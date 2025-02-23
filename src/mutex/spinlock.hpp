@@ -1,0 +1,69 @@
+#pragma once
+
+#include "../sync/yield.hpp"
+#include "mutex.hpp"
+
+#if !defined(__GNUC__)
+#include <sched.h>
+#endif
+
+namespace micron
+{
+class spin_lock
+{
+  atomic_token<bool> _lock;
+
+public:
+  spin_lock(void) : _lock(ATOMIC_OPEN) {}
+  spin_lock(bool state) : _lock(state) {}
+  // TTAS
+  void
+  operator()(void)
+  {
+    for ( ;; ) {
+      while ( _lock.get() ) {
+#if defined(__GNUC__)
+        __builtin_ia32_pause();
+#else
+        yield();
+#endif
+        // this is really GCC only, i'm afraid
+        // TODO: add the same for other compiles
+      }
+      if ( !_lock.swap(ATOMIC_LOCKED) )
+        break;
+    }
+  }
+  void
+  operator()(bool state)
+  {
+    for ( ;; ) {
+      while ( _lock.get() != state ) {
+#if defined(__GNUC__)
+        __builtin_ia32_pause();
+#else
+        yield();
+#endif
+        // this is really GCC only, i'm afraid
+        // TODO: add the same for other compiles
+      }
+      if ( !_lock.swap(!state) )
+        break;
+    }
+  }
+  void
+  unlock()
+  {
+    _lock.store(ATOMIC_OPEN);
+  }
+  void
+  try_unlock()
+  {
+    for ( ;; ) {
+      if ( _lock.swap(ATOMIC_OPEN) )
+        break;
+      __builtin_ia32_pause();
+    }
+  }
+};
+};

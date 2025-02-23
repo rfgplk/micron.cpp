@@ -1,0 +1,83 @@
+# build.ninja
+timer = /usr/bin/time -p
+compiler_gnu = g++
+compiler_llvm = clang++
+
+
+cflags_debug = -g -march=native
+cflags_optimizations = -Ofast -mavx2 -mbmi -march=native
+
+# annoying but works
+cflags_warn_all_llvm = -Weverything
+cflags_warn_base = -Wall -Wextra -Wpedantic
+cflags_warn_options = -Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconversion-null -Woverlength-strings -Wpointer-arith -Wunused-local-typedefs -Wunused-result -Wvarargs -Wvla -Wwrite-strings
+cflags_warn_ignore = -Wno-implicit-fallthrough -Wno-sign-conversion
+
+cflags_ext = -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
+cflags_ext_llvm = -fopenmp -ffast-math -flto -fdiagnostics-color=always
+
+
+
+
+cflags_gnu_debug =  -std=c++23 $cflags_debug $cflags_warn_base $cflags_warn_options $cflags_warn_ignore $cflags_ext
+cflags_gnu =  -std=c++23 $cflags_optimizations $cflags_warn_base $cflags_warn_options $cflags_warn_ignore $cflags_ext
+cflags_llvm =  -std=c++23 $cflags_optimizations $cflags_warn_all_llvm $cflags_ext_llvm
+
+
+clibs_location = -L./libs
+clibs_includes = -Isrc
+
+clibs_static = -static-libstdc++
+build_directory = bin
+
+rule cc_compile_cmnd
+  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu $clibs_location $clibs_includes $in -o $build_directory/$out;
+
+rule cc_compile_cmnd_debug
+  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu_debug $clibs_location $clibs_includes $in -o $build_directory/$out;
+
+build core_tests_strings: cc_compile_cmnd tests/core/cstrings.cpp
+build core_tests_cmemory: cc_compile_cmnd tests/core/cmemory.cpp
+build core_tests_pointers: cc_compile_cmnd tests/core/pointers.cpp
+build core_tests_mutex: cc_compile_cmnd tests/core/mutex.cpp
+build core_tests_once: cc_compile_cmnd tests/core/once.cpp
+build core_tests_cpu: cc_compile_cmnd tests/core/cpu.cpp
+build core_tests_thread: cc_compile_cmnd tests/core/threads.cpp
+build core_tests_arena: cc_compile_cmnd tests/core/arena.cpp
+build core_tests_linux: cc_compile_cmnd tests/core/linux.cpp
+build core_tests_channels: cc_compile_cmnd tests/core/channels.cpp
+
+build invoke_test: cc_compile_cmnd tests/invoke.cpp
+build printing_test: cc_compile_cmnd tests/printing.cpp
+build printing_bench: cc_compile_cmnd tests/printing_bench.cpp
+build list_test: cc_compile_cmnd tests/list.cpp
+build pairs_test: cc_compile_cmnd tests/pairs.cpp
+build matrix_test: cc_compile_cmnd tests/matrix.cpp
+build linux_files_test: cc_compile_cmnd tests/files.cpp
+build linux_fsys_test: cc_compile_cmnd tests/fsys.cpp
+build ftw_test: cc_compile_cmnd tests/ftw.cpp
+build serial_test: cc_compile_cmnd tests/serial.cpp
+build memset_test: cc_compile_cmnd tests/memset.cpp
+build strings_test: cc_compile_cmnd tests/strings.cpp
+build strmem_test: cc_compile_cmnd tests/strmem.cpp
+build iterator_test: cc_compile_cmnd tests/iterators.cpp
+build sleep_test: cc_compile_cmnd tests/sleeping.cpp
+build promises_test: cc_compile_cmnd tests/promises.cpp
+build fsys_test: cc_compile_cmnd tests/io.cpp
+build ivector_test: cc_compile_cmnd tests/ivector.cpp
+build stacks_test: cc_compile_cmnd tests/stack.cpp
+build buffers_test: cc_compile_cmnd tests/buffers.cpp
+build slices_test: cc_compile_cmnd tests/slices.cpp
+build hashes_test: cc_compile_cmnd tests/hashes.cpp
+build compile_time_test: cc_compile_cmnd tests/compile_time.cpp
+build vector_test: cc_compile_cmnd tests/vector.cpp
+build map_test: cc_compile_cmnd tests/maps.cpp
+build isort_test: cc_compile_cmnd tests/insert_sort.cpp
+build input_test: cc_compile_cmnd tests/input.cpp
+build allocators_test: cc_compile_cmnd tests/allocators.cpp
+build sorts_test: cc_compile_cmnd tests/sorts.cpp
+build process_test: cc_compile_cmnd tests/process.cpp
+build bloom_test: cc_compile_cmnd tests/bloom.cpp
+build errno_test: cc_compile_cmnd tests/errno.cpp
+#build vector_leak_test: cc_compile_cmnd tests/vector_leak.cpp
+#build vector_perf_test: cc_compile_cmnd tests/vector_perf.cpp
