@@ -5,8 +5,8 @@
 ### a core reimplementation of the C++ Standard Template Library
 </div>
 
-[!WARNING]
-micron is still in active development. The ABI may change at any point, and without notice.
+> [!WARNING]
+> micron is still in active development. The ABI may change at any point, and without notice.
 
 #### *micron intends to bring the ideological power of C and assembly to C++, while imbuing it with the functional power of more modern languages such as Rust*
 
