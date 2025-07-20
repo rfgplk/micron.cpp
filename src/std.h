@@ -1,3 +1,8 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
 #include "cmpl.hpp"
@@ -38,8 +43,8 @@ constexpr static const int MICRON_VERSION_PATCH = 0x0;
 #define GNUCC
 #endif
 #define COMPILER "GNU"
-#if __GNUC__ != 14
-#pragma GCC warning "This version of micron was made for GCC 14.0"
+#if __GNUC__ != 15
+#pragma GCC warning "This version of micron was made for GCC 15.0"
 #endif
 #elif defined(_MSC_VER)
 #define COMPILER "MSVC"

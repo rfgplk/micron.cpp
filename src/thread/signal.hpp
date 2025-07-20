@@ -1,3 +1,8 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
 #ifndef SIG_ERR
@@ -139,9 +144,10 @@
 #include <sched.h> /* Definition of CLONE_* constants */
 #include <spawn.h>
 // #include <sys/syscall.h>  /* Definition of SYS_* constants */
-#include <signal.h>
-#include <sys/wait.h>     // waitpid
-#include <time.h>
+//#include <signal.h>
+#include "../linux/sys/signal.hpp"
+//#include <sys/wait.h>     // waitpid
+//#include <time.h>
 #include <type_traits>
 #include <unistd.h>     // fork, close, daemon
 

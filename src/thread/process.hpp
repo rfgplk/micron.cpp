@@ -1,9 +1,11 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
-
-// #include <linux/sched.h> /* Definition of struct clone_args */
-#include <sched.h> /* Definition of CLONE_* constants */
+/*
 #include <spawn.h>
-// #include <sys/syscall.h>  /* Definition of SYS_* constants */
 #include <sys/wait.h>     // waitpid
 #include <sys/stat.h>
 #include <unistd.h>       // fork, close, daemon
@@ -70,15 +72,17 @@ enum class posix_process_flags {
   new_session = POSIX_SPAWN_SETSID
 };
 
-struct process_t {
+struct uprocess_t {
+  uid_t uid;
+  gid_t gid;
   pid_t pid;
   micron::string path;
   micron::svector<micron::string> argv;
   posix_spawnattr_t flags;
   int status;
-  bool wait;
+  //bool wait;
   template <typename... Args>
-  process_t(const char *str, Args... args) : pid(0), path(str), argv({ args... }), status(0), wait(true)
+  uprocess_t(const char *str, Args... args) : pid(0), uid(0), gid(0), path(str), argv({ args... }), status(0)//, wait(true)
   {
     if ( posix_spawnattr_init(&flags) != 0 ) {
       throw except::system_error("micron process failed to init spawnattrs");
@@ -86,7 +90,7 @@ struct process_t {
   }
 
   template <typename... Args>
-  process_t(micron::string &&o, Args... args) : pid(0), path(micron::move(o)), argv({ args... }), status(0), wait(true)
+  uprocess_t(micron::string &&o, Args... args) : pid(0), uid(0), gid(0), path(micron::move(o)), argv({ args... }), status(0)//, wait(true)
   {
     if ( posix_spawnattr_init(&flags) != 0 ) {
       throw except::system_error("micron process failed to init spawnattrs");
@@ -94,7 +98,7 @@ struct process_t {
   }
 };
 
-typedef micron::fvector<process_t> process_list_t;
+typedef micron::fvector<uprocess_t> process_list_t;
 
 template <is_string... S>
 process_list_t
@@ -122,26 +126,30 @@ run_processes(process_list_t &n)
     for ( size_t i = 0; i < t.argv.size(); i++ )
       argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
+    t.uid = posix::getuid();
+    t.gid = posix::getgid();
     if ( ::posix_spawn(&t.pid, t.path.c_str(), NULL, &t.flags, &argv[0], environ) ) {
       throw except::system_error("micron process failed to start posix_spawn");
     }
-    if ( t.wait )
-      ::waitpid(t.pid, &t.status, 0);
+    //if ( t.wait )
+    //  ::waitpid(t.pid, &t.status, 0);
   }
 }
 
 void
-process(process_t &t)
+process(uprocess_t &t)
 {
   micron::svector<char *> argv;
   for ( size_t i = 0; i < t.argv.size(); i++ )
     argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
+  t.uid = posix::getuid();
+  t.gid = posix::getgid();
   if ( ::posix_spawn(&t.pid, t.path.c_str(), NULL, &t.flags, &argv[0], environ) ) {
     throw except::system_error("micron process failed to start posix_spawn");
   }
-  if ( t.wait )
-    ::waitpid(t.pid, &t.status, 0);
+  //if ( t.wait )
+  //  ::waitpid(t.pid, &t.status, 0);
 }
 
 // fork and run process at path location specified by T
@@ -330,4 +338,4 @@ memfork()
     throw except::system_error("micron process failed to fork()");
   return pid;
 }
-};
+};*/

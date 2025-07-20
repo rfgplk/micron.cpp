@@ -1,6 +1,13 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <sys/mman.h>
+//#include <sys/mman.h>
+
+#include "../memory/mman.h"
 
 #include "../except.hpp"
 #include "../types.hpp"
@@ -35,21 +42,21 @@ template <typename B = byte>
 inline B *
 map_normal(void *ptr, const size_t n)
 {
-  return reinterpret_cast<B *>(mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+  return reinterpret_cast<B *>(micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
 };
 
 template <typename B = byte>
 inline B *
 map_frozen(void *ptr, const size_t n)
 {
-  return reinterpret_cast<B *>(mmap(ptr, n, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+  return reinterpret_cast<B *>(micron::mmap(ptr, n, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
 };
 
 template <typename B = byte>
 inline B *
 map_large(void *ptr, const size_t n)
 {
-  return reinterpret_cast<B *>(mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0));
+  return reinterpret_cast<B *>(micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0));
 };
 template <typename T = byte> class deleter
 {
@@ -66,8 +73,8 @@ public:
   {     // deallocate at location N
     if ( mem == nullptr )
       return;
-    munmap(mem, len);
-    if ( munmap(mem, len) == -1 )
+    micron::munmap(mem, len);
+    if ( micron::munmap(mem, len) == -1 )
       throw except::memory_error("Unmapping failed");
     mem = nullptr;
   }

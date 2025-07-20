@@ -11,7 +11,7 @@ cflags_optimizations = -Ofast -mavx2 -mbmi -march=native
 cflags_warn_all_llvm = -Weverything
 cflags_warn_base = -Wall -Wextra -Wpedantic
 cflags_warn_options = -Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconversion-null -Woverlength-strings -Wpointer-arith -Wunused-local-typedefs -Wunused-result -Wvarargs -Wvla -Wwrite-strings
-cflags_warn_ignore = -Wno-implicit-fallthrough -Wno-sign-conversion
+cflags_warn_ignore = -Wno-implicit-fallthrough -Wno-sign-conversion -Wno-variadic-macros
 
 cflags_ext = -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
 cflags_ext_llvm = -fopenmp -ffast-math -flto -fdiagnostics-color=always
@@ -36,6 +36,7 @@ rule cc_compile_cmnd
 rule cc_compile_cmnd_debug
   command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu_debug $clibs_location $clibs_includes $in -o $build_directory/$out;
 
+build core_tests_syscall: cc_compile_cmnd tests/core/syscall.cpp
 build core_tests_strings: cc_compile_cmnd tests/core/cstrings.cpp
 build core_tests_cmemory: cc_compile_cmnd tests/core/cmemory.cpp
 build core_tests_pointers: cc_compile_cmnd tests/core/pointers.cpp
@@ -47,6 +48,7 @@ build core_tests_arena: cc_compile_cmnd tests/core/arena.cpp
 build core_tests_linux: cc_compile_cmnd tests/core/linux.cpp
 build core_tests_channels: cc_compile_cmnd tests/core/channels.cpp
 
+build chrono_test: cc_compile_cmnd tests/chrono.cpp
 build invoke_test: cc_compile_cmnd tests/invoke.cpp
 build printing_test: cc_compile_cmnd tests/printing.cpp
 build printing_bench: cc_compile_cmnd tests/printing_bench.cpp

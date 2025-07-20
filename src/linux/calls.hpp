@@ -1,31 +1,27 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
+
 
 #include "../types.hpp"
 #include "linux_types.hpp"
 
 #include "../syscall.hpp"
 
+#include "../linux/sys/signal.hpp"
+#include "../linux/sys/time.hpp"
+
 namespace micron
 {
 namespace posix
 {
-
 auto
-nanosleep(const struct timespec &req, struct timespec &rem)
+kill(posix::pid_t pid, int sig)
 {
-  return ::syscall(SYS_nanosleep, &req, &rem);
-}
-
-auto
-nanosleep(const struct timespec &req)
-{
-  return ::syscall(SYS_nanosleep, &req, nullptr);
-}
-
-auto
-kill(pid_t pid, int sig)
-{
-  return ::syscall(SYS_kill, pid, sig);
+  return micron::syscall(SYS_kill, pid, sig);
 }
 
 /*
@@ -40,7 +36,7 @@ kill(pid_t pid, int sig)
 auto
 clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)
 {
-  return ::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls);
+  return micron::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls);
 }
 
 // NOTE: Linux 5.3+(5.7) req
@@ -50,15 +46,15 @@ struct clone_args {
   u64 pidfd;        /* Where to store PID file descriptor
                        (int *) */
   u64 child_tid;    /* Where to store child TID,
-                       in child's memory (pid_t *) */
+                       in child's memory (posix::pid_t *) */
   u64 parent_tid;   /* Where to store child TID,
-                       in parent's memory (pid_t *) */
+                       in parent's memory (posix::pid_t *) */
   u64 exit_signal;  /* Signal to deliver to parent on
                        child termination */
   u64 stack;        /* Pointer to lowest byte of stack */
   u64 stack_size;   /* Size of stack */
   u64 tls;          /* Location of new TLS */
-  u64 set_tid;      /* Pointer to a pid_t array
+  u64 set_tid;      /* Pointer to a posix::pid_t array
                        (since Linux 5.5) */
   u64 set_tid_size; /* Number of elements in set_tid
                        (since Linux 5.5) */
@@ -69,26 +65,26 @@ struct clone_args {
 auto
 clone3_kernel(clone_args& args)
 {
-  return ::syscall(SYS_clone3, &args, sizeof(args));
+  return micron::syscall(SYS_clone3, &args, sizeof(args));
 }
 
 auto
 fork_kernel(void)
 {
-  return ::syscall(SYS_fork);
+  return micron::syscall(SYS_fork);
 }
-
+/*
 auto
 wait(int *wstatus)
 {
-  return ::syscall(SYS_wait4, -1, wstatus, 0, nullptr);
+  return micron::syscall(SYS_wait4, -1, wstatus, 0, nullptr);
 }
 
 auto
-waitid(idtype_t idtype, id_t id, siginfo_t &info, int options)
+waitid(posix::idtype_t idtype, posix::id_t id, siginfo_t &info, int options)
 {
   // NOTE: last one is rusage*
-  return ::syscall(SYS_waitid, idtype, id, &info, options, nullptr);
-}
+  return micron::syscall(SYS_waitid, idtype, id, &info, options, nullptr);
+}*/
 };
 };

@@ -1,9 +1,17 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
 #include "linux/calls.hpp"
+#include "linux/sys/time.hpp"
+#include "linux/sys/signal.hpp"
+#include "process/wait.hpp"
 #include "thread/signal.hpp"
-#include <signal.h>
-#include <time.h>
+
+//#include <signal.h>
 
 #include "types.hpp"
 
@@ -49,7 +57,7 @@ inline int
 wait(int pid)
 {
   int status = 0;
-  return ::waitpid(pid, &status, 0);
+  return micron::waitpid(pid, &status, 0);
 }
 
 // wait for pid to finish
@@ -58,7 +66,7 @@ wait_thread(int tid)
 {
   // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
   siginfo_t i;
-  return static_cast<int>(posix::waitid(P_PID, tid, i, WEXITED | WSTOPPED));
+  return static_cast<int>(micron::waitid(P_PID, tid, i, exited | stopped));
 }
 
 inline int
@@ -66,7 +74,7 @@ can_wait(int tid)
 {
   // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
   siginfo_t i;
-  posix::waitid(P_PID, tid, i, WEXITED | WNOWAIT);
+  micron::waitid(P_PID, tid, i, exited | nowait);
   if ( i.si_code == CLD_EXITED or i.si_code == CLD_DUMPED or i.si_code == CLD_KILLED )
     return true;
   return false;
@@ -77,7 +85,7 @@ try_wait_thread(int tid)
 {
   // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
   int status = 0;
-  return ::waitpid(tid, &status, WNOHANG);
+  return micron::waitpid(tid, &status, nohang);
 }
 // wait for signal, equivalent to sigsuspend
 template <typename... Args>
@@ -127,10 +135,10 @@ crash(void)
 inline void
 ssleep(const umax_t s)
 {
-  struct timespec r, rmn;
+  timespec_t r, rmn;
   r.tv_sec = s;
   r.tv_nsec = 0;
-  while ( posix::nanosleep(r, rmn) == -1 && errno == EINTR ) {
+  while ( micron::nanosleep(r, rmn) == -1 && errno == EINTR ) {
     r = rmn;
   }
 }
@@ -139,10 +147,10 @@ ssleep(const umax_t s)
 inline void
 sleep_for(const umax_t ms)
 {
-  struct timespec r, rmn;
+  timespec_t r, rmn;
   r.tv_sec = ms / (umax_t)1000;
   r.tv_nsec = (ms % (umax_t)1000) * (umax_t)1000;
-  while ( posix::nanosleep(r, rmn) == -1 && errno == EINTR ) {
+  while ( micron::nanosleep(r, rmn) == -1 && errno == EINTR ) {
     r = rmn;
   }
 }
@@ -150,10 +158,10 @@ sleep_for(const umax_t ms)
 inline void
 sleep(const umax_t ms)
 {
-  struct timespec r;
+  timespec_t r;
   r.tv_sec = ms / (umax_t)1000;
   r.tv_nsec = (ms % (umax_t)1000) * (umax_t)1000;
-  while ( posix::nanosleep(r) == -1 && errno == EINTR ) {
+  while ( micron::nanosleep(r) == -1 && errno == EINTR ) {
   }
 }
 };

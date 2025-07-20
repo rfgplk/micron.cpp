@@ -1,3 +1,8 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 #include "../../memory/cmemory.hpp"
 #include "../../syscall.hpp"
@@ -40,13 +45,13 @@ struct rlimit_t {
 auto
 get_limits(limits lm, rlimit_t &rl)
 {
-  return ::syscall(SYS_getrlimit, static_cast<int>(lm), &rl);
+  return micron::syscall(SYS_getrlimit, static_cast<int>(lm), &rl);
 }
 
 auto
 set_limits(limits lm, rlimit_t &rl)
 {
-  return ::syscall(SYS_setrlimit, static_cast<int>(lm), &rl);
+  return micron::syscall(SYS_setrlimit, static_cast<int>(lm), &rl);
 }
 
 struct limits_t {

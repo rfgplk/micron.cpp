@@ -1,3 +1,8 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
 // errno port
@@ -5,6 +10,20 @@
 
 namespace micron
 {
+
+template <int Val>
+inline __attribute__((always_inline)) void
+set_errno(void)
+{
+  errno = Val;
+}
+
+inline __attribute__((always_inline)) void
+set_errno(int val)
+{
+  errno = val;
+}
+
 namespace error
 {
 
@@ -216,8 +235,6 @@ what_errno()
   return no_msg;
 }
 
-
-
 inline auto
 get_errno(const int e)
 {
@@ -345,131 +362,129 @@ get_errno(const int e)
   return no_msg;
 }
 
-
-
-template<int e>
+template <int e>
 inline constexpr auto
 const_get_errno(void)
 {
-  if constexpr( permissions == e ) {
+  if constexpr ( permissions == e ) {
     return permissions_msg;
   }
-  if constexpr( no_entry == e ) {
+  if constexpr ( no_entry == e ) {
     return no_entry_msg;
   }
-  if constexpr( no_process == e ) {
+  if constexpr ( no_process == e ) {
     return no_process_msg;
   }
-  if constexpr( interrupted == e ) {
+  if constexpr ( interrupted == e ) {
     return interrupted_msg;
   }
-  if constexpr( io_error == e ) {
+  if constexpr ( io_error == e ) {
 
     return io_error_msg;
   }
-  if constexpr( no_such_device == e ) {
+  if constexpr ( no_such_device == e ) {
 
     return no_such_device_msg;
   }
-  if constexpr( arguments_too_big == e ) {
+  if constexpr ( arguments_too_big == e ) {
 
     return arguments_too_big_msg;
   }
-  if constexpr( exec_error == e ) {
+  if constexpr ( exec_error == e ) {
 
     return exec_error_msg;
   }
-  if constexpr( bad_file_number == e ) {
+  if constexpr ( bad_file_number == e ) {
 
     return bad_file_number_msg;
   }
-  if constexpr( no_child_process == e ) {
+  if constexpr ( no_child_process == e ) {
     return no_child_process_msg;
   }
-  if constexpr( try_again == e ) {
+  if constexpr ( try_again == e ) {
 
     return try_again_msg;
   }
-  if constexpr( out_of_memory == e ) {
+  if constexpr ( out_of_memory == e ) {
 
     return out_of_memory_msg;
   }
-  if constexpr( permission_denied == e ) {
+  if constexpr ( permission_denied == e ) {
     return permission_denied_msg;
   }
-  if constexpr( bad_address == e ) {
+  if constexpr ( bad_address == e ) {
     return bad_address_msg;
   }
-  if constexpr( block_device_req == e ) {
+  if constexpr ( block_device_req == e ) {
     return block_device_req_msg;
   }
-  if constexpr( device_busy == e ) {
+  if constexpr ( device_busy == e ) {
     return device_busy_msg;
   }
-  if constexpr( file_exists == e ) {
+  if constexpr ( file_exists == e ) {
     return file_exists_msg;
   }
-  if constexpr( exdev == e ) {
+  if constexpr ( exdev == e ) {
     return exdev_msg;
   }
-  if constexpr( no_device == e ) {
+  if constexpr ( no_device == e ) {
     return no_device_msg;
   }
-  if constexpr( not_a_dir == e ) {
+  if constexpr ( not_a_dir == e ) {
     return not_a_dir_msg;
   }
-  if constexpr( is_a_dir == e ) {
+  if constexpr ( is_a_dir == e ) {
     return is_a_dir_msg;
   }
-  if constexpr( invalid_arg == e ) {
+  if constexpr ( invalid_arg == e ) {
     return invalid_arg_msg;
   }
-  if constexpr( file_table_ovflw == e ) {
+  if constexpr ( file_table_ovflw == e ) {
     return file_table_ovflw_msg;
   }
-  if constexpr( too_many_files == e ) {
+  if constexpr ( too_many_files == e ) {
     return too_many_files_msg;
   }
-  if constexpr( not_a_tty == e ) {
+  if constexpr ( not_a_tty == e ) {
     return not_a_tty_msg;
   }
-  if constexpr( text_busy == e ) {
+  if constexpr ( text_busy == e ) {
     return text_busy_msg;
   }
-  if constexpr( file_too_big == e ) {
+  if constexpr ( file_too_big == e ) {
     return file_too_big_msg;
   }
-  if constexpr( no_space == e ) {
+  if constexpr ( no_space == e ) {
     return no_space_msg;
   }
-  if constexpr( illegal_seek == e ) {
+  if constexpr ( illegal_seek == e ) {
     return illegal_seek_msg;
   }
-  if constexpr( read_only_fs == e ) {
+  if constexpr ( read_only_fs == e ) {
     return read_only_fs_msg;
   }
-  if constexpr( too_many_links == e ) {
+  if constexpr ( too_many_links == e ) {
     return too_many_links_msg;
   }
-  if constexpr( broken_pipe == e ) {
+  if constexpr ( broken_pipe == e ) {
     return broken_pipe_msg;
   }
-  if constexpr( out_of_domain == e ) {
+  if constexpr ( out_of_domain == e ) {
     return out_of_domain_msg;
   }
-  if constexpr( not_representable == e ) {
+  if constexpr ( not_representable == e ) {
     return not_representable_msg;
   }
-  if constexpr( deadlock == e ) {
+  if constexpr ( deadlock == e ) {
     return deadlock_msg;
   }
-  if constexpr( name_too_long == e ) {
+  if constexpr ( name_too_long == e ) {
     return name_too_long_msg;
   }
-  if constexpr( no_record_locks == e ) {
+  if constexpr ( no_record_locks == e ) {
     return no_record_locks_msg;
   }
-  if constexpr( bad_syscall == e ) {
+  if constexpr ( bad_syscall == e ) {
     return bad_syscall_msg;
   }
   return no_msg;

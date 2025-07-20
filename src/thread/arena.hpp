@@ -1,3 +1,8 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
 #include "../mutex/locks.hpp"
@@ -62,7 +67,7 @@ public:
   {
     micron::lock_guard l(mtx);
     // NOTE: "A child created by fork(2) inherits its parent's nice value.  The nice value is preserved across execve(2)"
-    threads.push({ .uid = ::syscall(SYS_getuid),
+    threads.push({ .uid = micron::syscall(SYS_getuid),
                    .priority = posix::get_priority(PRIO_PROCESS, 0),
                    .cpu_mask = {},
                    .thread = solo::spawn<Tr>(f, args...) });
@@ -81,7 +86,7 @@ public:
                    .priority = posix::get_priority(PRIO_PROCESS, 0),
                    .cpu_mask = c,
                    .thread = solo::spawn<Tr>(f, args...) });
-    ::syscall(SYS_sched_setaffinity, threads.top().thread->thread_id(), sizeof(c), &c);
+    micron::syscall(SYS_sched_setaffinity, threads.top().thread->thread_id(), sizeof(c), &c);
     return threads.top();
   }
   void

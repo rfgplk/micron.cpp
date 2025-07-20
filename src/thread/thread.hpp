@@ -1,7 +1,13 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
 #include "../control.hpp"
 #include "../memory/cmemory.hpp"
+#include "../memory/mman.h"
 #include "../pointer.hpp"
 #include "../sync/yield.hpp"
 #include "../tags.hpp"
@@ -10,11 +16,12 @@
 #include "signal.hpp"
 #include "types.hpp"
 
+#include "../memory/stack.hpp"
 #include "../linux/calls.hpp"
 
 #include <signal.h>        // for signal handling
-#include <sys/types.h>     // for waitpid
-#include <sys/wait.h>      // for wait
+//#include <sys/types.h>     // for waitpid
+//#include <sys/wait.h>      // for wait
 #include <tuple>
 #include <utility>     // needed for now
 #include <variant>
@@ -142,7 +149,7 @@ template <int Stack = default_stack_size> class thread
   __impl_makethread(F f, Args &&...args)
   {
     fstack = reinterpret_cast<byte *>(
-        ::mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
+        micron::mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
     if ( fstack == MAP_FAILED )
       throw except::system_error("micron::thread mmap failed to allocate stack");
 
@@ -201,7 +208,7 @@ public:
   release(void)
   {
     if ( fstack )
-      ::munmap(fstack, Stack);
+      micron::munmap(fstack, Stack);
     pid = 0;
   }
   inline bool
@@ -284,7 +291,7 @@ template <int Stack = default_stack_size> class group_thread
   __impl_makethread(F f, Args &&...args)
   {
     fstack = reinterpret_cast<byte *>(
-        ::mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
+        micron::mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
     if ( fstack == MAP_FAILED )
       throw except::system_error("micron::thread mmap failed to allocate stack");
 
@@ -343,7 +350,7 @@ public:
   release(void)
   {
     if ( fstack )
-      ::munmap(fstack, Stack);
+      micron::munmap(fstack, Stack);
     pid = 0;
   }
   inline bool

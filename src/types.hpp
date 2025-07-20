@@ -1,46 +1,67 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <stdint.h>
+#include "bits-types.hpp"
+#include "linux/linux_types.hpp"
 #include <type_traits>
 
+typedef unsigned char __u_char;
+typedef unsigned short int __u_short;
+typedef unsigned int __u_int;
+typedef unsigned long int __u_long;
 
-#if __WORDSIZE == 64
-#ifndef __intptr_t_defined
 typedef long int intptr_t;
 typedef unsigned long int uintptr_t;
-#define __intptr_t_defined
-#endif
-#endif
-
-#if defined(__intptr_t_defined)
-typedef uintptr_t ptr_t;
-#endif
-
+using ptr_t = uintptr_t;
 
 // portable cstdint for gcc, pp macros
 
-typedef __INT8_TYPE__ int8_t;
-typedef __INT16_TYPE__ int16_t;
-typedef __INT32_TYPE__ int32_t;
-typedef __INT64_TYPE__ int64_t;
+using int8_t = __INT8_TYPE__;
+using int16_t = __INT16_TYPE__;
+using int32_t = __INT32_TYPE__;
+using int64_t = __INT64_TYPE__;
 
-typedef __INTPTR_TYPE__ intptr_t;
-typedef __UINT8_TYPE__ uint8_t;
-typedef __UINT16_TYPE__ uint16_t;
-typedef __UINT32_TYPE__ uint32_t;
-typedef __UINT64_TYPE__ uint64_t;
-typedef __UINT_FAST8_TYPE__ fint8_t;
-typedef __UINT_FAST16_TYPE__ fint16_t;
-typedef __UINT_FAST32_TYPE__ fint32_t;
-typedef __UINT_FAST64_TYPE__ fint64_t;
+using intptr_t = __INTPTR_TYPE__;
+using uint8_t = __UINT8_TYPE__;
+using uint16_t = __UINT16_TYPE__;
+using uint32_t = __UINT32_TYPE__;
+using uint64_t = __UINT64_TYPE__;
+using fint8_t = __UINT_FAST8_TYPE__;
+using fint16_t = __UINT_FAST16_TYPE__;
+using fint32_t = __UINT_FAST32_TYPE__;
+using fint64_t = __UINT_FAST64_TYPE__;
 
-typedef __INTMAX_TYPE__ max_t;
-typedef __UINTMAX_TYPE__ umax_t;
+using int_least8_t = int8_t;
+using uint_least8_t = uint8_t;
+using int_least16_t = int16_t;
+using uint_least16_t = uint16_t;
+using int_least32_t = int32_t;
+using uint_least32_t = uint32_t;
+using int_least64_t = int64_t;
+using uint_least64_t = uint64_t;
 
-typedef max_t ssize_t;
-typedef umax_t size_t;
-typedef umax_t word;
+using intmax_t = __INTMAX_TYPE__;
+using uintmax_t = __UINTMAX_TYPE__;
+using max_t = __INTMAX_TYPE__;
+using umax_t = __UINTMAX_TYPE__;
 
+using ssize_t = max_t;
+using size_t = umax_t;
+using word = umax_t;
+// time block
+using clock_t = __clock_t;
+using clockid_t = __clockid_t;
+using timer_t = __timer_t;
+using suseconds_t = __suseconds_t;
+
+using time_t = __time_t;
+using time64_t = time_t;
+using slong_t = __SYSCALL_SLONG_TYPE;
+using ulong_t = __SYSCALL_ULONG_TYPE;
 using quad_t = int64_t;
 using uquad_t = uint64_t;
 
@@ -62,26 +83,28 @@ using p8 = fint8_t;
 using p16 = fint16_t;
 using p32 = fint32_t;
 using p64 = fint64_t;
+
 using byte = uint8_t;
 using p64 = uintptr_t;
 
-typedef umax_t __attribute__ ((__may_alias__)) word;
+typedef umax_t __attribute__((__may_alias__)) word;
 constexpr u32 byte_width = 8;
 
 using pnt_t = byte;
+// using time_t = uint64_t;
+// TODO: implement time.h
 
 #if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L
-typedef _Float16 f16;
-typedef _Float32 f32;
-typedef _Float64 f64;
-typedef _Float128 f128;
-#elif(defined(__clang__))
-typedef float f16;
-typedef float f32;
-typedef double f64;
+using f16 = _Float16;
+using f32 = _Float32;
+using f64 = _Float64;
+using f128 = _Float128;
+#elif (defined(__clang__))
+using f16 = float;
+using f32 = float;
+using f64 = double;
 typedef long double f128;
 #endif
 typedef long double flong;
-typedef float ff;
-typedef double df;
-
+using ff = float;
+using df = double;

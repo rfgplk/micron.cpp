@@ -1,8 +1,12 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <time.h>
-#include <signal.h>
-#include "../types.hpp"
+// #include <time.h>
+#include "../bits-types.hpp"
 
 namespace micron
 {
@@ -10,27 +14,27 @@ namespace micron
 // spec)
 namespace posix
 {
-using idtype_t = u32;
-using id_t = u32;
-using dev_t = u64;
-using pid_t = i32;
-using key_t = i32;
-using clockid_t = i32;
-using uid_t = u32;
-using gid_t = u32;
-using rlim_t = u64;
-using mode_t = u32;
+using idtype_t = __U32_TYPE;
+using id_t = __U32_TYPE;
+using pid_t = __pid_t;
+using key_t = __key_t;
+using uid_t = __uid_t;
+using gid_t = __gid_t;
+using off_t = __off_t;
+using off64_t = __off64_t;
+using suseconds_t = __suseconds_t;
+using suseconds64_t = __suseconds64_t;
+using rlim_t = __U64_TYPE;
+using mode_t = __U32_TYPE;
 
-using syscall_long_t = i64;
-using syscall_ulong_t = u64;
+using syscall_long_t = __S64_TYPE;
+using syscall_ulong_t = __U64_TYPE;
 
-using off_t = i64;
-using off64_t = i64;
+using dev_t = __dev_t;
 
-using ino64_t = u64;
+using ino64_t = __U64_TYPE;
 
-using daddr_t = i32;
-using key_t = i32;
+using daddr_t = __S32_TYPE;
 };
 
 };
