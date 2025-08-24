@@ -10,8 +10,6 @@
 #include "heap/cpp.hpp"
 #include "tags.hpp"
 #include "types.hpp"
-#include <exception>
-#include <stdexcept>
 
 namespace micron
 {
@@ -67,7 +65,7 @@ public:
   {
     __impl_heap(micron::move(T()), &root);
     if ( root == nullptr )
-      throw std::runtime_error("micron::double_list() heap allocation failure");
+      throw except::runtime_error("micron::double_list() heap allocation failure");
     double_list_node_t *ptr = root;
     double_list_node_t *ptr_prev = nullptr;
     for ( size_t i = 0; i < cnt; i++ ) {
@@ -80,7 +78,7 @@ public:
   {
     __impl_heap(t, &root);
     if ( root == nullptr )
-      throw std::runtime_error("micron::double_list() heap allocation failure");
+      throw except::runtime_error("micron::double_list() heap allocation failure");
     double_list_node_t *ptr = root;
     double_list_node_t *ptr_prev = nullptr;
     for ( size_t i = 0; i < cnt; i++ ) {
@@ -183,7 +181,7 @@ public:
   next(const_pointer itr, const size_t n = 0)
   {
     if ( itr == nullptr )
-      throw std::runtime_error("micron::next invalid iterator.");
+      throw except::runtime_error("micron::next invalid iterator.");
     for ( size_t i = 0; i < (n + 1); i++ ) {
       if ( itr->next == nullptr )
         break;
@@ -196,7 +194,7 @@ public:
   prev(const_pointer itr, const size_t n = 0)
   {
     if ( itr == nullptr )
-      throw std::runtime_error("micron::next invalid iterator.");
+      throw except::runtime_error("micron::next invalid iterator.");
     for ( size_t i = 0; i < (n + 1); i++ ) {
       if ( itr->prev == nullptr )
         break;
@@ -208,7 +206,7 @@ public:
   erase(const_pointer itr)
   {
     if ( itr == nullptr )
-      throw std::runtime_error("micron::erase invalid iterator.");
+      throw except::runtime_error("micron::erase invalid iterator.");
     auto *ptr = root;
     while ( ptr != nullptr ) {
       if ( ptr->next == itr )     // if parent found
@@ -223,7 +221,7 @@ public:
   insert(const_pointer itr, T &&v)
   {
     if ( itr == nullptr )
-      throw std::runtime_error("micron::insert invalid iterator.");
+      throw except::runtime_error("micron::insert invalid iterator.");
     double_list_node_t *ptr;
     __impl_heap(micron::move(v), &ptr);     // allocate ptr
     ptr->next = itr->next;
@@ -233,7 +231,7 @@ public:
   insert(const_pointer itr, const T &v)
   {
     if ( itr == nullptr )
-      throw std::runtime_error("micron::insert invalid iterator.");
+      throw except::runtime_error("micron::insert invalid iterator.");
     double_list_node_t *ptr;
     __impl_heap(v, &ptr);     // allocate ptr
     ptr->next = itr->next;
@@ -243,7 +241,7 @@ public:
   emplace(const_pointer itr, T &&v)
   {
     if ( itr == nullptr )
-      throw std::runtime_error("micron::insert invalid iterator.");
+      throw except::runtime_error("micron::insert invalid iterator.");
     double_list_node_t *ptr;
     __impl_heap(std::forward(v), &ptr);     // allocate ptr
     ptr->next = itr->next;
@@ -253,14 +251,14 @@ public:
   front() const
   {
     if ( root == nullptr )
-      throw std::runtime_error("micron::double_list front() is empty");
+      throw except::runtime_error("micron::double_list front() is empty");
     return root->data;
   }
   T
   back() const
   {
     if ( root == nullptr )
-      throw std::runtime_error("micron::double_list front() is empty");
+      throw except::runtime_error("micron::double_list front() is empty");
     return end()->data;
   }
   void

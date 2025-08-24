@@ -8,7 +8,6 @@
 #include "../math/generic.hpp"
 #include "../memory/memory.hpp"
 #include "../types.hpp"
-#include <exception>
 #include <type_traits>
 
 namespace micron

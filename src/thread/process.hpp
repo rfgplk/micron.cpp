@@ -5,11 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 /*
-#include <spawn.h>
-#include <sys/wait.h>     // waitpid
-#include <sys/stat.h>
-#include <unistd.h>       // fork, close, daemon
-#include <fcntl.h>
+#include spawn.h>
+#include sys/wait.h>     // waitpid
+#include sys/stat.h>
+#include unistd.h>       // fork, close, daemon
+#include fcntl.h>
 
 #include "../concepts.hpp"
 #include "../except.hpp"

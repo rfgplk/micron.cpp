@@ -8,9 +8,9 @@
 #include "../sync/yield.hpp"
 #include "mutex.hpp"
 
-#if !defined(__GNUC__)
-#include <sched.h>
-#endif
+//#if !defined(__GNUC__)
+//#include <sched.h>
+//#endif
 
 namespace micron
 {

@@ -5,9 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "errno.hpp"
 #include "cmpl.hpp"
 #include "endian.hpp"
 #include "types.hpp"
+
 
 #ifndef __MICRON
 #define __MICRON

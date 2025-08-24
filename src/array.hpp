@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <stdexcept>
 #include <type_traits>
 
 #include "algorithm/mem.hpp"
@@ -14,6 +13,7 @@
 #include "memory/memory.hpp"
 #include "tags.hpp"
 #include "types.hpp"
+#include "except.hpp"
 
 namespace micron
 {
@@ -50,7 +50,7 @@ public:
   farray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
-      throw std::runtime_error("micron::farray init_list too large.");
+      throw except::runtime_error("micron::farray init_list too large.");
     size_t i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
@@ -71,14 +71,14 @@ public:
   at(const size_t i)
   {
     if ( i >= N )
-      throw std::runtime_error("micron::farray at() out of range.");
+      throw except::runtime_error("micron::farray at() out of range.");
     return stack[i];
   }
   inline const T &
   at(const size_t i) const
   {
     if ( i >= N )
-      throw std::runtime_error("micron::farray at() out of range.");
+      throw except::runtime_error("micron::farray at() out of range.");
     return stack[i];
   }
   inline T &
@@ -310,7 +310,7 @@ public:
   array(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
-      throw std::runtime_error("micron::array init_list too large.");
+      throw except::runtime_error("micron::array init_list too large.");
     size_t i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
@@ -331,14 +331,14 @@ public:
   at(const size_t i)
   {
     if ( i >= N )
-      throw std::runtime_error("micron::array at() out of range.");
+      throw except::runtime_error("micron::array at() out of range.");
     return stack[i];
   }
   const T &
   at(const size_t i) const
   {
     if ( i >= N )
-      throw std::runtime_error("micron::array at() out of range.");
+      throw except::runtime_error("micron::array at() out of range.");
     return stack[i];
   }
   inline T &
@@ -615,7 +615,7 @@ public:
   carray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
-      throw std::runtime_error("micron::array init_list too large.");
+      throw except::runtime_error("micron::array init_list too large.");
     size_t i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
@@ -638,14 +638,14 @@ public:
   at(const size_t i)
   {
     if ( i >= N )
-      throw std::runtime_error("micron::array at() out of range.");
+      throw except::runtime_error("micron::array at() out of range.");
     return stack[i];
   }
   inline const T &
   at(const size_t i) const
   {
     if ( i >= N )
-      throw std::runtime_error("micron::array at() out of range.");
+      throw except::runtime_error("micron::array at() out of range.");
     return stack[i];
   }
   inline T &

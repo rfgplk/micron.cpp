@@ -5,9 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+//#include <cstdio>
+//#include <cstring>
 #include <concepts>
-#include <cstdio>
-#include <cstring>
 #include <type_traits>
 #include <locale.h>
 

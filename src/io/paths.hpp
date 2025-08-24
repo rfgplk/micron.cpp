@@ -11,7 +11,6 @@
 #include "../string/strings.h"
 #include "../vector/fvector.hpp"
 #include "posix/dir.hpp"
-#include <linux/limits.h>
 
 namespace micron
 {

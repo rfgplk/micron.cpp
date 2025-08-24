@@ -6,6 +6,9 @@
 #pragma once
 
 // errno port
+// TODO: fix this up, maybe even replace it entirely
+//extern int *__errno_location(void) __attribute__((const));
+//#define errno (*__errno_location())
 #include <cerrno>
 
 namespace micron

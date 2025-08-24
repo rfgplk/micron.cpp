@@ -10,11 +10,12 @@
 #endif
 #include "scheduling.hpp"
 
-#include <sched.h>
-#include <sys/resource.h>
-#include <sys/syscall.h>
-#include <sys/time.h>
+//#include <sched.h>
+//#include <sys/resource.h>
+//#include <sys/syscall.h>
+//#include <sys/time.h>
 
+#include "posix/resource.hpp"
 #include "posix/system.hpp"
 
 #include "../../external/cpuid.h"

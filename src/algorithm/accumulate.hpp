@@ -7,9 +7,8 @@
 
 #include "../math/generic.hpp"
 #include "../memory/memory.hpp"
+#include "../memory/actions.hpp"
 #include "../types.hpp"
-#include <exception>
-#include <type_traits>
 
 namespace micron
 {
@@ -18,7 +17,7 @@ T
 accumulate(I start, I end, T init)
 {
   for ( ; start != end; ++start )
-    init = std::move(init) + *start;
+    init = micron::move(init) + *start;
   return init;
 }
 };

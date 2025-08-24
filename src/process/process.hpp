@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <sched.h> /* Definition of CLONE_* constants */
 #include <spawn.h>
-#include <sys/stat.h>
+//#include <sys/stat.h>
 //#include <sys/wait.h>     // waitpid
 #include <unistd.h>       // fork, close, daemon
 

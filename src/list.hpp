@@ -10,8 +10,6 @@
 #include "heap/cpp.hpp"
 #include "tags.hpp"
 #include "types.hpp"
-#include <exception>
-#include <stdexcept>
 
 namespace micron
 {

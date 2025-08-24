@@ -1,0 +1,139 @@
+#pragma once
+
+#include "../except.hpp"
+#include "../types.hpp"
+
+#define ALLOCATOR_DEBUG 1
+#ifdef ALLOCATOR_DEBUG
+#include "../io/console.hpp"
+#define ALLOC_MESSAGE(x, ...)                                                                                           \
+  if constexpr ( __micron_global__alloc_debug == true ) {                                                               \
+    micron::_micron_log(__FILE__, __LINE__, x, ##__VA_ARGS__);                                                          \
+  }
+#else
+#define ALLOC_MESSAGE(x, ...)
+#endif
+
+#ifdef ALLOCATOR_DEBUG
+constexpr static const bool __micron_global__alloc_debug = true;
+#else
+constexpr static const bool __micron_global__alloc_debug = false;
+#endif
+
+// TODO: add C++17 aligning overloads
+
+
+/*
+template <typename... Args>
+void *
+operator new(size_t size, Args &&...args)
+{
+  (void)sizeof...(args); // suppress unused warning
+  ALLOC_MESSAGE("new args(", size, ")");
+  if ( void *ptr = malloc(size) ) {
+    ALLOC_MESSAGE("returning(", ptr, ")");
+    return ptr;
+  }
+  throw micron::except::memory_error("micron::operator new(): malloc failed");
+}
+template <typename... Args>
+void *
+operator new[](size_t size, Args &&...args)
+{
+  (void)sizeof...(args); // suppress unused warning
+  ALLOC_MESSAGE("new args[](", size, ")");
+  if ( void *ptr = malloc(size) ) {
+    ALLOC_MESSAGE("returning(", ptr, ")");
+    return ptr;
+  }
+  throw micron::except::memory_error("micron::operator new[]: malloc failed");
+}
+*/
+void *
+operator new(size_t size)
+{
+  ALLOC_MESSAGE("new(", size, ")");
+  if ( void *ptr = malloc(size) ) {
+    ALLOC_MESSAGE("returning(", ptr, ")");
+    return ptr;
+  }
+  throw micron::except::memory_error("micron::operator new(): malloc failed");
+}
+void *
+operator new[](size_t size)
+{
+  ALLOC_MESSAGE("new[](", size, ")");
+  if ( void *ptr = malloc(size) ) {
+    ALLOC_MESSAGE("returning(", ptr, ")");
+    return ptr;
+  }
+  throw micron::except::memory_error("micron::operator new[]: malloc failed");
+}
+
+void
+operator delete(void *ptr) noexcept
+{
+  ALLOC_MESSAGE("delete(", ptr, ")");
+  free(ptr);
+}
+
+void
+operator delete(void *ptr, size_t size) noexcept
+{
+  (void)size;
+  ALLOC_MESSAGE("delete(", ptr, ") size of ", size);
+  free(ptr);
+}
+
+void
+operator delete[](void *ptr) noexcept
+{
+  ALLOC_MESSAGE("delete[](", ptr, ")");
+  free(ptr);
+}
+
+void
+operator delete[](void *ptr, size_t size) noexcept
+{
+  (void)size;
+  ALLOC_MESSAGE("delete[](", ptr, ") size of ", size);
+  free(ptr);
+}
+
+namespace micron
+{
+template <typename Type, typename... Args>
+inline __attribute__((always_inline)) Type *
+__new(Args &&...args)
+{
+  return new Type(forward<Args>(args)...);
+}
+template <typename Type, typename... Args>
+inline __attribute__((always_inline)) Type *
+__new_arr(Args &&...args)
+{
+  return new Type[sizeof...(args)](forward<Args>(args)...);
+}
+
+template <typename T>
+inline __attribute__((always_inline)) void
+__delete(T *&ptr)
+{
+  delete ptr;
+  ptr = nullptr;
+}
+
+template <typename T>
+inline __attribute__((always_inline)) void
+__const_delete(const T *const &ptr)
+{
+  delete ptr;
+}
+template <typename T>
+inline __attribute__((always_inline)) void
+__delete_arr(T *&ptr)
+{
+  delete[] ptr;
+  ptr = nullptr;
+}
+};

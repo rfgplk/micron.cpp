@@ -10,6 +10,7 @@
 #include "linux/sys/signal.hpp"
 #include "process/wait.hpp"
 #include "thread/signal.hpp"
+#include "errno.hpp"
 
 //#include <signal.h>
 

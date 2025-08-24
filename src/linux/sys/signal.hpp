@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../linux_types.hpp"
-#include <signal.h>
 // TODO: implement signal
+#include <signal.h>
 
 namespace micron
 {

@@ -49,14 +49,13 @@ swap(T &a, T &b)
   b = move(tmp);
 }
 
-
 template <typename T, typename... Args>
   requires std::is_move_constructible_v<T>
 void
-reset(T &a, Args&&... args)
+reset(T &a, Args &&...args)
 {
   T tmp = move(a);
-  a = move(T{forward<Args>(args)...});
+  a = move(T{ forward<Args>(args)... });
 }
 
 template <typename T, typename... Args>
@@ -113,5 +112,11 @@ constexpr bool
 cmp_less_equal(T t, F f)
 {
   return !cmp_less(f, t);
+}
+
+[[noreturn]] inline void
+unreachable(void)
+{
+  __builtin_unreachable();
 }
 };

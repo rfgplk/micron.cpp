@@ -7,7 +7,6 @@
 
 #include "algorithm/mem.hpp"
 #include "types.hpp"
-#include <concepts>
 #include <initializer_list>
 #include <type_traits>
 

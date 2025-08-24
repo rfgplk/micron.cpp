@@ -20,8 +20,6 @@
 #include "../linux/calls.hpp"
 
 #include <signal.h>        // for signal handling
-//#include <sys/types.h>     // for waitpid
-//#include <sys/wait.h>      // for wait
 #include <tuple>
 #include <utility>     // needed for now
 #include <variant>

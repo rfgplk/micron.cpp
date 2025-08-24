@@ -6,8 +6,8 @@
 #pragma once
 
 #include "../types.hpp"
+#include "../memory/actions.hpp"
 
-#include <atomic>
 #include <initializer_list>
 #include <type_traits>
 
@@ -34,7 +34,7 @@ template <typename T> struct atomic_token {
 
   atomic_token(const T t = ATOMIC_OPEN) : v(t) {};
   atomic_token(const atomic_token &o) : v(o.v) {};
-  atomic_token(atomic_token &&t) : v(std::move(t.v)) {};
+  atomic_token(atomic_token &&t) : v(micron::move(t.v)) {};
   void operator=(const atomic_token &) = delete;
 
   T
@@ -112,7 +112,7 @@ public:
   atomic() : type(), tk() {};
   template <typename F> atomic(std::initializer_list<F> list) : type(list), tk(){};
   template <typename... Args> atomic(Args... args) : type(args...), tk(){};
-  atomic(atomic<T> &&o) : type(std::move(o.type)), tk(std::move(o.tk)) {};
+  atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) {};
   atomic(const atomic<T> &o) : type(o.type), tk(o.tk) {};
   T
   operator=(const T &o)

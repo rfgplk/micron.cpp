@@ -8,7 +8,9 @@
 #include <type_traits>
 
 #include "atomic/atomic.hpp"
+#include "except.hpp"
 #include "memory/actions.hpp"
+#include "memory/new.hpp"
 
 // ptr is pointer
 // pointer is unique_ptr
@@ -16,7 +18,7 @@
 
 namespace micron
 {
-typedef size_t count_t;
+using count_t = size_t;
 
 template <typename T>
 void
@@ -30,6 +32,53 @@ void
 sptr_deleter(T *ptr)
 {
 }
+template <typename T>
+concept is_nullptr = std::is_null_pointer_v<T>;
+template <typename T>
+concept is_valid_pointer = std::is_pointer_v<T> and !std::is_null_pointer_v<T>;
+
+template <class Type> struct __internal_pointer_alloc {
+  template <typename... Args>
+  inline __attribute__((always_inline)) Type *
+  __impl_alloc(Args &&...args)
+  {
+    return __new<Type>(forward<Args>(args)...);
+    // return new Type(forward<Args>(args)...);
+  }
+
+  inline __attribute__((always_inline)) void
+  __impl_dealloc(Type *&pointer)
+  {
+    if ( pointer != nullptr ) {
+      __delete(pointer);
+    }
+  }
+  inline __attribute__((always_inline)) void
+  __impl_constdealloc(const Type *const &pointer)
+  {
+    if ( pointer != nullptr ) {
+      __const_delete(pointer);
+    }
+  }
+};
+
+template <class Type> struct __internal_pointer_arralloc {
+  template <typename... Args>
+  inline __attribute__((always_inline)) Type *
+  __impl_alloc(Args &&...args)
+  {
+    return __new_arr<Type>(forward<Args>(args)...);
+    // return new Type(forward<Args>(args)...);
+  }
+
+  inline __attribute__((always_inline)) void
+  __impl_dealloc(Type *&pointer)
+  {
+    if ( pointer != nullptr ) {
+      __delete_arr(pointer);
+    }
+  }
+};
 
 template <typename T> class t_ptr
 {
@@ -42,19 +91,35 @@ template <typename T> struct shared_handler {
 };
 template <typename T> using thread_safe_handler = atomic<shared_handler<T>>;
 // thread safe pointer
-template <class Type> class thread_pointer
+template <class Type> class thread_pointer : private __internal_pointer_alloc<thread_safe_handler<Type>>
 {
+  using __alloc = __internal_pointer_alloc<thread_safe_handler<Type>>;
   thread_safe_handler<Type> *control;
 
 public:
-  thread_pointer() : control(new thread_safe_handler<Type>({ new Type(), 1 })) {};
+  ~thread_pointer()
+  {
+    if ( control != nullptr ) [[likely]] {
+      auto *t = control->get();
+      if ( !--t->refs ) [[unlikely]] {
+        __delete(t->pnt);     // TODO: think about passing through stored type to __dealloc
+        __alloc::__impl_dealloc(t);
+        control->release();
+      }
+    }
+  };
+  thread_pointer(void)
+      : control(__alloc::__impl_alloc(__new<Type>(), 1)) {};     // new shared_handler<Type>({ new Type(), 1 })) {};
 
-  thread_pointer(Type *p) : control(new thread_safe_handler<Type>({ p, 1 })) {};
+  thread_pointer(Type *p)
+      : control(__alloc::__impl_alloc(__new<Type>(), 1)) {}     // new thread_safe_handler<Type>({ p, 1 })) {};
   thread_pointer(const thread_pointer<Type> &t) : control(t.control) { control->get()->refs++; };
   thread_pointer(thread_pointer<Type> &&t) : control(t.control) { t.control = nullptr; };
 
   template <class... Args>
-  thread_pointer(Args &&...args) : control(new thread_safe_handler<Type>({ new Type(args...), 1 })){};
+  thread_pointer(Args &&...args) : control(__alloc::__impl_alloc(__new<Type>(forward<Args>(args)...), 1))
+  {
+  }     // new thread_safe_handler<Type>({ new Type(args...), 1 })){};
   const auto
   operator=(const thread_safe_handler<Type> &o)
   {
@@ -96,52 +161,55 @@ public:
     } else
       throw nullptr;
   };
-  ~thread_pointer()
-  {
-    if ( control != nullptr ) [[likely]] {
-      auto *t = control->get();
-      if ( !--t->refs ) [[unlikely]] {
-        delete t->pnt;
-        delete t;
-        control->release();
-      }
-    }
-  };
 };
 
-template <class Type> class shared
+template <class Type> class shared_pointer : private __internal_pointer_alloc<shared_handler<Type>>
 {
+  using __alloc = __internal_pointer_alloc<shared_handler<Type>>;
   shared_handler<Type> *control;
 
 public:
-  shared() : control(new shared_handler<Type>({ new Type(), 1 })) {};
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  shared(V) : control(nullptr){};
-  shared(Type *p) : control(new shared_handler<Type>({ p, 1 })) {};
-  shared(const shared<Type> &t) : control(t.control)
+  ~shared_pointer()
+  {
+    if ( control != nullptr ) [[likely]] {
+      if ( !--control->refs ) [[unlikely]] {
+        __delete(control->pnt);     // TODO: think about passing through stored type to __dealloc
+        __alloc::__impl_dealloc(control);
+        // delete control->pnt;
+        // delete control;
+      }
+    }
+  };
+  shared_pointer(void)
+      : control(__alloc::__impl_alloc(__new<Type>(), 1)) {};     // new shared_handler<Type>({ new Type(), 1 })) {};
+  template <is_nullptr V> shared_pointer(V) : control(nullptr){};
+  shared_pointer(Type *p) : control(__impl_alloc(p, 1)) {};     // new shared_pointer_handler<Type>({ p, 1 })) {};
+  shared_pointer(const shared_pointer<Type> &t) : control(t.control)
   {
     if ( control != nullptr ) [[likely]]
       control->refs++;
   };
-  shared(shared<Type> &t) : control(t.control)
+  shared_pointer(shared_pointer<Type> &t) : control(t.control)
   {
     if ( control != nullptr ) [[likely]]
       control->refs++;
   };
-  shared(shared<Type> &&t) : control(t.control) { t.control = nullptr; };
+  shared_pointer(shared_pointer<Type> &&t) noexcept : control(t.control) { t.control = nullptr; };
 
-  template <class... Args> shared(Args &&...args) : control(new shared_handler<Type>({ new Type(args...), 1 })){};
-  shared &
-  operator=(shared<Type> &&o)
+  template <class... Args>
+  shared_pointer(Args &&...args)
+      : control(__alloc::__impl_alloc(__new<Type>(forward<Args>(args)...),
+                                      1)){};     // control(new shared_handler<Type>({ new Type(args...), 1 })){};
+  shared_pointer &
+  operator=(shared_pointer<Type> &&o) noexcept
   {
     if ( control != nullptr ) {
       control = o.control;
     }
     return *this;
   };
-  shared &
-  operator=(const shared<Type> &o)
+  shared_pointer &
+  operator=(const shared_pointer<Type> &o) noexcept
   {
     if ( control != nullptr ) {
       control = o.control;
@@ -149,10 +217,9 @@ public:
     }
     return *this;
   };
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  shared &
-  operator=(V)
+  template <is_nullptr V>
+  shared_pointer &
+  operator=(V) noexcept
   {
     if ( control != nullptr ) {
       control->refs--;
@@ -161,7 +228,7 @@ public:
   };
 
   Type *
-  operator()()
+  operator()() noexcept
   {
     if ( control != nullptr ) {
       return control->pnt;
@@ -169,7 +236,7 @@ public:
       return nullptr;
   };
   const Type *
-  operator()() const
+  operator()() const noexcept
   {
     if ( control != nullptr ) {
       return control->pnt;
@@ -178,24 +245,24 @@ public:
   };
 
   Type *
-  operator->()
+  operator->() noexcept
   {
     if ( control != nullptr )
       return control->pnt;
     else
-      throw nullptr;
+      return nullptr;
   };
   const Type *
-  operator->() const
+  operator->() const noexcept
   {
     if ( control != nullptr )
       return control->pnt;
     else
-      throw nullptr;
+      return nullptr;
   };
 
   bool
-  operator!(void) const
+  operator!(void) const noexcept
   {
     return control == nullptr;
   };
@@ -205,7 +272,7 @@ public:
     if ( control != nullptr )
       return *control->pnt;
     else
-      throw nullptr;
+      throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -213,57 +280,46 @@ public:
     if ( control != nullptr )
       return *(control->pnt);
     else
-      throw nullptr;
+      throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
   };
   size_t
-  refs() const
+  refs() const noexcept
   {
     if ( control != nullptr )
       return control->refs;
     else
       return sizeof(size_t);
   }
-  ~shared()
-  {
-    if ( control != nullptr ) [[likely]] {
-      if ( !--control->refs ) [[unlikely]] {
-        delete control->pnt;
-        delete control;
-      }
-    }
-  };
 };
 
 // A unique pointer, a general replacement of unique_ptr with a few differences
 // unique_ptr is meant to always create a new instance of the object on creation and this is intentional
 // it's impossible to create a unique_pointer by passing a raw pointer into it without moving it
 // prevents two instances of the same pointer existing simult.
-template <class Type> class unique_pointer
+template <class Type> class unique_pointer : private __internal_pointer_alloc<Type>
 {
+  using __alloc = __internal_pointer_alloc<Type>;
   Type *internal_pointer;
 
 public:
-  unique_pointer() : internal_pointer(new Type()) {};
+  ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
+  unique_pointer(void) : internal_pointer(__alloc::__impl_alloc()) {};     // new Type()) {};
   template <typename V>
     requires std::is_null_pointer_v<V>
   unique_pointer(V) : internal_pointer(nullptr){};
   unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  template <class... Args> unique_pointer(Args &&...args) : internal_pointer(new Type(args...)){};
+  template <class... Args>
+  unique_pointer(Args &&...args)
+      : internal_pointer(__alloc::__impl__alloc(forward<Args>(args)...)){};     // new Type(args...)){};
 
   unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   unique_pointer(const unique_pointer &p) = delete;
-  ~unique_pointer()
-  {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
-  };
 
   unique_pointer &operator=(const unique_pointer &) = delete;
   unique_pointer &
-  operator=(Type *&&t)
+  operator=(Type *&&t) noexcept
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
     t = nullptr;
     return *this;
@@ -271,34 +327,33 @@ public:
   unique_pointer &
   operator=(unique_pointer &&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
   };
   bool
-  operator==(const unique_pointer &o)
+  operator==(const unique_pointer &o) noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const unique_pointer &o)
+  operator>(const unique_pointer &o) noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const unique_pointer &o)
+  operator<(const unique_pointer &o) noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const unique_pointer &o)
+  operator<=(const unique_pointer &o) noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const unique_pointer &o)
+  operator>=(const unique_pointer &o) noexcept
   {
     return internal_pointer >= o();
   }
@@ -308,7 +363,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
   }
   Type &
   operator*()
@@ -316,7 +371,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -324,10 +379,10 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
   };
   inline Type *
-  release() const
+  release() const noexcept
   {
     auto *temp = internal_pointer;
     internal_pointer = nullptr;
@@ -337,160 +392,33 @@ public:
   inline void
   clear()
   {
-    if ( internal_pointer )
-      delete internal_pointer;
-    internal_pointer = nullptr;
+    __alloc::__impl_dealloc(internal_pointer);
   };
 };
-/*
-template <class Type, size_t N> class unique_pointer<Type[N]>
+
+template <class Type> class unique_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
 {
+  using __alloc = __internal_pointer_arralloc<Type[]>;
   Type *internal_pointer;
 
 public:
-  template <typename L = size_t> unique_pointer(L n) : internal_pointer(new Type[N])
+  ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
+  unique_pointer(void) = delete;
+  template <typename... Args>
+  unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...))
   {
-    for ( size_t i = 0; i < N; i++ )
-      internal_pointer[i] = n;
-  };
+  }     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  //unique_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  //unique_pointer(void *raw_ptr) : internal_pointer(static_cast<Type *>(raw_ptr)) {};
-  template <class... Args> unique_pointer(Args &&...args) : internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   unique_pointer(const unique_pointer &p) = delete;
   unique_pointer(unique_pointer &p) = delete;
-  virtual ~unique_pointer()
-  {
-    if ( internal_pointer != nullptr )
-      delete[] internal_pointer;
-  };
-
-  unique_pointer &
-  operator=(unique_pointer &t)
-  {
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
-    return *this;
-  };
-  const Type&
-  operator[](const size_t n)
-  {
-    if ( internal_pointer != nullptr )
-      return (*internal_pointer)[n];
-    else
-      throw nullptr;
-  };
-  unique_pointer &
-  operator=(Type *&&t)
-  {
-    if ( internal_pointer != nullptr )
-      delete[] internal_pointer;
-    internal_pointer = t;
-    t = nullptr;
-    return *this;
-  };
-  unique_pointer &
-  operator=(unique_pointer<Type> &&t)
-  {
-    if ( internal_pointer != nullptr )
-      delete[] internal_pointer;
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
-    return *this;
-  };
-  bool
-  operator==(const unique_pointer &o)
-  {
-    return internal_pointer == o();
-  }
-  bool
-  operator>(const unique_pointer &o)
-  {
-    return internal_pointer > o();
-  }
-  bool
-  operator<(const unique_pointer &o)
-  {
-    return internal_pointer < o();
-  }
-  bool
-  operator<=(const unique_pointer &o)
-  {
-    return internal_pointer <= o();
-  }
-  bool
-  operator>=(const unique_pointer &o)
-  {
-    return internal_pointer >= o();
-  }
-  const Type *
-  operator()() const
-  {
-    return internal_pointer;
-  }
-  const Type *
-  operator&() const
-  {
-    return internal_pointer;
-  }
-  inline Type *
-  release()
-  {
-    auto *temp = internal_pointer;
-    internal_pointer = nullptr;
-    return temp;
-  };
-
-  inline void
-  clear()
-  {
-    if(internal_pointer)
-      delete[] internal_pointer;
-  };
-  Type &
-  operator*() const
-  {
-    if ( internal_pointer != nullptr )
-      return *internal_pointer;
-    else
-      throw nullptr;
-  };
-  Type &
-  operator->() const
-  {
-    if ( internal_pointer != nullptr )
-      return *internal_pointer;
-    else
-      throw nullptr;
-  };
-};*/
-
-template <class Type> class unique_pointer<Type[]>
-{
-  Type *internal_pointer;
-
-public:
-  unique_pointer() = delete;
-  template <typename... Args> unique_pointer(Args... args) : internal_pointer(new Type[sizeof...(args)]{ args... }){};
-
-  unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  template <class... Args> unique_pointer(Args &&...args) : internal_pointer(new Type[sizeof...(args)]{ args... }){};
-
-  unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
-  unique_pointer(const unique_pointer &p) = delete;
-  unique_pointer(unique_pointer &p) = delete;
-  ~unique_pointer()
-  {
-    if ( internal_pointer != nullptr )
-      delete[] internal_pointer;
-  };
   unique_pointer &operator=(const unique_pointer &) = delete;
   unique_pointer &
   operator=(unique_pointer &&t)
   {
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
@@ -501,48 +429,38 @@ public:
     if ( internal_pointer != nullptr )
       return (*internal_pointer)[n];
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer[] operator[](): internal_pointer was null");
   };
   unique_pointer &
   operator=(Type *&&t)
   {
-    if ( internal_pointer != nullptr )
-      delete[] internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
     t = nullptr;
     return *this;
   };
-  unique_pointer &
-  operator=(unique_pointer<Type> &&t)
-  {
-    if ( internal_pointer != nullptr )
-      delete[] internal_pointer;
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
-    return *this;
-  };
   bool
-  operator==(const unique_pointer &o)
+  operator==(const unique_pointer &o) const noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const unique_pointer &o)
+  operator>(const unique_pointer &o) const noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const unique_pointer &o)
+  operator<(const unique_pointer &o) const noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const unique_pointer &o)
+  operator<=(const unique_pointer &o) const noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const unique_pointer &o)
+  operator>=(const unique_pointer &o) const noexcept
   {
     return internal_pointer >= o();
   }
@@ -567,9 +485,7 @@ public:
   inline void
   clear()
   {
-    if ( internal_pointer )
-      delete[] internal_pointer;
-    internal_pointer = nullptr;
+    __impl_dealloc(internal_pointer);
   };
   Type &
   operator*()
@@ -577,7 +493,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -585,35 +501,42 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
   };
-  Type *
+  const Type *
   operator->() const
   {
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+  };
+
+  Type *
+  operator->()
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer;
+    else
+      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
   };
 };
 
 // A constant pointer, cannot be reassigned nor written to
-template <class Type> class const_pointer
+template <class Type> class const_pointer : private __internal_pointer_alloc<Type>
 {
+  using __alloc = __internal_pointer_alloc<Type>;
   const Type *const internal_pointer;
 
 public:
-  ~const_pointer()
-  {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
-  };
-  const_pointer() : internal_pointer(new Type()) {};
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  const_pointer(V) = delete;
+  ~const_pointer() { __alloc::__impl_constdealloc(internal_pointer); };
+  const_pointer() : internal_pointer(__alloc::__impl_alloc()) {}     // internal_pointer(new Type()) {};
+  template <is_nullptr V> const_pointer(V) = delete;
   const_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  template <class... Args> const_pointer(Args &&...args) : internal_pointer(new Type(args...)){};
+  template <class... Args>
+  const_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...))
+  {
+  }     // internal_pointer(new Type(args...)){};
 
   // important, cannot be moved
   const_pointer(const_pointer &&p) = delete;
@@ -621,28 +544,33 @@ public:
 
   const_pointer &operator=(const const_pointer &) = delete;
   const_pointer &operator=(const_pointer &&t) = delete;
+  const Type *
+  operator()() const noexcept
+  {
+    return internal_pointer;
+  }
   bool
-  operator==(const const_pointer &o)
+  operator==(const const_pointer &o) const noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const const_pointer &o)
+  operator>(const const_pointer &o) const noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const const_pointer &o)
+  operator<(const const_pointer &o) const noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const const_pointer &o)
+  operator<=(const const_pointer &o) const noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const const_pointer &o)
+  operator>=(const const_pointer &o) const noexcept
   {
     return internal_pointer >= o();
   }
@@ -652,7 +580,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("const_pointer operator->(): internal_pointer was null");
   }
   const Type &
   operator*() const
@@ -660,38 +588,27 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("const_pointer operator*(): internal_pointer was null");
   };
   inline Type *release() = delete;
-
   void clear() = delete;
 };
 
-template <class Type> class weak_pointer
+template <class Type> class weak_pointer : private __internal_pointer_alloc<Type>
 {
+  using __alloc = __internal_pointer_alloc<Type>;
   Type *internal_pointer;
 
 public:
-  ~weak_pointer()
-  {
-    // to make sure
-    if ( internal_pointer ) {
-      delete internal_pointer;
-    }
-  };
+  ~weak_pointer() { __alloc::__impl_dealloc(internal_pointer); };
   weak_pointer() : internal_pointer(nullptr) {}     //: internal_pointer(new Type()) {};
   weak_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  weak_pointer(V) : internal_pointer(nullptr){};
+  template <is_nullptr V> weak_pointer(V) : internal_pointer(nullptr){};
   weak_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  // very important, if we're passing in a func pointer it's almost certainly an argument to the container and not meant
-  // to go in here
-  template <typename Ft>
-    requires(!(std::is_invocable_v<Ft>))
-  weak_pointer(Ft *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)){};
   weak_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
-  template <class... Args> weak_pointer(Args &&...args) : internal_pointer(new Type(args...)){};
+  template <class... Args>
+  weak_pointer(Args &&...args)
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type(args...)){};
 
   weak_pointer(weak_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   weak_pointer(const weak_pointer &p) { internal_pointer = p.internal_pointer; }
@@ -699,8 +616,7 @@ public:
   weak_pointer &
   operator=(weak_pointer &&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
@@ -708,38 +624,62 @@ public:
   weak_pointer &
   operator=(Type *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
   bool
-  operator==(const weak_pointer &o)
+  operator==(const weak_pointer &o) noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const weak_pointer &o)
+  operator>(const weak_pointer &o) noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const weak_pointer &o)
+  operator<(const weak_pointer &o) noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const weak_pointer &o)
+  operator<=(const weak_pointer &o) noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const weak_pointer &o)
+  operator>=(const weak_pointer &o) noexcept
   {
     return internal_pointer >= o();
   }
   bool
-  operator!(void) const
+  operator==(const weak_pointer &o) const noexcept
+  {
+    return internal_pointer == o();
+  }
+  bool
+  operator>(const weak_pointer &o) const noexcept
+  {
+    return internal_pointer > o();
+  }
+  bool
+  operator<(const weak_pointer &o) const noexcept
+  {
+    return internal_pointer < o();
+  }
+  bool
+  operator<=(const weak_pointer &o) const noexcept
+  {
+    return internal_pointer <= o();
+  }
+  bool
+  operator>=(const weak_pointer &o) const noexcept
+  {
+    return internal_pointer >= o();
+  }
+  bool
+  operator!(void) const noexcept
   {
     return internal_pointer == nullptr;
   };
@@ -749,7 +689,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("weak_pointer operator->(): internal_pointer was null");
   };
   const Type *
   operator->() const
@@ -757,9 +697,8 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("weak_pointer operator->(): internal_pointer was null");
   };
-
 
   const Type &
   operator*() const
@@ -767,7 +706,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("weak_pointer operator*(): internal_pointer was null");
   };
   Type &
   operator*()
@@ -775,24 +714,23 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("weak_pointer operator*(): internal_pointer was null");
   };
   template <typename Ft>
   weak_pointer &
   operator=(Ft *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
-  const Type *
-  operator()() const
+  Type *
+  operator()()
   {
     return release();
   }
   inline Type *
-  release() const
+  release()
   {
     auto *temp = internal_pointer;
     internal_pointer = nullptr;
@@ -802,9 +740,7 @@ public:
   inline void
   clear()
   {
-    if ( internal_pointer )
-      delete internal_pointer;
-    internal_pointer = nullptr;
+    __alloc::__impl_dealloc(internal_pointer);
   };
   template <typename P = unique_pointer<Type>>
   inline P
@@ -814,42 +750,45 @@ public:
   }
 };
 
-template <class Type> class weak_pointer<Type[]>
+template <class Type> class weak_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
 {
+  using __alloc = __internal_pointer_arralloc<Type>;
   Type *internal_pointer;
 
 public:
-  ~weak_pointer()
-  {
-    if ( internal_pointer )
-      delete[] internal_pointer;
-  };
-  weak_pointer() : internal_pointer(nullptr) {}
+  ~weak_pointer() { __alloc::__impl_dealloc(internal_pointer); };
+  weak_pointer(void) : internal_pointer(nullptr) {}
   weak_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   weak_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  weak_pointer(V) : internal_pointer(nullptr){};
+  template <is_nullptr V> weak_pointer(V) : internal_pointer(nullptr){};
   weak_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
   template <class... Args>
-  weak_pointer(Args &&...args) : internal_pointer(new Type[sizeof...(args)]{ micron::forward<Args>(args)... }){};
+  weak_pointer(Args &&...args)
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(
+            args)...)){};     // internal_pointer(new Type[sizeof...(args)]{ micron::forward<Args>(args)... }){};
 
   weak_pointer(weak_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   weak_pointer(const weak_pointer &p) { internal_pointer = p.internal_pointer; }
 
-  const auto &
+  auto &
   operator[](const size_t n)
   {
     if ( internal_pointer != nullptr )
       return (*internal_pointer)[n];
-    throw nullptr;
+    throw except::memory_error("weak_pointer operator[](): internal_pointer was null");
   };
 
+  const auto &
+  operator[](const size_t n) const
+  {
+    if ( internal_pointer != nullptr )
+      return (*internal_pointer)[n];
+    throw except::memory_error("weak_pointer operator[](): internal_pointer was null");
+  };
   weak_pointer &
   operator=(Type *&&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
     t = nullptr;
     return *this;
@@ -857,8 +796,7 @@ public:
   weak_pointer &
   operator=(weak_pointer &&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
@@ -866,8 +804,7 @@ public:
   weak_pointer &
   operator=(Type *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
@@ -875,33 +812,32 @@ public:
   weak_pointer &
   operator=(Ft *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
   bool
-  operator==(const weak_pointer &o)
+  operator==(const weak_pointer &o) noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const weak_pointer &o)
+  operator>(const weak_pointer &o) noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const weak_pointer &o)
+  operator<(const weak_pointer &o) noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const weak_pointer &o)
+  operator<=(const weak_pointer &o) noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const weak_pointer &o)
+  operator>=(const weak_pointer &o) noexcept
   {
     return internal_pointer >= o();
   }
@@ -916,7 +852,16 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("weak_pointer operator->(): internal_pointer was null");
+  };
+
+  const Type *
+  operator->() const
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer;
+    else
+      throw except::memory_error("weak_pointer operator->(): internal_pointer was null");
   };
   Type &
   operator*()
@@ -924,7 +869,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("weak_pointer operator->(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -939,6 +884,11 @@ public:
   {
     return internal_pointer;
   }
+  Type *
+  operator()()
+  {
+    return internal_pointer;
+  }
   inline Type *
   release() const
   {
@@ -950,9 +900,7 @@ public:
   inline void
   clear()
   {
-    if ( internal_pointer )
-      delete[] internal_pointer;
-    internal_pointer = nullptr;
+    __alloc::__impl_dealloc(internal_pointer);
   };
   template <typename P = unique_pointer<Type[]>>
   inline P
@@ -962,21 +910,21 @@ public:
   }
 };
 
-template <class Type> class free_pointer
+template <class Type> class free_pointer : private __internal_pointer_alloc<Type>
 {
+  using __alloc = __internal_pointer_alloc<Type>;
   Type *internal_pointer;
 
 public:
   ~free_pointer() {};
-  free_pointer() : internal_pointer(nullptr) {}     //: internal_pointer(new Type()) {};
+  free_pointer(void) : internal_pointer(nullptr) {}     //: internal_pointer(new Type()) {};
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  free_pointer(V) : internal_pointer(nullptr){};
+  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr){};
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  template <typename Ft> free_pointer(Ft *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)){};
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
-  template <class... Args> free_pointer(Args &&...args) : internal_pointer(new Type(args...)){};
+  template <class... Args>
+  free_pointer(Args &&...args)
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type(args...)){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   free_pointer(const free_pointer &p) { internal_pointer = p.internal_pointer; }
@@ -984,8 +932,7 @@ public:
   free_pointer &
   operator=(free_pointer &&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
@@ -993,40 +940,48 @@ public:
   free_pointer &
   operator=(Type *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
   bool
-  operator==(const free_pointer &o)
+  operator==(const free_pointer &o) noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const free_pointer &o)
+  operator>(const free_pointer &o) noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const free_pointer &o)
+  operator<(const free_pointer &o) noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const free_pointer &o)
+  operator<=(const free_pointer &o) noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const free_pointer &o)
+  operator>=(const free_pointer &o) noexcept
   {
     return internal_pointer >= o();
   }
   bool
-  operator!(void) const
+  operator!(void) const noexcept
   {
     return internal_pointer == nullptr;
+  };
+
+  const Type *
+  operator->() const
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer;
+    else
+      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
   };
   Type *
   operator->()
@@ -1034,7 +989,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
   };
 
   const Type &
@@ -1043,7 +998,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("free_pointer operator*(): internal_pointer was null");
   };
   Type &
   operator*()
@@ -1051,26 +1006,25 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("free_pointer operator*(): internal_pointer was null");
   };
   template <typename Ft>
   free_pointer &
   operator=(Ft *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
-  const Type *
-  operator()() const
+  Type *
+  operator()()
   {
     return release();
   }
   inline Type *
-  release() const
+  release()
   {
-    auto *temp = internal_pointer;
+    Type *temp = internal_pointer;
     internal_pointer = nullptr;
     return temp;
   };
@@ -1078,9 +1032,7 @@ public:
   inline void
   clear()
   {
-    if ( internal_pointer )
-      delete internal_pointer;
-    internal_pointer = nullptr;
+    __alloc::__impl_dealloc(internal_pointer);
   };
   template <typename P = unique_pointer<Type>>
   inline P
@@ -1090,8 +1042,9 @@ public:
   }
 };
 
-template <class Type> class free_pointer<Type[]>
+template <class Type> class free_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
 {
+  using __alloc = __internal_pointer_arralloc<Type[]>;
   Type *internal_pointer;
 
 public:
@@ -1099,28 +1052,34 @@ public:
   free_pointer() : internal_pointer(nullptr) {}
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  template <typename V>
-    requires std::is_null_pointer_v<V>
-  free_pointer(V) : internal_pointer(nullptr){};
+  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr){};
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
-  template <class... Args> free_pointer(Args &&...args) : internal_pointer(new Type[sizeof...(args)]{ args... }){};
+  template <class... Args>
+  free_pointer(Args &&...args)
+      : internal_pointer(__alloc::__impl_alloc(
+            forward<Args>(args)...)){};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   free_pointer(const free_pointer &p) { internal_pointer = p.internal_pointer; }
 
-  const auto &
+  auto &
   operator[](const size_t n)
   {
     if ( internal_pointer != nullptr )
       return (*internal_pointer)[n];
     throw nullptr;
   };
-
+  const auto &
+  operator[](const size_t n) const
+  {
+    if ( internal_pointer != nullptr )
+      return (*internal_pointer)[n];
+    throw except::memory_error("free_pointer[] operator[](): internal_pointer was null");
+  };
   free_pointer &
   operator=(Type *&&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
     t = nullptr;
     return *this;
@@ -1128,8 +1087,7 @@ public:
   free_pointer &
   operator=(free_pointer &&t)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
@@ -1137,8 +1095,7 @@ public:
   free_pointer &
   operator=(Type *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
@@ -1146,38 +1103,37 @@ public:
   free_pointer &
   operator=(Ft *raw_ptr)
   {
-    if ( internal_pointer != nullptr )
-      delete internal_pointer;
+    __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = raw_ptr;
     return *this;
   };
   bool
-  operator==(const free_pointer &o)
+  operator==(const free_pointer &o) noexcept
   {
     return internal_pointer == o();
   }
   bool
-  operator>(const free_pointer &o)
+  operator>(const free_pointer &o) noexcept
   {
     return internal_pointer > o();
   }
   bool
-  operator<(const free_pointer &o)
+  operator<(const free_pointer &o) noexcept
   {
     return internal_pointer < o();
   }
   bool
-  operator<=(const free_pointer &o)
+  operator<=(const free_pointer &o) noexcept
   {
     return internal_pointer <= o();
   }
   bool
-  operator>=(const free_pointer &o)
+  operator>=(const free_pointer &o) noexcept
   {
     return internal_pointer >= o();
   }
   bool
-  operator!(void) const
+  operator!(void) const noexcept
   {
     return internal_pointer == nullptr;
   };
@@ -1187,7 +1143,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
   };
   Type &
   operator*()
@@ -1195,15 +1151,16 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
   };
+
   const Type &
   operator*() const
   {
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw nullptr;
+      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
   };
   const Type *
   operator()() const
@@ -1221,9 +1178,7 @@ public:
   inline void
   clear()
   {
-    if ( internal_pointer )
-      delete[] internal_pointer;
-    internal_pointer = nullptr;
+    __alloc::__impl_dealloc(internal_pointer);
   };
   template <typename P = unique_pointer<Type[]>>
   inline P
@@ -1233,8 +1188,13 @@ public:
   }
 };
 
+// TODO: move above code to pointers, and separate out
+
 template <typename T> using ptr = weak_pointer<T>;
+template <typename T> using fptr = free_pointer<T>;
+template <typename T> using cptr = const_pointer<T>;
 template <typename T> using pointer = unique_pointer<T>;
+template <typename T> using shared = shared_pointer<T>;
 
 template <class T>
 pointer<T>
@@ -1293,5 +1253,4 @@ voidify(const pointer<T[N]> &pnt)
   else
     return (void *)nullptr;
 };
-
 };     // namespace micron

@@ -53,24 +53,55 @@ template <typename K, typename V> struct hopscotch_node {
 
 template <typename K, typename V, size_t max = 4, typename Nd = hopscotch_node<K, V>> class hopscotch_map
 {
-  micron::fvector<hopscotch_node<K, V>> entries;
+  micron::fvector<Nd> entries;
   size_t length;
   void
-  resize()
+  resize(void)
   {
-    micron::fvector<hopscotch_node<K, V>> t = micron::move(entries);
-    entries.recreate(t.max_size() * 3);
-    std::cout << entries.max_size() << std::endl;
+    // quad growth
+    const micron::fvector<Nd> old_entries = entries;
+    size_t sz = entries.size();
+  retry:
+    sz *= 2;
+    entries.clear();
+    entries.resize(sz);
     length = 0;
-    for ( auto &e : t ) {
-      if ( e.key ) {
-        insert_asis(e.key, e.value);
+    for ( const auto &n : old_entries )
+      if ( n.key ) [[likely]]
+        if ( !insert_unhash(n.key, n.value) )
+          goto retry;
+  }
+  bool
+  insert_unhash(const hash64_t &hsh, V value)
+  {
+    size_t id = hsh % entries.capacity();
+    for ( size_t i = 0; i <= max; i++ ) {
+      size_t probe = (id + i) % entries.capacity();
+      if ( !entries[probe].key ) {
+        // hit
+        entries[probe] = { hsh, value };
+        length++;
+        return true;
       }
     }
+
+    for ( size_t j = 0; j <= max; j++ ) {
+      size_t probe = (id + j) % entries.capacity();
+      if ( entries[probe].key ) {
+        for ( size_t kl = 1; kl <= max; kl++ ) {
+          size_t hop = (probe + kl) % entries.capacity();
+          if ( !entries[hop].key ) {
+            entries[hop] = { entries[probe].key, entries[probe].value };
+            entries[probe] = { hsh, value };
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
-public:
-  using category_type = map_tag;
+p public : using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef size_t size_type;
@@ -125,6 +156,39 @@ public:
       }
     }
     throw except::library_error("failed to insert");
+  }
+
+  V &
+  add(const K &k, V value)
+  {
+    hash64_t hsh = hash64(k);
+    size_t id = hsh % entries.capacity();
+    for ( size_t i = 0; i <= max; i++ ) {
+      size_t probe = (id + i) % entries.capacity();
+      if ( !entries[probe].key ) {
+        // hit
+        entries[probe] = { hsh, value };
+        length++;
+        return entries[probe].value;
+      }
+    }
+
+    for ( size_t j = 0; j <= max; j++ ) {
+      size_t probe = (id + j) % entries.capacity();
+      if ( entries[probe].key ) {
+        for ( size_t kl = 1; kl <= max; kl++ ) {
+          size_t hop = (probe + kl) % entries.capacity();
+          if ( !entries[hop].key ) {
+            entries[hop] = { entries[probe].key, entries[probe].value };
+            entries[probe] = { hsh, value };
+            return entries[probe].value;
+          }
+        }
+      }
+    }
+    // failed resize this time
+    resize();
+    return add(k, value);
   }
 
   V &
