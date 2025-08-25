@@ -11,8 +11,6 @@
 namespace micron
 {
 
-// assumptions: micron::move(), micron::forward(), micron::is_*_constructible_v, usize, i32 exist.
-
 enum class RBColor : i32 { RED, BLACK };
 
 template <typename T>
@@ -511,7 +509,6 @@ public:
     return m ? &m->data : nullptr;
   }
 
-  // insert with perfect forwarding; does not allocate if key exists
   template <class U>
   T &
   insert_or_assign(U &&value)
@@ -527,9 +524,9 @@ public:
       else {
         x->data = micron::forward<U>(value);
         return x->data;
-      }     // assign in place, no new node
+      } 
     }
-    node *z = make_node(micron::forward<U>(value));     // first allocation only when needed
+    node *z = make_node(micron::forward<U>(value));
     z->parent = y;
     z->left = nullptr;
     z->right = nullptr;
@@ -565,9 +562,7 @@ public:
     // construct once into node when absent by forwarding args.
     node *y = nullptr;
     node *x = root_;
-    // we cannot compare without a T; so we fall back to insert_or_assign with a single construction.
     node *z = make_node(micron::forward<Args>(args)...);
-    // search for position/duplicates using z->data as the key (constructed once).
     while ( x ) {
       y = x;
       if ( Less::lt(z->data, x->data) )
