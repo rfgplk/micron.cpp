@@ -9,6 +9,7 @@
 #include "../except.hpp"
 #include "../math/generic.hpp"
 #include "../types.hpp"
+#include "../type_traits.hpp"
 #include "string.h"
 
 #include "../slice.hpp"
@@ -37,7 +38,7 @@ template <typename T>
 inline bool
 isupper(typename T::iterator t)
 {
-  if constexpr ( std::is_same_v<typename T::value_type, char> ) {
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
     // ascii
     if ( *t <= 0x5A && *t >= 0x41 )
       return true;
@@ -52,7 +53,7 @@ template <is_string T>
 inline bool
 islower(typename T::iterator t)
 {
-  if constexpr ( std::is_same_v<typename T::value_type, char> ) {
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
     // ascii
     if ( *t <= 0x7A && *t >= 0x61 )
       return true;
@@ -67,7 +68,7 @@ template <typename T>
 inline void
 to_upper(typename T::iterator t)
 {
-  if constexpr ( std::is_same_v<typename T::value_type, char> ) {
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
     // ascii
     if ( *t <= 0x7A && *t >= 0x61 )
       *t -= 32;
@@ -79,7 +80,7 @@ template <typename T>
 inline void
 to_lower(typename T::iterator t)
 {
-  if constexpr ( std::is_same_v<typename T::value_type, char> ) {
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
     // ascii
     if ( *t <= 0x5A && *t >= 0x41 )
       *t += 32;
@@ -87,11 +88,11 @@ to_lower(typename T::iterator t)
   // TODO: implement utf8
 }
 template <typename T>
-  requires std::is_fundamental_v<T>
+  requires micron::is_fundamental_v<T>
 inline bool
 isupper(const T t)
 {
-  if constexpr ( std::is_same_v<T, char> ) {
+  if constexpr ( micron::is_same_v<T, char> ) {
     // ascii
     if ( t <= 0x5A && t >= 0x41 )
       return true;
@@ -103,11 +104,11 @@ isupper(const T t)
 }
 
 template <typename T>
-  requires std::is_fundamental_v<T>
+  requires micron::is_fundamental_v<T>
 inline bool
 islower(const T t)
 {
-  if constexpr ( std::is_same_v<T, char> ) {
+  if constexpr ( micron::is_same_v<T, char> ) {
     // ascii
     if ( t <= 0x7A && t >= 0x61 )
       return true;
@@ -122,7 +123,7 @@ template <typename T>
 inline T
 to_upper(const T t)
 {
-  if constexpr ( std::is_same_v<T, char> ) {
+  if constexpr ( micron::is_same_v<T, char> ) {
     // ascii
     if ( t <= 0x5A && t >= 0x41 )
       return (t - 32);
@@ -135,7 +136,7 @@ template <typename T>
 inline bool
 to_lower(const T t)
 {
-  if constexpr ( std::is_same_v<T, char> ) {
+  if constexpr ( micron::is_same_v<T, char> ) {
     // ascii
     if ( t <= 0x7A && t >= 0x61 )
       return (t + 32);

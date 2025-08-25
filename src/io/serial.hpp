@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <type_traits>
+#include "../type_traits.hpp"
 #include "../types.hpp"
 
 namespace micron
@@ -56,7 +56,7 @@ serialize_bytes(fsys::file<T> &f, const R *_b, size_t n)
 }
 
 template <typename T, is_string R>
-requires std::is_class_v<T>
+requires micron::is_class_v<T>
 void
 serialize(fsys::file<R> &f, const T& obj)
 {
@@ -64,7 +64,7 @@ serialize(fsys::file<R> &f, const T& obj)
 }
 
 template <typename T, is_string R>
-requires (!std::is_null_pointer_v<T>)
+requires (!micron::is_null_pointer_v<T>)
 void
 serialize_page(fsys::file<R> &f, const T& obj)
 {
@@ -73,7 +73,7 @@ serialize_page(fsys::file<R> &f, const T& obj)
 }
 
 template <typename T>
-  requires std::is_object_v<T>
+  requires micron::is_object_v<T>
 void
 deserialize(const T &strct)
 {

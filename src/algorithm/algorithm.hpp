@@ -8,13 +8,13 @@
 #include "../math/generic.hpp"
 #include "../memory/memory.hpp"
 #include "../types.hpp"
-#include <type_traits>
+#include "../type_traits.hpp"
 
 namespace micron
 {
 
 template <class T>
-  requires std::is_object_v<T> && (std::is_floating_point_v<typename T::value_type>)
+  requires micron::is_object_v<T> && (micron::is_floating_point_v<typename T::value_type>)
 inline f128 sum(const T &src)
 {
   f128 sm = 0;
@@ -23,7 +23,7 @@ inline f128 sum(const T &src)
   return sm;
 }
 template <class T>
-  requires std::is_object_v<T>
+  requires micron::is_object_v<T>
 inline umax_t
 sum(const T &src)
 {
@@ -34,7 +34,7 @@ sum(const T &src)
 }
 
 template <typename R = f64, class T>
-  requires std::is_object_v<T>
+  requires micron::is_object_v<T>
 inline R
 mean(const T &src)
 {
@@ -42,7 +42,7 @@ mean(const T &src)
 }
 
 template <typename R = flong, class T>
-  requires std::is_object_v<T>
+  requires micron::is_object_v<T>
 inline R
 geomean(const T &src) 
 {
@@ -56,7 +56,7 @@ geomean(const T &src)
 }
 
 template <typename R = flong, class T>
-  requires std::is_object_v<T>
+  requires micron::is_object_v<T>
 inline R
 harmonicmean(const T &src)
 {
@@ -67,7 +67,7 @@ harmonicmean(const T &src)
 }
 
 template <class T>
-  requires std::is_arithmetic_v<T>
+  requires micron::is_arithmetic_v<T>
 void
 round(T *__restrict start, T *__restrict end)
 {
@@ -82,7 +82,7 @@ round(T &t)
 }
 
 template <class T>
-  requires std::is_arithmetic_v<T>
+  requires micron::is_arithmetic_v<T>
 void
 ceil(T *__restrict start, T *__restrict end)
 {
@@ -96,7 +96,7 @@ ceil(T &t)
   ceil(t.begin(), t.end());
 }
 template <class T>
-  requires std::is_arithmetic_v<T>
+  requires micron::is_arithmetic_v<T>
 void
 floor(T *__restrict start, T *__restrict end)
 {
@@ -110,13 +110,13 @@ floor(T &t)
   floor(t.begin(), t.end());
 }
 template <class T>
-  requires std::is_pointer_v<T>
+  requires micron::is_pointer_v<T>
 void
 reverse(T __restrict start, T __restrict end)
 {
   // if even set
   while ( start != end and end > start ) {
-    std::remove_pointer_t<T> tmp = *start;
+    micron::remove_pointer_t<T> tmp = *start;
     *start = *end;
     *end = tmp;
     ++start;
@@ -132,7 +132,7 @@ reverse(T &arr)
 }
 
 template <class T, typename F>
-  requires std::is_integral_v<F>
+  requires micron::is_integral_v<F>
 void
 transform(const T *start, const T *end, F f)
 {
@@ -182,7 +182,7 @@ template <class T, class P>
 void
 fill(const T *first, const T *end, const P &o)
 {
-  if constexpr ( std::is_class<T>::value ) {
+  if constexpr ( micron::is_class<T>::value ) {
     for ( ; first != end; first++ )
       *first = o;
   } else {     // if not a class, no deep copying need, just blitz
@@ -190,7 +190,7 @@ fill(const T *first, const T *end, const P &o)
   }
 }
 template <class T, typename F>
-  requires std::is_integral_v<F>
+  requires micron::is_integral_v<F>
 void
 generate(const T *first, const T *end, F f)
 {

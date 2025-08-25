@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../type_traits.hpp"
 #include "../concepts.hpp"
 #include "string.h"
 #include "unitypes.hpp"
@@ -41,14 +42,14 @@ invert(T &str)
 }
 
 template <typename I, typename T = char8_t>
-  requires std::is_integral_v<I>
+  requires micron::is_integral_v<I>
 inline micron::hstring<T>
 int_to_string(I n)
 {
   micron::hstring<T> buf(12);
   I ipart = static_cast<I>(n);
   T *iptr = &buf[0];
-  if constexpr ( std::is_signed_v<I> ) {
+  if constexpr ( micron::is_signed_v<I> ) {
     if ( n < 0 ) {
       *iptr++ = '-';
       ipart = -ipart;
@@ -65,14 +66,14 @@ int_to_string(I n)
 }
 
 template <typename I, typename T = char8_t, size_t N>
-  requires std::is_integral_v<I>
+  requires micron::is_integral_v<I>
 inline micron::sstring<N, T>
 int_to_string_stack(I n)
 {
   micron::sstring<N, T> buf;
   I ipart = static_cast<I>(n);
   T *iptr = &buf[0];
-  if constexpr ( std::is_signed_v<I> ) {
+  if constexpr ( micron::is_signed_v<I> ) {
     if ( n < 0 ) {
       *iptr++ = '-';
       ipart = -ipart;
@@ -185,7 +186,7 @@ u32_check(const char32_t *str, size_t n)
 }
 
 template <typename I, typename T = char8_t>
-  requires std::is_integral_v<I>
+  requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_string(I x)
 {

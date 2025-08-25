@@ -6,17 +6,17 @@
 #pragma once
 
 #include "types.hpp"
-#include <type_traits>
+#include "type_traits.hpp"
 
 namespace micron
 {
 
 template <typename F, typename T>
-concept range_size_t = std::convertible_to<T, F>;
+concept range_size_t = micron::convertible_to<T, F>;
 
 
 template <umax_t From, range_size_t<umax_t> auto To>
-  requires(From < To && std::is_arithmetic_v<umax_t>)
+  requires(From < To && micron::is_arithmetic_v<umax_t>)
 struct range {
   ~range() = default;
   range(void) = default;
@@ -26,7 +26,7 @@ struct range {
   range &operator=(range &&) = delete;
 
   template <typename F>
-    requires std::is_invocable_v<F, umax_t>
+    requires micron::is_invocable_v<F, umax_t>
   static void
   perform(F &f)
   {
@@ -49,7 +49,7 @@ struct range {
 
 
 template <typename T, T From, range_size_t<T> auto To>
-  requires(From < To && std::is_arithmetic_v<T>)
+  requires(From < To && micron::is_arithmetic_v<T>)
 struct count_range {
   ~count_range() = default;
   count_range(void) = default;
@@ -59,7 +59,7 @@ struct count_range {
   count_range &operator=(count_range &&) = delete;
 
   template <typename F>
-    requires std::is_invocable_v<F, T>
+    requires micron::is_invocable_v<F, T>
   static void
   perform(F &f)
   {

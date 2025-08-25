@@ -7,21 +7,21 @@
 
 #include "types.hpp"
 #include "except.hpp"
-#include <type_traits>
+#include "type_traits.hpp"
 
 namespace micron
 {
 
-template <typename T> constexpr auto view_ptr(T &) -> typename std::add_pointer<T>::type;
+template <typename T> constexpr auto view_ptr(T &) -> typename micron::add_pointer<T>::type;
 template <typename T>
 constexpr auto
-view_type(T &) -> typename std::remove_reference<T>::type
+view_type(T &) -> typename micron::remove_reference<T>::type
 {
-  return typename std::remove_reference<T>::type{};
+  return typename micron::remove_reference<T>::type{};
 }
 
 template <typename T = byte *>
-  requires std::is_pointer_v<T>
+  requires micron::is_pointer_v<T>
 class view
 {
   const T start;

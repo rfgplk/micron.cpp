@@ -9,12 +9,13 @@
 #include "allocation/chunks.hpp"
 #include "allocator.hpp"
 #include "types.hpp"
+#include "type_traits.hpp"
 
 namespace micron
 {
 
 template <typename T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 class queue : private Alloc, public contiguous_memory_no_copy<T>
 {
 public:
@@ -51,7 +52,7 @@ public:
   {
     if ( !contiguous_memory_no_copy<T>::length )
       return;
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < contiguous_memory_no_copy<T>::length; i++ )
         (contiguous_memory_no_copy<T>::memory)[i].~T();
     }

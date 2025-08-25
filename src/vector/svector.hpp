@@ -20,7 +20,7 @@ namespace micron
 // equivalent of inplace_vector, should be used over vector in almost all use
 // cases
 template <typename T, size_t N = 64>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 class svector
 {
   T stack[N];
@@ -43,7 +43,7 @@ class svector
   inline void
   __impl_copy(T *dest, T *src, size_t cnt)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       deep_copy(dest, src, cnt);
     } else {
       shallow_copy(dest, src, cnt);
@@ -118,7 +118,7 @@ public:
   {
     if ( lst.size() > N )
       throw except::runtime_error("error micron::svector() initializer_list too large.");
-    if constexpr ( std::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> ) {
       size_t i = 0;
       for ( T value : lst )
         stack[i++] = value;

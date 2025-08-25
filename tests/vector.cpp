@@ -12,6 +12,18 @@
 int
 main()
 {
+  {
+
+    micron::fvector<int> vec;
+    for(int i = 0; i < 50; i++)
+      vec.push_back(i);
+    vec.erase(vec.begin());
+    vec.erase(vec.begin() + 3);
+    vec.erase(vec.begin() + 7);
+    vec.erase(vec.begin() + 9);
+    micron::console(vec);
+    return 0;
+  };
   micron::vector<size_t> buf = { 1, 2, 3, 4 };
   for(auto x : buf)
     std::cout << x << std::endl;

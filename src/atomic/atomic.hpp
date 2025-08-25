@@ -5,11 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../types.hpp"
 #include "../memory/actions.hpp"
+#include "../types.hpp"
 
+#include "../type_traits.hpp"
 #include <initializer_list>
-#include <type_traits>
 
 #ifdef __GNUC__
 #define USE_GCC_ATOMICS
@@ -18,12 +18,28 @@
 // atomic library wrapped around standard C/C++
 namespace micron
 {
-//#define ATOMIC_LOCKED 0
-//#define ATOMIC_OPEN 1
+// #define ATOMIC_LOCKED 0
+// #define ATOMIC_OPEN 1
 
 constexpr bool ATOMIC_OPEN = 0;
 constexpr bool ATOMIC_LOCKED = 1;
 
+enum class memory_order : int {
+  relaxed = __ATOMIC_SEQ_CST,
+  consume = __ATOMIC_CONSUME,
+  acquire = __ATOMIC_ACQUIRE,
+  release = __ATOMIC_RELEASE,
+  acq_rel = __ATOMIC_ACQ_REL,
+  seq_cst = __ATOMIC_SEQ_CST,
+  __end
+};
+
+inline constexpr memory_order memory_order_relaxed = memory_order::relaxed;
+inline constexpr memory_order memory_order_consume = memory_order::consume;
+inline constexpr memory_order memory_order_acquire = memory_order::acquire;
+inline constexpr memory_order memory_order_release = memory_order::release;
+inline constexpr memory_order memory_order_acq_rel = memory_order::acq_rel;
+inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 
 template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
 // simplest atomic_token implementable, with stl use std::atomic
@@ -38,36 +54,49 @@ template <typename T> struct atomic_token {
   void operator=(const atomic_token &) = delete;
 
   T
-  operator++()
+  operator++() noexcept
   {
     return __atomic_add_fetch(&v, 1, __ATOMIC_SEQ_CST);
   };
   T
-  operator--()
+  operator--() noexcept
   {
     return __atomic_sub_fetch(&v, 1, __ATOMIC_SEQ_CST);
   };
   bool
-  compare_and_swap(const T old, const T new_)
+  compare_and_swap(const T old, const T new_) noexcept
   {
     T tmp = old;
     return __atomic_compare_exchange_n(&v, &tmp, new_, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
   };
-
+  bool
+  compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
+  {
+    return __atomic_compare_exchange_n(&v, &expected, desired, false, (int)order);
+  }
+  bool
+  compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
+  {
+    return __atomic_compare_exchange_n(&v, &expected, desired, false, (int)success, (int)failure);
+  }
+  bool
+  compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
+  {
+    return __atomic_compare_exchange_n(&v, &expected, desired, true, (int)success, (int)failure);
+  }
   void
-  store(const T new_)
+  store(const T new_, memory_order mr = memory_order::seq_cst) noexcept
   {
-    __atomic_store_n(&v, new_, __ATOMIC_SEQ_CST);
+    __atomic_store_n(&v, new_, (int)mr);
   };
-
   T
-  get() const
+  get(memory_order mrd = memory_order::seq_cst) const
   {
-    return __atomic_load_n(&v, __ATOMIC_SEQ_CST);
+    return __atomic_load_n(&v, (int)mrd);
   }
 
   T
-  swap(const T new_)
+  swap(const T new_) noexcept
   {
     return __atomic_exchange_n(&v, new_, __ATOMIC_SEQ_CST);
   };
@@ -109,6 +138,26 @@ template <class T> class atomic
   }
 
 public:
+  void
+  __store(const T new_, memory_order mr = memory_order::seq_cst) noexcept
+  {
+    return tk.store(new_, mr);
+  };
+  bool
+  compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
+  {
+    return tk.compare_exchange_strong(expected, desired, order);
+  }
+  bool
+  compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
+  {
+    return tk.compare_exchange_strong(expected, desired, success, failure);
+  }
+  bool
+  compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
+  {
+    return tk.compare_exchange_weak(expected, desired, success, failure);
+  }
   atomic() : type(), tk() {};
   template <typename F> atomic(std::initializer_list<F> list) : type(list), tk(){};
   template <typename... Args> atomic(Args... args) : type(args...), tk(){};
@@ -139,6 +188,11 @@ public:
     return &type;
   }
   // manual functions
+  T
+  __get(memory_order mrd = memory_order::seq_cst) const
+  {
+    return tk.get(mrd);
+  }
   T *
   get()
   {
@@ -152,70 +206,80 @@ public:
   }
   // operator overloads
   T
-  operator++(void){
+  operator++(void)
+  {
     lock_check();
     ++type;
     unlock();
     return type;
   }
   T
-  operator--(void){
+  operator--(void)
+  {
     lock_check();
     --type;
     unlock();
     return type;
   }
   T
-  operator*=(const T a) {
+  operator*=(const T a)
+  {
     lock_check();
     type *= a;
     unlock();
     return type;
   }
   T
-  operator/=(const T a) {
+  operator/=(const T a)
+  {
     lock_check();
     type /= a;
     unlock();
     return type;
   }
   T
-  operator-=(const T a) {
+  operator-=(const T a)
+  {
     lock_check();
     type -= a;
     unlock();
     return type;
   }
   T
-  operator+=(const T a) {
+  operator+=(const T a)
+  {
     lock_check();
     type += a;
     unlock();
     return type;
   }
   T
-  operator%=(const T a) {
+  operator%=(const T a)
+  {
     lock_check();
     type %= a;
     unlock();
     return type;
   }
   T
-  operator&=(const T a) {
+  operator&=(const T a)
+  {
     lock_check();
     type &= a;
     unlock();
     return type;
   }
   T
-  operator|=(const T a) {
+  operator|=(const T a)
+  {
     lock_check();
     type |= a;
     unlock();
     return type;
   }
   T
-  operator^=(const T a) {
+  operator^=(const T a)
+  {
     lock_check();
     type ^= a;
     unlock();

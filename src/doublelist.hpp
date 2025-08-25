@@ -7,6 +7,7 @@
 
 #include "algorithm/algorithm.hpp"
 #include "algorithm/mem.hpp"
+#include "memory/actions.hpp"
 #include "heap/cpp.hpp"
 #include "tags.hpp"
 #include "types.hpp"
@@ -243,7 +244,7 @@ public:
     if ( itr == nullptr )
       throw except::runtime_error("micron::insert invalid iterator.");
     double_list_node_t *ptr;
-    __impl_heap(std::forward(v), &ptr);     // allocate ptr
+    __impl_heap(micron::forward(v), &ptr);     // allocate ptr
     ptr->next = itr->next;
     itr->next = ptr;
   }

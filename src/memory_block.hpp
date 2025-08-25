@@ -12,6 +12,7 @@
 #include "except.hpp"
 #include "tags.hpp"
 #include "types.hpp"
+#include "concepts.hpp"
 
 namespace micron
 {
@@ -110,7 +111,7 @@ public:
   inline byte &
   operator[](size_t n)
   {
-    if constexpr ( std::is_same_v<safety_type, safe_tag> ) {
+    if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
         throw except::runtime_error("micron::memory [] out of bounds");
     }
@@ -119,7 +120,7 @@ public:
   inline const byte &
   operator[](size_t n) const
   {
-    if constexpr ( std::is_same_v<safety_type, safe_tag> ) {
+    if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
         throw except::runtime_error("micron::memory [] out of bounds");
     }
@@ -134,7 +135,7 @@ public:
   byte &
   at(size_t n)
   {
-    if constexpr ( std::is_same_v<safety_type, safe_tag> ) {
+    if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
         throw except::runtime_error("micron::memory [] out of bounds");
     }

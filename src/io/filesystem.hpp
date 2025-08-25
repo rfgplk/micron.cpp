@@ -116,7 +116,7 @@ public:
   system() : entries{ nullptr }, sz(0) {}
   system(const io::path_t &p, const io::modes c = _default_mode) : entries{ nullptr }, sz(0) { file(p, c); }
   template <typename... T>
-    requires((std::same_as<T, io::path_t> && ...))
+    requires((micron::same_as<T, io::path_t> && ...))
   system(const T &...t)
   {
     (file(t, _default_mode), ...);

@@ -15,7 +15,6 @@
 #include <dirent.h>     // for dir funcs
 #include <linux/limits.h>
 #include <sys/types.h>     // for dir funcs
-#include <type_traits>
 
 // functions for handling posix/linux dirs
 namespace micron

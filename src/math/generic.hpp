@@ -9,7 +9,7 @@
 #include "../endian.hpp"
 #include "../fp.hpp"
 #include "../types.hpp"
-#include <type_traits>
+#include "../type_traits.hpp"
 
 namespace micron
 {
@@ -102,7 +102,7 @@ digits(T x)
 }
 
 template <typename T, typename F>
-  requires(std::is_integral_v<T>) && (std::is_integral_v<F>)
+  requires(micron::is_integral_v<T>) && (micron::is_integral_v<F>)
 constexpr T power_loop(T x, F p)
 {
   if ( p == 0 )
@@ -113,7 +113,7 @@ constexpr T power_loop(T x, F p)
   return r;
 }
 template <typename T, typename F>
-  requires(std::is_integral_v<T>) && (std::is_integral_v<F>)
+  requires(micron::is_integral_v<T>) && (micron::is_integral_v<F>)
 constexpr T power(T x, F p)
 {
   if ( p == 0 )
@@ -243,7 +243,7 @@ remainderf128(flong x, f32 y)
 template <typename T>
 T
 round(T t)
-  requires(std::is_floating_point_v<T>)
+  requires(micron::is_floating_point_v<T>)
 {
   return static_cast<T>(static_cast<ssize_t>(t + 0.5));
 }
@@ -251,7 +251,7 @@ round(T t)
 template <typename T>
 T
 ceil(T s)
-  requires(std::is_floating_point_v<T>)
+  requires(micron::is_floating_point_v<T>)
 {
   ssize_t i = static_cast<ssize_t>(s);
   return (s > i) ? static_cast<T>(i + 1) : static_cast<T>(i);
@@ -259,7 +259,7 @@ ceil(T s)
 template <typename T>
 T
 floor(T s)
-  requires(std::is_floating_point_v<T>)
+  requires(micron::is_floating_point_v<T>)
 {
   return static_cast<T>(static_cast<ssize_t>(s));
 }

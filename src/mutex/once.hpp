@@ -8,7 +8,6 @@
 #include "../memory/actions.hpp"
 #include "barrier.hpp"
 #include "mutex.hpp"
-#include <type_traits>
 // NOTE: moved from /sync to /mutex
 
 namespace micron

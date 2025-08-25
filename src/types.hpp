@@ -7,7 +7,7 @@
 
 #include "bits-types.hpp"
 #include "linux/linux_types.hpp"
-#include <type_traits>
+#include "type_traits.hpp"
 
 typedef unsigned char __u_char;
 typedef unsigned short int __u_short;
@@ -108,3 +108,5 @@ typedef long double f128;
 typedef long double flong;
 using ff = float;
 using df = double;
+
+using nullptr_t = decltype(nullptr);

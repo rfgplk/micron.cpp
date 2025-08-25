@@ -7,6 +7,7 @@
 
 #include "../attributes.hpp"
 #include "../types.hpp"
+#include "../type_traits.hpp"
 
 #include <immintrin.h>
 #include <xmmintrin.h>
@@ -29,7 +30,7 @@ namespace micron
 {
 
 template <typename T, typename F>
-  requires(!std::is_null_pointer_v<F>)
+  requires(!micron::is_null_pointer_v<F>)
 F &
 rtypeset(F &s, const T in, const size_t cnt)
 {
@@ -48,7 +49,7 @@ rtypeset(F &s, const T in, const size_t cnt)
 };
 
 template <typename T, typename F>
-  requires(!std::is_null_pointer_v<F>)
+  requires(!micron::is_null_pointer_v<F>)
 F *
 typeset(F *s, const T in, const size_t cnt)
 {
@@ -211,7 +212,7 @@ template <size_t M, typename F, typename N>
 F *
 cmemset(F *src, const N in)
 {
-  if constexpr ( std::is_pointer_v<F> ) {
+  if constexpr ( micron::is_pointer_v<F> ) {
     for ( size_t n = 0; n < M; n++ )
       src[n] = reinterpret_cast<F>(in);
     return reinterpret_cast<F *>(src);
@@ -294,7 +295,7 @@ memset_64b(F *src, int in)
 };
 
 template <byte in, size_t cnt, typename F>
-  requires(!std::is_null_pointer_v<F>)
+  requires(!micron::is_null_pointer_v<F>)
 F *
 bset(F *s)
 {
@@ -330,7 +331,7 @@ wordset(word *src)
 };
 
 template <byte in, size_t cnt, typename F>
-  requires(!std::is_null_pointer_v<F>)
+  requires(!micron::is_null_pointer_v<F>)
 F *
 memset(F *s)
 {
@@ -349,7 +350,7 @@ memset(F *s)
 };
 
 template <typename F>
-  requires(!std::is_null_pointer_v<F>)
+  requires(!micron::is_null_pointer_v<F>)
 F &
 rmemset(F &s, const byte in, const size_t cnt)
 {
@@ -368,7 +369,7 @@ rmemset(F &s, const byte in, const size_t cnt)
 };
 
 template <typename F>
-  requires(!std::is_null_pointer_v<F>)
+  requires(!micron::is_null_pointer_v<F>)
 F *
 memset(F *s, const byte in, const size_t cnt)
 {
@@ -387,7 +388,7 @@ memset(F *s, const byte in, const size_t cnt)
 };
 
 template <typename T>
-  requires(!std::is_null_pointer_v<T>)
+  requires(!micron::is_null_pointer_v<T>)
 T *
 memchr(const T &restrict src, byte c, size_t n)
 {
@@ -400,7 +401,7 @@ memchr(const T &restrict src, byte c, size_t n)
 }
 
 template <typename T>
-  requires(!std::is_null_pointer_v<T>)
+  requires(!micron::is_null_pointer_v<T>)
 T *
 memchr(const T *restrict src, byte c, size_t n)
 {

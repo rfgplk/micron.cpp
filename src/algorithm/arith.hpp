@@ -7,7 +7,7 @@
 
 #include "../math/generic.hpp"
 #include "../types.hpp"
-#include <type_traits>
+#include "../type_traits.hpp"
 
 // container agnostic functions for arith. operations on contiguous data
 // T* sig. func. are blind iterators
@@ -18,12 +18,12 @@ namespace micron
 
 template <typename T>
 concept isContainer = requires(T t) {
-  { t.begin() } -> std::same_as<typename T::iterator>;
-  { t.end() } -> std::same_as<typename T::iterator>;
+  { t.begin() } -> micron::same_as<typename T::iterator>;
+  { t.end() } -> micron::same_as<typename T::iterator>;
 };
 
 template <isContainer T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 pow(T &cont, const Y y)
 {
@@ -33,7 +33,7 @@ pow(T &cont, const Y y)
     *first = math::power(*first, y);     // for clarity
 }
 template <typename T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 pow(T *__restrict first, T *__restrict end, const Y y)
 {
@@ -42,7 +42,7 @@ pow(T *__restrict first, T *__restrict end, const Y y)
 }
 
 template <isContainer T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 add(T &cont, const Y y)
 {
@@ -53,7 +53,7 @@ add(T &cont, const Y y)
 }
 
 template <isContainer T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 multiply(T &cont, const Y y)
 {
@@ -64,7 +64,7 @@ multiply(T &cont, const Y y)
 }
 
 template <isContainer T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 divide(T &cont, const Y y)
 {
@@ -75,7 +75,7 @@ divide(T &cont, const Y y)
 }
 
 template <isContainer T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 subtract(T &cont, const Y y)
 {
@@ -123,7 +123,7 @@ subtract(T &cont, const Args *__restrict... args)
 }
 
 template <class T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 add(T *first, T *end, const Y y)
 {
@@ -131,7 +131,7 @@ add(T *first, T *end, const Y y)
     *first = *first + y;
 }
 template <class T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 multiply(T *first, T *end, const Y y)
 {
@@ -139,7 +139,7 @@ multiply(T *first, T *end, const Y y)
     *first = *first * y;
 }
 template <class T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 divide(T *first, T *end, const Y y)
 {
@@ -147,7 +147,7 @@ divide(T *first, T *end, const Y y)
     *first = *first / y;
 }
 template <class T, typename Y>
-  requires std::is_arithmetic_v<Y>
+  requires micron::is_arithmetic_v<Y>
 void
 subtract(T *first, T *end, const Y y)
 {

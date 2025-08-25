@@ -170,7 +170,8 @@ msync(void *addr, size_t len, int flags)
 int
 madvise(void *addr, size_t len, int advice)
 {
-  return (int)micron::syscall(SYS_madvise, addr, len);
+
+  return (int)micron::syscall(SYS_madvise, addr, len, advice);
 };
 int
 mlock(const void *addr, size_t len)

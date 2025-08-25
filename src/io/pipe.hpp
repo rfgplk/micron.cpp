@@ -12,7 +12,7 @@
 #include "paths.hpp"
 #include <fcntl.h>
 #include <sys/stat.h>     // for mkfifo()
-#include <type_traits>
+#include "../type_traits.hpp"
 #include <unistd.h>
 
 namespace micron
@@ -81,7 +81,7 @@ public:
       }
   }
   template <typename T>
-    requires(std::is_object_v<T>) && (std::is_convertible_v<T, typename T::value_type>)
+    requires(micron::is_object_v<T>) && (micron::is_convertible_v<T, typename T::value_type>)
   void
   operator()(T &t)
   {
@@ -130,7 +130,7 @@ public:
   }
   // read/write to T
   template <typename T>
-    requires(std::is_object_v<T>) && (std::is_convertible_v<T, typename T::value_type>)
+    requires(micron::is_object_v<T>) && (micron::is_convertible_v<T, typename T::value_type>)
   void
   write(T &t)
   {
@@ -143,7 +143,7 @@ public:
   }
   // read/write to T
   template <typename T>
-    requires(std::is_object_v<T>) && (std::is_convertible_v<T, typename T::value_type>)
+    requires(micron::is_object_v<T>) && (micron::is_convertible_v<T, typename T::value_type>)
   void
   read(T &t)
   {

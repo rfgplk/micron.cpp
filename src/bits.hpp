@@ -6,7 +6,7 @@
 #pragma once
 
 #include "types.hpp"
-#include <type_traits>
+#include "type_traits.hpp"
 
 namespace micron
 {
@@ -66,7 +66,7 @@ aligned_16(const T* ptr) {
 template <typename T>
 bool
 aligned(const T* ptr) {
-  return !(reinterpret_cast<uintptr_t>(ptr) & (std::alignment_of<T>::value - 1));
+  return !(reinterpret_cast<uintptr_t>(ptr) & (micron::alignment_of<T>::value - 1));
 }
 
 static const unsigned char BitReverseTable256[256] = {
@@ -141,13 +141,13 @@ template <typename T>
 constexpr int
 bitcount(T x) noexcept     // seriously bitcount is a way more reasonable name, what even is POPcount where are the pops
 {
-  if constexpr ( std::is_same_v<T, int> or std::is_same_v<T, char> or std::is_same_v<T, unsigned char>
-                 or std::is_same_v<T, unsigned char> or std::is_same_v<T, unsigned int> or std::is_same_v<T, short>
-                 or std::is_same_v<T, unsigned short> )
+  if constexpr ( micron::is_same_v<T, int> or micron::is_same_v<T, char> or micron::is_same_v<T, unsigned char>
+                 or micron::is_same_v<T, unsigned char> or micron::is_same_v<T, unsigned int> or micron::is_same_v<T, short>
+                 or micron::is_same_v<T, unsigned short> )
     return __builtin_popcount(x);
-  if constexpr ( std::is_same_v<T, long> or std::is_same_v<T, unsigned long> )
+  if constexpr ( micron::is_same_v<T, long> or micron::is_same_v<T, unsigned long> )
     return __builtin_popcountl(x);
-  if constexpr ( std::is_same_v<T, long long> or std::is_same_v<T, unsigned long long> )
+  if constexpr ( micron::is_same_v<T, long long> or micron::is_same_v<T, unsigned long long> )
     return __builtin_popcountll(x);
 }
 
@@ -175,11 +175,11 @@ constexpr int
 countl_zero(T x) noexcept
 {
   // TODO: expand with numerics
-  if constexpr ( std::is_same_v<T, int> )
+  if constexpr ( micron::is_same_v<T, int> )
     return __builtin_clz(x);
-  if constexpr ( std::is_same_v<T, long> )
+  if constexpr ( micron::is_same_v<T, long> )
     return __builtin_clzl(x);
-  if constexpr ( std::is_same_v<T, long long> )
+  if constexpr ( micron::is_same_v<T, long long> )
     return __builtin_clzll(x);
 }
 template <typename T>
@@ -187,11 +187,11 @@ constexpr int
 countr_zero(T x) noexcept
 {
   // TODO: expand with numerics
-  if constexpr ( std::is_same_v<T, int> )
+  if constexpr ( micron::is_same_v<T, int> )
     return __builtin_ctz(x);
-  if constexpr ( std::is_same_v<T, long> )
+  if constexpr ( micron::is_same_v<T, long> )
     return __builtin_ctzl(x);
-  if constexpr ( std::is_same_v<T, long long> )
+  if constexpr ( micron::is_same_v<T, long long> )
     return __builtin_ctzll(x);
 }
 

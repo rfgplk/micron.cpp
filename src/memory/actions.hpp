@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <type_traits>
+#include "../type_traits.hpp"
 
 // thought really hard on what to name this file
 
@@ -13,34 +13,34 @@ namespace micron
 {
 template <typename T>
 constexpr T &&
-forward(std::remove_reference_t<T> &t) noexcept
+forward(micron::remove_reference_t<T> &t) noexcept
 {
   return static_cast<T &&>(t);
 }
 
 template <typename T>
 constexpr T &&
-forward(std::remove_reference_t<T> &&t) noexcept
+forward(micron::remove_reference_t<T> &&t) noexcept
 {
-  static_assert(!std::is_lvalue_reference_v<T>, "Cannot forward an rvalue as an lvalue.");
+  static_assert(!micron::is_lvalue_reference_v<T>, "Cannot forward an rvalue as an lvalue.");
   return static_cast<T &&>(t);
 }
 
 template <typename T, typename U>
 constexpr T &&
-forward_like(std::remove_reference_t<U> &&u) noexcept
+forward_like(micron::remove_reference_t<U> &&u) noexcept
 {
-  static_assert(!std::is_lvalue_reference_v<U>, "Cannot forward an rvalue as an lvalue.");
+  static_assert(!micron::is_lvalue_reference_v<U>, "Cannot forward an rvalue as an lvalue.");
   return static_cast<T &&>(u);
 }
 template <typename T>
-constexpr std::remove_reference_t<T> &&
+constexpr micron::remove_reference_t<T> &&
 move(T &&t) noexcept
 {
-  return static_cast<std::remove_reference_t<T> &&>(t);
+  return static_cast<micron::remove_reference_t<T> &&>(t);
 };
 template <typename T>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 void
 swap(T &a, T &b)
 {
@@ -49,8 +49,17 @@ swap(T &a, T &b)
   b = move(tmp);
 }
 
+template <class T, class V = T>
+constexpr T
+exchange(T &obj, V &&v)
+{
+  T old = move(obj);
+  obj = forward<V>(v);
+  return old;
+}
+
 template <typename T, typename... Args>
-  requires std::is_move_constructible_v<T>
+  requires micron::is_move_constructible_v<T>
 void
 reset(T &a, Args &&...args)
 {
@@ -69,14 +78,14 @@ template <typename T, typename F>
 constexpr bool
 cmp_equal(T t, F f)
 {
-  if constexpr ( std::is_signed_v<T> == std::is_signed_v<F> )
+  if constexpr ( micron::is_signed_v<T> == micron::is_signed_v<F> )
     return t == f;
-  else if constexpr ( std::is_signed_v<T> )
-    return t >= 0 && std::make_unsigned_t<T>(t) == f;
-  else if constexpr ( std::is_class_v<T> && std::is_class_v<F> )
+  else if constexpr ( micron::is_signed_v<T> )
+    return t >= 0 && micron::make_unsigned_t<T>(t) == f;
+  else if constexpr ( micron::is_class_v<T> && micron::is_class_v<F> )
     return t == f;
   else
-    return f >= 0 && std::make_unsigned_t<F>(f) == t;
+    return f >= 0 && micron::make_unsigned_t<F>(f) == t;
 }
 
 template <typename T, typename F>
@@ -90,14 +99,14 @@ template <typename T, typename F>
 constexpr bool
 cmp_less(T t, F f)
 {
-  if constexpr ( std::is_signed_v<T> == std::is_signed_v<F> )
+  if constexpr ( micron::is_signed_v<T> == micron::is_signed_v<F> )
     return t < f;
-  else if constexpr ( std::is_signed_v<T> )
-    return t < 0 && std::make_unsigned_t<T>(t) < f;
-  else if constexpr ( std::is_class_v<T> && std::is_class_v<F> )
+  else if constexpr ( micron::is_signed_v<T> )
+    return t < 0 && micron::make_unsigned_t<T>(t) < f;
+  else if constexpr ( micron::is_class_v<T> && micron::is_class_v<F> )
     return t < f;
   else
-    return f >= 0 && std::make_unsigned_t<F>(f) > t;
+    return f >= 0 && micron::make_unsigned_t<F>(f) > t;
 }
 
 template <typename T, typename F>

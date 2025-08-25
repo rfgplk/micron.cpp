@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <type_traits>
+#include "type_traits.hpp"
 
 #include "memory/addr.hpp"
 #include "memory/memory.hpp"
@@ -20,7 +20,7 @@ struct regular_iterator_tag {
 // micron iterators are bound to the fundamental type as declared, as such it isn't possible to iterate over different
 // types (nor should you want to). in return you get way more powerful utilities which simplify code
 template <typename P>
-  requires(std::is_fundamental_v<P>)
+  requires(micron::is_fundamental_v<P>)
 class iterator
 {
   using iterator_category = micron::regular_iterator_tag;
@@ -37,18 +37,18 @@ public:
   iterator() = delete;
 
   template <typename T>
-    requires(std::is_object_v<T>)
+    requires(micron::is_object_v<T>)
   iterator(T &t) : start_ptr(reinterpret_cast<pointer>(t.begin())), end_ptr(reinterpret_cast<pointer>(t.end()))
   {
   }
   template <typename T>
-    requires(std::is_pointer_v<T>) && (std::is_convertible_v<T, P>)
+    requires(micron::is_pointer_v<T>) && (micron::is_convertible_v<T, P>)
   iterator(T &&t, const size_t rng = 0)
       : start_ptr(reinterpret_cast<pointer>(t)), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {
   }
   template <typename T>
-    requires(std::is_fundamental_v<T>) && (std::is_convertible_v<T, P>)
+    requires(micron::is_fundamental_v<T>) && (micron::is_convertible_v<T, P>)
   iterator(T &&t, const size_t rng = 0)
       : start_ptr(reinterpret_cast<pointer>(micron::addr(t))), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {

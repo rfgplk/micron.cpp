@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../type_traits.hpp"
 #include "../mutex/locks.hpp"
 #include "../stack.hpp"
 #include "cpu.hpp"
@@ -41,7 +42,7 @@ class __empty_arena
 {
 };
 template <typename Tr = thread<>>
-  requires(!std::is_same_v<Tr, auto_thread<>>)     // we don't want to use auto_threads in an arena
+  requires(!micron::is_same_v<Tr, auto_thread<>>)     // we don't want to use auto_threads in an arena
 class __default_arena
 {
   micron::sstack<thread_t<Tr>, maximum_threads> threads;
@@ -61,7 +62,7 @@ public:
   __default_arena &operator=(const __default_arena &) = delete;
   __default_arena &operator=(__default_arena &&) = delete;
   template <typename Func, typename... Args>
-    requires(std::is_invocable_v<Func, Args...>)
+    requires(micron::is_invocable_v<Func, Args...>)
   auto&
   create(Func f, Args... args)
   {
@@ -74,7 +75,7 @@ public:
     return threads.top();
   }
   template <typename Func, typename... Args>
-    requires(std::is_invocable_v<Func, Args...>)
+    requires(micron::is_invocable_v<Func, Args...>)
   auto&
   create_at(size_t n, Func f, Args... args)
   {

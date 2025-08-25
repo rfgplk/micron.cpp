@@ -7,7 +7,7 @@
 
 #include "algorithm/mem.hpp"
 #include "pointer.hpp"
-#include <type_traits>
+#include "type_traits.hpp"
 
 namespace micron
 {
@@ -47,6 +47,6 @@ public:
   }
 };
 template <typename T>
-concept is_function = std::is_integral_v<T>;
+concept is_function = micron::is_integral_v<T>;
 
 };

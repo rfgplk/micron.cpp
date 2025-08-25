@@ -10,7 +10,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/memory.hpp"
 
-#include <type_traits>
+#include "../type_traits.hpp"
 
 namespace micron
 {
@@ -19,7 +19,7 @@ namespace micron
 // likely never will) support generalized iterators
 
 template <typename T, typename F>
-  requires std::is_pointer_v<T> && std::is_pointer_v<F>
+  requires micron::is_pointer_v<T> && micron::is_pointer_v<F>
 inline size_t
 distance(T a, F b)     // distance between two pointers, can be of different types
 {
@@ -27,7 +27,7 @@ distance(T a, F b)     // distance between two pointers, can be of different typ
 }
 
 template <typename T, typename F>
-  requires std::is_pointer_v<T> && std::is_pointer_v<F>
+  requires micron::is_pointer_v<T> && micron::is_pointer_v<F>
 inline size_t
 adistance(T a, F b)     // absolute distance between two pointers, can be of different types
 {
@@ -43,11 +43,11 @@ void overwrite(T& src, F& dest)
 template <typename T>
 inline void
 destroy(T &mem)
-  requires(!std::is_array<T>::value)
+  requires(!micron::is_array<T>::value)
 {
-  if constexpr ( std::is_class<T>::value ) {
+  if constexpr ( micron::is_class<T>::value ) {
     mem.~T();
-  } else if constexpr ( std::is_pointer<T>::value && !std::is_null_pointer<T>::value && !std::is_array<T>::value ) {
+  } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value && !micron::is_array<T>::value ) {
     delete mem;
   }
 }
@@ -55,12 +55,12 @@ destroy(T &mem)
 template <typename T, size_t N>
 inline void
 destroy(T &mem)
-  requires std::is_array<T>::value
+  requires micron::is_array<T>::value
 {
-  if constexpr ( std::is_class<T>::value ) {
+  if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
       mem[i].~T();
-  } else if constexpr ( std::is_pointer<T>::value && !std::is_null_pointer<T>::value ) {
+  } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value ) {
     delete[] mem;
   }
 }
@@ -113,7 +113,7 @@ template <size_t N, typename T, typename F>
 F *
 cmove(const T *restrict src, F *restrict dst)
 {
-  if constexpr ( std::is_class<T>::value ) {
+  if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
       dst[i] = micron::move(src[i]);
   } else {
@@ -141,7 +141,7 @@ template <size_t N, typename T, typename F>
 F *
 ccopy(const T *restrict src, F *restrict dst)
 {
-  if constexpr ( std::is_class<T>::value ) {
+  if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
       dst[i] = src[i];
   } else {
@@ -163,7 +163,7 @@ void
 scopy(const T &restrict src, T &restrict dst)
 {
   auto smlr = src.size() < dst.size() ? src.size() : dst.size();
-  if constexpr ( std::is_class_v<T> or std::is_object_v<T> ) {
+  if constexpr ( micron::is_class_v<T> or micron::is_object_v<T> ) {
     for ( size_t i = 0; i < smlr; i++ )
       dst[i] = src[i];
     return;

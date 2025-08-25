@@ -27,7 +27,7 @@ namespace micron
 {
 
 template <typename T, class Alloc = micron::allocator_serial<>>
-  requires std::is_move_constructible_v<T>
+  requires micron::is_move_constructible_v<T>
 class slice : private Alloc, public immutable_memory<T>
 {
 public:

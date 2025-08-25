@@ -11,6 +11,7 @@
 #include "pointer.hpp"
 #include "tags.hpp"
 #include "types.hpp"
+#include "type_traits.hpp"
 
 #include <initializer_list>
 
@@ -18,7 +19,7 @@ namespace micron
 {
 // BUG: the autoformatter set t to lowercase and i don't have the willpower to actually change this :( (sed can't help)
 template <typename t, size_t N = micron::alloc_auto_sz, class alloc = micron::allocator_serial<>>
-  requires std::is_copy_constructible_v<t> && std::is_move_constructible_v<t>
+  requires micron::is_copy_constructible_v<t> && micron::is_move_constructible_v<t>
 class stack : private alloc, public contiguous_memory_no_copy<t>
 {
 public:
@@ -38,7 +39,7 @@ public:
   {
     if ( contiguous_memory_no_copy<t>::memory == nullptr )
       return;
-    if constexpr ( std::is_class_v<t> )
+    if constexpr ( micron::is_class_v<t> )
       clear();
     this->destroy(to_chunk(contiguous_memory_no_copy<t>::memory, contiguous_memory_no_copy<t>::capacity));
   }
@@ -50,7 +51,7 @@ public:
   }
   stack(const std::initializer_list<t> &lst) : contiguous_memory_no_copy<t>(this->create(sizeof(t) * lst.size()))
   {
-    if constexpr ( std::is_class_v<t> ) {
+    if constexpr ( micron::is_class_v<t> ) {
       size_t i = 0;
       for ( t &&value : lst ) {
         new (&contiguous_memory_no_copy<t>::memory[i++]) t(micron::move(value));
@@ -122,7 +123,7 @@ public:
     }
   }
   template <typename... Args>
-  requires (std::is_lvalue_reference_v<Args> && ...)
+  requires (micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args)
   {
@@ -144,7 +145,7 @@ public:
   }
   inline void
   push(t v)
-    requires(std::is_arithmetic_v<t> && std::is_same_v<t, t>)
+    requires(micron::is_arithmetic_v<t> && micron::is_same_v<t, t>)
   {
     if ( contiguous_memory_no_copy<t>::length >= contiguous_memory_no_copy<t>::capacity )
       reserve(contiguous_memory_no_copy<t>::capacity + 1);
@@ -152,7 +153,7 @@ public:
   }
   inline void
   push(const t &v)
-  requires (!std::is_same_v<t, t>)
+  requires (!micron::is_same_v<t, t>)
   {
     if ( contiguous_memory_no_copy<t>::length >= contiguous_memory_no_copy<t>::capacity )
       reserve(contiguous_memory_no_copy<t>::capacity + 1);
@@ -168,7 +169,7 @@ public:
   inline void
   pop()
   {
-    if constexpr ( std::is_class<t>::value ) {
+    if constexpr ( micron::is_class<t>::value ) {
       contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length - 1].~t();
     }
     czero<sizeof(t) / sizeof(byte)>(
@@ -179,7 +180,7 @@ public:
   {
     if ( !contiguous_memory_no_copy<t>::length )
       return;
-    if constexpr ( std::is_class<t>::value ) {
+    if constexpr ( micron::is_class<t>::value ) {
       for ( size_t i = 0; i < contiguous_memory_no_copy<t>::length; i++ )
         (contiguous_memory_no_copy<t>::memory)[i].~t();
     }
@@ -220,7 +221,7 @@ public:
 };
 
 template <typename t, size_t N = micron::alloc_auto_sz, class alloc = micron::allocator_serial<>>
-  requires std::is_copy_constructible_v<t> && std::is_move_constructible_v<t>
+  requires micron::is_copy_constructible_v<t> && micron::is_move_constructible_v<t>
 class istack : private alloc, public immutable_memory<t>
 {
   inline void
@@ -247,7 +248,7 @@ class istack : private alloc, public immutable_memory<t>
   inline void
   _pop(void)
   {
-    if constexpr ( std::is_class<t>::value ) {
+    if constexpr ( micron::is_class<t>::value ) {
       immutable_memory<t>::memory[immutable_memory<t>::length - 1].~t();
     }
     czero<sizeof(t) / sizeof(byte)>(
@@ -282,7 +283,7 @@ public:
   }
   istack(const std::initializer_list<t> &lst) : immutable_memory<t>(this->create(sizeof(t) * lst.size()))
   {
-    if constexpr ( std::is_class_v<t> ) {
+    if constexpr ( micron::is_class_v<t> ) {
       size_t i = 0;
       for ( t &&value : lst ) {
         new (&immutable_memory<t>::memory[i++]) t(micron::move(value));
@@ -298,7 +299,7 @@ public:
   }
 
   template <typename K = t>
-    requires(std::is_convertible_v<K, t>)
+    requires(micron::is_convertible_v<K, t>)
   istack(const stack<K> &o) : immutable_memory<t>(this->create(o.size()))
   {
     // TODO: optimize
@@ -391,7 +392,7 @@ public:
 };
 
 template <typename t, size_t N = micron::alloc_auto_sz>
-  requires std::is_copy_constructible_v<t> && std::is_move_constructible_v<t>
+  requires micron::is_copy_constructible_v<t> && micron::is_move_constructible_v<t>
 class sstack
 {
   t stack[N];
@@ -414,7 +415,7 @@ class sstack
   inline void
   __impl_copy(t *dest, t *src, size_t cnt)
   {
-    if constexpr ( std::is_class<t>::value ) {
+    if constexpr ( micron::is_class<t>::value ) {
       deep_copy(dest, src, cnt);
     } else {
       shallow_copy(dest, src, cnt);
@@ -446,7 +447,7 @@ public:
   {
     if ( lst.size() > N )
       throw except::library_error("micron::sstack() initializer_list out of bounds");
-    if constexpr ( std::is_class_v<t> ) {
+    if constexpr ( micron::is_class_v<t> ) {
       size_t i = 0;
       for ( t &&value : lst )
         stack[i++] = value;
@@ -562,7 +563,7 @@ public:
   }
   inline void
   push(t v)
-    requires(std::is_arithmetic_v<t>)
+    requires(micron::is_arithmetic_v<t>)
   {
     stack[length++] = (v);
   }
@@ -579,7 +580,7 @@ public:
   inline void
   pop()
   {
-    if constexpr ( std::is_class<t>::value ) {
+    if constexpr ( micron::is_class<t>::value ) {
       stack[length - 1].~t();
     }
     czero<sizeof(t) / sizeof(byte)>((byte *)micron::voidify(&(stack)[length-- - 1]));
@@ -589,7 +590,7 @@ public:
   {
     if ( !length )
       return;
-    if constexpr ( std::is_class<t>::value ) {
+    if constexpr ( micron::is_class<t>::value ) {
       for ( size_t i = 0; i < length; i++ )
         (stack)[i].~t();
     }

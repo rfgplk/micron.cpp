@@ -9,6 +9,7 @@
 #include "../math/generic.hpp"
 #include "../memory/memory.hpp"
 #include "../types.hpp"
+#include "../type_traits.hpp"
 
 #include "counting.hpp"
 
@@ -48,7 +49,7 @@ radix(T &arr)
 }
 
 template <typename T>
-  requires std::is_floating_point_v<typename T::value_type>
+  requires micron::is_floating_point_v<typename T::value_type>
 void
 fradix(T &arr)
 {

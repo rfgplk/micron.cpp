@@ -9,6 +9,7 @@
 #include "../memory/memory.hpp"
 #include "../tuple.hpp"
 #include "../types.hpp"
+#include "../type_traits.hpp"
 #include "bernstein.hpp"
 #include "fib.hpp"
 #include "fnv.hpp"
@@ -96,9 +97,9 @@ template <typename R = hash64_t, u32 seed = default_seed>
 inline __attribute__((always_inline)) auto
 hash(const char *data)
 {
-  if constexpr ( sizeof(R) == 8 or std::is_same_v<R, hash64_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
     return hash64<seed>(data);
-  else if constexpr ( std::is_same_v<R, hash128_t> or std::is_convertible_v<R, hash128_t> )
+  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(data);
 }
 
@@ -106,9 +107,9 @@ template <typename R = hash64_t, is_container_or_string T, u32 seed = default_se
 inline __attribute__((always_inline)) auto
 hash(const T &data)
 {
-  if constexpr ( sizeof(R) == 8 or std::is_same_v<R, hash64_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
     return hash64<seed>(data);
-  else if constexpr ( std::is_same_v<R, hash128_t> or std::is_convertible_v<R, hash128_t> )
+  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(data);
 }
 
@@ -116,20 +117,20 @@ template <typename R = hash64_t, u32 seed = default_seed>
 inline __attribute__((always_inline)) auto
 hash(const byte *data, size_t len)
 {
-  if constexpr ( sizeof(R) == 8 or std::is_same_v<R, hash64_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
     return hash64<seed>(data, len);
-  else if constexpr ( std::is_same_v<R, hash128_t> or std::is_convertible_v<R, hash128_t> )
+  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(data, len);
 }
 
 template <typename R = hash64_t, typename F, u32 seed = default_seed>
-  requires std::is_arithmetic_v<F>
+  requires micron::is_arithmetic_v<F>
 inline __attribute__((always_inline)) auto
 hash(const F data)
 {
-  if constexpr ( sizeof(R) == 8 or std::is_same_v<R, hash64_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
     return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
-  else if constexpr ( std::is_same_v<R, hash128_t> or std::is_convertible_v<R, hash128_t> )
+  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
 }
 

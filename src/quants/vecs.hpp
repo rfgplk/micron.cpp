@@ -11,7 +11,7 @@
 namespace micron
 {
 template <typename T = float>
-  requires std::is_floating_point_v<T>
+  requires micron::is_floating_point_v<T>
 struct vector_2 {
   float x, y;
   vector_2() : x(0.0f), y(0.0f) {};
@@ -95,7 +95,7 @@ struct vector_2 {
 };
 
 template <typename T>
-  requires std::is_floating_point_v<T>
+  requires micron::is_floating_point_v<T>
 struct vector_3 {
   float x, y, z;
   vector_3() : x(0.0f), y(0.0f), z(0.0f) {};
@@ -186,7 +186,7 @@ struct vector_3 {
   }
 };
 template <typename T>
-  requires std::is_floating_point_v<T>
+  requires micron::is_floating_point_v<T>
 struct vector_4 {
   float x, y, z, w;
   vector_4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {};

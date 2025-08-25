@@ -11,12 +11,13 @@
 #include "string/format.h"
 #include "tags.hpp"
 #include "types.hpp"
+#include "type_traits.hpp"
 
 namespace micron
 {
 // N is number of bits in field, R is the desired return type (bool by default)
 template <size_t N, typename R = bool>
-  requires(N % 8 == 0) and std::is_fundamental_v<R>
+  requires(N % 8 == 0) and micron::is_fundamental_v<R>
 class alignas(64) bitfield
 {
   u8 bits[N / 8];

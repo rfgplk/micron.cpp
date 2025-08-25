@@ -9,6 +9,7 @@
 #include "cmpl.hpp"
 #include "endian.hpp"
 #include "types.hpp"
+#include "type_traits.hpp"
 
 
 #ifndef __MICRON
@@ -199,7 +200,7 @@ typedef void (*sig_t)(int);
 #endif
 
 template <typename T>
-  requires std::is_integral_v<T>
+  requires micron::is_integral_v<T>
 constexpr byte
 B(T t)
 {
@@ -207,7 +208,7 @@ B(T t)
 }
 
 template <typename T>
-  requires std::is_integral_v<T>
+  requires micron::is_integral_v<T>
 constexpr byte
 KB(T t)
 {
@@ -215,7 +216,7 @@ KB(T t)
 }
 
 template <typename T>
-  requires std::is_integral_v<T>
+  requires micron::is_integral_v<T>
 constexpr byte
 MB(T t)
 {
@@ -223,7 +224,7 @@ MB(T t)
 }
 
 template <typename T>
-  requires std::is_integral_v<T>
+  requires micron::is_integral_v<T>
 constexpr byte
 GB(T t)
 {

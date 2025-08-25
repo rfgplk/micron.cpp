@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../type_traits.hpp"
 #include "../types.hpp"
 #include "allocate_linux.hpp"
 
@@ -13,7 +14,9 @@ namespace micron
 
 // universal contiguous memory object, allows copying & moving.
 // meant to wrap a T* from the allocator
-template <typename T> struct contiguous_memory {
+template <typename T>
+  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
+struct contiguous_memory {
   contiguous_memory() : memory(nullptr), length(0), capacity(0) {}
   contiguous_memory(T *ptr, size_t a, size_t b) : memory(ptr), length(a), capacity(b) {};
   contiguous_memory(chunk<byte> &&o)
@@ -76,7 +79,7 @@ template <typename T> struct contiguous_memory {
   }
 
   // TODO: FIX CONFLICTS AND RESTORE PROTECTED
-//protected:
+  // protected:
   T *memory;
   size_t length;
   size_t capacity;
@@ -85,11 +88,9 @@ template <typename T> struct contiguous_memory {
 // move only contiguous memory object, disallow copying explicitly.
 // meant to wrap a T* from the allocator
 template <typename T>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T>
+  requires micron::is_move_constructible_v<T>
 struct contiguous_memory_no_copy {
-  contiguous_memory_no_copy()
-    : memory(nullptr), length(0), capacity(0)
-  {};
+  contiguous_memory_no_copy() : memory(nullptr), length(0), capacity(0) {};
   contiguous_memory_no_copy(T *ptr, size_t a, size_t b) : memory(ptr), length(a), capacity(b) {};
   contiguous_memory_no_copy(chunk<byte> &&o)
       : memory(reinterpret_cast<T *>(o.ptr)), length(0), capacity(o.len / (sizeof(T) / sizeof(byte)))
@@ -154,12 +155,10 @@ protected:
 // immutable memory object, for immutable objects.
 // meant to wrap a T* from the allocator
 template <typename T> struct immutable_memory {
-  immutable_memory() 
-    : memory(nullptr), length(0), capacity(0)
-  {};
+  immutable_memory() : memory(nullptr), length(0), capacity(0) {};
   template <typename V>
-  requires std::is_null_pointer_v<V>
-  immutable_memory(V) : memory(nullptr), length(0), capacity(0) {};
+    requires micron::is_null_pointer_v<V>
+  immutable_memory(V) : memory(nullptr), length(0), capacity(0){};
   immutable_memory(T *ptr, size_t a, size_t b) : memory(ptr), length(a), capacity(b) {};
   immutable_memory(chunk<byte> &&o)
       : memory(reinterpret_cast<T *>(o.ptr)), length(0), capacity(o.len / (sizeof(T) / sizeof(byte))) {};
@@ -211,6 +210,7 @@ template <typename T> struct immutable_memory {
     length = 0;
     capacity = 0;
   }
+
 protected:
   T *memory;
   size_t length;

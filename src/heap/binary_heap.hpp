@@ -9,6 +9,7 @@
 #include "../allocation/chunks.hpp"
 #include "../allocator.hpp"
 #include "../memory/memory.hpp"
+#include "../type_traits.hpp"
 
 namespace micron
 {
@@ -102,7 +103,7 @@ public:
   {
     if ( immutable_memory<T>::length == immutable_memory<T>::capacity )
       return;
-    if constexpr ( std::is_class_v<T> )
+    if constexpr ( micron::is_class_v<T> )
       immutable_memory<T>::memory[immutable_memory<T>::length] = micron::move(v);
     else
       immutable_memory<T>::memory[immutable_memory<T>::length] = v;
@@ -113,7 +114,7 @@ public:
   {
     if ( !immutable_memory<T>::length )
       throw except::library_error("micron::binary_heap::get() is empty");
-    if constexpr ( std::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> ) {
       T v = micron::move(immutable_memory<T>::memory[0]);
       immutable_memory<T>::memory[0] = micron::move(immutable_memory<T>::memory[immutable_memory<T>::length - 1]);
       immutable_memory<T>::length--;

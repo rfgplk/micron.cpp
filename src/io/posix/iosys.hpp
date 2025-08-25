@@ -6,7 +6,6 @@
 #pragma once
 
 #include <sys/stat.h>
-#include <type_traits>
 
 #include "../../syscall.hpp"
 #include "../../thread/posix/system.hpp"

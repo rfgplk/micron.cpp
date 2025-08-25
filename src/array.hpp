@@ -5,15 +5,17 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <type_traits>
+#include "type_traits.hpp"
+#include <initializer_list>
 
 #include "algorithm/mem.hpp"
+#include "except.hpp"
 #include "math/sqrt.hpp"
 #include "math/trig.hpp"
+#include "memory/addr.hpp"
 #include "memory/memory.hpp"
 #include "tags.hpp"
 #include "types.hpp"
-#include "except.hpp"
 
 namespace micron
 {
@@ -25,8 +27,8 @@ namespace micron
 // general purpose fundamental array class, only allows fundamental types
 // (int, char, etc) stack allocated, notthreadsafe, mutable. default to 64
 template <class T, size_t N = 64>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T> && (N > 0)
-           && std::is_fundamental_v<T>     // avoid weird stuff with N = 0
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && (N > 0)
+           && micron::is_fundamental_v<T>     // avoid weird stuff with N = 0
 class farray
 {
   T stack[N];
@@ -94,7 +96,7 @@ public:
   template <typename F, size_t M>
   farray &
   operator=(T (&o)[M])
-    requires std::is_array_v<F> && (M <= N)
+    requires micron::is_array_v<F> && (M <= N)
   {
     micron::copy<N>(&o.stack[0], &o[0]);
     return *this;
@@ -102,7 +104,7 @@ public:
   template <typename F>
   farray &
   operator=(const F &o)
-    requires std::is_fundamental_v<F>
+    requires micron::is_fundamental_v<F>
   {
     micron::cmemset<N>(&stack[0], o);
     return *this;
@@ -244,7 +246,7 @@ public:
 // general purpose array class, stack allocated, notthreadsafe, mutable.
 // default to 64
 template <class T, size_t N = 64>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
            && (N > 0)     // avoid weird stuff with N = 0
 class array
 {
@@ -252,7 +254,7 @@ class array
   inline void
   __impl_zero(T *src)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(T());
     } else {
@@ -262,7 +264,7 @@ class array
   void
   __impl_set(T *__restrict src, const T &val)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = val;
     } else {
@@ -272,7 +274,7 @@ class array
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = dest[i];
     } else {
@@ -282,7 +284,7 @@ class array
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(dest[i]);
     } else {
@@ -305,8 +307,8 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  array() { __impl_zero(&stack[0]); }
-  array(const T &o) { __impl_set(&stack[0], o); }
+  array() { __impl_zero(micron::addr(stack[0])); }
+  array(const T &o) { __impl_set(micron::addr(stack[0]), o); }
   array(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
@@ -315,12 +317,45 @@ public:
     for ( T value : lst )
       stack[i++] = micron::move(value);
   }
-  array(const array &o) { __impl_copy(&o.stack[0], &stack[0]); }     // micron::copy<N>(&o.stack[0], &stack[0]); }
+  array(const array &o)
+  {
+    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
+  }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
   array(array &&o)
   {
-    __impl_move(&o.stack[0], &stack[0]);
-    // micron::copy<N>(&o.stack[0], &stack[0]);
-    // micron::cmemset<N>(&stack[0], 0x0);
+    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
+    // micron::cmemset<N>(micron::addr(stack[0], 0x0);
+  }
+  ~array()
+  {
+    // explicit
+    if constexpr ( micron::is_class<T>::value ) {
+      for ( size_t i = 0; i < N; i++ )
+        stack[i].~T();
+    } else {
+      micron::czero<N>(micron::addr(stack[0]));
+    }
+  }
+  iterator
+  begin() noexcept
+  {
+    return micron::addr(stack[0]);
+  }
+  const_iterator
+  cbegin() const noexcept
+  {
+    return micron::addr(stack[0]);
+  }
+  iterator
+  end() noexcept
+  {
+    return micron::addr(stack[N]);
+  }
+  const_iterator
+  cend() const noexcept
+  {
+    return micron::addr(stack[N]);
   }
   size_t
   size() const
@@ -354,30 +389,30 @@ public:
   template <typename F, size_t M>
   array &
   operator=(T (&o)[M])
-    requires std::is_array_v<F> && (M <= N)
+    requires micron::is_array_v<F> && (M <= N)
   {
-    __impl_copy(&o.stack[0], &o[0]);
-    // micron::copy<N>(&o.stack[0], &o[0]);
+    __impl_copy(micron::addr(o.stack[0]), &o[0]);
+    // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
   template <typename F>
   array &
   operator=(const F &o)
-    requires std::is_fundamental_v<F>
+    requires micron::is_fundamental_v<F>
   {
-    micron::cmemset<N>(&stack[0], o);
+    micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
   }
   array &
   operator=(const array &o)
   {
-    __impl_copy(&o.stack[0], &stack[0]);
+    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
   array &
   operator=(array &&o)
   {
-    __impl_move(&o.stack[0], &stack[0]);
+    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
 
@@ -520,28 +555,18 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] = micron::sqrt(static_cast<float>(stack[i]));
   }
-  ~array()
-  {
-    // explicit
-    if constexpr ( std::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i].~T();
-    } else {
-      micron::czero<N>(&stack[0]);
-    }
-  }
 };
 // carray = cache-array. mutable & notthread safe.
 template <class T, size_t N = 64>
-  requires std::is_copy_constructible_v<T> && std::is_move_constructible_v<T> && (N > 0) && ((N * sizeof(T)) % 16 == 0)
-           && (N % 4 == 0)     // alignment just.
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && (N > 0)
+           && ((N * sizeof(T)) % 16 == 0) && (N % 4 == 0)     // alignment just.
 class alignas(32) carray
 {
   T stack[N];
   inline void
   __impl_zero(T *src)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(T());
     } else {
@@ -551,7 +576,7 @@ class alignas(32) carray
   void
   __impl_set(T *__restrict src, const T &val)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = val;
     } else {
@@ -561,7 +586,7 @@ class alignas(32) carray
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = dest[i];
     } else {
@@ -571,7 +596,7 @@ class alignas(32) carray
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(dest[i]);
     } else {
@@ -594,21 +619,21 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  carray() { __impl_zero(&stack[0]); }
+  carray() { __impl_zero(micron::addr(stack[0])); }
   carray(const T &o)
   {
-    __impl_set(&stack[0], o);
-    // if constexpr (std::is_class<T>::value) {
+    __impl_set(micron::addr(stack[0]), o);
+    // if constexpr (micron::is_class<T>::value) {
     //   for (size_t i = 0; i < N; i++)
     //     stack[i] = o;
     // } else {
     //   if constexpr (N * (sizeof(T) / sizeof(byte)) % (256 / 8) == 0)
-    //     micron::memset128(&stack[0], o, N);
+    //     micron::memset128(micron::addr(stack[0], o, N);
     //   else if constexpr (N * (sizeof(T) / sizeof(byte)) % (128 / 8) ==
     //                      0) // verbose for clarity, is it 128-bit aligned
-    //     micron::memset128(&stack[0], o, N);
+    //     micron::memset128(micron::addr(stack[0], o, N);
     //   else if constexpr (true) {
-    //     micron::cmemset<N>(&stack[0], o);
+    //     micron::cmemset<N>(micron::addr(stack[0], o);
     //   }
     // }
   }
@@ -620,15 +645,35 @@ public:
     for ( T value : lst )
       stack[i++] = micron::move(value);
   }
-  carray(const carray &o) { micron::copy<N>(&o.stack[0], &stack[0]); }
+  carray(const carray &o) { micron::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
   carray(carray &&o)
   {
-    __impl_copy(&o.stack[0], &stack[0]);
-    __impl_zero(&o.stack[0]);
-    // micron::copy<N>(&o.stack[0], &stack[0]);
-    // micron::memset(&stack[0], 0x0, N);
+    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_zero(micron::addr(o.stack[0]));
+    // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
+    // micron::memset(micron::addr(stack[0], 0x0, N);
   }
 
+  iterator
+  begin() noexcept
+  {
+    return micron::addr(stack[0]);
+  }
+  const_iterator
+  cbegin() const noexcept
+  {
+    return micron::addr(stack[0]);
+  }
+  iterator
+  end() const noexcept
+  {
+    return micron::addr(stack[N]);
+  }
+  const_iterator
+  cend() const noexcept
+  {
+    return micron::addr(stack[N]);
+  }
   size_t
   size() const
   {
@@ -661,29 +706,29 @@ public:
   template <typename F, size_t M>
   carray &
   operator=(T (&o)[M])
-    requires std::is_array_v<F> && (M <= N)
+    requires micron::is_array_v<F> && (M <= N)
   {
-    __impl_copy(&o[0], &stack[0]);
+    __impl_copy(&o[0], micron::addr(stack[0]));
     return *this;
   }
   template <typename F>
   carray &
   operator=(const F &o)
-    requires std::is_fundamental_v<F>
+    requires micron::is_fundamental_v<F>
   {
-    micron::memset(&stack[0], o, N);
+    micron::memset(micron::addr(stack[0]), o, N);
     return *this;
   }
   carray &
   operator=(const carray &o)
   {
-    __impl_copy(&o.stack[0], &stack[0]);
+    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
   carray &
   operator=(carray &&o)
   {
-    __impl_move(&o.stack[0], &stack[0]);
+    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }
 
   template <size_t M>
@@ -829,11 +874,11 @@ public:
   ~carray()
   {
     // explicit
-    if constexpr ( std::is_class<T>::value ) {
+    if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i].~T();
     } else {
-      micron::czero<N>(&stack[0]);
+      micron::czero<N>(micron::addr(stack[0]));
     }
   }
 };

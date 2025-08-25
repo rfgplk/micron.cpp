@@ -9,7 +9,7 @@
 #include "../memory/cmemory.hpp"
 #include "../types.hpp"
 #include <initializer_list>
-#include <type_traits>
+#include "../type_traits.hpp"
 
 // NOTE: these matrix types take a lot of inspiration from ARMs NEON SIMD extensions
 
@@ -18,7 +18,7 @@ namespace micron
 
 // NOTE: row major
 template <typename B, uint32_t C, uint32_t R>
-  requires(std::is_arithmetic_v<B> && ((C * sizeof(C)) * (R * sizeof(R)) <= (1024 / sizeof(byte))))
+  requires(micron::is_arithmetic_v<B> && ((C * sizeof(C)) * (R * sizeof(R)) <= (1024 / sizeof(byte))))
 struct int_matrix_base {
   static constexpr uint32_t __size = C * R;
   B __mat[__size];     // yes, public for conv.

@@ -118,7 +118,7 @@ load_caps(pid_t p = 0)
 }
 
 template <typename... T>
-concept all_pid = (std::same_as<T, pid_t> && ...);
+concept all_pid = (micron::same_as<T, pid_t> && ...);
 
 template <all_pid... Args>
 micron::svector<cap_t>

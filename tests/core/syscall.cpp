@@ -10,7 +10,7 @@
 int
 main(void)
 {
-  byte* ptr =  reinterpret_cast<byte *>(mcmicron::syscall(SYS_mmap, nullptr, 4096, mc::PROT_READ | mc::PROT_WRITE, mc::MAP_PRIVATE | mc::MAP_ANONYMOUS, -1, 0));
+  byte* ptr =  reinterpret_cast<byte *>(mc::syscall(SYS_mmap, nullptr, 4096, mc::PROT_READ | mc::PROT_WRITE, mc::MAP_PRIVATE | mc::MAP_ANONYMOUS, -1, 0));
   ptr[0] = 'H';
   ptr[1] = 'e';
   ptr[2] = 'l';

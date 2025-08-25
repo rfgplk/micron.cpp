@@ -25,10 +25,10 @@ main(void)
   mc::io::println("Ends with: ", ends_with(test, "ld!"));
   mc::io::println("Ends with: ", ends_with(test_stack, "ld!"));
   mc::io::println("Starts with: ", starts_with(test, "Hel"));
-  mc::io::println(std::strlen("Hello World!") == micron::strlen("Hello World!"));
+  mc::io::println(mc::strlen("Hello World!") == mc::strlen("Hello World!"));
   mc::io::println("Size check: (true) ", test.size() == test_stack.size());
-  mc::io::println("Size check: (true) ", test.size() == strlen("Hello World!"));
-  mc::io::println("Size check: (true) ", test.size() == strlen(test.c_str()));
+  mc::io::println("Size check: (true) ", test.size() == mc::strlen("Hello World!"));
+  mc::io::println("Size check: (true) ", test.size() == mc::strlen(test.c_str()));
   for ( size_t i = 0; i < 100000; i++ )
     test.insert(5, "{||||-bla-||||}");
   mc::string first = "John";

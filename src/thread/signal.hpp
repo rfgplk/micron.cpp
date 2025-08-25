@@ -148,7 +148,7 @@
 #include "../linux/sys/signal.hpp"
 //#include <sys/wait.h>     // waitpid
 //#include <time.h>
-#include <type_traits>
+#include "../type_traits.hpp"
 #include <unistd.h>     // fork, close, daemon
 
 #include "array.hpp"

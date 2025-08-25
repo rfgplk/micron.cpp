@@ -15,6 +15,7 @@
 #include "process.hpp"
 #include "signal.hpp"
 #include "types.hpp"
+#include "type_traits.hpp"
 
 #include "../memory/stack.hpp"
 #include "../linux/calls.hpp"
@@ -66,7 +67,7 @@ template <typename Func, typename... Args> struct _clone_args {
 };
 
 template <typename Func, typename... Args, size_t... Is>
-  requires(std::is_invocable_v<Func, Args...>)
+  requires(micron::is_invocable_v<Func, Args...>)
 auto
 invoke_function(Func func, std::tuple<Args...> &args_tuple, std::index_sequence<Is...>)
 {
@@ -74,7 +75,7 @@ invoke_function(Func func, std::tuple<Args...> &args_tuple, std::index_sequence<
 }
 
 template <typename Func, typename... Args>
-  requires(std::is_invocable_v<Func, Args...>)
+  requires(micron::is_invocable_v<Func, Args...>)
 int
 _thread_kernel(void *cargs)     //-> typename get_return_type<Func>::type
 {
@@ -86,7 +87,7 @@ _thread_kernel(void *cargs)     //-> typename get_return_type<Func>::type
 // index_sequence isn't implemented fully in micron so we have to use the STL
 
 template <int Stack, typename F, typename... Args>
-  requires(std::is_invocable_v<F, Args...>)
+  requires(micron::is_invocable_v<F, Args...>)
 int
 as_thread_read_only(byte *fstack, F f, Args... args)
 {
@@ -99,7 +100,7 @@ as_thread_read_only(byte *fstack, F f, Args... args)
 }
 
 template <int Stack = default_stack_size, typename F, typename... Args>
-  requires(std::is_invocable_v<F, Args...>)
+  requires(micron::is_invocable_v<F, Args...>)
 int
 as_thread_attached(byte *fstack, F f, Args &&...args)
 {
@@ -114,7 +115,7 @@ as_thread_attached(byte *fstack, F f, Args &&...args)
 }
 
 template <int Stack = default_stack_size, typename F, typename... Args>
-  requires(std::is_invocable_v<F, Args...>)
+  requires(micron::is_invocable_v<F, Args...>)
 int
 as_thread_samegroup(byte *fstack, F f, Args &&...args)
 {
@@ -142,7 +143,7 @@ template <int Stack = default_stack_size> class thread
     ::sigaction(SIGCHLD, &sa, nullptr);
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
   {
@@ -166,7 +167,7 @@ public:
     o.fstack = nullptr;
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   thread(F f, Args &&...args)
   {
     __impl_makethread(micron::forward<F>(f), micron::forward<Args>(args)...);
@@ -183,7 +184,7 @@ public:
     return *this;
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   thread &
   operator[](F f, Args &&...args)
   {
@@ -284,7 +285,7 @@ template <int Stack = default_stack_size> class group_thread
     ::sigaction(SIGCHLD, &sa, nullptr);
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
   {
@@ -308,7 +309,7 @@ public:
     o.fstack = nullptr;
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   group_thread(F f, Args &&...args)
   {
     __impl_makethread(micron::forward<F>(f), micron::forward<Args>(args)...);
@@ -325,7 +326,7 @@ public:
     return *this;
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   group_thread &
   operator[](F f, Args &&...args)
   {
@@ -426,7 +427,7 @@ template <int Stack = auto_thread_stack_size> class auto_thread
   using thread_type = thread_tag;
 
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
   {
@@ -456,7 +457,7 @@ public:
   }
   
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   auto_thread(F f, Args &&...args) : pid(0)
   {
     micron::czero<Stack>(fstack);
@@ -481,7 +482,7 @@ public:
     return *this;
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   auto_thread &
   operator[](F f, Args &&...args)
   {
@@ -576,7 +577,7 @@ template <int Stack = auto_thread_stack_size> class read_thread
   using thread_type = thread_tag;
 
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
   {
@@ -606,7 +607,7 @@ public:
     micron::czero<Stack>(o.fstack);
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   read_thread(F f, Args &&...args) : pid(0)
   {
     micron::czero<Stack>(fstack);
@@ -630,7 +631,7 @@ public:
     return *this;
   }
   template <typename F, typename... Args>
-    requires(std::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<F, Args...>)
   read_thread &
   operator[](F f, Args &&...args)
   {
@@ -746,9 +747,9 @@ namespace solo
 
 
 template <typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(std::is_invocable_v<Func, Args...> && sizeof...(Args) == 0
-           && ((std::is_lvalue_reference_v<Args> && ...) or (std::is_rvalue_reference_v<Args> && ...))
-           && (!std::is_same_v<std::decay_t<Args>, Args> && ...))// && (std::is_same_v<std::remove_reference_t<Args>, Args> && ...))
+  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) == 0
+           && ((micron::is_lvalue_reference_v<Args> && ...) or (micron::is_rvalue_reference_v<Args> && ...))
+           && (!micron::is_same_v<micron::decay_t<Args>, Args> && ...))// && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
 auto
 spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
 {
@@ -756,10 +757,10 @@ spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
 }
 
 template <typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(std::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
-           && ((std::is_lvalue_reference_v<Args> && ...) or (std::is_rvalue_reference_v<Args> && ...))
-           && (!std::is_same_v<std::decay_t<Args>, Args> && ...))// && (std::is_same_v<std::remove_reference_t<Args>, Args> && ...))
-// requires(std::is_invocable_v<Func, Args...>)
+  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
+           && ((micron::is_lvalue_reference_v<Args> && ...) or (micron::is_rvalue_reference_v<Args> && ...))
+           && (!micron::is_same_v<micron::decay_t<Args>, Args> && ...))// && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
+// requires(micron::is_invocable_v<Func, Args...>)
 auto
 spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
 {
@@ -768,10 +769,10 @@ spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
 
 
 template <typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(std::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
-           && ((std::is_lvalue_reference_v<Args> && ...))
-           && (!std::is_same_v<std::decay_t<Args>, Args> && ...))
-// requires(std::is_invocable_v<Func, Args...>)
+  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
+           && ((micron::is_lvalue_reference_v<Args> && ...))
+           && (!micron::is_same_v<micron::decay_t<Args>, Args> && ...))
+// requires(micron::is_invocable_v<Func, Args...>)
 auto
 spawn(Func f, const Args &...args) -> __thread_pointer<Tr>
 {
@@ -779,9 +780,9 @@ spawn(Func f, const Args &...args) -> __thread_pointer<Tr>
 }
 
 template <typename Tr = auto_thread<>, typename Func, typename... Args>
-// requires(std::is_invocable_v<Func, Args...>)
-  requires(std::is_invocable_v<Func, Args...> && sizeof...(Args) > 0 && ((!std::is_lvalue_reference_v<Args> && ...) and (!std::is_rvalue_reference_v<Args> && ...))
-           && (!std::is_reference_v<Args> && ...) && (std::is_same_v<std::decay_t<Args>, Args> && ...) && (std::is_same_v<std::remove_reference_t<Args>, Args> && ...))
+// requires(micron::is_invocable_v<Func, Args...>)
+  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0 && ((!micron::is_lvalue_reference_v<Args> && ...) and (!micron::is_rvalue_reference_v<Args> && ...))
+           && (!micron::is_reference_v<Args> && ...) && (micron::is_same_v<micron::decay_t<Args>, Args> && ...) && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
 auto
 spawn(Func f, Args... args) -> __thread_pointer<Tr>
 {
@@ -798,7 +799,7 @@ template <typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) bool
 join(__thread_pointer<Tr> &t)
 {
-  if constexpr ( std::same_as<Tr, group_thread<>> ) {
+  if constexpr ( micron::same_as<Tr, group_thread<>> ) {
     t->try_join();
     t.clear();
   } else {

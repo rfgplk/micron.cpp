@@ -7,8 +7,8 @@
 
 #include "algorithm/mem.hpp"
 #include "types.hpp"
+#include "type_traits.hpp"
 #include <initializer_list>
-#include <type_traits>
 
 namespace micron
 {
@@ -17,8 +17,8 @@ template <typename T, typename F> struct pair {
   F b;     // or second
   pair() : a(T()), b(F()) {}
   template <typename C>
-    requires((std::is_same_v<T, C>) or (std::is_same_v<F, C>)
-             or ((std::is_convertible_v<T, C>) or std::is_convertible_v<F, C>))
+    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>)
+             or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair(std::initializer_list<C> &&lst)
   {
     size_t i = 0;
@@ -32,8 +32,8 @@ template <typename T, typename F> struct pair {
     }
   }
   template <typename C>
-    requires((std::is_same_v<T, C>) or (std::is_same_v<F, C>)
-             or ((std::is_convertible_v<T, C>) or std::is_convertible_v<F, C>))
+    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>)
+             or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair &
   operator=(std::initializer_list<C> &&lst)
   {
@@ -48,13 +48,13 @@ template <typename T, typename F> struct pair {
     }
   }
   template <typename K, typename L>
-    requires(std::is_convertible_v<T, K> and std::is_convertible_v<F, L>)
+    requires(micron::is_convertible_v<T, K> and micron::is_convertible_v<F, L>)
   pair(const K &x, const L &y) : a(static_cast<T>(x)), b(static_cast<F>(y))
   {
   }
   template <typename K, typename L>
-    requires((std::is_convertible_v<T, K> and std::is_convertible_v<F, L>)
-             and (!std::is_same_v<T, K> and !std::is_same_v<F, L>))
+    requires((micron::is_convertible_v<T, K> and micron::is_convertible_v<F, L>)
+             and (!micron::is_same_v<T, K> and !micron::is_same_v<F, L>))
   pair(K &&x, L &&y) : a(micron::move(x)), b(micron::move(y))
   {
   }
@@ -65,22 +65,22 @@ template <typename T, typename F> struct pair {
   template <typename K, typename L> pair(const pair<K, L> &o) : a(static_cast<K>(o.a)), b(static_cast<L>(o.b)) {}
   pair(pair &&o) : a(micron::move(o.a)), b(micron::move(o.b))
   {
-    if constexpr ( std::is_class_v<T> )
+    if constexpr ( micron::is_class_v<T> )
       o.a.~T();
     else
       o.a = 0x0;
-    if constexpr ( std::is_class_v<F> )
+    if constexpr ( micron::is_class_v<F> )
       o.b.~F();
     else
       o.b = 0x0;
   }
   template <typename K, typename L> pair(pair<K, L> &&o) : a(micron::move(o.a)), b(micron::move(o.b))
   {
-    if constexpr ( std::is_class_v<T> )
+    if constexpr ( micron::is_class_v<T> )
       o.a.~T();
     else
       o.a = 0x0;
-    if constexpr ( std::is_class_v<F> )
+    if constexpr ( micron::is_class_v<F> )
       o.b.~F();
     else
       o.b = 0x0;
@@ -116,7 +116,7 @@ template <typename T, typename F> struct pair {
     return *this;
   }
   template <typename K = T>
-    requires(std::is_convertible_v<T, K>)
+    requires(micron::is_convertible_v<T, K>)
   pair &
   operator=(const K &x)
   {
@@ -125,7 +125,7 @@ template <typename T, typename F> struct pair {
   }
 
   template <typename L = F>
-    requires(std::is_convertible_v<F, L>)
+    requires(micron::is_convertible_v<F, L>)
   pair &
   operator=(const L &y)
   {
@@ -139,7 +139,7 @@ template <typename T, typename F> struct pair {
     return *this;
   }
   template <typename L = F>
-    requires(!std::same_as<T, F>)
+    requires(!micron::same_as<T, F>)
   pair &
   operator=(L &&y)
   {

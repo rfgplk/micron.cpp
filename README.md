@@ -51,8 +51,6 @@ Additionally, micron has taken great inspiration from the implementation of stan
 Is *micron* entirely independent of the STL yet? 
 
 No. There are still a few specific headers needed to compile *micron* (although they will be removed - soon), these are:
-- \<type_traits>
-- \<concepts>
 - \<initializer_list>
 
 

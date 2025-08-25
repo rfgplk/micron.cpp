@@ -23,6 +23,18 @@ template <size_t N> using utfsstring = sstring<N, unicode8>;
 template <size_t N> using utf16sstring = sstring<N, unicode16>;
 template <size_t N> using utf32sstring = sstring<N, unicode32>;
 
+template <typename U, typename V>
+constexpr bool
+lexi_compare(U a, U b, V c, V d)
+{
+  for ( ; a != b && c != d; ++a, ++c ) {
+    if ( *a < *c )
+      return true;
+    if ( *c < *a )
+      return false;
+  }
+  return (a == b) && (c != d);
+}
 inline string
 operator+(string &&str, string &&data)
 {
@@ -266,5 +278,19 @@ operator<<(O &os, sstring<N, T> &&o)
 {
   os << o.c_str();
   return os;
+}
+
+template <typename T>
+bool
+operator<(const hstring<T> &lhs, const hstring<T> &rhs)
+{
+  return lexi_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template <typename T>
+bool
+operator>(const hstring<T> &lhs, const hstring<T> &rhs)
+{
+  return lexi_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end());
 }
 };

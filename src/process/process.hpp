@@ -90,7 +90,7 @@ run_processes(posix::process_list_t &n)
 
 // implementation of daemon
 template <int Stack = default_stack_size, typename F, typename... Args>
-  requires std::is_function_v<F> or std::is_function_v<std::remove_pointer_t<F>>
+  requires micron::is_function_v<F> or micron::is_function_v<micron::remove_pointer_t<F>>
 int
 daemon(F f, Args &&...args)
 {

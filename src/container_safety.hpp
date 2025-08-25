@@ -5,17 +5,19 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "type_traits.hpp"
+
 namespace micron
 {
 typedef unsigned char Safe;
 typedef double Unsafe;
 template <typename T>
-concept is_safe = std::same_as<T, Safe>;
+concept is_safe = micron::same_as<T, Safe>;
 template <typename T>
-concept is_unsafe = std::same_as<T, Unsafe>;
+concept is_unsafe = micron::same_as<T, Unsafe>;
 constexpr bool
 safe(auto s)
 {
-  return std::is_same_v<decltype(s), Safe>;
+  return micron::is_same_v<decltype(s), Safe>;
 };
 };     // namespace micron

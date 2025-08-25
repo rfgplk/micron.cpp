@@ -8,8 +8,6 @@
 #include "../mutex/token.hpp"
 #include "../types.hpp"
 
-#include <type_traits>
-
 namespace micron
 {
 enum class states {

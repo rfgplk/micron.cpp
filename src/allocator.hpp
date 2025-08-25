@@ -7,9 +7,12 @@
 
 #include <xmmintrin.h>
 
+#include "allocation/__internal.hpp"
 #include "allocation/allocate_linux.hpp"
 #include "allocation/system_rs.hpp"
+#include "concepts.hpp"
 #include "memory/memory.hpp"
+#include "type_traits.hpp"
 #include "types.hpp"
 
 namespace micron
@@ -67,10 +70,10 @@ struct linked_allocation_policy {
 
 template <typename P>
 concept is_policy = requires {
-  { P::concurrent } -> std::same_as<const bool &>;
-  { P::on_grow } -> std::same_as<const uint32_t &>;
-  { P::pooling } -> std::same_as<const uint32_t &>;
-  { P::granularity } -> std::same_as<const uint32_t &>;
+  { P::concurrent } -> micron::same_as<const bool &>;
+  { P::on_grow } -> micron::same_as<const uint32_t &>;
+  { P::pooling } -> micron::same_as<const uint32_t &>;
+  { P::granularity } -> micron::same_as<const uint32_t &>;
 };
 // default allocator, use malloc/free
 template <typename T> class stl_allocator
@@ -81,7 +84,7 @@ template <typename T> class stl_allocator
   T *
   allocate(size_t cnt)
   {
-    const auto ptr = std::malloc(sizeof(T) * cnt);
+    const auto ptr = micron::__alloc(sizeof(T) * cnt);     // std::malloc(sizeof(T) * cnt);
     if ( !ptr )
       throw except::memory_error();
     return static_cast<T *>(ptr);
@@ -89,7 +92,7 @@ template <typename T> class stl_allocator
   void
   deallocate(T *ptr, size_t cnt)
   {
-    std::free(ptr);
+    micron::__free(ptr);
   }
   friend bool
   operator==(const stl_allocator<T> &a, const stl_allocator<T> &b)

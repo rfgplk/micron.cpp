@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/io/console.hpp"
 #include "../../src/pointer.hpp"
-#include "../../src/vector/vector.hpp"
 #include "../../src/std.h"
+#include "../../src/vector/vector.hpp"
 
 #include "../../src/string/strings.h"
 
@@ -19,19 +19,22 @@ main(void)
   }
   {
     mc::string *test = new mc::string("Reset");
-    mc::ptr<mc::string> wptr("Testing weak pointers");
-    mc::console(*wptr);
-    wptr = test;
-    mc::console(*wptr);
+    mc::ptr<mc::string> uptr("Testing unique pointers");
+    mc::console(*uptr);
+    uptr = test;
+    mc::console("Through unique pointer: ", *uptr);
+    mc::wptr<mc::string> p(uptr);
+    mc::console(p == uptr);
+    mc::console("Through weak pointer: ", *p);
   }
   {
-    mc::shared<mc::string> sptr("Testing shared pointers");
-    mc::shared<mc::string> second(sptr);
-    mc::console(*sptr);
-    (*sptr)[2] = 'd';
+    mc::shared<mc::string> shptr("Testing shared pointers");
+    mc::shared<mc::string> second(shptr);
+    mc::console(*shptr);
+    (*shptr)[2] = 'd';
     mc::console(*second);
-    mc::const_pointer<mc::wstr> cptr("你好嗎？");
-    mc::console(*cptr);
+    mc::const_pointer<mc::wstr> cnptr("你好嗎？");
+    mc::console(*cnptr);
   }
   return 0;
 }

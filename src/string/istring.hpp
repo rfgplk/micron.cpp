@@ -6,7 +6,6 @@
 #pragma once
 
 #include "../except.hpp"
-#include <type_traits>
 
 #include "../algorithm/mem.hpp"
 #include "../allocation/chunks.hpp"

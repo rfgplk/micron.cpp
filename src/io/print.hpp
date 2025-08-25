@@ -7,9 +7,9 @@
 
 //#include <cstdio>
 //#include <cstring>
-#include <concepts>
-#include <type_traits>
 #include <locale.h>
+#include "../type_traits.hpp"
+#include "../concepts.hpp"
 
 #include "../memory/memory.hpp"
 #include "../types.hpp"
@@ -23,12 +23,12 @@ namespace io
 
 template <typename T>
 concept is_container = requires(T t) {
-  { t.cbegin() } -> std::same_as<typename T::const_iterator>;
-  { t.cend() } -> std::same_as<typename T::const_iterator>;
-  { t.begin() } -> std::same_as<typename T::iterator>;
-  { t.end() } -> std::same_as<typename T::iterator>;
+  { t.cbegin() } -> micron::same_as<typename T::const_iterator>;
+  { t.cend() } -> micron::same_as<typename T::const_iterator>;
+  { t.begin() } -> micron::same_as<typename T::iterator>;
+  { t.end() } -> micron::same_as<typename T::iterator>;
 } && !requires(T t) {
-  { t.c_str() } -> std::same_as<const char *>;
+  { t.c_str() } -> micron::same_as<const char *>;
 };
 
 // PRINTK BLOCK OF FUNCS
@@ -55,11 +55,11 @@ sprintk(const char *c, size_t len)
 // ambiguity
 template <typename T>
 concept has_cstr = requires(T t) {
-  { t.c_str() } -> std::same_as<const char *>;
+  { t.c_str() } -> micron::same_as<const char *>;
 };
 // must be a class that provides .c_str()
 template <has_cstr T, int outstream = STDOUT_FILENO>
-  requires std::is_class_v<T>
+  requires micron::is_class_v<T>
 void
 printk(const T &str)
 {
@@ -71,7 +71,7 @@ printk(const T &str)
 
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_pointer_v<T>
+  requires micron::is_pointer_v<T>
 void
 printk(const T &x)
 {
@@ -86,12 +86,12 @@ printk(const T &x)
 
 // if type is arithmetic or not
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_arithmetic_v<T>
+  requires micron::is_arithmetic_v<T>
 void
 printk(const T &x)
 {
   char print_buffer[128];     // long enough, overkill
-  if constexpr ( std::same_as<T, bool> ) {
+  if constexpr ( micron::same_as<T, bool> ) {
     const char *ptr = format::bool_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -99,7 +99,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, i8> ) {
+  if constexpr ( micron::same_as<T, i8> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -107,7 +107,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, u8> ) {
+  if constexpr ( micron::same_as<T, u8> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -115,7 +115,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, i16> ) {
+  if constexpr ( micron::same_as<T, i16> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -123,7 +123,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, u16> ) {
+  if constexpr ( micron::same_as<T, u16> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -131,7 +131,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, int> ) {
+  if constexpr ( micron::same_as<T, int> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -139,7 +139,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, uint> ) {
+  if constexpr ( micron::same_as<T, uint> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -147,7 +147,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, long> ) {
+  if constexpr ( micron::same_as<T, long> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -155,7 +155,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, unsigned long> ) {
+  if constexpr ( micron::same_as<T, unsigned long> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -163,7 +163,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, char> ) {
+  if constexpr ( micron::same_as<T, char> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -171,7 +171,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, unsigned char> ) {
+  if constexpr ( micron::same_as<T, unsigned char> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -179,7 +179,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, short> ) {
+  if constexpr ( micron::same_as<T, short> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -187,7 +187,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, unsigned short> ) {
+  if constexpr ( micron::same_as<T, unsigned short> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -195,7 +195,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, long long> ) {
+  if constexpr ( micron::same_as<T, long long> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -203,7 +203,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, unsigned long long> ) {
+  if constexpr ( micron::same_as<T, unsigned long long> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -211,7 +211,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, i32> ) {
+  if constexpr ( micron::same_as<T, i32> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -219,7 +219,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, u32> or std::same_as<T, unsigned> ) {
+  if constexpr ( micron::same_as<T, u32> or micron::same_as<T, unsigned> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -227,7 +227,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, i64> ) {
+  if constexpr ( micron::same_as<T, i64> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -235,7 +235,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, u64> ) {
+  if constexpr ( micron::same_as<T, u64> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -244,7 +244,7 @@ printk(const T &x)
     return;
   }
   // just in case it's different from u64
-  if constexpr ( std::same_as<T, max_t> or std::same_as<T, ssize_t> ) {
+  if constexpr ( micron::same_as<T, max_t> or micron::same_as<T, ssize_t> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -252,7 +252,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, umax_t> or std::same_as<T, size_t> ) {
+  if constexpr ( micron::same_as<T, umax_t> or micron::same_as<T, size_t> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -260,7 +260,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, flong> ) {
+  if constexpr ( micron::same_as<T, flong> ) {
     const char *ptr = format::flong_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -268,7 +268,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, f128> ) {
+  if constexpr ( micron::same_as<T, f128> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -276,7 +276,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, f64> ) {
+  if constexpr ( micron::same_as<T, f64> ) {
     const char *ptr = format::f64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -285,7 +285,7 @@ printk(const T &x)
     return;
   }
 
-  if constexpr ( std::same_as<T, double> ) {
+  if constexpr ( micron::same_as<T, double> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -293,7 +293,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, float> ) {
+  if constexpr ( micron::same_as<T, float> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -301,7 +301,7 @@ printk(const T &x)
       fput(ptr, stderr);
     return;
   }
-  if constexpr ( std::same_as<T, f32> ) {
+  if constexpr ( micron::same_as<T, f32> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO )
       fput(ptr, stdout);
@@ -317,7 +317,7 @@ printk(const T &x)
 
 // spec case, single byte
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_same_v<T, byte> && (sizeof(T) == 1)
+  requires micron::is_same_v<T, byte> && (sizeof(T) == 1)
 void printk(T &x)
 {
   byte c[2];
@@ -330,7 +330,7 @@ void printk(T &x)
 }
 // non null trm string
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_same_v<T, byte *>
+  requires micron::is_same_v<T, byte *>
 void
 printk(T ptr, size_t len)
 {
@@ -397,7 +397,7 @@ sprintkn(const char *c, size_t len)
 // raw print
 // must be a class that provides .c_str()
 template <has_cstr T, int outstream = STDOUT_FILENO>
-  requires (std::is_class_v<T>) && (std::same_as<typename T::value_type, char8_t>)
+  requires (micron::is_class_v<T>) && (micron::same_as<typename T::value_type, char8_t>)
 void
 printkn(const T &str)
 {
@@ -411,7 +411,7 @@ printkn(const T &str)
 }
 
 template <has_cstr T, int outstream = STDOUT_FILENO>
-  requires (std::is_class_v<T>) && (std::same_as<typename T::value_type, char>)
+  requires (micron::is_class_v<T>) && (micron::same_as<typename T::value_type, char>)
 void
 printkn(const T &str)
 {
@@ -425,7 +425,7 @@ printkn(const T &str)
 }
 
 template <has_cstr T, int outstream = STDOUT_FILENO>
-  requires (std::is_class_v<T>) && (std::same_as<typename T::value_type, wchar_t>)
+  requires (micron::is_class_v<T>) && (micron::same_as<typename T::value_type, wchar_t>)
 void
 printkn(const T &str)
 {
@@ -439,7 +439,7 @@ printkn(const T &str)
 }
 
 template <has_cstr T, int outstream = STDOUT_FILENO>
-  requires (std::is_class_v<T>) && (std::same_as<typename T::value_type, char32_t>)
+  requires (micron::is_class_v<T>) && (micron::same_as<typename T::value_type, char32_t>)
 void
 printkn(const T &str)
 {
@@ -453,7 +453,7 @@ printkn(const T &str)
 }
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_pointer_v<T>
+  requires micron::is_pointer_v<T>
 void
 printkn(const T &x)
 {
@@ -471,12 +471,12 @@ printkn(const T &x)
 
 // if type is arithmetic or not
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_arithmetic_v<T>
+  requires micron::is_arithmetic_v<T>
 void
 printkn(const T &x)
 {
   char print_buffer[128];     // long enough, overkill
-  if constexpr ( std::same_as<T, bool> ) {
+  if constexpr ( micron::same_as<T, bool> ) {
     const char *ptr = format::bool_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -487,7 +487,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, i8> or std::same_as<T, u8> ) {
+  if constexpr ( micron::same_as<T, i8> or micron::same_as<T, u8> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -498,7 +498,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, i16> or std::same_as<T, u16> ) {
+  if constexpr ( micron::same_as<T, i16> or micron::same_as<T, u16> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -509,7 +509,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, i32> or std::same_as<T, u32> or std::same_as<T, unsigned> ) {
+  if constexpr ( micron::same_as<T, i32> or micron::same_as<T, u32> or micron::same_as<T, unsigned> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -520,7 +520,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, i64> or std::same_as<T, u64> ) {
+  if constexpr ( micron::same_as<T, i64> or micron::same_as<T, u64> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -532,7 +532,7 @@ printkn(const T &x)
     return;
   }
   // just in case it's different from u64
-  if constexpr ( std::same_as<T, max_t> or std::same_as<T, umax_t> ) {
+  if constexpr ( micron::same_as<T, max_t> or micron::same_as<T, umax_t> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -543,7 +543,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, flong> ) {
+  if constexpr ( micron::same_as<T, flong> ) {
     const char *ptr = format::flong_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -554,7 +554,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, f128> ) {
+  if constexpr ( micron::same_as<T, f128> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -565,7 +565,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, f64> ) {
+  if constexpr ( micron::same_as<T, f64> ) {
     const char *ptr = format::f64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -576,7 +576,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, double> ) {
+  if constexpr ( micron::same_as<T, double> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -587,7 +587,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, float> ) {
+  if constexpr ( micron::same_as<T, float> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -598,7 +598,7 @@ printkn(const T &x)
     }
     return;
   }
-  if constexpr ( std::same_as<T, f32> ) {
+  if constexpr ( micron::same_as<T, f32> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == STDOUT_FILENO ) {
       fput(ptr, stdout);
@@ -617,7 +617,7 @@ printkn(const T &x)
 
 // spec case, single byte
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_same_v<T, byte> && (sizeof(T) == 1)
+  requires micron::is_same_v<T, byte> && (sizeof(T) == 1)
 void printkn(T &x)
 {
   byte c[3];
@@ -631,7 +631,7 @@ void printkn(T &x)
 }
 // non null trm string
 template <typename T, int outstream = STDOUT_FILENO>
-  requires std::is_same_v<T, byte *>
+  requires micron::is_same_v<T, byte *>
 void
 printkn(T ptr, size_t len)
 {

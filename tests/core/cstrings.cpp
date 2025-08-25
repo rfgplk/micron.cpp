@@ -20,9 +20,9 @@ main(void) {
   const char* a = "fdgjfidgiodfg";
   const char* b = "fdgjfidgiodfg";
   const char* c = "dfg";
-  micron::console(strcmp(a, b));
-  micron::console(strcmp(b, a));
-  micron::console(strcmp(b, c));
+  micron::console(mc::strcmp(a, b));
+  micron::console(mc::strcmp(b, a));
+  micron::console(mc::strcmp(b, c));
   
   mc::istring ic = "Hello!";
   auto id = ic.append("hi");

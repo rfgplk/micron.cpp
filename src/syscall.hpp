@@ -4,6 +4,10 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wextra"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #include "syscall_x86_64.hpp"
 
@@ -3699,3 +3703,5 @@
 #ifdef __NR_writev
 #define SYS_writev __NR_writev
 #endif
+
+#pragma GCC diagnostic pop

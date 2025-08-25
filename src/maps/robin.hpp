@@ -13,8 +13,8 @@
 #include "except.hpp"
 #include "tags.hpp"
 #include "types.hpp"
-#include <concepts>
-#include <type_traits>
+#include "concepts.hpp"
+#include "type_traits.hpp"
 
 namespace micron
 {
@@ -55,7 +55,7 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
 // non STL compliant, compare predicate won't go in here
 // this is a hash robin_map container which implements robin hood h. allc. under the hood
 template <typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
-  requires std::is_move_constructible_v<V>
+  requires micron::is_move_constructible_v<V>
 class robin_map : private Alloc, public immutable_memory<Nd>
 {
   inline hash64_t
@@ -145,7 +145,7 @@ public:
   void
   clear()
   {
-    if constexpr ( std::is_object_v<V> ) {
+    if constexpr ( micron::is_object_v<V> ) {
       for ( size_t i = 0; i < immutable_memory<Nd>::capacity; i++ )
         if ( __access(i).key )
           __access(i).~Nd();

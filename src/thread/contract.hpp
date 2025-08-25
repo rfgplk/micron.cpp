@@ -7,13 +7,15 @@
 
 #include "../mutex/spinlock.hpp"
 #include "../types.hpp"
-#include <type_traits>
+#include "../type_traits.hpp"
+
+//TODO: implement
 
 namespace micron
 {
 
 template <typename K, typename... Args>
-  requires(std::is_invocable_v<K, Args...>)
+  requires(micron::is_invocable_v<K, Args...>)
 class contract
 {
   spin_lock lck;

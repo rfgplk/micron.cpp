@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../types.hpp"
+#include "../type_traits.hpp"
 
 #include <immintrin.h>
 #include <xmmintrin.h>
@@ -13,7 +14,7 @@
 namespace micron
 {
 template <typename T>
-  requires(!std::is_null_pointer_v<T>)
+  requires(!micron::is_null_pointer_v<T>)
 inline size_t
 strlen(const T *str)
 {
@@ -74,7 +75,7 @@ strlen256(const T *str)
 }
 
 template <typename T, typename F>
-  requires std::is_convertible_v<T, F>
+  requires micron::is_convertible_v<T, F>
 const T *
 strstr(const T *src, const F *fnd)
 {
