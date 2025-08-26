@@ -26,7 +26,8 @@ namespace micron
 {
 // Fast vector class, equivalent to vector but with no bounds checking
 template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
+               && micron::is_move_assignable_v<T>
 class fvector : private Alloc, public contiguous_memory_no_copy<T>
 {
   using __mem = contiguous_memory_no_copy<T>;

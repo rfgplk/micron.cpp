@@ -7,7 +7,6 @@
 
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/mem.hpp"
-#include "../io/print.hpp"
 #include "../pointer.hpp"
 #include "../types.hpp"
 #include "vector.hpp"
@@ -20,12 +19,29 @@ namespace micron
 // equivalent of inplace_vector, should be used over vector in almost all use
 // cases
 template <typename T, size_t N = 64>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
+           && micron::is_move_assignable_v<T>
 class svector
 {
   T stack[N];
-  size_t length;
+  size_t length = 0;
 
+  // shallow copy routine
+  inline void
+  shallow_move(T *dest, T *src, size_t cnt)
+  {
+    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
+    micron::memset(reinterpret_cast<byte *>(src), 0x0, cnt);
+    // micron::memmove(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
+  };
+  // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
+  // cause segfaulting if underlying doesn't account for double deletes)
+  inline void
+  deep_move(T *dest, T *src, size_t cnt)
+  {
+    for ( size_t i = 0; i < cnt; i++ )
+      dest[i] = micron::move(src[i]);
+  };
   // shallow copy routine
   inline void
   shallow_copy(T *dest, T *src, size_t cnt)
@@ -43,10 +59,20 @@ class svector
   inline void
   __impl_copy(T *dest, T *src, size_t cnt)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       deep_copy(dest, src, cnt);
     } else {
       shallow_copy(dest, src, cnt);
+    }
+  }
+
+  inline void
+  __impl_move(T *dest, T *src, size_t cnt)
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      deep_move(dest, src, cnt);
+    } else {
+      shallow_move(dest, src, cnt);
     }
   }
 
@@ -64,8 +90,14 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  ~svector() {};
-  svector() : length(0) {};
+  ~svector()
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
+      for ( size_t n = 0; n < length; n++ )
+        stack[n].~T();
+    }
+  }
+  svector(void) : length(0) {};
   template <typename... Args> svector(Args... args)
   {
     for ( size_t n = 0; n < N; n++ )
@@ -118,7 +150,7 @@ public:
   {
     if ( lst.size() > N )
       throw except::runtime_error("error micron::svector() initializer_list too large.");
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t i = 0;
       for ( T value : lst )
         stack[i++] = value;
@@ -130,8 +162,9 @@ public:
   };
   svector(svector &&o)
   {
-    micron::copy<N>(&o.stack[0], &stack[0]);
-    micron::zero<N>(&o.stack[0]);
+    __impl_move(&stack[0], &o.stack[0]);
+    // micron::copy<N>(&o.stack[0], &stack[0]);
+    // micron::zero<N>(&o.stack[0]);
     length = o.length;
     o.length = 0;
   };
@@ -182,6 +215,26 @@ public:
       throw except::runtime_error("micron::svector at() out of range.");
     return stack[N];
   }
+  const_iterator
+  front() const
+  {
+    return &stack[0];
+  };
+  iterator
+  front()
+  {
+    return &stack[0];
+  };
+  const_iterator
+  back() const
+  {
+    return &stack[length - 1];
+  };
+  iterator
+  back()
+  {
+    return &stack[length - 1];
+  };
   iterator
   begin()
   {
@@ -303,12 +356,12 @@ public:
   template <typename C = T>
   svector &
   insert(iterator itr, const C &i)
-  { 
-     if ( length + 1 >= N )
-       throw except::runtime_error("micron::svector insert() out of range.");
-     micron::bytemove(itr + sizeof(C), itr, sizeof(C) / sizeof(byte));
-     *itr = i;
-     length += 1;
+  {
+    if ( length + 1 >= N )
+      throw except::runtime_error("micron::svector insert() out of range.");
+    micron::bytemove(itr + sizeof(C), itr, sizeof(C) / sizeof(byte));
+    *itr = i;
+    length += 1;
     return *this;
   }
 };

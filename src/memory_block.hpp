@@ -5,8 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <xmmintrin.h>
-
 #include "algorithm/mem.hpp"
 #include "allocator.hpp"
 #include "except.hpp"

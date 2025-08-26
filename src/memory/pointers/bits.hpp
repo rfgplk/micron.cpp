@@ -7,6 +7,7 @@
 
 #include "../../tags.hpp"
 #include "../../type_traits.hpp"
+#include "../../concepts.hpp"
 #include "../../types.hpp"
 #include "atomic/atomic.hpp"
 #include "except.hpp"

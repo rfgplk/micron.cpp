@@ -8,8 +8,8 @@
 #include "../bits.hpp"
 #include "../endian.hpp"
 #include "../fp.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 
 namespace micron
 {
@@ -205,6 +205,17 @@ maxf128(flong x, flong y)
 {
   return __builtin_fmaxl(x, y);
 }
+constexpr i32
+log2(i32 x)
+{
+  return (i32)31 - (i32)__builtin_clz(x);
+}
+
+constexpr i64
+log2ll(i64 x)
+{
+  return (i64)63 - (i64)__builtin_clzll(x);
+}
 constexpr f32
 log10f32(f32 x)
 {
@@ -251,7 +262,7 @@ round(T t)
 template <typename T>
 T
 ceil(T s)
-  requires(micron::is_floating_point_v<T>)
+  requires(micron::is_floating_point_v<T> or micron::is_integral_v<T>)
 {
   ssize_t i = static_cast<ssize_t>(s);
   return (s > i) ? static_cast<T>(i + 1) : static_cast<T>(i);
@@ -259,7 +270,7 @@ ceil(T s)
 template <typename T>
 T
 floor(T s)
-  requires(micron::is_floating_point_v<T>)
+  requires(micron::is_floating_point_v<T> or micron::is_integral_v<T>)
 {
   return static_cast<T>(static_cast<ssize_t>(s));
 }

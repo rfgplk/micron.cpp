@@ -11,6 +11,8 @@ for root, dirs, files in os.walk("src/", followlinks=False):
         if ext in source_exts:
             path = os.path.join(root, file)
             try:
+                if "simd/intrin.hpp" in path:
+                    continue
                 with open(path, "r", encoding="utf-8") as f:
                     for line in f:
                         stripped = line.strip()

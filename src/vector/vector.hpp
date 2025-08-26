@@ -11,7 +11,7 @@
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/mem.hpp"
 #include "../allocation/chunks.hpp"
-#include "../allocator.hpp"
+#include "../allocation/allocator_types.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
@@ -27,7 +27,8 @@ namespace micron
 // Regular vector class, always safe, mutable, notthread safe, cannot be
 // copied for performance reasons (just move it, or use a slice for that)
 template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
+  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
+               && micron::is_move_assignable_v<T>
 class vector : private Alloc, public contiguous_memory_no_copy<T>
 {
   using __mem = contiguous_memory_no_copy<T>;
@@ -50,10 +51,31 @@ class vector : private Alloc, public contiguous_memory_no_copy<T>
   inline void
   __impl_copy(T *dest, T *src, size_t cnt)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       deep_copy(dest, src, cnt);
     } else {
       shallow_copy(dest, src, cnt);
+    }
+  }
+  inline void
+  shallow_move(T *dest, T *src, size_t cnt)
+  {
+    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
+    micron::memset(reinterpret_cast<byte *>(src), 0x0, cnt);
+  };
+  inline void
+  deep_move(T *dest, T *src, size_t cnt)
+  {
+    for ( size_t i = 0; i < cnt; i++ )
+      dest[i] = micron::move(src[i]);
+  };
+  inline void
+  __impl_move(T *dest, T *src, size_t cnt)
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      deep_move(dest, src, cnt);
+    } else {
+      shallow_move(dest, src, cnt);
     }
   }
 
@@ -81,7 +103,7 @@ public:
   }
   vector(const std::initializer_list<T> &lst) : contiguous_memory_no_copy<T>(this->create(sizeof(T) * lst.size()))
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t i = 0;
       for ( T &&value : lst ) {
         new (&__mem::memory[i++]) T(micron::move(value));
@@ -100,7 +122,7 @@ public:
         };
   vector(const size_t n) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T();
     } else {
@@ -119,7 +141,7 @@ public:
   };
   vector(size_t n, const T &init_value) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(init_value);
     } else {
@@ -131,7 +153,7 @@ public:
   vector(size_t n, T &&init_value) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
   {
     T tmp = micron::move(init_value);
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(tmp);
     } else {
@@ -596,7 +618,7 @@ public:
   inline void
   push_back(const T &v)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       if ( (__mem::length + 1 <= __mem::capacity) ) {
         new (&__mem::memory[__mem::length++]) T(v);
         return;
@@ -617,7 +639,7 @@ public:
   inline void
   push_back(T &&v)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       if ( (__mem::length + 1 <= __mem::capacity) ) {
         new (&__mem::memory[__mem::length++]) T(v);
         return;
@@ -639,7 +661,7 @@ public:
   inline void
   pop_back()
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       (__mem::memory)[(__mem::length - 1)].~T();
     } else {
       (__mem::memory)[(__mem::length - 1)] = 0x0;
@@ -652,11 +674,11 @@ public:
   {
     if ( n >= end() or n < begin() )
       throw except::library_error("micron::vector erase(): out of allocated memory range.");
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       n->~T();
     } else {
     }
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t _n = (n - cbegin());
       for ( size_t i = _n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
@@ -670,12 +692,12 @@ public:
   {
     if ( n >= size() )
       throw except::library_error("micron::vector erase(): out of allocated memory range.");
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       ~(__mem::memory)[n]();
     } else {
     }
 
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t _n = (n - cbegin());
       for ( size_t i = n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
@@ -690,7 +712,7 @@ public:
   {
     if ( !__mem::length )
       return;
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < __mem::length; i++ )
         (__mem::memory)[i].~T();
     }

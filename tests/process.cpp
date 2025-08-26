@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/process/process.hpp"
+#include "../src/linux/process/process.hpp"
 #include "../src/control.hpp"
 #include "../src/std.h"
 #include "../src/thread/signal.hpp"

@@ -14,18 +14,18 @@
 //#include <sys/wait.h>     // waitpid
 #include <unistd.h>       // fork, close, daemon
 
-#include "../thread/signal.hpp"
+#include "../../thread/signal.hpp"
 
 #include "wait.hpp"
-#include "../concepts.hpp"
-#include "../except.hpp"
-#include "../memory/actions.hpp"
-#include "../memory/mman.h"
-#include "../memory/stack.hpp"
-#include "../string/strings.h"
-#include "../vector/fvector.hpp"
-#include "../vector/vector.hpp"
-#include "../vector/svector.hpp"
+#include "../../concepts.hpp"
+#include "../../except.hpp"
+#include "../../memory/actions.hpp"
+#include "../../memory/mman.h"
+#include "../../memory/stack.hpp"
+#include "../../string/strings.h"
+#include "../../vector/fvector.hpp"
+#include "../../vector/vector.hpp"
+#include "../../vector/svector.hpp"
 
 #include "callbacks.hpp"
 #include "structs.hpp"

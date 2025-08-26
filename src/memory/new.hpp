@@ -6,11 +6,12 @@
 #pragma once
 
 #include "../except.hpp"
+#include "../memory/actions.hpp"
 #include "../types.hpp"
 
 #include "../allocation/__internal.hpp"
 
-//#define ALLOCATOR_DEBUG 1
+// #define ALLOCATOR_DEBUG 1
 #ifdef ALLOCATOR_DEBUG
 #include "../io/console.hpp"
 #define ALLOC_MESSAGE(x, ...)                                                                                           \
@@ -28,7 +29,6 @@ constexpr static const bool __micron_global__alloc_debug = false;
 #endif
 
 // TODO: add C++17 aligning overloads
-
 
 /*
 template <typename... Args>
@@ -69,7 +69,7 @@ operator new(size_t size)
 
 template <typename P>
 void *
-operator new(size_t size, P* ptr)
+operator new(size_t size, P *ptr)
 {
   ALLOC_MESSAGE("new(", size, ")");
   ALLOC_MESSAGE("at(", ptr, ")");

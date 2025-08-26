@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 
 #include "../../syscall.hpp"
-#include "../../thread/posix/system.hpp"
+#include "../../linux/process/system.hpp"
 
 // #include <sys/syscall.h>
 

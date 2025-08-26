@@ -7,8 +7,10 @@
 
 // think about moving to /memory
 
+#include "../linux/linux_types.hpp"
 #include "../syscall.hpp"
-#include <unistd.h>
+#include "../types.hpp"
+// #include <unistd.h>
 
 namespace micron
 {
@@ -51,7 +53,7 @@ constexpr int MAP_HUGETLB = 0x040000;         /* create a huge page mapping */
 constexpr int MAP_SYNC = 0x080000;            /* perform synchronous page faults for the mapping */
 constexpr int MAP_FIXED_NOREPLACE = 0x100000; /* MAP_FIXED which doesn't unmap underlying mapping */
 
-constexpr int MAP_UNINITIALIZED =  0x4000000; /* For anonymous mmap, memory could be
+constexpr int MAP_UNINITIALIZED = 0x4000000;
 
 /* When MAP_HUGETLB is set, bits [26:31] encode the log2 of the huge page size.
 The following definitions are associated with this huge page size encoding.
@@ -185,7 +187,7 @@ munlock(const void *addr, size_t len)
 }
 
 int
-memfd_create(const char* name, unsigned int flags)
+memfd_create(const char *name, unsigned int flags)
 {
   return (int)micron::syscall(SYS_memfd_create, name, flags);
 }
@@ -193,4 +195,23 @@ memfd_create(const char* name, unsigned int flags)
 int mlockall();
 int munlockall();
 
+template <typename T>
+auto
+mprotect(T *addr, size_t __length, int prot)
+{
+  return micron::syscall(SYS_mprotect, addr, __length, prot);
+}
+
+template <typename T>
+auto
+brk(T *addr)
+{
+  return micron::syscall(SYS_brk, addr);
+}
+
+// auto
+// sbrk(intptr_t inc)
+//{
+//   return micron::syscall(SYS_sbrk, inc);
+// }
 };

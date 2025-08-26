@@ -5,11 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../io/posix/iosys.hpp"
+#include "../../io/posix/iosys.hpp"
 
-#include "../array.hpp"
-#include "../mutex/mutex.hpp"
-#include "../mutex/locks.hpp"
+#include "../../array.hpp"
+#include "../../mutex/mutex.hpp"
+#include "../../mutex/locks.hpp"
 
 namespace micron
 {

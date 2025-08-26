@@ -8,8 +8,7 @@
 #include "../types.hpp"
 #include "../type_traits.hpp"
 
-#include <immintrin.h>
-#include <xmmintrin.h>
+#include "../simd/intrin.hpp"
 
 namespace micron
 {

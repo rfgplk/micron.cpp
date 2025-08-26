@@ -8,7 +8,7 @@
 #include "linux/calls.hpp"
 #include "linux/sys/time.hpp"
 #include "linux/sys/signal.hpp"
-#include "process/wait.hpp"
+#include "linux/process/wait.hpp"
 #include "thread/signal.hpp"
 #include "errno.hpp"
 

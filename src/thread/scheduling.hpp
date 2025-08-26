@@ -11,8 +11,8 @@
 #include "../except.hpp"
 #include "../memory/actions.hpp"
 #include "../syscall.hpp"
-#include "posix/sched.hpp"
-#include "posix/system.hpp"
+#include "../linux/process/sched.hpp"
+#include "../linux/process/system.hpp"
 #include <sched.h>
 //#include <sys/syscall.h>
 

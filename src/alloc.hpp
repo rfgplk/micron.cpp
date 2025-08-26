@@ -5,14 +5,22 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../linux/process/system.hpp"
+#include "allocation/__internal.hpp"
+#include "types.hpp"
 
 namespace micron
 {
-bool
-is_root(void)
+template <typename T = void>
+T *
+alloc(size_t sz)
 {
-  // NOTE: only a surface level check, root may not have a UID of 0
-  return (posix::getuid() == 0 or posix::geteuid() == 0);
+  return reinterpret_cast<T *>(micron::__alloc(sz));
+}
+
+template <typename T = void>
+void
+free(T *ptr)
+{
+  micron::_free(ptr);
 }
 };

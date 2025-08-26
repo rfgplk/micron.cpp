@@ -8,10 +8,10 @@
 #include <linux/capability.h>
 #include <sys/capability.h>
 
-#include "../array.hpp"
-#include "../svector.hpp"
-#include "../thread/posix/system.hpp"
-#include "../types.hpp"
+#include "../../array.hpp"
+#include "../../svector.hpp"
+#include "../../linux/process/system.hpp"
+#include "../../types.hpp"
 
 namespace micron
 {

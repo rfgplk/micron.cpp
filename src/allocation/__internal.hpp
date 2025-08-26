@@ -7,9 +7,11 @@
 
 #include "../types.hpp"
 
+#ifndef MICRON_USE_ABCMALLOC
+#include <cstdlib>
+#endif
 namespace micron
 {
-
 #ifdef MICRON_USE_ABCMALLOC
 inline __attribute__((always_inline)) void *
 __alloc(size_t sz)

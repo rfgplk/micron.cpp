@@ -48,10 +48,11 @@ using intmax_t = __INTMAX_TYPE__;
 using uintmax_t = __UINTMAX_TYPE__;
 using max_t = __INTMAX_TYPE__;
 using umax_t = __UINTMAX_TYPE__;
-
 using ssize_t = max_t;
 using size_t = umax_t;
 using word = umax_t;
+using off_t = __off_t;
+using off64_t = __off64_t;
 // time block
 using clock_t = __clock_t;
 using clockid_t = __clockid_t;
@@ -64,6 +65,38 @@ using slong_t = __SYSCALL_SLONG_TYPE;
 using ulong_t = __SYSCALL_ULONG_TYPE;
 using quad_t = int64_t;
 using uquad_t = uint64_t;
+
+using kernel_long_t = long;
+using kernel_ulong_t = unsigned long;
+using kernel_ino_t = kernel_ulong_t;
+using kernel_mode_t = unsigned int;
+using kernel_pid_t = int;
+using kernel_ipc_pid_t = int;
+using kernel_uid32_t = unsigned int;
+using kernel_gid32_t = unsigned int;
+using kernel_uid_t = unsigned int;
+using kernel_gid_t = unsigned int;
+using kernel_old_uid_t = unsigned int;
+using kernel_old_gid_t = unsigned int;
+using kernel_suseconds_t = kernel_long_t;
+using kernel_daddr_t = int;
+using kernel_old_dev_t = unsigned int;
+
+using kernel_size_t = kernel_ulong_t;
+using kernel_ssize_t = kernel_long_t;
+using kernel_ptrdiff_t = kernel_long_t;
+
+typedef kernel_long_t kernel_off_t;
+typedef long long kernel_loff_t;
+typedef kernel_long_t kernel_old_time_t;
+typedef kernel_long_t kernel_time_t;
+typedef long long kernel_time64_t;
+typedef kernel_long_t kernel_clock_t;
+typedef int kernel_timer_t;
+typedef int kernel_clockid_t;
+typedef char *kernel_caddr_t;
+typedef unsigned short kernel_uid16_t;
+typedef unsigned short kernel_gid16_t;
 
 // using complex = _Complex;
 // using imaginary = _Imaginary;

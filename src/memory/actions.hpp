@@ -68,12 +68,35 @@ reset(T &a, Args &&...args)
 }
 
 template <typename T, typename... Args>
-constexpr T *
+constexpr void
 construct(T *p, Args &&...args)
 {
-  return new (p) T{ micron::forward<Args>(args)... };
+  new (static_cast<void *>(p)) T{ micron::forward<Args>(args)... };
+}
+template <typename T, typename... Args>
+constexpr T *
+construct_at(T *p, Args &&...args)
+{
+  return new (static_cast<void *>(p)) T{ micron::forward<Args>(args)... };
 }
 
+template <typename T>
+inline void
+destroy(T *ptr)
+{
+  if ( ptr ) {
+    ptr->~T();
+  }
+}
+
+template <typename T>
+inline void
+destroy_at(T *ptr)
+{
+  if ( ptr ) {
+    ptr->~T();
+  }
+}
 template <typename T, typename F>
 constexpr bool
 cmp_equal(T t, F f)

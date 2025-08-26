@@ -27,7 +27,7 @@ namespace micron
 // iterators never invalidated, always safe, immutable, always thread safe as
 // fast as raw arrays
 template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
+  requires micron::is_move_constructible_v<T> && micron::is_move_assignable_v<T>
 class ivector : private Alloc, public immutable_memory<T>
 {
   using __mem = immutable_memory<T>;
@@ -35,8 +35,8 @@ class ivector : private Alloc, public immutable_memory<T>
   inline void
   reserve(size_t n)
   {
-    __mem::accept_new_memory(this->grow(reinterpret_cast<byte *>(__mem::memory),
-                                                      __mem::capacity * sizeof(T), sizeof(T) * n));
+    __mem::accept_new_memory(
+        this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
   }
 
   // shallow copy routine
@@ -175,6 +175,7 @@ public:
     }
     __mem::length = n;
   };
+  ivector(const ivector &) = delete;
   ivector(chunk<byte> *m) : immutable_memory<T>(m) {};
   ivector(chunk<byte> *&&m) : immutable_memory<T>(m) { m = nullptr; };
   template <typename C = T> ivector(ivector<C> &&o) : immutable_memory<T>(o.data()) { o.~immutable_memory<T>(); }
@@ -189,6 +190,7 @@ public:
     o.capacity = 0;
     return *this;
   }
+  ivector &operator=(const ivector &) = delete;
   ~ivector()
   {
     if ( __mem::memory == nullptr )
@@ -461,8 +463,7 @@ public:
     for ( size_t i = n; i < (__mem::length - 1); i++ )
       (*n)[i] = micron::move((__mem::memory)[i + 1]);
 
-    czero<sizeof(T) / sizeof(byte)>(
-        (byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
+    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
   }
   inline void
   erase(const size_t n)
@@ -473,8 +474,7 @@ public:
     }
     for ( size_t i = n; i < (__mem::length - 1); i++ )
       (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
-    czero<sizeof(T) / sizeof(byte)>(
-        (byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
+    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
     __mem::length--;
   }
   inline ivector<T>

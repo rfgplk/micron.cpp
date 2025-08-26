@@ -6,11 +6,10 @@
 #pragma once
 
 #include "../attributes.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 
-#include <immintrin.h>
-#include <xmmintrin.h>
+#include "../simd/intrin.hpp"
 
 // NOTE: originally included all memory handling functions, later separated into cmemory.hpp, cstring.hpp, and map.hpp
 // for maintainability check all include headers to make sure they match
@@ -68,14 +67,6 @@ typeset(F *s, const T in, const size_t cnt)
 };
 
 #define stackalloc(x, T) reinterpret_cast<T *>(__builtin_alloca(x));
-
-template <typename T, typename F = size_t>
-T *
-calloc(F cnt, F bytes)
-{
-  void *a;
-  return a;
-}
 
 template <size_t M, typename F, size_t L>
 constexpr F *
@@ -142,7 +133,7 @@ template <size_t M, typename F>
 constexpr F &
 cbzero(F &_src)
 {
-  byte* src = reinterpret_cast<F*>(_src);
+  byte *src = reinterpret_cast<F *>(_src);
   for ( size_t n = 0; n < M; n++ )
     src[n] = 0x0;
   return src;
@@ -152,12 +143,11 @@ template <size_t M, typename F>
 constexpr F *
 cbzero(F *_src)
 {
-  byte* src = reinterpret_cast<F*>(_src);
+  byte *src = reinterpret_cast<F *>(_src);
   for ( size_t n = 0; n < M; n++ )
     src[n] = 0x0;
   return reinterpret_cast<F *>(src);
 };
-
 
 template <typename F, size_t L, typename M = size_t>
 F *

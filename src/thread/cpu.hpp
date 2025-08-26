@@ -15,8 +15,8 @@
 //#include <sys/syscall.h>
 //#include <sys/time.h>
 
-#include "posix/resource.hpp"
-#include "posix/system.hpp"
+#include "../linux/process/resource.hpp"
+#include "../linux/process/system.hpp"
 
 #include "../../external/cpuid.h"
 #include "../io/console.hpp"
@@ -121,7 +121,7 @@ park_cpu(unsigned c = 0xFFFFFFFF)
   cpu_set_t set;
   CPU_ZERO(&set);
   CPU_SET(c, &set);
-  ::sched_setaffinity(0, sizeof(cpu_set_t), &set);
+  micron::sched_setaffinity(0, sizeof(cpu_set_t), &set);
   return c;
 }
 
@@ -134,13 +134,13 @@ park_cpu_pid(pid_t pid, unsigned c = 0xFFFFFFFF)
   cpu_set_t set;
   CPU_ZERO(&set);
   CPU_SET(c, &set);
-  ::sched_setaffinity(pid, sizeof(cpu_set_t), &set);
+  micron::sched_setaffinity(pid, sizeof(cpu_set_t), &set);
   return c;
 }
 inline void
 park_cpu(pid_t pid, cpu_set_t &set)
 {
-  ::sched_setaffinity(pid, sizeof(cpu_set_t), &set);
+  micron::sched_setaffinity(pid, sizeof(cpu_set_t), &set);
 }
 
 inline void
@@ -151,7 +151,7 @@ enable_all_cores(pid_t pid = 0)
   auto count = cpu_count();
   for ( size_t i = 0; i <= count; i++ )
     CPU_SET(i, &set);
-  ::sched_setaffinity(pid, sizeof(cpu_set_t), &set);
+  micron::sched_setaffinity(pid, sizeof(cpu_set_t), &set);
 }
 task_t
 this_task(void)
