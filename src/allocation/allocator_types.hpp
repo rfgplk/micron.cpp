@@ -369,6 +369,7 @@ public:
   {
     n = to_page(n);
     auto x = chunk<byte>{ allocate(n), n };
+    return x;
   }
   chunk<byte>
   grow(byte *ptr, size_t old, size_t n)

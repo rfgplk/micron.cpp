@@ -7,6 +7,9 @@
 
 // compiler provided
 
+namespace micron
+{
+
 #if defined(__STDCPP_FLOAT16_T__) && defined(_GLIBCXX_FLOAT_IS_IEEE_BINARY32)
 constexpr _Float16
 acos(_Float16 __x)
@@ -682,3 +685,4 @@ tanh(_Float128 __x)
   return __builtin_tanhf128(__x);
 }
 #endif
+};

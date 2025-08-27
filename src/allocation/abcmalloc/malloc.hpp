@@ -11,9 +11,14 @@
 
 namespace abc
 {
+void *alloc(size_t size);
 void *malloc(size_t size);
 void *calloc(size_t num, size_t size);
 void *realloc(void *ptr, size_t size);
 void *free(void *ptr);
 void *aligned_alloc(size_t alignment, size_t size);
+// launder()
+// query
+// inject
+// make_at
 };

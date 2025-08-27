@@ -20,20 +20,19 @@ struct sysinfo {
   sysinfo &operator=(const sysinfo &) = default;
   sysinfo &operator=(sysinfo &&) = default;
 
-  kernel_long_t uptime;                                   /* Seconds since boot */
-  kernel_ulong_t loads[3];                                /* 1, 5, and 15 minute load averages */
-  kernel_ulong_t totalram;                                /* Total usable main memory size */
-  kernel_ulong_t freeram;                                 /* Available memory size */
-  kernel_ulong_t sharedram;                               /* Amount of shared memory */
-  kernel_ulong_t bufferram;                               /* Memory used by buffers */
-  kernel_ulong_t totalswap;                               /* Total swap space size */
-  kernel_ulong_t freeswap;                                /* swap space still available */
-  u16 procs;                                              /* Number of current processes */
-  u16 pad;                                                /* Explicit padding for m68k */
-  kernel_ulong_t totalhigh;                               /* Total high memory size */
-  kernel_ulong_t freehigh;                                /* Available high memory size */
-  u32 mem_unit;                                           /* Memory unit size in bytes */
-  char _f[20 - 2 * sizeof(kernel_ulong_t) - sizeof(u32)]; /* Padding: libc5 uses this.. */
+  kernel_long_t uptime;     /* Seconds since boot */
+  kernel_ulong_t loads[3];  /* 1, 5, and 15 minute load averages */
+  kernel_ulong_t totalram;  /* Total usable main memory size */
+  kernel_ulong_t freeram;   /* Available memory size */
+  kernel_ulong_t sharedram; /* Amount of shared memory */
+  kernel_ulong_t bufferram; /* Memory used by buffers */
+  kernel_ulong_t totalswap; /* Total swap space size */
+  kernel_ulong_t freeswap;  /* swap space still available */
+  u16 procs;                /* Number of current processes */
+  u16 pad;                  /* Explicit padding for m68k */
+  kernel_ulong_t totalhigh; /* Total high memory size */
+  kernel_ulong_t freehigh;  /* Available high memory size */
+  u32 mem_unit;             /* Memory unit size in bytes */
 };
 
 constexpr const static int __max_cpus = 65535;
@@ -48,22 +47,24 @@ getpagesize(void)
 int
 get_nprocs(void)
 {
-  //cpu_set_t cpu_bits;
-  //micron::posix::get_affinity(0, cpu_bits);
-  //return CPU_COUNT_S(r, cpu_bits);
+  // TODO: implement
+  // cpu_set_t cpu_bits;
+  // micron::posix::get_affinity(0, cpu_bits);
+  // return CPU_COUNT_S(r, cpu_bits);
+  return -1;
 }
 long int
 get_phys_pages(void)
 {
   sysinfo sys;
-  unsigned long int page_size = getpagesize();
-  while ( sys.mem_unit > 1 && page_size > 1 ) {
+  unsigned long int _page_size = getpagesize();
+  while ( sys.mem_unit > 1 && _page_size > 1 ) {
     sys.mem_unit >>= 1;
-    page_size >>= 1;
+    _page_size >>= 1;
   }
   sys.totalram *= sys.mem_unit;
-  while ( page_size > 1 ) {
-    page_size >>= 1;
+  while ( _page_size > 1 ) {
+    _page_size >>= 1;
     sys.totalram >>= 1;
   }
   return sys.totalram;

@@ -71,6 +71,7 @@ template <typename P>
 void *
 operator new(size_t size, P *ptr)
 {
+  (void)size;
   ALLOC_MESSAGE("new(", size, ")");
   ALLOC_MESSAGE("at(", ptr, ")");
   return ptr;

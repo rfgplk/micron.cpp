@@ -8,7 +8,7 @@
 namespace micron
 {
 
-template <typename T = byte> struct __chunk {     // total memory allocated
+template <typename T = byte> struct alignas(16) __chunk {     // total memory allocated
   T *ptr;
   size_t len;
   bool

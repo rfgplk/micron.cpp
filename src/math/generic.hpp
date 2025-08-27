@@ -205,6 +205,10 @@ maxf128(flong x, flong y)
 {
   return __builtin_fmaxl(x, y);
 }
+
+// NOTE: in case the compiler can't constant fold these at ct, the log10 func from GLIBC is needed, compile with -lm if
+// that's the case
+
 constexpr i32
 log2(i32 x)
 {
@@ -246,6 +250,30 @@ remainderf128(flong x, f32 y)
 {
   return __builtin_remainderl(x, y);
 }
+
+template <typename T>
+requires (micron::is_integral_v<T>)
+T
+nearest_pow2ll(T x)
+{
+  return x == 0 ? 1u
+                : (((x) - (1u << ((8 * sizeof(x) - 1) - __builtin_clzll(x))))
+                           <= ((1u << ((8 * sizeof(x)) - __builtin_clzll(x))) - (x))
+                       ? (1u << ((8 * sizeof(x) - 1) - __builtin_clzll(x)))
+                       : (1u << ((8 * sizeof(x)) - __builtin_clzll(x))));
+}
+template <typename T>
+requires (micron::is_integral_v<T>)
+T
+nearest_pow2(T x)
+{
+  return x == 0 ? 1u
+                : (((x) - (1u << ((8 * sizeof(x) - 1) - __builtin_clz(x))))
+                           <= ((1u << ((8 * sizeof(x)) - __builtin_clz(x))) - (x))
+                       ? (1u << ((8 * sizeof(x) - 1) - __builtin_clz(x)))
+                       : (1u << ((8 * sizeof(x)) - __builtin_clz(x))));
+}
+
 // constexpr double powerf(double x, double y)
 //{
 //  note: TODO
@@ -265,7 +293,7 @@ ceil(T s)
   requires(micron::is_floating_point_v<T> or micron::is_integral_v<T>)
 {
   ssize_t i = static_cast<ssize_t>(s);
-  return (s > i) ? static_cast<T>(i + 1) : static_cast<T>(i);
+  return (s > static_cast<T>(i)) ? static_cast<T>(i + 1) : static_cast<T>(i);
 }
 template <typename T>
 T

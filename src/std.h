@@ -8,6 +8,7 @@
 #include "errno.hpp"
 #include "cmpl.hpp"
 #include "endian.hpp"
+#include "control.hpp"
 #include "types.hpp"
 #include "type_traits.hpp"
 
@@ -230,27 +231,5 @@ GB(T t)
 {
   return (t << 30);
 }
-
-namespace micron
-{
-void
-exit(int s = 0)
-{
-#if ( defined(GNUCC) )
-  __builtin__exit(s);
-#else
-  _Exit(s);
-#endif
-}
-void
-abort(void)
-{
-#if ( defined(GNUCC) )
-  __builtin__exit(SIG_ABRT);
-#else
-  _Exit(SIG_ABRT);
-#endif
-}
-};
 
 namespace mc = micron;

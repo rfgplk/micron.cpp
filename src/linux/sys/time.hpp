@@ -70,7 +70,7 @@ nanosleep(const timespec_t &req)
   return micron::syscall(SYS_nanosleep, &req, nullptr);
 }
 
-int
+long int
 clock_gettime(clockid_t clc, timespec_t &tm)
 {
   return micron::syscall(SYS_clock_gettime, clc, &tm);
@@ -90,14 +90,14 @@ time(void)
   return micron::syscall(SYS_time, nullptr);
 }
 double difftime(time_t t0, time_t t1);
-int
+long int
 clock_getres(clockid_t clc, timespec_t *res)
 {
   return micron::syscall(SYS_clock_getres, clc, res);
 }
 int clock_settime(clockid_t clc, timespec_t &tm);
 int clock_getcpuclockid(posix::pid_t pid, clockid_t &clc);
-int
+long int
 clock_nanosleep(clockid_t clock, int flags, timespec_t &tm, timespec *rmn)
 {
   return micron::syscall(SYS_clock_nanosleep, clock, flags, &tm, rmn);

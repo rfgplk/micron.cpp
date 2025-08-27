@@ -5,14 +5,14 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "linux/calls.hpp"
-#include "linux/sys/time.hpp"
-#include "linux/sys/signal.hpp"
-#include "linux/process/wait.hpp"
-#include "thread/signal.hpp"
 #include "errno.hpp"
+#include "linux/calls.hpp"
+#include "linux/process/wait.hpp"
+#include "linux/sys/signal.hpp"
+#include "linux/sys/time.hpp"
+#include "thread/signal.hpp"
 
-//#include <signal.h>
+// #include <signal.h>
 
 #include "types.hpp"
 
@@ -30,6 +30,24 @@ stop()
   ::raise(SIG_STOP);
 }
 
+void
+exit(int s = 0)
+{
+#if ( defined(GNUCC) )
+  __builtin__exit(s);
+#else
+  _Exit(s);
+#endif
+}
+void
+abort(void)
+{
+#if ( defined(GNUCC) )
+  __builtin__exit(SIG_ABRT);
+#else
+  _Exit(SIG_ABRT);
+#endif
+}
 template <typename F, typename... Args>
 inline void
 pause(F f, Args... args)
@@ -113,7 +131,7 @@ alarm()
 // a method to quickly crash a ring3 program
 // pick your poison
 template <int x = 0>
-__attribute__((no_return)) void
+__attribute__((noreturn)) void
 crash(void)
 {
   if constexpr ( !x ) {
