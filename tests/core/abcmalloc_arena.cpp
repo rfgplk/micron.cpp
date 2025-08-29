@@ -13,14 +13,83 @@ main()
   // mc::infolog(sizeof(abc::__arena::node<abc::sheet<abc::__class_medium>>));
   // mc::infolog(sizeof(abc::__arena::node<abc::sheet<abc::__class_large>>));
   // mc::infolog(sizeof(abc::__arena::node<abc::sheet<abc::__class_huge>>));
+  // size_t sz = abc::__class_small;
+  // mc::infolog(abc::__calculate_desired_space(sz));
+  // sz = abc::__class_medium;
+  // mc::infolog(abc::__calculate_desired_space(sz));
+  // sz = abc::__class_large;
+  // mc::infolog(abc::__calculate_desired_space(sz));
+  // sz = abc::__class_huge;
   if constexpr ( true ) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(1, 1000000);
+    abc::__arena arena;
+    size_t req_total = 0;
+    for ( size_t n = 0; n < 120000; ++n ) {
+      std::malloc(dist(gen));
+      //arena.push(dist(gen));
+    }
+  }
+  if constexpr ( false ) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(1, 1000000);
+    abc::__arena arena;
+    size_t req_total = 0;
+    for ( size_t n = 0; n < 120000; ++n ) {
+      auto mem = arena.push(dist(gen));
+      mc::console("#", n, " - Allocated memory, with size of: ", mem.len, " at address: ", mem.ptr);
+      // if ( mem.ptr == (byte *)-1 )
+      //   mc::console("Allocation failed");
+      //  info
+    }
+  }
+  if constexpr ( false ) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(1, 1000000);
+    abc::__arena arena;
+    size_t req_total = 0;
+    for ( size_t n = 0; n < (2 << 30); ++n ) {
+      auto mem = arena.push(dist(gen));
+      mc::console("#", n, " - Allocated memory, with size of: ", mem.len, " at address: ", mem.ptr);
+      if ( arena.pop(mem.ptr) == false )
+        mc::console("Failed to pop memory at: ", mem.ptr);
+      // if ( mem.ptr == (byte *)-1 )
+      //   mc::console("Allocation failed");
+      //  info
+    }
+  }
+  if constexpr ( false ) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(1, 20000);
+    abc::__arena arena;
+    size_t req_total = 0;
+    for ( size_t n = 0; n < (2 << 15); ++n ) {
+      auto tmp = dist(gen);
+      req_total += tmp;
+      auto mem = arena.push(tmp);
+      if ( mem.ptr == (byte *)-1 )
+        mc::console("Allocation failed");
+      // info
+      mc::console("#", n);
+      mc::console("Free internal buffer: ", arena.__available_buffer());
+      mc::console("Total allocated memory: ", arena.total_usage());
+      mc::console("Total requested memory: ", req_total);
+      mc::console("Efficiency ratio: ", (float)req_total / (float)arena.total_usage());
+    }
+    mc::infolog("Success");
+  }
+  if constexpr ( false ) {
     {
       // testing the dtors
       int j = 0;
       for ( int i = 0;; ++i ) {
         abc::__arena arena;
         for ( size_t n = 0; n < (2 << 12); ++n ) {
-          if ( arena.append(256).ptr == (byte *)-1 )
+          if ( arena.push(256).ptr == (byte *)-1 )
             mc::console("Error");
         }
         mc::infolog("Success");
@@ -35,14 +104,14 @@ main()
     mc::infolog(sizeof(abc::sheet<abc::__class_large>));
     mc::infolog(sizeof(abc::sheet<abc::__class_huge>));
     abc::__arena arena;
-    arena.append(1000);
+    arena.push(1000);
     mc::infolog("Success");
   }
   if constexpr ( false ) {
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 12); ++n ) {
       mc::console("Free internal buffer: ", arena.__available_buffer());
-      if ( arena.append(256).ptr == (byte *)-1 )
+      if ( arena.push(256).ptr == (byte *)-1 )
         mc::console("Error");
     }
     mc::infolog("Success");
@@ -55,7 +124,7 @@ main()
     for ( size_t n = 0; n < (2 << 10); ++n ) {
       mc::console("#", n);
       mc::console("Free internal buffer: ", arena.__available_buffer());
-      auto mem = arena.append(dist(gen));
+      auto mem = arena.push(dist(gen));
       if ( mem.ptr == (byte *)-1 )
         mc::console("Allocation failed");
       for ( int i = 0; i < mem.len; i++ )
@@ -77,7 +146,7 @@ main()
     for ( size_t n = 0; n < (2 << 14); ++n ) {
       mc::console("#", n);
       mc::console("Free internal buffer: ", arena.__available_buffer());
-      auto mem = arena.append(dist(gen));
+      auto mem = arena.push(dist(gen));
       if ( mem.ptr == (byte *)-1 )
         mc::console("Allocation failed");
     }
@@ -89,7 +158,7 @@ main()
     std::uniform_int_distribution<int> dist(30, 4521);
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 14); ++n ) {
-      auto mem = arena.append(dist(gen));
+      auto mem = arena.push(dist(gen));
       if ( mem.ptr == (byte *)-1 )
         mc::console("Allocation failed");
     }
@@ -101,7 +170,7 @@ main()
     std::uniform_int_distribution<int> dist(30, 4521);
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 15); ++n ) {
-      arena.append(2048);
+      arena.push(2048);
     }
   }
   if constexpr ( false ) {
@@ -111,7 +180,7 @@ main()
     std::uniform_int_distribution<int> dist(30, 4521);
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 18); ++n ) {
-      auto tmp = arena.append(dist(gen));
+      auto tmp = arena.push(dist(gen));
       if ( p_ptr == nullptr ) {
         p_ptr = tmp.ptr;
         *p_ptr = 0x1;
@@ -127,7 +196,7 @@ main()
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 30); ++n ) {
       mc::console("Free internal buffer: ", arena.__available_buffer());
-      if ( arena.append(dist(gen)).ptr == (byte *)-1 )
+      if ( arena.push(dist(gen)).ptr == (byte *)-1 )
         mc::console("Error");
       mc::console(n);
     }

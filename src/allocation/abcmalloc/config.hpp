@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../linux/allocate_map.hpp"
+#include "../linux/kmemory.hpp"
 namespace abc
 {
 

@@ -21,6 +21,6 @@ template <typename T = void>
 void
 free(T *ptr)
 {
-  micron::_free(ptr);
+  micron::__free(ptr);
 }
 };

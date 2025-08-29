@@ -8,7 +8,7 @@
 #include <xmmintrin.h>
 
 #include "__internal.hpp"
-#include "linux/allocate_map.hpp"
+#include "linux/kmemory.hpp"
 #include "linux/sysinfo.hpp"
 #include "../concepts.hpp"
 #include "../memory/memory.hpp"

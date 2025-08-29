@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../types.hpp"
+#include "abcmalloc/malloc.hpp"
 
 #ifndef MICRON_USE_ABCMALLOC
 #include <cstdlib>
@@ -13,16 +14,16 @@
 namespace micron
 {
 #ifdef MICRON_USE_ABCMALLOC
-inline __attribute__((always_inline)) void *
+inline __attribute__((always_inline)) byte *
 __alloc(size_t sz)
 {
-  return abc::malloc(sz);
+  return abc::alloc(sz);
 }
 template <typename T>
 inline __attribute__((always_inline)) void
-__free(T* ptr)
+__free(T *ptr)
 {
-  abc::free(ptr);
+  abc::dealloc(reinterpret_cast<byte *>(ptr));
 }
 #else
 inline __attribute__((always_inline)) void *
@@ -32,7 +33,7 @@ __alloc(size_t sz)
 }
 template <typename T>
 inline __attribute__((always_inline)) void
-__free(T* ptr)
+__free(T *ptr)
 {
   ::free(ptr);
 }

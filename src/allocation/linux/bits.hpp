@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../numerics.hpp"
+
 namespace micron
 {
 
@@ -17,6 +19,16 @@ template <typename T = byte> struct alignas(16) __chunk {     // total memory al
     if ( ptr == nullptr or len == 0 )
       return true;
     return false;
+  }
+  bool
+  failed_allocation(void) const noexcept
+  {
+    return ((ptr == micron::numeric_limits<byte *>::max() - 1) and len == 0xFF);
+  }
+  bool
+  invalid(void) const noexcept
+  {
+    return (ptr == (byte *)-1);
   }
 };
 };

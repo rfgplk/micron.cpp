@@ -3,9 +3,9 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
-#include <iostream>
 
 #include "../src/vector/vector.hpp"
+#include "../src/io/console.hpp"
 #include "../src/vector/fvector.hpp"
 #include "../src/vector/svector.hpp"
 
@@ -15,21 +15,20 @@ main()
   {
 
     micron::fvector<int> vec;
-    for(int i = 0; i < 50; i++)
+    for ( int i = 0; i < 50; i++ )
       vec.push_back(i);
     vec.erase(vec.begin());
     vec.erase(vec.begin() + 3);
     vec.erase(vec.begin() + 7);
     vec.erase(vec.begin() + 9);
     micron::console(vec);
-    return 0;
   };
   micron::vector<size_t> buf = { 1, 2, 3, 4 };
-  for(auto x : buf)
-    std::cout << x << std::endl;
+  for ( auto x : buf )
+    micron::console(x);
   buf.assign(10, 9999);
   for ( size_t i = 0; i < buf.size(); i++ )
-    std::cout << buf[i] << std::endl;
+    micron::console(buf[i]);
   micron::svector<int> stack_vec;
   micron::vector<byte> byte_data;
   micron::vector<char> char_data;
@@ -43,44 +42,44 @@ main()
     float_data.push_back(static_cast<float>(i));
     max_data.push_back(static_cast<size_t>(i));
   }
-  std::cout << "Size of byte: " << sizeof(byte) << std::endl;
-  std::cout << "Size of char: " << sizeof(char) << std::endl;
-  std::cout << "Size of float: " << sizeof(float) << std::endl;
-  std::cout << "Size of size_t: " << sizeof(size_t) << std::endl;
-  std::cout << "Size of byte_data(): " << byte_data.size() << std::endl;
-  std::cout << "Capacity of byte_data(): " << byte_data.max_size() << std::endl;
-  std::cout << "Size of char_data(): " << char_data.size() << std::endl;
-  std::cout << "Capacity of char_data(): " << char_data.max_size() << std::endl;
+  micron::console("Size of byte: ", sizeof(byte));
+  micron::console("Size of char: ", sizeof(char));
+  micron::console("Size of float: ", sizeof(float));
+  micron::console("Size of size_t: ", sizeof(size_t));
+  micron::console("Size of byte_data(): ", byte_data.size());
+  micron::console("Capacity of byte_data(): ", byte_data.max_size());
+  micron::console("Size of char_data(): ", char_data.size());
+  micron::console("Capacity of char_data(): ", char_data.max_size());
 
-  std::cout << "Size of int_data(): " << int_data.size() << std::endl;
-  std::cout << "Capacity of int_data(): " << int_data.max_size() << std::endl;
+  micron::console("Size of int_data(): ", int_data.size());
+  micron::console("Capacity of int_data(): ", int_data.max_size());
 
-  std::cout << "Size of float_data(): " << float_data.size() << std::endl;
-  std::cout << "Capacity of float_data(): " << float_data.max_size() << std::endl;
+  micron::console("Size of float_data(): ", float_data.size());
+  micron::console("Capacity of float_data(): ", float_data.max_size());
 
-  std::cout << "Size of max_data(): " << max_data.size() << std::endl;
-  std::cout << "Capacity of max_data(): " << max_data.max_size() << std::endl;
+  micron::console("Size of max_data(): ", max_data.size());
+  micron::console("Capacity of max_data(): ", max_data.max_size());
 
   for ( size_t i = 0; i < 50; i++ ) {
-    std::cout << "i: " << (int)byte_data[i] << std::endl;
-    std::cout << "i: " << (int)char_data[i] << std::endl;
-    std::cout << "i: " << int_data[i] << std::endl;
-    std::cout << "i: " << float_data[i] << std::endl;
-    std::cout << "i: " << max_data[i] << std::endl;
+    micron::console("i: ", (int)byte_data[i]);
+    micron::console("i: ", (int)char_data[i]);
+    micron::console("i: ", int_data[i]);
+    micron::console("i: ", float_data[i]);
+    micron::console("i: ", max_data[i]);
   }
 
   for ( size_t i = 9950; i < 10000; i++ ) {
-    std::cout << "i: " << (int)byte_data[i] << std::endl;
-    std::cout << "i: " << (int)char_data[i] << std::endl;
-    std::cout << "i: " << int_data[i] << std::endl;
-    std::cout << "i: " << float_data[i] << std::endl;
-    std::cout << "i: " << max_data[i] << std::endl;
+    micron::console("i: ", (int)byte_data[i]);
+    micron::console("i: ", (int)char_data[i]);
+    micron::console("i: ", int_data[i]);
+    micron::console("i: ", float_data[i]);
+    micron::console("i: ", max_data[i]);
   }
-  std::cout << "Slicing" << std::endl;
+  micron::console("Slicing");
   micron::slice<size_t> slc = max_data[4, 20];
   micron::vector<int> nint_data;
   nint_data = micron::move(int_data);
-  std::cout << "size of int_data" << int_data.size() << std::endl;
-  std::cout << "size of nint_data" << nint_data.size() << std::endl;
+  micron::console("size of int_data", int_data.size());
+  micron::console("size of nint_data", nint_data.size());
   return 0;
 }

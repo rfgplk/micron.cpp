@@ -8,7 +8,7 @@
 #include "../../control.hpp"
 #include "../../except.hpp"
 #include "../../types.hpp"
-#include "../linux/allocate_map.hpp"
+#include "../linux/kmemory.hpp"
 #include "config.hpp"
 #include "free_list.hpp"
 #include "hooks.hpp"
@@ -60,10 +60,6 @@ public:
   {
     return __kernel_memory.zero();
   }
-  void
-  resize(micron::__chunk<byte> &&n_mem)
-  {
-  }
   // request to allocate mem of sz, fail silently (return nullptr)
   micron::__chunk<byte>
   mark(size_t mem_sz)
@@ -71,7 +67,7 @@ public:
     if ( empty() )
       return { nullptr, 0 };
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
-    if ( _p.zero() )
+    if ( _p.zero() or _p.invalid() )
       return { nullptr, 0 };
     return _p;
   }
@@ -83,12 +79,9 @@ public:
     if ( empty() )
       micron::abort();
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
-    // max order
-    if ( _p.ptr == (byte *)0xFE and _p.len == 0xFE ) {
-      micron::abort();
-    }
-    if ( _p.zero() )
-      micron::abort();
+
+    if ( _p.zero() or _p.invalid() )
+      return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
     return _p;
   }
 
@@ -97,9 +90,19 @@ public:
   try_unmark(micron::__chunk<byte> _p)
   {
     if ( empty() )
-      return false;
+      micron::abort();
     if ( _p.zero() )
-      return false;
+      micron::abort();
+    __book.deallocate(_p);
+    return true;
+  }
+  bool
+  try_unmark_no_size(byte *_p)
+  {
+    if ( empty() )
+      micron::abort();
+    if ( _p == nullptr )
+      micron::abort();
     __book.deallocate(_p);
     return true;
   }
@@ -109,6 +112,34 @@ public:
     if ( empty() )
       return 0;
     return __book.available();
+  }
+  size_t
+  allocated() const
+  {
+    return __kernel_memory.len;
+  }
+  byte *
+  addr() const
+  {
+    return __kernel_memory.ptr;
+  }
+  byte *
+  addr_end() const
+  {
+    return __kernel_memory.ptr + __kernel_memory.len;
+  }
+  bool
+  is_at(byte *_addr) const
+  {
+    if ( _addr >= addr() and _addr < addr_end() )
+      return true;
+    return false;
+  }
+
+  void
+  reset(void)
+  {
+    __impl_release();
   }
 };
 

@@ -5,6 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "abcmalloc/__abc.hpp"
+#include "abcmalloc/__std.hpp"
+
 #include "__internal.hpp"
 #include "bits.hpp"
 #include "policies.hpp"
@@ -69,8 +72,28 @@ public:
     return std_allocator<byte, Sz>::dealloc(ptr, cnt);
   }
 };
+
+// default micron allocator, uses mmap
+template <typename T> class abc_allocator : private abc::__abc_allocator<byte>
+{
+public:
+  constexpr abc_allocator() = default;
+  constexpr abc_allocator(const abc_allocator &) = default;
+  constexpr abc_allocator(abc_allocator &&) = default;
+  T *
+  allocate(size_t cnt)
+  {
+    return abc::__abc_allocator<byte>::alloc(cnt);
+  }
+  void
+  deallocate(T *ptr, size_t cnt)
+  {
+    return abc::__abc_allocator<byte>::dealloc(ptr, cnt);
+  }
+};
+
 // serial standard allocator, cannot be mempooled, default doubling policy
-template <is_policy P = serial_allocation_policy> class allocator_serial : private map_allocator<byte, page_size>
+template <is_policy P = serial_allocation_policy> class allocator_serial : private abc_allocator<byte>
 {     // uses mmap_allocator as baseline allocator
 
 public:

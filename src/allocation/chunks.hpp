@@ -7,7 +7,7 @@
 
 #include "../type_traits.hpp"
 #include "../types.hpp"
-#include "linux/allocate_map.hpp"
+#include "linux/kmemory.hpp"
 
 namespace micron
 {

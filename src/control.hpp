@@ -30,6 +30,12 @@ stop()
   ::raise(SIG_STOP);
 }
 
+__attribute__((noinline)) __attribute__((used)) __attribute__((optimize("O0"))) void
+mark()
+{
+}
+
+__attribute__((noreturn))
 void
 exit(int s = 0)
 {
@@ -39,6 +45,7 @@ exit(int s = 0)
   _Exit(s);
 #endif
 }
+__attribute__((noreturn))
 void
 abort(void)
 {

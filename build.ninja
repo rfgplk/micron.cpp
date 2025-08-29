@@ -48,7 +48,12 @@ build core_tests_arena: cc_compile_cmnd_debug tests/core/arena.cpp
 build core_tests_linux: cc_compile_cmnd_debug tests/core/linux.cpp
 build core_tests_channels: cc_compile_cmnd_debug tests/core/channels.cpp
 build core_tests_abcmalloc: cc_compile_cmnd_debug tests/core/abcmalloc.cpp
+build core_tests_abcmalloc_main: cc_compile_cmnd_debug tests/core/abcmalloc_main.cpp
+build core_tests_abcmalloc_thread: cc_compile_cmnd_debug tests/core/abcmalloc_thread.cpp
 build core_tests_abcmalloc_arena: cc_compile_cmnd_debug tests/core/abcmalloc_arena.cpp
+
+build core_tests_abcmalloc_bench_abc: cc_compile_cmnd tests/core/abcmalloc_bench_abc.cpp
+build core_tests_abcmalloc_bench_malloc: cc_compile_cmnd tests/core/abcmalloc_bench_malloc.cpp
 
 build core_tests: phony core_tests_syscall core_tests_strings core_tests_cmemory core_tests_pointers core_tests_mutex core_tests_once core_tests_cpu core_tests_thread core_tests_arena core_tests_linux core_tests_channels
 

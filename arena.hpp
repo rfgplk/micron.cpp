@@ -6,14 +6,15 @@
 #pragma once
 
 #include "../../closures.hpp"
-#include "../../concepts.hpp"
+#include "../../memory/new.hpp"
 #include "../../numerics.hpp"
-#include "../../type_traits.hpp"
 #include "../../types.hpp"
+#include "../../vector/svector.hpp"
 #include "../linux/kmemory.hpp"
 #include "book.hpp"
 #include "config.hpp"
 #include "hooks.hpp"
+#include <iostream>
 
 namespace abc
 {
@@ -39,7 +40,7 @@ class __arena
   __reload_arena_buf(void)
   {
     // if arena buf is full, double it's capacity (inefficient and naive but it works)
-    __expand_bucket<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer, _tail_arena_buffer->nd->allocated() * 2);
+    __expand_bucket<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer);
   }
 
   template <u64 Sz, typename F, typename G>
@@ -49,11 +50,11 @@ class __arena
     while ( nd->nxt != nullptr ) {
       nd = nd->nxt;
     }
-    micron::__chunk<byte> buf_nd = _arena_memory.try_mark(sizeof(node<sheet<Sz>>));
-    micron::__chunk<byte> buf = _arena_memory.try_mark(sizeof(sheet<Sz>));
+    micron::__chunk<byte> buf_nd = _tail_arena_buffer->nd->try_mark(sizeof(node<sheet<Sz>>));
+    micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(sizeof(sheet<Sz>));
     // _arena_memory is full and unable to slot in more memory
     if ( buf_nd.failed_allocation() or buf.failed_allocation() ) [[unlikely]] {
-      micron::abort();
+      __reload_arena_buf();
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
     // reinterpret_cast<node<sheet<__class_small>> *>(buf_nd.ptr);
@@ -69,13 +70,11 @@ class __arena
     while ( nd->nxt != nullptr ) {
       nd = nd->nxt;
     }
-  retry_memory:
     micron::__chunk<byte> buf_nd = _tail_arena_buffer->nd->try_mark(sizeof(node<sheet<Sz>>));
     micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(sizeof(sheet<Sz>));
     // _arena_memory is full and unable to slot in more memory
     if ( buf_nd.failed_allocation() or buf.failed_allocation() ) [[unlikely]] {
       __reload_arena_buf();
-      goto retry_memory;
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
     // reinterpret_cast<node<sheet<__class_small>> *>(buf_nd.ptr);
@@ -244,29 +243,16 @@ class __arena
       nd = nd->nxt;
     } while ( nd != nullptr );
   }
-  template <typename F, typename Fn, typename... Args>
-  void
-  __for_each_bckt_void(const F &bucket, Fn fn, Args &&...args) const
-  {
-    auto *nd = &bucket;
-    do {
-      if ( nd->nd ) {
-        fn(nd, args...);
-      }
-      nd = nd->nxt;
-    } while ( nd != nullptr );
-  }
-  template <typename F, typename Fn, typename... Args>
+  template <typename F, typename Fn>
   auto
-  __for_each_bckt(const F &bucket, Fn fn, Args &&...args) const -> micron::lambda_return_t<decltype(fn)>
+  __for_each_bckt(const F &bucket, Fn fn) const -> micron::lambda_return_t<decltype(fn)>
   {
     using Rt = micron::lambda_return_t<decltype(fn)>;
     Rt _ret{};
     auto *nd = &bucket;
     do {
-      if ( nd->nd ) {
-        _ret += fn(nd->nd, args...);
-      }
+      if ( nd->nd )
+        _ret += fn(nd->nd);
       nd = nd->nxt;
     } while ( nd != nullptr );
     return _ret;
@@ -290,8 +276,7 @@ public:
         _large_buckets{ nullptr, nullptr }, _tail_large_buckets{ nullptr }, _huge_buckets{ nullptr, nullptr },
         _tail_huge_buckets{ nullptr }
   {
-    __init_bucket<__class_arena_internal>(_arena_buffer, _tail_arena_buffer,
-                                          (__default_arena_page_buf * __system_pagesize));
+    __init_bucket<__class_arena_internal>(_arena_buffer, _tail_arena_buffer);
     __init_bucket<__class_small>(_small_buckets, _tail_small_buckets);
     __init_bucket<__class_medium>(_medium_buckets, _tail_medium_buckets);
     if constexpr ( __default_init_large_pages ) {
@@ -334,28 +319,6 @@ public:
     total += __for_each_bckt(_large_buckets, [](sheet<__class_large> *const v) -> size_t { return v->allocated(); });
     total += __for_each_bckt(_huge_buckets, [](sheet<__class_huge> *const v) -> size_t { return v->allocated(); });
     return total;
-  }
-  void
-  reset_page(byte *ptr)
-  {
-    auto check = [](auto nd, byte *ptr) -> void {
-      while ( nd != nullptr ) {
-        if ( nd->nd == nullptr ) {
-          nd = nd->nxt;
-          continue;
-        }
-        auto &sh = *nd->nd;     // safe
-
-        if ( sh.is_at(ptr) ) [[unlikely]]
-          sh.reset();
-        nd = nd->nxt;
-      }
-    };
-
-    __for_each_bckt_void(_small_buckets, check, ptr);
-    __for_each_bckt_void(_medium_buckets, check, ptr);
-    __for_each_bckt_void(_large_buckets, check, ptr);
-    __for_each_bckt_void(_huge_buckets, check, ptr);
   }
   size_t
   __available_buffer(void) const

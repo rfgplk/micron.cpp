@@ -34,7 +34,6 @@ template <class Type> struct __internal_pointer_alloc {
   __impl_alloc(Args &&...args)
   {
     return __new<Type>(micron::forward<Args>(args)...);
-    // return new Type(micron::forward<Args>(args)...);
   }
 
   static inline __attribute__((always_inline)) void

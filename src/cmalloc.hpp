@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-namespace abc {
+#include "allocation/abcmalloc/malloc.hpp"
 
-};
+// alias the namespaces
+
