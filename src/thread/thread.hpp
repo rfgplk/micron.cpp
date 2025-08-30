@@ -7,7 +7,7 @@
 
 #include "../control.hpp"
 #include "../memory/cmemory.hpp"
-#include "../memory/mman.h"
+#include "../memory/mman.hpp"
 #include "../pointer.hpp"
 #include "../sync/yield.hpp"
 #include "../tags.hpp"

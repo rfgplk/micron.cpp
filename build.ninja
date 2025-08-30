@@ -1,6 +1,10 @@
 # build.ninja
 timer = /usr/bin/time -p
+compiler_gnuc = gcc
 compiler_gnu = g++
+custom_libc_start = -nostartfiles src/asm/__start.S -x c
+no_libc = -nostartfiles src/asm/__start.S
+include_libc_start = start.o
 compiler_llvm = clang++
 
 
@@ -21,8 +25,10 @@ cflags_ext_llvm = -fopenmp -ffast-math -flto -fdiagnostics-color=always
 
 cflags_gnu_debug =  -std=c++23 $cflags_debug $cflags_warn_base $cflags_warn_options $cflags_warn_ignore $cflags_ext
 cflags_gnu =  -std=c++23 $cflags_optimizations $cflags_warn_base $cflags_warn_options $cflags_warn_ignore $cflags_ext
+cflags_gnuc =  -std=c11 $cflags_optimizations $cflags_warn_base $cflags_ext
 cflags_llvm =  -std=c++23 $cflags_optimizations $cflags_warn_all_llvm $cflags_ext_llvm
 compile_flags_std = -lc -lgcc -lgcc_s -lstdc++ -lm
+compile_flags_start = -c
 
 clibs_location = -L./libs
 clibs_includes = -Isrc
@@ -30,11 +36,20 @@ clibs_includes = -Isrc
 clibs_static = -static-libstdc++
 build_directory = bin
 
+rule as_c_cc_compile_cmnd
+  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnuc $cflags_gnuc $clibs_location $clibs_includes $compile_flags_start $in -o start.o;
+
 rule cc_compile_cmnd
   command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu $clibs_location $clibs_includes $in $compile_flags_std -o $build_directory/$out;
 
+rule cc_compile_cmnd_debug_no_libc
+  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $no_libc $cflags_gnu_debug $clibs_location $clibs_includes $in $compile_flags_std $include_libc_start -o $build_directory/$out;
 rule cc_compile_cmnd_debug
   command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu_debug $clibs_location $clibs_includes $in $compile_flags_std -o $build_directory/$out;
+
+# core
+build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
+
 
 build core_tests_syscall: cc_compile_cmnd_debug tests/core/syscall.cpp
 build core_tests_strings: cc_compile_cmnd_debug tests/core/cstrings.cpp
@@ -51,6 +66,7 @@ build core_tests_abcmalloc: cc_compile_cmnd_debug tests/core/abcmalloc.cpp
 build core_tests_abcmalloc_main: cc_compile_cmnd_debug tests/core/abcmalloc_main.cpp
 build core_tests_abcmalloc_thread: cc_compile_cmnd_debug tests/core/abcmalloc_thread.cpp
 build core_tests_abcmalloc_arena: cc_compile_cmnd_debug tests/core/abcmalloc_arena.cpp
+build core_tests_resources: cc_compile_cmnd_debug tests/core/resources.cpp
 
 build core_tests_abcmalloc_bench_abc: cc_compile_cmnd tests/core/abcmalloc_bench_abc.cpp
 build core_tests_abcmalloc_bench_malloc: cc_compile_cmnd tests/core/abcmalloc_bench_malloc.cpp

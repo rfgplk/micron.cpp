@@ -13,7 +13,10 @@
 #include "../linux/kmemory.hpp"
 #include "book.hpp"
 #include "config.hpp"
+#include "harden.hpp"
 #include "hooks.hpp"
+#include "oom.hpp"
+#include "stats.hpp"
 
 namespace abc
 {
@@ -53,6 +56,7 @@ class __arena
     micron::__chunk<byte> buf = _arena_memory.try_mark(sizeof(sheet<Sz>));
     // _arena_memory is full and unable to slot in more memory
     if ( buf_nd.failed_allocation() or buf.failed_allocation() ) [[unlikely]] {
+      // TODO: add error
       micron::abort();
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
@@ -306,24 +310,47 @@ public:
   micron::__chunk<byte>
   push(const size_t sz)
   {
+    collect_stats<stat_type::alloc>();
+    collect_stats<stat_type::total_memory_req>(sz);
+    if ( check_oom() )
+      micron::abort();
     micron::__chunk<byte> memory;
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
-      if ( memory = __heap_append_tail(sz); !memory.zero() )
-        return memory;
-      __buf_expand(sz);
+      {
+        if ( memory = __heap_append_tail(sz); !memory.zero() ) {
+          zero_on_alloc(memory.ptr, memory.len);
+          collect_stats<stat_type::total_memory_throughput>(memory.len);
+          return memory;
+        }
+        __buf_expand(sz);
+      }
     }
     return { (byte *)-1, micron::numeric_limits<size_t>::max() };
   }
   bool
   pop(const micron::__chunk<byte> &mem)
   {
+    collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(mem.len);
+    full_on_free(mem.ptr, mem.len);
+    zero_on_free(mem.ptr, mem.len);
     return __heap_remove(mem);
   }
-  template <typename B = byte>
   bool
   pop(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
+    // TODO: add this
+    // collect_stats<stat_type::total_memory_freed>(mem.len);
+    collect_stats<stat_type::dealloc>();
+    full_on_free(mem);
+    zero_on_free(mem);
     return __heap_remove_at(mem);
+  }
+  bool
+  pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
+  {
+    collect_stats<stat_type::total_memory_freed>(len);
+    return __heap_remove({ mem, len });
   }
   size_t
   total_usage(void) const

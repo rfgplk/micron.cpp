@@ -6,7 +6,7 @@
 
 #include "../src/vector/ivector.hpp"
 #include "../src/io/console.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 int
 main(void)
 {

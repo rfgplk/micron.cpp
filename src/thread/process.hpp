@@ -14,7 +14,7 @@
 #include "../concepts.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
-#include "../string/strings.h"
+#include "../string/strings.hpp"
 #include "../vector/fvector.hpp"
 #include "../vector/svector.hpp"
 

@@ -5,10 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/io/console.hpp"
 #include "../../src/pointer.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 #include "../../src/vector/vector.hpp"
 
-#include "../../src/string/strings.h"
+#include "../../src/string/strings.hpp"
 
 int
 main(void)

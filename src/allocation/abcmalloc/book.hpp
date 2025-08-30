@@ -29,8 +29,10 @@ template <u64 Sz> class sheet
   __impl_release(void)
   {
     if ( !__kernel_memory.zero() ) {
-      if ( micron::munmap(__kernel_memory.ptr, __kernel_memory.len) == -1 )
-        throw micron::except::memory_error("abcmalloc ~sheet(): failed to unmap memory");
+      if ( micron::munmap(__kernel_memory.ptr, __kernel_memory.len) == -1 ) {
+        micron::abort();
+      }
+      // throw micron::except::memory_error("abcmalloc ~sheet(): failed to unmap memory");
       __kernel_memory.ptr = nullptr;
       __kernel_memory.len = 0;
     }

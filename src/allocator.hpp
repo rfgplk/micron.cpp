@@ -8,6 +8,7 @@
 #include <xmmintrin.h>
 
 #include "allocation/__internal.hpp"
+#include "allocation/allocator_types.hpp"
 #include "concepts.hpp"
 #include "memory/memory.hpp"
 #include "type_traits.hpp"

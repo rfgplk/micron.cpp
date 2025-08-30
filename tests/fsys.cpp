@@ -8,7 +8,7 @@
 #include "../src/io/paths.hpp"
 #include "../src/io/serial.hpp"
 #include "../src/string/unistring.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 #include "../src/control.hpp"
 #include "../src/errno.hpp"

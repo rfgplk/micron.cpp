@@ -9,7 +9,7 @@
 
 #include "../../concepts.hpp"
 #include "../../except.hpp"
-#include "../../string/strings.h"
+#include "../../string/strings.hpp"
 #include "../../tuple.hpp"
 // it really isn't worthwhile to rewrite these, might get around to it
 // eventually

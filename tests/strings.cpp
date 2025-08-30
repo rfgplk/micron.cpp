@@ -4,11 +4,11 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/string/strings.h"
+#include "../src/string/strings.hpp"
 #include "../src/string/unistring.hpp"
 #include "../src/io/print.hpp"
 #include "../src/memory/memory.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 using namespace micron::format;
 int

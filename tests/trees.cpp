@@ -1,7 +1,7 @@
 #include "../src/io/console.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 #include "../src/string/unistring.hpp"
-#include "../src/string/strings.h"
+#include "../src/string/strings.hpp"
 #include "../src/trees/b.hpp"
 
 int

@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../../except.hpp"
-#include "../../string/strings.h"
+#include "../../string/strings.hpp"
 #include "../../tuple.hpp"
 #include "../../vector/vector.hpp"
 #include "utils.hpp"

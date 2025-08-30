@@ -7,13 +7,13 @@
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
 #include "../../src/mutex/spinlock.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 #include "../../src/sync/yield.hpp"
 #include "../../src/thread/contract.hpp"
 #include "../../src/thread/thread.hpp"
 
 #include "../../src/attributes.hpp"
-#include "../../src/string/strings.h"
+#include "../../src/string/strings.hpp"
 
 #include "../src/range.hpp"
 

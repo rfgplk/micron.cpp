@@ -24,6 +24,7 @@ struct buffer_tag {};
 struct slice_tag {};
 struct bitfield_tag {};
 struct pointer_tag {};
+struct type_tag {};
 
 //memory_type
 struct heap_tag {};

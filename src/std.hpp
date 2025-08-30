@@ -56,6 +56,9 @@ constexpr static const int MICRON_VERSION_PATCH = 0x0;
 #define COMPILER "Unknown"
 #endif
 
+#if !defined(__x86_64__)
+#error "This version of the Micron standard library is designed for amd64 only."
+#endif
 #if !defined(__GNUC__) && !defined(__clang__)
 #error "Only G++ or Clang++ are the supported compilers. Remove this if you're willing to take risks."
 #endif

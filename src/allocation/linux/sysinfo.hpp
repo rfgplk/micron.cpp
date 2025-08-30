@@ -44,15 +44,6 @@ getpagesize(void)
   return 4096;
 }
 
-int
-get_nprocs(void)
-{
-  // TODO: implement
-  // cpu_set_t cpu_bits;
-  // micron::posix::get_affinity(0, cpu_bits);
-  // return CPU_COUNT_S(r, cpu_bits);
-  return -1;
-}
 long int
 get_phys_pages(void)
 {
@@ -77,21 +68,26 @@ struct resources {
   size_t free_memory;
   size_t shared_memory;
   size_t buffer_memory;
+  size_t total_memory;
   size_t total_swap;
   size_t free_swap;
   size_t procs;
   size_t mem_unit;
   resources() { __impl_rs(); }
+  resources(const resources &) = default;
+  resources(resources &&) = default;
+  resources &operator=(resources &&) = default;
+  resources &operator=(const resources &) = default;
   resources &
   operator()(void)
   {
     __impl_rs();     // update
     return *this;
   }
-  size_t
-  operator[](void)
+  void
+  reload(void)
   {
-    return memory;
+    __impl_rs();
   }
 
 private:
@@ -99,11 +95,11 @@ private:
   __impl_rs(void)
   {
     sysinfo info;
-    //::sysinfo(&info);
     memory = info.totalram;
     free_memory = info.freeram;
     shared_memory = info.sharedram;
     buffer_memory = info.bufferram;
+    total_memory = info.totalram;
     total_swap = info.totalswap;
     free_swap = info.freeswap;
     procs = info.procs;

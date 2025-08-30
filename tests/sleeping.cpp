@@ -6,7 +6,7 @@
 
 #include "../src/control.hpp"
 #include "../src/io/print.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 int
 main(void)

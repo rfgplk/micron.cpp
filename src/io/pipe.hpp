@@ -7,7 +7,7 @@
 
 #include "../concepts.hpp"
 #include "../except.hpp"
-#include "../string/strings.h"
+#include "../string/strings.hpp"
 #include "io.hpp"
 #include "paths.hpp"
 #include <fcntl.h>

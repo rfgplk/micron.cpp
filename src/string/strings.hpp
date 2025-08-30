@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "format.h"
-#include "string.h"
+#include "format.hpp"
+#include "string.hpp"
 
 namespace micron
 {

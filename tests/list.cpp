@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "../src/list.hpp"
-#include "../src/string/strings.h"
+#include "../src/string/strings.hpp"
 
 #include "../src/io/print.hpp"
 

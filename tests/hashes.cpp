@@ -5,9 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../src/slice.hpp"
 #include "../src/io/console.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 #include "../src/hash/hash.hpp"
-#include "../src/string/strings.h"
+#include "../src/string/strings.hpp"
 int
 main(void)
 {

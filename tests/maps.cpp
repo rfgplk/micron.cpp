@@ -7,8 +7,8 @@
 #include "../src/io/console.hpp"
 #include "../src/map.hpp"
 #include "../src/maps/hopscotch.hpp"
-#include "../src/std.h"
-#include "../src/string/strings.h"
+#include "../src/std.hpp"
+#include "../src/string/strings.hpp"
 
 
 int

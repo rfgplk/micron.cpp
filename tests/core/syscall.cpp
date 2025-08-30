@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/syscall.hpp"
 #include "../../src/io/console.hpp"
-#include "../../src/memory/mman.h"
-#include "../../src/std.h"
+#include "../../src/memory/mman.hpp"
+#include "../../src/std.hpp"
 int
 main(void)
 {

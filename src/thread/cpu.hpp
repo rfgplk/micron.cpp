@@ -18,11 +18,11 @@
 #include "../linux/process/resource.hpp"
 #include "../linux/process/system.hpp"
 
-#include "../../external/cpuid.h"
+#include "../../external/cpuid.hpp"
 #include "../io/console.hpp"
 #include "../io/filesystem.hpp"
 #include "../slice.hpp"
-#include "../string/strings.h"
+#include "../string/strings.hpp"
 #include "../string/unistring.hpp"
 #include "../types.hpp"
 

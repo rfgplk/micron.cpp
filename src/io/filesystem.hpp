@@ -9,7 +9,7 @@
 #include "../concepts.hpp"
 #include "../memory_block.hpp"
 #include "../pointer.hpp"
-#include "../string/strings.h"
+#include "../string/strings.hpp"
 #include "io.hpp"
 
 #include "paths.hpp"

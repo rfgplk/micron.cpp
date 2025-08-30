@@ -6,7 +6,7 @@
 
 #include "../src/io/console.hpp"
 #include "../src/sync/invoke.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 void fn(int x)
 {

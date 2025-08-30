@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/io/console.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 
 #include "../../src/mutex/locks.hpp"
 #include "../../src/mutex/token.hpp"

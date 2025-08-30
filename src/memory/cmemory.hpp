@@ -166,6 +166,14 @@ zero(F *src, const M cnt)
   return reinterpret_cast<F *>(src);
 };
 
+template <typename M = size_t>
+byte *
+bzero(byte *src, const M cnt)
+{
+  for ( M n = 0; n < cnt; n++ )
+    src[n] = 0x0;
+  return src;
+};
 template <typename F>
 F *
 memfrob(F *src, size_t n)

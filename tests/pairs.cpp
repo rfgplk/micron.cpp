@@ -6,8 +6,8 @@
 
 #include "../src/io/print.hpp"
 
-#include "../src/std.h"
-#include "../src/string/strings.h"
+#include "../src/std.hpp"
+#include "../src/string/strings.hpp"
 #include "../src/tuple.hpp"
 #include "../src/vector/vector.hpp"
 

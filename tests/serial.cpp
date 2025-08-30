@@ -10,7 +10,7 @@
 #include "../src/io/serial.hpp"
 #include "../src/io/print.hpp"
 #include "../src/io/paths.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 #include "../src/io/console.hpp"
 #include "../src/control.hpp"

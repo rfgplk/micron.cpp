@@ -8,7 +8,7 @@
 #include "algorithm/mem.hpp"
 #include "concepts.hpp"
 #include "memory/memory.hpp"
-#include "string/format.h"
+#include "string/format.hpp"
 #include "tags.hpp"
 #include "types.hpp"
 #include "type_traits.hpp"

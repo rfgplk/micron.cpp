@@ -6,8 +6,8 @@
 
 #include "../src/io/console.hpp"
 #include "../src/io/filesystem.hpp"
-#include "../src/std.h"
-#include "../src/string/format.h"
+#include "../src/std.hpp"
+#include "../src/string/format.hpp"
 
 int
 main(void)

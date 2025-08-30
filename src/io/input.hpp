@@ -7,7 +7,7 @@
 
 #include "../algorithm/mem.hpp"
 #include "../slice.hpp"
-#include "../string/strings.h"
+#include "../string/strings.hpp"
 #include "../types.hpp"
 #include "io.hpp"
 #include "print.hpp"

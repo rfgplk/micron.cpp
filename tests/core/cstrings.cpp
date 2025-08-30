@@ -8,7 +8,7 @@
 #include "../../src/io/console.hpp"
 
 #include "../../src/string/istring.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 int
 main(void) {
   const unicode8* a8 = u8"fdgjfidgiodfg";

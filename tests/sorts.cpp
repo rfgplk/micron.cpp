@@ -7,7 +7,7 @@
 #include "../src/sort/radix.hpp"
 #include "../src/vector/fvector.hpp"
 
-#include "../src/std.h"
+#include "../src/std.hpp"
 int
 main(void)
 {

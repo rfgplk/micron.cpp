@@ -10,7 +10,7 @@
 #include "../src/iterator.hpp"
 #include "../src/vector/vector.hpp"
 #include "../src/numerics.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 void success(long x){
   mc::io::println("The result of mc::mean(1..89) was ", x);

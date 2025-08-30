@@ -4,9 +4,9 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/io/console.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 
-#include "../../src/string/strings.h"
+#include "../../src/string/strings.hpp"
 #include "../../src/mutex/once.hpp"
 
 void do_this_once(mc::string& s)

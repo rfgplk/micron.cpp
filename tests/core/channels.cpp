@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 #include "../../src/sync/channel.hpp"
 #include "../../src/thread/thread.hpp"
 

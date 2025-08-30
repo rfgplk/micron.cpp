@@ -6,9 +6,9 @@
 #pragma once
 
 #include "../except.hpp"
-#include "../std.h"
-#include "../string/format.h"
-#include "../string/strings.h"
+#include "../std.hpp"
+#include "../string/format.hpp"
+#include "../string/strings.hpp"
 #include "../vector/fvector.hpp"
 #include "posix/dir.hpp"
 

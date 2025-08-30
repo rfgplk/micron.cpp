@@ -10,7 +10,7 @@
 #include "../math/generic.hpp"
 #include "../types.hpp"
 #include "../type_traits.hpp"
-#include "string.h"
+#include "string.hpp"
 
 #include "../slice.hpp"
 

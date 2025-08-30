@@ -2,7 +2,7 @@
 #include "../../src/allocation/abcmalloc/arena.hpp"
 #include "../../src/allocation/abcmalloc/book.hpp"
 #include "../../src/io/console.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 
 #include <random>
 int
@@ -20,7 +20,7 @@ main()
   // sz = abc::__class_large;
   // mc::infolog(abc::__calculate_desired_space(sz));
   // sz = abc::__class_huge;
-  if constexpr ( true ) {
+  if constexpr ( false ) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(1, 1000000);
@@ -45,21 +45,24 @@ main()
       //  info
     }
   }
-  if constexpr ( false ) {
+  if constexpr ( true ) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(1, 1000000);
     abc::__arena arena;
     size_t req_total = 0;
-    for ( size_t n = 0; n < (2 << 30); ++n ) {
+    for ( size_t n = 0; n < (2 << 10); ++n ) {
       auto mem = arena.push(dist(gen));
       mc::console("#", n, " - Allocated memory, with size of: ", mem.len, " at address: ", mem.ptr);
-      if ( arena.pop(mem.ptr) == false )
+      if ( arena.pop(mem) == false )
         mc::console("Failed to pop memory at: ", mem.ptr);
-      // if ( mem.ptr == (byte *)-1 )
-      //   mc::console("Allocation failed");
-      //  info
     }
+    abc::stats_t stats = abc::get_stats();
+    mc::console("Total number of memory allocations: ", stats.alloc_requests);
+    mc::console("Total number of memory deallocations: ", stats.dealloc_requests);
+    mc::console("Total amount of memory requested: ", stats.total_memory_req);
+    mc::console("Total amount of memory allocated: ", stats.total_memory_throughput);
+    mc::console("Total amount of memory freed: ", stats.total_memory_freed);
   }
   if constexpr ( false ) {
     std::random_device rd;

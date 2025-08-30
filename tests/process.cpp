@@ -6,7 +6,7 @@
 
 #include "../src/linux/process/process.hpp"
 #include "../src/control.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 #include "../src/thread/signal.hpp"
 
 #include "../src/io/console.hpp"

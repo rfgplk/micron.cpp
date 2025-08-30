@@ -7,7 +7,7 @@
 #include "../src/io/filesystem.hpp"
 #include "../src/io/paths.hpp"
 #include "../src/io/serial.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 #include "../src/control.hpp"
 #include "../src/errno.hpp"

@@ -6,7 +6,7 @@
 
 #include "../src/io/print.hpp"
 #include "../src/iterator.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 #include "../src/vector/vector.hpp"
 
 int

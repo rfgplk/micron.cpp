@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../mem.h"
+#include "../../mem.hpp"
 #include "../../memory/cmemory.hpp"
 #include "../../simd/types.hpp"
 #include "../../type_traits.hpp"
@@ -124,7 +124,7 @@ struct __buddy_list {
     if ( !base )
       return { nullptr, 0 };
     size_t needed = (n + Min - 1) & ~(Min - 1);
-    needed += sizeof(i8);
+    needed += sizeof(i64);
     int o = order_for_size(needed);
     if ( o >= max_order )
       return { nullptr, 0 };
@@ -146,11 +146,11 @@ struct __buddy_list {
       buddy->next = free_lists[i];
       free_lists[i] = buddy;
     }
-    i8 *hdr = reinterpret_cast<i8 *>(blk);
-    *hdr = static_cast<i8>(o);
+    i64 *hdr = reinterpret_cast<i64 *>(blk);
+    *hdr = static_cast<i64>(o);
     // NOTE: this is here due to alignment, plus we might add on later other info to the metadata, so we get a little
     // leeway. the offset is 256-bit to account properly for AVX2.
-    return { ((byte *)blk + sizeof(micron::simd::i256)), order_size(o) - sizeof(i8) };
+    return { ((byte *)blk + sizeof(micron::simd::i256)), order_size(o) - sizeof(i64) };
   }
 
   T
@@ -178,7 +178,7 @@ struct __buddy_list {
     // size_t sz = 0;
 
     byte *addr = static_cast<byte *>(ptr);
-    i8 *hdr = reinterpret_cast<i8 *>(addr - sizeof(micron::simd::i256));
+    i64 *hdr = reinterpret_cast<i64 *>(addr - sizeof(micron::simd::i256));
     int o = static_cast<int>(*hdr);
 
     addr = reinterpret_cast<byte *>(hdr);     // point to start of block including header

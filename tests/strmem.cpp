@@ -6,7 +6,7 @@
 
 #include "../src/io/print.hpp"
 #include "../src/memory/memory.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 #include <cstring>
 

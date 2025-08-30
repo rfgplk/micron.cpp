@@ -2,7 +2,7 @@
 #include "../../src/allocation/abcmalloc/arena.hpp"
 #include "../../src/allocation/abcmalloc/book.hpp"
 #include "../../src/io/console.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 
 void *volatile escaped;
 

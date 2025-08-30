@@ -8,7 +8,7 @@
 #include "../src/io/console.hpp"
 #include "../src/range.hpp"
 #include "../src/stack.hpp"
-#include "../src/std.h"
+#include "../src/std.hpp"
 
 #include <stack>
 

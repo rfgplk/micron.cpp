@@ -7,7 +7,7 @@
 
 #include "../type_traits.hpp"
 #include "../concepts.hpp"
-#include "string.h"
+#include "string.hpp"
 #include "unitypes.hpp"
 
 namespace micron

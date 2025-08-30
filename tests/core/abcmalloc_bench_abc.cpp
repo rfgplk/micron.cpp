@@ -1,6 +1,6 @@
 #include "../../src/cmalloc.hpp"
 #include "../../src/io/console.hpp"
-#include "../../src/std.h"
+#include "../../src/std.hpp"
 
 #include <random>
 int

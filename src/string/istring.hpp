@@ -15,7 +15,7 @@
 #include "../pointer.hpp"
 #include "../slice.hpp"
 
-#include "string.h"
+#include "string.hpp"
 #include "unitypes.hpp"
 
 namespace micron
