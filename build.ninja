@@ -14,7 +14,7 @@ cflags_optimizations = -Ofast -mavx2 -mbmi -march=native
 # annoying but works
 cflags_warn_all_llvm = -Weverything
 cflags_warn_base = -Wall -Wextra -Wpedantic
-cflags_warn_options = -Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconversion-null -Woverlength-strings -Wpointer-arith -Wunused-local-typedefs -Wunused-result -Wvarargs -Wvla -Wwrite-strings -Wduplicated-cond -Wdouble-promotion -Wdisabled-optimization -Winline -Wfloat-equal -Wmissing-noreturn -Wpacked -Wnonnull -Wundef -Wtrampolines -Winline -Winit-self -Wcast-align -Wnarrowing -Wregister -Wmain -Wchanges-meaning -Wsequence-point -Wattributes
+cflags_warn_options = -Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconversion-null -Woverlength-strings -Wpointer-arith -Wunused-local-typedefs -Wunused-result -Wvarargs -Wvla -Wwrite-strings -Wduplicated-cond -Wdouble-promotion -Wdisabled-optimization -Winline -Wfloat-equal -Wmissing-noreturn -Wpacked -Wnonnull -Wundef -Wtrampolines -Winline -Winit-self -Wcast-align -Wnarrowing -Wregister -Wmain -Wchanges-meaning -Wsequence-point -Wattributes -Werror=return-type
 cflags_warn_ignore = -Wno-implicit-fallthrough -Wno-sign-conversion -Wno-variadic-macros
 
 cflags_ext = -pedantic-errors -nodefaultlibs -fstack-protector-strong -fstrict-overflow -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
@@ -73,6 +73,7 @@ build core_tests_abcmalloc_bench_malloc: cc_compile_cmnd tests/core/abcmalloc_be
 
 build core_tests: phony core_tests_syscall core_tests_strings core_tests_cmemory core_tests_pointers core_tests_mutex core_tests_once core_tests_cpu core_tests_thread core_tests_arena core_tests_linux core_tests_channels
 
+build simd_test: cc_compile_cmnd_debug tests/simd.cpp
 build type_traits_test: cc_compile_cmnd_debug tests/type_traits.cpp
 build chrono_test: cc_compile_cmnd_debug tests/chrono.cpp
 build trees_test: cc_compile_cmnd_debug tests/trees.cpp

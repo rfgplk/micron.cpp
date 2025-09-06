@@ -51,9 +51,4 @@ map_large(void *ptr, const size_t n)
   return reinterpret_cast<B *>(
       micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0));
 };
-
-
-// template <typename T = byte, size_t Sz = alloc_auto_sz>
-// using std_allocator = __allocator<T, micron::map_normal, micron::map_large, micron::munmap, Sz>;
-
 };     // namespace micron

@@ -20,7 +20,8 @@ namespace micron
 template <typename B, uint32_t C, uint32_t R>
   requires(micron::is_arithmetic_v<B> and ((C * sizeof(C)) * (R * sizeof(R)) <= (4096 / sizeof(byte)))
            && ((((C * sizeof(C)) * (R * sizeof(R))) & 64) == 0))
-struct int_matrix_base_avx {
+class int_matrix_base_avx
+{
   using category_type = type_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
@@ -35,6 +36,12 @@ struct int_matrix_base_avx {
   typedef B *iterator;
   typedef const B *const_iterator;
 
+  bool
+  __verify_range(uint32_t sz)
+  {
+  }
+
+public:
   static constexpr uint32_t __size = C * R;
   B alignas(64) __mat[__size];     // yes, public for conv.
   ~int_matrix_base_avx(void) = default;
@@ -70,7 +77,14 @@ struct int_matrix_base_avx {
     micron::czero<__size>(o.__mat);
     return *this;
   }
+  // start of scalar funcs
   // scalar addition
+  int_matrix_base_avx &
+  operator=(B sc)
+  {
+    micron::memset(&__mat[0], sc, __size);
+    return *this;
+  }
   int_matrix_base_avx &
   operator+=(B sc)
   {
@@ -85,8 +99,71 @@ struct int_matrix_base_avx {
       __mat[i + 5] += sc;
       __mat[i + 7] += sc;
     }
-    micron::mark();
     return *this;
+  }
+  int_matrix_base_avx &
+  operator-=(B sc)
+  {
+    // NOTE: this will autovectorize or entirely get opt out during ct. ie
+    // (mov    $res,%edi)
+    for ( size_t i = 0; i < __size; i += 8 ) {
+      __mat[i] -= sc;
+      __mat[i + 1] -= sc;
+      __mat[i + 2] -= sc;
+      __mat[i + 3] -= sc;
+      __mat[i + 4] -= sc;
+      __mat[i + 5] -= sc;
+      __mat[i + 7] -= sc;
+    }
+    return *this;
+  }
+  int_matrix_base_avx &
+  operator/=(B sc)
+  {
+    // NOTE: this will autovectorize or entirely get opt out during ct. ie
+    // (mov    $res,%edi)
+    for ( size_t i = 0; i < __size; i += 8 ) {
+      __mat[i] /= sc;
+      __mat[i + 1] /= sc;
+      __mat[i + 2] /= sc;
+      __mat[i + 3] /= sc;
+      __mat[i + 4] /= sc;
+      __mat[i + 5] /= sc;
+      __mat[i + 7] /= sc;
+    }
+    return *this;
+  }
+  int_matrix_base_avx &
+  operator*=(B sc)
+  {
+    // NOTE: this will autovectorize or entirely get opt out during ct. ie
+    // (mov    $res,%edi)
+    for ( size_t i = 0; i < __size; i += 8 ) {
+      __mat[i] *= sc;
+      __mat[i + 1] *= sc;
+      __mat[i + 2] *= sc;
+      __mat[i + 3] *= sc;
+      __mat[i + 4] *= sc;
+      __mat[i + 5] *= sc;
+      __mat[i + 7] *= sc;
+    }
+    return *this;
+  }
+  // end of scalar funcs
+  B &
+  col(uint32_t c)
+  {
+    return __mat[c];
+  }
+  B &
+  row(uint32_t r)
+  {
+    return __mat[r * C];
+  }
+  B &
+  operator[](uint32_t r)
+  {
+    return __mat[r * C];
   }
   B &
   operator[](uint32_t r, uint32_t c)
@@ -108,6 +185,20 @@ struct int_matrix_base_avx {
     return *this;
   }
 
+  int_matrix_base_avx &
+  operator*=(const int_matrix_base_avx &o)
+  {
+    for ( size_t i = 0; i < __size; i++ )
+      __mat[i] *= o.__mat[i];
+    return *this;
+  }
+  int_matrix_base_avx &
+  operator/=(const int_matrix_base_avx &o)
+  {
+    for ( size_t i = 0; i < __size; i++ )
+      __mat[i] /= o.__mat[i];
+    return *this;
+  }
   int_matrix_base_avx
   operator*(const int_matrix_base_avx &o)
   {
@@ -116,6 +207,40 @@ struct int_matrix_base_avx {
       for ( B j = 0; j < C; j++ )
         for ( B k = 0; k < C; k++ )
           result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
+    }
+    return result;
+  }
+  int_matrix_base_avx
+  operator+(const int_matrix_base_avx &o)
+  {
+    int_matrix_base_avx result;
+    for ( B i = 0; i < R; i++ ) {
+      for ( B j = 0; j < C; j++ )
+        for ( B k = 0; k < C; k++ )
+          result[i, j] += __mat[i * C + k] + o.__mat[k * C + j];
+    }
+    return result;
+  }
+
+  int_matrix_base_avx
+  operator-(const int_matrix_base_avx &o)
+  {
+    int_matrix_base_avx result;
+    for ( B i = 0; i < R; i++ ) {
+      for ( B j = 0; j < C; j++ )
+        for ( B k = 0; k < C; k++ )
+          result[i, j] += __mat[i * C + k] - o.__mat[k * C + j];
+    }
+    return result;
+  }
+  int_matrix_base_avx
+  operator/(const int_matrix_base_avx &o)
+  {
+    int_matrix_base_avx result;
+    for ( B i = 0; i < R; i++ ) {
+      for ( B j = 0; j < C; j++ )
+        for ( B k = 0; k < C; k++ )
+          result[i, j] += __mat[i * C + k] / o.__mat[k * C + j];
     }
     return result;
   }

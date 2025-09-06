@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../array.hpp"
+#include "../vector/fvector.hpp"
 #include "../memory/new.hpp"
 #include "../pointer.hpp"
 #include "../tags.hpp"
@@ -298,6 +299,146 @@ template <typename T, int Dg> struct b_tree {
   {
     if ( root.get() )
       root->traverse(visit);
+  }
+
+  inline T *
+  get(const T &key)
+  {
+    if ( !root )
+      return nullptr;
+    int idx = -1;
+    b_node<T, Dg> *n = root->search(key, &idx);
+    return (n && idx >= 0) ? &n->keys[idx] : nullptr;
+  }
+
+  inline micron::array<b_node<T, Dg> *, 2>
+  get_near_children(const T &key)
+  {
+    if ( !root )
+      return { nullptr, nullptr };
+    int idx = -1;
+    b_node<T, Dg> *n = root->search(key, &idx);
+    if ( !n || idx < 0 )
+      return { nullptr, nullptr };
+    return { n->chld[idx], n->chld[idx + 1] };
+  }
+  inline int
+  size() const
+  {
+    int count = 0;
+    if ( root ) {
+      root->traverse([&](const T &) { ++count; });
+    }
+    return count;
+  }
+  inline T *
+  min() const
+  {
+    if ( !root )
+      return nullptr;
+    b_node<T, Dg> *cur = root.get();
+    while ( cur->chld[0] )
+      cur = cur->chld[0];
+    return &cur->keys[0];
+  }
+
+  inline T *
+  max() const
+  {
+    if ( !root )
+      return nullptr;
+    b_node<T, Dg> *cur = root.get();
+    while ( cur->chld[cur->nkeys] )
+      cur = cur->chld[cur->nkeys];
+    return &cur->keys[cur->nkeys - 1];
+  }
+  inline T *
+  lower_bound(const T &key)
+  {
+    b_node<T, Dg> *cur = root.get();
+    while ( cur ) {
+      int i = 0;
+      while ( i < cur->nkeys && cur->keys[i] < key )
+        ++i;
+      if ( i < cur->nkeys && cur->keys[i] >= key )
+        return &cur->keys[i];
+      cur = cur->chld[i];
+    }
+    return nullptr;
+  }
+
+  inline T *
+  upper_bound(const T &key)
+  {
+    b_node<T, Dg> *cur = root.get();
+    while ( cur ) {
+      int i = 0;
+      while ( i < cur->nkeys && cur->keys[i] <= key )
+        ++i;
+      if ( i < cur->nkeys )
+        return &cur->keys[i];
+      cur = cur->chld[i];
+    }
+    return nullptr;
+  }
+  inline T *
+  predecessor(const T &key)
+  {
+    int idx = -1;
+    b_node<T, Dg> *n = root->search(key, &idx);
+    if ( !n || idx < 0 )
+      return nullptr;
+    if ( n->chld[idx] ) {     // left subtree exists
+      b_node<T, Dg> *cur = n->chld[idx];
+      while ( cur->chld[cur->nkeys] )
+        cur = cur->chld[cur->nkeys];
+      return &cur->keys[cur->nkeys - 1];
+    }
+    return (idx > 0) ? &n->keys[idx - 1] : nullptr;
+  }
+
+  inline T *
+  successor(const T &key)
+  {
+    int idx = -1;
+    b_node<T, Dg> *n = root->search(key, &idx);
+    if ( !n || idx < 0 )
+      return nullptr;
+    if ( n->chld[idx + 1] ) {
+      b_node<T, Dg> *cur = n->chld[idx + 1];
+      while ( cur->chld[0] )
+        cur = cur->chld[0];
+      return &cur->keys[0];
+    }
+    return (idx < n->nkeys - 1) ? &n->keys[idx + 1] : nullptr;
+  }
+  inline int
+  height() const
+  {
+    int h = 0;
+    b_node<T, Dg> *cur = root.get();
+    while ( cur ) {
+      ++h;
+      cur = cur->chld[0];
+    }
+    return h;
+  }
+  inline micron::fvector<b_node<T, Dg> *>
+  get_children(const T &key)
+  {
+    micron::fvector<b_node<T, Dg> *> result;
+    if ( !root )
+      return result;
+    int idx = -1;
+    b_node<T, Dg> *n = root->search(key, &idx);
+    if ( !n || idx < 0 )
+      return result;
+
+    for ( int i = 0; i <= n->nkeys; ++i ) {
+      if ( n->chld[i] )
+        result.emplace_back(n->chld[i]);
+    }
+    return result;
   }
 };
 

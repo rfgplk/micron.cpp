@@ -5,8 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include <iostream>
+
 #include "../../closures.hpp"
 #include "../../concepts.hpp"
+#include "../../control.hpp"
 #include "../../numerics.hpp"
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
@@ -128,6 +131,7 @@ class __arena
   bool
   __find_and_remove(F *nd, const micron::__chunk<byte> &memory)
   {
+    F *__init_nd = nd;
     while ( nd != nullptr ) {
       if ( nd->nd == nullptr ) {
         nd = nd->nxt;
@@ -135,8 +139,16 @@ class __arena
       }
       auto &sh = *nd->nd;
 
-      if ( sh.try_unmark(memory) )
-        return true;
+      if ( sh.is_at(memory.ptr) ) [[unlikely]] {
+        if ( sh.try_unmark(memory) ) {
+          if ( sh.used() == 0 and nd != __init_nd )     // always keep one sheet around
+          {
+            sh.reset();
+            auto *t_nd = nd;
+          }
+          return true;
+        }
+      }
       nd = nd->nxt;
     }
     return false;
@@ -164,6 +176,9 @@ class __arena
   bool
   __heap_remove(const micron::__chunk<byte> &memory)
   {
+    // TODO: this must match the offsets of the headers in free_list
+    // clean this up
+
     if ( __find_and_remove(&_small_buckets, memory) )
       return true;
     if ( __find_and_remove(&_medium_buckets, memory) )
@@ -172,6 +187,21 @@ class __arena
       return true;
     if ( __find_and_remove(&_huge_buckets, memory) )
       return true;
+    /*if ( (memory.len + sizeof(micron::simd::i256)) < __class_medium ) {
+      if ( __find_and_remove(&_small_buckets, memory) )
+        return true;
+    } else if ( ((memory.len + sizeof(micron::simd::i256)) <= __class_large)
+                and (memory.len + sizeof(micron::simd::i256)) >= __class_medium ) {
+      if ( __find_and_remove(&_medium_buckets, memory) )
+        return true;
+    } else if ( (memory.len + sizeof(micron::simd::i256)) <= __class_huge
+                and (memory.len + sizeof(micron::simd::i256)) > __class_large ) {
+      if ( __find_and_remove(&_large_buckets, memory) )
+        return true;
+    } else if ( (memory.len + sizeof(micron::simd::i256)) > __class_huge ) {
+      if ( __find_and_remove(&_huge_buckets, memory) )
+        return true;
+    }*/
     return false;
   }
   bool
@@ -365,7 +395,7 @@ public:
   void
   reset_page(byte *ptr)
   {
-    auto check = [](auto nd, byte *ptr) -> void {
+    auto check = [](auto nd, byte *__ptr) -> void {
       while ( nd != nullptr ) {
         if ( nd->nd == nullptr ) {
           nd = nd->nxt;
@@ -373,7 +403,7 @@ public:
         }
         auto &sh = *nd->nd;     // safe
 
-        if ( sh.is_at(ptr) ) [[unlikely]]
+        if ( sh.is_at(__ptr) ) [[unlikely]]
           sh.reset();
         nd = nd->nxt;
       }

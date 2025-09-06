@@ -35,26 +35,22 @@ mark()
 {
 }
 
-__attribute__((noreturn))
-void
+__attribute__((noreturn)) void
 exit(int s = 0)
 {
-#if ( defined(GNUCC) )
   __builtin__exit(s);
-#else
-  _Exit(s);
-#endif
 }
-__attribute__((noreturn))
-void
+__attribute__((noreturn)) void
 abort(void)
 {
-#if ( defined(GNUCC) )
   __builtin__exit(SIG_ABRT);
-#else
-  _Exit(SIG_ABRT);
-#endif
 }
+__attribute__((noreturn)) void
+quick_exit(const int s = SIG_ABRT)
+{
+  _Exit(s);
+}
+
 template <typename F, typename... Args>
 inline void
 pause(F f, Args... args)
@@ -175,18 +171,18 @@ sleep_for(const umax_t ms)
 {
   timespec_t r, rmn;
   r.tv_sec = ms / (umax_t)1000;
-  r.tv_nsec = (ms % (umax_t)1000) * (umax_t)1000;
+  r.tv_nsec = (ms % (umax_t)1000) * (umax_t)1000000;
   while ( micron::nanosleep(r, rmn) == -1 && errno == EINTR ) {
     r = rmn;
   }
 }
 // in ms
 inline void
-sleep(const umax_t ms)
+sleep(const ulong_t ms)
 {
   timespec_t r;
   r.tv_sec = ms / (umax_t)1000;
-  r.tv_nsec = (ms % (umax_t)1000) * (umax_t)1000;
+  r.tv_nsec = ms * (umax_t)1000000;
   while ( micron::nanosleep(r) == -1 && errno == EINTR ) {
   }
 }

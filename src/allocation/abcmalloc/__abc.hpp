@@ -25,7 +25,7 @@ struct __abc_allocator {
   {
     T *ptr = abc::alloc(n);
     if ( ptr == (void *)-1 )
-      throw micron::except::memory_error("std_allocator::alloc(): mmap() failed");
+      throw micron::except::memory_error("abc_allocator::alloc(): mmap() failed");
     return ptr;
   };
 
@@ -33,7 +33,7 @@ struct __abc_allocator {
   dealloc(T *mem, size_t len)
   {     // deallocate at location N
     if ( mem == nullptr )
-      throw micron::except::memory_error("std_allocator::dealloc(): nullptr was provided");
+      throw micron::except::memory_error("abc_allocator::dealloc(): nullptr was provided");
     abc::dealloc(mem, len);
     mem = nullptr;
   }

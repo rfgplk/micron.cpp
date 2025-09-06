@@ -95,7 +95,11 @@ public:
       micron::abort();
     if ( _p.zero() )
       micron::abort();
-    __book.deallocate(_p);
+    auto r = __book.deallocate(_p);
+    if ( r == __flag_out_of_space )
+      return false;
+    if ( r == __flag_invalid or r == __flag_failure )
+      return false;
     return true;
   }
   bool
@@ -114,6 +118,11 @@ public:
     if ( empty() )
       return 0;
     return __book.available();
+  }
+  size_t
+  used() const
+  {
+    return __book.used();
   }
   size_t
   allocated() const

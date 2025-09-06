@@ -65,31 +65,31 @@ public:
   };
   template <is_pointer_class O>
   bool
-  operator==(const O &o) noexcept
+  operator==(const O &o) const noexcept
   {
     return internal_pointer == o.get();
   }
   template <is_pointer_class O>
   bool
-  operator>(const O &o) noexcept
+  operator>(const O &o) const noexcept
   {
     return internal_pointer > o.get();
   }
   template <is_pointer_class O>
   bool
-  operator<(const O &o) noexcept
+  operator<(const O &o) const noexcept
   {
     return internal_pointer < o.get();
   }
   template <is_pointer_class O>
   bool
-  operator<=(const O &o) noexcept
+  operator<=(const O &o) const noexcept
   {
     return internal_pointer <= o.get();
   }
   template <is_pointer_class O>
   bool
-  operator>=(const O &o) noexcept
+  operator>=(const O &o) const noexcept
   {
     return internal_pointer >= o.get();
   }

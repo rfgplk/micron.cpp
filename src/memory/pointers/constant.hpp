@@ -48,6 +48,16 @@ public:
   {
     return internal_pointer == nullptr;
   };
+  bool
+  operator==(Type* u) const noexcept
+  {
+    return internal_pointer == u;
+  };
+  bool
+  operator==(uintptr_t u) const noexcept
+  {
+    return internal_pointer == reinterpret_cast<Type*>(u);
+  };
   const Type *
   operator->() const
   {

@@ -11,7 +11,7 @@ namespace micron
 // base allocator which all others inherit from
 template <typename T, size_t Sz = alloc_auto_sz>
   requires(micron::is_integral_v<T>)
-struct std_allocator {
+struct sys_allocator {
   inline static T *
   alloc(size_t n)     // allocate 'smartly'
   {
@@ -21,7 +21,7 @@ struct std_allocator {
     else if constexpr ( Sz == large_page_size )
       ptr = micron::map_large(nullptr, n);
     if ( ptr == (void *)-1 )
-      throw except::memory_error("std_allocator::alloc(): mmap() failed");
+      throw except::memory_error("sys_allocator::alloc(): mmap() failed");
     return ptr;
   };
 
@@ -29,10 +29,10 @@ struct std_allocator {
   dealloc(T *mem, size_t len)
   {     // deallocate at location N
     if ( mem == nullptr )
-      throw except::memory_error("std_allocator::dealloc(): nullptr was provided");
+      throw except::memory_error("sys_allocator::dealloc(): nullptr was provided");
     // micron::munmap(mem, len);
     if ( micron::munmap(mem, len) == -1 )
-      throw except::memory_error("std_allocator::dealloc(): munmap() failed");
+      throw except::memory_error("sys_allocator::dealloc(): munmap() failed");
     mem = nullptr;
   }
 };

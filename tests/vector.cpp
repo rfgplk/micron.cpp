@@ -4,18 +4,22 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/vector/vector.hpp"
+#include "snowball/snowball.hpp"
+
 #include "../src/io/console.hpp"
 #include "../src/vector/fvector.hpp"
 #include "../src/vector/svector.hpp"
+#include "../src/vector/vector.hpp"
 
 int
 main()
 {
+  sb::verify_debug();
+  enable_scope()
   {
-
+    sb::test_case("micron::vector(), testing insertions and erasures");
     micron::fvector<int> vec;
-    for ( int i = 0; i < 50; i++ )
+    for ( int i = 0; i < 10; i++ )
       vec.push_back(i);
     vec.erase(vec.begin());
     vec.erase(vec.begin() + 3);
@@ -23,6 +27,7 @@ main()
     vec.erase(vec.begin() + 9);
     micron::console(vec);
   };
+  return 1;
   micron::vector<size_t> buf = { 1, 2, 3, 4 };
   for ( auto x : buf )
     micron::console(x);

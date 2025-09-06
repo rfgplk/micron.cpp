@@ -9,7 +9,7 @@ namespace micron
 {
 
 // default micron allocator, uses mmap
-template <typename T, size_t Sz> class map_allocator : private std_allocator<byte, Sz>
+template <typename T, size_t Sz> class map_allocator : private sys_allocator<byte, Sz>
 {
 public:
   constexpr map_allocator() = default;
@@ -18,12 +18,12 @@ public:
   T *
   allocate(size_t cnt)
   {
-    return std_allocator<byte, Sz>::alloc(cnt);
+    return sys_allocator<byte, Sz>::alloc(cnt);
   }
   void
   deallocate(T *ptr, size_t cnt)
   {
-    return std_allocator<byte, Sz>::dealloc(ptr, cnt);
+    return sys_allocator<byte, Sz>::dealloc(ptr, cnt);
   }
 };
 

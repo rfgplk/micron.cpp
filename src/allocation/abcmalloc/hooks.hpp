@@ -7,7 +7,7 @@
 
 #include "../../math/generic.hpp"
 #include "../../types.hpp"
-#include "__std.hpp"
+#include "__sys.hpp"
 #include "config.hpp"
 
 namespace abc
@@ -27,20 +27,20 @@ __calculate_desired_space(size_t sz)
 void *
 __get_kernel_memory(u64 sz)
 {
-  return micron::std_allocator<byte>::alloc(sz);
+  return micron::sys_allocator<byte>::alloc(sz);
 }
 
 template <typename T>
 T
 __get_kernel_chunk(u64 sz)
 {
-  return { micron::std_allocator<byte>::alloc(sz), sz };
+  return { micron::sys_allocator<byte>::alloc(sz), sz };
 }
 
 template <typename T>
 void
 __release_kernel_chunk(const T &mem)
 {
-  micron::std_allocator<byte>::dealloc(mem.ptr, mem.len);
+  micron::sys_allocator<byte>::dealloc(mem.ptr, mem.len);
 }
 };

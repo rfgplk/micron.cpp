@@ -8,6 +8,62 @@
 namespace micron
 {
 
+// default micron allocator, uses abcmalloc directly
+template <typename T> struct abc_allocator
+{
+  // difference between allocate and umanaged_* calls is that allocate pulls memory from the allocator, while unmanaged
+  // pulls pages from the kernel directly, for when you need to manage memory yourself
+  T *
+  allocate(size_t sz)
+  {
+    return reinterpret_cast<T *>(abc::__abc_allocator<byte>::alloc(sz));
+  }
+  void
+  deallocate(T *ptr, size_t sz)
+  {
+    return abc::__abc_allocator<byte>::dealloc(ptr, sz);
+  }
+  T *
+  unmanaged_allocate(size_t sz)
+  {
+    return reinterpret_cast<T *>(micron::sys_allocator<byte>::alloc(sz));
+  }
+  void
+  unmanaged_deallocate(T *ptr, size_t sz)
+  {
+    return micron::sys_allocator<byte>::dealloc(ptr, sz);
+  }
+};
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+#ifdef MICRON_ALLOW_GLIBC_MALLOC
+// TODO: legacy delete eventually
 // default allocator, use malloc/free
 template <typename T> class stl_allocator
 {
@@ -38,24 +94,5 @@ template <typename T> class stl_allocator
     return false;
   }
 };
-
-// default micron allocator, uses abcmalloc directly
-template <typename T> class abc_allocator : private abc::__abc_allocator<byte>
-{
-public:
-  constexpr abc_allocator() = default;
-  constexpr abc_allocator(const abc_allocator &) = default;
-  constexpr abc_allocator(abc_allocator &&) = default;
-  T *
-  allocate(size_t sz)
-  { 
-    return abc::__abc_allocator<byte>::alloc(sz);
-  }
-  void
-  deallocate(T *ptr, size_t sz)
-  {
-    return abc::__abc_allocator<byte>::dealloc(ptr, sz);
-  }
-};
-
+#endif
 };
