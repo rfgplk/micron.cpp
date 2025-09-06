@@ -62,7 +62,7 @@ No. There are still a few specific headers needed to compile *micron* (although 
 
 ## Features
 
-## currently, micron provides the following core C++ libraries:
+### currently, micron provides the following core C++ libraries:
 - allocation
 - algorithms
 - containers
