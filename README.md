@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://github.com/user-attachments/assets/b66231f3-655b-4106-a111-7f72dc38b2b9" alt="micron_logo_default" width="300"/>
+<img src="https://github.com/user-attachments/assets/b66231f3-655b-4106-a111-7f72dc38b2b9" alt="micron_logo_default" width="300"/> ![](https://img.shields.io/badge/version-indev-green)
   
 
 ## the micron standard library
