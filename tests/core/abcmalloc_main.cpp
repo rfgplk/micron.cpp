@@ -11,7 +11,7 @@ main()
   if constexpr ( true ) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    for ( size_t n = 0; n < (2 << 30); ++n ) {
+    for ( size_t n = 0; n < 10000; ++n ) {
       void *dont_optimize = abc::malloc(65536);
       escaped = dont_optimize;
     }

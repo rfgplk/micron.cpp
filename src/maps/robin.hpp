@@ -10,11 +10,11 @@
 
 #include "allocation/chunks.hpp"
 #include "allocator.hpp"
+#include "concepts.hpp"
 #include "except.hpp"
 #include "tags.hpp"
-#include "types.hpp"
-#include "concepts.hpp"
 #include "type_traits.hpp"
+#include "types.hpp"
 
 namespace micron
 {
@@ -26,7 +26,9 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
   robin_map_node() : length(0) {}
   robin_map_node(const hash64_t &k, V &&v, size_t l) : key(k), value(micron::move(v)), length(l) {}
   template <typename... Args>
-  robin_map_node(const hash64_t &k, size_t l, Args&&... args) : key(k), value(args...), length(l) {}
+  robin_map_node(const hash64_t &k, size_t l, Args &&...args) : key(k), value(args...), length(l)
+  {
+  }
   robin_map_node(const robin_map_node &) = default;
   robin_map_node(robin_map_node &&) = default;
   robin_map_node &operator=(const robin_map_node &) = default;
@@ -38,7 +40,7 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
   }
   template <typename... Args>
   robin_map_node &
-  set(const K &k, Args &&... args)
+  set(const K &k, Args &&...args)
   {
     key = hash<hash64_t>(k);
     value = micron::move(V(micron::forward(args)...));
@@ -101,7 +103,7 @@ class robin_map : private Alloc, public immutable_memory<Nd>
   }
 
 public:
-  using category_type = robin_map_tag;
+  using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef size_t size_type;
@@ -121,7 +123,9 @@ public:
     clear();
     this->destroy(to_chunk(immutable_memory<Nd>::memory, immutable_memory<Nd>::capacity));
   }
-  robin_map() : immutable_memory<Nd>(this->create((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd)))) {}
+  robin_map() : immutable_memory<Nd>(this->create((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd))))
+  {
+  }
   robin_map(const size_t n) : immutable_memory<Nd>(this->create(n * sizeof(Nd))) {}
   robin_map(const robin_map &) = delete;
   robin_map(robin_map &&o) : immutable_memory<Nd>(micron::move(o)) {}
@@ -141,7 +145,7 @@ public:
     o.capacity = 0;
     return *this;
   }
-  void reserve() = delete; // this robin_maps index is capacity bound, cannot grow the container
+  void reserve() = delete;     // this robin_maps index is capacity bound, cannot grow the container
   void
   clear()
   {
@@ -248,7 +252,7 @@ public:
   }
   template <typename... Args>
   V &
-  emplace(const K &k, Args&&... args)
+  emplace(const K &k, Args &&...args)
   {
     hash64_t key = hsh(k);
     auto index = hsh_index(key);
@@ -290,7 +294,8 @@ public:
     size_t plen = 0;
     size_t count = 0;
     while ( __access(index).key && plen <= __access(index).length ) {
-      if ( __access(index).key == kh ) count++;
+      if ( __access(index).key == kh )
+        count++;
       ++plen;
       index = (index + 1) % immutable_memory<Nd>::capacity;
     }

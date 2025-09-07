@@ -59,8 +59,8 @@ template <typename K, typename V, size_t max = 4, typename Nd = hopscotch_node<K
   resize(void)
   {
     // quad growth
-    const micron::fvector<Nd> old_entries = entries;
-    size_t sz = entries.size();
+    const micron::fvector<Nd> old_entries = micron::move(entries);
+    size_t sz = old_entries.size();
   retry:
     sz *= 2;
     entries.clear();
@@ -74,9 +74,9 @@ template <typename K, typename V, size_t max = 4, typename Nd = hopscotch_node<K
   bool
   insert_unhash(const hash64_t &hsh, V value)
   {
-    size_t id = hsh % entries.capacity();
+    size_t id = hsh % entries.max_size();
     for ( size_t i = 0; i <= max; i++ ) {
-      size_t probe = (id + i) % entries.capacity();
+      size_t probe = (id + i) % entries.max_size();
       if ( !entries[probe].key ) {
         // hit
         entries[probe] = { hsh, value };
@@ -86,10 +86,10 @@ template <typename K, typename V, size_t max = 4, typename Nd = hopscotch_node<K
     }
 
     for ( size_t j = 0; j <= max; j++ ) {
-      size_t probe = (id + j) % entries.capacity();
+      size_t probe = (id + j) % entries.max_size();
       if ( entries[probe].key ) {
         for ( size_t kl = 1; kl <= max; kl++ ) {
-          size_t hop = (probe + kl) % entries.capacity();
+          size_t hop = (probe + kl) % entries.max_size();
           if ( !entries[hop].key ) {
             entries[hop] = { entries[probe].key, entries[probe].value };
             entries[probe] = { hsh, value };
@@ -101,7 +101,8 @@ template <typename K, typename V, size_t max = 4, typename Nd = hopscotch_node<K
     return false;
   }
 
-p public : using category_type = map_tag;
+public:
+  using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef size_t size_type;
@@ -162,9 +163,9 @@ p public : using category_type = map_tag;
   add(const K &k, V value)
   {
     hash64_t hsh = hash64(k);
-    size_t id = hsh % entries.capacity();
+    size_t id = hsh % entries.max_size();
     for ( size_t i = 0; i <= max; i++ ) {
-      size_t probe = (id + i) % entries.capacity();
+      size_t probe = (id + i) % entries.max_size();
       if ( !entries[probe].key ) {
         // hit
         entries[probe] = { hsh, value };
@@ -174,10 +175,10 @@ p public : using category_type = map_tag;
     }
 
     for ( size_t j = 0; j <= max; j++ ) {
-      size_t probe = (id + j) % entries.capacity();
+      size_t probe = (id + j) % entries.max_size();
       if ( entries[probe].key ) {
         for ( size_t kl = 1; kl <= max; kl++ ) {
-          size_t hop = (probe + kl) % entries.capacity();
+          size_t hop = (probe + kl) % entries.max_size();
           if ( !entries[hop].key ) {
             entries[hop] = { entries[probe].key, entries[probe].value };
             entries[probe] = { hsh, value };

@@ -18,7 +18,7 @@
 #include "../linux/process/resource.hpp"
 #include "../linux/process/system.hpp"
 
-#include "../../external/cpuid.hpp"
+#include "../../external/cpuid.h"
 #include "../io/console.hpp"
 #include "../io/filesystem.hpp"
 #include "../slice.hpp"

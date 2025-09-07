@@ -171,7 +171,7 @@ cache_sets(void)
 inline void
 cache(const char level, cache_t *const __restrict__ r)
 {
-  cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = level, .edx = 0 };
+  cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = (unsigned char)level, .edx = 0 };
   cpuid_c(0x04, level, &cs);
 
   r->associative_cache = bit(cs.eax, 9);

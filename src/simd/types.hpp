@@ -11,6 +11,14 @@ namespace micron
 {
 namespace simd
 {
+
+using __vf = float;
+using __vd = double;
+using __v8 = i8;
+using __v16 = i16;
+using __v32 = i32;
+using __v64 = i64;
+
 using b64 = __m64;
 using f128 = __m128;
 using d128 = __m128d;
@@ -35,6 +43,13 @@ template <typename T>
 concept is_simd_256_type = micron::same_as<T, f256> or micron::same_as<T, d256> or micron::same_as<T, i256>;
 template <typename T>
 concept is_simd_512_type = micron::same_as<T, f512> or micron::same_as<T, d512> or micron::same_as<T, i512>;
+template <typename T>
+concept is_int_flag_type
+    = micron::same_as<T, __v8> or micron::same_as<T, __v16> or micron::same_as<T, __v32> or micron::same_as<T, __v64>;
+
+template <typename T>
+concept is_flag_type = micron::same_as<T, __vd> or micron::same_as<T, __vf> or micron::same_as<T, __v8>
+                       or micron::same_as<T, __v16> or micron::same_as<T, __v32> or micron::same_as<T, __v64>;
 
 #pragma GCC diagnostic pop
 };

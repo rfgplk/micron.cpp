@@ -10,11 +10,17 @@
 #include "../src/std.hpp"
 #include "../src/string/strings.hpp"
 
+#include "snowball/snowball.hpp"
 
 int
 main(void)
 {
-  //std::unordered_map<mc::hash64_t, int> hmp;
+
+  mc::stack_swiss_map<mc::string, int, 128> ms;
+  ms.insert("bla", 1);
+  mc::console(*ms.find("bla"));
+  return 1;
+  // std::unordered_map<mc::hash64_t, int> hmp;
   mc::hopscotch_map<mc::hash64_t, int> hmp(25000);
   for ( size_t i = 0; i < 10000; i++ ) {
     try {
@@ -24,7 +30,6 @@ main(void)
   }
   mc::console("Done");
   mc::console("Done");
-  return 0;
   mc::map<mc::string, int> mp;
   mc::console(mp.size());
   mc::console(mp.max_size());

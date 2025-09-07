@@ -12,7 +12,17 @@
 
 namespace abc
 {
-
+inline __attribute__((always_inline)) void
+sanitize_on_alloc(byte *addr, size_t sz = 0)
+{
+  // addr will always be valid
+  if constexpr ( __default_sanitize ) {
+    if ( sz == 0 ) {
+      sz = *reinterpret_cast<i64 *>(addr - sizeof(micron::simd::i256));
+    }
+    micron::memset(addr, __default_sanitize_with_on_alloc, sz);
+  }
+}
 inline __attribute__((always_inline)) void
 zero_on_alloc(byte *addr, size_t sz = 0)
 {

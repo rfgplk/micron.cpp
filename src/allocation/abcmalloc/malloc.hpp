@@ -57,7 +57,13 @@ dealloc(byte *ptr, size_t len)
   }     // wasn't able to throw, add an error
 }
 
-void launder();     // borrows existing alloc'd memory at address
+// gets all pointers alloc'd by abc
+void
+which(void);
+
+
+void borrow();      //
+void launder();     // realloc's memory at address
 void query();       // queries the allocator for info
 void make_at();     // creates memory at a set memory address
 

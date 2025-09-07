@@ -129,27 +129,30 @@ class __arena
   }
   template <typename F>
   bool
-  __find_and_remove(F *nd, const micron::__chunk<byte> &memory)
+  __find_and_remove(F *node, const micron::__chunk<byte> &memory)
   {
-    F *__init_nd = nd;
-    while ( nd != nullptr ) {
-      if ( nd->nd == nullptr ) {
-        nd = nd->nxt;
+    F *__init_nd = node;
+    F *__p_head = node;
+    while ( node != nullptr ) {
+      if ( node->nd == nullptr ) {
+        __p_head = node;
+        node = node->nxt;
         continue;
       }
-      auto &sh = *nd->nd;
+      auto &sh = *node->nd;
 
       if ( sh.is_at(memory.ptr) ) [[unlikely]] {
         if ( sh.try_unmark(memory) ) {
-          if ( sh.used() == 0 and nd != __init_nd )     // always keep one sheet around
+          if ( sh.used() == 0 and node != __init_nd )     // always keep one sheet around
           {
             sh.reset();
-            auto *t_nd = nd;
+            __p_head->nxt = node->nxt;     // relink
           }
           return true;
         }
       }
-      nd = nd->nxt;
+      __p_head = node;
+      node = node->nxt;
     }
     return false;
   }
@@ -337,18 +340,20 @@ public:
   __arena(__arena &&) = delete;
   __arena &operator=(const __arena &) = delete;
   __arena &operator=(__arena &&) = delete;
+  // main method for allocating/mallocing memory
   micron::__chunk<byte>
   push(const size_t sz)
   {
     collect_stats<stat_type::alloc>();
     collect_stats<stat_type::total_memory_req>(sz);
-    if ( check_oom() )
+    if ( check_oom() ) [[unlikely]]
       micron::abort();
     micron::__chunk<byte> memory;
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
       {
         if ( memory = __heap_append_tail(sz); !memory.zero() ) {
           zero_on_alloc(memory.ptr, memory.len);
+          sanitize_on_alloc(memory.ptr, memory.len);
           collect_stats<stat_type::total_memory_throughput>(memory.len);
           return memory;
         }
@@ -357,6 +362,7 @@ public:
     }
     return { (byte *)-1, micron::numeric_limits<size_t>::max() };
   }
+  // main methods for freeing memory
   bool
   pop(const micron::__chunk<byte> &mem)
   {
