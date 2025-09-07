@@ -2,9 +2,9 @@
   
 <div align="center">
 
-# the micron standard library
-### a core (re)implementation of the C++ Standard Template Library
+## the micron standard library
 </div>
+#### a core (re)design of the C++ Standard Template Library
 
 > [!WARNING]
 > micron is still in active development. The ABI may change at any point, and without notice.
