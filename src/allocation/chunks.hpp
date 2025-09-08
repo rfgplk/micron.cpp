@@ -12,6 +12,7 @@
 namespace micron
 {
 
+/*
 // universal contiguous memory object, allows copying & moving.
 // meant to wrap a T* from the allocator
 template <typename T>
@@ -216,5 +217,5 @@ protected:
   size_t length;
   size_t capacity;
 };
-
+*/
 };     // namespace micron

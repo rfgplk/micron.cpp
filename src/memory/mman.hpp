@@ -21,7 +21,7 @@ namespace micron
 
 #ifndef PROT_READ     // rationale: if PROT_READ is already defined it almost certainly means sys/mman.h is being
                       // included
-#define MAP_FAILED (void *)-1
+#define MAP_FAILED (addr_t *)-1
 constexpr int PROT_READ = 0x1;             /* Page can be read.  */
 constexpr int PROT_WRITE = 0x2;            /* Page can be written.  */
 constexpr int PROT_EXEC = 0x4;             /* Page can be executed.  */
@@ -148,40 +148,40 @@ enum class map_types : int {
   __end
 };
 
-inline __attribute__((always_inline)) void *
-mmap(void *__restrict addr, size_t len, int prot, int flags, int fd, off_t offset)
+inline __attribute__((always_inline)) addr_t *
+mmap(addr_t *__restrict addr, size_t len, int prot, int flags, int fd, off_t offset)
 {
-  return reinterpret_cast<void *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
 }
-// void *mmap64();
+// addr_t *mmap64();
 int
-munmap(void *__restrict addr, size_t len)
+munmap(addr_t *__restrict addr, size_t len)
 {
   return (int)micron::syscall(SYS_munmap, addr, len);
 }
 int
-mprotect(void *addr, size_t len, int prot, int pkey)
+mprotect(addr_t *addr, size_t len, int prot)
 {
-  return (int)micron::syscall(SYS_mprotect, addr, len, prot, pkey);
+  return (int)micron::syscall(SYS_mprotect, addr, len, prot);
 }
 int
-msync(void *addr, size_t len, int flags)
+msync(addr_t *addr, size_t len, int flags)
 {
   return (int)micron::syscall(SYS_msync, addr, len, flags);
 }
 int
-madvise(void *addr, size_t len, int advice)
+madvise(addr_t *addr, size_t len, int advice)
 {
 
   return (int)micron::syscall(SYS_madvise, addr, len, advice);
 };
 int
-mlock(const void *addr, size_t len)
+mlock(const addr_t *addr, size_t len)
 {
   return (int)micron::syscall(SYS_mlock, addr, len);
 }
 int
-munlock(const void *addr, size_t len)
+munlock(const addr_t *addr, size_t len)
 {
   return (int)micron::syscall(SYS_mlock, addr, len);
 }
@@ -209,9 +209,23 @@ brk(T *addr)
   return micron::syscall(SYS_brk, addr);
 }
 
-// auto
-// sbrk(intptr_t inc)
-//{
-//   return micron::syscall(SYS_sbrk, inc);
-// }
+addr_t *
+brk(nullptr_t t [[maybe_unused]])
+{
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_brk, 0));
+}
+
+addr_t *
+sbrk(intptr_t increment)
+{
+  addr_t *__program_break = nullptr;
+  __program_break = brk(nullptr);
+
+  if ( increment == 0 ) [[likely]]
+    return __program_break;
+
+  brk(__program_break + increment);
+  return __program_break;
+}
+
 };

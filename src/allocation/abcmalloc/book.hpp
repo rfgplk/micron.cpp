@@ -7,6 +7,7 @@
 
 #include "../../control.hpp"
 #include "../../except.hpp"
+#include "../../memory/addr.hpp"
 #include "../../types.hpp"
 #include "../linux/kmemory.hpp"
 #include "config.hpp"
@@ -29,7 +30,7 @@ template <u64 Sz> class sheet
   __impl_release(void)
   {
     if ( !__kernel_memory.zero() ) {
-      if ( micron::munmap(__kernel_memory.ptr, __kernel_memory.len) == -1 ) {
+      if ( micron::munmap(micron::real_addr(__kernel_memory.ptr), __kernel_memory.len) == -1 ) {
         micron::abort();
       }
       // throw micron::except::memory_error("abcmalloc ~sheet(): failed to unmap memory");
@@ -51,6 +52,22 @@ public:
     __kernel_memory = micron::move(o.__kernel_memory);
     __book = micron::move(o.__book);
     return *this;
+  }
+  bool
+  freeze(void)
+  {
+    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, micron::PROT_READ) != 0 ) {
+      return false;
+    }
+    return true;
+  }
+  bool
+  freeze(int prot)
+  {
+    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, prot) != 0 ) {
+      return false;
+    }
+    return true;
   }
   void
   release(void)

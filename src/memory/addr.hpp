@@ -36,6 +36,13 @@ max_cast(T &&t)
   return static_cast<size_t>(const_cast<micron::remove_const<T>::type>(t));
 }
 template <typename P>
+constexpr addr_t *
+real_addr(P &p) noexcept
+{
+  return reinterpret_cast<addr_t *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+}
+
+template <typename P>
 constexpr P *
 addressof(P &p) noexcept
 {

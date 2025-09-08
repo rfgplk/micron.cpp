@@ -46,7 +46,7 @@ template <typename T> struct enable_if<true, T> {
   using type = T;
 };
 
-template <bool _Cond, typename T = void> using __enable_if_t = typename enable_if<_Cond, T>::type;
+template <bool C, typename T = void> using __enable_if_t = typename enable_if<C, T>::type;
 
 template <bool> struct __conditional {
   template <typename T, typename> using type = T;
@@ -56,8 +56,8 @@ template <> struct __conditional<false> {
   template <typename, typename Uxp> using type = Uxp;
 };
 
-template <bool _Cond, typename _If, typename _Else>
-using __conditional_t = typename __conditional<_Cond>::template type<_If, _Else>;
+template <bool C, typename _If, typename _Else>
+using __conditional_t = typename __conditional<C>::template type<_If, _Else>;
 
 template <typename _Type> struct __type_identity {
   using type = _Type;
@@ -1007,11 +1007,11 @@ template <typename T> using __decay_t = typename decay<T>::type;
 
 template <typename T> using __decay_and_strip = __strip_reference_wrapper<__decay_t<T>>;
 
-template <typename... _Cond> using _Require = __enable_if_t<__and_<_Cond...>::value>;
+template <typename... C> using _Require = __enable_if_t<__and_<C...>::value>;
 
 template <typename T> using __remove_cvref_t = typename remove_cv<typename remove_reference<T>::type>::type;
 
-template <bool _Cond, typename _Iftrue, typename _Iffalse> struct conditional {
+template <bool C, typename _Iftrue, typename _Iffalse> struct conditional {
   using type = _Iftrue;
 };
 
@@ -1241,10 +1241,10 @@ template <__tt_size_t _Len, typename... _Types> using aligned_union_t = typename
 
 template <typename T> using decay_t = typename decay<T>::type;
 
-template <bool _Cond, typename T = void> using enable_if_t = typename enable_if<_Cond, T>::type;
+template <bool C, typename T = void> using enable_if_t = typename enable_if<C, T>::type;
 
-template <bool _Cond, typename _Iftrue, typename _Iffalse>
-using conditional_t = typename conditional<_Cond, _Iftrue, _Iffalse>::type;
+template <bool C, typename _Iftrue, typename _Iffalse>
+using conditional_t = typename conditional<C, _Iftrue, _Iffalse>::type;
 
 template <typename... T> using common_type_t = typename common_type<T...>::type;
 
@@ -1253,23 +1253,23 @@ template <typename T> using underlying_type_t = typename underlying_type<T>::typ
 template <typename T> using result_of_t = typename result_of<T>::type;
 
 template <typename...> using void_t = void;
-template <typename _Default, typename _AlwaysVoid, template <typename...> class _Op, typename... Args>
+template <typename Df, typename _AlwaysVoid, template <typename...> class Op, typename... Args>
 struct __detector {
-  using type = _Default;
+  using type = Df;
   using __is_detected = false_type;
 };
 
-template <typename _Default, template <typename...> class _Op, typename... Args>
-struct __detector<_Default, Void_t<_Op<Args...>>, _Op, Args...> {
-  using type = _Op<Args...>;
+template <typename Df, template <typename...> class Op, typename... Args>
+struct __detector<Df, Void_t<Op<Args...>>, Op, Args...> {
+  using type = Op<Args...>;
   using __is_detected = true_type;
 };
 
-template <typename _Default, template <typename...> class _Op, typename... Args>
-using __detected_or = __detector<_Default, void, _Op, Args...>;
+template <typename Df, template <typename...> class Op, typename... Args>
+using __detected_or = __detector<Df, void, Op, Args...>;
 
-template <typename _Default, template <typename...> class _Op, typename... Args>
-using __detected_or_t = typename __detected_or<_Default, _Op, Args...>::type;
+template <typename Df, template <typename...> class Op, typename... Args>
+using __detected_or_t = typename __detected_or<Df, Op, Args...>::type;
 template <typename T> struct __is_swappable;
 
 template <typename T> struct __is_nothrow_swappable;

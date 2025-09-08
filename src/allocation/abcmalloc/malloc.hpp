@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../type_traits.hpp"
 #include "../../types.hpp"
 #include "arena.hpp"
 #include "tapi.hpp"
@@ -22,18 +23,36 @@ relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets aren
 
 byte *mark_at(byte *ptr, size_t size);       // hard mark memory at addr. overrides previous entries
 byte *unmark_at(byte *ptr, size_t size);     // hard unmark memory at addr. overrides previous entries
-__attribute__((malloc, alloc_size(1))) byte *
-alloc(size_t size)     // allocates memory, near iden. func. to malloc
-{
-  __init_abcmalloc();
-  return __main_arena->push(size).ptr;
-}
 
-__attribute__((malloc, alloc_size(1))) micron::__chunk<byte>
-balloc(size_t size)     // allocates memory, near iden. func. to malloc
+micron::__chunk<byte>
+balloc(size_t size)     // allocates memory, returns entire memory chunk
 {
   __init_abcmalloc();
   return __main_arena->push(size);
+}
+
+micron::__chunk<byte>
+fetch(size_t size)
+{
+  __init_abcmalloc();
+  return __main_arena->push(size);
+}
+
+template <typename T>
+  requires(micron::is_trivial_v<T>)
+T *
+fetch(void)
+{
+  __init_abcmalloc();
+  auto mem = __main_arena->push(sizeof(T));
+  T *__obj = reinterpret_cast<T *>(mem.ptr);
+  return __obj;
+}
+
+__attribute__((malloc, alloc_size(1))) auto
+alloc(size_t size) -> byte *     // allocates memory, near iden. func. to malloc
+{
+  return balloc(size).ptr;
 }
 
 template <typename __S_ptr>
@@ -57,10 +76,16 @@ dealloc(byte *ptr, size_t len)
   }     // wasn't able to throw, add an error
 }
 
-// gets all pointers alloc'd by abc
 void
-which(void);
+freeze(byte *ptr)
+{
+  __init_abcmalloc();
+  if ( __main_arena->freeze(ptr) ) {
+  }
+}
 
+// gets all pointers alloc'd by abc
+void which(void);
 
 void borrow();      //
 void launder();     // realloc's memory at address
@@ -76,6 +101,8 @@ void inject();     // injects a function
 //
 // main functions retained for backwards compatibility with the c stdlib
 // even those these are fully functional, they aren't intended to be called as the de facto standard allocating fn's
+
+// leave these as void*
 __attribute__((malloc, alloc_size(1))) void *
 malloc(size_t size)     // alloc memory of size 'size', prefer using alloc
 {

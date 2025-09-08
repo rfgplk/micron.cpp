@@ -3,18 +3,32 @@
 #include "../../src/io/console.hpp"
 #include "../../src/std.hpp"
 
+#include "../../src/string/strings.hpp"
+
 #include <random>
-void *volatile escaped;
+
+struct s {
+  int x;
+  int y;
+};
 int
 main()
 {
   if constexpr ( true ) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    for ( size_t n = 0; n < 10000; ++n ) {
-      void *dont_optimize = abc::malloc(65536);
-      escaped = dont_optimize;
-    }
+    byte *buf = abc::alloc(65536);
+    mc::sstr<32> *tst = new (buf) mc::sstr<32>("Hello World!");
+    mc::console(tst->c_str());
+    volatile byte *p;
+    for ( int i = 0; i < 1000; i++ )
+      p = abc::alloc(65536);
+    mc::console(p);
+    mc::console(tst->c_str());
+    auto st = abc::fetch<s>();
+    st->x = 5;
+    st->y = 10;
+    mc::console(st->x);
+    mc::console(st->y);
+    abc::freeze(buf);
     mc::infolog("Success");
   }
   if constexpr ( false ) {

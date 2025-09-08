@@ -56,6 +56,7 @@ operator new[](size_t size, Args &&...args)
   throw micron::except::memory_error("micron::operator new[]: micron::__alloc failed");
 }
 */
+// leave these as void
 void *
 operator new(size_t size)
 {

@@ -63,7 +63,6 @@ class __arena
       micron::abort();
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
-    // reinterpret_cast<node<sheet<__class_small>> *>(buf_nd.ptr);
     nd->nxt->nd = new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(sz));
     nd->nxt->nxt = nullptr;
     tail = nd->nxt;
@@ -85,20 +84,26 @@ class __arena
       goto retry_memory;
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
-    // reinterpret_cast<node<sheet<__class_small>> *>(buf_nd.ptr);
     nd->nxt->nd = new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(sz));
     nd->nxt->nxt = nullptr;
     tail = nd->nxt;
   }
+
+  template <u64 Sz, typename F, typename G>
+  inline __attribute__((always_inline)) void
+  __insert_guard(F *nd, G *&tail)
+  {
+    if constexpr ( __default_insert_guard_pages ) {
+      __expand_bucket<Sz, F, G>(nd, tail, 4096);
+      nd->nxt->nd->freeze(__default_guard_page_perms);
+    }
+  }
   void
   __buf_expand(const size_t hint_sz)
   {
-    //= hint_sz <= (__default_page_mul * __system_pagesize)
-    //    ? (__default_page_mul * __system_pagesize)
-    //  : ((size_t)(micron::math::ceil((float)hint_sz / (float)(__default_page_mul * __system_pagesize))) + 1)
-    //      * (__default_page_mul * __system_pagesize);
     if ( hint_sz < __class_medium ) {
       __expand_bucket<__class_small>(&_small_buckets, _tail_small_buckets);
+      __insert_guard<__class_small>(&_small_buckets, _tail_small_buckets);
     } else if ( hint_sz <= __class_large and hint_sz >= __class_medium ) {
       __expand_bucket<__class_medium>(&_medium_buckets, _tail_medium_buckets);
     } else if ( hint_sz <= __class_huge and hint_sz > __class_large ) {
@@ -129,55 +134,131 @@ class __arena
   }
   template <typename F>
   bool
-  __find_and_remove(F *node, const micron::__chunk<byte> &memory)
+  __find_and_remove(F *__node, const micron::__chunk<byte> &memory)
   {
-    F *__init_nd = node;
-    F *__p_head = node;
-    while ( node != nullptr ) {
-      if ( node->nd == nullptr ) {
-        __p_head = node;
-        node = node->nxt;
+    F *__init_nd = __node;
+    F *__p_head = __node;
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __p_head = __node;
+        __node = __node->nxt;
         continue;
       }
-      auto &sh = *node->nd;
+      auto &sh = *__node->nd;
 
       if ( sh.is_at(memory.ptr) ) [[unlikely]] {
         if ( sh.try_unmark(memory) ) {
-          if ( sh.used() == 0 and node != __init_nd )     // always keep one sheet around
+          if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
           {
             sh.reset();
-            __p_head->nxt = node->nxt;     // relink
+            __p_head->nxt = __node->nxt;     // relink
           }
           return true;
         }
       }
-      __p_head = node;
-      node = node->nxt;
+      __p_head = __node;
+      __node = __node->nxt;
     }
     return false;
   }
   template <typename F>
   bool
-  __find_and_remove(F *nd, byte *addr)
+  __find_and_remove(F *__node, byte *addr)
   {
-    // we have to check nd->nd too, since certain buckets may be uninit'd
-    while ( nd != nullptr ) {
-      if ( nd->nd == nullptr ) {
-        nd = nd->nxt;
+    F *__init_nd = __node;
+    F *__p_head = __node;
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __p_head = __node;
+        __node = __node->nxt;
         continue;
       }
-      auto &sh = *nd->nd;     // safe
+      auto &sh = *__node->nd;     // safe
 
-      // check first if the addr is even present in the sheet before attempting to unfree
-      if ( sh.is_at(addr) ) [[unlikely]]
+      if ( sh.is_at(addr) ) [[unlikely]] {
         if ( sh.try_unmark_no_size(addr) )
+          if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+          {
+            sh.reset();
+            __p_head->nxt = __node->nxt;     // relink
+          }
+        return true;
+      }
+      __p_head = __node;
+      __node = __node->nxt;
+    }
+    return false;
+  }
+
+  template <typename F>
+  bool
+  __find_and_freeze(F *__node, const micron::__chunk<byte> &memory)
+  {
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;
+
+      if ( sh.is_at(memory.ptr) ) [[unlikely]] {
+        if ( sh.freeze() ) {
           return true;
-      nd = nd->nxt;
+        } else
+          return false;
+      }
+      __node = __node->nxt;
+    }
+    return false;
+  }
+
+  template <typename F>
+  bool
+  __find_and_freeze(F *__node, byte *addr)
+  {
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;     // safe
+
+      if ( sh.is_at(addr) ) [[unlikely]] {
+        return sh.freeze();
+      }
+      __node = __node->nxt;
     }
     return false;
   }
   bool
-  __heap_remove(const micron::__chunk<byte> &memory)
+  __vmap_freeze(const micron::__chunk<byte> &memory)
+  {
+    if ( __find_and_freeze(&_small_buckets, memory) )
+      return true;
+    if ( __find_and_freeze(&_medium_buckets, memory) )
+      return true;
+    if ( __find_and_freeze(&_large_buckets, memory) )
+      return true;
+    if ( __find_and_freeze(&_huge_buckets, memory) )
+      return true;
+    return false;
+  }
+  bool
+  __vmap_freeze_at(byte *addr)
+  {
+    if ( __find_and_freeze(&_small_buckets, addr) )
+      return true;
+    if ( __find_and_freeze(&_medium_buckets, addr) )
+      return true;
+    if ( __find_and_freeze(&_large_buckets, addr) )
+      return true;
+    if ( __find_and_freeze(&_huge_buckets, addr) )
+      return true;
+    return false;
+  }
+
+  bool
+  __vmap_remove(const micron::__chunk<byte> &memory)
   {
     // TODO: this must match the offsets of the headers in free_list
     // clean this up
@@ -208,7 +289,7 @@ class __arena
     return false;
   }
   bool
-  __heap_remove_at(byte *addr)
+  __vmap_remove_at(byte *addr)
   {
     if ( __find_and_remove(&_small_buckets, addr) )
       return true;
@@ -221,7 +302,17 @@ class __arena
     return false;
   }
   micron::__chunk<byte>
-  __heap_append_tail(const size_t sz)
+  __heap_grow(const size_t sz)
+  {
+    return { reinterpret_cast<byte *>(micron::sbrk(sz)), sz };
+  }
+  void
+  __heap_shrink(const ssize_t sz)
+  {
+    micron::sbrk((-1) * sz);
+  }
+  micron::__chunk<byte>
+  __vmap_append_tail(const size_t sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     if ( sz < __class_medium ) {
@@ -237,7 +328,7 @@ class __arena
     return memory;
   }
   micron::__chunk<byte>
-  __heap_append(const size_t sz)
+  __vmap_append(const size_t sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     if ( sz < __class_medium ) {
@@ -340,6 +431,35 @@ public:
   __arena(__arena &&) = delete;
   __arena &operator=(const __arena &) = delete;
   __arena &operator=(__arena &&) = delete;
+
+  micron::__chunk<byte>
+  grow(const size_t sz)
+  {
+    collect_stats<stat_type::alloc>();
+    collect_stats<stat_type::total_memory_req>(sz);
+    if ( check_oom() ) [[unlikely]]
+      micron::abort();
+
+    micron::__chunk<byte> memory;
+    if ( memory = __heap_grow(sz); !memory.zero() ) {
+      zero_on_alloc(memory.ptr, memory.len);
+      sanitize_on_alloc(memory.ptr, memory.len);
+      collect_stats<stat_type::total_memory_throughput>(memory.len);
+      return memory;
+    }
+    __buf_expand(sz);
+    return { (byte *)-1, micron::numeric_limits<size_t>::max() };
+  }
+
+  void
+  shrink(const ssize_t sz)
+  {
+    collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(mem.len);
+    full_on_free(mem.ptr, mem.len);
+    zero_on_free(mem.ptr, mem.len);
+    __heap_shrink(sz);
+  }
   // main method for allocating/mallocing memory
   micron::__chunk<byte>
   push(const size_t sz)
@@ -351,7 +471,7 @@ public:
     micron::__chunk<byte> memory;
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
       {
-        if ( memory = __heap_append_tail(sz); !memory.zero() ) {
+        if ( memory = __vmap_append_tail(sz); !memory.zero() ) {
           zero_on_alloc(memory.ptr, memory.len);
           sanitize_on_alloc(memory.ptr, memory.len);
           collect_stats<stat_type::total_memory_throughput>(memory.len);
@@ -370,7 +490,7 @@ public:
     collect_stats<stat_type::total_memory_freed>(mem.len);
     full_on_free(mem.ptr, mem.len);
     zero_on_free(mem.ptr, mem.len);
-    return __heap_remove(mem);
+    return __vmap_remove(mem);
   }
   bool
   pop(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
@@ -380,14 +500,30 @@ public:
     collect_stats<stat_type::dealloc>();
     full_on_free(mem);
     zero_on_free(mem);
-    return __heap_remove_at(mem);
+    return __vmap_remove_at(mem);
   }
   bool
   pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
     collect_stats<stat_type::total_memory_freed>(len);
-    return __heap_remove({ mem, len });
+    return __vmap_remove({ mem, len });
   }
+  bool
+  freeze(const micron::__chunk<byte> &mem)
+  {
+    return __vmap_freeze(mem);
+  }
+  bool
+  freeze(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
+  {
+    return __vmap_freeze_at(mem);
+  }
+  bool
+  freeze(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
+  {
+    return __vmap_freeze({ mem, len });
+  }
+
   size_t
   total_usage(void) const
   {

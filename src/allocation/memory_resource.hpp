@@ -15,74 +15,59 @@ namespace micron
 // chunk<byte> represents a raw memory chunk as received from an allocator
 // convert it into a __core_memory_resouce
 
+enum class memory_flags { read, write, exec, none };
+
+template <typename T> struct __core_memory_flags {
+  memory_flags flags;
+};
+
 template <typename T>
   requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
 struct __core_memory_resource {
-  T *memory;
-  size_t length;
-  size_t capacity;
+  using value_type = T;
+  using size_type = size_t;
 
-  ~__core_memory_resource()
-  {
-    memory = nullptr;
-    length = 0;
-    capacity = 0;
-  }
-  __core_memory_resource(void) : memory(nullptr), length(0), capacity(0) {}
-  __core_memory_resource(const __core_memory_resource &o) : memory(o.memory), length(o.length), capacity(o.capacity) {};
-  __core_memory_resource(__core_memory_resource &&o) : memory(o.memory), length(o.length), capacity(o.capacity)
-  {
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
-  };
+  chunk<byte> memory;     // capacity implied due to byte / sizeof(T)
 
-  template <typename C>
-  __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), length(o.length), capacity(o.capacity)
-  {
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
-  };
-  __core_memory_resource(chunk<byte> &&o)
-      : memory(reinterpret_cast<T *>(o.ptr)), length(0), capacity(o.len / (sizeof(T) / sizeof(byte))) {};
+  ~__core_memory_resource() = default;
+  __core_memory_resource(void) : memory() {}
+  __core_memory_resource(const __core_memory_resource &o) : memory(o.memory) {}
+  __core_memory_resource(__core_memory_resource &&o) : memory(o.memory) {};
+
+  template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory){};
+  __core_memory_resource(chunk<byte> &&b) : memory(b) {}
   __core_memory_resource &
   operator=(const __core_memory_resource &o)
   {
     memory = o.memory;
-    length = o.length;
-    capacity = o.capacity;
     return *this;
   }
   __core_memory_resource &
   operator=(__core_memory_resource &&o)
   {
-    memory = o.memory;
-    length = o.length;
-    capacity = o.capacity;
-
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
+    memory = micron::move(o.memory);
     return *this;
   };
 
   void
-  accept_new_memory(const chunk<byte> &o)
+  accept(const chunk<byte> &o)
   {
-    memory = reinterpret_cast<T *>(o.ptr);
-    capacity = o.len / (sizeof(T) / sizeof(byte));
+    memory = o;
   }
   void
-  accept_new_memory(chunk<byte> &&o)
+  accept(chunk<byte> &&o)
   {
-    memory = reinterpret_cast<T *>(o.ptr);
-    capacity = o.len / (sizeof(T) / sizeof(byte));
+    memory = o;
+  }
+  size_type
+  capacity() const
+  {
+    return memory.len / (sizeof(T) / sizeof(byte));
   }
   inline chunk<byte>
   operator*()
   {
-    return { .ptr = reinterpret_cast<byte *>(memory), .len = capacity * sizeof(T) * sizeof(byte) };
+    return memory;
   };
 };
 

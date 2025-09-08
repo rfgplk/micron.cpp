@@ -17,6 +17,7 @@ typedef unsigned long int __u_long;
 typedef long int intptr_t;
 typedef unsigned long int uintptr_t;
 using ptr_t = uintptr_t;
+using addr_t = uintptr_t;
 
 // portable cstdint for gcc, pp macros
 

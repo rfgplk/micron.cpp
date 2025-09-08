@@ -32,21 +32,21 @@ to_chunk(T *ptr, size_t len)
 
 template <typename B = byte>
 inline B *
-map_normal(void *ptr, const size_t n)
+map_normal(addr_t *ptr, const size_t n)
 {
   return reinterpret_cast<B *>(micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
 };
 
 template <typename B = byte>
 inline B *
-map_frozen(void *ptr, const size_t n)
+map_frozen(addr_t *ptr, const size_t n)
 {
   return reinterpret_cast<B *>(micron::mmap(ptr, n, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
 };
 
 template <typename B = byte>
 inline B *
-map_large(void *ptr, const size_t n)
+map_large(addr_t *ptr, const size_t n)
 {
   return reinterpret_cast<B *>(
       micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0));
