@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "allocation/chunks.hpp"
+#include "allocation/resources.hpp"
 #include "allocator.hpp"
 
 #include "algorithm/mem.hpp"
@@ -28,9 +28,9 @@ namespace micron
 
 template <typename T, class Alloc = micron::allocator_serial<>>
   requires micron::is_move_constructible_v<T>
-class slice : private Alloc, public immutable_memory<T>
+struct slice : public __immutable_memory_resource<T, Alloc>
 {
-public:
+  using __mem = __immutable_memory_resource<T, Alloc>;
   using category_type = slice_tag;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
@@ -47,126 +47,122 @@ public:
 
   ~slice()
   {
-    if ( immutable_memory<T>::memory == nullptr )
+    if ( __mem::memory == nullptr )
       return;
-    if ( immutable_memory<T>::length == 0 )
+    if ( __mem::length == 0 )
       return;     // this is only viewing memory
-    this->destroy(to_chunk(immutable_memory<T>::memory, immutable_memory<T>::capacity));
+    __mem::free();
+    //this->destroy(to_chunk(__mem::memory, __mem::capacity));
   }
-  slice() : immutable_memory<T>(this->create(Alloc::auto_size()))
+  slice() : __mem(Alloc::auto_size())
   {
-    immutable_memory<T>::length = immutable_memory<T>::capacity;
+    __mem::length = __mem::capacity();
   };
-  template <typename F = T>
-  slice(F *a, F *b)
-      : immutable_memory<T>(this->create((static_cast<size_t>(b - a) * sizeof(F)) >= Alloc::auto_size()
-                                             ? (static_cast<size_t>(b - a) * sizeof(F))
-                                             : Alloc::auto_size()))
+  slice(T *a, T *b)
+      : __mem(((static_cast<size_t>(b - a) / sizeof(T))))
   {
-    micron::memcpy(&immutable_memory<T>::memory[0], a, b - a);
-    immutable_memory<T>::length = b - a;
+    micron::memcpy(&__mem::memory[0], a, b - a);
+    __mem::length = b - a;
   };
-  slice(const size_t n) : immutable_memory<T>(this->create(n * sizeof(T)))
+  slice(const size_t n) : __mem(n)
   {
-    immutable_memory<T>::length = immutable_memory<T>::capacity;
+    __mem::length = __mem::capacity();
   };
 
 
   // take a view of memory of the underlying container
   // template <is_micron_structure Y>
-  // slice(const Y &c) : immutable_memory<T>(*c)
+  // slice(const Y &c) : __mem(*c)
   //{
   //}
   slice(const slice &) = delete;
-  slice(slice &&o) : immutable_memory<T>(micron::move(o)) {}
+  slice(slice &&o) : __mem(micron::move(o)) {}
   slice &operator=(const slice &) = delete;
   slice &
   operator=(slice &&o)
   {
-    immutable_memory<T>::memory = o.memory;
-    immutable_memory<T>::length = o.length;
-    immutable_memory<T>::capacity = o.capacity;
+    __mem::memory = o.memory;
+    __mem::length = o.length;
     o.memory = 0;
     o.length = 0;
-    o.capacity = 0;
     return *this;
   }
   slice &
   set(const T n)
   {
-    for ( size_t i = 0; i < immutable_memory<T>::length; i++ )
-      immutable_memory<T>::memory[i] = n;
+    for ( size_t i = 0; i < __mem::length; i++ )
+      __mem::memory[i] = n;
     return *this;
   }
   slice &
   operator=(const byte n)
   {
-    micron::memset(&immutable_memory<T>::memory[0], n, immutable_memory<T>::length);
+    micron::memset(&__mem::memory[0], n, __mem::length);
     return *this;
   }
   chunk<byte>
   operator*()
   {
-    return { reinterpret_cast<byte *>(immutable_memory<T>::memory), immutable_memory<T>::capacity };
+    return __mem::data();
   }
   // overload this to always point to mem
   byte *
   operator&() volatile
   {
-    return reinterpret_cast<byte *>(immutable_memory<T>::memory);
+    return reinterpret_cast<byte *>(__mem::memory);
   }
   T &
   operator[](const size_t n)
   {
-    return immutable_memory<T>::memory[n];
+    return __mem::memory[n];
   }
   const T &
   operator[](const size_t n) const
   {
-    return immutable_memory<T>::memory[n];
+    return __mem::memory[n];
   }
   slice
   operator[](const size_t n, const size_t m) const
   {     // from-to
-    return slice<T, Alloc>(&immutable_memory<T>::memory[n], &immutable_memory<T>::memory[m]);
+    return slice<T, Alloc>(&__mem::memory[n], &__mem::memory[m]);
   }
   slice
   operator[](void) const
   {     // from-to
-    return slice<T, Alloc>(&immutable_memory<T>::memory[0], &immutable_memory<T>::memory[immutable_memory<T>::length]);
+    return slice<T, Alloc>(&__mem::memory[0], &__mem::memory[__mem::length]);
   }
   iterator
   begin() const
   {
-    return &immutable_memory<T>::memory[0];
+    return &__mem::memory[0];
   }
 
   iterator
   end() const
   {
-    return &immutable_memory<T>::memory[immutable_memory<T>::length - 1];
+    return &__mem::memory[__mem::length - 1];
   }
   const_iterator
   cbegin() const
   {
-    return &immutable_memory<T>::memory[0];
+    return &__mem::memory[0];
   }
 
   const_iterator
   cend() const
   {
-    return &immutable_memory<T>::memory[immutable_memory<T>::length - 1];
+    return &__mem::memory[__mem::length - 1];
   }
   size_t
   size() const
   {
-    return immutable_memory<T>::length;
+    return __mem::length;
   }
   void
   reset()
   {
-    micron::zero(immutable_memory<T>::memory, immutable_memory<T>::length);
-    immutable_memory<T>::length = immutable_memory<T>::capacity;
+    micron::zero(__mem::memory, __mem::length);
+    __mem::length = __mem::capacity();
   }
 };
 };     // namespace micron

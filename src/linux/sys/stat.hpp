@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../types.hpp"
+#include "../../types.hpp"
+#include "../linux_types.hpp"
 
 namespace micron
 {
-
 constexpr int SEEK_SET = 0; /* Seek from beginning of file.  */
 constexpr int SEEK_CUR = 1; /* Seek from current position.  */
 constexpr int SEEK_END = 2; /* Seek from end of file.  */
@@ -68,7 +68,5 @@ struct stat {
   syscall_slong_t __glibc_reserved[3];
   ino64_t st_ino; /* File serial number.	*/
 };
-
-#endif
 
 };

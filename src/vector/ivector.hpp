@@ -9,7 +9,7 @@
 #include <initializer_list>
 
 #include "../algorithm/mem.hpp"
-#include "../allocation/chunks.hpp"
+#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../container_safety.hpp"
 #include "../memory/actions.hpp"
@@ -28,9 +28,9 @@ namespace micron
 // fast as raw arrays
 template <typename T, class Alloc = micron::allocator_serial<>>
   requires micron::is_move_constructible_v<T> && micron::is_move_assignable_v<T>
-class ivector : private Alloc, public immutable_memory<T>
+class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
 {
-  using __mem = immutable_memory<T>;
+  using __mem = __immutable_memory_resource<T, Alloc>;
   // grow container, private - only int. can call
   inline void
   reserve(size_t n)
@@ -86,12 +86,12 @@ public:
   // initialize empty with n reserve
   template <typename S = size_t>
     requires micron::is_arithmetic_v<S>
-  ivector(S n) : immutable_memory<T>(this->create(n * sizeof(T)))
+  ivector(S n) : __mem(n)
   {
     __mem::length = 0;
   };
   // two main functions when it comes to copying over data
-  ivector(const ivector &o) : immutable_memory<T>(this->create(o.capacity()))
+  ivector(const ivector &o) : __mem(o.capacity())
   {
     micron::memcpy256(&__mem::memory[0], o.itr(),
                       o.capacity);     // always is page aligned, 256 is fine.
@@ -111,28 +111,28 @@ public:
   // will be faster like this regardless)
 
   // identical to regular vector
-  ivector(const std::initializer_list<T> &lst) : immutable_memory<T>(this->create(sizeof(T) * lst.size()))
+  ivector(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> ) {
       size_t i = 0;
       for ( T &&value : lst ) {
-        new (&contiguous_memory_no_copy<T>::memory[i++]) T(micron::move(value));
+        new (&__mem::memory[i++]) T(micron::move(value));
       }
-      contiguous_memory_no_copy<T>::length = lst.size();
+      __mem::length = lst.size();
     } else {
       size_t i = 0;
       for ( T value : lst ) {
-        contiguous_memory_no_copy<T>::memory[i++] = value;
+        __mem::memory[i++] = value;
       }
-      contiguous_memory_no_copy<T>::length = lst.size();
+      __mem::length = lst.size();
     }
   };
-  ivector(const vector<T> &o) : immutable_memory<T>(this->create(o.size()))
+  ivector(const vector<T> &o) : __mem(o.size())
   {
     micron::memcpy(&__mem::memory[0], o.data(), o.size());
     __mem::length = o.size();
   }
-  ivector(size_t n) : immutable_memory<T>(this->create(n * sizeof(T)))
+  ivector(size_t n) : __mem(n)
   {
     if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
@@ -145,14 +145,14 @@ public:
   };
   template <typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
-  ivector(size_t n, Args... args) : immutable_memory<T>(this->create(n * sizeof(T)))
+  ivector(size_t n, Args... args) : __mem(n)
   {
     for ( size_t i = 0; i < n; i++ )
       new (&__mem::memory[i]) T(args...);
     __mem::length = n;
   };
 
-  ivector(size_t n, const T &init_value) : immutable_memory<T>(this->create(n * sizeof(T)))
+  ivector(size_t n, const T &init_value) : __mem(n)
   {
     if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
@@ -163,7 +163,7 @@ public:
     }
     __mem::length = n;
   };
-  ivector(size_t n, T &&init_value) : immutable_memory<T>(this->create(n * sizeof(T)))
+  ivector(size_t n, T &&init_value) : __mem(n)
   {
     T tmp = micron::move(init_value);
     if constexpr ( micron::is_class_v<T> ) {
@@ -175,10 +175,8 @@ public:
     }
     __mem::length = n;
   };
-  ivector(const ivector &) = delete;
-  ivector(chunk<byte> *m) : immutable_memory<T>(m) {};
-  ivector(chunk<byte> *&&m) : immutable_memory<T>(m) { m = nullptr; };
-  template <typename C = T> ivector(ivector<C> &&o) : immutable_memory<T>(o.data()) { o.~immutable_memory<T>(); }
+  ivector(chunk<byte> &&m) : __mem(m) { m = nullptr; };
+  template <typename C = T> ivector(ivector<C> &&o) : __mem(o.data()) { o.~__mem(); }
   ivector &
   operator=(ivector &&o)
   {
@@ -190,7 +188,6 @@ public:
     o.capacity = 0;
     return *this;
   }
-  ivector &operator=(const ivector &) = delete;
   ~ivector()
   {
     if ( __mem::memory == nullptr )

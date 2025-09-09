@@ -10,7 +10,7 @@
 
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/mem.hpp"
-#include "../allocation/chunks.hpp"
+#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
@@ -24,13 +24,13 @@
 #include "../types.hpp"
 namespace micron
 {
-// Fast vector class, equivalent to vector but with no bounds checking
+
 template <typename T, class Alloc = micron::allocator_serial<>>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
-               && micron::is_move_assignable_v<T>
-class fvector : private Alloc, public contiguous_memory_no_copy<T>
+           && micron::is_move_assignable_v<T>
+class fvector : public __mutable_memory_resource<T, Alloc>
 {
-  using __mem = contiguous_memory_no_copy<T>;
+  using __mem = __mutable_memory_resource<T, Alloc>;
   // shallow copy routine
   inline void
   shallow_copy(T *dest, T *src, size_t cnt)
@@ -50,10 +50,31 @@ class fvector : private Alloc, public contiguous_memory_no_copy<T>
   inline void
   __impl_copy(T *dest, T *src, size_t cnt)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       deep_copy(dest, src, cnt);
     } else {
       shallow_copy(dest, src, cnt);
+    }
+  }
+  inline void
+  shallow_move(T *dest, T *src, size_t cnt)
+  {
+    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
+    micron::memset(reinterpret_cast<byte *>(src), 0x0, cnt);
+  };
+  inline void
+  deep_move(T *dest, T *src, size_t cnt)
+  {
+    for ( size_t i = 0; i < cnt; i++ )
+      dest[i] = micron::move(src[i]);
+  };
+  inline void
+  __impl_move(T *dest, T *src, size_t cnt)
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      deep_move(dest, src, cnt);
+    } else {
+      shallow_move(dest, src, cnt);
     }
   }
 
@@ -71,27 +92,34 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+  // NOTE: by convetion destructors should be the first method, adjust all other classes to be in the same order
   ~fvector()
   {
-    if ( __mem::memory == nullptr )
+    if ( __mem::is_zero() )
       return;
     clear();
-    this->destroy(to_chunk(__mem::memory, __mem::capacity));
+    // this->destroy(to_chunk(__mem::memory, __mem::capacity));
   }
-  fvector(const std::initializer_list<T> &lst) : contiguous_memory_no_copy<T>(this->create(sizeof(T) * lst.size()))
+  fvector(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
-    size_t i = 0;
-    for ( T value : lst ) {
-      new (&__mem::memory[i++]) T(micron::move(value));
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      size_t i = 0;
+      for ( T &&value : lst ) {
+        new (&__mem::memory[i++]) T(micron::move(value));
+      }
+      __mem::length = lst.size();
+    } else {
+      size_t i = 0;
+      for ( T value : lst ) {
+        __mem::memory[i++] = value;
+      }
+      __mem::length = lst.size();
     }
-    __mem::length = lst.size();
   };
-  fvector()
-      : contiguous_memory_no_copy<T>(this->create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))) {
-        };
-  fvector(size_t n) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
+  fvector(void) : __mem() {};
+  fvector(const size_t n) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T();
     } else {
@@ -100,19 +128,17 @@ public:
     }
     __mem::length = n;
   };
-
   template <typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
-  fvector(size_t n, Args... args) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
+  fvector(size_t n, Args... args) : __mem(n)
   {
     for ( size_t i = 0; i < n; i++ )
       new (&__mem::memory[i]) T(args...);
     __mem::length = n;
   };
-
-  fvector(size_t n, const T &init_value) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
+  fvector(size_t n, const T &init_value) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(init_value);
     } else {
@@ -121,10 +147,10 @@ public:
     }
     __mem::length = n;
   };
-  fvector(size_t n, T &&init_value) : contiguous_memory_no_copy<T>(this->create(n * sizeof(T)))
+  fvector(size_t n, T &&init_value) : __mem(n)
   {
     T tmp = micron::move(init_value);
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(tmp);
     } else {
@@ -133,11 +159,10 @@ public:
     }
     __mem::length = n;
   };
-  fvector(const fvector &) = delete;     // reg vectors SHOULDNT be copied, for perf
-  fvector(chunk<byte> *m) : contiguous_memory_no_copy<T>(m) {};
-  fvector(chunk<byte> *&&m) : contiguous_memory_no_copy<T>(m) { m = nullptr; };
-  template <typename C = T> fvector(fvector<C> &&o) : contiguous_memory_no_copy<T>(micron::move(o)) {}
-  fvector(fvector &&o) : contiguous_memory_no_copy<T>(micron::move(o)) {}
+  fvector(const fvector &) = delete;
+  fvector(chunk<byte> &&m) : __mem(m) { m = nullptr; };
+  template <typename C = T> fvector(fvector<C> &&o) : __mem(micron::move(o)) {}
+  fvector(fvector &&o) : __mem(micron::move(o)) {}
   fvector &operator=(const fvector &) = delete;     // same reasoning as above
   fvector &
   operator=(fvector &&o)
@@ -145,16 +170,12 @@ public:
     if ( __mem::memory ) {
       // kill old memory first
       clear();
-      this->destroy(to_chunk(__mem::memory, __mem::capacity));
+      __mem::free();
     }
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = 0;
-    o.length = 0;
-    o.capacity = 0;
+    __mem::operator=(o);
     return *this;
   }
+
   template <typename... Args>
   fvector &
   operator+=(Args &&...args)
@@ -164,9 +185,9 @@ public:
   }
   // equivalent of .data() sortof
   chunk<byte>
-  operator*()
+  operator*() const
   {
-    return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
+    return __mem::data();
   }
   bool
   operator!() const
@@ -179,20 +200,22 @@ public:
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
-
-  inline __attribute__((always_inline)) slice<T>
+  const byte *
+  operator&() const volatile
+  {
+    return reinterpret_cast<byte *>(__mem::memory);
+  }
+  inline slice<T>
   operator[]()
   {
-    // meant to be safe so this is here
     return slice<T>(begin(), last());
   }
-  inline __attribute__((always_inline)) const slice<T>
+  inline const slice<T>
   operator[]() const
   {
-    // meant to be safe so this is here
     return slice<T>(begin(), last());
   }
-  // copies vector out
+  // copies fvector out
   inline __attribute__((always_inline)) const slice<T>
   operator[](size_t from, size_t to) const
   {
@@ -235,9 +258,24 @@ public:
   {
     if ( o.empty() )
       return *this;
-    if ( __mem::length + o.length >= __mem::capacity )
+    if ( !__mem::has_space(o.length) )
       reserve(__mem::capacity + o.max_size());
+
     __impl_copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
+    // micron::memcpy(&(__mem::memory)[__mem::length],
+    // &o.memory[0],
+    //                o.length);
+    __mem::length += o.length;
+    return *this;
+  }
+  template <typename F>
+    requires(sizeof(T) == sizeof(F))
+  inline fvector &
+  weld(fvector<F> &&o)
+  {
+    if ( !__mem::has_space(o.length) )
+      reserve(__mem::capacity + o.max_size());
+    __impl_copy(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
     // micron::memcpy(&(__mem::memory)[__mem::length],
     // &o.memory[0],
     //                o.length);
@@ -246,15 +284,10 @@ public:
   }
   template <typename C = T>
   void
-  swap(fvector<C> &o)
+  swap(fvector<C> &o) noexcept
   {
-    auto tmp = contiguous_memory_no_copy<C>(__mem::memory, __mem::length, __mem::capacity);
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = tmp.memory;
-    o.length = tmp.length;
-    o.capacity = tmp.capacity;
+    micron::swap(__mem::memory, o.memory);
+    micron::swap(__mem::length, o.length);
   }
   size_t
   max_size() const
@@ -283,16 +316,12 @@ public:
   {
     if ( n < __mem::capacity )
       return;
-    __mem::accept_new_memory(
-        this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
+    __mem::expand(n);
   }
   inline void
   try_reserve(const size_t n)
   {
-    if ( n < __mem::capacity )
-      throw except::memory_error("micron vector failed to reserve memory");
-    __mem::accept_new_memory(
-        this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
+    __mem::expand(n);
   }
   inline slice<byte>
   into_bytes()
@@ -305,27 +334,11 @@ public:
   {
     return fvector<T>(*this);
   }
-  template <typename F>
-  inline F
-  clone_to(void)
-  {
-    return F(*this);
-  }
   void
   fill(const T &v)
   {
     for ( size_t i = 0; i < __mem::length; i++ )
       __mem::memory[i] = v;
-  }
-  void
-  recreate(const size_t n = 0)     // needed if moved out
-  {
-    if ( __mem::memory == nullptr ) {
-      if ( !n )
-        __mem::accept_new_memory(this->create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T))));
-      else
-        __mem::accept_new_memory(this->create(n * sizeof(T)));
-    }
   }
   // resize to how much and fill with a value v
   void
@@ -335,26 +348,11 @@ public:
       return;
     }
     if ( n >= __mem::capacity ) {
-      reserve(sizeof(T) * n);
+      reserve(n);
     }
     T *f_ptr = __mem::memory;
     for ( size_t i = __mem::length; i < n; i++ )
       new (&f_ptr[i]) T(v);
-
-    __mem::length = n;
-  }
-  void
-  resize(size_t n)
-  {
-    if ( !(n > __mem::length) ) {
-      return;
-    }
-    if ( n >= __mem::capacity ) {
-      reserve(sizeof(T) * n);
-    }
-    T *f_ptr = __mem::memory;
-    for ( size_t i = __mem::length; i < n; i++ )
-      new (&f_ptr[i]) T{};
 
     __mem::length = n;
   }
@@ -474,10 +472,10 @@ public:
     return its;
   }
   inline iterator
-  insert_at(size_t n, T &&val)
+  insert(size_t n, T &&val)
   {
     if ( !__mem::length ) {
-      push_back(val);
+      emplace_back(val);
       return begin();
     }
     if ( __mem::length + 1 > __mem::capacity )
@@ -495,7 +493,7 @@ public:
   insert(iterator it, T &&val)
   {
     if ( !__mem::length ) {
-      emplace_back(val);
+      push_back(val);
       return begin();
     }
     if ( (__mem::length + sizeof(T)) >= __mem::capacity ) {
@@ -549,12 +547,15 @@ public:
     }     // invalidated if
     T *ite = end();
     size_t i = 0;
-    size_t lm = size();
-    for ( ; i < lm; i++ ) {
+    for ( ; i < size() - 1; i++ ) {
       if ( __mem::memory[i] >= val ) {
+        i++;
         break;
       }
     }
+    // if i == size() - 1 it's the largest element
+    if ( i == size() - 1 )
+      i++;
     T *it = &__mem::memory[i];
     micron::memmove(it + 1, it, ite - it);
     new (it) T(micron::move(val));
@@ -579,7 +580,7 @@ public:
   inline void
   push_back(const T &v)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       if ( (__mem::length + 1 <= __mem::capacity) ) {
         new (&__mem::memory[__mem::length++]) T(v);
         return;
@@ -600,13 +601,13 @@ public:
   inline void
   push_back(T &&v)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       if ( (__mem::length + 1 <= __mem::capacity) ) {
-        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+        new (&__mem::memory[__mem::length++]) T(v);
         return;
       } else {
         reserve(__mem::capacity * sizeof(T) + 1);
-        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+        new (&__mem::memory[__mem::length++]) T(v);
       }
     } else {
       if ( (__mem::length + 1 <= __mem::capacity) ) {
@@ -622,7 +623,7 @@ public:
   inline void
   pop_back()
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       (__mem::memory)[(__mem::length - 1)].~T();
     } else {
       (__mem::memory)[(__mem::length - 1)] = 0x0;
@@ -633,11 +634,11 @@ public:
   inline void
   erase(iterator n)
   {
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       n->~T();
     } else {
     }
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t _n = (n - cbegin());
       for ( size_t i = _n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
@@ -649,12 +650,12 @@ public:
   inline void
   erase(const size_t n)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       ~(__mem::memory)[n]();
     } else {
     }
 
-    if constexpr ( micron::is_class_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t _n = (n - cbegin());
       for ( size_t i = n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
@@ -669,7 +670,7 @@ public:
   {
     if ( !__mem::length )
       return;
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_t i = 0; i < __mem::length; i++ )
         (__mem::memory)[i].~T();
     }

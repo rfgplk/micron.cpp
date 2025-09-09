@@ -9,7 +9,7 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/mem.hpp"
-#include "../allocation/chunks.hpp"
+#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../memory/memory.hpp"
 #include "../memory_block.hpp"
@@ -663,9 +663,9 @@ constexpr const unicode32 _null_u32str[1] = U"";
 // string on the heap, mutable, standard replacement of std::string
 // accepts only char simple types
 template <non_class T = schar, class Alloc = micron::allocator_serial<>>
-class hstring : private Alloc, public contiguous_memory<T>
+class hstring : private Alloc, public __mutable_memory_resource<T>
 {
-  using __mem = contiguous_memory<T>;
+  using __mem = __mutable_memory_resource<T, Alloc>;
 
 public:
   using category_type = string_tag;
@@ -683,26 +683,25 @@ public:
   typedef const T *const_iterator;
 
   // contiguous_memory<T> memory;
-  constexpr hstring()
-      : contiguous_memory<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))) {};
-  constexpr hstring(const size_t n) : contiguous_memory<T>(Alloc::create(n)) {};
-  hstring(size_t cnt, T ch) : contiguous_memory<T>(Alloc::create(cnt < Alloc::auto_size() ? Alloc::auto_size() : cnt))
+  constexpr hstring() : __mem(Alloc::auto_size()) {};
+  constexpr hstring(const size_t n) : __mem(n) {};
+  hstring(size_t cnt, T ch) : __mem(cnt)
   {
     micron::typeset<T>(&__mem::memory[0], ch, cnt);
     __mem::length = cnt;
   }
-  constexpr hstring(const char *&str) : contiguous_memory<T>(Alloc::create(micron::strlen(str)))
+  constexpr hstring(const char *&str) : __mem(micron::strlen(str))
   {
     size_t end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
     __mem::length = end;                                   // - 1;
   };
-  template <size_t M, typename F> constexpr hstring(const F (&str)[M]) : contiguous_memory<T>(Alloc::create(M))
+  template <size_t M, typename F> constexpr hstring(const F (&str)[M]) : __mem((M))
   {
     micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
     __mem::length = M - 1;                                            // - 1;
   };
-  constexpr hstring(const hstring &o) : Alloc(), contiguous_memory<T>(this->create(o.capacity))
+  constexpr hstring(const hstring &o) : __mem(o.capacity)
   {
     micron::strcpy(__mem::memory, o.memory);
     __mem::length = o.length;
@@ -716,13 +715,13 @@ public:
     o.length = 0;
     o.capacity = 0;
   }
-  template <typename F> constexpr hstring(const hstring<F> &o) : contiguous_memory<T>(this->create(o.capacity))
+  template <typename F> constexpr hstring(const hstring<F> &o) : __mem(o.capacity)
   {
     micron::strcpy(__mem::memory, o.memory);
     __mem::length = o.length;
   };
   template <size_t N, typename F>
-  constexpr hstring(const sstring<N, F> &o) : contiguous_memory<T>(this->create(o.length))
+  constexpr hstring(const sstring<N, F> &o) : __mem(o.length)
   {
     memcpy(&(__mem::memory)[0], &o.memory[0],
            o.length);             // - 1);
@@ -828,7 +827,7 @@ public:
   void
   swap(hstring<C> &o)
   {
-    auto tmp = contiguous_memory<C>(__mem::memory, __mem::length, __mem::capacity);
+    auto tmp = __mutable_memory_resource(__mem::memory, __mem::length, __mem::capacity);
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -1381,6 +1380,28 @@ public:
     buf[cnt] = '\0';
     return buf;
   };
+  template <typename F = T>
+  inline hstring<F>
+  substr(iterator _start, iterator _end) const
+  {
+    if ( _start < begin() or _end >= end() )
+      throw except::library_error("error micron::string substr invalid range.");
+    hstring<F> buf(__mem::capacity);
+    micron::memcpy(&buf[0], _start, _end - _start);
+    *buf.last() = '\0';
+    return buf;
+  };
+  template <typename F = T>
+  inline hstring<F>
+  substr(const_iterator _start, const_iterator _end) const
+  {
+    if ( _start < begin() or _end >= end() )
+      throw except::library_error("error micron::string substr invalid range.");
+    hstring<F> buf(__mem::capacity);
+    micron::memcpy(&buf[0], _start, _end - _start);
+    *buf.last() = '\0';
+    return buf;
+  };
   // grow container
   inline void
   reserve(size_t n)
@@ -1391,11 +1412,10 @@ public:
     // NOTE: this is here because there may be edge cases where hstring has been hard zero'ed out. salvage it in that
     // case
     if ( __mem::memory == nullptr ) [[unlikely]] {
-      __mem::accept_new_memory(this->create((this->auto_size() >= sizeof(T) ? this->auto_size() : sizeof(T))));
+      __mem::realloc(Alloc::auto_size());
       return;
     }
-    __mem::accept_new_memory(
-        this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
+    __mem::expand(n);
   }
   inline void
   try_reserve(size_t n)
@@ -1403,8 +1423,7 @@ public:
     if ( (n < __mem::capacity) ) {
       throw except::memory_error("error micron::string was unable to allocate memory");
     }
-    __mem::accept_new_memory(
-        this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
+    __mem::expand(n);
   }
   inline bool
   operator==(const char *data) const

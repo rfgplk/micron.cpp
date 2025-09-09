@@ -5,8 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <iostream>
-
 #include "../../closures.hpp"
 #include "../../concepts.hpp"
 #include "../../control.hpp"
@@ -21,8 +19,35 @@
 #include "oom.hpp"
 #include "stats.hpp"
 
+#ifndef __OPTIMIZE__
+#include <iostream>
+#endif
+
 namespace abc
 {
+
+inline __attribute__((always_inline)) void
+__debug_print(const char *str, const size_t n)
+{
+#ifndef __OPTIMIZE__
+  // NOTE: we're using iostream since our io library depends on malloc()
+  if constexpr ( __default_debug_notices ) {
+    std::cout << "\033[34mabcmalloc[] debug: \033[0m " << str << " with size: " << n << std::endl;
+  }
+#endif
+}
+
+template <typename T>
+inline __attribute__((always_inline)) void
+__debug_print(const char *str, T& t)
+{
+#ifndef __OPTIMIZE__
+  // NOTE: we're using iostream since our io library depends on malloc()
+  if constexpr ( __default_debug_notices ) {
+    std::cout << "\033[34mabcmalloc[] debug: \033[0m " << str << " at addr: " << static_cast<const void*>(t) << std::endl;
+  }
+#endif
+}
 class __arena
 {
   template <typename T> struct alignas(16) node {
@@ -447,7 +472,6 @@ public:
       collect_stats<stat_type::total_memory_throughput>(memory.len);
       return memory;
     }
-    __buf_expand(sz);
     return { (byte *)-1, micron::numeric_limits<size_t>::max() };
   }
 
@@ -455,15 +479,14 @@ public:
   shrink(const ssize_t sz)
   {
     collect_stats<stat_type::dealloc>();
-    collect_stats<stat_type::total_memory_freed>(mem.len);
-    full_on_free(mem.ptr, mem.len);
-    zero_on_free(mem.ptr, mem.len);
+    collect_stats<stat_type::total_memory_freed>(sz);
     __heap_shrink(sz);
   }
   // main method for allocating/mallocing memory
   micron::__chunk<byte>
   push(const size_t sz)
   {
+    __debug_print("push(): ", sz);
     collect_stats<stat_type::alloc>();
     collect_stats<stat_type::total_memory_req>(sz);
     if ( check_oom() ) [[unlikely]]
@@ -472,11 +495,13 @@ public:
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
       {
         if ( memory = __vmap_append_tail(sz); !memory.zero() ) {
+          __debug_print("__vmap_append() alloc'd: ", memory.len);
           zero_on_alloc(memory.ptr, memory.len);
           sanitize_on_alloc(memory.ptr, memory.len);
           collect_stats<stat_type::total_memory_throughput>(memory.len);
           return memory;
         }
+        __debug_print("failed to __vmap_append(): ", sz);
         __buf_expand(sz);
       }
     }
@@ -486,6 +511,8 @@ public:
   bool
   pop(const micron::__chunk<byte> &mem)
   {
+    __debug_print("pop() address: ", mem.ptr);
+    __debug_print("pop() size: ", mem.len);
     collect_stats<stat_type::dealloc>();
     collect_stats<stat_type::total_memory_freed>(mem.len);
     full_on_free(mem.ptr, mem.len);

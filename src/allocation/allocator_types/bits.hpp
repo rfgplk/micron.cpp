@@ -9,26 +9,25 @@ namespace micron
 {
 
 // default micron allocator, uses abcmalloc directly
-template <typename T> struct abc_allocator
-{
+template <typename T> struct abc_allocator {
   // difference between allocate and umanaged_* calls is that allocate pulls memory from the allocator, while unmanaged
   // pulls pages from the kernel directly, for when you need to manage memory yourself
-  T *
-  allocate(size_t sz)
+  static auto
+  allocate(size_t sz) -> __chunk<byte>
   {
-    return reinterpret_cast<T *>(abc::__abc_allocator<byte>::alloc(sz));
+    return abc::__abc_allocator<byte>::calloc(sz);
   }
-  void
+  static void
   deallocate(T *ptr, size_t sz)
   {
     return abc::__abc_allocator<byte>::dealloc(ptr, sz);
   }
-  T *
+  static T *
   unmanaged_allocate(size_t sz)
   {
     return reinterpret_cast<T *>(micron::sys_allocator<byte>::alloc(sz));
   }
-  void
+  static void
   unmanaged_deallocate(T *ptr, size_t sz)
   {
     return micron::sys_allocator<byte>::dealloc(ptr, sz);

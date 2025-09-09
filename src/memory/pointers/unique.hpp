@@ -55,14 +55,6 @@ public:
     t = nullptr;
     return *this;
   };
-  unique_pointer &
-  operator=(Type *t) noexcept
-  {
-    __alloc::__impl_dealloc(internal_pointer);
-    internal_pointer = t;
-    t = nullptr;
-    return *this;
-  };
   template <is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
@@ -185,14 +177,6 @@ public:
   };
   unique_pointer &
   operator=(Type *&&t)
-  {
-    __alloc::__impl_dealloc(internal_pointer);
-    internal_pointer = t;
-    t = nullptr;
-    return *this;
-  };
-  unique_pointer &
-  operator=(Type *t) noexcept
   {
     __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;

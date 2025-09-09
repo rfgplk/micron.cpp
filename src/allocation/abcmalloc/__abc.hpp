@@ -20,6 +20,14 @@ namespace abc
 template <typename T>
   requires(micron::is_integral_v<T>)
 struct __abc_allocator {
+  inline static auto
+  calloc(size_t n) -> micron::__chunk<byte>     // allocate 'smartly'
+  {
+    auto mem = abc::fetch(n);
+    if ( mem.ptr == (void *)-1 )
+      throw micron::except::memory_error("abc_allocator::alloc(): mmap() failed");
+    return mem;
+  };
   inline static T *
   alloc(size_t n)     // allocate 'smartly'
   {

@@ -37,7 +37,7 @@ class system
 {
   // this serves as an internal buffer to hold open entries. if it's full, go back to the start and start closing entries
   // circularly by default (unless stated otherwise), access the last entry
-  micron::weak_pointer<fsys::file<>> entries[N];
+  micron::unique_pointer<fsys::file<>> entries[N];
   size_t sz;
   auto
   __find_fd(const io::path_t &p) -> int

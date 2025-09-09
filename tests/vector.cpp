@@ -27,7 +27,16 @@ main()
     vec.erase(vec.begin() + 9);
     micron::console(vec);
   };
-  return 1;
+  micron::console("Redo");
+  micron::vector<char> cv = { 1, 2, 3, 4, 5, 6};
+  micron::vector<char> bb = cv;
+  bb.push_back(100);
+  cv.push_back(2);
+  cv.push_back(5);
+  cv.push_back(5);
+  micron::console(cv);
+  micron::console(bb);
+
   micron::vector<size_t> buf = { 1, 2, 3, 4 };
   for ( auto x : buf )
     micron::console(x);
@@ -83,7 +92,9 @@ main()
   micron::console("Slicing");
   micron::slice<size_t> slc = max_data[4, 20];
   micron::vector<int> nint_data;
+  micron::console("moving");
   nint_data = micron::move(int_data);
+  micron::console("moving");
   micron::console("size of int_data", int_data.size());
   micron::console("size of nint_data", nint_data.size());
   return 0;

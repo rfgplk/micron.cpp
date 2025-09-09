@@ -13,6 +13,13 @@ namespace micron
 template <typename T = byte> struct alignas(16) __chunk {     // total memory allocated
   T *ptr;
   size_t len;
+  __chunk &
+  operator=(nullptr_t t [[maybe_unused]])
+  {
+    ptr = nullptr;
+    len = 0;
+    return *this;
+  }
   bool
   zero(void) const noexcept
   {
