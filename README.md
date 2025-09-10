@@ -5,7 +5,6 @@
 </div>
 
 #### a core (re)design of the C++ Standard Template Library
----
 ## About **micron**
 
 **micron** is a comprehensive collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only C++23 reimplementation of the C++ STL *and* the C standard library targeting the Linux syscall API.
@@ -29,7 +28,8 @@ Features
   - provides an innovative foundation for systems-level development, reimagining conventional approaches to low-level programming
   - optimized for rapid compilation speeds, enabling faster iteration and development cycles.
 
-## Motivation
+Motivation
+----------
 
 <p align="justify"> 
 The Standard Template Library (STL) has long been constrained by its imperative to preserve ABI stability across different versions. This limitation, coupled with the necessity of maintaining binary compatibility, intrinsically impedes the STL's capacity to evolve and assimilate modern development paradigms. The necessity of safeguarding compatibility with legacy systems imposes an architectural limit that resists transformative change, effectively tethering the STL to design philosophies that, while once pioneering, now appear antiquated. Consequently, this has permitted more novel programming languages such as Rust, Go, and even Zig, to develop a markedly more sophisticated set of core libraries. These languages, unburdened by historical bloat, are free to explore novel abstractions and innovative ideas, allowing them to embrace paradigms such as memory safety by design, zero-cost abstractions, and concurrency models that are inherently safer and more efficient.</p>
@@ -40,7 +40,8 @@ Conversely, the *micron standard library*, unencumbered by such legacy constrain
 <p align="justify"> 
 Since *micron* is specifically developed with Linux in mind, all library code is meticulously optimized for the nuances of the Linux kernel and its underlying system calls. This singular focus allows for an unparalleled level of integration and efficiency, leveraging Linux-specific features without the overhead of cross-platform abstractions. Consequently, the library achieves a degree of performance and system coherence that is unattainable in more generalized, platform-agnostic designs, solidifying its role as an indispensable tool for high-performance Linux development.</p>
 
-## Philosphy
+Philosophy
+----------
 
 **All core library code adheres to the following design principles**:
 - in all instances where functional equivalence exists between *micron* and the STL, or any third-party library, *micron* must demonstrate superior performance
@@ -72,7 +73,9 @@ No. There are still a few specific headers needed to compile *micron* (although 
 > [!IMPORTANT]
 > Documentation for the *micron* library does not exist for now, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86, as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
 
-## Features
+ 
+Libraries
+-----------
 
 ### currently, micron provides the following core C++ libraries:
 - allocation
@@ -86,6 +89,7 @@ No. There are still a few specific headers needed to compile *micron* (although 
 - math
 - parallel
 - threading 
+
 
 ## License
 Licensed under the Boost Software License
