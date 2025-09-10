@@ -16,7 +16,6 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 \
 \
-\
 
 
 
