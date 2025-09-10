@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://github.com/user-attachments/assets/b66231f3-655b-4106-a111-7f72dc38b2b9" alt="micron_logo_default" width="300"/> 
+<img align="left" style="width:280px" src="https://github.com/user-attachments/assets/b66231f3-655b-4106-a111-7f72dc38b2b9" alt="micron_logo_default" width="300"/> 
 
 ## the micron standard library <img src="https://img.shields.io/badge/version-indev-green">
 </div>
@@ -15,6 +15,16 @@
 **micron** is a comprehensive collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only C++23 reimplementation of the C++ STL *and* the C standard library targeting the Linux syscall API.
 Unlike library collections such as Boost et al., *micron* does not intend to merely *augment* the STL, but entirely replace it.
 
+
+Features
+--------
+  - a fully functional, templated C++ standard library implementation, designed from the ground up with modern principles in mind
+  - completely self-contained, with no dependencies on external code or even the traditional C standard library
+  - all functions are guaranteed to be side effect free, ensuring deterministic and predictable behavior across the codebase
+  - written entirely in c++23
+  - a high performance, cache-aware algorithmic base architecture
+  - provides an innovative foundation for systems-level development, reimagining conventional approaches to low-level programming
+  - optimized for rapid compilation speeds, enabling faster iteration and development cycles.
 
 ## Motivation
 
