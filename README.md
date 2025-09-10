@@ -5,15 +5,18 @@
 </div>
 
 #### a core (re)design of the C++ Standard Template Library
-
-> [!WARNING]
-> micron is still in active development. The ABI may change at any point, and without notice.
-
 ---
 ## About **micron**
 
 **micron** is a comprehensive collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only C++23 reimplementation of the C++ STL *and* the C standard library targeting the Linux syscall API.
 Unlike library collections such as Boost et al., *micron* does not intend to merely *augment* the STL, but entirely replace it.
+
+
+
+> [!WARNING]
+> micron is still in active development. The ABI may change at any point, and without notice.
+
+
 
 
 Features
