@@ -58,8 +58,9 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
 // this is a hash robin_map container which implements robin hood h. allc. under the hood
 template <typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
   requires micron::is_move_constructible_v<V>
-class robin_map : private Alloc, public immutable_memory<Nd>
+class robin_map : public _immutable_memory<Nd, Alloc>
 {
+  using __mem = __immutable_memory_resource<Nd, Alloc>;
   inline hash64_t
   hsh(const K &val) const
   {
@@ -69,12 +70,12 @@ class robin_map : private Alloc, public immutable_memory<Nd>
   inline size_t
   hsh_index(const hash64_t &hsh) const
   {
-    return hsh % immutable_memory<Nd>::capacity;
+    return hsh % __mem::capacity;
   }
   inline size_t
   hsh_index(const V &val) const
   {
-    return hash<hash64_t>(val) % immutable_memory<Nd>::capacity;
+    return hash<hash64_t>(val) % __mem::capacity;
   }
   template <typename _N = Nd>     // this is here to help the compile inline properly
   inline __attribute__((always_inline)) Nd &
@@ -92,13 +93,13 @@ class robin_map : private Alloc, public immutable_memory<Nd>
   __shift(size_t index)
   {
     // shift all entries to accomodate for deletion
-    index = (index + 1) % immutable_memory<Nd>::capacity;
+    index = (index + 1) % __mem::capacity;
     while ( !!__access(index) && __access(index) > 0 ) {
-      __access((index - 1 + immutable_memory<Nd>::capacity) % immutable_memory<Nd>::capacity)
+      __access((index - 1 + __mem::capacity) % __mem::capacity)
           = micron::move(__access(index));
       __access(index).key = 0x0;
-      __access((index - 1 + immutable_memory<Nd>::capacity) % immutable_memory<Nd>::capacity).length--;
-      index = (index + 1) % immutable_memory<Nd>::capacity;
+      __access((index - 1 + __mem::capacity) % __mem::capacity).length--;
+      index = (index + 1) % __mem::capacity;
     }
   }
 
@@ -118,28 +119,26 @@ public:
   typedef const Nd *const_iterator;
   ~robin_map()
   {
-    if ( immutable_memory<Nd>::memory == nullptr )
+    if ( __mem::memory == nullptr )
       return;
     clear();
-    this->destroy(to_chunk(immutable_memory<Nd>::memory, immutable_memory<Nd>::capacity));
   }
-  robin_map() : immutable_memory<Nd>(this->create((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd))))
+  robin_map() : __mem((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd)))
   {
   }
-  robin_map(const size_t n) : immutable_memory<Nd>(this->create(n * sizeof(Nd))) {}
+  robin_map(const size_t n) : __mem(n * sizeof(Nd)) {}
   robin_map(const robin_map &) = delete;
-  robin_map(robin_map &&o) : immutable_memory<Nd>(micron::move(o)) {}
+  robin_map(robin_map &&o) : __mem(micron::move(o)) {}
   robin_map &operator=(const robin_map &) = delete;
   robin_map &
   operator=(robin_map &&o)
   {
-    if ( immutable_memory<Nd>::memory ) {
+    if ( __mem::memory ) {
       clear();
-      this->destroy(to_chunk(immutable_memory<Nd>::memory, immutable_memory<Nd>::capacity));
     }
-    immutable_memory<Nd>::memory = o.memory;
-    immutable_memory<Nd>::length = o.length;
-    immutable_memory<Nd>::capacity = o.capacity;
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
     o.memory = nullptr;
     o.length = 0;
     o.capacity = 0;
@@ -150,12 +149,12 @@ public:
   clear()
   {
     if constexpr ( micron::is_object_v<V> ) {
-      for ( size_t i = 0; i < immutable_memory<Nd>::capacity; i++ )
+      for ( size_t i = 0; i < __mem::capacity; i++ )
         if ( __access(i).key )
           __access(i).~Nd();
     }
-    micron::memset(&immutable_memory<Nd>::memory[0], 0x0, immutable_memory<Nd>::capacity);
-    immutable_memory<Nd>::length = 0;
+    micron::memset(&__mem::memory[0], 0x0, __mem::capacity);
+    __mem::length = 0;
   }
   inline V &
   at(const K &k)     // access at K
@@ -174,7 +173,7 @@ public:
         return __access(index).value;
       }
       ++plen;
-      index = (index + 1) % immutable_memory<Nd>::capacity;
+      index = (index + 1) % __mem::capacity;
     }
     // conform to standard behavior, if no hit insert empty object
     return insert(k, V{});
@@ -182,51 +181,51 @@ public:
   iterator
   begin()
   {
-    return &immutable_memory<Nd>::memory[0];     // the memory is contiguous so this is fine
+    return &__mem::memory[0];     // the memory is contiguous so this is fine
   }
   const_iterator
   begin() const
   {
-    return &immutable_memory<Nd>::memory[0];     // the memory is contiguous so this is fine
+    return &__mem::memory[0];     // the memory is contiguous so this is fine
   }
   const_iterator
   cbegin() const
   {
-    return &immutable_memory<Nd>::memory[0];     // the memory is contiguous so this is fine
+    return &__mem::memory[0];     // the memory is contiguous so this is fine
   }
 
   iterator
   end()
   {
-    return &immutable_memory<Nd>::memory[immutable_memory<Nd>::length];     // the memory is contiguous so this is fine
+    return &__mem::memory[__mem::length];     // the memory is contiguous so this is fine
   }
   const_iterator
   end() const
   {
-    return &immutable_memory<Nd>::memory[immutable_memory<Nd>::length];     // the memory is contiguous so this is fine
+    return &__mem::memory[__mem::length];     // the memory is contiguous so this is fine
   }
 
   const_iterator
   cend() const
   {
-    return &immutable_memory<Nd>::memory[immutable_memory<Nd>::length];     // the memory is contiguous so this is fine
+    return &__mem::memory[__mem::length];     // the memory is contiguous so this is fine
   }
   size_t
   size() const
   {
-    return immutable_memory<Nd>::length;
+    return __mem::length;
   }
   size_t
   max_size() const
   {
-    return immutable_memory<Nd>::capacity;
+    return __mem::capacity;
   }
   void
   swap(robin_map &o) noexcept
   {
-    micron::swap(immutable_memory<Nd>::memory, o.memory);
-    micron::swap(immutable_memory<Nd>::length, o.length);
-    micron::swap(immutable_memory<Nd>::capacity, o.capacity);
+    micron::swap(__mem::memory, o.memory);
+    micron::swap(__mem::length, o.length);
+    micron::swap(__mem::capacity, o.capacity);
   }
   V &
   insert(const K &k, V &&value)
@@ -244,10 +243,10 @@ public:
         micron::swap(plen, __access(index).length);
       }
       ++plen;
-      index = (index + 1) % immutable_memory<Nd>::capacity;
+      index = (index + 1) % __mem::capacity;
     }
     new (&__access(index)) Nd(key, micron::move(value), plen);
-    ++immutable_memory<Nd>::length;
+    ++__mem::length;
     return __access(index).value;
   }
   template <typename... Args>
@@ -258,7 +257,7 @@ public:
     auto index = hsh_index(key);
     size_t plen = 0;
     new (&__access(index)) Nd(key, plen, micron::forward<Args>(args)...);
-    ++immutable_memory<Nd>::length;
+    ++__mem::length;
     return __access(index).value;
   }
 
@@ -272,12 +271,12 @@ public:
     while ( !!__access(index) && plen <= __access(index).length ) {
       if ( __access(index).key == k ) {
         __access(index).key = 0x0;
-        immutable_memory<Nd>::length--;
+        __mem::length--;
         __shift(index);
         return true;
       }
       plen++;
-      index = (index + 1) % immutable_memory<Nd>::capacity;
+      index = (index + 1) % __mem::capacity;
     }
     return false;
   }
@@ -297,7 +296,7 @@ public:
       if ( __access(index).key == kh )
         count++;
       ++plen;
-      index = (index + 1) % immutable_memory<Nd>::capacity;
+      index = (index + 1) % __mem::capacity;
     }
     return count;
   }

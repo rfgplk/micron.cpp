@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__container.hpp"
+
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/mem.hpp"
 #include "../pointer.hpp"
@@ -25,56 +27,6 @@ class svector
 {
   T stack[N];
   size_t length = 0;
-
-  // shallow copy routine
-  inline void
-  shallow_move(T *dest, T *src, size_t cnt)
-  {
-    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
-    micron::memset(reinterpret_cast<byte *>(src), 0x0, cnt);
-    // micron::memmove(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
-  };
-  // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
-  // cause segfaulting if underlying doesn't account for double deletes)
-  inline void
-  deep_move(T *dest, T *src, size_t cnt)
-  {
-    for ( size_t i = 0; i < cnt; i++ )
-      dest[i] = micron::move(src[i]);
-  };
-  // shallow copy routine
-  inline void
-  shallow_copy(T *dest, T *src, size_t cnt)
-  {
-    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
-  };
-  // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
-  // cause segfaulting if underlying doesn't account for double deletes)
-  inline void
-  deep_copy(T *dest, T *src, size_t cnt)
-  {
-    for ( size_t i = 0; i < cnt; i++ )
-      dest[i] = src[i];
-  };
-  inline void
-  __impl_copy(T *dest, T *src, size_t cnt)
-  {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      deep_copy(dest, src, cnt);
-    } else {
-      shallow_copy(dest, src, cnt);
-    }
-  }
-
-  inline void
-  __impl_move(T *dest, T *src, size_t cnt)
-  {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      deep_move(dest, src, cnt);
-    } else {
-      shallow_move(dest, src, cnt);
-    }
-  }
 
 public:
   using category_type = vector_tag;
@@ -121,10 +73,10 @@ public:
   svector(const vector<C> &o)
   {
     if ( o.length >= N ) {
-      __impl_copy(o.memory, stack, N);
+      __impl_container::copy(o.memory, stack, N);
       // micron::copy<N>(&(*o.memory)[0], &stack[0]);
     } else {
-      __impl_copy(o.memory, stack, o.length);
+      __impl_container::copy(o.memory, stack, o.length);
       // micron::copy(&(*o.memory)[0], &stack[0], o.length);
     }
     length = o.length;
@@ -138,10 +90,10 @@ public:
   template <typename C = T, size_t M = N> svector(const svector<C, M> &o)
   {
     if constexpr ( N < M ) {
-      __impl_copy(o.stack, stack, M);
+      __impl_container::copy(o.stack, stack, M);
       // micron::copy<M>(&o.stack[0], &stack[0]);
     } else if constexpr ( M >= N ) {
-      __impl_copy(o.stack, stack, N);
+      __impl_container::copy(o.stack, stack, N);
       // micron::copy<N>(&o.stack[0], &stack[0]);
     }
     length = o.length;
@@ -162,7 +114,7 @@ public:
   };
   svector(svector &&o)
   {
-    __impl_move(&stack[0], &o.stack[0]);
+    __impl_container::move(&stack[0], &o.stack[0]);
     // micron::copy<N>(&o.stack[0], &stack[0]);
     // micron::zero<N>(&o.stack[0]);
     length = o.length;
@@ -185,7 +137,7 @@ public:
   svector &
   operator=(const svector &o)
   {
-    __impl_copy(o.stack, stack, N);
+    __impl_container::copy(o.stack, stack, N);
     length = o.length;
     return *this;
   };

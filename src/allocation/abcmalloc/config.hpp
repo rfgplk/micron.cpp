@@ -28,6 +28,7 @@ constexpr static const bool __default_launder_auto = true;
 constexpr static const float __default_oom_limit_warn = 0.1f;
 constexpr static const float __default_oom_limit_error = 0.2f;
 
+constexpr static const bool __default_tombstone = true; // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation UNLESS the page on which it resides has been unmapped
 constexpr static const bool __default_insert_guard_pages = true;
 constexpr static const int __default_guard_page_perms = micron::PROT_NONE;
 

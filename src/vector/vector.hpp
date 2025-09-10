@@ -8,6 +8,8 @@
 #include "../type_traits.hpp"
 #include <initializer_list>     // nigh impossible to implement without invoking the darkest of sorceries :c
 
+#include "../bits/__container.hpp"
+
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/mem.hpp"
 #include "../allocation/resources.hpp"
@@ -31,52 +33,6 @@ template <typename T, class Alloc = micron::allocator_serial<>>
 class vector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
-  // shallow copy routine
-  inline void
-  shallow_copy(T *dest, T *src, size_t cnt)
-  {
-    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src),
-                   cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
-                                                          // fine, just realign back to bytes
-  };
-  // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
-  // cause segfaulting if underlying doesn't account for double deletes)
-  inline void
-  deep_copy(T *dest, T *src, size_t cnt)
-  {
-    for ( size_t i = 0; i < cnt; i++ )
-      dest[i] = src[i];
-  };
-  inline void
-  __impl_copy(T *dest, T *src, size_t cnt)
-  {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      deep_copy(dest, src, cnt);
-    } else {
-      shallow_copy(dest, src, cnt);
-    }
-  }
-  inline void
-  shallow_move(T *dest, T *src, size_t cnt)
-  {
-    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
-    micron::memset(reinterpret_cast<byte *>(src), 0x0, cnt);
-  };
-  inline void
-  deep_move(T *dest, T *src, size_t cnt)
-  {
-    for ( size_t i = 0; i < cnt; i++ )
-      dest[i] = micron::move(src[i]);
-  };
-  inline void
-  __impl_move(T *dest, T *src, size_t cnt)
-  {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      deep_move(dest, src, cnt);
-    } else {
-      shallow_move(dest, src, cnt);
-    }
-  }
 
 public:
   using category_type = vector_tag;
@@ -160,7 +116,7 @@ public:
   };
   vector(const vector &o) : __mem(o.length)
   {
-    __impl_copy(__mem::memory, o.memory, o.length);
+    __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
   }
   vector(chunk<byte> &&m) : __mem(m) { m = nullptr; };
@@ -173,7 +129,7 @@ public:
     __mem::capacity = 0;
     realloc(o.length);
     __mem::length = o.length;
-    __impl_copy(__mem::memory, o.memory, o.length);
+    __impl_container::copy(__mem::memory, o.memory, o.length);
     return *this;
   }
   vector &
@@ -291,7 +247,7 @@ public:
     if ( !__mem::has_space(o.length) )
       reserve(__mem::capacity + o.max_size());
 
-    __impl_copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
+    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     // micron::memcpy(&(__mem::memory)[__mem::length],
     // &o.memory[0],
     //                o.length);
@@ -305,7 +261,7 @@ public:
   {
     if ( !__mem::has_space(o.length) )
       reserve(__mem::capacity + o.max_size());
-    __impl_copy(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
+    __impl_container::copy(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
     // micron::memcpy(&(__mem::memory)[__mem::length],
     // &o.memory[0],
     //                o.length);
@@ -394,11 +350,11 @@ public:
   emplace_back(Args &&...v)
   {
     if ( __mem::length < __mem::capacity ) {
-      new (&__mem::memory[__mem::length++]) T(micron::move(micron::forward<Args>(v)...));
+      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
       return;
     } else {
       reserve(__mem::capacity + 1);
-      new (&__mem::memory[__mem::length++]) T(micron::move(micron::forward<Args>(v)...));
+      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
     }
   }
   template <typename V = T>
@@ -683,7 +639,7 @@ public:
       for ( size_t i = _n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
     } else {
-      __impl_copy(n, n + 1, __mem::length);
+      __impl_container::copy(n, n + 1, __mem::length);
     }
     czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
   }
@@ -702,7 +658,7 @@ public:
       for ( size_t i = n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
     } else {
-      __impl_copy(__mem::memory[n], __mem::memory[n + 1], __mem::length);
+      __impl_container::copy(__mem::memory[n], __mem::memory[n + 1], __mem::length);
     }
     czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
     __mem::length--;

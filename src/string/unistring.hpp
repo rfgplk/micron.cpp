@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../type_traits.hpp"
 #include "../concepts.hpp"
+#include "../type_traits.hpp"
 #include "string.hpp"
 #include "unitypes.hpp"
 
@@ -39,6 +39,61 @@ invert(T &str)
     *start++ = *end;
     *end-- = t;
   }
+}
+
+template <typename T = char8_t>
+int64_t
+hex_string_to_int64(const micron::hstring<T> &buf)
+{
+  const T *ptr = buf.begin();
+  int64_t result = 0;
+  bool neg = false;
+
+  if ( *ptr == '-' ) {
+    neg = true;
+    ++ptr;
+  }
+
+  const T *end = buf.end();
+  while ( ptr != end ) {
+    char c = *ptr++;
+    int digit = 0;
+    if ( c >= '0' && c <= '9' )
+      digit = c - '0';
+    else if ( c >= 'a' && c <= 'f' )
+      digit = 10 + (c - 'a');
+    else if ( c >= 'A' && c <= 'F' )
+      digit = 10 + (c - 'A');
+    else
+      break;
+
+    result = (result << 4) | digit;
+  }
+
+  return neg ? -result : result;
+}
+
+template <typename T = char8_t>
+int64_t
+string_to_int64(const micron::hstring<T> &buf)
+{
+  const T *ptr = &buf[0];
+  int64_t result = 0;
+  bool neg = false;
+
+  if constexpr ( std::is_signed_v<int64_t> ) {
+    if ( *ptr == '-' ) {
+      neg = true;
+      ++ptr;
+    }
+  }
+
+  while ( *ptr != buf.end() ) {
+    result = result * 10 + (*ptr - '0');
+    ++ptr;
+  }
+
+  return neg ? -result : result;
 }
 
 template <typename I, typename T = char8_t>

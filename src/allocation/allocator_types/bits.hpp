@@ -23,6 +23,16 @@ template <typename T> struct abc_allocator {
     return abc::__abc_allocator<byte>::dealloc(ptr, sz);
   }
   static T *
+  brk_allocate(size_t sz)
+  {
+    return abc::__abc_allocator<byte>::calloc(sz);
+  }
+  static void
+  brk_deallocate(T *ptr, size_t sz)
+  {
+    return abc::__abc_allocator<byte>::dealloc(ptr, sz);
+  }
+  static T *
   unmanaged_allocate(size_t sz)
   {
     return reinterpret_cast<T *>(micron::sys_allocator<byte>::alloc(sz));

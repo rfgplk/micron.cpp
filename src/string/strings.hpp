@@ -196,7 +196,7 @@ operator+(sstr<N> &str, const char (&data)[M])
 {
   sstr<N> out;
   out += str;
-  out += data;
+  out.append_null(data);
   return out;
 };
 template <size_t N, size_t M>
@@ -204,7 +204,7 @@ inline sstr<N>
 operator+(const char (&data)[M], sstr<N> &str)
 {
   sstr<N> out;
-  out += data;
+  out.append_null(data);
   out += str;
   return out;
 };

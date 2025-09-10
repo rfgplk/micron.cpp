@@ -19,6 +19,7 @@ using ret_flag = micron::sentinel_pointer;
 constexpr static const uintptr_t __flag_invalid = 0;
 constexpr static const uintptr_t __flag_failure = -1;
 constexpr static const uintptr_t __flag_out_of_space = -2;
+constexpr static const uintptr_t __flag_tombstoned = -3;
 
 template <typename T, i64 Min, i32 Mx = 64>
   requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T>
@@ -188,7 +189,28 @@ struct __buddy_list {
     // leeway. the offset is 256-bit to account properly for AVX2.
     return { ((byte *)blk + __hdr_offset), order_size(o) - __hdr_offset };
   }
+  ret_flag
+  tombstone(byte *ptr) noexcept
+  {
+    byte *addr = ptr - (__hdr_offset - sizeof(micron::simd::i128));
+    i8 *ts = reinterpret_cast<i8 *>(addr);
+    *ts = 1;
 
+    i64 *hdr = reinterpret_cast<i64 *>(ptr - __hdr_offset);
+    i64 o = static_cast<i64>(*hdr);
+    if ( o < 0 || o >= max_order )
+      return { __flag_invalid };
+    allocated_bytes -= order_size(o);
+
+    return __flag_tombstoned;
+  }
+  ret_flag
+  tombstone(T &node) noexcept
+  {
+    if ( !node.ptr or node.len == 0 )
+      return __flag_invalid;
+    return tombstone(node.ptr);
+  }
   ret_flag
   deallocate(byte *ptr) noexcept
   {

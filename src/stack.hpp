@@ -5,23 +5,27 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__container.hpp"
+
 #include "algorithm/mem.hpp"
-#include "allocation/chunks.hpp"
+#include "allocation/resources.hpp"
 #include "allocator.hpp"
 #include "pointer.hpp"
 #include "tags.hpp"
-#include "types.hpp"
 #include "type_traits.hpp"
+#include "types.hpp"
 
 #include <initializer_list>
 
 namespace micron
 {
 // BUG: the autoformatter set t to lowercase and i don't have the willpower to actually change this :( (sed can't help)
-template <typename t, size_t N = micron::alloc_auto_sz, class alloc = micron::allocator_serial<>>
+template <typename t, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
   requires micron::is_copy_constructible_v<t> && micron::is_move_constructible_v<t>
-class stack : private alloc, public contiguous_memory_no_copy<t>
+class stack : public __mutable_memory_resource<t, Alloc>
 {
+  using __mem = __mutable_memory_resource<t, Alloc>;
+
 public:
   using category_type = buffer_tag;
   using mutability_type = mutable_tag;
@@ -37,222 +41,223 @@ public:
   typedef const t *const_iterator;
   ~stack()
   {
-    if ( contiguous_memory_no_copy<t>::memory == nullptr )
+    if ( __mem::is_zero() )
       return;
-    if constexpr ( micron::is_class_v<t> )
-      clear();
-    this->destroy(to_chunk(contiguous_memory_no_copy<t>::memory, contiguous_memory_no_copy<t>::capacity));
+    clear();
   }
-  stack() : contiguous_memory_no_copy<t>(this->create(N)) {}
-  stack(const umax_t n) : contiguous_memory_no_copy<t>(this->create(n * sizeof(t)))
+  stack() : __mem(N) {}
+  stack(const umax_t n) : __mem(n)
   {
     for ( umax_t i = 0; i < n; i++ )
       push();
   }
-  stack(const std::initializer_list<t> &lst) : contiguous_memory_no_copy<t>(this->create(sizeof(t) * lst.size()))
+  stack(const std::initializer_list<t> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<t> ) {
       size_t i = 0;
       for ( t &&value : lst ) {
-        new (&contiguous_memory_no_copy<t>::memory[i++]) t(micron::move(value));
+        new (&__mem::memory[i++]) t(micron::move(value));
       }
-      contiguous_memory_no_copy<t>::length = lst.size();
+      __mem::length = lst.size();
     } else {
       size_t i = 0;
       for ( t value : lst ) {
-        contiguous_memory_no_copy<t>::memory[i++] = value;
+        __mem::memory[i++] = value;
       }
-      contiguous_memory_no_copy<t>::length = lst.size();
+      __mem::length = lst.size();
     }
   }
-  stack(const stack &) = delete;
-  stack(stack &&o) : contiguous_memory_no_copy<t>(micron::move(o)) {}
-  stack &operator=(const stack &) = delete;
+  stack(const stack &o) : __mem(o.length) { __impl_container::copy(__mem::memory, o.memory, o.length); };
+  stack(stack &&o) : __mem(micron::move(o)) {}
+  stack &
+  operator=(const stack &o)
+  {
+    if ( o.length >= __mem::capacity )
+      reserve(o.length);
+    __impl_container::copy(__mem::memory, o.memory, o.length);
+    __mem::length = o.length;
+    return *this;
+  };
   stack &
   operator=(stack &&o)
   {
-    if ( o.length >= contiguous_memory_no_copy<t>::capacity )
-      reserve(o.length);
-    micron::bytecpy(contiguous_memory_no_copy<t>::memory, o.memory, o.length);
-    contiguous_memory_no_copy<t>::length = o.length;
-    o.length = 0;
+    if ( __mem::memory ) {
+      __mem::free();
+    }
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
     return *this;
   };
-
   inline t &
   operator[](const umax_t n)
   {
-    umax_t c = contiguous_memory_no_copy<t>::length - n - 1;
-    return contiguous_memory_no_copy<t>::memory[c];
+    umax_t c = __mem::length - n - 1;
+    return __mem::memory[c];
   }
   inline const t &
   operator[](const umax_t n) const
   {
-    umax_t c = contiguous_memory_no_copy<t>::length - n - 1;
-    return contiguous_memory_no_copy<t>::memory[c];
+    umax_t c = __mem::length - n - 1;
+    return __mem::memory[c];
   }
   t &
   top(void)
   {
-    return contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length - 1];
+    return __mem::memory[__mem::length - 1];
   }
   const t &
   top(void) const
   {
-    return immutable_memory<t>::memory[immutable_memory<t>::length - 1];
+    return __mem::memory[__mem::length - 1];
   }
   // calling stack() is equivalent to top() and pop()
   inline t
   operator()(void)
   {
-    auto n = contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length - 1];
+    auto n = __mem::memory[__mem::length - 1];
     pop();
     return n;
   }
   template <typename... Args>
   inline void
-  emplace(Args...args)
+  emplace(Args... args)
   {
-    if ( contiguous_memory_no_copy<t>::length < contiguous_memory_no_copy<t>::capacity ) {
-      new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++])
-          t(micron::move(args...));
+    if ( __mem::length < __mem::capacity ) {
+      new (&__mem::memory[__mem::length++]) t(micron::move(args...));
     } else {
-      reserve(contiguous_memory_no_copy<t>::capacity + 1);
-      new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++])
-          t(micron::move(args...));
+      reserve(__mem::capacity + 1);
+      new (&__mem::memory[__mem::length++]) t(micron::move(args...));
     }
   }
   template <typename... Args>
-  requires (micron::is_lvalue_reference_v<Args> && ...)
+    requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args)
   {
-    if ( contiguous_memory_no_copy<t>::length < contiguous_memory_no_copy<t>::capacity ) {
-      new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++])
-          t(micron::move(micron::forward<args>(args)...));
+    if ( __mem::length < __mem::capacity ) {
+      new (&__mem::memory[__mem::length++]) t(micron::move(micron::forward<args>(args)...));
     } else {
-      reserve(contiguous_memory_no_copy<t>::capacity + 1);
-      new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++])
-          t(micron::move(micron::forward<args>(args)...));
+      reserve(__mem::capacity + 1);
+      new (&__mem::memory[__mem::length++]) t(micron::move(micron::forward<args>(args)...));
     }
   }
   inline void
   push(void)
   {
-    if ( contiguous_memory_no_copy<t>::length >= contiguous_memory_no_copy<t>::capacity )
-      reserve(contiguous_memory_no_copy<t>::capacity + 1);
-    new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++]) t();
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    new (&__mem::memory[__mem::length++]) t();
   }
   inline void
   push(t v)
     requires(micron::is_arithmetic_v<t> && micron::is_same_v<t, t>)
   {
-    if ( contiguous_memory_no_copy<t>::length >= contiguous_memory_no_copy<t>::capacity )
-      reserve(contiguous_memory_no_copy<t>::capacity + 1);
-    contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++] = (v);
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    __mem::memory[__mem::length++] = (v);
   }
   inline void
   push(const t &v)
-  requires (!micron::is_same_v<t, t>)
+    requires(!micron::is_same_v<t, t>)
   {
-    if ( contiguous_memory_no_copy<t>::length >= contiguous_memory_no_copy<t>::capacity )
-      reserve(contiguous_memory_no_copy<t>::capacity + 1);
-    new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++]) t(v);
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    new (&__mem::memory[__mem::length++]) t(v);
   }
   inline void
   push(t &&v)
   {
-    if ( contiguous_memory_no_copy<t>::length >= contiguous_memory_no_copy<t>::capacity )
-      reserve(contiguous_memory_no_copy<t>::capacity + 1);
-    new (&contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length++]) t(micron::move(v));
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    new (&__mem::memory[__mem::length++]) t(micron::move(v));
   }
   inline void
   pop()
   {
     if constexpr ( micron::is_class<t>::value ) {
-      contiguous_memory_no_copy<t>::memory[contiguous_memory_no_copy<t>::length - 1].~t();
+      __mem::memory[__mem::length - 1].~t();
     }
-    czero<sizeof(t) / sizeof(byte)>(
-        (byte *)micron::voidify(&(contiguous_memory_no_copy<t>::memory)[contiguous_memory_no_copy<t>::length-- - 1]));
+    czero<sizeof(t) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
   }
   inline void
   clear()
   {
-    if ( !contiguous_memory_no_copy<t>::length )
+    if ( !__mem::length )
       return;
     if constexpr ( micron::is_class<t>::value ) {
-      for ( size_t i = 0; i < contiguous_memory_no_copy<t>::length; i++ )
-        (contiguous_memory_no_copy<t>::memory)[i].~t();
+      for ( size_t i = 0; i < __mem::length; i++ )
+        (__mem::memory)[i].~t();
     }
-    micron::zero((byte *)micron::voidify(&(contiguous_memory_no_copy<t>::memory)[0]),
-                 contiguous_memory_no_copy<t>::capacity * (sizeof(t) / sizeof(byte)));
-    contiguous_memory_no_copy<t>::length = 0;
+    micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(t) / sizeof(byte)));
+    __mem::length = 0;
   }
   // grow container
   inline void
   reserve(const size_t n)
   {
-    contiguous_memory_no_copy<t>::accept_new_memory(
-        this->grow(reinterpret_cast<byte *>(contiguous_memory_no_copy<t>::memory),
-                   contiguous_memory_no_copy<t>::capacity * sizeof(t), sizeof(t) * n));
+    if ( n < __mem::capacity )
+      return;
+    __mem::expand(n);
   }
   inline void
   swap(stack &o)
   {
-    micron::swap(contiguous_memory_no_copy<t>::memory);
-    micron::swap(contiguous_memory_no_copy<t>::length);
-    micron::swap(contiguous_memory_no_copy<t>::capacity);
+    micron::swap(__mem::memory);
+    micron::swap(__mem::length);
+    micron::swap(__mem::capacity);
   }
   inline bool
   empty() const
   {
-    return !contiguous_memory_no_copy<t>::length;
+    return !__mem::length;
   }
   inline size_t
   size() const
   {
-    return contiguous_memory_no_copy<t>::length;
+    return __mem::length;
   }
   inline size_t
   max_size() const
   {
-    return contiguous_memory_no_copy<t>::capacity;
+    return __mem::capacity;
   }
 };
 
-template <typename t, size_t N = micron::alloc_auto_sz, class alloc = micron::allocator_serial<>>
+template <typename t, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
   requires micron::is_copy_constructible_v<t> && micron::is_move_constructible_v<t>
-class istack : private alloc, public immutable_memory<t>
+class istack : public __immutable_memory_resource<t, Alloc>
 {
+  using __mem = __immutable_memory_resource<t, Alloc>;
   inline void
   _push(void)
   {
-    if ( immutable_memory<t>::length >= immutable_memory<t>::capacity )
-      reserve(immutable_memory<t>::capacity + 1);
-    new (&immutable_memory<t>::memory[immutable_memory<t>::length++]) t();
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    new (&__mem::memory[__mem::length++]) t();
   }
   inline void
   _push(const t &v)
   {
-    if ( immutable_memory<t>::length >= immutable_memory<t>::capacity )
-      reserve(immutable_memory<t>::capacity + 1);
-    new (&immutable_memory<t>::memory[immutable_memory<t>::length++]) t(v);
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    new (&__mem::memory[__mem::length++]) t(v);
   }
   inline void
   _push(t &&v)
   {
-    if ( immutable_memory<t>::length >= immutable_memory<t>::capacity )
-      reserve(immutable_memory<t>::capacity + 1);
-    new (&immutable_memory<t>::memory[immutable_memory<t>::length++]) t(micron::move(v));
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::capacity + 1);
+    new (&__mem::memory[__mem::length++]) t(micron::move(v));
   }
   inline void
   _pop(void)
   {
     if constexpr ( micron::is_class<t>::value ) {
-      immutable_memory<t>::memory[immutable_memory<t>::length - 1].~t();
+      __mem::memory[__mem::length - 1].~t();
     }
     czero<sizeof(t) / sizeof(byte)>(
-        (byte *)micron::voidify(&(immutable_memory<t>::memory)[immutable_memory<t>::length-- - 1]));
+        (byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
   }
 
 public:
@@ -270,37 +275,36 @@ public:
   typedef const t *const_iterator;
   ~istack()
   {
-    if ( immutable_memory<t>::memory == nullptr )
+    if ( __mem::is_zero() )
       return;
     // clear(); CANT BE HERE DON'T WILL INF REC LOOP
-    this->destroy(to_chunk(immutable_memory<t>::memory, immutable_memory<t>::capacity));
   }
-  istack() : immutable_memory<t>(this->create(N)) {}
-  istack(const umax_t n) : immutable_memory<t>(this->create(n * sizeof(t)))
+  istack() : __mem(N) {}
+  istack(const umax_t n) : __mem(n)
   {
     for ( umax_t i = 0; i < n; i++ )
       _push();
   }
-  istack(const std::initializer_list<t> &lst) : immutable_memory<t>(this->create(sizeof(t) * lst.size()))
+  istack(const std::initializer_list<t> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<t> ) {
       size_t i = 0;
       for ( t &&value : lst ) {
-        new (&immutable_memory<t>::memory[i++]) t(micron::move(value));
+        new (&__mem::memory[i++]) t(micron::move(value));
       }
-      immutable_memory<t>::length = lst.size();
+      __mem::length = lst.size();
     } else {
       size_t i = 0;
       for ( t value : lst ) {
-        immutable_memory<t>::memory[i++] = value;
+        __mem::memory[i++] = value;
       }
-      immutable_memory<t>::length = lst.size();
+      __mem::length = lst.size();
     }
   }
 
   template <typename K = t>
     requires(micron::is_convertible_v<K, t>)
-  istack(const stack<K> &o) : immutable_memory<t>(this->create(o.size()))
+  istack(const stack<K> &o) : __mem(o.size())
   {
     // TODO: optimize
     for ( size_t i = o.size(); i > 0; --i )
@@ -308,29 +312,29 @@ public:
     _push(o[0]);
   }
   istack(const istack &) = delete;
-  istack(istack &&o) : immutable_memory<t>(micron::move(o)) {}
-  istack(const istack *o) : immutable_memory<t>(this->create((o->capacity * sizeof(t)) + sizeof(t)))
+  istack(istack &&o) : __mem(micron::move(o)) {}
+  istack(const istack *o) : __mem(o->capacity * sizeof(t))
   {
     for ( size_t i = 0; i < o->length; i++ )
-      immutable_memory<t>::memory[i] = o->memory[i];
-    immutable_memory<t>::length = o->length;
+      __mem::memory[i] = o->memory[i];
+    __mem::length = o->length;
   }
   istack &operator=(const istack &) = delete;
   inline const t &
   operator[](const umax_t n) const
   {
-    umax_t c = immutable_memory<t>::length - n - 1;
-    return immutable_memory<t>::memory[c];
+    umax_t c = __mem::length - n - 1;
+    return __mem::memory[c];
   }
   const t &
   top(void) const
   {
-    return immutable_memory<t>::memory[immutable_memory<t>::length - 1];
+    return __mem::memory[__mem::length - 1];
   }
   inline const t &
   operator()(void)
   {
-    return immutable_memory<t>::memory[immutable_memory<t>::length - 1];
+    return __mem::memory[__mem::length - 1];
   }
   inline auto
   push(const t &v) -> istack
@@ -357,37 +361,38 @@ public:
   clear() -> istack
   {
     istack ret;
-    ret.reserve(immutable_memory<t>::capacity);
+    ret.reserve(__mem::capacity);
     return ret;
   }
   // grow container
   inline void
   reserve(const size_t n)
   {
-    immutable_memory<t>::accept_new_memory(this->grow(reinterpret_cast<byte *>(immutable_memory<t>::memory),
-                                                      immutable_memory<t>::capacity * sizeof(t), sizeof(t) * n));
+    if ( n < __mem::capacity )
+      return;
+    __mem::expand(n);
   }
   inline void
   swap(istack &o)
   {
-    micron::swap(immutable_memory<t>::memory);
-    micron::swap(immutable_memory<t>::length);
-    micron::swap(immutable_memory<t>::capacity);
+    micron::swap(__mem::memory);
+    micron::swap(__mem::length);
+    micron::swap(__mem::capacity);
   }
   inline bool
   empty() const
   {
-    return !immutable_memory<t>::length;
+    return !__mem::length;
   }
   inline size_t
   size() const
   {
-    return immutable_memory<t>::length;
+    return __mem::length;
   }
   inline size_t
   max_size() const
   {
-    return immutable_memory<t>::capacity;
+    return __mem::capacity;
   }
 };
 
@@ -397,30 +402,6 @@ class sstack
 {
   t stack[N];
   size_t length;
-
-  // shallow copy routine
-  inline void
-  shallow_copy(t *dest, t *src, size_t cnt)
-  {
-    micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
-  };
-  // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
-  // cause segfaulting if underlying doesn't account for double deletes)
-  inline void
-  deep_copy(t *dest, t *src, size_t cnt)
-  {
-    for ( size_t i = 0; i < cnt; i++ )
-      dest[i] = src[i];
-  };
-  inline void
-  __impl_copy(t *dest, t *src, size_t cnt)
-  {
-    if constexpr ( micron::is_class<t>::value ) {
-      deep_copy(dest, src, cnt);
-    } else {
-      shallow_copy(dest, src, cnt);
-    }
-  }
 
 public:
   using category_type = buffer_tag;
@@ -435,9 +416,8 @@ public:
   typedef const t *const_pointer;
   typedef t *iterator;
   typedef const t *const_iterator;
-  ~sstack() {}
-  sstack() : stack{}, length(0) {
-  }
+  ~sstack() = default;
+  sstack() : stack{}, length(0) {}
   sstack(const umax_t n) : length(n)
   {
     for ( umax_t i = 0; i < n; i++ )
@@ -459,15 +439,15 @@ public:
   }
   sstack(const sstack &o)
   {
-    __impl_copy(o.stack, stack, N);
+    __impl_container::copy(o.stack, stack, N);
     length = o.length;
   }
   template <typename C = t, size_t M> sstack(const sstack<C, M> &o)
   {
     if constexpr ( N < M ) {
-      __impl_copy(o.stack, stack, M);
+      __impl_container::copy(o.stack, stack, M);
     } else if constexpr ( M >= N ) {
-      __impl_copy(o.stack, stack, N);
+      __impl_container::copy(o.stack, stack, N);
     }
     length = o.length;
   }
@@ -495,7 +475,7 @@ public:
   sstack &
   operator=(const sstack &o)
   {
-    __impl_copy(o.stack, stack, N);
+    __impl_container::copy(o.stack, stack, N);
     length = o.length;
     return *this;
   }
@@ -504,9 +484,9 @@ public:
   operator=(const sstack<C, M> &o)
   {
     if constexpr ( N >= M ) {
-      __impl_copy(o.stack, stack, N);
+      __impl_container::copy(o.stack, stack, N);
     } else {
-      __impl_copy(o.stack, stack, M);
+      __impl_container::copy(o.stack, stack, M);
     }
     length = o.length;
     return *this;

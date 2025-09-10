@@ -49,6 +49,14 @@ fetch(void)
   return __obj;
 }
 
+void
+retire(byte *ptr)
+{
+  __init_abcmalloc();
+  if ( __main_arena->ts_pop(ptr) ) {
+  }     // wasn't able to throw, add an error
+}
+
 __attribute__((malloc, alloc_size(1))) auto
 alloc(size_t size) -> byte *     // allocates memory, near iden. func. to malloc
 {

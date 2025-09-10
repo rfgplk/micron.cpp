@@ -92,6 +92,7 @@ struct file {
   int fd;
   struct stat sd;
   // regardless
+  ~file() { close(); }
   file(void) : fname(), fd(-1), sd() {};
   file(const char *str) { _open_linux(str, modes::read); }
   file(const micron::sstr<MAX_NAME_LENGTH> &str) { _open_linux(str, modes::read); }
@@ -133,7 +134,6 @@ struct file {
     posix::close(fd);
     fd = -1;
   }
-  ~file() { close(); }
   // here come the functions
   template <bool B = STAT_EXISTING>
   inline void

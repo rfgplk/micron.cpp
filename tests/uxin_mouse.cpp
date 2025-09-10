@@ -4,10 +4,14 @@
 #include "../src/std.hpp"
 
 void
-key_press(u16 x, i32 y)
+mouse_move(u16 x, i32 y)
 {
-  if ( x == micron::btn_left )
-    mc::console("Pressed lmb, ", y);
+  if ( x == micron::abs_x ) {
+    mc::console("Mouse movement detected, x: ", y);
+  }
+  if ( x == micron::abs_y ) {
+    mc::console("Mouse movement detected, y: ", y);
+  }
 }
 
 int
@@ -19,7 +23,7 @@ main()
     if ( n.type == mc::uxin::type_t::mouse ) {
       mc::console(n.i_path);
       mc::uxin::bind_device(n);
-      mc::uxin::poll(n, mc::uxin::prepare_generic_mouse(nullptr, key_press, nullptr));
+      mc::uxin::poll(n, mc::uxin::prepare_generic_mouse_sensor_abs(nullptr, mouse_move, nullptr));
       break;
     }
   }

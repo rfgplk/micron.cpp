@@ -120,6 +120,20 @@ public:
     return true;
   }
   bool
+  try_tombstone(micron::__chunk<byte> _p)
+  {
+    if ( empty() )
+      micron::abort();
+    if ( _p.zero() )
+      micron::abort();
+    auto r = __book.tombstone(_p);
+    if ( r == __flag_out_of_space )
+      return false;
+    if ( r == __flag_invalid or r == __flag_failure )
+      return false;
+    return true;
+  }
+  bool
   try_unmark_no_size(byte *_p)
   {
     if ( empty() )
@@ -127,6 +141,17 @@ public:
     if ( _p == nullptr )
       micron::abort();
     __book.deallocate(_p);
+    return true;
+  }
+  // deprecated technically
+  bool
+  try_tombstone_no_size(byte *_p)
+  {
+    if ( empty() )
+      micron::abort();
+    if ( _p == nullptr )
+      micron::abort();
+    __book.tombstone(_p);
     return true;
   }
   size_t

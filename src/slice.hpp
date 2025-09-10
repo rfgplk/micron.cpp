@@ -28,8 +28,7 @@ namespace micron
 
 template <typename T, class Alloc = micron::allocator_serial<>>
   requires micron::is_move_constructible_v<T>
-struct slice : public __immutable_memory_resource<T, Alloc>
-{
+struct slice : public __immutable_memory_resource<T, Alloc> {
   using __mem = __immutable_memory_resource<T, Alloc>;
   using category_type = slice_tag;
   using mutability_type = immutable_tag;
@@ -52,23 +51,15 @@ struct slice : public __immutable_memory_resource<T, Alloc>
     if ( __mem::length == 0 )
       return;     // this is only viewing memory
     __mem::free();
-    //this->destroy(to_chunk(__mem::memory, __mem::capacity));
+    // this->destroy(to_chunk(__mem::memory, __mem::capacity));
   }
-  slice() : __mem(Alloc::auto_size())
-  {
-    __mem::length = __mem::capacity();
-  };
-  slice(T *a, T *b)
-      : __mem(((static_cast<size_t>(b - a) / sizeof(T))))
+  slice() : __mem(Alloc::auto_size()) { __mem::length = __mem::capacity; };
+  slice(T *a, T *b) : __mem(((static_cast<size_t>(b - a) / sizeof(T))))
   {
     micron::memcpy(&__mem::memory[0], a, b - a);
     __mem::length = b - a;
   };
-  slice(const size_t n) : __mem(n)
-  {
-    __mem::length = __mem::capacity();
-  };
-
+  slice(const size_t n) : __mem(n) { __mem::length = __mem::capacity; };
 
   // take a view of memory of the underlying container
   // template <is_micron_structure Y>
@@ -81,10 +72,15 @@ struct slice : public __immutable_memory_resource<T, Alloc>
   slice &
   operator=(slice &&o)
   {
+    if ( __mem::memory ) {
+      __mem::free();
+    }
     __mem::memory = o.memory;
     __mem::length = o.length;
+    __mem::capacity = o.capacity;
     o.memory = 0;
     o.length = 0;
+    o.capacity = 0;
     return *this;
   }
   slice &
@@ -162,7 +158,7 @@ struct slice : public __immutable_memory_resource<T, Alloc>
   reset()
   {
     micron::zero(__mem::memory, __mem::length);
-    __mem::length = __mem::capacity();
+    __mem::length = __mem::capacity;
   }
 };
 };     // namespace micron

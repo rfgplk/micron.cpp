@@ -15,7 +15,15 @@
 int
 main()
 {
-  if constexpr ( false ) {
+  if constexpr (true ) {
+    mc::stack<int> stck{ 2, 6, 7, 22, 55 };
+    mc::console(stck.max_size());
+    for ( int i = 0; i < 100; i++ )
+      stck.push(i);
+    mc::console(stck.size());
+    mc::console(stck.top());
+  }
+  if constexpr (false ) {
     mc::istack<int> stck{ 2, 6, 7, 22, 55 };
     mc::console(stck.max_size());
     for ( int i = 0; i < 100; i++ )

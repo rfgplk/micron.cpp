@@ -8,8 +8,8 @@
 #include "../concepts.hpp"
 #include "../except.hpp"
 #include "../math/generic.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 #include "string.hpp"
 
 #include "../slice.hpp"
@@ -300,6 +300,90 @@ split(const T &data, size_t at = 0)
     return data.substr(data.size() / 2, data.size() - (data.size() / 2));
   return data.substr(at, data.size() - at);
 }
+
+template <is_string T>
+T
+split(const T &data, typename T::const_iterator itr)
+{
+  if ( itr >= data.end() or itr < data.begin() )
+    throw micron::except::library_error("micron::split() out of bounds.");
+  return data.substr(data.begin(), itr);
+}
+
+template <is_string T>
+auto
+contains(const T &data, typename T::const_iterator from, const char fnd) -> bool
+{
+  if ( data.empty() )
+    return false;
+  if ( from < data.begin() or from >= data.end() )
+    return false;
+  for ( auto itr = from; itr != data.end(); ++itr ) {
+    if ( *itr == fnd ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <is_string T>
+auto
+contains(const T &data, typename T::const_iterator from, const char *fnd) -> bool
+{
+  size_t sz = micron::strlen(fnd);
+  if ( sz > data.size() )
+    return false;
+  if ( data.empty() or sz == 0 )
+    return false;
+  if ( from < data.begin() or from >= data.end() )
+    return false;
+  for ( auto itr = from; itr != data.end(); ++itr ) {
+    u64 j = 0;
+    while ( (itr + j) != data.end() && j <= sz && *(itr + j) == fnd[j] ) {
+      ++j;
+    }
+    if ( j == sz ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <is_string T>
+auto
+contains(const T &data, const char fnd) -> bool
+{
+  if ( data.empty() )
+    return false;
+  for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
+    if ( *itr == fnd ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <is_string T>
+auto
+contains(const T &data, const char *fnd) -> bool
+{
+  size_t sz = micron::strlen(fnd);
+  if ( sz > data.size() )
+    return false;
+  if ( data.empty() or sz == 0 )
+    return false;
+  for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
+    u64 j = 0;
+    while ( (itr + j) != data.end() && j <= sz && *(itr + j) == fnd[j] ) {
+      ++j;
+    }
+    if ( j == sz ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 template <is_string T>
 bool
 contains(const T &data, const T &fnd)
@@ -333,6 +417,20 @@ contains(const T &data, const T &fnd)
 
 template <is_string T>
 auto
+find(const T &data, const char fnd) -> typename T::iterator
+{
+  if ( data.empty() )
+    return nullptr;
+  for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
+    if ( *(itr) == fnd ) {
+      return itr;
+    }
+  }
+  return (typename T::iterator) nullptr;
+}
+
+template <is_string T>
+auto
 find(const T &data, const char *fnd) -> typename T::iterator
 {
   size_t sz = micron::strlen(fnd);
@@ -354,8 +452,28 @@ find(const T &data, const char *fnd) -> typename T::iterator
 
 template <is_string T>
 auto
+find(const T &data, typename T::iterator from, const char fnd) -> typename T::iterator
+{
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
+  if ( !from )
+    return nullptr;
+  if ( data.empty() )
+    return nullptr;
+  for ( auto itr = from; itr != data.end(); ++itr ) {
+    if ( *(itr) == fnd ) {
+      return itr;
+    }
+  }
+  return (typename T::iterator) nullptr;
+}
+
+template <is_string T>
+auto
 find(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
   if ( !from )
     return nullptr;
   size_t sz = fnd.size();
@@ -379,6 +497,8 @@ template <is_string T>
 auto
 find(const T &data, typename T::iterator from, const char *fnd) -> typename T::iterator
 {
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
   if ( !from )
     return nullptr;
   size_t sz = micron::strlen(fnd);
@@ -402,6 +522,8 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
   if ( !from )
     return nullptr;
   size_t sz = fnd.size();
@@ -425,6 +547,8 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::iterator from, const char *fnd) -> typename T::iterator
 {
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
   if ( !from )
     return nullptr;
   size_t sz = micron::strlen(fnd);

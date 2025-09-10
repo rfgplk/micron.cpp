@@ -27,10 +27,12 @@ public:
   using __alloc = __internal_pointer_alloc<Type>;
 
   ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
-  unique_pointer(void) : internal_pointer(__alloc::__impl_alloc()) {};     // new Type()) {};
+  unique_pointer(void) : internal_pointer(nullptr) {};
   template <typename V>
     requires micron::is_null_pointer_v<V>
-  unique_pointer(V) : internal_pointer(nullptr){};
+  unique_pointer(V) : internal_pointer(nullptr)
+  {
+  };
   unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   template <class... Args>
   unique_pointer(Args &&...args)

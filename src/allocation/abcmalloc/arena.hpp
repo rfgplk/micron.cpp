@@ -39,12 +39,13 @@ __debug_print(const char *str, const size_t n)
 
 template <typename T>
 inline __attribute__((always_inline)) void
-__debug_print(const char *str, T& t)
+__debug_print(const char *str, T &t)
 {
 #ifndef __OPTIMIZE__
   // NOTE: we're using iostream since our io library depends on malloc()
   if constexpr ( __default_debug_notices ) {
-    std::cout << "\033[34mabcmalloc[] debug: \033[0m " << str << " at addr: " << static_cast<const void*>(t) << std::endl;
+    std::cout << "\033[34mabcmalloc[] debug: \033[0m " << str << " at addr: " << static_cast<const void *>(t)
+              << std::endl;
   }
 #endif
 }
@@ -157,6 +158,66 @@ class __arena
     }
     return memory;
   }
+
+  template <typename F>
+  bool
+  __find_and_tombstone(F *__node, const micron::__chunk<byte> &memory)
+  {
+    F *__init_nd = __node;
+    F *__p_head = __node;
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __p_head = __node;
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;
+
+      if ( sh.is_at(memory.ptr) ) [[unlikely]] {
+        if ( sh.try_tombstone(memory) ) {
+          if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+          {
+            sh.reset();
+            __p_head->nxt = __node->nxt;     // relink
+          }
+          return true;
+        }
+        return true;
+      }
+      __p_head = __node;
+      __node = __node->nxt;
+    }
+    return false;
+  }
+  template <typename F>
+  bool
+  __find_and_tombstone(F *__node, byte *addr)
+  {
+    F *__init_nd = __node;
+    F *__p_head = __node;
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __p_head = __node;
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;     // safe
+
+      if ( sh.is_at(addr) ) [[unlikely]] {
+        if ( sh.try_tombstone_no_size(addr) )
+          if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+          {
+            sh.reset();
+            __p_head->nxt = __node->nxt;     // relink
+          }
+        return true;
+      }
+      __p_head = __node;
+      __node = __node->nxt;
+    }
+    return false;
+  }
+
   template <typename F>
   bool
   __find_and_remove(F *__node, const micron::__chunk<byte> &memory)
@@ -172,11 +233,23 @@ class __arena
       auto &sh = *__node->nd;
 
       if ( sh.is_at(memory.ptr) ) [[unlikely]] {
-        if ( sh.try_unmark(memory) ) {
-          if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
-          {
-            sh.reset();
-            __p_head->nxt = __node->nxt;     // relink
+        if constexpr ( !__default_tombstone ) {
+          if ( sh.try_unmark(memory) ) {
+            if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+            {
+              sh.reset();
+              __p_head->nxt = __node->nxt;     // relink
+            }
+            return true;
+          }
+        } else {
+          if ( sh.try_tombstone(memory) ) {
+            if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+            {
+              sh.reset();
+              __p_head->nxt = __node->nxt;     // relink
+            }
+            return true;
           }
           return true;
         }
@@ -201,13 +274,23 @@ class __arena
       auto &sh = *__node->nd;     // safe
 
       if ( sh.is_at(addr) ) [[unlikely]] {
-        if ( sh.try_unmark_no_size(addr) )
-          if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
-          {
-            sh.reset();
-            __p_head->nxt = __node->nxt;     // relink
-          }
-        return true;
+        if constexpr ( !__default_tombstone ) {
+          if ( sh.try_unmark_no_size(addr) )
+            if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+            {
+              sh.reset();
+              __p_head->nxt = __node->nxt;     // relink
+            }
+          return true;
+        } else {
+          if ( sh.try_tombstone_no_size(addr) )
+            if ( sh.used() == 0 and __node != __init_nd )     // always keep one sheet around
+            {
+              sh.reset();
+              __p_head->nxt = __node->nxt;     // relink
+            }
+          return true;
+        }
       }
       __p_head = __node;
       __node = __node->nxt;
@@ -281,13 +364,9 @@ class __arena
       return true;
     return false;
   }
-
   bool
-  __vmap_remove(const micron::__chunk<byte> &memory)
+  __vmap_tombstone(const micron::__chunk<byte> &memory)
   {
-    // TODO: this must match the offsets of the headers in free_list
-    // clean this up
-
     if ( __find_and_remove(&_small_buckets, memory) )
       return true;
     if ( __find_and_remove(&_medium_buckets, memory) )
@@ -296,21 +375,33 @@ class __arena
       return true;
     if ( __find_and_remove(&_huge_buckets, memory) )
       return true;
-    /*if ( (memory.len + sizeof(micron::simd::i256)) < __class_medium ) {
-      if ( __find_and_remove(&_small_buckets, memory) )
-        return true;
-    } else if ( ((memory.len + sizeof(micron::simd::i256)) <= __class_large)
-                and (memory.len + sizeof(micron::simd::i256)) >= __class_medium ) {
-      if ( __find_and_remove(&_medium_buckets, memory) )
-        return true;
-    } else if ( (memory.len + sizeof(micron::simd::i256)) <= __class_huge
-                and (memory.len + sizeof(micron::simd::i256)) > __class_large ) {
-      if ( __find_and_remove(&_large_buckets, memory) )
-        return true;
-    } else if ( (memory.len + sizeof(micron::simd::i256)) > __class_huge ) {
-      if ( __find_and_remove(&_huge_buckets, memory) )
-        return true;
-    }*/
+    return false;
+  }
+  bool
+  __vmap_tombstone_at(byte *addr)
+  {
+    if ( __find_and_tombstone(&_small_buckets, addr) )
+      return true;
+    if ( __find_and_tombstone(&_medium_buckets, addr) )
+      return true;
+    if ( __find_and_tombstone(&_large_buckets, addr) )
+      return true;
+    if ( __find_and_tombstone(&_huge_buckets, addr) )
+      return true;
+    return false;
+  }
+
+  bool
+  __vmap_remove(const micron::__chunk<byte> &memory)
+  {
+    if ( __find_and_remove(&_small_buckets, memory) )
+      return true;
+    if ( __find_and_remove(&_medium_buckets, memory) )
+      return true;
+    if ( __find_and_remove(&_large_buckets, memory) )
+      return true;
+    if ( __find_and_remove(&_huge_buckets, memory) )
+      return true;
     return false;
   }
   bool
@@ -534,6 +625,34 @@ public:
   {
     collect_stats<stat_type::total_memory_freed>(len);
     return __vmap_remove({ mem, len });
+  }
+  // tombstone pop
+  bool
+  ts_pop(const micron::__chunk<byte> &mem)
+  {
+    __debug_print("pop() address: ", mem.ptr);
+    __debug_print("pop() size: ", mem.len);
+    collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(mem.len);
+    full_on_free(mem.ptr, mem.len);
+    zero_on_free(mem.ptr, mem.len);
+    return __vmap_tombstone(mem);
+  }
+  bool
+  ts_pop(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
+  {
+    // TODO: add this
+    // collect_stats<stat_type::total_memory_freed>(mem.len);
+    collect_stats<stat_type::dealloc>();
+    full_on_free(mem);
+    zero_on_free(mem);
+    return __vmap_tombstone_at(mem);
+  }
+  bool
+  ts_pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
+  {
+    collect_stats<stat_type::total_memory_freed>(len);
+    return __vmap_tombstone({ mem, len });
   }
   bool
   freeze(const micron::__chunk<byte> &mem)

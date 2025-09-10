@@ -7,6 +7,7 @@
 
 #include "../types.hpp"
 
+static const ssize_t npos = -1;
 
 using const_schar = const char;
 using schar = char; // TODO: think about removing this
