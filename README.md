@@ -2,9 +2,7 @@
 
 <div align="left">
 
-###the micron standard library 
-
-  <img src="https://img.shields.io/badge/version-indev-green">
+### the micron standard library  <img src="https://img.shields.io/badge/version-indev-green">
 
 #### a core (re)design of the C++ Standard Template Library
 
