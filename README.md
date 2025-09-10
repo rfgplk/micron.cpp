@@ -28,8 +28,8 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 Features
 --------
-  - a fully functional, templated C++ standard library implementation, designed from the ground up with modern principles in mind
-  - completely self-contained, with no dependencies on external code or even the traditional C standard library
+  - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind
+  - completely self-contained, with *no dependencies on external code* or even the traditional C standard library
   - all functions are guaranteed to be side effect free, ensuring deterministic and predictable behavior across the codebase
   - written entirely in c++23
   - a high performance, cache-aware algorithmic base architecture
