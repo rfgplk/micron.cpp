@@ -651,14 +651,14 @@ public:
         }
         __debug_print("failed to __vmap_append(): ", sz);
         if ( sz >= __class_medium and sz < __class_gb ) {
-          __debug_print("growing container with size: ", __calculate_space_huge(sz));
-          __buf_expand_exact(sz, __calculate_space_huge(sz));
+          __debug_print("growing container with size: ", __calculate_space_huge(sz) * __default_overcommit);
+          __buf_expand_exact(sz, __calculate_space_huge(sz) * __default_overcommit);
         } else if ( sz >= __class_gb ) {     // for if someone requests allocations exceeding 1gb
           __debug_print("growing container with size: ", __calculate_space_bulk(sz));
           __buf_expand_exact(sz, __calculate_space_bulk(sz));
         } else {     // for all other allocs, grow the most aggressive
-          __debug_print("growing container with size: ", __calculate_space_small(sz));
-          __buf_expand_exact(sz, __calculate_space_small(sz));
+          __debug_print("growing container with size: ", __calculate_space_small(sz) * __default_overcommit);
+          __buf_expand_exact(sz, __calculate_space_small(sz) * __default_overcommit);
         }
       }
     }

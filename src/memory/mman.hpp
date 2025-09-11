@@ -148,6 +148,7 @@ enum class map_types : int {
   __end
 };
 
+// NOTE: mmap returns -1 on failure, will roll over
 inline __attribute__((always_inline)) addr_t *
 mmap(addr_t *__restrict addr, size_t len, int prot, int flags, int fd, off_t offset)
 {

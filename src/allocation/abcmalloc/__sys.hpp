@@ -12,20 +12,20 @@ namespace micron
 template <typename T, size_t Sz = alloc_auto_sz>
   requires(micron::is_integral_v<T>)
 struct sys_allocator {
-  inline static T *
+  static T *
   alloc(size_t n)     // allocate 'smartly'
   {
     T *ptr = nullptr;
     if constexpr ( Sz == page_size )
-      ptr = micron::map_normal(nullptr, n);
+      ptr = reinterpret_cast<T*>(micron::map_normal(nullptr, n));
     else if constexpr ( Sz == large_page_size )
-      ptr = micron::map_large(nullptr, n);
+      ptr = reinterpret_cast<T*>(micron::map_large(nullptr, n));
     if ( ptr == (void *)-1 )
       throw except::memory_error("sys_allocator::alloc(): mmap() failed");
     return ptr;
   };
 
-  inline static void
+  static void
   dealloc(T *mem, size_t len)
   {     // deallocate at location N
     if ( mem == nullptr )
