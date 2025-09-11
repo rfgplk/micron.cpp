@@ -1,2 +1,9 @@
 .ninja_log
 bin/*
+.gitignore
+
+*.o
+*.log
+*.tmp
+
+*.vgcore_*
