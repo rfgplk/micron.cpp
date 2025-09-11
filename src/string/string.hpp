@@ -215,7 +215,7 @@ public:
   bool
   empty() const
   {
-    return (bool)__mem::length == 0;
+    return (__mem::length == 0);
   };
   size_t
   size() const

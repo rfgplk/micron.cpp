@@ -16,7 +16,7 @@ main()
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(1, 1000000);
     abc::__arena arena;
-    for ( size_t n = 0; n < 100000; ++n ) {
+    for ( size_t n = 0; n < 10000; ++n ) {
       void *dont_optimize = std::malloc(dist(gen));
       escaped = dont_optimize;
     }

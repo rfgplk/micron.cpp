@@ -11,6 +11,9 @@
 #include "../../except.hpp"
 #include "../../string/strings.hpp"
 #include "../../tuple.hpp"
+
+#include "../bits.hpp"
+
 // it really isn't worthwhile to rewrite these, might get around to it
 // eventually
 // #include <cstdio>
@@ -89,11 +92,12 @@ struct openmode {
 // implementing all linux syscalls
 struct file {
   micron::sstr<MAX_NAME_LENGTH> fname;
-  int fd;
+  // int fd;
+  fd_t __handle;
   struct stat sd;
   // regardless
   ~file() { close(); }
-  file(void) : fname(), fd(-1), sd() {};
+  file(void) : fname(), __handle(-1), sd() {};
   file(const char *str) { _open_linux(str, modes::read); }
   file(const micron::sstr<MAX_NAME_LENGTH> &str) { _open_linux(str, modes::read); }
   file(const micron::string &str) { _open_linux(str, modes::read); }
@@ -102,19 +106,19 @@ struct file {
   file(const micron::sstr<MAX_NAME_LENGTH> &str, const modes mode) { _open_linux(str, mode); }
   // file(const micron::string &str, const modes mode) { _open_linux(str, mode); }
 
-  file(const file &o) : fname(o.fname), fd(o.fd), sd(o.sd) {}
-  file(file &&o) : fname(micron::move(o.fname)), fd(o.fd), sd(o.sd)
+  file(const file &o) : fname(o.fname), __handle(o.__handle), sd(o.sd) {}
+  file(file &&o) : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
   {
-    o.fd = -1;
+    o.__handle = -1;
     micron::zero(&sd);
   }
   file &
   operator=(file &&o)
   {
     fname = micron::move(o.fname);
-    fd = o.fd;
+    __handle = o.__handle;
     sd = o.sd;
-    o.fd = -1;
+    o.__handle = -1;
     micron::zero(&sd);
     return *this;
   }
@@ -122,17 +126,17 @@ struct file {
   operator=(const file &o)
   {
     fname = o.fname;
-    fd = o.fd;
+    __handle = o.__handle;
     sd = o.sd;
     return *this;
   }
   void
   close()
   {
-    if ( fd == -1 )
+    if ( __handle.closed() )
       return;
-    posix::close(fd);
-    fd = -1;
+    posix::close(__handle.fd);
+    __handle.fd = -1;
   }
   // here come the functions
   template <bool B = STAT_EXISTING>
@@ -143,11 +147,11 @@ struct file {
       if ( !is_zero(&sd) )
         return;
       alive();
-      if ( posix::fstat(fd, sd) == -1 )     // fstat((fd), &sd) == -1 )
+      if ( posix::fstat(__handle.fd, sd) == -1 )     // fstat((fd), &sd) == -1 )
         throw io_err("micron::file, fstat failed.");
     } else if constexpr ( B == STAT_OVERRIDE ) {
       alive();
-      if ( posix::fstat(fd, sd) == -1 )     // fstat((fd), &sd) == -1 )
+      if ( posix::fstat(__handle.fd, sd) == -1 )     // fstat((fd), &sd) == -1 )
         throw io_err("micron::file, fstat failed.");
     }
   }
@@ -241,7 +245,7 @@ struct file {
     if ( perms.others.execute )
       mode |= S_IXOTH;
 
-    posix::fchmod(fd, mode);
+    posix::fchmod(__handle.fd, mode);
   }
   inline const auto &
   name() const
@@ -253,7 +257,7 @@ private:
   inline bool
   alive(void) const
   {
-    if ( fd == -1 ) {
+    if ( __handle.fd == -1 ) {
       throw io_err("micron::file, fd isn't open.");
       return false;
     }
@@ -309,9 +313,9 @@ private:
         if ( !is_file(str.c_str()) )
           throw io_err("micron::file file isn't a file (check type)");
       }
-      fd = static_cast<int>(_syscall_open(str.c_str(), mode));
+      __handle.fd = static_cast<int>(_syscall_open(str.c_str(), mode));
       // fd = open(str.c_str(), );
-      if ( fd == -1 )
+      if ( __handle.has_error() )
         throw io_err("micron::file failed to open");
       fname = str;
       micron::zero(&sd);
@@ -325,8 +329,8 @@ private:
           throw io_err("micron::file file isn't a file (check type)");
       }
       // fd = open(str, "r");
-      fd = static_cast<int>(_syscall_open(str, mode));
-      if ( fd == -1 )
+      __handle.fd = static_cast<int>(_syscall_open(str, mode));
+      if ( __handle.has_error() )
         throw io_err("micron::file failed to open");
       fname = str;
       micron::zero(&sd);

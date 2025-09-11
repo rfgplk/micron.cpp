@@ -4,7 +4,7 @@
 #include "../src/std.hpp"
 
 void
-key_press(u16 x, i32 y)
+key_press(const timeval&, u16 x, i32 y)
 {
   if ( x == micron::btn_left )
     mc::console("Pressed lmb, ", y);

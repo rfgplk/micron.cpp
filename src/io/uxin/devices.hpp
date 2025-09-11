@@ -8,6 +8,8 @@
 #include "../../io/posix/iosys.hpp"
 #include "../../linux/sys/event_codes.hpp"
 
+#include "../bits.hpp"
+
 #include "../../string/format.hpp"
 #include "../../string/unistring.hpp"
 #include "../../vector/fvector.hpp"
@@ -59,9 +61,20 @@ struct device_t {
   ustr8 name;
   ustr8 phys;
   type_t type;
-  int bound_fd;
+  io::fd_t bound_fd;
 };
 
+bool
+is_loaded(const device_t &dev)
+{
+  return !(dev.i_path.empty() or dev.path.empty());
+}
+
+bool
+is_bound(const device_t &dev)
+{
+  return !(dev.bound_fd.closed());
+}
 fvector<device_t>
 get_devices()
 {
@@ -106,11 +119,23 @@ get_devices()
 }
 
 // start reading from device
+// WARNING: need either CAP_SYS_ADMIN or CAP_SYS_RAWIO to be able to read raw character devices.
+// WILL FAIL OTHERWISE
+int
+nonblock_bind_device(device_t &dev)
+{
+  if ( dev.i_path.empty() )
+    return -1;
+  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), O_NONBLOCK | O_RDONLY));
+  if ( fd < 0 )
+    return fd;
+  dev.bound_fd = fd;
+  return fd;
+}
+
 int
 bind_device(device_t &dev)
 {
-  // WARNING: need either CAP_SYS_ADMIN or CAP_SYS_RAWIO to be able to read raw character devices.
-  // WILL FAIL OTHERWISE
   if ( dev.i_path.empty() )
     return -1;
   int fd = static_cast<int>(posix::open(dev.i_path.c_str(), O_RDONLY));
@@ -119,11 +144,12 @@ bind_device(device_t &dev)
   dev.bound_fd = fd;
   return fd;
 }
+
 void
 unbind_device(device_t &dev)
 {
-  if ( dev.bound_fd != -1 )
-    posix::close(dev.bound_fd);
+  if ( dev.bound_fd.has_error() )
+    posix::close(dev.bound_fd.fd);
   dev.bound_fd = -1;
 }
 };

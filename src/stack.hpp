@@ -126,7 +126,7 @@ public:
     if ( __mem::length < __mem::capacity ) {
       new (&__mem::memory[__mem::length++]) t(micron::move(args...));
     } else {
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
       new (&__mem::memory[__mem::length++]) t(micron::move(args...));
     }
   }
@@ -138,7 +138,7 @@ public:
     if ( __mem::length < __mem::capacity ) {
       new (&__mem::memory[__mem::length++]) t(micron::move(micron::forward<args>(args)...));
     } else {
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
       new (&__mem::memory[__mem::length++]) t(micron::move(micron::forward<args>(args)...));
     }
   }
@@ -146,7 +146,7 @@ public:
   push(void)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t();
   }
   inline void
@@ -154,22 +154,21 @@ public:
     requires(micron::is_arithmetic_v<t> && micron::is_same_v<t, t>)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     __mem::memory[__mem::length++] = (v);
   }
   inline void
   push(const t &v)
-    requires(!micron::is_same_v<t, t>)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(v);
   }
   inline void
   push(t &&v)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(micron::move(v));
   }
   inline void
@@ -233,21 +232,21 @@ class istack : public __immutable_memory_resource<t, Alloc>
   _push(void)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t();
   }
   inline void
   _push(const t &v)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(v);
   }
   inline void
   _push(t &&v)
   {
     if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity + 1);
+      reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(micron::move(v));
   }
   inline void
@@ -256,8 +255,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
     if constexpr ( micron::is_class<t>::value ) {
       __mem::memory[__mem::length - 1].~t();
     }
-    czero<sizeof(t) / sizeof(byte)>(
-        (byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
+    czero<sizeof(t) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
   }
 
 public:

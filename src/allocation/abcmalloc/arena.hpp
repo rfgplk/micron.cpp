@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include <iostream>
+
 #include "../../closures.hpp"
 #include "../../concepts.hpp"
 #include "../../control.hpp"
@@ -71,12 +73,12 @@ class __arena
   __reload_arena_buf(void)
   {
     // if arena buf is full, double it's capacity (inefficient and naive but it works)
-    __expand_bucket<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer, _tail_arena_buffer->nd->allocated() * 2);
+    __expand_bucket_arena<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer,
+                                                  _tail_arena_buffer->nd->allocated() * 2);
   }
-
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
-  __expand_bucket(F *nd, G *&tail, const size_t sz)
+  __expand_bucket_arena(F *nd, G *&tail, const size_t sz)
   {
     while ( nd->nxt != nullptr ) {
       nd = nd->nxt;
@@ -95,37 +97,87 @@ class __arena
   }
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
-  __expand_bucket(F *nd, G *&tail)
+  __expand_bucket(F *nd, G *&tail, const size_t sz)
   {
-    size_t sz = __calculate_desired_space(Sz);     //(__default_page_mul * __system_pagesize);
+    __debug_print("__expand_bucket() with req. space: ", sz);
     while ( nd->nxt != nullptr ) {
       nd = nd->nxt;
     }
-  retry_memory:
+  retry_memory_e:
     micron::__chunk<byte> buf_nd = _tail_arena_buffer->nd->try_mark(sizeof(node<sheet<Sz>>));
     micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(sizeof(sheet<Sz>));
     // _arena_memory is full and unable to slot in more memory
     if ( buf_nd.failed_allocation() or buf.failed_allocation() ) [[unlikely]] {
       __reload_arena_buf();
-      goto retry_memory;
+      goto retry_memory_e;
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
     nd->nxt->nd = new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(sz));
     nd->nxt->nxt = nullptr;
     tail = nd->nxt;
   }
-
+  /*
+    template <u64 Sz, typename F, typename G>
+    inline __attribute__((always_inline)) void
+    __expand_bucket(F *nd, G *&tail)
+    {
+      __debug_print("__expand_bucket_arena() with req. space: ", Sz);
+      size_t sz = __calculate_desired_space(Sz);     //(__default_page_mul * __system_pagesize);
+      __debug_print("calculated space: ", sz);
+      while ( nd->nxt != nullptr ) {
+        nd = nd->nxt;
+      }
+    retry_memory:
+      micron::__chunk<byte> buf_nd = _tail_arena_buffer->nd->try_mark(sizeof(node<sheet<Sz>>));
+      micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(sizeof(sheet<Sz>));
+      // _arena_memory is full and unable to slot in more memory
+      if ( buf_nd.failed_allocation() or buf.failed_allocation() ) [[unlikely]] {
+        __reload_arena_buf();
+        goto retry_memory;
+      }
+      nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
+      nd->nxt->nd = new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(sz));
+      nd->nxt->nxt = nullptr;
+      tail = nd->nxt;
+    }
+  */
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
   __insert_guard(F *nd, G *&tail)
   {
     if constexpr ( __default_insert_guard_pages ) {
+      __debug_print("__insert_guard():", 0);
       __expand_bucket<Sz, F, G>(nd, tail, 4096);
       nd->nxt->nd->freeze(__default_guard_page_perms);
     }
   }
   void
-  __buf_expand(const size_t hint_sz)
+  __buf_expand_exact(const size_t class_sz, const size_t exact_sz)
+  {
+    if ( class_sz < __class_medium ) {
+      __expand_bucket<__class_small>(&_small_buckets, _tail_small_buckets, exact_sz);
+      __insert_guard<__class_small>(&_small_buckets, _tail_small_buckets);
+    } else if ( class_sz <= __class_large and class_sz >= __class_medium ) {
+      __expand_bucket<__class_medium>(&_medium_buckets, _tail_medium_buckets, exact_sz);
+      __insert_guard<__class_small>(&_small_buckets, _tail_small_buckets);
+    } else if ( class_sz <= __class_huge and class_sz > __class_large ) {
+      if ( _large_buckets.nd == nullptr ) [[unlikely]] {
+        __init_bucket<__class_large>(_large_buckets, _tail_large_buckets);
+      } else
+        __expand_bucket<__class_large>(&_large_buckets, _tail_large_buckets, exact_sz);
+      __insert_guard<__class_small>(&_small_buckets, _tail_small_buckets);
+    } else if ( class_sz > __class_huge ) {
+      if ( _huge_buckets.nd == nullptr ) [[unlikely]] {
+        __init_bucket<__class_huge>(_huge_buckets, _tail_huge_buckets);
+      } else
+        __expand_bucket<__class_huge>(&_huge_buckets, _tail_huge_buckets, exact_sz);
+      __insert_guard<__class_small>(&_small_buckets, _tail_small_buckets);
+    }
+  }
+
+  /*
+  void
+  __buf_expand_class(const size_t hint_sz)
   {
     if ( hint_sz < __class_medium ) {
       __expand_bucket<__class_small>(&_small_buckets, _tail_small_buckets);
@@ -143,7 +195,7 @@ class __arena
       } else
         __expand_bucket<__class_huge>(&_huge_buckets, _tail_huge_buckets);
     }
-  }
+  }*/
   template <typename F>
   micron::__chunk<byte>
   __append_bucket(F *nd, const size_t sz)
@@ -467,9 +519,14 @@ class __arena
     if ( n == __default_page_mul * __system_pagesize ) {
       // override default size depending on size of bucket provided
       // larger classes will inherently store more data, therefore should be init'd with far more memory
-      // __calculate_desired_space is in hooks.hpp
-      n = __calculate_desired_space(Sz);
+      // __calculate_space_x is in hooks.hpp
+      if ( Sz >= __class_medium ) {
+        n = __calculate_space_huge(Sz);
+      } else {     // for all other allocs, grow the most aggressive
+        n = __calculate_space_small(Sz);
+      }
     }
+    __debug_print("__init_bucket(): ", n);
     micron::__chunk<byte> buf = _arena_memory.try_mark(sizeof(sheet<Sz>));
     bucket = { new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(n)), nullptr };
     tail = &bucket;
@@ -593,7 +650,16 @@ public:
           return memory;
         }
         __debug_print("failed to __vmap_append(): ", sz);
-        __buf_expand(sz);
+        if ( sz >= __class_medium and sz < __class_gb ) {
+          __debug_print("growing container with size: ", __calculate_space_huge(sz));
+          __buf_expand_exact(sz, __calculate_space_huge(sz));
+        } else if ( sz >= __class_gb ) {     // for if someone requests allocations exceeding 1gb
+          __debug_print("growing container with size: ", __calculate_space_bulk(sz));
+          __buf_expand_exact(sz, __calculate_space_bulk(sz));
+        } else {     // for all other allocs, grow the most aggressive
+          __debug_print("growing container with size: ", __calculate_space_small(sz));
+          __buf_expand_exact(sz, __calculate_space_small(sz));
+        }
       }
     }
     return { (byte *)-1, micron::numeric_limits<size_t>::max() };

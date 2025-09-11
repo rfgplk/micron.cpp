@@ -8,16 +8,37 @@
 #include "errno.hpp"
 #include "linux/calls.hpp"
 #include "linux/process/wait.hpp"
+#include "linux/sys/poll.hpp"
 #include "linux/sys/signal.hpp"
 #include "linux/sys/time.hpp"
 #include "thread/signal.hpp"
 
 // #include <signal.h>
+#include "io/bits.hpp"
 
 #include "types.hpp"
 
 namespace micron
 {
+
+template <int P = poll_in>
+inline auto
+make_poll(const io::fd_t &hnd) -> pollfd
+{
+  if ( hnd.has_error() )
+    return {};
+  pollfd pfd = {};
+  pfd.fd = hnd.fd;
+  pfd.events = P;
+  return pfd;
+}
+
+inline int
+poll_for(pollfd &pfd, const int timeout)
+{
+  return micron::poll(pfd, 1, timeout);
+}
+
 // routines for controlling program state
 inline void
 halt()

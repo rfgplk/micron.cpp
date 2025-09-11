@@ -19,17 +19,17 @@ namespace uxin
 
 using button_t = i32;
 
-struct raw_input_t {
+struct input_packet_t {
   u16 mask_type;
   slice<button_t> button_mask;
-  void (*callback)(u16, i32);
-  void (*actuate_callback)(u16, i32);
-  void (*release_callback)(u16, i32);
+  void (*callback)(const timeval&, u16, i32);
+  void (*actuate_callback)(const timeval&, u16, i32);
+  void (*release_callback)(const timeval&, u16, i32);
 };
 
 struct input_t {
-  device_t;
-  micron::stack<u16> history;
+  device_t device;
+  micron::stack<input_event> history;
 };
 
 };
