@@ -266,8 +266,9 @@ public:
 
     data.reserve(sz + 1);
     do {
-      posix::lseek(__handle.fd, seek, SEEK_SET);
+      posix::lseek(__handle.fd, seek, seek_set);
       ssize_t bytes_read = io::read(__handle.fd, &(*bf), ((buffer_sz > sz) ? sz : buffer_sz));
+      if(bytes_read == 0) break;
       if ( bytes_read == -1 ) [[unlikely]]
         throw except::io_error("micron::fsys::file error reading file");
       seek += static_cast<size_t>(bytes_read);
@@ -295,7 +296,7 @@ public:
     auto s = size();
     data.reserve(s + 1);
 
-    posix::lseek(__handle.fd, 0, SEEK_SET);
+    posix::lseek(__handle.fd, 0, seek_set);
     ssize_t read_bytes = 0;
     do {
       read_bytes = io::read(__handle.fd, &data, s);
@@ -310,7 +311,7 @@ public:
   {
     if ( __handle.closed() )
       throw except::filesystem_error("micron::fsys::file fd isn't open'");
-    posix::lseek(__handle.fd, 0, SEEK_SET);
+    posix::lseek(__handle.fd, 0, seek_set);
     size_t s = 0;
     ssize_t read_bytes = 0;
     do {
@@ -337,14 +338,14 @@ public:
       return;
     if ( __handle.closed() )
       throw except::filesystem_error("micron::fsys::file fd isn't open");
-    posix::lseek(__handle.fd, seek, SEEK_SET);
+    posix::lseek(__handle.fd, seek, seek_set);
     ssize_t sz = io::write(__handle.fd, &data, data.size());
     if ( sz == -1 )
       throw except::filesystem_error("micron::fsys::file wasn't able to write to fd");
     if ( sz < (ssize_t)data.size() )
       throw except::filesystem_error("micron::fsys::file wasn't able to write to fd");
     seek += sz;
-    posix::lseek(__handle.fd, seek, SEEK_SET);
+    posix::lseek(__handle.fd, seek, seek_set);
   }
   auto
   buffer_size() const
@@ -374,7 +375,7 @@ public:
     if ( __handle.closed() )
       throw except::filesystem_error("micron::fsys::file fd isn't open'");
 
-    posix::lseek(__handle.fd, seek, SEEK_SET);
+    posix::lseek(__handle.fd, seek, seek_set);
     ssize_t bytes_written = io::write(__handle.fd, &(*bf), ((buffer_sz > sz) ? sz : buffer_sz));
     if ( bytes_written == -1 ) [[unlikely]]
       throw except::io_error("micron::fsys::file error writing to file");
@@ -393,12 +394,12 @@ public:
       return;
     if ( __handle.closed())
       throw except::filesystem_error("micron::fsys::file fd isn't open");
-    posix::lseek(__handle.fd, seek, SEEK_SET);
+    posix::lseek(__handle.fd, seek, seek_set);
     size_t sz = io::write(__handle.fd, &data, data.size());
     if ( sz < data.size() )
       throw except::filesystem_error("micron::fsys::file wasn't able to write to fd");
     seek += sz;
-    posix::lseek(__handle.fd, seek, SEEK_SET);
+    posix::lseek(__handle.fd, seek, seek_set);
     clear();
   }
   size_t

@@ -10,6 +10,7 @@
 #include "../src/vector/fvector.hpp"
 #include "../src/vector/svector.hpp"
 #include "../src/vector/vector.hpp"
+#include "../src/std.hpp"
 
 int
 main()

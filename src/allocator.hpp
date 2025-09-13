@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <xmmintrin.h>
 
 #include "allocation/__internal.hpp"
 #include "allocation/allocator_types.hpp"

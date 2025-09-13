@@ -24,6 +24,8 @@ using suseconds_t = __suseconds_t;
 using suseconds64_t = __suseconds64_t;
 using rlim_t = __U64_TYPE;
 using mode_t = __U32_TYPE;
+using off_t = __off_t;
+using off64_t = __off64_t;
 
 using syscall_long_t = __S64_TYPE;
 using syscall_ulong_t = __U64_TYPE;

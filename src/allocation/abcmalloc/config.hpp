@@ -19,6 +19,7 @@ constexpr static const u64 __class_large = (2 << 14);      // 32768
 constexpr static const u64 __class_huge = (2 << 17);       // 262133
 constexpr static const u64 __class_gb = (2 << 29);         // 1073741824
 
+constexpr static const byte __default_fail_result = 0; // 0: abort 1: message 2: silent fail
 constexpr static const u64 __default_max_retries = 2;
 // in pages (each page is 4096)
 constexpr static const bool __default_saturated_mode = true;     // enables a saturation buffer, which checks the rate at which new requests are coming in. adjusts allocation space accordingly
@@ -31,6 +32,8 @@ constexpr static const bool __default_launder_auto = true;
 constexpr static const float __default_oom_limit_warn = 0.1f;
 constexpr static const float __default_oom_limit_error = 0.2f;
 
+// enforce provenance forces the allocator to verify if a req. pointer has been allocated within that session. if it hasn't fail out according to __default_fail_result
+constexpr static const bool __default_enforce_provenance = true;
 // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation
 // UNLESS the page on which it resides has been unmapped
 constexpr static const bool __default_tombstone = true;

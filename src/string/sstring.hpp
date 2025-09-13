@@ -67,9 +67,17 @@ public:
   };
   template <size_t M, typename F> constexpr sstring(const sstring<M, F> &o)
   {
-    static_assert(N >= M, "micron::sstring sstring(cconst) too large.");
-    micron::memcpy(&memory[0], &o.memory[0], M);
-    length = o.length;
+    // removed, only copy what we can
+    // static_assert(N >= M, "micron::sstring sstring(cconst) too large.");
+    if constexpr ( N < M ) {
+      micron::memcpy(&memory[0], &o.memory[0], N);
+    } else if constexpr ( N >= M ) {
+      micron::memcpy(&memory[0], &o.memory[0], M);
+    }
+    if ( o.length > N )
+      length = N;
+    else
+      length = o.length;
   };
   template <is_string S> constexpr sstring(const S &o)
   {
@@ -90,10 +98,18 @@ public:
   };
   template <size_t M, typename F> constexpr sstring(sstring<M, F> &&o)
   {
-    static_assert(N >= M, "micron::sstring sstring(mconst) too large.");
-    micron::memcpy(&memory[0], &o.memory[0], M);
-    micron::zero(&o.memory[0], N);
-    length = o.length;
+    if constexpr ( N < M ) {
+      micron::memcpy(&memory[0], &o.memory[0], N);
+      micron::zero(&o.memory[0], N);
+    } else if constexpr ( N >= M ) {
+      micron::memcpy(&memory[0], &o.memory[0], M);
+      micron::memcpy(&memory[0], &o.memory[0], M);
+      micron::zero(&o.memory[0], N);
+    }
+    if ( o.length > N )
+      length = N;
+    else
+      length = o.length;
     o.length = 0;
   };
   sstring &

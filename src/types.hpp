@@ -52,8 +52,7 @@ using umax_t = __UINTMAX_TYPE__;
 using ssize_t = max_t;
 using size_t = umax_t;
 using word = umax_t;
-using off_t = __off_t;
-using off64_t = __off64_t;
+
 // time block
 using clock_t = __clock_t;
 using clockid_t = __clockid_t;

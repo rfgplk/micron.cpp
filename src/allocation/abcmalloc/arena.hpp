@@ -5,8 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <iostream>
-
 #include "../../closures.hpp"
 #include "../../concepts.hpp"
 #include "../../control.hpp"
@@ -22,7 +20,7 @@
 #include "stats.hpp"
 
 #ifndef __OPTIMIZE__
-#include <iostream>
+/*permitted*/ #include<iostream>
 #endif
 
 namespace abc
@@ -88,7 +86,7 @@ class __arena
     // _arena_memory is full and unable to slot in more memory
     if ( buf_nd.failed_allocation() or buf.failed_allocation() ) [[unlikely]] {
       // TODO: add error
-      micron::abort();
+      abort_state();
     }
     nd->nxt = new (buf_nd.ptr) node<sheet<Sz>>();
     nd->nxt->nd = new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(sz));
@@ -196,6 +194,58 @@ class __arena
         __expand_bucket<__class_huge>(&_huge_buckets, _tail_huge_buckets);
     }
   }*/
+  template <typename F>
+  bool
+  __within(F *__node, addr_t *memory)
+  {
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;
+      if ( sh.is_at(reinterpret_cast<byte *>(memory)) ) [[unlikely]]
+        return true;
+      __node = __node->nxt;
+    }
+    return false;
+  }
+  template <typename F>
+  bool
+  __locate_at(F *__node, addr_t *memory)
+  {
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;
+
+      if ( sh.find(reinterpret_cast<byte *>(memory)) ) [[unlikely]] {
+        return true;
+      }
+      __node = __node->nxt;
+    }
+    return false;
+  }
+  template <typename F>
+  bool
+  __locate(F *__node, const micron::__chunk<byte> &memory)
+  {
+    while ( __node != nullptr ) {
+      if ( __node->nd == nullptr ) {
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;
+
+      if ( sh.find(memory.ptr) ) [[unlikely]] {
+        return true;
+      }
+      __node = __node->nxt;
+    }
+    return false;
+  }
   template <typename F>
   micron::__chunk<byte>
   __append_bucket(F *nd, const size_t sz)
@@ -442,7 +492,34 @@ class __arena
       return true;
     return false;
   }
-
+  bool
+  __vmap_within(addr_t *addr)
+  {
+    if ( __within(&_small_buckets, addr) )
+      return true;
+    if ( __within(&_medium_buckets, addr) )
+      return true;
+    if ( __within(&_large_buckets, addr) )
+      return true;
+    if ( __within(&_huge_buckets, addr) )
+      return true;
+    return false;
+  }
+  bool
+  __vmap_locate_at(addr_t *addr)
+  {
+    if constexpr ( !__default_tombstone )
+      return false;
+    if ( __locate_at(&_small_buckets, addr) )
+      return true;
+    if ( __locate_at(&_medium_buckets, addr) )
+      return true;
+    if ( __locate_at(&_large_buckets, addr) )
+      return true;
+    if ( __locate_at(&_huge_buckets, addr) )
+      return true;
+    return false;
+  }
   bool
   __vmap_remove(const micron::__chunk<byte> &memory)
   {
@@ -531,7 +608,7 @@ class __arena
     bucket = { new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(n)), nullptr };
     tail = &bucket;
     if ( bucket.nd->empty() )
-      micron::abort();
+      abort_state();
   }
 
   template <typename F>
@@ -611,8 +688,7 @@ public:
     collect_stats<stat_type::alloc>();
     collect_stats<stat_type::total_memory_req>(sz);
     if ( check_oom() ) [[unlikely]]
-      micron::abort();
-
+      abort_state();
     micron::__chunk<byte> memory;
     if ( memory = __heap_grow(sz); !memory.zero() ) {
       zero_on_alloc(memory.ptr, memory.len);
@@ -638,7 +714,7 @@ public:
     collect_stats<stat_type::alloc>();
     collect_stats<stat_type::total_memory_req>(sz);
     if ( check_oom() ) [[unlikely]]
-      micron::abort();
+      abort_state();
     micron::__chunk<byte> memory;
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
       {
@@ -670,6 +746,12 @@ public:
   {
     __debug_print("pop() address: ", mem.ptr);
     __debug_print("pop() size: ", mem.len);
+    if ( mem.zero() )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem.ptr)) )
+        return fail_state();
+    }
     collect_stats<stat_type::dealloc>();
     collect_stats<stat_type::total_memory_freed>(mem.len);
     full_on_free(mem.ptr, mem.len);
@@ -681,14 +763,42 @@ public:
   {
     // TODO: add this
     // collect_stats<stat_type::total_memory_freed>(mem.len);
+    __debug_print("pop() address: ", mem);
+    if ( mem == nullptr )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+        return fail_state();
+    }
     collect_stats<stat_type::dealloc>();
     full_on_free(mem);
     zero_on_free(mem);
     return __vmap_remove_at(mem);
   }
   bool
+  present(addr_t *mem)
+  {
+    if ( mem == nullptr )
+      return false;
+    return __vmap_locate_at(mem);
+  }
+  bool
+  has_provenance(addr_t *mem)
+  {
+    if ( mem == nullptr )
+      return false;
+    return __vmap_within(mem);
+  }
+  bool
   pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
+    __debug_print("pop() address: ", mem);
+    if ( mem == nullptr )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+        return fail_state();
+    }
     collect_stats<stat_type::total_memory_freed>(len);
     return __vmap_remove({ mem, len });
   }
@@ -698,6 +808,12 @@ public:
   {
     __debug_print("pop() address: ", mem.ptr);
     __debug_print("pop() size: ", mem.len);
+    if ( mem.zero() )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem.ptr)) )
+        return fail_state();
+    }
     collect_stats<stat_type::dealloc>();
     collect_stats<stat_type::total_memory_freed>(mem.len);
     full_on_free(mem.ptr, mem.len);
@@ -707,8 +823,15 @@ public:
   bool
   ts_pop(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
+    __debug_print("pop() address: ", mem);
     // TODO: add this
     // collect_stats<stat_type::total_memory_freed>(mem.len);
+    if ( mem == nullptr )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+        return fail_state();
+    }
     collect_stats<stat_type::dealloc>();
     full_on_free(mem);
     zero_on_free(mem);
@@ -717,22 +840,46 @@ public:
   bool
   ts_pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
+    if ( mem == nullptr )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+        return fail_state();
+    }
     collect_stats<stat_type::total_memory_freed>(len);
     return __vmap_tombstone({ mem, len });
   }
   bool
   freeze(const micron::__chunk<byte> &mem)
   {
+    if ( mem.zero() )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem.ptr)) )
+        return fail_state();
+    }
     return __vmap_freeze(mem);
   }
   bool
   freeze(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
+    if ( mem == nullptr )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+        return fail_state();
+    }
     return __vmap_freeze_at(mem);
   }
   bool
   freeze(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
+    if ( mem == nullptr )
+      return false;
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+        return fail_state();
+    }
     return __vmap_freeze({ mem, len });
   }
 

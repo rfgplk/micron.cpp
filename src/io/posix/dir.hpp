@@ -11,10 +11,10 @@
 #include "../../vector/vector.hpp"
 #include "utils.hpp"
 
+#include "limits.hpp"
+#include "../../linux/linux_types.hpp"
+
 #include <cstdio>
-#include <dirent.h>     // for dir funcs
-#include <linux/limits.h>
-#include <sys/types.h>     // for dir funcs
 
 // functions for handling posix/linux dirs
 namespace micron
@@ -22,19 +22,20 @@ namespace micron
 namespace io
 {
 
-constexpr static const int max_name = (NAME_MAX + 1) * 2;
+constexpr static const int max_name = (posix::name_max + 1) * 2;
 
 struct dir {
 
-  typedef micron::vector<micron::pair<struct dirent, struct stat>> dir_container;
+  typedef micron::vector<micron::pair<posix::__impl_dir, struct stat>> dir_container;
   micron::sstr<max_name> dname;
-  DIR *dp;
+  // DIR *dp;
+  posix::dir_t dp;
   dir_container dd;
   ~dir()
   {
-    if ( dp == NULL )
+    if ( dp.has_error() or dp.closed() )
       return;
-    closedir(dp);
+    posix::closedir(dp);
   }
   dir(void) = default;
   dir(const char *str)
@@ -45,8 +46,8 @@ struct dir {
       throw except::filesystem_error("micron::dir dir doesn't exist");
     if ( !is_dir(str) )
       throw except::filesystem_error("micron::dir dir isn't a dir (check type)");
-    dp = ::opendir(str);
-    if ( dp == NULL )
+    dp = posix::opendir(str);
+    if ( dp.has_error() or dp.closed() )
       throw except::filesystem_error("micron::dir failed to open");
     list();     // init base structure
     dname = str;
@@ -59,8 +60,8 @@ struct dir {
       throw except::filesystem_error("micron::dir dir doesn't exist");
     if ( !is_dir(str.c_str()) )
       throw except::filesystem_error("micron::dir dir isn't a dir (check type)");
-    dp = ::opendir(str.c_str());
-    if ( dp == NULL )
+    dp = posix::opendir(str.c_str());
+    if ( dp.has_error() or dp.closed() )
       throw except::filesystem_error("micron::dir failed to open");
     list();     // init base structure
     dname = str;
@@ -73,14 +74,14 @@ struct dir {
       throw except::filesystem_error("micron::dir dir doesn't exist");
     if ( !is_dir(str.c_str()) )
       throw except::filesystem_error("micron::dir dir isn't a dir (check type)");
-    dp = ::opendir(str.c_str());
-    if ( dp == NULL )
+    dp = posix::opendir(str.c_str());
+    if ( dp.has_error() or dp.closed() )
       throw except::filesystem_error("micron::dir failed to open");
     list();     // init base structure
     dname = str;
   }
   dir(const dir &o) : dname(o.dname), dp(o.dp), dd() {}
-  dir(dir &&o) : dname(micron::move(o.dname)), dp(o.dp), dd(micron::move(o.dd)) { o.dp = nullptr; }
+  dir(dir &&o) : dname(micron::move(o.dname)), dp(o.dp), dd(micron::move(o.dd)) { o.dp.reset(); }
   dir &
   operator=(const dir &o)
   {
@@ -94,7 +95,7 @@ struct dir {
   {
     dname = micron::move(o.dname);
     dp = o.dp;
-    o.dp = nullptr;
+    o.dp.reset();
     dd = micron::move(o.dd);
     return *this;
   }
@@ -140,13 +141,13 @@ struct dir {
   {
     if ( dd.empty() )
       list();
-    if ( dp )
-      closedir(dp);
+    if ( dp.open() )
+      posix::closedir(dp);
     micron::sstr<(max_name) * 2> pstr(dname);
     pstr += "/..";
 
-    dp = ::opendir(pstr.c_str());
-    if ( dp == NULL )
+    dp = posix::opendir(pstr.c_str());
+    if ( dp.has_error() or dp.closed() )
       throw except::filesystem_error("micron::dir failed to open");
     list();
     dname = ::realpath(pstr.c_str(), NULL);
@@ -160,10 +161,10 @@ struct dir {
   dir &
   to(const char *str)
   {
-    if ( dp )
-      closedir(dp);
-    dp = ::opendir(str);
-    if ( dp == NULL )
+    if ( dp.open() )
+      posix::closedir(dp);
+    dp = posix::opendir(str);
+    if ( dp.has_error() or dp.closed() )
       throw except::filesystem_error("micron::dir failed to open");
     list();
     dname = ::realpath(str, NULL);
@@ -172,8 +173,8 @@ struct dir {
   int
   fd(void) const
   {
-    if ( dp )
-      return dirfd(dp);
+    if ( dp.open() )
+      return dp.fd;
     return -1;
   }
   // NOTE: takes in a str which _must_ correlate to a child
@@ -182,13 +183,13 @@ struct dir {
   {
     // change dir. NOTE: this doesn't actually change the working path of the bin, only modifies *dp
     for ( auto &n : dd ) {
-      if ( !micron::strcmp(n.a.d_name, str) ) {
-        closedir(dp);
+      if ( !micron::strcmp(n.a.d_name.c_str(), str) ) {
+        posix::closedir(dp);
         micron::sstr<(max_name) * 2> pstr(dname);
         pstr += "/";
         pstr += n.a.d_name;
-        dp = ::opendir(str);
-        if ( dp == NULL )
+        dp = posix::opendir(str);
+        if ( dp.has_error() or dp.closed() )
           throw except::filesystem_error("micron::dir failed to open");
         list();     // init base structure
         dname = str;
@@ -205,16 +206,17 @@ struct dir {
     alive();
     if ( dd.size() )
       dd.clear();
-    struct dirent *e;
-    while ( (e = readdir(dp)) != NULL ) {     // TODO: implement readdir from 0
+    // struct dirent *e;
+    posix::__impl_dir e;
+    while ( (e = posix::readdir(dp.fd)).type != dt_end ) {
       struct stat sd;
       micron::sstr<(max_name) * 2> pstr(dname);
       pstr += "/";
-      pstr += e->d_name;
+      pstr += e.d_name;
       if ( stat(pstr.c_str(), &sd) != 0 )
         throw except::filesystem_error("micron::dir failed to stat dir");
       dd.emplace_back(
-          micron::tie(micron::move(*e),
+          micron::tie(micron::move(e),
                       micron::move(sd)));     // try to avoid senseless copying, replace with preallocated eventually
     }
   }
@@ -223,7 +225,7 @@ private:
   inline bool
   alive(void) const
   {
-    if ( dp == NULL ) {
+    if ( dp.has_error() or dp.closed() ) {
       throw except::filesystem_error("micron::linux_dir, dp isn't open.");
       return false;
     }

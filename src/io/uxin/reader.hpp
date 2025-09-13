@@ -38,7 +38,7 @@ prepare_generic_mouse_sensor_abs(void (*fn_cb)(const timeval &, u16, i32),
 auto
 prepare_generic_mouse_sensor_abs(void) -> input_packet_t
 {
-  input_packet_t __input = { ev_key, sizeof(button_t) * 9, nullptr, nullptr, nullptr };
+  input_packet_t __input = { ev_rel, sizeof(button_t) * 9, nullptr, nullptr, nullptr };
 
   __input.button_mask[0] = abs_x;
   __input.button_mask[1] = abs_y;
@@ -76,7 +76,7 @@ prepare_generic_mouse_sensor(void (*fn_cb)(const timeval &, u16, i32),
 auto
 prepare_generic_mouse_sensor(void) -> input_packet_t
 {
-  input_packet_t __input = { ev_key, sizeof(button_t) * 9, nullptr, nullptr, nullptr };
+  input_packet_t __input = { ev_rel, sizeof(button_t) * 9, nullptr, nullptr, nullptr };
 
   __input.button_mask[0] = rel_x;
   __input.button_mask[1] = rel_y;
@@ -111,10 +111,10 @@ prepare_generic_mouse(void (*fn_cb)(const timeval &, u16, i32), void (*fn_acb)(c
 auto
 prepare_generic_keyboard_us(void) -> input_packet_t
 {
-  input_packet_t __input = { ev_key, sizeof(button_t) * 27, nullptr, nullptr, nullptr };
-
   const byte __first = key_esc;
   const byte __end = key_kpdot;
+  input_packet_t __input = { ev_key, sizeof(button_t) * (__end - __first), nullptr, nullptr, nullptr };
+
   for ( byte i = 0; i < (__end - __first); ++i )
     __input.button_mask[i] = __first + i;
 
@@ -132,7 +132,6 @@ prepare_generic_keyboard_us(void (*fn_cb)(const timeval &, u16, i32),
 
   for ( byte i = 0; i < (__end - __first); ++i )
     __input.button_mask[i] = __first + i;
-
   return __input;
 };
 

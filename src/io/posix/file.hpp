@@ -13,12 +13,9 @@
 #include "../../tuple.hpp"
 
 #include "../bits.hpp"
+#include "../../linux/sys/fcntl.hpp"
 
-// it really isn't worthwhile to rewrite these, might get around to it
-// eventually
-// #include <cstdio>
 
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
 
@@ -268,34 +265,34 @@ private:
   {
     switch ( mode ) {
     case modes::largeread:
-      return posix::open(str, O_RDONLY | O_SYNC | O_DIRECT | O_LARGEFILE);
+      return posix::open(str, o_rdonly | o_sync | o_direct | o_largefile);
       break;
     case modes::large:
-      return posix::open(str, O_RDWR | O_CREAT | O_SYNC | O_DIRECT | O_LARGEFILE, 0644);
+      return posix::open(str, o_rdwr | o_create | o_sync | o_direct | o_largefile, 0644);
       break;
     case modes::quiet:
-      return posix::open(str, O_RDONLY | O_NOATIME, 0644);
+      return posix::open(str, o_rdonly | o_noatime, 0644);
       break;
     case modes::create:
-      return posix::open(str, O_RDONLY | O_CREAT | O_EXCL, 0644);
+      return posix::open(str, o_rdonly | o_create | o_excl, 0644);
       break;
     case modes::read:
-      return posix::open(str, O_RDONLY);
+      return posix::open(str, o_rdonly);
       break;
     case modes::readwrite:
-      return posix::open(str, O_RDWR | O_SYNC);
+      return posix::open(str, o_rdwr | o_sync);
       break;
     case modes::write:
-      return posix::open(str, O_WRONLY | O_SYNC);
+      return posix::open(str, o_wronly | o_sync);
       break;
     case modes::readwritecreate:
-      return posix::open(str, O_RDWR | O_CREAT | O_SYNC, 0644);
+      return posix::open(str, o_rdwr | o_create | o_sync, 0644);
       break;
     case modes::append:
-      return posix::open(str, O_WRONLY | O_CREAT | O_SYNC, 0644);
+      return posix::open(str, o_wronly | o_create | o_sync, 0644);
       break;
     case modes::appendread:
-      return posix::open(str, O_RDWR | O_CREAT | O_SYNC, 0644);
+      return posix::open(str, o_rdwr | o_create | o_sync, 0644);
       break;
     }
     return -1;

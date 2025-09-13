@@ -40,6 +40,16 @@ struct fd_t {
       return fd * -1;
     return 0;
   }
+  inline void
+  reset()
+  {
+    fd = -1;
+  }
+  bool
+  operator==(const fd_t &o) const
+  {
+    return (fd == o.fd);
+  }
 };
 };
 

@@ -14,6 +14,34 @@
 
 namespace abc
 {
+
+// checks if pointer has been alloc.
+bool
+is_present(addr_t *ptr)
+{
+  __init_abcmalloc();
+  return __main_arena->present(ptr);
+}
+
+bool
+is_present(byte *ptr)
+{
+  return is_present(reinterpret_cast<addr_t*>(ptr));
+}
+
+// checks if pointer is addressable at any known page of the allocator, if it is it's valid
+bool
+within(addr_t *ptr)
+{
+  __init_abcmalloc();
+  return __main_arena->has_provenance(ptr);
+}
+
+bool
+within(byte *ptr)
+{
+  return within(reinterpret_cast<addr_t*>(ptr));
+}
 void
 relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely (NOTE: this will
 {
@@ -72,7 +100,7 @@ void
 dealloc(byte *ptr)
 {
   __init_abcmalloc();
-  if ( __main_arena->pop(ptr) ) {
+  if ( !__main_arena->pop(ptr) ) {
   }     // wasn't able to throw, add an error
 }
 
@@ -80,7 +108,7 @@ void
 dealloc(byte *ptr, size_t len)
 {
   __init_abcmalloc();
-  if ( __main_arena->pop({ ptr, len }) ) {
+  if ( !__main_arena->pop({ ptr, len }) ) {
   }     // wasn't able to throw, add an error
 }
 

@@ -345,17 +345,37 @@ require_print(bool (&fn)(Args...), Args &&...args)
     __abort();
   }
 };
+
 void
-require(const bool expected_output)
+require(const bool a, const bool b)
 {
-  if ( expected_output == false ) {
+  if ( a != b ) {
+    __print_error("\033[34msnowball require() failure:\033[0m expected output was wrong.\n\r");
+    should_print_stack();
+    __require_clbck();
+    __abort();
+  }
+};
+void
+require_false(const bool expected_output)
+{
+  if ( expected_output != false ) {
+    __print_error("\033[34msnowball require() failure:\033[0m expected output was true.\n\r");
+    should_print_stack();
+    __require_clbck();
+    __abort();
+  }
+};
+void
+require_true(const bool expected_output)
+{
+  if ( expected_output != true ) {
     __print_error("\033[34msnowball require() failure:\033[0m expected output was false.\n\r");
     should_print_stack();
     __require_clbck();
     __abort();
   }
 };
-
 template <typename A, typename B>
 void
 require(const A &_a, const B &_b)

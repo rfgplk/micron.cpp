@@ -7,7 +7,6 @@
 
 // libelves
 
-#include <fcntl.h>
 #include <sched.h> /* Definition of CLONE_* constants */
 #include <spawn.h>
 //#include <sys/stat.h>
@@ -15,6 +14,9 @@
 #include <unistd.h>       // fork, close, daemon
 
 #include "../../thread/signal.hpp"
+
+#include "../sys/fcntl.hpp"
+#include "../io.hpp"
 
 #include "wait.hpp"
 #include "../../concepts.hpp"
@@ -105,9 +107,9 @@ daemon(F f, Args &&...args)
   posix::close(STDOUT_FILENO);
   posix::close(STDERR_FILENO);
 
-  ::open("/dev/null", O_RDWR);
-  ::dup(0);
-  ::dup(0);
+  micron::open("/dev/null", o_rdwr);
+  posix::dup(0);
+  posix::dup(0);
   f(args...);
   return 0;
 }

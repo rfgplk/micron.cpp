@@ -10,6 +10,7 @@
 #include "devices.hpp"
 #include "poll.hpp"
 #include "reader.hpp"
+#include "key_mapper.hpp"
 
 #include "../../except.hpp"
 
@@ -19,7 +20,51 @@ namespace uxin
 {
 
 // high level "open a device and init" func.
+slice<input_t>
+open_nonblock(type_t __type)
+{
+  switch ( __type ) {
+  case type_t::keyboard:
+    break;
+  case type_t::mouse:
+    break;
+  default:
+    throw micron::except::library_error("uxin open(): invalid specified type of device");
+  }
+  auto dev = mc::uxin::get_devices();
+  fvector<input_t> res;
+  for ( auto &n : dev ) {
+    if ( n.type == __type ) {
+      mc::uxin::nonblock_bind_device(n);
+      res.push_back({ n, {} });
+    }
+  }
+  if ( res.empty() )
+    throw micron::except::library_error("uxin open(): couldn't open device");
+  return res[];
+}
 input_t
+open_first_nonblock(type_t __type)
+{
+  switch ( __type ) {
+  case type_t::keyboard:
+    break;
+  case type_t::mouse:
+    break;
+  default:
+    throw micron::except::library_error("uxin open(): invalid specified type of device");
+  }
+  auto dev = mc::uxin::get_devices();
+  fvector<input_t> res;
+  for ( auto &n : dev ) {
+    if ( n.type == __type ) {
+      mc::uxin::nonblock_bind_device(n);
+      return { n, {} };
+    }
+  }
+  throw micron::except::library_error("uxin open(): couldn't open device");
+}
+slice<input_t>
 open(type_t __type)
 {
   switch ( __type ) {
@@ -31,6 +76,30 @@ open(type_t __type)
     throw micron::except::library_error("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
+  fvector<input_t> res;
+  for ( auto &n : dev ) {
+    if ( n.type == __type ) {
+      mc::uxin::bind_device(n);
+      res.push_back({ n, {} });
+    }
+  }
+  if ( res.empty() )
+    throw micron::except::library_error("uxin open(): couldn't open device");
+  return res[];
+}
+input_t
+open_first(type_t __type)
+{
+  switch ( __type ) {
+  case type_t::keyboard:
+    break;
+  case type_t::mouse:
+    break;
+  default:
+    throw micron::except::library_error("uxin open(): invalid specified type of device");
+  }
+  auto dev = mc::uxin::get_devices();
+  fvector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
       mc::uxin::bind_device(n);
@@ -39,7 +108,6 @@ open(type_t __type)
   }
   throw micron::except::library_error("uxin open(): couldn't open device");
 }
-
 template <auto Fn = nullptr, auto Fn_2 = nullptr, auto Fn_3 = nullptr>
 input_packet_t
 prepare_listener(type_t __type)
@@ -68,6 +136,35 @@ read(input_t &t, Args &&...__input_packet)
     throw micron::except::library_error("uxin read(): device isn't bound");
   mc::uxin::poll(t, micron::forward<Args>(__input_packet)...);
 }
+
+template <typename... Args>
+  requires(micron::same_as<input_packet_t, Args> && ...)
+void
+read(slice<input_t> &inputs, Args &&...__input_packet)
+{
+  for ( const auto &t : inputs ) {
+    if ( !is_loaded(t.device) )
+      throw micron::except::library_error("uxin read(): device isn't loaded");
+    if ( !is_bound(t.device) )
+      throw micron::except::library_error("uxin read(): device isn't bound");
+  }
+  mc::uxin::poll_pack(inputs, micron::forward<Args>(__input_packet)...);
+}
+// NOTE: if using a pack, be sure to open with a nonblocking method
+template <typename... Args>
+  requires(micron::same_as<input_packet_t, Args> && ...)
+void
+read_rt(slice<input_t> &inputs, Args &&...__input_packet)
+{
+  for ( const auto &t : inputs ) {
+    if ( !is_loaded(t.device) )
+      throw micron::except::library_error("uxin read(): device isn't loaded");
+    if ( !is_bound(t.device) )
+      throw micron::except::library_error("uxin read(): device isn't bound");
+  }
+  mc::uxin::poll_pack_rt(inputs, micron::forward<Args>(__input_packet)...);
+}
+
 void
 write()
 {

@@ -18,7 +18,7 @@ cflags_warn_options = -Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconv
 cflags_extra_errors = -Werror=missing-field-initializers -Werror=return-type
 cflags_warn_ignore = -Wno-implicit-fallthrough -Wno-sign-conversion -Wno-variadic-macros
 
-cflags_ext = -pedantic-errors -nodefaultlibs -fstack-protector-strong -fstrict-overflow -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
+cflags_ext = -nodefaultlibs -fstack-protector-strong -fstrict-overflow -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
 cflags_ext_llvm = -fopenmp -ffast-math -flto -fdiagnostics-color=always
 
 
@@ -52,6 +52,7 @@ rule cc_compile_cmnd_debug
 build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
 
 
+build core_tests_io_init: cc_compile_cmnd_debug tests/core/io_init.cpp
 build core_tests_syscall: cc_compile_cmnd_debug tests/core/syscall.cpp
 build core_tests_strings: cc_compile_cmnd_debug tests/core/cstrings.cpp
 build core_tests_cmemory: cc_compile_cmnd_debug tests/core/cmemory.cpp
@@ -65,6 +66,7 @@ build core_tests_linux: cc_compile_cmnd_debug tests/core/linux.cpp
 build core_tests_channels: cc_compile_cmnd_debug tests/core/channels.cpp
 build core_tests_abcmalloc: cc_compile_cmnd_debug tests/core/abcmalloc.cpp
 build core_tests_abcmalloc_main: cc_compile_cmnd_debug tests/core/abcmalloc_main.cpp
+build core_tests_abcmalloc_vet: cc_compile_cmnd_debug tests/core/abcmalloc_vet.cpp
 build core_tests_abcmalloc_thread: cc_compile_cmnd_debug tests/core/abcmalloc_thread.cpp
 build core_tests_abcmalloc_arena: cc_compile_cmnd_debug tests/core/abcmalloc_arena.cpp
 build core_tests_resources: cc_compile_cmnd_debug tests/core/resources.cpp
@@ -74,6 +76,7 @@ build core_tests_abcmalloc_bench_malloc: cc_compile_cmnd tests/core/abcmalloc_be
 
 build core_tests: phony core_tests_syscall core_tests_strings core_tests_cmemory core_tests_pointers core_tests_mutex core_tests_once core_tests_cpu core_tests_thread core_tests_arena core_tests_linux core_tests_channels
 
+build uxin_keyboard_test: cc_compile_cmnd_debug tests/uxin_keyboard.cpp
 build uxin_mouse_test: cc_compile_cmnd_debug tests/uxin_mouse.cpp
 build uxin_test: cc_compile_cmnd_debug tests/uxin_d.cpp
 build simd_test: cc_compile_cmnd tests/simd.cpp
@@ -86,6 +89,7 @@ build printing_bench: cc_compile_cmnd_debug tests/printing_bench.cpp
 build list_test: cc_compile_cmnd_debug tests/list.cpp
 build pairs_test: cc_compile_cmnd_debug tests/pairs.cpp
 build matrix_test: cc_compile_cmnd_debug tests/matrix.cpp
+build streams_test: cc_compile_cmnd_debug tests/streams.cpp
 build linux_files_test: cc_compile_cmnd_debug tests/files.cpp
 build linux_fsys_test: cc_compile_cmnd_debug tests/fsys.cpp
 build ftw_test: cc_compile_cmnd_debug tests/ftw.cpp

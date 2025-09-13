@@ -60,7 +60,19 @@ struct slice : public __immutable_memory_resource<T, Alloc> {
     __mem::length = b - a;
   };
   slice(const size_t n) : __mem(n) { __mem::length = __mem::capacity; };
-
+  slice(const size_t n, const T &r) : __mem(n)
+  {
+    __mem::length = __mem::capacity;
+    for ( size_t i = 0; i < __mem::length; i++ )
+      __mem::memory[i] = r;
+  };
+  // init by running Fn with each elem. of R, R must be a slice, holding type T
+  template <typename Fn, typename R> slice(Fn &&fn, const R &r) : __mem(r.size())
+  {
+    __mem::length = __mem::capacity;
+    for ( size_t i = 0; i < __mem::length; i++ )
+      __mem::memory[i] = fn(r[i]);
+  };
   // take a view of memory of the underlying container
   // template <is_micron_structure Y>
   // slice(const Y &c) : __mem(*c)

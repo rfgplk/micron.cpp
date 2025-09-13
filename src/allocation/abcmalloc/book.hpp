@@ -154,6 +154,17 @@ public:
     __book.tombstone(_p);
     return true;
   }
+  bool
+  find(byte *_p)
+  {
+    if(_p == nullptr)
+      return false;
+    if ( empty() )
+      micron::abort();
+    if ( _p == nullptr )
+      micron::abort();
+    return !__book.is_tombstoned(_p);
+  }
   size_t
   available() const
   {
@@ -188,7 +199,6 @@ public:
       return true;
     return false;
   }
-
   void
   reset(void)
   {

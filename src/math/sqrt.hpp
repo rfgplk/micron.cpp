@@ -7,7 +7,7 @@
 
 #include "../types.hpp"
 #include "generic.hpp"
-#include <xmmintrin.h>
+#include "../simd/intrin.hpp"
 
 // void rsqrtps_sse(float *in, float *out, unsigned long int len);
 // void vrsqrtps_avx(float *in, float *out, unsigned long int len);

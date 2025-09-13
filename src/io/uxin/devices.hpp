@@ -39,7 +39,7 @@ __has_alnum_keys(const micron::ustr8 &buf)
   while ( _start != nullptr ) {
     i64 k = hex_string_to_int64(_ss);
     byte __first = key_1;
-    byte __last = key_m;
+    byte __last = key_help;
     for ( ; __first < __last; __first++ ) {
       if ( k & (1 << __first) )
         __count++;
@@ -50,7 +50,7 @@ __has_alnum_keys(const micron::ustr8 &buf)
     _ss = micron::move(buf.substr(_start + 1, _next));
     _start = _next;
   }
-  return (__count > 27);
+  return (__count > 100);
 }
 
 enum class type_t : char { keyboard, mouse };
@@ -94,7 +94,7 @@ get_devices()
       i64 ev = hex_string_to_int64(__parse_device("EV", buf));
       if ( ev & (1 << ev_key) )     // likely keyboard
       {
-        if ( format::contains(buf, "KEY") ) {
+        if ( format::contains(buf, "KEY") and !format::contains(buf, "REL") ) {
           if ( __has_alnum_keys(__parse_device("KEY", buf)) )     // likely keyboard, bypass parse
           {
             auto name = __parse_device("NAME", buf);
@@ -126,7 +126,7 @@ nonblock_bind_device(device_t &dev)
 {
   if ( dev.i_path.empty() )
     return -1;
-  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), O_NONBLOCK | O_RDONLY));
+  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), o_nonblock | o_rdonly));
   if ( fd < 0 )
     return fd;
   dev.bound_fd = fd;
@@ -138,10 +138,11 @@ bind_device(device_t &dev)
 {
   if ( dev.i_path.empty() )
     return -1;
-  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), O_RDONLY));
+  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), o_rdonly));
   if ( fd < 0 )
     return fd;
   dev.bound_fd = fd;
+
   return fd;
 }
 

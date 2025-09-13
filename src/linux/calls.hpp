@@ -73,6 +73,19 @@ fork_kernel(void)
 {
   return micron::syscall(SYS_fork);
 }
+
+int dup(int old){
+  return static_cast<int>(micron::syscall(SYS_dup, old));
+}
+
+int dup2(int old, int newfd){
+  return static_cast<int>(micron::syscall(SYS_dup2, old, newfd));
+}
+
+int dup3(int old, int newfd, int flags){
+  return static_cast<int>(micron::syscall(SYS_dup2, old, newfd, flags));
+}
+
 /*
 auto
 wait(int *wstatus)

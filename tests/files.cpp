@@ -9,6 +9,8 @@
 #include "../src/io/serial.hpp"
 #include "../src/std.hpp"
 
+#include "../src/io/stream.hpp"
+
 #include "../src/control.hpp"
 #include "../src/errno.hpp"
 #include "../src/io/console.hpp"
@@ -56,6 +58,7 @@ main(void)
       sys["/bin/errno", mc::io::rd] >> binfile;
     } catch ( mc::except::io_error &e ) {
       mc::console(mc::error::what_errno());
+      mc::console(e.what());
       return -1;
     }
     auto p = sys.list();

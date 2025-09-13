@@ -16,6 +16,8 @@
 
 namespace micron
 {
+constexpr double __string_epsilon = 1e-12;
+
 /*
 template <typename T>
 inline micron::hstring<T>
@@ -635,7 +637,7 @@ to_float(const T &o)
   i64 c = 0;
   const auto *buf = o.cdata();
   while ( *(buf + c) ) {
-    if ( *(buf + c) == ' ' && res == 0 ) {
+    if ( *(buf + c) == ' ' && res < __string_epsilon ) {
       ++c;
       continue;
     }
@@ -662,7 +664,7 @@ to_double(const T &o)
   i64 c = 0;
   const auto *buf = o.cdata();
   while ( *(buf + c) ) {
-    if ( *(buf + c) == ' ' && res == 0 ) {
+    if ( *(buf + c) == ' ' && res < __string_epsilon ) {
       ++c;
       continue;
     }

@@ -188,7 +188,7 @@ public:
   auto
   list(void) const
   {
-    micron::vector<micron::sstr<io::max_name>> names;
+    micron::vector<micron::sstr<posix::name_max>> names;
     for ( size_t i = 0; i < sz; i++ ) {
       names.push_back(entries[i]->name());
     }

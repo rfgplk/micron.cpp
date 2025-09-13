@@ -14,6 +14,18 @@
 
 namespace micron
 {
+
+template <class T>
+void *
+voidify(const T *ptr)
+{
+  using erase_type = micron::remove_cv_t<decltype(ptr)>;
+  if ( ptr != nullptr )
+    return const_cast<void *>(static_cast<const void *>(static_cast<erase_type>(ptr)));
+  else
+    return (void *)nullptr;
+};
+
 template <typename T, typename P>
 T
 cast(P &&p)
@@ -41,7 +53,12 @@ real_addr(P &p) noexcept
 {
   return reinterpret_cast<addr_t *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
-
+template <typename O, typename P>
+constexpr O *
+real_addr_as(P &p) noexcept
+{
+  return reinterpret_cast<O *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+}
 template <typename P>
 constexpr P *
 addressof(P &p) noexcept
@@ -51,10 +68,10 @@ addressof(P &p) noexcept
 
 template <typename P>
   requires(micron::is_pointer_v<P>)
-constexpr P
+constexpr P *
 addr(P &p) noexcept
 {
-  return reinterpret_cast<P>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 template <typename P>
   requires(!micron::is_pointer_v<P>)

@@ -46,9 +46,9 @@ __default_daemon_callback(void *)
   posix::close(STDOUT_FILENO);
   posix::close(STDERR_FILENO);
 
-  ::open("/dev/null", O_RDWR);
-  ::dup(0);
-  ::dup(0);
+  micron::open("/dev/null", o_rdwr);
+  posix::dup(0);
+  posix::dup(0);
   if(!__global_callback_size) return -1;
   __global_callback_ptrs.at(__global_callback_size--)();
   return 0;

@@ -12,6 +12,8 @@
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
 
+#include <iostream>
+
 namespace abc
 {
 
@@ -211,6 +213,16 @@ struct __buddy_list {
       return __flag_invalid;
     return tombstone(node.ptr);
   }
+  bool
+  is_tombstoned(byte *ptr) noexcept
+  {
+    byte *addr = ptr - (__hdr_offset - sizeof(micron::simd::i128));
+    i8 *ts = reinterpret_cast<i8 *>(addr);
+    if ( *ts )
+      return true;
+    return false;
+  }
+
   ret_flag
   deallocate(byte *ptr) noexcept
   {

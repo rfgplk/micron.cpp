@@ -77,7 +77,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p ) {
-      if ( file(n.a.d_name) ) {
+      if ( file(n.a.d_name.c_str()) ) {
         paths.emplace_back(n.a.d_name);
       }
     }
@@ -89,7 +89,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p ) {
-      if ( directory(n.a.d_name) ) {
+      if ( directory(n.a.d_name.c_str()) ) {
         paths.emplace_back(n.a.d_name);
       }
     }
@@ -130,7 +130,7 @@ public:
     }
     return paths;
   }
-  micron::sstring<PATH_MAX>
+  micron::sstring<posix::path_max>
   absolute(const pnode_t &n)
   {
     micron::vector<path_t> paths;
@@ -140,7 +140,7 @@ public:
       d.up();
       paths.emplace_back(d.name());
     }
-    micron::sstring<PATH_MAX> absolute_path("/");
+    micron::sstring<posix::path_max> absolute_path("/");
     auto s = paths.begin();
     for ( auto e = paths.end(); e >= s; --e ) {
       absolute_path += *e;

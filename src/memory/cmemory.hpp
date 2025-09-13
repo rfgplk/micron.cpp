@@ -38,6 +38,15 @@ using simd::memmove512;
 using simd::rmemcpy128;
 using simd::rmemcpy256;
 
+long int
+bytecmp(const byte *__restrict src, const byte *__restrict dest, size_t cnt)
+{
+  for ( size_t i = 0; i < cnt; i++ )
+    if ( src[i] != dest[i] )
+      return &src[i] - &dest[i];
+  return 0;
+};
+
 template <typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &

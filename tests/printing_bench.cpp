@@ -13,6 +13,6 @@ int
 main(void)
 {
   mc::ustr8 str = "Another message";
-  for(size_t i = 0; i < (size_t)1e7; i++)
+  for(size_t i = 0; i < (size_t)1e6; i++)
     mc::console(str);
 }

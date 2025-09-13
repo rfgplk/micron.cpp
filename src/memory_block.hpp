@@ -7,10 +7,10 @@
 
 #include "algorithm/mem.hpp"
 #include "allocator.hpp"
+#include "concepts.hpp"
 #include "except.hpp"
 #include "tags.hpp"
 #include "types.hpp"
-#include "concepts.hpp"
 
 namespace micron
 {
@@ -34,17 +34,14 @@ public:
   typedef byte *iterator;
   typedef const byte *const_iterator;
 
-  ~memory_block() {
-    this->destroy(memory);
-  }
+  ~memory_block() { this->destroy(memory); }
 
   memory_block() = delete;
-  memory_block(size_t n) : memory(this->create(n)) {
-  };
+  memory_block(size_t n) : memory(this->create(n)) {};
   memory_block(const memory_block &o) : Alloc(), memory(o.memory) {}
   memory_block(chunk<byte> *m) : Alloc(), memory(m) {}
-  memory_block(chunk<byte> *&&m) : Alloc(), memory(m) { }
-  memory_block(memory_block &&o) : memory(o.memory) { }
+  memory_block(chunk<byte> *&&m) : Alloc(), memory(m) {}
+  memory_block(memory_block &&o) : memory(o.memory) {}
   memory_block &
   operator=(const memory_block &o)
   {
@@ -77,26 +74,29 @@ public:
     o.len = 0;
     return *this;
   }
-  memory_block& operator=(const byte& b)
+  memory_block &
+  operator=(const byte &b)
   {
     micron::memset(memory.ptr, b, memory.len);
     return *this;
   }
   // resize and move elements
   inline void
-  resize(const size_t n) {
-    if(n <= memory.len)
+  resize(const size_t n)
+  {
+    if ( n <= memory.len )
       return;
     chunk<byte> tmp = micron::move(memory);
     memory = this->create(n);
     micron::memcpy(memory.ptr, tmp.ptr, tmp.len);
-    this->destroy(tmp); // delete old memory
+    this->destroy(tmp);     // delete old memory
   }
 
   // resize and DONT copy memory (eqv to assigning a new block)
   inline void
-  recreate(const size_t n) {
-    this->destroy(memory); // delete old memory
+  recreate(const size_t n)
+  {
+    this->destroy(memory);     // delete old memory
     memory = this->create(n);
   }
   // overload this to always point to mem
@@ -129,6 +129,15 @@ public:
   operator->()
   {
     return &memory;
+  }
+  byte *
+  at_pointer(size_t n)
+  {
+    if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
+      if ( n >= memory.len ) [[unlikely]]
+        throw except::runtime_error("micron::memory [] out of bounds");
+    }
+    return &memory.ptr[n];
   }
   byte &
   at(size_t n)

@@ -125,7 +125,7 @@ template <typename Type, typename... Args>
 inline __attribute__((always_inline)) Type *
 __new(Args &&...args)
 {
-  return new Type(micron::forward<Args>(args)...);
+  return new Type(micron::forward<Args&&>(args)...);
 }
 template <typename Type, typename... Args>
 inline __attribute__((always_inline)) Type *

@@ -12,6 +12,25 @@
 
 namespace abc
 {
+
+void
+abort_state(void)
+{
+  micron::abort();
+}
+bool
+fail_state(void)
+{
+  if constexpr ( __default_fail_result == 0 ) {
+    micron::abort();
+  } else if constexpr ( __default_fail_result == 1 ) {
+    micron::abort();
+  } else if constexpr ( __default_fail_result == 2 ) {
+    return false;
+  }
+  return true;
+}
+
 inline __attribute__((always_inline)) void
 sanitize_on_alloc(byte *addr, size_t sz = 0)
 {

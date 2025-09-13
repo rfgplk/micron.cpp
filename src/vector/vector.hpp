@@ -157,6 +157,16 @@ public:
   {
     return __mem::data();
   }
+  const_pointer
+  data() const
+  {
+    return &__mem::memory[0];
+  }
+  pointer
+  data()
+  {
+    return &__mem::memory[0];
+  }
   bool
   operator!() const
   {
@@ -176,12 +186,12 @@ public:
   inline slice<T>
   operator[]()
   {
-    return slice<T>(begin(), last());
+    return slice<T>(begin(), end());
   }
   inline const slice<T>
   operator[]() const
   {
-    return slice<T>(begin(), last());
+    return slice<T>(begin(), end());
   }
   // copies vector out
   inline __attribute__((always_inline)) const slice<T>

@@ -10,7 +10,6 @@
 #include "../string/strings.hpp"
 #include "io.hpp"
 #include "paths.hpp"
-#include <fcntl.h>
 #include <sys/stat.h>     // for mkfifo()
 #include "../type_traits.hpp"
 #include <unistd.h>
@@ -34,8 +33,8 @@ class upipe
 public:
   ~upipe()
   {
-    ::close(fd[ic(utype::upipe_reader)]);
-    ::close(fd[ic(utype::upipe_writer)]);
+    posix::close(fd[ic(utype::upipe_reader)]);
+    posix::close(fd[ic(utype::upipe_writer)]);
   }
   upipe(utype t)
   {
@@ -110,12 +109,12 @@ class npipe
   micron::string pipe_name;     // name
   int fd; //fd of open pipe
 public:
-  ~npipe() { ::unlink(pipe_name.c_str()); ::close(fd); }
+  ~npipe() { ::unlink(pipe_name.c_str()); posix::close(fd); }
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str)
   {
     if ( ::mkfifo(pipe_name.c_str(), perms) == -1 )
       throw except::io_error("micron::npipe(mkfifo) failed to create pipe");
-    fd = ::open(pipe_name.c_str(), O_RDWR);
+    fd = posix::open(pipe_name.c_str(), O_RDWR);
     if(fd == -1)
       throw except::io_error("micron::npipe(open) failed to open pipe file");
   }

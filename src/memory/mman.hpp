@@ -150,7 +150,7 @@ enum class map_types : int {
 
 // NOTE: mmap returns -1 on failure, will roll over
 inline __attribute__((always_inline)) addr_t *
-mmap(addr_t *__restrict addr, size_t len, int prot, int flags, int fd, off_t offset)
+mmap(addr_t *__restrict addr, size_t len, int prot, int flags, int fd, posix::off_t offset)
 {
   return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
 }

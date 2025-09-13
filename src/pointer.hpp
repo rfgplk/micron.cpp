@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "memory/addr.hpp"
 #include "memory/pointers/constant.hpp"
 #include "memory/pointers/free.hpp"
 // #include "memory/pointers/hazard.hpp"
@@ -84,7 +85,7 @@ template <class T, class Y>
 pointer<T>
 unique(Y &&ptr)
 {
-  return pointer<T>(ptr);
+  return pointer<T>(micron::forward<Y>(ptr));
 };
 
 template <template <is_pointer_class> class P, typename T>
@@ -110,17 +111,6 @@ P<T>
 as_pointer(Y &&ptr)
 {
   return P<T>(ptr);
-};
-
-template <class T>
-void *
-voidify(const T *ptr)
-{
-  using erase_type = micron::remove_cv_t<decltype(ptr)>;
-  if ( ptr != nullptr )
-    return const_cast<void *>(static_cast<const void *>(static_cast<erase_type>(ptr)));
-  else
-    return (void *)nullptr;
 };
 
 template <class T>

@@ -12,21 +12,16 @@
 #include "types.hpp"
 #include "type_traits.hpp"
 
+#include "io/__std.hpp"
 
 #ifndef __MICRON
 #define __MICRON
 #define __MICRONTL
 #endif
 
-constexpr static const int MICRON_VERSION_MAJOR = 0x0;
-constexpr static const int MICRON_VERSION_MINOR = 0x2;
-constexpr static const int MICRON_VERSION_PATCH = 0x0;
-
-#ifdef MICRON_VERSION_PP
-#define MICRON_VERSION_MAJOR 0
-#define MICRON_VERSION_MINOR 2
-#define MICRON_VERSION_PATCH 0
-#endif
+constexpr static const int MICRON_VERSION_MAJOR = 0x000;
+constexpr static const int MICRON_VERSION_MINOR = 0x030;
+constexpr static const int MICRON_VERSION_PATCH = 0x000;
 
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
@@ -48,7 +43,7 @@ constexpr static const int MICRON_VERSION_PATCH = 0x0;
 #endif
 #define COMPILER "GNU"
 #if __GNUC__ != 15
-#pragma GCC warning "This version of micron was made for GCC 15.0"
+#pragma GCC warning "This version of micron was made for GCC 15.x"
 #endif
 #elif defined(_MSC_VER)
 #define COMPILER "MSVC"
