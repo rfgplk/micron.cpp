@@ -20,11 +20,11 @@ main()
   mc::ustr8 contents = "Contents of a file..";
   mc::io::stream<> strm;
   mc::io::fd_t fl
-      = (i32)mc::posix::open("/tmp/test_0", mc::o_rdwr | mc::o_create, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      = (i32)mc::posix::open("/tmp/test_0", mc::o_rdwr | mc::o_create, mc::S_IRUSR | mc::S_IWUSR | mc::S_IRGRP | mc::S_IROTH);
   mc::io::fd_t fl_2
-      = (i32)mc::posix::open("/tmp/test_1", mc::o_rdwr | mc::o_create, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      = (i32)mc::posix::open("/tmp/test_1", mc::o_rdwr | mc::o_create, mc::S_IRUSR | mc::S_IWUSR | mc::S_IRGRP | mc::S_IROTH);
   mc::io::fd_t fl_3
-      = (i32)mc::posix::open("/tmp/test_2", mc::o_rdwr | mc::o_create, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      = (i32)mc::posix::open("/tmp/test_2", mc::o_rdwr | mc::o_create, mc::S_IRUSR | mc::S_IWUSR | mc::S_IRGRP | mc::S_IROTH);
   sb::require(mc::access("/tmp/test_0", mc::f_ok), 0);
   sb::require(mc::access("/tmp/test_1", mc::f_ok), 0);
   sb::require(mc::access("/tmp/test_2", mc::f_ok), 0);

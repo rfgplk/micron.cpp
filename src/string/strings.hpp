@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../concepts.hpp"
 #include "format.hpp"
 #include "string.hpp"
 

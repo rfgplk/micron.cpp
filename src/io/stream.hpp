@@ -12,8 +12,6 @@
 
 #include "posix/iosys.hpp"
 
-#include <iostream>
-
 namespace micron
 {
 

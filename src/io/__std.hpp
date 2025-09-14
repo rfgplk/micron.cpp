@@ -20,21 +20,20 @@ fd_t stdin;
 fd_t stdout;
 fd_t stderr;
 
+constexpr char __global_buffer_flush = '\n';
 constexpr int __global_buffer_size = 4096;
 constexpr int __global_buffer_chunk = 1024;
-micron::pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
-micron::pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdin(nullptr);
+micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
+micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stderr(nullptr);
 
 __attribute__((constructor)) void
 __init_io_buffer(void)
 {
   if ( !__global_buffer_stdout ) {
-    __global_buffer_stdout = micron::unique<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>(
-        new micron::io::stream<__global_buffer_size, __global_buffer_chunk>{});
+    __global_buffer_stdout = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
   }
-  if ( !__global_buffer_stdin ) {
-    __global_buffer_stdin = micron::unique<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>(
-        new micron::io::stream<__global_buffer_size, __global_buffer_chunk>{});
+  if ( !__global_buffer_stderr ) {
+    __global_buffer_stderr = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
   }
 }
 

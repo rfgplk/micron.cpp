@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "types.hpp"
+
 // errno port
 // TODO: fix this up, maybe even replace it entirely
 //extern int *__errno_location(void) __attribute__((const));

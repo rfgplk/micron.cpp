@@ -13,7 +13,6 @@
 #include "linux/sys/time.hpp"
 #include "thread/signal.hpp"
 
-// #include <signal.h>
 #include "io/bits.hpp"
 
 #include "types.hpp"
@@ -48,7 +47,7 @@ halt()
 inline void
 stop()
 {
-  ::raise(SIG_STOP);
+  posix::raise(sig_stop);
 }
 
 __attribute__((noinline)) __attribute__((used)) __attribute__((optimize("O0"))) void
@@ -64,10 +63,10 @@ exit(int s = 0)
 __attribute__((noreturn)) void
 abort(void)
 {
-  __builtin__exit(SIG_ABRT);
+  __builtin__exit(sig_abrt);
 }
 __attribute__((noreturn)) void
-quick_exit(const int s = SIG_ABRT)
+quick_exit(const int s = sig_abrt)
 {
   _Exit(s);
 }
@@ -76,23 +75,23 @@ template <typename F, typename... Args>
 inline void
 pause(F f, Args... args)
 {
-  sigset_t signal;
-  sigemptyset(&signal);
-  sigaddset(&signal, SIG_CONT);
+  micron::sigset_t signal;
+  micron::sigemptyset(signal);
+  micron::sigaddset(signal, sig_cont);
   int sig = 0;
-  auto s = sigwait(&signal, &sig);
+  auto s = micron::sigwait(signal, sig);
   f(sig, args...);
   return;
 }
 inline void
 pause()
 {
-  sigset_t signal;
-  sigemptyset(&signal);
-  sigaddset(&signal, SIG_CONT);
-  sigprocmask(SIG_BLOCK, &signal, nullptr);
+  micron::sigset_t signal;
+  micron::sigemptyset(signal);
+  micron::sigaddset(signal, sig_cont);
+  micron::sigprocmask(sig_block, signal, nullptr);
   int sig = 0;
-  sigwait(&signal, &sig);
+  micron::sigwait(signal, sig);
   return;
 }
 // wait for pid to finish
@@ -118,7 +117,7 @@ can_wait(int tid)
   // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
   siginfo_t i;
   micron::waitid(P_PID, tid, i, exited | nowait);
-  if ( i.si_code == CLD_EXITED or i.si_code == CLD_DUMPED or i.si_code == CLD_KILLED )
+  if ( i.si_code == cld_exited or i.si_code == cld_dumped or i.si_code == cld_killed )
     return true;
   return false;
 }
@@ -135,15 +134,15 @@ template <typename... Args>
 inline int
 await(Args... args)
 {
-  sigset_t old;
+  micron::sigset_t old;
   int save;
-  sigset_t signal;
-  ::sigemptyset(&signal);
-  (::sigaddset(&signal, args), ...);
-  if ( ::sigprocmask(SIG_SETMASK, &signal, &old) < 0 )
+  micron::sigset_t signal;
+  micron::sigemptyset(signal);
+  (micron::sigaddset(signal, args), ...);
+  if ( micron::sigprocmask(sig_setmask, signal, &old) < 0 )
     return -1;
-  ::sigwait(&signal, &save);
-  if ( ::sigprocmask(SIG_SETMASK, &old, nullptr) < 0 )
+  micron::sigwait(signal, save);
+  if ( micron::sigprocmask(sig_setmask, old, nullptr) < 0 )
     return -1;
   return 0;
 }
@@ -164,7 +163,7 @@ crash(void)
                                      // guaranteed to work on any OS/kernel running x64 cpus. cannot be optimized away
   }
   if constexpr ( x == 1 ) {
-    ::raise(SIGSEGV);
+    posix::raise(sig_segv);
   } else if constexpr ( x == 2 ) {
     // assert(false);
   } else if constexpr ( x ) {

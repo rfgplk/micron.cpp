@@ -5,13 +5,16 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <sys/stat.h>
+// #include <sys/stat.h>
 
 #include "../memory/addr.hpp"
 
 #include "../linux/process/system.hpp"
 #include "../syscall.hpp"
 #include "sys/fcntl.hpp"
+#include "sys/stat.hpp"
+
+#include "linux_types.hpp"
 
 namespace micron
 {
@@ -60,6 +63,24 @@ constexpr char dt_sock = 12;
 constexpr char dt_why = 14;
 constexpr char dt_end = 127;
 
+inline posix::dev_t
+makedev(unsigned int major, unsigned int minor)
+{
+  return ((posix::dev_t)(major & 0xfff) << 8) | (posix::dev_t)(minor & 0xff) | ((posix::dev_t)(minor & 0xfff00) << 12);
+}
+
+inline unsigned int
+major(posix::dev_t dev)
+{
+  return (unsigned int)((dev >> 8) & 0xfff);
+}
+
+inline unsigned int
+minor(posix::dev_t dev)
+{
+  return (unsigned int)((dev & 0xff) | ((dev >> 12) & 0xfff00));
+}
+
 template <typename P>
 ssize_t
 read(int fd, P *buf, size_t cnt)
@@ -104,7 +125,7 @@ open(const char *name, int flags)
 }
 
 auto
-openat(int dirfd, const char *pth, int flags, unsigned int mode[[maybe_unused]])
+openat(int dirfd, const char *pth, int flags, unsigned int mode [[maybe_unused]])
 {
   return micron::syscall(SYS_openat, dirfd, pth, flags);
 }
@@ -117,6 +138,14 @@ creat(const char *pth, unsigned int mode)
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
   return micron::syscall(SYS_creat, pth, mode);
 }
+
+auto
+umask(mode_t mask)
+{
+  return micron::syscall(SYS_umask, mask);
+}
+
+
 
 auto
 fsync(int fd)
@@ -171,16 +200,28 @@ fchmod(int fd, unsigned int mode)
   return micron::syscall(SYS_fchmod, fd, mode);
 }
 
-auto
-fstatat(const char *__restrict name, struct stat &__restrict buf)
+long
+fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags)
 {
-  return micron::syscall(SYS_stat, name, &buf);
+  return micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags); // why?
 }
 
-auto
-fstat(int fd, struct stat &buf)
+long
+fstat(int fd, stat_t &buf)
 {
   return micron::syscall(SYS_fstat, fd, &buf);
+}
+
+long
+lstat(const char *path, stat_t &buf)
+{
+  return micron::syscall(SYS_stat, path, &buf);
+}
+
+long
+stat(const char *path, stat_t &buf)
+{
+  return micron::syscall(SYS_stat, path, &buf);
 }
 
 auto

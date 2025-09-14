@@ -38,17 +38,17 @@ __default_callback(void *)
 int
 __default_daemon_callback(void *)
 {
-  if ( setsid() < 0 )
+  if ( posix::setsid() < 0 )
     throw except::runtime_error("micron process daemon failed to create new session");
   // don't change dir
-  ::umask(0);
+  posix::umask(0);
   posix::close(STDIN_FILENO);
   posix::close(STDOUT_FILENO);
   posix::close(STDERR_FILENO);
 
-  ::open("/dev/null", O_RDWR);
-  ::dup(0);
-  ::dup(0);
+  posix::open("/dev/null", O_RDWR);
+  posix::dup(0);
+  posix::dup(0);
   if(!__global_callback_size) return -1;
   __global_callback_ptrs.at(__global_callback_size--)();
   return 0;

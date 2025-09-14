@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include <sys/stat.h>
-#include <sys/sysmacros.h>
+//#include <sys/stat.h>
+//#include <sys/sysmacros.h>
 
 #include "../../concepts.hpp"
 
@@ -67,16 +67,16 @@ verify(T str)
 bool
 exists(const char *str)
 {
-  struct stat buf;
-  return (stat(str, &buf) == 0);
+  stat_t buf;
+  return (posix::stat(str, buf) == 0);
 }
 
 template <node_types Tp, is_string T>
 inline bool
 is_inode_type(const T &str)
 {
-  struct stat buf;
-  if ( stat(str.c_str(), &buf) != 0 )
+  stat_t buf;
+  if ( stat(str.c_str(), buf) != 0 )
     return false;     // doesn't exist, can't be
   if ( (buf.st_mode & S_IFMT) == (int)Tp )
     return true;
@@ -87,8 +87,8 @@ template <node_types Tp>
 inline bool
 is_inode_type(const char *str)
 {
-  struct stat buf;
-  if ( stat(str, &buf) != 0 )
+  stat_t buf;
+  if ( stat(str, buf) != 0 )
     return false;     // doesn't exist, can't be
   if ( (buf.st_mode & S_IFMT) == (int)Tp )
     return true;
@@ -100,8 +100,8 @@ template <node_types Tp>
 inline bool
 is_inode_type(const int fd)
 {
-  struct stat buf;
-  if ( fstat(fd, &buf) != 0 )
+  stat_t buf;
+  if ( posix::fstat(fd, buf) != 0 )
     return false;     // doesn't exist, can't be
   if ( (buf.st_mode & S_IFMT) == (int)Tp )
     return true;
@@ -112,8 +112,8 @@ template <node_types Tp>
 inline bool
 is_inode_type_at(int fd, const char *str)
 {
-  struct stat buf;
-  if ( fstatat(fd, str, &buf, 0) != 0 )
+  stat_t buf;
+  if ( posix::fstatat(fd, str, buf, 0) != 0 )
     return false;     // doesn't exist, can't be
   if ( (buf.st_mode & S_IFMT) == (int)Tp )
     return true;
@@ -124,8 +124,8 @@ template <node_types Tp, is_string T>
 inline bool
 is_inode_type_at(int fd, const T &str)
 {
-  struct stat buf;
-  if ( fstatat(fd, str.c_str(), &buf, 0) != 0 )
+  stat_t buf;
+  if ( posix::fstatat(fd, str.c_str(), buf, 0) != 0 )
     return false;     // doesn't exist, can't be
   if ( (buf.st_mode & S_IFMT) == (int)Tp )
     return true;
@@ -137,8 +137,8 @@ is_inode_type_at(int fd, const T &str)
 auto
 get_type_at(const char* str)
 {
-  struct stat buf;
-  if ( stat(str, &buf) != 0 )
+  stat_t buf;
+  if ( stat(str, buf) != 0 )
     return node_types::not_found;     // doesn't exist, can't be
   return static_cast<node_types>(buf.st_mode & S_IFMT);
 }
@@ -146,8 +146,8 @@ get_type_at(const char* str)
 auto
 get_type(const int fd)
 {
-  struct stat buf;
-  if ( fstat(fd, &buf) != 0 )
+  stat_t buf;
+  if ( posix::fstat(fd, buf) != 0 )
     return node_types::not_found;     // doesn't exist, can't be
   return static_cast<node_types>(buf.st_mode & S_IFMT);
 }
@@ -155,11 +155,11 @@ get_type(const int fd)
 bool
 is_virtual_file(const int fd)
 {
-  struct stat buf;
-  if ( fstat(fd, &buf) != 0 )
+  stat_t buf;
+  if ( posix::fstat(fd, buf) != 0 )
     return false;     // doesn't exist, can't be
   if ( (buf.st_mode & S_IFMT) == (int)node_types::regular_file )
-    if ( ::major(buf.st_dev) == 0 )
+    if ( micron::major(buf.st_dev) == 0 )
       return true;
   return false;
 }

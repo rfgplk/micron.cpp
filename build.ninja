@@ -52,6 +52,7 @@ rule cc_compile_cmnd_debug
 build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
 
 
+build core_tests_control: cc_compile_cmnd_debug tests/core/control.cpp
 build core_tests_io_init: cc_compile_cmnd_debug tests/core/io_init.cpp
 build core_tests_syscall: cc_compile_cmnd_debug tests/core/syscall.cpp
 build core_tests_strings: cc_compile_cmnd_debug tests/core/cstrings.cpp
@@ -85,7 +86,7 @@ build chrono_test: cc_compile_cmnd_debug tests/chrono.cpp
 build trees_test: cc_compile_cmnd_debug tests/trees.cpp
 build invoke_test: cc_compile_cmnd_debug tests/invoke.cpp
 build printing_test: cc_compile_cmnd_debug tests/printing.cpp
-build printing_bench: cc_compile_cmnd_debug tests/printing_bench.cpp
+build printing_bench: cc_compile_cmnd tests/printing_bench.cpp
 build list_test: cc_compile_cmnd_debug tests/list.cpp
 build pairs_test: cc_compile_cmnd_debug tests/pairs.cpp
 build matrix_test: cc_compile_cmnd_debug tests/matrix.cpp

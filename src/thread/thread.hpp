@@ -20,7 +20,6 @@
 #include "../memory/stack.hpp"
 #include "../linux/calls.hpp"
 
-#include <signal.h>        // for signal handling
 #include <tuple>
 #include <utility>     // needed for now
 #include <variant>
@@ -49,9 +48,9 @@ __thread_handler()
   sa.sa_handler = __thread_sigsleep;
   ::sigemptyset(&sa.sa_mask);
   sa.sa_flags = SA_RESTART;
-  ::sigaction(SIG_USR1, &sa, nullptr);
+  ::sigaction(sig_usr1, &sa, nullptr);
   sa.sa_handler = __thread_yield;
-  ::sigaction(SIG_ALRM, &sa, nullptr);
+  ::sigaction(sig_alrm, &sa, nullptr);
 }
 
 template <typename T> struct get_return_type;

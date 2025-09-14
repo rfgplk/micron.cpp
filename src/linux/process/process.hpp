@@ -9,16 +9,15 @@
 
 #include <sched.h> /* Definition of CLONE_* constants */
 #include <spawn.h>
-//#include <sys/stat.h>
-//#include <sys/wait.h>     // waitpid
-#include <unistd.h>       // fork, close, daemon
+// #include <sys/stat.h>
+// #include <sys/wait.h>     // waitpid
+#include <unistd.h>     // fork, close, daemon
 
 #include "../../thread/signal.hpp"
 
-#include "../sys/fcntl.hpp"
 #include "../io.hpp"
+#include "../sys/fcntl.hpp"
 
-#include "wait.hpp"
 #include "../../concepts.hpp"
 #include "../../except.hpp"
 #include "../../memory/actions.hpp"
@@ -26,8 +25,10 @@
 #include "../../memory/stack.hpp"
 #include "../../string/strings.hpp"
 #include "../../vector/fvector.hpp"
-#include "../../vector/vector.hpp"
 #include "../../vector/svector.hpp"
+#include "../../vector/vector.hpp"
+#include "../calls.hpp"
+#include "wait.hpp"
 
 #include "callbacks.hpp"
 #include "structs.hpp"
@@ -41,17 +42,18 @@ extern char **environ;
 namespace micron
 {
 
-
 struct uelf_t {
   int fd;
-  byte* elf;
+  byte *elf;
 };
 
 template <is_string S>
 uelf_t
-create_elf_memory(uelf_t& elf, const S& str, const S& str)
+create_elf_memory(uelf_t &elf, const S &str, const S &str)
 {
-  uelf_t elf { memfd_create(str.c_str(), 0),  };
+  uelf_t elf{
+    memfd_create(str.c_str(), 0),
+  };
 }
 
 template <is_string... S>
@@ -99,10 +101,10 @@ daemon(F f, Args &&...args)
   int pid = ::fork();     // much nicer to do this
   if ( pid > 0 )          // parent
     _Exit(0);
-  if ( setsid() < 0 )
+  if ( posix::setsid() < 0 )
     throw except::runtime_error("micron process daemon failed to create new session");
   // don't change dir
-  ::umask(0);
+  posix::umask(0);
   posix::close(STDIN_FILENO);
   posix::close(STDOUT_FILENO);
   posix::close(STDERR_FILENO);

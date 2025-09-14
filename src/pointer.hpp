@@ -9,6 +9,7 @@
 #include "memory/pointers/constant.hpp"
 #include "memory/pointers/free.hpp"
 // #include "memory/pointers/hazard.hpp"
+#include "memory/pointers/global.hpp"
 #include "memory/pointers/shared.hpp"
 #include "memory/pointers/thread.hpp"
 #include "memory/pointers/unique.hpp"
@@ -64,6 +65,20 @@ operator>=(const O &o, const P &p) noexcept
 }
 
 template <class T>
+__global_pointer<T>
+make_global()
+{
+  return __global_pointer<T>();
+};
+template <class T, class... Args>
+  requires(sizeof...(Args) > 0)
+__global_pointer<T>
+make_global(Args &&...x)
+{
+  return __global_pointer<T>(x...);
+};
+
+template <class T>
 pointer<T>
 unique()
 {
@@ -76,6 +91,7 @@ unique(std::initializer_list<F> list)
   return pointer<T>(list);
 };
 template <class T, class... Args>
+  requires(sizeof...(Args) > 0)
 pointer<T>
 unique(Args &&...x)
 {

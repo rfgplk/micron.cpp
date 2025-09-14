@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../../syscall.hpp"
 #include "../../types.hpp"
 #include "../linux_types.hpp"
-#include "../../syscall.hpp"
 
 namespace micron
 {
@@ -98,7 +98,7 @@ clock_getres(clockid_t clc, timespec_t *res)
 int clock_settime(clockid_t clc, timespec_t &tm);
 int clock_getcpuclockid(posix::pid_t pid, clockid_t &clc);
 long int
-clock_nanosleep(clockid_t clock, int flags, timespec_t &tm, timespec *rmn)
+clock_nanosleep(clockid_t clock, int flags, timespec_t &tm, timespec_t *rmn)
 {
   return micron::syscall(SYS_clock_nanosleep, clock, flags, &tm, rmn);
 }

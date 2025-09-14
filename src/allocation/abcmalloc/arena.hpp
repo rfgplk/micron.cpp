@@ -651,15 +651,38 @@ class __arena
   }
 
 public:
-  // TODO: add cleanup
   ~__arena(void)
   {
+    // WARNING: this destructor is meant to trigger iff you seek to recycle the entire memory arena, .ie you're looking
+    // to reload the entire allocator. if abcmalloc is compiled in stm, on global scope destruction THIS FUNCTION WILL BE
+    // DESTROYED IN REVERSE ORDER OF CONSTRUCTION, if any global scope objects registered memory with the allocator ALL
+    // SUBSEQUENT CALLS WILL FAIL. this will ALWAYS happen if using automatic/default allocation, since all objects
+    // invoke the allocator WITHIN their own constructors if compiled in global_mode THIS CODE WILL NEVER TRIGGER (kernel
+    // reclaims on ret)
+
+    // NOTE: ONCE THESE CALLS FIRE ALL MEMORY IS UNMAPPED AND LOST IRREVOCABLY.
     __release(_small_buckets);
     __release(_medium_buckets);
     __release(_large_buckets);
     __release(_huge_buckets);
     __release(_arena_buffer);
     _arena_memory.release();
+
+    /*
+    Constructed objects (9.4) with static storage duration are destroyed and functions registered with std::atexit
+are called as part of a call to std::exit (17.5). The call to std::exit is sequenced before the destructions
+and the registered functions.
+[Note 1 : Returning from main invokes std::exit (6.9.3.1). — end note]
+ If the completion of the constructor or dynamic initialization of an object with static storage duration
+strongly happens before that of another, the completion of the destructor of the second is sequenced before
+the initiation of the destructor of the first. If the completion of the constructor or dynamic initialization of an
+object with thread storage duration is sequenced before that of another, the completion of the destructor of
+the second is sequenced before the initiation of the destructor of the first. If an object is initialized statically,
+the object is destroyed in the same order as if the object was dynamically initialized. For an object of array or
+class type, all subobjects of that object are destroyed before any block variable with static storage duration
+initialized during the construction of the subobjects is destroyed. If the destruction of an object with static
+or thread storage duration exits via an exception, the function std::terminate is called (14.6.2).
+    * */
   }
   __arena(void)
       : _arena_memory(__get_kernel_chunk<micron::__chunk<byte>>(__default_arena_page_buf * __system_pagesize)),
@@ -749,7 +772,7 @@ public:
     if ( mem.zero() )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem.ptr)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem.ptr)) )
         return fail_state();
     }
     collect_stats<stat_type::dealloc>();
@@ -767,7 +790,7 @@ public:
     if ( mem == nullptr )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) )
         return fail_state();
     }
     collect_stats<stat_type::dealloc>();
@@ -796,7 +819,7 @@ public:
     if ( mem == nullptr )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) )
         return fail_state();
     }
     collect_stats<stat_type::total_memory_freed>(len);
@@ -811,7 +834,7 @@ public:
     if ( mem.zero() )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem.ptr)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem.ptr)) )
         return fail_state();
     }
     collect_stats<stat_type::dealloc>();
@@ -829,7 +852,7 @@ public:
     if ( mem == nullptr )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) )
         return fail_state();
     }
     collect_stats<stat_type::dealloc>();
@@ -843,7 +866,7 @@ public:
     if ( mem == nullptr )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) )
         return fail_state();
     }
     collect_stats<stat_type::total_memory_freed>(len);
@@ -855,7 +878,7 @@ public:
     if ( mem.zero() )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem.ptr)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem.ptr)) )
         return fail_state();
     }
     return __vmap_freeze(mem);
@@ -866,7 +889,7 @@ public:
     if ( mem == nullptr )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) )
         return fail_state();
     }
     return __vmap_freeze_at(mem);
@@ -877,7 +900,7 @@ public:
     if ( mem == nullptr )
       return false;
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t*>(mem)) )
+      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) )
         return fail_state();
     }
     return __vmap_freeze({ mem, len });

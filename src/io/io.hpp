@@ -110,22 +110,40 @@ fwrite(T *ptr, size_t num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
     return -1;
+  // differentiate depending on handle, maintains cache loc.
   if ( handle == stdout ) {
     if ( __global_buffer_stdout->full(num * sizeof(byte)) ) {
       (*__global_buffer_stdout) >> handle;
       posix::write(handle.fd, ptr, num);
       return num;
-    force_flush:
+    force_flush_out:
       (*__global_buffer_stdout) >> handle;
       return num;
     }
     __global_buffer_stdout->append(ptr, num);
-    if ( simd::any_set_128(ptr, num, '\n') )
-      goto force_flush;
+    if ( simd::any_set_128(ptr, num, __global_buffer_flush) )
+      goto force_flush_out;
+    return num;
+  } else if ( handle == stderr ) {
+    if ( __global_buffer_stderr->full(num * sizeof(byte)) ) {
+      (*__global_buffer_stderr) >> handle;
+      posix::write(handle.fd, ptr, num);
+      return num;
+    force_flush_err:
+      (*__global_buffer_stderr) >> handle;
+      return num;
+    }
+    __global_buffer_stderr->append(ptr, num);
+    if ( simd::any_set_128(ptr, num, __global_buffer_flush) )
+      goto force_flush_err;
     return num;
   }
-
   return posix::write(handle.fd, ptr, num);
+}
+
+inline void
+fflush(const fd_t &handle)
+{
 }
 
 inline __attribute__((always_inline)) void

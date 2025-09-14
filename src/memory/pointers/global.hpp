@@ -12,11 +12,10 @@
 namespace micron
 {
 
-// A unique pointer, a general replacement of unique_ptr with a few differences
-// unique_ptr is meant to always create a new instance of the object on creation and this is intentional
-// it's impossible to create a unique_pointer by passing a raw pointer into it without moving it
-// prevents two instances of the same pointer existing simult.
-template <class Type> class unique_pointer : private __internal_pointer_alloc<Type>
+// A global pointer, equivalent to a unique ptr with a few select differences
+// a global pointer is meant to exist for the entire duration of the binary execution, within global scope. as such it
+// does not reclaim memory on destruction
+template <class Type> class __global_pointer : private __internal_pointer_alloc<Type>
 {
   Type *internal_pointer;
 
@@ -28,35 +27,29 @@ public:
 
   using __alloc = __internal_pointer_alloc<Type>;
 
-  ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
-  unique_pointer(void) : internal_pointer(nullptr) {};
+  ~__global_pointer() { /*nothing*/ };
+  __global_pointer(void) : internal_pointer(__alloc::__impl_alloc()) {};
   template <typename V>
     requires micron::is_null_pointer_v<V>
-  unique_pointer(V) : internal_pointer(nullptr){};
-  unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+  __global_pointer(V) : internal_pointer(nullptr){};
+  __global_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   template <class... Args>
     requires(sizeof...(Args) > 0)
-  unique_pointer(Args &&...args)
+  __global_pointer(Args &&...args)
       : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};     // new Type(args...)){};
 
-  unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
-  unique_pointer(const unique_pointer &p) = delete;
-  unique_pointer &
-  operator=(unique_pointer &&t)
+  __global_pointer(__global_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+  __global_pointer(const __global_pointer &p) = delete;
+  __global_pointer &
+  operator=(__global_pointer &&t)
   {
     __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
     t.internal_pointer = nullptr;
     return *this;
   };
-  unique_pointer &operator=(const unique_pointer &) = delete;
-  unique_pointer &
-  operator=(Type *&t) noexcept
-  {
-    return operator=(micron::move(t));
-    return *this;
-  };
-  unique_pointer &
+  __global_pointer &operator=(const __global_pointer &) = delete;
+  __global_pointer &
   operator=(Type *&&t) noexcept
   {
     __alloc::__impl_dealloc(internal_pointer);
@@ -106,7 +99,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer operator*(): internal_pointer was null");
   }
   Type &
   operator*()
@@ -114,7 +107,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -122,7 +115,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer operator*(): internal_pointer was null");
   };
   inline Type *
   release() noexcept
@@ -143,7 +136,7 @@ public:
   };
 };
 
-template <class Type> class unique_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
+template <class Type> class __global_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
 {
   Type *internal_pointer;
 
@@ -155,21 +148,22 @@ public:
 
   using __alloc = __internal_pointer_arralloc<Type[]>;
 
-  ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
-  unique_pointer(void) = delete;
+  ~__global_pointer() { /*nothing*/ };
+  __global_pointer(void) = delete;
   template <typename... Args>
-  unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
+  requires (sizeof...(Args) > 0)
+  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
   {
   }     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
-  unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+  __global_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
-  unique_pointer(const unique_pointer &p) = delete;
-  unique_pointer(unique_pointer &p) = delete;
-  unique_pointer &operator=(const unique_pointer &) = delete;
-  unique_pointer &
-  operator=(unique_pointer &&t)
+  __global_pointer(__global_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+  __global_pointer(const __global_pointer &p) = delete;
+  __global_pointer(__global_pointer &p) = delete;
+  __global_pointer &operator=(const __global_pointer &) = delete;
+  __global_pointer &
+  operator=(__global_pointer &&t)
   {
     __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t.internal_pointer;
@@ -182,15 +176,9 @@ public:
     if ( internal_pointer != nullptr )
       return (*internal_pointer)[n];
     else
-      throw except::memory_error("unique_pointer[] operator[](): internal_pointer was null");
+      throw except::memory_error("__global_pointer[] operator[](): internal_pointer was null");
   };
-  unique_pointer &
-  operator=(Type *&t) noexcept
-  {
-    return operator=(micron::move(t));
-    return *this;
-  };
-  unique_pointer &
+  __global_pointer &
   operator=(Type *&&t)
   {
     __alloc::__impl_dealloc(internal_pointer);
@@ -231,7 +219,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -239,7 +227,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
   };
   const Type *
   operator->() const
@@ -247,7 +235,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
   };
 
   Type *
@@ -256,7 +244,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
   };
 };
 

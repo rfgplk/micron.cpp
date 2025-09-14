@@ -9,7 +9,7 @@
 #include "abcmalloc/malloc.hpp"
 
 #ifndef MICRON_USE_ABCMALLOC
-#include <cstdlib>
+/*permitted*/#include <cstdlib>
 #endif
 namespace micron
 {

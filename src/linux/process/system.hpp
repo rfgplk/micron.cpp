@@ -28,6 +28,41 @@ using uid_t = u32;
 using gid_t = u32;
 using rlim_t = u64;
 */
+
+posix::pid_t
+setsid(void)
+{
+  return static_cast<posix::pid_t>(micron::syscall(SYS_setsid));
+}
+posix::pid_t
+setpgid(posix::pid_t pid, posix::pid_t gpid)
+{
+  return static_cast<posix::pid_t>(micron::syscall(SYS_setpgid, pid, gpid));
+}
+
+
+int
+setuid(posix::uid_t uid)
+{
+  return static_cast<int>(micron::syscall(SYS_setuid, uid));
+}
+
+int
+setgid(posix::gid_t gid)
+{
+  return static_cast<int>(micron::syscall(SYS_setgid, gid));
+}
+
+
+
+posix::pid_t
+getsid(void)
+{
+  return static_cast<posix::pid_t>(micron::syscall(SYS_getsid));
+}
+
+
+
 pid_t
 getpid(void)
 {

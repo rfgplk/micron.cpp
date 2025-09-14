@@ -14,5 +14,6 @@ main(void)
 {
   mc::ustr8 str = "Another message";
   for(size_t i = 0; i < (size_t)1e6; i++)
-    mc::console(str);
+    //std::cout << mc::c_str(str) << std::endl;
+        mc::console(mc::c_str(str));
 }

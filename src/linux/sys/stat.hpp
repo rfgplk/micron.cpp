@@ -5,9 +5,9 @@
 
 namespace micron
 {
-constexpr int SEEK_SET = 0; /* Seek from beginning of file.  */
-constexpr int SEEK_CUR = 1; /* Seek from current position.  */
-constexpr int SEEK_END = 2; /* Seek from end of file.  */
+// constexpr int seek_set = 0; /* Seek from beginning of file.  */
+// constexpr int seek_cur = 1; /* Seek from current position.  */
+// constexpr int seek_end = 2; /* Seek from end of file.  */
 
 constexpr int S_IFMT = 0170000; /* These bits determine file type.  */
 
@@ -33,7 +33,7 @@ constexpr int S_IRUSR = S_IREAD;  /* Read by owner.  */
 constexpr int S_IWUSR = S_IWRITE; /* Write by owner.  */
 constexpr int S_IXUSR = S_IEXEC;  /* Execute by owner.  */
 /* Read, write, and execute by owner.  */
-constexpr int S_IRWXU = (__S_IREAD | __S_IWRITE | __S_IEXEC);
+constexpr int S_IRWXU = (S_IREAD | S_IWRITE | S_IEXEC);
 
 constexpr int S_IRGRP = (S_IRUSR >> 3); /* Read by group.  */
 constexpr int S_IWGRP = (S_IWUSR >> 3); /* Write by group.  */
@@ -47,26 +47,29 @@ constexpr int S_IXOTH = (S_IXGRP >> 3); /* Execute by others.  */
 /* Read, write, and execute by others.  */
 constexpr int S_IRWXO = (S_IRWXG >> 3);
 
-struct stat {
-  dev_t st_dev;     /* Device.  */
-  ino_t st_ino;     /* File serial number.	*/
-  mode_t st_mode;   /* File mode.  */
-  nlink_t st_nlink; /* Link count.  */
-  uid_t st_uid;     /* User ID of the file's owner.	*/
-  gid_t st_gid;     /* Group ID of the file's group.*/
-  int __pad0;
-  dev_t st_rdev;                /* Device number, if device.  */
-  off_t st_size;                /* Size of file, in bytes.  */
-  blksize_t st_blksize;         /* Optimal block size for I/O.  */
-  blkcnt64_t st_blocks;         /* Number 512-byte blocks allocated. */
-  time_t st_atime;              /* Time of last access.  */
-  syscall_ulong_t st_atimensec; /* Nscecs of last access.  */
-  time_t st_mtime;              /* Time of last modification.  */
-  syscall_ulong_t st_mtimensec; /* Nsecs of last modification.  */
-  time_t st_ctime;              /* Time of last status change.  */
-  syscall_ulong_t st_ctimensec; /* Nsecs of last status change.  */
-  syscall_slong_t __glibc_reserved[3];
-  ino64_t st_ino; /* File serial number.	*/
+struct stat_t {
+  posix::dev_t st_dev;     /* Device.  */
+  posix::ino64_t st_ino;     /* File serial number.  */
+  posix::nlink_t st_nlink; /* Link count.  */
+
+  posix::mode_t st_mode; /* File mode.  */
+  posix::uid_t st_uid;   /* User ID of the file’s owner.  */
+  posix::gid_t st_gid;   /* Group ID of the file’s group. */
+  i32 __pad0;
+  posix::dev_t st_rdev;        /* Device number, if device.  */
+  posix::off64_t st_size;        /* Size of file, in bytes.  */
+  posix::blksize_t st_blksize; /* Optimal block size for I/O.  */
+
+  posix::blkcnt_t st_blocks; /* Number of 512-byte blocks allocated. */
+
+  struct timespec st_atim;      /* Time of last access.  */
+  struct timespec st_mtim;      /* Time of last modification.  */
+  struct timespec st_ctim;      /* Time of last status change.  */
+#define st_atime st_atim.tv_sec /* Backward compatibility.  */
+#define st_mtime st_mtim.tv_sec
+#define st_ctime st_ctim.tv_sec
+
+  __syscall_slong_t __glibc_reserved[3];
 };
 
 };

@@ -16,8 +16,8 @@
 #include "../../linux/sys/fcntl.hpp"
 
 
-#include <sys/stat.h>
-#include <sys/sysmacros.h>
+//#include <sys/stat.h>
+//#include <sys/sysmacros.h>
 
 #include "utils.hpp"
 
@@ -91,7 +91,7 @@ struct file {
   micron::sstr<MAX_NAME_LENGTH> fname;
   // int fd;
   fd_t __handle;
-  struct stat sd;
+  stat_t sd;
   // regardless
   ~file() { close(); }
   file(void) : fname(), __handle(-1), sd() {};
@@ -164,7 +164,7 @@ struct file {
   {
     alive();
     stat();
-    return (::major(sd.st_dev) == 0);
+    return (micron::major(sd.st_dev) == 0);
   }
   inline auto
   owner(void)

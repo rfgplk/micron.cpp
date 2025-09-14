@@ -7,7 +7,6 @@
 
 #include "../bits.hpp"
 #include "../endian.hpp"
-#include "../fp.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 

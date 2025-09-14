@@ -14,7 +14,6 @@
 #include "limits.hpp"
 #include "../../linux/linux_types.hpp"
 
-#include <cstdio>
 
 // functions for handling posix/linux dirs
 namespace micron
@@ -26,7 +25,7 @@ constexpr static const int max_name = (posix::name_max + 1) * 2;
 
 struct dir {
 
-  typedef micron::vector<micron::pair<posix::__impl_dir, struct stat>> dir_container;
+  typedef micron::vector<micron::pair<posix::__impl_dir, stat_t>> dir_container;
   micron::sstr<max_name> dname;
   // DIR *dp;
   posix::dir_t dp;
@@ -209,11 +208,11 @@ struct dir {
     // struct dirent *e;
     posix::__impl_dir e;
     while ( (e = posix::readdir(dp.fd)).type != dt_end ) {
-      struct stat sd;
+      stat_t sd;
       micron::sstr<(max_name) * 2> pstr(dname);
       pstr += "/";
       pstr += e.d_name;
-      if ( stat(pstr.c_str(), &sd) != 0 )
+      if ( posix::stat(pstr.c_str(), sd) != 0 )
         throw except::filesystem_error("micron::dir failed to stat dir");
       dd.emplace_back(
           micron::tie(micron::move(e),

@@ -22,7 +22,6 @@
 #define __ULONG32_TYPE unsigned long int
 #define __S64_TYPE int64_t
 #define __U64_TYPE uint64_t
-#define __STD_TYPE __extension__ typedef
 #elif __WORDSIZE == 64
 #define __SQUAD_TYPE long int
 #define __UQUAD_TYPE unsigned long int
@@ -32,7 +31,6 @@
 #define __ULONG32_TYPE unsigned int
 #define __S64_TYPE long int
 #define __U64_TYPE unsigned long int
-#define __STD_TYPE typedef
 #else
 #error
 #endif
@@ -83,29 +81,27 @@
 #define __SSIZE_T_TYPE __SWORD_TYPE
 #define __CPU_MASK_TYPE __SYSCALL_ULONG_TYPE
 
-__STD_TYPE __DEV_T_TYPE __dev_t;     /* Type of device numbers.  */
-__STD_TYPE __UID_T_TYPE __uid_t;     /* Type of user identifications.  */
-__STD_TYPE __GID_T_TYPE __gid_t;     /* Type of group identifications.  */
-__STD_TYPE __INO_T_TYPE __ino_t;     /* Type of file serial numbers.  */
-__STD_TYPE __INO64_T_TYPE __ino64_t; /* Type of file serial numbers (LFS).*/
-__STD_TYPE __MODE_T_TYPE __mode_t;   /* Type of file attribute bitmasks.  */
-__STD_TYPE __NLINK_T_TYPE __nlink_t; /* Type of file link counts.  */
-__STD_TYPE __OFF_T_TYPE __off_t;     /* Type of file sizes and offsets.  */
-__STD_TYPE __OFF64_T_TYPE __off64_t; /* Type of file sizes and offsets (LFS).  */
-__STD_TYPE __PID_T_TYPE __pid_t;     /* Type of process identifications.  */
-//__STD_TYPE __FSID_T_TYPE __fsid_t;	/* Type of file system IDs.  */
-__STD_TYPE __CLOCK_T_TYPE __clock_t; /* Type of CPU usage counts.  */
-__STD_TYPE __CLOCKID_T_TYPE __clockid_t;
-__STD_TYPE __RLIM_T_TYPE __rlim_t;           /* Type for resource measurement.  */
-__STD_TYPE __RLIM64_T_TYPE __rlim64_t;       /* Type for resource measurement (LFS).  */
-__STD_TYPE __ID_T_TYPE __id_t;               /* General type for IDs.  */
-__STD_TYPE __TIME_T_TYPE __time_t;           /* Seconds since the Epoch.  */
-__STD_TYPE __TIMER_T_TYPE __timer_t;         /* Seconds since the Epoch.  */
-__STD_TYPE __USECONDS_T_TYPE __useconds_t;   /* Count of microseconds.  */
-__STD_TYPE __SUSECONDS_T_TYPE __suseconds_t; /* Signed count of microseconds.  */
-__STD_TYPE __SUSECONDS64_T_TYPE __suseconds64_t;
+using __dev_t = __DEV_T_TYPE;     /* Type of device numbers.  */
+using __uid_t = __UID_T_TYPE;     /* Type of user identifications.  */
+using __gid_t = __GID_T_TYPE;     /* Type of group identifications.  */
+using __ino_t = __INO_T_TYPE;     /* Type of file serial numbers.  */
+using __ino64_t = __INO64_T_TYPE; /* Type of file serial numbers (LFS).*/
+using __mode_t = __MODE_T_TYPE;   /* Type of file attribute bitmasks.  */
+using __nlink_t = __NLINK_T_TYPE; /* Type of file link counts.  */
+using __off_t = __OFF_T_TYPE;     /* Type of file sizes and offsets.  */
+using __off64_t = __OFF64_T_TYPE; /* Type of file sizes and offsets (LFS).  */
+using __pid_t = __PID_T_TYPE;     /* Type of process identifications.  */
+// using  __fsid_t __FSID_T_TYPE;	/* Type of file system IDs.  */
+using __clock_t = __CLOCK_T_TYPE; /* Type of CPU usage counts.  */
+using __clockid_t = __CLOCKID_T_TYPE;
+using __rlim_t = __RLIM_T_TYPE;           /* Type for resource measurement.  */
+using __rlim64_t = __RLIM64_T_TYPE;       /* Type for resource measurement (LFS).  */
+using __id_t = __ID_T_TYPE;               /* General type for IDs.  */
+using __time_t = __TIME_T_TYPE;           /* Seconds since the Epoch.  */
+using __timer_t = __TIMER_T_TYPE;         /* Seconds since the Epoch.  */
+using __useconds_t = __USECONDS_T_TYPE;   /* Count of microseconds.  */
+using __suseconds_t = __SUSECONDS_T_TYPE; /* Signed count of microseconds.  */
+using __suseconds64_t = __SUSECONDS64_T_TYPE;
 
-__STD_TYPE __DADDR_T_TYPE __daddr_t; /* The type of a disk address.  */
-__STD_TYPE __KEY_T_TYPE __key_t;     /* Type of an IPC key.  */
-
-#undef __STD_TYPE
+using __daddr_t = __DADDR_T_TYPE; /* The type of a disk address.  */
+using __key_t = __KEY_T_TYPE;     /* Type of an IPC key.  */

@@ -27,10 +27,10 @@ to_string(const T *str)
 };
 */
 template <is_string T>
-inline const char *
-c_str(const T &str)
+inline auto
+c_str(const T &str) -> const char*
 {
-  return &str[0];
+  return reinterpret_cast<const char*>(&str[0]);
 }
 
 namespace format

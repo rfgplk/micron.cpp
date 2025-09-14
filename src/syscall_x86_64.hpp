@@ -26,7 +26,7 @@ typedef __builtin_va_list va_list;
 // sourced from glibc.
 
 #ifdef MICRON_USE_GLIBC_SYSCALL
-#include <unistd.h>
+/*permitted*/#include <unistd.h>
 namespace micron
 {
 template <typename... Args>

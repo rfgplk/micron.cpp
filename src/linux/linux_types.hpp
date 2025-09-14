@@ -29,6 +29,10 @@ using off64_t = __off64_t;
 
 using syscall_long_t = __S64_TYPE;
 using syscall_ulong_t = __U64_TYPE;
+using blksize_t = __BLKSIZE_T_TYPE;
+using blkcnt_t = __BLKCNT_T_TYPE;
+using nlink_t = __NLINK_T_TYPE;
+using clock_t = __CLOCK_T_TYPE;
 
 using dev_t = __dev_t;
 

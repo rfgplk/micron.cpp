@@ -10,7 +10,7 @@
 #include "../string/strings.hpp"
 #include "io.hpp"
 #include "paths.hpp"
-#include <sys/stat.h>     // for mkfifo()
+//#include <sys/stat.h>     // for mkfifo()
 #include "../type_traits.hpp"
 #include <unistd.h>
 

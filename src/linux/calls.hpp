@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-
 #include "../types.hpp"
 #include "linux_types.hpp"
 
@@ -19,6 +18,12 @@ namespace micron
 namespace posix
 {
 auto
+raise(int sig)
+{
+  return micron::syscall(SYS_kill, static_cast<pid_t>(micron::syscall(SYS_getpid)), sig);
+}
+
+auto
 kill(posix::pid_t pid, int sig)
 {
   return micron::syscall(SYS_kill, pid, sig);
@@ -30,8 +35,8 @@ kill(posix::pid_t pid, int sig)
  *                     unsigned long tls);
  */
 
-
-// NOTE: these functions are here only for general utility, they can not be used as is without setting up the stack beforehand
+// NOTE: these functions are here only for general utility, they can not be used as is without setting up the stack
+// beforehand
 
 auto
 clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)
@@ -63,7 +68,7 @@ struct clone_args {
 };
 
 auto
-clone3_kernel(clone_args& args)
+clone3_kernel(clone_args &args)
 {
   return micron::syscall(SYS_clone3, &args, sizeof(args));
 }
@@ -74,15 +79,21 @@ fork_kernel(void)
   return micron::syscall(SYS_fork);
 }
 
-int dup(int old){
+int
+dup(int old)
+{
   return static_cast<int>(micron::syscall(SYS_dup, old));
 }
 
-int dup2(int old, int newfd){
+int
+dup2(int old, int newfd)
+{
   return static_cast<int>(micron::syscall(SYS_dup2, old, newfd));
 }
 
-int dup3(int old, int newfd, int flags){
+int
+dup3(int old, int newfd, int flags)
+{
   return static_cast<int>(micron::syscall(SYS_dup2, old, newfd, flags));
 }
 

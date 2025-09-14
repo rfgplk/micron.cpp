@@ -70,6 +70,21 @@ public:
     }
     return *this;
   };
+  shared_pointer &
+  operator=(Type *&t) noexcept
+  {
+    return operator=(micron::move(t));
+    return *this;
+  };
+  shared_pointer &
+  operator=(Type *&&t) noexcept
+  {
+    __delete(control->pnt);     // TODO: think about passing through stored type to __dealloc
+    __alloc::__impl_dealloc(control);
+    control = __alloc::__impl_alloc(t, 1);
+    t = nullptr;
+    return *this;
+  };
   template <is_nullptr V>
   shared_pointer &
   operator=(V) noexcept
