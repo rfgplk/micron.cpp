@@ -591,9 +591,9 @@ class __arena
   // TODO: add popping
   template <u64 Sz, typename F, typename G>
   void
-  __init_bucket(F &bucket, G *&tail, size_t n = __default_page_mul * __system_pagesize)
+  __init_bucket(F &bucket, G *&tail, size_t n = __default_magic_size)
   {
-    if ( n == __default_page_mul * __system_pagesize ) {
+    if ( n == __default_magic_size ) {
       // override default size depending on size of bucket provided
       // larger classes will inherently store more data, therefore should be init'd with far more memory
       // __calculate_space_x is in hooks.hpp

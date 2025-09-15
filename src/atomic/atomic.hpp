@@ -9,7 +9,7 @@
 #include "../types.hpp"
 
 #include "../type_traits.hpp"
-#include <initializer_list>
+#include "../__special/initializer_list"
 
 #ifdef __GNUC__
 #define USE_GCC_ATOMICS

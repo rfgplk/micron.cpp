@@ -7,11 +7,15 @@
 
 #include "arena.hpp"
 
+#include "../../mutex/locks.hpp"
+#include "../../mutex/mutex.hpp"
+
 // main thread-specific api functions go here
 // all external code (non-test) calling abcmalloc code should go through here
 
 namespace abc
 {
+micron::mutex __global_mutex;
 thread_local static bool __abcmalloc_init = false;
 thread_local static __arena *__main_arena = nullptr;
 
@@ -31,6 +35,15 @@ __global_abcmalloc_start(void)
   }
 }
 
+inline __attribute__((destructor(65535))) void
+__global_abcmalloc_finish(void)
+{
+  if constexpr ( __default_global_instance ) {
+    __abcmalloc_init = false;
+    __main_arena = nullptr;
+  }
+}
+
 // initialize abcmalloc, once per thread
 inline __attribute__((always_inline)) void
 __init_abcmalloc(void)
@@ -44,4 +57,14 @@ __init_abcmalloc(void)
   }
 }
 
+constexpr inline __attribute__((always_inline)) auto
+__guard_abcmalloc(void)
+{
+  if constexpr ( __default_multithread_safe == true ) {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__global_mutex);
+    return __lock;
+  } else if constexpr ( __default_multithread_safe == false ) {
+    return 0;
+  }
+}
 };

@@ -7,8 +7,6 @@
 
 #include "bits.hpp"
 
-#include <iostream>
-
 namespace micron
 {
 

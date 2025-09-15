@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../type_traits.hpp"
-#include <initializer_list>     // nigh impossible to implement without invoking the darkest of sorceries :c
+#include "../__special/initializer_list"
 
 #include "../bits/__container.hpp"
 

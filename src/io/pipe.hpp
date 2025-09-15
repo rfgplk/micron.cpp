@@ -12,7 +12,6 @@
 #include "paths.hpp"
 //#include <sys/stat.h>     // for mkfifo()
 #include "../type_traits.hpp"
-#include <unistd.h>
 
 namespace micron
 {
@@ -38,13 +37,13 @@ public:
   }
   upipe(utype t)
   {
-    if ( ::pipe(fd) == -1 )
+    if ( posix::pipe(fd) == -1 )
       throw except::io_error("micron::pipe failed to open pipe");
     tp = t;
   }
   upipe()
   {
-    if ( ::pipe(fd) == -1 )
+    if ( posix::pipe(fd) == -1 )
       throw except::io_error("micron::pipe failed to open pipe");
     tp = utype::upipe_writer;
   }

@@ -99,7 +99,11 @@ write(int fd, P *buf, size_t cnt)
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
   return micron::syscall(SYS_write, fd, micron::voidify(buf), cnt);
 }
-
+int
+pipe(int* fd)
+{
+  return micron::syscall(SYS_pipe, fd);
+}
 auto
 close(int fd)
 {

@@ -305,7 +305,6 @@ int
 sigwait(const micron::sigset_t &set, int &sig)
 {
   siginfo_t info = {};
-  timespec_t ts = {};
   int ret = 0;
   do {
     ret = static_cast<int>(micron::syscall(SYS_rt_sigtimedwait, &set, &info, nullptr, __sig_syscall_size));

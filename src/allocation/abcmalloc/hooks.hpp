@@ -20,7 +20,7 @@ __calculate_space_small(size_t sz)
   u64 t = static_cast<u64>((float)(sz * sz) / micron::math::log10f32((float)sz));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < 96 ? 96 : (size_t)t_2) * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 
@@ -33,7 +33,7 @@ __calculate_space_huge(size_t sz)
                            * (micron::math::logf128(micron::math::logf128(f_sz))));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < 96 ? 96 : (size_t)t_2) * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 inline size_t
@@ -46,7 +46,7 @@ __calculate_space_bulk(size_t sz)
       * micron::math::logf128(micron::math::logf128(micron::math::logf128(micron::math::logf128(f_sz)))));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < 96 ? 96 : (size_t)t_2) * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 inline size_t
@@ -57,7 +57,7 @@ __calculate_space_saturated(size_t sz)
   u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * (micron::math::logf128(micron::math::logf128(f_sz))));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < 96 ? 96 : (size_t)t_2) * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 void *

@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "attributes.hpp"
+
 #include "cmpl.hpp"
 #include "control.hpp"
 #include "endian.hpp"

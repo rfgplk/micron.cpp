@@ -15,10 +15,17 @@
 namespace abc
 {
 
+// NOTE: when __guard_abcmalloc leaves scope, it'll automatically release the underlying mutex
+
 // checks if pointer has been alloc.
 bool
 is_present(addr_t *ptr)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    return __main_arena->present(ptr);
+  }
   __init_abcmalloc();
   return __main_arena->present(ptr);
 }
@@ -26,13 +33,18 @@ is_present(addr_t *ptr)
 bool
 is_present(byte *ptr)
 {
-  return is_present(reinterpret_cast<addr_t*>(ptr));
+  return is_present(reinterpret_cast<addr_t *>(ptr));
 }
 
 // checks if pointer is addressable at any known page of the allocator, if it is it's valid
 bool
 within(addr_t *ptr)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    return __main_arena->has_provenance(ptr);
+  }
   __init_abcmalloc();
   return __main_arena->has_provenance(ptr);
 }
@@ -40,11 +52,17 @@ within(addr_t *ptr)
 bool
 within(byte *ptr)
 {
-  return within(reinterpret_cast<addr_t*>(ptr));
+  return within(reinterpret_cast<addr_t *>(ptr));
 }
 void
 relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely (NOTE: this will
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    __main_arena->reset_page(ptr);
+    return;
+  }
   __init_abcmalloc();
   __main_arena->reset_page(ptr);
 }
@@ -55,6 +73,11 @@ byte *unmark_at(byte *ptr, size_t size);     // hard unmark memory at addr. over
 micron::__chunk<byte>
 balloc(size_t size)     // allocates memory, returns entire memory chunk
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    return __main_arena->push(size);
+  }
   __init_abcmalloc();
   return __main_arena->push(size);
 }
@@ -62,6 +85,11 @@ balloc(size_t size)     // allocates memory, returns entire memory chunk
 micron::__chunk<byte>
 fetch(size_t size)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    return __main_arena->push(size);
+  }
   __init_abcmalloc();
   return __main_arena->push(size);
 }
@@ -71,6 +99,13 @@ template <typename T>
 T *
 fetch(void)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    auto mem = __main_arena->push(sizeof(T));
+    T *__obj = reinterpret_cast<T *>(mem.ptr);
+    return __obj;
+  }
   __init_abcmalloc();
   auto mem = __main_arena->push(sizeof(T));
   T *__obj = reinterpret_cast<T *>(mem.ptr);
@@ -80,6 +115,14 @@ fetch(void)
 void
 retire(byte *ptr)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    if ( __main_arena->ts_pop(ptr) ) {
+
+    }     // wasn't able to throw, add an error
+    return;
+  }
   __init_abcmalloc();
   if ( __main_arena->ts_pop(ptr) ) {
   }     // wasn't able to throw, add an error
@@ -99,6 +142,14 @@ __attribute__((malloc, alloc_size(1))) byte *salloc(size_t size);     // applies
 void
 dealloc(byte *ptr)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    if ( __main_arena->pop(ptr) ) {
+
+    }     // wasn't able to throw, add an error
+    return;
+  }
   __init_abcmalloc();
   if ( !__main_arena->pop(ptr) ) {
   }     // wasn't able to throw, add an error
@@ -107,6 +158,14 @@ dealloc(byte *ptr)
 void
 dealloc(byte *ptr, size_t len)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    if ( !__main_arena->pop({ ptr, len }) ) {
+
+    }     // wasn't able to throw, add an error
+    return;
+  }
   __init_abcmalloc();
   if ( !__main_arena->pop({ ptr, len }) ) {
   }     // wasn't able to throw, add an error
@@ -115,6 +174,14 @@ dealloc(byte *ptr, size_t len)
 void
 freeze(byte *ptr)
 {
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    if ( __main_arena->freeze(ptr) ) {
+
+    }     // wasn't able to throw, add an error
+    return;
+  }
   __init_abcmalloc();
   if ( __main_arena->freeze(ptr) ) {
   }

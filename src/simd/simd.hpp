@@ -9,7 +9,7 @@
 #include "dispatch.hpp"
 #include "load.hpp"
 #include "types.hpp"
-#include <initializer_list>
+#include "../__special/initializer_list"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"

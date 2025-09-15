@@ -19,8 +19,16 @@ constexpr static const u64 __class_large = (2 << 14);      // 32768
 constexpr static const u64 __class_huge = (2 << 17);       // 262133
 constexpr static const u64 __class_gb = (2 << 29);         // 1073741824
 
+// these two switches determine the number of *pages* to allocate on initialization, by default, it's 512 pages for the
+// internal abcmalloc metabuffer, and a minimum of 32 per each new sheet allocation
+constexpr static const u64 __default_arena_page_buf = 512;     // 2MiB for now... ~81k rnd allocations
+constexpr static const u64 __default_magic_size = micron::numeric_limits<u64>::max();
+constexpr static const u64 __default_minimum_page_mul = 32; // 131kB minimum per sheet, larger buckets will exceed this
+
 constexpr static const bool __default_single_instance = false;
 constexpr static const bool __default_global_instance = true;
+constexpr static const bool __default_multithread_safe = false;     // essentially, enables locks across API calls
+
 
 static_assert(
     __default_single_instance != __default_global_instance,
@@ -34,8 +42,7 @@ constexpr static const bool __default_saturated_mode
                 // allocation space accordingly
 constexpr static const u64 __default_overcommit
     = 2;     // overcommit multiplier, multiplies all page req. by this value. MUST BE GREATER THAN ONE AND INTEGRAL.
-constexpr static const u64 __default_arena_page_buf = 512;     // 2MiB for now... ~81k rnd allocations
-constexpr static const u64 __default_page_mul = 96;            // 393KiB as a baseline
+
 constexpr static const bool __default_init_large_pages = false;
 constexpr static const bool __default_oom_enable = false;     // NOTE: costs performance
 constexpr static const bool __default_launder_auto = true;

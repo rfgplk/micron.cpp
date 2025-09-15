@@ -60,6 +60,7 @@ read(int fd, const T (&buf)[N])
     return -1;
   return posix::read(fd, &buf, N);
 }
+/*
 template <typename T>
 inline ssize_t
 __read(FILE *fd, T *buf, size_t cnt)
@@ -77,7 +78,7 @@ __read(FILE *fd, const T (&buf)[N])
     return -1;
   return posix::read(fd->_fileno, &buf, N);
 }
-
+*/
 template <typename T = byte>
 inline ssize_t
 write(int fd, T *buf, size_t cnt)

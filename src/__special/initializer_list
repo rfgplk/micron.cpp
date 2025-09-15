@@ -1,0 +1,61 @@
+#ifndef _INITIALIZER_LIST
+#define _INITIALIZER_LIST
+
+// NOTE: this file must look *exactly* like this, including keeping the std:: namespace. initializer_list is special, it is not viable to reimplement it in another way.
+
+namespace std
+{
+template <class T> class initializer_list
+{
+public:
+  typedef T value_type;
+  typedef const T &reference;
+  typedef const T &const_reference;
+  typedef size_t size_type;
+  typedef const T *iterator;
+  typedef const T *const_iterator;
+
+private:
+  iterator __array;
+  size_type __len;
+
+  constexpr initializer_list(const_iterator __itr, size_type __l) : __array(__itr), __len(__l) {}
+
+public:
+  constexpr initializer_list() noexcept : __array(0), __len(0) {}
+
+  constexpr size_type
+  size() const noexcept
+  {
+    return __len;
+  }
+
+  constexpr const_iterator
+  begin() const noexcept
+  {
+    return __array;
+  }
+
+  constexpr const_iterator
+  end() const noexcept
+  {
+    return begin() + size();
+  }
+};
+
+template <class T>
+constexpr const T *
+begin(initializer_list<T> list) noexcept
+{
+  return list.begin();
+}
+
+template <class T>
+constexpr const T *
+end(initializer_list<T> list) noexcept
+{
+  return list.end();
+}
+};
+
+#endif     // _INITIALIZER_LIST

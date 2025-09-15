@@ -144,4 +144,3 @@ using df = double;
 
 using nullptr_t = decltype(nullptr);
 
-#define naked_fn __attribute__((naked)) void

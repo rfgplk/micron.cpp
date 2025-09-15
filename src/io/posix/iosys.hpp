@@ -48,6 +48,7 @@ using micron::renameat2;
 using micron::rmdir;
 using micron::syncfs;
 using micron::write;
+using micron::pipe;
 
 using micron::access_ok;
 using micron::execute_ok;
