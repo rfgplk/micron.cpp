@@ -73,8 +73,11 @@ Additionally, micron has taken great inspiration from the implementation of stan
 
 Is *micron* entirely independent of the STL yet? 
 
-No. There are still a few specific headers needed to compile *micron* (although they will be removed - soon), these are:
-- \<initializer_list>
+Yes.
+
+Is *micron* entirely independent of libc yet? 
+
+Not fully, there are a select few glibc specific headers still needed to fully compile micron.
 
 
 
@@ -86,17 +89,7 @@ Libraries
 -----------
 
 ### currently, micron provides the following core C++ libraries:
-- allocation
-- algorithms
-- containers
-- iterators
-- atomics
-- hashing
-- io
-- maps
-- math
-- parallel
-- threading 
+- (being reorganized)
 
 
 ## License
