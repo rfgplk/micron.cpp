@@ -35,7 +35,7 @@ struct __buddy_list {
   i64 max_order;
   size_t allocated_bytes;
   free_block *free_lists[Mx];     // on the stack
-
+  free_block *active[Mx];
   void
   __impl_init_memory(byte *_ptr, size_t _len)
   {
@@ -165,7 +165,53 @@ struct __buddy_list {
     // leeway. the offset is 256-bit to account properly for AVX2.
     return { ((byte *)blk + __hdr_offset), order_size(i) - __hdr_offset };
   }
+  T
+  temporal_allocate(size_t n) noexcept
+  {
+    n += sizeof(micron::simd::i256);
+    if ( n == 0 )
+      n = 1;
+    if ( !base )
+      return { nullptr, 0 };
 
+    size_t needed = (n + Min - 1) & ~(Min - 1);
+    needed += sizeof(i64);
+    i64 o = order_for_size(needed);
+    if ( o >= max_order )
+      return { nullptr, 0 };
+
+    size_t target_size = order_size(o);
+
+    // reuse existing allocation if this order was already allocated
+    if ( active[o] != nullptr ) {
+      return { reinterpret_cast<byte *>(active[o]) + __hdr_offset, target_size - __hdr_offset };
+    }
+
+    i64 i = o;
+    while ( i < max_order && free_lists[i] == nullptr )
+      ++i;
+    if ( i == max_order )
+      return { nullptr, 0 };
+
+    free_block *blk = free_lists[i];
+    free_lists[i] = blk->next;
+    while ( i > o ) {
+      --i;
+      size_t len = order_size(i);
+      byte *right = (byte *)blk + len;
+      free_block *buddy = (free_block *)right;
+      buddy->next = free_lists[i];
+      free_lists[i] = buddy;
+    }
+
+    i64 *hdr = reinterpret_cast<i64 *>(blk);
+    *hdr = static_cast<i64>(o);
+    allocated_bytes += target_size;
+
+    active[o] = blk;
+
+    return { ((byte *)blk + __hdr_offset), target_size - __hdr_offset };
+  }
   T
   allocate_exact(size_t n) noexcept
   {
@@ -263,6 +309,7 @@ struct __buddy_list {
         free_block *nb = (free_block *)addr;
         nb->next = free_lists[o];
         free_lists[o] = nb;
+        active[o] = nullptr; 
         return addr;
       }
     merged:

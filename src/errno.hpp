@@ -71,6 +71,7 @@ constexpr u32 deadlock = 35;
 constexpr u32 name_too_long = 36;
 constexpr u32 no_record_locks = 37;
 constexpr u32 bad_syscall = 38;
+constexpr u32 overflow = 75;
 
 constexpr const char *permissions_msg = "Operation not permitted *";
 constexpr const char *no_entry_msg = "No such file or directory *";

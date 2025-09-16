@@ -67,13 +67,20 @@ build core_tests_linux: cc_compile_cmnd_debug tests/core/linux.cpp
 build core_tests_channels: cc_compile_cmnd_debug tests/core/channels.cpp
 build core_tests_abcmalloc: cc_compile_cmnd_debug tests/core/abcmalloc.cpp
 build core_tests_abcmalloc_main: cc_compile_cmnd_debug tests/core/abcmalloc_main.cpp
+build core_tests_abcmalloc_imm: cc_compile_cmnd_debug tests/core/abcmalloc_imm.cpp
 build core_tests_abcmalloc_vet: cc_compile_cmnd_debug tests/core/abcmalloc_vet.cpp
 build core_tests_abcmalloc_thread: cc_compile_cmnd_debug tests/core/abcmalloc_thread.cpp
 build core_tests_abcmalloc_arena: cc_compile_cmnd_debug tests/core/abcmalloc_arena.cpp
 build core_tests_resources: cc_compile_cmnd_debug tests/core/resources.cpp
 
+build core_tests_abcmalloc_bench_abc_4gb: cc_compile_cmnd tests/core/abcmalloc_bench_abc_4gb.cpp
+build core_tests_abcmalloc_bench_abc_small: cc_compile_cmnd tests/core/abcmalloc_bench_abc_small.cpp
+build core_tests_abcmalloc_bench_abc_large: cc_compile_cmnd tests/core/abcmalloc_bench_abc_large.cpp
+build core_tests_abcmalloc_bench_abc_large_freq: cc_compile_cmnd tests/core/abcmalloc_bench_abc_large_freq.cpp
 build core_tests_abcmalloc_bench_abc: cc_compile_cmnd tests/core/abcmalloc_bench_abc.cpp
 build core_tests_abcmalloc_bench_malloc: cc_compile_cmnd tests/core/abcmalloc_bench_malloc.cpp
+
+build core_abcmalloc_benches: phony core_tests_abcmalloc_bench_abc_4gb core_tests_abcmalloc_bench_abc_small core_tests_abcmalloc_bench_abc_large_freq core_tests_abcmalloc_bench_abc_large core_tests_abcmalloc_bench_abc
 
 build core_tests: phony core_tests_syscall core_tests_strings core_tests_cmemory core_tests_pointers core_tests_mutex core_tests_once core_tests_cpu core_tests_thread core_tests_arena core_tests_linux core_tests_channels
 

@@ -10,8 +10,8 @@ main()
   if constexpr ( true ) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(1, 1000000);
-    for ( size_t n = 0; n < 10000; ++n ) {
+    std::uniform_int_distribution<int> dist(1, 1e6);
+    for ( size_t n = 0; n < 5000; ++n ) { //1-5gb
       void *dont_optimize = abc::malloc(dist(gen));
       escaped = dont_optimize;
     }

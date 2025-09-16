@@ -145,6 +145,16 @@ fwrite(T *ptr, size_t num, const fd_t &handle)
 inline void
 fflush(const fd_t &handle)
 {
+  if ( handle.has_error() or handle.closed() )
+    return;
+  // differentiate depending on handle, maintains cache loc.
+  if ( handle == stdout ) {
+    (*__global_buffer_stdout) >> handle;
+    return;
+  } else if ( handle == stderr ) {
+    (*__global_buffer_stderr) >> handle;
+    return;
+  }
 }
 
 inline __attribute__((always_inline)) void

@@ -22,7 +22,7 @@ bool
 is_present(addr_t *ptr)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     return __main_arena->present(ptr);
   }
@@ -41,7 +41,7 @@ bool
 within(addr_t *ptr)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     return __main_arena->has_provenance(ptr);
   }
@@ -58,7 +58,7 @@ void
 relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely (NOTE: this will
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     __main_arena->reset_page(ptr);
     return;
@@ -74,7 +74,7 @@ micron::__chunk<byte>
 balloc(size_t size)     // allocates memory, returns entire memory chunk
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     return __main_arena->push(size);
   }
@@ -86,7 +86,7 @@ micron::__chunk<byte>
 fetch(size_t size)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     return __main_arena->push(size);
   }
@@ -100,7 +100,7 @@ T *
 fetch(void)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     auto mem = __main_arena->push(sizeof(T));
     T *__obj = reinterpret_cast<T *>(mem.ptr);
@@ -116,7 +116,7 @@ void
 retire(byte *ptr)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     if ( __main_arena->ts_pop(ptr) ) {
 
@@ -143,7 +143,7 @@ void
 dealloc(byte *ptr)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     if ( __main_arena->pop(ptr) ) {
 
@@ -159,7 +159,7 @@ void
 dealloc(byte *ptr, size_t len)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     if ( !__main_arena->pop({ ptr, len }) ) {
 
@@ -175,7 +175,7 @@ void
 freeze(byte *ptr)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
-    auto __lock = micron::move(__guard_abcmalloc());
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
     if ( __main_arena->freeze(ptr) ) {
 
@@ -188,10 +188,23 @@ freeze(byte *ptr)
 }
 
 // gets all pointers alloc'd by abc
-void which(void);
+void
+which(void)
+{
+}
 
-void borrow();      //
-void launder();     // realloc's memory at address
+void borrow();     //
+__attribute__((malloc, alloc_size(1))) byte *
+launder(size_t size)
+{
+  if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
+    [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
+    __init_abcmalloc();
+    return __main_arena->launder(size).ptr;
+  }
+  __init_abcmalloc();
+  return __main_arena->launder(size).ptr;
+}
 void query();       // queries the allocator for info
 void make_at();     // creates memory at a set memory address
 

@@ -33,19 +33,19 @@ to_chunk(T *ptr, size_t len)
 inline addr_t *
 map_normal(addr_t *ptr, const size_t n)
 {
-  return reinterpret_cast<addr_t *>(micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+  return reinterpret_cast<addr_t *>(micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous, -1, 0));
 };
 
 inline addr_t *
 map_frozen(addr_t *ptr, const size_t n)
 {
-  return reinterpret_cast<addr_t *>(micron::mmap(ptr, n, PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+  return reinterpret_cast<addr_t *>(micron::mmap(ptr, n, prot_read, map_private | map_anonymous, -1, 0));
 };
 
 inline addr_t *
 map_large(addr_t *ptr, const size_t n)
 {
   return reinterpret_cast<addr_t *>(
-      micron::mmap(ptr, n, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0));
+      micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous | map_hugetlb, -1, 0));
 };
 };     // namespace micron

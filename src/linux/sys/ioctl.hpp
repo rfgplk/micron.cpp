@@ -8,83 +8,80 @@
 #include "../../syscall.hpp"
 #include "../../type_traits.hpp"
 
-namespace micron {
+namespace micron
+{
 
 template <typename... Args>
-requires ((micron::is_same_v<Args, unsigned long> && ...))
-int ioctl(int fd, Args... ops){
+  requires((micron::is_same_v<Args, unsigned long> && ...))
+int
+ioctl(int fd, Args... ops)
+{
   return micron::syscall(SYS_ioctl, fd, ops...);
 }
 
-#define _IOC_NRBITS	8
-#define _IOC_TYPEBITS	8
+#define _ioc_nrbits 8
+#define _ioc_typebits 8
 
 /*
  * Let any architecture override either of the following before
  * including this file.
  */
 
-#ifndef _IOC_SIZEBITS
-# define _IOC_SIZEBITS	14
+#ifndef _ioc_sizebits
+#define _ioc_sizebits 14
 #endif
 
-#ifndef _IOC_DIRBITS
-# define _IOC_DIRBITS	2
+#ifndef _ioc_dirbits
+#define _ioc_dirbits 2
 #endif
 
-#define _IOC_NRMASK	((1 << _IOC_NRBITS)-1)
-#define _IOC_TYPEMASK	((1 << _IOC_TYPEBITS)-1)
-#define _IOC_SIZEMASK	((1 << _IOC_SIZEBITS)-1)
-#define _IOC_DIRMASK	((1 << _IOC_DIRBITS)-1)
+#define _ioc_nrmask ((1 << _ioc_nrbits) - 1)
+#define _ioc_typemask ((1 << _ioc_typebits) - 1)
+#define _ioc_sizemask ((1 << _ioc_sizebits) - 1)
+#define _ioc_dirmask ((1 << _ioc_dirbits) - 1)
 
-#define _IOC_NRSHIFT	0
-#define _IOC_TYPESHIFT	(_IOC_NRSHIFT+_IOC_NRBITS)
-#define _IOC_SIZESHIFT	(_IOC_TYPESHIFT+_IOC_TYPEBITS)
-#define _IOC_DIRSHIFT	(_IOC_SIZESHIFT+_IOC_SIZEBITS)
+#define _ioc_nrshift 0
+#define _ioc_typeshift (_ioc_nrshift + _ioc_nrbits)
+#define _ioc_sizeshift (_ioc_typeshift + _ioc_typebits)
+#define _ioc_dirshift (_ioc_sizeshift + _ioc_sizebits)
 
-#ifndef _IOC_NONE
-# define _IOC_NONE	0U
+#ifndef _ioc_none
+#define _ioc_none 0u
 #endif
 
-#ifndef _IOC_WRITE
-# define _IOC_WRITE	1U
+#ifndef _ioc_write
+#define _ioc_write 1u
 #endif
 
-#ifndef _IOC_READ
-# define _IOC_READ	2U
+#ifndef _ioc_read
+#define _ioc_read 2u
 #endif
 
-#define _IOC(dir,type,nr,size) \
-	(((dir)  << _IOC_DIRSHIFT) | \
-	 ((type) << _IOC_TYPESHIFT) | \
-	 ((nr)   << _IOC_NRSHIFT) | \
-	 ((size) << _IOC_SIZESHIFT))
+#define _ioc(dir, type, nr, size)                                                                                       \
+  (((dir) << _ioc_dirshift) | ((type) << _ioc_typeshift) | ((nr) << _ioc_nrshift) | ((size) << _ioc_sizeshift))
 
-#define _IOC_TYPECHECK(t) (sizeof(t))
+#define _ioc_typecheck(t) (sizeof(t))
 
-#define _IO(type,nr)			_IOC(_IOC_NONE,(type),(nr),0)
-#define _IOR(type,nr,argtype)		_IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(argtype)))
-#define _IOW(type,nr,argtype)		_IOC(_IOC_WRITE,(type),(nr),(_IOC_TYPECHECK(argtype)))
-#define _IOWR(type,nr,argtype)		_IOC(_IOC_READ|_IOC_WRITE,(type),(nr),(_IOC_TYPECHECK(argtype)))
-#define _IOR_BAD(type,nr,argtype)	_IOC(_IOC_READ,(type),(nr),sizeof(argtype))
-#define _IOW_BAD(type,nr,argtype)	_IOC(_IOC_WRITE,(type),(nr),sizeof(argtype))
-#define _IOWR_BAD(type,nr,argtype)	_IOC(_IOC_READ|_IOC_WRITE,(type),(nr),sizeof(argtype))
+#define _io(type, nr) _ioc(_ioc_none, (type), (nr), 0)
+#define _ior(type, nr, argtype) _ioc(_ioc_read, (type), (nr), (_ioc_typecheck(argtype)))
+#define _iow(type, nr, argtype) _ioc(_ioc_write, (type), (nr), (_ioc_typecheck(argtype)))
+#define _iowr(type, nr, argtype) _ioc(_ioc_read | _ioc_write, (type), (nr), (_ioc_typecheck(argtype)))
+#define _ior_bad(type, nr, argtype) _ioc(_ioc_read, (type), (nr), sizeof(argtype))
+#define _iow_bad(type, nr, argtype) _ioc(_ioc_write, (type), (nr), sizeof(argtype))
+#define _iowr_bad(type, nr, argtype) _ioc(_ioc_read | _ioc_write, (type), (nr), sizeof(argtype))
 
 /* used to decode ioctl numbers.. */
-#define _IOC_DIR(nr)		(((nr) >> _IOC_DIRSHIFT) & _IOC_DIRMASK)
-#define _IOC_TYPE(nr)		(((nr) >> _IOC_TYPESHIFT) & _IOC_TYPEMASK)
-#define _IOC_NR(nr)		(((nr) >> _IOC_NRSHIFT) & _IOC_NRMASK)
-#define _IOC_SIZE(nr)		(((nr) >> _IOC_SIZESHIFT) & _IOC_SIZEMASK)
+#define _ioc_dir(nr) (((nr) >> _ioc_dirshift) & _ioc_dirmask)
+#define _ioc_type(nr) (((nr) >> _ioc_typeshift) & _ioc_typemask)
+#define _ioc_nr(nr) (((nr) >> _ioc_nrshift) & _ioc_nrmask)
+#define _ioc_size(nr) (((nr) >> _ioc_sizeshift) & _ioc_sizemask)
 
 /* ...and for the drivers/sound files... */
 
-#define IOC_IN		(_IOC_WRITE << _IOC_DIRSHIFT)
-#define IOC_OUT		(_IOC_READ << _IOC_DIRSHIFT)
-#define IOC_INOUT	((_IOC_WRITE|_IOC_READ) << _IOC_DIRSHIFT)
-#define IOCSIZE_MASK	(_IOC_SIZEMASK << _IOC_SIZESHIFT)
-#define IOCSIZE_SHIFT	(_IOC_SIZESHIFT)
-
-
-
+#define ioc_in (_ioc_write << _ioc_dirshift)
+#define ioc_out (_ioc_read << _ioc_dirshift)
+#define ioc_inout ((_ioc_write | _ioc_read) << _ioc_dirshift)
+#define iocsize_mask (_ioc_sizemask << _ioc_sizeshift)
+#define iocsize_shift (_ioc_sizeshift)
 
 };

@@ -102,7 +102,7 @@ write(int fd, P *buf, size_t cnt)
 int
 pipe(int* fd)
 {
-  return micron::syscall(SYS_pipe, fd);
+  return static_cast<int>(micron::syscall(SYS_pipe, fd));
 }
 auto
 close(int fd)

@@ -13,7 +13,7 @@
 namespace abc
 {
 
-void
+__attribute__((noreturn)) void
 abort_state(void)
 {
   micron::abort();
@@ -22,9 +22,9 @@ bool
 fail_state(void)
 {
   if constexpr ( __default_fail_result == 0 ) {
-    micron::abort();
+    abort_state();
   } else if constexpr ( __default_fail_result == 1 ) {
-    micron::abort();
+    abort_state();
   } else if constexpr ( __default_fail_result == 2 ) {
     return false;
   }

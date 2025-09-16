@@ -7,6 +7,7 @@
 
 // think about moving to /memory
 
+#include "../numerics.hpp"
 #include "../linux/linux_types.hpp"
 #include "../syscall.hpp"
 #include "../types.hpp"
@@ -21,108 +22,106 @@ namespace micron
 
 #ifndef PROT_READ     // rationale: if PROT_READ is already defined it almost certainly means sys/mman.h is being
                       // included
-#define MAP_FAILED (addr_t *)-1
-constexpr int PROT_READ = 0x1;             /* Page can be read.  */
-constexpr int PROT_WRITE = 0x2;            /* Page can be written.  */
-constexpr int PROT_EXEC = 0x4;             /* Page can be executed.  */
-constexpr int PROT_NONE = 0x0;             /* Page can not be accessed.  */
-constexpr int PROT_GROWSDOWN = 0x01000000; /* Extend change to start of
+constexpr static const addr_t *map_failed = numeric_limits<addr_t*>::max();
+constexpr static const int prot_read = 0x1;             /* page can be read.  */
+constexpr static const int prot_write = 0x2;            /* page can be written.  */
+constexpr static const int prot_exec = 0x4;             /* page can be executed.  */
+constexpr static const int prot_none = 0x0;             /* page can not be accessed.  */
+constexpr static const int prot_growsdown = 0x01000000; /* extend change to start of
                                       growsdown vma (mprotect only).  */
-constexpr int PROT_GROWSUP = 0x02000000;   /* Extend change to start of
+constexpr static const int prot_growsup = 0x02000000;   /* extend change to start of
                                       growsup vma (mprotect only).  */
 
-/* Sharing types (must choose one and only one of these).  */
-constexpr int MAP_SHARED = 0x01;          /* Share changes.  */
-constexpr int MAP_PRIVATE = 0x02;         /* Changes are private.  */
-constexpr int MAP_SHARED_VALIDATE = 0x03; /* Share changes and validate
+/* sharing types (must choose one and only one of these).  */
+constexpr static const int map_shared = 0x01;          /* share changes.  */
+constexpr static const int map_private = 0x02;         /* changes are private.  */
+constexpr static const int map_shared_validate = 0x03; /* share changes and validate
                                      extension flags.  */
-constexpr int MAP_DROPPABLE = 0x08;       /* Zero memory under memory pressure.  */
-constexpr int MAP_TYPE = 0x0f;            /* Mask for type of mapping.  */
+constexpr static const int map_droppable = 0x08;       /* zero memory under memory pressure.  */
+constexpr static const int map_type = 0x0f;            /* mask for type of mapping.  */
 
-/* Other flags.  */
-constexpr int MAP_FIXED = 0x10; /* Interpret addr exactly.  */
-constexpr int MAP_FILE = 0;
-constexpr int MAP_ANONYMOUS = 0x20; /* Don't use a file.  */
-constexpr int MAP_ANON = MAP_ANONYMOUS;
+/* other flags.  */
+constexpr static const int map_fixed = 0x10; /* interpret addr exactly.  */
+constexpr static const int map_file = 0;
+constexpr static const int map_anonymous = 0x20; /* don't use a file.  */
+constexpr static const int map_anon = map_anonymous;
 
 /* 0x0100 - 0x4000 flags are defined in asm-generic/mman.h */
-constexpr int MAP_POPULATE = 0x008000;        /* populate (prefault) pagetables */
-constexpr int MAP_NONBLOCK = 0x010000;        /* do not block on IO */
-constexpr int MAP_STACK = 0x020000;           /* give out an address that is best suited for process/thread stacks */
-constexpr int MAP_HUGETLB = 0x040000;         /* create a huge page mapping */
-constexpr int MAP_SYNC = 0x080000;            /* perform synchronous page faults for the mapping */
-constexpr int MAP_FIXED_NOREPLACE = 0x100000; /* MAP_FIXED which doesn't unmap underlying mapping */
+constexpr static const int map_populate = 0x008000; /* populate (prefault) pagetables */
+constexpr static const int map_nonblock = 0x010000; /* do not block on io */
+constexpr static const int map_stack = 0x020000; /* give out an address that is best suited for process/thread stacks */
+constexpr static const int map_hugetlb = 0x040000;         /* create a huge page mapping */
+constexpr static const int map_sync = 0x080000;            /* perform synchronous page faults for the mapping */
+constexpr static const int map_fixed_noreplace = 0x100000; /* map_fixed which doesn't unmap underlying mapping */
 
-constexpr int MAP_UNINITIALIZED = 0x4000000;
+constexpr static const int map_uninitialized = 0x4000000;
 
-/* When MAP_HUGETLB is set, bits [26:31] encode the log2 of the huge page size.
-The following definitions are associated with this huge page size encoding.
-It is responsibility of the application to know which sizes are supported on
-the running system.  See mmap(2) man page for details.  */
+/* when map_hugetlb is set, bits [26:31] encode the log2 of the huge page size.
+the following definitions are associated with this huge page size encoding.
+it is responsibility of the application to know which sizes are supported on
+the running system.  see mmap(2) man page for details.  */
 
-constexpr int MAP_HUGE_SHIFT = 26;
-constexpr int MAP_HUGE_MASK = 0x3f;
+constexpr static const int map_huge_shift = 26;
+constexpr static const int map_huge_mask = 0x3f;
 
-constexpr int MAP_HUGE_16KB = (14 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_64KB = (16 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_512KB = (19 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_1MB = (20 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_2MB = (21 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_8MB = (23 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_16MB = (24 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_32MB = (25 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_256MB = (28 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_512MB = (29 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_1GB = (30 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_2GB = (31 << MAP_HUGE_SHIFT);
-constexpr int MAP_HUGE_16GB = (34U << MAP_HUGE_SHIFT);
+constexpr static const int map_huge_16kb = (14 << map_huge_shift);
+constexpr static const int map_huge_64kb = (16 << map_huge_shift);
+constexpr static const int map_huge_512kb = (19 << map_huge_shift);
+constexpr static const int map_huge_1mb = (20 << map_huge_shift);
+constexpr static const int map_huge_2mb = (21 << map_huge_shift);
+constexpr static const int map_huge_8mb = (23 << map_huge_shift);
+constexpr static const int map_huge_16mb = (24 << map_huge_shift);
+constexpr static const int map_huge_32mb = (25 << map_huge_shift);
+constexpr static const int map_huge_256mb = (28 << map_huge_shift);
+constexpr static const int map_huge_512mb = (29 << map_huge_shift);
+constexpr static const int map_huge_1gb = (30 << map_huge_shift);
+constexpr static const int map_huge_2gb = (31 << map_huge_shift);
+constexpr static const int map_huge_16gb = (34u << map_huge_shift);
 
-/* Flags to `msync'.  */
-constexpr int MS_ASYNC = 1;      /* Sync memory asynchronously.  */
-constexpr int MS_SYNC = 4;       /* Synchronous memory sync.  */
-constexpr int MS_INVALIDATE = 2; /* Invalidate the caches.  */
+/* flags to `msync'.  */
+constexpr static const int ms_async = 1;      /* sync memory asynchronously.  */
+constexpr static const int ms_sync = 4;       /* synchronous memory sync.  */
+constexpr static const int ms_invalidate = 2; /* invalidate the caches.  */
 
-constexpr int MADV_NORMAL = 0;           /* No further special treatment.  */
-constexpr int MADV_RANDOM = 1;           /* Expect random page references.  */
-constexpr int MADV_SEQUENTIAL = 2;       /* Expect sequential page references.  */
-constexpr int MADV_WILLNEED = 3;         /* Will need these pages.  */
-constexpr int MADV_DONTNEED = 4;         /* Don't need these pages.  */
-constexpr int MADV_FREE = 8;             /* Free pages only if memory pressure.  */
-constexpr int MADV_REMOVE = 9;           /* Remove these pages and resources.  */
-constexpr int MADV_DONTFORK = 10;        /* Do not inherit across fork.  */
-constexpr int MADV_DOFORK = 11;          /* Do inherit across fork.  */
-constexpr int MADV_MERGEABLE = 12;       /* KSM may merge identical pages.  */
-constexpr int MADV_UNMERGEABLE = 13;     /* KSM may not merge identical pages.  */
-constexpr int MADV_HUGEPAGE = 14;        /* Worth backing with hugepages.  */
-constexpr int MADV_NOHUGEPAGE = 15;      /* Not worth backing with hugepages.  */
-constexpr int MADV_DONTDUMP = 16;        /* Explicitly exclude from the core dump,
+constexpr static const int madv_normal = 0;           /* no further special treatment.  */
+constexpr static const int madv_random = 1;           /* expect random page references.  */
+constexpr static const int madv_sequential = 2;       /* expect sequential page references.  */
+constexpr static const int madv_willneed = 3;         /* will need these pages.  */
+constexpr static const int madv_dontneed = 4;         /* don't need these pages.  */
+constexpr static const int madv_free = 8;             /* free pages only if memory pressure.  */
+constexpr static const int madv_remove = 9;           /* remove these pages and resources.  */
+constexpr static const int madv_dontfork = 10;        /* do not inherit across fork.  */
+constexpr static const int madv_dofork = 11;          /* do inherit across fork.  */
+constexpr static const int madv_mergeable = 12;       /* ksm may merge identical pages.  */
+constexpr static const int madv_unmergeable = 13;     /* ksm may not merge identical pages.  */
+constexpr static const int madv_hugepage = 14;        /* worth backing with hugepages.  */
+constexpr static const int madv_nohugepage = 15;      /* not worth backing with hugepages.  */
+constexpr static const int madv_dontdump = 16;        /* explicitly exclude from the core dump,
                                    overrides the coredump filter bits.  */
-constexpr int MADV_DODUMP = 17;          /* Clear the MADV_DONTDUMP flag.  */
-constexpr int MADV_WIPEONFORK = 18;      /* Zero memory on fork, child only.  */
-constexpr int MADV_KEEPONFORK = 19;      /* Undo MADV_WIPEONFORK.  */
-constexpr int MADV_COLD = 20;            /* Deactivate these pages.  */
-constexpr int MADV_PAGEOUT = 21;         /* Reclaim these pages.  */
-constexpr int MADV_POPULATE_READ = 22;   /* Populate (prefault) page tables
+constexpr static const int madv_dodump = 17;          /* clear the madv_dontdump flag.  */
+constexpr static const int madv_wipeonfork = 18;      /* zero memory on fork, child only.  */
+constexpr static const int madv_keeponfork = 19;      /* undo madv_wipeonfork.  */
+constexpr static const int madv_cold = 20;            /* deactivate these pages.  */
+constexpr static const int madv_pageout = 21;         /* reclaim these pages.  */
+constexpr static const int madv_populate_read = 22;   /* populate (prefault) page tables
                                     readable.  */
-constexpr int MADV_POPULATE_WRITE = 23;  /* Populate (prefault) page tables
+constexpr static const int madv_populate_write = 23;  /* populate (prefault) page tables
                                     writable.  */
-constexpr int MADV_DONTNEED_LOCKED = 24; /* Like MADV_DONTNEED, but drop
+constexpr static const int madv_dontneed_locked = 24; /* like madv_dontneed, but drop
                                     locked pages too.  */
-constexpr int MADV_COLLAPSE = 25;        /* Synchronous hugepage collapse.  */
-constexpr int MADV_HWPOISON = 100;       /* Poison a page for testing.  */
+constexpr static const int madv_collapse = 25;        /* synchronous hugepage collapse.  */
+constexpr static const int madv_hwpoison = 100;       /* poison a page for testing.  */
 
-#ifdef __USE_XOPEN2K
-constexpr int POSIX_MADV_NORMAL = 0;     /* No further special treatment.  */
-constexpr int POSIX_MADV_RANDOM = 1;     /* Expect random page references.  */
-constexpr int POSIX_MADV_SEQUENTIAL = 2; /* Expect sequential page references.  */
-constexpr int POSIX_MADV_WILLNEED = 3;   /* Will need these pages.  */
-constexpr int POSIX_MADV_DONTNEED = 4;   /* Don't need these pages.  */
-#endif
+constexpr static const int posix_madv_normal = 0;     /* no further special treatment.  */
+constexpr static const int posix_madv_random = 1;     /* expect random page references.  */
+constexpr static const int posix_madv_sequential = 2; /* expect sequential page references.  */
+constexpr static const int posix_madv_willneed = 3;   /* will need these pages.  */
+constexpr static const int posix_madv_dontneed = 4;   /* don't need these pages.  */
 
-constexpr int MCL_CURRENT = 1; /* Lock all currently mapped pages.  */
-constexpr int MCL_FUTURE = 2;  /* Lock all additions to address
+constexpr static const int mcl_current = 1; /* lock all currently mapped pages.  */
+constexpr static const int mcl_future = 2;  /* lock all additions to address
                           space.  */
-constexpr int MCL_ONFAULT = 4;
+constexpr static const int mcl_onfault = 4;
 #endif
 
 enum class mem_prots : int {
@@ -137,7 +136,7 @@ enum class mem_prots : int {
 
 enum class map_types : int {
   shared = 0x01,
-  map_private = 0x02,     // boo ;c
+  mmap_private = 0x02,     // boo ;c
   shared_validate = 0x03,
   droppable = 0x08,
   type = 0x0f,

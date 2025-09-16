@@ -56,7 +56,7 @@ public:
   bool
   freeze(void)
   {
-    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, micron::PROT_READ) != 0 ) {
+    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, micron::prot_read) != 0 ) {
       return false;
     }
     return true;
@@ -90,7 +90,17 @@ public:
       return { nullptr, 0 };
     return _p;
   }
-
+  // allows marking at existing location
+  micron::__chunk<byte>
+  temporal_mark(size_t mem_sz)
+  {
+    if ( empty() )
+      return { nullptr, 0 };
+    micron::__chunk<byte> _p = __book.temporal_allocate(mem_sz);
+    if ( _p.zero() or _p.invalid() )
+      return { nullptr, 0 };
+    return _p;
+  }
   // request to allocate mem of sz, fail loudly, force quote
   micron::__chunk<byte>
   try_mark(size_t mem_sz)
@@ -157,7 +167,7 @@ public:
   bool
   find(byte *_p)
   {
-    if(_p == nullptr)
+    if ( _p == nullptr )
       return false;
     if ( empty() )
       micron::abort();
@@ -182,18 +192,18 @@ public:
   {
     return __kernel_memory.len;
   }
-  byte *
+  addr_t *
   addr() const
   {
-    return __kernel_memory.ptr;
+    return reinterpret_cast<addr_t *>(__kernel_memory.ptr);
   }
-  byte *
+  addr_t *
   addr_end() const
   {
-    return __kernel_memory.ptr + __kernel_memory.len;
+    return reinterpret_cast<addr_t *>(__kernel_memory.ptr + __kernel_memory.len);
   }
   bool
-  is_at(byte *_addr) const
+  is_at(addr_t *_addr) const
   {
     if ( _addr >= addr() and _addr < addr_end() )
       return true;
