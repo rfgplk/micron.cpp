@@ -63,7 +63,7 @@ constexpr static const bool __default_insert_guard_pages = false;
 constexpr static const int __default_guard_page_perms = micron::prot_none;
 
 // NOTE: all of these cost a lot of performance
-constexpr static const bool __default_debug_notices = false;
+constexpr static const bool __default_debug_notices = true;
 constexpr static const bool __default_zero_on_alloc = false;
 constexpr static const bool __default_zero_on_free = false;
 constexpr static const bool __default_full_on_free = false;

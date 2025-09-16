@@ -108,10 +108,10 @@ class npipe
   micron::string pipe_name;     // name
   int fd; //fd of open pipe
 public:
-  ~npipe() { ::unlink(pipe_name.c_str()); posix::close(fd); }
+  ~npipe() { posix::unlink(pipe_name.c_str()); posix::close(fd); }
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str)
   {
-    if ( ::mkfifo(pipe_name.c_str(), perms) == -1 )
+    if ( posix::mkfifo(pipe_name.c_str(), perms) == -1 )
       throw except::io_error("micron::npipe(mkfifo) failed to create pipe");
     fd = posix::open(pipe_name.c_str(), O_RDWR);
     if(fd == -1)

@@ -9,7 +9,6 @@
 
 namespace micron
 {
-
 template <class Type> class shared_pointer : private __internal_pointer_alloc<shared_handler<Type>>
 {
   shared_handler<Type> *control;
@@ -24,154 +23,170 @@ public:
 
   ~shared_pointer()
   {
-    if ( control != nullptr ) [[likely]] {
-      if ( !--control->refs ) [[unlikely]] {
-        __delete(control->pnt);     // TODO: think about passing through stored type to __dealloc
-        __alloc::__impl_dealloc(control);
-        // delete control->pnt;
-        // delete control;
-      }
+    if ( control != nullptr && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
     }
-  };
-  shared_pointer(void)
-      : control(__alloc::__impl_alloc(__new<Type>(), 1)) {};     // new shared_handler<Type>({ new Type(), 1 })) {};
-  template <is_nullptr V> shared_pointer(V) : control(nullptr){};
-  shared_pointer(Type *p) : control(__impl_alloc(p, 1)) {};     // new shared_pointer_handler<Type>({ p, 1 })) {};
-  shared_pointer(const shared_pointer<Type> &t) : control(t.control)
+  }
+  shared_pointer() : control(nullptr) {}
+  template <is_nullptr V> shared_pointer(V) : control(nullptr) {}
+  explicit shared_pointer(Type *p) : control(p ? __alloc::__impl_alloc(p, 1) : nullptr) {}
+  shared_pointer(const shared_pointer &t) : control(t.control)
   {
-    if ( control != nullptr ) [[likely]]
-      control->refs++;
-  };
-  shared_pointer(shared_pointer<Type> &t) : control(t.control)
+    if ( control )
+      ++control->refs;
+  }
+  shared_pointer(shared_pointer &t) : control(t.control)
   {
-    if ( control != nullptr ) [[likely]]
-      control->refs++;
-  };
-  shared_pointer(shared_pointer<Type> &&t) noexcept : control(t.control) { t.control = nullptr; };
+    if ( control )
+      ++control->refs;
+  }
+  shared_pointer(shared_pointer &&t) noexcept : control(t.control) { t.control = nullptr; }
 
   template <class... Args>
-  shared_pointer(Args &&...args)
-      : control(__alloc::__impl_alloc(__new<Type>(forward<Args>(args)...),
-                                      1)){};     // control(new shared_handler<Type>({ new Type(args...), 1 })){};
-  shared_pointer &
-  operator=(shared_pointer<Type> &&o) noexcept
+  explicit shared_pointer(Args &&...args) : control(__alloc::__impl_alloc(__new<Type>(std::forward<Args>(args)...), 1))
   {
-    if ( control != nullptr ) {
+  }
+
+  shared_pointer &
+  operator=(shared_pointer &&o) noexcept
+  {
+    if ( this != &o ) {
+      if ( control != nullptr && --control->refs == 0 ) {
+        __delete(control->pnt);
+        __alloc::__impl_dealloc(control);
+      }
       control = o.control;
+      o.control = nullptr;
     }
     return *this;
-  };
+  }
+
   shared_pointer &
-  operator=(const shared_pointer<Type> &o) noexcept
+  operator=(const shared_pointer &o) noexcept
   {
-    if ( control != nullptr ) {
+    if ( this != &o ) {
+      if ( control != nullptr && --control->refs == 0 ) {
+        __delete(control->pnt);
+        __alloc::__impl_dealloc(control);
+      }
       control = o.control;
-      control->refs++;
+      if ( control )
+        ++control->refs;
     }
     return *this;
-  };
+  }
   shared_pointer &
-  operator=(Type *&t) noexcept
+  operator=(const Type &obj) noexcept
   {
-    return operator=(micron::move(t));
+    if ( control != nullptr && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = __alloc::__impl_alloc(__new<Type>(obj), 1);
     return *this;
-  };
+  }
+
+  shared_pointer &
+  operator=(Type &&obj) noexcept
+  {
+    if ( control != nullptr && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = __alloc::__impl_alloc(__new<Type>(std::move(obj)), 1);
+    return *this;
+  }
   shared_pointer &
   operator=(Type *&&t) noexcept
   {
-    __delete(control->pnt);     // TODO: think about passing through stored type to __dealloc
-    __alloc::__impl_dealloc(control);
-    control = __alloc::__impl_alloc(t, 1);
+    if ( control != nullptr && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = t ? __alloc::__impl_alloc(t, 1) : nullptr;
     t = nullptr;
     return *this;
-  };
+  }
+
+  shared_pointer &
+  operator=(Type *&t) noexcept
+  {
+    return (*this = std::move(t));
+  }
+
   template <is_nullptr V>
   shared_pointer &
   operator=(V) noexcept
   {
-    if ( control != nullptr ) {
-      control->refs--;
+    if ( control != nullptr && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
     }
+    control = nullptr;
     return *this;
-  };
+  }
+
   Type *
   operator()() noexcept
   {
-    if ( control != nullptr ) {
-      return control->pnt;
-    } else
-      return nullptr;
-  };
+    return control ? control->pnt : nullptr;
+  }
   const Type *
   operator()() const noexcept
   {
-    if ( control != nullptr ) {
-      return control->pnt;
-    } else
-      return nullptr;
-  };
+    return control ? control->pnt : nullptr;
+  }
 
   Type *
   operator->() noexcept
   {
-    if ( control != nullptr )
-      return control->pnt;
-    else
-      return nullptr;
-  };
+    return control ? control->pnt : nullptr;
+  }
   const Type *
   operator->() const noexcept
   {
-    if ( control != nullptr )
-      return control->pnt;
-    else
-      return nullptr;
-  };
+    return control ? control->pnt : nullptr;
+  }
 
-  bool
-  operator!(void) const noexcept
-  {
-    return control == nullptr;
-  };
   Type &
   operator*()
   {
-    if ( control != nullptr )
-      return *control->pnt;
-    else
+    if ( !control )
       throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
-  };
+    return *control->pnt;
+  }
+
   const Type &
   operator*() const
   {
-    if ( control != nullptr )
-      return *(control->pnt);
-    else
+    if ( !control )
       throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
-  };
+    return *control->pnt;
+  }
+
   Type *
-  get(void)
+  get()
   {
-    if ( control != nullptr )
-      return control->pnt;
-    else
-      throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
-  };
+    return control ? control->pnt : nullptr;
+  }
   const Type *
-  get(void) const
+  get() const
   {
-    if ( control != nullptr )
-      return control->pnt;
-    else
-      throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
-  };
+    return control ? control->pnt : nullptr;
+  }
+
+  bool
+  operator!() const noexcept
+  {
+    return control == nullptr;
+  }
+
   size_t
   refs() const noexcept
   {
-    if ( control != nullptr )
-      return control->refs;
-    else
-      return sizeof(size_t);
+    return control ? control->refs : 0;
   }
 };
+
 };

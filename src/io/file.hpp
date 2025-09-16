@@ -268,7 +268,8 @@ public:
     do {
       posix::lseek(__handle.fd, seek, seek_set);
       ssize_t bytes_read = io::read(__handle.fd, &(*bf), ((buffer_sz > sz) ? sz : buffer_sz));
-      if(bytes_read == 0) break;
+      if ( bytes_read == 0 )
+        break;
       if ( bytes_read == -1 ) [[unlikely]]
         throw except::io_error("micron::fsys::file error reading file");
       seek += static_cast<size_t>(bytes_read);
@@ -392,7 +393,7 @@ public:
     // nothing to write cancel
     if ( !data )
       return;
-    if ( __handle.closed())
+    if ( __handle.closed() )
       throw except::filesystem_error("micron::fsys::file fd isn't open");
     posix::lseek(__handle.fd, seek, seek_set);
     size_t sz = io::write(__handle.fd, &data, data.size());

@@ -5,87 +5,235 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../mutex/locks.hpp"
 #include "bits.hpp"
 
-namespace micron {
-
-template <typename T> using thread_safe_handler = atomic<shared_handler<T>>;
-// thread safe pointer
-template <class Type> class thread_pointer : private __internal_pointer_alloc<thread_safe_handler<Type>>
+namespace micron
 {
-  using pointer_type = threaded_pointer_tag;
+
+template <class Type> class thread_pointer
+{
+  shared_handler<Type> *control;
+  mutable micron::mutex mtx;
+
+public:
+  using pointer_type = owning_pointer_tag;
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
-  
-  using __alloc = __internal_pointer_alloc<thread_safe_handler<Type>>;
-  thread_safe_handler<Type> *control;
 
-public:
+  using __alloc = __internal_pointer_alloc<shared_handler<Type>>;
+
   ~thread_pointer()
   {
-    if ( control != nullptr ) [[likely]] {
-      auto *t = control->get();
-      if ( !--t->refs ) [[unlikely]] {
-        __delete(t->pnt);     // TODO: think about passing through stored type to __dealloc
-        __alloc::__impl_dealloc(t);
-        control->release();
+    micron::lock_guard lock(mtx);
+    if ( control && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+  }
+  thread_pointer() : control(nullptr) {}
+  template <is_nullptr V> thread_pointer(V) : control(nullptr) {}
+  explicit thread_pointer(Type *p)
+  {
+    micron::lock_guard lock(mtx);
+    control = p ? __alloc::__impl_alloc(p, 1) : nullptr;
+  }
+  thread_pointer(const thread_pointer &t)
+  {
+    micron::lock_guard lock(t.mtx);
+    control = t.control;
+    if ( control )
+      ++control->refs;
+  }
+
+  thread_pointer(thread_pointer &t)
+  {
+    micron::lock_guard lock(t.mtx);
+    control = t.control;
+    if ( control )
+      ++control->refs;
+  }
+
+  thread_pointer(thread_pointer &&t) noexcept
+  {
+    micron::lock_guard lock(t.mtx);
+    control = t.control;
+    t.control = nullptr;
+  }
+
+  template <class... Args> explicit thread_pointer(Args &&...args)
+  {
+    micron::lock_guard lock(mtx);
+    control = __alloc::__impl_alloc(__new<Type>(std::forward<Args>(args)...), 1);
+  }
+
+  thread_pointer &
+  operator=(thread_pointer &&o) noexcept
+  {
+    if ( this != &o ) {
+      micron::lock_guard lock_this(mtx);
+      micron::lock_guard lock_other(o.mtx);
+
+      if ( control && --control->refs == 0 ) {
+        __delete(control->pnt);
+        __alloc::__impl_dealloc(control);
       }
-    }
-  };
-  thread_pointer(void)
-      : control(__alloc::__impl_alloc(__new<Type>(), 1)) {};     // new shared_handler<Type>({ new Type(), 1 })) {};
 
-  thread_pointer(Type *p)
-      : control(__alloc::__impl_alloc(__new<Type>(), 1)) {}     // new thread_safe_handler<Type>({ p, 1 })) {};
-  thread_pointer(const thread_pointer<Type> &t) : control(t.control) { control->get()->refs++; };
-  thread_pointer(thread_pointer<Type> &&t) : control(t.control) { t.control = nullptr; };
-
-  template <class... Args>
-  thread_pointer(Args &&...args) : control(__alloc::__impl_alloc(__new<Type>(forward<Args>(args)...), 1))
-  {
-  }     // new thread_safe_handler<Type>({ new Type(args...), 1 })){};
-  const auto
-  operator=(const thread_safe_handler<Type> &o)
-  {
-    if ( control != nullptr ) {
       control = o.control;
-      control->get()->refs++;
-      control->release();
+      o.control = nullptr;
     }
-  };
+    return *this;
+  }
 
-  const auto
-  operator()() const
+  thread_pointer &
+  operator=(const thread_pointer &o) noexcept
   {
-    if ( control != nullptr ) {
-      auto t = control->get()->pnt;
-      control->release();
-      return t;
-    } else
-      return nullptr;
-  };
+    if ( this != &o ) {
+      micron::lock_guard lock_this(mtx);
+      micron::lock_guard lock_other(o.mtx);
+
+      if ( control && --control->refs == 0 ) {
+        __delete(control->pnt);
+        __alloc::__impl_dealloc(control);
+      }
+
+      control = o.control;
+      if ( control )
+        ++control->refs;
+    }
+    return *this;
+  }
+
+  thread_pointer &
+  operator=(const Type &obj) noexcept
+  {
+    micron::lock_guard lock(mtx);
+    if ( control && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = __alloc::__impl_alloc(__new<Type>(obj), 1);
+    return *this;
+  }
+
+  thread_pointer &
+  operator=(Type &&obj) noexcept
+  {
+    micron::lock_guard lock(mtx);
+    if ( control && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = __alloc::__impl_alloc(__new<Type>(std::move(obj)), 1);
+    return *this;
+  }
+
+  thread_pointer &
+  operator=(Type *&&t) noexcept
+  {
+    micron::lock_guard lock(mtx);
+    if ( control && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = t ? __alloc::__impl_alloc(t, 1) : nullptr;
+    t = nullptr;
+    return *this;
+  }
+
+  thread_pointer &
+  operator=(Type *&t) noexcept
+  {
+    return (*this = std::move(t));
+  }
+
+  template <is_nullptr V>
+  thread_pointer &
+  operator=(V) noexcept
+  {
+    micron::lock_guard lock(mtx);
+    if ( control && --control->refs == 0 ) {
+      __delete(control->pnt);
+      __alloc::__impl_dealloc(control);
+    }
+    control = nullptr;
+    return *this;
+  }
 
   Type *
-  operator->() const
+  operator()() noexcept
   {
-    if ( control != nullptr ) {
-      auto *t = *control->get()->pnt;
-      control->release();
-      return t;
-    } else
-      throw nullptr;
-  };
-  Type
+    micron::lock_guard lock(mtx);
+    return control ? control->pnt : nullptr;
+  }
+
+  const Type *
+  operator()() const noexcept
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->pnt : nullptr;
+  }
+
+  Type *
+  operator->() noexcept
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->pnt : nullptr;
+  }
+
+  const Type *
+  operator->() const noexcept
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->pnt : nullptr;
+  }
+
+  Type &
+  operator*()
+  {
+    micron::lock_guard lock(mtx);
+    if ( !control )
+      throw except::memory_error("thread_pointer operator*(): internal_pointer was null");
+    return *control->pnt;
+  }
+
+  const Type &
   operator*() const
   {
-    if ( control != nullptr ) {
-      auto t = *control->get()->pnt;
-      control->release();
-      return t;
-    } else
-      throw nullptr;
-  };
+    micron::lock_guard lock(mtx);
+    if ( !control )
+      throw except::memory_error("thread_pointer operator*(): internal_pointer was null");
+    return *control->pnt;
+  }
+
+  Type *
+  get()
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->pnt : nullptr;
+  }
+
+  const Type *
+  get() const
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->pnt : nullptr;
+  }
+
+  bool
+  operator!() const noexcept
+  {
+    micron::lock_guard lock(mtx);
+    return control == nullptr;
+  }
+
+  size_t
+  refs() const noexcept
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->refs : 0;
+  }
 };
 
 };

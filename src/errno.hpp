@@ -7,11 +7,16 @@
 
 #include "types.hpp"
 
-// errno port
-// TODO: fix this up, maybe even replace it entirely
-//extern int *__errno_location(void) __attribute__((const));
-//#define errno (*__errno_location())
-#include <cerrno>
+thread_local int __micron_errno = 0;
+
+int *
+__micron_errno_location(void)
+{
+  return &__micron_errno;
+}
+#ifndef errno
+#define errno (*__micron_errno_location())
+#endif
 
 namespace micron
 {

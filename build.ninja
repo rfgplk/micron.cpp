@@ -67,6 +67,7 @@ build core_tests_linux: cc_compile_cmnd_debug tests/core/linux.cpp
 build core_tests_channels: cc_compile_cmnd_debug tests/core/channels.cpp
 build core_tests_abcmalloc: cc_compile_cmnd_debug tests/core/abcmalloc.cpp
 build core_tests_abcmalloc_main: cc_compile_cmnd_debug tests/core/abcmalloc_main.cpp
+build core_tests_abcmalloc_alloc_free: cc_compile_cmnd_debug tests/core/abcmalloc_alloc_free.cpp
 build core_tests_abcmalloc_imm: cc_compile_cmnd_debug tests/core/abcmalloc_imm.cpp
 build core_tests_abcmalloc_vet: cc_compile_cmnd_debug tests/core/abcmalloc_vet.cpp
 build core_tests_abcmalloc_thread: cc_compile_cmnd_debug tests/core/abcmalloc_thread.cpp

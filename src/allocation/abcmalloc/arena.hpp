@@ -492,6 +492,8 @@ class __arena : private cache
   bool
   __vmap_freeze(const micron::__chunk<byte> &memory)
   {
+    if ( __find_and_freeze(&_cache_buffer, memory) )
+      return true;
     if ( __find_and_freeze(&_small_buckets, memory) )
       return true;
     if ( __find_and_freeze(&_medium_buckets, memory) )
@@ -505,6 +507,8 @@ class __arena : private cache
   bool
   __vmap_freeze_at(byte *addr)
   {
+    if ( __find_and_freeze(&_cache_buffer, addr) )
+      return true;
     if ( __find_and_freeze(&_small_buckets, addr) )
       return true;
     if ( __find_and_freeze(&_medium_buckets, addr) )
@@ -518,6 +522,8 @@ class __arena : private cache
   bool
   __vmap_tombstone(const micron::__chunk<byte> &memory)
   {
+    if ( __find_and_remove(&_cache_buffer, memory) )
+      return true;
     if ( __find_and_remove(&_small_buckets, memory) )
       return true;
     if ( __find_and_remove(&_medium_buckets, memory) )
@@ -531,6 +537,8 @@ class __arena : private cache
   bool
   __vmap_tombstone_at(byte *addr)
   {
+    if ( __find_and_tombstone(&_cache_buffer, addr) )
+      return true;
     if ( __find_and_tombstone(&_small_buckets, addr) )
       return true;
     if ( __find_and_tombstone(&_medium_buckets, addr) )
@@ -544,6 +552,8 @@ class __arena : private cache
   bool
   __vmap_within(addr_t *addr)
   {
+    if ( __within(&_cache_buffer, addr) )
+      return true;
     if ( __within(&_small_buckets, addr) )
       return true;
     if ( __within(&_medium_buckets, addr) )
@@ -559,6 +569,8 @@ class __arena : private cache
   {
     if constexpr ( !__default_tombstone )
       return false;
+    if ( __locate_at(&_cache_buffer, addr) )
+      return true;
     if ( __locate_at(&_small_buckets, addr) )
       return true;
     if ( __locate_at(&_medium_buckets, addr) )
@@ -572,6 +584,8 @@ class __arena : private cache
   bool
   __vmap_remove(const micron::__chunk<byte> &memory)
   {
+    if ( __find_and_remove(&_cache_buffer, memory) )
+      return true;
     if ( __find_and_remove(&_small_buckets, memory) )
       return true;
     if ( __find_and_remove(&_medium_buckets, memory) )
@@ -585,6 +599,8 @@ class __arena : private cache
   bool
   __vmap_remove_at(byte *addr)
   {
+    if ( __find_and_remove(&_cache_buffer, addr) )
+      return true;
     if ( __find_and_remove(&_small_buckets, addr) )
       return true;
     if ( __find_and_remove(&_medium_buckets, addr) )
@@ -749,6 +765,7 @@ public:
     // reclaims on ret)
 
     // NOTE: ONCE THESE CALLS FIRE ALL MEMORY IS UNMAPPED AND LOST IRREVOCABLY.
+    __release(_cache_buffer);
     __release(_small_buckets);
     __release(_medium_buckets);
     __release(_large_buckets);
@@ -1029,6 +1046,7 @@ or thread storage duration exits via an exception, the function std::terminate i
   total_usage(void) const
   {
     size_t total = 0;
+    total += __for_each_bckt(_cache_buffer, [](sheet<__class_precise> *const v) -> size_t { return v->allocated(); });
     total += __for_each_bckt(_small_buckets, [](sheet<__class_small> *const v) -> size_t { return v->allocated(); });
     total += __for_each_bckt(_medium_buckets, [](sheet<__class_medium> *const v) -> size_t { return v->allocated(); });
     total += __for_each_bckt(_large_buckets, [](sheet<__class_large> *const v) -> size_t { return v->allocated(); });
@@ -1052,6 +1070,7 @@ or thread storage duration exits via an exception, the function std::terminate i
       }
     };
 
+    __for_each_bckt_void(_cache_buffer, check, ptr);
     __for_each_bckt_void(_small_buckets, check, ptr);
     __for_each_bckt_void(_medium_buckets, check, ptr);
     __for_each_bckt_void(_large_buckets, check, ptr);

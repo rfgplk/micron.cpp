@@ -7,13 +7,9 @@
 
 #include "../linux/sys/signal.hpp"
 
-// #include <linux/sched.h> /* Definition of struct clone_args */
 #include <sched.h> /* Definition of CLONE_* constants */
 #include <spawn.h>
-// #include <sys/syscall.h>  /* Definition of SYS_* constants */
 #include "../linux/sys/signal.hpp"
-// #include <sys/wait.h>     // waitpid
-// #include <time.h>
 #include "../type_traits.hpp"
 #include <unistd.h>     // fork, close, daemon
 

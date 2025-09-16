@@ -14,7 +14,7 @@ for root, dirs, files in os.walk("src/", followlinks=False):
                 with open(path, "r", encoding="utf-8") as f:
                     for line in f:
                         stripped = line.strip()
-                        if not stripped.startswith("//") and "std::" in stripped or " ::" in stripped: #checking for both global namespace too
+                        if not stripped.startswith("//") and ("std::" in stripped or " ::" in stripped) and not "std::initializer_list" in stripped: #checking for both global namespace too
                             print(f"{RED}{path}{RESET}: {stripped}{RESET}")
             except Exception:
                 pass

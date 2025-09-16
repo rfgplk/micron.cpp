@@ -72,7 +72,7 @@ struct __buddy_list {
   __buddy_list(const T &mem) noexcept : base(nullptr), total(0), max_order(0), allocated_bytes(0)
   {
     if ( mem.zero() or mem.len < Min )
-      std::abort();
+      micron::abort();
     __impl_init_memory(mem.ptr, mem.len);
   }
   __buddy_list(const __buddy_list &) = delete;

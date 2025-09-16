@@ -17,8 +17,14 @@
 int
 main(void)
 {
+  try {
   mc::io::path_t bg = "/as/345";
   mc::console(mc::fsys::valid_path(bg));
   for(int i = 0; i < 100; i++)
     mc::fsys::make("/tmp/" + mc::to_string(i));
+  }
+  catch(mc::except::io_error& e)
+  {
+    mc::console(e.what());
+  }
 }

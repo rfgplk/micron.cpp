@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "types.hpp"
+
 #include <tuple>
 
 namespace micron
@@ -24,10 +26,10 @@ template <typename T> struct function_traits;
 // free functions
 template <typename R, typename... Args> struct function_traits<R(Args...)> {
   using return_type = R;
-  static constexpr std::size_t arity = sizeof...(Args);
+  static constexpr size_t arity = sizeof...(Args);
   using args_tuple = std::tuple<Args...>;
 
-  template <std::size_t N> using arg_type = typename std::tuple_element<N, args_tuple>::type;
+  template <size_t N> using arg_type = typename std::tuple_element<N, args_tuple>::type;
 };
 
 // function pointers
@@ -47,7 +49,7 @@ struct function_traits<R (C::*)(Args...) const> : function_traits<R(Args...)> {
 template <typename F> struct function_traits : function_traits<decltype(&F::operator())> {
 };
 
-template <typename Tuple, typename F, std::size_t... I>
+template <typename Tuple, typename F, size_t... I>
 constexpr void
 for_each_type_impl(F &&f, std::index_sequence<I...>)
 {

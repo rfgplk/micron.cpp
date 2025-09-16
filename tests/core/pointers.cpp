@@ -14,6 +14,10 @@ int
 main(void)
 {
   {
+    mc::thread_pointer<int> tptr(1);
+    mc::console((*tptr));
+  }
+  {
     mc::cptr<mc::vector<int>> cnst(10, 9);
     mc::console((*cnst)[2]);
   }

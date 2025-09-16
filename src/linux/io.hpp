@@ -100,7 +100,7 @@ write(int fd, P *buf, size_t cnt)
   return micron::syscall(SYS_write, fd, micron::voidify(buf), cnt);
 }
 int
-pipe(int* fd)
+pipe(int *fd)
 {
   return static_cast<int>(micron::syscall(SYS_pipe, fd));
 }
@@ -148,8 +148,6 @@ umask(mode_t mask)
 {
   return micron::syscall(SYS_umask, mask);
 }
-
-
 
 auto
 fsync(int fd)
@@ -207,7 +205,7 @@ fchmod(int fd, unsigned int mode)
 long
 fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags)
 {
-  return micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags); // why?
+  return micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags);     // why?
 }
 
 long
@@ -316,6 +314,16 @@ auto
 getdents64(int dirfd, void *dirp, unsigned int count)
 {
   return micron::syscall(SYS_getdents64, dirfd, dirp, count);
+}
+int
+mkfifo(const char *path, posix::mode_t mode)
+{
+  return micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0);
+}
+int
+unlink(const char *path)
+{
+  return micron::syscall(SYS_unlink, path);
 }
 
 };
