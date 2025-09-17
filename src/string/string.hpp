@@ -24,7 +24,6 @@ namespace micron
 {
 // null terminated
 
-
 template <typename T>
 concept non_class = !requires { typename T::type; };
 
@@ -491,13 +490,10 @@ public:
   inline hstring &
   insert(size_t ind, F ch, size_t cnt = 1)
   {
-    if ( __mem::length >= __mem::capacity or (__mem::length + cnt + 1) >= __mem::capacity )
+    if ( __mem::length + cnt >= __mem::capacity )
       reserve(__mem::capacity + 1);
-    char *buf = reinterpret_cast<char *>(malloc(cnt));
-    micron::typeset<T>(&buf[0], ch, cnt);
-    micron::bytemove(&(__mem::memory)[ind + cnt], &(__mem::memory)[ind], __mem::length - ind);
-    micron::memcpy(&(__mem::memory)[ind], &buf[0], cnt);
-    free(buf);
+    micron::bytemove(&__mem::memory[ind + cnt], &__mem::memory[ind], __mem::length - ind);
+    micron::memset(&__mem::memory[ind], ch, cnt);
     __mem::length += cnt;
     return *this;
   }
@@ -507,15 +503,12 @@ public:
   {
     if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity )
       reserve(__mem::capacity + 1);
-    ssize_t str_len = strlen(str);
-    char *buf = reinterpret_cast<char *>(malloc(cnt * str_len));
-    for ( size_t i = 0; i < cnt; i++ )
-      micron::memcpy(&buf[str_len * i], &str[0], str_len);
-    micron::bytemove(&(__mem::memory)[ind + (cnt * str_len)], &(__mem::memory)[ind], __mem::length - ind);
-    micron::memcpy(&(__mem::memory)[ind], &buf[0],
+    ssize_t str_len = M - 1;     // strlen(str);
 
-                   cnt * str_len);
-    free(buf);
+    micron::bytemove(&__mem::memory[ind + cnt * str_len], &__mem::memory[ind], __mem::length - ind);
+
+    for ( size_t i = 0; i < cnt; ++i )
+      micron::memcpy(&__mem::memory[ind + i * str_len], str, str_len);
     __mem::length += (cnt * str_len);
     return *this;
   }
@@ -543,12 +536,12 @@ public:
       reserve(__mem::capacity + cnt);
       itr = __mem::memory + dif;
     }
-    char *buf = reinterpret_cast<char *>(malloc(cnt));
-    micron::typeset<T>(&buf[0], ch, cnt);
-    micron::bytemove(itr + cnt, itr,
-                     __mem::length - (itr - &(__mem::memory)[0]));     // not null term
-    micron::memcpy(itr, &buf[0], cnt);
-    free(buf);
+
+    if ( itr < __mem::memory || itr > __mem::memory + __mem::length )
+      throw except::library_error("micron:string string() out of range");
+
+    micron::bytemove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
+    micron::memset(itr, ch, cnt);
     __mem::length += cnt;
     return *this;
   }
@@ -561,14 +554,13 @@ public:
       reserve(__mem::capacity + M);
       itr = __mem::memory + dif;
     }
+    ssize_t str_len = M - 1;     // strlen(str);
 
-    char *buf = reinterpret_cast<char *>(malloc(cnt * (M - 1)));
-    for ( size_t i = 0; i < cnt; i++ )
-      micron::memcpy(&buf[(M)*i], &str[0], (M));
-    micron::bytemove(itr + (cnt * (M)), itr, __mem::length - (itr - &(__mem::memory)[0]));
-    micron::memcpy(itr, &buf[0], cnt * (M));
-    free(buf);
-    __mem::length += (cnt * (M));
+    size_t tail_len = __mem::length - (itr - __mem::memory);
+    micron::bytemove(itr + cnt * str_len, itr, tail_len);
+    for ( size_t i = 0; i < cnt; ++i )
+      micron::memcpy(itr + i * str_len, str, str_len);
+    __mem::length += (cnt * str_len);
     return *this;
   }
   template <typename F = T>

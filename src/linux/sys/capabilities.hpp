@@ -8,8 +8,8 @@
 #include <linux/capability.h>
 #include <sys/capability.h>
 
-#include "../../array.hpp"
-#include "../../svector.hpp"
+#include "../../array/arrays.hpp"
+#include "../../vector/svector.hpp"
 #include "../../linux/process/system.hpp"
 #include "../../types.hpp"
 

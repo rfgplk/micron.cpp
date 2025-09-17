@@ -378,6 +378,8 @@ public:
   inline sstring &
   erase(I ind, size_t cnt = 1)
   {
+    if ( ind > length || cnt > length - ind )
+      throw except::library_error("micron:sstring erase() out of range");
     if ( cnt > N )
       throw except::library_error("micron:sstring erase() out of range");
     if ( !cnt )
@@ -392,6 +394,8 @@ public:
   inline sstring &
   erase(iterator itr, size_t cnt = 1)
   {
+    if ( itr < begin() or itr > end() or cnt > (end() - itr) )
+      throw except::library_error("micron:sstring erase() out of range");
     if ( cnt > N )
       throw except::library_error("micron:sstring erase() out of range");
     // micron::memmove(itr - cnt + 1, itr, length - (&memory[0] - itr - 1));
@@ -404,6 +408,8 @@ public:
   inline sstring &
   erase(const_iterator itr, size_t cnt = 1)
   {
+    if ( itr < begin() or itr > end() or cnt > (end() - itr) )
+      throw except::library_error("micron:sstring erase() out of range");
     if ( cnt > N )
       throw except::library_error("micron:sstring erase() out of range");
     micron::bytemove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
@@ -416,13 +422,10 @@ public:
   inline sstring &
   insert(size_t ind, F ch, size_t cnt = 1)
   {
-    if ( length >= N or length + cnt >= N )
+    if ( ind > length || cnt > N - length )
       throw except::library_error("micron:sstring insert() out of range");
-    char *buf = reinterpret_cast<char *>(malloc(cnt));
-    micron::typeset<T>(&buf[0], ch, cnt);
     micron::bytemove(&memory[ind + cnt], &memory[ind], length - ind);
-    micron::memcpy(&memory[ind], &buf[0], cnt);
-    free(buf);
+    micron::typeset<T>(&memory[ind], ch, cnt);
     length += cnt;
     return *this;
   }
@@ -430,15 +433,14 @@ public:
   inline sstring &
   insert(size_t ind, const F (&str)[M], size_t cnt = 1)
   {
-    if ( length >= N or length + cnt >= N )
+    ssize_t str_len = M - 1;     // strlen(str);
+    if ( ind > length || length + cnt * str_len > N )
       throw except::library_error("micron:sstring insert() out of range");
-    ssize_t str_len = strlen(str);
-    char *buf = reinterpret_cast<char *>(malloc(cnt * str_len));
-    for ( size_t i = 0; i < cnt; i++ )
-      micron::memcpy(&buf[str_len * i], &str[0], str_len);
-    micron::bytemove(&memory[ind + (cnt * str_len)], &memory[ind], length - ind);
-    micron::memcpy(&memory[ind], &buf[0], cnt * str_len);
-    free(buf);
+
+    micron::bytemove(&memory[ind + cnt * str_len], &memory[ind], length - ind);
+    for ( size_t i = 0; i < cnt; ++i )
+      micron::memcpy(&memory[ind + i * str_len], str, str_len);
+
     length += (cnt * str_len);
     return *this;
   }
@@ -448,11 +450,8 @@ public:
   {
     if ( length >= N or length + cnt >= N )
       throw except::library_error("micron:sstring insert() out of range");
-    char *buf = reinterpret_cast<char *>(malloc(cnt));
-    micron::typeset<T>(&buf[0], ch, cnt);
     micron::bytemove(itr + cnt, itr, length - (&memory[0] - itr - 1));
-    micron::memcpy(itr, &buf[0], cnt);
-    free(buf);
+    micron::typeset<T>(itr, ch, cnt);
     length += cnt;
     return *this;
   }
@@ -460,15 +459,14 @@ public:
   inline sstring &
   insert(iterator itr, const F (&str)[M], size_t cnt = 1)
   {
-    if ( length >= N or length + cnt >= N )
+    size_t str_len = M - 1;
+    if ( itr < memory || itr > memory + length || length + cnt * str_len > N )
       throw except::library_error("micron:sstring insert() out of range");
-    ssize_t str_len = strlen(str);
-    char *buf = reinterpret_cast<char *>(malloc(cnt * str_len));
-    for ( size_t i = 0; i < cnt; i++ )
-      micron::memcpy(&buf[str_len * i], &str[0], str_len);
-    micron::bytemove(itr + (cnt * str_len), itr, length - (&memory[0] - itr - 1));
-    micron::memcpy(itr, &buf[0], cnt * str_len);
-    free(buf);
+
+    micron::bytemove(itr + cnt * str_len, itr, (memory + length) - itr);
+
+    for ( size_t i = 0; i < cnt; ++i )
+      micron::memcpy(itr + i * str_len, str, str_len);
     length += (cnt * str_len);
     return *this;
   }

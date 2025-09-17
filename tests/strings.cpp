@@ -4,6 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+#include "../src/string/string_view.hpp"
 #include "../src/string/strings.hpp"
 #include "../src/string/unistring.hpp"
 #include "../src/io/print.hpp"
@@ -20,6 +21,9 @@ main(void)
   test.insert((size_t)0, "Hello");
   mc::io::println(test);
   mc::sstr<256> test_stack = "Hello World!";
+  mc::string_view<mc::sstr<256>> vw(test_stack);
+  test_stack.insert(6, '-', 5);
+  test_stack.insert((size_t)0, '"', 1);
   mc::io::println("Substr: ", test.substr((test.size()) - 3, 3));
   mc::io::println("Substr: ", test_stack.substr((test_stack.size()) - 3, 3));
   mc::io::println("Ends with: ", ends_with(test, "ld!"));
@@ -29,8 +33,10 @@ main(void)
   mc::io::println("Size check: (true) ", test.size() == test_stack.size());
   mc::io::println("Size check: (true) ", test.size() == mc::strlen("Hello World!"));
   mc::io::println("Size check: (true) ", test.size() == mc::strlen(test.c_str()));
-  for ( size_t i = 0; i < 100000; i++ )
+  mc::io::println(test_stack);
+  for ( size_t i = 0; i < 10000; i++ )
     test.insert(5, "{||||-bla-||||}");
+  mc::io::println("Inserted");
   mc::string first = "John";
   mc::string second = "Bananaseed";
   mc::io::println(first + " " + second);

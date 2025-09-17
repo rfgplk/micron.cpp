@@ -15,14 +15,15 @@ namespace micron
 {
 
 template <typename T, class Alloc = micron::allocator_serial<>>
-class binary_heap : private Alloc, public immutable_memory<T>
+class binary_heap : public __immutable_memory_resource<T>
 {
+  using __mem = __immutable_memory_resource<T, Alloc>;
   inline void
   make_heap(size_t j)
   {
     auto k = (j - 1) / 2;
-    if ( j > 0 and immutable_memory<T>::memory[k] < immutable_memory<T>::memory[j] ) {
-      micron::swap(immutable_memory<T>::memory[k], immutable_memory<T>::memory[j]);
+    if ( j > 0 and __mem::memory[k] < __mem::memory[j] ) {
+      micron::swap(__mem::memory[k], __mem::memory[j]);
       make_heap(k);
     }
   }
@@ -34,14 +35,14 @@ class binary_heap : private Alloc, public immutable_memory<T>
     int right = 2 * j + 2;
     int max = j;
 
-    if ( left < immutable_memory<T>::length && immutable_memory<T>::memory[left] > immutable_memory<T>::memory[max] ) {
+    if ( left < __mem::length && __mem::memory[left] > __mem::memory[max] ) {
       max = left;
     }
-    if ( right < immutable_memory<T>::length && immutable_memory<T>::memory[right] > immutable_memory<T>::memory[max] ) {
+    if ( right < __mem::length && __mem::memory[right] > __mem::memory[max] ) {
       max = right;
     }
     if ( max != j ) {
-      micron::swap(immutable_memory<T>::memory[j], immutable_memory<T>::memory[max]);
+      micron::swap(__mem::memory[j], __mem::memory[max]);
       reduce_heap(max);
     }
   }
@@ -62,26 +63,25 @@ public:
   typedef const T *const_iterator;
   ~binary_heap()
   {
-    if ( contiguous_memory_no_copy<T>::memory == nullptr )
+    if ( __mem::memory == nullptr )
       return;
     clear();
-    this->destroy(to_chunk(immutable_memory<T>::memory, immutable_memory<T>::capacity));
   }
   binary_heap(void)
-      : immutable_memory<T>(this->create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T))))
+      : __mem((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))
   {
   }
-  template <T... Args> binary_heap(Args &&...args) : immutable_memory<T>(this->create(sizeof...(args) * sizeof(T)))
+  template <T... Args> binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T)))
   {
     (insert(args), ...);
   }
-  binary_heap(const size_t n) : immutable_memory<T>(this->create(n * sizeof(T))) {}
+  binary_heap(const size_t n) : __mem(n * sizeof(T)) {}
   binary_heap(const binary_heap &o) = delete;
   binary_heap(binary_heap &&o)
   {
-    immutable_memory<T>::memory = o.memory;
-    immutable_memory<T>::length = o.length;
-    immutable_memory<T>::capacity = o.capacity;
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
     o.memory = 0;
     o.length = 0;
     o.capacity = 0;
@@ -90,9 +90,9 @@ public:
   binary_heap &
   operator=(binary_heap &&o)
   {
-    immutable_memory<T>::memory = o.memory;
-    immutable_memory<T>::length = o.length;
-    immutable_memory<T>::capacity = o.capacity;
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
     o.memory = 0;
     o.length = 0;
     o.capacity = 0;
@@ -101,29 +101,29 @@ public:
   binary_heap &
   insert(T &&v)
   {
-    if ( immutable_memory<T>::length == immutable_memory<T>::capacity )
+    if ( __mem::length == __mem::capacity )
       return;
     if constexpr ( micron::is_class_v<T> )
-      immutable_memory<T>::memory[immutable_memory<T>::length] = micron::move(v);
+      __mem::memory[__mem::length] = micron::move(v);
     else
-      immutable_memory<T>::memory[immutable_memory<T>::length] = v;
-    make_heap(immutable_memory<T>::length++);
+      __mem::memory[__mem::length] = v;
+    make_heap(__mem::length++);
   }
   T
   get()
   {
-    if ( !immutable_memory<T>::length )
+    if ( !__mem::length )
       throw except::library_error("micron::binary_heap::get() is empty");
     if constexpr ( micron::is_class_v<T> ) {
-      T v = micron::move(immutable_memory<T>::memory[0]);
-      immutable_memory<T>::memory[0] = micron::move(immutable_memory<T>::memory[immutable_memory<T>::length - 1]);
-      immutable_memory<T>::length--;
+      T v = micron::move(__mem::memory[0]);
+      __mem::memory[0] = micron::move(__mem::memory[__mem::length - 1]);
+      __mem::length--;
       reduce_heap(0);
       return v;
     } else {
-      T v = immutable_memory<T>::memory[0];
-      immutable_memory<T>::memory[0] = (immutable_memory<T>::memory[immutable_memory<T>::length - 1]);
-      immutable_memory<T>::length--;
+      T v = __mem::memory[0];
+      __mem::memory[0] = (__mem::memory[__mem::length - 1]);
+      __mem::length--;
       reduce_heap(0);
       return v;
     }
@@ -131,19 +131,19 @@ public:
   size_t
   size() const
   {
-    return immutable_memory<T>::length;
+    return __mem::length;
   }
   size_t
   max_size() const
   {
-    return immutable_memory<T>::capacity;
+    return __mem::capacity;
   }
   T
   max() const
   {
-    if ( immutable_memory<T>::memory == nullptr )
+    if ( __mem::memory == nullptr )
       throw except::library_error("micron::binary_heap::max() is empty.");
-    return immutable_memory<T>::memory[0];
+    return __mem::memory[0];
   }
 };
 };

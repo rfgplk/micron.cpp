@@ -11,6 +11,13 @@
 
 namespace micron
 {
+
+template <typename T>
+constexpr micron::remove_cv_t<T>& 
+mutable_cast(T& val) noexcept {
+  return const_cast<micron::remove_cv_t<T>&>(val);
+}
+
 template <typename T>
 constexpr T &&
 forward(micron::remove_reference_t<T> &t) noexcept

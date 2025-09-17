@@ -5,9 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "types.hpp"
 #include "except.hpp"
 #include "type_traits.hpp"
+#include "types.hpp"
 
 namespace micron
 {
@@ -33,7 +33,7 @@ public:
   view() = delete;
   view(T s) : start(s), _end(nullptr) {}
   view(T s, T e) : start(s), _end(e) {}
-  template <typename F> view(F &f) : start(reinterpret_cast<T>(&f)), _end(reinterpret_cast<T>(&f + sizeof(F))) {}
+  template <typename F> view(F &f) : start(reinterpret_cast<T>(f.begin())), _end(reinterpret_cast<T>(f.end())) {}
   view(const view &) = delete;
   view(view &&) = delete;
   view &operator=(const view &) = delete;

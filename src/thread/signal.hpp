@@ -7,13 +7,13 @@
 
 #include "../linux/sys/signal.hpp"
 
-#include <sched.h> /* Definition of CLONE_* constants */
-#include <spawn.h>
 #include "../linux/sys/signal.hpp"
 #include "../type_traits.hpp"
+#include <sched.h> /* Definition of CLONE_* constants */
+#include <spawn.h>
 #include <unistd.h>     // fork, close, daemon
 
-#include "array.hpp"
+#include "array/arrays.hpp"
 #include "types.hpp"
 namespace micron
 {
@@ -108,7 +108,12 @@ public:
     return _signal;
   };
   int
-  operator()()     // wait for signal
+  wait(void) // NOTE: can't be const sigwait modifies _sig
+  {
+    return micron::sigwait(_signal, _sig);
+  }
+  int
+  operator()(void)     // wait for signal
   {
     return micron::sigwait(_signal, _sig);
   }

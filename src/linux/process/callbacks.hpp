@@ -7,7 +7,7 @@
 
 #include "../../io/posix/iosys.hpp"
 
-#include "../../array.hpp"
+#include "../../array/arrays.hpp"
 #include "../../mutex/mutex.hpp"
 #include "../../mutex/locks.hpp"
 

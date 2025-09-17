@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../type_traits.hpp"
 #include "../__special/initializer_list"
+#include "../type_traits.hpp"
 
 #include "../bits/__container.hpp"
 
@@ -459,6 +459,27 @@ public:
     return (__mem::memory) + (__mem::length);
   }
   inline iterator
+  insert(size_t n, const T &val, size_t cnt)
+  {
+    if ( !__mem::length ) {
+      for ( size_t i = 0; i < cnt; ++i )
+        push_back(val);
+      return begin();
+    }
+    if ( __mem::length + cnt > __mem::capacity )
+      reserve(__mem::capacity + 1);
+    if ( n >= __mem::length )
+      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+    T *its = &(__mem::memory)[n];
+    T *ite = &(__mem::memory)[__mem::length - 1];
+    micron::memmove(its + cnt, its, ite - its);
+    //*its = (val);
+    for ( size_t i = 0; i < cnt; ++i )
+      new (its + i) T(val);
+    __mem::length += cnt;
+    return its;
+  }
+  inline iterator
   insert(size_t n, const T &val)
   {
     if ( !__mem::length ) {
@@ -467,6 +488,8 @@ public:
     }
     if ( __mem::length + 1 > __mem::capacity )
       reserve(__mem::capacity + 1);
+    if ( n >= __mem::length )
+      throw except::library_error("micron::vector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
     T *ite = &(__mem::memory)[__mem::length - 1];
     micron::memmove(its + 1, its, ite - its);
@@ -484,6 +507,8 @@ public:
     }
     if ( __mem::length + 1 > __mem::capacity )
       reserve(__mem::capacity + 1);
+    if ( n >= __mem::length )
+      throw except::library_error("micron::vector insert(): out of allocated memory range.");
     T *its = itr(n);
     T *ite = end();
     micron::memmove(its + 1, its, (ite - its));
@@ -500,15 +525,40 @@ public:
       push_back(val);
       return begin();
     }
-    if ( (__mem::length + sizeof(T)) >= __mem::capacity ) {
+    if ( (__mem::length) >= __mem::capacity ) {
       size_t dif = static_cast<size_t>(it - __mem::memory);
       reserve(__mem::capacity + 1);
       it = __mem::memory + dif;
     }     // invalidated if
+    if ( it >= end() or it < begin() )
+      throw except::library_error("micron::vector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + 1, it, ite - it);
     new (it) T(micron::move(val));
     //*it = (val);
+    __mem::length++;
+    return it;
+  }
+  inline iterator
+  insert(iterator it, const T &val, const size_t cnt)
+  {
+    if ( !__mem::length ) {
+      for ( size_t i = 0; i < cnt; ++i )
+        push_back(val);
+      return begin();
+    }
+    if ( __mem::length >= __mem::capacity ) {
+      size_t dif = it - __mem::memory;
+      reserve(__mem::capacity + 1);
+      it = __mem::memory + dif;
+    }
+    if ( it >= end() or it < begin() )
+      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+    T *ite = end();
+    micron::memmove(it + cnt, it, ite - it);
+    //*it = (val);
+    for ( size_t i = 0; i < cnt; ++i )
+      new (it + i) T(val);
     __mem::length++;
     return it;
   }
@@ -524,6 +574,8 @@ public:
       reserve(__mem::capacity + 1);
       it = __mem::memory + dif;
     }
+    if ( it >= end() or it < begin() )
+      throw except::library_error("micron::vector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + 1, it, ite - it);
     //*it = (val);

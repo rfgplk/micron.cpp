@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../array.hpp"
+#include "../array/arrays.hpp"
 #include "../vector/fvector.hpp"
 #include "../memory/new.hpp"
 #include "../pointer.hpp"

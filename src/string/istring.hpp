@@ -406,35 +406,32 @@ public:
   insert(size_t ind, F ch, size_t cnt = 1)
   {
     istring t(__mem::length + cnt);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
-                   &__mem::memory[0], __mem::length);
-    t.length += __mem::length;
-    char *buf = reinterpret_cast<char *>(malloc(cnt));
-    micron::typeset<T>(&buf[0], ch, cnt);
-    micron::bytemove(&(t.memory)[ind + cnt], &(t.memory)[ind], t.length - ind);
-    micron::memcpy(&(t.memory)[ind], &buf[0], cnt);
-    free(buf);
-    t.length += cnt;
+
+    micron::memcpy(t.memory, __mem::memory, ind);
+    micron::typeset<T>(t.memory + ind, ch, cnt);
+    micron::memcpy(t.memory + ind + cnt, __mem::memory + ind, __mem::length - ind);
+
+    t.length = __mem::length + cnt;
     return t;
   }
   template <typename F = T, size_t M>
-  inline istring
-  insert(size_t ind, const F (&str)[M], size_t cnt = 1)
+  inline istring istring
+  insert(size_t ind, const char (&str)[M], size_t cnt = 1)
   {
-    istring t(__mem::length + (M * cnt));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
-                   &__mem::memory[0], __mem::length);
-    t.length += __mem::length;
-    ssize_t str_len = strlen(str);
-    char *buf = reinterpret_cast<char *>(malloc(cnt * str_len));
-    for ( size_t i = 0; i < cnt; i++ )
-      micron::memcpy(&buf[str_len * i], &str[0], str_len);
-    micron::bytemove(&(t.memory)[ind + (cnt * str_len)], &(t.memory)[ind], t.length - ind);
-    micron::memcpy(&(t.memory)[ind], &buf[0],
+    size_t str_len = M - 1;
+    if ( ind > __mem::length )
+      throw except::library_error("micron:string at() out of range");
 
-                   cnt * str_len);
-    free(buf);
-    t.length += (cnt * str_len);
+    istring t(__mem::length + cnt * str_len);
+
+    micron::memcpy(t.memory, __mem::memory, ind);
+
+    for ( size_t i = 0; i < cnt; ++i )
+      micron::memcpy(t.memory + ind + i * str_len, str, str_len);
+
+    micron::memcpy(t.memory + ind + cnt * str_len, __mem::memory + ind, __mem::length - ind);
+
+    t.length = __mem::length + cnt * str_len;
     return t;
   }
 

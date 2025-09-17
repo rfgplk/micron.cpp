@@ -50,6 +50,8 @@ concept is_container_or_string = requires(T t) {
   { t.begin() } -> micron::same_as<typename T::iterator>;
   { t.end() } -> micron::same_as<typename T::iterator>;
 };
+
+
 template <typename T>
 concept is_container = requires(T t) {
   { t.data() } -> micron::same_as<typename T::pointer>;

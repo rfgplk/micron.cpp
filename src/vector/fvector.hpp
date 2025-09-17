@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../type_traits.hpp"
 #include "../__special/initializer_list"
+#include "../type_traits.hpp"
 
 #include "../bits/__container.hpp"
 
@@ -33,6 +33,7 @@ template <typename T, class Alloc = micron::allocator_serial<>>
 class fvector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
+
 public:
   using category_type = vector_tag;
   using mutability_type = mutable_tag;
@@ -420,6 +421,25 @@ public:
     return (__mem::memory) + (__mem::length);
   }
   inline iterator
+  insert(size_t n, const T &val, size_t cnt)
+  {
+    if ( !__mem::length ) {
+      for ( size_t i = 0; i < cnt; ++i )
+        push_back(val);
+      return begin();
+    }
+    if ( __mem::length + cnt > __mem::capacity )
+      reserve(__mem::capacity + 1);
+    T *its = &(__mem::memory)[n];
+    T *ite = &(__mem::memory)[__mem::length - 1];
+    micron::memmove(its + cnt, its, ite - its);
+    //*its = (val);
+    for ( size_t i = 0; i < cnt; ++i )
+      new (its + i) T(val);
+    __mem::length += cnt;
+    return its;
+  }
+  inline iterator
   insert(size_t n, const T &val)
   {
     if ( !__mem::length ) {
@@ -454,6 +474,27 @@ public:
     return its;
   }
 
+  inline iterator
+  insert(iterator it, const T &val, const size_t cnt)
+  {
+    if ( !__mem::length ) {
+      for ( size_t i = 0; i < cnt; ++i )
+        push_back(val);
+      return begin();
+    }
+    if ( __mem::length >= __mem::capacity ) {
+      size_t dif = it - __mem::memory;
+      reserve(__mem::capacity + 1);
+      it = __mem::memory + dif;
+    }
+    T *ite = end();
+    micron::memmove(it + cnt, it, ite - it);
+    //*it = (val);
+    for ( size_t i = 0; i < cnt; ++i )
+      new (it + i) T(val);
+    __mem::length++;
+    return it;
+  }
   inline iterator
   insert(iterator it, T &&val)
   {

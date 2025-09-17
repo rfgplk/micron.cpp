@@ -8,8 +8,9 @@
 #include "../memory/actions.hpp"
 #include "../types.hpp"
 
-#include "../type_traits.hpp"
 #include "../__special/initializer_list"
+#include "../concepts.hpp"
+#include "../type_traits.hpp"
 
 #ifdef __GNUC__
 #define USE_GCC_ATOMICS
@@ -42,7 +43,6 @@ inline constexpr memory_order memory_order_acq_rel = memory_order::acq_rel;
 inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 
 template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
-// simplest atomic_token implementable, with stl use std::atomic
 #ifdef USE_GCC_ATOMICS
 template <typename T> struct atomic_token {
   volatile T v;
@@ -198,7 +198,7 @@ public:
   {
     lock_check();
     return &type;
-  }     // must release
+  }     // NOTE: must release
   void
   release()
   {
@@ -284,6 +284,90 @@ public:
     type ^= a;
     unlock();
     return type;
+  }
+};
+
+template <typename T> class atomic_ref
+{
+  static_assert(micron::is_trivially_copyable_v<T>, "atomic_ref requires a trivially copyable type");
+
+  T *ptr;
+
+public:
+  using value_type = T;
+
+  constexpr explicit atomic_ref(T &obj) noexcept : ptr(&obj) {}
+
+  atomic_ref(const atomic_ref &) = delete;
+  atomic_ref &operator=(const atomic_ref &) = delete;
+
+  T
+  load(memory_order order = memory_order::seq_cst) const noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    return tmp.get(order);
+  }
+
+  void
+  store(T val, memory_order order = memory_order::seq_cst) noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    tmp.store(val, order);
+  }
+
+  T
+  exchange(T val, memory_order order = memory_order::seq_cst) noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    return tmp.swap(val);
+  }
+
+  bool
+  compare_exchange_strong(T &expected, T desired, memory_order success = memory_order::seq_cst,
+                          memory_order failure = memory_order::seq_cst) noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    return tmp.compare_exchange_strong(expected, desired, success, failure);
+  }
+
+  T
+  operator++() noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    return ++tmp;
+  }
+
+  T
+  operator--() noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    return --tmp;
+  }
+
+  template <typename U = T>
+  micron::enable_if_t<micron::is_arithmetic_v<U>, U>
+  fetch_add(U val, memory_order order = memory_order::seq_cst) noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    T old = tmp.get(order);
+    T new_ = old + val;
+    while ( !tmp.compare_and_swap(old, new_) ) {
+      new_ = old + val;
+    }
+    return old;
+  }
+
+  template <typename U = T>
+  micron::enable_if_t<micron::is_arithmetic_v<U>, U>
+  fetch_sub(U val, memory_order order = memory_order::seq_cst) noexcept
+  {
+    atomic_token<T> tmp(*ptr);
+    T old = tmp.get(order);
+    T new_ = old - val;
+    while ( !tmp.compare_and_swap(old, new_) ) {
+      new_ = old - val;
+    }
+    return old;
   }
 };
 };     // namespace micron
