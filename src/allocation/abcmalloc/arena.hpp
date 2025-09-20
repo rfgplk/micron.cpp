@@ -227,7 +227,7 @@ class __arena : private cache
   }*/
   template <typename F>
   bool
-  __within(F *__node, addr_t *memory)
+  __within(F *__node, addr_t *memory) const
   {
     while ( __node != nullptr ) {
       if ( __node->nd == nullptr ) {
@@ -243,7 +243,7 @@ class __arena : private cache
   }
   template <typename F>
   bool
-  __locate_at(F *__node, addr_t *memory)
+  __locate_at(F *__node, addr_t *memory) const
   {
     while ( __node != nullptr ) {
       if ( __node->nd == nullptr ) {
@@ -261,7 +261,7 @@ class __arena : private cache
   }
   template <typename F>
   bool
-  __locate(F *__node, const micron::__chunk<byte> &memory)
+  __locate(F *__node, const micron::__chunk<byte> &memory) const
   {
     while ( __node != nullptr ) {
       if ( __node->nd == nullptr ) {
@@ -550,7 +550,7 @@ class __arena : private cache
     return false;
   }
   bool
-  __vmap_within(addr_t *addr)
+  __vmap_within(addr_t *addr) const
   {
     if ( __within(&_cache_buffer, addr) )
       return true;
@@ -565,7 +565,7 @@ class __arena : private cache
     return false;
   }
   bool
-  __vmap_locate_at(addr_t *addr)
+  __vmap_locate_at(addr_t *addr) const
   {
     if constexpr ( !__default_tombstone )
       return false;
@@ -935,14 +935,14 @@ or thread storage duration exits via an exception, the function std::terminate i
     return __vmap_remove_at(mem);
   }
   bool
-  present(addr_t *mem)
+  present(addr_t *mem) const
   {
     if ( mem == nullptr )
       return false;
     return __vmap_locate_at(mem);
   }
   bool
-  has_provenance(addr_t *mem)
+  has_provenance(addr_t *mem) const
   {
     if ( mem == nullptr )
       return false;
@@ -1080,6 +1080,36 @@ or thread storage duration exits via an exception, the function std::terminate i
   __available_buffer(void) const
   {
     return _arena_memory.available();
+  }
+  size_t
+  __size_of_alloc(addr_t *addr) const
+  {
+    if ( __within(&_cache_buffer, addr) ) {
+      addr_t *ptr = get_metadata_addr(addr);
+      i64 order_class = static_cast<i64>(*ptr);
+      return __class_precise << order_class;
+    }
+    if ( __within(&_small_buckets, addr) ) {
+      addr_t *ptr = get_metadata_addr(addr);
+      i64 order_class = static_cast<i64>(*ptr);
+      return __class_small << order_class;
+    }
+    if ( __within(&_medium_buckets, addr) ) {
+      addr_t *ptr = get_metadata_addr(addr);
+      i64 order_class = static_cast<i64>(*ptr);
+      return __class_medium << order_class;
+    }
+    if ( __within(&_large_buckets, addr) ) {
+      addr_t *ptr = get_metadata_addr(addr);
+      i64 order_class = static_cast<i64>(*ptr);
+      return __class_large << order_class;
+    }
+    if ( __within(&_huge_buckets, addr) ) {
+      addr_t *ptr = get_metadata_addr(addr);
+      i64 order_class = static_cast<i64>(*ptr);
+      return __class_huge << order_class;
+    }
+    return 0;
   }
 };
 };

@@ -27,7 +27,7 @@ main(void)
     mc::lock_guard c(m);
     mc::console("Locked again");
   }
-  if constexpr ( false ) {
+  if constexpr ( true ) {
     mc::unique_lock<mc::lock_starts::defer> lck(m);
     mc::console("unique_lock created in deferred mode");
     lck.lock();

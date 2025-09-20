@@ -318,12 +318,12 @@ getdents64(int dirfd, void *dirp, unsigned int count)
 int
 mkfifo(const char *path, posix::mode_t mode)
 {
-  return micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0);
+  return static_cast<int>(micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0));
 }
 int
 unlink(const char *path)
 {
-  return micron::syscall(SYS_unlink, path);
+  return static_cast<int>(micron::syscall(SYS_unlink, path));
 }
 
 };

@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "intrin.hpp"
+
 #include "../memory/actions.hpp"
 #include "../types.hpp"
 
@@ -26,12 +28,12 @@ constexpr bool ATOMIC_OPEN = 0;
 constexpr bool ATOMIC_LOCKED = 1;
 
 enum class memory_order : int {
-  relaxed = __ATOMIC_SEQ_CST,
-  consume = __ATOMIC_CONSUME,
-  acquire = __ATOMIC_ACQUIRE,
-  release = __ATOMIC_RELEASE,
-  acq_rel = __ATOMIC_ACQ_REL,
-  seq_cst = __ATOMIC_SEQ_CST,
+  relaxed = atomic_seq_cst,
+  consume = atomic_consume,
+  acquire = atomic_acquire,
+  release = atomic_release,
+  acq_rel = atomic_acq_rel,
+  seq_cst = atomic_seq_cst,
   __end
 };
 
@@ -45,67 +47,97 @@ inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
 #ifdef USE_GCC_ATOMICS
 template <typename T> struct atomic_token {
-  volatile T v;
+  T v;
   static_assert(size_of<T, 1> or size_of<T, 2> or size_of<T, 4> or size_of<T, 8>, "Size must be 1, 2, 4, or 8 bytes");
 
   atomic_token(const T t = ATOMIC_OPEN) : v(t) {};
   atomic_token(const atomic_token &o) : v(o.v) {};
   atomic_token(atomic_token &&t) : v(micron::move(t.v)) {};
   void operator=(const atomic_token &) = delete;
+  atomic_token& operator=(atomic_token &&o){
+    v = o.v;
+    o.v = {};
+    return *this;
+  }
 
   T
-  operator++() noexcept
+  fetch_add(T set, memory_order order) noexcept
   {
-    return __atomic_add_fetch(&v, 1, __ATOMIC_SEQ_CST);
+    return atom::fetch_sub(&v, set, (int)order);
   };
   T
-  operator--() noexcept
+  fetch_sub(T set, memory_order order) noexcept
   {
-    return __atomic_sub_fetch(&v, 1, __ATOMIC_SEQ_CST);
+    return atom::fetch_sub(&v, set, (int)order);
+  };
+  T
+  add_fetch(T set, memory_order order) noexcept
+  {
+    return atom::add_fetch(&v, set, (int)order);
+  };
+  T
+  sub_fetch(T set, memory_order order) noexcept
+  {
+    return atom::sub_fetch(&v, set, (int)order);
   };
   bool
   compare_and_swap(const T old, const T new_) noexcept
   {
     T tmp = old;
-    return __atomic_compare_exchange_n(&v, &tmp, new_, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    return atom::compare_exchange(&v, &tmp, new_, true, atomic_seq_cst, atomic_seq_cst);
   };
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
-    return __atomic_compare_exchange_n(&v, &expected, desired, false, (int)order);
+    return atom::compare_exchange(&v, &expected, desired, false, (int)order);
   }
   bool
   compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
-    return __atomic_compare_exchange_n(&v, &expected, desired, false, (int)success, (int)failure);
+    return atom::compare_exchange(&v, &expected, desired, false, (int)success, (int)failure);
   }
   bool
   compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
-    return __atomic_compare_exchange_n(&v, &expected, desired, true, (int)success, (int)failure);
+    return atom::compare_exchange(&v, &expected, desired, true, (int)success, (int)failure);
   }
   void
   store(const T new_, memory_order mr = memory_order::seq_cst) noexcept
   {
-    __atomic_store_n(&v, new_, (int)mr);
+    atom::store(&v, new_, (int)mr);
   };
   T
   get(memory_order mrd = memory_order::seq_cst) const
   {
-    return __atomic_load_n(&v, (int)mrd);
+    return atom::load(&v, (int)mrd);
   }
-
+  T*
+  ptr()
+  {
+    return &v;
+  }
   T
   swap(const T new_) noexcept
   {
-    return __atomic_exchange_n(&v, new_, __ATOMIC_SEQ_CST);
+    return atom::exchange(&v, new_, atomic_seq_cst);
   };
 
+  // high levels
   T
   operator()() const
   {
     return get();
   }
+  T
+  operator++() noexcept
+  {
+    return atom::add_fetch(&v, 1, atomic_seq_cst);
+  };
+  T
+  operator--() noexcept
+  {
+    return atom::sub_fetch(&v, 1, atomic_seq_cst);
+  };
   T
   operator=(const T new_)
   {
@@ -143,6 +175,11 @@ public:
   {
     return tk.store(new_, mr);
   };
+  T
+  __get(memory_order mrd = memory_order::seq_cst) const
+  {
+    return tk.get(mrd);
+  }
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
@@ -188,11 +225,6 @@ public:
     return &type;
   }
   // manual functions
-  T
-  __get(memory_order mrd = memory_order::seq_cst) const
-  {
-    return tk.get(mrd);
-  }
   T *
   get()
   {

@@ -12,7 +12,6 @@
 #error "Unsupported platform."
 #endif
 
-
-#ifndef MICRON_USE_ABCMALLOC
-#define MICRON_USE_ABCMALLOC 1
+#ifndef MICRON_ABCMALLOC_STD
+#define MICRON_ABCMALLOC_STD 1
 #endif

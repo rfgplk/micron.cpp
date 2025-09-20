@@ -9,10 +9,10 @@
 #include "../../type_traits.hpp"
 #include "../../concepts.hpp"
 #include "../../types.hpp"
-#include "atomic/atomic.hpp"
-#include "except.hpp"
-#include "memory/actions.hpp"
-#include "memory/new.hpp"
+#include "../../atomic/atomic.hpp"
+#include "../../except.hpp"
+#include "../../memory/actions.hpp"
+#include "../../memory/new.hpp"
 
 namespace micron
 {

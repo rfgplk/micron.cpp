@@ -10,8 +10,6 @@
 #include "arena.hpp"
 #include "tapi.hpp"
 
-#define MICRON_USE_ABCMALLOC 1
-
 namespace abc
 {
 
@@ -131,12 +129,11 @@ retire(byte *ptr)
 __attribute__((malloc, alloc_size(1))) auto
 alloc(size_t size) -> byte *     // allocates memory, near iden. func. to malloc
 {
-  return balloc(size).ptr;
+  byte *ptr = balloc(size).ptr;
+  if ( ptr == (byte *)-1 )
+    return nullptr;
+  return ptr;
 }
-
-template <typename __S_ptr>
-__attribute__((malloc, alloc_size(1))) __S_ptr
-alloc_as_ptr(size_t size);     // allocates memory, returns packaged as a smart pointer
 
 __attribute__((malloc, alloc_size(1))) byte *salloc(size_t size);     // applies policies from harden
 void
@@ -191,6 +188,7 @@ freeze(byte *ptr)
 void
 which(void)
 {
+  // TODO: implement
 }
 
 void borrow();     //
@@ -205,10 +203,12 @@ launder(size_t size)
   __init_abcmalloc();
   return __main_arena->launder(size).ptr;
 }
-void query();       // queries the allocator for info
-void make_at();     // creates memory at a set memory address
-
-void inject();     // injects a function
+template <typename T>
+size_t
+query_size(T *ptr)
+{
+  return __main_arena->__size_of_alloc(reinterpret_cast<addr_t*>(ptr));
+}
 
 //
 // LEGACY STDLIB FUNCTIONS START HERE
@@ -224,8 +224,43 @@ malloc(size_t size)     // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(alloc(size));
 }
-void *calloc(size_t num, size_t size);     // alloc's zero'd out memory, prefer using salloc()
-void *realloc(void *ptr, size_t size);     // reallocates memory
+void *
+calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using salloc()
+{
+  if ( size != 0 && (size * num) / size != num )
+    return nullptr;
+
+  byte *mem = alloc(size * num);
+  if ( !mem )
+    return nullptr;
+  micron::zero(mem, size * num);
+  return mem;
+}
+void *
+realloc(void *ptr, size_t size)     // reallocates memory
+{
+  size_t old_size = query_size(reinterpret_cast<addr_t*>(ptr));
+  if ( size == 0 ) {
+    dealloc(reinterpret_cast<byte *>(ptr));
+    return nullptr;
+  }
+
+  if ( !ptr ) {
+    return reinterpret_cast<void *>(alloc(size));
+  }
+
+  byte *new_block = alloc(size);
+  if ( !new_block )
+    return nullptr;     // allocation failed
+
+  size_t copy_size = old_size < size ? old_size : size;
+  micron::memcpy(new_block, reinterpret_cast<byte*>(ptr), copy_size);
+
+  dealloc(reinterpret_cast<byte *>(ptr));
+
+  return new_block;
+}
+
 void
 free(void *ptr)     // frees memory, prefer dealloc always
 {

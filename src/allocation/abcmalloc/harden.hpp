@@ -18,6 +18,10 @@ abort_state(void)
 {
   micron::abort();
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-attribute=noreturn"
+
 bool
 fail_state(void)
 {
@@ -30,6 +34,7 @@ fail_state(void)
   }
   return true;
 }
+#pragma GCC diagnostic pop
 
 inline __attribute__((always_inline)) void
 sanitize_on_alloc(byte *addr, size_t sz = 0)

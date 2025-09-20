@@ -16,6 +16,7 @@ main()
 {
   if constexpr ( true ) {
     byte *buf = abc::alloc(65536);
+    mc::console("Allocated: ", abc::query_size(buf));
     mc::sstr<32> *tst = new (buf) mc::sstr<32>("Hello World!");
     mc::console(tst->c_str());
     volatile byte *p;

@@ -214,7 +214,7 @@ public:
   bool
   empty() const
   {
-    return (__mem::length == 0);
+    return (__mem::length == 0 or __mem::memory == nullptr);
   };
   size_t
   size() const
@@ -725,7 +725,17 @@ public:
     __mem::length += data.length;
     return *this;
   };
+  inline hstring &
+  operator+=(const T d)
+  {
+    if ( (__mem::length + 1) >= __mem::capacity )
+      reserve(__mem::capacity + 1);
 
+    size_t ln = __mem::length == 0 ? 0 : __mem::length;
+    __mem::memory[ln] = d;
+    __mem::length++;
+    return *this;
+  };
   template <typename F = T>
   inline hstring &
   operator+=(const slice<F> &data)

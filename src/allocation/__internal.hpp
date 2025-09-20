@@ -6,14 +6,14 @@
 #pragma once
 
 #include "../types.hpp"
-#include "abcmalloc/malloc.hpp"
+#include "../cmalloc.hpp"
 
-#ifndef MICRON_USE_ABCMALLOC
+#ifndef MICRON_ABCMALLOC_STD
 /*permitted*/#include <cstdlib>
 #endif
 namespace micron
 {
-#ifdef MICRON_USE_ABCMALLOC
+#ifdef MICRON_ABCMALLOC_STD
 inline __attribute__((always_inline)) byte *
 __alloc(size_t sz)
 {

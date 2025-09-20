@@ -100,6 +100,38 @@ inline constexpr T constant_egamma
 template <typename T>
 inline constexpr T constant_phi
     = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.618033988749894848204586834365638118L);
+
+inline constexpr float e_float = constant_e<float>;
+inline constexpr float log2e_float = constant_log2e<float>;
+inline constexpr float log10e_float = constant_log10e<float>;
+inline constexpr float pi_float = constant_pi<float>;
+inline constexpr float inv_pi_float = constant_pi_inv<float>;
+inline constexpr float inv_sqrtpi_float = constant_sqrtpi_inv<float>;
+inline constexpr float ln2_float = constant_ln2<float>;
+inline constexpr float ln10_float = constant_ln10<float>;
+inline constexpr float sqrt2_float = constant_sqrt2<float>;
+inline constexpr float sqrt3_float = constant_sqrt3<float>;
+inline constexpr float sqrt4_float = constant_sqrt4<float>;
+inline constexpr float sqrt5_float = constant_sqrt5<float>;
+inline constexpr float sqrt6_float = constant_sqrt6<float>;
+inline constexpr float sqrt7_float = constant_sqrt7<float>;
+inline constexpr float sqrt8_float = constant_sqrt8<float>;
+inline constexpr float sqrt9_float = constant_sqrt9<float>;
+inline constexpr float sqrt10_float = constant_sqrt10<float>;
+inline constexpr float sqrt11_float = constant_sqrt11<float>;
+inline constexpr float sqrt12_float = constant_sqrt12<float>;
+inline constexpr float sqrt13_float = constant_sqrt13<float>;
+inline constexpr float sqrt14_float = constant_sqrt14<float>;
+inline constexpr float sqrt15_float = constant_sqrt15<float>;
+inline constexpr float sqrt16_float = constant_sqrt16<float>;
+inline constexpr float sqrt17_float = constant_sqrt17<float>;
+inline constexpr float sqrt18_float = constant_sqrt18<float>;
+inline constexpr float sqrt19_float = constant_sqrt19<float>;
+inline constexpr float sqrt20_float = constant_sqrt20<float>;
+inline constexpr float inv_sqrt3_float = constant_sqrt3_inv<float>;
+inline constexpr float egamma_float = constant_egamma<float>;
+inline constexpr float phi_float = constant_phi<float>;
+
 inline constexpr double e = constant_e<double>;
 inline constexpr double log2e = constant_log2e<double>;
 inline constexpr double log10e = constant_log10e<double>;

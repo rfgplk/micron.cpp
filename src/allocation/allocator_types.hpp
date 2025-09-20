@@ -5,9 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "abcmalloc/__abc.hpp"
-#include "abcmalloc/__sys.hpp"
-
 #include "__internal.hpp"
 #include "bits.hpp"
 #include "policies.hpp"

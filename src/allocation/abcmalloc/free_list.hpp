@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "metadata.hpp"
+
 #include "../../mem.hpp"
 #include "../../memory/cmemory.hpp"
 #include "../../memory/pointers/sentinel.hpp"
@@ -28,7 +30,6 @@ struct __buddy_list {
   struct free_block {
     free_block *next;
   };
-  constexpr static size_t __hdr_offset = sizeof(micron::simd::i256);
   // size_t min_block;
   byte *base;
   size_t total;
@@ -309,7 +310,7 @@ struct __buddy_list {
         free_block *nb = (free_block *)addr;
         nb->next = free_lists[o];
         free_lists[o] = nb;
-        active[o] = nullptr; 
+        active[o] = nullptr;
         return addr;
       }
     merged:

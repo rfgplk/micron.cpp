@@ -13,8 +13,8 @@
 #include <spawn.h>
 #include <unistd.h>     // fork, close, daemon
 
-#include "array/arrays.hpp"
-#include "types.hpp"
+#include "../array/arrays.hpp"
+#include "../types.hpp"
 namespace micron
 {
 

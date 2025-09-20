@@ -59,6 +59,7 @@ build core_tests_strings: cc_compile_cmnd_debug tests/core/cstrings.cpp
 build core_tests_cmemory: cc_compile_cmnd_debug tests/core/cmemory.cpp
 build core_tests_pointers: cc_compile_cmnd_debug tests/core/pointers.cpp
 build core_tests_mutex: cc_compile_cmnd_debug tests/core/mutex.cpp
+build core_tests_semaphore: cc_compile_cmnd_debug tests/core/semaphores.cpp
 build core_tests_once: cc_compile_cmnd_debug tests/core/once.cpp
 build core_tests_cpu: cc_compile_cmnd_debug tests/core/cpu.cpp
 build core_tests_thread: cc_compile_cmnd_debug tests/core/threads.cpp
