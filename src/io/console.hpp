@@ -207,6 +207,7 @@ _micron_log(const char* FILEMACRO, int line, const T &...str)
   set_color(color::yellow, style::bold);
   io::println(str...);
   set_color_reset();
+  io::println("\n");
 }
 
 // has to be like this so we don't get conflicts with float/stl libs 

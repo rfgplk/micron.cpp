@@ -1,8 +1,24 @@
-//  Copyright (c) 2024- David Lucius Severus
+// Copyright (c) 2025 David Lucius Severus
 //
-//  Distributed under the Boost Software License, Version 1.0.
-//  See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #pragma once
 
 #include "../linux/kmemory.hpp"
@@ -32,7 +48,7 @@ constexpr static const bool __default_launder
     = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address
 constexpr static const bool __default_single_instance = false;
 constexpr static const bool __default_global_instance = true;
-constexpr static const bool __default_multithread_safe = false;     // essentially, enables locks across API calls
+constexpr static const bool __default_multithread_safe = true;     // essentially, enables locks across API calls
 
 static_assert(
     __default_single_instance != __default_global_instance,
@@ -63,7 +79,7 @@ constexpr static const bool __default_insert_guard_pages = false;
 constexpr static const int __default_guard_page_perms = micron::prot_none;
 
 // NOTE: all of these cost a lot of performance
-constexpr static const bool __default_debug_notices = true;
+constexpr static const bool __default_debug_notices = false;
 constexpr static const bool __default_zero_on_alloc = false;
 constexpr static const bool __default_zero_on_free = false;
 constexpr static const bool __default_full_on_free = false;

@@ -98,4 +98,4 @@ Libraries
 
 
 ## License
-Licensed under the Boost Software License
+Licensed under the Boost Software License, except the 'abcmalloc' memory allocator, which is licensed under the MIT License
