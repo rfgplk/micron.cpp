@@ -12,76 +12,122 @@ namespace micron
 {
 
 template <typename... Args>
-  requires((micron::is_same_v<Args, unsigned long> && ...))
+// TODO: reintroduce this, and resolve type conflicts  requires((micron::is_same_v<Args, unsigned long> && ...))
 int
 ioctl(int fd, Args... ops)
 {
-  return micron::syscall(SYS_ioctl, fd, ops...);
+  return static_cast<int>(micron::syscall(SYS_ioctl, fd, ops...));
 }
 
-#define _ioc_nrbits 8
-#define _ioc_typebits 8
+constexpr static const u32 __ioc_nrbits = 8;
+constexpr static const u32 __ioc_typebits = 8;
+constexpr static const u32 __ioc_sizebits = 14;
+constexpr static const u32 __ioc_dirbits = 2;
 
-/*
- * Let any architecture override either of the following before
- * including this file.
- */
+constexpr static const u64 __ioc_nrmask = ((1 << __ioc_nrbits) - 1);
+constexpr static const u64 __ioc_typemask = ((1 << __ioc_typebits) - 1);
+constexpr static const u64 __ioc_sizemask = ((1 << __ioc_sizebits) - 1);
+constexpr static const u64 __ioc_dirmask = ((1 << __ioc_dirbits) - 1);
 
-#ifndef _ioc_sizebits
-#define _ioc_sizebits 14
-#endif
+constexpr static const u32 __ioc_nrshift = 0;
+constexpr static const u64 __ioc_typeshift = (__ioc_nrshift + __ioc_nrbits);
+constexpr static const u64 __ioc_sizeshift = (__ioc_typeshift + __ioc_typebits);
+constexpr static const u64 __ioc_dirshift = (__ioc_sizeshift + __ioc_sizebits);
 
-#ifndef _ioc_dirbits
-#define _ioc_dirbits 2
-#endif
+constexpr static const u64 __ioc_none = 0;
+constexpr static const u64 __ioc_write = 1;
+constexpr static const u64 __ioc_read = 2;
 
-#define _ioc_nrmask ((1 << _ioc_nrbits) - 1)
-#define _ioc_typemask ((1 << _ioc_typebits) - 1)
-#define _ioc_sizemask ((1 << _ioc_sizebits) - 1)
-#define _ioc_dirmask ((1 << _ioc_dirbits) - 1)
+template <typename T>
+consteval size_t
+__sizeof_type()
+{
+  return sizeof(T);
+}
 
-#define _ioc_nrshift 0
-#define _ioc_typeshift (_ioc_nrshift + _ioc_nrbits)
-#define _ioc_sizeshift (_ioc_typeshift + _ioc_typebits)
-#define _ioc_dirshift (_ioc_sizeshift + _ioc_sizebits)
+consteval u64
+io_request(u64 dir, u64 type, u64 nr, u64 size)
+{
+  return (((dir) << __ioc_dirshift) | ((type) << __ioc_typeshift) | ((nr) << __ioc_nrshift)
+          | ((size) << __ioc_sizeshift));
+}
 
-#ifndef _ioc_none
-#define _ioc_none 0u
-#endif
+consteval u64
+io_default_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_none, type, nr, 0);
+}
 
-#ifndef _ioc_write
-#define _ioc_write 1u
-#endif
+template <typename T>
+consteval u64
+io_read_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_read, type, nr, __sizeof_type<T>());
+}
 
-#ifndef _ioc_read
-#define _ioc_read 2u
-#endif
+template <typename T>
+consteval u64
+io_write_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_write, type, nr, __sizeof_type<T>());
+}
 
-#define _ioc(dir, type, nr, size)                                                                                       \
-  (((dir) << _ioc_dirshift) | ((type) << _ioc_typeshift) | ((nr) << _ioc_nrshift) | ((size) << _ioc_sizeshift))
+template <typename T>
+consteval u64
+io_readwrite_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_write | __ioc_read, type, nr, __sizeof_type<T>());
+}
 
-#define _ioc_typecheck(t) (sizeof(t))
+template <typename T>
+consteval u64
+io_read_bad_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_read, type, nr, __sizeof_type<T>());
+}
 
-#define _io(type, nr) _ioc(_ioc_none, (type), (nr), 0)
-#define _ior(type, nr, argtype) _ioc(_ioc_read, (type), (nr), (_ioc_typecheck(argtype)))
-#define _iow(type, nr, argtype) _ioc(_ioc_write, (type), (nr), (_ioc_typecheck(argtype)))
-#define _iowr(type, nr, argtype) _ioc(_ioc_read | _ioc_write, (type), (nr), (_ioc_typecheck(argtype)))
-#define _ior_bad(type, nr, argtype) _ioc(_ioc_read, (type), (nr), sizeof(argtype))
-#define _iow_bad(type, nr, argtype) _ioc(_ioc_write, (type), (nr), sizeof(argtype))
-#define _iowr_bad(type, nr, argtype) _ioc(_ioc_read | _ioc_write, (type), (nr), sizeof(argtype))
+template <typename T>
+consteval u64
+io_write_bad_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_write, type, nr, __sizeof_type<T>());
+}
 
-/* used to decode ioctl numbers.. */
-#define _ioc_dir(nr) (((nr) >> _ioc_dirshift) & _ioc_dirmask)
-#define _ioc_type(nr) (((nr) >> _ioc_typeshift) & _ioc_typemask)
-#define _ioc_nr(nr) (((nr) >> _ioc_nrshift) & _ioc_nrmask)
-#define _ioc_size(nr) (((nr) >> _ioc_sizeshift) & _ioc_sizemask)
+template <typename T>
+consteval u64
+io_readwrite_bad_command(u64 type, u64 nr)
+{
+  return io_request(__ioc_read | __ioc_write, type, nr, __sizeof_type<T>());
+}
 
-/* ...and for the drivers/sound files... */
+consteval u64
+io_get_dir(u64 nr)
+{
+  return (((nr) >> __ioc_dirshift) & __ioc_dirmask);
+}
 
-#define ioc_in (_ioc_write << _ioc_dirshift)
-#define ioc_out (_ioc_read << _ioc_dirshift)
-#define ioc_inout ((_ioc_write | _ioc_read) << _ioc_dirshift)
-#define iocsize_mask (_ioc_sizemask << _ioc_sizeshift)
-#define iocsize_shift (_ioc_sizeshift)
+consteval u64
+io_get_type(u64 nr)
+{
+  return (((nr) >> __ioc_typeshift) & __ioc_typemask);
+}
+
+consteval u64
+io_get_nr(u64 nr)
+{
+  return (((nr) >> __ioc_nrshift) & __ioc_nrmask);
+}
+
+consteval u64
+io_get_size(u64 nr)
+{
+  return (((nr) >> __ioc_sizeshift) & __ioc_sizemask);
+}
+
+#define ioc_in (__ioc_write << __ioc_dirshift)
+#define ioc_out (__ioc_read << __ioc_dirshift)
+#define ioc_inout ((__ioc_write | __ioc_read) << __ioc_dirshift)
+#define iocsize_mask (__ioc_sizemask << __ioc_sizeshift)
+#define iocsize_shift (__ioc_sizeshift)
 
 };

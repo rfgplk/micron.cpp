@@ -334,32 +334,32 @@ public:
   inline iterator
   begin()
   {
-    return const_cast<T *>(&(__mem::memory)[0]);
+    return const_cast<iterator>(&(__mem::memory)[0]);
   }
   inline iterator
   end()
   {
-    return const_cast<T *>(&(__mem::memory)[__mem::length]);
+    return const_cast<iterator>(&(__mem::memory)[__mem::length]);
   }
   inline iterator
   begin() const
   {
-    return const_cast<T *>(&(__mem::memory)[0]);
+    return const_cast<iterator>(&(__mem::memory)[0]);
   }
   inline iterator
   end() const
   {
-    return const_cast<T *>(&(__mem::memory)[__mem::length]);
+    return const_cast<iterator>(&(__mem::memory)[__mem::length]);
   }
   inline iterator
   last()
   {
-    return const_cast<T *>(&(__mem::memory)[__mem::length - 1]);
+    return const_cast<iterator>(&(__mem::memory)[__mem::length - 1]);
   }
   inline iterator
   last() const
   {
-    return const_cast<T *>(&(__mem::memory)[__mem::length - 1]);
+    return const_cast<iterator>(&(__mem::memory)[__mem::length - 1]);
   }
   inline const_iterator
   cbegin() const
@@ -503,7 +503,7 @@ public:
   {
     if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity )
       reserve(__mem::capacity + 1);
-    ssize_t str_len = M - 1;     // strlen(str);
+    size_t str_len = M - 1;     // strlen(str);
 
     micron::bytemove(&__mem::memory[ind + cnt * str_len], &__mem::memory[ind], __mem::length - ind);
 

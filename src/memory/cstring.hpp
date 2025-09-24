@@ -5,20 +5,20 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 
 #include "../simd/intrin.hpp"
 
 namespace micron
 {
-template <typename T>
+template <integral T>
   requires(!micron::is_null_pointer_v<T>)
 inline size_t
 strlen(const T *str)
 {
   for ( size_t i = 0;; i++ ) {
-    if ( str[i] == '\0' )
+    if ( str[i] == static_cast<T>('\0') )
       return i;
   }
   return 0;
@@ -43,7 +43,6 @@ u16strlen(const char16_t *str)
   }
   return 0;
 }
-
 
 inline size_t
 ustrlen(const char32_t *str)

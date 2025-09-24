@@ -7,9 +7,9 @@
 
 #include "types.hpp"
 
-thread_local int __micron_errno = 0;
+thread_local u32 __micron_errno = 0;
 
-int *
+u32 *
 __micron_errno_location(void)
 {
   return &__micron_errno;
@@ -38,45 +38,45 @@ namespace error
 {
 
 // NOTE: we're doing it like this because it's simpler
-constexpr u32 permissions = 1;
-constexpr u32 no_entry = 2;
-constexpr u32 no_process = 3;
-constexpr u32 interrupted = 4;
-constexpr u32 io_error = 5;
-constexpr u32 no_such_device = 6;
-constexpr u32 arguments_too_big = 7;
-constexpr u32 exec_error = 8;
-constexpr u32 bad_file_number = 9;
-constexpr u32 no_child_process = 10;
-constexpr u32 try_again = 11;
-constexpr u32 out_of_memory = 12;
-constexpr u32 permission_denied = 13;
-constexpr u32 bad_address = 14;
-constexpr u32 block_device_req = 15;
-constexpr u32 device_busy = 16;
-constexpr u32 file_exists = 17;
-constexpr u32 exdev = 18;
-constexpr u32 no_device = 19;
-constexpr u32 not_a_dir = 20;
-constexpr u32 is_a_dir = 21;
-constexpr u32 invalid_arg = 22;
-constexpr u32 file_table_ovflw = 23;
-constexpr u32 too_many_files = 24;
-constexpr u32 not_a_tty = 25;
-constexpr u32 text_busy = 26;
-constexpr u32 file_too_big = 27;
-constexpr u32 no_space = 28;
-constexpr u32 illegal_seek = 29;
-constexpr u32 read_only_fs = 30;
-constexpr u32 too_many_links = 31;
-constexpr u32 broken_pipe = 32;
-constexpr u32 out_of_domain = 33;
-constexpr u32 not_representable = 34;
-constexpr u32 deadlock = 35;
-constexpr u32 name_too_long = 36;
-constexpr u32 no_record_locks = 37;
-constexpr u32 bad_syscall = 38;
-constexpr u32 overflow = 75;
+constexpr static const u32 permissions = 1;
+constexpr static const u32 no_entry = 2;
+constexpr static const u32 no_process = 3;
+constexpr static const u32 interrupted = 4;
+constexpr static const u32 io_error = 5;
+constexpr static const u32 no_such_device = 6;
+constexpr static const u32 arguments_too_big = 7;
+constexpr static const u32 exec_error = 8;
+constexpr static const u32 bad_file_number = 9;
+constexpr static const u32 no_child_process = 10;
+constexpr static const u32 try_again = 11;
+constexpr static const u32 out_of_memory = 12;
+constexpr static const u32 permission_denied = 13;
+constexpr static const u32 bad_address = 14;
+constexpr static const u32 block_device_req = 15;
+constexpr static const u32 device_busy = 16;
+constexpr static const u32 file_exists = 17;
+constexpr static const u32 exdev = 18;
+constexpr static const u32 no_device = 19;
+constexpr static const u32 not_a_dir = 20;
+constexpr static const u32 is_a_dir = 21;
+constexpr static const u32 invalid_arg = 22;
+constexpr static const u32 file_table_ovflw = 23;
+constexpr static const u32 too_many_files = 24;
+constexpr static const u32 not_a_tty = 25;
+constexpr static const u32 text_busy = 26;
+constexpr static const u32 file_too_big = 27;
+constexpr static const u32 no_space = 28;
+constexpr static const u32 illegal_seek = 29;
+constexpr static const u32 read_only_fs = 30;
+constexpr static const u32 too_many_links = 31;
+constexpr static const u32 broken_pipe = 32;
+constexpr static const u32 out_of_domain = 33;
+constexpr static const u32 not_representable = 34;
+constexpr static const u32 deadlock = 35;
+constexpr static const u32 name_too_long = 36;
+constexpr static const u32 no_record_locks = 37;
+constexpr static const u32 bad_syscall = 38;
+constexpr static const u32 overflow = 75;
 
 constexpr const char *permissions_msg = "Operation not permitted *";
 constexpr const char *no_entry_msg = "No such file or directory *";

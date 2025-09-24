@@ -12,6 +12,9 @@
 namespace micron
 {
 
+template <typename T>
+concept integral = micron::is_integral_v<T>;
+
 template <typename T, typename U>
 concept __same_as = is_same_v<T, U>;
 
@@ -98,5 +101,4 @@ concept is_string_on_stack = requires(T t) {
   { t.cbegin() } -> micron::same_as<typename T::iterator>;
   { t.cend() } -> micron::same_as<typename T::iterator>;
 };
-
 };

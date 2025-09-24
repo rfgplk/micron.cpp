@@ -51,6 +51,7 @@ rule cc_compile_cmnd_debug
 # core
 build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
 
+build bench_strings: cc_compile_cmnd benches/strings.cpp
 
 build core_tests_control: cc_compile_cmnd_debug tests/core/control.cpp
 build core_tests_io_init: cc_compile_cmnd_debug tests/core/io_init.cpp
@@ -86,6 +87,7 @@ build core_abcmalloc_benches: phony core_tests_abcmalloc_bench_abc_4gb core_test
 
 build core_tests: phony core_tests_syscall core_tests_strings core_tests_cmemory core_tests_pointers core_tests_mutex core_tests_once core_tests_cpu core_tests_thread core_tests_arena core_tests_linux core_tests_channels
 
+build uxin_virtual: cc_compile_cmnd_debug tests/uxin_virtual.cpp
 build uxin_keyboard_test: cc_compile_cmnd_debug tests/uxin_keyboard.cpp
 build uxin_mouse_test: cc_compile_cmnd_debug tests/uxin_mouse.cpp
 build uxin_test: cc_compile_cmnd_debug tests/uxin_d.cpp

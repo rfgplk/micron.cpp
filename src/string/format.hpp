@@ -12,7 +12,9 @@
 #include "../types.hpp"
 #include "string.hpp"
 
+#include "../array.hpp"
 #include "../slice.hpp"
+#include "../vector.hpp"
 
 namespace micron
 {
@@ -28,9 +30,9 @@ to_string(const T *str)
 */
 template <is_string T>
 inline auto
-c_str(const T &str) -> const char*
+c_str(const T &str) -> const char *
 {
-  return reinterpret_cast<const char*>(&str[0]);
+  return reinterpret_cast<const char *>(&str[0]);
 }
 
 namespace format
@@ -312,6 +314,154 @@ split(const T &data, typename T::const_iterator itr)
   return data.substr(data.begin(), itr);
 }
 
+// BM start
+
+template <is_string T>
+micron::fvector<int>
+build_bad_char(const T &pattern)
+{
+  micron::fvector<int> bad(256, -1);
+  for ( size_t i = 0; i < pattern.size(); ++i )
+    bad[static_cast<unsigned char>(pattern[i])] = i;
+  return bad;
+}
+
+template <is_string T>
+micron::fvector<int>
+build_good_suffix(const T &pattern)
+{
+  size_t m = pattern.size();
+  micron::fvector<int> shift(m + 1, m);
+  micron::fvector<int> border(m + 1, 0);
+  int i = m, j = m + 1;
+  border[i] = j;
+  while ( i > 0 ) {
+    while ( j <= m && pattern[i - 1] != pattern[j - 1] )
+      j = border[j];
+    --i;
+    --j;
+    border[i] = j;
+  }
+  j = border[0];
+  for ( i = 0; i <= m; ++i ) {
+    if ( shift[i] == m )
+      shift[i] = j;
+    if ( i == j )
+      j = border[j];
+  }
+  return shift;
+}
+
+template <is_string T>
+micron::fvector<int>
+boyer_moore_search(const T &text, const T &pattern)
+{
+  micron::fvector<int> result;
+  size_t n = text.size(), m = pattern.size();
+  if ( m == 0 )
+    return result;
+
+  auto bad = build_bad_char(pattern);
+  auto good = build_good_suffix(pattern);
+
+  size_t s = 0;
+  while ( s <= n - m ) {
+    int j = m - 1;
+    while ( j >= 0 && pattern[j] == text[s + j] )
+      --j;
+    if ( j < 0 ) {
+      result.push_back(s);
+      s += good[0];
+    } else {
+      int bc_shift = j - bad[static_cast<unsigned char>(text[s + j])];
+      s += micron::max(1, micron::max(bc_shift, good[j + 1]));
+    }
+  }
+  return result;
+}
+
+template <size_t Pt, size_t N>
+micron::carray<size_t, N>
+bm_find(const char (&text)[N], const char (&pattern)[Pt], size_t &found_count)
+{
+  micron::carray<int, 256> bad{};
+  micron::carray<size_t, Pt + 1> good{};
+  micron::carray<size_t, N> result{};
+  found_count = 0;
+
+  bad.fill(-1);
+  for ( size_t i = 0; i < Pt - 1; ++i )
+    bad[static_cast<unsigned char>(pattern[i])] = i;
+
+  micron::carray<int, Pt + 1> border{};
+  size_t m = Pt - 1;
+  int i = m, j = m + 1;
+  border[i] = j;
+  while ( i > 0 ) {
+    while ( j <= m && pattern[i - 1] != pattern[j - 1] )
+      j = border[j];
+    --i;
+    --j;
+    border[i] = j;
+  }
+  j = border[0];
+  for ( i = 0; i <= m; ++i ) {
+    if ( good[i] == 0 )
+      good[i] = j;
+    if ( i == j )
+      j = border[j];
+  }
+
+  size_t s = 0;
+  while ( s <= N - Pt ) {
+    int k = Pt - 1;
+    while ( k >= 0 && pattern[k] == text[s + k] )
+      --k;
+    if ( k < 0 ) {
+      result[found_count++] = s;
+      s += good[0];
+    } else {
+      int bc_shift = k - bad[static_cast<unsigned char>(text[s + k])];
+      s += micron::max(1, micron::max(bc_shift, good[k + 1]));
+    }
+  }
+  return result;
+}
+
+// end BM
+
+template <is_string T>
+auto
+fast_find(const T &data, const char *fnd) -> typename T::iterator
+{
+  size_t n = data.size();
+  size_t m = micron::strlen(fnd);
+
+  if ( m == 0 || m > n )
+    return data.end();
+
+  size_t shift[256];
+  for ( size_t i = 0; i < 256; ++i )
+    shift[i] = m;
+  for ( size_t i = 0; i < m - 1; ++i )
+    shift[(unsigned char)fnd[i]] = m - 1 - i;
+
+  auto it = data.begin();
+  auto end_it = data.begin() + (n - m + 1);
+
+  while ( it != end_it ) {
+    size_t j = m;
+    while ( j > 0 && (*(it + j - 1) == fnd[j - 1]) )
+      --j;
+    if ( j == 0 )
+      return it;
+
+    unsigned char nextc = (unsigned char)*(it + m - 1);
+    it += shift[nextc];
+  }
+  return data.end();
+}
+
 template <is_string T>
 auto
 contains(const T &data, typename T::const_iterator from, const char fnd) -> bool
@@ -341,7 +491,7 @@ contains(const T &data, typename T::const_iterator from, const char *fnd) -> boo
     return false;
   for ( auto itr = from; itr != data.end(); ++itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j <= sz && *(itr + j) == fnd[j] ) {
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
@@ -376,7 +526,7 @@ contains(const T &data, const char *fnd) -> bool
     return false;
   for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j <= sz && *(itr + j) == fnd[j] ) {
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
@@ -442,7 +592,7 @@ find(const T &data, const char *fnd) -> typename T::iterator
     return nullptr;
   for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j <= sz && *(itr + j) == fnd[j] ) {
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
@@ -588,6 +738,46 @@ find(const T &data, const T &fnd) -> typename T::iterator
     }
   }
   return nullptr;
+}
+
+template <is_string T>
+bool
+is_not_in(const char *fnd, const T &data)
+{
+  return find(data, fnd) != nullptr ? false : true;
+}
+template <is_string T>
+bool
+is_not_in(const T &data, const char *fnd)
+{
+  return find(data, fnd) != nullptr ? false : true;
+}
+
+template <is_string T>
+bool
+is_not_in(const T &data, const T &fnd)
+{
+  return find(data, fnd) != nullptr ? false : true;
+}
+
+template <is_string T>
+bool
+is_in(const char *fnd, const T &data)
+{
+  return find(data, fnd) == nullptr ? false : true;
+}
+template <is_string T>
+bool
+is_in(const T &data, const char *fnd)
+{
+  return find(data, fnd) == nullptr ? false : true;
+}
+
+template <is_string T>
+bool
+is_in(const T &data, const T &fnd)
+{
+  return find(data, fnd) == nullptr ? false : true;
 }
 
 template <is_string T>

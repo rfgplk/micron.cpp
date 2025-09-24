@@ -34,9 +34,27 @@ concept is_container = requires(T t) {
 };
 
 // PRINTK BLOCK OF FUNCS
-template <int outstream = STDOUT_FILENO>
+template <int outstream = STDOUT_FILENO, typename T, size_t M>
+  requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide>
+           or micron::is_same_v<T, unicode8> or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char>
+           or micron::is_same_v<T, const schar> or micron::is_same_v<T, const wide>
+           or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
 inline void
-printk(const char *c)
+printk(T (&c)[M])
+{
+  if constexpr ( outstream == STDOUT_FILENO )
+    io::fput(c, io::stdout);
+  else if constexpr ( outstream == STDERR_FILENO )
+    io::fput(c, io::stderr);
+}
+
+template <int outstream = STDOUT_FILENO, typename T>
+  requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *>
+           or micron::is_same_v<T, unicode8 *> or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *>
+           or micron::is_same_v<T, const schar *> or micron::is_same_v<T, const wide *>
+           or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
+inline void
+printk(const T &c)
 {
   if constexpr ( outstream == STDOUT_FILENO )
     io::fput(c, io::stdout);
@@ -82,7 +100,11 @@ printk(const T &str)
 
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = STDOUT_FILENO>
-  requires micron::is_pointer_v<T>
+  requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *>
+           and !micron::is_same_v<T, wide *> and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *>
+           and !micron::is_same_v<T, const char *> and !micron::is_same_v<T, const schar *>
+           and !micron::is_same_v<T, const wide *> and !micron::is_same_v<T, const unicode8 *>
+           and !micron::is_same_v<T, const unicode32 *>)
 void
 printk(const T &x)
 {
@@ -356,16 +378,37 @@ printk(T ptr, size_t len)
 }
 
 // PRINTKN BLOCK OF FUNCS, APPENDS NEWLINE
-template <int outstream = STDOUT_FILENO>
+template <int outstream = STDOUT_FILENO, typename T, size_t M>
+  requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide>
+           or micron::is_same_v<T, unicode8> or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char>
+           or micron::is_same_v<T, const schar> or micron::is_same_v<T, const wide>
+           or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
 inline void
-printkn(const char *c)
+printkn(T (&c)[M])
 {
   if constexpr ( outstream == STDOUT_FILENO ) {
     io::fput(c, io::stdout);
     io::fput("\n", io::stdout);
   } else if constexpr ( outstream == STDERR_FILENO ) {
     io::fput(c, io::stderr);
-    io::fput("\n", io::stderr);
+    io::fput("\n", io::stdout);
+  }
+}
+
+template <int outstream = STDOUT_FILENO, typename T>
+  requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *>
+           or micron::is_same_v<T, unicode8 *> or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *>
+           or micron::is_same_v<T, const schar *> or micron::is_same_v<T, const wide *>
+           or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
+inline void
+printkn(const T &c)
+{
+  if constexpr ( outstream == STDOUT_FILENO ) {
+    io::fput(c, io::stdout);
+    io::fput("\n", io::stdout);
+  } else if constexpr ( outstream == STDERR_FILENO ) {
+    io::fput(c, io::stderr);
+    io::fput("\n", io::stdout);
   }
 }
 
@@ -375,10 +418,10 @@ printk(const char (&c)[M])
 {
   if constexpr ( outstream == STDOUT_FILENO ) {
     io::fput(c, M, io::stdout);
-    io::fput("\n", io::stdout);
+    // io::fput("\n", io::stdout);
   } else if constexpr ( outstream == STDERR_FILENO ) {
     io::fput(c, M, io::stderr);
-    io::fput("\n", io::stderr);
+    // io::fput("\n", io::stderr);
   }
 }
 template <typename T, int outstream = STDOUT_FILENO, size_t M>
@@ -460,7 +503,11 @@ void printkn(const T &str)
 }
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = STDOUT_FILENO>
-  requires micron::is_pointer_v<T>
+  requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *>
+           and !micron::is_same_v<T, wide *> and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *>
+           and !micron::is_same_v<T, const char *> and !micron::is_same_v<T, const schar *>
+           and !micron::is_same_v<T, const wide *> and !micron::is_same_v<T, const unicode8 *>
+           and !micron::is_same_v<T, const unicode32 *>)
 void
 printkn(const T &x)
 {

@@ -190,7 +190,9 @@ template <> struct __is_integral_helper<unsigned char> : public true_type {
 
 template <> struct __is_integral_helper<wchar_t> : public true_type {
 };
-
+// NOTE: even though the standard doesn't say this, make char8 integral too
+template <> struct __is_integral_helper<char8_t> : public true_type {
+};
 template <> struct __is_integral_helper<char16_t> : public true_type {
 };
 
