@@ -2,7 +2,7 @@
 #include "../src/std.hpp"
 
 void
-key_press(const timeval &, u16 x, i32 y)
+key_press(const micron::timeval_t &, u16 x, i32 y)
 {
   mc::console("Keypress detected: ", x, " - with state: ", y);
   mc::console("which is: ", mc::uxin::__ev_code_to_integral<char>(x));

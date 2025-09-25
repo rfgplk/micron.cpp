@@ -150,19 +150,17 @@ public:
     new (&__mem::memory[__mem::length++]) t();
   }
   inline void
-  push(t v)
-    requires(micron::is_arithmetic_v<t> && micron::is_same_v<t, t>)
-  {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
-    __mem::memory[__mem::length++] = (v);
-  }
-  inline void
   push(const t &v)
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) t(v);
+    if constexpr ( micron::is_class_v<t> or !micron::is_trivially_constructible_v<t> ) {
+      if ( __mem::length >= __mem::capacity )
+        reserve(__mem::capacity * 2);
+      new (&__mem::memory[__mem::length++]) t(v);
+    } else {
+      if ( __mem::length >= __mem::capacity )
+        reserve(__mem::capacity * 2);
+      __mem::memory[__mem::length++] = (v);
+    }
   }
   inline void
   push(t &&v)

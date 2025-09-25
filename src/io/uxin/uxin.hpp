@@ -165,6 +165,20 @@ read_rt(slice<input_t> &inputs, Args &&...__input_packet)
   mc::uxin::poll_pack_rt(inputs, micron::forward<Args>(__input_packet)...);
 }
 
+template <typename... Args>
+  requires(micron::same_as<input_packet_t, Args> && ...)
+void
+read_once(slice<input_t> &inputs, Args &&...__input_packet)
+{
+  for ( const auto &t : inputs ) {
+    if ( !is_loaded(t.device) )
+      throw micron::except::library_error("uxin read(): device isn't loaded");
+    if ( !is_bound(t.device) )
+      throw micron::except::library_error("uxin read(): device isn't bound");
+  }
+  mc::uxin::poll_pack_once(inputs, micron::forward<Args>(__input_packet)...);
+}
+
 void
 write()
 {

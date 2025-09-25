@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../except.hpp"
-#include "print.hpp"
+#include "stdout.hpp"
 
 namespace micron
 {

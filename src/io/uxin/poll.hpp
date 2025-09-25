@@ -202,5 +202,40 @@ poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
   return 0;
 }
 
+template <auto Fn = get_event, typename... Args>
+  requires((micron::same_as<input_packet_t, Args> && ...))
+poll_flag
+poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
+{
+  for ( const auto &_inp : inp )
+    if ( _inp.device.bound_fd.has_error() )
+      return -1;
+  auto for_every = [](input_t &_inp, const input_event &event, input_packet_t &__raw_in) {
+    if ( __raw_in.mask_type == event.type ) {
+      for ( const auto &mask : __raw_in.button_mask ) {
+        if ( mask == event.code ) {
+          _inp.history.push(event);
+          if ( __raw_in.callback )
+            __raw_in.callback(event.time, event.code, event.value);
+          if ( event.value ) {
+            if ( __raw_in.actuate_callback )
+              __raw_in.actuate_callback(event.time, event.code, event.value);
+          } else {
+            if ( __raw_in.release_callback )
+              __raw_in.release_callback(event.time, event.code, event.value);
+            // unpressed
+          }
+        }
+      }
+    }
+  };
+  for ( size_t j = 0; j < inp.size(); ++j ) {
+    auto &inp_i = inp[j];
+    input_event ev = Fn(inp_i.device);
+    (for_every(inp_i, ev, raw_in), ...);
+  }
+  return 0;
+}
+
 };
 };

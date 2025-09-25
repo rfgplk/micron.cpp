@@ -10,7 +10,6 @@
 #include "../string/strings.hpp"
 #include "io.hpp"
 #include "paths.hpp"
-//#include <sys/stat.h>     // for mkfifo()
 #include "../type_traits.hpp"
 
 namespace micron
@@ -108,12 +107,12 @@ class npipe
   micron::string pipe_name;     // name
   int fd; //fd of open pipe
 public:
-  ~npipe() { posix::unlink(pipe_name.c_str()); posix::close(fd); }
+  ~npipe() { micron::unlink(pipe_name.c_str()); posix::close(fd); }
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str)
   {
-    if ( posix::mkfifo(pipe_name.c_str(), perms) == -1 )
+    if ( micron::mkfifo(pipe_name.c_str(), perms) == -1 )
       throw except::io_error("micron::npipe(mkfifo) failed to create pipe");
-    fd = posix::open(pipe_name.c_str(), O_RDWR);
+    fd = posix::open(pipe_name.c_str(), o_rdwr);
     if(fd == -1)
       throw except::io_error("micron::npipe(open) failed to open pipe file");
   }

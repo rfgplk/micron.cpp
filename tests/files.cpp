@@ -81,14 +81,14 @@ main(void)
   // mc::console(f.pull());
   return 0;
   /*mc::io::path p("/");
-  mc::io::println("Created path.");
-  mc::io::println("Current path is: ", p.get());
+  mc::io::stdoutln("Created path.");
+  mc::io::stdoutln("Current path is: ", p.get());
   auto ps = p.dirs();
-  mc::io::println("Subdirectories:");
+  mc::io::stdoutln("Subdirectories:");
   for ( auto n : ps )
-    mc::io::println(n);
+    mc::io::stdoutln(n);
   auto fs = p.files();
-  mc::io::println("Files:");
+  mc::io::stdoutln("Files:");
   for ( auto n : fs )
-    mc::io::println(n);*/
+    mc::io::stdoutln(n);*/
 }

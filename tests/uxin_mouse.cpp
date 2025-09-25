@@ -2,7 +2,7 @@
 #include "../src/std.hpp"
 
 void
-mouse_move(const timeval &, u16 x, i32 y)
+mouse_move(const micron::timeval_t &, u16 x, i32 y)
 {
   if ( x == micron::abs_x ) {
     mc::console("Mouse movement detected, x: ", y);

@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/io/print.hpp"
+#include "../src/io/stdout.hpp"
 #include "../src/memory/memory.hpp"
 #include "../src/std.hpp"
 #include <cstring>
@@ -19,5 +19,5 @@ main(void)
     x++;
   }
   for ( int i = 0; i < 64; i++ )
-    mc::io::print((int)buf[i]);
+    mc::io::stdout((int)buf[i]);
 }

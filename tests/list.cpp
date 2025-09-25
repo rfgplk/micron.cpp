@@ -8,7 +8,7 @@
 #include "../src/list.hpp"
 #include "../src/string/strings.hpp"
 
-#include "../src/io/print.hpp"
+#include "../src/io/stdout.hpp"
 
 int
 main()

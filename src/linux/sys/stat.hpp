@@ -3,6 +3,8 @@
 #include "../../types.hpp"
 #include "../linux_types.hpp"
 
+#include "../../memory/cmemory.hpp"
+
 namespace micron
 {
 // constexpr int seek_set = 0; /* Seek from beginning of file.  */
@@ -49,7 +51,7 @@ constexpr int S_IRWXO = (S_IRWXG >> 3);
 
 struct stat_t {
   posix::dev_t st_dev;     /* Device.  */
-  posix::ino64_t st_ino;     /* File serial number.  */
+  posix::ino64_t st_ino;   /* File serial number.  */
   posix::nlink_t st_nlink; /* Link count.  */
 
   posix::mode_t st_mode; /* File mode.  */
@@ -57,7 +59,7 @@ struct stat_t {
   posix::gid_t st_gid;   /* Group ID of the file’s group. */
   i32 __pad0;
   posix::dev_t st_rdev;        /* Device number, if device.  */
-  posix::off64_t st_size;        /* Size of file, in bytes.  */
+  posix::off64_t st_size;      /* Size of file, in bytes.  */
   posix::blksize_t st_blksize; /* Optimal block size for I/O.  */
 
   posix::blkcnt_t st_blocks; /* Number of 512-byte blocks allocated. */
@@ -70,6 +72,16 @@ struct stat_t {
 #define st_ctime st_ctim.tv_sec
 
   __syscall_slong_t __glibc_reserved[3];
+  bool
+  operator!=(const stat_t &o) const
+  {
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t*>(&st_blksize) - reinterpret_cast<const addr_t*>(&st_dev));
+  }
+  bool
+  operator==(const stat_t &o) const
+  {
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t*>(&st_blksize) - reinterpret_cast<const addr_t*>(&st_dev));
+  }
 };
 
 };

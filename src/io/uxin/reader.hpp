@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../linux/sys/time.hpp"
+
 #include "../../type_traits.hpp"
 
 #include "bits.hpp"
@@ -16,9 +18,9 @@ namespace uxin
 {
 
 auto
-prepare_generic_mouse_sensor_abs(void (*fn_cb)(const timeval &, u16, i32),
-                                 void (*fn_acb)(const timeval &, u16, i32) = nullptr,
-                                 void (*fn_rcb)(const timeval &, u16, i32) = nullptr) -> input_packet_t
+prepare_generic_mouse_sensor_abs(void (*fn_cb)(const micron::timeval_t &, u16, i32),
+                                 void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+                                 void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input = { ev_rel, sizeof(button_t) * 9, fn_cb, fn_acb, fn_rcb };
 
@@ -54,9 +56,9 @@ prepare_generic_mouse_sensor_abs(void) -> input_packet_t
 };
 
 auto
-prepare_generic_mouse_sensor(void (*fn_cb)(const timeval &, u16, i32),
-                             void (*fn_acb)(const timeval &, u16, i32) = nullptr,
-                             void (*fn_rcb)(const timeval &, u16, i32) = nullptr) -> input_packet_t
+prepare_generic_mouse_sensor(void (*fn_cb)(const micron::timeval_t &, u16, i32),
+                             void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+                             void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input = { ev_rel, sizeof(button_t) * 9, fn_cb, fn_acb, fn_rcb };
 
@@ -91,8 +93,8 @@ prepare_generic_mouse_sensor(void) -> input_packet_t
 };
 
 auto
-prepare_generic_mouse(void (*fn_cb)(const timeval &, u16, i32), void (*fn_acb)(const timeval &, u16, i32) = nullptr,
-                      void (*fn_rcb)(const timeval &, u16, i32) = nullptr) -> input_packet_t
+prepare_generic_mouse(void (*fn_cb)(const micron::timeval_t &, u16, i32), void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+                      void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input = { ev_key, sizeof(button_t) * 8, fn_cb, fn_acb, fn_rcb };
 
@@ -122,9 +124,9 @@ prepare_generic_keyboard_us(void) -> input_packet_t
 };
 
 auto
-prepare_generic_keyboard_us(void (*fn_cb)(const timeval &, u16, i32),
-                            void (*fn_acb)(const timeval &, u16, i32) = nullptr,
-                            void (*fn_rcb)(const timeval &, u16, i32) = nullptr) -> input_packet_t
+prepare_generic_keyboard_us(void (*fn_cb)(const micron::timeval_t &, u16, i32),
+                            void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+                            void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   const byte __first = key_esc;
   const byte __end = key_kpdot;

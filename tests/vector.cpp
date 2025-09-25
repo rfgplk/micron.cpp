@@ -7,10 +7,11 @@
 #include "snowball/snowball.hpp"
 
 #include "../src/io/console.hpp"
+#include "../src/std.hpp"
+#include "../src/vector/convector.hpp"
 #include "../src/vector/fvector.hpp"
 #include "../src/vector/svector.hpp"
 #include "../src/vector/vector.hpp"
-#include "../src/std.hpp"
 
 int
 main()
@@ -28,9 +29,13 @@ main()
     vec.erase(vec.begin() + 9);
     micron::console(vec);
   };
+  mc::convector<float> conf;
+  conf.resize(50);
+  conf.fill(5.5f);
+  mc::console(conf[40]);
   micron::console("Redo");
-  micron::vector<char> cv = { 1, 2, 3, 4, 5, 6};
-  micron::vector<char> bb = cv;
+  micron::vector<u16> cv = { 1, 2, 3, 4, 5, 6 };
+  micron::vector<u16> bb = cv;
   bb.push_back(100);
   cv.push_back(2);
   cv.push_back(5);

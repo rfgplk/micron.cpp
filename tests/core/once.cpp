@@ -18,13 +18,13 @@ void do_this_once(mc::string& s)
 
 void new_scope(void){
 
-  mc::string p = "Works across scopes, this will never be printed :(";
+  mc::string p = "Works across scopes, this will never be stdouted :(";
   mc::do_once<do_this_once> test( p );
 }
 
 void do_this_again(mc::string& s)
 {
-  mc::console("Will be printed again, because the function is different");
+  mc::console("Will be stdouted again, because the function is different");
   mc::console(s);
   return;
 }
@@ -38,7 +38,7 @@ void do_this_third_time(mc::string& s)
 int
 main(void)
 {
-  mc::string msg = "\"Fox\" will be printed once only!";
+  mc::string msg = "\"Fox\" will be stdouted once only!";
   mc::console(msg);
   mc::string test = "Fox";
   mc::do_once<do_this_once> d1( test );

@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/io/print.hpp"
+#include "../src/io/stdout.hpp"
 #include "../src/memory/memory.hpp"
 #include "../src/std.hpp"
 
@@ -31,12 +31,12 @@ main(void)
         "aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque "
         "earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut "
         "perferendis doloribus asperiores repellat.";
-  mc::io::println(mc::strstr(test, "omnis"));
+  mc::io::stdoutln(mc::strstr(test, "omnis"));
   volatile int x = 0;
   size_t cnt = 0;
   for ( uintmax_t i = 0; i < 1e9; i++ ) {
     cnt = micron::strlen(test);
     x++;
   }
-  mc::io::println(cnt);
+  mc::io::stdoutln(cnt);
 }

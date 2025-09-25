@@ -5,18 +5,18 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/control.hpp"
-#include "../src/io/print.hpp"
+#include "../src/io/stdout.hpp"
 #include "../src/std.hpp"
 
 int
 main(void)
 {
-  mc::io::println("Will sleep for 3 seconds");
+  mc::io::stdoutln("Will sleep for 3 seconds");
   mc::sleep(3000);
-  mc::io::println("Awakened.");
+  mc::io::stdoutln("Awakened.");
 
-  mc::io::println("Will pause until SIG_CONT");
+  mc::io::stdoutln("Will pause until SIG_CONT");
   mc::pause();
-  mc::io::println("Finishing");
+  mc::io::stdoutln("Finishing");
   return 1;
 }

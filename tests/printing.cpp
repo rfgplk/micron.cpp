@@ -38,7 +38,7 @@ main(void)
   }
 
   std::string a = "An STL string.";
-  mc::console("Can also print any string-like object: ", a);
+  mc::console("Can also stdout any string-like object: ", a);
   mc::console("Sizes of vector stl and vector mc: ", sizeof(std::vector<int>), " ", sizeof(mc::vector<int>));
   std::vector<int> vecstl(10, 4);
   mc::vector<f128> vec(5, 66234.24f);

@@ -16,7 +16,7 @@
 constexpr u32 ev_version = 0x010001;
 
 struct input_event {
-  struct timeval time;
+  micron::timeval_t time;
   u16 type;
   u16 code;
   i32 value;

@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/io/print.hpp"
+#include "../src/io/stdout.hpp"
 #include "../src/iterator.hpp"
 #include "../src/std.hpp"
 #include "../src/vector/vector.hpp"
@@ -32,29 +32,29 @@ main(void)
   mc::vector<double> d(2000, 55342.2f);
   mc::iterator<float> fitr(f);
   mc::iterator<double> ditr(d);
-  mc::io::println(*fitr, " ", *ditr);
-  mc::io::println(fitr.next_value(), " ", ditr.next_value());
-  mc::io::println(fitr.count());
+  mc::io::stdoutln(*fitr, " ", *ditr);
+  mc::io::stdoutln(fitr.next_value(), " ", ditr.next_value());
+  mc::io::stdoutln(fitr.count());
   mc::vector<int> vints;
   for ( int i = 0; i < (int)80; i++ )
     vints.emplace_back(i * 3);
   mc::iterator<int> ints(vints);
-  mc::io::println(*ints.nth(20));
+  mc::io::stdoutln(*ints.nth(20));
   for ( auto n : vints )
-    mc::io::print(n, " ");
-  mc::io::print("\n");
+    mc::io::stdout(n, " ");
+  mc::io::stdout("\n");
   ints.for_each(dbl);
   for ( auto n : vints )
-    mc::io::print(n, " ");
-  mc::io::print("\n");
+    mc::io::stdout(n, " ");
+  mc::io::stdout("\n");
 
   for ( size_t i = 0; i < vints.size(); i++ )
     vints[i] = i;
   ints = mc::iterator<int>(vints);
   ints.skip(skip2);
-  mc::io::println(*ints.peek());
+  mc::io::stdoutln(*ints.peek());
   ints.skip(skip2);
-  mc::io::println(*ints.peek());
+  mc::io::stdoutln(*ints.peek());
   ints.skip(skip2);
-  mc::io::println(*ints.peek());
+  mc::io::stdoutln(*ints.peek());
 }

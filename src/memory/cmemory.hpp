@@ -38,6 +38,18 @@ using simd::memmove512;
 using simd::rmemcpy128;
 using simd::rmemcpy256;
 
+template <typename T, typename F>
+long int
+memcmp(const F *__restrict _src, const F *__restrict _dest, size_t cnt)
+{
+  const byte *src = reinterpret_cast<const T *>(_src);
+  const byte *dest = reinterpret_cast<const T *>(_dest);
+  for ( size_t i = 0; i < cnt; i++ )
+    if ( src[i] != dest[i] )
+      return &src[i] - &dest[i];
+  return 0;
+};
+
 long int
 bytecmp(const byte *__restrict src, const byte *__restrict dest, size_t cnt)
 {

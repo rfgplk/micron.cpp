@@ -57,7 +57,7 @@ public:
   }
   vector(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       size_t i = 0;
       for ( T &&value : lst ) {
         new (&__mem::memory[i++]) T(micron::move(value));
@@ -74,7 +74,7 @@ public:
   vector(void) : __mem() {};
   vector(const size_t n) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T();
     } else {
@@ -93,7 +93,7 @@ public:
   };
   vector(size_t n, const T &init_value) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(init_value);
     } else {
@@ -105,7 +105,7 @@ public:
   vector(size_t n, T &&init_value) : __mem(n)
   {
     T tmp = micron::move(init_value);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(tmp);
     } else {
@@ -339,6 +339,21 @@ public:
       __mem::memory[i] = v;
   }
   // resize to how much and fill with a value v
+  void
+  resize(size_t n)
+  {
+    if ( !(n > __mem::length) ) {
+      return;
+    }
+    if ( n >= __mem::capacity ) {
+      reserve(n);
+    }
+    T *f_ptr = __mem::memory;
+    for ( size_t i = __mem::length; i < n; i++ )
+      new (&f_ptr[i]) T{};
+
+    __mem::length = n;
+  }
   void
   resize(size_t n, const T &v)
   {
@@ -730,7 +745,7 @@ public:
   {
     if ( !__mem::length )
       return;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
       for ( size_t i = 0; i < __mem::length; i++ )
         (__mem::memory)[i].~T();
     }

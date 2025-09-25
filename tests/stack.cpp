@@ -15,15 +15,17 @@
 int
 main()
 {
-  if constexpr (true ) {
+  if constexpr ( true ) {
     mc::stack<int> stck{ 2, 6, 7, 22, 55 };
     mc::console(stck.max_size());
     for ( int i = 0; i < 100; i++ )
       stck.push(i);
     mc::console(stck.size());
     mc::console(stck.top());
+    stck.pop();
+    mc::console(stck.top());
   }
-  if constexpr (false ) {
+  if constexpr ( false ) {
     mc::istack<int> stck{ 2, 6, 7, 22, 55 };
     mc::console(stck.max_size());
     for ( int i = 0; i < 100; i++ )
@@ -34,7 +36,7 @@ main()
   if constexpr ( false ) {
     mc::stack<int> stck{ 2, 6, 7, 22, 55 };
     using rng = mc::int_range<0, 1e7>;
-    rng::perform(stck, &mc::stack<int>::push);
+    rng::perform(stck, static_cast<void (mc::stack<int>::*)(const int &)>(&mc::stack<int>::push));
     mc::console(stck.size());
     mc::console(stck.top());
   }

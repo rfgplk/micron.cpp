@@ -121,6 +121,7 @@ build slices_test: cc_compile_cmnd_debug tests/slices.cpp
 build hashes_test: cc_compile_cmnd_debug tests/hashes.cpp
 build compile_time_test: cc_compile_cmnd_debug tests/compile_time.cpp
 build vector_test: cc_compile_cmnd_debug tests/vector.cpp
+build queue_test: cc_compile_cmnd_debug tests/queue.cpp
 build map_test: cc_compile_cmnd_debug tests/maps.cpp
 build isort_test: cc_compile_cmnd_debug tests/insert_sort.cpp
 build input_test: cc_compile_cmnd_debug tests/input.cpp
