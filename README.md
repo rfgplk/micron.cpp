@@ -30,7 +30,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 Using the Library
 -------------------
 
-All necessary code is self contained within the `src/` directory. Since *micron* relies on no external sources, no other files or libraries are necessary (*with the sole exception of `pthread.h`, more on that before*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
+All necessary code is self contained within the `src/` directory. Since *micron* relies on no external sources, no other files or libraries are necessary (*with the sole exception of `pthread.h`, more on that below*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
 
 
 #### Installation via `local_install.sh`
