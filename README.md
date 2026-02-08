@@ -6,7 +6,7 @@
 
 #### a core (re)design of the C++ Standard Template Library
 
-**micron** is a comprehensive core library; a collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only C++23 reimplementation of the C++ STL *and* the C standard library targeting the Linux syscall API.
+**micron** is a comprehensive core library; a collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only core system library written in c++23 targeting the Linux syscall API.
 Unlike library collections such as Boost et al., *micron* does not intend to merely *augment* the STL, but entirely replace it.
 
 </div>
