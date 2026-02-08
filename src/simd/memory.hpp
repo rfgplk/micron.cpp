@@ -44,7 +44,7 @@ template <typename F, typename D>
 F &
 rmemcpy128(F &restrict dest, D &restrict src, const u64 cnt)
 {
-  for ( u64 n = 0; n < (cnt / (u64)sizeof(i128)); n++ ) {
+  for ( u64 n = 0; n < ((cnt * sizeof(D)) / (u64)sizeof(i128)); n++ ) {
     i128 pkt = _mm_loadu_si128(reinterpret_cast<i128 *>(&src[n]));
     _mm_storeu_si128(reinterpret_cast<i128 *>(&dest[n]), pkt);
   }
@@ -84,7 +84,7 @@ template <typename F, typename D>
 F &
 rmemcpy256(F &restrict dest, D &restrict src, const u64 cnt)
 {
-  for ( u64 n = 0; n < (cnt / (u64)sizeof(i256)); n++ ) {
+  for ( u64 n = 0; n < ((cnt * sizeof(D)) / (u64)sizeof(i256)); n++ ) {
     i256 pkt = _mm256_loadu_si256(reinterpret_cast<i256 *>(&src[n]));
     _mm256_storeu_si256(reinterpret_cast<i256 *>(&dest[n]), pkt);
   }

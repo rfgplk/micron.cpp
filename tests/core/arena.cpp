@@ -3,7 +3,7 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
-#include "../../src/thread/arena.hpp"
+#include "../../src/thread/pool.hpp"
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
 #include "../../src/mutex/spinlock.hpp"
@@ -17,6 +17,8 @@
 
 #include "../src/range.hpp"
 
+#include "../snowball/snowball.hpp"
+
 int
 fn(void)
 {
@@ -27,16 +29,59 @@ fn(void)
 int
 main(void)
 {
-  int x = 0;
-  mc::console("Maximum threads = ", mc::maximum_threads);
-  mc::standard_arena arena;
-redo: {
-  for ( size_t i = 0; i < 10; i++ ) {
-    arena.create_at(0, fn);
+  disable_scope()
+  {
+    int x = 0;
+    mc::console("Maximum threads = ", mc::maximum_threads);
+    mc::standard_arena arena;
+  redo_fs: {
+    for ( size_t i = 0; i < 10; i++ ) {
+      arena.create_at(0, fn);
+    }
+    if ( x++ < 50 )
+      goto redo_fs;
+    mc::sleep(250);
+    arena.force_clean();
   }
-  if ( x++ < 50 )
-    goto redo;
-  arena.clean();
-}
+  }
+  disable_scope()
+  {
+    int x = 0;
+    mc::console("Maximum threads = ", mc::maximum_threads);
+    mc::standard_arena arena;
+  redo: {
+    for ( size_t i = 0; i < 10; i++ ) {
+      arena.create_at(0, fn);
+    }
+    if ( x++ < 50 )
+      goto redo;
+    arena.clean();
+  }
+  }
+
+  disable_scope()
+  {
+    mc::console("Maximum threads = ", mc::maximum_threads);
+    mc::standard_arena arena;
+    for ( size_t i = 0; i < 4; i++ ) {
+      arena.create_at(i, [&]() -> int {
+        for ( ;; ) {
+        };
+        return 0;
+      });     // throws because console isn't ts, fix it
+    }
+    arena.join_all();
+  }
+  enable_scope()
+  {
+    mc::console("Maximum threads = ", mc::maximum_threads);
+    mc::standard_arena arena;
+    for ( size_t i = 0; i < 9; i++ ) {
+      arena.create_burden([&]() -> int {
+        return 0;
+      });     // throws because console isn't ts, fix it
+    }
+    arena.join_all();
+  }
   return 1;
 }

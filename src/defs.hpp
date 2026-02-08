@@ -5,9 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #if defined(__unix__) || defined(__APPLE__)
 #define PAGE_SIZE_MICRON sysconf(_SC_PAGESIZE)
-#elif defined(_WIN32)
-#include <windows.h>
-#define PAGE_SIZE GetPageSize()
 #else
 #error "Unsupported platform."
 #endif

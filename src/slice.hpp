@@ -8,7 +8,7 @@
 #include "allocation/resources.hpp"
 #include "allocator.hpp"
 
-#include "algorithm/mem.hpp"
+#include "algorithm/memory.hpp"
 #include "memory/addr.hpp"
 #include "tags.hpp"
 #include "types.hpp"
@@ -119,8 +119,10 @@ struct slice : public __immutable_memory_resource<T, Alloc> {
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
+  template <typename R>
+    requires(micron::is_integral_v<R>)
   T &
-  operator[](const size_t n)
+  operator[](const R n)
   {
     return __mem::memory[n];
   }
@@ -140,13 +142,18 @@ struct slice : public __immutable_memory_resource<T, Alloc> {
     return slice<T, Alloc>(&__mem::memory[0], &__mem::memory[__mem::length]);
   }
   iterator
-  begin() const
+  data()
+  {
+    return &__mem::memory[0];
+  }
+  iterator
+  begin()
   {
     return &__mem::memory[0];
   }
 
   iterator
-  end() const
+  end()
   {
     return &__mem::memory[__mem::length - 1];
   }

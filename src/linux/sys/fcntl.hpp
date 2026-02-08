@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../../types.hpp"
-#include "../linux_types.hpp"
+#include "../sys/types.hpp"
 
 namespace micron
 {

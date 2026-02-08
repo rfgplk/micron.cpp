@@ -11,7 +11,7 @@
 #include "../bits/__container.hpp"
 
 #include "../algorithm/algorithm.hpp"
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../allocation/resources.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
@@ -274,8 +274,10 @@ public:
       throw except::library_error("micron::convector operator[] out of allocated memory range.");
     return slice<T>(get(from), get(to));
   }
+  template <typename R>
+    requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) const T &
-  operator[](size_t n) const
+  operator[](R n) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
@@ -283,8 +285,10 @@ public:
       throw except::library_error("micron::convector operator[] out of allocated memory range.");
     return (__mem::memory)[n];
   }
+  template <typename R>
+    requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) T &
-  operator[](size_t n)
+  operator[](R n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
@@ -452,7 +456,6 @@ public:
     __mem::length = n;
   }
   template <typename... Args>
-    requires(micron::is_class_v<T>)
   inline void
   emplace_back(Args &&...v)
   {
@@ -465,17 +468,16 @@ public:
       new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
     }
   }
-  template <typename V = T>
-    requires(!micron::is_class_v<T>) && (!micron::is_class_v<V>)
-  inline void emplace_back(V v)
+  inline void
+  move_back(T &&t)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::length < __mem::capacity ) {
-      __mem::memory[__mem::length++] = static_cast<T>(v);
+      __mem::memory[__mem::length++] = micron::move(t);
       return;
     } else {
       __unlocked_reserve(__mem::capacity + 1);
-      __mem::memory[__mem::length++] = static_cast<T>(v);
+      __mem::memory[__mem::length++] = micron::move(t);
     }
   }
   inline const_iterator

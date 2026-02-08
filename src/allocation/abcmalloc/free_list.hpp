@@ -126,7 +126,7 @@ struct __buddy_list {
     return *this;
   }
   static inline int
-  ceil_log2_u64(uint64_t v) noexcept
+  ceil_log2_u64(u64 v) noexcept
   {
     if ( v <= 1 )
       return 0;

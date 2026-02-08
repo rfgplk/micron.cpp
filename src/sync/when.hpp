@@ -9,7 +9,8 @@
 #include "../types.hpp"
 #include "../type_traits.hpp"
 
-// TODO: implement
+// (when) is a framework for enabling asynchronous work. similar to 'async' in the STL and other languages, but with a twist
+// the general usage pattern is you select some boolean condition (which must evaluate to true) with a function/workload attached. upon calling when a background thread is launched which periodically checks if the condition has been met, and if it has, launches the task 
 
 namespace micron
 {

@@ -21,6 +21,7 @@ public:
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
+  using element_type = Type;
 
   using __alloc = __internal_pointer_alloc<shared_handler<Type>>;
 
@@ -65,7 +66,7 @@ public:
   template <class... Args> explicit thread_pointer(Args &&...args)
   {
     micron::lock_guard lock(mtx);
-    control = __alloc::__impl_alloc(__new<Type>(std::forward<Args>(args)...), 1);
+    control = __alloc::__impl_alloc(__new<Type>(micron::forward<Args>(args)...), 1);
   }
 
   thread_pointer &
@@ -125,7 +126,7 @@ public:
       __delete(control->pnt);
       __alloc::__impl_dealloc(control);
     }
-    control = __alloc::__impl_alloc(__new<Type>(std::move(obj)), 1);
+    control = __alloc::__impl_alloc(__new<Type>(micron::move(obj)), 1);
     return *this;
   }
 
@@ -145,7 +146,7 @@ public:
   thread_pointer &
   operator=(Type *&t) noexcept
   {
-    return (*this = std::move(t));
+    return (*this = micron::move(t));
   }
 
   template <is_nullptr V>

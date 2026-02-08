@@ -7,7 +7,7 @@
 
 #include "../except.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../memory/memory.hpp"
 #include "../memory_block.hpp"
@@ -269,6 +269,12 @@ public:
   clear()
   {
     zero(__mem::memory, __mem::capacity);
+    __mem::length = 0;
+  }
+  // doesn't zero memory, just resets the cur. pointer to 0
+  inline void
+  fast_clear()
+  {
     __mem::length = 0;
   }
   inline istring

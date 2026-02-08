@@ -47,6 +47,7 @@ class hazard_pointer
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = void;
+  using value_type = void;
   static constexpr size_t _end = numeric_limits<size_t>::max();
   size_t _id = _end;
 

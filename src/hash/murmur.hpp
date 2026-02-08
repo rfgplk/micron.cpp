@@ -56,7 +56,7 @@ murmur(const T *key, const size_t len, const u32 seed)
     k2 += k1;
     k2 = k2 * 5 + 0x38495ab5;
   }
-  const uint8_t *tail = (const u8 *)(key + nblocks * 16);
+  const u8 *tail = (const u8 *)(key + nblocks * 16);
 
   u64 k1 = 0;
   u64 k2 = 0;
@@ -160,7 +160,7 @@ murmur(const T *key, const size_t len)
     k2 += k1;
     k2 = k2 * 5 + 0x38495ab5;
   }
-  const uint8_t *tail = (const u8 *)(key + nblocks * 16);
+  const u8 *tail = (const u8 *)(key + nblocks * 16);
 
   u64 k1 = 0;
   u64 k2 = 0;

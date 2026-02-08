@@ -11,8 +11,19 @@
 #define _IMMINTRIN_H_INCLUDED
 #endif
 
-// include everything
+// NOTE: these files include a lot of the stdlib via system headers through the following include stack. rewrite them eventually so we can avoid this
+// from /usr/include/sys/types.h:227,
+// from /usr/include/stdlib.h:514,
+// from /usr/include/c++/15/cstdlib:83,
+// from /usr/include/c++/15/stdlib.h:36,
+// from /usr/lib/gcc/x86_64-redhat-linux/15/include/mm_malloc.h:27,
+// from /usr/lib/gcc/x86_64-redhat-linux/15/include/xmmintrin.h:34,
+// from ../simd/intrin.hpp:18
+
+
+
 // TODO: eventually dynamically include headers depending on comp. target to speed up comp times.
+// include everything
 #include <mmintrin.h>
 
 #include <xmmintrin.h>

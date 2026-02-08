@@ -125,18 +125,18 @@ template <typename Type, typename... Args>
 inline __attribute__((always_inline)) Type *
 __new(Args &&...args)
 {
-  return new Type(micron::forward<Args&&>(args)...);
+  return new Type(micron::forward<Args &&>(args)...);
 }
-template <typename Type, typename... Args>
-inline __attribute__((always_inline)) Type *
-__new_arr(Args &&...args)
+template <typename Type>
+inline __attribute__((always_inline)) auto
+__new_arr(size_t n)
 {
-  return new Type[sizeof...(args)](micron::forward<Args>(args)...);
+  return new Type[n];
 }
 
 template <typename T>
 inline __attribute__((always_inline)) void
-__delete(T *&ptr)
+__delete(T *ptr)
 {
   delete ptr;
   ptr = nullptr;
@@ -144,13 +144,13 @@ __delete(T *&ptr)
 
 template <typename T>
 inline __attribute__((always_inline)) void
-__const_delete(const T *const &ptr)
+__const_delete(const T *const ptr)
 {
   delete ptr;
 }
 template <typename T>
 inline __attribute__((always_inline)) void
-__delete_arr(T *&ptr)
+__delete_arr(T *ptr)
 {
   delete[] ptr;
   ptr = nullptr;

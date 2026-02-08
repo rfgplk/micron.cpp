@@ -1,12 +1,16 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+
 #pragma once
+
+#include "../../types.hpp"
+
+#include "../sys/resource.hpp"
 
 namespace micron
 {
-
-constexpr int PRIO_MIN = -20;
-constexpr int PRIO_MAX = 20;
-
-constexpr int PRIO_PROCESS = 0;
-constexpr int PRIO_PGRP = 1;
-constexpr int PRIO_USER = 2;
+    // TODO: add arbitraty process resource getting from /proc/.../stat
 };

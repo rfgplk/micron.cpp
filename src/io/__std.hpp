@@ -14,15 +14,21 @@
 #endif
 namespace micron
 {
+
+constexpr static const int stdin_fileno = 0;
+constexpr static const int stdout_fileno = 0;
+constexpr static const int stderr_fileno = 0;
+
 namespace io
 {
-fd_t stdin;
-fd_t stdout;
-fd_t stderr;
 
 constexpr char __global_buffer_flush = '\n';
 constexpr int __global_buffer_size = 4096;
 constexpr int __global_buffer_chunk = 1024;
+
+fd_t stdin;
+fd_t stdout;
+fd_t stderr;
 micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>
     __global_buffer_stdout(nullptr);
 micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>
@@ -45,9 +51,9 @@ __load_stdfd(void)
 {
   if ( __verify_open() < 0 )
     return false;
-  stdin = { STDIN_FILENO };
-  stdout = { STDOUT_FILENO };
-  stderr = { STDERR_FILENO };
+  stdin = { stdin_fileno };
+  stdout = { stdout_fileno };
+  stderr = { stderr_fileno };
   return true;
 }
 

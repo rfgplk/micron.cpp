@@ -19,7 +19,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 #pragma once
 
 #include "../../closures.hpp"
@@ -818,7 +817,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     __init_cache<__class_precise>(_cache_buffer);
     __init_bucket<__class_small>(_small_buckets, _tail_small_buckets);        // 1.6MB
     __init_bucket<__class_medium>(_medium_buckets, _tail_medium_buckets);     // 283KB
-    if constexpr ( __default_init_large_pages ) {
+    if constexpr ( __default_init_large_pages or !__is_constrained ) {
       __init_bucket<__class_large>(_large_buckets, _tail_large_buckets);     // 3.54MB
       __init_bucket<__class_huge>(_huge_buckets, _tail_huge_buckets);        // 40.8MB
     }
@@ -834,6 +833,8 @@ or thread storage duration exits via an exception, the function std::terminate i
     __debug_print("push(): ", sz);
     collect_stats<stat_type::alloc>();
     collect_stats<stat_type::total_memory_req>(sz);
+    if ( check_constraint(sz) ) [[unlikely]]
+      abort_state();
     if ( check_oom() ) [[unlikely]]
       abort_state();
     micron::__chunk<byte> memory;
@@ -851,28 +852,47 @@ or thread storage duration exits via an exception, the function std::terminate i
           size_t __next_sz = __calculate_space_cache(__default_cache_step);
           __debug_print("growing (cache) container with size: ", __next_sz);
           __buf_expand_exact(sz, __next_sz);
-        } else if ( sz >= __class_medium and sz < __class_1mb ) {
+          continue;
+        }
 
-          size_t __next_sz = __calculate_space_medium(sz) * __default_overcommit;
-          __predict += __next_sz;
-          __debug_print("growing (large) container with size: ", __predict.predict_size(__next_sz));
-          __buf_expand_exact(sz, __predict.predict_size(__next_sz));
+        if constexpr ( !__is_constrained ) {
+          if ( sz >= __class_medium and sz < __class_1mb ) {
+            // yes, this is correct, no sep calc_spac funcs for classes between these
+            size_t __next_sz = __calculate_space_medium(sz) * __default_overcommit;
+            __predict += __next_sz;
+            __debug_print("growing (large) container with size: ", __predict.predict_size(__next_sz));
+            __buf_expand_exact(sz, __predict.predict_size(__next_sz));
+            continue;
+          }
+        } else if constexpr ( __is_constrained ) {
+          if ( sz >= __class_medium ) {
+            // yes, this is correct, no sep calc_spac funcs for classes between these
+            size_t __next_sz = __calculate_space_medium(sz) * __default_overcommit;
+            __predict += __next_sz;
+            __debug_print("growing (large) container with size: ", __predict.predict_size(__next_sz));
+            __buf_expand_exact(sz, __predict.predict_size(__next_sz));
+            continue;
+          }
+        }
+        if constexpr ( !__is_constrained ) {
 
-        } else if ( sz >= __class_1mb and sz < __class_gb ) {
+          if ( sz >= __class_1mb and sz < __class_gb ) {
 
-          size_t __next_sz = __calculate_space_huge(sz) * __default_overcommit;
-          __predict += __next_sz;
-          __debug_print("growing (1mb+) container with size: ", __predict.predict_size(__next_sz));
-          __buf_expand_exact(sz, __predict.predict_size(__next_sz));
+            size_t __next_sz = __calculate_space_huge(sz) * __default_overcommit;
+            __predict += __next_sz;
+            __debug_print("growing (1mb+) container with size: ", __predict.predict_size(__next_sz));
+            __buf_expand_exact(sz, __predict.predict_size(__next_sz));
+            continue;
 
-        } else if ( sz >= __class_gb ) {     // for if someone requests allocations exceeding 1gb
+          } else if ( sz >= __class_gb ) {     // for if someone requests allocations exceeding 1gb
 
-          size_t __next_sz = __calculate_space_bulk(sz);     // don't overcommit massive multigb allocations
-          __debug_print("growing (gb+) container with size: ", __next_sz);
-          __buf_expand_exact(sz, __next_sz);
-
-        } else {     // for all other allocs, grow the most aggressive
-
+            size_t __next_sz = __calculate_space_bulk(sz);     // don't overcommit massive multigb allocations
+            __debug_print("growing (gb+) container with size: ", __next_sz);
+            __buf_expand_exact(sz, __next_sz);
+            continue;
+          }
+        }
+        {     // for all other allocs, grow the most aggressive
           size_t __next_sz = __calculate_space_small(sz) * __default_overcommit;
           __predict += __next_sz;
           __debug_print("growing (small) container with size: ", __predict.predict_size(__next_sz));
@@ -888,6 +908,8 @@ or thread storage duration exits via an exception, the function std::terminate i
     __debug_print("launder(): ", sz);
     collect_stats<stat_type::alloc>();
     collect_stats<stat_type::total_memory_req>(sz);
+    if ( check_constraint(sz) ) [[unlikely]]
+      abort_state();
     if ( check_oom() ) [[unlikely]]
       abort_state();
     micron::__chunk<byte> memory;

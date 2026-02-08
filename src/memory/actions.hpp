@@ -13,9 +13,10 @@ namespace micron
 {
 
 template <typename T>
-constexpr micron::remove_cv_t<T>& 
-mutable_cast(T& val) noexcept {
-  return const_cast<micron::remove_cv_t<T>&>(val);
+constexpr micron::remove_cv_t<T> &
+mutable_cast(T &val) noexcept
+{
+  return const_cast<micron::remove_cv_t<T> &>(val);
 }
 
 template <typename T>
@@ -153,9 +154,65 @@ cmp_less_equal(T t, F f)
   return !cmp_less(f, t);
 }
 
+template <typename T>
+constexpr T
+min(T a, T b)
+{
+  return (a < b) ? a : b;
+}
+
+template <typename T>
+constexpr T
+max(T a, T b)
+{
+  return (a > b) ? a : b;
+}
+template <typename T, typename... Ts>
+constexpr T
+min(T a, T b, Ts... args)
+{
+  return min(min(a, b), args...);
+}
+
+template <typename T, typename... Ts>
+constexpr T
+max(T a, T b, Ts... args)
+{
+  return max(max(a, b), args...);
+}
+
+template <typename T>
+constexpr bool
+less(T a, T b)
+{
+  return a < b;
+}
+
+template <typename T>
+constexpr bool
+greater(T a, T b)
+{
+  return a > b;
+}
+
+template <typename T>
+constexpr bool
+less_equal(T a, T b)
+{
+  return a <= b;
+}
+
+template <typename T>
+constexpr bool
+greater_equal(T a, T b)
+{
+  return a >= b;
+}
+
 [[noreturn]] inline void
 unreachable(void)
 {
   __builtin_unreachable();
 }
+
 };

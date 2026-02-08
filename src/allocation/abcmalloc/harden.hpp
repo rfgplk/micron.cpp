@@ -36,6 +36,16 @@ fail_state(void)
 }
 #pragma GCC diagnostic pop
 
+inline __attribute__((always_inline)) auto
+check_constraint(const size_t sz) -> bool
+{
+  if constexpr ( __is_constrained ) {
+    if ( sz > __alloc_limit )
+      return true;
+  }
+  return false;
+}
+
 inline __attribute__((always_inline)) void
 sanitize_on_alloc(byte *addr, size_t sz = 0)
 {

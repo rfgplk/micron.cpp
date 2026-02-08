@@ -19,5 +19,5 @@ main(void)
     x++;
   }
   for ( int i = 0; i < 64; i++ )
-    mc::io::stdout((int)buf[i]);
+    mc::io::println((int)buf[i]);
 }

@@ -6,10 +6,11 @@
 #pragma once
 
 #include "errno.hpp"
-#include "linux/calls.hpp"
+#include "linux/__includes.hpp"
 #include "linux/process/wait.hpp"
 #include "linux/sys/poll.hpp"
 #include "linux/sys/signal.hpp"
+#include "linux/sys/system.hpp"
 #include "linux/sys/time.hpp"
 #include "thread/signal.hpp"
 
@@ -108,7 +109,12 @@ wait_thread(int tid)
 {
   // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
   siginfo_t i;
-  return static_cast<int>(micron::waitid(P_PID, tid, i, exited | stopped));
+  int r = static_cast<int>(micron::waitid(P_PID, tid, i, exited));
+  if ( r < 0 ) {
+    if ( r == -10 ) {
+    }
+  }
+  return r;
 }
 
 inline int

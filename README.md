@@ -2,15 +2,18 @@
 
 <div align="left">
 
-### the micron standard library  <img src="https://img.shields.io/badge/version-indev-green">
+### the micron core library 🦅 <img src="https://img.shields.io/badge/version-indev-green">
 
 #### a core (re)design of the C++ Standard Template Library
 
-**micron** is a comprehensive collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only C++23 reimplementation of the C++ STL *and* the C standard library targeting the Linux syscall API.
+**micron** is a comprehensive core library; a collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only C++23 reimplementation of the C++ STL *and* the C standard library targeting the Linux syscall API.
 Unlike library collections such as Boost et al., *micron* does not intend to merely *augment* the STL, but entirely replace it.
 
 </div>
 
+![Version](https://img.shields.io/badge/version-0.5.0-red)
+[![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
+[![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
 
 ------
@@ -21,10 +24,23 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 
 > [!WARNING]
-> micron is still in active development. The ABI may change at any point, and without notice.
+> micron is still in active development, and as of v0.5 has reached relative stability. Regardless, the ABI may change at any point, and without notice.
 
 
+Using the Library
+-------------------
 
+All necessary code is self contained within the `src/` directory. Since *micron* relies on no external sources, no other files or libraries are necessary (*with the sole exception of `pthread.h`, more on that before*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
+
+
+#### Installation via `local_install.sh`
+
+A simple script which copies all files to `/usr/local/micron`
+
+
+#### Is micron entirely self-sufficient?
+
+Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `gcc` compiler, you can compile and run it anywhere. The sole exception as for now is `<pthread.h>`, which is necessary to facilitate multi-threading. (technical note: as for now you still need to link against -libc due to exceptions/_start/TLS not being fully implemented).
 
 Features
 --------
@@ -60,6 +76,7 @@ Philosophy
 - functionality must be preserved with any arbitrary data type
 - in all instances, *micron* must maintain seamless interoperability with the STL and any other library offering equivalent functionality
 - in all cases, performance always takes precedence over safety, with the developer assuming full responsibility for code validity and security
+- all functions follow a strict side effect free formulation (pure functions)
 
 in short:
 - the written code, in its explicit form, stands as the ultimate arbiter of truth, unyielding and devoid of ambiguity, embodying the essence of how code should perform.
@@ -76,25 +93,32 @@ in short:
 
 ***
 
-Is *micron* entirely independent of the STL yet? 
-
-Yes.
-
-Is *micron* entirely independent of libc yet? 
-
-Not fully, there are a select few glibc specific headers still needed to fully compile micron.
-
-
-
 > [!IMPORTANT]
-> Documentation for the *micron* library does not exist for now, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86, as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
+> Documentation for the *micron* library does not exist for now, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support), as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
 
  
 Libraries
 -----------
 
 ### currently, micron provides the following core C++ libraries:
-- (being reorganized)
+- [algorithm]
+- [allocation]
+- [array]
+- [hash]
+- [maps]
+- [math]
+- [matrix]
+- [memory]
+- [parallel]
+- [quants]
+- [queue]
+- [simd]
+- [sort]
+- [string]
+- [sync]
+- [thread]
+- [trees]
+- [vector]
 
 
 ## License

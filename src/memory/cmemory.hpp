@@ -164,7 +164,7 @@ template <u64 M, typename F>
 constexpr F &
 cbzero(F &_src)
 {
-  byte *src = reinterpret_cast<F *>(_src);
+  byte *src = reinterpret_cast<byte *>(_src);
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0x0;
   return src;
@@ -174,10 +174,29 @@ template <u64 M, typename F>
 constexpr F *
 cbzero(F *_src)
 {
-  byte *src = reinterpret_cast<F *>(_src);
+  byte *src = reinterpret_cast<byte *>(_src);
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0x0;
   return reinterpret_cast<F *>(src);
+};
+template <u64 M, typename F>
+constexpr F &
+scbzero(F &_src)
+{
+  volatile byte *src = reinterpret_cast<volatile byte *>(_src);
+  for ( u64 n = 0; n < M; n++ )
+    src[n] = 0x0;
+  return _src;
+};
+
+template <u64 M, typename F>
+constexpr F *
+scbzero(F *_src)
+{
+  volatile byte *src = reinterpret_cast<volatile byte *>(_src);
+  for ( u64 n = 0; n < M; n++ )
+    src[n] = 0x0;
+  return _src;
 };
 
 template <typename F, u64 L, typename M = u64>
@@ -816,14 +835,14 @@ crmemcpy(F &restrict dest, const D &restrict src)
 {
   if constexpr ( M % 4 == 0 )
     for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = static_cast<F>(src[n]);
-      dest[n + 1] = static_cast<F>(src[n + 1]);
-      dest[n + 2] = static_cast<F>(src[n + 2]);
-      dest[n + 3] = static_cast<F>(src[n + 3]);
+      dest[n] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n]);
+      dest[n + 1] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n + 1]);
+      dest[n + 2] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n + 2]);
+      dest[n + 3] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n + 3]);
     }
   else if constexpr ( M % 4 != 0 )
     for ( u64 n = 0; n < M; n++ )
-      dest[n] = static_cast<F>(src[n]);
+      dest[n] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n]);
   return reinterpret_cast<F &>(dest);
 };
 
@@ -833,14 +852,14 @@ rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt)
 {
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
-      dest[n] = static_cast<F>(src[n]);
-      dest[n + 1] = static_cast<F>(src[n + 1]);
-      dest[n + 2] = static_cast<F>(src[n + 2]);
-      dest[n + 3] = static_cast<F>(src[n + 3]);
+      dest[n] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n]);
+      dest[n + 1] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n + 1]);
+      dest[n + 2] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n + 2]);
+      dest[n + 3] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n + 3]);
     }
   else
     for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = static_cast<F>(src[n]);
+      dest[n] = static_cast<micron::remove_cv_t<micron::remove_pointer_t<F>>>(src[n]);
   return reinterpret_cast<F &>(dest);
 };
 
@@ -862,6 +881,7 @@ memcpy(F *restrict dest, const D *restrict src, const u64 cnt)
 };
 
 template <u64 M, typename F, typename D>
+  requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F *
 cbytecpy(F *restrict _dest, const D *restrict _src)
 {
@@ -879,7 +899,26 @@ cbytecpy(F *restrict _dest, const D *restrict _src)
       dest[n] = (src[n]);
   return reinterpret_cast<F *>(dest);
 };
+
+void *
+voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt)
+{
+  byte *dest = reinterpret_cast<byte *>(_dest);
+  const byte *src = reinterpret_cast<const byte *>(_src);
+  if ( cnt % 4 == 0 ) [[likely]]
+    for ( u64 n = 0; n < cnt; n += 4 ) {
+      dest[n] = (src[n]);
+      dest[n + 1] = (src[n + 1]);
+      dest[n + 2] = (src[n + 2]);
+      dest[n + 3] = (src[n + 3]);
+    }
+  else
+    for ( u64 n = 0; n < cnt; n++ )
+      dest[n] = (src[n]);
+  return reinterpret_cast<void *>(dest);
+};
 template <typename F, typename D>
+  requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F *
 bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt)
 {
@@ -898,6 +937,7 @@ bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt)
   return reinterpret_cast<F *>(dest);
 };
 template <typename F, typename D>
+  requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F &
 rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt)
 {
@@ -916,11 +956,12 @@ rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt)
   return reinterpret_cast<F &>(dest);
 };
 template <typename F, typename D>
+  requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F *
 bytemove(F *_dest, D *_src, const u64 cnt)
 {
-  byte *dest = reinterpret_cast<byte *>(_dest);
-  byte *src = reinterpret_cast<byte *>(_src);
+  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F>*>(_dest));
+  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F>*>(_src));
   if ( dest < src )
     for ( u64 i = 0; i < cnt; i++ )
       dest[i] = src[i];
@@ -931,6 +972,7 @@ bytemove(F *_dest, D *_src, const u64 cnt)
 };
 
 template <typename F, typename D>
+  requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F &
 rbytemove(F &_dest, D &_src, const u64 cnt)
 {

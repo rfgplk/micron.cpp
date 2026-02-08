@@ -6,8 +6,7 @@
 #pragma once
 
 #include "algorithm/algorithm.hpp"
-#include "algorithm/mem.hpp"
-#include "heap/cpp.hpp"
+#include "algorithm/memory.hpp"
 #include "tags.hpp"
 #include "types.hpp"
 #include "except.hpp"

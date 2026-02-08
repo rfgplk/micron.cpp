@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../allocation/chunks.hpp"
 #include "../allocator.hpp"
 #include "../memory/actions.hpp"

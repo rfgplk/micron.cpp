@@ -5,14 +5,14 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../tags.hpp"
-#include "../../type_traits.hpp"
-#include "../../concepts.hpp"
-#include "../../types.hpp"
 #include "../../atomic/atomic.hpp"
+#include "../../concepts.hpp"
 #include "../../except.hpp"
 #include "../../memory/actions.hpp"
 #include "../../memory/new.hpp"
+#include "../../tags.hpp"
+#include "../../type_traits.hpp"
+#include "../../types.hpp"
 
 namespace micron
 {
@@ -33,18 +33,25 @@ template <class Type> struct __internal_pointer_alloc {
   static inline __attribute__((always_inline)) Type *
   __impl_alloc(Args &&...args)
   {
-    return __new<Type>(micron::forward<Args>(args)...);
+    return __new<Type>(micron::forward<Args &&>(args)...);
   }
-
+  template <typename Arr>
   static inline __attribute__((always_inline)) void
-  __impl_dealloc(Type *&pointer)
+  __impl_dealloc_arr(Arr *pointer)
+  {
+    if ( pointer != nullptr ) {
+      __delete_arr(pointer);
+    }
+  }
+  static inline __attribute__((always_inline)) void
+  __impl_dealloc(Type *pointer)
   {
     if ( pointer != nullptr ) {
       __delete(pointer);
     }
   }
   static inline __attribute__((always_inline)) void
-  __impl_constdealloc(const Type *const &pointer)
+  __impl_constdealloc(const Type *const pointer)
   {
     if ( pointer != nullptr ) {
       __const_delete(pointer);
@@ -53,16 +60,16 @@ template <class Type> struct __internal_pointer_alloc {
 };
 
 template <class Type> struct __internal_pointer_arralloc {
-  template <typename... Args>
-  inline __attribute__((always_inline)) Type *
-  __impl_alloc(Args &&...args)
+  static inline __attribute__((always_inline)) auto
+  __impl_alloc(size_t n)
   {
-    return __new_arr<Type>(micron::forward<Args>(args)...);
+    return __new_arr<Type>(n);
     // return new Type(micron::forward<Args>(args)...);
   }
 
-  inline __attribute__((always_inline)) void
-  __impl_dealloc(Type *&pointer)
+  template <typename A>
+  static inline __attribute__((always_inline)) void
+  __impl_dealloc(A *pointer)
   {
     if ( pointer != nullptr ) {
       __delete_arr(pointer);

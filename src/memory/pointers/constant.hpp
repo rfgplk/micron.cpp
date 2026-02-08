@@ -9,7 +9,6 @@
 
 namespace micron
 {
-
 // A constant pointer, cannot be reassigned nor written to
 template <class Type> class const_pointer : private __internal_pointer_alloc<Type>
 {
@@ -20,44 +19,52 @@ public:
   using category_type = pointer_tag;
   using mutability_type = immutable_tag;
   using value_type = Type;
-
+  using element_type = Type;
   using __alloc = __internal_pointer_alloc<Type>;
 
-  ~const_pointer() { __alloc::__impl_constdealloc(internal_pointer); };
-  const_pointer() : internal_pointer(__alloc::__impl_alloc()) {}     // internal_pointer(new Type()) {};
+  ~const_pointer() { __alloc::__impl_constdealloc(internal_pointer); }
+
+  const_pointer() : internal_pointer(__alloc::__impl_alloc()) {}
+
   template <is_nullptr V> const_pointer(V) = delete;
-  const_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+
+  const_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; }
+
   template <class... Args>
   const_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...))
   {
-  }     // internal_pointer(new Type(args...)){};
+  }
 
-  // important, cannot be moved
+  // Cannot be moved nor copied
   const_pointer(const_pointer &&p) = delete;
   const_pointer(const const_pointer &p) = delete;
-
   const_pointer &operator=(const const_pointer &) = delete;
   const_pointer &operator=(const_pointer &&t) = delete;
+
   const Type *
   operator()() const noexcept
   {
     return internal_pointer;
   }
+
   bool
   operator!(void) const noexcept
   {
     return internal_pointer == nullptr;
-  };
+  }
+
   bool
-  operator==(Type* u) const noexcept
+  operator==(const Type *u) const noexcept
   {
     return internal_pointer == u;
-  };
+  }
+
   bool
   operator==(uintptr_t u) const noexcept
   {
-    return internal_pointer == reinterpret_cast<Type*>(u);
-  };
+    return internal_pointer == reinterpret_cast<const Type *>(u);
+  }
+
   const Type *
   operator->() const
   {
@@ -66,6 +73,7 @@ public:
     else
       throw except::memory_error("const_pointer operator->(): internal_pointer was null");
   }
+
   const Type &
   operator*() const
   {
@@ -73,9 +81,88 @@ public:
       return *internal_pointer;
     else
       throw except::memory_error("const_pointer operator*(): internal_pointer was null");
-  };
+  }
+
   inline Type *release() = delete;
   void clear() = delete;
 };
 
+// A constant array pointer, cannot be reassigned nor written to
+template <class Type> class const_pointer<Type[]> : private __internal_pointer_alloc<Type[]>
+{
+  const Type *const internal_pointer;
+  const size_t array_size;
+
+public:
+  using pointer_type = owning_pointer_tag;
+  using category_type = pointer_tag;
+  using mutability_type = immutable_tag;
+  using value_type = Type;
+  using element_type = Type;
+  using __alloc = __internal_pointer_alloc<Type[]>;
+
+  ~const_pointer() { __alloc::__impl_constdealloc(internal_pointer); }
+
+  const_pointer() : internal_pointer(nullptr), array_size(0) {}
+
+  explicit const_pointer(size_t size) : internal_pointer(__alloc::__impl_alloc(size)), array_size(size) {}
+
+  template <is_nullptr V> const_pointer(V) = delete;
+
+  const_pointer(Type *&&raw_ptr, size_t size) : internal_pointer(raw_ptr), array_size(size) { raw_ptr = nullptr; }
+
+  const_pointer(const_pointer &&p) = delete;
+  const_pointer(const const_pointer &p) = delete;
+  const_pointer &operator=(const const_pointer &) = delete;
+  const_pointer &operator=(const_pointer &&t) = delete;
+
+  const Type *
+  operator()() const noexcept
+  {
+    return internal_pointer;
+  }
+
+  bool
+  operator!(void) const noexcept
+  {
+    return internal_pointer == nullptr;
+  }
+
+  bool
+  operator==(const Type *u) const noexcept
+  {
+    return internal_pointer == u;
+  }
+
+  bool
+  operator==(uintptr_t u) const noexcept
+  {
+    return internal_pointer == reinterpret_cast<const Type *>(u);
+  }
+
+  const Type &
+  operator[](size_t index) const
+  {
+    if ( internal_pointer != nullptr && index < array_size )
+      return internal_pointer[index];
+    else
+      throw except::memory_error("const_pointer operator[]: index out of bounds or internal_pointer was null");
+  }
+
+  size_t
+  size() const noexcept
+  {
+    return array_size;
+  }
+
+  const Type *
+  data() const noexcept
+  {
+    return internal_pointer;
+  }
+
+  inline Type *release() = delete;
+  void clear() = delete;
 };
+
+}     // namespace micron

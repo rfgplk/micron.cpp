@@ -5,10 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../type_traits.hpp"
 #include "../__special/initializer_list"
+#include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../container_safety.hpp"
@@ -206,8 +206,10 @@ public:
     return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
   }
   // always direct
+  template <typename R>
+    requires(micron::is_integral_v<R>)
   inline const T &
-  operator[](size_t n) const
+  operator[](R n) const
   {
     return (__mem::memory)[n];
   }
@@ -488,6 +490,11 @@ public:
   back()
   {
     return (__mem::memory)[__mem::length - 1];
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
   // access at element
 };

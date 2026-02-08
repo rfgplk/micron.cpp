@@ -8,7 +8,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -138,6 +138,21 @@ public:
     micron::copy<N>(&o.stack[0], &stack[0]);
     return *this;
   }
+  template <is_constexpr_container A>
+  farray &
+  operator=(const A &o)
+  {
+    micron::copy<N>(&o[0], &stack[0]);
+    return *this;
+  }
+  template <is_container A>
+    requires(!micron::is_same_v<A, farray>)
+  farray &
+  operator=(const A &o)
+  {
+    micron::copy<N>(&o[0], &stack[0]);
+    return *this;
+  }
   farray &
   operator=(farray &&o)
   {
@@ -189,6 +204,16 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] %= o.stack[o];
     return *this;
+  }
+  byte *
+  operator&()
+  {
+    return reinterpret_cast<byte *>(stack);
+  }
+  const byte *
+  operator&() const
+  {
+    return reinterpret_cast<byte *>(stack);
   }
 
   // special functions - no idea why the stl doesn't have these
@@ -270,6 +295,11 @@ public:
   {
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
 };
 

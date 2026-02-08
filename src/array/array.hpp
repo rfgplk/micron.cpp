@@ -6,9 +6,10 @@
 #pragma once
 
 #include "../__special/initializer_list"
+#include "../bits/__container.hpp"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -49,11 +50,32 @@ class array
     }
   }
   void
+  __impl_copy(const T *__restrict src, T *__restrict dest)
+  {
+    if constexpr ( micron::is_class<T>::value ) {
+      for ( size_t i = 0; i < N; i++ )
+        dest[i] = src[i];
+    } else {
+      micron::copy<N>(src, dest);
+    }
+  }
+  void
+  __impl_move(T *__restrict src, const T *__restrict dest)
+  {
+    if constexpr ( micron::is_class<T>::value ) {
+      for ( size_t i = 0; i < N; i++ )
+        dest[i] = micron::move(src[i]);
+    } else {
+      micron::copy<N>(src, dest);
+      micron::czero<N>(src);
+    }
+  }
+  void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
     if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
-        stack[i] = dest[i];
+        dest[i] = src[i];
     } else {
       micron::copy<N>(src, dest);
     }
@@ -63,7 +85,7 @@ class array
   {
     if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(dest[i]);
+        dest[i] = micron::move(src[i]);
     } else {
       micron::copy<N>(src, dest);
       micron::czero<N>(src);
@@ -101,7 +123,7 @@ public:
     if ( lst.size() > N )
       throw except::runtime_error("micron::array array(init_list): init_list too large.");
     size_t i = 0;
-    for ( T value : lst )
+    for ( auto &&value : lst )
       stack[i++] = micron::move(value);
   }
   template <is_container A>
@@ -118,7 +140,10 @@ public:
   {
     if ( o.size() < N )
       throw except::runtime_error("micron::array array(&&) invalid size");
-    __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
+    if constexpr ( micron::is_rvalue_reference_v<A &&> )
+      __impl_move(micron::addr(o[0]), stack);
+    else
+      __impl_copy(micron::addr(o[0]), stack);
   }
   array(const array &o)
   {
@@ -199,7 +224,7 @@ public:
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
   {
-    __impl_copy(micron::addr(o.stack[0]), &o[0]);
+    __impl_copy(micron::addr(&o[0]), &stack[0]);
     // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
@@ -209,6 +234,21 @@ public:
     requires micron::is_fundamental_v<F>
   {
     micron::cmemset<N>(micron::addr(stack[0]), o);
+    return *this;
+  }
+  template <is_constexpr_container A>
+  array &
+  operator=(const A &o)
+  {
+    micron::copy<N>(&o[0], &stack[0]);
+    return *this;
+  }
+  template <is_container A>
+    requires(!micron::is_same_v<A, array>)
+  array &
+  operator=(const A &o)
+  {
+    micron::copy<N>(&o[0], &stack[0]);
     return *this;
   }
   array &
@@ -308,6 +348,18 @@ public:
       stack[i] += o;
     return *this;
   }
+
+  byte *
+  operator&()
+  {
+    return reinterpret_cast<byte *>(stack);
+  }
+  const byte *
+  operator&() const
+  {
+    return reinterpret_cast<byte *>(stack);
+  }
+
   void
   mul(const size_t n)
   {
@@ -370,6 +422,11 @@ public:
   {
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
 };
 };     // namespace micron

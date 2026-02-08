@@ -4,9 +4,10 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
+#include "bits/__pause.hpp"
 
 #include "bits-types.hpp"
-#include "linux/linux_types.hpp"
+#include "linux/sys/types.hpp"
 #include "type_traits.hpp"
 
 typedef unsigned char __u_char;
@@ -61,8 +62,8 @@ using suseconds_t = __suseconds_t;
 
 using time_t = __time_t;
 using time64_t = time_t;
-using slong_t = __SYSCALL_SLONG_TYPE;
-using ulong_t = __SYSCALL_ULONG_TYPE;
+using slong_t = __syscall_slong_type;
+using ulong_t = __syscall_ulong_type;
 using quad_t = int64_t;
 using uquad_t = uint64_t;
 
@@ -86,17 +87,17 @@ using kernel_size_t = kernel_ulong_t;
 using kernel_ssize_t = kernel_long_t;
 using kernel_ptrdiff_t = kernel_long_t;
 
-typedef kernel_long_t kernel_off_t;
-typedef long long kernel_loff_t;
-typedef kernel_long_t kernel_old_time_t;
-typedef kernel_long_t kernel_time_t;
-typedef long long kernel_time64_t;
-typedef kernel_long_t kernel_clock_t;
-typedef int kernel_timer_t;
-typedef int kernel_clockid_t;
-typedef char *kernel_caddr_t;
-typedef unsigned short kernel_uid16_t;
-typedef unsigned short kernel_gid16_t;
+using kernel_off_t = __off_t;                // kernel_long_t
+using kernel_loff_t = __off64_t;             // long long
+using kernel_old_time_t = __time_t;          // kernel_long_t
+using kernel_time_t = __time_t;              // kernel_long_t
+using kernel_time64_t = __suseconds64_t;     // long long
+using kernel_clock_t = __clock_t;            // kernel_long_t
+using kernel_timer_t = int;                  // int
+using kernel_clockid_t = int;                // int
+using kernel_caddr_t = char *;               // char*
+using kernel_uid16_t = __uid_t_type;         // unsigned short
+using kernel_gid16_t = __gid_t_type;         // unsigned short
 
 // using complex = _Complex;
 // using imaginary = _Imaginary;
@@ -143,4 +144,3 @@ using ff = float;
 using df = double;
 
 using nullptr_t = decltype(nullptr);
-

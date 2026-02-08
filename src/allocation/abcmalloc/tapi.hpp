@@ -31,8 +31,8 @@
 namespace abc
 {
 micron::mutex __global_mutex;
-thread_local static bool __abcmalloc_init = false;
-thread_local static __arena *__main_arena = nullptr;
+static bool __abcmalloc_init = false;
+static __arena *__main_arena = nullptr;
 
 // global construction
 // NOTE: attr constructor will fire after zero-initialization of all static variables, but BEFORE dynamic init. of all
@@ -43,8 +43,8 @@ thread_local static __arena *__main_arena = nullptr;
 inline __attribute__((constructor(101))) void
 __global_abcmalloc_start(void)
 {
-  if constexpr ( __default_global_instance ) {
-    thread_local static __arena local_arena;
+  if constexpr ( __default_global_instance and __default_construct_on_start ) {
+    static __arena local_arena;
     __main_arena = &local_arena;
     __abcmalloc_init = true;
   }

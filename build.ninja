@@ -11,6 +11,7 @@ compiler_llvm = clang++
 cflags_debug = -g -march=native
 cflags_optimizations = -Ofast -mavx2 -mbmi -march=native
 
+
 # annoying but works
 cflags_warn_all_llvm = -Weverything
 cflags_warn_base = -Wall -Wextra -Wpedantic
@@ -18,12 +19,13 @@ cflags_warn_options = -Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconv
 cflags_extra_errors = -Werror=missing-field-initializers -Werror=return-type
 cflags_warn_ignore = -Wno-implicit-fallthrough -Wno-sign-conversion -Wno-variadic-macros
 
-cflags_ext = -nodefaultlibs -fstack-protector-strong -fstrict-overflow -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
+cflags_ext = -nodefaultlibs -fstack-protector-strong -fstack-clash-protection -fstrict-overflow -fopenmp -fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2
 cflags_ext_llvm = -fopenmp -ffast-math -flto -fdiagnostics-color=always
 
 
 
 
+cflags_llvm_debug =  -std=c++23 $cflags_debug $cflags_optimizations $cflags_ext_llvm
 cflags_gnu_debug =  -std=c++23 $cflags_debug $cflags_warn_base $cflags_warn_options $cflags_warn_ignore $cflags_extra_errors $cflags_ext
 cflags_gnu =  -std=c++23 $cflags_optimizations $cflags_warn_base $cflags_warn_options $cflags_warn_ignore $cflags_extra_errors $cflags_ext
 cflags_gnuc =  -std=c11 $cflags_optimizations $cflags_warn_base $cflags_ext
@@ -34,25 +36,38 @@ compile_flags_start = -c
 clibs_location = -L./libs
 clibs_includes = -Isrc
 
-clibs_static = -static-libstdc++
+clibs_static = -static-libstdc++ -static-libgcc
 build_directory = bin
 
 rule as_c_cc_compile_cmnd
   command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnuc $cflags_gnuc $clibs_location $clibs_includes $compile_flags_start $in -o start.o;
 
 rule cc_compile_cmnd
-  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu $clibs_location $clibs_includes $in $compile_flags_std -o $build_directory/$out;
+  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu $clibs_location $clibs_includes $in $compile_flags_std -o $build_directory/$out $clibs_static;
 
 rule cc_compile_cmnd_debug_no_libc
   command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $no_libc $cflags_gnu_debug $clibs_location $clibs_includes $in $compile_flags_std $include_libc_start -o $build_directory/$out;
 rule cc_compile_cmnd_debug
   command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_gnu $cflags_gnu_debug $clibs_location $clibs_includes $in $compile_flags_std -o $build_directory/$out;
+rule cc_clang_compile_cmnd_debug
+  command = echo -e "\n\n\033[1;32mBuilding:\033[0m $out" && $timer $compiler_llvm $cflags_llvm_debug $clibs_location $clibs_includes $in $compile_flags_std -o $build_directory/$out;
 
 # core
 build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
 
+build micron_build_bin: cc_compile_cmnd tools/src/build.cc
 build bench_strings: cc_compile_cmnd benches/strings.cpp
 
+build rigor_memory: cc_compile_cmnd tests/rigor/memory.cpp
+build rigor_stack: cc_compile_cmnd tests/rigor/stack.cpp
+build rigor_vector: cc_compile_cmnd tests/rigor/vector.cpp
+build rigor_string: cc_compile_cmnd tests/rigor/string.cpp
+build rigor_array: cc_compile_cmnd tests/rigor/array.cpp
+
+build example_png: cc_compile_cmnd examples/sample.cpp
+
+build prints: cc_compile_cmnd tests/prints.cpp
+build core_tests_forks: cc_compile_cmnd_debug tests/core/forks.cpp
 build core_tests_control: cc_compile_cmnd_debug tests/core/control.cpp
 build core_tests_io_init: cc_compile_cmnd_debug tests/core/io_init.cpp
 build core_tests_syscall: cc_compile_cmnd_debug tests/core/syscall.cpp
@@ -65,6 +80,7 @@ build core_tests_once: cc_compile_cmnd_debug tests/core/once.cpp
 build core_tests_cpu: cc_compile_cmnd_debug tests/core/cpu.cpp
 build core_tests_thread: cc_compile_cmnd_debug tests/core/threads.cpp
 build core_tests_arena: cc_compile_cmnd_debug tests/core/arena.cpp
+build core_tests_spawning: cc_compile_cmnd tests/core/spawning.cpp
 build core_tests_linux: cc_compile_cmnd_debug tests/core/linux.cpp
 build core_tests_channels: cc_compile_cmnd_debug tests/core/channels.cpp
 build core_tests_abcmalloc: cc_compile_cmnd_debug tests/core/abcmalloc.cpp
@@ -112,8 +128,11 @@ build strmem_test: cc_compile_cmnd_debug tests/strmem.cpp
 build iterator_test: cc_compile_cmnd_debug tests/iterators.cpp
 build sleep_test: cc_compile_cmnd_debug tests/sleeping.cpp
 build promises_test: cc_compile_cmnd_debug tests/promises.cpp
+build algo_test: cc_compile_cmnd_debug tests/algo.cpp
+build fold_test: cc_compile_cmnd tests/fold.cpp
 build fsys_test: cc_compile_cmnd_debug tests/io.cpp
 build ivector_test: cc_compile_cmnd_debug tests/ivector.cpp
+build circle_buffer_test: cc_compile_cmnd_debug tests/circle_buffer.cpp
 build array_test: cc_compile_cmnd_debug tests/array.cpp
 build stacks_test: cc_compile_cmnd_debug tests/stack.cpp
 build buffers_test: cc_compile_cmnd_debug tests/buffers.cpp
@@ -121,6 +140,8 @@ build slices_test: cc_compile_cmnd_debug tests/slices.cpp
 build hashes_test: cc_compile_cmnd_debug tests/hashes.cpp
 build compile_time_test: cc_compile_cmnd_debug tests/compile_time.cpp
 build vector_test: cc_compile_cmnd_debug tests/vector.cpp
+build fvector_test: cc_compile_cmnd_debug tests/fvector.cpp
+build vector_tt_test: cc_compile_cmnd_debug tests/vector_tt.cpp
 build queue_test: cc_compile_cmnd_debug tests/queue.cpp
 build map_test: cc_compile_cmnd_debug tests/maps.cpp
 build isort_test: cc_compile_cmnd_debug tests/insert_sort.cpp
@@ -131,5 +152,6 @@ build process_test: cc_compile_cmnd_debug tests/process.cpp
 build bloom_test: cc_compile_cmnd_debug tests/bloom.cpp
 build errno_test: cc_compile_cmnd_debug tests/errno.cpp
 build container_leak_test: cc_compile_cmnd_debug tests/vector_leak.cpp
+build threads_comparison: cc_compile_cmnd tests/comparison/threads_stl.cpp
 #build vector_leak_test: cc_compile_cmnd_debug tests/vector_leak.cpp
 #build vector_perf_test: cc_compile_cmnd_debug tests/vector_perf.cpp

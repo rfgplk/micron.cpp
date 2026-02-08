@@ -8,9 +8,6 @@
 #include "../sync/yield.hpp"
 #include "mutex.hpp"
 
-//#if !defined(__GNUC__)
-//#include <sched.h>
-//#endif
 
 namespace micron
 {
@@ -28,12 +25,12 @@ public:
     for ( ;; ) {
       while ( _lock.get() ) {
 #if defined(__GNUC__)
-        __builtin_ia32_pause();
+        cpu_pause();
 #else
         yield();
 #endif
         // this is really GCC only, i'm afraid
-        // TODO: add the same for other compiles
+        // TODO: add the same for other compilers
       }
       if ( !_lock.swap(ATOMIC_LOCKED) )
         break;
@@ -45,7 +42,7 @@ public:
     for ( ;; ) {
       while ( _lock.get() != state ) {
 #if defined(__GNUC__)
-        __builtin_ia32_pause();
+        cpu_pause();
 #else
         yield();
 #endif
@@ -67,7 +64,7 @@ public:
     for ( ;; ) {
       if ( _lock.swap(ATOMIC_OPEN) )
         break;
-      __builtin_ia32_pause();
+      cpu_pause();
     }
   }
 };

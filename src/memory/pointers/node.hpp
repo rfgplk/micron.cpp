@@ -1,7 +1,7 @@
 #pragma once
 
 #include "bits.hpp"
-
+/*
 namespace micron {
 
 template <class Type, > class node_pointer : private __internal_pointer_alloc<Type>
@@ -10,6 +10,7 @@ template <class Type, > class node_pointer : private __internal_pointer_alloc<Ty
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
+  using element_type = Type;
   
   Type *internal_pointer;
 public:
@@ -40,5 +41,5 @@ public:
     __impl_dealloc(internal_pointer);
   }
 };
-
 };
+*/

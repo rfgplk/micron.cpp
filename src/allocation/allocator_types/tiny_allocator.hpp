@@ -91,7 +91,7 @@ public:
     count = 0;
     total = 0;
   }
-  int16_t
+  i16
   get_grow() const
   {
     return P::on_grow;

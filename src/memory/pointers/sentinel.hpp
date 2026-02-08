@@ -20,6 +20,8 @@ public:
   using pointer_type = owning_pointer_tag;
   using category_type = pointer_tag;
   using mutability_type = immutable_tag;
+  using element_type = void;
+  using value_type = void;
 
   ~sentinel_pointer() = default;
   sentinel_pointer(byte* P)

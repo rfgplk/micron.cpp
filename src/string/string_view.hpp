@@ -8,7 +8,7 @@
 #include "../except.hpp"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../memory/memory.hpp"
 #include "../memory_block.hpp"

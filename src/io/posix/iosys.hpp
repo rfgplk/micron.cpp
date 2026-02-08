@@ -11,7 +11,7 @@
 #include "../bits.hpp"
 
 #include "bits.hpp"
-#include "limits.hpp"
+#include "../../linux/sys/limits.hpp"
 
 namespace micron
 {

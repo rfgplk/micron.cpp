@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../linux/process/system.hpp"
+#include "../../linux/sys/cpu.hpp"
 #include "../../syscall.hpp"
 #include "../../types.hpp"
 
@@ -36,7 +37,7 @@ struct sysinfo {
 };
 
 constexpr const static int __max_cpus = 65535;
-constexpr const static int __bits_size = CPU_ALLOC_SIZE(65535);
+constexpr const static int __bits_size = posix::cpu_bits_size(65535);
 
 constexpr int
 getpagesize(void)

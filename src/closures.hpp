@@ -6,8 +6,9 @@
 #pragma once
 
 #include "types.hpp"
+#include "type_traits.hpp"
 
-#include <tuple>
+#include "tuple.hpp"
 
 namespace micron
 {
@@ -20,16 +21,15 @@ template <typename F, typename R, typename... Args> struct lambda_return<R (F::*
 template <typename F> using lambda_return_t = typename lambda_return<decltype(&F::operator())>::type;
 };
 
-
 template <typename T> struct function_traits;
 
 // free functions
 template <typename R, typename... Args> struct function_traits<R(Args...)> {
   using return_type = R;
   static constexpr size_t arity = sizeof...(Args);
-  using args_tuple = std::tuple<Args...>;
+  using args_tuple = micron::tuple<Args...>;
 
-  template <size_t N> using arg_type = typename std::tuple_element<N, args_tuple>::type;
+  template <size_t N> using arg_type = typename micron::tuple_element<N, args_tuple>::type;
 };
 
 // function pointers
@@ -51,15 +51,14 @@ template <typename F> struct function_traits : function_traits<decltype(&F::oper
 
 template <typename Tuple, typename F, size_t... I>
 constexpr void
-for_each_type_impl(F &&f, std::index_sequence<I...>)
+for_each_type_impl(F &&f, micron::index_sequence<I...>)
 {
-  (f.template operator()<std::tuple_element_t<I, Tuple>>(), ...);
+  (f.template operator()<micron::tuple_element_t<I, Tuple>>(), ...);
 }
 
 template <typename Tuple, typename F>
 constexpr void
 for_each_type(F &&f)
 {
-  for_each_type_impl<Tuple>(std::forward<F>(f), std::make_index_sequence<std::tuple_size_v<Tuple>>{});
+  for_each_type_impl<Tuple>(micron::forward<F>(f), micron::make_index_sequence<micron::tuple_size_v<Tuple>>{});
 }
-

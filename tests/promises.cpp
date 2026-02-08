@@ -13,7 +13,7 @@
 #include "../src/std.hpp"
 
 void success(long x){
-  mc::io::stdoutln("The result of mc::mean(1..89) was ", x);
+  mc::console("The result of mc::mean(1..89) was ", x);
 }
 
 int
@@ -29,9 +29,9 @@ main(void)
     vc_s[i] = i + 1;
   for ( size_t i = 0; i < vc.size(); i++ )
     vc[i] = i + 1;
-  mc::io::stdoutln(vc);
-  mc::io::stdoutln("The arith. mean of (1..25) is expected to be 13: ", mc::expect(mc::mean(vc), 13.0));
-  mc::io::stdoutln("The arith. mean of (1..25) is not expected to be 12: ", mc::expect(mc::mean(vc), 12.0));
+  mc::console(vc);
+  mc::console("The arith. mean of (1..25) is expected to be 13: ", mc::expect(mc::mean(vc), 13.0));
+  mc::console("The arith. mean of (1..25) is not expected to be 12: ", mc::expect(mc::mean(vc), 12.0));
   mc::expect(mc::mean(vc_l), 45, success, 45);
-  mc::io::stdoutln("The geo. mean of (1..50) is: ", mc::geomean(vc_s));
+  mc::console("The geo. mean of (1..50) is: ", mc::geomean(vc_s));
 }

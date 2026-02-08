@@ -102,7 +102,8 @@ digits(T x)
 
 template <typename T, typename F>
   requires(micron::is_integral_v<T>) && (micron::is_integral_v<F>)
-constexpr T power_loop(T x, F p)
+constexpr T
+power_loop(T x, F p)
 {
   if ( p == 0 )
     return 1;
@@ -113,7 +114,8 @@ constexpr T power_loop(T x, F p)
 }
 template <typename T, typename F>
   requires(micron::is_integral_v<T>) && (micron::is_integral_v<F>)
-constexpr T power(T x, F p)
+constexpr T
+power(T x, F p)
 {
   if ( p == 0 )
     return 1;
@@ -125,6 +127,21 @@ constexpr T power(T x, F p)
     return x * n * n;
   }
 }
+template <typename T>
+inline constexpr T
+pow_s(T base, i32 exp)
+{
+  T result = 1;
+  while ( exp > 0 ) {
+    if ( exp & 1 ) {
+      result *= base;
+    }
+    base *= base;
+    exp >>= 1;
+  }
+  return result;
+}
+
 // due to the extensive complexity of implementing ieee754 fully
 // (arch-specific), builtins will handle this, until i get around to
 // porting it in full
@@ -251,7 +268,7 @@ remainderf128(flong x, f32 y)
 }
 
 template <typename T>
-requires (micron::is_integral_v<T>)
+  requires(micron::is_integral_v<T>)
 T
 nearest_pow2ll(T x)
 {
@@ -262,7 +279,7 @@ nearest_pow2ll(T x)
                        : (1u << ((8 * sizeof(x)) - __builtin_clzll(x))));
 }
 template <typename T>
-requires (micron::is_integral_v<T>)
+  requires(micron::is_integral_v<T>)
 T
 nearest_pow2(T x)
 {

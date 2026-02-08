@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
 #include "../memory_block.hpp"
 #include "../pointer.hpp"
@@ -25,7 +25,7 @@ namespace fsys
 {
 // opens file on construct, closes on destruct
 // does NOT load data until load() or read() are called
-template <is_string T = micron::ustr8> class file : public io::file     // if not using posix systems swap this out
+template <is_string T = micron::string> class file : public io::file     // if not using posix systems swap this out
 {
   T data;
   micron::sstr<io::max_name> fname;

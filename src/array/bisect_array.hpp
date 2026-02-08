@@ -8,7 +8,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -219,6 +219,11 @@ public:
     for ( size_t i = idx; i + 1 < length; ++i )
       stack[i] = stack[i + 1];
     --length;
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
 };
 

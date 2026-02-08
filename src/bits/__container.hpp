@@ -12,6 +12,14 @@ namespace __impl_container
 
 template <typename T>
 inline void
+shallow_copy(T *dest, const T *src, size_t cnt)
+{
+  micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src),
+                 cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
+                                                        // fine, just realign back to bytes
+};
+template <typename T>
+inline void
 shallow_copy(T *dest, T *src, size_t cnt)
 {
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src),
@@ -23,6 +31,14 @@ shallow_copy(T *dest, T *src, size_t cnt)
 template <typename T>
 inline void
 deep_copy(T *dest, T *src, size_t cnt)
+{
+  for ( size_t i = 0; i < cnt; i++ )
+    dest[i] = src[i];
+};
+
+template <typename T>
+inline void
+deep_copy(T *dest, const T *src, size_t cnt)
 {
   for ( size_t i = 0; i < cnt; i++ )
     dest[i] = src[i];
@@ -53,9 +69,21 @@ copy(T *dest, T *src, size_t cnt)
     shallow_copy(dest, src, cnt);
   }
 }
+
 template <typename T>
 inline void
-move(T *&dest, T *&src, size_t cnt)
+copy(T *dest, const T *src, size_t cnt)
+{
+  if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    deep_copy(dest, src, cnt);
+  } else {
+    shallow_copy(dest, src, cnt);
+  }
+}
+
+template <typename T>
+inline void
+move(T *dest, T *src, size_t cnt)
 {
   if constexpr ( micron::is_class_v<T> or !micron::is_trivially_move_assignable_v<T> ) {
     deep_move(dest, src, cnt);

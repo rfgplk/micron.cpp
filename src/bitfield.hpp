@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "algorithm/mem.hpp"
+#include "algorithm/memory.hpp"
 #include "concepts.hpp"
 #include "memory/memory.hpp"
 #include "string/format.hpp"
@@ -174,8 +174,8 @@ public:
       bits[i + 2] ^= 0xFF;
       bits[i + 3] ^= 0xFF;
     }
-    // uint64_t m32 = 0xFFFFFFFF;
-    // uint32_t m = m32 >> _lzcnt_u32(bits[i]);
+    // u64 m32 = 0xFFFFFFFF;
+    // u32 m = m32 >> _lzcnt_u32(bits[i]);
     // bits[i] ^= m;
     return *this;
   }

@@ -54,6 +54,7 @@ MICRON_EXCEPTION_TEMP(standard_error)
 MICRON_EXCEPTION_TEMP(library_error)
 MICRON_EXCEPTION_TEMP(hardware_error)
 MICRON_EXCEPTION_TEMP(memory_error)
+MICRON_EXCEPTION_TEMP(thread_error)
 MICRON_EXCEPTION_TEMP(filesystem_error)
 };
 using domain = except::domain_error;
@@ -65,7 +66,7 @@ using overflow = except::overflow_error;
 using range_error = except::range_error;
 using runtime = except::runtime_error;
 using underflow = except::underflow_error;
-using future = except::future_error;
+using future_err = except::future_error;
 using system = except::system_error;
 using io_err = except::io_error;
 using format_err = except::format_error;

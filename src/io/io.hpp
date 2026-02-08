@@ -14,6 +14,8 @@
 
 #include "../simd/bitwise.hpp"
 
+#include "../concepts.hpp"
+
 // NOTE: on naming conventions:
 // all functions starting with f are buffered
 // functions ending in d (where d isn't part of the noun of the name) are direct (ie. nonblocking)
@@ -23,27 +25,9 @@ namespace micron
 {
 namespace io
 {
-template <typename T>
-inline ssize_t
-fread(int fd, T *buf, size_t cnt)
-{
-  if ( fd <= 0 )
-    return -1;
-  return posix::read(fd, buf, cnt);
-  // ugly i know, but valid
-}
-
-template <typename T, size_t N>
-inline ssize_t
-fread(int fd, const T (&buf)[N])
-{
-  if ( fd <= 0 )
-    return -1;
-  return posix::read(fd, &buf, N);
-}
 // no seeking alignment, just read
 template <typename T>
-inline ssize_t
+ssize_t
 read(int fd, T *buf, size_t cnt)
 {
   if ( fd <= 0 )
@@ -53,34 +37,24 @@ read(int fd, T *buf, size_t cnt)
 }
 
 template <typename T, size_t N>
-inline ssize_t
+ssize_t
 read(int fd, const T (&buf)[N])
 {
   if ( fd <= 0 )
     return -1;
   return posix::read(fd, &buf, N);
 }
-/*
-template <typename T>
-inline ssize_t
-__read(FILE *fd, T *buf, size_t cnt)
+
+template <is_iterable_container T>
+  requires(micron::is_fundamental_v<typename T::value_type>)
+ssize_t
+read(int fd, T &buf, const size_t cnt)
 {
-  if ( fd == nullptr )
-    return -1;
-  return posix::read(fd->_fileno, buf, cnt);
-  // ugly i know, but valid
+  return posix::read(fd, buf.data(), cnt);
 }
-template <typename T, size_t N>
-inline ssize_t
-__read(FILE *fd, const T (&buf)[N])
-{
-  if ( fd == nullptr )
-    return -1;
-  return posix::read(fd->_fileno, &buf, N);
-}
-*/
+
 template <typename T = byte>
-inline ssize_t
+ssize_t
 write(int fd, T *buf, size_t cnt)
 {
   if ( fd <= 0 )
@@ -88,7 +62,7 @@ write(int fd, T *buf, size_t cnt)
   return posix::write(fd, buf, cnt);
 }
 template <typename T, size_t N>
-inline ssize_t
+ssize_t
 write(int fd, const T (&buf)[N])
 {
   if ( fd <= 0 )
@@ -96,8 +70,16 @@ write(int fd, const T (&buf)[N])
   return posix::write(fd, &buf, N);
 }
 
+template <is_iterable_container T>
+  requires(micron::is_fundamental_v<typename T::value_type>)
+ssize_t
+write(int fd, T &buf, const size_t cnt)
+{
+  return posix::write(fd, buf.data(), cnt);
+}
+
 template <typename T = byte>
-inline ssize_t
+ssize_t
 fwrited(T *ptr, size_t num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
@@ -106,7 +88,7 @@ fwrited(T *ptr, size_t num, const fd_t &handle)
 }
 
 template <typename T = byte>
-inline ssize_t
+ssize_t
 fwrite(T *ptr, size_t num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
@@ -142,7 +124,7 @@ fwrite(T *ptr, size_t num, const fd_t &handle)
   return posix::write(handle.fd, ptr, num);
 }
 
-inline void
+void
 fflush(const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
@@ -206,76 +188,6 @@ put(const char *__restrict s, const fd_t &handle)
     io::fput(*s, handle.fd);
   //::fputc_unlocked(*s, fp);
 }
-
-/* OLD OBSOLETE CODE
-inline void
-buffer_flush_stdout(void)
-{
-  ::fflush(stdout);
-}
-inline void
-set_buffering(char **buf)
-{
-  ::setvbuf(stdout, *buf, _IOFBF, sizeof(*buf));
-}
-inline void
-disable_buffering(void)
-{
-  ::setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-}
-
-inline __attribute__((always_inline)) void
-fput(const char *__restrict s, size_t len, FILE *__restrict fp)
-{
-  ::fwrite_unlocked(s, sizeof(char), len, fp);
-  // posix::write(fp->_fileno, s, len);
-}
-inline __attribute__((always_inline)) void
-fput(const char *__restrict s, FILE *__restrict fp)
-{
-  ::fwrite_unlocked(s, sizeof(char), micron::strlen(s), fp);
-  // posix::write(fp->_fileno, s, strlen(s));
-}
-inline __attribute__((always_inline)) void
-fput(const char s, FILE *__restrict fp)
-{
-  ::fwrite_unlocked(&s, sizeof(char), 1, fp);
-  // posix::write(fp->_fileno, s, strlen(s));
-}
-
-inline __attribute__((always_inline)) void
-wfput(const wchar_t *__restrict s, FILE *__restrict fp)
-{
-  ::fwrite_unlocked(s, sizeof(wchar_t), micron::wstrlen(s), fp);
-}
-
-inline __attribute__((always_inline)) void
-unifput(const char32_t *__restrict s, FILE *__restrict fp)
-{
-  ::fwrite_unlocked(s, sizeof(char32_t), micron::ustrlen(s), fp);
-}
-
-template <typename T>
-inline __attribute__((always_inline)) auto
-fget(T *__restrict s, const size_t n, FILE *__restrict fp)
-{
-  return ::fread_unlocked(s, sizeof(char), n, fp);
-}
-template <typename T>
-inline __attribute__((always_inline)) auto
-fget_byte(T *__restrict s, FILE *__restrict fp)     // equivalent to getchar
-{
-  return posix::read(fp->_fileno, s, 1);
-}
-// equivalent to fputs
-inline __attribute__((always_inline)) void
-put(const char *__restrict s, FILE *__restrict fp)
-{
-  for ( ; *s != 0x0; s++ )
-    ::fputc_unlocked(*s, fp);
-}
-*/
-
 };     // namespace io
 
 };     // namespace micron

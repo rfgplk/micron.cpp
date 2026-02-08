@@ -7,12 +7,14 @@
 
 #include "../bits/__container.hpp"
 
+#include "../__special/initializer_list"
 #include "../algorithm/algorithm.hpp"
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../pointer.hpp"
 #include "../types.hpp"
 #include "vector.hpp"
-#include "../__special/initializer_list"
+
+#include "../memory/addr.hpp"
 
 namespace micron
 {
@@ -73,28 +75,28 @@ public:
   svector(const vector<C> &o)
   {
     if ( o.length >= N ) {
-      __impl_container::copy(o.memory, stack, N);
-      // micron::copy<N>(&(*o.memory)[0], &stack[0]);
+      __impl_container::copy(stack, o.memory, N);
+      // micron::copy<N>(&(*o.memory)[0], micron::real_addr_as<T>(stack[0]));
     } else {
-      __impl_container::copy(o.memory, stack, o.length);
-      // micron::copy(&(*o.memory)[0], &stack[0], o.length);
+      __impl_container::copy(stack, o.memory, o.length);
+      // micron::copy(&(*o.memory)[0], micron::real_addr_as<T>(stack[0]), o.length);
     }
     length = o.length;
   };
 
   svector(const svector &o)
   {
-    micron::copy<N>(&o.stack[0], &stack[0]);
+    __impl_container::copy(stack, o.stack, N);
     length = o.length;
   };
   template <typename C = T, size_t M = N> svector(const svector<C, M> &o)
   {
     if constexpr ( N < M ) {
-      __impl_container::copy(o.stack, stack, M);
-      // micron::copy<M>(&o.stack[0], &stack[0]);
+      __impl_container::copy(stack, o.stack, M);
+      // micron::copy<M>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
     } else if constexpr ( M >= N ) {
-      __impl_container::copy(o.stack, stack, N);
-      // micron::copy<N>(&o.stack[0], &stack[0]);
+      __impl_container::copy(stack, o.stack, N);
+      // micron::copy<N>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
     }
     length = o.length;
   };
@@ -114,22 +116,22 @@ public:
   };
   svector(svector &&o)
   {
-    __impl_container::move(&stack[0], &o.stack[0]);
-    // micron::copy<N>(&o.stack[0], &stack[0]);
-    // micron::zero<N>(&o.stack[0]);
+    __impl_container::move(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(o.stack[0]), N);
+    // micron::copy<N>(micron::real_addr_as<T>(o.stack[0]), stack[0]);
+    // micron::zero<N>(micron::real_addr_as<T>(o.stack[0]));
     length = o.length;
     o.length = 0;
   };
   template <typename C = T, size_t M> svector(svector<C, M> &&o)
   {
     if constexpr ( N >= M ) {
-      micron::copy<N>(&o.stack[0], &stack[0]);
-      micron::zero<M>(&o.stack[0]);
+      micron::copy<N>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
+      micron::zero<M>(micron::real_addr_as<T>(o.stack[0]));
       length = o.length;
       o.length = 0;
     } else {
-      micron::copy<M>(&o.stack[0], &stack[0]);
-      micron::zero<M>(&o.stack[0]);
+      micron::copy<M>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
+      micron::zero<M>(micron::real_addr_as<T>(o.stack[0]));
       length = o.length;
       o.length = 0;
     }
@@ -137,26 +139,30 @@ public:
   svector &
   operator=(const svector &o)
   {
-    __impl_container::copy(o.stack, stack, N);
+    __impl_container::copy(stack, o.stack, N);
     length = o.length;
     return *this;
   };
   svector &
   operator=(svector &&o)
   {
-    micron::copy<N>(&o.stack[0], &stack[0]);
-    micron::zero<N>(&o.stack[0]);
+    micron::copy<N>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
+    micron::zero<N>(micron::real_addr_as<T>(o.stack[0]));
     length = o.length;
     o.length = 0;
     return *this;
   };
+  template <typename R>
+    requires(micron::is_integral_v<R>)
   T &
-  operator[](const size_t n)
+  operator[](const R n)
   {
     return stack[n];
   }
+  template <typename R>
+    requires(micron::is_integral_v<R>)
   const T &
-  operator[](const size_t n) const
+  operator[](const R n) const
   {
     return stack[n];
   }
@@ -170,43 +176,58 @@ public:
   const_iterator
   front() const
   {
-    return &stack[0];
+    return micron::real_addr_as<T>(stack[0]);
   };
   iterator
   front()
   {
-    return &stack[0];
+    return micron::real_addr_as<T>(stack[0]);
   };
   const_iterator
   back() const
   {
-    return &stack[length - 1];
+    return micron::real_addr_as<T>(stack[length - 1]);
   };
   iterator
   back()
   {
-    return &stack[length - 1];
+    return micron::real_addr_as<T>(stack[length - 1]);
   };
   iterator
   begin()
   {
-    return &stack[0];
+    return micron::real_addr_as<T>(stack[0]);
   };
   const_iterator
   cbegin() const
   {
-    return &stack[0];
+    return micron::real_addr_as<T>(stack[0]);
   };
   iterator
   end()
   {
-    return &stack[length];
+    return micron::real_addr_as<T>(stack[length]);
   };
   const_iterator
   cend() const
   {
-    return &stack[length];
+    return micron::real_addr_as<T>(stack[length]);
   };
+  inline bool
+  full() const
+  {
+    return ((length + 1) == N);
+  }
+  inline bool
+  overflowed() const
+  {
+    return ((length + 1) > N);
+  }
+  inline bool
+  full_or_overflowed() const
+  {
+    return ((length + 1) >= N);
+  }
   size_t
   size() const
   {
@@ -221,7 +242,7 @@ public:
   clear()
   {
     length = 0;
-    czero<N>(&stack[0]);
+    czero<N>(micron::real_addr_as<T>(stack[0]));
   }
   void resize(const size_t n) = delete;
   void reserve(const size_t n) = delete;
@@ -232,8 +253,8 @@ public:
     if ( n >= N or n >= length )
       throw except::runtime_error("micron::svector erase() out of range.");
     stack[n].~T();
-    micron::memmove(&stack[n], &stack[n + 1], length - n - 1);
-    czero<sizeof(svector) / sizeof(byte)>((byte *)micron::voidify(&stack[length-- - 1]));
+    micron::memmove(micron::real_addr_as<T>(stack[n]), micron::real_addr_as<T>(stack[n + 1]), length - n - 1);
+    czero<sizeof(svector) / sizeof(byte)>((byte *)micron::voidify(micron::real_addr_as<T>(stack[length-- - 1])));
     return *this;
   }
   template <typename C = T, size_t M>
@@ -259,16 +280,15 @@ public:
   }
   template <typename... Args>
   svector &
-  push_back(Args &&...args)
+  emplace_back(Args &&...args)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector push_back() out of range.");
-    stack[length++] = micron::move(T(args)...);
+      throw except::runtime_error("micron::svector emplace_back() out of range.");
+    stack[length++] = T(micron::forward<Args>(args)...);
     return *this;
   }
-  template <typename C = T>
   svector &
-  push_back(C &&i)
+  move_back(T &&i)
   {
     if ( length + 1 >= N )
       throw except::runtime_error("micron::svector push_back() out of range.");
@@ -315,6 +335,11 @@ public:
     *itr = i;
     length += 1;
     return *this;
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
 };
 }     // namespace micron

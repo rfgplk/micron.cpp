@@ -47,7 +47,7 @@ public:
     deallocate(mem.ptr, mem.len);
   }
   byte *share(void) = delete;
-  static int16_t
+  static i16
   get_grow()
   {
     return P::on_grow;

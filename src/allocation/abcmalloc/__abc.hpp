@@ -36,7 +36,7 @@ namespace abc
 template <typename T>
   requires(micron::is_integral_v<T>)
 struct __abc_allocator {
-  inline static auto
+  static auto
   calloc(size_t n) -> micron::__chunk<byte>     // allocate 'smartly'
   {
     auto mem = abc::fetch(n);
@@ -44,7 +44,7 @@ struct __abc_allocator {
       throw micron::except::memory_error("abc_allocator::alloc(): mmap() failed");
     return mem;
   };
-  inline static T *
+  static T *
   alloc(size_t n)     // allocate 'smartly'
   {
     T *ptr = abc::alloc(n);
@@ -53,7 +53,7 @@ struct __abc_allocator {
     return ptr;
   };
 
-  inline static void
+  static void
   dealloc(T *mem, size_t len)
   {     // deallocate at location N
     if ( mem == nullptr )

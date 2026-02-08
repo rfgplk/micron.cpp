@@ -8,7 +8,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -47,11 +47,21 @@ class alignas(32) carray
     }
   }
   void
+  __impl_copy(const T *__restrict src, T *__restrict dest)
+  {
+    if constexpr ( micron::is_class<T>::value ) {
+      for ( size_t i = 0; i < N; i++ )
+        dest[i] = src[i];
+    } else {
+      micron::copy<N>(src, dest);
+    }
+  }
+  void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
     if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
-        stack[i] = dest[i];
+        dest[i] = src[i];
     } else {
       micron::copy<N>(src, dest);
     }
@@ -61,7 +71,7 @@ class alignas(32) carray
   {
     if constexpr ( micron::is_class<T>::value ) {
       for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(dest[i]);
+        dest[i] = micron::move(src[i]);
     } else {
       micron::copy<N>(src, dest);
       micron::czero<N>(src);
@@ -114,7 +124,7 @@ public:
     if ( lst.size() > N )
       throw except::runtime_error("micron::array init_list too large.");
     size_t i = 0;
-    for ( T value : lst )
+    for ( auto &&value : lst )
       stack[i++] = micron::move(value);
   }
 
@@ -231,6 +241,21 @@ public:
     __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }
 
+  template <is_constexpr_container A>
+  carray &
+  operator=(const A &o)
+  {
+    micron::copy<N>(&o[0], &stack[0]);
+    return *this;
+  }
+  template <is_container A>
+    requires(!micron::is_same_v<A, carray>)
+  carray &
+  operator=(const A &o)
+  {
+    micron::copy<N>(&o[0], &stack[0]);
+    return *this;
+  }
   template <size_t M>
     requires(M <= N)
   carray &
@@ -306,6 +331,16 @@ public:
       stack[i] %= o.stack[o];
     return *this;
   }
+  byte *
+  operator&()
+  {
+    return reinterpret_cast<byte *>(stack);
+  }
+  const byte *
+  operator&() const
+  {
+    return reinterpret_cast<byte *>(stack);
+  }
 
   // special functions - no idea why the stl doesn't have these
   size_t
@@ -378,6 +413,11 @@ public:
   {
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
 };
 };

@@ -6,12 +6,7 @@
 #pragma once
 
 #include "../linux/sys/signal.hpp"
-
-#include "../linux/sys/signal.hpp"
 #include "../type_traits.hpp"
-#include <sched.h> /* Definition of CLONE_* constants */
-#include <spawn.h>
-#include <unistd.h>     // fork, close, daemon
 
 #include "../array/arrays.hpp"
 #include "../types.hpp"

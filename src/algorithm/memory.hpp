@@ -81,7 +81,7 @@ copy_n(const T *restrict src, F *restrict dst, const N cnt)
 }
 template <size_t N, typename T>
 void
-zero(const T *src)
+zero(T *src)
 {
   czero<N>(src);
 }

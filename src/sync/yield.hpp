@@ -5,15 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../syscall.hpp"
+#include "../linux/sys/sched.hpp"
+
 namespace micron
 {
-
-int
+void
 yield()
 {
-  micron::syscall(SYS_sched_yield);
-  return 0;
+  posix::sched_yield();
 }
-
 };

@@ -8,7 +8,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -268,7 +268,7 @@ public:
       stack[i] %= o.stack[o];
     return *this;
   }
-
+  
   // special functions - no idea why the stl doesn't have these
   size_t
   sum(void) const
@@ -383,6 +383,11 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
+  }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
   }
 };
 };     // namespace micron

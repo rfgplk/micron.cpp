@@ -5,9 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// #include <cstdio>
-// #include <cstring>
-// #include <locale.h>
 #include "../concepts.hpp"
 #include "../type_traits.hpp"
 
@@ -34,7 +31,7 @@ concept is_container = requires(T t) {
 };
 
 // PRINTK BLOCK OF FUNCS
-template <int outstream = STDOUT_FILENO, typename T, size_t M>
+template <int outstream = stdout_fileno, typename T, size_t M>
   requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide>
            or micron::is_same_v<T, unicode8> or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char>
            or micron::is_same_v<T, const schar> or micron::is_same_v<T, const wide>
@@ -42,13 +39,13 @@ template <int outstream = STDOUT_FILENO, typename T, size_t M>
 inline void
 printk(T (&c)[M])
 {
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(c, io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(c, io::stderr);
 }
 
-template <int outstream = STDOUT_FILENO, typename T>
+template <int outstream = stdout_fileno, typename T>
   requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *>
            or micron::is_same_v<T, unicode8 *> or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *>
            or micron::is_same_v<T, const schar *> or micron::is_same_v<T, const wide *>
@@ -56,27 +53,27 @@ template <int outstream = STDOUT_FILENO, typename T>
 inline void
 printk(const T &c)
 {
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(c, io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(c, io::stderr);
 }
-template <int outstream = STDOUT_FILENO>
+template <int outstream = stdout_fileno>
 inline void
 printk(char c)
 {
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(c, io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(c, io::stderr);
 }
-template <int outstream = STDOUT_FILENO>
+template <int outstream = stdout_fileno>
 inline void
 sprintk(const char *c, size_t len)
 {
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(c, len, io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(c, len, io::stderr);
 }     // raw print
 
@@ -87,19 +84,19 @@ concept has_cstr = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 // must be a class that provides .c_str()
-template <has_cstr T, int outstream = STDOUT_FILENO>
+template <has_cstr T, int outstream = stdout_fileno>
   requires micron::is_class_v<T>
 void
 printk(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(str.c_str(), io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(str.c_str(), io::stderr);
 }
 
 // if type is a pointer, or, pointerlike
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *>
            and !micron::is_same_v<T, wide *> and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *>
            and !micron::is_same_v<T, const char *> and !micron::is_same_v<T, const schar *>
@@ -110,15 +107,15 @@ printk(const T &x)
 {
   char print_buffer[32];     // long enough, overkill
   const char *ptr = format::ptr_to_char(x, &print_buffer[0]);
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(ptr, io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(ptr, io::stderr);
   return;
 }
 
 // if type is arithmetic or not
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
 void
 printk(const T &x)
@@ -126,226 +123,226 @@ printk(const T &x)
   char print_buffer[128];     // long enough, overkill
   if constexpr ( micron::same_as<T, bool> ) {
     const char *ptr = format::bool_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, i8> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, u8> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, i16> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, u16> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, int> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, uint> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, long> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, unsigned long> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, char> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, unsigned char> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, short> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, unsigned short> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, long long> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, unsigned long long> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, i32> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, u32> or micron::same_as<T, unsigned> ) {
     const char *ptr = format::uint_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, i64> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, u64> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   // just in case it's different from u64
   if constexpr ( micron::same_as<T, max_t> or micron::same_as<T, ssize_t> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, umax_t> or micron::same_as<T, size_t> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, flong> ) {
     const char *ptr = format::flong_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, f128> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, f64> ) {
     const char *ptr = format::f64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
 
   if constexpr ( micron::same_as<T, double> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, float> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, f32> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO )
+    if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
-    else if constexpr ( outstream == STDERR_FILENO )
+    else if constexpr ( outstream == stderr_fileno )
       io::fput(ptr, io::stderr);
     return;
   }
   if constexpr ( micron::same_as<T, char> ) {
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(print_buffer, 1, io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(print_buffer, 1, io::stderr);
     }
     return;
@@ -357,20 +354,21 @@ printk(const T &x)
 }
 
 // spec case, single byte
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte> && (sizeof(T) == 1)
-void printk(T &x)
+void
+printk(T &x)
 {
   byte c[2];
   c[0] = x;
   c[1] = 0x0;
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(reinterpret_cast<const char *>(c), io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(reinterpret_cast<const char *>(c), io::stderr);
 }
 // non null trm string
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
 void
 printk(T ptr, size_t len)
@@ -378,139 +376,143 @@ printk(T ptr, size_t len)
   byte *null_trm = new byte[len + 1];
   micron::memcpy(null_trm, ptr, len);
   null_trm[len] = 0x0;
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(reinterpret_cast<const char *>(null_trm), io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(reinterpret_cast<const char *>(null_trm), io::stderr);
   delete[] null_trm;
 }
 
 // PRINTKN BLOCK OF FUNCS, APPENDS NEWLINE
-template <int outstream = STDOUT_FILENO, typename T, size_t M>
+template <int outstream = stdout_fileno, typename T, size_t M>
   requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide>
            or micron::is_same_v<T, unicode8> or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char>
            or micron::is_same_v<T, const schar> or micron::is_same_v<T, const wide>
            or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
-inline void
+void
 printkn(T (&c)[M])
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(c, io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(c, io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 
-template <int outstream = STDOUT_FILENO, typename T>
+template <int outstream = stdout_fileno, typename T>
   requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *>
            or micron::is_same_v<T, unicode8 *> or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *>
            or micron::is_same_v<T, const schar *> or micron::is_same_v<T, const wide *>
            or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
-inline void
+void
 printkn(const T &c)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(c, io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(c, io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 
-template <typename T, int outstream = STDOUT_FILENO, size_t M>
-inline void
+template <typename T, int outstream = stdout_fileno, size_t M>
+void
 printk(const char (&c)[M])
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(c, M, io::stdout);
     // io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(c, M, io::stderr);
     // io::fput("\n", io::stderr);
   }
 }
-template <typename T, int outstream = STDOUT_FILENO, size_t M>
-inline void
+template <typename T, int outstream = stdout_fileno, size_t M>
+void
 printkn(const char (&c)[M])
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(c, M, io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(c, M, io::stderr);
     io::fput("\n", io::stderr);
   }
 }
-template <int outstream = STDOUT_FILENO>
-inline void
+template <int outstream = stdout_fileno>
+void
 sprintkn(const char *c, size_t len)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(c, len, io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(c, len, io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 // raw print
 // must be a class that provides .c_str()
-template <has_cstr T, int outstream = STDOUT_FILENO>
+template <has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T>) && (micron::same_as<typename T::value_type, char8_t>)
-void printkn(const T &str)
+void
+printkn(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(str.c_str(), io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(str.c_str(), io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 
-template <has_cstr T, int outstream = STDOUT_FILENO>
+template <has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T>) && (micron::same_as<typename T::value_type, char>)
-void printkn(const T &str)
+void
+printkn(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(str.c_str(), io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(str.c_str(), io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 
-template <has_cstr T, int outstream = STDOUT_FILENO>
+template <has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T>) && (micron::same_as<typename T::value_type, wchar_t>)
-void printkn(const T &str)
+void
+printkn(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     wfput(str.w_str(), io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     wfput(str.w_str(), io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 
-template <has_cstr T, int outstream = STDOUT_FILENO>
+template <has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T>) && (micron::same_as<typename T::value_type, char32_t>)
-void printkn(const T &str)
+void
+printkn(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::unifput(str.uni_str(), io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::unifput(str.uni_str(), io::stderr);
     io::fput("\n", io::stderr);
   }
 }
 // if type is a pointer, or, pointerlike
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *>
            and !micron::is_same_v<T, wide *> and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *>
            and !micron::is_same_v<T, const char *> and !micron::is_same_v<T, const schar *>
@@ -521,10 +523,10 @@ printkn(const T &x)
 {
   char print_buffer[32];     // long enough, overkill
   const char *ptr = format::ptr_to_char(x, &print_buffer[0]);
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     io::fput(ptr, io::stdout);
     io::fput("\n", io::stdout);
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     io::fput(ptr, io::stderr);
     io::fput("\n", io::stderr);
   }
@@ -532,7 +534,7 @@ printkn(const T &x)
 }
 
 // if type is arithmetic or not
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
 void
 printkn(const T &x)
@@ -540,10 +542,10 @@ printkn(const T &x)
   char print_buffer[128];     // long enough, overkill
   if constexpr ( micron::same_as<T, bool> ) {
     const char *ptr = format::bool_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -551,10 +553,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, i8> or micron::same_as<T, u8> ) {
     const char *ptr = format::int_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -562,10 +564,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, i16> or micron::same_as<T, u16> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -573,10 +575,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, i32> or micron::same_as<T, u32> or micron::same_as<T, unsigned> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -584,10 +586,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, i64> or micron::same_as<T, u64> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -596,10 +598,10 @@ printkn(const T &x)
   // just in case it's different from u64
   if constexpr ( micron::same_as<T, max_t> or micron::same_as<T, umax_t> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -607,10 +609,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, flong> ) {
     const char *ptr = format::flong_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -618,10 +620,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, f128> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -629,10 +631,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, f64> ) {
     const char *ptr = format::f64_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -640,10 +642,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, double> ) {
     const char *ptr = format::f128_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -651,10 +653,10 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, float> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -662,20 +664,20 @@ printkn(const T &x)
   }
   if constexpr ( micron::same_as<T, f32> ) {
     const char *ptr = format::f32_to_char(x, &print_buffer[0]);
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(ptr, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(ptr, io::stderr);
       io::fput("\n", io::stderr);
     }
     return;
   }
   if constexpr ( micron::same_as<T, char> ) {
-    if constexpr ( outstream == STDOUT_FILENO ) {
+    if constexpr ( outstream == stdout_fileno ) {
       io::fput(print_buffer, 1, io::stdout);
       io::fput("\n", io::stdout);
-    } else if constexpr ( outstream == STDERR_FILENO ) {
+    } else if constexpr ( outstream == stderr_fileno ) {
       io::fput(print_buffer, 1, io::stderr);
       io::fput("\n", io::stderr);
     }
@@ -688,21 +690,22 @@ printkn(const T &x)
 }
 
 // spec case, single byte
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte> && (sizeof(T) == 1)
-void printkn(T &x)
+void
+printkn(T &x)
 {
   byte c[3];
   c[0] = x;
   c[1] = '\n';
   c[2] = 0x0;
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(reinterpret_cast<const char *>(c), io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(reinterpret_cast<const char *>(c), io::stderr);
 }
 // non null trm string
-template <typename T, int outstream = STDOUT_FILENO>
+template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
 void
 printkn(T ptr, size_t len)
@@ -711,100 +714,100 @@ printkn(T ptr, size_t len)
   micron::memcpy(null_trm, ptr, len);
   null_trm[len - 1] = '\n';
   null_trm[len] = 0x0;
-  if constexpr ( outstream == STDOUT_FILENO )
+  if constexpr ( outstream == stdout_fileno )
     io::fput(reinterpret_cast<const char *>(null_trm), io::stdout);
-  else if constexpr ( outstream == STDERR_FILENO )
+  else if constexpr ( outstream == stderr_fileno )
     io::fput(reinterpret_cast<const char *>(null_trm), io::stderr);
   delete[] null_trm;
 }
-template <is_container T, int outstream = STDOUT_FILENO>
+template <is_container T, int outstream = stdout_fileno>
 void
 printkn(T &&str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     auto start = str.cbegin();
     auto end = str.cend();
-    printk<STDOUT_FILENO>("{ ");
+    printk<stdout_fileno>("{ ");
     for ( ; start != end; ++start ) {
       printk<T, io::stdout>(*start);
       if ( start + 1 != end )
-        printk<STDOUT_FILENO>(", ");
+        printk<stdout_fileno>(", ");
     }
-    printk<STDOUT_FILENO>(" }");
-    printk<STDOUT_FILENO>("\n");
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+    printk<stdout_fileno>(" }");
+    printk<stdout_fileno>("\n");
+  } else if constexpr ( outstream == stderr_fileno ) {
     auto start = str.cbegin();
     auto end = str.cend();
-    printk<STDERR_FILENO>("{ ");
+    printk<stderr_fileno>("{ ");
     for ( ; start != end; ++start ) {
-      printk<T, STDERR_FILENO>(*start);
+      printk<T, stderr_fileno>(*start);
       if ( start + 1 != end )
-        printk<STDERR_FILENO>(", ");
+        printk<stderr_fileno>(", ");
     }
-    printk<STDERR_FILENO>(" }");
-    printk<STDERR_FILENO>("\n");
+    printk<stderr_fileno>(" }");
+    printk<stderr_fileno>("\n");
   }
 }
-template <is_container T, int outstream = STDOUT_FILENO>
+template <is_container T, int outstream = stdout_fileno>
 void
 printkn(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     auto start = str.cbegin();
 
     auto end = str.cend();
-    printk<STDOUT_FILENO>("{ ");
+    printk<stdout_fileno>("{ ");
     for ( ; start != end; ++start ) {
       printk(*start);
       if ( start + 1 != end )
-        printk<STDOUT_FILENO>(", ");
+        printk<stdout_fileno>(", ");
     }
-    printk<STDOUT_FILENO>(" }");
-    printk<STDOUT_FILENO>("\n");
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+    printk<stdout_fileno>(" }");
+    printk<stdout_fileno>("\n");
+  } else if constexpr ( outstream == stderr_fileno ) {
     const auto *start = str.cbegin();
     const auto *end = str.cend();
-    printk<STDERR_FILENO>("{ ");
+    printk<stderr_fileno>("{ ");
     for ( ; start != end; ++start ) {
       printk(*start);
       if ( start + 1 != end )
-        printk<STDERR_FILENO>(", ");
+        printk<stderr_fileno>(", ");
     }
-    printk<STDERR_FILENO>(" }");
-    printk<STDERR_FILENO>("\n");
+    printk<stderr_fileno>(" }");
+    printk<stderr_fileno>("\n");
   }
 }
-template <is_container T, int outstream = STDOUT_FILENO>
+template <is_container T, int outstream = stdout_fileno>
 void
 printk(T &&str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     const auto *start = str.cbegin();
     const auto *end = str.cend();
-    printk<STDOUT_FILENO>("{ ");
+    printk<stdout_fileno>("{ ");
     for ( ; start != end; ++start ) {
       printk(*start);
       if ( start + 1 != end )
-        printk<STDOUT_FILENO>(", ");
+        printk<stdout_fileno>(", ");
     }
-    printk<STDOUT_FILENO>(" }");
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+    printk<stdout_fileno>(" }");
+  } else if constexpr ( outstream == stderr_fileno ) {
     const auto *start = str.cbegin();
     const auto *end = str.cend();
-    printk<STDERR_FILENO>("{ ");
+    printk<stderr_fileno>("{ ");
     for ( ; start != end; ++start ) {
       printk(*start);
       if ( start + 1 != end )
-        printk<STDERR_FILENO>(", ");
+        printk<stderr_fileno>(", ");
     }
-    printk<STDERR_FILENO>(" }");
+    printk<stderr_fileno>(" }");
   }
 }
-template <is_container T, int outstream = STDOUT_FILENO>
+template <is_container T, int outstream = stdout_fileno>
 void
 printk(const T &str)
 {
-  if constexpr ( outstream == STDOUT_FILENO ) {
+  if constexpr ( outstream == stdout_fileno ) {
     const auto *start = str.cbegin();
 
     const auto *end = str.cend();
@@ -815,7 +818,7 @@ printk(const T &str)
         printk<T, io::stdout>(", ");
     }
     printk<T, io::stdout>(" }");
-  } else if constexpr ( outstream == STDERR_FILENO ) {
+  } else if constexpr ( outstream == stderr_fileno ) {
     const auto *start = str.cbegin();
     const auto *end = str.cend();
     printk<T, io::stderr>("{ ");
@@ -936,42 +939,42 @@ template <typename... T>
 void
 error(T &...str)
 {
-  (printk<T..., STDERR_FILENO>(str), ...);
+  (printk<T..., stderr_fileno>(str), ...);
 }
 template <typename... T>
 void
 errorn(T &...str)
 {
-  (printkn<T..., STDERR_FILENO>(str), ...);
+  (printkn<T..., stderr_fileno>(str), ...);
 }
 template <typename... T>
 void
 errorln(T &...str)
 {
-  (printk<T..., STDERR_FILENO>(str), ...);
-  printk<T..., STDERR_FILENO>("\n");
+  (printk<T..., stderr_fileno>(str), ...);
+  printk<T..., stderr_fileno>("\n");
 }
 template <typename... T>
 inline void
 error(const T &...str)
 {
-  (printk<T..., STDERR_FILENO>(str), ...);
+  (printk<T..., stderr_fileno>(str), ...);
 }
 template <typename... T>
 inline void
 errorn(const T &...str)
 {
-  (printkn<T..., STDERR_FILENO>(str), ...);
+  (printkn<T..., stderr_fileno>(str), ...);
 }
 template <typename... T>
 inline void
 errorln(const T &...str)
 {
   if constexpr ( sizeof...(T) > 1 ) {
-    (printk<T..., STDERR_FILENO>(str), ...);
-    printk<STDERR_FILENO>("\n");
+    (printk<T..., stderr_fileno>(str), ...);
+    printk<stderr_fileno>("\n");
   } else {
-    (printkn<T..., STDERR_FILENO>(str), ...);
+    (printkn<T..., stderr_fileno>(str), ...);
   }
 }
 

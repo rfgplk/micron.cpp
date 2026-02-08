@@ -22,6 +22,7 @@ public:
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
+  using element_type = Type;
 
   using __alloc = __internal_pointer_alloc<Type>;
 

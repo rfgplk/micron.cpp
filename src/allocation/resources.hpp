@@ -56,6 +56,14 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     o.length = 0;
     return *this;
   }
+  __mutable_memory_resource &
+  swap(__mutable_memory_resource &o) noexcept
+  {
+    micron::swap(__core_memory_resource<T>::capacity, o.capacity);
+    micron::swap(__core_memory_resource<T>::memory, o.memory);
+    micron::swap(length, o.length);
+    return *this;
+  }
   inline bool
   is_zero() const
   {
@@ -78,7 +86,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   {
     return __core_memory_resource<T>::operator*();
   }
-  inline void
+  void
   free(void)
   {
     if ( __core_memory_resource<T>::alive() ) {
@@ -89,7 +97,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     }
   }
   // deletes and reallocs, number of elements
-  inline void
+  void
   realloc(size_t len)
   {
     if ( __core_memory_resource<T>::alive() )
@@ -97,7 +105,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
   }
   // expands memory, size_t is number of elements
-  inline void
+  void
   expand(size_t len)
   {
     // NOTE: grow destroys memory

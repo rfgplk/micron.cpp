@@ -54,6 +54,7 @@ constexpr static const u32 permission_denied = 13;
 constexpr static const u32 bad_address = 14;
 constexpr static const u32 block_device_req = 15;
 constexpr static const u32 device_busy = 16;
+constexpr static const u32 busy = 16;
 constexpr static const u32 file_exists = 17;
 constexpr static const u32 exdev = 18;
 constexpr static const u32 no_device = 19;

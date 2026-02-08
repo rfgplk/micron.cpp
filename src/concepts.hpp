@@ -5,13 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "allocation/linux/kmemory.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
-#include "allocation/linux/kmemory.hpp"
 // all concepts go here
 namespace micron
 {
-
 template <typename T>
 concept integral = micron::is_integral_v<T>;
 
@@ -24,6 +23,22 @@ concept same_as = __same_as<T, U> && __same_as<U, T>;
 template <typename F, typename T>
 concept convertible_to = is_convertible_v<F, T> && requires { static_cast<T>(declval<F>()); };
 
+template <typename T, typename I = size_t>
+concept is_iterable_container = requires(T t, I i) {
+  { t.data() } -> micron::same_as<typename T::pointer>;
+  { t.cbegin() } -> micron::same_as<typename T::const_iterator>;
+  { t.cend() } -> micron::same_as<typename T::const_iterator>;
+  { t.begin() } -> micron::same_as<typename T::iterator>;
+  { t.end() } -> micron::same_as<typename T::iterator>;
+  { t[i] } -> micron::same_as<typename T::reference>;
+  { t.size() } -> micron::same_as<typename T::size_type>;
+};
+
+template <typename T>
+concept is_general_pointer_class = requires(T t) {
+  typename T::element_type;
+  { t.get() } -> micron::same_as<typename T::element_type *>;
+};
 template <typename T>
 concept is_micron_structure = requires(T a) {
   { *a } -> micron::same_as<chunk<byte>>;
@@ -54,7 +69,6 @@ concept is_container_or_string = requires(T t) {
   { t.end() } -> micron::same_as<typename T::iterator>;
 };
 
-
 template <typename T>
 concept is_container = requires(T t) {
   { t.data() } -> micron::same_as<typename T::pointer>;
@@ -64,6 +78,23 @@ concept is_container = requires(T t) {
   { t.end() } -> micron::same_as<typename T::iterator>;
 } && !requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
+};
+template <typename C>
+concept is_constexpr_container = requires {
+  []() consteval {
+    C c{};
+    auto n = c.size();
+    (void)n;
+
+    if constexpr ( requires { c[0]; } ) {
+      auto x = c[0];
+      (void)x;
+    }
+
+    for ( auto it = c.begin(); it != c.end(); ++it ) {
+      (void)*it;
+    }
+  }();
 };
 
 template <typename T>

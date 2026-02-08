@@ -1,0 +1,167 @@
+#pragma once
+
+#include "../linux/sys/types.hpp"
+
+// NOTE: this is here so we can avoid directly including pthread.h, since technically it would pull it a lot of libc code
+// we don't need
+
+//these _might_ get included REGARDLESS via immintrin...
+//using pthread_t = unsigned long int;
+//
+//typedef union {
+//  char __size[__sizeof_pthread_mutexattr_t];
+//  int __align;
+//} pthread_mutexattr_t;
+//
+//typedef union {
+//  char __size[__sizeof_pthread_condattr_t];
+//  int __align;
+//} pthread_condattr_t;
+//
+//using pthread_key_t = unsigned int;
+//
+//union pthread_attr_t {
+//  char __size[__sizeof_pthread_attr_t];
+//  long int __align;
+//};
+//typedef union pthread_attr_t pthread_attr_t;
+//
+///* POSIX spinlock data type.  */
+//typedef volatile int pthread_spinlock_t;
+//
+//typedef union {
+//  char __size[__sizeof_pthread_barrier_t];
+//  long int __align;
+//} pthread_barrier_t;
+//
+//typedef union {
+//  char __size[__sizeof_pthread_barrierattr_t];
+//  int __align;
+//} pthread_barrierattr_t;
+//
+
+extern "C" pid_t pthread_gettid_np (pthread_t __thread_id);
+
+extern "C" int pthread_detach (pthread_t __th) __THROW;
+
+
+extern "C" pthread_t pthread_self (void) __THROW __attribute__ ((__const__));
+
+extern "C" int pthread_equal (pthread_t __thread1, pthread_t __thread2)
+  __THROW __attribute__ ((__const__));
+
+
+extern "C" int pthread_attr_init (pthread_attr_t *__attr) __THROW __nonnull ((1));
+
+extern "C" int pthread_attr_destroy (pthread_attr_t *__attr)
+     __THROW __nonnull ((1));
+
+extern "C" int pthread_attr_getdetachstate (const pthread_attr_t *__attr,
+					int *__detachstate)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setdetachstate (pthread_attr_t *__attr,
+					int __detachstate)
+     __THROW __nonnull ((1));
+
+
+extern "C" int pthread_attr_getguardsize (const pthread_attr_t *__attr,
+				      size_t *__guardsize)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setguardsize (pthread_attr_t *__attr,
+				      size_t __guardsize)
+     __THROW __nonnull ((1));
+
+
+extern "C" int pthread_attr_getschedparam (const pthread_attr_t *__restrict __attr,
+				       struct sched_param *__restrict __param)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setschedparam (pthread_attr_t *__restrict __attr,
+				       const struct sched_param *__restrict
+				       __param) __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_getschedpolicy (const pthread_attr_t *__restrict
+					__attr, int *__restrict __policy)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setschedpolicy (pthread_attr_t *__attr, int __policy)
+     __THROW __nonnull ((1));
+
+extern "C" int pthread_attr_getinheritsched (const pthread_attr_t *__restrict
+					 __attr, int *__restrict __inherit)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setinheritsched (pthread_attr_t *__attr,
+					 int __inherit)
+     __THROW __nonnull ((1));
+
+
+extern "C" int pthread_attr_getscope (const pthread_attr_t *__restrict __attr,
+				  int *__restrict __scope)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setscope (pthread_attr_t *__attr, int __scope)
+     __THROW __nonnull ((1));
+
+extern "C" int pthread_attr_getstackaddr (const pthread_attr_t *__restrict
+				      __attr, void **__restrict __stackaddr)
+     __THROW __nonnull ((1, 2)) __attribute_deprecated__;
+
+extern "C" int pthread_attr_setstackaddr (pthread_attr_t *__attr,
+				      void *__stackaddr)
+     __THROW __nonnull ((1)) __attribute_deprecated__;
+
+extern "C" int pthread_attr_getstacksize (const pthread_attr_t *__restrict
+				      __attr, size_t *__restrict __stacksize)
+     __THROW __nonnull ((1, 2));
+
+extern "C" int pthread_attr_setstacksize (pthread_attr_t *__attr,
+				      size_t __stacksize)
+     __THROW __nonnull ((1));
+
+
+extern "C" int pthread_create(pthread_t *__restrict __newthread, const pthread_attr_t *__restrict __attr,
+                          void *(*__start_routine)(void *), void *__restrict __arg) __THROWNL __nonnull((1, 3));
+
+extern "C" void pthread_exit(void *__retval) __attribute__((__noreturn__));
+
+extern "C" int pthread_join(pthread_t __th, void **__thread_return);
+
+extern "C" int pthread_tryjoin_np(pthread_t __th, void **__thread_return) __THROW;
+
+extern "C" int pthread_timedjoin_np(pthread_t __th, void **__thread_return, const struct timespec *__abstime);
+extern "C" int pthread_clockjoin_np(pthread_t __th, void **__thread_return, clockid_t __clockid,
+                                const struct timespec *__abstime);
+extern "C" int pthread_attr_setstack (pthread_attr_t *__attr, void *__stackaddr,
+				  size_t __stacksize) __THROW __nonnull ((1));
+
+extern "C" int pthread_getattr_default_np (pthread_attr_t *__attr)
+     __THROW __nonnull ((1));
+
+extern "C" int pthread_attr_setsigmask_np (pthread_attr_t *__attr,
+				       const __sigset_t *sigmask);
+
+extern "C" int pthread_attr_getsigmask_np (const pthread_attr_t *__attr,
+				       __sigset_t *sigmask);
+
+extern "C" int pthread_setschedparam (pthread_t __target_thread, int __policy,
+				  const struct sched_param *__param)
+     __THROW __nonnull ((3));
+
+extern "C" int pthread_getschedparam (pthread_t __target_thread,
+				  int *__restrict __policy,
+				  struct sched_param *__restrict __param)
+     __THROW __nonnull ((2, 3));
+
+extern "C" int pthread_setschedprio (pthread_t __target_thread, int __prio)
+     __THROW;
+
+
+extern "C" int pthread_getname_np (pthread_t __target_thread, char *__buf,
+			       size_t __buflen)
+     __THROW __nonnull ((2));
+
+extern "C" int pthread_setname_np (pthread_t __target_thread, const char *__name)
+     __THROW __nonnull ((2));

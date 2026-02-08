@@ -41,7 +41,7 @@ __exit(void)
   __builtin_exit(6);
 }
 
-void
+void __attribute__((noreturn))
 __abort(void)
 {
   if constexpr ( config::__default_abort_on_require ) {
@@ -102,6 +102,12 @@ __print_stack()
 }
 
 void
+stdout(const char *str)
+{
+  __print(str);
+  __print("\n");
+}
+void
 verify_debug(void)
 {
 #if defined(__OPTIMIZE__) || __has_feature(debug_info)
@@ -110,7 +116,7 @@ verify_debug(void)
 }
 
 #define enable_scope(x) if constexpr ( true )
-#define disable_scope(x) if constexpr ( true )
+#define disable_scope(x) if constexpr ( false )
 
 inline __attribute__((always_inline)) void
 should_print_stack(void)
@@ -250,7 +256,7 @@ end_test_case(void)
   __global_test_case.clear();
 }
 
-void
+void __attribute__((noreturn))
 early_end(void)
 {
   __abort();
@@ -273,7 +279,7 @@ print(const char *p)
 }
 
 template <typename T>
-void
+void __attribute__((noreturn))
 error(const T &p)
 {
   __print_error("\033[34msnowball error():\033[0m ");
@@ -282,7 +288,7 @@ error(const T &p)
   __abort();
 }
 
-void
+void __attribute__((noreturn))
 error(const char *ptr)
 {
   __print_error("\033[34msnowball error():\033[0m ");
@@ -305,6 +311,17 @@ require_distinct(bool (*fn)(FArgs...), Args &&...args)
   }
 };
 
+template <typename... Args>
+void
+require(bool v)
+{
+  if ( v == true ) {
+    __print_error("\033[34msnowball require() failure:\033[0m expected output was false.\n\r");
+    should_print_stack();
+    __require_clbck();
+    __abort();
+  }
+};
 template <typename... Args>
 void
 require(bool (*fn)(Args...), Args &&...args)
@@ -523,7 +540,20 @@ require_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected
 };
 
 // throw variants
-
+template <typename Fn>
+void
+require_throw(Fn &&fn)
+{
+  try {
+    fn();
+    __print_error("\033[34msnowball require_throw() failure:\033[0m nothing was thrown.\n\r");
+    should_print_stack();
+    __require_clbck();
+    __abort();
+  } catch ( ... ) {
+    return;
+  }
+};
 template <typename Fn>
   requires((std::is_function_v<std::remove_pointer_t<Fn>> or std::is_function_v<Fn>) && std::is_invocable_v<Fn>)
 void

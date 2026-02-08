@@ -432,7 +432,7 @@ bm_find(const char (&text)[N], const char (&pattern)[Pt], size_t &found_count)
 
 template <is_string T>
 auto
-fast_find(const T &data, const char *fnd) -> typename T::iterator
+fast_find(const T &data, const char *fnd) -> typename T::const_iterator
 {
   size_t n = data.size();
   size_t m = micron::strlen(fnd);
@@ -583,7 +583,27 @@ find(const T &data, const char fnd) -> typename T::iterator
 
 template <is_string T>
 auto
-find(const T &data, const char *fnd) -> typename T::iterator
+find(T &data, const char *fnd) -> typename T::iterator
+{
+  size_t sz = micron::strlen(fnd);
+  if ( sz > data.size() )
+    return nullptr;
+  if ( data.empty() or sz == 0 )
+    return nullptr;
+  for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
+    u64 j = 0;
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
+      ++j;
+    }
+    if ( j == sz ) {
+      return itr;
+    }
+  }
+  return (typename T::iterator) nullptr;
+}
+template <is_string T>
+auto
+find(const T &data, const char *fnd) -> typename T::const_iterator
 {
   size_t sz = micron::strlen(fnd);
   if ( sz > data.size() )

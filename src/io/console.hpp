@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "__std.hpp"
+
 #include "../except.hpp"
 #include "stdout.hpp"
 
@@ -193,7 +195,7 @@ cerror(const T &...str)
 
 template <typename... T>
 inline void
-_micron_log(const char* FILEMACRO, int line, const T &...str)
+__micron_log(const char* FILEMACRO, int line, const T &...str)
 {
   set_color(color::cyan, style::italic);
   set_color(color::cyan, style::bold);
@@ -211,7 +213,11 @@ _micron_log(const char* FILEMACRO, int line, const T &...str)
 }
 
 // has to be like this so we don't get conflicts with float/stl libs 
-#define infolog(x) _micron_log( __FILE__, __LINE__, x )
+#define infolog(x) __micron_log( __FILE__, __LINE__, x )
+
+// TODO: isn't behind a mtx, not ts, FIX
+
+// WARNING: NOT TS
 
 inline void
 console_newline(void)
@@ -225,6 +231,12 @@ console(const T &...str)
   io::println(str...);
 }
 
+template <typename... T>
+inline void
+consoled(const T &...str)
+{
+  io::print(str...);
+}
 template <typename... T>
 inline void
 console_bin(const T &...str)

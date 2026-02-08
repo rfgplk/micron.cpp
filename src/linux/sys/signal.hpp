@@ -3,7 +3,7 @@
 #include "../../errno.hpp"
 #include "../../syscall.hpp"
 #include "../../types.hpp"
-#include "../linux_types.hpp"
+#include "../sys/types.hpp"
 
 #include "../../memory/cmemory.hpp"
 
@@ -63,7 +63,7 @@ constexpr static const int sig_poll = 29;
 constexpr static const int sig_io = 29;
 
 constexpr static const int sig_block = 0;             /* Block signals.  */
-constexpr static const int sig_unlock = 1;            /* Unblock signals.  */
+constexpr static const int sig_unblock = 1;            /* Unblock signals.  */
 constexpr static const int sig_setmask = 2;           /* Set the set of blocked signals.  */
 constexpr static const int sa_nocldstop = 1;          /* Don't send SIGCHLD when children stop.  */
 constexpr static const int sa_nocldwait = 2;          /* Don't create zombie on child death.  */
@@ -146,7 +146,7 @@ struct siginfo_t {
           void *_upper;
         } _addr_bnd;
         /* used when si_code=SEGV_PKUERR */
-        uint32_t _pkey;
+        u32 _pkey;
       } _bounds;
     } _sigfault;
 
@@ -285,7 +285,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   __syscall_sigaction_t __system_oldaction = {};
 
   __system_action.k_sa_handler = action.sigaction_handler.sa_handler;
-  micron::bytecpy(&__system_action.sa_mask, &action.sa_mask, sizeof(micron::sigset_t));
+  micron::voidcpy(&__system_action.sa_mask, &action.sa_mask, sizeof(micron::sigset_t));
   __system_action.sa_flags = (u32)action.sa_flags;
   __system_action.sa_flags |= 0x04000000;
   __system_action.sa_restorer = &restore_rt;
@@ -294,7 +294,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
       micron::syscall(SYS_rt_sigaction, sig, &__system_action, old ? &__system_oldaction : nullptr, __sig_syscall_size));
   if ( old && result >= 0 ) {
     old->sigaction_handler.sa_handler = __system_oldaction.k_sa_handler;
-    micron::bytecpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(micron::sigset_t));
+    micron::voidcpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(micron::sigset_t));
     old->sa_flags = static_cast<int>(__system_oldaction.sa_flags);
     old->sa_restorer = __system_action.sa_restorer;
   }

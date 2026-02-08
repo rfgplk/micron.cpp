@@ -17,7 +17,7 @@ namespace micron
 {
 
 // NOTE: row major
-template <typename B, uint32_t C, uint32_t R>
+template <typename B, u32 C, u32 R>
   requires(micron::is_arithmetic_v<B> and ((C * sizeof(C)) * (R * sizeof(R)) <= (4096 / sizeof(byte)))
            && ((((C * sizeof(C)) * (R * sizeof(R))) & 64) == 0))
 class int_matrix_base_avx
@@ -37,12 +37,12 @@ class int_matrix_base_avx
   typedef const B *const_iterator;
 
   bool
-  __verify_range(uint32_t sz)
+  __verify_range(u32 sz)
   {
   }
 
 public:
-  static constexpr uint32_t __size = C * R;
+  static constexpr u32 __size = C * R;
   B alignas(64) __mat[__size];     // yes, public for conv.
   ~int_matrix_base_avx(void) = default;
   int_matrix_base_avx(void) { micron::czero<__size>(__mat); }
@@ -151,22 +151,22 @@ public:
   }
   // end of scalar funcs
   B &
-  col(uint32_t c)
+  col(u32 c)
   {
     return __mat[c];
   }
   B &
-  row(uint32_t r)
+  row(u32 r)
   {
     return __mat[r * C];
   }
   B &
-  operator[](uint32_t r)
+  operator[](u32 r)
   {
     return __mat[r * C];
   }
   B &
-  operator[](uint32_t r, uint32_t c)
+  operator[](u32 r, u32 c)
   {
     return __mat[r * C + c];
   }
@@ -246,6 +246,6 @@ public:
   }
 };
 
-template <typename B, uint32_t C, uint32_t R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
+template <typename B, u32 C, u32 R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
 
 };

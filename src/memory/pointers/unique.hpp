@@ -23,6 +23,7 @@ public:
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
+  using element_type = Type;
 
   using __alloc = __internal_pointer_alloc<Type>;
 
@@ -34,17 +35,18 @@ public:
   unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   template <class... Args>
     requires(sizeof...(Args) > 0)
-  unique_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};     // new Type(args...)){};
+  unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
   unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   unique_pointer(const unique_pointer &p) = delete;
   unique_pointer &
   operator=(unique_pointer &&t)
   {
-    __alloc::__impl_dealloc(internal_pointer);
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
+    if ( this != &t ) {
+      __alloc::__impl_dealloc(internal_pointer);
+      internal_pointer = t.internal_pointer;
+      t.internal_pointer = nullptr;
+    }
     return *this;
   };
   unique_pointer &operator=(const unique_pointer &) = delete;
@@ -52,7 +54,6 @@ public:
   operator=(Type *&t) noexcept
   {
     return operator=(micron::move(t));
-    return *this;
   };
   unique_pointer &
   operator=(Type *&&t) noexcept
@@ -104,7 +105,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
+      throw except::memory_error("unique_pointer operator->(): internal_pointer was null");
   }
   Type &
   operator*()
@@ -134,14 +135,20 @@ public:
   {
     return internal_pointer;
   }
+  bool
+  active() const noexcept
+  {
+    return (internal_pointer != nullptr);
+  }
   inline void
   clear()
   {
     __alloc::__impl_dealloc(internal_pointer);
+    internal_pointer = nullptr;
   };
 };
 
-template <class Type> class unique_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
+template <class Type> class unique_pointer<Type[]> : private __internal_pointer_arralloc<Type>
 {
   Type *internal_pointer;
 
@@ -150,35 +157,49 @@ public:
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
+  using element_type = Type;
 
-  using __alloc = __internal_pointer_arralloc<Type[]>;
+  using __alloc = __internal_pointer_arralloc<Type>;
 
   ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
-  unique_pointer(void) = delete;
+  unique_pointer(void) : internal_pointer(nullptr) {};
+  template <typename V>
+    requires micron::is_null_pointer_v<V>
+  unique_pointer(V) : internal_pointer(nullptr){};
   template <typename... Args>
+    requires(sizeof...(Args) > 0)
   unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
   {
-  }     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
+  }
 
   unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
   unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   unique_pointer(const unique_pointer &p) = delete;
-  unique_pointer(unique_pointer &p) = delete;
   unique_pointer &operator=(const unique_pointer &) = delete;
   unique_pointer &
   operator=(unique_pointer &&t)
   {
-    __alloc::__impl_dealloc(internal_pointer);
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
+    if ( this != &t ) {
+      __alloc::__impl_dealloc(internal_pointer);
+      internal_pointer = t.internal_pointer;
+      t.internal_pointer = nullptr;
+    }
     return *this;
   };
-  const Type &
+  Type &
   operator[](const size_t n)
   {
     if ( internal_pointer != nullptr )
-      return (*internal_pointer)[n];
+      return (internal_pointer)[n];
+    else
+      throw except::memory_error("unique_pointer[] operator[](): internal_pointer was null");
+  };
+  const Type &
+  operator[](const size_t n) const
+  {
+    if ( internal_pointer != nullptr )
+      return (internal_pointer)[n];
     else
       throw except::memory_error("unique_pointer[] operator[](): internal_pointer was null");
   };
@@ -186,10 +207,9 @@ public:
   operator=(Type *&t) noexcept
   {
     return operator=(micron::move(t));
-    return *this;
   };
   unique_pointer &
-  operator=(Type *&&t)
+  operator=(Type *&&t) noexcept
   {
     __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
@@ -207,7 +227,7 @@ public:
     return internal_pointer;
   }
   inline Type *
-  release()
+  release() noexcept
   {
     auto *temp = internal_pointer;
     internal_pointer = nullptr;
@@ -218,10 +238,16 @@ public:
   {
     return internal_pointer;
   }
+  bool
+  active() const noexcept
+  {
+    return (internal_pointer != nullptr);
+  }
   inline void
   clear()
   {
-    __impl_dealloc(internal_pointer);
+    __alloc::__impl_dealloc(internal_pointer);
+    internal_pointer = nullptr;
   };
   Type &
   operator*()
@@ -245,7 +271,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      throw except::memory_error("unique_pointer[] operator->(): internal_pointer was null");
   };
 
   Type *
@@ -254,7 +280,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      throw except::memory_error("unique_pointer[] operator->(): internal_pointer was null");
   };
 };
 

@@ -1255,8 +1255,7 @@ template <typename T> using underlying_type_t = typename underlying_type<T>::typ
 template <typename T> using result_of_t = typename result_of<T>::type;
 
 template <typename...> using void_t = void;
-template <typename Df, typename _AlwaysVoid, template <typename...> class Op, typename... Args>
-struct __detector {
+template <typename Df, typename _AlwaysVoid, template <typename...> class Op, typename... Args> struct __detector {
   using type = Df;
   using __is_detected = false_type;
 };
@@ -1710,5 +1709,49 @@ template <typename T> struct is_aggregate : bool_constant<__is_aggregate(remove_
 };
 
 template <typename T> inline constexpr bool is_aggregate_v = __is_aggregate(remove_cv_t<T>);
+
+// new
+template <__tt_size_t... Is> struct index_sequence {
+  using type = index_sequence;
+  static constexpr __tt_size_t
+  size() noexcept
+  {
+    return sizeof...(Is);
+  }
+};
+
+// helper to concatenate sequences
+template <typename Seq1, typename Seq2> struct concat_index_sequence;
+
+template <__tt_size_t... I1, __tt_size_t... I2>
+struct concat_index_sequence<index_sequence<I1...>, index_sequence<I2...>> {
+  using type = index_sequence<I1..., (sizeof...(I1) + I2)...>;
+};
+
+// make_index_sequence_impl recursively builds sequence 0..N-1
+template <__tt_size_t N> struct make_index_sequence_impl {
+private:
+  using half = typename make_index_sequence_impl<N / 2>::type;
+  using rem = typename make_index_sequence_impl<N - N / 2>::type;
+
+public:
+  using type = typename concat_index_sequence<half, rem>::type;
+};
+
+// base case: N = 0
+template <> struct make_index_sequence_impl<0> {
+  using type = index_sequence<>;
+};
+
+// base case: N = 1
+template <> struct make_index_sequence_impl<1> {
+  using type = index_sequence<0>;
+};
+
+// public alias
+template <__tt_size_t N> using make_index_sequence = typename make_index_sequence_impl<N>::type;
+
+// index_sequence_for - creates index sequence with sizeof...(Ts) elements
+template <typename... Ts> using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
 
 };

@@ -34,6 +34,11 @@ main()
   conf.fill(5.5f);
   mc::console(conf[40]);
   micron::console("Redo");
+  micron::vector<u16> test_vec = {1, 2,  2, 2, 3, 4, 5, 5, 6, 7, 7, 7, 7, 8, 9};
+  micron::console(test_vec);
+  test_vec.remove(2, 7, 9);
+  micron::console(test_vec);
+  return 1;
   micron::vector<u16> cv = { 1, 2, 3, 4, 5, 6 };
   micron::vector<u16> bb = cv;
   bb.push_back(100);

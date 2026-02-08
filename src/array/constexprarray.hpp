@@ -8,7 +8,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -23,6 +23,19 @@ namespace micron
 template <class T, size_t N = 64>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && (N > 0)
 struct constexpr_array {
+  using category_type = array_tag;
+  using mutability_type = mutable_tag;
+  using memory_type = stack_tag;
+  typedef T value_type;
+  typedef T &reference;
+  typedef T &ref;
+  typedef const T &const_reference;
+  typedef const T &const_ref;
+  typedef T *pointer;
+  typedef const T *const_pointer;
+  typedef T *iterator;
+  typedef const T *const_iterator;
+
   alignas(64) T stack[N];
 
   constexpr constexpr_array() = default;
@@ -67,7 +80,26 @@ struct constexpr_array {
       stack[i] = micron::move(o.stack[i]);
     return *this;
   }
-
+  constexpr const_iterator
+  begin(void) const noexcept
+  {
+    return micron::real_addr_as<T>(stack[0]);
+  }
+  constexpr const_iterator
+  end(void) const noexcept
+  {
+    return micron::real_addr_as<T>(stack[N]);
+  }
+  constexpr iterator
+  begin(void) noexcept
+  {
+    return micron::real_addr_as<T>(stack[0]);
+  }
+  constexpr iterator
+  end(void) noexcept
+  {
+    return micron::real_addr_as<T>(stack[N]);
+  }
   constexpr T &
   operator[](size_t i)
   {
@@ -261,5 +293,13 @@ struct constexpr_array {
     res /= o;
     return res;
   }
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
+  }
 };
+
+template <class T, size_t N = 64> using constarray = constexpr_array<T, N>;
+
 };

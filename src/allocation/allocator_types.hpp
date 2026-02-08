@@ -14,9 +14,9 @@ namespace micron
 template <typename P>
 concept is_policy = requires {
   { P::concurrent } -> micron::same_as<const bool &>;
-  { P::on_grow } -> micron::same_as<const uint32_t &>;
-  { P::pooling } -> micron::same_as<const uint32_t &>;
-  { P::granularity } -> micron::same_as<const uint32_t &>;
+  { P::on_grow } -> micron::same_as<const u32 &>;
+  { P::pooling } -> micron::same_as<const u32 &>;
+  { P::granularity } -> micron::same_as<const u32 &>;
 };
 };
 

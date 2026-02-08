@@ -56,6 +56,7 @@ main(void)
       sys["/tmp/testing"] >> str;
       sys["/usr/include/assert.h", mc::io::rd] >> assertfile;
       sys["/bin/errno", mc::io::rd] >> binfile;
+      micron::console(assertfile);
     } catch ( mc::except::io_error &e ) {
       mc::console(mc::error::what_errno());
       mc::console(e.what());

@@ -6,15 +6,7 @@
 #pragma once
 
 #include "memory/addr.hpp"
-#include "memory/pointers/constant.hpp"
-#include "memory/pointers/free.hpp"
-// #include "memory/pointers/hazard.hpp"
-#include "memory/pointers/global.hpp"
-#include "memory/pointers/shared.hpp"
-#include "memory/pointers/thread.hpp"
-#include "memory/pointers/unique.hpp"
-#include "memory/pointers/void.hpp"
-#include "memory/pointers/weak.hpp"
+#include "memory/ptrs.hpp"
 
 namespace micron
 {
@@ -23,6 +15,7 @@ using count_t = size_t;
 // range constructor
 // overseer
 
+template <typename T> using ptr_arr = unique_pointer<T[]>;
 template <typename T> using ptr = unique_pointer<T>;
 template <typename T> using uptr = unique_pointer<T>;
 template <typename T> using sptr = shared_pointer<T>;
@@ -30,6 +23,7 @@ template <typename T> using fptr = free_pointer<T>;
 template <typename T> using wptr = weak_pointer<T>;
 template <typename T> using cptr = const_pointer<T>;
 template <typename T> using pointer = unique_pointer<T>;
+template <typename T> using pointer_arr = unique_pointer<T[]>;
 template <typename T> using shared = shared_pointer<T>;
 // using hazard = hazard_pointer;
 
@@ -103,6 +97,40 @@ unique(Y &&ptr)
 {
   return pointer<T>(micron::forward<Y>(ptr));
 };
+
+template <class T>
+pointer_arr<T>
+unique_arr()
+{
+  return pointer_arr<T>();
+}
+
+template <class T, class F>
+pointer_arr<T>
+unique_arr(std::initializer_list<F> list)
+{
+  return pointer_arr<T>(list);
+}
+template <class T>
+pointer_arr<T>
+unique_arr(size_t n)
+{
+  return pointer_arr<T>(n);
+}
+template <class T, class... Args>
+  requires(sizeof...(Args) > 0)
+pointer_arr<T>
+unique_arr(Args &&...x)
+{
+  return pointer_arr<T>(micron::forward<Args>(x)...);
+}
+
+template <class T, class Y>
+pointer_arr<T>
+unique_arr(Y &&ptr)
+{
+  return pointer_arr<T>(micron::forward<Y>(ptr));
+}
 
 template <template <is_pointer_class> class P, typename T>
 P<T>

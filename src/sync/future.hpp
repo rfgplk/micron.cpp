@@ -11,79 +11,702 @@
 namespace micron
 {
 
-class atomic_flag
+enum class future_errc { broken_promise = 1, future_already_retrieved, promise_already_satisfied, no_state };
+
+enum class future_status { ready, timeout, deferred };
+
+enum class launch { async = 1, deferred = 2 };
+
+template <typename T> class shared_state
 {
-  mutable micron::mutex mtx;
-  bool flag;
+  mutable mutex mtx;
+  bool ready;
+  bool retrieved;
+  bool has_exception;
+
+  union storage_t {
+    char dummy;
+    T value;
+
+    storage_t() : dummy(0) {}
+    ~storage_t() {}
+  } storage;
 
 public:
-  atomic_flag(bool _set = false) : flag(_set) {}
-  atomic_flag(const atomic_flag &) = delete;
-  atomic_flag(atomic_flag &&o) : flag(_set) {}
-  atomic_flag &operator=(const atomic_flag &) = delete;
-  atomic_flag &
-  operator=(atomic_flag &&o)
+  shared_state() : ready(false), retrieved(false), has_exception(false) {}
+
+  ~shared_state()
   {
-    flag = o.flag;
-    o.flag = false;
-    return *this;
+    if ( ready && !has_exception ) {
+      storage.value.~T();
+    }
   }
+
+  shared_state(const shared_state &) = delete;
+  shared_state &operator=(const shared_state &) = delete;
+
   void
-  set(void)
+  wait() const
   {
-    micron::lock_guard lck(mtx);
-    flag = true;
+    for ( ;; ) {
+      {
+        lock_guard<mutex> lck(mtx);
+        if ( ready )
+          return;
+      }
+      cpu_pause();
+    }
   }
+
+  future_status
+  wait_for(micron::duration_d timeout) const
+  {
+
+    auto start = micron::system_clock<>::now();
+    for ( ;; ) {
+      {
+        lock_guard<mutex> lck(mtx);
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) )
+          break;
+      }
+      cpu_pause();
+    }
+    return ready ? future_status::ready : future_status::timeout;
+  }
+
+  future_status wait_until();
+
+  template <typename... Args>
   void
-  unset(void)
+  set_value(Args &&...args)
   {
-    micron::lock_guard lck(mtx);
-    flag = false;
+    lock_guard<mutex> lck(mtx);
+    if ( ready ) {
+      throw except::future_error("");
+    }
+    new (&storage.value) T(micron::forward<Args>(args)...);
+    ready = true;
+    has_exception = false;
   }
-  void
-  flip(void)
+
+  T
+  get()
   {
-    micron::lock_guard lck(mtx);
-    flag = !flag;
+    wait();
+
+    lock_guard<mutex> lck(mtx);
+    if ( retrieved ) {
+      throw except::future_error("");
+    }
+    retrieved = true;
+
+    return micron::move(storage.value);
   }
+
   bool
-  is(void) const
+  is_ready() const
   {
-    micron::lock_guard lck(mtx);
-    return (flag == true);
+    lock_guard<mutex> lck(mtx);
+    return ready;
+  }
+
+  bool
+  valid() const
+  {
+    return true;
   }
 };
 
-// create in place or via async/promises
-template <typename T> class future
+template <> class shared_state<void>
 {
-  micron::mutex mtx;
-  atomic_flag _set;
-  T object;
+  mutable mutex mtx;
+  bool ready;
+  bool retrieved;
 
 public:
-  future() : _set{ false }, object{} {}
-  future(future &&o) : _set{ o._set.is() }, object(micron::move(o.object)) {}
-  future(const future &) = delete;
-  future &
-  operator=(T &&t)
+  shared_state() : ready(false), retrieved(false) {}
+
+  shared_state(const shared_state &) = delete;
+  shared_state &operator=(const shared_state &) = delete;
+
+  void
+  wait() const
   {
-    micron::lock_guard lck(mtx);
-    _set = micron::move(t._set) object = micron::move(t.object);
+    while ( true ) {
+      {
+        lock_guard<mutex> lck(mtx);
+        if ( ready )
+          return;
+      }
+      cpu_pause();
+    }
+  }
+
+  future_status
+  wait_for(micron::duration_d timeout) const
+  {
+    auto start = micron::system_clock<>::now();
+    for ( ;; ) {
+      {
+        lock_guard<mutex> lck(mtx);
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) )
+          break;
+      }
+      cpu_pause();
+    }
+    return ready ? future_status::ready : future_status::timeout;
+  }
+  future_status wait_until();
+
+  void
+  set_value()
+  {
+    lock_guard<mutex> lck(mtx);
+    if ( ready ) {
+      throw except::future_error("");
+    }
+    ready = true;
+  }
+
+  void
+  get()
+  {
+    wait();
+
+    lock_guard<mutex> lck(mtx);
+    if ( retrieved ) {
+      throw except::future_error("");
+    }
+    retrieved = true;
+  }
+
+  bool
+  is_ready() const
+  {
+    lock_guard<mutex> lck(mtx);
+    return ready;
+  }
+
+  bool
+  valid() const
+  {
+    return true;
+  }
+};
+
+template <typename T> class shared_state<T &>
+{
+  mutable mutex mtx;
+  bool ready;
+  bool retrieved;
+  T *ptr;
+
+public:
+  shared_state() : ready(false), retrieved(false), ptr(nullptr) {}
+
+  shared_state(const shared_state &) = delete;
+  shared_state &operator=(const shared_state &) = delete;
+
+  void
+  wait() const
+  {
+    while ( true ) {
+      {
+        lock_guard<mutex> lck(mtx);
+        if ( ready )
+          return;
+      }
+      cpu_pause();
+    }
+  }
+
+  future_status
+  wait_for(micron::duration_d timeout) const
+  {
+
+    auto start = micron::system_clock<>::now();
+    for ( ;; ) {
+      {
+        lock_guard<mutex> lck(mtx);
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) )
+          break;
+      }
+      cpu_pause();
+    }
+    return ready ? future_status::ready : future_status::timeout;
+  }
+  future_status wait_until();
+
+  void
+  set_value(T &ref)
+  {
+    lock_guard<mutex> lck(mtx);
+    if ( ready ) {
+      throw except::future_error("");
+    }
+    ptr = &ref;
+    ready = true;
+  }
+  T &
+  get()
+  {
+    wait();
+
+    lock_guard<mutex> lck(mtx);
+    if ( retrieved ) {
+      throw except::future_error("");
+    }
+    retrieved = true;
+
+    return *ptr;
+  }
+
+  bool
+  is_ready() const
+  {
+    lock_guard<mutex> lck(mtx);
+    return ready;
+  }
+
+  bool
+  valid() const
+  {
+    return true;
+  }
+};
+
+template <typename T> class promise;
+template <typename T> class future;
+
+template <typename T> class future
+{
+  shared_state<T> *state;
+
+  template <typename U> friend class promise;
+
+  explicit future(shared_state<T> *s) : state(s) {}
+
+public:
+  future() noexcept : state(nullptr) {}
+
+  future(const future &) = delete;
+  future &operator=(const future &) = delete;
+
+  future(future &&other) noexcept : state(other.state) { other.state = nullptr; }
+
+  future &
+  operator=(future &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state ) {
+        delete state;
+      }
+      state = other.state;
+      other.state = nullptr;
+    }
     return *this;
   }
-  inline void
-  wait(void) const
+
+  ~future()
   {
-    while ( !_set.is() )
-      __builtin_ia32_pause();
+    if ( state ) {
+      delete state;
+    }
   }
-  void valid();
+
   T
-  operator&(void)
+  get()
   {
-    micron::lock_guard lck(mtx);
-    return object;
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    return state->get();
+  }
+
+  bool
+  valid() const noexcept
+  {
+    return state != nullptr;
+  }
+
+  void
+  wait() const
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->wait();
+  }
+
+  future_status
+  wait_for(micron::duration_d timeout_duration) const
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    return state->wait_for(timeout_duration);
+  }
+
+  future_status wait_until();
+};
+
+template <> class future<void>
+{
+  shared_state<void> *state;
+
+  template <typename U> friend class promise;
+
+  explicit future(shared_state<void> *s) : state(s) {}
+
+public:
+  future() noexcept : state(nullptr) {}
+
+  future(const future &) = delete;
+  future &operator=(const future &) = delete;
+
+  future(future &&other) noexcept : state(other.state) { other.state = nullptr; }
+
+  future &
+  operator=(future &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state ) {
+        delete state;
+      }
+      state = other.state;
+      other.state = nullptr;
+    }
+    return *this;
+  }
+
+  ~future()
+  {
+    if ( state ) {
+      delete state;
+    }
+  }
+
+  void
+  get()
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->get();
+  }
+
+  bool
+  valid() const noexcept
+  {
+    return state != nullptr;
+  }
+
+  void
+  wait() const
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->wait();
+  }
+
+  future_status
+  wait_for(micron::duration_d timeout_duration) const
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    return state->wait_for(timeout_duration);
+  }
+
+  future_status wait_until();
+};
+
+template <typename T> class future<T &>
+{
+  shared_state<T &> *state;
+
+  template <typename U> friend class promise;
+
+  explicit future(shared_state<T &> *s) : state(s) {}
+
+public:
+  future() noexcept : state(nullptr) {}
+
+  future(const future &) = delete;
+  future &operator=(const future &) = delete;
+
+  future(future &&other) noexcept : state(other.state) { other.state = nullptr; }
+
+  future &
+  operator=(future &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state ) {
+        delete state;
+      }
+      state = other.state;
+      other.state = nullptr;
+    }
+    return *this;
+  }
+
+  ~future()
+  {
+    if ( state ) {
+      delete state;
+    }
+  }
+
+  T &
+  get()
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    return state->get();
+  }
+
+  bool
+  valid() const noexcept
+  {
+    return state != nullptr;
+  }
+
+  void
+  wait() const
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->wait();
+  }
+
+  future_status
+  wait_for(micron::duration_d timeout_duration) const
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    return state->wait_for(timeout_duration);
+  }
+
+  future_status wait_until();
+};
+
+template <typename T> class promise
+{
+  shared_state<T> *state;
+  bool future_retrieved;
+
+public:
+  promise() : state(new shared_state<T>()), future_retrieved(false) {}
+
+  promise(const promise &) = delete;
+  promise &operator=(const promise &) = delete;
+
+  promise(promise &&other) noexcept : state(other.state), future_retrieved(other.future_retrieved)
+  {
+    other.state = nullptr;
+    other.future_retrieved = false;
+  }
+
+  promise &
+  operator=(promise &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state && !state->is_ready() ) {
+        // broken promise
+      }
+      state = other.state;
+      future_retrieved = other.future_retrieved;
+      other.state = nullptr;
+      other.future_retrieved = false;
+    }
+    return *this;
+  }
+
+  ~promise()
+  {
+    if ( state && !state->is_ready() ) {
+      // broken promise
+    }
+  }
+
+  future<T>
+  get_future()
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    if ( future_retrieved ) {
+      throw except::future_error("");
+    }
+    future_retrieved = true;
+    return future<T>(state);
+  }
+
+  void
+  set_value(const T &value)
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->set_value(value);
+  }
+
+  void
+  set_value(T &&value)
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->set_value(micron::move(value));
+  }
+  void
+  set_value_at_thread_exit(const T &value)
+  {
+    set_value(value);
+  }
+
+  void
+  set_value_at_thread_exit(T &&value)
+  {
+    set_value(micron::move(value));
+  }
+};
+
+template <> class promise<void>
+{
+  shared_state<void> *state;
+  bool future_retrieved;
+
+public:
+  promise() : state(new shared_state<void>()), future_retrieved(false) {}
+
+  promise(const promise &) = delete;
+  promise &operator=(const promise &) = delete;
+
+  promise(promise &&other) noexcept : state(other.state), future_retrieved(other.future_retrieved)
+  {
+    other.state = nullptr;
+    other.future_retrieved = false;
+  }
+
+  promise &
+  operator=(promise &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state && !state->is_ready() ) {
+        // broken promise
+      }
+      state = other.state;
+      future_retrieved = other.future_retrieved;
+      other.state = nullptr;
+      other.future_retrieved = false;
+    }
+    return *this;
+  }
+
+  ~promise()
+  {
+    if ( state && !state->is_ready() ) {
+      // broken promise
+    }
+  }
+
+  future<void>
+  get_future()
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    if ( future_retrieved ) {
+      throw except::future_error("");
+    }
+    future_retrieved = true;
+    return future<void>(state);
+  }
+
+  void
+  set_value()
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->set_value();
+  }
+  void
+  set_value_at_thread_exit()
+  {
+    set_value();
+  }
+};
+
+template <typename T> class promise<T &>
+{
+  shared_state<T &> *state;
+  bool future_retrieved;
+
+public:
+  promise() : state(new shared_state<T &>()), future_retrieved(false) {}
+
+  promise(const promise &) = delete;
+  promise &operator=(const promise &) = delete;
+
+  promise(promise &&other) noexcept : state(other.state), future_retrieved(other.future_retrieved)
+  {
+    other.state = nullptr;
+    other.future_retrieved = false;
+  }
+
+  promise &
+  operator=(promise &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state && !state->is_ready() ) {
+        // broken promise
+      }
+      state = other.state;
+      future_retrieved = other.future_retrieved;
+      other.state = nullptr;
+      other.future_retrieved = false;
+    }
+    return *this;
+  }
+
+  ~promise()
+  {
+    if ( state && !state->is_ready() ) {
+      // broken promise
+    }
+  }
+
+  future<T &>
+  get_future()
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    if ( future_retrieved ) {
+      throw except::future_error("");
+    }
+    future_retrieved = true;
+    return future<T &>(state);
+  }
+
+  void
+  set_value(T &value)
+  {
+    if ( !state ) {
+      throw except::future_error("");
+    }
+    state->set_value(value);
+  }
+  void
+  set_value_at_thread_exit(T &value)
+  {
+    set_value(value);
   }
 };
 

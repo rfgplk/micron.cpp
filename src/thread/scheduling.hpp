@@ -9,23 +9,22 @@
 #define _GNU_SOURCE
 #endif
 #include "../except.hpp"
-#include "../memory/actions.hpp"
-#include "../syscall.hpp"
 #include "../linux/process/sched.hpp"
 #include "../linux/process/system.hpp"
-#include <sched.h>
-//#include <sys/syscall.h>
+#include "../linux/sys/sched.hpp"
+#include "../memory/actions.hpp"
+#include "../syscall.hpp"
 
 namespace micron
 {
 
 enum class schedulers : u32 {
-  fifo = SCHED_FIFO,
-  roundrobin = SCHED_RR,
-  deadline = SCHED_DEADLINE,
-  normal = SCHED_OTHER,
-  idle = SCHED_IDLE,
-  batch = SCHED_BATCH,
+  fifo = posix::sched_fifo,
+  roundrobin = posix::sched_rr,
+  deadline = posix::sched_deadline,
+  normal = posix::sched_other,
+  idle = posix::sched_idle,
+  batch = posix::sched_batch,
   none
 };
 
@@ -43,11 +42,11 @@ class scheduler_t
   __set(const pid_t pid)
   {
     if ( is_scheduled() ) {
-      sched_param prio = { .sched_priority = 0 };     // must be zero
+      posix::sched_param prio = { .sched_priority = 0 };     // must be zero
       if ( posix::set_scheduler(pid, (int)sched, prio) == -1 )
         throw except::system_error("micron::scheduler_t set() failed");
     } else {
-      sched_param prio = { .sched_priority = 99 };
+      posix::sched_param prio = { .sched_priority = 99 };
       if ( posix::set_scheduler(pid, (int)sched, prio) == -1 )
         throw except::system_error("micron::scheduler_t set() failed");
     }

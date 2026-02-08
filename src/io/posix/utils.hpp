@@ -5,21 +5,18 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-//#include <sys/stat.h>
-//#include <sys/sysmacros.h>
-
 #include "../../concepts.hpp"
 
-#ifndef STDIN_FILENO
-#define STDIN_FILENO 0
+#ifndef stdin_fileno
+#define stdin_fileno 0
 #endif
 
-#ifndef STDOUT_FILENO
-#define STDOUT_FILENO 1
+#ifndef stdout_fileno
+#define stdout_fileno 1
 #endif
 
-#ifndef STDERR_FILENO
-#define STDERR_FILENO 2
+#ifndef stderr_fileno
+#define stderr_fileno 2
 #endif
 
 #define MAX_NAME_LENGTH 256     // generally true for nearly all FSs

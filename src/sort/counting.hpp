@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../algorithm/algorithm.hpp"
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../types.hpp"
 
 namespace micron

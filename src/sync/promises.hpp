@@ -5,12 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../mutex/mutex.hpp"
 #include "../mutex/locks.hpp"
+#include "../mutex/mutex.hpp"
 namespace micron
 {
-
-class broken_promise{};
+class broken_promise
+{
+};
 class promise
 {
   micron::mutex mtx;
@@ -27,7 +28,6 @@ public:
     return *this;
   }
 };
-
 
 template <typename T, typename F, typename R, typename... Args>
 inline bool

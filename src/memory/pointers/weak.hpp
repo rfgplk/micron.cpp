@@ -19,6 +19,7 @@ public:
   using pointer_type = weak_pointer_tag;
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
+  using element_type = Type;
   using value_type = Type;
 
   using __alloc = __internal_pointer_alloc<Type>;

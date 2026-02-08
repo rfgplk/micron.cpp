@@ -114,19 +114,19 @@ struct range_of {
 };
 
 
-template <int32_t From, range_size_t<int32_t> auto To>
-using int_range = count_range<int32_t, From, To>;
+template <i32 From, range_size_t<i32> auto To>
+using int_range = count_range<i32, From, To>;
 
 template <float From, range_size_t<float> auto To>
 using float_range = count_range<float, From, To>;
 
-template <uint32_t From, range_size_t<uint32_t> auto To>
-using u32_range = count_range<uint32_t, From, To>;
+template <u32 From, range_size_t<u32> auto To>
+using u32_range = count_range<u32, From, To>;
 
-template <uint64_t From, range_size_t<uint64_t> auto To>
-using u64_range = count_range<uint64_t, From, To>;
+template <u64 From, range_size_t<u64> auto To>
+using u64_range = count_range<u64, From, To>;
 
-template <int64_t From, range_size_t<int64_t> auto To>
-using i64_range = count_range<int64_t, From, To>;
+template <i64 From, range_size_t<i64> auto To>
+using i64_range = count_range<i64, From, To>;
 
 };

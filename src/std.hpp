@@ -11,9 +11,9 @@
 #include "control.hpp"
 #include "endian.hpp"
 #include "errno.hpp"
+#include "linux/sys/types.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
-#include "linux/linux_types.hpp"
 
 #include "io/__std.hpp"
 #include "linux/sys/signal.hpp"
@@ -24,18 +24,8 @@
 #endif
 
 constexpr static const int MICRON_VERSION_MAJOR = 0x000;
-constexpr static const int MICRON_VERSION_MINOR = 0x030;
+constexpr static const int MICRON_VERSION_MINOR = 0x050;
 constexpr static const int MICRON_VERSION_PATCH = 0x000;
-
-#ifndef STDIN_FILENO
-#define STDIN_FILENO 0
-#endif
-#ifndef STDOUT_FILENO
-#define STDOUT_FILENO 1
-#endif
-#ifndef STDERR_FILENO
-#define STDERR_FILENO 2
-#endif
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"
@@ -55,11 +45,18 @@ constexpr static const int MICRON_VERSION_PATCH = 0x000;
 #define COMPILER "Unknown"
 #endif
 
-#if !defined(__x86_64__)
-#error "This version of the Micron standard library is designed for amd64 only."
+#if defined(_WIN32) || defined(_WIN64)
+#error "The micron standard library wasn't made for Windows."
+#endif
+
+#if defined(__arm__) || defined(__aarch64__) || defined(_M_ARM) || defined(_M_ARM64)
+#pragma GCC warning "Limited support for ARM platforms currently. Be careful!"
+#elif defined(__x86_64__) || defined(_M_X64)
+#else
+#error "This version of the Micron standard library is designed for amd64, with limited support for ARM platforms."
 #endif
 #if !defined(__GNUC__) && !defined(__clang__)
-#error "Only G++ or Clang++ are the supported compilers. Remove this if you're willing to take risks."
+#error "Only gcc or clang are currently supported compilers. Remove this if you're willing to take risks."
 #endif
 
 typedef void (*sig_t)(int);

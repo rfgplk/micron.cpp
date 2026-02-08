@@ -6,8 +6,10 @@
 #pragma once
 
 #include "../math/generic.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
+
+#include "../concepts.hpp"
 
 // container agnostic functions for arith. operations on contiguous data
 // T* sig. func. are blind iterators
@@ -16,13 +18,7 @@
 namespace micron
 {
 
-template <typename T>
-concept isContainer = requires(T t) {
-  { t.begin() } -> micron::same_as<typename T::iterator>;
-  { t.end() } -> micron::same_as<typename T::iterator>;
-};
-
-template <isContainer T, typename Y>
+template <is_iterable_container T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
 pow(T &cont, const Y y)
@@ -41,10 +37,9 @@ pow(T *__restrict first, T *__restrict end, const Y y)
     *first = math::power(*first, y);     // for clarity
 }
 
-template <isContainer T, typename Y>
-  requires micron::is_arithmetic_v<Y>
+template <is_iterable_container T>
 void
-add(T &cont, const Y y)
+add(T &cont, const typename T::value_type y)
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -52,10 +47,20 @@ add(T &cont, const Y y)
     *first = *first + y;     // for clarity
 }
 
-template <isContainer T, typename Y>
-  requires micron::is_arithmetic_v<Y>
+template <is_iterable_container T>
+auto
+multiply(T &cont)
+{
+  typename T::value_type r = 1;
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first )
+    r *= *first;     // for clarity
+  return r;
+}
+template <is_iterable_container T>
 void
-multiply(T &cont, const Y y)
+multiply(T &cont, const typename T::value_type y)
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -63,7 +68,20 @@ multiply(T &cont, const Y y)
     *first = *first * y;     // for clarity
 }
 
-template <isContainer T, typename Y>
+template <is_iterable_container T>
+auto
+mul(T &cont)
+{
+  return multiply(cont);
+}
+template <is_iterable_container T>
+void
+mul(T &cont, const typename T::value_type y)
+{
+  multiply(cont, y);
+}
+
+template <is_iterable_container T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
 divide(T &cont, const Y y)
@@ -74,7 +92,7 @@ divide(T &cont, const Y y)
     *first = *first / y;     // for clarity
 }
 
-template <isContainer T, typename Y>
+template <is_iterable_container T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
 subtract(T &cont, const Y y)
@@ -85,7 +103,7 @@ subtract(T &cont, const Y y)
     *first = *first - y;     // for clarity
 }
 
-template <isContainer T, typename... Args>
+template <is_iterable_container T, typename... Args>
 void
 add(T &cont, const Args *__restrict... args)
 {
@@ -94,7 +112,7 @@ add(T &cont, const Args *__restrict... args)
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
-template <isContainer T, typename... Args>
+template <is_iterable_container T, typename... Args>
 void
 multiply(T &cont, const Args *__restrict... args)
 {
@@ -103,7 +121,7 @@ multiply(T &cont, const Args *__restrict... args)
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
-template <isContainer T, typename... Args>
+template <is_iterable_container T, typename... Args>
 void
 divide(T &cont, const Args *__restrict... args)
 {
@@ -112,7 +130,7 @@ divide(T &cont, const Args *__restrict... args)
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
-template <isContainer T, typename... Args>
+template <is_iterable_container T, typename... Args>
 void
 subtract(T &cont, const Args *__restrict... args)
 {

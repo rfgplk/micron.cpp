@@ -5,52 +5,108 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
+#include "../../src/linux/std.hpp"
 #include "../../src/mutex/spinlock.hpp"
 #include "../../src/std.hpp"
 #include "../../src/sync/yield.hpp"
 #include "../../src/thread/contract.hpp"
 #include "../../src/thread/thread.hpp"
+#include "../../src/vector/vector.hpp"
 
 #include "../../src/attributes.hpp"
 #include "../../src/string/strings.hpp"
 
+#include "../snowball/snowball.hpp"
 int global = 4;
 
 mc::spin_lock sl;
+
+volatile int __global = 0;
+
 int
-fn(int a, int b, int c, int d, int e)
+fn_loop(void)
 {
-  global = 100;
-  mc::console("A should be: ", a, b, c, d, e);
-  mc::console("I am: ", ::gettid());
-  mc::ssleep(2);
-  mc::console("Global is: ", global);
-  size_t x = 0;
-  for ( size_t i = 0; i < 1e10; i++ )
-    x += i;
-  mc::console("Done", x);
-  // sl();
-  return 0;
+  mc::vector<byte> vec;
+  for ( i32 i = 0; i < 10000000; ++i ) {
+    vec.push_back(i);
+    __global = i;
+    // mc::console(vec.back());
+  }
+  return 100;
 }
 
 int
-fn_void(void)
+fn(int a, int b, int c, int d, int e)
 {
-  mc::console("Done");
+  mc::console("A should be: ", a, ", ", b, ", ", c, ", ", d, ", ", e);
+  mc::console("Global is: ", static_cast<int>(__global));     // should be different each time
+  return 4;
+}
+
+int
+fn_objs(const micron::vector<int> &a)
+{
+  mc::console("Size is: ", a.size());
+  return 2;
+}
+int
+fn_ptrs_all(int **a, int **b, int **c)
+{
+  mc::console(a);
+  mc::console(b);
+  mc::console(c);
+  return 7;
+}
+int
+fn_ptrs(int **a, int **b, int c)
+{
+  mc::console(a);
+  mc::console(b);
+  mc::console(c);
+  return 1;
+}
+
+int
+fn_forever(void)
+{
+  for ( int i = 1;; ) {
+    mc::console(i++);
+    mc::sleep(500);
+  }
   return 0;
 }
+int
+fn_void(void)
+{
+  mc::console("Void!");
+  return 1001;
+}
 #include "../../src/sync/when.hpp"
+#include "../../src/thread/tasks.hpp"
 
 int
 main(void)
 {
-  if constexpr ( false ) {
+
+  enable_scope()
+  {
+    // mc::when(t, 6);
+    // mc::as_thread(fn, t);
+    mc::thread th(fn_loop);
+    mc::solo::wait_for(th);
+    mc::solo::join(th);
+    mc::console(th.result<int>());
+    mc::console("Done");
+    return 0;
+  }
+  disable_scope()
+  {
     int t = 6;
     // mc::when(t, 6);
     // mc::as_thread(fn, t);
     mc::thread th(fn, 5, 6, 7, 8, 9);
     mc::ssleep(1);
-    mc::console("Parent is: ", ::gettid());
+    mc::console("Parent is: ", mc::gettid());
     mc::ssleep(5);
     mc::console("Will unlock now!");
     sl.unlock();
@@ -61,7 +117,8 @@ main(void)
     th.try_join();
     return 0;
   }
-  if constexpr ( false ) {
+  disable_scope()
+  {
     mc::yield();
     auto t = mc::solo::spawn<mc::auto_thread<>>(fn, 5, 6, 7, 8, 9);
     mc::ssleep(1);
@@ -74,28 +131,63 @@ main(void)
     // t->awaken();
     mc::solo::join(t);
   }
-  if constexpr ( false ) {
+
+  disable_scope()
+  {
+    mc::auto_thread th(fn_loop);
+    mc::auto_thread th_2(fn_loop);
+    mc::auto_thread th_3(fn, 1, 5, 10, 25, 50);
+    mc::auto_thread th_4(fn_void);
+    mc::auto_thread th_5(fn_loop);
+    mc::ssleep(2);
+    int res = th.result<int>();
+    res = th_2.result<int>();
+    res = th_3.result<int>();
+    res = th_4.result<int>();
+    res = th_5.result<int>();
+    mc::console(res);
+  }
+  disable_scope()
+  {
     mc::auto_thread th(fn, 5, 6, 7, 8, 9);
-    auto f = th.try_join();
-    mc::console("trying to join, should be -1: ", f, ".");
+    // auto t = mc::solo::spawn<mc::auto_thread<>>(fn, 5,6,7,8,9);
   }
 
-  if constexpr ( true ) {
-    mc::yield();
-    auto t = mc::solo::spawn<mc::auto_thread<>>(fn, 5, 6, 7, 8, 9);
+  disable_scope()
+  {
+    mc::auto_thread th(fn_forever);
     mc::ssleep(1);
-    // mc::console("Global is ", global);
+    mc::solo::sleep(th);
+    // auto t = mc::solo::spawn<mc::auto_thread<>>(fn, 5,6,7,8,9);
+  }
+  disable_scope()
+  {
+    mc::yield();
+    mc::console("Global is ", global);
+    auto t = mc::solo::spawn<mc::auto_thread<>>(fn, 5, 6, 7, 8, 9);
+    mc::console("Spawned");
+    mc::ssleep(1);
     mc::solo::yield(t);
-    //mc::ssleep(2);
+    // mc::ssleep(2);
     t->sleep();
     mc::console("Thread Asleep!");
     mc::ssleep(2);
     t->awaken();
     mc::solo::join(t);
   }
-  if constexpr ( false ) {
-    auto t = mc::solo::spawn<mc::auto_thread<>>(fn_void);
-    mc::solo::join(t);
+  disable_scope()
+  {
+    int var = 5;
+    int *a = &var;
+    int **b = &a;
+    micron::vector<int> vec;
+    vec.resize(10);
+    auto t = mc::solo::spawn<mc::thread<>>(fn_void);
+    auto p = mc::solo::spawn<mc::thread<>>(fn, 1, 5, 6, 2, 15);
+    auto d = mc::solo::spawn<mc::thread<>>(fn_ptrs, nullptr, b, 5);
+    auto e = mc::solo::spawn<mc::thread<>>(fn_objs, vec);
+    mc::solo::join(t, p, d, e);
+    // mc::console("Joined with return code: ", mc::solo::join(t));
   }
   return 1;
 }

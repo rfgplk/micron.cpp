@@ -11,8 +11,8 @@
 #include "../../vector/vector.hpp"
 #include "utils.hpp"
 
-#include "limits.hpp"
-#include "../../linux/linux_types.hpp"
+#include "../../linux/sys/limits.hpp"
+#include "../../linux/sys/types.hpp"
 
 
 // functions for handling posix/linux dirs

@@ -13,7 +13,6 @@
 namespace micron
 {
 template <integral T>
-  requires(!micron::is_null_pointer_v<T>)
 inline size_t
 strlen(const T *str)
 {

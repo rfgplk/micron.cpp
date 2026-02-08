@@ -7,14 +7,11 @@
 
 // libelves
 
-#include <sched.h> /* Definition of CLONE_* constants */
-#include <spawn.h>
-// #include <sys/stat.h>
-// #include <sys/wait.h>     // waitpid
-#include <unistd.h>     // fork, close, daemon
+#include "../process/spawn.hpp"
+#include "../sys/clone.hpp"
+#include "../sys/limits.hpp"
 
-#include "../../thread/signal.hpp"
-
+#include "../../pointer.hpp"
 #include "../io.hpp"
 #include "../sys/fcntl.hpp"
 
@@ -27,68 +24,223 @@
 #include "../../vector/fvector.hpp"
 #include "../../vector/svector.hpp"
 #include "../../vector/vector.hpp"
-#include "../calls.hpp"
+#include "../__includes.hpp"
+#include "fork.hpp"
 #include "wait.hpp"
 
-#include "callbacks.hpp"
-#include "structs.hpp"
+#include "../../io/filesystem.hpp"
 
-// fork clone daemon execve mmap functionality
-// you might be wondering why not roll your own posix calls for process spawning
-// the reason is, it's simply too tedious to get it working on a wide range of machines, and there is a LOT of
-// boilterplate code, which would make the final result more or less identical to the system version
+#include "callbacks.hpp"
 
 extern char **environ;
 namespace micron
 {
 
-struct uelf_t {
+/*
+
+   // TODO: add this
+
+   struct uelf_t {
   int fd;
   byte *elf;
 };
 
 template <is_string S>
 uelf_t
-create_elf_memory(uelf_t &elf, const S &str, const S &str)
+create_elf_memory(uelf_t &elf, const S &str, const S &str_)
 {
-  uelf_t elf{
-    memfd_create(str.c_str(), 0),
-  };
+  //uelf_t elf{
+  //  memfd_create(str.c_str(), 0),
+  //};
+}*/
+
+struct upid_t {
+  uid_t uid;
+  uid_t euid;
+  gid_t gid;
+  pid_t pid;
+  pid_t ppid;
+};
+
+// TODO: extend with mmap regions
+struct runtime_t {
+  byte *stack;
+  byte *heap;
+};
+inline runtime_t
+load_stack_heap(void)
+{
+  micron::string dt;
+  fsys::system<micron::io::rd> sys;
+  io::path_t path = "/proc/self/maps";
+  sys["/proc/self/maps"] >> dt;
+  micron::string::iterator stck = micron::format::find(dt, "[stack]");
+  micron::string::iterator heap = micron::format::find(dt, "[heap]");
+  // NOTE: the reason this is here is because we might not always have a heap, in which case heap will be nullptr
+  if ( !stck and !heap ) {
+    runtime_t rt = { .stack = nullptr, .heap = nullptr };
+    return rt;
+  } else if ( heap ) {
+    micron::string::iterator stck_nl = micron::format::find_reverse(dt, stck, "\n") + 1;
+    micron::string::iterator heap_nl = micron::format::find_reverse(dt, heap, "\n") + 1;
+    micron::string::iterator stck_ptr = micron::format::find(dt, stck_nl, "-");
+    micron::string::iterator heap_ptr = micron::format::find(dt, heap_nl, "-");
+    byte *sptr = micron::format::to_pointer_addr<byte, micron::string>(stck_nl, stck_ptr);
+    byte *hptr = micron::format::to_pointer_addr<byte, micron::string>(heap_nl, heap_ptr);
+    runtime_t rt = { .stack = sptr, .heap = hptr };
+    return rt;
+  } else {
+    micron::string::iterator stck_nl = micron::format::find_reverse(dt, stck, "\n") + 1;
+    micron::string::iterator stck_ptr = micron::format::find(dt, stck_nl, "-");
+    byte *sptr = micron::format::to_pointer_addr<byte, micron::string>(stck_nl, stck_ptr);
+    runtime_t rt = { .stack = sptr, .heap = nullptr };
+    return rt;
+  }
+  runtime_t rt = { .stack = nullptr, .heap = nullptr };
+  return rt;
 }
 
+micron::ptr_arr<char *>
+vector_to_argv(const micron::svector<micron::string> &vec)
+{
+  auto argv = micron::unique_arr<char *>(vec.size() + 1);     // for nullptr
+  for ( size_t i = 0; i < vec.size(); ++i ) {
+    argv[i] = const_cast<char *>(vec[i].c_str());
+  }
+  argv[vec.size()] = nullptr;
+  return argv;
+}
+
+// uses containers rather than PODs, redesigned with spawn_ctx as info
+struct uprocess_t {
+  upid_t pids;     // pid of process
+  micron::sstring<posix::path_max + 1> path;
+  micron::svector<micron::string> argv;     // can be variable, up to cca 2 MiB
+  micron::svector<micron::string> envp;
+  posix::limits_t lims;     // limits of the process, slower to get, but makes handling effortless
+  posix::cpu_set_t affinity;
+  int status;
+  ~uprocess_t() = default;
+
+  uprocess_t(void)
+      : pids{ posix::getuid(), posix::geteuid(), posix::getgid(), posix::getpid(), posix::getppid() }, path(), argv{},
+        envp{}, lims(0), affinity(), status(0)
+  {
+    // programatically get argv and environ
+    micron::string str;
+    fsys::system<micron::io::rd> sys;
+    sys["/proc/self/cmdline"] >> str;
+    umax_t k = 0;
+    umax_t t = 0;
+    // stored as null term strings, so we're iterating according to what we read
+    for ( umax_t i = 0; i < str.size(); ++i ) {
+      if ( str[i] == 0x0 ) {
+        t = i;
+        argv.emplace_back(str.begin() + k, str.begin() + t);
+        k = t + 1;
+      }
+    }
+    // argv[0] is always path, not absolute but works without reparsing
+    path = argv[0];
+    str.clear();
+    k = 0;
+    t = 0;
+    sys["/proc/self/environ"] >> str;
+    for ( umax_t i = 0; i < str.size(); ++i ) {
+      if ( str[i] == 0x0 ) {
+        t = i;
+        envp.emplace_back(str.begin() + k, str.begin() + t);
+        // our vector can only hold 64 elements, and as it turns out environ could easily exceed that
+        if(envp.full_or_overflowed())
+          break;
+        k = t + 1;
+      }
+    }
+    posix::get_affinity(pids.pid, affinity);
+  }
+
+  template <typename... Args>
+  uprocess_t(const char *str, Args &&...args)
+      : pids{}, path(str), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
+  {
+  }
+  template <typename... Args>
+  uprocess_t(micron::sstring<posix::path_max + 1> &&o, Args &&...args)
+      : pids{}, path(micron::move(o)), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
+  {
+  }
+  uprocess_t(const uprocess_t &o)
+      : pids(o.pids), path(o.path), argv(o.argv), envp(o.envp), lims(o.lims), affinity(o.affinity), status(o.status)
+  {
+  }
+
+  uprocess_t(uprocess_t &&o)
+      : pids(micron::move(o.pids)), path(micron::move(o.path)), argv(micron::move(o.argv)), envp(micron::move(o.envp)),
+        lims(micron::move(o.lims)), affinity(micron::move(o.affinity)), status(o.status)
+  {
+    o.status = 0;
+  }
+  template <typename... Args>
+  uprocess_t &
+  operator=(uprocess_t &&o)
+  {
+
+    pids = micron::move(o.pids);
+    path = micron::move(o.path);
+    argv = micron::move(o.argv);
+    envp = micron::move(o.envp);
+    lims = micron::move(o.lims);
+    affinity = micron::move(o.affinity);
+    status = o.status;
+    o.status = 0;
+    return *this;
+  }
+  uprocess_t &
+  operator=(const uprocess_t &o)
+  {
+    pids = o.pids;
+    path = o.path;
+    argv = o.argv;
+    envp = o.envp;
+    lims = o.lims;
+    affinity = o.affinity;
+    status = o.status;
+    return *this;
+  }
+};
+
+typedef micron::fvector<uprocess_t> process_list_t;
 template <is_string... S>
-posix::process_list_t
+process_list_t
 create_processes(S... names)
 {
-  posix::process_list_t p;
+  process_list_t p;
   (p.emplace_back(names, names), ...);
   return p;
 }
 
 template <typename... S>
-posix::process_list_t
+process_list_t
 create_processes(S... names)
 {
-  posix::process_list_t p;
+  process_list_t p;
   (p.emplace_back(names, names), ...);
   return p;
 }
 
 void
-run_processes(posix::process_list_t &n)
+run_processes(process_list_t &n)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
     for ( size_t i = 0; i < t.argv.size(); i++ )
       argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
-    t.uid = posix::getuid();
-    t.gid = posix::getgid();
-    if ( ::posix_spawn(&t.pid, t.path.c_str(), NULL, &t.flags, &argv[0], environ) ) {
-      throw except::system_error("micron process failed to start posix_spawn");
+    t.pids.uid = posix::getuid();
+    t.pids.gid = posix::getgid();
+    if ( micron::spawn(t.pids.pid, t.path.c_str(), &argv[0], environ) ) {
+      throw except::system_error("micron process failed to start spawn");
     }
-    // if ( t.wait )
-    //   ::waitpid(t.pid, &t.status, 0);
   }
 }
 
@@ -98,104 +250,29 @@ template <int Stack = default_stack_size, typename F, typename... Args>
 int
 daemon(F f, Args &&...args)
 {
-  int pid = ::fork();     // much nicer to do this
-  if ( pid > 0 )          // parent
+  int pid = micron::fork();     // much nicer to do this
+  if ( pid > 0 )                // parent
     _Exit(0);
   if ( posix::setsid() < 0 )
     throw except::runtime_error("micron process daemon failed to create new session");
   // don't change dir
-  posix::umask(0);
-  posix::close(STDIN_FILENO);
-  posix::close(STDOUT_FILENO);
-  posix::close(STDERR_FILENO);
+  micron::umask(0);
+  micron::close(stdin_fileno);
+  micron::close(stdout_fileno);
+  micron::close(stderr_fileno);
 
   micron::open("/dev/null", o_rdwr);
-  posix::dup(0);
-  posix::dup(0);
+  micron::dup(0);
+  micron::dup(0);
   f(args...);
   return 0;
 }
 
-// implementation of ::fork()
-template <int Stack = default_stack_size>
-int
-dead_fork()
+// ex this_task
+uprocess_t
+this_process(void)
 {
-  char *fstack = reinterpret_cast<char *>(
-      mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
-  if ( fstack == MAP_FAILED )
-    throw except::system_error("micron process mmap failed to allocate stack");
-  int pid = ::clone(__default_callback, fstack + Stack,
-                    CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_PARENT | SIGCHLD, NULL);
-  if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
-  return pid;
-}
+  return uprocess_t();
+};
 
-// implementation of ::fork()
-template <int Stack = default_stack_size>
-int
-wdead_fork()
-{
-  char *fstack = reinterpret_cast<char *>(
-      mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
-  if ( fstack == MAP_FAILED )
-    throw except::system_error("micron process mmap failed to allocate stack");
-  int pid = ::clone(__default_sleep_callback, fstack + Stack,
-                    CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_PARENT | SIGCHLD, NULL);
-  if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
-  return pid;
-}
-
-// implementation of ::fork()
-template <int Stack = default_stack_size>
-int
-fork()
-{
-
-  char *fstack = reinterpret_cast<char *>(
-      mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
-  if ( fstack == MAP_FAILED )
-    throw except::system_error("micron process mmap failed to allocate stack");
-  int pid = ::clone(__default_callback, fstack + Stack,
-                    CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_PARENT | SIGCHLD, NULL);
-  if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
-  return pid;
-}
-
-// implementation of ::fork() but automatically wait for child proc to end
-template <int Stack = default_stack_size>
-int
-wfork()
-{
-  char *fstack = reinterpret_cast<char *>(
-      mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
-  if ( fstack == MAP_FAILED )
-    throw except::system_error("micron process mmap failed to allocate stack");
-  int pid
-      = ::clone(__default_callback, fstack + Stack, CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | SIGCHLD, NULL);
-  if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
-  if ( pid == 0 )
-    return pid;
-  int status = 0;
-  micron::waitpid(pid, &status, 0);
-  return status;
-}
-// implementation of ::fork() but automatically wait for child proc to end
-template <int Stack = default_stack_size>
-int
-memfork()
-{
-  char *fstack = reinterpret_cast<char *>(
-      mmap(NULL, Stack, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0));
-  if ( fstack == MAP_FAILED )
-    throw except::system_error("micron process mmap failed to allocate stack");
-  int pid = ::clone(__default_callback, fstack + Stack, CLONE_FS | CLONE_FILES | CLONE_PARENT | SIGCHLD, NULL);
-  if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
-  return pid;
-}
 };

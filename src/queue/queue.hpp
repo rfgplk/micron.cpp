@@ -8,7 +8,7 @@
 #include "__special/initializer_list"
 #include "type_traits.hpp"
 
-#include "algorithm/mem.hpp"
+#include "algorithm/memory.hpp"
 #include "allocation/resources.hpp"
 #include "allocator.hpp"
 #include "bits/__container.hpp"

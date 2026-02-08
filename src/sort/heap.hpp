@@ -12,13 +12,13 @@ namespace micron
 namespace sort
 {
 
-template <typename T>
+template <typename T, typename R, typename I>
 void
-__impl_as_heap(T &arr, int n, int i)
+__impl_as_heap(T &arr, R n, I i)
 {
-  int largest = i;
-  int left = 2 * i + 1;
-  int right = 2 * i + 2;
+  I largest = i;
+  I left = 2 * i + 1;
+  I right = 2 * i + 2;
 
   if ( left < n && arr[left] > arr[largest] )
     largest = left;
@@ -27,7 +27,8 @@ __impl_as_heap(T &arr, int n, int i)
     largest = right;
 
   if ( largest != i ) {
-    size_t tmp = arr[i];
+    // TODO: fix
+    typename T::value_type tmp = arr[i];
     arr[i] = arr[largest];
     arr[largest] = tmp;
     __impl_as_heap(arr, n, largest);
@@ -37,13 +38,13 @@ template <typename T>
 void
 heap(T &arr)
 {
-  int n = arr.size();
+  i64 n = arr.size();
 
-  for ( int i = n / 2 - 1; i >= 0; i-- )
+  for ( i64 i = n / 2 - 1; i >= 0; i-- )
     __impl_as_heap(arr, n, i);
 
-  for ( int i = n - 1; i > 0; i-- ) {
-    size_t tmp = arr[0];
+  for ( i64 i = n - 1; i > 0; i-- ) {
+    typename T::value_type tmp = arr[0];
     arr[0] = arr[i];
     arr[i] = tmp;
     __impl_as_heap(arr, i, 0);

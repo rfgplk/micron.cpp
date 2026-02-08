@@ -42,11 +42,11 @@ invert(T &str)
 }
 
 template <typename T = char8_t>
-int64_t
+i64
 hex_string_to_int64(const micron::hstring<T> &buf)
 {
   const T *ptr = buf.begin();
-  int64_t result = 0;
+  i64 result = 0;
   bool neg = false;
 
   if ( *ptr == '-' ) {
@@ -74,14 +74,14 @@ hex_string_to_int64(const micron::hstring<T> &buf)
 }
 
 template <typename T = char8_t>
-int64_t
+i64
 string_to_int64(const micron::hstring<T> &buf)
 {
   const T *ptr = &buf[0];
-  int64_t result = 0;
+  i64 result = 0;
   bool neg = false;
 
-  if constexpr ( std::is_signed_v<int64_t> ) {
+  if constexpr ( micron::is_signed_v<i64> ) {
     if ( *ptr == '-' ) {
       neg = true;
       ++ptr;
@@ -204,7 +204,7 @@ constexpr const char16_t *
 u16_check(const char16_t *str, size_t n)
 {
   for ( size_t i = 0; i < n; i++ ) {
-    uint16_t c = (*str++);
+    u16 c = (*str++);
 
     if ( c < 0xD800 )
       continue;     // Valid range for U+0000 to U+D7FF

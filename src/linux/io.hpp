@@ -5,8 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// #include <sys/stat.h>
-
 #include "../memory/addr.hpp"
 
 #include "../linux/process/system.hpp"
@@ -14,7 +12,7 @@
 #include "sys/fcntl.hpp"
 #include "sys/stat.hpp"
 
-#include "linux_types.hpp"
+#include "sys/types.hpp"
 
 namespace micron
 {
@@ -104,6 +102,30 @@ pipe(int *fd)
 {
   return static_cast<int>(micron::syscall(SYS_pipe, fd));
 }
+
+int
+pipe2(int *fd, int a)
+{
+  return static_cast<int>(micron::syscall(SYS_pipe2, fd, a));
+}
+
+int
+dup(int old)
+{
+  return static_cast<int>(micron::syscall(SYS_dup, old));
+}
+
+int
+dup2(int old, int newfd)
+{
+  return static_cast<int>(micron::syscall(SYS_dup2, old, newfd));
+}
+
+int
+dup3(int old, int newfd, int flags)
+{
+  return static_cast<int>(micron::syscall(SYS_dup2, old, newfd, flags));
+}
 auto
 close(int fd)
 {
@@ -147,6 +169,12 @@ auto
 umask(mode_t mask)
 {
   return micron::syscall(SYS_umask, mask);
+}
+
+auto
+sync(void)
+{
+  return micron::syscall(SYS_sync);
 }
 
 auto
