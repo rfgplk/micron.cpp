@@ -84,7 +84,7 @@ Yes, *micron* relies on no external code other than what is included in this rep
 
 
 > [!IMPORTANT]
-> Documentation for the *micron* library does not exist for now, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support), as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
+> Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support), as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
 
  
 Libraries
