@@ -38,10 +38,6 @@ All necessary code is self contained within the `src/` directory. Since *micron*
 A simple script which copies all files to `/usr/local/micron`
 
 
-#### Is micron entirely self-sufficient?
-
-Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `gcc` compiler, you can compile and run it anywhere. The sole exception as for now is `<pthread.h>`, which is necessary to facilitate multi-threading. (technical note: as for now you still need to link against -libc due to exceptions/_start/TLS not being fully implemented).
-
 Features
 --------
   - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind
@@ -81,17 +77,11 @@ Philosophy
 in short:
 - the written code, in its explicit form, stands as the ultimate arbiter of truth, unyielding and devoid of ambiguity, embodying the essence of how code should perform.
 
-***
+Is micron entirely self-sufficient?
+--------------------------------------
 
-<p align="justify"> 
-  
-  While the STL (and most other libraries of it's kind) intend to restrict developer freedom, or much rather limit functionality to an approval subset of permissible behavior, *micron* makes no such restrictions, granting nearly full control not just over library code, but even library internals. As such, containers much as maps, vectors, or strings, freely expose their internal components and make them *directly accessible* via the public library API. As a result, it's perfectly simple to create a *micron*::string<byte> from a *micron*::vector<struct custom_struct>, if the need arises.</p>
+Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `gcc` compiler, you can compile and run it anywhere. The sole exception as for now is `<pthread.h>`, which is necessary to facilitate multi-threading. (technical note: as for now you still need to link against -libc due to exceptions/stack unwinding/_start/TLS not being fully implemented).
 
-<p align="justify"> 
-
-  Additionally, micron has taken great inspiration from the implementation of standard libraries of other languages, notably Rust, Golang, and Python (see algorithms, channels, arenas). By studying and adapting their most innovative concepts, micron not only inherits proven design patterns but also refines them to align with its own performance-centric philosophy.</p>
-
-***
 
 > [!IMPORTANT]
 > Documentation for the *micron* library does not exist for now, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support), as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
