@@ -25,7 +25,7 @@ public:
     for ( ;; ) {
       while ( _lock.get() ) {
 #if defined(__GNUC__)
-        cpu_pause();
+        __cpu_pause();
 #else
         yield();
 #endif
@@ -42,7 +42,7 @@ public:
     for ( ;; ) {
       while ( _lock.get() != state ) {
 #if defined(__GNUC__)
-        cpu_pause();
+        __cpu_pause();
 #else
         yield();
 #endif
@@ -64,7 +64,7 @@ public:
     for ( ;; ) {
       if ( _lock.swap(ATOMIC_OPEN) )
         break;
-      cpu_pause();
+      __cpu_pause();
     }
   }
 };

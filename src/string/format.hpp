@@ -624,7 +624,7 @@ find(const T &data, const char *fnd) -> typename T::const_iterator
 
 template <is_string T>
 auto
-find(const T &data, typename T::iterator from, const char fnd) -> typename T::iterator
+find(const T &data, typename T::const_iterator from, const char fnd) -> typename T::const_iterator
 {
   if ( from < data.begin() or from >= data.end() )
     return nullptr;
@@ -639,6 +639,7 @@ find(const T &data, typename T::iterator from, const char fnd) -> typename T::it
   }
   return (typename T::iterator) nullptr;
 }
+
 
 template <is_string T>
 auto
@@ -831,6 +832,25 @@ replace_all(T &str, const char *lhs, const char *rhs)
     micron::memcpy(itr, rhs, szr);
     micron::bytemove(itr + szr, itr + szl, sz - ((szr - szl) > 0 ? (szr - szl) : 0));
     str.set_size(str.size() - math::abs(szl - szr));
+    itr = find(str, lhs);
+  }
+  return str;
+}
+
+template <char N, is_string T>
+T &
+replace_all(T &str, const char *lhs)
+{
+  auto sz = str.size();
+  auto szl = micron::strlen(lhs);
+  if ( (szl) + sz > str.max_size() )
+    throw micron::except::library_error("concat range error.");
+  typename T::iterator itr = find(str, lhs);
+  while ( itr != nullptr ) {
+    sz = str.size();
+    micron::memset(itr, N, 1);
+    micron::bytemove(itr + 1, itr + szl, sz - ((1 - szl) > 0 ? (1 - szl) : 0));
+    str.set_size(str.size() - math::abs(szl - 1));
     itr = find(str, lhs);
   }
   return str;

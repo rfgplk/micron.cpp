@@ -54,7 +54,7 @@ public:
         if ( ready )
           return;
       }
-      cpu_pause();
+      __cpu_pause();
     }
   }
 
@@ -69,7 +69,7 @@ public:
         if ( ready or (micron::system_clock<>::now() - start >= timeout) )
           break;
       }
-      cpu_pause();
+      __cpu_pause();
     }
     return ready ? future_status::ready : future_status::timeout;
   }
@@ -138,7 +138,7 @@ public:
         if ( ready )
           return;
       }
-      cpu_pause();
+      __cpu_pause();
     }
   }
 
@@ -152,7 +152,7 @@ public:
         if ( ready or (micron::system_clock<>::now() - start >= timeout) )
           break;
       }
-      cpu_pause();
+      __cpu_pause();
     }
     return ready ? future_status::ready : future_status::timeout;
   }
@@ -216,7 +216,7 @@ public:
         if ( ready )
           return;
       }
-      cpu_pause();
+      __cpu_pause();
     }
   }
 
@@ -231,7 +231,7 @@ public:
         if ( ready or (micron::system_clock<>::now() - start >= timeout) )
           break;
       }
-      cpu_pause();
+      __cpu_pause();
     }
     return ready ? future_status::ready : future_status::timeout;
   }

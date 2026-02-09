@@ -120,7 +120,7 @@ template <typename T>
 constexpr __attribute__((always_inline)) inline T
 fetch_add(T *ptr, T val, int memorder)
 {
-  return __atomic_fetch_ad(ptr, val, memorder);
+  return __atomic_fetch_add(ptr, val, memorder);
 }
 
 template <typename T>

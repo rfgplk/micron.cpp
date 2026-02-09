@@ -36,7 +36,6 @@ namespace pthread
 
 enum class thread_create_state : int { joinable = 0, detached = 1 };
 
-
 constexpr int thread_create_joinable = static_cast<int>(thread_create_state::joinable);
 constexpr int thread_create_detached = static_cast<int>(thread_create_state::detached);
 
@@ -195,6 +194,12 @@ set_stack_thread(pthread_attr_t &attr, T *ptr, size_t size)
 {
   pthread_attr_setstacksize(&attr, size);
   pthread_attr_setstack(&attr, ptr, size);
+}
+
+auto
+set_name(pthread_t pt, const char *name)
+{
+  return pthread_setname_np(pt, name);
 }
 
 auto

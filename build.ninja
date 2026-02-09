@@ -55,7 +55,7 @@ rule cc_clang_compile_cmnd_debug
 # core
 build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
 
-build micron_build_bin: cc_compile_cmnd tools/src/build.cc
+build micron_build_bin: cc_compile_cmnd_debug tools/src/build.cc
 build bench_strings: cc_compile_cmnd benches/strings.cpp
 
 build rigor_memory: cc_compile_cmnd tests/rigor/memory.cpp
@@ -148,7 +148,7 @@ build isort_test: cc_compile_cmnd_debug tests/insert_sort.cpp
 build input_test: cc_compile_cmnd_debug tests/input.cpp
 build allocators_test: cc_compile_cmnd_debug tests/allocators.cpp
 build sorts_test: cc_compile_cmnd_debug tests/sorts.cpp
-build process_test: cc_compile_cmnd_debug tests/process.cpp
+build process_test: cc_compile_cmnd tests/process.cpp
 build bloom_test: cc_compile_cmnd_debug tests/bloom.cpp
 build errno_test: cc_compile_cmnd_debug tests/errno.cpp
 build container_leak_test: cc_compile_cmnd_debug tests/vector_leak.cpp

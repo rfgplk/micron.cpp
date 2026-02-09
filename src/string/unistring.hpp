@@ -120,6 +120,8 @@ int_to_string(I n)
   return buf;
 }
 
+// WARNING: could go OOB
+
 template <typename I, typename T = char8_t, size_t N>
   requires micron::is_integral_v<I>
 inline micron::sstring<N, T>

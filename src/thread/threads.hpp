@@ -266,7 +266,7 @@ template <size_t Stack_Size = thread_stack_size> class thread
     pid = __as_thread_attached<Stack_Size, F, Args...>(&payload, fstack, f, micron::forward<Args &&>(args)...);
     // no longer needed
     // while ( pthread::thread_kill(parent_pid, pid, 0) != 0 )
-    //  cpu_pause();
+    //  __cpu_pause();
     // massively important, wait for the thread to actually be
     // created by the scheduler, otherwise race conditions will occur
 
@@ -288,8 +288,9 @@ template <size_t Stack_Size = thread_stack_size> class thread
   void
   __safe_release(void)
   {
-    if ( alive() )
+    if ( alive() ) {
       throw except::thread_error("micron thread::__safe_release(): tried to release a running thread");
+    }
     if ( micron::try_unmap(fstack, Stack_Size) < 0 ) {
       throw except::memory_error("micron thread::__safe_release(): failed to unmap thread stack");
     }
@@ -299,10 +300,10 @@ template <size_t Stack_Size = thread_stack_size> class thread
   pid_t parent_pid;
   pthread_t pid;
   addr_t *fstack;
-  __thread_payload payload;
   // atomic_token<bool> status;
 
 public:
+  __thread_payload payload;
   ~thread() { __release(); }
   thread(const thread &o) = delete;
   thread &operator=(const thread &) = delete;
@@ -335,18 +336,19 @@ public:
   }
   // prepared functions
   // fstack set by preparethread
-  template <typename Fn, typename... Args>
+  /*template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn &, Args &...>)
   thread(addr_t *stack_ptr, const pthread_attr_t &attrs, Fn &fn, Args &...args)
       : parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{}
   {
+      for(;;){}
     __impl_preparethread(stack_ptr, attrs, fn, args...);
-  }
+  }*/
 
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args && ...>)
   thread(addr_t *stack_ptr, const pthread_attr_t &attrs, Fn &&fn, Args &&...args)
-      : parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{}
+      : parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload()
   {
     __impl_preparethread(stack_ptr, attrs, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
   }
@@ -405,13 +407,9 @@ public:
   auto
   join(void) -> int     // thread
   {
-    if ( try_join() == error::busy ) {
-      auto r = pthread::__join_thread(pid);
-      __safe_release();
-      return r;
-    }
+    auto r = pthread::__join_thread(pid);
     __safe_release();
-    return 1;
+    return r;
   }
   auto
   try_join(void) -> int
@@ -419,7 +417,7 @@ public:
     int r = pthread::__try_join_thread(pid);
     if ( r == 0 ) {
       __safe_release();
-      return 1;
+      return 0;
     }
     if ( r == error::busy or r == error::invalid_arg )
       return r;
@@ -471,7 +469,7 @@ public:
   void
   wait_for(void) const
   {
-    //until(true, &thread<Stack_Size>::active, this);
+    // until(true, &thread<Stack_Size>::active, this);
     until(false, &thread<Stack_Size>::alive, this);
   }
   template <typename R>
@@ -524,7 +522,7 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
 
     // no longer needed
     // while ( pthread::thread_kill(parent_pid, pid, 0) != 0 )
-    //  cpu_pause();
+    //  __cpu_pause();
     // massively important, wait for the thread to actually be
     // created by the scheduler, otherwise race conditions will occur
 
@@ -715,7 +713,7 @@ public:
   void
   wait_for(void) const
   {
-    //until(true, &auto_thread<Stack_Size>::active, this);
+    // until(true, &auto_thread<Stack_Size>::active, this);
     until(false, &auto_thread<Stack_Size>::alive, this);
   }
   template <typename R>

@@ -280,7 +280,7 @@ public:
       this->operator[](to);
       t_id = sz - 1;
     }
-    micron::ustr8 buf;
+    micron::string buf;
     entries[f_id]->operator>>(buf);
     entries[t_id]->operator=(buf);
     sync();

@@ -37,9 +37,9 @@ int main() {
 int
 main(void)
 {
-  mc::ustr8 str;
-  mc::ustr8 assertfile;
-  mc::ustr8 binfile;
+  mc::string str;
+  mc::string assertfile;
+  mc::string binfile;
   mc::fsys::system<mc::io::rwc> sys;     //("build.ninja");
   // for(size_t i = 0; i < 100000; i++)
   {

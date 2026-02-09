@@ -240,7 +240,7 @@ public:
     return memory;
   }
   auto
-  data() -> T *
+  data() -> pointer
   {
     return &memory[0];
   }
@@ -365,6 +365,13 @@ public:
   fast_clear()
   {
     length = 0;
+  }
+  inline sstring &
+  pop_back(void)
+  {
+    if ( (length) > 0 )
+      (memory)[--length] = 0x0;
+    return *this;
   }
   inline sstring &
   push_back(char ch)
@@ -612,6 +619,15 @@ public:
   {
     memory[length] = 0x0;
   }
+  // was missing this
+  inline sstring &
+  operator+=(char ch)
+  {
+    if ( length + 1 >= N )
+      throw except::library_error("micron::sstring += out of memory.");
+    memory[length++] = ch;
+    return *this;
+  };
   inline sstring &
   operator+=(const buffer &data)
   {
@@ -629,7 +645,7 @@ public:
     if ( length + M >= N )
       throw except::library_error("micron::sstring += out of memory.");
     micron::memcpy(&memory[length], &data[0], M);
-    length += M;
+    length += M - 1;
     return *this;
   };
   template <typename F = T>
@@ -640,7 +656,7 @@ public:
     if ( length + sz >= N )
       throw except::library_error("micron::sstring += out of memory.");
     micron::memcpy(&memory[length], &data[0], sz);
-    length += sz;
+    length += sz - 1;
     return *this;
   };
   template <size_type M = N, typename F = T>
@@ -652,17 +668,19 @@ public:
     sstring<M, F> buf;
     micron::memcpy(&buf.data()[0], &memory[pos], cnt);
     buf[cnt] = '\0';
+    buf.set_size(cnt);
     return buf;
   };
   template <size_type M = N, typename F = T>
   inline sstring<M, F>
   substr(const_iterator _start, const_iterator _end) const
   {
-    if ( _start < begin() or _end >= end() )
+    if ( _start < begin() or _end > end() )
       throw except::library_error("error micron::sstring substr invalid range.");
     sstring<M, F> buf;
     micron::memcpy(&buf.data()[0], _start, _end - _start);
     buf[_end - _start] = '\0';
+    buf.set_size(_end - _start);
     return buf;
   };
   inline bool

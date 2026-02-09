@@ -27,7 +27,7 @@ template <typename T> class channel
     // storage duration involves the destruction of objects with automatic storage duration that are in scope at the
     // point transferred from but not at the point transferred to.
   rst: {     // doing it like this to prevent needing two separate locks
-    cpu_pause();
+    __cpu_pause();
     micron::lock_guard m(_lock);
     if ( obj.empty() ) {
       goto rst;

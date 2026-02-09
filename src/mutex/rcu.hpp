@@ -53,7 +53,7 @@ template <typename T = void> class rcu_domain
   lock_queue()
   {
     while ( !queue_lock.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) {
-      cpu_pause();
+      __cpu_pause();
     }
   }
 
@@ -104,7 +104,7 @@ template <typename T = void> class rcu_domain
       if ( all_clear )
         break;
 
-      cpu_pause();
+      __cpu_pause();
     }
   }
 

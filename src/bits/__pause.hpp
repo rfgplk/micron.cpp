@@ -6,7 +6,7 @@
 #pragma once
 
 inline __attribute__((always_inline)) void
-cpu_pause(void)
+__cpu_pause(void)
 {
 #if defined(__x86_64__) || defined(__i386__)
   asm volatile("pause" ::: "memory");

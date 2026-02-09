@@ -1,20 +1,96 @@
 
-#include "../../src/linux/process/exec.hpp"
-#include "../src/control.hpp"
-#include "../src/linux/process/fork.hpp"
-#include "../src/linux/process/process.hpp"
-#include "../src/std.hpp"
-#include "../src/thread/signal.hpp"
+#include "control.hpp"
+#include "linux/process/exec.hpp"
+#include "linux/process/fork.hpp"
+#include "linux/process/process.hpp"
+#include "std.hpp"
+#include "thread/signal.hpp"
 
-#include "../src/io/console.hpp"
-#include "../src/io/filesystem.hpp"
+#include "chrono.hpp"
 
-#include "../../src/linux/std.hpp"
+#include "io/console.hpp"
+#include "io/filesystem.hpp"
+
+#include "linux/std.hpp"
+
+using string_type = mc::sstring<4096>;
+
+template <typename... Ts>
+string_type
+make_command(Ts &&...ts)
+{
+  string_type r;
+  ((r += ts, r += ' '), ...);
+  if constexpr ( sizeof...(Ts) > 0 )
+    r.pop_back();
+  return r;
+}
+
+enum modes { debug, optimized };
 
 int
 main(int argc, char **argv)
 {
-  // replace this with out custom build system eventually
-  mc::execute("tools/ninja", argv);
+  int mode = modes::optimized;
+  if ( argc < 3 )
+    mc::cerror("Invalid command line arguments, should be build [file_name] [output_name]");
+
+  if ( argc == 4 )
+    if ( mc::strcmp(argv[3], "-d") == 0 )
+      mode = modes::debug;
+
+  // TODO: eventually add all of these compiler flags to a dispatch system
+  const string_type bin_dir = "bin";
+  const string_type compiler = "/usr/bin/g++";
+  const string_type standard = "-std=c++23";
+  const string_type optimizations = "-Ofast -mavx2 -mbmi -march=native";
+  const string_type debug = "-g -march=native";
+  const string_type compile_libs = "-lc -lgcc -lgcc_s -lstdc++ -lm";
+  const string_type flags_warn_base = "-Wall -Wextra -Wpedantic";
+  const string_type flags_warn_extra
+      = "-Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconversion-null -Woverlength-strings -Wpointer-arith "
+        "-Wunused-local-typedefs -Wunused-result -Wvarargs -Wvla -Wwrite-strings -Wduplicated-cond -Wdouble-promotion "
+        "-Wdisabled-optimization -Winline -Wfloat-equal -Wmissing-noreturn -Wpacked -Wnonnull -Wundef -Wtrampolines "
+        "-Winline -Winit-self -Wcast-align -Wnarrowing -Wregister -Wmain -Wchanges-meaning -Wsequence-point "
+        "-Wattributes";
+  const string_type flags_errors_extra = "-Werror=missing-field-initializers -Werror=return-type";
+  const string_type flags_warn_ignore = "-Wno-implicit-fallthrough -Wno-sign-conversion -Wno-variadic-macros";
+  const string_type flags_extensions
+      = "-nodefaultlibs -fstack-protector-strong -fstack-clash-protection -fstrict-overflow -fopenmp "
+        "-fext-numeric-literals -ffast-math -flto -fdiagnostics-color=always -fconcepts-diagnostics-depth=2";
+
+  const string_type libs_location = "-L./libs";
+  const string_type includes_location = "-Isrc";
+  string_type command_pre_opt = make_command(compiler, standard, optimizations, flags_warn_base, flags_warn_extra,
+                                             flags_warn_ignore, flags_errors_extra, flags_extensions);
+  string_type command_pre_debug = make_command(compiler, standard, debug, flags_warn_base, flags_warn_extra,
+                                               flags_warn_ignore, flags_errors_extra, flags_extensions);
+  string_type command_post = make_command(compile_libs, includes_location);
+  string_type command_release = make_command(command_pre_opt, argv[1], command_post, "-o", bin_dir + "/" + argv[2]);
+  string_type command_debug = make_command(command_pre_debug, argv[1], command_post, "-o", bin_dir + "/" + argv[2]);
+  mc::set_color(mc::color::blue);
+  mc::consoled("Building ");
+  mc::set_color(mc::color::green);
+  mc::consoled(argv[1]);
+  mc::set_color(mc::color::blue);
+  mc::consoled(" into ");
+  mc::set_color(mc::color::green);
+  mc::console(bin_dir, "/", argv[2]);
+  mc::set_color(mc::color::yellow);
+  auto start = mc::now();
+  if ( mode == modes::optimized ) {
+    mc::console("with command: ", command_release);
+    mc::set_color(mc::color::reset);
+    mc::execute<mc::exec_wait>(compiler, command_release);
+
+  } else if ( mode == modes::debug ) {
+    mc::console("with command: ", command_debug);
+    mc::set_color(mc::color::reset);
+    mc::execute<mc::exec_wait>(compiler, command_debug);
+  }
+  auto end = mc::now();
+  mc::set_color(mc::color::yellow);
+  mc::console("Compilation took: ", end - start, " milliseconds");
+  mc::set_color(mc::color::reset);
   return 0;
 }

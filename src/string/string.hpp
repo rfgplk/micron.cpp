@@ -468,6 +468,13 @@ public:
     __mem::length += end;
     return *this;
   }
+  inline hstring &
+  pop_back(void)
+  {
+    if ( (__mem::length) > 0 )
+      (__mem::memory)[__mem::length--] = 0x0;
+    return *this;
+  }
 
   template <typename F = T>
   inline hstring &
@@ -712,7 +719,7 @@ public:
     __mem::length += data.size();
     return *this;
   };
-  template <size_t M>
+  /*template <size_t M>
   inline hstring &
   operator+=(const char (&data)[M])
   {
@@ -723,7 +730,7 @@ public:
     micron::memcpy(&(__mem::memory)[ln], &(data)[0], M);
     __mem::length += M - 1;
     return *this;
-  };
+  };*/
   template <typename F = T>
   inline hstring &
   operator+=(const F *data)
@@ -817,7 +824,7 @@ public:
     return buf;
   };
   // grow container
-  inline void
+  void
   reserve(size_t n)
   {
     if ( (n < __mem::capacity) ) {
@@ -831,7 +838,7 @@ public:
     }
     __mem::expand(n);
   }
-  inline void
+  void
   try_reserve(size_t n)
   {
     if ( (n < __mem::capacity) ) {

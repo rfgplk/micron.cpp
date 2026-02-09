@@ -142,7 +142,7 @@ public:
   {
     if ( length >= N )
       throw except::library_error("sstack overflow on emplace");
-    new (&stack[length++]) T(micron::forward<Args>(args)...);
+    new (&stack[length++]) T(micron::forward<Args &&>(args)...);
   }
 
   void
@@ -168,15 +168,14 @@ public:
       throw except::library_error("sstack overflow on push");
     new (&stack[length++]) T(micron::move(v));
   }
-
-  void
+  inline void
   pop()
   {
-    if ( empty() )
-      throw except::library_error("pop() called on empty sstack");
-    --length;
     if constexpr ( micron::is_class<T>::value )
-      stack[length].~T();
+      stack[--length].~T();
+    else {
+      stack[--length] = {};
+    }
   }
 
   void
@@ -248,7 +247,7 @@ template <typename t, size_t N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<t>
 class fsstack
 {
-  t stack[N];
+  alignas(t) t stack[N];
   size_t length;
 
 public:
@@ -378,7 +377,7 @@ public:
   inline void
   emplace(Args &&...args)
   {
-    new (&stack[length++]) t(micron::forward<Args>(args)...);
+    new (&stack[length++]) t(micron::forward<Args &&>(args)...);
   }
   inline void
   push(void)
@@ -391,16 +390,18 @@ public:
     new (&stack[length++]) t(v);
   }
   inline void
-  push(t &&v)
+  move(t &&v)
   {
     new (&stack[length++]) t(micron::move(v));
   }
   inline void
   pop()
   {
-    --length;
     if constexpr ( micron::is_class<t>::value )
-      stack[length].~t();
+      stack[--length].~t();
+    else {
+      stack[--length] = {};
+    }
   }
   inline void
   clear()
