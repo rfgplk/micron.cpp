@@ -17,6 +17,9 @@ using namespace micron::format;
 int
 main(void)
 {
+  mc::string a = "dsgsdfgdfg";
+  mc::string b;
+  b = micron::move(a);
   mc::string d_uni = micron::int_to_string<int, schar>(500);
   sb::require(d_uni.size(), 3);
   sb::require_true(is_in(d_uni, "500"));

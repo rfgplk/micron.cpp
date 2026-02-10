@@ -30,6 +30,26 @@ go(Fn fn, Args &&...args)
   return __global_threadpool->create_burden(fn, micron::forward<Args &&>(args)...);
 }
 
+// lists all threads
+auto
+threads(void)
+{
+  if ( __global_threadpool == nullptr ) [[unlikely]]
+    throw except::system_error("micron thread::go(): system arena is uninitialized/nullptr");
+  return __global_threadpool->list();
+  // auto lck = __global_threadpool->lock();
+  //__global_threadpool->unlock(lck);
+}
+
+auto
+lock()
+{
+  if ( __global_threadpool == nullptr ) [[unlikely]]
+    throw except::system_error("micron thread::go(): system arena is uninitialized/nullptr");
+  return __global_threadpool->lock();
+  //__global_threadpool->unlock(lck);
+}
+
 // new proc
 // fork and run process at path location specified by T
 template <is_string T, is_string... R>

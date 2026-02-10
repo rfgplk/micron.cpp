@@ -12,13 +12,36 @@
 // NOTE: this is a bare-minimum implementation to make signals work. a LOT of functions/code are missing (especially for
 // more advanced signal handling).
 
-// WARNING: this is an absolute minumum for signal trampolines to work. there is a LOT of code missing, specifically in regards to debuggers (gdb et al.) which will entirely mess up any attempts at debugging/backtracing through signals. although the below code is 100% valid and will work in all instances, it will fail for debugging.
+// WARNING: this is an absolute minumum for signal trampolines to work. there is a LOT of code missing, specifically in
+// regards to debuggers (gdb et al.) which will entirely mess up any attempts at debugging/backtracing through signals.
+// although the below code is 100% valid and will work in all instances, it will fail for debugging.
+
+#if defined(__x86_64__)
 naked_fn
 restore_rt(void)
 {
+  // i was dumb :/
   asm volatile("mov $15, %rax\n\t"
-               "syscall\n\t");
+               "syscall\n\t"
+               "ud2\n\t");
 }
+#elif defined(_M_ARM)
+naked_fn
+restore_rt(void)
+{
+  asm volatile("mov r7, #173\n\t"
+               "svc #0\n\t"
+               "udf #0\n\t");
+}
+#elif defined(__aarch64__)
+naked_fn
+restore_rt(void)
+{
+  asm volatile("mov x8, #139\n\t"
+               "svc #0\n\t"
+               "brk #0\n\t");
+}
+#endif
 namespace micron
 {
 
@@ -63,7 +86,7 @@ constexpr static const int sig_poll = 29;
 constexpr static const int sig_io = 29;
 
 constexpr static const int sig_block = 0;             /* Block signals.  */
-constexpr static const int sig_unblock = 1;            /* Unblock signals.  */
+constexpr static const int sig_unblock = 1;           /* Unblock signals.  */
 constexpr static const int sig_setmask = 2;           /* Set the set of blocked signals.  */
 constexpr static const int sa_nocldstop = 1;          /* Don't send SIGCHLD when children stop.  */
 constexpr static const int sa_nocldwait = 2;          /* Don't create zombie on child death.  */

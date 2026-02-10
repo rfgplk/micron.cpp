@@ -64,7 +64,13 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
       shallow_copy(dest, src, cnt);
     }
   }
-
+  T*
+  __itr(size_t n)
+  {
+    if ( n >= __mem::length )
+      throw except::library_error("micron::ivector itr() out of bounds");
+    return &(__mem::memory)[n];
+  }
 public:
   using category_type = vector_tag;
   using mutability_type = immutable_tag;
@@ -93,7 +99,7 @@ public:
   // two main functions when it comes to copying over data
   ivector(const ivector &o) : __mem(o.capacity())
   {
-    micron::memcpy256(&__mem::memory[0], o.itr(),
+    micron::memcpy256(&__mem::memory[0], o.__itr(0),
                       o.capacity);     // always is page aligned, 256 is fine.
     __mem::length = o.size();
   }
@@ -102,7 +108,7 @@ public:
   {
     if ( o.capacity >= __mem::capacity )
       reserve(o.capacity);
-    micron::memcpy256(&__mem::memory[0], o.itr(),
+    micron::memcpy256(&__mem::memory[0], o.__itr(0),
                       o.capacity);     // always is page aligned, 256 is fine.
     __mem::length = o.size();
   };
@@ -180,12 +186,12 @@ public:
   ivector &
   operator=(ivector &&o)
   {
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = 0;
-    o.length = 0;
-    o.capacity = 0;
+    if ( __mem::memory ) {
+      // kill old memory first
+      clear();
+      __mem::free();
+    }
+    __mem::operator=(micron::move(o));
     return *this;
   }
   ~ivector()
@@ -279,9 +285,9 @@ public:
   {
     micron::ivector<T> buf(__mem::capacity + sizeof...(Args) * sizeof(T));
     __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-    buf.length = __mem::length + 1;     // by one
 
     new (&buf.memory[buf.size()]) T(micron::move(micron::forward<Args>(v)...));
+    return buf;
   }
 
   inline const_iterator
@@ -413,7 +419,7 @@ public:
     micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
     __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
 
-    new (&buf.itr() + __mem::length) T(v);
+    new (&buf.__itr(__mem::length)) T(v);
 
     buf.length = __mem::length + 1;
     return buf;
@@ -424,7 +430,7 @@ public:
     micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
     __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
 
-    new (buf.itr() + __mem::length) T(micron::move(v));
+    new (buf.__itr(__mem::length)) T(micron::move(v));
 
     buf.length = __mem::length + 1;
     return buf;
@@ -435,7 +441,7 @@ public:
     micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
     __impl_copy(&buf.memory[1], &__mem::memory[0], __mem::capacity);
 
-    new (&buf.itr()) T(v);
+    new (&buf.__itr(0)) T(v);
 
     buf.length = __mem::length + 1;
     return buf;
@@ -446,7 +452,7 @@ public:
     micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
     __impl_copy(&buf.memory[1], &__mem::memory[0], __mem::capacity);
 
-    new (buf.itr()) T(micron::move(v));
+    new (buf.__itr(0)) T(micron::move(v));
 
     buf.length = __mem::length + 1;
     return buf;

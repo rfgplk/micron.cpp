@@ -118,7 +118,7 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
     // payload->ret_val = reinterpret_cast<void *>(&ret);
     // TODO: think about adding a futex here
   }
-
+  
   // end work
 
   // epilogue
@@ -452,7 +452,7 @@ public:
   {
     int r = pthread::__try_join_thread(pid);
     if ( r == 0 ) {
-      __safe_release();
+      __release();
       return 0;
     }
     return r;

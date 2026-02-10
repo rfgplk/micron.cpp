@@ -59,7 +59,7 @@ public:
     if ( n >= N )
       throw except::library_error("sstring::sstring(): char* too large.");
     micron::zero(&memory[0], N);
-    micron::memcpy(&memory[0], &ptr[0], n);
+    micron::memcpy(&memory[0], ptr, n);
     length = n;
   }
   template <size_type M, typename F> constexpr sstring(const F (&str)[M])
@@ -67,6 +67,17 @@ public:
     static_assert(N >= M, "micron::sstring sstring(cconst) too large.");
     micron::memcpy(&memory[0], &str[0], M);
     length = M - 1;     // cut null
+  };
+  // allow construction from - to iterator (be careful!)
+  constexpr sstring(iterator __start, iterator __end)
+  {
+    micron::memcpy(&memory[0], __start, __end - __start);
+    length = __end - __start;
+  };
+  constexpr sstring(const_iterator __start, const_iterator __end)
+  {
+    micron::memcpy(&memory[0], __start, __end - __start);
+    length = __end - __start;
   };
   template <size_type M, typename F> constexpr sstring(const sstring<M, F> &o)
   {

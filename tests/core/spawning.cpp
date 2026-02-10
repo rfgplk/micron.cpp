@@ -15,6 +15,8 @@ int
 fn(const mc::string &str)
 {
   mc::console(str);
+  while ( true ) {
+  }
   return 0;
 }
 
@@ -22,6 +24,8 @@ int
 fn_void(void)
 {
   mc::console("Void!");
+  while ( true ) {
+  }
   return 5;
 }
 
@@ -29,18 +33,26 @@ int
 fn_loop(void)
 {
   int i = 0;
-  for ( ;i<10000; ) {
-   i++;// mc::console(i++);
+  for ( ; i < 10000; ) {
+    i++;     // mc::console(i++);
+  }
+  while ( true ) {
   }
   return 5;
 }
 int
 main(void)
 {
-  mc::go(fn_void);
-  mc::go(fn, mc::string("Hello World"));
-  auto& thread = mc::go(fn_loop);
+  auto &thread_3 = mc::go(fn_void);
+  auto &thread_2 = mc::go(fn, mc::string("Hello World"));
+  auto &thread = mc::go(fn_loop);
   mc::sleep(500);
-  //thread().cancel();
+  auto list = mc::threads();
+  for ( auto &n : list ) {
+    mc::console(n->name());
+  }
+  thread().cancel();
+  thread_2().cancel();
+  thread_3().cancel();
   return 1;
 }

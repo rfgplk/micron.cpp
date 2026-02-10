@@ -24,4 +24,4 @@
 #define pure_fn(x) cpure x
 #define start_fn(x, y) gconstructor(y) x
 #define end_fn(x, y) gdestructor(y) x
-#define naked_fn __attribute__((naked)) void
+#define naked_fn __attribute__((naked, noreturn)) void

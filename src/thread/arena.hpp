@@ -57,6 +57,12 @@ template <typename Tr> struct thread_t {
   {
     return thread;
   }
+  sstring<32, char> name() const {
+    sstring<32, char> n = {};
+    if(pthread::get_name(thread.native_handle(), n.data(), 32) != 0)
+      n = "error";
+    return n;
+  }
   posix::rusage_t
   stats(void) const
   {
@@ -84,7 +90,7 @@ class __default_arena
 {
   using type = thread_t<Tr>;
   micron::fsstack<thread_t<Tr>, maximum_threads> threads;
-  micron::mutex mtx;
+  mutable micron::mutex mtx;
 
   addr_t *
   __create_stack(void) const
@@ -297,6 +303,15 @@ public:
   {
     return threads.size();
   }
+  ivector<const thread_t<Tr>*>
+  list() const
+  {
+    micron::lock_guard l(mtx);
+    ivector<const thread_t<Tr>*> r(0);
+    for(umax_t i = 0; i < threads.size(); ++i)
+        r = r.push_back(&threads[i]);
+    return r;
+  }
   void
   lower_priority(thread_t<Tr> &rf, const int n = 1)
   {
@@ -360,6 +375,17 @@ public:
     if ( !__verify_domain(&t) )
       throw except::thread_error("micron arena::move_thread(): invalid thread");
     return t.stats();
+  }
+  auto
+  lock()
+  {
+    return mtx.lock();
+  }
+  template <typename M>
+  void
+  unlock(M m)
+  {
+    (mtx.*m)();
   }
 };
 

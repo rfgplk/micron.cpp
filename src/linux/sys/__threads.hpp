@@ -206,6 +206,12 @@ set_stack_thread(pthread_attr_t &attr, T *ptr, size_t size)
 }
 
 auto
+get_name(pthread_t pt, char *name, size_t sz)
+{
+  return pthread_getname_np(pt, name, sz);
+}
+
+auto
 set_name(pthread_t pt, const char *name)
 {
   return pthread_setname_np(pt, name);

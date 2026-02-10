@@ -128,7 +128,7 @@ public:
       clear();
       __mem::free();
     }
-    __mem::operator=(o);
+    __mem::operator=(micron::move(o));
     return *this;
   }
 
