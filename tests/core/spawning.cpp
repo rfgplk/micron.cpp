@@ -8,9 +8,9 @@
 #include "../../src/std.hpp"
 #include "../../src/string/strings.hpp"
 
-#include "../../src/thread/spawn.hpp" 
+#include "../../src/thread/spawn.hpp"
 
-//#include "../snowball/snowball.hpp"
+// #include "../snowball/snowball.hpp"
 int
 fn(const mc::string &str)
 {
@@ -26,11 +26,21 @@ fn_void(void)
 }
 
 int
+fn_loop(void)
+{
+  int i = 0;
+  for ( ;i<10000; ) {
+   i++;// mc::console(i++);
+  }
+  return 5;
+}
+int
 main(void)
 {
   mc::go(fn_void);
-  mc::sleep(500);
   mc::go(fn, mc::string("Hello World"));
+  auto& thread = mc::go(fn_loop);
   mc::sleep(500);
+  //thread().cancel();
   return 1;
 }

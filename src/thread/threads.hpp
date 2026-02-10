@@ -10,6 +10,7 @@
 
 #include "../linux/__includes.hpp"
 #include "../linux/sys/__threads.hpp"
+#include "../linux/sys/resource.hpp"
 #include "../linux/sys/system.hpp"
 #include "../memory/stack.hpp"
 
@@ -27,6 +28,8 @@
 namespace micron
 {
 
+// TODO: move callbacks to sep file
+
 void
 __thread_sigchld(int)
 {
@@ -37,6 +40,12 @@ __thread_sigthrottle(int)
   // configure
   micron::ssleep(1);
 }
+void
+__thread_cancel(int)
+{
+  pthread::cancel();
+}
+
 void
 __thread_yield(int)
 {
@@ -62,6 +71,12 @@ __thread_handler()
   micron::sigaction(sig_alrm, sa, nullptr);
   // YIELD
 
+  // CANCEL
+  sa.sigaction_handler.sa_handler = __thread_cancel;
+  micron::sigemptyset(sa.sa_mask);
+  sa.sa_flags = 0;
+  micron::sigaction(sig_usr2, sa, nullptr);
+
   // TODO: investigate
   sa.sigaction_handler.sa_handler = __thread_stop;
   micron::sigemptyset(sa.sa_mask);
@@ -75,6 +90,7 @@ enum thread_returns : i32 { return_success, return_fail };
 struct __thread_payload {
   atomic_token<bool> alive;
   atomic_token<u64> ret_val;
+  posix::rusage_t usage;     // non atomic
 };
 // The kernel of the thread, encapsulating the req'd function
 // status flags if the thread is running or not
@@ -83,9 +99,15 @@ template <typename Fn, typename... Args>
 i32
 __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
 {
+  // prologue
   using ret_t = micron::invoke_result_t<Fn, Args...>;
   __thread_handler();
+  pthread::set_cancel_state(pthread::cancel_state::enable);
+  pthread::set_cancel_type(pthread::cancel_type::deferred);
   payload->alive.store(true, memory_order_seq_cst);
+
+  // work
+
   if constexpr ( micron::is_void_v<ret_t> ) {
     fn(micron::forward<Args>(args)...);
   } else {
@@ -96,6 +118,11 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
     // payload->ret_val = reinterpret_cast<void *>(&ret);
     // TODO: think about adding a futex here
   }
+
+  // end work
+
+  // epilogue
+  posix::getrusage(posix::rusage_thread, payload->usage);
   payload->alive.store(false, memory_order_seq_cst);
   return return_success;
 }
@@ -382,6 +409,15 @@ public:
     return *this;
   }
   auto swap(thread &o) = delete;
+  // yes, copying it out
+  inline posix::rusage_t
+  stats(void) const
+  {
+    if ( alive() )
+      return {};
+    return payload.usage;
+  }
+
   inline bool
   alive(void) const
   {
@@ -419,9 +455,7 @@ public:
       __safe_release();
       return 0;
     }
-    if ( r == error::busy or r == error::invalid_arg )
-      return r;
-    return error::busy;
+    return r;
   }
   auto
   thread_id(void) const
@@ -463,6 +497,16 @@ public:
   {
     if ( alive() ) {
       return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signals::cont);
+    }
+    return -1;
+  }
+  int
+  cancel(void)
+  {
+    if ( alive() ) {
+      int r = pthread::cancel_thread(pid);
+      signal(signals::usr2);
+      return r;
     }
     return -1;
   }
@@ -534,6 +578,7 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
   __release(void)
   {
     micron::czero<Stack_Size>(fstack);
+    parent_pid = 0;
     pid = 0;
   }
   void
@@ -556,7 +601,12 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
   __thread_payload payload;
 
 public:
-  ~auto_thread() { __join(); }
+  ~auto_thread()
+  {
+    if ( parent_pid == 0 and pid == 0 )
+      return;
+    __join();
+  }
   auto_thread(const auto_thread &o) = delete;
   auto_thread(void) = delete;
   auto_thread &operator=(const auto_thread &) = delete;
@@ -614,6 +664,15 @@ public:
     return *this;
   }
   void swap(auto_thread &o) = delete;
+  // yes, copying it out
+  inline posix::rusage_t
+  stats(void) const
+  {
+    if ( alive() )
+      return {};
+    return payload.usage;
+  }
+
   inline bool
   alive(void) const
   {
@@ -703,7 +762,14 @@ public:
     }
     return -1;
   }
-
+  int
+  cancel(void)
+  {
+    if ( alive() ) {
+      return pthread::cancel_thread(pid);
+    }
+    return -1;
+  }
   byte *
   stack()
   {

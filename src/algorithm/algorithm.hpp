@@ -13,21 +13,21 @@ namespace micron
 
 template <typename T>
 constexpr const T &
-clamp(const T &v, const T &lo, const T &hi) noexcept(noexcept(lo < v) && noexcept(v < hi))
+clamp(const T &v, const T &lo, const T &hi) noexcept
 {
   return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
 template <typename T, typename C>
 constexpr const T &
-clamp(const T &v, const T &lo, const T &hi, C comp) noexcept(noexcept(comp(v, lo)) && noexcept(comp(hi, v)))
+clamp(const T &v, const T &lo, const T &hi, C comp) noexcept
 {
   return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
 }
 
 template <is_iterable_container T>
-  requires(micron::is_floating_point_v<typename T::value_type>)
-inline f128
+  requires micron::is_floating_point_v<typename T::value_type>
+constexpr f128
 sum(const T &src)
 {
   f128 sm = 0;
@@ -37,8 +37,8 @@ sum(const T &src)
 }
 
 template <is_iterable_container T>
-  requires(micron::is_integral_v<typename T::value_type>)
-inline umax_t
+  requires micron::is_integral_v<typename T::value_type>
+constexpr umax_t
 sum(const T &src)
 {
   umax_t sm = 0;
@@ -48,8 +48,8 @@ sum(const T &src)
 }
 
 template <is_iterable_container T, typename R>
-  requires(micron::is_integral_v<typename T::value_type> and micron::is_integral_v<R>)
-inline T &
+  requires(micron::is_integral_v<typename T::value_type> && micron::is_integral_v<R>)
+constexpr T &
 fill(T &src, const R r)
 {
   for ( auto &n : src )
@@ -58,19 +58,19 @@ fill(T &src, const R r)
 }
 
 template <typename T, class P>
-void
+constexpr void
 fill(T *first, T *end, const P &o)
 {
   if constexpr ( micron::is_class_v<T> ) {
     for ( ; first != end; ++first )
       *first = o;
   } else {
-    micron::memset(first, o, end - first);
+    constexpr_memset(first, o, end - first);
   }
 }
 
 template <typename T, class P>
-T *
+constexpr T *
 fill_n(T *first, size_t n, const P &value)
 {
   for ( size_t i = 0; i < n; ++i, ++first )
@@ -79,7 +79,7 @@ fill_n(T *first, size_t n, const P &value)
 }
 
 template <is_iterable_container C, class P>
-C &
+constexpr C &
 fill_n(C &c, size_t n, const P &value)
 {
   fill_n(c.begin(), n, value);
@@ -87,7 +87,7 @@ fill_n(C &c, size_t n, const P &value)
 }
 
 template <typename T, class P>
-bool
+constexpr bool
 contains(const T *first, const T *end, const P &value)
 {
   for ( ; first != end; ++first )
@@ -97,36 +97,36 @@ contains(const T *first, const T *end, const P &value)
 }
 
 template <is_iterable_container C, class P>
-bool
+constexpr bool
 contains(const C &c, const P &value)
 {
   return contains(c.begin(), c.end(), value);
 }
 
 template <is_iterable_container T, typename R = typename T::value_type>
-inline T &
+constexpr T &
 clear(T &src, const R r = 0)
 {
   if constexpr ( micron::is_object_v<micron::remove_cv_t<typename T::value_type>> ) {
     for ( auto &n : src )
       n = r;
   } else if constexpr ( micron::is_fundamental_v<micron::remove_cv_t<typename T::value_type>> ) {
-    micron::memset(src.begin(), r, src.size());
+    constexpr_memset(src.begin(), r, src.size());
   }
   return src;
 }
 
 template <typename R = f64, typename T>
   requires micron::is_object_v<T>
-inline R
+constexpr R
 mean(const T &src)
 {
-  return static_cast<R>(static_cast<R>(sum(src)) / static_cast<R>(src.size()));
+  return static_cast<R>(sum(src)) / static_cast<R>(src.size());
 }
 
 template <typename R = flong, typename T>
   requires micron::is_object_v<T>
-inline R
+constexpr R
 geomean(const T &src)
 {
   R mulsm = static_cast<R>(src[0]);
@@ -137,7 +137,7 @@ geomean(const T &src)
 
 template <typename R = flong, typename T>
   requires micron::is_object_v<T>
-inline R
+constexpr R
 harmonicmean(const T &src)
 {
   R recsum = 0;
@@ -148,7 +148,7 @@ harmonicmean(const T &src)
 
 template <typename T>
   requires micron::is_arithmetic_v<T>
-void
+constexpr void
 round(T *__restrict start, T *__restrict end)
 {
   for ( ; start != end; ++start )
@@ -156,7 +156,7 @@ round(T *__restrict start, T *__restrict end)
 }
 
 template <typename T>
-void
+constexpr void
 round(T &t)
 {
   round(t.begin(), t.end());
@@ -164,7 +164,7 @@ round(T &t)
 
 template <typename T>
   requires micron::is_arithmetic_v<T>
-void
+constexpr void
 ceil(T *__restrict start, T *__restrict end)
 {
   for ( ; start != end; ++start )
@@ -172,7 +172,7 @@ ceil(T *__restrict start, T *__restrict end)
 }
 
 template <is_iterable_container T>
-T &
+constexpr T &
 ceil(T &t)
 {
   ceil(t.begin(), t.end());
@@ -181,7 +181,7 @@ ceil(T &t)
 
 template <typename T>
   requires micron::is_arithmetic_v<T>
-void
+constexpr void
 floor(T *__restrict start, T *__restrict end)
 {
   for ( ; start != end; ++start )
@@ -189,7 +189,7 @@ floor(T *__restrict start, T *__restrict end)
 }
 
 template <typename T>
-void
+constexpr void
 floor(T &t)
 {
   floor(t.begin(), t.end());
@@ -197,11 +197,11 @@ floor(T &t)
 
 template <typename T>
   requires micron::is_pointer_v<T>
-void
+constexpr void
 reverse(T __restrict start, T __restrict end)
 {
   while ( start < end ) {
-    micron::remove_pointer_t<T> tmp = *start;
+    auto tmp = *start;
     *start = *end;
     *end = tmp;
     ++start;
@@ -210,7 +210,7 @@ reverse(T __restrict start, T __restrict end)
 }
 
 template <typename T>
-void
+constexpr void
 reverse(T &arr)
 {
   reverse(arr.begin(), arr.end() - 1);
@@ -218,14 +218,15 @@ reverse(T &arr)
 
 template <typename T, typename F>
   requires micron::is_invocable_v<F, T *>
-void
+constexpr void
 transform(T *start, T *end, F f)
 {
   for ( ; start != end; ++start )
     *start = f(*start);
 }
+
 template <is_iterable_container C, typename F>
-void
+constexpr void
 transform(C &c, F f)
 {
   transform(c.begin(), c.end(), f);
@@ -233,7 +234,7 @@ transform(C &c, F f)
 
 template <typename T, class P>
   requires(micron::is_convertible_v<T, P>)
-const T *
+constexpr const T *
 find_last(const T *start, const T *end, const P &f)
 {
   const T *fnd = nullptr;
@@ -245,7 +246,7 @@ find_last(const T *start, const T *end, const P &f)
 
 template <typename T, class P>
   requires(micron::is_convertible_v<T, P>)
-const T *
+constexpr const T *
 find(const T *start, const T *end, const P &f)
 {
   for ( ; start != end; ++start )
@@ -255,10 +256,10 @@ find(const T *start, const T *end, const P &f)
 }
 
 template <typename T, typename F>
-  requires micron::is_invocable_v<F> and requires(F f) {
+  requires micron::is_invocable_v<F> && requires(F f) {
     { f() } -> micron::same_as<T>;
   }
-void
+constexpr void
 generate(T *first, T *end, F f)
 {
   for ( ; first != end; ++first )
@@ -267,7 +268,7 @@ generate(T *first, T *end, F f)
 
 template <typename T, typename F, typename... Args>
   requires micron::is_invocable_v<F, Args...>
-void
+constexpr void
 generate(T *first, T *end, F f, Args &&...args)
 {
   for ( ; first != end; ++first )
@@ -275,7 +276,7 @@ generate(T *first, T *end, F f, Args &&...args)
 }
 
 template <is_iterable_container C, typename F>
-C &
+constexpr C &
 generate(C &c, F f)
 {
   generate(c.begin(), c.end(), f);
@@ -283,7 +284,7 @@ generate(C &c, F f)
 }
 
 template <is_iterable_container C, typename F, typename... Args>
-C &
+constexpr C &
 generate(C &c, F f, Args &&...args)
 {
   generate(c.begin(), c.end(), f, micron::forward<Args>(args)...);
@@ -605,4 +606,21 @@ none_of(const C &c, const P &v)
 {
   return none_of(c.begin(), c.end(), v);
 }
+}     // namespace micron
+
+#pragma once
+
+#include "../concepts.hpp"
+#include "../math/generic.hpp"
+#include "../memory/actions.hpp"
+#include "../memory/memory.hpp"
+#include "../type_traits.hpp"
+#include "../types.hpp"
+
+namespace micron
+{
+
+// The rest of your pointer/container algorithms (max, min, all_of, any_of, count, search, starts_with, ends_with)
+// can be rewritten similarly with constexpr loops.
+
 }     // namespace micron

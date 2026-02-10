@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../linux/sys/types.hpp"
+#include "../bits-types.hpp"
+
+#undef __USE_GUN
 
 // NOTE: this is here so we can avoid directly including pthread.h, since technically it would pull it a lot of libc code
 // we don't need
@@ -121,6 +124,12 @@ extern "C" int pthread_attr_setstacksize (pthread_attr_t *__attr,
 				      size_t __stacksize)
      __THROW __nonnull ((1));
 
+extern "C" int pthread_attr_setaffinity_np (pthread_attr_t *__attr,
+					size_t cpusetsize,
+					const cpu_set_t *__cpuset)
+     __THROW __nonnull ((1, 3));
+
+
 
 extern "C" int pthread_create(pthread_t *__restrict __newthread, const pthread_attr_t *__restrict __attr,
                           void *(*__start_routine)(void *), void *__restrict __arg) __THROWNL __nonnull((1, 3));
@@ -165,3 +174,14 @@ extern "C" int pthread_getname_np (pthread_t __target_thread, char *__buf,
 
 extern "C" int pthread_setname_np (pthread_t __target_thread, const char *__name)
      __THROW __nonnull ((2));
+
+
+extern "C" int pthread_setcancelstate (int __state, int *__oldstate);
+
+extern "C" int pthread_setcanceltype (int __type, int *__oldtype);
+
+extern "C" int pthread_cancel (pthread_t __th);
+
+extern "C" void pthread_testcancel (void);
+
+

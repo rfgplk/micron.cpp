@@ -5,14 +5,16 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../simd/intrin.hpp"
 #include "../types.hpp"
 #include "generic.hpp"
-#include "../simd/intrin.hpp"
 
 // void rsqrtps_sse(float *in, float *out, unsigned long int len);
 // void vrsqrtps_avx(float *in, float *out, unsigned long int len);
 
 namespace micron
+{
+namespace math
 {
 // inline void sqrt_sse(float *in, float *out, unsigned long int len) {
 //  rsqrtps_sse(in, out, len);
@@ -70,5 +72,6 @@ inline float
 sqrt(const float x)
 {
   return fsqrt(x);
+};
 };
 };     // namespace micron

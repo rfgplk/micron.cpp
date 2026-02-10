@@ -53,6 +53,10 @@ enum class thread_mutex_type : int {
   fast_np = timed_np
 };
 
+enum cancel_state { enable, disable };
+enum cancel_type { deferred, async };
+// #define PTHREAD_CANCELED ((void *) -1)
+
 constexpr int thread_mutex_timed_np = static_cast<int>(thread_mutex_type::timed_np);
 constexpr int thread_mutex_recursive_np = static_cast<int>(thread_mutex_type::recursive_np);
 constexpr int thread_mutex_errorcheck_np = static_cast<int>(thread_mutex_type::errorcheck_np);
@@ -186,6 +190,11 @@ prepare_thread(thread_create_state dstate = thread_create_state::joinable, int p
 
   return attr;
 }
+void
+set_affinity(pthread_attr_t &attr, const posix::cpu_set_t &cpu)
+{
+  pthread_attr_setaffinity_np(&attr, sizeof(cpu), reinterpret_cast<const cpu_set_t *>(&cpu));
+}
 
 template <typename T>
   requires(micron::is_fundamental_v<T>)
@@ -210,6 +219,10 @@ __join_thread(pthread_t thread, void **rval = nullptr)
 inline void __attribute__((noreturn))
 __exit_thread(void *ret = nullptr)
 {
+  if ( ret == nullptr ) {
+    int __t = 0;
+    pthread_exit(&__t);
+  }
   pthread_exit(ret);
 }
 auto
@@ -227,6 +240,27 @@ inline auto
 get_thread_id(pthread_t thread)
 {
   return pthread_gettid_np(thread);
+}
+
+inline auto
+set_cancel_state(cancel_state state)
+{
+  return pthread_setcancelstate(static_cast<int>(state), nullptr);
+}
+inline auto
+set_cancel_type(cancel_type type)
+{
+  return pthread_setcanceltype(static_cast<int>(type), nullptr);
+}
+inline auto
+cancel_thread(pthread_t th)
+{
+  return pthread_cancel(th);
+}
+inline __attribute__((always_inline)) void
+cancel(void)
+{
+  pthread_testcancel();
 }
 
 };

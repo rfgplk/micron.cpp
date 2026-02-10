@@ -44,7 +44,7 @@ constexpr static const u64 __alloc_limit
 constexpr static const u64 __default_arena_page_buf = 512;     // 2MiB for now... ~81k rnd allocations
 constexpr static const u64 __default_magic_size = micron::numeric_limits<u64>::max();
 constexpr static const u64 __default_minimum_page_mul
-    = 32;                                                  // 131kB minimum per sheet, larger buckets will exceed this
+    = 16;                                                  // 131kB minimum per sheet, larger buckets will exceed this
 constexpr static const u64 __default_cache_step = 768;     // ~5.9MB
 
 constexpr static const bool __default_launder

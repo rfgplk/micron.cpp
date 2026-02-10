@@ -6,6 +6,7 @@
 
 #include "../src/algorithm/algorithm.hpp"
 #include "../src/algorithm/filter.hpp"
+#include "../src/algorithm/math.hpp"
 #include "../src/io/console.hpp"
 #include "../src/iterator.hpp"
 #include "../src/numerics.hpp"
@@ -22,5 +23,9 @@ main(void)
   mc::console(mc::find(v, 100));
   mc::console(mc::clear(v));
   mc::console(mc::find(v, 100));
-  mc::console(mc::generate(v, [](int x){ return x; }, 5));
+  mc::console(mc::generate(v, [](int x) { return x; }, 5));
+  mc::vector<float> vf(10);
+  float i = 0;
+  mc::console(mc::generate(vf, [](float& x) { return ++x; }, i));
+  mc::console(mc::sin(vf));
 }

@@ -9,6 +9,9 @@
 
 namespace micron
 {
+// NOTE: using these builtin functions forces the inclusion of libm
+namespace math
+{
 
 #if defined(__STDCPP_FLOAT16_T__) && defined(_GLIBCXX_FLOAT_IS_IEEE_BINARY32)
 constexpr _Float16
@@ -52,7 +55,11 @@ cosh(_Float16 __x)
 {
   return _Float16(__builtin_coshf(__x));
 }
-
+constexpr _Float16
+acosh(_Float16 __x)
+{
+  return _Float16(__builtin_acoshf(__x));
+}
 constexpr _Float16
 exp(_Float16 __x)
 {
@@ -128,6 +135,12 @@ sinh(_Float16 __x)
 }
 
 constexpr _Float16
+asinh(_Float16 __x)
+{
+  return _Float16(__builtin_asinhf(__x));
+}
+
+constexpr _Float16
 sqrt(_Float16 __x)
 {
   return _Float16(__builtin_sqrtf(__x));
@@ -139,6 +152,11 @@ tan(_Float16 __x)
   return _Float16(__builtin_tanf(__x));
 }
 
+constexpr _Float16
+atanh(_Float16 __x)
+{
+  return _Float16(__builtin_atanhf(__x));
+}
 constexpr _Float16
 tanh(_Float16 __x)
 {
@@ -685,4 +703,5 @@ tanh(_Float128 __x)
   return __builtin_tanhf128(__x);
 }
 #endif
+};
 };

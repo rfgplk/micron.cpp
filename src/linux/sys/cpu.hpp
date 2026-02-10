@@ -4,8 +4,17 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-
 #pragma once
+
+// WARNING: nasty workaround, but we need this here since the attr setting functions in pthread need cpu_set_t in global
+// ns and we'll run into conflicting declarations with bits/cpu-set otherwise
+
+#define _BITS_CPU_SET_H 1
+
+typedef struct {
+     __syscall_ulong_type __bits[1024/(8*sizeof(__syscall_ulong_type))];
+} cpu_set_t;
+
 
 #include "../../array/constexprarray.hpp"
 
@@ -30,12 +39,12 @@ getcpu(void)
 }
 
 constexpr static const int cpu_setsize = 1024;
-constexpr static const int __ncpubits = sizeof(unsigned long) * 8;
+constexpr static const int __ncpubits = sizeof(__syscall_ulong_type) * 8;
 
 constexpr size_t
 cpu_bits_size(size_t count)
 {
-  return ((count + __ncpubits - 1) / __ncpubits) * sizeof(unsigned long);
+  return ((count + __ncpubits - 1) / __ncpubits) * sizeof(__syscall_ulong_type);
 }
 
 template <size_t N> struct __cpu_set_t {
@@ -100,6 +109,11 @@ template <size_t N> struct __cpu_set_t {
       if ( __bits[i] != other.__bits[i] )
         return false;
     return true;
+  }
+  constexpr size_t
+  size() const
+  {
+    return sizeof(__bits);
   }
 };
 

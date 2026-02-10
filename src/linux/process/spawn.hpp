@@ -11,7 +11,19 @@
 
 namespace micron
 {
-
+int
+__inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
+{
+  // TODO: configure
+  micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, 0 };
+  micron::posix::spawn_process(ctx);
+  return 0;
+}
+int
+inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
+{
+  return __inplace_spawn(pid, path, argv, envp);
+}
 int
 __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
@@ -19,7 +31,7 @@ __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const 
   if ( micron::pipe2(pipefd, o_cloexec) < 0 )
     return errno;
   micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, pipefd[1] };
-  pid = fork();
+  pid = micron::fork();
   if ( pid == 0 ) {
     micron::close(pipefd[0]);
     micron::posix::spawn_process(ctx);
@@ -44,7 +56,9 @@ spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *e
   return __spawn(pid, path, argv, envp);
 }
 
-// WARNING: the following code is currently very unstable/unsafe. stack frames get completely messed up and we have to implement a proper trampoline for it to function properly. the stack/activation frame maintains that the stack pointer must remain stable, otherwise bad things occur.
+// WARNING: the following code is currently very unstable/unsafe. stack frames get completely messed up and we have to
+// implement a proper trampoline for it to function properly. the stack/activation frame maintains that the stack pointer
+// must remain stable, otherwise bad things occur.
 
 namespace unsafe
 {

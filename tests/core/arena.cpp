@@ -78,8 +78,8 @@ main(void)
     mc::standard_arena arena;
     for ( size_t i = 0; i < 12; i++ ) {
       arena.create_burden([&]() -> int {
-          mc::ssleep(1);
-          //mc::cpu_pause<1000000000>();
+        mc::ssleep(1);
+        // mc::cpu_pause<1000000000>();
         return 0;
       });     // throws because console isn't ts, fix it
     }

@@ -277,6 +277,8 @@ cmemset(F *src, const N in)
   return reinterpret_cast<F *>(src);
 };
 
+
+
 void *
 bset(void *isrc, const byte in, const u64 cnt)
 {
@@ -434,6 +436,27 @@ memset(F *s, const byte in, const u64 cnt)
       src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
+
+template <typename F>
+  requires(!micron::is_null_pointer_v<F>)
+constexpr F *
+constexpr_memset(F *s, const byte in, const u64 cnt)
+{
+  byte *src = reinterpret_cast<byte *>(s);
+  if ( cnt % 4 == 0 )
+    for ( u64 n = 0; n < cnt; n += 4 ) {
+      src[n] = (in);
+      src[n + 1] = (in);
+      src[n + 2] = (in);
+      src[n + 3] = (in);
+    }
+  else
+    for ( u64 n = 0; n < cnt; n++ )
+      src[n] = (in);
+  return reinterpret_cast<F *>(src);
+};
+
+
 
 template <typename T>
   requires(!micron::is_null_pointer_v<T>)

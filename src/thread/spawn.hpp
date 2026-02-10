@@ -22,12 +22,12 @@ namespace micron
 // new thread
 template <typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args...>)
-void
+auto &
 go(Fn fn, Args &&...args)
 {
   if ( __global_threadpool == nullptr ) [[unlikely]]
     throw except::system_error("micron thread::go(): system arena is uninitialized/nullptr");
-  __global_threadpool->create_burden(fn, micron::forward<Args &&>(args)...);
+  return __global_threadpool->create_burden(fn, micron::forward<Args &&>(args)...);
 }
 
 // new proc

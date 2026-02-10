@@ -5,8 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/linux/process/process.hpp"
-#include "../src/linux/process/fork.hpp"
+#include "../src/linux/process/exec.hpp"
 #include "../src/control.hpp"
+#include "../src/linux/process/fork.hpp"
 #include "../src/std.hpp"
 #include "../src/thread/signal.hpp"
 
@@ -53,8 +54,7 @@ main(void)
   mc::console(proc.path);
   mc::console(proc.argv);
   int pid = micron::wfork();
-  if(pid == 0)
-  {
+  if ( pid == 0 ) {
     mc::console(pid);
     mc::console(errno);
     mc::console("From the forked process!");
@@ -65,6 +65,7 @@ main(void)
   mc::console("The return code was: ", pid);
   mc::console("Errno was: ", errno);
   mc::console("From the parent process!");
+  mc::rexecute("/bin/htop");
   return 0;
   if ( false ) {
     micron::signal s(micron::signals::abort);

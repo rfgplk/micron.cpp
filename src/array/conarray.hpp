@@ -373,7 +373,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(micron::mutable_cast(__mtx));
     for ( size_t i = 0; i < N; i++ )
-      stack[i] = micron::sqrt(static_cast<float>(stack[i]));
+      stack[i] = math::sqrt(static_cast<float>(stack[i]));
   }
   template <typename F>
   conarray &

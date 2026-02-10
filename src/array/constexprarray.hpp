@@ -250,7 +250,7 @@ struct constexpr_array {
   sqrt()
   {
     for ( size_t i = 0; i < N; ++i )
-      stack[i] = static_cast<T>(micron::sqrt(static_cast<double>(stack[i])));
+      stack[i] = static_cast<T>(math::sqrt(static_cast<double>(stack[i])));
     return *this;
   }
 

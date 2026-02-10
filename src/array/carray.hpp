@@ -404,7 +404,7 @@ public:
   sqrt(void) const
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] = micron::sqrt(static_cast<float>(stack[i]));
+      stack[i] = math::sqrt(static_cast<float>(stack[i]));
   }
   template <typename F>
   carray &

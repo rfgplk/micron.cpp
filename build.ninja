@@ -55,7 +55,7 @@ rule cc_clang_compile_cmnd_debug
 # core
 build micron_library_start: as_c_cc_compile_cmnd src/asm/start.c
 
-build micron_build_bin: cc_compile_cmnd_debug tools/src/build.cc
+build micron_build_bin: cc_compile_cmnd tools/src/build.cc
 build bench_strings: cc_compile_cmnd benches/strings.cpp
 
 build rigor_memory: cc_compile_cmnd tests/rigor/memory.cpp

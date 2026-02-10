@@ -26,8 +26,8 @@ volatile int __global = 0;
 int
 fn_loop(void)
 {
-  mc::vector<byte> vec;
-  for ( i32 i = 0; i < 10000000; ++i ) {
+  mc::vector<i32> vec;
+  for ( i32 i = 0; i < 100000000; ++i ) {
     vec.push_back(i);
     __global = i;
     // mc::console(vec.back());
@@ -92,10 +92,13 @@ main(void)
   {
     // mc::when(t, 6);
     // mc::as_thread(fn, t);
-    mc::thread th(fn_loop);
+    mc::auto_thread th(fn_loop);
     mc::solo::wait_for(th);
     mc::solo::join(th);
     mc::console(th.result<int>());
+    mc::console(th.stats().ru_utime.tv_sec);
+    mc::console(th.stats().ru_stime.tv_sec);
+    mc::console(th.stats().ru_maxrss);
     mc::console("Done");
     return 0;
   }

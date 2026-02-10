@@ -112,7 +112,7 @@ await(Args... args)
 // nanosleep doesn't set errno anymore
 
 // in seconds
-inline void
+void
 ssleep(const umax_t s)
 {
   timespec_t r, rmn;
@@ -124,7 +124,7 @@ ssleep(const umax_t s)
   }
 }
 // in milliseconds
-inline void
+void
 sleep_for(umax_t ms)
 {
   timespec_t r;
@@ -137,7 +137,7 @@ sleep_for(umax_t ms)
 }
 
 // in milliseconds
-inline void
+void
 sleep(ulong_t ms)
 {
   timespec_t r;
@@ -150,7 +150,7 @@ sleep(ulong_t ms)
 }
 
 // in nanoseconds
-inline void
+void
 sleep_nano(umax_t ns)
 {
   timespec_t r;
