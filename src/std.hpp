@@ -25,7 +25,7 @@
 
 constexpr static const int MICRON_VERSION_MAJOR = 0x000;
 constexpr static const int MICRON_VERSION_MINOR = 0x050;
-constexpr static const int MICRON_VERSION_PATCH = 0x000;
+constexpr static const int MICRON_VERSION_PATCH = 0x010;
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"
