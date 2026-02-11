@@ -282,11 +282,21 @@ public:
   {
     if ( n < __mem::capacity )
       return;
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
     __mem::expand(n);
   }
   inline void
   try_reserve(const size_t n)
   {
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
     __mem::expand(n);
   }
   inline slice<byte>
@@ -319,6 +329,21 @@ public:
     T *f_ptr = __mem::memory;
     for ( size_t i = __mem::length; i < n; i++ )
       new (&f_ptr[i]) T(v);
+
+    __mem::length = n;
+  }
+  void
+  resize(size_t n)
+  {
+    if ( !(n > __mem::length) ) {
+      return;
+    }
+    if ( n >= __mem::capacity ) {
+      reserve(n);
+    }
+    T *f_ptr = __mem::memory;
+    for ( size_t i = __mem::length; i < n; i++ )
+      new (&f_ptr[i]) T{};
 
     __mem::length = n;
   }

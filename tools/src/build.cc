@@ -18,8 +18,11 @@ main(int argc, char **argv)
   if ( argc < 2 )
     mc::cerror("Invalid command line arguments, should be build [file_name] [output_name]");
 
-  if ( argc == 3 or argc == 4 )
-    if ( mc::strcmp(argv[2], "-d") == 0 or mc::strcmp(argv[3], "-d") == 0 )
+  if ( argc == 3 )
+    if ( mc::strcmp(argv[2], "-d") == 0 )
+      mode = modes::debug;
+  if ( argc == 4 )
+    if ( mc::strcmp(argv[3], "-d") == 0 )
       mode = modes::debug;
 
   const string_type bin_dir = "bin";

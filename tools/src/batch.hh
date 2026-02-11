@@ -150,7 +150,7 @@ batch_debug(char *file_name, char *out_name, const string_type &compiler, const 
     command_debug = make_command(command_pre_debug, file_name, command_post, "-o", bin_dir + "/" + out_name);
   else {
     string_type tmp{ file_name };
-    auto itr = mc::format::find_reverse(tmp, tmp.end(), ".");
+    auto itr = mc::format::find_reverse(tmp, tmp.end() - 1, ".");
     auto itr_2 = mc::format::find_reverse(tmp, itr, "/") + 1;
     string_type out(itr, itr_2);
     command_debug = make_command(command_pre_debug, file_name, command_post, "-o", bin_dir + "/" + string_type(out));

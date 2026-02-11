@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include <iostream>
+
 namespace micron
 {
 
@@ -34,6 +36,13 @@ public:
   static chunk<byte>
   grow(chunk<byte> memory, size_t n)
   {
+    // NOTE: in case we somehow provide zerod out mem
+    if ( memory.len == 0 and memory.ptr == nullptr ) {
+      n = to_page(n);
+      n *= P::on_grow;
+      chunk<byte> mem = allocate(n);
+      return mem;
+    }
     n = to_page(n);
     n = n / memory.len < P::on_grow ? P::on_grow * memory.len : (n / memory.len) * memory.len;
     chunk<byte> mem = allocate(n);

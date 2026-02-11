@@ -8,7 +8,6 @@
 #include "hash/hash.hpp"
 #include "memory/actions.hpp"
 
-#include "allocation/chunks.hpp"
 #include "allocator.hpp"
 #include "concepts.hpp"
 #include "except.hpp"
@@ -58,7 +57,7 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
 // this is a hash robin_map container which implements robin hood h. allc. under the hood
 template <typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
   requires micron::is_move_constructible_v<V>
-class robin_map : public _immutable_memory<Nd, Alloc>
+class robin_map : public __immutable_memory_resource<Nd, Alloc>
 {
   using __mem = __immutable_memory_resource<Nd, Alloc>;
   inline hash64_t
@@ -81,13 +80,13 @@ class robin_map : public _immutable_memory<Nd, Alloc>
   inline __attribute__((always_inline)) Nd &
   __access(const size_t index)
   {
-    return immutable_memory<_N>::memory[index];     // to prevent pointless typing
+    return __mem::memory[index];     // to prevent pointless typing
   }
   template <typename _N = Nd>     // this is here to help the compile inline properly
   inline __attribute__((always_inline)) const Nd &
   __access(const size_t index) const
   {
-    return immutable_memory<_N>::memory[index];     // to prevent pointless typing
+    return __mem::memory[index];     // to prevent pointless typing
   }
   inline __attribute__((always_inline)) void
   __shift(size_t index)
@@ -95,8 +94,7 @@ class robin_map : public _immutable_memory<Nd, Alloc>
     // shift all entries to accomodate for deletion
     index = (index + 1) % __mem::capacity;
     while ( !!__access(index) && __access(index) > 0 ) {
-      __access((index - 1 + __mem::capacity) % __mem::capacity)
-          = micron::move(__access(index));
+      __access((index - 1 + __mem::capacity) % __mem::capacity) = micron::move(__access(index));
       __access(index).key = 0x0;
       __access((index - 1 + __mem::capacity) % __mem::capacity).length--;
       index = (index + 1) % __mem::capacity;
@@ -123,9 +121,7 @@ public:
       return;
     clear();
   }
-  robin_map() : __mem((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd)))
-  {
-  }
+  robin_map() : __mem((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd))) {}
   robin_map(const size_t n) : __mem(n * sizeof(Nd)) {}
   robin_map(const robin_map &) = delete;
   robin_map(robin_map &&o) : __mem(micron::move(o)) {}

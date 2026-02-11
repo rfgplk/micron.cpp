@@ -7,51 +7,5 @@
 
 namespace micron
 {
-
-// serial standard allocator, cannot be mempooled, default doubling policy
-template <is_policy P = serial_allocation_policy> class allocator_break : private abc_allocator<byte>
-{
-
-public:
-  ~allocator_break() = default;
-  allocator_break() = default;
-  allocator_break(const allocator_break &o) = default;
-  allocator_break(allocator_break &&o) = default;
-  allocator_break &operator=(const allocator_break &o) = default;
-  allocator_break &operator=(allocator_break &&o) = default;
-
-  inline __attribute__((always_inline)) static constexpr size_t
-  auto_size()
-  {
-    return alloc_auto_sz;
-  }
-  static chunk<byte>
-  create(size_t n)
-  {
-    n = to_page(n);
-    return allocate(n);     // create the block, the handler is responsible for calling destroy
-  }
-  static chunk<byte>
-  grow(chunk<byte> memory, size_t n)
-  {
-    n = to_page(n);
-    n = n / memory.len < P::on_grow ? P::on_grow * memory.len : (n / memory.len) * memory.len;
-    chunk<byte> mem = allocate(n);
-    micron::memcpy(mem.ptr, memory.ptr, memory.len);
-    destroy(memory);
-    return mem;
-  }
-  static void
-  destroy(const chunk<byte> mem)
-  {
-    deallocate(mem.ptr, mem.len);
-  }
-  byte *share(void) = delete;
-  static i16
-  get_grow()
-  {
-    return P::on_grow;
-  }
-};
-
+// TODO: implement
 };

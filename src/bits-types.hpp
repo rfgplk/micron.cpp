@@ -56,6 +56,7 @@ using __slong32_type = long int;
 using __ulong32_type = unsigned long int;
 using __s64_type = __INT64_TYPE__;
 using __u64_type = __UINT64_TYPE__;
+using __ptrdiff_type = signed int;
 #elif __WORDSIZE == 64
 using __squad_type = long int;
 using __uquad_type = unsigned long int;
@@ -65,6 +66,7 @@ using __slong32_type = int;
 using __ulong32_type = unsigned int;
 using __s64_type = long int;
 using __u64_type = unsigned long int;
+using __ptrdiff_type = signed long long;
 #else
 #error "__WORDSIZE invalid"
 #endif

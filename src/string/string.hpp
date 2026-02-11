@@ -82,8 +82,7 @@ public:
     micron::strcpy(__mem::memory, o.memory);
     __mem::length = o.length;
   };
-  template <typename F>
-  constexpr hstring(hstring<F> &&o)
+  template <typename F> constexpr hstring(hstring<F> &&o)
   {
     __mem::memory = o.memory;
     __mem::length = o.length;
@@ -109,19 +108,23 @@ public:
   template <size_t N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(o.length)
   {
     micron::memcpy(&(__mem::memory)[0], &o.memory[0],
-           o.length);             // - 1);
+                   o.length);     // - 1);
     __mem::length = o.length;     // - 1; // no null
   };
   // allow construction from - to iterator (be careful!)
   constexpr hstring(iterator __start, iterator __end)
       : __mem((ssize_t)Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
   {
+    if ( __start >= __end )
+      throw except::library_error("micron::hstring hstring() wrong iterators");
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
   };
   constexpr hstring(const_iterator __start, const_iterator __end)
       : __mem(Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
   {
+    if ( __start >= __end )
+      throw except::library_error("micron::hstring hstring() wrong iterators");
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
   };
@@ -843,6 +846,12 @@ public:
   {
     if ( (n < __mem::capacity) ) {
       throw except::memory_error("error micron::string was unable to allocate memory");
+    }
+    // NOTE: this is here because there may be edge cases where hstring has been hard zero'ed out. salvage it in that
+    // case
+    if ( __mem::memory == nullptr ) [[unlikely]] {
+      __mem::realloc(Alloc::auto_size());
+      return;
     }
     __mem::expand(n);
   }

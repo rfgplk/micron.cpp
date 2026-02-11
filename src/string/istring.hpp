@@ -23,7 +23,8 @@ namespace micron
 
 // immutable string on the heap, immutable
 // accepts only char simple types
-template <non_class T = schar, class Alloc = micron::allocator_serial<>>
+template <typename T = schar, class Alloc = micron::allocator_serial<>>
+  requires (micron::is_fundamental_v<T>)
 class istring : private Alloc, public __immutable_memory_resource<T>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
@@ -325,7 +326,7 @@ public:
     t.length += __mem::length;
     micron::memcpy(&(t.memory)[t.length],     // null is here so, overwrite it
                    &str[0], M);
-    t.length += (M - 1);
+    t.length += (M);
     return t;
   }
   template <typename F = T>
@@ -420,7 +421,7 @@ public:
     return t;
   }
   template <typename F = T, size_t M>
-  inline istring istring
+  inline istring
   insert(size_t ind, const char (&str)[M], size_t cnt = 1)
   {
     size_t str_len = M - 1;

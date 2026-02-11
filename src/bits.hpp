@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "types.hpp"
 #include "type_traits.hpp"
+#include "types.hpp"
 
 namespace micron
 {
@@ -15,7 +15,7 @@ template <size_t N>
 constexpr inline word __attribute__((always_inline))
 repeat_bytes(void)
 {
-  return ((word)-1 / 0xFF)*N;
+  return ((word)-1 / 0xFF) * N;
 }
 template <typename T = word>
 constexpr inline word __attribute__((always_inline))
@@ -43,29 +43,34 @@ get_byte(word a, u32 ind)
 }
 template <typename T>
 bool
-aligned_256(const T* ptr) {
+aligned_256(const T *ptr)
+{
   return !(reinterpret_cast<uintptr_t>(ptr) & 31);
 }
 template <typename T>
 bool
-aligned_64(const T* ptr) {
+aligned_64(const T *ptr)
+{
   return !(reinterpret_cast<uintptr_t>(ptr) & 7);
 }
 template <typename T>
 bool
-aligned_32(const T* ptr) {
+aligned_32(const T *ptr)
+{
   return !(reinterpret_cast<uintptr_t>(ptr) & 3);
 }
 
 template <typename T>
 bool
-aligned_16(const T* ptr) {
+aligned_16(const T *ptr)
+{
   return !(reinterpret_cast<uintptr_t>(ptr) & 1);
 }
 
 template <typename T>
 bool
-aligned(const T* ptr) {
+aligned(const T *ptr)
+{
   return !(reinterpret_cast<uintptr_t>(ptr) & (micron::alignment_of<T>::value - 1));
 }
 
@@ -80,7 +85,7 @@ template <typename T>
 inline __attribute__((always_inline)) T
 rotl32(const T x, const i8 r)
 {
-  if constexpr(__has_builtin(__builtin_rotateleft32))
+  if constexpr ( __has_builtin(__builtin_rotateleft32) )
     return __builtin_rotateleft32(x, r);
   else
     return (x << r) | (x >> (32 - r));
@@ -90,7 +95,7 @@ template <typename T>
 inline __attribute__((always_inline)) T
 rotl64(const T x, const i8 r)
 {
-  if constexpr(__has_builtin(__builtin_rotateleft32))
+  if constexpr ( __has_builtin(__builtin_rotateleft32) )
     return __builtin_rotateleft64(x, r);
   else
     return (x << r) | (x >> (64 - r));
@@ -110,7 +115,7 @@ reverse_bits(T t)
 }
 
 template <typename T>
-requires (sizeof(T) == 1)
+  requires(sizeof(T) == 1)
 constexpr T
 reverse_bits_byte(T t)
 {
@@ -119,7 +124,8 @@ reverse_bits_byte(T t)
 
 template <typename T>
 inline constexpr T
-flip(T t) {
+flip(T t)
+{
   t ^= 0xFF;
   return t;
 }
@@ -142,8 +148,8 @@ constexpr int
 bitcount(T x) noexcept     // seriously bitcount is a way more reasonable name, what even is POPcount where are the pops
 {
   if constexpr ( micron::is_same_v<T, int> or micron::is_same_v<T, char> or micron::is_same_v<T, unsigned char>
-                 or micron::is_same_v<T, unsigned char> or micron::is_same_v<T, unsigned int> or micron::is_same_v<T, short>
-                 or micron::is_same_v<T, unsigned short> )
+                 or micron::is_same_v<T, unsigned char> or micron::is_same_v<T, unsigned int>
+                 or micron::is_same_v<T, short> or micron::is_same_v<T, unsigned short> )
     return __builtin_popcount(x);
   if constexpr ( micron::is_same_v<T, long> or micron::is_same_v<T, unsigned long> )
     return __builtin_popcountl(x);
@@ -193,6 +199,7 @@ countr_zero(T x) noexcept
     return __builtin_ctzl(x);
   if constexpr ( micron::is_same_v<T, long long> )
     return __builtin_ctzll(x);
+  return 0;
 }
 
 template <typename T>

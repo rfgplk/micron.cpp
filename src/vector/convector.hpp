@@ -58,6 +58,12 @@ class convector : public __mutable_memory_resource<T, Alloc>
   {
     if ( n < __mem::capacity )
       return;
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
+
     __mem::expand(n);
   }
   inline void
@@ -392,6 +398,11 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n < __mem::capacity )
       return;
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
     __mem::expand(n);
   }
   inline void
@@ -400,6 +411,11 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n < __mem::capacity )
       throw except::memory_error("micron convector failed to reserve memory");
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
     __mem::expand(n);
   }
   inline slice<byte>

@@ -39,15 +39,23 @@ struct __core_memory_resource {
   ~__core_memory_resource() = default;
   __core_memory_resource(void) : memory(nullptr), capacity(0) {}
   __core_memory_resource(const __core_memory_resource &o) : memory(o.memory), capacity(o.capacity) {}
-  __core_memory_resource(__core_memory_resource &&o) : memory(o.memory), capacity(o.capacity)
+  __core_memory_resource(__core_memory_resource &&o) noexcept : memory(o.memory), capacity(o.capacity)
   {
     o.memory = nullptr;
     o.capacity = 0;
   };
 
   template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity){};
-  __core_memory_resource(chunk<byte> &&b) : memory(reinterpret_cast<T *>(b.ptr)), capacity(b.len / sizeof(T))
+  __core_memory_resource(chunk<byte> &&b)
   {
+    auto addr = reinterpret_cast<uintptr_t>(b.ptr);
+    if ( addr % alignof(T) != 0 )
+      __builtin_exit(1);
+    if ( b.len % sizeof(T) != 0 )
+      __builtin_exit(1);
+
+    memory = reinterpret_cast<T *>(b.ptr);
+    capacity = b.len / sizeof(T);
     b = nullptr;
   }
   __core_memory_resource &
@@ -76,12 +84,24 @@ struct __core_memory_resource {
   void
   accept(const chunk<byte> &o)
   {
+    auto addr = reinterpret_cast<uintptr_t>(o.ptr);
+    if ( addr % alignof(T) != 0 )
+      __builtin_exit(1);
+    if ( o.len % sizeof(T) != 0 )
+      __builtin_exit(1);
+
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
   }
   void
   accept(chunk<byte> &&o)
   {
+    auto addr = reinterpret_cast<uintptr_t>(o.ptr);
+    if ( addr % alignof(T) != 0 )
+      __builtin_exit(1);
+    if ( o.len % sizeof(T) != 0 )
+      __builtin_exit(1);
+
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
     o = nullptr;
@@ -89,7 +109,7 @@ struct __core_memory_resource {
   inline pointer
   cast()
   {
-    return reinterpret_cast<const_pointer *>(memory);
+    return reinterpret_cast<pointer *>(memory);
   }
   inline const_pointer
   cast() const
@@ -99,14 +119,23 @@ struct __core_memory_resource {
   inline reference
   ref()
   {
+    if ( memory == nullptr )
+      __builtin_exit(1);
+    if ( capacity == 0 )
+      __builtin_exit(1);
     return *cast();
   }
   inline const_reference
   ref() const
   {
+    if ( memory == nullptr )
+      __builtin_exit(1);
+    if ( capacity == 0 )
+      __builtin_exit(1);
     return *cast();
   }
   // converts a memory resource to a chunk
+  
   inline const chunk<byte>
   operator*() const
   {

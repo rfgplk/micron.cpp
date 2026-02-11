@@ -27,6 +27,7 @@ using int16_t = __INT16_TYPE__;
 using int32_t = __INT32_TYPE__;
 using int64_t = __INT64_TYPE__;
 
+using ptrdiff_t = __PTRDIFF_TYPE__;
 using intptr_t = __INTPTR_TYPE__;
 using uint8_t = __UINT8_TYPE__;
 using uint16_t = __UINT16_TYPE__;

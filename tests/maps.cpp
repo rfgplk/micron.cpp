@@ -19,7 +19,6 @@ main(void)
   mc::stack_swiss_map<mc::string, int, 128> ms;
   ms.insert("bla", 1);
   mc::console(*ms.find("bla"));
-  return 1;
   // std::unordered_map<mc::hash64_t, int> hmp;
   mc::hopscotch_map<mc::hash64_t, int> hmp(25000);
   for ( size_t i = 0; i < 10000; i++ ) {
@@ -28,8 +27,10 @@ main(void)
     } catch ( mc::except::library_error &e ) {
     }
   }
+  mc::console(hmp[500]);
   mc::console("Done");
   mc::console("Done");
+  return 1;
   mc::map<mc::string, int> mp;
   mc::console(mp.size());
   mc::console(mp.max_size());

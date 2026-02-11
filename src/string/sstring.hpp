@@ -71,11 +71,15 @@ public:
   // allow construction from - to iterator (be careful!)
   constexpr sstring(iterator __start, iterator __end)
   {
+    if ( __start >= __end )
+      throw except::library_error("micron::hstring sstring() wrong iterators");
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
   };
   constexpr sstring(const_iterator __start, const_iterator __end)
   {
+    if ( __start >= __end )
+      throw except::library_error("micron::hstring sstring() wrong iterators");
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
   };

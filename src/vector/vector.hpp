@@ -65,7 +65,7 @@ public:
       __mem::length = lst.size();
     } else {
       size_t i = 0;
-      for ( auto&& value : lst ) {
+      for ( auto &&value : lst ) {
         __mem::memory[i++] = value;
       }
       __mem::length = lst.size();
@@ -316,6 +316,11 @@ public:
   {
     if ( n < __mem::capacity )
       return;
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
     __mem::expand(n);
   }
   inline void
@@ -323,6 +328,11 @@ public:
   {
     if ( n < __mem::capacity )
       throw except::memory_error("micron vector failed to reserve memory");
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
     __mem::expand(n);
   }
   inline slice<byte>
@@ -386,7 +396,7 @@ public:
     }
   }
   void
-  move_back(T&& t)
+  move_back(T &&t)
   {
     if ( __mem::length < __mem::capacity ) {
       __mem::memory[__mem::length++] = micron::move(t);
@@ -857,8 +867,7 @@ public:
     __mem::length = 0;
   }
 
-  void
-  fast_clear() = delete;
+  void fast_clear() = delete;
   inline const T &
   front() const
   {

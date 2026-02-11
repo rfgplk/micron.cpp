@@ -17,7 +17,7 @@ namespace micron
 template <typename T, typename Alloc = allocator_serial<>>
   requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
 struct __mutable_memory_resource : public __core_memory_resource<T> {
-  __core_memory_resource<T>::size_type length;
+  typename __core_memory_resource<T>::size_type length;
   ~__mutable_memory_resource()
   {
     if ( __core_memory_resource<T>::alive() ) {
@@ -81,11 +81,6 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   {
     return __core_memory_resource<T>::operator*();
   }
-  inline chunk<byte> &
-  mut()
-  {
-    return __core_memory_resource<T>::operator*();
-  }
   void
   free(void)
   {
@@ -100,6 +95,8 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   void
   realloc(size_t len)
   {
+    if ( len == 0 ) [[unlikely]]
+      return;
     if ( __core_memory_resource<T>::alive() )
       Alloc::destroy(__core_memory_resource<T>::operator*());
     __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
@@ -108,6 +105,8 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   void
   expand(size_t len)
   {
+    if ( len == 0 ) [[unlikely]]
+      return;
     // NOTE: grow destroys memory
     __core_memory_resource<T>::accept(
         Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
@@ -117,7 +116,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
 template <typename T, typename Alloc = allocator_serial<>>
   requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
 struct __immutable_memory_resource : public __core_memory_resource<T> {
-  __core_memory_resource<T>::size_type length;
+  typename __core_memory_resource<T>::size_type length;
   ~__immutable_memory_resource()
   {
     if ( __core_memory_resource<T>::alive() ) {
@@ -168,11 +167,6 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
   {
     return __core_memory_resource<T>::operator*();
   }
-  inline chunk<byte> &
-  mut()
-  {
-    return __core_memory_resource<T>::operator*();
-  }
   inline void
   free(void)
   {
@@ -187,6 +181,8 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
   inline void
   realloc(size_t len)
   {
+    if ( len == 0 ) [[unlikely]]
+      return;
     if ( __core_memory_resource<T>::alive() )
       Alloc::destroy(__core_memory_resource<T>::operator*());
     __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
@@ -195,6 +191,8 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
   inline void
   expand(size_t len)
   {
+    if ( len == 0 ) [[unlikely]]
+      return;
     __core_memory_resource<T>::accept(
         Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
   }

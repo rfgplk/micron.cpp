@@ -13,14 +13,14 @@
 namespace micron
 {
 
-template <typename T = char8_t>
+template <typename T = char>
 inline micron::hstring<T>
 with_capacity(const size_t n)
 {
   return micron::hstring<T>(n);
 };
 
-template <size_t N, typename T = char8_t>
+template <size_t N, typename T = char>
 inline micron::hstring<T>
 with_capacity(void)
 {
@@ -41,7 +41,7 @@ invert(T &str)
   }
 }
 
-template <typename T = char8_t>
+template <typename T = char>
 i64
 hex_string_to_int64(const micron::hstring<T> &buf)
 {
@@ -73,7 +73,7 @@ hex_string_to_int64(const micron::hstring<T> &buf)
   return neg ? -result : result;
 }
 
-template <typename T = char8_t>
+template <typename T = char>
 i64
 string_to_int64(const micron::hstring<T> &buf)
 {
@@ -96,7 +96,7 @@ string_to_int64(const micron::hstring<T> &buf)
   return neg ? -result : result;
 }
 
-template <typename I, typename T = char8_t>
+template <typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 int_to_string(I n)
@@ -122,7 +122,7 @@ int_to_string(I n)
 
 // WARNING: could go OOB
 
-template <typename I, typename T = char8_t, size_t N>
+template <typename I, typename T = char, size_t N>
   requires micron::is_integral_v<I>
 inline micron::sstring<N, T>
 int_to_string_stack(I n)
@@ -145,7 +145,7 @@ int_to_string_stack(I n)
   invert(buf);
   return buf;
 }
-template <typename I, typename T = char8_t>
+template <typename I, typename T = char>
 inline micron::hstring<T>
 bytes_to_string(I n)
 {
@@ -166,11 +166,11 @@ bytes_to_string(I n)
   return buf;
 }
 
-constexpr const char8_t *
-u8_check(const char8_t *str, size_t n)
+constexpr const char *
+u8_check(const char *str, size_t n)
 {
   for ( size_t i = 0; i < n; i++ ) {
-    char8_t c = *str++;
+    char c = *str++;
     if ( c < 0x80 )
       continue;     // ASCII range
 
@@ -242,7 +242,7 @@ u32_check(const char32_t *str, size_t n)
   return str;     // All checks passed
 }
 
-template <typename I, typename T = char8_t>
+template <typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_string(I x)
