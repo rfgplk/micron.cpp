@@ -7,7 +7,6 @@
 
 #include "../memory/addr.hpp"
 
-#include "../linux/process/system.hpp"
 #include "../syscall.hpp"
 #include "sys/fcntl.hpp"
 #include "sys/stat.hpp"

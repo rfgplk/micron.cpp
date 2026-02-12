@@ -45,13 +45,13 @@ public:
   operator>>(const fd_t &out)
   {
     if ( out.has_error() or out.closed() )
-      throw except::io_error("io::stream() operator>>: fd_t is closed or has an error");
+      exc<except::io_error>("io::stream() operator>>: fd_t is closed or has an error");
     if ( __size ) {
       size_t __buf_i = 0;
       do {
         ssize_t sz = posix::write(out.fd, __buffer->at_pointer(__buf_i), __chnk > __size ? __size : __chnk);
         if ( sz == -1 )
-          throw except::io_error("posix::write() operator>>: writing failed.");
+          exc<except::io_error>("posix::write() operator>>: writing failed.");
         if ( sz == 0 )
           break;
         __buf_i += __chnk > __size ? __size : __chnk;
@@ -78,7 +78,7 @@ public:
   operator<<(const T &in)
   {
     if ( in.empty() )
-      throw except::io_error("io::stream() operator>>: input container is empty.");
+      exc<except::io_error>("io::stream() operator>>: input container is empty.");
     ssize_t c = 0;
     if ( __sz <= (in.size() * sizeof(typename T::value_type)) )
       c = __sz + __size;
@@ -93,7 +93,7 @@ public:
   operator<<(const fd_t &in)
   {
     if ( in.has_error() or in.closed() )
-      throw except::io_error("io::stream() operator>>: fd_t is closed or has an error");
+      exc<except::io_error>("io::stream() operator>>: fd_t is closed or has an error");
     size_t seek = posix::lseek(in.fd, 0, seek_cur);
     do {
       ssize_t bytes_read
@@ -179,13 +179,13 @@ public:
   operator>>(const fd_t &out)
   {
     if ( out.has_error() or out.closed() )
-      throw except::io_error("io::stream_view() operator>>: fd_t is closed or has an error");
+      exc<except::io_error>("io::stream_view() operator>>: fd_t is closed or has an error");
     if ( __size ) {
       size_t __buf_i = 0;
       do {
         ssize_t sz = posix::write(out.fd, __buffer->at_pointer(__buf_i), __chnk > __size ? __size : __chnk);
         if ( sz == -1 )
-          throw except::io_error("posix::write() operator>>: writing failed.");
+          exc<except::io_error>("posix::write() operator>>: writing failed.");
         if ( sz == 0 )
           break;
         __buf_i += __chnk > __size ? __size : __chnk;
@@ -200,7 +200,7 @@ public:
   operator<<(const T &in)
   {
     if ( in.empty() )
-      throw except::io_error("io::stream_view() operator>>: input container is empty.");
+      exc<except::io_error>("io::stream_view() operator>>: input container is empty.");
     ssize_t c = 0;
     if ( __sz <= (in.size() * sizeof(typename T::value_type)) )
       c = __sz + __size;
@@ -215,7 +215,7 @@ public:
   operator<<(const fd_t &in)
   {
     if ( in.has_error() or in.closed() )
-      throw except::io_error("io::stream_view() operator>>: fd_t is closed or has an error");
+      exc<except::io_error>("io::stream_view() operator>>: fd_t is closed or has an error");
     size_t seek = posix::lseek(in.fd, 0, seek_cur);
     do {
       ssize_t bytes_read

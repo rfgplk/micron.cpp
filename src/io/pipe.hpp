@@ -37,13 +37,13 @@ public:
   upipe(utype t)
   {
     if ( posix::pipe(fd) == -1 )
-      throw except::io_error("micron::pipe failed to open pipe");
+      exc<except::io_error>("micron::pipe failed to open pipe");
     tp = t;
   }
   upipe()
   {
     if ( posix::pipe(fd) == -1 )
-      throw except::io_error("micron::pipe failed to open pipe");
+      exc<except::io_error>("micron::pipe failed to open pipe");
     tp = utype::upipe_writer;
   }
   upipe(const upipe &) = default;
@@ -111,10 +111,10 @@ public:
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str)
   {
     if ( micron::mkfifo(pipe_name.c_str(), perms) == -1 )
-      throw except::io_error("micron::npipe(mkfifo) failed to create pipe");
+      exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe");
     fd = posix::open(pipe_name.c_str(), o_rdwr);
     if(fd == -1)
-      throw except::io_error("micron::npipe(open) failed to open pipe file");
+      exc<except::io_error>("micron::npipe(open) failed to open pipe file");
   }
   npipe(const npipe &) = default;
   npipe(npipe &&) = default;

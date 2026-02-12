@@ -17,7 +17,7 @@ public:
   ~empty_pointer()
   {
     if ( internal_pointer != nullptr )
-      throw except::memory_error("empty_pointer ~(): pointer is not empty");
+      exc<except::memory_error>("empty_pointer ~(): pointer is not empty");
   }
   empty_pointer(void) : internal_pointer(occupied) {}
   empty_pointer(const empty_pointer &) = delete;
@@ -27,7 +27,7 @@ public:
   operator=(empty_pointer &&o)
   {
     if ( internal_pointer != nullptr )
-      throw except::memory_error("empty_pointer operator=(): pointer is not empty");
+      exc<except::memory_error>("empty_pointer operator=(): pointer is not empty");
     internal_pointer = o.internal_pointer;
     o.internal_pointer = nullptr;
     return *this;
@@ -38,6 +38,11 @@ public:
     Type *ptr = internal_pointer;
     internal_pointer = nullptr;
     return ptr;
+  }
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
   }
 };
 

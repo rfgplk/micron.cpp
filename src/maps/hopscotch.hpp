@@ -191,7 +191,7 @@ template <typename K, typename V, size_t MH = 32, typename Nd = hopscotch_node<K
       new_size *= 2;
     }
 
-    throw except::library_error("Failed to resize hopscotch map after multiple attempts");
+    exc<except::library_error>("Failed to resize hopscotch map after multiple attempts");
   }
 
   bool
@@ -323,12 +323,12 @@ public:
   insert_asis(const hash64_t &hsh, const V &value)
   {
     if ( hsh == 0 ) {
-      throw except::library_error("Invalid hash value (0)");
+      exc<except::library_error>("Invalid hash value (0)");
     }
 
     size_t size = entries.max_size();
     if ( size == 0 ) {
-      throw except::library_error("Hopscotch map not initialized");
+      exc<except::library_error>("Hopscotch map not initialized");
     }
 
     if ( length >= entries.max_size() * 3 / 4 ) {
@@ -387,12 +387,12 @@ public:
     hash64_t hsh = hash<hash64_t>(k);
 
     if ( hsh == 0 ) {
-      throw except::library_error("Invalid hash value (0)");
+      exc<except::library_error>("Invalid hash value (0)");
     }
 
     size_t size = entries.max_size();
     if ( size == 0 ) {
-      throw except::library_error("Hopscotch map not initialized");
+      exc<except::library_error>("Hopscotch map not initialized");
     }
 
     if ( length >= entries.max_size() * 3 / 4 ) {
@@ -445,12 +445,12 @@ public:
     hash64_t hsh = hash<hash64_t>(k);
 
     if ( hsh == 0 ) {
-      throw except::library_error("Invalid hash value (0)");
+      exc<except::library_error>("Invalid hash value (0)");
     }
 
     size_t size = entries.max_size();
     if ( size == 0 ) {
-      throw except::library_error("Hopscotch map not initialized");
+      exc<except::library_error>("Hopscotch map not initialized");
     }
 
     size_t home = hsh % size;
@@ -540,7 +540,7 @@ public:
 
     V *result = insert(k, V{});
     if ( !result ) {
-      throw except::library_error("Failed to insert into hopscotch map");
+      exc<except::library_error>("Failed to insert into hopscotch map");
     }
     return *result;
   }
@@ -550,7 +550,7 @@ public:
   {
     V *v = find(k);
     if ( !v ) {
-      throw except::library_error("Key not found in hopscotch map");
+      exc<except::library_error>("Key not found in hopscotch map");
     }
     return *v;
   }
@@ -560,7 +560,7 @@ public:
   {
     const V *v = find(k);
     if ( !v ) {
-      throw except::library_error("Key not found in hopscotch map");
+      exc<except::library_error>("Key not found in hopscotch map");
     }
     return *v;
   }
@@ -570,7 +570,7 @@ public:
   {
     V *result = insert(k, micron::move(value));
     if ( !result ) {
-      throw except::library_error("Failed to add to hopscotch map");
+      exc<except::library_error>("Failed to add to hopscotch map");
     }
     return *result;
   }

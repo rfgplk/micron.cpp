@@ -104,7 +104,7 @@ public:
   operator[](const size_t n) const
   {
     if ( n >= count )
-      throw except::library_error("micron cpu_t::operator[] out of range");
+      exc<except::library_error>("micron cpu_t::operator[] out of range");
     return procs.cpu_isset(n);
   }
   void
@@ -121,7 +121,7 @@ public:
   at(const size_t n) const
   {
     if ( n >= count )
-      throw except::library_error("micron cpu_t::operator[] out of range");
+      exc<except::library_error>("micron cpu_t::operator[] out of range");
     return procs.cpu_isset(n);
   }
 
@@ -129,7 +129,7 @@ public:
   set_core(const size_t n)
   {
     if ( n >= count )
-      throw except::library_error("micron cpu_t::operator[] out of range");
+      exc<except::library_error>("micron cpu_t::operator[] out of range");
     procs.cpu_set(n);
   }
   void

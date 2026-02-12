@@ -111,7 +111,7 @@ constexpr int thread_process_shared_flag = static_cast<int>(thread_process_share
 
 // PTHREAD IMPLEMENTATION
 
-constexpr int thread_failed = 0;
+constexpr pthread_t thread_failed = numeric_limits<pthread_t>::max();
 
 using thread_fn = void *(*)(void *);
 
@@ -190,6 +190,26 @@ prepare_thread(thread_create_state dstate = thread_create_state::joinable, int p
 
   return attr;
 }
+
+inline pthread_attr_t
+prepare_thread_with_stack(thread_create_state dstate, int policy, addr_t *ptr, size_t stack_size, int priority = 0)
+{
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+
+  pthread_attr_setdetachstate(&attr, static_cast<int>(dstate));
+
+  posix::sched_param sp{};
+  sp.sched_priority = priority;
+  pthread_attr_setschedpolicy(&attr, static_cast<int>(policy));
+  pthread_attr_setschedparam(&attr, reinterpret_cast<sched_param *>(&sp));
+  pthread_attr_setinheritsched(&attr, thread_explicit_sched);
+  pthread_attr_setstacksize(&attr, stack_size);
+  pthread_attr_setstack(&attr, ptr, stack_size);
+
+  return attr;
+}
+
 void
 set_affinity(pthread_attr_t &attr, const posix::cpu_set_t &cpu)
 {
@@ -205,6 +225,28 @@ set_stack_thread(pthread_attr_t &attr, T *ptr, size_t size)
   pthread_attr_setstack(&attr, ptr, size);
 }
 
+inline void
+get_stack_thread(const pthread_attr_t &attr, addr_t* &ptr, size_t &size)
+{
+  pthread_attr_getstack(&attr, reinterpret_cast<void**>(&ptr), &size);
+}
+
+inline void
+get_sched_param(const pthread_attr_t &attr, u32 &param)
+{
+  pthread_attr_getschedparam(&attr, reinterpret_cast<sched_param *>(&param));
+}
+
+inline void
+get_detach_state(const pthread_attr_t &attr, i32 &detach)
+{
+  pthread_attr_getdetachstate(&attr, &detach);
+}
+inline void
+get_sched_policy(const pthread_attr_t &attr, i32 &policy)
+{
+  pthread_attr_getschedpolicy(&attr, &policy);
+}
 auto
 get_name(pthread_t pt, char *name, size_t sz)
 {

@@ -51,7 +51,7 @@ public:
   chunk<byte>
   grow(byte *ptr, size_t old, size_t n)
   {
-    throw except::memory_error("The total memory allocator cannot grow");
+    exc<except::memory_error>("The total memory allocator cannot grow");
   }
   void
   destroy(const chunk<byte> &mem)

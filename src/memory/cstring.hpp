@@ -5,10 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../except.hpp"
 #include "../numerics.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
+
+#include "../concepts.hpp"
 
 #include "../simd/intrin.hpp"
 

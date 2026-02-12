@@ -4,7 +4,6 @@
 #include "../../types.hpp"
 #include "cpu.hpp"
 
-
 #ifndef _BITS_TYPES_STRUCT_SCHED_PARAM
 #define _BITS_TYPES_STRUCT_SCHED_PARAM 1
 
@@ -28,6 +27,18 @@ int
 sched_yield()
 {
   return static_cast<int>(micron::syscall(SYS_sched_yield));
+}
+
+int
+sched_getparam(pid_t pid, sched_param &params)
+{
+  return static_cast<int>(micron::syscall(SYS_sched_getparam, pid, &params));
+}
+
+int
+sched_setparam(pid_t pid, const sched_param &params)
+{
+  return static_cast<int>(micron::syscall(SYS_sched_setparam, pid, &params));
 }
 
 int

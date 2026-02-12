@@ -184,7 +184,7 @@ public:
   stack(void) const
   {
     if ( __mem::size >= 255 )
-      throw except::library_error("micron::istring stack() out of memory.");
+      exc<except::library_error>("micron::istring stack() out of memory.");
     return sstr<512, T>(c_str());
   };
   inline const char *
@@ -426,7 +426,7 @@ public:
   {
     size_t str_len = M - 1;
     if ( ind > __mem::length )
-      throw except::library_error("micron:string at() out of range");
+      exc<except::library_error>("micron:string at() out of range");
 
     istring t(__mem::length + cnt * str_len);
 
@@ -460,14 +460,14 @@ public:
   at(const size_t n) const
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron:string at() out of range");
+      exc<except::library_error>("micron:string at() out of range");
     return (__mem::memory)[n];
   };
   inline size_t
   at(const_iterator n) const
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      throw except::library_error("micron:sstring at() out of range");
+      exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
 
@@ -475,7 +475,7 @@ public:
   at(iterator n) const
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      throw except::library_error("micron:sstring at() out of range");
+      exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
   inline const T &
@@ -569,7 +569,7 @@ public:
   substr(size_t pos = 0, size_t cnt = 0) const
   {
     if ( pos > __mem::length or (cnt + pos) > __mem::capacity )
-      throw except::library_error("error micron::string substr invalid range.");
+      exc<except::library_error>("error micron::string substr invalid range.");
     istring<F> buf(__mem::capacity);
     micron::memcpy(&buf[0], &__mem::memory[pos], cnt);
     buf[cnt] = '\0';

@@ -15,7 +15,7 @@
 namespace micron
 {
 
-using standard_arena = arena::__default_arena<micron::thread<>>;
+using standard_arena = arena::__default_arena<micron::group_thread<>>;
 
 static standard_arena *__global_threadpool = nullptr;
 

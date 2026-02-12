@@ -415,7 +415,7 @@ public:
   at(size_type idx)
   {
     if ( idx >= __size )
-      throw except::library_error("circle_vector::at");
+      exc<except::library_error>("circle_vector::at");
     return __buffer[(__tail + idx) & __mask];
   }
 
@@ -423,7 +423,7 @@ public:
   at(size_type idx) const
   {
     if ( idx >= __size )
-      throw except::library_error("circle_vector::at");
+      exc<except::library_error>("circle_vector::at");
     return __buffer[(__tail + idx) & __mask];
   }
 

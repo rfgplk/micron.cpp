@@ -71,7 +71,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("const_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("const_pointer operator->(): internal_pointer was null");
   }
 
   const Type &
@@ -80,7 +80,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("const_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("const_pointer operator*(): internal_pointer was null");
   }
 
   inline Type *release() = delete;
@@ -146,7 +146,7 @@ public:
     if ( internal_pointer != nullptr && index < array_size )
       return internal_pointer[index];
     else
-      throw except::memory_error("const_pointer operator[]: index out of bounds or internal_pointer was null");
+      exc<except::memory_error>("const_pointer operator[]: index out of bounds or internal_pointer was null");
   }
 
   size_t
@@ -161,6 +161,11 @@ public:
     return internal_pointer;
   }
 
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
+  }
   inline Type *release() = delete;
   void clear() = delete;
 };

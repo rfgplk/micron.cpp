@@ -74,7 +74,7 @@ class parallel_system
       if ( __access(*entries[i]).name() == p )
         return __access(*entries[i]);
     }
-    throw except::filesystem_error("micron fsys wasn't able to find file");
+    exc<except::filesystem_error>("micron fsys wasn't able to find file");
   }
   inline __attribute__((always_inline)) size_t
   __locate(const io::path_t &p)
@@ -114,7 +114,7 @@ class parallel_system
   __limit()
   {
     if ( sz == N )
-      throw except::filesystem_error("micron::fsys too many file handles open");
+      exc<except::filesystem_error>("micron::fsys too many file handles open");
   }
   void
   __lock_all(void)
@@ -192,7 +192,7 @@ public:
     __limit();
     if ( nd == io::node_types::regular_file )
       return file(p, c);
-    throw except::filesystem_error("micron::fsys[] path wasn't a file");
+    exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
   }
   inline void
   remove(const io::path_t &p)

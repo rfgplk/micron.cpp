@@ -74,7 +74,7 @@ template <lock_starts S, class M = mutex> class unique_lock
   __verify()
   {
     if ( !mtx )
-      throw except::library_error("micron::unique_lock lock() no mtx");
+      exc<except::library_error>("micron::unique_lock lock() no mtx");
   }
 
 public:

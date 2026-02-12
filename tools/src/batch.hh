@@ -60,7 +60,7 @@ make_flags(const mc::constarray<F> flags)
 // these are char* since they come directly from argv
 string_type
 batch_optimized(char *file_name, char *out_name, const string_type &compiler, const string_type &bin_dir,
-                const string_type &standard)
+                const string_type &standard, bool disable_warnings)
 {
   const string_type optimizations
       = make_flags(gcc::opt_flags::flags::optimize_fast, gcc::x86_flags::flags::mavx2, gcc::x86_flags::flags::mbmi,
@@ -72,7 +72,7 @@ batch_optimized(char *file_name, char *out_name, const string_type &compiler, co
   const string_type flags_warn_base
       = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
-  const string_type flags_warn_extra
+  string_type flags_warn_extra
       = "-Wno-cpp -Wunused -Wshadow -Wconversion -Wcast-qual -Wconversion-null -Woverlength-strings -Wpointer-arith "
         "-Wunused-local-typedefs -Wunused-result -Wvarargs -Wvla -Wwrite-strings -Wduplicated-cond -Wdouble-promotion "
         "-Wdisabled-optimization -Winline -Wfloat-equal -Wmissing-noreturn -Wpacked -Wnonnull -Wundef -Wtrampolines "
@@ -91,8 +91,11 @@ batch_optimized(char *file_name, char *out_name, const string_type &compiler, co
   const string_type includes_location = "-Isrc";
   const string_type libs_static = "-static-libstdc++ -static-libgcc";
 
-  string_type command_pre_opt = make_command(compiler, standard, optimizations, flags_warn_base, flags_warn_extra,
-                                             flags_warn_ignore, flags_errors_extra, flags_extensions);
+  string_type command_pre_opt
+      = disable_warnings
+            ? make_command(compiler, standard, optimizations, flags_warn_base, flags_warn_ignore, flags_extensions)
+            : make_command(compiler, standard, optimizations, flags_warn_base, flags_warn_extra, flags_warn_ignore,
+                           flags_errors_extra, flags_extensions);
 
   string_type command_post = make_command(compile_libs, includes_location);
 
@@ -112,7 +115,7 @@ batch_optimized(char *file_name, char *out_name, const string_type &compiler, co
 
 string_type
 batch_debug(char *file_name, char *out_name, const string_type &compiler, const string_type &bin_dir,
-            const string_type &standard)
+            const string_type &standard, bool disable_warnings)
 {
   const string_type debug_flags = make_flags(gcc::debug_flags::flags::g, gcc::x86_flags::flags::march_native);
 
@@ -140,8 +143,11 @@ batch_debug(char *file_name, char *out_name, const string_type &compiler, const 
   const string_type includes_location = "-Isrc";
   const string_type libs_static = "-static-libstdc++ -static-libgcc";
 
-  string_type command_pre_debug = make_command(compiler, standard, debug_flags, flags_warn_base, flags_warn_extra,
-                                               flags_warn_ignore, flags_errors_extra, flags_extensions);
+  string_type command_pre_debug
+      = disable_warnings
+            ? make_command(compiler, standard, debug_flags, flags_warn_base, flags_warn_ignore, flags_extensions)
+            : make_command(compiler, standard, debug_flags, flags_warn_base, flags_warn_extra, flags_warn_ignore,
+                           flags_errors_extra, flags_extensions);
 
   string_type command_post = make_command(compile_libs, includes_location);
 
@@ -152,7 +158,7 @@ batch_debug(char *file_name, char *out_name, const string_type &compiler, const 
     string_type tmp{ file_name };
     auto itr = mc::format::find_reverse(tmp, tmp.end() - 1, ".");
     auto itr_2 = mc::format::find_reverse(tmp, itr, "/") + 1;
-    string_type out(itr, itr_2);
+    string_type out(itr_2, itr);
     command_debug = make_command(command_pre_debug, file_name, command_post, "-o", bin_dir + "/" + string_type(out));
   }
   return command_debug;

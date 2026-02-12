@@ -68,7 +68,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
   Type *
   operator->()
@@ -76,7 +76,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
 
   const Type &
@@ -85,7 +85,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("free_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator*(): internal_pointer was null");
   };
   Type &
   operator*()
@@ -93,7 +93,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("free_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator*(): internal_pointer was null");
   };
   template <typename Ft>
   free_pointer &
@@ -130,6 +130,12 @@ public:
   convert(void)
   {
     return P(micron::move(internal_pointer));
+  }
+
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
   }
 };
 
@@ -175,7 +181,7 @@ public:
   {
     if ( internal_pointer != nullptr )
       return (*internal_pointer)[n];
-    throw except::memory_error("free_pointer[] operator[](): internal_pointer was null");
+    exc<except::memory_error>("free_pointer[] operator[](): internal_pointer was null");
   };
   free_pointer &
   operator=(Type *&&t)
@@ -249,7 +255,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
   Type &
   operator*()
@@ -257,7 +263,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
 
   const Type &
@@ -266,7 +272,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("free_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
   const Type *
   operator()() const

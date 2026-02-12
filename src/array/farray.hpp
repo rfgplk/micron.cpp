@@ -48,7 +48,7 @@ public:
   farray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
-      throw except::runtime_error("micron::farray init_list too large.");
+      exc<except::runtime_error>("micron::farray init_list too large.");
     size_t i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
@@ -96,14 +96,14 @@ public:
   at(const size_t i)
   {
     if ( i >= N )
-      throw except::runtime_error("micron::farray at() out of range.");
+      exc<except::runtime_error>("micron::farray at() out of range.");
     return stack[i];
   }
   inline const T &
   at(const size_t i) const
   {
     if ( i >= N )
-      throw except::runtime_error("micron::farray at() out of range.");
+      exc<except::runtime_error>("micron::farray at() out of range.");
     return stack[i];
   }
   inline T &

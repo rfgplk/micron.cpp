@@ -143,11 +143,11 @@ struct file {
         return;
       alive();
       if ( posix::fstat(__handle.fd, sd) == -1 )     // fstat((fd), &sd) == -1 )
-        throw io_err("micron::file, fstat failed.");
+        exc<except::io_error>("micron::file, fstat failed.");
     } else if constexpr ( B == STAT_OVERRIDE ) {
       alive();
       if ( posix::fstat(__handle.fd, sd) == -1 )     // fstat((fd), &sd) == -1 )
-        throw io_err("micron::file, fstat failed.");
+        exc<except::io_error>("micron::file, fstat failed.");
     }
   }
   inline auto
@@ -253,7 +253,7 @@ private:
   alive(void) const
   {
     if ( __handle.fd == -1 ) {
-      throw io_err("micron::file, fd isn't open.");
+      exc<except::io_error>("micron::file, fd isn't open.");
       return false;
     }
     return true;
@@ -301,32 +301,32 @@ private:
   {
     if constexpr ( micron::is_string_ascii<T> ) {
       if ( !verify(str) )
-        throw io_err("error in creating micron::file, malformed string.");
+        exc<except::io_error>("error in creating micron::file, malformed string.");
       if ( mode != modes::append and mode != modes::create and mode != modes::readwritecreate ) {
         if ( !exists(str.c_str()) )
-          throw io_err("micron::file file doesn't exist");
+          exc<except::io_error>("micron::file file doesn't exist");
         if ( !is_file(str.c_str()) )
-          throw io_err("micron::file file isn't a file (check type)");
+          exc<except::io_error>("micron::file file isn't a file (check type)");
       }
       __handle.fd = static_cast<int>(_syscall_open(str.c_str(), mode));
       // fd = open(str.c_str(), );
       if ( __handle.has_error() )
-        throw io_err("micron::file failed to open");
+        exc<except::io_error>("micron::file failed to open");
       fname = str;
       micron::zero(&sd);
     } else {
       if ( !verify(str) )
-        throw io_err("error in creating micron::file, malformed string.");
+        exc<except::io_error>("error in creating micron::file, malformed string.");
       if ( mode != modes::append and mode != modes::create and mode != modes::readwritecreate ) {
         if ( !exists(str) )
-          throw io_err("micron::file file doesn't exist");
+          exc<except::io_error>("micron::file file doesn't exist");
         if ( !is_file(str) )
-          throw io_err("micron::file file isn't a file (check type)");
+          exc<except::io_error>("micron::file file isn't a file (check type)");
       }
       // fd = open(str, "r");
       __handle.fd = static_cast<int>(_syscall_open(str, mode));
       if ( __handle.has_error() )
-        throw io_err("micron::file failed to open");
+        exc<except::io_error>("micron::file failed to open");
       fname = str;
       micron::zero(&sd);
     }

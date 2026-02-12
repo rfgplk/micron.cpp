@@ -9,12 +9,13 @@
 // WARNING: nasty workaround, but we need this here since the attr setting functions in pthread need cpu_set_t in global
 // ns and we'll run into conflicting declarations with bits/cpu-set otherwise
 
+#ifndef _BITS_CPU_SET_H
 #define _BITS_CPU_SET_H 1
 
 typedef struct {
      __syscall_ulong_type __bits[1024/(8*sizeof(__syscall_ulong_type))];
 } cpu_set_t;
-
+#endif
 
 #include "../../array/constexprarray.hpp"
 

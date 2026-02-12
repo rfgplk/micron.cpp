@@ -116,7 +116,7 @@ struct reader {
   read(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
     if ( input.size() < sizeof(header_t) + sizeof(dib_header_t) ) {
-      throw except::library_error("Input too small to be valid BMP");
+      exc<except::library_error>("Input too small to be valid BMP");
     }
 
     header_t bmp_header;
@@ -155,7 +155,7 @@ struct reader {
   extract_header(const S &input)
   {
     if ( input.size() < sizeof(header_t) ) {
-      throw except::library_error("Input too small for BMP header");
+      exc<except::library_error>("Input too small for BMP header");
     }
 
     header_t bmp_header;
@@ -168,7 +168,7 @@ struct reader {
   extract_dib_header(const S &input)
   {
     if ( input.size() < sizeof(header_t) + sizeof(dib_header_t) ) {
-      throw except::library_error("Input too small for DIB header");
+      exc<except::library_error>("Input too small for DIB header");
     }
 
     dib_header_t dib_header;

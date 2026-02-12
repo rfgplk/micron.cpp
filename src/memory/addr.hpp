@@ -6,7 +6,6 @@
 #pragma once
 
 #include "../algorithm/memory.hpp"
-#include "../except.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
@@ -92,7 +91,7 @@ T *
 not_null(T *p)
 {
   if ( p == nullptr )
-    throw except::memory_error("not_null was nullptr");
+   {} //exc<except::memory_error>("not_null was nullptr");
   return p;
 }
 };

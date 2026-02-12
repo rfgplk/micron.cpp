@@ -136,7 +136,7 @@ inline u32
 xxhash32(const byte *src, size_t len)
 {
   if ((((size_t)src) & 7) != 0 ) [[unlikely]]
-    throw except::library_error("micron::hash::xxhash src isn't aligned");
+    exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   //xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {
@@ -169,7 +169,7 @@ inline u64
 xxhash64(const byte *src, size_t len)
 {
   if ((((size_t)src) & 7) != 0 ) [[unlikely]]
-    throw except::library_error("micron::hash::xxhash src isn't aligned");
+    exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   //xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {
@@ -200,7 +200,7 @@ inline u64
 xxhash64_rtseed(const byte *src, u64 seed, size_t len)
 {
   if ((((size_t)src) & 7) != 0 ) [[unlikely]]
-    throw except::library_error("micron::hash::xxhash src isn't aligned");
+    exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   //xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {

@@ -113,7 +113,7 @@ public:
   get()
   {
     if ( !__mem::length )
-      throw except::library_error("micron::binary_heap::get() is empty");
+      exc<except::library_error>("micron::binary_heap::get() is empty");
     if constexpr ( micron::is_class_v<T> ) {
       T v = micron::move(__mem::memory[0]);
       __mem::memory[0] = micron::move(__mem::memory[__mem::length - 1]);
@@ -142,7 +142,7 @@ public:
   max() const
   {
     if ( __mem::memory == nullptr )
-      throw except::library_error("micron::binary_heap::max() is empty.");
+      exc<except::library_error>("micron::binary_heap::max() is empty.");
     return __mem::memory[0];
   }
 };

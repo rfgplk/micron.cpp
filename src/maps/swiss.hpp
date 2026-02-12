@@ -411,7 +411,7 @@ public:
 
     auto result = insert(key, V{});
     if ( !result.first ) {
-      throw except::library_error("micron stack_swiss_map::operator[](): map is full");
+      exc<except::library_error>("micron stack_swiss_map::operator[](): map is full");
     }
     return *result.second;
   }
@@ -421,7 +421,7 @@ public:
   {
     V *v = find(key);
     if ( !v ) {
-      throw except::library_error("micron stack_swiss_map::at(): key not found");
+      exc<except::library_error>("micron stack_swiss_map::at(): key not found");
     }
     return *v;
   }
@@ -431,7 +431,7 @@ public:
   {
     const V *v = find(key);
     if ( !v ) {
-      throw except::library_error("micron stack_swiss_map::at(): key not found");
+      exc<except::library_error>("micron stack_swiss_map::at(): key not found");
     }
     return *v;
   }

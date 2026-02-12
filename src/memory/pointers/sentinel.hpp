@@ -54,6 +54,11 @@ public:
   {
     return internal_pointer == reinterpret_cast<byte*>(u);
   };
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
+  }
   byte *operator->() = delete;
   const byte *
   operator*() const

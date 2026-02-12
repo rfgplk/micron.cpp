@@ -124,7 +124,7 @@ public:
   bisect_array(const A &o)
   {
     if ( o.size() < N )
-      throw except::runtime_error("micron::bisect_array bisect_array(const&) invalid size");
+      exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
     __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
   }
   template <is_container A>
@@ -132,7 +132,7 @@ public:
   bisect_array(A &&o)
   {
     if ( o.size() < N )
-      throw except::runtime_error("micron::bisect_array bisect_array(&&) invalid size");
+      exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
     __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
   }
   bisect_array(const bisect_array &o)
@@ -195,7 +195,7 @@ public:
   operator[](size_t idx) const
   {
     if ( idx >= length )
-      throw except::library_error("micron::bisect_array::erase(): out of range");
+      exc<except::library_error>("micron::bisect_array::erase(): out of range");
     return stack[idx];
   }
 
@@ -203,7 +203,7 @@ public:
   insert(const T &val)
   {
     if ( full() )
-      throw except::library_error("micron::bisect_array::erase(): max capacity reached");
+      exc<except::library_error>("micron::bisect_array::erase(): max capacity reached");
     size_t idx = __bisect_right(val);
     for ( size_t i = length; i > idx; --i )
       stack[i] = stack[i - 1];
@@ -215,7 +215,7 @@ public:
   erase(size_t idx)
   {
     if ( idx >= length )
-      throw except::library_error("micron::bisect_array::erase(): out of range");
+      exc<except::library_error>("micron::bisect_array::erase(): out of range");
     for ( size_t i = idx; i + 1 < length; ++i )
       stack[i] = stack[i + 1];
     --length;

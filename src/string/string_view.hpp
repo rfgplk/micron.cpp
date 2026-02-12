@@ -50,7 +50,7 @@ public:
         __end(reinterpret_cast<typename S::const_iterator>(f.cbegin() + n))
   {
     if ( (n + f.cbegin()) >= f.cend() )
-      throw except::library_error("micron::string_view set() out of memory range");
+      exc<except::library_error>("micron::string_view set() out of memory range");
   }
   string_view(const string_view &o) : __start(o.__start), __end(o.__end) {}
   string_view(string_view &&) = delete;
@@ -76,7 +76,7 @@ public:
     if ( o.empty() )
       return *this;
     if ( n >= o.size() )
-      throw except::library_error("micron::string_view set() out of memory range");
+      exc<except::library_error>("micron::string_view set() out of memory range");
     __start = o.cbegin() + n;
     __end = o.cend();
     return *this;
@@ -85,7 +85,7 @@ public:
   advance(const size_t n)
   {
     if ( n >= (__end - __start) )
-      throw except::library_error("micron::string_view advance() out of memory range");
+      exc<except::library_error>("micron::string_view advance() out of memory range");
     __start += n;
     return *this;
   }
@@ -118,7 +118,7 @@ public:
   at(const size_t n) const
   {
     if ( n >= (__end - __start) )
-      throw except::library_error("micron::string_view operator[] out of memory range");
+      exc<except::library_error>("micron::string_view operator[] out of memory range");
     return __start[n];
   }
   T
@@ -160,7 +160,7 @@ public:
   substr(const size_t a)
   {
     if ( a >= (__end - __start) )
-      throw except::library_error("micron::string_view substr() out of memory range");
+      exc<except::library_error>("micron::string_view substr() out of memory range");
     return string_view(__start + a, __end);
   }
 };

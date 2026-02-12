@@ -45,7 +45,8 @@ public:
   shared_pointer(shared_pointer &&t) noexcept : control(t.control) { t.control = nullptr; }
 
   template <class... Args>
-  explicit shared_pointer(Args &&...args) : control(__alloc::__impl_alloc(__new<Type>(micron::forward<Args>(args)...), 1))
+  explicit shared_pointer(Args &&...args)
+      : control(__alloc::__impl_alloc(__new<Type>(micron::forward<Args>(args)...), 1))
   {
   }
 
@@ -154,7 +155,7 @@ public:
   operator*()
   {
     if ( !control )
-      throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("shared_pointer operator*(): internal_pointer was null");
     return *control->pnt;
   }
 
@@ -162,10 +163,9 @@ public:
   operator*() const
   {
     if ( !control )
-      throw except::memory_error("shared_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("shared_pointer operator*(): internal_pointer was null");
     return *control->pnt;
   }
-
   Type *
   get()
   {
@@ -175,6 +175,42 @@ public:
   get() const
   {
     return control ? control->pnt : nullptr;
+  }
+
+  template <is_pointer_class O>
+  bool
+  operator==(const O &o) const noexcept
+  {
+    return (control ? control->pnt : nullptr) == o.get();
+  }
+  template <is_pointer_class O>
+  bool
+  operator>(const O &o) const noexcept
+  {
+    return (control ? control->pnt : nullptr) > o.get();
+  }
+  template <is_pointer_class O>
+  bool
+  operator<(const O &o) const noexcept
+  {
+    return (control ? control->pnt : nullptr) < o.get();
+  }
+  template <is_pointer_class O>
+  bool
+  operator<=(const O &o) const noexcept
+  {
+    return (control ? control->pnt : nullptr) <= o.get();
+  }
+  template <is_pointer_class O>
+  bool
+  operator>=(const O &o) const noexcept
+  {
+    return (control ? control->pnt : nullptr) >= o.get();
+  }
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return control ? control->pnt != nullptr : false;
   }
 
   bool
@@ -191,5 +227,3 @@ public:
 };
 
 };
-
-

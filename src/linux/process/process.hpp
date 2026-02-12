@@ -239,7 +239,7 @@ run_processes(process_list_t &n)
     t.pids.uid = posix::getuid();
     t.pids.gid = posix::getgid();
     if ( micron::spawn(t.pids.pid, t.path.c_str(), &argv[0], environ) ) {
-      throw except::system_error("micron process failed to start spawn");
+      exc<except::system_error>("micron process failed to start spawn");
     }
   }
 }
@@ -254,7 +254,7 @@ daemon(F f, Args &&...args)
   if ( pid > 0 )                // parent
     _Exit(0);
   if ( posix::setsid() < 0 )
-    throw except::runtime_error("micron process daemon failed to create new session");
+    exc<except::runtime_error>("micron process daemon failed to create new session");
   // don't change dir
   micron::umask(0);
   micron::close(stdin_fileno);

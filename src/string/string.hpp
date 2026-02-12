@@ -116,7 +116,7 @@ public:
       : __mem((ssize_t)Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
   {
     if ( __start >= __end )
-      throw except::library_error("micron::hstring hstring() wrong iterators");
+      exc<except::library_error>("micron::hstring hstring() wrong iterators");
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
   };
@@ -124,7 +124,7 @@ public:
       : __mem(Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
   {
     if ( __start >= __end )
-      throw except::library_error("micron::hstring hstring() wrong iterators");
+      exc<except::library_error>("micron::hstring hstring() wrong iterators");
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
   };
@@ -270,7 +270,7 @@ public:
   stack(void) const
   {
     if ( __mem::size >= 255 )
-      throw except::library_error("micron::hstring stack() out of memory.");
+      exc<except::library_error>("micron::hstring stack() out of memory.");
     return sstr<512, T>(c_str());
   };
   inline const char *
@@ -573,7 +573,7 @@ public:
     }
 
     if ( itr < __mem::memory || itr > __mem::memory + __mem::length )
-      throw except::library_error("micron:string string() out of range");
+      exc<except::library_error>("micron:string string() out of range");
 
     micron::bytemove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
     micron::memset(itr, ch, cnt);
@@ -651,7 +651,7 @@ public:
   at(const size_t n)
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron:string at() out of range");
+      exc<except::library_error>("micron:string at() out of range");
     return (__mem::memory)[n];
   };
 
@@ -659,7 +659,7 @@ public:
   at(const size_t n) const
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron:string at() out of range");
+      exc<except::library_error>("micron:string at() out of range");
     return (__mem::memory)[n];
   };
 
@@ -669,7 +669,7 @@ public:
   at(Itr n)
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      throw except::library_error("micron:sstring at() out of range");
+      exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
 
@@ -679,7 +679,7 @@ public:
   at(Itr n) const
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      throw except::library_error("micron:sstring at() out of range");
+      exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
   template <typename Itr>
@@ -688,7 +688,7 @@ public:
   at(Itr n)
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      throw except::library_error("micron:sstring at() out of range");
+      exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
 
@@ -698,7 +698,7 @@ public:
   at(Itr n) const
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      throw except::library_error("micron:sstring at() out of range");
+      exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
   inline T &
@@ -795,7 +795,7 @@ public:
   substr(size_t pos = 0, size_t cnt = 0) const
   {
     if ( pos > __mem::length or (cnt + pos) > __mem::capacity )
-      throw except::library_error("error micron::string substr invalid range.");
+      exc<except::library_error>("error micron::string substr invalid range.");
     hstring<F> buf(cnt + 1);
     micron::memcpy(&buf[0], &__mem::memory[pos], cnt);
     buf[cnt] = '\0';
@@ -807,7 +807,7 @@ public:
   substr(iterator _start, iterator _end) const
   {
     if ( _start < begin() or _end >= end() )
-      throw except::library_error("error micron::string substr invalid range.");
+      exc<except::library_error>("error micron::string substr invalid range.");
     hstring<F> buf(_end - _start + 1);
     micron::memcpy(&buf[0], _start, _end - _start);
     buf._buf_set_length(_end - _start + 1);
@@ -819,7 +819,7 @@ public:
   substr(const_iterator _start, const_iterator _end) const
   {
     if ( _start < begin() or _end >= end() )
-      throw except::library_error("error micron::string substr invalid range.");
+      exc<except::library_error>("error micron::string substr invalid range.");
     hstring<F> buf(_end - _start + 1);
     micron::memcpy(&buf[0], _start, _end - _start);
     buf._buf_set_length(_end - _start + 1);
@@ -845,7 +845,7 @@ public:
   try_reserve(size_t n)
   {
     if ( (n < __mem::capacity) ) {
-      throw except::memory_error("error micron::string was unable to allocate memory");
+      exc<except::memory_error>("error micron::string was unable to allocate memory");
     }
     // NOTE: this is here because there may be edge cases where hstring has been hard zero'ed out. salvage it in that
     // case
@@ -873,7 +873,7 @@ public:
   erase(I ind, size_t cnt = 1)
   {
     if ( ind > __mem::length || cnt > __mem::length - ind )
-      throw except::library_error("micron:hstring erase() out of range");
+      exc<except::library_error>("micron:hstring erase() out of range");
     if ( !cnt )
       return *this;
     micron::bytemove(&__mem::memory[ind], &__mem::memory[ind + (1 + (cnt - 1))], __mem::length - (ind + 1 + (cnt - 1)));
@@ -888,7 +888,7 @@ public:
   {
     // TODO: signedness
     if ( itr < begin() or itr > end() or cnt > (end() - itr) )
-      throw except::library_error("micron:hstring erase() out of range");
+      exc<except::library_error>("micron:hstring erase() out of range");
     if ( !cnt )
       return *this;
     // micron::memmove(itr - cnt + 1, itr, __mem::length - (&__mem::memory[0] - itr - 1));
@@ -902,7 +902,7 @@ public:
   erase(const_iterator itr, size_t cnt = 1)
   {
     if ( itr < begin() or itr > end() or cnt > (end() - itr) )
-      throw except::library_error("micron:hstring erase() out of range");
+      exc<except::library_error>("micron:hstring erase() out of range");
     if ( !cnt )
       return *this;
     micron::bytemove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));

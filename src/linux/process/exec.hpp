@@ -27,7 +27,7 @@ rexecute(uprocess_t &t)
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
   if ( micron::inplace_spawn(t.pids.pid, t.path.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -40,11 +40,11 @@ rexecute(const T &t)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { &t[0], nullptr };
   if ( micron::inplace_spawn(pid, t.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -57,14 +57,14 @@ rexecute(const T &t, const R &...args)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { &t[0], nullptr };
 
   (argv.insert(argv.begin() + 1, &args[0]), ...);
 
   if ( micron::inplace_spawn(pid, t.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -77,7 +77,7 @@ rexecute(const T &t, A &__argv)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv;
   format::replace_all<0x0>(__argv, " ");
@@ -93,7 +93,7 @@ rexecute(const T &t, A &__argv)
     itr = ++itr_f;
   }
   if ( micron::inplace_spawn(pid, t.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -103,11 +103,11 @@ rexecute(const char *t)
   pid_t pid;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
   if ( micron::inplace_spawn(pid, t, &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -118,14 +118,14 @@ rexecute(const char *t, R *...args)
   pid_t pid;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
 
   (argv.insert(argv.begin() + 1, const_cast<char *>(args)), ...);
 
   if ( micron::inplace_spawn(pid, t, &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -135,7 +135,7 @@ rexecute(const char *t, char **args)
   pid_t pid;
 
   if ( micron::inplace_spawn(pid, t, args, environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -151,7 +151,7 @@ execute(uprocess_t &t)
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
   if ( micron::spawn(t.pids.pid, t.path.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
 }
 
@@ -164,11 +164,11 @@ execute(const T &t)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { &t[0], nullptr };
   if ( micron::spawn(pid, t.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W )
     micron::waitpid(pid, &status, 0);
@@ -184,14 +184,14 @@ execute(const T &t, const R &...args)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { &t[0], nullptr };
 
   (argv.insert(argv.begin() + 1, &args[0]), ...);
 
   if ( micron::spawn(pid, t.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W )
     micron::waitpid(pid, &status, 0);
@@ -207,7 +207,7 @@ execute(const T &t, A &__argv)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv;
   format::replace_all<0x0>(__argv, " ");
@@ -223,7 +223,7 @@ execute(const T &t, A &__argv)
     itr = ++itr_f;
   }
   if ( micron::spawn(pid, t.c_str(), &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W )
     micron::waitpid(pid, &status, 0);
@@ -239,11 +239,11 @@ execute(const char *t)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
   if ( micron::spawn(pid, t, &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W )
     micron::waitpid(pid, &status, 0);
@@ -258,14 +258,14 @@ execute(const char *t, R *...args)
   int status = 0;
   posix::spawnattr_t flags;
   if ( posix::spawnattr_init(flags) != 0 ) {
-    throw except::system_error("micron process failed to init posix::spawnattrs");
+    exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
 
   (argv.insert(argv.begin() + 1, const_cast<char *>(args)), ...);
 
   if ( micron::spawn(pid, t, &argv[0], environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W )
     micron::waitpid(pid, &status, 0);
@@ -280,7 +280,7 @@ execute(const char *t, char **args)
   int status = 0;
 
   if ( micron::spawn(pid, t, args, environ) ) {
-    throw except::system_error("micron process failed to start posix_spawn");
+    exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W )
     micron::waitpid(pid, &status, 0);

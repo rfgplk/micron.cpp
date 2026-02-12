@@ -11,6 +11,8 @@
 #include "thread/signal.hpp"
 #include "types.hpp"
 
+#include "exit.hpp"
+
 namespace micron
 {
 
@@ -73,21 +75,5 @@ stop()
 __attribute__((noinline)) __attribute__((used)) __attribute__((optimize("O0"))) void
 mark()
 {
-}
-
-__attribute__((noreturn)) void
-exit(int s = 0)
-{
-  __builtin__exit(s);
-}
-__attribute__((noreturn)) void
-abort(void)
-{
-  __builtin__exit(sig_abrt);
-}
-__attribute__((noreturn)) void
-quick_exit(const int s = sig_abrt)
-{
-  _Exit(s);
 }
 };

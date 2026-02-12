@@ -173,6 +173,586 @@ upper(T &str)
   }
   return str;
 }
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isalnum(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return (c >= 0x30 && c <= 0x39) ||     // 0-9
+           (c >= 0x41 && c <= 0x5A) ||     // A-Z
+           (c >= 0x61 && c <= 0x7A);       // a-z
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isalpha(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return (c >= 0x41 && c <= 0x5A) ||     // A-Z
+           (c >= 0x61 && c <= 0x7A);       // a-z
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+iscntrl(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return (c >= 0x00 && c <= 0x1F) || c == 0x7F;
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isdigit(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return c >= 0x30 && c <= 0x39;     // 0-9
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isgraph(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return c >= 0x21 && c <= 0x7E;     // visible characters
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isprint(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return c >= 0x20 && c <= 0x7E;
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+ispunct(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return (c >= 0x21 && c <= 0x2F) ||     // !"#$%&'()*+,-./
+           (c >= 0x3A && c <= 0x40) ||     // :;<=>?@
+           (c >= 0x5B && c <= 0x60) ||     // [\]^_`
+           (c >= 0x7B && c <= 0x7E);       // {|}~
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isspace(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return c == 0x20 ||                  // space
+           (c >= 0x09 && c <= 0x0D);     // \t \n \v \f \r
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isxdigit(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return (c >= 0x30 && c <= 0x39) ||     // 0-9
+           (c >= 0x41 && c <= 0x46) ||     // A-F
+           (c >= 0x61 && c <= 0x66);       // a-f
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isascii(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return c >= 0x00 && c <= 0x7F;
+  }
+  return false;
+}
+
+template <typename T>
+  requires micron::is_fundamental_v<T>
+inline bool
+isblank(const T c)
+{
+  if constexpr ( micron::is_same_v<T, char> ) {
+    return c == 0x20 || c == 0x09;
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isalnum(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return (*t >= 0x30 && *t <= 0x39) || (*t >= 0x41 && *t <= 0x5A) || (*t >= 0x61 && *t <= 0x7A);
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isalpha(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return (*t >= 0x41 && *t <= 0x5A) || (*t >= 0x61 && *t <= 0x7A);
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+iscntrl(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return (*t >= 0x00 && *t <= 0x1F) || *t == 0x7F;
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isdigit(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return *t >= 0x30 && *t <= 0x39;
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isgraph(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return *t >= 0x21 && *t <= 0x7E;
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isprint(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return *t >= 0x20 && *t <= 0x7E;
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+ispunct(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return (*t >= 0x21 && *t <= 0x2F) || (*t >= 0x3A && *t <= 0x40) || (*t >= 0x5B && *t <= 0x60)
+           || (*t >= 0x7B && *t <= 0x7E);
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isspace(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return *t == 0x20 || (*t >= 0x09 && *t <= 0x0D);
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isxdigit(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return (*t >= 0x30 && *t <= 0x39) || (*t >= 0x41 && *t <= 0x46) || (*t >= 0x61 && *t <= 0x66);
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isascii(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return *t >= 0x00 && *t <= 0x7F;
+  }
+  return false;
+}
+
+template <typename T>
+inline bool
+isblank(typename T::iterator t)
+{
+  if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
+    return *t == 0x20 || *t == 0x09;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isalnum_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isalnum<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isalpha_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isalpha<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+iscntrl_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !iscntrl<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isdigit_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isdigit<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isgraph_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isgraph<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+islower_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !islower<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isupper_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isupper<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isprint_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isprint<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+ispunct_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !ispunct<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isspace_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isspace<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isxdigit_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isxdigit<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isascii_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isascii<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isblank_all(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( !isblank<T>(itr) )
+      return false;
+  }
+  return true;
+}
+
+template <is_string T>
+bool
+isalnum_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isalnum<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isalpha_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isalpha<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+iscntrl_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( iscntrl<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isdigit_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isdigit<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isgraph_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isgraph<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+islower_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( islower<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isupper_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isupper<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isprint_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isprint<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+ispunct_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( ispunct<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isspace_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isspace<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isxdigit_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isxdigit<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isascii_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isascii<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
+template <is_string T>
+bool
+isblank_any(const T &str)
+{
+  if ( str.empty() )
+    return false;
+  for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
+    if ( isblank<T>(itr) )
+      return true;
+  }
+  return false;
+}
+
 template <char Tk = ' ', is_string T>
 T &
 strip(T &data)
@@ -263,7 +843,7 @@ concat(sstring<N, T> &lhs, const char *rhs)
 {
   auto sz = micron::strlen(rhs);
   if ( sz + lhs.size() > lhs.max_size() )
-    throw micron::except::library_error("concat range error.");
+    exc<except::library_error>("concat range error.");
   auto *p = lhs.begin();
   micron::bytemove(p + sz, p, lhs.size());
   micron::memcpy(p, rhs, sz);
@@ -277,7 +857,7 @@ concat(const char *lhs, sstring<N, T> &rhs)
 {
   auto sz = micron::strlen(lhs);
   if ( sz + rhs.size() > rhs.max_size() )
-    throw micron::except::library_error("concat range error.");
+    exc<except::library_error>("concat range error.");
   auto *p = rhs.begin();
   micron::bytemove(p + sz, p, rhs.size());
   micron::memcpy(p, lhs, sz);
@@ -299,7 +879,7 @@ T
 split(const T &data, size_t at = 0)
 {
   if ( at > data.size() )
-    throw micron::except::library_error("micron::split() out of bounds.");
+    exc<except::library_error>("micron::split() out of bounds.");
   if ( !at )
     return data.substr(data.size() / 2, data.size() - (data.size() / 2));
   return data.substr(at, data.size() - at);
@@ -310,7 +890,7 @@ T
 split(const T &data, typename T::const_iterator itr)
 {
   if ( itr >= data.end() or itr < data.begin() )
-    throw micron::except::library_error("micron::split() out of bounds.");
+    exc<except::library_error>("micron::split() out of bounds.");
   return data.substr(data.begin(), itr);
 }
 
@@ -640,7 +1220,6 @@ find(const T &data, typename T::const_iterator from, const char fnd) -> typename
   return (typename T::iterator) nullptr;
 }
 
-
 template <is_string T>
 auto
 find(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
@@ -809,7 +1388,7 @@ replace(T &str, const char *lhs, const char *rhs)
   auto szl = micron::strlen(lhs);
   auto szr = micron::strlen(rhs);
   if ( (szr - szl) + sz > str.max_size() )
-    throw micron::except::library_error("concat range error.");
+    exc<except::library_error>("concat range error.");
   typename T::iterator itr = find(str, lhs);
   micron::memcpy(itr, rhs, szr);
   micron::bytemove(itr + szr, itr + szl, sz - ((szr - szl) > 0 ? (szr - szl) : 0));
@@ -825,7 +1404,7 @@ replace_all(T &str, const char *lhs, const char *rhs)
   auto szl = micron::strlen(lhs);
   auto szr = micron::strlen(rhs);
   if ( (szr - szl) + sz > str.max_size() )
-    throw micron::except::library_error("concat range error.");
+    exc<except::library_error>("concat range error.");
   typename T::iterator itr = find(str, lhs);
   while ( itr != nullptr ) {
     sz = str.size();
@@ -844,7 +1423,7 @@ replace_all(T &str, const char *lhs)
   auto sz = str.size();
   auto szl = micron::strlen(lhs);
   if ( (szl) + sz > str.max_size() )
-    throw micron::except::library_error("concat range error.");
+    exc<except::library_error>("concat range error.");
   typename T::iterator itr = find(str, lhs);
   while ( itr != nullptr ) {
     sz = str.size();

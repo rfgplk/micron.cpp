@@ -98,7 +98,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("__global_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer operator*(): internal_pointer was null");
   }
   Type &
   operator*()
@@ -106,7 +106,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("__global_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -114,8 +114,13 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("__global_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer operator*(): internal_pointer was null");
   };
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
+  }
   inline Type *
   release() noexcept
   {
@@ -175,7 +180,7 @@ public:
     if ( internal_pointer != nullptr )
       return (*internal_pointer)[n];
     else
-      throw except::memory_error("__global_pointer[] operator[](): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer[] operator[](): internal_pointer was null");
   };
   __global_pointer &
   operator=(Type *&&t)
@@ -218,7 +223,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -226,7 +231,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
   };
   const Type *
   operator->() const
@@ -234,7 +239,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
   };
 
   Type *
@@ -243,7 +248,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("__global_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
   };
 };
 

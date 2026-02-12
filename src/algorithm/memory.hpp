@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../except.hpp"
 #include "../math/generic.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/memory.hpp"
@@ -34,7 +33,8 @@ adistance(T a, F b)     // absolute distance between two pointers, can be of dif
   return math::abs(reinterpret_cast<word *>(b) - reinterpret_cast<word *>(a));
 }
 template <typename T, typename F>
-void overwrite(T& src, F& dest)
+void
+overwrite(T &src, F &dest)
 {
   micron::bytecpy(&src, &dest, dest.size());
   // NOTE: yes it's supposed to look like this
@@ -47,7 +47,8 @@ destroy(T &mem)
 {
   if constexpr ( micron::is_class<T>::value ) {
     mem.~T();
-  } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value && !micron::is_array<T>::value ) {
+  } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value
+                        && !micron::is_array<T>::value ) {
     delete mem;
   }
 }
@@ -195,8 +196,8 @@ copy(const T *restrict src, F *restrict dst)
   return dst;
 }
 template <size_t N, typename T, typename F>
-F&
-copy(const T&restrict src, F&restrict dst)
+F &
+copy(const T &restrict src, F &restrict dst)
 {
   if constexpr ( N <= 32 )
     _memcpy_32(dst, src, N);
@@ -214,7 +215,7 @@ F *
 copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 {
   if ( (end_src - start_src) < 0 )
-    throw except::library_error("micron::copy invalid pointers.");
+    __builtin_abort();     // exc<except::library_error>("micron::copy invalid pointers.");
   if ( N % 16 == 0 && N % 32 != 0 )
     memcpy128(dest, start_src, end_src - start_src);
   else if ( N % 32 == 0 )

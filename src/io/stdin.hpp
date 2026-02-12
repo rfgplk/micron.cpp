@@ -52,7 +52,7 @@ void
 terminal(micron::string &bf)
 {
   if ( !io::__read_from<'\n'>(bf, micron::io::stdin) )
-    throw except::io_error("from_terminal(): failed to read from stream.");
+    exc<except::io_error>("from_terminal(): failed to read from stream.");
   if constexpr ( Echo )
     io::println(bf);
 }
@@ -61,7 +61,7 @@ void
 from_terminal(micron::string &bf)
 {
   if ( !io::__read_from<End>(bf, micron::io::stdin) )
-    throw except::io_error("from_terminal(): failed to read from stream.");
+    exc<except::io_error>("from_terminal(): failed to read from stream.");
 }
 
 template <char End = '\n'>
@@ -70,7 +70,7 @@ from_terminal(void)
 {
   micron::string bf{};
   if ( !io::__read_from<End>(bf, micron::io::stdin) )
-    throw except::io_error("from_terminal(): failed to read from stream.");
+    exc<except::io_error>("from_terminal(): failed to read from stream.");
   return bf;
 }
 
@@ -80,7 +80,7 @@ terminal(void)
 {
   micron::string bf;
   if ( !io::__read_from<'\n'>(bf, micron::io::stdin) )
-    throw except::io_error("from_terminal(): failed to read from stream.");
+    exc<except::io_error>("from_terminal(): failed to read from stream.");
   if constexpr ( Echo )
     io::println(bf);
   return bf;

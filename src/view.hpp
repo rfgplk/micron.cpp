@@ -43,7 +43,7 @@ public:
   operator[](const size_t n) const
   {
     if ( n > (_end - start) )
-      throw except::library_error("micron::view operator[] out of memory range");
+      exc<except::library_error>("micron::view operator[] out of memory range");
     return &start[n];
   }
   const_ptr

@@ -64,7 +64,7 @@ class quake_heap : private Alloc, public immutable_memory<T>
   pop_node(node *root, T &out)
   {
     if ( !root )
-      throw except::library_error("quake_heap::pop() empty");
+      exc<except::library_error>("quake_heap::pop() empty");
     out = micron::move(root->value);
     node *res = merge(root->left, root->right);
     delete root;
@@ -154,7 +154,7 @@ public:
       }
     }
     if ( max__n == SIZE_MAX )
-      throw except::library_error("quake_heap::max() empty");
+      exc<except::library_error>("quake_heap::max() empty");
     return roots[max__n]->value;
   }
 
@@ -169,7 +169,7 @@ public:
       }
     }
     if ( max__n == SIZE_MAX )
-      throw except::library_error("quake_heap::pop() empty");
+      exc<except::library_error>("quake_heap::pop() empty");
     T v;
     roots[max__n] = pop_node(roots[max__n], v);
     return v;

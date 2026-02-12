@@ -40,6 +40,9 @@ fn_loop(void)
   }
   return 5;
 }
+void fn_rt(void){
+}
+
 int
 main(void)
 {
@@ -51,8 +54,8 @@ main(void)
   for ( auto &n : list ) {
     mc::console(n->name());
   }
-  thread().cancel();
-  thread_2().cancel();
-  thread_3().cancel();
+  mc::cancel(thread);
+  mc::cancel(thread_2);
+  mc::cancel(thread_3);
   return 1;
 }

@@ -195,7 +195,7 @@ public:
   {
     micron::lock_guard lock(mtx);
     if ( !control )
-      throw except::memory_error("thread_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("thread_pointer operator*(): internal_pointer was null");
     return *control->pnt;
   }
 
@@ -204,7 +204,7 @@ public:
   {
     micron::lock_guard lock(mtx);
     if ( !control )
-      throw except::memory_error("thread_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("thread_pointer operator*(): internal_pointer was null");
     return *control->pnt;
   }
 
@@ -229,6 +229,12 @@ public:
     return control == nullptr;
   }
 
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    micron::lock_guard lock(mtx);
+    return control ? control->refs : 0;
+  }
   size_t
   refs() const noexcept
   {

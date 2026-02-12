@@ -103,7 +103,7 @@ public:
   conarray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
-      throw except::runtime_error("micron::conarray conarray(init_list): init_list too large.");
+      exc<except::runtime_error>("micron::conarray conarray(init_list): init_list too large.");
     size_t i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
@@ -113,7 +113,7 @@ public:
   conarray(const A &o)
   {
     if ( o.size() < N )
-      throw except::runtime_error("micron::conarray conarray(const&) invalid size");
+      exc<except::runtime_error>("micron::conarray conarray(const&) invalid size");
     __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
   }
   template <is_container A>
@@ -121,7 +121,7 @@ public:
   conarray(A &&o)
   {
     if ( o.size() < N )
-      throw except::runtime_error("micron::conarray conarray(&&) invalid size");
+      exc<except::runtime_error>("micron::conarray conarray(&&) invalid size");
     __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
   }
   conarray(const conarray &o)

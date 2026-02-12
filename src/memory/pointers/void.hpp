@@ -54,7 +54,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("void_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("void_pointer operator*(): internal_pointer was null");
   }
   template <typename Type>
   inline Type *

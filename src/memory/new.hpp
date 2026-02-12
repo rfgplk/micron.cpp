@@ -41,7 +41,7 @@ operator new(size_t size, Args &&...args)
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
   }
-  throw micron::except::memory_error("micron::operator new(): micron::__alloc failed");
+  micron::exc<micron::except::memory_error>("micron::operator new(): micron::__alloc failed");
 }
 template <typename... Args>
 void *
@@ -53,7 +53,7 @@ operator new[](size_t size, Args &&...args)
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
   }
-  throw micron::except::memory_error("micron::operator new[]: micron::__alloc failed");
+  micron::exc<micron::except::memory_error>("micron::operator new[]: micron::__alloc failed");
 }
 */
 // leave these as void
@@ -65,7 +65,7 @@ operator new(size_t size)
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
   }
-  throw micron::except::memory_error("micron::operator new(): micron::__alloc failed");
+  micron::exc<micron::except::memory_error>("micron::operator new(): micron::__alloc failed");
 }
 
 template <typename P>
@@ -86,7 +86,7 @@ operator new[](size_t size)
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
   }
-  throw micron::except::memory_error("micron::operator new[]: micron::__alloc failed");
+  micron::exc<micron::except::memory_error>("micron::operator new[]: micron::__alloc failed");
 }
 
 void

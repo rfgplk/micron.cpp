@@ -21,7 +21,7 @@ __base_fork()
 {
   int pid = micron::posix::__fork_clone(sig_chld);     // should be sig_chld
   if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
+    exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 
@@ -32,10 +32,10 @@ __base_fork(Args &&...args)
 {
   addr_t *fstack = micron::addrmap(Stack);
   if ( micron::mmap_failed(fstack) )
-    throw except::system_error("micron process micron::mmap failed to allocate stack");
+    exc<except::system_error>("micron process micron::mmap failed to allocate stack");
   int pid = micron::posix::clone<Stack, Fn>(fstack, __fork_flags_std, micron::forward<Args>(args)...);
   if ( pid == -1 )
-    throw except::system_error("micron process failed to fork()");
+    exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 

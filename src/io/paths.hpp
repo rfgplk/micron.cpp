@@ -164,7 +164,7 @@ public:
   resolve(const char *cstr)
   {
     if ( micron::strlen(cstr) >= max_name )
-      throw except::library_error("io::resolve out of range.");
+      exc<except::library_error>("io::resolve out of range.");
     micron::sstr<max_name> str(cstr);
     if ( str == "." )
       return absolute(str).at(0);

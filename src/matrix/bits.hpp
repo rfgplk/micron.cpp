@@ -55,7 +55,7 @@ public:
   int_matrix_base_avx(const std::initializer_list<B> &lst)
   {
     if ( lst.size() != __size )
-      throw except::library_error("micron::int8x8 initializer_list out of bounds");
+      exc<except::library_error>("micron::int8x8 initializer_list out of bounds");
     micron::bytecpy(__mat, lst.data(), __size * sizeof(B));
   }
   int_matrix_base_avx(const int_matrix_base_avx &o) { micron::cmemcpy<__size>(__mat, o.__mat); }

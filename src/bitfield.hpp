@@ -40,7 +40,7 @@ public:
   {
     size_t sz = micron::strlen(ch);
     if ( sz > (N) )
-      throw except::library_error("micron::bitfield bitfield initialization string is too long");
+      exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
     for ( size_t i = 0; i < (sz / 8); i++ ) {
       if ( ch[i] == zero ) [[likely]] {
       } else if ( ch[i] == one )     // zero by default so no need for that
@@ -50,7 +50,7 @@ public:
   template <is_string T> bitfield(const T &str, const T zero = '0', const T one = '1')     // standard modified
   {
     if ( str.size() > (N) )
-      throw except::library_error("micron::bitfield bitfield initialization string is too long");
+      exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
     for ( size_t i = 0; i < (str.size() / 8); i++ ) {
       if ( str[i] == zero ) [[likely]] {
       } else if ( str[i] == one )     // zero by default so no need for that
@@ -103,14 +103,14 @@ public:
   at(const size_t n)
   {
     if ( n >= N / 8 )
-      throw except::out_of_range_error("micron::bitfield at() out of range");
+      exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
   constexpr const R
   at(const size_t n) const
   {
     if ( n >= N / 8 )
-      throw except::out_of_range_error("micron::bitfield at() out of range");
+      exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
   constexpr bool

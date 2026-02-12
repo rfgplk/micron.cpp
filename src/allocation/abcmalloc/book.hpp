@@ -49,7 +49,7 @@ template <u64 Sz> class sheet
       if ( micron::munmap(micron::real_addr(__kernel_memory.ptr), __kernel_memory.len) == -1 ) {
         micron::abort();
       }
-      // throw micron::except::memory_error("abcmalloc ~sheet(): failed to unmap memory");
+      // exc<except::memory_error>("abcmalloc ~sheet(): failed to unmap memory");
       __kernel_memory.ptr = nullptr;
       __kernel_memory.len = 0;
     }

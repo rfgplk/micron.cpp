@@ -199,7 +199,7 @@ public:
   max()
   {
     if ( !min_root )
-      throw except::library_error("fibonacci_heap::max() empty");
+      exc<except::library_error>("fibonacci_heap::max() empty");
     return min_root->value;
   }
 
@@ -207,7 +207,7 @@ public:
   pop()
   {
     if ( !min_root )
-      throw except::library_error("fibonacci_heap::pop() empty");
+      exc<except::library_error>("fibonacci_heap::pop() empty");
     node *z = min_root;
     if ( z->child ) {
       node *c = z->child;

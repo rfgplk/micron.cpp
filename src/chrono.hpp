@@ -83,32 +83,32 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     micron::memset(&time_begin, 0x0, sizeof(timespec_t));
     micron::memset(&time_end, 0x0, sizeof(timespec_t));
     if ( micron::clock_gettime((clockid_t)C, time_begin) == -1 )
-      throw except::runtime_error("micron::system_clock failed to get time");
+      exc<except::runtime_error>("micron::system_clock failed to get time");
   }
   inline __attribute__((always_inline)) void
   start(void)
   {
     if ( micron::clock_gettime((clockid_t)C, time_begin) == -1 )
-      throw except::runtime_error("micron::system_clock failed to get time");
+      exc<except::runtime_error>("micron::system_clock failed to get time");
   }
   inline __attribute__((always_inline)) auto
   start_get(void) -> timespec_t
   {
     if ( micron::clock_gettime((clockid_t)C, time_begin) == -1 )
-      throw except::runtime_error("micron::system_clock failed to get time");
+      exc<except::runtime_error>("micron::system_clock failed to get time");
     return time_begin;
   }
   inline __attribute__((always_inline)) void
   stop(void)
   {
     if ( micron::clock_gettime((clockid_t)C, time_end) == -1 )
-      throw except::runtime_error("micron::system_clock failed to get time");
+      exc<except::runtime_error>("micron::system_clock failed to get time");
   }
   inline __attribute__((always_inline)) auto
   stop_get(void) -> timespec_t
   {
     if ( micron::clock_gettime((clockid_t)C, time_end) == -1 )
-      throw except::runtime_error("micron::system_clock failed to get time");
+      exc<except::runtime_error>("micron::system_clock failed to get time");
     return time_end;
   }
   inline __attribute__((always_inline)) static auto
@@ -116,7 +116,7 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
   {
     timespec_t t;
     if ( micron::clock_gettime((clockid_t)C, t) == -1 )
-      throw except::runtime_error("micron::system_clock failed to get time");
+      exc<except::runtime_error>("micron::system_clock failed to get time");
     auto msec = t.tv_nsec / 1000000;
     return static_cast<duration_d>(t.tv_sec) * 1000 +
     static_cast<duration_d>(msec);
@@ -186,7 +186,7 @@ now(void)
 {
   timespec_t t;
   if ( micron::clock_gettime((clockid_t)clock_realtime_alarm, t) == -1 )
-    throw except::runtime_error("micron::now failed to get time");
+    exc<except::runtime_error>("micron::now failed to get time");
   auto msec = t.tv_nsec / 1000000;
   return static_cast<duration_d>(t.tv_sec) * 1000 +
   static_cast<duration_d>(msec);

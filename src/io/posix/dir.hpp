@@ -40,42 +40,42 @@ struct dir {
   dir(const char *str)
   {
     if ( !verify(str) )
-      throw except::filesystem_error("error in creating micron::dir, malformed string.");
+      exc<except::filesystem_error>("error in creating micron::dir, malformed string.");
     if ( !exists(str) )
-      throw except::filesystem_error("micron::dir dir doesn't exist");
+      exc<except::filesystem_error>("micron::dir dir doesn't exist");
     if ( !is_dir(str) )
-      throw except::filesystem_error("micron::dir dir isn't a dir (check type)");
+      exc<except::filesystem_error>("micron::dir dir isn't a dir (check type)");
     dp = posix::opendir(str);
     if ( dp.has_error() or dp.closed() )
-      throw except::filesystem_error("micron::dir failed to open");
+      exc<except::filesystem_error>("micron::dir failed to open");
     list();     // init base structure
     dname = str;
   }
   dir(const micron::sstr<max_name> &str)
   {
     if ( !verify(str) )
-      throw except::filesystem_error("error in creating micron::dir, malformed string.");
+      exc<except::filesystem_error>("error in creating micron::dir, malformed string.");
     if ( !exists(str.c_str()) )
-      throw except::filesystem_error("micron::dir dir doesn't exist");
+      exc<except::filesystem_error>("micron::dir dir doesn't exist");
     if ( !is_dir(str.c_str()) )
-      throw except::filesystem_error("micron::dir dir isn't a dir (check type)");
+      exc<except::filesystem_error>("micron::dir dir isn't a dir (check type)");
     dp = posix::opendir(str.c_str());
     if ( dp.has_error() or dp.closed() )
-      throw except::filesystem_error("micron::dir failed to open");
+      exc<except::filesystem_error>("micron::dir failed to open");
     list();     // init base structure
     dname = str;
   }
   dir(const micron::string &str)
   {
     if ( !verify(str) )
-      throw except::filesystem_error("error in creating micron::dir, malformed string.");
+      exc<except::filesystem_error>("error in creating micron::dir, malformed string.");
     if ( !exists(str.c_str()) )
-      throw except::filesystem_error("micron::dir dir doesn't exist");
+      exc<except::filesystem_error>("micron::dir dir doesn't exist");
     if ( !is_dir(str.c_str()) )
-      throw except::filesystem_error("micron::dir dir isn't a dir (check type)");
+      exc<except::filesystem_error>("micron::dir dir isn't a dir (check type)");
     dp = posix::opendir(str.c_str());
     if ( dp.has_error() or dp.closed() )
-      throw except::filesystem_error("micron::dir failed to open");
+      exc<except::filesystem_error>("micron::dir failed to open");
     list();     // init base structure
     dname = str;
   }
@@ -147,7 +147,7 @@ struct dir {
 
     dp = posix::opendir(pstr.c_str());
     if ( dp.has_error() or dp.closed() )
-      throw except::filesystem_error("micron::dir failed to open");
+      exc<except::filesystem_error>("micron::dir failed to open");
     list();
     dname = ::realpath(pstr.c_str(), NULL);
     return *this;
@@ -164,7 +164,7 @@ struct dir {
       posix::closedir(dp);
     dp = posix::opendir(str);
     if ( dp.has_error() or dp.closed() )
-      throw except::filesystem_error("micron::dir failed to open");
+      exc<except::filesystem_error>("micron::dir failed to open");
     list();
     dname = ::realpath(str, NULL);
     return *this;
@@ -189,7 +189,7 @@ struct dir {
         pstr += n.a.d_name;
         dp = posix::opendir(str);
         if ( dp.has_error() or dp.closed() )
-          throw except::filesystem_error("micron::dir failed to open");
+          exc<except::filesystem_error>("micron::dir failed to open");
         list();     // init base structure
         dname = str;
         return *this;
@@ -213,7 +213,7 @@ struct dir {
       pstr += "/";
       pstr += e.d_name;
       if ( posix::stat(pstr.c_str(), sd) != 0 )
-        throw except::filesystem_error("micron::dir failed to stat dir");
+        exc<except::filesystem_error>("micron::dir failed to stat dir");
       dd.emplace_back(
           micron::tie(micron::move(e),
                       micron::move(sd)));     // try to avoid senseless copying, replace with preallocated eventually
@@ -225,7 +225,7 @@ private:
   alive(void) const
   {
     if ( dp.has_error() or dp.closed() ) {
-      throw except::filesystem_error("micron::linux_dir, dp isn't open.");
+      exc<except::filesystem_error>("micron::linux_dir, dp isn't open.");
       return false;
     }
     return true;

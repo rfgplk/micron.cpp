@@ -111,7 +111,7 @@ public:
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
-        throw except::runtime_error("micron::memory [] out of bounds");
+        exc<except::runtime_error>("micron::memory [] out of bounds");
     }
     return memory.ptr[n];
   }
@@ -120,7 +120,7 @@ public:
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
-        throw except::runtime_error("micron::memory [] out of bounds");
+        exc<except::runtime_error>("micron::memory [] out of bounds");
     }
     return memory.ptr[n];
   }
@@ -135,7 +135,7 @@ public:
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
-        throw except::runtime_error("micron::memory [] out of bounds");
+        exc<except::runtime_error>("micron::memory [] out of bounds");
     }
     return &memory.ptr[n];
   }
@@ -144,7 +144,7 @@ public:
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
-        throw except::runtime_error("micron::memory [] out of bounds");
+        exc<except::runtime_error>("micron::memory [] out of bounds");
     }
     return memory.ptr[n];
   }

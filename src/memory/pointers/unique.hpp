@@ -94,6 +94,11 @@ public:
     return internal_pointer >= o.get();
   }
 
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
+  }
   bool
   operator!(void) const noexcept
   {
@@ -105,7 +110,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator->(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer operator->(): internal_pointer was null");
   }
   Type &
   operator*()
@@ -113,7 +118,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -121,7 +126,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer operator*(): internal_pointer was null");
   };
   inline Type *
   release() noexcept
@@ -193,7 +198,7 @@ public:
     if ( internal_pointer != nullptr )
       return (internal_pointer)[n];
     else
-      throw except::memory_error("unique_pointer[] operator[](): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer[] operator[](): internal_pointer was null");
   };
   const Type &
   operator[](const size_t n) const
@@ -201,7 +206,7 @@ public:
     if ( internal_pointer != nullptr )
       return (internal_pointer)[n];
     else
-      throw except::memory_error("unique_pointer[] operator[](): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer[] operator[](): internal_pointer was null");
   };
   unique_pointer &
   operator=(Type *&t) noexcept
@@ -255,7 +260,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer[] operator*(): internal_pointer was null");
   };
   const Type &
   operator*() const
@@ -263,7 +268,7 @@ public:
     if ( internal_pointer != nullptr )
       return *internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer[] operator*(): internal_pointer was null");
   };
   const Type *
   operator->() const
@@ -271,7 +276,7 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator->(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer[] operator->(): internal_pointer was null");
   };
 
   Type *
@@ -280,8 +285,14 @@ public:
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      throw except::memory_error("unique_pointer[] operator->(): internal_pointer was null");
+      exc<except::memory_error>("unique_pointer[] operator->(): internal_pointer was null");
   };
+
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
+  }
 };
 
 };

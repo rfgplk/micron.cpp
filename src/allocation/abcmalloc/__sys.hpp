@@ -64,7 +64,7 @@ struct sys_allocator {
     else if constexpr ( Sz == large_page_size )
       ptr = micron::map_large(nullptr, n);
     if ( !__validate_mmap_addr(ptr) )
-      throw except::memory_error("sys_allocator::alloc(): mmap() failed");
+      exc<except::memory_error>("sys_allocator::alloc(): mmap() failed");
 
     if ( micron::madvise(ptr, n, micron::madv_dontneed) != 0 ) {
     }
@@ -76,10 +76,10 @@ struct sys_allocator {
   dealloc(T *mem, size_t len)
   {     // deallocate at location N
     if ( mem == nullptr )
-      throw except::memory_error("sys_allocator::dealloc(): nullptr was provided");
+      exc<except::memory_error>("sys_allocator::dealloc(): nullptr was provided");
     // micron::munmap(mem, len);
     if ( micron::munmap(mem, len) == -1 )
-      throw except::memory_error("sys_allocator::dealloc(): munmap() failed");
+      exc<except::memory_error>("sys_allocator::dealloc(): munmap() failed");
     mem = nullptr;
   }
 };

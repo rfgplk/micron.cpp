@@ -121,7 +121,7 @@ public:
   array(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
-      throw except::runtime_error("micron::array array(init_list): init_list too large.");
+      exc<except::runtime_error>("micron::array array(init_list): init_list too large.");
     size_t i = 0;
     for ( auto &&value : lst )
       stack[i++] = micron::move(value);
@@ -131,7 +131,7 @@ public:
   array(const A &o)
   {
     if ( o.size() < N )
-      throw except::runtime_error("micron::array array(const&) invalid size");
+      exc<except::runtime_error>("micron::array array(const&) invalid size");
     __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
   }
   template <is_container A>
@@ -139,7 +139,7 @@ public:
   array(A &&o)
   {
     if ( o.size() < N )
-      throw except::runtime_error("micron::array array(&&) invalid size");
+      exc<except::runtime_error>("micron::array array(&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
       __impl_move(micron::addr(o[0]), stack);
     else
@@ -199,14 +199,14 @@ public:
   at(const size_t i)
   {
     if ( i >= N )
-      throw except::runtime_error("micron::array at() out of range.");
+      exc<except::runtime_error>("micron::array at() out of range.");
     return stack[i];
   }
   const T &
   at(const size_t i) const
   {
     if ( i >= N )
-      throw except::runtime_error("micron::array at() out of range.");
+      exc<except::runtime_error>("micron::array at() out of range.");
     return stack[i];
   }
   inline T &

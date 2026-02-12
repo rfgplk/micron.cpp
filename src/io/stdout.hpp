@@ -930,6 +930,17 @@ println(const T &...str)
   }
 }
 
+template <typename... T>
+inline void
+println(const T *...str)
+{
+  if constexpr ( sizeof...(T) > 1 ) {
+    (printk(str), ...);
+    printk("\n");
+  } else {
+    (printkn(str), ...);
+  }
+}
 // error functions
 // error = print / no new line
 // errork = print / newline after each arg

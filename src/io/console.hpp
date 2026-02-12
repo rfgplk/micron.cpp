@@ -71,7 +71,7 @@ struct ansi_colors {
 inline void
 set_color_reset(void)
 {
-  const char* buf = "\033[0m";
+  const char *buf = "\033[0m";
   io::print(buf);
 };
 
@@ -190,12 +190,12 @@ cerror(const T &...str)
   set_color(color::red, style::bold);
   io::errorln(str...);
   set_color_reset();
-  (throw except::standard_error(str), ...);
+  (exc<except::standard_error>(str), ...);
 }
 
 template <typename... T>
 inline void
-__micron_log(const char* FILEMACRO, int line, const T &...str)
+__micron_log(const char *FILEMACRO, int line, const T &...str)
 {
   set_color(color::cyan, style::italic);
   set_color(color::cyan, style::bold);
@@ -212,8 +212,8 @@ __micron_log(const char* FILEMACRO, int line, const T &...str)
   io::println("\n");
 }
 
-// has to be like this so we don't get conflicts with float/stl libs 
-#define infolog(x) __micron_log( __FILE__, __LINE__, x )
+// has to be like this so we don't get conflicts with float/stl libs
+#define infolog(x) __micron_log(__FILE__, __LINE__, x)
 
 // TODO: isn't behind a mtx, not ts, FIX
 
@@ -223,6 +223,13 @@ inline void
 console_newline(void)
 {
   io::println("\n");
+}
+template <typename... T>
+  requires(micron::is_pointer_v<T> and ...)
+inline void
+console(const T &...str)
+{
+  io::println(str...);
 }
 template <typename... T>
 inline void

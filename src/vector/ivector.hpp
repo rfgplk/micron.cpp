@@ -68,7 +68,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   __itr(size_t n)
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::ivector itr() out of bounds");
+      exc<except::library_error>("micron::ivector itr() out of bounds");
     return &(__mem::memory)[n];
   }
 public:
@@ -223,14 +223,14 @@ public:
   at(size_t n) const
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::ivector at() out of bounds");
+      exc<except::library_error>("micron::ivector at() out of bounds");
     return (__mem::memory)[n];
   }
   size_t
   at_n(iterator i) const
   {
     if ( i - begin() >= __mem::length )
-      throw except::library_error("micron::ivector at_n() out of bounds");
+      exc<except::library_error>("micron::ivector at_n() out of bounds");
     return static_cast<size_t>(i - begin());
   }
   // return const iterator, immutable
@@ -238,7 +238,7 @@ public:
   itr(size_t n) const
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::ivector itr() out of bounds");
+      exc<except::library_error>("micron::ivector itr() out of bounds");
     return &(__mem::memory)[n];
   }
   template <typename F>
@@ -294,14 +294,14 @@ public:
   get(const size_t n)
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::ivector get() out of range");
+      exc<except::library_error>("micron::ivector get() out of range");
     return &(__mem::memory[n]);
   }
   inline const_iterator
   cget(const size_t n)
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::ivector cget() out of range");
+      exc<except::library_error>("micron::ivector cget() out of range");
     return &(__mem::memory[n]);
   }
   inline const_iterator

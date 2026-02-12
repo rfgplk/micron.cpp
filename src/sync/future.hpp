@@ -82,7 +82,7 @@ public:
   {
     lock_guard<mutex> lck(mtx);
     if ( ready ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     new (&storage.value) T(micron::forward<Args>(args)...);
     ready = true;
@@ -96,7 +96,7 @@ public:
 
     lock_guard<mutex> lck(mtx);
     if ( retrieved ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     retrieved = true;
 
@@ -163,7 +163,7 @@ public:
   {
     lock_guard<mutex> lck(mtx);
     if ( ready ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     ready = true;
   }
@@ -175,7 +175,7 @@ public:
 
     lock_guard<mutex> lck(mtx);
     if ( retrieved ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     retrieved = true;
   }
@@ -242,7 +242,7 @@ public:
   {
     lock_guard<mutex> lck(mtx);
     if ( ready ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     ptr = &ref;
     ready = true;
@@ -254,7 +254,7 @@ public:
 
     lock_guard<mutex> lck(mtx);
     if ( retrieved ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     retrieved = true;
 
@@ -318,7 +318,7 @@ public:
   get()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     return state->get();
   }
@@ -333,7 +333,7 @@ public:
   wait() const
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->wait();
   }
@@ -342,7 +342,7 @@ public:
   wait_for(micron::duration_d timeout_duration) const
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     return state->wait_for(timeout_duration);
   }
@@ -390,7 +390,7 @@ public:
   get()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->get();
   }
@@ -405,7 +405,7 @@ public:
   wait() const
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->wait();
   }
@@ -414,7 +414,7 @@ public:
   wait_for(micron::duration_d timeout_duration) const
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     return state->wait_for(timeout_duration);
   }
@@ -462,7 +462,7 @@ public:
   get()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     return state->get();
   }
@@ -477,7 +477,7 @@ public:
   wait() const
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->wait();
   }
@@ -486,7 +486,7 @@ public:
   wait_for(micron::duration_d timeout_duration) const
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     return state->wait_for(timeout_duration);
   }
@@ -537,10 +537,10 @@ public:
   get_future()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     if ( future_retrieved ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     future_retrieved = true;
     return future<T>(state);
@@ -550,7 +550,7 @@ public:
   set_value(const T &value)
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->set_value(value);
   }
@@ -559,7 +559,7 @@ public:
   set_value(T &&value)
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->set_value(micron::move(value));
   }
@@ -619,10 +619,10 @@ public:
   get_future()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     if ( future_retrieved ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     future_retrieved = true;
     return future<void>(state);
@@ -632,7 +632,7 @@ public:
   set_value()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->set_value();
   }
@@ -686,10 +686,10 @@ public:
   get_future()
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     if ( future_retrieved ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     future_retrieved = true;
     return future<T &>(state);
@@ -699,7 +699,7 @@ public:
   set_value(T &value)
   {
     if ( !state ) {
-      throw except::future_error("");
+      exc<except::future_error>("");
     }
     state->set_value(value);
   }

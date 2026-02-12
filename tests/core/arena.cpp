@@ -76,12 +76,12 @@ main(void)
   {
     mc::console("Maximum threads = ", mc::maximum_threads);
     mc::standard_arena arena;
-    for ( size_t i = 0; i < 12; i++ ) {
-      arena.create_burden([&]() -> int {
-        mc::ssleep(1);
-        // mc::cpu_pause<1000000000>();
+    for ( int i = 0; i < 12; i++ ) {
+      arena.create_burden([&](int x) -> int {
+          mc::sleep(x * 100);
+          mc::console(x);
         return 0;
-      });     // throws because console isn't ts, fix it
+      }, i);     // throws because console isn't ts, fix it
     }
     arena.join_all();
   }

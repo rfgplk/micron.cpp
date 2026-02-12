@@ -97,7 +97,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( heap.empty() )
-      throw except::library_error("micron::heapq::top() is empty");
+      exc<except::library_error>("micron::heapq::top() is empty");
 
     T min_val = heap[0];
     heap[0] = heap.back();
@@ -112,7 +112,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( heap.empty() )
-      throw except::library_error("micron::heapq::top() is empty");
+      exc<except::library_error>("micron::heapq::top() is empty");
     return heap[0];
   }
 

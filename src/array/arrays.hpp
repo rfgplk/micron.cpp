@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../except.hpp"
+
 #include "conarray.hpp"
 #include "array.hpp"
 #include "farray.hpp"

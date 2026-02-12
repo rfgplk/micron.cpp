@@ -94,7 +94,7 @@ public:
   validate(const char *header)
   {
     if ( header[0] != 'P' || (header[1] != '3' && header[1] != '6') ) {
-      throw std::runtime_error("Invalid PPM signature");
+      exc<except::library_error>("Invalid PPM signature");
     }
   }
 
@@ -291,7 +291,7 @@ public:
   read(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
     if ( input.size() < 3 ) {
-      throw std::runtime_error("Input too small to be valid PPM");
+      exc<except::library_error>("Input too small to be valid PPM");
     }
 
     writer::validate(input.data());
@@ -310,7 +310,7 @@ public:
   extract_dimensions(const S &input, i32 &width, i32 &height)
   {
     if ( input.size() < 3 ) {
-      throw std::runtime_error("Input too small for PPM header");
+      exc<except::library_error>("Input too small for PPM header");
     }
 
     writer::validate(input.data());
@@ -340,7 +340,7 @@ private:
 
     const i32 max_val = parse_number(input, pos);
     if ( max_val != 255 ) {
-      throw std::runtime_error("Only 255 max value supported");
+      exc<except::library_error>("Only 255 max value supported");
     }
 
     skip_single_whitespace(input, pos);
@@ -354,7 +354,7 @@ private:
 
     for ( i32 i = 0; i < width * height; ++i ) {
       if ( pos + 3 > input.size() ) {
-        throw std::runtime_error("Truncated pixel data");
+        exc<except::library_error>("Truncated pixel data");
       }
 
       pixel &px = pixels[i];
@@ -379,7 +379,7 @@ private:
 
     const i32 max_val = parse_number(input, pos);
     if ( max_val != 255 ) {
-      throw std::runtime_error("Only 255 max value supported");
+      exc<except::library_error>("Only 255 max value supported");
     }
 
     pixels.resize(width * height);
@@ -446,7 +446,7 @@ private:
     }
 
     if ( !found_digit ) {
-      throw std::runtime_error("Expected number");
+      exc<except::library_error>("Expected number");
     }
 
     return result;

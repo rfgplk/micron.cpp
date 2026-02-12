@@ -103,7 +103,7 @@ public:
   svector(const std::initializer_list<T> &lst)
   {
     if ( lst.size() > N )
-      throw except::runtime_error("error micron::svector() initializer_list too large.");
+      exc<except::runtime_error>("error micron::svector() initializer_list too large.");
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_t i = 0;
       for ( T value : lst )
@@ -170,7 +170,7 @@ public:
   at(const size_t n)
   {
     if ( n >= N )
-      throw except::runtime_error("micron::svector at() out of range.");
+      exc<except::runtime_error>("micron::svector at() out of range.");
     return stack[N];
   }
   const_iterator
@@ -251,7 +251,7 @@ public:
   erase(size_t n)
   {
     if ( n >= N or n >= length )
-      throw except::runtime_error("micron::svector erase() out of range.");
+      exc<except::runtime_error>("micron::svector erase() out of range.");
     stack[n].~T();
     micron::memmove(micron::real_addr_as<T>(stack[n]), micron::real_addr_as<T>(stack[n + 1]), length - n - 1);
     czero<sizeof(svector) / sizeof(byte)>((byte *)micron::voidify(micron::real_addr_as<T>(stack[length-- - 1])));
@@ -263,7 +263,7 @@ public:
   append(const svector<C, M> &o)
   {
     if ( length + M >= N )
-      throw except::runtime_error("micron::svector push_back() out of range.");
+      exc<except::runtime_error>("micron::svector push_back() out of range.");
     for ( size_t i = length, j = 0; j < o.size(); i++, j++ )
       stack[i] = o[j];
     length += o.size();
@@ -283,7 +283,7 @@ public:
   emplace_back(Args &&...args)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector emplace_back() out of range.");
+      exc<except::runtime_error>("micron::svector emplace_back() out of range.");
     stack[length++] = T(micron::forward<Args>(args)...);
     return *this;
   }
@@ -291,7 +291,7 @@ public:
   move_back(T &&i)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector push_back() out of range.");
+      exc<except::runtime_error>("micron::svector push_back() out of range.");
     stack[length++] = micron::move(i);
     return *this;
   }
@@ -300,7 +300,7 @@ public:
   push_back(const C &i)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector push_back() out of range.");
+      exc<except::runtime_error>("micron::svector push_back() out of range.");
     stack[length++] = i;
     return *this;
   }
@@ -309,7 +309,7 @@ public:
   append(const C &i)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector push_back() out of range.");
+      exc<except::runtime_error>("micron::svector push_back() out of range.");
     stack[length++] = i;
     return *this;
   }
@@ -318,7 +318,7 @@ public:
   insert(size_t ind, const C &i)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector insert() out of range.");
+      exc<except::runtime_error>("micron::svector insert() out of range.");
     micron::bytemove(&(stack)[ind] + sizeof(C), &(stack)[ind], sizeof(C) / sizeof(byte));
     stack[ind] = i;
     length += 1;
@@ -330,7 +330,7 @@ public:
   insert(iterator itr, const C &i)
   {
     if ( length + 1 >= N )
-      throw except::runtime_error("micron::svector insert() out of range.");
+      exc<except::runtime_error>("micron::svector insert() out of range.");
     micron::bytemove(itr + sizeof(C), itr, sizeof(C) / sizeof(byte));
     *itr = i;
     length += 1;

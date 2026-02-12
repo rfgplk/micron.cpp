@@ -84,7 +84,7 @@ template <typename T> class stl_allocator
   {
     const auto ptr = micron::__alloc(sizeof(T) * cnt);     // std::malloc(sizeof(T) * cnt);
     if ( !ptr )
-      throw except::memory_error();
+      exc<except::memory_error>();
     return static_cast<T *>(ptr);
   }
   void
@@ -236,7 +236,7 @@ public:
   chunk<byte>
   grow(byte *ptr, size_t old, size_t n)
   {
-    throw except::memory_error("The total memory allocator cannot grow");
+    exc<except::memory_error>("The total memory allocator cannot grow");
   }
   void
   destroy(const chunk<byte> &mem)

@@ -6,11 +6,11 @@
 #pragma once
 
 #include "../array.hpp"
+#include "../memory/actions.hpp"
 #include "../memory/new.hpp"
 #include "../pointer.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
-#include "../utility.hpp"
 #include "../vector/fvector.hpp"
 #include "hash/hash.hpp"
 
@@ -360,11 +360,11 @@ template <typename K, typename V, int Dg = 32>
   requires micron::is_move_constructible_v<V>
 class btree_map
 {
+  using node_type = btree_map_node<K, V, Dg>;
   micron::uptr<node_type> root;
   size_t _size;
 
 public:
-  using node_type = btree_map_node<K, V, Dg>;
   using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
@@ -372,7 +372,6 @@ public:
   using key_type = K;
   using mapped_type = V;
   using value_type = typename node_type::kv_pair;
-
 
   ~btree_map() = default;
 
@@ -533,7 +532,7 @@ public:
   {
     V *val = find(key);
     if ( !val ) {
-      throw except::library_error("btree_map::at: key not found");
+      exc<except::library_error>("btree_map::at: key not found");
     }
     return *val;
   }
@@ -543,7 +542,7 @@ public:
   {
     const V *val = find(key);
     if ( !val ) {
-      throw except::library_error("btree_map::at: key not found");
+      exc<except::library_error>("btree_map::at: key not found");
     }
     return *val;
   }

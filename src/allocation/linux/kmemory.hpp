@@ -7,7 +7,6 @@
 
 #include "../../memory/mman.hpp"
 
-#include "../../except.hpp"
 #include "../../types.hpp"
 #include "bits.hpp"
 

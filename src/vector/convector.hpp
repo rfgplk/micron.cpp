@@ -268,7 +268,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
     if ( from >= to or from > __mem::capacity or to > __mem::capacity )
-      throw except::library_error("micron::convector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
     return slice<T>(get(from), get(to));
   }
   inline __attribute__((always_inline)) slice<T>
@@ -277,7 +277,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
     if ( from >= to or from > __mem::capacity or to > __mem::capacity )
-      throw except::library_error("micron::convector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
     return slice<T>(get(from), get(to));
   }
   template <typename R>
@@ -288,7 +288,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
     if ( n > __mem::capacity )
-      throw except::library_error("micron::convector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
     return (__mem::memory)[n];
   }
   template <typename R>
@@ -299,7 +299,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
     if ( n > __mem::capacity )
-      throw except::library_error("micron::convector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
     return (__mem::memory)[n];
   }
   inline __attribute__((always_inline)) T &
@@ -307,7 +307,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n >= __mem::length )
-      throw except::library_error("micron::convector at() out of bounds");
+      exc<except::library_error>("micron::convector at() out of bounds");
     return (__mem::memory)[n];
   }
   size_t
@@ -315,14 +315,14 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( i - begin() >= __mem::length )
-      throw except::library_error("micron::iconvector at_n() out of bounds");
+      exc<except::library_error>("micron::iconvector at_n() out of bounds");
     return static_cast<size_t>(i - begin());
   }
   const T *
   itr(size_t n) const
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::convector at() out of bounds");
+      exc<except::library_error>("micron::convector at() out of bounds");
     return &(__mem::memory)[n];
   }
   template <typename F>
@@ -410,7 +410,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n < __mem::capacity )
-      throw except::memory_error("micron convector failed to reserve memory");
+      exc<except::memory_error>("micron convector failed to reserve memory");
     if ( __mem::is_zero() ) {
       // NOTE: if a container has been moved out, we need to reinit. memor
       __mem::realloc(n);
@@ -500,14 +500,14 @@ public:
   get(const size_t n) const
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::convector get() out of range");
+      exc<except::library_error>("micron::convector get() out of range");
     return &(__mem::memory[n]);
   }
   inline const_iterator
   cget(const size_t n) const
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::convector cget() out of range");
+      exc<except::library_error>("micron::convector cget() out of range");
     return &(__mem::memory[n]);
   }
   inline iterator
@@ -567,7 +567,7 @@ public:
     if ( __mem::length + cnt > __mem::capacity )
       __unlocked_reserve(__mem::capacity + 1);
     if ( n >= __mem::length )
-      throw except::library_error("micron::convector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
     T *ite = &(__mem::memory)[__mem::length - 1];
     micron::memmove(its + cnt, its, ite - its);
@@ -588,7 +588,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity )
       __unlocked_reserve(__mem::capacity + 1);
     if ( n >= __mem::length )
-      throw except::library_error("micron::convector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
     T *ite = &(__mem::memory)[__mem::length - 1];
     micron::memmove(its + 1, its, ite - its);
@@ -608,7 +608,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity )
       __unlocked_reserve(__mem::capacity + 1);
     if ( n >= __mem::length )
-      throw except::library_error("micron::convector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
     T *its = itr(n);
     T *ite = end();
     micron::memmove(its + 1, its, (ite - its));
@@ -632,7 +632,7 @@ public:
       it = __mem::memory + dif;
     }     // invalidated if
     if ( it >= end() or it < begin() )
-      throw except::library_error("micron::convector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + 1, it, ite - it);
     new (it) T(micron::move(val));
@@ -655,7 +655,7 @@ public:
       it = __mem::memory + dif;
     }
     if ( it >= end() or it < begin() )
-      throw except::library_error("micron::convector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + cnt, it, ite - it);
     //*it = (val);
@@ -678,7 +678,7 @@ public:
       it = __mem::memory + dif;
     }
     if ( it >= end() or it < begin() )
-      throw except::library_error("micron::convector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + 1, it, ite - it);
     //*it = (val);
@@ -801,7 +801,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n >= end() or n < begin() )
-      throw except::library_error("micron::convector erase(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector erase(): out of allocated memory range.");
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       n->~T();
     } else {
@@ -820,7 +820,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n >= size() )
-      throw except::library_error("micron::convector erase(): out of allocated memory range.");
+      exc<except::library_error>("micron::convector erase(): out of allocated memory range.");
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       ~(__mem::memory)[n]();
     } else {

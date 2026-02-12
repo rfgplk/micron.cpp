@@ -197,7 +197,7 @@ public:
   {
     // meant to be safe so this is here
     if ( from >= to or from > __mem::capacity or to > __mem::capacity )
-      throw except::library_error("micron::vector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::vector operator[] out of allocated memory range.");
     return slice<T>(get(from), get(to));
   }
   inline __attribute__((always_inline)) slice<T>
@@ -205,7 +205,7 @@ public:
   {
     // meant to be safe so this is here
     if ( from >= to or from > __mem::capacity or to > __mem::capacity )
-      throw except::library_error("micron::vector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::vector operator[] out of allocated memory range.");
     return slice<T>(get(from), get(to));
   }
   // NOTE: yes operator[] are correct, this is meant to check against capacity, not length. reasoning being you're
@@ -217,7 +217,7 @@ public:
   {
     // meant to be safe so this is here
     if ( static_cast<size_t>(n) > __mem::capacity ) [[unlikely]]
-      throw except::library_error("micron::vector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::vector operator[] out of allocated memory range.");
     return (__mem::memory)[n];
   }
   template <typename R>
@@ -227,28 +227,28 @@ public:
   {
     // meant to be safe so this is here
     if ( static_cast<size_t>(n) > __mem::capacity ) [[unlikely]]
-      throw except::library_error("micron::vector operator[] out of allocated memory range.");
+      exc<except::library_error>("micron::vector operator[] out of allocated memory range.");
     return (__mem::memory)[n];
   }
   inline __attribute__((always_inline)) T &
   at(size_t n)
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::vector at() out of bounds");
+      exc<except::library_error>("micron::vector at() out of bounds");
     return (__mem::memory)[n];
   }
   size_t
   at_n(iterator i) const
   {
     if ( i - begin() >= __mem::length )
-      throw except::library_error("micron::ivector at_n() out of bounds");
+      exc<except::library_error>("micron::ivector at_n() out of bounds");
     return static_cast<size_t>(i - begin());
   }
   T *
   itr(size_t n)
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::vector at() out of bounds");
+      exc<except::library_error>("micron::vector at() out of bounds");
     return &(__mem::memory)[n];
   }
   template <typename F>
@@ -327,7 +327,7 @@ public:
   try_reserve(const size_t n)
   {
     if ( n < __mem::capacity )
-      throw except::memory_error("micron vector failed to reserve memory");
+      exc<except::memory_error>("micron vector failed to reserve memory");
     if ( __mem::is_zero() ) {
       // NOTE: if a container has been moved out, we need to reinit. memor
       __mem::realloc(n);
@@ -410,21 +410,21 @@ public:
   get(const size_t n)
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::vector get() out of range");
+      exc<except::library_error>("micron::vector get() out of range");
     return &(__mem::memory[n]);
   }
   inline const_iterator
   get(const size_t n) const
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::vector get() out of range");
+      exc<except::library_error>("micron::vector get() out of range");
     return &(__mem::memory[n]);
   }
   inline const_iterator
   cget(const size_t n) const
   {
     if ( n > __mem::length )
-      throw except::library_error("micron::vector cget() out of range");
+      exc<except::library_error>("micron::vector cget() out of range");
     return &(__mem::memory[n]);
   }
   inline iterator
@@ -496,7 +496,7 @@ public:
     if ( __mem::length + cnt > __mem::capacity )
       reserve(__mem::capacity + 1);
     if ( n >= __mem::length )
-      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
     T *ite = &(__mem::memory)[__mem::length - 1];
     micron::memmove(its + cnt, its, ite - its);
@@ -516,7 +516,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity )
       reserve(__mem::capacity + 1);
     if ( n >= __mem::length )
-      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
     T *ite = &(__mem::memory)[__mem::length - 1];
     micron::memmove(its + 1, its, ite - its);
@@ -535,7 +535,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity )
       reserve(__mem::capacity + 1);
     if ( n >= __mem::length )
-      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *its = itr(n);
     T *ite = end();
     micron::memmove(its + 1, its, (ite - its));
@@ -558,7 +558,7 @@ public:
       it = __mem::memory + dif;
     }     // invalidated if
     if ( it >= end() or it < begin() )
-      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + 1, it, ite - it);
     new (it) T(micron::move(val));
@@ -580,7 +580,7 @@ public:
       it = __mem::memory + dif;
     }
     if ( it >= end() or it < begin() )
-      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + cnt, it, ite - it);
     //*it = (val);
@@ -602,7 +602,7 @@ public:
       it = __mem::memory + dif;
     }
     if ( it >= end() or it < begin() )
-      throw except::library_error("micron::vector insert(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *ite = end();
     micron::memmove(it + 1, it, ite - it);
     //*it = (val);
@@ -763,7 +763,7 @@ public:
   erase(iterator first, iterator last)
   {
     if ( first < begin() || last > end() || first >= last )
-      throw except::library_error("micron::vector erase(): invalid iterator range");
+      exc<except::library_error>("micron::vector erase(): invalid iterator range");
 
     size_t count = last - first;
 
@@ -788,7 +788,7 @@ public:
   erase(size_t from, size_t to)
   {
     if ( from >= to || to > __mem::length )
-      throw except::library_error("micron::vector erase(): invalid range");
+      exc<except::library_error>("micron::vector erase(): invalid range");
 
     size_t count = to - from;
 
@@ -826,7 +826,7 @@ public:
   erase(iterator it)
   {
     if ( it < begin() || it >= end() )
-      throw except::library_error("micron::vector erase(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector erase(): out of allocated memory range.");
 
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
       it->~T();
@@ -842,7 +842,7 @@ public:
   erase(const size_t n)
   {
     if ( n >= __mem::length )
-      throw except::library_error("micron::vector erase(): out of allocated memory range.");
+      exc<except::library_error>("micron::vector erase(): out of allocated memory range.");
 
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
       (__mem::memory)[n].~T();
