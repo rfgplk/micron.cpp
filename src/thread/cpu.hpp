@@ -11,6 +11,7 @@
 #include "scheduling.hpp"
 
 #include "../linux/sys/cpu.hpp"
+#include "../linux/sys/limits.hpp"
 
 #include "../linux/process/system.hpp"
 #include "../linux/sys/resource.hpp"
@@ -22,8 +23,6 @@
 #include "../string/strings.hpp"
 #include "../string/unistring.hpp"
 #include "../types.hpp"
-
-#include "tasks.hpp"
 
 // the definitive header file including all general CPU handling code (affinity, priority, parking cores, thread maps
 // etc)

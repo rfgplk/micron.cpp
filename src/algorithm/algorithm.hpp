@@ -28,7 +28,7 @@ clamp(const T &v, const T &lo, const T &hi, C comp) noexcept
 template <is_iterable_container T>
   requires micron::is_floating_point_v<typename T::value_type>
 constexpr f128
-sum(const T &src)
+sum(const T &src) noexcept
 {
   f128 sm = 0;
   for ( size_t i = 0; i < src.size(); i++ )
@@ -39,7 +39,7 @@ sum(const T &src)
 template <is_iterable_container T>
   requires micron::is_integral_v<typename T::value_type>
 constexpr umax_t
-sum(const T &src)
+sum(const T &src) noexcept
 {
   umax_t sm = 0;
   for ( size_t i = 0; i < src.size(); i++ )
@@ -50,7 +50,7 @@ sum(const T &src)
 template <is_iterable_container T, typename R>
   requires(micron::is_integral_v<typename T::value_type> && micron::is_integral_v<R>)
 constexpr T &
-fill(T &src, const R r)
+fill(T &src, const R r) noexcept
 {
   for ( auto &n : src )
     n = r;
@@ -59,7 +59,7 @@ fill(T &src, const R r)
 
 template <typename T, class P>
 constexpr void
-fill(T *first, T *end, const P &o)
+fill(T *first, T *end, const P &o) noexcept
 {
   if constexpr ( micron::is_class_v<T> ) {
     for ( ; first != end; ++first )
@@ -71,7 +71,7 @@ fill(T *first, T *end, const P &o)
 
 template <typename T, class P>
 constexpr T *
-fill_n(T *first, size_t n, const P &value)
+fill_n(T *first, size_t n, const P &value) noexcept
 {
   for ( size_t i = 0; i < n; ++i, ++first )
     *first = value;
@@ -80,7 +80,7 @@ fill_n(T *first, size_t n, const P &value)
 
 template <is_iterable_container C, class P>
 constexpr C &
-fill_n(C &c, size_t n, const P &value)
+fill_n(C &c, size_t n, const P &value) noexcept
 {
   fill_n(c.begin(), n, value);
   return c;
@@ -88,7 +88,7 @@ fill_n(C &c, size_t n, const P &value)
 
 template <typename T, class P>
 constexpr bool
-contains(const T *first, const T *end, const P &value)
+contains(const T *first, const T *end, const P &value) noexcept
 {
   for ( ; first != end; ++first )
     if ( *first == value )
@@ -98,14 +98,14 @@ contains(const T *first, const T *end, const P &value)
 
 template <is_iterable_container C, class P>
 constexpr bool
-contains(const C &c, const P &value)
+contains(const C &c, const P &value) noexcept
 {
   return contains(c.begin(), c.end(), value);
 }
 
 template <is_iterable_container T, typename R = typename T::value_type>
 constexpr T &
-clear(T &src, const R r = 0)
+clear(T &src, const R r = 0) noexcept
 {
   if constexpr ( micron::is_object_v<micron::remove_cv_t<typename T::value_type>> ) {
     for ( auto &n : src )
@@ -119,7 +119,7 @@ clear(T &src, const R r = 0)
 template <typename R = f64, typename T>
   requires micron::is_object_v<T>
 constexpr R
-mean(const T &src)
+mean(const T &src) noexcept
 {
   return static_cast<R>(sum(src)) / static_cast<R>(src.size());
 }
@@ -127,7 +127,7 @@ mean(const T &src)
 template <typename R = flong, typename T>
   requires micron::is_object_v<T>
 constexpr R
-geomean(const T &src)
+geomean(const T &src) noexcept
 {
   R mulsm = static_cast<R>(src[0]);
   for ( size_t i = 1; i < src.size(); i++ )
@@ -138,7 +138,7 @@ geomean(const T &src)
 template <typename R = flong, typename T>
   requires micron::is_object_v<T>
 constexpr R
-harmonicmean(const T &src)
+harmonicmean(const T &src) noexcept
 {
   R recsum = 0;
   for ( size_t i = 0; i < src.size(); i++ )
@@ -149,7 +149,7 @@ harmonicmean(const T &src)
 template <typename T>
   requires micron::is_arithmetic_v<T>
 constexpr void
-round(T *__restrict start, T *__restrict end)
+round(T *__restrict start, T *__restrict end) noexcept
 {
   for ( ; start != end; ++start )
     *start = math::round(*start);
@@ -157,7 +157,7 @@ round(T *__restrict start, T *__restrict end)
 
 template <typename T>
 constexpr void
-round(T &t)
+round(T &t) noexcept
 {
   round(t.begin(), t.end());
 }
@@ -165,7 +165,7 @@ round(T &t)
 template <typename T>
   requires micron::is_arithmetic_v<T>
 constexpr void
-ceil(T *__restrict start, T *__restrict end)
+ceil(T *__restrict start, T *__restrict end) noexcept
 {
   for ( ; start != end; ++start )
     *start = math::ceil(*start);
@@ -173,7 +173,7 @@ ceil(T *__restrict start, T *__restrict end)
 
 template <is_iterable_container T>
 constexpr T &
-ceil(T &t)
+ceil(T &t) noexcept
 {
   ceil(t.begin(), t.end());
   return t;
@@ -182,7 +182,7 @@ ceil(T &t)
 template <typename T>
   requires micron::is_arithmetic_v<T>
 constexpr void
-floor(T *__restrict start, T *__restrict end)
+floor(T *__restrict start, T *__restrict end) noexcept
 {
   for ( ; start != end; ++start )
     *start = math::floor(*start);
@@ -190,7 +190,7 @@ floor(T *__restrict start, T *__restrict end)
 
 template <typename T>
 constexpr void
-floor(T &t)
+floor(T &t) noexcept
 {
   floor(t.begin(), t.end());
 }
@@ -198,7 +198,7 @@ floor(T &t)
 template <typename T>
   requires micron::is_pointer_v<T>
 constexpr void
-reverse(T __restrict start, T __restrict end)
+reverse(T __restrict start, T __restrict end) noexcept
 {
   while ( start < end ) {
     auto tmp = *start;
@@ -211,7 +211,7 @@ reverse(T __restrict start, T __restrict end)
 
 template <typename T>
 constexpr void
-reverse(T &arr)
+reverse(T &arr) noexcept
 {
   reverse(arr.begin(), arr.end() - 1);
 }
@@ -219,7 +219,7 @@ reverse(T &arr)
 template <typename T, typename F>
   requires micron::is_invocable_v<F, T *>
 constexpr void
-transform(T *start, T *end, F f)
+transform(T *start, T *end, F f) noexcept
 {
   for ( ; start != end; ++start )
     *start = f(*start);
@@ -227,7 +227,7 @@ transform(T *start, T *end, F f)
 
 template <is_iterable_container C, typename F>
 constexpr void
-transform(C &c, F f)
+transform(C &c, F f) noexcept
 {
   transform(c.begin(), c.end(), f);
 }
@@ -235,7 +235,7 @@ transform(C &c, F f)
 template <typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr const T *
-find_last(const T *start, const T *end, const P &f)
+find_last(const T *start, const T *end, const P &f) noexcept
 {
   const T *fnd = nullptr;
   for ( ; start != end; ++start )
@@ -247,7 +247,7 @@ find_last(const T *start, const T *end, const P &f)
 template <typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr const T *
-find(const T *start, const T *end, const P &f)
+find(const T *start, const T *end, const P &f) noexcept
 {
   for ( ; start != end; ++start )
     if ( *start == static_cast<T>(f) )
@@ -260,7 +260,7 @@ template <typename T, typename F>
     { f() } -> micron::same_as<T>;
   }
 constexpr void
-generate(T *first, T *end, F f)
+generate(T *first, T *end, F f) noexcept
 {
   for ( ; first != end; ++first )
     *first = f();
@@ -269,7 +269,7 @@ generate(T *first, T *end, F f)
 template <typename T, typename F, typename... Args>
   requires micron::is_invocable_v<F, Args...>
 constexpr void
-generate(T *first, T *end, F f, Args &&...args)
+generate(T *first, T *end, F f, Args &&...args) noexcept
 {
   for ( ; first != end; ++first )
     *first = f(micron::forward<Args>(args)...);
@@ -277,7 +277,7 @@ generate(T *first, T *end, F f, Args &&...args)
 
 template <is_iterable_container C, typename F>
 constexpr C &
-generate(C &c, F f)
+generate(C &c, F f) noexcept
 {
   generate(c.begin(), c.end(), f);
   return c;
@@ -285,7 +285,7 @@ generate(C &c, F f)
 
 template <is_iterable_container C, typename F, typename... Args>
 constexpr C &
-generate(C &c, F f, Args &&...args)
+generate(C &c, F f, Args &&...args) noexcept
 {
   generate(c.begin(), c.end(), f, micron::forward<Args>(args)...);
   return c;
@@ -293,7 +293,7 @@ generate(C &c, F f, Args &&...args)
 
 template <typename T>
 typename T::const_iterator
-max_at(const T &arr)
+max_at(const T &arr) noexcept
 {
   auto it = arr.cbegin();
   auto end = arr.cend();
@@ -306,7 +306,7 @@ max_at(const T &arr)
 
 template <typename T>
 typename T::const_iterator
-min_at(const T &arr)
+min_at(const T &arr) noexcept
 {
   auto it = arr.cbegin();
   auto end = arr.cend();
@@ -319,7 +319,7 @@ min_at(const T &arr)
 
 template <typename T>
 typename T::const_iterator
-max_at(const T *first, const T *end)
+max_at(const T *first, const T *end) noexcept
 {
   typename T::const_iterator max_v = first;
   for ( ; first != end; ++first )
@@ -330,7 +330,7 @@ max_at(const T *first, const T *end)
 
 template <typename T>
 typename T::const_iterator
-min_at(const T *first, const T *end)
+min_at(const T *first, const T *end) noexcept
 {
   typename T::const_iterator min_v = first;
   for ( ; first != end; ++first )
@@ -341,7 +341,7 @@ min_at(const T *first, const T *end)
 
 template <typename T>
 typename T::value_type
-max(const T &arr)
+max(const T &arr) noexcept
 {
   auto it = arr.cbegin();
   auto end = arr.cend();
@@ -354,7 +354,7 @@ max(const T &arr)
 
 template <typename T>
 typename T::value_type
-min(const T &arr)
+min(const T &arr) noexcept
 {
   auto it = arr.cbegin();
   auto end = arr.cend();
@@ -367,7 +367,7 @@ min(const T &arr)
 
 template <typename T>
 T
-max(const T *first, const T *end)
+max(const T *first, const T *end) noexcept
 {
   T max_v = *first++;
   for ( ; first != end; ++first )
@@ -378,7 +378,7 @@ max(const T *first, const T *end)
 
 template <typename T>
 T
-min(const T *first, const T *end)
+min(const T *first, const T *end) noexcept
 {
   T min_v = *first++;
   for ( ; first != end; ++first )
@@ -389,7 +389,7 @@ min(const T *first, const T *end)
 
 template <typename T, class P>
 bool
-all_of(const T *first, const T *end, const P &o)
+all_of(const T *first, const T *end, const P &o) noexcept
 {
   for ( ; first != end; ++first )
     if ( *first != o )
@@ -399,7 +399,7 @@ all_of(const T *first, const T *end, const P &o)
 
 template <typename T, class P>
 bool
-any_of(const T *first, const T *end, const P &o)
+any_of(const T *first, const T *end, const P &o) noexcept
 {
   for ( ; first != end; ++first )
     if ( *first == o )
@@ -409,7 +409,7 @@ any_of(const T *first, const T *end, const P &o)
 
 template <typename T, class P>
 bool
-none_of(const T *first, const T *end, const P &o)
+none_of(const T *first, const T *end, const P &o) noexcept
 {
   for ( ; first != end; ++first )
     if ( *first == o )
@@ -419,7 +419,7 @@ none_of(const T *first, const T *end, const P &o)
 
 template <typename T, class P>
 umax_t
-count(const T *first, const T *end, const P &o)
+count(const T *first, const T *end, const P &o) noexcept
 {
   umax_t c = 0;
   for ( ; first != end; ++first )
@@ -431,7 +431,7 @@ count(const T *first, const T *end, const P &o)
 template <typename T, class F>
   requires micron::is_invocable_v<F, T *>
 umax_t
-count_if(const T *first, const T *end, F f)
+count_if(const T *first, const T *end, F f) noexcept
 {
   umax_t c = 0;
   for ( ; first != end; ++first )
@@ -442,7 +442,7 @@ count_if(const T *first, const T *end, F f)
 
 template <typename T>
 bool
-equal(const T *first1, const T *end1, const T *first2)
+equal(const T *first1, const T *end1, const T *first2) noexcept
 {
   for ( ; first1 != end1; ++first1, ++first2 )
     if ( !(*first1 == *first2) )
@@ -452,7 +452,7 @@ equal(const T *first1, const T *end1, const T *first2)
 
 template <typename T, class P>
 const T *
-search(const T *first, const T *end, const P *pfirst, const P *pend)
+search(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
   for ( ; first != end; ++first ) {
     const T *it1 = first;
@@ -469,7 +469,7 @@ search(const T *first, const T *end, const P *pfirst, const P *pend)
 
 template <typename T, class P>
 const T *
-search_n(const T *first, const T *end, size_t n, const P &value)
+search_n(const T *first, const T *end, size_t n, const P &value) noexcept
 {
   for ( ; first != end; ++first ) {
     size_t i = 0;
@@ -483,7 +483,7 @@ search_n(const T *first, const T *end, size_t n, const P &value)
 
 template <typename T, class P>
 bool
-starts_with(const T *first, const T *end, const P *pfirst, const P *pend)
+starts_with(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
   while ( pfirst != pend ) {
     if ( first == end || *first != *pfirst )
@@ -496,7 +496,7 @@ starts_with(const T *first, const T *end, const P *pfirst, const P *pend)
 
 template <typename T, class P>
 bool
-ends_with(const T *first, const T *end, const P *pfirst, const P *pend)
+ends_with(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
   size_t n = pend - pfirst;
   size_t len = end - first;
@@ -507,7 +507,7 @@ ends_with(const T *first, const T *end, const P *pfirst, const P *pend)
 template <is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::iterator
-find(C &c, P &v)
+find(C &c, P &v) noexcept
 {
   return find(c.begin(), c.end(), v);
 }
@@ -515,7 +515,7 @@ find(C &c, P &v)
 template <is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::iterator
-find_last(C &c, P &v)
+find_last(C &c, P &v) noexcept
 {
   return find_last(c.begin(), c.end(), v);
 }
@@ -523,7 +523,7 @@ find_last(C &c, P &v)
 template <is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::const_iterator
-find(const C &c, const P &v)
+find(const C &c, const P &v) noexcept
 {
   return find(c.begin(), c.end(), v);
 }
@@ -531,7 +531,7 @@ find(const C &c, const P &v)
 template <is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::const_iterator
-find_last(const C &c, const P &v)
+find_last(const C &c, const P &v) noexcept
 {
   return find_last(c.begin(), c.end(), v);
 }
@@ -539,88 +539,71 @@ find_last(const C &c, const P &v)
 template <is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 umax_t
-count(const C &c, const P &v)
+count(const C &c, const P &v) noexcept
 {
   return count(c.begin(), c.end(), v);
 }
 
 template <is_iterable_container C, class F>
 umax_t
-count_if(const C &c, F f)
+count_if(const C &c, F f) noexcept
 {
   return count_if(c.begin(), c.end(), f);
 }
 
 template <is_iterable_container C1, is_iterable_container C2>
 bool
-equal(const C1 &a, const C2 &b)
+equal(const C1 &a, const C2 &b) noexcept
 {
   return equal(a.begin(), a.end(), b.begin());
 }
 
 template <is_iterable_container C, is_iterable_container P>
 const typename C::value_type *
-search(const C &c, const P &p)
+search(const C &c, const P &p) noexcept
 {
   return search(c.begin(), c.end(), p.begin(), p.end());
 }
 
 template <is_iterable_container C, class V>
 const typename C::value_type *
-search_n(const C &c, size_t n, const V &v)
+search_n(const C &c, size_t n, const V &v) noexcept
 {
   return search_n(c.begin(), c.end(), n, v);
 }
 
 template <is_iterable_container C, class P>
 bool
-starts_with(const C &c, const P &p)
+starts_with(const C &c, const P &p) noexcept
 {
   return starts_with(c.begin(), c.end(), p.begin(), p.end());
 }
 
 template <is_iterable_container C, class P>
 bool
-ends_with(const C &c, const P &p)
+ends_with(const C &c, const P &p) noexcept
 {
   return ends_with(c.begin(), c.end(), p.begin(), p.end());
 }
 
 template <is_iterable_container C, class P>
 bool
-all_of(const C &c, const P &v)
+all_of(const C &c, const P &v) noexcept
 {
   return all_of(c.begin(), c.end(), v);
 }
 
 template <is_iterable_container C, class P>
 bool
-any_of(const C &c, const P &v)
+any_of(const C &c, const P &v) noexcept
 {
   return any_of(c.begin(), c.end(), v);
 }
 
 template <is_iterable_container C, class P>
 bool
-none_of(const C &c, const P &v)
+none_of(const C &c, const P &v) noexcept
 {
   return none_of(c.begin(), c.end(), v);
 }
-}     // namespace micron
-
-#pragma once
-
-#include "../concepts.hpp"
-#include "../math/generic.hpp"
-#include "../memory/actions.hpp"
-#include "../memory/memory.hpp"
-#include "../type_traits.hpp"
-#include "../types.hpp"
-
-namespace micron
-{
-
-// The rest of your pointer/container algorithms (max, min, all_of, any_of, count, search, starts_with, ends_with)
-// can be rewritten similarly with constexpr loops.
-
 }     // namespace micron

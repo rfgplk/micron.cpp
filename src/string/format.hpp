@@ -1507,6 +1507,72 @@ to_integer(const T &o)
   }
   return t;
 }
+constexpr int
+xdigit_to_val(char c) noexcept
+{
+  if ( c >= '0' && c <= '9' )
+    return c - '0';
+  if ( c >= 'a' && c <= 'f' )
+    return c - 'a' + 10;
+  if ( c >= 'A' && c <= 'F' )
+    return c - 'A' + 10;
+  return -1;
+}
+
+// Parse decimal number from string
+constexpr u32
+parse_decimal(const char *cp) noexcept
+{
+  u32 val = 0;
+  while ( isdigit(*cp) ) {
+    val = val * 10 + (*cp - '0');
+    ++cp;
+  }
+  return val;
+}
+
+// Parse hex number from string
+constexpr u32
+parse_hex(const char *cp) noexcept
+{
+  u32 val = 0;
+  while ( isxdigit(*cp) ) {
+    val = val * 16 + xdigit_to_val(*cp);
+    ++cp;
+  }
+  return val;
+}
+
+constexpr int
+parse_hex_byte(const char *p) noexcept
+{
+  if ( !isxdigit(*p) )
+    return -1;
+
+  int val = xdigit_to_val(*p++);
+
+  if ( isxdigit(*p) ) {
+    val = (val << 4) | xdigit_to_val(*p++);
+  }
+
+  return val;
+}
+
+constexpr u32
+parse_octal(const char *&cp) noexcept
+{
+  u32 val = 0;
+  while ( *cp >= '0' && *cp <= '7' ) {
+    val = val * 8 + (*cp - '0');
+    ++cp;
+  }
+  return val;
+}
+constexpr u8
+to_hex_char(u8 nibble) noexcept
+{
+  return nibble < 10 ? '0' + nibble : 'a' + (nibble - 10);
+}
 
 template <typename R, is_string T>
 R *

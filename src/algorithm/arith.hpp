@@ -21,7 +21,7 @@ namespace micron
 template <is_iterable_container T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-pow(T &cont, const Y y)
+pow(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -31,7 +31,7 @@ pow(T &cont, const Y y)
 template <typename T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-pow(T *__restrict first, T *__restrict end, const Y y)
+pow(T *__restrict first, T *__restrict end, const Y y) noexcept
 {
   for ( ; first != end; ++first )
     *first = math::power(*first, y);     // for clarity
@@ -39,7 +39,7 @@ pow(T *__restrict first, T *__restrict end, const Y y)
 
 template <is_iterable_container T>
 void
-add(T &cont, const typename T::value_type y)
+add(T &cont, const typename T::value_type y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -49,7 +49,7 @@ add(T &cont, const typename T::value_type y)
 
 template <is_iterable_container T>
 auto
-multiply(T &cont)
+multiply(T &cont) noexcept
 {
   typename T::value_type r = 1;
   auto *first = cont.begin();
@@ -60,7 +60,7 @@ multiply(T &cont)
 }
 template <is_iterable_container T>
 void
-multiply(T &cont, const typename T::value_type y)
+multiply(T &cont, const typename T::value_type y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -70,13 +70,13 @@ multiply(T &cont, const typename T::value_type y)
 
 template <is_iterable_container T>
 auto
-mul(T &cont)
+mul(T &cont) noexcept
 {
   return multiply(cont);
 }
 template <is_iterable_container T>
 void
-mul(T &cont, const typename T::value_type y)
+mul(T &cont, const typename T::value_type y) noexcept
 {
   multiply(cont, y);
 }
@@ -84,7 +84,7 @@ mul(T &cont, const typename T::value_type y)
 template <is_iterable_container T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-divide(T &cont, const Y y)
+divide(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -95,7 +95,7 @@ divide(T &cont, const Y y)
 template <is_iterable_container T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-subtract(T &cont, const Y y)
+subtract(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
@@ -105,7 +105,7 @@ subtract(T &cont, const Y y)
 
 template <is_iterable_container T, typename... Args>
 void
-add(T &cont, const Args *__restrict... args)
+add(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
@@ -114,7 +114,7 @@ add(T &cont, const Args *__restrict... args)
 }
 template <is_iterable_container T, typename... Args>
 void
-multiply(T &cont, const Args *__restrict... args)
+multiply(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
@@ -123,7 +123,7 @@ multiply(T &cont, const Args *__restrict... args)
 }
 template <is_iterable_container T, typename... Args>
 void
-divide(T &cont, const Args *__restrict... args)
+divide(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
@@ -132,7 +132,7 @@ divide(T &cont, const Args *__restrict... args)
 }
 template <is_iterable_container T, typename... Args>
 void
-subtract(T &cont, const Args *__restrict... args)
+subtract(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
@@ -143,7 +143,7 @@ subtract(T &cont, const Args *__restrict... args)
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-add(T *first, T *end, const Y y)
+add(T *first, T *end, const Y y) noexcept
 {
   for ( ; first != end; ++first )
     *first = *first + y;
@@ -151,7 +151,7 @@ add(T *first, T *end, const Y y)
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-multiply(T *first, T *end, const Y y)
+multiply(T *first, T *end, const Y y) noexcept
 {
   for ( ; first != end; ++first )
     *first = *first * y;
@@ -159,7 +159,7 @@ multiply(T *first, T *end, const Y y)
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-divide(T *first, T *end, const Y y)
+divide(T *first, T *end, const Y y) noexcept
 {
   for ( ; first != end; ++first )
     *first = *first / y;
@@ -167,7 +167,7 @@ divide(T *first, T *end, const Y y)
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
-subtract(T *first, T *end, const Y y)
+subtract(T *first, T *end, const Y y) noexcept
 {
   for ( ; first != end; ++first )
     *first = *first - y;
@@ -175,28 +175,28 @@ subtract(T *first, T *end, const Y y)
 
 template <class T, typename... Args>
 void
-add(size_t n, T *__restrict first, const Args *__restrict... args)
+add(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
 {
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
 template <class T, typename... Args>
 void
-multiply(size_t n, T *__restrict first, const Args *__restrict... args)
+multiply(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
 {
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
 template <class T, typename... Args>
 void
-divide(size_t n, T *__restrict first, const Args *__restrict... args)
+divide(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
 {
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
 template <class T, typename... Args>
 void
-subtract(size_t n, T *__restrict first, const Args *__restrict... args)
+subtract(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
 {
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) - (... + (*(args + i)));

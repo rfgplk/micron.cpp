@@ -40,7 +40,7 @@ using simd::rmemcpy256;
 
 template <typename T, typename F>
 long int
-memcmp(const F *__restrict _src, const F *__restrict _dest, size_t cnt)
+memcmp(const F *__restrict _src, const F *__restrict _dest, size_t cnt) noexcept
 {
   const byte *src = reinterpret_cast<const T *>(_src);
   const byte *dest = reinterpret_cast<const T *>(_dest);
@@ -51,7 +51,7 @@ memcmp(const F *__restrict _src, const F *__restrict _dest, size_t cnt)
 };
 
 long int
-bytecmp(const byte *__restrict src, const byte *__restrict dest, size_t cnt)
+bytecmp(const byte *__restrict src, const byte *__restrict dest, size_t cnt) noexcept
 {
   for ( size_t i = 0; i < cnt; i++ )
     if ( src[i] != dest[i] )
@@ -62,7 +62,7 @@ bytecmp(const byte *__restrict src, const byte *__restrict dest, size_t cnt)
 template <typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &
-rtypeset(F &s, const T in, const u64 cnt)
+rtypeset(F &s, const T in, const u64 cnt) noexcept
 {
   T *src = reinterpret_cast<T *>(&s);
   if ( cnt % 4 == 0 )
@@ -81,7 +81,7 @@ rtypeset(F &s, const T in, const u64 cnt)
 template <typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 F *
-typeset(F *s, const T in, const u64 cnt)
+typeset(F *s, const T in, const u64 cnt) noexcept
 {
   T *src = reinterpret_cast<T *>(s);
   if ( cnt % 4 == 0 )
@@ -101,7 +101,7 @@ typeset(F *s, const T in, const u64 cnt)
 
 template <u64 M, typename F, u64 L>
 constexpr F *
-cfull(const F (&src)[L])
+cfull(const F (&src)[L]) noexcept
 {
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0xFF;
@@ -110,7 +110,7 @@ cfull(const F (&src)[L])
 
 template <u64 M, typename F>
 constexpr F *
-cfull(F *src)
+cfull(F *src) noexcept
 {
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0xFF;
@@ -119,7 +119,7 @@ cfull(F *src)
 
 template <u64 M, typename F>
 constexpr F *
-cfull(const F *src)
+cfull(const F *src) noexcept
 {
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0xFF;
@@ -128,7 +128,7 @@ cfull(const F *src)
 
 template <typename F, u64 L, typename M = u64>
 constexpr F *
-full(const F (&src)[L], const M cnt)
+full(const F (&src)[L], const M cnt) noexcept
 {
   for ( M n = 0; n < cnt; n++ )
     src[n] = 0xFF;
@@ -136,7 +136,7 @@ full(const F (&src)[L], const M cnt)
 };
 template <typename F, typename M = u64>
 constexpr F *
-full(F *src, const M cnt)
+full(F *src, const M cnt) noexcept
 {
   for ( M n = 0; n < cnt; n++ )
     src[n] = 0xFF;
@@ -145,7 +145,7 @@ full(F *src, const M cnt)
 
 template <u64 M, typename F>
 constexpr F &
-czero(F &src)
+czero(F &src) noexcept
 {
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0x0;
@@ -154,7 +154,7 @@ czero(F &src)
 
 template <u64 M, typename F>
 constexpr F *
-czero(F *src)
+czero(F *src) noexcept
 {
   for ( u64 n = 0; n < M; n++ )
     src[n] = 0x0;
@@ -162,7 +162,7 @@ czero(F *src)
 };
 template <u64 M, typename F>
 constexpr F &
-cbzero(F &_src)
+cbzero(F &_src) noexcept
 {
   byte *src = reinterpret_cast<byte *>(_src);
   for ( u64 n = 0; n < M; n++ )
@@ -172,7 +172,7 @@ cbzero(F &_src)
 
 template <u64 M, typename F>
 constexpr F *
-cbzero(F *_src)
+cbzero(F *_src) noexcept
 {
   byte *src = reinterpret_cast<byte *>(_src);
   for ( u64 n = 0; n < M; n++ )
@@ -181,7 +181,7 @@ cbzero(F *_src)
 };
 template <u64 M, typename F>
 constexpr F &
-scbzero(F &_src)
+scbzero(F &_src) noexcept
 {
   volatile byte *src = reinterpret_cast<volatile byte *>(_src);
   for ( u64 n = 0; n < M; n++ )
@@ -191,7 +191,7 @@ scbzero(F &_src)
 
 template <u64 M, typename F>
 constexpr F *
-scbzero(F *_src)
+scbzero(F *_src) noexcept
 {
   volatile byte *src = reinterpret_cast<volatile byte *>(_src);
   for ( u64 n = 0; n < M; n++ )
@@ -201,7 +201,7 @@ scbzero(F *_src)
 
 template <typename F, u64 L, typename M = u64>
 F *
-zero(const F (&src)[L], const M cnt)
+zero(const F (&src)[L], const M cnt) noexcept
 {
   for ( M n = 0; n < cnt; n++ )
     src[n] = 0x0;
@@ -209,7 +209,7 @@ zero(const F (&src)[L], const M cnt)
 };
 template <typename F, typename M = u64>
 F *
-zero(F *src, const M cnt)
+zero(F *src, const M cnt) noexcept
 {
   for ( M n = 0; n < cnt; n++ )
     src[n] = 0x0;
@@ -218,7 +218,7 @@ zero(F *src, const M cnt)
 
 template <typename M = u64>
 byte *
-bzero(byte *src, const M cnt)
+bzero(byte *src, const M cnt) noexcept
 {
   for ( M n = 0; n < cnt; n++ )
     src[n] = 0x0;
@@ -226,7 +226,7 @@ bzero(byte *src, const M cnt)
 };
 template <typename F>
 F *
-memfrob(F *src, u64 n)
+memfrob(F *src, u64 n) noexcept
 {
   F *a = src;
   while ( n-- > 0 )
@@ -236,7 +236,7 @@ memfrob(F *src, u64 n)
 
 template <typename F, typename N = byte>
 F *
-memset256(F *src, N in, const u64 cnt)
+memset256(F *src, N in, const u64 cnt) noexcept
 {
   __m256i v = _mm256_set1_epi32(in);
   for ( u64 n = 0; n < cnt; n += 8 ) {
@@ -247,7 +247,7 @@ memset256(F *src, N in, const u64 cnt)
 
 template <typename F, typename N = byte>
 F *
-memset128(F *src, N in, const u64 cnt)
+memset128(F *src, N in, const u64 cnt) noexcept
 {
   __m128i v = _mm_set1_epi32(in);
   for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -258,7 +258,7 @@ memset128(F *src, N in, const u64 cnt)
 
 template <u64 M, typename F, typename N>
 F *
-cmemset(F *src, const N in)
+cmemset(F *src, const N in) noexcept
 {
   if constexpr ( micron::is_pointer_v<F> ) {
     for ( u64 n = 0; n < M; n++ )
@@ -277,10 +277,8 @@ cmemset(F *src, const N in)
   return reinterpret_cast<F *>(src);
 };
 
-
-
 void *
-bset(void *isrc, const byte in, const u64 cnt)
+bset(void *isrc, const byte in, const u64 cnt) noexcept
 {
   byte *src = reinterpret_cast<byte *>(isrc);
   if ( cnt % 4 == 0 )
@@ -297,7 +295,7 @@ bset(void *isrc, const byte in, const u64 cnt)
 };
 template <u64 N>
 void *
-cbset(void *isrc, const byte in)
+cbset(void *isrc, const byte in) noexcept
 {
   byte *src = reinterpret_cast<byte *>(isrc);
   if ( N % 4 == 0 )
@@ -315,7 +313,7 @@ cbset(void *isrc, const byte in)
 
 template <typename F>
 inline F *
-memset_32b(F *src, int in)
+memset_32b(F *src, int in) noexcept
 {
   umax_t val = (unsigned char)in * 0x0101010101010101ULL;
   u64 *mem = reinterpret_cast<u64 *>(src);
@@ -328,7 +326,7 @@ memset_32b(F *src, int in)
 
 template <typename F>
 inline F *
-memset_64b(F *src, int in)
+memset_64b(F *src, int in) noexcept
 {
   umax_t val = (unsigned char)in * 0x0101010101010101ULL;
   u64 *mem = reinterpret_cast<u64 *>(src);
@@ -347,7 +345,7 @@ memset_64b(F *src, int in)
 template <byte in, u64 cnt, typename F>
   requires(!micron::is_null_pointer_v<F>)
 F *
-bset(F *s)
+bset(F *s) noexcept
 {
   byte *src = reinterpret_cast<byte *>(s);
   if constexpr ( cnt % 4 == 0 )
@@ -365,7 +363,7 @@ bset(F *s)
 
 template <word in, u64 cnt>
 word *
-wordset(word *src)
+wordset(word *src) noexcept
 {
   if constexpr ( cnt % 4 == 0 )
     for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -383,7 +381,7 @@ wordset(word *src)
 template <byte in, u64 cnt, typename F>
   requires(!micron::is_null_pointer_v<F>)
 F *
-memset(F *s)
+memset(F *s) noexcept
 {
   byte *src = reinterpret_cast<byte *>(s);
   if constexpr ( cnt % 4 == 0 )
@@ -402,7 +400,7 @@ memset(F *s)
 template <typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &
-rmemset(F &s, const byte in, const u64 cnt)
+rmemset(F &s, const byte in, const u64 cnt) noexcept
 {
   byte *src = reinterpret_cast<byte *>(&s);
   if ( cnt % 4 == 0 )
@@ -421,7 +419,7 @@ rmemset(F &s, const byte in, const u64 cnt)
 template <typename F>
   requires(!micron::is_null_pointer_v<F>)
 F *
-memset(F *s, const byte in, const u64 cnt)
+memset(F *s, const byte in, const u64 cnt) noexcept
 {
   byte *src = reinterpret_cast<byte *>(s);
   if ( cnt % 4 == 0 )
@@ -440,7 +438,7 @@ memset(F *s, const byte in, const u64 cnt)
 template <typename F>
   requires(!micron::is_null_pointer_v<F>)
 constexpr F *
-constexpr_memset(F *s, const byte in, const u64 cnt)
+constexpr_memset(F *s, const byte in, const u64 cnt) noexcept
 {
   byte *src = reinterpret_cast<byte *>(s);
   if ( cnt % 4 == 0 )
@@ -456,12 +454,27 @@ constexpr_memset(F *s, const byte in, const u64 cnt)
   return reinterpret_cast<F *>(src);
 };
 
-
+template <typename F, typename D>
+F *
+constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
+{
+  if ( cnt % 4 == 0 ) [[likely]]
+    for ( u64 n = 0; n < cnt; n += 4 ) {
+      dest[n] = static_cast<F>(src[n]);
+      dest[n + 1] = static_cast<F>(src[n + 1]);
+      dest[n + 2] = static_cast<F>(src[n + 2]);
+      dest[n + 3] = static_cast<F>(src[n + 3]);
+    }
+  else
+    for ( u64 n = 0; n < cnt; n++ )
+      dest[n] = static_cast<F>(src[n]);
+  return reinterpret_cast<F *>(dest);
+};
 
 template <typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
-memchr(const T &restrict src, byte c, u64 n)
+memchr(const T &restrict src, byte c, u64 n) noexcept
 {
   if ( src == nullptr )
     return nullptr;
@@ -474,7 +487,7 @@ memchr(const T &restrict src, byte c, u64 n)
 template <typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
-memchr(const T *restrict src, byte c, u64 n)
+memchr(const T *restrict src, byte c, u64 n) noexcept
 {
   if ( src == nullptr )
     return nullptr;
@@ -487,7 +500,7 @@ memchr(const T *restrict src, byte c, u64 n)
 
 template <typename T, typename F, typename S = u64>
 T *
-_rmemcpy_32(T &restrict _d, const F &restrict _s, const S n)
+_rmemcpy_32(T &restrict _d, const F &restrict _s, const S n) noexcept
 {
   T *d = &_d;
   F *s = &_s;
@@ -663,7 +676,7 @@ _rmemcpy_32(T &restrict _d, const F &restrict _s, const S n)
 }
 template <typename T, typename F, typename S = u64>
 T *
-_memcpy_32(T *__restrict d, const F *__restrict s, const S n)
+_memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
 {
   if ( n == 0 )
     return d;
@@ -837,7 +850,7 @@ _memcpy_32(T *__restrict d, const F *__restrict s, const S n)
 }
 template <u64 M, typename F, typename D>
 F *
-cmemcpy(F *__restrict dest, const D *__restrict src)
+cmemcpy(F *__restrict dest, const D *__restrict src) noexcept
 {
   if constexpr ( M % 4 == 0 )
     for ( u64 n = 0; n < M; n += 4 ) {
@@ -854,7 +867,7 @@ cmemcpy(F *__restrict dest, const D *__restrict src)
 
 template <u64 M, typename F, typename D>
 F &
-crmemcpy(F &restrict dest, const D &restrict src)
+crmemcpy(F &restrict dest, const D &restrict src) noexcept
 {
   if constexpr ( M % 4 == 0 )
     for ( u64 n = 0; n < M; n += 4 ) {
@@ -871,7 +884,7 @@ crmemcpy(F &restrict dest, const D &restrict src)
 
 template <typename F, typename D>
 F &
-rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt)
+rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
 {
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -888,7 +901,7 @@ rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt)
 
 template <typename F, typename D>
 F *
-memcpy(F *restrict dest, const D *restrict src, const u64 cnt)
+memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -906,7 +919,7 @@ memcpy(F *restrict dest, const D *restrict src, const u64 cnt)
 template <u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F *
-cbytecpy(F *restrict _dest, const D *restrict _src)
+cbytecpy(F *restrict _dest, const D *restrict _src) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
@@ -924,7 +937,7 @@ cbytecpy(F *restrict _dest, const D *restrict _src)
 };
 
 void *
-voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt)
+voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
@@ -943,7 +956,7 @@ voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt)
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F *
-bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt)
+bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
@@ -962,7 +975,7 @@ bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt)
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F &
-rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt)
+rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
@@ -981,10 +994,10 @@ rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt)
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F *
-bytemove(F *_dest, D *_src, const u64 cnt)
+bytemove(F *_dest, D *_src, const u64 cnt) noexcept
 {
-  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F>*>(_dest));
-  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F>*>(_src));
+  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
+  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_src));
   if ( dest < src )
     for ( u64 i = 0; i < cnt; i++ )
       dest[i] = src[i];
@@ -997,7 +1010,7 @@ bytemove(F *_dest, D *_src, const u64 cnt)
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> and micron::is_fundamental_v<D>)
 F &
-rbytemove(F &_dest, D &_src, const u64 cnt)
+rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(&_dest);
   byte *src = reinterpret_cast<byte *>(&_src);
@@ -1012,7 +1025,7 @@ rbytemove(F &_dest, D &_src, const u64 cnt)
 // NOTE: UNLIKE DEFAULT MEMMOVE THIS OPERATES ON THE SIZE TYPE OF THE UNDERLYING DATA, FOR "NORMAL" MEMMOVE USE BYTEMOVE
 template <typename F, typename D>
 F *
-memmove(F *dest, D *src, const u64 cnt)
+memmove(F *dest, D *src, const u64 cnt) noexcept
 {
   if ( dest < src )
     for ( u64 i = 0; i < cnt; i++ )

@@ -14,7 +14,7 @@ namespace micron
 {
 template <class I, typename T>
 T
-accumulate(I start, I end, T init)
+accumulate(I start, I end, T init) noexcept
 {
   for ( ; start != end; ++start )
     init = micron::move(init) + *start;

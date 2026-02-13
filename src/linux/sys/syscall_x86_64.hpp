@@ -29,7 +29,7 @@ namespace micron
 {
 template <typename... Args>
 long int
-syscall(Args... args)
+syscall(Args... args) noexcept
 {
   return ::syscall(args...);
 };
@@ -432,7 +432,7 @@ namespace micron
 {
 
 long int
-syscall(long int n, ...)
+syscall(long int n, ...) noexcept
 {
   va_list args;
   va_start(args, n);

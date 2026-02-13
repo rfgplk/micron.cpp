@@ -25,7 +25,7 @@ namespace micron
 // T& sig. func. take in a container which requires .begin and .end funcs
 template <is_iterable_container T>
 constexpr T &
-sin(T &cont)
+sin(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::sin(static_cast<double>(*it));
@@ -34,7 +34,7 @@ sin(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-cos(T &cont)
+cos(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::cos(static_cast<double>(*it));
@@ -43,7 +43,7 @@ cos(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-tan(T &cont)
+tan(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::tan(static_cast<double>(*it));
@@ -52,7 +52,7 @@ tan(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-asin(T &cont)
+asin(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::asin(static_cast<double>(*it));
@@ -61,7 +61,7 @@ asin(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-acos(T &cont)
+acos(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::acos(static_cast<double>(*it));
@@ -70,7 +70,7 @@ acos(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-atan(T &cont)
+atan(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::atan(static_cast<double>(*it));
@@ -79,7 +79,7 @@ atan(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-sinh(T &cont)
+sinh(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::sinh(static_cast<double>(*it));
@@ -88,7 +88,7 @@ sinh(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-cosh(T &cont)
+cosh(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::cosh(static_cast<double>(*it));
@@ -97,7 +97,7 @@ cosh(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-tanh(T &cont)
+tanh(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::tanh(static_cast<double>(*it));
@@ -106,7 +106,7 @@ tanh(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-exp(T &cont)
+exp(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::exp(static_cast<double>(*it));
@@ -115,7 +115,7 @@ exp(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-log(T &cont)
+log(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::log(static_cast<double>(*it));
@@ -124,7 +124,7 @@ log(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-log10(T &cont)
+log10(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::log10(static_cast<double>(*it));
@@ -133,7 +133,7 @@ log10(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-sqrt(T &cont)
+sqrt(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::sqrt(static_cast<double>(*it));
@@ -142,7 +142,7 @@ sqrt(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-cbrt(T &cont)
+cbrt(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::cbrt(static_cast<double>(*it));
@@ -151,7 +151,7 @@ cbrt(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-absolute(T &cont)
+absolute(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::abs(static_cast<double>(*it));
@@ -160,7 +160,7 @@ absolute(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-sign(T &cont)
+sign(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = (*it > 0) - (*it < 0);
@@ -169,7 +169,7 @@ sign(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-clip(T &cont, const typename T::value_type lo, const typename T::value_type hi)
+clip(T &cont, const typename T::value_type lo, const typename T::value_type hi) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = (*it < lo) ? lo : ((*it > hi) ? hi : *it);
@@ -178,7 +178,7 @@ clip(T &cont, const typename T::value_type lo, const typename T::value_type hi)
 
 template <is_iterable_container T>
 constexpr T &
-degrees(T &cont)
+degrees(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = *it * (180.0 / math::pi);
@@ -187,7 +187,7 @@ degrees(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-radians(T &cont)
+radians(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = *it * (math::pi / 180.0);
@@ -196,7 +196,7 @@ radians(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-asinh(T &cont)
+asinh(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::asinh(static_cast<double>(*it));
@@ -205,7 +205,7 @@ asinh(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-acosh(T &cont)
+acosh(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::acosh(static_cast<double>(*it));
@@ -214,7 +214,7 @@ acosh(T &cont)
 
 template <is_iterable_container T>
 constexpr T &
-atanh(T &cont)
+atanh(T &cont) noexcept
 {
   for ( auto *it = cont.begin(); it != cont.end(); ++it )
     *it = math::atanh(static_cast<double>(*it));
@@ -226,7 +226,7 @@ atanh(T &cont)
 
 template <typename F, typename T>
 constexpr T
-derivative(F f, T x, T h = T(1e-6))
+derivative(F f, T x, T h = T(1e-6)) noexcept
 {
   return (f(x + h) - f(x - h)) / (T(2) * h);
 }
@@ -234,7 +234,7 @@ derivative(F f, T x, T h = T(1e-6))
 // gradient of function f: R^n -> R
 template <typename F, typename V>
 V
-jacobian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-6))
+jacobian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-6)) noexcept
 {
   using T = typename V::value_type;
 
@@ -257,7 +257,7 @@ jacobian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-6
 // hessian of function f: R^n -> R
 template <typename F, typename V>
 auto
-hessian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-5))
+hessian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-5)) noexcept
 {
   using T = typename V::value_type;
   const size_t n = x.size();
