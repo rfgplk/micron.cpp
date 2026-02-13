@@ -11,6 +11,8 @@
 
 #include "../type_traits.hpp"
 
+#include "../except.hpp"
+
 namespace micron
 {
 
@@ -70,6 +72,8 @@ template <typename N, typename T, typename F>
 F *
 copy_n(const T *restrict src, F *restrict dst, const N cnt)
 {
+  if ( src == nullptr or dst == nullptr  )
+    exc<except::library_error>("micron::copy invalid pointers.");
   // if (cnt <= 32)
   //   _memcpy_32(dst, src, cnt);
   if ( cnt % 16 == 0 and cnt % 32 != 0 )
@@ -103,6 +107,8 @@ template <typename T>
 inline bool
 is_zero(const T *src)
 {
+  if ( src == nullptr  )
+    exc<except::library_error>("micron::copy invalid pointers.");
   const byte *b_ptr = reinterpret_cast<const byte *>(src);
   for ( size_t i = 0; i < sizeof(T); i++ )
     if ( *b_ptr++ > 0x0 )
@@ -114,6 +120,8 @@ template <size_t N, typename T, typename F>
 F *
 cmove(const T *restrict src, F *restrict dst)
 {
+  if ( src == nullptr or dst == nullptr  )
+    exc<except::library_error>("micron::copy invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
       dst[i] = micron::move(src[i]);
@@ -142,6 +150,8 @@ template <size_t N, typename T, typename F>
 F *
 ccopy(const T *restrict src, F *restrict dst)
 {
+  if ( src == nullptr or dst == nullptr  )
+    exc<except::library_error>("micron::copy invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
       dst[i] = src[i];
@@ -185,6 +195,8 @@ template <size_t N, typename T, typename F>
 F *
 copy(const T *restrict src, F *restrict dst)
 {
+  if ( src == nullptr or dst == nullptr  )
+    exc<except::library_error>("micron::copy invalid pointers.");
   if constexpr ( N <= 32 )
     _memcpy_32(dst, src, N);
   if constexpr ( N % 16 == 0 and N % 32 != 0 )
@@ -215,7 +227,7 @@ F *
 copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 {
   if ( (end_src - start_src) < 0 )
-    __builtin_abort();     // exc<except::library_error>("micron::copy invalid pointers.");
+    exc<except::library_error>("micron::copy invalid pointers.");
   if ( N % 16 == 0 && N % 32 != 0 )
     memcpy128(dest, start_src, end_src - start_src);
   else if ( N % 32 == 0 )

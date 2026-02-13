@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../algorithm/memory.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
