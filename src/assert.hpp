@@ -5,12 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-namespace micron {
+namespace micron
+{
 
-static constexpr void assert(){
+static constexpr void
+assert()
+{
   static_cast<void>((0));
 }
-
-
 
 };

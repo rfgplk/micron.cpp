@@ -8,5 +8,3 @@
 #include "../types.hpp"
 #include "cmemory.hpp"
 #include "cstring.hpp"
-
-

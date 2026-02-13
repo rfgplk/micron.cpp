@@ -6,8 +6,8 @@
 #pragma once
 
 #include "../math/generic.hpp"
-#include "../memory/memory.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/memory.hpp"
 #include "../types.hpp"
 
 namespace micron

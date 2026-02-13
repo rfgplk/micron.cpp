@@ -5,13 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "__internal.hpp"
-#include "linux/kmemory.hpp"
-#include "linux/sysinfo.hpp"
 #include "../concepts.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
+#include "__internal.hpp"
+#include "linux/kmemory.hpp"
+#include "linux/sysinfo.hpp"
 
 namespace micron
 {
@@ -25,7 +25,7 @@ namespace micron
 // determine how memory will be allocated, whenever a container requests more
 // mem follow this policy
 struct serial_allocation_policy {
-  static constexpr bool concurrent = false;              // used in concurrent structures
+  static constexpr bool concurrent = false;         // used in concurrent structures
   static constexpr u32 on_grow = 3;                 // by how much memory grows on each realloc (& how)
   static constexpr u32 pooling = POOL_SERIAL;       // what type of pool
   static constexpr u32 granularity = page_size;     // minimum amount of memory alloc'd
@@ -34,7 +34,7 @@ struct serial_allocation_policy {
 
 // for huge pages
 struct huge_allocation_policy {
-  static constexpr bool concurrent = false;                    // used in concurrent structures
+  static constexpr bool concurrent = false;               // used in concurrent structures
   static constexpr u32 on_grow = 4;                       // by how much memory grows on each realloc (& how)
   static constexpr u32 pooling = POOL_SERIAL;             // what type of pool
   static constexpr u32 granularity = large_page_size;     // minimum amount of memory alloc'd
@@ -43,7 +43,7 @@ struct huge_allocation_policy {
 
 // for allocating nearly all RAM
 struct total_allocation_policy {
-  static constexpr bool concurrent = false;              // used in concurrent structures
+  static constexpr bool concurrent = false;         // used in concurrent structures
   static constexpr u32 on_grow = 0;                 // cannot grow by definition
   static constexpr u32 pooling = POOL_NONE;         // what type of pool
   static constexpr u32 granularity = page_size;     // minimum amount of memory alloc'd
@@ -51,7 +51,7 @@ struct total_allocation_policy {
 };
 
 struct tiny_allocation_policy {
-  static constexpr bool concurrent = false;            // used in concurrent structures
+  static constexpr bool concurrent = false;       // used in concurrent structures
   static constexpr u32 on_grow = 2;               // by how much memory grows on each realloc (& how)
   static constexpr u32 pooling = POOL_SERIAL;     // what type of pool
   static constexpr u32 granularity = 256;         // minimum amount of memory alloc'd
@@ -59,7 +59,7 @@ struct tiny_allocation_policy {
 };
 
 struct linked_allocation_policy {
-  static constexpr bool concurrent = true;               // used in concurrent structures
+  static constexpr bool concurrent = true;          // used in concurrent structures
   static constexpr u32 on_grow = 3;                 // by how much memory grows on each realloc (& how)
   static constexpr u32 pooling = POOL_LINKED;       // what type of pool
   static constexpr u32 granularity = page_size;     // minimum amount of memory alloc'd

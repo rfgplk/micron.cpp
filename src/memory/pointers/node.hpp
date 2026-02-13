@@ -11,7 +11,7 @@ template <class Type, > class node_pointer : private __internal_pointer_alloc<Ty
   using mutability_type = mutable_tag;
   using value_type = Type;
   using element_type = Type;
-  
+
   Type *internal_pointer;
 public:
   ~node_pointer() {}     // don't delete on destruction

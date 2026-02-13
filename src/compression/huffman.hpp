@@ -29,8 +29,7 @@
     return (zz2 > zz3) ? zz2 : zz3;
   }
 
-  void bz2_makecodes(micron::vector<unsigned char> &len, micron::vector<u32> &freq, u32 alpha_size,
-                     u32 max_len) {
+  void bz2_makecodes(micron::vector<unsigned char> &len, micron::vector<u32> &freq, u32 alpha_size, u32 max_len) {
 
   };
 

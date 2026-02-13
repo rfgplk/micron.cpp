@@ -10,8 +10,8 @@
 #include "../../linux/io.hpp"
 #include "../bits.hpp"
 
-#include "bits.hpp"
 #include "../../linux/sys/limits.hpp"
+#include "bits.hpp"
 
 namespace micron
 {
@@ -30,25 +30,25 @@ using micron::fchmod;
 using micron::fchownat;
 using micron::fdatasync;
 using micron::flock;
-using micron::stat;
-using micron::lstat;
-using micron::umask;
 using micron::fstat;
 using micron::fstatat;
 using micron::fsync;
 using micron::getcwd;
 using micron::lchown;
 using micron::lseek;
+using micron::lstat;
 using micron::open;
 using micron::openat;
+using micron::pipe;
 using micron::read;
 using micron::rename;
 using micron::renameat;
 using micron::renameat2;
 using micron::rmdir;
+using micron::stat;
 using micron::syncfs;
+using micron::umask;
 using micron::write;
-using micron::pipe;
 
 using micron::access_ok;
 using micron::execute_ok;

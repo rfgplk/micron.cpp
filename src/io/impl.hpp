@@ -32,7 +32,7 @@ bool_to_char(bool n, char *frm)
   if ( n )
     frm = const_cast<char *>("true");
   else
-    frm = const_cast<char*>("false");
+    frm = const_cast<char *>("false");
   return frm;
 }
 const char *

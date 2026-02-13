@@ -118,8 +118,7 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     if ( micron::clock_gettime((clockid_t)C, t) == -1 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
     auto msec = t.tv_nsec / 1000000;
-    return static_cast<duration_d>(t.tv_sec) * 1000 +
-    static_cast<duration_d>(msec);
+    return static_cast<duration_d>(t.tv_sec) * 1000 + static_cast<duration_d>(msec);
   }
   auto
   read(const timespec_t &t) -> duration_d
@@ -127,13 +126,12 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     time_t sec = t.tv_sec - time_begin.tv_sec;
     long nsec = t.tv_nsec - time_begin.tv_nsec;
 
-    if (nsec < 0) {
+    if ( nsec < 0 ) {
       --sec;
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec)
-    + static_cast<duration_d>(nsec) * 1e-9;
+    return static_cast<duration_d>(sec) + static_cast<duration_d>(nsec) * 1e-9;
   }
 
   auto
@@ -142,13 +140,12 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     time_t sec = time_end.tv_sec - time_begin.tv_sec;
     long nsec = time_end.tv_nsec - time_begin.tv_nsec;
 
-    if (nsec < 0) {
+    if ( nsec < 0 ) {
       --sec;
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec)
-    + static_cast<duration_d>(nsec) * 1e-9;
+    return static_cast<duration_d>(sec) + static_cast<duration_d>(nsec) * 1e-9;
   }
   auto
   read_ms(const timespec_t &t) -> duration_d
@@ -156,13 +153,12 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     time_t sec = t.tv_sec - time_begin.tv_sec;
     long nsec = t.tv_nsec - time_begin.tv_nsec;
 
-    if (nsec < 0) {
+    if ( nsec < 0 ) {
       --sec;
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec) * 1000.0
-    + static_cast<duration_d>(nsec) * 1e-6;
+    return static_cast<duration_d>(sec) * 1000.0 + static_cast<duration_d>(nsec) * 1e-6;
   }
 
   auto
@@ -171,13 +167,12 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     time_t sec = time_end.tv_sec - time_begin.tv_sec;
     long nsec = time_end.tv_nsec - time_begin.tv_nsec;
 
-    if (nsec < 0) {
+    if ( nsec < 0 ) {
       --sec;
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec) * 1000.0
-    + static_cast<duration_d>(nsec) * 1e-6;
+    return static_cast<duration_d>(sec) * 1000.0 + static_cast<duration_d>(nsec) * 1e-6;
   }
 };
 
@@ -188,8 +183,7 @@ now(void)
   if ( micron::clock_gettime((clockid_t)clock_realtime_alarm, t) == -1 )
     exc<except::runtime_error>("micron::now failed to get time");
   auto msec = t.tv_nsec / 1000000;
-  return static_cast<duration_d>(t.tv_sec) * 1000 +
-  static_cast<duration_d>(msec);
+  return static_cast<duration_d>(t.tv_sec) * 1000 + static_cast<duration_d>(msec);
 }
 
 template <typename C = system_clock<>, typename D = duration_d> struct time_point {

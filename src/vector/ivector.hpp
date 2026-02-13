@@ -64,13 +64,14 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
       shallow_copy(dest, src, cnt);
     }
   }
-  T*
+  T *
   __itr(size_t n)
   {
     if ( n >= __mem::length )
       exc<except::library_error>("micron::ivector itr() out of bounds");
     return &(__mem::memory)[n];
   }
+
 public:
   using category_type = vector_tag;
   using mutability_type = immutable_tag;

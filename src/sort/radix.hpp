@@ -8,8 +8,8 @@
 #include "../algorithm/algorithm.hpp"
 #include "../math/generic.hpp"
 #include "../memory/memory.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 
 #include "counting.hpp"
 
@@ -31,8 +31,8 @@ __impl_count(T &arr, T &carr, i32 size, i32 rdx)
 
   for ( i32 k = size - 1; k >= 0; --k )
     carr[bckt[(arr[k] / rdx) % 10]-- - 1] = arr[k];
-  //arr = carr;
-  micron::memcpy(&arr[0], &carr[0], arr.size()); // avoiding copy assign deletion (yes it's bad)
+  // arr = carr;
+  micron::memcpy(&arr[0], &carr[0], arr.size());     // avoiding copy assign deletion (yes it's bad)
 }
 
 template <typename T>

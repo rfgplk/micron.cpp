@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-
 /*
  * All allocators must provide these (public) methods
  * ~dest() = default;
@@ -20,4 +19,4 @@
  * static chunk<byte> grow(chunk<byte> memory, size_t n);
  * static void destroy(const chunk<byte> mem);
  * byte *share(void);
-**/
+ **/

@@ -8,9 +8,9 @@
 #include "../../concepts.hpp"
 #include "../../memory/actions.hpp"
 #include "devices.hpp"
+#include "key_mapper.hpp"
 #include "poll.hpp"
 #include "reader.hpp"
-#include "key_mapper.hpp"
 
 #include "../../except.hpp"
 

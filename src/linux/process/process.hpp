@@ -151,7 +151,7 @@ struct uprocess_t {
         t = i;
         envp.emplace_back(str.begin() + k, str.begin() + t);
         // our vector can only hold 64 elements, and as it turns out environ could easily exceed that
-        if(envp.full_or_overflowed())
+        if ( envp.full_or_overflowed() )
           break;
         k = t + 1;
       }

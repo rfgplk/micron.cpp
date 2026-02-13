@@ -13,7 +13,7 @@
 #define _BITS_CPU_SET_H 1
 
 typedef struct {
-     __syscall_ulong_type __bits[1024/(8*sizeof(__syscall_ulong_type))];
+  __syscall_ulong_type __bits[1024 / (8 * sizeof(__syscall_ulong_type))];
 } cpu_set_t;
 #endif
 

@@ -9,7 +9,6 @@
 #include "except.hpp"
 #include "types.hpp"
 
-
 namespace micron
 {
 

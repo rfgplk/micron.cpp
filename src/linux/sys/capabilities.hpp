@@ -65,7 +65,6 @@ struct vfs_ns_cap_data {
   u32 rootid;
 };
 
-
 constexpr static const i32 _linux_capability_version = 0x19980330;
 constexpr static const i32 _linux_capability_u32s = 1;
 

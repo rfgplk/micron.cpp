@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-int main(int argc, char** argv);
+int main(int argc, char **argv);
 
 // at global ns
 int __attribute__((noreturn, used, visibility("default")))

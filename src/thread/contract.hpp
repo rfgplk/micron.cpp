@@ -6,10 +6,10 @@
 #pragma once
 
 #include "../mutex/spinlock.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 
-//TODO: implement
+// TODO: implement
 
 namespace micron
 {
@@ -20,13 +20,10 @@ class contract
 {
   spin_lock lck;
   K (*fcallback)(Args...);     // main callback
-  
+
 public:
   ~contract() {}
-  template <typename... Targs>
-  contract(Targs&&... args) {
-    
-  }
+  template <typename... Targs> contract(Targs &&...args) {}
   contract(const contract &o) = delete;
   contract(contract &&) = delete;
   contract &operator=(const contract &) = delete;

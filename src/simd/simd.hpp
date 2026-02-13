@@ -5,11 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../__special/initializer_list"
 #include "bits.hpp"
 #include "dispatch.hpp"
 #include "load.hpp"
 #include "types.hpp"
-#include "../__special/initializer_list"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"

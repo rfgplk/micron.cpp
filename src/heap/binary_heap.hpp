@@ -14,8 +14,7 @@
 namespace micron
 {
 
-template <typename T, class Alloc = micron::allocator_serial<>>
-class binary_heap : public __immutable_memory_resource<T>
+template <typename T, class Alloc = micron::allocator_serial<>> class binary_heap : public __immutable_memory_resource<T>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
   inline void
@@ -67,14 +66,8 @@ public:
       return;
     clear();
   }
-  binary_heap(void)
-      : __mem((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))
-  {
-  }
-  template <T... Args> binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T)))
-  {
-    (insert(args), ...);
-  }
+  binary_heap(void) : __mem((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T))) {}
+  template <T... Args> binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T))) { (insert(args), ...); }
   binary_heap(const size_t n) : __mem(n * sizeof(T)) {}
   binary_heap(const binary_heap &o) = delete;
   binary_heap(binary_heap &&o)

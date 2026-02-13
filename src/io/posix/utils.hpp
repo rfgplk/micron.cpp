@@ -130,9 +130,8 @@ is_inode_type_at(int fd, const T &str)
 }
 // from fd
 
-
 auto
-get_type_at(const char* str)
+get_type_at(const char *str)
 {
   stat_t buf;
   if ( stat(str, buf) != 0 )

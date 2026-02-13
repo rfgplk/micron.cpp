@@ -22,9 +22,9 @@ using button_t = i32;
 struct input_packet_t {
   u16 mask_type;
   slice<button_t> button_mask;
-  void (*callback)(const micron::timeval_t&, u16, i32);
-  void (*actuate_callback)(const micron::timeval_t&, u16, i32);
-  void (*release_callback)(const micron::timeval_t&, u16, i32);
+  void (*callback)(const micron::timeval_t &, u16, i32);
+  void (*actuate_callback)(const micron::timeval_t &, u16, i32);
+  void (*release_callback)(const micron::timeval_t &, u16, i32);
 };
 
 struct input_t {

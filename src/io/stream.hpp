@@ -62,14 +62,14 @@ public:
   }
   template <typename T>
   stream &
-  append(T* ptr, size_t count)
+  append(T *ptr, size_t count)
   {
     ssize_t c = 0;
     if ( __sz <= (count * sizeof(T)) )
       c = __sz;
     else
       c = count * sizeof(T);
-    micron::memcpy(&(*__buffer)[__size], reinterpret_cast<const byte*>(ptr), c);
+    micron::memcpy(&(*__buffer)[__size], reinterpret_cast<const byte *>(ptr), c);
     __size += c;
     return *this;
   }
@@ -114,7 +114,7 @@ public:
   bool
   full(const size_t n = 0) const
   {
-    // NOTE: fails if above size of size_t / 2 
+    // NOTE: fails if above size of size_t / 2
     return ((size() + static_cast<ssize_t>(n)) >= max_size());
   }
   byte *

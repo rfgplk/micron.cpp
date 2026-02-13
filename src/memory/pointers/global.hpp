@@ -155,7 +155,7 @@ public:
   ~__global_pointer() { /*nothing*/ };
   __global_pointer(void) = delete;
   template <typename... Args>
-  requires (sizeof...(Args) > 0)
+    requires(sizeof...(Args) > 0)
   __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
   {
   }     // internal_pointer(new Type[sizeof...(args)]{ args... }){};

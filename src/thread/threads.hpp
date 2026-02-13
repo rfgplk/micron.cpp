@@ -26,6 +26,6 @@
 
 #include "signal.hpp"
 
-#include "thread_types/reg_thread.hpp"
 #include "thread_types/auto_thread.hpp"
 #include "thread_types/group_thread.hpp"
+#include "thread_types/reg_thread.hpp"

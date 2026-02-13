@@ -103,7 +103,7 @@ public:
     return _signal;
   };
   int
-  wait(void) // NOTE: can't be const sigwait modifies _sig
+  wait(void)     // NOTE: can't be const sigwait modifies _sig
   {
     return micron::sigwait(_signal, _sig);
   }

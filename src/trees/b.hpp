@@ -6,11 +6,11 @@
 #pragma once
 
 #include "../array.hpp"
-#include "../vector/fvector.hpp"
 #include "../memory/new.hpp"
 #include "../pointer.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
+#include "../vector/fvector.hpp"
 
 // TODO: redo
 

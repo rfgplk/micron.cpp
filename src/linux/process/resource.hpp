@@ -12,5 +12,5 @@
 
 namespace micron
 {
-    // TODO: add arbitraty process resource getting from /proc/.../stat
+// TODO: add arbitraty process resource getting from /proc/.../stat
 };

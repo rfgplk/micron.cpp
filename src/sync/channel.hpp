@@ -59,7 +59,8 @@ public:
   channel &
   operator<<(T &to)
   {
-    auto m = __wait();     // keeps lock throughout scope, NOTE: although lock_guards are immovable, ellision allows this operation
+    auto m = __wait();     // keeps lock throughout scope, NOTE: although lock_guards are immovable, ellision allows this
+                           // operation
     to = obj();
     return *this;
   }

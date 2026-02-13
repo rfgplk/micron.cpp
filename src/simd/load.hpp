@@ -11,7 +11,8 @@ namespace micron
 {
 namespace simd
 {
-// NOTE: this is currently here since the compiler really likes to complain that we lose attributes when passing _mXXX types around through templates. no way to surpress otherwise
+// NOTE: this is currently here since the compiler really likes to complain that we lose attributes when passing _mXXX
+// types around through templates. no way to surpress otherwise
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 template <is_simd_type B>

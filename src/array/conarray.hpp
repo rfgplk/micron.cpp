@@ -268,7 +268,7 @@ public:
       stack[i] %= o.stack[o];
     return *this;
   }
-  
+
   // special functions - no idea why the stl doesn't have these
   size_t
   sum(void) const

@@ -10,8 +10,8 @@
 #include "memory/memory.hpp"
 #include "string/format.hpp"
 #include "tags.hpp"
-#include "types.hpp"
 #include "type_traits.hpp"
+#include "types.hpp"
 
 namespace micron
 {

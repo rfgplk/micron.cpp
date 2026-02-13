@@ -767,8 +767,9 @@ public:
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
       it->~T();
 
-    for ( T *p = it; p < (__mem::memory + __mem::length - 1); ++p )
-      *p = micron::move(*(p + 1));
+    size_t idx = it - __mem::memory;
+    for ( size_t i = idx; i + 1 < __mem::length; ++i )
+      __mem::memory[i] = micron::move(__mem::memory[i + 1]);
 
     czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
 

@@ -9,7 +9,8 @@
 
 namespace micron
 {
-namespace simd {
+namespace simd
+{
 // bit width - lane width
 template <is_simd_128_type T, is_flag_type F> class v128
 {

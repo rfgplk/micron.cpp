@@ -226,9 +226,9 @@ set_stack_thread(pthread_attr_t &attr, T *ptr, size_t size)
 }
 
 inline void
-get_stack_thread(const pthread_attr_t &attr, addr_t* &ptr, size_t &size)
+get_stack_thread(const pthread_attr_t &attr, addr_t *&ptr, size_t &size)
 {
-  pthread_attr_getstack(&attr, reinterpret_cast<void**>(&ptr), &size);
+  pthread_attr_getstack(&attr, reinterpret_cast<void **>(&ptr), &size);
 }
 
 inline void

@@ -8,7 +8,6 @@
 #include "../sync/yield.hpp"
 #include "mutex.hpp"
 
-
 namespace micron
 {
 class spin_lock

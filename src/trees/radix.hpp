@@ -6,11 +6,11 @@
 #pragma once
 
 #include "../array/arrays.hpp"
-#include "../vector/fvector.hpp"
 #include "../memory/new.hpp"
 #include "../pointer.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
+#include "../vector/fvector.hpp"
 
 template <typename Key, typename Value>
   requires micron::is_copy_constructible_v<Key> && micron::is_move_constructible_v<Key>

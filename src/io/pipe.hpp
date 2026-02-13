@@ -8,9 +8,9 @@
 #include "../concepts.hpp"
 #include "../except.hpp"
 #include "../string/strings.hpp"
+#include "../type_traits.hpp"
 #include "io.hpp"
 #include "paths.hpp"
-#include "../type_traits.hpp"
 
 namespace micron
 {
@@ -105,15 +105,19 @@ public:
 class npipe
 {
   micron::string pipe_name;     // name
-  int fd; //fd of open pipe
+  int fd;                       // fd of open pipe
 public:
-  ~npipe() { micron::unlink(pipe_name.c_str()); posix::close(fd); }
+  ~npipe()
+  {
+    micron::unlink(pipe_name.c_str());
+    posix::close(fd);
+  }
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str)
   {
     if ( micron::mkfifo(pipe_name.c_str(), perms) == -1 )
       exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe");
     fd = posix::open(pipe_name.c_str(), o_rdwr);
-    if(fd == -1)
+    if ( fd == -1 )
       exc<except::io_error>("micron::npipe(open) failed to open pipe file");
   }
   npipe(const npipe &) = default;
@@ -131,12 +135,12 @@ public:
   void
   write(T &t)
   {
-    //write(fd, t, t.size());
+    // write(fd, t, t.size());
   }
   void
   write(byte *t, size_t sz)
   {
-    //write(fd, t, sz); 
+    // write(fd, t, sz);
   }
   // read/write to T
   template <typename T>
@@ -144,12 +148,12 @@ public:
   void
   read(T &t)
   {
-    //read(fd, t, t.size());
+    // read(fd, t, t.size());
   }
   void
   read(byte *t, size_t sz)
   {
-    //read(fd, t, sz); 
+    // read(fd, t, sz);
   }
 };
 

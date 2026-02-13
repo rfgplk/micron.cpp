@@ -8,8 +8,8 @@
 #include "../concepts.hpp"
 #include "../memory/memory.hpp"
 #include "../tuple.hpp"
-#include "../types.hpp"
 #include "../type_traits.hpp"
+#include "../types.hpp"
 #include "bernstein.hpp"
 #include "fib.hpp"
 #include "fnv.hpp"
@@ -83,7 +83,7 @@ hash64_t
 hash64(const T *data, size_t len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
-    return hashes::xxhash64_rtseed(reinterpret_cast<const byte*>(data), seed, len);
+    return hashes::xxhash64_rtseed(reinterpret_cast<const byte *>(data), seed, len);
 }
 
 hash64_t

@@ -12,10 +12,8 @@
 #include "../../string/strings.hpp"
 #include "../../tuple.hpp"
 
-#include "../bits.hpp"
 #include "../../linux/sys/fcntl.hpp"
-
-
+#include "../bits.hpp"
 
 #include "utils.hpp"
 

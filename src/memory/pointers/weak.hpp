@@ -133,7 +133,6 @@ public:
     return internal_pointer >= o.get();
   }
 
-
   constexpr explicit
   operator bool() const noexcept
   {

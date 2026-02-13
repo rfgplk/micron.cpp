@@ -8,7 +8,8 @@
 #include "../../except.hpp"
 #include "bits.hpp"
 
-namespace micron {
+namespace micron
+{
 template <class Type> class empty_pointer
 {
   Type *internal_pointer;

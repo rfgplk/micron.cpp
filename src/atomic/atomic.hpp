@@ -52,9 +52,11 @@ template <typename T> struct atomic_token {
 
   atomic_token(const T t = ATOMIC_OPEN) : v(t) {};
   atomic_token(const atomic_token &o) : v(o.v) {};
-  atomic_token(atomic_token &&t) : v(micron::move(t.v)) { t.v = {};};
+  atomic_token(atomic_token &&t) : v(micron::move(t.v)) { t.v = {}; };
   void operator=(const atomic_token &) = delete;
-  atomic_token& operator=(atomic_token &&o){
+  atomic_token &
+  operator=(atomic_token &&o)
+  {
     v = o.v;
     o.v = {};
     return *this;
@@ -111,7 +113,7 @@ template <typename T> struct atomic_token {
   {
     return atom::load(&v, (int)mrd);
   }
-  T*
+  T *
   ptr()
   {
     return &v;

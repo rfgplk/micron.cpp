@@ -223,7 +223,7 @@ template <typename T>
 size_t
 query_size(T *ptr)
 {
-  return __main_arena->__size_of_alloc(reinterpret_cast<addr_t*>(ptr));
+  return __main_arena->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
 }
 
 //
@@ -256,7 +256,7 @@ void *
 realloc(void *ptr, size_t size)     // reallocates memory
 {
   // NOTE: this always gets the full size of the allocated memory, not what was requested
-  size_t old_size = query_size(reinterpret_cast<addr_t*>(ptr));
+  size_t old_size = query_size(reinterpret_cast<addr_t *>(ptr));
   if ( size == 0 ) {
     dealloc(reinterpret_cast<byte *>(ptr));
     return nullptr;
@@ -271,7 +271,7 @@ realloc(void *ptr, size_t size)     // reallocates memory
     return nullptr;     // allocation failed
 
   size_t copy_size = old_size < size ? old_size : size;
-  micron::memcpy(new_block, reinterpret_cast<byte*>(ptr), copy_size);
+  micron::memcpy(new_block, reinterpret_cast<byte *>(ptr), copy_size);
 
   dealloc(reinterpret_cast<byte *>(ptr));
 

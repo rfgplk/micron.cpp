@@ -93,7 +93,8 @@ prepare_generic_mouse_sensor(void) -> input_packet_t
 };
 
 auto
-prepare_generic_mouse(void (*fn_cb)(const micron::timeval_t &, u16, i32), void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+prepare_generic_mouse(void (*fn_cb)(const micron::timeval_t &, u16, i32),
+                      void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                       void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input = { ev_key, sizeof(button_t) * 8, fn_cb, fn_acb, fn_rcb };

@@ -7,9 +7,9 @@
 
 #include "algorithm/algorithm.hpp"
 #include "algorithm/memory.hpp"
+#include "except.hpp"
 #include "tags.hpp"
 #include "types.hpp"
-#include "except.hpp"
 
 namespace micron
 {

@@ -10,10 +10,11 @@
 namespace micron
 {
 
-void
+__attribute__((noreturn)) void
 sys_exit(int ret)
 {
   micron::syscall(SYS_exit, ret);
+  __builtin_unreachable();
 }
 
 constexpr static const int exit_ok = 0;

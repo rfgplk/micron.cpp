@@ -7,8 +7,8 @@
 
 #include "../except.hpp"
 
-#include "conarray.hpp"
 #include "array.hpp"
-#include "farray.hpp"
-#include "carray.hpp"
 #include "bisect_array.hpp"
+#include "carray.hpp"
+#include "conarray.hpp"
+#include "farray.hpp"

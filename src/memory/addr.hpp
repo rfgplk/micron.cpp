@@ -89,8 +89,8 @@ template <typename T>
 T *
 not_null(T *p)
 {
-  if ( p == nullptr )
-   {} //exc<except::memory_error>("not_null was nullptr");
+  if ( p == nullptr ) {
+  }     // exc<except::memory_error>("not_null was nullptr");
   return p;
 }
 };

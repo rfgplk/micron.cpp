@@ -4,7 +4,6 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-
 #pragma once
 
 #include "../../allocation/abcmalloc/tapi.hpp"
@@ -125,7 +124,7 @@ clone(addr_t *stack, int flags, Args &&...args)
     clone_args.exit_signal = sig_chld;
 
   uintptr_t sptr = reinterpret_cast<uintptr_t>(stack);
-  sptr += Sz;       // top of allocated stack
+  sptr += Sz;         // top of allocated stack
   sptr &= ~0xFUL;     // 16-byte alignment
   clone_args.stack = sptr;
   clone_args.stack_size = Sz;
@@ -154,7 +153,6 @@ clone(addr_t *stack, int flags, Args &&...args)
   }
   return pid;
 }
-
 
 // special clone func
 pid_t

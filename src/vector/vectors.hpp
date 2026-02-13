@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "vector.hpp"
 #include "fvector.hpp"
 #include "ivector.hpp"
 #include "svector.hpp"
+#include "vector.hpp"

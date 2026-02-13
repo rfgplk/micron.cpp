@@ -5,10 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../src/maps/b_map.hpp"
 #include "../src/maps/hopscotch.hpp"
 #include "../src/maps/robin.hpp"
 #include "../src/maps/swiss.hpp"
-#include "../src/maps/b_map.hpp"
 
 namespace micron
 {

@@ -23,7 +23,7 @@
 
 #include "../../types.hpp"
 
-#include  "../linux/kmemory.hpp"
+#include "../linux/kmemory.hpp"
 
 #include "../../except.hpp"
 #include "../../type_traits.hpp"

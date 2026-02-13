@@ -13,6 +13,7 @@ __call_main(int (*main)(int, char **, char **), int argc, char **argv)
 }
 
 static inline __attribute__((always_inline)) int
-_start(){
-__call_main();
+_start()
+{
+  __call_main();
 }

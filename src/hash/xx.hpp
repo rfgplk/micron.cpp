@@ -18,12 +18,11 @@ namespace micron
 namespace hashes
 {
 
-constexpr u32 xxprime32a = 0x9E3779B1U;  /*!< 0b10011110001101110111100110110001 */
-constexpr u32 xxprime32b = 0x85EBCA77U;  /*!< 0b10000101111010111100101001110111 */
-constexpr u32 xxprime32c = 0xC2B2AE3DU;  /*!< 0b11000010101100101010111000111101 */
-constexpr u32 xxprime32d = 0x27D4EB2FU;  /*!< 0b00100111110101001110101100101111 */
-constexpr u32 xxprime32e = 0x165667B1U;  /*!< 0b00010110010101100110011110110001 */
-
+constexpr u32 xxprime32a = 0x9E3779B1U; /*!< 0b10011110001101110111100110110001 */
+constexpr u32 xxprime32b = 0x85EBCA77U; /*!< 0b10000101111010111100101001110111 */
+constexpr u32 xxprime32c = 0xC2B2AE3DU; /*!< 0b11000010101100101010111000111101 */
+constexpr u32 xxprime32d = 0x27D4EB2FU; /*!< 0b00100111110101001110101100101111 */
+constexpr u32 xxprime32e = 0x165667B1U; /*!< 0b00010110010101100110011110110001 */
 
 constexpr u64 xxprime64a = 0x9E3779B185EBCA87ULL;
 constexpr u64 xxprime64b = 0xC2B2AE3D27D4EB4FULL;
@@ -168,9 +167,9 @@ template <u64 seed>
 inline u64
 xxhash64(const byte *src, size_t len)
 {
-  if ((((size_t)src) & 7) != 0 ) [[unlikely]]
+  if ( (((size_t)src) & 7) != 0 ) [[unlikely]]
     exc<except::library_error>("micron::hash::xxhash src isn't aligned");
-  //xstate state = init_seed<seed>();
+  // xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {
     const byte *const end = src + len;
@@ -199,9 +198,9 @@ xxhash64(const byte *src, size_t len)
 inline u64
 xxhash64_rtseed(const byte *src, u64 seed, size_t len)
 {
-  if ((((size_t)src) & 7) != 0 ) [[unlikely]]
+  if ( (((size_t)src) & 7) != 0 ) [[unlikely]]
     exc<except::library_error>("micron::hash::xxhash src isn't aligned");
-  //xstate state = init_seed<seed>();
+  // xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {
     const byte *const end = src + len;

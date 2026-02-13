@@ -58,7 +58,7 @@ class fibonacci_heap : private Alloc, public immutable_memory<T>
   {
     if ( !min_root )
       return;
-    size_t max_degree = 64; 
+    size_t max_degree = 64;
     node *A[max_degree] = { nullptr };
 
     node *start = min_root;

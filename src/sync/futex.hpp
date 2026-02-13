@@ -46,7 +46,7 @@ wait_futex(T *ptr, T val)
   T e = 0;
   while ( !atom::cmp_exchange_weak(ptr, &e, 1) ) {
     e = 0;
-    __futex(reinterpret_cast<u32*>(ptr), futex_wait | futex_private_flag, val, nullptr, nullptr, 0);
+    __futex(reinterpret_cast<u32 *>(ptr), futex_wait | futex_private_flag, val, nullptr, nullptr, 0);
   }
 }
 template <typename T>
@@ -54,7 +54,7 @@ void
 release_futex(T *ptr, T val)
 {
   atom::store(ptr, 0, atomic_seq_cst);
-  __futex(reinterpret_cast<u32*>(ptr), futex_wake | futex_private_flag, val, nullptr, nullptr, 0);
+  __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, val, nullptr, nullptr, 0);
 }
 
 template <typename T = u32, T __D = 1>

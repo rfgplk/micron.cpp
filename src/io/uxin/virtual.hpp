@@ -48,7 +48,7 @@ set_keys(const io::fd_t &handle, Args... args)
 }
 
 void
-start_device(const io::fd_t &handle, const uinput_setup_t& usetup)
+start_device(const io::fd_t &handle, const uinput_setup_t &usetup)
 {
   if ( r = micron::ioctl(handle.fd, ui_dev_setup(), &usetup); r != 0 ) {
     set_errno(-r);

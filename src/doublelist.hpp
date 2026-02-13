@@ -7,8 +7,8 @@
 
 #include "algorithm/algorithm.hpp"
 #include "algorithm/memory.hpp"
-#include "memory/actions.hpp"
 #include "heap/cpp.hpp"
+#include "memory/actions.hpp"
 #include "tags.hpp"
 #include "types.hpp"
 

@@ -135,7 +135,7 @@ struct __core_memory_resource {
     return *cast();
   }
   // converts a memory resource to a chunk
-  
+
   inline const chunk<byte>
   operator*() const
   {

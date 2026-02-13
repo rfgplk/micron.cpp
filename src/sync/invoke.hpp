@@ -67,8 +67,8 @@ invoke_r(F &&f, Args &&...args) noexcept(micron::is_nothrow_invocable_r_v<R, F, 
 }
 template <class V, class F, class... Args> constexpr bool negate_invocable_impl = false;
 template <class F, class... Args>
-constexpr bool
-    negate_invocable_impl<micron::void_t<decltype(!micron::invoke(micron::declval<F>(), micron::declval<Args>()...))>, F, Args...>
+constexpr bool negate_invocable_impl<
+    micron::void_t<decltype(!micron::invoke(micron::declval<F>(), micron::declval<Args>()...))>, F, Args...>
     = true;
 
 template <class F, class... Args> constexpr bool negate_invocable_v = negate_invocable_impl<void, F, Args...>;

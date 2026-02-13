@@ -49,10 +49,12 @@ constexpr static const u64 __default_cache_step = 768;     // ~5.9MB
 
 constexpr static const bool __default_launder
     = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address
-constexpr static const bool __default_construct_on_start = true; // construct on start, if false, you have to construct/start it manually
-constexpr static const bool __default_single_instance = true; // enable an allocator per thread
-constexpr static const bool __default_global_instance = false; // enable a single global allocator
-constexpr static const bool __default_multithread_safe = true;     // essentially, enables locks across API calls, only necessary if enabling global mode
+constexpr static const bool __default_construct_on_start
+    = true;     // construct on start, if false, you have to construct/start it manually
+constexpr static const bool __default_single_instance = true;      // enable an allocator per thread
+constexpr static const bool __default_global_instance = false;     // enable a single global allocator
+constexpr static const bool __default_multithread_safe
+    = true;     // essentially, enables locks across API calls, only necessary if enabling global mode
 
 static_assert(
     __default_single_instance != __default_global_instance,

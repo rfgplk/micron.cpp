@@ -108,7 +108,7 @@ class __default_arena
   bool
   __verify_domain(thread_t<Tr> *ptr)
   {
-    if ( ptr < reinterpret_cast<thread_t<Tr>*>(&threads) or ptr > &threads.top() )
+    if ( ptr < reinterpret_cast<thread_t<Tr> *>(&threads) or ptr > &threads.top() )
       return false;
     return true;
   }
@@ -474,7 +474,8 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().cancel();
   }
-  // WARNING: if a thread dies unexpectedly, and/or you kill/cancel it before it completes naturally, this WILL stall forever. that is by design
+  // WARNING: if a thread dies unexpectedly, and/or you kill/cancel it before it completes naturally, this WILL stall
+  // forever. that is by design
   auto
   await(thread_t<Tr> &t)
   {

@@ -13,11 +13,12 @@ namespace micron
 // used to signal whether an action should be taken, if it should, execute the callback
 template <typename R, typename... Args> using token_function = R (*)(Args...);
 
-template <typename R = void, typename T = micron::mutex*, typename A = void(micron::mutex::*)()>class token
+template <typename R = void, typename T = micron::mutex *, typename A = void (micron::mutex::*)()> class token
 {
   token_function<R, T, A> fptr;
   micron::mutex mtx;
   void (micron::mutex::*rmtx)();
+
 public:
   ~token() {}
   token() : fptr(nullptr), mtx(), rmtx(nullptr) {}

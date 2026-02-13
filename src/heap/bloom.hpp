@@ -17,7 +17,7 @@
 namespace micron
 {
 
-template <typename T, size_t N, size_t L = (size_t)(N/(N/4)*__builtin_log(2))> class bloom_filter
+template <typename T, size_t N, size_t L = (size_t)(N / (N / 4) * __builtin_log(2))> class bloom_filter
 {
   bitfield<N> bits;
   size_t length;

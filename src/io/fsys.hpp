@@ -34,34 +34,39 @@ template <is_string T>
 void
 open_dir(const io::path_t &path, const io::modes mode)
 {
-  //fsys::dir<T> f(path, mode);
-  //return f;
+  // fsys::dir<T> f(path, mode);
+  // return f;
 }
 
-bool exists(const io::path_t &path){
+bool
+exists(const io::path_t &path)
+{
   return (posix::access(path.c_str(), posix::access_ok) == 0);
 }
 
-bool valid_path(const io::path_t &path){
+bool
+valid_path(const io::path_t &path)
+{
   return (posix::access(path.c_str(), posix::access_ok) == 0);
 }
 
-
-bool readable_at(const io::path_t &path){
+bool
+readable_at(const io::path_t &path)
+{
   return (posix::access(path.c_str(), posix::read_ok) == 0);
 }
 
-
-bool writeable_at(const io::path_t &path){
+bool
+writeable_at(const io::path_t &path)
+{
   return (posix::access(path.c_str(), posix::write_ok) == 0);
 }
 
-
-bool executable_at(const io::path_t &path){
+bool
+executable_at(const io::path_t &path)
+{
   return (posix::access(path.c_str(), posix::execute_ok) == 0);
 }
-
-
 
 void
 rename(const io::path_t &from, const io::path_t &to)

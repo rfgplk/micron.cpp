@@ -72,7 +72,7 @@ template <typename N, typename T, typename F>
 F *
 copy_n(const T *restrict src, F *restrict dst, const N cnt)
 {
-  if ( src == nullptr or dst == nullptr  )
+  if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::copy invalid pointers.");
   // if (cnt <= 32)
   //   _memcpy_32(dst, src, cnt);
@@ -107,7 +107,7 @@ template <typename T>
 inline bool
 is_zero(const T *src)
 {
-  if ( src == nullptr  )
+  if ( src == nullptr )
     exc<except::library_error>("micron::copy invalid pointers.");
   const byte *b_ptr = reinterpret_cast<const byte *>(src);
   for ( size_t i = 0; i < sizeof(T); i++ )
@@ -120,7 +120,7 @@ template <size_t N, typename T, typename F>
 F *
 cmove(const T *restrict src, F *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr  )
+  if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::copy invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
@@ -150,7 +150,7 @@ template <size_t N, typename T, typename F>
 F *
 ccopy(const T *restrict src, F *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr  )
+  if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::copy invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
     for ( size_t i = 0; i < N; i++ )
@@ -195,7 +195,7 @@ template <size_t N, typename T, typename F>
 F *
 copy(const T *restrict src, F *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr  )
+  if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::copy invalid pointers.");
   if constexpr ( N <= 32 )
     _memcpy_32(dst, src, N);

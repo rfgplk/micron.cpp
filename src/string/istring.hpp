@@ -24,7 +24,7 @@ namespace micron
 // immutable string on the heap, immutable
 // accepts only char simple types
 template <typename T = schar, class Alloc = micron::allocator_serial<>>
-  requires (micron::is_fundamental_v<T>)
+  requires(micron::is_fundamental_v<T>)
 class istring : private Alloc, public __immutable_memory_resource<T>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;

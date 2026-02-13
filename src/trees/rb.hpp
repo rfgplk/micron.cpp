@@ -524,7 +524,7 @@ public:
       else {
         x->data = micron::forward<U>(value);
         return x->data;
-      } 
+      }
     }
     node *z = make_node(micron::forward<U>(value));
     z->parent = y;

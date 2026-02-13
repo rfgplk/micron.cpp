@@ -14,7 +14,6 @@
 #include "../../linux/sys/limits.hpp"
 #include "../../linux/sys/types.hpp"
 
-
 // functions for handling posix/linux dirs
 namespace micron
 {
