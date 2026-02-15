@@ -26,8 +26,7 @@ namespace micron
 // (Immutable) vector class. ivector, contiguous in memory, O(1) access,
 // iterators never invalidated, always safe, immutable, always thread safe as
 // fast as raw arrays
-template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_move_constructible_v<T> && micron::is_move_assignable_v<T>
+template <is_movable_object T, class Alloc = micron::allocator_serial<>>
 class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;

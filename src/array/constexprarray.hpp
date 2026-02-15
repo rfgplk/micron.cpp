@@ -8,20 +8,19 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
 #include "../memory/addr.hpp"
-#include "../memory/memory.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
 
+#include "../concepts.hpp"
 namespace micron
 {
 
-template <class T, size_t N = 64>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && (N > 0)
+template <is_constexpr_valid T, size_t N = 64>
+  requires (N > 0)
 struct constexpr_array {
   using category_type = array_tag;
   using mutability_type = mutable_tag;

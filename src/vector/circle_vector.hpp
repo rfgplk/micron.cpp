@@ -14,7 +14,7 @@ namespace micron
 
 // renamed from circle_buffer/circular, aliases kept that point to this file
 // no longer heap allocated
-template <typename T, size_t N>
+template <is_regular_object T, size_t N>
   requires((N & (N - 1)) == 0)
 class circle_vector
 {

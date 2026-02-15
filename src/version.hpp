@@ -7,10 +7,21 @@
 
 #include "std.hpp"
 
+#ifndef __MICRON
+#define __MICRON
+#define __MICRONTL
+#endif
+
+constexpr static const int MICRON_VERSION_MAJOR = 0x000;
+constexpr static const int MICRON_VERSION_MINOR = 0x050;
+constexpr static const int MICRON_VERSION_PATCH = 0x004;
+
+template <int __major, int __minor, int __patch>
 constexpr bool
-is_version(int major, int minor, int patch)
+is_version()
 {
-  if constexpr ( major == MICRON_VERSION_MAJOR and minor == MICRON_VERSION_MINOR and patch == MICRON_VERSION_PATCH )
+  if constexpr ( __major == MICRON_VERSION_MAJOR and __minor == MICRON_VERSION_MINOR
+                 and __patch == MICRON_VERSION_PATCH )
     return true;
   return false;
 }

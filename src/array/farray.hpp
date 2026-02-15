@@ -21,9 +21,8 @@ namespace micron
 {
 // general purpose fundamental array class, only allows fundamental types
 // (int, char, etc) stack allocated, notthreadsafe, mutable. default to 64
-template <class T, size_t N = 64>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && (N > 0)
-           && micron::is_fundamental_v<T>     // avoid weird stuff with N = 0
+template <is_fundamental_object T, size_t N = 64>
+  requires(N > 0)     // avoid weird stuff with N = 0
 class farray
 {
   alignas(64) T stack[N];

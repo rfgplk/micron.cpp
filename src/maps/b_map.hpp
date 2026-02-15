@@ -14,10 +14,11 @@
 #include "../vector/fvector.hpp"
 #include "hash/hash.hpp"
 
+#include "../concepts.hpp"
 namespace micron
 {
 
-template <typename K, typename V, int Dg> struct btree_map_node {
+template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_node {
   struct kv_pair {
     K key;
     V value;
@@ -356,8 +357,7 @@ template <typename K, typename V, int Dg> struct btree_map_node {
   }
 };
 
-template <typename K, typename V, int Dg = 32>
-  requires micron::is_move_constructible_v<V>
+template <typename K, is_movable_object V, int Dg = 32>
 class btree_map
 {
   using node_type = btree_map_node<K, V, Dg>;

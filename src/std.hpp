@@ -18,14 +18,7 @@
 #include "io/__std.hpp"
 #include "linux/sys/signal.hpp"
 
-#ifndef __MICRON
-#define __MICRON
-#define __MICRONTL
-#endif
-
-constexpr static const int MICRON_VERSION_MAJOR = 0x000;
-constexpr static const int MICRON_VERSION_MINOR = 0x050;
-constexpr static const int MICRON_VERSION_PATCH = 0x003;
+#include "version.hpp"
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"

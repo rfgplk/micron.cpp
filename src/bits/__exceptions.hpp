@@ -8,7 +8,7 @@
 #include "../exit.hpp"
 #include "../syscall.hpp"
 
-#include "../linux/io.hpp"
+#include "../memory/addr.hpp"
 
 #include "../memory/actions.hpp"
 #include "../memory/cstring.hpp"
@@ -23,13 +23,13 @@ constexpr static const bool __use_exceptions = false;
 void
 __write_n(const char *str_err)
 {
-  write(2, str_err, strlen(str_err));
-  write(2, "\n", 1);
+  micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+  micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
 }
 void
 __write(const char *str_err)
 {
-  write(2, str_err, strlen(str_err));
+  micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
 }
 template <typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void

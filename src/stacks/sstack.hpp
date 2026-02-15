@@ -162,7 +162,7 @@ public:
   }
 
   void
-  push(T &&v)
+  move(T &&v)
   {
     if ( length >= N )
       exc<except::library_error>("sstack overflow on push");

@@ -22,7 +22,7 @@
 namespace micron
 {
 // string on the stack, inplace (sstring means stackstring)
-template <size_t N, integral T = schar> class sstring
+template <size_t N, is_scalar_literal T = schar> class sstring
 {
 public:
   using category_type = string_tag;

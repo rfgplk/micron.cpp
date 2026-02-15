@@ -12,7 +12,7 @@
 #include "../linux/sys/__threads.hpp"
 #include "../linux/sys/resource.hpp"
 #include "../linux/sys/system.hpp"
-#include "../memory/stack.hpp"
+#include "../memory/stack_constants.hpp"
 
 #include "../atomic/atomic.hpp"
 #include "../control.hpp"

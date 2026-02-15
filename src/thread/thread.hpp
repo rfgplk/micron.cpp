@@ -9,7 +9,7 @@
 
 #include "../linux/__includes.hpp"
 #include "../linux/sys/__threads.hpp"
-#include "../memory/stack.hpp"
+#include "../memory/stack_constants.hpp"
 
 #include "threads.hpp"
 

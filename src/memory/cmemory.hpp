@@ -12,9 +12,6 @@
 #include "../simd/intrin.hpp"
 #include "../simd/memory.hpp"
 
-// NOTE: originally included all memory handling functions, later separated into cmemory.hpp, cstring.hpp, and map.hpp
-// for maintainability check all include headers to make sure they match
-
 // TO ALL READERS
 // this set of functions is ever so slightly different from the standard string.h set of memory manip. functions
 // generally if you'd like to set memory you should use
@@ -26,6 +23,28 @@
 // functions suffixed with a number represent the width or alignment of the function
 // functions prefixed with a 'c' all take in certain parameters at compile time
 
+#include "cmemory/memchr.hpp"
+#include "cmemory/memcmp.hpp"
+#include "cmemory/memcpy.hpp"
+#include "cmemory/memmove.hpp"
+#include "cmemory/memset.hpp"
+
+#include "stack.hpp"
+
+namespace micron
+{
+// propagating
+using simd::memcpy128;
+using simd::memcpy256;
+using simd::memcpy512;
+using simd::memmove128;
+using simd::memmove256;
+using simd::memmove512;
+using simd::rmemcpy128;
+using simd::rmemcpy256;
+};
+
+/*
 namespace micron
 {
 // propagating
@@ -1036,3 +1055,4 @@ memmove(F *dest, D *src, const u64 cnt) noexcept
   return reinterpret_cast<F *>(dest);
 };
 };     // namespace micron
+       */

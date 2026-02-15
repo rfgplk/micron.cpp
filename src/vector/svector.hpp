@@ -22,10 +22,7 @@ namespace micron
 // Vector on the stack, always safe, mutable, fixed size
 // equivalent of inplace_vector, should be used over vector in almost all use
 // cases
-template <typename T, size_t N = 64>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
-           && micron::is_move_assignable_v<T>
-class svector
+template <is_regular_object T, size_t N = 64> class svector
 {
   T stack[N];
   size_t length = 0;
@@ -60,14 +57,27 @@ public:
   };
   svector(const size_t cnt)
   {
-    for ( size_t n = 0; n < cnt; n++ )
-      stack[n] = T();
+    if ( cnt > N ) [[unlikely]]
+      exc<except::library_error>("error micron::svector(): cnt too large");
+
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( size_t i = 0; i < cnt; i++ )
+        new (&stack[i]) T{};
+    } else if constexpr ( micron::is_literal_type_v<T> ) {
+      micron::memset(stack, T{}, cnt);
+    }
     length = cnt;
   };
   svector(const size_t cnt, const T &v)
   {
-    for ( size_t n = 0; n < cnt; n++ )
-      stack[n] = v;
+    if ( cnt > N ) [[unlikely]]
+      exc<except::library_error>("error micron::svector(): cnt too large");
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( size_t i = 0; i < cnt; i++ )
+        new (&stack[i]) T{ v };
+    } else if constexpr ( micron::is_literal_type_v<T> ) {
+      micron::memset(stack, v, cnt);
+    }
     length = cnt;
   };
   template <typename C = T>

@@ -4,7 +4,7 @@
 #include "../../memory/mman.hpp"
 #include "../sys/clone.hpp"
 
-#include "../../memory/stack.hpp"
+#include "../../memory/stack_constants.hpp"
 
 #include "callbacks.hpp"
 

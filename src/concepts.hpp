@@ -6,6 +6,7 @@
 #pragma once
 
 #include "allocation/linux/kmemory.hpp"
+#include "memory/actions.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
 // all concepts go here
@@ -18,10 +19,58 @@ template <typename T, typename U>
 concept __same_as = is_same_v<T, U>;
 
 template <typename T, typename U>
-concept same_as = __same_as<T, U> && __same_as<U, T>;
+concept same_as = __same_as<T, U> and __same_as<U, T>;
 
 template <typename F, typename T>
-concept convertible_to = is_convertible_v<F, T> && requires { static_cast<T>(declval<F>()); };
+concept convertible_to = is_convertible_v<F, T> and requires { static_cast<T>(declval<F>()); };
+
+template <typename T>
+concept destructible = micron::is_nothrow_destructible_v<T>;
+
+template <typename T, typename... Args>
+concept constructible_from = destructible<T> and requires { T(declval<Args>()...); };
+
+template <typename L, typename R>
+concept assignable_from = requires(L lhs, R &&rhs) {
+  { lhs = micron::forward<R>(rhs) } -> micron::same_as<L>;
+};
+template <typename T>
+concept movable = micron::constructible_from<T, T> and micron::assignable_from<T &, T> and micron::destructible<T>;
+
+template <typename T>
+concept copyable = movable<T> and micron::constructible_from<T, const T &> and micron::assignable_from<T &, const T &>;
+
+template <typename T>
+concept default_initializable = micron::constructible_from<T>;
+
+template <typename T>
+concept is_semiregular = micron::copyable<T> and micron::default_initializable<T>;
+
+template <typename T>
+concept is_regular = micron::is_semiregular<T> and requires(const T &a, const T &b) {
+  { a == b } -> micron::convertible_to<bool>;
+  { a != b } -> micron::convertible_to<bool>;
+};
+
+template <typename T>
+concept is_movable_object
+    = micron::movable<T> and micron::is_move_constructible_v<T> and micron::is_move_assignable_v<T>;
+
+template <typename T>
+concept is_constexpr_valid = micron::is_trivially_destructible_v<T> && requires {
+  { T{} } -> micron::same_as<T>;
+};
+
+template <typename T>
+concept is_scalar_literal = micron::is_literal_type_v<T> and micron::is_fundamental_v<T>;
+
+template <typename T>
+concept is_fundamental_object = micron::is_literal_type_v<T> and (micron::is_fundamental_v<T> or micron::is_scalar_v<T>);
+
+template <typename T>
+concept is_regular_object
+    = micron::copyable<T> and micron::movable<T> and micron::is_copy_constructible_v<T>
+      and micron::is_move_constructible_v<T> and micron::is_copy_assignable_v<T> and micron::is_move_assignable_v<T>;
 
 template <typename T, typename I = size_t>
 concept is_iterable_container = requires(T t, I i) {
@@ -76,7 +125,7 @@ concept is_container = requires(T t) {
   { t.cend() } -> micron::same_as<typename T::const_iterator>;
   { t.begin() } -> micron::same_as<typename T::iterator>;
   { t.end() } -> micron::same_as<typename T::iterator>;
-} && !requires(T t) {
+} and !requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 template <typename C>

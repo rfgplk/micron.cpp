@@ -315,7 +315,7 @@ template <typename... Args>
 void
 require(bool v)
 {
-  if ( v == true ) {
+  if ( v == false ) {
     __print_error("\033[34msnowball require() failure:\033[0m expected output was false.\n\r");
     should_print_stack();
     __require_clbck();

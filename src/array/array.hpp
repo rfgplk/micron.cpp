@@ -18,21 +18,21 @@
 #include "../tags.hpp"
 #include "../types.hpp"
 
+#include "../concepts.hpp"
 namespace micron
 {
 
 // general purpose array class, stack allocated, notthreadsafe, mutable.
 // default to 64
-template <class T, size_t N = 64>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
-           && (N > 0)     // avoid weird stuff with N = 0
+template <is_regular_object T, size_t N = 64>
+  requires(N > 0)     // avoid weird stuff with N = 0
 class array
 {
   alignas(64) T stack[N];
   inline void
   __impl_zero(T *src)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(T());
     } else {
@@ -42,7 +42,7 @@ class array
   void
   __impl_set(T *__restrict src, const T &val)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = val;
     } else {
@@ -52,7 +52,7 @@ class array
   void
   __impl_copy(const T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = src[i];
     } else {
@@ -62,7 +62,7 @@ class array
   void
   __impl_move(T *__restrict src, const T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = micron::move(src[i]);
     } else {
@@ -73,7 +73,7 @@ class array
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = src[i];
     } else {
@@ -83,7 +83,7 @@ class array
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = micron::move(src[i]);
     } else {
@@ -109,7 +109,7 @@ public:
   ~array()
   {
     // explicit
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i].~T();
     } else {

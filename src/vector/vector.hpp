@@ -13,6 +13,7 @@
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
 #include "../allocation/resources.hpp"
+#include "../concepts.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
@@ -27,9 +28,7 @@ namespace micron
 {
 // Regular vector class, always safe, mutable, notthread safe, cannot be
 // copied for performance reasons (just move it, or use a slice for that)
-template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
-           && micron::is_move_assignable_v<T>
+template <is_regular_object T, class Alloc = micron::allocator_serial<>>
 class vector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
@@ -77,18 +76,17 @@ public:
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T();
-    } else {
-      for ( size_t i = 0; i < n; i++ )
-        __mem::memory[i] = T{};
+    } else if constexpr ( micron::is_literal_type_v<T> ) {
+      micron::memset(__mem::memory, T{}, n);
     }
     __mem::length = n;
   };
   template <typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
-  vector(size_t n, Args... args) : __mem(n)
+  vector(size_t n, Args &&...args) : __mem(n)
   {
     for ( size_t i = 0; i < n; i++ )
-      new (&__mem::memory[i]) T(args...);
+      new (&__mem::memory[i]) T(forward<Args>(args)...);
     __mem::length = n;
   };
   vector(size_t n, const T &init_value) : __mem(n)
@@ -96,21 +94,8 @@ public:
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       for ( size_t i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(init_value);
-    } else {
-      for ( size_t i = 0; i < n; i++ )
-        __mem::memory[i] = init_value;
-    }
-    __mem::length = n;
-  };
-  vector(size_t n, T &&init_value) : __mem(n)
-  {
-    T tmp = micron::move(init_value);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( size_t i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T(tmp);
-    } else {
-      for ( size_t i = 0; i < n; i++ )
-        __mem::memory[i] = init_value;
+    } else if constexpr ( micron::is_literal_type_v<T> ) {
+      micron::memset(__mem::memory, T{}, n);
     }
     __mem::length = n;
   };

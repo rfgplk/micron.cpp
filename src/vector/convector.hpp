@@ -31,9 +31,7 @@ namespace micron
 {
 // Regular convector class, always safe, mutable, notthread safe, cannot be
 // copied for performance reasons (just move it, or use a slice for that)
-template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && micron::is_copy_assignable_v<T>
-           && micron::is_move_assignable_v<T>
+template <is_movable_object T, class Alloc = micron::allocator_serial<>>
 class convector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;

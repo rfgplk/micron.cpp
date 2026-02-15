@@ -12,6 +12,7 @@
 #include "../linux/process/sched.hpp"
 #include "../linux/process/system.hpp"
 #include "../linux/sys/sched.hpp"
+#include "../linux/sys/system.hpp"
 #include "../memory/actions.hpp"
 #include "../syscall.hpp"
 

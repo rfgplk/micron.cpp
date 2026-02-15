@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "linux/sys/signal.hpp"
+#include "syscall.hpp"
 
 namespace micron
 {
@@ -36,7 +36,7 @@ abort(int ret)
 }
 
 __attribute__((noreturn)) void
-quick_exit(const int s = sig_abrt)
+quick_exit(const int s)
 {
   sys_exit(s);
 }

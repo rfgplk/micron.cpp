@@ -32,7 +32,7 @@ namespace micron
 inline unsigned
 cpu_count(void)
 {
-  return (unsigned)maximum_leaf();
+  return (unsigned)maximum_leaf() + 1;
 }
 
 inline unsigned

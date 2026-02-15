@@ -21,9 +21,12 @@
 // stack unrolls will trigger stack smashing
 
 #include "../../type_traits.hpp"
+#include "../../errno.hpp"
 
-#include "cpu.hpp"
 #include "sched.hpp"
+
+#include "system.hpp"
+#include "cpu.hpp"
 
 #include "../../__special/pthread"
 
@@ -226,6 +229,11 @@ set_stack_thread(pthread_attr_t &attr, T *ptr, size_t size)
 }
 
 inline void
+get_attrs(pthread_t pid, pthread_attr_t &attr)
+{
+  pthread_getattr_np(pid, &attr);
+}
+inline void
 get_stack_thread(const pthread_attr_t &attr, addr_t *&ptr, size_t &size)
 {
   pthread_attr_getstack(&attr, reinterpret_cast<void **>(&ptr), &size);
@@ -251,6 +259,12 @@ auto
 get_name(pthread_t pt, char *name, size_t sz)
 {
   return pthread_getname_np(pt, name, sz);
+}
+
+auto
+self(void) -> pthread_t
+{
+  return pthread_self();
 }
 
 auto

@@ -17,19 +17,19 @@
 #include "../tags.hpp"
 #include "../types.hpp"
 
+#include "../concepts.hpp"
 namespace micron
 {
 // carray = cache-array. mutable & notthread safe.
-template <class T, size_t N = 64>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T> && (N > 0)
-           && ((N * sizeof(T)) % 16 == 0) && (N % 4 == 0)     // alignment just.
+template <is_regular_object T, size_t N = 64>
+  requires(N > 0) && ((N * sizeof(T)) % 16 == 0) && (N % 4 == 0)     // alignment just.
 class alignas(32) carray
 {
   alignas(64) T stack[N];
   inline void
   __impl_zero(T *src)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(T());
     } else {
@@ -39,7 +39,7 @@ class alignas(32) carray
   void
   __impl_set(T *__restrict src, const T &val)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = val;
     } else {
@@ -49,7 +49,7 @@ class alignas(32) carray
   void
   __impl_copy(const T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = src[i];
     } else {
@@ -59,7 +59,7 @@ class alignas(32) carray
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = src[i];
     } else {
@@ -69,7 +69,7 @@ class alignas(32) carray
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         dest[i] = micron::move(src[i]);
     } else {
@@ -94,7 +94,7 @@ public:
   ~carray()
   {
     // explicit
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i].~T();
     } else {
@@ -105,7 +105,7 @@ public:
   carray(const T &o)
   {
     __impl_set(micron::addr(stack[0]), o);
-    // if constexpr (micron::is_class<T>::value) {
+    // if constexpr (micron::is_class_v<T>) {
     //   for (size_t i = 0; i < N; i++)
     //     stack[i] = o;
     // } else {

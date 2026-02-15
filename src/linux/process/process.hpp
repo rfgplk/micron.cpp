@@ -19,7 +19,7 @@
 #include "../../except.hpp"
 #include "../../memory/actions.hpp"
 #include "../../memory/mman.hpp"
-#include "../../memory/stack.hpp"
+#include "../../memory/stack_constants.hpp"
 #include "../../string/strings.hpp"
 #include "../../vector/fvector.hpp"
 #include "../../vector/svector.hpp"

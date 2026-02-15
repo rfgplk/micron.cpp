@@ -16,12 +16,13 @@
 #include "../memory/memory.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
+#include "../concepts.hpp"
 
 namespace micron
 {
 
 // c++ version of python's bisect array, which maintains sorted order
-template <typename T, size_t N> class bisect_array
+template <is_regular_object T, size_t N> class bisect_array
 {
   alignas(64) T stack[N];
   size_t length = 0;

@@ -1610,8 +1610,6 @@ template <typename T>
 inline constexpr bool is_pod_v = __is_pod(T);
 template <typename T>
 
-[[__deprecated__]]
-
 inline constexpr bool is_literal_type_v
     = __is_literal_type(T);
 template <typename T> inline constexpr bool is_empty_v = __is_empty(T);

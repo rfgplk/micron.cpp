@@ -33,7 +33,7 @@ constexpr const unicode32 _null_u32str[1] = U"";
 
 // string on the heap, mutable, standard replacement of std::string
 // accepts only char simple types
-template <integral T = schar, class Alloc = micron::allocator_serial<>>
+template <is_scalar_literal T = schar, class Alloc = micron::allocator_serial<>>
 class hstring : private Alloc, public __mutable_memory_resource<T>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;

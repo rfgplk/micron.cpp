@@ -88,17 +88,17 @@ __calculate_space_huge(size_t sz)
 inline size_t
 __calculate_space_bulk(size_t sz)
 {
-  // x * ln(x) * ln(ln(ln(ln(x))))
-  flong f_sz = static_cast<flong>(sz);
-  u64 t = static_cast<u64>(
-      f_sz * micron::math::logf128(f_sz)
-      * micron::math::logf128(micron::math::logf128(micron::math::logf128(micron::math::logf128(f_sz)))));
-  float t_2 = (float)t / 4096;
-  t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul
-                                                                               : (size_t)t_2)
-       * 4096;
-  return sz;
+  // logarithmic taper
+  long double factor = 1.0 + 0.1 * micron::math::logf128(static_cast<double>(sz) / (1024 * 1024 * 1024));
+  if ( factor < 1.0 )
+    factor = 1.0;     // never shrink
+
+  size_t t = static_cast<size_t>(sz * factor);
+
+  size_t pow2_sz = 1;
+  while ( pow2_sz < t )
+    pow2_sz <<= 1;
+  return pow2_sz;
 }
 inline size_t
 __calculate_space_saturated(size_t sz)

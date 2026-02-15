@@ -26,8 +26,7 @@
 namespace micron
 {
 
-template <typename T, class Alloc = micron::allocator_serial<>>
-  requires micron::is_move_constructible_v<T>
+template <is_movable_object T, class Alloc = micron::allocator_serial<>>
 struct slice : public __immutable_memory_resource<T, Alloc> {
   using __mem = __immutable_memory_resource<T, Alloc>;
   using category_type = slice_tag;
