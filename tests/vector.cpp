@@ -12,11 +12,13 @@
 #include "../src/vector/fvector.hpp"
 #include "../src/vector/svector.hpp"
 #include "../src/vector/vector.hpp"
+#include "../src/string/string.hpp"
 
 int
 main()
 {
   sb::verify_debug();
+  micron::vector<mc::hstring<char>> __vec;
   enable_scope()
   {
     sb::test_case("micron::vector(), testing insertions and erasures");

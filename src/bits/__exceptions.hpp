@@ -18,7 +18,7 @@ namespace micron
 namespace except
 {
 
-constexpr static const bool __use_exceptions = false;
+constexpr static const bool __use_exceptions = true;
 // so we don't rely on io
 void
 __write_n(const char *str_err)

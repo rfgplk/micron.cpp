@@ -62,7 +62,9 @@ main(void)
       mc::console(e.what());
       return -1;
     }
+    mc::console("List?");
     auto p = sys.list();
+    mc::console("!!!!!!!!!");
     for ( const auto &n : p )
       mc::console(n);
     mc::console("Is opened /usr/include/err.h: ", sys.is_opened("/usr/include/err.h"));

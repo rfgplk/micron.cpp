@@ -11,6 +11,8 @@
 
 #include "../memory/actions.hpp"
 
+#include "../except.hpp"
+
 namespace micron
 {
 
@@ -50,9 +52,7 @@ struct __core_memory_resource {
   {
     auto addr = reinterpret_cast<uintptr_t>(b.ptr);
     if ( addr % alignof(T) != 0 )
-      __builtin_exit(1);
-    if ( b.len % sizeof(T) != 0 )
-      __builtin_exit(1);
+      exc<except::memory_error>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(b.ptr);
     capacity = b.len / sizeof(T);
@@ -86,9 +86,7 @@ struct __core_memory_resource {
   {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
     if ( addr % alignof(T) != 0 )
-      __builtin_exit(1);
-    if ( o.len % sizeof(T) != 0 )
-      __builtin_exit(1);
+      exc<except::memory_error>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
@@ -98,9 +96,7 @@ struct __core_memory_resource {
   {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
     if ( addr % alignof(T) != 0 )
-      __builtin_exit(1);
-    if ( o.len % sizeof(T) != 0 )
-      __builtin_exit(1);
+      exc<except::memory_error>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);

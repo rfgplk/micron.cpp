@@ -27,7 +27,7 @@ __make_threadarena(void)
   static standard_arena local_pool;
   __global_threadpool = &local_pool;
 };
-
+/*
 __attribute__((constructor)) void
 __make_parallelarena(void)
 {
@@ -38,5 +38,5 @@ __make_parallelarena(void)
   for ( umax_t i = 0; i < c; ++i )
     local_pool.create();
 };
-
+*/
 };

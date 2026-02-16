@@ -11,6 +11,8 @@
 #include "../../vector/vector.hpp"
 #include "utils.hpp"
 
+#include "../realpath.hpp"
+
 #include "../../linux/sys/limits.hpp"
 #include "../../linux/sys/types.hpp"
 
@@ -148,7 +150,7 @@ struct dir {
     if ( dp.has_error() or dp.closed() )
       exc<except::filesystem_error>("micron::dir failed to open");
     list();
-    dname = ::realpath(pstr.c_str(), NULL);
+    dname = micron::realpath(pstr.c_str(), NULL);
     return *this;
   }
   dir &
@@ -165,7 +167,7 @@ struct dir {
     if ( dp.has_error() or dp.closed() )
       exc<except::filesystem_error>("micron::dir failed to open");
     list();
-    dname = ::realpath(str, NULL);
+    dname = micron::realpath(str, NULL);
     return *this;
   }
   int

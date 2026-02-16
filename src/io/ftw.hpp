@@ -48,13 +48,12 @@ ftw(path &&p)
   }
   return rslt;
 }
-
 auto
-ftw_files(path &&p)
+ftw_all(path &&p)
 {
   micron::fvector<path_t> rslt;
   // look how much prettier this is compared to nftw
-  micron::fvector<path_t> all = p.files();
+  micron::fvector<path_t> all = p.all();
   if ( all.empty() or all.size() == 2 )
     return rslt;
   // rslt.append(dirs);
@@ -80,12 +79,13 @@ ftw_files(path &&p)
   }
   return rslt;
 }
+
 auto
-ftw_all(path &&p)
+ftw_files(path &&p)
 {
   micron::fvector<path_t> rslt;
   // look how much prettier this is compared to nftw
-  micron::fvector<path_t> all = p.all();
+  micron::fvector<path_t> all = p.files();
   if ( all.empty() or all.size() == 2 )
     return rslt;
   // rslt.append(dirs);
