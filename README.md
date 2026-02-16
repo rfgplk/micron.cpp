@@ -80,8 +80,13 @@ in short:
 Is micron entirely self-sufficient?
 --------------------------------------
 
-Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `gcc` compiler, you can compile and run it anywhere. The sole exception as for now is `<pthread.h>`, which is necessary to facilitate multi-threading. (technical note: as for now you still need to link against -libc due to exceptions/stack unwinding/_start/TLS not being fully implemented).
+Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), you **must** link against pthread.
 
+
+Conformance with the STL
+-------------------------
+
+*micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Template Library. Although *most* of these functions do have generally the same interfaces and functionality, there are minute core differences (in certain cases, significant) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
 
 > [!IMPORTANT]
 > Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support), as such other operating systems, kernels, or CPU architectures are entirely unsupported for the time being.
