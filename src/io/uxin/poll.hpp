@@ -98,7 +98,6 @@ poll(input_t &inp, Args &&...raw_in)
   };
   pollfd pfd = make_poll(inp.device.bound_fd);
   for ( ;; ) {
-    std::cout << inp.device.i_path.c_str() << std::endl;
     int res = micron::poll_for(pfd, S);
     if ( res < 0 ) {
       return -1;

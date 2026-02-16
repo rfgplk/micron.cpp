@@ -150,7 +150,6 @@ template <typename F>
 bool
 __is_at_heap(const F &ref) noexcept
 {
-  std::cout << "cheap: " << &ref << std::endl;
   return abc::within(reinterpret_cast<addr_t *const>(ref));
 }
 

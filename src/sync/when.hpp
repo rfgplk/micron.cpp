@@ -41,7 +41,7 @@ when_any(Fn &&fn, Args &&...args, D *...result)
   (go([&] {
      while ( *result != true )
        cpu_pause<500>();
-     fn(std::forward<Args>(args)...);
+     fn(micron::forward<Args>(args)...);
    }),
    ...);
 }
