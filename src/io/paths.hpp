@@ -188,8 +188,7 @@ public:
   // dflt
   path(void) : nd({ dir(resolve("..")), dir(resolve(".")) }) {}
   path(const char *name)
-      : nd{ .parent = dir(resolve(prune(micron::format::concat<path_t>(name, "/..")))),
-            .path = dir(resolve(prune(name))) }
+      : nd{ .parent = dir(resolve(prune(micron::format::concat<path_t>(name, "/..")))), .path = dir(resolve(prune(name))) }
   {
   }
   path(const path &o) : nd(o.nd) {}

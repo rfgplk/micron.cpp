@@ -15,6 +15,6 @@
 #endif
 
 #if defined(__cplusplus) && __cplusplus <= 202300L
-#pragma GCC error                                                                                                       \
+#pragma GCC error                                                                                                                          \
     "Micron _requires_ full support for C++23 features, such as multidimensional subscript operators, constexpr and lambda changes). Please use a compliant compiler"
 #endif

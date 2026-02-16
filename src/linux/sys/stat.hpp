@@ -82,14 +82,12 @@ struct stat_t {
   bool
   operator!=(const stat_t &o) const
   {
-    return micron::memcmp<byte>(
-        this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
   }
   bool
   operator==(const stat_t &o) const
   {
-    return !micron::memcmp<byte>(
-        this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
   }
 };
 

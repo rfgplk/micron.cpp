@@ -94,8 +94,7 @@ class stack_swiss_map
   {
     simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
     simd::i128 sentinel = _mm_set1_epi8(static_cast<i8>(__sentinel));
-    int mask = _mm_movemask_epi8(_mm_cmpgt_epi8(meta, sentinel)
-                                 | _mm_cmpeq_epi8(meta, _mm_set1_epi8(static_cast<i8>(__deleted))));
+    int mask = _mm_movemask_epi8(_mm_cmpgt_epi8(meta, sentinel) | _mm_cmpeq_epi8(meta, _mm_set1_epi8(static_cast<i8>(__deleted))));
     return __mask(mask);
   }
 

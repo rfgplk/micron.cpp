@@ -17,16 +17,9 @@
 
 #include "../concepts.hpp"
 
-#pragma once
-#include <algorithm>
-#include <numeric>
-#include <set>
-#include <vector>
-
 namespace micron
 {
 
-// Convert wide 2D array (vector of vectors) to long format
 template <is_iterable_container T>
   requires is_iterable_container<typename T::value_type>
 T
@@ -37,8 +30,8 @@ melt(const T &obj)
   for ( size_t i = 0; i < obj[0].size(); i++ ) {
     for ( size_t j = 0; j < obj.size(); j++ ) {
       Row r(2);
-      r[0] = obj[j][i];                                    // value
-      r[1] = static_cast<typename Row::value_type>(j);     // column index
+      r[0] = obj[j][i];
+      r[1] = static_cast<typename Row::value_type>(j);
       out.push_back(r);
     }
   }
@@ -91,7 +84,7 @@ template <is_iterable_container T>
 T
 concat(const T &obj1, const T &obj2)
 {
-  return merge(obj1, obj2);     // identical to merge for 1D
+  return merge(obj1, obj2);
 }
 
 template <typename I>

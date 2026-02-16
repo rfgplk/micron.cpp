@@ -58,8 +58,7 @@ template <size_t Stack_Size = thread_stack_size> class thread
       micron::exc<except::thread_error>("micron thread::__impl_makethread(): failed to allocate stack");
 
     thread_handler();
-    attributes.pid = __as_thread_attached<Stack_Size, F, Args...>(&payload, attributes.stack_addr, f,
-                                                                  micron::forward<Args &&>(args)...);
+    attributes.pid = __as_thread_attached<Stack_Size, F, Args...>(&payload, attributes.stack_addr, f, micron::forward<Args &&>(args)...);
     // no longer needed
     // while ( pthread::thread_kill(parent_pid, pid, 0) != 0 )
     //  __cpu_pause();
@@ -101,9 +100,7 @@ public:
   ~thread() { __release(); }
   thread(const thread &o) = delete;
   thread &operator=(const thread &) = delete;
-  thread(void)
-      : attributes(posix::getpid()), payload{}
-  {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+  thread(void) : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
   thread(thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn &, Args &...>)

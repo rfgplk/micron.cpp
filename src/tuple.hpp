@@ -21,8 +21,7 @@ template <typename T, typename F> struct pair {
   F b;     // or second
   pair() : a(T()), b(F()) {}
   template <typename C>
-    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>)
-             or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
+    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair(std::initializer_list<C> &&lst)
   {
     size_t i = 0;
@@ -36,8 +35,7 @@ template <typename T, typename F> struct pair {
     }
   }
   template <typename C>
-    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>)
-             or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
+    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair &
   operator=(std::initializer_list<C> &&lst)
   {
@@ -256,8 +254,7 @@ public:
 
 template <typename Indices, typename... Ts> class tuple_impl;
 
-template <size_t... Indices, typename... Ts>
-class tuple_impl<index_sequence<Indices...>, Ts...> : public tuple_leaf<Indices, Ts>...
+template <size_t... Indices, typename... Ts> class tuple_impl<index_sequence<Indices...>, Ts...> : public tuple_leaf<Indices, Ts>...
 {
 public:
   constexpr tuple_impl() = default;
@@ -278,8 +275,7 @@ public:
 
   template <typename... Us>
     requires(sizeof...(Us) == sizeof...(Ts)) && (micron::is_constructible_v<Ts, Us> && ...)
-  constexpr explicit(!(micron::is_convertible_v<Us, Ts> && ...)) tuple(Us &&...args)
-      : base_type(micron::forward<Us>(args)...)
+  constexpr explicit(!(micron::is_convertible_v<Us, Ts> && ...)) tuple(Us &&...args) : base_type(micron::forward<Us>(args)...)
   {
   }
 
@@ -402,8 +398,7 @@ template <size_t I, typename T> struct tuple_element<I, const volatile T> {
   using type = micron::add_cv_t<typename tuple_element<I, T>::type>;
 };
 
-template <size_t I, typename Head, typename... Tail>
-struct tuple_element<I, tuple<Head, Tail...>> : tuple_element<I - 1, tuple<Tail...>> {
+template <size_t I, typename Head, typename... Tail> struct tuple_element<I, tuple<Head, Tail...>> : tuple_element<I - 1, tuple<Tail...>> {
 };
 
 template <typename Head, typename... Tail> struct tuple_element<0, tuple<Head, Tail...>> {
@@ -457,8 +452,7 @@ struct type_index<T, U, Ts...> : micron::integral_constant<size_t, 1 + type_inde
 
 template <typename T, typename... Ts> inline constexpr size_t type_index_v = type_index<T, Ts...>::value;
 
-template <typename T, typename... Ts>
-struct count_type : micron::integral_constant<size_t, (micron::is_same_v<T, Ts> + ...)> {
+template <typename T, typename... Ts> struct count_type : micron::integral_constant<size_t, (micron::is_same_v<T, Ts> + ...)> {
 };
 
 template <typename T, typename... Ts> inline constexpr size_t count_type_v = count_type<T, Ts...>::value;
@@ -576,8 +570,7 @@ tuple_cat(Tps &&...tuples)
 {
   auto all_args = make_tuple(impl::tuple_to_args(micron::forward<Tps>(tuples))...);
 
-  return impl::make_from_tuple_impl<impl::tuple_cat_result_t<Tps...>>(
-      all_args, make_index_sequence<tuple_size_v<decltype(all_args)>>{});
+  return impl::make_from_tuple_impl<impl::tuple_cat_result_t<Tps...>>(all_args, make_index_sequence<tuple_size_v<decltype(all_args)>>{});
 }
 
 namespace impl
@@ -725,15 +718,13 @@ template <typename F, typename Tp>
 constexpr decltype(auto)
 apply(F &&f, Tp &&t)
 {
-  return impl::apply_impl(micron::forward<F>(f), micron::forward<Tp>(t),
-                          make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
+  return impl::apply_impl(micron::forward<F>(f), micron::forward<Tp>(t), make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
 }
 
 template <typename T, typename Tp>
 constexpr T
 make_from_tuple(Tp &&t)
 {
-  return impl::make_from_tuple_impl<T>(micron::forward<Tp>(t),
-                                       make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
+  return impl::make_from_tuple_impl<T>(micron::forward<Tp>(t), make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
 }
 };

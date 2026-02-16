@@ -40,8 +40,7 @@ template <size_t C = 65536, is_string T = micron::ustr8, typename R>
 void
 serialize_bytes(fsys::file<T> &f, const R *_b, size_t n)
 {
-  const byte *b = reinterpret_cast<const byte *>(
-      _b);     // overloading like this so we don't have to check for return type of operator&
+  const byte *b = reinterpret_cast<const byte *>(_b);     // overloading like this so we don't have to check for return type of operator&
   size_t pb = n < C ? n : C;
   size_t p = 0;
   if ( f.buffer_size() < C )

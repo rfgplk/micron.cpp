@@ -49,8 +49,7 @@ destroy(T &mem)
 {
   if constexpr ( micron::is_class<T>::value ) {
     mem.~T();
-  } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value
-                        && !micron::is_array<T>::value ) {
+  } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value && !micron::is_array<T>::value ) {
     delete mem;
   }
 }

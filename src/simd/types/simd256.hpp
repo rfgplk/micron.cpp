@@ -129,8 +129,8 @@ public:
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
-    value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8],
-                             __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
+                             __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
   inline v256 &
@@ -144,10 +144,10 @@ public:
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
 
-    value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24],
-                            __arr[23], __arr[22], __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16],
-                            __arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8],
-                            __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
+                            __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
+                            __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
+                            __arr[0]);
     return *this;
   }
   // end of ints
@@ -267,8 +267,8 @@ public:
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
-    value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8],
-                             __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
+                             __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
   v256(std::initializer_list<i8> lst)
   {
@@ -279,23 +279,23 @@ public:
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
-    value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24],
-                            __arr[23], __arr[22], __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16],
-                            __arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8],
-                            __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
+                            __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
+                            __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
+                            __arr[0]);
   }
   // end of ints
 
-  v256(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12,
-       i8 _e13, i8 _e14, i8 _e15, i8 _e16, i8 _e17, i8 _e18, i8 _e19, i8 _e20, i8 _e21, i8 _e22, i8 _e23, i8 _e24,
-       i8 _e25, i8 _e26, i8 _e27, i8 _e28, i8 _e29, i8 _e30, i8 _e31)
+  v256(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15,
+       i8 _e16, i8 _e17, i8 _e18, i8 _e19, i8 _e20, i8 _e21, i8 _e22, i8 _e23, i8 _e24, i8 _e25, i8 _e26, i8 _e27, i8 _e28, i8 _e29,
+       i8 _e30, i8 _e31)
     requires micron::is_same_v<T, i256>
   {
-    value = _mm256_set_epi8(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15, _e16,
-                            _e17, _e18, _e19, _e20, _e21, _e22, _e23, _e24, _e25, _e26, _e27, _e28, _e29, _e30, _e31);
+    value = _mm256_set_epi8(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15, _e16, _e17, _e18, _e19,
+                            _e20, _e21, _e22, _e23, _e24, _e25, _e26, _e27, _e28, _e29, _e30, _e31);
   }
-  v256(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7, i16 _e8, i16 _e9, i16 _e10, i16 _e11,
-       i16 _e12, i16 _e13, i16 _e14, i16 _e15)
+  v256(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7, i16 _e8, i16 _e9, i16 _e10, i16 _e11, i16 _e12, i16 _e13,
+       i16 _e14, i16 _e15)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set_epi16(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15);
@@ -421,16 +421,16 @@ public:
       float _f = 0.0f;
       // thanks docs ;c
       switch ( a ) {
-      case 0:
+      case 0 :
         _f = _mm256_cvtss_f32(_mm256_permute_ps(value, _MM_SHUFFLE(0, 0, 0, 0)));
         break;
-      case 1:
+      case 1 :
         _f = _mm256_cvtss_f32(_mm256_permute_ps(value, _MM_SHUFFLE(1, 1, 1, 1)));
         break;
-      case 2:
+      case 2 :
         _f = _mm256_cvtss_f32(_mm256_permute_ps(value, _MM_SHUFFLE(2, 2, 2, 2)));
         break;
-      case 3:
+      case 3 :
         _f = _mm256_cvtss_f32(_mm256_permute_ps(value, _MM_SHUFFLE(3, 3, 3, 3)));
         break;
       }
@@ -456,16 +456,16 @@ public:
       if constexpr ( __is_64_wide<F>() ) {
         i64 _d = 0;
         switch ( a ) {
-        case 0:
+        case 0 :
           _d = _mm256_extract_epi64(value, 0);
           break;
-        case 1:
+        case 1 :
           _d = _mm256_extract_epi64(value, 1);
           break;
-        case 2:
+        case 2 :
           _d = _mm256_extract_epi64(value, 2);
           break;
-        case 3:
+        case 3 :
           _d = _mm256_extract_epi64(value, 3);
           break;
         }
@@ -474,28 +474,28 @@ public:
       if constexpr ( __is_32_wide<F>() ) {
         i32 _d = 0;
         switch ( a ) {
-        case 0:
+        case 0 :
           _d = _mm256_extract_epi32(value, 0);
           break;
-        case 1:
+        case 1 :
           _d = _mm256_extract_epi32(value, 1);
           break;
-        case 2:
+        case 2 :
           _d = _mm256_extract_epi32(value, 2);
           break;
-        case 3:
+        case 3 :
           _d = _mm256_extract_epi32(value, 3);
           break;
-        case 4:
+        case 4 :
           _d = _mm256_extract_epi32(value, 4);
           break;
-        case 5:
+        case 5 :
           _d = _mm256_extract_epi32(value, 5);
           break;
-        case 6:
+        case 6 :
           _d = _mm256_extract_epi32(value, 6);
           break;
-        case 7:
+        case 7 :
           _d = _mm256_extract_epi32(value, 7);
           break;
         }
@@ -504,52 +504,52 @@ public:
       if constexpr ( __is_16_wide<F>() ) {
         i16 _d = 0;
         switch ( a ) {
-        case 0:
+        case 0 :
           _d = _mm256_extract_epi16(value, 0);
           break;
-        case 1:
+        case 1 :
           _d = _mm256_extract_epi16(value, 1);
           break;
-        case 2:
+        case 2 :
           _d = _mm256_extract_epi16(value, 2);
           break;
-        case 3:
+        case 3 :
           _d = _mm256_extract_epi16(value, 3);
           break;
-        case 4:
+        case 4 :
           _d = _mm256_extract_epi16(value, 4);
           break;
-        case 5:
+        case 5 :
           _d = _mm256_extract_epi16(value, 5);
           break;
-        case 6:
+        case 6 :
           _d = _mm256_extract_epi16(value, 6);
           break;
-        case 7:
+        case 7 :
           _d = _mm256_extract_epi16(value, 7);
           break;
-        case 8:
+        case 8 :
           _d = _mm256_extract_epi16(value, 8);
           break;
-        case 9:
+        case 9 :
           _d = _mm256_extract_epi16(value, 9);
           break;
-        case 10:
+        case 10 :
           _d = _mm256_extract_epi16(value, 10);
           break;
-        case 11:
+        case 11 :
           _d = _mm256_extract_epi16(value, 11);
           break;
-        case 12:
+        case 12 :
           _d = _mm256_extract_epi16(value, 12);
           break;
-        case 13:
+        case 13 :
           _d = _mm256_extract_epi16(value, 13);
           break;
-        case 14:
+        case 14 :
           _d = _mm256_extract_epi16(value, 14);
           break;
-        case 15:
+        case 15 :
           _d = _mm256_extract_epi16(value, 15);
           break;
         }
@@ -558,100 +558,100 @@ public:
       if constexpr ( __is_8_wide<F>() ) {
         i8 _d = 0;
         switch ( a ) {
-        case 0:
+        case 0 :
           _d = _mm256_extract_epi8(value, 0);
           break;
-        case 1:
+        case 1 :
           _d = _mm256_extract_epi8(value, 1);
           break;
-        case 2:
+        case 2 :
           _d = _mm256_extract_epi8(value, 2);
           break;
-        case 3:
+        case 3 :
           _d = _mm256_extract_epi8(value, 3);
           break;
-        case 4:
+        case 4 :
           _d = _mm256_extract_epi8(value, 4);
           break;
-        case 5:
+        case 5 :
           _d = _mm256_extract_epi8(value, 5);
           break;
-        case 6:
+        case 6 :
           _d = _mm256_extract_epi8(value, 6);
           break;
-        case 7:
+        case 7 :
           _d = _mm256_extract_epi8(value, 7);
           break;
-        case 8:
+        case 8 :
           _d = _mm256_extract_epi8(value, 8);
           break;
-        case 9:
+        case 9 :
           _d = _mm256_extract_epi8(value, 9);
           break;
-        case 10:
+        case 10 :
           _d = _mm256_extract_epi8(value, 10);
           break;
-        case 11:
+        case 11 :
           _d = _mm256_extract_epi8(value, 11);
           break;
-        case 12:
+        case 12 :
           _d = _mm256_extract_epi8(value, 12);
           break;
-        case 13:
+        case 13 :
           _d = _mm256_extract_epi8(value, 13);
           break;
-        case 14:
+        case 14 :
           _d = _mm256_extract_epi8(value, 14);
           break;
-        case 15:
+        case 15 :
           _d = _mm256_extract_epi8(value, 15);
           break;
-        case 16:
+        case 16 :
           _d = _mm256_extract_epi8(value, 16);
           break;
-        case 17:
+        case 17 :
           _d = _mm256_extract_epi8(value, 17);
           break;
-        case 18:
+        case 18 :
           _d = _mm256_extract_epi8(value, 18);
           break;
-        case 19:
+        case 19 :
           _d = _mm256_extract_epi8(value, 19);
           break;
-        case 20:
+        case 20 :
           _d = _mm256_extract_epi8(value, 20);
           break;
-        case 21:
+        case 21 :
           _d = _mm256_extract_epi8(value, 21);
           break;
-        case 22:
+        case 22 :
           _d = _mm256_extract_epi8(value, 22);
           break;
-        case 23:
+        case 23 :
           _d = _mm256_extract_epi8(value, 23);
           break;
-        case 24:
+        case 24 :
           _d = _mm256_extract_epi8(value, 24);
           break;
-        case 25:
+        case 25 :
           _d = _mm256_extract_epi8(value, 25);
           break;
-        case 26:
+        case 26 :
           _d = _mm256_extract_epi8(value, 26);
           break;
-        case 27:
+        case 27 :
           _d = _mm256_extract_epi8(value, 27);
           break;
-        case 28:
+        case 28 :
           _d = _mm256_extract_epi8(value, 28);
           break;
-        case 29:
+        case 29 :
           _d = _mm256_extract_epi8(value, 29);
           break;
-        case 30:
+        case 30 :
           _d = _mm256_extract_epi8(value, 30);
           break;
-        case 31:
+        case 31 :
           _d = _mm256_extract_epi8(value, 31);
           break;
         }

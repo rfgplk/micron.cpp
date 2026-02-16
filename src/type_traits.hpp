@@ -56,8 +56,7 @@ template <> struct __conditional<false> {
   template <typename, typename Uxp> using type = Uxp;
 };
 
-template <bool C, typename _If, typename _Else>
-using __conditional_t = typename __conditional<C>::template type<_If, _Else>;
+template <bool C, typename _If, typename _Else> using __conditional_t = typename __conditional<C>::template type<_If, _Else>;
 
 template <typename _Type> struct __type_identity {
   using type = _Type;
@@ -97,8 +96,7 @@ template <typename, typename _B1, typename... B> struct __disjunction_impl {
   using type = _B1;
 };
 
-template <typename _B1, typename _B2, typename... B>
-struct __disjunction_impl<__enable_if_t<!bool(_B1::value)>, _B1, _B2, B...> {
+template <typename _B1, typename _B2, typename... B> struct __disjunction_impl<__enable_if_t<!bool(_B1::value)>, _B1, _B2, B...> {
   using type = typename __disjunction_impl<void, _B2, B...>::type;
 };
 
@@ -106,8 +104,7 @@ template <typename, typename _B1, typename... B> struct __conjunction_impl {
   using type = _B1;
 };
 
-template <typename _B1, typename _B2, typename... B>
-struct __conjunction_impl<__enable_if_t<bool(_B1::value)>, _B1, _B2, B...> {
+template <typename _B1, typename _B2, typename... B> struct __conjunction_impl<__enable_if_t<bool(_B1::value)>, _B1, _B2, B...> {
   using type = typename __conjunction_impl<void, _B2, B...>::type;
 };
 }
@@ -149,9 +146,9 @@ __is_complete_or_unbounded(__type_identity<T>)
 }
 
 template <typename _TypeIdentity, typename _NestedType = typename _TypeIdentity::type>
-constexpr typename __or_<is_reference<_NestedType>, is_function<_NestedType>, is_void<_NestedType>,
-                         __is_array_unknown_bounds<_NestedType>>::type
-__is_complete_or_unbounded(_TypeIdentity)
+constexpr
+    typename __or_<is_reference<_NestedType>, is_function<_NestedType>, is_void<_NestedType>, __is_array_unknown_bounds<_NestedType>>::type
+    __is_complete_or_unbounded(_TypeIdentity)
 {
   return {};
 }
@@ -312,8 +309,7 @@ template <typename T> struct is_object : public __bool_constant<__is_object(T)> 
 template <typename> struct is_member_pointer;
 
 template <typename T>
-struct is_scalar
-    : public __or_<is_arithmetic<T>, is_enum<T>, is_pointer<T>, is_member_pointer<T>, is_null_pointer<T>>::type {
+struct is_scalar : public __or_<is_arithmetic<T>, is_enum<T>, is_pointer<T>, is_member_pointer<T>, is_null_pointer<T>>::type {
 };
 
 template <typename T> struct is_compound : public __bool_constant<!is_fundamental<T>::value> {
@@ -326,18 +322,16 @@ template <typename, typename> struct is_same;
 template <typename T, typename... _Types> using __is_one_of = __or_<is_same<T, _Types>...>;
 
 __extension__ template <typename T>
-using __is_signed_integer
-    = __is_one_of<__remove_cv_t<T>, signed char, signed short, signed int, signed long, signed long long
+using __is_signed_integer = __is_one_of<__remove_cv_t<T>, signed char, signed short, signed int, signed long, signed long long
 
-                  ,
-                  signed __int128>;
+                                        ,
+                                        signed __int128>;
 
 __extension__ template <typename T>
-using __is_unsigned_integer
-    = __is_one_of<__remove_cv_t<T>, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long
+using __is_unsigned_integer = __is_one_of<__remove_cv_t<T>, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long
 
-                  ,
-                  unsigned __int128>;
+                                          ,
+                                          unsigned __int128>;
 
 template <typename T> using __is_standard_integer = __or_<__is_signed_integer<T>, __is_unsigned_integer<T>>;
 
@@ -441,8 +435,7 @@ template <typename T, bool = __or_<is_void<T>, __is_array_unknown_bounds<T>, is_
 struct __is_destructible_safe;
 
 template <typename T>
-struct __is_destructible_safe<T, false, false>
-    : public __is_destructible_impl<typename remove_all_extents<T>::type>::type {
+struct __is_destructible_safe<T, false, false> : public __is_destructible_impl<typename remove_all_extents<T>::type>::type {
 };
 
 template <typename T> struct __is_destructible_safe<T, true, false> : public false_type {
@@ -471,8 +464,7 @@ template <typename T, bool = __or_<is_void<T>, __is_array_unknown_bounds<T>, is_
 struct __is_nt_destructible_safe;
 
 template <typename T>
-struct __is_nt_destructible_safe<T, false, false>
-    : public __is_nt_destructible_impl<typename remove_all_extents<T>::type>::type {
+struct __is_nt_destructible_safe<T, false, false> : public __is_nt_destructible_impl<typename remove_all_extents<T>::type>::type {
 };
 
 template <typename T> struct __is_nt_destructible_safe<T, true, false> : public false_type {
@@ -510,11 +502,9 @@ template <typename T> struct is_move_constructible : public __is_constructible_i
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T, typename... Args>
-using __is_nothrow_constructible_impl = __bool_constant<__is_nothrow_constructible(T, Args...)>;
+template <typename T, typename... Args> using __is_nothrow_constructible_impl = __bool_constant<__is_nothrow_constructible(T, Args...)>;
 
-template <typename T, typename... Args>
-struct is_nothrow_constructible : public __is_nothrow_constructible_impl<T, Args...> {
+template <typename T, typename... Args> struct is_nothrow_constructible : public __is_nothrow_constructible_impl<T, Args...> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -524,14 +514,12 @@ template <typename T> struct is_nothrow_default_constructible : public __is_noth
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T>
-struct is_nothrow_copy_constructible : public __is_nothrow_constructible_impl<T, __add_lval_ref_t<const T>> {
+template <typename T> struct is_nothrow_copy_constructible : public __is_nothrow_constructible_impl<T, __add_lval_ref_t<const T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T>
-struct is_nothrow_move_constructible : public __is_nothrow_constructible_impl<T, __add_rval_ref_t<T>> {
+template <typename T> struct is_nothrow_move_constructible : public __is_nothrow_constructible_impl<T, __add_rval_ref_t<T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -543,8 +531,7 @@ template <typename T, typename Uxp> struct is_assignable : public __is_assignabl
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T>
-struct is_copy_assignable : public __is_assignable_impl<__add_lval_ref_t<T>, __add_lval_ref_t<const T>> {
+template <typename T> struct is_copy_assignable : public __is_assignable_impl<__add_lval_ref_t<T>, __add_lval_ref_t<const T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -554,8 +541,7 @@ template <typename T> struct is_move_assignable : public __is_assignable_impl<__
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T, typename Uxp>
-using __is_nothrow_assignable_impl = __bool_constant<__is_nothrow_assignable(T, Uxp)>;
+template <typename T, typename Uxp> using __is_nothrow_assignable_impl = __bool_constant<__is_nothrow_assignable(T, Uxp)>;
 
 template <typename T, typename Uxp> struct is_nothrow_assignable : public __is_nothrow_assignable_impl<T, Uxp> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
@@ -568,17 +554,14 @@ struct is_nothrow_copy_assignable : public __is_nothrow_assignable_impl<__add_lv
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T>
-struct is_nothrow_move_assignable : public __is_nothrow_assignable_impl<__add_lval_ref_t<T>, __add_rval_ref_t<T>> {
+template <typename T> struct is_nothrow_move_assignable : public __is_nothrow_assignable_impl<__add_lval_ref_t<T>, __add_rval_ref_t<T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T, typename... Args>
-using __is_trivially_constructible_impl = __bool_constant<__is_trivially_constructible(T, Args...)>;
+template <typename T, typename... Args> using __is_trivially_constructible_impl = __bool_constant<__is_trivially_constructible(T, Args...)>;
 
-template <typename T, typename... Args>
-struct is_trivially_constructible : public __is_trivially_constructible_impl<T, Args...> {
+template <typename T, typename... Args> struct is_trivially_constructible : public __is_trivially_constructible_impl<T, Args...> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -595,13 +578,11 @@ struct __do_is_implicitly_default_constructible_impl {
   static false_type __test(...);
 };
 
-template <typename T>
-struct __is_implicitly_default_constructible_impl : public __do_is_implicitly_default_constructible_impl {
+template <typename T> struct __is_implicitly_default_constructible_impl : public __do_is_implicitly_default_constructible_impl {
   using type = decltype(__test(declval<T>()));
 };
 
-template <typename T>
-struct __is_implicitly_default_constructible_safe : public __is_implicitly_default_constructible_impl<T>::type {
+template <typename T> struct __is_implicitly_default_constructible_safe : public __is_implicitly_default_constructible_impl<T>::type {
 };
 
 template <typename T>
@@ -609,20 +590,17 @@ struct __is_implicitly_default_constructible
     : public __and_<__is_constructible_impl<T>, __is_implicitly_default_constructible_safe<T>>::type {
 };
 
-template <typename T>
-struct is_trivially_copy_constructible : public __is_trivially_constructible_impl<T, __add_lval_ref_t<const T>> {
+template <typename T> struct is_trivially_copy_constructible : public __is_trivially_constructible_impl<T, __add_lval_ref_t<const T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T>
-struct is_trivially_move_constructible : public __is_trivially_constructible_impl<T, __add_rval_ref_t<T>> {
+template <typename T> struct is_trivially_move_constructible : public __is_trivially_constructible_impl<T, __add_rval_ref_t<T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T, typename Uxp>
-using __is_trivially_assignable_impl = __bool_constant<__is_trivially_assignable(T, Uxp)>;
+template <typename T, typename Uxp> using __is_trivially_assignable_impl = __bool_constant<__is_trivially_assignable(T, Uxp)>;
 
 template <typename T, typename Uxp> struct is_trivially_assignable : public __is_trivially_assignable_impl<T, Uxp> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
@@ -630,8 +608,7 @@ template <typename T, typename Uxp> struct is_trivially_assignable : public __is
 };
 
 template <typename T>
-struct is_trivially_copy_assignable
-    : public __is_trivially_assignable_impl<__add_lval_ref_t<T>, __add_lval_ref_t<const T>> {
+struct is_trivially_copy_assignable : public __is_trivially_assignable_impl<__add_lval_ref_t<T>, __add_lval_ref_t<const T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -643,8 +620,7 @@ struct is_trivially_move_assignable : public __is_trivially_assignable_impl<__ad
 };
 
 template <typename T>
-struct is_trivially_destructible
-    : public __and_<__is_destructible_safe<T>, __bool_constant<__has_trivial_destructor(T)>>::type {
+struct is_trivially_destructible : public __and_<__is_destructible_safe<T>, __bool_constant<__has_trivial_destructor(T)>>::type {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -667,8 +643,7 @@ template <typename, unsigned Uxint = 0> struct extent : public integral_constant
 template <typename T, __tt_size_t _Size> struct extent<T[_Size], 0> : public integral_constant<__tt_size_t, _Size> {
 };
 
-template <typename T, unsigned Uxint, __tt_size_t _Size>
-struct extent<T[_Size], Uxint> : public extent<T, Uxint - 1>::type {
+template <typename T, unsigned Uxint, __tt_size_t _Size> struct extent<T[_Size], Uxint> : public extent<T, Uxint - 1>::type {
 };
 
 template <typename T> struct extent<T[], 0> : public integral_constant<__tt_size_t, 0> {
@@ -686,8 +661,7 @@ template <typename F, typename U> struct is_convertible : public __bool_constant
 template <typename UElementType, typename FElementType>
 using __is_array_convertible = is_convertible<FElementType (*)[], UElementType (*)[]>;
 template <typename T, typename... Args>
-struct __is_nothrow_new_constructible_impl
-    : __bool_constant<noexcept(::new (micron::declval<void *>()) T(micron::declval<Args>()...))> {
+struct __is_nothrow_new_constructible_impl : __bool_constant<noexcept(::new (micron::declval<void *>()) T(micron::declval<Args>()...))> {
 };
 
 template <typename T, typename... Args>
@@ -840,19 +814,10 @@ public:
   using __type = typename __match_cv_qualifiers<T, __unsigned_type>::__type;
 };
 
-template <> struct __make_unsigned<wchar_t>
-{
-  using __type = typename __make_unsigned_selector<wchar_t, false, true>::__type;
-};
-template <> struct __make_unsigned<char16_t>
-{
-  using __type = typename __make_unsigned_selector<char16_t, false, true>::__type;
-};
+template <> struct __make_unsigned<wchar_t> { using __type = typename __make_unsigned_selector<wchar_t, false, true>::__type; };
+template <> struct __make_unsigned<char16_t> { using __type = typename __make_unsigned_selector<char16_t, false, true>::__type; };
 
-template <> struct __make_unsigned<char32_t>
-{
-  using __type = typename __make_unsigned_selector<char32_t, false, true>::__type;
-};
+template <> struct __make_unsigned<char32_t> { using __type = typename __make_unsigned_selector<char32_t, false, true>::__type; };
 
 template <typename T> struct make_unsigned {
   using type = typename __make_unsigned_selector<T>::__type;
@@ -896,19 +861,10 @@ public:
   using __type = typename __make_signed_selector<__unsigned_type>::__type;
 };
 
-template <> struct __make_signed<wchar_t>
-{
-  using __type = typename __make_signed_selector<wchar_t, false, true>::__type;
-};
-template <> struct __make_signed<char16_t>
-{
-  using __type = typename __make_signed_selector<char16_t, false, true>::__type;
-};
+template <> struct __make_signed<wchar_t> { using __type = typename __make_signed_selector<wchar_t, false, true>::__type; };
+template <> struct __make_signed<char16_t> { using __type = typename __make_signed_selector<char16_t, false, true>::__type; };
 
-template <> struct __make_signed<char32_t>
-{
-  using __type = typename __make_signed_selector<char32_t, false, true>::__type;
-};
+template <> struct __make_signed<char32_t> { using __type = typename __make_signed_selector<char32_t, false, true>::__type; };
 
 template <typename T> struct make_signed {
   using type = typename __make_signed_selector<T>::__type;
@@ -966,9 +922,8 @@ template <typename... _Types> struct __strictest_alignment {
 };
 
 template <typename T, typename... _Types> struct __strictest_alignment<T, _Types...> {
-  static const __tt_size_t _S_alignment = alignof(T) > __strictest_alignment<_Types...>::_S_alignment
-                                              ? alignof(T)
-                                              : __strictest_alignment<_Types...>::_S_alignment;
+  static const __tt_size_t _S_alignment
+      = alignof(T) > __strictest_alignment<_Types...>::_S_alignment ? alignof(T) : __strictest_alignment<_Types...>::_S_alignment;
   static const __tt_size_t _S_size
       = sizeof(T) > __strictest_alignment<_Types...>::_S_size ? sizeof(T) : __strictest_alignment<_Types...>::_S_size;
 };
@@ -1044,8 +999,7 @@ template <> struct common_type<> {
 template <typename T0> struct common_type<T0> : public common_type<T0, T0> {
 };
 
-template <typename T1, typename T2, typename _Dp1 = __decay_t<T1>, typename _Dp2 = __decay_t<T2>>
-struct __common_type_impl {
+template <typename T1, typename T2, typename _Dp1 = __decay_t<T1>, typename _Dp2 = __decay_t<T2>> struct __common_type_impl {
 
   using type = common_type<_Dp1, _Dp2>;
 };
@@ -1068,8 +1022,7 @@ struct common_type<T1, T2, _Rp...> : public __common_type_fold<common_type<T1, T
 };
 
 template <typename _CTp, typename... _Rp>
-struct __common_type_fold<_CTp, __common_type_pack<_Rp...>, Void_t<typename _CTp::type>>
-    : public common_type<typename _CTp::type, _Rp...> {
+struct __common_type_fold<_CTp, __common_type_pack<_Rp...>, Void_t<typename _CTp::type>> : public common_type<typename _CTp::type, _Rp...> {
 };
 
 template <typename _CTp, typename _Rp> struct __common_type_fold<_CTp, _Rp, void> {
@@ -1116,15 +1069,13 @@ template <typename T, typename _Tag> struct __result_of_success : __success_type
 
 struct __result_of_memfun_ref_impl {
   template <typename _Fp, typename T1, typename... Args>
-  static __result_of_success<decltype((micron::declval<T1>().*micron::declval<_Fp>())(micron::declval<Args>()...)),
-                             __invoke_memfun_ref>
+  static __result_of_success<decltype((micron::declval<T1>().*micron::declval<_Fp>())(micron::declval<Args>()...)), __invoke_memfun_ref>
   _S_test(int);
 
   template <typename...> static __failure_type _S_test(...);
 };
 
-template <typename Ptr, typename _Arg, typename... Args>
-struct __result_of_memfun_ref : private __result_of_memfun_ref_impl {
+template <typename Ptr, typename _Arg, typename... Args> struct __result_of_memfun_ref : private __result_of_memfun_ref_impl {
   using type = decltype(_S_test<Ptr, _Arg, Args...>(0));
 };
 
@@ -1137,8 +1088,7 @@ struct __result_of_memfun_deref_impl {
   template <typename...> static __failure_type _S_test(...);
 };
 
-template <typename Ptr, typename _Arg, typename... Args>
-struct __result_of_memfun_deref : private __result_of_memfun_deref_impl {
+template <typename Ptr, typename _Arg, typename... Args> struct __result_of_memfun_deref : private __result_of_memfun_deref_impl {
   using type = decltype(_S_test<Ptr, _Arg, Args...>(0));
 };
 
@@ -1155,8 +1105,7 @@ template <typename Ptr, typename _Arg> struct __result_of_memobj_ref : private _
 
 struct __result_of_memobj_deref_impl {
   template <typename _Fp, typename T1>
-  static __result_of_success<decltype((*micron::declval<T1>()).*micron::declval<_Fp>()), __invoke_memobj_deref>
-  _S_test(int);
+  static __result_of_success<decltype((*micron::declval<T1>()).*micron::declval<_Fp>()), __invoke_memobj_deref> _S_test(int);
 
   template <typename, typename> static __failure_type _S_test(...);
 };
@@ -1176,8 +1125,7 @@ template <typename _Res, typename _Class, typename _Arg> struct __result_of_memo
 
 template <typename Ptr, typename _Arg, typename... Args> struct __result_of_memfun;
 
-template <typename _Res, typename _Class, typename _Arg, typename... Args>
-struct __result_of_memfun<_Res _Class::*, _Arg, Args...> {
+template <typename _Res, typename _Class, typename _Arg, typename... Args> struct __result_of_memfun<_Res _Class::*, _Arg, Args...> {
   using _Argval = typename remove_reference<_Arg>::type;
   using Ptr = _Res _Class::*;
   using type = typename __conditional_t<is_base_of<_Class, _Argval>::value, __result_of_memfun_ref<Ptr, _Arg, Args...>,
@@ -1197,8 +1145,7 @@ template <bool, bool, typename Fnc, typename... _ArgTypes> struct __result_of_im
 };
 
 template <typename Ptr, typename _Arg>
-struct __result_of_impl<true, false, Ptr, _Arg>
-    : public __result_of_memobj<__decay_t<Ptr>, typename __inv_unwrap<_Arg>::type> {
+struct __result_of_impl<true, false, Ptr, _Arg> : public __result_of_memobj<__decay_t<Ptr>, typename __inv_unwrap<_Arg>::type> {
 };
 
 template <typename Ptr, typename _Arg, typename... Args>
@@ -1213,21 +1160,19 @@ struct __result_of_other_impl {
   template <typename...> static __failure_type _S_test(...);
 };
 
-template <typename Fnc, typename... _ArgTypes>
-struct __result_of_impl<false, false, Fnc, _ArgTypes...> : private __result_of_other_impl {
+template <typename Fnc, typename... _ArgTypes> struct __result_of_impl<false, false, Fnc, _ArgTypes...> : private __result_of_other_impl {
   using type = decltype(_S_test<Fnc, _ArgTypes...>(0));
 };
 
 template <typename Fnc, typename... _ArgTypes>
-struct __invoke_result : public __result_of_impl<is_member_object_pointer<typename remove_reference<Fnc>::type>::value,
-                                                 is_member_function_pointer<typename remove_reference<Fnc>::type>::value,
-                                                 Fnc, _ArgTypes...>::type {
+struct __invoke_result
+    : public __result_of_impl<is_member_object_pointer<typename remove_reference<Fnc>::type>::value,
+                              is_member_function_pointer<typename remove_reference<Fnc>::type>::value, Fnc, _ArgTypes...>::type {
 };
 
 template <typename Fn, typename... Args> using __invoke_result_t = typename __invoke_result<Fn, Args...>::type;
 
-template <typename Fnc, typename... _ArgTypes>
-struct result_of<Fnc(_ArgTypes...)> : public __invoke_result<Fnc, _ArgTypes...> {
+template <typename Fnc, typename... _ArgTypes> struct result_of<Fnc(_ArgTypes...)> : public __invoke_result<Fnc, _ArgTypes...> {
 } __attribute__((__deprecated__("use '"
                                 "micron::invoke_result"
                                 "' instead")));
@@ -1245,8 +1190,7 @@ template <typename T> using decay_t = typename decay<T>::type;
 
 template <bool C, typename T = void> using enable_if_t = typename enable_if<C, T>::type;
 
-template <bool C, typename _Iftrue, typename _Iffalse>
-using conditional_t = typename conditional<C, _Iftrue, _Iffalse>::type;
+template <bool C, typename _Iftrue, typename _Iffalse> using conditional_t = typename conditional<C, _Iftrue, _Iffalse>::type;
 
 template <typename... T> using common_type_t = typename common_type<T...>::type;
 
@@ -1260,14 +1204,12 @@ template <typename Df, typename _AlwaysVoid, template <typename...> class Op, ty
   using __is_detected = false_type;
 };
 
-template <typename Df, template <typename...> class Op, typename... Args>
-struct __detector<Df, Void_t<Op<Args...>>, Op, Args...> {
+template <typename Df, template <typename...> class Op, typename... Args> struct __detector<Df, Void_t<Op<Args...>>, Op, Args...> {
   using type = Op<Args...>;
   using __is_detected = true_type;
 };
 
-template <typename Df, template <typename...> class Op, typename... Args>
-using __detected_or = __detector<Df, void, Op, Args...>;
+template <typename Df, template <typename...> class Op, typename... Args> using __detected_or = __detector<Df, void, Op, Args...>;
 
 template <typename Df, template <typename...> class Op, typename... Args>
 using __detected_or_t = typename __detected_or<Df, Op, Args...>::type;
@@ -1288,23 +1230,20 @@ swap(T &, T &) noexcept(__and_<is_nothrow_move_constructible<T>, is_nothrow_move
 
 template <typename T, __tt_size_t _Nm>
 
-inline __enable_if_t<__is_swappable<T>::value> swap(T (&__a)[_Nm],
-                                                    T (&__b)[_Nm]) noexcept(__is_nothrow_swappable<T>::value);
+inline __enable_if_t<__is_swappable<T>::value> swap(T (&__a)[_Nm], T (&__b)[_Nm]) noexcept(__is_nothrow_swappable<T>::value);
 
 namespace __swappable_details
 {
 using micron::swap;
 
 struct __do_is_swappable_impl {
-  template <typename T, typename = decltype(swap(micron::declval<T &>(), micron::declval<T &>()))>
-  static true_type __test(int);
+  template <typename T, typename = decltype(swap(micron::declval<T &>(), micron::declval<T &>()))> static true_type __test(int);
 
   template <typename> static false_type __test(...);
 };
 
 struct __do_is_nothrow_swappable_impl {
-  template <typename T>
-  static __bool_constant<noexcept(swap(micron::declval<T &>(), micron::declval<T &>()))> __test(int);
+  template <typename T> static __bool_constant<noexcept(swap(micron::declval<T &>(), micron::declval<T &>()))> __test(int);
 
   template <typename> static false_type __test(...);
 };
@@ -1366,8 +1305,7 @@ struct __do_is_nothrow_swappable_with_impl {
 
 }
 
-template <typename T, typename Uxp>
-struct __is_swappable_with_impl : public __swappable_with_details::__do_is_swappable_with_impl {
+template <typename T, typename Uxp> struct __is_swappable_with_impl : public __swappable_with_details::__do_is_swappable_with_impl {
   using type = decltype(__test<T, Uxp>(0));
 };
 
@@ -1380,8 +1318,7 @@ struct __is_nothrow_swappable_with_impl : public __swappable_with_details::__do_
   using type = decltype(__test<T, Uxp>(0));
 };
 
-template <typename T>
-struct __is_nothrow_swappable_with_impl<T &, T &> : public __swappable_details::__do_is_nothrow_swappable_impl {
+template <typename T> struct __is_nothrow_swappable_with_impl<T &, T &> : public __swappable_details::__do_is_nothrow_swappable_impl {
   using type = decltype(__test<T &>(0));
 };
 
@@ -1392,8 +1329,7 @@ template <typename T, typename Uxp> struct is_swappable_with : public __is_swapp
                 "second template argument must be a complete class or an unbounded array");
 };
 
-template <typename T, typename Uxp>
-struct is_nothrow_swappable_with : public __is_nothrow_swappable_with_impl<T, Uxp>::type {
+template <typename T, typename Uxp> struct is_nothrow_swappable_with : public __is_nothrow_swappable_with_impl<T, Uxp>::type {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "first template argument must be a complete class or an unbounded array");
   static_assert(micron::__is_complete_or_unbounded(__type_identity<Uxp>{}),
@@ -1407,13 +1343,11 @@ inline constexpr bool is_swappable_with_v = is_swappable_with<T, Uxp>::value;
 template <typename T, typename Uxp>
 
 inline constexpr bool is_nothrow_swappable_with_v = is_nothrow_swappable_with<T, Uxp>::value;
-template <typename _Result, typename R, bool = is_void<R>::value, typename = void>
-struct __is_invocable_impl : false_type {
+template <typename _Result, typename R, bool = is_void<R>::value, typename = void> struct __is_invocable_impl : false_type {
   using __nothrow_conv = false_type;
 };
 
-template <typename _Result, typename R>
-struct __is_invocable_impl<_Result, R, true, Void_t<typename _Result::type>> : true_type {
+template <typename _Result, typename R> struct __is_invocable_impl<_Result, R, true, Void_t<typename _Result::type>> : true_type {
   using __nothrow_conv = true_type;
 };
 
@@ -1444,8 +1378,7 @@ public:
 };
 #pragma GCC diagnostic pop
 
-template <typename Fn, typename... _ArgTypes>
-struct __is_invocable : __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, void>::type {
+template <typename Fn, typename... _ArgTypes> struct __is_invocable : __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, void>::type {
 };
 
 template <typename Fn, typename T, typename... Args>
@@ -1489,8 +1422,7 @@ template <typename _Result, typename Fn, typename... Args>
 struct __call_is_nothrow : __bool_constant<micron::__call_is_nt<Fn, Args...>(typename _Result::__invoke_type{})> {
 };
 
-template <typename Fn, typename... Args>
-using __call_is_nothrow_ = __call_is_nothrow<__invoke_result<Fn, Args...>, Fn, Args...>;
+template <typename Fn, typename... Args> using __call_is_nothrow_ = __call_is_nothrow<__invoke_result<Fn, Args...>, Fn, Args...>;
 
 template <typename Fn, typename... Args>
 struct __is_nothrow_invocable : __and_<__is_invocable<Fn, Args...>, __call_is_nothrow_<Fn, Args...>>::type {
@@ -1508,8 +1440,7 @@ struct __nonesuch : private __nonesuchbase {
 #pragma GCC diagnostic pop
 
 template <typename Fnc, typename... _ArgTypes> struct invoke_result : public __invoke_result<Fnc, _ArgTypes...> {
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fnc>{}),
-                "Fnc must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fnc>{}), "Fnc must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
                 "each argument type must be a complete class or an unbounded array");
 };
@@ -1522,20 +1453,17 @@ struct is_invocable
     : public __bool_constant<__is_invocable(Fn, _ArgTypes...)>
 
 {
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}),
-                "Fn must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}), "Fn must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
                 "each argument type must be a complete class or an unbounded array");
 };
 
 template <typename R, typename Fn, typename... _ArgTypes>
 struct is_invocable_r : __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, R>::type {
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}),
-                "Fn must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}), "Fn must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
                 "each argument type must be a complete class or an unbounded array");
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<R>{}),
-                "R must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<R>{}), "R must be a complete class or an unbounded array");
 };
 
 template <typename Fn, typename... _ArgTypes>
@@ -1544,24 +1472,20 @@ struct is_nothrow_invocable
     : public __bool_constant<__is_nothrow_invocable(Fn, _ArgTypes...)>
 
 {
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}),
-                "Fn must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}), "Fn must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
                 "each argument type must be a complete class or an unbounded array");
 };
 
-template <typename _Result, typename R>
-using __is_nt_invocable_impl = typename __is_invocable_impl<_Result, R>::__nothrow_conv;
+template <typename _Result, typename R> using __is_nt_invocable_impl = typename __is_invocable_impl<_Result, R>::__nothrow_conv;
 
 template <typename R, typename Fn, typename... _ArgTypes>
 struct is_nothrow_invocable_r
     : __and_<__is_nt_invocable_impl<__invoke_result<Fn, _ArgTypes...>, R>, __call_is_nothrow_<Fn, _ArgTypes...>>::type {
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}),
-                "Fn must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}), "Fn must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
                 "each argument type must be a complete class or an unbounded array");
-  static_assert(micron::__is_complete_or_unbounded(__type_identity<R>{}),
-                "R must be a complete class or an unbounded array");
+  static_assert(micron::__is_complete_or_unbounded(__type_identity<R>{}), "R must be a complete class or an unbounded array");
 };
 
 // value'd'
@@ -1610,8 +1534,7 @@ template <typename T>
 inline constexpr bool is_pod_v = __is_pod(T);
 template <typename T>
 
-inline constexpr bool is_literal_type_v
-    = __is_literal_type(T);
+inline constexpr bool is_literal_type_v = __is_literal_type(T);
 template <typename T> inline constexpr bool is_empty_v = __is_empty(T);
 template <typename T> inline constexpr bool is_polymorphic_v = __is_polymorphic(T);
 template <typename T> inline constexpr bool is_abstract_v = __is_abstract(T);
@@ -1626,42 +1549,31 @@ template <typename T> inline constexpr bool is_copy_constructible_v = __is_const
 template <typename T> inline constexpr bool is_move_constructible_v = __is_constructible(T, __add_rval_ref_t<T>);
 
 template <typename T, typename Uxp> inline constexpr bool is_assignable_v = __is_assignable(T, Uxp);
-template <typename T>
-inline constexpr bool is_copy_assignable_v = __is_assignable(__add_lval_ref_t<T>, __add_lval_ref_t<const T>);
-template <typename T>
-inline constexpr bool is_move_assignable_v = __is_assignable(__add_lval_ref_t<T>, __add_rval_ref_t<T>);
+template <typename T> inline constexpr bool is_copy_assignable_v = __is_assignable(__add_lval_ref_t<T>, __add_lval_ref_t<const T>);
+template <typename T> inline constexpr bool is_move_assignable_v = __is_assignable(__add_lval_ref_t<T>, __add_rval_ref_t<T>);
 
 template <typename T> inline constexpr bool is_destructible_v = is_destructible<T>::value;
 
-template <typename T, typename... Args>
-inline constexpr bool is_trivially_constructible_v = __is_trivially_constructible(T, Args...);
+template <typename T, typename... Args> inline constexpr bool is_trivially_constructible_v = __is_trivially_constructible(T, Args...);
 template <typename T> inline constexpr bool is_trivially_default_constructible_v = __is_trivially_constructible(T);
-template <typename T>
-inline constexpr bool is_trivially_copy_constructible_v = __is_trivially_constructible(T, __add_lval_ref_t<const T>);
-template <typename T>
-inline constexpr bool is_trivially_move_constructible_v = __is_trivially_constructible(T, __add_rval_ref_t<T>);
+template <typename T> inline constexpr bool is_trivially_copy_constructible_v = __is_trivially_constructible(T, __add_lval_ref_t<const T>);
+template <typename T> inline constexpr bool is_trivially_move_constructible_v = __is_trivially_constructible(T, __add_rval_ref_t<T>);
 
 template <typename T, typename Uxp> inline constexpr bool is_trivially_assignable_v = __is_trivially_assignable(T, Uxp);
 template <typename T>
-inline constexpr bool is_trivially_copy_assignable_v
-    = __is_trivially_assignable(__add_lval_ref_t<T>, __add_lval_ref_t<const T>);
+inline constexpr bool is_trivially_copy_assignable_v = __is_trivially_assignable(__add_lval_ref_t<T>, __add_lval_ref_t<const T>);
 template <typename T>
-inline constexpr bool is_trivially_move_assignable_v
-    = __is_trivially_assignable(__add_lval_ref_t<T>, __add_rval_ref_t<T>);
+inline constexpr bool is_trivially_move_assignable_v = __is_trivially_assignable(__add_lval_ref_t<T>, __add_rval_ref_t<T>);
 template <typename T> inline constexpr bool is_trivially_destructible_v = is_trivially_destructible<T>::value;
 
-template <typename T, typename... Args>
-inline constexpr bool is_nothrow_constructible_v = __is_nothrow_constructible(T, Args...);
+template <typename T, typename... Args> inline constexpr bool is_nothrow_constructible_v = __is_nothrow_constructible(T, Args...);
 template <typename T> inline constexpr bool is_nothrow_default_constructible_v = __is_nothrow_constructible(T);
-template <typename T>
-inline constexpr bool is_nothrow_copy_constructible_v = __is_nothrow_constructible(T, __add_lval_ref_t<const T>);
-template <typename T>
-inline constexpr bool is_nothrow_move_constructible_v = __is_nothrow_constructible(T, __add_rval_ref_t<T>);
+template <typename T> inline constexpr bool is_nothrow_copy_constructible_v = __is_nothrow_constructible(T, __add_lval_ref_t<const T>);
+template <typename T> inline constexpr bool is_nothrow_move_constructible_v = __is_nothrow_constructible(T, __add_rval_ref_t<T>);
 
 template <typename T, typename Uxp> inline constexpr bool is_nothrow_assignable_v = __is_nothrow_assignable(T, Uxp);
 template <typename T>
-inline constexpr bool is_nothrow_copy_assignable_v
-    = __is_nothrow_assignable(__add_lval_ref_t<T>, __add_lval_ref_t<const T>);
+inline constexpr bool is_nothrow_copy_assignable_v = __is_nothrow_assignable(__add_lval_ref_t<T>, __add_lval_ref_t<const T>);
 template <typename T>
 inline constexpr bool is_nothrow_move_assignable_v = __is_nothrow_assignable(__add_lval_ref_t<T>, __add_rval_ref_t<T>);
 
@@ -1674,8 +1586,7 @@ template <typename T> inline constexpr __tt_size_t alignment_of_v = alignment_of
 template <typename T> inline constexpr __tt_size_t rank_v = __array_rank(T);
 template <typename T, unsigned _Idx = 0> inline constexpr __tt_size_t extent_v = 0;
 template <typename T, __tt_size_t _Size> inline constexpr __tt_size_t extent_v<T[_Size], 0> = _Size;
-template <typename T, unsigned _Idx, __tt_size_t _Size>
-inline constexpr __tt_size_t extent_v<T[_Size], _Idx> = extent_v<T, _Idx - 1>;
+template <typename T, unsigned _Idx, __tt_size_t _Size> inline constexpr __tt_size_t extent_v<T[_Size], _Idx> = extent_v<T, _Idx - 1>;
 template <typename T> inline constexpr __tt_size_t extent_v<T[], 0> = 0;
 template <typename T, unsigned _Idx> inline constexpr __tt_size_t extent_v<T[], _Idx> = extent_v<T, _Idx - 1>;
 
@@ -1686,22 +1597,18 @@ template <typename _Base, typename _Derived> inline constexpr bool is_base_of_v 
 template <typename F, typename U> inline constexpr bool is_convertible_v = __is_convertible(F, U);
 
 template <typename Fn, typename... Args> inline constexpr bool is_invocable_v = is_invocable<Fn, Args...>::value;
-template <typename Fn, typename... Args>
-inline constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<Fn, Args...>::value;
-template <typename R, typename Fn, typename... Args>
-inline constexpr bool is_invocable_r_v = is_invocable_r<R, Fn, Args...>::value;
+template <typename Fn, typename... Args> inline constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<Fn, Args...>::value;
+template <typename R, typename Fn, typename... Args> inline constexpr bool is_invocable_r_v = is_invocable_r<R, Fn, Args...>::value;
 template <typename R, typename Fn, typename... Args>
 inline constexpr bool is_nothrow_invocable_r_v = is_nothrow_invocable_r<R, Fn, Args...>::value;
 
 template <typename T>
-struct has_unique_object_representations
-    : bool_constant<__has_unique_object_representations(remove_cv_t<remove_all_extents_t<T>>)> {
+struct has_unique_object_representations : bool_constant<__has_unique_object_representations(remove_cv_t<remove_all_extents_t<T>>)> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
 
-template <typename T>
-inline constexpr bool has_unique_object_representations_v = has_unique_object_representations<T>::value;
+template <typename T> inline constexpr bool has_unique_object_representations_v = has_unique_object_representations<T>::value;
 
 template <typename T> struct is_aggregate : bool_constant<__is_aggregate(remove_cv_t<T>)> {
 };
@@ -1721,8 +1628,7 @@ template <__tt_size_t... Is> struct index_sequence {
 // helper to concatenate sequences
 template <typename Seq1, typename Seq2> struct concat_index_sequence;
 
-template <__tt_size_t... I1, __tt_size_t... I2>
-struct concat_index_sequence<index_sequence<I1...>, index_sequence<I2...>> {
+template <__tt_size_t... I1, __tt_size_t... I2> struct concat_index_sequence<index_sequence<I1...>, index_sequence<I2...>> {
   using type = index_sequence<I1..., (sizeof...(I1) + I2)...>;
 };
 

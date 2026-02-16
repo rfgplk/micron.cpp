@@ -28,8 +28,7 @@ __parallel_for(typename T::iterator start, typename T::iterator end)
 }
 
 template <auto Fn, is_iterable_container T>
-  requires(micron::is_invocable_v<decltype(Fn), typename T::iterator>
-           or micron::is_invocable_v<decltype(Fn), typename T::const_iterator>)
+  requires(micron::is_invocable_v<decltype(Fn), typename T::iterator> or micron::is_invocable_v<decltype(Fn), typename T::const_iterator>)
 void
 parallel_for(T &data)
 {

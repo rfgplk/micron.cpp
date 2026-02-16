@@ -48,8 +48,7 @@ __sizeof_type()
 consteval u64
 io_request(u64 dir, u64 type, u64 nr, u64 size)
 {
-  return (((dir) << __ioc_dirshift) | ((type) << __ioc_typeshift) | ((nr) << __ioc_nrshift)
-          | ((size) << __ioc_sizeshift));
+  return (((dir) << __ioc_dirshift) | ((type) << __ioc_typeshift) | ((nr) << __ioc_nrshift) | ((size) << __ioc_sizeshift));
 }
 
 consteval u64
@@ -177,9 +176,8 @@ constexpr static const u64 tiocgrs485 = 0x542e;
 constexpr static const u64 tiocsrs485 = 0x542f;
 constexpr static const u64 tiocgptn = io_read_command<unsigned int>('T', 0x30); /* get pty number (of pty-mux device) */
 constexpr static const u64 tiocsptlck = io_write_command<int>('T', 0x31);       /* lock/unlock pty */
-constexpr static const u64 tiocgdev
-    = io_read_command<unsigned int>('T', 0x32); /* get primary device node of /dev/console */
-constexpr static const u64 tcgetx = 0x5432;     /* sys5 tcgetx compatibility */
+constexpr static const u64 tiocgdev = io_read_command<unsigned int>('T', 0x32); /* get primary device node of /dev/console */
+constexpr static const u64 tcgetx = 0x5432;                                     /* sys5 tcgetx compatibility */
 constexpr static const u64 tcsetx = 0x5433;
 constexpr static const u64 tcsetxf = 0x5434;
 constexpr static const u64 tcsetxw = 0x5435;

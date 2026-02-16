@@ -37,8 +37,7 @@ __calculate_space_cache(size_t sz)
   u64 t = static_cast<u64>((float)(sz * sz * sz) * micron::math::logf128((double)sz * __builtin_sqrt((double)sz)));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul
-                                                                               : (size_t)t_2)
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2)
        * 4096;     // still align to pg
   return sz;
 }
@@ -51,9 +50,7 @@ __calculate_space_small(size_t sz)
   u64 t = static_cast<u64>((float)(sz * sz) * micron::math::logf128((float)sz));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul
-                                                                               : (size_t)t_2)
-       * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 
@@ -65,9 +62,7 @@ __calculate_space_medium(size_t sz)
   u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * (micron::math::logf128(f_sz)));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul
-                                                                               : (size_t)t_2)
-       * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 
@@ -76,13 +71,10 @@ __calculate_space_huge(size_t sz)
 {
   // x * ln(x) * ln(ln(ln(x))
   flong f_sz = static_cast<flong>(sz);
-  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz)
-                           * micron::math::logf128(micron::math::logf128(micron::math::logf128(f_sz))));
+  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * micron::math::logf128(micron::math::logf128(micron::math::logf128(f_sz))));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul
-                                                                               : (size_t)t_2)
-       * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 inline size_t
@@ -108,9 +100,7 @@ __calculate_space_saturated(size_t sz)
   u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * (micron::math::logf128(micron::math::logf128(f_sz))));
   float t_2 = (float)t / 4096;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul
-                                                                               : (size_t)t_2)
-       * 4096;
+  sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
 void *

@@ -34,8 +34,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   inline void
   reserve(size_t n)
   {
-    __mem::accept_new_memory(
-        this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
+    __mem::accept_new_memory(this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
   }
 
   // shallow copy routine
@@ -346,8 +345,7 @@ public:
   inline slice<byte>
   into_bytes()
   {
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]),
-                       reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
+    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
   inline ivector<T>
   insert(size_t n, const T &val)

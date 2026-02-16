@@ -67,8 +67,8 @@ invoke_r(F &&f, Args &&...args) noexcept(micron::is_nothrow_invocable_r_v<R, F, 
 }
 template <class V, class F, class... Args> constexpr bool negate_invocable_impl = false;
 template <class F, class... Args>
-constexpr bool negate_invocable_impl<
-    micron::void_t<decltype(!micron::invoke(micron::declval<F>(), micron::declval<Args>()...))>, F, Args...>
+constexpr bool
+    negate_invocable_impl<micron::void_t<decltype(!micron::invoke(micron::declval<F>(), micron::declval<Args>()...))>, F, Args...>
     = true;
 
 template <class F, class... Args> constexpr bool negate_invocable_v = negate_invocable_impl<void, F, Args...>;
@@ -99,8 +99,7 @@ template <class F> struct not_fn_t {
 
   template <class... Args, micron::enable_if_t<negate_invocable_v<const F, Args...>, int> = 0>
   constexpr decltype(auto)
-  operator()(Args &&...args) const && noexcept(noexcept(!micron::invoke(micron::move(f),
-                                                                        micron::forward<Args>(args)...)))
+  operator()(Args &&...args) const && noexcept(noexcept(!micron::invoke(micron::move(f), micron::forward<Args>(args)...)))
   {
     return !micron::invoke(micron::move(f), micron::forward<Args>(args)...);
   }
@@ -108,14 +107,12 @@ template <class F> struct not_fn_t {
   // Deleted overloads are needed since C++20
   // for preventing a non-equivalent but well-formed overload to be selected.
 
-  template <class... Args, micron::enable_if_t<!negate_invocable_v<F &, Args...>, int> = 0>
-  void operator()(Args &&...) & = delete;
+  template <class... Args, micron::enable_if_t<!negate_invocable_v<F &, Args...>, int> = 0> void operator()(Args &&...) & = delete;
 
   template <class... Args, micron::enable_if_t<!negate_invocable_v<const F &, Args...>, int> = 0>
   void operator()(Args &&...) const & = delete;
 
-  template <class... Args, micron::enable_if_t<!negate_invocable_v<F, Args...>, int> = 0>
-  void operator()(Args &&...) && = delete;
+  template <class... Args, micron::enable_if_t<!negate_invocable_v<F, Args...>, int> = 0> void operator()(Args &&...) && = delete;
 
   template <class... Args, micron::enable_if_t<!negate_invocable_v<const F, Args...>, int> = 0>
   void operator()(Args &&...) const && = delete;

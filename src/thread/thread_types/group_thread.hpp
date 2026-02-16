@@ -86,8 +86,7 @@ public:
   group_thread(const group_thread &o) = delete;
   group_thread &operator=(const group_thread &) = delete;
   group_thread(void)
-      : attributes(posix::getpid()), payload{}
-  {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+      : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
   group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
   // prepared functions
   // fstack set by preparethread
@@ -100,8 +99,7 @@ public:
 
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<const Fn, const Args &...>)
-  group_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args)
-      : attributes(posix::getpid(), _attrs), payload{}
+  group_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args) : attributes(posix::getpid(), _attrs), payload{}
   {
     __impl_preparethread(_attrs, fn, args...);
   }

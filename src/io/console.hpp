@@ -80,102 +80,102 @@ set_color(color c, style s = style::bold)
 {
   char buf[] = "\033[1;xxm";
   switch ( c ) {
-  case color::black:
+  case color::black :
     buf[4] = ansi_colors::black[0];
     buf[5] = ansi_colors::black[1];
     break;
-  case color::red:
+  case color::red :
     buf[4] = ansi_colors::red[0];
     buf[5] = ansi_colors::red[1];
     break;
-  case color::green:
+  case color::green :
     buf[4] = ansi_colors::green[0];
     buf[5] = ansi_colors::green[1];
     break;
-  case color::yellow:
+  case color::yellow :
     buf[4] = ansi_colors::yellow[0];
     buf[5] = ansi_colors::yellow[1];
     break;
-  case color::blue:
+  case color::blue :
     buf[4] = ansi_colors::blue[0];
     buf[5] = ansi_colors::blue[1];
     break;
-  case color::magenta:
+  case color::magenta :
     buf[4] = ansi_colors::magenta[0];
     buf[5] = ansi_colors::magenta[1];
     break;
-  case color::cyan:
+  case color::cyan :
     buf[4] = ansi_colors::cyan[0];
     buf[5] = ansi_colors::cyan[1];
     break;
-  case color::white:
+  case color::white :
     buf[4] = ansi_colors::white[0];
     buf[5] = ansi_colors::white[1];
     break;
-  case color::reset:
+  case color::reset :
     buf[4] = ansi_colors::reset[0];
     buf[5] = ansi_colors::reset[1];
     break;
-  case color::fgblack:
+  case color::fgblack :
     buf[4] = ansi_colors::fgblack[0];
     buf[5] = ansi_colors::fgblack[1];
     break;
-  case color::fgred:
+  case color::fgred :
     buf[4] = ansi_colors::fgred[0];
     buf[5] = ansi_colors::fgred[1];
     break;
-  case color::fggreen:
+  case color::fggreen :
     buf[4] = ansi_colors::fggreen[0];
     buf[5] = ansi_colors::fggreen[1];
     break;
-  case color::fgyellow:
+  case color::fgyellow :
     buf[4] = ansi_colors::fgyellow[0];
     buf[5] = ansi_colors::fgyellow[1];
     break;
-  case color::fgblue:
+  case color::fgblue :
     buf[4] = ansi_colors::fgblue[0];
     buf[5] = ansi_colors::fgblue[1];
     break;
-  case color::fgmagenta:
+  case color::fgmagenta :
     buf[4] = ansi_colors::fgmagenta[0];
     buf[5] = ansi_colors::fgmagenta[1];
     break;
-  case color::fgcyan:
+  case color::fgcyan :
     buf[4] = ansi_colors::fgcyan[0];
     buf[5] = ansi_colors::fgcyan[1];
     break;
-  case color::fgwhite:
+  case color::fgwhite :
     buf[4] = ansi_colors::fgwhite[0];
     buf[5] = ansi_colors::fgwhite[1];
     break;
-  case color::fgreset:
+  case color::fgreset :
     buf[4] = ansi_colors::fgreset[0];
     buf[5] = ansi_colors::fgreset[1];
     break;
   };
   switch ( s ) {
-  case style::bold:
+  case style::bold :
     buf[2] = ansi_colors::bold[0];
     break;
-  case style::dim:
+  case style::dim :
     buf[2] = ansi_colors::dim[0];
     break;
-  case style::italic:
+  case style::italic :
     buf[2] = ansi_colors::italic[0];
     break;
-  case style::underline:
+  case style::underline :
     buf[2] = ansi_colors::underline[0];
     break;
-  case style::blink:
+  case style::blink :
     buf[2] = ansi_colors::blink[0];
     break;
-  case style::reverse:
+  case style::reverse :
     buf[2] = ansi_colors::reverse[0];
     break;
-  case style::hidden:
+  case style::hidden :
     buf[2] = ansi_colors::hidden[0];
     break;
-  case style::reset:
+  case style::reset :
     buf[2] = ansi_colors::sreset[0];
     break;
   };

@@ -369,8 +369,7 @@ inline bool
 ispunct(typename T::iterator t)
 {
   if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
-    return (*t >= 0x21 && *t <= 0x2F) || (*t >= 0x3A && *t <= 0x40) || (*t >= 0x5B && *t <= 0x60)
-           || (*t >= 0x7B && *t <= 0x7E);
+    return (*t >= 0x21 && *t <= 0x2F) || (*t >= 0x3A && *t <= 0x40) || (*t >= 0x5B && *t <= 0x60) || (*t >= 0x7B && *t <= 0x7E);
   }
   return false;
 }

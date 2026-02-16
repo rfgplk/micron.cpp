@@ -24,10 +24,7 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
   ~robin_map_node() = default;
   robin_map_node() : length(0) {}
   robin_map_node(const hash64_t &k, V &&v, size_t l) : key(k), value(micron::move(v)), length(l) {}
-  template <typename... Args>
-  robin_map_node(const hash64_t &k, size_t l, Args &&...args) : key(k), value(args...), length(l)
-  {
-  }
+  template <typename... Args> robin_map_node(const hash64_t &k, size_t l, Args &&...args) : key(k), value(args...), length(l) {}
   robin_map_node(const robin_map_node &) = default;
   robin_map_node(robin_map_node &&) = default;
   robin_map_node &operator=(const robin_map_node &) = default;

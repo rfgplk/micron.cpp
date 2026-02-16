@@ -20,7 +20,7 @@ namespace micron
 {
 
 template <is_constexpr_valid T, size_t N = 64>
-  requires (N > 0)
+  requires(N > 0)
 struct constexpr_array {
   using category_type = array_tag;
   using mutability_type = mutable_tag;

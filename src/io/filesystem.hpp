@@ -138,8 +138,7 @@ public:
   }
   // search for file
   auto &
-  operator[](const io::path_t &p, const io::modes c = _default_mode,
-             const io::node_types nd = io::node_types::regular_file)
+  operator[](const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
   {
     __limit();
     for ( size_t i = 0; i < sz; i++ )

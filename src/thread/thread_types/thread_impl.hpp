@@ -136,8 +136,8 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
   if ( payload == nullptr )
     micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
 
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn),
-                                         micron::forward<Args>(args)...);
+  pthread_t pid
+      = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
 
   if ( pid == pthread::thread_failed )
     micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): thread failed to spawn");
@@ -148,8 +148,7 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
 template <typename Fn, typename... Args>
   requires(micron::is_invocable_v<const Fn &, const Args &...>)
 pthread_t
-__as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, const Fn &fn,
-                                const Args &...args)
+__as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, const Fn &fn, const Args &...args)
 {
   if ( payload == nullptr )
     micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
@@ -214,8 +213,8 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&
 
   pthread::set_stack_thread(attrs, fstack, Stack_Size);
 
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn),
-                                         micron::forward<Args>(args)...);
+  pthread_t pid
+      = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
 
   if ( pid == pthread::thread_failed )
     micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
@@ -246,8 +245,7 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, const Fn &fn, co
 struct thread_attr_t {
   ~thread_attr_t() = default;
   thread_attr_t(pid_t a)
-      : parent(a), pid(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0),
-        stack_addr(nullptr)
+      : parent(a), pid(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0), stack_addr(nullptr)
   {
   }
   thread_attr_t(pid_t a, const pthread_attr_t &attr) : parent(a), pid(0)

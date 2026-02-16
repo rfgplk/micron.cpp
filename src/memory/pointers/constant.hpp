@@ -30,10 +30,7 @@ public:
 
   const_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; }
 
-  template <class... Args>
-  const_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...))
-  {
-  }
+  template <class... Args> const_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) {}
 
   // Cannot be moved nor copied
   const_pointer(const_pointer &&p) = delete;

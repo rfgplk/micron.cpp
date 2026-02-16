@@ -20,13 +20,13 @@
 // (depends on arch), if you clone without setting this properly, or passing .tls to clone, it won't be set right, and
 // stack unrolls will trigger stack smashing
 
-#include "../../type_traits.hpp"
 #include "../../errno.hpp"
+#include "../../type_traits.hpp"
 
 #include "sched.hpp"
 
-#include "system.hpp"
 #include "cpu.hpp"
+#include "system.hpp"
 
 #include "../../__special/pthread"
 
@@ -93,8 +93,7 @@ enum class thread_rwlock_type : int {
 
 constexpr int thread_rwlock_prefer_reader_np = static_cast<int>(thread_rwlock_type::prefer_reader_np);
 constexpr int thread_rwlock_prefer_writer_np = static_cast<int>(thread_rwlock_type::prefer_writer_np);
-constexpr int thread_rwlock_prefer_writer_nonrecursive_np
-    = static_cast<int>(thread_rwlock_type::prefer_writer_nonrecursive_np);
+constexpr int thread_rwlock_prefer_writer_nonrecursive_np = static_cast<int>(thread_rwlock_type::prefer_writer_nonrecursive_np);
 constexpr int thread_rwlock_default_np = static_cast<int>(thread_rwlock_type::default_np);
 
 enum class thread_sched_inherit : int { inherit_sched = 0, explicit_sched };
@@ -166,8 +165,7 @@ create_thread(const pthread_attr_t &attrs, Fn fn, Args &&...args)
   };
 
   pthread_t tid{};
-  if ( int err = pthread_create(&tid, &attrs, &__impl_thread<Fn, micron::decay_t<Args>...>::trampoline, payload);
-       err != 0 ) {
+  if ( int err = pthread_create(&tid, &attrs, &__impl_thread<Fn, micron::decay_t<Args>...>::trampoline, payload); err != 0 ) {
     errno = err;
     delete payload;
     return thread_failed;
@@ -177,8 +175,7 @@ create_thread(const pthread_attr_t &attrs, Fn fn, Args &&...args)
 
 // inits thread, should be called first
 inline pthread_attr_t
-prepare_thread(thread_create_state dstate = thread_create_state::joinable, int policy = posix::sched_other,
-               int priority = 0)
+prepare_thread(thread_create_state dstate = thread_create_state::joinable, int policy = posix::sched_other, int priority = 0)
 {
   pthread_attr_t attr;
   pthread_attr_init(&attr);

@@ -357,8 +357,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   }
 };
 
-template <typename K, is_movable_object V, int Dg = 32>
-class btree_map
+template <typename K, is_movable_object V, int Dg = 32> class btree_map
 {
   using node_type = btree_map_node<K, V, Dg>;
   micron::uptr<node_type> root;

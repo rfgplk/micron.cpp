@@ -213,9 +213,8 @@ struct dir {
       pstr += e.d_name;
       if ( posix::stat(pstr.c_str(), sd) != 0 )
         exc<except::filesystem_error>("micron::dir failed to stat dir");
-      dd.emplace_back(
-          micron::tie(micron::move(e),
-                      micron::move(sd)));     // try to avoid senseless copying, replace with preallocated eventually
+      dd.emplace_back(micron::tie(micron::move(e),
+                                  micron::move(sd)));     // try to avoid senseless copying, replace with preallocated eventually
     }
   }
 

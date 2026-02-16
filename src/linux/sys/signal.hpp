@@ -105,9 +105,8 @@ constexpr static const int sa_stack = sa_onstack;
 
 #define ALIGN_UP(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
 
-constexpr static const int __sigwords = 1;     // ???
-constexpr static const int __sigsize
-    = (1024 / (8 * sizeof(unsigned long int)));     //__sigwords * sizeof(unsigned long int);
+constexpr static const int __sigwords = 1;                                           // ???
+constexpr static const int __sigsize = (1024 / (8 * sizeof(unsigned long int)));     //__sigwords * sizeof(unsigned long int);
 
 struct sigset_t {
   unsigned long int __val[__sigsize];
@@ -313,8 +312,8 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   __system_action.sa_flags |= 0x04000000;
   __system_action.sa_restorer = &restore_rt;
   // restorer
-  int result = static_cast<int>(
-      micron::syscall(SYS_rt_sigaction, sig, &__system_action, old ? &__system_oldaction : nullptr, __sig_syscall_size));
+  int result
+      = static_cast<int>(micron::syscall(SYS_rt_sigaction, sig, &__system_action, old ? &__system_oldaction : nullptr, __sig_syscall_size));
   if ( old && result >= 0 ) {
     old->sigaction_handler.sa_handler = __system_oldaction.k_sa_handler;
     micron::voidcpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(micron::sigset_t));

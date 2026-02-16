@@ -26,8 +26,7 @@
 namespace micron
 {
 
-template <is_movable_object T, class Alloc = micron::allocator_serial<>>
-struct slice : public __immutable_memory_resource<T, Alloc> {
+template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct slice : public __immutable_memory_resource<T, Alloc> {
   using __mem = __immutable_memory_resource<T, Alloc>;
   using category_type = slice_tag;
   using mutability_type = immutable_tag;

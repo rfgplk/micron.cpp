@@ -32,10 +32,9 @@ concept is_container = requires(T t) {
 
 // PRINTK BLOCK OF FUNCS
 template <int outstream = stdout_fileno, typename T, size_t M>
-  requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide>
-           or micron::is_same_v<T, unicode8> or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char>
-           or micron::is_same_v<T, const schar> or micron::is_same_v<T, const wide>
-           or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
+  requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide> or micron::is_same_v<T, unicode8>
+           or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char> or micron::is_same_v<T, const schar>
+           or micron::is_same_v<T, const wide> or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
 inline void
 printk(T (&c)[M])
 {
@@ -46,10 +45,9 @@ printk(T (&c)[M])
 }
 
 template <int outstream = stdout_fileno, typename T>
-  requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *>
-           or micron::is_same_v<T, unicode8 *> or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *>
-           or micron::is_same_v<T, const schar *> or micron::is_same_v<T, const wide *>
-           or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
+  requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *> or micron::is_same_v<T, unicode8 *>
+           or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *> or micron::is_same_v<T, const schar *>
+           or micron::is_same_v<T, const wide *> or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
 inline void
 printk(const T &c)
 {
@@ -97,10 +95,9 @@ printk(const T &str)
 
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = stdout_fileno>
-  requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *>
-           and !micron::is_same_v<T, wide *> and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *>
-           and !micron::is_same_v<T, const char *> and !micron::is_same_v<T, const schar *>
-           and !micron::is_same_v<T, const wide *> and !micron::is_same_v<T, const unicode8 *>
+  requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *> and !micron::is_same_v<T, wide *>
+           and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *> and !micron::is_same_v<T, const char *>
+           and !micron::is_same_v<T, const schar *> and !micron::is_same_v<T, const wide *> and !micron::is_same_v<T, const unicode8 *>
            and !micron::is_same_v<T, const unicode32 *>)
 void
 printk(const T &x)
@@ -385,10 +382,9 @@ printk(T ptr, size_t len)
 
 // PRINTKN BLOCK OF FUNCS, APPENDS NEWLINE
 template <int outstream = stdout_fileno, typename T, size_t M>
-  requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide>
-           or micron::is_same_v<T, unicode8> or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char>
-           or micron::is_same_v<T, const schar> or micron::is_same_v<T, const wide>
-           or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
+  requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide> or micron::is_same_v<T, unicode8>
+           or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char> or micron::is_same_v<T, const schar>
+           or micron::is_same_v<T, const wide> or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
 void
 printkn(T (&c)[M])
 {
@@ -402,10 +398,9 @@ printkn(T (&c)[M])
 }
 
 template <int outstream = stdout_fileno, typename T>
-  requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *>
-           or micron::is_same_v<T, unicode8 *> or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *>
-           or micron::is_same_v<T, const schar *> or micron::is_same_v<T, const wide *>
-           or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
+  requires(micron::is_same_v<T, char *> or micron::is_same_v<T, schar *> or micron::is_same_v<T, wide *> or micron::is_same_v<T, unicode8 *>
+           or micron::is_same_v<T, unicode32 *> or micron::is_same_v<T, const char *> or micron::is_same_v<T, const schar *>
+           or micron::is_same_v<T, const wide *> or micron::is_same_v<T, const unicode8 *> or micron::is_same_v<T, const unicode32 *>)
 void
 printkn(const T &c)
 {
@@ -513,10 +508,9 @@ printkn(const T &str)
 }
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = stdout_fileno>
-  requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *>
-           and !micron::is_same_v<T, wide *> and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *>
-           and !micron::is_same_v<T, const char *> and !micron::is_same_v<T, const schar *>
-           and !micron::is_same_v<T, const wide *> and !micron::is_same_v<T, const unicode8 *>
+  requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *> and !micron::is_same_v<T, wide *>
+           and !micron::is_same_v<T, unicode8 *> and !micron::is_same_v<T, unicode32 *> and !micron::is_same_v<T, const char *>
+           and !micron::is_same_v<T, const schar *> and !micron::is_same_v<T, const wide *> and !micron::is_same_v<T, const unicode8 *>
            and !micron::is_same_v<T, const unicode32 *>)
 void
 printkn(const T &x)
@@ -856,8 +850,7 @@ bin(const T &data)
   do {
     // NOTE: this is _rd to prevent shadowing in posix/file
     size_t _rd = (sz - 4096) < 0 ? sz : 4096;
-    const char *ptr
-        = format::bytes_to_hex(const_cast<byte *>(reinterpret_cast<const byte *>(&data[cnt])), _rd, &print_buffer[0]);
+    const char *ptr = format::bytes_to_hex(const_cast<byte *>(reinterpret_cast<const byte *>(&data[cnt])), _rd, &print_buffer[0]);
     sz = (sz - 4096) < 0 ? 0 : (sz - 4096);
     cnt += _rd;
     io::printk(" 0x");     // formatting it nicely

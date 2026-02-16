@@ -13,8 +13,7 @@ prctl(int option, Args &&...args)
 }
 
 int
-prctl(int option, unsigned long arg0 = 0, unsigned long arg1 = 0, unsigned long arg2 = 0, unsigned long arg3 = 0,
-      unsigned long arg4 = 0)
+prctl(int option, unsigned long arg0 = 0, unsigned long arg1 = 0, unsigned long arg2 = 0, unsigned long arg3 = 0, unsigned long arg4 = 0)
 {
   return static_cast<int>(micron::syscall(SYS_prctl, option, arg0, arg1, arg2, arg3, arg4));
 }

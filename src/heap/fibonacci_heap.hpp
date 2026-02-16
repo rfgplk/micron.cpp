@@ -11,8 +11,7 @@
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
-template <typename T, class Alloc = micron::allocator_serial<>>
-class fibonacci_heap : private Alloc, public immutable_memory<T>
+template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_heap : private Alloc, public immutable_memory<T>
 {
   struct node {
     T value;
@@ -24,10 +23,7 @@ class fibonacci_heap : private Alloc, public immutable_memory<T>
     bool mark;
 
     node(const T &v) : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
-    node(T &&v) noexcept
-        : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false)
-    {
-    }
+    node(T &&v) noexcept : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
   };
 
   node *min_root;

@@ -34,8 +34,7 @@ public:
   __global_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   template <class... Args>
     requires(sizeof...(Args) > 0)
-  __global_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};     // new Type(args...)){};
+  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};     // new Type(args...)){};
 
   __global_pointer(__global_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   __global_pointer(const __global_pointer &p) = delete;

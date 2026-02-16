@@ -9,6 +9,7 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
+#include "../concepts.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -16,7 +17,6 @@
 #include "../memory/memory.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
-#include "../concepts.hpp"
 
 namespace micron
 {

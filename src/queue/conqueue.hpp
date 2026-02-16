@@ -116,8 +116,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __mem::expand(n);
-    micron::memmove(&__mem::memory[(__mem::capacity - 1) - __mem::length], &__mem::memory[needle - __mem::length],
-                    __mem::length);
+    micron::memmove(&__mem::memory[(__mem::capacity - 1) - __mem::length], &__mem::memory[needle - __mem::length], __mem::length);
     needle = __mem::capacity - 1;
   }
   inline void

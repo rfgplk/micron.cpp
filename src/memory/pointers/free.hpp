@@ -157,8 +157,7 @@ public:
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
   template <class... Args>
   free_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(
-            forward<Args>(args)...)){};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
   free_pointer(const free_pointer &p) { internal_pointer = p.internal_pointer; }

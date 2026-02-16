@@ -43,8 +43,7 @@ public:
   }
   template <typename T>
     requires(micron::is_pointer_v<T>) && (micron::is_convertible_v<T, P>)
-  iterator(T &&t, const size_t rng = 0)
-      : start_ptr(reinterpret_cast<pointer>(t)), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
+  iterator(T &&t, const size_t rng = 0) : start_ptr(reinterpret_cast<pointer>(t)), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {
   }
   template <typename T>

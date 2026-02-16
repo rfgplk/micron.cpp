@@ -36,46 +36,42 @@ public:
   ~file() = default;
   file() : io::file(), data(), fname(), seek(0), buffer_sz(0), bf(nullptr) {}
   file(const T &name, const io::modes mode)
-      : io::file(name, mode), data(), fname(name),
-        seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0), buffer_sz(0), bf(nullptr)
+      : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
+        buffer_sz(0), bf(nullptr)
   {
   }
   file(const char *name, const io::modes mode)
-      : io::file(name, mode), data(), fname(name),
-        seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0), buffer_sz(0), bf(nullptr)
+      : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
+        buffer_sz(0), bf(nullptr)
   {
   }
   template <size_t M>
   file(const char (&name)[M], const io::modes mode)
-      : io::file(name, mode), data(), fname(name),
-        seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0), buffer_sz(0), bf(nullptr)
+      : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
+        buffer_sz(0), bf(nullptr)
   {
   }
 
   file(const T &name, const io::modes mode, const size_t _bf)
-      : io::file(name, mode), data(), fname(name),
-        seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0), buffer_sz(_bf),
-        bf(new micron::buffer(_bf))
+      : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
+        buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
   file(const char *name, const io::modes mode, const size_t _bf)
-      : io::file(name, mode), data(), fname(name),
-        seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0), buffer_sz(_bf),
-        bf(new micron::buffer(_bf))
+      : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
+        buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
   template <size_t M>
   file(const char (&name)[M], const io::modes mode, const size_t _bf)
-      : io::file(name, mode), data(), fname(name),
-        seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0), buffer_sz(_bf),
-        bf(new micron::buffer(_bf))
+      : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
+        buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
 
   file(const T &name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
   file(const char *name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
-  template <size_t M>
-  file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
+  template <size_t M> file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
   {
   }
   // reopens file in place
@@ -158,8 +154,7 @@ public:
   }
   file(const file &o) : io::file(o), data(o.data), fname(o.fname), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf) {}
   file(file &&o)
-      : io::file(micron::move(o)), data(micron::move(o.data)), fname(micron::move(o.fname)), seek(o.seek),
-        buffer_sz(o.buffer_sz), bf(o.bf)
+      : io::file(micron::move(o)), data(micron::move(o.data)), fname(micron::move(o.fname)), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf)
   {
     o.seek = 0;
     o.buffer_sz = 0;
@@ -259,8 +254,7 @@ public:
   read_bytes(size_t sz)
   {
     if ( !bf )
-      exc<except::filesystem_error>(
-          "micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
+      exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
     if ( __handle.closed() )
       exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
 
@@ -352,8 +346,7 @@ public:
   buffer_size() const
   {
     if ( !bf )
-      exc<except::filesystem_error>(
-          "micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
+      exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
     return buffer_sz;
   }
   // load buffer
@@ -361,8 +354,7 @@ public:
   load_buffer(const byte *b, const size_t n)
   {
     if ( !bf )
-      exc<except::filesystem_error>(
-          "micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
+      exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
     if ( n > buffer_sz )
       exc<except::filesystem_error>("micron::fsys::file trying to load buffer with too much data");
     micron::bytecpy(&(*bf), b, n);
@@ -371,8 +363,7 @@ public:
   write_bytes(size_t sz)
   {
     if ( !bf )
-      exc<except::filesystem_error>(
-          "micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
+      exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
     if ( __handle.closed() )
       exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
 

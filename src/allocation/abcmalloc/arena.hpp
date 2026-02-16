@@ -64,8 +64,7 @@ __debug_print(const char *str [[maybe_unused]], T &t [[maybe_unused]])
 #ifndef __OPTIMIZE__
   // NOTE: we're using iostream since our io library depends on malloc()
   if constexpr ( __default_debug_notices ) {
-    std::cout << "\033[34mabcmalloc[] debug: \033[0m " << str << " at addr: " << static_cast<const void *>(t)
-              << std::endl;
+    std::cout << "\033[34mabcmalloc[] debug: \033[0m " << str << " at addr: " << static_cast<const void *>(t) << std::endl;
   }
 #endif
 }
@@ -92,8 +91,7 @@ class __arena : private cache
   __reload_arena_buf(void)
   {
     // if arena buf is full, double it's capacity (inefficient and naive but it works)
-    __expand_bucket_arena<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer,
-                                                  _tail_arena_buffer->nd->allocated() * 2);
+    __expand_bucket_arena<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer, _tail_arena_buffer->nd->allocated() * 2);
   }
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
@@ -812,8 +810,7 @@ or thread storage duration exits via an exception, the function std::terminate i
         _tail_medium_buckets{ nullptr }, _large_buckets{ nullptr, nullptr }, _tail_large_buckets{ nullptr },
         _huge_buckets{ nullptr, nullptr }, _tail_huge_buckets{ nullptr }
   {
-    __init_bucket<__class_arena_internal>(_arena_buffer, _tail_arena_buffer,
-                                          (__default_arena_page_buf * __system_pagesize));
+    __init_bucket<__class_arena_internal>(_arena_buffer, _tail_arena_buffer, (__default_arena_page_buf * __system_pagesize));
     __init_cache<__class_precise>(_cache_buffer);
     __init_bucket<__class_small>(_small_buckets, _tail_small_buckets);        // 1.6MB
     __init_bucket<__class_medium>(_medium_buckets, _tail_medium_buckets);     // 283KB

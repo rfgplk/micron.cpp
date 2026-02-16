@@ -273,8 +273,7 @@ T
 nearest_pow2ll(T x)
 {
   return x == 0 ? 1u
-                : (((x) - (1u << ((8 * sizeof(x) - 1) - __builtin_clzll(x))))
-                           <= ((1u << ((8 * sizeof(x)) - __builtin_clzll(x))) - (x))
+                : (((x) - (1u << ((8 * sizeof(x) - 1) - __builtin_clzll(x)))) <= ((1u << ((8 * sizeof(x)) - __builtin_clzll(x))) - (x))
                        ? (1u << ((8 * sizeof(x) - 1) - __builtin_clzll(x)))
                        : (1u << ((8 * sizeof(x)) - __builtin_clzll(x))));
 }
@@ -284,8 +283,7 @@ T
 nearest_pow2(T x)
 {
   return x == 0 ? 1u
-                : (((x) - (1u << ((8 * sizeof(x) - 1) - __builtin_clz(x))))
-                           <= ((1u << ((8 * sizeof(x)) - __builtin_clz(x))) - (x))
+                : (((x) - (1u << ((8 * sizeof(x) - 1) - __builtin_clz(x)))) <= ((1u << ((8 * sizeof(x)) - __builtin_clz(x))) - (x))
                        ? (1u << ((8 * sizeof(x) - 1) - __builtin_clz(x)))
                        : (1u << ((8 * sizeof(x)) - __builtin_clz(x))));
 }

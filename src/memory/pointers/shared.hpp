@@ -45,8 +45,7 @@ public:
   shared_pointer(shared_pointer &&t) noexcept : control(t.control) { t.control = nullptr; }
 
   template <class... Args>
-  explicit shared_pointer(Args &&...args)
-      : control(__alloc::__impl_alloc(__new<Type>(micron::forward<Args>(args)...), 1))
+  explicit shared_pointer(Args &&...args) : control(__alloc::__impl_alloc(__new<Type>(micron::forward<Args>(args)...), 1))
   {
   }
 

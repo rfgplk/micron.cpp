@@ -11,8 +11,7 @@
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
-template <typename T, class Alloc = micron::allocator_serial<>>
-class quake_heap : private Alloc, public immutable_memory<T>
+template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap : private Alloc, public immutable_memory<T>
 {
   struct node {
     T value;

@@ -42,29 +42,26 @@ constexpr static const u64 __alloc_limit
 // internal abcmalloc metabuffer, and a minimum of 32 per each new sheet allocation
 constexpr static const u64 __default_arena_page_buf = 256;
 constexpr static const u64 __default_magic_size = micron::numeric_limits<u64>::max();
-constexpr static const u64 __default_minimum_page_mul
-    = 32;                                                  // 131kB minimum per sheet, larger buckets will exceed this
-constexpr static const u64 __default_cache_step = 768;     // ~5.9MB
+constexpr static const u64 __default_minimum_page_mul = 32;     // 131kB minimum per sheet, larger buckets will exceed this
+constexpr static const u64 __default_cache_step = 768;          // ~5.9MB
 
 constexpr static const bool __default_launder
     = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address
 constexpr static const bool __default_construct_on_start
-    = true;     // construct on start, if false, you have to construct/start it manually
+    = true;                                                        // construct on start, if false, you have to construct/start it manually
 constexpr static const bool __default_single_instance = false;     // enable an allocator per thread
 constexpr static const bool __default_global_instance = true;      // enable a single global allocator
 constexpr static const bool __default_multithread_safe
     = true;     // essentially, enables locks across API calls, only necessary if enabling global mode
 
-static_assert(
-    __default_single_instance != __default_global_instance,
-    "abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.");
+static_assert(__default_single_instance != __default_global_instance,
+              "abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.");
 
 constexpr static const byte __default_fail_result = 0;     // 0: abort 1: message 2: silent fail
 constexpr static const u64 __default_max_retries = 2;
 // in pages (each page is 4096)
-constexpr static const bool __default_saturated_mode
-    = true;     // enables a saturation buffer, which checks the rate at which new requests are coming in. adjusts
-                // allocation space accordingly
+constexpr static const bool __default_saturated_mode = true;     // enables a saturation buffer, which checks the rate at which new requests
+                                                                 // are coming in. adjusts allocation space accordingly
 constexpr static const u64 __default_overcommit
     = 2;     // overcommit multiplier, multiplies all page req. by this value. MUST BE GREATER THAN ONE AND INTEGRAL.
 

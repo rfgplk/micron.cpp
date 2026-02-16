@@ -121,8 +121,7 @@ public:
     if ( _id == _end )
       return;
     T *expected = const_cast<T *>(ptr);
-    __hazard_table[_id].ptr.compare_exchange_strong(expected, (bool)nullptr, memory_order::acq_rel,
-                                                    memory_order::acquire);
+    __hazard_table[_id].ptr.compare_exchange_strong(expected, (bool)nullptr, memory_order::acq_rel, memory_order::acquire);
   }
   void
   reset_protection(nullptr_t = nullptr) noexcept

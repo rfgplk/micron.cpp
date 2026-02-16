@@ -68,10 +68,9 @@ using packet16f = v512<f512, __vf>;
 using packet8d = v512<d512, __vd>;
 
 template <typename T>
-concept is_simd_class
-    = micron::same_as<T, v8> or micron::same_as<T, v16> or micron::same_as<T, v32> or micron::same_as<T, v64>
-      or micron::same_as<T, vfloat> or micron::same_as<T, vdouble> or micron::same_as<T, w8> or micron::same_as<T, w16>
-      or micron::same_as<T, w32> or micron::same_as<T, w64> or micron::same_as<T, wfloat> or micron::same_as<T, wdouble>;
+concept is_simd_class = micron::same_as<T, v8> or micron::same_as<T, v16> or micron::same_as<T, v32> or micron::same_as<T, v64>
+                        or micron::same_as<T, vfloat> or micron::same_as<T, vdouble> or micron::same_as<T, w8> or micron::same_as<T, w16>
+                        or micron::same_as<T, w32> or micron::same_as<T, w64> or micron::same_as<T, wfloat> or micron::same_as<T, wdouble>;
 
 };
 #pragma GCC diagnostic pop

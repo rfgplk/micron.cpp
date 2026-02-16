@@ -30,9 +30,8 @@ template <size_t N> struct lambda_queue {
   };
 
   node_base_t *__q[N]{};
-  micron::atomic_token<size_t> head{0};
-  micron::atomic_token<size_t> tail{0};
-
+  micron::atomic_token<size_t> head{ 0 };
+  micron::atomic_token<size_t> tail{ 0 };
 
   template <typename Fn>
   inline void

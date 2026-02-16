@@ -28,8 +28,7 @@
 namespace micron
 {
 
-template <is_regular_object T, class Alloc = micron::allocator_serial<>>
-class fvector : public __mutable_memory_resource<T, Alloc>
+template <is_regular_object T, class Alloc = micron::allocator_serial<>> class fvector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
 
@@ -287,8 +286,7 @@ public:
   inline slice<byte>
   into_bytes()
   {
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]),
-                       reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
+    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
   inline fvector<T>
   clone(void)

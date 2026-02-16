@@ -20,8 +20,7 @@ template <int __major, int __minor, int __patch>
 constexpr bool
 is_version()
 {
-  if constexpr ( __major == MICRON_VERSION_MAJOR and __minor == MICRON_VERSION_MINOR
-                 and __patch == MICRON_VERSION_PATCH )
+  if constexpr ( __major == MICRON_VERSION_MAJOR and __minor == MICRON_VERSION_MINOR and __patch == MICRON_VERSION_PATCH )
     return true;
   return false;
 }

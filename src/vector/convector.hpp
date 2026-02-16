@@ -31,8 +31,7 @@ namespace micron
 {
 // Regular convector class, always safe, mutable, notthread safe, cannot be
 // copied for performance reasons (just move it, or use a slice for that)
-template <is_movable_object T, class Alloc = micron::allocator_serial<>>
-class convector : public __mutable_memory_resource<T, Alloc>
+template <is_movable_object T, class Alloc = micron::allocator_serial<>> class convector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
   micron::mutex __mtx;
@@ -420,8 +419,7 @@ public:
   into_bytes()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]),
-                       reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
+    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
   inline convector<T>
   clone(void)

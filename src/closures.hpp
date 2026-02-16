@@ -37,12 +37,10 @@ template <typename R, typename... Args> struct function_traits<R (*)(Args...)> :
 };
 
 // member functions
-template <typename C, typename R, typename... Args>
-struct function_traits<R (C::*)(Args...)> : function_traits<R(Args...)> {
+template <typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...)> : function_traits<R(Args...)> {
 };
 
-template <typename C, typename R, typename... Args>
-struct function_traits<R (C::*)(Args...) const> : function_traits<R(Args...)> {
+template <typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) const> : function_traits<R(Args...)> {
 };
 
 // callable objects (functors/lambdas)

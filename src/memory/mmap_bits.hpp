@@ -34,9 +34,9 @@ constexpr static const int map_anonymous = 0x20; /* don't use a file.  */
 constexpr static const int map_anon = map_anonymous;
 
 /* 0x0100 - 0x4000 flags are defined in asm-generic/mman.h */
-constexpr static const int map_populate = 0x008000; /* populate (prefault) pagetables */
-constexpr static const int map_nonblock = 0x010000; /* do not block on io */
-constexpr static const int map_stack = 0x020000; /* give out an address that is best suited for process/thread stacks */
+constexpr static const int map_populate = 0x008000;        /* populate (prefault) pagetables */
+constexpr static const int map_nonblock = 0x010000;        /* do not block on io */
+constexpr static const int map_stack = 0x020000;           /* give out an address that is best suited for process/thread stacks */
 constexpr static const int map_hugetlb = 0x040000;         /* create a huge page mapping */
 constexpr static const int map_sync = 0x080000;            /* perform synchronous page faults for the mapping */
 constexpr static const int map_fixed_noreplace = 0x100000; /* map_fixed which doesn't unmap underlying mapping */
@@ -110,15 +110,7 @@ constexpr static const int mcl_future = 2;  /* lock all additions to address
                           space.  */
 constexpr static const int mcl_onfault = 4;
 
-enum class mem_prots : int {
-  read = 0x1,
-  write = 0x2,
-  exec = 0x4,
-  none = 0x0,
-  growsdown = 0x01000000,
-  growsup = 0x02000000,
-  __end
-};
+enum class mem_prots : int { read = 0x1, write = 0x2, exec = 0x4, none = 0x0, growsdown = 0x01000000, growsup = 0x02000000, __end };
 
 enum class map_types : int {
   shared = 0x01,

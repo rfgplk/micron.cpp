@@ -116,8 +116,7 @@ inline T *
 __as_map(size_t sz)
 {
   if constexpr ( micron::is_same_v<C, __default_map> ) {
-    return reinterpret_cast<T *>(
-        micron::mmap(0, sz, prot_read | prot_write, map_private | map_anonymous | map_stack, -1, 0));
+    return reinterpret_cast<T *>(micron::mmap(0, sz, prot_read | prot_write, map_private | map_anonymous | map_stack, -1, 0));
   }
   return nullptr;
 }

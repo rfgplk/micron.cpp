@@ -501,8 +501,7 @@ template <typename T, typename Domain = void> class rcu_batch
   }
 
 public:
-  explicit rcu_batch(rcu_domain<Domain> &d, size_t initial_capacity = 16)
-      : domain(d), count(0), capacity(initial_capacity)
+  explicit rcu_batch(rcu_domain<Domain> &d, size_t initial_capacity = 16) : domain(d), count(0), capacity(initial_capacity)
   {
     objects = new T *[capacity];
   }

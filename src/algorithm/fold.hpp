@@ -211,8 +211,7 @@ fold_left_while(const T *first, const T *end, A init, Fn fn, P pred)
 }
 
 template <is_iterable_container C, class A, typename Fn, typename P>
-  requires micron::is_invocable_v<Fn, A, const typename C::value_type *>
-           && micron::is_invocable_v<P, A, const typename C::value_type *>
+  requires micron::is_invocable_v<Fn, A, const typename C::value_type *> && micron::is_invocable_v<P, A, const typename C::value_type *>
 A
 fold_left_while(const C &c, A init, Fn fn, P pred)
 {

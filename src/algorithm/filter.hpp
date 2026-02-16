@@ -118,8 +118,7 @@ filter(const C &c, Fn fn, size_t limit)
 }
 
 template <is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
-           && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
 filter(const C &c_in, Fn fn, O &c_out)
 {
@@ -127,8 +126,7 @@ filter(const C &c_in, Fn fn, O &c_out)
 }
 
 template <is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
-           && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
 filter(const C &c_in, Fn fn, O &c_out, size_t limit)
 {
@@ -136,8 +134,7 @@ filter(const C &c_in, Fn fn, O &c_out, size_t limit)
 }
 
 template <is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
-           && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
 prune(const C &c_in, Fn fn, O &c_out, size_t limit)
 {
@@ -145,8 +142,7 @@ prune(const C &c_in, Fn fn, O &c_out, size_t limit)
 }
 
 template <is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
-           && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
 prune(const C &c_in, Fn fn, O &c_out)
 {

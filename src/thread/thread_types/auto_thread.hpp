@@ -55,8 +55,7 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
   __impl_makethread(F f, Args &&...args)
   {
     thread_handler();
-    pid = __as_thread_attached<Stack_Size, F, Args...>(&payload, micron::real_addr(fstack), f,
-                                                       micron::forward<Args &&>(args)...);
+    pid = __as_thread_attached<Stack_Size, F, Args...>(&payload, micron::real_addr(fstack), f, micron::forward<Args &&>(args)...);
 
     // no longer needed
     // while ( pthread::thread_kill(parent_pid, pid, 0) != 0 )

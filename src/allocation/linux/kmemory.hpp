@@ -42,7 +42,6 @@ map_frozen(addr_t *ptr, const size_t n)
 inline addr_t *
 map_large(addr_t *ptr, const size_t n)
 {
-  return reinterpret_cast<addr_t *>(
-      micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous | map_hugetlb, -1, 0));
+  return reinterpret_cast<addr_t *>(micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous | map_hugetlb, -1, 0));
 };
 };     // namespace micron

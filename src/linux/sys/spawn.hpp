@@ -95,7 +95,7 @@ __apply_file_actions(const spawn_file_actions_t &fa)
     const spawn_action &a = fa.__actions[i];
 
     switch ( a.type ) {
-    case SPAWN_ACTION_OPEN: {
+    case SPAWN_ACTION_OPEN : {
       auto fd = micron::openat(at_fdcwd, a.path, a.oflag, a.mode);
       if ( fd < 0 )
         return -errno;
@@ -105,11 +105,11 @@ __apply_file_actions(const spawn_file_actions_t &fa)
       }
       break;
     }
-    case SPAWN_ACTION_CLOSE:
+    case SPAWN_ACTION_CLOSE :
       micron::close(a.fd);
       break;
 
-    case SPAWN_ACTION_DUP2:
+    case SPAWN_ACTION_DUP2 :
       micron::dup3(a.fd, a.newfd, 0);
       break;
     }

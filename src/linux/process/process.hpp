@@ -123,8 +123,8 @@ struct uprocess_t {
   ~uprocess_t() = default;
 
   uprocess_t(void)
-      : pids{ posix::getuid(), posix::geteuid(), posix::getgid(), posix::getpid(), posix::getppid() }, path(), argv{},
-        envp{}, lims(0), affinity(), status(0)
+      : pids{ posix::getuid(), posix::geteuid(), posix::getgid(), posix::getpid(), posix::getppid() }, path(), argv{}, envp{}, lims(0),
+        affinity(), status(0)
   {
     // programatically get argv and environ
     micron::string str;

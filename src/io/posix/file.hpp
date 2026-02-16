@@ -260,34 +260,34 @@ private:
   _syscall_open(const char *str, const modes mode)
   {
     switch ( mode ) {
-    case modes::largeread:
+    case modes::largeread :
       return posix::open(str, o_rdonly | o_sync | o_direct | o_largefile);
       break;
-    case modes::large:
+    case modes::large :
       return posix::open(str, o_rdwr | o_create | o_sync | o_direct | o_largefile, 0644);
       break;
-    case modes::quiet:
+    case modes::quiet :
       return posix::open(str, o_rdonly | o_noatime, 0644);
       break;
-    case modes::create:
+    case modes::create :
       return posix::open(str, o_rdonly | o_create | o_excl, 0644);
       break;
-    case modes::read:
+    case modes::read :
       return posix::open(str, o_rdonly);
       break;
-    case modes::readwrite:
+    case modes::readwrite :
       return posix::open(str, o_rdwr | o_sync);
       break;
-    case modes::write:
+    case modes::write :
       return posix::open(str, o_wronly | o_sync);
       break;
-    case modes::readwritecreate:
+    case modes::readwritecreate :
       return posix::open(str, o_rdwr | o_create | o_sync, 0644);
       break;
-    case modes::append:
+    case modes::append :
       return posix::open(str, o_wronly | o_create | o_sync, 0644);
       break;
-    case modes::appendread:
+    case modes::appendread :
       return posix::open(str, o_rdwr | o_create | o_sync, 0644);
       break;
     }

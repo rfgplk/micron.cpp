@@ -86,13 +86,9 @@ public:
   void_thread(const void_thread &o) = delete;
   void_thread &operator=(const void_thread &) = delete;
   void_thread(void)
-      : attributes(posix::getpid()), payload{}
-  {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+      : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
   void_thread(void_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
-  void_thread(const pthread_attr_t &_attrs) : attributes(posix::getpid(), _attrs), payload{}
-  {
-    __impl_preparethread(_attrs);
-  }
+  void_thread(const pthread_attr_t &_attrs) : attributes(posix::getpid(), _attrs), payload{} { __impl_preparethread(_attrs); }
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args && ...>)
   void_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
@@ -103,8 +99,7 @@ public:
 
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<const Fn, const Args &...>)
-  void_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args)
-      : attributes(posix::getpid(), _attrs), payload{}
+  void_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args) : attributes(posix::getpid(), _attrs), payload{}
   {
     __impl_preparethread(_attrs);
     __impl_runthread(fn, args...);

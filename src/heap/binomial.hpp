@@ -25,8 +25,7 @@ template <typename T, typename C> struct __binomial_node {
   __binomial_node(T &&val) : value(micron::move(val)), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
 
   template <typename... Args>
-  __binomial_node(Args &&...args)
-      : value(micron::forward<Args>(args)...), degree(0), parent(nullptr), child(nullptr), sibling(nullptr)
+  __binomial_node(Args &&...args) : value(micron::forward<Args>(args)...), degree(0), parent(nullptr), child(nullptr), sibling(nullptr)
   {
   }
 };

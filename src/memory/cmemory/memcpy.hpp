@@ -28,32 +28,32 @@ _memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
   const byte *src = reinterpret_cast<const byte *>(s);
 
   switch ( n ) {
-  case 1:
+  case 1 :
     dest[0] = src[0];
     break;
-  case 2:
+  case 2 :
     dest[0] = src[0];
     dest[1] = src[1];
     break;
-  case 3:
+  case 3 :
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
     break;
-  case 4:
+  case 4 :
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
     dest[3] = src[3];
     break;
-  case 5:
+  case 5 :
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
     dest[3] = src[3];
     dest[4] = src[4];
     break;
-  case 6:
+  case 6 :
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -61,7 +61,7 @@ _memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
     dest[4] = src[4];
     dest[5] = src[5];
     break;
-  case 7:
+  case 7 :
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -70,103 +70,103 @@ _memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
     dest[5] = src[5];
     dest[6] = src[6];
     break;
-  case 8:
+  case 8 :
     for ( u64 i = 0; i < 8; i++ )
       dest[i] = src[i];
     break;
-  case 9:
+  case 9 :
     for ( u64 i = 0; i < 9; i++ )
       dest[i] = src[i];
     break;
-  case 10:
+  case 10 :
     for ( u64 i = 0; i < 10; i++ )
       dest[i] = src[i];
     break;
-  case 11:
+  case 11 :
     for ( u64 i = 0; i < 11; i++ )
       dest[i] = src[i];
     break;
-  case 12:
+  case 12 :
     for ( u64 i = 0; i < 12; i++ )
       dest[i] = src[i];
     break;
-  case 13:
+  case 13 :
     for ( u64 i = 0; i < 13; i++ )
       dest[i] = src[i];
     break;
-  case 14:
+  case 14 :
     for ( u64 i = 0; i < 14; i++ )
       dest[i] = src[i];
     break;
-  case 15:
+  case 15 :
     for ( u64 i = 0; i < 15; i++ )
       dest[i] = src[i];
     break;
-  case 16:
+  case 16 :
     for ( u64 i = 0; i < 16; i++ )
       dest[i] = src[i];
     break;
-  case 17:
+  case 17 :
     for ( u64 i = 0; i < 17; i++ )
       dest[i] = src[i];
     break;
-  case 18:
+  case 18 :
     for ( u64 i = 0; i < 18; i++ )
       dest[i] = src[i];
     break;
-  case 19:
+  case 19 :
     for ( u64 i = 0; i < 19; i++ )
       dest[i] = src[i];
     break;
-  case 20:
+  case 20 :
     for ( u64 i = 0; i < 20; i++ )
       dest[i] = src[i];
     break;
-  case 21:
+  case 21 :
     for ( u64 i = 0; i < 21; i++ )
       dest[i] = src[i];
     break;
-  case 22:
+  case 22 :
     for ( u64 i = 0; i < 22; i++ )
       dest[i] = src[i];
     break;
-  case 23:
+  case 23 :
     for ( u64 i = 0; i < 23; i++ )
       dest[i] = src[i];
     break;
-  case 24:
+  case 24 :
     for ( u64 i = 0; i < 24; i++ )
       dest[i] = src[i];
     break;
-  case 25:
+  case 25 :
     for ( u64 i = 0; i < 25; i++ )
       dest[i] = src[i];
     break;
-  case 26:
+  case 26 :
     for ( u64 i = 0; i < 26; i++ )
       dest[i] = src[i];
     break;
-  case 27:
+  case 27 :
     for ( u64 i = 0; i < 27; i++ )
       dest[i] = src[i];
     break;
-  case 28:
+  case 28 :
     for ( u64 i = 0; i < 28; i++ )
       dest[i] = src[i];
     break;
-  case 29:
+  case 29 :
     for ( u64 i = 0; i < 29; i++ )
       dest[i] = src[i];
     break;
-  case 30:
+  case 30 :
     for ( u64 i = 0; i < 30; i++ )
       dest[i] = src[i];
     break;
-  case 31:
+  case 31 :
     for ( u64 i = 0; i < 31; i++ )
       dest[i] = src[i];
     break;
-  case 32:
+  case 32 :
     for ( u64 i = 0; i < 32; i++ )
       dest[i] = src[i];
     break;

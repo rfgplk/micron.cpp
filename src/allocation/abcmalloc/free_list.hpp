@@ -40,8 +40,7 @@ constexpr static const uintptr_t __flag_out_of_space = -2;
 constexpr static const uintptr_t __flag_tombstoned = -3;
 
 template <typename T, i64 Min, i32 Mx = 64>
-  requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T>
-           and (bool)((Min & (Min - 1)) == 0))
+  requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T> and (bool)((Min & (Min - 1)) == 0))
 struct __buddy_list {
   struct free_block {
     free_block *next;
@@ -93,8 +92,7 @@ struct __buddy_list {
     __impl_init_memory(mem.ptr, mem.len);
   }
   __buddy_list(const __buddy_list &) = delete;
-  __buddy_list(__buddy_list &&o)
-      : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes)
+  __buddy_list(__buddy_list &&o) : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes)
   {
     o.base = nullptr;
     o.total = 0;

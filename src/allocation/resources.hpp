@@ -28,17 +28,13 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     }
   }
   __mutable_memory_resource(void)
-      : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))),
-        length(0)
+      : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
   {
   }
   __mutable_memory_resource(size_t n_elements)
       : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) {};
   __mutable_memory_resource(const __mutable_memory_resource &o) : __core_memory_resource<T>(o), length(o.length) {}
-  __mutable_memory_resource(__mutable_memory_resource &&o) : __core_memory_resource<T>(micron::move(o)), length(o.length)
-  {
-    o.length = 0;
-  }
+  __mutable_memory_resource(__mutable_memory_resource &&o) : __core_memory_resource<T>(micron::move(o)), length(o.length) { o.length = 0; }
   __mutable_memory_resource(__chunk<byte> &&o) : __core_memory_resource<T>(micron::move(o)), length(0) { o = nullptr; }
 
   __mutable_memory_resource &
@@ -108,8 +104,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     if ( len == 0 ) [[unlikely]]
       return;
     // NOTE: grow destroys memory
-    __core_memory_resource<T>::accept(
-        Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
+    __core_memory_resource<T>::accept(Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
   }
 };
 
@@ -127,15 +122,13 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
     }
   }
   __immutable_memory_resource(void)
-      : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))),
-        length(0)
+      : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
   {
   }
   __immutable_memory_resource(size_t n_elements)
       : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) {};
   __immutable_memory_resource(const __immutable_memory_resource &) = delete;
-  __immutable_memory_resource(__immutable_memory_resource &&o)
-      : __core_memory_resource<T>(micron::move(o)), length(o.length)
+  __immutable_memory_resource(__immutable_memory_resource &&o) : __core_memory_resource<T>(micron::move(o)), length(o.length)
   {
     o.length = 0;
   }
@@ -193,8 +186,7 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
   {
     if ( len == 0 ) [[unlikely]]
       return;
-    __core_memory_resource<T>::accept(
-        Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
+    __core_memory_resource<T>::accept(Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
   }
 };
 

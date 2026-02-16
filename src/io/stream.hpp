@@ -96,8 +96,7 @@ public:
       exc<except::io_error>("io::stream() operator>>: fd_t is closed or has an error");
     size_t seek = posix::lseek(in.fd, 0, seek_cur);
     do {
-      ssize_t bytes_read
-          = posix::read(in.fd, __buffer->at_pointer(__size), (__chnk > (__sz - __size)) ? (__sz - __size) : __chnk);
+      ssize_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), (__chnk > (__sz - __size)) ? (__sz - __size) : __chnk);
       if ( bytes_read == 0 )
         break;
       seek += static_cast<size_t>(bytes_read);
@@ -218,8 +217,7 @@ public:
       exc<except::io_error>("io::stream_view() operator>>: fd_t is closed or has an error");
     size_t seek = posix::lseek(in.fd, 0, seek_cur);
     do {
-      ssize_t bytes_read
-          = posix::read(in.fd, __buffer->at_pointer(__size), (__chnk > (__sz - __size)) ? (__sz - __size) : __chnk);
+      ssize_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), (__chnk > (__sz - __size)) ? (__sz - __size) : __chnk);
       if ( bytes_read == 0 )
         break;
       seek += static_cast<size_t>(bytes_read);

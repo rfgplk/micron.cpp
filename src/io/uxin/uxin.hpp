@@ -24,11 +24,11 @@ slice<input_t>
 open_nonblock(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard:
+  case type_t::keyboard :
     break;
-  case type_t::mouse:
+  case type_t::mouse :
     break;
-  default:
+  default :
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -47,11 +47,11 @@ input_t
 open_first_nonblock(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard:
+  case type_t::keyboard :
     break;
-  case type_t::mouse:
+  case type_t::mouse :
     break;
-  default:
+  default :
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -68,11 +68,11 @@ slice<input_t>
 open(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard:
+  case type_t::keyboard :
     break;
-  case type_t::mouse:
+  case type_t::mouse :
     break;
-  default:
+  default :
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -91,11 +91,11 @@ input_t
 open_first(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard:
+  case type_t::keyboard :
     break;
-  case type_t::mouse:
+  case type_t::mouse :
     break;
-  default:
+  default :
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -113,13 +113,13 @@ input_packet_t
 prepare_listener(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard:
+  case type_t::keyboard :
     return mc::uxin::prepare_generic_keyboard_us(Fn, Fn_2, Fn_3);
     break;
-  case type_t::mouse:
+  case type_t::mouse :
     return mc::uxin::prepare_generic_mouse_sensor(Fn, Fn_2, Fn_3);
     break;
-  default:
+  default :
     exc<except::library_error>("uxin prepare_listener(): invalid specified type of device");
   }
   exc<except::library_error>("uxin prepare_listener(): invalid specified type of device");

@@ -297,8 +297,7 @@ public:
   inline slice<byte>
   into_bytes()
   {
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]),
-                       reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
+    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
   inline auto
   clone()

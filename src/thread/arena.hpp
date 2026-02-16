@@ -39,16 +39,12 @@ constexpr static const u32 maximum_threads = (1 << 10);     // 1024
 #else
 constexpr static const u32 maximum_threads = (1 << 8);     // 256
 #endif
-constexpr static const u32 concurrent_threads
-    = 256;     // reasoning, afaik the cpu with the highest number of threads on a single socket has 256 threads. later
-               // on this might increase
+constexpr static const u32 concurrent_threads = 256;     // reasoning, afaik the cpu with the highest number of threads on a single socket
+                                                         // has 256 threads. later on this might increase
 
 template <typename Tr> struct thread_t {
   thread_t(void) : cpu_mask{}, thread{} {}
-  template <typename... Args>
-  thread_t(const cpu_t<true> &c, Args &&...args) : cpu_mask(c), thread(micron::forward<Args>(args)...)
-  {
-  }
+  template <typename... Args> thread_t(const cpu_t<true> &c, Args &&...args) : cpu_mask(c), thread(micron::forward<Args>(args)...) {}
 
   const Tr &
   operator()(void) const
@@ -141,8 +137,7 @@ public:
     if ( threads.full_or_overflowed() ) [[unlikely]]
       micron::exc<except::thread_error>("micron arena::create(): Arena is full or corrupted");
     addr_t *stack_ptr = __create_stack();
-    pthread_attr_t attrs
-        = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     threads.emplace(cpu_t<true>(), micron::move(attrs), f, micron::forward<Args>(args)...);
     sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
     thread_name[15] = 0x0;
@@ -163,8 +158,7 @@ public:
     c.set_core(n);
     addr_t *stack_ptr = __create_stack();
 
-    pthread_attr_t attrs
-        = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
     sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
@@ -188,8 +182,7 @@ public:
     c.set_core(n);
     addr_t *stack_ptr = __create_stack();
 
-    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_fifo,
-                                                              stack_ptr, Sz, 1);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_fifo, stack_ptr, Sz, 1);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
     sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
@@ -229,8 +222,7 @@ public:
     c.set_core(0);
   start_thread:
     addr_t *stack_ptr = __create_stack();
-    pthread_attr_t attrs
-        = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
     sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
@@ -268,8 +260,7 @@ public:
     c.set_core(0);
   start_thread:
     addr_t *stack_ptr = __create_stack();
-    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_fifo,
-                                                              stack_ptr, Sz, 1);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_fifo, stack_ptr, Sz, 1);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
     sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
@@ -560,8 +551,7 @@ public:
       micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
     micron::lock_guard l(mtx);
     addr_t *stack_ptr = __create_stack();
-    pthread_attr_t attrs
-        = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     new (&threads.mut(counter)) thread_t<Tr>{ cpu_t<true>(), micron::move(attrs), f, micron::forward<Args>(args)... };
     sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(threads.size());
     thread_name[15] = 0x0;
@@ -575,8 +565,7 @@ public:
       micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
     micron::lock_guard l(mtx);
     addr_t *stack_ptr = __create_stack();
-    pthread_attr_t attrs
-        = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
+    pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     threads.mut(counter).~thread_t<Tr>();
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };

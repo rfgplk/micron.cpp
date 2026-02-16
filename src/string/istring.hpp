@@ -210,8 +210,7 @@ public:
   inline const slice<byte>
   into_bytes() const
   {
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]),
-                       reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
+    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
   inline const auto
   clone() const

@@ -53,8 +53,7 @@ concept is_regular = micron::is_semiregular<T> and requires(const T &a, const T 
 };
 
 template <typename T>
-concept is_movable_object
-    = micron::movable<T> and micron::is_move_constructible_v<T> and micron::is_move_assignable_v<T>;
+concept is_movable_object = micron::movable<T> and micron::is_move_constructible_v<T> and micron::is_move_assignable_v<T>;
 
 template <typename T>
 concept is_constexpr_valid = micron::is_trivially_destructible_v<T> && requires {
@@ -68,9 +67,8 @@ template <typename T>
 concept is_fundamental_object = micron::is_literal_type_v<T> and (micron::is_fundamental_v<T> or micron::is_scalar_v<T>);
 
 template <typename T>
-concept is_regular_object
-    = micron::copyable<T> and micron::movable<T> and micron::is_copy_constructible_v<T>
-      and micron::is_move_constructible_v<T> and micron::is_copy_assignable_v<T> and micron::is_move_assignable_v<T>;
+concept is_regular_object = micron::copyable<T> and micron::movable<T> and micron::is_copy_constructible_v<T>
+                            and micron::is_move_constructible_v<T> and micron::is_copy_assignable_v<T> and micron::is_move_assignable_v<T>;
 
 template <typename T, typename I = size_t>
 concept is_iterable_container = requires(T t, I i) {

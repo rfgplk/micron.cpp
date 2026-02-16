@@ -50,24 +50,24 @@ public:
   };
 };
 // unclean but the only way to avoid senseless boilterplate ;c
-#define MICRON_EXCEPTION_TEMP(_str, _errcode)                                                                           \
-  class _str : public __base_exception                                                                                  \
-  {                                                                                                                     \
-    const char *__what;                                                                                                 \
-    static constexpr u32 __errcode = _errcode;                                                                          \
-                                                                                                                        \
-  public:                                                                                                               \
-    explicit _str(const char *w) : __what(w) {}                                                                         \
-    const char *                                                                                                        \
-    what() const noexcept override                                                                                      \
-    {                                                                                                                   \
-      return __what;                                                                                                    \
-    }                                                                                                                   \
-    constexpr u32                                                                                                       \
-    which() const noexcept                                                                                              \
-    {                                                                                                                   \
-      return __errcode;                                                                                                 \
-    }                                                                                                                   \
+#define MICRON_EXCEPTION_TEMP(_str, _errcode)                                                                                              \
+  class _str : public __base_exception                                                                                                     \
+  {                                                                                                                                        \
+    const char *__what;                                                                                                                    \
+    static constexpr u32 __errcode = _errcode;                                                                                             \
+                                                                                                                                           \
+  public:                                                                                                                                  \
+    explicit _str(const char *w) : __what(w) {}                                                                                            \
+    const char *                                                                                                                           \
+    what() const noexcept override                                                                                                         \
+    {                                                                                                                                      \
+      return __what;                                                                                                                       \
+    }                                                                                                                                      \
+    constexpr u32                                                                                                                          \
+    which() const noexcept                                                                                                                 \
+    {                                                                                                                                      \
+      return __errcode;                                                                                                                    \
+    }                                                                                                                                      \
   };
 
 MICRON_EXCEPTION_TEMP(domain_error, domain_errno)

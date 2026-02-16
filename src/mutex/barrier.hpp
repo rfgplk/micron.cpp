@@ -11,10 +11,10 @@
 
 #define write_barrier() __asm("" ::: "memory");
 
-#define forced_read_barrier(x)                                                                                          \
-  ({                                                                                                                    \
-    \ __typeof(x) __x;                                                                                                  \
-    \ __asm("" : "=r"(__x) : "0"(x));                                                                                   \
-    \ __x;                                                                                                              \
-    \                                                                                                                   \
+#define forced_read_barrier(x)                                                                                                             \
+  ({                                                                                                                                       \
+    \ __typeof(x) __x;                                                                                                                     \
+    \ __asm("" : "=r"(__x) : "0"(x));                                                                                                      \
+    \ __x;                                                                                                                                 \
+    \                                                                                                                                      \
   });

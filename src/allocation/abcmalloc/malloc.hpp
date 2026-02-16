@@ -57,10 +57,10 @@ within(const addr_t *ptr)
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), micron::unique_lock<micron::lock_starts::locked>> ) {
     [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
     __init_abcmalloc();
-    return __main_arena->has_provenance(const_cast<addr_t*>(ptr));
+    return __main_arena->has_provenance(const_cast<addr_t *>(ptr));
   }
   __init_abcmalloc();
-    return __main_arena->has_provenance(const_cast<addr_t*>(ptr));
+  return __main_arena->has_provenance(const_cast<addr_t *>(ptr));
 }
 bool
 within(addr_t *ptr)

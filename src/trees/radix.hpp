@@ -13,8 +13,8 @@
 #include "../vector/fvector.hpp"
 
 template <typename Key, typename Value>
-  requires micron::is_copy_constructible_v<Key> && micron::is_move_constructible_v<Key>
-           && micron::is_copy_constructible_v<Value> && micron::is_move_constructible_v<Value>
+  requires micron::is_copy_constructible_v<Key> && micron::is_move_constructible_v<Key> && micron::is_copy_constructible_v<Value>
+           && micron::is_move_constructible_v<Value>
 class radix_node
 {
   struct node {
@@ -28,8 +28,7 @@ class radix_node
     node(Key &&k, Value &&v) noexcept : key_fragment(micron::move(k)), value(micron::move(v)), is_leaf(true) {}
     node(const node &o) = delete;
     node(node &&o) noexcept
-        : key_fragment(micron::move(o.key_fragment)), value(micron::move(o.value)), is_leaf(o.is_leaf),
-          children(micron::move(o.children))
+        : key_fragment(micron::move(o.key_fragment)), value(micron::move(o.value)), is_leaf(o.is_leaf), children(micron::move(o.children))
     {
       o.is_leaf = false;
       o.children.clear();

@@ -40,8 +40,7 @@ public:
   string_view(const char *ptr, size_t count) : __start(ptr), __end(ptr + count) {}
   template <is_string F>
   string_view(const F &f)
-      : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())),
-        __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
+      : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
   {
   }
   template <is_string F>
@@ -185,8 +184,7 @@ public:
   constexpr cstring_view(const char *ptr, size_t count) : __start(ptr), __end(ptr + count) {}
   template <is_string F>
   constexpr cstring_view(const F &f)
-      : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())),
-        __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
+      : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
   {
   }
   template <is_string F>

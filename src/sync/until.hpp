@@ -728,8 +728,7 @@ until_or_future_or_flag(P pred, Fut &fut, const micron::atomic<bool> &flag)
 
 template <typename F, typename Fut, typename... Args>
 bool
-until_timeout_or_future_or_flag(auto cond, micron::duration_d timeout, Fut &fut, const micron::atomic<bool> &flag, F f,
-                                Args &&...args)
+until_timeout_or_future_or_flag(auto cond, micron::duration_d timeout, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
   auto start = micron::system_clock<>::now();

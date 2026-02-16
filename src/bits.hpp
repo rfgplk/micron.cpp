@@ -148,8 +148,8 @@ constexpr int
 bitcount(T x) noexcept     // seriously bitcount is a way more reasonable name, what even is POPcount where are the pops
 {
   if constexpr ( micron::is_same_v<T, int> or micron::is_same_v<T, char> or micron::is_same_v<T, unsigned char>
-                 or micron::is_same_v<T, unsigned char> or micron::is_same_v<T, unsigned int>
-                 or micron::is_same_v<T, short> or micron::is_same_v<T, unsigned short> )
+                 or micron::is_same_v<T, unsigned char> or micron::is_same_v<T, unsigned int> or micron::is_same_v<T, short>
+                 or micron::is_same_v<T, unsigned short> )
     return __builtin_popcount(x);
   if constexpr ( micron::is_same_v<T, long> or micron::is_same_v<T, unsigned long> )
     return __builtin_popcountl(x);

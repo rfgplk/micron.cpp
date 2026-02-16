@@ -26,10 +26,7 @@ template <typename K, typename V> struct hopscotch_node {
   hopscotch_node(const hash64_t &k, const V &v) : key(k), value(v) {}
   hopscotch_node(const hash64_t &k, V &&v) : key(k), value(micron::move(v)) {}
 
-  template <typename... Args>
-  hopscotch_node(const hash64_t &k, Args &&...args) : key(k), value(micron::forward<Args>(args)...)
-  {
-  }
+  template <typename... Args> hopscotch_node(const hash64_t &k, Args &&...args) : key(k), value(micron::forward<Args>(args)...) {}
 
   hopscotch_node(const hopscotch_node &o) : key(o.key), value(o.value) {}
   hopscotch_node(hopscotch_node &&o) noexcept : key(o.key), value(micron::move(o.value)) { o.key = 0; }
@@ -128,8 +125,7 @@ template <typename K, typename V, size_t MH = 32, typename Nd = hopscotch_node<K
         }
 
         size_t entry_home = entries[check_pos].key % size;
-        size_t dist_to_empty
-            = (current_empty >= entry_home) ? (current_empty - entry_home) : (size - entry_home + current_empty);
+        size_t dist_to_empty = (current_empty >= entry_home) ? (current_empty - entry_home) : (size - entry_home + current_empty);
 
         if ( dist_to_empty <= MH ) {
           entries[current_empty] = micron::move(entries[check_pos]);

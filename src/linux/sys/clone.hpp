@@ -179,8 +179,7 @@ __fork_clone(int exit_signal)
 
 // c-style, legacy
 pid_t
-clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nullptr, void *tls = nullptr,
-      int *child_tid = nullptr)
+clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nullptr, void *tls = nullptr, int *child_tid = nullptr)
 {
   if ( !stack )
     return -EINVAL;
@@ -201,8 +200,7 @@ clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nu
 
   pid_t pid = static_cast<pid_t>(posix::clone3_kernel(args));
   if ( pid == -1 && errno == ENOSYS ) {
-    pid = static_cast<pid_t>(
-        posix::clone_kernel(flags, stack_top, parent_tid, child_tid, reinterpret_cast<unsigned long>(tls)));
+    pid = static_cast<pid_t>(posix::clone_kernel(flags, stack_top, parent_tid, child_tid, reinterpret_cast<unsigned long>(tls)));
   }
 
   if ( pid == 0 ) {

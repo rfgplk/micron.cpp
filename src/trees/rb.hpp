@@ -311,8 +311,7 @@ private:
           rotate_left(x_parent);
           w = x_parent->right;
         }
-        if ( (!w || (!w->left || w->left->color == RBColor::BLACK))
-             && (!w || (!w->right || w->right->color == RBColor::BLACK)) ) {
+        if ( (!w || (!w->left || w->left->color == RBColor::BLACK)) && (!w || (!w->right || w->right->color == RBColor::BLACK)) ) {
           if ( w )
             w->color = RBColor::RED;
           x = x_parent;
@@ -346,8 +345,7 @@ private:
           rotate_right(x_parent);
           w = x_parent->left;
         }
-        if ( (!w || (!w->right || w->right->color == RBColor::BLACK))
-             && (!w || (!w->left || w->left->color == RBColor::BLACK)) ) {
+        if ( (!w || (!w->right || w->right->color == RBColor::BLACK)) && (!w || (!w->left || w->left->color == RBColor::BLACK)) ) {
           if ( w )
             w->color = RBColor::RED;
           x = x_parent;
