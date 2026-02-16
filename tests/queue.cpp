@@ -14,6 +14,17 @@ int
 main()
 {
   sb::verify_debug();
+  enable_scope()
+  {
+    micron::spsc_queue<int, 64> qu;
+    for ( int i = 0; i < 50; i++ )
+      qu.push(i);
+    while ( !qu.empty() ) {
+      mc::console("Back: ", qu.front());
+      qu.pop();
+    }
+  };
+
   disable_scope()
   {
     micron::queue<int> qu;
@@ -25,7 +36,7 @@ main()
       qu.pop();
     }
   };
-  enable_scope()
+  disable_scope()
   {
     micron::queue<int> qu;
     for ( int i = 0; i < 50; i++ )

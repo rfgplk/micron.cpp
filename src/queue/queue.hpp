@@ -5,21 +5,20 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "__special/initializer_list"
-#include "type_traits.hpp"
+#include "../__special/initializer_list"
+#include "../type_traits.hpp"
 
-#include "algorithm/memory.hpp"
-#include "allocation/resources.hpp"
-#include "allocator.hpp"
-#include "bits/__container.hpp"
-#include "type_traits.hpp"
-#include "types.hpp"
+#include "../algorithm/memory.hpp"
+#include "../allocation/resources.hpp"
+#include "../allocator.hpp"
+#include "../bits/__container.hpp"
+#include "../type_traits.hpp"
+#include "../types.hpp"
 
 namespace micron
 {
 
-template <typename T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
+template <is_regular_object T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class queue : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
@@ -48,13 +47,13 @@ public:
   queue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      size_t i = __mem::capacity;
+      size_t i = __mem::capacity - 1;
       for ( T &&value : lst ) {
         new (&__mem::memory[i--]) T(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
-      size_t i = __mem::capacity;
+      size_t i = __mem::capacity - 1;
       for ( T value : lst ) {
         __mem::memory[i--] = value;
       }

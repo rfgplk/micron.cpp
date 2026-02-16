@@ -128,14 +128,6 @@ public:
   }
   template <is_container A>
     requires(!micron::is_same_v<A, array>)
-  array(const A &o)
-  {
-    if ( o.size() < N )
-      exc<except::runtime_error>("micron::array array(const&) invalid size");
-    __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
-  }
-  template <is_container A>
-    requires(!micron::is_same_v<A, array>)
   array(A &&o)
   {
     if ( o.size() < N )
@@ -270,7 +262,7 @@ public:
   operator+(const array<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] += o.stack[o];
+      stack[i] += o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -279,7 +271,7 @@ public:
   operator-(const array<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] -= o.stack[o];
+      stack[i] -= o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -288,7 +280,7 @@ public:
   operator*(const array<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] *= o.stack[o];
+      stack[i] *= o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -297,7 +289,7 @@ public:
   operator/(const array<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] /= o.stack[o];
+      stack[i] /= o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -306,7 +298,7 @@ public:
   operator%(const array<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] %= o.stack[o];
+      stack[i] %= o.stack[i];
     return *this;
   }
 
@@ -429,4 +421,5 @@ public:
     return micron::is_pod_v<T>;
   }
 };
+
 };     // namespace micron

@@ -40,21 +40,23 @@ __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2
 }
 
 template <typename T>
+  requires(sizeof(T) == 4)
 void
-wait_futex(T *ptr, T val)
+wait_futex(T *ptr, auto val)
 {
-  T e = 0;
-  while ( !atom::cmp_exchange_weak(ptr, &e, 1) ) {
-    e = 0;
+  T e = T{};
+  while ( !atom::cmp_exchange_weak(ptr, &e, static_cast<T>(1)) ) {
+    e = T{};
     __futex(reinterpret_cast<u32 *>(ptr), futex_wait | futex_private_flag, val, nullptr, nullptr, 0);
   }
 }
 template <typename T>
+  requires(sizeof(T) == 4)
 void
-release_futex(T *ptr, T val)
+release_futex(T *ptr, u32 cnt)
 {
   atom::store(ptr, 0, atomic_seq_cst);
-  __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, val, nullptr, nullptr, 0);
+  __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, cnt, nullptr, nullptr, 0);
 }
 
 template <typename T = u32, T __D = 1>

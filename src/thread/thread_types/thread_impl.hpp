@@ -16,6 +16,9 @@
 #include "../../linux/sys/resource.hpp"
 #include "../../linux/sys/system.hpp"
 #include "../../memory/stack_constants.hpp"
+#include "../../new.hpp"
+#include "../../queue/lambda_queue.hpp"
+#include "../../sync/futex.hpp"
 
 #include "../../except.hpp"
 
@@ -28,7 +31,7 @@
 
 namespace micron
 {
-enum thread_returns : i32 { return_success, return_fail };
+enum thread_returns : i32 { return_success, return_force, return_fail };
 enum join_status { join_success, join_fail, join_allowed, join_busy };
 
 struct __thread_payload {
@@ -36,6 +39,14 @@ struct __thread_payload {
   atomic_token<u64> ret_val;
   posix::rusage_t usage;     // non atomic
 };
+
+struct __worker_payload {
+  atomic_token<u32> has_work{ 0 };            // for futex compat.
+  atomic_token<bool> should_die{ false };     // rude :/
+  micron::lambda_queue<256> queue;
+  posix::rusage_t usage;     // non atomic
+};
+
 // The kernel of the thread, encapsulating the req'd function
 // status flags if the thread is running or not
 template <typename Fn, typename... Args>
@@ -57,17 +68,42 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
   } else {
     ret_t ret = fn(micron::forward<Args>(args)...);
     payload->ret_val.store(static_cast<u64>(ret), memory_order_seq_cst);
-    // nasty std::any workaround
-    // auto ret = fn(micron::forward<Args>(args)...);
-    // payload->ret_val = reinterpret_cast<void *>(&ret);
-    // TODO: think about adding a futex here
   }
-
   // end work
 
   // epilogue
   posix::getrusage(posix::rusage_thread, payload->usage);
   payload->alive.store(false, memory_order_seq_cst);
+  return return_success;
+}
+
+// worker kernel, for concurrent arenas and parallelism
+// main difference compared to a regular kernel is that this function NEVER returns, instead constantly loops checking
+// for new work
+
+i32
+__worker_kernel(__worker_payload *payload)
+{
+  // prologue
+  __thread_handler();
+  pthread::set_cancel_state(pthread::cancel_state::enable);
+  pthread::set_cancel_type(pthread::cancel_type::deferred);
+rerun_worker:
+  while ( payload->has_work.get(memory_order_seq_cst) == false )
+    wait_futex(payload->has_work.ptr(), true);
+  if ( payload->should_die.get(memory_order_seq_cst) )
+    return return_force;
+  auto __task = payload->queue.pop();
+  if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) )
+    payload->has_work.store(false, memory_order_release);
+
+  if ( __task != nullptr ) {
+    __task->call();
+    delete __task;
+  }
+  // epilogue
+  posix::getrusage(posix::rusage_thread, payload->usage);
+  goto rerun_worker;
   return return_success;
 }
 
@@ -122,6 +158,22 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
 
   if ( pid == pthread::thread_failed )
     micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): thread failed to spawn");
+
+  return pid;
+}
+
+// worker threads
+
+pthread_t
+__as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, __worker_payload *payload)
+{
+  if ( payload == nullptr )
+    micron::exc<except::thread_error>("micron thread::__as_unprepared_worker_thread_attached(): invalid arguments");
+
+  pthread_t pid = pthread::create_thread(attrs, __worker_kernel, payload);
+
+  if ( pid == pthread::thread_failed )
+    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
 
   return pid;
 }

@@ -22,9 +22,7 @@
 namespace micron
 {
 // string on the stack, inplace (sstring means stackstring)
-template <size_t N, is_scalar_literal T = schar> class sstring
-{
-public:
+template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring {
   using category_type = string_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
@@ -39,9 +37,15 @@ public:
 
   T memory[N];
   size_type length;
+  ~sstring()
+  {
+    if constexpr ( Sf ) {
+      micron::czero<N>(&memory[0]);
+    }
+  }
   constexpr sstring()
   {
-    micron::zero(&memory[0], N);
+    micron::czero<N>(&memory[0]);
     length = 0;
   };
   constexpr sstring(const char *str)
@@ -205,7 +209,6 @@ public:
     length = N;
     return *this;
   }
-  ~sstring() {}
 
   bool
   operator!() const
@@ -372,7 +375,7 @@ public:
   inline void
   clear()
   {
-    micron::zero(&memory);
+    micron::czero<N>(memory);
     length = 0;
   }
   // doesn't zero memory, just resets the cur. pointer to 0

@@ -6,7 +6,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
-#include "../algorithm/mem.hpp"
+#include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -19,15 +19,15 @@ namespace micron
 {
 // general purpose immutable iarray class, stack allocated, threadsafe, immutable.
 // default to 64
-template <is_regular_object T, size_t N = 64>
+template <is_movable_object T, size_t N = 64>
   requires(N > 0)     // avoid weird stuff with N = 0
 class iarray
 {
-  alignas(64) T stack[N];
+  alignas(alignof(T)) T stack[N];
   inline void
   __impl_zero(T *src)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = micron::move(T());
     } else {
@@ -37,7 +37,7 @@ class iarray
   void
   __impl_set(T *__restrict src, const T &val)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
         stack[i] = val;
     } else {
@@ -45,11 +45,32 @@ class iarray
     }
   }
   void
+  __impl_copy(const T *__restrict src, T *__restrict dest)
+  {
+    if constexpr ( micron::is_class_v<T> ) {
+      for ( size_t i = 0; i < N; i++ )
+        dest[i] = src[i];
+    } else {
+      micron::copy<N>(src, dest);
+    }
+  }
+  void
+  __impl_move(T *__restrict src, const T *__restrict dest)
+  {
+    if constexpr ( micron::is_class_v<T> ) {
+      for ( size_t i = 0; i < N; i++ )
+        dest[i] = micron::move(src[i]);
+    } else {
+      micron::copy<N>(src, dest);
+      micron::czero<N>(src);
+    }
+  }
+  void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
-        stack[i] = dest[i];
+        dest[i] = src[i];
     } else {
       micron::copy<N>(src, dest);
     }
@@ -57,9 +78,9 @@ class iarray
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
-    if constexpr ( micron::is_class<T>::value ) {
+    if constexpr ( micron::is_class_v<T> ) {
       for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(dest[i]);
+        dest[i] = micron::move(src[i]);
     } else {
       micron::copy<N>(src, dest);
       micron::czero<N>(src);
@@ -126,8 +147,8 @@ public:
     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
     // micron::cmemset<N>(micron::addr(stack[0], 0x0);
   }
-  iterator
-  begin() noexcept
+  const_iterator
+  begin() const noexcept
   {
     return micron::addr(stack[0]);
   }
@@ -136,8 +157,8 @@ public:
   {
     return micron::addr(stack[0]);
   }
-  iterator
-  end() noexcept
+  const_iterator
+  end() const noexcept
   {
     return micron::addr(stack[N]);
   }
@@ -156,22 +177,10 @@ public:
   {
     return N;
   }
-  T *
-  data()
-  {
-    return stack;
-  }
   const T *
   data() const
   {
     return stack;
-  }
-  T &
-  at(const size_t i)
-  {
-    if ( i >= N )
-      throw except::runtime_error("micron::iarray at() out of range.");
-    return stack[i];
   }
   const T &
   at(const size_t i) const
@@ -180,37 +189,23 @@ public:
       throw except::runtime_error("micron::iarray at() out of range.");
     return stack[i];
   }
-  inline T &
-  operator[](const size_t i)
+  inline const T &
+  operator[](const size_t i) const
   {
     return stack[i];
   }
-  inline const T &
-  operator[](const size_t i) const
+  inline T &
+  mut(const size_t i)
   {
     return stack[i];
   }
   template <typename F, size_t M>
   iarray &
   operator=(T (&o)[M])
-    requires micron::is_iarray_v<F> && (M <= N)
+    requires(M <= N)
   {
     __impl_copy(micron::addr(o.stack[0]), &o[0]);
     // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
-    return *this;
-  }
-  template <typename F>
-  iarray &
-  operator=(const F &o)
-    requires micron::is_fundamental_v<F>
-  {
-    micron::cmemset<N>(micron::addr(stack[0]), o);
-    return *this;
-  }
-  iarray &
-  operator=(const iarray &o)
-  {
-    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
   iarray &
@@ -221,49 +216,86 @@ public:
   }
 
   template <size_t M>
-    requires(M <= N)
-  iarray &
+  auto
   operator+(const iarray<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] += o.stack[o];
-    return *this;
+    if constexpr ( M <= N ) {
+      iarray arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) += o.stack[i];
+      return arr;
+    } else {
+      iarray<T, M> arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) += o.stack[i];
+      return arr;
+    }
   }
   template <size_t M>
-    requires(M <= N)
-  iarray &
+  auto
   operator-(const iarray<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] -= o.stack[o];
-    return *this;
+    if constexpr ( M <= N ) {
+      iarray arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) -= o.stack[i];
+      return arr;
+    } else {
+      iarray<T, M> arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) -= o.stack[i];
+      return arr;
+    }
   }
   template <size_t M>
-    requires(M <= N)
-  iarray &
+  auto
   operator*(const iarray<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] *= o.stack[o];
-    return *this;
+    if constexpr ( M <= N ) {
+      iarray arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) *= o.stack[i];
+      return arr;
+    } else {
+      iarray<T, M> arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) *= o.stack[i];
+      return arr;
+    }
   }
   template <size_t M>
     requires(M <= N)
-  iarray &
+  auto
   operator/(const iarray<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] /= o.stack[o];
-    return *this;
+    if constexpr ( M <= N ) {
+      iarray arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) /= o.stack[i];
+      return arr;
+    } else {
+      iarray<T, M> arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) /= o.stack[i];
+      return arr;
+    }
   }
   template <size_t M>
     requires(M <= N)
-  iarray &
+  auto
   operator%(const iarray<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] %= o.stack[o];
-    return *this;
+    if constexpr ( M <= N ) {
+      iarray arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) %= o.stack[i];
+      return arr;
+    } else {
+      iarray<T, M> arr(*this);
+      for ( size_t i = 0; i < N; i++ )
+        arr.mut(i) %= o.stack[i];
+      return arr;
+    }
   }
 
   // special functions - no idea why the stl doesn't have these
@@ -276,67 +308,38 @@ public:
     return sm;
   }
 
-  iarray &
+  iarray
   operator*=(const T &o)
   {
+    iarray arr(*this);
     for ( size_t i = 0; i < N; i++ )
-      stack[i] *= o;
-    return *this;
+      arr.mut(i) *= o;
+    return arr;
   }
-  iarray &
+  iarray
   operator/=(const T &o)
   {
+    iarray arr(*this);
     for ( size_t i = 0; i < N; i++ )
-      stack[i] /= o;
-    return *this;
+      arr.mut(i) /= o;
+    return arr;
   }
-  iarray &
+  iarray
   operator-=(const T &o)
   {
+    iarray arr(*this);
     for ( size_t i = 0; i < N; i++ )
-      stack[i] -= o;
-    return *this;
+      arr.mut(i) -= o;
+    return arr;
   }
-  iarray &
+  iarray
   operator+=(const T &o)
   {
+    iarray arr(*this);
     for ( size_t i = 0; i < N; i++ )
-      stack[i] += o;
-    return *this;
+      arr.mut(i) += o;
+    return arr;
   }
-  void
-  mul(const size_t n)
-  {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] *= n;
-  }
-  void
-  div(const size_t n)
-  {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] /= n;
-  }
-  void
-  sub(const size_t n)
-  {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] -= n;
-  }
-  void
-  add(const size_t n)
-  {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] += n;
-  }
-  size_t
-  mul(void) const
-  {
-    size_t mul_ = stack[0];
-    for ( size_t i = 1; i < N; i++ )
-      mul_ *= stack[i];
-    return mul_;
-  }
-
   bool
   all(const T &o) const
   {
@@ -352,20 +355,6 @@ public:
       if ( stack[i] == o )
         return true;
     return false;
-  }
-  void
-  sqrt(void) const
-  {
-    for ( size_t i = 0; i < N; i++ )
-      stack[i] = micron::sqrt(static_cast<float>(stack[i]));
-  }
-  template <typename F>
-  iarray &
-  fill(const F &o)
-    requires micron::is_fundamental_v<F>
-  {
-    micron::cmemset<N>(micron::addr(stack[0]), o);
-    return *this;
   }
 };
 };     // namespace micron

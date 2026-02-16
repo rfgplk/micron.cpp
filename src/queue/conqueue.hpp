@@ -21,8 +21,7 @@
 namespace micron
 {
 
-template <typename T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
+template <is_regular_object T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class conqueue : public __mutable_memory_resource<T, Alloc>
 {
   micron::mutex __mtx;
@@ -52,7 +51,7 @@ public:
   conqueue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      size_t i = __mem::capacity;
+      size_t i = __mem::capacity - 1;
       for ( T &&value : lst ) {
         new (&__mem::memory[i--]) T(micron::move(value));
       }

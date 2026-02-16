@@ -165,7 +165,7 @@ public:
   operator+(const farray<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] += o.stack[o];
+      stack[i] += o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -174,7 +174,7 @@ public:
   operator-(const farray<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] -= o.stack[o];
+      stack[i] -= o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -183,7 +183,7 @@ public:
   operator*(const farray<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] *= o.stack[o];
+      stack[i] *= o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -192,7 +192,7 @@ public:
   operator/(const farray<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] /= o.stack[o];
+      stack[i] /= o.stack[i];
     return *this;
   }
   template <size_t M>
@@ -201,7 +201,7 @@ public:
   operator%(const farray<T, M> &o)
   {
     for ( size_t i = 0; i < N; i++ )
-      stack[i] %= o.stack[o];
+      stack[i] %= o.stack[i];
     return *this;
   }
   byte *

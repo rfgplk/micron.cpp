@@ -11,18 +11,32 @@
 #include "arena.hpp"
 #include "thread.hpp"
 
-// thread pool
+// thread pools
 namespace micron
 {
 
-using standard_arena = arena::__default_arena<micron::group_thread<>>;
+using standard_arena = arena::__default_arena<micron::thread_stack_size, micron::group_thread<>>;
+using concurrent_arena = arena::__concurrent_arena<>;
 
 static standard_arena *__global_threadpool = nullptr;
+static concurrent_arena *__global_parallelpool = nullptr;
 
 __attribute__((constructor)) void
-__make_arena(void)
+__make_threadarena(void)
 {
   static standard_arena local_pool;
   __global_threadpool = &local_pool;
 };
+
+__attribute__((constructor)) void
+__make_parallelarena(void)
+{
+  static concurrent_arena local_pool;
+  __global_parallelpool = &local_pool;
+  // init here
+  umax_t c = cpu_count();
+  for ( umax_t i = 0; i < c; ++i )
+    local_pool.create();
+};
+
 };
