@@ -121,6 +121,229 @@ pow(_Float16 __x, _Float16 __y)
 {
   return _Float16(__builtin_powf(__x, __y));
 }
+constexpr float
+fcos(float x) noexcept
+{
+  return __builtin_cosf(x);
+}
+constexpr double
+fcos(double x) noexcept
+{
+  return __builtin_cos(x);
+}
+constexpr long double
+fcos(long double x) noexcept
+{
+  return __builtin_cosl(x);
+}
+
+constexpr float
+ftan(float x) noexcept
+{
+  return __builtin_tanf(x);
+}
+constexpr double
+ftan(double x) noexcept
+{
+  return __builtin_tan(x);
+}
+constexpr long double
+ftan(long double x) noexcept
+{
+  return __builtin_tanl(x);
+}
+
+constexpr float
+fasin(float x) noexcept
+{
+  return __builtin_asinf(x);
+}
+constexpr double
+fasin(double x) noexcept
+{
+  return __builtin_asin(x);
+}
+constexpr long double
+fasin(long double x) noexcept
+{
+  return __builtin_asinl(x);
+}
+
+constexpr float
+facos(float x) noexcept
+{
+  return __builtin_acosf(x);
+}
+constexpr double
+facos(double x) noexcept
+{
+  return __builtin_acos(x);
+}
+constexpr long double
+facos(long double x) noexcept
+{
+  return __builtin_acosl(x);
+}
+
+constexpr float
+fatan(float x) noexcept
+{
+  return __builtin_atanf(x);
+}
+constexpr double
+fatan(double x) noexcept
+{
+  return __builtin_atan(x);
+}
+constexpr long double
+fatan(long double x) noexcept
+{
+  return __builtin_atanl(x);
+}
+
+constexpr float
+fatan2(float y, float x) noexcept
+{
+  return __builtin_atan2f(y, x);
+}
+constexpr double
+fatan2(double y, double x) noexcept
+{
+  return __builtin_atan2(y, x);
+}
+constexpr long double
+fatan2(long double y, long double x) noexcept
+{
+  return __builtin_atan2l(y, x);
+}
+
+constexpr float
+fsinh(float x) noexcept
+{
+  return __builtin_sinhf(x);
+}
+constexpr double
+fsinh(double x) noexcept
+{
+  return __builtin_sinh(x);
+}
+constexpr long double
+fsinh(long double x) noexcept
+{
+  return __builtin_sinhl(x);
+}
+
+constexpr float
+fcosh(float x) noexcept
+{
+  return __builtin_coshf(x);
+}
+constexpr double
+fcosh(double x) noexcept
+{
+  return __builtin_cosh(x);
+}
+constexpr long double
+fcosh(long double x) noexcept
+{
+  return __builtin_coshl(x);
+}
+
+constexpr float
+ftanh(float x) noexcept
+{
+  return __builtin_tanhf(x);
+}
+constexpr double
+ftanh(double x) noexcept
+{
+  return __builtin_tanh(x);
+}
+constexpr long double
+ftanh(long double x) noexcept
+{
+  return __builtin_tanhl(x);
+}
+
+constexpr float
+fsin(float x) noexcept
+{
+  return __builtin_sinf(x);
+}
+constexpr double
+fsin(double x) noexcept
+{
+  return __builtin_sin(x);
+}
+constexpr long double
+fsin(long double x) noexcept
+{
+  return __builtin_sinl(x);
+}
+
+constexpr float
+fgamma(float x) noexcept
+{
+  return __builtin_tgammaf(x);
+}
+constexpr double
+fgamma(double x) noexcept
+{
+  return __builtin_tgamma(x);
+}
+constexpr long double
+fgamma(long double x) noexcept
+{
+  return __builtin_tgammal(x);
+}
+
+constexpr float
+ferfc(float x) noexcept
+{
+  return __builtin_erfcf(x);
+}
+constexpr double
+ferfc(double x) noexcept
+{
+  return __builtin_erfc(x);
+}
+constexpr long double
+ferfc(long double x) noexcept
+{
+  return __builtin_erfcl(x);
+}
+
+constexpr float
+ferf(float x) noexcept
+{
+  return __builtin_erff(x);
+}
+constexpr double
+ferf(double x) noexcept
+{
+  return __builtin_erf(x);
+}
+constexpr long double
+ferf(long double x) noexcept
+{
+  return __builtin_erfl(x);
+}
+
+constexpr float
+fexp2(float x) noexcept
+{
+  return __builtin_exp2f(x);
+}
+constexpr double
+fexp2(double x) noexcept
+{
+  return __builtin_exp2(x);
+}
+constexpr long double
+fexp2(long double x) noexcept
+{
+  return __builtin_exp2l(x);
+}
 
 constexpr _Float16
 sin(_Float16 __x)
@@ -211,12 +434,6 @@ constexpr _Float32
 exp(_Float32 __x)
 {
   return __builtin_expf(__x);
-}
-
-constexpr _Float32
-fabs(_Float32 __x)
-{
-  return __builtin_fabsf(__x);
 }
 
 constexpr _Float32
@@ -347,12 +564,6 @@ constexpr _Float64
 exp(_Float64 __x)
 {
   return __builtin_exp(__x);
-}
-
-constexpr _Float64
-fabs(_Float64 __x)
-{
-  return __builtin_fabs(__x);
 }
 
 constexpr _Float64
@@ -702,6 +913,39 @@ tanh(_Float128 __x)
 {
   return __builtin_tanhf128(__x);
 }
+
+constexpr float
+flog(float x) noexcept
+{
+  return logf32(x);
+}
+constexpr double
+flog(double x) noexcept
+{
+  return logf64(x);
+}
+constexpr long double
+flog(long double x) noexcept
+{
+  return logf128(x);
+}
+
+constexpr float
+flog10(float x) noexcept
+{
+  return log10f32(x);
+}
+constexpr double
+flog10(double x) noexcept
+{
+  return log10f64(x);
+}
+constexpr long double
+flog10(long double x) noexcept
+{
+  return log10f128(x);
+}
+
 #endif
 };
 };

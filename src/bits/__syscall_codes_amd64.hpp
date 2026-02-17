@@ -373,7 +373,7 @@
 #undef __NR_preadv2
 #undef __NR_pwritev2
 
-#if __x86_64__
+#if __micron_arch_amd64
 #define __NR_read 0
 #define __NR_write 1
 #define __NR_open 2

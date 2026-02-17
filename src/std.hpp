@@ -42,9 +42,9 @@
 #error "The micron standard library wasn't made for Windows."
 #endif
 
-#if defined(__arm__) || defined(__aarch64__) || defined(_M_ARM) || defined(_M_ARM64)
+#if defined(__micron_arch_arm32) || defined(__aarch64__) || defined(_M_ARM) || defined(_M_ARM64)
 #pragma GCC warning "Limited support for ARM platforms currently. Be careful!"
-#elif defined(__x86_64__) || defined(_M_X64)
+#elif defined(__micron_arch_amd64) || defined(_M_X64)
 #else
 #error "This version of the Micron standard library is designed for amd64, with limited support for ARM platforms."
 #endif

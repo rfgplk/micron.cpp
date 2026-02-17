@@ -5,14 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// translated everything to a cpp-style using system
+// moved arch/wordsizes to here
+#include "bits/__arch.hpp"
 
-#if defined(__x86_64__) && !defined(__ILP32__)
-#define __WORDSIZE 64
-#define __SYSCALL_WORDSIZE 64
-#else
-#define __WORDSIZE 32     // add experimental 32-bit support
-#endif
+// translated everything to a cpp-style using system
 
 using __s16_type = short int;
 using __u16_type = unsigned short int;
@@ -23,8 +19,8 @@ using __ulongword_type = unsigned long int;
 
 // for pthreads compatibility, we don't really use this at all
 
-#ifdef __x86_64__
-#if __WORDSIZE == 64
+#ifdef __micron_arch_amd64
+#if __wordsize == 64
 constexpr static const int __sizeof_pthread_mutex_t = 40;
 constexpr static const int __sizeof_pthread_attr_t = 56;
 constexpr static const int __sizeof_pthread_rwlock_t = 56;
@@ -47,7 +43,7 @@ constexpr static const int __sizeof_pthread_condattr_t = 4;
 constexpr static const int __sizeof_pthread_rwlockattr_t = 8;
 constexpr static const int __sizeof_pthread_barrierattr_t = 4;
 
-#if __WORDSIZE == 32
+#if __wordsize == 32
 using __squad_type = __INT64_TYPE__;
 using __uquad_type = __UINT64_TYPE__;
 using __sword_type = int;
@@ -57,7 +53,7 @@ using __ulong32_type = unsigned long int;
 using __s64_type = __INT64_TYPE__;
 using __u64_type = __UINT64_TYPE__;
 using __ptrdiff_type = signed int;
-#elif __WORDSIZE == 64
+#elif __wordsize == 64
 using __squad_type = long int;
 using __uquad_type = unsigned long int;
 using __sword_type = long int;
@@ -68,10 +64,10 @@ using __s64_type = long int;
 using __u64_type = unsigned long int;
 using __ptrdiff_type = signed long long;
 #else
-#error "__WORDSIZE invalid"
+#error "__wordsize invalid"
 #endif
 
-#if defined(__x86_64__) && defined(__ILP32__)
+#if defined(__micron_arch_amd64) && defined(__ILP32__)
 using __syscall_slong_type = __squad_type;
 using __syscall_ulong_type = __uquad_type;
 #else
@@ -86,7 +82,7 @@ using __ino_t_type = __syscall_ulong_type;
 using __ino64_t_type = __uquad_type;
 using __mode_t_type = __u32_type;
 
-#ifdef __x86_64__
+#ifdef __micron_arch_amd64
 using __nlink_t_type = __syscall_ulong_type;
 using __fsword_t_type = __syscall_slong_type;
 #else

@@ -552,7 +552,9 @@ public:
     micron::lock_guard l(mtx);
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
-    new (&threads.mut(counter)) thread_t<Tr>{ cpu_t<true>(), micron::move(attrs), f, micron::forward<Args>(args)... };
+    // WARNING: important, make sure no temporaries are created
+    auto __cn = cpu_t<true>();
+    new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs), f, micron::forward<Args>(args)... };
     sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(threads.size());
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
@@ -567,6 +569,7 @@ public:
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     threads.mut(counter).~thread_t<Tr>();
+    // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };
     sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(threads.size());

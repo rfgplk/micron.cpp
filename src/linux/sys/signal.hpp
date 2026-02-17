@@ -16,7 +16,7 @@
 // regards to debuggers (gdb et al.) which will entirely mess up any attempts at debugging/backtracing through signals.
 // although the below code is 100% valid and will work in all instances, it will fail for debugging.
 
-#if defined(__x86_64__)
+#if defined(__micron_arch_amd64)
 naked_fn
 restore_rt(void)
 {

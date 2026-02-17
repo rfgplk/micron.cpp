@@ -11,7 +11,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 </div>
 
-![Version](https://img.shields.io/badge/version-0.5.5-red)
+![Version](https://img.shields.io/badge/version-0.5.6-red)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -41,12 +41,27 @@ A simple script which copies all files to `/usr/local/micron`
 Features
 --------
   - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind
-  - completely self-contained, with *no dependencies on external code* or even the traditional C standard library
+  - completely self-contained and self-hosted, with *no dependencies on external code whatsoever*; even the traditional C standard library
   - all functions are guaranteed to be side effect free, ensuring deterministic and predictable behavior across the codebase
   - written entirely in c++23
   - a high performance, cache-aware algorithmic base architecture
   - provides an innovative foundation for systems-level development, reimagining conventional approaches to low-level programming
-  - optimized for rapid compilation speeds, enabling faster iteration and development cycles.
+  - uses a modular design allowing for reduced compiled binary sizes and easier vetting of include dependencies
+
+Philosophy
+----------
+
+**All core library code adheres to the following design principles**:
+- in all instances where functional equivalence exists between *micron* and the STL, or any third-party library, *micron* must demonstrate superior performance
+- in all conceivable scenarios, this code grants the developer absolute control, both of execution and compilation
+- functionality must be preserved with any arbitrary data type
+- in all instances, *micron* must maintain seamless interoperability with the STL and any other library offering equivalent functionality
+- in all cases, performance always takes precedence over safety, with the developer assuming full responsibility for code validity and security
+- all functions follow a strict side effect free formulation (pure functions)
+
+in short:
+- the written code, in its explicit form, stands as the ultimate arbiter of truth, unyielding and devoid of ambiguity, embodying the essence of how code should perform.
+
 
 Motivation
 ----------
@@ -63,25 +78,15 @@ Motivation
 
   Since *micron* is specifically developed with Linux in mind, all library code is meticulously optimized for the nuances of the Linux kernel and its underlying system calls. This singular focus allows for an unparalleled level of integration and efficiency, leveraging Linux-specific features without the overhead of cross-platform abstractions. Consequently, the library achieves a degree of performance and system coherence that is unattainable in more generalized, platform-agnostic designs, solidifying its role as an indispensable tool for high-performance Linux development.</p>
 
-Philosophy
-----------
-
-**All core library code adheres to the following design principles**:
-- in all instances where functional equivalence exists between *micron* and the STL, or any third-party library, *micron* must demonstrate superior performance
-- in all conceivable scenarios, this code grants the developer absolute control, both of execution and compilation
-- functionality must be preserved with any arbitrary data type
-- in all instances, *micron* must maintain seamless interoperability with the STL and any other library offering equivalent functionality
-- in all cases, performance always takes precedence over safety, with the developer assuming full responsibility for code validity and security
-- all functions follow a strict side effect free formulation (pure functions)
-
-in short:
-- the written code, in its explicit form, stands as the ultimate arbiter of truth, unyielding and devoid of ambiguity, embodying the essence of how code should perform.
-
 Is micron entirely self-sufficient?
 --------------------------------------
 
 Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), you **must** link against pthread.
 
+Architecture Support
+----------------------
+
+*micron* is primarily developed for the x86_64 arch. As of v0.5, it provides for experimental ARM32/ARM64 support.
 
 Conformance with the STL
 -------------------------
@@ -89,7 +94,7 @@ Conformance with the STL
 *micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Template Library. Although *most* of these functions do generallyhave the same interfaces and functionality, there are minute core differences (in certain cases, significant ones) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
 
 > [!IMPORTANT]
-> Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support), as such other operating systems, kernels, or CPU architectures are entirely unsupported.
+> Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support - still experimental), as such other operating systems, kernels, or CPU architectures are entirely unsupported.
 
  
 Libraries

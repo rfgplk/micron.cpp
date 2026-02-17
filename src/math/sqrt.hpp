@@ -37,8 +37,41 @@ cbrtdl(const flong x)
 {
   return math::powerflong(x, 1 / 3.f);
 };
+
+constexpr float
+frsqrt(float x) noexcept
+{
+  return 1.f / __builtin_sqrtf(x);
+}
+constexpr double
+frsqrt(double x) noexcept
+{
+  return 1.0 / __builtin_sqrt(x);
+}
+constexpr long double
+frsqrt(long double x) noexcept
+{
+  return 1.0L / __builtin_sqrtl(x);
+}
+
+constexpr float
+fsqrt(float x) noexcept
+{
+  return __builtin_sqrtf(x);
+}
+constexpr double
+fsqrt(double x) noexcept
+{
+  return __builtin_sqrt(x);
+}
+constexpr long double
+fsqrt(long double x) noexcept
+{
+  return __builtin_sqrtl(x);
+}
+
 inline float
-fsqrt(const float x)
+fsqrt_simd(const float x)
 {
   return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 };

@@ -19,7 +19,7 @@ namespace micron
 // NOTE: row major
 template <typename B, u32 C, u32 R>
   requires(micron::is_arithmetic_v<B> and ((C * sizeof(C)) * (R * sizeof(R)) <= (4096 / sizeof(byte)))
-           && ((((C * sizeof(C)) * (R * sizeof(R))) & 64) == 0))
+           && ((((C * R * sizeof(R))) % 64) == 0))
 class int_matrix_base_avx
 {
   using category_type = type_tag;
@@ -36,17 +36,12 @@ class int_matrix_base_avx
   typedef B *iterator;
   typedef const B *const_iterator;
 
-  bool
-  __verify_range(u32 sz)
-  {
-  }
-
 public:
   static constexpr u32 __size = C * R;
   B alignas(64) __mat[__size];     // yes, public for conv.
   ~int_matrix_base_avx(void) = default;
-  int_matrix_base_avx(void) { micron::czero<__size>(__mat); }
-  int_matrix_base_avx(B n) { micron::cmemset<__size>(__mat, n); }
+  int_matrix_base_avx(void) : __mat{} { micron::czero<__size>(__mat); }
+  int_matrix_base_avx(B n) : __mat{} { micron::ctypeset<__size, B>(__mat, n); }
   template <typename... Args>
     requires(sizeof...(Args) == __size)
   int_matrix_base_avx(Args... args) : __mat{ args... }
@@ -97,6 +92,7 @@ public:
       __mat[i + 3] += sc;
       __mat[i + 4] += sc;
       __mat[i + 5] += sc;
+      __mat[i + 6] += sc;
       __mat[i + 7] += sc;
     }
     return *this;
@@ -113,6 +109,7 @@ public:
       __mat[i + 3] -= sc;
       __mat[i + 4] -= sc;
       __mat[i + 5] -= sc;
+      __mat[i + 6] -= sc;
       __mat[i + 7] -= sc;
     }
     return *this;
@@ -129,6 +126,7 @@ public:
       __mat[i + 3] /= sc;
       __mat[i + 4] /= sc;
       __mat[i + 5] /= sc;
+      __mat[i + 6] /= sc;
       __mat[i + 7] /= sc;
     }
     return *this;
@@ -145,6 +143,7 @@ public:
       __mat[i + 3] *= sc;
       __mat[i + 4] *= sc;
       __mat[i + 5] *= sc;
+      __mat[i + 6] *= sc;
       __mat[i + 7] *= sc;
     }
     return *this;
@@ -200,48 +199,94 @@ public:
     return *this;
   }
   int_matrix_base_avx
-  operator*(const int_matrix_base_avx &o)
+  div_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( B i = 0; i < R; i++ ) {
-      for ( B j = 0; j < C; j++ )
-        for ( B k = 0; k < C; k++ )
-          result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
-    }
+    for ( size_t i = 0; i < __size; ++i )
+      result.__mat[i] = __mat[i] / sc;
     return result;
   }
   int_matrix_base_avx
-  operator+(const int_matrix_base_avx &o)
+  transpose() const
   {
     int_matrix_base_avx result;
-    for ( B i = 0; i < R; i++ ) {
-      for ( B j = 0; j < C; j++ )
-        for ( B k = 0; k < C; k++ )
-          result[i, j] += __mat[i * C + k] + o.__mat[k * C + j];
-    }
+    for ( size_t i = 0; i < R; ++i )
+      for ( size_t j = 0; j < C; ++j )
+        result[j, i] = (*this)[i, j];
+    return result;
+  }
+  int_matrix_base_avx
+  add_scalar(B sc) const
+  {
+    int_matrix_base_avx result;
+    for ( size_t i = 0; i < __size; ++i )
+      result.__mat[i] = __mat[i] + sc;
     return result;
   }
 
   int_matrix_base_avx
-  operator-(const int_matrix_base_avx &o)
+  sub_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( B i = 0; i < R; i++ ) {
-      for ( B j = 0; j < C; j++ )
-        for ( B k = 0; k < C; k++ )
-          result[i, j] += __mat[i * C + k] - o.__mat[k * C + j];
-    }
+    for ( size_t i = 0; i < __size; ++i )
+      result.__mat[i] = __mat[i] - sc;
     return result;
   }
   int_matrix_base_avx
-  operator/(const int_matrix_base_avx &o)
+  scale(B sc) const
   {
     int_matrix_base_avx result;
-    for ( B i = 0; i < R; i++ ) {
-      for ( B j = 0; j < C; j++ )
-        for ( B k = 0; k < C; k++ )
-          result[i, j] += __mat[i * C + k] / o.__mat[k * C + j];
+    for ( size_t i = 0; i < __size; ++i )
+      result.__mat[i] = __mat[i] * sc;
+    return result;
+  }
+  int_matrix_base_avx
+  mul(const int_matrix_base_avx &o) const
+  {
+    int_matrix_base_avx result;
+    for ( size_t i = 0; i < R; i++ ) {
+      for ( size_t j = 0; j < C; j++ )
+        for ( size_t k = 0; k < C; k++ )
+          result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
     }
+    return result;
+  }
+  // element wise
+  int_matrix_base_avx
+  operator*(const int_matrix_base_avx &o) const
+  {
+    int_matrix_base_avx result;
+    for ( size_t i = 0; i < R; ++i )
+      for ( size_t j = 0; j < C; ++j )
+        result[i, j] = (*this)[i, j] * o[i, j];
+    return result;
+  }
+  int_matrix_base_avx
+  operator+(const int_matrix_base_avx &o) const
+  {
+    int_matrix_base_avx result;
+    for ( size_t i = 0; i < R; ++i )
+      for ( size_t j = 0; j < C; ++j )
+        result[i, j] = (*this)[i, j] + o[i, j];
+    return result;
+  }
+
+  int_matrix_base_avx
+  operator-(const int_matrix_base_avx &o) const
+  {
+    int_matrix_base_avx result;
+    for ( size_t i = 0; i < R; ++i )
+      for ( size_t j = 0; j < C; ++j )
+        result[i, j] = (*this)[i, j] - o[i, j];
+    return result;
+  }
+  int_matrix_base_avx
+  operator/(const int_matrix_base_avx &o) const
+  {
+    int_matrix_base_avx result;
+    for ( size_t i = 0; i < R; ++i )
+      for ( size_t j = 0; j < C; ++j )
+        result[i, j] = (*this)[i, j] / o[i, j];
     return result;
   }
 };

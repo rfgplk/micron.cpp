@@ -4,6 +4,9 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
+
+#include "bits/__arch.hpp"
+
 #include "bits/__pause.hpp"
 
 #include "bits-types.hpp"
@@ -15,11 +18,6 @@ typedef unsigned short int __u_short;
 typedef unsigned int __u_int;
 typedef unsigned long int __u_long;
 
-typedef long int intptr_t;
-typedef unsigned long int uintptr_t;
-using ptr_t = uintptr_t;
-using addr_t = uintptr_t;
-
 // portable cstdint for gcc, pp macros
 
 using int8_t = __INT8_TYPE__;
@@ -29,6 +27,7 @@ using int64_t = __INT64_TYPE__;
 
 using ptrdiff_t = __PTRDIFF_TYPE__;
 using intptr_t = __INTPTR_TYPE__;
+using uintptr_t = __UINTPTR_TYPE__;
 using uint8_t = __UINT8_TYPE__;
 using uint16_t = __UINT16_TYPE__;
 using uint32_t = __UINT32_TYPE__;
@@ -37,6 +36,9 @@ using fint8_t = __UINT_FAST8_TYPE__;
 using fint16_t = __UINT_FAST16_TYPE__;
 using fint32_t = __UINT_FAST32_TYPE__;
 using fint64_t = __UINT_FAST64_TYPE__;
+
+using ptr_t = uintptr_t;
+using addr_t = uintptr_t;
 
 using int_least8_t = int8_t;
 using uint_least8_t = uint8_t;
@@ -53,7 +55,6 @@ using max_t = __INTMAX_TYPE__;
 using umax_t = __UINTMAX_TYPE__;
 using ssize_t = max_t;
 using size_t = umax_t;
-using word = umax_t;
 
 // time block
 using clock_t = __clock_t;
@@ -145,3 +146,72 @@ using ff = float;
 using df = double;
 
 using nullptr_t = decltype(nullptr);
+
+struct __ct_type_checker {
+  static constexpr bool
+  check()
+  {
+    static_assert(sizeof(byte) == 1, "byte must be exactly 1 byte");
+    static_assert(sizeof(byte) == sizeof(unsigned char), "byte must be exactly 1 unsigned char (check arch)");
+    static_assert(sizeof(int8_t) == 1, "int8_t must be 1 byte");
+    static_assert(sizeof(uint8_t) == 1, "uint8_t must be 1 byte");
+    static_assert(sizeof(int16_t) == 2, "int16_t must be 2 bytes");
+    static_assert(sizeof(uint16_t) == 2, "uint16_t must be 2 bytes");
+    static_assert(sizeof(int32_t) == 4, "int32_t must be 4 bytes");
+    static_assert(sizeof(uint32_t) == 4, "uint32_t must be 4 bytes");
+    static_assert(sizeof(int64_t) == 8, "int64_t must be 8 bytes");
+    static_assert(sizeof(uint64_t) == 8, "uint64_t must be 8 bytes");
+    static_assert(sizeof(uint64_t) == sizeof(size_t), "uint64_t should match size_t");
+    static_assert(sizeof(uint64_t) == sizeof(umax_t), "uint64_t should match umax_t");
+
+    static_assert(sizeof(int8_t) == sizeof(i8), "int8_t must be equaequal to i8");
+    static_assert(sizeof(uint8_t) == sizeof(u8), "uint8_t must be equal to u8");
+    static_assert(sizeof(int16_t) == sizeof(i16), "int16_t must be equal to i16");
+    static_assert(sizeof(uint16_t) == sizeof(u16), "uint16_t must be equal to u16");
+    static_assert(sizeof(int32_t) == sizeof(i32), "int32_t must be equal to i32");
+    static_assert(sizeof(uint32_t) == sizeof(u32), "uint32_t must be equal to u32");
+    static_assert(sizeof(int64_t) == sizeof(i64), "int64_t must be equal to i64");
+    static_assert(sizeof(uint64_t) == sizeof(u64), "uint64_t must be equal to u64");
+
+    static_assert(sizeof(intptr_t) == sizeof(void *), "intptr_t must match pointer size");
+    static_assert(sizeof(uintptr_t) == sizeof(void *), "uintptr_t must match pointer size");
+    static_assert(sizeof(ptr_t) == sizeof(void *), "ptr_t must match pointer size");
+    static_assert(sizeof(addr_t) == sizeof(void *), "addr_t must match pointer size");
+    static_assert(sizeof(size_t) == sizeof(void *), "size_t must match pointer size");
+    static_assert(sizeof(ssize_t) == sizeof(ptrdiff_t), "ssize_t must match ptrdiff_t");
+
+#if __micron_arch_amd64 || __micron_arch_x86
+    static_assert(sizeof(long) == (__micron_arch_amd64 ? 8 : 4), "long must match LP64/ILP32 model");
+#elif __micron_arch_arm64
+    static_assert(sizeof(long) == 8, "ARM64 long must be 64-bit");
+#elif __micron_arch_arm32
+    static_assert(sizeof(long) == 4, "ARM32 long must be 32-bit");
+#endif
+
+#if defined(__GNUC__) && !defined(__clang__) && __cplusplus >= 202300L
+    static_assert(sizeof(f16) == 2, "_Float16 must be 2 bytes");
+    static_assert(sizeof(f32) == 4, "_Float32 must be 4 bytes");
+    static_assert(sizeof(f64) == 8, "_Float64 must be 8 bytes");
+    static_assert(sizeof(f128) == 16, "_Float128 must be 16 bytes");
+#elif defined(__clang__)
+    static_assert(sizeof(f16) == 4, "f16 fallback must be 4 bytes (float)");
+    static_assert(sizeof(f32) == 4, "f32 fallback must be 4 bytes (float)");
+    static_assert(sizeof(f64) == 8, "f64 fallback must be 8 bytes (double)");
+    static_assert(sizeof(f128) >= 8, "f128 fallback must be at least 8 bytes (long double)");
+#else
+    static_assert(sizeof(float) == 4, "float must be 4 bytes");
+    static_assert(sizeof(double) == 8, "double must be 8 bytes");
+#endif
+
+    static_assert(sizeof(flong) >= 8, "long double must be at least 8 bytes");
+
+    static_assert(sizeof(c8) == 1, "char8_t must be 1 byte");
+    static_assert(sizeof(c16) == 2, "char16_t must be 2 bytes");
+    static_assert(sizeof(c32) == 4, "char32_t must be 4 bytes");
+
+    return true;
+  }
+};
+
+// Compile-time trigger
+constexpr bool __type_sizes_ok = __ct_type_checker::check();

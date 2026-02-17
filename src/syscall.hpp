@@ -9,11 +9,11 @@
 #pragma GCC diagnostic ignored "-Wextra"
 #pragma GCC diagnostic ignored "-Wpedantic"
 
-#if defined(__x86_64__)
+#if defined(__micron_arch_amd64)
 #include "linux/sys/syscall_x86_64.hpp"
 
 #include "bits/__syscall_codes_amd64.hpp"
-#elif defined(__arm__)
+#elif defined(__micron_arch_arm32)
 #include "linux/sys/syscall_arm32.hpp"
 
 #include "bits/__syscall_codes_arm32.hpp"

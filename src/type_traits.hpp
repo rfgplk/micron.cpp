@@ -239,6 +239,20 @@ template <> struct __is_floating_point_helper<double> : public true_type {
 
 template <> struct __is_floating_point_helper<long double> : public true_type {
 };
+
+#if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L
+template <> struct __is_floating_point_helper<_Float16> : public true_type {
+};
+template <> struct __is_floating_point_helper<_Float32> : public true_type {
+};
+
+template <> struct __is_floating_point_helper<_Float64> : public true_type {
+};
+
+template <> struct __is_floating_point_helper<_Float128> : public true_type {
+};
+
+#endif
 template <> struct __is_floating_point_helper<__float128> : public true_type {
 };
 
