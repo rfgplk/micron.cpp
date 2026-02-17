@@ -34,17 +34,21 @@ template <is_string T = micron::string> class file : public io::file     // if n
   micron::shared<micron::buffer> bf;     // internal buffer for buffering
 public:
   ~file() = default;
+
   file() : io::file(), data(), fname(), seek(0), buffer_sz(0), bf(nullptr) {}
+
   file(const T &name, const io::modes mode)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(0), bf(nullptr)
   {
   }
+
   file(const char *name, const io::modes mode)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(0), bf(nullptr)
   {
   }
+
   template <size_t M>
   file(const char (&name)[M], const io::modes mode)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
@@ -57,11 +61,13 @@ public:
         buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
+
   file(const char *name, const io::modes mode, const size_t _bf)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
+
   template <size_t M>
   file(const char (&name)[M], const io::modes mode, const size_t _bf)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
@@ -70,10 +76,13 @@ public:
   }
 
   file(const T &name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
+
   file(const char *name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
+
   template <size_t M> file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
   {
   }
+
   // reopens file in place
   void
   reopen(const T &name, const io::modes mode, const size_t _bf)
@@ -86,6 +95,7 @@ public:
     buffer_sz = _bf;
     bf = micron::move(buffer(new micron::buffer(_bf)));
   }
+
   void
   reopen(const char *name, const io::modes mode, const size_t _bf)
   {
@@ -97,6 +107,7 @@ public:
     buffer_sz = _bf;
     bf = micron::move(buffer(new micron::buffer(_bf)));
   }
+
   void
   reopen(const T &name, const io::modes mode)
   {
@@ -109,6 +120,7 @@ public:
     buffer_sz = 0;
     bf = nullptr;
   }
+
   void
   reopen(const char *name, const io::modes mode)
   {
@@ -121,6 +133,7 @@ public:
     buffer_sz = 0;
     bf = nullptr;
   }
+
   void
   reopen(const T &name)
   {
@@ -133,6 +146,7 @@ public:
     buffer_sz = 0;
     bf = nullptr;
   }
+
   void
   reopen(const char *name)
   {
@@ -145,6 +159,7 @@ public:
     buffer_sz = 0;
     bf = nullptr;
   }
+
   void
   clear(void)
   {
@@ -152,7 +167,9 @@ public:
     data._set_buf_length(0);
     // reset internal container
   }
+
   file(const file &o) : io::file(o), data(o.data), fname(o.fname), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf) {}
+
   file(file &&o)
       : io::file(micron::move(o)), data(micron::move(o.data)), fname(micron::move(o.fname)), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf)
   {
@@ -160,11 +177,13 @@ public:
     o.buffer_sz = 0;
     o.bf = nullptr;
   }
+
   bool
   operator==(const file &o)
   {
     return __handle.fd == o.__handle.fd;
   }
+
   file &
   operator=(const file &o)
   {
@@ -176,6 +195,7 @@ public:
     bf = o.bf;
     return *this;
   }
+
   file &
   operator=(file &&o)
   {
@@ -190,6 +210,7 @@ public:
     o.bf = nullptr;
     return *this;
   }
+
   // read into operators
   file &
   operator>>(T &str)
@@ -197,6 +218,7 @@ public:
     str = load_and_pull();
     return *this;
   }
+
   // write to operators, both via << and =
   file &
   operator<<(T &&str)
@@ -205,6 +227,7 @@ public:
     write();
     return *this;
   }
+
   file &
   operator<<(const T &str)
   {
@@ -212,6 +235,7 @@ public:
     write();
     return *this;
   }
+
   file &
   operator=(T &&str)
   {
@@ -219,6 +243,7 @@ public:
     write();
     return *this;
   }
+
   file &
   operator=(const T &str)
   {
@@ -226,29 +251,34 @@ public:
     write();
     return *this;
   }
+
   file &
   set(const size_t s)
   {
     seek = s;
     return *this;
   }
+
   file &
   set_start(void)
   {
     seek = 0;
     return *this;
   }
+
   file &
   set_end(void)
   {
     seek = size();
     return *this;
   }
+
   size_t
   seek_pos(void) const
   {
     return seek;
   }
+
   // load buffered, starting from seek
   void
   read_bytes(size_t sz)
@@ -272,6 +302,7 @@ public:
 
     } while ( sz );
   }
+
   void
   swap(file &o)
   {
@@ -282,6 +313,7 @@ public:
     micron::swap(bf, o.bf);
     return;
   }
+
   // full file
   void
   load(void)
@@ -300,6 +332,7 @@ public:
     } while ( read_bytes );
     data._buf_set_length(s);
   }
+
   // this is needed since if the file is virtual, it doesn't have the appropriate stat inodes
   void
   load_kernel(void)
@@ -320,6 +353,7 @@ public:
     if ( s )
       data._buf_set_length(s);
   }
+
   // will write to wherever the seek is (so be careful)
   // writes the contents of data to the file
   // if data hasn't changed nothing is different
@@ -342,6 +376,7 @@ public:
     seek += sz;
     posix::lseek(__handle.fd, seek, seek_set);
   }
+
   auto
   buffer_size() const
   {
@@ -349,6 +384,7 @@ public:
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
     return buffer_sz;
   }
+
   // load buffer
   void
   load_buffer(const byte *b, const size_t n)
@@ -359,6 +395,7 @@ public:
       exc<except::filesystem_error>("micron::fsys::file trying to load buffer with too much data");
     micron::bytecpy(&(*bf), b, n);
   }
+
   void
   write_bytes(size_t sz)
   {
@@ -376,6 +413,7 @@ public:
     do {
     } while ( sz );
   }
+
   // saves the entire file and wipes data
   // this is useful if you want to reset the container later anyways
   void
@@ -394,11 +432,13 @@ public:
     posix::lseek(__handle.fd, seek, seek_set);
     clear();
   }
+
   size_t
   count(void) const
   {
     return data.size();
   }
+
   void
   push_copy(const T &str)
   {
@@ -411,6 +451,7 @@ public:
   {
     data = micron::move(str);
   }
+
   // pulls the string out of the file for later use
   auto
   pull(void)
@@ -419,6 +460,7 @@ public:
     data = micron::ustr8();
     return tmp;
   }
+
   auto
   load_and_pull(void)
   {
@@ -430,22 +472,26 @@ public:
     data = T();
     return tmp;
   }
+
   // get will only return a const ref
   const auto &
   get(void) const
   {
     return data;
   }
+
   auto
   name(void) const
   {
     return fname;
   }
+
   auto
   get_fd(void) const
   {
     return __handle.fd;
   }
+
   void
   sync(void) const
   {

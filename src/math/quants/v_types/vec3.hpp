@@ -26,10 +26,14 @@ struct vector_3 {
   T x, y, z;
 
   ~vector_3() = default;
+
   constexpr vector_3() : x(T{}), y(T{}), z(T{}) {}
+
   constexpr vector_3(T a, T b, T c) : x(a), y(b), z(c) {}
+
   constexpr vector_3(const vector_3<T> &o) = default;
   constexpr vector_3(vector_3<T> &&o) = default;
+
   constexpr vector_3(const std::initializer_list<T> &o)
   {
     if ( o.size() != 3 )
@@ -48,11 +52,13 @@ struct vector_3 {
   {
     return { x + o.x, y + o.y, z + o.z };
   }
+
   constexpr vector_3<T>
   operator-(const vector_3<T> &o) const
   {
     return { x - o.x, y - o.y, z - o.z };
   }
+
   constexpr vector_3<T> &
   operator+=(const vector_3<T> &o)
   {
@@ -61,6 +67,7 @@ struct vector_3 {
     z += o.z;
     return *this;
   }
+
   constexpr vector_3<T> &
   operator-=(const vector_3<T> &o)
   {
@@ -75,6 +82,7 @@ struct vector_3 {
   {
     return { x * s, y * s, z * s };
   }
+
   constexpr vector_3<T> &
   operator*=(T s)
   {
@@ -83,6 +91,7 @@ struct vector_3 {
     z *= s;
     return *this;
   }
+
   friend constexpr vector_3<T>
   operator*(T s, const vector_3<T> &v)
   {
@@ -94,6 +103,7 @@ struct vector_3 {
   {
     return { x / s, y / s, z / s };
   }
+
   constexpr vector_3<T> &
   operator/=(T s)
   {
@@ -102,6 +112,7 @@ struct vector_3 {
     z /= s;
     return *this;
   }
+
   friend constexpr vector_3<T>
   operator/(T s, const vector_3<T> &v)
   {
@@ -113,16 +124,19 @@ struct vector_3 {
   {
     return { x + s, y + s, z + s };
   }
+
   constexpr vector_3<T>
   operator-(T s) const
   {
     return { x - s, y - s, z - s };
   }
+
   friend constexpr vector_3<T>
   operator+(T s, const vector_3<T> &v)
   {
     return { s + v.x, s + v.y, s + v.z };
   }
+
   friend constexpr vector_3<T>
   operator-(T s, const vector_3<T> &v)
   {
@@ -140,6 +154,7 @@ struct vector_3 {
   {
     return { x * o.x, y * o.y, z * o.z };
   }
+
   constexpr vector_3<T>
   operator*(const vector_3<T> &o) const
   {
@@ -481,6 +496,7 @@ struct vector_3 {
   {
     return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s) };
   }
+
   friend constexpr vector_3<T>
   pow(T s, const vector_3<T> &v)
   {
@@ -584,16 +600,19 @@ struct vector_3 {
   {
     return { static_cast<T>(x < o.x), static_cast<T>(y < o.y), static_cast<T>(z < o.z) };
   }
+
   constexpr vector_3<T>
   operator<=(const vector_3<T> &o) const
   {
     return { static_cast<T>(x <= o.x), static_cast<T>(y <= o.y), static_cast<T>(z <= o.z) };
   }
+
   constexpr vector_3<T>
   operator>(const vector_3<T> &o) const
   {
     return { static_cast<T>(x > o.x), static_cast<T>(y > o.y), static_cast<T>(z > o.z) };
   }
+
   constexpr vector_3<T>
   operator>=(const vector_3<T> &o) const
   {
@@ -605,16 +624,19 @@ struct vector_3 {
   {
     return { static_cast<T>(x < s), static_cast<T>(y < s), static_cast<T>(z < s) };
   }
+
   constexpr vector_3<T>
   operator<=(T s) const
   {
     return { static_cast<T>(x <= s), static_cast<T>(y <= s), static_cast<T>(z <= s) };
   }
+
   constexpr vector_3<T>
   operator>(T s) const
   {
     return { static_cast<T>(x > s), static_cast<T>(y > s), static_cast<T>(z > s) };
   }
+
   constexpr vector_3<T>
   operator>=(T s) const
   {
@@ -626,16 +648,19 @@ struct vector_3 {
   {
     return { static_cast<T>(s < v.x), static_cast<T>(s < v.y), static_cast<T>(s < v.z) };
   }
+
   friend constexpr vector_3<T>
   operator<=(T s, const vector_3<T> &v)
   {
     return { static_cast<T>(s <= v.x), static_cast<T>(s <= v.y), static_cast<T>(s <= v.z) };
   }
+
   friend constexpr vector_3<T>
   operator>(T s, const vector_3<T> &v)
   {
     return { static_cast<T>(s > v.x), static_cast<T>(s > v.y), static_cast<T>(s > v.z) };
   }
+
   friend constexpr vector_3<T>
   operator>=(T s, const vector_3<T> &v)
   {
@@ -647,11 +672,13 @@ struct vector_3 {
   {
     return x;
   }
+
   constexpr T
   yy() const
   {
     return y;
   }
+
   constexpr T
   zz() const
   {
@@ -663,41 +690,49 @@ struct vector_3 {
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   xz() const
   {
     return { x, z };
   }
+
   constexpr vector_2<T>
   yx() const
   {
     return { y, x };
   }
+
   constexpr vector_2<T>
   yz() const
   {
     return { y, z };
   }
+
   constexpr vector_2<T>
   zx() const
   {
     return { z, x };
   }
+
   constexpr vector_2<T>
   zy() const
   {
     return { z, y };
   }
+
   constexpr vector_2<T>
   xx_() const
   {
     return { x, x };
   }
+
   constexpr vector_2<T>
   yy_() const
   {
     return { y, y };
   }
+
   constexpr vector_2<T>
   zz_() const
   {
@@ -709,41 +744,49 @@ struct vector_3 {
   {
     return { x, y, z };
   }
+
   constexpr vector_3<T>
   xzy() const
   {
     return { x, z, y };
   }
+
   constexpr vector_3<T>
   yxz() const
   {
     return { y, x, z };
   }
+
   constexpr vector_3<T>
   yzx() const
   {
     return { y, z, x };
   }
+
   constexpr vector_3<T>
   zxy() const
   {
     return { z, x, y };
   }
+
   constexpr vector_3<T>
   zyx() const
   {
     return { z, y, x };
   }
+
   constexpr vector_3<T>
   xxx() const
   {
     return { x, x, x };
   }
+
   constexpr vector_3<T>
   yyy() const
   {
     return { y, y, y };
   }
+
   constexpr vector_3<T>
   zzz() const
   {
@@ -755,36 +798,43 @@ struct vector_3 {
   {
     return x;
   }
+
   constexpr T
   g() const
   {
     return y;
   }
+
   constexpr T
   b() const
   {
     return z;
   }
+
   constexpr vector_2<T>
   rg() const
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   rb() const
   {
     return { x, z };
   }
+
   constexpr vector_2<T>
   gb() const
   {
     return { y, z };
   }
+
   constexpr vector_3<T>
   rgb() const
   {
     return { x, y, z };
   }
+
   constexpr vector_3<T>
   bgr() const
   {
@@ -796,21 +846,25 @@ struct vector_3 {
   {
     return x;
   }
+
   constexpr T
   v() const
   {
     return y;
   }
+
   constexpr T
   w() const
   {
     return z;
   }
+
   constexpr vector_2<T>
   uv() const
   {
     return { x, y };
   }
+
   constexpr vector_3<T>
   uvw() const
   {

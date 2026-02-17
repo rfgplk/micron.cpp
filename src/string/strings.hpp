@@ -36,6 +36,7 @@ lexi_compare(U a, U b, V c, V d)
   }
   return (a == b) && (c != d);
 }
+
 inline string
 operator+(string &&str, string &&data)
 {
@@ -63,6 +64,7 @@ operator+(const string &str, const string &data)
   out += data;
   return out;
 };
+
 inline string
 operator+(string &str, string &data)
 {
@@ -90,6 +92,7 @@ operator+(string &str, const char *data)
   out += data;
   return out;
 };
+
 inline string
 operator+(string &&str, const char *data)
 {
@@ -107,6 +110,7 @@ operator+(const char *data, string &str)
   out += str;
   return out;
 };
+
 inline string
 operator+(const char *data, string &&str)
 {
@@ -125,6 +129,7 @@ operator+(string &str, const char (&data)[M])
   out += data;
   return out;
 };
+
 /*template <size_t M>
 inline string
 operator+(string &&str, const char (&data)[M])
@@ -144,6 +149,7 @@ operator+(const char (&data)[M], string &str)
   out += str;
   return out;
 };
+
 template <size_t M>
 inline string
 operator+(const char (&data)[M], string &&str)
@@ -163,6 +169,7 @@ operator+(sstr<N> &str, const char *data)
   out += data;
   return out;
 };
+
 template <size_t N, size_t M>
 inline sstr<N>
 operator+(const char *data, sstr<N> &str)
@@ -172,6 +179,7 @@ operator+(const char *data, sstr<N> &str)
   out += str;
   return out;
 };
+
 template <size_t N>
 inline sstr<N>
 operator+(sstr<N> &&str, const char *data)
@@ -181,6 +189,7 @@ operator+(sstr<N> &&str, const char *data)
   out += data;
   return out;
 };
+
 template <size_t N, size_t M>
 inline sstr<N>
 operator+(const char *data, sstr<N> &&str)
@@ -200,6 +209,7 @@ operator+(sstr<N> &str, const char (&data)[M])
   out.append_null(data);
   return out;
 };
+
 template <size_t N, size_t M>
 inline sstr<N>
 operator+(const char (&data)[M], sstr<N> &str)
@@ -209,6 +219,7 @@ operator+(const char (&data)[M], sstr<N> &str)
   out += str;
   return out;
 };
+
 /*template <size_t N, size_t M>
 inline sstr<N>
 operator+(sstr<N> &&str, const char (&data)[M])
@@ -243,6 +254,7 @@ operator<<(O &os, const hstring<T> &&o)
   os << o.c_str();
   return os;
 }
+
 template <typename O, typename T>
 O &
 operator<<(O &os, hstring<T> &&o)
@@ -250,6 +262,7 @@ operator<<(O &os, hstring<T> &&o)
   os << o.c_str();
   return os;
 }
+
 template <typename O, size_t N, typename T>
 O &
 operator<<(O &os, const sstring<N, T> &o)
@@ -265,6 +278,7 @@ operator<<(O &os, const sstring<N, T> &&o)
   os << o.c_str();
   return os;
 }
+
 template <typename O, size_t N, typename T>
 O &
 operator<<(O &os, sstring<N, T> &o)

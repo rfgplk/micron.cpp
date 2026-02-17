@@ -48,6 +48,7 @@ verify(const char *str)
     return false;
   return true;
 }
+
 template <is_string T>
 bool
 verify(T str)
@@ -61,6 +62,7 @@ verify(T str)
     return false;
   return true;
 }
+
 bool
 exists(const char *str)
 {
@@ -91,6 +93,7 @@ is_inode_type(const char *str)
     return true;
   return false;
 }
+
 //
 
 template <node_types Tp>
@@ -104,6 +107,7 @@ is_inode_type(const int fd)
     return true;
   return false;
 }
+
 //
 template <node_types Tp>
 inline bool
@@ -128,6 +132,7 @@ is_inode_type_at(int fd, const T &str)
     return true;
   return false;
 }
+
 // from fd
 
 auto
@@ -159,6 +164,7 @@ is_virtual_file(const int fd)
       return true;
   return false;
 }
+
 bool
 is_file(const int fd)
 {
@@ -202,26 +208,31 @@ is_file_at(int fd, const char *str)
 {
   return is_inode_type_at<node_types::regular_file>(fd, str);
 }
+
 bool
 is_file(const char *str)
 {
   return is_inode_type<node_types::regular_file>(str);
 }
+
 bool
 is_dir_at(int fd, const char *str)
 {
   return is_inode_type_at<node_types::directory>(fd, str);
 }
+
 bool
 is_dir(const char *str)
 {
   return is_inode_type<node_types::directory>(str);
 }
+
 bool
 is_socket_at(int fd, const char *str)
 {
   return is_inode_type_at<node_types::socket>(fd, str);
 }
+
 bool
 is_socket(const char *str)
 {
@@ -233,6 +244,7 @@ is_symlink_at(int fd, const char *str)
 {
   return is_inode_type_at<node_types::symlink>(fd, str);
 }
+
 bool
 is_symlink(const char *str)
 {
@@ -244,6 +256,7 @@ is_block_device_at(int fd, const char *str)
 {
   return is_inode_type_at<node_types::block_device>(fd, str);
 }
+
 bool
 is_block_device(const char *str)
 {
@@ -255,6 +268,7 @@ is_fifo_at(int fd, const char *str)
 {
   return is_inode_type_at<node_types::fifo>(fd, str);
 }
+
 bool
 is_fifo(const char *str)
 {

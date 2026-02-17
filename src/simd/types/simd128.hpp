@@ -48,6 +48,7 @@ template <is_simd_128_type T, is_flag_type F> class v128
 
 public:
   ~v128() = default;
+
   v128(void) { __impl_zero_init(); }
 
   inline v128 &
@@ -67,6 +68,7 @@ public:
     value = _mm_set_pd(b, a);
     return *this;
   }
+
   inline v128 &
   operator=(std::initializer_list<float> lst)
   {
@@ -88,6 +90,7 @@ public:
     value = _mm_set_ps(d, c, b, a);
     return *this;
   }
+
   // start of ints
   inline v128 &
   operator=(std::initializer_list<i64> lst)
@@ -106,6 +109,7 @@ public:
     value = _mm_set_epi64x(b, a);
     return *this;
   }
+
   inline v128 &
   operator=(std::initializer_list<i32> lst)
   {
@@ -119,6 +123,7 @@ public:
     value = _mm_set_epi32(__arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   inline v128 &
   operator=(std::initializer_list<i16> lst)
   {
@@ -132,6 +137,7 @@ public:
     value = _mm_set_epi16(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   inline v128 &
   operator=(std::initializer_list<i8> lst)
   {
@@ -146,6 +152,7 @@ public:
                          __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   // end of ints
 
   v128(std::initializer_list<double> lst)
@@ -163,6 +170,7 @@ public:
     }
     value = _mm_set_pd(b, a);
   }
+
   v128(std::initializer_list<float> lst)
   {
     if ( lst.size() != 4 )
@@ -182,6 +190,7 @@ public:
     }
     value = _mm_set_ps(d, c, b, a);
   }
+
   // start of ints
   v128(std::initializer_list<i64> lst)
   {
@@ -198,6 +207,7 @@ public:
     }
     value = _mm_set_epi64x(b, a);
   }
+
   v128(std::initializer_list<i32> lst)
   {
     if ( lst.size() != 4 )
@@ -209,6 +219,7 @@ public:
       __arr[__i++] = *itr;
     value = _mm_set_epi32(__arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   v128(std::initializer_list<i16> lst)
   {
     if ( lst.size() != 8 )
@@ -220,6 +231,7 @@ public:
       __arr[__i++] = *itr;
     value = _mm_set_epi16(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   v128(std::initializer_list<i8> lst)
   {
     if ( lst.size() != 32 )
@@ -234,68 +246,82 @@ public:
                             __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
                             __arr[0]);
   }
+
   // end of ints
   v128(i8 _e0)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set1_epi8(_e0);
   }
+
   v128(i16 _e0)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set1_epi16(_e0);
   }
+
   v128(i32 a)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set1_epi32(a);
   }
+
   v128(i64 a)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set1_epi64x(a);
   }
+
   v128(float a)
     requires micron::is_same_v<T, f128>
   {
     value = _mm_set1_ps(a);
   }
+
   v128(double a)
     requires micron::is_same_v<T, d128>
   {
     value = _mm_set1_pd(a);
   }
+
   v128(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set_epi8(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15);
   }
+
   v128(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set_epi16(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7);
   }
+
   v128(i32 a, i32 b, i32 c, i32 d)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set_epi32(d, c, b, a);
   }
+
   v128(i64 a, i64 b)
     requires micron::is_same_v<T, i128>
   {
     value = _mm_set_epi64x(b, a);
   }
+
   v128(float a, float b, float c, float d)
     requires micron::is_same_v<T, f128>
   {
     value = _mm_set_ps(d, c, b, a);
   }
+
   v128(double a, double b)
     requires micron::is_same_v<T, d128>
   {
     value = _mm_set_pd(b, a);
   }
+
   v128(const v128 &o) : value(o.value) {}
+
   v128(v128 &&o) : value(o.value)
   {
     if constexpr ( micron::same_as<T, f128> ) {
@@ -308,18 +334,21 @@ public:
       o.value = _mm_setzero_si128();
     }
   }
+
   inline v128 &
   operator=(const v128 &o)
   {
     value = o.value;
     return *this;
   }
+
   inline v128 &
   operator=(v128 &&o)
   {
     value = o.value;
     return *this;
   }
+
   // broadcast /set() analog.
   inline v128 &
   operator=(float f)
@@ -327,41 +356,48 @@ public:
     value = _mm_set1_ps(f);
     return *this;
   }
+
   inline v128 &
   operator=(double d)
   {
     value = _mm_set1_pd(d);
     return *this;
   }
+
   inline v128 &
   operator=(i8 c)
   {
     value = _mm_set1_epi8(c);
     return *this;
   }
+
   inline v128 &
   operator=(i16 s)
   {
     value = _mm_set1_epi16(s);
     return *this;
   }
+
   inline v128 &
   operator=(i32 i)
   {
     value = _mm_set1_epi32(i);
     return *this;
   }
+
   inline v128 &
   operator=(i64 l)
   {
     value = _mm_set1_epi64x(l);
     return *this;
   }
+
   inline v128 &
   operator=(F *addr)
   {
     return uload<F>(addr);
   }
+
   // for loops
   constexpr size_t
   size(void)
@@ -534,6 +570,7 @@ public:
       }
     }
   }
+
   constexpr int
   operator==(const v128 &o) const
   {
@@ -563,6 +600,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator>=(const v128 &o) const
   {
@@ -622,6 +660,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator<(const v128 &o) const
   {
@@ -649,6 +688,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator<=(const v128 &o) const
   {
@@ -676,6 +716,7 @@ public:
     }
     return 0x0;
   }
+
   // scalar const. adds
   constexpr inline v128 &
   operator+=(double x)
@@ -686,6 +727,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator+=(float x)
   {
@@ -695,6 +737,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v128 &
   operator+=(A __x)
@@ -721,6 +764,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator+=(const v128 &o)
   {
@@ -751,6 +795,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator*=(const v128 &o)
   {
@@ -779,6 +824,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator/=(const v128 &o)
   {
@@ -794,6 +840,7 @@ public:
     }
     return *this;
   }
+
   // end
   // scalar const subs
 
@@ -806,6 +853,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator-=(float x)
   {
@@ -815,6 +863,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v128 &
   operator-=(A x)
@@ -840,6 +889,7 @@ public:
     }
     return *this;
   }
+
   // end
   constexpr inline v128 &
   operator-=(const v128 &o)
@@ -889,6 +939,7 @@ public:
     }
     return _r;
   }
+
   constexpr inline v128
   operator-(const v128 &o) const
   {
@@ -913,6 +964,7 @@ public:
     }
     return _r;
   }
+
   constexpr bool
   all_zeroes() const
   {
@@ -924,6 +976,7 @@ public:
       return (_mm_test_all_zeros(value, value) != 0);
     }
   }
+
   constexpr bool
   all_ones() const
   {
@@ -935,16 +988,19 @@ public:
       return (_mm_test_all_ones(value) != 0);
     }
   }
+
   constexpr void
   to_zero(void)
   {
     __impl_zero_init();
   }
+
   constexpr void
   to_ones(void)
   {
     __impl_one_init();
   }
+
   // broadcast /set() analog.
   inline v128 &
   set(float f)
@@ -952,42 +1008,49 @@ public:
     value = _mm_set1_ps(f);
     return *this;
   }
+
   inline v128 &
   set(double d)
   {
     value = _mm_set1_pd(d);
     return *this;
   }
+
   inline v128 &
   set(i8 c)
   {
     value = _mm_set1_epi8(c);
     return *this;
   }
+
   inline v128 &
   set(i16 s)
   {
     value = _mm_set1_epi16(s);
     return *this;
   }
+
   inline v128 &
   set(i32 i)
   {
     value = _mm_set1_epi32(i);
     return *this;
   }
+
   inline v128 &
   set(i64 l)
   {
     value = _mm_set1_epi64x(l);
     return *this;
   }
+
   inline v128 &
   set(float const *f)
   {
     value = _mm_broadcast_ss(f);
     return *this;
   }
+
   inline v128 &
   broadcast(float const *f)
   {
@@ -1011,6 +1074,7 @@ public:
     value = loadu<T, F>(reinterpret_cast<F *>(mem));
     return *this;
   }
+
   // BOOLEANS start
   inline v128 &
   operator|=(const v128 &o)
@@ -1026,6 +1090,7 @@ public:
     }
     return *this;
   }
+
   inline v128 &
   operator&=(const v128 &o)
   {
@@ -1040,6 +1105,7 @@ public:
     }
     return *this;
   }
+
   inline v128 &
   operator^=(const v128 &o)
   {
@@ -1054,6 +1120,7 @@ public:
     }
     return *this;
   }
+
   inline T
   operator|(const v128 &o) const
   {
@@ -1069,6 +1136,7 @@ public:
     }
     return _r;
   }
+
   inline T
   operator&(const v128 &o) const
   {
@@ -1084,6 +1152,7 @@ public:
     }
     return _r;
   }
+
   inline T
   operator^(const v128 &o) const
   {
@@ -1169,6 +1238,7 @@ public:
     }
     return *this;
   }
+
   // BOOLEANS end
   // divs (f only) and muls
 
@@ -1181,6 +1251,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator/=(float x)
   {
@@ -1201,6 +1272,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline T
   operator/(float x) const
   {
@@ -1211,6 +1283,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v128 &
   operator*=(double x)
   {
@@ -1220,6 +1293,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v128 &
   operator*=(float x)
   {
@@ -1267,6 +1341,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v128
   operator*(float x) const
   {
@@ -1277,6 +1352,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v128
   operator*(F x)
   {
@@ -1299,6 +1375,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v128
   operator*(v128 x)
   {
@@ -1323,6 +1400,7 @@ public:
     }
     return _d;
   }
+
   // end divs and muls
 
   // converts to plain arr
@@ -1339,6 +1417,7 @@ public:
       _mm_storeu_si128(reinterpret_cast<T *>(arr), value);
     }
   }
+
   inline void
   get_aligned(F *arr) const
   {

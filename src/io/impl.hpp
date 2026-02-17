@@ -26,6 +26,7 @@ bytes_to_hex(byte *ptr, size_t len, char *frm)
   }
   return frm;
 }
+
 const char *
 bool_to_char(bool n, char *frm)
 {
@@ -35,6 +36,7 @@ bool_to_char(bool n, char *frm)
     frm = const_cast<char *>("false");
   return frm;
 }
+
 const char *
 int64_to_char(i64 n, char *frm)
 {
@@ -79,6 +81,7 @@ uint64_to_char(u64 n, char *frm)
   *buf = '\0';
   return frm;
 }
+
 const char *
 uint_to_char(u32 n, char *frm)
 {
@@ -98,6 +101,7 @@ uint_to_char(u32 n, char *frm)
   *buf = '\0';
   return frm;
 }
+
 const char *
 int_to_char(i32 n, char *frm)
 {
@@ -161,6 +165,7 @@ f64_to_char(f64 n, char *frm)
   *buf = '\0';
   return frm;
 }
+
 const char *
 f32_to_char(f32 n, char *frm)
 {
@@ -199,6 +204,7 @@ f32_to_char(f32 n, char *frm)
   *buf = '\0';
   return frm;
 }
+
 const char *
 flong_to_char(flong n, char *frm)
 {
@@ -237,6 +243,7 @@ flong_to_char(flong n, char *frm)
   *buf = '\0';
   return frm;
 }
+
 const char *
 f128_to_char(f128 n, char *frm)
 {
@@ -275,6 +282,7 @@ f128_to_char(f128 n, char *frm)
   *buf = '\0';
   return frm;
 }
+
 template <typename T>
 const char *
 ptr_to_char(T *ptr, char *frm)

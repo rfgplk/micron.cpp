@@ -18,6 +18,7 @@ struct ucap_header {
   u32 version;
   i32 pid;
 };
+
 using ucap_header_t = ucap_header_t *;
 
 struct ucap_data_t {
@@ -25,6 +26,7 @@ struct ucap_data_t {
   u32 permitted;
   u32 inheritable;
 };
+
 using cap_user_data_t = user_cap_data *;
 
 constexpr static const i32 vfs_cap_revision_mask = 0xFF000000;
@@ -50,6 +52,7 @@ constexpr static const i32 vfs_cap_revision = vfs_cap_revision_3;
 
 struct vfs_cap_data {
   u32 magic_etc;
+
   struct {
     u32 permitted;
     u32 inheritable;
@@ -58,10 +61,12 @@ struct vfs_cap_data {
 
 struct vfs_ns_cap_data {
   u32 magic_etc;
+
   struct {
     u32 permitted;
     u32 inheritable;
   } data[vfs_cap_u32];
+
   u32 rootid;
 };
 

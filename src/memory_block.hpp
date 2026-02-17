@@ -24,89 +24,86 @@ public:
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   using safety_type = safe_tag;
-  typedef byte value_type;
-  typedef byte &reference;
-  typedef byte &ref;
-  typedef const byte &const_reference;
-  typedef const byte &const_ref;
-  typedef byte *pointer;
-  typedef const byte *const_pointer;
-  typedef byte *iterator;
-  typedef const byte *const_iterator;
+  using value_type = byte;
+  using reference = byte &;
+  using const_reference = const byte &;
+  using pointer = byte *;
+  using const_pointer = const byte *;
+  using iterator = byte *;
+  using const_iterator = const byte *;
 
-  ~memory_block() { this->destroy(memory); }
+  ~memory_block()
+  {
+    if ( !memory.zero() )
+      this->destroy(memory);
+  }
 
   memory_block() = delete;
-  memory_block(size_t n) : memory(this->create(n)) {};
-  memory_block(const memory_block &o) : Alloc(), memory(o.memory) {}
-  memory_block(chunk<byte> *m) : Alloc(), memory(m) {}
-  memory_block(chunk<byte> *&&m) : Alloc(), memory(m) {}
-  memory_block(memory_block &&o) : memory(o.memory) {}
+
+  explicit memory_block(size_t n) : memory(this->create(n)) {}
+
+  memory_block(const memory_block &o) : Alloc(), memory(this->create(o.size())) { micron::memcpy(memory.ptr, o.memory.ptr, o.size()); }
+
+  explicit memory_block(chunk<byte> &&m) : memory(micron::move(m)) {}
+
+  memory_block(memory_block &&o) noexcept : Alloc(micron::move(o)), memory(micron::move(o.memory))
+  {
+    o.memory.ptr = nullptr;
+    o.memory.len = 0;
+  }
+
   memory_block &
   operator=(const memory_block &o)
   {
-    memory.ptr = o.memory.ptr;
-    memory.len = o.memory.len;
+    if ( this != &o ) {
+      if ( memory.len != o.size() ) {
+        this->destroy(memory);
+        memory = this->create(o.size());
+      }
+      micron::memcpy(memory.ptr, o.memory.ptr, o.size());
+    }
     return *this;
   }
+
   memory_block &
-  operator=(memory_block &&o)
+  operator=(memory_block &&o) noexcept
   {
-    memory.ptr = o.memory.ptr;
-    memory.len = o.memory.len;
-    o.memory.ptr = 0;
-    o.memory.len = 0;
+    if ( this != &o ) {
+      this->destroy(memory);
+      Alloc::operator=(micron::move(o));
+      memory = micron::move(o.memory);
+      o.memory.ptr = nullptr;
+      o.memory.len = 0;
+    }
     return *this;
   }
-  memory_block &
-  operator=(chunk<byte> *o)
-  {
-    memory.ptr = o->ptr;
-    memory.len = o->len;
-    return *this;
-  }
-  memory_block &
-  operator=(chunk<byte> &&o)
-  {
-    memory.ptr = o.ptr;
-    memory.len = o.len;
-    o.ptr = 0;
-    o.len = 0;
-    return *this;
-  }
+
   memory_block &
   operator=(const byte &b)
   {
     micron::memset(memory.ptr, b, memory.len);
     return *this;
   }
-  // resize and move elements
-  inline void
-  resize(const size_t n)
+
+  void
+  resize(size_t n)
   {
     if ( n <= memory.len )
       return;
     chunk<byte> tmp = micron::move(memory);
     memory = this->create(n);
     micron::memcpy(memory.ptr, tmp.ptr, tmp.len);
-    this->destroy(tmp);     // delete old memory
+    this->destroy(tmp);
   }
 
-  // resize and DONT copy memory (eqv to assigning a new block)
-  inline void
-  recreate(const size_t n)
+  void
+  recreate(size_t n)
   {
-    this->destroy(memory);     // delete old memory
+    this->destroy(memory);
     memory = this->create(n);
   }
-  // overload this to always point to mem
-  byte *
-  operator&()
-  {
-    return memory.ptr;
-  }
-  // access at element
-  inline byte &
+
+  byte &
   operator[](size_t n)
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
@@ -115,7 +112,8 @@ public:
     }
     return memory.ptr[n];
   }
-  inline const byte &
+
+  const byte &
   operator[](size_t n) const
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
@@ -124,56 +122,81 @@ public:
     }
     return memory.ptr[n];
   }
-  // get underlying mem ptr
-  chunk<byte> *
-  operator->()
-  {
-    return &memory;
-  }
+
   byte *
   at_pointer(size_t n)
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
-        exc<except::runtime_error>("micron::memory [] out of bounds");
+        exc<except::runtime_error>("micron::memory at_pointer out of bounds");
     }
-    return &memory.ptr[n];
+    return memory.ptr + n;
   }
+
   byte &
   at(size_t n)
   {
     if constexpr ( micron::is_same_v<safety_type, safe_tag> ) {
       if ( n >= memory.len ) [[unlikely]]
-        exc<except::runtime_error>("micron::memory [] out of bounds");
+        exc<except::runtime_error>("micron::memory at out of bounds");
     }
     return memory.ptr[n];
   }
+
   byte *
-  begin()
+  operator&()
   {
-    return &memory.ptr[0];
-  }
-  byte *
-  end()
-  {
-    return &memory.ptr[memory.len - 1];
+    return memory.ptr;
   }
 
-  const byte *
+  iterator
+  begin()
+  {
+    return memory.ptr;
+  }
+
+  iterator
+  end()
+  {
+    return memory.ptr + memory.len;
+  }
+
+  const_iterator
+  begin() const
+  {
+    return memory.ptr;
+  }
+
+  const_iterator
+  end() const
+  {
+    return memory.ptr + memory.len;
+  }
+
+  const_iterator
   cbegin() const
   {
-    return &memory.ptr[0];
+    return memory.ptr;
   }
-  const byte *
+
+  const_iterator
   cend() const
   {
-    return &memory.ptr[memory.len - 1];
+    return memory.ptr + memory.len;
   }
+
   size_t
   size() const
   {
     return memory.len;
   }
+
+  const chunk<byte> &
+  chunk_ref() const
+  {
+    return memory;
+  }
 };
+
 using buffer = memory_block<>;
 };     // namespace micron

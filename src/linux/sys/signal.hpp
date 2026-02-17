@@ -118,6 +118,7 @@ union sigval_t {
 };
 
 typedef void (*sighandler_t)(int);
+
 struct siginfo_t {
   int si_signo; /* Signal number.  */
   int si_errno; /* If non-zero, an errno value associated with
@@ -161,12 +162,14 @@ struct siginfo_t {
     struct {
       void *si_addr;         /* Faulting insn/memory ref.  */
       short int si_addr_lsb; /* Valid LSB of the reported address.  */
+
       union {
         /* used when si_code=SEGV_BNDERR */
         struct {
           void *_lower;
           void *_upper;
         } _addr_bnd;
+
         /* used when si_code=SEGV_PKUERR */
         u32 _pkey;
       } _bounds;

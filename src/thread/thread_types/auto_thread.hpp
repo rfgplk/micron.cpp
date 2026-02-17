@@ -40,6 +40,7 @@ namespace micron
 template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
 {
   using thread_type = thread_tag;
+
   void
   thread_handler()
   {
@@ -49,6 +50,7 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
     sa.sa_flags = sa_restart;
     micron::sigaction(sig_chld, sa, nullptr);
   }
+
   template <typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
@@ -67,6 +69,7 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
     // thread doesn't exist yet (it takes a few cycles for the scheduler to actually insert the thread into the process
     // table)
   }
+
   void
   __release(void)
   {
@@ -74,6 +77,7 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
     parent_pid = 0;
     pid = 0;
   }
+
   void
   __safe_release(void)
   {
@@ -81,12 +85,14 @@ template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
       micron::exc<except::thread_error>("micron thread::__safe_release(): tried to release a running thread");
     __release();
   }
+
   auto
   __join(void) -> int
   {
     join();
     return 0;
   }
+
   pid_t parent_pid;
   pthread_t pid;
   alignas(16) byte fstack[Stack_Size];     // must be 16 byte aligned, stack will be stack allocated and survive for the
@@ -100,9 +106,11 @@ public:
       return;
     __join();
   }
+
   auto_thread(const auto_thread &o) = delete;
   auto_thread(void) = delete;
   auto_thread &operator=(const auto_thread &) = delete;
+
   auto_thread(auto_thread &&o) : parent_pid(o.parent_pid), pid(o.pid), payload(micron::move(o.payload))
   {
     o.parent_pid = 0;
@@ -110,6 +118,7 @@ public:
     micron::cmemcpy<Stack_Size>(fstack, o.fstack);
     micron::czero<Stack_Size>(o.fstack);
   }
+
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn &, Args &...>)
   auto_thread(Fn &fn, Args &...args) : parent_pid(micron::posix::getpid()), pid(0), payload{}
@@ -135,6 +144,7 @@ public:
     micron::czero<Stack_Size>(fstack);
     __impl_makethread(fn, args...);
   }
+
   auto_thread &
   operator=(auto_thread &&o)
   {
@@ -147,6 +157,7 @@ public:
     o.pid = 0;
     return *this;
   }
+
   template <typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   auto_thread &
@@ -156,7 +167,9 @@ public:
     __impl_makethread(f, args...);
     return *this;
   }
+
   void swap(auto_thread &o) = delete;
+
   // yes, copying it out
   inline posix::rusage_t
   stats(void) const
@@ -171,12 +184,14 @@ public:
   {
     return payload.alive.get(micron::memory_order_seq_cst);
   }
+
   inline bool
   active(void) const
   {
     // more reliable, although slower
     return (pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), 0) == 0 ? true : false);
   }
+
   auto
   can_join(void) -> int
   {
@@ -188,6 +203,7 @@ public:
       return r;
     return 0;
   }
+
   auto
   join(void) -> int     // auto_thread
   {
@@ -199,6 +215,7 @@ public:
     __safe_release();
     return 1;
   }
+
   auto
   try_join(void) -> int
   {
@@ -211,11 +228,13 @@ public:
       return r;
     return error::busy;
   }
+
   auto
   thread_id(void) const
   {
     return pthread::get_thread_id(pid);
   }
+
   auto
   native_handle(void) const
   {
@@ -230,6 +249,7 @@ public:
     }
     return -1;
   }
+
   // pseudo sleep
   int
   sleep_second(void)
@@ -239,6 +259,7 @@ public:
     }
     return -1;
   }
+
   int
   sleep(void)
   {
@@ -247,6 +268,7 @@ public:
     }
     return -1;
   }
+
   int
   awaken(void)
   {
@@ -255,6 +277,7 @@ public:
     }
     return -1;
   }
+
   int
   cancel(void)
   {
@@ -263,6 +286,7 @@ public:
     }
     return -1;
   }
+
   byte *
   stack()
   {
@@ -275,6 +299,7 @@ public:
     // until(true, &auto_thread<Stack_Size>::active, this);
     until(false, &auto_thread<Stack_Size>::alive, this);
   }
+
   template <typename R>
     requires(micron::is_convertible_v<R, u64>)
   R
@@ -284,11 +309,13 @@ public:
     R val = static_cast<R>(payload.ret_val.get());
     return val;
   }
+
   constexpr size_t
   stack_size() const
   {
     return Stack_Size;
   }
+
   void
   cleanup()
   {

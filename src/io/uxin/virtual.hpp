@@ -28,6 +28,7 @@ make_uinput(void)
     set_errno(5);
   return handle;
 }
+
 template <typename... Args>
   requires((micron::is_same_v<Args, byte> && ...))
 void
@@ -38,6 +39,7 @@ set_events(const io::fd_t &handle, Args... args)
     set_errno(-r);
   }
 }
+
 template <typename... Args>
   requires((micron::is_same_v<Args, byte> && ...))
 void

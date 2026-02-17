@@ -15,6 +15,7 @@ template <typename T>
 concept is_safe = micron::same_as<T, Safe>;
 template <typename T>
 concept is_unsafe = micron::same_as<T, Unsafe>;
+
 constexpr bool
 safe(auto s)
 {

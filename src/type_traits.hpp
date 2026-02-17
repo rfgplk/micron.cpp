@@ -15,10 +15,12 @@ using __tt_nullptr_t = decltype(nullptr);
 using __bfloat16_t = __decltype(0.0bf16);
 
 template <typename T> class reference_wrapper;
+
 template <typename T, T V> struct integral_constant {
   static constexpr T value = V;
   using value_type = T;
   using type = integral_constant<T, V>;
+
   constexpr
   operator value_type() const noexcept
   {
@@ -31,6 +33,7 @@ template <typename T, T V> struct integral_constant {
     return value;
   }
 };
+
 template <bool V> using __bool_constant = integral_constant<bool, V>;
 
 using true_type = __bool_constant<true>;
@@ -187,9 +190,11 @@ template <> struct __is_integral_helper<unsigned char> : public true_type {
 
 template <> struct __is_integral_helper<wchar_t> : public true_type {
 };
+
 // NOTE: even though the standard doesn't say this, make char8 integral too
 template <> struct __is_integral_helper<char8_t> : public true_type {
 };
+
 template <> struct __is_integral_helper<char16_t> : public true_type {
 };
 
@@ -225,6 +230,7 @@ __extension__ template <> struct __is_integral_helper<__int128> : public true_ty
 
 __extension__ template <> struct __is_integral_helper<unsigned __int128> : public true_type {
 };
+
 template <typename T> struct is_integral : public __is_integral_helper<__remove_cv_t<T>>::type {
 };
 
@@ -243,6 +249,7 @@ template <> struct __is_floating_point_helper<long double> : public true_type {
 #if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L
 template <> struct __is_floating_point_helper<_Float16> : public true_type {
 };
+
 template <> struct __is_floating_point_helper<_Float32> : public true_type {
 };
 
@@ -261,8 +268,10 @@ template <typename T> struct is_floating_point : public __is_floating_point_help
 
 template <typename T> struct is_array : public __bool_constant<__is_array(T)> {
 };
+
 template <typename T> struct is_pointer : public __bool_constant<__is_pointer(T)> {
 };
+
 template <typename> struct is_lvalue_reference : public false_type {
 };
 
@@ -277,8 +286,10 @@ template <typename T> struct is_rvalue_reference<T &&> : public true_type {
 
 template <typename T> struct is_member_object_pointer : public __bool_constant<__is_member_object_pointer(T)> {
 };
+
 template <typename T> struct is_member_function_pointer : public __bool_constant<__is_member_function_pointer(T)> {
 };
+
 template <typename T> struct is_enum : public __bool_constant<__is_enum(T)> {
 };
 
@@ -290,6 +301,7 @@ template <typename T> struct is_class : public __bool_constant<__is_class(T)> {
 
 template <typename T> struct is_function : public __bool_constant<__is_function(T)> {
 };
+
 template <typename T> struct is_null_pointer : public false_type {
 };
 
@@ -312,6 +324,7 @@ template <typename T> struct __is_nullptr_t : public is_null_pointer<T> {
 
 template <typename T> struct is_reference : public __bool_constant<__is_reference(T)> {
 };
+
 template <typename T> struct is_arithmetic : public __or_<is_integral<T>, is_floating_point<T>>::type {
 };
 
@@ -353,8 +366,10 @@ template <typename...> using Void_t = void;
 
 template <typename T> struct is_const : public __bool_constant<__is_const(T)> {
 };
+
 template <typename T> struct is_volatile : public __bool_constant<__is_volatile(T)> {
 };
+
 template <typename T>
 struct
 
@@ -434,6 +449,7 @@ template <typename T> struct __is_array_unknown_bounds : public false_type {
 
 template <typename T> struct __is_array_unknown_bounds<T[]> : public true_type {
 };
+
 struct __do_is_destructible_impl {
   template <typename T, typename = decltype(declval<T &>().~T())> static true_type __test(int);
 
@@ -505,12 +521,14 @@ template <typename T> struct is_default_constructible : public __is_constructibl
 };
 
 template <typename T> using __add_lval_ref_t = __add_lvalue_reference(T);
+
 template <typename T> struct is_copy_constructible : public __is_constructible_impl<T, __add_lval_ref_t<const T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
 
 template <typename T> using __add_rval_ref_t = __add_rvalue_reference(T);
+
 template <typename T> struct is_move_constructible : public __is_constructible_impl<T, __add_rval_ref_t<T>> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
@@ -584,6 +602,7 @@ template <typename T> struct is_trivially_default_constructible : public __is_tr
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
+
 struct __do_is_implicitly_default_constructible_impl {
   template <typename T> static void __helper(const T &);
 
@@ -651,6 +670,7 @@ template <typename T> struct alignment_of : public integral_constant<__tt_size_t
 
 template <typename T> struct rank : public integral_constant<__tt_size_t, __array_rank(T)> {
 };
+
 template <typename, unsigned Uxint = 0> struct extent : public integral_constant<__tt_size_t, 0> {
 };
 
@@ -668,12 +688,16 @@ template <typename T, unsigned Uxint> struct extent<T[], Uxint> : public extent<
 
 template <typename T, typename Uxp> struct is_same : public __bool_constant<__is_same(T, Uxp)> {
 };
+
 template <typename _Base, typename _Derived> struct is_base_of : public __bool_constant<__is_base_of(_Base, _Derived)> {
 };
+
 template <typename F, typename U> struct is_convertible : public __bool_constant<__is_convertible(F, U)> {
 };
+
 template <typename UElementType, typename FElementType>
 using __is_array_convertible = is_convertible<FElementType (*)[], UElementType (*)[]>;
+
 template <typename T, typename... Args>
 struct __is_nothrow_new_constructible_impl : __bool_constant<noexcept(::new (micron::declval<void *>()) T(micron::declval<Args>()...))> {
 };
@@ -702,6 +726,7 @@ template <typename T> struct remove_volatile<T volatile> {
 template <typename T> struct remove_cv {
   using type = __remove_cv(T);
 };
+
 template <typename T> struct add_const {
   using type = T const;
 };
@@ -729,6 +754,7 @@ template <typename T> using add_cv_t = typename add_cv<T>::type;
 template <typename T> struct remove_reference {
   using type = __remove_reference(T);
 };
+
 template <typename T> struct add_lvalue_reference {
   using type = __add_lval_ref_t<T>;
 };
@@ -829,6 +855,7 @@ public:
 };
 
 template <> struct __make_unsigned<wchar_t> { using __type = typename __make_unsigned_selector<wchar_t, false, true>::__type; };
+
 template <> struct __make_unsigned<char16_t> { using __type = typename __make_unsigned_selector<char16_t, false, true>::__type; };
 
 template <> struct __make_unsigned<char32_t> { using __type = typename __make_unsigned_selector<char32_t, false, true>::__type; };
@@ -876,6 +903,7 @@ public:
 };
 
 template <> struct __make_signed<wchar_t> { using __type = typename __make_signed_selector<wchar_t, false, true>::__type; };
+
 template <> struct __make_signed<char16_t> { using __type = typename __make_signed_selector<char16_t, false, true>::__type; };
 
 template <> struct __make_signed<char32_t> { using __type = typename __make_signed_selector<char32_t, false, true>::__type; };
@@ -896,9 +924,11 @@ template <typename T> using make_unsigned_t = typename make_unsigned<T>::type;
 template <typename T> struct remove_extent {
   using type = __remove_extent(T);
 };
+
 template <typename T> struct remove_all_extents {
   using type = __remove_all_extents(T);
 };
+
 template <typename T> using remove_extent_t = typename remove_extent<T>::type;
 
 template <typename T> using remove_all_extents_t = typename remove_all_extents<T>::type;
@@ -906,9 +936,11 @@ template <typename T> using remove_all_extents_t = typename remove_all_extents<T
 template <typename T> struct remove_pointer {
   using type = __remove_pointer(T);
 };
+
 template <typename T> struct add_pointer {
   using type = __add_pointer(T);
 };
+
 template <typename T> using remove_pointer_t = typename remove_pointer<T>::type;
 
 template <typename T> using add_pointer_t = typename add_pointer<T>::type;
@@ -921,6 +953,7 @@ __aligned_storage_default_alignment([[__maybe_unused__]] __tt_size_t __len)
 {
   return alignof(__aligned_storage_max_align_t);
 }
+
 template <__tt_size_t _Len, __tt_size_t _Align = __aligned_storage_default_alignment(_Len)>
 struct
 
@@ -944,6 +977,7 @@ template <typename T, typename... _Types> struct __strictest_alignment<T, _Types
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 template <__tt_size_t _Len, typename... _Types>
 struct
 
@@ -966,6 +1000,7 @@ template <__tt_size_t _Len, typename... _Types> const __tt_size_t aligned_union<
 template <typename T> struct decay {
   using type = __decay(T);
 };
+
 template <typename T> struct __strip_reference_wrapper {
   using __type = T;
 };
@@ -991,6 +1026,7 @@ template <typename _Iftrue, typename _Iffalse> struct conditional<false, _Iftrue
 };
 
 template <typename... T> struct common_type;
+
 template <typename T> struct __success_type {
   using type = T;
 };
@@ -1068,12 +1104,16 @@ template <typename _Signature> struct result_of;
 
 struct __invoke_memfun_ref {
 };
+
 struct __invoke_memfun_deref {
 };
+
 struct __invoke_memobj_ref {
 };
+
 struct __invoke_memobj_deref {
 };
+
 struct __invoke_other {
 };
 
@@ -1213,6 +1253,7 @@ template <typename T> using underlying_type_t = typename underlying_type<T>::typ
 template <typename T> using result_of_t = typename result_of<T>::type;
 
 template <typename...> using void_t = void;
+
 template <typename Df, typename _AlwaysVoid, template <typename...> class Op, typename... Args> struct __detector {
   using type = Df;
   using __is_detected = false_type;
@@ -1357,6 +1398,7 @@ inline constexpr bool is_swappable_with_v = is_swappable_with<T, Uxp>::value;
 template <typename T, typename Uxp>
 
 inline constexpr bool is_nothrow_swappable_with_v = is_nothrow_swappable_with<T, Uxp>::value;
+
 template <typename _Result, typename R, bool = is_void<R>::value, typename = void> struct __is_invocable_impl : false_type {
   using __nothrow_conv = false_type;
 };
@@ -1390,6 +1432,7 @@ public:
 
   using __nothrow_conv = decltype(_S_test<R>(1));
 };
+
 #pragma GCC diagnostic pop
 
 template <typename Fn, typename... _ArgTypes> struct __is_invocable : __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, void>::type {
@@ -1444,13 +1487,16 @@ struct __is_nothrow_invocable : __and_<__is_invocable<Fn, Args...>, __call_is_no
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
+
 struct __nonesuchbase {
 };
+
 struct __nonesuch : private __nonesuchbase {
   ~__nonesuch() = delete;
   __nonesuch(__nonesuch const &) = delete;
   void operator=(__nonesuch const &) = delete;
 };
+
 #pragma GCC diagnostic pop
 
 template <typename Fnc, typename... _ArgTypes> struct invoke_result : public __invoke_result<Fnc, _ArgTypes...> {
@@ -1632,6 +1678,7 @@ template <typename T> inline constexpr bool is_aggregate_v = __is_aggregate(remo
 // new
 template <__tt_size_t... Is> struct index_sequence {
   using type = index_sequence;
+
   static constexpr __tt_size_t
   size() noexcept
   {

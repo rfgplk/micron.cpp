@@ -25,6 +25,7 @@ template <typename T> using cptr = const_pointer<T>;
 template <typename T> using pointer = unique_pointer<T>;
 template <typename T> using pointer_arr = unique_pointer<T[]>;
 template <typename T> using shared = shared_pointer<T>;
+
 // using hazard = hazard_pointer;
 
 template <is_pointer_class O, is_pointer_class P>
@@ -33,24 +34,28 @@ operator==(const O &o, const P &p) noexcept
 {
   return o.get() == p.get();
 }
+
 template <is_pointer_class O, is_pointer_class P>
 bool
 operator>(const O &o, const P &p) noexcept
 {
   return o.get() > p.get();
 }
+
 template <is_pointer_class O, is_pointer_class P>
 bool
 operator<(const O &o, const P &p) noexcept
 {
   return o.get() < p.get();
 }
+
 template <is_pointer_class O, is_pointer_class P>
 bool
 operator<=(const O &o, const P &p) noexcept
 {
   return o.get() <= p.get();
 }
+
 template <is_pointer_class O, is_pointer_class P>
 bool
 operator>=(const O &o, const P &p) noexcept
@@ -64,6 +69,7 @@ make_global()
 {
   return __global_pointer<T>();
 };
+
 template <class T, class... Args>
   requires(sizeof...(Args) > 0)
 __global_pointer<T>
@@ -78,12 +84,14 @@ unique()
 {
   return pointer<T>();
 };
+
 template <class T, class F>
 pointer<T>
 unique(std::initializer_list<F> list)
 {
   return pointer<T>(list);
 };
+
 template <class T, class... Args>
   requires(sizeof...(Args) > 0)
 pointer<T>
@@ -91,6 +99,7 @@ unique(Args &&...x)
 {
   return pointer<T>(x...);
 };
+
 template <class T, class Y>
 pointer<T>
 unique(Y &&ptr)
@@ -111,12 +120,14 @@ unique_arr(std::initializer_list<F> list)
 {
   return pointer_arr<T>(list);
 }
+
 template <class T>
 pointer_arr<T>
 unique_arr(size_t n)
 {
   return pointer_arr<T>(n);
 }
+
 template <class T, class... Args>
   requires(sizeof...(Args) > 0)
 pointer_arr<T>
@@ -138,18 +149,21 @@ as_pointer()
 {
   return P<T>();
 };
+
 template <template <is_pointer_class> class P, typename T, class F>
 P<T>
 as_pointer(std::initializer_list<F> list)
 {
   return P<T>(list);
 };
+
 template <template <is_pointer_class> class P, typename T, class... Args>
 P<T>
 as_pointer(Args &&...x)
 {
   return P<T>(x...);
 };
+
 template <template <is_pointer_class> class P, typename T, class Y>
 P<T>
 as_pointer(Y &&ptr)

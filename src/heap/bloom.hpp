@@ -42,19 +42,23 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   bloom_filter(void) : bits(false), length(N) {}
+
   void
   insert(const T &key)
   {
     for ( size_t i = 0; i < L; i++ )
       bits.set(hash_round(key, i));
   }
+
   void
   emplace(T &&key)
   {
     for ( size_t i = 0; i < L; i++ )
       bits.set(hash_round(key, i));
   }
+
   bool
   contains(const T &key)
   {

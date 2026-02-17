@@ -27,11 +27,13 @@ cbrt(const f32 x)
 {
   return math::powerf32(x, 1 / 3.f);
 };
+
 inline f64
 cbrtd(const f64 x)
 {
   return math::powerf(x, 1 / 3.f);
 };
+
 inline flong
 cbrtdl(const flong x)
 {
@@ -43,11 +45,13 @@ frsqrt(float x) noexcept
 {
   return 1.f / __builtin_sqrtf(x);
 }
+
 constexpr double
 frsqrt(double x) noexcept
 {
   return 1.0 / __builtin_sqrt(x);
 }
+
 constexpr long double
 frsqrt(long double x) noexcept
 {
@@ -59,11 +63,13 @@ fsqrt(float x) noexcept
 {
   return __builtin_sqrtf(x);
 }
+
 constexpr double
 fsqrt(double x) noexcept
 {
   return __builtin_sqrt(x);
 }
+
 constexpr long double
 fsqrt(long double x) noexcept
 {
@@ -75,6 +81,7 @@ fsqrt_simd(const float x)
 {
   return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 };
+
 inline float
 gsqrt(const float x)
 {
@@ -86,21 +93,25 @@ sd_sqrt(const float x)
 {
   return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 };
+
 inline float
 sd_rsqrt(const float x)
 {
   return 1.0f / _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 };
+
 inline float
 ss_sqrt(const float x)
 {
   return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 };
+
 inline float
 ss_rsqrt(const float x)
 {
   return 1.0f / _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 };
+
 inline float
 sqrt(const float x)
 {

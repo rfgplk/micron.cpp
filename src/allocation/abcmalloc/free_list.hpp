@@ -45,6 +45,7 @@ struct __buddy_list {
   struct free_block {
     free_block *next;
   };
+
   // size_t min_block;
   byte *base;
   size_t total;
@@ -52,6 +53,7 @@ struct __buddy_list {
   size_t allocated_bytes;
   free_block *free_lists[Mx];     // on the stack
   free_block *active[Mx];
+
   void
   __impl_init_memory(byte *_ptr, size_t _len)
   {
@@ -82,8 +84,10 @@ struct __buddy_list {
     free_lists[max_order - 1] = (free_block *)base;
     free_lists[max_order - 1]->next = nullptr;
   }
+
   ~__buddy_list() noexcept = default;
   __buddy_list(void) = delete;
+
   //__buddy_list(void *mem, size_t bytes) noexcept : base(nullptr), total(0), max_order(0)
   __buddy_list(const T &mem) noexcept : base(nullptr), total(0), max_order(0), allocated_bytes(0)
   {
@@ -91,7 +95,9 @@ struct __buddy_list {
       micron::abort();
     __impl_init_memory(mem.ptr, mem.len);
   }
+
   __buddy_list(const __buddy_list &) = delete;
+
   __buddy_list(__buddy_list &&o) : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes)
   {
     o.base = nullptr;
@@ -104,7 +110,9 @@ struct __buddy_list {
       o.free_lists[i] = nullptr;
     }
   }
+
   __buddy_list &operator=(const __buddy_list &) = delete;
+
   __buddy_list &
   operator=(__buddy_list &&o)
   {
@@ -123,6 +131,7 @@ struct __buddy_list {
     }
     return *this;
   }
+
   static inline int
   ceil_log2_u64(u64 v) noexcept
   {
@@ -130,12 +139,14 @@ struct __buddy_list {
       return 0;
     return 64 - __builtin_clzll(v - 1);
   }
+
   inline int
   order_for_size(size_t n) const noexcept
   {
     size_t units = (n + Min - 1) / Min;
     return ceil_log2_u64(units);
   }
+
   inline size_t
   order_size(i64 o) const noexcept
   {
@@ -180,6 +191,7 @@ struct __buddy_list {
     // leeway. the offset is 256-bit to account properly for AVX2.
     return { ((byte *)blk + __hdr_offset), order_size(i) - __hdr_offset };
   }
+
   T
   temporal_allocate(size_t n) noexcept
   {
@@ -227,6 +239,7 @@ struct __buddy_list {
 
     return { ((byte *)blk + __hdr_offset), target_size - __hdr_offset };
   }
+
   T
   allocate_exact(size_t n) noexcept
   {
@@ -250,6 +263,7 @@ struct __buddy_list {
     // leeway. the offset is 256-bit to account properly for AVX2.
     return { ((byte *)blk + __hdr_offset), order_size(o) - __hdr_offset };
   }
+
   ret_flag
   tombstone(byte *ptr) noexcept
   {
@@ -265,6 +279,7 @@ struct __buddy_list {
 
     return __flag_tombstoned;
   }
+
   ret_flag
   tombstone(T &node) noexcept
   {
@@ -272,6 +287,7 @@ struct __buddy_list {
       return __flag_invalid;
     return tombstone(node.ptr);
   }
+
   bool
   is_tombstoned(byte *ptr) noexcept
   {
@@ -340,6 +356,7 @@ struct __buddy_list {
       return __flag_invalid;
     return deallocate(node.ptr);
   }
+
   T
   reallocate(T node, size_t new_size) noexcept
   {
@@ -372,11 +389,13 @@ struct __buddy_list {
       return 0;
     return total - allocated_bytes;
   }
+
   size_t
   used() const noexcept
   {
     return allocated_bytes;
   }
+
   size_t
   block_size(byte *ptr) const noexcept
   {
@@ -392,6 +411,7 @@ struct __buddy_list {
     }
     return 0;
   }
+
   bool
   is_allocated(byte *ptr) const noexcept
   {

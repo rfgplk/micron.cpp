@@ -90,6 +90,7 @@ wait(int *status)
 {
   return wait4(-1, status, 0, nullptr);
 }
+
 posix::pid_t
 waitpid(posix::pid_t pid, int *status, int options)
 {

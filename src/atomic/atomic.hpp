@@ -14,20 +14,13 @@
 #include "../concepts.hpp"
 #include "../type_traits.hpp"
 
-#ifdef __GNUC__
-#define USE_GCC_ATOMICS
-#endif
-
-// atomic library wrapped around standard C/C++
 namespace micron
 {
-// #define ATOMIC_LOCKED 0
-// #define ATOMIC_OPEN 1
 
 constexpr bool ATOMIC_OPEN = 0;
 constexpr bool ATOMIC_LOCKED = 1;
 
-enum class memory_order : int {
+enum class memory_order : i32 {
   relaxed = atomic_seq_cst,
   consume = atomic_consume,
   acquire = atomic_acquire,
@@ -44,16 +37,17 @@ inline constexpr memory_order memory_order_release = memory_order::release;
 inline constexpr memory_order memory_order_acq_rel = memory_order::acq_rel;
 inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 
-template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
-#ifdef USE_GCC_ATOMICS
-template <typename T> struct atomic_token {
+template <is_atomic_type T> struct atomic_token {
   T v;
   static_assert(size_of<T, 1> or size_of<T, 2> or size_of<T, 4> or size_of<T, 8>, "Size must be 1, 2, 4, or 8 bytes");
 
   atomic_token(const T t = ATOMIC_OPEN) : v(t) {};
   atomic_token(const atomic_token &o) : v(o.v) {};
+
   atomic_token(atomic_token &&t) : v(micron::move(t.v)) { t.v = {}; };
+
   void operator=(const atomic_token &) = delete;
+
   atomic_token &
   operator=(atomic_token &&o)
   {
@@ -67,57 +61,68 @@ template <typename T> struct atomic_token {
   {
     return atom::fetch_sub(&v, set, (int)order);
   };
+
   T
   fetch_sub(T set, memory_order order) noexcept
   {
     return atom::fetch_sub(&v, set, (int)order);
   };
+
   T
   add_fetch(T set, memory_order order) noexcept
   {
     return atom::add_fetch(&v, set, (int)order);
   };
+
   T
   sub_fetch(T set, memory_order order) noexcept
   {
     return atom::sub_fetch(&v, set, (int)order);
   };
+
   bool
   compare_and_swap(const T old, const T new_) noexcept
   {
     T tmp = old;
     return atom::compare_exchange(&v, &tmp, new_, true, atomic_seq_cst, atomic_seq_cst);
   };
+
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
     return atom::compare_exchange(&v, &expected, desired, false, (int)order);
   }
+
   bool
   compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
     return atom::compare_exchange(&v, &expected, desired, false, (int)success, (int)failure);
   }
+
   bool
   compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
     return atom::compare_exchange(&v, &expected, desired, true, (int)success, (int)failure);
   }
+
   void
   store(const T new_, memory_order mr = memory_order::seq_cst) noexcept
   {
     atom::store(&v, new_, (int)mr);
   };
+
   T
   get(memory_order mrd = memory_order::seq_cst) const
   {
     return atom::load(&v, (int)mrd);
   }
+
   T *
   ptr()
   {
     return &v;
   }
+
   T
   swap(const T new_) noexcept
   {
@@ -130,16 +135,19 @@ template <typename T> struct atomic_token {
   {
     return get();
   }
+
   T
   operator++() noexcept
   {
     return atom::add_fetch(&v, 1, atomic_seq_cst);
   };
+
   T
   operator--() noexcept
   {
     return atom::sub_fetch(&v, 1, atomic_seq_cst);
   };
+
   T
   operator=(const T new_)
   {
@@ -147,7 +155,7 @@ template <typename T> struct atomic_token {
     return new_;
   }
 };
-#endif
+
 // wraps around atomic_token so actually appears atomic
 template <class T> class atomic
 {
@@ -160,11 +168,13 @@ template <class T> class atomic
     while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) )
       ;
   }
+
   void
   lock()
   {
     tk.store(ATOMIC_LOCKED);
   }
+
   void
   unlock()
   {
@@ -177,31 +187,37 @@ public:
   {
     return tk.store(new_, mr);
   };
+
   T
   __get(memory_order mrd = memory_order::seq_cst) const
   {
     return tk.get(mrd);
   }
+
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
     return tk.compare_exchange_strong(expected, desired, order);
   }
+
   bool
   compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
     return tk.compare_exchange_strong(expected, desired, success, failure);
   }
+
   bool
   compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
     return tk.compare_exchange_weak(expected, desired, success, failure);
   }
+
   atomic() : type(), tk() {};
   template <typename F> atomic(std::initializer_list<F> list) : type(list), tk(){};
   template <typename... Args> atomic(Args... args) : type(args...), tk(){};
   atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) {};
   atomic(const atomic<T> &o) : type(o.type), tk(o.tk) {};
+
   T
   operator=(const T &o)
   {
@@ -211,6 +227,7 @@ public:
     unlock();
     return tmp;
   };
+
   template <typename N>
   T
   operator[](const N n)
@@ -220,12 +237,14 @@ public:
     unlock();
     return tmp;
   };
+
   T *
   operator->()
   {
     lock_check();
     return &type;
   }
+
   // manual functions
   T *
   get()
@@ -233,11 +252,13 @@ public:
     lock_check();
     return &type;
   }     // NOTE: must release
+
   void
   release()
   {
     unlock();
   }
+
   // operator overloads
   T
   operator++(void)
@@ -247,6 +268,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator--(void)
   {
@@ -255,6 +277,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator*=(const T a)
   {
@@ -263,6 +286,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator/=(const T a)
   {
@@ -271,6 +295,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator-=(const T a)
   {
@@ -279,6 +304,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator+=(const T a)
   {
@@ -287,6 +313,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator%=(const T a)
   {
@@ -295,6 +322,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator&=(const T a)
   {
@@ -303,6 +331,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator|=(const T a)
   {
@@ -311,6 +340,7 @@ public:
     unlock();
     return type;
   }
+
   T
   operator^=(const T a)
   {
@@ -321,7 +351,7 @@ public:
   }
 };
 
-template <typename T> class atomic_ref
+template <is_atomic_type T> class atomic_ref
 {
   static_assert(micron::is_trivially_copyable_v<T>, "atomic_ref requires a trivially copyable type");
 

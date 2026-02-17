@@ -457,6 +457,7 @@ rcu_call(F &&func, rcu_domain<Domain> &domain)
 {
   struct wrapper {
     F f;
+
     wrapper(F &&fn) : f(micron::forward<F>(fn)) {}
   };
 

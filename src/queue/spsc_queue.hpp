@@ -19,10 +19,12 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../memory/cache.hpp"
+
 namespace micron
 {
 
-inline constexpr u64 __cache_line = 64;
+inline constexpr u64 __cache_line = cache_line_size();
 
 template <is_movable_object T, size_t N, class Alloc = micron::allocator_serial<>>
 class spsc_queue : public __mutable_memory_resource<T, Alloc>
@@ -70,7 +72,9 @@ public:
   typedef const T *const_pointer;
 
   ~spsc_queue() { clear(); }
+
   spsc_queue() : __mem(__spsc_capacity), head(0), tail(0), cached_head(0), cached_tail(0) {}
+
   spsc_queue(const std::initializer_list<T> &lst) : spsc_queue()
   {
     for ( const T &value : lst ) {
@@ -107,21 +111,25 @@ public:
   {
     return head.get(memory_order_acquire) == tail.get(memory_order_acquire);
   }
+
   inline size_t
   size() const
   {
     return tail.get(memory_order_acquire) - head.get(memory_order_acquire);
   }
+
   inline size_t
   capacity() const
   {
     return __spsc_capacity;
   }
+
   inline size_t
   max_size() const
   {
     return __spsc_capacity;
   }
+
   __attribute__((always_inline)) inline bool
   push(void)
   {

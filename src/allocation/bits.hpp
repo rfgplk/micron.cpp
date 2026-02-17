@@ -10,6 +10,7 @@ to_page(size_t n)
     n += Sz - (n % Sz);
   return n;
 }
+
 template <u32 G>
 inline constexpr size_t
 to_granularity(size_t n)

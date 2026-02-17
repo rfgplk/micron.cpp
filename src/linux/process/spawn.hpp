@@ -19,11 +19,13 @@ __inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char
   micron::posix::spawn_process(ctx);
   return 0;
 }
+
 int
 inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
   return __inplace_spawn(pid, path, argv, envp);
 }
+
 int
 __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
@@ -50,6 +52,7 @@ __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const 
 
   return 0;
 }
+
 int
 spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
@@ -130,5 +133,6 @@ spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions_t
   return __spawn(pid, path, &file_actions, &attrp, argv, envp);
 }
 };
+
 // POSIX compliance, if we need it
 };

@@ -13,49 +13,52 @@
 namespace micron
 {
 
-using duration_t = __time_t;
-using duration_d = double;
-constexpr duration_d duration_ratio = 1000;     // the standard SI metric prefix (power of 1000)
+using duration_t = time_t;
+using fduration_t = f64;
+constexpr fduration_t duration_ratio = 1000;     // the standard SI metric prefix (power of 1000)
 
-inline constexpr duration_d
-days(const duration_d s)
+inline constexpr fduration_t
+days(const fduration_t s)
 {
   return (s / (60 * 60 * 24));
 }
 
-inline constexpr duration_d
-hours(const duration_d s)
+inline constexpr fduration_t
+hours(const fduration_t s)
 {
   return (s / (60 * 60));
 }
 
-inline constexpr duration_d
-minutes(const duration_d s)
+inline constexpr fduration_t
+minutes(const fduration_t s)
 {
   return (s / 60);
 }
 
 template <typename S = base_ratio>
-inline constexpr duration_d
-seconds(const duration_d s)
+inline constexpr fduration_t
+seconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
+
 template <typename S = milli>
-inline constexpr duration_d
-milliseconds(const duration_d s)
+inline constexpr fduration_t
+milliseconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
+
 template <typename S = micro>
-inline constexpr duration_d
-microseconds(const duration_d s)
+inline constexpr fduration_t
+microseconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
+
 template <typename S = nano>
-inline constexpr duration_d
-nanoseconds(const duration_d s)
+inline constexpr fduration_t
+nanoseconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
@@ -85,12 +88,14 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     if ( micron::clock_gettime((clockid_t)C, time_begin) == -1 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
+
   inline __attribute__((always_inline)) void
   start(void)
   {
     if ( micron::clock_gettime((clockid_t)C, time_begin) == -1 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
+
   inline __attribute__((always_inline)) auto
   start_get(void) -> timespec_t
   {
@@ -98,12 +103,14 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       exc<except::runtime_error>("micron::system_clock failed to get time");
     return time_begin;
   }
+
   inline __attribute__((always_inline)) void
   stop(void)
   {
     if ( micron::clock_gettime((clockid_t)C, time_end) == -1 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
+
   inline __attribute__((always_inline)) auto
   stop_get(void) -> timespec_t
   {
@@ -111,17 +118,19 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       exc<except::runtime_error>("micron::system_clock failed to get time");
     return time_end;
   }
+
   inline __attribute__((always_inline)) static auto
-  now(void) -> duration_d
+  now(void) -> fduration_t
   {
     timespec_t t;
     if ( micron::clock_gettime((clockid_t)C, t) == -1 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
     auto msec = t.tv_nsec / 1000000;
-    return static_cast<duration_d>(t.tv_sec) * 1000 + static_cast<duration_d>(msec);
+    return static_cast<fduration_t>(t.tv_sec) * 1000 + static_cast<fduration_t>(msec);
   }
+
   auto
-  read(const timespec_t &t) -> duration_d
+  read(const timespec_t &t) -> fduration_t
   {
     time_t sec = t.tv_sec - time_begin.tv_sec;
     long nsec = t.tv_nsec - time_begin.tv_nsec;
@@ -131,11 +140,11 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec) + static_cast<duration_d>(nsec) * 1e-9;
+    return static_cast<fduration_t>(sec) + static_cast<fduration_t>(nsec) * 1e-9;
   }
 
   auto
-  read(void) -> duration_d
+  read(void) -> fduration_t
   {
     time_t sec = time_end.tv_sec - time_begin.tv_sec;
     long nsec = time_end.tv_nsec - time_begin.tv_nsec;
@@ -145,10 +154,11 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec) + static_cast<duration_d>(nsec) * 1e-9;
+    return static_cast<fduration_t>(sec) + static_cast<fduration_t>(nsec) * 1e-9;
   }
+
   auto
-  read_ms(const timespec_t &t) -> duration_d
+  read_ms(const timespec_t &t) -> fduration_t
   {
     time_t sec = t.tv_sec - time_begin.tv_sec;
     long nsec = t.tv_nsec - time_begin.tv_nsec;
@@ -158,11 +168,11 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec) * 1000.0 + static_cast<duration_d>(nsec) * 1e-6;
+    return static_cast<fduration_t>(sec) * 1000.0 + static_cast<fduration_t>(nsec) * 1e-6;
   }
 
   auto
-  read_ms(void) -> duration_d
+  read_ms(void) -> fduration_t
   {
     time_t sec = time_end.tv_sec - time_begin.tv_sec;
     long nsec = time_end.tv_nsec - time_begin.tv_nsec;
@@ -172,24 +182,25 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       nsec += 1000000000L;
     }
 
-    return static_cast<duration_d>(sec) * 1000.0 + static_cast<duration_d>(nsec) * 1e-6;
+    return static_cast<fduration_t>(sec) * 1000.0 + static_cast<fduration_t>(nsec) * 1e-6;
   }
 };
 
-duration_d
+fduration_t
 now(void)
 {
   timespec_t t;
   if ( micron::clock_gettime((clockid_t)clock_realtime_alarm, t) == -1 )
     exc<except::runtime_error>("micron::now failed to get time");
   auto msec = t.tv_nsec / 1000000;
-  return static_cast<duration_d>(t.tv_sec) * 1000 + static_cast<duration_d>(msec);
+  return static_cast<fduration_t>(t.tv_sec) * 1000 + static_cast<fduration_t>(msec);
 }
 
-template <typename C = system_clock<>, typename D = duration_d> struct time_point {
+template <typename C = system_clock<>, typename D = fduration_t> struct time_point {
   D d;
 
   constexpr time_point() : d(0) {}
+
   constexpr explicit time_point(const D &dur) : d(dur) {}
 
   constexpr D
@@ -248,51 +259,54 @@ operator-(const time_point<C, D> &lhs, const time_point<C, D> &rhs)
 }
 
 struct time_of_day {
-  duration_d hours_val;
-  duration_d minutes_val;
-  duration_d seconds_val;
-  duration_d subseconds_val;
+  fduration_t hours_val;
+  fduration_t minutes_val;
+  fduration_t seconds_val;
+  fduration_t subseconds_val;
 
   constexpr time_of_day() : hours_val(0), minutes_val(0), seconds_val(0), subseconds_val(0) {}
 
-  constexpr explicit time_of_day(duration_d dur_since_midnight)
+  constexpr explicit time_of_day(fduration_t dur_since_midnight)
   {
     auto total = dur_since_midnight;
-    hours_val = static_cast<duration_d>(static_cast<duration_t>(total / 3600) % 24);
+    hours_val = static_cast<fduration_t>(static_cast<duration_t>(total / 3600) % 24);
     total -= hours_val * 3600;
-    minutes_val = static_cast<duration_d>(static_cast<duration_t>(total / 60));
+    minutes_val = static_cast<fduration_t>(static_cast<duration_t>(total / 60));
     total -= minutes_val * 60;
-    seconds_val = static_cast<duration_d>(static_cast<duration_t>(total));
+    seconds_val = static_cast<fduration_t>(static_cast<duration_t>(total));
     subseconds_val = total - seconds_val;
   }
 
-  constexpr time_of_day(duration_d h, duration_d m, duration_d s = 0, duration_d ss = 0)
+  constexpr time_of_day(fduration_t h, fduration_t m, fduration_t s = 0, fduration_t ss = 0)
       : hours_val(h), minutes_val(m), seconds_val(s), subseconds_val(ss)
   {
   }
 
-  constexpr duration_d
+  constexpr fduration_t
   hours() const
   {
     return hours_val;
   }
-  constexpr duration_d
+
+  constexpr fduration_t
   minutes() const
   {
     return minutes_val;
   }
-  constexpr duration_d
+
+  constexpr fduration_t
   seconds() const
   {
     return seconds_val;
   }
-  constexpr duration_d
+
+  constexpr fduration_t
   subseconds() const
   {
     return subseconds_val;
   }
 
-  constexpr duration_d
+  constexpr fduration_t
   to_duration() const
   {
     return hours_val * 3600 + minutes_val * 60 + seconds_val + subseconds_val;
@@ -303,11 +317,13 @@ struct year {
   int y;
 
   constexpr explicit year(int val) : y(val) {}
+
   constexpr
   operator int() const
   {
     return y;
   }
+
   constexpr bool
   is_leap() const
   {
@@ -319,11 +335,13 @@ struct month {
   unsigned m;
 
   constexpr explicit month(unsigned val) : m(val) {}
+
   constexpr
   operator unsigned() const
   {
     return m;
   }
+
   constexpr bool
   ok() const
   {
@@ -335,11 +353,13 @@ struct day {
   unsigned d;
 
   constexpr explicit day(unsigned val) : d(val) {}
+
   constexpr
   operator unsigned() const
   {
     return d;
   }
+
   constexpr bool
   ok() const
   {

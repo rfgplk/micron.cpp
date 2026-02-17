@@ -50,6 +50,7 @@ wait_futex(T *ptr, auto val)
     __futex(reinterpret_cast<u32 *>(ptr), futex_wait | futex_private_flag, val, nullptr, nullptr, 0);
   }
 }
+
 template <typename T>
   requires(sizeof(T) == 4)
 void
@@ -79,6 +80,7 @@ struct futex {
       __futex(&__value, futex_wait | futex_private_flag, __D, nullptr, nullptr, 0);
     }
   }
+
   void
   release()
   {

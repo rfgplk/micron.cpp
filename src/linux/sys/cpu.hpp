@@ -52,28 +52,34 @@ template <size_t N> struct __cpu_set_t {
   micron::constexpr_array<unsigned long, (N + __ncpubits - 1) / __ncpubits> __bits{};
 
   constexpr __cpu_set_t(void) { cpu_zero(); }
+
   constexpr __cpu_set_t(size_t cpu) { cpu_set(cpu); }
+
   constexpr void
   cpu_set(size_t cpu)
   {
     __bits[cpu / __ncpubits] |= 1UL << (cpu % __ncpubits);
   }
+
   constexpr void
   cpu_clr(size_t cpu)
   {
     __bits[cpu / __ncpubits] &= ~(1UL << (cpu % __ncpubits));
   }
+
   constexpr bool
   cpu_isset(size_t cpu) const
   {
     return (__bits[cpu / __ncpubits] & (1UL << (cpu % __ncpubits))) != 0;
   }
+
   constexpr void
   cpu_zero()
   {
     for ( auto &b : __bits )
       b = 0;
   }
+
   constexpr size_t
   cpu_count() const
   {
@@ -85,24 +91,28 @@ template <size_t N> struct __cpu_set_t {
     }
     return cnt;
   }
+
   constexpr void
   cpu_and(const __cpu_set_t &other)
   {
     for ( size_t i = 0; i < __bits.size(); ++i )
       __bits[i] &= other.__bits[i];
   }
+
   constexpr void
   cpu_or(const __cpu_set_t &other)
   {
     for ( size_t i = 0; i < __bits.size(); ++i )
       __bits[i] |= other.__bits[i];
   }
+
   constexpr void
   cpu_xor(const __cpu_set_t &other)
   {
     for ( size_t i = 0; i < __bits.size(); ++i )
       __bits[i] ^= other.__bits[i];
   }
+
   constexpr bool
   cpu_equal(const __cpu_set_t &other) const
   {
@@ -111,6 +121,7 @@ template <size_t N> struct __cpu_set_t {
         return false;
     return true;
   }
+
   constexpr size_t
   size() const
   {
@@ -120,27 +131,32 @@ template <size_t N> struct __cpu_set_t {
 
 template <size_t N> struct __cpu_set_s_t {
   micron::constexpr_array<unsigned long, N> __bits{};
+
   constexpr void
   cpu_set_s(size_t cpu)
   {
     __bits[cpu / __ncpubits] |= 1UL << (cpu % __ncpubits);
   }
+
   constexpr void
   cpu_clr_s(size_t cpu)
   {
     __bits[cpu / __ncpubits] &= ~(1UL << (cpu % __ncpubits));
   }
+
   constexpr bool
   cpu_isset_s(size_t cpu) const
   {
     return (__bits[cpu / __ncpubits] & (1UL << (cpu % __ncpubits))) != 0;
   }
+
   constexpr void
   cpu_zero_s()
   {
     for ( auto &b : __bits )
       b = 0;
   }
+
   constexpr size_t
   cpu_count_s() const
   {
@@ -152,24 +168,28 @@ template <size_t N> struct __cpu_set_s_t {
     }
     return cnt;
   }
+
   constexpr void
   cpu_and_s(const __cpu_set_s_t &other)
   {
     for ( size_t i = 0; i < __bits.size(); ++i )
       __bits[i] &= other.__bits[i];
   }
+
   constexpr void
   cpu_or_s(const __cpu_set_s_t &other)
   {
     for ( size_t i = 0; i < __bits.size(); ++i )
       __bits[i] |= other.__bits[i];
   }
+
   constexpr void
   cpu_xor_s(const __cpu_set_s_t &other)
   {
     for ( size_t i = 0; i < __bits.size(); ++i )
       __bits[i] ^= other.__bits[i];
   }
+
   constexpr bool
   cpu_equal_s(const __cpu_set_s_t &other) const
   {

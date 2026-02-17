@@ -29,6 +29,7 @@ constexpr u64 xxprime64b = 0xC2B2AE3D27D4EB4FULL;
 constexpr u64 xxprime64c = 0x165667B19E3779F9ULL;
 constexpr u64 xxprime64d = 0x85EBCA77C2B2AE63ULL;
 constexpr u64 xxprime64e = 0x27D4EB2F165667C5ULL;
+
 struct xxhash64_state {
   u64 len;
   u64 v[4];
@@ -37,7 +38,9 @@ struct xxhash64_state {
   u32 pad32;
   u64 pad64;
 };
+
 typedef xxhash64_state xstate;
+
 template <u64 seed>
 inline xstate
 init_seed()
@@ -49,6 +52,7 @@ init_seed()
   s.v[3] = seed - xxprime64a;
   return s;
 }
+
 /*
 inline __attribute__((always_inline)) u64
 rotl64(const u64 x, const i8 r)
@@ -195,6 +199,7 @@ xxhash64(const byte *src, size_t len)
   xxhash += len;
   return xxhash_final(xxhash, src, len);
 }
+
 inline u64
 xxhash64_rtseed(const byte *src, u64 seed, size_t len)
 {

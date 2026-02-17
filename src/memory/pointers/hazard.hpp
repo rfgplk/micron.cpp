@@ -60,6 +60,7 @@ class hazard_pointer
     if ( _id != _end ) [[likely]]
       __hazard_table[_id].ptr.__store(static_cast<void *>(_ptr), memory_order::seq_cst);
   }
+
   inline void
   __impl_delete(void) noexcept
   {
@@ -71,10 +72,14 @@ class hazard_pointer
 
 public:
   ~hazard_pointer() { __impl_delete(); }
+
   hazard_pointer(void) noexcept : _id(__emplace_hazard()) {}
+
   // all in one go
   template <typename T> hazard_pointer(const atomic<T *> &src) : _id(__emplace_hazard()) { protect(src); }
+
   hazard_pointer(hazard_pointer &&o) noexcept : _id(exchange(o._id, _end)) {}
+
   hazard_pointer &
   operator=(hazard_pointer &&o) noexcept
   {
@@ -90,6 +95,7 @@ public:
   {
     return (_id == _end) or (__hazard_table[_id].ptr.__get(memory_order::acquire) == nullptr);
   }
+
   template <class T>
   T *
   protect(const atomic<T *> &src) noexcept
@@ -101,6 +107,7 @@ public:
         return ptr;
     }
   }
+
   template <class T>
   bool
   try_protect(T *&ptr, const atomic<T *> &src) noexcept
@@ -114,6 +121,7 @@ public:
     }
     return ok;
   }
+
   template <class T>
   void
   reset_protection(const T *ptr) noexcept
@@ -123,6 +131,7 @@ public:
     T *expected = const_cast<T *>(ptr);
     __hazard_table[_id].ptr.compare_exchange_strong(expected, (bool)nullptr, memory_order::acq_rel, memory_order::acquire);
   }
+
   void
   reset_protection(nullptr_t = nullptr) noexcept
   {

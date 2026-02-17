@@ -17,29 +17,40 @@ template <typename T> struct abc_allocator {
   {
     return abc::__abc_allocator<byte>::calloc(sz);
   }
+
   static void
   deallocate(T *ptr, size_t sz)
   {
+    if ( ptr == nullptr ) [[unlikely]]
+      return;
     return abc::__abc_allocator<byte>::dealloc(ptr, sz);
   }
+
   static T *
   brk_allocate(size_t sz)
   {
     return abc::__abc_allocator<byte>::calloc(sz);
   }
+
   static void
   brk_deallocate(T *ptr, size_t sz)
   {
+    if ( ptr == nullptr ) [[unlikely]]
+      return;
     return abc::__abc_allocator<byte>::dealloc(ptr, sz);
   }
+
   static T *
   unmanaged_allocate(size_t sz)
   {
     return reinterpret_cast<T *>(micron::sys_allocator<byte>::alloc(sz));
   }
+
   static void
   unmanaged_deallocate(T *ptr, size_t sz)
   {
+    if ( ptr == nullptr ) [[unlikely]]
+      return;
     return micron::sys_allocator<byte>::dealloc(ptr, sz);
   }
 };
@@ -79,6 +90,7 @@ template <typename T> class stl_allocator
   constexpr stl_allocator() = default;
   constexpr stl_allocator(const stl_allocator &) = default;
   constexpr stl_allocator(stl_allocator &&) = default;
+
   T *
   allocate(size_t cnt)
   {
@@ -87,16 +99,19 @@ template <typename T> class stl_allocator
       exc<except::memory_error>();
     return static_cast<T *>(ptr);
   }
+
   void
   deallocate(T *ptr, size_t cnt)
   {
     micron::__free(ptr);
   }
+
   friend bool
   operator==(const stl_allocator<T> &a, const stl_allocator<T> &b)
   {
     return true;
   }
+
   friend bool
   operator!=(const stl_allocator<T> &a, const stl_allocator<T> &b)
   {

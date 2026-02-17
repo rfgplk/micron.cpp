@@ -76,76 +76,91 @@ struct vector_16 {
   {
     return x;
   }
+
   constexpr T
   s1() const
   {
     return y;
   }
+
   constexpr T
   s2() const
   {
     return z;
   }
+
   constexpr T
   s3() const
   {
     return w;
   }
+
   constexpr T
   s4() const
   {
     return a;
   }
+
   constexpr T
   s5() const
   {
     return b;
   }
+
   constexpr T
   s6() const
   {
     return c;
   }
+
   constexpr T
   s7() const
   {
     return d;
   }
+
   constexpr T
   s8() const
   {
     return e;
   }
+
   constexpr T
   s9() const
   {
     return f;
   }
+
   constexpr T
   sa() const
   {
     return g;
   }
+
   constexpr T
   sb() const
   {
     return h;
   }
+
   constexpr T
   sc() const
   {
     return i;
   }
+
   constexpr T
   sd() const
   {
     return j;
   }
+
   constexpr T
   se() const
   {
     return k;
   }
+
   constexpr T
   sf() const
   {
@@ -195,6 +210,7 @@ struct vector_16 {
   {
     return { x * s, y * s, z * s, w * s, a * s, b * s, c * s, d * s, e * s, f * s, g * s, h * s, i * s, j * s, k * s, l * s };
   }
+
   constexpr vector_16<T> &
   operator*=(T s)
   {
@@ -216,6 +232,7 @@ struct vector_16 {
     l *= s;
     return *this;
   }
+
   friend constexpr vector_16<T>
   operator*(T s, const vector_16<T> &v)
   {
@@ -228,6 +245,7 @@ struct vector_16 {
   {
     return { x / s, y / s, z / s, w / s, a / s, b / s, c / s, d / s, e / s, f / s, g / s, h / s, i / s, j / s, k / s, l / s };
   }
+
   constexpr vector_16<T> &
   operator/=(T s)
   {
@@ -249,6 +267,7 @@ struct vector_16 {
     l /= s;
     return *this;
   }
+
   friend constexpr vector_16<T>
   operator/(T s, const vector_16<T> &v)
   {
@@ -261,17 +280,20 @@ struct vector_16 {
   {
     return { x + s, y + s, z + s, w + s, a + s, b + s, c + s, d + s, e + s, f + s, g + s, h + s, i + s, j + s, k + s, l + s };
   }
+
   constexpr vector_16<T>
   operator-(T s) const
   {
     return { x - s, y - s, z - s, w - s, a - s, b - s, c - s, d - s, e - s, f - s, g - s, h - s, i - s, j - s, k - s, l - s };
   }
+
   friend constexpr vector_16<T>
   operator+(T s, const vector_16<T> &v)
   {
     return { s + v.x, s + v.y, s + v.z, s + v.w, s + v.a, s + v.b, s + v.c, s + v.d,
              s + v.e, s + v.f, s + v.g, s + v.h, s + v.i, s + v.j, s + v.k, s + v.l };
   }
+
   friend constexpr vector_16<T>
   operator-(T s, const vector_16<T> &v)
   {
@@ -337,6 +359,7 @@ struct vector_16 {
   {
     return (*this - v).magnitude();
   }
+
   constexpr T
   squared_distance(const vector_16<T> &v) const
   {
@@ -493,6 +516,7 @@ struct vector_16 {
              math::fpow(c, s), math::fpow(d, s), math::fpow(e, s), math::fpow(f, s), math::fpow(g, s), math::fpow(h, s),
              math::fpow(i, s), math::fpow(j, s), math::fpow(k, s), math::fpow(l, s) };
   }
+
   friend constexpr vector_16<T>
   pow(T s, const vector_16<T> &v)
   {
@@ -514,11 +538,13 @@ struct vector_16 {
   {
     return x + y + z + w + a + b + c + d + e + f + g + h + i + j + k + l;
   }
+
   constexpr T
   mean() const
   {
     return sum() / T{ 16 };
   }
+
   constexpr T
   prod() const
   {
@@ -587,6 +613,7 @@ struct vector_16 {
     return x == o.x && y == o.y && z == o.z && w == o.w && a == o.a && b == o.b && c == o.c && d == o.d && e == o.e && f == o.f && g == o.g
            && h == o.h && i == o.i && j == o.j && k == o.k && l == o.l;
   }
+
   constexpr bool
   operator!=(const vector_16<T> &o) const
   {
@@ -631,16 +658,19 @@ struct vector_16 {
   {
     return { x, y, z, w };
   }
+
   constexpr vector_4<T>
   q1() const
   {
     return { a, b, c, d };
   }
+
   constexpr vector_4<T>
   q2() const
   {
     return { e, f, g, h };
   }
+
   constexpr vector_4<T>
   q3() const
   {
@@ -652,6 +682,7 @@ struct vector_16 {
   {
     return { x, y, z, w, a, b, c, d };
   }
+
   constexpr vector_8<T>
   hi() const
   {
@@ -663,6 +694,7 @@ struct vector_16 {
   {
     return { x, z, a, c, e, g, i, k };
   }
+
   constexpr vector_8<T>
   odd() const
   {
@@ -698,6 +730,7 @@ struct vector_16 {
   {
     return fma(v, u);
   }
+
   constexpr vector_16<T>
   mul_add(T s, const vector_16<T> &u) const
   {

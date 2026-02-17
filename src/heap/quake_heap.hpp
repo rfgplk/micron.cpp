@@ -20,6 +20,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
     size_t size;
 
     node(const T &v) : value(v), left(nullptr), right(nullptr), size(1) {}
+
     node(T &&v) noexcept : value(micron::move(v)), left(nullptr), right(nullptr), size(1) {}
   };
 
@@ -103,6 +104,7 @@ public:
   }
 
   quake_heap(const quake_heap &o) = delete;
+
   quake_heap(quake_heap &&o) noexcept : roots(o.roots), levels(o.levels)
   {
     o.roots = nullptr;
@@ -110,6 +112,7 @@ public:
   }
 
   quake_heap &operator=(const quake_heap &o) = delete;
+
   quake_heap &
   operator=(quake_heap &&o) noexcept
   {

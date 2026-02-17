@@ -8,6 +8,7 @@
 #include "../types.hpp"
 
 #include "../algorithm/algorithm.hpp"
+
 namespace micron
 {
 namespace sort
@@ -36,6 +37,7 @@ __quick(T &arr, ssize_t low, ssize_t high)
     __quick(arr, i + 1, high);
   }
 }
+
 template <typename T>
 T &
 quick(T &arr)

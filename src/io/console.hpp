@@ -224,6 +224,7 @@ console_newline(void)
 {
   io::println("\n");
 }
+
 template <typename... T>
   requires(micron::is_pointer_v<T> and ...)
 inline void
@@ -231,6 +232,7 @@ console(const T &...str)
 {
   io::println(str...);
 }
+
 template <typename... T>
 inline void
 console(const T &...str)
@@ -244,6 +246,7 @@ consoled(const T &...str)
 {
   io::print(str...);
 }
+
 template <typename... T>
 inline void
 console_bin(const T &...str)

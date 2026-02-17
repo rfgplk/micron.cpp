@@ -35,6 +35,7 @@ namespace micron
 template <size_t Stack_Size = thread_stack_size> class thread
 {
   using thread_type = thread_tag;
+
   void
   thread_handler()
   {
@@ -79,6 +80,7 @@ template <size_t Stack_Size = thread_stack_size> class thread
     }
     attributes.clear();
   }
+
   void
   __safe_release(void)
   {
@@ -90,6 +92,7 @@ template <size_t Stack_Size = thread_stack_size> class thread
     }
     attributes.clear();
   }
+
   // pid_t parent_pid;
   // pthread_t pid;
   // addr_t *fstack;
@@ -97,11 +100,16 @@ template <size_t Stack_Size = thread_stack_size> class thread
 
 public:
   __thread_payload payload;
+
   ~thread() { __release(); }
+
   thread(const thread &o) = delete;
   thread &operator=(const thread &) = delete;
+
   thread(void) : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+
   thread(thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
+
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn &, Args &...>)
   thread(Fn &fn, Args &...args) : attributes(posix::getpid()), payload{}
@@ -130,6 +138,7 @@ public:
     payload = micron::move(o.payload);
     return *this;
   }
+
   template <typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   thread &
@@ -139,7 +148,9 @@ public:
     __impl_makethread(f, args...);
     return *this;
   }
+
   auto swap(thread &o) = delete;
+
   // yes, copying it out
   inline posix::rusage_t
   stats(void) const
@@ -154,12 +165,14 @@ public:
   {
     return payload.alive.get(micron::memory_order_seq_cst);
   }
+
   inline bool
   active(void) const
   {
     // more reliable, although slower
     return (pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), 0) == 0 ? true : false);
   }
+
   auto
   can_join(void) -> int
   {
@@ -171,6 +184,7 @@ public:
       return r;
     return 0;
   }
+
   auto
   join(void) -> int     // thread
   {
@@ -178,6 +192,7 @@ public:
     __safe_release();
     return r;
   }
+
   auto
   try_join(void) -> int
   {
@@ -188,16 +203,19 @@ public:
     }
     return r;
   }
+
   auto
   thread_id(void) const
   {
     return pthread::get_thread_id(attributes.pid);
   }
+
   auto
   native_handle(void) const
   {
     return attributes.pid;
   }
+
   long int
   signal(const signals s)
   {
@@ -206,6 +224,7 @@ public:
     }
     return -1;
   }
+
   // pseudo sleep
   int
   sleep_second(void)
@@ -215,6 +234,7 @@ public:
     }
     return -1;
   }
+
   int
   sleep(void)
   {
@@ -223,6 +243,7 @@ public:
     }
     return -1;
   }
+
   int
   awaken(void)
   {
@@ -231,6 +252,7 @@ public:
     }
     return -1;
   }
+
   int
   cancel(void)
   {
@@ -241,11 +263,13 @@ public:
     }
     return -1;
   }
+
   void
   wait_for(void) const
   {
     until(false, &thread<Stack_Size>::alive, this);
   }
+
   template <typename R>
   auto
   result(void)
@@ -254,6 +278,7 @@ public:
     R val = static_cast<R>(payload.ret_val.get());
     return val;
   }
+
   addr_t *
   stack()
   {

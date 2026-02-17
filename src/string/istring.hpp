@@ -27,6 +27,7 @@ template <is_scalar_literal T = schar, class Alloc = micron::allocator_serial<>>
 class istring : private Alloc, public __immutable_memory_resource<T>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
+
   istring
   __replicate()
   {
@@ -46,32 +47,39 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~istring()
   {
     if ( __mem::is_zero() )
       return;
     clear();
   }
+
   // __mem memory;
   constexpr istring() : __mem(Alloc::auto_size()) {};
   constexpr istring(const size_t n) : __mem(n) {};
+
   istring(size_t cnt, T ch) : __mem(cnt)
   {
     micron::typeset<T>(&__mem::memory[0], ch, cnt);
     __mem::length = cnt;
   }
+
   constexpr istring(const char *&str) : __mem(micron::strlen(str))
   {
     size_t end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
     __mem::length = end;                                   // - 1;
   };
+
   template <size_t M, typename F> constexpr istring(const F (&str)[M]) : __mem(M)
   {
     micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
     __mem::length = M - 1;                                            // - 1;
   };
+
   constexpr istring(const istring &o) = delete;
+
   constexpr istring(istring &&o)
   {
     __mem::memory = o.memory;
@@ -81,6 +89,7 @@ public:
     o.length = 0;
     o.capacity = 0;
   }
+
   template <typename F> istring(istring<F> &&o)
   {
     __mem::memory = o.memory;
@@ -90,7 +99,9 @@ public:
     o.length = 0;
     o.capacity = 0;
   }
+
   istring &operator=(const istring &o) = delete;
+
   istring &
   operator=(istring &&o)
   {
@@ -106,6 +117,7 @@ public:
     o.capacity = 0;
     return *this;
   }
+
   template <typename F>
   istring &
   operator=(istring<F> &&o)
@@ -123,23 +135,28 @@ public:
     ;
     return *this;
   }
+
   chunk<byte>
   operator*()
   {
     return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
   }
+
   inline bool
   operator!() const
   {
     return empty();
   }
+
   // overload this to always point to mem
   byte *operator&() = delete;
+
   const byte *
   operator&() const
   {
     return reinterpret_cast<const byte *>(__mem::memory);
   }
+
   template <typename C = T>
   void
   swap(istring<C> &o)
@@ -152,27 +169,32 @@ public:
     o.length = tmp.length;
     o.capacity = tmp.capacity;
   }
+
   bool
   empty() const
   {
     return (bool)__mem::length == 0;
   };
+
   size_t
   size() const
   {
     return __mem::length;
   }
+
   size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   // unsafe
   T *
   data()
   {
     return __mem::memory;
   };
+
   const auto &
   cdata() const
   {
@@ -186,6 +208,7 @@ public:
       exc<except::library_error>("micron::istring stack() out of memory.");
     return sstr<512, T>(c_str());
   };
+
   inline const char *
   c_str() const
   {
@@ -193,6 +216,7 @@ public:
       return _null_str;
     return reinterpret_cast<const char *>(&(__mem::memory)[0]);
   };
+
   inline const wide *
   w_str() const
   {
@@ -200,6 +224,7 @@ public:
       return _null_wstr;
     return reinterpret_cast<const wide *>(&(__mem::memory)[0]);
   };
+
   inline const unicode32 *
   uni_str() const
   {
@@ -207,22 +232,26 @@ public:
       return _null_u32str;
     return reinterpret_cast<const unicode32 *>(&(__mem::memory)[0]);
   };
+
   inline const slice<byte>
   into_bytes() const
   {
     return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
+
   inline const auto
   clone() const
   {
     return istring<T>(*this);     // copy
   }
+
   template <typename F>
   inline const F
   clone() const
   {
     return F(*this);     // copy
   }
+
   template <typename F>
   size_t
   find(F ch, size_t pos = 0) const
@@ -233,49 +262,58 @@ public:
     }
     return npos;
   }
+
   template <typename F>
   size_t
   find(const istring<F> &str, size_t pos = 0)
   {
     return npos;
   }
+
   inline const_iterator
   begin() const
   {
     return const_cast<T *>(&(__mem::memory)[0]);
   }
+
   inline const_iterator
   end() const
   {
     return const_cast<T *>(&(__mem::memory)[__mem::length]);
   }
+
   inline const_iterator
   last() const
   {
     return const_cast<T *>(&(__mem::memory)[__mem::length - 1]);
   }
+
   inline const_iterator
   cbegin() const
   {
     return &(__mem::memory)[0];
   }
+
   inline const_iterator
   cend() const
   {
     return &(__mem::memory)[__mem::length];     // correct, should point at nptr
   }
+
   inline void
   clear()
   {
     zero(__mem::memory, __mem::capacity);
     __mem::length = 0;
   }
+
   // doesn't zero memory, just resets the cur. pointer to 0
   inline void
   fast_clear()
   {
     __mem::length = 0;
   }
+
   inline istring
   append(const buffer &f, size_t n)
   {
@@ -288,6 +326,7 @@ public:
     t.length += (n);
     return t;
   }
+
   template <typename F>
   inline istring
   append(const slice<F> &f, size_t n)
@@ -301,6 +340,7 @@ public:
     t.length += n;
     return *this;
   }
+
   template <typename F>
   inline istring
   append(const F *f, size_t n)
@@ -314,6 +354,7 @@ public:
     t.length += n - 1;
     return t;
   }
+
   template <typename F = T, size_t M>
   inline istring
   append(const F (&str)[M])
@@ -327,6 +368,7 @@ public:
     t.length += (M);
     return t;
   }
+
   template <typename F = T>
   inline istring
   append(const istring<F> &o)
@@ -340,6 +382,7 @@ public:
     t.length += o.length;
     return t;
   }
+
   template <size_t M, typename F = T>
   inline istring
   append(const sstring<M, F> &o)
@@ -366,6 +409,7 @@ public:
     (t.memory)[t.length++] = ch;
     return t;
   }
+
   template <typename F = T, size_t M>
   inline istring
   push_back(const F (&str)[M])
@@ -378,6 +422,7 @@ public:
     t.length += M - 1;
     return t;
   }
+
   template <typename F = T>
   inline istring
   push_back(const istring<F> &o)
@@ -391,6 +436,7 @@ public:
     t.length += o.length;
     return t;
   }
+
   template <size_t M, typename F = T>
   inline istring
   push_back(const sstring<M, F> &o)
@@ -405,6 +451,7 @@ public:
     t.length += end - 1;
     return t;
   }
+
   template <typename F = T>
   inline istring
   insert(size_t ind, F ch, size_t cnt = 1)
@@ -418,6 +465,7 @@ public:
     t.length = __mem::length + cnt;
     return t;
   }
+
   template <typename F = T, size_t M>
   inline istring
   insert(size_t ind, const char (&str)[M], size_t cnt = 1)
@@ -454,6 +502,7 @@ public:
     t.length += end;
     return t;
   }
+
   inline const T &
   at(const size_t n) const
   {
@@ -461,6 +510,7 @@ public:
       exc<except::library_error>("micron:string at() out of range");
     return (__mem::memory)[n];
   };
+
   inline size_t
   at(const_iterator n) const
   {
@@ -476,6 +526,7 @@ public:
       exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
+
   inline const T &
   operator[](const size_t n) const
   {
@@ -494,6 +545,7 @@ public:
     t.length += data.size();
     return t;
   };
+
   template <size_t M>
   inline istring
   operator+=(const char (&data)[M])
@@ -508,6 +560,7 @@ public:
     t.length += M - 1;
     return t;
   };
+
   template <typename F = T>
   inline istring
   operator+=(const F *&data)
@@ -522,6 +575,7 @@ public:
     t.length += end;
     return t;
   };
+
   template <typename F, size_t M>
   inline istring
   operator+=(const sstring<M, F> &data)
@@ -535,6 +589,7 @@ public:
     t.length += data.length;
     return t;
   };
+
   template <typename F = T>
   inline istring
   operator+=(const istring<F> &data)
@@ -562,6 +617,7 @@ public:
     t.length += data.size() - 1;
     return t;
   };
+
   template <typename F = T>
   inline istring<F>
   substr(size_t pos = 0, size_t cnt = 0) const
@@ -573,10 +629,12 @@ public:
     buf[cnt] = '\0';
     return buf;
   };
+
   // grow container
   inline void reserve(size_t n) = delete;
 
   inline void try_reserve(size_t n) = delete;
+
   inline bool
   operator==(const char *data) const
   {
@@ -589,6 +647,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T, size_t M>
   inline bool
   operator==(const F (&data)[M]) const
@@ -601,6 +660,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T>
   inline bool
   operator==(const istring<F> &data) const
@@ -626,6 +686,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T, size_t M>
   inline bool
   operator==(const F (&data)[M])
@@ -638,6 +699,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T>
   inline bool
   operator==(const istring<F> &data)

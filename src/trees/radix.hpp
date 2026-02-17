@@ -24,16 +24,22 @@ class radix_node
     mc::fvector<node *> children;
 
     node() = delete;
+
     node(const Key &k, const Value &v) : key_fragment(k), value(v), is_leaf(true) {}
+
     node(Key &&k, Value &&v) noexcept : key_fragment(micron::move(k)), value(micron::move(v)), is_leaf(true) {}
+
     node(const node &o) = delete;
+
     node(node &&o) noexcept
         : key_fragment(micron::move(o.key_fragment)), value(micron::move(o.value)), is_leaf(o.is_leaf), children(micron::move(o.children))
     {
       o.is_leaf = false;
       o.children.clear();
     }
+
     node &operator=(const node &o) = delete;
+
     node &
     operator=(node &&o) noexcept
     {
@@ -68,11 +74,15 @@ class radix_node
 
 public:
   radix_node() : root(nullptr) {}
+
   ~radix_node() { clear(); }
 
   radix_node(const radix_node &o) = delete;
+
   radix_node(radix_node &&o) noexcept : root(o.root) { o.root = nullptr; }
+
   radix_node &operator=(const radix_node &o) = delete;
+
   radix_node &
   operator=(radix_node &&o) noexcept
   {

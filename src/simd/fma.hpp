@@ -8,6 +8,7 @@
 
 #include "simd.hpp"
 #include "types.hpp"
+
 namespace micron
 {
 namespace simd
@@ -118,4 +119,5 @@ fms(T &o, T &b, T &c)
 };
 };
 };
+
 #pragma GCC diagnostic pop

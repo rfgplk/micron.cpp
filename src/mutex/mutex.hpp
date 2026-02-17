@@ -12,6 +12,7 @@ namespace micron
 class mutex
 {
   atomic_token<bool> tk;
+
   void
   reset()
   {
@@ -29,11 +30,13 @@ public:
     };
     return &mutex::reset;
   }
+
   bool
   operator!()
   {
     return (tk.get() != ATOMIC_LOCKED);     // inverse if it's locked false
   }
+
   auto
   lock()
   {
@@ -41,11 +44,13 @@ public:
     };
     return &mutex::reset;
   }
+
   auto
   retrieve()
   {
     return &mutex::reset;
   }
+
   template <typename... T> friend void unlock(T &...);
   mutex(const mutex &) = delete;
   mutex(mutex &&) = delete;

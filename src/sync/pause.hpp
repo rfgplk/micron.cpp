@@ -5,24 +5,36 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "errno.hpp"
+#include "../errno.hpp"
 
-#include "bits/__pause.hpp"
+#include "../bits/__pause.hpp"
 
-#include "linux/__includes.hpp"
-#include "linux/process/wait.hpp"
-#include "linux/sys/poll.hpp"
-#include "linux/sys/signal.hpp"
-#include "linux/sys/system.hpp"
-#include "linux/sys/time.hpp"
-#include "thread/signal.hpp"
+#include "../linux/__includes.hpp"
+#include "../linux/process/wait.hpp"
+#include "../linux/sys/poll.hpp"
+#include "../linux/sys/signal.hpp"
+#include "../linux/sys/system.hpp"
+#include "../linux/sys/time.hpp"
+#include "../thread/signal.hpp"
 
-#include "io/bits.hpp"
+#include "../io/bits.hpp"
 
-#include "types.hpp"
+#include "../chrono.hpp"
+
+#include "../types.hpp"
 
 namespace micron
 {
+template <umax_t L>
+void
+cpu_pause()
+{
+  timespec_t r = { L / 1000000000UL, L % 1000000000UL };
+
+  while ( micron::nanosleep(r, r) == -error::interrupted ) {
+    __cpu_pause();
+  }
+}
 
 template <typename F, typename... Args>
 inline void
@@ -36,6 +48,7 @@ pause(F f, Args... args)
   f(sig, args...);
   return;
 }
+
 inline void
 pause()
 {
@@ -90,6 +103,7 @@ try_wait_thread(int tid)
   int status = 0;
   return micron::waitpid(tid, &status, nohang);
 }
+
 // wait for signal, equivalent to sigsuspend
 template <typename... Args>
 inline int
@@ -109,7 +123,41 @@ await(Args... args)
 }
 
 // SLEEPING SECTION
-// nanosleep doesn't set errno anymore
+
+void
+spin_for(fduration_t timeout)
+{
+  auto start = micron::system_clock<>::now();
+  for ( ;; ) {
+    if ( (micron::system_clock<>::now() - start >= timeout) )
+      break;
+    __cpu_pause();
+  }
+}
+
+void
+wait_for(fduration_t timeout)
+{
+  auto start = micron::system_clock<>::now();
+  for ( ;; ) {
+    if ( (micron::system_clock<>::now() - start >= timeout) )
+      break;
+    // since its a ms dt
+    cpu_pause<1000>();
+  }
+}
+
+void
+sleep_duration(const fduration_t s)
+{
+  timespec_t r, rmn;
+  r.tv_sec = static_cast<time_t>(s / 1000.0);
+  r.tv_nsec = static_cast<long>((s - r.tv_sec * 1000) * 1'000'000);     // remainder in ns
+  while ( micron::nanosleep(r, rmn) == -error::interrupted ) {
+    r = rmn;
+    __cpu_pause();
+  }
+}
 
 // in seconds
 void
@@ -123,6 +171,7 @@ ssleep(const umax_t s)
     __cpu_pause();
   }
 }
+
 // in milliseconds
 void
 sleep_for(umax_t ms)
@@ -156,17 +205,6 @@ sleep_nano(umax_t ns)
   timespec_t r;
   r.tv_sec = ns / 1000000000UL;
   r.tv_nsec = ns % 1000000000UL;
-
-  while ( micron::nanosleep(r, r) == -error::interrupted ) {
-    __cpu_pause();
-  }
-}
-
-template <umax_t L>
-void
-cpu_pause()
-{
-  timespec_t r = { L / 1000000000UL, L % 1000000000UL };
 
   while ( micron::nanosleep(r, r) == -error::interrupted ) {
     __cpu_pause();

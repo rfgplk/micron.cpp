@@ -18,6 +18,7 @@ template <typename T> class channel
   // micron::spin_lock _spin;
   micron::mutex _lock;
   micron::stack<T> obj;
+
   auto
   __wait(void)
   {
@@ -38,10 +39,12 @@ template <typename T> class channel
 
 public:
   channel(void) : obj{} {}
+
   template <typename... Args> channel(Args &&...args)     // : _spin{}
   {
     (obj.emplace(args), ...);
   }
+
   channel &
   operator>>(T &&o)
   {
@@ -49,6 +52,7 @@ public:
     obj.emplace(o);
     return *this;
   }
+
   channel &
   operator>>(T &o)
   {
@@ -56,6 +60,7 @@ public:
     obj.push(o);
     return *this;
   }
+
   channel &
   operator<<(T &to)
   {
@@ -64,6 +69,7 @@ public:
     to = obj();
     return *this;
   }
+
   inline bool
   operator!(void)
   {

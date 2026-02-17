@@ -47,6 +47,7 @@ public:
   }
 
   rb_node(const rb_node &o) = default;
+
   rb_node(rb_node &&o) noexcept(noexcept(T(micron::move(o.data))))
       : data(micron::move(o.data)), color(o.color), parent(o.parent), left(o.left), right(o.right), kind(o.kind)
   {
@@ -57,6 +58,7 @@ public:
   }
 
   rb_node &operator=(const rb_node &o) = default;
+
   rb_node &
   operator=(rb_node &&o) noexcept(noexcept(data = micron::move(o.data)))
   {
@@ -82,11 +84,13 @@ public:
   {
     return kind == kind_t::leaf;
   }
+
   bool
   is_inner() const noexcept
   {
     return kind == kind_t::inner;
   }
+
   bool
   is_empty() const noexcept
   {
@@ -98,6 +102,7 @@ public:
   {
     return parent ? parent->parent : nullptr;
   }
+
   rb_node *
   uncle() const noexcept
   {
@@ -105,6 +110,7 @@ public:
       return nullptr;
     return parent == parent->parent->left ? parent->parent->right : parent->parent->left;
   }
+
   rb_node *
   sibling() const noexcept
   {
@@ -122,6 +128,7 @@ public:
       kind = kind_t::inner;
     }
   }
+
   void
   set_right(rb_node *r) noexcept
   {
@@ -137,6 +144,7 @@ public:
   {
     color = c;
   }
+
   RBColor
   get_color() const noexcept
   {
@@ -148,6 +156,7 @@ public:
   {
     return data;
   }
+
   const T &
   value() const noexcept
   {
@@ -201,6 +210,7 @@ private:
       x = x->left;
     return x;
   }
+
   static node *
   maximum(node *x)
   {
@@ -458,6 +468,7 @@ public:
   {
     return size_ == 0;
   }
+
   usize
   size() const noexcept
   {
@@ -470,12 +481,14 @@ public:
     node *n = find_node(key);
     return n ? &n->data : nullptr;
   }
+
   const T *
   find(const T &key) const noexcept
   {
     node *n = find_node(key);
     return n ? &n->data : nullptr;
   }
+
   bool
   contains(const T &key) const noexcept
   {
@@ -488,18 +501,21 @@ public:
     node *m = minimum(root_);
     return m ? &m->data : nullptr;
   }
+
   const T *
   min() const noexcept
   {
     node *m = minimum(root_);
     return m ? &m->data : nullptr;
   }
+
   T *
   max() noexcept
   {
     node *m = maximum(root_);
     return m ? &m->data : nullptr;
   }
+
   const T *
   max() const noexcept
   {
@@ -546,6 +562,7 @@ public:
   {
     return insert_or_assign(v);
   }
+
   T &
   insert(T &&v)
   {

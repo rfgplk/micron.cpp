@@ -504,6 +504,7 @@ ends_with(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
     return false;
   return equal(first + (len - n), end, pfirst);
 }
+
 template <is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::iterator

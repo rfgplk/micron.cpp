@@ -147,6 +147,7 @@ __apply_spawnattr(const spawnattr_t &attr)
 
   return 0;
 }
+
 __attribute__((noreturn)) int
 spawn_process(spawn_ctx *ctx)
 {
@@ -170,6 +171,7 @@ fail:
   micron::posix::exit(127);
   __builtin_unreachable();
 }
+
 __attribute__((noreturn)) int
 spawn_process(spawn_ctx &ctx)
 {

@@ -35,6 +35,7 @@ template <class Type> struct __internal_pointer_alloc {
   {
     return __new<Type>(micron::forward<Args &&>(args)...);
   }
+
   template <typename Arr>
   static inline __attribute__((always_inline)) void
   __impl_dealloc_arr(Arr *pointer)
@@ -43,6 +44,7 @@ template <class Type> struct __internal_pointer_alloc {
       __delete_arr(pointer);
     }
   }
+
   static inline __attribute__((always_inline)) void
   __impl_dealloc(Type *pointer)
   {
@@ -50,6 +52,7 @@ template <class Type> struct __internal_pointer_alloc {
       __delete(pointer);
     }
   }
+
   static inline __attribute__((always_inline)) void
   __impl_constdealloc(const Type *const pointer)
   {
@@ -82,6 +85,7 @@ template <typename T> struct shared_handler {
   count_t refs;
   // count_t weaks
 };
+
 template <typename T> using thread_safe_handler = atomic<shared_handler<T>>;
 
 template <typename T>

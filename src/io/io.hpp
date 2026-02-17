@@ -61,6 +61,7 @@ write(int fd, T *buf, size_t cnt)
     return -1;
   return posix::write(fd, buf, cnt);
 }
+
 template <typename T, size_t N>
 ssize_t
 write(int fd, const T (&buf)[N])
@@ -150,6 +151,7 @@ fput(const char *__restrict s, const fd_t &handle)
 {
   io::fwrite(s, micron::strlen(s), handle);
 }
+
 inline __attribute__((always_inline)) void
 fput(const char s, const fd_t &handle)
 {
@@ -174,12 +176,14 @@ fget(T *__restrict s, const size_t n, const fd_t &handle)
 {
   return posix::read(s, n, handle.fd);
 }
+
 template <typename T>
 inline __attribute__((always_inline)) auto
 fget_byte(T *__restrict s, const fd_t &handle)     // equivalent to getchar
 {
   return posix::read(handle.fd, s, 1);
 }
+
 // equivalent to fputs
 inline __attribute__((always_inline)) void
 put(const char *__restrict s, const fd_t &handle)

@@ -23,6 +23,7 @@ setsid(void)
 {
   return static_cast<posix::pid_t>(micron::syscall(SYS_setsid));
 }
+
 posix::pid_t
 setpgid(posix::pid_t pid, posix::pid_t gpid)
 {
@@ -46,31 +47,37 @@ getsid(void)
 {
   return static_cast<posix::pid_t>(micron::syscall(SYS_getsid));
 }
+
 pid_t
 gettid(void)
 {
   return static_cast<pid_t>(micron::syscall(SYS_gettid));
 }
+
 pid_t
 getpid(void)
 {
   return static_cast<pid_t>(micron::syscall(SYS_getpid));
 }
+
 pid_t
 getppid(void)
 {
   return static_cast<pid_t>(micron::syscall(SYS_getppid));
 }
+
 gid_t
 getgid(void)
 {
   return static_cast<gid_t>(micron::syscall(SYS_getgid));
 }
+
 uid_t
 getuid(void)
 {
   return static_cast<uid_t>(micron::syscall(SYS_getuid));
 }
+
 uid_t
 geteuid(void)
 {

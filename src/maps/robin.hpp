@@ -22,18 +22,24 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
   V value;           // if value is set, then it's occupied
   size_t length;     // length from starting node
   ~robin_map_node() = default;
+
   robin_map_node() : length(0) {}
+
   robin_map_node(const hash64_t &k, V &&v, size_t l) : key(k), value(micron::move(v)), length(l) {}
+
   template <typename... Args> robin_map_node(const hash64_t &k, size_t l, Args &&...args) : key(k), value(args...), length(l) {}
+
   robin_map_node(const robin_map_node &) = default;
   robin_map_node(robin_map_node &&) = default;
   robin_map_node &operator=(const robin_map_node &) = default;
   robin_map_node &operator=(robin_map_node &&) = default;
+
   bool
   operator!(void)
   {
     return !value;     // not set = true, set false
   }
+
   template <typename... Args>
   robin_map_node &
   set(const K &k, Args &&...args)
@@ -42,6 +48,7 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
     value = micron::move(V(micron::forward(args)...));
     return *this;
   }
+
   robin_map_node &
   set(const K &k, V &&val)
   {
@@ -50,6 +57,7 @@ template <typename K, typename V> struct alignas(32) robin_map_node {
     return *this;
   }
 };
+
 // non STL compliant, compare predicate won't go in here
 // this is a hash robin_map container which implements robin hood h. allc. under the hood
 template <typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
@@ -57,6 +65,7 @@ template <typename K, typename V, class Alloc = micron::allocator_serial<>, type
 class robin_map : public __immutable_memory_resource<Nd, Alloc>
 {
   using __mem = __immutable_memory_resource<Nd, Alloc>;
+
   inline hash64_t
   hsh(const K &val) const
   {
@@ -68,23 +77,27 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
   {
     return hsh % __mem::capacity;
   }
+
   inline size_t
   hsh_index(const V &val) const
   {
     return hash<hash64_t>(val) % __mem::capacity;
   }
+
   template <typename _N = Nd>     // this is here to help the compile inline properly
   inline __attribute__((always_inline)) Nd &
   __access(const size_t index)
   {
     return __mem::memory[index];     // to prevent pointless typing
   }
+
   template <typename _N = Nd>     // this is here to help the compile inline properly
   inline __attribute__((always_inline)) const Nd &
   __access(const size_t index) const
   {
     return __mem::memory[index];     // to prevent pointless typing
   }
+
   inline __attribute__((always_inline)) void
   __shift(size_t index)
   {
@@ -112,17 +125,24 @@ public:
   typedef const Nd *const_pointer;
   typedef Nd *iterator;
   typedef const Nd *const_iterator;
+
   ~robin_map()
   {
     if ( __mem::memory == nullptr )
       return;
     clear();
   }
+
   robin_map() : __mem((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd))) {}
+
   robin_map(const size_t n) : __mem(n * sizeof(Nd)) {}
+
   robin_map(const robin_map &) = delete;
+
   robin_map(robin_map &&o) : __mem(micron::move(o)) {}
+
   robin_map &operator=(const robin_map &) = delete;
+
   robin_map &
   operator=(robin_map &&o)
   {
@@ -137,7 +157,9 @@ public:
     o.capacity = 0;
     return *this;
   }
+
   void reserve() = delete;     // this robin_maps index is capacity bound, cannot grow the container
+
   void
   clear()
   {
@@ -149,11 +171,13 @@ public:
     micron::memset(&__mem::memory[0], 0x0, __mem::capacity);
     __mem::length = 0;
   }
+
   inline V &
   at(const K &k)     // access at K
   {
     return this->operator[](k);
   }
+
   inline V &
   operator[](const K &k)     // access at K
   {
@@ -171,16 +195,19 @@ public:
     // conform to standard behavior, if no hit insert empty object
     return insert(k, V{});
   }
+
   iterator
   begin()
   {
     return &__mem::memory[0];     // the memory is contiguous so this is fine
   }
+
   const_iterator
   begin() const
   {
     return &__mem::memory[0];     // the memory is contiguous so this is fine
   }
+
   const_iterator
   cbegin() const
   {
@@ -192,6 +219,7 @@ public:
   {
     return &__mem::memory[__mem::length];     // the memory is contiguous so this is fine
   }
+
   const_iterator
   end() const
   {
@@ -203,16 +231,19 @@ public:
   {
     return &__mem::memory[__mem::length];     // the memory is contiguous so this is fine
   }
+
   size_t
   size() const
   {
     return __mem::length;
   }
+
   size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   void
   swap(robin_map &o) noexcept
   {
@@ -220,6 +251,7 @@ public:
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);
   }
+
   V &
   insert(const K &k, V &&value)
   {
@@ -242,6 +274,7 @@ public:
     ++__mem::length;
     return __access(index).value;
   }
+
   template <typename... Args>
   V &
   emplace(const K &k, Args &&...args)
@@ -273,11 +306,13 @@ public:
     }
     return false;
   }
+
   size_t
   exists(const K &k) const
   {
     return get(k, V{}) ? 1 : 0;
   }
+
   size_t
   count(const K &k) const     // NOTE: robin hood robin_maps support multiple elements unlike STL robin_maps
   {

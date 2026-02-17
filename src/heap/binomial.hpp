@@ -39,6 +39,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   C comp;
 
   ~__binomial_heap() { clear(); }
+
   __binomial_heap() : root_list(nullptr), min_node(nullptr), node_count(0), comp() {}
 
   __binomial_heap(const C &c) : root_list(nullptr), min_node(nullptr), node_count(0), comp(c) {}

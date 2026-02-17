@@ -35,6 +35,7 @@ poll(pollfd &pfd, nfds_t nfds, int timeout)
 {
   return static_cast<int>(micron::syscall(SYS_poll, &pfd, nfds, timeout));
 }
+
 int
 ppoll(pollfd &pfd, nfds_t nfds, int timeout, sigset_t &ss)
 {

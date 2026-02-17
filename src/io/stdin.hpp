@@ -56,6 +56,7 @@ terminal(micron::string &bf)
   if constexpr ( Echo )
     io::println(bf);
 }
+
 template <char End = '\n'>
 void
 from_terminal(micron::string &bf)

@@ -40,6 +40,7 @@ template <u64 Sz> class sheet
   using stack_page_list = __buddy_list<micron::__chunk<byte>, __size_class, 64>;
   micron::__chunk<byte> __kernel_memory;
   stack_page_list __book;
+
   // when a new malloc happens insert it into the book
 
   inline __attribute__((always_inline)) void
@@ -57,11 +58,17 @@ template <u64 Sz> class sheet
 
 public:
   ~sheet() { __impl_release(); };
+
   sheet(void) = delete;
+
   sheet(const micron::__chunk<byte> &mem) : __kernel_memory(mem), __book(mem) {}
+
   sheet(const sheet &) = delete;
+
   sheet(sheet &&o) : __kernel_memory(micron::move(o.__kernel_memory)), __book(micron::move(o.__book)) {}
+
   sheet &operator=(const sheet &) = delete;
+
   sheet &
   operator=(sheet &&o)
   {
@@ -69,6 +76,7 @@ public:
     __book = micron::move(o.__book);
     return *this;
   }
+
   bool
   freeze(void)
   {
@@ -77,6 +85,7 @@ public:
     }
     return true;
   }
+
   bool
   freeze(int prot)
   {
@@ -85,16 +94,19 @@ public:
     }
     return true;
   }
+
   void
   release(void)
   {
     __impl_release();
   }
+
   bool
   empty(void) const noexcept
   {
     return __kernel_memory.zero();
   }
+
   // request to allocate mem of sz, fail silently (return nullptr)
   micron::__chunk<byte>
   mark(size_t mem_sz)
@@ -106,6 +118,7 @@ public:
       return { nullptr, 0 };
     return _p;
   }
+
   // allows marking at existing location
   micron::__chunk<byte>
   temporal_mark(size_t mem_sz)
@@ -117,6 +130,7 @@ public:
       return { nullptr, 0 };
     return _p;
   }
+
   // request to allocate mem of sz, fail loudly, force quote
   micron::__chunk<byte>
   try_mark(size_t mem_sz)
@@ -145,6 +159,7 @@ public:
       return false;
     return true;
   }
+
   bool
   try_tombstone(micron::__chunk<byte> _p)
   {
@@ -159,6 +174,7 @@ public:
       return false;
     return true;
   }
+
   bool
   try_unmark_no_size(byte *_p)
   {
@@ -169,6 +185,7 @@ public:
     __book.deallocate(_p);
     return true;
   }
+
   // deprecated technically
   bool
   try_tombstone_no_size(byte *_p)
@@ -180,6 +197,7 @@ public:
     __book.tombstone(_p);
     return true;
   }
+
   bool
   find(byte *_p)
   {
@@ -191,6 +209,7 @@ public:
       micron::abort();
     return !__book.is_tombstoned(_p);
   }
+
   size_t
   available() const
   {
@@ -198,26 +217,31 @@ public:
       return 0;
     return __book.available();
   }
+
   size_t
   used() const
   {
     return __book.used();
   }
+
   size_t
   allocated() const
   {
     return __kernel_memory.len;
   }
+
   addr_t *
   addr() const
   {
     return reinterpret_cast<addr_t *>(__kernel_memory.ptr);
   }
+
   addr_t *
   addr_end() const
   {
     return reinterpret_cast<addr_t *>(__kernel_memory.ptr + __kernel_memory.len);
   }
+
   bool
   is_at(addr_t *_addr) const
   {
@@ -225,6 +249,7 @@ public:
       return true;
     return false;
   }
+
   void
   reset(void)
   {

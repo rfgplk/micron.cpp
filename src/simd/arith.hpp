@@ -7,6 +7,7 @@
 
 #include "simd.hpp"
 #include "types.hpp"
+
 namespace micron
 {
 namespace simd
@@ -229,4 +230,5 @@ abs(T &o)
 }
 };
 };
+
 #pragma GCC diagnostic pop

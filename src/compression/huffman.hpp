@@ -18,11 +18,13 @@
   {
     return (zz0) & 0xffffff00;
   };
+
   u32
   depth(u32 zz1)
   {
     return (zz1) & 0x00000ff;
   };
+
   u32
   max(u32 zz2, u32 zz3)
   {

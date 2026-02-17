@@ -51,19 +51,24 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     __mem::free();
     // this->destroy(to_chunk(__mem::memory, __mem::capacity));
   }
+
   slice() : __mem(Alloc::auto_size()) { __mem::length = __mem::capacity; };
+
   slice(T *a, T *b) : __mem(((static_cast<size_t>(b - a) / sizeof(T))))
   {
     micron::memcpy(&__mem::memory[0], a, b - a);
     __mem::length = b - a;
   };
+
   slice(const size_t n) : __mem(n) { __mem::length = __mem::capacity; };
+
   slice(const size_t n, const T &r) : __mem(n)
   {
     __mem::length = __mem::capacity;
     for ( size_t i = 0; i < __mem::length; i++ )
       __mem::memory[i] = r;
   };
+
   // init by running Fn with each elem. of R, R must be a slice, holding type T
   template <typename Fn, typename R> slice(Fn &&fn, const R &r) : __mem(r.size())
   {
@@ -71,14 +76,18 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     for ( size_t i = 0; i < __mem::length; i++ )
       __mem::memory[i] = fn(r[i]);
   };
+
   // take a view of memory of the underlying container
   // template <is_micron_structure Y>
   // slice(const Y &c) : __mem(*c)
   //{
   //}
   slice(const slice &) = delete;
+
   slice(slice &&o) : __mem(micron::move(o)) {}
+
   slice &operator=(const slice &) = delete;
+
   slice &
   operator=(slice &&o)
   {
@@ -93,6 +102,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     o.capacity = 0;
     return *this;
   }
+
   slice &
   set(const T n)
   {
@@ -100,23 +110,27 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
       __mem::memory[i] = n;
     return *this;
   }
+
   slice &
   operator=(const byte n)
   {
     micron::memset(&__mem::memory[0], n, __mem::length);
     return *this;
   }
+
   chunk<byte>
   operator*()
   {
     return __mem::data();
   }
+
   // overload this to always point to mem
   byte *
   operator&() volatile
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
+
   template <typename R>
     requires(micron::is_integral_v<R>)
   T &
@@ -124,26 +138,31 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   {
     return __mem::memory[n];
   }
+
   const T &
   operator[](const size_t n) const
   {
     return __mem::memory[n];
   }
+
   slice
   operator[](const size_t n, const size_t m) const
   {     // from-to
     return slice<T, Alloc>(&__mem::memory[n], &__mem::memory[m]);
   }
+
   slice
   operator[](void) const
   {     // from-to
     return slice<T, Alloc>(&__mem::memory[0], &__mem::memory[__mem::length]);
   }
+
   iterator
   data()
   {
     return &__mem::memory[0];
   }
+
   iterator
   begin()
   {
@@ -155,6 +174,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   {
     return &__mem::memory[__mem::length - 1];
   }
+
   const_iterator
   cbegin() const
   {
@@ -166,11 +186,13 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   {
     return &__mem::memory[__mem::length - 1];
   }
+
   size_t
   size() const
   {
     return __mem::length;
   }
+
   void
   reset()
   {

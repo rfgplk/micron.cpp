@@ -19,6 +19,7 @@
 
 #include "vec3.hpp"
 #include "vec4.hpp"
+
 namespace micron
 {
 
@@ -28,10 +29,14 @@ struct vector_8 {
   T x, y, z, w, a, b, c, d;
 
   ~vector_8() = default;
+
   constexpr vector_8() : x(T{}), y(T{}), z(T{}), w(T{}), a(T{}), b(T{}), c(T{}), d(T{}) {}
+
   constexpr vector_8(T x_, T y_, T z_, T w_, T a_, T b_, T c_, T d_) : x(x_), y(y_), z(z_), w(w_), a(a_), b(b_), c(c_), d(d_) {}
+
   constexpr vector_8(const vector_8<T> &o) = default;
   constexpr vector_8(vector_8<T> &&o) = default;
+
   constexpr vector_8(const std::initializer_list<T> &o)
   {
     if ( o.size() != 8 )
@@ -84,6 +89,7 @@ struct vector_8 {
   {
     return { x * s, y * s, z * s, w * s, a * s, b * s, c * s, d * s };
   }
+
   constexpr vector_8<T> &
   operator*=(T s)
   {
@@ -97,6 +103,7 @@ struct vector_8 {
     d *= s;
     return *this;
   }
+
   friend constexpr vector_8<T>
   operator*(T s, const vector_8<T> &v)
   {
@@ -108,6 +115,7 @@ struct vector_8 {
   {
     return { x / s, y / s, z / s, w / s, a / s, b / s, c / s, d / s };
   }
+
   constexpr vector_8<T> &
   operator/=(T s)
   {
@@ -121,6 +129,7 @@ struct vector_8 {
     d /= s;
     return *this;
   }
+
   friend constexpr vector_8<T>
   operator/(T s, const vector_8<T> &v)
   {
@@ -132,16 +141,19 @@ struct vector_8 {
   {
     return { x + s, y + s, z + s, w + s, a + s, b + s, c + s, d + s };
   }
+
   constexpr vector_8<T>
   operator-(T s) const
   {
     return { x - s, y - s, z - s, w - s, a - s, b - s, c - s, d - s };
   }
+
   friend constexpr vector_8<T>
   operator+(T s, const vector_8<T> &v)
   {
     return { s + v.x, s + v.y, s + v.z, s + v.w, s + v.a, s + v.b, s + v.c, s + v.d };
   }
+
   friend constexpr vector_8<T>
   operator-(T s, const vector_8<T> &v)
   {
@@ -335,6 +347,7 @@ struct vector_8 {
     return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s), math::fpow(w, s),
              math::fpow(a, s), math::fpow(b, s), math::fpow(c, s), math::fpow(d, s) };
   }
+
   friend constexpr vector_8<T>
   pow(T s, const vector_8<T> &v)
   {
@@ -354,11 +367,13 @@ struct vector_8 {
   {
     return x + y + z + w + a + b + c + d;
   }
+
   constexpr T
   mean() const
   {
     return sum() / T{ 8 };
   }
+
   constexpr T
   prod() const
   {
@@ -416,6 +431,7 @@ struct vector_8 {
   {
     return x == o.x && y == o.y && z == o.z && w == o.w && a == o.a && b == o.b && c == o.c && d == o.d;
   }
+
   constexpr bool
   operator!=(const vector_8<T> &o) const
   {
@@ -452,16 +468,19 @@ struct vector_8 {
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   lo_zw() const
   {
     return { z, w };
   }
+
   constexpr vector_2<T>
   hi_ab() const
   {
     return { a, b };
   }
+
   constexpr vector_2<T>
   hi_cd() const
   {
@@ -473,6 +492,7 @@ struct vector_8 {
   {
     return { x, y, z, w };
   }
+
   constexpr vector_4<T>
   hi() const
   {
@@ -484,6 +504,7 @@ struct vector_8 {
   {
     return { x, z, a, c };
   }
+
   constexpr vector_4<T>
   odd() const
   {
@@ -495,36 +516,43 @@ struct vector_8 {
   {
     return x;
   }
+
   constexpr T
   s1() const
   {
     return y;
   }
+
   constexpr T
   s2() const
   {
     return z;
   }
+
   constexpr T
   s3() const
   {
     return w;
   }
+
   constexpr T
   s4() const
   {
     return a;
   }
+
   constexpr T
   s5() const
   {
     return b;
   }
+
   constexpr T
   s6() const
   {
     return c;
   }
+
   constexpr T
   s7() const
   {
@@ -550,6 +578,7 @@ struct vector_8 {
   {
     return fma(v, u);
   }
+
   constexpr vector_8<T>
   mul_add(T s, const vector_8<T> &u) const
   {

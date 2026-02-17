@@ -145,6 +145,7 @@ int_to_string_stack(I n)
   invert(buf);
   return buf;
 }
+
 template <typename I, typename T = char>
 inline micron::hstring<T>
 bytes_to_string(I n)
@@ -171,8 +172,8 @@ u8_check(const char *str, size_t n)
 {
   for ( size_t i = 0; i < n; i++ ) {
     char c = *str++;
-    if ( c < 0x80 )
-      continue;     // ASCII range
+    // if ( c < 0x80 )
+    //   continue;     // ASCII range
 
     // Check the leading byte for UTF-8 validity
     if ( (c & 0xE0) == 0xC0 ) {     // 110xxxxx
@@ -202,6 +203,7 @@ u8_check(const char *str, size_t n)
   }
   return str;     // all checks passed
 }
+
 constexpr const char16_t *
 u16_check(const char16_t *str, size_t n)
 {
@@ -225,6 +227,7 @@ u16_check(const char16_t *str, size_t n)
   }
   return str;     // All checks passed
 }
+
 constexpr const char32_t *
 u32_check(const char32_t *str, size_t n)
 {

@@ -148,6 +148,7 @@ power_loop(T x, F p)
     r *= x;
   return r;
 }
+
 template <typename T, typename F>
   requires(micron::is_integral_v<T> && micron::is_integral_v<F>)
 constexpr T
@@ -189,31 +190,37 @@ pow(T base, i32 exp)
 // (arch-specific), builtins will handle this, until i get around to
 // porting it in full
 static constexpr double huge = 1.0e300, tiny = 1.0e-300;
+
 constexpr f32
 powerf32(f32 x, f32 y)
 {
   return __builtin_powf(x, y);
 }
+
 constexpr f64
 powerf(f64 x, f64 y)
 {
   return __builtin_pow(x, y);
 }
+
 constexpr flong
 powerflong(flong x, flong y)
 {
   return __builtin_powl(x, y);
 }
+
 constexpr float
 fpow(float x, float y) noexcept
 {
   return powerf32(x, y);
 }
+
 constexpr double
 fpow(double x, double y) noexcept
 {
   return powerf(x, y);
 }
+
 constexpr long double
 fpow(long double x, long double y) noexcept
 {
@@ -225,71 +232,85 @@ expf64(f64 x)
 {
   return __builtin_exp(x);
 }
+
 constexpr f32
 expf32(f32 x)
 {
   return __builtin_expf(x);
 }
+
 constexpr flong
 expf128(flong x)
 {
   return __builtin_expl(x);
 }
+
 constexpr float
 fexp(float x) noexcept
 {
   return expf32(x);
 }
+
 constexpr double
 fexp(double x) noexcept
 {
   return expf64(x);
 }
+
 constexpr long double
 fexp(long double x) noexcept
 {
   return expf128(x);
 }
+
 constexpr f32
 logf32(f32 x)
 {
   return __builtin_logf(x);
 }
+
 constexpr f64
 logf64(f64 x)
 {
   return __builtin_log(x);
 }
+
 constexpr flong
 logf128(flong x)
 {
   return __builtin_logl(x);
 }
+
 constexpr f32
 roundf32(f32 x)
 {
   return __builtin_roundf(x);
 }
+
 constexpr f64
 roundf64(f64 x)
 {
   return __builtin_round(x);
 }
+
 constexpr flong
 roundf128(flong x)
 {
   return __builtin_roundl(x);
 }
+
 constexpr f32
 maxf32(f32 x, f32 y)
 {
   return __builtin_fmaxf(x, y);
 }
+
 constexpr f64
 maxf64(f64 x, f64 y)
 {
   return __builtin_fmax(x, y);
 }
+
 constexpr flong
 maxf128(flong x, flong y)
 {
@@ -327,11 +348,13 @@ flog2(float x) noexcept
 {
   return __builtin_log2f(x);
 }
+
 constexpr double
 flog2(double x) noexcept
 {
   return __builtin_log2(x);
 }
+
 constexpr long double
 flog2(long double x) noexcept
 {
@@ -353,21 +376,25 @@ log2ll(i64 x)
     return -1;
   return (i64)63 - (i64)__builtin_clzll(x);
 }
+
 constexpr f32
 log10f32(f32 x)
 {
   return __builtin_log10f(x);
 }
+
 constexpr f64
 log10f64(f64 x)
 {
   return __builtin_log10(x);
 }
+
 constexpr flong
 log10f128(flong x)
 {
   return __builtin_log10l(x);
 }
+
 constexpr f64
 remainderf64(f64 x, f64 y)
 {
@@ -379,6 +406,7 @@ remainderf128(flong x, flong y)
 {
   return __builtin_remainderl(x, y);
 }
+
 constexpr flong
 remainderf128(flong x, f32 y)
 {
@@ -401,6 +429,7 @@ nearest_pow2(T x)
 
   return (v - lower <= upper - v) ? T(lower) : T(upper);
 }
+
 template <typename T>
   requires(micron::is_integral_v<T>)
 constexpr T
@@ -417,6 +446,7 @@ nearest_pow2ll(T x)
 
   return (v - lower <= upper - v) ? T(lower) : T(upper);
 }
+
 template <typename T>
   requires(micron::is_integral_v<T>)
 T
@@ -427,6 +457,7 @@ __nearest_pow2ll(T x)
                        ? (1u << ((8 * sizeof(x) - 1) - __builtin_clzll(x)))
                        : (1u << ((8 * sizeof(x)) - __builtin_clzll(x))));
 }
+
 template <typename T>
   requires(micron::is_integral_v<T>)
 T
@@ -464,6 +495,7 @@ ceil(T s)
     return T(i + 1);
   return T(i);
 }
+
 template <typename T>
   requires(micron::is_floating_point_v<T>)
 constexpr T
@@ -474,24 +506,28 @@ floor(T s)
     return T(i - 1);
   return T(i);
 }
+
 template <typename T>
 constexpr T
 fround(T x) noexcept
 {
   return round(x);
 }
+
 template <typename T>
 constexpr T
 fceil(T x) noexcept
 {
   return ceil(x);
 }
+
 template <typename T>
 constexpr T
 ffloor(T x) noexcept
 {
   return floor(x);
 }
+
 // trunc: cast to integer, cast back (no std::trunc)
 template <typename T>
 constexpr T
@@ -505,22 +541,26 @@ isfinite(f32 x)
 {
   return __builtin_isfinite(x);
 }
+
 constexpr int
 isfinite(f64 x)
 {
   return __builtin_isfinite(x);
 }
+
 template <typename T>
 constexpr int
 isign(T x) noexcept
 {
   return (x > T{}) - (x < T{});
 }
+
 constexpr int
 isinf(f32 x)
 {
   return __builtin_isinf(x);
 }
+
 constexpr int
 isinf(f64 x)
 {
@@ -532,6 +572,7 @@ isnan(f32 x)
 {
   return __builtin_isnan(x);
 }
+
 constexpr int
 isnan(f64 x)
 {
@@ -543,6 +584,7 @@ isnormal(f32 x)
 {
   return __builtin_isnormal(x);
 }
+
 constexpr int
 isnormal(f64 x)
 {
@@ -554,16 +596,19 @@ signbit(f32 x)
 {
   return __builtin_signbit(x);
 }
+
 constexpr int
 signbit(f64 x)
 {
   return __builtin_signbit(x);
 }
+
 constexpr int
 isgreater(f32 a, f32 b)
 {
   return __builtin_isgreater(a, b);
 }
+
 constexpr int
 isgreater(f64 a, f64 b)
 {
@@ -575,6 +620,7 @@ isgreaterequal(f32 a, f32 b)
 {
   return __builtin_isgreaterequal(a, b);
 }
+
 constexpr int
 isgreaterequal(f64 a, f64 b)
 {
@@ -586,6 +632,7 @@ isless(f32 a, f32 b)
 {
   return __builtin_isless(a, b);
 }
+
 constexpr int
 isless(f64 a, f64 b)
 {
@@ -597,6 +644,7 @@ islessequal(f32 a, f32 b)
 {
   return __builtin_islessequal(a, b);
 }
+
 constexpr int
 islessequal(f64 a, f64 b)
 {
@@ -608,6 +656,7 @@ islessgreater(f32 a, f32 b)
 {
   return __builtin_islessgreater(a, b);
 }
+
 constexpr int
 islessgreater(f64 a, f64 b)
 {
@@ -619,16 +668,19 @@ isunordered(f32 a, f32 b)
 {
   return __builtin_isunordered(a, b);
 }
+
 constexpr int
 isunordered(f64 a, f64 b)
 {
   return __builtin_isunordered(a, b);
 }
+
 constexpr f32
 rint(f32 x)
 {
   return __builtin_rintf(x);
 }
+
 constexpr f64
 rint(f64 x)
 {
@@ -640,6 +692,7 @@ lrint(f32 x)
 {
   return __builtin_lrintf(x);
 }
+
 constexpr long
 lrint(f64 x)
 {
@@ -651,6 +704,7 @@ llrint(f32 x)
 {
   return __builtin_llrintf(x);
 }
+
 constexpr long long
 llrint(f64 x)
 {
@@ -662,16 +716,19 @@ nearbyint(f32 x)
 {
   return __builtin_nearbyintf(x);
 }
+
 constexpr f64
 nearbyint(f64 x)
 {
   return __builtin_nearbyint(x);
 }
+
 constexpr f32
 scalbn(f32 x, int n)
 {
   return __builtin_scalbnf(x, n);
 }
+
 constexpr f64
 scalbn(f64 x, int n)
 {
@@ -683,16 +740,19 @@ scalbln(f32 x, long n)
 {
   return __builtin_scalblnf(x, n);
 }
+
 constexpr f64
 scalbln(f64 x, long n)
 {
   return __builtin_scalbln(x, n);
 }
+
 constexpr f32
 copysign(f32 x, f32 y)
 {
   return __builtin_copysignf(x, y);
 }
+
 constexpr f64
 copysign(f64 x, f64 y)
 {
@@ -704,22 +764,26 @@ fabs(f32 x)
 {
   return __builtin_fabsf(x);
 }
+
 constexpr f64
 fabs(f64 x)
 {
   return __builtin_fabs(x);
 }
+
 template <typename T>
 constexpr T
 fabsmax(T a, T b)
 {
   return fmax(fabs(a), fabs(b));
 }
+
 constexpr f32
 remainder(f32 x, f32 y)
 {
   return __builtin_remainderf(x, y);
 }
+
 constexpr f64
 remainder(f64 x, f64 y)
 {
@@ -737,26 +801,31 @@ remquo(f64 x, f64 y, int *q)
 {
   return __builtin_remquo(x, y, q);
 }
+
 inline f32
 nanf(const char *tag)
 {
   return __builtin_nanf(tag);
 }
+
 inline f64
 nan(const char *tag)
 {
   return __builtin_nan(tag);
 }
+
 constexpr i32
 abs(i32 x)
 {
   return __builtin_abs(x);
 }
+
 constexpr long
 labs(long x)
 {
   return __builtin_labs(x);
 }
+
 constexpr long long
 llabs(long long x)
 {
@@ -768,11 +837,13 @@ ffmaf(float a, float b, float c) noexcept
 {
   return __builtin_fmaf(a, b, c);
 }
+
 constexpr double
 ffma(double a, double b, double c) noexcept
 {
   return __builtin_fma(a, b, c);
 }
+
 constexpr long double
 ffmal(long double a, long double b, long double c) noexcept
 {

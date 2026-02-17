@@ -17,6 +17,7 @@ repeat_bytes(void)
 {
   return ((word)-1 / 0xFF) * N;
 }
+
 template <typename T = word>
 constexpr inline word __attribute__((always_inline))
 has_zero(T a)
@@ -41,18 +42,21 @@ get_byte(word a, u32 ind)
 {
   return (a >> (ind * byte_width));
 }
+
 template <typename T>
 bool
 aligned_256(const T *ptr)
 {
   return !(reinterpret_cast<uintptr_t>(ptr) & 31);
 }
+
 template <typename T>
 bool
 aligned_64(const T *ptr)
 {
   return !(reinterpret_cast<uintptr_t>(ptr) & 7);
 }
+
 template <typename T>
 bool
 aligned_32(const T *ptr)
@@ -100,6 +104,7 @@ rotl64(const T x, const i8 r)
   else
     return (x << r) | (x >> (64 - r));
 }
+
 template <typename T>
 constexpr T
 reverse_bits(T t)
@@ -143,6 +148,7 @@ bit(T t)     // is bit set
 {
   return (t & (1 << x));
 }
+
 template <typename T>
 constexpr int
 bitcount(T x) noexcept     // seriously bitcount is a way more reasonable name, what even is POPcount where are the pops
@@ -163,12 +169,14 @@ popcount(T x) noexcept     // for stl compat
 {
   return bitcount(x);
 }
+
 template <typename T>
 constexpr bool
 has_any_bit(T x)
 {
   return bitcount(x);
 }
+
 template <typename T>
 constexpr bool
 has_single_bit(T x)
@@ -188,6 +196,7 @@ countl_zero(T x) noexcept
   if constexpr ( micron::is_same_v<T, long long> )
     return __builtin_clzll(x);
 }
+
 template <typename T>
 constexpr int
 countr_zero(T x) noexcept

@@ -47,6 +47,7 @@ template <is_simd_512_type T, is_flag_type F> class v512
 
 public:
   ~v512() = default;
+
   v512(void) { __impl_zero_init(); }
 
   inline v512 &
@@ -78,6 +79,7 @@ public:
     value = _mm512_set_pd(h, g, f, e, d, c, b, a);
     return *this;
   }
+
   inline v512 &
   operator=(std::initializer_list<float> lst)
   {
@@ -93,6 +95,7 @@ public:
                           __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   // start of ints
   inline v512 &
   operator=(std::initializer_list<i64> lst)
@@ -109,6 +112,7 @@ public:
     value = _mm512_set_epi64(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   inline v512 &
   operator=(std::initializer_list<i32> lst)
   {
@@ -123,6 +127,7 @@ public:
                              __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   inline v512 &
   operator=(std::initializer_list<i16> lst)
   {
@@ -139,6 +144,7 @@ public:
                              __arr[0]);
     return *this;
   }
+
   inline v512 &
   operator=(std::initializer_list<i8> lst)
   {
@@ -159,37 +165,44 @@ public:
                             __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   // end of ints
   v512(i8 _e0)
     requires stdlib::is_same_v<T, i512>
   {
     value = _mm512_set1_epi8(_e0);
   }
+
   v512(i16 _e0)
     requires stdlib::is_same_v<T, i512>
   {
     value = _mm512_set1_epi16(_e0);
   }
+
   v512(i32 a)
     requires stdlib::is_same_v<T, i512>
   {
     value = _mm512_set1_epi32(a);
   }
+
   v512(i64 a)
     requires stdlib::is_same_v<T, i512>
   {
     value = _mm512_set1_epi64(a);
   }
+
   v512(float a)
     requires stdlib::is_same_v<T, f512>
   {
     value = _mm512_set1_ps(a);
   }
+
   v512(double a)
     requires stdlib::is_same_v<T, d512>
   {
     value = _mm512_set1_pd(a);
   }
+
   v512(std::initializer_list<double> lst)
   {
     if ( lst.size() != 8 )
@@ -217,6 +230,7 @@ public:
     }
     value = _mm512_set_pd(h, g, f, e, d, c, b, a);
   }
+
   v512(std::initializer_list<float> lst)
   {
     if ( lst.size() != 16 )
@@ -230,6 +244,7 @@ public:
     value = _mm512_set_ps(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
                           __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   // start of ints
   v512(std::initializer_list<i64> lst)
   {
@@ -243,6 +258,7 @@ public:
 
     value = _mm512_set_epi64(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   v512(std::initializer_list<i32> lst)
   {
     if ( lst.size() != 16 )
@@ -256,6 +272,7 @@ public:
     value = _mm512_set_epi32(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
                              __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   v512(std::initializer_list<i16> lst)
   {
     if ( lst.size() != 32 )
@@ -271,6 +288,7 @@ public:
                              __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
                              __arr[0]);
   }
+
   v512(std::initializer_list<i8> lst)
   {
     if ( lst.size() != 64 )
@@ -288,9 +306,11 @@ public:
                             __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4],
                             __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   // end of ints
 
   v512(const v512 &o) : value(o.value) {}
+
   v512(v512 &&o) : value(o.value)
   {
     if constexpr ( stdlib::same_as<T, f512> ) {
@@ -303,18 +323,21 @@ public:
       o.value = _mm512_setzero_si512();
     }
   }
+
   inline v512 &
   operator=(const v512 &o)
   {
     value = o.value;
     return *this;
   }
+
   inline v512 &
   operator=(v512 &&o)
   {
     value = o.value;
     return *this;
   }
+
   // broadcast /set() analog.
   inline v512 &
   operator=(float f)
@@ -322,42 +345,50 @@ public:
     value = _mm512_set1_ps(f);
     return *this;
   }
+
   inline v512 &
   operator=(double d)
   {
     value = _mm512_set1_pd(d);
     return *this;
   }
+
   inline v512 &
   operator=(i8 c)
   {
     value = _mm512_set1_epi8(c);
     return *this;
   }
+
   inline v512 &
   operator=(i16 s)
   {
     value = _mm512_set1_epi16(s);
     return *this;
   }
+
   inline v512 &
   operator=(i32 i)
   {
     value = _mm512_set1_epi32(i);
     return *this;
   }
+
   inline v512 &
   operator=(i64 l)
   {
     value = _mm512_set1_epi64(l);
     return *this;
   }
+
   inline v512 &
   operator=(F *addr)
   {
     return uload<F>(addr);
   }
+
   constexpr v512 &operator[](const int a) = delete;
+
   constexpr int
   operator==(const v512 &o) const
   {
@@ -387,6 +418,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator>=(const v512 &o) const
   {
@@ -446,6 +478,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator<(const v512 &o) const
   {
@@ -473,6 +506,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator<=(const v512 &o) const
   {
@@ -500,6 +534,7 @@ public:
     }
     return 0x0;
   }
+
   // scalar const. adds
   constexpr inline v512 &
   operator+=(double x)
@@ -510,6 +545,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v512 &
   operator+=(float x)
   {
@@ -519,6 +555,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v512 &
   operator+=(A x)
@@ -544,6 +581,7 @@ public:
     }
     return *this;
   }
+
   // end
   // scalar const subs
 
@@ -556,6 +594,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v512 &
   operator-=(float x)
   {
@@ -565,6 +604,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v512 &
   operator-=(A x)
@@ -590,6 +630,7 @@ public:
     }
     return *this;
   }
+
   // end
   constexpr inline v512 &
   operator-=(const v512 &o)
@@ -639,6 +680,7 @@ public:
     }
     return _r;
   }
+
   constexpr inline v512 &
   operator-(const v512 &o) const
   {
@@ -663,6 +705,7 @@ public:
     }
     return _r;
   }
+
   constexpr bool
   all_zeroes() const
   {
@@ -674,6 +717,7 @@ public:
       return (_mm512_test_all_zeros(value, value) != 0);
     }
   }
+
   constexpr bool
   all_ones() const
   {
@@ -685,16 +729,19 @@ public:
       return (_mm512_test_all_ones(value) != 0);
     }
   }
+
   constexpr void
   to_zero(void)
   {
     __impl_zero_init();
   }
+
   constexpr void
   to_ones(void)
   {
     __impl_one_init();
   }
+
   // broadcast /set() analog.
   inline v512 &
   set(float f)
@@ -702,36 +749,42 @@ public:
     value = _mm512_set1_ps(f);
     return *this;
   }
+
   inline v512 &
   set(double d)
   {
     value = _mm512_set1_pd(d);
     return *this;
   }
+
   inline v512 &
   set(i8 c)
   {
     value = _mm512_set1_epi8(c);
     return *this;
   }
+
   inline v512 &
   set(i16 s)
   {
     value = _mm512_set1_epi16(s);
     return *this;
   }
+
   inline v512 &
   set(i32 i)
   {
     value = _mm512_set1_epi32(i);
     return *this;
   }
+
   inline v512 &
   set(i64 l)
   {
     value = _mm512_set1_epi64(l);
     return *this;
   }
+
   inline v512 &
   set(float const *f)
   {
@@ -739,6 +792,7 @@ public:
     value = _mm512_broadcastss_ps(t);     // why :c
     return *this;
   }
+
   inline v512 &
   broadcast(float const *f)
   {
@@ -762,6 +816,7 @@ public:
     value = loadu<T, F>(reinterpret_cast<F *>(mem));
     return *this;
   }
+
   // BOOLEANS start
   inline v512 &
   operator|=(const v512 &o)
@@ -777,6 +832,7 @@ public:
     }
     return *this;
   }
+
   inline v512 &
   operator&=(const v512 &o)
   {
@@ -791,6 +847,7 @@ public:
     }
     return *this;
   }
+
   inline v512 &
   operator^=(const v512 &o)
   {
@@ -805,6 +862,7 @@ public:
     }
     return *this;
   }
+
   inline T
   operator|(const v512 &o) const
   {
@@ -820,6 +878,7 @@ public:
     }
     return _r;
   }
+
   inline T
   operator&(const v512 &o) const
   {
@@ -835,6 +894,7 @@ public:
     }
     return _r;
   }
+
   inline T
   operator^(const v512 &o) const
   {
@@ -920,6 +980,7 @@ public:
     }
     return *this;
   }
+
   // BOOLEANS end
   // divs (f only) and muls
 
@@ -932,6 +993,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v512 &
   operator/=(float x)
   {
@@ -952,6 +1014,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline T
   operator/(float x) const
   {
@@ -962,6 +1025,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v512 &
   operator*=(double x)
   {
@@ -971,6 +1035,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v512 &
   operator*=(float x)
   {
@@ -980,6 +1045,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v512 &
   operator*=(A x)
@@ -1014,6 +1080,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline T
   operator*(float x) const
   {
@@ -1024,6 +1091,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline T
   operator*(F x)
   {
@@ -1046,6 +1114,7 @@ public:
     }
     return _d;
   }
+
   // end divs and muls
 
   inline void
@@ -1062,6 +1131,7 @@ public:
       _mm512_storeu_si512(reinterpret_cast<T *>(arr), value);
     }
   }
+
   inline void
   get_aligned(F *arr) const
   {

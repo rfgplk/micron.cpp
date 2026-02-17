@@ -68,6 +68,7 @@ count_set_128(const void *_ptr, size_t len, const char b)
       ++cnt;
   return cnt;
 }
+
 size_t
 count_set_256(const void *_ptr, size_t len, const char b)
 {
@@ -85,6 +86,7 @@ count_set_256(const void *_ptr, size_t len, const char b)
       ++cnt;
   return cnt;
 }
+
 bool
 any_set_128(const void *_ptr, size_t len, const char b)
 {

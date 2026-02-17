@@ -55,6 +55,7 @@ invoke(F &&f, Args &&...args) noexcept(micron::is_nothrow_invocable_v<F, Args...
   else
     return micron::forward<F>(f)(micron::forward<Args>(args)...);
 }
+
 template <class R, class F, class... Args>
   requires micron::is_invocable_r_v<R, F, Args...>
 constexpr R

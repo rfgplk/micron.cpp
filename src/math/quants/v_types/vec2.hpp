@@ -26,10 +26,14 @@ struct vector_2 {
   T x, y;
 
   ~vector_2() = default;
+
   constexpr vector_2() : x(T{}), y(T{}) {}
+
   constexpr vector_2(T a, T b) : x(a), y(b) {}
+
   constexpr vector_2(const vector_2<T> &o) = default;
   constexpr vector_2(vector_2<T> &&o) = default;
+
   constexpr vector_2(const std::initializer_list<T> &o)
   {
     if ( o.size() != 2 )
@@ -47,11 +51,13 @@ struct vector_2 {
   {
     return { x + o.x, y + o.y };
   }
+
   constexpr vector_2<T>
   operator-(const vector_2<T> &o) const
   {
     return { x - o.x, y - o.y };
   }
+
   constexpr vector_2<T> &
   operator+=(const vector_2<T> &o)
   {
@@ -59,6 +65,7 @@ struct vector_2 {
     y += o.y;
     return *this;
   }
+
   constexpr vector_2<T> &
   operator-=(const vector_2<T> &o)
   {
@@ -72,6 +79,7 @@ struct vector_2 {
   {
     return { x * s, y * s };
   }
+
   constexpr vector_2<T> &
   operator*=(T s)
   {
@@ -91,6 +99,7 @@ struct vector_2 {
   {
     return { x / s, y / s };
   }
+
   constexpr vector_2<T> &
   operator/=(T s)
   {
@@ -98,6 +107,7 @@ struct vector_2 {
     y /= s;
     return *this;
   }
+
   friend constexpr vector_2<T>
   operator/(T s, const vector_2<T> &v)
   {
@@ -109,16 +119,19 @@ struct vector_2 {
   {
     return { x + s, y + s };
   }
+
   constexpr vector_2<T>
   operator-(T s) const
   {
     return { x - s, y - s };
   }
+
   friend constexpr vector_2<T>
   operator+(T s, const vector_2<T> &v)
   {
     return { s + v.x, s + v.y };
   }
+
   friend constexpr vector_2<T>
   operator-(T s, const vector_2<T> &v)
   {
@@ -136,6 +149,7 @@ struct vector_2 {
   {
     return { x * o.x, y * o.y };
   }
+
   constexpr vector_2<T>
   operator*(const vector_2<T> &o) const
   {
@@ -147,6 +161,7 @@ struct vector_2 {
   {
     return x * o.x + y * o.y;
   }
+
   constexpr T
   cross(const vector_2<T> &o) const
   {
@@ -476,6 +491,7 @@ struct vector_2 {
   {
     return { math::fpow(x, s), math::fpow(y, s) };
   }
+
   friend constexpr vector_2<T>
   pow(T s, const vector_2<T> &v)
   {
@@ -571,16 +587,19 @@ struct vector_2 {
   {
     return { static_cast<T>(x < o.x), static_cast<T>(y < o.y) };
   }
+
   constexpr vector_2<T>
   operator<=(const vector_2<T> &o) const
   {
     return { static_cast<T>(x <= o.x), static_cast<T>(y <= o.y) };
   }
+
   constexpr vector_2<T>
   operator>(const vector_2<T> &o) const
   {
     return { static_cast<T>(x > o.x), static_cast<T>(y > o.y) };
   }
+
   constexpr vector_2<T>
   operator>=(const vector_2<T> &o) const
   {
@@ -592,16 +611,19 @@ struct vector_2 {
   {
     return { static_cast<T>(x < s), static_cast<T>(y < s) };
   }
+
   constexpr vector_2<T>
   operator<=(T s) const
   {
     return { static_cast<T>(x <= s), static_cast<T>(y <= s) };
   }
+
   constexpr vector_2<T>
   operator>(T s) const
   {
     return { static_cast<T>(x > s), static_cast<T>(y > s) };
   }
+
   constexpr vector_2<T>
   operator>=(T s) const
   {
@@ -613,16 +635,19 @@ struct vector_2 {
   {
     return { static_cast<T>(s < v.x), static_cast<T>(s < v.y) };
   }
+
   friend constexpr vector_2<T>
   operator<=(T s, const vector_2<T> &v)
   {
     return { static_cast<T>(s <= v.x), static_cast<T>(s <= v.y) };
   }
+
   friend constexpr vector_2<T>
   operator>(T s, const vector_2<T> &v)
   {
     return { static_cast<T>(s > v.x), static_cast<T>(s > v.y) };
   }
+
   friend constexpr vector_2<T>
   operator>=(T s, const vector_2<T> &v)
   {
@@ -634,6 +659,7 @@ struct vector_2 {
   {
     return x;
   }
+
   constexpr T
   yy() const
   {
@@ -645,16 +671,19 @@ struct vector_2 {
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   yx() const
   {
     return { y, x };
   }
+
   constexpr vector_2<T>
   xx_() const
   {
     return { x, x };
   }
+
   constexpr vector_2<T>
   yy_() const
   {
@@ -666,26 +695,31 @@ struct vector_2 {
   {
     return x;
   }
+
   constexpr T
   g() const
   {
     return y;
   }
+
   constexpr vector_2<T>
   rg() const
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   gr() const
   {
     return { y, x };
   }
+
   constexpr vector_2<T>
   rr() const
   {
     return { x, x };
   }
+
   constexpr vector_2<T>
   gg() const
   {
@@ -697,16 +731,19 @@ struct vector_2 {
   {
     return x;
   }
+
   constexpr T
   v() const
   {
     return y;
   }
+
   constexpr vector_2<T>
   uv() const
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   vu() const
   {
@@ -718,16 +755,19 @@ struct vector_2 {
   {
     return x;
   }
+
   constexpr T
   t() const
   {
     return y;
   }
+
   constexpr vector_2<T>
   st() const
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   ts() const
   {
@@ -751,6 +791,7 @@ struct vector_2 {
   {
     return math::fma(v, w);
   }
+
   constexpr vector_2<T>
   mul_add(T s, const vector_2<T> &w) const
   {

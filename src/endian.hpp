@@ -5,32 +5,24 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#define __LITTLE_ENDIAN 1234
-#define __BIG_ENDIAN 4321
-#define __PDP_ENDIAN 3412
-#define __BYTE_ORDER __LITTLE_ENDIAN
+static constexpr int little_endian = 1234;
+static constexpr int big_endian = 4321;
+static constexpr int pdp_endian = 3412;
 
-#ifndef __FLOAT_WORD_ORDER
-#define __FLOAT_WORD_ORDER __BYTE_ORDER
-#endif
-
-#ifdef __USE_MISC
-#define LITTLE_ENDIAN __LITTLE_ENDIAN
-#define BIG_ENDIAN __BIG_ENDIAN
-#define PDP_ENDIAN __PDP_ENDIAN
-#define BYTE_ORDER __BYTE_ORDER
-#endif
-
-#if __FLOAT_WORD_ORDER == __BIG_ENDIAN
-#define BIG_ENDI 1
-#undef LITTLE_ENDI
-#define HIGH_HALF 0
-#define LOW_HALF 1
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+static constexpr int byte_order = big_endian;
+#elif defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_PDP_ENDIAN__)
+static constexpr int byte_order = pdp_endian;
 #else
-#if __FLOAT_WORD_ORDER == __LITTLE_ENDIAN
-#undef BIG_ENDI
-#define LITTLE_ENDI 1
-#define HIGH_HALF 1
-#define LOW_HALF 0
+static constexpr int byte_order = little_endian;
 #endif
-#endif
+
+static constexpr int float_word_order = byte_order;
+
+static constexpr bool is_big_endian = float_word_order == big_endian;
+
+static constexpr bool is_little_endian = float_word_order == little_endian;
+
+static constexpr int high_half = is_big_endian ? 0 : 1;
+
+static constexpr int low_half = is_big_endian ? 1 : 0;

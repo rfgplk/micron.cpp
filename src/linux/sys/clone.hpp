@@ -213,6 +213,7 @@ clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nu
 
   return pid;
 }
+
 /*
 pid_t
 clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, size_t stack_size, int *parent_tid = nullptr,

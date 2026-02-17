@@ -34,7 +34,9 @@ broadcast_byte(byte b) noexcept
     return static_cast<umax_t>(b);
   }
 }
+
 #define stackalloc(x, T) reinterpret_cast<T *>(__builtin_alloca(x));
+
 template <typename F>
 constexpr bool
 __is_aligned_to(const F *ptr, const u64 alignment) noexcept
@@ -109,6 +111,7 @@ __is_at_stack(const F *ptr, const u64 size) noexcept
     return false;
   return true;
 }
+
 template <typename F>
 bool
 __is_at_stack(F &ref, const u64 size) noexcept
@@ -119,6 +122,7 @@ __is_at_stack(F &ref, const u64 size) noexcept
     return false;
   return true;
 }
+
 template <typename F>
 bool
 __is_at_stack(const F &ref, const u64 size) noexcept
@@ -139,6 +143,7 @@ __is_at_heap(const F *ptr) noexcept
 {
   return abc::within(reinterpret_cast<const addr_t *>(ptr));
 }
+
 template <typename F>
 bool
 __is_at_heap(F &ref) noexcept
@@ -166,6 +171,7 @@ __is_valid_address(F &ref, const u64 size) noexcept
 {
   return (__is_at_stack(ref, size) or __is_at_heap(ref));
 }
+
 template <typename F>
 bool
 __is_valid_address(const F &ref, const u64 size) noexcept

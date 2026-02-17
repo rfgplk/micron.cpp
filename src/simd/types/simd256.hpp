@@ -47,6 +47,7 @@ template <is_simd_256_type T, is_flag_type F> class v256
 
 public:
   ~v256() = default;
+
   v256(void) { __impl_zero_init(); }
 
   inline v256 &
@@ -70,6 +71,7 @@ public:
     value = _mm256_set_pd(d, c, b, a);
     return *this;
   }
+
   inline v256 &
   operator=(std::initializer_list<float> lst)
   {
@@ -84,6 +86,7 @@ public:
     value = _mm256_set_ps(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   // start of ints
   inline v256 &
   operator=(std::initializer_list<i64> lst)
@@ -106,6 +109,7 @@ public:
     value = _mm256_set_epi64x(d, c, b, a);
     return *this;
   }
+
   inline v256 &
   operator=(std::initializer_list<i32> lst)
   {
@@ -119,6 +123,7 @@ public:
     value = _mm256_set_epi32(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   inline v256 &
   operator=(std::initializer_list<i16> lst)
   {
@@ -133,6 +138,7 @@ public:
                              __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
+
   inline v256 &
   operator=(std::initializer_list<i8> lst)
   {
@@ -150,37 +156,44 @@ public:
                             __arr[0]);
     return *this;
   }
+
   // end of ints
   v256(i8 _e0)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set1_epi8(_e0);
   }
+
   v256(i16 _e0)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set1_epi16(_e0);
   }
+
   v256(i32 a)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set1_epi32(a);
   }
+
   v256(i64 a)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set1_epi64x(a);
   }
+
   v256(float a)
     requires micron::is_same_v<T, f256>
   {
     value = _mm256_set1_ps(a);
   }
+
   v256(double a)
     requires micron::is_same_v<T, d256>
   {
     value = _mm256_set1_pd(a);
   }
+
   v256(std::initializer_list<double> lst)
   {
     if ( lst.size() != 4 )
@@ -200,6 +213,7 @@ public:
     }
     value = _mm256_set_pd(d, c, b, a);
   }
+
   v256(std::initializer_list<float> lst)
   {
     if ( lst.size() != 8 )
@@ -227,6 +241,7 @@ public:
     }
     value = _mm256_set_ps(h, g, f, e, d, c, b, a);
   }
+
   // start of ints
   v256(std::initializer_list<i64> lst)
   {
@@ -247,6 +262,7 @@ public:
     }
     value = _mm256_set_epi64x(d, c, b, a);
   }
+
   v256(std::initializer_list<i32> lst)
   {
     if ( lst.size() != 8 )
@@ -258,6 +274,7 @@ public:
       __arr[__i++] = *itr;
     value = _mm256_set_epi32(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   v256(std::initializer_list<i16> lst)
   {
     if ( lst.size() != 16 )
@@ -270,6 +287,7 @@ public:
     value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
                              __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
+
   v256(std::initializer_list<i8> lst)
   {
     if ( lst.size() != 32 )
@@ -284,6 +302,7 @@ public:
                             __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
                             __arr[0]);
   }
+
   // end of ints
 
   v256(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15,
@@ -294,33 +313,40 @@ public:
     value = _mm256_set_epi8(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15, _e16, _e17, _e18, _e19,
                             _e20, _e21, _e22, _e23, _e24, _e25, _e26, _e27, _e28, _e29, _e30, _e31);
   }
+
   v256(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7, i16 _e8, i16 _e9, i16 _e10, i16 _e11, i16 _e12, i16 _e13,
        i16 _e14, i16 _e15)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set_epi16(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15);
   }
+
   v256(i32 a, i32 b, i32 c, i32 d, i32 e, i32 f, i32 g, i32 h)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set_epi32(h, g, f, e, d, c, b, a);
   }
+
   v256(i64 a, i64 b, i64 c, i64 d)
     requires micron::is_same_v<T, i256>
   {
     value = _mm256_set_epi64x(d, c, b, a);
   }
+
   v256(float a, float b, float c, float d, float e, float f, float g, float h)
     requires micron::is_same_v<T, f256>
   {
     value = _mm256_set_ps(h, g, f, e, d, c, b, a);
   }
+
   v256(double a, double b, double c, double d)
     requires micron::is_same_v<T, d256>
   {
     value = _mm256_set_pd(d, c, b, a);
   }
+
   v256(const v256 &o) : value(o.value) {}
+
   v256(v256 &&o) : value(o.value)
   {
     if constexpr ( micron::same_as<T, f256> ) {
@@ -333,18 +359,21 @@ public:
       o.value = _mm256_setzero_si256();
     }
   }
+
   inline v256 &
   operator=(const v256 &o)
   {
     value = o.value;
     return *this;
   }
+
   inline v256 &
   operator=(v256 &&o)
   {
     value = o.value;
     return *this;
   }
+
   // broadcast /set() analog.
   inline v256 &
   operator=(float f)
@@ -352,41 +381,48 @@ public:
     value = _mm256_set1_ps(f);
     return *this;
   }
+
   inline v256 &
   operator=(double d)
   {
     value = _mm256_set1_pd(d);
     return *this;
   }
+
   inline v256 &
   operator=(i8 c)
   {
     value = _mm256_set1_epi8(c);
     return *this;
   }
+
   inline v256 &
   operator=(i16 s)
   {
     value = _mm256_set1_epi16(s);
     return *this;
   }
+
   inline v256 &
   operator=(i32 i)
   {
     value = _mm256_set1_epi32(i);
     return *this;
   }
+
   inline v256 &
   operator=(i64 l)
   {
     value = _mm256_set1_epi64x(l);
     return *this;
   }
+
   inline v256 &
   operator=(F *addr)
   {
     return uload<F>(addr);
   }
+
   // for loops
   constexpr size_t
   size(void)
@@ -659,6 +695,7 @@ public:
       }
     }
   }
+
   constexpr int
   operator==(const v256 &o) const
   {
@@ -688,6 +725,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator>=(const v256 &o) const
   {
@@ -747,6 +785,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator<(const v256 &o) const
   {
@@ -774,6 +813,7 @@ public:
     }
     return 0x0;
   }
+
   constexpr int
   operator<=(const v256 &o) const
   {
@@ -801,6 +841,7 @@ public:
     }
     return 0x0;
   }
+
   // scalar const. adds
   constexpr inline v256 &
   operator+=(double x)
@@ -811,6 +852,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256 &
   operator+=(float x)
   {
@@ -820,6 +862,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v256 &
   operator+=(A __x)
@@ -846,6 +889,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256 &
   operator+=(const v256 &o)
   {
@@ -876,6 +920,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256 &
   operator*=(const v256 &o)
   {
@@ -904,6 +949,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256
   operator*(v256 x)
   {
@@ -928,6 +974,7 @@ public:
     }
     return _d;
   }
+
   // end
   // scalar const subs
 
@@ -940,6 +987,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256 &
   operator-=(float x)
   {
@@ -949,6 +997,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v256 &
   operator-=(A x)
@@ -974,6 +1023,7 @@ public:
     }
     return *this;
   }
+
   // end
   constexpr inline v256 &
   operator-=(const v256 &o)
@@ -1023,6 +1073,7 @@ public:
     }
     return _r;
   }
+
   constexpr inline v256
   operator-(const v256 &o) const
   {
@@ -1047,6 +1098,7 @@ public:
     }
     return _r;
   }
+
   constexpr bool
   all_zeroes() const
   {
@@ -1058,6 +1110,7 @@ public:
       return (_mm256_test_all_zeros(value, value) != 0);
     }
   }
+
   constexpr bool
   all_ones() const
   {
@@ -1069,16 +1122,19 @@ public:
       return (_mm256_test_all_ones(value) != 0);
     }
   }
+
   constexpr void
   to_zero(void)
   {
     __impl_zero_init();
   }
+
   constexpr void
   to_ones(void)
   {
     __impl_one_init();
   }
+
   // broadcast /set() analog.
   inline v256 &
   set(float f)
@@ -1086,42 +1142,49 @@ public:
     value = _mm256_set1_ps(f);
     return *this;
   }
+
   inline v256 &
   set(double d)
   {
     value = _mm256_set1_pd(d);
     return *this;
   }
+
   inline v256 &
   set(i8 c)
   {
     value = _mm256_set1_epi8(c);
     return *this;
   }
+
   inline v256 &
   set(i16 s)
   {
     value = _mm256_set1_epi16(s);
     return *this;
   }
+
   inline v256 &
   set(i32 i)
   {
     value = _mm256_set1_epi32(i);
     return *this;
   }
+
   inline v256 &
   set(i64 l)
   {
     value = _mm256_set1_epi64x(l);
     return *this;
   }
+
   inline v256 &
   set(float const *f)
   {
     value = _mm256_broadcast_ss(f);
     return *this;
   }
+
   inline v256 &
   broadcast(float const *f)
   {
@@ -1145,6 +1208,7 @@ public:
     value = loadu<T, F>(reinterpret_cast<F *>(mem));
     return *this;
   }
+
   // BOOLEANS start
   inline v256 &
   operator|=(const v256 &o)
@@ -1160,6 +1224,7 @@ public:
     }
     return *this;
   }
+
   inline v256 &
   operator&=(const v256 &o)
   {
@@ -1174,6 +1239,7 @@ public:
     }
     return *this;
   }
+
   inline v256 &
   operator^=(const v256 &o)
   {
@@ -1188,6 +1254,7 @@ public:
     }
     return *this;
   }
+
   inline T
   operator|(const v256 &o) const
   {
@@ -1203,6 +1270,7 @@ public:
     }
     return _r;
   }
+
   inline T
   operator&(const v256 &o) const
   {
@@ -1218,6 +1286,7 @@ public:
     }
     return _r;
   }
+
   inline T
   operator^(const v256 &o) const
   {
@@ -1303,6 +1372,7 @@ public:
     }
     return *this;
   }
+
   // BOOLEANS end
   // divs (f only) and muls
 
@@ -1315,6 +1385,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256 &
   operator/=(float x)
   {
@@ -1335,6 +1406,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline T
   operator/(float x) const
   {
@@ -1345,6 +1417,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v256 &
   operator*=(double x)
   {
@@ -1354,6 +1427,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256 &
   operator*=(float x)
   {
@@ -1363,6 +1437,7 @@ public:
     }
     return *this;
   }
+
   template <typename A>
   constexpr inline v256 &
   operator*=(A __x)
@@ -1405,6 +1480,7 @@ public:
     }
     return *this;
   }
+
   constexpr inline v256
   operator*(double x) const
   {
@@ -1415,6 +1491,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v256
   operator*(float x) const
   {
@@ -1425,6 +1502,7 @@ public:
     }
     return _d;
   }
+
   constexpr inline v256
   operator*(F x)
   {
@@ -1448,6 +1526,7 @@ public:
     }
     return _d;
   }
+
   // end divs and muls
 
   inline void
@@ -1463,6 +1542,7 @@ public:
       _mm256_storeu_si256(reinterpret_cast<T *>(arr), value);
     }
   }
+
   inline void
   get_aligned(F *arr) const
   {

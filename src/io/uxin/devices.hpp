@@ -75,6 +75,7 @@ is_bound(const device_t &dev)
 {
   return !(dev.bound_fd.closed());
 }
+
 fvector<device_t>
 get_devices()
 {

@@ -7,42 +7,229 @@
 
 #include "../mutex/locks.hpp"
 #include "../mutex/mutex.hpp"
+
 namespace micron
 {
 class broken_promise
 {
 };
-class promise
+
+template <typename T> class promise
 {
-  micron::mutex mtx;
+  shared_state<T> *state;
+  bool future_retrieved;
 
 public:
-  promise(void) {}
-  promise(promise &&o) {}
+  promise() : state(new shared_state<T>()), future_retrieved(false) {}
+
   promise(const promise &) = delete;
   promise &operator=(const promise &) = delete;
-  promise &
-  operator=(promise &&o)
-  {
 
+  promise(promise &&other) noexcept : state(other.state), future_retrieved(other.future_retrieved)
+  {
+    other.state = nullptr;
+    other.future_retrieved = false;
+  }
+
+  promise &
+  operator=(promise &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state && !state->is_ready() ) {
+        // broken promise
+      }
+      state = other.state;
+      future_retrieved = other.future_retrieved;
+      other.state = nullptr;
+      other.future_retrieved = false;
+    }
     return *this;
+  }
+
+  ~promise()
+  {
+    if ( state && !state->is_ready() ) {
+      // broken promise
+    }
+  }
+
+  future<T>
+  get_future()
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    if ( future_retrieved ) {
+      exc<except::future_error>("");
+    }
+    future_retrieved = true;
+    return future<T>(state);
+  }
+
+  void
+  set_value(const T &value)
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_value(value);
+  }
+
+  void
+  set_value(T &&value)
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_value(micron::move(value));
+  }
+
+  void
+  set_value_at_thread_exit(const T &value)
+  {
+    set_value(value);
+  }
+
+  void
+  set_value_at_thread_exit(T &&value)
+  {
+    set_value(micron::move(value));
   }
 };
 
-template <typename T, typename F, typename R, typename... Args>
-inline bool
-expect(const T &t, const F &f, R r, Args &&...args)
+template <> class promise<void>
 {
-  if ( t == f ) {
-    r(args...);
-    return true;
+  shared_state<void> *state;
+  bool future_retrieved;
+
+public:
+  promise() : state(new shared_state<void>()), future_retrieved(false) {}
+
+  promise(const promise &) = delete;
+  promise &operator=(const promise &) = delete;
+
+  promise(promise &&other) noexcept : state(other.state), future_retrieved(other.future_retrieved)
+  {
+    other.state = nullptr;
+    other.future_retrieved = false;
   }
-  return false;
-}
-template <typename T, typename F, typename... Args>
-inline bool
-expect(const T &t, const F &f)
+
+  promise &
+  operator=(promise &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state && !state->is_ready() ) {
+        // broken promise
+      }
+      state = other.state;
+      future_retrieved = other.future_retrieved;
+      other.state = nullptr;
+      other.future_retrieved = false;
+    }
+    return *this;
+  }
+
+  ~promise()
+  {
+    if ( state && !state->is_ready() ) {
+      // broken promise
+    }
+  }
+
+  future<void>
+  get_future()
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    if ( future_retrieved ) {
+      exc<except::future_error>("");
+    }
+    future_retrieved = true;
+    return future<void>(state);
+  }
+
+  void
+  set_value()
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_value();
+  }
+
+  void
+  set_value_at_thread_exit()
+  {
+    set_value();
+  }
+};
+
+template <typename T> class promise<T &>
 {
-  return (f == t);
-}
+  shared_state<T &> *state;
+  bool future_retrieved;
+
+public:
+  promise() : state(new shared_state<T &>()), future_retrieved(false) {}
+
+  promise(const promise &) = delete;
+  promise &operator=(const promise &) = delete;
+
+  promise(promise &&other) noexcept : state(other.state), future_retrieved(other.future_retrieved)
+  {
+    other.state = nullptr;
+    other.future_retrieved = false;
+  }
+
+  promise &
+  operator=(promise &&other) noexcept
+  {
+    if ( this != &other ) {
+      if ( state && !state->is_ready() ) {
+        // broken promise
+      }
+      state = other.state;
+      future_retrieved = other.future_retrieved;
+      other.state = nullptr;
+      other.future_retrieved = false;
+    }
+    return *this;
+  }
+
+  ~promise()
+  {
+    if ( state && !state->is_ready() ) {
+      // broken promise
+    }
+  }
+
+  future<T &>
+  get_future()
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    if ( future_retrieved ) {
+      exc<except::future_error>("");
+    }
+    future_retrieved = true;
+    return future<T &>(state);
+  }
+
+  void
+  set_value(T &value)
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_value(value);
+  }
+
+  void
+  set_value_at_thread_exit(T &value)
+  {
+    set_value(value);
+  }
+};
 };

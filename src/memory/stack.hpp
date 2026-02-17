@@ -27,6 +27,7 @@ get_stack_start(void) -> addr_t *
 {
   return get_stack().start;
 }
+
 auto
 get_stack_size(void) -> size_t
 {

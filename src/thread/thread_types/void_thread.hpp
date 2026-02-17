@@ -35,6 +35,7 @@ namespace micron
 template <size_t Stack_Size = thread_stack_size> class void_thread
 {
   using thread_type = thread_tag;
+
   void
   thread_handler()
   {
@@ -44,6 +45,7 @@ template <size_t Stack_Size = thread_stack_size> class void_thread
     sa.sa_flags = sa_restart;
     micron::sigaction(sig_chld, sa, nullptr);
   }
+
   inline __attribute__((always_inline)) void
   __impl_preparethread(const pthread_attr_t &attrs)
   {
@@ -68,27 +70,36 @@ template <size_t Stack_Size = thread_stack_size> class void_thread
     payload.has_work.store(true, memory_order_seq_cst);
     micron::release_futex(payload.has_work.ptr(), 1);
   }
+
   void
   __release(void)
   {
     attributes.clear();
   }
+
   void
   __safe_release(void)
   {
     __release();
   }
+
   thread_attr_t attributes;
 
 public:
   __worker_payload payload;
+
   ~void_thread() { __release(); }
+
   void_thread(const void_thread &o) = delete;
   void_thread &operator=(const void_thread &) = delete;
+
   void_thread(void)
       : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+
   void_thread(void_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
+
   void_thread(const pthread_attr_t &_attrs) : attributes(posix::getpid(), _attrs), payload{} { __impl_preparethread(_attrs); }
+
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args && ...>)
   void_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
@@ -104,6 +115,7 @@ public:
     __impl_preparethread(_attrs);
     __impl_runthread(fn, args...);
   }
+
   void_thread &
   operator=(void_thread &&o)
   {
@@ -111,7 +123,9 @@ public:
     payload = micron::move(o.payload);
     return *this;
   }
+
   auto swap(void_thread &o) = delete;
+
   // yes, copying it out
   inline posix::rusage_t
   stats(void) const
@@ -120,6 +134,7 @@ public:
       return {};
     return payload.usage;
   }
+
   template <typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   void_thread &
@@ -128,13 +143,16 @@ public:
     __impl_runthread(micron::forward<F &&>(f), micron::forward<Args &&>(args)...);
     return *this;
   }
+
   inline bool alive(void) = delete;
+
   inline bool
   active(void) const
   {
     // more reliable, although slower
     return (pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), 0) == 0 ? true : false);
   }
+
   auto
   can_join(void) -> int
   {
@@ -146,6 +164,7 @@ public:
       return r;
     return 0;
   }
+
   auto
   join(void) -> int     // thread
   {
@@ -153,6 +172,7 @@ public:
     __safe_release();
     return r;
   }
+
   auto
   try_join(void) -> int
   {
@@ -163,16 +183,19 @@ public:
     }
     return r;
   }
+
   auto
   thread_id(void) const
   {
     return pthread::get_thread_id(attributes.pid);
   }
+
   auto
   native_handle(void) const
   {
     return attributes.pid;
   }
+
   long int signal(const signals s) = delete;
   int sleep_second(void) = delete;
   int sleep(void) = delete;
@@ -180,17 +203,20 @@ public:
   int cancel(void) = delete;
   void wait_for(void) = delete;
   auto result(void) = delete;
+
   void
   stop(void)
   {
     payload.should_die.store(1, memory_order_seq_cst);
     payload.has_work.store(1, memory_order_seq_cst);
   }
+
   const auto &
   attrs() const
   {
     return attributes;
   }
+
   addr_t *
   stack()
   {

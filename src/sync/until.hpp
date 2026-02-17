@@ -80,7 +80,7 @@ until_true(P pred, Args &&...args)
 
 template <typename F, typename... Args>
 bool
-until_timeout(auto cond, micron::duration_d timeout, F f, Args &&...args)
+until_timeout(auto cond, fduration_t timeout, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
   auto start = micron::system_clock<>::now();
@@ -99,7 +99,7 @@ until_timeout(auto cond, micron::duration_d timeout, F f, Args &&...args)
 
 template <typename P>
 bool
-until_timeout(micron::duration_d timeout, P pred)
+until_timeout(fduration_t timeout, P pred)
 {
   auto start = micron::system_clock<>::now();
 
@@ -130,7 +130,7 @@ template <typename F>
 auto
 until_ready(F &fut)
 {
-  while ( fut.wait_for(micron::duration_d(0)) != micron::future_status::ready ) {
+  while ( fut.wait_for(fduration_t(0)) != micron::future_status::ready ) {
     __cpu_pause();
   }
   return fut.get();
@@ -138,11 +138,11 @@ until_ready(F &fut)
 
 template <typename F>
 bool
-until_ready_timeout(F &fut, micron::duration_d timeout)
+until_ready_timeout(F &fut, fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
 
-  while ( fut.wait_for(micron::duration_d(0)) != micron::future_status::ready ) {
+  while ( fut.wait_for(fduration_t(0)) != micron::future_status::ready ) {
     if ( micron::system_clock<>::now() - start >= timeout )
       return false;
     __cpu_pause();
@@ -295,7 +295,7 @@ until_or_future(const T &cond, Fut &fut, F f, Args &&...args)
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
@@ -311,7 +311,7 @@ void
 until_or_future(const T &cond, const T &var, Fut &fut)
 {
   while ( var != cond ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
     __cpu_pause();
   }
@@ -322,7 +322,7 @@ void
 until_or_future(const T &cond, const micron::atomic<T> &var, Fut &fut)
 {
   while ( var.__get(micron::memory_order_acquire) != cond ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
     __cpu_pause();
   }
@@ -334,7 +334,7 @@ void
 until_or_future(P pred, Fut &fut)
 {
   while ( !pred() ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
     __cpu_pause();
   }
@@ -346,7 +346,7 @@ void
 until_true_or_future(P pred, Fut &fut, Args &&...args)
 {
   while ( !micron::invoke(pred, micron::forward<Args>(args)...) ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
     __cpu_pause();
   }
@@ -354,13 +354,13 @@ until_true_or_future(P pred, Fut &fut, Args &&...args)
 
 template <typename F, typename Fut, typename... Args>
 bool
-until_timeout_or_future(auto cond, micron::duration_d timeout, Fut &fut, F f, Args &&...args)
+until_timeout_or_future(auto cond, fduration_t timeout, Fut &fut, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
   auto start = micron::system_clock<>::now();
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       return false;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
@@ -376,12 +376,12 @@ until_timeout_or_future(auto cond, micron::duration_d timeout, Fut &fut, F f, Ar
 
 template <typename P, typename Fut>
 bool
-until_timeout_or_future(micron::duration_d timeout, Fut &fut, P pred)
+until_timeout_or_future(fduration_t timeout, Fut &fut, P pred)
 {
   auto start = micron::system_clock<>::now();
 
   while ( !pred() ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       return false;
 
     if ( micron::system_clock<>::now() - start >= timeout )
@@ -399,7 +399,7 @@ until_with_wait_or_future(const T &cond, Fut &fut, Fn wait, F f, Args &&...args)
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
@@ -419,7 +419,7 @@ until_backoff_or_future(auto cond, Fut &fut, F f, Args &&...args)
   constexpr size_t max_backoff = 1024;
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
@@ -501,7 +501,7 @@ until_true_or_flag(P pred, const micron::atomic<bool> &flag, Args &&...args)
 
 template <typename F, typename... Args>
 bool
-until_timeout_or_flag(auto cond, micron::duration_d timeout, const micron::atomic<bool> &flag, F f, Args &&...args)
+until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
   auto start = micron::system_clock<>::now();
@@ -523,7 +523,7 @@ until_timeout_or_flag(auto cond, micron::duration_d timeout, const micron::atomi
 
 template <typename P>
 bool
-until_timeout_or_flag(micron::duration_d timeout, const micron::atomic<bool> &flag, P pred)
+until_timeout_or_flag(fduration_t timeout, const micron::atomic<bool> &flag, P pred)
 {
   auto start = micron::system_clock<>::now();
 
@@ -681,7 +681,7 @@ until_or_future_or_flag(const T &cond, Fut &fut, const micron::atomic<bool> &fla
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     if ( flag.__get(micron::memory_order_acquire) )
@@ -700,7 +700,7 @@ void
 until_or_future_or_flag(const T &cond, const micron::atomic<T> &var, Fut &fut, const micron::atomic<bool> &flag)
 {
   while ( var.__get(micron::memory_order_acquire) != cond ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     if ( flag.__get(micron::memory_order_acquire) )
@@ -716,7 +716,7 @@ void
 until_or_future_or_flag(P pred, Fut &fut, const micron::atomic<bool> &flag)
 {
   while ( !pred() ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     if ( flag.__get(micron::memory_order_acquire) )
@@ -728,13 +728,13 @@ until_or_future_or_flag(P pred, Fut &fut, const micron::atomic<bool> &flag)
 
 template <typename F, typename Fut, typename... Args>
 bool
-until_timeout_or_future_or_flag(auto cond, micron::duration_d timeout, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
+until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
   auto start = micron::system_clock<>::now();
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       return false;
 
     if ( flag.__get(micron::memory_order_acquire) )
@@ -760,7 +760,7 @@ until_backoff_or_future_or_flag(auto cond, Fut &fut, const micron::atomic<bool> 
   constexpr size_t max_backoff = 1024;
 
   for ( ;; ) {
-    if ( fut.wait_for(micron::duration_d(0)) == micron::future_status::ready )
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
       break;
 
     if ( flag.__get(micron::memory_order_acquire) )
@@ -799,7 +799,7 @@ until_flag_clear(const A &flag)
 
 template <typename A>
 bool
-until_flag_set_timeout(const A &flag, micron::duration_d timeout)
+until_flag_set_timeout(const A &flag, fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
 
@@ -813,7 +813,7 @@ until_flag_set_timeout(const A &flag, micron::duration_d timeout)
 
 template <typename A>
 bool
-until_flag_clear_timeout(const A &flag, micron::duration_d timeout)
+until_flag_clear_timeout(const A &flag, fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
 

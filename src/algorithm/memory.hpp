@@ -34,6 +34,7 @@ adistance(T a, F b)     // absolute distance between two pointers, can be of dif
 {
   return math::abs(reinterpret_cast<word *>(b) - reinterpret_cast<word *>(a));
 }
+
 template <typename T, typename F>
 void
 overwrite(T &src, F &dest)
@@ -83,12 +84,14 @@ copy_n(const T *restrict src, F *restrict dst, const N cnt)
     memcpy(dst, src, cnt);
   return dst;
 }
+
 template <size_t N, typename T>
 void
 zero(T *src)
 {
   czero<N>(src);
 }
+
 template <typename T, size_t M>
 void
 zero(char (*ptr)[M])
@@ -102,6 +105,7 @@ zero(T *src)
 {
   bset(src, 0x0, sizeof(T));
 }
+
 template <typename T>
 inline bool
 is_zero(const T *src)
@@ -137,6 +141,7 @@ cmove(const T *restrict src, F *restrict dst)
   }
   return dst;
 }
+
 template <typename T, typename F>
 void
 cmove(T &&src, const F &dst)
@@ -206,6 +211,7 @@ copy(const T *restrict src, F *restrict dst)
     cmemcpy<N>(dst, src);
   return dst;
 }
+
 template <size_t N, typename T, typename F>
 F &
 copy(const T &restrict src, F &restrict dst)
@@ -220,6 +226,7 @@ copy(const T &restrict src, F &restrict dst)
     crmemcpy<N>(dst, src);
   return dst;
 }
+
 // C++ standard, from ptr, to ptr, dest pointer
 template <size_t N, typename T, typename F>
 F *

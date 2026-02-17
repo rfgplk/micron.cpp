@@ -37,6 +37,7 @@ get_scheduler(void)
     exc<except::system_error>("micron::scheduling unable to get scheduler");
   return static_cast<schedulers>(r);
 }
+
 class scheduler_t
 {
   void
@@ -58,14 +59,18 @@ class scheduler_t
 
 public:
   ~scheduler_t() = default;
+
   scheduler_t(pid_t pid)
   {
     if ( posix::get_attrs(pid, properties, 0) == -1 )
       exc<except::system_error>("micron::scheduler_t unable to get scheduling attributes");
     sched = static_cast<schedulers>(properties.sched_policy);
   }
+
   scheduler_t(const scheduler_t &o) : sched(o.sched), properties(o.properties) {}
+
   scheduler_t(scheduler_t &&o) : sched(o.sched), properties(micron::move(o.properties)) { o.sched = schedulers::none; }
+
   scheduler_t &
   operator=(const scheduler_t &o)
   {
@@ -73,6 +78,7 @@ public:
     properties = o.properties;
     return *this;
   }
+
   scheduler_t &
   operator=(scheduler_t &&o)
   {
@@ -81,11 +87,13 @@ public:
     o.sched = schedulers::none;
     return *this;
   }
+
   auto
   get_scheduler(void)
   {
     return sched;
   }
+
   auto
   get_priority(void) -> u64
   {
@@ -95,6 +103,7 @@ public:
       return properties.sched_priority;
     return 0;
   }
+
   void
   set_scheduler(const schedulers s)
   {
@@ -117,6 +126,7 @@ public:
       // sched_runtime <= sched_deadline <= sched_period
     }
   }
+
   void
   enable_deadline(u64 time)
   {
@@ -126,6 +136,7 @@ public:
     properties.sched_deadline = static_cast<u64>((double)time * 0.75);
     properties.sched_period = time;
   }
+
   void
   load_scheduler(const pid_t pid)
   {
@@ -133,6 +144,7 @@ public:
     if ( posix::set_attrs(pid, properties, 0x00) == -1 )
       exc<except::system_error>("micron::scheduling unable to set scheduler");
   }
+
   static bool
   is_realtime(const schedulers s)
   {
@@ -140,6 +152,7 @@ public:
       return true;
     return false;
   }
+
   static bool
   is_scheduled(const schedulers s)
   {
@@ -147,6 +160,7 @@ public:
       return true;
     return false;
   }
+
   static bool
   is_deadline(const schedulers s)
   {
@@ -154,6 +168,7 @@ public:
       return true;
     return false;
   }
+
   bool
   is_realtime(void) const
   {
@@ -161,6 +176,7 @@ public:
       return true;
     return false;
   }
+
   bool
   is_scheduled(void) const
   {
@@ -168,6 +184,7 @@ public:
       return true;
     return false;
   }
+
   bool
   is_deadline(void) const
   {

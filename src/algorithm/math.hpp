@@ -17,6 +17,7 @@
 #include "../types.hpp"
 
 #include "../concepts.hpp"
+
 namespace micron
 {
 

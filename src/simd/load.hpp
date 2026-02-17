@@ -15,6 +15,7 @@ namespace simd
 // types around through templates. no way to surpress otherwise
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+
 template <is_simd_type B>
 inline B
 stream_load(B *ptr)
@@ -131,6 +132,7 @@ loadu(T *ptr)
     return _mm256_loadu_pd(reinterpret_cast<T *>(ptr));
   }
 }
+
 #pragma GCC diagnostic pop
 };
 };

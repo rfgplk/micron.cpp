@@ -91,6 +91,7 @@ to_lower(typename T::iterator t)
   }
   // TODO: implement utf8
 }
+
 template <typename T>
   requires micron::is_fundamental_v<T>
 inline bool
@@ -148,6 +149,7 @@ to_lower(const T t)
   return false;
   // TODO: implement utf8
 }
+
 template <is_string T>
 T &
 casefold(T &str)
@@ -774,6 +776,7 @@ strip(T &data)
   } while ( flag );
   return data;
 }
+
 template <is_string T>
 bool
 ends_with(const T &data, const char *fnd)
@@ -784,6 +787,7 @@ ends_with(const T &data, const char *fnd)
   else
     return false;
 }
+
 template <is_string T>
 bool
 ends_with(const T &data, const T &fnd)
@@ -806,6 +810,7 @@ starts_with(const T &data, const char *fnd)
   else
     return false;
 }
+
 template <is_string T>
 bool
 starts_with(const T &data, const T &fnd)
@@ -1180,6 +1185,7 @@ find(T &data, const char *fnd) -> typename T::iterator
   }
   return (typename T::iterator) nullptr;
 }
+
 template <is_string T>
 auto
 find(const T &data, const char *fnd) -> typename T::const_iterator
@@ -1345,6 +1351,7 @@ is_not_in(const char *fnd, const T &data)
 {
   return find(data, fnd) != nullptr ? false : true;
 }
+
 template <is_string T>
 bool
 is_not_in(const T &data, const char *fnd)
@@ -1365,6 +1372,7 @@ is_in(const char *fnd, const T &data)
 {
   return find(data, fnd) == nullptr ? false : true;
 }
+
 template <is_string T>
 bool
 is_in(const T &data, const char *fnd)
@@ -1461,6 +1469,7 @@ to_float(const T &o)
   }
   return res;
 }
+
 template <typename T>
 f64
 to_double(const T &o)
@@ -1506,6 +1515,7 @@ to_integer(const T &o)
   }
   return t;
 }
+
 constexpr int
 xdigit_to_val(char c) noexcept
 {
@@ -1567,6 +1577,7 @@ parse_octal(const char *&cp) noexcept
   }
   return val;
 }
+
 constexpr u8
 to_hex_char(u8 nibble) noexcept
 {
@@ -1608,6 +1619,7 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
   }
   return reinterpret_cast<R *>(reinterpret_cast<u64 *>(result));
 }
+
 template <typename T>
 i64
 to_long(const T &o)

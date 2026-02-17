@@ -49,6 +49,7 @@ public:
     return "__base_exception";
   };
 };
+
 // unclean but the only way to avoid senseless boilterplate ;c
 #define MICRON_EXCEPTION_TEMP(_str, _errcode)                                                                                              \
   class _str : public __base_exception                                                                                                     \
@@ -92,6 +93,7 @@ MICRON_EXCEPTION_TEMP(memory_error, memory_errno)
 MICRON_EXCEPTION_TEMP(thread_error, thread_errno)
 MICRON_EXCEPTION_TEMP(filesystem_error, filesystem_errno)
 };
+
 using domain = except::domain_error;
 using invalid = except::invalid_argument;
 using length = except::length_error;

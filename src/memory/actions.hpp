@@ -41,12 +41,14 @@ forward_like(micron::remove_reference_t<U> &&u) noexcept
   static_assert(!micron::is_lvalue_reference_v<U>, "Cannot forward an rvalue as an lvalue.");
   return static_cast<T &&>(u);
 }
+
 template <typename T>
 constexpr micron::remove_reference_t<T> &&
 move(T &&t) noexcept
 {
   return static_cast<micron::remove_reference_t<T> &&>(t);
 };
+
 template <typename T>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 void
@@ -81,6 +83,7 @@ construct(T *p, Args &&...args)
 {
   new (static_cast<void *>(p)) T{ micron::forward<Args>(args)... };
 }
+
 template <typename T, typename... Args>
 constexpr T *
 construct_at(T *p, Args &&...args)
@@ -105,6 +108,7 @@ destroy_at(T *ptr)
     ptr->~T();
   }
 }
+
 template <typename T, typename F>
 constexpr bool
 cmp_equal(T t, F f)
@@ -167,6 +171,7 @@ max(T a, T b)
 {
   return (a > b) ? a : b;
 }
+
 template <typename T, typename... Ts>
 constexpr T
 min(T a, T b, Ts... args)

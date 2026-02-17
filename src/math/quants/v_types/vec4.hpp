@@ -26,10 +26,14 @@ struct vector_4 {
   T x, y, z, w;
 
   ~vector_4() = default;
+
   constexpr vector_4() : x(T{}), y(T{}), z(T{}), w(T{}) {}
+
   constexpr vector_4(T a, T b, T c, T d) : x(a), y(b), z(c), w(d) {}
+
   constexpr vector_4(const vector_4<T> &o) = default;
   constexpr vector_4(vector_4<T> &&o) = default;
+
   constexpr vector_4(const std::initializer_list<T> &o)
   {
     if ( o.size() != 4 )
@@ -49,11 +53,13 @@ struct vector_4 {
   {
     return { x + o.x, y + o.y, z + o.z, w + o.w };
   }
+
   constexpr vector_4<T>
   operator-(const vector_4<T> &o) const
   {
     return { x - o.x, y - o.y, z - o.z, w - o.w };
   }
+
   constexpr vector_4<T> &
   operator+=(const vector_4<T> &o)
   {
@@ -63,6 +69,7 @@ struct vector_4 {
     w += o.w;
     return *this;
   }
+
   constexpr vector_4<T> &
   operator-=(const vector_4<T> &o)
   {
@@ -78,6 +85,7 @@ struct vector_4 {
   {
     return { x * s, y * s, z * s, w * s };
   }
+
   constexpr vector_4<T> &
   operator*=(T s)
   {
@@ -87,6 +95,7 @@ struct vector_4 {
     w *= s;
     return *this;
   }
+
   friend constexpr vector_4<T>
   operator*(T s, const vector_4<T> &v)
   {
@@ -98,6 +107,7 @@ struct vector_4 {
   {
     return { x / s, y / s, z / s, w / s };
   }
+
   constexpr vector_4<T> &
   operator/=(T s)
   {
@@ -107,6 +117,7 @@ struct vector_4 {
     w /= s;
     return *this;
   }
+
   friend constexpr vector_4<T>
   operator/(T s, const vector_4<T> &v)
   {
@@ -118,16 +129,19 @@ struct vector_4 {
   {
     return { x + s, y + s, z + s, w + s };
   }
+
   constexpr vector_4<T>
   operator-(T s) const
   {
     return { x - s, y - s, z - s, w - s };
   }
+
   friend constexpr vector_4<T>
   operator+(T s, const vector_4<T> &v)
   {
     return { s + v.x, s + v.y, s + v.z, s + v.w };
   }
+
   friend constexpr vector_4<T>
   operator-(T s, const vector_4<T> &v)
   {
@@ -145,6 +159,7 @@ struct vector_4 {
   {
     return { x * o.x, y * o.y, z * o.z, w * o.w };
   }
+
   constexpr vector_4<T>
   operator*(const vector_4<T> &o) const
   {
@@ -484,6 +499,7 @@ struct vector_4 {
   {
     return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s), math::fpow(w, s) };
   }
+
   friend constexpr vector_4<T>
   pow(T s, const vector_4<T> &v)
   {
@@ -605,16 +621,19 @@ struct vector_4 {
   {
     return { static_cast<T>(x < o.x), static_cast<T>(y < o.y), static_cast<T>(z < o.z), static_cast<T>(w < o.w) };
   }
+
   constexpr vector_4<T>
   operator<=(const vector_4<T> &o) const
   {
     return { static_cast<T>(x <= o.x), static_cast<T>(y <= o.y), static_cast<T>(z <= o.z), static_cast<T>(w <= o.w) };
   }
+
   constexpr vector_4<T>
   operator>(const vector_4<T> &o) const
   {
     return { static_cast<T>(x > o.x), static_cast<T>(y > o.y), static_cast<T>(z > o.z), static_cast<T>(w > o.w) };
   }
+
   constexpr vector_4<T>
   operator>=(const vector_4<T> &o) const
   {
@@ -626,16 +645,19 @@ struct vector_4 {
   {
     return { static_cast<T>(x < s), static_cast<T>(y < s), static_cast<T>(z < s), static_cast<T>(w < s) };
   }
+
   constexpr vector_4<T>
   operator<=(T s) const
   {
     return { static_cast<T>(x <= s), static_cast<T>(y <= s), static_cast<T>(z <= s), static_cast<T>(w <= s) };
   }
+
   constexpr vector_4<T>
   operator>(T s) const
   {
     return { static_cast<T>(x > s), static_cast<T>(y > s), static_cast<T>(z > s), static_cast<T>(w > s) };
   }
+
   constexpr vector_4<T>
   operator>=(T s) const
   {
@@ -647,16 +669,19 @@ struct vector_4 {
   {
     return { static_cast<T>(s < v.x), static_cast<T>(s < v.y), static_cast<T>(s < v.z), static_cast<T>(s < v.w) };
   }
+
   friend constexpr vector_4<T>
   operator<=(T s, const vector_4<T> &v)
   {
     return { static_cast<T>(s <= v.x), static_cast<T>(s <= v.y), static_cast<T>(s <= v.z), static_cast<T>(s <= v.w) };
   }
+
   friend constexpr vector_4<T>
   operator>(T s, const vector_4<T> &v)
   {
     return { static_cast<T>(s > v.x), static_cast<T>(s > v.y), static_cast<T>(s > v.z), static_cast<T>(s > v.w) };
   }
+
   friend constexpr vector_4<T>
   operator>=(T s, const vector_4<T> &v)
   {
@@ -668,16 +693,19 @@ struct vector_4 {
   {
     return x;
   }
+
   constexpr T
   yy() const
   {
     return y;
   }
+
   constexpr T
   zz() const
   {
     return z;
   }
+
   constexpr T
   ww() const
   {
@@ -689,56 +717,67 @@ struct vector_4 {
   {
     return { x, y };
   }
+
   constexpr vector_2<T>
   xz() const
   {
     return { x, z };
   }
+
   constexpr vector_2<T>
   xw() const
   {
     return { x, w };
   }
+
   constexpr vector_2<T>
   yx() const
   {
     return { y, x };
   }
+
   constexpr vector_2<T>
   yz() const
   {
     return { y, z };
   }
+
   constexpr vector_2<T>
   yw() const
   {
     return { y, w };
   }
+
   constexpr vector_2<T>
   zx() const
   {
     return { z, x };
   }
+
   constexpr vector_2<T>
   zy() const
   {
     return { z, y };
   }
+
   constexpr vector_2<T>
   zw() const
   {
     return { z, w };
   }
+
   constexpr vector_2<T>
   wx() const
   {
     return { w, x };
   }
+
   constexpr vector_2<T>
   wy() const
   {
     return { w, y };
   }
+
   constexpr vector_2<T>
   wz() const
   {
@@ -750,21 +789,25 @@ struct vector_4 {
   {
     return { x, y, z };
   }
+
   constexpr vector_3<T>
   xyw() const
   {
     return { x, y, w };
   }
+
   constexpr vector_3<T>
   xzw() const
   {
     return { x, z, w };
   }
+
   constexpr vector_3<T>
   yzw() const
   {
     return { y, z, w };
   }
+
   constexpr vector_3<T>
   zyx() const
   {
@@ -776,36 +819,43 @@ struct vector_4 {
   {
     return { x, y, z, w };
   }
+
   constexpr vector_4<T>
   wzyx() const
   {
     return { w, z, y, x };
   }
+
   constexpr vector_4<T>
   xxxx() const
   {
     return { x, x, x, x };
   }
+
   constexpr vector_4<T>
   yyyy() const
   {
     return { y, y, y, y };
   }
+
   constexpr vector_4<T>
   zzzz() const
   {
     return { z, z, z, z };
   }
+
   constexpr vector_4<T>
   wwww() const
   {
     return { w, w, w, w };
   }
+
   constexpr vector_4<T>
   zwxy() const
   {
     return { z, w, x, y };
   }
+
   constexpr vector_4<T>
   yxwz() const
   {
@@ -817,41 +867,49 @@ struct vector_4 {
   {
     return x;
   }
+
   constexpr T
   g() const
   {
     return y;
   }
+
   constexpr T
   b() const
   {
     return z;
   }
+
   constexpr T
   a() const
   {
     return w;
   }
+
   constexpr vector_2<T>
   rg() const
   {
     return { x, y };
   }
+
   constexpr vector_3<T>
   rgb() const
   {
     return { x, y, z };
   }
+
   constexpr vector_4<T>
   rgba() const
   {
     return { x, y, z, w };
   }
+
   constexpr vector_4<T>
   bgra() const
   {
     return { z, y, x, w };
   }
+
   constexpr vector_4<T>
   abgr() const
   {

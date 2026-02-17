@@ -8,6 +8,7 @@
 #include "../memory/actions.hpp"
 #include "barrier.hpp"
 #include "mutex.hpp"
+
 // NOTE: moved from /sync to /mutex
 
 namespace micron
@@ -29,6 +30,7 @@ template <auto F> class do_once
 
 public:
   ~do_once() {}
+
   template <typename... Args> do_once(Args &&...args)
   {
     full_barrier();
@@ -41,6 +43,7 @@ public:
       }
     }
   }
+
   // delete everything else explicitly
   do_once(void) = delete;
   do_once(const do_once &) = delete;

@@ -52,36 +52,43 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~hstring()
   {
     if ( __mem::is_zero() )
       return;
     clear();
   }
+
   // contiguous_memory<T> memory;
   constexpr hstring() : __mem(Alloc::auto_size()) {};
   constexpr hstring(const size_t n) : __mem(n) {};
+
   hstring(size_t cnt, T ch) : __mem(cnt)
   {
     micron::typeset<T>(&__mem::memory[0], ch, cnt);
     __mem::length = cnt;
   }
+
   constexpr hstring(const char *str) : __mem(micron::strlen(str))
   {
     size_t end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
     __mem::length = end;                                   // - 1;
   };
+
   template <size_t M, typename F> constexpr hstring(const F (&str)[M]) : __mem((M))
   {
     micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
     __mem::length = M - 1;                                            // - 1;
   };
+
   constexpr hstring(const hstring &o) : __mem(o.capacity)
   {
     micron::strcpy(__mem::memory, o.memory);
     __mem::length = o.length;
   };
+
   template <typename F> constexpr hstring(hstring<F> &&o)
   {
     __mem::memory = o.memory;
@@ -91,6 +98,7 @@ public:
     o.length = 0;
     o.capacity = 0;
   }
+
   constexpr hstring(hstring &&o)
   {
     __mem::memory = o.memory;
@@ -100,17 +108,20 @@ public:
     o.length = 0;
     o.capacity = 0;
   }
+
   template <typename F> constexpr hstring(const hstring<F> &o) : __mem(o.capacity)
   {
     micron::strcpy(__mem::memory, o.memory);
     __mem::length = o.length;
   };
+
   template <size_t N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(o.length)
   {
     micron::memcpy(&(__mem::memory)[0], &o.memory[0],
                    o.length);     // - 1);
     __mem::length = o.length;     // - 1; // no null
   };
+
   // allow construction from - to iterator (be careful!)
   constexpr hstring(iterator __start, iterator __end)
       : __mem((ssize_t)Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
@@ -120,6 +131,7 @@ public:
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
   };
+
   constexpr hstring(const_iterator __start, const_iterator __end)
       : __mem(Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
   {
@@ -139,6 +151,7 @@ public:
     __mem::length = o.length;
     return *this;
   }
+
   hstring &
   operator=(hstring &&o)
   {
@@ -154,6 +167,7 @@ public:
     o.capacity = 0;
     return *this;
   }
+
   template <template <typename> class S, typename F>
   hstring &
   operator=(const S<F> &o)
@@ -165,6 +179,7 @@ public:
 
     return *this;
   }
+
   template <typename F>
   hstring &
   operator=(hstring<F> &&o)
@@ -182,6 +197,7 @@ public:
     ;
     return *this;
   }
+
   template <template <size_t, typename> class S, typename F, size_t N>
   hstring &
   operator=(const S<N, F> &o)
@@ -193,6 +209,7 @@ public:
     __mem::length = o.length;
     return *this;
   }
+
   template <size_t M, typename F = T>
   hstring &
   operator=(const F (&str)[M])
@@ -204,27 +221,32 @@ public:
     __mem::length = M;
     return *this;
   }
+
   chunk<byte>
   operator*()
   {
     return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
   }
+
   inline bool
   operator!() const
   {
     return empty();
   }
+
   // overload this to always point to mem
   byte *
   operator&()
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
+
   const byte *
   operator&() const
   {
     return reinterpret_cast<const byte *>(__mem::memory);
   }
+
   /* TODO
    * template <typename C = T>
   hstring<T> &
@@ -238,28 +260,33 @@ public:
   {
     return (__mem::length == 0 or __mem::memory == nullptr);
   };
+
   size_t
   size() const
   {
     return __mem::length;
   }
+
   void
   adjust_size()
   {
     auto ln = micron::strlen(__mem::memory);
     __mem::length = ln;
   }
+
   size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   // unsafe
   T *
   data()
   {
     return __mem::memory;
   };
+
   const auto &
   cdata() const
   {
@@ -273,6 +300,7 @@ public:
       exc<except::library_error>("micron::hstring stack() out of memory.");
     return sstr<512, T>(c_str());
   };
+
   inline const char *
   c_str() const
   {
@@ -280,6 +308,7 @@ public:
       return _null_str;
     return reinterpret_cast<const char *>(&(__mem::memory)[0]);
   };
+
   inline const wide *
   w_str() const
   {
@@ -287,6 +316,7 @@ public:
       return _null_wstr;
     return reinterpret_cast<const wide *>(&(__mem::memory)[0]);
   };
+
   inline const unicode32 *
   uni_str() const
   {
@@ -294,48 +324,57 @@ public:
       return _null_u32str;
     return reinterpret_cast<const unicode32 *>(&(__mem::memory)[0]);
   };
+
   inline slice<byte>
   into_bytes()
   {
     return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
   }
+
   inline auto
   clone()
   {
     return hstring<T>(*this);     // copy
   }
+
   template <typename F>
   inline F
   clone()
   {
     return F(*this);     // copy
   }
+
   inline T &
   front()
   {
     return __mem::memory[0];
   }
+
   inline const T &
   front() const
   {
     return __mem::memory[0];
   }
+
   inline T &
   back()
   {
     return __mem::memory[__mem::length - 1];
   }
+
   inline const T &
   back() const
   {
     return __mem::memory[__mem::length - 1];
   }
+
   // if used for buffering, adjust the length of the internals
   inline void
   _buf_set_length(const size_t s)
   {
     __mem::length = s;
   }
+
   template <typename F>
   size_t
   find(F ch, size_t pos = 0) const
@@ -346,64 +385,76 @@ public:
     }
     return npos;
   }
+
   template <typename F>
   size_t
   find(const hstring<F> &str, size_t pos = 0) const
   {
     return npos;
   }
+
   inline iterator
   begin()
   {
     return const_cast<iterator>(&(__mem::memory)[0]);
   }
+
   inline iterator
   end()
   {
     return const_cast<iterator>(&(__mem::memory)[__mem::length]);
   }
+
   inline iterator
   begin() const
   {
     return const_cast<iterator>(&(__mem::memory)[0]);
   }
+
   inline iterator
   end() const
   {
     return const_cast<iterator>(&(__mem::memory)[__mem::length]);
   }
+
   inline iterator
   last()
   {
     return const_cast<iterator>(&(__mem::memory)[__mem::length - 1]);
   }
+
   inline iterator
   last() const
   {
     return const_cast<iterator>(&(__mem::memory)[__mem::length - 1]);
   }
+
   inline const_iterator
   cbegin() const
   {
     return &(__mem::memory)[0];
   }
+
   inline const_iterator
   cend() const
   {
     return &(__mem::memory)[__mem::length];     // correct, should point at nptr
   }
+
   inline void
   clear()
   {
     zero(__mem::memory, __mem::capacity);
     __mem::length = 0;
   }
+
   // doesn't zero memory, just resets the cur. pointer to 0
   inline void
   fast_clear()
   {
     __mem::length = 0;
   }
+
   inline hstring &
   append(const buffer &f, size_t n)
   {
@@ -414,6 +465,7 @@ public:
     __mem::length += n;
     return *this;
   }
+
   template <typename F>
   inline hstring &
   append(const slice<F> &f, size_t n)
@@ -425,6 +477,7 @@ public:
     __mem::length += n;
     return *this;
   }
+
   template <typename F>
   inline hstring &
   append(const F *f, size_t n)
@@ -436,6 +489,7 @@ public:
     __mem::length += n - 1;
     return *this;
   }
+
   template <typename F = T, size_t M>
   inline hstring &
   append(const F (&str)[M])
@@ -447,6 +501,7 @@ public:
     __mem::length += M - 1;
     return *this;
   }
+
   template <typename F = T>
   inline hstring &
   append(const hstring<F> &o)
@@ -458,6 +513,7 @@ public:
     __mem::length += o.length;
     return *this;
   }
+
   template <size_t M, typename F = T>
   inline hstring &
   append(const sstring<M, F> &o)
@@ -470,6 +526,7 @@ public:
     __mem::length += end;
     return *this;
   }
+
   inline hstring &
   pop_back(void)
   {
@@ -487,6 +544,7 @@ public:
     (__mem::memory)[__mem::length++] = ch;
     return *this;
   }
+
   template <typename F = T, size_t M>
   inline hstring &
   push_back(const F (&str)[M])
@@ -497,6 +555,7 @@ public:
     __mem::length += M - 1;
     return *this;
   }
+
   template <typename F = T>
   inline hstring &
   push_back(const hstring<F> &o)
@@ -508,6 +567,7 @@ public:
     __mem::length += o.length;
     return *this;
   }
+
   template <size_t M, typename F = T>
   inline hstring &
   push_back(const sstring<M, F> &o)
@@ -520,6 +580,7 @@ public:
     __mem::length += end - 1;
     return *this;
   }
+
   template <typename F = T>
   inline hstring &
   insert(size_t ind, F ch, size_t cnt = 1)
@@ -531,6 +592,7 @@ public:
     __mem::length += cnt;
     return *this;
   }
+
   template <typename F = T, size_t M>
   inline hstring &
   insert(size_t ind, const F (&str)[M], size_t cnt = 1)
@@ -561,6 +623,7 @@ public:
     __mem::length += end;
     return *this;
   }
+
   template <typename F = T>
   inline hstring &
   insert(iterator itr, F ch, size_t cnt = 1)
@@ -579,6 +642,7 @@ public:
     __mem::length += cnt;
     return *this;
   }
+
   template <typename F = T, size_t M>
   inline hstring &
   insert(iterator itr, const F (&str)[M], size_t cnt = 1)
@@ -597,6 +661,7 @@ public:
     __mem::length += (cnt * str_len);
     return *this;
   }
+
   template <typename F = T>
   inline hstring &
   insert(iterator itr, const hstring<F> &o)
@@ -681,6 +746,7 @@ public:
       exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
+
   template <typename Itr>
     requires(micron::same_as<Itr, iterator>)
   inline size_t
@@ -700,11 +766,13 @@ public:
       exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
+
   inline T &
   operator[](const size_t n)
   {
     return (__mem::memory)[n];
   };
+
   inline const T &
   operator[](const size_t n) const
   {
@@ -721,6 +789,7 @@ public:
     __mem::length += data.size();
     return *this;
   };
+
   /*template <size_t M>
   inline hstring &
   operator+=(const char (&data)[M])
@@ -745,6 +814,7 @@ public:
     __mem::length += end;
     return *this;
   };
+
   template <typename F, size_t M>
   inline hstring &
   operator+=(const sstring<M, F> &data)
@@ -756,6 +826,7 @@ public:
     __mem::length += end;
     return *this;
   };
+
   template <typename F = T>
   inline hstring &
   operator+=(const hstring<F> &data)
@@ -767,6 +838,7 @@ public:
     __mem::length += data.length;
     return *this;
   };
+
   inline hstring &
   operator+=(const T d)
   {
@@ -778,6 +850,7 @@ public:
     __mem::length++;
     return *this;
   };
+
   template <typename F = T>
   inline hstring &
   operator+=(const slice<F> &data)
@@ -789,6 +862,7 @@ public:
     __mem::length += data.size() - 1;
     return *this;
   };
+
   template <typename F = T>
   inline hstring<F>
   substr(size_t pos = 0, size_t cnt = 0) const
@@ -801,6 +875,7 @@ public:
     buf._buf_set_length(cnt + 1);
     return buf;
   };
+
   template <typename F = T>
   inline hstring<F>
   substr(iterator _start, iterator _end) const
@@ -813,6 +888,7 @@ public:
     *buf.last() = '\0';
     return buf;
   };
+
   template <typename F = T>
   inline hstring<F>
   substr(const_iterator _start, const_iterator _end) const
@@ -825,6 +901,7 @@ public:
     *buf.last() = '\0';
     return buf;
   };
+
   // grow container
   void
   reserve(size_t n)
@@ -840,6 +917,7 @@ public:
     }
     __mem::expand(n);
   }
+
   void
   try_reserve(size_t n)
   {
@@ -854,6 +932,7 @@ public:
     }
     __mem::expand(n);
   }
+
   void
   resize(size_t n, const T ch)
   {
@@ -866,6 +945,7 @@ public:
     micron::memset(&__mem::memory[__mem::length], ch, n);
     __mem::length = n;
   }
+
   template <typename F = T, typename I = size_t>
     requires micron::is_arithmetic_v<I>
   inline hstring<F> &
@@ -896,6 +976,7 @@ public:
     __mem::length -= cnt;
     return *this;
   }
+
   template <typename F = T>
   inline hstring<F> &
   erase(const_iterator itr, size_t cnt = 1)
@@ -922,6 +1003,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T, size_t M>
   inline bool
   operator==(const F (&data)[M]) const
@@ -934,6 +1016,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T>
   inline bool
   operator==(const hstring<F> &data) const
@@ -959,6 +1042,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T, size_t M>
   inline bool
   operator==(const F (&data)[M])
@@ -971,6 +1055,7 @@ public:
       return false;
     return true;
   };
+
   template <typename F = T>
   inline bool
   operator==(const hstring<F> &data)

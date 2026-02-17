@@ -19,6 +19,7 @@ __alloc(size_t sz)
 {
   return abc::alloc(sz);
 }
+
 template <typename T>
 inline __attribute__((always_inline)) void
 __free(T *ptr)
@@ -31,6 +32,7 @@ __alloc(size_t sz)
 {
   return ::malloc(sz);
 }
+
 template <typename T>
 inline __attribute__((always_inline)) void
 __free(T *ptr)

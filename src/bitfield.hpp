@@ -28,6 +28,7 @@ public:
   using memory_type = stack_tag;
 
   ~bitfield() = default;
+
   constexpr bitfield(const bool b = false)
   {
     if ( !b )
@@ -47,6 +48,7 @@ public:
         bits[i] |= (1 << (i % 8));
     }
   }
+
   template <is_string T> bitfield(const T &str, const T zero = '0', const T one = '1')     // standard modified
   {
     if ( str.size() > (N) )
@@ -57,18 +59,22 @@ public:
         bits[i] |= (1 << (i % 8));
     }
   }
+
   constexpr bitfield(const bitfield &o) { micron::cmemcpy<N / 8>(bits, o.bits); }
+
   constexpr bitfield(bitfield &&o)
   {
     micron::cmemcpy<N / 8>(bits, o.bits);
     micron::czero<N / 8>(o.bits);
   }
+
   constexpr bitfield &
   operator=(const bitfield &o)
   {
     micron::cmemcpy<N / 8>(bits, o.bits);
     return *this;
   }
+
   constexpr bitfield &
   operator=(bitfield &&o)
   {
@@ -76,21 +82,25 @@ public:
     micron::czero<N / 8>(o.bits);
     return *this;
   }
+
   constexpr R
   operator[](const size_t n)
   {
     return (bits[n / 8] & (1 << n % 8));
   }
+
   constexpr const R
   operator[](const size_t n) const
   {
     return (bits[n / 8] & (1 << n % 8));
   }
+
   constexpr bool
   operator!(void) const
   {
     return none();
   }
+
   constexpr bitfield &
   swap(bitfield &a)
   {
@@ -99,6 +109,7 @@ public:
     a = i;
     return *this;
   }
+
   constexpr R
   at(const size_t n)
   {
@@ -106,6 +117,7 @@ public:
       exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
+
   constexpr const R
   at(const size_t n) const
   {
@@ -113,6 +125,7 @@ public:
       exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
+
   constexpr bool
   all(void) const
   {
@@ -121,6 +134,7 @@ public:
         return false;
     return true;
   }
+
   constexpr bool
   any(void) const
   {
@@ -129,6 +143,7 @@ public:
         return true;
     return false;
   }
+
   constexpr bool
   none(void) const
   {
@@ -137,11 +152,13 @@ public:
         return false;
     return true;
   }
+
   constexpr size_t
   size() const
   {
     return (N / 8);
   }
+
   constexpr bitfield &
   operator&=(const bitfield &o)
   {
@@ -149,6 +166,7 @@ public:
       bits[i] &= o[i];
     return *this;
   }
+
   constexpr bitfield &
   operator|=(const bitfield &o)
   {
@@ -156,6 +174,7 @@ public:
       bits[i] |= o[i];
     return *this;
   }
+
   constexpr bitfield &
   operator^=(const bitfield &o)
   {
@@ -163,6 +182,7 @@ public:
       bits[i] ^= o[i];
     return *this;
   }
+
   // TODO: experiment with adding explicit AVX for all functions (although the compiler does a good job of
   // autovectorizing)
   constexpr inline bitfield &
@@ -179,12 +199,14 @@ public:
     // bits[i] ^= m;
     return *this;
   }
+
   constexpr bitfield &
   flip(const size_t n)
   {
     bits[n] ^= 0xFF;
     return *this;
   }
+
   constexpr bitfield &
   set(void)
   {
@@ -196,12 +218,14 @@ public:
     }
     return *this;
   }
+
   constexpr bitfield &
   set(const size_t n)
   {
     bits[n / 8] |= (1 << n % 8);
     return *this;
   }
+
   constexpr bitfield &
   clear(const size_t n)
   {

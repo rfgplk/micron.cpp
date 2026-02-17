@@ -21,7 +21,9 @@ template <size_t N> struct lambda_queue {
 
   template <typename Fn> struct node_t : node_base_t {
     Fn fn;
+
     node_t(Fn &&f) : fn(micron::move(f)) {}
+
     void
     call() override
     {

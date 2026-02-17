@@ -17,6 +17,7 @@ namespace micron
 template <typename T, class Alloc = micron::allocator_serial<>> class binary_heap : public __immutable_memory_resource<T>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
+
   inline void
   make_heap(size_t j)
   {
@@ -60,16 +61,22 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~binary_heap()
   {
     if ( __mem::memory == nullptr )
       return;
     clear();
   }
+
   binary_heap(void) : __mem((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T))) {}
+
   template <T... Args> binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T))) { (insert(args), ...); }
+
   binary_heap(const size_t n) : __mem(n * sizeof(T)) {}
+
   binary_heap(const binary_heap &o) = delete;
+
   binary_heap(binary_heap &&o)
   {
     __mem::memory = o.memory;
@@ -79,7 +86,9 @@ public:
     o.length = 0;
     o.capacity = 0;
   }
+
   binary_heap &operator=(const binary_heap &o) = delete;
+
   binary_heap &
   operator=(binary_heap &&o)
   {
@@ -91,6 +100,7 @@ public:
     o.capacity = 0;
     return *this;
   }
+
   binary_heap &
   insert(T &&v)
   {
@@ -102,6 +112,7 @@ public:
       __mem::memory[__mem::length] = v;
     make_heap(__mem::length++);
   }
+
   T
   get()
   {
@@ -121,16 +132,19 @@ public:
       return v;
     }
   }
+
   size_t
   size() const
   {
     return __mem::length;
   }
+
   size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   T
   max() const
   {

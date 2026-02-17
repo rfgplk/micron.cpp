@@ -19,6 +19,7 @@ namespace except
 {
 
 constexpr static const bool __use_exceptions = true;
+
 // so we don't rely on io
 void
 __write_n(const char *str_err)
@@ -26,11 +27,13 @@ __write_n(const char *str_err)
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
   micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
 }
+
 void
 __write(const char *str_err)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
 }
+
 template <typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 raise(Args &&...args)

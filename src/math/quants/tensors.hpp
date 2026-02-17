@@ -104,6 +104,7 @@ public:
   {
     return __data[idx];
   }
+
   constexpr const B &
   operator[](u32 idx) const
   {
@@ -115,6 +116,7 @@ public:
   {
     return __data[d * __slice + h * W + w];
   }
+
   constexpr const B &
   operator[](u32 d, u32 h, u32 w) const
   {
@@ -126,6 +128,7 @@ public:
   {
     return __data[d * __slice + h * W + w];
   }
+
   constexpr const B &
   at(u32 d, u32 h, u32 w) const
   {
@@ -137,6 +140,7 @@ public:
   {
     return &__data[d * __slice];
   }
+
   constexpr const B *
   slice(u32 d) const
   {
@@ -148,6 +152,7 @@ public:
   {
     return &__data[d * __slice + h * W];
   }
+
   constexpr const B *
   row(u32 d, u32 h) const
   {
@@ -159,6 +164,7 @@ public:
   {
     return __data;
   }
+
   constexpr const B *
   data() const
   {
@@ -170,26 +176,31 @@ public:
   {
     return __data;
   }
+
   constexpr iterator
   end()
   {
     return __data + __size;
   }
+
   constexpr const_iterator
   begin() const
   {
     return __data;
   }
+
   constexpr const_iterator
   end() const
   {
     return __data + __size;
   }
+
   constexpr const_iterator
   cbegin() const
   {
     return __data;
   }
+
   constexpr const_iterator
   cend() const
   {
@@ -201,11 +212,13 @@ public:
   {
     return __size;
   }
+
   static constexpr u32
   ndim()
   {
     return 3u;
   }
+
   static constexpr u32
   dim(u32 axis)
   {
@@ -321,16 +334,19 @@ public:
   {
     return t.add_scalar(sc);
   }
+
   friend __tensor_base_avx
   operator-(B sc, const __tensor_base_avx &t)
   {
     return t.sub_scalar(sc);
   }
+
   friend __tensor_base_avx
   operator*(B sc, const __tensor_base_avx &t)
   {
     return t.scale(sc);
   }
+
   friend __tensor_base_avx
   operator/(B sc, const __tensor_base_avx &t)
   {
@@ -345,16 +361,19 @@ public:
   {
     return add_scalar(sc);
   }
+
   __tensor_base_avx
   operator-(B sc) const
   {
     return sub_scalar(sc);
   }
+
   __tensor_base_avx
   operator*(B sc) const
   {
     return scale(sc);
   }
+
   __tensor_base_avx
   operator/(B sc) const
   {
@@ -797,6 +816,7 @@ public:
   {
     return fma(v, w);
   }
+
   __tensor_base_avx
   mul_add(B s, const __tensor_base_avx &w) const
   {

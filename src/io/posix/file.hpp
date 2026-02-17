@@ -29,6 +29,7 @@ struct ipermissions {
   bool write;
   bool execute;
 };
+
 struct linux_permissions {
   ipermissions owner;
   ipermissions group;
@@ -88,23 +89,32 @@ struct file {
   // int fd;
   fd_t __handle;
   stat_t sd;
+
   // regardless
   ~file() { close(); }
+
   file(void) : fname(), __handle(-1), sd() {};
+
   file(const char *str) { _open_linux(str, modes::read); }
+
   file(const micron::sstr<MAX_NAME_LENGTH> &str) { _open_linux(str, modes::read); }
+
   file(const micron::string &str) { _open_linux(str, modes::read); }
 
   file(const char *str, const modes mode) { _open_linux(str, mode); }
+
   file(const micron::sstr<MAX_NAME_LENGTH> &str, const modes mode) { _open_linux(str, mode); }
+
   // file(const micron::string &str, const modes mode) { _open_linux(str, mode); }
 
   file(const file &o) : fname(o.fname), __handle(o.__handle), sd(o.sd) {}
+
   file(file &&o) : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
   {
     o.__handle = -1;
     micron::zero(&sd);
   }
+
   file &
   operator=(file &&o)
   {
@@ -115,6 +125,7 @@ struct file {
     micron::zero(&sd);
     return *this;
   }
+
   file &
   operator=(const file &o)
   {
@@ -123,6 +134,7 @@ struct file {
     sd = o.sd;
     return *this;
   }
+
   void
   close()
   {
@@ -131,6 +143,7 @@ struct file {
     posix::close(__handle.fd);
     __handle.fd = -1;
   }
+
   // here come the functions
   template <bool B = STAT_EXISTING>
   inline void
@@ -148,6 +161,7 @@ struct file {
         exc<except::io_error>("micron::file, fstat failed.");
     }
   }
+
   inline auto
   size(void)
   {
@@ -155,6 +169,7 @@ struct file {
     stat();
     return sd.st_size;
   }
+
   inline auto
   is_system_virtual(void)
   {
@@ -162,6 +177,7 @@ struct file {
     stat();
     return (micron::major(sd.st_dev) == 0);
   }
+
   inline auto
   owner(void)
   {
@@ -169,10 +185,12 @@ struct file {
     stat();
     return micron::tie({ sd.st_uid, sd.st_gid });
   }
+
   inline auto
   set_owner(void)
   {
   }
+
   inline auto
   access(void)
   {
@@ -180,6 +198,7 @@ struct file {
     stat();
     return micron::tie({ sd.st_atime, sd.st_mtime });
   }
+
   inline auto
   modified(void)
   {
@@ -187,6 +206,7 @@ struct file {
     stat();
     return sd.st_mtime;
   }
+
   inline auto
   permissions(void)
   {
@@ -214,6 +234,7 @@ struct file {
       perms.others.execute = true;
     return perms;
   }
+
   inline void
   set_permissions(const linux_permissions &perms)
   {
@@ -240,6 +261,7 @@ struct file {
 
     posix::fchmod(__handle.fd, mode);
   }
+
   inline const auto &
   name() const
   {
@@ -256,6 +278,7 @@ private:
     }
     return true;
   }
+
   inline __attribute((always_inline)) long int
   _syscall_open(const char *str, const modes mode)
   {
@@ -293,6 +316,7 @@ private:
     }
     return -1;
   }
+
   template <typename T>
   inline __attribute__((always_inline)) void
   _open_linux(const T &str, const modes mode)

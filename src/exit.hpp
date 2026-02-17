@@ -24,11 +24,13 @@ exit(int s = exit_ok)
 {
   __builtin_exit(s);
 }
+
 __attribute__((noreturn)) void
 abort(void)
 {
   __builtin_abort();
 }
+
 __attribute__((noreturn)) void
 abort(int ret)
 {

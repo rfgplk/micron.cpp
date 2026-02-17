@@ -18,6 +18,7 @@ namespace io
 {
 
 typedef micron::sstr<max_name> path_t;
+
 struct pnode_t {
   dir parent;     // DIR*
   dir path;       // DIR*
@@ -32,6 +33,7 @@ public:
   // remove any excess '/', dots etc
   // static since this is useful outside of path and i was too lazy to move it out
   ~path() = default;
+
   static path_t
   prune(path_t &&str)
   {
@@ -51,26 +53,31 @@ public:
   {
     return is_dir_at(nd.path.fd(), name);
   }
+
   bool
   file(const char *name) const
   {
     return is_file_at(nd.path.fd(), name);
   }
+
   bool
   socket(const char *name) const
   {
     return is_socket_at(nd.path.fd(), name);
   }
+
   bool
   symlink(const char *name) const
   {
     return is_symlink_at(nd.path.fd(), name);
   }
+
   bool
   block_device(const char *name) const
   {
     return is_block_device_at(nd.path.fd(), name);
   }
+
   auto
   files(void)
   {
@@ -83,6 +90,7 @@ public:
     }
     return paths;
   }
+
   auto
   dirs(void)
   {
@@ -95,6 +103,7 @@ public:
     }
     return paths;
   }
+
   auto
   all(void)
   {
@@ -105,17 +114,20 @@ public:
     }
     return paths;
   }
+
   // get path
   auto
   get(void) const
   {
     return nd.path.name();
   }
+
   auto
   get_parent(void) const
   {
     return nd.parent.name();
   }
+
   micron::vector<path_t>
   absolute(const path_t &n)
   {
@@ -130,6 +142,7 @@ public:
     }
     return paths;
   }
+
   micron::sstring<posix::path_max>
   absolute(const pnode_t &n)
   {
@@ -148,18 +161,21 @@ public:
     }
     return absolute_path;
   }
+
   void
   up(void)
   {
     nd.path = micron::move(nd.parent);
     nd.parent = micron::move(dir(resolve("../" + nd.parent.name())));
   }
+
   void
   set(const char *str)
   {
     nd.parent = dir(resolve(micron::format::concat<path_t>(str, "/..")));
     nd.path = dir(resolve(str));
   }
+
   path_t
   resolve(const char *cstr)
   {
@@ -172,6 +188,7 @@ public:
       return absolute(str).at(1);
     return str;
   }
+
   template <is_string T>
   path_t
   resolve(T &&str)
@@ -187,24 +204,30 @@ public:
 
   // dflt
   path(void) : nd({ dir(resolve("..")), dir(resolve(".")) }) {}
+
   path(const char *name)
       : nd{ .parent = dir(resolve(prune(micron::format::concat<path_t>(name, "/..")))), .path = dir(resolve(prune(name))) }
   {
   }
+
   path(const path &o) : nd(o.nd) {}
+
   path(path &&o) : nd(micron::move(o.nd)) {}
+
   path &
   operator=(const path &o)
   {
     nd = o.nd;
     return *this;
   }
+
   path &
   operator=(path &&o)
   {
     nd = micron::move(o.nd);
     return *this;
   }
+
   bool
   operator==(const path &o)
   {

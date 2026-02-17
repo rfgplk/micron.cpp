@@ -15,6 +15,7 @@ namespace micron
 {
 struct regular_iterator_tag {
 };
+
 // iterator is slightly different to stdlib iterators
 // they provide more powerful ways to iterate over objects, but sacrificing some of the versatility that C++ have.
 // micron iterators are bound to the fundamental type as declared, as such it isn't possible to iterate over different
@@ -41,24 +42,30 @@ public:
   iterator(T &t) : start_ptr(reinterpret_cast<pointer>(t.begin())), end_ptr(reinterpret_cast<pointer>(t.end()))
   {
   }
+
   template <typename T>
     requires(micron::is_pointer_v<T>) && (micron::is_convertible_v<T, P>)
   iterator(T &&t, const size_t rng = 0) : start_ptr(reinterpret_cast<pointer>(t)), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {
   }
+
   template <typename T>
     requires(micron::is_fundamental_v<T>) && (micron::is_convertible_v<T, P>)
   iterator(T &&t, const size_t rng = 0)
       : start_ptr(reinterpret_cast<pointer>(micron::addr(t))), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {
   }
+
   iterator(pointer sptr, pointer eptr) : start_ptr(sptr), end_ptr(eptr) {}
+
   iterator(const iterator &o) : start_ptr(o.start_ptr), end_ptr(o.end_ptr) {}
+
   iterator(iterator &&o) : start_ptr(o.start_ptr), end_ptr(o.end_ptr)
   {
     o.start_ptr = nullptr;
     o.end_ptr = nullptr;
   }
+
   iterator &
   operator=(const iterator &o)
   {
@@ -66,6 +73,7 @@ public:
     end_ptr = o.end_ptr;
     return *this;
   }
+
   iterator &
   operator=(iterator &&o)
   {
@@ -75,6 +83,7 @@ public:
     o.end_ptr = nullptr;
     return *this;
   }
+
   ~iterator()
   {
     start_ptr = nullptr;
@@ -86,17 +95,20 @@ public:
   {
     return *start_ptr;
   }
+
   pointer
   operator->(void)
   {
     return start_ptr;
   }
+
   pointer
   retreat(const umax_t n)
   {
     start_ptr -= n;
     return start_ptr;
   }
+
   pointer
   nth(const size_t n)
   {
@@ -104,32 +116,38 @@ public:
       next();
     return this->operator()();
   }
+
   pointer
   end(void)
   {
     return end_ptr;
   }
+
   pointer
   advance(const umax_t n)
   {
     start_ptr += n;
     return start_ptr;
   }
+
   inline pointer
   prev(void)
   {
     return --start_ptr;
   }
+
   inline pointer
   next(void)
   {
     return ++start_ptr;
   }
+
   inline value_type
   next_value(void)
   {
     return *(++start_ptr);
   }
+
   inline size_t
   count(void)
   {
@@ -138,11 +156,13 @@ public:
       c++;     // hehe
     return c;
   }
+
   inline size_t
   size_hint(void) const
   {
     return end_ptr - start_ptr;
   }
+
   template <typename F>
   void
   for_each(F f)
@@ -151,23 +171,27 @@ public:
       *start_ptr = f(*this->operator()());
     } while ( next() != end() );
   }
+
   bool
   operator!(void) const
   {
     return start_ptr == nullptr;
   }
+
   iterator &
   operator++(void)
   {
     ++start_ptr;
     return *this;
   }
+
   iterator &
   operator--(void)
   {
     --start_ptr;
     return *this;
   }
+
   template <typename F>
   inline void
   skip(F f)
@@ -175,21 +199,25 @@ public:
     if ( f(*peek()) )
       next();
   }
+
   inline pointer
   peek(void)
   {
     return start_ptr;
   }
+
   inline pointer
   operator()(void)
   {
     return start_ptr;
   }
+
   bool
   operator==(const iterator &o) const
   {
     return start_ptr == o.start_ptr;
   }
+
   bool
   operator!=(const iterator &o) const
   {

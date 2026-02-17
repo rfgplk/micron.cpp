@@ -17,20 +17,24 @@ template <typename T> struct list_node {
   T data;
   list_node<T> *next;
 };
+
 template <typename T> class list
 {
   using list_node_t = list_node<T>;
   list_node_t *root;     // root node -- is a pointer (simpler to impl)
+
   inline void
   __impl_heap(T &&t, list_node_t **ptr)
   {
     *ptr = new list_node_t(micron::move(t), nullptr);
   }
+
   inline void
   __impl_heap(const T &t, list_node_t **ptr)
   {
     *ptr = new list_node_t(t, nullptr);
   }
+
   inline void
   deep_copy(list_node_t *dst, const list_node_t *src)
   {
@@ -60,6 +64,7 @@ public:
   typedef const T *const_iterator;
 
   list() : root(nullptr) {}
+
   list(const size_t cnt) : root(nullptr)
   {
     __impl_heap(micron::move(T()), &root);
@@ -71,6 +76,7 @@ public:
       ptr = ptr->next;
     }
   }
+
   list(const size_t cnt, const T &t)
   {
     __impl_heap(t, &root);
@@ -82,14 +88,18 @@ public:
       ptr = ptr->next;
     }
   }
+
   list(const list &o) { deep_copy(root, o.root); }
+
   list(list &&o) : root(o.root) { o.root = nullptr; }
+
   list &
   operator=(const list &o)
   {
     deep_copy(&root, &o.root);
     return *this;
   }
+
   list &
   operator=(list &&o)
   {
@@ -98,6 +108,7 @@ public:
     o.root.next = nullptr;
     return *this;
   }
+
   ~list()
   {
     if ( root == nullptr )
@@ -118,6 +129,7 @@ public:
       delete ptrs[j];
     delete[] ptrs;
   }
+
   const_pointer
   iend() const
   {
@@ -126,11 +138,13 @@ public:
       ptr = ptr->next;
     return ptr;
   }
+
   const_pointer
   ibegin() const
   {
     return root;
   }
+
   const_iterator
   end() const
   {
@@ -139,11 +153,13 @@ public:
       ptr = ptr->next;
     return &ptr->data;
   }
+
   const_iterator
   begin() const
   {
     return &root->data;
   }
+
   void
   push_front(const T &v)
   {
@@ -152,6 +168,7 @@ public:
     ptr->next = root;
     root = ptr;
   }
+
   void
   push_back(const T &v)
   {
@@ -160,6 +177,7 @@ public:
     auto end_p = end();
     end_p->next = ptr;
   }
+
   const_iterator
   find(const T &srch)
   {
@@ -171,6 +189,7 @@ public:
     }     // ptr is found node
     return &ptr->data;     // nullptr if no hit :/
   }
+
   // advance by how many
   const_pointer
   next(const_pointer itr, const size_t n = 0)
@@ -184,6 +203,7 @@ public:
     }
     return itr;
   }
+
   void
   erase(const_pointer itr)
   {
@@ -199,6 +219,7 @@ public:
     ptr->next = itr->next;     // relink
     delete itr;
   }
+
   void
   insert(const_pointer itr, T &&v)
   {
@@ -209,6 +230,7 @@ public:
     ptr->next = itr->next;
     itr->next = ptr;
   }
+
   void
   insert(const_pointer itr, const T &v)
   {
@@ -219,6 +241,7 @@ public:
     ptr->next = itr->next;
     itr->next = ptr;
   }
+
   void
   emplace(const_pointer itr, T &&v)
   {
@@ -229,6 +252,7 @@ public:
     ptr->next = itr->next;
     itr->next = ptr;
   }
+
   T
   front() const
   {
@@ -236,6 +260,7 @@ public:
       exc<except::runtime_error>("micron::list front() is empty");
     return root->data;
   }
+
   T
   back() const
   {
@@ -243,6 +268,7 @@ public:
       exc<except::runtime_error>("micron::list front() is empty");
     return end()->data;
   }
+
   void
   merge(list &o)
   {
@@ -252,6 +278,7 @@ public:
     end_ptr->next = o.root;
     o.root = nullptr;
   }
+
   void
   merge(list &&o)
   {
@@ -261,6 +288,7 @@ public:
     end_ptr->next = o.root;
     o.root = nullptr;
   }
+
   void
   splice(const_pointer pos, list &o)
   {
@@ -270,6 +298,7 @@ public:
     ptr->next = pos->next;
     pos->next = nullptr;
   }
+
   bool
   empty() const
   {
@@ -278,6 +307,7 @@ public:
     else
       return false;
   }
+
   size_t
   size() const
   {
@@ -291,6 +321,7 @@ public:
     }
     return cnt;
   }
+
   size_t
   max_size() const
   {

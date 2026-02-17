@@ -77,6 +77,7 @@ opendir(const char *path)
   dir_t r(static_cast<i32>(micron::openat(at_fdcwd, path, o_rdonly | o_directory | o_cloexec, 0)));
   return r;
 }
+
 int
 closedir(const io::fd_t &ds)
 {

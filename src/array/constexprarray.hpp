@@ -16,6 +16,7 @@
 #include "../types.hpp"
 
 #include "../concepts.hpp"
+
 namespace micron
 {
 
@@ -79,31 +80,37 @@ struct constexpr_array {
       stack[i] = micron::move(o.stack[i]);
     return *this;
   }
+
   constexpr const_iterator
   begin(void) const noexcept
   {
     return micron::real_addr_as<T>(stack[0]);
   }
+
   constexpr const_iterator
   end(void) const noexcept
   {
     return micron::real_addr_as<T>(stack[N]);
   }
+
   constexpr iterator
   begin(void) noexcept
   {
     return micron::real_addr_as<T>(stack[0]);
   }
+
   constexpr iterator
   end(void) noexcept
   {
     return micron::real_addr_as<T>(stack[N]);
   }
+
   constexpr T &
   operator[](size_t i)
   {
     return stack[i];
   }
+
   constexpr const T &
   operator[](size_t i) const
   {
@@ -121,6 +128,7 @@ struct constexpr_array {
   {
     return stack;
   }
+
   constexpr const T *
   data() const
   {
@@ -292,6 +300,7 @@ struct constexpr_array {
     res /= o;
     return res;
   }
+
   static constexpr bool
   is_pod()
   {

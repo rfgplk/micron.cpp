@@ -15,10 +15,6 @@
 
 namespace micron
 {
-enum class states { RED, YELLOW, GREEN };
-
-enum class priority { low, regular, high, realtime };
-
 // synchronization mechanism across threads or resources
 class basic_semaphore
 {
@@ -26,17 +22,23 @@ class basic_semaphore
 
 public:
   ~basic_semaphore() = default;
+
   basic_semaphore(void) : counter(0) {}
+
   basic_semaphore(i32 __init) : counter(__init) {}
+
   basic_semaphore(const basic_semaphore &) = delete;
   basic_semaphore &operator=(const basic_semaphore &) = delete;
+
   basic_semaphore(basic_semaphore &&o) : counter(micron::move(o.counter)) {}
+
   basic_semaphore &
   operator=(basic_semaphore &&o)
   {
     counter = micron::move(o.counter);
     return *this;
   }
+
   void
   wait(void) noexcept
   {
@@ -45,6 +47,7 @@ public:
       wait_futex(counter.ptr(), v);
     }
   }
+
   bool
   try_wait() noexcept
   {
@@ -55,6 +58,7 @@ public:
     }
     return false;
   }
+
   void
   flag() noexcept
   {
@@ -63,6 +67,7 @@ public:
       release_futex(counter.ptr(), 1);
     }
   }
+
   i32
   value() const noexcept
   {
@@ -88,16 +93,21 @@ template <auto Fn> class semaphore
 
 public:
   ~semaphore() = default;
+
   semaphore(void) : sem(1) {}
+
   semaphore(const semaphore &) = delete;
   semaphore &operator=(const semaphore &) = delete;
+
   semaphore(semaphore &&o) : sem(micron::move(o.sem)) {}
+
   semaphore &
   operator=(semaphore &&o)
   {
     sem = micron::move(o.sem);
     return *this;
   }
+
   template <typename... Args>
   void
   run(Args &&...args)
@@ -105,16 +115,19 @@ public:
     sem.wait();
     Fn(micron::forward<Args>(args)...);
   }
+
   auto
   get_permit()
   {
     return &semaphore<Fn>::__trigger;
   }
+
   void
   permit()
   {
     sem.flag();
   }
+
   void
   permit_ahead(u64 n)
   {

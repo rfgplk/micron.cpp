@@ -40,31 +40,39 @@ public:
   static constexpr u32 __size = C * R;
   B alignas(64) __mat[__size];     // yes, public for conv.
   ~int_matrix_base_avx(void) = default;
+
   int_matrix_base_avx(void) : __mat{} { micron::czero<__size>(__mat); }
+
   int_matrix_base_avx(B n) : __mat{} { micron::ctypeset<__size, B>(__mat, n); }
+
   template <typename... Args>
     requires(sizeof...(Args) == __size)
   int_matrix_base_avx(Args... args) : __mat{ args... }
   {
   }
+
   int_matrix_base_avx(const std::initializer_list<B> &lst)
   {
     if ( lst.size() != __size )
       exc<except::library_error>("micron::int8x8 initializer_list out of bounds");
     micron::bytecpy(__mat, lst.data(), __size * sizeof(B));
   }
+
   int_matrix_base_avx(const int_matrix_base_avx &o) { micron::cmemcpy<__size>(__mat, o.__mat); }
+
   int_matrix_base_avx(int_matrix_base_avx &&o)
   {
     micron::cmemcpy<__size>(__mat, o.__mat);
     micron::czero<__size>(o.__mat);
   }
+
   int_matrix_base_avx &
   operator=(const int_matrix_base_avx &o)
   {
     micron::cmemcpy<__size>(__mat, o.__mat);
     return *this;
   }
+
   int_matrix_base_avx &
   operator=(int_matrix_base_avx &&o)
   {
@@ -72,6 +80,7 @@ public:
     micron::czero<__size>(o.__mat);
     return *this;
   }
+
   // start of scalar funcs
   // scalar addition
   int_matrix_base_avx &
@@ -80,6 +89,7 @@ public:
     micron::memset(&__mat[0], sc, __size);
     return *this;
   }
+
   int_matrix_base_avx &
   operator+=(B sc)
   {
@@ -97,6 +107,7 @@ public:
     }
     return *this;
   }
+
   int_matrix_base_avx &
   operator-=(B sc)
   {
@@ -114,6 +125,7 @@ public:
     }
     return *this;
   }
+
   int_matrix_base_avx &
   operator/=(B sc)
   {
@@ -131,6 +143,7 @@ public:
     }
     return *this;
   }
+
   int_matrix_base_avx &
   operator*=(B sc)
   {
@@ -148,27 +161,32 @@ public:
     }
     return *this;
   }
+
   // end of scalar funcs
   B &
   col(u32 c)
   {
     return __mat[c];
   }
+
   B &
   row(u32 r)
   {
     return __mat[r * C];
   }
+
   B &
   operator[](u32 r)
   {
     return __mat[r * C];
   }
+
   B &
   operator[](u32 r, u32 c)
   {
     return __mat[r * C + c];
   }
+
   int_matrix_base_avx &
   operator+=(const int_matrix_base_avx &o)
   {
@@ -176,6 +194,7 @@ public:
       __mat[i] += o.__mat[i];
     return *this;
   }
+
   int_matrix_base_avx &
   operator-=(const int_matrix_base_avx &o)
   {
@@ -191,6 +210,7 @@ public:
       __mat[i] *= o.__mat[i];
     return *this;
   }
+
   int_matrix_base_avx &
   operator/=(const int_matrix_base_avx &o)
   {
@@ -198,6 +218,7 @@ public:
       __mat[i] /= o.__mat[i];
     return *this;
   }
+
   int_matrix_base_avx
   div_scalar(B sc) const
   {
@@ -206,6 +227,7 @@ public:
       result.__mat[i] = __mat[i] / sc;
     return result;
   }
+
   int_matrix_base_avx
   transpose() const
   {
@@ -215,6 +237,7 @@ public:
         result[j, i] = (*this)[i, j];
     return result;
   }
+
   int_matrix_base_avx
   add_scalar(B sc) const
   {
@@ -232,6 +255,7 @@ public:
       result.__mat[i] = __mat[i] - sc;
     return result;
   }
+
   int_matrix_base_avx
   scale(B sc) const
   {
@@ -240,6 +264,7 @@ public:
       result.__mat[i] = __mat[i] * sc;
     return result;
   }
+
   int_matrix_base_avx
   mul(const int_matrix_base_avx &o) const
   {
@@ -251,6 +276,7 @@ public:
     }
     return result;
   }
+
   // element wise
   int_matrix_base_avx
   operator*(const int_matrix_base_avx &o) const
@@ -261,6 +287,7 @@ public:
         result[i, j] = (*this)[i, j] * o[i, j];
     return result;
   }
+
   int_matrix_base_avx
   operator+(const int_matrix_base_avx &o) const
   {
@@ -280,6 +307,7 @@ public:
         result[i, j] = (*this)[i, j] - o[i, j];
     return result;
   }
+
   int_matrix_base_avx
   operator/(const int_matrix_base_avx &o) const
   {

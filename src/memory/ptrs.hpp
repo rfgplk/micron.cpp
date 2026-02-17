@@ -28,6 +28,7 @@ is_alive_ptr(const T &ptr)
 {
   return ptr.get() != nullptr;
 }
+
 template <typename T>
 bool
 is_valid_ptr(T &&)

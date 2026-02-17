@@ -48,13 +48,16 @@ public:
         stack[n].~T();
     }
   }
+
   svector(void) : length(0) {};
+
   template <typename... Args> svector(Args... args)
   {
     for ( size_t n = 0; n < N; n++ )
       stack[n] = T(args...);
     length = N;
   };
+
   svector(const size_t cnt)
   {
     if ( cnt > N ) [[unlikely]]
@@ -68,6 +71,7 @@ public:
     }
     length = cnt;
   };
+
   svector(const size_t cnt, const T &v)
   {
     if ( cnt > N ) [[unlikely]]
@@ -80,6 +84,7 @@ public:
     }
     length = cnt;
   };
+
   template <typename C = T>
     requires(sizeof(C) == sizeof(T))
   svector(const vector<C> &o)
@@ -99,6 +104,7 @@ public:
     __impl_container::copy(stack, o.stack, N);
     length = o.length;
   };
+
   template <typename C = T, size_t M = N> svector(const svector<C, M> &o)
   {
     if constexpr ( N < M ) {
@@ -110,6 +116,7 @@ public:
     }
     length = o.length;
   };
+
   svector(const std::initializer_list<T> &lst)
   {
     if ( lst.size() > N )
@@ -124,6 +131,7 @@ public:
         stack[i++] = micron::move(value);
     }
   };
+
   svector(svector &&o)
   {
     __impl_container::move(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(o.stack[0]), N);
@@ -132,6 +140,7 @@ public:
     length = o.length;
     o.length = 0;
   };
+
   template <typename C = T, size_t M> svector(svector<C, M> &&o)
   {
     if constexpr ( N >= M ) {
@@ -146,6 +155,7 @@ public:
       o.length = 0;
     }
   };
+
   svector &
   operator=(const svector &o)
   {
@@ -153,6 +163,7 @@ public:
     length = o.length;
     return *this;
   };
+
   svector &
   operator=(svector &&o)
   {
@@ -162,6 +173,7 @@ public:
     o.length = 0;
     return *this;
   };
+
   template <typename R>
     requires(micron::is_integral_v<R>)
   T &
@@ -169,6 +181,7 @@ public:
   {
     return stack[n];
   }
+
   template <typename R>
     requires(micron::is_integral_v<R>)
   const T &
@@ -176,6 +189,7 @@ public:
   {
     return stack[n];
   }
+
   T &
   at(const size_t n)
   {
@@ -183,79 +197,95 @@ public:
       exc<except::runtime_error>("micron::svector at() out of range.");
     return stack[N];
   }
+
   const_iterator
   front() const
   {
     return micron::real_addr_as<T>(stack[0]);
   };
+
   iterator
   front()
   {
     return micron::real_addr_as<T>(stack[0]);
   };
+
   const_iterator
   back() const
   {
     return micron::real_addr_as<T>(stack[length - 1]);
   };
+
   iterator
   back()
   {
     return micron::real_addr_as<T>(stack[length - 1]);
   };
+
   iterator
   begin()
   {
     return micron::real_addr_as<T>(stack[0]);
   };
+
   const_iterator
   cbegin() const
   {
     return micron::real_addr_as<T>(stack[0]);
   };
+
   iterator
   end()
   {
     return micron::real_addr_as<T>(stack[length]);
   };
+
   const_iterator
   cend() const
   {
     return micron::real_addr_as<T>(stack[length]);
   };
+
   inline bool
   full() const
   {
     return ((length + 1) == N);
   }
+
   inline bool
   overflowed() const
   {
     return ((length + 1) > N);
   }
+
   inline bool
   full_or_overflowed() const
   {
     return ((length + 1) >= N);
   }
+
   size_t
   size() const
   {
     return length;
   };
+
   size_t
   max_size() const
   {
     return N;
   };
+
   void
   clear()
   {
     length = 0;
     czero<N>(micron::real_addr_as<T>(stack[0]));
   }
+
   void resize(const size_t n) = delete;
   void reserve(const size_t n) = delete;
+
   template <typename C = T>
   svector &
   erase(size_t n)
@@ -267,6 +297,7 @@ public:
     czero<sizeof(svector) / sizeof(byte)>((byte *)micron::voidify(micron::real_addr_as<T>(stack[length-- - 1])));
     return *this;
   }
+
   template <typename C = T, size_t M>
     requires(sizeof(C) == sizeof(T))
   svector &
@@ -288,6 +319,7 @@ public:
     append(o);
     return *this;
   }
+
   template <typename... Args>
   svector &
   emplace_back(Args &&...args)
@@ -297,6 +329,7 @@ public:
     stack[length++] = T(micron::forward<Args>(args)...);
     return *this;
   }
+
   svector &
   move_back(T &&i)
   {
@@ -305,6 +338,7 @@ public:
     stack[length++] = micron::move(i);
     return *this;
   }
+
   template <typename C = T>
   svector &
   push_back(const C &i)
@@ -314,6 +348,7 @@ public:
     stack[length++] = i;
     return *this;
   }
+
   template <typename C = T>
   svector &
   append(const C &i)
@@ -323,6 +358,7 @@ public:
     stack[length++] = i;
     return *this;
   }
+
   template <typename C = T>
   svector &
   insert(size_t ind, const C &i)
@@ -346,6 +382,7 @@ public:
     length += 1;
     return *this;
   }
+
   static constexpr bool
   is_pod()
   {

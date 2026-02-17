@@ -15,7 +15,9 @@ namespace micron
 
 struct sysinfo {
   ~sysinfo() = default;
+
   sysinfo(void) { micron::syscall(SYS_sysinfo, this); }
+
   sysinfo(const sysinfo &) = default;
   sysinfo(sysinfo &&) = default;
   sysinfo &operator=(const sysinfo &) = default;
@@ -74,17 +76,21 @@ struct resources {
   size_t free_swap;
   size_t procs;
   size_t mem_unit;
+
   resources() { __impl_rs(); }
+
   resources(const resources &) = default;
   resources(resources &&) = default;
   resources &operator=(resources &&) = default;
   resources &operator=(const resources &) = default;
+
   resources &
   operator()(void)
   {
     __impl_rs();     // update
     return *this;
   }
+
   void
   reload(void)
   {

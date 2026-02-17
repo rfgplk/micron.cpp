@@ -16,6 +16,7 @@
 #include "types/simd128.hpp"
 #include "types/simd256.hpp"
 #include "types/simd512.hpp"
+
 namespace micron
 {
 namespace simd
@@ -73,6 +74,7 @@ concept is_simd_class = micron::same_as<T, v8> or micron::same_as<T, v16> or mic
                         or micron::same_as<T, w32> or micron::same_as<T, w64> or micron::same_as<T, wfloat> or micron::same_as<T, wdouble>;
 
 };
+
 #pragma GCC diagnostic pop
 // type defines
 using v8 = simd::v8;

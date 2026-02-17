@@ -247,10 +247,15 @@ template <typename T, int Dg> struct b_tree {
   micron::uptr<b_node<T, Dg>> root;
 
   ~b_tree() = default;
+
   b_tree() : root(unique<b_node<T, Dg>>()) {}
+
   b_tree(const b_tree &) = delete;
+
   b_tree(b_tree &&o) : root(micron::move(o.root)) {}
+
   b_tree &operator=(const b_tree &) = delete;
+
   b_tree &
   operator=(b_tree &&o)
   {
@@ -259,6 +264,7 @@ template <typename T, int Dg> struct b_tree {
     }
     return *this;
   }
+
   inline void
   insert(const T &key)
   {
@@ -324,6 +330,7 @@ template <typename T, int Dg> struct b_tree {
       return { nullptr, nullptr };
     return { n->chld[idx], n->chld[idx + 1] };
   }
+
   inline int
   size() const
   {
@@ -333,6 +340,7 @@ template <typename T, int Dg> struct b_tree {
     }
     return count;
   }
+
   inline T *
   min() const
   {
@@ -354,6 +362,7 @@ template <typename T, int Dg> struct b_tree {
       cur = cur->chld[cur->nkeys];
     return &cur->keys[cur->nkeys - 1];
   }
+
   inline T *
   lower_bound(const T &key)
   {
@@ -383,6 +392,7 @@ template <typename T, int Dg> struct b_tree {
     }
     return nullptr;
   }
+
   inline T *
   predecessor(const T &key)
   {
@@ -414,6 +424,7 @@ template <typename T, int Dg> struct b_tree {
     }
     return (idx < n->nkeys - 1) ? &n->keys[idx + 1] : nullptr;
   }
+
   inline int
   height() const
   {
@@ -425,6 +436,7 @@ template <typename T, int Dg> struct b_tree {
     }
     return h;
   }
+
   inline micron::fvector<b_node<T, Dg> *>
   get_children(const T &key)
   {

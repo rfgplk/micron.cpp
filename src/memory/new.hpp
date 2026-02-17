@@ -127,6 +127,7 @@ __new(Args &&...args)
 {
   return new Type(micron::forward<Args &&>(args)...);
 }
+
 template <typename Type>
 inline __attribute__((always_inline)) auto
 __new_arr(size_t n)
@@ -148,6 +149,7 @@ __const_delete(const T *const ptr)
 {
   delete ptr;
 }
+
 template <typename T>
 inline __attribute__((always_inline)) void
 __delete_arr(T *ptr)

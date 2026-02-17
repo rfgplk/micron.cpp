@@ -39,18 +39,22 @@ public:
   typedef const t *const_pointer;
   typedef t *iterator;
   typedef const t *const_iterator;
+
   ~stack()
   {
     if ( __mem::is_zero() )
       return;
     clear();
   }
+
   stack() : __mem(N) {}
+
   stack(const umax_t n) : __mem(n)
   {
     for ( umax_t i = 0; i < n; i++ )
       push();
   }
+
   stack(const std::initializer_list<t> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<t> ) {
@@ -67,8 +71,11 @@ public:
       __mem::length = lst.size();
     }
   }
+
   stack(const stack &o) : __mem(o.length) { __impl_container::copy(__mem::memory, o.memory, o.length); };
+
   stack(stack &&o) : __mem(micron::move(o)) {}
+
   stack &
   operator=(const stack &o)
   {
@@ -78,6 +85,7 @@ public:
     __mem::length = o.length;
     return *this;
   };
+
   stack &
   operator=(stack &&o)
   {
@@ -89,28 +97,33 @@ public:
     __mem::capacity = o.capacity;
     return *this;
   };
+
   inline t &
   operator[](const umax_t n)
   {
     umax_t c = __mem::length - n - 1;
     return __mem::memory[c];
   }
+
   inline const t &
   operator[](const umax_t n) const
   {
     umax_t c = __mem::length - n - 1;
     return __mem::memory[c];
   }
+
   t &
   top(void)
   {
     return __mem::memory[__mem::length - 1];
   }
+
   const t &
   top(void) const
   {
     return __mem::memory[__mem::length - 1];
   }
+
   // calling stack() is equivalent to top() and pop()
   inline t
   operator()(void)
@@ -119,6 +132,7 @@ public:
     pop();
     return n;
   }
+
   template <typename... Args>
     requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
@@ -131,6 +145,7 @@ public:
       new (&__mem::memory[__mem::length++]) t(micron::forward<Args>(args)...);
     }
   }
+
   inline void
   push(void)
   {
@@ -138,6 +153,7 @@ public:
       reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t();
   }
+
   inline void
   push(const t &v)
   {
@@ -151,6 +167,7 @@ public:
       __mem::memory[__mem::length++] = (v);
     }
   }
+
   inline void
   push(t &&v)
   {
@@ -158,6 +175,7 @@ public:
       reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(micron::move(v));
   }
+
   inline void
   pop()
   {
@@ -166,6 +184,7 @@ public:
     }
     czero<sizeof(t) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
   }
+
   inline void
   clear()
   {
@@ -178,6 +197,7 @@ public:
     micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(t) / sizeof(byte)));
     __mem::length = 0;
   }
+
   // grow container
   inline void
   reserve(const size_t n)
@@ -186,6 +206,7 @@ public:
       return;
     __mem::expand(n);
   }
+
   inline void
   swap(stack &o)
   {
@@ -193,6 +214,7 @@ public:
     micron::swap(__mem::length);
     micron::swap(__mem::capacity);
   }
+
   inline bool
   empty() const
   {
@@ -204,11 +226,13 @@ public:
   {
     return __mem::length;
   }
+
   inline size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   static constexpr bool
   is_pod()
   {

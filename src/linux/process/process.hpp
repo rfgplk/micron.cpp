@@ -33,6 +33,7 @@
 #include "callbacks.hpp"
 
 extern char **environ;
+
 namespace micron
 {
 
@@ -67,6 +68,7 @@ struct runtime_t {
   byte *stack;
   byte *heap;
 };
+
 inline runtime_t
 load_stack_heap(void)
 {
@@ -164,11 +166,13 @@ struct uprocess_t {
       : pids{}, path(str), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
   {
   }
+
   template <typename... Args>
   uprocess_t(micron::sstring<posix::path_max + 1> &&o, Args &&...args)
       : pids{}, path(micron::move(o)), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
   {
   }
+
   uprocess_t(const uprocess_t &o)
       : pids(o.pids), path(o.path), argv(o.argv), envp(o.envp), lims(o.lims), affinity(o.affinity), status(o.status)
   {
@@ -180,6 +184,7 @@ struct uprocess_t {
   {
     o.status = 0;
   }
+
   template <typename... Args>
   uprocess_t &
   operator=(uprocess_t &&o)
@@ -195,6 +200,7 @@ struct uprocess_t {
     o.status = 0;
     return *this;
   }
+
   uprocess_t &
   operator=(const uprocess_t &o)
   {
@@ -210,6 +216,7 @@ struct uprocess_t {
 };
 
 typedef micron::fvector<uprocess_t> process_list_t;
+
 template <is_string... S>
 process_list_t
 create_processes(S... names)

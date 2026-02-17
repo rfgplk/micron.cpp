@@ -6,6 +6,7 @@
 #pragma once
 
 #include "bits.hpp"
+
 // NOTE: these matrix types take a lot of inspiration from ARMs NEON SIMD extensions
 namespace micron
 {

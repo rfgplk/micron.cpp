@@ -28,6 +28,7 @@ pow(T &cont, const Y y) noexcept
   for ( ; first != end; ++first )
     *first = math::power(*first, y);     // for clarity
 }
+
 template <typename T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
@@ -58,6 +59,7 @@ multiply(T &cont) noexcept
     r *= *first;     // for clarity
   return r;
 }
+
 template <is_iterable_container T>
 void
 multiply(T &cont, const typename T::value_type y) noexcept
@@ -74,6 +76,7 @@ mul(T &cont) noexcept
 {
   return multiply(cont);
 }
+
 template <is_iterable_container T>
 void
 mul(T &cont, const typename T::value_type y) noexcept
@@ -112,6 +115,7 @@ add(T &cont, const Args *__restrict... args) noexcept
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
+
 template <is_iterable_container T, typename... Args>
 void
 multiply(T &cont, const Args *__restrict... args) noexcept
@@ -121,6 +125,7 @@ multiply(T &cont, const Args *__restrict... args) noexcept
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
+
 template <is_iterable_container T, typename... Args>
 void
 divide(T &cont, const Args *__restrict... args) noexcept
@@ -130,6 +135,7 @@ divide(T &cont, const Args *__restrict... args) noexcept
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
+
 template <is_iterable_container T, typename... Args>
 void
 subtract(T &cont, const Args *__restrict... args) noexcept
@@ -148,6 +154,7 @@ add(T *first, T *end, const Y y) noexcept
   for ( ; first != end; ++first )
     *first = *first + y;
 }
+
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
@@ -156,6 +163,7 @@ multiply(T *first, T *end, const Y y) noexcept
   for ( ; first != end; ++first )
     *first = *first * y;
 }
+
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
@@ -164,6 +172,7 @@ divide(T *first, T *end, const Y y) noexcept
   for ( ; first != end; ++first )
     *first = *first / y;
 }
+
 template <class T, typename Y>
   requires micron::is_arithmetic_v<Y>
 void
@@ -180,6 +189,7 @@ add(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
+
 template <class T, typename... Args>
 void
 multiply(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
@@ -187,6 +197,7 @@ multiply(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
+
 template <class T, typename... Args>
 void
 divide(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
@@ -194,6 +205,7 @@ divide(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
   for ( size_t i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
+
 template <class T, typename... Args>
 void
 subtract(size_t n, T *__restrict first, const Args *__restrict... args) noexcept

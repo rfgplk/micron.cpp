@@ -87,6 +87,7 @@ read(int fd, P *buf, size_t cnt)
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
   return micron::syscall(SYS_read, fd, micron::voidify(buf), cnt);
 }
+
 template <typename P>
 ssize_t
 write(int fd, P *buf, size_t cnt)
@@ -96,6 +97,7 @@ write(int fd, P *buf, size_t cnt)
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
   return micron::syscall(SYS_write, fd, micron::voidify(buf), cnt);
 }
+
 int
 pipe(int *fd)
 {
@@ -125,6 +127,7 @@ dup3(int old, int newfd, int flags)
 {
   return static_cast<int>(micron::syscall(SYS_dup2, old, newfd, flags));
 }
+
 auto
 close(int fd)
 {
@@ -187,6 +190,7 @@ syncfs(int fd)
 {
   return micron::syscall(SYS_syncfs, fd);
 }
+
 auto
 fdatasync(int fd)
 {
@@ -342,11 +346,13 @@ getdents64(int dirfd, void *dirp, unsigned int count)
 {
   return micron::syscall(SYS_getdents64, dirfd, dirp, count);
 }
+
 int
 mkfifo(const char *path, posix::mode_t mode)
 {
   return static_cast<int>(micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0));
 }
+
 int
 unlink(const char *path)
 {

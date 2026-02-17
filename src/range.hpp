@@ -72,6 +72,7 @@ struct count_range {
     for ( T i = From; i < To; i++ )
       (obj.*f)(i);
   }
+
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg))
@@ -88,6 +89,7 @@ struct count_range {
     for ( T i = From; i < To; i++ )
       (obj.*f)(i);
   }
+
   // explicitly deleting this
 };
 

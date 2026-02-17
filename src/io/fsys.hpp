@@ -30,6 +30,7 @@ open_file(const io::path_t &path, const io::modes mode)
   fsys::file<T> f(path, mode);
   return f;
 }
+
 template <is_string T>
 void
 open_dir(const io::path_t &path, const io::modes mode)
@@ -73,6 +74,7 @@ rename(const io::path_t &from, const io::path_t &to)
 {
   posix::rename(from.c_str(), to.c_str());
 }
+
 // provide both
 void
 move(const io::path_t &from, const io::path_t &to)
@@ -102,6 +104,7 @@ copy_list(const io::path_t &from, const Paths &...to)
 {
   (copy(from, to), ...);
 }
+
 // FILE TYPE FUNCS
 auto
 file_type_at(const io::path_t &p)

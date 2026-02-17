@@ -29,10 +29,15 @@ template <int __sz = __buffer_size, int __chnk = __buffer_packet> class stream
 
 public:
   ~stream() = default;
+
   stream(void) : __size(0), __buffer(__sz) {}
+
   stream(const stream &o) = delete;
+
   stream(stream &&o) : __size(o.__size), __buffer(micron::move(__buffer)) { o.__size = 0; }
+
   stream &operator=(const stream &o) = delete;
+
   stream &
   operator=(stream &&o)
   {
@@ -41,6 +46,7 @@ public:
     __buffer = micron::move(o.__buffer);
     return *this;
   }
+
   stream &
   operator>>(const fd_t &out)
   {
@@ -60,6 +66,7 @@ public:
     }
     return *this;
   }
+
   template <typename T>
   stream &
   append(T *ptr, size_t count)
@@ -73,6 +80,7 @@ public:
     __size += c;
     return *this;
   }
+
   template <is_container_or_string T>
   stream &
   operator<<(const T &in)
@@ -89,6 +97,7 @@ public:
       *(__buffer->at_pointer(i)) = *(reinterpret_cast<const byte *>(in.begin()) + (i - __o));
     return *this;
   }
+
   stream &
   operator<<(const fd_t &in)
   {
@@ -105,53 +114,63 @@ public:
     } while ( __size < __sz );
     return *this;
   }
+
   bool
   full(const ssize_t n = 0) const
   {
     return ((size() + n) >= max_size());
   }
+
   bool
   full(const size_t n = 0) const
   {
     // NOTE: fails if above size of size_t / 2
     return ((size() + static_cast<ssize_t>(n)) >= max_size());
   }
+
   byte *
   data()
   {
     return (*__buffer).begin();
   }
+
   const byte *
   data() const
   {
     return (*__buffer).cbegin();
   }
+
   auto
   size() const
   {
     return __size;
   }
+
   auto
   max_size() const
   {
     return __sz;
   }
+
   auto
   chunk_size() const
   {
     return __chnk;
   }
+
   void
   clear()
   {
     __size = 0;
     micron::czero<__sz>(__buffer->begin());
   }
+
   micron::buffer *
   pass()
   {
     return __buffer.release();
   }
+
   void
   receive(micron::buffer *ptr)
   {
@@ -168,12 +187,14 @@ template <int __sz = __buffer_size, int __chnk = __buffer_packet> class stream_v
 
 public:
   ~stream_view() {}
+
   stream_view(void) = delete;
   template <typename T> stream_view(T &p) : __buffer(p){};
   stream_view(const stream_view &o) = delete;
   stream_view(stream_view &&o) = delete;
   stream_view &operator=(const stream_view &o) = delete;
   stream_view &operator=(stream_view &&) = delete;
+
   stream_view &
   operator>>(const fd_t &out)
   {
@@ -210,6 +231,7 @@ public:
       *(__buffer->at_pointer(i)) = *(reinterpret_cast<const byte *>(in.begin()) + (i - __o));
     return *this;
   }
+
   stream_view &
   operator<<(const fd_t &in)
   {
@@ -226,31 +248,37 @@ public:
     } while ( __size < __sz );
     return *this;
   }
+
   byte *
   data()
   {
     return (*__buffer).begin();
   }
+
   const byte *
   data() const
   {
     return (*__buffer).cbegin();
   }
+
   auto
   size() const
   {
     return __size;
   }
+
   auto
   max_size() const
   {
     return __sz;
   }
+
   auto
   chunk_size() const
   {
     return __chnk;
   }
+
   void
   clear()
   {

@@ -68,12 +68,14 @@ __debug_print(const char *str [[maybe_unused]], T &t [[maybe_unused]])
   }
 #endif
 }
+
 class __arena : private cache
 {
   template <typename T> struct alignas(16) node {
     T *nd;
     node<T> *nxt;
   };
+
   alloc_predictor __predict;
   sheet<__class_arena_internal> _arena_memory;     // 2 MiB metadata buffer
   node<sheet<__class_precise>> _cache_buffer;
@@ -87,12 +89,14 @@ class __arena : private cache
   node<sheet<__class_large>> *_tail_large_buckets;
   node<sheet<__class_huge>> _huge_buckets;     // only init if needed
   node<sheet<__class_huge>> *_tail_huge_buckets;
+
   void
   __reload_arena_buf(void)
   {
     // if arena buf is full, double it's capacity (inefficient and naive but it works)
     __expand_bucket_arena<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer, _tail_arena_buffer->nd->allocated() * 2);
   }
+
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
   __expand_bucket_arena(F *nd, G *&tail, const size_t sz)
@@ -156,6 +160,7 @@ class __arena : private cache
     if ( tail )
       tail = nd->nxt;
   }
+
   /*
     template <u64 Sz, typename F, typename G>
     inline __attribute__((always_inline)) void
@@ -191,6 +196,7 @@ class __arena : private cache
       nd->nxt->nd->freeze(__default_guard_page_perms);
     }
   }
+
   void
   __buf_expand_exact(const size_t class_sz, const size_t exact_sz)
   {
@@ -255,6 +261,7 @@ class __arena : private cache
     }
     return false;
   }
+
   template <typename F>
   bool
   __locate_at(F *__node, addr_t *memory) const
@@ -273,6 +280,7 @@ class __arena : private cache
     }
     return false;
   }
+
   template <typename F>
   bool
   __locate(F *__node, const micron::__chunk<byte> &memory) const
@@ -291,6 +299,7 @@ class __arena : private cache
     }
     return false;
   }
+
   template <typename F>
   micron::__chunk<byte>
   __append_bucket(F *nd, const size_t sz)
@@ -310,6 +319,7 @@ class __arena : private cache
     }
     return memory;
   }
+
   template <typename F>
   micron::__chunk<byte>
   __append_bucket_launder(F *nd, const size_t sz)
@@ -354,6 +364,7 @@ class __arena : private cache
     }
     return false;
   }
+
   template <typename F>
   bool
   __find_and_tombstone(F *__node, byte *addr)
@@ -424,6 +435,7 @@ class __arena : private cache
     }
     return false;
   }
+
   template <typename F>
   bool
   __find_and_remove(F *__node, byte *addr)
@@ -503,6 +515,7 @@ class __arena : private cache
     }
     return false;
   }
+
   bool
   __vmap_freeze(const micron::__chunk<byte> &memory)
   {
@@ -518,6 +531,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_freeze_at(byte *addr)
   {
@@ -533,6 +547,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_tombstone(const micron::__chunk<byte> &memory)
   {
@@ -548,6 +563,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_tombstone_at(byte *addr)
   {
@@ -563,6 +579,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_within(addr_t *addr) const
   {
@@ -578,6 +595,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_locate_at(addr_t *addr) const
   {
@@ -595,6 +613,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_remove(const micron::__chunk<byte> &memory)
   {
@@ -610,6 +629,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   bool
   __vmap_remove_at(byte *addr)
   {
@@ -625,6 +645,7 @@ class __arena : private cache
       return true;
     return false;
   }
+
   hot_fn(micron::__chunk<byte>) __append_cache(const size_t sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
@@ -662,6 +683,7 @@ class __arena : private cache
     // could be nullptr here
     return memory;
   }
+
   micron::__chunk<byte>
   __vmap_append(const size_t sz)
   {
@@ -678,6 +700,7 @@ class __arena : private cache
     // could be nullptr here
     return memory;
   }
+
   micron::__chunk<byte>
   __vmap_launder(const size_t sz)
   {
@@ -694,6 +717,7 @@ class __arena : private cache
     // could be nullptr here
     return memory;
   }
+
   template <u64 Sz, typename F>
   void
   __init_cache(F &bucket)
@@ -740,6 +764,7 @@ class __arena : private cache
       nd = nd->nxt;
     } while ( nd != nullptr );
   }
+
   template <typename F, typename Fn, typename... Args>
   void
   __for_each_bckt_void(const F &bucket, Fn fn, Args &&...args) const
@@ -752,6 +777,7 @@ class __arena : private cache
       nd = nd->nxt;
     } while ( nd != nullptr );
   }
+
   template <typename F, typename Fn, typename... Args>
   auto
   __for_each_bckt(const F &bucket, Fn fn, Args &&...args) const -> micron::lambda_return_t<decltype(fn)>
@@ -803,6 +829,7 @@ initialized during the construction of the subobjects is destroyed. If the destr
 or thread storage duration exits via an exception, the function std::terminate is called (14.6.2).
     * */
   }
+
   __arena(void)
       : _arena_memory(__get_kernel_chunk<micron::__chunk<byte>>(__default_arena_page_buf * __system_pagesize)),
         _cache_buffer{ nullptr, nullptr }, _arena_buffer{ nullptr, nullptr }, _tail_arena_buffer{ nullptr },
@@ -819,6 +846,7 @@ or thread storage duration exits via an exception, the function std::terminate i
       __init_bucket<__class_huge>(_huge_buckets, _tail_huge_buckets);        // 40.8MB
     }
   }
+
   __arena(const __arena &) = delete;
   __arena(__arena &&) = delete;
   __arena &operator=(const __arena &) = delete;
@@ -899,6 +927,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     }
     return { (byte *)-1, micron::numeric_limits<size_t>::max() };
   }
+
   micron::__chunk<byte>
   launder(const size_t sz)
   {
@@ -953,6 +982,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     zero_on_free(mem.ptr, mem.len);
     return __vmap_remove(mem);
   }
+
   bool
   pop(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
@@ -970,6 +1000,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     zero_on_free(mem);
     return __vmap_remove_at(mem);
   }
+
   bool
   present(addr_t *mem) const
   {
@@ -977,6 +1008,7 @@ or thread storage duration exits via an exception, the function std::terminate i
       return false;
     return __vmap_locate_at(mem);
   }
+
   bool
   has_provenance(addr_t *mem) const
   {
@@ -984,6 +1016,7 @@ or thread storage duration exits via an exception, the function std::terminate i
       return false;
     return __vmap_within(mem);
   }
+
   bool
   pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
@@ -997,6 +1030,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     collect_stats<stat_type::total_memory_freed>(len);
     return __vmap_remove({ mem, len });
   }
+
   // tombstone pop
   bool
   ts_pop(const micron::__chunk<byte> &mem)
@@ -1015,6 +1049,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     zero_on_free(mem.ptr, mem.len);
     return __vmap_tombstone(mem);
   }
+
   bool
   ts_pop(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
@@ -1032,6 +1067,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     zero_on_free(mem);
     return __vmap_tombstone_at(mem);
   }
+
   bool
   ts_pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
@@ -1044,6 +1080,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     collect_stats<stat_type::total_memory_freed>(len);
     return __vmap_tombstone({ mem, len });
   }
+
   bool
   freeze(const micron::__chunk<byte> &mem)
   {
@@ -1055,6 +1092,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     }
     return __vmap_freeze(mem);
   }
+
   bool
   freeze(byte *mem)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
@@ -1066,6 +1104,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     }
     return __vmap_freeze_at(mem);
   }
+
   bool
   freeze(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
@@ -1089,6 +1128,7 @@ or thread storage duration exits via an exception, the function std::terminate i
     total += __for_each_bckt(_huge_buckets, [](sheet<__class_huge> *const v) -> size_t { return v->allocated(); });
     return total;
   }
+
   void
   reset_page(byte *ptr)
   {
@@ -1112,11 +1152,13 @@ or thread storage duration exits via an exception, the function std::terminate i
     __for_each_bckt_void(_large_buckets, check, ptr);
     __for_each_bckt_void(_huge_buckets, check, ptr);
   }
+
   size_t
   __available_buffer(void) const
   {
     return _arena_memory.available();
   }
+
   size_t
   __size_of_alloc(addr_t *addr) const
   {

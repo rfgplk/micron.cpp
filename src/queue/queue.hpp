@@ -37,13 +37,16 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~queue()
   {
     if ( __mem::memory == nullptr )
       return;
     clear();
   }
+
   queue() : __mem(N), needle(__mem::capacity - 1) {}
+
   queue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
@@ -67,19 +70,23 @@ public:
     for ( umax_t i = 0; i < n; i++ )
       push(val);
   }
+
   queue(const umax_t n) : __mem(n), needle(__mem::capacity - 1)
 
   {
     for ( umax_t i = 0; i < n; i++ )
       push();
   }
+
   queue(const queue &o) : __mem(o.length), needle(o.needle)
 
   {
     __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
   }
+
   queue(queue &&o) : __mem(micron::move(o)), needle(o.needle) { o.needle = 0; }
+
   queue &
   operator=(const queue &o)
   {
@@ -104,6 +111,7 @@ public:
     __mem::length = 0;
     needle = __mem::capacity - 1;
   }
+
   // grow container
   inline void
   reserve(const size_t n)
@@ -112,6 +120,7 @@ public:
     micron::memmove(&__mem::memory[(__mem::capacity - 1) - __mem::length], &__mem::memory[needle - __mem::length], __mem::length);
     needle = __mem::capacity - 1;
   }
+
   inline void
   swap(queue &o)
   {
@@ -120,72 +129,86 @@ public:
     micron::swap(__mem::capacity, o.capacity);
     micron::swap(needle, o.needle);
   }
+
   inline bool
   empty() const
   {
     return __mem::length == 0;
   }
+
   inline size_t
   size() const
   {
     return __mem::length;
   }
+
   inline size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   inline T &
   last()
   {
     return __mem::memory[needle];
   }
+
   inline const T &
   last() const
   {
     return __mem::memory[needle];
   }
+
   inline T &
   front()
   {
     return __mem::memory[needle - __mem::length + 1];
   }
+
   inline const T &
   front() const
   {
     return __mem::memory[needle - __mem::length + 1];
   }
+
   inline T *
   begin()
   {
     return &__mem::memory[needle - __mem::length + 1];
   }
+
   inline const T *
   begin() const
   {
     return &__mem::memory[needle - __mem::length + 1];
   }
+
   inline const T *
   cbegin() const
   {
     return &__mem::memory[needle - __mem::length + 1];
   }
+
   // one past
   inline T *
   end()
   {
     return &__mem::memory[needle + 1];
   }
+
   inline const T *
   end() const
   {
     return &__mem::memory[needle + 1];
   }
+
   inline const T *
   cend() const
   {
     return &__mem::memory[needle + 1];
   }
+
   inline queue &
   push(void)
   {
@@ -198,6 +221,7 @@ public:
     }
     return *this;
   }
+
   inline queue &
   push(T &&val)
   {
@@ -210,6 +234,7 @@ public:
     }
     return *this;
   }
+
   inline queue &
   push(const T &val)
   {

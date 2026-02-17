@@ -39,8 +39,11 @@ struct __core_memory_resource {
   size_t capacity;
 
   ~__core_memory_resource() = default;
+
   __core_memory_resource(void) : memory(nullptr), capacity(0) {}
+
   __core_memory_resource(const __core_memory_resource &o) : memory(o.memory), capacity(o.capacity) {}
+
   __core_memory_resource(__core_memory_resource &&o) noexcept : memory(o.memory), capacity(o.capacity)
   {
     o.memory = nullptr;
@@ -48,6 +51,7 @@ struct __core_memory_resource {
   };
 
   template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity){};
+
   __core_memory_resource(chunk<byte> &&b)
   {
     auto addr = reinterpret_cast<uintptr_t>(b.ptr);
@@ -58,6 +62,7 @@ struct __core_memory_resource {
     capacity = b.len / sizeof(T);
     b = nullptr;
   }
+
   __core_memory_resource &
   operator=(const __core_memory_resource &o)
   {
@@ -65,6 +70,7 @@ struct __core_memory_resource {
     capacity = o.capacity;
     return *this;
   }
+
   __core_memory_resource &
   operator=(__core_memory_resource &&o)
   {
@@ -74,11 +80,13 @@ struct __core_memory_resource {
     o.capacity = 0;
     return *this;
   };
+
   bool
   alive() const
   {
     return (memory != nullptr);
   }
+
   // converts a chunk to a memory_resource
   // this is important since a raw chunk is simply a mapping that the allocator returns
   void
@@ -91,6 +99,7 @@ struct __core_memory_resource {
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
   }
+
   void
   accept(chunk<byte> &&o)
   {
@@ -102,16 +111,19 @@ struct __core_memory_resource {
     capacity = o.len / sizeof(T);
     o = nullptr;
   }
+
   inline pointer
   cast()
   {
     return reinterpret_cast<pointer *>(memory);
   }
+
   inline const_pointer
   cast() const
   {
     return reinterpret_cast<const_pointer *>(memory);
   }
+
   inline reference
   ref()
   {
@@ -121,6 +133,7 @@ struct __core_memory_resource {
       __builtin_exit(1);
     return *cast();
   }
+
   inline const_reference
   ref() const
   {
@@ -130,6 +143,7 @@ struct __core_memory_resource {
       __builtin_exit(1);
     return *cast();
   }
+
   // converts a memory resource to a chunk
 
   inline const chunk<byte>
@@ -137,6 +151,7 @@ struct __core_memory_resource {
   {
     return { reinterpret_cast<byte *>(memory), capacity * sizeof(T) };
   };
+
   inline chunk<byte>
   operator*()
   {

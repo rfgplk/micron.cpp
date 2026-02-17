@@ -77,6 +77,7 @@ __calculate_space_huge(size_t sz)
   sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
+
 inline size_t
 __calculate_space_bulk(size_t sz)
 {
@@ -92,6 +93,7 @@ __calculate_space_bulk(size_t sz)
     pow2_sz <<= 1;
   return pow2_sz;
 }
+
 inline size_t
 __calculate_space_saturated(size_t sz)
 {
@@ -103,6 +105,7 @@ __calculate_space_saturated(size_t sz)
   sz = micron::math::nearest_pow2ll(((size_t)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (size_t)t_2) * 4096;
   return sz;
 }
+
 void *
 __get_kernel_memory(u64 sz)
 {

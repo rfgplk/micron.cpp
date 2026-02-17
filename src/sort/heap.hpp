@@ -34,6 +34,7 @@ __impl_as_heap(T &arr, R n, I i)
     __impl_as_heap(arr, n, largest);
   }
 }
+
 template <typename T>
 void
 heap(T &arr)

@@ -15,6 +15,7 @@ enum class lock_starts { defer, adopt, locked, unlocked, attempt };
 
 struct defer_lock {
 };
+
 struct adopt_lock {
 };
 
@@ -31,6 +32,7 @@ lock(Locks &...locks)
 {
   (locks.lock(), ...);
 }
+
 // use with care
 template <typename... Locks>
 void
@@ -49,6 +51,7 @@ public:
   lock_guard(M &m) : mtx(&m), rptr(m()) {};
   lock_guard(M *m, adopt_lock a) : mtx(m), rptr(m->retrieve()) {};
   lock_guard(M *m) : mtx(m), rptr(m()) {};
+
   ~lock_guard() { (mtx->*rptr)(); }
 };
 
@@ -59,7 +62,9 @@ template <class M = mutex> class auto_guard
 
 public:
   auto_guard() : mtx(), rptr(mtx()) {};
+
   ~auto_guard() { (mtx.*rptr)(); }
+
   auto_guard(const auto_guard &) = delete;
   auto_guard(auto_guard &&) = delete;
   auto_guard &operator=(auto_guard &&) = delete;
@@ -70,6 +75,7 @@ template <lock_starts S, class M = mutex> class unique_lock
 {
   M *mtx;
   void (micron::mutex::*rptr)();
+
   void
   __verify()
   {
@@ -110,12 +116,15 @@ public:
     requires(S == lock_starts::defer)
       : mtx(&m), rptr(nullptr) {};
   unique_lock(const unique_lock &) = delete;
+
   unique_lock(unique_lock &&o) : mtx(o.mtx), rptr(o.rptr)
   {
     o.mtx = nullptr;
     o.rptr = nullptr;
   }
+
   unique_lock &operator=(const unique_lock &) = delete;
+
   unique_lock &
   operator=(unique_lock &&o)
   {
@@ -125,12 +134,14 @@ public:
     o.rptr = nullptr;
     return *this;
   }
+
   void
   lock()
   {
     __verify();
     rptr = (*mtx).operator()();     // like this so it's explicit
   }
+
   void
   try_lock()
   {
@@ -140,6 +151,7 @@ public:
         rptr = (*mtx).operator()();
     }
   }
+
   void
   unlocks()
   {
@@ -158,6 +170,7 @@ public:
     rptr = nullptr;
     return t;
   }
+
   void
   swap(unique_lock &o)
   {

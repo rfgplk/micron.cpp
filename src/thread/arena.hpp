@@ -44,6 +44,7 @@ constexpr static const u32 concurrent_threads = 256;     // reasoning, afaik the
 
 template <typename Tr> struct thread_t {
   thread_t(void) : cpu_mask{}, thread{} {}
+
   template <typename... Args> thread_t(const cpu_t<true> &c, Args &&...args) : cpu_mask(c), thread(micron::forward<Args>(args)...) {}
 
   const Tr &
@@ -51,11 +52,13 @@ template <typename Tr> struct thread_t {
   {
     return thread;
   }
+
   Tr &
   operator()(void)
   {
     return thread;
   }
+
   sstring<32, char>
   name() const
   {
@@ -64,16 +67,19 @@ template <typename Tr> struct thread_t {
       n = "couldn't get name";
     return n;
   }
+
   posix::rusage_t
   stats(void) const
   {
     return thread.stats();
   }
+
   const auto &
   attrs(void) const
   {
     return thread.attrs();
   }
+
   cpu_t<true> cpu_mask;     // cpu mask for that specific thread
   Tr thread;                // all other attributes are in thread
 };
@@ -105,6 +111,7 @@ class __default_arena
       micron::exc<except::thread_error>("micron arena::__create_stack(): failed to allocate stack");
     return fstack;
   }
+
   bool
   __verify_domain(thread_t<Tr> *ptr)
   {
@@ -120,11 +127,14 @@ public:
     join_all(500);
     // force_clean();
   }
+
   __default_arena(void) : threads() {}
+
   __default_arena(const __default_arena &) = delete;
   __default_arena(__default_arena &&) = delete;
   __default_arena &operator=(const __default_arena &) = delete;
   __default_arena &operator=(__default_arena &&) = delete;
+
   // thread creation functions
   // Create a new thread automatically, without any config. Uses generally standard best practices config options
   template <typename Func, typename... Args>
@@ -144,6 +154,7 @@ public:
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     return threads.top();
   }
+
   // Create a new thread at a specific core/unit
   template <typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
@@ -192,6 +203,7 @@ public:
     // posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());
     return threads.top();
   }
+
   // Create a new thread at a specific core that is currently more free than the rest
   template <typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
@@ -231,6 +243,7 @@ public:
     // posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());
     return threads.top();
   }
+
   template <typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
@@ -289,6 +302,7 @@ public:
       threads.pop();
     }
   }
+
   void
   force_clean(void)
   {
@@ -339,6 +353,7 @@ public:
     }
     return 0;
   }
+
   i32
   join(pthread_t pid, u64 retries = numeric_limits<u64>::max())
   {
@@ -368,6 +383,7 @@ public:
   {
     return threads.size();
   }
+
   ivector<const thread_t<Tr> *>
   list() const
   {
@@ -377,6 +393,7 @@ public:
       r = r.push_back(&threads[i]);
     return r;
   }
+
   void
   lower_priority(thread_t<Tr> &rf, const int n = 1)
   {
@@ -385,6 +402,7 @@ public:
       micron::exc<except::thread_error>("micron arena::lower_priority(): invalid thread");
     micron::set_priority(rf.priority + n, rf.thread.thread_id());
   }
+
   void
   increase_priority(thread_t<Tr> &rf, const int n = 1)
   {
@@ -394,6 +412,7 @@ public:
     micron::set_priority(rf.priority - n, rf.thread.thread_id());
     // NOTE: can't go below 0 without root or CAP_SYS_NICE
   }
+
   void
   move_thread(thread_t<Tr> &rf, const int to_core)
   {
@@ -405,6 +424,7 @@ public:
     rf.cpu_mask.set_core(to_core);
     posix::sched_setaffinity(rf.thread_id(), sizeof(rf.get()), rf.get());
   }
+
   // check if arena controls thread
   bool
   contains(const thread_t<Tr> &t) const
@@ -415,6 +435,7 @@ public:
         return true;
     return false;
   }
+
   bool
   contains(const pthread_t pid) const
   {
@@ -434,6 +455,7 @@ public:
         return threads[i].thread.stats();
     return posix::rusage_t{};
   }
+
   posix::rusage_t
   stats(const thread_t<Tr> &t) const
   {
@@ -441,6 +463,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t.stats();
   }
+
   auto
   sleep(thread_t<Tr> &t)
   {
@@ -448,6 +471,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().sleep();
   }
+
   auto
   awaken(thread_t<Tr> &t)
   {
@@ -455,6 +479,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().awaken();
   }
+
   void
   throttle(thread_t<Tr> &t)
   {
@@ -462,6 +487,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().sleep_second();
   }
+
   auto
   cancel(thread_t<Tr> &t)
   {
@@ -469,6 +495,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().cancel();
   }
+
   // WARNING: if a thread dies unexpectedly, and/or you kill/cancel it before it completes naturally, this WILL stall
   // forever. that is by design
   auto
@@ -478,11 +505,13 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().wait_for();
   }
+
   auto
   lock()
   {
     return mtx.lock();
   }
+
   template <typename M>
   void
   unlock(M m)
@@ -517,6 +546,7 @@ class __concurrent_arena
       micron::exc<except::memory_error>("micron concurrect_arena::__free_stack(): failed to unmap thread stack");
     }
   }
+
   bool
   __verify_domain(thread_t<Tr> *ptr)
   {
@@ -535,11 +565,14 @@ public:
     for ( umax_t i = 0; i < counter; ++i )
       __free_stack(i);
   }
+
   __concurrent_arena(void) : counter{ 0 }, threads() {}
+
   __concurrent_arena(const __concurrent_arena &) = delete;
   __concurrent_arena(__concurrent_arena &&) = delete;
   __concurrent_arena &operator=(const __concurrent_arena &) = delete;
   __concurrent_arena &operator=(__concurrent_arena &&) = delete;
+
   // thread creation functions
   // Create a new thread automatically, without any config. Uses generally standard best practices config options
   template <typename Func, typename... Args>
@@ -560,6 +593,7 @@ public:
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
   }
+
   auto &
   create(void)
   {
@@ -577,8 +611,22 @@ public:
     pthread::set_name(threads.mut(counter).thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
   }
+
   void clean(void) = delete;
   void force_clean(void) = delete;
+
+  template <typename Fn, typename... Args>
+    requires(micron::is_invocable_v<Fn, Args...>)
+  void
+  add(Fn &&fn, Args &&...args)
+  {
+    micron::lock_guard l(mtx);
+    static umax_t __ct = 0;
+    threads.mut(__ct++).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
+    if ( __ct >= counter )
+      __ct = 0;
+  }
+
   void
   stop_all(void)
   {
@@ -593,7 +641,6 @@ public:
   join_all(void)
   {
     micron::lock_guard l(mtx);
-    int r = 0;
     for ( umax_t i = 0; i < counter; ++i ) {
       solo::join(threads.mut(i).thread);
     }
@@ -605,6 +652,7 @@ public:
   {
     return threads.size();
   }
+
   ivector<const thread_t<Tr> *>
   list() const
   {
@@ -614,6 +662,7 @@ public:
       r = r.push_back(&threads[i]);
     return r;
   }
+
   void
   lower_priority(thread_t<Tr> &rf, const int n = 1)
   {
@@ -622,6 +671,7 @@ public:
       micron::exc<except::thread_error>("micron arena::lower_priority(): invalid thread");
     micron::set_priority(rf.priority + n, rf.thread.thread_id());
   }
+
   void
   increase_priority(thread_t<Tr> &rf, const int n = 1)
   {
@@ -631,6 +681,7 @@ public:
     micron::set_priority(rf.priority - n, rf.thread.thread_id());
     // NOTE: can't go below 0 without root or CAP_SYS_NICE
   }
+
   // check if arena controls thread
   bool
   contains(const thread_t<Tr> &t) const
@@ -641,6 +692,7 @@ public:
         return true;
     return false;
   }
+
   bool
   contains(const pthread_t pid) const
   {
@@ -660,6 +712,7 @@ public:
         return threads[i].thread.stats();
     return posix::rusage_t{};
   }
+
   posix::rusage_t
   stats(const thread_t<Tr> &t) const
   {
@@ -667,6 +720,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t.stats();
   }
+
   auto
   sleep(thread_t<Tr> &t)
   {
@@ -674,6 +728,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().sleep();
   }
+
   auto
   awaken(thread_t<Tr> &t)
   {
@@ -681,6 +736,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().awaken();
   }
+
   void
   throttle(thread_t<Tr> &t)
   {
@@ -688,6 +744,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().sleep_second();
   }
+
   auto
   cancel(thread_t<Tr> &t)
   {
@@ -695,6 +752,7 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().cancel();
   }
+
   // WARNING: if a thread dies unexpectedly, and/or you kill/cancel it before it completes naturally, this WILL stall
   // forever. that is by design
   auto
@@ -704,11 +762,13 @@ public:
       micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().wait_for();
   }
+
   auto
   lock()
   {
     return mtx.lock();
   }
+
   template <typename M>
   void
   unlock(M m)

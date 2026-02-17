@@ -29,19 +29,25 @@ public:
       __alloc::__impl_dealloc(control);
     }
   }
+
   shared_pointer() : control(nullptr) {}
+
   template <is_nullptr V> shared_pointer(V) : control(nullptr) {}
+
   explicit shared_pointer(Type *p) : control(p ? __alloc::__impl_alloc(p, 1) : nullptr) {}
+
   shared_pointer(const shared_pointer &t) : control(t.control)
   {
     if ( control )
       ++control->refs;
   }
+
   shared_pointer(shared_pointer &t) : control(t.control)
   {
     if ( control )
       ++control->refs;
   }
+
   shared_pointer(shared_pointer &&t) noexcept : control(t.control) { t.control = nullptr; }
 
   template <class... Args>
@@ -77,6 +83,7 @@ public:
     }
     return *this;
   }
+
   shared_pointer &
   operator=(const Type &obj) noexcept
   {
@@ -98,6 +105,7 @@ public:
     control = __alloc::__impl_alloc(__new<Type>(micron::move(obj)), 1);
     return *this;
   }
+
   shared_pointer &
   operator=(Type *&&t) noexcept
   {
@@ -133,6 +141,7 @@ public:
   {
     return control ? control->pnt : nullptr;
   }
+
   const Type *
   operator()() const noexcept
   {
@@ -144,6 +153,7 @@ public:
   {
     return control ? control->pnt : nullptr;
   }
+
   const Type *
   operator->() const noexcept
   {
@@ -165,11 +175,13 @@ public:
       exc<except::memory_error>("shared_pointer operator*(): internal_pointer was null");
     return *control->pnt;
   }
+
   Type *
   get()
   {
     return control ? control->pnt : nullptr;
   }
+
   const Type *
   get() const
   {
@@ -182,30 +194,35 @@ public:
   {
     return (control ? control->pnt : nullptr) == o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return (control ? control->pnt : nullptr) > o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return (control ? control->pnt : nullptr) < o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return (control ? control->pnt : nullptr) <= o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
   {
     return (control ? control->pnt : nullptr) >= o.get();
   }
+
   constexpr explicit
   operator bool() const noexcept
   {

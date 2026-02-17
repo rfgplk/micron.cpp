@@ -62,8 +62,11 @@ template <typename T> class heapq
 
 public:
   heapq() = default;
+
   heapq(const heapq &o) : heap(o) {}
+
   heapq(heapq &&o) : heap(micron::move(o)) {}
+
   heapq &
   operator=(const heapq &o)
   {
@@ -71,6 +74,7 @@ public:
     heap = o;
     return *this;
   }
+
   heapq &
   operator=(heapq &&o)
   {
@@ -78,6 +82,7 @@ public:
     heap = micron::move(o.heap);
     return *this;
   }
+
   explicit heapq(const micron::fvector<T> &v) : heap(v)
   {
     for ( int i = static_cast<int>(heap.size() / 2) - 1; i >= 0; --i )
@@ -122,6 +127,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return heap.empty();
   }
+
   size_t
   size() const
   {

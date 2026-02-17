@@ -21,20 +21,26 @@ template <typename F, typename... Args> class function<F(Args...)>
     virtual ~f_base() = default;
     virtual F call(Args...) = 0;
   };
+
   template <typename G> struct f_cll : f_base {
     G fnc;
+
     f_cll(G &&g) : fnc(micron::forward<G>(g)) {}
+
     F
     call(Args... args) override
     {
       return fnc(micron::forward<Args>(args)...);
     };
   };
+
   micron::shared<f_base> callable = nullptr;
 
 public:
   template <typename G> function(G &&g) : callable(new f_cll<G>(micron::forward<G>(g))) {}
+
   ~function() { delete callable; }
+
   F
   operator()(Args... args)
   {
@@ -46,6 +52,7 @@ public:
     }
   }
 };
+
 template <typename T>
 concept is_function = micron::is_integral_v<T>;
 

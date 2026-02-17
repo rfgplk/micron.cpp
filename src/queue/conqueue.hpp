@@ -41,13 +41,16 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~conqueue()
   {
     if ( __mem::memory == nullptr )
       return;
     clear();
   }
+
   conqueue() : __mem(N), needle(__mem::capacity - 1) {}
+
   conqueue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
@@ -71,19 +74,23 @@ public:
     for ( umax_t i = 0; i < n; i++ )
       push(val);
   }
+
   conqueue(const umax_t n) : __mem(n), needle(__mem::capacity - 1)
 
   {
     for ( umax_t i = 0; i < n; i++ )
       push();
   }
+
   conqueue(const conqueue &o) : __mem(o.length), needle(o.needle)
 
   {
     __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
   }
+
   conqueue(conqueue &&o) : __mem(micron::move(o)), needle(o.needle) { o.needle = 0; }
+
   conqueue &
   operator=(const conqueue &o)
   {
@@ -110,6 +117,7 @@ public:
     __mem::length = 0;
     needle = __mem::capacity - 1;
   }
+
   // grow container
   inline void
   reserve(const size_t n)
@@ -119,6 +127,7 @@ public:
     micron::memmove(&__mem::memory[(__mem::capacity - 1) - __mem::length], &__mem::memory[needle - __mem::length], __mem::length);
     needle = __mem::capacity - 1;
   }
+
   inline void
   swap(conqueue &o)
   {
@@ -128,66 +137,77 @@ public:
     micron::swap(__mem::capacity, o.capacity);
     micron::swap(needle, o.needle);
   }
+
   inline bool
   empty() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::length == 0;
   }
+
   inline size_t
   size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::length;
   }
+
   inline size_t
   max_size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::capacity;
   }
+
   inline T &
   last()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::memory[needle];
   }
+
   inline const T &
   last() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::memory[needle];
   }
+
   inline T &
   front()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::memory[needle - __mem::length + 1];
   }
+
   inline const T &
   front() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::memory[needle - __mem::length + 1];
   }
+
   inline T *
   begin()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return &__mem::memory[needle - __mem::length + 1];
   }
+
   inline const T *
   begin() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return &__mem::memory[needle - __mem::length + 1];
   }
+
   inline const T *
   cbegin() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return &__mem::memory[needle - __mem::length + 1];
   }
+
   // one past
   inline T *
   end()
@@ -195,18 +215,21 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return &__mem::memory[needle + 1];
   }
+
   inline const T *
   end() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return &__mem::memory[needle + 1];
   }
+
   inline const T *
   cend() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return &__mem::memory[needle + 1];
   }
+
   inline conqueue &
   push(void)
   {
@@ -220,6 +243,7 @@ public:
     }
     return *this;
   }
+
   inline conqueue &
   push(T &&val)
   {
@@ -233,6 +257,7 @@ public:
     }
     return *this;
   }
+
   inline conqueue &
   push(const T &val)
   {

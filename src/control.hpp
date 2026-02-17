@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "thread/pause.hpp"
+#include "sync/pause.hpp"
 
 #include "linux/__includes.hpp"
 #include "thread/signal.hpp"
@@ -20,6 +20,7 @@ inline void
 alarm()
 {
 }
+
 // a method to quickly crash a ring3 program
 // pick your poison
 template <int x = 0>

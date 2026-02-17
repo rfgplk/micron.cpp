@@ -44,6 +44,7 @@ struct input_absinfo_t {
   i32 flat;
   i32 resolution;
 };
+
 struct input_keymap_entry_t {
   u8 flags;
   u8 len;

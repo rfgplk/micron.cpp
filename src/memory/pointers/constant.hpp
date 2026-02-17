@@ -163,6 +163,7 @@ public:
   {
     return internal_pointer != nullptr;
   }
+
   inline Type *release() = delete;
   void clear() = delete;
 };

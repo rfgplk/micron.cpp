@@ -23,33 +23,39 @@ mmap(addr_t *__restrict addr, size_t len, int prot, int flags, int fd, posix::of
 {
   return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
 }
+
 // addr_t *mmap64();
 int
 munmap(addr_t *__restrict addr, size_t len)
 {
   return (int)micron::syscall(SYS_munmap, addr, len);
 }
+
 int
 mprotect(addr_t *addr, size_t len, int prot)
 {
   return (int)micron::syscall(SYS_mprotect, addr, len, prot);
 }
+
 int
 msync(addr_t *addr, size_t len, int flags)
 {
   return (int)micron::syscall(SYS_msync, addr, len, flags);
 }
+
 int
 madvise(addr_t *addr, size_t len, int advice)
 {
 
   return (int)micron::syscall(SYS_madvise, addr, len, advice);
 };
+
 int
 mlock(const addr_t *addr, size_t len)
 {
   return (int)micron::syscall(SYS_mlock, addr, len);
 }
+
 int
 munlock(const addr_t *addr, size_t len)
 {
@@ -127,6 +133,7 @@ addrmap(size_t sz)
 {
   return __as_map<C, addr_t>(sz);
 }
+
 template <class C = __default_map>
 inline byte *
 bytemap(size_t sz)

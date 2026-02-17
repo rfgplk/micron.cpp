@@ -84,6 +84,7 @@ fold_left(const C &c, A init, Fn fn)
 {
   return fold_left<typename C::value_type, A, U, Fn>(c.begin(), c.end(), init, fn);
 }
+
 template <class T, class A, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, A>
 A

@@ -31,13 +31,16 @@ struct dir {
   // DIR *dp;
   posix::dir_t dp;
   dir_container dd;
+
   ~dir()
   {
     if ( dp.has_error() or dp.closed() )
       return;
     posix::closedir(dp);
   }
+
   dir(void) = default;
+
   dir(const char *str)
   {
     if ( !verify(str) )
@@ -52,6 +55,7 @@ struct dir {
     list();     // init base structure
     dname = str;
   }
+
   dir(const micron::sstr<max_name> &str)
   {
     if ( !verify(str) )
@@ -66,6 +70,7 @@ struct dir {
     list();     // init base structure
     dname = str;
   }
+
   dir(const micron::string &str)
   {
     if ( !verify(str) )
@@ -80,8 +85,11 @@ struct dir {
     list();     // init base structure
     dname = str;
   }
+
   dir(const dir &o) : dname(o.dname), dp(o.dp), dd() {}
+
   dir(dir &&o) : dname(micron::move(o.dname)), dp(o.dp), dd(micron::move(o.dd)) { o.dp.reset(); }
+
   dir &
   operator=(const dir &o)
   {
@@ -90,6 +98,7 @@ struct dir {
     dd = dir_container();
     return *this;
   }
+
   dir &
   operator=(dir &&o)
   {
@@ -99,11 +108,13 @@ struct dir {
     dd = micron::move(o.dd);
     return *this;
   }
+
   inline auto
   get() const
   {
     return dp;
   }
+
   inline auto &
   get_children()
   {
@@ -111,11 +122,13 @@ struct dir {
       list();
     return dd;
   }
+
   inline auto
   name() const
   {
     return dname;
   }
+
   template <typename F>
   inline dir &
   until(const char *str, F (dir::*f)())
@@ -125,6 +138,7 @@ struct dir {
     }
     return *this;
   }
+
   template <typename F, typename... Args>
   inline dir &
   until(const char *str, F (dir::*f)(Args...), Args &&...args)
@@ -136,6 +150,7 @@ struct dir {
     }
     return *this;
   }
+
   inline dir &
   parent(void)
   {
@@ -153,11 +168,13 @@ struct dir {
     dname = micron::realpath(pstr.c_str(), NULL);
     return *this;
   }
+
   dir &
   up(void)
   {
     return parent();
   }     // shorthand
+
   dir &
   to(const char *str)
   {
@@ -170,6 +187,7 @@ struct dir {
     dname = micron::realpath(str, NULL);
     return *this;
   }
+
   int
   fd(void) const
   {
@@ -177,6 +195,7 @@ struct dir {
       return dp.fd;
     return -1;
   }
+
   // NOTE: takes in a str which _must_ correlate to a child
   dir &
   change(const char *str)
@@ -198,6 +217,7 @@ struct dir {
     }
     return *this;
   }
+
   void
   list(void)
   {

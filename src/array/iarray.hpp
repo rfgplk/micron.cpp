@@ -24,6 +24,7 @@ template <is_movable_object T, size_t N = 64>
 class iarray
 {
   alignas(alignof(T)) T stack[N];
+
   inline void
   __impl_zero(T *src)
   {
@@ -34,6 +35,7 @@ class iarray
       micron::cmemset<N>(src, 0x0);
     }
   }
+
   void
   __impl_set(T *__restrict src, const T &val)
   {
@@ -44,6 +46,7 @@ class iarray
       micron::cmemset<N>(src, val);
     }
   }
+
   void
   __impl_copy(const T *__restrict src, T *__restrict dest)
   {
@@ -54,6 +57,7 @@ class iarray
       micron::copy<N>(src, dest);
     }
   }
+
   void
   __impl_move(T *__restrict src, const T *__restrict dest)
   {
@@ -65,6 +69,7 @@ class iarray
       micron::czero<N>(src);
     }
   }
+
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
@@ -75,6 +80,7 @@ class iarray
       micron::copy<N>(src, dest);
     }
   }
+
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
@@ -111,8 +117,11 @@ public:
       micron::czero<N>(micron::addr(stack[0]));
     }
   }
+
   iarray() { __impl_zero(micron::addr(stack[0])); }
+
   iarray(const T &o) { __impl_set(micron::addr(stack[0]), o); }
+
   iarray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
@@ -121,6 +130,7 @@ public:
     for ( T value : lst )
       stack[i++] = micron::move(value);
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, iarray>)
   iarray(const A &o)
@@ -129,6 +139,7 @@ public:
       throw except::runtime_error("micron::iarray iarray(const&) invalid size");
     __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, iarray>)
   iarray(A &&o)
@@ -137,51 +148,61 @@ public:
       throw except::runtime_error("micron::iarray iarray(&&) invalid size");
     __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
   }
+
   iarray(const iarray &o)
   {
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
+
   iarray(iarray &&o)
   {
     __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
     // micron::cmemset<N>(micron::addr(stack[0], 0x0);
   }
+
   const_iterator
   begin() const noexcept
   {
     return micron::addr(stack[0]);
   }
+
   const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
+
   const_iterator
   end() const noexcept
   {
     return micron::addr(stack[N]);
   }
+
   const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);
   }
+
   size_t
   size() const
   {
     return N;
   }
+
   size_t
   max_size() const
   {
     return N;
   }
+
   const T *
   data() const
   {
     return stack;
   }
+
   const T &
   at(const size_t i) const
   {
@@ -189,16 +210,19 @@ public:
       throw except::runtime_error("micron::iarray at() out of range.");
     return stack[i];
   }
+
   inline const T &
   operator[](const size_t i) const
   {
     return stack[i];
   }
+
   inline T &
   mut(const size_t i)
   {
     return stack[i];
   }
+
   template <typename F, size_t M>
   iarray &
   operator=(T (&o)[M])
@@ -208,6 +232,7 @@ public:
     // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
+
   iarray &
   operator=(iarray &&o)
   {
@@ -231,6 +256,7 @@ public:
       return arr;
     }
   }
+
   template <size_t M>
   auto
   operator-(const iarray<T, M> &o)
@@ -247,6 +273,7 @@ public:
       return arr;
     }
   }
+
   template <size_t M>
   auto
   operator*(const iarray<T, M> &o)
@@ -263,6 +290,7 @@ public:
       return arr;
     }
   }
+
   template <size_t M>
     requires(M <= N)
   auto
@@ -280,6 +308,7 @@ public:
       return arr;
     }
   }
+
   template <size_t M>
     requires(M <= N)
   auto
@@ -316,6 +345,7 @@ public:
       arr.mut(i) *= o;
     return arr;
   }
+
   iarray
   operator/=(const T &o)
   {
@@ -324,6 +354,7 @@ public:
       arr.mut(i) /= o;
     return arr;
   }
+
   iarray
   operator-=(const T &o)
   {
@@ -332,6 +363,7 @@ public:
       arr.mut(i) -= o;
     return arr;
   }
+
   iarray
   operator+=(const T &o)
   {
@@ -340,6 +372,7 @@ public:
       arr.mut(i) += o;
     return arr;
   }
+
   bool
   all(const T &o) const
   {
@@ -348,6 +381,7 @@ public:
         return false;
     return true;
   }
+
   bool
   any(const T &o) const
   {

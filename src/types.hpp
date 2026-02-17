@@ -9,6 +9,8 @@
 
 #include "bits/__pause.hpp"
 
+#include "endian.hpp"
+
 #include "bits-types.hpp"
 #include "linux/sys/types.hpp"
 #include "type_traits.hpp"
@@ -213,6 +215,7 @@ struct __ct_type_checker {
 
     return true;
   }
+
   static constexpr bool
   check_posix()
   {

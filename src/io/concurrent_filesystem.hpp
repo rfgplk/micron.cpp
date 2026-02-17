@@ -39,12 +39,15 @@ class parallel_system
 {
   micron::mutex __mtx;
   micron::weak_pointer<__parallel_wrapper> entries[N];
+
   inline __attribute__((always_inline)) auto &
   __access(__parallel_wrapper &pw)
   {
     return pw._fentry;
   }
+
   size_t sz;
+
   auto
   __find_fd(const io::path_t &p) -> int
   {
@@ -56,6 +59,7 @@ class parallel_system
     }
     return -1;
   }
+
   auto
   __find_id(const io::path_t &p) -> size_t
   {
@@ -66,6 +70,7 @@ class parallel_system
     }
     return __max_fs;
   }
+
   auto &
   __find(const io::path_t &p)
   {
@@ -76,6 +81,7 @@ class parallel_system
     }
     exc<except::filesystem_error>("micron fsys wasn't able to find file");
   }
+
   inline __attribute__((always_inline)) size_t
   __locate(const io::path_t &p)
   {
@@ -86,6 +92,7 @@ class parallel_system
     }
     return _id;
   }
+
   inline __attribute__((always_inline)) void
   __set_perms(io::linux_permissions &perms, io::permission_types x)
   {
@@ -110,12 +117,14 @@ class parallel_system
     else if ( x == io::permission_types::others_execute )
       perms.others.execute = true;
   }
+
   inline __attribute__((always_inline)) void
   __limit()
   {
     if ( sz == N )
       exc<except::filesystem_error>("micron::fsys too many file handles open");
   }
+
   void
   __lock_all(void)
   {
@@ -123,6 +132,7 @@ class parallel_system
       micron::lock(entries[i]->mtx);
     }
   }
+
   void
   __unlock_all(void)
   {
@@ -130,11 +140,13 @@ class parallel_system
       micron::unlock(entries[i]->mtx);
     }
   }
+
   void
   __lock(void)
   {
     micron::lock(__mtx);
   }
+
   void
   __unlock(void)
   {
@@ -150,22 +162,29 @@ public:
       entries[i].clear();
     }
   }
+
   parallel_system() : entries{ nullptr }, sz(0) {}
+
   parallel_system(const io::path_t &p, const io::modes c = _default_mode) : entries{ nullptr }, sz(0) { file(p, c); }
+
   template <typename... T>
     requires((micron::same_as<T, io::path_t> && ...))
   parallel_system(const T &...t)
   {
     (file(t, _default_mode), ...);
   }
+
   parallel_system(const parallel_system &o) { micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]); }
+
   parallel_system(parallel_system &&o) : entries(micron::move(o.entries)) {}
+
   parallel_system &
   operator=(const parallel_system &o)
   {
     micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]);
     return *this;
   }
+
   parallel_system &
   operator=(parallel_system &&o)
   {
@@ -173,6 +192,7 @@ public:
     micron::czero<sizeof(entries) * 256>(&o.entries[0]);
     return *this;
   }
+
   // search for file
   auto &
   operator[](const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
@@ -185,6 +205,7 @@ public:
     }     // as with maps, if file doesn't exist open it
     return append(p, c, nd);
   }
+
   inline auto &
   append(const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
   {
@@ -193,6 +214,7 @@ public:
       return file(p, c);
     exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
   }
+
   inline void
   remove(const io::path_t &p)
   {
@@ -209,6 +231,7 @@ public:
       entries[i - 1] = micron::move(entries[i]);
     __unlock();
   }
+
   inline void
   remove(fsys::file<> &fref)
   {
@@ -225,7 +248,9 @@ public:
       entries[i - 1] = micron::move(entries[i]);
     __unlock();
   }
+
   void to_persist() = delete;
+
   auto
   list(void) const
   {
@@ -236,6 +261,7 @@ public:
     }
     return names;
   }
+
   auto &
   file(const io::path_t &p, const io::modes mode = _default_mode)
   {
@@ -253,6 +279,7 @@ public:
       return *entries[_sz];
     }
   }
+
   /*
   template <is_string T>
   auto &
@@ -297,6 +324,7 @@ public:
     posix::rename(from.c_str(), to.c_str());
     __unlock();
   }
+
   // provide both
   void
   move(const io::path_t &from, const io::path_t &to)
@@ -317,6 +345,7 @@ public:
     posix::rename(from.c_str(), to.c_str());
     __unlock();
   }
+
   void
   copy(const io::path_t &from, const io::path_t &to)
   {
@@ -338,12 +367,14 @@ public:
     sync();
     __unlock();
   }
+
   template <typename... Paths>
   void
   copy_list(const io::path_t &from, const Paths &...to)
   {
     (copy(from, to), ...);
   }
+
   // we don't need this, but for compatibility with the STL we're adding it
   bool
   is_opened(const io::path_t &path) const
@@ -353,34 +384,40 @@ public:
         return true;
     return false;
   }
+
   // we don't need this, but for compatibility with the STL we're adding it
   bool
   equivalent(const io::path_t &path, const io::path_t &cmp) const
   {
     return path == cmp;
   }
+
   bool
   exists(const io::path_t &path) const
   {
     return (posix::access(path.c_str(), posix::access_ok) == 0);
   }
+
   bool
   accessible(const io::path_t &path) const
   {
     return (posix::access(path.c_str(), posix::read_ok | posix::execute_ok) == 0);
   }
+
   auto
   permissions(const io::path_t &path) const
   {
     size_t id = __locate(path);
     return entries[id]->permissions();
   }
+
   auto
   set_permissions(const io::path_t &path, const io::linux_permissions &perms)
   {
     size_t id = __locate(path);
     return entries[id]->set_permissions(perms);
   }
+
   template <typename... Args>
   auto
   set_permissions(const io::path_t &path, Args... args)
@@ -392,12 +429,14 @@ public:
     (__set_perm(perms, args), ...);
     return entries[id]->set_permissions(perms);
   }
+
   // FILE TYPE FUNCS
   auto
   file_type_at(const io::path_t &p) const
   {
     return io::get_type_at(p.c_str());
   }
+
   auto
   file_type(const io::path_t &p) const
   {
@@ -408,6 +447,7 @@ public:
       return io::node_types::not_found;
     return io::get_type(f);
   }
+
   // is_ stl compat
   bool
   is_virtual_file(const io::path_t &p) const
@@ -419,6 +459,7 @@ public:
       return false;
     return io::is_virtual_file(f);
   }
+
   bool
   is_regular_file(const io::path_t &p) const
   {
@@ -429,6 +470,7 @@ public:
       return false;
     return io::is_file(f);
   }
+
   bool
   is_block_device(const io::path_t &p) const
   {
@@ -439,6 +481,7 @@ public:
       return false;
     return io::is_block_device(f);
   }
+
   bool
   is_directory(const io::path_t &p) const
   {
@@ -449,6 +492,7 @@ public:
       return false;
     return io::is_dir(f);
   }
+
   bool
   is_socket(const io::path_t &p) const
   {
@@ -459,6 +503,7 @@ public:
       return false;
     return io::is_socket(f);
   }
+
   bool
   is_symlink(const io::path_t &p) const
   {
@@ -469,6 +514,7 @@ public:
       return false;
     return io::is_symlink(f);
   }
+
   bool
   is_fifo(const io::path_t &p) const
   {
@@ -489,6 +535,7 @@ public:
     }
     return false;
   }
+
   bool
   is_block_device(void) const
   {
@@ -497,6 +544,7 @@ public:
     }
     return false;
   }
+
   bool
   is_directory(void) const
   {
@@ -505,6 +553,7 @@ public:
     }
     return false;
   }
+
   bool
   is_socket(void) const
   {
@@ -513,6 +562,7 @@ public:
     }
     return false;
   }
+
   bool
   is_symlink(void) const
   {
@@ -521,6 +571,7 @@ public:
     }
     return false;
   }
+
   bool
   is_fifo(void) const
   {

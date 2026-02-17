@@ -292,6 +292,7 @@ park(posix::cpu_set_t &set, Tr &t)
 {
   park_cpu(t.thread_id(), set);
 }
+
 template <typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 interrupt(Tr &t)
@@ -307,6 +308,7 @@ interrupt(__thread_pointer<Tr> &t)
     return -1;
   return t->signal(signals::interrupt);
 }
+
 template <typename... Args>
 inline int
 interrupt(Args &...t)

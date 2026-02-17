@@ -91,19 +91,24 @@ clock(void)
     return -1;
   return (tm.tv_sec * clocks_per_sec + tm.tv_nsec / (1000000000 / clocks_per_sec));
 }
+
 time_t
 time(void)
 {
   return micron::syscall(SYS_time, nullptr);
 }
+
 double difftime(time_t t0, time_t t1);
+
 long int
 clock_getres(clockid_t clc, timespec_t *res)
 {
   return micron::syscall(SYS_clock_getres, clc, res);
 }
+
 int clock_settime(clockid_t clc, timespec_t &tm);
 int clock_getcpuclockid(posix::pid_t pid, clockid_t &clc);
+
 long int
 clock_nanosleep(clockid_t clock, int flags, timespec_t &tm, timespec_t *rmn)
 {

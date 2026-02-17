@@ -32,6 +32,7 @@ class conarray
 {
   micron::mutex __mtx;
   alignas(64) T stack[N];
+
   inline void
   __impl_zero(T *src)
   {
@@ -42,6 +43,7 @@ class conarray
       micron::cmemset<N>(src, 0x0);
     }
   }
+
   void
   __impl_set(T *__restrict src, const T &val)
   {
@@ -52,6 +54,7 @@ class conarray
       micron::cmemset<N>(src, val);
     }
   }
+
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
@@ -62,6 +65,7 @@ class conarray
       micron::copy<N>(src, dest);
     }
   }
+
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
@@ -98,8 +102,11 @@ public:
       micron::czero<N>(micron::addr(stack[0]));
     }
   }
+
   conarray() { __impl_zero(micron::addr(stack[0])); }
+
   conarray(const T &o) { __impl_set(micron::addr(stack[0]), o); }
+
   conarray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
@@ -108,6 +115,7 @@ public:
     for ( T value : lst )
       stack[i++] = micron::move(value);
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, conarray>)
   conarray(const A &o)
@@ -116,6 +124,7 @@ public:
       exc<except::runtime_error>("micron::conarray conarray(const&) invalid size");
     __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, conarray>)
   conarray(A &&o)
@@ -124,11 +133,13 @@ public:
       exc<except::runtime_error>("micron::conarray conarray(&&) invalid size");
     __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
   }
+
   conarray(const conarray &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
+
   conarray(conarray &&o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
@@ -142,48 +153,57 @@ public:
   {
     return micron::addr(stack[0]);
   }
+
   const_iterator
   end() const noexcept
   {
     return micron::addr(stack[N]);
   }
+
   const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
+
   const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);
   }
+
   const_iterator
   view() const
   {
     return micron::addr(stack[0]);
   }
+
   iterator
   get()     // NOTE: main method of getting the underlying conarray, mtx must be released manually
   {
     __mtx.lock();
     return micron::addr(stack[0]);
   }
+
   void
   release()
   {
     void (micron::mutex::*rptr)() = __mtx.retrieve();
     (__mtx.*rptr)();
   }
+
   size_t
   size() const
   {
     return N;
   }
+
   size_t
   max_size() const
   {
     return N;
   }
+
   template <typename F, size_t M>
   conarray &
   operator=(T (&o)[M])
@@ -194,6 +214,7 @@ public:
     // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
+
   template <typename F>
   conarray &
   operator=(const F &o)
@@ -203,6 +224,7 @@ public:
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
   }
+
   conarray &
   operator=(const conarray &o)
   {
@@ -210,6 +232,7 @@ public:
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
+
   conarray &
   operator=(conarray &&o)
   {
@@ -228,6 +251,7 @@ public:
       stack[i] += o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   conarray &
@@ -238,6 +262,7 @@ public:
       stack[i] -= o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   conarray &
@@ -248,6 +273,7 @@ public:
       stack[i] *= o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   conarray &
@@ -258,6 +284,7 @@ public:
       stack[i] /= o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   conarray &
@@ -288,6 +315,7 @@ public:
       stack[i] *= o;
     return *this;
   }
+
   conarray &
   operator/=(const T &o)
   {
@@ -296,6 +324,7 @@ public:
       stack[i] /= o;
     return *this;
   }
+
   conarray &
   operator-=(const T &o)
   {
@@ -304,6 +333,7 @@ public:
       stack[i] -= o;
     return *this;
   }
+
   conarray &
   operator+=(const T &o)
   {
@@ -312,6 +342,7 @@ public:
       stack[i] += o;
     return *this;
   }
+
   void
   mul(const size_t n)
   {
@@ -319,6 +350,7 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] *= n;
   }
+
   void
   div(const size_t n)
   {
@@ -326,6 +358,7 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] /= n;
   }
+
   void
   sub(const size_t n)
   {
@@ -333,6 +366,7 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] -= n;
   }
+
   void
   add(const size_t n)
   {
@@ -340,6 +374,7 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] += n;
   }
+
   size_t
   mul(void) const
   {
@@ -359,6 +394,7 @@ public:
         return false;
     return true;
   }
+
   bool
   any(const T &o) const
   {
@@ -368,6 +404,7 @@ public:
         return true;
     return false;
   }
+
   void
   sqrt(void) const
   {
@@ -375,6 +412,7 @@ public:
     for ( size_t i = 0; i < N; i++ )
       stack[i] = math::sqrt(static_cast<float>(stack[i]));
   }
+
   template <typename F>
   conarray &
   fill(const F &o)
@@ -384,6 +422,7 @@ public:
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
   }
+
   static constexpr bool
   is_pod()
   {

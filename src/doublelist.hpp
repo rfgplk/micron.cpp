@@ -19,20 +19,24 @@ template <typename T> struct double_list_node {
   double_list_node<T> *prev;
   double_list_node<T> *next;
 };
+
 template <typename T> class double_list
 {
   using double_list_node_t = double_list_node<T>;
   double_list_node_t *root;     // root node -- is a pointer (simpler to impl)
+
   inline void
   __impl_heap(T &&t, double_list_node_t **ptr, double_list_node_t *pptr)
   {
     *ptr = new double_list_node_t(micron::move(t), pptr, nullptr);
   }
+
   inline void
   __impl_heap(const T &t, double_list_node_t **ptr, double_list_node_t *pptr)
   {
     *ptr = new double_list_node_t(t, pptr, nullptr);
   }
+
   inline void
   deep_copy(double_list_node_t *dst, const double_list_node_t *src)
   {
@@ -62,6 +66,7 @@ public:
   typedef const T *const_iterator;
 
   double_list() : root(nullptr) {}
+
   double_list(const size_t cnt) : root(nullptr)
   {
     __impl_heap(micron::move(T()), &root);
@@ -75,6 +80,7 @@ public:
       ptr = ptr->next;
     }
   }
+
   double_list(const size_t cnt, const T &t)
   {
     __impl_heap(t, &root);
@@ -88,14 +94,18 @@ public:
       ptr = ptr->next;
     }
   }
+
   double_list(const double_list &o) { deep_copy(root, o.root); }
+
   double_list(double_list &&o) : root(o.root) { o.root = nullptr; }
+
   double_list &
   operator=(const double_list &o)
   {
     deep_copy(&root, &o.root);
     return *this;
   }
+
   double_list &
   operator=(double_list &&o)
   {
@@ -104,6 +114,7 @@ public:
     o.root.next = nullptr;
     return *this;
   }
+
   ~double_list()
   {
     if ( root == nullptr )
@@ -124,6 +135,7 @@ public:
       delete ptrs[j];
     delete[] ptrs;
   }
+
   const_pointer
   iend() const
   {
@@ -132,11 +144,13 @@ public:
       ptr = ptr->next;
     return ptr;
   }
+
   const_pointer
   ibegin() const
   {
     return root;
   }
+
   const_iterator
   end() const
   {
@@ -145,11 +159,13 @@ public:
       ptr = ptr->next;
     return &ptr->data;
   }
+
   const_iterator
   begin() const
   {
     return &root->data;
   }
+
   void
   push_front(const T &v)
   {
@@ -158,6 +174,7 @@ public:
     ptr->next = root;
     root = ptr;
   }
+
   void
   push_back(const T &v)
   {
@@ -166,6 +183,7 @@ public:
     auto end_p = end();
     end_p->next = ptr;
   }
+
   const_iterator
   find(const T &srch)
   {
@@ -177,6 +195,7 @@ public:
     }     // ptr is found node
     return &ptr->data;     // nullptr if no hit :/
   }
+
   // advance by how many
   const_pointer
   next(const_pointer itr, const size_t n = 0)
@@ -190,6 +209,7 @@ public:
     }
     return itr;
   }
+
   // retret by how many
   const_pointer
   prev(const_pointer itr, const size_t n = 0)
@@ -203,6 +223,7 @@ public:
     }
     return itr;
   }
+
   void
   erase(const_pointer itr)
   {
@@ -218,6 +239,7 @@ public:
     ptr->next = itr->next;     // relink
     delete itr;
   }
+
   void
   insert(const_pointer itr, T &&v)
   {
@@ -228,6 +250,7 @@ public:
     ptr->next = itr->next;
     itr->next = ptr;
   }
+
   void
   insert(const_pointer itr, const T &v)
   {
@@ -238,6 +261,7 @@ public:
     ptr->next = itr->next;
     itr->next = ptr;
   }
+
   void
   emplace(const_pointer itr, T &&v)
   {
@@ -248,6 +272,7 @@ public:
     ptr->next = itr->next;
     itr->next = ptr;
   }
+
   T
   front() const
   {
@@ -255,6 +280,7 @@ public:
       exc<except::runtime_error>("micron::double_list front() is empty");
     return root->data;
   }
+
   T
   back() const
   {
@@ -262,6 +288,7 @@ public:
       exc<except::runtime_error>("micron::double_list front() is empty");
     return end()->data;
   }
+
   void
   merge(double_list &o)
   {
@@ -271,6 +298,7 @@ public:
     end_ptr->next = o.root;
     o.root = nullptr;
   }
+
   void
   merge(double_list &&o)
   {
@@ -280,6 +308,7 @@ public:
     end_ptr->next = o.root;
     o.root = nullptr;
   }
+
   void
   splice(const_pointer pos, double_list &o)
   {
@@ -289,6 +318,7 @@ public:
     ptr->next = pos->next;
     pos->next = nullptr;
   }
+
   bool
   empty() const
   {
@@ -297,6 +327,7 @@ public:
     else
       return false;
   }
+
   size_t
   size() const
   {
@@ -310,6 +341,7 @@ public:
     }
     return cnt;
   }
+
   size_t
   max_size() const
   {

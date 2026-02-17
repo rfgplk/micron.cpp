@@ -27,6 +27,7 @@
 namespace abc
 {
 constexpr static const u64 __max_cached = 32;
+
 class alloc_predictor
 {
   micron::carray<size_t, __max_cached> allocs;
@@ -54,6 +55,7 @@ public:
   alloc_predictor(void) = default;
   alloc_predictor(const alloc_predictor &) = default;
   alloc_predictor(alloc_predictor &&) = default;
+
   alloc_predictor &
   operator+=(const size_t n)
   {

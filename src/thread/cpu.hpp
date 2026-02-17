@@ -69,6 +69,7 @@ park_cpu_pid(pid_t pid, unsigned c = 0xFFFFFFFF)
   posix::sched_setaffinity(pid, sizeof(set), set);
   return c;
 }
+
 inline void
 park_cpu(pid_t pid, posix::cpu_set_t &set)
 {
@@ -99,6 +100,7 @@ public:
         procs.cpu_set(i);
     }     // default to all threads
   }
+
   bool
   operator[](const size_t n) const
   {
@@ -106,16 +108,19 @@ public:
       exc<except::library_error>("micron cpu_t::operator[] out of range");
     return procs.cpu_isset(n);
   }
+
   void
   clear(void)
   {
     procs.cpu_zero();
   }
+
   auto &
   get()
   {
     return procs;
   }
+
   bool
   at(const size_t n) const
   {
@@ -131,11 +136,13 @@ public:
       exc<except::library_error>("micron cpu_t::operator[] out of range");
     procs.cpu_set(n);
   }
+
   void
   update_cores(void)
   {
     posix::set_affinity(pid, procs);
   }
+
   void
   update(void)
   {

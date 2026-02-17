@@ -18,6 +18,7 @@ shallow_copy(T *dest, const T *src, size_t cnt)
                  cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
                                                         // fine, just realign back to bytes
 };
+
 template <typename T>
 inline void
 shallow_copy(T *dest, T *src, size_t cnt)
@@ -26,6 +27,7 @@ shallow_copy(T *dest, T *src, size_t cnt)
                  cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
                                                         // fine, just realign back to bytes
 };
+
 // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
 // cause segfaulting if underlying doesn't account for double deletes)
 template <typename T>
@@ -51,6 +53,7 @@ shallow_move(T *dest, T *src, size_t cnt)
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src), cnt);
   micron::memset(reinterpret_cast<byte *>(src), 0x0, cnt);
 };
+
 template <typename T>
 inline void
 deep_move(T *dest, T *src, size_t cnt)

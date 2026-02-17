@@ -48,6 +48,7 @@ ftw(path &&p)
   }
   return rslt;
 }
+
 auto
 ftw_all(path &&p)
 {

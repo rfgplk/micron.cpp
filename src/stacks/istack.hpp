@@ -26,6 +26,7 @@ template <typename t, size_t N = micron::alloc_auto_sz, class Alloc = micron::al
 class istack : public __immutable_memory_resource<t, Alloc>
 {
   using __mem = __immutable_memory_resource<t, Alloc>;
+
   inline void
   _push(void)
   {
@@ -33,6 +34,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
       reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t();
   }
+
   inline void
   _push(const t &v)
   {
@@ -40,6 +42,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
       reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(v);
   }
+
   inline void
   _push(t &&v)
   {
@@ -47,6 +50,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
       reserve(__mem::capacity * 2);
     new (&__mem::memory[__mem::length++]) t(micron::move(v));
   }
+
   inline void
   _pop(void)
   {
@@ -69,18 +73,22 @@ public:
   typedef const t *const_pointer;
   typedef t *iterator;
   typedef const t *const_iterator;
+
   ~istack()
   {
     if ( __mem::is_zero() )
       return;
     // clear(); CANT BE HERE DON'T WILL INF REC LOOP
   }
+
   istack() : __mem(N) {}
+
   istack(const umax_t n) : __mem(n)
   {
     for ( umax_t i = 0; i < n; i++ )
       _push();
   }
+
   istack(const std::initializer_list<t> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<t> ) {
@@ -107,31 +115,39 @@ public:
       _push(o[i]);     // we want it to be inverse aka as it is in memory
     _push(o[0]);
   }
+
   istack(const istack &) = delete;
+
   istack(istack &&o) : __mem(micron::move(o)) {}
+
   istack(const istack *o) : __mem(o->capacity * sizeof(t))
   {
     for ( size_t i = 0; i < o->length; i++ )
       __mem::memory[i] = o->memory[i];
     __mem::length = o->length;
   }
+
   istack &operator=(const istack &) = delete;
+
   inline const t &
   operator[](const umax_t n) const
   {
     umax_t c = __mem::length - n - 1;
     return __mem::memory[c];
   }
+
   const t &
   top(void) const
   {
     return __mem::memory[__mem::length - 1];
   }
+
   inline const t &
   operator()(void)
   {
     return __mem::memory[__mem::length - 1];
   }
+
   inline auto
   push(const t &v) -> istack
   {
@@ -139,6 +155,7 @@ public:
     ret._push(v);
     return ret;
   }
+
   inline auto
   push(t &&v) -> istack
   {
@@ -146,6 +163,7 @@ public:
     ret._push(v);
     return ret;
   }
+
   inline auto
   pop() -> istack
   {
@@ -153,6 +171,7 @@ public:
     ret._pop();
     return ret;
   }
+
   inline auto
   clear() -> istack
   {
@@ -160,6 +179,7 @@ public:
     ret.reserve(__mem::capacity);
     return ret;
   }
+
   // grow container
   inline void
   reserve(const size_t n)
@@ -168,6 +188,7 @@ public:
       return;
     __mem::expand(n);
   }
+
   inline void
   swap(istack &o)
   {
@@ -175,21 +196,25 @@ public:
     micron::swap(__mem::length);
     micron::swap(__mem::capacity);
   }
+
   inline bool
   empty() const
   {
     return !__mem::length;
   }
+
   inline size_t
   size() const
   {
     return __mem::length;
   }
+
   inline size_t
   max_size() const
   {
     return __mem::capacity;
   }
+
   static constexpr bool
   is_pod()
   {

@@ -26,6 +26,7 @@ template <is_regular_object T, size_t N> class bisect_array
 {
   alignas(64) T stack[N];
   size_t length = 0;
+
   inline void
   __impl_zero(T *src)
   {
@@ -36,6 +37,7 @@ template <is_regular_object T, size_t N> class bisect_array
       micron::cmemset<N>(src, 0x0);
     }
   }
+
   void
   __impl_set(T *__restrict src, const T &val)
   {
@@ -46,6 +48,7 @@ template <is_regular_object T, size_t N> class bisect_array
       micron::cmemset<N>(src, val);
     }
   }
+
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
@@ -56,6 +59,7 @@ template <is_regular_object T, size_t N> class bisect_array
       micron::copy<N>(src, dest);
     }
   }
+
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
@@ -109,6 +113,7 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~bisect_array()
   {
     // explicit
@@ -119,7 +124,9 @@ public:
       micron::czero<N>(micron::addr(stack[0]));
     }
   }
+
   bisect_array() { __impl_zero(micron::addr(stack[0])); }
+
   template <is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(const A &o)
@@ -128,6 +135,7 @@ public:
       exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
     __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(A &&o)
@@ -136,46 +144,55 @@ public:
       exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
     __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
   }
+
   bisect_array(const bisect_array &o)
   {
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
+
   bisect_array(bisect_array &&o)
   {
     __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
     // micron::cmemset<N>(micron::addr(stack[0], 0x0);
   }
+
   size_t
   size() const noexcept
   {
     return length;
   }
+
   bool
   full() const noexcept
   {
     return length == N;
   }
+
   bool
   empty() const noexcept
   {
     return length == 0;
   }
+
   iterator
   begin() noexcept
   {
     return stack;
   }
+
   iterator
   end() noexcept
   {
     return &stack[length];
   }
+
   const_iterator
   cbegin() const noexcept
   {
     return stack;
   }
+
   const_iterator
   cend() const noexcept
   {
@@ -187,11 +204,13 @@ public:
   {
     return stack;
   }
+
   iterator
   data()
   {
     return stack;
   }
+
   const T &
   operator[](size_t idx) const
   {
@@ -221,6 +240,7 @@ public:
       stack[i] = stack[i + 1];
     --length;
   }
+
   static constexpr bool
   is_pod()
   {

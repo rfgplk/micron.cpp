@@ -82,7 +82,6 @@ fn_void(void)
   return 1001;
 }
 #include "../../src/sync/when.hpp"
-#include "../../src/thread/tasks.hpp"
 
 int
 main(void)

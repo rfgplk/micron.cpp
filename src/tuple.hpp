@@ -19,7 +19,9 @@ namespace micron
 template <typename T, typename F> struct pair {
   T a;     // or first
   F b;     // or second
+
   pair() : a(T()), b(F()) {}
+
   template <typename C>
     requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair(std::initializer_list<C> &&lst)
@@ -34,6 +36,7 @@ template <typename T, typename F> struct pair {
         break;
     }
   }
+
   template <typename C>
     requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair &
@@ -49,22 +52,30 @@ template <typename T, typename F> struct pair {
         break;
     }
   }
+
   template <typename K, typename L>
     requires(micron::is_convertible_v<T, K> and micron::is_convertible_v<F, L>)
   pair(const K &x, const L &y) : a(static_cast<T>(x)), b(static_cast<F>(y))
   {
   }
+
   template <typename K, typename L>
     requires((micron::is_convertible_v<T, K> and micron::is_convertible_v<F, L>)
              and (!micron::is_same_v<T, K> and !micron::is_same_v<F, L>))
   pair(K &&x, L &&y) : a(micron::move(x)), b(micron::move(y))
   {
   }
+
   pair(T &&x, F &&y) : a(micron::move(x)), b(micron::move(y)) {}
+
   pair(const T &x, const F &y) : a(x), b(y) {}
+
   template <typename K, typename L> pair(K &&x, L &&y) : a(micron::move(x)), b(micron::move(y)) {}
+
   pair(const pair &o) : a(o.a), b(o.b) {}
+
   template <typename K, typename L> pair(const pair<K, L> &o) : a(static_cast<K>(o.a)), b(static_cast<L>(o.b)) {}
+
   pair(pair &&o) : a(micron::move(o.a)), b(micron::move(o.b))
   {
     if constexpr ( micron::is_class_v<T> )
@@ -76,6 +87,7 @@ template <typename T, typename F> struct pair {
     else
       o.b = 0x0;
   }
+
   template <typename K, typename L> pair(pair<K, L> &&o) : a(micron::move(o.a)), b(micron::move(o.b))
   {
     if constexpr ( micron::is_class_v<T> )
@@ -87,6 +99,7 @@ template <typename T, typename F> struct pair {
     else
       o.b = 0x0;
   }
+
   pair &
   operator=(const pair &o)
   {
@@ -94,6 +107,7 @@ template <typename T, typename F> struct pair {
     b = o.b;
     return *this;
   }
+
   template <typename K, typename L>
   pair &
   operator=(const pair<K, L> &o)
@@ -102,6 +116,7 @@ template <typename T, typename F> struct pair {
     b = o.b;
     return *this;
   }
+
   pair &
   operator=(pair &&o)
   {
@@ -109,6 +124,7 @@ template <typename T, typename F> struct pair {
     b = micron::move(o.b);
     return *this;
   }
+
   template <typename K, typename L>
   pair &
   operator=(pair<K, L> &&o)
@@ -117,6 +133,7 @@ template <typename T, typename F> struct pair {
     b = micron::move(o.b);
     return *this;
   }
+
   template <typename K = T>
     requires(micron::is_convertible_v<T, K>)
   pair &
@@ -134,12 +151,14 @@ template <typename T, typename F> struct pair {
     b = static_cast<F>(y);
     return *this;
   }
+
   pair &
   operator=(T &&x)
   {
     a = micron::move(x);
     return *this;
   }
+
   template <typename L = F>
     requires(!micron::same_as<T, F>)
   pair &
@@ -148,6 +167,7 @@ template <typename T, typename F> struct pair {
     b = micron::move(y);
     return *this;
   }
+
   pair
   get(void) const
   {
@@ -156,6 +176,7 @@ template <typename T, typename F> struct pair {
 
   ~pair() = default;
 };
+
 template <typename C>
 micron::pair<C, C>
 tie(std::initializer_list<C> &&lst)
@@ -163,6 +184,7 @@ tie(std::initializer_list<C> &&lst)
   micron::pair<C, C> c(micron::move(lst));
   return c;
 }
+
 template <typename C, typename D>
 micron::pair<C, D>
 tie(const C &c, const D &d)
@@ -170,6 +192,7 @@ tie(const C &c, const D &d)
   micron::pair<C, D> p(c, d);
   return p;
 }
+
 template <typename C, typename D>
 micron::pair<C, D>
 tie(C &&c, D &&d)
@@ -202,16 +225,19 @@ public:
   {
     return __value;
   }
+
   constexpr const T &
   get() const & noexcept
   {
     return __value;
   }
+
   constexpr T &&
   get() && noexcept
   {
     return micron::move(__value);
   }
+
   constexpr const T &&
   get() const && noexcept
   {
@@ -235,16 +261,19 @@ public:
   {
     return *this;
   }
+
   constexpr const T &
   get() const & noexcept
   {
     return *this;
   }
+
   constexpr T &&
   get() && noexcept
   {
     return micron::move(*this);
   }
+
   constexpr const T &&
   get() const && noexcept
   {
@@ -356,6 +385,7 @@ template <> class tuple<>
 {
 public:
   constexpr tuple() = default;
+
   constexpr void
   swap(tuple &) noexcept
   {

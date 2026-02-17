@@ -23,6 +23,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
     bool mark;
 
     node(const T &v) : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
+
     node(T &&v) noexcept : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
   };
 
@@ -137,6 +138,7 @@ public:
   ~fibonacci_heap() { clear(); }
 
   fibonacci_heap(const fibonacci_heap &o) = delete;
+
   fibonacci_heap(fibonacci_heap &&o) noexcept : min_root(o.min_root), total_nodes(o.total_nodes)
   {
     o.min_root = nullptr;
@@ -144,6 +146,7 @@ public:
   }
 
   fibonacci_heap &operator=(const fibonacci_heap &o) = delete;
+
   fibonacci_heap &
   operator=(fibonacci_heap &&o) noexcept
   {
@@ -185,6 +188,7 @@ public:
   {
     return total_nodes == 0;
   }
+
   size_t
   size() const noexcept
   {

@@ -33,13 +33,17 @@ public:
       __alloc::__impl_dealloc(control);
     }
   }
+
   thread_pointer() : control(nullptr) {}
+
   template <is_nullptr V> thread_pointer(V) : control(nullptr) {}
+
   explicit thread_pointer(Type *p)
   {
     micron::lock_guard lock(mtx);
     control = p ? __alloc::__impl_alloc(p, 1) : nullptr;
   }
+
   thread_pointer(const thread_pointer &t)
   {
     micron::lock_guard lock(t.mtx);
@@ -235,6 +239,7 @@ public:
     micron::lock_guard lock(mtx);
     return control ? control->refs : 0;
   }
+
   size_t
   refs() const noexcept
   {

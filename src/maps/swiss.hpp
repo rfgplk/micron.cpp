@@ -148,7 +148,9 @@ public:
     V value;
 
     __swiss_entry() : key{}, value{} {}
+
     __swiss_entry(const K &k, const V &v) : key(k), value(v) {}
+
     __swiss_entry(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) {}
   };
 
@@ -157,6 +159,7 @@ public:
   size_t __size = 0;
 
   ~stack_swiss_map() = default;
+
   stack_swiss_map() : __size(0)
   {
     for ( size_t i = 0; i < N; ++i ) {
@@ -227,16 +230,19 @@ public:
   {
     return __size;
   }
+
   bool
   empty() const noexcept
   {
     return __size == 0;
   }
+
   constexpr size_t
   max_size() const noexcept
   {
     return N;
   }
+
   constexpr size_t
   capacity() const noexcept
   {
@@ -566,26 +572,31 @@ public:
   {
     return iterator(this, 0);
   }
+
   iterator
   end()
   {
     return iterator(this, N);
   }
+
   const_iterator
   begin() const
   {
     return const_iterator(this, 0);
   }
+
   const_iterator
   end() const
   {
     return const_iterator(this, N);
   }
+
   const_iterator
   cbegin() const
   {
     return const_iterator(this, 0);
   }
+
   const_iterator
   cend() const
   {

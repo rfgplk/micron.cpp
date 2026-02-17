@@ -9,7 +9,7 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
-#include "../thread/pause.hpp"
+#include "pause.hpp"
 
 #include "../thread/spawn.hpp"
 

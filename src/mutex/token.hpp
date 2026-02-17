@@ -21,12 +21,16 @@ template <typename R = void, typename T = micron::mutex *, typename A = void (mi
 
 public:
   ~token() {}
+
   token() : fptr(nullptr), mtx(), rmtx(nullptr) {}
+
   token(token_function<R, T, A> f) : fptr(f), mtx(), rmtx(nullptr) {}
+
   token(const token &) = delete;
   token(token &&) = delete;
   token &operator=(const token &) = delete;
   token &operator=(token &&) = delete;
+
   bool
   operator()(void)
   {

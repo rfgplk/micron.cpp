@@ -10,6 +10,7 @@
 
 #include "../array/arrays.hpp"
 #include "../types.hpp"
+
 namespace micron
 {
 
@@ -67,7 +68,9 @@ public:
     micron::sigemptyset(_default_signal);
     micron::sigprocmask(sig_setmask, _default_signal, NULL);
   }
+
   signal(void) : _acts(), _sig(0) { micron::sigemptyset(_signal); }
+
   template <typename... Sigs> signal(const Sigs... sig) : _acts{}
   {
     // micron::czero<sizeof(sigaction)>(&act);
@@ -78,16 +81,19 @@ public:
     }
     _sig = 0;
   }
+
   signal(const signal &) = default;
   signal(signal &&) = default;
   signal &operator=(const signal &) = default;
   signal &operator=(signal &&) = default;
+
   // mask masks the signals, to be caugh via operator()
   int
   mask(void) const
   {
     return micron::sigprocmask(sig_block, _signal, nullptr);
   }
+
   // on signal sets a universal function callback, when a signal is received call the function
   int
   on_signal(const signals s, void (*fhandler)(int))
@@ -97,16 +103,19 @@ public:
     _acts[(i32)s].sigaction_handler.sa_handler = fhandler;
     return micron::sigaction((i32)s, _acts[(i32)s], nullptr);
   }
+
   micron::sigset_t &
   get_signal()
   {
     return _signal;
   };
+
   int
   wait(void)     // NOTE: can't be const sigwait modifies _sig
   {
     return micron::sigwait(_signal, _sig);
   }
+
   int
   operator()(void)     // wait for signal
   {

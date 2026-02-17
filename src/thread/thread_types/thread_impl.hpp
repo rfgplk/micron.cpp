@@ -32,6 +32,7 @@
 namespace micron
 {
 enum thread_returns : i32 { return_success, return_force, return_fail };
+
 enum join_status { join_success, join_fail, join_allowed, join_busy };
 
 struct __thread_payload {
@@ -244,10 +245,12 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, const Fn &fn, co
 
 struct thread_attr_t {
   ~thread_attr_t() = default;
+
   thread_attr_t(pid_t a)
       : parent(a), pid(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0), stack_addr(nullptr)
   {
   }
+
   thread_attr_t(pid_t a, const pthread_attr_t &attr) : parent(a), pid(0)
   {
     pthread::get_sched_policy(attr, sched_policy);
@@ -256,6 +259,7 @@ struct thread_attr_t {
     pthread::get_detach_state(attr, detach_state);
     pthread::get_stack_thread(attr, stack_addr, stack_size);
   }
+
   void
   clear()
   {
@@ -263,6 +267,7 @@ struct thread_attr_t {
     stack_size = 0;
     stack_addr = nullptr;
   }
+
   pid_t parent;
   pthread_t pid;
   i32 sched_policy;

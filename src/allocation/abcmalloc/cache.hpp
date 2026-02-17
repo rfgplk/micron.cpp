@@ -35,6 +35,7 @@ struct cache {
   {
     return { reinterpret_cast<byte *>(micron::sbrk(sz)), sz };
   }
+
   void
   __heap_shrink(const ssize_t sz)
   {

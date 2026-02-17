@@ -18,6 +18,7 @@
 #include "../types.hpp"
 
 #include "../concepts.hpp"
+
 namespace micron
 {
 // carray = cache-array. mutable & notthread safe.
@@ -26,6 +27,7 @@ template <is_regular_object T, size_t N = 64>
 class alignas(32) carray
 {
   alignas(64) T stack[N];
+
   inline void
   __impl_zero(T *src)
   {
@@ -36,6 +38,7 @@ class alignas(32) carray
       micron::cmemset<N>(src, 0x0);
     }
   }
+
   void
   __impl_set(T *__restrict src, const T &val)
   {
@@ -46,6 +49,7 @@ class alignas(32) carray
       micron::cmemset<N>(src, val);
     }
   }
+
   void
   __impl_copy(const T *__restrict src, T *__restrict dest)
   {
@@ -56,6 +60,7 @@ class alignas(32) carray
       micron::copy<N>(src, dest);
     }
   }
+
   void
   __impl_copy(T *__restrict src, T *__restrict dest)
   {
@@ -66,6 +71,7 @@ class alignas(32) carray
       micron::copy<N>(src, dest);
     }
   }
+
   void
   __impl_move(T *__restrict src, T *__restrict dest)
   {
@@ -91,6 +97,7 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+
   ~carray()
   {
     // explicit
@@ -101,7 +108,9 @@ public:
       micron::czero<N>(micron::addr(stack[0]));
     }
   }
+
   carray() { __impl_zero(micron::addr(stack[0])); }
+
   carray(const T &o)
   {
     __impl_set(micron::addr(stack[0]), o);
@@ -119,6 +128,7 @@ public:
     //   }
     // }
   }
+
   carray(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
@@ -134,13 +144,16 @@ public:
   {
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, carray>)
   carray(A &&o)
   {
     __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }
+
   carray(const carray &o) { micron::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
+
   carray(carray &&o)
   {
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
@@ -154,41 +167,49 @@ public:
   {
     return micron::addr(stack[0]);
   }
+
   const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
+
   const_iterator
   end() const noexcept
   {
     return micron::addr(stack[N]);
   }
+
   const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);
   }
+
   size_t
   size() const
   {
     return N;
   }
+
   size_t
   max_size() const
   {
     return N;
   }
+
   T *
   data()
   {
     return stack;
   }
+
   const T *
   data() const
   {
     return stack;
   }
+
   inline T &
   at(const size_t i)
   {
@@ -196,6 +217,7 @@ public:
       exc<except::runtime_error>("micron::array at() out of range.");
     return stack[i];
   }
+
   inline const T &
   at(const size_t i) const
   {
@@ -203,16 +225,19 @@ public:
       exc<except::runtime_error>("micron::array at() out of range.");
     return stack[i];
   }
+
   inline T &
   operator[](const size_t i)
   {
     return stack[i];
   }
+
   inline const T &
   operator[](const size_t i) const
   {
     return stack[i];
   }
+
   template <typename F, size_t M>
   carray &
   operator=(T (&o)[M])
@@ -221,6 +246,7 @@ public:
     __impl_copy(&o[0], micron::addr(stack[0]));
     return *this;
   }
+
   template <typename F>
   carray &
   operator=(const F &o)
@@ -229,12 +255,14 @@ public:
     micron::memset(micron::addr(stack[0]), o, N);
     return *this;
   }
+
   carray &
   operator=(const carray &o)
   {
     __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
+
   carray &
   operator=(carray &&o)
   {
@@ -248,6 +276,7 @@ public:
     micron::copy<N>(&o[0], &stack[0]);
     return *this;
   }
+
   template <is_container A>
     requires(!micron::is_same_v<A, carray>)
   carray &
@@ -256,6 +285,7 @@ public:
     micron::copy<N>(&o[0], &stack[0]);
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   carray &
@@ -265,6 +295,7 @@ public:
       stack[i] += o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   carray &
@@ -274,6 +305,7 @@ public:
       stack[i] -= o.stack[o];
     return *this;
   }
+
   carray &
   operator*=(const T &o)
   {
@@ -289,6 +321,7 @@ public:
       stack[i] /= o;
     return *this;
   }
+
   carray &
   operator-=(const T &o)
   {
@@ -296,6 +329,7 @@ public:
       stack[i] -= o;
     return *this;
   }
+
   carray &
   operator+=(const T &o)
   {
@@ -313,6 +347,7 @@ public:
       stack[i] *= o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   carray &
@@ -322,6 +357,7 @@ public:
       stack[i] /= o.stack[o];
     return *this;
   }
+
   template <size_t M>
     requires(M <= N)
   carray &
@@ -331,11 +367,13 @@ public:
       stack[i] %= o.stack[o];
     return *this;
   }
+
   byte *
   operator&()
   {
     return reinterpret_cast<byte *>(stack);
   }
+
   const byte *
   operator&() const
   {
@@ -351,30 +389,35 @@ public:
       sm += stack[i];
     return sm;
   }
+
   void
   mul(const size_t n)
   {
     for ( size_t i = 0; i < N; i++ )
       stack[i] *= n;
   }
+
   void
   div(const size_t n)
   {
     for ( size_t i = 0; i < N; i++ )
       stack[i] /= n;
   }
+
   void
   sub(const size_t n)
   {
     for ( size_t i = 0; i < N; i++ )
       stack[i] -= n;
   }
+
   void
   add(const size_t n)
   {
     for ( size_t i = 0; i < N; i++ )
       stack[i] += n;
   }
+
   size_t
   mul(void) const
   {
@@ -392,6 +435,7 @@ public:
         return false;
     return true;
   }
+
   bool
   any(const T &o) const
   {
@@ -400,12 +444,14 @@ public:
         return true;
     return false;
   }
+
   void
   sqrt(void) const
   {
     for ( size_t i = 0; i < N; i++ )
       stack[i] = math::sqrt(static_cast<float>(stack[i]));
   }
+
   template <typename F>
   carray &
   fill(const F &o)
@@ -414,6 +460,7 @@ public:
     micron::cmemset<N>(micron::addr(stack[0]), o);
     return *this;
   }
+
   static constexpr bool
   is_pod()
   {

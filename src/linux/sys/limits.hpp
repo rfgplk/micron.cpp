@@ -88,6 +88,7 @@ struct rlimit_t {
   rlim_t rlim_cur;
   rlim_t rlim_max;
 };
+
 auto
 getrlimit(limits lm, rlimit_t &rl)
 {
@@ -99,6 +100,7 @@ setrlimit(limits lm, rlimit_t &rl)
 {
   return micron::syscall(SYS_setrlimit, static_cast<i32>(lm), &rl);
 }
+
 auto
 get_limits(limits lm, rlimit_t &rl)
 {
@@ -122,6 +124,7 @@ set_process_limits(pid_t pid, rlim_t lm, rlimit_t &in)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, nullptr);
 }
+
 // with the out
 auto
 set_process_limits(pid_t pid, rlim_t lm, rlimit_t &in, rlimit_t &out)
@@ -140,6 +143,7 @@ prlimit_in(pid_t pid, rlim_t lm, rlimit_t &in)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, nullptr);
 }
+
 // with the out
 auto
 prlimit(pid_t pid, rlim_t lm, rlimit_t &in, rlimit_t &out)
@@ -151,23 +155,28 @@ prlimit(pid_t pid, rlim_t lm, rlimit_t &in, rlimit_t &out)
 struct limits_t {
   rlimit_t lim[rlimit_nlimits];
   ~limits_t() = default;
+
   limits_t(const pid_t proc = 0)     // for us by default
   {
     for ( rlim_t i = 0; i < rlimit_nlimits; i++ )
       get_process_limits(proc, i, lim[i]);
   }
+
   limits_t(const limits_t &o) { micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16); }
+
   limits_t(limits_t &&o)
   {
     micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16);
     micron::memset(o.lim, 0x0, sizeof(rlimit_t) * 16);
   }
+
   limits_t &
   operator=(const limits_t &o)
   {
     micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16);
     return *this;
   }
+
   limits_t &
   operator=(limits_t &&o)
   {
@@ -179,4 +188,5 @@ struct limits_t {
 
 };
 };
+
 ;

@@ -56,6 +56,7 @@ printk(const T &c)
   else if constexpr ( outstream == stderr_fileno )
     io::fput(c, io::stderr);
 }
+
 template <int outstream = stdout_fileno>
 inline void
 printk(char c)
@@ -65,6 +66,7 @@ printk(char c)
   else if constexpr ( outstream == stderr_fileno )
     io::fput(c, io::stderr);
 }
+
 template <int outstream = stdout_fileno>
 inline void
 sprintk(const char *c, size_t len)
@@ -81,6 +83,7 @@ template <typename T>
 concept has_cstr = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
+
 // must be a class that provides .c_str()
 template <has_cstr T, int outstream = stdout_fileno>
   requires micron::is_class_v<T>
@@ -364,6 +367,7 @@ printk(T &x)
   else if constexpr ( outstream == stderr_fileno )
     io::fput(reinterpret_cast<const char *>(c), io::stderr);
 }
+
 // non null trm string
 template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
@@ -425,6 +429,7 @@ printk(const char (&c)[M])
     // io::fput("\n", io::stderr);
   }
 }
+
 template <typename T, int outstream = stdout_fileno, size_t M>
 void
 printkn(const char (&c)[M])
@@ -437,6 +442,7 @@ printkn(const char (&c)[M])
     io::fput("\n", io::stderr);
   }
 }
+
 template <int outstream = stdout_fileno>
 void
 sprintkn(const char *c, size_t len)
@@ -449,6 +455,7 @@ sprintkn(const char *c, size_t len)
     io::fput("\n", io::stderr);
   }
 }
+
 // raw print
 // must be a class that provides .c_str()
 template <has_cstr T, int outstream = stdout_fileno>
@@ -506,6 +513,7 @@ printkn(const T &str)
     io::fput("\n", io::stderr);
   }
 }
+
 // if type is a pointer, or, pointerlike
 template <typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> and !micron::is_same_v<T, char *> and !micron::is_same_v<T, schar *> and !micron::is_same_v<T, wide *>
@@ -698,6 +706,7 @@ printkn(T &x)
   else if constexpr ( outstream == stderr_fileno )
     io::fput(reinterpret_cast<const char *>(c), io::stderr);
 }
+
 // non null trm string
 template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
@@ -714,6 +723,7 @@ printkn(T ptr, size_t len)
     io::fput(reinterpret_cast<const char *>(null_trm), io::stderr);
   delete[] null_trm;
 }
+
 template <is_container T, int outstream = stdout_fileno>
 void
 printkn(T &&str)
@@ -742,6 +752,7 @@ printkn(T &&str)
     printk<stderr_fileno>("\n");
   }
 }
+
 template <is_container T, int outstream = stdout_fileno>
 void
 printkn(const T &str)
@@ -771,6 +782,7 @@ printkn(const T &str)
     printk<stderr_fileno>("\n");
   }
 }
+
 template <is_container T, int outstream = stdout_fileno>
 void
 printk(T &&str)
@@ -797,6 +809,7 @@ printk(T &&str)
     printk<stderr_fileno>(" }");
   }
 }
+
 template <is_container T, int outstream = stdout_fileno>
 void
 printk(const T &str)
@@ -824,6 +837,7 @@ printk(const T &str)
     printk<T, io::stderr>(" }");
   }
 }
+
 // dump binary data
 template <is_container T>
 void
@@ -871,6 +885,7 @@ print_buffer(char **buf [[maybe_unused]])
   //   if ( *buf )
   //     set_buffering(buf);
 }
+
 inline void
 flush(void)
 {
@@ -885,12 +900,14 @@ print(T &&...str)
   (printk(str), ...);
   flush();
 }
+
 template <typename... T>
 void
 printn(T &&...str)
 {
   (printkn(str), ...);
 }
+
 /*template <typename... T>
 void
 println(T &...str)
@@ -905,12 +922,14 @@ print(const T &...str)
   (printk(str), ...);
   flush();
 }
+
 template <typename... T>
 inline void
 printn(const T &...str)
 {
   (printkn(str), ...);
 }
+
 template <typename... T>
 inline void
 println(const T &...str)
@@ -934,6 +953,7 @@ println(const T *...str)
     (printkn(str), ...);
   }
 }
+
 // error functions
 // error = print / no new line
 // errork = print / newline after each arg
@@ -945,12 +965,14 @@ error(T &...str)
 {
   (printk<T..., stderr_fileno>(str), ...);
 }
+
 template <typename... T>
 void
 errorn(T &...str)
 {
   (printkn<T..., stderr_fileno>(str), ...);
 }
+
 template <typename... T>
 void
 errorln(T &...str)
@@ -958,18 +980,21 @@ errorln(T &...str)
   (printk<T..., stderr_fileno>(str), ...);
   printk<T..., stderr_fileno>("\n");
 }
+
 template <typename... T>
 inline void
 error(const T &...str)
 {
   (printk<T..., stderr_fileno>(str), ...);
 }
+
 template <typename... T>
 inline void
 errorn(const T &...str)
 {
   (printkn<T..., stderr_fileno>(str), ...);
 }
+
 template <typename... T>
 inline void
 errorln(const T &...str)

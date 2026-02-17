@@ -48,6 +48,7 @@ enum class stat_type : int {
 };
 
 static stats_t stat = {};
+
 template <stat_type S>
 inline __attribute__((always_inline)) void
 collect_stats(size_t n = 0)
@@ -66,6 +67,7 @@ collect_stats(size_t n = 0)
     }
   }
 }
+
 inline __attribute__((always_inline)) auto &
 get_stats(void)
 {

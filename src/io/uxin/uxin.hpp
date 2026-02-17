@@ -43,6 +43,7 @@ open_nonblock(type_t __type)
     exc<except::library_error>("uxin open(): couldn't open device");
   return res[];
 }
+
 input_t
 open_first_nonblock(type_t __type)
 {
@@ -64,6 +65,7 @@ open_first_nonblock(type_t __type)
   }
   exc<except::library_error>("uxin open(): couldn't open device");
 }
+
 slice<input_t>
 open(type_t __type)
 {
@@ -87,6 +89,7 @@ open(type_t __type)
     exc<except::library_error>("uxin open(): couldn't open device");
   return res[];
 }
+
 input_t
 open_first(type_t __type)
 {
@@ -108,6 +111,7 @@ open_first(type_t __type)
   }
   exc<except::library_error>("uxin open(): couldn't open device");
 }
+
 template <auto Fn = nullptr, auto Fn_2 = nullptr, auto Fn_3 = nullptr>
 input_packet_t
 prepare_listener(type_t __type)
@@ -150,6 +154,7 @@ read(slice<input_t> &inputs, Args &&...__input_packet)
   }
   mc::uxin::poll_pack(inputs, micron::forward<Args>(__input_packet)...);
 }
+
 // NOTE: if using a pack, be sure to open with a nonblocking method
 template <typename... Args>
   requires(micron::same_as<input_packet_t, Args> && ...)

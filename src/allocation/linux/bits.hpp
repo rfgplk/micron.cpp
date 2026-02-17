@@ -13,6 +13,7 @@ namespace micron
 template <typename T = byte> struct alignas(16) __chunk {     // total memory allocated
   T *ptr;
   size_t len;
+
   __chunk &
   operator=(nullptr_t t [[maybe_unused]])
   {
@@ -20,6 +21,7 @@ template <typename T = byte> struct alignas(16) __chunk {     // total memory al
     len = 0;
     return *this;
   }
+
   bool
   zero(void) const noexcept
   {
@@ -27,11 +29,13 @@ template <typename T = byte> struct alignas(16) __chunk {     // total memory al
       return true;
     return false;
   }
+
   bool
   failed_allocation(void) const noexcept
   {
     return ((ptr == micron::numeric_limits<byte *>::max() - 1) and len == 0xFF);
   }
+
   bool
   invalid(void) const noexcept
   {

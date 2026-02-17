@@ -25,6 +25,8 @@
 #include "arena.hpp"
 #include "tapi.hpp"
 
+#include "../../except.hpp"
+
 namespace abc
 {
 
@@ -61,6 +63,7 @@ within(const addr_t *ptr)
   __init_abcmalloc();
   return __main_arena->has_provenance(const_cast<addr_t *>(ptr));
 }
+
 bool
 within(addr_t *ptr)
 {
@@ -72,11 +75,13 @@ within(addr_t *ptr)
   __init_abcmalloc();
   return __main_arena->has_provenance(ptr);
 }
+
 bool
 within(byte *ptr)
 {
   return within(reinterpret_cast<addr_t *>(ptr));
 }
+
 void
 relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely (NOTE: this will
 {
@@ -161,6 +166,7 @@ alloc(size_t size) -> byte *     // allocates memory, near iden. func. to malloc
 }
 
 __attribute__((malloc, alloc_size(1))) byte *salloc(size_t size);     // applies policies from harden
+
 void
 dealloc(byte *ptr)
 {
@@ -217,6 +223,7 @@ which(void)
 }
 
 void borrow();     //
+
 __attribute__((malloc, alloc_size(1))) byte *
 launder(size_t size)
 {
@@ -228,6 +235,7 @@ launder(size_t size)
   __init_abcmalloc();
   return __main_arena->launder(size).ptr;
 }
+
 template <typename T>
 size_t
 query_size(T *ptr)
@@ -249,6 +257,7 @@ malloc(size_t size)     // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(alloc(size));
 }
+
 void *
 calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using salloc()
 {
@@ -261,6 +270,7 @@ calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using s
   micron::zero(mem, size * num);
   return mem;
 }
+
 void *
 realloc(void *ptr, size_t size)     // reallocates memory
 {
@@ -292,6 +302,7 @@ free(void *ptr)     // frees memory, prefer dealloc always
 {
   dealloc(reinterpret_cast<byte *>(ptr));
 }
+
 void *aligned_alloc(size_t alignment, size_t size);
 // launder()
 // query

@@ -79,11 +79,13 @@ struct stat_t {
 #define st_ctime st_ctim.tv_sec
 
   __syscall_slong_t __glibc_reserved[3];
+
   bool
   operator!=(const stat_t &o) const
   {
     return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
   }
+
   bool
   operator==(const stat_t &o) const
   {

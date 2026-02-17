@@ -23,8 +23,11 @@ public:
   using __alloc = __internal_pointer_alloc<Type>;
 
   ~free_pointer() {};
+
   free_pointer(void) : internal_pointer(nullptr) {}     //: internal_pointer(new Type()) {};
+
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+
   template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr){};
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
@@ -33,6 +36,7 @@ public:
       : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type(args...)){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+
   free_pointer(const free_pointer &p) { internal_pointer = p.internal_pointer; }
 
   free_pointer &
@@ -41,6 +45,7 @@ public:
     internal_pointer = t.internal_pointer;
     return *this;
   };
+
   free_pointer &
   operator=(free_pointer &&t)
   {
@@ -49,6 +54,7 @@ public:
     t.internal_pointer = nullptr;
     return *this;
   };
+
   free_pointer &
   operator=(Type *raw_ptr)
   {
@@ -56,6 +62,7 @@ public:
     internal_pointer = raw_ptr;
     return *this;
   };
+
   bool
   operator!(void) const noexcept
   {
@@ -70,6 +77,7 @@ public:
     else
       exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
+
   Type *
   operator->()
   {
@@ -87,6 +95,7 @@ public:
     else
       exc<except::memory_error>("free_pointer operator*(): internal_pointer was null");
   };
+
   Type &
   operator*()
   {
@@ -95,6 +104,7 @@ public:
     else
       exc<except::memory_error>("free_pointer operator*(): internal_pointer was null");
   };
+
   template <typename Ft>
   free_pointer &
   operator=(Ft *raw_ptr)
@@ -103,11 +113,13 @@ public:
     internal_pointer = raw_ptr;
     return *this;
   };
+
   Type *
   operator()()
   {
     return release();
   }
+
   inline Type *
   release()
   {
@@ -115,16 +127,19 @@ public:
     internal_pointer = nullptr;
     return temp;
   };
+
   Type *
   get() const noexcept
   {
     return internal_pointer;
   }
+
   inline void
   clear()
   {
     __alloc::__impl_dealloc(internal_pointer);
   };
+
   template <is_pointer_class P>
   inline P
   convert(void)
@@ -150,8 +165,11 @@ template <class Type> class free_pointer<Type[]> : private __internal_pointer_ar
 
 public:
   ~free_pointer() {};
+
   free_pointer() : internal_pointer(nullptr) {}
+
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
   template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr){};
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
@@ -160,6 +178,7 @@ public:
       : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+
   free_pointer(const free_pointer &p) { internal_pointer = p.internal_pointer; }
 
   free_pointer &
@@ -168,6 +187,7 @@ public:
     internal_pointer = t.internal_pointer;
     return *this;
   };
+
   auto &
   operator[](const size_t n)
   {
@@ -175,6 +195,7 @@ public:
       return (*internal_pointer)[n];
     throw nullptr;
   };
+
   const auto &
   operator[](const size_t n) const
   {
@@ -182,6 +203,7 @@ public:
       return (*internal_pointer)[n];
     exc<except::memory_error>("free_pointer[] operator[](): internal_pointer was null");
   };
+
   free_pointer &
   operator=(Type *&&t)
   {
@@ -190,6 +212,7 @@ public:
     t = nullptr;
     return *this;
   };
+
   free_pointer &
   operator=(free_pointer &&t)
   {
@@ -198,6 +221,7 @@ public:
     t.internal_pointer = nullptr;
     return *this;
   };
+
   free_pointer &
   operator=(Type *raw_ptr)
   {
@@ -205,6 +229,7 @@ public:
     internal_pointer = raw_ptr;
     return *this;
   };
+
   template <typename Ft>
   free_pointer &
   operator=(Ft *raw_ptr)
@@ -213,41 +238,49 @@ public:
     internal_pointer = raw_ptr;
     return *this;
   };
+
   Type *
   get() const noexcept
   {
     return internal_pointer;
   }
+
   bool
   operator==(const free_pointer &o) noexcept
   {
     return internal_pointer == o();
   }
+
   bool
   operator>(const free_pointer &o) noexcept
   {
     return internal_pointer > o();
   }
+
   bool
   operator<(const free_pointer &o) noexcept
   {
     return internal_pointer < o();
   }
+
   bool
   operator<=(const free_pointer &o) noexcept
   {
     return internal_pointer <= o();
   }
+
   bool
   operator>=(const free_pointer &o) noexcept
   {
     return internal_pointer >= o();
   }
+
   bool
   operator!(void) const noexcept
   {
     return internal_pointer == nullptr;
   };
+
   Type *
   operator->()
   {
@@ -256,6 +289,7 @@ public:
     else
       exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
+
   Type &
   operator*()
   {
@@ -273,11 +307,13 @@ public:
     else
       exc<except::memory_error>("free_pointer operator->(): internal_pointer was null");
   };
+
   const Type *
   operator()() const
   {
     return internal_pointer;
   }
+
   inline Type *
   release() const
   {
@@ -291,6 +327,7 @@ public:
   {
     __alloc::__impl_dealloc(internal_pointer);
   };
+
   template <is_pointer_class P>
   inline P
   convert(void)

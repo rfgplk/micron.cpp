@@ -68,6 +68,7 @@ u32strlen(const char32_t *str) noexcept
   }
   return i;
 }
+
 inline constexpr size_t
 ustrlen(const char32_t *str) noexcept
 {

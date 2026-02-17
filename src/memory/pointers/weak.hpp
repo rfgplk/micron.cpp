@@ -24,12 +24,16 @@ public:
 
   using __alloc = __internal_pointer_alloc<Type>;
 
-  ~weak_pointer() {};                               //__alloc::__impl_dealloc(internal_pointer); };
+  ~weak_pointer() {};     //__alloc::__impl_dealloc(internal_pointer); };
+
   weak_pointer() : internal_pointer(nullptr) {}     //: internal_pointer(new Type()) {};
+
   template <is_nullptr V> weak_pointer(V) : internal_pointer(nullptr){};
+
   template <is_pointer_class C> weak_pointer(C &c) : internal_pointer(c.get()) {}
 
   weak_pointer(weak_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+
   weak_pointer(const weak_pointer &p) { internal_pointer = p.internal_pointer; }
 
   weak_pointer &
@@ -39,6 +43,7 @@ public:
     t.internal_pointer = nullptr;
     return *this;
   };
+
   template <is_pointer_class C>
   weak_pointer &
   operator=(C &ptr)
@@ -52,6 +57,7 @@ public:
   {
     return internal_pointer == nullptr;
   };
+
   Type *
   operator->()
   {
@@ -60,6 +66,7 @@ public:
     else
       exc<except::memory_error>("weak_pointer operator->(): internal_pointer was null");
   };
+
   const Type *
   operator->() const
   {
@@ -77,6 +84,7 @@ public:
     else
       exc<except::memory_error>("weak_pointer operator*(): internal_pointer was null");
   };
+
   Type &
   operator*()
   {
@@ -94,6 +102,7 @@ public:
     else
       exc<except::memory_error>("shared_pointer operator*(): internal_pointer was null");
   };
+
   const Type *
   get(void) const
   {
@@ -102,30 +111,35 @@ public:
     else
       exc<except::memory_error>("shared_pointer operator*(): internal_pointer was null");
   };
+
   template <is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
   {
     return internal_pointer == o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return internal_pointer > o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return internal_pointer < o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return internal_pointer <= o.get();
   }
+
   template <is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
@@ -138,11 +152,13 @@ public:
   {
     return internal_pointer != nullptr;
   }
+
   Type *
   operator()()
   {
     return release();
   }
+
   inline Type *
   release()
   {

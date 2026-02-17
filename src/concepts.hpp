@@ -9,6 +9,7 @@
 #include "memory/actions.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
+
 // all concepts go here
 namespace micron
 {
@@ -20,6 +21,8 @@ concept __same_as = is_same_v<T, U>;
 
 template <typename T, typename U>
 concept same_as = __same_as<T, U> and __same_as<U, T>;
+
+template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
 
 template <typename F, typename T>
 concept convertible_to = is_convertible_v<F, T> and requires { static_cast<T>(declval<F>()); };
@@ -80,6 +83,11 @@ concept is_iterable_container = requires(T t, I i) {
   { t[i] } -> micron::same_as<typename T::reference>;
   { t.size() } -> micron::same_as<typename T::size_type>;
 };
+
+template <typename T>
+concept is_atomic_type
+    = micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_floating_point_v<T>
+      || (micron::is_trivially_copyable_v<T> && !micron::is_integral_v<T> && !micron::is_pointer_v<T> && !micron::is_floating_point_v<T>);
 
 template <typename T>
 concept is_general_pointer_class = requires(T t) {

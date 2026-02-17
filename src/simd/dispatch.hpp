@@ -52,16 +52,19 @@ __has_fma(const __simd_flags &flags)
 {
   return flags.fma;
 }
+
 inline bool
 __has_sse(const __simd_flags &flags)
 {
   return flags.sse3 and flags.sse2 and flags.sse4_2 and flags.sse4_2;
 }
+
 inline bool
 __has_avx128(const __simd_flags &flags)
 {
   return flags.avx;
 }
+
 inline bool
 __has_avx256(const __simd_flags &flags)
 {

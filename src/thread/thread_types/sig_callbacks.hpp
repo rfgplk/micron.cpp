@@ -20,12 +20,14 @@ void
 __thread_sigchld(int)
 {
 }
+
 void
 __thread_sigthrottle(int)
 {
   // configure
   micron::ssleep(1);
 }
+
 void
 __thread_cancel(int)
 {

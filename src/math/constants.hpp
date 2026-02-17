@@ -74,18 +74,21 @@ inline constexpr T constant_egamma = micron::enable_if_t<micron::is_floating_poi
 template <typename T>
 inline constexpr T constant_phi = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.618033988749894848204586834365638118L);
 template <typename T> constexpr T pi_t() noexcept;
+
 template <>
 constexpr float
 pi_t<float>() noexcept
 {
   return 3.14159265358979323846f;
 }
+
 template <>
 constexpr double
 pi_t<double>() noexcept
 {
   return 3.14159265358979323846;
 }
+
 template <>
 constexpr long double
 pi_t<long double>() noexcept
@@ -94,18 +97,21 @@ pi_t<long double>() noexcept
 }
 
 template <typename T> constexpr T default_eps() noexcept;
+
 template <>
 constexpr float
 default_eps<float>() noexcept
 {
   return 1e-6f;
 }
+
 template <>
 constexpr double
 default_eps<double>() noexcept
 {
   return 1e-12;
 }
+
 template <>
 constexpr long double
 default_eps<long double>() noexcept

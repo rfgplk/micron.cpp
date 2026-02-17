@@ -44,6 +44,7 @@ struct __abc_allocator {
       micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
     return mem;
   };
+
   static T *
   alloc(size_t n)     // allocate 'smartly'
   {

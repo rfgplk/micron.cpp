@@ -15,6 +15,7 @@
 #include "hash/hash.hpp"
 
 #include "../concepts.hpp"
+
 namespace micron
 {
 
@@ -24,9 +25,13 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
     V value;
 
     ~kv_pair() = default;
+
     kv_pair() : key(), value() {}
+
     kv_pair(const K &k, const V &v) : key(k), value(v) {}
+
     kv_pair(const K &k, V &&v) : key(k), value(micron::move(v)) {}
+
     kv_pair(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) {}
 
     bool
@@ -34,11 +39,13 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
     {
       return key < other.key;
     }
+
     bool
     operator<(const K &k) const
     {
       return key < k;
     }
+
     bool
     operator==(const K &k) const
     {
@@ -49,6 +56,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   micron::array<kv_pair, 2 * Dg - 1> pairs;
   btree_map_node *chld[2 * Dg]{};
   int nkeys = 0;
+
   ~btree_map_node()
   {
     for ( int i = 0; i <= nkeys; ++i ) {
@@ -58,6 +66,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
       }
     }
   }
+
   inline btree_map_node() = default;
 
   inline explicit btree_map_node(const K &key, const V &value)
@@ -398,11 +407,13 @@ public:
   {
     return _size;
   }
+
   inline bool
   empty() const noexcept
   {
     return _size == 0;
   }
+
   inline size_t
   max_size() const noexcept
   {

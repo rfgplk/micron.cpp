@@ -168,6 +168,7 @@ public:
       exc<except::library_error>("sstack overflow on push");
     new (&stack[length++]) T(micron::move(v));
   }
+
   inline void
   pop()
   {
@@ -210,26 +211,31 @@ public:
   {
     return !length;
   }
+
   inline bool
   full() const
   {
     return (length == N);
   }
+
   inline bool
   overflowed() const
   {
     return (length > N);
   }
+
   inline bool
   full_or_overflowed() const
   {
     return (length >= N);
   }
+
   size_t
   size() const
   {
     return length;
   }
+
   constexpr size_t
   max_size() const
   {
@@ -264,12 +270,15 @@ public:
   typedef t *iterator;
   typedef const t *const_iterator;
   ~fsstack() = default;
+
   fsstack() : stack{}, length(0) {}
+
   fsstack(const umax_t n) : stack{}, length(0)
   {
     for ( umax_t i = 0; i < n; i++ )
       push();
   }
+
   fsstack(const std::initializer_list<t> &lst) : length(lst.size())
   {
     if ( lst.size() > N )
@@ -284,11 +293,13 @@ public:
         stack[i++] = value;
     }
   }
+
   fsstack(const fsstack &o)
   {
     __impl_container::copy(&stack[0], &o.stack[0], N);
     length = o.length;
   }
+
   template <typename C = t, size_t M> fsstack(const fsstack<C, M> &o)
   {
     if constexpr ( N < M ) {
@@ -298,12 +309,14 @@ public:
     }
     length = o.length;
   }
+
   fsstack(fsstack &&o)
   {
     micron::copy<N>(&o.stack[0], &stack[0]);
     length = o.length;
     o.length = 0;
   }
+
   template <typename C = t, size_t M> fsstack(fsstack<C, M> &&o)
   {
     if constexpr ( N >= M ) {
@@ -316,6 +329,7 @@ public:
       o.length = 0;
     }
   };
+
   fsstack &
   operator=(const fsstack &o)
   {
@@ -323,6 +337,7 @@ public:
     length = o.length;
     return *this;
   }
+
   template <typename C = t, size_t M>
   fsstack &
   operator=(const fsstack<C, M> &o)
@@ -335,6 +350,7 @@ public:
     length = o.length;
     return *this;
   }
+
   fsstack &
   operator=(fsstack &&o)
   {
@@ -343,28 +359,33 @@ public:
     o.length = 0;
     return *this;
   };
+
   inline t &
   operator[](const umax_t n)
   {
     umax_t c = length - n - 1;
     return stack[c];
   }
+
   inline const t &
   operator[](const umax_t n) const
   {
     umax_t c = length - n - 1;
     return stack[c];
   }
+
   t &
   top(void)
   {
     return stack[length - 1];
   }
+
   const t &
   top(void) const
   {
     return stack[length - 1];
   }
+
   // calling stack() is equivalent to top() and pop()
   inline t
   operator()(void)
@@ -373,27 +394,32 @@ public:
     pop();
     return n;
   }
+
   template <typename... Args>
   inline void
   emplace(Args &&...args)
   {
     new (&stack[length++]) t(micron::forward<Args &&>(args)...);
   }
+
   inline void
   push(void)
   {
     new (&stack[length++]) t();
   }
+
   inline void
   push(const t &v)
   {
     new (&stack[length++]) t(v);
   }
+
   inline void
   move(t &&v)
   {
     new (&stack[length++]) t(micron::move(v));
   }
+
   inline void
   pop()
   {
@@ -403,6 +429,7 @@ public:
       stack[--length] = {};
     }
   }
+
   inline void
   clear()
   {
@@ -415,19 +442,23 @@ public:
     micron::zero((byte *)micron::voidify(&(stack)[0]), N * (sizeof(t) / sizeof(byte)));
     length = 0;
   }
+
   // grow container
   inline void reserve(const size_t) = delete;
   inline void swap(fsstack &o) = delete;
+
   inline bool
   empty() const
   {
     return !length;
   }
+
   inline bool
   full() const
   {
     return (length == N);
   }
+
   inline bool
   overflowed() const
   {
@@ -439,16 +470,19 @@ public:
   {
     return (length >= N);
   }
+
   inline size_t
   size() const
   {
     return length;
   }
+
   inline size_t
   max_size() const
   {
     return N;
   }
+
   static constexpr bool
   is_pod()
   {

@@ -15,6 +15,7 @@ R
 crc1(const T &data)
 {
 }
+
 template <typename R = u32, typename T>
 R
 crc16(const T &data)

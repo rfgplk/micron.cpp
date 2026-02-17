@@ -35,6 +35,7 @@ namespace micron
 template <size_t Stack_Size = thread_stack_size> class group_thread
 {
   using thread_type = thread_tag;
+
   void
   thread_handler()
   {
@@ -44,6 +45,7 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
     sa.sa_flags = sa_restart;
     micron::sigaction(sig_chld, sa, nullptr);
   }
+
   template <typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
@@ -55,6 +57,7 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
     thread_handler();
     attributes.pid = __as_unprepared_thread_attached<F, Args...>(attrs, &payload, f, micron::forward<Args &&>(args)...);
   }
+
   void
   __release(void)
   {
@@ -64,6 +67,7 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
     }
     attributes.clear();
   }
+
   void
   __safe_release(void)
   {
@@ -75,6 +79,7 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
     }
     attributes.clear();
   }
+
   // pid_t parent_pid;
   // pthread_t pid;
   // addr_t *fstack;
@@ -82,12 +87,17 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
 
 public:
   __thread_payload payload;
+
   ~group_thread() { __release(); }
+
   group_thread(const group_thread &o) = delete;
   group_thread &operator=(const group_thread &) = delete;
+
   group_thread(void)
       : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+
   group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
+
   // prepared functions
   // fstack set by preparethread
   template <typename Fn, typename... Args>
@@ -103,6 +113,7 @@ public:
   {
     __impl_preparethread(_attrs, fn, args...);
   }
+
   group_thread &
   operator=(group_thread &&o)
   {
@@ -110,7 +121,9 @@ public:
     payload = micron::move(o.payload);
     return *this;
   }
+
   auto swap(group_thread &o) = delete;
+
   // yes, copying it out
   inline posix::rusage_t
   stats(void) const
@@ -125,12 +138,14 @@ public:
   {
     return payload.alive.get(micron::memory_order_seq_cst);
   }
+
   inline bool
   active(void) const
   {
     // more reliable, although slower
     return (pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), 0) == 0 ? true : false);
   }
+
   auto
   can_join(void) -> int
   {
@@ -142,6 +157,7 @@ public:
       return r;
     return 0;
   }
+
   auto
   join(void) -> int     // thread
   {
@@ -149,6 +165,7 @@ public:
     __safe_release();
     return r;
   }
+
   auto
   try_join(void) -> int
   {
@@ -159,16 +176,19 @@ public:
     }
     return r;
   }
+
   auto
   thread_id(void) const
   {
     return pthread::get_thread_id(attributes.pid);
   }
+
   auto
   native_handle(void) const
   {
     return attributes.pid;
   }
+
   long int
   signal(const signals s)
   {
@@ -177,6 +197,7 @@ public:
     }
     return -1;
   }
+
   // pseudo sleep
   int
   sleep_second(void)
@@ -186,6 +207,7 @@ public:
     }
     return -1;
   }
+
   int
   sleep(void)
   {
@@ -194,6 +216,7 @@ public:
     }
     return -1;
   }
+
   int
   awaken(void)
   {
@@ -202,6 +225,7 @@ public:
     }
     return -1;
   }
+
   int
   cancel(void)
   {
@@ -212,11 +236,13 @@ public:
     }
     return -1;
   }
+
   void
   wait_for(void) const
   {
     until(false, &group_thread<Stack_Size>::alive, this);
   }
+
   template <typename R>
   auto
   result(void)
@@ -225,11 +251,13 @@ public:
     R val = static_cast<R>(payload.ret_val.get());
     return val;
   }
+
   const auto &
   attrs() const
   {
     return attributes;
   }
+
   addr_t *
   stack()
   {

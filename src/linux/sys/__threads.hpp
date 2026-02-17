@@ -57,7 +57,9 @@ enum class thread_mutex_type : int {
 };
 
 enum cancel_state { enable, disable };
+
 enum cancel_type { deferred, async };
+
 // #define PTHREAD_CANCELED ((void *) -1)
 
 constexpr int thread_mutex_timed_np = static_cast<int>(thread_mutex_type::timed_np);
@@ -124,6 +126,7 @@ create_thread(thread_fn fn, void *arg)
   pthread_create(&tid, nullptr, fn, arg);
   return tid;
 }
+
 template <typename Fn, typename... Args> struct __impl_thread {
   Fn fn;
   void *args[sizeof...(Args)];
@@ -230,6 +233,7 @@ get_attrs(pthread_t pid, pthread_attr_t &attr)
 {
   pthread_getattr_np(pid, &attr);
 }
+
 inline void
 get_stack_thread(const pthread_attr_t &attr, addr_t *&ptr, size_t &size)
 {
@@ -247,11 +251,13 @@ get_detach_state(const pthread_attr_t &attr, i32 &detach)
 {
   pthread_attr_getdetachstate(&attr, &detach);
 }
+
 inline void
 get_sched_policy(const pthread_attr_t &attr, i32 &policy)
 {
   pthread_attr_getschedpolicy(&attr, &policy);
 }
+
 auto
 get_name(pthread_t pt, char *name, size_t sz)
 {
@@ -275,6 +281,7 @@ __join_thread(pthread_t thread, void **rval = nullptr)
 {
   return pthread_join(thread, rval);
 }
+
 inline void __attribute__((noreturn))
 __exit_thread(void *ret = nullptr)
 {
@@ -284,6 +291,7 @@ __exit_thread(void *ret = nullptr)
   }
   pthread_exit(ret);
 }
+
 auto
 __try_join_thread(pthread_t thread, void **rval = nullptr)
 {
@@ -295,6 +303,7 @@ thread_kill(pid_t pid, pthread_t thread, int sig)
 {
   return posix::tgkill(pid, thread, sig);
 }
+
 inline auto
 get_thread_id(pthread_t thread)
 {
@@ -306,16 +315,19 @@ set_cancel_state(cancel_state state)
 {
   return pthread_setcancelstate(static_cast<int>(state), nullptr);
 }
+
 inline auto
 set_cancel_type(cancel_type type)
 {
   return pthread_setcanceltype(static_cast<int>(type), nullptr);
 }
+
 inline auto
 cancel_thread(pthread_t th)
 {
   return pthread_cancel(th);
 }
+
 inline __attribute__((always_inline)) void
 cancel(void)
 {

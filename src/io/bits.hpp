@@ -23,16 +23,19 @@ struct fd_t {
   fd_t(fd_t &&) = default;
   fd_t &operator=(const fd_t &) = default;
   fd_t &operator=(fd_t &&) = default;
+
   inline bool
   closed() const
   {
     return fd == -1;
   }
+
   inline bool
   open() const
   {
     return fd >= 0;
   }
+
   inline auto
   has_error() const -> u32
   {
@@ -40,11 +43,13 @@ struct fd_t {
       return fd * -1;
     return 0;
   }
+
   inline void
   reset()
   {
     fd = -1;
   }
+
   bool
   operator==(const fd_t &o) const
   {

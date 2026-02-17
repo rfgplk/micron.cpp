@@ -16,47 +16,40 @@ class spin_lock
 
 public:
   spin_lock(void) : _lock(ATOMIC_OPEN) {}
+
   spin_lock(bool state) : _lock(state) {}
+
   // TTAS
   void
   operator()(void)
   {
     for ( ;; ) {
       while ( _lock.get() ) {
-#if defined(__GNUC__)
         __cpu_pause();
-#else
-        yield();
-#endif
-        // this is really GCC only, i'm afraid
-        // TODO: add the same for other compilers
       }
       if ( !_lock.swap(ATOMIC_LOCKED) )
         break;
     }
   }
+
   void
   operator()(bool state)
   {
     for ( ;; ) {
       while ( _lock.get() != state ) {
-#if defined(__GNUC__)
         __cpu_pause();
-#else
-        yield();
-#endif
-        // this is really GCC only, i'm afraid
-        // TODO: add the same for other compiles
       }
       if ( !_lock.swap(!state) )
         break;
     }
   }
+
   void
   unlock()
   {
     _lock.store(ATOMIC_OPEN);
   }
+
   void
   try_unlock()
   {

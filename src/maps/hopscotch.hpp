@@ -22,13 +22,17 @@ template <typename K, typename V> struct hopscotch_node {
   V value;
 
   ~hopscotch_node() = default;
+
   hopscotch_node() : key(0), value() {}
+
   hopscotch_node(const hash64_t &k, const V &v) : key(k), value(v) {}
+
   hopscotch_node(const hash64_t &k, V &&v) : key(k), value(micron::move(v)) {}
 
   template <typename... Args> hopscotch_node(const hash64_t &k, Args &&...args) : key(k), value(micron::forward<Args>(args)...) {}
 
   hopscotch_node(const hopscotch_node &o) : key(o.key), value(o.value) {}
+
   hopscotch_node(hopscotch_node &&o) noexcept : key(o.key), value(micron::move(o.value)) { o.key = 0; }
 
   hopscotch_node &
@@ -290,16 +294,19 @@ public:
   {
     return length;
   }
+
   bool
   empty() const noexcept
   {
     return length == 0;
   }
+
   size_t
   capacity() const noexcept
   {
     return entries.max_size();
   }
+
   float
   load_factor() const noexcept
   {
@@ -576,26 +583,31 @@ public:
   {
     return entries.data();
   }
+
   iterator
   end()
   {
     return entries.data() + entries.size();
   }
+
   const_iterator
   begin() const
   {
     return entries.data();
   }
+
   const_iterator
   end() const
   {
     return entries.data() + entries.size();
   }
+
   const_iterator
   cbegin() const
   {
     return entries.data();
   }
+
   const_iterator
   cend() const
   {
