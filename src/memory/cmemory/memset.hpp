@@ -61,11 +61,9 @@ rmemset(F &s, const byte in, const u64 cnt) noexcept
 
 // CONSTEXPR MEMSET
 template <typename F>
-  requires(!micron::is_null_pointer_v<F>)
 constexpr F *
-constexpr_memset(F *s, const byte in, const u64 cnt) noexcept
+constexpr_memset(F *src, const byte in, const u64 cnt) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(s);
   if ( cnt % 4 == 0 )
     for ( u64 n = 0; n < cnt; n += 4 ) {
       src[n] = (in);
@@ -76,7 +74,7 @@ constexpr_memset(F *s, const byte in, const u64 cnt) noexcept
   else
     for ( u64 n = 0; n < cnt; n++ )
       src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  return src;
 };
 
 // COMPILE-TIME CONSTANT MEMSET - TEMPLATE COUNT AND VALUE
@@ -786,7 +784,7 @@ bzero(byte *src, const M cnt) noexcept
 
 // BYTE-LEVEL ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 cbzero(F &_src) noexcept
 {
@@ -798,7 +796,7 @@ cbzero(F &_src) noexcept
 
 // BYTE-LEVEL ZERO - COMPILE-TIME CONSTANT COUNT
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 cbzero(F *_src) noexcept
 {
@@ -810,7 +808,7 @@ cbzero(F *_src) noexcept
 
 // SECURE BYTE-LEVEL ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 scbzero(F &_src) noexcept
 {
@@ -823,7 +821,7 @@ scbzero(F &_src) noexcept
 
 // SECURE BYTE-LEVEL ZERO - COMPILE-TIME CONSTANT COUNT
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 scbzero(F *_src) noexcept
 {
@@ -1366,6 +1364,14 @@ zero(F *src, const M cnt) noexcept
 };
 
 template <typename F, typename M = u64>
+constexpr F *
+constexpr_zero(F *src, const M cnt) noexcept
+{
+  constexpr_memset(src, 0x0, cnt);
+  return src;
+};
+
+template <typename F, typename M = u64>
 F &
 rzero(F &s, const M cnt) noexcept
 {
@@ -1376,7 +1382,7 @@ rzero(F &s, const M cnt) noexcept
 
 // ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 czero(F &src) noexcept
 {
@@ -1387,7 +1393,7 @@ czero(F &src) noexcept
 
 // ZERO - COMPILE-TIME CONSTANT COUNT
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 czero(F *src) noexcept
 {
@@ -1398,7 +1404,7 @@ czero(F *src) noexcept
 
 // SECURE ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 sczero(F &s) noexcept
 {
@@ -1411,7 +1417,7 @@ sczero(F &s) noexcept
 
 // SECURE ZERO - COMPILE-TIME CONSTANT COUNT
 template <u64 M, typename F>
-  requires micron::is_fundamental_v<F>
+  requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 sczero(F *s) noexcept
 {

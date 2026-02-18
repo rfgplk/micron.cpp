@@ -22,25 +22,29 @@ constexpr static const int exit_ok = 0;
 __attribute__((noreturn)) void
 exit(int s = exit_ok)
 {
-  __builtin_exit(s);
+  sys_exit(s);
+  __builtin_unreachable();
 }
 
 __attribute__((noreturn)) void
 abort(void)
 {
-  __builtin_abort();
+  sys_exit(6);
+  __builtin_unreachable();
 }
 
 __attribute__((noreturn)) void
 abort(int ret)
 {
   sys_exit(ret);
+  __builtin_unreachable();
 }
 
 __attribute__((noreturn)) void
 quick_exit(const int s)
 {
   sys_exit(s);
+  __builtin_unreachable();
 }
 
 };

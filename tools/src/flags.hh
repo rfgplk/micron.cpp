@@ -2,8 +2,56 @@
 
 #include "types.hpp"
 
+#include "impl.hh"
+
 namespace gcc
 {
+constexpr const string_type __standard_c90 = "-std=c90";
+constexpr const string_type __standard_iso9899_1990 = "-std=iso9899:1990";
+constexpr const string_type __standard_iso9899_199409 = "-std=iso9899:199409";
+constexpr const string_type __standard_c99 = "-std=c99";
+constexpr const string_type __standard_iso9899_1999 = "-std=iso9899:1999";
+constexpr const string_type __standard_c11 = "-std=c11";
+constexpr const string_type __standard_iso9899_2011 = "-std=iso9899:2011";
+constexpr const string_type __standard_c17 = "-std=c17";
+constexpr const string_type __standard_c18 = "-std=c18";
+constexpr const string_type __standard_iso9899_2017 = "-std=iso9899:2017";
+constexpr const string_type __standard_c23 = "-std=c23";
+constexpr const string_type __standard_iso9899_2023 = "-std=iso9899:2023";
+
+constexpr const string_type __standard_gnu90 = "-std=gnu90";
+constexpr const string_type __standard_gnu89 = "-std=gnu89";
+constexpr const string_type __standard_gnu99 = "-std=gnu99";
+constexpr const string_type __standard_gnu11 = "-std=gnu11";
+constexpr const string_type __standard_gnu17 = "-std=gnu17";
+constexpr const string_type __standard_gnu18 = "-std=gnu18";
+constexpr const string_type __standard_gnu23 = "-std=gnu23";
+
+constexpr const string_type __standard_cxx98 = "-std=c++98";
+constexpr const string_type __standard_cxx03 = "-std=c++03";
+constexpr const string_type __standard_cxx11 = "-std=c++11";
+constexpr const string_type __standard_cxx14 = "-std=c++14";
+constexpr const string_type __standard_cxx17 = "-std=c++17";
+constexpr const string_type __standard_cxx20 = "-std=c++20";
+constexpr const string_type __standard_cxx23 = "-std=c++23";
+constexpr const string_type __standard_cxx26 = "-std=c++26";
+
+constexpr const string_type __standard_gnuxx98 = "-std=gnu++98";
+constexpr const string_type __standard_gnuxx03 = "-std=gnu++03";
+constexpr const string_type __standard_gnuxx11 = "-std=gnu++11";
+constexpr const string_type __standard_gnuxx14 = "-std=gnu++14";
+constexpr const string_type __standard_gnuxx17 = "-std=gnu++17";
+constexpr const string_type __standard_gnuxx20 = "-std=gnu++20";
+constexpr const string_type __standard_gnuxx23 = "-std=gnu++23";
+constexpr const string_type __standard_gnuxx26 = "-std=gnu++26";
+
+constexpr const string_type __standard_c9x = "-std=c9x";
+constexpr const string_type __standard_gnu9x = "-std=gnu9x";
+constexpr const string_type __standard_c1x = "-std=c1x";
+constexpr const string_type __standard_gnu1x = "-std=gnu1x";
+constexpr const string_type __standard_c2x = "-std=c2x";
+constexpr const string_type __standard_gnu2x = "-std=gnu2x";
+
 namespace c_flags
 {
 // C Language Standards and Extensions
@@ -1376,8 +1424,7 @@ enum class flags : i32 {
 };
 
 // TODO: finish
-constexpr static const char *flag_strings[] = { "-g",
-                                                "..." };
+constexpr static const char *flag_strings[] = { "-g", "..." };
 
 constexpr const char *
 get_string_flag(flags f)

@@ -91,6 +91,14 @@ construct_at(T *p, Args &&...args)
   return new (static_cast<void *>(p)) T{ micron::forward<Args>(args)... };
 }
 
+template <typename T, typename... Args>
+constexpr T *
+construct_at(T &p, Args &&...args)
+{
+  return new (static_cast<void *>(reinterpret_cast<addr_t *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)))))
+      T{ micron::forward<Args>(args)... };
+}
+
 template <typename T>
 inline void
 destroy(T *ptr)

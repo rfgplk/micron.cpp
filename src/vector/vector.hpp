@@ -185,6 +185,18 @@ public:
     return reinterpret_cast<byte *>(__mem::memory);
   }
 
+  auto *
+  addr()
+  {
+    return this;
+  }
+
+  const auto *
+  addr() const
+  {
+    return this;
+  }
+
   inline slice<T>
   operator[]()
   {

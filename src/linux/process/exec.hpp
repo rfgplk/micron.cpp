@@ -26,9 +26,8 @@ rexecute(uprocess_t &t)
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
-  if ( micron::inplace_spawn(t.pids.pid, t.path.c_str(), &argv[0], environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(t.pids.pid, t.path.c_str(), &argv[0], environ);
+  __builtin_unreachable();
 }
 
 // run process at path location specified by T
@@ -43,9 +42,8 @@ rexecute(const T &t)
     exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { &t[0], nullptr };
-  if ( micron::inplace_spawn(pid, t.c_str(), &argv[0], environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(pid, t.c_str(), &argv[0], environ);
+  __builtin_unreachable();
 }
 
 // fork and run process at path location specified by T
@@ -63,9 +61,8 @@ rexecute(const T &t, const R &...args)
 
   (argv.insert(argv.begin() + 1, &args[0]), ...);
 
-  if ( micron::inplace_spawn(pid, t.c_str(), &argv[0], environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(pid, t.c_str(), &argv[0], environ);
+  __builtin_unreachable();
 }
 
 // for passing a preprocessed string to be split up
@@ -92,9 +89,8 @@ rexecute(const T &t, A &__argv)
     argv.emplace_back(const_cast<char *>(itr));
     itr = ++itr_f;
   }
-  if ( micron::inplace_spawn(pid, t.c_str(), &argv[0], environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(pid, t.c_str(), &argv[0], environ);
+  __builtin_unreachable();
 }
 
 __attribute__((noreturn)) void
@@ -106,9 +102,8 @@ rexecute(const char *t)
     exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
-  if ( micron::inplace_spawn(pid, t, &argv[0], environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(pid, t, &argv[0], environ);
+  __builtin_unreachable();
 }
 
 template <typename... R>
@@ -124,9 +119,8 @@ rexecute(const char *t, R *...args)
 
   (argv.insert(argv.begin() + 1, const_cast<char *>(args)), ...);
 
-  if ( micron::inplace_spawn(pid, t, &argv[0], environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(pid, t, &argv[0], environ);
+  __builtin_unreachable();
 }
 
 __attribute__((noreturn)) void
@@ -134,9 +128,8 @@ rexecute(const char *t, char **args)
 {
   pid_t pid;
 
-  if ( micron::inplace_spawn(pid, t, args, environ) ) {
-    exc<except::system_error>("micron process failed to start posix_spawn");
-  }
+  micron::inplace_spawn(pid, t, args, environ);
+  __builtin_unreachable();
 }
 
 // fork and execute

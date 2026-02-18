@@ -69,6 +69,13 @@ addressof(P &p) noexcept
 }
 
 template <typename P>
+constexpr P *
+addr_of(P &p) noexcept
+{
+  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+}
+
+template <typename P>
   requires(micron::is_pointer_v<P>)
 constexpr P *
 addr(P &p) noexcept

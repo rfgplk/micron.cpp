@@ -131,7 +131,7 @@ dup3(int old, int newfd, int flags)
 auto
 close(int fd)
 {
-  return micron::syscall(SYS_close, fd);
+  return static_cast<int>(micron::syscall(SYS_close, fd));
 }
 
 auto
@@ -140,7 +140,7 @@ open(const char *name, int flags, unsigned int mode)
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return micron::syscall(SYS_open, name, flags, mode);
+  return static_cast<int>(micron::syscall(SYS_open, name, flags, mode));
 }
 
 auto
@@ -149,13 +149,13 @@ open(const char *name, int flags)
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return micron::syscall(SYS_open, name, flags, 0);
+  return static_cast<int>(micron::syscall(SYS_open, name, flags, 0));
 }
 
 auto
 openat(int dirfd, const char *pth, int flags, unsigned int mode [[maybe_unused]])
 {
-  return micron::syscall(SYS_openat, dirfd, pth, flags);
+  return static_cast<int>(micron::syscall(SYS_openat, dirfd, pth, flags));
 }
 
 auto
@@ -164,7 +164,7 @@ creat(const char *pth, unsigned int mode)
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return micron::syscall(SYS_creat, pth, mode);
+  return static_cast<int>(micron::syscall(SYS_creat, pth, mode));
 }
 
 auto

@@ -38,7 +38,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   T memory[N];
   size_type length;
 
-  ~sstring()
+  constexpr ~sstring()
   {
     if constexpr ( Sf ) {
       micron::czero<N>(&memory[0]);
@@ -53,7 +53,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
 
   constexpr sstring(const char *str)
   {
-    micron::zero(&memory[0], N);
+    micron::constexpr_zero(&memory[0], N);
     size_type sz = strlen(str);
     if ( sz > N )
       exc<except::library_error>("sstring::sstring() const char* too large.");
@@ -66,7 +66,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
     size_type n = micron::strlen(ptr);
     if ( n >= N )
       exc<except::library_error>("sstring::sstring(): char* too large.");
-    micron::zero(&memory[0], N);
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], ptr, n);
     length = n;
   }
@@ -125,7 +125,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   constexpr sstring(sstring &&o)
   {
     micron::memcpy(&memory[0], &o.memory[0], N);
-    micron::zero(&o.memory[0], N);
+    micron::constexpr_zero(&o.memory[0], N);
     length = o.length;
     o.length = 0;
   };
@@ -134,11 +134,11 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   {
     if constexpr ( N < M ) {
       micron::memcpy(&memory[0], &o.memory[0], N);
-      micron::zero(&o.memory[0], N);
+      micron::constexpr_zero(&o.memory[0], N);
     } else if constexpr ( N >= M ) {
       micron::memcpy(&memory[0], &o.memory[0], M);
       micron::memcpy(&memory[0], &o.memory[0], M);
-      micron::zero(&o.memory[0], N);
+      micron::constexpr_zero(&o.memory[0], N);
     }
     if ( o.length > N )
       length = N;
@@ -195,7 +195,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   {
     static_assert(N >= M, "micron::sstring operator= too large.");
     micron::memcpy(&memory[0], &o.memory[0], M);
-    micron::zero(&o.memory[0], M);
+    micron::constexpr_zero(&o.memory[0], M);
     length = o.length;
     o.length = 0;
     return *this;
@@ -205,7 +205,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   operator=(char *ptr)
   {
     size_type n = strlen(ptr);
-    micron::zero(&memory[0], N);
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &ptr[0], n);
     length = n;
     return *this;
@@ -215,7 +215,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   operator=(const char *ptr)
   {
     size_type n = strlen(ptr);
-    micron::zero(&memory[0], N);
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &ptr[0], n);
     length = n;
     return *this;
@@ -247,6 +247,18 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   operator&() const
   {
     return reinterpret_cast<const byte *>(&memory[0]);
+  }
+
+  constexpr auto *
+  addr()
+  {
+    return this;
+  }
+
+  constexpr const auto *
+  addr() const
+  {
+    return this;
   }
 
   bool
@@ -372,55 +384,55 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   }
 
   // end points to one-past-last (ie null) while last points to the last OCCUPIED element
-  inline iterator
+  inline constexpr iterator
   begin() const
   {
     return const_cast<T *>(&memory[0]);
   }
 
-  inline iterator
+  inline constexpr iterator
   end() const
   {
     return const_cast<T *>(&memory[length]);
   }
 
-  inline iterator
+  inline constexpr iterator
   begin()
   {
     return const_cast<T *>(&memory[0]);
   }
 
-  inline iterator
+  inline constexpr iterator
   end()
   {
     return const_cast<T *>(&memory[length]);
   }
 
-  inline iterator
+  inline constexpr iterator
   last()
   {
     return const_cast<T *>(&memory[length - 1]);
   }
 
-  inline iterator
+  inline constexpr iterator
   last() const
   {
     return const_cast<T *>(&memory[length - 1]);
   }
 
-  inline const_iterator
+  inline constexpr const_iterator
   cbegin() const
   {
     return &(memory)[0];
   }
 
-  inline const_iterator
+  inline constexpr const_iterator
   cend() const
   {
     return &(memory)[length];
   }
 
-  inline void
+  inline constexpr void
   clear()
   {
     micron::czero<N>(memory);
@@ -428,7 +440,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   }
 
   // doesn't zero memory, just resets the cur. pointer to 0
-  inline void
+  inline constexpr void
   fast_clear()
   {
     length = 0;
@@ -592,7 +604,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
     micron::memcpy(itr, &o.memory[0], o.length);
 
     length += o.length;
-    micron::zero(o.memory, o.length);
+    micron::constexpr_zero(o.memory, o.length);
     o.length = 0;
     return *this;
   }

@@ -184,7 +184,7 @@ _rmemcpy_32(T &restrict _d, const F &restrict _s, const S n) noexcept
 }
 
 template <typename F, typename D>
-F *
+constexpr F *
 memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
   if ( cnt % 4 == 0 ) [[likely]]

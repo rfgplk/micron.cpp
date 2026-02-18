@@ -11,19 +11,18 @@
 
 namespace micron
 {
-int
-__inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
+__attribute__((noreturn)) void
+__inplace_spawn([[maybe_unused]] pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
   // TODO: configure
   micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, 0 };
   micron::posix::spawn_process(ctx);
-  return 0;
 }
 
-int
+__attribute__((noreturn)) void
 inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
-  return __inplace_spawn(pid, path, argv, envp);
+  __inplace_spawn(pid, path, argv, envp);
 }
 
 int
