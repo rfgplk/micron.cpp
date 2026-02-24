@@ -97,6 +97,12 @@ batch_cmp(const config_t &conf)
       compile_libs += " -l";
       compile_libs += n;
     }
+  string_type compile_objs = "";
+  if ( !conf.bonus_objs.empty() )
+    for ( auto &n : conf.bonus_objs ) {
+      compile_objs += n;
+      compile_objs += " ";
+    }
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
   const string_type flags_warn_extra = make_flags(
@@ -134,7 +140,7 @@ batch_cmp(const config_t &conf)
 
   string_type command_post = make_command(compile_libs, includes_location, libs_location);
 
-  return make_command(command_pre, conf.target, command_post, "-o", conf.target_out, libs_static);
+  return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static);
 };
 
 string_type
@@ -142,8 +148,7 @@ batch_asm(const config_t &conf)
 {
   const string_type main_flags = "-f elf64";
   const string_type includes_location = "-I" + conf.include_path;
-  string_type command_pre
-      = make_command(conf.compiler_path, main_flags);
+  string_type command_pre = make_command(conf.compiler_path, main_flags);
 
   string_type command_post = make_command(includes_location);
 
@@ -151,9 +156,11 @@ batch_asm(const config_t &conf)
 };
 
 string_type
-batch(const config_t &conf){
-  if(conf.language == __languages::lasm or conf.compiler == __compilers::nasm)
+batch(const config_t &conf)
+{
+  if ( conf.language == __languages::lasm or conf.compiler == __compilers::nasm )
     return batch_asm(conf);
-  else if(conf.language != __languages::lasm or conf.compiler != __compilers::nasm)
+  else if ( conf.language != __languages::lasm or conf.compiler != __compilers::nasm )
     return batch_cmp(conf);
+  __builtin_trap();
 }

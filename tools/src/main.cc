@@ -8,7 +8,7 @@
 #include "run.hh"
 #include "test.hh"
 
-enum class __modes : i32 { build, compile, debug, run, make, test, recipes, __end };
+enum class __modes : i32 { build, link, compile, debug, run, make, test, recipes, __end };
 
 auto
 match(char **argv) -> __modes
@@ -16,6 +16,9 @@ match(char **argv) -> __modes
   // builds file/project - if file build single file, if dir, every file in dir
   if ( mc::strcmp(argv[1], "build") == 0 )
     return __modes::build;
+  // links obj files together
+  else if ( mc::strcmp(argv[1], "link") == 0 )
+    return __modes::link;
   // compiles file. does not wait
   else if ( mc::strcmp(argv[1], "compile") == 0 )
     return __modes::compile;
@@ -57,6 +60,12 @@ main(int argc, char **argv)
     break;
   }
   case __modes::compile : {
+    auto confs = parse_argv_build(argc - 2, argv + 2);
+    for ( auto &conf : confs )
+      build<mc::exec_continue>(conf);
+    break;
+  }
+  case __modes::link : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
     for ( auto &conf : confs )
       build<mc::exec_continue>(conf);

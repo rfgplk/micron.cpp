@@ -84,6 +84,7 @@ struct config_t {
   string_type standard;
   string_type include_path;
   string_type lib_path;
+  mc::vector<string_type> bonus_objs;
   mc::vector<string_type> bonus_libs;
   bool warnings;
   bool static_binary;
@@ -95,6 +96,8 @@ struct config_t {
   u32 mode{ __opt_modes::optimized };     // optimized by default
   gcc::opt_flags::flags opt_mode{ gcc::opt_flags::flag_optimize_fast };
 };
+
+// TODO: ugly refactor into a single func
 
 mc::vector<config_t>
 parse_argv_build(int argc, char **argv)
@@ -142,6 +145,24 @@ parse_argv_build(int argc, char **argv)
     conf.compile_type = __comp_type::linked;
     conf.bin_dir = "bin/";
 
+    auto __determine_source = [&](string_type &&str) {
+      auto itr = mc::format::find_reverse(str, str.end() - 1, ".");
+      if ( itr == nullptr ) {
+        conf.target_out = str;
+        return true;     // should be target_out
+      } else {
+        auto sstr = str.substr(itr);
+        if ( sstr == ".bin" ) {
+          conf.target_out = str;
+          return true;     // should be target_out
+        } else if ( sstr == ".o" ) {
+          // we added an obj
+          conf.bonus_objs.emplace_back(str);
+          return false;
+        }
+      }
+      return false;
+    };
     auto __make_name = [&]() {
       if ( conf.target.empty() )
         return;
@@ -170,7 +191,9 @@ parse_argv_build(int argc, char **argv)
     };
 
     __make_name();
-
+    bool user_provided_out = false;
+    bool user_provided_type = false;
+    bool user_provided_opt = false;
     for ( int i = 1; i < argc; ++i ) {
       if ( mc::strcmp(argv[i], "-d") == 0 or mc::strcmp(argv[i], "-g") == 0 ) {
         conf.mode = __opt_modes::debug;
@@ -209,10 +232,13 @@ parse_argv_build(int argc, char **argv)
         conf.static_binary = true;
       } else if ( mc::strcmp(argv[i], "--obj") == 0 ) {
         conf.compile_type = __comp_type::object;
+        user_provided_type = true;
       } else if ( mc::strcmp(argv[i], "--asm") == 0 ) {
         conf.compile_type = __comp_type::assembly;
+        user_provided_type = true;
       } else if ( mc::strcmp(argv[i], "--pp") == 0 ) {
         conf.compile_type = __comp_type::preprocessed;
+        user_provided_type = true;
       } else if ( mc::strcmp(argv[i], "-c") == 0 ) {
         conf.language = __languages::c;
       } else if ( mc::strcmp(argv[i], "-cpp") == 0 ) {
@@ -237,30 +263,59 @@ parse_argv_build(int argc, char **argv)
         }
       } else if ( mc::strcmp(argv[i], "-O0") == 0 ) {
         conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
+        user_provided_opt = true;
       } else if ( mc::strcmp(argv[i], "-O1") == 0 ) {
         conf.opt_mode = gcc::opt_flags::flags::optimize_one;
+        user_provided_opt = true;
       } else if ( mc::strcmp(argv[i], "-O2") == 0 ) {
         conf.opt_mode = gcc::opt_flags::flags::optimize_two;
+        user_provided_opt = true;
       } else if ( mc::strcmp(argv[i], "-O3") == 0 ) {
         conf.opt_mode = gcc::opt_flags::flags::optimize_three;
+        user_provided_opt = true;
       } else if ( mc::strcmp(argv[i], "-Ofast") == 0 ) {
         conf.opt_mode = gcc::opt_flags::flags::optimize_fast;
+        user_provided_opt = true;
       } else if ( mc::strcmp(argv[i], "-Oz") == 0 ) {
         conf.opt_mode = gcc::opt_flags::flags::optimize_z;
+        user_provided_opt = true;
       } else if ( sources.size() == 1 ) {
-        conf.target_out = string_type{ argv[i] };
+        if ( __determine_source(string_type{ argv[i] }) )
+          user_provided_out = true;
       }
     }
 
-    if ( conf.mode == __opt_modes::debug )
+    if ( conf.mode == __opt_modes::debug and !user_provided_opt )
       conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
     conf.target_out.insert(conf.target_out.begin(), conf.bin_dir);
-    if(conf.compile_type == __comp_type::object)
-      conf.target_out.append(".o");
-    else if(conf.compile_type == __comp_type::assembly)
-      conf.target_out.append(".s");
-    // if ( conf.target_out.empty() )
-    //   __make_name();
+    if ( !user_provided_out ) {
+      if ( conf.bonus_objs.empty() ) {
+        if ( conf.compile_type == __comp_type::object )
+          conf.target_out.append(".o");
+        else if ( conf.compile_type == __comp_type::assembly )
+          conf.target_out.append(".s");
+      } else {
+        conf.target_out = *conf.bonus_objs.last();
+        conf.bonus_objs.pop_back();
+      }
+    }
+    if ( !user_provided_type ) {
+      auto itr = mc::format::find_reverse(conf.target_out, conf.target_out.end() - 1, ".");
+      if ( itr != nullptr ) {
+        auto sstr = conf.target_out.substr(itr);
+        if ( sstr == ".o" )
+          conf.compile_type = __comp_type::object;
+        else if ( sstr == ".bin" ) {
+          conf.compile_type = __comp_type::linked;
+        } else if ( sstr == ".a" ) {
+          // TODO: implement static outs
+        }
+
+        else if ( sstr == ".so" ) {
+          // TODO: implement shared outs
+        }
+      }
+    }
 
     switch ( conf.compiler ) {
     case __compilers::nasm : {
@@ -284,6 +339,7 @@ parse_argv_build(int argc, char **argv)
     };
     confs.move_back(mc::move(conf));
   }
+
   return confs;
 }
 
@@ -298,6 +354,25 @@ parse_argv_build_single(int argc, char **argv)
   conf.bin_dir = "bin/";
   conf.include_path = "./src";
   conf.lib_path = "./libs/";
+
+  auto __determine_source = [&](string_type &&str) {
+    auto itr = mc::format::find_reverse(str, str.end() - 1, ".");
+    if ( itr == nullptr ) {
+      conf.target_out = str;
+      return true;     // should be target_out
+    } else {
+      auto sstr = str.substr(itr);
+      if ( sstr == ".bin" ) {
+        conf.target_out = str;
+        return true;     // should be target_out
+      } else if ( sstr == ".o" ) {
+        // we added an obj
+        conf.bonus_objs.emplace_back(str);
+        return false;
+      }
+    }
+    return false;
+  };
 
   auto __make_name = [&]() {
     if ( conf.target.empty() )
@@ -323,6 +398,9 @@ parse_argv_build_single(int argc, char **argv)
 
   __make_name();
 
+  bool user_provided_out = false;
+  bool user_provided_type = false;
+  bool user_provided_opt = false;
   for ( int i = 1; i < argc; ++i ) {
     if ( mc::strcmp(argv[i], "-d") == 0 or mc::strcmp(argv[i], "-g") == 0 ) {
       conf.mode = __opt_modes::debug;
@@ -361,11 +439,13 @@ parse_argv_build_single(int argc, char **argv)
       conf.static_binary = true;
     } else if ( mc::strcmp(argv[i], "--obj") == 0 ) {
       conf.compile_type = __comp_type::object;
+      user_provided_type = true;
     } else if ( mc::strcmp(argv[i], "--asm") == 0 ) {
       conf.compile_type = __comp_type::assembly;
+      user_provided_type = true;
     } else if ( mc::strcmp(argv[i], "--pp") == 0 ) {
       conf.compile_type = __comp_type::preprocessed;
-
+      user_provided_type = true;
     } else if ( mc::strcmp(argv[i], "-c") == 0 ) {
       conf.language = __languages::c;
     } else if ( mc::strcmp(argv[i], "-cpp") == 0 ) {
@@ -384,28 +464,60 @@ parse_argv_build_single(int argc, char **argv)
       }
     } else if ( mc::strcmp(argv[i], "-O0") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
+      user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-O1") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_one;
+      user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-O2") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_two;
+      user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-O3") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_three;
+      user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-Ofast") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_fast;
+      user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-Oz") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_z;
+      user_provided_opt = true;
     } else {
-      conf.target_out = string_type{ argv[i] };
+      if ( __determine_source(string_type{ argv[i] }) )
+        user_provided_out = true;
     }
   }
 
-  if ( conf.mode == __opt_modes::debug )
+  if ( conf.mode == __opt_modes::debug and !user_provided_opt )
     conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
+  if ( !user_provided_out ) {
+    if ( conf.bonus_objs.empty() ) {
+      if ( conf.compile_type == __comp_type::object )
+        conf.target_out.append(".o");
+      else if ( conf.compile_type == __comp_type::assembly )
+        conf.target_out.append(".s");
+    } else {
+      conf.target_out = *conf.bonus_objs.last();
+      conf.bonus_objs.pop_back();
+    }
+  }
 
-  if ( conf.compile_type == __comp_type::linked or conf.compile_type == __comp_type::assembly )
-    conf.target_out.insert(conf.target_out.begin(), conf.bin_dir);
-  else if ( conf.compile_type == __comp_type::object )
-    conf.target_out.insert(conf.target_out.begin(), conf.lib_path);
+  if ( !user_provided_type ) {
+    auto itr = mc::format::find_reverse(conf.target_out, conf.target_out.end() - 1, ".");
+    if ( itr != nullptr ) {
+      auto sstr = conf.target_out.substr(itr);
+      if ( sstr == ".o" )
+        conf.compile_type = __comp_type::object;
+      else if ( sstr == ".bin" ) {
+        conf.compile_type = __comp_type::linked;
+      } else if ( sstr == ".a" ) {
+        // TODO: implement static outs
+      }
+
+      else if ( sstr == ".so" ) {
+        // TODO: implement shared outs
+      }
+    }
+  }
+
   // if ( conf.target_out.empty() )
   //   __make_name();
 
