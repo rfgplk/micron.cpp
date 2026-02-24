@@ -11,7 +11,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 </div>
 
-![Version](https://img.shields.io/badge/version-0.5.6-red)
+![Version](https://img.shields.io/badge/version-0.5.8-red)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
