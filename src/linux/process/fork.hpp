@@ -88,4 +88,4 @@ wfork(Args &&...args)
   return status;
 }
 
-};
+};     // namespace micron

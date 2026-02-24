@@ -25,7 +25,6 @@ namespace micron
 {
 namespace io
 {
-
 enum class node_types : int {
   socket = S_IFSOCK,
   symlink = S_IFLNK,
@@ -361,5 +360,5 @@ is_fifo(const T &str)
   return is_inode_type<node_types::fifo>(str);
 }
 
-};
-};
+};     // namespace io
+};     // namespace micron

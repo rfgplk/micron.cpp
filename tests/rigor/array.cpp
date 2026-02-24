@@ -82,6 +82,7 @@ struct Tracked {
 int
 main()
 {
+  sb::print("=== ARRAY TESTS ===");
   // ------------------------------------------------------------
   test_case("default construction zero-init");
   {
@@ -221,8 +222,6 @@ main()
       for ( size_t i = 0; i < 8; ++i )
         a[i] = Tracked(int(i));
     }
-    micron::console(Tracked::dtor);
-    micron::console(Tracked::ctor);
     //require(Tracked::ctor, Tracked::dtor);
   }
   end_test_case();
@@ -285,5 +284,6 @@ main()
   }
   end_test_case();
 
-  return 0;
+  sb::print("=== ALL TESTS PASSED ===");
+  return 1;
 }

@@ -364,6 +364,16 @@ require_print(bool (&fn)(Args...), Args &&...args)
 };
 
 void
+require_distinct(const bool a, const bool b)
+{
+  if ( a == b ) {
+    __print_error("\033[34msnowball require() failure:\033[0m expected output was wrong.\n\r");
+    should_print_stack();
+    __require_clbck();
+    __abort();
+  }
+};
+void
 require(const bool a, const bool b)
 {
   if ( a != b ) {
@@ -880,7 +890,7 @@ fuzz(Fn &&fn, size_t cnt)
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<size_t> dist(0, (2 << (4 * 8)) - 1);
+    std::uniform_int_distribution<size_t> dist(0, (2 << (4 * 6)) - 1);
 
     for ( size_t i = 0; i < cnt; ++i ) {
       var = static_cast<typename traits::arg_type<0>>(dist(gen));

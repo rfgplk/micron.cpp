@@ -222,6 +222,15 @@ constexpr void
 transform(T *start, T *end, F f) noexcept
 {
   for ( ; start != end; ++start )
+    *start = f(start);
+}
+
+template <typename T, typename F>
+  requires micron::is_invocable_v<F, T>
+constexpr void
+transform(T *start, T *end, F f) noexcept
+{
+  for ( ; start != end; ++start )
     *start = f(*start);
 }
 
@@ -230,6 +239,18 @@ constexpr void
 transform(C &c, F f) noexcept
 {
   transform(c.begin(), c.end(), f);
+}
+
+template <typename T, class P>
+  requires(micron::is_convertible_v<T, P>)
+constexpr T *
+find_last(T *start, T *end, const P &f) noexcept
+{
+  T *fnd = nullptr;
+  for ( ; start != end; ++start )
+    if ( *start == static_cast<T>(f) )
+      fnd = start;
+  return fnd;
 }
 
 template <typename T, class P>
@@ -430,6 +451,18 @@ count(const T *first, const T *end, const P &o) noexcept
 
 template <typename T, class F>
   requires micron::is_invocable_v<F, T *>
+umax_t
+count_if(const T *first, const T *end, F f) noexcept
+{
+  umax_t c = 0;
+  for ( ; first != end; ++first )
+    if ( f(first) )
+      ++c;
+  return c;
+}
+
+template <typename T, class F>
+  requires micron::is_invocable_v<F, T>
 umax_t
 count_if(const T *first, const T *end, F f) noexcept
 {

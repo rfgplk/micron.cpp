@@ -23,12 +23,16 @@ main()
       mc::console("Back: ", qu.front());
       qu.pop();
     }
+    qu.clear();
+    for ( int i = 20; i < 140; i++ )
+      qu.push(i);
+    mc::console(qu.front());
   };
 
   disable_scope()
   {
     micron::queue<int> qu;
-    for ( int i = 0; i < 10; i++ )
+    for ( int i = 3; i < 10; i++ )
       qu.push(i);
     while ( !qu.empty() ) {
       mc::console("Front: ", qu.front());

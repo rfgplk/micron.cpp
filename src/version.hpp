@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "std.hpp"
+// #include "std.hpp"
 
 #ifndef __MICRON
 #define __MICRON
@@ -14,7 +14,7 @@
 
 constexpr static const int MICRON_VERSION_MAJOR = 0x000;
 constexpr static const int MICRON_VERSION_MINOR = 0x050;
-constexpr static const int MICRON_VERSION_PATCH = 0x006;
+constexpr static const int MICRON_VERSION_PATCH = 0x008;
 constexpr static const int MICRON_VERSION_EX = 1;
 
 template <int __major, int __minor, int __patch>

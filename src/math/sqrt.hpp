@@ -117,5 +117,5 @@ sqrt(const float x)
 {
   return fsqrt(x);
 };
-};
+};     // namespace math
 };     // namespace micron

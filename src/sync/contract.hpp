@@ -5,9 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../mutex/spinlock.hpp"
+#include "../mutex/locks/spin_lock.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
+
+#include "../queue/lambda_queue.hpp"
+#include "../queue/queue.hpp"
 
 #include "../atomic/atomic.hpp"
 
@@ -29,10 +32,30 @@ namespace micron
 
 enum class contract_state : i32 { lenient, enforcing, strict, __end };
 
+template <contract_state S, typename T> class contract;
+
+template <contract_state S, typename T, typename Fn>
+void
+violation(contract<S, T> *c, Fn *fn)
+{
+  if ( c->State == contract_state::lenient ) {
+  } else if ( c->State == contract_state::enforcing ) {
+    if ( fn == nullptr )
+      exc<except::future_error>("contract::violation(): no enforcing function provided");
+    if ( fn->call() )
+      mc::abort();
+  } else if ( c->State == contract_state::strict ) {
+    exc<except::future_error>("contract::violation(): strict enforcement, contract violation detected");
+  }
+}
+
+template <typename T> using requirement_t = micron::atomic_token<T>;
+
 template <contract_state S, typename T> class contract
 {
+
   struct fn_base_t {
-    virtual void call() = 0;
+    virtual bool call() = 0;
     virtual ~fn_base_t() = default;
   };
 
@@ -41,76 +64,103 @@ template <contract_state S, typename T> class contract
 
     fn_t(Fn &&f) : fn(micron::move(f)) {}
 
-    void
+    bool
     call() override
     {
-      fn();
+      if constexpr ( !micron::is_same_v<micron::invoke_result_t<Fn>, void> )
+        return fn();
+      else
+        static_assert(false, "contract function must return");
     }
   };
 
-  bool is_signed;
+  micron::atomic_token<bool> is_signed;
   fduration_t __duration;
+  // the enforcing function runs within the lambda which is spawned off in a separate thread. will be called exclusively from violation(),
+  // essentially acts as a callback
   fn_base_t *__enforcing_fn;
+  // the condition function determines whether the contract succeeds/is satisfied or not
   fn_base_t *__condition_fn;
-  atomic_token<T> *__requirement;
+  // may be added to the contract, all must evaluate to true for the contract to succeed
+  micron::queue<requirement_t<T> *> __requirements;
+
+  void
+  __check_reqs(void)
+  {
+    while ( !__requirements.empty() ) {
+      auto &req = __requirements.front();
+      if ( !req->get(memory_order_acquire) )
+        violation(this, __enforcing_fn);
+      __requirements.pop();
+    }
+    if ( !__condition_fn->call() )
+      violation(this, __enforcing_fn);
+  }
 
 public:
-  ~contract() {}
+  constexpr static contract_state State = S;
+
+  ~contract()
+  {
+    // condition doesn't matter for the destructor, only lambdas
+    // if condition has been freed, no need to recheck
+    if ( __condition_fn ) {
+      {
+        //  if contract has been signed, cannot destroy, stall
+        while ( is_signed.get(memory_order::acquire) )
+          cpu_pause<5000>();
+        __check_reqs();
+        if ( __condition_fn )
+          delete __condition_fn;
+      }
+      if ( __enforcing_fn )
+        delete __enforcing_fn;
+      if ( __condition_fn )
+        delete __condition_fn;
+    }
+  }
+
+  contract(void) = delete;
 
   template <typename Fn, typename... Args>
-  contract(Fn &&fn, Args &&...args) : is_signed{ false }, __duration{ 0 }, __enforcing_fn(nullptr), __requirement{ nullptr }
+  contract(Fn &&fn, Args &&...args) : is_signed{ false }, __duration{ 0 }, __enforcing_fn(nullptr), __requirements{}
   {
-    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { f(a...); };
+    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { return f(a...); };
     __condition_fn = new fn_t<decltype(__fn)>(micron::move(__fn));
   }
 
   contract(const contract &o) = delete;
 
   contract(contract &&o)
-      : is_signed(o.is_signed), __duration(o.__duration), __enforcing_fn(o.__enforcing_fn), __condition_fn(o.__condition_fn),
-        __requirement(o.__requirement)
+      : is_signed{ micron::move(o.is_signed) }, __duration{ micron::move(o.duration) }, __condition_fn(o.__condition_fn),
+        __enforcing_fn(o.__enforcing_fn), __requirements{ micron::move(o.__requirements) }
   {
-    o.is_signed = false;
-    o.__duration = 0;
-    o.__enforcing_fn = nullptr;
     o.__condition_fn = nullptr;
-    o.__requirement = nullptr;
-  }
+    o.__enforcing_fn = nullptr;
+  };
 
   contract &operator=(const contract &) = delete;
-
-  contract &
-  operator=(contract &&o)
-  {
-    is_signed = o.is_signed;
-    __duration = o.__duration;
-    __enforcing_fn = o.__enforcing_fn;
-    __condition_fn = o.__condition_fn;
-    __requirement = o.__requirement;
-    o.is_signed = false;
-    o.__duration = 0;
-    o.__enforcing_fn = nullptr;
-    o.__condition_fn = nullptr;
-    o.__requirement = nullptr;
-    return *this;
-  }
+  contract &operator=(contract &&o) = delete;
 
   void
   sign(void)
   {
-    if ( is_signed ) [[unlikely]]
+    if ( is_signed.get(memory_order::acquire) ) [[unlikely]]
       exc<except::future_error>("contract::sign(): was already signed");
-    is_signed = true;
+    is_signed.store(true, memory_order::acquire);
     go([this]() {
-      if ( this->__requirement != nullptr ) {
-        // a requirement has been set
+      if ( this->__condition_fn != nullptr ) {
+      resleep:
+        // if the condition hasn't been met cannot proceed
         sleep_duration(this->__duration);
-        if ( this->__requirement.get(memory_order_acquire) )
-          return;
-        // contract violation
-      } else {
+        if ( !__condition_fn->call() )
+          goto resleep;
+        __check_reqs();
+      }
+      {
+        satisfy();
         return;
-        // always good
+        // always good, cntrct satisfied
       }
     });
   }
@@ -120,28 +170,33 @@ public:
   void
   sign(Fn &&fn, Args &&...args)
   {
-    if ( is_signed ) [[unlikely]]
+    if ( is_signed.get(memory_order::acquire) ) [[unlikely]]
       exc<except::future_error>("contract::sign(): was already signed");
     if ( __enforcing_fn != nullptr )
       exc<except::future_error>("contract::sign(): already has a stored enforcing function");
-    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { f(a...); };
+    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { return f(a...); };
     __enforcing_fn = new fn_t<decltype(__fn)>(micron::move(__fn));
-    is_signed = true;
+    is_signed.store(true, memory_order::acquire);
     go([this]() {
-      if ( this->__requirement != nullptr ) {
-        // a requirement has been set
+      if ( this->__condition_fn != nullptr ) {
+      resleep:
         sleep_duration(this->__duration);
-        if ( this->__enforcing_fn->call() == this->__requirement.get(memory_order_acquire) )
-          return;
-        // contract violation
-      } else {
-        // no requirement, just enforce
-        sleep_duration(this->__duration);
-        if ( this->__enforcing_fn->call() )
-          return;
-        // contract violation
+        if ( !__condition_fn->call() )
+          goto resleep;
+        __check_reqs();
+      }
+      {
+        satisfy();
+        return;
       }
     });
+  }
+
+  // TODO: think about making this private
+  void
+  satisfy(void)
+  {
+    is_signed.store(false, memory_order_release);
   }
 
   void
@@ -150,15 +205,22 @@ public:
     __duration = tm;
   }
 
-  // requirement that needs to be true in order to fire ensures
+  template <typename Fn, typename... Args>
+  void
+  enforce(Fn &&fn, Args &&...args)
+  {
+    if ( __enforcing_fn != nullptr )
+      delete __enforcing_fn;
+    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { return f(a...); };
+    __enforcing_fn = new fn_t<decltype(__fn)>(micron::move(__fn));
+  }
+
   template <typename... Args>
+    requires(micron::is_same_v<Args, requirement_t<T>>, ...)
   void
   require(Args &&...args)
   {
-    if ( __requirement != nullptr )
-      exc<except::future_error>("contract::require(): requirement already stored");
-    __requirement = new atomic_token<T>(micron::forward<Args &&>(args)...);
+    __requirements.emplace_back(micron::forward<Args &&>(args)...);
   }
 };
-
-};
+};     // namespace micron

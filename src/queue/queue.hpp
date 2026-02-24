@@ -9,9 +9,9 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../bits/__container.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
@@ -45,7 +45,7 @@ public:
     clear();
   }
 
-  queue() : __mem(N), needle(__mem::capacity - 1) {}
+  queue(void) : __mem(N), needle(__mem::capacity - 1) {}
 
   queue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
@@ -78,47 +78,48 @@ public:
       push();
   }
 
-  queue(const queue &o) : __mem(o.length), needle(o.needle)
-
-  {
-    __impl_container::copy(__mem::memory, o.memory, o.length);
-    __mem::length = o.length;
-  }
+  queue(const queue &o) = delete;
 
   queue(queue &&o) : __mem(micron::move(o)), needle(o.needle) { o.needle = 0; }
 
-  queue &
-  operator=(const queue &o)
-  {
-    if ( __mem::capacity <= o.length )
-      resize(o.length + 1);
-    __impl_container::copy(__mem::memory, o.memory, o.length);
-    __mem::length = o.length;
-    needle = o.needle;
-    return *this;
-  }
+  queue &operator=(const queue &o) = delete;
 
   inline void
   clear()
   {
     if ( !__mem::length )
       return;
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
-        (__mem::memory)[i].~T();
-    }
-    micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
-    __mem::length = 0;
+    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::capacity);
     needle = __mem::capacity - 1;
+    __mem::length = 0;
   }
 
-  // grow container
   inline void
   reserve(const size_t n)
   {
+    const size_t old_capacity = __mem::capacity;
+    const size_t old_needle = needle;
+    const size_t len = __mem::length;
+
+    if ( n <= old_capacity )
+      return;
+
     __mem::expand(n);
-    micron::memmove(&__mem::memory[(__mem::capacity - 1) - __mem::length], &__mem::memory[needle - __mem::length], __mem::length);
-    needle = __mem::capacity - 1;
+
+    if ( len == 0 ) {
+      needle = __mem::capacity - 1;
+      return;
+    }
+
+    const size_t new_capacity = __mem::capacity;
+    const size_t new_needle = new_capacity - 1;
+
+    T *const old_begin = &__mem::memory[old_needle - len + 1];
+    T *const new_begin = &__mem::memory[new_needle - len + 1];
+
+    micron::memmove(new_begin, old_begin, len);
+
+    needle = new_needle;
   }
 
   inline void

@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../concepts.hpp"
+#include "../memory/actions.hpp"
 #include "../types.hpp"
 
 namespace micron
@@ -12,46 +14,133 @@ namespace micron
 namespace sort
 {
 
-template <typename T, typename R, typename I>
-void
-__impl_as_heap(T &arr, R n, I i)
+template <is_iterable_container C, typename Compare>
+constexpr void
+__sift_down(C &c, size_t start, size_t n, Compare comp) noexcept
 {
-  I largest = i;
-  I left = 2 * i + 1;
-  I right = 2 * i + 2;
+  auto *first = c.begin();
+  size_t root = start;
 
-  if ( left < n && arr[left] > arr[largest] )
-    largest = left;
+  for ( ;; ) {
+    size_t left = (root << 1) + 1;
+    if ( left >= n )
+      break;
 
-  if ( right < n && arr[right] > arr[largest] )
-    largest = right;
+    size_t swap_i = root;
+    if ( comp(first[swap_i], first[left]) )
+      swap_i = left;
 
-  if ( largest != i ) {
-    // TODO: fix
-    typename T::value_type tmp = arr[i];
-    arr[i] = arr[largest];
-    arr[largest] = tmp;
-    __impl_as_heap(arr, n, largest);
+    size_t right = left + 1;
+    if ( right < n && comp(first[swap_i], first[right]) )
+      swap_i = right;
+
+    if ( swap_i == root )
+      return;
+
+    auto tmp = micron::move(first[root]);
+    first[root] = micron::move(first[swap_i]);
+    first[swap_i] = micron::move(tmp);
+
+    root = swap_i;
   }
 }
 
-template <typename T>
-void
-heap(T &arr)
+template <is_iterable_container C, typename Compare>
+constexpr void
+__make_heap(C &c, Compare comp) noexcept
 {
-  i64 n = arr.size();
+  size_t n = c.size();
+  if ( n < 2 )
+    return;
 
-  for ( i64 i = n / 2 - 1; i >= 0; i-- )
-    __impl_as_heap(arr, n, i);
+  for ( size_t i = n / 2; i-- > 0; )
+    __sift_down(c, i, n, comp);
+}
 
-  for ( i64 i = n - 1; i > 0; i-- ) {
-    typename T::value_type tmp = arr[0];
-    arr[0] = arr[i];
-    arr[i] = tmp;
-    __impl_as_heap(arr, i, 0);
+template <is_iterable_container C>
+constexpr void
+make_heap(C &c) noexcept
+{
+  __make_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+}
+
+template <is_iterable_container C, is_valid_comp<C> Cmp>
+constexpr void
+make_heap(C &c, Cmp comp) noexcept
+{
+  __make_heap(c, comp);
+}
+
+template <is_iterable_container C, typename Compare>
+constexpr void
+__sort_heap(C &c, Compare comp) noexcept
+{
+  size_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  while ( n > 1 ) {
+    auto tmp = micron::move(c[0]);
+    c[0] = micron::move(c[n - 1]);
+    c[n - 1] = micron::move(tmp);
+    --n;
+    __sift_down(c, 0, n, comp);
   }
+}
+
+template <is_iterable_container C>
+constexpr void
+heap(C &c) noexcept
+{
+  __sort_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+}
+
+template <is_iterable_container C, is_valid_comp<C> Cmp>
+constexpr void
+heap(C &c, Cmp comp) noexcept
+{
+  __sort_heap(c, comp);
+}
+
+template <is_iterable_container C>
+constexpr C &
+as_heap(C &c) noexcept
+{
+  make_heap(c);
+  heap(c);
+  return c;
+}
+
+template <is_iterable_container C, is_valid_comp<C> Cmp>
+constexpr C &
+as_heap(C &c, Cmp comp) noexcept
+{
+  make_heap(c, comp);
+  heap(c, comp);
+  return c;
+}
+
+template <is_iterable_container C>
+constexpr C &
+as_heap(C &c, typename C::size_type lim) noexcept
+{
+  if ( lim < 2 )
+    return c;
+  __make_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+  __sort_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+  return c;
+}
+
+template <is_iterable_container C, is_valid_comp<C> Cmp>
+constexpr C &
+as_heap(C &c, typename C::size_type lim, Cmp comp) noexcept
+{
+  if ( lim < 2 )
+    return c;
+  __make_heap(c, comp);
+  __sort_heap(c, comp);
+  return c;
 }
 
 };     // namespace sort
-
 };     // namespace micron

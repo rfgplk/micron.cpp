@@ -186,7 +186,7 @@ struct limits_t {
   }
 };
 
-};
-};
+};     // namespace posix
+};     // namespace micron
 
 ;

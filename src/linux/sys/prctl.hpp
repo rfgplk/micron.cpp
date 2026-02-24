@@ -285,4 +285,4 @@ constexpr int FH_FLAG_IMMUTABLE = (1ULL << 0);
 constexpr int PR_FUTEX_HASH_GET_SLOTS = 2;
 constexpr int PR_FUTEX_HASH_GET_IMMUTABLE = 3;
 
-};
+};     // namespace micron

@@ -4,12 +4,136 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
+#include "../except.hpp"
+#include "../memory/actions.hpp"
+#include "../memory/allocation/__internal.hpp"
+#include "../types.hpp"
+// #define ALLOCATOR_DEBUG 1
+#ifdef ALLOCATOR_DEBUG
+#include "../io/console.hpp"
+#define ALLOC_MESSAGE(x, ...)                                                                                                              \
+  if constexpr ( __micron_global__alloc_debug == true ) {                                                                                  \
+    micron::_micron_log(__FILE__, __LINE__, x, ##__VA_ARGS__);                                                                             \
+  }
+#else
+#define ALLOC_MESSAGE(x, ...)
+#endif
+#ifdef ALLOCATOR_DEBUG
+constexpr static const bool __micron_global__alloc_debug = true;
+#else
+constexpr static const bool __micron_global__alloc_debug = false;
+#endif
+
+// §17.6.3 — scalar new/delete
+
+[[nodiscard]] void *
+operator new(size_t size)
+{
+  ALLOC_MESSAGE("new(", size, ")");
+  if ( void *ptr = micron::__alloc(size) ) {
+    ALLOC_MESSAGE("returning(", ptr, ")");
+    return ptr;
+  }
+  micron::exc<micron::except::memory_error>("micron::operator new(): micron::__alloc failed");
+}
+
+[[nodiscard]] void *
+operator new[](size_t size)
+{
+  ALLOC_MESSAGE("new[](", size, ")");
+  if ( void *ptr = micron::__alloc(size) ) {
+    ALLOC_MESSAGE("returning(", ptr, ")");
+    return ptr;
+  }
+  micron::exc<micron::except::memory_error>("micron::operator new[](): micron::__alloc failed");
+}
+
+void
+operator delete(void *ptr) noexcept
+{
+  ALLOC_MESSAGE("delete(", ptr, ")");
+  micron::__free(ptr);
+}
+
+void
+operator delete[](void *ptr) noexcept
+{
+  ALLOC_MESSAGE("delete[](", ptr, ")");
+  micron::__free(ptr);
+}
+
+void
+operator delete(void *ptr, size_t size) noexcept
+{
+  (void)size;
+  ALLOC_MESSAGE("delete(", ptr, ") size of ", size);
+  micron::__free(ptr);
+}
+
+void
+operator delete[](void *ptr, size_t size) noexcept
+{
+  (void)size;
+  ALLOC_MESSAGE("delete[](", ptr, ") size of ", size);
+  micron::__free(ptr);
+}
+
+/*
+ * TODO: introduce align_val variants eventually
+ *
+ */
+namespace micron
+{
+template <typename Type, typename... Args>
+inline __attribute__((always_inline)) Type *
+__new(Args &&...args)
+{
+  return new Type(micron::forward<Args &&>(args)...);
+}
+
+template <typename Type>
+inline __attribute__((always_inline)) auto
+__new_arr(size_t n)
+{
+  return new Type[n];
+}
+
+template <typename T>
+inline __attribute__((always_inline)) void
+__delete(T *ptr)
+{
+  delete ptr;
+  ptr = nullptr;
+}
+
+template <typename T>
+inline __attribute__((always_inline)) void
+__const_delete(const T *const ptr)
+{
+  delete ptr;
+}
+
+template <typename T>
+inline __attribute__((always_inline)) void
+__delete_arr(T *ptr)
+{
+  delete[] ptr;
+  ptr = nullptr;
+}
+};     // namespace micron
+
+/*//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+#pragma once
 
 #include "../except.hpp"
 #include "../memory/actions.hpp"
 #include "../types.hpp"
 
-#include "../allocation/__internal.hpp"
+#include "../memory/allocation/__internal.hpp"
 
 // #define ALLOCATOR_DEBUG 1
 #ifdef ALLOCATOR_DEBUG
@@ -55,7 +179,7 @@ operator new[](size_t size, Args &&...args)
   }
   micron::exc<micron::except::memory_error>("micron::operator new[]: micron::__alloc failed");
 }
-*/
+
 // leave these as void
 void *
 operator new(size_t size)
@@ -68,6 +192,8 @@ operator new(size_t size)
   micron::exc<micron::except::memory_error>("micron::operator new(): micron::__alloc failed");
 }
 
+/*
+// WARNING: shadowing warning if included alongside the STL
 template <typename P>
 void *
 operator new(size_t size, P *ptr)
@@ -77,7 +203,6 @@ operator new(size_t size, P *ptr)
   ALLOC_MESSAGE("at(", ptr, ")");
   return ptr;
 }
-
 void *
 operator new[](size_t size)
 {
@@ -157,4 +282,4 @@ __delete_arr(T *ptr)
   delete[] ptr;
   ptr = nullptr;
 }
-};
+};*/     // namespace micron

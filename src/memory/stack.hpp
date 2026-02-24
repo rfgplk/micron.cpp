@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/linux/sys/__threads.hpp"
+#include "../linux/sys/__threads.hpp"
 
 #include "stack_constants.hpp"
 
@@ -33,4 +33,4 @@ get_stack_size(void) -> size_t
 {
   return get_stack().size;
 }
-};
+};     // namespace micron

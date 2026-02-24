@@ -287,6 +287,6 @@ public:
   }
 };
 
-};
+};     // namespace io
 
-};
+};     // namespace micron

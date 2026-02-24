@@ -214,5 +214,5 @@ cpu_free(auto &)
 
 using cpu_set_t = __cpu_set_t<cpu_setsize>;
 
-}
-};
+}     // namespace posix
+};     // namespace micron

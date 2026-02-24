@@ -7,10 +7,12 @@
 
 #include "../types.hpp"
 
+#include "../numerics.hpp"
+
 namespace micron
 {
 
-static const ssize_t npos = -1;
+static const size_t npos = numeric_limits<size_t>::max();
 };
 
 using const_schar = const char;

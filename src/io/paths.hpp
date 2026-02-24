@@ -133,7 +133,7 @@ public:
   {
     micron::vector<path_t> paths;
     paths.emplace_back(path_t());
-    ::realpath(n.c_str(), &paths.back()[0]);
+    micron::realpath(n.c_str(), &paths.back()[0]);
     paths.back().adjust_size();
     dir d(n);
     while ( d.name() != "/" ) {
@@ -234,5 +234,5 @@ public:
     return (nd.path.dname == o.nd.path.dname);
   }
 };
-};
-};
+};     // namespace io
+};     // namespace micron

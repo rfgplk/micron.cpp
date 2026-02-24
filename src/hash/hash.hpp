@@ -134,4 +134,4 @@ hash(const F data)
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
 }
 
-};
+};     // namespace micron

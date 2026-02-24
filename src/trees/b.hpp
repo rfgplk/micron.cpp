@@ -456,4 +456,4 @@ template <typename T, int Dg> struct b_tree {
   }
 };
 
-};
+};     // namespace micron

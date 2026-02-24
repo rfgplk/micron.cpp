@@ -7,6 +7,8 @@
 
 #include "../type_traits.hpp"
 
+#include "../types.hpp"
+
 // thought really hard on what to name this file
 
 namespace micron
@@ -228,4 +230,4 @@ unreachable(void)
   __builtin_unreachable();
 }
 
-};
+};     // namespace micron

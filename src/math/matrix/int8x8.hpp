@@ -12,4 +12,4 @@ namespace micron
 {
 using int8x8_t = int_matrix_base<i32, 8, 8>;
 using uint8x8_t = int_matrix_base<u32, 8, 8>;
-};
+};     // namespace micron

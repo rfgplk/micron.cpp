@@ -28,4 +28,4 @@ crc32(const T &data)
 {
 }
 
-};
+};     // namespace micron

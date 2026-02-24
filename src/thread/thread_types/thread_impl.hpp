@@ -90,18 +90,16 @@ __worker_kernel(__worker_payload *payload)
   pthread::set_cancel_state(pthread::cancel_state::enable);
   pthread::set_cancel_type(pthread::cancel_type::deferred);
 rerun_worker:
-  while ( payload->has_work.get(memory_order_seq_cst) == false )
-    wait_futex(payload->has_work.ptr(), true);
-  if ( payload->should_die.get(memory_order_seq_cst) )
-    return return_force;
-  auto __task = payload->queue.pop();
-  if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) )
-    payload->has_work.store(false, memory_order_release);
-
-  if ( __task != nullptr ) {
-    __task->call();
-    delete __task;
+  while ( payload->has_work.get(memory_order_acquire) == 0 ) {
+    wait_futex(payload->has_work.ptr(), 0);
   }
+  // doesn't need to be atomic
+  if ( *payload->should_die.ptr() )
+    return return_force;
+  payload->queue.execute();
+
+  if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) )
+    payload->has_work.store(0, memory_order_release);
   // epilogue
   posix::getrusage(posix::rusage_thread, payload->usage);
   goto rerun_worker;
@@ -278,4 +276,4 @@ struct thread_attr_t {
   addr_t *stack_addr;
 };
 
-};
+};     // namespace micron

@@ -5,24 +5,25 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "bits/__container.hpp"
+#include "../bits/__container.hpp"
 
-#include "algorithm/memory.hpp"
-#include "allocation/resources.hpp"
-#include "allocator.hpp"
-#include "pointer.hpp"
-#include "tags.hpp"
-#include "type_traits.hpp"
-#include "types.hpp"
+#include "../algorithm/memory.hpp"
+#include "../allocator.hpp"
+#include "../concepts.hpp"
+#include "../memory/allocation/resources.hpp"
+#include "../pointer.hpp"
+#include "../tags.hpp"
+#include "../type_traits.hpp"
+#include "../types.hpp"
 
-#include "__special/initializer_list"
+#include "../__special/initializer_list"
+#include "../concepts.hpp"
 
 #include "stack.hpp"
 
 namespace micron
 {
-template <typename t, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-  requires micron::is_copy_constructible_v<t> && micron::is_move_constructible_v<t>
+template <is_movable_object t, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class istack : public __immutable_memory_resource<t, Alloc>
 {
   using __mem = __immutable_memory_resource<t, Alloc>;

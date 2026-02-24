@@ -20,4 +20,4 @@ accumulate(I start, I end, T init) noexcept
     init = micron::move(init) + *start;
   return init;
 }
-};
+};     // namespace micron

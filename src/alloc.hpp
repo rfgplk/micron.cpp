@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "allocation/__internal.hpp"
+#include "memory/allocation/__internal.hpp"
 #include "types.hpp"
 
 namespace micron
@@ -23,4 +23,4 @@ free(T *ptr)
 {
   micron::__free(ptr);
 }
-};
+};     // namespace micron

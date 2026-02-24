@@ -650,5 +650,5 @@ const_get_errno(void)
 #define EHWPOISON 133 /* Memory page has hardware error */
 
 #endif
-};
-};
+};     // namespace error
+};     // namespace micron

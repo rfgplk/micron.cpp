@@ -12,4 +12,4 @@ namespace micron
 {
 using int64x1_t = int_matrix_base<i32, 64, 1>;
 using uint64x1_t = int_matrix_base<u32, 64, 1>;
-};
+};     // namespace micron

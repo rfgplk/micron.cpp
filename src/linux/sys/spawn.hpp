@@ -195,5 +195,5 @@ fail:
   micron::posix::exit(127);
   __builtin_unreachable();
 }
-};
-};
+};     // namespace posix
+};     // namespace micron

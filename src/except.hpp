@@ -92,7 +92,7 @@ MICRON_EXCEPTION_TEMP(hardware_error, hardware_errno)
 MICRON_EXCEPTION_TEMP(memory_error, memory_errno)
 MICRON_EXCEPTION_TEMP(thread_error, thread_errno)
 MICRON_EXCEPTION_TEMP(filesystem_error, filesystem_errno)
-};
+};     // namespace except
 
 using domain = except::domain_error;
 using invalid = except::invalid_argument;
@@ -113,4 +113,4 @@ using hardware = except::hardware_error;
 using memory_err = except::memory_error;
 using thread_err = except::thread_error;
 using fs_error = except::filesystem_error;
-};
+};     // namespace micron

@@ -12,10 +12,10 @@
 
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../pointer.hpp"
 #include "../slice.hpp"
@@ -298,10 +298,8 @@ public:
     return slice<T>(get(from), get(to));
   }
 
-  template <typename R>
-    requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) const T &
-  operator[](R n) const
+  operator[](size_type n) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
@@ -310,10 +308,8 @@ public:
     return (__mem::memory)[n];
   }
 
-  template <typename R>
-    requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) T &
-  operator[](R n)
+  operator[](size_type n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
@@ -932,6 +928,24 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return (__mem::memory)[__mem::length - 1];
+  }
+
+  static constexpr bool
+  is_pod() noexcept
+  {
+    return micron::is_pod_v<T>;
+  }
+
+  static constexpr bool
+  is_class_type() noexcept
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
   }
 
   // access at element

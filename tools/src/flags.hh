@@ -570,7 +570,6 @@ enum class flags : i32 {
 
 namespace w_flags
 {
-
 // Warning flag indices
 constexpr static const i32 flag_fsyntax_only = 0;
 constexpr static const i32 flag_fmax_errors = 1;
@@ -671,6 +670,148 @@ constexpr static const i32 flag_w_vla = 95;
 constexpr static const i32 flag_w_write_strings = 96;
 constexpr static const i32 flag_w_zero_as_null_pointer_constant = 97;
 constexpr static const i32 flag_w_no_cpp = 98;
+constexpr static const i32 flag_w_varargs = 99;
+constexpr static const i32 flag_w_missing_noreturn = 100;
+constexpr static const i32 flag_compile_std_module = 101;
+constexpr static const i32 flag_fabi_compat_version = 102;
+constexpr static const i32 flag_fabi_version = 103;
+constexpr static const i32 flag_fno_access_control = 104;
+constexpr static const i32 flag_faligned_new = 105;
+constexpr static const i32 flag_fno_assume_sane_operators_new_delete = 106;
+constexpr static const i32 flag_fchar8_t = 107;
+constexpr static const i32 flag_fcheck_new = 108;
+constexpr static const i32 flag_fconcepts = 109;
+constexpr static const i32 flag_fconcepts_diagnostics_depth = 110;
+constexpr static const i32 flag_fconstexpr_depth = 111;
+constexpr static const i32 flag_fconstexpr_cache_depth = 112;
+constexpr static const i32 flag_fconstexpr_loop_limit = 113;
+constexpr static const i32 flag_fconstexpr_ops_limit = 114;
+constexpr static const i32 flag_fcontracts = 115;
+constexpr static const i32 flag_fcontract_evaluation_semantic = 116;
+constexpr static const i32 flag_fcontracts_conservative_ipa = 117;
+constexpr static const i32 flag_fcontract_checks_outlined = 118;
+constexpr static const i32 flag_fcontract_disable_optimized_checks = 119;
+constexpr static const i32 flag_fcontracts_client_check = 120;
+constexpr static const i32 flag_fcontracts_definition_check = 121;
+constexpr static const i32 flag_fcoroutines = 122;
+constexpr static const i32 flag_fdiagnostics_all_candidates = 123;
+constexpr static const i32 flag_fno_elide_constructors = 124;
+constexpr static const i32 flag_fno_enforce_eh_specs = 125;
+constexpr static const i32 flag_fext_numeric_literals = 126;
+constexpr static const i32 flag_fno_gnu_keywords = 127;
+constexpr static const i32 flag_fno_immediate_escalation = 128;
+constexpr static const i32 flag_fno_implement_inlines = 129;
+constexpr static const i32 flag_fimplicit_constexpr = 130;
+constexpr static const i32 flag_fno_implicit_inline_templates = 131;
+constexpr static const i32 flag_fno_implicit_templates = 132;
+constexpr static const i32 flag_fmodule_header = 133;
+constexpr static const i32 flag_fmodule_implicit_inline = 134;
+constexpr static const i32 flag_fno_module_lazy = 135;
+constexpr static const i32 flag_fmodule_mapper = 136;
+constexpr static const i32 flag_fmodule_only = 137;
+constexpr static const i32 flag_fmodules = 138;
+constexpr static const i32 flag_fms_extensions = 139;
+constexpr static const i32 flag_fnew_inheriting_ctors = 140;
+constexpr static const i32 flag_fnew_ttp_matching = 141;
+constexpr static const i32 flag_fno_nonansi_builtins = 142;
+constexpr static const i32 flag_fnothrow_opt = 143;
+constexpr static const i32 flag_fno_operator_names = 144;
+constexpr static const i32 flag_fno_optional_diags = 145;
+constexpr static const i32 flag_fno_pretty_templates = 146;
+constexpr static const i32 flag_frange_for_ext_temps = 147;
+constexpr static const i32 flag_freflection = 148;
+constexpr static const i32 flag_fno_rtti = 149;
+constexpr static const i32 flag_fsized_deallocation = 150;
+constexpr static const i32 flag_fstrict_enums = 151;
+constexpr static const i32 flag_fstrong_eval_order = 152;
+constexpr static const i32 flag_ftemplate_backtrace_limit = 153;
+constexpr static const i32 flag_ftemplate_depth = 154;
+constexpr static const i32 flag_fno_threadsafe_statics = 155;
+constexpr static const i32 flag_fuse_cxa_atexit = 156;
+constexpr static const i32 flag_fno_use_cxa_get_exception_ptr = 157;
+constexpr static const i32 flag_fno_weak = 158;
+constexpr static const i32 flag_nostdinc_plusplus = 159;
+constexpr static const i32 flag_fvisibility_inlines_hidden = 160;
+constexpr static const i32 flag_fvisibility_ms_compat = 161;
+constexpr static const i32 flag_flang_info_include_translate = 162;
+constexpr static const i32 flag_flang_info_include_translate_not = 163;
+constexpr static const i32 flag_flang_info_module_cmi = 164;
+constexpr static const i32 flag_stdlib = 165;
+constexpr static const i32 flag_w_abbreviated_auto_in_template_arg = 166;
+constexpr static const i32 flag_w_abi_tag = 167;
+constexpr static const i32 flag_w_aligned_new = 168;
+constexpr static const i32 flag_w_catch_value = 169;
+constexpr static const i32 flag_w_no_class_conversion = 170;
+constexpr static const i32 flag_w_class_memaccess = 171;
+constexpr static const i32 flag_w_comma_subscript = 172;
+constexpr static const i32 flag_w_conditionally_supported = 173;
+constexpr static const i32 flag_w_no_conversion_null = 174;
+constexpr static const i32 flag_w_ctad_maybe_unsupported = 175;
+constexpr static const i32 flag_w_ctor_dtor_privacy = 176;
+constexpr static const i32 flag_w_dangling_reference = 177;
+constexpr static const i32 flag_w_no_defaulted_function_deleted = 178;
+constexpr static const i32 flag_w_no_delete_incomplete = 179;
+constexpr static const i32 flag_w_delete_non_virtual_dtor = 180;
+constexpr static const i32 flag_w_no_deprecated_array_compare = 181;
+constexpr static const i32 flag_w_deprecated_copy = 182;
+constexpr static const i32 flag_w_deprecated_copy_dtor = 183;
+constexpr static const i32 flag_w_no_deprecated_enum_enum_conversion = 184;
+constexpr static const i32 flag_w_no_deprecated_enum_float_conversion = 185;
+constexpr static const i32 flag_w_no_deprecated_literal_operator = 186;
+constexpr static const i32 flag_w_deprecated_variadic_comma_omission = 187;
+constexpr static const i32 flag_w_effc_plusplus = 188;
+constexpr static const i32 flag_w_no_elaborated_enum_base = 189;
+constexpr static const i32 flag_w_no_exceptions = 190;
+constexpr static const i32 flag_w_no_expose_global_module_tu_local = 191;
+constexpr static const i32 flag_w_no_external_tu_local = 192;
+constexpr static const i32 flag_w_extra_semi = 193;
+constexpr static const i32 flag_w_no_global_module = 194;
+constexpr static const i32 flag_w_no_inaccessible_base = 195;
+constexpr static const i32 flag_w_no_inherited_variadic_ctor = 196;
+constexpr static const i32 flag_w_no_init_list_lifetime = 197;
+constexpr static const i32 flag_w_invalid_constexpr = 198;
+constexpr static const i32 flag_w_invalid_imported_macros = 199;
+constexpr static const i32 flag_w_no_invalid_offsetof = 200;
+constexpr static const i32 flag_w_no_literal_suffix = 201;
+constexpr static const i32 flag_w_mismatched_new_delete = 202;
+constexpr static const i32 flag_w_mismatched_tags = 203;
+constexpr static const i32 flag_w_multiple_inheritance = 204;
+constexpr static const i32 flag_w_namespaces = 205;
+constexpr static const i32 flag_w_narrowing = 206;
+constexpr static const i32 flag_w_noexcept = 207;
+constexpr static const i32 flag_w_noexcept_type = 208;
+constexpr static const i32 flag_w_non_virtual_dtor = 209;
+constexpr static const i32 flag_w_pessimizing_move = 210;
+constexpr static const i32 flag_w_no_placement_new = 211;
+constexpr static const i32 flag_w_placement_new = 212;
+constexpr static const i32 flag_w_range_loop_construct = 213;
+constexpr static const i32 flag_w_redundant_move = 214;
+constexpr static const i32 flag_w_redundant_tags = 215;
+constexpr static const i32 flag_w_reorder = 216;
+constexpr static const i32 flag_w_register = 217;
+constexpr static const i32 flag_w_no_sfinae_incomplete = 218;
+constexpr static const i32 flag_w_strict_null_sentinel = 219;
+constexpr static const i32 flag_w_no_subobject_linkage = 220;
+constexpr static const i32 flag_w_templates = 221;
+constexpr static const i32 flag_w_no_non_c_typedef_for_linkage = 222;
+constexpr static const i32 flag_w_no_non_template_friend = 223;
+constexpr static const i32 flag_w_old_style_cast = 224;
+constexpr static const i32 flag_w_overloaded_virtual = 225;
+constexpr static const i32 flag_w_no_pmf_conversions = 226;
+constexpr static const i32 flag_w_self_move = 227;
+constexpr static const i32 flag_w_sign_promo = 228;
+constexpr static const i32 flag_w_sized_deallocation = 229;
+constexpr static const i32 flag_w_suggest_final_methods = 230;
+constexpr static const i32 flag_w_suggest_final_types = 231;
+constexpr static const i32 flag_w_suggest_override = 232;
+constexpr static const i32 flag_w_no_template_body = 233;
+constexpr static const i32 flag_w_no_template_id_cdtor = 234;
+constexpr static const i32 flag_w_template_names_tu_local = 235;
+constexpr static const i32 flag_w_no_terminate = 236;
+constexpr static const i32 flag_w_no_vexing_parse = 237;
+constexpr static const i32 flag_w_virtual_inheritance = 238;
+constexpr static const i32 flag_w_no_virtual_move_assign = 239;
+constexpr static const i32 flag_w_volatile = 240;
 
 enum class flags : i32 {
   fsyntax_only = flag_fsyntax_only,
@@ -771,7 +912,149 @@ enum class flags : i32 {
   Wvla = flag_w_vla,
   Wwrite_strings = flag_w_write_strings,
   Wzero_as_null_pointer_constant = flag_w_zero_as_null_pointer_constant,
-  Wno_cpp = flag_w_no_cpp
+  Wno_cpp = flag_w_no_cpp,
+  Wvarargs = flag_w_varargs,
+  Wmissing_noreturn = flag_w_missing_noreturn,
+  compile_std_module = flag_compile_std_module,
+  fabi_compat_version = flag_fabi_compat_version,
+  fabi_version = flag_fabi_version,
+  fno_access_control = flag_fno_access_control,
+  faligned_new = flag_faligned_new,
+  fno_assume_sane_operators_new_delete = flag_fno_assume_sane_operators_new_delete,
+  fchar8_t = flag_fchar8_t,
+  fcheck_new = flag_fcheck_new,
+  fconcepts = flag_fconcepts,
+  fconcepts_diagnostics_depth = flag_fconcepts_diagnostics_depth,
+  fconstexpr_depth = flag_fconstexpr_depth,
+  fconstexpr_cache_depth = flag_fconstexpr_cache_depth,
+  fconstexpr_loop_limit = flag_fconstexpr_loop_limit,
+  fconstexpr_ops_limit = flag_fconstexpr_ops_limit,
+  fcontracts = flag_fcontracts,
+  fcontract_evaluation_semantic = flag_fcontract_evaluation_semantic,
+  fcontracts_conservative_ipa = flag_fcontracts_conservative_ipa,
+  fcontract_checks_outlined = flag_fcontract_checks_outlined,
+  fcontract_disable_optimized_checks = flag_fcontract_disable_optimized_checks,
+  fcontracts_client_check = flag_fcontracts_client_check,
+  fcontracts_definition_check = flag_fcontracts_definition_check,
+  fcoroutines = flag_fcoroutines,
+  fdiagnostics_all_candidates = flag_fdiagnostics_all_candidates,
+  fno_elide_constructors = flag_fno_elide_constructors,
+  fno_enforce_eh_specs = flag_fno_enforce_eh_specs,
+  fext_numeric_literals = flag_fext_numeric_literals,
+  fno_gnu_keywords = flag_fno_gnu_keywords,
+  fno_immediate_escalation = flag_fno_immediate_escalation,
+  fno_implement_inlines = flag_fno_implement_inlines,
+  fimplicit_constexpr = flag_fimplicit_constexpr,
+  fno_implicit_inline_templates = flag_fno_implicit_inline_templates,
+  fno_implicit_templates = flag_fno_implicit_templates,
+  fmodule_header = flag_fmodule_header,
+  fmodule_implicit_inline = flag_fmodule_implicit_inline,
+  fno_module_lazy = flag_fno_module_lazy,
+  fmodule_mapper = flag_fmodule_mapper,
+  fmodule_only = flag_fmodule_only,
+  fmodules = flag_fmodules,
+  fms_extensions = flag_fms_extensions,
+  fnew_inheriting_ctors = flag_fnew_inheriting_ctors,
+  fnew_ttp_matching = flag_fnew_ttp_matching,
+  fno_nonansi_builtins = flag_fno_nonansi_builtins,
+  fnothrow_opt = flag_fnothrow_opt,
+  fno_operator_names = flag_fno_operator_names,
+  fno_optional_diags = flag_fno_optional_diags,
+  fno_pretty_templates = flag_fno_pretty_templates,
+  frange_for_ext_temps = flag_frange_for_ext_temps,
+  freflection = flag_freflection,
+  fno_rtti = flag_fno_rtti,
+  fsized_deallocation = flag_fsized_deallocation,
+  fstrict_enums = flag_fstrict_enums,
+  fstrong_eval_order = flag_fstrong_eval_order,
+  ftemplate_backtrace_limit = flag_ftemplate_backtrace_limit,
+  ftemplate_depth = flag_ftemplate_depth,
+  fno_threadsafe_statics = flag_fno_threadsafe_statics,
+  fuse_cxa_atexit = flag_fuse_cxa_atexit,
+  fno_use_cxa_get_exception_ptr = flag_fno_use_cxa_get_exception_ptr,
+  fno_weak = flag_fno_weak,
+  nostdinc_plusplus = flag_nostdinc_plusplus,
+  fvisibility_inlines_hidden = flag_fvisibility_inlines_hidden,
+  fvisibility_ms_compat = flag_fvisibility_ms_compat,
+  flang_info_include_translate = flag_flang_info_include_translate,
+  flang_info_include_translate_not = flag_flang_info_include_translate_not,
+  flang_info_module_cmi = flag_flang_info_module_cmi,
+  stdlib = flag_stdlib,
+  Wabbreviated_auto_in_template_arg = flag_w_abbreviated_auto_in_template_arg,
+  Wabi_tag = flag_w_abi_tag,
+  Waligned_new = flag_w_aligned_new,
+  Wcatch_value = flag_w_catch_value,
+  Wno_class_conversion = flag_w_no_class_conversion,
+  Wclass_memaccess = flag_w_class_memaccess,
+  Wcomma_subscript = flag_w_comma_subscript,
+  Wconditionally_supported = flag_w_conditionally_supported,
+  Wno_conversion_null = flag_w_no_conversion_null,
+  Wctad_maybe_unsupported = flag_w_ctad_maybe_unsupported,
+  Wctor_dtor_privacy = flag_w_ctor_dtor_privacy,
+  Wdangling_reference = flag_w_dangling_reference,
+  Wno_defaulted_function_deleted = flag_w_no_defaulted_function_deleted,
+  Wno_delete_incomplete = flag_w_no_delete_incomplete,
+  Wdelete_non_virtual_dtor = flag_w_delete_non_virtual_dtor,
+  Wno_deprecated_array_compare = flag_w_no_deprecated_array_compare,
+  Wdeprecated_copy = flag_w_deprecated_copy,
+  Wdeprecated_copy_dtor = flag_w_deprecated_copy_dtor,
+  Wno_deprecated_enum_enum_conversion = flag_w_no_deprecated_enum_enum_conversion,
+  Wno_deprecated_enum_float_conversion = flag_w_no_deprecated_enum_float_conversion,
+  Wno_deprecated_literal_operator = flag_w_no_deprecated_literal_operator,
+  Wdeprecated_variadic_comma_omission = flag_w_deprecated_variadic_comma_omission,
+  Weffc_plusplus = flag_w_effc_plusplus,
+  Wno_elaborated_enum_base = flag_w_no_elaborated_enum_base,
+  Wno_exceptions = flag_w_no_exceptions,
+  Wno_expose_global_module_tu_local = flag_w_no_expose_global_module_tu_local,
+  Wno_external_tu_local = flag_w_no_external_tu_local,
+  Wextra_semi = flag_w_extra_semi,
+  Wno_global_module = flag_w_no_global_module,
+  Wno_inaccessible_base = flag_w_no_inaccessible_base,
+  Wno_inherited_variadic_ctor = flag_w_no_inherited_variadic_ctor,
+  Wno_init_list_lifetime = flag_w_no_init_list_lifetime,
+  Winvalid_constexpr = flag_w_invalid_constexpr,
+  Winvalid_imported_macros = flag_w_invalid_imported_macros,
+  Wno_invalid_offsetof = flag_w_no_invalid_offsetof,
+  Wno_literal_suffix = flag_w_no_literal_suffix,
+  Wmismatched_new_delete = flag_w_mismatched_new_delete,
+  Wmismatched_tags = flag_w_mismatched_tags,
+  Wmultiple_inheritance = flag_w_multiple_inheritance,
+  Wnamespaces = flag_w_namespaces,
+  Wnarrowing = flag_w_narrowing,
+  Wnoexcept = flag_w_noexcept,
+  Wnoexcept_type = flag_w_noexcept_type,
+  Wnon_virtual_dtor = flag_w_non_virtual_dtor,
+  Wpessimizing_move = flag_w_pessimizing_move,
+  Wno_placement_new = flag_w_no_placement_new,
+  Wplacement_new = flag_w_placement_new,
+  Wrange_loop_construct = flag_w_range_loop_construct,
+  Wredundant_move = flag_w_redundant_move,
+  Wredundant_tags = flag_w_redundant_tags,
+  Wreorder = flag_w_reorder,
+  Wregister = flag_w_register,
+  Wno_sfinae_incomplete = flag_w_no_sfinae_incomplete,
+  Wstrict_null_sentinel = flag_w_strict_null_sentinel,
+  Wno_subobject_linkage = flag_w_no_subobject_linkage,
+  Wtemplates = flag_w_templates,
+  Wno_non_c_typedef_for_linkage = flag_w_no_non_c_typedef_for_linkage,
+  Wno_non_template_friend = flag_w_no_non_template_friend,
+  Wold_style_cast = flag_w_old_style_cast,
+  Woverloaded_virtual = flag_w_overloaded_virtual,
+  Wno_pmf_conversions = flag_w_no_pmf_conversions,
+  Wself_move = flag_w_self_move,
+  Wsign_promo = flag_w_sign_promo,
+  Wsized_deallocation = flag_w_sized_deallocation,
+  Wsuggest_final_methods = flag_w_suggest_final_methods,
+  Wsuggest_final_types = flag_w_suggest_final_types,
+  Wsuggest_override = flag_w_suggest_override,
+  Wno_template_body = flag_w_no_template_body,
+  Wno_template_id_cdtor = flag_w_no_template_id_cdtor,
+  Wtemplate_names_tu_local = flag_w_template_names_tu_local,
+  Wno_terminate = flag_w_no_terminate,
+  Wno_vexing_parse = flag_w_no_vexing_parse,
+  Wvirtual_inheritance = flag_w_virtual_inheritance,
+  Wno_virtual_move_assign = flag_w_no_virtual_move_assign,
+  Wvolatile = flag_w_volatile
 };
 
 constexpr static const char *flag_strings[] = { "-fsyntax-only",
@@ -872,7 +1155,149 @@ constexpr static const char *flag_strings[] = { "-fsyntax-only",
                                                 "-Wvla",
                                                 "-Wwrite-strings",
                                                 "-Wzero-as-null-pointer-constant",
-                                                "-Wno-cpp" };
+                                                "-Wno-cpp",
+                                                "-Wvarargs",
+                                                "-Wmissing-noreturn",
+                                                "--compile-std-module",
+                                                "-fabi-compat-version=",
+                                                "-fabi-version=",
+                                                "-fno-access-control",
+                                                "-faligned-new=",
+                                                "-fno-assume-sane-operators-new-delete",
+                                                "-fchar8_t",
+                                                "-fcheck-new",
+                                                "-fconcepts",
+                                                "-fconcepts-diagnostics-depth=",
+                                                "-fconstexpr-depth=",
+                                                "-fconstexpr-cache-depth=",
+                                                "-fconstexpr-loop-limit=",
+                                                "-fconstexpr-ops-limit=",
+                                                "-fcontracts",
+                                                "-fcontract-evaluation-semantic=",
+                                                "-fcontracts-conservative-ipa",
+                                                "-fcontract-checks-outlined",
+                                                "-fcontract-disable-optimized-checks",
+                                                "-fcontracts-client-check=",
+                                                "-fcontracts-definition-check=",
+                                                "-fcoroutines",
+                                                "-fdiagnostics-all-candidates",
+                                                "-fno-elide-constructors",
+                                                "-fno-enforce-eh-specs",
+                                                "-fext-numeric-literals",
+                                                "-fno-gnu-keywords",
+                                                "-fno-immediate-escalation",
+                                                "-fno-implement-inlines",
+                                                "-fimplicit-constexpr",
+                                                "-fno-implicit-inline-templates",
+                                                "-fno-implicit-templates",
+                                                "-fmodule-header=",
+                                                "-fmodule-implicit-inline",
+                                                "-fno-module-lazy",
+                                                "-fmodule-mapper=",
+                                                "-fmodule-only",
+                                                "-fmodules",
+                                                "-fms-extensions",
+                                                "-fnew-inheriting-ctors",
+                                                "-fnew-ttp-matching",
+                                                "-fno-nonansi-builtins",
+                                                "-fnothrow-opt",
+                                                "-fno-operator-names",
+                                                "-fno-optional-diags",
+                                                "-fno-pretty-templates",
+                                                "-frange-for-ext-temps",
+                                                "-freflection",
+                                                "-fno-rtti",
+                                                "-fsized-deallocation",
+                                                "-fstrict-enums",
+                                                "-fstrong-eval-order=",
+                                                "-ftemplate-backtrace-limit=",
+                                                "-ftemplate-depth=",
+                                                "-fno-threadsafe-statics",
+                                                "-fuse-cxa-atexit",
+                                                "-fno-use-cxa-get-exception-ptr",
+                                                "-fno-weak",
+                                                "-nostdinc++",
+                                                "-fvisibility-inlines-hidden",
+                                                "-fvisibility-ms-compat",
+                                                "-flang-info-include-translate=",
+                                                "-flang-info-include-translate-not",
+                                                "-flang-info-module-cmi=",
+                                                "-stdlib=",
+                                                "-Wabbreviated-auto-in-template-arg",
+                                                "-Wabi-tag",
+                                                "-Waligned-new=",
+                                                "-Wcatch-value=",
+                                                "-Wno-class-conversion",
+                                                "-Wclass-memaccess",
+                                                "-Wcomma-subscript",
+                                                "-Wconditionally-supported",
+                                                "-Wno-conversion-null",
+                                                "-Wctad-maybe-unsupported",
+                                                "-Wctor-dtor-privacy",
+                                                "-Wdangling-reference",
+                                                "-Wno-defaulted-function-deleted",
+                                                "-Wno-delete-incomplete",
+                                                "-Wdelete-non-virtual-dtor",
+                                                "-Wno-deprecated-array-compare",
+                                                "-Wdeprecated-copy",
+                                                "-Wdeprecated-copy-dtor",
+                                                "-Wno-deprecated-enum-enum-conversion",
+                                                "-Wno-deprecated-enum-float-conversion",
+                                                "-Wno-deprecated-literal-operator",
+                                                "-Wdeprecated-variadic-comma-omission",
+                                                "-Weffc++",
+                                                "-Wno-elaborated-enum-base",
+                                                "-Wno-exceptions",
+                                                "-Wno-expose-global-module-tu-local",
+                                                "-Wno-external-tu-local",
+                                                "-Wextra-semi",
+                                                "-Wno-global-module",
+                                                "-Wno-inaccessible-base",
+                                                "-Wno-inherited-variadic-ctor",
+                                                "-Wno-init-list-lifetime",
+                                                "-Winvalid-constexpr",
+                                                "-Winvalid-imported-macros",
+                                                "-Wno-invalid-offsetof",
+                                                "-Wno-literal-suffix",
+                                                "-Wmismatched-new-delete",
+                                                "-Wmismatched-tags",
+                                                "-Wmultiple-inheritance",
+                                                "-Wnamespaces",
+                                                "-Wnarrowing",
+                                                "-Wnoexcept",
+                                                "-Wnoexcept-type",
+                                                "-Wnon-virtual-dtor",
+                                                "-Wpessimizing-move",
+                                                "-Wno-placement-new",
+                                                "-Wplacement-new=",
+                                                "-Wrange-loop-construct",
+                                                "-Wredundant-move",
+                                                "-Wredundant-tags",
+                                                "-Wreorder",
+                                                "-Wregister",
+                                                "-Wno-sfinae-incomplete",
+                                                "-Wstrict-null-sentinel",
+                                                "-Wno-subobject-linkage",
+                                                "-Wtemplates",
+                                                "-Wno-non-c-typedef-for-linkage",
+                                                "-Wno-non-template-friend",
+                                                "-Wold-style-cast",
+                                                "-Woverloaded-virtual",
+                                                "-Wno-pmf-conversions",
+                                                "-Wself-move",
+                                                "-Wsign-promo",
+                                                "-Wsized-deallocation",
+                                                "-Wsuggest-final-methods",
+                                                "-Wsuggest-final-types",
+                                                "-Wsuggest-override",
+                                                "-Wno-template-body",
+                                                "-Wno-template-id-cdtor",
+                                                "-Wtemplate-names-tu-local",
+                                                "-Wno-terminate",
+                                                "-Wno-vexing-parse",
+                                                "-Wvirtual-inheritance",
+                                                "-Wno-virtual-move-assign",
+                                                "-Wvolatile" };
 
 constexpr const char *
 get_string_flag(flags f)
@@ -894,84 +1319,252 @@ constexpr static const i32 flag_no_allocation_dce = 6;
 constexpr static const i32 flag_allow_store_data_races = 7;
 constexpr static const i32 flag_associative_math = 8;
 constexpr static const i32 flag_auto_profile = 9;
-constexpr static const i32 flag_auto_inc_dec = 10;
-constexpr static const i32 flag_branch_probabilities = 11;
-constexpr static const i32 flag_caller_saves = 12;
-constexpr static const i32 flag_combine_stack_adjustments = 13;
-constexpr static const i32 flag_conserve_stack = 14;
-constexpr static const i32 flag_fold_mem_offsets = 15;
-constexpr static const i32 flag_compare_elim = 16;
-constexpr static const i32 flag_cprop_registers = 17;
-constexpr static const i32 flag_crossjumping = 18;
-constexpr static const i32 flag_cse_follow_jumps = 19;
-constexpr static const i32 flag_cse_skip_blocks = 20;
-constexpr static const i32 flag_data_sections = 21;
-constexpr static const i32 flag_dce = 22;
-constexpr static const i32 flag_delete_null_pointer_checks = 23;
-constexpr static const i32 flag_devirtualize = 24;
-constexpr static const i32 flag_dse = 25;
-constexpr static const i32 flag_early_inlining = 26;
-constexpr static const i32 flag_expensive_optimizations = 27;
-constexpr static const i32 flag_fast_math = 28;
-constexpr static const i32 flag_finite_math_only = 29;
-constexpr static const i32 flag_float_store = 30;
-constexpr static const i32 flag_forward_propagate = 31;
-constexpr static const i32 flag_function_sections = 32;
-constexpr static const i32 flag_gcse = 33;
-constexpr static const i32 flag_hoist_adjacent_loads = 34;
-constexpr static const i32 flag_if_conversion = 35;
-constexpr static const i32 flag_inline_functions = 36;
-constexpr static const i32 flag_inline_small_functions = 37;
-constexpr static const i32 flag_ipa_cp = 38;
-constexpr static const i32 flag_ipa_sra = 39;
-constexpr static const i32 flag_isolate_erroneous_paths_dereference = 40;
-constexpr static const i32 flag_ivopts = 41;
-constexpr static const i32 flag_keep_inline_functions = 42;
-constexpr static const i32 flag_lifetime_dse = 43;
-constexpr static const i32 flag_live_range_shrinkage = 44;
-constexpr static const i32 flag_loop_interchange = 45;
-constexpr static const i32 flag_loop_unroll_and_jam = 46;
-constexpr static const i32 flag_lra_remat = 47;
-constexpr static const i32 flag_lto = 48;
-constexpr static const i32 flag_merge_constants = 49;
-constexpr static const i32 flag_modulo_sched = 50;
-constexpr static const i32 flag_move_loop_invariants = 51;
-constexpr static const i32 flag_omit_frame_pointer = 52;
-constexpr static const i32 flag_optimize_sibling_calls = 53;
-constexpr static const i32 flag_partial_inlining = 54;
-constexpr static const i32 flag_peel_loops = 55;
-constexpr static const i32 flag_prefetch_loop_arrays = 56;
-constexpr static const i32 flag_profile_use = 57;
-constexpr static const i32 flag_reciprocal_math = 58;
-constexpr static const i32 flag_rename_registers = 59;
-constexpr static const i32 flag_reorder_blocks = 60;
-constexpr static const i32 flag_rounding_math = 61;
-constexpr static const i32 flag_schedule_insns = 62;
-constexpr static const i32 flag_section_anchors = 63;
-constexpr static const i32 flag_semantic_interposition = 64;
-constexpr static const i32 flag_shrink_wrap = 65;
-constexpr static const i32 flag_signaling_nans = 66;
-constexpr static const i32 flag_split_loops = 67;
-constexpr static const i32 flag_strict_aliasing = 68;
-constexpr static const i32 flag_thread_jumps = 69;
-constexpr static const i32 flag_tree_vectorize = 70;
-constexpr static const i32 flag_trivial_auto_var_init = 71;
-constexpr static const i32 flag_unroll_loops = 72;
-constexpr static const i32 flag_unsafe_math_optimizations = 73;
-constexpr static const i32 flag_unswitch_loops = 74;
-constexpr static const i32 flag_vect_cost_model = 75;
-constexpr static const i32 flag_whole_program = 76;
-constexpr static const i32 flag_zero_call_used_regs = 77;
-constexpr static const i32 flag_optimize = 78;
-constexpr static const i32 flag_optimize_zero = 79;
-constexpr static const i32 flag_optimize_one = 80;
-constexpr static const i32 flag_optimize_two = 81;
-constexpr static const i32 flag_optimize_three = 82;
-constexpr static const i32 flag_optimize_size = 83;
-constexpr static const i32 flag_optimize_fast = 84;
-constexpr static const i32 flag_optimize_debug = 85;
-constexpr static const i32 flag_optimize_z = 86;
-constexpr static const i32 flag_param = 87;
+constexpr static const i32 flag_auto_profile_inlining = 10;
+constexpr static const i32 flag_auto_inc_dec = 11;
+constexpr static const i32 flag_branch_probabilities = 12;
+constexpr static const i32 flag_caller_saves = 13;
+constexpr static const i32 flag_combine_stack_adjustments = 14;
+constexpr static const i32 flag_conserve_stack = 15;
+constexpr static const i32 flag_fold_mem_offsets = 16;
+constexpr static const i32 flag_compare_elim = 17;
+constexpr static const i32 flag_cprop_registers = 18;
+constexpr static const i32 flag_crossjumping = 19;
+constexpr static const i32 flag_cse_follow_jumps = 20;
+constexpr static const i32 flag_cse_skip_blocks = 21;
+constexpr static const i32 flag_cx_fortran_rules = 22;
+constexpr static const i32 flag_cx_limited_range = 23;
+constexpr static const i32 flag_cx_method = 24;
+constexpr static const i32 flag_data_sections = 25;
+constexpr static const i32 flag_dce = 26;
+constexpr static const i32 flag_delayed_branch = 27;
+constexpr static const i32 flag_delete_null_pointer_checks = 28;
+constexpr static const i32 flag_dep_fusion = 29;
+constexpr static const i32 flag_devirtualize = 30;
+constexpr static const i32 flag_devirtualize_speculatively = 31;
+constexpr static const i32 flag_devirtualize_at_ltrans = 32;
+constexpr static const i32 flag_dse = 33;
+constexpr static const i32 flag_early_inlining = 34;
+constexpr static const i32 flag_excess_precision = 35;
+constexpr static const i32 flag_expensive_optimizations = 36;
+constexpr static const i32 flag_ext_dce = 37;
+constexpr static const i32 flag_fast_math = 38;
+constexpr static const i32 flag_fat_lto_objects = 39;
+constexpr static const i32 flag_finite_loops = 40;
+constexpr static const i32 flag_finite_math_only = 41;
+constexpr static const i32 flag_float_store = 42;
+constexpr static const i32 flag_forward_propagate = 43;
+constexpr static const i32 flag_fp_contract = 44;
+constexpr static const i32 flag_fp_int_builtin_inexact = 45;
+constexpr static const i32 flag_function_sections = 46;
+constexpr static const i32 flag_fuse_ops_with_volatile_access = 47;
+constexpr static const i32 flag_gcse = 48;
+constexpr static const i32 flag_gcse_after_reload = 49;
+constexpr static const i32 flag_gcse_las = 50;
+constexpr static const i32 flag_gcse_lm = 51;
+constexpr static const i32 flag_graphite_identity = 52;
+constexpr static const i32 flag_gcse_sm = 53;
+constexpr static const i32 flag_hoist_adjacent_loads = 54;
+constexpr static const i32 flag_if_conversion = 55;
+constexpr static const i32 flag_if_conversion2 = 56;
+constexpr static const i32 flag_indirect_inlining = 57;
+constexpr static const i32 flag_inline_atomics = 58;
+constexpr static const i32 flag_inline_functions = 59;
+constexpr static const i32 flag_inline_functions_called_once = 60;
+constexpr static const i32 flag_inline_limit = 61;
+constexpr static const i32 flag_inline_small_functions = 62;
+constexpr static const i32 flag_inline_stringops = 63;
+constexpr static const i32 flag_ipa_modref = 64;
+constexpr static const i32 flag_ipa_cp = 65;
+constexpr static const i32 flag_ipa_cp_clone = 66;
+constexpr static const i32 flag_ipa_bit_cp = 67;
+constexpr static const i32 flag_ipa_vrp = 68;
+constexpr static const i32 flag_ipa_pta = 69;
+constexpr static const i32 flag_ipa_profile = 70;
+constexpr static const i32 flag_ipa_pure_const = 71;
+constexpr static const i32 flag_ipa_reference = 72;
+constexpr static const i32 flag_ipa_reference_addressable = 73;
+constexpr static const i32 flag_ipa_reorder_for_locality = 74;
+constexpr static const i32 flag_ipa_sra = 75;
+constexpr static const i32 flag_ipa_stack_alignment = 76;
+constexpr static const i32 flag_ipa_icf = 77;
+constexpr static const i32 flag_ipa_icf_functions = 78;
+constexpr static const i32 flag_ipa_icf_variables = 79;
+constexpr static const i32 flag_ira_algorithm = 80;
+constexpr static const i32 flag_late_combine_instructions = 81;
+constexpr static const i32 flag_lifetime_dse = 82;
+constexpr static const i32 flag_live_patching = 83;
+constexpr static const i32 flag_ira_region = 84;
+constexpr static const i32 flag_ira_hoist_pressure = 85;
+constexpr static const i32 flag_ira_loop_pressure = 86;
+constexpr static const i32 flag_no_ira_share_save_slots = 87;
+constexpr static const i32 flag_no_ira_share_spill_slots = 88;
+constexpr static const i32 flag_isolate_erroneous_paths_dereference = 89;
+constexpr static const i32 flag_isolate_erroneous_paths_attribute = 90;
+constexpr static const i32 flag_ivopts = 91;
+constexpr static const i32 flag_keep_inline_functions = 92;
+constexpr static const i32 flag_keep_static_functions = 93;
+constexpr static const i32 flag_keep_static_consts = 94;
+constexpr static const i32 flag_limit_function_alignment = 95;
+constexpr static const i32 flag_live_range_shrinkage = 96;
+constexpr static const i32 flag_loop_block = 97;
+constexpr static const i32 flag_loop_interchange = 98;
+constexpr static const i32 flag_loop_strip_mine = 99;
+constexpr static const i32 flag_loop_unroll_and_jam = 100;
+constexpr static const i32 flag_loop_nest_optimize = 101;
+constexpr static const i32 flag_loop_parallelize_all = 102;
+constexpr static const i32 flag_lra_remat = 103;
+constexpr static const i32 flag_lto = 104;
+constexpr static const i32 flag_lto_compression_level = 105;
+constexpr static const i32 flag_lto_toplevel_asm_heuristics = 106;
+constexpr static const i32 flag_lto_partition = 107;
+constexpr static const i32 flag_lto_incremental = 108;
+constexpr static const i32 flag_lto_incremental_cache_size = 109;
+constexpr static const i32 flag_malloc_dce = 110;
+constexpr static const i32 flag_merge_all_constants = 111;
+constexpr static const i32 flag_merge_constants = 112;
+constexpr static const i32 flag_modulo_sched = 113;
+constexpr static const i32 flag_modulo_sched_allow_regmoves = 114;
+constexpr static const i32 flag_move_loop_invariants = 115;
+constexpr static const i32 flag_move_loop_stores = 116;
+constexpr static const i32 flag_no_branch_count_reg = 117;
+constexpr static const i32 flag_no_defer_pop = 118;
+constexpr static const i32 flag_no_function_cse = 119;
+constexpr static const i32 flag_no_guess_branch_probability = 120;
+constexpr static const i32 flag_no_inline = 121;
+constexpr static const i32 flag_no_math_errno = 122;
+constexpr static const i32 flag_no_peephole = 123;
+constexpr static const i32 flag_no_peephole2 = 124;
+constexpr static const i32 flag_no_printf_return_value = 125;
+constexpr static const i32 flag_no_sched_interblock = 126;
+constexpr static const i32 flag_no_sched_spec = 127;
+constexpr static const i32 flag_no_signed_zeros = 128;
+constexpr static const i32 flag_no_toplevel_reorder = 129;
+constexpr static const i32 flag_no_trapping_math = 130;
+constexpr static const i32 flag_no_zero_initialized_in_bss = 131;
+constexpr static const i32 flag_omit_frame_pointer = 132;
+constexpr static const i32 flag_optimize_crc = 133;
+constexpr static const i32 flag_optimize_sibling_calls = 134;
+constexpr static const i32 flag_partial_inlining = 135;
+constexpr static const i32 flag_peel_loops = 136;
+constexpr static const i32 flag_predictive_commoning = 137;
+constexpr static const i32 flag_prefetch_loop_arrays = 138;
+constexpr static const i32 flag_profile_correction = 139;
+constexpr static const i32 flag_profile_use = 140;
+constexpr static const i32 flag_profile_partial_training = 141;
+constexpr static const i32 flag_profile_values = 142;
+constexpr static const i32 flag_profile_reorder_functions = 143;
+constexpr static const i32 flag_reciprocal_math = 144;
+constexpr static const i32 flag_free = 145;
+constexpr static const i32 flag_rename_registers = 146;
+constexpr static const i32 flag_reorder_blocks = 147;
+constexpr static const i32 flag_reorder_blocks_algorithm = 148;
+constexpr static const i32 flag_reorder_blocks_and_partition = 149;
+constexpr static const i32 flag_reorder_functions = 150;
+constexpr static const i32 flag_rerun_cse_after_loop = 151;
+constexpr static const i32 flag_reschedule_modulo_scheduled_loops = 152;
+constexpr static const i32 flag_rounding_math = 153;
+constexpr static const i32 flag_save_optimization_record = 154;
+constexpr static const i32 flag_sched2_use_superblocks = 155;
+constexpr static const i32 flag_sched_pressure = 156;
+constexpr static const i32 flag_sched_spec_load = 157;
+constexpr static const i32 flag_sched_spec_load_dangerous = 158;
+constexpr static const i32 flag_sched_stalled_insns_dep = 159;
+constexpr static const i32 flag_sched_stalled_insns = 160;
+constexpr static const i32 flag_sched_group_heuristic = 161;
+constexpr static const i32 flag_sched_critical_path_heuristic = 162;
+constexpr static const i32 flag_sched_spec_insn_heuristic = 163;
+constexpr static const i32 flag_sched_rank_heuristic = 164;
+constexpr static const i32 flag_sched_last_insn_heuristic = 165;
+constexpr static const i32 flag_sched_dep_count_heuristic = 166;
+constexpr static const i32 flag_schedule_fusion = 167;
+constexpr static const i32 flag_schedule_insns = 168;
+constexpr static const i32 flag_schedule_insns2 = 169;
+constexpr static const i32 flag_section_anchors = 170;
+constexpr static const i32 flag_selective_scheduling = 171;
+constexpr static const i32 flag_selective_scheduling2 = 172;
+constexpr static const i32 flag_sel_sched_pipelining = 173;
+constexpr static const i32 flag_sel_sched_pipelining_outer_loops = 174;
+constexpr static const i32 flag_semantic_interposition = 175;
+constexpr static const i32 flag_shrink_wrap = 176;
+constexpr static const i32 flag_shrink_wrap_separate = 177;
+constexpr static const i32 flag_signaling_nans = 178;
+constexpr static const i32 flag_single_precision_constant = 179;
+constexpr static const i32 flag_split_ivs_in_unroller = 180;
+constexpr static const i32 flag_split_loops = 181;
+constexpr static const i32 flag_speculatively_call_stored_functions = 182;
+constexpr static const i32 flag_split_paths = 183;
+constexpr static const i32 flag_split_wide_types = 184;
+constexpr static const i32 flag_split_wide_types_early = 185;
+constexpr static const i32 flag_ssa_backprop = 186;
+constexpr static const i32 flag_ssa_phiopt = 187;
+constexpr static const i32 flag_stdarg_opt = 188;
+constexpr static const i32 flag_store_merging = 189;
+constexpr static const i32 flag_strict_aliasing = 190;
+constexpr static const i32 flag_ipa_strict_aliasing = 191;
+constexpr static const i32 flag_thread_jumps = 192;
+constexpr static const i32 flag_tracer = 193;
+constexpr static const i32 flag_tree_bit_ccp = 194;
+constexpr static const i32 flag_tree_builtin_call_dce = 195;
+constexpr static const i32 flag_tree_ccp = 196;
+constexpr static const i32 flag_tree_ch = 197;
+constexpr static const i32 flag_tree_coalesce_vars = 198;
+constexpr static const i32 flag_tree_copy_prop = 199;
+constexpr static const i32 flag_tree_cselim = 200;
+constexpr static const i32 flag_tree_dce = 201;
+constexpr static const i32 flag_tree_dominator_opts = 202;
+constexpr static const i32 flag_tree_dse = 203;
+constexpr static const i32 flag_tree_forwprop = 204;
+constexpr static const i32 flag_tree_fre = 205;
+constexpr static const i32 flag_code_hoisting = 206;
+constexpr static const i32 flag_tree_loop_if_convert = 207;
+constexpr static const i32 flag_tree_loop_im = 208;
+constexpr static const i32 flag_tree_phiprop = 209;
+constexpr static const i32 flag_tree_loop_distribution = 210;
+constexpr static const i32 flag_tree_loop_distribute_patterns = 211;
+constexpr static const i32 flag_tree_loop_ivcanon = 212;
+constexpr static const i32 flag_tree_loop_linear = 213;
+constexpr static const i32 flag_tree_loop_optimize = 214;
+constexpr static const i32 flag_tree_loop_vectorize = 215;
+constexpr static const i32 flag_tree_parallelize_loops = 216;
+constexpr static const i32 flag_tree_pre = 217;
+constexpr static const i32 flag_tree_partial_pre = 218;
+constexpr static const i32 flag_tree_pta = 219;
+constexpr static const i32 flag_tree_reassoc = 220;
+constexpr static const i32 flag_tree_scev_cprop = 221;
+constexpr static const i32 flag_tree_sink = 222;
+constexpr static const i32 flag_tree_slsr = 223;
+constexpr static const i32 flag_tree_sra = 224;
+constexpr static const i32 flag_tree_switch_conversion = 225;
+constexpr static const i32 flag_tree_tail_merge = 226;
+constexpr static const i32 flag_tree_ter = 227;
+constexpr static const i32 flag_tree_vectorize = 228;
+constexpr static const i32 flag_tree_vrp = 229;
+constexpr static const i32 flag_trivial_auto_var_init = 230;
+constexpr static const i32 flag_unconstrained_commons = 231;
+constexpr static const i32 flag_unit_at_a_time = 232;
+constexpr static const i32 flag_unroll_all_loops = 233;
+constexpr static const i32 flag_unroll_loops = 234;
+constexpr static const i32 flag_unsafe_math_optimizations = 235;
+constexpr static const i32 flag_unswitch_loops = 236;
+constexpr static const i32 flag_ipa_ra = 237;
+constexpr static const i32 flag_variable_expansion_in_unroller = 238;
+constexpr static const i32 flag_vect_cost_model = 239;
+constexpr static const i32 flag_vpt = 240;
+constexpr static const i32 flag_web = 241;
+constexpr static const i32 flag_whole_program = 242;
+constexpr static const i32 flag_wpa = 243;
+constexpr static const i32 flag_use_linker_plugin = 244;
+constexpr static const i32 flag_zero_call_used_regs = 245;
+constexpr static const i32 flag_optimize = 246;
+constexpr static const i32 flag_optimize_zero = 247;
+constexpr static const i32 flag_optimize_one = 248;
+constexpr static const i32 flag_optimize_two = 249;
+constexpr static const i32 flag_optimize_three = 250;
+constexpr static const i32 flag_optimize_size = 251;
+constexpr static const i32 flag_optimize_fast = 252;
+constexpr static const i32 flag_optimize_debug = 253;
+constexpr static const i32 flag_optimize_z = 254;
+constexpr static const i32 flag_param = 255;
 
 enum class flags : i32 {
   aggressive_loop_optimizations = flag_aggressive_loop_optimizations,
@@ -984,6 +1577,7 @@ enum class flags : i32 {
   allow_store_data_races = flag_allow_store_data_races,
   associative_math = flag_associative_math,
   auto_profile = flag_auto_profile,
+  auto_profile_inlining = flag_auto_profile_inlining,
   auto_inc_dec = flag_auto_inc_dec,
   branch_probabilities = flag_branch_probabilities,
   caller_saves = flag_caller_saves,
@@ -995,62 +1589,229 @@ enum class flags : i32 {
   crossjumping = flag_crossjumping,
   cse_follow_jumps = flag_cse_follow_jumps,
   cse_skip_blocks = flag_cse_skip_blocks,
+  cx_fortran_rules = flag_cx_fortran_rules,
+  cx_limited_range = flag_cx_limited_range,
+  cx_method = flag_cx_method,
   data_sections = flag_data_sections,
   dce = flag_dce,
+  delayed_branch = flag_delayed_branch,
   delete_null_pointer_checks = flag_delete_null_pointer_checks,
+  dep_fusion = flag_dep_fusion,
   devirtualize = flag_devirtualize,
+  devirtualize_speculatively = flag_devirtualize_speculatively,
+  devirtualize_at_ltrans = flag_devirtualize_at_ltrans,
   dse = flag_dse,
   early_inlining = flag_early_inlining,
+  excess_precision = flag_excess_precision,
   expensive_optimizations = flag_expensive_optimizations,
+  ext_dce = flag_ext_dce,
   fast_math = flag_fast_math,
+  fat_lto_objects = flag_fat_lto_objects,
+  finite_loops = flag_finite_loops,
   finite_math_only = flag_finite_math_only,
   float_store = flag_float_store,
   forward_propagate = flag_forward_propagate,
+  fp_contract = flag_fp_contract,
+  fp_int_builtin_inexact = flag_fp_int_builtin_inexact,
   function_sections = flag_function_sections,
+  fuse_ops_with_volatile_access = flag_fuse_ops_with_volatile_access,
   gcse = flag_gcse,
+  gcse_after_reload = flag_gcse_after_reload,
+  gcse_las = flag_gcse_las,
+  gcse_lm = flag_gcse_lm,
+  graphite_identity = flag_graphite_identity,
+  gcse_sm = flag_gcse_sm,
   hoist_adjacent_loads = flag_hoist_adjacent_loads,
   if_conversion = flag_if_conversion,
+  if_conversion2 = flag_if_conversion2,
+  indirect_inlining = flag_indirect_inlining,
+  inline_atomics = flag_inline_atomics,
   inline_functions = flag_inline_functions,
+  inline_functions_called_once = flag_inline_functions_called_once,
+  inline_limit = flag_inline_limit,
   inline_small_functions = flag_inline_small_functions,
+  inline_stringops = flag_inline_stringops,
+  ipa_modref = flag_ipa_modref,
   ipa_cp = flag_ipa_cp,
+  ipa_cp_clone = flag_ipa_cp_clone,
+  ipa_bit_cp = flag_ipa_bit_cp,
+  ipa_vrp = flag_ipa_vrp,
+  ipa_pta = flag_ipa_pta,
+  ipa_profile = flag_ipa_profile,
+  ipa_pure_const = flag_ipa_pure_const,
+  ipa_reference = flag_ipa_reference,
+  ipa_reference_addressable = flag_ipa_reference_addressable,
+  ipa_reorder_for_locality = flag_ipa_reorder_for_locality,
   ipa_sra = flag_ipa_sra,
+  ipa_stack_alignment = flag_ipa_stack_alignment,
+  ipa_icf = flag_ipa_icf,
+  ipa_icf_functions = flag_ipa_icf_functions,
+  ipa_icf_variables = flag_ipa_icf_variables,
+  ira_algorithm = flag_ira_algorithm,
+  late_combine_instructions = flag_late_combine_instructions,
+  lifetime_dse = flag_lifetime_dse,
+  live_patching = flag_live_patching,
+  ira_region = flag_ira_region,
+  ira_hoist_pressure = flag_ira_hoist_pressure,
+  ira_loop_pressure = flag_ira_loop_pressure,
+  no_ira_share_save_slots = flag_no_ira_share_save_slots,
+  no_ira_share_spill_slots = flag_no_ira_share_spill_slots,
   isolate_erroneous_paths_dereference = flag_isolate_erroneous_paths_dereference,
+  isolate_erroneous_paths_attribute = flag_isolate_erroneous_paths_attribute,
   ivopts = flag_ivopts,
   keep_inline_functions = flag_keep_inline_functions,
-  lifetime_dse = flag_lifetime_dse,
+  keep_static_functions = flag_keep_static_functions,
+  keep_static_consts = flag_keep_static_consts,
+  limit_function_alignment = flag_limit_function_alignment,
   live_range_shrinkage = flag_live_range_shrinkage,
+  loop_block = flag_loop_block,
   loop_interchange = flag_loop_interchange,
+  loop_strip_mine = flag_loop_strip_mine,
   loop_unroll_and_jam = flag_loop_unroll_and_jam,
+  loop_nest_optimize = flag_loop_nest_optimize,
+  loop_parallelize_all = flag_loop_parallelize_all,
   lra_remat = flag_lra_remat,
   lto = flag_lto,
+  lto_compression_level = flag_lto_compression_level,
+  lto_toplevel_asm_heuristics = flag_lto_toplevel_asm_heuristics,
+  lto_partition = flag_lto_partition,
+  lto_incremental = flag_lto_incremental,
+  lto_incremental_cache_size = flag_lto_incremental_cache_size,
+  malloc_dce = flag_malloc_dce,
+  merge_all_constants = flag_merge_all_constants,
   merge_constants = flag_merge_constants,
   modulo_sched = flag_modulo_sched,
+  modulo_sched_allow_regmoves = flag_modulo_sched_allow_regmoves,
   move_loop_invariants = flag_move_loop_invariants,
+  move_loop_stores = flag_move_loop_stores,
+  no_branch_count_reg = flag_no_branch_count_reg,
+  no_defer_pop = flag_no_defer_pop,
+  no_function_cse = flag_no_function_cse,
+  no_guess_branch_probability = flag_no_guess_branch_probability,
+  no_inline = flag_no_inline,
+  no_math_errno = flag_no_math_errno,
+  no_peephole = flag_no_peephole,
+  no_peephole2 = flag_no_peephole2,
+  no_printf_return_value = flag_no_printf_return_value,
+  no_sched_interblock = flag_no_sched_interblock,
+  no_sched_spec = flag_no_sched_spec,
+  no_signed_zeros = flag_no_signed_zeros,
+  no_toplevel_reorder = flag_no_toplevel_reorder,
+  no_trapping_math = flag_no_trapping_math,
+  no_zero_initialized_in_bss = flag_no_zero_initialized_in_bss,
   omit_frame_pointer = flag_omit_frame_pointer,
+  optimize_crc = flag_optimize_crc,
   optimize_sibling_calls = flag_optimize_sibling_calls,
   partial_inlining = flag_partial_inlining,
   peel_loops = flag_peel_loops,
+  predictive_commoning = flag_predictive_commoning,
   prefetch_loop_arrays = flag_prefetch_loop_arrays,
+  profile_correction = flag_profile_correction,
   profile_use = flag_profile_use,
+  profile_partial_training = flag_profile_partial_training,
+  profile_values = flag_profile_values,
+  profile_reorder_functions = flag_profile_reorder_functions,
   reciprocal_math = flag_reciprocal_math,
+  free = flag_free,
   rename_registers = flag_rename_registers,
   reorder_blocks = flag_reorder_blocks,
+  reorder_blocks_algorithm = flag_reorder_blocks_algorithm,
+  reorder_blocks_and_partition = flag_reorder_blocks_and_partition,
+  reorder_functions = flag_reorder_functions,
+  rerun_cse_after_loop = flag_rerun_cse_after_loop,
+  reschedule_modulo_scheduled_loops = flag_reschedule_modulo_scheduled_loops,
   rounding_math = flag_rounding_math,
+  save_optimization_record = flag_save_optimization_record,
+  sched2_use_superblocks = flag_sched2_use_superblocks,
+  sched_pressure = flag_sched_pressure,
+  sched_spec_load = flag_sched_spec_load,
+  sched_spec_load_dangerous = flag_sched_spec_load_dangerous,
+  sched_stalled_insns_dep = flag_sched_stalled_insns_dep,
+  sched_stalled_insns = flag_sched_stalled_insns,
+  sched_group_heuristic = flag_sched_group_heuristic,
+  sched_critical_path_heuristic = flag_sched_critical_path_heuristic,
+  sched_spec_insn_heuristic = flag_sched_spec_insn_heuristic,
+  sched_rank_heuristic = flag_sched_rank_heuristic,
+  sched_last_insn_heuristic = flag_sched_last_insn_heuristic,
+  sched_dep_count_heuristic = flag_sched_dep_count_heuristic,
+  schedule_fusion = flag_schedule_fusion,
   schedule_insns = flag_schedule_insns,
+  schedule_insns2 = flag_schedule_insns2,
   section_anchors = flag_section_anchors,
+  selective_scheduling = flag_selective_scheduling,
+  selective_scheduling2 = flag_selective_scheduling2,
+  sel_sched_pipelining = flag_sel_sched_pipelining,
+  sel_sched_pipelining_outer_loops = flag_sel_sched_pipelining_outer_loops,
   semantic_interposition = flag_semantic_interposition,
   shrink_wrap = flag_shrink_wrap,
+  shrink_wrap_separate = flag_shrink_wrap_separate,
   signaling_nans = flag_signaling_nans,
+  single_precision_constant = flag_single_precision_constant,
+  split_ivs_in_unroller = flag_split_ivs_in_unroller,
   split_loops = flag_split_loops,
+  speculatively_call_stored_functions = flag_speculatively_call_stored_functions,
+  split_paths = flag_split_paths,
+  split_wide_types = flag_split_wide_types,
+  split_wide_types_early = flag_split_wide_types_early,
+  ssa_backprop = flag_ssa_backprop,
+  ssa_phiopt = flag_ssa_phiopt,
+  stdarg_opt = flag_stdarg_opt,
+  store_merging = flag_store_merging,
   strict_aliasing = flag_strict_aliasing,
+  ipa_strict_aliasing = flag_ipa_strict_aliasing,
   thread_jumps = flag_thread_jumps,
+  tracer = flag_tracer,
+  tree_bit_ccp = flag_tree_bit_ccp,
+  tree_builtin_call_dce = flag_tree_builtin_call_dce,
+  tree_ccp = flag_tree_ccp,
+  tree_ch = flag_tree_ch,
+  tree_coalesce_vars = flag_tree_coalesce_vars,
+  tree_copy_prop = flag_tree_copy_prop,
+  tree_cselim = flag_tree_cselim,
+  tree_dce = flag_tree_dce,
+  tree_dominator_opts = flag_tree_dominator_opts,
+  tree_dse = flag_tree_dse,
+  tree_forwprop = flag_tree_forwprop,
+  tree_fre = flag_tree_fre,
+  code_hoisting = flag_code_hoisting,
+  tree_loop_if_convert = flag_tree_loop_if_convert,
+  tree_loop_im = flag_tree_loop_im,
+  tree_phiprop = flag_tree_phiprop,
+  tree_loop_distribution = flag_tree_loop_distribution,
+  tree_loop_distribute_patterns = flag_tree_loop_distribute_patterns,
+  tree_loop_ivcanon = flag_tree_loop_ivcanon,
+  tree_loop_linear = flag_tree_loop_linear,
+  tree_loop_optimize = flag_tree_loop_optimize,
+  tree_loop_vectorize = flag_tree_loop_vectorize,
+  tree_parallelize_loops = flag_tree_parallelize_loops,
+  tree_pre = flag_tree_pre,
+  tree_partial_pre = flag_tree_partial_pre,
+  tree_pta = flag_tree_pta,
+  tree_reassoc = flag_tree_reassoc,
+  tree_scev_cprop = flag_tree_scev_cprop,
+  tree_sink = flag_tree_sink,
+  tree_slsr = flag_tree_slsr,
+  tree_sra = flag_tree_sra,
+  tree_switch_conversion = flag_tree_switch_conversion,
+  tree_tail_merge = flag_tree_tail_merge,
+  tree_ter = flag_tree_ter,
   tree_vectorize = flag_tree_vectorize,
+  tree_vrp = flag_tree_vrp,
   trivial_auto_var_init = flag_trivial_auto_var_init,
+  unconstrained_commons = flag_unconstrained_commons,
+  unit_at_a_time = flag_unit_at_a_time,
+  unroll_all_loops = flag_unroll_all_loops,
   unroll_loops = flag_unroll_loops,
   unsafe_math_optimizations = flag_unsafe_math_optimizations,
   unswitch_loops = flag_unswitch_loops,
+  ipa_ra = flag_ipa_ra,
+  variable_expansion_in_unroller = flag_variable_expansion_in_unroller,
   vect_cost_model = flag_vect_cost_model,
+  vpt = flag_vpt,
+  web = flag_web,
   whole_program = flag_whole_program,
+  wpa = flag_wpa,
+  use_linker_plugin = flag_use_linker_plugin,
   zero_call_used_regs = flag_zero_call_used_regs,
   optimize = flag_optimize,
   optimize_zero = flag_optimize_zero,
@@ -1074,6 +1835,7 @@ constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations
                                                 "-fallow-store-data-races",
                                                 "-fassociative-math",
                                                 "-fauto-profile",
+                                                "-fauto-profile-inlining",
                                                 "-fauto-inc-dec",
                                                 "-fbranch-probabilities",
                                                 "-fcaller-saves",
@@ -1085,62 +1847,229 @@ constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations
                                                 "-fcrossjumping",
                                                 "-fcse-follow-jumps",
                                                 "-fcse-skip-blocks",
+                                                "-fcx-fortran-rules",
+                                                "-fcx-limited-range",
+                                                "-fcx-method",
                                                 "-fdata-sections",
                                                 "-fdce",
+                                                "-fdelayed-branch",
                                                 "-fdelete-null-pointer-checks",
+                                                "-fdep-fusion",
                                                 "-fdevirtualize",
+                                                "-fdevirtualize-speculatively",
+                                                "-fdevirtualize-at-ltrans",
                                                 "-fdse",
                                                 "-fearly-inlining",
+                                                "-fexcess-precision=",
                                                 "-fexpensive-optimizations",
+                                                "-fext-dce",
                                                 "-ffast-math",
+                                                "-ffat-lto-objects",
+                                                "-ffinite-loops",
                                                 "-ffinite-math-only",
                                                 "-ffloat-store",
                                                 "-fforward-propagate",
+                                                "-ffp-contract=",
+                                                "-ffp-int-builtin-inexact",
                                                 "-ffunction-sections",
+                                                "-ffuse-ops-with-volatile-access",
                                                 "-fgcse",
+                                                "-fgcse-after-reload",
+                                                "-fgcse-las",
+                                                "-fgcse-lm",
+                                                "-fgraphite-identity",
+                                                "-fgcse-sm",
                                                 "-fhoist-adjacent-loads",
                                                 "-fif-conversion",
+                                                "-fif-conversion2",
+                                                "-findirect-inlining",
+                                                "-finline-atomics",
                                                 "-finline-functions",
+                                                "-finline-functions-called-once",
+                                                "-finline-limit=",
                                                 "-finline-small-functions",
+                                                "-finline-stringops=",
+                                                "-fipa-modref",
                                                 "-fipa-cp",
+                                                "-fipa-cp-clone",
+                                                "-fipa-bit-cp",
+                                                "-fipa-vrp",
+                                                "-fipa-pta",
+                                                "-fipa-profile",
+                                                "-fipa-pure-const",
+                                                "-fipa-reference",
+                                                "-fipa-reference-addressable",
+                                                "-fipa-reorder-for-locality",
                                                 "-fipa-sra",
+                                                "-fipa-stack-alignment",
+                                                "-fipa-icf",
+                                                "-fipa-icf-functions",
+                                                "-fipa-icf-variables",
+                                                "-fira-algorithm=",
+                                                "-flate-combine-instructions",
+                                                "-flifetime-dse",
+                                                "-flive-patching=",
+                                                "-fira-region=",
+                                                "-fira-hoist-pressure",
+                                                "-fira-loop-pressure",
+                                                "-fno-ira-share-save-slots",
+                                                "-fno-ira-share-spill-slots",
                                                 "-fisolate-erroneous-paths-dereference",
+                                                "-fisolate-erroneous-paths-attribute",
                                                 "-fivopts",
                                                 "-fkeep-inline-functions",
-                                                "-flifetime-dse",
+                                                "-fkeep-static-functions",
+                                                "-fkeep-static-consts",
+                                                "-flimit-function-alignment",
                                                 "-flive-range-shrinkage",
+                                                "-floop-block",
                                                 "-floop-interchange",
+                                                "-floop-strip-mine",
                                                 "-floop-unroll-and-jam",
+                                                "-floop-nest-optimize",
+                                                "-floop-parallelize-all",
                                                 "-flra-remat",
                                                 "-flto",
+                                                "-flto-compression-level=",
+                                                "-flto-toplevel-asm-heuristics",
+                                                "-flto-partition=",
+                                                "-flto-incremental=",
+                                                "-flto-incremental-cache-size=",
+                                                "-fmalloc-dce",
+                                                "-fmerge-all-constants",
                                                 "-fmerge-constants",
                                                 "-fmodulo-sched",
+                                                "-fmodulo-sched-allow-regmoves",
                                                 "-fmove-loop-invariants",
+                                                "-fmove-loop-stores",
+                                                "-fno-branch-count-reg",
+                                                "-fno-defer-pop",
+                                                "-fno-function-cse",
+                                                "-fno-guess-branch-probability",
+                                                "-fno-inline",
+                                                "-fno-math-errno",
+                                                "-fno-peephole",
+                                                "-fno-peephole2",
+                                                "-fno-printf-return-value",
+                                                "-fno-sched-interblock",
+                                                "-fno-sched-spec",
+                                                "-fno-signed-zeros",
+                                                "-fno-toplevel-reorder",
+                                                "-fno-trapping-math",
+                                                "-fno-zero-initialized-in-bss",
                                                 "-fomit-frame-pointer",
+                                                "-foptimize-crc",
                                                 "-foptimize-sibling-calls",
                                                 "-fpartial-inlining",
                                                 "-fpeel-loops",
+                                                "-fpredictive-commoning",
                                                 "-fprefetch-loop-arrays",
+                                                "-fprofile-correction",
                                                 "-fprofile-use",
+                                                "-fprofile-partial-training",
+                                                "-fprofile-values",
+                                                "-fprofile-reorder-functions",
                                                 "-freciprocal-math",
+                                                "-free",
                                                 "-frename-registers",
                                                 "-freorder-blocks",
+                                                "-freorder-blocks-algorithm=",
+                                                "-freorder-blocks-and-partition",
+                                                "-freorder-functions",
+                                                "-frerun-cse-after-loop",
+                                                "-freschedule-modulo-scheduled-loops",
                                                 "-frounding-math",
+                                                "-fsave-optimization-record",
+                                                "-fsched2-use-superblocks",
+                                                "-fsched-pressure",
+                                                "-fsched-spec-load",
+                                                "-fsched-spec-load-dangerous",
+                                                "-fsched-stalled-insns-dep=",
+                                                "-fsched-stalled-insns=",
+                                                "-fsched-group-heuristic",
+                                                "-fsched-critical-path-heuristic",
+                                                "-fsched-spec-insn-heuristic",
+                                                "-fsched-rank-heuristic",
+                                                "-fsched-last-insn-heuristic",
+                                                "-fsched-dep-count-heuristic",
+                                                "-fschedule-fusion",
                                                 "-fschedule-insns",
+                                                "-fschedule-insns2",
                                                 "-fsection-anchors",
+                                                "-fselective-scheduling",
+                                                "-fselective-scheduling2",
+                                                "-fsel-sched-pipelining",
+                                                "-fsel-sched-pipelining-outer-loops",
                                                 "-fsemantic-interposition",
                                                 "-fshrink-wrap",
+                                                "-fshrink-wrap-separate",
                                                 "-fsignaling-nans",
+                                                "-fsingle-precision-constant",
+                                                "-fsplit-ivs-in-unroller",
                                                 "-fsplit-loops",
+                                                "-fspeculatively-call-stored-functions",
+                                                "-fsplit-paths",
+                                                "-fsplit-wide-types",
+                                                "-fsplit-wide-types-early",
+                                                "-fssa-backprop",
+                                                "-fssa-phiopt",
+                                                "-fstdarg-opt",
+                                                "-fstore-merging",
                                                 "-fstrict-aliasing",
+                                                "-fipa-strict-aliasing",
                                                 "-fthread-jumps",
+                                                "-ftracer",
+                                                "-ftree-bit-ccp",
+                                                "-ftree-builtin-call-dce",
+                                                "-ftree-ccp",
+                                                "-ftree-ch",
+                                                "-ftree-coalesce-vars",
+                                                "-ftree-copy-prop",
+                                                "-ftree-cselim",
+                                                "-ftree-dce",
+                                                "-ftree-dominator-opts",
+                                                "-ftree-dse",
+                                                "-ftree-forwprop",
+                                                "-ftree-fre",
+                                                "-fcode-hoisting",
+                                                "-ftree-loop-if-convert",
+                                                "-ftree-loop-im",
+                                                "-ftree-phiprop",
+                                                "-ftree-loop-distribution",
+                                                "-ftree-loop-distribute-patterns",
+                                                "-ftree-loop-ivcanon",
+                                                "-ftree-loop-linear",
+                                                "-ftree-loop-optimize",
+                                                "-ftree-loop-vectorize",
+                                                "-ftree-parallelize-loops=",
+                                                "-ftree-pre",
+                                                "-ftree-partial-pre",
+                                                "-ftree-pta",
+                                                "-ftree-reassoc",
+                                                "-ftree-scev-cprop",
+                                                "-ftree-sink",
+                                                "-ftree-slsr",
+                                                "-ftree-sra",
+                                                "-ftree-switch-conversion",
+                                                "-ftree-tail-merge",
+                                                "-ftree-ter",
                                                 "-ftree-vectorize",
+                                                "-ftree-vrp",
                                                 "-ftrivial-auto-var-init",
+                                                "-funconstrained-commons",
+                                                "-funit-at-a-time",
+                                                "-funroll-all-loops",
                                                 "-funroll-loops",
                                                 "-funsafe-math-optimizations",
                                                 "-funswitch-loops",
+                                                "-fipa-ra",
+                                                "-fvariable-expansion-in-unroller",
                                                 "-fvect-cost-model",
+                                                "-fvpt",
+                                                "-fweb",
                                                 "-fwhole-program",
+                                                "-fwpa",
+                                                "-fuse-linker-plugin",
                                                 "-fzero-call-used-regs",
                                                 "-O",
                                                 "-O0",
@@ -1324,57 +2253,64 @@ enum class flags : i32 {
 namespace debug_flags
 {
 constexpr static const i32 flag_g = 0;
-constexpr static const i32 flag_glevel = 1;
-constexpr static const i32 flag_gdwarf = 2;
-constexpr static const i32 flag_gdwarf_version = 3;
-constexpr static const i32 flag_gbtf = 4;
-constexpr static const i32 flag_gctf = 5;
-constexpr static const i32 flag_gctflevel = 6;
-constexpr static const i32 flag_gprune_btf = 7;
-constexpr static const i32 flag_gno_prune_btf = 8;
-constexpr static const i32 flag_ggdb = 9;
-constexpr static const i32 flag_grecord_gcc_switches = 10;
-constexpr static const i32 flag_gno_record_gcc_switches = 11;
-constexpr static const i32 flag_gstrict_dwarf = 12;
-constexpr static const i32 flag_gno_strict_dwarf = 13;
-constexpr static const i32 flag_gas_loc_support = 14;
-constexpr static const i32 flag_gno_as_loc_support = 15;
-constexpr static const i32 flag_gas_locview_support = 16;
-constexpr static const i32 flag_gno_as_locview_support = 17;
-constexpr static const i32 flag_gcodeview = 18;
-constexpr static const i32 flag_gcolumn_info = 19;
-constexpr static const i32 flag_gno_column_info = 20;
-constexpr static const i32 flag_gdwarf32 = 21;
-constexpr static const i32 flag_gdwarf64 = 22;
-constexpr static const i32 flag_gstatement_frontiers = 23;
-constexpr static const i32 flag_gno_statement_frontiers = 24;
-constexpr static const i32 flag_gvariable_location_views = 25;
-constexpr static const i32 flag_gno_variable_location_views = 26;
-constexpr static const i32 flag_ginternal_reset_location_views = 27;
-constexpr static const i32 flag_gno_internal_reset_location_views = 28;
-constexpr static const i32 flag_ginline_points = 29;
-constexpr static const i32 flag_gno_inline_points = 30;
-constexpr static const i32 flag_gvms = 31;
-constexpr static const i32 flag_gz = 32;
-constexpr static const i32 flag_gsplit_dwarf = 33;
-constexpr static const i32 flag_gdescribe_dies = 34;
-constexpr static const i32 flag_gno_describe_dies = 35;
-constexpr static const i32 flag_debug_prefix_map = 36;
-constexpr static const i32 flag_debug_types_section = 37;
-constexpr static const i32 flag_no_eliminate_unused_debug_types = 38;
-constexpr static const i32 flag_emit_struct_debug_baseonly = 39;
-constexpr static const i32 flag_emit_struct_debug_reduced = 40;
-constexpr static const i32 flag_emit_struct_debug_detailed = 41;
-constexpr static const i32 flag_no_eliminate_unused_debug_symbols = 42;
-constexpr static const i32 flag_emit_class_debug_always = 43;
-constexpr static const i32 flag_no_merge_debug_strings = 44;
-constexpr static const i32 flag_no_dwarf2_cfi_asm = 45;
-constexpr static const i32 flag_var_tracking = 46;
-constexpr static const i32 flag_var_tracking_assignments = 47;
+constexpr static const i32 flag_g_one = 1;
+constexpr static const i32 flag_g_two = 2;
+constexpr static const i32 flag_g_three = 3;
+constexpr static const i32 flag_gdwarf = 4;
+constexpr static const i32 flag_gdwarf_version = 5;
+constexpr static const i32 flag_gbtf = 6;
+constexpr static const i32 flag_gctf = 7;
+constexpr static const i32 flag_gctflevel = 8;
+constexpr static const i32 flag_gprune_btf = 9;
+constexpr static const i32 flag_gno_prune_btf = 10;
+constexpr static const i32 flag_ggdb = 11;
+constexpr static const i32 flag_ggdb_one = 12;
+constexpr static const i32 flag_ggdb_two = 13;
+constexpr static const i32 flag_ggdb_three = 14;
+constexpr static const i32 flag_grecord_gcc_switches = 15;
+constexpr static const i32 flag_gno_record_gcc_switches = 16;
+constexpr static const i32 flag_gstrict_dwarf = 17;
+constexpr static const i32 flag_gno_strict_dwarf = 18;
+constexpr static const i32 flag_gas_loc_support = 19;
+constexpr static const i32 flag_gno_as_loc_support = 20;
+constexpr static const i32 flag_gas_locview_support = 21;
+constexpr static const i32 flag_gno_as_locview_support = 22;
+constexpr static const i32 flag_gcodeview = 23;
+constexpr static const i32 flag_gcolumn_info = 24;
+constexpr static const i32 flag_gno_column_info = 25;
+constexpr static const i32 flag_gdwarf32 = 26;
+constexpr static const i32 flag_gdwarf64 = 27;
+constexpr static const i32 flag_gstatement_frontiers = 28;
+constexpr static const i32 flag_gno_statement_frontiers = 29;
+constexpr static const i32 flag_gvariable_location_views = 30;
+constexpr static const i32 flag_gno_variable_location_views = 31;
+constexpr static const i32 flag_ginternal_reset_location_views = 32;
+constexpr static const i32 flag_gno_internal_reset_location_views = 33;
+constexpr static const i32 flag_ginline_points = 34;
+constexpr static const i32 flag_gno_inline_points = 35;
+constexpr static const i32 flag_gvms = 36;
+constexpr static const i32 flag_gz = 37;
+constexpr static const i32 flag_gsplit_dwarf = 38;
+constexpr static const i32 flag_gdescribe_dies = 39;
+constexpr static const i32 flag_gno_describe_dies = 40;
+constexpr static const i32 flag_debug_prefix_map = 41;
+constexpr static const i32 flag_debug_types_section = 42;
+constexpr static const i32 flag_no_eliminate_unused_debug_types = 43;
+constexpr static const i32 flag_emit_struct_debug_baseonly = 44;
+constexpr static const i32 flag_emit_struct_debug_reduced = 45;
+constexpr static const i32 flag_emit_struct_debug_detailed = 46;
+constexpr static const i32 flag_no_eliminate_unused_debug_symbols = 47;
+constexpr static const i32 flag_emit_class_debug_always = 48;
+constexpr static const i32 flag_no_merge_debug_strings = 49;
+constexpr static const i32 flag_no_dwarf2_cfi_asm = 50;
+constexpr static const i32 flag_var_tracking = 51;
+constexpr static const i32 flag_var_tracking_assignments = 52;
 
 enum class flags : i32 {
   g = flag_g,
-  glevel = flag_glevel,
+  g_one = flag_g_one,
+  g_two = flag_g_two,
+  g_three = flag_g_three,
   gdwarf = flag_gdwarf,
   gdwarf_version = flag_gdwarf_version,
   gbtf = flag_gbtf,
@@ -1383,6 +2319,9 @@ enum class flags : i32 {
   gprune_btf = flag_gprune_btf,
   gno_prune_btf = flag_gno_prune_btf,
   ggdb = flag_ggdb,
+  ggdb_one = flag_ggdb_one,
+  ggdb_two = flag_ggdb_two,
+  ggdb_three = flag_ggdb_three,
   grecord_gcc_switches = flag_grecord_gcc_switches,
   gno_record_gcc_switches = flag_gno_record_gcc_switches,
   gstrict_dwarf = flag_gstrict_dwarf,
@@ -1423,8 +2362,62 @@ enum class flags : i32 {
   var_tracking_assignments = flag_var_tracking_assignments
 };
 
-// TODO: finish
-constexpr static const char *flag_strings[] = { "-g", "..." };
+// String literals for debug flags
+constexpr static const char *flag_strings[] = {
+  "-g",                                      // 0  flag_g
+  "-g1",                                     // 1  flag_g_one
+  "-g2",                                     // 2  flag_g_two
+  "-g3",                                     // 3  flag_g_three
+  "-gdwarf",                                 // 4  flag_gdwarf
+  "-gdwarf-",                                // 5  flag_gdwarf_version (requires version number)
+  "-gbtf",                                   // 6  flag_gbtf
+  "-gctf",                                   // 7  flag_gctf
+  "-gctf",                                   // 8  flag_gctflevel (can have level)
+  "-gprune-btf",                             // 9  flag_gprune_btf
+  "-gno-prune-btf",                          // 10 flag_gno_prune_btf
+  "-ggdb",                                   // 11 flag_ggdb
+  "-ggdb1",                                  // 12 flag_ggdb_one
+  "-ggdb2",                                  // 13 flag_ggdb_two
+  "-ggdb3",                                  // 14 flag_ggdb_three
+  "-grecord-gcc-switches",                   // 15 flag_grecord_gcc_switches
+  "-gno-record-gcc-switches",                // 16 flag_gno_record_gcc_switches
+  "-gstrict-dwarf",                          // 17 flag_gstrict_dwarf
+  "-gno-strict-dwarf",                       // 18 flag_gno_strict_dwarf
+  "-gas-loc-support",                        // 19 flag_gas_loc_support
+  "-gno-as-loc-support",                     // 20 flag_gno_as_loc_support
+  "-gas-locview-support",                    // 21 flag_gas_locview_support
+  "-gno-as-locview-support",                 // 22 flag_gno_as_locview_support
+  "-gcodeview",                              // 23 flag_gcodeview
+  "-gcolumn-info",                           // 24 flag_gcolumn_info
+  "-gno-column-info",                        // 25 flag_gno_column_info
+  "-gdwarf32",                               // 26 flag_gdwarf32
+  "-gdwarf64",                               // 27 flag_gdwarf64
+  "-gstatement-frontiers",                   // 28 flag_gstatement_frontiers
+  "-gno-statement-frontiers",                // 29 flag_gno_statement_frontiers
+  "-gvariable-location-views",               // 30 flag_gvariable_location_views
+  "-gno-variable-location-views",            // 31 flag_gno_variable_location_views
+  "-ginternal-reset-location-views",         // 32 flag_ginternal_reset_location_views
+  "-gno-internal-reset-location-views",      // 33 flag_gno_internal_reset_location_views
+  "-ginline-points",                         // 34 flag_ginline_points
+  "-gno-inline-points",                      // 35 flag_gno_inline_points
+  "-gvms",                                   // 36 flag_gvms
+  "-gz",                                     // 37 flag_gz
+  "-gsplit-dwarf",                           // 38 flag_gsplit_dwarf
+  "-gdescribe-dies",                         // 39 flag_gdescribe_dies
+  "-gno-describe-dies",                      // 40 flag_gno_describe_dies
+  "-fdebug-prefix-map=",                     // 41 flag_debug_prefix_map
+  "-fdebug-types-section",                   // 42 flag_debug_types_section
+  "-fno-eliminate-unused-debug-types",       // 43 flag_no_eliminate_unused_debug_types
+  "-femit-struct-debug-baseonly",            // 44 flag_emit_struct_debug_baseonly
+  "-femit-struct-debug-reduced",             // 45 flag_emit_struct_debug_reduced
+  "-femit-struct-debug-detailed=",           // 46 flag_emit_struct_debug_detailed
+  "-fno-eliminate-unused-debug-symbols",     // 47 flag_no_eliminate_unused_debug_symbols
+  "-femit-class-debug-always",               // 48 flag_emit_class_debug_always
+  "-fno-merge-debug-strings",                // 49 flag_no_merge_debug_strings
+  "-fno-dwarf2-cfi-asm",                     // 50 flag_no_dwarf2_cfi_asm
+  "-fvar-tracking",                          // 51 flag_var_tracking
+  "-fvar-tracking-assignments"               // 52 flag_var_tracking_assignments
+};
 
 constexpr const char *
 get_string_flag(flags f)
@@ -1498,6 +2491,8 @@ constexpr static const i32 flag_instrument_functions_exclude_function_list = 58;
 constexpr static const i32 flag_instrument_functions_exclude_file_list = 59;
 constexpr static const i32 flag_profile_prefix_map = 60;
 constexpr static const i32 flag_patchable_function_entry = 61;
+constexpr static const i32 flag_stack_clash_protection = 62;
+constexpr static const i32 flag_strict_overflow = 63;
 
 enum class flags : i32 {
   p = flag_p,
@@ -1561,8 +2556,85 @@ enum class flags : i32 {
   instrument_functions_exclude_function_list = flag_instrument_functions_exclude_function_list,
   instrument_functions_exclude_file_list = flag_instrument_functions_exclude_file_list,
   profile_prefix_map = flag_profile_prefix_map,
-  patchable_function_entry = flag_patchable_function_entry
+  patchable_function_entry = flag_patchable_function_entry,
+  stack_clash_protection = flag_stack_clash_protection,
+  strict_overflow = flag_strict_overflow
 };
+
+// String literals for profiling flags
+constexpr static const char *flag_strings[] = {
+  "-p",                                                // 0  flag_p
+  "-pg",                                               // 1  flag_pg
+  "-fprofile-arcs",                                    // 2  flag_profile_arcs
+  "--coverage",                                        // 3  flag_coverage
+  "-ftest-coverage",                                   // 4  flag_test_coverage
+  "-fcondition-coverage",                              // 5  flag_condition_coverage
+  "-fprofile-partial-training",                        // 6  flag_path_coverage
+  "-fprofile-abs-path",                                // 7  flag_profile_abs_path
+  "-fprofile-dir=",                                    // 8  flag_profile_dir
+  "-fprofile-generate",                                // 9  flag_profile_generate
+  "-fprofile-generate=",                               // 10 flag_profile_generate_path
+  "-fprofile-info-section",                            // 11 flag_profile_info_section
+  "-fprofile-info-section=",                           // 12 flag_profile_info_section_name
+  "-fprofile-note=",                                   // 13 flag_profile_note
+  "-fprofile-prefix-path=",                            // 14 flag_profile_prefix_path
+  "-fprofile-update=",                                 // 15 flag_profile_update
+  "-fprofile-filter-files=",                           // 16 flag_profile_filter_files
+  "-fprofile-exclude-files=",                          // 17 flag_profile_exclude_files
+  "-fprofile-reproducible",                            // 18 flag_profile_reproducible
+  "-fsanitize=",                                       // 19 flag_sanitize
+  "-fsanitize-recover=",                               // 20 flag_sanitize_recover
+  "-fsanitize-recover=",                               // 21 flag_sanitize_recover_style
+  "-fsanitize-trap=",                                  // 22 flag_sanitize_trap
+  "-fsanitize-trap=",                                  // 23 flag_sanitize_trap_style
+  "-fasan-shadow-offset=",                             // 24 flag_asan_shadow_offset
+  "-fsanitize-sections=",                              // 25 flag_sanitize_sections
+  "-fsanitize-undefined-trap-on-error",                // 26 flag_sanitize_undefined_trap_on_error
+  "-fbounds-check",                                    // 27 flag_bounds_check
+  "-fcf-protection",                                   // 28 flag_cf_protection
+  "-fcf-protection=",                                  // 29 flag_cf_protection_mode
+  "-fharden-compares",                                 // 30 flag_harden_compares
+  "-fharden-conditional-branches",                     // 31 flag_harden_conditional_branches
+  "-fhardened",                                        // 32 flag_hardened
+  "-fharden-control-flow-redundancy",                  // 33 flag_harden_control_flow_redundancy
+  "-fhardcfr-skip-leaf",                               // 34 flag_hardcfr_skip_leaf
+  "-fhardcfr-check-exceptions",                        // 35 flag_hardcfr_check_exceptions
+  "-fhardcfr-check-returning-calls",                   // 36 flag_hardcfr_check_returning_calls
+  "-fhardcfr-check-noreturn-calls=",                   // 37 flag_hardcfr_check_noreturn_calls
+  "-fstack-protector",                                 // 38 flag_stack_protector
+  "-fstack-protector-all",                             // 39 flag_stack_protector_all
+  "-fstack-protector-strong",                          // 40 flag_stack_protector_strong
+  "-fstack-protector-explicit",                        // 41 flag_stack_protector_explicit
+  "-fstack-check",                                     // 42 flag_stack_check
+  "-fstack-limit-register=",                           // 43 flag_stack_limit_register
+  "-fstack-limit-symbol=",                             // 44 flag_stack_limit_symbol
+  "-fno-stack-limit",                                  // 45 flag_no_stack_limit
+  "-fsplit-stack",                                     // 46 flag_split_stack
+  "-fstrub=disabled",                                  // 47 flag_strub_disable
+  "-fstrub=strict",                                    // 48 flag_strub_strict
+  "-fstrub=relaxed",                                   // 49 flag_strub_relaxed
+  "-fstrub=all",                                       // 50 flag_strub_all
+  "-fstrub=at-calls",                                  // 51 flag_strub_at_calls
+  "-fstrub=internal",                                  // 52 flag_strub_internal
+  "-fvtable-verify=",                                  // 53 flag_vtable_verify
+  "-fvtv-counts",                                      // 54 flag_vtv_counts
+  "-fvtv-debug",                                       // 55 flag_vtv_debug
+  "-finstrument-functions",                            // 56 flag_instrument_functions
+  "-finstrument-functions-once",                       // 57 flag_instrument_functions_once
+  "-finstrument-functions-exclude-function-list=",     // 58 flag_instrument_functions_exclude_function_list
+  "-finstrument-functions-exclude-file-list=",         // 59 flag_instrument_functions_exclude_file_list
+  "-fprofile-prefix-map=",                             // 60 flag_profile_prefix_map
+  "-fpatchable-function-entry=",
+  "-fstack-clash-protection",     // 61 flag_patchable_function_entry
+  "-fstrict-overflow"             // 61 flag_patchable_function_entry
+};
+
+constexpr const char *
+get_string_flag(flags f)
+{
+  return flag_strings[static_cast<i32>(f)];
+}
+
 }
 
 namespace preprocessor_flags
@@ -1670,6 +2742,67 @@ enum class flags : i32 {
   wp = flag_wp,
   xpreprocessor = flag_xpreprocessor
 };
+
+// String literals for preprocessor flags
+constexpr static const char *flag_strings[] = {
+  "-A",                                // 0  flag_a_question
+  "-A",                                // 1  flag_a_question_answer
+  "-C",                                // 2  flag_c
+  "-CC",                               // 3  flag_cc
+  "-D",                                // 4  flag_d_macro
+  "-dD",                               // 5  flag_dd
+  "-dI",                               // 6  flag_di
+  "-dM",                               // 7  flag_dm
+  "-dN",                               // 8  flag_dn
+  "-dU",                               // 9  flag_du
+  "-fdebug-cpp",                       // 10 flag_debug_cpp
+  "-fdirectives-only",                 // 11 flag_directives_only
+  "-fdollars-in-identifiers",          // 12 flag_dollars_in_identifiers
+  "-fexec-charset=",                   // 13 flag_exec_charset
+  "-fextended-identifiers",            // 14 flag_extended_identifiers
+  "-finput-charset=",                  // 15 flag_input_charset
+  "-fmacro-prefix-map=",               // 16 flag_macro_prefix_map
+  "-fmax-include-depth=",              // 17 flag_max_include_depth
+  "-fno-canonical-system-headers",     // 18 flag_no_canonical_system_headers
+  "-fpch-deps",                        // 19 flag_pch_deps
+  "-fpch-preprocess",                  // 20 flag_pch_preprocess
+  "-fpreprocessed",                    // 21 flag_preprocessed
+  "-ftabstop=",                        // 22 flag_tabstop
+  "-ftrack-macro-expansion",           // 23 flag_track_macro_expansion
+  "-fwide-exec-charset=",              // 24 flag_wide_exec_charset
+  "-fworking-directory",               // 25 flag_working_directory
+  "-H",                                // 26 flag_h
+  "-imacros",                          // 27 flag_imacros
+  "-include",                          // 28 flag_include
+  "-M",                                // 29 flag_m
+  "-MD",                               // 30 flag_md
+  "-MF",                               // 31 flag_mf
+  "-MG",                               // 32 flag_mg
+  "-MM",                               // 33 flag_mm
+  "-MMD",                              // 34 flag_mmd
+  "-MP",                               // 35 flag_mp
+  "-MQ",                               // 36 flag_mq
+  "-MT",                               // 37 flag_mt
+  "-Mno-modules",                      // 38 flag_mno_modules
+  "-fno-integrated-cpp",               // 39 flag_no_integrated_cpp
+  "-P",                                // 40 flag_p_preproc
+  "-pthread",                          // 41 flag_pthread
+  "-fremap",                           // 42 flag_remap
+  "-traditional",                      // 43 flag_traditional
+  "-traditional-cpp",                  // 44 flag_traditional_cpp
+  "-ftrigraphs",                       // 45 flag_trigraphs
+  "-U",                                // 46 flag_u_macro
+  "-undef",                            // 47 flag_undef
+  "-Wp,",                              // 48 flag_wp
+  "-Xpreprocessor"                     // 49 flag_xpreprocessor
+};
+
+constexpr const char *
+get_string_flag(flags f)
+{
+  return flag_strings[static_cast<i32>(f)];
+}
+
 }
 
 namespace linker_flags
@@ -1739,6 +2872,48 @@ enum class flags : i32 {
   u_symbol = flag_u_symbol,
   z_keyword = flag_z_keyword
 };
+
+// String literals for linker flags
+constexpr static const char *flag_strings[] = {
+  "-o",                    // 0  flag_object_file_name
+  "-fuse-ld=",             // 1  flag_use_ld
+  "-l",                    // 2  flag_l_library
+  "-nostartfiles",         // 3  flag_nostartfiles
+  "-nodefaultlibs",        // 4  flag_nodefaultlibs
+  "-nolibc",               // 5  flag_nolibc
+  "-nostdlib",             // 6  flag_nostdlib
+  "-nostdlib++",           // 7  flag_nostdlib_pp
+  "-e",                    // 8  flag_e_entry
+  "--entry=",              // 9  flag_entry
+  "-pie",                  // 10 flag_pie
+  "-pthread",              // 11 flag_pthread_link
+  "-r",                    // 12 flag_r
+  "-rdynamic",             // 13 flag_rdynamic
+  "-s",                    // 14 flag_s
+  "-static",               // 15 flag_static
+  "-static-pie",           // 16 flag_static_pie
+  "-static-libgcc",        // 17 flag_static_libgcc
+  "-static-libstdc++",     // 18 flag_static_libstdc_pp
+  "-static-libasan",       // 19 flag_static_libasan
+  "-static-libtsan",       // 20 flag_static_libtsan
+  "-static-liblsan",       // 21 flag_static_liblsan
+  "-static-libubsan",      // 22 flag_static_libubsan
+  "-shared",               // 23 flag_shared
+  "-shared-libgcc",        // 24 flag_shared_libgcc
+  "-symbolic",             // 25 flag_symbolic
+  "-T",                    // 26 flag_t_script
+  "-Wl,",                  // 27 flag_wl
+  "-Xlinker",              // 28 flag_xlinker
+  "-u",                    // 29 flag_u_symbol
+  "-z"                     // 30 flag_z_keyword
+};
+
+constexpr const char *
+get_string_flag(flags f)
+{
+  return flag_strings[static_cast<i32>(f)];
+}
+
 }
 
 namespace x86_flags

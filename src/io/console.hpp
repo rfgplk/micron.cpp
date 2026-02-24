@@ -8,6 +8,7 @@
 #include "__std.hpp"
 
 #include "../except.hpp"
+#include "../mutex/locks.hpp"
 #include "stdout.hpp"
 
 namespace micron
@@ -190,7 +191,7 @@ cerror(const T &...str)
   set_color(color::red, style::bold);
   io::errorln(str...);
   set_color_reset();
-  (exc<except::standard_error>(str), ...);
+  (exc_silent<except::standard_error>(str), ...);
 }
 
 template <typename... T>
@@ -215,9 +216,9 @@ __micron_log(const char *FILEMACRO, int line, const T &...str)
 // has to be like this so we don't get conflicts with float/stl libs
 #define infolog(x) __micron_log(__FILE__, __LINE__, x)
 
-// TODO: isn't behind a mtx, not ts, FIX
+// WARNING: partially TS
 
-// WARNING: NOT TS
+// TODO: optimize
 
 inline void
 console_newline(void)
@@ -253,4 +254,4 @@ console_bin(const T &...str)
 {
   io::bin(str...);
 }
-};
+};     // namespace micron

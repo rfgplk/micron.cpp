@@ -14,4 +14,4 @@ struct stack_t {
   size_t size;
 };
 
-};
+};     // namespace micron

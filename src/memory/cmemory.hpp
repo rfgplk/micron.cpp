@@ -42,7 +42,7 @@ using simd::memmove256;
 using simd::memmove512;
 using simd::rmemcpy128;
 using simd::rmemcpy256;
-};
+};     // namespace micron
 
 /*
 namespace micron

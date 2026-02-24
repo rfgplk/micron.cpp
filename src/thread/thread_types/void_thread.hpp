@@ -65,9 +65,8 @@ template <size_t Stack_Size = thread_stack_size> class void_thread
       micron::exc<except::thread_error>("micron thread::__impl_runthread(): a stack isn't allocated");
     }
     // creates the function to be inserted into the queue
-    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { f(a...); };
+    auto __fn = [f = micron::forward<Fn &&>(fn), ... a = micron::forward<Args &&>(args)] { f(a...); };
     payload.queue.push(micron::move(__fn));
-    payload.has_work.store(true, memory_order_seq_cst);
     micron::release_futex(payload.has_work.ptr(), 1);
   }
 
@@ -130,8 +129,6 @@ public:
   inline posix::rusage_t
   stats(void) const
   {
-    if ( alive() )
-      return {};
     return payload.usage;
   }
 
@@ -145,6 +142,18 @@ public:
   }
 
   inline bool alive(void) = delete;
+
+  const auto &
+  get_status(void) const
+  {
+    return payload.has_work;
+  }
+
+  bool
+  is_working(void) const
+  {
+    return payload.has_work.get(memory_order_acquire);
+  }
 
   inline bool
   active(void) const
@@ -207,8 +216,8 @@ public:
   void
   stop(void)
   {
-    payload.should_die.store(1, memory_order_seq_cst);
-    payload.has_work.store(1, memory_order_seq_cst);
+    payload.should_die.store(1, memory_order_release);
+    micron::release_futex(payload.has_work.ptr(), 1);
   }
 
   const auto &
@@ -229,4 +238,4 @@ public:
     return Stack_Size;
   }
 };
-};
+};     // namespace micron

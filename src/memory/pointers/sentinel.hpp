@@ -78,4 +78,4 @@ public:
   void clear() = delete;
 };
 
-};
+};     // namespace micron

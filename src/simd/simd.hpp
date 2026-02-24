@@ -73,7 +73,7 @@ concept is_simd_class = micron::same_as<T, v8> or micron::same_as<T, v16> or mic
                         or micron::same_as<T, vfloat> or micron::same_as<T, vdouble> or micron::same_as<T, w8> or micron::same_as<T, w16>
                         or micron::same_as<T, w32> or micron::same_as<T, w64> or micron::same_as<T, wfloat> or micron::same_as<T, wdouble>;
 
-};
+};     // namespace simd
 
 #pragma GCC diagnostic pop
 // type defines
@@ -107,4 +107,4 @@ using packet4l = simd::packet4l;
 using packet8f = simd::packet8f;
 using packet4d = simd::packet4d;
 
-};
+};     // namespace micron

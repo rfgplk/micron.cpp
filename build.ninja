@@ -1,3 +1,4 @@
+# legacy file - default to using duck
 # build.ninja
 timer = /usr/bin/time -p
 compiler_gnuc = gcc

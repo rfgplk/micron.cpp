@@ -14,4 +14,4 @@ yield()
 {
   posix::sched_yield();
 }
-};
+};     // namespace micron

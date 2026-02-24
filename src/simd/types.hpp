@@ -96,5 +96,5 @@ __is_8_wide(void)
 }
 
 #pragma GCC diagnostic pop
-};
-};
+};     // namespace simd
+};     // namespace micron

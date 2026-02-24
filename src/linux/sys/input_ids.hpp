@@ -50,4 +50,4 @@ constexpr static const u64 ff_status_stopped = 0x00;
 constexpr static const u64 ff_status_playing = 0x01;
 constexpr static const u64 ff_status_max = 0x01;
 
-};
+};     // namespace micron

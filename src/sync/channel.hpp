@@ -7,7 +7,7 @@
 
 #include "../memory/actions.hpp"
 #include "../mutex/locks.hpp"
-#include "../mutex/spinlock.hpp"
+#include "../mutex/locks/spin_lock.hpp"
 #include "../stack.hpp"
 
 namespace micron
@@ -77,4 +77,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

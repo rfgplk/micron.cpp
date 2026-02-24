@@ -73,4 +73,4 @@ __thread_handler()
   //
 }
 
-};
+};     // namespace micron

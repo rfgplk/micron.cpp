@@ -152,4 +152,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

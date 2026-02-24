@@ -13,4 +13,4 @@ namespace micron
 template <typename T, size_t N> using circular = circle_vector<T, N>;
 template <typename T, size_t N> using circle_buffer = circle_vector<T, N>;
 
-};
+};     // namespace micron

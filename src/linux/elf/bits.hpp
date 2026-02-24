@@ -5,4 +5,4 @@ namespace micron
 namespace elf
 {
 };
-};
+};     // namespace micron

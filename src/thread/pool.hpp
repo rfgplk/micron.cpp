@@ -28,7 +28,11 @@ __make_threadarena(void)
   __global_threadpool = &local_pool;
 };
 
+#if defined(__micron_enable_concurrency_at_startup_var)
 __attribute__((constructor)) void
+#else
+inline __attribute__((always_inline)) void
+#endif
 __make_parallelarena(void)
 {
   static concurrent_arena local_pool;
@@ -39,4 +43,12 @@ __make_parallelarena(void)
     local_pool.create();
 };
 
-};
+void
+start_concurrent_pools(void)
+{
+#if !defined(__micron_enable_concurrency_at_startup_var)
+  __make_parallelarena();
+#endif
+}
+
+};     // namespace micron

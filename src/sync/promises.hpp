@@ -8,6 +8,8 @@
 #include "../mutex/locks.hpp"
 #include "../mutex/mutex.hpp"
 
+#include "future.hpp"
+
 namespace micron
 {
 class broken_promise
@@ -232,4 +234,4 @@ public:
     set_value(value);
   }
 };
-};
+};     // namespace micron

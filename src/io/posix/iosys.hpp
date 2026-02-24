@@ -17,6 +17,16 @@ namespace micron
 {
 namespace posix
 {
+
+constexpr static const int fifo = S_IFIFO;
+constexpr static const int chr = S_IFCHR;
+constexpr static const int dir = S_IFDIR;
+constexpr static const int blk = S_IFBLK;
+constexpr static const int reg = S_IFREG;
+constexpr static const int lnk = S_IFLNK;
+constexpr static const int socket = S_IFSOCK;
+constexpr static const int mask = S_IFMT;
+
 // propagate from io.hpp into ::posix
 using micron::access;
 using micron::chdir;
@@ -74,14 +84,14 @@ struct __impl_dir {
 dir_t
 opendir(const char *path)
 {
-  dir_t r(static_cast<i32>(micron::openat(at_fdcwd, path, o_rdonly | o_directory | o_cloexec, 0)));
+  dir_t r((micron::openat(at_fdcwd, path, o_rdonly | o_directory | o_cloexec, 0)));
   return r;
 }
 
 int
 closedir(const io::fd_t &ds)
 {
-  return static_cast<int>(micron::close(ds.fd));
+  return micron::close(ds.fd);
 }
 
 __impl_dir
@@ -102,5 +112,5 @@ readdir(const io::fd_t &_f)
   return { p->d_name, p->d_type, p->d_ino };
 }
 
-}
-};
+}     // namespace posix
+};     // namespace micron

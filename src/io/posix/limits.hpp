@@ -20,5 +20,5 @@ constexpr int xattr_list_max = 65536; /* size of extended attribute namelist (64
 
 constexpr int rtsig_max = 32;
 
-};
-};
+};     // namespace posix
+};     // namespace micron

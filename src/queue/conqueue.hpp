@@ -5,15 +5,15 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "__special/initializer_list"
-#include "type_traits.hpp"
+#include "../__special/initializer_list"
+#include "../type_traits.hpp"
 
-#include "algorithm/memory.hpp"
-#include "allocation/resources.hpp"
-#include "allocator.hpp"
-#include "bits/__container.hpp"
-#include "type_traits.hpp"
-#include "types.hpp"
+#include "../algorithm/memory.hpp"
+#include "../allocator.hpp"
+#include "../bits/__container.hpp"
+#include "../memory/allocation/resources.hpp"
+#include "../type_traits.hpp"
+#include "../types.hpp"
 
 #include "../mutex/locks.hpp"
 #include "../mutex/mutex.hpp"

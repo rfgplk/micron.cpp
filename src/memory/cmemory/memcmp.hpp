@@ -34,4 +34,4 @@ bytecmp(const byte *__restrict src, const byte *__restrict dest, size_t cnt) noe
   return 0;
 };
 
-};
+};     // namespace micron

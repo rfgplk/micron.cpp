@@ -15,5 +15,5 @@ namespace fsys
 class entry
 {
 };
-};
-};
+};     // namespace fsys
+};     // namespace micron

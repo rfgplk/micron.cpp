@@ -14,7 +14,7 @@ namespace bits
 {
 constexpr int byte = 8;
 constexpr int _char = 8;
-};
+};     // namespace bits
 
 namespace maximum
 {
@@ -31,7 +31,7 @@ constexpr i32 i32bit = 2147483647;
 constexpr i64 i64bit = 9223372036854775807;
 constexpr f32 f32bit = 3.402823466e+38f;
 constexpr f64 f64bit = 1.79769313486231e+308;
-};
+};     // namespace maximum
 
 namespace minimum
 {
@@ -41,7 +41,7 @@ constexpr i32 i32bit = -2147483647 - 1;
 constexpr i64 i64bit = -9223372036854775807 - 1;
 constexpr f32 f32bit = -maximum::f32bit;
 constexpr f64 f64bit = -maximum::f64bit;
-};
+};     // namespace minimum
 
 constexpr f32 pi = 3.14159265359f;
 constexpr f32 half_pi = 1.5707963267f;
@@ -1780,4 +1780,4 @@ template <class T> class numeric_limits<const volatile T> : public numeric_limit
 {
 };
 
-};
+};     // namespace micron

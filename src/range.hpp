@@ -120,4 +120,4 @@ template <u64 From, range_size_t<u64> auto To> using u64_range = count_range<u64
 
 template <i64 From, range_size_t<i64> auto To> using i64_range = count_range<i64, From, To>;
 
-};
+};     // namespace micron

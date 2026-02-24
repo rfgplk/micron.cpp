@@ -9,10 +9,10 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../container_safety.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../pointer.hpp"
 #include "../slice.hpp"

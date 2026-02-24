@@ -150,4 +150,4 @@ make_hazard(Args &&...args)
   return hazard_pointer(a_ptr);
 }
 
-};
+};     // namespace micron

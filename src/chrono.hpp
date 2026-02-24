@@ -367,4 +367,4 @@ struct day {
   }
 };
 
-};
+};     // namespace micron

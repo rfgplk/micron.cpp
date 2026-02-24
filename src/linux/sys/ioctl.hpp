@@ -212,4 +212,4 @@ constexpr static const u64 tiocpkt_dostop = 32;
 constexpr static const u64 tiocpkt_ioctl = 64;
 constexpr static const u64 tiocser_temt = 0x01;
 
-}
+}     // namespace micron

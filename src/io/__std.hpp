@@ -16,8 +16,8 @@ namespace micron
 {
 
 constexpr static const int stdin_fileno = 0;
-constexpr static const int stdout_fileno = 0;
-constexpr static const int stderr_fileno = 0;
+constexpr static const int stdout_fileno = 1;
+constexpr static const int stderr_fileno = 2;
 
 namespace io
 {
@@ -109,5 +109,5 @@ __closeall_default(void)
 }
 #endif
 
-};
-};
+};     // namespace io
+};     // namespace micron

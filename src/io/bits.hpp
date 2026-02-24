@@ -12,8 +12,6 @@ namespace micron
 namespace io
 {
 
-// NOTE: this is encap. as a struct so we have an easy unified way of managing fd related errors
-
 struct fd_t {
   i32 fd;
   ~fd_t() = default;
@@ -56,6 +54,6 @@ struct fd_t {
     return (fd == o.fd);
   }
 };
-};
+};     // namespace io
 
-};
+};     // namespace micron

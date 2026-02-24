@@ -10,11 +10,11 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../atomic/atomic.hpp"
 #include "../bits/__container.hpp"
 #include "../concepts.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../new.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
@@ -385,4 +385,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

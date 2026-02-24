@@ -80,4 +80,4 @@ struct safe_tag {
 
 struct unsafe_tag {
 };
-};
+};     // namespace micron

@@ -16,6 +16,8 @@
 #include "../../linux/sys/limits.hpp"
 #include "../../linux/sys/types.hpp"
 
+#include "../console.hpp"
+
 // functions for handling posix/linux dirs
 namespace micron
 {
@@ -52,8 +54,8 @@ struct dir {
     dp = posix::opendir(str);
     if ( dp.has_error() or dp.closed() )
       exc<except::filesystem_error>("micron::dir failed to open");
-    list();     // init base structure
     dname = str;
+    list();     // init base structure
   }
 
   dir(const micron::sstr<max_name> &str)
@@ -67,8 +69,8 @@ struct dir {
     dp = posix::opendir(str.c_str());
     if ( dp.has_error() or dp.closed() )
       exc<except::filesystem_error>("micron::dir failed to open");
-    list();     // init base structure
     dname = str;
+    list();     // init base structure
   }
 
   dir(const micron::string &str)
@@ -82,8 +84,8 @@ struct dir {
     dp = posix::opendir(str.c_str());
     if ( dp.has_error() or dp.closed() )
       exc<except::filesystem_error>("micron::dir failed to open");
-    list();     // init base structure
     dname = str;
+    list();     // init base structure
   }
 
   dir(const dir &o) : dname(o.dname), dp(o.dp), dd() {}
@@ -234,7 +236,7 @@ struct dir {
       pstr += "/";
       pstr += e.d_name;
       if ( posix::stat(pstr.c_str(), sd) != 0 )
-        exc<except::filesystem_error>("micron::dir failed to stat dir");
+        exc<except::filesystem_error>("micron::dir failed to stat");
       dd.emplace_back(micron::tie(micron::move(e),
                                   micron::move(sd)));     // try to avoid senseless copying, replace with preallocated eventually
     }
@@ -251,5 +253,5 @@ private:
     return true;
   }
 };
-};
-};
+};     // namespace io
+};     // namespace micron

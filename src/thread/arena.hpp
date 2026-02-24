@@ -39,10 +39,13 @@ constexpr static const u32 maximum_threads = (1 << 10);     // 1024
 #else
 constexpr static const u32 maximum_threads = (1 << 8);     // 256
 #endif
-constexpr static const u32 concurrent_threads = 256;     // reasoning, afaik the cpu with the highest number of threads on a single socket
-                                                         // has 256 threads. later on this might increase
+constexpr static const u32 concurrent_threads = 64;     // reasoning, afaik the cpu with the highest number of threads on a single socket
+                                                        // has 256 threads. reduced for performance/mem usage reasons
 
 template <typename Tr> struct thread_t {
+  cpu_t<true> cpu_mask;     // cpu mask for that specific thread
+  Tr thread;                // all other attributes are in thread
+
   thread_t(void) : cpu_mask{}, thread{} {}
 
   template <typename... Args> thread_t(const cpu_t<true> &c, Args &&...args) : cpu_mask(c), thread(micron::forward<Args>(args)...) {}
@@ -79,9 +82,6 @@ template <typename Tr> struct thread_t {
   {
     return thread.attrs();
   }
-
-  cpu_t<true> cpu_mask;     // cpu mask for that specific thread
-  Tr thread;                // all other attributes are in thread
 };
 
 // NOTE: not for external usage, always call from /spawn.hpp
@@ -99,7 +99,6 @@ template <umax_t Sz = thread_stack_size, typename Tr = group_thread<Sz>>
   requires(!micron::is_same_v<Tr, auto_thread<>>)     // we don't want to use auto_threads in an arena
 class __default_arena
 {
-  using type = thread_t<Tr>;
   micron::fsstack<thread_t<Tr>, maximum_threads> threads;
   mutable micron::mutex mtx;
 
@@ -121,6 +120,9 @@ class __default_arena
   }
 
 public:
+  using type = thread_t<Tr>;
+  using thread_class = Tr;
+
   ~__default_arena()
   {
     // forcing stops
@@ -524,7 +526,6 @@ template <umax_t Sz = concurrent_thread_stack_size, typename Tr = void_thread<Sz
   requires(micron::is_same_v<Tr, void_thread<Sz>>)
 class __concurrent_arena
 {
-  using type = thread_t<Tr>;
   umax_t counter;
   micron::iarray<thread_t<Tr>, concurrent_threads> threads;
   mutable micron::mutex mtx;
@@ -556,6 +557,9 @@ class __concurrent_arena
   }
 
 public:
+  using type = thread_t<Tr>;
+  using thread_class = Tr;
+
   ~__concurrent_arena()
   {
     // forcing stops
@@ -588,7 +592,7 @@ public:
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs), f, micron::forward<Args>(args)... };
-    sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(counter);
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
@@ -606,7 +610,7 @@ public:
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };
-    sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(counter);
     thread_name[15] = 0x0;
     pthread::set_name(threads.mut(counter).thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
@@ -617,14 +621,18 @@ public:
 
   template <typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args...>)
-  void
+  auto &
   add(Fn &&fn, Args &&...args)
   {
     micron::lock_guard l(mtx);
     static umax_t __ct = 0;
-    threads.mut(__ct++).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
-    if ( __ct >= counter )
+    if ( !counter )
+      micron::exc<except::thread_error>("micron concurrect_arena::add(): empty arena");
+    threads.mut(__ct).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
+    umax_t __ot = __ct;
+    if ( ++__ct >= counter )
       __ct = 0;
+    return threads[__ot];
   }
 
   void
@@ -777,5 +785,5 @@ public:
   }
 };
 
-};
-};
+};     // namespace arena
+};     // namespace micron

@@ -291,4 +291,4 @@ public:
     return Stack_Size;
   }
 };
-};
+};     // namespace micron

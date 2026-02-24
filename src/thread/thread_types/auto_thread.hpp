@@ -322,4 +322,4 @@ public:
     __join();
   }
 };
-};
+};     // namespace micron

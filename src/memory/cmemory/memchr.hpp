@@ -35,4 +35,4 @@ memchr(const T *restrict src, byte c, u64 n) noexcept
   return nullptr;
 }
 
-};
+};     // namespace micron

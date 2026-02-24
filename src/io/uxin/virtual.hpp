@@ -74,5 +74,5 @@ start_device(const io::fd_t &handle, const char *name, u16 vendor, u16 product, 
   }
 }
 
-};
-};
+};     // namespace uxin
+};     // namespace micron

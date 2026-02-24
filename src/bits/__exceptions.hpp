@@ -13,12 +13,12 @@
 #include "../memory/actions.hpp"
 #include "../memory/cstring.hpp"
 
+#include "../defs.hpp"
+
 namespace micron
 {
 namespace except
 {
-
-constexpr static const bool __use_exceptions = false;
 
 // so we don't rely on io
 void
@@ -44,7 +44,26 @@ raise(Args &&...args)
   abort(ex.which());
 }
 
-};
+template <typename T, typename... Args>
+__attribute__((always_inline, noreturn)) inline void
+raise_silent(Args &&...args)
+{
+  T ex(args...);
+  abort(ex.which());
+}
+
+};     // namespace except
+
+template <typename T, typename... Args>
+__attribute__((always_inline, noreturn)) inline void
+exc_silent(Args &&...args)
+{
+  if constexpr ( micron::except::__use_exceptions )
+    throw T(micron::forward<Args>(args)...);
+  else {
+    except::raise_silent<T>(micron::forward<Args>(args)...);
+  }
+}
 
 template <typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
@@ -56,4 +75,4 @@ exc(Args &&...args)
     except::raise<T>(micron::forward<Args>(args)...);
   }
 }
-};
+};     // namespace micron

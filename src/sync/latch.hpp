@@ -93,4 +93,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

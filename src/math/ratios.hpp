@@ -43,4 +43,4 @@ typedef ratio<1, static_cast<uintmax_t>(1e18)> atto;
 // typedef ratio<1, static_cast<uintmax_t>(1e24)> yocto;
 // typedef ratio<1, static_cast<uintmax_t>(1e27)> ronto;
 // typedef ratio<1, static_cast<uintmax_t>(1e30)> quecto;
-};
+};     // namespace micron

@@ -150,4 +150,4 @@ try_unmap(T *addr, size_t sz)
   return 1;
 }
 
-};
+};     // namespace micron

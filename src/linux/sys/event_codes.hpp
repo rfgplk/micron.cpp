@@ -858,4 +858,4 @@ constexpr byte snd_bell = 0x01;
 constexpr byte snd_tone = 0x02;
 constexpr byte snd_max = 0x07;
 constexpr byte snd_cnt = (snd_max + 1);
-};
+};     // namespace micron

@@ -941,4 +941,4 @@ struct vector_4 {
   }
 };
 
-}
+}     // namespace micron

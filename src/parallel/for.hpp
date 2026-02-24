@@ -14,6 +14,9 @@
 
 #include "../thread/spawn.hpp"
 
+#include "../sync/async.hpp"
+#include "../sync/expect.hpp"
+
 #include "../concepts.hpp"
 #include "../stacks/sstack.hpp"
 
@@ -37,16 +40,20 @@ template <auto Fn, is_iterable_container T>
 void
 parallel_for(T &data)
 {
+  if ( data.empty() )
+    return;
   u64 cn = cpu_count();
-  if ( data.size() % cn != 0 )
-    exc<except::thread_error>("micron parallel_for(): size of container isn't divisible by thread count");
+
   fsstack<uptr<thread<>>, 1024> threads;
-  u64 segment = (data.size() / cn);
+  u64 segment = (data.size() + cn - 1) / cn;
   u64 start = 0;
-  for ( u64 i = 0; i < cn; ++i ) {
-    console("start: ", i);
-    threads.move(__parallel_for<Fn, thread<>, T>(data.begin() + start, data.begin() + start + segment));
-    start += segment;
+
+  for ( u64 i = 0; i < cn && start < data.size(); ++i ) {
+    u64 end = start + segment;
+    if ( end > data.size() )
+      end = data.size();
+    threads.move(__parallel_for<Fn, thread<>, T>(data.begin() + start, data.begin() + end));
+    start = end;
   }
   while ( !threads.empty() ) {
     solo::join(threads.top());
@@ -60,10 +67,12 @@ template <auto Fn, typename Tr, is_iterable_container T>
 inline __attribute__((always_inline)) auto
 __fork_for(typename T::iterator start, typename T::iterator end)
 {
-  return solo::spawn<Tr>([start, end]() mutable {
-    for ( ; start != end; ++start )
-      Fn(start);
-  });
+  return &async(
+      [](typename T::iterator __start, typename T::iterator __end) {
+        for ( ; __start != __end; ++__start )
+          Fn(__start);
+      },
+      start, end);
 }
 
 template <auto Fn, is_iterable_container T>
@@ -71,20 +80,23 @@ template <auto Fn, is_iterable_container T>
 void
 fork_for(T &data)
 {
+  if ( data.empty() )
+    return;
   u64 cn = cpu_count();
-  if ( data.size() % cn != 0 )
-    exc<except::thread_error>("micron fork_for(): size of container isn't divisible by thread count");
-  fsstack<uptr<thread<>>, 1024> threads;
-  u64 segment = (data.size() / cn);
+  fsstack<const concurrent_arena::type *, 1024> threads;
+  u64 segment = (data.size() + cn - 1) / cn;
   u64 start = 0;
-  for ( u64 i = 0; i < cn; ++i ) {
-    console("start: ", i);
-    threads.move(__fork_for<Fn, thread<>, T>(data.begin() + start, data.begin() + start + segment));
-    start += segment;
+
+  for ( u64 i = 0; i < cn && start < data.size(); ++i ) {
+    u64 end = start + segment;
+    if ( end > data.size() )
+      end = data.size();
+    threads.move(__fork_for<Fn, concurrent_arena::thread_class, T>(data.begin() + start, data.begin() + end));
+    start = end;
   }
   while ( !threads.empty() ) {
-    solo::join(threads.top());
+    expect<memory_order::acquire>(threads.top()->thread.get_status(), (u32)0);
     threads.pop();
   }
 }
-};
+};     // namespace micron

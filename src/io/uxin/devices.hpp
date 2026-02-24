@@ -154,5 +154,5 @@ unbind_device(device_t &dev)
     posix::close(dev.bound_fd.fd);
   dev.bound_fd = -1;
 }
-};
-};
+};     // namespace uxin
+};     // namespace micron

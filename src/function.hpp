@@ -56,4 +56,4 @@ public:
 template <typename T>
 concept is_function = micron::is_integral_v<T>;
 
-};
+};     // namespace micron

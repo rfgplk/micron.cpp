@@ -340,4 +340,4 @@ sigwait(const micron::sigset_t &set, int &sig)
   return 0;
 }
 
-};
+};     // namespace micron

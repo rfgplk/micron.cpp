@@ -41,14 +41,14 @@ template <is_atomic_type T> struct atomic_token {
   T v;
   static_assert(size_of<T, 1> or size_of<T, 2> or size_of<T, 4> or size_of<T, 8>, "Size must be 1, 2, 4, or 8 bytes");
 
-  atomic_token(const T t = ATOMIC_OPEN) : v(t) {};
-  atomic_token(const atomic_token &o) : v(o.v) {};
+  constexpr atomic_token(const T t = ATOMIC_OPEN) noexcept : v(t) {};
+  constexpr atomic_token(const atomic_token &o) noexcept : v(o.v) {};
 
-  atomic_token(atomic_token &&t) : v(micron::move(t.v)) { t.v = {}; };
+  constexpr atomic_token(atomic_token &&t) noexcept : v(micron::move(t.v)) { t.v = {}; };
 
   void operator=(const atomic_token &) = delete;
 
-  atomic_token &
+  constexpr atomic_token &
   operator=(atomic_token &&o)
   {
     v = o.v;
@@ -90,7 +90,7 @@ template <is_atomic_type T> struct atomic_token {
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
-    return atom::compare_exchange(&v, &expected, desired, false, (int)order);
+    return atom::compare_exchange(&v, &expected, desired, false, (int)order, (int)memory_order::relaxed);
   }
 
   bool
@@ -115,6 +115,12 @@ template <is_atomic_type T> struct atomic_token {
   get(memory_order mrd = memory_order::seq_cst) const
   {
     return atom::load(&v, (int)mrd);
+  }
+
+  const T *
+  ptr() const
+  {
+    return &v;
   }
 
   T *

@@ -486,7 +486,7 @@ template <typename T, typename... Ts> struct count_type : micron::integral_const
 };
 
 template <typename T, typename... Ts> inline constexpr size_t count_type_v = count_type<T, Ts...>::value;
-}
+}     // namespace impl
 
 template <typename T, typename... Ts>
   requires(impl::count_type_v<T, Ts...> == 1)
@@ -531,7 +531,7 @@ template <typename T> struct unwrap_refwrapper<micron::reference_wrapper<T>> {
 };
 
 template <typename T> using unwrap_decay_t = typename unwrap_refwrapper<micron::decay_t<T>>::type;
-}
+}     // namespace impl
 
 template <typename... Ts>
 constexpr tuple<impl::unwrap_decay_t<Ts>...>
@@ -592,7 +592,7 @@ make_from_tuple_impl(Tp &&t, index_sequence<Is...>)
 {
   return Result(get<Is>(micron::forward<Tp>(t))...);
 }
-}
+}     // namespace impl
 
 template <typename... Tps>
 constexpr impl::tuple_cat_result_t<Tps...>
@@ -655,7 +655,7 @@ tuple_ge_impl(const tuple<Ts...> &lhs, const tuple<Us...> &rhs, index_sequence<I
 {
   return !tuple_lt_impl(lhs, rhs, index_sequence<Is...>{});
 }
-}
+}     // namespace impl
 
 template <typename... Ts, typename... Us>
   requires(sizeof...(Ts) == sizeof...(Us))
@@ -726,7 +726,7 @@ concept has_tuple_element_at = requires {
   typename tuple_element_t<I, T>;
   { get<I>(micron::declval<T>()) } -> micron::convertible_to<const tuple_element_t<I, T> &>;
 };
-}
+}     // namespace impl
 
 template <typename T>
 concept tuple_like = impl::has_tuple_element<micron::remove_cvref_t<T>>;
@@ -742,7 +742,7 @@ apply_impl(F &&f, Tp &&t, index_sequence<Is...>)
 {
   return micron::invoke(micron::forward<F>(f), get<Is>(micron::forward<Tp>(t))...);
 }
-}
+}     // namespace impl
 
 template <typename F, typename Tp>
 constexpr decltype(auto)
@@ -757,4 +757,4 @@ make_from_tuple(Tp &&t)
 {
   return impl::make_from_tuple_impl<T>(micron::forward<Tp>(t), make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
 }
-};
+};     // namespace micron

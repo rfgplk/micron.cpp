@@ -768,5 +768,5 @@ swap_bits64(u64 x, u64 mask, int shift)
   return x ^ t ^ (t << shift);
 }
 
-};
-};
+};     // namespace math
+};     // namespace micron

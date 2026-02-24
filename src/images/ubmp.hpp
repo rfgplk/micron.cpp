@@ -176,4 +176,4 @@ struct reader {
     return dib_header;
   }
 };
-};
+};     // namespace micron

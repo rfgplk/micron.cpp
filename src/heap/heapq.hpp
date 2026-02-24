@@ -6,9 +6,9 @@
 #pragma once
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/chunks.hpp"
 #include "../allocator.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/allocation/chunks.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
@@ -143,4 +143,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

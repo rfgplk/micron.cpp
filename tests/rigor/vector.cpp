@@ -70,6 +70,7 @@ int
 main()
 {
 
+  sb::print("=== VECTOR TESTS ===");
   // ------------------------------------------------------------
   test_case("default construction");
   {
@@ -293,5 +294,6 @@ main()
   }
   end_test_case();
 
-  return 0;
+  sb::print("=== ALL TESTS PASSED ===");
+  return 1;
 }

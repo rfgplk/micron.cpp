@@ -15,6 +15,7 @@
 #include "../math/trig.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/memory.hpp"
+#include "../slice_forward.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
 
@@ -26,83 +27,16 @@ namespace micron
 // general purpose array class, stack allocated, notthreadsafe, mutable.
 // default to 64
 template <is_regular_object T, size_t N = 64>
-  requires(N > 0)     // avoid weird stuff with N = 0
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 class array
 {
   alignas(64) T stack[N];
-
-  inline void
-  __impl_zero(T *src)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(T());
-    } else {
-      micron::cmemset<N>(src, 0x0);
-    }
-  }
-
-  void
-  __impl_set(T *__restrict src, const T &val)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = val;
-    } else {
-      micron::cmemset<N>(src, val);
-    }
-  }
-
-  void
-  __impl_copy(const T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        dest[i] = src[i];
-    } else {
-      micron::copy<N>(src, dest);
-    }
-  }
-
-  void
-  __impl_move(T *__restrict src, const T *__restrict dest)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        dest[i] = micron::move(src[i]);
-    } else {
-      micron::copy<N>(src, dest);
-      micron::czero<N>(src);
-    }
-  }
-
-  void
-  __impl_copy(T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        dest[i] = src[i];
-    } else {
-      micron::copy<N>(src, dest);
-    }
-  }
-
-  void
-  __impl_move(T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        dest[i] = micron::move(src[i]);
-    } else {
-      micron::copy<N>(src, dest);
-      micron::czero<N>(src);
-    }
-  }
 
 public:
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
+  typedef size_t size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -112,27 +46,19 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+  static constexpr size_type length = N;
 
-  ~array()
-  {
-    // explicit
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i].~T();
-    } else {
-      micron::czero<N>(micron::addr(stack[0]));
-    }
-  }
+  ~array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  array() { __impl_zero(micron::addr(stack[0])); }
+  array() { __impl_container::set<N>(micron::addr(stack[0]), T{}); }
 
-  array(const T &o) { __impl_set(micron::addr(stack[0]), o); }
+  array(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
 
   array(const std::initializer_list<T> &&lst)
   {
     if ( lst.size() > N )
       exc<except::runtime_error>("micron::array array(init_list): init_list too large.");
-    size_t i = 0;
+    size_type i = 0;
     for ( auto &&value : lst )
       stack[i++] = micron::move(value);
   }
@@ -144,22 +70,25 @@ public:
     if ( o.size() < N )
       exc<except::runtime_error>("micron::array array(&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
-      __impl_move(micron::addr(o[0]), stack);
+      __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
     else
-      __impl_copy(micron::addr(o[0]), stack);
+      __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
+  }
+
+  template <class C> array(const slice<T, C> &o)
+  {
+    if ( o.size() <= N )
+      __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
+    else
+      __impl_container::copy(micron::addr(stack[0]), o.begin(), o.size());
   }
 
   array(const array &o)
   {
-    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
-  }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
+    __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+  }     // micron::copy<N, T><N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
 
-  array(array &&o)
-  {
-    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
-    // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
-    // micron::cmemset<N>(micron::addr(stack[0], 0x0);
-  }
+  array(array &&o) { __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
   iterator
   begin() noexcept
@@ -185,32 +114,44 @@ public:
     return micron::addr(stack[N]);
   }
 
-  size_t
+  size_type
   size() const
   {
     return N;
   }
 
-  size_t
+  size_type
   max_size() const
   {
     return N;
   }
 
-  T *
+  auto *
+  addr()
+  {
+    return this;
+  }
+
+  const auto *
+  addr() const
+  {
+    return this;
+  }
+
+  iterator
   data()
   {
     return stack;
   }
 
-  const T *
+  const_iterator
   data() const
   {
     return stack;
   }
 
   T &
-  at(const size_t i)
+  at(const size_type i)
   {
     if ( i >= N )
       exc<except::runtime_error>("micron::array at() out of range.");
@@ -218,32 +159,90 @@ public:
   }
 
   const T &
-  at(const size_t i) const
+  at(const size_type i) const
   {
     if ( i >= N )
       exc<except::runtime_error>("micron::array at() out of range.");
     return stack[i];
   }
 
+  inline iterator
+  get(const size_type n)
+  {
+    if ( n >= N )
+      exc<except::library_error>("micron::array get() out of range");
+    return micron::addr(stack + n);
+  }
+
+  inline const_iterator
+  get(const size_type n) const
+  {
+    if ( n >= N )
+      exc<except::library_error>("micron::array get() out of range");
+    return micron::addr(stack + n);
+  }
+
+  inline const_iterator
+  cget(const size_type n) const
+  {
+    if ( n >= N )
+      exc<except::library_error>("micron::array get() out of range");
+    return micron::addr(stack + n);
+  }
+
   inline T &
-  operator[](const size_t i)
+  operator[](const size_type i)
   {
     return stack[i];
   }
 
   inline const T &
-  operator[](const size_t i) const
+  operator[](const size_type i) const
   {
     return stack[i];
   }
 
-  template <typename F, size_t M>
+  template <class C>
+  inline slice<T, C>
+  operator[]()
+  {
+    return slice<T, C>(begin(), end());
+  }
+
+  template <class C>
+  inline const slice<T, C>
+  operator[]() const
+  {
+    return slice<T, C>(begin(), end());
+  }
+
+  template <class C>
+  inline __attribute__((always_inline)) const slice<T, C>
+  operator[](size_type from, size_type to) const
+  {
+    // meant to be safe so this is here
+    if ( from >= to or from > N or to > N )
+      exc<except::library_error>("micron::array operator[] out of allocated memory range.");
+    return slice<T, C>(get(from), get(to));
+  }
+
+  template <class C>
+  inline __attribute__((always_inline)) slice<T, C>
+  operator[](size_type from, size_type to)
+  {
+    // meant to be safe so this is here
+    if ( from >= to or from > N or to > N )
+      exc<except::library_error>("micron::array operator[] out of allocated memory range.");
+    return slice<T, C>(get(from), get(to));
+  }
+
+  template <typename F, size_type M>
   array &
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
   {
-    __impl_copy(micron::addr(&o[0]), &stack[0]);
-    // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
+    __impl_container::copy<N, T>(micron::addr(&stack[0]), micron::addr(o[0]));
+    // micron::copy<N, T><N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
 
@@ -252,7 +251,7 @@ public:
   operator=(const F &o)
     requires micron::is_fundamental_v<F>
   {
-    micron::cmemset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), o);
     return *this;
   }
 
@@ -260,7 +259,11 @@ public:
   array &
   operator=(const A &o)
   {
-    micron::copy<N>(&o[0], &stack[0]);
+    if constexpr ( N <= A::length ) {
+      __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    } else {
+      __impl_container::copy<A::length>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    }
     return *this;
   }
 
@@ -269,80 +272,84 @@ public:
   array &
   operator=(const A &o)
   {
-    micron::copy<N>(&o[0], &stack[0]);
+    if ( N <= o.size() ) {
+      __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    } else {
+      __impl_container::copy(micron::addr(stack[0]), micron::addr(o.stack[0]), o.size());
+    }
     return *this;
   }
 
   array &
   operator=(const array &o)
   {
-    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
   array &
   operator=(array &&o)
   {
-    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
-  template <size_t M>
+  template <size_type M>
     requires(M <= N)
   array &
   operator+(const array<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] += o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <size_type M>
     requires(M <= N)
   array &
   operator-(const array<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] -= o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <size_type M>
     requires(M <= N)
   array &
   operator*(const array<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] *= o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <size_type M>
     requires(M <= N)
   array &
   operator/(const array<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] /= o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <size_type M>
     requires(M <= N)
   array &
   operator%(const array<T, M> &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] %= o.stack[i];
     return *this;
   }
 
   // special functions - no idea why the stl doesn't have these
-  size_t
+  size_type
   sum(void) const
   {
-    size_t sm = 0;
-    for ( size_t i = 0; i < N; i++ )
+    size_type sm = 0;
+    for ( size_type i = 0; i < N; i++ )
       sm += stack[i];
     return sm;
   }
@@ -350,7 +357,7 @@ public:
   array &
   operator*=(const T &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] *= o;
     return *this;
   }
@@ -358,7 +365,7 @@ public:
   array &
   operator/=(const T &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] /= o;
     return *this;
   }
@@ -366,7 +373,7 @@ public:
   array &
   operator-=(const T &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] -= o;
     return *this;
   }
@@ -374,7 +381,7 @@ public:
   array &
   operator+=(const T &o)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] += o;
     return *this;
   }
@@ -392,38 +399,38 @@ public:
   }
 
   void
-  mul(const size_t n)
+  mul(const size_type n)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] *= n;
   }
 
   void
-  div(const size_t n)
+  div(const size_type n)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] /= n;
   }
 
   void
-  sub(const size_t n)
+  sub(const size_type n)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] -= n;
   }
 
   void
-  add(const size_t n)
+  add(const size_type n)
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] += n;
   }
 
-  size_t
+  size_type
   mul(void) const
   {
-    size_t mul_ = stack[0];
-    for ( size_t i = 1; i < N; i++ )
+    size_type mul_ = stack[0];
+    for ( size_type i = 1; i < N; i++ )
       mul_ *= stack[i];
     return mul_;
   }
@@ -431,7 +438,7 @@ public:
   bool
   all(const T &o) const
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       if ( stack[i] != o )
         return false;
     return true;
@@ -440,7 +447,7 @@ public:
   bool
   any(const T &o) const
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       if ( stack[i] == o )
         return true;
     return false;
@@ -449,7 +456,7 @@ public:
   void
   sqrt(void) const
   {
-    for ( size_t i = 0; i < N; i++ )
+    for ( size_type i = 0; i < N; i++ )
       stack[i] = math::sqrt(static_cast<float>(stack[i]));
   }
 
@@ -458,7 +465,15 @@ public:
   fill(const F &o)
     requires micron::is_fundamental_v<F>
   {
-    micron::cmemset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    return *this;
+  }
+
+  template <typename F>
+  array &
+  fill(const F &o)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), o);
     return *this;
   }
 
@@ -466,6 +481,18 @@ public:
   is_pod()
   {
     return micron::is_pod_v<T>;
+  }
+
+  static constexpr bool
+  is_class()
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
   }
 };
 

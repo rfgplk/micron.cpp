@@ -31,6 +31,7 @@ template <size_t N> struct lambda_queue {
     }
   };
 
+  u8 slots[N * 64]{};
   node_base_t *__q[N]{};
   micron::atomic_token<size_t> head{ 0 };
   micron::atomic_token<size_t> tail{ 0 };
@@ -44,7 +45,15 @@ template <size_t N> struct lambda_queue {
     while ( __q[idx] != nullptr ) {
       // Spin or yield - queue is full
     }
-    __q[idx] = new node_t<Fn>(micron::forward<Fn>(fn));
+    __q[idx] = new (&slots[idx * 64]) node_t<Fn>(micron::forward<Fn>(fn));
+  }
+
+  void
+  execute()
+  {
+    auto __task = pop();
+    if ( __task != nullptr ) [[unlikely]]
+      __task->call();
   }
 
   inline node_base_t *

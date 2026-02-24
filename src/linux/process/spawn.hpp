@@ -131,7 +131,7 @@ spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions_t
 {
   return __spawn(pid, path, &file_actions, &attrp, argv, envp);
 }
-};
+};     // namespace unsafe
 
 // POSIX compliance, if we need it
-};
+};     // namespace micron

@@ -1,11 +1,14 @@
-#include "../snowball/snowball.hpp"
+
+#include "../../src/io/console.hpp"
 
 #include "../../src/string/strings.hpp"
 
+#include "../snowball/snowball.hpp"
 using namespace snowball;
 int
 main(int, char **)
 {
+  sb::print("=== STRINGS TESTS ===");
   // Test construction
   test_case("Default construction");
   {
@@ -208,5 +211,6 @@ main(int, char **)
     require_throw([&] { s.at(100); });
   }
   end_test_case();
+  sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

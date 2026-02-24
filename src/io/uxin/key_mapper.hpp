@@ -306,6 +306,6 @@ __ev_code_to_integral(const u16 c)
   return 0x0;
 }
 
-};
+};     // namespace uxin
 
-};
+};     // namespace micron

@@ -12,4 +12,4 @@ namespace micron
 {
 using int16x16_t = int_matrix_base<i32, 16, 16>;
 using uint16x16_t = int_matrix_base<u32, 16, 16>;
-};
+};     // namespace micron

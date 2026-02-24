@@ -135,6 +135,6 @@ cap_to_mask(i32 x) noexcept
   return 1U << (x & 31);
 }
 
-};
+};     // namespace posix
 
-};
+};     // namespace micron

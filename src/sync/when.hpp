@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../mutex/spinlock.hpp"
+#include "../mutex/locks/spin_lock.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
@@ -46,4 +46,4 @@ when_any(Fn &&fn, Args &&...args, D *...result)
    ...);
 }
 
-};
+};     // namespace micron

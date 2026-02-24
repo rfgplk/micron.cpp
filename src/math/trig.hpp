@@ -983,5 +983,5 @@ flog10(long double x) noexcept
 }
 
 #endif
-};
-};
+};     // namespace math
+};     // namespace micron

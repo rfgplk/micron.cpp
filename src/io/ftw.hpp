@@ -112,5 +112,5 @@ ftw_files(path &&p)
   }
   return rslt;
 }
-};
-};
+};     // namespace io
+};     // namespace micron

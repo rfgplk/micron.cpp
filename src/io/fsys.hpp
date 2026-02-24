@@ -111,5 +111,5 @@ file_type_at(const io::path_t &p)
 {
   return io::get_type_at(p.c_str());
 }
-};
-};
+};     // namespace fsys
+};     // namespace micron

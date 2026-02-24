@@ -163,6 +163,6 @@ terminal_getattr(termios_t &buf)
     return -1;
   return 0;
 }
-};
+};     // namespace posix
 
-};
+};     // namespace micron

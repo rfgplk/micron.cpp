@@ -236,5 +236,5 @@ poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
   return 0;
 }
 
-};
-};
+};     // namespace uxin
+};     // namespace micron

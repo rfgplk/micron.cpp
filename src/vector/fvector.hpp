@@ -12,12 +12,12 @@
 
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../concepts.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../pointer.hpp"
 #include "../slice.hpp"
@@ -78,12 +78,7 @@ public:
 
   fvector(const size_t n) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      for ( size_t i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T();
-    } else if constexpr ( micron::is_literal_type_v<T> ) {
-      micron::memset(__mem::memory, T{}, n);
-    }
+    __impl_container::set(micron::addr(__mem::memory[0]), T{}, n);
     __mem::length = n;
   };
 
@@ -98,12 +93,7 @@ public:
 
   fvector(size_t n, const T &init_value) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      for ( size_t i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T(init_value);
-    } else if constexpr ( micron::is_literal_type_v<T> ) {
-      micron::memset(__mem::memory, T{}, n);
-    }
+    __impl_container::set(micron::addr(__mem::memory[0]), init_value, n);
     __mem::length = n;
   };
 
@@ -843,15 +833,20 @@ public:
   }
 
   inline void
+  fast_clear()
+  {
+    if constexpr ( !micron::is_class_v<T> ) {
+      __mem::length = 0;
+    } else
+      clear();
+  }
+
+  inline void
   clear()
   {
     if ( !__mem::length )
       return;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
-        (__mem::memory)[i].~T();
-    }
-    micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
+    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
     __mem::length = 0;
   }
 
@@ -877,6 +872,24 @@ public:
   back()
   {
     return (__mem::memory)[__mem::length - 1];
+  }
+
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
+  }
+
+  static constexpr bool
+  is_class_type() noexcept
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
   }
 
   // access at element

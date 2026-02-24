@@ -228,7 +228,7 @@ abs(T &o)
     return abs_32(o);
   }
 }
-};
-};
+};     // namespace simd
+};     // namespace micron
 
 #pragma GCC diagnostic pop

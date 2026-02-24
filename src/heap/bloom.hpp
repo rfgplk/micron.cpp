@@ -6,8 +6,8 @@
 #pragma once
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/chunks.hpp"
 #include "../allocator.hpp"
+#include "../memory/allocation/chunks.hpp"
 #include "../memory/memory.hpp"
 #include "../slice.hpp"
 
@@ -69,4 +69,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

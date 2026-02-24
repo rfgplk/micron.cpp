@@ -194,6 +194,6 @@ signal_fence(i32 memorder)
 {
   return __atomic_signal_fence(memorder);
 }
-};
+};     // namespace atom
 
-};
+};     // namespace micron

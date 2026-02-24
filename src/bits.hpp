@@ -217,4 +217,4 @@ countr_one(T x) noexcept
 {
   return countl_zero((T)~x);
 }
-};
+};     // namespace micron

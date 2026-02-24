@@ -231,6 +231,6 @@ xxhash64_rtseed(const byte *src, u64 seed, size_t len)
   xxhash += len;
   return xxhash_final(xxhash, src, len);
 }
-};
+};     // namespace hashes
 
-};
+};     // namespace micron

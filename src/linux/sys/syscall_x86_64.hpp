@@ -27,7 +27,7 @@ syscall(Args... args) noexcept
 {
   return ::syscall(args...);
 };
-};
+};     // namespace micron
 #else
 #ifdef __ASSEMBLER__
 
@@ -435,6 +435,6 @@ syscall(long int n, ...) noexcept
   }
   return r;
 }
-};
+};     // namespace micron
 
 #endif

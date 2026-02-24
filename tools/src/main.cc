@@ -3,30 +3,36 @@
 
 #include "build.hh"
 #include "clean.hh"
+#include "help.hh"
 #include "make.hh"
 #include "run.hh"
 #include "test.hh"
 
-enum class __modes : i32 { build, run, make, test, clean, __end };
+enum class __modes : i32 { build, compile, debug, run, make, test, recipes, __end };
 
 auto
 match(char **argv) -> __modes
 {
-  // builds file/project
+  // builds file/project - if file build single file, if dir, every file in dir
   if ( mc::strcmp(argv[1], "build") == 0 )
     return __modes::build;
-  // builds file and runs
+  // compiles file. does not wait
+  else if ( mc::strcmp(argv[1], "compile") == 0 )
+    return __modes::compile;
+  // shorthand for build -d/-g -w
+  else if ( mc::strcmp(argv[1], "debug") == 0 )
+    return __modes::debug;
+  // builds file and runs it, replacing current proc.
   else if ( mc::strcmp(argv[1], "run") == 0 )
     return __modes::run;
-  // makes a new project
+  // makes a new project from template
   else if ( mc::strcmp(argv[1], "make") == 0 )
     return __modes::make;
-  // builds test files and runs
+  // builds test files and runs, verifies if each exits with '1' (success) or '0' (fail)
   else if ( mc::strcmp(argv[1], "test") == 0 )
     return __modes::test;
-  // cleans unnecessary files
-  else if ( mc::strcmp(argv[1], "clean") == 0 )
-    return __modes::clean;
+  else if ( mc::strcmp(argv[1], "recipes") == 0 )
+    return __modes::recipes;
   // nothing
   return __modes::__end;
 }
@@ -34,20 +40,39 @@ match(char **argv) -> __modes
 int
 main(int argc, char **argv)
 {
-  if ( argc < 3 ) {
+  if ( argc < 3 ) [[unlikely]] {
+    if ( argc == 2 )
+      if ( mc::strcmp(argv[1], "help") == 0 ) {
+        help();
+        return 0;
+      }
     mc::cerror("Invalid command arguments provided");
   }
   auto mode = match(argv);
   switch ( mode ) {
   case __modes::build : {
-    config_t conf = parse_argv_build(argc - 2, argv + 2);
-    return build(conf);
+    auto confs = parse_argv_build(argc - 2, argv + 2);
+    for ( auto &conf : confs )
+      build<mc::exec_wait>(conf);
+    break;
+  }
+  case __modes::compile : {
+    auto confs = parse_argv_build(argc - 2, argv + 2);
+    for ( auto &conf : confs )
+      build<mc::exec_continue>(conf);
+    break;
+  }
+  case __modes::debug : {
+    auto confs = parse_argv_build(argc - 2, argv + 2);
+    for ( auto &conf : confs )
+      build_debug(conf);
     break;
   }
   case __modes::run : {
+    // can't be batched doesn't make sense
+    config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    build_and_run(conf);
     break;
-    // config_t conf = parse_argv_run(argc - 2, argv + 2);
-    // return run(conf);
   }
   case __modes::make : {
     break;
@@ -55,16 +80,16 @@ main(int argc, char **argv)
     // return make(conf);
   }
   case __modes::test : {
+    auto confs = parse_argv_build(argc - 2, argv + 2);
+    cicd_test(confs);
     break;
-    // config_t conf = parse_argv_test(argc - 2, argv + 2);
-    // return test(conf);
   }
-  case __modes::clean : {
+  case __modes::recipes : {
     break;
   }
   case __modes::__end : {
     mc::cerror("Invalid command argument provided");
   }
   };
-  return -1;
+  return 0;
 };

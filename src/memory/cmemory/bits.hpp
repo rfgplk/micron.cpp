@@ -9,7 +9,7 @@
 
 #include "../stack_constants.hpp"
 
-#include "../../allocation/abcmalloc/malloc_forward.hpp"
+#include "../../memory/allocation/abcmalloc/malloc_forward.hpp"
 
 namespace micron
 {
@@ -178,4 +178,4 @@ __is_valid_address(const F &ref, const u64 size) noexcept
 {
   return (__is_at_stack(ref, size) or __is_at_heap(ref));
 }
-};
+};     // namespace micron

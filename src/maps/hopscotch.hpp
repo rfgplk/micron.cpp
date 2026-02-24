@@ -7,6 +7,7 @@
 
 #include "../hash/hash.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/addr.hpp"
 
 #include "../allocator.hpp"
 #include "../except.hpp"
@@ -408,7 +409,7 @@ public:
     for ( size_t i = 0; i <= MH; ++i ) {
       size_t probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
-        return &entries[probe].value;
+        return micron::addressof(entries[probe].value);
       }
     }
 
@@ -417,7 +418,7 @@ public:
       if ( !entries[probe].key ) {
         entries[probe] = Nd{ hsh, micron::move(value) };
         ++length;
-        return &entries[probe].value;
+        return micron::addressof(entries[probe].value);
       }
     }
 
@@ -431,7 +432,7 @@ public:
         if ( find_closer_slot(home, check, result_slot) ) {
           entries[result_slot] = Nd{ hsh, micron::move(value) };
           ++length;
-          return &entries[result_slot].value;
+          return micron::addressof(entries[result_slot].value);
         }
         break;
       }
@@ -487,7 +488,7 @@ public:
     for ( size_t i = 0; i <= MH; ++i ) {
       size_t probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
-        return &entries[probe].value;
+        return micron::addressof(entries[probe].value);
       }
     }
 

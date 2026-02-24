@@ -51,4 +51,4 @@ public:
   do_once &operator=(do_once &&) = delete;
   do_once &operator=(const do_once &) = delete;
 };
-};
+};     // namespace micron

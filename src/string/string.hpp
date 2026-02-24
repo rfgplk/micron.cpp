@@ -9,9 +9,9 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../concepts.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../memory_block.hpp"
 #include "../pointer.hpp"
@@ -122,6 +122,24 @@ public:
     __mem::length = o.length;     // - 1; // no null
   };
 
+  template <is_iterable_container F>
+    requires(sizeof(typename F::value_type) == sizeof(T))
+  constexpr hstring(const F &o) : __mem(o.size())
+  {
+    micron::memcpy(&(__mem::memory)[0], o.data(),
+                   o.size());     // - 1);
+    __mem::length = o.size();     // - 1; // no null
+  };
+
+  template <is_iterable_container F>
+    requires(sizeof(typename F::value_type) == sizeof(T))
+  constexpr hstring(F &&o) : __mem(o.size())
+  {
+    micron::memcpy(&(__mem::memory)[0], o.data(),
+                   o.size());     // - 1);
+    __mem::length = o.size();     // - 1; // no null
+  };
+
   // allow construction from - to iterator (be careful!)
   constexpr hstring(iterator __start, iterator __end)
       : __mem((ssize_t)Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
@@ -218,7 +236,7 @@ public:
       reserve(M);
     clear();
     micron::memcpy(&(__mem::memory)[0], &str[0], M);
-    __mem::length = M;
+    __mem::length = M - 1;
     return *this;
   }
 
@@ -281,13 +299,19 @@ public:
   }
 
   // unsafe
-  T *
+  iterator
   data()
   {
     return __mem::memory;
   };
 
-  const auto &
+  const_iterator
+  data() const
+  {
+    return __mem::memory;
+  };
+
+  const_iterator
   cdata() const
   {
     return __mem::memory;
@@ -324,6 +348,12 @@ public:
       return _null_u32str;
     return reinterpret_cast<const unicode32 *>(&(__mem::memory)[0]);
   };
+
+  inline slice<T>
+  into_chars() const
+  {
+    return slice<T>(&__mem::memory[0], &__mem::memory[__mem::length]);
+  }
 
   inline slice<byte>
   into_bytes()
@@ -863,46 +893,94 @@ public:
     return *this;
   };
 
-  template <typename F = T>
+  template <typename I, typename F = T>
+    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
   inline hstring<F>
-  substr(size_t pos = 0, size_t cnt = 0) const
+  substr(I pos = 0, I cnt = npos) const
   {
-    if ( pos > __mem::length or (cnt + pos) > __mem::capacity )
-      exc<except::library_error>("error micron::string substr invalid range.");
-    hstring<F> buf(cnt + 1);
-    micron::memcpy(&buf[0], &__mem::memory[pos], cnt);
-    buf[cnt] = '\0';
-    buf._buf_set_length(cnt + 1);
+    if ( cnt == npos )
+      cnt = (pos <= __mem::length) ? __mem::length - pos : 0;
+    if ( pos > __mem::length or (pos + cnt) > __mem::length )
+      exc<except::library_error>("error micron::hstring substr invalid range.");
+    hstring<F> buf(cnt + 1);     // +1 for null headroom
+    micron::memcpy(buf.data(), &__mem::memory[pos], cnt);
+    // hstring ctor zero-initialises, null is already present
+    buf._buf_set_length(cnt);
     return buf;
   };
 
   template <typename F = T>
   inline hstring<F>
-  substr(iterator _start, iterator _end) const
+  substr(iterator _start, iterator _end = nullptr) const
   {
-    if ( _start < begin() or _end >= end() )
-      exc<except::library_error>("error micron::string substr invalid range.");
-    hstring<F> buf(_end - _start + 1);
-    micron::memcpy(&buf[0], _start, _end - _start);
-    buf._buf_set_length(_end - _start + 1);
-    *buf.last() = '\0';
+    if ( _end == nullptr )
+      _end = end();
+    if ( _start < begin() or _end > end() or _start > _end )
+      exc<except::library_error>("error micron::hstring substr invalid range.");
+    size_t len = static_cast<size_t>(_end - _start);
+    hstring<F> buf(len + 1);
+    micron::memcpy(buf.data(), _start, len);
+    buf._buf_set_length(len);
     return buf;
   };
 
   template <typename F = T>
   inline hstring<F>
-  substr(const_iterator _start, const_iterator _end) const
+  substr(const_iterator _start, const_iterator _end = nullptr) const
   {
-    if ( _start < begin() or _end >= end() )
-      exc<except::library_error>("error micron::string substr invalid range.");
-    hstring<F> buf(_end - _start + 1);
-    micron::memcpy(&buf[0], _start, _end - _start);
-    buf._buf_set_length(_end - _start + 1);
-    *buf.last() = '\0';
+    if ( _end == nullptr )
+      _end = cend();
+    if ( _start < cbegin() or _end > cend() or _start > _end )
+      exc<except::library_error>("error micron::hstring substr invalid range.");
+    size_t len = static_cast<size_t>(_end - _start);
+    hstring<F> buf(len + 1);
+    micron::memcpy(buf.data(), _start, len);
+    buf._buf_set_length(len);
     return buf;
   };
 
-  // grow container
+  template <typename I, typename F = T>
+    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline hstring<F> &
+  truncate(I n)
+  {
+    if ( n >= __mem::length )
+      return *this;
+    if ( n > __mem::capacity )
+      exc<except::library_error>("micron::hstring truncate() index out of range");
+    micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
+    __mem::length = n;
+    return *this;
+  }
+
+  template <typename F = T>
+  inline hstring<F> &
+  truncate(iterator itr)
+  {
+    if ( itr < begin() or itr > end() )
+      exc<except::library_error>("micron::hstring truncate() iterator out of range");
+    if ( itr >= end() )
+      return *this;
+    size_t n = static_cast<size_t>(itr - begin());
+    micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
+    __mem::length = n;
+    return *this;
+  }
+
+  template <typename F = T>
+  inline hstring<F> &
+  truncate(const_iterator itr)
+  {
+    if ( itr < cbegin() or itr > cend() )
+      exc<except::library_error>("micron::hstring truncate() iterator out of range");
+    if ( itr >= cend() )
+      return *this;
+    size_t n = static_cast<size_t>(itr - cbegin());
+    micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
+    __mem::length = n;
+    return *this;
+  }
+
   void
   reserve(size_t n)
   {
@@ -991,6 +1069,119 @@ public:
     return *this;
   }
 
+  inline size_t
+  find_substr(const T *needle, size_t needle_len, size_t pos = 0) const
+  {
+    if ( needle_len == 0 or needle_len > __mem::length )
+      return npos;
+    size_t limit = __mem::length - needle_len;
+    for ( size_t i = pos; i <= limit; ++i ) {
+      size_t j = 0;
+      while ( j < needle_len and __mem::memory[i + j] == needle[j] )
+        ++j;
+      if ( j == needle_len )
+        return i;
+    }
+    return npos;
+  }
+
+  template <typename F = T>
+  inline hstring<F> &
+  remove(const char *needle)
+  {
+    if ( needle == nullptr )
+      exc<except::library_error>("micron:hstring remove() null needle");
+    size_t needle_len = micron::strlen(needle);
+    if ( needle_len == 0 )
+      return *this;
+    size_t pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
+    if ( pos == npos )
+      return *this;
+    micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
+    micron::typeset<T>(&__mem::memory[__mem::length - needle_len], 0x0, needle_len);
+    __mem::length -= needle_len;
+    return *this;
+  }
+
+  template <typename F = T, size_t M, typename G>
+  inline hstring<F> &
+  remove(const micron::sstring<M, G> &needle)
+  {
+    if ( needle.empty() )
+      return *this;
+    size_t pos = find_substr(needle.data(), needle.size());
+    if ( pos == npos )
+      return *this;
+    micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+    micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
+    __mem::length -= needle.size();
+    return *this;
+  }
+
+  template <typename F = T, typename G>
+  inline hstring<F> &
+  remove(const hstring<G> &needle)
+  {
+    if ( needle.empty() )
+      return *this;
+    size_t pos = find_substr(needle.data(), needle.size());
+    if ( pos == npos )
+      return *this;
+    micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+    micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
+    __mem::length -= needle.size();
+    return *this;
+  }
+
+  template <typename F = T>
+  inline hstring<F> &
+  remove_all(const char *needle)
+  {
+    if ( needle == nullptr )
+      exc<except::library_error>("micron:hstring remove_all() null needle");
+    size_t needle_len = micron::strlen(needle);
+    if ( needle_len == 0 )
+      return *this;
+    size_t pos = 0;
+    while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
+      micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
+      micron::typeset<T>(&__mem::memory[__mem::length - needle_len], 0x0, needle_len);
+      __mem::length -= needle_len;
+      // do NOT advance pos — the chars that slid left may form another match
+    }
+    return *this;
+  }
+
+  template <typename F = T, size_t M, typename G>
+  inline hstring<F> &
+  remove_all(const micron::sstring<M, G> &needle)
+  {
+    if ( needle.empty() )
+      return *this;
+    size_t pos = 0;
+    while ( (pos = find_substr(needle.data(), needle.size(), pos)) != npos ) {
+      micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+      micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
+      __mem::length -= needle.size();
+    }
+    return *this;
+  }
+
+  template <typename F = T, typename G>
+  inline hstring<F> &
+  remove_all(const hstring<G> &needle)
+  {
+    if ( needle.empty() )
+      return *this;
+    size_t pos = 0;
+    while ( (pos = find_substr(needle.data(), needle.size(), pos)) != npos ) {
+      micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+      micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
+      __mem::length -= needle.size();
+    }
+    return *this;
+  }
+
   inline bool
   operator==(const char *data) const
   {
@@ -1020,45 +1211,6 @@ public:
   template <typename F = T>
   inline bool
   operator==(const hstring<F> &data) const
-  {
-    if ( data.length == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
-        if ( data.memory[i] != __mem::memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
-
-  inline bool
-  operator==(const char *data)
-  {
-    size_t M = strlen(data);
-    if ( M == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
-
-  template <typename F = T, size_t M>
-  inline bool
-  operator==(const F (&data)[M])
-  {
-    if ( M == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
-
-  template <typename F = T>
-  inline bool
-  operator==(const hstring<F> &data)
   {
     if ( data.length == __mem::length ) {
       for ( size_t i = 0; i < __mem::length; i++ )

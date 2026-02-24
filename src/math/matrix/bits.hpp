@@ -187,6 +187,30 @@ public:
     return __mat[r * C + c];
   }
 
+  const B &
+  col(u32 c) const
+  {
+    return __mat[c];
+  }
+
+  const B &
+  row(u32 r) const
+  {
+    return __mat[r * C];
+  }
+
+  const B &
+  operator[](u32 r) const
+  {
+    return __mat[r * C];
+  }
+
+  const B &
+  operator[](u32 r, u32 c) const
+  {
+    return __mat[r * C + c];
+  }
+
   int_matrix_base_avx &
   operator+=(const int_matrix_base_avx &o)
   {
@@ -321,4 +345,4 @@ public:
 
 template <typename B, u32 C, u32 R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
 
-};
+};     // namespace micron

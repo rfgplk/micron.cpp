@@ -125,4 +125,4 @@ enum class map_types : int {
   __end
 };
 
-};
+};     // namespace micron

@@ -79,7 +79,7 @@ template <typename... B> auto __or_fn(...) -> true_type;
 template <typename... B> auto __and_fn(int) -> __first_t<true_type, __enable_if_t<bool(B::value)>...>;
 
 template <typename... B> auto __and_fn(...) -> false_type;
-}
+}     // namespace __detail
 
 template <typename... B> struct __or_ : decltype(__detail::__or_fn<B...>(0)) {
 };
@@ -110,7 +110,7 @@ template <typename, typename _B1, typename... B> struct __conjunction_impl {
 template <typename _B1, typename _B2, typename... B> struct __conjunction_impl<__enable_if_t<bool(_B1::value)>, _B1, _B2, B...> {
   using type = typename __conjunction_impl<void, _B2, B...>::type;
 };
-}
+}     // namespace __detail
 
 template <typename... B> struct conjunction : __detail::__conjunction_impl<void, B...>::type {
 };
@@ -1303,7 +1303,7 @@ struct __do_is_nothrow_swappable_impl {
   template <typename> static false_type __test(...);
 };
 
-}
+}     // namespace __swappable_details
 
 template <typename T> struct __is_swappable_impl : public __swappable_details::__do_is_swappable_impl {
   using type = decltype(__test<T>(0));
@@ -1358,7 +1358,7 @@ struct __do_is_nothrow_swappable_with_impl {
   template <typename, typename> static false_type __test(...);
 };
 
-}
+}     // namespace __swappable_with_details
 
 template <typename T, typename Uxp> struct __is_swappable_with_impl : public __swappable_with_details::__do_is_swappable_with_impl {
   using type = decltype(__test<T, Uxp>(0));
@@ -1719,4 +1719,4 @@ template <__tt_size_t N> using make_index_sequence = typename make_index_sequenc
 // index_sequence_for - creates index sequence with sizeof...(Ts) elements
 template <typename... Ts> using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
 
-};
+};     // namespace micron

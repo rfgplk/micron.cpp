@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../__special/initializer_list"
+#include "../bits/__container.hpp"
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
@@ -22,55 +23,12 @@ namespace micron
 {
 
 // c++ version of python's bisect array, which maintains sorted order
-template <is_regular_object T, size_t N> class bisect_array
+template <is_regular_object T, size_t N>
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
+class bisect_array
 {
   alignas(64) T stack[N];
   size_t length = 0;
-
-  inline void
-  __impl_zero(T *src)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(T());
-    } else {
-      micron::cmemset<N>(src, 0x0);
-    }
-  }
-
-  void
-  __impl_set(T *__restrict src, const T &val)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = val;
-    } else {
-      micron::cmemset<N>(src, val);
-    }
-  }
-
-  void
-  __impl_copy(T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = dest[i];
-    } else {
-      micron::copy<N>(src, dest);
-    }
-  }
-
-  void
-  __impl_move(T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(dest[i]);
-    } else {
-      micron::copy<N>(src, dest);
-      micron::czero<N>(src);
-    }
-  }
 
   size_t
   __bisect_left(const T &val) const noexcept
@@ -104,6 +62,7 @@ public:
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
+  typedef size_t size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -114,18 +73,9 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  ~bisect_array()
-  {
-    // explicit
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i].~T();
-    } else {
-      micron::czero<N>(micron::addr(stack[0]));
-    }
-  }
+  ~bisect_array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  bisect_array() { __impl_zero(micron::addr(stack[0])); }
+  bisect_array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   template <is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
@@ -133,7 +83,7 @@ public:
   {
     if ( o.size() < N )
       exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
-    __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
+    __impl_container::copy<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
   template <is_container A>
@@ -142,20 +92,12 @@ public:
   {
     if ( o.size() < N )
       exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
-    __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
+    __impl_container::move<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
-  bisect_array(const bisect_array &o)
-  {
-    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
-  }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
+  bisect_array(const bisect_array &o) { __impl_container::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
 
-  bisect_array(bisect_array &&o)
-  {
-    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
-    // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
-    // micron::cmemset<N>(micron::addr(stack[0], 0x0);
-  }
+  bisect_array(bisect_array &&o) { __impl_container::move<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
 
   size_t
   size() const noexcept
@@ -197,6 +139,42 @@ public:
   cend() const noexcept
   {
     return &stack[length];
+  }
+
+  inline iterator
+  get(const size_type n)
+  {
+    if ( n >= N )
+      exc<except::library_error>("micron::array get() out of range");
+    return micron::addr(stack + n);
+  }
+
+  inline const_iterator
+  get(const size_type n) const
+  {
+    if ( n >= N )
+      exc<except::library_error>("micron::array get() out of range");
+    return micron::addr(stack + n);
+  }
+
+  inline const_iterator
+  cget(const size_type n) const
+  {
+    if ( n >= N )
+      exc<except::library_error>("micron::array get() out of range");
+    return micron::addr(stack + n);
+  }
+
+  auto *
+  addr()
+  {
+    return this;
+  }
+
+  const auto *
+  addr() const
+  {
+    return this;
   }
 
   const_iterator
@@ -248,4 +226,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

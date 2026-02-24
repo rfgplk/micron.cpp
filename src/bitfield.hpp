@@ -233,4 +233,4 @@ public:
     return *this;
   }
 };
-};
+};     // namespace micron

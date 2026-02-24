@@ -8,3 +8,4 @@
 #include "stacks/istack.hpp"
 #include "stacks/sstack.hpp"
 #include "stacks/stack.hpp"
+#include "stacks/fstack.hpp"

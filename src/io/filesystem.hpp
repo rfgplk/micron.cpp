@@ -521,5 +521,5 @@ public:
     return false;
   }
 };
-};
-};
+};     // namespace fsys
+};     // namespace micron

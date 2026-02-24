@@ -412,4 +412,4 @@ rscmemmove(F &dest, D &src) noexcept
   return true;
 };
 
-};
+};     // namespace micron

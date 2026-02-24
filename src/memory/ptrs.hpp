@@ -38,4 +38,4 @@ is_valid_ptr(T &&)
   }
   return false;
 }
-};
+};     // namespace micron

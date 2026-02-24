@@ -910,4 +910,4 @@ struct vector_3 {
   }
 };
 
-}
+}     // namespace micron

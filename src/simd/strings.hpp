@@ -31,6 +31,6 @@ sse_strlen(const char *str)
   }
 }
 
-};
+};     // namespace simd
 
-};
+};     // namespace micron

@@ -44,4 +44,4 @@ ppoll(pollfd &pfd, nfds_t nfds, int timeout, sigset_t &ss)
 
 int poll_chk(pollfd &pfd, nfds_t nfds, int timeout);
 
-};
+};     // namespace micron

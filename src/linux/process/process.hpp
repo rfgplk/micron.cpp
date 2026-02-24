@@ -282,4 +282,4 @@ this_process(void)
   return uprocess_t();
 };
 
-};
+};     // namespace micron

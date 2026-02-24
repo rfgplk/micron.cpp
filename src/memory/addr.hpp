@@ -107,4 +107,4 @@ not_null(T *p)
   }     // exc<except::memory_error>("not_null was nullptr");
   return p;
 }
-};
+};     // namespace micron

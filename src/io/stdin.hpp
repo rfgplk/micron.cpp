@@ -44,7 +44,7 @@ void
 copy_to(const fd_t &handle)
 {
 }
-};
+};     // namespace io
 
 // functions intended for reading from the terminal and retrieving the data
 template <bool Echo = false>
@@ -87,4 +87,4 @@ terminal(void)
   return bf;
 }
 
-};
+};     // namespace micron

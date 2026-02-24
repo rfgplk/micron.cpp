@@ -40,6 +40,6 @@ using ino_t = __ino_t;
 using ino64_t = __ino64_t;
 
 using daddr_t = __s32_type;
-};
+};     // namespace posix
 
-};
+};     // namespace micron

@@ -109,5 +109,5 @@ constexpr static const unsigned long long clone_newnet = 0x40000000;
 constexpr static const unsigned long long clone_io = 0x80000000;
 constexpr static const unsigned long long clone_newtime = 0x00000080;
 
-};
-};
+};     // namespace posix
+};     // namespace micron

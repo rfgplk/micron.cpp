@@ -134,5 +134,5 @@ loadu(T *ptr)
 }
 
 #pragma GCC diagnostic pop
-};
-};
+};     // namespace simd
+};     // namespace micron

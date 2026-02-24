@@ -146,5 +146,5 @@ read_raw(const device_t &dev, input_event &event)
   i64 read_bytes = posix::read(dev.bound_fd.fd, &event, sizeof(input_event));
   return (read_bytes == sizeof(input_event));
 };
-};
-};
+};     // namespace uxin
+};     // namespace micron

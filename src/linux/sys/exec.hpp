@@ -37,5 +37,5 @@ fexecve(int fd, char *const argv[], char *const envp[])
   return 0;
 }
 
-};
-};
+};     // namespace posix
+};     // namespace micron

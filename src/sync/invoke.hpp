@@ -125,4 +125,4 @@ not_fn(F &&f)
 {
   return { micron::forward<F>(f) };
 }
-};
+};     // namespace micron

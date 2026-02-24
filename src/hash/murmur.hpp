@@ -229,6 +229,6 @@ murmur(const T *key, const size_t len)
   return { s1, s2 };
 }
 
-};
+};     // namespace hashes
 
-};
+};     // namespace micron

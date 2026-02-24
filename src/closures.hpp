@@ -19,7 +19,7 @@ template <typename F, typename R, typename... Args> struct lambda_return<R (F::*
 };
 
 template <typename F> using lambda_return_t = typename lambda_return<decltype(&F::operator())>::type;
-};
+};     // namespace micron
 
 template <typename T> struct function_traits;
 

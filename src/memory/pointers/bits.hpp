@@ -93,4 +93,4 @@ concept is_nullptr = micron::is_null_pointer_v<T>;
 template <typename T>
 concept is_valid_pointer = micron::is_pointer_v<T> and !micron::is_null_pointer_v<T>;
 
-};
+};     // namespace micron

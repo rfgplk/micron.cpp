@@ -114,4 +114,4 @@ clock_nanosleep(clockid_t clock, int flags, timespec_t &tm, timespec_t *rmn)
 {
   return micron::syscall(SYS_clock_nanosleep, clock, flags, &tm, rmn);
 }
-};
+};     // namespace micron

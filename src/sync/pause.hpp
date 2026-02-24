@@ -151,8 +151,14 @@ void
 sleep_duration(const fduration_t s)
 {
   timespec_t r, rmn;
-  r.tv_sec = static_cast<time_t>(s / 1000.0);
-  r.tv_nsec = static_cast<long>((s - r.tv_sec * 1000) * 1'000'000);     // remainder in ns
+
+  const auto total_ms = s;
+
+  r.tv_sec = static_cast<time64_t>(total_ms / 1000.0);
+
+  const auto frac_ms = total_ms - static_cast<micron::fduration_t>(r.tv_sec) * 1000.0;
+
+  r.tv_nsec = static_cast<long>(frac_ms * 1'000'000.0);
   while ( micron::nanosleep(r, rmn) == -error::interrupted ) {
     r = rmn;
     __cpu_pause();
@@ -211,4 +217,4 @@ sleep_nano(umax_t ns)
   }
 }
 
-};
+};     // namespace micron

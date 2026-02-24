@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "allocation/resources.hpp"
 #include "allocator.hpp"
+#include "memory/allocation/resources.hpp"
 
 #include "algorithm/memory.hpp"
 #include "memory/addr.hpp"
@@ -52,11 +52,11 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     // this->destroy(to_chunk(__mem::memory, __mem::capacity));
   }
 
-  slice() : __mem(Alloc::auto_size()) { __mem::length = __mem::capacity; };
+  slice(void) : __mem(Alloc::auto_size()) { __mem::length = __mem::capacity; };
 
   slice(T *a, T *b) : __mem(((static_cast<size_t>(b - a) / sizeof(T))))
   {
-    micron::memcpy(&__mem::memory[0], a, b - a);
+    micron::memcpy(micron::addr(__mem::memory[0]), a, b - a);
     __mem::length = b - a;
   };
 
@@ -114,7 +114,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   operator=(const byte n)
   {
-    micron::memset(&__mem::memory[0], n, __mem::length);
+    micron::memset(micron::addr(__mem::memory[0]), n, __mem::length);
     return *this;
   }
 
@@ -148,43 +148,43 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice
   operator[](const size_t n, const size_t m) const
   {     // from-to
-    return slice<T, Alloc>(&__mem::memory[n], &__mem::memory[m]);
+    return slice<T, Alloc>(micron::addr(__mem::memory[n], micron::addr(__mem::memory[m])));
   }
 
   slice
   operator[](void) const
   {     // from-to
-    return slice<T, Alloc>(&__mem::memory[0], &__mem::memory[__mem::length]);
+    return slice<T, Alloc>(micron::addr(__mem::memory[0]), micron::addr(__mem::memory[__mem::length]));
   }
 
   iterator
   data()
   {
-    return &__mem::memory[0];
+    return micron::addr(__mem::memory[0]);
   }
 
   iterator
   begin()
   {
-    return &__mem::memory[0];
+    return micron::addr(__mem::memory[0]);
   }
 
   iterator
   end()
   {
-    return &__mem::memory[__mem::length - 1];
+    return micron::addr(__mem::memory[__mem::length - 1]);
   }
 
   const_iterator
   cbegin() const
   {
-    return &__mem::memory[0];
+    return micron::addr(__mem::memory[0]);
   }
 
   const_iterator
   cend() const
   {
-    return &__mem::memory[__mem::length - 1];
+    return micron::addr(__mem::memory[__mem::length - 1]);
   }
 
   size_t

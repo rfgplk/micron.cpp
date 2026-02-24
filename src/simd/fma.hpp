@@ -116,8 +116,8 @@ fms(T &o, T &b, T &c)
   return _mm256_fmsub_ps(o, b, c);
 }
 
-};
-};
-};
+};     // namespace fma
+};     // namespace simd
+};     // namespace micron
 
 #pragma GCC diagnostic pop

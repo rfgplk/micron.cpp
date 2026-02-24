@@ -30,4 +30,4 @@ using micron::posix::setgid;
 using micron::posix::setpgid;
 using micron::posix::setsid;
 using micron::posix::setuid;
-};
+};     // namespace micron

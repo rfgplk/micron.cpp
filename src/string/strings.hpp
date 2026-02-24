@@ -308,4 +308,4 @@ operator>(const hstring<T> &lhs, const hstring<T> &rhs)
 {
   return lexi_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end());
 }
-};
+};     // namespace micron

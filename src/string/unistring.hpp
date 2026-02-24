@@ -270,4 +270,4 @@ to_string(const T (&str)[N])
     return micron::hstring<T>(str);
 };
 
-};
+};     // namespace micron

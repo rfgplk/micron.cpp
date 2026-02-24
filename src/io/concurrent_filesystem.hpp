@@ -582,5 +582,5 @@ public:
   }
 };
 
-};
-};
+};     // namespace fsys
+};     // namespace micron

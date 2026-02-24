@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../__special/initializer_list"
+#include "../bits/__container.hpp"
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
@@ -15,6 +16,7 @@
 #include "../math/trig.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/memory.hpp"
+#include "../slice_forward.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
 
@@ -27,61 +29,17 @@ namespace micron
 // general purpose concurrent array class, stack allocated, thread-safe, mutable.
 // default to 64
 template <is_regular_object T, size_t N = 64>
-  requires(N > 0)     // avoid weird stuff with N = 0
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 class conarray
 {
   micron::mutex __mtx;
   alignas(64) T stack[N];
 
-  inline void
-  __impl_zero(T *src)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(T());
-    } else {
-      micron::cmemset<N>(src, 0x0);
-    }
-  }
-
-  void
-  __impl_set(T *__restrict src, const T &val)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = val;
-    } else {
-      micron::cmemset<N>(src, val);
-    }
-  }
-
-  void
-  __impl_copy(T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = dest[i];
-    } else {
-      micron::copy<N>(src, dest);
-    }
-  }
-
-  void
-  __impl_move(T *__restrict src, T *__restrict dest)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i] = micron::move(dest[i]);
-    } else {
-      micron::copy<N>(src, dest);
-      micron::czero<N>(src);
-    }
-  }
-
 public:
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
+  typedef size_t size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -92,20 +50,11 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  ~conarray()
-  {
-    // explicit
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < N; i++ )
-        stack[i].~T();
-    } else {
-      micron::czero<N>(micron::addr(stack[0]));
-    }
-  }
+  ~conarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  conarray() { __impl_zero(micron::addr(stack[0])); }
+  conarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  conarray(const T &o) { __impl_set(micron::addr(stack[0]), o); }
+  conarray(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
 
   conarray(const std::initializer_list<T> &&lst)
   {
@@ -122,7 +71,7 @@ public:
   {
     if ( o.size() < N )
       exc<except::runtime_error>("micron::conarray conarray(const&) invalid size");
-    __impl_copy(micron::addr(o[0]), micron::addr(stack[0]));
+    __impl_container::copy<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
   template <is_container A>
@@ -131,21 +80,21 @@ public:
   {
     if ( o.size() < N )
       exc<except::runtime_error>("micron::conarray conarray(&&) invalid size");
-    __impl_move(micron::addr(o[0]), micron::addr(stack[0]));
+    __impl_container::move<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
   conarray(const conarray &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
-    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
   }     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]); }
 
   conarray(conarray &&o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
-    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::move<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
     // micron::copy<N>(micron::addr(o.stack[0], micron::addr(stack[0]);
-    // micron::cmemset<N>(micron::addr(stack[0], 0x0);
+    // micron::ctypeset<N>(micron::addr(stack[0], 0x0);
   }
 
   const_iterator
@@ -210,7 +159,7 @@ public:
     requires micron::is_array_v<F> && (M <= N)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __impl_copy(micron::addr(o.stack[0]), &o[0]);
+    __impl_container::copy<N>(micron::addr(o.stack[0]), &o[0]);
     // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
@@ -221,7 +170,7 @@ public:
     requires micron::is_fundamental_v<F>
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    micron::cmemset<N>(micron::addr(stack[0]), o);
+    __impl_container::set<N>(micron::addr(stack[0]), o);
     return *this;
   }
 
@@ -229,7 +178,7 @@ public:
   operator=(const conarray &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __impl_copy(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
 
@@ -237,7 +186,7 @@ public:
   operator=(conarray &&o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __impl_move(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::move<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
 
@@ -419,7 +368,7 @@ public:
     requires micron::is_fundamental_v<F>
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    micron::cmemset<N>(micron::addr(stack[0]), o);
+    __impl_container::set<N>(micron::addr(stack[0]), o);
     return *this;
   }
 
@@ -427,6 +376,12 @@ public:
   is_pod()
   {
     return micron::is_pod_v<T>;
+  }
+
+  static constexpr bool
+  is_class()
+  {
+    return micron::is_class_v<T>;
   }
 };
 };     // namespace micron

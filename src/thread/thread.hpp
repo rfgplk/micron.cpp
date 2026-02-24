@@ -67,7 +67,7 @@ template <typename Tr = auto_thread<>, typename Func, typename... Args>
 auto
 spawn(Func f, const Args &...args) -> __thread_pointer<Tr>
 {
-  return __thread_pointer<Tr>(f, micron::forward<Args &>(args)...);
+  return __thread_pointer<Tr>(f, micron::forward<const Args &>(args)...);
 }
 
 template <typename Tr = auto_thread<>, typename Func, typename... Args>
@@ -393,5 +393,5 @@ kill(Args &...t)
   return 0;
 }
 
-};
-};
+};     // namespace solo
+};     // namespace micron

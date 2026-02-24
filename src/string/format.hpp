@@ -1277,6 +1277,56 @@ find(const T &data, typename T::iterator from, const char *fnd) -> typename T::i
 
 template <is_string T>
 auto
+find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> typename T::const_iterator
+{
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
+  if ( !from )
+    return nullptr;
+  size_t sz = fnd.size();
+  if ( sz > data.size() )
+    return nullptr;
+  if ( data.empty() or sz == 0 )
+    return nullptr;
+  for ( auto itr = from; itr != data.begin(); --itr ) {
+    u64 j = 0;
+    while ( (itr + j) != data.begin() && j <= sz && *(itr + j) == fnd[j] ) {
+      ++j;
+    }
+    if ( j == sz ) {
+      return itr;
+    }
+  }
+  return (typename T::iterator) nullptr;
+}
+
+template <is_string T>
+auto
+find_reverse(const T &data, typename T::const_iterator from, const char *fnd) -> typename T::const_iterator
+{
+  if ( from < data.begin() or from >= data.end() )
+    return nullptr;
+  if ( !from )
+    return nullptr;
+  size_t sz = micron::strlen(fnd);
+  if ( sz > data.size() )
+    return nullptr;
+  if ( data.empty() or sz == 0 )
+    return nullptr;
+  for ( auto itr = from; itr != data.begin(); --itr ) {
+    u64 j = 0;
+    while ( (itr + j) != data.begin() && j <= sz && *(itr + j) == fnd[j] ) {
+      ++j;
+    }
+    if ( j == sz ) {
+      return itr;
+    }
+  }
+  return (typename T::iterator) nullptr;
+}
+
+template <is_string T>
+auto
 find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
   if ( from < data.begin() or from >= data.end() )

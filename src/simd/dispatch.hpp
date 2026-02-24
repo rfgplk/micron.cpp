@@ -79,5 +79,5 @@ __runtime_check(void)
 }
 #endif
 
-};
-};
+};     // namespace simd
+};     // namespace micron

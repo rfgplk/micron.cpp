@@ -1,4 +1,3 @@
-
 //  Copyright (c) 2024- David Lucius Severus
 //
 //  Distributed under the Boost Software License, Version 1.0.
@@ -17,6 +16,8 @@
 
 #include "../concepts.hpp"
 
+#include "../sort/heap.hpp"
+
 namespace micron
 {
 
@@ -27,8 +28,8 @@ melt(const T &obj)
 {
   T out;
   using Row = typename T::value_type;
-  for ( size_t i = 0; i < obj[0].size(); i++ ) {
-    for ( size_t j = 0; j < obj.size(); j++ ) {
+  for ( umax_t i = 0; i < obj[0].size(); i++ ) {
+    for ( umax_t j = 0; j < obj.size(); j++ ) {
       Row r(2);
       r[0] = obj[j][i];
       r[1] = static_cast<typename Row::value_type>(j);
@@ -40,12 +41,13 @@ melt(const T &obj)
 
 template <is_iterable_container T>
   requires micron::is_arithmetic_v<typename T::value_type>
-micron::fvector<size_t>
+T
 cut(const T &obj, const T &bins)
 {
-  micron::fvector<size_t> out(obj.size());
-  for ( size_t i = 0; i < obj.size(); i++ ) {
-    size_t bin_index = 0;
+  T out;
+  out.resize(obj.size());
+  for ( umax_t i = 0; i < obj.size(); i++ ) {
+    umax_t bin_index = 0;
     while ( bin_index < bins.size() - 1 && obj[i] > bins[bin_index + 1] )
       bin_index++;
     out[i] = bin_index;
@@ -53,7 +55,7 @@ cut(const T &obj, const T &bins)
   return out;
 }
 
-template <template I, template J, template O>
+template <typename I, typename J, typename O>
 constexpr O
 merge(I first1, I last1, J first2, J last2, O d_first)
 {
@@ -166,7 +168,315 @@ cycle_rotate(I first, I n_first, I last)
   return first + (last - n_first);
 }
 
+template <typename T, typename Cmp>
+constexpr void
+__sift_down(T *first, umax_t start, umax_t end, Cmp comp)
+{
+  umax_t root = start;
+  while ( true ) {
+    umax_t child = 2 * root + 1;
+    if ( child >= end )
+      break;
+    if ( child + 1 < end && comp(first[child], first[child + 1]) )
+      child++;
+    if ( comp(first[root], first[child]) ) {
+      micron::swap(first[root], first[child]);
+      root = child;
+    } else {
+      break;
+    }
+  }
 }
+
+template <typename T, typename Cmp>
+constexpr void
+__sift_up(T *first, umax_t idx, Cmp comp) noexcept
+{
+  while ( idx > 0 ) {
+    umax_t parent = (idx - 1) >> 1;
+
+    if ( !comp(first[parent], first[idx]) )
+      return;
+
+    auto tmp = micron::move(first[parent]);
+    first[parent] = micron::move(first[idx]);
+    first[idx] = micron::move(tmp);
+
+    idx = parent;
+  }
+}
+
+template <is_iterable_container C>
+constexpr void
+make_heap(C &c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  umax_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  for ( umax_t i = (n >> 1); i > 0; ) {
+    --i;
+    __sift_down(c.begin(), i, n, comp);
+  }
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+make_heap(C &c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  for ( umax_t i = (n >> 1); i > 0; ) {
+    --i;
+    __sift_down(c.begin(), i, n, comp);
+  }
+}
+
+template <is_iterable_container C>
+constexpr void
+make_heap(C &c, typename C::umax_type lim) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  if ( lim < 2 )
+    return;
+
+  for ( umax_t i = (lim >> 1); i > 0; ) {
+    --i;
+    __sift_down(c.begin(), i, lim, comp);
+  }
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+make_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
+{
+  if ( lim < 2 )
+    return;
+
+  for ( umax_t i = (lim >> 1); i > 0; ) {
+    --i;
+    __sift_down(c.begin(), i, lim, comp);
+  }
+}
+
+template <is_iterable_container C>
+constexpr void
+push_heap(C &c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  umax_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  __sift_up(c.begin(), n - 1, comp);
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+push_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
+{
+  if ( lim < 2 )
+    return;
+
+  __sift_up(c.begin(), lim - 1, comp);
+}
+
+template <is_iterable_container C>
+constexpr void
+push_heap(C &c, typename C::umax_type lim) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  if ( lim < 2 )
+    return;
+
+  __sift_up(c.begin(), lim - 1, comp);
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+push_heap(C &c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  __sift_up(c.begin(), n - 1, comp);
+}
+
+template <is_iterable_container C>
+constexpr void
+pop_heap(C &c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  umax_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[n - 1]);
+  first[n - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, n - 1, comp);
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+pop_heap(C &c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  if ( n < 2 )
+    return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[n - 1]);
+  first[n - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, n - 1, comp);
+}
+
+template <is_iterable_container C>
+constexpr void
+pop_heap(C &c, typename C::umax_type lim) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  if ( lim < 2 )
+    return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[lim - 1]);
+  first[lim - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, lim - 1, comp);
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+pop_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
+{
+  if ( lim < 2 )
+    return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[lim - 1]);
+  first[lim - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, lim - 1, comp);
+}
+
+template <is_iterable_container C>
+constexpr void
+sort_heap(C &c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a > b; };     // max
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  while ( n > 1 ) {
+    auto tmp = micron::move(first[0]);
+    first[0] = micron::move(first[n - 1]);
+    first[n - 1] = micron::move(tmp);
+
+    --n;
+    __sift_down(first, 0, n, comp);
+  }
+}
+
+template <is_iterable_container C>
+constexpr void
+sort_heap_min(C &c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };     // min
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  while ( n > 1 ) {
+    auto tmp = micron::move(first[0]);
+    first[0] = micron::move(first[n - 1]);
+    first[n - 1] = micron::move(tmp);
+
+    --n;
+    __sift_down(first, 0, n, comp);
+  }
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr void
+sort_heap(C &c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  while ( n > 1 ) {
+    auto tmp = micron::move(first[0]);
+    first[0] = micron::move(first[n - 1]);
+    first[n - 1] = micron::move(tmp);
+
+    --n;
+    __sift_down(first, 0, n, comp);
+  }
+}
+
+template <is_iterable_container C>
+constexpr bool
+is_heap(const C &c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &a, const T &b) { return a < b; };
+
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  for ( umax_t i = 1; i < n; ++i ) {
+    umax_t parent = (i - 1) >> 1;
+    if ( comp(first[parent], first[i]) )
+      return false;
+  }
+
+  return true;
+}
+
+template <is_iterable_container C, typename Cmp>
+constexpr bool
+is_heap(const C &c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  for ( umax_t i = 1; i < n; ++i ) {
+    umax_t parent = (i - 1) >> 1;
+    if ( comp(first[parent], first[i]) )
+      return false;
+  }
+
+  return true;
+}
+
+}     // namespace micron
 
 // TODO: implement all of this, from pandas
 

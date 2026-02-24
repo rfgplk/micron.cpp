@@ -330,4 +330,4 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   }
 };
 
-};
+};     // namespace micron

@@ -137,7 +137,8 @@ template <typename Fn, typename... Args> struct __impl_thread {
     auto *self = static_cast<__impl_thread *>(p);
     __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
     __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
-    delete self;
+    // NOTE: these deletes will technically run at program clea
+    // delete self;
     return nullptr;
   }
 
@@ -151,9 +152,9 @@ private:
 
   template <size_t... I>
   static void
-  __cleanup(__impl_thread *self, micron::index_sequence<I...>)
+  __cleanup([[maybe_unused]] __impl_thread *self, micron::index_sequence<I...>)
   {
-    (delete static_cast<Args *>(self->args[I]), ...);
+    //(delete static_cast<Args *>(self->args[I]), ...);
   }
 };
 
@@ -334,6 +335,6 @@ cancel(void)
   pthread_testcancel();
 }
 
-};
+};     // namespace pthread
 
-};
+};     // namespace micron

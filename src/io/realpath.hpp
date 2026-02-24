@@ -31,7 +31,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   bool allocated = false;
 
   if ( !resolved_path ) {
-    result_buf = static_cast<char *>(reinterpret_cast<char *>(
+    result_buf = (reinterpret_cast<char *>(
         micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0)));
 
     allocated = true;
@@ -59,7 +59,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
       temp_fd /= 10;
     }
     for ( int j = digit_count - 1; j >= 0; --j ) {
-      fd_str[idx++] = '0' + digits[j];
+      fd_str[idx++] = '0' + static_cast<char>(digits[j]);
     }
   }
   fd_str[idx] = '\0';
@@ -70,7 +70,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   }
   proc_path[i] = '\0';
 
-  ssize_t len = static_cast<ssize_t>(micron::syscall(SYS_readlink, proc_path, result_buf, posix::path_max - 1));
+  ssize_t len = (micron::syscall(SYS_readlink, proc_path, result_buf, posix::path_max - 1));
 
   close(fd);
   if ( len < 0 ) {
@@ -121,4 +121,4 @@ realpath(const sstring<M, U> &path, sstring<N, T> &resolved)
   return realpath(path.c_str(), resolved);
 }
 
-};
+};     // namespace micron

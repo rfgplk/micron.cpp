@@ -15,6 +15,10 @@
 #include "linux/sys/types.hpp"
 #include "type_traits.hpp"
 
+// must surpress int128 extensions
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 typedef unsigned char __u_char;
 typedef unsigned short int __u_short;
 typedef unsigned int __u_int;
@@ -26,6 +30,11 @@ using int8_t = __INT8_TYPE__;
 using int16_t = __INT16_TYPE__;
 using int32_t = __INT32_TYPE__;
 using int64_t = __INT64_TYPE__;
+using int64_t = __INT64_TYPE__;
+#if __wordsize == 64
+using int128_t = __int128;
+using uint128_t = __uint128_t;
+#endif
 
 using ptrdiff_t = __PTRDIFF_TYPE__;
 using intptr_t = __INTPTR_TYPE__;
@@ -122,6 +131,11 @@ using p16 = fint16_t;
 using p32 = fint32_t;
 using p64 = fint64_t;
 
+#if __wordsize == 64
+using u128 = uint128_t;
+using i128 = int128_t;
+#endif
+
 using byte = uint8_t;
 using p64 = uintptr_t;
 
@@ -148,6 +162,21 @@ using ff = float;
 using df = double;
 
 using nullptr_t = decltype(nullptr);
+
+namespace micron
+{
+union max_align_t {
+  char c;
+  short s;
+  int i;
+  long l;
+  long long ll;
+  float f;
+  double d;
+  long double ld;
+  void *p;
+};
+};     // namespace micron
 
 struct __ct_type_checker {
   static constexpr bool
@@ -292,3 +321,5 @@ struct __ct_type_checker {
 // Compile-time trigger
 constexpr bool __type_sizes_ok = __ct_type_checker::check();
 constexpr bool __posix_type_sizes_ok = __ct_type_checker::check_posix();
+
+#pragma GCC diagnostic pop

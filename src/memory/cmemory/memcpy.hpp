@@ -654,4 +654,4 @@ svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcep
   return _dest;
 };
 
-};
+};     // namespace micron

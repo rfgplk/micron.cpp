@@ -207,5 +207,5 @@ none_set_256(const void *_ptr, size_t len, const char b)
   return true;
 }
 
-};
-};
+};     // namespace simd
+};     // namespace micron

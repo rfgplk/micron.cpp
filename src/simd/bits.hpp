@@ -77,4 +77,4 @@ store_fence(void)
   sfence();
 }
 
-};
+};     // namespace micron

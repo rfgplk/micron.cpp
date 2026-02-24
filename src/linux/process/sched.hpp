@@ -24,4 +24,4 @@ struct sched_attr {
   u32 sched_util_max;
 };
 
-};
+};     // namespace micron

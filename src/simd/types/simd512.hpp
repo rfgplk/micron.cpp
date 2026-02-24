@@ -20,13 +20,13 @@ template <is_simd_512_type T, is_flag_type F> class v512
   inline void
   __impl_zero_init(void)
   {
-    if constexpr ( stdlib::same_as<T, f512> ) {
+    if constexpr ( micron::same_as<T, f512> ) {
       value = _mm512_setzero_ps();
     }
-    if constexpr ( stdlib::same_as<T, d512> ) {
+    if constexpr ( micron::same_as<T, d512> ) {
       value = _mm512_setzero_pd();
     }
-    if constexpr ( stdlib::same_as<T, i512> ) {
+    if constexpr ( micron::same_as<T, i512> ) {
       value = _mm512_setzero_si512();
     }
   }
@@ -34,13 +34,13 @@ template <is_simd_512_type T, is_flag_type F> class v512
   inline void
   __impl_one_init(void)
   {
-    if constexpr ( stdlib::same_as<T, f512> ) {
+    if constexpr ( micron::same_as<T, f512> ) {
       value = _mm512_castsi512_pd(_mm512_set1_epi32(-1));
     }
-    if constexpr ( stdlib::same_as<T, d512> ) {
+    if constexpr ( micron::same_as<T, d512> ) {
       value = _mm512_castsi512_ps(_mm512_set1_epi64(-1));
     }
-    if constexpr ( stdlib::same_as<T, i512> ) {
+    if constexpr ( micron::same_as<T, i512> ) {
       value = _mm512_set1_epi32(-1);
     }
   }
@@ -168,37 +168,37 @@ public:
 
   // end of ints
   v512(i8 _e0)
-    requires stdlib::is_same_v<T, i512>
+    requires micron::is_same_v<T, i512>
   {
     value = _mm512_set1_epi8(_e0);
   }
 
   v512(i16 _e0)
-    requires stdlib::is_same_v<T, i512>
+    requires micron::is_same_v<T, i512>
   {
     value = _mm512_set1_epi16(_e0);
   }
 
   v512(i32 a)
-    requires stdlib::is_same_v<T, i512>
+    requires micron::is_same_v<T, i512>
   {
     value = _mm512_set1_epi32(a);
   }
 
   v512(i64 a)
-    requires stdlib::is_same_v<T, i512>
+    requires micron::is_same_v<T, i512>
   {
     value = _mm512_set1_epi64(a);
   }
 
   v512(float a)
-    requires stdlib::is_same_v<T, f512>
+    requires micron::is_same_v<T, f512>
   {
     value = _mm512_set1_ps(a);
   }
 
   v512(double a)
-    requires stdlib::is_same_v<T, d512>
+    requires micron::is_same_v<T, d512>
   {
     value = _mm512_set1_pd(a);
   }
@@ -313,13 +313,13 @@ public:
 
   v512(v512 &&o) : value(o.value)
   {
-    if constexpr ( stdlib::same_as<T, f512> ) {
+    if constexpr ( micron::same_as<T, f512> ) {
       o.value = _mm512_setzero_ps();
     }
-    if constexpr ( stdlib::same_as<T, d512> ) {
+    if constexpr ( micron::same_as<T, d512> ) {
       o.value = _mm512_setzero_pd();
     }
-    if constexpr ( stdlib::same_as<T, i512> ) {
+    if constexpr ( micron::same_as<T, i512> ) {
       o.value = _mm512_setzero_si512();
     }
   }
@@ -393,24 +393,24 @@ public:
   operator==(const v512 &o) const
   {
     {
-      if constexpr ( stdlib::is_same_v<T, f512> ) {
+      if constexpr ( micron::is_same_v<T, f512> ) {
         T _r = _mm512_cmpeq_ps(value, o.value);
         return _mm512_movemask_ps(_r);
-      } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+      } else if constexpr ( micron::is_same_v<T, d512> ) {
         T _r = _mm512_cmpeq_pd(value, o.value);
         return _mm512_movemask_pd(_r);
-      } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+      } else if constexpr ( micron::is_same_v<T, i512> ) {
         T _r;
-        if constexpr ( stdlib::is_same_v<F, __v8> ) {
+        if constexpr ( micron::is_same_v<F, __v8> ) {
           _r = _mm512_cmpeq_epi8(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v16> ) {
+        if constexpr ( micron::is_same_v<F, __v16> ) {
           _r = _mm512_cmpeq_epi16(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v32> ) {
+        if constexpr ( micron::is_same_v<F, __v32> ) {
           _r = _mm512_cmpeq_epi32(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v64> ) {
+        if constexpr ( micron::is_same_v<F, __v64> ) {
           _r = _mm512_cmpeq_epi64(value, o.value);
         }
         return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
@@ -423,24 +423,24 @@ public:
   operator>=(const v512 &o) const
   {
     {
-      if constexpr ( stdlib::is_same_v<T, f512> ) {
+      if constexpr ( micron::is_same_v<T, f512> ) {
         T _r = _mm512_cmpge_ps(value, o.value);
         return _mm512_movemask_ps(_r);
-      } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+      } else if constexpr ( micron::is_same_v<T, d512> ) {
         T _r = _mm512_cmpge_pd(value, o.value);
         return _mm512_movemask_pd(_r);
-      } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+      } else if constexpr ( micron::is_same_v<T, i512> ) {
         T _r;
-        if constexpr ( stdlib::is_same_v<F, __v8> ) {
+        if constexpr ( micron::is_same_v<F, __v8> ) {
           _r = _mm512_cmpge_epi8(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v16> ) {
+        if constexpr ( micron::is_same_v<F, __v16> ) {
           _r = _mm512_cmpge_epi16(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v32> ) {
+        if constexpr ( micron::is_same_v<F, __v32> ) {
           _r = _mm512_cmpge_epi32(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v64> ) {
+        if constexpr ( micron::is_same_v<F, __v64> ) {
           _r = _mm512_cmpge_epi64(value, o.value);
         }
         return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
@@ -453,24 +453,24 @@ public:
   operator>(const v512 &o) const
   {
     {
-      if constexpr ( stdlib::is_same_v<T, f512> ) {
+      if constexpr ( micron::is_same_v<T, f512> ) {
         T _r = _mm512_cmpgt_ps(value, o.value);
         return _mm512_movemask_ps(_r);
-      } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+      } else if constexpr ( micron::is_same_v<T, d512> ) {
         T _r = _mm512_cmpgt_pd(value, o.value);
         return _mm512_movemask_pd(_r);
-      } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+      } else if constexpr ( micron::is_same_v<T, i512> ) {
         T _r;
-        if constexpr ( stdlib::is_same_v<F, __v8> ) {
+        if constexpr ( micron::is_same_v<F, __v8> ) {
           _r = _mm512_cmpgt_epi8(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v16> ) {
+        if constexpr ( micron::is_same_v<F, __v16> ) {
           _r = _mm512_cmpgt_epi16(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v32> ) {
+        if constexpr ( micron::is_same_v<F, __v32> ) {
           _r = _mm512_cmpgt_epi32(value, o.value);
         }
-        if constexpr ( stdlib::is_same_v<F, __v64> ) {
+        if constexpr ( micron::is_same_v<F, __v64> ) {
           _r = _mm512_cmpgt_epi64(value, o.value);
         }
         return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
@@ -482,24 +482,24 @@ public:
   constexpr int
   operator<(const v512 &o) const
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       T _r = _mm512_cmplt_ps(value, o.value);
       return _mm512_movemask_ps(_r);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       T _r = _mm512_cmplt_pd(value, o.value);
       return _mm512_movemask_pd(_r);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
       T _r;
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         _r = _mm512_cmplt_epi8(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         _r = _mm512_cmplt_epi16(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         _r = _mm512_cmplt_epi32(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v64> ) {
+      if constexpr ( micron::is_same_v<F, __v64> ) {
         _r = _mm512_cmplt_epi64(value, o.value);
       }
       return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
@@ -510,24 +510,24 @@ public:
   constexpr int
   operator<=(const v512 &o) const
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       T _r = _mm512_cmple_ps(value, o.value);
       return _mm512_movemask_ps(_r);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       T _r = _mm512_cmple_pd(value, o.value);
       return _mm512_movemask_pd(_r);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
       T _r;
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         _r = _mm512_cmple_epi8(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         _r = _mm512_cmple_epi16(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         _r = _mm512_cmple_epi32(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v64> ) {
+      if constexpr ( micron::is_same_v<F, __v64> ) {
         _r = _mm512_cmple_epi64(value, o.value);
       }
       return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
@@ -539,7 +539,7 @@ public:
   constexpr inline v512 &
   operator+=(double x)
   {
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
       value = _mm512_add_pd(value, _r);
     }
@@ -549,7 +549,7 @@ public:
   constexpr inline v512 &
   operator+=(float x)
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
       value = _mm512_add_ps(value, _r);
     }
@@ -561,20 +561,20 @@ public:
   operator+=(A x)
     requires is_int_flag_type<A>
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<A, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<A, __v8> ) {
         i512 _r = _mm512_set1_epi8(x);
         value = _mm512_add_epi8(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v16> ) {
+      if constexpr ( micron::is_same_v<A, __v16> ) {
         i512 _r = _mm512_set1_epi16(x);
         value = _mm512_add_epi16(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v32> ) {
+      if constexpr ( micron::is_same_v<A, __v32> ) {
         i512 _r = _mm512_set1_epi32(x);
         value = _mm512_add_epi32(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v64> ) {
+      if constexpr ( micron::is_same_v<A, __v64> ) {
         i512 _r = _mm512_set1_epi64(x);
         value = _mm512_add_epi64(value, _r);
       }
@@ -588,7 +588,7 @@ public:
   constexpr inline v512 &
   operator-=(double x)
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       d512 _r = _mm512_set1_pd(x);
       value = _mm512_sub_pd(value, _r);
     }
@@ -598,7 +598,7 @@ public:
   constexpr inline v512 &
   operator-=(float x)
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
       value = _mm512_sub_ps(value, _r);
     }
@@ -610,20 +610,20 @@ public:
   operator-=(A x)
     requires is_int_flag_type<A>
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<A, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<A, __v8> ) {
         i512 _r = _mm512_set1_epi8(x);
         value = _mm512_sub_epi8(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v16> ) {
+      if constexpr ( micron::is_same_v<A, __v16> ) {
         i512 _r = _mm512_set1_epi16(x);
         value = _mm512_sub_epi16(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v32> ) {
+      if constexpr ( micron::is_same_v<A, __v32> ) {
         i512 _r = _mm512_set1_epi32(x);
         value = _mm512_sub_epi32(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v64> ) {
+      if constexpr ( micron::is_same_v<A, __v64> ) {
         i512 _r = _mm512_set1_epi64(x);
         value = _mm512_sub_epi64(value, _r);
       }
@@ -635,21 +635,21 @@ public:
   constexpr inline v512 &
   operator-=(const v512 &o)
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       value = _mm512_sub_ps(value, o.value);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       value = _mm512_sub_pd(value, o.value);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         value = _mm512_sub_epi8(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         value = _mm512_sub_epi16(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         value = _mm512_sub_epi32(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v64> ) {
+      if constexpr ( micron::is_same_v<F, __v64> ) {
         value = _mm512_sub_epi64(value, o.value);
       }
     }
@@ -660,21 +660,21 @@ public:
   operator+(const v512 &o) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       _r = _mm512_add_ps(value, o.value);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       _r = _mm512_add_pd(value, o.value);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         _r = _mm512_add_epi8(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         _r = _mm512_add_epi16(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         _r = _mm512_add_epi32(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v64> ) {
+      if constexpr ( micron::is_same_v<F, __v64> ) {
         _r = _mm512_add_epi64(value, o.value);
       }
     }
@@ -685,21 +685,21 @@ public:
   operator-(const v512 &o) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       _r = _mm512_sub_ps(value, o.value);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       _r = _mm512_sub_pd(value, o.value);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         _r = _mm512_sub_epi8(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         _r = _mm512_sub_epi16(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         _r = _mm512_sub_epi32(value, o.value);
       }
-      if constexpr ( stdlib::is_same_v<F, __v64> ) {
+      if constexpr ( micron::is_same_v<F, __v64> ) {
         _r = _mm512_sub_epi64(value, o.value);
       }
     }
@@ -709,11 +709,11 @@ public:
   constexpr bool
   all_zeroes() const
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       return (_mm512_movemask_ps(value) == 0x0);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       return (_mm512_movemask_pd(value) == 0x0);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
       return (_mm512_test_all_zeros(value, value) != 0);
     }
   }
@@ -721,11 +721,11 @@ public:
   constexpr bool
   all_ones() const
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       return (_mm512_movemask_ps(value) == 0b1111);
-    } else if constexpr ( stdlib::is_same_v<T, d512> ) {
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
       return (_mm512_movemask_pd(value) == 0b11);
-    } else if constexpr ( stdlib::is_same_v<T, i512> ) {
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
       return (_mm512_test_all_ones(value) != 0);
     }
   }
@@ -821,13 +821,13 @@ public:
   inline v512 &
   operator|=(const v512 &o)
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
       value = _mm512_or_si512(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       value = _mm512_or_ps(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       value = _mm512_or_pd(value, o.value);
     }
     return *this;
@@ -836,13 +836,13 @@ public:
   inline v512 &
   operator&=(const v512 &o)
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
       value = _mm512_and_si512(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       value = _mm512_and_ps(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       value = _mm512_and_pd(value, o.value);
     }
     return *this;
@@ -851,13 +851,13 @@ public:
   inline v512 &
   operator^=(const v512 &o)
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
       value = _mm512_xor_si512(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       value = _mm512_xor_ps(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       value = _mm512_xor_pd(value, o.value);
     }
     return *this;
@@ -867,13 +867,13 @@ public:
   operator|(const v512 &o) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
       _r = _mm512_or_si512(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       _r = _mm512_or_ps(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       _r = _mm512_or_pd(value, o.value);
     }
     return _r;
@@ -883,13 +883,13 @@ public:
   operator&(const v512 &o) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
       _r = _mm512_and_si512(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       _r = _mm512_and_ps(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       _r = _mm512_and_pd(value, o.value);
     }
     return _r;
@@ -899,13 +899,13 @@ public:
   operator^(const v512 &o) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
       _r = _mm512_xor_si512(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       _r = _mm512_xor_ps(value, o.value);
     }
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       _r = _mm512_xor_pd(value, o.value);
     }
     return _r;
@@ -915,14 +915,14 @@ public:
   operator<<(int i) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         _r = _mm512_srai_epi8(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         _r = _mm512_srai_epi16(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         _r = _mm512_srai_epi32(value, i);
       }
     }
@@ -932,14 +932,14 @@ public:
   inline v512 &
   operator<<=(int i)
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         value = _mm512_srai_epi8(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         value = _mm512_srai_epi16(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         value = _mm512_srai_epi32(value, i);
       }
     }
@@ -950,14 +950,14 @@ public:
   operator>>(int i) const
   {
     T _r;
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         _r = _mm512_slai_epi8(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         _r = _mm512_slai_epi16(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         _r = _mm512_slai_epi32(value, i);
       }
     }
@@ -967,14 +967,14 @@ public:
   inline v512 &
   operator>>=(int i)
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         value = _mm512_slai_epi8(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         value = _mm512_slai_epi16(value, i);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         value = _mm512_slai_epi32(value, i);
       }
     }
@@ -987,7 +987,7 @@ public:
   constexpr inline v512 &
   operator/=(double x)
   {
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
       value = _mm512_div_pd(value, _r);
     }
@@ -997,7 +997,7 @@ public:
   constexpr inline v512 &
   operator/=(float x)
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
       value = _mm512_div_ps(value, _r);
     }
@@ -1008,7 +1008,7 @@ public:
   operator/(double x) const
   {
     T _d;
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
       _d = _mm512_div_pd(value, _r);
     }
@@ -1019,7 +1019,7 @@ public:
   operator/(float x) const
   {
     T _d;
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
       _d = _mm512_div_ps(value, _r);
     }
@@ -1029,7 +1029,7 @@ public:
   constexpr inline v512 &
   operator*=(double x)
   {
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
       value = _mm512_mul_pd(value, _r);
     }
@@ -1039,7 +1039,7 @@ public:
   constexpr inline v512 &
   operator*=(float x)
   {
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
       value = _mm512_mul_ps(value, _r);
     }
@@ -1051,20 +1051,20 @@ public:
   operator*=(A x)
     requires is_int_flag_type<A>
   {
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<A, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<A, __v8> ) {
         i512 _r = _mm512_set1_epi8(x);
         value = _mm512_mullo_epi8(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v16> ) {
+      if constexpr ( micron::is_same_v<A, __v16> ) {
         i512 _r = _mm512_set1_epi16(x);
         value = _mm512_mullo_epi16(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v32> ) {
+      if constexpr ( micron::is_same_v<A, __v32> ) {
         i512 _r = _mm512_set1_epi32(x);
         value = _mm512_mullo_epi32(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<A, __v64> ) {
+      if constexpr ( micron::is_same_v<A, __v64> ) {
       }
     }
     return *this;
@@ -1074,7 +1074,7 @@ public:
   operator*(double x) const
   {
     T _d;
-    if constexpr ( stdlib::is_same_v<T, d512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
       _d = _mm512_mul_pd(value, _r);
     }
@@ -1085,7 +1085,7 @@ public:
   operator*(float x) const
   {
     T _d;
-    if constexpr ( stdlib::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
       _d = _mm512_mul_ps(value, _r);
     }
@@ -1096,20 +1096,20 @@ public:
   operator*(F x)
   {
     T _d;
-    if constexpr ( stdlib::is_same_v<T, i512> ) {
-      if constexpr ( stdlib::is_same_v<F, __v8> ) {
+    if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) {
         i512 _r = _mm512_set1_epi8(x);
         _d = _mm512_mullo_epi8(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<F, __v16> ) {
+      if constexpr ( micron::is_same_v<F, __v16> ) {
         i512 _r = _mm512_set1_epi16(x);
         _d = _mm512_mullo_epi16(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<F, __v32> ) {
+      if constexpr ( micron::is_same_v<F, __v32> ) {
         i512 _r = _mm512_set1_epi32(x);
         _d = _mm512_mullo_epi32(value, _r);
       }
-      if constexpr ( stdlib::is_same_v<F, __v64> ) {
+      if constexpr ( micron::is_same_v<F, __v64> ) {
       }
     }
     return _d;
@@ -1120,14 +1120,14 @@ public:
   inline void
   get(F *arr) const
   {
-    if constexpr ( stdlib::is_same_v<F, __vf> ) {
+    if constexpr ( micron::is_same_v<F, __vf> ) {
       _mm512_storeu_ps(reinterpret_cast<T *>(arr), value);
     }
-    if constexpr ( stdlib::is_same_v<F, __vd> ) {
+    if constexpr ( micron::is_same_v<F, __vd> ) {
       _mm512_storeu_pd(reinterpret_cast<T *>(arr), value);
     }
-    if constexpr ( stdlib::is_same_v<F, __v8> or stdlib::is_same_v<F, __v16> or stdlib::is_same_v<F, __v32>
-                   or stdlib::is_same_v<F, __v64> ) {
+    if constexpr ( micron::is_same_v<F, __v8> or micron::is_same_v<F, __v16> or micron::is_same_v<F, __v32>
+                   or micron::is_same_v<F, __v64> ) {
       _mm512_storeu_si512(reinterpret_cast<T *>(arr), value);
     }
   }
@@ -1135,18 +1135,18 @@ public:
   inline void
   get_aligned(F *arr) const
   {
-    if constexpr ( stdlib::is_same_v<F, __vf> ) {
+    if constexpr ( micron::is_same_v<F, __vf> ) {
       _mm512_store_ps(reinterpret_cast<T *>(arr), value);
     }
-    if constexpr ( stdlib::is_same_v<F, __vd> ) {
+    if constexpr ( micron::is_same_v<F, __vd> ) {
       _mm512_store_pd(reinterpret_cast<T *>(arr), value);
     }
-    if constexpr ( stdlib::is_same_v<F, __v8> or stdlib::is_same_v<F, __v16> or stdlib::is_same_v<F, __v32>
-                   or stdlib::is_same_v<F, __v64> ) {
+    if constexpr ( micron::is_same_v<F, __v8> or micron::is_same_v<F, __v16> or micron::is_same_v<F, __v32>
+                   or micron::is_same_v<F, __v64> ) {
       _mm512_store_si512(reinterpret_cast<T *>(arr), value);
     }
   }
 };
 
-};
-};
+};     // namespace simd
+};     // namespace micron

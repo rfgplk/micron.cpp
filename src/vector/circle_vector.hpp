@@ -473,6 +473,24 @@ public:
   {
     return __buffer.data();
   }
+
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
+  }
+
+  static constexpr bool
+  is_class_type() noexcept
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
+  }
 };
 
 }     // namespace micron

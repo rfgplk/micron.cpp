@@ -14,47 +14,83 @@
 
 namespace micron
 {
-// constexpr int seek_set = 0; /* Seek from beginning of file.  */
-// constexpr int seek_cur = 1; /* Seek from current position.  */
-// constexpr int seek_end = 2; /* Seek from end of file.  */
-
-constexpr int S_IFMT = 0170000; /* These bits determine file type.  */
+constexpr i32 __format_mask = 0170000; /* These bits determine file type.  */
 
 /* File types.  */
-constexpr int S_IFDIR = 0040000;  /* Directory.  */
-constexpr int S_IFCHR = 0020000;  /* Character device.  */
-constexpr int S_IFBLK = 0060000;  /* Block device.  */
-constexpr int S_IFREG = 0100000;  /* Regular file.  */
-constexpr int S_IFIFO = 0010000;  /* FIFO.  */
-constexpr int S_IFLNK = 0120000;  /* Symbolic link.  */
-constexpr int S_IFSOCK = 0140000; /* Socket.  */
+constexpr i32 inode_dir = 0040000;  /* Directory.  */
+constexpr i32 inode_char = 0020000; /* Character device.  */
+constexpr i32 inode_blck = 0060000; /* Block device.  */
+constexpr i32 inode_reg = 0100000;  /* Regular file.  */
+constexpr i32 inode_fifo = 0010000; /* FIFO.  */
+constexpr i32 inode_link = 0120000; /* Symbolic link.  */
+constexpr i32 inode_sock = 0140000; /* Socket.  */
 
 /* Protection bits.  */
 
-constexpr int S_ISUID = 04000; /* Set user ID on execution.  */
-constexpr int S_ISGID = 02000; /* Set group ID on execution.  */
-constexpr int S_ISVTX = 01000; /* Save swapped text after use (sticky).  */
-constexpr int S_IREAD = 0400;  /* Read by owner.  */
-constexpr int S_IWRITE = 0200; /* Write by owner.  */
-constexpr int S_IEXEC = 0100;  /* Execute by owner.  */
+constexpr i32 s_isuid = 04000; /* Set user ID on execution.  */
+constexpr i32 s_isgid = 02000; /* Set group ID on execution.  */
+constexpr i32 s_isvtx = 01000; /* Save swapped text after use (sticky).  */
+constexpr i32 s_iread = 0400;  /* Read by owner.  */
+constexpr i32 s_iwrite = 0200; /* Write by owner.  */
+constexpr i32 s_iexec = 0100;  /* Execute by owner.  */
 
-constexpr int S_IRUSR = S_IREAD;  /* Read by owner.  */
-constexpr int S_IWUSR = S_IWRITE; /* Write by owner.  */
-constexpr int S_IXUSR = S_IEXEC;  /* Execute by owner.  */
+constexpr i32 s_irusr = s_iread;  /* Read by owner.  */
+constexpr i32 s_iwusr = s_iwrite; /* Write by owner.  */
+constexpr i32 s_ixusr = s_iexec;  /* Execute by owner.  */
 /* Read, write, and execute by owner.  */
-constexpr int S_IRWXU = (S_IREAD | S_IWRITE | S_IEXEC);
+constexpr i32 s_irwxu = (s_iread | s_iwrite | s_iexec);
 
-constexpr int S_IRGRP = (S_IRUSR >> 3); /* Read by group.  */
-constexpr int S_IWGRP = (S_IWUSR >> 3); /* Write by group.  */
-constexpr int S_IXGRP = (S_IXUSR >> 3); /* Execute by group.  */
+constexpr i32 s_irgrp = (s_irusr >> 3); /* Read by group.  */
+constexpr i32 s_iwgrp = (s_iwusr >> 3); /* Write by group.  */
+constexpr i32 s_ixgrp = (s_ixusr >> 3); /* Execute by group.  */
 /* Read, write, and execute by group.  */
-constexpr int S_IRWXG = (S_IRWXU >> 3);
+constexpr i32 s_irwxg = (s_irwxu >> 3);
 
-constexpr int S_IROTH = (S_IRGRP >> 3); /* Read by others.  */
-constexpr int S_IWOTH = (S_IWGRP >> 3); /* Write by others.  */
-constexpr int S_IXOTH = (S_IXGRP >> 3); /* Execute by others.  */
+constexpr i32 s_iroth = (s_irgrp >> 3); /* Read by others.  */
+constexpr i32 s_iwoth = (s_iwgrp >> 3); /* Write by others.  */
+constexpr i32 s_ixoth = (s_ixgrp >> 3); /* Execute by others.  */
 /* Read, write, and execute by others.  */
-constexpr int S_IRWXO = (S_IRWXG >> 3);
+constexpr i32 s_irwxo = (s_irwxg >> 3);
+
+// legacy consts, keeping them around for backwards compatibility
+
+constexpr i32 S_IFMT = 0170000; /* These bits determine file type.  */
+
+/* File types.  */
+constexpr i32 S_IFDIR = 0040000;  /* Directory.  */
+constexpr i32 S_IFCHR = 0020000;  /* Character device.  */
+constexpr i32 S_IFBLK = 0060000;  /* Block device.  */
+constexpr i32 S_IFREG = 0100000;  /* Regular file.  */
+constexpr i32 S_IFIFO = 0010000;  /* FIFO.  */
+constexpr i32 S_IFLNK = 0120000;  /* Symbolic link.  */
+constexpr i32 S_IFSOCK = 0140000; /* Socket.  */
+
+/* Protection bits.  */
+
+constexpr i32 S_ISUID = 04000; /* Set user ID on execution.  */
+constexpr i32 S_ISGID = 02000; /* Set group ID on execution.  */
+constexpr i32 S_ISVTX = 01000; /* Save swapped text after use (sticky).  */
+constexpr i32 S_IREAD = 0400;  /* Read by owner.  */
+constexpr i32 S_IWRITE = 0200; /* Write by owner.  */
+constexpr i32 S_IEXEC = 0100;  /* Execute by owner.  */
+
+constexpr i32 S_IRUSR = S_IREAD;  /* Read by owner.  */
+constexpr i32 S_IWUSR = S_IWRITE; /* Write by owner.  */
+constexpr i32 S_IXUSR = S_IEXEC;  /* Execute by owner.  */
+/* Read, write, and execute by owner.  */
+constexpr i32 S_IRWXU = (S_IREAD | S_IWRITE | S_IEXEC);
+
+constexpr i32 S_IRGRP = (S_IRUSR >> 3); /* Read by group.  */
+constexpr i32 S_IWGRP = (S_IWUSR >> 3); /* Write by group.  */
+constexpr i32 S_IXGRP = (S_IXUSR >> 3); /* Execute by group.  */
+/* Read, write, and execute by group.  */
+constexpr i32 S_IRWXG = (S_IRWXU >> 3);
+
+constexpr i32 S_IROTH = (S_IRGRP >> 3); /* Read by others.  */
+constexpr i32 S_IWOTH = (S_IWGRP >> 3); /* Write by others.  */
+constexpr i32 S_IXOTH = (S_IXGRP >> 3); /* Execute by others.  */
+/* Read, write, and execute by others.  */
+constexpr i32 S_IRWXO = (S_IRWXG >> 3);
 
 struct stat_t {
   posix::dev_t st_dev;     /* Device.  */
@@ -83,14 +119,38 @@ struct stat_t {
   bool
   operator!=(const stat_t &o) const
   {
-    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
   }
 
   bool
   operator==(const stat_t &o) const
   {
-    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - reinterpret_cast<const addr_t *>(&st_dev));
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
   }
 };
 
-};
+long
+fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags)
+{
+  return micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags);     // why?
+}
+
+long
+fstat(int fd, stat_t &buf)
+{
+  return micron::syscall(SYS_fstat, fd, &buf);
+}
+
+long
+lstat(const char *path, stat_t &buf)
+{
+  return micron::syscall(SYS_stat, path, &buf);
+}
+
+long
+stat(const char *path, stat_t &buf)
+{
+  return micron::syscall(SYS_stat, path, &buf);
+}
+
+};     // namespace micron

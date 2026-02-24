@@ -44,4 +44,4 @@ public:
     return true;
   }
 };
-};
+};     // namespace micron

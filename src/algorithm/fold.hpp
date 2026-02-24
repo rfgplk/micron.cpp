@@ -235,4 +235,4 @@ fold_build(const I &c, O init, Fn fn)
   return fold_left<I, O, U, Fn>(c, init, fn);
 }
 
-};
+};     // namespace micron

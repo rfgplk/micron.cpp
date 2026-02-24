@@ -234,5 +234,5 @@ memmove512(T *dest, const T *src, u64 count)
   return dest;
 }
 
-};
-};
+};     // namespace simd
+};     // namespace micron

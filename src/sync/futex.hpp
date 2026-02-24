@@ -33,30 +33,32 @@ constexpr static const u32 futex_futex_lock_pi2 = 13;
 constexpr static const u32 futex_private_flag = 128;
 constexpr static const u32 futex_clock_realtime = 256;
 
-void
+auto
 __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2)
 {
-  micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);
+  return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);
 }
 
 template <typename T>
   requires(sizeof(T) == 4)
 void
-wait_futex(T *ptr, auto val)
+wait_futex(T *ptr, decay_t<T> expected)
 {
-  T e = T{};
-  while ( !atom::cmp_exchange_weak(ptr, &e, static_cast<T>(1)) ) {
-    e = T{};
-    __futex(reinterpret_cast<u32 *>(ptr), futex_wait | futex_private_flag, val, nullptr, nullptr, 0);
+  while ( atom::load(ptr, (int)memory_order_relaxed) == expected ) {
+    int ret = __futex(reinterpret_cast<u32 *>(const_cast<decay_t<T> *>(ptr)), futex_wait | futex_private_flag, static_cast<u32>(expected),
+                      nullptr, nullptr, 0);
+    if ( ret < 0 and ret != -11 ) {
+      micron::exc<except::thread_error>("futex wait failed");
+    }
   }
 }
 
 template <typename T>
   requires(sizeof(T) == 4)
 void
-release_futex(T *ptr, u32 cnt)
+release_futex(T *ptr, decay_t<T> to_store, u32 cnt = 1)
 {
-  atom::store(ptr, 0, atomic_seq_cst);
+  atom::store(ptr, to_store, (int)memory_order_release);
   __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, cnt, nullptr, nullptr, 0);
 }
 
@@ -89,4 +91,4 @@ struct futex {
   }
 };
 
-};
+};     // namespace micron

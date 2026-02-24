@@ -36,4 +36,4 @@ destructive_interference_size()
   return cache_line_size();
 }
 
-};
+};     // namespace micron

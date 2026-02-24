@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "types.hpp"
+
 #include "syscall.hpp"
 
 namespace micron
@@ -47,4 +49,4 @@ quick_exit(const int s)
   __builtin_unreachable();
 }
 
-};
+};     // namespace micron

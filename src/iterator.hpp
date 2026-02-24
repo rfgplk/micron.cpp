@@ -33,8 +33,6 @@ class iterator
   pointer end_ptr;
 
 public:
-  // using different_type = std::ptrdiff_t;
-
   iterator() = delete;
 
   template <typename T>
@@ -225,4 +223,4 @@ public:
   }
 };
 
-};
+};     // namespace micron

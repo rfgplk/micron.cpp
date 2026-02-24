@@ -155,7 +155,7 @@ exit(int r)
 {
   return static_cast<int>(micron::syscall(SYS_exit, r));
 }
-};
+};     // namespace posix
 
 uid_t
 this_pid()
@@ -163,4 +163,4 @@ this_pid()
   return posix::getpid();
 }
 
-};
+};     // namespace micron

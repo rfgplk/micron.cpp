@@ -32,5 +32,5 @@ struct input_t {
   micron::stack<input_event> history;
 };
 
-};
-};
+};     // namespace uxin
+};     // namespace micron

@@ -47,5 +47,5 @@ getrusage(i32 who, rusage_t &rusage)
   return micron::syscall(SYS_getrusage, who, &rusage);
 }
 
-};
-};
+};     // namespace posix
+};     // namespace micron

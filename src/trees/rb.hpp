@@ -664,4 +664,4 @@ public:
     size_ = 0;
   }
 };
-};
+};     // namespace micron

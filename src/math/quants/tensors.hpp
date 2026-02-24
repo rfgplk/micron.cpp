@@ -958,4 +958,4 @@ template <u32 D, u32 H, u32 W> using tensor3u = __tensor_base_avx<u32, D, H, W>;
 template <u32 D, u32 H, u32 W> using tensor3i8 = __tensor_base_avx<i8, D, H, W>;
 template <u32 D, u32 H, u32 W> using tensor3u8 = __tensor_base_avx<u8, D, H, W>;
 
-}
+}     // namespace micron

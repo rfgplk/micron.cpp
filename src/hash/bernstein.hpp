@@ -19,4 +19,4 @@ bernstein_32(const byte *data, size_t sz)
   return hash;
 }
 
-};
+};     // namespace micron

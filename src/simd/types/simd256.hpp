@@ -1558,5 +1558,5 @@ public:
   }
 };
 
-};
-};
+};     // namespace simd
+};     // namespace micron

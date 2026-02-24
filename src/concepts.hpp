@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "allocation/linux/kmemory.hpp"
 #include "memory/actions.hpp"
+#include "memory/allocation/kmemory.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
 
@@ -82,6 +82,11 @@ concept is_iterable_container = requires(T t, I i) {
   { t.end() } -> micron::same_as<typename T::iterator>;
   { t[i] } -> micron::same_as<typename T::reference>;
   { t.size() } -> micron::same_as<typename T::size_type>;
+};
+
+template <typename Cmp, typename C>
+concept is_valid_comp = requires(Cmp c, typename C::value_type a, typename C::value_type b) {
+  { c(a, b) } -> micron::convertible_to<bool>;
 };
 
 template <typename T>
@@ -187,4 +192,4 @@ concept is_string_on_stack = requires(T t) {
   { t.cbegin() } -> micron::same_as<typename T::iterator>;
   { t.cend() } -> micron::same_as<typename T::iterator>;
 };
-};
+};     // namespace micron

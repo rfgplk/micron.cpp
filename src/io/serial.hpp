@@ -81,7 +81,7 @@ deserialize(const T &strct)
 
 void write();
 void read();
-};
+};     // namespace serialize
 
-};
-};
+};     // namespace io
+};     // namespace micron

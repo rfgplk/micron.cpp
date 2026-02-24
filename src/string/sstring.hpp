@@ -9,9 +9,9 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
-#include "../allocation/resources.hpp"
 #include "../allocator.hpp"
 #include "../concepts.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../memory_block.hpp"
 #include "../pointer.hpp"
@@ -82,7 +82,10 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   constexpr sstring(iterator __start, iterator __end)
   {
     if ( __start >= __end )
-      exc<except::library_error>("micron::hstring sstring() wrong iterators");
+      exc<except::library_error>("micron::sstring sstring() wrong iterators");
+    if ( (__end - __start) + 1 > N )
+      exc<except::library_error>("sstring(iter,iter): range too large.");
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
   };
@@ -90,15 +93,21 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   constexpr sstring(const_iterator __start, const_iterator __end)
   {
     if ( __start >= __end )
-      exc<except::library_error>("micron::hstring sstring() wrong iterators");
+      exc<except::library_error>("micron::sstring sstring() wrong iterators");
+    if ( (__end - __start) + 1 > N )
+      exc<except::library_error>("sstring(iter,iter): range too large.");
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
   };
 
   template <size_type M, typename F> constexpr sstring(const sstring<M, F> &o)
   {
-    // removed, only copy what we can
-    // static_assert(N >= M, "micron::sstring sstring(cconst) too large.");
+    micron::constexpr_zero(&memory[0], N);
+    if ( o.empty() ) {
+      length = 0;
+      return;
+    }
     if constexpr ( N < M ) {
       micron::memcpy(&memory[0], &o.memory[0], N);
     } else if constexpr ( N >= M ) {
@@ -112,12 +121,14 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
 
   template <is_string S> constexpr sstring(const S &o)
   {
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &o.memory[0], N);
     length = o.length;
   };
 
   constexpr sstring(const sstring &o)
   {
+    micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &o.memory[0], N);
     length = o.length;
   };
@@ -150,6 +161,11 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(sstring &&o)
   {
+    if ( o.empty() ) {
+      length = 0;
+      return *this;
+    }
+    clear();
     micron::memcpy(&memory[0], &o.memory[0], N);
     length = o.length;
     micron::czero<N>(&o.memory[0]);
@@ -160,6 +176,11 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(const sstring &o)
   {
+    if ( o.empty() ) {
+      length = 0;
+      return *this;
+    }
+    clear();
     micron::memcpy(&memory[0], &o.memory[0], N);
     length = o.length;
     return *this;
@@ -169,6 +190,11 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(const F &o)
   {
+    if ( o.empty() ) {
+      length = 0;
+      return *this;
+    }
+    clear();
     if ( o.size() < N ) {
       micron::memcpy(&memory[0], &o.cdata()[0], o.size());
       length = o.size();
@@ -183,7 +209,12 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(const sstring<M, F> &o)
   {
+    if ( o.empty() ) {
+      length = 0;
+      return *this;
+    }
     static_assert(N >= M, "micron::sstring operator= too large.");
+    clear();
     micron::memcpy(&memory[0], &o.memory[0], M);
     length = o.length;
     return *this;
@@ -193,7 +224,12 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(sstring<M, F> &&o)
   {
+    if ( o.empty() ) {
+      length = 0;
+      return *this;
+    }
     static_assert(N >= M, "micron::sstring operator= too large.");
+    clear();
     micron::memcpy(&memory[0], &o.memory[0], M);
     micron::constexpr_zero(&o.memory[0], M);
     length = o.length;
@@ -204,6 +240,9 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(char *ptr)
   {
+    if ( ptr == nullptr )
+      return *this;
+    clear();
     size_type n = strlen(ptr);
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &ptr[0], n);
@@ -214,6 +253,9 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(const char *ptr)
   {
+    if ( ptr == nullptr )
+      return *this;
+    clear();
     size_type n = strlen(ptr);
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &ptr[0], n);
@@ -225,12 +267,13 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   sstring &
   operator=(const F (&str)[N])
   {
+    clear();
     micron::memcpy(&memory, &str, N);
     length = N;
     return *this;
   }
 
-  bool
+  constexpr bool
   operator!() const
   {
     return empty();
@@ -261,31 +304,31 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
     return this;
   }
 
-  bool
+  constexpr bool
   empty() const
   {
     return (bool)length == 0;
   };
 
-  void
+  constexpr void
   set_size(size_type n)
   {
     length = n;
   }
 
-  size_type
+  constexpr size_type
   size() const
   {
     return length;
   }
 
-  size_type
+  constexpr size_type
   capacity() const
   {
     return N;
   }
 
-  size_type
+  constexpr size_type
   max_size() const
   {
     return N;
@@ -314,6 +357,12 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   c_str() const
   {
     return const_cast<const char *>(reinterpret_cast<const char *>(&memory[0]));
+  }
+
+  inline slice<char>
+  into_chars()
+  {
+    return slice<char>(reinterpret_cast<char *>(&memory[0]), reinterpret_cast<char *>(&memory[length]));
   }
 
   inline slice<byte>
@@ -384,13 +433,13 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   }
 
   // end points to one-past-last (ie null) while last points to the last OCCUPIED element
-  inline constexpr iterator
+  inline constexpr const_iterator
   begin() const
   {
     return const_cast<T *>(&memory[0]);
   }
 
-  inline constexpr iterator
+  inline constexpr const_iterator
   end() const
   {
     return const_cast<T *>(&memory[length]);
@@ -481,10 +530,13 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   }
 
   template <typename F = T, typename I = size_type>
-    requires micron::is_arithmetic_v<I>
+    requires(micron::is_arithmetic_v<I>)
   inline sstring &
-  erase(I ind, size_type cnt = 1)
+  erase(I __ind, size_type cnt = 1)
   {
+    size_type ind = static_cast<size_type>(__ind);
+    if ( cnt == 0 ) [[unlikely]]
+      return *this;
     if ( ind >= length || cnt > length - ind )
       exc<except::library_error>("micron:sstring erase() out of range");
     if ( cnt > N )
@@ -501,6 +553,8 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   inline sstring &
   erase(iterator itr, size_type cnt = 1)
   {
+    if ( cnt == 0 ) [[unlikely]]
+      return *this;
     if ( itr < begin() || itr > end() || static_cast<size_type>(cnt) > static_cast<size_type>(end() - itr) )
       exc<except::library_error>("micron:sstring erase() out of range");
     if ( cnt > N )
@@ -516,7 +570,8 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   inline sstring &
   erase(const_iterator itr, size_type cnt = 1)
   {
-    if ( itr < begin() or itr > end() or cnt > (end() - itr) )
+    // WARNING: be careful
+    if ( itr < begin() or itr > end() or static_cast<ssize_t>(cnt) > (end() - itr) )
       exc<except::library_error>("micron:sstring erase() out of range");
     if ( cnt > N )
       exc<except::library_error>("micron:sstring erase() out of range");
@@ -526,10 +581,126 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
     return *this;
   }
 
-  template <typename F = T>
-  inline sstring &
-  insert(size_type ind, F ch, size_type cnt = 1)
+  inline size_type
+  find_substr(const T *needle, size_type needle_len, size_type pos = 0) const
   {
+    if ( needle_len == 0 or needle_len > length )
+      return npos;
+    size_type limit = length - needle_len;
+    for ( size_type i = pos; i <= limit; ++i ) {
+      size_type j = 0;
+      while ( j < needle_len and memory[i + j] == needle[j] )
+        ++j;
+      if ( j == needle_len )
+        return i;
+    }
+    return npos;
+  }
+
+  inline sstring &
+  remove(const char *needle)
+  {
+    if ( needle == nullptr )
+      exc<except::library_error>("micron:sstring remove() null needle");
+    size_type needle_len = micron::strlen(needle);
+    if ( needle_len == 0 )
+      return *this;
+    size_type pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
+    if ( pos == npos )
+      return *this;
+    micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+    micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
+    length -= needle_len;
+    return *this;
+  }
+
+  template <size_type M>
+  inline sstring &
+  remove(const T (&needle)[M])
+  {
+    constexpr size_type needle_len = M - 1;     // strip null
+    if constexpr ( needle_len == 0 )
+      return *this;
+    size_type pos = find_substr(&needle[0], needle_len);
+    if ( pos == npos )
+      return *this;
+    micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+    micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
+    length -= needle_len;
+    return *this;
+  }
+
+  template <size_type M, typename F>
+  inline sstring &
+  remove(const sstring<M, F> &needle)
+  {
+    if ( needle.empty() )
+      return *this;
+    size_type pos = find_substr(needle.memory, needle.length);
+    if ( pos == npos )
+      return *this;
+    micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
+    micron::typeset<T>(&memory[length - needle.length], 0x0, needle.length);
+    length -= needle.length;
+    return *this;
+  }
+
+  inline sstring &
+  remove_all(const char *needle)
+  {
+    if ( needle == nullptr )
+      exc<except::library_error>("micron:sstring remove_all() null needle");
+    size_type needle_len = micron::strlen(needle);
+    if ( needle_len == 0 )
+      return *this;
+    size_type pos = 0;
+    while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
+      micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+      micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
+      length -= needle_len;
+    }
+    return *this;
+  }
+
+  template <size_type M>
+  inline sstring &
+  remove_all(const T (&needle)[M])
+  {
+    constexpr size_type needle_len = M - 1;
+    if constexpr ( needle_len == 0 )
+      return *this;
+    size_type pos = 0;
+    while ( (pos = find_substr(&needle[0], needle_len, pos)) != npos ) {
+      micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+      micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
+      length -= needle_len;
+    }
+    return *this;
+  }
+
+  template <size_type M, typename F>
+  inline sstring &
+  remove_all(const sstring<M, F> &needle)
+  {
+    if ( needle.empty() )
+      return *this;
+    size_type pos = 0;
+    while ( (pos = find_substr(needle.memory, needle.length, pos)) != npos ) {
+      micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
+      micron::typeset<T>(&memory[length - needle.length], 0x0, needle.length);
+      length -= needle.length;
+    }
+    return *this;
+  }
+
+  template <typename I, typename F = T>
+    requires micron::same_as<micron::remove_cvref_t<F>, T> && micron::convertible_to<I, size_type> && micron::integral<I>
+             && (!micron::is_pointer_v<I>)
+  inline sstring &
+  insert(I ind, F ch, size_type cnt = 1)
+  {
+    if ( cnt == 0 ) [[unlikely]]
+      return *this;
     if ( ind >= length || cnt > N - length )
       exc<except::library_error>("micron:sstring insert() out of range");
     micron::bytemove(&memory[ind + cnt], &memory[ind], length - ind);
@@ -538,10 +709,13 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
     return *this;
   }
 
-  template <typename F = T, size_type M>
+  template <typename I, typename F = T, size_type M>
+    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
   inline sstring &
-  insert(size_type ind, const F (&str)[M], size_type cnt = 1)
+  insert(I ind, const F (&str)[M], size_type cnt = 1)
   {
+    if ( cnt == 0 ) [[unlikely]]
+      return *this;
     size_type str_len = M - 1;     // strlen(str);
     if ( ind > length || length + cnt * str_len >= N )
       exc<except::library_error>("micron:sstring insert() out of range");
@@ -555,9 +729,12 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   }
 
   template <typename F = T>
+    requires true
   inline sstring &
   insert(iterator itr, F ch, size_type cnt = 1)
   {
+    if ( cnt == 0 ) [[unlikely]]
+      return *this;
     if ( length >= N or length + cnt >= N )
       exc<except::library_error>("micron:sstring insert() out of range");
     micron::bytemove(itr + cnt, itr, length - (&memory[0] - itr - 1));
@@ -650,7 +827,8 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   inline size_type
   at(Itr n)
   {
-    if ( n - &memory[0] > length or n - &memory[0] < 0 )
+    // WARNING: be careful
+    if ( n - &memory[0] > static_cast<ssize_t>(length) or n - &memory[0] < 0 )
       exc<except::library_error>("micron:sstring at() out of range");
     return n - &memory[0];
   };
@@ -680,6 +858,8 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   inline sstring &
   operator+=(const sstring &data)
   {
+    if ( data.empty() )
+      return *this;
     if ( length + data.length >= N )
       exc<except::library_error>("micron::sstring += out of memory.");
     micron::memcpy(&memory[length], &data.memory[0], data.length);
@@ -690,6 +870,8 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   inline sstring &
   append(const sstring &o)
   {
+    if ( o.empty() )
+      return *this;
     if ( (length + o.length) >= N )
       exc<except::library_error>("micron::sstring append() out of memory.");
     micron::memcpy(&memory[length], &o.memory[0], o.length);
@@ -738,6 +920,8 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   inline sstring &
   operator+=(const char (&data)[M])
   {
+    if ( M == 1 and data[0] == 0x0 )
+      return *this;
     if ( length + M >= N )
       exc<except::library_error>("micron::sstring += out of memory.");
     micron::memcpy(&memory[length], &data[0], M);
@@ -757,31 +941,79 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
     return *this;
   };
 
-  template <size_type M = N, typename F = T>
+  template <typename I = size_type, size_type M = N, typename F = T>
+    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
   inline sstring<M, F>
-  substr(size_type pos = 0, size_type cnt = 0) const
+  substr(I pos = 0, I cnt = npos) const
   {
-    if ( pos > N or cnt > N or (pos + cnt) > N )
+    if ( cnt == npos )
+      cnt = (pos < length) ? static_cast<I>(length - pos) : 0;     // safe never negative
+    if ( pos > length or cnt > length or (pos + cnt) > length )
       exc<except::library_error>("error micron::sstring substr invalid range.");
+    if ( cnt >= M )
+      exc<except::library_error>("error micron::sstring substr result too large for target.");
     sstring<M, F> buf;
     micron::memcpy(&buf.data()[0], &memory[pos], cnt);
-    buf[cnt] = '\0';
     buf.set_size(cnt);
     return buf;
   };
 
   template <size_type M = N, typename F = T>
   inline sstring<M, F>
-  substr(const_iterator _start, const_iterator _end) const
+  substr(const_iterator _start, const_iterator _end = nullptr) const
   {
-    if ( _start < begin() or _end > end() )
+    if ( _end == nullptr )
+      _end = cend();
+    if ( _start < cbegin() or _end > cend() or _start > _end )
       exc<except::library_error>("error micron::sstring substr invalid range.");
+    size_type len = static_cast<size_type>(_end - _start);
+    if ( len >= M )
+      exc<except::library_error>("error micron::sstring substr result too large for target.");
     sstring<M, F> buf;
-    micron::memcpy(&buf.data()[0], _start, _end - _start);
-    buf[_end - _start] = '\0';
-    buf.set_size(_end - _start);
+    micron::memcpy(&buf.data()[0], _start, len);
+    buf.set_size(len);
     return buf;
   };
+
+  template <typename I>
+    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline sstring &
+  truncate(I n)
+  {
+    if ( static_cast<size_type>(n) >= length )
+      return *this;
+    if ( static_cast<size_type>(n) > N )
+      n = N;
+    micron::typeset<T>(&memory[static_cast<size_type>(n)], 0x0, length - static_cast<size_type>(n));
+    length = n;
+    return *this;
+  }
+
+  inline sstring &
+  truncate(iterator itr)
+  {
+    if ( itr < begin() or itr > end() )
+      exc<except::library_error>("micron::sstring truncate() iterator out of range");
+    if ( itr >= end() )
+      return *this;
+    size_type n = static_cast<size_type>(itr - begin());
+    micron::typeset<T>(&memory[n], 0x0, length - n);
+    length = n;
+    return *this;
+  }
+
+  inline sstring &
+  truncate(const_iterator itr)
+  {
+    if ( itr < cbegin() or itr > cend() )
+      exc<except::library_error>("micron::sstring truncate() iterator out of range");
+    if ( itr >= cend() )
+      return *this;
+    size_type n = static_cast<size_type>(itr - cbegin());
+    micron::typeset<T>(&memory[n], 0x0, length - n);
+    length = n;
+    return *this;
+  }
 
   inline bool
   operator==(const char *data) const
@@ -845,4 +1077,4 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   }
 };
 
-};
+};     // namespace micron

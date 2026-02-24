@@ -233,30 +233,6 @@ fchmod(int fd, unsigned int mode)
   return micron::syscall(SYS_fchmod, fd, mode);
 }
 
-long
-fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags)
-{
-  return micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags);     // why?
-}
-
-long
-fstat(int fd, stat_t &buf)
-{
-  return micron::syscall(SYS_fstat, fd, &buf);
-}
-
-long
-lstat(const char *path, stat_t &buf)
-{
-  return micron::syscall(SYS_stat, path, &buf);
-}
-
-long
-stat(const char *path, stat_t &buf)
-{
-  return micron::syscall(SYS_stat, path, &buf);
-}
-
 auto
 chown(const char *name, uid_t owner, gid_t group)
 {
@@ -359,4 +335,4 @@ unlink(const char *path)
   return static_cast<int>(micron::syscall(SYS_unlink, path));
 }
 
-};
+};     // namespace micron

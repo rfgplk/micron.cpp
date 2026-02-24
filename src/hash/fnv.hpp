@@ -19,4 +19,4 @@ fnv_32(const byte *data, u32 seed, size_t sz)
   }
   return hash;
 }
-}
+}     // namespace micron

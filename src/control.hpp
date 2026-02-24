@@ -77,4 +77,4 @@ __attribute__((noinline)) __attribute__((used)) __attribute__((optimize("O0"))) 
 mark()
 {
 }
-};
+};     // namespace micron

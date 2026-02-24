@@ -142,4 +142,4 @@ run(const T &t, const R &...args)
 // new thread
 void spawn();
 
-};
+};     // namespace micron

@@ -19,7 +19,29 @@ namespace micron
 {
 
 template <is_iterable_container T, typename Y>
-  requires micron::is_arithmetic_v<Y>
+  requires micron::is_floating_point_v<Y>
+void
+pow(T &cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first )
+    *first = math::powerf(*first, y);     // for clarity
+}
+
+template <is_iterable_container T, typename Y>
+  requires(micron::is_floating_point_v<typename T::value_type> and micron::is_integral_v<Y>)
+void
+pow(T &cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first )
+    *first = math::powerf(*first, y);     // for clarity
+}
+
+template <is_iterable_container T, typename Y>
+  requires(micron::is_integral_v<typename T::value_type> and micron::is_integral_v<Y>)
 void
 pow(T &cont, const Y y) noexcept
 {
@@ -30,7 +52,16 @@ pow(T &cont, const Y y) noexcept
 }
 
 template <typename T, typename Y>
-  requires micron::is_arithmetic_v<Y>
+  requires micron::is_floating_point_v<Y>
+void
+pow(T *__restrict first, T *__restrict end, const Y y) noexcept
+{
+  for ( ; first != end; ++first )
+    *first = math::powerf(*first, y);     // for clarity
+}
+
+template <typename T, typename Y>
+  requires micron::is_integral_v<Y>
 void
 pow(T *__restrict first, T *__restrict end, const Y y) noexcept
 {

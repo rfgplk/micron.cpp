@@ -122,4 +122,4 @@ public:
     return micron::sigwait(_signal, _sig);
   }
 };
-};
+};     // namespace micron

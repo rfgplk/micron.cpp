@@ -9,7 +9,7 @@
 #include "../../src/mutex/spinlock.hpp"
 #include "../../src/std.hpp"
 #include "../../src/sync/yield.hpp"
-#include "../../src/thread/contract.hpp"
+#include "../../src/sync/contract.hpp"
 #include "../../src/thread/thread.hpp"
 #include "../../src/vector/vector.hpp"
 

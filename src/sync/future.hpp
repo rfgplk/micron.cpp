@@ -498,4 +498,4 @@ public:
   future_status wait_until();
 };
 
-};
+};     // namespace micron

@@ -499,5 +499,5 @@ public:
     posix::syncfs(__handle.fd);
   }
 };
-};
-};
+};     // namespace fsys
+};     // namespace micron

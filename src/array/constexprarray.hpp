@@ -21,11 +21,12 @@ namespace micron
 {
 
 template <is_constexpr_valid T, size_t N = 64>
-  requires(N > 0)
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 struct constexpr_array {
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
+  typedef size_t size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -306,8 +307,20 @@ struct constexpr_array {
   {
     return micron::is_pod_v<T>;
   }
+
+  static constexpr bool
+  is_class()
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
+  }
 };
 
 template <class T, size_t N = 64> using constarray = constexpr_array<T, N>;
 
-};
+};     // namespace micron

@@ -10,7 +10,7 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
-#include "concepts.hpp"
+#include "../concepts.hpp"
 
 namespace micron
 {
@@ -170,6 +170,7 @@ power(T x, F p)
 }
 
 template <typename T>
+  requires(micron::is_integral_v<T>)
 constexpr T
 pow(T base, i32 exp)
 {
@@ -366,7 +367,7 @@ log2(i32 x)
 {
   if ( x <= 0 )
     return -1;
-  return (i32)31 - (i32)__builtin_clz(x);
+  return 31 - __builtin_clz(x);
 }
 
 constexpr i64
@@ -505,6 +506,39 @@ floor(T s)
   if ( s < T(i) )
     return T(i - 1);
   return T(i);
+}
+
+template <typename R, typename T>
+  requires(micron::is_convertible_v<R, T> and micron::is_floating_point_v<T>)
+constexpr R
+round(T t)
+{
+  if ( t >= 0 )
+    return static_cast<R>(T((i64)(t + T(0.5))));
+  else
+    return static_cast<R>(T((i64)(t - T(0.5))));
+}
+
+template <typename R, typename T>
+  requires(micron::is_convertible_v<R, T> and micron::is_floating_point_v<T>)
+constexpr R
+ceil(T s)
+{
+  i64 i = (i64)s;
+  if ( s > T(i) )
+    return static_cast<R>((i + 1));
+  return static_cast<R>(T(i));
+}
+
+template <typename R, typename T>
+  requires(micron::is_convertible_v<R, T> and micron::is_floating_point_v<T>)
+constexpr R
+floor(T s)
+{
+  i64 i = (i64)s;
+  if ( s < T(i) )
+    return static_cast<R>(T(i - 1));
+  return static_cast<R>(T(i));
 }
 
 template <typename T>

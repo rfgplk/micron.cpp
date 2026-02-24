@@ -149,4 +149,4 @@ prune(const C &c_in, Fn fn, O &c_out)
   return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
 }
 
-};
+};     // namespace micron
