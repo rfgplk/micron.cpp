@@ -25,7 +25,7 @@ filter(const T *first, const T *end, Fn fn, T *out)
   for ( ; first != end; ++first )
     if ( fn(first) )
       *out++ = *first;
-  return out;     // pointer past last written element
+  return out;
 }
 
 template <class T, typename Fn>
@@ -38,7 +38,7 @@ filter(const T *first, const T *end, Fn fn, T *out, size_t limit)
       *out++ = *first;
       ++i;
     }
-  return out;     // pointer past last written element
+  return out;
 }
 
 template <class T, typename Fn>
@@ -50,7 +50,7 @@ filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
     if ( fn(first) ) {
       *out++ = *first;
     }
-  return out;     // pointer past last written element
+  return out;
 }
 
 template <class T, typename Fn>
@@ -149,4 +149,47 @@ prune(const C &c_in, Fn fn, O &c_out)
   return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
 }
 
+template <auto Fn, typename T>
+constexpr T *
+filter(const T *first, const T *end, T *out) noexcept
+{
+  for ( ; first != end; ++first )
+    if ( Fn(first) )
+      *out++ = *first;
+  return out;
+}
+
+template <auto Fn, typename T>
+constexpr T *
+filter(const T *first, const T *end, T *out, size_t limit) noexcept
+{
+  for ( u64 i = 0; first != end && i < limit; ++first )
+    if ( Fn(first) ) {
+      *out++ = *first;
+      ++i;
+    }
+  return out;
+}
+
+template <auto Fn, is_iterable_container C>
+C
+filter(const C &c)
+{
+  C out;
+  out.resize(c.size());
+  auto *last = filter<Fn>(c.begin(), c.end(), out.begin());
+  out.resize(last - out.begin());
+  return out;
+}
+
+template <auto Fn, is_iterable_container C>
+C
+filter(const C &c, size_t limit)
+{
+  C out;
+  out.resize(micron::min(c.size(), limit));
+  auto *last = filter<Fn>(c.begin(), c.end(), out.begin(), limit);
+  out.resize(last - out.begin());
+  return out;
+}
 };     // namespace micron

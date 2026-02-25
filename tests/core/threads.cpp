@@ -6,7 +6,7 @@
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
 #include "../../src/linux/std.hpp"
-#include "../../src/mutex/spinlock.hpp"
+#include "../../src/mutex/spin_lock.hpp"
 #include "../../src/std.hpp"
 #include "../../src/sync/yield.hpp"
 #include "../../src/sync/contract.hpp"

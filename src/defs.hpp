@@ -22,5 +22,5 @@
 namespace micron::except
 {
 // NOTE: this must be enabled for tests
-constexpr static const bool __use_exceptions = true;
+constexpr static const bool __use_exceptions = false;
 };     // namespace micron::except

@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
-#include "../../src/mutex/spinlock.hpp"
 #include "../../src/std.hpp"
 #include "../../src/sync/yield.hpp"
 #include "../../src/thread/pool.hpp"

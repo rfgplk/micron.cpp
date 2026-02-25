@@ -1719,4 +1719,6 @@ template <__tt_size_t N> using make_index_sequence = typename make_index_sequenc
 // index_sequence_for - creates index sequence with sizeof...(Ts) elements
 template <typename... Ts> using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
 
+template <typename T> using remove_cvref_t = __remove_cvref_t<T>;
+
 };     // namespace micron

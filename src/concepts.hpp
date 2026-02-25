@@ -34,11 +34,62 @@ template <typename T, typename... Args>
 concept constructible_from = destructible<T> and requires { T(declval<Args>()...); };
 
 template <typename L, typename R>
-concept assignable_from = requires(L lhs, R &&rhs) {
+concept assignable_from = requires(L &lhs, R &&rhs) {
   { lhs = micron::forward<R>(rhs) } -> micron::same_as<L>;
 };
 template <typename T>
-concept movable = micron::constructible_from<T, T> and micron::assignable_from<T &, T> and micron::destructible<T>;
+concept equality_comparable = requires(const T &a, const T &b) {
+  { a == b } -> micron::convertible_to<bool>;
+  { a != b } -> micron::convertible_to<bool>;
+};
+
+template <typename T, typename U>
+concept equality_comparable_with = micron::__same_as<micron::remove_cvref_t<T>, micron::remove_cvref_t<T>>
+                                   && micron::__same_as<micron::remove_cvref_t<U>, micron::remove_cvref_t<U>>
+                                   && micron::equality_comparable<T> && micron::equality_comparable<U> && requires(const T &t, const U &u) {
+                                        { t == u } -> micron::convertible_to<bool>;
+                                        { t != u } -> micron::convertible_to<bool>;
+                                        { u == t } -> micron::convertible_to<bool>;
+                                        { u != t } -> micron::convertible_to<bool>;
+                                      };
+
+template <typename T>
+concept boolean_testable = micron::convertible_to<T, bool>;
+
+template <typename T>
+concept totally_ordered = micron::equality_comparable<T> && requires(const T &a, const T &b) {
+  { a < b } -> micron::boolean_testable;
+  { a > b } -> micron::boolean_testable;
+  { a <= b } -> micron::boolean_testable;
+  { a >= b } -> micron::boolean_testable;
+};
+
+template <typename T, typename U>
+concept totally_ordered_with = micron::totally_ordered<T> && micron::totally_ordered<U> && micron::equality_comparable_with<T, U>
+                               && requires(const T &t, const U &u) {
+                                    { t < u } -> micron::boolean_testable;
+                                    { t > u } -> micron::boolean_testable;
+                                    { t <= u } -> micron::boolean_testable;
+                                    { t >= u } -> micron::boolean_testable;
+                                    { u < t } -> micron::boolean_testable;
+                                    { u > t } -> micron::boolean_testable;
+                                    { u <= t } -> micron::boolean_testable;
+                                    { u >= t } -> micron::boolean_testable;
+                                  };
+template <typename T, typename U>
+concept comparable_with = micron::totally_ordered<T> && micron::totally_ordered<U> && micron::equality_comparable_with<T, U>
+                          && requires(const T &t, const U &u) {
+                               { t < u } -> micron::boolean_testable;
+                               { t > u } -> micron::boolean_testable;
+                               { t <= u } -> micron::boolean_testable;
+                               { t >= u } -> micron::boolean_testable;
+                               { u < t } -> micron::boolean_testable;
+                               { u > t } -> micron::boolean_testable;
+                               { u <= t } -> micron::boolean_testable;
+                               { u >= t } -> micron::boolean_testable;
+                             };
+template <typename T>
+concept movable = micron::constructible_from<T &&, T> and micron::assignable_from<T &, T> and micron::destructible<T>;
 
 template <typename T>
 concept copyable = movable<T> and micron::constructible_from<T, const T &> and micron::assignable_from<T &, const T &>;
@@ -115,9 +166,7 @@ concept stl_container = requires(T t) {
   { t.data() } -> micron::same_as<typename T::iterator>;
   { t.size() } -> micron::convertible_to<typename T::size_type>;
   { t.begin() } -> micron::same_as<typename T::iterator>;
-  { t.begin() } -> micron::same_as<typename T::const_iterator>;
   { t.end() } -> micron::same_as<typename T::iterator>;
-  { t.end() } -> micron::same_as<typename T::const_iterator>;
 };
 
 template <typename T>

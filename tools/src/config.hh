@@ -488,6 +488,7 @@ parse_argv_build_single(int argc, char **argv)
 
   if ( conf.mode == __opt_modes::debug and !user_provided_opt )
     conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
+  conf.target_out.insert(conf.target_out.begin(), conf.bin_dir);
   if ( !user_provided_out ) {
     if ( conf.bonus_objs.empty() ) {
       if ( conf.compile_type == __comp_type::object )
