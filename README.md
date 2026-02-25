@@ -60,7 +60,7 @@ or https:
 `git clone --depth=1 https://github.com/rfgplk/micron.cpp.git`
 
 
-Then, install to your desired location either via `cd`, `rsync`, or `scripts/install_local.py`, a simple script which copies all header files to `/usr/local/micron`
+Then, install to your desired location either via `cp`, `rsync`, or `scripts/install_local.py`, a simple script which copies all header files to `/usr/local/micron`
 
 Philosophy
 ----------
