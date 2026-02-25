@@ -562,7 +562,6 @@ ffloor(T x) noexcept
   return floor(x);
 }
 
-// trunc: cast to integer, cast back (no std::trunc)
 template <typename T>
 constexpr T
 ftrunc(T x) noexcept
