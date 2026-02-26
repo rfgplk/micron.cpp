@@ -9,6 +9,7 @@
 #include "../bits/__container.hpp"
 #include "../type_traits.hpp"
 
+#include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
 #include "../except.hpp"

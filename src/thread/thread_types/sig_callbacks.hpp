@@ -8,8 +8,8 @@
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
 
+#include "../../linux/process/signals.hpp"
 #include "../../linux/sys/__threads.hpp"
-#include "../signal.hpp"
 
 #include "../../control.hpp"
 
@@ -49,28 +49,32 @@ __thread_stop(int)
 void
 __thread_handler()
 {
-  sigaction_t sa = {};
-  sa.sigaction_handler.sa_handler = __thread_sigthrottle;
-  micron::sigemptyset(sa.sa_mask);
-  sa.sa_flags = sa_restart;
-  micron::sigaction(sig_usr1, sa, nullptr);
-  // YIELD
-  sa.sigaction_handler.sa_handler = __thread_yield;
-  micron::sigaction(sig_alrm, sa, nullptr);
-  // YIELD
+  auto sa = micron::create_handler(__thread_sigthrottle, signal::user_signal_1);
+  micron::add_action(sa, __thread_yield, signal::alarm);
+  micron::create_handler(__thread_cancel, signal::user_signal_2);
+  micron::create_handler(__thread_stop, signal::terminate);
+  /*
+    posix::sigaction_t sa = {};
+    sa.sigaction_handler.sa_handler = __thread_sigthrottle;
+    micron::posix::sigemptyset(sa.sa_mask);
+    sa.sa_flags = sa_restart;
+    micron::posix::sigaction(posix::sig_usr1, sa, nullptr);
+    // YIELD
+    sa.posix::sigaction_handler.sa_handler = __thread_yield;
+    micron::posix::sigaction(posix::sig_alrm, sa, nullptr);
+    // YIELD
 
-  // CANCEL
-  sa.sigaction_handler.sa_handler = __thread_cancel;
-  micron::sigemptyset(sa.sa_mask);
-  sa.sa_flags = 0;
-  micron::sigaction(sig_usr2, sa, nullptr);
+    // CANCEL
+    sa.sigaction_handler.sa_handler = __thread_cancel;
+    micron::posix::sigemptyset(sa.sa_mask);
+    sa.sa_flags = 0;
+    micron::posix::sigaction(posix::sig_usr2, sa, nullptr);
 
-  // TODO: investigate
-  sa.sigaction_handler.sa_handler = __thread_stop;
-  micron::sigemptyset(sa.sa_mask);
-  sa.sa_flags = 0;
-  micron::sigaction(sig_term, sa, nullptr);
-  //
+    sa.sigaction_handler.sa_handler = __thread_stop;
+    micron::posix::sigemptyset(sa.sa_mask);
+    sa.sa_flags = 0;
+    micron::posix::sigaction(posix::sig_term, sa, nullptr);
+    *///
 }
 
 };     // namespace micron

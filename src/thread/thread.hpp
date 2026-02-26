@@ -8,6 +8,7 @@
 #include "../memory/ptrs.hpp"
 
 #include "../linux/__includes.hpp"
+#include "../linux/process/signals.hpp"
 #include "../linux/sys/__threads.hpp"
 #include "../memory/stack_constants.hpp"
 
@@ -17,6 +18,7 @@ namespace micron
 {
 
 // is_joinable == is thread joinable
+// dismiss == joins with main thread but without checking for state
 // join == joins with main thread
 // signal == send signal to thread
 // spawn == create a thread
@@ -97,6 +99,37 @@ is_joinable(__thread_pointer<Tr> &t)
   if ( !micron::is_alive_ptr(t) )
     return false;
   return t->can_join();
+}
+
+// NOTE: using join() on threads which were abruptly terminated or otherwise killed/stopped will yield an error, this is by design. join()
+// is meant only for rejoining properly exited threads, otherwise, use dismiss
+
+template <typename Tr = auto_thread<>>
+inline int
+dismiss(Tr &t)
+{
+  int r = 0;
+  r = t.dismiss();
+  return r;
+}
+
+template <typename Tr = auto_thread<>>
+inline int
+dismiss(__thread_pointer<Tr> &t)
+{
+  if ( !micron::is_alive_ptr(t) )
+    return -1;
+  int r = 0;
+  r = t->dismiss();
+  t.clear();
+  return r;
+}
+
+template <typename... Args>
+inline void
+dismiss(Args &...t)
+{
+  (dismiss(t), ...);
 }
 
 template <typename Tr = auto_thread<>>
@@ -297,7 +330,7 @@ template <typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 interrupt(Tr &t)
 {
-  return t.signal(signals::interrupt);
+  return t.signal(signal::interrupt);
 }
 
 template <typename Tr = auto_thread<>>
@@ -306,7 +339,7 @@ interrupt(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) )
     return -1;
-  return t->signal(signals::interrupt);
+  return t->signal(signal::interrupt);
 }
 
 template <typename... Args>
@@ -324,14 +357,14 @@ force_stop(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) )
     return -1;
-  return t->signal(signals::stop);
+  return t->signal(signal::stop);
 }
 
 template <typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 force_stop(Tr &t)
 {
-  return t.signal(signals::stop);
+  return t.signal(signal::stop);
 }
 
 template <typename... Args>
@@ -349,14 +382,14 @@ terminate(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) )
     return -1;
-  return t->signal(signals::terminate);
+  return t->signal(signal::terminate);
 }
 
 template <typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 terminate(Tr &t)
 {
-  return t.signal(signals::terminate);
+  return t.signal(signal::terminate);
 }
 
 template <typename... Args>
@@ -372,7 +405,7 @@ template <typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 kill(Tr &t)
 {
-  return t.signal(signals::kill9);
+  return t.signal(signal::kill9);
 }
 
 template <typename Tr = auto_thread<>>
@@ -381,7 +414,7 @@ kill(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) )
     return -1;
-  return t->signal(signals::kill9);
+  return t->signal(signal::kill9);
 }
 
 template <typename... Args>

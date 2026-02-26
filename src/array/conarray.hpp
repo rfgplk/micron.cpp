@@ -9,6 +9,7 @@
 #include "../bits/__container.hpp"
 #include "../type_traits.hpp"
 
+#include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
 #include "../except.hpp"
@@ -53,6 +54,22 @@ public:
   ~conarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   conarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
+
+  template <typename Fn>
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  conarray(Fn &&fn)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    micron::generate(const_cast<iterator>(begin()), const_cast<iterator>(end()), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  conarray(Fn &&fn)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    micron::transform(const_cast<iterator>(begin()), const_cast<iterator>(end()), fn);
+  }
 
   conarray(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
 

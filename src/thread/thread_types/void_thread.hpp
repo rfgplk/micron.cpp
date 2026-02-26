@@ -39,11 +39,7 @@ template <size_t Stack_Size = thread_stack_size> class void_thread
   void
   thread_handler()
   {
-    sigaction_t sa = {};
-    sa.sigaction_handler.sa_handler = __thread_sigchld;
-    micron::sigemptyset(sa.sa_mask);
-    sa.sa_flags = sa_restart;
-    micron::sigaction(sig_chld, sa, nullptr);
+    micron::create_handler(__thread_sigchld, signal::child);
   }
 
   inline __attribute__((always_inline)) void
@@ -205,7 +201,7 @@ public:
     return attributes.pid;
   }
 
-  long int signal(const signals s) = delete;
+  long int signal(const signal s) = delete;
   int sleep_second(void) = delete;
   int sleep(void) = delete;
   int awaken(void) = delete;

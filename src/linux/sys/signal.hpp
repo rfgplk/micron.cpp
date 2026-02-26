@@ -44,7 +44,8 @@ restore_rt(void)
 #endif
 namespace micron
 {
-
+namespace posix
+{
 using sig_t = void (*)(int);
 
 // children exit codes
@@ -194,7 +195,7 @@ struct __syscall_sigaction_t {
   sighandler_t k_sa_handler;
   unsigned long sa_flags;
   void (*sa_restorer)(void);
-  micron::sigset_t sa_mask;
+  posix::sigset_t sa_mask;
 };
 
 struct sigaction_t {
@@ -203,7 +204,7 @@ struct sigaction_t {
     void (*sa_sigaction)(int, siginfo_t *, void *);
   } sigaction_handler;
 
-  micron::sigset_t sa_mask;
+  posix::sigset_t sa_mask;
 
   int sa_flags;
 
@@ -225,7 +226,7 @@ sigword(const int mask)
 }
 
 inline void
-sigemptyset(micron::sigset_t &set)
+sigemptyset(posix::sigset_t &set)
 {
   auto cnt = __sigsize;
   while ( --cnt >= 0 )
@@ -233,7 +234,7 @@ sigemptyset(micron::sigset_t &set)
 }
 
 inline void
-sigfillset(micron::sigset_t &set)
+sigfillset(posix::sigset_t &set)
 {
   auto cnt = __sigwords;
   while ( --cnt >= 0 )
@@ -241,7 +242,7 @@ sigfillset(micron::sigset_t &set)
 }
 
 inline int
-sigisemptyset(const micron::sigset_t &set)
+sigisemptyset(const posix::sigset_t &set)
 {
   auto cnt = __sigwords;
   u64 ret = set.__val[--cnt];
@@ -250,20 +251,20 @@ sigisemptyset(const micron::sigset_t &set)
   return (ret == 0);
 }
 
-inline micron::sigset_t
-sigandset(const micron::sigset_t &a, const micron::sigset_t &b)
+inline posix::sigset_t
+sigandset(const posix::sigset_t &a, const posix::sigset_t &b)
 {
-  micron::sigset_t ret;
+  posix::sigset_t ret;
   auto cnt = __sigwords;
   while ( --cnt >= 0 )
     ret.__val[cnt] = a.__val[cnt] & b.__val[cnt];
   return ret;
 }
 
-inline micron::sigset_t
-sigorset(const micron::sigset_t &a, const micron::sigset_t &b)
+inline posix::sigset_t
+sigorset(const posix::sigset_t &a, const posix::sigset_t &b)
 {
-  micron::sigset_t ret;
+  posix::sigset_t ret;
   auto cnt = __sigwords;
   while ( --cnt >= 0 )
     ret.__val[cnt] = a.__val[cnt] | b.__val[cnt];
@@ -271,7 +272,7 @@ sigorset(const micron::sigset_t &a, const micron::sigset_t &b)
 }
 
 inline int
-sigismember(const micron::sigset_t &a, int sig)
+sigismember(const posix::sigset_t &a, int sig)
 {
   u64 mask = sigmask(sig);
   int word = sigword(sig);
@@ -279,7 +280,7 @@ sigismember(const micron::sigset_t &a, int sig)
 }
 
 inline void
-sigaddset(micron::sigset_t &a, int sig)
+sigaddset(posix::sigset_t &a, int sig)
 {
   u64 mask = sigmask(sig);
   int word = sigword(sig);
@@ -287,18 +288,18 @@ sigaddset(micron::sigset_t &a, int sig)
 }
 
 inline void
-sigdelset(micron::sigset_t &a, int sig)
+sigdelset(posix::sigset_t &a, int sig)
 {
   u64 mask = sigmask(sig);
   int word = sigword(sig);
   a.__val[word] &= ~mask;
 }
 
-constexpr u64 __sig_syscall_size = 8;     // NOT THIS sizeof(micron::sigset_t);
+constexpr u64 __sig_syscall_size = 8;     // NOT THIS sizeof(posix::sigset_t);
 
 // start of syscalls
 inline int
-sigprocmask(int how, const micron::sigset_t &set, micron::sigset_t *old)
+sigprocmask(int how, const posix::sigset_t &set, posix::sigset_t *old)
 {
   return static_cast<int>(micron::syscall(SYS_rt_sigprocmask, how, &set, old, __sig_syscall_size));
 }
@@ -310,7 +311,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   __syscall_sigaction_t __system_oldaction = {};
 
   __system_action.k_sa_handler = action.sigaction_handler.sa_handler;
-  micron::voidcpy(&__system_action.sa_mask, &action.sa_mask, sizeof(micron::sigset_t));
+  micron::voidcpy(&__system_action.sa_mask, &action.sa_mask, sizeof(posix::sigset_t));
   __system_action.sa_flags = (u32)action.sa_flags;
   __system_action.sa_flags |= 0x04000000;
   __system_action.sa_restorer = &restore_rt;
@@ -319,7 +320,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
       = static_cast<int>(micron::syscall(SYS_rt_sigaction, sig, &__system_action, old ? &__system_oldaction : nullptr, __sig_syscall_size));
   if ( old && result >= 0 ) {
     old->sigaction_handler.sa_handler = __system_oldaction.k_sa_handler;
-    micron::voidcpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(micron::sigset_t));
+    micron::voidcpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(posix::sigset_t));
     old->sa_flags = static_cast<int>(__system_oldaction.sa_flags);
     old->sa_restorer = __system_action.sa_restorer;
   }
@@ -327,7 +328,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
 }
 
 int
-sigwait(const micron::sigset_t &set, int &sig)
+sigwait(const posix::sigset_t &set, int &sig)
 {
   siginfo_t info = {};
   int ret = 0;
@@ -339,5 +340,5 @@ sigwait(const micron::sigset_t &set, int &sig)
   sig = info.si_signo;
   return 0;
 }
-
+};     // namespace posix
 };     // namespace micron

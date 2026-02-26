@@ -14,6 +14,8 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../tuple.hpp"
+
 namespace micron
 {
 

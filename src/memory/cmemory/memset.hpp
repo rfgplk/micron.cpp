@@ -178,28 +178,8 @@ rscmemset(F &s, const byte in) noexcept
 };
 
 // SIMD MEMSET VARIANTS, REQUIRES ALIGNMENT
-template <typename F, typename N = byte>
-__attribute__((nonnull)) F *
-memset256(F *src, N in, const u64 cnt) noexcept
-{
-  __m256i v = _mm256_set1_epi32(in);
-  for ( u64 n = 0; n < cnt; n += 8 ) {
-    _mm256_store_si256(reinterpret_cast<__m256i *>(src + n), v);
-  }
-  return reinterpret_cast<F *>(src);
-};
-
-template <typename F, typename N = byte>
-__attribute__((nonnull)) F *
-memset128(F *src, N in, const u64 cnt) noexcept
-{
-  __m128i v = _mm_set1_epi32(in);
-  for ( u64 n = 0; n < cnt; n += 4 ) {
-    _mm_store_si128(reinterpret_cast<__m128i *>(src + n), v);
-  }
-  return reinterpret_cast<F *>(src);
-};
-
+// MOVED TO /simd
+//
 // MANUALLY UNROLLED MEMSET - BE CAREFUL!
 template <typename F>
 inline F *

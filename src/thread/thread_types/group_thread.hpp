@@ -39,11 +39,7 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
   void
   thread_handler()
   {
-    sigaction_t sa = {};
-    sa.sigaction_handler.sa_handler = __thread_sigchld;
-    micron::sigemptyset(sa.sa_mask);
-    sa.sa_flags = sa_restart;
-    micron::sigaction(sig_chld, sa, nullptr);
+    micron::create_handler(__thread_sigchld, signal::child);
   }
 
   template <typename F, typename... Args>
@@ -66,6 +62,7 @@ template <size_t Stack_Size = thread_stack_size> class group_thread
       micron::exc<except::memory_error>("micron thread::__release(): failed to unmap thread stack");
     }
     attributes.clear();
+    payload.alive.store(false);
   }
 
   void
@@ -159,11 +156,23 @@ public:
   }
 
   auto
-  join(void) -> int     // thread
+  join(void) -> int     // group_thread
   {
     auto r = pthread::__join_thread(attributes.pid);
     __safe_release();
     return r;
+  }
+
+  auto
+  dismiss(void) -> int     // group_thread
+  {
+    if ( try_join() == error::busy ) {
+      auto r = pthread::__join_thread(attributes.pid);
+      __release();
+      return r;
+    }
+    __release();
+    return 1;
   }
 
   auto
@@ -190,7 +199,7 @@ public:
   }
 
   long int
-  signal(const signals s)
+  signal(const micron::signal s)
   {
     if ( alive() ) {
       return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)s);
@@ -203,7 +212,7 @@ public:
   sleep_second(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signals::usr1);
+      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::usr1);
     }
     return -1;
   }
@@ -212,7 +221,7 @@ public:
   sleep(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signals::stop);
+      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::stop);
     }
     return -1;
   }
@@ -221,7 +230,7 @@ public:
   awaken(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signals::cont);
+      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::cont);
     }
     return -1;
   }
@@ -231,8 +240,17 @@ public:
   {
     if ( alive() ) {
       int r = pthread::cancel_thread(attributes.pid);
-      signal(signals::usr2);
+      signal(signal::usr2);
       return r;
+    }
+    return -1;
+  }
+
+  int
+  terminate(void)
+  {
+    if ( alive() ) {
+      return signal(signal::terminate);
     }
     return -1;
   }

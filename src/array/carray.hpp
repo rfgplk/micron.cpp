@@ -9,6 +9,7 @@
 #include "../bits/__container.hpp"
 #include "../type_traits.hpp"
 
+#include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
@@ -51,6 +52,22 @@ public:
   ~carray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   carray() { __impl_container::zero<N>(micron::addr(stack[0])); }
+
+  template <typename Fn>
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  carray(Fn &&fn)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  carray(Fn &&fn)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    micron::transform(begin(), end(), fn);
+  }
 
   carray(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
 

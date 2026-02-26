@@ -4,10 +4,8 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
-#if defined(__unix__) || defined(__APPLE__)
-#else
-#error "Unsupported platform."
-#endif
+
+#include "bits/__arch.hpp"
 
 #ifndef MICRON_ABCMALLOC_STD
 #define MICRON_ABCMALLOC_STD 1

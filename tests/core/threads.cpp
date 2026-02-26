@@ -6,7 +6,7 @@
 #include "../../src/control.hpp"
 #include "../../src/io/console.hpp"
 #include "../../src/linux/std.hpp"
-#include "../../src/mutex/spin_lock.hpp"
+#include "../../src/mutex/locks/spin_lock.hpp"
 #include "../../src/std.hpp"
 #include "../../src/sync/yield.hpp"
 #include "../../src/sync/contract.hpp"
@@ -87,7 +87,7 @@ int
 main(void)
 {
 
-  enable_scope()
+  disable_scope()
   {
     // mc::when(t, 6);
     // mc::as_thread(fn, t);
@@ -119,19 +119,16 @@ main(void)
     th.try_join();
     return 0;
   }
-  disable_scope()
+  enable_scope()
   {
     mc::yield();
-    auto t = mc::solo::spawn<mc::auto_thread<>>(fn, 5, 6, 7, 8, 9);
-    mc::ssleep(1);
-    // mc::console("Global is ", global);
-    mc::solo::yield(t);
+    auto t = mc::solo::spawn<mc::auto_thread<>>(fn_forever);
+    t->sleep();
+    mc::console("Thread Asleep!");
     mc::ssleep(2);
-    // t->sleep();
-    // mc::console("Thread Asleep!");
-    // mc::ssleep(2);
-    // t->awaken();
-    mc::solo::join(t);
+    t->awaken();
+    mc::solo::terminate(t);
+    mc::solo::dismiss(t);
   }
 
   disable_scope()

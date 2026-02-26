@@ -8,6 +8,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
+#include "../algorithm/algorithm.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
@@ -19,7 +20,6 @@
 
 namespace micron
 {
-
 template <is_constexpr_valid T, size_t N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 struct constexpr_array {
@@ -41,6 +41,24 @@ struct constexpr_array {
 
   constexpr constexpr_array() = default;
 
+  // BUG: spaghetti includes, fix
+  /*
+  template <typename Fn> constexpr constexpr_array(Fn &&fn)
+  {
+    for ( size_t i = 0; i < N; ++i )
+      stack[i] = T{};
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  constexpr constexpr_array(Fn &&fn)
+  {
+    for ( size_t i = 0; i < N; ++i )
+      stack[i] = T{};
+    micron::transform(begin(), end(), fn);
+  }
+*/
   constexpr constexpr_array(const T &val)
   {
     for ( size_t i = 0; i < N; ++i )

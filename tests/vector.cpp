@@ -31,6 +31,12 @@ main()
     vec.erase(vec.begin() + 9);
     micron::console(vec);
   };
+  enable_scope()
+  {
+    sb::test_case("micron::vector(), testing closures");
+    micron::fvector<int> vec(10, [&](int* p){ if(p != vec.begin())*p = *(p - 1) + 5; return *p;});
+    micron::console(vec);
+  };
   mc::convector<float> conf;
   conf.resize(50);
   conf.fill(5.5f);

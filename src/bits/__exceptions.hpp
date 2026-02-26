@@ -15,6 +15,8 @@
 
 #include "../defs.hpp"
 
+#include "../errno.hpp"
+
 namespace micron
 {
 namespace except
@@ -29,9 +31,38 @@ __write_n(const char *str_err)
 }
 
 void
+__write(const char *str_err, size_t sz)
+{
+  micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);
+}
+
+void
 __write(const char *str_err)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+}
+
+template <typename T>
+inline void
+__write_unsigned(T n)
+{
+  char buf[32];
+  int i = 0;
+  if ( n == 0 ) {
+    buf[i++] = '0';
+  } else {
+    while ( n > 0 ) {
+      buf[i++] = '0' + (n % 10);
+      n /= 10;
+    }
+    // reverse
+    for ( int j = 0; j < i / 2; ++j ) {
+      char tmp = buf[j];
+      buf[j] = buf[i - j - 1];
+      buf[i - j - 1] = tmp;
+    }
+  }
+  __write(buf, i);
 }
 
 template <typename T, typename... Args>
@@ -41,6 +72,9 @@ raise(Args &&...args)
   T ex(args...);
   __write("exception raised: ");
   __write_n(ex.what());
+  __write("errno: ");
+  __write_unsigned(errno);
+  __write("\n");
   abort(ex.which());
 }
 

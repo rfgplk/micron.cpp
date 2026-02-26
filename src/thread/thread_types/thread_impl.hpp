@@ -39,6 +39,14 @@ struct __thread_payload {
   atomic_token<bool> alive;
   atomic_token<u64> ret_val;
   posix::rusage_t usage;     // non atomic
+
+  void
+  clear(void)
+  {
+    alive.store(false);
+    ret_val.store(0);
+    usage = posix::rusage_t{};
+  }
 };
 
 struct __worker_payload {

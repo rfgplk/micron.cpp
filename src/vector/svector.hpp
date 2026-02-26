@@ -67,6 +67,28 @@ public:
     length = cnt;
   };
 
+  template <typename Fn>
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  svector(const size_type n, Fn &&fn)
+  {
+    if ( n > N ) [[unlikely]]
+      exc<except::library_error>("error micron::svector(): cnt too large");
+    __impl_container::set(micron::addr(stack[0]), T{}, n);
+    length = n;
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  svector(const size_type n, Fn &&fn)
+  {
+    if ( n > N ) [[unlikely]]
+      exc<except::library_error>("error micron::svector(): cnt too large");
+    __impl_container::set(micron::addr(stack[0]), T{}, n);
+    length = n;
+    micron::transform(begin(), end(), fn);
+  }
+
   svector(const size_type cnt, const T &v)
   {
     if ( cnt > N ) [[unlikely]]

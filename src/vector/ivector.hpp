@@ -100,6 +100,20 @@ public:
     __mem::length = 0;
   };
 
+  template <typename Fn>
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  ivector(Fn &&fn) : __mem()
+  {
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  ivector(Fn &&fn)
+  {
+    micron::transform(begin(), end(), fn);
+  }
+
   // two main functions when it comes to copying over data
   ivector(const ivector &o) : __mem(o.capacity())
   {

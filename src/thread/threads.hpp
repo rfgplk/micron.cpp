@@ -24,7 +24,7 @@
 #include "../tags.hpp"
 #include "../tuple.hpp"
 
-#include "signal.hpp"
+#include "../linux/process/signals.hpp"
 
 #include "thread_types/auto_thread.hpp"
 #include "thread_types/group_thread.hpp"

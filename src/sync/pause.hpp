@@ -15,7 +15,8 @@
 #include "../linux/sys/signal.hpp"
 #include "../linux/sys/system.hpp"
 #include "../linux/sys/time.hpp"
-#include "../thread/signal.hpp"
+
+#include "../linux/process/signals.hpp"
 
 #include "../io/bits.hpp"
 
@@ -40,11 +41,11 @@ template <typename F, typename... Args>
 inline void
 pause(F f, Args... args)
 {
-  micron::sigset_t signal;
-  micron::sigemptyset(signal);
-  micron::sigaddset(signal, sig_cont);
+  micron::posix::sigset_t signal;
+  micron::posix::sigemptyset(signal);
+  micron::posix::sigaddset(signal, posix::sig_cont);
   int sig = 0;
-  auto s = micron::sigwait(signal, sig);
+  auto s = micron::posix::sigwait(signal, sig);
   f(sig, args...);
   return;
 }
@@ -52,12 +53,12 @@ pause(F f, Args... args)
 inline void
 pause()
 {
-  micron::sigset_t signal;
-  micron::sigemptyset(signal);
-  micron::sigaddset(signal, sig_cont);
-  micron::sigprocmask(sig_block, signal, nullptr);
+  micron::posix::sigset_t signal;
+  micron::posix::sigemptyset(signal);
+  micron::posix::sigaddset(signal, posix::sig_cont);
+  micron::posix::sigprocmask(posix::sig_block, signal, nullptr);
   int sig = 0;
-  micron::sigwait(signal, sig);
+  micron::posix::sigwait(signal, sig);
   return;
 }
 
@@ -75,8 +76,8 @@ wait(int pid)
 inline int
 wait_thread(int tid)
 {
-  // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
-  siginfo_t i;
+  // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
+  micron::posix::siginfo_t i;
   int r = static_cast<int>(micron::waitid(P_PID, tid, i, exited));
   if ( r < 0 ) {
     if ( r == -10 ) {
@@ -88,10 +89,10 @@ wait_thread(int tid)
 inline int
 can_wait(int tid)
 {
-  // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
-  siginfo_t i;
+  // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
+  micron::posix::siginfo_t i;
   micron::waitid(P_PID, tid, i, exited | nowait);
-  if ( i.si_code == cld_exited or i.si_code == cld_dumped or i.si_code == cld_killed )
+  if ( i.si_code == posix::cld_exited or i.si_code == posix::cld_dumped or i.si_code == posix::cld_killed )
     return true;
   return false;
 }
@@ -99,7 +100,7 @@ can_wait(int tid)
 inline int
 try_wait_thread(int tid)
 {
-  // int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
+  // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
   int status = 0;
   return micron::waitpid(tid, &status, nohang);
 }
@@ -109,15 +110,15 @@ template <typename... Args>
 inline int
 await(Args... args)
 {
-  micron::sigset_t old;
+  micron::posix::sigset_t old;
   int save;
-  micron::sigset_t signal;
-  micron::sigemptyset(signal);
-  (micron::sigaddset(signal, args), ...);
-  if ( micron::sigprocmask(sig_setmask, signal, &old) < 0 )
+  micron::posix::sigset_t signal;
+  micron::posix::sigemptyset(signal);
+  (micron::posix::sigaddset(signal, args), ...);
+  if ( micron::posix::sigprocmask(posix::sig_setmask, signal, &old) < 0 )
     return -1;
-  micron::sigwait(signal, save);
-  if ( micron::sigprocmask(sig_setmask, old, nullptr) < 0 )
+  micron::posix::sigwait(signal, save);
+  if ( micron::posix::sigprocmask(posix::sig_setmask, old, nullptr) < 0 )
     return -1;
   return 0;
 }

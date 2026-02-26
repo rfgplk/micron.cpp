@@ -81,6 +81,24 @@ public:
     __mem::length = n;
   };
 
+  template <typename Fn>
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  vector(const size_type n, Fn &&fn) : __mem(n)
+  {
+    __impl_container::set(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  vector(const size_type n, Fn &&fn) : __mem(n)
+  {
+    __impl_container::set(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+    micron::transform(begin(), end(), fn);
+  }
+
   template <typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   vector(size_type n, Args &&...args) : __mem(n)

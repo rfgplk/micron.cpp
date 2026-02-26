@@ -6,6 +6,7 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
+#include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
 #include "../except.hpp"
 #include "../math/sqrt.hpp"
@@ -43,6 +44,23 @@ public:
   ~iarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   iarray() { __impl_container::zero<N>(micron::addr(stack[0])); }
+
+  template <typename Fn>
+
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  iarray(Fn &&fn)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  iarray(Fn &&fn)
+  {
+    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    micron::transform(begin(), end(), fn);
+  }
 
   iarray(const T &o) { __impl_container::set(micron::addr(stack[0]), o); }
 

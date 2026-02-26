@@ -172,7 +172,7 @@ waitpid(status_t &status)
 }
 
 auto
-waitid(idtype_t idtype, posix::id_t id, siginfo_t &info, int options)
+waitid(idtype_t idtype, posix::id_t id, posix::siginfo_t &info, int options)
 {
   // note: last one is rusage*
   return micron::syscall(SYS_waitid, idtype, id, &info, options, nullptr);

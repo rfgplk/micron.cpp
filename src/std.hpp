@@ -20,6 +20,8 @@
 
 #include "version.hpp"
 
+#include "bits/__ctasserts.hpp"
+
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
