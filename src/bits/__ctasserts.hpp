@@ -7,6 +7,11 @@
 
 #include "__arch.hpp"
 
+
+#if !defined(__micron_lang_cpp23 )
+#error "Micron needs C++23 compiler support to compile properly"
+#endif
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compilers
 
