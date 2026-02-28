@@ -101,7 +101,7 @@ public:
   }
 
   void
-  operator()(byte *t, size_t sz)
+  operator()(byte *t, usize sz)
   {
     if ( tp == utype::upipe_reader )
       while ( read(fd[ic(utype::upipe_reader)], t, sz) > 0 ) {
@@ -154,7 +154,7 @@ public:
   }
 
   void
-  write(byte *t, size_t sz)
+  write(byte *t, usize sz)
   {
     // write(fd, t, sz);
   }
@@ -169,7 +169,7 @@ public:
   }
 
   void
-  read(byte *t, size_t sz)
+  read(byte *t, usize sz)
   {
     // read(fd, t, sz);
   }

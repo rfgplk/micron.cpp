@@ -32,7 +32,7 @@
 namespace micron
 {
 // thread, a regular thread
-template <size_t Stack_Size = thread_stack_size> class thread
+template <usize Stack_Size = thread_stack_size> class thread
 {
   using thread_type = thread_tag;
 
@@ -303,7 +303,7 @@ public:
     return attributes.stack_addr;
   }
 
-  constexpr size_t
+  constexpr usize
   stack_size() const
   {
     return Stack_Size;

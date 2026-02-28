@@ -63,10 +63,10 @@ class radix_node
 
   node *root;
 
-  static size_t
+  static usize
   common_prefix_length(const Key &a, const Key &b)
   {
-    size_t i = 0;
+    usize i = 0;
     while ( i < a.size() && i < b.size() && a[i] == b[i] )
       i++;
     return i;
@@ -103,7 +103,7 @@ public:
     }
     node *cur = root;
     while ( true ) {
-      size_t prefix = common_prefix_length(cur->key_fragment, k);
+      usize prefix = common_prefix_length(cur->key_fragment, k);
       if ( prefix == cur->key_fragment.size() ) {
         if ( prefix == k.size() ) {
           // exact match
@@ -157,9 +157,9 @@ public:
   find(const Key &k)
   {
     node *cur = root;
-    size_t pos = 0;
+    usize pos = 0;
     while ( cur ) {
-      size_t prefix = common_prefix_length(cur->key_fragment, k.substr(pos));
+      usize prefix = common_prefix_length(cur->key_fragment, k.substr(pos));
       if ( prefix == cur->key_fragment.size() ) {
         pos += prefix;
         if ( pos == k.size() )

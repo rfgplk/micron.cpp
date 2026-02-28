@@ -10,7 +10,7 @@
 namespace micron
 {
 u32
-fnv_32(const byte *data, u32 seed, size_t sz)
+fnv_32(const byte *data, u32 seed, usize sz)
 {
   u64 hash = 14695981039346656037ULL + (31 * seed);
   for ( u32 i = 0; i < sz; i++ ) {

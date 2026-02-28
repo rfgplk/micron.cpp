@@ -15,7 +15,7 @@
 
 ;	.globl rsqrtps_sse
 
-	; void rsqrtps_sse(float *in, float *out, size_t len)
+	; void rsqrtps_sse(float *in, float *out, usize len)
 	; On entry:
 	;     rcx = in
 	;     rdx = out

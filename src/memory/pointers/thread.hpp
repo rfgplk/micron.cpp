@@ -240,7 +240,7 @@ public:
     return control ? control->refs : 0;
   }
 
-  size_t
+  usize
   refs() const noexcept
   {
     micron::lock_guard lock(mtx);

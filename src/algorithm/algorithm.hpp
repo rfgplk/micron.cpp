@@ -50,9 +50,9 @@ fill(T *first, T *end) noexcept
 
 template <auto Fn, typename T>
 constexpr T *
-fill_n(T *first, size_t n) noexcept
+fill_n(T *first, usize n) noexcept
 {
-  for ( size_t i = 0; i < n; ++i, ++first )
+  for ( usize i = 0; i < n; ++i, ++first )
     *first = Fn();
   return first;
 }
@@ -67,7 +67,7 @@ fill(C &c) noexcept
 
 template <auto Fn, is_iterable_container C>
 constexpr C &
-fill_n(C &c, size_t n) noexcept
+fill_n(C &c, usize n) noexcept
 {
   fill_n<Fn>(c.begin(), n);
   return c;
@@ -98,9 +98,9 @@ fill(T *first, T *end, Fn fn) noexcept
 
 template <typename T, class P>
 constexpr T *
-fill_n(T *first, size_t n, const P &value) noexcept
+fill_n(T *first, usize n, const P &value) noexcept
 {
-  for ( size_t i = 0; i < n; ++i, ++first )
+  for ( usize i = 0; i < n; ++i, ++first )
     *first = value;
   return first;
 }
@@ -110,9 +110,9 @@ template <typename T, typename Fn>
     { f() } -> micron::same_as<T>;
   }
 constexpr T *
-fill_n(T *first, size_t n, Fn fn) noexcept
+fill_n(T *first, usize n, Fn fn) noexcept
 {
-  for ( size_t i = 0; i < n; ++i, ++first )
+  for ( usize i = 0; i < n; ++i, ++first )
     *first = fn();
   return first;
 }
@@ -138,7 +138,7 @@ fill(C &c, Fn fn) noexcept
 
 template <is_iterable_container C, class P>
 constexpr C &
-fill_n(C &c, size_t n, const P &value) noexcept
+fill_n(C &c, usize n, const P &value) noexcept
 {
   fill_n(c.begin(), n, value);
   return c;
@@ -149,7 +149,7 @@ template <is_iterable_container C, typename Fn>
     { f() } -> micron::same_as<typename C::value_type>;
   }
 constexpr C &
-fill_n(C &c, size_t n, Fn fn) noexcept
+fill_n(C &c, usize n, Fn fn) noexcept
 {
   fill_n(c.begin(), n, fn);
   return c;
@@ -423,45 +423,45 @@ where(const C &c, Fn fn)
 // shifts/rotates
 template <typename T>
 constexpr T *
-shift_left(T *first, T *end, size_t n) noexcept
+shift_left(T *first, T *end, usize n) noexcept
 {
   if ( n == 0 || first == end )
     return end;
-  const size_t len = static_cast<size_t>(end - first);
+  const usize len = static_cast<usize>(end - first);
   if ( n >= len ) {
     for ( T *p = first; p != end; ++p )
       *p = T{};
     return first;
   }
-  for ( size_t i = 0; i + n < len; ++i )
+  for ( usize i = 0; i + n < len; ++i )
     first[i] = micron::move(first[i + n]);
-  for ( size_t i = len - n; i < len; ++i )
+  for ( usize i = len - n; i < len; ++i )
     first[i] = T{};
   return first + (len - n);
 }
 
 template <typename T>
 constexpr T *
-shift_right(T *first, T *end, size_t n) noexcept
+shift_right(T *first, T *end, usize n) noexcept
 {
   if ( n == 0 || first == end )
     return first;
-  const size_t len = static_cast<size_t>(end - first);
+  const usize len = static_cast<usize>(end - first);
   if ( n >= len ) {
     for ( T *p = first; p != end; ++p )
       *p = T{};
     return end;
   }
-  for ( size_t i = len; i-- > n; )
+  for ( usize i = len; i-- > n; )
     first[i] = micron::move(first[i - n]);
-  for ( size_t i = 0; i < n; ++i )
+  for ( usize i = 0; i < n; ++i )
     first[i] = T{};
   return first + n;
 }
 
 template <is_iterable_container C>
 constexpr C &
-shift_left(C &c, size_t n) noexcept
+shift_left(C &c, usize n) noexcept
 {
   shift_left(c.begin(), c.end(), n);
   return c;
@@ -469,7 +469,7 @@ shift_left(C &c, size_t n) noexcept
 
 template <is_iterable_container C>
 constexpr C &
-shift_right(C &c, size_t n) noexcept
+shift_right(C &c, usize n) noexcept
 {
   shift_right(c.begin(), c.end(), n);
   return c;
@@ -477,9 +477,9 @@ shift_right(C &c, size_t n) noexcept
 
 template <typename T>
 constexpr void
-rotate_left(T *first, T *end, size_t n) noexcept
+rotate_left(T *first, T *end, usize n) noexcept
 {
-  const size_t len = static_cast<size_t>(end - first);
+  const usize len = static_cast<usize>(end - first);
   if ( len == 0 )
     return;
   n %= len;
@@ -501,9 +501,9 @@ rotate_left(T *first, T *end, size_t n) noexcept
 
 template <typename T>
 constexpr void
-rotate_right(T *first, T *end, size_t n) noexcept
+rotate_right(T *first, T *end, usize n) noexcept
 {
-  const size_t len = static_cast<size_t>(end - first);
+  const usize len = static_cast<usize>(end - first);
   if ( len == 0 )
     return;
   n %= len;
@@ -514,7 +514,7 @@ rotate_right(T *first, T *end, size_t n) noexcept
 
 template <is_iterable_container C>
 constexpr C &
-rotate_left(C &c, size_t n) noexcept
+rotate_left(C &c, usize n) noexcept
 {
   rotate_left(c.begin(), c.end(), n);
   return c;
@@ -522,7 +522,7 @@ rotate_left(C &c, size_t n) noexcept
 
 template <is_iterable_container C>
 constexpr C &
-rotate_right(C &c, size_t n) noexcept
+rotate_right(C &c, usize n) noexcept
 {
   rotate_right(c.begin(), c.end(), n);
   return c;
@@ -536,7 +536,7 @@ constexpr f128
 sum(const T &src) noexcept
 {
   f128 sm = 0;
-  for ( size_t i = 0; i < src.size(); i++ )
+  for ( usize i = 0; i < src.size(); i++ )
     sm += static_cast<f128>(src[i]);
   return sm;
 }
@@ -547,7 +547,7 @@ constexpr umax_t
 sum(const T &src) noexcept
 {
   umax_t sm = 0;
-  for ( size_t i = 0; i < src.size(); i++ )
+  for ( usize i = 0; i < src.size(); i++ )
     sm += static_cast<umax_t>(src[i]);
   return sm;
 }
@@ -579,7 +579,7 @@ constexpr R
 geomean(const T &src) noexcept
 {
   R mulsm = static_cast<R>(src[0]);
-  for ( size_t i = 1; i < src.size(); i++ )
+  for ( usize i = 1; i < src.size(); i++ )
     mulsm *= static_cast<R>(src[i]);
   return math::powerflong(mulsm, static_cast<R>(R(1) / R(src.size())));
 }
@@ -590,7 +590,7 @@ constexpr R
 harmonicmean(const T &src) noexcept
 {
   R recsum = 0;
-  for ( size_t i = 0; i < src.size(); i++ )
+  for ( usize i = 0; i < src.size(); i++ )
     recsum += (R(1) / static_cast<R>(src[i]));
   return static_cast<R>(src.size()) / recsum;
 }

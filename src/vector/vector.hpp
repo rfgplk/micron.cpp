@@ -37,7 +37,7 @@ public:
   using category_type = vector_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;

@@ -81,7 +81,7 @@ enable_all_cores(pid_t pid = 0)
 {
   posix::cpu_set_t set;
   auto count = cpu_count();
-  for ( size_t i = 0; i <= count; i++ )
+  for ( usize i = 0; i <= count; i++ )
     set.cpu_set(i);
   posix::sched_setaffinity(pid, sizeof(set), set);
 }
@@ -96,13 +96,13 @@ public:
   cpu_t(void) : scheduler_t(posix::getpid()), pid(posix::getpid()), procs(), count(cpu_count())
   {
     if constexpr ( D ) {
-      for ( size_t i = 0; i <= count; i++ )
+      for ( usize i = 0; i <= count; i++ )
         procs.cpu_set(i);
     }     // default to all threads
   }
 
   bool
-  operator[](const size_t n) const
+  operator[](const usize n) const
   {
     if ( n >= count )
       exc<except::library_error>("micron cpu_t::operator[] out of range");
@@ -122,7 +122,7 @@ public:
   }
 
   bool
-  at(const size_t n) const
+  at(const usize n) const
   {
     if ( n >= count )
       exc<except::library_error>("micron cpu_t::operator[] out of range");
@@ -130,7 +130,7 @@ public:
   }
 
   void
-  set_core(const size_t n)
+  set_core(const usize n)
   {
     if ( n >= count )
       exc<except::library_error>("micron cpu_t::operator[] out of range");

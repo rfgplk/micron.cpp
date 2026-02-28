@@ -131,25 +131,55 @@ struct stat_t {
 };
 #elif __wordsize == 32
 // ARCH
-struct stat_t {
-  dev_t st_dev;     // Device
-  u32 __pad0;
-  ino64_t st_ino;       // 64-bit inode number
-  nlink_t st_nlink;     // 32-bit link count
+struct stat {
+  dev_t st_dev;
+  unsigned short int __pad1;
+  ino_t __st_ino;
+  mode_t st_mode;
+  nlink_t st_nlink;
+  uid_t st_uid;
+  gid_t st_gid;
+  dev_t st_rdev;
+  unsigned short int __pad2;
+  off_t st_size;
+  blksize_t st_blksize;
+  blkcnt_t st_blocks;
+  struct timespec st_atim;
+  struct timespec st_mtim;
+  struct timespec st_ctim;
+  unsigned long int __glibc_reserved4;
+  unsigned long int __glibc_reserved5;
 
-  u32 st_mode;       // File mode
-  uid_t st_uid;      // File owner UID
-  gid_t st_gid;      // File group GID
-  dev_t st_rdev;     // Device number (if special file)
-  u32 __pad1;
-  off64_t st_size;          // 64-bit file size
-  blksize_t st_blksize;     // Optimal block size
-  u32 __pad2;
-  i64 st_blocks;     // Number of 512-byte blocks allocated
+  bool
+  operator!=(const stat_t &o) const
+  {
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+  }
 
-  struct timespec_t st_atim;     // Last access time
-  struct timespec_t st_mtim;     // Last modification time
-  struct timespec_t st_ctim;     // Last status change time
+  bool
+  operator==(const stat_t &o) const
+  {
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+  }
+};
+
+struct stat64 {
+  dev_t st_dev;
+  unsigned short int __pad1;
+  ino_t __st_ino;
+  mode_t st_mode;
+  nlink_t st_nlink;
+  uid_t st_uid;
+  gid_t st_gid;
+  dev_t st_rdev;
+  unsigned short int __pad2;
+  off64_t st_size;
+  blksize_t st_blksize;
+  blkcnt64_t st_blocks;
+  struct timespec st_atim;
+  struct timespec st_mtim;
+  struct timespec st_ctim;
+  ino64_t st_ino;
 
   bool
   operator!=(const stat_t &o) const

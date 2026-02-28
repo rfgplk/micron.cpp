@@ -50,7 +50,7 @@ fold_left(const T *first, const T *end, A init, Fn fn)
 template <class T, class A, typename Fn>
   requires micron::is_invocable_v<Fn, A, const T *>
 A
-fold_left(const T *first, const T *end, A init, Fn fn, size_t limit)
+fold_left(const T *first, const T *end, A init, Fn fn, usize limit)
 {
   for ( u64 i = 0; first != end and i < limit; ++first, ++i )
     init = fn(init, first);
@@ -60,7 +60,7 @@ fold_left(const T *first, const T *end, A init, Fn fn, size_t limit)
 template <class T, class A, class U, typename Fn>
   requires micron::is_invocable_v<Fn, A, const U *> && can_be_transformed<T, U>
 A
-fold_left(const T *first, const T *end, A init, Fn fn, size_t limit)
+fold_left(const T *first, const T *end, A init, Fn fn, usize limit)
 {
   for ( u64 i = 0; first != end and i < limit; ++first, ++i ) {
     U transformed = transform_to<U>(*first);
@@ -121,7 +121,7 @@ fold_right(const T *first, const T *end, Fn fn, A init)
 template <class T, class A, typename Fn>
   requires micron::is_invocable_v<Fn, A, const T *>
 A
-fold(const T *first, const T *end, A init, Fn fn, size_t limit)
+fold(const T *first, const T *end, A init, Fn fn, usize limit)
 {
   return fold_left(first, end, init, fn, limit);
 }
@@ -129,7 +129,7 @@ fold(const T *first, const T *end, A init, Fn fn, size_t limit)
 template <class T, class A, class U, typename Fn>
   requires micron::is_invocable_v<Fn, A, const U *> && can_be_transformed<T, U>
 A
-fold(const T *first, const T *end, A init, Fn fn, size_t limit)
+fold(const T *first, const T *end, A init, Fn fn, usize limit)
 {
   return fold_left(first, end, init, fn, limit);
 }
@@ -169,7 +169,7 @@ fold_right(const C &c, Fn fn, A init)
 template <is_iterable_container C, class A, typename Fn>
   requires micron::is_invocable_v<Fn, A, const typename C::value_type *>
 A
-fold_left(const C &c, A init, Fn fn, size_t limit)
+fold_left(const C &c, A init, Fn fn, usize limit)
 {
   return fold_left(c.begin(), c.end(), init, fn, limit);
 }
@@ -177,17 +177,17 @@ fold_left(const C &c, A init, Fn fn, size_t limit)
 template <is_iterable_container C, class A, class U, typename Fn>
   requires micron::is_invocable_v<Fn, A, const U *> && can_be_transformed<typename C::value_type, U>
 A
-fold_left(const C &c, A init, Fn fn, size_t limit)
+fold_left(const C &c, A init, Fn fn, usize limit)
 {
   return fold_left<typename C::value_type, A, U, Fn>(c.begin(), c.end(), init, fn, limit);
 }
 
 template <class T, class A, typename Fn>
   requires micron::is_invocable_v<Fn, A, const T *>
-micron::pair<A, size_t>
+micron::pair<A, usize>
 fold_left_counted(const T *first, const T *end, A init, Fn fn)
 {
-  size_t count = 0;
+  usize count = 0;
   for ( ; first != end; ++first, ++count )
     init = fn(init, first);
   return { init, count };
@@ -195,7 +195,7 @@ fold_left_counted(const T *first, const T *end, A init, Fn fn)
 
 template <is_iterable_container C, class A, typename Fn>
   requires micron::is_invocable_v<Fn, A, const typename C::value_type *>
-micron::pair<A, size_t>
+micron::pair<A, usize>
 fold_left_counted(const C &c, A init, Fn fn)
 {
   return fold_left_counted(c.begin(), c.end(), init, fn);

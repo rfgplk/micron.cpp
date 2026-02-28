@@ -43,7 +43,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> class c
     if ( !__mem::length )
       return;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         (__mem::memory)[i].~T();
     }
     micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
@@ -51,7 +51,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> class c
   }
 
   inline void
-  __unlocked_reserve(const size_t n)
+  __unlocked_reserve(const usize n)
   {
     if ( n < __mem::capacity )
       return;
@@ -112,7 +112,7 @@ public:
   using category_type = vector_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -134,13 +134,13 @@ public:
   convector(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      size_t i = 0;
+      usize i = 0;
       for ( T &&value : lst ) {
         new (&__mem::memory[i++]) T(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
-      size_t i = 0;
+      usize i = 0;
       for ( T value : lst ) {
         __mem::memory[i++] = value;
       }
@@ -150,13 +150,13 @@ public:
 
   convector(void) : __mem() {};
 
-  convector(const size_t n) : __mem(n)
+  convector(const usize n) : __mem(n)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( size_t i = 0; i < n; i++ )
+      for ( usize i = 0; i < n; i++ )
         new (&__mem::memory[i]) T();
     } else {
-      for ( size_t i = 0; i < n; i++ )
+      for ( usize i = 0; i < n; i++ )
         __mem::memory[i] = T{};
     }
     __mem::length = n;
@@ -164,33 +164,33 @@ public:
 
   template <typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
-  convector(size_t n, Args... args) : __mem(n)
+  convector(usize n, Args... args) : __mem(n)
   {
-    for ( size_t i = 0; i < n; i++ )
+    for ( usize i = 0; i < n; i++ )
       new (&__mem::memory[i]) T(args...);
     __mem::length = n;
   };
 
-  convector(size_t n, const T &init_value) : __mem(n)
+  convector(usize n, const T &init_value) : __mem(n)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( size_t i = 0; i < n; i++ )
+      for ( usize i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(init_value);
     } else {
-      for ( size_t i = 0; i < n; i++ )
+      for ( usize i = 0; i < n; i++ )
         __mem::memory[i] = init_value;
     }
     __mem::length = n;
   };
 
-  convector(size_t n, T &&init_value) : __mem(n)
+  convector(usize n, T &&init_value) : __mem(n)
   {
     T tmp = micron::move(init_value);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( size_t i = 0; i < n; i++ )
+      for ( usize i = 0; i < n; i++ )
         new (&__mem::memory[i]) T(tmp);
     } else {
-      for ( size_t i = 0; i < n; i++ )
+      for ( usize i = 0; i < n; i++ )
         __mem::memory[i] = init_value;
     }
     __mem::length = n;
@@ -279,7 +279,7 @@ public:
 
   // copies convector out
   inline __attribute__((always_inline)) const slice<T>
-  operator[](size_t from, size_t to) const
+  operator[](usize from, usize to) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
@@ -289,7 +289,7 @@ public:
   }
 
   inline __attribute__((always_inline)) slice<T>
-  operator[](size_t from, size_t to)
+  operator[](usize from, usize to)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     // meant to be safe so this is here
@@ -319,7 +319,7 @@ public:
   }
 
   inline __attribute__((always_inline)) T &
-  at(size_t n)
+  at(usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n >= __mem::length )
@@ -327,17 +327,17 @@ public:
     return (__mem::memory)[n];
   }
 
-  size_t
+  usize
   at_n(iterator i) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( i - begin() >= __mem::length )
       exc<except::library_error>("micron::iconvector at_n() out of bounds");
-    return static_cast<size_t>(i - begin());
+    return static_cast<usize>(i - begin());
   }
 
   const T *
-  itr(size_t n) const
+  itr(usize n) const
   {
     if ( n >= __mem::length )
       exc<except::library_error>("micron::convector at() out of bounds");
@@ -388,14 +388,14 @@ public:
     micron::swap(__mem::length, o.length);
   }
 
-  size_t
+  usize
   max_size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::capacity;
   }
 
-  size_t
+  usize
   size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
@@ -403,7 +403,7 @@ public:
   }
 
   void
-  set_size(const size_t n)
+  set_size(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __mem::length = n;
@@ -418,7 +418,7 @@ public:
 
   // grow container
   inline void
-  reserve(const size_t n)
+  reserve(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n < __mem::capacity )
@@ -432,7 +432,7 @@ public:
   }
 
   inline void
-  try_reserve(const size_t n)
+  try_reserve(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n < __mem::capacity )
@@ -463,13 +463,13 @@ public:
   fill(const T &v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < __mem::length; i++ )
+    for ( usize i = 0; i < __mem::length; i++ )
       __mem::memory[i] = v;
   }
 
   // resize to how much and fill with a value v
   void
-  resize(size_t n)
+  resize(usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !(n > __mem::length) ) {
@@ -479,14 +479,14 @@ public:
       __unlocked_reserve(n);
     }
     T *f_ptr = __mem::memory;
-    for ( size_t i = __mem::length; i < n; i++ )
+    for ( usize i = __mem::length; i < n; i++ )
       new (&f_ptr[i]) T{};
 
     __mem::length = n;
   }
 
   void
-  resize(size_t n, const T &v)
+  resize(usize n, const T &v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !(n > __mem::length) ) {
@@ -496,7 +496,7 @@ public:
       __unlocked_reserve(n);
     }
     T *f_ptr = __mem::memory;
-    for ( size_t i = __mem::length; i < n; i++ )
+    for ( usize i = __mem::length; i < n; i++ )
       new (&f_ptr[i]) T(v);
 
     __mem::length = n;
@@ -530,7 +530,7 @@ public:
   }
 
   inline const_iterator
-  get(const size_t n) const
+  get(const usize n) const
   {
     if ( n > __mem::length )
       exc<except::library_error>("micron::convector get() out of range");
@@ -538,7 +538,7 @@ public:
   }
 
   inline const_iterator
-  cget(const size_t n) const
+  cget(const usize n) const
   {
     if ( n > __mem::length )
       exc<except::library_error>("micron::convector cget() out of range");
@@ -550,7 +550,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *f_ptr = __mem::memory;
-    for ( size_t i = 0; i < __mem::length; i++ )
+    for ( usize i = 0; i < __mem::length; i++ )
       if ( f_ptr[i] == o )
         return &f_ptr[i];
     return nullptr;
@@ -561,7 +561,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *f_ptr = __mem::memory;
-    for ( size_t i = 0; i < __mem::length; i++ )
+    for ( usize i = 0; i < __mem::length; i++ )
       if ( f_ptr[i] == o )
         return &f_ptr[i];
     return nullptr;
@@ -598,11 +598,11 @@ public:
   }
 
   inline iterator
-  insert(size_t n, const T &val, size_t cnt)
+  insert(usize n, const T &val, usize cnt)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
-      for ( size_t i = 0; i < cnt; ++i )
+      for ( usize i = 0; i < cnt; ++i )
         __unlocked_push_back(val);
       return begin();
     }
@@ -614,14 +614,14 @@ public:
     T *ite = &(__mem::memory)[__mem::length - 1];
     micron::memmove(its + cnt, its, ite - its);
     //*its = (val);
-    for ( size_t i = 0; i < cnt; ++i )
+    for ( usize i = 0; i < cnt; ++i )
       new (its + i) T(val);
     __mem::length += cnt;
     return its;
   }
 
   inline iterator
-  insert(size_t n, const T &val)
+  insert(usize n, const T &val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
@@ -642,7 +642,7 @@ public:
   }
 
   inline iterator
-  insert(size_t n, T &&val)
+  insert(usize n, T &&val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
@@ -671,7 +671,7 @@ public:
       return begin();
     }
     if ( (__mem::length) >= __mem::capacity ) {
-      size_t dif = static_cast<size_t>(it - __mem::memory);
+      usize dif = static_cast<usize>(it - __mem::memory);
       __unlocked_reserve(__mem::capacity + 1);
       it = __mem::memory + dif;
     }     // invalidated if
@@ -686,16 +686,16 @@ public:
   }
 
   inline iterator
-  insert(iterator it, const T &val, const size_t cnt)
+  insert(iterator it, const T &val, const usize cnt)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
-      for ( size_t i = 0; i < cnt; ++i )
+      for ( usize i = 0; i < cnt; ++i )
         __unlocked_push_back(val);
       return begin();
     }
     if ( __mem::length >= __mem::capacity ) {
-      size_t dif = it - __mem::memory;
+      usize dif = it - __mem::memory;
       __unlocked_reserve(__mem::capacity + 1);
       it = __mem::memory + dif;
     }
@@ -704,7 +704,7 @@ public:
     T *ite = end();
     micron::memmove(it + cnt, it, ite - it);
     //*it = (val);
-    for ( size_t i = 0; i < cnt; ++i )
+    for ( usize i = 0; i < cnt; ++i )
       new (it + i) T(val);
     __mem::length++;
     return it;
@@ -719,7 +719,7 @@ public:
       return begin();
     }
     if ( __mem::length >= __mem::capacity ) {
-      size_t dif = it - __mem::memory;
+      usize dif = it - __mem::memory;
       __unlocked_reserve(__mem::capacity + 1);
       it = __mem::memory + dif;
     }
@@ -755,7 +755,7 @@ public:
       __unlocked_reserve(__mem::capacity + 1);
     }     // invalidated if
     T *ite = end();
-    size_t i = 0;
+    usize i = 0;
     for ( ; i < size() - 1; i++ ) {
       if ( __mem::memory[i] >= val ) {
         i++;
@@ -773,14 +773,14 @@ public:
   }
 
   inline convector &
-  assign(const size_t cnt, const T &val)
+  assign(const usize cnt, const T &val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( (cnt * (sizeof(T) / sizeof(byte))) >= __mem::capacity ) {
       __unlocked_reserve(__mem::capacity + (cnt) * sizeof(T));
     }
     __unlocked_clear();     // clear the vec
-    for ( size_t i = 0; i < cnt; i++ ) {
+    for ( usize i = 0; i < cnt; i++ ) {
       //(__mem::memory)[i] = val;
       new (&__mem::memory[i]) T(val);
     }
@@ -857,8 +857,8 @@ public:
     } else {
     }
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      size_t _n = (n - cbegin());
-      for ( size_t i = _n; i < (__mem::length - 1); i++ )
+      usize _n = (n - cbegin());
+      for ( usize i = _n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
     } else {
       __impl_container::copy(n, n + 1, __mem::length);
@@ -867,7 +867,7 @@ public:
   }
 
   inline void
-  erase(const size_t n)
+  erase(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( n >= size() )
@@ -878,8 +878,8 @@ public:
     }
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      size_t _n = (n - cbegin());
-      for ( size_t i = n; i < (__mem::length - 1); i++ )
+      usize _n = (n - cbegin());
+      for ( usize i = n; i < (__mem::length - 1); i++ )
         (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
     } else {
       __impl_container::copy(__mem::memory[n], __mem::memory[n + 1], __mem::length);
@@ -895,7 +895,7 @@ public:
     if ( !__mem::length )
       return;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         (__mem::memory)[i].~T();
     }
     micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));

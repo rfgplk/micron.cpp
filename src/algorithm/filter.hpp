@@ -31,7 +31,7 @@ filter(const T *first, const T *end, Fn fn, T *out)
 template <class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 T *
-filter(const T *first, const T *end, Fn fn, T *out, size_t limit)
+filter(const T *first, const T *end, Fn fn, T *out, usize limit)
 {
   for ( u64 i = 0; first != end and i < limit; ++first )
     if ( fn(first) ) {
@@ -56,7 +56,7 @@ filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
 template <class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 const T *
-prune(const T *first, const T *end, Fn fn, T *out, size_t limit)
+prune(const T *first, const T *end, Fn fn, T *out, usize limit)
 {
   for ( u64 i = 0; first != end and i < limit; ++first )
     if ( fn(first) ) {
@@ -108,7 +108,7 @@ filter_inplace(C &c, F fn)
 template <is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 C
-filter(const C &c, Fn fn, size_t limit)
+filter(const C &c, Fn fn, usize limit)
 {
   C out;
   out.resize(micron::min(c.size(), limit));
@@ -128,7 +128,7 @@ filter(const C &c_in, Fn fn, O &c_out)
 template <is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
-filter(const C &c_in, Fn fn, O &c_out, size_t limit)
+filter(const C &c_in, Fn fn, O &c_out, usize limit)
 {
   return filter(c_in.begin(), c_in.end(), fn, c_out.begin(), limit);
 }
@@ -136,7 +136,7 @@ filter(const C &c_in, Fn fn, O &c_out, size_t limit)
 template <is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
-prune(const C &c_in, Fn fn, O &c_out, size_t limit)
+prune(const C &c_in, Fn fn, O &c_out, usize limit)
 {
   return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), limit);
 }
@@ -161,7 +161,7 @@ filter(const T *first, const T *end, T *out) noexcept
 
 template <auto Fn, typename T>
 constexpr T *
-filter(const T *first, const T *end, T *out, size_t limit) noexcept
+filter(const T *first, const T *end, T *out, usize limit) noexcept
 {
   for ( u64 i = 0; first != end && i < limit; ++first )
     if ( Fn(first) ) {
@@ -184,7 +184,7 @@ filter(const C &c)
 
 template <auto Fn, is_iterable_container C>
 C
-filter(const C &c, size_t limit)
+filter(const C &c, usize limit)
 {
   C out;
   out.resize(micron::min(c.size(), limit));

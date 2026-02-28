@@ -46,26 +46,26 @@ struct __buddy_list {
     free_block *next;
   };
 
-  // size_t min_block;
+  // usize min_block;
   byte *base;
-  size_t total;
+  usize total;
   i64 max_order;
-  size_t allocated_bytes;
-  size_t tombstoned_bytes;
+  usize allocated_bytes;
+  usize tombstoned_bytes;
   free_block *free_lists[Mx];     // on the stack
   free_block *active[Mx];
 
   void
-  __impl_init_memory(byte *_ptr, size_t _len)
+  __impl_init_memory(byte *_ptr, usize _len)
   {
     uintptr_t ptr = (uintptr_t)_ptr;
     uintptr_t a = alignof(void *);
     uintptr_t r = (ptr + (a - 1)) & ~(a - 1);
     base = (byte *)r;
-    size_t adjust = r - ptr;
+    usize adjust = r - ptr;
     if ( _len <= adjust )
       return;
-    size_t usable = _len - adjust;
+    usize usable = _len - adjust;
 
     usable = (usable / Min) * Min;
     if ( usable < Min )
@@ -73,7 +73,7 @@ struct __buddy_list {
     total = usable;
 
     int m = 0;
-    size_t blk = Min;
+    usize blk = Min;
     while ( blk <= total && m < Mx ) {
       ++m;
       blk <<= 1;
@@ -89,7 +89,7 @@ struct __buddy_list {
   ~__buddy_list() noexcept = default;
   __buddy_list(void) = delete;
 
-  //__buddy_list(void *mem, size_t bytes) noexcept : base(nullptr), total(0), max_order(0)
+  //__buddy_list(void *mem, usize bytes) noexcept : base(nullptr), total(0), max_order(0)
   __buddy_list(const T &mem) noexcept : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0)
   {
     if ( mem.zero() or mem.len < Min )
@@ -146,27 +146,27 @@ struct __buddy_list {
   }
 
   inline int
-  order_for_size(size_t n) const noexcept
+  order_for_size(usize n) const noexcept
   {
-    size_t units = (n + Min - 1) / Min;
+    usize units = (n + Min - 1) / Min;
     return ceil_log2_u64(units);
   }
 
-  inline size_t
+  inline usize
   order_size(i64 o) const noexcept
   {
     return Min << o;
   }
 
   T
-  allocate(size_t n) noexcept
+  allocate(usize n) noexcept
   {
     n += sizeof(micron::simd::i256);
     if ( n == 0 )
       n = 1;
     if ( !base )
       return { nullptr, 0 };
-    size_t needed = (n + Min - 1) & ~(Min - 1);
+    usize needed = (n + Min - 1) & ~(Min - 1);
     needed += sizeof(i64);
     i64 o = order_for_size(needed);
     if ( o >= max_order )
@@ -183,7 +183,7 @@ struct __buddy_list {
     free_lists[i] = blk->next;
     while ( i > o ) {
       --i;
-      size_t len = order_size(i);
+      usize len = order_size(i);
       byte *right = (byte *)blk + len;
       free_block *buddy = (free_block *)right;
       buddy->next = free_lists[i];
@@ -198,7 +198,7 @@ struct __buddy_list {
   }
 
   T
-  temporal_allocate(size_t n) noexcept
+  temporal_allocate(usize n) noexcept
   {
     n += sizeof(micron::simd::i256);
     if ( n == 0 )
@@ -206,13 +206,13 @@ struct __buddy_list {
     if ( !base )
       return { nullptr, 0 };
 
-    size_t needed = (n + Min - 1) & ~(Min - 1);
+    usize needed = (n + Min - 1) & ~(Min - 1);
     needed += sizeof(i64);
     i64 o = order_for_size(needed);
     if ( o >= max_order )
       return { nullptr, 0 };
 
-    size_t target_size = order_size(o);
+    usize target_size = order_size(o);
 
     // reuse existing allocation if this order was already allocated
     if ( active[o] != nullptr ) {
@@ -229,7 +229,7 @@ struct __buddy_list {
     free_lists[i] = blk->next;
     while ( i > o ) {
       --i;
-      size_t len = order_size(i);
+      usize len = order_size(i);
       byte *right = (byte *)blk + len;
       free_block *buddy = (free_block *)right;
       buddy->next = free_lists[i];
@@ -246,7 +246,7 @@ struct __buddy_list {
   }
 
   T
-  allocate_exact(size_t n) noexcept
+  allocate_exact(usize n) noexcept
   {
     if ( !base )
       return { nullptr, 0 };
@@ -318,9 +318,9 @@ struct __buddy_list {
     if ( o >= max_order )
       o = max_order - 1;
     while ( true ) {
-      size_t blk_sz = order_size(o);
-      size_t off = (size_t)(addr - base);
-      size_t buddy_off = off ^ blk_sz;
+      usize blk_sz = order_size(o);
+      usize off = (usize)(addr - base);
+      usize buddy_off = off ^ blk_sz;
       byte *buddy = base + buddy_off;
       free_block *prev = nullptr;
       free_block *cur = free_lists[o];
@@ -364,7 +364,7 @@ struct __buddy_list {
   }
 
   T
-  reallocate(T node, size_t new_size) noexcept
+  reallocate(T node, usize new_size) noexcept
   {
     if ( !base )
       return { nullptr, 0 };
@@ -382,13 +382,13 @@ struct __buddy_list {
     if ( !nnode.ptr )
       return { nullptr, 0 };
 
-    size_t to_copy = (node.len < nnode.len) ? node.len : nnode.len;
+    usize to_copy = (node.len < nnode.len) ? node.len : nnode.len;
     micron::memcpy(nnode.ptr, node.ptr, to_copy);
     deallocate(node);
     return nnode;
   }
 
-  size_t
+  usize
   available() const noexcept
   {
     if ( !base )
@@ -396,25 +396,25 @@ struct __buddy_list {
     return total - allocated_bytes;
   }
 
-  size_t
+  usize
   __total() const noexcept
   {
     return total;
   }
 
-  size_t
+  usize
   tombstoned() const noexcept
   {
     return tombstoned_bytes;
   }
 
-  size_t
+  usize
   used() const noexcept
   {
     return allocated_bytes;
   }
 
-  size_t
+  usize
   block_size(byte *ptr) const noexcept
   {
     if ( !base || !ptr )
@@ -422,8 +422,8 @@ struct __buddy_list {
     if ( ptr < base || ptr >= base + total )
       return 0;
     for ( i64 o = 0; o < max_order; ++o ) {
-      size_t len = order_size(o);
-      size_t off = (size_t)(ptr - base);
+      usize len = order_size(o);
+      usize off = (usize)(ptr - base);
       if ( (off & (len - 1)) == 0 )
         return len;
     }

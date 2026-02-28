@@ -18,7 +18,7 @@
 	.globl _sqrtps_divps_sse
 	.globl sqrtps_divps_sse
 
-	# void sqrtps_divps_sse(float *in, float *out, size_t len)
+	# void sqrtps_divps_sse(float *in, float *out, usize len)
 	# On entry:
 	#     rdi = in
 	#     rsi = out

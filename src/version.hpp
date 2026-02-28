@@ -14,7 +14,7 @@
 
 constexpr static const int MICRON_VERSION_MAJOR = 0x0000;
 constexpr static const int MICRON_VERSION_MINOR = 0x0500;
-constexpr static const int MICRON_VERSION_PATCH = 0x00A0;
+constexpr static const int MICRON_VERSION_PATCH = 0x00B0;
 constexpr static const int MICRON_VERSION_HOTFIX = 0x0000;
 
 template <int __major, int __minor, int __patch>

@@ -284,34 +284,34 @@ private:
   {
     switch ( mode ) {
     case modes::largeread :
-      return posix::open(str, o_rdonly | o_sync | o_direct | o_largefile);
+      return posix::open(str, posix::o_rdonly | posix::o_sync | posix::o_direct | posix::o_largefile);
       break;
     case modes::large :
-      return posix::open(str, o_rdwr | o_create | o_sync | o_direct | o_largefile, 0644);
+      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_sync | posix::o_direct | posix::o_largefile, 0644);
       break;
     case modes::quiet :
-      return posix::open(str, o_rdonly | o_noatime, 0644);
+      return posix::open(str, posix::o_rdonly | posix::o_noatime, 0644);
       break;
     case modes::create :
-      return posix::open(str, o_rdonly | o_create | o_excl, 0644);
+      return posix::open(str, posix::o_rdonly | posix::o_create | posix::o_excl, 0644);
       break;
     case modes::read :
-      return posix::open(str, o_rdonly);
+      return posix::open(str, posix::o_rdonly);
       break;
     case modes::readwrite :
-      return posix::open(str, o_rdwr | o_sync);
+      return posix::open(str, posix::o_rdwr | posix::o_sync);
       break;
     case modes::write :
-      return posix::open(str, o_wronly | o_sync);
+      return posix::open(str, posix::o_wronly | posix::o_sync);
       break;
     case modes::readwritecreate :
-      return posix::open(str, o_rdwr | o_create | o_sync, 0644);
+      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_sync, 0644);
       break;
     case modes::append :
-      return posix::open(str, o_wronly | o_create | o_sync, 0644);
+      return posix::open(str, posix::o_wronly | posix::o_create | posix::o_sync, 0644);
       break;
     case modes::appendread :
-      return posix::open(str, o_rdwr | o_create | o_sync, 0644);
+      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_sync, 0644);
       break;
     }
     return -1;

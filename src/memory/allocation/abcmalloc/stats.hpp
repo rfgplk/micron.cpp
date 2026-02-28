@@ -51,7 +51,7 @@ static stats_t stat = {};
 
 template <stat_type S>
 inline __attribute__((always_inline)) void
-collect_stats(size_t n = 0)
+collect_stats(usize n = 0)
 {
   if constexpr ( __default_collect_stats ) {
     if constexpr ( S == stat_type::alloc ) {

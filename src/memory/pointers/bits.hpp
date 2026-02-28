@@ -16,7 +16,7 @@
 
 namespace micron
 {
-using count_t = size_t;
+using count_t = usize;
 constexpr static const ptr_t nullvalue = 0x0;
 constexpr static const ptr_t occupied = 0x1;
 
@@ -64,7 +64,7 @@ template <class Type> struct __internal_pointer_alloc {
 
 template <class Type> struct __internal_pointer_arralloc {
   static inline __attribute__((always_inline)) auto
-  __impl_alloc(size_t n)
+  __impl_alloc(usize n)
   {
     return __new_arr<Type>(n);
     // return new Type(micron::forward<Args>(args)...);

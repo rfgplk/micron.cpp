@@ -218,7 +218,7 @@ public:
   };
 
   Type &
-  operator[](const size_t n)
+  operator[](const usize n)
   {
     if ( internal_pointer != nullptr )
       return (internal_pointer)[n];
@@ -227,7 +227,7 @@ public:
   };
 
   const Type &
-  operator[](const size_t n) const
+  operator[](const usize n) const
   {
     if ( internal_pointer != nullptr )
       return (internal_pointer)[n];

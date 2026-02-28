@@ -15,7 +15,7 @@ namespace micron
 {
 #ifdef MICRON_ABCMALLOC_STD
 inline __attribute__((always_inline)) byte *
-__alloc(size_t sz)
+__alloc(usize sz)
 {
   return abc::alloc(sz);
 }
@@ -28,7 +28,7 @@ __free(T *ptr)
 }
 #else
 inline __attribute__((always_inline)) void *
-__alloc(size_t sz)
+__alloc(usize sz)
 {
   return ::malloc(sz);
 }

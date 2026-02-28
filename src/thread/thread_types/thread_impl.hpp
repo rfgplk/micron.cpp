@@ -280,7 +280,7 @@ struct thread_attr_t {
   u32 sched_priority;
   u32 sched_niceness;
   i32 detach_state;
-  size_t stack_size;
+  usize stack_size;
   addr_t *stack_addr;
 };
 

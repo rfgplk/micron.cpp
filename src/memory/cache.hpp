@@ -12,7 +12,7 @@
 namespace micron
 {
 
-inline constexpr size_t
+inline constexpr usize
 cache_line_size()
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
@@ -24,13 +24,13 @@ cache_line_size()
 #endif
 }
 
-inline constexpr size_t
+inline constexpr usize
 constructive_interference_size()
 {
   return cache_line_size();
 }
 
-inline constexpr size_t
+inline constexpr usize
 destructive_interference_size()
 {
   return cache_line_size();

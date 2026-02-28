@@ -143,7 +143,7 @@ add(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
 
@@ -153,7 +153,7 @@ multiply(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
 
@@ -163,7 +163,7 @@ divide(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
 
@@ -173,7 +173,7 @@ subtract(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
 }
 
@@ -215,33 +215,33 @@ subtract(T *first, T *end, const Y y) noexcept
 
 template <class T, typename... Args>
 void
-add(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
+add(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
 
 template <class T, typename... Args>
 void
-multiply(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
+multiply(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
 
 template <class T, typename... Args>
 void
-divide(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
+divide(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
 
 template <class T, typename... Args>
 void
-subtract(size_t n, T *__restrict first, const Args *__restrict... args) noexcept
+subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( size_t i = 0; i < n; i++ )
+  for ( usize i = 0; i < n; i++ )
     (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
 }
 };     // namespace micron

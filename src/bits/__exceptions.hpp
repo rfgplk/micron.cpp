@@ -31,7 +31,7 @@ __write_n(const char *str_err)
 }
 
 void
-__write(const char *str_err, size_t sz)
+__write(const char *str_err, usize sz)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);
 }

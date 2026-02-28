@@ -29,7 +29,7 @@ namespace micron
 
 // general purpose concurrent array class, stack allocated, thread-safe, mutable.
 // default to 64
-template <is_regular_object T, size_t N = 64>
+template <is_regular_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 class conarray
 {
@@ -40,7 +40,7 @@ public:
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -77,7 +77,7 @@ public:
   {
     if ( lst.size() > N )
       exc<except::runtime_error>("micron::conarray conarray(init_list): init_list too large.");
-    size_t i = 0;
+    usize i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
   }
@@ -158,19 +158,19 @@ public:
     (__mtx.*rptr)();
   }
 
-  size_t
+  usize
   size() const
   {
     return N;
   }
 
-  size_t
+  usize
   max_size() const
   {
     return N;
   }
 
-  template <typename F, size_t M>
+  template <typename F, usize M>
   conarray &
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
@@ -207,68 +207,68 @@ public:
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   conarray &
   operator+(const conarray<T, M> &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] += o.stack[o];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   conarray &
   operator-(const conarray<T, M> &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] -= o.stack[o];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   conarray &
   operator*(const conarray<T, M> &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] *= o.stack[o];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   conarray &
   operator/(const conarray<T, M> &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] /= o.stack[o];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   conarray &
   operator%(const conarray<T, M> &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] %= o.stack[o];
     return *this;
   }
 
   // special functions - no idea why the stl doesn't have these
-  size_t
+  usize
   sum(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(micron::mutable_cast(__mtx));
-    size_t sm = 0;
-    for ( size_t i = 0; i < N; i++ )
+    usize sm = 0;
+    for ( usize i = 0; i < N; i++ )
       sm += stack[i];
     return sm;
   }
@@ -277,7 +277,7 @@ public:
   operator*=(const T &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] *= o;
     return *this;
   }
@@ -286,7 +286,7 @@ public:
   operator/=(const T &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] /= o;
     return *this;
   }
@@ -295,7 +295,7 @@ public:
   operator-=(const T &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] -= o;
     return *this;
   }
@@ -304,49 +304,49 @@ public:
   operator+=(const T &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] += o;
     return *this;
   }
 
   void
-  mul(const size_t n)
+  mul(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] *= n;
   }
 
   void
-  div(const size_t n)
+  div(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] /= n;
   }
 
   void
-  sub(const size_t n)
+  sub(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] -= n;
   }
 
   void
-  add(const size_t n)
+  add(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] += n;
   }
 
-  size_t
+  usize
   mul(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(micron::mutable_cast(__mtx));
-    size_t mul_ = stack[0];
-    for ( size_t i = 1; i < N; i++ )
+    usize mul_ = stack[0];
+    for ( usize i = 1; i < N; i++ )
       mul_ *= stack[i];
     return mul_;
   }
@@ -355,7 +355,7 @@ public:
   all(const T &o) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(micron::mutable_cast(__mtx));
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       if ( stack[i] != o )
         return false;
     return true;
@@ -365,7 +365,7 @@ public:
   any(const T &o) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(micron::mutable_cast(__mtx));
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       if ( stack[i] == o )
         return true;
     return false;
@@ -375,7 +375,7 @@ public:
   sqrt(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(micron::mutable_cast(__mtx));
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       stack[i] = math::sqrt(static_cast<float>(stack[i]));
   }
 

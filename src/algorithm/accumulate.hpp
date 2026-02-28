@@ -37,7 +37,7 @@ accumulate(const T *first, const T *end, Acc init, Fn fn) noexcept
 
 template <class T, typename Acc>
 Acc
-accumulate(const T *first, const T *end, Acc init, size_t limit) noexcept
+accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
 {
   for ( u64 i = 0; first != end and i < limit; ++first, ++i )
     init = micron::move(init) + *first;
@@ -47,7 +47,7 @@ accumulate(const T *first, const T *end, Acc init, size_t limit) noexcept
 template <class T, typename Acc, typename Fn>
   requires micron::is_invocable_v<Fn, Acc, const T &>
 Acc
-accumulate(const T *first, const T *end, Acc init, Fn fn, size_t limit) noexcept
+accumulate(const T *first, const T *end, Acc init, Fn fn, usize limit) noexcept
 {
   for ( u64 i = 0; first != end and i < limit; ++first, ++i )
     init = fn(micron::move(init), *first);
@@ -71,7 +71,7 @@ accumulate(const C &c, Acc init, Fn fn) noexcept
 
 template <is_iterable_container C, typename Acc = typename C::value_type>
 Acc
-accumulate(const C &c, Acc init, size_t limit) noexcept
+accumulate(const C &c, Acc init, usize limit) noexcept
 {
   return accumulate(c.begin(), c.end(), micron::move(init), limit);
 }
@@ -79,7 +79,7 @@ accumulate(const C &c, Acc init, size_t limit) noexcept
 template <is_iterable_container C, typename Acc, typename Fn>
   requires micron::is_invocable_v<Fn, Acc, const typename C::value_type &>
 Acc
-accumulate(const C &c, Acc init, Fn fn, size_t limit) noexcept
+accumulate(const C &c, Acc init, Fn fn, usize limit) noexcept
 {
   return accumulate(c.begin(), c.end(), micron::move(init), fn, limit);
 }
@@ -95,7 +95,7 @@ accumulate(const T *first, const T *end, Acc init) noexcept
 
 template <auto Fn, typename T, typename Acc>
 constexpr Acc
-accumulate(const T *first, const T *end, Acc init, size_t limit) noexcept
+accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
 {
   for ( u64 i = 0; first != end && i < limit; ++first, ++i )
     init = Fn(micron::move(init), *first);
@@ -111,7 +111,7 @@ accumulate(const C &c, Acc init = Acc{}) noexcept
 
 template <auto Fn, is_iterable_container C, typename Acc = typename C::value_type>
 constexpr Acc
-accumulate(const C &c, Acc init, size_t limit) noexcept
+accumulate(const C &c, Acc init, usize limit) noexcept
 {
   return accumulate<Fn>(c.begin(), c.end(), micron::move(init), limit);
 }

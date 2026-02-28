@@ -22,7 +22,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
     return nullptr;
   }
 
-  int fd = static_cast<int>(micron::syscall(SYS_open, path, o_rdonly | o_path));
+  int fd = static_cast<int>(micron::syscall(SYS_open, path, posix::o_rdonly | posix::o_path));
   if ( fd < 0 ) {
     return nullptr;
   }
@@ -85,7 +85,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   return result_buf;
 }
 
-template <size_t N = posix::path_max, size_t M, typename T>
+template <usize N = posix::path_max, usize M, typename T>
 inline sstring<N>
 realpath(const sstring<M, T> &path)
 {
@@ -101,7 +101,7 @@ realpath(const sstring<M, T> &path)
   return result;
 }
 
-template <size_t N, typename T = schar>
+template <usize N, typename T = schar>
 inline char *
 realpath(const char *path, sstring<N, T> &resolved)
 {
@@ -114,7 +114,7 @@ realpath(const char *path, sstring<N, T> &resolved)
   return res;
 }
 
-template <size_t N, typename T = schar, size_t M, typename U>
+template <usize N, typename T = schar, usize M, typename U>
 inline char *
 realpath(const sstring<M, U> &path, sstring<N, T> &resolved)
 {

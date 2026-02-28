@@ -42,7 +42,7 @@ public:
   {
   }
 
-  string_view(const char *ptr, size_t count) : __start(ptr), __end(ptr + count) {}
+  string_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) {}
 
   template <is_string F>
   string_view(const F &f)
@@ -51,7 +51,7 @@ public:
   }
 
   template <is_string F>
-  string_view(const F &f, const size_t n)
+  string_view(const F &f, const usize n)
       : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())),
         __end(reinterpret_cast<typename S::const_iterator>(f.cbegin() + n))
   {
@@ -82,7 +82,7 @@ public:
   }
 
   string_view &
-  set(const S &o, const size_t n = 0)
+  set(const S &o, const usize n = 0)
   {
     if ( o.empty() )
       return *this;
@@ -94,7 +94,7 @@ public:
   }
 
   string_view &
-  advance(const size_t n)
+  advance(const usize n)
   {
     if ( n >= (__end - __start) )
       exc<except::library_error>("micron::string_view advance() out of memory range");
@@ -104,14 +104,14 @@ public:
 
   // unsafe
   string_view &
-  __advance(const size_t n)
+  __advance(const usize n)
   {
     __start += n;
     return *this;
   }
 
   string_view &
-  __move(const size_t n)
+  __move(const usize n)
   {
     __start += n;
     __end += n;
@@ -119,20 +119,20 @@ public:
   }
 
   string_view &
-  __push(const size_t n)
+  __push(const usize n)
   {
     __end += n;
     return *this;
   }
 
   const auto &
-  operator[](const size_t n) const
+  operator[](const usize n) const
   {
     return __start[n];
   }
 
   const auto &
-  at(const size_t n) const
+  at(const usize n) const
   {
     if ( n >= (__end - __start) )
       exc<except::library_error>("micron::string_view operator[] out of memory range");
@@ -140,7 +140,7 @@ public:
   }
 
   T
-  ptr(const size_t n) const
+  ptr(const usize n) const
   {
     return __start + n;
   }
@@ -169,20 +169,20 @@ public:
     return *__end;
   }
 
-  size_t
+  usize
   size() const
   {
     return __end - __start;
   }
 
   string_view
-  substr(const size_t a, const size_t b)
+  substr(const usize a, const usize b)
   {
     return string_view(__start + a, __start + b);
   }
 
   string_view
-  substr(const size_t a)
+  substr(const usize a)
   {
     if ( a >= (__end - __start) )
       exc<except::library_error>("micron::string_view substr() out of memory range");
@@ -212,7 +212,7 @@ public:
   {
   }
 
-  constexpr cstring_view(const char *ptr, size_t count) : __start(ptr), __end(ptr + count) {}
+  constexpr cstring_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) {}
 
   template <is_string F>
   constexpr cstring_view(const F &f)
@@ -221,7 +221,7 @@ public:
   }
 
   template <is_string F>
-  constexpr cstring_view(const F &f, const size_t n)
+  constexpr cstring_view(const F &f, const usize n)
       : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())),
         __end(reinterpret_cast<typename S::const_iterator>(f.cbegin() + n))
   {
@@ -252,7 +252,7 @@ public:
   }
 
   constexpr cstring_view &
-  set(const S &o, const size_t n = 0)
+  set(const S &o, const usize n = 0)
   {
     if ( o.empty() )
       return *this;
@@ -262,7 +262,7 @@ public:
   }
 
   constexpr cstring_view &
-  advance(const size_t n)
+  advance(const usize n)
   {
     __start += n;
     return *this;
@@ -270,14 +270,14 @@ public:
 
   // unsafe
   constexpr cstring_view &
-  __advance(const size_t n)
+  __advance(const usize n)
   {
     __start += n;
     return *this;
   }
 
   constexpr cstring_view &
-  __move(const size_t n)
+  __move(const usize n)
   {
     __start += n;
     __end += n;
@@ -285,26 +285,26 @@ public:
   }
 
   constexpr cstring_view &
-  __push(const size_t n)
+  __push(const usize n)
   {
     __end += n;
     return *this;
   }
 
   const auto &
-  operator[](const size_t n) const
+  operator[](const usize n) const
   {
     return __start[n];
   }
 
   const auto &
-  at(const size_t n) const
+  at(const usize n) const
   {
     return __start[n];
   }
 
   T
-  ptr(const size_t n) const
+  ptr(const usize n) const
   {
     return __start + n;
   }
@@ -333,20 +333,20 @@ public:
     return *__end;
   }
 
-  size_t
+  usize
   size() const
   {
     return __end - __start;
   }
 
   constexpr cstring_view
-  substr(const size_t a, const size_t b)
+  substr(const usize a, const usize b)
   {
     return cstring_view(__start + a, __start + b);
   }
 
   constexpr cstring_view
-  substr(const size_t a)
+  substr(const usize a)
   {
     return cstring_view(__start + a, __end);
   }

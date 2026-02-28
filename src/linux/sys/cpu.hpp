@@ -42,33 +42,33 @@ getcpu(void)
 constexpr static const int cpu_setsize = 1024;
 constexpr static const int __ncpubits = sizeof(__syscall_ulong_type) * 8;
 
-constexpr size_t
-cpu_bits_size(size_t count)
+constexpr usize
+cpu_bits_size(usize count)
 {
   return ((count + __ncpubits - 1) / __ncpubits) * sizeof(__syscall_ulong_type);
 }
 
-template <size_t N> struct __cpu_set_t {
+template <usize N> struct __cpu_set_t {
   micron::constexpr_array<unsigned long, (N + __ncpubits - 1) / __ncpubits> __bits{};
 
   constexpr __cpu_set_t(void) { cpu_zero(); }
 
-  constexpr __cpu_set_t(size_t cpu) { cpu_set(cpu); }
+  constexpr __cpu_set_t(usize cpu) { cpu_set(cpu); }
 
   constexpr void
-  cpu_set(size_t cpu)
+  cpu_set(usize cpu)
   {
     __bits[cpu / __ncpubits] |= 1UL << (cpu % __ncpubits);
   }
 
   constexpr void
-  cpu_clr(size_t cpu)
+  cpu_clr(usize cpu)
   {
     __bits[cpu / __ncpubits] &= ~(1UL << (cpu % __ncpubits));
   }
 
   constexpr bool
-  cpu_isset(size_t cpu) const
+  cpu_isset(usize cpu) const
   {
     return (__bits[cpu / __ncpubits] & (1UL << (cpu % __ncpubits))) != 0;
   }
@@ -80,10 +80,10 @@ template <size_t N> struct __cpu_set_t {
       b = 0;
   }
 
-  constexpr size_t
+  constexpr usize
   cpu_count() const
   {
-    size_t cnt = 0;
+    usize cnt = 0;
     for ( auto b : __bits ) {
       for ( int i = 0; i < __ncpubits; ++i )
         if ( b & (1UL << i) )
@@ -95,57 +95,57 @@ template <size_t N> struct __cpu_set_t {
   constexpr void
   cpu_and(const __cpu_set_t &other)
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       __bits[i] &= other.__bits[i];
   }
 
   constexpr void
   cpu_or(const __cpu_set_t &other)
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       __bits[i] |= other.__bits[i];
   }
 
   constexpr void
   cpu_xor(const __cpu_set_t &other)
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       __bits[i] ^= other.__bits[i];
   }
 
   constexpr bool
   cpu_equal(const __cpu_set_t &other) const
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       if ( __bits[i] != other.__bits[i] )
         return false;
     return true;
   }
 
-  constexpr size_t
+  constexpr usize
   size() const
   {
     return sizeof(__bits);
   }
 };
 
-template <size_t N> struct __cpu_set_s_t {
+template <usize N> struct __cpu_set_s_t {
   micron::constexpr_array<unsigned long, N> __bits{};
 
   constexpr void
-  cpu_set_s(size_t cpu)
+  cpu_set_s(usize cpu)
   {
     __bits[cpu / __ncpubits] |= 1UL << (cpu % __ncpubits);
   }
 
   constexpr void
-  cpu_clr_s(size_t cpu)
+  cpu_clr_s(usize cpu)
   {
     __bits[cpu / __ncpubits] &= ~(1UL << (cpu % __ncpubits));
   }
 
   constexpr bool
-  cpu_isset_s(size_t cpu) const
+  cpu_isset_s(usize cpu) const
   {
     return (__bits[cpu / __ncpubits] & (1UL << (cpu % __ncpubits))) != 0;
   }
@@ -157,10 +157,10 @@ template <size_t N> struct __cpu_set_s_t {
       b = 0;
   }
 
-  constexpr size_t
+  constexpr usize
   cpu_count_s() const
   {
-    size_t cnt = 0;
+    usize cnt = 0;
     for ( auto b : __bits ) {
       for ( int i = 0; i < __ncpubits; ++i )
         if ( b & (1UL << i) )
@@ -172,35 +172,35 @@ template <size_t N> struct __cpu_set_s_t {
   constexpr void
   cpu_and_s(const __cpu_set_s_t &other)
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       __bits[i] &= other.__bits[i];
   }
 
   constexpr void
   cpu_or_s(const __cpu_set_s_t &other)
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       __bits[i] |= other.__bits[i];
   }
 
   constexpr void
   cpu_xor_s(const __cpu_set_s_t &other)
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       __bits[i] ^= other.__bits[i];
   }
 
   constexpr bool
   cpu_equal_s(const __cpu_set_s_t &other) const
   {
-    for ( size_t i = 0; i < __bits.size(); ++i )
+    for ( usize i = 0; i < __bits.size(); ++i )
       if ( __bits[i] != other.__bits[i] )
         return false;
     return true;
   }
 };
 
-template <size_t N = cpu_setsize>
+template <usize N = cpu_setsize>
 constexpr auto
 cpu_alloc()
 {

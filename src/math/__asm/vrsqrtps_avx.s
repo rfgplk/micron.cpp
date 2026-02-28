@@ -18,7 +18,7 @@
 	.globl _vrsqrtps_avx
 	.globl vrsqrtps_avx
 
-	# void vrsqrtps_avx(float *in, float *out, size_t len)
+	# void vrsqrtps_avx(float *in, float *out, usize len)
 	# On entry:
 	#     rdi = in
 	#     rsi = out

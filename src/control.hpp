@@ -43,24 +43,6 @@ crash(void)
   }
 }
 
-template <int P = poll_in>
-inline auto
-make_poll(const io::fd_t &hnd) -> pollfd
-{
-  if ( hnd.has_error() )
-    return {};
-  pollfd pfd = {};
-  pfd.fd = hnd.fd;
-  pfd.events = P;
-  return pfd;
-}
-
-inline int
-poll_for(pollfd &pfd, const int timeout)
-{
-  return micron::poll(pfd, 1, timeout);
-}
-
 inline void
 halt()
 {

@@ -47,7 +47,7 @@
 
 template <typename P>
 void *
-operator new(size_t size, P *ptr)
+operator new(usize size, P *ptr)
 {
   (void)size;
   return ptr;
@@ -86,7 +86,7 @@ class __arena : private cache
 
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
-  __expand_bucket_arena(F *nd, G *&tail, const size_t sz)
+  __expand_bucket_arena(F *nd, G *&tail, const usize sz)
   {
     while ( nd->nxt != nullptr ) {
       nd = nd->nxt;
@@ -107,7 +107,7 @@ class __arena : private cache
 
   template <u64 Sz, typename F>
   inline __attribute__((always_inline)) void
-  __expand_cache(F *nd, const size_t sz)
+  __expand_cache(F *nd, const usize sz)
   {
     __debug_print("__expand_cache() with req. space: ", sz);
     while ( nd->nxt != nullptr ) {
@@ -128,7 +128,7 @@ class __arena : private cache
 
   template <u64 Sz, typename F, typename G>
   inline __attribute__((always_inline)) void
-  __expand_bucket(F *nd, G *&tail, const size_t sz)
+  __expand_bucket(F *nd, G *&tail, const usize sz)
   {
     __debug_print("__expand_bucket() with req. space: ", sz);
     while ( nd->nxt != nullptr ) {
@@ -169,7 +169,7 @@ class __arena : private cache
   }
 
   void
-  __buf_expand_exact(const size_t class_sz, const size_t exact_sz)
+  __buf_expand_exact(const usize class_sz, const usize exact_sz)
   {
     if ( class_sz <= __class_small ) {
       __expand_cache<__class_precise>(&_cache_buffer, exact_sz);
@@ -272,7 +272,7 @@ class __arena : private cache
 
   template <typename F>
   micron::__chunk<byte>
-  __append_bucket(F *nd, const size_t sz)
+  __append_bucket(F *nd, const usize sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     while ( nd != nullptr ) {
@@ -292,7 +292,7 @@ class __arena : private cache
 
   template <typename F>
   micron::__chunk<byte>
-  __append_bucket_launder(F *nd, const size_t sz)
+  __append_bucket_launder(F *nd, const usize sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     while ( nd != nullptr ) {
@@ -633,7 +633,7 @@ class __arena : private cache
     return false;
   }
 
-  hot_fn(micron::__chunk<byte>) __append_cache(const size_t sz)
+  hot_fn(micron::__chunk<byte>) __append_cache(const usize sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     abc::__arena::node<abc::sheet<256>> *nd = &_cache_buffer;
@@ -653,7 +653,7 @@ class __arena : private cache
   }
 
   micron::__chunk<byte>
-  __vmap_append_tail(const size_t sz)
+  __vmap_append_tail(const usize sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     if ( sz <= __class_small ) {
@@ -672,7 +672,7 @@ class __arena : private cache
   }
 
   micron::__chunk<byte>
-  __vmap_append(const size_t sz)
+  __vmap_append(const usize sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     if ( sz < __class_medium ) {
@@ -689,7 +689,7 @@ class __arena : private cache
   }
 
   micron::__chunk<byte>
-  __vmap_launder(const size_t sz)
+  __vmap_launder(const usize sz)
   {
     micron::__chunk<byte> memory = { nullptr, 0 };
     if ( sz < __class_medium ) {
@@ -707,7 +707,7 @@ class __arena : private cache
 
   template <u64 Sz, typename F>
   void
-  __init_cache(F &bucket, size_t n = __default_cache_size_factor * Sz)
+  __init_cache(F &bucket, usize n = __default_cache_size_factor * Sz)
   {
     __debug_print("__init_bucket(): ", n);
     micron::__chunk<byte> buf = _arena_memory.try_mark(sizeof(sheet<Sz>));
@@ -718,7 +718,7 @@ class __arena : private cache
 
   template <u64 Sz, typename F, typename G>
   void
-  __init_bucket(F &bucket, G *&tail, size_t n = __default_magic_size)
+  __init_bucket(F &bucket, G *&tail, usize n = __default_magic_size)
   {
     if ( n == __default_magic_size ) {
       // override default size depending on size of bucket provided
@@ -903,7 +903,7 @@ or thread storage duration exits via an exception, the function std::terminate i
   __arena &operator=(__arena &&) = delete;
 
   // main method for allocating/mallocing memory
-  hot_fn(micron::__chunk<byte>) push(const size_t sz)
+  hot_fn(micron::__chunk<byte>) push(const usize sz)
   {
     __debug_print("push(): ", sz);
     collect_stats<stat_type::alloc>();
@@ -928,7 +928,7 @@ or thread storage duration exits via an exception, the function std::terminate i
       __debug_print("failed to __vmap_append(): ", sz);
 
       if ( sz <= __class_small ) {
-        size_t __next_sz = __calculate_space_cache(__default_cache_step);
+        usize __next_sz = __calculate_space_cache(__default_cache_step);
         __debug_print("growing (cache) container with size: ", __next_sz);
         __buf_expand_exact(sz, __next_sz);
         continue;
@@ -936,7 +936,7 @@ or thread storage duration exits via an exception, the function std::terminate i
 
       if constexpr ( __is_constrained ) {
         if ( sz >= __class_medium ) {
-          size_t __next_sz = __calculate_space_medium(sz) * __default_overcommit;
+          usize __next_sz = __calculate_space_medium(sz) * __default_overcommit;
           __predict += __next_sz;
           __debug_print("growing (large) container with size: ", __predict.predict_size(__next_sz));
           __buf_expand_exact(sz, __predict.predict_size(__next_sz));
@@ -946,7 +946,7 @@ or thread storage duration exits via an exception, the function std::terminate i
 
       if constexpr ( !__is_constrained ) {
         if ( sz >= __class_medium && sz < __class_1mb ) {
-          size_t __next_sz = __calculate_space_medium(sz) * __default_overcommit;
+          usize __next_sz = __calculate_space_medium(sz) * __default_overcommit;
           __predict += __next_sz;
           __debug_print("growing (large) container with size: ", __predict.predict_size(__next_sz));
           __buf_expand_exact(sz, __predict.predict_size(__next_sz));
@@ -954,7 +954,7 @@ or thread storage duration exits via an exception, the function std::terminate i
         }
 
         if ( sz >= __class_1mb && sz < __class_gb ) {
-          size_t __next_sz = __calculate_space_huge(sz) * __default_overcommit;
+          usize __next_sz = __calculate_space_huge(sz) * __default_overcommit;
           __predict += __next_sz;
           __debug_print("growing (1mb+) container with size: ", __predict.predict_size(__next_sz));
           __buf_expand_exact(sz, __predict.predict_size(__next_sz));
@@ -962,7 +962,7 @@ or thread storage duration exits via an exception, the function std::terminate i
         }
 
         if ( sz >= __class_gb ) {
-          size_t __next_sz = __calculate_space_bulk(sz);
+          usize __next_sz = __calculate_space_bulk(sz);
           __debug_print("growing (gb+) container with size: ", __next_sz);
           __buf_expand_exact(sz, __next_sz);
           continue;
@@ -971,18 +971,18 @@ or thread storage duration exits via an exception, the function std::terminate i
 
       // smallest allocations grow the faster
       {
-        size_t __next_sz = __calculate_space_small(sz) * __default_overcommit;
+        usize __next_sz = __calculate_space_small(sz) * __default_overcommit;
         __predict += __next_sz;
         __debug_print("growing (small) container with size: ", __predict.predict_size(__next_sz));
         __buf_expand_exact(sz, __predict.predict_size(__next_sz));
       }
     }
 
-    return { (byte *)-1, micron::numeric_limits<size_t>::max() };
+    return { (byte *)-1, micron::numeric_limits<usize>::max() };
   }
 
   micron::__chunk<byte>
-  launder(const size_t sz)
+  launder(const usize sz)
   {
     __debug_print("launder(): ", sz);
     collect_stats<stat_type::alloc>();
@@ -1014,7 +1014,7 @@ or thread storage duration exits via an exception, the function std::terminate i
         }
       }
     }
-    return { (byte *)-1, micron::numeric_limits<size_t>::max() };
+    return { (byte *)-1, micron::numeric_limits<usize>::max() };
   }
 
   // main methods for freeing memory
@@ -1073,7 +1073,7 @@ or thread storage duration exits via an exception, the function std::terminate i
   }
 
   bool
-  pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
+  pop(byte *mem, usize len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
     __debug_print_addr("pop() address: ", mem);
     if ( mem == nullptr )
@@ -1124,7 +1124,7 @@ or thread storage duration exits via an exception, the function std::terminate i
   }
 
   bool
-  ts_pop(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
+  ts_pop(byte *mem, usize len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
     if ( mem == nullptr )
       return false;
@@ -1161,7 +1161,7 @@ or thread storage duration exits via an exception, the function std::terminate i
   }
 
   bool
-  freeze(byte *mem, size_t len)     // need to support popping memory by addr only, will be slower due to req. lookup
+  freeze(byte *mem, usize len)     // need to support popping memory by addr only, will be slower due to req. lookup
   {
     if ( mem == nullptr )
       return false;
@@ -1172,32 +1172,32 @@ or thread storage duration exits via an exception, the function std::terminate i
     return __vmap_freeze({ mem, len });
   }
 
-  size_t
+  usize
   total_usage(void) const
   {
-    size_t total = 0;
-    total += __for_each_bckt(_cache_buffer, [](sheet<__class_precise> *const v) -> size_t { return v->allocated(); });
-    total += __for_each_bckt(_small_buckets, [](sheet<__class_small> *const v) -> size_t { return v->allocated(); });
-    total += __for_each_bckt(_medium_buckets, [](sheet<__class_medium> *const v) -> size_t { return v->allocated(); });
-    total += __for_each_bckt(_large_buckets, [](sheet<__class_large> *const v) -> size_t { return v->allocated(); });
-    total += __for_each_bckt(_huge_buckets, [](sheet<__class_huge> *const v) -> size_t { return v->allocated(); });
+    usize total = 0;
+    total += __for_each_bckt(_cache_buffer, [](sheet<__class_precise> *const v) -> usize { return v->allocated(); });
+    total += __for_each_bckt(_small_buckets, [](sheet<__class_small> *const v) -> usize { return v->allocated(); });
+    total += __for_each_bckt(_medium_buckets, [](sheet<__class_medium> *const v) -> usize { return v->allocated(); });
+    total += __for_each_bckt(_large_buckets, [](sheet<__class_large> *const v) -> usize { return v->allocated(); });
+    total += __for_each_bckt(_huge_buckets, [](sheet<__class_huge> *const v) -> usize { return v->allocated(); });
     return total;
   }
 
   template <u64 Sz>
-  size_t
+  usize
   total_usage_of_class(void) const
   {
     if constexpr ( Sz == __class_precise ) {
-      return __for_each_bckt(_cache_buffer, [](sheet<__class_precise> *const v) -> size_t { return v->allocated(); });
+      return __for_each_bckt(_cache_buffer, [](sheet<__class_precise> *const v) -> usize { return v->allocated(); });
     } else if constexpr ( Sz == __class_small ) {
-      return __for_each_bckt(_small_buckets, [](sheet<__class_small> *const v) -> size_t { return v->allocated(); });
+      return __for_each_bckt(_small_buckets, [](sheet<__class_small> *const v) -> usize { return v->allocated(); });
     } else if constexpr ( Sz == __class_medium ) {
-      return __for_each_bckt(_medium_buckets, [](sheet<__class_medium> *const v) -> size_t { return v->allocated(); });
+      return __for_each_bckt(_medium_buckets, [](sheet<__class_medium> *const v) -> usize { return v->allocated(); });
     } else if constexpr ( Sz == __class_large ) {
-      return __for_each_bckt(_large_buckets, [](sheet<__class_large> *const v) -> size_t { return v->allocated(); });
+      return __for_each_bckt(_large_buckets, [](sheet<__class_large> *const v) -> usize { return v->allocated(); });
     } else if constexpr ( Sz == __class_huge ) {
-      return __for_each_bckt(_huge_buckets, [](sheet<__class_huge> *const v) -> size_t { return v->allocated(); });
+      return __for_each_bckt(_huge_buckets, [](sheet<__class_huge> *const v) -> usize { return v->allocated(); });
     }
     return 0;
   }
@@ -1226,13 +1226,13 @@ or thread storage duration exits via an exception, the function std::terminate i
     __for_each_bckt_void(_huge_buckets, check, ptr);
   }
 
-  size_t
+  usize
   __available_buffer(void) const
   {
     return _arena_memory.available();
   }
 
-  size_t
+  usize
   __size_of_alloc(addr_t *addr) const
   {
     if ( __within(&_cache_buffer, addr) ) {

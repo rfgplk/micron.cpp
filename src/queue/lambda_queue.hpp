@@ -13,7 +13,7 @@
 namespace micron
 {
 
-template <size_t N> struct lambda_queue {
+template <usize N> struct lambda_queue {
   struct node_base_t {
     virtual void call() = 0;
     virtual ~node_base_t() = default;
@@ -33,14 +33,14 @@ template <size_t N> struct lambda_queue {
 
   u8 slots[N * 64]{};
   node_base_t *__q[N]{};
-  micron::atomic_token<size_t> head{ 0 };
-  micron::atomic_token<size_t> tail{ 0 };
+  micron::atomic_token<usize> head{ 0 };
+  micron::atomic_token<usize> tail{ 0 };
 
   template <typename Fn>
   inline void
   push(Fn &&fn)
   {
-    size_t idx = tail.fetch_add(1, memory_order_acquire) % N;
+    usize idx = tail.fetch_add(1, memory_order_acquire) % N;
     // Wait if queue is full
     while ( __q[idx] != nullptr ) {
       // Spin or yield - queue is full
@@ -62,7 +62,7 @@ template <size_t N> struct lambda_queue {
     if ( head.get(memory_order_acquire) == tail.get(memory_order_acquire) )
       return nullptr;
 
-    size_t idx = head.fetch_add(1, memory_order_acquire) % N;
+    usize idx = head.fetch_add(1, memory_order_acquire) % N;
     node_base_t *task = __q[idx];
     __q[idx] = nullptr;
     return task;
@@ -71,11 +71,11 @@ template <size_t N> struct lambda_queue {
   inline void
   clear()
   {
-    size_t h = head.get(memory_order_acquire);
-    size_t t = tail.get(memory_order_acquire);
+    usize h = head.get(memory_order_acquire);
+    usize t = tail.get(memory_order_acquire);
 
-    for ( size_t i = h; i < t; i++ ) {
-      size_t idx = i % N;
+    for ( usize i = h; i < t; i++ ) {
+      usize idx = i % N;
       if ( __q[idx] != nullptr ) {
         delete __q[idx];
         __q[idx] = nullptr;
@@ -92,15 +92,15 @@ template <size_t N> struct lambda_queue {
     return head.get(memory_order_acquire) == tail.get(memory_order_acquire);
   }
 
-  inline size_t
+  inline usize
   size() const
   {
-    size_t t = tail.get(memory_order_acquire);
-    size_t h = head.get(memory_order_acquire);
+    usize t = tail.get(memory_order_acquire);
+    usize h = head.get(memory_order_acquire);
     return t - h;
   }
 
-  inline size_t
+  inline usize
   max_size() const
   {
     return N;

@@ -11,7 +11,6 @@
 
 #include "../linux/__includes.hpp"
 #include "../linux/process/wait.hpp"
-#include "../linux/sys/poll.hpp"
 #include "../linux/sys/signal.hpp"
 #include "../linux/sys/system.hpp"
 #include "../linux/sys/time.hpp"

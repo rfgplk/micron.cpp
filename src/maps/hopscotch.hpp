@@ -94,43 +94,43 @@ template <typename K, typename V> struct hopscotch_node {
   }
 };
 
-template <typename K, typename V, size_t MH = 32, typename Nd = hopscotch_node<K, V>> class hopscotch_map
+template <typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, V>> class hopscotch_map
 {
   micron::fvector<Nd> entries;
-  size_t length;
+  usize length;
 
-  static constexpr size_t __min_size = 64;
-  static constexpr size_t __max_displacement = 256;     // Maximum distance to search for swap
+  static constexpr usize __min_size = 64;
+  static constexpr usize __max_displacement = 256;     // Maximum distance to search for swap
 
   bool
-  find_closer_slot(size_t target, size_t empty_slot, size_t &result_slot)
+  find_closer_slot(usize target, usize empty_slot, usize &result_slot)
   {
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       return false;
     }
 
-    size_t distance = (empty_slot >= target) ? (empty_slot - target) : (size - target + empty_slot);
+    usize distance = (empty_slot >= target) ? (empty_slot - target) : (size - target + empty_slot);
     if ( distance <= MH ) {
       result_slot = empty_slot;
       return true;
     }
 
-    size_t current_empty = empty_slot;
+    usize current_empty = empty_slot;
 
-    for ( size_t attempt = 0; attempt < __max_displacement; ++attempt ) {
-      size_t search_start = (current_empty >= MH) ? (current_empty - MH) : 0;
+    for ( usize attempt = 0; attempt < __max_displacement; ++attempt ) {
+      usize search_start = (current_empty >= MH) ? (current_empty - MH) : 0;
 
       bool found_swap = false;
-      for ( size_t i = 0; i < MH && !found_swap; ++i ) {
-        size_t check_pos = (current_empty + size - i - 1) % size;
+      for ( usize i = 0; i < MH && !found_swap; ++i ) {
+        usize check_pos = (current_empty + size - i - 1) % size;
 
         if ( !entries[check_pos].key ) {
           continue;     // Skip empty slots
         }
 
-        size_t entry_home = entries[check_pos].key % size;
-        size_t dist_to_empty = (current_empty >= entry_home) ? (current_empty - entry_home) : (size - entry_home + current_empty);
+        usize entry_home = entries[check_pos].key % size;
+        usize dist_to_empty = (current_empty >= entry_home) ? (current_empty - entry_home) : (size - entry_home + current_empty);
 
         if ( dist_to_empty <= MH ) {
           entries[current_empty] = micron::move(entries[check_pos]);
@@ -158,20 +158,20 @@ template <typename K, typename V, size_t MH = 32, typename Nd = hopscotch_node<K
   resize()
   {
     const micron::fvector<Nd> old_entries = micron::move(entries);
-    size_t old_size = old_entries.size();
-    size_t new_size = old_size * 2;
+    usize old_size = old_entries.size();
+    usize new_size = old_size * 2;
 
     if ( new_size < __min_size ) {
       new_size = __min_size;
     }
 
-    constexpr size_t max_resize_attmpt = 4;
-    for ( size_t attempt = 0; attempt < max_resize_attmpt; ++attempt ) {
+    constexpr usize max_resize_attmpt = 4;
+    for ( usize attempt = 0; attempt < max_resize_attmpt; ++attempt ) {
       entries.clear();
       entries.resize(new_size);
       length = 0;
 
-      for ( size_t i = 0; i < new_size; ++i ) {
+      for ( usize i = 0; i < new_size; ++i ) {
         entries[i].key = 0;
       }
 
@@ -202,21 +202,21 @@ template <typename K, typename V, size_t MH = 32, typename Nd = hopscotch_node<K
       return false;
     }
 
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       return false;
     }
-    size_t home = hsh % size;
+    usize home = hsh % size;
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
         return true;
       }
     }
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( !entries[probe].key ) {
         entries[probe] = Nd{ hsh, value };
         ++length;
@@ -224,13 +224,13 @@ template <typename K, typename V, size_t MH = 32, typename Nd = hopscotch_node<K
       }
     }
 
-    size_t empty_slot = (home + MH + 1) % size;
-    constexpr size_t SEARCH_LIMIT = 512;
+    usize empty_slot = (home + MH + 1) % size;
+    constexpr usize SEARCH_LIMIT = 512;
 
-    for ( size_t i = 0; i < SEARCH_LIMIT; ++i ) {
-      size_t check = (empty_slot + i) % size;
+    for ( usize i = 0; i < SEARCH_LIMIT; ++i ) {
+      usize check = (empty_slot + i) % size;
       if ( !entries[check].key ) {
-        size_t result_slot;
+        usize result_slot;
         if ( find_closer_slot(home, check, result_slot) ) {
           entries[result_slot] = Nd{ hsh, value };
           ++length;
@@ -247,7 +247,7 @@ public:
   using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef Nd value_type;
   typedef Nd &reference;
   typedef Nd &ref;
@@ -260,15 +260,15 @@ public:
 
   ~hopscotch_map() {}
 
-  hopscotch_map(const size_t n = 4096) : length(0)
+  hopscotch_map(const usize n = 4096) : length(0)
   {
-    size_t initial_size = (n / sizeof(Nd));
+    usize initial_size = (n / sizeof(Nd));
     if ( initial_size < __min_size ) {
       initial_size = __min_size;
     }
     entries.resize(initial_size);
 
-    for ( size_t i = 0; i < initial_size; ++i ) {
+    for ( usize i = 0; i < initial_size; ++i ) {
       entries[i].key = 0;
     }
   }
@@ -290,7 +290,7 @@ public:
     return *this;
   }
 
-  size_t
+  usize
   size() const noexcept
   {
     return length;
@@ -302,7 +302,7 @@ public:
     return length == 0;
   }
 
-  size_t
+  usize
   capacity() const noexcept
   {
     return entries.max_size();
@@ -330,7 +330,7 @@ public:
       exc<except::library_error>("Invalid hash value (0)");
     }
 
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       exc<except::library_error>("Hopscotch map not initialized");
     }
@@ -340,17 +340,17 @@ public:
       size = entries.max_size();
     }
 
-    size_t home = hsh % size;
+    usize home = hsh % size;
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
         return &entries[probe].value;
       }
     }
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( !entries[probe].key ) {
         entries[probe] = Nd{ hsh, value };
         ++length;
@@ -358,13 +358,13 @@ public:
       }
     }
 
-    size_t empty_slot = (home + MH + 1) % size;
-    constexpr size_t SEARCH_LIMIT = 512;
+    usize empty_slot = (home + MH + 1) % size;
+    constexpr usize SEARCH_LIMIT = 512;
 
-    for ( size_t i = 0; i < SEARCH_LIMIT; ++i ) {
-      size_t check = (empty_slot + i) % size;
+    for ( usize i = 0; i < SEARCH_LIMIT; ++i ) {
+      usize check = (empty_slot + i) % size;
       if ( !entries[check].key ) {
-        size_t result_slot;
+        usize result_slot;
         if ( find_closer_slot(home, check, result_slot) ) {
           entries[result_slot] = Nd{ hsh, value };
           ++length;
@@ -394,7 +394,7 @@ public:
       exc<except::library_error>("Invalid hash value (0)");
     }
 
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       exc<except::library_error>("Hopscotch map not initialized");
     }
@@ -404,17 +404,17 @@ public:
       size = entries.max_size();
     }
 
-    size_t home = hsh % size;
+    usize home = hsh % size;
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
         return micron::addressof(entries[probe].value);
       }
     }
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( !entries[probe].key ) {
         entries[probe] = Nd{ hsh, micron::move(value) };
         ++length;
@@ -422,13 +422,13 @@ public:
       }
     }
 
-    size_t empty_slot = (home + MH + 1) % size;
-    constexpr size_t SEARCH_LIMIT = 512;
+    usize empty_slot = (home + MH + 1) % size;
+    constexpr usize SEARCH_LIMIT = 512;
 
-    for ( size_t i = 0; i < SEARCH_LIMIT; ++i ) {
-      size_t check = (empty_slot + i) % size;
+    for ( usize i = 0; i < SEARCH_LIMIT; ++i ) {
+      usize check = (empty_slot + i) % size;
       if ( !entries[check].key ) {
-        size_t result_slot;
+        usize result_slot;
         if ( find_closer_slot(home, check, result_slot) ) {
           entries[result_slot] = Nd{ hsh, micron::move(value) };
           ++length;
@@ -452,15 +452,15 @@ public:
       exc<except::library_error>("Invalid hash value (0)");
     }
 
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       exc<except::library_error>("Hopscotch map not initialized");
     }
 
-    size_t home = hsh % size;
+    usize home = hsh % size;
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
         return &entries[probe].value;
       }
@@ -478,15 +478,15 @@ public:
       return nullptr;
     }
 
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       return nullptr;
     }
 
-    size_t home = hsh % size;
+    usize home = hsh % size;
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
         return micron::addressof(entries[probe].value);
       }
@@ -515,15 +515,15 @@ public:
       return false;
     }
 
-    size_t size = entries.max_size();
+    usize size = entries.max_size();
     if ( size == 0 ) {
       return false;
     }
 
-    size_t home = hsh % size;
+    usize home = hsh % size;
 
-    for ( size_t i = 0; i <= MH; ++i ) {
-      size_t probe = (home + i) % size;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) % size;
       if ( entries[probe].key == hsh ) {
         entries[probe].clear();
         --length;

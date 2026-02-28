@@ -32,7 +32,7 @@
 namespace micron
 {
 // void_thread, a thread type which *doesn't* allocate or manage it's own stack
-template <size_t Stack_Size = thread_stack_size> class void_thread
+template <usize Stack_Size = thread_stack_size> class void_thread
 {
   using thread_type = thread_tag;
 
@@ -228,7 +228,7 @@ public:
     return attributes.stack_addr;
   }
 
-  constexpr size_t
+  constexpr usize
   stack_size() const
   {
     return Stack_Size;

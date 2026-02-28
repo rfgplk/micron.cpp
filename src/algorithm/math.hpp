@@ -240,9 +240,9 @@ jacobian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-6
   using T = typename V::value_type;
 
   V grad = x;
-  const size_t n = x.size();
+  const usize n = x.size();
 
-  for ( size_t i = 0; i < n; ++i ) {
+  for ( usize i = 0; i < n; ++i ) {
     V xp = x;
     V xm = x;
 
@@ -261,12 +261,12 @@ auto
 hessian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-5)) noexcept
 {
   using T = typename V::value_type;
-  const size_t n = x.size();
+  const usize n = x.size();
 
   typename V::template rebind<V>::type H(n, V(n));
 
-  for ( size_t i = 0; i < n; ++i ) {
-    for ( size_t j = 0; j < n; ++j ) {
+  for ( usize i = 0; i < n; ++i ) {
+    for ( usize j = 0; j < n; ++j ) {
 
       V xpp = x;
       V xpm = x;

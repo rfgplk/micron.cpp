@@ -15,7 +15,7 @@ namespace micron
 {
 auto get_stack(void) -> stack_t;
 auto get_stack_start(void) -> addr_t *;
-auto get_stack_size(void) -> size_t;
+auto get_stack_size(void) -> usize;
 
 inline void
 __mem_barrier() noexcept

@@ -31,7 +31,7 @@ public:
   using category_type = type_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  using size_type = size_t;
+  using size_type = usize;
   using value_type = B;
   using reference = B &;
   using ref = B &;
@@ -232,7 +232,7 @@ public:
   __tensor_base_avx &
   operator+=(B sc)
   {
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __data[i] += sc;
       __data[i + 1] += sc;
       __data[i + 2] += sc;
@@ -248,7 +248,7 @@ public:
   __tensor_base_avx &
   operator-=(B sc)
   {
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __data[i] -= sc;
       __data[i + 1] -= sc;
       __data[i + 2] -= sc;
@@ -264,7 +264,7 @@ public:
   __tensor_base_avx &
   operator*=(B sc)
   {
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __data[i] *= sc;
       __data[i + 1] *= sc;
       __data[i + 2] *= sc;
@@ -280,7 +280,7 @@ public:
   __tensor_base_avx &
   operator/=(B sc)
   {
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __data[i] /= sc;
       __data[i + 1] /= sc;
       __data[i + 2] /= sc;
@@ -297,7 +297,7 @@ public:
   add_scalar(B sc) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] + sc;
     return result;
   }
@@ -306,7 +306,7 @@ public:
   sub_scalar(B sc) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] - sc;
     return result;
   }
@@ -315,7 +315,7 @@ public:
   scale(B sc) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] * sc;
     return result;
   }
@@ -324,7 +324,7 @@ public:
   div_scalar(B sc) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] / sc;
     return result;
   }
@@ -351,7 +351,7 @@ public:
   operator/(B sc, const __tensor_base_avx &t)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = sc / t.__data[i];
     return result;
   }
@@ -383,7 +383,7 @@ public:
   __tensor_base_avx &
   operator+=(const __tensor_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       __data[i] += o.__data[i];
     return *this;
   }
@@ -391,7 +391,7 @@ public:
   __tensor_base_avx &
   operator-=(const __tensor_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       __data[i] -= o.__data[i];
     return *this;
   }
@@ -399,7 +399,7 @@ public:
   __tensor_base_avx &
   operator*=(const __tensor_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       __data[i] *= o.__data[i];
     return *this;
   }
@@ -407,7 +407,7 @@ public:
   __tensor_base_avx &
   operator/=(const __tensor_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       __data[i] /= o.__data[i];
     return *this;
   }
@@ -416,7 +416,7 @@ public:
   operator+(const __tensor_base_avx &o) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] + o.__data[i];
     return result;
   }
@@ -425,7 +425,7 @@ public:
   operator-(const __tensor_base_avx &o) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] - o.__data[i];
     return result;
   }
@@ -434,7 +434,7 @@ public:
   operator*(const __tensor_base_avx &o) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] * o.__data[i];
     return result;
   }
@@ -443,7 +443,7 @@ public:
   operator/(const __tensor_base_avx &o) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] / o.__data[i];
     return result;
   }
@@ -452,7 +452,7 @@ public:
   operator-() const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = -__data[i];
     return result;
   }
@@ -460,7 +460,7 @@ public:
   bool
   operator==(const __tensor_base_avx &o) const
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       if ( __data[i] != o.__data[i] )
         return false;
     return true;
@@ -476,7 +476,7 @@ public:
   almost_equal(const __tensor_base_avx &o, B eps = math::default_eps<B>()) const
     requires(micron::is_floating_point_v<B>)
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       if ( math::fabs(__data[i] - o.__data[i]) > eps )
         return false;
     return true;
@@ -585,7 +585,7 @@ public:
   sum() const
   {
     B acc = B{};
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       acc += __data[i];
     return acc;
   }
@@ -594,7 +594,7 @@ public:
   prod() const
   {
     B acc = B{ 1 };
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       acc *= __data[i];
     return acc;
   }
@@ -609,7 +609,7 @@ public:
   min_element() const
   {
     B m = __data[0];
-    for ( size_t i = 1; i < __size; ++i )
+    for ( usize i = 1; i < __size; ++i )
       if ( __data[i] < m )
         m = __data[i];
     return m;
@@ -619,7 +619,7 @@ public:
   max_element() const
   {
     B m = __data[0];
-    for ( size_t i = 1; i < __size; ++i )
+    for ( usize i = 1; i < __size; ++i )
       if ( __data[i] > m )
         m = __data[i];
     return m;
@@ -629,7 +629,7 @@ public:
   argmin() const
   {
     u32 idx = 0;
-    for ( size_t i = 1; i < __size; ++i )
+    for ( usize i = 1; i < __size; ++i )
       if ( __data[i] < __data[idx] )
         idx = static_cast<u32>(i);
     return idx;
@@ -639,7 +639,7 @@ public:
   argmax() const
   {
     u32 idx = 0;
-    for ( size_t i = 1; i < __size; ++i )
+    for ( usize i = 1; i < __size; ++i )
       if ( __data[i] > __data[idx] )
         idx = static_cast<u32>(i);
     return idx;
@@ -686,7 +686,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     B acc = B{};
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       acc += math::fabs(__data[i]);
     return acc;
   }
@@ -695,7 +695,7 @@ public:
   squared_norm() const
   {
     B acc = B{};
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       acc += __data[i] * __data[i];
     return acc;
   }
@@ -712,7 +712,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     B m = math::fabs(__data[0]);
-    for ( size_t i = 1; i < __size; ++i ) {
+    for ( usize i = 1; i < __size; ++i ) {
       B v = math::fabs(__data[i]);
       if ( v > m )
         m = v;
@@ -725,7 +725,7 @@ public:
     requires(micron::is_floating_point_v<B>)                                                                                               \
   {                                                                                                                                        \
     __tensor_base_avx result;                                                                                                              \
-    for ( size_t i = 0; i < __size; ++i )                                                                                                  \
+    for ( usize i = 0; i < __size; ++i )                                                                                                  \
       result.__data[i] = fn(__data[i]);                                                                                                    \
     return result;                                                                                                                         \
   }
@@ -744,7 +744,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = math::fclamp(__data[i], B{ 0 }, B{ 1 });
     return result;
   }
@@ -754,7 +754,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = math::fclamp(__data[i], lo, hi);
     return result;
   }
@@ -763,7 +763,7 @@ public:
   sign() const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = static_cast<B>((__data[i] > B{}) - (__data[i] < B{}));
     return result;
   }
@@ -773,7 +773,7 @@ public:
     requires(micron::is_floating_point_v<B>)                                                                                               \
   {                                                                                                                                        \
     __tensor_base_avx result;                                                                                                              \
-    for ( size_t i = 0; i < __size; ++i )                                                                                                  \
+    for ( usize i = 0; i < __size; ++i )                                                                                                  \
       result.__data[i] = fn(__data[i], o.__data[i]);                                                                                       \
     return result;                                                                                                                         \
   }
@@ -786,7 +786,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = math::fpow(__data[i], s);
     return result;
   }
@@ -796,7 +796,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = math::ffma(__data[i], v.__data[i], w.__data[i]);
     return result;
   }
@@ -806,7 +806,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = math::ffma(__data[i], s, w.__data[i]);
     return result;
   }
@@ -828,7 +828,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = math::flerp(__data[i], other.__data[i], t);
     return result;
   }
@@ -836,7 +836,7 @@ public:
   bool
   all() const
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       if ( __data[i] == B{} )
         return false;
     return true;
@@ -845,7 +845,7 @@ public:
   bool
   any() const
   {
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       if ( __data[i] != B{} )
         return true;
     return false;
@@ -875,7 +875,7 @@ public:
   iota(B start = B{}, B step = B{ 1 })
   {
     B val = start;
-    for ( size_t i = 0; i < __size; ++i, val += step )
+    for ( usize i = 0; i < __size; ++i, val += step )
       __data[i] = val;
     return *this;
   }
@@ -887,7 +887,7 @@ public:
 
     B m = max_element();
     __tensor_base_avx shifted;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       shifted.__data[i] = math::fexp(__data[i] - m);
     B s = shifted.sum();
     return shifted / s;
@@ -897,7 +897,7 @@ public:
   relu() const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] > B{} ? __data[i] : B{};
     return result;
   }
@@ -906,7 +906,7 @@ public:
   leaky_relu(B alpha) const
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = __data[i] > B{} ? __data[i] : alpha * __data[i];
     return result;
   }
@@ -916,7 +916,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__data[i] = B{ 1 } / (B{ 1 } + math::fexp(-__data[i]));
     return result;
   }

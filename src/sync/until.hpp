@@ -113,11 +113,11 @@ until_timeout(fduration_t timeout, P pred)
 
 template <typename F, typename... Args>
 bool
-until_max_iter(auto cond, size_t max_iters, F f, Args &&...args)
+until_max_iter(auto cond, usize max_iters, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
 
-  for ( size_t i = 0; i < max_iters; ++i ) {
+  for ( usize i = 0; i < max_iters; ++i ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
     if ( res == cond )
       return true;
@@ -243,15 +243,15 @@ void
 until_backoff(auto cond, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
-  size_t backoff = 1;
-  constexpr size_t max_backoff = 1024;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
     if ( res == cond )
       break;
 
-    for ( size_t i = 0; i < backoff; ++i ) {
+    for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
@@ -415,8 +415,8 @@ void
 until_backoff_or_future(auto cond, Fut &fut, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
-  size_t backoff = 1;
-  constexpr size_t max_backoff = 1024;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
     if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
@@ -426,7 +426,7 @@ until_backoff_or_future(auto cond, Fut &fut, F f, Args &&...args)
     if ( res == cond )
       break;
 
-    for ( size_t i = 0; i < backoff; ++i ) {
+    for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
@@ -541,11 +541,11 @@ until_timeout_or_flag(fduration_t timeout, const micron::atomic<bool> &flag, P p
 
 template <typename F, typename... Args>
 bool
-until_max_iter_or_flag(auto cond, size_t max_iters, const micron::atomic<bool> &flag, F f, Args &&...args)
+until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
 
-  for ( size_t i = 0; i < max_iters; ++i ) {
+  for ( usize i = 0; i < max_iters; ++i ) {
     if ( flag.__get(micron::memory_order_acquire) )
       return false;
 
@@ -600,8 +600,8 @@ void
 until_backoff_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
-  size_t backoff = 1;
-  constexpr size_t max_backoff = 1024;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
     if ( flag.__get(micron::memory_order_acquire) )
@@ -611,7 +611,7 @@ until_backoff_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&.
     if ( res == cond )
       break;
 
-    for ( size_t i = 0; i < backoff; ++i ) {
+    for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
@@ -756,8 +756,8 @@ void
 until_backoff_or_future_or_flag(auto cond, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
   using ret_t = micron::invoke_result_t<F, Args...>;
-  size_t backoff = 1;
-  constexpr size_t max_backoff = 1024;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
     if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
@@ -770,7 +770,7 @@ until_backoff_or_future_or_flag(auto cond, Fut &fut, const micron::atomic<bool> 
     if ( res == cond )
       break;
 
-    for ( size_t i = 0; i < backoff; ++i ) {
+    for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
@@ -838,11 +838,11 @@ template <typename A>
 void
 until_flag_set_backoff(const A &flag)
 {
-  size_t backoff = 1;
-  constexpr size_t max_backoff = 1024;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
 
   while ( !flag.__get(micron::memory_order_acquire) ) {
-    for ( size_t i = 0; i < backoff; ++i ) {
+    for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 

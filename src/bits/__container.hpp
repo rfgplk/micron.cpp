@@ -18,7 +18,7 @@ namespace __impl_container
 
 template <typename T>
 inline void
-shallow_copy(T *__restrict dest, const T *__restrict src, size_t cnt) noexcept
+shallow_copy(T *__restrict dest, const T *__restrict src, usize cnt) noexcept
 {
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src),
                  cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
@@ -27,7 +27,7 @@ shallow_copy(T *__restrict dest, const T *__restrict src, size_t cnt) noexcept
 
 template <typename T>
 inline void
-shallow_copy(T *__restrict dest, T *__restrict src, size_t cnt) noexcept
+shallow_copy(T *__restrict dest, T *__restrict src, usize cnt) noexcept
 {
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src),
                  cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
@@ -38,23 +38,23 @@ shallow_copy(T *__restrict dest, T *__restrict src, size_t cnt) noexcept
 // cause segfaulting if underlying doesn't account for double deletes)
 template <typename T>
 inline void
-deep_copy(T *__restrict dest, T *__restrict src, size_t cnt)
+deep_copy(T *__restrict dest, T *__restrict src, usize cnt)
 {
-  for ( size_t i = 0; i < cnt; i++ )
+  for ( usize i = 0; i < cnt; i++ )
     dest[i] = src[i];
 };
 
 template <typename T>
 inline void
-deep_copy(T *__restrict dest, const T *__restrict src, size_t cnt)
+deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)
 {
-  for ( size_t i = 0; i < cnt; i++ )
+  for ( usize i = 0; i < cnt; i++ )
     dest[i] = src[i];
 };
 
 template <typename T>
 inline void
-shallow_move(T *__restrict dest, T *__restrict src, size_t cnt)
+shallow_move(T *__restrict dest, T *__restrict src, usize cnt)
 {
   micron::memcpy(dest, src, cnt);
   micron::byteset(reinterpret_cast<byte *>(src), 0x0, cnt * sizeof(T));
@@ -62,29 +62,29 @@ shallow_move(T *__restrict dest, T *__restrict src, size_t cnt)
 
 template <typename T>
 inline void
-deep_move(T *__restrict dest, T *__restrict src, size_t cnt)
+deep_move(T *__restrict dest, T *__restrict src, usize cnt)
 {
-  for ( size_t i = 0; i < cnt; i++ )
+  for ( usize i = 0; i < cnt; i++ )
     dest[i] = micron::move(src[i]);
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 deep_copy(T *__restrict dest, T *__restrict src)
 {
-  for ( size_t i = 0; i < N; i++ )
+  for ( usize i = 0; i < N; i++ )
     dest[i] = src[i];
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 deep_copy(T *__restrict dest, const T *__restrict src)
 {
-  for ( size_t i = 0; i < N; i++ )
+  for ( usize i = 0; i < N; i++ )
     dest[i] = src[i];
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 shallow_move(T *__restrict dest, T *__restrict src)
 {
@@ -92,15 +92,15 @@ shallow_move(T *__restrict dest, T *__restrict src)
   micron::cbyteset<N * sizeof(T)>(reinterpret_cast<byte *>(src), 0x0);
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 deep_move(T *__restrict dest, T *__restrict src)
 {
-  for ( size_t i = 0; i < N; i++ )
+  for ( usize i = 0; i < N; i++ )
     dest[i] = micron::move(src[i]);
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 shallow_copy(T *__restrict dest, const T *__restrict src) noexcept
 {
@@ -109,7 +109,7 @@ shallow_copy(T *__restrict dest, const T *__restrict src) noexcept
                                                                            // fine, just realign back to bytes
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 shallow_copy(T *__restrict dest, T *__restrict src) noexcept
 {
@@ -120,7 +120,7 @@ shallow_copy(T *__restrict dest, T *__restrict src) noexcept
 
 template <typename T>
 inline void
-copy(T *__restrict dest, T *__restrict src, size_t cnt)
+copy(T *__restrict dest, T *__restrict src, usize cnt)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_copyable_v<micron::remove_cv_t<T>> ) {
     deep_copy(dest, src, cnt);
@@ -131,7 +131,7 @@ copy(T *__restrict dest, T *__restrict src, size_t cnt)
 
 template <typename T>
 inline void
-copy(T *__restrict dest, const T *__restrict src, size_t cnt)
+copy(T *__restrict dest, const T *__restrict src, usize cnt)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_copyable_v<micron::remove_cv_t<T>> ) {
     deep_copy(dest, src, cnt);
@@ -142,7 +142,7 @@ copy(T *__restrict dest, const T *__restrict src, size_t cnt)
 
 template <typename T>
 inline void
-move(T *__restrict dest, T *__restrict src, size_t cnt)
+move(T *__restrict dest, T *__restrict src, usize cnt)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_move_assignable_v<micron::remove_cv_t<T>> ) {
     deep_move(dest, src, cnt);
@@ -151,7 +151,7 @@ move(T *__restrict dest, T *__restrict src, size_t cnt)
   }
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 copy(T *__restrict dest, T *__restrict src)
 {
@@ -162,7 +162,7 @@ copy(T *__restrict dest, T *__restrict src)
   }
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 copy(T *__restrict dest, const T *__restrict src)
 {
@@ -173,7 +173,7 @@ copy(T *__restrict dest, const T *__restrict src)
   }
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 move(T *__restrict dest, T *__restrict src)
 {
@@ -184,20 +184,20 @@ move(T *__restrict dest, T *__restrict src)
   }
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline void
 destroy(T *src)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
     if constexpr ( N % 4 == 0 ) {
-      for ( size_t i = 0; i < N; i += 4 ) {
+      for ( usize i = 0; i < N; i += 4 ) {
         src[i].~T();
         src[i + 1].~T();
         src[i + 2].~T();
         src[i + 3].~T();
       }
     } else {
-      for ( size_t i = 0; i < N; i++ )
+      for ( usize i = 0; i < N; i++ )
         src[i].~T();
     }
   } else {
@@ -207,37 +207,37 @@ destroy(T *src)
 
 template <typename T>
 inline void
-destroy(T *src, size_t cnt)
+destroy(T *src, usize cnt)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
-    for ( size_t i = 0; i < cnt; ++i )
+    for ( usize i = 0; i < cnt; ++i )
       src[i].~T();
   } else {
     micron::byteset(src, 0x0, cnt * sizeof(T));
   }
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 void
 zero(T *src)
 {
   micron::cbyteset<N * sizeof(T)>(src, 0x0);
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 void
 set(T *__restrict src, const T &val)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_assignable_v<T, T> ) {
     if constexpr ( N % 4 == 0 ) {
-      for ( size_t i = 0; i < N; i += 4 ) {
+      for ( usize i = 0; i < N; i += 4 ) {
         src[i] = val;
         src[i + 1] = val;
         src[i + 2] = val;
         src[i + 3] = val;
       }
     } else {
-      for ( size_t i = 0; i < N; i++ )
+      for ( usize i = 0; i < N; i++ )
         src[i] = val;
     }
   } else {
@@ -247,11 +247,11 @@ set(T *__restrict src, const T &val)
 
 template <typename T>
 void
-set(T *__restrict src, const T &val, size_t cnt)
+set(T *__restrict src, const T &val, usize cnt)
 {
   if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_assignable_v<T, T> ) {
 
-    for ( size_t i = 0; i < cnt; i++ )
+    for ( usize i = 0; i < cnt; i++ )
       src[i] = val;
   } else {
     micron::typeset(src, val, cnt);

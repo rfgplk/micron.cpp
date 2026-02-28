@@ -29,8 +29,8 @@ template <is_string T = micron::string> class file : public io::file     // if n
 {
   T data;
   micron::sstr<io::max_name> fname;
-  size_t seek;                           // seek start
-  size_t buffer_sz;                      // size of the internal buffer
+  usize seek;                           // seek start
+  usize buffer_sz;                      // size of the internal buffer
   micron::shared<micron::buffer> bf;     // internal buffer for buffering
 public:
   ~file() = default;
@@ -49,27 +49,27 @@ public:
   {
   }
 
-  template <size_t M>
+  template <usize M>
   file(const char (&name)[M], const io::modes mode)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(0), bf(nullptr)
   {
   }
 
-  file(const T &name, const io::modes mode, const size_t _bf)
+  file(const T &name, const io::modes mode, const usize _bf)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
 
-  file(const char *name, const io::modes mode, const size_t _bf)
+  file(const char *name, const io::modes mode, const usize _bf)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
 
-  template <size_t M>
-  file(const char (&name)[M], const io::modes mode, const size_t _bf)
+  template <usize M>
+  file(const char (&name)[M], const io::modes mode, const usize _bf)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append or mode == io::modes::appendread ? size() : 0),
         buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
@@ -79,13 +79,13 @@ public:
 
   file(const char *name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
 
-  template <size_t M> file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
+  template <usize M> file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
   {
   }
 
   // reopens file in place
   void
-  reopen(const T &name, const io::modes mode, const size_t _bf)
+  reopen(const T &name, const io::modes mode, const usize _bf)
   {
     sync();
     close();
@@ -97,7 +97,7 @@ public:
   }
 
   void
-  reopen(const char *name, const io::modes mode, const size_t _bf)
+  reopen(const char *name, const io::modes mode, const usize _bf)
   {
     sync();
     close();
@@ -253,7 +253,7 @@ public:
   }
 
   file &
-  set(const size_t s)
+  set(const usize s)
   {
     seek = s;
     return *this;
@@ -273,7 +273,7 @@ public:
     return *this;
   }
 
-  size_t
+  usize
   seek_pos(void) const
   {
     return seek;
@@ -281,7 +281,7 @@ public:
 
   // load buffered, starting from seek
   void
-  read_bytes(size_t sz)
+  read_bytes(usize sz)
   {
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
@@ -296,7 +296,7 @@ public:
         break;
       if ( bytes_read == -1 ) [[unlikely]]
         exc<except::io_error>("micron::fsys::file error reading file");
-      seek += static_cast<size_t>(bytes_read);
+      seek += static_cast<usize>(bytes_read);
       data.append(*bf, ((buffer_sz > sz) ? sz : buffer_sz));
       sz -= ((buffer_sz > sz) ? sz : buffer_sz);
 
@@ -340,7 +340,7 @@ public:
     if ( __handle.closed() )
       exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
     posix::lseek(__handle.fd, 0, seek_set);
-    size_t s = 0;
+    usize s = 0;
     ssize_t read_bytes = 0;
     do {
       // On success, the number of bytes read is returned (zero indicates end of file), and the file position is advanced
@@ -387,7 +387,7 @@ public:
 
   // load buffer
   void
-  load_buffer(const byte *b, const size_t n)
+  load_buffer(const byte *b, const usize n)
   {
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
@@ -397,7 +397,7 @@ public:
   }
 
   void
-  write_bytes(size_t sz)
+  write_bytes(usize sz)
   {
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
@@ -408,7 +408,7 @@ public:
     ssize_t bytes_written = io::write(__handle.fd, &(*bf), ((buffer_sz > sz) ? sz : buffer_sz));
     if ( bytes_written == -1 ) [[unlikely]]
       exc<except::io_error>("micron::fsys::file error writing to file");
-    seek += static_cast<size_t>(bytes_written);
+    seek += static_cast<usize>(bytes_written);
     sz -= ((buffer_sz > sz) ? sz : buffer_sz);
     do {
     } while ( sz );
@@ -425,7 +425,7 @@ public:
     if ( __handle.closed() )
       exc<except::filesystem_error>("micron::fsys::file fd isn't open");
     posix::lseek(__handle.fd, seek, seek_set);
-    size_t sz = io::write(__handle.fd, &data, data.size());
+    usize sz = io::write(__handle.fd, &data, data.size());
     if ( sz < data.size() )
       exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
     seek += sz;
@@ -433,7 +433,7 @@ public:
     clear();
   }
 
-  size_t
+  usize
   count(void) const
   {
     return data.size();

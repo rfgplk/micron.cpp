@@ -60,10 +60,7 @@ using micron::syncfs;
 using micron::umask;
 using micron::write;
 
-using micron::access_ok;
-using micron::execute_ok;
-using micron::read_ok;
-using micron::write_ok;
+// in posix now
 
 // old glibc dirent, entry, obsolete
 struct __dirent {
@@ -98,8 +95,8 @@ __impl_dir
 readdir(const io::fd_t &_f)
 {
   static char __readdir_buf[8192];
-  static size_t __readdir_bufpos = 0;
-  static size_t __readdir_nread = 0;
+  static usize __readdir_bufpos = 0;
+  static usize __readdir_nread = 0;
   if ( __readdir_bufpos >= __readdir_nread ) {
     __readdir_nread = micron::getdents64(_f.fd, &__readdir_buf, sizeof(__readdir_buf));
     __readdir_bufpos = 0;

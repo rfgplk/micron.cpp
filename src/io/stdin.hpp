@@ -24,7 +24,7 @@ __read_from(micron::string &bufout, const fd_t &handle)
   if ( handle.has_error() or !handle.open() )
     return false;
   micron::slice<char> buf(4096);
-  size_t needle = 0;
+  usize needle = 0;
   io::fget_byte(&buf[needle], handle);
   while ( buf[needle] != C )     // stop char to look for, if any
   {

@@ -424,7 +424,7 @@ public:
   }
 
   // for loops
-  constexpr size_t
+  constexpr usize
   size(void)
   {
     if constexpr ( micron::is_same_v<T, f256> ) {

@@ -17,72 +17,72 @@ namespace micron
 {
 
 template <integral T>
-inline constexpr size_t
+inline constexpr usize
 strlen(const T *str) noexcept
 {
   if ( !str )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( str[i] != static_cast<T>('\0') ) {
     ++i;
   }
   return i;
 }
 
-inline constexpr size_t
+inline constexpr usize
 wstrlen(const wchar_t *str) noexcept
 {
   if ( !str )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( str[i] != L'\0' ) {
     ++i;
   }
   return i;
 }
 
-inline constexpr size_t
+inline constexpr usize
 u16strlen(const char16_t *str) noexcept
 {
   if ( !str )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( str[i] != u'\0' ) {
     ++i;
   }
   return i;
 }
 
-inline constexpr size_t
+inline constexpr usize
 u32strlen(const char32_t *str) noexcept
 {
   if ( !str )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( str[i] != U'\0' ) {
     ++i;
   }
   return i;
 }
 
-inline constexpr size_t
+inline constexpr usize
 ustrlen(const char32_t *str) noexcept
 {
   if ( !str )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( str[i] != U'\0' ) {
     ++i;
   }
   return i;
 }
 
-inline size_t
+inline usize
 strlen256(const char *str) noexcept
 {
   if ( !str )
@@ -103,13 +103,13 @@ strlen256(const char *str) noexcept
 }
 
 template <integral T>
-inline constexpr size_t
-strnlen(const T *str, size_t maxlen) noexcept
+inline constexpr usize
+strnlen(const T *str, usize maxlen) noexcept
 {
   if ( !str )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < maxlen && str[i] != static_cast<T>('\0') ) {
     ++i;
   }
@@ -127,7 +127,7 @@ strcmp(const F *src, const D *dest) noexcept
   if ( !dest )
     return 1;
 
-  size_t i = 0;
+  usize i = 0;
   while ( src[i] != static_cast<F>('\0') && dest[i] != static_cast<D>('\0') ) {
     if ( src[i] != static_cast<F>(dest[i]) ) {
       return static_cast<int>(src[i]) - static_cast<int>(dest[i]);
@@ -140,7 +140,7 @@ strcmp(const F *src, const D *dest) noexcept
 
 template <integral F, integral D>
 inline constexpr int
-strncmp(const F *src, const D *dest, size_t n) noexcept
+strncmp(const F *src, const D *dest, usize n) noexcept
 {
   if ( !src && !dest )
     return 0;
@@ -151,7 +151,7 @@ strncmp(const F *src, const D *dest, size_t n) noexcept
   if ( n == 0 )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < n && src[i] != static_cast<F>('\0') && dest[i] != static_cast<D>('\0') ) {
     if ( src[i] != static_cast<F>(dest[i]) ) {
       return static_cast<int>(src[i]) - static_cast<int>(dest[i]);
@@ -171,7 +171,7 @@ strcpy(F *__restrict dest, const D *__restrict src) noexcept
   if ( !dest || !src )
     return dest;
 
-  size_t i = 0;
+  usize i = 0;
   while ( src[i] != static_cast<D>('\0') ) {
     dest[i] = static_cast<F>(src[i]);
     ++i;
@@ -183,12 +183,12 @@ strcpy(F *__restrict dest, const D *__restrict src) noexcept
 
 template <integral F, integral D>
 inline constexpr F *
-strncpy(F *__restrict dest, const D *__restrict src, size_t n) noexcept
+strncpy(F *__restrict dest, const D *__restrict src, usize n) noexcept
 {
   if ( !dest || !src )
     return dest;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < n && src[i] != static_cast<D>('\0') ) {
     dest[i] = static_cast<F>(src[i]);
     ++i;
@@ -209,8 +209,8 @@ strcat(F *__restrict dest, const D *__restrict src) noexcept
   if ( !dest || !src )
     return dest;
 
-  size_t dest_len = strlen(dest);
-  size_t i = 0;
+  usize dest_len = strlen(dest);
+  usize i = 0;
 
   while ( src[i] != static_cast<D>('\0') ) {
     dest[dest_len + i] = static_cast<F>(src[i]);
@@ -223,13 +223,13 @@ strcat(F *__restrict dest, const D *__restrict src) noexcept
 
 template <integral F, integral D>
 inline constexpr F *
-strncat(F *__restrict dest, const D *__restrict src, size_t n) noexcept
+strncat(F *__restrict dest, const D *__restrict src, usize n) noexcept
 {
   if ( !dest || !src )
     return dest;
 
-  size_t dest_len = strlen(dest);
-  size_t i = 0;
+  usize dest_len = strlen(dest);
+  usize i = 0;
 
   while ( i < n && src[i] != static_cast<D>('\0') ) {
     dest[dest_len + i] = static_cast<F>(src[i]);
@@ -248,7 +248,7 @@ strchr(const T *s, int c) noexcept
     return nullptr;
 
   T ch = static_cast<T>(c);
-  size_t i = 0;
+  usize i = 0;
 
   while ( s[i] != static_cast<T>('\0') ) {
     if ( s[i] == ch ) {
@@ -273,7 +273,7 @@ strrchr(const T *s, int c) noexcept
 
   T ch = static_cast<T>(c);
   const T *last = nullptr;
-  size_t i = 0;
+  usize i = 0;
 
   while ( s[i] != static_cast<T>('\0') ) {
     if ( s[i] == ch ) {
@@ -297,7 +297,7 @@ strchrnul(const T *s, int c) noexcept
     return nullptr;
 
   T ch = static_cast<T>(c);
-  size_t i = 0;
+  usize i = 0;
 
   while ( s[i] != static_cast<T>('\0') ) {
     if ( s[i] == ch ) {
@@ -317,13 +317,13 @@ strstr(const T *haystack, const F *needle) noexcept
   if ( !haystack || !needle )
     return nullptr;
 
-  size_t needle_len = strlen(needle);
+  usize needle_len = strlen(needle);
   if ( needle_len == 0 )
     return haystack;
 
-  size_t i = 0;
+  usize i = 0;
   while ( haystack[i] != static_cast<T>('\0') ) {
-    size_t j = 0;
+    usize j = 0;
     while ( j < needle_len && haystack[i + j] != static_cast<T>('\0') && haystack[i + j] == static_cast<T>(needle[j]) ) {
       ++j;
     }
@@ -340,19 +340,19 @@ strstr(const T *haystack, const F *needle) noexcept
 template <integral T, integral F>
   requires micron::is_convertible_v<F, T>
 inline constexpr const T *
-strnstr(const T *haystack, const F *needle, size_t len) noexcept
+strnstr(const T *haystack, const F *needle, usize len) noexcept
 {
   if ( !haystack || !needle )
     return nullptr;
 
-  size_t needle_len = strlen(needle);
+  usize needle_len = strlen(needle);
   if ( needle_len == 0 )
     return haystack;
   if ( needle_len > len )
     return nullptr;
 
-  for ( size_t i = 0; i <= len - needle_len && haystack[i] != static_cast<T>('\0'); ++i ) {
-    size_t j = 0;
+  for ( usize i = 0; i <= len - needle_len && haystack[i] != static_cast<T>('\0'); ++i ) {
+    usize j = 0;
     while ( j < needle_len && haystack[i + j] == static_cast<T>(needle[j]) ) {
       ++j;
     }
@@ -372,9 +372,9 @@ strpbrk(const T *s, const T *accept) noexcept
   if ( !s || !accept )
     return nullptr;
 
-  size_t i = 0;
+  usize i = 0;
   while ( s[i] != static_cast<T>('\0') ) {
-    size_t j = 0;
+    usize j = 0;
     while ( accept[j] != static_cast<T>('\0') ) {
       if ( s[i] == accept[j] ) {
         return const_cast<T *>(s + i);
@@ -388,15 +388,15 @@ strpbrk(const T *s, const T *accept) noexcept
 }
 
 template <integral T>
-inline constexpr size_t
+inline constexpr usize
 strspn(const T *s, const T *accept) noexcept
 {
   if ( !s || !accept )
     return 0;
 
-  size_t i = 0;
+  usize i = 0;
   while ( s[i] != static_cast<T>('\0') ) {
-    size_t j = 0;
+    usize j = 0;
     bool found = false;
 
     while ( accept[j] != static_cast<T>('\0') ) {
@@ -416,15 +416,15 @@ strspn(const T *s, const T *accept) noexcept
 }
 
 template <integral T>
-inline constexpr size_t
+inline constexpr usize
 strcspn(const T *s, const T *reject) noexcept
 {
   if ( !s || !reject )
     return strlen(s);
 
-  size_t i = 0;
+  usize i = 0;
   while ( s[i] != static_cast<T>('\0') ) {
-    size_t j = 0;
+    usize j = 0;
 
     while ( reject[j] != static_cast<T>('\0') ) {
       if ( s[i] == reject[j] ) {
@@ -445,10 +445,10 @@ strdup(const T *s)
   if ( !s )
     return nullptr;
 
-  size_t len = strlen(s);
+  usize len = strlen(s);
   T *copy = new T[len + 1];
 
-  for ( size_t i = 0; i <= len; ++i ) {
+  for ( usize i = 0; i <= len; ++i ) {
     copy[i] = s[i];
   }
 
@@ -457,15 +457,15 @@ strdup(const T *s)
 
 template <integral T>
 inline T *
-strndup(const T *s, size_t n)
+strndup(const T *s, usize n)
 {
   if ( !s )
     return nullptr;
 
-  size_t len = strnlen(s, n);
+  usize len = strnlen(s, n);
   T *copy = new T[len + 1];
 
-  for ( size_t i = 0; i < len; ++i ) {
+  for ( usize i = 0; i < len; ++i ) {
     copy[i] = s[i];
   }
   copy[len] = static_cast<T>('\0');
@@ -477,7 +477,7 @@ enum class str_error : i32 { nullptr_arg, invalid_length, buffer_overflow, ok, o
 
 template <integral T>
 inline constexpr str_error
-sstrlen(const T *str, size_t maxlen, size_t *out_len) noexcept
+sstrlen(const T *str, usize maxlen, usize *out_len) noexcept
 {
   if ( !str )
     return str_error::nullptr_arg;
@@ -486,7 +486,7 @@ sstrlen(const T *str, size_t maxlen, size_t *out_len) noexcept
   if ( maxlen == 0 )
     return str_error::invalid_length;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < maxlen && str[i] != static_cast<T>('\0') ) {
     ++i;
   }
@@ -501,7 +501,7 @@ sstrlen(const T *str, size_t maxlen, size_t *out_len) noexcept
 
 template <integral F, integral D>
 inline constexpr str_error
-sstrcmp(const F *src, size_t src_max, const D *dest, size_t dest_max, int *result) noexcept
+sstrcmp(const F *src, usize src_max, const D *dest, usize dest_max, int *result) noexcept
 {
   if ( !src || !dest )
     return str_error::nullptr_arg;
@@ -510,7 +510,7 @@ sstrcmp(const F *src, size_t src_max, const D *dest, size_t dest_max, int *resul
   if ( src_max == 0 || dest_max == 0 )
     return str_error::invalid_length;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < src_max && i < dest_max && src[i] != static_cast<F>('\0') && dest[i] != static_cast<D>('\0') ) {
     if ( src[i] != static_cast<F>(dest[i]) ) {
       *result = static_cast<int>(src[i]) - static_cast<int>(dest[i]);
@@ -529,7 +529,7 @@ sstrcmp(const F *src, size_t src_max, const D *dest, size_t dest_max, int *resul
 
 template <integral F, integral D>
 inline constexpr str_error
-sstrncmp(const F *src, size_t src_max, const D *dest, size_t dest_max, size_t n, int *result) noexcept
+sstrncmp(const F *src, usize src_max, const D *dest, usize dest_max, usize n, int *result) noexcept
 {
   if ( !src || !dest )
     return str_error::nullptr_arg;
@@ -542,10 +542,10 @@ sstrncmp(const F *src, size_t src_max, const D *dest, size_t dest_max, size_t n,
     return str_error::ok;
   }
 
-  size_t max_cmp = (n < src_max) ? n : src_max;
+  usize max_cmp = (n < src_max) ? n : src_max;
   max_cmp = (max_cmp < dest_max) ? max_cmp : dest_max;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < max_cmp && src[i] != static_cast<F>('\0') && dest[i] != static_cast<D>('\0') ) {
     if ( src[i] != static_cast<F>(dest[i]) ) {
       *result = static_cast<int>(src[i]) - static_cast<int>(dest[i]);
@@ -569,7 +569,7 @@ sstrncmp(const F *src, size_t src_max, const D *dest, size_t dest_max, size_t n,
 
 template <integral F, integral D>
 inline constexpr str_error
-sstrcpy(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t src_max) noexcept
+sstrcpy(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max) noexcept
 {
   if ( !dest || !src )
     return str_error::nullptr_arg;
@@ -585,7 +585,7 @@ sstrcpy(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t sr
     return str_error::overlap_detected;
   }
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < dest_size - 1 && i < src_max && src[i] != static_cast<D>('\0') ) {
     dest[i] = static_cast<F>(src[i]);
     ++i;
@@ -602,7 +602,7 @@ sstrcpy(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t sr
 
 template <integral F, integral D>
 inline constexpr str_error
-sstrncpy(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t src_max, size_t n) noexcept
+sstrncpy(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max, usize n) noexcept
 {
   if ( !dest || !src )
     return str_error::nullptr_arg;
@@ -620,8 +620,8 @@ sstrncpy(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t s
     return str_error::overlap_detected;
   }
 
-  size_t i = 0;
-  size_t max_copy = (n < dest_size) ? n : dest_size;
+  usize i = 0;
+  usize max_copy = (n < dest_size) ? n : dest_size;
   max_copy = (max_copy < src_max) ? max_copy : src_max;
 
   while ( i < max_copy && src[i] != static_cast<D>('\0') ) {
@@ -639,7 +639,7 @@ sstrncpy(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t s
 
 template <integral F, integral D>
 inline constexpr str_error
-sstrcat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t src_max) noexcept
+sstrcat(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max) noexcept
 {
   if ( !dest || !src )
     return str_error::nullptr_arg;
@@ -655,7 +655,7 @@ sstrcat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t sr
     return str_error::overlap_detected;
   }
 
-  size_t dest_len = 0;
+  usize dest_len = 0;
   while ( dest_len < dest_size && dest[dest_len] != static_cast<F>('\0') ) {
     ++dest_len;
   }
@@ -664,7 +664,7 @@ sstrcat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t sr
     return str_error::buffer_overflow;
   }
 
-  size_t i = 0;
+  usize i = 0;
   while ( dest_len + i < dest_size - 1 && i < src_max && src[i] != static_cast<D>('\0') ) {
     dest[dest_len + i] = static_cast<F>(src[i]);
     ++i;
@@ -681,7 +681,7 @@ sstrcat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t sr
 
 template <integral F, integral D>
 inline constexpr str_error
-sstrncat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t src_max, size_t n) noexcept
+sstrncat(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max, usize n) noexcept
 {
   if ( !dest || !src )
     return str_error::nullptr_arg;
@@ -697,7 +697,7 @@ sstrncat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t s
     return str_error::overlap_detected;
   }
 
-  size_t dest_len = 0;
+  usize dest_len = 0;
   while ( dest_len < dest_size && dest[dest_len] != static_cast<F>('\0') ) {
     ++dest_len;
   }
@@ -706,10 +706,10 @@ sstrncat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t s
     return str_error::buffer_overflow;
   }
 
-  size_t max_copy = (n < dest_size - dest_len - 1) ? n : (dest_size - dest_len - 1);
+  usize max_copy = (n < dest_size - dest_len - 1) ? n : (dest_size - dest_len - 1);
   max_copy = (max_copy < src_max) ? max_copy : src_max;
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < max_copy && src[i] != static_cast<D>('\0') ) {
     dest[dest_len + i] = static_cast<F>(src[i]);
     ++i;
@@ -726,7 +726,7 @@ sstrncat(F *__restrict dest, size_t dest_size, const D *__restrict src, size_t s
 
 template <integral T>
 inline constexpr str_error
-sstrchr(const T *s, size_t maxlen, int c, T **result) noexcept
+sstrchr(const T *s, usize maxlen, int c, T **result) noexcept
 {
   if ( !s || !result )
     return str_error::nullptr_arg;
@@ -734,7 +734,7 @@ sstrchr(const T *s, size_t maxlen, int c, T **result) noexcept
     return str_error::invalid_length;
 
   T ch = static_cast<T>(c);
-  size_t i = 0;
+  usize i = 0;
 
   while ( i < maxlen && s[i] != static_cast<T>('\0') ) {
     if ( s[i] == ch ) {
@@ -759,7 +759,7 @@ sstrchr(const T *s, size_t maxlen, int c, T **result) noexcept
 
 template <integral T>
 inline constexpr str_error
-sstrrchr(const T *s, size_t maxlen, int c, T **result) noexcept
+sstrrchr(const T *s, usize maxlen, int c, T **result) noexcept
 {
   if ( !s || !result )
     return str_error::nullptr_arg;
@@ -768,7 +768,7 @@ sstrrchr(const T *s, size_t maxlen, int c, T **result) noexcept
 
   T ch = static_cast<T>(c);
   const T *last = nullptr;
-  size_t i = 0;
+  usize i = 0;
 
   while ( i < maxlen && s[i] != static_cast<T>('\0') ) {
     if ( s[i] == ch ) {
@@ -793,14 +793,14 @@ sstrrchr(const T *s, size_t maxlen, int c, T **result) noexcept
 template <integral T, integral F>
   requires micron::is_convertible_v<F, T>
 inline constexpr str_error
-sstrstr(const T *haystack, size_t hay_max, const F *needle, size_t needle_max, const T **result) noexcept
+sstrstr(const T *haystack, usize hay_max, const F *needle, usize needle_max, const T **result) noexcept
 {
   if ( !haystack || !needle || !result )
     return str_error::nullptr_arg;
   if ( hay_max == 0 || needle_max == 0 )
     return str_error::invalid_length;
 
-  size_t needle_len = 0;
+  usize needle_len = 0;
   while ( needle_len < needle_max && needle[needle_len] != static_cast<F>('\0') ) {
     ++needle_len;
   }
@@ -814,12 +814,12 @@ sstrstr(const T *haystack, size_t hay_max, const F *needle, size_t needle_max, c
     return str_error::ok;
   }
 
-  size_t i = 0;
+  usize i = 0;
   while ( i < hay_max && haystack[i] != static_cast<T>('\0') ) {
     if ( i + needle_len > hay_max )
       break;
 
-    size_t j = 0;
+    usize j = 0;
     while ( j < needle_len && haystack[i + j] == static_cast<T>(needle[j]) ) {
       ++j;
     }

@@ -43,7 +43,7 @@ struct __mask {
   }
 };
 
-template <typename K, typename V, size_t N, size_t NH = 16>
+template <typename K, typename V, usize N, usize NH = 16>
   requires(N >= 16 and (N % 16) == 0 and NH <= N)
 class stack_swiss_map
 {
@@ -59,20 +59,20 @@ class stack_swiss_map
     return __h2(hash<hash64_t>(k));
   }
 
-  static constexpr size_t
+  static constexpr usize
   __h1(hash64_t h)
   {
-    return static_cast<size_t>(h);
+    return static_cast<usize>(h);
   }
 
-  static constexpr size_t
+  static constexpr usize
   __b_index(const K &k)
   {
     return __h1(hash<hash64_t>(k)) % N;
   }
 
   __mask
-  __match(u8 hash_val, size_t ind) const
+  __match(u8 hash_val, usize ind) const
   {
     simd::i128 match = _mm_set1_epi8(static_cast<i8>(hash_val));
     simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
@@ -81,7 +81,7 @@ class stack_swiss_map
   }
 
   __mask
-  __match_empty(size_t ind) const
+  __match_empty(usize ind) const
   {
     simd::i128 empty = _mm_set1_epi8(static_cast<i8>(__empty));
     simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
@@ -90,7 +90,7 @@ class stack_swiss_map
   }
 
   __mask
-  __match_empty_or_deleted(size_t ind) const
+  __match_empty_or_deleted(usize ind) const
   {
     simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
     simd::i128 sentinel = _mm_set1_epi8(static_cast<i8>(__sentinel));
@@ -112,23 +112,23 @@ class stack_swiss_map
     }
 
     u8 h2 = __hash(key);
-    size_t start = __b_index(key);
+    usize start = __b_index(key);
 
-    for ( size_t i = 0; i < NH; i += 16 ) {
-      size_t group_start = (start + i) % N;
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
 
       if ( group_start + 16 <= N ) {
         __mask m = __match_empty_or_deleted(group_start);
         if ( m.any() ) {
-          size_t probe = group_start + m.lowest();
+          usize probe = group_start + m.lowest();
           __control_bytes[probe] = h2;
           __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
           ++__size;
           return { true, &__entries[probe].value };
         }
       } else {
-        for ( size_t j = 0; j < 16 && i + j < NH; ++j ) {
-          size_t probe = (start + i + j) % N;
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
             __control_bytes[probe] = h2;
             __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
@@ -156,20 +156,20 @@ public:
 
   alignas(16) u8 __control_bytes[N];
   __swiss_entry __entries[N];
-  size_t __size = 0;
+  usize __size = 0;
 
   ~stack_swiss_map() = default;
 
   stack_swiss_map() : __size(0)
   {
-    for ( size_t i = 0; i < N; ++i ) {
+    for ( usize i = 0; i < N; ++i ) {
       __control_bytes[i] = __empty;
     }
   }
 
   stack_swiss_map(const stack_swiss_map &other) : __size(other.__size)
   {
-    for ( size_t i = 0; i < N; ++i ) {
+    for ( usize i = 0; i < N; ++i ) {
       __control_bytes[i] = other.__control_bytes[i];
       if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
         __entries[i] = other.__entries[i];
@@ -179,14 +179,14 @@ public:
 
   stack_swiss_map(stack_swiss_map &&other) noexcept : __size(other.__size)
   {
-    for ( size_t i = 0; i < N; ++i ) {
+    for ( usize i = 0; i < N; ++i ) {
       __control_bytes[i] = other.__control_bytes[i];
       if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
         __entries[i] = micron::move(other.__entries[i]);
       }
     }
     other.__size = 0;
-    for ( size_t i = 0; i < N; ++i ) {
+    for ( usize i = 0; i < N; ++i ) {
       other.__control_bytes[i] = __empty;
     }
   }
@@ -196,7 +196,7 @@ public:
   {
     if ( this != &other ) {
       __size = other.__size;
-      for ( size_t i = 0; i < N; ++i ) {
+      for ( usize i = 0; i < N; ++i ) {
         __control_bytes[i] = other.__control_bytes[i];
         if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
           __entries[i] = other.__entries[i];
@@ -211,21 +211,21 @@ public:
   {
     if ( this != &other ) {
       __size = other.__size;
-      for ( size_t i = 0; i < N; ++i ) {
+      for ( usize i = 0; i < N; ++i ) {
         __control_bytes[i] = other.__control_bytes[i];
         if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
           __entries[i] = micron::move(other.__entries[i]);
         }
       }
       other.__size = 0;
-      for ( size_t i = 0; i < N; ++i ) {
+      for ( usize i = 0; i < N; ++i ) {
         other.__control_bytes[i] = __empty;
       }
     }
     return *this;
   }
 
-  size_t
+  usize
   size() const noexcept
   {
     return __size;
@@ -237,13 +237,13 @@ public:
     return __size == 0;
   }
 
-  constexpr size_t
+  constexpr usize
   max_size() const noexcept
   {
     return N;
   }
 
-  constexpr size_t
+  constexpr usize
   capacity() const noexcept
   {
     return N;
@@ -252,7 +252,7 @@ public:
   void
   clear() noexcept
   {
-    for ( size_t i = 0; i < N; ++i ) {
+    for ( usize i = 0; i < N; ++i ) {
       __control_bytes[i] = __empty;
     }
     __size = 0;
@@ -290,15 +290,15 @@ public:
     }
 
     u8 h2 = __hash(key);
-    size_t start = __b_index(key);
+    usize start = __b_index(key);
 
-    for ( size_t i = 0; i < NH; i += 16 ) {
-      size_t group_start = (start + i) % N;
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
 
       if ( group_start + 16 <= N ) {
         __mask m = __match_empty_or_deleted(group_start);
         if ( m.any() ) {
-          size_t probe = group_start + m.lowest();
+          usize probe = group_start + m.lowest();
           __control_bytes[probe] = h2;
           __entries[probe].key = key;
           new (&__entries[probe].value) V(micron::forward<Args>(args)...);
@@ -306,8 +306,8 @@ public:
           return { true, &__entries[probe].value };
         }
       } else {
-        for ( size_t j = 0; j < 16 && i + j < NH; ++j ) {
-          size_t probe = (start + i + j) % N;
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
             __control_bytes[probe] = h2;
             __entries[probe].key = key;
@@ -326,15 +326,15 @@ public:
   erase(const K &key)
   {
     u8 h2 = __hash(key);
-    size_t start = __b_index(key);
+    usize start = __b_index(key);
 
-    for ( size_t i = 0; i < NH; i += 16 ) {
-      size_t group_start = (start + i) % N;
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
 
       if ( group_start + 16 <= N ) {
         __mask m = __match(h2, group_start);
         while ( m.any() ) {
-          size_t probe = group_start + m.lowest();
+          usize probe = group_start + m.lowest();
           if ( __entries[probe].key == key ) {
             __control_bytes[probe] = __deleted;
             --__size;
@@ -343,8 +343,8 @@ public:
           m.clear_lowest();
         }
       } else {
-        for ( size_t j = 0; j < 16 && i + j < NH; ++j ) {
-          size_t probe = (start + i + j) % N;
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
             __control_bytes[probe] = __deleted;
             --__size;
@@ -361,23 +361,23 @@ public:
   find(const K &key)
   {
     u8 h2 = __hash(key);
-    size_t start = __b_index(key);
+    usize start = __b_index(key);
 
-    for ( size_t i = 0; i < NH; i += 16 ) {
-      size_t group_start = (start + i) % N;
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
 
       if ( group_start + 16 <= N ) {
         __mask m = __match(h2, group_start);
         while ( m.any() ) {
-          size_t probe = group_start + m.lowest();
+          usize probe = group_start + m.lowest();
           if ( __entries[probe].key == key ) {
             return &__entries[probe].value;
           }
           m.clear_lowest();
         }
       } else {
-        for ( size_t j = 0; j < 16 && i + j < NH; ++j ) {
-          size_t probe = (start + i + j) % N;
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
             return &__entries[probe].value;
           }
@@ -400,7 +400,7 @@ public:
     return find(key) != nullptr;
   }
 
-  size_t
+  usize
   count(const K &key) const
   {
     return contains(key) ? 1 : 0;
@@ -445,7 +445,7 @@ public:
   {
   private:
     stack_swiss_map *map_;
-    size_t index_;
+    usize index_;
 
     void
     advance()
@@ -461,7 +461,7 @@ public:
     using pointer = micron::pair<const K *, V *>;
     using reference = micron::pair<const K &, V &>;
 
-    iterator(stack_swiss_map *m, size_t idx) : map_(m), index_(idx) { advance(); }
+    iterator(stack_swiss_map *m, usize idx) : map_(m), index_(idx) { advance(); }
 
     reference
     operator*()
@@ -508,7 +508,7 @@ public:
   {
   private:
     const stack_swiss_map *map_;
-    size_t index_;
+    usize index_;
 
     void
     advance()
@@ -524,7 +524,7 @@ public:
     using pointer = micron::pair<const K *, const V *>;
     using reference = micron::pair<const K &, const V &>;
 
-    const_iterator(const stack_swiss_map *m, size_t idx) : map_(m), index_(idx) { advance(); }
+    const_iterator(const stack_swiss_map *m, usize idx) : map_(m), index_(idx) { advance(); }
 
     reference
     operator*() const

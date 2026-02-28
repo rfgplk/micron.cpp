@@ -18,24 +18,24 @@ struct hazard_entry {
   atomic<bool> occupied = false;
 };
 
-constexpr static const size_t __max_hazard_threads = 256;
+constexpr static const usize __max_hazard_threads = 256;
 inline hazard_entry __hazard_table[__max_hazard_threads];
 
-inline __attribute__((always_inline)) size_t
+inline __attribute__((always_inline)) usize
 __emplace_hazard(void)
 {
-  for ( size_t i = 0; i < __max_hazard_threads; ++i ) {
+  for ( usize i = 0; i < __max_hazard_threads; ++i ) {
     bool _f = false;
     if ( __hazard_table[i].occupied.compare_exchange_strong(_f, true, memory_order::relaxed) ) {
       __hazard_table[i].ptr.__store(0, memory_order::relaxed);
       return i;
     }
   }
-  return numeric_limits<size_t>::max();
+  return numeric_limits<usize>::max();
 };
 
-inline __attribute__((always_inline)) size_t
-__pop_hazard(size_t _id) noexcept
+inline __attribute__((always_inline)) usize
+__pop_hazard(usize _id) noexcept
 {
   __hazard_table[_id].ptr.__store(0, memory_order::relaxed);
   __hazard_table[_id].occupied.__store(false, memory_order::relaxed);
@@ -48,8 +48,8 @@ class hazard_pointer
   using mutability_type = mutable_tag;
   using value_type = void;
   using value_type = void;
-  static constexpr size_t _end = numeric_limits<size_t>::max();
-  size_t _id = _end;
+  static constexpr usize _end = numeric_limits<usize>::max();
+  usize _id = _end;
 
   template <typename T>
   inline __attribute__((always_inline)) void

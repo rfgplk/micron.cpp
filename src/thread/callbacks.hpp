@@ -19,7 +19,7 @@ namespace micron
 // especially since clone() kills/flattens proper resolution
 mutex __global_callback_mtx;
 array<void (*)(void), 64> __global_callback_ptrs;
-size_t __global_callback_size = 0;
+usize __global_callback_size = 0;
 
 void
 add_callback(void (*f)(void))

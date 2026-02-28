@@ -24,10 +24,10 @@ template <typename T> class heapq
   micron::fvector<T> heap;
 
   void
-  sift_up(size_t idx)
+  sift_up(usize idx)
   {
     while ( idx > 0 ) {
-      size_t parent = (idx - 1) / 2;
+      usize parent = (idx - 1) / 2;
       if ( heap[idx] < heap[parent] ) {
         micron::swap(heap[idx], heap[parent]);
         idx = parent;
@@ -38,13 +38,13 @@ template <typename T> class heapq
   }
 
   void
-  sift_down(size_t idx)
+  sift_down(usize idx)
   {
-    size_t n = heap.size();
+    usize n = heap.size();
     while ( true ) {
-      size_t left = 2 * idx + 1;
-      size_t right = 2 * idx + 2;
-      size_t smallest = idx;
+      usize left = 2 * idx + 1;
+      usize right = 2 * idx + 2;
+      usize smallest = idx;
 
       if ( left < n && heap[left] < heap[smallest] )
         smallest = left;
@@ -128,7 +128,7 @@ public:
     return heap.empty();
   }
 
-  size_t
+  usize
   size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);

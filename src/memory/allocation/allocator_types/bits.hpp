@@ -17,13 +17,13 @@ template <typename T> struct abc_allocator {
   // difference between allocate and umanaged_* calls is that allocate pulls memory from the allocator, while unmanaged
   // pulls pages from the kernel directly, for when you need to manage memory yourself
   static auto
-  allocate(size_t sz) -> __chunk<byte>
+  allocate(usize sz) -> __chunk<byte>
   {
     return abc::__abc_allocator<byte>::calloc(sz);
   }
 
   static void
-  deallocate(T *ptr, size_t sz)
+  deallocate(T *ptr, usize sz)
   {
     if ( ptr == nullptr ) [[unlikely]]
       return;
@@ -31,13 +31,13 @@ template <typename T> struct abc_allocator {
   }
 
   static T *
-  brk_allocate(size_t sz)
+  brk_allocate(usize sz)
   {
     return abc::__abc_allocator<byte>::calloc(sz);
   }
 
   static void
-  brk_deallocate(T *ptr, size_t sz)
+  brk_deallocate(T *ptr, usize sz)
   {
     if ( ptr == nullptr ) [[unlikely]]
       return;
@@ -45,13 +45,13 @@ template <typename T> struct abc_allocator {
   }
 
   static T *
-  unmanaged_allocate(size_t sz)
+  unmanaged_allocate(usize sz)
   {
     return reinterpret_cast<T *>(micron::sys_allocator<byte>::alloc(sz));
   }
 
   static void
-  unmanaged_deallocate(T *ptr, size_t sz)
+  unmanaged_deallocate(T *ptr, usize sz)
   {
     if ( ptr == nullptr ) [[unlikely]]
       return;
@@ -96,7 +96,7 @@ template <typename T> class stl_allocator
   constexpr stl_allocator(stl_allocator &&) = default;
 
   T *
-  allocate(size_t cnt)
+  allocate(usize cnt)
   {
     const auto ptr = micron::__alloc(sizeof(T) * cnt);
     if ( !ptr )
@@ -105,7 +105,7 @@ template <typename T> class stl_allocator
   }
 
   void
-  deallocate(T *ptr, size_t cnt)
+  deallocate(T *ptr, usize cnt)
   {
     micron::__free(ptr);
   }

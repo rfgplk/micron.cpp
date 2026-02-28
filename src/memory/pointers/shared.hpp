@@ -235,7 +235,7 @@ public:
     return control == nullptr;
   }
 
-  size_t
+  usize
   refs() const noexcept
   {
     return control ? control->refs : 0;

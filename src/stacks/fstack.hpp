@@ -22,7 +22,7 @@ namespace micron
 {
 
 // stack equivalent, fast variant, no bounds checking or safety checks
-template <is_regular_object T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class fstack : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
@@ -59,12 +59,12 @@ public:
   fstack(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> ) {
-      size_t i = 0;
+      usize i = 0;
       for ( T &&value : lst )
         new (&__mem::memory[i++]) T(micron::move(value));
       __mem::length = lst.size();
     } else {
-      size_t i = 0;
+      usize i = 0;
       for ( T value : lst )
         __mem::memory[i++] = value;
       __mem::length = lst.size();
@@ -203,7 +203,7 @@ public:
   }
 
   inline void
-  reserve(const size_t n) noexcept
+  reserve(const usize n) noexcept
   {
     if ( n < __mem::capacity )
       return;
@@ -233,13 +233,13 @@ public:
     return __mem::length == 0;
   }
 
-  [[nodiscard]] inline size_t
+  [[nodiscard]] inline usize
   size() const noexcept
   {
     return __mem::length;
   }
 
-  [[nodiscard]] inline size_t
+  [[nodiscard]] inline usize
   max_size() const noexcept
   {
     return __mem::capacity;
@@ -340,7 +340,7 @@ public:
   {
     if ( __mem::length != o.length )
       return false;
-    for ( size_t i = 0; i < __mem::length; ++i )
+    for ( usize i = 0; i < __mem::length; ++i )
       if ( __mem::memory[i] != o.memory[i] )
         return false;
     return true;
@@ -355,8 +355,8 @@ public:
   bool
   operator<(const fstack &o) const noexcept
   {
-    size_t n = __mem::length < o.length ? __mem::length : o.length;
-    for ( size_t i = 0; i < n; ++i ) {
+    usize n = __mem::length < o.length ? __mem::length : o.length;
+    for ( usize i = 0; i < n; ++i ) {
       if ( __mem::memory[i] < o.memory[i] )
         return true;
       if ( o.memory[i] < __mem::memory[i] )

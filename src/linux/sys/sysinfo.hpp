@@ -68,15 +68,15 @@ get_phys_pages(void)
 // this is a wrapper around Linux spec. fcalls providing necessary system info
 // again NO idea why the STL doesn't have this
 struct resources {
-  size_t memory;
-  size_t free_memory;
-  size_t shared_memory;
-  size_t buffer_memory;
-  size_t total_memory;
-  size_t total_swap;
-  size_t free_swap;
-  size_t procs;
-  size_t mem_unit;
+  usize memory;
+  usize free_memory;
+  usize shared_memory;
+  usize buffer_memory;
+  usize total_memory;
+  usize total_swap;
+  usize free_swap;
+  usize procs;
+  usize mem_unit;
 
   resources() { __impl_rs(); }
 

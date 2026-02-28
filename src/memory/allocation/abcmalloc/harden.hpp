@@ -38,7 +38,7 @@ fail_state(void)
 #pragma GCC diagnostic pop
 
 inline __attribute__((always_inline)) auto
-check_constraint(const size_t sz) -> bool
+check_constraint(const usize sz) -> bool
 {
   if constexpr ( __is_constrained ) {
     if ( sz > __alloc_limit and __alloc_limit != 0 )
@@ -48,7 +48,7 @@ check_constraint(const size_t sz) -> bool
 }
 
 inline __attribute__((always_inline)) void
-sanitize_on_alloc(byte *addr, size_t sz = 0)
+sanitize_on_alloc(byte *addr, usize sz = 0)
 {
   // addr will always be valid
   if constexpr ( __default_sanitize ) {
@@ -60,7 +60,7 @@ sanitize_on_alloc(byte *addr, size_t sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-zero_on_alloc(byte *addr, size_t sz = 0)
+zero_on_alloc(byte *addr, usize sz = 0)
 {
   // addr will always be valid
   if constexpr ( __default_zero_on_alloc ) {
@@ -72,7 +72,7 @@ zero_on_alloc(byte *addr, size_t sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-zero_on_free(byte *addr, size_t sz = 0)
+zero_on_free(byte *addr, usize sz = 0)
 {
   // addr will always be valid
   if constexpr ( __default_zero_on_free ) {
@@ -84,7 +84,7 @@ zero_on_free(byte *addr, size_t sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-full_on_free(byte *addr, size_t sz = 0)
+full_on_free(byte *addr, usize sz = 0)
 {
   // addr will always be valid
   if constexpr ( __default_full_on_free ) {

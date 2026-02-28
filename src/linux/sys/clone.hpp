@@ -110,7 +110,7 @@ fork_kernel(void)
   return micron::syscall(SYS_fork);
 }
 
-template <size_t Sz, auto Fn, typename... Args>
+template <usize Sz, auto Fn, typename... Args>
 pid_t
 clone(addr_t *stack, int flags, Args &&...args)
 {
@@ -216,7 +216,7 @@ clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nu
 
 /*
 pid_t
-clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, size_t stack_size, int *parent_tid = nullptr,
+clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr,
       int *child_tid = nullptr, unsigned long tls = 0, int exit_signal = sig_chld)
 {
   if ( !stack || stack_size == 0 )

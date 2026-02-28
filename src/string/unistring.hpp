@@ -15,12 +15,12 @@ namespace micron
 
 template <typename T = char>
 inline micron::hstring<T>
-with_capacity(const size_t n)
+with_capacity(const usize n)
 {
   return micron::hstring<T>(n);
 };
 
-template <size_t N, typename T = char>
+template <usize N, typename T = char>
 inline micron::hstring<T>
 with_capacity(void)
 {
@@ -122,7 +122,7 @@ int_to_string(I n)
 
 // WARNING: could go OOB
 
-template <typename I, typename T = char, size_t N>
+template <typename I, typename T = char, usize N>
   requires micron::is_integral_v<I>
 inline micron::sstring<N, T>
 int_to_string_stack(I n)
@@ -168,9 +168,9 @@ bytes_to_string(I n)
 }
 
 constexpr const char *
-u8_check(const char *str, size_t n)
+u8_check(const char *str, usize n)
 {
-  for ( size_t i = 0; i < n; i++ ) {
+  for ( usize i = 0; i < n; i++ ) {
     char c = *str++;
     // if ( c < 0x80 )
     //   continue;     // ASCII range
@@ -205,9 +205,9 @@ u8_check(const char *str, size_t n)
 }
 
 constexpr const char16_t *
-u16_check(const char16_t *str, size_t n)
+u16_check(const char16_t *str, usize n)
 {
-  for ( size_t i = 0; i < n; i++ ) {
+  for ( usize i = 0; i < n; i++ ) {
     u16 c = (*str++);
 
     if ( c < 0xD800 )
@@ -229,9 +229,9 @@ u16_check(const char16_t *str, size_t n)
 }
 
 constexpr const char32_t *
-u32_check(const char32_t *str, size_t n)
+u32_check(const char32_t *str, usize n)
 {
-  for ( size_t i = 0; i < n; i++ ) {
+  for ( usize i = 0; i < n; i++ ) {
     char32_t c = (*str++);
 
     if ( c <= 0x10FFFF ) {     // Valid range for Unicode code points
@@ -260,7 +260,7 @@ to_string(const T *str)
   return micron::hstring<T>(str);
 };
 
-template <size_t N, typename T>
+template <usize N, typename T>
 inline auto     // micron::hstring<T>
 to_string(const T (&str)[N])
 {

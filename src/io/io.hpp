@@ -28,7 +28,7 @@ namespace io
 // no seeking alignment, just read
 template <typename T>
 ssize_t
-read(int fd, T *buf, size_t cnt)
+read(int fd, T *buf, usize cnt)
 {
   if ( fd <= 0 )
     return -1;
@@ -36,7 +36,7 @@ read(int fd, T *buf, size_t cnt)
   // ugly i know, but valid
 }
 
-template <typename T, size_t N>
+template <typename T, usize N>
 ssize_t
 read(int fd, const T (&buf)[N])
 {
@@ -48,21 +48,21 @@ read(int fd, const T (&buf)[N])
 template <is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 ssize_t
-read(int fd, T &buf, const size_t cnt)
+read(int fd, T &buf, const usize cnt)
 {
   return posix::read(fd, buf.data(), cnt);
 }
 
 template <typename T = byte>
 ssize_t
-write(int fd, T *buf, size_t cnt)
+write(int fd, T *buf, usize cnt)
 {
   if ( fd <= 0 )
     return -1;
   return posix::write(fd, buf, cnt);
 }
 
-template <typename T, size_t N>
+template <typename T, usize N>
 ssize_t
 write(int fd, const T (&buf)[N])
 {
@@ -74,14 +74,14 @@ write(int fd, const T (&buf)[N])
 template <is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 ssize_t
-write(int fd, T &buf, const size_t cnt)
+write(int fd, T &buf, const usize cnt)
 {
   return posix::write(fd, buf.data(), cnt);
 }
 
 template <typename T = byte>
 ssize_t
-fwrited(T *ptr, size_t num, const fd_t &handle)
+fwrited(T *ptr, usize num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
     return -1;
@@ -90,7 +90,7 @@ fwrited(T *ptr, size_t num, const fd_t &handle)
 
 template <typename T = byte>
 ssize_t
-fwrite(T *ptr, size_t num, const fd_t &handle)
+fwrite(T *ptr, usize num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
     return -1;
@@ -141,7 +141,7 @@ fflush(const fd_t &handle)
 }
 
 inline __attribute__((always_inline)) void
-fput(const char *__restrict s, size_t len, const fd_t &handle)
+fput(const char *__restrict s, usize len, const fd_t &handle)
 {
   io::fwrite(s, len, handle);
 }
@@ -172,7 +172,7 @@ unifput(const char32_t *__restrict s, const fd_t &handle)
 
 template <typename T>
 inline __attribute__((always_inline)) auto
-fget(T *__restrict s, const size_t n, const fd_t &handle)
+fget(T *__restrict s, const usize n, const fd_t &handle)
 {
   return posix::read(s, n, handle.fd);
 }

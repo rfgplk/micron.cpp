@@ -18,12 +18,12 @@ namespace io
 namespace serialize
 {
 // serialize a byte array, of size n
-template <size_t C = 65536, is_string T = micron::ustr8>
+template <usize C = 65536, is_string T = micron::ustr8>
 void
-serialize_bytes(fsys::file<T> &f, const byte *b, size_t n)
+serialize_bytes(fsys::file<T> &f, const byte *b, usize n)
 {
-  size_t pb = n < C ? n : C;
-  size_t p = 0;
+  usize pb = n < C ? n : C;
+  usize p = 0;
   if ( f.buffer_size() < C )
     pb = f.buffer_size();
   do {
@@ -36,13 +36,13 @@ serialize_bytes(fsys::file<T> &f, const byte *b, size_t n)
   } while ( n );
 }
 
-template <size_t C = 65536, is_string T = micron::ustr8, typename R>
+template <usize C = 65536, is_string T = micron::ustr8, typename R>
 void
-serialize_bytes(fsys::file<T> &f, const R *_b, size_t n)
+serialize_bytes(fsys::file<T> &f, const R *_b, usize n)
 {
   const byte *b = reinterpret_cast<const byte *>(_b);     // overloading like this so we don't have to check for return type of operator&
-  size_t pb = n < C ? n : C;
-  size_t p = 0;
+  usize pb = n < C ? n : C;
+  usize p = 0;
   if ( f.buffer_size() < C )
     pb = f.buffer_size();
   do {

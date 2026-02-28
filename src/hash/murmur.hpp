@@ -23,9 +23,9 @@ rotl64(const u64 x, const i8 r)
 // variants of this hash are being omitted. credits to smhasher
 template <typename T = byte>
 micron::pair<u64, u64>
-murmur(const T *key, const size_t len, const u32 seed)
+murmur(const T *key, const usize len, const u32 seed)
 {
-  const size_t nblocks = len / 16;
+  const usize nblocks = len / 16;
   u64 s1 = seed;
   u64 s2 = seed;
 
@@ -34,7 +34,7 @@ murmur(const T *key, const size_t len, const u32 seed)
 
   const u64 *blcks = reinterpret_cast<const u64 *>(key);
 
-  for ( size_t i = 0; i < nblocks; i++ ) {
+  for ( usize i = 0; i < nblocks; i++ ) {
     u64 k1 = blcks[i * 2];
     u64 k2 = blcks[i * 2 + 1];
 
@@ -127,9 +127,9 @@ murmur(const T *key, const size_t len, const u32 seed)
 
 template <u32 seed, typename T = byte>
 micron::pair<u64, u64>
-murmur(const T *key, const size_t len)
+murmur(const T *key, const usize len)
 {
-  const size_t nblocks = len / 16;
+  const usize nblocks = len / 16;
   u64 s1 = seed;
   u64 s2 = seed;
 
@@ -138,7 +138,7 @@ murmur(const T *key, const size_t len)
 
   const u64 *blcks = reinterpret_cast<const u64 *>(key);
 
-  for ( size_t i = 0; i < nblocks; i++ ) {
+  for ( usize i = 0; i < nblocks; i++ ) {
     u64 k1 = blcks[i * 2];
     u64 k2 = blcks[i * 2 + 1];
 

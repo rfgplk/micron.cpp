@@ -40,7 +40,7 @@ template <u64 Sz> class sheet
   using stack_page_list = __buddy_list<micron::__chunk<byte>, __size_class, 64>;
   micron::__chunk<byte> __kernel_memory;
   stack_page_list __book;
-  size_t __guard_offset;
+  usize __guard_offset;
 
   // when a new malloc happens insert it into the book
 
@@ -65,7 +65,7 @@ public:
   sheet(const micron::__chunk<byte> &mem) : __kernel_memory(mem), __book(mem), __guard_offset(0) {}
 
   // for guard pages
-  sheet(const micron::__chunk<byte> &mem, size_t offset)
+  sheet(const micron::__chunk<byte> &mem, usize offset)
       : __kernel_memory(mem), __book(micron::__chunk<byte>{ mem.ptr, mem.len - offset }), __guard_offset(offset)
   {
   }
@@ -121,7 +121,7 @@ public:
 
   // request to allocate mem of sz, fail silently (return nullptr)
   micron::__chunk<byte>
-  mark(size_t mem_sz)
+  mark(usize mem_sz)
   {
     if ( empty() )
       return { nullptr, 0 };
@@ -133,7 +133,7 @@ public:
 
   // allows marking at existing location
   micron::__chunk<byte>
-  temporal_mark(size_t mem_sz)
+  temporal_mark(usize mem_sz)
   {
     if ( empty() )
       return { nullptr, 0 };
@@ -145,7 +145,7 @@ public:
 
   // request to allocate mem of sz, fail loudly, force quote
   micron::__chunk<byte>
-  try_mark(size_t mem_sz)
+  try_mark(usize mem_sz)
   {
     if ( empty() )
       micron::abort();
@@ -222,7 +222,7 @@ public:
     return !__book.is_tombstoned(_p);
   }
 
-  size_t
+  usize
   available() const
   {
     if ( empty() )
@@ -230,7 +230,7 @@ public:
     return __book.available();
   }
 
-  size_t
+  usize
   total() const
   {
     if ( empty() )
@@ -239,25 +239,25 @@ public:
   }
 
   // to be used in loops where sheet is always allocd
-  size_t
+  usize
   ftotal() const
   {
     return __book.__total();
   }
 
-  size_t
+  usize
   used() const
   {
     return __book.used();
   }
 
-  size_t
+  usize
   tombstoned() const
   {
     return __book.tombstoned();
   }
 
-  size_t
+  usize
   allocated() const
   {
     return __kernel_memory.len - __guard_offset;
@@ -292,7 +292,7 @@ public:
 
 template <u64 Sz>
 sheet<Sz>
-make_sheet(size_t req_size)
+make_sheet(usize req_size)
 {
   return sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(req_size));
 }

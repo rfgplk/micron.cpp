@@ -41,10 +41,10 @@ cast(P &&p)
 }
 
 template <typename T>
-size_t
+usize
 max_cast(T &&t)
 {
-  return static_cast<size_t>(const_cast<micron::remove_const<T>::type>(t));
+  return static_cast<usize>(const_cast<micron::remove_const<T>::type>(t));
 }
 
 template <typename P>

@@ -23,7 +23,7 @@
 
 namespace micron
 {
-template <is_movable_object t, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+template <is_movable_object t, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class istack : public __immutable_memory_resource<t, Alloc>
 {
   using __mem = __immutable_memory_resource<t, Alloc>;
@@ -93,13 +93,13 @@ public:
   istack(const std::initializer_list<t> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<t> ) {
-      size_t i = 0;
+      usize i = 0;
       for ( t &&value : lst ) {
         new (&__mem::memory[i++]) t(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
-      size_t i = 0;
+      usize i = 0;
       for ( t value : lst ) {
         __mem::memory[i++] = value;
       }
@@ -112,7 +112,7 @@ public:
   istack(const stack<K> &o) : __mem(o.size())
   {
     // TODO: optimize
-    for ( size_t i = o.size(); i > 0; --i )
+    for ( usize i = o.size(); i > 0; --i )
       _push(o[i]);     // we want it to be inverse aka as it is in memory
     _push(o[0]);
   }
@@ -123,7 +123,7 @@ public:
 
   istack(const istack *o) : __mem(o->capacity * sizeof(t))
   {
-    for ( size_t i = 0; i < o->length; i++ )
+    for ( usize i = 0; i < o->length; i++ )
       __mem::memory[i] = o->memory[i];
     __mem::length = o->length;
   }
@@ -183,7 +183,7 @@ public:
 
   // grow container
   inline void
-  reserve(const size_t n)
+  reserve(const usize n)
   {
     if ( n < __mem::capacity )
       return;
@@ -204,13 +204,13 @@ public:
     return !__mem::length;
   }
 
-  inline size_t
+  inline usize
   size() const
   {
     return __mem::length;
   }
 
-  inline size_t
+  inline usize
   max_size() const
   {
     return __mem::capacity;

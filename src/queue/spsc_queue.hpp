@@ -26,11 +26,11 @@ namespace micron
 
 inline constexpr u64 __cache_line = cache_line_size();
 
-template <is_movable_object T, size_t N, class Alloc = micron::allocator_serial<>>
+template <is_movable_object T, usize N, class Alloc = micron::allocator_serial<>>
 class spsc_queue : public __mutable_memory_resource<T, Alloc>
 {
-  constexpr static size_t
-  __next_pow2(size_t n)
+  constexpr static usize
+  __next_pow2(usize n)
   {
     n--;
     n |= n >> 1;
@@ -44,20 +44,20 @@ class spsc_queue : public __mutable_memory_resource<T, Alloc>
 
   using __mem = __mutable_memory_resource<T, Alloc>;
 
-  static constexpr size_t __spsc_capacity = __next_pow2(N);
-  static constexpr size_t __mask = __spsc_capacity - 1;
+  static constexpr usize __spsc_capacity = __next_pow2(N);
+  static constexpr usize __mask = __spsc_capacity - 1;
 
-  alignas(__cache_line) micron::atomic_token<size_t> head;
-  char __pad1[__cache_line - sizeof(micron::atomic_token<size_t>)];
+  alignas(__cache_line) micron::atomic_token<usize> head;
+  char __pad1[__cache_line - sizeof(micron::atomic_token<usize>)];
 
-  alignas(__cache_line) micron::atomic_token<size_t> tail;
-  char __pad2[__cache_line - sizeof(micron::atomic_token<size_t>)];
+  alignas(__cache_line) micron::atomic_token<usize> tail;
+  char __pad2[__cache_line - sizeof(micron::atomic_token<usize>)];
 
-  alignas(__cache_line) size_t cached_head;
-  char __pad3[__cache_line - sizeof(size_t)];
+  alignas(__cache_line) usize cached_head;
+  char __pad3[__cache_line - sizeof(usize)];
 
-  alignas(__cache_line) size_t cached_tail;
-  char __pad4[__cache_line - sizeof(size_t)];
+  alignas(__cache_line) usize cached_tail;
+  char __pad4[__cache_line - sizeof(usize)];
 
 public:
   using category_type = buffer_tag;
@@ -90,11 +90,11 @@ public:
   inline void
   clear()
   {
-    const size_t h = head.get(memory_order_relaxed);
-    const size_t t = tail.get(memory_order_relaxed);
+    const usize h = head.get(memory_order_relaxed);
+    const usize t = tail.get(memory_order_relaxed);
 
     if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = h; i != t; ++i ) {
+      for ( usize i = h; i != t; ++i ) {
         (__mem::memory)[i & __mask].~T();
       }
     }
@@ -112,19 +112,19 @@ public:
     return head.get(memory_order_acquire) == tail.get(memory_order_acquire);
   }
 
-  inline size_t
+  inline usize
   size() const
   {
     return tail.get(memory_order_acquire) - head.get(memory_order_acquire);
   }
 
-  inline size_t
+  inline usize
   capacity() const
   {
     return __spsc_capacity;
   }
 
-  inline size_t
+  inline usize
   max_size() const
   {
     return __spsc_capacity;
@@ -133,10 +133,10 @@ public:
   __attribute__((always_inline)) inline bool
   push(void)
   {
-    const size_t t = tail.get(memory_order_relaxed);
-    const size_t __next = t + 1;
+    const usize t = tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
 
-    size_t avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (__next - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
@@ -146,7 +146,7 @@ public:
         return false;
     }
 
-    const size_t idx = t & __mask;
+    const usize idx = t & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (&__mem::memory[idx]) T{};
@@ -161,10 +161,10 @@ public:
   __attribute__((always_inline)) inline bool
   push(T &&val)
   {
-    const size_t t = tail.get(memory_order_relaxed);
-    const size_t __next = t + 1;
+    const usize t = tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
 
-    size_t avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (__next - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
@@ -174,7 +174,7 @@ public:
         return false;
     }
 
-    const size_t idx = t & __mask;
+    const usize idx = t & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (&__mem::memory[idx]) T{ micron::move(val) };
@@ -189,10 +189,10 @@ public:
   __attribute__((always_inline)) inline bool
   push(const T &val)
   {
-    const size_t t = tail.get(memory_order_relaxed);
-    const size_t __next = t + 1;
+    const usize t = tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
 
-    size_t avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (__next - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
@@ -202,7 +202,7 @@ public:
         return false;
     }
 
-    const size_t idx = t & __mask;
+    const usize idx = t & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (&__mem::memory[idx]) T{ val };
@@ -218,10 +218,10 @@ public:
   __attribute__((always_inline)) inline bool
   emplace(Args &&...args)
   {
-    const size_t t = tail.get(memory_order_relaxed);
-    const size_t __next = t + 1;
+    const usize t = tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
 
-    size_t avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (__next - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
@@ -231,7 +231,7 @@ public:
         return false;
     }
 
-    const size_t idx = t & __mask;
+    const usize idx = t & __mask;
 
     new (&__mem::memory[idx]) T{ micron::forward<Args>(args)... };
 
@@ -242,9 +242,9 @@ public:
   __attribute__((always_inline)) inline bool
   pop(T &out)
   {
-    const size_t h = head.get(memory_order_relaxed);
+    const usize h = head.get(memory_order_relaxed);
 
-    size_t avail = cached_tail - h;
+    usize avail = cached_tail - h;
 
     if ( avail == 0 ) [[unlikely]] {
       cached_tail = tail.get(memory_order_acquire);
@@ -254,7 +254,7 @@ public:
         return false;
     }
 
-    const size_t idx = h & __mask;
+    const usize idx = h & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       out = micron::move(__mem::memory[idx]);
@@ -270,9 +270,9 @@ public:
   __attribute__((always_inline)) inline bool
   pop(void)
   {
-    const size_t h = head.get(memory_order_relaxed);
+    const usize h = head.get(memory_order_relaxed);
 
-    size_t avail = cached_tail - h;
+    usize avail = cached_tail - h;
 
     if ( avail == 0 ) [[unlikely]] {
       cached_tail = tail.get(memory_order_acquire);
@@ -282,7 +282,7 @@ public:
         return false;
     }
 
-    const size_t idx = h & __mask;
+    const usize idx = h & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
       __mem::memory[idx].~T();
@@ -297,8 +297,8 @@ public:
   __attribute__((always_inline)) inline bool
   peek(T &out) const
   {
-    const size_t h = head.get(memory_order_relaxed);
-    const size_t t = tail.get(memory_order_acquire);
+    const usize h = head.get(memory_order_relaxed);
+    const usize t = tail.get(memory_order_acquire);
 
     const bool has_data = (h != t);
     if ( has_data ) [[likely]] {
@@ -331,21 +331,21 @@ public:
     return __mem::memory[(tail.get(memory_order_relaxed) - 1) & __mask];
   }
 
-  __attribute__((always_inline)) inline size_t
-  push_batch(const T *items, size_t count)
+  __attribute__((always_inline)) inline usize
+  push_batch(const T *items, usize count)
   {
-    const size_t t = tail.get(memory_order_relaxed);
-    size_t avail = __spsc_capacity - (t - cached_head);
+    const usize t = tail.get(memory_order_relaxed);
+    usize avail = __spsc_capacity - (t - cached_head);
 
     if ( avail < count ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
       avail = __spsc_capacity - (t - cached_head);
     }
 
-    const size_t to_push = (avail < count) ? avail : count;
+    const usize to_push = (avail < count) ? avail : count;
 
-    for ( size_t i = 0; i < to_push; ++i ) {
-      const size_t idx = (t + i) & __mask;
+    for ( usize i = 0; i < to_push; ++i ) {
+      const usize idx = (t + i) & __mask;
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
         new (&__mem::memory[idx]) T{ items[i] };
       } else {
@@ -357,21 +357,21 @@ public:
     return to_push;
   }
 
-  __attribute__((always_inline)) inline size_t
-  pop_batch(T *items, size_t count)
+  __attribute__((always_inline)) inline usize
+  pop_batch(T *items, usize count)
   {
-    const size_t h = head.get(memory_order_relaxed);
-    size_t avail = cached_tail - h;
+    const usize h = head.get(memory_order_relaxed);
+    usize avail = cached_tail - h;
 
     if ( avail < count ) [[unlikely]] {
       cached_tail = tail.get(memory_order_acquire);
       avail = cached_tail - h;
     }
 
-    const size_t to_pop = (avail < count) ? avail : count;
+    const usize to_pop = (avail < count) ? avail : count;
 
-    for ( size_t i = 0; i < to_pop; ++i ) {
-      const size_t idx = (h + i) & __mask;
+    for ( usize i = 0; i < to_pop; ++i ) {
+      const usize idx = (h + i) & __mask;
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
         items[i] = micron::move(__mem::memory[idx]);
         __mem::memory[idx].~T();

@@ -13,7 +13,7 @@ namespace micron
 {
 
 struct rcu_reader_state {
-  atomic_token<size_t> epoch;
+  atomic_token<usize> epoch;
   atomic_token<bool> active;
 
   rcu_reader_state() : epoch(0), active(false) {}
@@ -27,25 +27,25 @@ template <typename T> thread_local rcu_reader_state rcu_tls_state<T>::state;
 
 template <typename T = void> class rcu_domain
 {
-  atomic_token<size_t> global_epoch;
-  atomic_token<size_t> sync_epoch;
+  atomic_token<usize> global_epoch;
+  atomic_token<usize> sync_epoch;
 
   struct retire_entry {
     void (*deleter)(void *);
     void *ptr;
-    size_t retire_epoch;
+    usize retire_epoch;
     retire_entry *next;
 
-    retire_entry(void (*d)(void *), void *p, size_t e) : deleter(d), ptr(p), retire_epoch(e), next(nullptr) {}
+    retire_entry(void (*d)(void *), void *p, usize e) : deleter(d), ptr(p), retire_epoch(e), next(nullptr) {}
   };
 
   atomic<retire_entry *> retire_head;
   atomic<retire_entry *> retire_tail;
-  atomic_token<size_t> retire_count;
+  atomic_token<usize> retire_count;
 
-  static constexpr size_t MAX_READERS = 256;
+  static constexpr usize MAX_READERS = 256;
   atomic<rcu_reader_state *> readers[MAX_READERS];
-  atomic_token<size_t> reader_count;
+  atomic_token<usize> reader_count;
 
   atomic_token<bool> queue_lock;
 
@@ -68,7 +68,7 @@ template <typename T = void> class rcu_domain
   {
     auto &state = rcu_tls_state<T>::state;
 
-    size_t idx = reader_count.fetch_add(1, memory_order_acq_rel);
+    usize idx = reader_count.fetch_add(1, memory_order_acq_rel);
     if ( idx >= MAX_READERS ) {
       reader_count.fetch_sub(1, memory_order_acq_rel);
       return;
@@ -78,14 +78,14 @@ template <typename T = void> class rcu_domain
   }
 
   void
-  wait_for_readers(size_t target_epoch)
+  wait_for_readers(usize target_epoch)
   {
-    size_t num_readers = reader_count.get(memory_order_acquire);
+    usize num_readers = reader_count.get(memory_order_acquire);
 
     for ( ;; ) {
       bool all_clear = true;
 
-      for ( size_t i = 0; i < num_readers; ++i ) {
+      for ( usize i = 0; i < num_readers; ++i ) {
         rcu_reader_state *reader = *readers[i].get();
         if ( !reader )
           continue;
@@ -94,7 +94,7 @@ template <typename T = void> class rcu_domain
         if ( !is_active )
           continue;
 
-        size_t reader_epoch = reader->epoch.get(memory_order_acquire);
+        usize reader_epoch = reader->epoch.get(memory_order_acquire);
         if ( reader_epoch < target_epoch ) {
           all_clear = false;
           break;
@@ -109,7 +109,7 @@ template <typename T = void> class rcu_domain
   }
 
   void
-  process_retirements(size_t safe_epoch)
+  process_retirements(usize safe_epoch)
   {
     lock_queue();
 
@@ -159,7 +159,7 @@ public:
     retire_head.operator=(static_cast<retire_entry *>(nullptr));
     retire_tail.operator=(static_cast<retire_entry *>(nullptr));
 
-    for ( size_t i = 0; i < MAX_READERS; ++i ) {
+    for ( usize i = 0; i < MAX_READERS; ++i ) {
       readers[i].operator=(static_cast<rcu_reader_state *>(nullptr));
     }
   }
@@ -199,7 +199,7 @@ public:
     scoped_lock &operator=(const scoped_lock &) = delete;
   };
 
-  size_t
+  usize
   get_epoch() const
   {
     return global_epoch.get(memory_order_acquire);
@@ -215,7 +215,7 @@ public:
   void
   retire_impl(U *ptr, void (*deleter)(void *))
   {
-    size_t current_epoch = global_epoch.get(memory_order_acquire);
+    usize current_epoch = global_epoch.get(memory_order_acquire);
     auto *entry = new retire_entry(deleter, static_cast<void *>(ptr), current_epoch);
 
     lock_queue();
@@ -233,7 +233,7 @@ public:
 
     if ( retire_count.get(memory_order_acquire) > 16 ) {
       advance_epoch();
-      size_t safe_epoch = current_epoch;
+      usize safe_epoch = current_epoch;
       wait_for_readers(current_epoch + 1);
       process_retirements(safe_epoch);
     }
@@ -242,7 +242,7 @@ public:
   void
   synchronize_impl()
   {
-    size_t current = global_epoch.fetch_add(1, memory_order_acq_rel);
+    usize current = global_epoch.fetch_add(1, memory_order_acq_rel);
     wait_for_readers(current + 1);
     sync_epoch.store(current + 1, memory_order_release);
   }
@@ -250,7 +250,7 @@ public:
   void
   barrier_impl()
   {
-    size_t current = global_epoch.fetch_add(1, memory_order_acq_rel);
+    usize current = global_epoch.fetch_add(1, memory_order_acq_rel);
 
     wait_for_readers(current + 1);
 
@@ -259,7 +259,7 @@ public:
     sync_epoch.store(current + 1, memory_order_release);
   }
 
-  size_t
+  usize
   pending_retirements() const
   {
     return retire_count.get(memory_order_acquire);
@@ -483,16 +483,16 @@ template <typename T, typename Domain = void> class rcu_batch
 {
   rcu_domain<Domain> &domain;
   T **objects;
-  size_t count;
-  size_t capacity;
+  usize count;
+  usize capacity;
 
   void
   grow()
   {
-    size_t new_cap = capacity * 2;
+    usize new_cap = capacity * 2;
     T **new_objs = new T *[new_cap];
 
-    for ( size_t i = 0; i < count; ++i ) {
+    for ( usize i = 0; i < count; ++i ) {
       new_objs[i] = objects[i];
     }
 
@@ -502,7 +502,7 @@ template <typename T, typename Domain = void> class rcu_batch
   }
 
 public:
-  explicit rcu_batch(rcu_domain<Domain> &d, size_t initial_capacity = 16) : domain(d), count(0), capacity(initial_capacity)
+  explicit rcu_batch(rcu_domain<Domain> &d, usize initial_capacity = 16) : domain(d), count(0), capacity(initial_capacity)
   {
     objects = new T *[capacity];
   }
@@ -525,13 +525,13 @@ public:
   void
   flush()
   {
-    for ( size_t i = 0; i < count; ++i ) {
+    for ( usize i = 0; i < count; ++i ) {
       rcu_retire(objects[i], domain);
     }
     count = 0;
   }
 
-  size_t
+  usize
   size() const
   {
     return count;

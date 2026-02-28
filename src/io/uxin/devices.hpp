@@ -33,7 +33,7 @@ __parse_device(const char *s, const micron::ustr8 &buf)
 bool
 __has_alnum_keys(const micron::ustr8 &buf)
 {
-  size_t __count = 0;
+  usize __count = 0;
   auto _start = micron::format::find(buf, ' ');
   auto _ss = buf.substr(buf.begin(), _start);
   while ( _start != nullptr ) {

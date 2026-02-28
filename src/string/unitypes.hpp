@@ -12,7 +12,7 @@
 namespace micron
 {
 
-static const size_t npos = numeric_limits<size_t>::max();
+static const usize npos = numeric_limits<usize>::max();
 };
 
 using const_schar = const char;

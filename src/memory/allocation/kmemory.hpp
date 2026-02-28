@@ -14,14 +14,14 @@
 namespace micron
 {
 
-constexpr size_t page_size = 4096;                      // generally is this on linux
-constexpr size_t large_page_size = 2 * 1024 * 1024;     // likewise
-constexpr size_t alloc_auto_sz = page_size;
-constexpr size_t alloc_auto_large_sz = large_page_size;
+constexpr usize page_size = 4096;                      // generally is this on linux
+constexpr usize large_page_size = 2 * 1024 * 1024;     // likewise
+constexpr usize alloc_auto_sz = page_size;
+constexpr usize alloc_auto_large_sz = large_page_size;
 
 template <typename T = byte> struct alignas(16) __chunk {     // total memory allocated
   T *ptr;
-  size_t len;
+  usize len;
 
   __chunk &
   operator=(nullptr_t t [[maybe_unused]])
@@ -56,25 +56,25 @@ template <typename T> using chunk = micron::__chunk<T>;
 
 template <typename T>
 chunk<byte>
-to_chunk(T *ptr, size_t len)
+to_chunk(T *ptr, usize len)
 {
   return chunk<byte>(reinterpret_cast<byte *>(ptr), len);
 }
 
 inline addr_t *
-map_normal(addr_t *ptr, const size_t n)
+map_normal(addr_t *ptr, const usize n)
 {
   return (micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous, -1, 0));
 };
 
 inline addr_t *
-map_frozen(addr_t *ptr, const size_t n)
+map_frozen(addr_t *ptr, const usize n)
 {
   return (micron::mmap(ptr, n, prot_read, map_private | map_anonymous, -1, 0));
 };
 
 inline addr_t *
-map_large(addr_t *ptr, const size_t n)
+map_large(addr_t *ptr, const usize n)
 {
   return (micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous | map_hugetlb, -1, 0));
 };

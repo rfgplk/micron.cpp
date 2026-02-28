@@ -166,7 +166,7 @@ template <is_atomic_type T> struct atomic_token {
 template <class T> class atomic
 {
   T type;     // internal data, can be any
-  atomic_token<size_t> tk;
+  atomic_token<usize> tk;
 
   void
   lock_check()

@@ -37,7 +37,7 @@ template <typename T>
   requires(micron::is_integral_v<T>)
 struct __abc_allocator {
   static auto
-  calloc(size_t n) -> micron::__chunk<byte>     // allocate 'smartly'
+  calloc(usize n) -> micron::__chunk<byte>     // allocate 'smartly'
   {
     auto mem = abc::fetch(n);
     if ( mem.ptr == (void *)-1 )
@@ -46,7 +46,7 @@ struct __abc_allocator {
   };
 
   static T *
-  alloc(size_t n)     // allocate 'smartly'
+  alloc(usize n)     // allocate 'smartly'
   {
     T *ptr = abc::alloc(n);
     if ( ptr == (void *)-1 )
@@ -55,7 +55,7 @@ struct __abc_allocator {
   };
 
   static void
-  dealloc(T *mem, size_t len)
+  dealloc(T *mem, usize len)
   {     // deallocate at location N
     if ( mem == nullptr )
       micron::exc<micron::except::memory_error>("abc_allocator::dealloc(): nullptr was provided");

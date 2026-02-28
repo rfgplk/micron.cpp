@@ -80,7 +80,7 @@ minor(posix::dev_t dev)
 
 template <typename P>
 ssize_t
-read(int fd, P *buf, size_t cnt)
+read(int fd, P *buf, usize cnt)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
@@ -90,7 +90,7 @@ read(int fd, P *buf, size_t cnt)
 
 template <typename P>
 ssize_t
-write(int fd, P *buf, size_t cnt)
+write(int fd, P *buf, usize cnt)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
@@ -198,7 +198,7 @@ fdatasync(int fd)
 }
 
 auto
-getcwd(char *buf, size_t size)
+getcwd(char *buf, usize size)
 {
   return micron::syscall(SYS_getcwd, buf, size);
 }

@@ -24,7 +24,7 @@ namespace micron
 {
 // general purpose fundamental array class, only allows fundamental types
 // (int, char, etc) stack allocated, notthreadsafe, mutable. default to 64
-template <is_fundamental_object T, size_t N = 64>
+template <is_fundamental_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 class farray
 {
@@ -34,7 +34,7 @@ public:
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;

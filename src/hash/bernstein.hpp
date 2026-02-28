@@ -10,7 +10,7 @@
 namespace micron
 {
 u32
-bernstein_32(const byte *data, size_t sz)
+bernstein_32(const byte *data, usize sz)
 {
   u32 hash = 5381;
   while ( --sz ) {

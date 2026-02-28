@@ -12,6 +12,7 @@
 #include "reader.hpp"
 
 #include "../../control.hpp"
+#include "../../linux/poll.hpp"
 
 namespace micron
 {
@@ -55,7 +56,7 @@ poll(const device_t &dev, Args &&...raw_in)
       }
     }
   };
-  pollfd pfd = make_poll(dev.bound_fd);
+  posix::pollfd pfd = make_poll(dev.bound_fd);
   for ( ;; ) {
     int res = micron::poll_for(pfd, S);
     if ( res < 0 ) {
@@ -111,7 +112,7 @@ poll(input_t &inp, Args &&...raw_in)
   return 0;
 }
 
-pollfd
+posix::pollfd
 __make_poll(const input_t &arg)
 {
   return make_poll(arg.device.bound_fd);
@@ -145,9 +146,9 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
       }
     }
   };
-  slice<pollfd> pfd_pack(__make_poll, inp);
+  slice<posix::pollfd> pfd_pack(__make_poll, inp);
   for ( ;; ) {
-    for ( size_t j = 0; j < inp.size(); ++j ) {
+    for ( usize j = 0; j < inp.size(); ++j ) {
       auto &pfd = pfd_pack[j];
       auto &inp_i = inp[j];
       int res = micron::poll_for(pfd, S);
@@ -192,7 +193,7 @@ poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
     }
   };
   for ( ;; ) {
-    for ( size_t j = 0; j < inp.size(); ++j ) {
+    for ( usize j = 0; j < inp.size(); ++j ) {
       auto &inp_i = inp[j];
       input_event ev = Fn(inp_i.device);
       (for_every(inp_i, ev, raw_in), ...);
@@ -228,7 +229,7 @@ poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
       }
     }
   };
-  for ( size_t j = 0; j < inp.size(); ++j ) {
+  for ( usize j = 0; j < inp.size(); ++j ) {
     auto &inp_i = inp[j];
     input_event ev = Fn(inp_i.device);
     (for_every(inp_i, ev, raw_in), ...);

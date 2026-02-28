@@ -18,7 +18,7 @@
 	.globl _vsqrtps_vdivps_avx
 	.globl vsqrtps_vdivps_avx
 
-	# void vsqrtps_vdivps_avx(float *in, float *out, size_t len)
+	# void vsqrtps_vdivps_avx(float *in, float *out, usize len)
 	# On entry:
 	#     rdi = in
 	#     rsi = out

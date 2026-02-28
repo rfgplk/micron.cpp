@@ -25,7 +25,7 @@ class int_matrix_base_avx
   using category_type = type_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef B value_type;
   typedef B &reference;
   typedef B &ref;
@@ -95,7 +95,7 @@ public:
   {
     // NOTE: this will autovectorize or entirely get opt out during ct. ie
     // (mov    $res,%edi)
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __mat[i] += sc;
       __mat[i + 1] += sc;
       __mat[i + 2] += sc;
@@ -113,7 +113,7 @@ public:
   {
     // NOTE: this will autovectorize or entirely get opt out during ct. ie
     // (mov    $res,%edi)
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __mat[i] -= sc;
       __mat[i + 1] -= sc;
       __mat[i + 2] -= sc;
@@ -131,7 +131,7 @@ public:
   {
     // NOTE: this will autovectorize or entirely get opt out during ct. ie
     // (mov    $res,%edi)
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __mat[i] /= sc;
       __mat[i + 1] /= sc;
       __mat[i + 2] /= sc;
@@ -149,7 +149,7 @@ public:
   {
     // NOTE: this will autovectorize or entirely get opt out during ct. ie
     // (mov    $res,%edi)
-    for ( size_t i = 0; i < __size; i += 8 ) {
+    for ( usize i = 0; i < __size; i += 8 ) {
       __mat[i] *= sc;
       __mat[i + 1] *= sc;
       __mat[i + 2] *= sc;
@@ -214,7 +214,7 @@ public:
   int_matrix_base_avx &
   operator+=(const int_matrix_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; i++ )
+    for ( usize i = 0; i < __size; i++ )
       __mat[i] += o.__mat[i];
     return *this;
   }
@@ -222,7 +222,7 @@ public:
   int_matrix_base_avx &
   operator-=(const int_matrix_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; i++ )
+    for ( usize i = 0; i < __size; i++ )
       __mat[i] -= o.__mat[i];
     return *this;
   }
@@ -230,7 +230,7 @@ public:
   int_matrix_base_avx &
   operator*=(const int_matrix_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; i++ )
+    for ( usize i = 0; i < __size; i++ )
       __mat[i] *= o.__mat[i];
     return *this;
   }
@@ -238,7 +238,7 @@ public:
   int_matrix_base_avx &
   operator/=(const int_matrix_base_avx &o)
   {
-    for ( size_t i = 0; i < __size; i++ )
+    for ( usize i = 0; i < __size; i++ )
       __mat[i] /= o.__mat[i];
     return *this;
   }
@@ -247,7 +247,7 @@ public:
   div_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__mat[i] = __mat[i] / sc;
     return result;
   }
@@ -256,8 +256,8 @@ public:
   transpose() const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < R; ++i )
-      for ( size_t j = 0; j < C; ++j )
+    for ( usize i = 0; i < R; ++i )
+      for ( usize j = 0; j < C; ++j )
         result[j, i] = (*this)[i, j];
     return result;
   }
@@ -266,7 +266,7 @@ public:
   add_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__mat[i] = __mat[i] + sc;
     return result;
   }
@@ -275,7 +275,7 @@ public:
   sub_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__mat[i] = __mat[i] - sc;
     return result;
   }
@@ -284,7 +284,7 @@ public:
   scale(B sc) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < __size; ++i )
+    for ( usize i = 0; i < __size; ++i )
       result.__mat[i] = __mat[i] * sc;
     return result;
   }
@@ -293,9 +293,9 @@ public:
   mul(const int_matrix_base_avx &o) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < R; i++ ) {
-      for ( size_t j = 0; j < C; j++ )
-        for ( size_t k = 0; k < C; k++ )
+    for ( usize i = 0; i < R; i++ ) {
+      for ( usize j = 0; j < C; j++ )
+        for ( usize k = 0; k < C; k++ )
           result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
     }
     return result;
@@ -306,8 +306,8 @@ public:
   operator*(const int_matrix_base_avx &o) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < R; ++i )
-      for ( size_t j = 0; j < C; ++j )
+    for ( usize i = 0; i < R; ++i )
+      for ( usize j = 0; j < C; ++j )
         result[i, j] = (*this)[i, j] * o[i, j];
     return result;
   }
@@ -316,8 +316,8 @@ public:
   operator+(const int_matrix_base_avx &o) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < R; ++i )
-      for ( size_t j = 0; j < C; ++j )
+    for ( usize i = 0; i < R; ++i )
+      for ( usize j = 0; j < C; ++j )
         result[i, j] = (*this)[i, j] + o[i, j];
     return result;
   }
@@ -326,8 +326,8 @@ public:
   operator-(const int_matrix_base_avx &o) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < R; ++i )
-      for ( size_t j = 0; j < C; ++j )
+    for ( usize i = 0; i < R; ++i )
+      for ( usize j = 0; j < C; ++j )
         result[i, j] = (*this)[i, j] - o[i, j];
     return result;
   }
@@ -336,8 +336,8 @@ public:
   operator/(const int_matrix_base_avx &o) const
   {
     int_matrix_base_avx result;
-    for ( size_t i = 0; i < R; ++i )
-      for ( size_t j = 0; j < C; ++j )
+    for ( usize i = 0; i < R; ++i )
+      for ( usize j = 0; j < C; ++j )
         result[i, j] = (*this)[i, j] / o[i, j];
     return result;
   }

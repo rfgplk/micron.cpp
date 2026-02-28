@@ -37,12 +37,12 @@ bool within(addr_t *ptr);
 bool within(byte *ptr);
 void relinquish(byte *ptr);
 
-byte *mark_at(byte *ptr, size_t size);
-byte *unmark_at(byte *ptr, size_t size);
+byte *mark_at(byte *ptr, usize size);
+byte *unmark_at(byte *ptr, usize size);
 
-micron::__chunk<byte> balloc(size_t size);
+micron::__chunk<byte> balloc(usize size);
 
-micron::__chunk<byte> fetch(size_t size);
+micron::__chunk<byte> fetch(usize size);
 
 template <typename T>
   requires(micron::is_trivial_v<T>)
@@ -50,35 +50,35 @@ T *fetch(void);
 
 void retire(byte *ptr);
 
-__attribute__((malloc, alloc_size(1))) auto alloc(size_t size) -> byte *;
+__attribute__((malloc, alloc_size(1))) auto alloc(usize size) -> byte *;
 
-__attribute__((malloc, alloc_size(1))) byte *salloc(size_t size);
+__attribute__((malloc, alloc_size(1))) byte *salloc(usize size);
 void dealloc(byte *ptr);
 
-void dealloc(byte *ptr, size_t len);
+void dealloc(byte *ptr, usize len);
 
 void freeze(byte *ptr);
 
 void which(void);
 
 void borrow();
-__attribute__((malloc, alloc_size(1))) byte *launder(size_t size);
-template <typename T> size_t query_size(T *ptr);
+__attribute__((malloc, alloc_size(1))) byte *launder(usize size);
+template <typename T> usize query_size(T *ptr);
 
-__attribute__((malloc, alloc_size(1))) void *malloc(size_t size);
-void *calloc(size_t num, size_t size);
-void *realloc(void *ptr, size_t size);
+__attribute__((malloc, alloc_size(1))) void *malloc(usize size);
+void *calloc(usize num, usize size);
+void *realloc(void *ptr, usize size);
 
 void free(void *ptr);
-void *aligned_alloc(size_t alignment, size_t size);
+void *aligned_alloc(usize alignment, usize size);
 
 };     // namespace abc
 #ifdef ABCMALLOC_DISABLE
 
-extern "C" __attribute__((malloc, alloc_size(1))) void *malloc(size_t size);
-extern "C" void *calloc(size_t num, size_t size);
-extern "C" void *realloc(void *ptr, size_t size);
+extern "C" __attribute__((malloc, alloc_size(1))) void *malloc(usize size);
+extern "C" void *calloc(usize num, usize size);
+extern "C" void *realloc(void *ptr, usize size);
 
 extern "C" void free(void *ptr);
-extern "C" void *aligned_alloc(size_t alignment, size_t size);
+extern "C" void *aligned_alloc(usize alignment, usize size);
 #endif

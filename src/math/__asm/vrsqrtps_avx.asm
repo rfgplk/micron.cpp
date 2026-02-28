@@ -15,7 +15,7 @@
 
 ;	.globl vrsqrtps_avx
 
-	; void vrsqrtps_avx(float *in, float *out, size_t len)
+	; void vrsqrtps_avx(float *in, float *out, usize len)
 	; On entry:
 	;     rcx = in
 	;     rdx = out

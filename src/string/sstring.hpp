@@ -22,7 +22,7 @@
 namespace micron
 {
 // string on the stack, inplace (sstring means stackstring)
-template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring {
+template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring {
   using category_type = string_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
@@ -31,7 +31,7 @@ template <size_t N, is_scalar_literal T = schar, bool Sf = false> struct sstring
   typedef const T *const_iterator;
   typedef T *pointer;
   typedef const T *const_pointer;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T &reference;
   typedef const T &const_reference;
 

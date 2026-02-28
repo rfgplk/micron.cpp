@@ -95,11 +95,11 @@ relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets aren
   __main_arena->reset_page(ptr);
 }
 
-byte *mark_at(byte *ptr, size_t size);       // hard mark memory at addr. overrides previous entries
-byte *unmark_at(byte *ptr, size_t size);     // hard unmark memory at addr. overrides previous entries
+byte *mark_at(byte *ptr, usize size);       // hard mark memory at addr. overrides previous entries
+byte *unmark_at(byte *ptr, usize size);     // hard unmark memory at addr. overrides previous entries
 
 micron::__chunk<byte>
-balloc(size_t size)     // allocates memory, returns entire memory chunk
+balloc(usize size)     // allocates memory, returns entire memory chunk
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> ) {
     [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
@@ -111,7 +111,7 @@ balloc(size_t size)     // allocates memory, returns entire memory chunk
 }
 
 micron::__chunk<byte>
-fetch(size_t size)
+fetch(usize size)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> ) {
     [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
@@ -158,7 +158,7 @@ retire(byte *ptr)
 }
 
 __attribute__((malloc, alloc_size(1))) auto
-alloc(size_t size) -> byte *     // allocates memory, near iden. func. to malloc
+alloc(usize size) -> byte *     // allocates memory, near iden. func. to malloc
 {
   byte *ptr = balloc(size).ptr;
   if ( ptr == (byte *)-1 )
@@ -166,7 +166,7 @@ alloc(size_t size) -> byte *     // allocates memory, near iden. func. to malloc
   return ptr;
 }
 
-__attribute__((malloc, alloc_size(1))) byte *salloc(size_t size);     // applies policies from harden
+__attribute__((malloc, alloc_size(1))) byte *salloc(usize size);     // applies policies from harden
 
 void
 dealloc(byte *ptr)
@@ -189,7 +189,7 @@ dealloc(byte *ptr)
 }
 
 void
-dealloc(byte *ptr, size_t len)
+dealloc(byte *ptr, usize len)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> ) {
     [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
@@ -232,7 +232,7 @@ which(void)
 void borrow();     //
 
 __attribute__((malloc, alloc_size(1))) byte *
-launder(size_t size)
+launder(usize size)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> ) {
     [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
@@ -244,7 +244,7 @@ launder(size_t size)
 }
 
 template <typename T>
-size_t
+usize
 query_size(T *ptr)
 {
   return __main_arena->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
@@ -256,7 +256,7 @@ query_size(T *ptr)
 // inject
 // make_at
 
-size_t
+usize
 musage(void)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> ) {
@@ -269,7 +269,7 @@ musage(void)
 }
 
 template <u64 Sz>
-size_t
+usize
 musage(void)
 {
   if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> ) {
@@ -282,13 +282,13 @@ musage(void)
 }
 
 __attribute__((malloc, alloc_size(1))) void *
-malloc(size_t size)     // alloc memory of size 'size', prefer using alloc
+malloc(usize size)     // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(abc::alloc(size));
 }
 
 void *
-calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using salloc()
+calloc(usize num, usize size)     // alloc's zero'd out memory, prefer using salloc()
 {
   if ( size != 0 && (size * num) / size != num )
     return nullptr;
@@ -301,10 +301,10 @@ calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using s
 }
 
 void *
-realloc(void *ptr, size_t size)     // reallocates memory
+realloc(void *ptr, usize size)     // reallocates memory
 {
   // NOTE: this always gets the full size of the allocated memory, not what was requested
-  size_t old_size = abc::query_size(reinterpret_cast<addr_t *>(ptr));
+  usize old_size = abc::query_size(reinterpret_cast<addr_t *>(ptr));
   if ( size == 0 ) {
     abc::dealloc(reinterpret_cast<byte *>(ptr));
     return nullptr;
@@ -318,7 +318,7 @@ realloc(void *ptr, size_t size)     // reallocates memory
   if ( !new_block )
     return nullptr;     // allocation failed
 
-  size_t copy_size = old_size < size ? old_size : size;
+  usize copy_size = old_size < size ? old_size : size;
   micron::memcpy(new_block, reinterpret_cast<byte *>(ptr), copy_size);
 
   abc::dealloc(reinterpret_cast<byte *>(ptr));
@@ -332,7 +332,7 @@ free(void *ptr)     // frees memory, prefer abc::dealloc always
   abc::dealloc(reinterpret_cast<byte *>(ptr));
 }
 
-void *aligned_alloc(size_t alignment, size_t size);
+void *aligned_alloc(usize alignment, usize size);
 
 };     // namespace abc
 

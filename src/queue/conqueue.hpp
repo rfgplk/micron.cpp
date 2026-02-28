@@ -21,12 +21,12 @@
 namespace micron
 {
 
-template <is_regular_object T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class conqueue : public __mutable_memory_resource<T, Alloc>
 {
   micron::mutex __mtx;
   using __mem = __mutable_memory_resource<T, Alloc>;
-  size_t needle;
+  usize needle;
 
 public:
   using category_type = buffer_tag;
@@ -54,13 +54,13 @@ public:
   conqueue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      size_t i = __mem::capacity - 1;
+      usize i = __mem::capacity - 1;
       for ( T &&value : lst ) {
         new (&__mem::memory[i--]) T(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
-      size_t i = __mem::capacity;
+      usize i = __mem::capacity;
       for ( T value : lst ) {
         __mem::memory[i--] = value;
       }
@@ -110,7 +110,7 @@ public:
     if ( !__mem::length )
       return;
     if constexpr ( micron::is_class_v<T> ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         (__mem::memory)[i].~T();
     }
     micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
@@ -120,7 +120,7 @@ public:
 
   // grow container
   inline void
-  reserve(const size_t n)
+  reserve(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __mem::expand(n);
@@ -145,14 +145,14 @@ public:
     return __mem::length == 0;
   }
 
-  inline size_t
+  inline usize
   size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::length;
   }
 
-  inline size_t
+  inline usize
   max_size() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);

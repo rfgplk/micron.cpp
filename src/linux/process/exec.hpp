@@ -21,7 +21,7 @@ __attribute__((noreturn)) void
 rexecute(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  for ( size_t i = 0; i < t.argv.size(); i++ )
+  for ( usize i = 0; i < t.argv.size(); i++ )
     argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -135,7 +135,7 @@ void
 execute(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  for ( size_t i = 0; i < t.argv.size(); i++ )
+  for ( usize i = 0; i < t.argv.size(); i++ )
     argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();

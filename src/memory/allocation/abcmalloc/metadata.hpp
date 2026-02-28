@@ -24,7 +24,7 @@
 
 namespace abc
 {
-constexpr static size_t __hdr_offset = sizeof(micron::simd::i256);
+constexpr static usize __hdr_offset = sizeof(micron::simd::i256);
 
 inline addr_t *
 get_metadata_addr(addr_t *ptr)

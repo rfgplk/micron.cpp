@@ -33,10 +33,10 @@ struct __core_memory_resource {
   using pointer = T *;
   using const_pointer = const T *;
   using value_type = T;
-  using size_type = size_t;
+  using size_type = usize;
 
   T *memory;     // capacity implied due to byte / sizeof(T)
-  size_t capacity;
+  usize capacity;
 
   ~__core_memory_resource() = default;
 

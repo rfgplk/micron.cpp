@@ -34,7 +34,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   {
   }
 
-  __mutable_memory_resource(size_t n_elements)
+  __mutable_memory_resource(usize n_elements)
       : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) {};
 
   __mutable_memory_resource(const __mutable_memory_resource &o) : __core_memory_resource<T>(o), length(o.length) {}
@@ -77,7 +77,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
 
   // start funcs
   inline bool
-  has_space(const size_t n_el) const
+  has_space(const usize n_el) const
   {
     return (((n_el * (sizeof(T) / sizeof(byte))) + length) <= (__core_memory_resource<T>::capacity));
   }
@@ -101,7 +101,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
 
   // deletes and reallocs, number of elements
   void
-  realloc(size_t len)
+  realloc(usize len)
   {
     if ( len == 0 ) [[unlikely]]
       return;
@@ -110,9 +110,9 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
   }
 
-  // expands memory, size_t is number of elements
+  // expands memory, usize is number of elements
   void
-  expand(size_t len)
+  expand(usize len)
   {
     if ( len == 0 ) [[unlikely]]
       return;

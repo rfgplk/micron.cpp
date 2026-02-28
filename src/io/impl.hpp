@@ -14,11 +14,11 @@ namespace io
 namespace format
 {
 const char *
-bytes_to_hex(byte *ptr, size_t len, char *frm)
+bytes_to_hex(byte *ptr, usize len, char *frm)
 {
   const char *hex = "0123456789ABCDEF";
   char *buf = frm;
-  for ( size_t i = 0; i < len; i++ ) {
+  for ( usize i = 0; i < len; i++ ) {
     *frm = hex[*ptr >> 4];
     *frm = hex[*ptr & 0x0F];
     ++buf;

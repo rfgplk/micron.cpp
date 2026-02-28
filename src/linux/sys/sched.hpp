@@ -54,13 +54,13 @@ sched_getscheduler(pid_t pid)
 }
 
 int
-sched_setaffinity(pid_t pid, size_t cpusetsize, const cpu_set_t &mask)
+sched_setaffinity(pid_t pid, usize cpusetsize, const cpu_set_t &mask)
 {
   return static_cast<int>(micron::syscall(SYS_sched_setaffinity, pid, cpusetsize, &mask));
 }
 
 int
-sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t &mask)
+sched_getaffinity(pid_t pid, usize cpusetsize, cpu_set_t &mask)
 {
   return static_cast<int>(micron::syscall(SYS_sched_getaffinity, pid, cpusetsize, &mask));
 }

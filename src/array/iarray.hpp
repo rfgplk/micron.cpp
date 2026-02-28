@@ -20,7 +20,7 @@ namespace micron
 {
 // general purpose immutable iarray class, stack allocated, threadsafe, immutable.
 // default to 64
-template <is_movable_object T, size_t N = 64>
+template <is_movable_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 class iarray
 {
@@ -30,7 +30,7 @@ public:
   using category_type = array_tag;
   using mutability_type = immutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;

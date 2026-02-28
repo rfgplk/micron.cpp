@@ -161,7 +161,7 @@ public:
   template <typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
-  create_at(size_t n, Func f, Args &&...args)
+  create_at(usize n, Func f, Args &&...args)
   {
     micron::lock_guard l(mtx);
     if ( threads.full_or_overflowed() ) [[unlikely]]
@@ -185,7 +185,7 @@ public:
   template <typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
-  create_realtime_at(size_t n, Func f, Args &&...args)
+  create_realtime_at(usize n, Func f, Args &&...args)
   {
     micron::lock_guard l(mtx);
     if ( threads.full_or_overflowed() ) [[unlikely]]
@@ -380,7 +380,7 @@ public:
     return 0;
   }
 
-  size_t
+  usize
   count() const
   {
     return threads.size();
@@ -655,7 +655,7 @@ public:
     return 0;
   }
 
-  size_t
+  usize
   count() const
   {
     return threads.size();

@@ -14,9 +14,9 @@
  * &operator=(&) = default;
  * &operator=(&&o) = default;
  *
- * inline __attribute__((always_inline)) static constexpr size_t auto_size();
- * static chunk<byte> create(size_t n);
- * static chunk<byte> grow(chunk<byte> memory, size_t n);
+ * inline __attribute__((always_inline)) static constexpr usize auto_size();
+ * static chunk<byte> create(usize n);
+ * static chunk<byte> grow(chunk<byte> memory, usize n);
  * static void destroy(const chunk<byte> mem);
  * byte *share(void);
  **/

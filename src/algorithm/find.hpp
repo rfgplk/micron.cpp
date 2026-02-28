@@ -1137,10 +1137,10 @@ search(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noex
 
 template <typename T, class P>
 const T *
-search_n(const T *first, const T *end, size_t n, const P &value) noexcept
+search_n(const T *first, const T *end, usize n, const P &value) noexcept
 {
   for ( ; first != end; ++first ) {
-    size_t i = 0;
+    usize i = 0;
     while ( first + i != end && i < n && *(first + i) == static_cast<T>(value) )
       ++i;
     if ( i == n )
@@ -1152,10 +1152,10 @@ search_n(const T *first, const T *end, size_t n, const P &value) noexcept
 template <typename T, class P, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const P *>
 const T *
-search_n(const T *first, const T *end, size_t n, const P &value, Fn fn) noexcept
+search_n(const T *first, const T *end, usize n, const P &value, Fn fn) noexcept
 {
   for ( ; first != end; ++first ) {
-    size_t i = 0;
+    usize i = 0;
     while ( first + i != end && i < n && fn(first + i, &value) )
       ++i;
     if ( i == n )
@@ -1181,7 +1181,7 @@ search(const C &c, const P &p, Fn fn) noexcept
 
 template <is_iterable_container C, class V>
 const typename C::value_type *
-search_n(const C &c, size_t n, const V &v) noexcept
+search_n(const C &c, usize n, const V &v) noexcept
 {
   return search_n(c.begin(), c.end(), n, v);
 }
@@ -1189,7 +1189,7 @@ search_n(const C &c, size_t n, const V &v) noexcept
 template <is_iterable_container C, class V, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const V *>
 const typename C::value_type *
-search_n(const C &c, size_t n, const V &v, Fn fn) noexcept
+search_n(const C &c, usize n, const V &v, Fn fn) noexcept
 {
   return search_n(c.begin(), c.end(), n, v, fn);
 }

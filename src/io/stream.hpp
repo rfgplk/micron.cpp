@@ -53,7 +53,7 @@ public:
     if ( out.has_error() or out.closed() )
       exc<except::io_error>("io::stream() operator>>: fd_t is closed or has an error");
     if ( __size ) {
-      size_t __buf_i = 0;
+      usize __buf_i = 0;
       do {
         ssize_t sz = posix::write(out.fd, __buffer->at_pointer(__buf_i), __chnk > __size ? __size : __chnk);
         if ( sz == -1 )
@@ -69,7 +69,7 @@ public:
 
   template <typename T>
   stream &
-  append(T *ptr, size_t count)
+  append(T *ptr, usize count)
   {
     ssize_t c = 0;
     if ( __sz <= (count * sizeof(T)) )
@@ -103,12 +103,12 @@ public:
   {
     if ( in.has_error() or in.closed() )
       exc<except::io_error>("io::stream() operator>>: fd_t is closed or has an error");
-    size_t seek = posix::lseek(in.fd, 0, seek_cur);
+    usize seek = posix::lseek(in.fd, 0, seek_cur);
     do {
       ssize_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), (__chnk > (__sz - __size)) ? (__sz - __size) : __chnk);
       if ( bytes_read == 0 )
         break;
-      seek += static_cast<size_t>(bytes_read);
+      seek += static_cast<usize>(bytes_read);
       __size += bytes_read;
       posix::lseek(in.fd, seek, seek_set);
     } while ( __size < __sz );
@@ -122,9 +122,9 @@ public:
   }
 
   bool
-  full(const size_t n = 0) const
+  full(const usize n = 0) const
   {
-    // NOTE: fails if above size of size_t / 2
+    // NOTE: fails if above size of usize / 2
     return ((size() + static_cast<ssize_t>(n)) >= max_size());
   }
 
@@ -201,7 +201,7 @@ public:
     if ( out.has_error() or out.closed() )
       exc<except::io_error>("io::stream_view() operator>>: fd_t is closed or has an error");
     if ( __size ) {
-      size_t __buf_i = 0;
+      usize __buf_i = 0;
       do {
         ssize_t sz = posix::write(out.fd, __buffer->at_pointer(__buf_i), __chnk > __size ? __size : __chnk);
         if ( sz == -1 )
@@ -237,12 +237,12 @@ public:
   {
     if ( in.has_error() or in.closed() )
       exc<except::io_error>("io::stream_view() operator>>: fd_t is closed or has an error");
-    size_t seek = posix::lseek(in.fd, 0, seek_cur);
+    usize seek = posix::lseek(in.fd, 0, seek_cur);
     do {
       ssize_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), (__chnk > (__sz - __size)) ? (__sz - __size) : __chnk);
       if ( bytes_read == 0 )
         break;
-      seek += static_cast<size_t>(bytes_read);
+      seek += static_cast<usize>(bytes_read);
       __size += bytes_read;
       posix::lseek(in.fd, seek, seek_set);
     } while ( __size < __sz );

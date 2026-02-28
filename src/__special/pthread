@@ -69,11 +69,11 @@ extern "C" int pthread_attr_setdetachstate (pthread_attr_t *__attr,
 
 
 extern "C" int pthread_attr_getguardsize (const pthread_attr_t *__attr,
-				      size_t *__guardsize)
+				      usize *__guardsize)
      __THROW __nonnull ((1, 2));
 
 extern "C" int pthread_attr_setguardsize (pthread_attr_t *__attr,
-				      size_t __guardsize)
+				      usize __guardsize)
      __THROW __nonnull ((1));
 
 
@@ -110,7 +110,7 @@ extern "C" int pthread_attr_setscope (pthread_attr_t *__attr, int __scope)
 
 extern "C" int pthread_attr_getstack (const pthread_attr_t *__restrict __attr,
 				  void **__restrict __stackaddr,
-				  size_t *__restrict __stacksize)
+				  usize *__restrict __stacksize)
      __THROW __nonnull ((1, 2, 3));
 
 
@@ -123,15 +123,15 @@ extern "C" int pthread_attr_setstackaddr (pthread_attr_t *__attr,
      __THROW __nonnull ((1)) __attribute_deprecated__;
 
 extern "C" int pthread_attr_getstacksize (const pthread_attr_t *__restrict
-				      __attr, size_t *__restrict __stacksize)
+				      __attr, usize *__restrict __stacksize)
      __THROW __nonnull ((1, 2));
 
 extern "C" int pthread_attr_setstacksize (pthread_attr_t *__attr,
-				      size_t __stacksize)
+				      usize __stacksize)
      __THROW __nonnull ((1));
 
 extern "C" int pthread_attr_setaffinity_np (pthread_attr_t *__attr,
-					size_t cpusetsize,
+					usize cpusetsize,
 					const cpu_set_t *__cpuset)
      __THROW __nonnull ((1, 3));
 
@@ -150,7 +150,7 @@ extern "C" int pthread_timedjoin_np(pthread_t __th, void **__thread_return, cons
 extern "C" int pthread_clockjoin_np(pthread_t __th, void **__thread_return, clockid_t __clockid,
                                 const struct timespec *__abstime);
 extern "C" int pthread_attr_setstack (pthread_attr_t *__attr, void *__stackaddr,
-				  size_t __stacksize) __THROW __nonnull ((1));
+				  usize __stacksize) __THROW __nonnull ((1));
 
 extern "C" int pthread_getattr_default_np (pthread_attr_t *__attr)
      __THROW __nonnull ((1));
@@ -178,7 +178,7 @@ extern "C" int pthread_setschedprio (pthread_t __target_thread, int __prio)
 
 
 extern "C" int pthread_getname_np (pthread_t __target_thread, char *__buf,
-			       size_t __buflen)
+			       usize __buflen)
      __THROW __nonnull ((2));
 
 extern "C" int pthread_setname_np (pthread_t __target_thread, const char *__name)

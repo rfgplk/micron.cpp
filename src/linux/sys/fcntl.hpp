@@ -11,6 +11,9 @@
 namespace micron
 {
 
+namespace posix
+{
+
 template <typename... Args>
 auto
 fcntl(int fd, int cmd, Args &&...args)
@@ -80,5 +83,5 @@ constexpr i32 f_setsig = 10;
 constexpr i32 f_getsig = 11;
 constexpr i32 f_setown_ex = 15;
 constexpr i32 f_getown_ex = 16;
-
+};     // namespace posix
 };     // namespace micron

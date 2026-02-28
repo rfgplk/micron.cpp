@@ -18,11 +18,11 @@
 namespace micron
 {
 
-template <is_regular_object T, size_t N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class queue : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
-  size_t needle;
+  usize needle;
 
 public:
   using category_type = buffer_tag;
@@ -50,13 +50,13 @@ public:
   queue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      size_t i = __mem::capacity - 1;
+      usize i = __mem::capacity - 1;
       for ( T &&value : lst ) {
         new (&__mem::memory[i--]) T(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
-      size_t i = __mem::capacity - 1;
+      usize i = __mem::capacity - 1;
       for ( T value : lst ) {
         __mem::memory[i--] = value;
       }
@@ -95,11 +95,11 @@ public:
   }
 
   inline void
-  reserve(const size_t n)
+  reserve(const usize n)
   {
-    const size_t old_capacity = __mem::capacity;
-    const size_t old_needle = needle;
-    const size_t len = __mem::length;
+    const usize old_capacity = __mem::capacity;
+    const usize old_needle = needle;
+    const usize len = __mem::length;
 
     if ( n <= old_capacity )
       return;
@@ -111,8 +111,8 @@ public:
       return;
     }
 
-    const size_t new_capacity = __mem::capacity;
-    const size_t new_needle = new_capacity - 1;
+    const usize new_capacity = __mem::capacity;
+    const usize new_needle = new_capacity - 1;
 
     T *const old_begin = &__mem::memory[old_needle - len + 1];
     T *const new_begin = &__mem::memory[new_needle - len + 1];
@@ -137,13 +137,13 @@ public:
     return __mem::length == 0;
   }
 
-  inline size_t
+  inline usize
   size() const
   {
     return __mem::length;
   }
 
-  inline size_t
+  inline usize
   max_size() const
   {
     return __mem::capacity;

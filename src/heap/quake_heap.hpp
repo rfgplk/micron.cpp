@@ -17,7 +17,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
     T value;
     node *left;
     node *right;
-    size_t size;
+    usize size;
 
     node(const T &v) : value(v), left(nullptr), right(nullptr), size(1) {}
 
@@ -25,7 +25,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
   };
 
   node **roots;
-  size_t levels;
+  usize levels;
 
   inline void
   update_size(node *n) noexcept
@@ -86,14 +86,14 @@ public:
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   using value_type = T;
-  using size_type = size_t;
+  using size_type = usize;
   using reference = T &;
   using const_reference = const T &;
 
-  quake_heap(size_t max_levels = 32) : levels(max_levels)
+  quake_heap(usize max_levels = 32) : levels(max_levels)
   {
     roots = static_cast<node **>(this->create(levels * sizeof(node *)));
-    for ( size_t i = 0; i < levels; i++ )
+    for ( usize i = 0; i < levels; i++ )
       roots[i] = nullptr;
   }
 
@@ -131,7 +131,7 @@ public:
   insert(T &&v)
   {
     roots[0] = insert_node(roots[0], micron::move(v));
-    for ( size_t i = 0; i + 1 < levels; i++ ) {
+    for ( usize i = 0; i + 1 < levels; i++ ) {
       if ( roots[i] && roots[i]->size >= (1ULL << i) ) {
         roots[i + 1] = merge(roots[i + 1], roots[i]);
         roots[i] = nullptr;
@@ -148,8 +148,8 @@ public:
   reference
   max()
   {
-    size_t max__n = SIZE_MAX;
-    for ( size_t i = 0; i < levels; i++ ) {
+    usize max__n = SIZE_MAX;
+    for ( usize i = 0; i < levels; i++ ) {
       if ( roots[i] ) {
         if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value )
           max__n = i;
@@ -163,8 +163,8 @@ public:
   T
   pop()
   {
-    size_t max__n = SIZE_MAX;
-    for ( size_t i = 0; i < levels; i++ ) {
+    usize max__n = SIZE_MAX;
+    for ( usize i = 0; i < levels; i++ ) {
       if ( roots[i] ) {
         if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value )
           max__n = i;
@@ -180,17 +180,17 @@ public:
   bool
   empty() const noexcept
   {
-    for ( size_t i = 0; i < levels; i++ )
+    for ( usize i = 0; i < levels; i++ )
       if ( roots[i] )
         return false;
     return true;
   }
 
-  size_t
+  usize
   size() const noexcept
   {
-    size_t total = 0;
-    for ( size_t i = 0; i < levels; i++ )
+    usize total = 0;
+    for ( usize i = 0; i < levels; i++ )
       if ( roots[i] )
         total += roots[i]->size;
     return total;
@@ -199,7 +199,7 @@ public:
   void
   clear() noexcept
   {
-    for ( size_t i = 0; i < levels; i++ ) {
+    for ( usize i = 0; i < levels; i++ ) {
       clear_tree(roots[i]);
       roots[i] = nullptr;
     }

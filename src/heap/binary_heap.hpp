@@ -19,7 +19,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class binary_hea
   using __mem = __immutable_memory_resource<T, Alloc>;
 
   inline void
-  make_heap(size_t j)
+  make_heap(usize j)
   {
     auto k = (j - 1) / 2;
     if ( j > 0 and __mem::memory[k] < __mem::memory[j] ) {
@@ -29,7 +29,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class binary_hea
   }
 
   inline void
-  reduce_heap(size_t j)
+  reduce_heap(usize j)
   {
     int left = 2 * j + 1;
     int right = 2 * j + 2;
@@ -52,7 +52,7 @@ public:
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   typedef T value_type;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T &reference;
   typedef T &ref;
   typedef const T &const_reference;
@@ -73,7 +73,7 @@ public:
 
   template <T... Args> binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T))) { (insert(args), ...); }
 
-  binary_heap(const size_t n) : __mem(n * sizeof(T)) {}
+  binary_heap(const usize n) : __mem(n * sizeof(T)) {}
 
   binary_heap(const binary_heap &o) = delete;
 
@@ -133,13 +133,13 @@ public:
     }
   }
 
-  size_t
+  usize
   size() const
   {
     return __mem::length;
   }
 
-  size_t
+  usize
   max_size() const
   {
     return __mem::capacity;

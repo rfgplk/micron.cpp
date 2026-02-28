@@ -29,13 +29,13 @@
 #ifndef ABCMALLOC_DISABLE
 
 extern "C" __attribute__((malloc, alloc_size(1))) void *
-malloc(size_t size)     // alloc memory of size 'size', prefer using alloc
+malloc(usize size)     // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(abc::alloc(size));
 }
 
 extern "C" void *
-calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using salloc()
+calloc(usize num, usize size)     // alloc's zero'd out memory, prefer using salloc()
 {
   if ( size != 0 && (size * num) / size != num )
     return nullptr;
@@ -48,10 +48,10 @@ calloc(size_t num, size_t size)     // alloc's zero'd out memory, prefer using s
 }
 
 extern "C" void *
-realloc(void *ptr, size_t size)     // reallocates memory
+realloc(void *ptr, usize size)     // reallocates memory
 {
   // NOTE: this always gets the full size of the allocated memory, not what was requested
-  size_t old_size = abc::query_size(reinterpret_cast<addr_t *>(ptr));
+  usize old_size = abc::query_size(reinterpret_cast<addr_t *>(ptr));
   if ( size == 0 ) {
     abc::dealloc(reinterpret_cast<byte *>(ptr));
     return nullptr;
@@ -65,7 +65,7 @@ realloc(void *ptr, size_t size)     // reallocates memory
   if ( !new_block )
     return nullptr;     // allocation failed
 
-  size_t copy_size = old_size < size ? old_size : size;
+  usize copy_size = old_size < size ? old_size : size;
   micron::memcpy(new_block, reinterpret_cast<byte *>(ptr), copy_size);
 
   abc::dealloc(reinterpret_cast<byte *>(ptr));
@@ -79,6 +79,6 @@ free(void *ptr)     // frees memory, prefer abc::dealloc always
   abc::dealloc(reinterpret_cast<byte *>(ptr));
 }
 
-extern "C" void *aligned_alloc(size_t alignment, size_t size);
+extern "C" void *aligned_alloc(usize alignment, usize size);
 
 #endif

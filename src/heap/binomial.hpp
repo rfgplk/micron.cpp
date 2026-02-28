@@ -15,7 +15,7 @@ namespace micron
 
 template <typename T, typename C> struct __binomial_node {
   T value;
-  size_t degree;
+  usize degree;
   __binomial_node *parent;
   __binomial_node *child;
   __binomial_node *sibling;
@@ -35,7 +35,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
 
   node_type *root_list;
   node_type *min_node;
-  size_t node_count;
+  usize node_count;
   C comp;
 
   ~__binomial_heap() { clear(); }
@@ -323,7 +323,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
     return node_count == 0;
   }
 
-  inline size_t
+  inline usize
   size() const
   {
     return node_count;

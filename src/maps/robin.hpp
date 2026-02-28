@@ -20,14 +20,14 @@ namespace micron
 template <typename K, typename V> struct alignas(32) robin_map_node {
   hash64_t key;
   V value;           // if value is set, then it's occupied
-  size_t length;     // length from starting node
+  usize length;     // length from starting node
   ~robin_map_node() = default;
 
   robin_map_node() : length(0) {}
 
-  robin_map_node(const hash64_t &k, V &&v, size_t l) : key(k), value(micron::move(v)), length(l) {}
+  robin_map_node(const hash64_t &k, V &&v, usize l) : key(k), value(micron::move(v)), length(l) {}
 
-  template <typename... Args> robin_map_node(const hash64_t &k, size_t l, Args &&...args) : key(k), value(args...), length(l) {}
+  template <typename... Args> robin_map_node(const hash64_t &k, usize l, Args &&...args) : key(k), value(args...), length(l) {}
 
   robin_map_node(const robin_map_node &) = default;
   robin_map_node(robin_map_node &&) = default;
@@ -72,13 +72,13 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
     return hash<hash64_t>(val);
   }
 
-  inline size_t
+  inline usize
   hsh_index(const hash64_t &hsh) const
   {
     return hsh % __mem::capacity;
   }
 
-  inline size_t
+  inline usize
   hsh_index(const V &val) const
   {
     return hash<hash64_t>(val) % __mem::capacity;
@@ -86,20 +86,20 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
 
   template <typename _N = Nd>     // this is here to help the compile inline properly
   inline __attribute__((always_inline)) Nd &
-  __access(const size_t index)
+  __access(const usize index)
   {
     return __mem::memory[index];     // to prevent pointless typing
   }
 
   template <typename _N = Nd>     // this is here to help the compile inline properly
   inline __attribute__((always_inline)) const Nd &
-  __access(const size_t index) const
+  __access(const usize index) const
   {
     return __mem::memory[index];     // to prevent pointless typing
   }
 
   inline __attribute__((always_inline)) void
-  __shift(size_t index)
+  __shift(usize index)
   {
     // shift all entries to accomodate for deletion
     index = (index + 1) % __mem::capacity;
@@ -115,7 +115,7 @@ public:
   using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef Nd value_type;
   typedef Nd &reference;
   typedef Nd &ref;
@@ -135,7 +135,7 @@ public:
 
   robin_map() : __mem((Alloc::auto_size() >= sizeof(Nd) ? Alloc::auto_size() : sizeof(Nd))) {}
 
-  robin_map(const size_t n) : __mem(n * sizeof(Nd)) {}
+  robin_map(const usize n) : __mem(n * sizeof(Nd)) {}
 
   robin_map(const robin_map &) = delete;
 
@@ -164,7 +164,7 @@ public:
   clear()
   {
     if constexpr ( micron::is_object_v<V> ) {
-      for ( size_t i = 0; i < __mem::capacity; i++ )
+      for ( usize i = 0; i < __mem::capacity; i++ )
         if ( __access(i).key )
           __access(i).~Nd();
     }
@@ -182,8 +182,8 @@ public:
   operator[](const K &k)     // access at K
   {
     hash64_t kh = hsh(k);
-    size_t index = hsh_index(kh);
-    size_t plen = 0;
+    usize index = hsh_index(kh);
+    usize plen = 0;
 
     while ( __access(index).key && plen <= __access(index).length ) {
       if ( __access(index).key == kh ) {
@@ -232,13 +232,13 @@ public:
     return &__mem::memory[__mem::length];     // the memory is contiguous so this is fine
   }
 
-  size_t
+  usize
   size() const
   {
     return __mem::length;
   }
 
-  size_t
+  usize
   max_size() const
   {
     return __mem::capacity;
@@ -257,7 +257,7 @@ public:
   {
     hash64_t key = hsh(k);
     auto index = hsh_index(key);
-    size_t plen = 0;
+    usize plen = 0;
     while ( !!__access(index) ) {
       if ( __access(index).key == key ) {
         __access(index).set(k, micron::move(value));
@@ -281,7 +281,7 @@ public:
   {
     hash64_t key = hsh(k);
     auto index = hsh_index(key);
-    size_t plen = 0;
+    usize plen = 0;
     new (&__access(index)) Nd(key, plen, micron::forward<Args>(args)...);
     ++__mem::length;
     return __access(index).value;
@@ -292,7 +292,7 @@ public:
   {
     hash64_t key = hsh(k);
     auto index = hsh_index(key);
-    size_t plen = 0;
+    usize plen = 0;
 
     while ( !!__access(index) && plen <= __access(index).length ) {
       if ( __access(index).key == k ) {
@@ -307,19 +307,19 @@ public:
     return false;
   }
 
-  size_t
+  usize
   exists(const K &k) const
   {
     return get(k, V{}) ? 1 : 0;
   }
 
-  size_t
+  usize
   count(const K &k) const     // NOTE: robin hood robin_maps support multiple elements unlike STL robin_maps
   {
     hash64_t kh = hsh(k);
-    size_t index = hsh_index(kh);
-    size_t plen = 0;
-    size_t count = 0;
+    usize index = hsh_index(kh);
+    usize plen = 0;
+    usize count = 0;
     while ( __access(index).key && plen <= __access(index).length ) {
       if ( __access(index).key == kh )
         count++;

@@ -27,7 +27,7 @@ constexpr static const bool __micron_global__alloc_debug = false;
 // §17.6.3 — scalar new/delete
 
 [[nodiscard]] void *
-operator new(size_t size)
+operator new(usize size)
 {
   ALLOC_MESSAGE("new(", size, ")");
   if ( void *ptr = micron::__alloc(size) ) {
@@ -38,7 +38,7 @@ operator new(size_t size)
 }
 
 [[nodiscard]] void *
-operator new[](size_t size)
+operator new[](usize size)
 {
   ALLOC_MESSAGE("new[](", size, ")");
   if ( void *ptr = micron::__alloc(size) ) {
@@ -63,7 +63,7 @@ operator delete[](void *ptr) noexcept
 }
 
 void
-operator delete(void *ptr, size_t size) noexcept
+operator delete(void *ptr, usize size) noexcept
 {
   (void)size;
   ALLOC_MESSAGE("delete(", ptr, ") size of ", size);
@@ -71,7 +71,7 @@ operator delete(void *ptr, size_t size) noexcept
 }
 
 void
-operator delete[](void *ptr, size_t size) noexcept
+operator delete[](void *ptr, usize size) noexcept
 {
   (void)size;
   ALLOC_MESSAGE("delete[](", ptr, ") size of ", size);
@@ -93,7 +93,7 @@ __new(Args &&...args)
 
 template <typename Type>
 inline __attribute__((always_inline)) auto
-__new_arr(size_t n)
+__new_arr(usize n)
 {
   return new Type[n];
 }
@@ -157,7 +157,7 @@ constexpr static const bool __micron_global__alloc_debug = false;
 /*
 template <typename... Args>
 void *
-operator new(size_t size, Args &&...args)
+operator new(usize size, Args &&...args)
 {
   (void)sizeof...(args); // suppress unused warning
   ALLOC_MESSAGE("new args(", size, ")");
@@ -169,7 +169,7 @@ operator new(size_t size, Args &&...args)
 }
 template <typename... Args>
 void *
-operator new[](size_t size, Args &&...args)
+operator new[](usize size, Args &&...args)
 {
   (void)sizeof...(args); // suppress unused warning
   ALLOC_MESSAGE("new args[](", size, ")");
@@ -182,7 +182,7 @@ operator new[](size_t size, Args &&...args)
 
 // leave these as void
 void *
-operator new(size_t size)
+operator new(usize size)
 {
   ALLOC_MESSAGE("new(", size, ")");
   if ( void *ptr = micron::__alloc(size) ) {
@@ -196,7 +196,7 @@ operator new(size_t size)
 // WARNING: shadowing warning if included alongside the STL
 template <typename P>
 void *
-operator new(size_t size, P *ptr)
+operator new(usize size, P *ptr)
 {
   (void)size;
   ALLOC_MESSAGE("new(", size, ")");
@@ -204,7 +204,7 @@ operator new(size_t size, P *ptr)
   return ptr;
 }
 void *
-operator new[](size_t size)
+operator new[](usize size)
 {
   ALLOC_MESSAGE("new[](", size, ")");
   if ( void *ptr = micron::__alloc(size) ) {
@@ -222,7 +222,7 @@ operator delete(void *ptr) noexcept
 }
 
 void
-operator delete(void *ptr, size_t size) noexcept
+operator delete(void *ptr, usize size) noexcept
 {
   (void)size;
   ALLOC_MESSAGE("delete(", ptr, ") size of ", size);
@@ -237,7 +237,7 @@ operator delete[](void *ptr) noexcept
 }
 
 void
-operator delete[](void *ptr, size_t size) noexcept
+operator delete[](void *ptr, usize size) noexcept
 {
   (void)size;
   ALLOC_MESSAGE("delete[](", ptr, ") size of ", size);
@@ -255,7 +255,7 @@ __new(Args &&...args)
 
 template <typename Type>
 inline __attribute__((always_inline)) auto
-__new_arr(size_t n)
+__new_arr(usize n)
 {
   return new Type[n];
 }

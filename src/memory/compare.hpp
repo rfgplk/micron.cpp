@@ -21,7 +21,7 @@ namespace micron
 template <typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
-compare(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
+compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 {
   return bytecmp(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), n * sizeof(T));
 }
@@ -29,9 +29,9 @@ compare(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
 template <typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict a, const T *__restrict b, const size_t n, Fn fn) noexcept
+compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
 {
-  for ( size_t i = 0; i < n; ++i )
+  for ( usize i = 0; i < n; ++i )
     if ( !fn(a[i], b[i]) )
       return false;
   return true;
@@ -40,9 +40,9 @@ compare(const T *__restrict a, const T *__restrict b, const size_t n, Fn fn) noe
 template <typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict a, const T *__restrict b, const size_t n, Fn fn) noexcept
+compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
 {
-  for ( size_t i = 0; i < n; ++i )
+  for ( usize i = 0; i < n; ++i )
     if ( !fn(&a[i], &b[i]) )
       return false;
   return true;
@@ -51,9 +51,9 @@ compare(const T *__restrict a, const T *__restrict b, const size_t n, Fn fn) noe
 template <auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
+compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 {
-  for ( size_t i = 0; i < n; ++i ) {
+  for ( usize i = 0; i < n; ++i ) {
     if constexpr ( micron::is_invocable_v<decltype(Fn), const T *, const T *> ) {
       if ( !Fn(&a[i], &b[i]) )
         return false;
@@ -74,7 +74,7 @@ __attribute__((nonnull)) constexpr long int
 compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
 {
   return bytecmp(reinterpret_cast<const byte *>(first1), reinterpret_cast<const byte *>(first2),
-                 static_cast<size_t>(end1 - first1) * sizeof(T));
+                 static_cast<usize>(end1 - first1) * sizeof(T));
 }
 
 template <typename T, typename Fn>
@@ -123,7 +123,7 @@ template <is_iterable_container C>
 constexpr long int
 compare(const C &a, const C &b) noexcept
 {
-  const size_t n = a.size() < b.size() ? a.size() : b.size();
+  const usize n = a.size() < b.size() ? a.size() : b.size();
   const long int r
       = bytecmp(reinterpret_cast<const byte *>(a.begin()), reinterpret_cast<const byte *>(b.begin()), n * sizeof(typename C::value_type));
   if ( r != 0 )
@@ -189,7 +189,7 @@ template <is_iterable_container C, is_iterable_container D>
 constexpr long int
 compare(const C &a, const D &b) noexcept
 {
-  const size_t n = a.size() < b.size() ? a.size() : b.size();
+  const usize n = a.size() < b.size() ? a.size() : b.size();
   const long int r
       = bytecmp(reinterpret_cast<const byte *>(a.begin()), reinterpret_cast<const byte *>(b.begin()), n * sizeof(typename C::value_type));
   if ( r != 0 )
@@ -242,7 +242,7 @@ compare(const C &a, const D &b) noexcept
 template <typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
-compare_n(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
+compare_n(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 {
   return bytecmp(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), n * sizeof(T));
 }
@@ -250,9 +250,9 @@ compare_n(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
 template <typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
-compare_n(const T *__restrict a, const T *__restrict b, size_t n, Fn fn) noexcept
+compare_n(const T *__restrict a, const T *__restrict b, usize n, Fn fn) noexcept
 {
-  for ( size_t i = 0; i < n; ++i )
+  for ( usize i = 0; i < n; ++i )
     if ( !fn(a[i], b[i]) )
       return false;
   return true;
@@ -261,9 +261,9 @@ compare_n(const T *__restrict a, const T *__restrict b, size_t n, Fn fn) noexcep
 template <typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
-compare_n(const T *__restrict a, const T *__restrict b, size_t n, Fn fn) noexcept
+compare_n(const T *__restrict a, const T *__restrict b, usize n, Fn fn) noexcept
 {
-  for ( size_t i = 0; i < n; ++i )
+  for ( usize i = 0; i < n; ++i )
     if ( !fn(&a[i], &b[i]) )
       return false;
   return true;
@@ -272,9 +272,9 @@ compare_n(const T *__restrict a, const T *__restrict b, size_t n, Fn fn) noexcep
 template <auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
-compare_n(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
+compare_n(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 {
-  for ( size_t i = 0; i < n; ++i ) {
+  for ( usize i = 0; i < n; ++i ) {
     if constexpr ( micron::is_invocable_v<decltype(Fn), const T *, const T *> ) {
       if ( !Fn(&a[i], &b[i]) )
         return false;
@@ -288,9 +288,9 @@ compare_n(const T *__restrict a, const T *__restrict b, const size_t n) noexcept
 
 template <is_iterable_container C>
 constexpr long int
-compare_n(const C &a, const C &b, const size_t n) noexcept
+compare_n(const C &a, const C &b, const usize n) noexcept
 {
-  const size_t clamped = n < a.size() && n < b.size() ? n : a.size() < b.size() ? a.size() : b.size();
+  const usize clamped = n < a.size() && n < b.size() ? n : a.size() < b.size() ? a.size() : b.size();
   return bytecmp(reinterpret_cast<const byte *>(a.begin()), reinterpret_cast<const byte *>(b.begin()),
                  clamped * sizeof(typename C::value_type));
 }
@@ -298,13 +298,13 @@ compare_n(const C &a, const C &b, const size_t n) noexcept
 template <is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type &, const typename C::value_type &>
 constexpr bool
-compare_n(const C &a, const C &b, size_t n, Fn fn) noexcept
+compare_n(const C &a, const C &b, usize n, Fn fn) noexcept
 {
   auto ia = a.begin();
   auto ib = b.begin();
   const auto ea = a.end();
   const auto eb = b.end();
-  for ( size_t i = 0; i < n && ia != ea && ib != eb; ++i, ++ia, ++ib )
+  for ( usize i = 0; i < n && ia != ea && ib != eb; ++i, ++ia, ++ib )
     if ( !fn(*ia, *ib) )
       return false;
   return true;
@@ -313,13 +313,13 @@ compare_n(const C &a, const C &b, size_t n, Fn fn) noexcept
 template <is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
 constexpr bool
-compare_n(const C &a, const C &b, size_t n, Fn fn) noexcept
+compare_n(const C &a, const C &b, usize n, Fn fn) noexcept
 {
   auto ia = a.begin();
   auto ib = b.begin();
   const auto ea = a.end();
   const auto eb = b.end();
-  for ( size_t i = 0; i < n && ia != ea && ib != eb; ++i, ++ia, ++ib )
+  for ( usize i = 0; i < n && ia != ea && ib != eb; ++i, ++ia, ++ib )
     if ( !fn(ia, ib) )
       return false;
   return true;
@@ -327,13 +327,13 @@ compare_n(const C &a, const C &b, size_t n, Fn fn) noexcept
 
 template <auto Fn, is_iterable_container C>
 constexpr bool
-compare_n(const C &a, const C &b, const size_t n) noexcept
+compare_n(const C &a, const C &b, const usize n) noexcept
 {
   auto ia = a.begin();
   auto ib = b.begin();
   const auto ea = a.end();
   const auto eb = b.end();
-  for ( size_t i = 0; i < n && ia != ea && ib != eb; ++i, ++ia, ++ib ) {
+  for ( usize i = 0; i < n && ia != ea && ib != eb; ++i, ++ia, ++ib ) {
     if constexpr ( micron::is_invocable_v<decltype(Fn), const typename C::value_type *, const typename C::value_type *> ) {
       if ( !Fn(ia, ib) )
         return false;

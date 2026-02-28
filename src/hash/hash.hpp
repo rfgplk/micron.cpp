@@ -40,7 +40,7 @@ hash128(const T &data)
 
 template <u32 seed = default_seed>
 hash128_t
-hash128(const byte *data, size_t len)
+hash128(const byte *data, usize len)
 {
   if constexpr ( default_hash_128 == hash_types::murmur128 )
     return hashes::murmur<seed>(data, len);
@@ -72,7 +72,7 @@ hash64(const char *data)
 
 template <u64 seed = default_seed>
 hash64_t
-hash64(const byte *data, size_t len)
+hash64(const byte *data, usize len)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64<seed>(data, len);
@@ -80,14 +80,14 @@ hash64(const byte *data, size_t len)
 
 template <typename T>
 hash64_t
-hash64(const T *data, size_t len, u64 seed)
+hash64(const T *data, usize len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64_rtseed(reinterpret_cast<const byte *>(data), seed, len);
 }
 
 hash64_t
-hash64(const byte *data, size_t len, u64 seed)
+hash64(const byte *data, usize len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64_rtseed(data, seed, len);
@@ -115,7 +115,7 @@ hash(const T &data)
 
 template <typename R = hash64_t, u32 seed = default_seed>
 inline __attribute__((always_inline)) auto
-hash(const byte *data, size_t len)
+hash(const byte *data, usize len)
 {
   if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
     return hash64<seed>(data, len);

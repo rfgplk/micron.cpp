@@ -29,7 +29,7 @@ namespace micron
 
 template <typename T, typename F>
   requires micron::is_pointer_v<T> && micron::is_pointer_v<F>
-inline size_t
+inline usize
 distance(T a, F b)     // distance between two pointers, can be of different types
 {
   return (reinterpret_cast<word *>(b) - reinterpret_cast<word *>(a));
@@ -37,7 +37,7 @@ distance(T a, F b)     // distance between two pointers, can be of different typ
 
 template <typename T, typename F>
   requires micron::is_pointer_v<T> && micron::is_pointer_v<F>
-inline size_t
+inline usize
 adistance(T a, F b)     // absolute distance between two pointers, can be of different types
 {
   return math::abs(reinterpret_cast<word *>(b) - reinterpret_cast<word *>(a));
@@ -58,13 +58,13 @@ destroy(T &mem)
   }
 }
 
-template <typename T, size_t N>
+template <typename T, usize N>
 inline void
 destroy(T &mem)
   requires micron::is_array<T>::value
 {
   if constexpr ( micron::is_class<T>::value ) {
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       mem[i].~T();
   } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value ) {
     delete[] mem;
@@ -85,14 +85,14 @@ overwrite(T &src, F &dest)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // zeros
 
-template <size_t N, typename T>
+template <usize N, typename T>
 void
 zero(T *src)
 {
   czero<N>(src);
 }
 
-template <typename T, size_t M>
+template <typename T, usize M>
 void
 zero(char (*ptr)[M])
 {
@@ -113,7 +113,7 @@ is_zero(const T *src)
   if ( src == nullptr )
     exc<except::library_error>("micron::is_zero invalid pointer.");
   const byte *b_ptr = reinterpret_cast<const byte *>(src);
-  for ( size_t i = 0; i < sizeof(T); i++ )
+  for ( usize i = 0; i < sizeof(T); i++ )
     if ( *b_ptr++ > 0x0 )
       return false;
   return true;
@@ -149,7 +149,7 @@ copy_n(const T *restrict src, F *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy
 
-template <size_t N, typename T, typename F>
+template <usize N, typename T, typename F>
 F *
 copy(const T *restrict src, F *restrict dst)
 {
@@ -180,7 +180,7 @@ copy(const T *restrict src, F *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy
 
-template <size_t N, typename T, typename F>
+template <usize N, typename T, typename F>
 F &
 copy(const T &restrict src, F &restrict dst)
 {
@@ -209,13 +209,13 @@ copy(const T &restrict src, F &restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy
 
-template <size_t N, typename T, typename F>
+template <usize N, typename T, typename F>
 F *
 copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 {
   if ( (end_src - start_src) < 0 )
     exc<except::library_error>("micron::copy invalid pointers.");
-  const size_t len = static_cast<size_t>(end_src - start_src);
+  const usize len = static_cast<usize>(end_src - start_src);
 #if __micron_x86_simd_width >= 256
   if ( N % 32 == 0 )
     simd::memcpy256(dest, start_src, len);
@@ -237,14 +237,14 @@ copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ccopys
 
-template <size_t N, typename T, typename F>
+template <usize N, typename T, typename F>
 F *
 ccopy(const T *restrict src, F *restrict dst)
 {
   if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::ccopy invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       dst[i] = src[i];
     return dst;
   }
@@ -279,7 +279,7 @@ scopy(const T &restrict src, T &restrict dst)
 {
   auto smlr = src.size() < dst.size() ? src.size() : dst.size();
   if constexpr ( micron::is_class_v<T> or micron::is_object_v<T> ) {
-    for ( size_t i = 0; i < smlr; i++ )
+    for ( usize i = 0; i < smlr; i++ )
       dst[i] = src[i];
     return;
   }
@@ -308,14 +308,14 @@ scopy(const T &restrict src, T &restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cmoves
 
-template <size_t N, typename T, typename F>
+template <usize N, typename T, typename F>
 F *
 cmove(const T *restrict src, F *restrict dst)
 {
   if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::cmove invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       dst[i] = micron::move(src[i]);
     return dst;
   }
@@ -410,7 +410,7 @@ set_n(T *restrict dst, const byte val, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cset_ns
 
-template <size_t N, typename T>
+template <usize N, typename T>
 T *
 cset_n(T *restrict dst, const byte val)
 {
@@ -455,14 +455,14 @@ fill_n(T *restrict dst, const T val, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cfill_ns
 
-template <size_t N, typename T>
+template <usize N, typename T>
 T *
 cfill_n(T *restrict dst, const T val)
 {
   if ( dst == nullptr )
     exc<except::library_error>("micron::cfill_n invalid pointer.");
   if constexpr ( micron::is_class_v<T> ) {
-    for ( size_t i = 0; i < N; i++ )
+    for ( usize i = 0; i < N; i++ )
       dst[i] = val;
     return dst;
   }
@@ -500,7 +500,7 @@ zero_n(T *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // czero_ns
 
-template <size_t N, typename T>
+template <usize N, typename T>
 T *
 czero_n(T *restrict dst)
 {
@@ -553,7 +553,7 @@ compare_n(const T *restrict src, const T *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ccompare_ns
 
-template <size_t N, typename T>
+template <usize N, typename T>
 i64
 ccompare_n(const T *restrict src, const T *restrict dst)
 {
@@ -589,7 +589,7 @@ equal_n(const T *restrict src, const T *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cequal_ns
 
-template <size_t N, typename T>
+template <usize N, typename T>
 bool
 cequal_n(const T *restrict src, const T *restrict dst)
 {
@@ -627,7 +627,7 @@ swap_n(T *restrict a, T *restrict b, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cswap_ns
 
-template <size_t N, typename T>
+template <usize N, typename T>
 void
 cswap_n(T *restrict a, T *restrict b)
 {

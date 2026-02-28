@@ -3,7 +3,7 @@
 namespace uppm
 {
 
-using size_t = __UINTMAX_TYPE__;
+using usize = __UINTMAX_TYPE__;
 using i32 = __INT32_TYPE__;
 using u32 = __UINT32_TYPE__;
 using u16 = __UINT16_TYPE__;
@@ -315,7 +315,7 @@ public:
 
     writer::validate(input.data());
 
-    size_t pos = 3;
+    usize pos = 3;
     skip_whitespace_and_comments(input, pos);
 
     width = parse_number(input, pos);
@@ -329,7 +329,7 @@ private:
   static void
   read_binary(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
-    size_t pos = 3;
+    usize pos = 3;
     skip_whitespace_and_comments(input, pos);
 
     width = parse_number(input, pos);
@@ -368,7 +368,7 @@ private:
   static void
   read_ascii(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
-    size_t pos = 3;
+    usize pos = 3;
     skip_whitespace_and_comments(input, pos);
 
     width = parse_number(input, pos);
@@ -408,7 +408,7 @@ private:
 
   template <__string_like S>
   static void
-  skip_whitespace_and_comments(const S &input, size_t &pos)
+  skip_whitespace_and_comments(const S &input, usize &pos)
   {
     while ( pos < input.size() ) {
       if ( input[pos] == '#' ) {
@@ -425,7 +425,7 @@ private:
 
   template <__string_like S>
   static void
-  skip_single_whitespace(const S &input, size_t &pos)
+  skip_single_whitespace(const S &input, usize &pos)
   {
     if ( pos < input.size() && (input[pos] == ' ' || input[pos] == '\t' || input[pos] == '\n' || input[pos] == '\r') ) {
       ++pos;
@@ -434,7 +434,7 @@ private:
 
   template <__string_like S>
   static i32
-  parse_number(const S &input, size_t &pos)
+  parse_number(const S &input, usize &pos)
   {
     i32 result = 0;
     bool found_digit = false;

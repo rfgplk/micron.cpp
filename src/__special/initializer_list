@@ -13,7 +13,7 @@ public:
   typedef T value_type;
   typedef const T &reference;
   typedef const T &const_reference;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef const T *iterator;
   typedef const T *const_iterator;
 

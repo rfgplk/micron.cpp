@@ -35,11 +35,11 @@ micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffe
 i32
 __verify_open(void)
 {
-  if ( micron::fcntl(0, f_getfl) == -1 )
+  if ( micron::posix::fcntl(0, posix::f_getfl) == -1 )
     return -1;
-  if ( micron::fcntl(1, f_getfl) == -1 )
+  if ( micron::posix::fcntl(1, posix::f_getfl) == -1 )
     return -2;
-  if ( micron::fcntl(2, f_getfl) == -1 )
+  if ( micron::posix::fcntl(2, posix::f_getfl) == -1 )
     return -3;
   return 0;
 }

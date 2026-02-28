@@ -33,7 +33,7 @@ struct __parallel_wrapper {
 // main class for handling all system functions
 // not thread safe
 template <io::modes _default_mode = io::modes::read,
-          size_t N = 256>     // max size of open handles (entries & dirs), note that the max is usually 1024, but
+          usize N = 256>     // max size of open handles (entries & dirs), note that the max is usually 1024, but
                               // defaulting to 256
 class parallel_system
 {
@@ -46,12 +46,12 @@ class parallel_system
     return pw._fentry;
   }
 
-  size_t sz;
+  usize sz;
 
   auto
   __find_fd(const io::path_t &p) -> int
   {
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
       if ( __access(*entries[i]).name() == p ) {
         return __access(*entries[i]).get_fd();
@@ -61,9 +61,9 @@ class parallel_system
   }
 
   auto
-  __find_id(const io::path_t &p) -> size_t
+  __find_id(const io::path_t &p) -> usize
   {
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
       if ( __access(*entries[i]).name() == p )
         return i;
@@ -74,7 +74,7 @@ class parallel_system
   auto &
   __find(const io::path_t &p)
   {
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
       if ( __access(*entries[i]).name() == p )
         return __access(*entries[i]);
@@ -82,7 +82,7 @@ class parallel_system
     exc<except::filesystem_error>("micron fsys wasn't able to find file");
   }
 
-  inline __attribute__((always_inline)) size_t
+  inline __attribute__((always_inline)) usize
   __locate(const io::path_t &p)
   {
     auto _id = __find_id(p);
@@ -128,7 +128,7 @@ class parallel_system
   void
   __lock_all(void)
   {
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::lock(entries[i]->mtx);
     }
   }
@@ -136,7 +136,7 @@ class parallel_system
   void
   __unlock_all(void)
   {
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::unlock(entries[i]->mtx);
     }
   }
@@ -156,7 +156,7 @@ class parallel_system
 public:
   ~parallel_system()
   {
-    for ( size_t i = 0; i < N; i++ ) {
+    for ( usize i = 0; i < N; i++ ) {
       if ( i < sz )
         (*entries[i]).sync();     // we'll automatically mandate syncing to underlying storage on dest call
       entries[i].clear();
@@ -198,7 +198,7 @@ public:
   operator[](const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
   {
     __limit();
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
       if ( __access(*entries[i]).name() == p )
         return __access(*entries[i]);
@@ -219,7 +219,7 @@ public:
   remove(const io::path_t &p)
   {
     __lock();
-    size_t i = 0;
+    usize i = 0;
     for ( ; i < sz; i++ ) {
       if ( entries[i]->name() == p ) {
         entries[i]->sync();
@@ -236,7 +236,7 @@ public:
   remove(fsys::file<> &fref)
   {
     __lock();
-    size_t i = 0;
+    usize i = 0;
     for ( ; i < sz; i++ ) {
       if ( *entries[i] == fref ) {
         __access(*entries[i]).sync();
@@ -255,7 +255,7 @@ public:
   list(void) const
   {
     micron::vector<micron::sstr<io::max_name>> names;
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
       names.push_back(__access(*entries[i]).name());
     }
@@ -269,12 +269,12 @@ public:
     __limit();
     if ( !entries[sz] ) {
       entries[sz] = new fsys::file(p.c_str(), mode);
-      size_t _sz = sz++;
+      usize _sz = sz++;
       __unlock();
       return *entries[_sz];
     } else {
       entries[++sz] = new fsys::file(p.c_str(), mode);
-      size_t _sz = sz - 1;
+      usize _sz = sz - 1;
       __unlock();
       return *entries[_sz];
     }
@@ -379,7 +379,7 @@ public:
   bool
   is_opened(const io::path_t &path) const
   {
-    for ( size_t i = 0; i < sz; i++ )
+    for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == path )
         return true;
     return false;
@@ -407,14 +407,14 @@ public:
   auto
   permissions(const io::path_t &path) const
   {
-    size_t id = __locate(path);
+    usize id = __locate(path);
     return entries[id]->permissions();
   }
 
   auto
   set_permissions(const io::path_t &path, const io::linux_permissions &perms)
   {
-    size_t id = __locate(path);
+    usize id = __locate(path);
     return entries[id]->set_permissions(perms);
   }
 
@@ -422,7 +422,7 @@ public:
   auto
   set_permissions(const io::path_t &path, Args... args)
   {
-    size_t id = __locate(path);
+    usize id = __locate(path);
 
     struct linux_permissions perms
         = { { false, false, false }, { false, false, false }, { false, false, false } };     // explicitly init to zero

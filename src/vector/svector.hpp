@@ -23,16 +23,16 @@ namespace micron
 // Vector on the stack, always safe, mutable, fixed size
 // equivalent of inplace_vector, should be used over vector in almost all use
 // cases
-template <is_regular_object T, size_t N = 64> class svector
+template <is_regular_object T, usize N = 64> class svector
 {
   T stack[N];
-  size_t length = 0;
+  usize length = 0;
 
 public:
   using category_type = vector_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;

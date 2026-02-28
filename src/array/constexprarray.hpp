@@ -20,13 +20,13 @@
 
 namespace micron
 {
-template <is_constexpr_valid T, size_t N = 64>
+template <is_constexpr_valid T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 struct constexpr_array {
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -45,7 +45,7 @@ struct constexpr_array {
   /*
   template <typename Fn> constexpr constexpr_array(Fn &&fn)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = T{};
     micron::generate(begin(), end(), fn);
   }
@@ -54,40 +54,40 @@ struct constexpr_array {
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   constexpr constexpr_array(Fn &&fn)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = T{};
     micron::transform(begin(), end(), fn);
   }
 */
   constexpr constexpr_array(const T &val)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = val;
   }
 
   constexpr constexpr_array(const std::initializer_list<T> &lst)
   {
-    size_t i = 0;
+    usize i = 0;
     for ( auto &v : lst )
       stack[i++] = v;
   }
 
   constexpr constexpr_array(const constexpr_array &o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = o.stack[i];
   }
 
   constexpr constexpr_array(constexpr_array &&o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = micron::move(o.stack[i]);
   }
 
   constexpr constexpr_array &
   operator=(const constexpr_array &o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = o.stack[i];
     return *this;
   }
@@ -95,7 +95,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator=(constexpr_array &&o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = micron::move(o.stack[i]);
     return *this;
   }
@@ -125,18 +125,18 @@ struct constexpr_array {
   }
 
   constexpr T &
-  operator[](size_t i)
+  operator[](usize i)
   {
     return stack[i];
   }
 
   constexpr const T &
-  operator[](size_t i) const
+  operator[](usize i) const
   {
     return stack[i];
   }
 
-  constexpr size_t
+  constexpr usize
   size() const
   {
     return N;
@@ -159,7 +159,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   fill(F val)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = val;
     return *this;
   }
@@ -167,7 +167,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator+=(const T &o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] += o;
     return *this;
   }
@@ -175,7 +175,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator-=(const T &o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] -= o;
     return *this;
   }
@@ -183,7 +183,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator*=(const T &o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] *= o;
     return *this;
   }
@@ -191,47 +191,47 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator/=(const T &o)
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] /= o;
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator+=(const constexpr_array<T, M> &o)
   {
-    for ( size_t i = 0; i < M; ++i )
+    for ( usize i = 0; i < M; ++i )
       stack[i] += o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator-=(const constexpr_array<T, M> &o)
   {
-    for ( size_t i = 0; i < M; ++i )
+    for ( usize i = 0; i < M; ++i )
       stack[i] -= o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator*=(const constexpr_array<T, M> &o)
   {
-    for ( size_t i = 0; i < M; ++i )
+    for ( usize i = 0; i < M; ++i )
       stack[i] *= o.stack[i];
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator/=(const constexpr_array<T, M> &o)
   {
-    for ( size_t i = 0; i < M; ++i )
+    for ( usize i = 0; i < M; ++i )
       stack[i] /= o.stack[i];
     return *this;
   }
@@ -240,7 +240,7 @@ struct constexpr_array {
   sum() const
   {
     T sm{};
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       sm += stack[i];
     return sm;
   }
@@ -249,7 +249,7 @@ struct constexpr_array {
   mul() const
   {
     T prod = stack[0];
-    for ( size_t i = 1; i < N; ++i )
+    for ( usize i = 1; i < N; ++i )
       prod *= stack[i];
     return prod;
   }
@@ -257,7 +257,7 @@ struct constexpr_array {
   constexpr bool
   all(const T &val) const
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       if ( stack[i] != val )
         return false;
     return true;
@@ -266,7 +266,7 @@ struct constexpr_array {
   constexpr bool
   any(const T &val) const
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       if ( stack[i] == val )
         return true;
     return false;
@@ -275,12 +275,12 @@ struct constexpr_array {
   constexpr constexpr_array &
   sqrt()
   {
-    for ( size_t i = 0; i < N; ++i )
+    for ( usize i = 0; i < N; ++i )
       stack[i] = static_cast<T>(math::sqrt(static_cast<double>(stack[i])));
     return *this;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator+(const constexpr_array<T, M> &o) const
@@ -290,7 +290,7 @@ struct constexpr_array {
     return res;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator-(const constexpr_array<T, M> &o) const
@@ -300,7 +300,7 @@ struct constexpr_array {
     return res;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator*(const constexpr_array<T, M> &o) const
@@ -310,7 +310,7 @@ struct constexpr_array {
     return res;
   }
 
-  template <size_t M>
+  template <usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator/(const constexpr_array<T, M> &o) const
@@ -339,6 +339,6 @@ struct constexpr_array {
   }
 };
 
-template <class T, size_t N = 64> using constarray = constexpr_array<T, N>;
+template <class T, usize N = 64> using constarray = constexpr_array<T, N>;
 
 };     // namespace micron

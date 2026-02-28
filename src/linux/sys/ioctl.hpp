@@ -39,7 +39,7 @@ constexpr static const u64 __ioc_write = 1;
 constexpr static const u64 __ioc_read = 2;
 
 template <typename T>
-consteval size_t
+consteval usize
 __sizeof_type()
 {
   return sizeof(T);

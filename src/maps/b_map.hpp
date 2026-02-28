@@ -370,13 +370,13 @@ template <typename K, is_movable_object V, int Dg = 32> class btree_map
 {
   using node_type = btree_map_node<K, V, Dg>;
   micron::uptr<node_type> root;
-  size_t _size;
+  usize _size;
 
 public:
   using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
-  using size_type = size_t;
+  using size_type = usize;
   using key_type = K;
   using mapped_type = V;
   using value_type = typename node_type::kv_pair;
@@ -402,7 +402,7 @@ public:
     return *this;
   }
 
-  inline size_t
+  inline usize
   size() const noexcept
   {
     return _size;
@@ -414,10 +414,10 @@ public:
     return _size == 0;
   }
 
-  inline size_t
+  inline usize
   max_size() const noexcept
   {
-    return size_t(-1);
+    return usize(-1);
   }
 
   inline void
@@ -525,13 +525,13 @@ public:
     return find(key) != nullptr;
   }
 
-  inline size_t
+  inline usize
   count(const K &key) const
   {
     return contains(key) ? 1 : 0;
   }
 
-  inline size_t
+  inline usize
   exists(const K &key) const
   {
     return count(key);

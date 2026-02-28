@@ -30,14 +30,14 @@ namespace abc
 
 // so we don't rely on io
 inline void
-__write_n(const char *str, size_t len)
+__write_n(const char *str, usize len)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str), len);
   micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
 }
 
 inline void
-__write(const char *str, size_t len)
+__write(const char *str, usize len)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str), len);
 }

@@ -66,6 +66,7 @@ using max_t = __INTMAX_TYPE__;
 using umax_t = __UINTMAX_TYPE__;
 using ssize_t = max_t;
 using size_t = umax_t;
+using usize = umax_t;
 
 // time block
 using clock_t = __clock_t;

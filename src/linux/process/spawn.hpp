@@ -73,7 +73,7 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
   if ( micron::pipe2(pipefd, o_cloexec) < 0 )
     return errno;
 
-  constexpr size_t stack_size = 1 << 20;
+  constexpr usize stack_size = 1 << 20;
   void *stack
       = reinterpret_cast<void *>(micron::mmap(nullptr, stack_size + 4096, prot_read | prot_write, map_private | map_anonymous, -1, 0));
   if ( mmap_failed(stack) )

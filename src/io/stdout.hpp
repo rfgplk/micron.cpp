@@ -31,7 +31,7 @@ concept is_container = requires(T t) {
 };
 
 // PRINTK BLOCK OF FUNCS
-template <int outstream = stdout_fileno, typename T, size_t M>
+template <int outstream = stdout_fileno, typename T, usize M>
   requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide> or micron::is_same_v<T, unicode8>
            or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char> or micron::is_same_v<T, const schar>
            or micron::is_same_v<T, const wide> or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
@@ -69,7 +69,7 @@ printk(char c)
 
 template <int outstream = stdout_fileno>
 inline void
-sprintk(const char *c, size_t len)
+sprintk(const char *c, usize len)
 {
   if constexpr ( outstream == stdout_fileno )
     io::fput(c, len, io::stdout);
@@ -282,7 +282,7 @@ printk(const T &x)
       io::fput(ptr, io::stderr);
     return;
   }
-  if constexpr ( micron::same_as<T, umax_t> or micron::same_as<T, size_t> ) {
+  if constexpr ( micron::same_as<T, umax_t> or micron::same_as<T, usize> ) {
     const char *ptr = format::uint64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
@@ -372,7 +372,7 @@ printk(T &x)
 template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
 void
-printk(T ptr, size_t len)
+printk(T ptr, usize len)
 {
   byte *null_trm = new byte[len + 1];
   micron::memcpy(null_trm, ptr, len);
@@ -385,7 +385,7 @@ printk(T ptr, size_t len)
 }
 
 // PRINTKN BLOCK OF FUNCS, APPENDS NEWLINE
-template <int outstream = stdout_fileno, typename T, size_t M>
+template <int outstream = stdout_fileno, typename T, usize M>
   requires(micron::is_same_v<T, char> or micron::is_same_v<T, schar> or micron::is_same_v<T, wide> or micron::is_same_v<T, unicode8>
            or micron::is_same_v<T, unicode32> or micron::is_same_v<T, const char> or micron::is_same_v<T, const schar>
            or micron::is_same_v<T, const wide> or micron::is_same_v<T, const unicode8> or micron::is_same_v<T, const unicode32>)
@@ -417,7 +417,7 @@ printkn(const T &c)
   }
 }
 
-template <typename T, int outstream = stdout_fileno, size_t M>
+template <typename T, int outstream = stdout_fileno, usize M>
 void
 printk(const char (&c)[M])
 {
@@ -430,7 +430,7 @@ printk(const char (&c)[M])
   }
 }
 
-template <typename T, int outstream = stdout_fileno, size_t M>
+template <typename T, int outstream = stdout_fileno, usize M>
 void
 printkn(const char (&c)[M])
 {
@@ -445,7 +445,7 @@ printkn(const char (&c)[M])
 
 template <int outstream = stdout_fileno>
 void
-sprintkn(const char *c, size_t len)
+sprintkn(const char *c, usize len)
 {
   if constexpr ( outstream == stdout_fileno ) {
     io::fput(c, len, io::stdout);
@@ -711,7 +711,7 @@ printkn(T &x)
 template <typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
 void
-printkn(T ptr, size_t len)
+printkn(T ptr, usize len)
 {
   byte *null_trm = new byte[len + 2];
   micron::memcpy(null_trm, ptr, len);
@@ -844,10 +844,10 @@ void
 bin(const T &data)
 {
   char print_buffer[4096];     // long enough
-  size_t cnt = 0;
-  size_t sz = data.size();
+  usize cnt = 0;
+  usize sz = data.size();
   do {
-    size_t _rd = (sz - 4096) < 0 ? sz : 4096;
+    usize _rd = (sz - 4096) < 0 ? sz : 4096;
     const char *ptr = format::bytes_to_hex(&data[cnt], _rd, &print_buffer[0]);
     sz = (sz - 4096) < 0 ? 0 : (sz - 4096);
     cnt += _rd;
@@ -859,11 +859,11 @@ void
 bin(const T &data)
 {
   char print_buffer[4096];     // long enough
-  size_t cnt = 0;
-  size_t sz = data.size();
+  usize cnt = 0;
+  usize sz = data.size();
   do {
     // NOTE: this is _rd to prevent shadowing in posix/file
-    size_t _rd = (sz - 4096) < 0 ? sz : 4096;
+    usize _rd = (sz - 4096) < 0 ? sz : 4096;
     const char *ptr = format::bytes_to_hex(const_cast<byte *>(reinterpret_cast<const byte *>(&data[cnt])), _rd, &print_buffer[0]);
     sz = (sz - 4096) < 0 ? 0 : (sz - 4096);
     cnt += _rd;

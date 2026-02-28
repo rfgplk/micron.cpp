@@ -37,7 +37,7 @@ namespace micron
 // WARNING: this thread automatically allocates it's stack on the parent process stack, the normal stack limit on linux
 // is 8MB, while auto_thread_stack_size is 262kB, meaning spawning ~32 threads WILL segfault
 // the advantage is that this is MUCH faster (no mmap)
-template <size_t Stack_Size = auto_thread_stack_size> class auto_thread
+template <usize Stack_Size = auto_thread_stack_size> class auto_thread
 {
   using thread_type = thread_tag;
 
@@ -330,7 +330,7 @@ public:
     return val;
   }
 
-  constexpr size_t
+  constexpr usize
   stack_size() const
   {
     return Stack_Size;

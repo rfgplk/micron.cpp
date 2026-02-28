@@ -24,19 +24,19 @@ namespace micron
 {
 
 // c++ version of python's bisect array, which maintains sorted order
-template <is_regular_object T, size_t N>
+template <is_regular_object T, usize N>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
 class bisect_array
 {
   alignas(64) T stack[N];
-  size_t length = 0;
+  usize length = 0;
 
-  size_t
+  usize
   __bisect_left(const T &val) const noexcept
   {
-    size_t low = 0, high = length;
+    usize low = 0, high = length;
     while ( low < high ) {
-      size_t mid = low + (high - low) / 2;
+      usize mid = low + (high - low) / 2;
       if ( stack[mid] < val )
         low = mid + 1;
       else
@@ -45,12 +45,12 @@ class bisect_array
     return low;
   }
 
-  size_t
+  usize
   __bisect_right(const T &val) const noexcept
   {
-    size_t low = 0, high = length;
+    usize low = 0, high = length;
     while ( low < high ) {
-      size_t mid = low + (high - low) / 2;
+      usize mid = low + (high - low) / 2;
       if ( val < stack[mid] )
         high = mid;
       else
@@ -63,7 +63,7 @@ public:
   using category_type = array_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -100,7 +100,7 @@ public:
 
   bisect_array(bisect_array &&o) { __impl_container::move<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
 
-  size_t
+  usize
   size() const noexcept
   {
     return length;
@@ -191,7 +191,7 @@ public:
   }
 
   const T &
-  operator[](size_t idx) const
+  operator[](usize idx) const
   {
     if ( idx >= length )
       exc<except::library_error>("micron::bisect_array::erase(): out of range");
@@ -203,19 +203,19 @@ public:
   {
     if ( full() )
       exc<except::library_error>("micron::bisect_array::erase(): max capacity reached");
-    size_t idx = __bisect_right(val);
-    for ( size_t i = length; i > idx; --i )
+    usize idx = __bisect_right(val);
+    for ( usize i = length; i > idx; --i )
       stack[i] = stack[i - 1];
     stack[idx] = val;
     ++length;
   }
 
   void
-  erase(size_t idx)
+  erase(usize idx)
   {
     if ( idx >= length )
       exc<except::library_error>("micron::bisect_array::erase(): out of range");
-    for ( size_t i = idx; i + 1 < length; ++i )
+    for ( usize i = idx; i + 1 < length; ++i )
       stack[i] = stack[i + 1];
     --length;
   }

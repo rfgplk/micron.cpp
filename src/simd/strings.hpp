@@ -8,7 +8,7 @@ namespace micron
 namespace simd
 {
 
-inline size_t
+inline usize
 sse_strlen(const char *str)
 {
   const char *p = str;

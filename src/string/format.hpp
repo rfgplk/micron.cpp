@@ -841,7 +841,7 @@ concat(const char *lhs, const char *rhs)
   return str;
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 sstring<N, T> &
 concat(sstring<N, T> &lhs, const char *rhs)
 {
@@ -855,7 +855,7 @@ concat(sstring<N, T> &lhs, const char *rhs)
   return lhs;
 }
 
-template <size_t N, typename T>
+template <usize N, typename T>
 sstring<N, T> &
 concat(const char *lhs, sstring<N, T> &rhs)
 {
@@ -880,7 +880,7 @@ concat(const T &...strs)
 
 template <is_string T>
 T
-split(const T &data, size_t at = 0)
+split(const T &data, usize at = 0)
 {
   if ( at > data.size() )
     exc<except::library_error>("micron::split() out of bounds.");
@@ -905,7 +905,7 @@ micron::fvector<int>
 build_bad_char(const T &pattern)
 {
   micron::fvector<int> bad(256, -1);
-  for ( size_t i = 0; i < pattern.size(); ++i )
+  for ( usize i = 0; i < pattern.size(); ++i )
     bad[static_cast<unsigned char>(pattern[i])] = i;
   return bad;
 }
@@ -914,7 +914,7 @@ template <is_string T>
 micron::fvector<int>
 build_good_suffix(const T &pattern)
 {
-  size_t m = pattern.size();
+  usize m = pattern.size();
   micron::fvector<int> shift(m + 1, m);
   micron::fvector<int> border(m + 1, 0);
   int i = m, j = m + 1;
@@ -941,14 +941,14 @@ micron::fvector<int>
 boyer_moore_search(const T &text, const T &pattern)
 {
   micron::fvector<int> result;
-  size_t n = text.size(), m = pattern.size();
+  usize n = text.size(), m = pattern.size();
   if ( m == 0 )
     return result;
 
   auto bad = build_bad_char(pattern);
   auto good = build_good_suffix(pattern);
 
-  size_t s = 0;
+  usize s = 0;
   while ( s <= n - m ) {
     int j = m - 1;
     while ( j >= 0 && pattern[j] == text[s + j] )
@@ -964,21 +964,21 @@ boyer_moore_search(const T &text, const T &pattern)
   return result;
 }
 
-template <size_t Pt, size_t N>
-micron::carray<size_t, N>
-bm_find(const char (&text)[N], const char (&pattern)[Pt], size_t &found_count)
+template <usize Pt, usize N>
+micron::carray<usize, N>
+bm_find(const char (&text)[N], const char (&pattern)[Pt], usize &found_count)
 {
   micron::carray<int, 256> bad{};
-  micron::carray<size_t, Pt + 1> good{};
-  micron::carray<size_t, N> result{};
+  micron::carray<usize, Pt + 1> good{};
+  micron::carray<usize, N> result{};
   found_count = 0;
 
   bad.fill(-1);
-  for ( size_t i = 0; i < Pt - 1; ++i )
+  for ( usize i = 0; i < Pt - 1; ++i )
     bad[static_cast<unsigned char>(pattern[i])] = i;
 
   micron::carray<int, Pt + 1> border{};
-  size_t m = Pt - 1;
+  usize m = Pt - 1;
   int i = m, j = m + 1;
   border[i] = j;
   while ( i > 0 ) {
@@ -996,7 +996,7 @@ bm_find(const char (&text)[N], const char (&pattern)[Pt], size_t &found_count)
       j = border[j];
   }
 
-  size_t s = 0;
+  usize s = 0;
   while ( s <= N - Pt ) {
     int k = Pt - 1;
     while ( k >= 0 && pattern[k] == text[s + k] )
@@ -1018,23 +1018,23 @@ template <is_string T>
 auto
 fast_find(const T &data, const char *fnd) -> typename T::const_iterator
 {
-  size_t n = data.size();
-  size_t m = micron::strlen(fnd);
+  usize n = data.size();
+  usize m = micron::strlen(fnd);
 
   if ( m == 0 || m > n )
     return data.end();
 
-  size_t shift[256];
-  for ( size_t i = 0; i < 256; ++i )
+  usize shift[256];
+  for ( usize i = 0; i < 256; ++i )
     shift[i] = m;
-  for ( size_t i = 0; i < m - 1; ++i )
+  for ( usize i = 0; i < m - 1; ++i )
     shift[(unsigned char)fnd[i]] = m - 1 - i;
 
   auto it = data.begin();
   auto end_it = data.begin() + (n - m + 1);
 
   while ( it != end_it ) {
-    size_t j = m;
+    usize j = m;
     while ( j > 0 && (*(it + j - 1) == fnd[j - 1]) )
       --j;
     if ( j == 0 )
@@ -1066,7 +1066,7 @@ template <is_string T>
 auto
 contains(const T &data, typename T::const_iterator from, const char *fnd) -> bool
 {
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return false;
   if ( data.empty() or sz == 0 )
@@ -1103,7 +1103,7 @@ template <is_string T>
 auto
 contains(const T &data, const char *fnd) -> bool
 {
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return false;
   if ( data.empty() or sz == 0 )
@@ -1133,7 +1133,7 @@ contains(const T &data, const T &fnd)
       {
         b = 1;
         i32 a = 1;
-        for ( size_t k = 0; k < (size_t)(itr - fnd.begin()); k++ ) {
+        for ( usize k = 0; k < (usize)(itr - fnd.begin()); k++ ) {
           if ( *(itr + k) != *(itr_data + k) ) {
             a = 0;
             break;
@@ -1169,7 +1169,7 @@ template <is_string T>
 auto
 find(T &data, const char *fnd) -> typename T::iterator
 {
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1190,7 +1190,7 @@ template <is_string T>
 auto
 find(const T &data, const char *fnd) -> typename T::const_iterator
 {
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1233,7 +1233,7 @@ find(const T &data, typename T::iterator from, const T &fnd) -> typename T::iter
     return nullptr;
   if ( !from )
     return nullptr;
-  size_t sz = fnd.size();
+  usize sz = fnd.size();
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1258,7 +1258,7 @@ find(const T &data, typename T::iterator from, const char *fnd) -> typename T::i
     return nullptr;
   if ( !from )
     return nullptr;
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1283,7 +1283,7 @@ find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> ty
     return nullptr;
   if ( !from )
     return nullptr;
-  size_t sz = fnd.size();
+  usize sz = fnd.size();
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1308,7 +1308,7 @@ find_reverse(const T &data, typename T::const_iterator from, const char *fnd) ->
     return nullptr;
   if ( !from )
     return nullptr;
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1333,7 +1333,7 @@ find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename
     return nullptr;
   if ( !from )
     return nullptr;
-  size_t sz = fnd.size();
+  usize sz = fnd.size();
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )
@@ -1358,7 +1358,7 @@ find_reverse(const T &data, typename T::iterator from, const char *fnd) -> typen
     return nullptr;
   if ( !from )
     return nullptr;
-  size_t sz = micron::strlen(fnd);
+  usize sz = micron::strlen(fnd);
   if ( sz > data.size() )
     return nullptr;
   if ( data.empty() or sz == 0 )

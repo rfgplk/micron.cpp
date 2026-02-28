@@ -31,19 +31,19 @@ constexpr static const u64 __max_cached = 32;
 class alloc_predictor
 {
   // Keep sum and div maintained incrementally instead of recomputing each time
-  micron::carray<size_t, __max_cached> allocs;
+  micron::carray<usize, __max_cached> allocs;
   u64 running_sum;
   u64 running_div;     // count of non-zero entries
   u32 index;
 
-  static constexpr size_t
-  align_to_page(const size_t n) noexcept
+  static constexpr usize
+  align_to_page(const usize n) noexcept
   {
-    return (n + __system_pagesize - 1) & ~(size_t(__system_pagesize) - 1);
+    return (n + __system_pagesize - 1) & ~(usize(__system_pagesize) - 1);
   }
 
   [[nodiscard]] inline u64
-  of_class(const size_t sz) const noexcept
+  of_class(const usize sz) const noexcept
   {
     return (sz < __class_small)    ? __class_precise
            : (sz < __class_medium) ? __class_small
@@ -64,11 +64,11 @@ public:
   alloc_predictor &operator=(alloc_predictor &&) = default;
 
   inline alloc_predictor &
-  operator+=(const size_t n) noexcept
+  operator+=(const usize n) noexcept
   {
     const u32 i = index;
 
-    const size_t old = allocs[i];
+    const usize old = allocs[i];
     running_sum -= old;
     running_div -= (old != 0);
 
@@ -81,13 +81,13 @@ public:
     return *this;
   }
 
-  [[nodiscard]] inline size_t
-  predict_size(const size_t n) const noexcept
+  [[nodiscard]] inline usize
+  predict_size(const usize n) const noexcept
   {
     if ( __builtin_expect(running_div == 0, 0) )
       return align_to_page(n);
 
-    const size_t mean_alloc = running_sum / running_div;
+    const usize mean_alloc = running_sum / running_div;
 
     if ( mean_alloc == 0 || n > mean_alloc * 3 || of_class(n) != of_class(mean_alloc) ) {
       return align_to_page(n);

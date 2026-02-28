@@ -143,14 +143,14 @@ template <typename Fn, typename... Args> struct __impl_thread {
   }
 
 private:
-  template <size_t... I>
+  template <usize... I>
   static void
   __invoke(__impl_thread *self, micron::index_sequence<I...>)
   {
     self->fn(*static_cast<Args *>(self->args[I])...);
   }
 
-  template <size_t... I>
+  template <usize... I>
   static void
   __cleanup([[maybe_unused]] __impl_thread *self, micron::index_sequence<I...>)
   {
@@ -196,7 +196,7 @@ prepare_thread(thread_create_state dstate = thread_create_state::joinable, int p
 }
 
 inline pthread_attr_t
-prepare_thread_with_stack(thread_create_state dstate, int policy, addr_t *ptr, size_t stack_size, int priority = 0)
+prepare_thread_with_stack(thread_create_state dstate, int policy, addr_t *ptr, usize stack_size, int priority = 0)
 {
   pthread_attr_t attr;
   pthread_attr_init(&attr);
@@ -223,7 +223,7 @@ set_affinity(pthread_attr_t &attr, const posix::cpu_set_t &cpu)
 template <typename T>
   requires(micron::is_fundamental_v<T>)
 inline void
-set_stack_thread(pthread_attr_t &attr, T *ptr, size_t size)
+set_stack_thread(pthread_attr_t &attr, T *ptr, usize size)
 {
   pthread_attr_setstacksize(&attr, size);
   pthread_attr_setstack(&attr, ptr, size);
@@ -236,7 +236,7 @@ get_attrs(pthread_t pid, pthread_attr_t &attr)
 }
 
 inline void
-get_stack_thread(const pthread_attr_t &attr, addr_t *&ptr, size_t &size)
+get_stack_thread(const pthread_attr_t &attr, addr_t *&ptr, usize &size)
 {
   pthread_attr_getstack(&attr, reinterpret_cast<void **>(&ptr), &size);
 }
@@ -260,7 +260,7 @@ get_sched_policy(const pthread_attr_t &attr, i32 &policy)
 }
 
 auto
-get_name(pthread_t pt, char *name, size_t sz)
+get_name(pthread_t pt, char *name, usize sz)
 {
   return pthread_getname_np(pt, name, sz);
 }

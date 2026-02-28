@@ -17,13 +17,13 @@
 namespace micron
 {
 
-template <typename T, size_t N, size_t L = (size_t)(N / (N / 4) * __builtin_log(2))> class bloom_filter
+template <typename T, usize N, usize L = (usize)(N / (N / 4) * __builtin_log(2))> class bloom_filter
 {
   bitfield<N> bits;
-  size_t length;
+  usize length;
 
   hash64_t
-  hash_round(const T &key, const size_t rnd)
+  hash_round(const T &key, const usize rnd)
   {
     return hash64(&key, sizeof(T), fib_32(rnd)) % length;
   }
@@ -33,7 +33,7 @@ public:
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   typedef T value_type;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T &reference;
   typedef T &ref;
   typedef const T &const_reference;
@@ -48,14 +48,14 @@ public:
   void
   insert(const T &key)
   {
-    for ( size_t i = 0; i < L; i++ )
+    for ( usize i = 0; i < L; i++ )
       bits.set(hash_round(key, i));
   }
 
   void
   emplace(T &&key)
   {
-    for ( size_t i = 0; i < L; i++ )
+    for ( usize i = 0; i < L; i++ )
       bits.set(hash_round(key, i));
   }
 
@@ -63,7 +63,7 @@ public:
   contains(const T &key)
   {
     bool f = true;
-    for ( size_t i = 0; i < L; i++ )
+    for ( usize i = 0; i < L; i++ )
       f = f && bits[hash_round(key, i)];
     return f;
   }

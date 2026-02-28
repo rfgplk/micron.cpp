@@ -11,7 +11,7 @@ constexpr int micro_stack_size = 256 * 1024;                // 256KB
 
 struct stack_t {
   addr_t *start;
-  size_t size;
+  usize size;
 };
 
 };     // namespace micron

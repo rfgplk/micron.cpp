@@ -20,12 +20,12 @@
 
 namespace micron
 {
-template <typename T, size_t N = micron::alloc_auto_sz>
+template <typename T, usize N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<T>
 class sstack
 {
   T stack[N]{};
-  size_t length = 0;
+  usize length = 0;
 
 public:
   using category_type = buffer_tag;
@@ -43,11 +43,11 @@ public:
 
   constexpr sstack() = default;
 
-  sstack(size_t n) : length(n)
+  sstack(usize n) : length(n)
   {
     if ( n > N )
       exc<except::library_error>("sstack size exceeds capacity");
-    for ( size_t i = 0; i < n; ++i )
+    for ( usize i = 0; i < n; ++i )
       push();
   }
 
@@ -55,22 +55,22 @@ public:
   {
     if ( lst.size() > N )
       exc<except::library_error>("initializer_list size exceeds capacity");
-    size_t i = 0;
+    usize i = 0;
     for ( const T &v : lst )
       push(v);
   }
 
   sstack(const sstack &o) : length(o.length)
   {
-    size_t n = micron::min(N, o.length);
-    for ( size_t i = 0; i < n; ++i )
+    usize n = micron::min(N, o.length);
+    for ( usize i = 0; i < n; ++i )
       push(o.stack[i]);
   }
 
   sstack(sstack &&o) noexcept : length(o.length)
   {
-    size_t n = micron::min(N, o.length);
-    for ( size_t i = 0; i < n; ++i )
+    usize n = micron::min(N, o.length);
+    for ( usize i = 0; i < n; ++i )
       push(micron::move(o.stack[i]));
     o.clear();
   }
@@ -79,8 +79,8 @@ public:
   operator=(const sstack &o)
   {
     clear();
-    size_t n = micron::min(N, o.length);
-    for ( size_t i = 0; i < n; ++i )
+    usize n = micron::min(N, o.length);
+    for ( usize i = 0; i < n; ++i )
       push(o.stack[i]);
     return *this;
   }
@@ -89,15 +89,15 @@ public:
   operator=(sstack &&o) noexcept
   {
     clear();
-    size_t n = micron::min(N, o.length);
-    for ( size_t i = 0; i < n; ++i )
+    usize n = micron::min(N, o.length);
+    for ( usize i = 0; i < n; ++i )
       push(micron::move(o.stack[i]));
     o.clear();
     return *this;
   }
 
   reference
-  operator[](size_t n)
+  operator[](usize n)
   {
     if ( n >= length )
       exc<except::library_error>("sstack index out of bounds");
@@ -105,7 +105,7 @@ public:
   }
 
   const_reference
-  operator[](size_t n) const
+  operator[](usize n) const
   {
     if ( n >= length )
       exc<except::library_error>("sstack index out of bounds");
@@ -183,7 +183,7 @@ public:
   clear()
   {
     if constexpr ( micron::is_class<T>::value ) {
-      for ( size_t i = 0; i < length; ++i )
+      for ( usize i = 0; i < length; ++i )
         stack[i].~T();
     }
     length = 0;
@@ -192,15 +192,15 @@ public:
   void
   swap(sstack &o) noexcept
   {
-    size_t min_len = micron::min(length, o.length);
-    for ( size_t i = 0; i < min_len; ++i )
+    usize min_len = micron::min(length, o.length);
+    for ( usize i = 0; i < min_len; ++i )
       micron::swap(stack[i], o.stack[i]);
     if ( length > o.length ) {
-      for ( size_t i = min_len; i < length; ++i )
+      for ( usize i = min_len; i < length; ++i )
         o.push(micron::move(stack[i]));
       length = o.length;
     } else if ( o.length > length ) {
-      for ( size_t i = min_len; i < o.length; ++i )
+      for ( usize i = min_len; i < o.length; ++i )
         push(micron::move(o.stack[i]));
       o.length = length;
     }
@@ -230,13 +230,13 @@ public:
     return (length >= N);
   }
 
-  size_t
+  usize
   size() const
   {
     return length;
   }
 
-  constexpr size_t
+  constexpr usize
   max_size() const
   {
     return N;
@@ -249,12 +249,12 @@ public:
   }
 };
 
-template <typename t, size_t N = micron::alloc_auto_sz>
+template <typename t, usize N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<t>
 class fsstack
 {
   alignas(t) t stack[N];
-  size_t length;
+  usize length;
 
 public:
   using category_type = buffer_tag;
@@ -284,11 +284,11 @@ public:
     if ( lst.size() > N )
       exc<except::library_error>("micron::fsstack() initializer_list out of bounds");
     if constexpr ( micron::is_class_v<t> ) {
-      size_t i = 0;
+      usize i = 0;
       for ( auto &&value : lst )
         new (&stack[i++]) t(value);
     } else {
-      size_t i = 0;
+      usize i = 0;
       for ( t value : lst )
         stack[i++] = value;
     }
@@ -300,7 +300,7 @@ public:
     length = o.length;
   }
 
-  template <typename C = t, size_t M> fsstack(const fsstack<C, M> &o)
+  template <typename C = t, usize M> fsstack(const fsstack<C, M> &o)
   {
     if constexpr ( N < M ) {
       __impl_container::copy(&stack[0], &o.stack[0], M);
@@ -317,7 +317,7 @@ public:
     o.length = 0;
   }
 
-  template <typename C = t, size_t M> fsstack(fsstack<C, M> &&o)
+  template <typename C = t, usize M> fsstack(fsstack<C, M> &&o)
   {
     if constexpr ( N >= M ) {
       micron::copy<N>(&o.stack[0], &stack[0]);
@@ -338,7 +338,7 @@ public:
     return *this;
   }
 
-  template <typename C = t, size_t M>
+  template <typename C = t, usize M>
   fsstack &
   operator=(const fsstack<C, M> &o)
   {
@@ -436,7 +436,7 @@ public:
     if ( !length )
       return;
     if constexpr ( micron::is_class<t>::value ) {
-      for ( size_t i = 0; i < length; i++ )
+      for ( usize i = 0; i < length; i++ )
         (stack)[i].~t();
     }
     micron::zero((byte *)micron::voidify(&(stack)[0]), N * (sizeof(t) / sizeof(byte)));
@@ -444,7 +444,7 @@ public:
   }
 
   // grow container
-  inline void reserve(const size_t) = delete;
+  inline void reserve(const usize) = delete;
   inline void swap(fsstack &o) = delete;
 
   inline bool
@@ -471,13 +471,13 @@ public:
     return (length >= N);
   }
 
-  inline size_t
+  inline usize
   size() const
   {
     return length;
   }
 
-  inline size_t
+  inline usize
   max_size() const
   {
     return N;

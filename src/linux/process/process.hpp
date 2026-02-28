@@ -106,7 +106,7 @@ micron::ptr_arr<char *>
 vector_to_argv(const micron::svector<micron::string> &vec)
 {
   auto argv = micron::unique_arr<char *>(vec.size() + 1);     // for nullptr
-  for ( size_t i = 0; i < vec.size(); ++i ) {
+  for ( usize i = 0; i < vec.size(); ++i ) {
     argv[i] = const_cast<char *>(vec[i].c_str());
   }
   argv[vec.size()] = nullptr;
@@ -240,7 +240,7 @@ run_processes(process_list_t &n)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
-    for ( size_t i = 0; i < t.argv.size(); i++ )
+    for ( usize i = 0; i < t.argv.size(); i++ )
       argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();

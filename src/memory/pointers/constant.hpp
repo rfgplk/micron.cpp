@@ -88,7 +88,7 @@ public:
 template <class Type> class const_pointer<Type[]> : private __internal_pointer_alloc<Type[]>
 {
   const Type *const internal_pointer;
-  const size_t array_size;
+  const usize array_size;
 
 public:
   using pointer_type = owning_pointer_tag;
@@ -102,11 +102,11 @@ public:
 
   const_pointer() : internal_pointer(nullptr), array_size(0) {}
 
-  explicit const_pointer(size_t size) : internal_pointer(__alloc::__impl_alloc(size)), array_size(size) {}
+  explicit const_pointer(usize size) : internal_pointer(__alloc::__impl_alloc(size)), array_size(size) {}
 
   template <is_nullptr V> const_pointer(V) = delete;
 
-  const_pointer(Type *&&raw_ptr, size_t size) : internal_pointer(raw_ptr), array_size(size) { raw_ptr = nullptr; }
+  const_pointer(Type *&&raw_ptr, usize size) : internal_pointer(raw_ptr), array_size(size) { raw_ptr = nullptr; }
 
   const_pointer(const_pointer &&p) = delete;
   const_pointer(const const_pointer &p) = delete;
@@ -138,7 +138,7 @@ public:
   }
 
   const Type &
-  operator[](size_t index) const
+  operator[](usize index) const
   {
     if ( internal_pointer != nullptr && index < array_size )
       return internal_pointer[index];
@@ -146,7 +146,7 @@ public:
       exc<except::memory_error>("const_pointer operator[]: index out of bounds or internal_pointer was null");
   }
 
-  size_t
+  usize
   size() const noexcept
   {
     return array_size;

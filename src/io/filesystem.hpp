@@ -26,33 +26,33 @@ namespace micron
 namespace fsys
 {
 
-constexpr static const size_t __max_fs = 0xFFFFFFFFFFFFFFFF;
+constexpr static const usize __max_fs = 0xFFFFFFFFFFFFFFFF;
 
 // main class for handling all system functions
 // not thread safe
 template <io::modes _default_mode = io::modes::read,
-          size_t N = 256>     // max size of open handles (entries & dirs), note that the max is usually 1024, but
+          usize N = 256>     // max size of open handles (entries & dirs), note that the max is usually 1024, but
                               // defaulting to 256
 class system
 {
   // this serves as an internal buffer to hold open entries. if it's full, go back to the start and start closing entries
   // circularly by default (unless stated otherwise), access the last entry
   micron::unique_pointer<fsys::file<>> entries[N];
-  size_t sz;
+  usize sz;
 
   auto
   __find_fd(const io::path_t &p) -> int
   {
-    for ( size_t i = 0; i < sz; i++ )
+    for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == p )
         return (*entries[i]).get_fd();
     return -1;
   }
 
   auto
-  __find_id(const io::path_t &p) -> size_t
+  __find_id(const io::path_t &p) -> usize
   {
-    for ( size_t i = 0; i < sz; i++ )
+    for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == p )
         return i;
     return __max_fs;
@@ -61,13 +61,13 @@ class system
   auto &
   __find(const io::path_t &p)
   {
-    for ( size_t i = 0; i < sz; i++ )
+    for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == p )
         return *entries[i];
     exc<except::filesystem_error>("micron fsys wasn't able to find file");
   }
 
-  inline __attribute__((always_inline)) size_t
+  inline __attribute__((always_inline)) usize
   __locate(const io::path_t &p)
   {
     auto _id = __find_id(p);
@@ -113,7 +113,7 @@ class system
 public:
   ~system()
   {
-    for ( size_t i = 0; i < N; i++ ) {
+    for ( usize i = 0; i < N; i++ ) {
       if ( i < sz )
         (*entries[i]).sync();     // we'll automatically mandate syncing to underlying storage on dest call
       entries[i].clear();
@@ -155,7 +155,7 @@ public:
   operator[](const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
   {
     __limit();
-    for ( size_t i = 0; i < sz; i++ )
+    for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == p )
         return *entries[i];
     // as with maps, if file doesn't exist open it
@@ -174,7 +174,7 @@ public:
   inline void
   remove(const io::path_t &p)
   {
-    size_t i = 0;
+    usize i = 0;
     for ( ; i < sz; i++ ) {
       if ( entries[i]->name() == p ) {
         entries[i]->sync();
@@ -189,7 +189,7 @@ public:
   inline void
   remove(fsys::file<> &fref)
   {
-    size_t i = 0;
+    usize i = 0;
     for ( ; i < sz; i++ ) {
       if ( *entries[i] == fref ) {
         entries[i]->sync();
@@ -207,7 +207,7 @@ public:
   list(void) const
   {
     micron::vector<micron::sstr<posix::name_max>> names;
-    for ( size_t i = 0; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       names.push_back(entries[i]->name());
     }
     return names;
@@ -319,7 +319,7 @@ public:
   bool
   is_opened(const io::path_t &path) const
   {
-    for ( size_t i = 0; i < sz; i++ )
+    for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == path )
         return true;
     return false;
@@ -347,14 +347,14 @@ public:
   auto
   permissions(const io::path_t &path) const
   {
-    size_t id = __locate(path);
+    usize id = __locate(path);
     return entries[id]->permissions();
   }
 
   auto
   set_permissions(const io::path_t &path, const io::linux_permissions &perms)
   {
-    size_t id = __locate(path);
+    usize id = __locate(path);
     return entries[id]->set_permissions(perms);
   }
 
@@ -362,7 +362,7 @@ public:
   auto
   set_permissions(const io::path_t &path, Args... args)
   {
-    size_t id = __locate(path);
+    usize id = __locate(path);
 
     struct linux_permissions perms
         = { { false, false, false }, { false, false, false }, { false, false, false } };     // explicitly init to zero

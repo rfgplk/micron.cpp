@@ -15,22 +15,22 @@ namespace micron
 
 class recursive_lock
 {
-  static constexpr size_t __ownerless = 0;
+  static constexpr usize __ownerless = 0;
 
-  atomic_token<size_t> owner;
-  atomic_token<size_t> depth;
+  atomic_token<usize> owner;
+  atomic_token<usize> depth;
 
-  static size_t
+  static usize
   current_thread() noexcept
   {
-    return static_cast<size_t>(pthread::self());
+    return static_cast<usize>(pthread::self());
   }
 
   void
   reset()
   {
 
-    size_t d = depth.get(memory_order::relaxed);
+    usize d = depth.get(memory_order::relaxed);
     if ( d > 1 ) {
       depth.store(d - 1, memory_order::relaxed);
     } else {
@@ -49,11 +49,11 @@ public:
   auto
   operator()()
   {
-    const size_t me = current_thread();
+    const usize me = current_thread();
 
     for ( ;; ) {
 
-      size_t cur = owner.get(memory_order::acquire);
+      usize cur = owner.get(memory_order::acquire);
       if ( cur == me ) {
         depth.fetch_add(1, memory_order::relaxed);
         return &recursive_lock::reset;
@@ -79,9 +79,9 @@ public:
   bool
   try_lock() noexcept
   {
-    const size_t me = current_thread();
+    const usize me = current_thread();
 
-    size_t cur = owner.get(memory_order::acquire);
+    usize cur = owner.get(memory_order::acquire);
     if ( cur == me ) {
       depth.fetch_add(1, memory_order::relaxed);
       return true;
@@ -117,7 +117,7 @@ public:
     return owner.get(memory_order::relaxed) != __ownerless;
   }
 
-  size_t
+  usize
   lock_depth() const noexcept
   {
     return depth.get(memory_order::relaxed);

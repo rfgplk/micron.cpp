@@ -16,21 +16,21 @@ namespace sort
 
 template <is_iterable_container C, typename Compare>
 constexpr void
-__sift_down(C &c, size_t start, size_t n, Compare comp) noexcept
+__sift_down(C &c, usize start, usize n, Compare comp) noexcept
 {
   auto *first = c.begin();
-  size_t root = start;
+  usize root = start;
 
   for ( ;; ) {
-    size_t left = (root << 1) + 1;
+    usize left = (root << 1) + 1;
     if ( left >= n )
       break;
 
-    size_t swap_i = root;
+    usize swap_i = root;
     if ( comp(first[swap_i], first[left]) )
       swap_i = left;
 
-    size_t right = left + 1;
+    usize right = left + 1;
     if ( right < n && comp(first[swap_i], first[right]) )
       swap_i = right;
 
@@ -49,11 +49,11 @@ template <is_iterable_container C, typename Compare>
 constexpr void
 __make_heap(C &c, Compare comp) noexcept
 {
-  size_t n = c.size();
+  usize n = c.size();
   if ( n < 2 )
     return;
 
-  for ( size_t i = n / 2; i-- > 0; )
+  for ( usize i = n / 2; i-- > 0; )
     __sift_down(c, i, n, comp);
 }
 
@@ -75,7 +75,7 @@ template <is_iterable_container C, typename Compare>
 constexpr void
 __sort_heap(C &c, Compare comp) noexcept
 {
-  size_t n = c.size();
+  usize n = c.size();
   if ( n < 2 )
     return;
 

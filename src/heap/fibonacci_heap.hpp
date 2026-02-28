@@ -19,7 +19,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
     node *child;
     node *left;
     node *right;
-    size_t degree;
+    usize degree;
     bool mark;
 
     node(const T &v) : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
@@ -28,7 +28,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
   };
 
   node *min_root;
-  size_t total_nodes;
+  usize total_nodes;
 
   void
   link(node *y, node *x) noexcept
@@ -55,14 +55,14 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
   {
     if ( !min_root )
       return;
-    size_t max_degree = 64;
+    usize max_degree = 64;
     node *A[max_degree] = { nullptr };
 
     node *start = min_root;
     node *w = min_root;
     do {
       node *x = w;
-      size_t d = x->degree;
+      usize d = x->degree;
       while ( A[d] ) {
         node *y = A[d];
         if ( x->value < y->value )
@@ -76,7 +76,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
     } while ( w != start );
 
     min_root = nullptr;
-    for ( size_t i = 0; i < max_degree; i++ ) {
+    for ( usize i = 0; i < max_degree; i++ ) {
       if ( A[i] ) {
         if ( !min_root ) {
           min_root = A[i];
@@ -129,7 +129,7 @@ public:
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   using value_type = T;
-  using size_type = size_t;
+  using size_type = usize;
   using reference = T &;
   using const_reference = const T &;
 
@@ -189,7 +189,7 @@ public:
     return total_nodes == 0;
   }
 
-  size_t
+  usize
   size() const noexcept
   {
     return total_nodes;

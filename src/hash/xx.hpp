@@ -102,7 +102,7 @@ xxmergeround(u64 (&v)[4])
 }
 
 inline u64
-xxhash_final(u64 xxhash, const byte *ptr, size_t len)
+xxhash_final(u64 xxhash, const byte *ptr, usize len)
 {
   len &= 31;
   while ( len >= 8 ) {
@@ -136,9 +136,9 @@ xxhash_final(u64 xxhash, const byte *ptr, size_t len)
 /*
 template <u32 seed>
 inline u32
-xxhash32(const byte *src, size_t len)
+xxhash32(const byte *src, usize len)
 {
-  if ((((size_t)src) & 7) != 0 ) [[unlikely]]
+  if ((((usize)src) & 7) != 0 ) [[unlikely]]
     exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   //xstate state = init_seed<seed>();
   u64 xxhash = 0;
@@ -169,9 +169,9 @@ xxhash32(const byte *src, size_t len)
 */
 template <u64 seed>
 inline u64
-xxhash64(const byte *src, size_t len)
+xxhash64(const byte *src, usize len)
 {
-  if ( (((size_t)src) & 7) != 0 ) [[unlikely]]
+  if ( (((usize)src) & 7) != 0 ) [[unlikely]]
     exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   // xstate state = init_seed<seed>();
   u64 xxhash = 0;
@@ -201,9 +201,9 @@ xxhash64(const byte *src, size_t len)
 }
 
 inline u64
-xxhash64_rtseed(const byte *src, u64 seed, size_t len)
+xxhash64_rtseed(const byte *src, u64 seed, usize len)
 {
-  if ( (((size_t)src) & 7) != 0 ) [[unlikely]]
+  if ( (((usize)src) & 7) != 0 ) [[unlikely]]
     exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   // xstate state = init_seed<seed>();
   u64 xxhash = 0;

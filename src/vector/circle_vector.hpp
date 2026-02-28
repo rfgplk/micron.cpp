@@ -14,33 +14,33 @@ namespace micron
 
 // renamed from circle_buffer/circular, aliases kept that point to this file
 // no longer heap allocated
-template <is_regular_object T, size_t N>
+template <is_regular_object T, usize N>
   requires((N & (N - 1)) == 0)
 class circle_vector
 {
   micron::carray<T, N> __buffer;
-  size_t __head = 0;
-  size_t __tail = 0;
-  size_t __size = 0;
-  static constexpr size_t __mask = N - 1;
+  usize __head = 0;
+  usize __tail = 0;
+  usize __size = 0;
+  static constexpr usize __mask = N - 1;
 
   inline void
-  __deep_copy(T *dest, const T *src, size_t cnt)
+  __deep_copy(T *dest, const T *src, usize cnt)
   {
-    for ( size_t i = 0; i < cnt; ++i ) {
+    for ( usize i = 0; i < cnt; ++i ) {
       dest[i] = src[i];
     }
   }
 
   inline void
-  __shallow_copy(T *dest, const T *src, size_t cnt)
+  __shallow_copy(T *dest, const T *src, usize cnt)
   {
     micron::bytecpy<byte>(dest, src, cnt * sizeof(T));
   }
 
   template <typename U>
   inline void
-  __impl_copy(U *dest, const U *src, size_t cnt)
+  __impl_copy(U *dest, const U *src, usize cnt)
   {
     if constexpr ( micron::is_class_v<U> or !micron::is_trivially_copyable_v<U> ) {
       __deep_copy(dest, src, cnt);
@@ -60,7 +60,7 @@ public:
   typedef const T &const_ref;
   typedef T *pointer;
   typedef const T *const_pointer;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef ptrdiff_t difference_type;
 
   template <bool Cnst> class circular_iterator;
@@ -76,9 +76,9 @@ public:
     using value_ptr = typename micron::conditional<Cnst, const T *, T *>::type;
 
     buffer_ptr __buf;
-    size_t __index;
+    usize __index;
 
-    circular_iterator(buffer_ptr buf, size_t index) noexcept : __buf(buf), __index(index) {}
+    circular_iterator(buffer_ptr buf, usize index) noexcept : __buf(buf), __index(index) {}
 
   public:
     using value_type = T;

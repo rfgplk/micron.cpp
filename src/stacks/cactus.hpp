@@ -15,7 +15,7 @@
 namespace micron
 {
 
-template <is_regular_object T, size_t N = 64>
+template <is_regular_object T, usize N = 64>
   requires(N > 0 and N < (1 << 16))
 class cactus_stack
 {
@@ -165,13 +165,13 @@ class cactus_stack
 
   i32 __used;
   i32 __head;
-  size_t __depth;
+  usize __depth;
 
 public:
   using category_type = buffer_tag;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -573,56 +573,56 @@ public:
   }
 };
 
-template <is_regular_object T, size_t N = 64>
+template <is_regular_object T, usize N = 64>
   requires(N > 0 and N < (1 << 16))
 class fixed_stack
 {
 
   alignas(64) byte stack[sizeof(T) * N];
 
-  size_t _depth;
+  usize _depth;
 
   T *
-  __at(size_t i) noexcept
+  __at(usize i) noexcept
   {
     return reinterpret_cast<T *>(stack) + i;
   }
 
   const T *
-  __at(size_t i) const noexcept
+  __at(usize i) const noexcept
   {
     return reinterpret_cast<const T *>(stack) + i;
   }
 
   void
-  __destruct(size_t i) noexcept
+  __destruct(usize i) noexcept
   {
     if constexpr ( micron::is_class_v<T> )
       __at(i)->~T();
   }
 
   void
-  __bulk_copy(const fixed_stack &src, size_t cnt) noexcept
+  __bulk_copy(const fixed_stack &src, usize cnt) noexcept
   {
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
       if ( cnt )
         micron::memcpy(stack, src.stack, cnt * sizeof(T));
     } else {
-      for ( size_t i = 0; i < cnt; ++i )
+      for ( usize i = 0; i < cnt; ++i )
         new (__at(i)) T(*src.__at(i));
     }
     _depth = cnt;
   }
 
   void
-  __bulk_move(fixed_stack &src, size_t cnt) noexcept
+  __bulk_move(fixed_stack &src, usize cnt) noexcept
   {
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
       if ( cnt )
         micron::memcpy(stack, src.stack, cnt * sizeof(T));
 
     } else {
-      for ( size_t i = 0; i < cnt; ++i ) {
+      for ( usize i = 0; i < cnt; ++i ) {
         new (__at(i)) T(micron::move(*src.__at(i)));
         src.__destruct(i);
       }
@@ -647,9 +647,9 @@ class fixed_stack
 
   template <typename... Args>
   static fixed_stack
-  __append_args(fixed_stack &&acc, size_t base, Args &&...args) noexcept
+  __append_args(fixed_stack &&acc, usize base, Args &&...args) noexcept
   {
-    size_t i = base;
+    usize i = base;
 
     ((new (acc.__at(i)) T(micron::forward<Args>(args)), ++i), ...);
     acc._depth = i;
@@ -660,7 +660,7 @@ public:
   using category_type = buffer_tag;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T value_type;
   typedef const T &const_reference;
   typedef const T &const_ref;
@@ -670,7 +670,7 @@ public:
   ~fixed_stack()
   {
 
-    for ( size_t i = 0; i < _depth; ++i )
+    for ( usize i = 0; i < _depth; ++i )
       __destruct(i);
   }
 
@@ -685,7 +685,7 @@ public:
   {
     if ( this == &o )
       return *this;
-    for ( size_t i = 0; i < _depth; ++i )
+    for ( usize i = 0; i < _depth; ++i )
       __destruct(i);
     _depth = 0;
     __bulk_copy(o, o._depth);
@@ -697,7 +697,7 @@ public:
   {
     if ( this == &o )
       return *this;
-    for ( size_t i = 0; i < _depth; ++i )
+    for ( usize i = 0; i < _depth; ++i )
       __destruct(i);
     _depth = 0;
     __bulk_move(o, o._depth);
@@ -738,7 +738,7 @@ public:
   fixed_stack
   push_range(Args &&...args) const
   {
-    constexpr size_t K = sizeof...(Args);
+    constexpr usize K = sizeof...(Args);
     if ( _depth + K > N ) [[unlikely]]
       __builtin_trap();
 
@@ -750,7 +750,7 @@ public:
   fixed_stack
   pop() const noexcept
   {
-    size_t cnt = _depth > 0 ? _depth - 1 : 0;
+    usize cnt = _depth > 0 ? _depth - 1 : 0;
     fixed_stack next;
     next.__bulk_copy(*this, cnt);
     return next;
@@ -779,14 +779,14 @@ public:
   {
     static_assert((micron::is_same_v<micron::remove_cv_t<micron::remove_reference_t<Args>>, T> && ...),
                   "fixed_stack::pop_range: all output types must match value_type");
-    constexpr size_t K = sizeof...(Args);
+    constexpr usize K = sizeof...(Args);
 
     {
-      size_t idx = _depth;
+      usize idx = _depth;
       ((args = *__at(--idx)), ...);
     }
 
-    size_t remain = _depth >= K ? _depth - K : 0;
+    usize remain = _depth >= K ? _depth - K : 0;
     fixed_stack next;
     next.__bulk_copy(*this, remain);
     return next;
@@ -891,7 +891,7 @@ public:
     const T &
     operator*() const noexcept
     {
-      return *owner->__at((size_t)cur);
+      return *owner->__at((usize)cur);
     }
 
     __at_range_itr &
@@ -970,12 +970,12 @@ public:
     operator*() const noexcept
     {
       fixed_stack snap;
-      size_t cnt = (size_t)(cur + 1);
+      usize cnt = (usize)(cur + 1);
       if constexpr ( micron::is_trivially_copyable_v<T> ) {
         if ( cnt )
           micron::memcpy(snap.stack, owner->stack, cnt * sizeof(T));
       } else {
-        for ( size_t i = 0; i < cnt; ++i )
+        for ( usize i = 0; i < cnt; ++i )
           new (snap.__at(i)) T(*owner->__at(i));
       }
       snap._depth = cnt;
@@ -1011,7 +1011,7 @@ public:
   {
     if ( _depth != o._depth )
       return false;
-    for ( size_t i = 0; i < _depth; ++i )
+    for ( usize i = 0; i < _depth; ++i )
       if ( !(*__at(i) == *o.__at(i)) )
         return false;
     return true;
@@ -1026,8 +1026,8 @@ public:
   bool
   operator<(const fixed_stack &o) const noexcept
   {
-    size_t n = (_depth < o._depth) ? _depth : o._depth;
-    for ( size_t i = 0; i < n; ++i ) {
+    usize n = (_depth < o._depth) ? _depth : o._depth;
+    for ( usize i = 0; i < n; ++i ) {
       if ( *__at(i) < *o.__at(i) )
         return true;
       if ( *o.__at(i) < *__at(i) )

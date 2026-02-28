@@ -38,7 +38,7 @@ public:
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   typedef T value_type;
-  typedef size_t size_type;
+  typedef usize size_type;
   typedef T &reference;
   typedef T &ref;
   typedef const T &const_reference;
@@ -57,9 +57,9 @@ public:
 
   // __mem memory;
   constexpr istring() : __mem(Alloc::auto_size()) {};
-  constexpr istring(const size_t n) : __mem(n) {};
+  constexpr istring(const usize n) : __mem(n) {};
 
-  istring(size_t cnt, T ch) : __mem(cnt)
+  istring(usize cnt, T ch) : __mem(cnt)
   {
     micron::typeset<T>(&__mem::memory[0], ch, cnt);
     __mem::length = cnt;
@@ -67,12 +67,12 @@ public:
 
   constexpr istring(const char *&str) : __mem(micron::strlen(str))
   {
-    size_t end = micron::strlen(str);
+    usize end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
     __mem::length = end;                                   // - 1;
   };
 
-  template <size_t M, typename F> constexpr istring(const F (&str)[M]) : __mem(M)
+  template <usize M, typename F> constexpr istring(const F (&str)[M]) : __mem(M)
   {
     micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
     __mem::length = M - 1;                                            // - 1;
@@ -176,13 +176,13 @@ public:
     return (bool)__mem::length == 0;
   };
 
-  size_t
+  usize
   size() const
   {
     return __mem::length;
   }
 
-  size_t
+  usize
   max_size() const
   {
     return __mem::capacity;
@@ -253,8 +253,8 @@ public:
   }
 
   template <typename F>
-  size_t
-  find(F ch, size_t pos = 0) const
+  usize
+  find(F ch, usize pos = 0) const
   {
     for ( ; pos < __mem::length; pos++ ) {
       if ( (__mem::memory)[pos] == ch )
@@ -264,8 +264,8 @@ public:
   }
 
   template <typename F>
-  size_t
-  find(const istring<F> &str, size_t pos = 0)
+  usize
+  find(const istring<F> &str, usize pos = 0)
   {
     return npos;
   }
@@ -315,7 +315,7 @@ public:
   }
 
   inline istring
-  append(const buffer &f, size_t n)
+  append(const buffer &f, usize n)
   {
     istring t(__mem::length + n);
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
@@ -329,7 +329,7 @@ public:
 
   template <typename F>
   inline istring
-  append(const slice<F> &f, size_t n)
+  append(const slice<F> &f, usize n)
   {
     istring t(__mem::length + n);
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
@@ -343,7 +343,7 @@ public:
 
   template <typename F>
   inline istring
-  append(const F *f, size_t n)
+  append(const F *f, usize n)
   {
     istring t(__mem::length + n);
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
@@ -355,7 +355,7 @@ public:
     return t;
   }
 
-  template <typename F = T, size_t M>
+  template <typename F = T, usize M>
   inline istring
   append(const F (&str)[M])
   {
@@ -383,7 +383,7 @@ public:
     return t;
   }
 
-  template <size_t M, typename F = T>
+  template <usize M, typename F = T>
   inline istring
   append(const sstring<M, F> &o)
   {
@@ -391,7 +391,7 @@ public:
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    size_t end = micron::strlen(o.c_str());
+    usize end = micron::strlen(o.c_str());
     micron::memcpy(&(t.memory)[t.length], &(o.memory)[0],
                    end);     // truncate null
     t.length += end;
@@ -410,7 +410,7 @@ public:
     return t;
   }
 
-  template <typename F = T, size_t M>
+  template <typename F = T, usize M>
   inline istring
   push_back(const F (&str)[M])
   {
@@ -437,11 +437,11 @@ public:
     return t;
   }
 
-  template <size_t M, typename F = T>
+  template <usize M, typename F = T>
   inline istring
   push_back(const sstring<M, F> &o)
   {
-    size_t end = micron::strlen(o.c_str());
+    usize end = micron::strlen(o.c_str());
     istring t(__mem::length + end);
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
@@ -454,7 +454,7 @@ public:
 
   template <typename F = T>
   inline istring
-  insert(size_t ind, F ch, size_t cnt = 1)
+  insert(usize ind, F ch, usize cnt = 1)
   {
     istring t(__mem::length + cnt);
 
@@ -466,11 +466,11 @@ public:
     return t;
   }
 
-  template <typename F = T, size_t M>
+  template <typename F = T, usize M>
   inline istring
-  insert(size_t ind, const char (&str)[M], size_t cnt = 1)
+  insert(usize ind, const char (&str)[M], usize cnt = 1)
   {
-    size_t str_len = M - 1;
+    usize str_len = M - 1;
     if ( ind > __mem::length )
       exc<except::library_error>("micron:string at() out of range");
 
@@ -478,7 +478,7 @@ public:
 
     micron::memcpy(t.memory, __mem::memory, ind);
 
-    for ( size_t i = 0; i < cnt; ++i )
+    for ( usize i = 0; i < cnt; ++i )
       micron::memcpy(t.memory + ind + i * str_len, str, str_len);
 
     micron::memcpy(t.memory + ind + cnt * str_len, __mem::memory + ind, __mem::length - ind);
@@ -487,11 +487,11 @@ public:
     return t;
   }
 
-  template <typename F, size_t M>
+  template <typename F, usize M>
   inline istring
-  insert(size_t ind, const sstring<M, F> &o)
+  insert(usize ind, const sstring<M, F> &o)
   {
-    size_t end = micron::strlen(o.c_str());
+    usize end = micron::strlen(o.c_str());
     istring t(__mem::length + (end));
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
@@ -504,14 +504,14 @@ public:
   }
 
   inline const T &
-  at(const size_t n) const
+  at(const usize n) const
   {
     if ( n >= __mem::length )
       exc<except::library_error>("micron:string at() out of range");
     return (__mem::memory)[n];
   };
 
-  inline size_t
+  inline usize
   at(const_iterator n) const
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
@@ -519,7 +519,7 @@ public:
     return n - &__mem::memory[0];
   };
 
-  inline size_t
+  inline usize
   at(iterator n) const
   {
     if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
@@ -528,7 +528,7 @@ public:
   };
 
   inline const T &
-  operator[](const size_t n) const
+  operator[](const usize n) const
   {
     return (__mem::memory)[n];
   };
@@ -546,7 +546,7 @@ public:
     return t;
   };
 
-  template <size_t M>
+  template <usize M>
   inline istring
   operator+=(const char (&data)[M])
   {
@@ -555,7 +555,7 @@ public:
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
-    size_t ln = __mem::length == 0 ? 0 : __mem::length - 1;
+    usize ln = __mem::length == 0 ? 0 : __mem::length - 1;
     micron::memcpy(&(t.memory)[ln], &(data)[0], M);
     t.length += M - 1;
     return t;
@@ -565,7 +565,7 @@ public:
   inline istring
   operator+=(const F *&data)
   {
-    size_t end = micron::strlen(data);
+    usize end = micron::strlen(data);
     istring t(__mem::length + (end));
     micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
@@ -576,7 +576,7 @@ public:
     return t;
   };
 
-  template <typename F, size_t M>
+  template <typename F, usize M>
   inline istring
   operator+=(const sstring<M, F> &data)
   {
@@ -620,7 +620,7 @@ public:
 
   template <typename F = T>
   inline istring<F>
-  substr(size_t pos = 0, size_t cnt = 0) const
+  substr(usize pos = 0, usize cnt = 0) const
   {
     if ( pos > __mem::length or (cnt + pos) > __mem::capacity )
       exc<except::library_error>("error micron::string substr invalid range.");
@@ -631,16 +631,16 @@ public:
   };
 
   // grow container
-  inline void reserve(size_t n) = delete;
+  inline void reserve(usize n) = delete;
 
-  inline void try_reserve(size_t n) = delete;
+  inline void try_reserve(usize n) = delete;
 
   inline bool
   operator==(const char *data) const
   {
-    size_t M = strlen(data);
+    usize M = strlen(data);
     if ( M == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         if ( data[i] != __mem::memory[i] )
           return false;
     } else
@@ -648,12 +648,12 @@ public:
     return true;
   };
 
-  template <typename F = T, size_t M>
+  template <typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M]) const
   {
     if ( M == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         if ( data[i] != __mem::memory[i] )
           return false;
     } else
@@ -666,7 +666,7 @@ public:
   operator==(const istring<F> &data) const
   {
     if ( data.length == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         if ( data.memory[i] != __mem::memory[i] )
           return false;
     } else
@@ -677,9 +677,9 @@ public:
   inline bool
   operator==(const char *data)
   {
-    size_t M = strlen(data);
+    usize M = strlen(data);
     if ( M == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         if ( data[i] != __mem::memory[i] )
           return false;
     } else
@@ -687,12 +687,12 @@ public:
     return true;
   };
 
-  template <typename F = T, size_t M>
+  template <typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M])
   {
     if ( M == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         if ( data[i] != __mem::memory[i] )
           return false;
     } else
@@ -705,7 +705,7 @@ public:
   operator==(const istring<F> &data)
   {
     if ( data.length == __mem::length ) {
-      for ( size_t i = 0; i < __mem::length; i++ )
+      for ( usize i = 0; i < __mem::length; i++ )
         if ( data.memory[i] != __mem::memory[i] )
           return false;
     } else
