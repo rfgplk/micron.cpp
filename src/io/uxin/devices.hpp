@@ -127,7 +127,7 @@ nonblock_bind_device(device_t &dev)
 {
   if ( dev.i_path.empty() )
     return -1;
-  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), o_nonblock | o_rdonly));
+  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), posix::o_nonblock | posix::o_rdonly));
   if ( fd < 0 )
     return fd;
   dev.bound_fd = fd;
@@ -139,7 +139,7 @@ bind_device(device_t &dev)
 {
   if ( dev.i_path.empty() )
     return -1;
-  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), o_rdonly));
+  int fd = static_cast<int>(posix::open(dev.i_path.c_str(), posix::o_rdonly));
   if ( fd < 0 )
     return fd;
   dev.bound_fd = fd;

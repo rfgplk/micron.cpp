@@ -9,12 +9,14 @@
 #include "linux/std.hpp"
 #include "std.hpp"
 
-#include "config.hh"
+#include "../recipes/gnu/config.hh"
 
-#include "batch.hh"
+#include "../recipes/gnu/batch.hh"
 
+template <typename T = void>
 __attribute__((noreturn)) void
-build_and_run(const config_t &conf)
+build_and_run(const recipes::gnu::config_t &conf)
+  requires(recipes::__using_gnu)
 {
   mc::set_color(mc::color::blue);
   mc::consoled("Building ");
@@ -28,7 +30,7 @@ build_and_run(const config_t &conf)
   auto start = mc::now();
 
   {
-    auto command = batch(conf);
+    auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
     mc::execute<mc::exec_wait>(conf.compiler_path, command);

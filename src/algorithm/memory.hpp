@@ -436,7 +436,8 @@ cset_n(T *restrict dst, const byte val)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // fill_ns
-
+/*
+ * NOTE: use fills from algorithm.hpp
 template <typename T, typename N>
 T *
 fill_n(T *restrict dst, const T val, const N cnt)
@@ -469,7 +470,7 @@ cfill_n(T *restrict dst, const T val)
   ctypeset<N>(dst, val);
   return dst;
 }
-
+*/
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // zero_ns
 

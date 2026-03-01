@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../linux/sys/__threads.hpp"
-
 #include "stack_constants.hpp"
 
 namespace micron
@@ -11,16 +9,8 @@ namespace micron
 // TODO: implement this via _start
 
 auto
-get_stack(void) -> stack_t
-{
-  pthread_attr_t attr;
-  pthread::get_attrs(pthread::self(), attr);
-  addr_t *ptr = nullptr;
-  usize sz = 0;
-  pthread::get_stack_thread(attr, ptr, sz);
-  pthread_attr_destroy(&attr);
-  return { ptr, sz };
-};
+get_stack(void) -> stack_t;
+// in __threads.hpp
 
 auto
 get_stack_start(void) -> addr_t *

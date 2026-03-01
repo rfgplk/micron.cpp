@@ -128,7 +128,7 @@ public:
   {
     if ( micron::mkfifo(pipe_name.c_str(), perms) == -1 )
       exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe");
-    fd = posix::open(pipe_name.c_str(), o_rdwr);
+    fd = posix::open(pipe_name.c_str(), posix::o_rdwr);
     if ( fd == -1 )
       exc<except::io_error>("micron::npipe(open) failed to open pipe file");
   }

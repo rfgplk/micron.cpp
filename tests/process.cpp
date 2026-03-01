@@ -9,7 +9,7 @@
 #include "../src/control.hpp"
 #include "../src/linux/process/fork.hpp"
 #include "../src/std.hpp"
-#include "../src/thread/signal.hpp"
+#include "../src/linux/process/signals.hpp"
 
 #include "../src/io/console.hpp"
 #include "../src/io/filesystem.hpp"
@@ -68,7 +68,7 @@ main(void)
   mc::rexecute("/bin/htop");
   return 0;
   if ( false ) {
-    micron::signal s(micron::signals::abort);
+    micron::signal_t s(micron::signal::abort);
     s.mask();
     // s.on_signal(micron::signals::abort, test);
     s();

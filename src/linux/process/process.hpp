@@ -268,7 +268,7 @@ daemon(F f, Args &&...args)
   micron::close(stdout_fileno);
   micron::close(stderr_fileno);
 
-  micron::open("/dev/null", o_rdwr);
+  micron::open("/dev/null", posix::o_rdwr);
   micron::dup(0);
   micron::dup(0);
   f(args...);

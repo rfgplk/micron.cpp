@@ -9,13 +9,12 @@
 #include "linux/std.hpp"
 #include "std.hpp"
 
-#include "config.hh"
-
-#include "batch.hh"
+#include "../recipe.hh"
 
 template <bool Wait = mc::exec_wait>
+  requires(recipes::__using_gnu)
 int
-build(const config_t &conf)
+build(const recipes::gnu::config_t &conf)
 {
   mc::set_color(mc::color::blue);
   mc::consoled("Building ");
@@ -29,7 +28,7 @@ build(const config_t &conf)
   auto start = mc::now();
 
   {
-    auto command = batch(conf);
+    auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
     mc::execute<Wait>(conf.compiler_path, command);
@@ -43,10 +42,12 @@ build(const config_t &conf)
   return 0;
 }
 
+template <typename T = void>
 int
-build_debug(config_t &conf)
+build_debug(recipes::gnu::config_t &conf)
+  requires(recipes::__using_gnu)
 {
-  conf.mode = __opt_modes::debug;
+  conf.mode = recipes::gnu::__opt_modes::debug;
   conf.warnings = true;
   conf.opt_mode = gcc::opt_flags::flags::optimize_debug;
   mc::set_color(mc::color::blue);
@@ -61,7 +62,7 @@ build_debug(config_t &conf)
   auto start = mc::now();
 
   {
-    auto command = batch(conf);
+    auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
     mc::execute<mc::exec_wait>(conf.compiler_path, command);

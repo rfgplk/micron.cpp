@@ -29,7 +29,7 @@ int
 __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, o_cloexec) < 0 )
+  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 )
     return errno;
   micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, pipefd[1] };
   pid = micron::fork();
@@ -70,7 +70,7 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
         const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, o_cloexec) < 0 )
+  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 )
     return errno;
 
   constexpr usize stack_size = 1 << 20;
@@ -89,7 +89,7 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
       micron::mmap(nullptr, sizeof(micron::posix::spawn_ctx), prot_read | prot_write, map_private | map_anonymous, -1, 0));
 
   *ctx = { path, argv, envp, file_actions, attrp, pipefd[1] };
-  pid_t child = static_cast<pid_t>(micron::posix::clone_kernel(sig_chld, reinterpret_cast<void *>(sp), nullptr, nullptr, 0));
+  pid_t child = static_cast<pid_t>(micron::posix::clone_kernel(posix::sig_chld, reinterpret_cast<void *>(sp), nullptr, nullptr, 0));
 
   if ( child == 0 ) {
     micron::close(pipefd[0]);

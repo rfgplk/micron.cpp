@@ -4,8 +4,8 @@
 #include "linux/process/exec.hpp"
 #include "linux/process/fork.hpp"
 #include "linux/process/process.hpp"
+#include "linux/process/signals.hpp"
 #include "std.hpp"
-#include "thread/signal.hpp"
 
 #include "chrono.hpp"
 
@@ -17,10 +17,14 @@
 
 #include "linux/std.hpp"
 
-#include "impl.hh"
-
 #include "flags.hh"
 
+#include "config.hh"
+
+namespace recipes
+{
+namespace gnu
+{
 template <typename... Ts>
 string_type
 make_command(Ts &&...ts)
@@ -155,7 +159,7 @@ batch_asm(const config_t &conf)
   return make_command(command_pre, conf.target, command_post, "-o", conf.target_out);
 };
 
-string_type
+inline __attribute__((always_inline)) string_type
 batch(const config_t &conf)
 {
   if ( conf.language == __languages::lasm or conf.compiler == __compilers::nasm )
@@ -164,3 +168,5 @@ batch(const config_t &conf)
     return batch_cmp(conf);
   __builtin_trap();
 }
+};     // namespace gnu
+};     // namespace recipes

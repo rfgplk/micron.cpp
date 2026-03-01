@@ -9,12 +9,14 @@
 #include "linux/std.hpp"
 #include "std.hpp"
 
-#include "config.hh"
+#include "../recipes/gnu/config.hh"
 
-#include "batch.hh"
+#include "../recipes/gnu/batch.hh"
 
+template <typename T = void>
 void
 cicd_test(const auto &cfs)
+  requires(recipes::__using_gnu)
 {
   struct test_t {
     string_type name;
@@ -31,7 +33,7 @@ cicd_test(const auto &cfs)
     mc::set_color(mc::color::reset);
 
     {
-      auto command = batch(conf);
+      auto command = recipes::gnu::batch(conf);
       if ( int r = mc::wexitstatus(mc::execute<mc::exec_wait>(conf.compiler_path, command)); r != 0 )
         mc::cerror("Failed to compile");
     };

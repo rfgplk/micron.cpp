@@ -2,8 +2,10 @@
 
 #include "io/console.hpp"
 
+template <typename T = void>
 void
 help(void)
+  requires(recipes::__using_gnu)
 {
   mc::console("duck is a command line build tool for c/cpp/asm projects");
   mc::console("");

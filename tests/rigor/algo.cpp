@@ -6,6 +6,7 @@
 #include "../../src/array/array.hpp"
 #include "../../src/std.hpp"
 #include "../../src/vector/vector.hpp"
+#include "../../src/io/console.hpp"
 
 #include "../snowball/snowball.hpp"
 

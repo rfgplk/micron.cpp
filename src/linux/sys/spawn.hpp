@@ -74,8 +74,8 @@ spawnattr_init(spawnattr_t &attr)
   attr.__flags = 0;
   attr.pgrp = 0;
 
-  micron::sigemptyset(attr.sd);
-  micron::sigemptyset(attr.ss);
+  sigemptyset(attr.sd);
+  sigemptyset(attr.ss);
 
   attr.__sp.sched_priority = 0;
   attr.policy = sched_other;

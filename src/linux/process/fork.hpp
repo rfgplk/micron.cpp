@@ -19,7 +19,7 @@ constexpr static const int __fork_flags_parent = posix::clone_parent;
 int
 __base_fork()
 {
-  int pid = micron::posix::__fork_clone(sig_chld);     // should be sig_chld
+  int pid = micron::posix::__fork_clone(posix::sig_chld);     // should be posix::sig_chld
   if ( pid == -1 )
     exc<except::system_error>("micron process failed to fork()");
   return pid;
