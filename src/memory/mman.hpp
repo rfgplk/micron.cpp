@@ -5,8 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// think about moving to /memory
-
 #include "../linux/sys/types.hpp"
 #include "../numerics.hpp"
 #include "../syscall.hpp"
@@ -66,6 +64,12 @@ int
 memfd_create(const char *name, unsigned int flags)
 {
   return (int)micron::syscall(SYS_memfd_create, name, flags);
+}
+
+int
+memfd_secret(const char *name, unsigned int flags)
+{
+  return (int)micron::syscall(SYS_memfd_secret, name, flags);
 }
 
 int mlockall();

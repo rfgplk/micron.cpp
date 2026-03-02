@@ -11,6 +11,7 @@
 #include "sys/fcntl.hpp"
 #include "sys/stat.hpp"
 
+#include "../types.hpp"
 #include "sys/types.hpp"
 
 namespace micron
@@ -60,27 +61,31 @@ constexpr char dt_sock = 12;
 constexpr char dt_why = 14;
 constexpr char dt_end = 127;
 
+constexpr i32 shutdown_reads = 0;
+constexpr i32 shutdown_writes = 2;
+constexpr i32 shutdown_rdwr = 2;
+
 inline posix::dev_t
-makedev(unsigned int major, unsigned int minor)
+makedev(u32 major, u32 minor)
 {
   return ((posix::dev_t)(major & 0xfff) << 8) | (posix::dev_t)(minor & 0xff) | ((posix::dev_t)(minor & 0xfff00) << 12);
 }
 
-inline unsigned int
+inline u32
 major(posix::dev_t dev)
 {
-  return (unsigned int)((dev >> 8) & 0xfff);
+  return (u32)((dev >> 8) & 0xfff);
 }
 
-inline unsigned int
+inline u32
 minor(posix::dev_t dev)
 {
-  return (unsigned int)((dev & 0xff) | ((dev >> 12) & 0xfff00));
+  return (u32)((dev & 0xff) | ((dev >> 12) & 0xfff00));
 }
 
 template <typename P>
 ssize_t
-read(int fd, P *buf, usize cnt)
+read(i32 fd, P *buf, usize cnt)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
@@ -90,7 +95,7 @@ read(int fd, P *buf, usize cnt)
 
 template <typename P>
 ssize_t
-write(int fd, P *buf, usize cnt)
+write(i32 fd, P *buf, usize cnt)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
@@ -98,73 +103,79 @@ write(int fd, P *buf, usize cnt)
   return micron::syscall(SYS_write, fd, micron::voidify(buf), cnt);
 }
 
-int
-pipe(int *fd)
+i32
+pipe(i32 *fd)
 {
-  return static_cast<int>(micron::syscall(SYS_pipe, fd));
+  return static_cast<i32>(micron::syscall(SYS_pipe, fd));
 }
 
-int
-pipe2(int *fd, int a)
+i32
+pipe2(i32 *fd, i32 a)
 {
-  return static_cast<int>(micron::syscall(SYS_pipe2, fd, a));
+  return static_cast<i32>(micron::syscall(SYS_pipe2, fd, a));
 }
 
-int
-dup(int old)
+i32
+dup(i32 old)
 {
-  return static_cast<int>(micron::syscall(SYS_dup, old));
+  return static_cast<i32>(micron::syscall(SYS_dup, old));
 }
 
-int
-dup2(int old, int newfd)
+i32
+dup2(i32 old, i32 newfd)
 {
-  return static_cast<int>(micron::syscall(SYS_dup2, old, newfd));
+  return static_cast<i32>(micron::syscall(SYS_dup2, old, newfd));
 }
 
-int
-dup3(int old, int newfd, int flags)
+i32
+dup3(i32 old, i32 newfd, i32 flags)
 {
-  return static_cast<int>(micron::syscall(SYS_dup2, old, newfd, flags));
-}
-
-auto
-close(int fd)
-{
-  return static_cast<int>(micron::syscall(SYS_close, fd));
+  return static_cast<i32>(micron::syscall(SYS_dup2, old, newfd, flags));
 }
 
 auto
-open(const char *name, int flags, unsigned int mode)
+close(i32 fd)
+{
+  return static_cast<i32>(micron::syscall(SYS_close, fd));
+}
+
+auto
+shutdown(i32 fd, i32 how)
+{
+  return static_cast<i32>(micron::syscall(SYS_shutdown, fd, how));
+}
+
+auto
+open(const char *name, i32 flags, u32 mode)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return static_cast<int>(micron::syscall(SYS_open, name, flags, mode));
+  return static_cast<i32>(micron::syscall(SYS_open, name, flags, mode));
 }
 
 auto
-open(const char *name, int flags)
+open(const char *name, i32 flags)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return static_cast<int>(micron::syscall(SYS_open, name, flags, 0));
+  return static_cast<i32>(micron::syscall(SYS_open, name, flags, 0));
 }
 
 auto
-openat(int dirfd, const char *pth, int flags, unsigned int mode [[maybe_unused]])
+openat(i32 dirfd, const char *pth, i32 flags, u32 mode [[maybe_unused]])
 {
-  return static_cast<int>(micron::syscall(SYS_openat, dirfd, pth, flags));
+  return static_cast<i32>(micron::syscall(SYS_openat, dirfd, pth, flags));
 }
 
 auto
-creat(const char *pth, unsigned int mode)
+creat(const char *pth, u32 mode)
 {
   //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
   //  returning
   //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return static_cast<int>(micron::syscall(SYS_creat, pth, mode));
+  return static_cast<i32>(micron::syscall(SYS_creat, pth, mode));
 }
 
 auto
@@ -180,19 +191,19 @@ sync(void)
 }
 
 auto
-fsync(int fd)
+fsync(i32 fd)
 {
   return micron::syscall(SYS_fsync, fd);
 }
 
 auto
-syncfs(int fd)
+syncfs(i32 fd)
 {
   return micron::syscall(SYS_syncfs, fd);
 }
 
 auto
-fdatasync(int fd)
+fdatasync(i32 fd)
 {
   return micron::syscall(SYS_fdatasync, fd);
 }
@@ -210,7 +221,7 @@ chdir(const char *path)
 }
 
 auto
-fchdir(int fd)
+fchdir(i32 fd)
 {
   return micron::syscall(SYS_fchdir, fd);
 }
@@ -222,13 +233,13 @@ rmdir(const char *name)
 }
 
 auto
-chmod(const char *name, unsigned int mode)
+chmod(const char *name, u32 mode)
 {
   return micron::syscall(SYS_chmod, name, mode);
 }
 
 auto
-fchmod(int fd, unsigned int mode)
+fchmod(i32 fd, u32 mode)
 {
   return micron::syscall(SYS_fchmod, fd, mode);
 }
@@ -240,7 +251,7 @@ chown(const char *name, uid_t owner, gid_t group)
 }
 
 auto
-fchown(int fd, uid_t owner, gid_t group)
+fchown(i32 fd, uid_t owner, gid_t group)
 {
   return micron::syscall(SYS_fchown, fd, owner, group);
 }
@@ -252,25 +263,25 @@ lchown(const char *name, uid_t owner, gid_t group)
 }
 
 auto
-fchownat(int dirfd, const char *name, uid_t owner, gid_t group, int flags)
+fchownat(i32 dirfd, const char *name, uid_t owner, gid_t group, i32 flags)
 {
   return micron::syscall(SYS_fchown, dirfd, name, owner, group, flags);
 }
 
 auto
-flock(int fd, int op)
+flock(i32 fd, i32 op)
 {
   return micron::syscall(SYS_flock, fd, op);
 }
 
 auto
-lseek(int fd, posix::off_t offset, int whence)
+lseek(i32 fd, posix::off_t offset, i32 whence)
 {
   return micron::syscall(SYS_lseek, fd, offset, whence);
 }
 
 auto
-fallocate(int fd, int mode, posix::off_t offset, posix::off_t len)
+fallocate(i32 fd, i32 mode, posix::off_t offset, posix::off_t len)
 {
   return micron::syscall(SYS_lseek, fd, mode, offset, len);
 }
@@ -282,57 +293,57 @@ rename(const char *__restrict oldpath, const char *__restrict newpath)
 }
 
 auto
-renameat(int oldfd, const char *__restrict oldpath, int newfd, const char *__restrict newpath)
+renameat(i32 oldfd, const char *__restrict oldpath, i32 newfd, const char *__restrict newpath)
 {
   return micron::syscall(SYS_rename, oldfd, oldpath, newfd, newpath);
 }
 
 auto
-renameat2(int oldfd, const char *__restrict oldpath, int newfd, const char *__restrict newpath, int flags)
+renameat2(i32 oldfd, const char *__restrict oldpath, i32 newfd, const char *__restrict newpath, i32 flags)
 {
   return micron::syscall(SYS_rename, oldfd, oldpath, newfd, newpath, flags);
 }
 
 auto
-access(const char *path, int mode)
+access(const char *path, i32 mode)
 {
   return micron::syscall(SYS_access, path, mode);
 }
 
 auto
-faccessat(int dirfd, const char *name, int mode, int flags)
+faccessat(i32 dirfd, const char *name, i32 mode, i32 flags)
 {
   return micron::syscall(SYS_faccessat2, dirfd, name, mode, flags);
 }
 
 auto
-getdents(int dirfd, __linux_kernel_dirent &dirp, unsigned int count)
+getdents(i32 dirfd, __linux_kernel_dirent &dirp, u32 count)
 {
   return micron::syscall(SYS_getdents, dirfd, &dirp, count);
 }
 
 auto
-getdents64(int dirfd, __linux_kernel_dirent64 &dirp, unsigned int count)
+getdents64(i32 dirfd, __linux_kernel_dirent64 &dirp, u32 count)
 {
   return micron::syscall(SYS_getdents64, dirfd, &dirp, count);
 }
 
 auto
-getdents64(int dirfd, void *dirp, unsigned int count)
+getdents64(i32 dirfd, void *dirp, u32 count)
 {
   return micron::syscall(SYS_getdents64, dirfd, dirp, count);
 }
 
-int
+i32
 mkfifo(const char *path, posix::mode_t mode)
 {
-  return static_cast<int>(micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0));
+  return static_cast<i32>(micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0));
 }
 
-int
+i32
 unlink(const char *path)
 {
-  return static_cast<int>(micron::syscall(SYS_unlink, path));
+  return static_cast<i32>(micron::syscall(SYS_unlink, path));
 }
 
 };     // namespace micron

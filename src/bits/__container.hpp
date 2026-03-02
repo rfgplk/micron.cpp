@@ -21,8 +21,8 @@ inline void
 shallow_copy(T *__restrict dest, const T *__restrict src, usize cnt) noexcept
 {
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src),
-                 cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
-                                                        // fine, just realign back to bytes
+                 cnt * (sizeof(T)));     // always is page aligned, 256 is
+                                         // fine, just realign back to bytes
 };
 
 template <typename T>
@@ -30,8 +30,8 @@ inline void
 shallow_copy(T *__restrict dest, T *__restrict src, usize cnt) noexcept
 {
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src),
-                 cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
-                                                        // fine, just realign back to bytes
+                 cnt * (sizeof(T)));     // always is page aligned, 256 is
+                                         // fine, just realign back to bytes
 };
 
 // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
@@ -88,7 +88,7 @@ template <usize N, typename T>
 inline void
 shallow_move(T *__restrict dest, T *__restrict src)
 {
-  micron::cmemcpy<N>(dest, src);
+  micron::cmemcpy<N, T, T>(dest, src);
   micron::cbyteset<N * sizeof(T)>(reinterpret_cast<byte *>(src), 0x0);
 };
 

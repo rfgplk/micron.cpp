@@ -9,10 +9,28 @@
 
 #include "../types.hpp"
 
+#include "../bits/__arch.hpp"
+
 // thought really hard on what to name this file
+
+#ifdef alloca
+#undef alloca
+#endif
 
 namespace micron
 {
+template <typename T, typename U> struct __is_same { static constexpr bool value = false; };
+
+template <typename T> struct __is_same<T, T> { static constexpr bool value = true; };
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// allocas
+
+#define alloca(x, T) reinterpret_cast<T *>(__builtin_alloca(x * sizeof(T)))
+#define balloca(x, T) reinterpret_cast<T *>(__builtin_alloca(x))
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// casts
 
 template <typename T>
 constexpr micron::remove_cv_t<T> &
@@ -20,6 +38,9 @@ mutable_cast(T &val) noexcept
 {
   return const_cast<micron::remove_cv_t<T> &>(val);
 }
+
+// %%%%%%%%%%%%%%%%%%%%%%%%
+// actions
 
 template <typename T>
 constexpr T &&
@@ -31,17 +52,21 @@ forward(micron::remove_reference_t<T> &t) noexcept
 template <typename T>
 constexpr T &&
 forward(micron::remove_reference_t<T> &&t) noexcept
+  requires(!micron::is_lvalue_reference_v<T>)
 {
-  static_assert(!micron::is_lvalue_reference_v<T>, "Cannot forward an rvalue as an lvalue.");
   return static_cast<T &&>(t);
 }
 
 template <typename T, typename U>
+  requires(!micron::is_lvalue_reference_v<T> || !micron::is_lvalue_reference_v<U>)
 constexpr T &&
-forward_like(micron::remove_reference_t<U> &&u) noexcept
+forward_like(U &&u) noexcept
 {
-  static_assert(!micron::is_lvalue_reference_v<U>, "Cannot forward an rvalue as an lvalue.");
-  return static_cast<T &&>(u);
+  if constexpr ( micron::is_lvalue_reference_v<U> ) {
+    return static_cast<T &>(u);     // preserve lvalue category
+  } else {
+    return static_cast<T &&>(u);     // preserve rvalue category
+  }
 }
 
 template <typename T>
@@ -50,6 +75,9 @@ move(T &&t) noexcept
 {
   return static_cast<micron::remove_reference_t<T> &&>(t);
 };
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// constructions
 
 template <typename T>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
@@ -118,6 +146,9 @@ destroy_at(T *ptr)
     ptr->~T();
   }
 }
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// cmps
 
 template <typename T, typename F>
 constexpr bool
@@ -230,4 +261,9 @@ unreachable(void)
   __builtin_unreachable();
 }
 
+[[noreturn]] inline void
+trap(void)
+{
+  __builtin_trap();
+}
 };     // namespace micron

@@ -135,6 +135,19 @@ concept is_iterable_container = requires(T t, I i) {
   { t.size() } -> micron::same_as<typename T::size_type>;
 };
 
+template <typename T, typename I = size_t>
+concept is_iterable = requires(T t, I i) {
+  { &t } -> micron::same_as<byte *>;
+  { &t[i] } -> micron::same_as<typename T::value_type *>;
+} || requires(T t) {
+  { t.begin() } -> micron::same_as<typename T::value_type *>;
+  { t.end() } -> micron::same_as<typename T::value_type *>;
+};
+template <typename T>
+concept addressable = requires(T t) {
+  { &t } -> micron::same_as<T *>;
+};
+
 template <typename Cmp, typename C>
 concept is_valid_comp = requires(Cmp c, typename C::value_type a, typename C::value_type b) {
   { c(a, b) } -> micron::convertible_to<bool>;

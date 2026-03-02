@@ -13,21 +13,29 @@
 #define __micron_arch_width_64 1
 #define __wordsize 64
 #define __syscall_wordsize 64
+inline constexpr unsigned __micron_arch = __micron_arch_amd64;
+inline constexpr unsigned __micron_width = __wordsize;
 #elif defined(__i386__) || defined(_M_IX86) || defined(__ILP32__)
-#define __micron_arch_x86 1
+#define __micron_arch_x86 2
 #define __micron_arch_width_32 1
 #define __wordsize 32
 #define __syscall_wordsize 32
+inline constexpr unsigned __micron_arch = __micron_arch_x86;
+inline constexpr unsigned __micron_width = __wordsize;
 #elif defined(__aarch64__) || defined(__AARCH64EL__) || defined(__AARCH64EB__)
-#define __micron_arch_arm64 1
+#define __micron_arch_arm64 3
 #define __micron_arch_width_64 1
 #define __syscall_wordsize 64
 #define __wordsize 64
+inline constexpr unsigned __micron_arch = __micron_arch_arm64;
+inline constexpr unsigned __micron_width = __wordsize;
 #elif defined(__arm__) || defined(__thumb__) || defined(__ARMEL__) || defined(__ARMEB__) || defined(__ARM_ARCH)
-#define __micron_arch_arm32 1
+#define __micron_arch_arm32 4
 #define __micron_arch_width_32 1
 #define __wordsize 32
 #define __syscall_wordsize 32
+inline constexpr unsigned __micron_arch = __micron_arch_arm32;
+inline constexpr unsigned __micron_width = __wordsize;
 #else
 #error "Unsupported architecture. Is your compiler working properly?"
 #endif

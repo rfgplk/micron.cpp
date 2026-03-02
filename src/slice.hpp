@@ -35,7 +35,8 @@ template <typename T> struct raw_slice {
 
   constexpr raw_slice() = default;
 
-  constexpr raw_slice(T *p, size_t l) : ptr(p), len(l) {}
+  //constexpr raw_slice(T *p, size_t l) : ptr(p), len(l) {}
+  constexpr raw_slice(const T *p, size_t l) : ptr(const_cast<T*>(p)), len(l) {}
 
   constexpr T *
   begin()

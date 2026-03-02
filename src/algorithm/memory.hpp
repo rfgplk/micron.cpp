@@ -156,18 +156,18 @@ copy(const T *restrict src, F *restrict dst)
   if ( src == nullptr or dst == nullptr )
     exc<except::library_error>("micron::copy invalid pointers.");
 #if __micron_x86_simd_width >= 256
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 32 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
     simd::memcpy256(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::memcpy128(dst, src, N);
   else
     cmemcpy<N>(dst, src);
 #elif __micron_x86_simd_width >= 128
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
     simd::memcpy128(dst, src, N);
   else
     cmemcpy<N>(dst, src);
@@ -185,18 +185,18 @@ F &
 copy(const T &restrict src, F &restrict dst)
 {
 #if __micron_x86_simd_width >= 256
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 32 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
     simd::rmemcpy256(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::rmemcpy128(dst, src, N);
   else
     crmemcpy<N>(dst, src);
 #elif __micron_x86_simd_width >= 128
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::rmemcpy128(dst, src, N);
   else
     crmemcpy<N>(dst, src);
@@ -249,18 +249,18 @@ ccopy(const T *restrict src, F *restrict dst)
     return dst;
   }
 #if __micron_x86_simd_width >= 256
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 32 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
     simd::memcpy256(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::memcpy128(dst, src, N);
   else
     cmemcpy<N>(dst, src);
 #elif __micron_x86_simd_width >= 128
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::memcpy128(dst, src, N);
   else
     cmemcpy<N>(dst, src);
@@ -286,7 +286,7 @@ scopy(const T &restrict src, T &restrict dst)
   smlr = smlr * sizeof(typename T::value_type);
 #if __micron_x86_simd_width >= 256
   if ( smlr <= 32 )
-    _memcpy_32(dst, src, smlr);
+    __memcpy_32(dst, src, smlr);
   else if ( smlr % 32 == 0 )
     simd::memcpy256(dst, src, smlr);
   else if ( smlr % 16 == 0 )
@@ -295,7 +295,7 @@ scopy(const T &restrict src, T &restrict dst)
     memcpy(dst, src, smlr);
 #elif __micron_x86_simd_width >= 128
   if ( smlr <= 32 )
-    _memcpy_32(dst, src, smlr);
+    __memcpy_32(dst, src, smlr);
   else if ( smlr % 16 == 0 )
     simd::memcpy128(dst, src, smlr);
   else
@@ -320,18 +320,18 @@ cmove(const T *restrict src, F *restrict dst)
     return dst;
   }
 #if __micron_x86_simd_width >= 256
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 32 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
     simd::memcpy256(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::memcpy128(dst, src, N);
   else
     cmemcpy<N>(dst, src);
 #elif __micron_x86_simd_width >= 128
-  if constexpr ( N <= 32 )
-    _memcpy_32(dst, src, N);
-  else if constexpr ( N % 16 == 0 )
+  if constexpr ( (N / sizeof(T)) <= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::memcpy128(dst, src, N);
   else
     cmemcpy<N>(dst, src);
@@ -611,9 +611,9 @@ swap_n(T *restrict a, T *restrict b, const N cnt)
   byte *pb = reinterpret_cast<byte *>(b);
   N remaining = cnt;
   while ( remaining >= 32 ) {
-    _memcpy_32(tmp, pa, 32);
-    _memcpy_32(pa, pb, 32);
-    _memcpy_32(pb, tmp, 32);
+    __memcpy_32(tmp, pa, 32);
+    __memcpy_32(pa, pb, 32);
+    __memcpy_32(pb, tmp, 32);
     pa += 32;
     pb += 32;
     remaining -= 32;

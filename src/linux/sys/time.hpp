@@ -55,6 +55,7 @@ constexpr int clock_tai = 11;
 
 constexpr int timer_abstime = 1;
 
+#if __wordsize == 64
 struct timeval_t {
   time64_t tv_sec;              /* Seconds.  */
   posix::suseconds64_t tv_usec; /* Microseconds.  */
@@ -64,6 +65,17 @@ struct timespec_t {
   time64_t tv_sec; /* Seconds.  */
   slong_t tv_nsec; /* Nanoseconds.  */
 };
+#elif __wordsize == 32
+struct timeval_t {
+  i32 tv_sec;  /* Seconds */
+  i32 tv_usec; /* Microseconds */
+};
+
+struct timespec_t {
+  i32 tv_sec;  /* Seconds */
+  i32 tv_nsec; /* Nanoseconds */
+};
+#endif
 
 auto
 nanosleep(const timespec_t &req, timespec_t &rem)

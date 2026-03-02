@@ -110,6 +110,15 @@ constexpr static const int mcl_future = 2;  /* lock all additions to address
                           space.  */
 constexpr static const int mcl_onfault = 4;
 
+constexpr static const int mfd_cloexec = 0x0001;       /* set FD_CLOEXEC on the new FD */
+constexpr static const int mfd_allow_sealing = 0x0002; /* allow sealing operations */
+constexpr static const int mfd_hugetlb = 0x0004;       /* create in hugetlbfs */
+constexpr static const int mfd_huge_2mb = (21 << map_huge_shift);
+constexpr static const int mfd_huge_1gb = (30 << map_huge_shift);
+
+/* helper for unknown/unused bits */
+constexpr static const int mfd_unused_mask = ~(mfd_cloexec | mfd_allow_sealing | mfd_hugetlb);
+
 enum class mem_prots : int { read = 0x1, write = 0x2, exec = 0x4, none = 0x0, growsdown = 0x01000000, growsup = 0x02000000, __end };
 
 enum class map_types : int {

@@ -17,9 +17,10 @@
 namespace micron
 {
 
+// NOTE: memcpy_32 (unlike other memcpies) works off of bytes and not elements
 template <typename T, typename F, typename S = u64>
 T *
-_memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
+__memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
 {
   if ( n == 0 )
     return d;
@@ -180,7 +181,7 @@ _rmemcpy_32(T &restrict _d, const F &restrict _s, const S n) noexcept
 {
   T *d = &_d;
   const F *s = &_s;
-  return _memcpy_32(d, s, n);
+  return __memcpy_32(d, s, n);
 }
 
 template <typename F, typename D>
