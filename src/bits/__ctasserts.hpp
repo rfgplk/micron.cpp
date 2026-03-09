@@ -7,8 +7,7 @@
 
 #include "__arch.hpp"
 
-
-#if !defined(__micron_lang_cpp23 )
+#if !defined(__micron_lang_cpp23)
 #error "Micron needs C++23 compiler support to compile properly"
 #endif
 
@@ -90,7 +89,7 @@ struct __ct_type_checker {
     static_assert(sizeof(ptr_t) == sizeof(void *), "ptr_t must match pointer size");
     static_assert(sizeof(addr_t) == sizeof(void *), "addr_t must match pointer size");
     static_assert(sizeof(usize) == sizeof(void *), "usize must match pointer size");
-    static_assert(sizeof(ssize_t) == sizeof(ptrdiff_t), "ssize_t must match ptrdiff_t");
+    static_assert(sizeof(max_t) == sizeof(ptrdiff_t), "max_t must match ptrdiff_t");
 
 #if __micron_arch_amd64 || __micron_arch_x86
     static_assert(sizeof(long) == (__micron_arch_amd64 ? 8 : 4), "long must match LP64/ILP32 model");
@@ -134,7 +133,7 @@ struct __ct_type_checker {
     static_assert(sizeof(__slongword_type) == sizeof(long), "__slongword_type must match long");
     static_assert(sizeof(__ulongword_type) == sizeof(unsigned long), "__ulongword_type must match unsigned long");
 
-    static_assert(sizeof(__sword_type) == sizeof(ssize_t), "__sword_type must match ssize_t");
+    static_assert(sizeof(__sword_type) == sizeof(max_t), "__sword_type must match max_t");
     static_assert(sizeof(__uword_type) == sizeof(usize), "__uword_type must match usize");
     static_assert(sizeof(__squad_type) == 8 || sizeof(__squad_type) == sizeof(long), "__squad_type must be 8 bytes or long");
     static_assert(sizeof(__uquad_type) == 8 || sizeof(__uquad_type) == sizeof(unsigned long),

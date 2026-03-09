@@ -9,20 +9,20 @@
 #include "../type_traits.hpp"
 
 #include "../algorithm/memory.hpp"
-#include "../allocator.hpp"
 #include "../concepts.hpp"
-#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
-#include "../memory_block.hpp"
 #include "../pointer.hpp"
-#include "../slice.hpp"
+// #include "../slice_forward.hpp"
+#include "../span.hpp"
+
+#include "../memory_block.hpp"
 
 #include "unitypes.hpp"
 
 namespace micron
 {
 // string on the stack, inplace (sstring means stackstring)
-template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring {
+template <usize N, is_scalar_literal T = schar, bool Sf = true> struct sstring {
   using category_type = string_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
@@ -38,6 +38,111 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   T memory[N];
   size_type length;
 
+private:
+  inline __attribute__((always_inline)) bool
+  __null_check(const void *ptr) const noexcept
+  {
+    return (ptr == nullptr);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __index_check(size_type n) const noexcept
+  {
+    return (n >= length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __size_check(size_type cnt) const noexcept
+  {
+    return (length + cnt >= N);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __range_pos_cnt(size_type pos, size_type cnt) const noexcept
+  {
+    return (pos > length or cnt > length or (pos + cnt) > length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __capacity_exceed(size_type n) const noexcept
+  {
+    return (n > N);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_check(const T *itr) const noexcept
+  {
+    return (itr < &memory[0] or itr > &memory[length]);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __erase_ind_check(size_type ind, size_type cnt) const noexcept
+  {
+    return (ind >= length or cnt > (length - ind));
+  }
+
+  inline __attribute__((always_inline)) bool
+  __erase_iter_check(const T *itr, size_type cnt) const noexcept
+  {
+    return (itr < &memory[0] or itr > &memory[length] or static_cast<max_t>(cnt) > (&memory[length] - itr));
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iter_substr_check(const T *start, const T *end_) const noexcept
+  {
+    return (start < &memory[0] or end_ > &memory[length] or start > end_);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __at_iter_check(const T *itr) const noexcept
+  {
+    auto diff = itr - &memory[0];
+    return (diff < 0 or static_cast<size_type>(diff) > length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __insert_ind_check(size_type ind, size_type cnt) const noexcept
+  {
+    return (ind > length or cnt > N - length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __insert_iter_check(const T *itr, size_type required) const noexcept
+  {
+    return (itr < &memory[0] or itr > &memory[length] or length + required >= N);
+  }
+
+  template <auto Fn, typename E, typename... Args>
+  inline __attribute__((always_inline)) void
+  __safety_check(const char *msg, Args &&...args) const
+  {
+    if constexpr ( Sf == true ) {
+      if ( (this->*Fn)(micron::forward<Args>(args)...) ) {
+        exc<E>(msg);
+      }
+    }
+  }
+
+  inline __attribute__((always_inline)) int
+  __lexcmp(const T *a, size_type alen, const T *b, size_type blen) const noexcept
+  {
+    size_type common = alen < blen ? alen : blen;
+    for ( size_type i = 0; i < common; ++i ) {
+      auto ca = static_cast<unsigned char>(a[i]);
+      auto cb = static_cast<unsigned char>(b[i]);
+      if ( ca < cb )
+        return -1;
+      if ( ca > cb )
+        return 1;
+    }
+    if ( alen < blen )
+      return -1;
+    if ( alen > blen )
+      return 1;
+    return 0;
+  }
+
+public:
   constexpr ~sstring()
   {
     if constexpr ( Sf ) {
@@ -79,11 +184,12 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   };
 
   // allow construction from - to iterator (be careful!)
+
   constexpr sstring(iterator __start, iterator __end)
   {
     if ( __start >= __end )
       exc<except::library_error>("micron::sstring sstring() wrong iterators");
-    if ( (__end - __start) + 1 > N )
+    if ( static_cast<usize>(__end - __start) + 1 > N )
       exc<except::library_error>("sstring(iter,iter): range too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], __start, __end - __start);
@@ -94,14 +200,14 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( __start >= __end )
       exc<except::library_error>("micron::sstring sstring() wrong iterators");
-    if ( (__end - __start) + 1 > N )
+    if ( static_cast<usize>(__end - __start) + 1 > N )
       exc<except::library_error>("sstring(iter,iter): range too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
   };
 
-  template <size_type M, typename F> constexpr sstring(const sstring<M, F> &o)
+  template <size_type M, typename F, bool X = Sf> constexpr sstring(const sstring<M, F, X> &o)
   {
     micron::constexpr_zero(&memory[0], N);
     if ( o.empty() ) {
@@ -141,7 +247,7 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     o.length = 0;
   };
 
-  template <size_type M, typename F> constexpr sstring(sstring<M, F> &&o)
+  template <size_type M, typename F, bool X = Sf> constexpr sstring(sstring<M, F, X> &&o)
   {
     if constexpr ( N < M ) {
       micron::memcpy(&memory[0], &o.memory[0], N);
@@ -205,9 +311,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     return *this;
   }
 
-  template <size_type M, typename F>
+  template <size_type M, typename F, bool X = Sf>
   sstring &
-  operator=(const sstring<M, F> &o)
+  operator=(const sstring<M, F, X> &o)
   {
     if ( o.empty() ) {
       length = 0;
@@ -220,9 +326,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     return *this;
   }
 
-  template <size_type M, typename F>
+  template <size_type M, typename F, bool X = Sf>
   sstring &
-  operator=(sstring<M, F> &&o)
+  operator=(sstring<M, F, X> &&o)
   {
     if ( o.empty() ) {
       length = 0;
@@ -317,7 +423,7 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   }
 
   constexpr size_type
-  size() const
+  size(void) const
   {
     return length;
   }
@@ -329,12 +435,11 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   }
 
   constexpr size_type
-  max_size() const
+  max_size(void) const
   {
     return N;
   }
 
-  // unsafe
   const auto &
   cdata() const
   {
@@ -347,28 +452,34 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     return &memory[0];
   }
 
-  inline const char *
+  auto
+  data() const -> const_pointer
+  {
+    return &memory[0];
+  }
+
+  inline constexpr const char *
   c_str()
   {
     return const_cast<const char *>(reinterpret_cast<char *>(&memory[0]));
   }
 
-  inline const char *
+  inline constexpr const char *
   c_str() const
   {
     return const_cast<const char *>(reinterpret_cast<const char *>(&memory[0]));
   }
 
-  inline slice<char>
+  inline span<char, N * (sizeof(T) / sizeof(char))>
   into_chars()
   {
-    return slice<char>(reinterpret_cast<char *>(&memory[0]), reinterpret_cast<char *>(&memory[length]));
+    return span<char, N * (sizeof(T) / sizeof(char))>(reinterpret_cast<char *>(&memory[0]), reinterpret_cast<char *>(&memory[length]));
   }
 
-  inline slice<byte>
+  inline span<byte, N * (sizeof(T) / sizeof(byte))>
   into_bytes()
   {
-    return slice<byte>(reinterpret_cast<byte *>(&memory[0]), reinterpret_cast<byte *>(&memory[length]));
+    return span<byte, N * (sizeof(T) / sizeof(byte))>(reinterpret_cast<byte *>(&memory[0]), reinterpret_cast<byte *>(&memory[length]));
   }
 
   inline auto
@@ -384,7 +495,6 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     return F(*this);     // copy
   }
 
-  // if used for buffering, adjust the length of the internals
   inline void
   _buf_set_length(const size_type s)
   {
@@ -423,16 +533,15 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     return npos;
   }
 
-  template <size_type M = N, typename F = T>
+  template <size_type M = N, typename F = T, bool X = Sf>
   size_type
-  find(const sstring<M, F> &str, size_type pos = 0) const
+  find(const sstring<M, F, X> &str, size_type pos = 0) const
   {
     for ( ;; pos++ ) {
     }
     return npos;
   }
 
-  // end points to one-past-last (ie null) while last points to the last OCCUPIED element
   inline constexpr const_iterator
   begin() const
   {
@@ -488,7 +597,6 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     length = 0;
   }
 
-  // doesn't zero memory, just resets the cur. pointer to 0
   inline constexpr void
   fast_clear()
   {
@@ -535,14 +643,13 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   erase(I __ind, size_type cnt = 1)
   {
     size_type ind = static_cast<size_type>(__ind);
+
     if ( cnt == 0 ) [[unlikely]]
       return *this;
-    if ( ind >= length || cnt > length - ind )
-      exc<except::library_error>("micron:sstring erase() out of range");
-    if ( cnt > N )
-      exc<except::library_error>("micron:sstring erase() out of range");
-    if ( !cnt )
-      return *this;
+
+    __safety_check<&sstring::__erase_ind_check, except::library_error>("micron::sstring erase() out of range", ind, cnt);
+    __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
+
     micron::bytemove(&memory[ind], &memory[ind + (1 + (cnt - 1))], length - (ind + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - (cnt)], 0x0, cnt);
     length -= cnt;
@@ -555,11 +662,11 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( cnt == 0 ) [[unlikely]]
       return *this;
-    if ( itr < begin() || itr > end() || static_cast<size_type>(cnt) > static_cast<size_type>(end() - itr) )
-      exc<except::library_error>("micron:sstring erase() out of range");
-    if ( cnt > N )
-      exc<except::library_error>("micron:sstring erase() out of range");
-    // micron::memmove(itr - cnt + 1, itr, length - (&memory[0] - itr - 1));
+
+    __safety_check<&sstring::__erase_iter_check, except::library_error>("micron::sstring erase() out of range", static_cast<const T *>(itr),
+                                                                        cnt);
+    __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
+
     micron::bytemove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - cnt], 0x0, cnt);
     length -= cnt;
@@ -570,11 +677,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   erase(const_iterator itr, size_type cnt = 1)
   {
-    // WARNING: be careful
-    if ( itr < begin() or itr > end() or static_cast<ssize_t>(cnt) > (end() - itr) )
-      exc<except::library_error>("micron:sstring erase() out of range");
-    if ( cnt > N )
-      exc<except::library_error>("micron:sstring erase() out of range");
+    __safety_check<&sstring::__erase_iter_check, except::library_error>("micron::sstring erase() out of range", itr, cnt);
+    __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
+
     micron::bytemove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - cnt], 0x0, cnt);
     length -= cnt;
@@ -600,14 +705,17 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   remove(const char *needle)
   {
-    if ( needle == nullptr )
-      exc<except::library_error>("micron:sstring remove() null needle");
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring remove() null needle",
+                                                                  static_cast<const void *>(needle));
+
     size_type needle_len = micron::strlen(needle);
     if ( needle_len == 0 )
       return *this;
+
     size_type pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
     if ( pos == npos )
       return *this;
+
     micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
     micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
     length -= needle_len;
@@ -618,27 +726,31 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   remove(const T (&needle)[M])
   {
-    constexpr size_type needle_len = M - 1;     // strip null
+    constexpr size_type needle_len = M - 1;
     if constexpr ( needle_len == 0 )
       return *this;
+
     size_type pos = find_substr(&needle[0], needle_len);
     if ( pos == npos )
       return *this;
+
     micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
     micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
     length -= needle_len;
     return *this;
   }
 
-  template <size_type M, typename F>
+  template <size_type M, typename F, bool X = Sf>
   inline sstring &
-  remove(const sstring<M, F> &needle)
+  remove(const sstring<M, F, X> &needle)
   {
     if ( needle.empty() )
       return *this;
+
     size_type pos = find_substr(needle.memory, needle.length);
     if ( pos == npos )
       return *this;
+
     micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
     micron::typeset<T>(&memory[length - needle.length], 0x0, needle.length);
     length -= needle.length;
@@ -648,11 +760,13 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   remove_all(const char *needle)
   {
-    if ( needle == nullptr )
-      exc<except::library_error>("micron:sstring remove_all() null needle");
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring remove_all() null needle",
+                                                                  static_cast<const void *>(needle));
+
     size_type needle_len = micron::strlen(needle);
     if ( needle_len == 0 )
       return *this;
+
     size_type pos = 0;
     while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
       micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
@@ -669,6 +783,7 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     constexpr size_type needle_len = M - 1;
     if constexpr ( needle_len == 0 )
       return *this;
+
     size_type pos = 0;
     while ( (pos = find_substr(&needle[0], needle_len, pos)) != npos ) {
       micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
@@ -678,12 +793,13 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     return *this;
   }
 
-  template <size_type M, typename F>
+  template <size_type M, typename F, bool X = Sf>
   inline sstring &
-  remove_all(const sstring<M, F> &needle)
+  remove_all(const sstring<M, F, X> &needle)
   {
     if ( needle.empty() )
       return *this;
+
     size_type pos = 0;
     while ( (pos = find_substr(needle.memory, needle.length, pos)) != npos ) {
       micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
@@ -701,8 +817,10 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( cnt == 0 ) [[unlikely]]
       return *this;
-    if ( ind >= length || cnt > N - length )
-      exc<except::library_error>("micron:sstring insert() out of range");
+
+    __safety_check<&sstring::__insert_ind_check, except::library_error>("micron::sstring insert() out of range",
+                                                                        static_cast<size_type>(ind), cnt);
+
     micron::bytemove(&memory[ind + cnt], &memory[ind], length - ind);
     micron::typeset<T>(&memory[ind], ch, cnt);
     length += cnt;
@@ -716,9 +834,11 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( cnt == 0 ) [[unlikely]]
       return *this;
-    size_type str_len = M - 1;     // strlen(str);
-    if ( ind > length || length + cnt * str_len >= N )
-      exc<except::library_error>("micron:sstring insert() out of range");
+
+    size_type str_len = M - 1;
+
+    __safety_check<&sstring::__insert_ind_check, except::library_error>("micron::sstring insert() out of range",
+                                                                        static_cast<size_type>(ind), cnt * str_len);
 
     micron::bytemove(&memory[ind + cnt * str_len], &memory[ind], length - ind);
     for ( size_type i = 0; i < cnt; ++i )
@@ -735,8 +855,10 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( cnt == 0 ) [[unlikely]]
       return *this;
-    if ( length >= N or length + cnt >= N )
-      exc<except::library_error>("micron:sstring insert() out of range");
+
+    __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
+                                                                         static_cast<const T *>(itr), cnt);
+
     micron::bytemove(itr + cnt, itr, length - (&memory[0] - itr - 1));
     micron::typeset<T>(itr, ch, cnt);
     length += cnt;
@@ -748,38 +870,39 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   insert(iterator itr, const F (&str)[M], size_type cnt = 1)
   {
     size_type str_len = M - 1;
-    if ( itr < memory || itr > memory + length || length + cnt * str_len > N )
-      exc<except::library_error>("micron:sstring insert() out of range");
+
+    __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
+                                                                         static_cast<const T *>(itr), cnt * str_len);
 
     micron::bytemove(itr + cnt * str_len, itr, (memory + length) - itr);
-
     for ( size_type i = 0; i < cnt; ++i )
       micron::memcpy(itr + i * str_len, str, str_len);
     length += (cnt * str_len);
     return *this;
   }
 
-  template <typename F, size_type M>
+  template <typename F, size_type M, bool X = Sf>
   inline sstring &
-  insert(iterator itr, const sstring<M, F> &o)
+  insert(iterator itr, const sstring<M, F, X> &o)
   {
-    if ( itr < memory || itr > memory + length || length + o.length >= N )
-      exc<except::library_error>("micron:sstring insert() out of range");
+    __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
+                                                                         static_cast<const T *>(itr), o.length);
+
     micron::bytemove(itr + (o.length), itr, length - (&memory[0] - itr - 1));
     micron::memcpy(itr, &o.memory[0], o.length);
     length += o.length;
     return *this;
   }
 
-  template <typename F, size_type M>
+  template <typename F, size_type M, bool X = Sf>
   inline sstring &
-  insert(iterator itr, sstring<M, F> &&o)
+  insert(iterator itr, sstring<M, F, X> &&o)
   {
-    if ( (length + o.length) >= N )
-      exc<except::library_error>("micron:sstring insert() out of range");
+    __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
+                                                                         static_cast<const T *>(itr), o.length);
+
     micron::bytemove(itr + (o.length), itr, length - (&memory[0] - itr - 1));
     micron::memcpy(itr, &o.memory[0], o.length);
-
     length += o.length;
     micron::constexpr_zero(o.memory, o.length);
     o.length = 0;
@@ -789,16 +912,14 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline T &
   at(const size_type n)
   {
-    if ( n >= length )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&sstring::__index_check, except::library_error>("micron::sstring at() out of range", n);
     return memory[n];
   };
 
   inline T &
   at(const size_type n) const
   {
-    if ( n >= length )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&sstring::__index_check, except::library_error>("micron::sstring at() out of range", n);
     return memory[n];
   };
 
@@ -807,8 +928,8 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline size_type
   at(Itr n)
   {
-    if ( n - &memory[0] > length or n - &memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&sstring::__at_iter_check, except::library_error>("micron::sstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &memory[0];
   };
 
@@ -817,8 +938,8 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline size_type
   at(Itr n) const
   {
-    if ( n - &memory[0] > length or n - &memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&sstring::__at_iter_check, except::library_error>("micron::sstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &memory[0];
   };
 
@@ -827,9 +948,8 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline size_type
   at(Itr n)
   {
-    // WARNING: be careful
-    if ( n - &memory[0] > static_cast<ssize_t>(length) or n - &memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&sstring::__at_iter_check, except::library_error>("micron::sstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &memory[0];
   };
 
@@ -838,8 +958,8 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline size_type
   at(Itr n) const
   {
-    if ( n - &memory[0] > length or n - &memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&sstring::__at_iter_check, except::library_error>("micron::sstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &memory[0];
   };
 
@@ -860,8 +980,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( data.empty() )
       return *this;
-    if ( length + data.length >= N )
-      exc<except::library_error>("micron::sstring += out of memory.");
+
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.length);
+
     micron::memcpy(&memory[length], &data.memory[0], data.length);
     length += data.length;
     return *this;
@@ -872,8 +993,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( o.empty() )
       return *this;
-    if ( (length + o.length) >= N )
-      exc<except::library_error>("micron::sstring append() out of memory.");
+
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring append() out of memory", o.length);
+
     micron::memcpy(&memory[length], &o.memory[0], o.length);
     length += o.length;
     return *this;
@@ -883,8 +1005,8 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   append_null(const F (&str)[M])
   {
-    if ( (length + M) >= N )
-      exc<except::library_error>("micron::sstring append() out of memory.");
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring append_null() out of memory", M);
+
     micron::memcpy(&memory[length], &str[0], M - 1);
     length += M - 1;
     return *this;
@@ -896,12 +1018,11 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
     memory[length] = 0x0;
   }
 
-  // was missing this
   inline sstring &
   operator+=(char ch)
   {
-    if ( length + 1 >= N )
-      exc<except::library_error>("micron::sstring += out of memory.");
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", static_cast<size_type>(1));
+
     memory[length++] = ch;
     return *this;
   };
@@ -909,8 +1030,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   operator+=(const buffer &data)
   {
-    if ( length + data.size() >= N )
-      exc<except::library_error>("micron::sstring += out of memory.");
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory",
+                                                                  static_cast<size_type>(data.size()));
+
     micron::memcpy(&memory[length], &data, data.size());
     length += data.size();
     return *this;
@@ -922,8 +1044,9 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   {
     if ( M == 1 and data[0] == 0x0 )
       return *this;
-    if ( length + M >= N )
-      exc<except::library_error>("micron::sstring += out of memory.");
+
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", static_cast<size_type>(M));
+
     micron::memcpy(&memory[length], &data[0], M);
     length += M - 1;
     return *this;
@@ -934,42 +1057,48 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   operator+=(const F *&data)
   {
     auto sz = strlen(data) + 1;
-    if ( length + sz >= N )
-      exc<except::library_error>("micron::sstring += out of memory.");
+
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", static_cast<size_type>(sz));
+
     micron::memcpy(&memory[length], &data[0], sz);
     length += sz - 1;
     return *this;
   };
 
-  template <typename I = size_type, size_type M = N, typename F = T>
-    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
+  template <size_type M = N, typename F = T, bool X = Sf>
   inline sstring<M, F>
-  substr(I pos = 0, I cnt = npos) const
+  substr(usize pos = 0, usize cnt = npos) const
   {
     if ( cnt == npos )
-      cnt = (pos < length) ? static_cast<I>(length - pos) : 0;     // safe never negative
-    if ( pos > length or cnt > length or (pos + cnt) > length )
-      exc<except::library_error>("error micron::sstring substr invalid range.");
+      cnt = (pos < length) ? (length - pos) : 0;
+
+    __safety_check<&sstring::__range_pos_cnt, except::library_error>("micron::sstring substr() invalid range", static_cast<size_type>(pos),
+                                                                     static_cast<size_type>(cnt));
+
     if ( cnt >= M )
-      exc<except::library_error>("error micron::sstring substr result too large for target.");
-    sstring<M, F> buf;
+      exc<except::library_error>("micron::sstring substr() result too large for target.");
+
+    sstring<M, F, X> buf;
     micron::memcpy(&buf.data()[0], &memory[pos], cnt);
     buf.set_size(cnt);
     return buf;
   };
 
-  template <size_type M = N, typename F = T>
+  template <size_type M = N, typename F = T, bool X = Sf>
   inline sstring<M, F>
   substr(const_iterator _start, const_iterator _end = nullptr) const
   {
     if ( _end == nullptr )
       _end = cend();
-    if ( _start < cbegin() or _end > cend() or _start > _end )
-      exc<except::library_error>("error micron::sstring substr invalid range.");
+
+    __safety_check<&sstring::__iter_substr_check, except::library_error>("micron::sstring substr() invalid range", _start, _end);
+
     size_type len = static_cast<size_type>(_end - _start);
+
     if ( len >= M )
-      exc<except::library_error>("error micron::sstring substr result too large for target.");
-    sstring<M, F> buf;
+      exc<except::library_error>("micron::sstring substr() result too large for target.");
+
+    sstring<M, F, X> buf;
     micron::memcpy(&buf.data()[0], _start, len);
     buf.set_size(len);
     return buf;
@@ -992,10 +1121,11 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   truncate(iterator itr)
   {
-    if ( itr < begin() or itr > end() )
-      exc<except::library_error>("micron::sstring truncate() iterator out of range");
+    __safety_check<&sstring::__iterator_check, except::library_error>("micron::sstring truncate() iterator out of range", itr);
+
     if ( itr >= end() )
       return *this;
+
     size_type n = static_cast<size_type>(itr - begin());
     micron::typeset<T>(&memory[n], 0x0, length - n);
     length = n;
@@ -1005,75 +1135,173 @@ template <usize N, is_scalar_literal T = schar, bool Sf = false> struct sstring 
   inline sstring &
   truncate(const_iterator itr)
   {
-    if ( itr < cbegin() or itr > cend() )
-      exc<except::library_error>("micron::sstring truncate() iterator out of range");
+    __safety_check<&sstring::__iterator_check, except::library_error>("micron::sstring truncate() iterator out of range", itr);
+
     if ( itr >= cend() )
       return *this;
+
     size_type n = static_cast<size_type>(itr - cbegin());
     micron::typeset<T>(&memory[n], 0x0, length - n);
     length = n;
     return *this;
   }
 
-  inline bool
-  operator==(const char *data) const
+  explicit inline
+  operator bool() const noexcept
   {
-    auto sz = strlen(data);
-    if ( sz > length )
-      return false;
-    for ( size_type i = 0; i < sz; i++ )
-      if ( data[i] != memory[i] )
-        return false;
-    return true;
-  };
-
-  inline bool
-  operator==(const sstring &data) const
-  {
-    if ( data.length == length ) {
-      for ( size_type i = 0; i < length; i++ )
-        if ( data.memory[i] != memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
-
-  bool
-  operator!=(const sstring &o) const
-  {
-    if ( o.length == length ) {
-      for ( size_type i = 0; i < length; i++ )
-        if ( o.memory[i] != memory[i] )
-          return true;
-    } else
-      return true;
-    return false;
+    return !empty();
   }
 
-  bool
-  operator!=(const char *str) const
+  explicit constexpr
+  operator const char *() const
   {
-    auto sz = strlen(str);
-    if ( sz != length )
-      return true;     // must be unequal
-    for ( size_type i = 0; i < sz; i++ ) {
-      if ( memory[i] != str[i] )
-        return true;
-    }
-    return false;
+    return c_str();
   }
 
-  template <typename F, size_type M>
-  bool
-  operator!=(const F (&str)[M]) const
+  template <is_string S>
+  inline bool
+  operator==(const S &str) const
   {
-    if ( M != N )
-      return true;
-    for ( size_type i = 0; i < length; i++ )
-      if ( memory[i] != str[i] )
-        return true;
-    return false;
+    return __lexcmp(memory, length, str.c_str(), str.size()) == 0;
+  }
+
+  template <is_string S>
+  inline bool
+  operator!=(const S &str) const
+  {
+    return __lexcmp(memory, length, str.c_str(), str.size()) != 0;
+  }
+
+  inline bool
+  operator==(const T *data) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring operator==() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(memory, length, data, micron::strlen(data)) == 0;
+  }
+
+  inline bool
+  operator!=(const T *data) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring operator!=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(memory, length, data, micron::strlen(data)) != 0;
+  }
+
+  inline bool
+  operator<(const T *data) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring operator<() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(memory, length, data, micron::strlen(data)) < 0;
+  }
+
+  inline bool
+  operator>(const T *data) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring operator>() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(memory, length, data, micron::strlen(data)) > 0;
+  }
+
+  inline bool
+  operator<=(const T *data) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring operator<=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(memory, length, data, micron::strlen(data)) <= 0;
+  }
+
+  inline bool
+  operator>=(const T *data) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring operator>=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(memory, length, data, micron::strlen(data)) >= 0;
+  }
+
+  template <typename F = T, size_type M>
+  inline bool
+  operator==(const F (&data)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) == 0;
+  }
+
+  template <typename F = T, size_type M>
+  inline bool
+  operator!=(const F (&data)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) != 0;
+  }
+
+  template <typename F = T, size_type M>
+  inline bool
+  operator<(const F (&data)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) < 0;
+  }
+
+  template <typename F = T, size_type M>
+  inline bool
+  operator>(const F (&data)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) > 0;
+  }
+
+  template <typename F = T, size_type M>
+  inline bool
+  operator<=(const F (&data)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) <= 0;
+  }
+
+  template <typename F = T, size_type M>
+  inline bool
+  operator>=(const F (&data)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) >= 0;
+  }
+
+  template <size_type M, typename F = T, bool X = Sf>
+  inline bool
+  operator==(const sstring<M, F, X> &data) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) == 0;
+  }
+
+  template <size_type M, typename F = T, bool X = Sf>
+  inline bool
+  operator!=(const sstring<M, F, X> &data) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) != 0;
+  }
+
+  template <size_type M, typename F = T, bool X = Sf>
+  inline bool
+  operator<(const sstring<M, F, X> &data) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) < 0;
+  }
+
+  template <size_type M, typename F = T, bool X = Sf>
+  inline bool
+  operator>(const sstring<M, F, X> &data) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) > 0;
+  }
+
+  template <size_type M, typename F = T, bool X = Sf>
+  inline bool
+  operator<=(const sstring<M, F, X> &data) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) <= 0;
+  }
+
+  template <size_type M, typename F = T, bool X = Sf>
+  inline bool
+  operator>=(const sstring<M, F, X> &data) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) >= 0;
   }
 };
 

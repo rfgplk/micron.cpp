@@ -10,13 +10,15 @@
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
+#include "../../concepts.hpp"
+
 namespace micron
 {
 
-template <class M = mutex> class lock_guard
+template <is_mutex M = mutex> class lock_guard
 {
   M *mtx;
-  void (micron::mutex::*rptr)();
+  void (M::*rptr)();
 
 public:
   lock_guard(M &m, adopt_lock_t a) : mtx(&m), rptr(m.retrieve()) {};

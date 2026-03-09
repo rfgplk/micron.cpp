@@ -16,20 +16,20 @@ namespace sort
 
 template <typename T, typename Cmp>
 static void
-__merge(T *arr, ssize_t left, ssize_t mid, ssize_t right, Cmp comp)
+__merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
 {
-  ssize_t n1 = mid - left + 1;
-  ssize_t n2 = right - mid;
+  max_t n1 = mid - left + 1;
+  max_t n2 = right - mid;
 
   T *L = new T[n1];
   T *R = new T[n2];
 
-  for ( ssize_t i = 0; i < n1; ++i )
+  for ( max_t i = 0; i < n1; ++i )
     L[i] = arr[left + i];
-  for ( ssize_t j = 0; j < n2; ++j )
+  for ( max_t j = 0; j < n2; ++j )
     R[j] = arr[mid + 1 + j];
 
-  ssize_t i = 0, j = 0, k = left;
+  max_t i = 0, j = 0, k = left;
 
   while ( i < n1 && j < n2 ) {
     if ( comp(R[j], L[i]) ) {
@@ -51,19 +51,19 @@ __merge(T *arr, ssize_t left, ssize_t mid, ssize_t right, Cmp comp)
 
 template <typename T>
 static void
-__merge(T *arr, ssize_t left, ssize_t mid, ssize_t right)
+__merge(T *arr, max_t left, max_t mid, max_t right)
 {
   __merge(arr, left, mid, right, [](const T &a, const T &b) { return a < b; });
 }
 
 template <typename T, typename Cmp>
 static void
-__merge_sort(T *arr, ssize_t left, ssize_t right, Cmp comp)
+__merge_sort(T *arr, max_t left, max_t right, Cmp comp)
 {
   if ( left >= right )
     return;
 
-  ssize_t mid = left + ((right - left) >> 1);
+  max_t mid = left + ((right - left) >> 1);
 
   __merge_sort(arr, left, mid, comp);
   __merge_sort(arr, mid + 1, right, comp);
@@ -72,7 +72,7 @@ __merge_sort(T *arr, ssize_t left, ssize_t right, Cmp comp)
 
 template <typename T>
 static void
-__merge_sort(T *arr, ssize_t left, ssize_t right)
+__merge_sort(T *arr, max_t left, max_t right)
 {
   __merge_sort(arr, left, right, [](const T &a, const T &b) { return a < b; });
 }
@@ -97,14 +97,14 @@ merge(C &arr, Cmp comp)
 
 template <typename T, typename Cmp>
 static void
-__merge_sort_bottom_up(T *arr, ssize_t n, Cmp comp)
+__merge_sort_bottom_up(T *arr, max_t n, Cmp comp)
 {
-  for ( ssize_t width = 1; width < n; width <<= 1 ) {
-    for ( ssize_t i = 0; i < n; i += (width << 1) ) {
+  for ( max_t width = 1; width < n; width <<= 1 ) {
+    for ( max_t i = 0; i < n; i += (width << 1) ) {
 
-      ssize_t left = i;
-      ssize_t mid = i + width - 1;
-      ssize_t right = i + (width << 1) - 1;
+      max_t left = i;
+      max_t mid = i + width - 1;
+      max_t right = i + (width << 1) - 1;
 
       if ( mid >= n )
         continue;
@@ -118,7 +118,7 @@ __merge_sort_bottom_up(T *arr, ssize_t n, Cmp comp)
 
 template <typename T>
 static void
-__merge_sort_bottom_up(T *arr, ssize_t n)
+__merge_sort_bottom_up(T *arr, max_t n)
 {
   __merge_sort_bottom_up(arr, n, [](const T &a, const T &b) { return a < b; });
 }

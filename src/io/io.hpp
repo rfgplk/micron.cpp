@@ -10,11 +10,19 @@
 #include "__std.hpp"
 #include "posix/iosys.hpp"
 
+#include "../errno.hpp"
+
 #include "stream.hpp"
 
 #include "../simd/bitwise.hpp"
 
 #include "../concepts.hpp"
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// general io:: high level functions
+// unlike the code from posix/io and posix/
+// these fns include safety checks
+// 0.6 each functions now has a raw i32 fd fd_t and T& overload
 
 // NOTE: on naming conventions:
 // all functions starting with f are buffered
@@ -27,73 +35,250 @@ namespace io
 {
 // no seeking alignment, just read
 template <typename T>
-ssize_t
-read(int fd, T *buf, usize cnt)
+max_t
+read(i32 fd, T *buf, usize cnt)
 {
-  if ( fd <= 0 )
-    return -1;
+  if ( buf == nullptr ) [[unlikely]]
+    return -error::invalid_arg;
+  if ( fd < 0 )
+    return -error::bad_fd;
   return posix::read(fd, buf, cnt);
-  // ugly i know, but valid
+}
+
+template <typename T>
+max_t
+read(fd_t fd, T *buf, usize cnt)
+{
+  if ( buf == nullptr ) [[unlikely]]
+    return -error::invalid_arg;
+  if ( fd.invalid() ) [[unlikely]]
+    return -error::bad_fd;
+  return posix::read(fd.fd, buf, cnt);
+}
+
+template <typename T>
+max_t
+read(i32 fd, T &buf, usize cnt)
+{
+  if ( fd < 0 )
+    return -error::bad_fd;
+  return posix::read(fd, buf, cnt);
+}
+
+template <typename T>
+max_t
+read(fd_t fd, T &buf, usize cnt)
+{
+  if ( fd.invalid() ) [[unlikely]]
+    return -error::bad_fd;
+  return posix::read(fd.fd, buf, cnt);
 }
 
 template <typename T, usize N>
-ssize_t
-read(int fd, const T (&buf)[N])
+max_t
+read(i32 fd, const T (&buf)[N])
 {
-  if ( fd <= 0 )
-    return -1;
+  if ( fd < 0 )
+    return -error::bad_fd;
   return posix::read(fd, &buf, N);
+}
+
+template <typename T, usize N>
+max_t
+read(fd_t fd, const T (&buf)[N])
+{
+  if ( fd.invalid() )
+    return -error::bad_fd;
+  return posix::read(fd.fd, &buf, N);
 }
 
 template <is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
-ssize_t
-read(int fd, T &buf, const usize cnt)
+max_t
+read(i32 fd, T &buf, const usize cnt)
 {
+  if ( fd < 0 )
+    return -error::bad_fd;
+  // check alloc'd cap
+  if ( buf.max_size() < cnt ) [[unlikely]]
+    return -error::invalid_arg;
   return posix::read(fd, buf.data(), cnt);
 }
 
-template <typename T = byte>
-ssize_t
-write(int fd, T *buf, usize cnt)
+template <is_iterable_container T>
+  requires(micron::is_fundamental_v<typename T::value_type>)
+max_t
+read(fd_t fd, T &buf, const usize cnt)
 {
-  if ( fd <= 0 )
-    return -1;
+  if ( fd.invalid() ) [[unlikely]]
+    return -error::bad_fd;
+  // check alloc'd cap
+  if ( buf.max_size() < cnt ) [[unlikely]]
+    return -error::invalid_arg;
+  return posix::read(fd.fd, buf.data(), cnt);
+}
+
+template <is_iterable_container T>
+  requires(micron::is_fundamental_v<typename T::value_type>)
+max_t
+read(i32 fd, T &buf)
+{
+  if ( fd < 0 )
+    return -error::bad_fd;
+  return posix::read(fd, buf.data(), buf.max_size());
+}
+
+template <is_iterable_container T>
+  requires(micron::is_fundamental_v<typename T::value_type>)
+max_t
+read(fd_t fd, T &buf)
+{
+  if ( fd.invalid() ) [[unlikely]]
+    return -error::bad_fd;
+  return posix::read(fd.fd, buf.data(), buf.max_size());
+}
+
+template <typename T = byte>
+max_t
+write(i32 fd, const T *buf, usize cnt)
+{
+  if ( buf == nullptr ) [[unlikely]]
+    return -error::bad_fd;
+  if ( fd < 0 )
+    return -error::bad_fd;
+  return posix::write(fd, buf, cnt);
+}
+
+template <typename T = byte>
+max_t
+write(fd_t fd, const T *buf, usize cnt)
+{
+  if ( buf == nullptr ) [[unlikely]]
+    return -error::invalid_arg;
+  if ( fd.invalid() )
+    return -error::bad_fd;
+  return posix::write(fd, buf, cnt);
+}
+
+template <typename T = byte>
+max_t
+write(i32 fd, const T &buf, usize cnt)
+{
+  if ( fd < 0 )
+    return -error::bad_fd;
+  return posix::write(fd, buf, cnt);
+}
+
+template <typename T = byte>
+max_t
+write(fd_t fd, const T &buf, usize cnt)
+{
+  if ( fd.invalid() )
+    return -error::bad_fd;
   return posix::write(fd, buf, cnt);
 }
 
 template <typename T, usize N>
-ssize_t
-write(int fd, const T (&buf)[N])
+max_t
+write(i32 fd, const T (&buf)[N])
 {
-  if ( fd <= 0 )
-    return -1;
+  if ( fd < 0 )
+    return -error::bad_fd;
+  return posix::write(fd, &buf, N);
+}
+
+template <typename T, usize N>
+max_t
+write(fd_t fd, const T (&buf)[N])
+{
+  if ( fd.invalid() )
+    return -error::bad_fd;
   return posix::write(fd, &buf, N);
 }
 
 template <is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
-ssize_t
-write(int fd, T &buf, const usize cnt)
+max_t
+write(i32 fd, T &buf, const usize cnt)
 {
+  if ( fd < 0 )
+    return -error::bad_fd;
+  return posix::write(fd, buf.data(), cnt);
+}
+
+template <is_iterable_container T>
+  requires(micron::is_fundamental_v<typename T::value_type>)
+max_t
+write(fd_t fd, T &buf, const usize cnt)
+{
+  if ( fd.invalid() )
+    return -error::bad_fd;
   return posix::write(fd, buf.data(), cnt);
 }
 
 template <typename T = byte>
-ssize_t
+max_t
 fwrited(T *ptr, usize num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
-    return -1;
+    return -error::bad_fd;
   return posix::write(handle.fd, ptr, num);
 }
 
 template <typename T = byte>
-ssize_t
-fwrite(T *ptr, usize num, const fd_t &handle)
+max_t
+fwrited(T &ptr, usize num, const fd_t &handle)
 {
   if ( handle.has_error() or handle.closed() )
-    return -1;
+    return -error::bad_fd;
+  return posix::write(handle.fd, ptr, num);
+}
+
+template <typename T = byte>
+max_t
+fwrite(T &ref, usize num, const fd_t &handle)
+{
+  if ( handle.has_error() or handle.closed() )
+    return -error::bad_fd;
+  // differentiate depending on handle, maintains cache loc.
+  if ( handle == stdout ) {
+    if ( __global_buffer_stdout->full(num * sizeof(byte)) ) {
+      (*__global_buffer_stdout) >> handle;
+      posix::write(handle.fd, ref, num);
+      return num;
+    force_flush_out:
+      (*__global_buffer_stdout) >> handle;
+      return num;
+    }
+    __global_buffer_stdout->append(ref, num);
+    if ( simd::any_set_128(ref, num, __global_buffer_flush) )
+      goto force_flush_out;
+    return num;
+  } else if ( handle == stderr ) {
+    if ( __global_buffer_stderr->full(num * sizeof(byte)) ) {
+      (*__global_buffer_stderr) >> handle;
+      posix::write(handle.fd, ref, num);
+      return num;
+    force_flush_err:
+      (*__global_buffer_stderr) >> handle;
+      return num;
+    }
+    __global_buffer_stderr->append(ref, num);
+    if ( simd::any_set_128(ref, num, __global_buffer_flush) )
+      goto force_flush_err;
+    return num;
+  }
+  return posix::write(handle.fd, ref, num);
+}
+
+template <typename T = byte>
+max_t
+fwrite(T *ptr, usize num, const fd_t &handle)
+{
+  if ( ptr == nullptr ) [[unlikely]]
+    return -error::invalid_arg;
+  if ( handle.has_error() or handle.closed() )
+    return -error::bad_fd;
   // differentiate depending on handle, maintains cache loc.
   if ( handle == stdout ) {
     if ( __global_buffer_stdout->full(num * sizeof(byte)) ) {

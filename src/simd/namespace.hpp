@@ -5,4 +5,9 @@
 #include "../__special/initializer_list"
 #include "../concepts.hpp"
 #include "../type_traits.hpp"
-#include "../types.hpp"
+
+#include "intrin.hpp"
+
+#include "types.hpp"
+
+#include "simd.hpp"

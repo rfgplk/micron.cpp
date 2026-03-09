@@ -21,7 +21,7 @@ __insertion(T &arr, typename T::size_type start, typename T::size_type end, Cmp 
   using value_t = typename T::value_type;
   for ( typename T::size_type i = start + 1; i < end; ++i ) {
     value_t key = arr[i];
-    ssize_t j = i;
+    max_t j = i;
     while ( j > 0 && comp(key, arr[j - 1]) ) {
       arr[j] = arr[j - 1];
       --j;

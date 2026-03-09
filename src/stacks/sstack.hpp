@@ -310,9 +310,9 @@ public:
     length = o.length;
   }
 
-  fsstack(fsstack &&o)
+  fsstack(fsstack &&o) : stack{}
   {
-    micron::copy<N>(&o.stack[0], &stack[0]);
+    __impl_container::move(&stack[0], &o.stack[0], N);
     length = o.length;
     o.length = 0;
   }
@@ -354,7 +354,7 @@ public:
   fsstack &
   operator=(fsstack &&o)
   {
-    micron::copy<N>(&o.stack[0], &stack[0]);
+    __impl_container::move(&stack[0], &o.stack[0], N);
     length = o.length;
     o.length = 0;
     return *this;

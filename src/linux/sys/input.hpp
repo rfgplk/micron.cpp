@@ -24,6 +24,8 @@ struct input_event {
 
 namespace micron
 {
+namespace posix
+{
 
 constexpr static const u8 uinput_version = 5;
 constexpr static const u8 uinput_max_name_size = 80;
@@ -159,5 +161,5 @@ ui_dev_dest(void)
 {
   return io_default_command(uinput_ioctl_magic, 2);
 }
-
+};     // namespace posix
 };     // namespace micron

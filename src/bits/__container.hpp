@@ -218,6 +218,37 @@ destroy(T *src, usize cnt)
 }
 
 template <usize N, typename T>
+inline void
+destroy_fast(T *src)
+{
+  if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
+    if constexpr ( N % 4 == 0 ) {
+      for ( usize i = 0; i < N; i += 4 ) {
+        src[i].~T();
+        src[i + 1].~T();
+        src[i + 2].~T();
+        src[i + 3].~T();
+      }
+    } else {
+      for ( usize i = 0; i < N; i++ )
+        src[i].~T();
+    }
+  } else {
+  }
+}
+
+template <typename T>
+inline void
+destroy_fast(T *src, usize cnt)
+{
+  if constexpr ( micron::is_class_v<micron::remove_cv_t<T>> or !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
+    for ( usize i = 0; i < cnt; ++i )
+      src[i].~T();
+  } else {
+  }
+}
+
+template <usize N, typename T>
 void
 zero(T *src)
 {

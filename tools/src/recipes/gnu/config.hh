@@ -311,7 +311,7 @@ parse_argv_build(int argc, char **argv)
 {
   bool __dir_mode = true;
   mc::vector<mc::sstring<256>> sources{};
-  if ( (int)mc::io::get_type_at(argv[0]) == mc::posix::dir ) {
+  if ( (int)mc::posix::get_type_at(argv[0]) == mc::posix::dir ) {
     mc::io::dir d(argv[0]);
     auto &files = d.get_children();
     auto match_ext = [](const mc::sstring<256> &file) -> bool {
@@ -329,8 +329,8 @@ parse_argv_build(int argc, char **argv)
     };
 
     for ( auto &n : files )
-      if ( match_ext(n.a.d_name) )
-        sources.emplace_back(n.a.d_name);
+      if ( match_ext(n.d_name) )
+        sources.emplace_back(n.d_name);
   } else {
     sources.emplace_back(argv[0]);
     __dir_mode = false;

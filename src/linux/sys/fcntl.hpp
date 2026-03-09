@@ -8,6 +8,8 @@
 #include "../../types.hpp"
 #include "../sys/types.hpp"
 
+#include "../io/fd.hpp"
+
 namespace micron
 {
 
@@ -16,9 +18,28 @@ namespace posix
 
 template <typename... Args>
 auto
-fcntl(int fd, int cmd, Args &&...args)
+fcntl(i32 fd, i32 cmd, Args &&...args) -> i32
 {
-  return micron::syscall(SYS_fcntl, fd, cmd, args...);
+  return static_cast<i32>(micron::syscall(SYS_fcntl, fd, cmd, args...));
+}
+
+auto
+fadvise(i32 fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_fadvise64, fd, offset, len, advice));
+}
+
+auto
+fadvise(fd_t fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_fadvise64, fd.fd, offset, len, advice));
+}
+
+template <typename... Args>
+auto
+fcntl(fd_t fd, i32 cmd, Args &&...args)
+{
+  return micron::syscall(SYS_fcntl, fd.fd, cmd, args...);
 }
 
 struct flock_t {
@@ -77,11 +98,25 @@ constexpr i32 f_getfd = 1;
 constexpr i32 f_setfd = 2;
 constexpr i32 f_getfl = 3;
 constexpr i32 f_setfl = 4;
+constexpr i32 f_getlk = 5;
+constexpr i32 f_setlk = 6;
+constexpr i32 f_setlkw = 7;
 constexpr i32 f_setown = 8;
 constexpr i32 f_getown = 9;
 constexpr i32 f_setsig = 10;
 constexpr i32 f_getsig = 11;
+constexpr i32 f_getlk64 = 12;
+constexpr i32 f_setlk64 = 13;
+constexpr i32 f_setlkw64 = 14;
 constexpr i32 f_setown_ex = 15;
 constexpr i32 f_getown_ex = 16;
+
+inline constexpr i32 fadv_normal = 0;         // no specific advice
+inline constexpr i32 fadv_random = 1;         // expect random access
+inline constexpr i32 fadv_sequential = 2;     // expect sequential access
+inline constexpr i32 fadv_willneed = 3;       // prefetch — will access soon
+inline constexpr i32 fadv_dontneed = 4;       // drop from page cache
+inline constexpr i32 fadv_noreuse = 5;        // access once — bypass cache
+
 };     // namespace posix
 };     // namespace micron

@@ -1,6 +1,6 @@
 import os
 
-source_exts = {'.c', '.cpp', '.h', '.hpp'}
+source_exts = {'.c', '.cpp', '.h', '.hpp', '.cc', '.hh'}
 RED = "\033[31m"
 RESET = "\033[0m"
 

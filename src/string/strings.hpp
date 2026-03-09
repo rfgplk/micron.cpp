@@ -295,17 +295,11 @@ operator<<(O &os, sstring<N, T> &&o)
   return os;
 }
 
-template <typename T>
+template <usize N, is_string S>
 bool
-operator<(const hstring<T> &lhs, const hstring<T> &rhs)
+operator==(const char (&data)[N], const S &str)
 {
-  return lexi_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+  return str == data;
 }
 
-template <typename T>
-bool
-operator>(const hstring<T> &lhs, const hstring<T> &rhs)
-{
-  return lexi_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end());
-}
 };     // namespace micron

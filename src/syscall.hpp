@@ -9,6 +9,8 @@
 #pragma GCC diagnostic ignored "-Wextra"
 #pragma GCC diagnostic ignored "-Wpedantic"
 
+#include "bits/__arch.hpp"
+
 #if defined(__micron_arch_amd64)
 #include "linux/sys/syscall_x86_64.hpp"
 

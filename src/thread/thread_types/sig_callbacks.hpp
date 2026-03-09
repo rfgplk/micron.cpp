@@ -40,7 +40,7 @@ __thread_yield(int)
   micron::yield();
 }
 
-void
+__attribute__((noreturn)) void
 __thread_stop(int)
 {
   pthread::__exit_thread();

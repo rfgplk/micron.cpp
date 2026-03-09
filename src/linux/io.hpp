@@ -14,336 +14,251 @@
 #include "../types.hpp"
 #include "sys/types.hpp"
 
+#include "io/inode.hpp"
+#include "io/io_structs.hpp"
+
+#include "io/ext.hpp"     // for non syscall fns
+#include "io/sys.hpp"     // for syscalls
+
 namespace micron
 {
-using kernel_long_t = long long;
-using kernel_ulong_t = unsigned long long;
+using posix::stat_t;
 
-struct __linux_kernel_dirent {
-  unsigned long d_ino;     /* Inode number */
-  unsigned long d_off;     /* Not an offset; see below */
-  unsigned short d_reclen; /* Length of this linux_dirent */
-  char d_name[256];        /* Filename (null-terminated) */
-  /* length is actually (d_reclen - 2 -
-     offsetof(struct linux_dirent, d_name)) */
-  char pad;        // Zero padding byte
-  char d_type;     // File type (only since Linux
-                   // 2.6.4); offset is (d_reclen - 1)
-};
+using posix::fstat;
+using posix::fstatat;
+using posix::lstat;
+using posix::stat;
 
-struct __linux_kernel_dirent64 {
-  posix::ino64_t d_ino;    /* 64-bit inode number */
-  posix::off64_t d_off;    /* Not an offset; see getdents() */
-  unsigned short d_reclen; /* Size of this dirent */
-  unsigned char d_type;    /* File type */
-  char d_name[256];        /* Filename (null-terminated) */
-};
+using posix::dir_t;
+using posix::fd_t;
+using posix::inotify_event_t;
+using posix::invalid_fd;
+using posix::iovec_t;
 
-constexpr char f_ok = 0;
-constexpr char x_ok = 1;
-constexpr char w_ok = 2;
-constexpr char r_ok = 4;
+using posix::major;
+using posix::makedev;
+using posix::minor;
 
-constexpr char seek_set = 0;
-constexpr char seek_cur = 1;
-constexpr char seek_end = 2;
-constexpr char seek_data = 3;
-constexpr char seek_hole = 4;
+// basic syscalls
+using posix::pread;
+using posix::preadv;
+using posix::pwrite;
+using posix::pwritev;
+using posix::read;
+using posix::readv;
+using posix::write;
+using posix::writev;
 
-constexpr char dt_unknown = 0;
-constexpr char dt_fifo = 1;
-constexpr char dt_chr = 2;
-constexpr char dt_dir = 4;
-constexpr char dt_blk = 6;
-constexpr char dt_reg = 8;
-constexpr char dt_lnk = 10;
-constexpr char dt_sock = 12;
-constexpr char dt_why = 14;
-constexpr char dt_end = 127;
+// pipes
+using posix::make_pipe;
+using posix::pipe;
+using posix::pipe2;
+using posix::pipe_pair;
 
-constexpr i32 shutdown_reads = 0;
-constexpr i32 shutdown_writes = 2;
-constexpr i32 shutdown_rdwr = 2;
+// dups
+using posix::dup;
+using posix::dup2;
+using posix::dup3;
 
-inline posix::dev_t
-makedev(u32 major, u32 minor)
-{
-  return ((posix::dev_t)(major & 0xfff) << 8) | (posix::dev_t)(minor & 0xff) | ((posix::dev_t)(minor & 0xfff00) << 12);
-}
+// closes / shutdown
+using posix::close;
+using posix::shutdown;
 
-inline u32
-major(posix::dev_t dev)
-{
-  return (u32)((dev >> 8) & 0xfff);
-}
+// opens
+using posix::creat;
+using posix::creat_fd;
+using posix::open;
+using posix::open_fd;
+using posix::openat;
 
-inline u32
-minor(posix::dev_t dev)
-{
-  return (u32)((dev & 0xff) | ((dev >> 12) & 0xfff00));
-}
+// syncs
+using posix::fdatasync;
+using posix::fsync;
+using posix::sync;
+using posix::syncfs;
+using posix::umask;
 
-template <typename P>
-ssize_t
-read(i32 fd, P *buf, usize cnt)
-{
-  //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
-  //  returning
-  //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return micron::syscall(SYS_read, fd, micron::voidify(buf), cnt);
-}
+// truncs
+using posix::ftruncate;
+using posix::truncate;
 
-template <typename P>
-ssize_t
-write(i32 fd, P *buf, usize cnt)
-{
-  //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
-  //  returning
-  //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return micron::syscall(SYS_write, fd, micron::voidify(buf), cnt);
-}
+// dirs
+using posix::chdir;
+using posix::fchdir;
+using posix::getcwd;
+using posix::mkdir;
+using posix::mkdirat;
+using posix::rmdir;
 
-i32
-pipe(i32 *fd)
-{
-  return static_cast<i32>(micron::syscall(SYS_pipe, fd));
-}
+// ch*s
+using posix::chmod;
+using posix::chown;
+using posix::chroot;
+using posix::fchmod;
+using posix::fchmodat;
+using posix::fchown;
+using posix::fchownat;
+using posix::flock;
+using posix::lchown;
 
-i32
-pipe2(i32 *fd, i32 a)
-{
-  return static_cast<i32>(micron::syscall(SYS_pipe2, fd, a));
-}
+// seeks
+using posix::fallocate;
+using posix::lseek;
 
-i32
-dup(i32 old)
-{
-  return static_cast<i32>(micron::syscall(SYS_dup, old));
-}
+// renames
+using posix::rename;
+using posix::renameat;
+using posix::renameat2;
 
-i32
-dup2(i32 old, i32 newfd)
-{
-  return static_cast<i32>(micron::syscall(SYS_dup2, old, newfd));
-}
+// links
+using posix::link;
+using posix::linkat;
+using posix::readlink;
+using posix::readlinkat;
+using posix::symlink;
+using posix::symlinkat;
 
-i32
-dup3(i32 old, i32 newfd, i32 flags)
-{
-  return static_cast<i32>(micron::syscall(SYS_dup2, old, newfd, flags));
-}
+// unlinks / access
+using posix::access;
+using posix::faccessat;
+using posix::unlink;
+using posix::unlinkat;
 
-auto
-close(i32 fd)
-{
-  return static_cast<i32>(micron::syscall(SYS_close, fd));
-}
+// ents / getdents
+using posix::getdents;
+using posix::getdents64;
 
-auto
-shutdown(i32 fd, i32 how)
-{
-  return static_cast<i32>(micron::syscall(SYS_shutdown, fd, how));
-}
+// mks
+using posix::mkfifo;
+using posix::mknod;
+using posix::mknodat;
 
-auto
-open(const char *name, i32 flags, u32 mode)
-{
-  //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
-  //  returning
-  //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return static_cast<i32>(micron::syscall(SYS_open, name, flags, mode));
-}
+// sendfile / splice
+using posix::copy_file_range;
+using posix::sendfile;
+using posix::signalfd;
+using posix::splice;
+using posix::tee;
 
-auto
-open(const char *name, i32 flags)
-{
-  //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
-  //  returning
-  //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return static_cast<i32>(micron::syscall(SYS_open, name, flags, 0));
-}
+// inotify
+using posix::inotify_add_watch;
+using posix::inotify_init;
+using posix::inotify_init1;
+using posix::inotify_rm_watch;
 
-auto
-openat(i32 dirfd, const char *pth, i32 flags, u32 mode [[maybe_unused]])
-{
-  return static_cast<i32>(micron::syscall(SYS_openat, dirfd, pth, flags));
-}
+using posix::in_access;
+using posix::in_all_events;
+using posix::in_attrib;
+using posix::in_cloexec;
+using posix::in_close;
+using posix::in_close_nowrite;
+using posix::in_close_write;
+using posix::in_create;
+using posix::in_delete;
+using posix::in_delete_self;
+using posix::in_modify;
+using posix::in_move;
+using posix::in_move_self;
+using posix::in_moved_from;
+using posix::in_moved_to;
+using posix::in_nonblock;
+using posix::in_open;
 
-auto
-creat(const char *pth, u32 mode)
-{
-  //  NOTE : On Linux, read() (and similar system calls) will transfer at most 0x7ffff000 (2,147,479,552) bytes,
-  //  returning
-  //        the number of bytes actually transferred.  (This is true on both 32-bit and 64-bit systems.)
-  return static_cast<i32>(micron::syscall(SYS_creat, pth, mode));
-}
+// attrs / xattr
+using posix::fgetxattr;
+using posix::flistxattr;
+using posix::fremovexattr;
+using posix::fsetxattr;
+using posix::getxattr;
+using posix::lgetxattr;
+using posix::listxattr;
+using posix::llistxattr;
+using posix::lsetxattr;
+using posix::removexattr;
+using posix::setxattr;
 
-auto
-umask(mode_t mask)
-{
-  return micron::syscall(SYS_umask, mask);
-}
+// from inode
+using posix::node_types;
 
-auto
-sync(void)
-{
-  return micron::syscall(SYS_sync);
-}
+using posix::is_absolute;
+using posix::is_dot_entry;
+using posix::is_relative;
+using posix::verify;
 
-auto
-fsync(i32 fd)
-{
-  return micron::syscall(SYS_fsync, fd);
-}
+using posix::exists;
+using posix::exists_at;
+using posix::lexists;
 
-auto
-syncfs(i32 fd)
-{
-  return micron::syscall(SYS_syncfs, fd);
-}
+using posix::get_type;
+using posix::get_type_at;
+using posix::is_inode_type;
+using posix::is_inode_type_at;
 
-auto
-fdatasync(i32 fd)
-{
-  return micron::syscall(SYS_fdatasync, fd);
-}
+using posix::is_virtual_file;
 
-auto
-getcwd(char *buf, usize size)
-{
-  return micron::syscall(SYS_getcwd, buf, size);
-}
+using posix::is_block_device;
+using posix::is_char_device;
+using posix::is_dir;
+using posix::is_fifo;
+using posix::is_file;
+using posix::is_pipe;
+// NOTE: conflicts with the conflict
+using posix::is_regular_node;
+using posix::is_socket;
+using posix::is_symlink;
 
-auto
-chdir(const char *path)
-{
-  return micron::syscall(SYS_chdir, path);
-}
+using posix::is_block_device_at;
+using posix::is_char_device_at;
+using posix::is_dir_at;
+using posix::is_fifo_at;
+using posix::is_file_at;
+using posix::is_pipe_at;
+using posix::is_regular_at;
+using posix::is_socket_at;
+using posix::is_symlink_at;
 
-auto
-fchdir(i32 fd)
-{
-  return micron::syscall(SYS_fchdir, fd);
-}
+using posix::is_executable;
+using posix::is_readable;
+using posix::is_writable;
 
-auto
-rmdir(const char *name)
-{
-  return micron::syscall(SYS_rmdir, name);
-}
+using posix::is_executable_at;
+using posix::is_readable_at;
+using posix::is_writable_at;
 
-auto
-chmod(const char *name, u32 mode)
-{
-  return micron::syscall(SYS_chmod, name, mode);
-}
+using posix::has_setgid;
+using posix::has_setuid;
+using posix::has_sticky;
 
-auto
-fchmod(i32 fd, u32 mode)
-{
-  return micron::syscall(SYS_fchmod, fd, mode);
-}
+using posix::mode_group_exec;
+using posix::mode_group_read;
+using posix::mode_group_write;
+using posix::mode_other_exec;
+using posix::mode_other_read;
+using posix::mode_other_write;
+using posix::mode_user_exec;
+using posix::mode_user_read;
+using posix::mode_user_write;
 
-auto
-chown(const char *name, uid_t owner, gid_t group)
-{
-  return micron::syscall(SYS_chown, name, owner, group);
-}
+using posix::is_in_group;
+using posix::is_owned_by;
 
-auto
-fchown(i32 fd, uid_t owner, gid_t group)
-{
-  return micron::syscall(SYS_fchown, fd, owner, group);
-}
+using posix::has_content;
+// NOTE: conflicts with the type trait
+using posix::is_empty_dir;
+using posix::is_empty_file;
+using posix::is_empty_node;
 
-auto
-lchown(const char *name, uid_t owner, gid_t group)
-{
-  return micron::syscall(SYS_fchown, name, owner, group);
-}
+using posix::is_mountpoint;
 
-auto
-fchownat(i32 dirfd, const char *name, uid_t owner, gid_t group, i32 flags)
-{
-  return micron::syscall(SYS_fchown, dirfd, name, owner, group, flags);
-}
+using posix::is_same_file;
 
-auto
-flock(i32 fd, i32 op)
-{
-  return micron::syscall(SYS_flock, fd, op);
-}
-
-auto
-lseek(i32 fd, posix::off_t offset, i32 whence)
-{
-  return micron::syscall(SYS_lseek, fd, offset, whence);
-}
-
-auto
-fallocate(i32 fd, i32 mode, posix::off_t offset, posix::off_t len)
-{
-  return micron::syscall(SYS_lseek, fd, mode, offset, len);
-}
-
-auto
-rename(const char *__restrict oldpath, const char *__restrict newpath)
-{
-  return micron::syscall(SYS_rename, oldpath, newpath);
-}
-
-auto
-renameat(i32 oldfd, const char *__restrict oldpath, i32 newfd, const char *__restrict newpath)
-{
-  return micron::syscall(SYS_rename, oldfd, oldpath, newfd, newpath);
-}
-
-auto
-renameat2(i32 oldfd, const char *__restrict oldpath, i32 newfd, const char *__restrict newpath, i32 flags)
-{
-  return micron::syscall(SYS_rename, oldfd, oldpath, newfd, newpath, flags);
-}
-
-auto
-access(const char *path, i32 mode)
-{
-  return micron::syscall(SYS_access, path, mode);
-}
-
-auto
-faccessat(i32 dirfd, const char *name, i32 mode, i32 flags)
-{
-  return micron::syscall(SYS_faccessat2, dirfd, name, mode, flags);
-}
-
-auto
-getdents(i32 dirfd, __linux_kernel_dirent &dirp, u32 count)
-{
-  return micron::syscall(SYS_getdents, dirfd, &dirp, count);
-}
-
-auto
-getdents64(i32 dirfd, __linux_kernel_dirent64 &dirp, u32 count)
-{
-  return micron::syscall(SYS_getdents64, dirfd, &dirp, count);
-}
-
-auto
-getdents64(i32 dirfd, void *dirp, u32 count)
-{
-  return micron::syscall(SYS_getdents64, dirfd, dirp, count);
-}
-
-i32
-mkfifo(const char *path, posix::mode_t mode)
-{
-  return static_cast<i32>(micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0));
-}
-
-i32
-unlink(const char *path)
-{
-  return static_cast<i32>(micron::syscall(SYS_unlink, path));
-}
+using posix::get_device;
+using posix::get_gid;
+using posix::get_inode;
+using posix::get_link_count;
+using posix::get_mode;
+using posix::get_permissions;
+using posix::get_size;
+using posix::get_uid;
 
 };     // namespace micron

@@ -8,9 +8,11 @@
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
+#include "../../concepts.hpp"
+
 namespace micron
 {
-template <lock_starts S, class M = mutex> class unique_lock
+template <lock_starts S, is_mutex M = mutex> class unique_lock
 {
   M *mtx;
   void (micron::mutex::*rptr)();

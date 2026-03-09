@@ -25,9 +25,8 @@ template <typename T> struct __core_memory_flags {
   memory_flags flags;
 };
 
-template <typename T>
-  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
-struct __core_memory_resource {
+// NOTE: restraints not necessary, managed by external resource, internal pointer
+template <typename T> struct __core_memory_resource {
   using reference = T &;
   using const_reference = const T &;
   using pointer = T *;

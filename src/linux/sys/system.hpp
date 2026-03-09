@@ -30,16 +30,16 @@ setpgid(posix::pid_t pid, posix::pid_t gpid)
   return static_cast<posix::pid_t>(micron::syscall(SYS_setpgid, pid, gpid));
 }
 
-int
+i32
 setuid(posix::uid_t uid)
 {
-  return static_cast<int>(micron::syscall(SYS_setuid, uid));
+  return static_cast<i32>(micron::syscall(SYS_setuid, uid));
 }
 
-int
+i32
 setgid(posix::gid_t gid)
 {
-  return static_cast<int>(micron::syscall(SYS_setgid, gid));
+  return static_cast<i32>(micron::syscall(SYS_setgid, gid));
 }
 
 posix::pid_t
@@ -85,75 +85,75 @@ geteuid(void)
 }
 
 auto
-get_scheduler(pid_t pid)
+get_scheduler(pid_t pid) -> i32
 {
-  return micron::syscall(SYS_sched_getscheduler, pid);
+  return static_cast<i32>(micron::syscall(SYS_sched_getscheduler, pid));
 }
 
 auto
-set_scheduler(pid_t pid, int sched, sched_param &prio)
+set_scheduler(pid_t pid, int sched, sched_param &prio) -> i32
 {
-  return micron::syscall(SYS_sched_setscheduler, pid, sched, &prio);
-}
-
-void
-get_affinity(pid_t pid, cpu_set_t &mask)
-{
-  micron::syscall(SYS_sched_getaffinity, pid, sizeof(mask), &mask);
+  return static_cast<i32>(micron::syscall(SYS_sched_setscheduler, pid, sched, &prio));
 }
 
 auto
-set_attrs(pid_t pid, sched_attr &mask, int options)
+get_affinity(pid_t pid, cpu_set_t &mask) -> i32
 {
-  return micron::syscall(SYS_sched_setattr, pid, &mask, options);
+  return static_cast<i32>(micron::syscall(SYS_sched_getaffinity, pid, sizeof(mask), &mask));
 }
 
 auto
-get_attrs(pid_t pid, sched_attr &mask, int options)
+set_attrs(pid_t pid, sched_attr &mask, int options) -> i32
 {
-  return micron::syscall(SYS_sched_getattr, pid, &mask, sizeof(struct sched_attr), options);
-}
-
-void
-set_affinity(pid_t pid, cpu_set_t &mask)
-{
-  micron::syscall(SYS_sched_setaffinity, pid, sizeof(mask), &mask);
+  return static_cast<i32>(micron::syscall(SYS_sched_setattr, pid, &mask, options));
 }
 
 auto
-get_priority(int which, pid_t pid)
+get_attrs(pid_t pid, sched_attr &mask, int options) -> i32
 {
-  return micron::syscall(SYS_getpriority, which, pid);
-}
-
-void
-set_priority(int which, pid_t pid, int prio)
-{
-  micron::syscall(SYS_setpriority, which, pid, prio);
+  return static_cast<i32>(micron::syscall(SYS_sched_getattr, pid, &mask, sizeof(struct sched_attr), options));
 }
 
 auto
-raise(int sig)
+set_affinity(pid_t pid, cpu_set_t &mask) -> i32
 {
-  return micron::syscall(SYS_kill, getpid(), sig);
+  return static_cast<i32>(micron::syscall(SYS_sched_setaffinity, pid, sizeof(mask), &mask));
 }
 
 auto
-tgkill(posix::pid_t pid, long unsigned int tid, int sig)
+get_priority(int which, pid_t pid) -> i32
 {
-  return micron::syscall(SYS_tgkill, pid, tid, sig);
+  return static_cast<i32>(micron::syscall(SYS_getpriority, which, pid));
 }
 
 auto
-kill(posix::pid_t pid, int sig)
+set_priority(int which, pid_t pid, int prio) -> i32
 {
-  return micron::syscall(SYS_kill, pid, sig);
+  return static_cast<i32>(micron::syscall(SYS_setpriority, which, pid, prio));
 }
 
-int
-exit(int r)
+auto
+raise(i32 sig) -> i32
 {
-  return static_cast<int>(micron::syscall(SYS_exit, r));
+  return static_cast<i32>(micron::syscall(SYS_kill, getpid(), sig));
+}
+
+auto
+tgkill(posix::pid_t pid, long unsigned int tid, int sig) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_tgkill, pid, tid, sig));
+}
+
+auto
+kill(posix::pid_t pid, int sig) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_kill, pid, sig));
+}
+
+auto
+exit(int r) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_exit, r));
 }
 };     // namespace posix
 

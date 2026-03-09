@@ -15,21 +15,21 @@ namespace micron
 
 namespace posix
 {
-constexpr i32 nr_open = 1024;
+constexpr rlim_t nr_open = 1024;
 
-constexpr i32 ngroups_max = 65536;    /* supplemental group ids are available */
-constexpr i32 arg_max = 131072;       /* # bytes of args + environ for exec() */
-constexpr i32 link_max = 127;         /* # links a file may have */
-constexpr i32 max_canon = 255;        /* size of the canonical input queue */
-constexpr i32 max_input = 255;        /* size of the type-ahead buffer */
-constexpr i32 name_max = 255;         /* # chars in a file name */
-constexpr i32 path_max = 4096;        /* # chars in a path name including nul */
-constexpr i32 pipe_buf = 4096;        /* # bytes in atomic write to a pipe */
-constexpr i32 xattr_name_max = 255;   /* # chars in an extended attribute name */
-constexpr i32 xattr_size_max = 65536; /* size of an extended attribute value (64k) */
-constexpr i32 xattr_list_max = 65536; /* size of extended attribute namelist (64k) */
+constexpr rlim_t ngroups_max = 65536;    /* supplemental group ids are available */
+constexpr rlim_t arg_max = 131072;       /* # bytes of args + environ for exec() */
+constexpr rlim_t link_max = 127;         /* # links a file may have */
+constexpr rlim_t max_canon = 255;        /* size of the canonical input queue */
+constexpr rlim_t max_input = 255;        /* size of the type-ahead buffer */
+constexpr rlim_t name_max = 255;         /* # chars in a file name */
+constexpr rlim_t path_max = 4096;        /* # chars in a path name including nul */
+constexpr rlim_t pipe_buf = 4096;        /* # bytes in atomic write to a pipe */
+constexpr rlim_t xattr_name_max = 255;   /* # chars in an extended attribute name */
+constexpr rlim_t xattr_size_max = 65536; /* size of an extended attribute value (64k) */
+constexpr rlim_t xattr_list_max = 65536; /* size of extended attribute namelist (64k) */
 
-constexpr i32 rtsig_max = 32;
+constexpr rlim_t rtsig_max = 32;
 
 constexpr static const int prio_min = -20;
 constexpr static const int prio_max = 20;

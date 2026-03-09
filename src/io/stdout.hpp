@@ -13,6 +13,8 @@
 #include "impl.hpp"
 #include "io.hpp"
 
+#include "../tuple.hpp"
+
 #include "__std.hpp"
 
 namespace micron
@@ -274,7 +276,7 @@ printk(const T &x)
     return;
   }
   // just in case it's different from u64
-  if constexpr ( micron::same_as<T, max_t> or micron::same_as<T, ssize_t> ) {
+  if constexpr ( micron::same_as<T, max_t> or micron::same_as<T, max_t> ) {
     const char *ptr = format::int64_to_char(x, &print_buffer[0]);
     if constexpr ( outstream == stdout_fileno )
       io::fput(ptr, io::stdout);
@@ -836,6 +838,52 @@ printk(const T &str)
     }
     printk<T, io::stderr>(" }");
   }
+}
+
+// tuples
+
+template <typename A, typename B, int outstream = stdout_fileno>
+void
+printkn(pair<A, B> &&str)
+{
+  printk("[");
+  printk(str.a);
+  printk(", ");
+  printk(str.b);
+  printkn("]");
+}
+
+template <typename A, typename B, int outstream = stdout_fileno>
+void
+printkn(const pair<A, B> &str)
+{
+  printk("[");
+  printk(str.a);
+  printk(", ");
+  printk(str.b);
+  printkn("]");
+}
+
+template <typename A, typename B, int outstream = stdout_fileno>
+void
+printk(pair<A, B> &&str)
+{
+  printk("[");
+  printk(str.a);
+  printk(", ");
+  printk(str.b);
+  printk("]");
+}
+
+template <typename A, typename B, int outstream = stdout_fileno>
+void
+printk(const pair<A, B> &str)
+{
+  printk("[");
+  printk(str.a);
+  printk(", ");
+  printk(str.b);
+  printk("]");
 }
 
 // dump binary data

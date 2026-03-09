@@ -19,7 +19,7 @@ namespace micron
 {
 template <typename K, typename V> struct alignas(32) robin_map_node {
   hash64_t key;
-  V value;           // if value is set, then it's occupied
+  V value;          // if value is set, then it's occupied
   usize length;     // length from starting node
   ~robin_map_node() = default;
 

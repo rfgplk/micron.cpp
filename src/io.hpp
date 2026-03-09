@@ -5,15 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "posix/utils.hpp"
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// standard io include file
+// everything needed for (general) io should be here
+
+#include "io/io.hpp"
 
 namespace micron
 {
-namespace fsys
-{
-
-class entry
-{
 };
-};     // namespace fsys
-};     // namespace micron

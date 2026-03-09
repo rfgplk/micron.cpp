@@ -10,8 +10,8 @@ def main():
     dest = sys.argv[1] if len(sys.argv) > 1 else default_dest_dir
 
     if not os.path.isdir(dest):
-        print("location doesnt exist", file=sys.stderr)
-        sys.exit(1)
+        print("location doesnt exist, creating" + dest, file=sys.stderr)
+        os.mkdir(dest)
 
     if os.geteuid() != 0:
         print("Must be root", file=sys.stderr)

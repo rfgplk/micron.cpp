@@ -41,6 +41,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
+  // NOTE: zeroes out memory
   ~iarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   iarray() { __impl_container::zero<N>(micron::addr(stack[0])); }
@@ -103,25 +104,25 @@ public:
     // micron::cmemset<N>(micron::addr(stack[0], 0x0);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   begin() const noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   end() const noexcept
   {
     return micron::addr(stack[N]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);

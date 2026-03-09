@@ -114,7 +114,7 @@ is_zero(const T *src)
     exc<except::library_error>("micron::is_zero invalid pointer.");
   const byte *b_ptr = reinterpret_cast<const byte *>(src);
   for ( usize i = 0; i < sizeof(T); i++ )
-    if ( *b_ptr++ > 0x0 )
+    if ( *b_ptr++ != 0x0 )
       return false;
   return true;
 }

@@ -81,10 +81,11 @@ template <is_atomic_type T> struct atomic_token {
   };
 
   bool
-  compare_and_swap(const T old, const T new_) noexcept
+  compare_and_swap(const T old, const T new_, const memory_order success = memory_order_seq_cst,
+                   const memory_order failure = memory_order_seq_cst) noexcept
   {
     T tmp = old;
-    return atom::compare_exchange(&v, &tmp, new_, true, atomic_seq_cst, atomic_seq_cst);
+    return atom::compare_exchange(&v, &tmp, new_, true, (i32)success, (i32)failure);
   };
 
   bool
@@ -135,7 +136,6 @@ template <is_atomic_type T> struct atomic_token {
     return atom::exchange(&v, new_, atomic_seq_cst);
   };
 
-  // high levels
   T
   operator()() const
   {
@@ -159,6 +159,108 @@ template <is_atomic_type T> struct atomic_token {
   {
     store(new_);
     return new_;
+  }
+
+  // comparisons
+  bool
+  operator==(const T &other) const noexcept
+  {
+    return get() == other;
+  }
+
+  bool
+  operator!=(const T &other) const noexcept
+  {
+    return get() != other;
+  }
+
+  bool
+  operator<(const T &other) const noexcept
+  {
+    return get() < other;
+  }
+
+  bool
+  operator<=(const T &other) const noexcept
+  {
+    return get() <= other;
+  }
+
+  bool
+  operator>(const T &other) const noexcept
+  {
+    return get() > other;
+  }
+
+  bool
+  operator>=(const T &other) const noexcept
+  {
+    return get() >= other;
+  }
+
+  // atomic vs atomic_token
+  bool
+  operator==(const atomic_token &o) const noexcept
+  {
+    return get() == o.get();
+  }
+
+  bool
+  operator!=(const atomic_token &o) const noexcept
+  {
+    return get() != o.get();
+  }
+
+  bool
+  operator<(const atomic_token &o) const noexcept
+  {
+    return get() < o.get();
+  }
+
+  bool
+  operator<=(const atomic_token &o) const noexcept
+  {
+    return get() <= o.get();
+  }
+
+  bool
+  operator>(const atomic_token &o) const noexcept
+  {
+    return get() > o.get();
+  }
+
+  bool
+  operator>=(const atomic_token &o) const noexcept
+  {
+    return get() >= o.get();
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator+(const X &x) const noexcept
+  {
+    return get() + x;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator-(const X &x) const noexcept
+  {
+    return get() - x;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator*(const X &x) const noexcept
+  {
+    return get() * x;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator/(const X &x) const noexcept
+  {
+    return get() / x;
   }
 };
 
@@ -355,6 +457,364 @@ public:
     unlock();
     return type;
   }
+
+  // implicit bool
+  explicit
+  operator bool()
+  {
+    lock_check();
+    bool r = static_cast<bool>(type);
+    unlock();
+    return r;
+  }
+
+  // comparisons with value
+  bool
+  operator==(const T &v)
+  {
+    lock_check();
+    bool r = (type == v);
+    unlock();
+    return r;
+  }
+
+  bool
+  operator!=(const T &v)
+  {
+    return !(*this == v);
+  }
+
+  bool
+  operator<(const T &v)
+  {
+    lock_check();
+    bool r = (type < v);
+    unlock();
+    return r;
+  }
+
+  bool
+  operator<=(const T &v)
+  {
+    lock_check();
+    bool r = (type <= v);
+    unlock();
+    return r;
+  }
+
+  bool
+  operator>(const T &v)
+  {
+    lock_check();
+    bool r = (type > v);
+    unlock();
+    return r;
+  }
+
+  bool
+  operator>=(const T &v)
+  {
+    lock_check();
+    bool r = (type >= v);
+    unlock();
+    return r;
+  }
+
+  // arithmetic high-level (only if supported)
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator+(const X &v)
+  {
+    lock_check();
+    X r = type + v;
+    unlock();
+    return r;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator-(const X &v)
+  {
+    lock_check();
+    X r = type - v;
+    unlock();
+    return r;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator*(const X &v)
+  {
+    lock_check();
+    X r = type * v;
+    unlock();
+    return r;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator/(const X &v)
+  {
+    lock_check();
+    X r = type / v;
+    unlock();
+    return r;
+  }
+};
+
+template <typename T>
+  requires micron::is_pointer_v<T>
+class atomic_ptr
+{
+  using P = T;
+  using I = usize;
+
+  atomic_token<P> tk;
+
+public:
+  using value_type = P;
+
+  constexpr atomic_ptr() noexcept : tk(nullptr) {}
+
+  constexpr explicit atomic_ptr(P p) noexcept : tk(p) {}
+
+  atomic_ptr(const atomic_ptr &) = delete;
+  atomic_ptr &operator=(const atomic_ptr &) = delete;
+
+  P
+  load(memory_order order = memory_order::seq_cst) const noexcept
+  {
+    return tk.get(order);
+  }
+
+  void
+  store(P p, memory_order order = memory_order::seq_cst) noexcept
+  {
+    tk.store(p, order);
+  }
+
+  P
+  exchange(P p, memory_order order = memory_order::seq_cst) noexcept
+  {
+    return tk.swap(p);
+  }
+
+  bool
+  compare_exchange_strong(P &expected, P desired, memory_order success = memory_order::seq_cst,
+                          memory_order failure = memory_order::seq_cst) noexcept
+  {
+    return tk.compare_exchange_strong(expected, desired, success, failure);
+  }
+
+  bool
+  compare_exchange_weak(P &expected, P desired, memory_order success, memory_order failure) noexcept
+  {
+    return tk.compare_exchange_weak(expected, desired, success, failure);
+  }
+
+  explicit
+  operator bool() const noexcept
+  {
+    return load() != nullptr;
+  }
+
+  auto
+  operator*() const noexcept -> decltype(*load())
+  {
+    return *load();
+  }
+
+  P
+  get(memory_order order = memory_order::seq_cst) const noexcept
+  {
+    return load(order);
+  }
+
+  P
+  operator->() const noexcept
+  {
+    return load();
+  }
+
+  atomic_ptr &
+  operator=(micron::remove_pointer_t<P> p) noexcept
+  {
+    store(reinterpret_cast<P>(p));
+    return *this;
+  }
+
+  atomic_ptr &
+  operator=(P p) noexcept
+  {
+    store(p);
+    return *this;
+  }
+
+  atomic_ptr &
+  operator=(nullptr_t) noexcept
+  {
+    store(nullptr);
+    return *this;
+  }
+
+  atomic_ptr &
+  operator=(atomic_ptr &&other) noexcept
+  {
+    P tmp = other.load();
+    store(tmp);
+    other.store(nullptr);
+    return *this;
+  }
+
+  bool
+  operator==(P p) const noexcept
+  {
+    return load() == p;
+  }
+
+  bool
+  operator!=(P p) const noexcept
+  {
+    return load() != p;
+  }
+
+  bool
+  operator<(P p) const noexcept
+  {
+    return load() < p;
+  }
+
+  bool
+  operator<=(P p) const noexcept
+  {
+    return load() <= p;
+  }
+
+  bool
+  operator>(P p) const noexcept
+  {
+    return load() > p;
+  }
+
+  bool
+  operator>=(P p) const noexcept
+  {
+    return load() >= p;
+  }
+
+  bool
+  operator==(const atomic_ptr &o) const noexcept
+  {
+    return load() == o.load();
+  }
+
+  bool
+  operator!=(const atomic_ptr &o) const noexcept
+  {
+    return load() != o.load();
+  }
+
+  bool
+  operator<(const atomic_ptr &o) const noexcept
+  {
+    return load() < o.load();
+  }
+
+  bool
+  operator<=(const atomic_ptr &o) const noexcept
+  {
+    return load() <= o.load();
+  }
+
+  bool
+  operator>(const atomic_ptr &o) const noexcept
+  {
+    return load() > o.load();
+  }
+
+  bool
+  operator>=(const atomic_ptr &o) const noexcept
+  {
+    return load() >= o.load();
+  }
+
+  P
+  operator+(I n) const noexcept
+  {
+    return load() + n;
+  }
+
+  P
+  operator-(I n) const noexcept
+  {
+    return load() - n;
+  }
+
+  I
+  operator-(P other) const noexcept
+  {
+    return load() - other;
+  }
+
+  atomic_ptr &
+  operator+=(I n) noexcept
+  {
+    P old = load();
+    P desired = old + n;
+    while ( !tk.compare_and_swap(old, desired) )
+      desired = old + n;
+    return *this;
+  }
+
+  atomic_ptr &
+  operator-=(I n) noexcept
+  {
+    P old = load();
+    P desired = old - n;
+    while ( !tk.compare_and_swap(old, desired) )
+      desired = old - n;
+    return *this;
+  }
+
+  P
+  operator++() noexcept
+  {
+    P old = load();
+    P desired = old + 1;
+    while ( !tk.compare_and_swap(old, desired) )
+      desired = old + 1;
+    return desired;
+  }
+
+  P
+  operator++(int) noexcept
+  {
+    P old = load();
+    P desired = old + 1;
+    while ( !tk.compare_and_swap(old, desired) )
+      desired = old + 1;
+    return old;
+  }
+
+  P
+  operator--() noexcept
+  {
+    P old = load();
+    P desired = old - 1;
+    while ( !tk.compare_and_swap(old, desired) )
+      desired = old - 1;
+    return desired;
+  }
+
+  P
+  operator--(int) noexcept
+  {
+    P old = load();
+    P desired = old - 1;
+    while ( !tk.compare_and_swap(old, desired) )
+      desired = old - 1;
+    return old;
+  }
 };
 
 template <is_atomic_type T> class atomic_ref
@@ -438,6 +898,112 @@ public:
       new_ = old - val;
     }
     return old;
+  }
+
+  explicit
+  operator bool() const noexcept
+  {
+    return static_cast<bool>(load());
+  }
+
+  bool
+  operator==(const T &v) const noexcept
+  {
+    return load() == v;
+  }
+
+  bool
+  operator!=(const T &v) const noexcept
+  {
+    return load() != v;
+  }
+
+  bool
+  operator<(const T &v) const noexcept
+  {
+    return load() < v;
+  }
+
+  bool
+  operator<=(const T &v) const noexcept
+  {
+    return load() <= v;
+  }
+
+  bool
+  operator>(const T &v) const noexcept
+  {
+    return load() > v;
+  }
+
+  bool
+  operator>=(const T &v) const noexcept
+  {
+    return load() >= v;
+  }
+
+  bool
+  operator==(const atomic_ref &o) const noexcept
+  {
+    return load() == o.load();
+  }
+
+  bool
+  operator!=(const atomic_ref &o) const noexcept
+  {
+    return load() != o.load();
+  }
+
+  bool
+  operator<(const atomic_ref &o) const noexcept
+  {
+    return load() < o.load();
+  }
+
+  bool
+  operator<=(const atomic_ref &o) const noexcept
+  {
+    return load() <= o.load();
+  }
+
+  bool
+  operator>(const atomic_ref &o) const noexcept
+  {
+    return load() > o.load();
+  }
+
+  bool
+  operator>=(const atomic_ref &o) const noexcept
+  {
+    return load() >= o.load();
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator+(const X &v) const noexcept
+  {
+    return load() + v;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator-(const X &v) const noexcept
+  {
+    return load() - v;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator*(const X &v) const noexcept
+  {
+    return load() * v;
+  }
+
+  template <typename X = T>
+  micron::enable_if_t<micron::is_arithmetic_v<X>, X>
+  operator/(const X &v) const noexcept
+  {
+    return load() / v;
   }
 };
 };     // namespace micron

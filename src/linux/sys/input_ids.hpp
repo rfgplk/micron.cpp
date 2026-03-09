@@ -9,7 +9,8 @@
 
 namespace micron
 {
-
+namespace posix
+{
 constexpr static const u64 id_bus = 0;
 constexpr static const u64 id_vendor = 1;
 constexpr static const u64 id_product = 2;
@@ -49,5 +50,5 @@ constexpr static const u64 mt_tool_max = 0x0f;
 constexpr static const u64 ff_status_stopped = 0x00;
 constexpr static const u64 ff_status_playing = 0x01;
 constexpr static const u64 ff_status_max = 0x01;
-
+};     // namespace posix
 };     // namespace micron

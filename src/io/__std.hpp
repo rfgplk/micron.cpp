@@ -26,9 +26,9 @@ constexpr char __global_buffer_flush = '\n';
 constexpr int __global_buffer_size = 4096;
 constexpr int __global_buffer_chunk = 1024;
 
-fd_t stdin;
-fd_t stdout;
-fd_t stderr;
+fd_t stdin = posix::invalid_fd;
+fd_t stdout = posix::invalid_fd;
+fd_t stderr = posix::invalid_fd;
 micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
 micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stderr(nullptr);
 

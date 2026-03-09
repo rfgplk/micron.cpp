@@ -44,12 +44,12 @@ main(void)
   // for(size_t i = 0; i < 100000; i++)
   {
     // sys["TODO", mc::io::rw]; or this
-    mc::console((int)mc::io::get_type_at("/proc/self/maps"));
-    mc::console((int)mc::io::get_type_at("/proc"));
-    mc::console((int)mc::io::get_type_at("/dev/sda"));
-    mc::console((int)mc::io::get_type_at("/tmp"));
-    mc::console((int)mc::io::get_type_at("/tmp/testing"));
-    mc::console((int)mc::io::get_type_at("/dev/null"));
+    mc::console((int)mc::posix::get_type_at("/proc/self/maps"));
+    mc::console((int)mc::posix::get_type_at("/proc"));
+    mc::console((int)mc::posix::get_type_at("/dev/sda"));
+    mc::console((int)mc::posix::get_type_at("/tmp"));
+    mc::console((int)mc::posix::get_type_at("/tmp/testing"));
+    mc::console((int)mc::posix::get_type_at("/dev/null"));
     try {
       sys["/tmp/data"];
       sys["/tmp/second"];

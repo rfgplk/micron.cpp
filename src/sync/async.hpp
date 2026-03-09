@@ -11,8 +11,15 @@
 #include "../thread/arena.hpp"
 #include "../thread/pool.hpp"
 
+#include "inlet.hpp"
+
 namespace micron
 {
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// strands
+// (maybe)
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// asyncs
 // analogous to go(), but launches a lightweight worker thread instead into the concurrent runtime arena
 
 template <typename Fn, typename... Args>

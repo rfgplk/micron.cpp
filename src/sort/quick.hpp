@@ -17,7 +17,7 @@ namespace sort
 {
 template <is_iterable_container T, is_valid_comp<T> Cmp>
 void
-__quick(typename T::iterator start, ssize_t low, ssize_t high, Cmp comp)
+__quick(typename T::iterator start, max_t low, max_t high, Cmp comp)
 {
   if ( low < high ) {
     auto pivot = start[high];
@@ -42,7 +42,7 @@ __quick(typename T::iterator start, ssize_t low, ssize_t high, Cmp comp)
 
 template <is_iterable_container T>
 void
-__quick(typename T::iterator start, ssize_t low, ssize_t high)
+__quick(typename T::iterator start, max_t low, max_t high)
 {
   if ( low < high ) {
     auto pivot = start[high];
@@ -67,7 +67,7 @@ __quick(typename T::iterator start, ssize_t low, ssize_t high)
 
 template <is_iterable_container T>
 void
-__quick(T &arr, ssize_t low, ssize_t high)
+__quick(T &arr, max_t low, max_t high)
 {
   if ( low < high ) {
     auto pivot = arr[high];
@@ -92,7 +92,7 @@ __quick(T &arr, ssize_t low, ssize_t high)
 
 template <is_iterable_container T, is_valid_comp<T> Cmp>
 void
-__quick(T &arr, ssize_t low, ssize_t high, Cmp comp)
+__quick(T &arr, max_t low, max_t high, Cmp comp)
 {
   if ( low < high ) {
     auto pivot = arr[high];

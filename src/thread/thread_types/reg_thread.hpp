@@ -76,6 +76,11 @@ template <usize Stack_Size = thread_stack_size> class thread
     }
     attributes.clear();
     payload.alive.store(false);
+    byte *ptr = payload.ret_val.get();
+    if ( ptr ) {
+      delete ptr;
+      ptr = nullptr;
+    }
   }
 
   void
@@ -88,6 +93,14 @@ template <usize Stack_Size = thread_stack_size> class thread
       micron::exc<except::memory_error>("micron thread::__safe_release(): failed to unmap thread stack");
     }
     attributes.clear();
+
+    if ( payload.tag_val == __thread_payload::tag::heap ) {
+      byte *ptr = payload.ret_val.get();
+      if ( ptr ) {
+        delete ptr;
+        ptr = nullptr;
+      }
+    }
   }
 
   // pid_t parent_pid;

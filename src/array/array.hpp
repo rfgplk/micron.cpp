@@ -49,6 +49,7 @@ public:
   typedef const T *const_iterator;
   static constexpr size_type length = N;
 
+  // NOTE: zeroes out memory
   ~array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   array() { __impl_container::set<N>(micron::addr(stack[0]), T{}); }
@@ -107,25 +108,25 @@ public:
 
   array(array &&o) { __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
-  iterator
+  [[nodiscard]] iterator
   begin() noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  iterator
+  [[nodiscard]] iterator
   end() noexcept
   {
     return micron::addr(stack[N]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);
@@ -155,16 +156,22 @@ public:
     return this;
   }
 
-  iterator
+  [[nodiscard]] iterator
   data()
   {
     return stack;
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   data() const
   {
     return stack;
+  }
+
+  void
+  clear()
+  {
+    __impl_container::destroy<N>(micron::addr(stack[0]));
   }
 
   T &

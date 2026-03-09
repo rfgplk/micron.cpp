@@ -396,7 +396,7 @@ require_false(const bool expected_output)
 void
 require_true(const bool expected_output)
 {
-  if ( expected_output != true ) {
+  if ( !expected_output ) {
     __print_error("\033[34msnowball require() failure:\033[0m expected output was false.\n\r");
     should_print_stack();
     __require_clbck();

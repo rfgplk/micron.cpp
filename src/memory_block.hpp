@@ -55,7 +55,7 @@ public:
   memory_block &
   operator=(const memory_block &o)
   {
-    if ( this != &o ) {
+    if ( this != o.addr() ) {
       if ( memory.len != o.size() ) {
         this->destroy(memory);
         memory = this->create(o.size());
@@ -68,7 +68,7 @@ public:
   memory_block &
   operator=(memory_block &&o) noexcept
   {
-    if ( this != &o ) {
+    if ( this != o.addr() ) {
       this->destroy(memory);
       Alloc::operator=(micron::move(o));
       memory = micron::move(o.memory);
@@ -143,8 +143,26 @@ public:
     return memory.ptr[n];
   }
 
+  auto *
+  addr()
+  {
+    return this;
+  }
+
+  const auto *
+  addr() const
+  {
+    return this;
+  }
+
   byte *
   operator&()
+  {
+    return memory.ptr;
+  }
+
+  const byte *
+  operator&() const
   {
     return memory.ptr;
   }

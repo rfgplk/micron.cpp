@@ -337,7 +337,8 @@ cancel(void)
 
 };     // namespace pthread
 
-auto get_stack(void) -> stack_t
+auto
+get_stack(void) -> stack_t
 {
   pthread_attr_t attr;
   pthread::get_attrs(pthread::self(), attr);

@@ -51,6 +51,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
+  // NOTE: zeroes out memory
   ~conarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
   conarray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
@@ -136,6 +137,12 @@ public:
   cend() const noexcept
   {
     return micron::addr(stack[N]);
+  }
+
+  void
+  clear()
+  {
+    __impl_container::destroy<N>(micron::addr(stack[0]));
   }
 
   const_iterator

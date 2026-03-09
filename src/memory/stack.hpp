@@ -8,8 +8,8 @@ namespace micron
 
 // TODO: implement this via _start
 
-auto
-get_stack(void) -> stack_t;
+auto get_stack(void) -> stack_t;
+
 // in __threads.hpp
 
 auto

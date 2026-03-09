@@ -45,8 +45,8 @@ void
 wait_futex(T *ptr, decay_t<T> expected)
 {
   while ( atom::load(ptr, (int)memory_order_relaxed) == expected ) {
-    int ret = __futex(reinterpret_cast<u32 *>(const_cast<decay_t<T> *>(ptr)), futex_wait | futex_private_flag, static_cast<u32>(expected),
-                      nullptr, nullptr, 0);
+    auto ret = __futex(reinterpret_cast<u32 *>(const_cast<decay_t<T> *>(ptr)), futex_wait | futex_private_flag, static_cast<u32>(expected),
+                       nullptr, nullptr, 0);
     if ( ret < 0 and ret != -11 ) {
       micron::exc<except::thread_error>("futex wait failed");
     }

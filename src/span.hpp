@@ -650,6 +650,7 @@ public:
   {
     return last_chunk<Chunk>();
   }
+
   template <typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type

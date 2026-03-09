@@ -21,8 +21,6 @@
 
 #include "sstring.hpp"
 
-// TODO: very messy, rewrite this
-
 namespace micron
 {
 // null terminated
@@ -33,10 +31,122 @@ constexpr const unicode32 _null_u32str[1] = U"";
 
 // string on the heap, mutable, standard replacement of std::string
 // accepts only char simple types
-template <is_scalar_literal T = schar, class Alloc = micron::allocator_serial<>>
+template <is_scalar_literal T = schar, bool Sf = true, class Alloc = micron::allocator_serial<>>
 class hstring : private Alloc, public __mutable_memory_resource<T>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
+
+  // all safety functions return true IF condition failed
+  inline constexpr __attribute__((always_inline)) bool
+  __valid_cnt(usize cnt) const
+  {
+    return (cnt > micron::numeric_limits<ssize_t>::max());
+  }
+
+  inline constexpr __attribute__((always_inline)) bool
+  __size_check(usize cnt) const
+  {
+    return (__mem::length >= __mem::capacity or (__mem::length + cnt) >= __mem::capacity);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_check(T *itr) const
+  {
+    return (itr < __mem::memory or itr > __mem::memory + __mem::length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_check(const T *itr) const
+  {
+    return (itr < __mem::memory or itr > __mem::memory + __mem::length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_bounds_check(const T *start, const T *end) const
+  {
+    return (start < __mem::memory or end > __mem::memory + __mem::length or start > end);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __null_check(const void *ptr) const
+  {
+    return (ptr == nullptr);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __index_check(usize n) const
+  {
+    return (n >= __mem::length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __range_pos_cnt(usize pos, usize cnt) const
+  {
+    return (pos > __mem::length or (pos + cnt) > __mem::length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __capacity_exceed(usize n) const
+  {
+    return (n > __mem::capacity);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __erase_iter_check(const T *itr, usize cnt) const
+  {
+    return (itr < __mem::memory or itr > __mem::memory + __mem::length
+            or static_cast<ssize_t>(cnt) > ((__mem::memory + __mem::length) - itr));
+  }
+
+  inline __attribute__((always_inline)) bool
+  __erase_ind_check(usize ind, usize cnt) const
+  {
+    return (ind > __mem::length or cnt > __mem::length - ind);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iter_substr_check(const T *start, const T *end_) const
+  {
+    return (start < __mem::memory or end_ > __mem::memory + __mem::length or start > end_);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __at_iter_check(const T *itr) const
+  {
+    auto diff = itr - &__mem::memory[0];
+    return (diff > 256 or diff < 0);
+  }
+
+  inline __attribute__((always_inline)) int
+  __lexcmp(const T *a, usize alen, const T *b, usize blen) const noexcept
+  {
+    usize common = alen < blen ? alen : blen;
+    for ( usize i = 0; i < common; ++i ) {
+      // promote to unsigned so high-byte chars sort correctly
+      auto ca = static_cast<unsigned char>(a[i]);
+      auto cb = static_cast<unsigned char>(b[i]);
+      if ( ca < cb )
+        return -1;
+      if ( ca > cb )
+        return 1;
+    }
+    if ( alen < blen )
+      return -1;
+    if ( alen > blen )
+      return 1;
+    return 0;
+  }
+
+  template <auto Fn, typename E, typename... Args>
+  inline __attribute__((always_inline)) void
+  __safety_check(const char *msg, Args &&...args) const
+  {
+    if constexpr ( Sf == true ) {
+      if ( (this->*Fn)(micron::forward<Args>(args)...) ) {
+        exc<E>(msg);
+      }
+    }
+  }
 
 public:
   using category_type = string_tag;
@@ -73,14 +183,14 @@ public:
   constexpr hstring(const char *str) : __mem(micron::strlen(str))
   {
     usize end = micron::strlen(str);
-    micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
-    __mem::length = end;                                   // - 1;
+    micron::memcpy(&(__mem::memory)[0], &str[0], end);
+    __mem::length = end;
   };
 
   template <usize M, typename F> constexpr hstring(const F (&str)[M]) : __mem((M))
   {
-    micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
-    __mem::length = M - 1;                                            // - 1;
+    micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));
+    __mem::length = M - 1;
   };
 
   constexpr hstring(const hstring &o) : __mem(o.capacity)
@@ -117,47 +227,46 @@ public:
 
   template <usize N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(o.length)
   {
-    micron::memcpy(&(__mem::memory)[0], &o.memory[0],
-                   o.length);     // - 1);
-    __mem::length = o.length;     // - 1; // no null
+    micron::memcpy(&(__mem::memory)[0], &o.memory[0], o.length);
+    __mem::length = o.length;
   };
 
   template <is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
   constexpr hstring(const F &o) : __mem(o.size())
   {
-    micron::memcpy(&(__mem::memory)[0], o.data(),
-                   o.size());     // - 1);
-    __mem::length = o.size();     // - 1; // no null
+    micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
+    __mem::length = o.size();
   };
 
   template <is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
   constexpr hstring(F &&o) : __mem(o.size())
   {
-    micron::memcpy(&(__mem::memory)[0], o.data(),
-                   o.size());     // - 1);
-    __mem::length = o.size();     // - 1; // no null
+    micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
+    __mem::length = o.size();
   };
 
   // allow construction from - to iterator (be careful!)
+  // NOTE: exc() in initialiser list intentionally left in place — __safety_check
+  //       cannot be invoked before the object is fully constructed.
   constexpr hstring(iterator __start, iterator __end)
-      : __mem((ssize_t)Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
+      : __mem((__start < __end ? ((max_t)Alloc::auto_size() < static_cast<usize>(__end - __start) ? static_cast<usize>(__end - __start)
+                                                                                                  : Alloc::auto_size())
+                               : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
   {
-    if ( __start >= __end )
-      exc<except::library_error>("micron::hstring hstring() wrong iterators");
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
-  };
+  }
 
   constexpr hstring(const_iterator __start, const_iterator __end)
-      : __mem(Alloc::auto_size() < (__end - __start) ? (__end - __start) : Alloc::auto_size())
+      : __mem((__start < __end
+                   ? (Alloc::auto_size() < static_cast<usize>(__end - __start) ? static_cast<usize>(__end - __start) : Alloc::auto_size())
+                   : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
   {
-    if ( __start >= __end )
-      exc<except::library_error>("micron::hstring hstring() wrong iterators");
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
-  };
+  }
 
   hstring &
   operator=(const hstring &o)
@@ -174,7 +283,6 @@ public:
   operator=(hstring &&o)
   {
     if ( __mem::memory ) {
-      // kill old memory first
       __mem::free();
     }
     __mem::memory = o.memory;
@@ -194,7 +302,6 @@ public:
       reserve(o.capacity + 1);
     micron::strcpy(__mem::memory, o.memory);
     __mem::length = o.length;
-
     return *this;
   }
 
@@ -203,7 +310,6 @@ public:
   operator=(hstring<F> &&o)
   {
     if ( __mem::memory ) {
-      // kill old memory first
       __mem::free();
     }
     __mem::memory = o.memory;
@@ -212,7 +318,6 @@ public:
     o.memory = nullptr;
     o.length = 0;
     o.capacity = 0;
-    ;
     return *this;
   }
 
@@ -252,7 +357,6 @@ public:
     return empty();
   }
 
-  // overload this to always point to mem
   byte *
   operator&()
   {
@@ -265,14 +369,6 @@ public:
     return reinterpret_cast<const byte *>(__mem::memory);
   }
 
-  /* TODO
-   * template <typename C = T>
-  hstring<T> &
-  swap(hstring<C> &o)
-  {
-    __mem::swap(o);
-    return *this;
-  }*/
   bool
   empty() const
   {
@@ -283,6 +379,12 @@ public:
   size() const
   {
     return __mem::length;
+  }
+
+  void
+  set_size(size_type n)
+  {
+    __mem::length = n;
   }
 
   void
@@ -298,7 +400,6 @@ public:
     return __mem::capacity;
   }
 
-  // unsafe
   iterator
   data()
   {
@@ -364,14 +465,14 @@ public:
   inline auto
   clone()
   {
-    return hstring<T>(*this);     // copy
+    return hstring<T>(*this);
   }
 
   template <typename F>
   inline F
   clone()
   {
-    return F(*this);     // copy
+    return F(*this);
   }
 
   inline T &
@@ -398,7 +499,6 @@ public:
     return __mem::memory[__mem::length - 1];
   }
 
-  // if used for buffering, adjust the length of the internals
   inline void
   _buf_set_length(const usize s)
   {
@@ -468,7 +568,7 @@ public:
   inline const_iterator
   cend() const
   {
-    return &(__mem::memory)[__mem::length];     // correct, should point at nptr
+    return &(__mem::memory)[__mem::length];
   }
 
   inline void
@@ -478,7 +578,6 @@ public:
     __mem::length = 0;
   }
 
-  // doesn't zero memory, just resets the cur. pointer to 0
   inline void
   fast_clear()
   {
@@ -490,8 +589,7 @@ public:
   {
     if ( (__mem::length + n) >= __mem::capacity )
       reserve(__mem::capacity + n);
-    micron::memcpy(&(__mem::memory)[__mem::length],     // null is here so, overwrite it
-                   &f[0], n);
+    micron::memcpy(&(__mem::memory)[__mem::length], &f[0], n);
     __mem::length += n;
     return *this;
   }
@@ -502,8 +600,7 @@ public:
   {
     if ( (__mem::length + n) >= __mem::capacity )
       reserve(__mem::capacity + n);
-    micron::memcpy(&(__mem::memory)[__mem::length],     // null is here so, overwrite it
-                   &f[0], n);
+    micron::memcpy(&(__mem::memory)[__mem::length], &f[0], n);
     __mem::length += n;
     return *this;
   }
@@ -514,8 +611,7 @@ public:
   {
     if ( (__mem::length + n) >= __mem::capacity )
       reserve(__mem::capacity + n);
-    micron::memcpy(&(__mem::memory)[__mem::length],     // null is here so, overwrite it
-                   f, n);
+    micron::memcpy(&(__mem::memory)[__mem::length], f, n);
     __mem::length += n - 1;
     return *this;
   }
@@ -526,8 +622,7 @@ public:
   {
     if ( (__mem::length + M) >= __mem::capacity )
       reserve(__mem::capacity + M);
-    micron::memcpy(&(__mem::memory)[__mem::length],     // null is here so, overwrite it
-                   &str[0], M);
+    micron::memcpy(&(__mem::memory)[__mem::length], &str[0], M);
     __mem::length += M - 1;
     return *this;
   }
@@ -538,8 +633,7 @@ public:
   {
     if ( (__mem::length + o.length) >= __mem::capacity )
       reserve(__mem::capacity + o.length);
-    micron::memcpy(&(__mem::memory)[__mem::length],     // null trunc
-                   &(o.memory)[0], o.length);
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -551,8 +645,7 @@ public:
     usize end = micron::strlen(o.c_str());
     if ( (__mem::length + end) >= __mem::capacity )
       reserve(__mem::capacity + end);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0],
-                   end);     // truncate null
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], end);
     __mem::length += end;
     return *this;
   }
@@ -592,8 +685,7 @@ public:
   {
     if ( (__mem::length + o.length) >= __mem::capacity )
       reserve(__mem::capacity + o.length);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0],
-                   o.length);     // truncate null
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -605,8 +697,7 @@ public:
     usize end = micron::strlen(o.c_str());
     if ( (__mem::length + end) >= __mem::capacity )
       reserve(__mem::capacity + end);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0],
-                   end);     // truncate null
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], end);
     __mem::length += end - 1;
     return *this;
   }
@@ -615,6 +706,7 @@ public:
   inline hstring &
   insert(usize ind, F ch, usize cnt = 1)
   {
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
     if ( __mem::length + cnt >= __mem::capacity )
       reserve(__mem::capacity + 1);
     micron::bytemove(&__mem::memory[ind + cnt], &__mem::memory[ind], __mem::length - ind);
@@ -627,12 +719,12 @@ public:
   inline hstring &
   insert(usize ind, const F (&str)[M], usize cnt = 1)
   {
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
     if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity )
       reserve(__mem::capacity + 1);
-    usize str_len = M - 1;     // strlen(str);
+    usize str_len = M - 1;
 
     micron::bytemove(&__mem::memory[ind + cnt * str_len], &__mem::memory[ind], __mem::length - ind);
-
     for ( usize i = 0; i < cnt; ++i )
       micron::memcpy(&__mem::memory[ind + i * str_len], str, str_len);
     __mem::length += (cnt * str_len);
@@ -649,7 +741,6 @@ public:
     }
     micron::bytemove(&(__mem::memory)[ind + (end)], &(__mem::memory)[ind], __mem::length - ind);
     micron::memcpy(&(__mem::memory)[ind], &o.memory[0], end);
-
     __mem::length += end;
     return *this;
   }
@@ -658,14 +749,15 @@ public:
   inline hstring &
   insert(iterator itr, F ch, usize cnt = 1)
   {
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
+
     if ( __mem::length >= __mem::capacity or (__mem::length + cnt) >= __mem::capacity ) {
       usize dif = itr - __mem::memory;
       reserve(__mem::capacity + cnt);
       itr = __mem::memory + dif;
     }
 
-    if ( itr < __mem::memory || itr > __mem::memory + __mem::length )
-      exc<except::library_error>("micron:string string() out of range");
+    __safety_check<&hstring::__iterator_check, except::library_error>("micron::hstring insert() iterator out of range", itr);
 
     micron::bytemove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
     micron::memset(itr, ch, cnt);
@@ -677,12 +769,14 @@ public:
   inline hstring &
   insert(iterator itr, const F (&str)[M], usize cnt = 1)
   {
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
+
     if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity ) {
       usize dif = itr - __mem::memory;
       reserve(__mem::capacity + M);
       itr = __mem::memory + dif;
     }
-    ssize_t str_len = M - 1;     // strlen(str);
+    max_t str_len = M - 1;
 
     usize tail_len = __mem::length - (itr - __mem::memory);
     micron::bytemove(itr + cnt * str_len, itr, tail_len);
@@ -734,7 +828,6 @@ public:
     }
     micron::bytemove(itr + (o.length - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
     micron::memcpy(itr, &o.memory[0], o.length - 1);
-
     __mem::length += o.length - 1;
     micron::zero(o.memory, o.length);
     o.length = 0;
@@ -744,16 +837,14 @@ public:
   inline T &
   at(const usize n)
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron:string at() out of range");
+    __safety_check<&hstring::__index_check, except::library_error>("micron::hstring at() out of range", n);
     return (__mem::memory)[n];
   };
 
   inline const T &
   at(const usize n) const
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron:string at() out of range");
+    __safety_check<&hstring::__index_check, except::library_error>("micron::hstring at() out of range", n);
     return (__mem::memory)[n];
   };
 
@@ -762,8 +853,8 @@ public:
   inline usize
   at(Itr n)
   {
-    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&hstring::__at_iter_check, except::library_error>("micron::hstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &__mem::memory[0];
   };
 
@@ -772,8 +863,8 @@ public:
   inline usize
   at(Itr n) const
   {
-    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&hstring::__at_iter_check, except::library_error>("micron::hstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &__mem::memory[0];
   };
 
@@ -782,8 +873,8 @@ public:
   inline usize
   at(Itr n)
   {
-    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&hstring::__at_iter_check, except::library_error>("micron::hstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &__mem::memory[0];
   };
 
@@ -792,8 +883,8 @@ public:
   inline usize
   at(Itr n) const
   {
-    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    __safety_check<&hstring::__at_iter_check, except::library_error>("micron::hstring at() iterator out of range",
+                                                                     static_cast<const T *>(n));
     return n - &__mem::memory[0];
   };
 
@@ -814,24 +905,11 @@ public:
   {
     if ( (__mem::length + data.size()) >= __mem::capacity )
       reserve(__mem::capacity + data.size() + 1);
-
     micron::memcpy(&(__mem::memory)[__mem::length], &data[0], data.size());
     __mem::length += data.size();
     return *this;
   };
 
-  /*template <usize M>
-  inline hstring &
-  operator+=(const char (&data)[M])
-  {
-    if ( (__mem::length + M) >= __mem::capacity )
-      reserve(__mem::capacity + M + 1);
-
-    usize ln = __mem::length == 0 ? 0 : __mem::length;
-    micron::memcpy(&(__mem::memory)[ln], &(data)[0], M);
-    __mem::length += M - 1;
-    return *this;
-  };*/
   template <typename F = T>
   inline hstring &
   operator+=(const F *data)
@@ -839,7 +917,6 @@ public:
     usize end = micron::strlen(data);
     if ( (__mem::length + end) >= __mem::capacity )
       reserve(__mem::capacity + end + 1);
-
     micron::memcpy(&(__mem::memory)[__mem::length], &(data)[0], end);
     __mem::length += end;
     return *this;
@@ -863,7 +940,6 @@ public:
   {
     if ( (data.length + __mem::length) >= __mem::capacity )
       reserve(__mem::capacity + data.length + 1);
-
     micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], data.length);
     __mem::length += data.length;
     return *this;
@@ -874,7 +950,6 @@ public:
   {
     if ( (__mem::length + 1) >= __mem::capacity )
       reserve(__mem::capacity + 1);
-
     usize ln = __mem::length == 0 ? 0 : __mem::length;
     __mem::memory[ln] = d;
     __mem::length++;
@@ -887,24 +962,22 @@ public:
   {
     if ( (data.size() + __mem::length) >= __mem::capacity )
       reserve(__mem::capacity + data.size() + 1);
-
     micron::memcpy(&(__mem::memory)[__mem::length], &data[0], data.size() - 1);
     __mem::length += data.size() - 1;
     return *this;
   };
 
-  template <typename I, typename F = T>
-    requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
+  template <typename F = T>
   inline hstring<F>
-  substr(I pos = 0, I cnt = npos) const
+  substr(usize pos = 0, usize cnt = npos) const
   {
-    if ( cnt == npos )
+    if ( cnt == npos )     // logic sentinel — kept for both Sf modes
       cnt = (pos <= __mem::length) ? __mem::length - pos : 0;
-    if ( pos > __mem::length or (pos + cnt) > __mem::length )
-      exc<except::library_error>("error micron::hstring substr invalid range.");
-    hstring<F> buf(cnt + 1);     // +1 for null headroom
+
+    __safety_check<&hstring::__range_pos_cnt, except::library_error>("micron::hstring substr() invalid range", pos, cnt);
+
+    hstring<F> buf(cnt + 1);
     micron::memcpy(buf.data(), &__mem::memory[pos], cnt);
-    // hstring ctor zero-initialises, null is already present
     buf._buf_set_length(cnt);
     return buf;
   };
@@ -913,10 +986,12 @@ public:
   inline hstring<F>
   substr(iterator _start, iterator _end = nullptr) const
   {
-    if ( _end == nullptr )
+    if ( _end == nullptr )     // logic default — kept for both Sf modes
       _end = end();
-    if ( _start < begin() or _end > end() or _start > _end )
-      exc<except::library_error>("error micron::hstring substr invalid range.");
+
+    __safety_check<&hstring::__iter_substr_check, except::library_error>("micron::hstring substr() invalid range",
+                                                                         static_cast<const T *>(_start), static_cast<const T *>(_end));
+
     usize len = static_cast<usize>(_end - _start);
     hstring<F> buf(len + 1);
     micron::memcpy(buf.data(), _start, len);
@@ -930,8 +1005,9 @@ public:
   {
     if ( _end == nullptr )
       _end = cend();
-    if ( _start < cbegin() or _end > cend() or _start > _end )
-      exc<except::library_error>("error micron::hstring substr invalid range.");
+
+    __safety_check<&hstring::__iter_substr_check, except::library_error>("micron::hstring substr() invalid range", _start, _end);
+
     usize len = static_cast<usize>(_end - _start);
     hstring<F> buf(len + 1);
     micron::memcpy(buf.data(), _start, len);
@@ -946,8 +1022,10 @@ public:
   {
     if ( n >= __mem::length )
       return *this;
-    if ( n > __mem::capacity )
-      exc<except::library_error>("micron::hstring truncate() index out of range");
+
+    __safety_check<&hstring::__capacity_exceed, except::library_error>("micron::hstring truncate() index out of range",
+                                                                       static_cast<usize>(n));
+
     micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
     __mem::length = n;
     return *this;
@@ -957,10 +1035,11 @@ public:
   inline hstring<F> &
   truncate(iterator itr)
   {
-    if ( itr < begin() or itr > end() )
-      exc<except::library_error>("micron::hstring truncate() iterator out of range");
+    __safety_check<&hstring::__iterator_check, except::library_error>("micron::hstring truncate() iterator out of range", itr);
+
     if ( itr >= end() )
       return *this;
+
     usize n = static_cast<usize>(itr - begin());
     micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
     __mem::length = n;
@@ -971,10 +1050,11 @@ public:
   inline hstring<F> &
   truncate(const_iterator itr)
   {
-    if ( itr < cbegin() or itr > cend() )
-      exc<except::library_error>("micron::hstring truncate() iterator out of range");
+    __safety_check<&hstring::__iterator_check, except::library_error>("micron::hstring truncate() iterator out of range", itr);
+
     if ( itr >= cend() )
       return *this;
+
     usize n = static_cast<usize>(itr - cbegin());
     micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
     __mem::length = n;
@@ -987,8 +1067,6 @@ public:
     if ( (n < __mem::capacity) ) {
       return;
     }
-    // NOTE: this is here because there may be edge cases where hstring has been hard zero'ed out. salvage it in that
-    // case
     if ( __mem::memory == nullptr ) [[unlikely]] {
       __mem::realloc(Alloc::auto_size());
       return;
@@ -1000,10 +1078,8 @@ public:
   try_reserve(usize n)
   {
     if ( (n < __mem::capacity) ) {
-      exc<except::memory_error>("error micron::string was unable to allocate memory");
+      exc<except::memory_error>("micron::hstring try_reserve() was unable to allocate memory");
     }
-    // NOTE: this is here because there may be edge cases where hstring has been hard zero'ed out. salvage it in that
-    // case
     if ( __mem::memory == nullptr ) [[unlikely]] {
       __mem::realloc(Alloc::auto_size());
       return;
@@ -1027,12 +1103,16 @@ public:
   template <typename F = T, typename I = usize>
     requires micron::is_arithmetic_v<I>
   inline hstring<F> &
-  erase(I ind, usize cnt = 1)
+  erase(I __ind, usize cnt = 1)
   {
-    if ( ind > __mem::length || cnt > __mem::length - ind )
-      exc<except::library_error>("micron:hstring erase() out of range");
+    usize ind = static_cast<usize>(__ind);
+
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring erase() invalid count", cnt);
+    __safety_check<&hstring::__erase_ind_check, except::library_error>("micron::hstring erase() out of range", ind, cnt);
+
     if ( !cnt )
       return *this;
+
     micron::bytemove(&__mem::memory[ind], &__mem::memory[ind + (1 + (cnt - 1))], __mem::length - (ind + 1 + (cnt - 1)));
     micron::typeset<T>(&__mem::memory[__mem::length - (cnt)], 0x0, cnt);
     __mem::length -= cnt;
@@ -1043,12 +1123,13 @@ public:
   inline hstring<F> &
   erase(iterator itr, usize cnt = 1)
   {
-    // TODO: signedness
-    if ( itr < begin() or itr > end() or cnt > (end() - itr) )
-      exc<except::library_error>("micron:hstring erase() out of range");
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring erase() invalid count", cnt);
+    __safety_check<&hstring::__erase_iter_check, except::library_error>("micron::hstring erase() out of range", static_cast<const T *>(itr),
+                                                                        cnt);
+
     if ( !cnt )
       return *this;
-    // micron::memmove(itr - cnt + 1, itr, __mem::length - (&__mem::memory[0] - itr - 1));
+
     micron::bytemove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&__mem::memory[__mem::length - cnt], 0x0, cnt);
     __mem::length -= cnt;
@@ -1059,10 +1140,12 @@ public:
   inline hstring<F> &
   erase(const_iterator itr, usize cnt = 1)
   {
-    if ( itr < begin() or itr > end() or cnt > (end() - itr) )
-      exc<except::library_error>("micron:hstring erase() out of range");
+    __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring erase() invalid count", cnt);
+    __safety_check<&hstring::__erase_iter_check, except::library_error>("micron::hstring erase() out of range", itr, cnt);
+
     if ( !cnt )
       return *this;
+
     micron::bytemove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&__mem::memory[__mem::length - cnt], 0x0, cnt);
     __mem::length -= cnt;
@@ -1089,14 +1172,17 @@ public:
   inline hstring<F> &
   remove(const char *needle)
   {
-    if ( needle == nullptr )
-      exc<except::library_error>("micron:hstring remove() null needle");
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring remove() null needle",
+                                                                  static_cast<const void *>(needle));
+
     usize needle_len = micron::strlen(needle);
     if ( needle_len == 0 )
       return *this;
+
     usize pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
     if ( pos == npos )
       return *this;
+
     micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
     micron::typeset<T>(&__mem::memory[__mem::length - needle_len], 0x0, needle_len);
     __mem::length -= needle_len;
@@ -1109,9 +1195,11 @@ public:
   {
     if ( needle.empty() )
       return *this;
+
     usize pos = find_substr(needle.data(), needle.size());
     if ( pos == npos )
       return *this;
+
     micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
     micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
     __mem::length -= needle.size();
@@ -1124,9 +1212,11 @@ public:
   {
     if ( needle.empty() )
       return *this;
+
     usize pos = find_substr(needle.data(), needle.size());
     if ( pos == npos )
       return *this;
+
     micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
     micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
     __mem::length -= needle.size();
@@ -1137,17 +1227,18 @@ public:
   inline hstring<F> &
   remove_all(const char *needle)
   {
-    if ( needle == nullptr )
-      exc<except::library_error>("micron:hstring remove_all() null needle");
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring remove_all() null needle",
+                                                                  static_cast<const void *>(needle));
+
     usize needle_len = micron::strlen(needle);
     if ( needle_len == 0 )
       return *this;
+
     usize pos = 0;
     while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
       micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
       micron::typeset<T>(&__mem::memory[__mem::length - needle_len], 0x0, needle_len);
       __mem::length -= needle_len;
-      // do NOT advance pos — the chars that slid left may form another match
     }
     return *this;
   }
@@ -1158,6 +1249,7 @@ public:
   {
     if ( needle.empty() )
       return *this;
+
     usize pos = 0;
     while ( (pos = find_substr(needle.data(), needle.size(), pos)) != npos ) {
       micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
@@ -1173,6 +1265,7 @@ public:
   {
     if ( needle.empty() )
       return *this;
+
     usize pos = 0;
     while ( (pos = find_substr(needle.data(), needle.size(), pos)) != npos ) {
       micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
@@ -1182,44 +1275,218 @@ public:
     return *this;
   }
 
-  inline bool
-  operator==(const char *data) const
+  explicit inline
+  operator bool() const noexcept
   {
-    usize M = strlen(data);
-    if ( M == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
+    return !empty();
+  }
+
+  template <is_string S>
+  inline bool
+  operator==(const S &str) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, str.c_str(), str.size()) == 0;
+  }
+
+  template <is_string S>
+  inline bool
+  operator!=(const S &str) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, str.c_str(), str.size()) != 0;
+  }
+
+  inline bool
+  operator==(const T *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator==() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) == 0;
+  }
+
+  template <usize M>
+  inline bool
+  operator!=(const char (&data)[M]) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator!=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) != 0;
+  }
+
+  template <typename S>
+    requires(!micron::same_as<S, T>)
+  inline bool
+  operator!=(const S *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator!=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) != 0;
+  }
+
+  inline bool
+  operator!=(const T *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator!=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) != 0;
+  }
+
+  inline bool
+  operator<(const T *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator<() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) < 0;
+  }
+
+  inline bool
+  operator>(const T *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator>() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) > 0;
+  }
+
+  inline bool
+  operator<=(const T *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator<=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) <= 0;
+  }
+
+  inline bool
+  operator>=(const T *data) const
+  {
+    __safety_check<&hstring::__null_check, except::library_error>("micron::hstring operator>=() null pointer",
+                                                                  static_cast<const void *>(data));
+    return __lexcmp(__mem::memory, __mem::length, data, micron::strlen(data)) >= 0;
+  }
 
   template <typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M]) const
   {
-    if ( M == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(&data[0]), M - 1) == 0;
+  }
+
+  template <typename F = T, usize M>
+  inline bool
+  operator!=(const F (&data)[M]) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(&data[0]), M - 1) != 0;
+  }
+
+  template <typename F = T, usize M>
+  inline bool
+  operator<(const F (&data)[M]) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(&data[0]), M - 1) < 0;
+  }
+
+  template <typename F = T, usize M>
+  inline bool
+  operator>(const F (&data)[M]) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(&data[0]), M - 1) > 0;
+  }
+
+  template <typename F = T, usize M>
+  inline bool
+  operator<=(const F (&data)[M]) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(&data[0]), M - 1) <= 0;
+  }
+
+  template <typename F = T, usize M>
+  inline bool
+  operator>=(const F (&data)[M]) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(&data[0]), M - 1) >= 0;
+  }
 
   template <typename F = T>
   inline bool
   operator==(const hstring<F> &data) const
   {
-    if ( data.length == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data.memory[i] != __mem::memory[i] )
-          return false;
-    } else
-      return false;
-    return true;
-  };
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) == 0;
+  }
+
+  template <typename F = T>
+  inline bool
+  operator!=(const hstring<F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) != 0;
+  }
+
+  template <typename F = T>
+  inline bool
+  operator<(const hstring<F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) < 0;
+  }
+
+  template <typename F = T>
+  inline bool
+  operator>(const hstring<F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) > 0;
+  }
+
+  template <typename F = T>
+  inline bool
+  operator<=(const hstring<F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) <= 0;
+  }
+
+  template <typename F = T>
+  inline bool
+  operator>=(const hstring<F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) >= 0;
+  }
+
+  template <usize N, typename F = T>
+  inline bool
+  operator==(const sstring<N, F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) == 0;
+  }
+
+  template <usize N, typename F = T>
+  inline bool
+  operator!=(const sstring<N, F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) != 0;
+  }
+
+  template <usize N, typename F = T>
+  inline bool
+  operator<(const sstring<N, F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) < 0;
+  }
+
+  template <usize N, typename F = T>
+  inline bool
+  operator>(const sstring<N, F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) > 0;
+  }
+
+  template <usize N, typename F = T>
+  inline bool
+  operator<=(const sstring<N, F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) <= 0;
+  }
+
+  template <usize N, typename F = T>
+  inline bool
+  operator>=(const sstring<N, F> &data) const
+  {
+    return __lexcmp(__mem::memory, __mem::length, reinterpret_cast<const T *>(data.memory), data.length) >= 0;
+  }
 };
 
 };     // namespace micron

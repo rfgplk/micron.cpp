@@ -14,7 +14,6 @@
 
 #include "paths.hpp"
 #include "posix/file.hpp"
-#include "posix/utils.hpp"
 
 #include "entry.hpp"
 #include "file.hpp"
@@ -34,7 +33,7 @@ struct __parallel_wrapper {
 // not thread safe
 template <io::modes _default_mode = io::modes::read,
           usize N = 256>     // max size of open handles (entries & dirs), note that the max is usually 1024, but
-                              // defaulting to 256
+                             // defaulting to 256
 class parallel_system
 {
   micron::mutex __mtx;

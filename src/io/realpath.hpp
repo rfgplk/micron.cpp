@@ -70,7 +70,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   }
   proc_path[i] = '\0';
 
-  ssize_t len = (micron::syscall(SYS_readlink, proc_path, result_buf, posix::path_max - 1));
+  max_t len = (micron::syscall(SYS_readlink, proc_path, result_buf, posix::path_max - 1));
 
   close(fd);
   if ( len < 0 ) {

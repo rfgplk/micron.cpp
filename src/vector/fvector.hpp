@@ -54,7 +54,6 @@ public:
     if ( __mem::is_zero() )
       return;
     clear();
-    // this->destroy(to_chunk(__mem::memory, __mem::capacity));
   }
 
   fvector(const std::initializer_list<T> &lst) : __mem(lst.size())
@@ -784,7 +783,7 @@ public:
   {
     size_type count = last - first;
 
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( T *p = first; p < last; ++p )
         p->~T();
     }
@@ -807,7 +806,7 @@ public:
   {
     size_type count = to - from;
 
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_type i = from; i < to; ++i )
         (__mem::memory)[i].~T();
     }
@@ -824,7 +823,7 @@ public:
   inline void
   erase(iterator it)
   {
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
       it->~T();
 
     size_type idx = it - __mem::memory;
@@ -839,7 +838,7 @@ public:
   inline void
   erase(const size_type n)
   {
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
       (__mem::memory)[n].~T();
 
     for ( size_type i = n; i < __mem::length - 1; ++i )
@@ -859,12 +858,16 @@ public:
       clear();
   }
 
+  // NOTE: by default, micron vectors will actually zero out memory they hold
+  // this is done for correctness, even though it's partially enforced at the allocator level
+  // this may incur a heavy performance penalty
+  // fvector doesn't manually zero out trivial types
   inline void
   clear()
   {
     if ( !__mem::length )
       return;
-    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy_fast(micron::addr(__mem::memory[0]), __mem::length);
     __mem::length = 0;
   }
 

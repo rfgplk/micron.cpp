@@ -7,9 +7,9 @@
 
 #include "types.hpp"
 
-thread_local u32 __micron_errno = 0;
+thread_local i32 __micron_errno = 0;
 
-u32 *
+i32 *
 __micron_errno_location(void)
 {
   return &__micron_errno;
@@ -29,55 +29,104 @@ set_errno(void)
 }
 
 inline __attribute__((always_inline)) void
-set_errno(int val)
+set_errno(i32 val)
 {
   errno = val;
+}
+
+template <typename T>
+  requires(micron::is_arithmetic_v<T> and micron::is_convertible_v<T, i32>)
+inline __attribute__((always_inline)) void
+set_errno(const T val)
+{
+  errno = static_cast<i32>(val);
 }
 
 namespace error
 {
 
 // NOTE: we're doing it like this because it's simpler
-constexpr static const u32 permissions = 1;
-constexpr static const u32 no_entry = 2;
-constexpr static const u32 no_process = 3;
-constexpr static const u32 interrupted = 4;
-constexpr static const u32 io_error = 5;
-constexpr static const u32 no_such_device = 6;
-constexpr static const u32 arguments_too_big = 7;
-constexpr static const u32 exec_error = 8;
-constexpr static const u32 bad_file_number = 9;
-constexpr static const u32 no_child_process = 10;
-constexpr static const u32 try_again = 11;
-constexpr static const u32 out_of_memory = 12;
-constexpr static const u32 permission_denied = 13;
-constexpr static const u32 bad_address = 14;
-constexpr static const u32 block_device_req = 15;
-constexpr static const u32 device_busy = 16;
-constexpr static const u32 busy = 16;
-constexpr static const u32 file_exists = 17;
-constexpr static const u32 exdev = 18;
-constexpr static const u32 no_device = 19;
-constexpr static const u32 not_a_dir = 20;
-constexpr static const u32 is_a_dir = 21;
-constexpr static const u32 invalid_arg = 22;
-constexpr static const u32 file_table_ovflw = 23;
-constexpr static const u32 too_many_files = 24;
-constexpr static const u32 not_a_tty = 25;
-constexpr static const u32 text_busy = 26;
-constexpr static const u32 file_too_big = 27;
-constexpr static const u32 no_space = 28;
-constexpr static const u32 illegal_seek = 29;
-constexpr static const u32 read_only_fs = 30;
-constexpr static const u32 too_many_links = 31;
-constexpr static const u32 broken_pipe = 32;
-constexpr static const u32 out_of_domain = 33;
-constexpr static const u32 not_representable = 34;
-constexpr static const u32 deadlock = 35;
-constexpr static const u32 name_too_long = 36;
-constexpr static const u32 no_record_locks = 37;
-constexpr static const u32 bad_syscall = 38;
-constexpr static const u32 overflow = 75;
+constexpr static const i32 permissions = 1;
+constexpr static const i32 no_entry = 2;
+constexpr static const i32 no_process = 3;
+constexpr static const i32 interrupted = 4;
+constexpr static const i32 io_error = 5;
+constexpr static const i32 no_such_device = 6;
+constexpr static const i32 arguments_too_big = 7;
+constexpr static const i32 exec_error = 8;
+constexpr static const i32 bad_file_number = 9;
+constexpr static const i32 no_child_process = 10;
+constexpr static const i32 try_again = 11;
+constexpr static const i32 out_of_memory = 12;
+constexpr static const i32 permission_denied = 13;
+constexpr static const i32 bad_address = 14;
+constexpr static const i32 block_device_req = 15;
+constexpr static const i32 device_busy = 16;
+constexpr static const i32 busy = 16;
+constexpr static const i32 file_exists = 17;
+constexpr static const i32 exdev = 18;
+constexpr static const i32 no_device = 19;
+constexpr static const i32 not_a_dir = 20;
+constexpr static const i32 is_a_dir = 21;
+constexpr static const i32 invalid_arg = 22;
+constexpr static const i32 file_table_ovflw = 23;
+constexpr static const i32 too_many_files = 24;
+constexpr static const i32 not_a_tty = 25;
+constexpr static const i32 text_busy = 26;
+constexpr static const i32 file_too_big = 27;
+constexpr static const i32 no_space = 28;
+constexpr static const i32 illegal_seek = 29;
+constexpr static const i32 read_only_fs = 30;
+constexpr static const i32 too_many_links = 31;
+constexpr static const i32 broken_pipe = 32;
+constexpr static const i32 out_of_domain = 33;
+constexpr static const i32 not_representable = 34;
+constexpr static const i32 deadlock = 35;
+constexpr static const i32 name_too_long = 36;
+constexpr static const i32 no_record_locks = 37;
+constexpr static const i32 bad_syscall = 38;
+constexpr static const i32 overflow = 75;
+constexpr static const i32 bad_fd = 77;
+
+// for networking (libjkr)
+constexpr static const i32 restarted = 85;
+constexpr static const i32 estrpipe = 86;
+constexpr static const i32 eusers = 87;
+constexpr static const i32 not_a_socket = 88;
+constexpr static const i32 edestaddrreq = 89;
+constexpr static const i32 emsgsize = 90;
+constexpr static const i32 wrong_protocol = 91;
+constexpr static const i32 enoprotoopt = 92;
+constexpr static const i32 eprotonosupport = 93;
+constexpr static const i32 socket_not_supported = 94;
+constexpr static const i32 eopnotsupp = 95;
+constexpr static const i32 epfnosupport = 96;
+constexpr static const i32 eafnosupport = 97;
+constexpr static const i32 addr_in_use = 98;
+constexpr static const i32 addr_not_available = 99;
+constexpr static const i32 enetdown = 100;
+constexpr static const i32 enetunreach = 101;
+constexpr static const i32 network_reset = 102;
+constexpr static const i32 econnaborted = 103;
+constexpr static const i32 econnreset = 104;
+constexpr static const i32 enobufs = 105;
+constexpr static const i32 eisconn = 106;
+constexpr static const i32 enotconn = 107;
+constexpr static const i32 eshutdown = 108;
+constexpr static const i32 etoomanyrefs = 109;
+constexpr static const i32 timed_out = 110;
+constexpr static const i32 econnrefused = 111;
+constexpr static const i32 ehostdown = 112;
+constexpr static const i32 ehostunreach = 113;
+constexpr static const i32 ealready = 114;
+constexpr static const i32 einprogress = 115;
+constexpr static const i32 estale = 116;
+constexpr static const i32 euclean = 117;
+constexpr static const i32 enotnam = 118;
+constexpr static const i32 enavail = 119;
+constexpr static const i32 eisnam = 120;
+constexpr static const i32 eremoteio = 121;
+constexpr static const i32 equot = 122;
 
 constexpr const char *permissions_msg = "Operation not permitted *";
 constexpr const char *no_entry_msg = "No such file or directory *";
@@ -119,387 +168,374 @@ constexpr const char *no_record_locks_msg = "No record locks available *";
 constexpr const char *bad_syscall_msg = "Invalid system call number *";
 constexpr const char *no_msg = "No errno *";
 
-inline auto
-what_errno()
-{
-  const int e = errno;
-  if ( permissions == e ) {
-    return permissions_msg;
-  }
-  if ( no_entry == e ) {
-    return no_entry_msg;
-  }
-  if ( no_process == e ) {
-    return no_process_msg;
-  }
-  if ( interrupted == e ) {
-    return interrupted_msg;
-  }
-  if ( io_error == e ) {
-
-    return io_error_msg;
-  }
-  if ( no_such_device == e ) {
-
-    return no_such_device_msg;
-  }
-  if ( arguments_too_big == e ) {
-
-    return arguments_too_big_msg;
-  }
-  if ( exec_error == e ) {
-
-    return exec_error_msg;
-  }
-  if ( bad_file_number == e ) {
-
-    return bad_file_number_msg;
-  }
-  if ( no_child_process == e ) {
-    return no_child_process_msg;
-  }
-  if ( try_again == e ) {
-
-    return try_again_msg;
-  }
-  if ( out_of_memory == e ) {
-
-    return out_of_memory_msg;
-  }
-  if ( permission_denied == e ) {
-    return permission_denied_msg;
-  }
-  if ( bad_address == e ) {
-    return bad_address_msg;
-  }
-  if ( block_device_req == e ) {
-    return block_device_req_msg;
-  }
-  if ( device_busy == e ) {
-    return device_busy_msg;
-  }
-  if ( file_exists == e ) {
-    return file_exists_msg;
-  }
-  if ( exdev == e ) {
-    return exdev_msg;
-  }
-  if ( no_device == e ) {
-    return no_device_msg;
-  }
-  if ( not_a_dir == e ) {
-    return not_a_dir_msg;
-  }
-  if ( is_a_dir == e ) {
-    return is_a_dir_msg;
-  }
-  if ( invalid_arg == e ) {
-    return invalid_arg_msg;
-  }
-  if ( file_table_ovflw == e ) {
-    return file_table_ovflw_msg;
-  }
-  if ( too_many_files == e ) {
-    return too_many_files_msg;
-  }
-  if ( not_a_tty == e ) {
-    return not_a_tty_msg;
-  }
-  if ( text_busy == e ) {
-    return text_busy_msg;
-  }
-  if ( file_too_big == e ) {
-    return file_too_big_msg;
-  }
-  if ( no_space == e ) {
-    return no_space_msg;
-  }
-  if ( illegal_seek == e ) {
-    return illegal_seek_msg;
-  }
-  if ( read_only_fs == e ) {
-    return read_only_fs_msg;
-  }
-  if ( too_many_links == e ) {
-    return too_many_links_msg;
-  }
-  if ( broken_pipe == e ) {
-    return broken_pipe_msg;
-  }
-  if ( out_of_domain == e ) {
-    return out_of_domain_msg;
-  }
-  if ( not_representable == e ) {
-    return not_representable_msg;
-  }
-  if ( deadlock == e ) {
-    return deadlock_msg;
-  }
-  if ( name_too_long == e ) {
-    return name_too_long_msg;
-  }
-  if ( no_record_locks == e ) {
-    return no_record_locks_msg;
-  }
-  if ( bad_syscall == e ) {
-    return bad_syscall_msg;
-  }
-  return no_msg;
-}
+constexpr const char *restarted_msg = "Interrupted system call should be restarted *";
+constexpr const char *estrpipe_msg = "Streams pipe error *";
+constexpr const char *eusers_msg = "Too many users *";
+constexpr const char *not_a_socket_msg = "Socket operation on non-socket *";
+constexpr const char *edestaddrreq_msg = "Destination address required *";
+constexpr const char *emsgsize_msg = "Message too long *";
+constexpr const char *wrong_protocol_msg = "Protocol wrong type for socket *";
+constexpr const char *enoprotoopt_msg = "Protocol not available *";
+constexpr const char *eprotonosupport_msg = "Protocol not supported *";
+constexpr const char *socket_not_supported_msg = "Socket type not supported *";
+constexpr const char *eopnotsupp_msg = "Operation not supported on transport endpoint *";
+constexpr const char *epfnosupport_msg = "Protocol family not supported *";
+constexpr const char *eafnosupport_msg = "Address family not supported by protocol *";
+constexpr const char *eaddrinuse_msg = "Address already in use *";
+constexpr const char *addr_not_available_msg = "Cannot assign requested address *";
+constexpr const char *enetdown_msg = "Network is down *";
+constexpr const char *enetunreach_msg = "Network is unreachable *";
+constexpr const char *network_reset_msg = "Network dropped connection because of reset *";
+constexpr const char *econnaborted_msg = "Software caused connection abort *";
+constexpr const char *econnreset_msg = "Connection reset by peer *";
+constexpr const char *enobufs_msg = "No buffer space available *";
+constexpr const char *eisconn_msg = "Transport endpoint is already connected *";
+constexpr const char *enotconn_msg = "Transport endpoint is not connected *";
+constexpr const char *eshutdown_msg = "Cannot send after transport endpoint shutdown *";
+constexpr const char *etoomanyrefs_msg = "Too many references: cannot splice *";
+constexpr const char *timed_out_msg = "Connection timed out *";
+constexpr const char *econnrefused_msg = "Connection refused *";
+constexpr const char *ehostdown_msg = "Host is down *";
+constexpr const char *ehostunreach_msg = "No route to host *";
+constexpr const char *ealready_msg = "Operation already in progress *";
+constexpr const char *einprogress_msg = "Operation now in progress *";
+constexpr const char *estale_msg = "Stale file handle *";
+constexpr const char *euclean_msg = "Structure needs cleaning *";
+constexpr const char *enotnam_msg = "Not a XENIX named type file *";
+constexpr const char *enavail_msg = "No XENIX semaphores available *";
+constexpr const char *eisnam_msg = "Is a named type file *";
+constexpr const char *eremoteio_msg = "Remote I/O error *";
+constexpr const char *equot_msg = "Quota exceeded *";
 
 inline auto
 get_errno(const int e)
 {
-  if ( permissions == e ) {
+  switch ( e ) {
+  case permissions :
     return permissions_msg;
-  }
-  if ( no_entry == e ) {
+  case no_entry :
     return no_entry_msg;
-  }
-  if ( no_process == e ) {
+  case no_process :
     return no_process_msg;
-  }
-  if ( interrupted == e ) {
+  case interrupted :
     return interrupted_msg;
-  }
-  if ( io_error == e ) {
-
+  case io_error :
     return io_error_msg;
-  }
-  if ( no_such_device == e ) {
-
+  case no_such_device :
     return no_such_device_msg;
-  }
-  if ( arguments_too_big == e ) {
-
+  case arguments_too_big :
     return arguments_too_big_msg;
-  }
-  if ( exec_error == e ) {
-
+  case exec_error :
     return exec_error_msg;
-  }
-  if ( bad_file_number == e ) {
-
+  case bad_file_number :
     return bad_file_number_msg;
-  }
-  if ( no_child_process == e ) {
+  case no_child_process :
     return no_child_process_msg;
-  }
-  if ( try_again == e ) {
-
+  case try_again :
     return try_again_msg;
-  }
-  if ( out_of_memory == e ) {
-
+  case out_of_memory :
     return out_of_memory_msg;
-  }
-  if ( permission_denied == e ) {
+  case permission_denied :
     return permission_denied_msg;
-  }
-  if ( bad_address == e ) {
+  case bad_address :
     return bad_address_msg;
-  }
-  if ( block_device_req == e ) {
+  case block_device_req :
     return block_device_req_msg;
-  }
-  if ( device_busy == e ) {
+  case device_busy :
     return device_busy_msg;
-  }
-  if ( file_exists == e ) {
+  case file_exists :
     return file_exists_msg;
-  }
-  if ( exdev == e ) {
+  case exdev :
     return exdev_msg;
-  }
-  if ( no_device == e ) {
+  case no_device :
     return no_device_msg;
-  }
-  if ( not_a_dir == e ) {
+  case not_a_dir :
     return not_a_dir_msg;
-  }
-  if ( is_a_dir == e ) {
+  case is_a_dir :
     return is_a_dir_msg;
-  }
-  if ( invalid_arg == e ) {
+  case invalid_arg :
     return invalid_arg_msg;
-  }
-  if ( file_table_ovflw == e ) {
+  case file_table_ovflw :
     return file_table_ovflw_msg;
-  }
-  if ( too_many_files == e ) {
+  case too_many_files :
     return too_many_files_msg;
-  }
-  if ( not_a_tty == e ) {
+  case not_a_tty :
     return not_a_tty_msg;
-  }
-  if ( text_busy == e ) {
+  case text_busy :
     return text_busy_msg;
-  }
-  if ( file_too_big == e ) {
+  case file_too_big :
     return file_too_big_msg;
-  }
-  if ( no_space == e ) {
+  case no_space :
     return no_space_msg;
-  }
-  if ( illegal_seek == e ) {
+  case illegal_seek :
     return illegal_seek_msg;
-  }
-  if ( read_only_fs == e ) {
+  case read_only_fs :
     return read_only_fs_msg;
-  }
-  if ( too_many_links == e ) {
+  case too_many_links :
     return too_many_links_msg;
-  }
-  if ( broken_pipe == e ) {
+  case broken_pipe :
     return broken_pipe_msg;
-  }
-  if ( out_of_domain == e ) {
+  case out_of_domain :
     return out_of_domain_msg;
-  }
-  if ( not_representable == e ) {
+  case not_representable :
     return not_representable_msg;
-  }
-  if ( deadlock == e ) {
+  case deadlock :
     return deadlock_msg;
-  }
-  if ( name_too_long == e ) {
+  case name_too_long :
     return name_too_long_msg;
-  }
-  if ( no_record_locks == e ) {
+  case no_record_locks :
     return no_record_locks_msg;
-  }
-  if ( bad_syscall == e ) {
+  case bad_syscall :
     return bad_syscall_msg;
+
+  case restarted :
+    return restarted_msg;
+  case estrpipe :
+    return estrpipe_msg;
+  case eusers :
+    return eusers_msg;
+  case not_a_socket :
+    return not_a_socket_msg;
+  case edestaddrreq :
+    return edestaddrreq_msg;
+  case emsgsize :
+    return emsgsize_msg;
+  case wrong_protocol :
+    return wrong_protocol_msg;
+  case enoprotoopt :
+    return enoprotoopt_msg;
+  case eprotonosupport :
+    return eprotonosupport_msg;
+  case socket_not_supported :
+    return socket_not_supported_msg;
+  case eopnotsupp :
+    return eopnotsupp_msg;
+  case epfnosupport :
+    return epfnosupport_msg;
+  case eafnosupport :
+    return eafnosupport_msg;
+  case addr_in_use :
+    return eaddrinuse_msg;
+  case addr_not_available :
+    return addr_not_available_msg;
+  case enetdown :
+    return enetdown_msg;
+  case enetunreach :
+    return enetunreach_msg;
+  case network_reset :
+    return network_reset_msg;
+  case econnaborted :
+    return econnaborted_msg;
+  case econnreset :
+    return econnreset_msg;
+  case enobufs :
+    return enobufs_msg;
+  case eisconn :
+    return eisconn_msg;
+  case enotconn :
+    return enotconn_msg;
+  case eshutdown :
+    return eshutdown_msg;
+  case etoomanyrefs :
+    return etoomanyrefs_msg;
+  case timed_out :
+    return timed_out_msg;
+  case econnrefused :
+    return econnrefused_msg;
+  case ehostdown :
+    return ehostdown_msg;
+  case ehostunreach :
+    return ehostunreach_msg;
+  case ealready :
+    return ealready_msg;
+  case einprogress :
+    return einprogress_msg;
+  case estale :
+    return estale_msg;
+  case euclean :
+    return euclean_msg;
+  case enotnam :
+    return enotnam_msg;
+  case enavail :
+    return enavail_msg;
+  case eisnam :
+    return eisnam_msg;
+  case eremoteio :
+    return eremoteio_msg;
+  case equot :
+    return equot_msg;
+
+  default :
+    return no_msg;
   }
-  return no_msg;
 }
 
 template <int e>
 inline constexpr auto
-const_get_errno(void)
+const_get_errno()
 {
-  if constexpr ( permissions == e ) {
+  if constexpr ( e == permissions )
     return permissions_msg;
-  }
-  if constexpr ( no_entry == e ) {
+  if constexpr ( e == no_entry )
     return no_entry_msg;
-  }
-  if constexpr ( no_process == e ) {
+  if constexpr ( e == no_process )
     return no_process_msg;
-  }
-  if constexpr ( interrupted == e ) {
+  if constexpr ( e == interrupted )
     return interrupted_msg;
-  }
-  if constexpr ( io_error == e ) {
-
+  if constexpr ( e == io_error )
     return io_error_msg;
-  }
-  if constexpr ( no_such_device == e ) {
-
+  if constexpr ( e == no_such_device )
     return no_such_device_msg;
-  }
-  if constexpr ( arguments_too_big == e ) {
-
+  if constexpr ( e == arguments_too_big )
     return arguments_too_big_msg;
-  }
-  if constexpr ( exec_error == e ) {
-
+  if constexpr ( e == exec_error )
     return exec_error_msg;
-  }
-  if constexpr ( bad_file_number == e ) {
-
+  if constexpr ( e == bad_file_number )
     return bad_file_number_msg;
-  }
-  if constexpr ( no_child_process == e ) {
+  if constexpr ( e == no_child_process )
     return no_child_process_msg;
-  }
-  if constexpr ( try_again == e ) {
-
+  if constexpr ( e == try_again )
     return try_again_msg;
-  }
-  if constexpr ( out_of_memory == e ) {
-
+  if constexpr ( e == out_of_memory )
     return out_of_memory_msg;
-  }
-  if constexpr ( permission_denied == e ) {
+  if constexpr ( e == permission_denied )
     return permission_denied_msg;
-  }
-  if constexpr ( bad_address == e ) {
+  if constexpr ( e == bad_address )
     return bad_address_msg;
-  }
-  if constexpr ( block_device_req == e ) {
+  if constexpr ( e == block_device_req )
     return block_device_req_msg;
-  }
-  if constexpr ( device_busy == e ) {
+  if constexpr ( e == device_busy )
     return device_busy_msg;
-  }
-  if constexpr ( file_exists == e ) {
+  if constexpr ( e == file_exists )
     return file_exists_msg;
-  }
-  if constexpr ( exdev == e ) {
+  if constexpr ( e == exdev )
     return exdev_msg;
-  }
-  if constexpr ( no_device == e ) {
+  if constexpr ( e == no_device )
     return no_device_msg;
-  }
-  if constexpr ( not_a_dir == e ) {
+  if constexpr ( e == not_a_dir )
     return not_a_dir_msg;
-  }
-  if constexpr ( is_a_dir == e ) {
+  if constexpr ( e == is_a_dir )
     return is_a_dir_msg;
-  }
-  if constexpr ( invalid_arg == e ) {
+  if constexpr ( e == invalid_arg )
     return invalid_arg_msg;
-  }
-  if constexpr ( file_table_ovflw == e ) {
+  if constexpr ( e == file_table_ovflw )
     return file_table_ovflw_msg;
-  }
-  if constexpr ( too_many_files == e ) {
+  if constexpr ( e == too_many_files )
     return too_many_files_msg;
-  }
-  if constexpr ( not_a_tty == e ) {
+  if constexpr ( e == not_a_tty )
     return not_a_tty_msg;
-  }
-  if constexpr ( text_busy == e ) {
+  if constexpr ( e == text_busy )
     return text_busy_msg;
-  }
-  if constexpr ( file_too_big == e ) {
+  if constexpr ( e == file_too_big )
     return file_too_big_msg;
-  }
-  if constexpr ( no_space == e ) {
+  if constexpr ( e == no_space )
     return no_space_msg;
-  }
-  if constexpr ( illegal_seek == e ) {
+  if constexpr ( e == illegal_seek )
     return illegal_seek_msg;
-  }
-  if constexpr ( read_only_fs == e ) {
+  if constexpr ( e == read_only_fs )
     return read_only_fs_msg;
-  }
-  if constexpr ( too_many_links == e ) {
+  if constexpr ( e == too_many_links )
     return too_many_links_msg;
-  }
-  if constexpr ( broken_pipe == e ) {
+  if constexpr ( e == broken_pipe )
     return broken_pipe_msg;
-  }
-  if constexpr ( out_of_domain == e ) {
+  if constexpr ( e == out_of_domain )
     return out_of_domain_msg;
-  }
-  if constexpr ( not_representable == e ) {
+  if constexpr ( e == not_representable )
     return not_representable_msg;
-  }
-  if constexpr ( deadlock == e ) {
+  if constexpr ( e == deadlock )
     return deadlock_msg;
-  }
-  if constexpr ( name_too_long == e ) {
+  if constexpr ( e == name_too_long )
     return name_too_long_msg;
-  }
-  if constexpr ( no_record_locks == e ) {
+  if constexpr ( e == no_record_locks )
     return no_record_locks_msg;
-  }
-  if constexpr ( bad_syscall == e ) {
+  if constexpr ( e == bad_syscall )
     return bad_syscall_msg;
-  }
+
+  if constexpr ( e == restarted )
+    return restarted_msg;
+  if constexpr ( e == estrpipe )
+    return estrpipe_msg;
+  if constexpr ( e == eusers )
+    return eusers_msg;
+  if constexpr ( e == not_a_socket )
+    return not_a_socket_msg;
+  if constexpr ( e == edestaddrreq )
+    return edestaddrreq_msg;
+  if constexpr ( e == emsgsize )
+    return emsgsize_msg;
+  if constexpr ( e == wrong_protocol )
+    return wrong_protocol_msg;
+  if constexpr ( e == enoprotoopt )
+    return enoprotoopt_msg;
+  if constexpr ( e == eprotonosupport )
+    return eprotonosupport_msg;
+  if constexpr ( e == socket_not_supported )
+    return socket_not_supported_msg;
+  if constexpr ( e == eopnotsupp )
+    return eopnotsupp_msg;
+  if constexpr ( e == epfnosupport )
+    return epfnosupport_msg;
+  if constexpr ( e == eafnosupport )
+    return eafnosupport_msg;
+  if constexpr ( e == addr_in_use )
+    return eaddrinuse_msg;
+  if constexpr ( e == addr_not_available )
+    return addr_not_available_msg;
+  if constexpr ( e == enetdown )
+    return enetdown_msg;
+  if constexpr ( e == enetunreach )
+    return enetunreach_msg;
+  if constexpr ( e == network_reset )
+    return network_reset_msg;
+  if constexpr ( e == econnaborted )
+    return econnaborted_msg;
+  if constexpr ( e == econnreset )
+    return econnreset_msg;
+  if constexpr ( e == enobufs )
+    return enobufs_msg;
+  if constexpr ( e == eisconn )
+    return eisconn_msg;
+  if constexpr ( e == enotconn )
+    return enotconn_msg;
+  if constexpr ( e == eshutdown )
+    return eshutdown_msg;
+  if constexpr ( e == etoomanyrefs )
+    return etoomanyrefs_msg;
+  if constexpr ( e == timed_out )
+    return timed_out_msg;
+  if constexpr ( e == econnrefused )
+    return econnrefused_msg;
+  if constexpr ( e == ehostdown )
+    return ehostdown_msg;
+  if constexpr ( e == ehostunreach )
+    return ehostunreach_msg;
+  if constexpr ( e == ealready )
+    return ealready_msg;
+  if constexpr ( e == einprogress )
+    return einprogress_msg;
+  if constexpr ( e == estale )
+    return estale_msg;
+  if constexpr ( e == euclean )
+    return euclean_msg;
+  if constexpr ( e == enotnam )
+    return enotnam_msg;
+  if constexpr ( e == enavail )
+    return enavail_msg;
+  if constexpr ( e == eisnam )
+    return eisnam_msg;
+  if constexpr ( e == eremoteio )
+    return eremoteio_msg;
+  if constexpr ( e == equot )
+    return equot_msg;
+
   return no_msg;
+}
+
+inline auto
+what_errno()
+{
+  const int e = errno;
+  return get_errno(e);
 }
 
 // NOTE: for backwards compatibility, we're keeping the raw list of defines

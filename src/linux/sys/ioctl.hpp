@@ -10,11 +10,12 @@
 
 namespace micron
 {
-
+namespace posix
+{
 template <typename... Args>
 // TODO: reintroduce this, and resolve type conflicts  requires((micron::is_same_v<Args, unsigned long> && ...))
 int
-ioctl(int fd, Args... ops)
+ioctl(i32 fd, Args... ops)
 {
   return static_cast<int>(micron::syscall(SYS_ioctl, fd, ops...));
 }
@@ -45,10 +46,11 @@ __sizeof_type()
   return sizeof(T);
 }
 
+// NOTE: shadowing
 consteval u64
-io_request(u64 dir, u64 type, u64 nr, u64 size)
+io_request(u64 __dir, u64 type, u64 nr, u64 size)
 {
-  return (((dir) << __ioc_dirshift) | ((type) << __ioc_typeshift) | ((nr) << __ioc_nrshift) | ((size) << __ioc_sizeshift));
+  return (((__dir) << __ioc_dirshift) | ((type) << __ioc_typeshift) | ((nr) << __ioc_nrshift) | ((size) << __ioc_sizeshift));
 }
 
 consteval u64
@@ -211,5 +213,5 @@ constexpr static const u64 tiocpkt_nostop = 16;
 constexpr static const u64 tiocpkt_dostop = 32;
 constexpr static const u64 tiocpkt_ioctl = 64;
 constexpr static const u64 tiocser_temt = 0x01;
-
+};     // namespace posix
 }     // namespace micron

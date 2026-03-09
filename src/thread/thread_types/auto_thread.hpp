@@ -73,6 +73,13 @@ template <usize Stack_Size = auto_thread_stack_size> class auto_thread
     parent_pid = 0;
     pid = 0;
     payload.alive.store(false, micron::memory_order_seq_cst);
+    if ( payload.tag_val == __thread_payload::tag::heap ) {
+      byte *ptr = payload.ret_val.get();
+      if ( ptr ) {
+        delete ptr;
+        ptr = nullptr;
+      }
+    }
   }
 
   void

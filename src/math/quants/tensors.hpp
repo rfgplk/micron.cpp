@@ -725,7 +725,7 @@ public:
     requires(micron::is_floating_point_v<B>)                                                                                               \
   {                                                                                                                                        \
     __tensor_base_avx result;                                                                                                              \
-    for ( usize i = 0; i < __size; ++i )                                                                                                  \
+    for ( usize i = 0; i < __size; ++i )                                                                                                   \
       result.__data[i] = fn(__data[i]);                                                                                                    \
     return result;                                                                                                                         \
   }
@@ -773,7 +773,7 @@ public:
     requires(micron::is_floating_point_v<B>)                                                                                               \
   {                                                                                                                                        \
     __tensor_base_avx result;                                                                                                              \
-    for ( usize i = 0; i < __size; ++i )                                                                                                  \
+    for ( usize i = 0; i < __size; ++i )                                                                                                   \
       result.__data[i] = fn(__data[i], o.__data[i]);                                                                                       \
     return result;                                                                                                                         \
   }

@@ -8,6 +8,8 @@
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
 
+#include "../../tuple.hpp"
+
 #include "../../linux/__includes.hpp"
 
 #include "sig_callbacks.hpp"
@@ -35,7 +37,7 @@ enum thread_returns : i32 { return_success, return_force, return_fail };
 
 enum join_status { join_success, join_fail, join_allowed, join_busy };
 
-struct __thread_payload {
+template <typename T> struct __async_payload {
   atomic_token<bool> alive;
   atomic_token<u64> ret_val;
   posix::rusage_t usage;     // non atomic
@@ -45,6 +47,31 @@ struct __thread_payload {
   {
     alive.store(false);
     ret_val.store(0);
+    usage = posix::rusage_t{};
+  }
+};
+
+struct __thread_payload {
+  atomic_token<bool> alive;
+  // NOTE:
+  // the pointer is used as the operand of a static_cast (7.6.1.8), except when the conversion is to pointer
+  // to cv void, or to pointer to cv void and subsequently to pointer to cv char, cv unsigned char, or
+  // cv std::byte (17.2.1)....
+  // If a program attempts to access (3.1) the stored value of an object through a glvalue whose type is not
+  // similar (7.3.5) to one of the following types the behavior is undefined:51
+  //(11.1) — the dynamic type of the object,
+  //(11.2) — a type that is the signed or unsigned type corresponding to the dynamic type of the object, or
+  //(11.3) — a char, unsigned char, or std::byte type.
+  atomic_ptr<byte *> ret_val;     // stop gap measure for returning arbitrary return types
+  enum class tag : u8 { none = 0, literal, heap, __end } tag_val;
+
+  posix::rusage_t usage;     // non atomic
+
+  void
+  clear(void)
+  {
+    alive.store(false);
+    ret_val.store(nullptr, memory_order_acq_rel);
     usage = posix::rusage_t{};
   }
 };
@@ -74,9 +101,25 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
 
   if constexpr ( micron::is_void_v<ret_t> ) {
     fn(micron::forward<Args>(args)...);
+    // function has _no_ return value, signal that it returned successfully (1)
+    // NOTE: this may cause erronous behavior if 1 happens to be a valid pointer on your platform. be careful!
+    payload->ret_val.store(reinterpret_cast<byte *>(1), memory_order_release);
+    payload->tag_val = __thread_payload::tag::none;
+  } else if constexpr ( micron::is_class_v<ret_t> and !micron::is_trivially_constructible_v<ret_t> and !micron::is_literal_type_v<ret_t> ) {
+    // NOTE: IMPORTANT
+    // make sure this is freed either by the calling thread, or whatever handles returns
+    ret_t *ret = new ret_t(fn(micron::forward<Args>(args)...));
+    payload->ret_val.store(reinterpret_cast<byte *>(ret), memory_order_release);
+    payload->tag_val = __thread_payload::tag::heap;
+  } else if constexpr ( sizeof(ret_t) > 8 ) {
+    // bigger than 8 bytes, use new
+    ret_t *ret = new ret_t(fn(micron::forward<Args>(args)...));
+    payload->ret_val.store(reinterpret_cast<byte *>(ret), memory_order_release);
+    payload->tag_val = __thread_payload::tag::heap;
   } else {
-    ret_t ret = fn(micron::forward<Args>(args)...);
-    payload->ret_val.store(static_cast<u64>(ret), memory_order_seq_cst);
+    // type is literal, can be stored
+    payload->ret_val.store(reinterpret_cast<byte *>(fn(micron::forward<Args>(args)...)), memory_order_release);
+    payload->tag_val = __thread_payload::tag::literal;
   }
   // end work
 
@@ -170,13 +213,14 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
 
 // worker threads
 
+template <auto Fn = __worker_kernel, typename P, typename... Args>
 pthread_t
-__as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, __worker_payload *payload)
+__as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, P *payload)
 {
   if ( payload == nullptr )
     micron::exc<except::thread_error>("micron thread::__as_unprepared_worker_thread_attached(): invalid arguments");
 
-  pthread_t pid = pthread::create_thread(attrs, __worker_kernel, payload);
+  pthread_t pid = pthread::create_thread(attrs, Fn, payload);
 
   if ( pid == pthread::thread_failed )
     micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");

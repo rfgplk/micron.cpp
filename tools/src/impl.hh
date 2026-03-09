@@ -7,4 +7,4 @@
 
 #include "std.hpp"
 
-using string_type = mc::sstring<4096>;
+using string_type = mc::sstring<4096, char, false>;

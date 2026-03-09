@@ -15,6 +15,179 @@
 
 namespace micron
 {
+
+template <usize N, usize A = alignof(max_align_t)> class static_any
+{
+  alignas(A) unsigned char storage_[N];
+  const void *type_id_ = nullptr;
+
+  template <typename T>
+  static const void *
+  id() noexcept
+  {
+    static const int x;
+    return &x;
+  }
+
+  template <typename T>
+  static void
+  destroy_fn(void *p) noexcept
+  {
+    static_cast<T *>(p)->~T();
+  }
+
+  template <typename T>
+  static void
+  copy_fn(void *dst, const void *src)
+  {
+    new (dst) T(*static_cast<const T *>(src));
+  }
+
+  template <typename T>
+  static void
+  move_fn(void *dst, void *src)
+  {
+    new (dst) T(micron::move(*static_cast<T *>(src)));
+    destroy_fn<T>(src);
+  }
+
+  void (*destroy_)(void *) noexcept = nullptr;
+  void (*copy_)(void *, const void *) = nullptr;
+  void (*move_)(void *, void *) = nullptr;
+
+public:
+  constexpr static_any() noexcept = default;
+
+  constexpr ~static_any() { reset(); }
+
+  constexpr static_any(const static_any &other)
+  {
+    if ( other.type_id_ ) {
+      other.copy_(storage_, other.storage_);
+      type_id_ = other.type_id_;
+      destroy_ = other.destroy_;
+      copy_ = other.copy_;
+      move_ = other.move_;
+    }
+  }
+
+  constexpr static_any(static_any &&other) noexcept
+  {
+    if ( other.type_id_ ) {
+      other.move_(storage_, other.storage_);
+      type_id_ = other.type_id_;
+      destroy_ = other.destroy_;
+      copy_ = other.copy_;
+      move_ = other.move_;
+
+      other.type_id_ = nullptr;
+      other.destroy_ = nullptr;
+      other.copy_ = nullptr;
+      other.move_ = nullptr;
+    }
+  }
+
+  constexpr static_any &
+  operator=(const static_any &other)
+  {
+    if ( this != &other ) {
+      reset();
+      if ( other.type_id_ ) {
+        other.copy_(storage_, other.storage_);
+        type_id_ = other.type_id_;
+        destroy_ = other.destroy_;
+        copy_ = other.copy_;
+        move_ = other.move_;
+      }
+    }
+    return *this;
+  }
+
+  constexpr static_any &
+  operator=(static_any &&other) noexcept
+  {
+    if ( this != &other ) {
+      reset();
+      if ( other.type_id_ ) {
+        other.move_(storage_, other.storage_);
+        type_id_ = other.type_id_;
+        destroy_ = other.destroy_;
+        copy_ = other.copy_;
+        move_ = other.move_;
+
+        other.type_id_ = nullptr;
+        other.destroy_ = nullptr;
+        other.copy_ = nullptr;
+        other.move_ = nullptr;
+      }
+    }
+    return *this;
+  }
+
+  template <typename T> constexpr static_any(T &&value) { emplace<micron::decay_t<T>>(micron::forward<T>(value)); }
+
+  template <typename T, typename... Args>
+  constexpr T &
+  emplace(Args &&...args)
+  {
+    using U = micron::decay_t<T>;
+    static_assert(sizeof(U) <= N, "type too large for static_any");
+    static_assert(alignof(U) <= A, "alignment too strict for static_any");
+
+    reset();
+
+    new (storage_) U(micron::forward<Args>(args)...);
+
+    type_id_ = id<U>();
+    destroy_ = &destroy_fn<U>;
+    copy_ = &copy_fn<U>;
+    move_ = &move_fn<U>;
+
+    return *reinterpret_cast<U *>(storage_);
+  }
+
+  constexpr void
+  reset() noexcept
+  {
+    if ( type_id_ ) {
+      destroy_(storage_);
+      type_id_ = nullptr;
+      destroy_ = nullptr;
+      copy_ = nullptr;
+      move_ = nullptr;
+    }
+  }
+
+  constexpr bool
+  has_value() const noexcept
+  {
+    return type_id_ != nullptr;
+  }
+
+  template <typename T>
+  constexpr T &
+  cast()
+  {
+    assert(type_id_ == id<micron::decay_t<T>>());
+    return *reinterpret_cast<micron::decay_t<T> *>(storage_);
+  }
+
+  template <typename T>
+  constexpr const T &
+  cast() const
+  {
+    assert(type_id_ == id<micron::decay_t<T>>());
+    return *reinterpret_cast<const micron::decay_t<T> *>(storage_);
+  }
+
+  template <typename T>
+  constexpr bool
+  is() const noexcept
+  {
+    return type_id_ == id<micron::decay_t<T>>();
+  }
+};
+
 template <typename T, typename F> struct pair {
   T a;     // or first
   F b;     // or second

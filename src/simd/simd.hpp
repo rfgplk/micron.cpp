@@ -6,16 +6,15 @@
 #pragma once
 
 #include "../__special/initializer_list"
-#include "bits.hpp"
+#include "bits.hpp"     // arched
 #include "dispatch.hpp"
-#include "load.hpp"
-#include "types.hpp"
+#include "load.hpp"      // arched
+#include "types.hpp"     // arched
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
-#include "types/simd128.hpp"
-#include "types/simd256.hpp"
-#include "types/simd512.hpp"
+
+#include "types/simd_dispatch.hpp"
 
 namespace micron
 {

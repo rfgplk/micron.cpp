@@ -9,6 +9,18 @@
 
 namespace micron
 {
+template <u32 seed>
+u32
+fnv_32(const byte *data, usize sz)
+{
+  u64 hash = 14695981039346656037ULL + (31 * seed);
+  for ( u32 i = 0; i < sz; i++ ) {
+    hash = hash ^ (unsigned char)data[i];
+    hash = hash * 1099511628211ULL;
+  }
+  return hash;
+}
+
 u32
 fnv_32(const byte *data, u32 seed, usize sz)
 {

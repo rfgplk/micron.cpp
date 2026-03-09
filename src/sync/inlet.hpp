@@ -216,10 +216,6 @@ public:
   }
 };
 
-template <typename T> using mutex_inlet = inlet<T, micron::mutex>;
-
-template <typename T> using spin_inlet = inlet<T, micron::spin_lock>;
-
 struct queuing_mutex_adapter {
   queuing_mutex mtx;
   queuing_mutex::node_type node;
@@ -251,5 +247,9 @@ struct queuing_mutex_adapter {
 
 template <typename T> using queuing_inlet = inlet<T, queuing_mutex_adapter>;
 template <typename T> using recursive_inlet = inlet<T, micron::recursive_lock>;
+
+template <typename T> using mutex_inlet = inlet<T, micron::mutex>;
+template <typename T> using weak_inlet = inlet<T, micron::weak_mutex>;
+template <typename T> using spin_inlet = inlet<T, micron::spin_lock>;
 
 }     // namespace micron

@@ -23,7 +23,7 @@ class recursive_lock
   static usize
   current_thread() noexcept
   {
-    return static_cast<usize>(pthread::self());
+    return pthread::self();
   }
 
   void

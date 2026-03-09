@@ -45,6 +45,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
+  // just pop off
   ~farray() = default;
 
   farray() { micron::czero<N>(&stack[0]); }
@@ -98,25 +99,25 @@ public:
     micron::ctypeset<N>(&o.stack[0], 0x0);
   }
 
-  iterator
+  [[nodiscard]] iterator
   begin() noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  iterator
+  [[nodiscard]] iterator
   end() noexcept
   {
     return micron::addr(stack[N]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);
@@ -146,16 +147,23 @@ public:
     return this;
   }
 
-  iterator
+  [[nodiscard]] iterator
   data()
   {
     return stack;
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   data() const
   {
     return stack;
+  }
+
+  // zeroes out memory
+  void
+  clear()
+  {
+    __impl_container::destroy<N>(micron::addr(stack[0]));
   }
 
   inline T &

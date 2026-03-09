@@ -188,6 +188,12 @@ public:
     return control ? control->pnt : nullptr;
   }
 
+  bool
+  operator==(nullptr_t ptr) const noexcept
+  {
+    return (control ? control->pnt : nullptr) == ptr;
+  }
+
   template <is_pointer_class O>
   bool
   operator==(const O &o) const noexcept

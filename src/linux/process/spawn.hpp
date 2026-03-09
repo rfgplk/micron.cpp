@@ -41,7 +41,7 @@ __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const 
   micron::close(pipefd[1]);
 
   int err;
-  ssize_t n = micron::read(pipefd[0], &err, sizeof(err));
+  max_t n = micron::read(pipefd[0], &err, sizeof(err));
   micron::close(pipefd[0]);
 
   if ( n == sizeof(err) ) {
@@ -99,7 +99,7 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
   micron::close(pipefd[1]);
 
   int err;
-  ssize_t n = micron::read(pipefd[0], &err, sizeof(err));
+  max_t n = micron::read(pipefd[0], &err, sizeof(err));
   micron::close(pipefd[0]);
 
   if ( n == sizeof(err) ) {

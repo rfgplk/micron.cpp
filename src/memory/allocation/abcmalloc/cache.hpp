@@ -37,7 +37,7 @@ struct cache {
   }
 
   void
-  __heap_shrink(const ssize_t sz)
+  __heap_shrink(const max_t sz)
   {
     micron::sbrk((-1) * sz);
   }
@@ -58,7 +58,7 @@ struct cache {
   }
 
   void
-  shrink(const ssize_t sz)
+  shrink(const max_t sz)
   {
     collect_stats<stat_type::dealloc>();
     collect_stats<stat_type::total_memory_freed>(sz);

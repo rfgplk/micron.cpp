@@ -35,8 +35,8 @@ template <typename T> struct raw_slice {
 
   constexpr raw_slice() = default;
 
-  //constexpr raw_slice(T *p, size_t l) : ptr(p), len(l) {}
-  constexpr raw_slice(const T *p, size_t l) : ptr(const_cast<T*>(p)), len(l) {}
+  // constexpr raw_slice(T *p, size_t l) : ptr(p), len(l) {}
+  constexpr raw_slice(const T *p, size_t l) : ptr(const_cast<T *>(p)), len(l) {}
 
   constexpr T *
   begin()
@@ -370,6 +370,24 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   iterator
   end()
   {
+    // guard against mark(0)
+    if ( !__mem::length ) [[unlikely]]
+      return micron::addr(__mem::memory[__mem::length]);
+    return micron::addr(__mem::memory[__mem::length - 1]);
+  }
+
+  const_iterator
+  begin() const
+  {
+    return micron::addr(__mem::memory[0]);
+  }
+
+  const_iterator
+  end() const
+  {
+    // guard against mark(0)
+    if ( !__mem::length )
+      return micron::addr(__mem::memory[__mem::length]);
     return micron::addr(__mem::memory[__mem::length - 1]);
   }
 
@@ -382,6 +400,9 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   const_iterator
   cend() const
   {
+    // guard against mark(0)
+    if ( !__mem::length )
+      return micron::addr(__mem::memory[__mem::length]);
     return micron::addr(__mem::memory[__mem::length - 1]);
   }
 

@@ -10,10 +10,12 @@
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
+#include "../../concepts.hpp"
+
 namespace micron
 {
 
-template <class M = mutex> class auto_guard
+template <is_mutex M = mutex> class auto_guard
 {
   M mtx;
   void (micron::mutex::*rptr)();

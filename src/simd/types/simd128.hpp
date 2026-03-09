@@ -11,6 +11,7 @@ namespace micron
 {
 namespace simd
 {
+
 // bit width - lane width
 template <is_simd_128_type T, is_flag_type F> class v128
 {
@@ -36,14 +37,20 @@ template <is_simd_128_type T, is_flag_type F> class v128
   __impl_one_init(void)
   {
     if constexpr ( micron::same_as<T, f128> ) {
-      value = _mm_castsi128_pd(_mm_set1_epi32(-1));
+      value = _mm_castsi128_ps(_mm_set1_epi32(-1));
     }
     if constexpr ( micron::same_as<T, d128> ) {
-      value = _mm_castsi128_ps(_mm_set1_epi64x(-1));
+      value = _mm_castsi128_pd(_mm_set1_epi64x(-1));
     }
     if constexpr ( micron::same_as<T, i128> ) {
       value = _mm_set1_epi32(-1);
     }
+  }
+
+  static inline i128
+  __all_ones_si128(void)
+  {
+    return _mm_set1_epi32(-1);
   }
 
 public:
@@ -91,7 +98,6 @@ public:
     return *this;
   }
 
-  // start of ints
   inline v128 &
   operator=(std::initializer_list<i64> lst)
   {
@@ -116,7 +122,6 @@ public:
     if ( lst.size() != 4 )
       return *this;
     i32 __arr[4];
-
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
@@ -130,7 +135,6 @@ public:
     if ( lst.size() != 8 )
       return *this;
     i16 __arr[8];
-
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
@@ -144,7 +148,6 @@ public:
     if ( lst.size() != 16 )
       return *this;
     i8 __arr[16];
-
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
@@ -152,8 +155,6 @@ public:
                          __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
-
-  // end of ints
 
   v128(std::initializer_list<double> lst)
   {
@@ -191,7 +192,6 @@ public:
     value = _mm_set_ps(d, c, b, a);
   }
 
-  // start of ints
   v128(std::initializer_list<i64> lst)
   {
     if ( lst.size() != 2 )
@@ -213,7 +213,6 @@ public:
     if ( lst.size() != 4 )
       return;
     i32 __arr[4];
-
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
@@ -225,7 +224,6 @@ public:
     if ( lst.size() != 8 )
       return;
     i16 __arr[8];
-
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
@@ -234,20 +232,17 @@ public:
 
   v128(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 32 )
+    if ( lst.size() != 16 )
       return;
-    i8 __arr[32];
 
+    i8 __arr[16];
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
       __arr[__i++] = *itr;
-    value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
-                            __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
-                            __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
-                            __arr[0]);
+    value = _mm_set_epi8(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5],
+                         __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
 
-  // end of ints
   v128(i8 _e0)
     requires micron::is_same_v<T, i128>
   {
@@ -349,7 +344,6 @@ public:
     return *this;
   }
 
-  // broadcast /set() analog.
   inline v128 &
   operator=(float f)
   {
@@ -398,27 +392,22 @@ public:
     return uload<F>(addr);
   }
 
-  // for loops
   constexpr usize
   size(void)
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      return 1;
+      return 4;
     } else if constexpr ( micron::is_same_v<T, d128> ) {
       return 2;
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_64_wide<F>() ) {
+      if constexpr ( __is_64_wide<F>() )
         return 2;
-      }
-      if constexpr ( __is_32_wide<F>() ) {
+      if constexpr ( __is_32_wide<F>() )
         return 4;
-      }
-      if constexpr ( __is_16_wide<F>() ) {
+      if constexpr ( __is_16_wide<F>() )
         return 8;
-      }
-      if constexpr ( __is_8_wide<F>() ) {
+      if constexpr ( __is_8_wide<F>() )
         return 16;
-      }
     }
   }
 
@@ -427,10 +416,8 @@ public:
   constexpr auto
   operator[](const R a)
   {
-    // guess the formatter doesn't like this :(
     if constexpr ( micron::is_same_v<T, f128> ) {
       float _f = 0.0f;
-      // thanks docs ;c
       switch ( a ) {
       case 0 :
         _f = _mm_cvtss_f32(_mm_shuffle_ps(value, value, _MM_SHUFFLE(0, 0, 0, 0)));
@@ -447,7 +434,7 @@ public:
       }
       return _f;
     } else if constexpr ( micron::is_same_v<T, d128> ) {
-      double _d;
+      double _d = 0.0;
       if ( a == 0 )
         _d = _mm_cvtsd_f64(value);
       else
@@ -488,28 +475,28 @@ public:
         i16 _d = 0;
         switch ( a ) {
         case 0 :
-          _d = _mm_extract_epi16(value, 0);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 0));
           break;
         case 1 :
-          _d = _mm_extract_epi16(value, 1);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 1));
           break;
         case 2 :
-          _d = _mm_extract_epi16(value, 2);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 2));
           break;
         case 3 :
-          _d = _mm_extract_epi16(value, 3);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 3));
           break;
         case 4 :
-          _d = _mm_extract_epi16(value, 4);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 4));
           break;
         case 5 :
-          _d = _mm_extract_epi16(value, 5);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 5));
           break;
         case 6 :
-          _d = _mm_extract_epi16(value, 6);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 6));
           break;
         case 7 :
-          _d = _mm_extract_epi16(value, 7);
+          _d = static_cast<i16>(_mm_extract_epi16(value, 7));
           break;
         }
         return _d;
@@ -518,52 +505,52 @@ public:
         i8 _d = 0;
         switch ( a ) {
         case 0 :
-          _d = _mm_extract_epi8(value, 0);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 0));
           break;
         case 1 :
-          _d = _mm_extract_epi8(value, 1);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 1));
           break;
         case 2 :
-          _d = _mm_extract_epi8(value, 2);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 2));
           break;
         case 3 :
-          _d = _mm_extract_epi8(value, 3);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 3));
           break;
         case 4 :
-          _d = _mm_extract_epi8(value, 4);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 4));
           break;
         case 5 :
-          _d = _mm_extract_epi8(value, 5);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 5));
           break;
         case 6 :
-          _d = _mm_extract_epi8(value, 6);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 6));
           break;
         case 7 :
-          _d = _mm_extract_epi8(value, 7);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 7));
           break;
         case 8 :
-          _d = _mm_extract_epi8(value, 8);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 8));
           break;
         case 9 :
-          _d = _mm_extract_epi8(value, 9);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 9));
           break;
         case 10 :
-          _d = _mm_extract_epi8(value, 10);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 10));
           break;
         case 11 :
-          _d = _mm_extract_epi8(value, 11);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 11));
           break;
         case 12 :
-          _d = _mm_extract_epi8(value, 12);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 12));
           break;
         case 13 :
-          _d = _mm_extract_epi8(value, 13);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 13));
           break;
         case 14 :
-          _d = _mm_extract_epi8(value, 14);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 14));
           break;
         case 15 :
-          _d = _mm_extract_epi8(value, 15);
+          _d = static_cast<i8>(_mm_extract_epi8(value, 15));
           break;
         }
         return _d;
@@ -574,29 +561,44 @@ public:
   constexpr int
   operator==(const v128 &o) const
   {
-    {
-      if constexpr ( micron::is_same_v<T, f128> ) {
-        T _r = _mm_cmpeq_ps(value, o.value);
-        return _mm_movemask_ps(_r);
-      } else if constexpr ( micron::is_same_v<T, d128> ) {
-        T _r = _mm_cmpeq_pd(value, o.value);
-        return _mm_movemask_pd(_r);
-      } else if constexpr ( micron::is_same_v<T, i128> ) {
-        T _r;
-        if constexpr ( __is_8_wide<F>() ) {
-          _r = _mm_cmpeq_epi8(value, o.value);
-        }
-        if constexpr ( __is_16_wide<F>() ) {
-          _r = _mm_cmpeq_epi16(value, o.value);
-        }
-        if constexpr ( __is_32_wide<F>() ) {
-          _r = _mm_cmpeq_epi32(value, o.value);
-        }
-        if constexpr ( __is_64_wide<F>() ) {
-          _r = _mm_cmpeq_epi64(value, o.value);
-        }
-        return _mm_movemask_ps(_mm_castsi128_ps(_r));
-      }
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      return _mm_movemask_ps(_mm_cmpeq_ps(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      return _mm_movemask_pd(_mm_cmpeq_pd(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
+      T _r;
+      if constexpr ( __is_8_wide<F>() )
+        _r = _mm_cmpeq_epi8(value, o.value);
+      if constexpr ( __is_16_wide<F>() )
+        _r = _mm_cmpeq_epi16(value, o.value);
+      if constexpr ( __is_32_wide<F>() )
+        _r = _mm_cmpeq_epi32(value, o.value);
+      if constexpr ( __is_64_wide<F>() )
+        _r = _mm_cmpeq_epi64(value, o.value);
+      return _mm_movemask_ps(_mm_castsi128_ps(_r));
+    }
+    return 0x0;
+  }
+
+  constexpr int
+  operator!=(const v128 &o) const
+  {
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      return _mm_movemask_ps(_mm_cmpneq_ps(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      return _mm_movemask_pd(_mm_cmpneq_pd(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
+      T _eq;
+      if constexpr ( __is_8_wide<F>() )
+        _eq = _mm_cmpeq_epi8(value, o.value);
+      if constexpr ( __is_16_wide<F>() )
+        _eq = _mm_cmpeq_epi16(value, o.value);
+      if constexpr ( __is_32_wide<F>() )
+        _eq = _mm_cmpeq_epi32(value, o.value);
+      if constexpr ( __is_64_wide<F>() )
+        _eq = _mm_cmpeq_epi64(value, o.value);
+      T _r = _mm_xor_si128(_eq, __all_ones_si128());
+      return _mm_movemask_ps(_mm_castsi128_ps(_r));
     }
     return 0x0;
   }
@@ -604,29 +606,22 @@ public:
   constexpr int
   operator>=(const v128 &o) const
   {
-    {
-      if constexpr ( micron::is_same_v<T, f128> ) {
-        T _r = _mm_cmpge_ps(value, o.value);
-        return _mm_movemask_ps(_r);
-      } else if constexpr ( micron::is_same_v<T, d128> ) {
-        T _r = _mm_cmpge_pd(value, o.value);
-        return _mm_movemask_pd(_r);
-      } else if constexpr ( micron::is_same_v<T, i128> ) {
-        T _r;
-        if constexpr ( __is_8_wide<F>() ) {
-          _r = _mm_cmpge_epi8(value, o.value);
-        }
-        if constexpr ( __is_16_wide<F>() ) {
-          _r = _mm_cmpge_epi16(value, o.value);
-        }
-        if constexpr ( __is_32_wide<F>() ) {
-          _r = _mm_cmpge_epi32(value, o.value);
-        }
-        if constexpr ( __is_64_wide<F>() ) {
-          _r = _mm_cmpge_epi64(value, o.value);
-        }
-        return _mm_movemask_ps(_mm_castsi128_ps(_r));
-      }
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      return _mm_movemask_ps(_mm_cmpge_ps(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      return _mm_movemask_pd(_mm_cmpge_pd(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
+      T _lt;
+      if constexpr ( __is_8_wide<F>() )
+        _lt = _mm_cmpgt_epi8(o.value, value);
+      if constexpr ( __is_16_wide<F>() )
+        _lt = _mm_cmpgt_epi16(o.value, value);
+      if constexpr ( __is_32_wide<F>() )
+        _lt = _mm_cmpgt_epi32(o.value, value);
+      if constexpr ( __is_64_wide<F>() )
+        _lt = _mm_cmpgt_epi64(o.value, value);
+      T _r = _mm_xor_si128(_lt, __all_ones_si128());
+      return _mm_movemask_ps(_mm_castsi128_ps(_r));
     }
     return 0x0;
   }
@@ -634,29 +629,21 @@ public:
   constexpr int
   operator>(const v128 &o) const
   {
-    {
-      if constexpr ( micron::is_same_v<T, f128> ) {
-        T _r = _mm_cmpgt_ps(value, o.value);
-        return _mm_movemask_ps(_r);
-      } else if constexpr ( micron::is_same_v<T, d128> ) {
-        T _r = _mm_cmpgt_pd(value, o.value);
-        return _mm_movemask_pd(_r);
-      } else if constexpr ( micron::is_same_v<T, i128> ) {
-        T _r;
-        if constexpr ( __is_8_wide<F>() ) {
-          _r = _mm_cmpgt_epi8(value, o.value);
-        }
-        if constexpr ( __is_16_wide<F>() ) {
-          _r = _mm_cmpgt_epi16(value, o.value);
-        }
-        if constexpr ( __is_32_wide<F>() ) {
-          _r = _mm_cmpgt_epi32(value, o.value);
-        }
-        if constexpr ( __is_64_wide<F>() ) {
-          _r = _mm_cmpgt_epi64(value, o.value);
-        }
-        return _mm_movemask_ps(_mm_castsi128_ps(_r));
-      }
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      return _mm_movemask_ps(_mm_cmpgt_ps(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      return _mm_movemask_pd(_mm_cmpgt_pd(value, o.value));
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
+      T _r;
+      if constexpr ( __is_8_wide<F>() )
+        _r = _mm_cmpgt_epi8(value, o.value);
+      if constexpr ( __is_16_wide<F>() )
+        _r = _mm_cmpgt_epi16(value, o.value);
+      if constexpr ( __is_32_wide<F>() )
+        _r = _mm_cmpgt_epi32(value, o.value);
+      if constexpr ( __is_64_wide<F>() )
+        _r = _mm_cmpgt_epi64(value, o.value);
+      return _mm_movemask_ps(_mm_castsi128_ps(_r));
     }
     return 0x0;
   }
@@ -665,25 +652,20 @@ public:
   operator<(const v128 &o) const
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      T _r = _mm_cmplt_ps(value, o.value);
-      return _mm_movemask_ps(_r);
+      return _mm_movemask_ps(_mm_cmplt_ps(value, o.value));
     } else if constexpr ( micron::is_same_v<T, d128> ) {
-      T _r = _mm_cmplt_pd(value, o.value);
-      return _mm_movemask_pd(_r);
+      return _mm_movemask_pd(_mm_cmplt_pd(value, o.value));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       T _r;
-      if constexpr ( __is_8_wide<F>() ) {
+      if constexpr ( __is_8_wide<F>() )
         _r = _mm_cmplt_epi8(value, o.value);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
+      if constexpr ( __is_16_wide<F>() )
         _r = _mm_cmplt_epi16(value, o.value);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
+      if constexpr ( __is_32_wide<F>() )
         _r = _mm_cmplt_epi32(value, o.value);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
-        _r = _mm_cmplt_epi64(value, o.value);
-      }
+
+      if constexpr ( __is_64_wide<F>() )
+        _r = _mm_cmpgt_epi64(o.value, value);
       return _mm_movemask_ps(_mm_castsi128_ps(_r));
     }
     return 0x0;
@@ -693,37 +675,30 @@ public:
   operator<=(const v128 &o) const
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      T _r = _mm_cmple_ps(value, o.value);
-      return _mm_movemask_ps(_r);
+      return _mm_movemask_ps(_mm_cmple_ps(value, o.value));
     } else if constexpr ( micron::is_same_v<T, d128> ) {
-      T _r = _mm_cmple_pd(value, o.value);
-      return _mm_movemask_pd(_r);
+      return _mm_movemask_pd(_mm_cmple_pd(value, o.value));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      T _r;
-      if constexpr ( __is_8_wide<F>() ) {
-        _r = _mm_cmple_epi8(value, o.value);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm_cmple_epi16(value, o.value);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm_cmple_epi32(value, o.value);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
-        _r = _mm_cmple_epi64(value, o.value);
-      }
+      T _gt;
+      if constexpr ( __is_8_wide<F>() )
+        _gt = _mm_cmpgt_epi8(value, o.value);
+      if constexpr ( __is_16_wide<F>() )
+        _gt = _mm_cmpgt_epi16(value, o.value);
+      if constexpr ( __is_32_wide<F>() )
+        _gt = _mm_cmpgt_epi32(value, o.value);
+      if constexpr ( __is_64_wide<F>() )
+        _gt = _mm_cmpgt_epi64(value, o.value);
+      T _r = _mm_xor_si128(_gt, __all_ones_si128());
       return _mm_movemask_ps(_mm_castsi128_ps(_r));
     }
     return 0x0;
   }
 
-  // scalar const. adds
   constexpr inline v128 &
   operator+=(double x)
   {
     if constexpr ( micron::is_same_v<T, d128> ) {
-      d128 _r = _mm_set1_pd(x);
-      value = _mm_add_pd(value, _r);
+      value = _mm_add_pd(value, _mm_set1_pd(x));
     }
     return *this;
   }
@@ -732,8 +707,7 @@ public:
   operator+=(float x)
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      f128 _r = _mm_set1_ps(x);
-      value = _mm_add_ps(value, _r);
+      value = _mm_add_ps(value, _mm_set1_ps(x));
     }
     return *this;
   }
@@ -745,22 +719,14 @@ public:
   {
     F x = static_cast<F>(__x);
     if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() ) {
-        i128 _r = _mm_set1_epi8(x);
-        value = _mm_add_epi8(value, _r);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
-        i128 _r = _mm_set1_epi16(x);
-        value = _mm_add_epi16(value, _r);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        i128 _r = _mm_set1_epi32(x);
-        value = _mm_add_epi32(value, _r);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
-        i128 _r = _mm_set1_epi64x(x);
-        value = _mm_add_epi64(value, _r);
-      }
+      if constexpr ( __is_8_wide<F>() )
+        value = _mm_add_epi8(value, _mm_set1_epi8(x));
+      if constexpr ( __is_16_wide<F>() )
+        value = _mm_add_epi16(value, _mm_set1_epi16(x));
+      if constexpr ( __is_32_wide<F>() )
+        value = _mm_add_epi32(value, _mm_set1_epi32(x));
+      if constexpr ( __is_64_wide<F>() )
+        value = _mm_add_epi64(value, _mm_set1_epi64x(x));
     }
     return *this;
   }
@@ -768,30 +734,19 @@ public:
   constexpr inline v128 &
   operator+=(const v128 &o)
   {
-    T _r;
     if constexpr ( micron::is_same_v<T, f128> ) {
-      _r = _mm_add_ps(value, o.value);
-      value = _mm_add_ps(value, _r);
+      value = _mm_add_ps(value, o.value);
     } else if constexpr ( micron::is_same_v<T, d128> ) {
-      _r = _mm_add_pd(value, o.value);
-      value = _mm_add_pd(value, _r);
+      value = _mm_add_pd(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() ) {
-        _r = _mm_add_epi8(value, o.value);
-        value = _mm_add_epi8(value, _r);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm_add_epi16(value, o.value);
-        value = _mm_add_epi16(value, _r);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm_add_epi32(value, o.value);
-        value = _mm_add_epi32(value, _r);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
-        _r = _mm_add_epi64(value, o.value);
-        value = _mm_add_epi64(value, _r);
-      }
+      if constexpr ( __is_8_wide<F>() )
+        value = _mm_add_epi8(value, o.value);
+      if constexpr ( __is_16_wide<F>() )
+        value = _mm_add_epi16(value, o.value);
+      if constexpr ( __is_32_wide<F>() )
+        value = _mm_add_epi32(value, o.value);
+      if constexpr ( __is_64_wide<F>() )
+        value = _mm_add_epi64(value, o.value);
     }
     return *this;
   }
@@ -799,25 +754,18 @@ public:
   constexpr inline v128 &
   operator*=(const v128 &o)
   {
-    T _r;
-    if constexpr ( micron::is_same_v<T, f256> ) {
-      _r = _mm_mul_ps(value, o.value);
-      value = _r;
-    } else if constexpr ( micron::is_same_v<T, d256> ) {
-      _r = _mm_mul_pd(value, o.value);
-      value = _r;
-    } else if constexpr ( micron::is_same_v<T, i256> ) {
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      value = _mm_mul_ps(value, o.value);
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      value = _mm_mul_pd(value, o.value);
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
       if constexpr ( __is_8_wide<F>() ) {
         static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm_mullo_epi16(value, o.value);
-        value = _r;
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm_mullo_epi32(value, o.value);
-        value = _r;
-      }
+      if constexpr ( __is_16_wide<F>() )
+        value = _mm_mullo_epi16(value, o.value);
+      if constexpr ( __is_32_wide<F>() )
+        value = _mm_mullo_epi32(value, o.value);
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "SSE/AVX have no epi64 multiply");
       }
@@ -828,28 +776,35 @@ public:
   constexpr inline v128 &
   operator/=(const v128 &o)
   {
-    T _r;
-    if constexpr ( micron::is_same_v<T, f256> ) {
-      _r = _mm_div_ps(value, o.value);
-      value = _r;
-    } else if constexpr ( micron::is_same_v<T, d256> ) {
-      _r = _mm_div_pd(value, o.value);
-      value = _r;
-    } else if constexpr ( micron::is_same_v<T, i256> ) {
-      static_assert(!micron::is_same_v<T, i256>, "No SIMD integer division for __m128i (SSE/AVX)");
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      value = _mm_div_ps(value, o.value);
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      value = _mm_div_pd(value, o.value);
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
+      static_assert(!micron::is_same_v<T, i128>, "No SIMD integer division for __m128i (SSE/AVX)");
     }
     return *this;
   }
 
-  // end
-  // scalar const subs
+  constexpr inline v128
+  operator/(const v128 &o) const
+  {
+    v128 _d;
+    if constexpr ( micron::is_same_v<T, f128> ) {
+      _d.value = _mm_div_ps(value, o.value);
+    } else if constexpr ( micron::is_same_v<T, d128> ) {
+      _d.value = _mm_div_pd(value, o.value);
+    } else if constexpr ( micron::is_same_v<T, i128> ) {
+      static_assert(!micron::is_same_v<T, i128>, "No SIMD integer division for __m128i (SSE/AVX)");
+    }
+    return _d;
+  }
 
   constexpr inline v128 &
   operator-=(double x)
   {
-    if constexpr ( micron::is_same_v<T, f128> ) {
-      d128 _r = _mm_set1_pd(x);
-      value = _mm_sub_pd(value, _r);
+    if constexpr ( micron::is_same_v<T, d128> ) {
+      value = _mm_sub_pd(value, _mm_set1_pd(x));
     }
     return *this;
   }
@@ -858,8 +813,7 @@ public:
   operator-=(float x)
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      f128 _r = _mm_set1_ps(x);
-      value = _mm_sub_ps(value, _r);
+      value = _mm_sub_ps(value, _mm_set1_ps(x));
     }
     return *this;
   }
@@ -870,27 +824,18 @@ public:
     requires is_int_flag_type<A>
   {
     if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( micron::is_same_v<A, __v8> or micron::is_same_v<A, __uv8> ) {
-        i128 _r = _mm_set1_epi8(x);
-        value = _mm_sub_epi8(value, _r);
-      }
-      if constexpr ( micron::is_same_v<A, __v16> or micron::is_same_v<A, __uv16> ) {
-        i128 _r = _mm_set1_epi16(x);
-        value = _mm_sub_epi16(value, _r);
-      }
-      if constexpr ( micron::is_same_v<A, __v32> or micron::is_same_v<A, __uv32> ) {
-        i128 _r = _mm_set1_epi32(x);
-        value = _mm_sub_epi32(value, _r);
-      }
-      if constexpr ( micron::is_same_v<A, __v64> or micron::is_same_v<A, __uv64> ) {
-        i128 _r = _mm_set1_epi64x(x);
-        value = _mm_sub_epi64(value, _r);
-      }
+      if constexpr ( micron::is_same_v<A, __v8> || micron::is_same_v<A, __uv8> )
+        value = _mm_sub_epi8(value, _mm_set1_epi8(x));
+      if constexpr ( micron::is_same_v<A, __v16> || micron::is_same_v<A, __uv16> )
+        value = _mm_sub_epi16(value, _mm_set1_epi16(x));
+      if constexpr ( micron::is_same_v<A, __v32> || micron::is_same_v<A, __uv32> )
+        value = _mm_sub_epi32(value, _mm_set1_epi32(x));
+      if constexpr ( micron::is_same_v<A, __v64> || micron::is_same_v<A, __uv64> )
+        value = _mm_sub_epi64(value, _mm_set1_epi64x(x));
     }
     return *this;
   }
 
-  // end
   constexpr inline v128 &
   operator-=(const v128 &o)
   {
@@ -899,18 +844,14 @@ public:
     } else if constexpr ( micron::is_same_v<T, d128> ) {
       value = _mm_sub_pd(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() ) {
+      if constexpr ( __is_8_wide<F>() )
         value = _mm_sub_epi8(value, o.value);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
+      if constexpr ( __is_16_wide<F>() )
         value = _mm_sub_epi16(value, o.value);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
+      if constexpr ( __is_32_wide<F>() )
         value = _mm_sub_epi32(value, o.value);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
+      if constexpr ( __is_64_wide<F>() )
         value = _mm_sub_epi64(value, o.value);
-      }
     }
     return *this;
   }
@@ -924,18 +865,14 @@ public:
     } else if constexpr ( micron::is_same_v<T, d128> ) {
       _r.value = _mm_add_pd(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() ) {
+      if constexpr ( __is_8_wide<F>() )
         _r.value = _mm_add_epi8(value, o.value);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
+      if constexpr ( __is_16_wide<F>() )
         _r.value = _mm_add_epi16(value, o.value);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
+      if constexpr ( __is_32_wide<F>() )
         _r.value = _mm_add_epi32(value, o.value);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
+      if constexpr ( __is_64_wide<F>() )
         _r.value = _mm_add_epi64(value, o.value);
-      }
     }
     return _r;
   }
@@ -949,18 +886,14 @@ public:
     } else if constexpr ( micron::is_same_v<T, d128> ) {
       _r.value = _mm_sub_pd(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() ) {
+      if constexpr ( __is_8_wide<F>() )
         _r.value = _mm_sub_epi8(value, o.value);
-      }
-      if constexpr ( __is_16_wide<F>() ) {
+      if constexpr ( __is_16_wide<F>() )
         _r.value = _mm_sub_epi16(value, o.value);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
+      if constexpr ( __is_32_wide<F>() )
         _r.value = _mm_sub_epi32(value, o.value);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
+      if constexpr ( __is_64_wide<F>() )
         _r.value = _mm_sub_epi64(value, o.value);
-      }
     }
     return _r;
   }
@@ -981,9 +914,9 @@ public:
   all_ones() const
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      return (_mm_movemask_ps(value) == 0b1111);
+      return (_mm_movemask_ps(value) == 0xF);
     } else if constexpr ( micron::is_same_v<T, d128> ) {
-      return (_mm_movemask_pd(value) == 0b11);
+      return (_mm_movemask_pd(value) == 0x3);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       return (_mm_test_all_ones(value) != 0);
     }
@@ -1001,7 +934,6 @@ public:
     __impl_one_init();
   }
 
-  // broadcast /set() analog.
   inline v128 &
   set(float f)
   {
@@ -1075,114 +1007,114 @@ public:
     return *this;
   }
 
-  // BOOLEANS start
   inline v128 &
   operator|=(const v128 &o)
   {
-    if constexpr ( micron::is_same_v<T, i128> ) {
+    if constexpr ( micron::is_same_v<T, i128> )
       value = _mm_or_si128(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, f128> ) {
+    if constexpr ( micron::is_same_v<T, f128> )
       value = _mm_or_ps(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, d128> ) {
+    if constexpr ( micron::is_same_v<T, d128> )
       value = _mm_or_pd(value, o.value);
-    }
     return *this;
   }
 
   inline v128 &
   operator&=(const v128 &o)
   {
-    if constexpr ( micron::is_same_v<T, i128> ) {
+    if constexpr ( micron::is_same_v<T, i128> )
       value = _mm_and_si128(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, f128> ) {
+    if constexpr ( micron::is_same_v<T, f128> )
       value = _mm_and_ps(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, d128> ) {
+    if constexpr ( micron::is_same_v<T, d128> )
       value = _mm_and_pd(value, o.value);
-    }
     return *this;
   }
 
   inline v128 &
   operator^=(const v128 &o)
   {
-    if constexpr ( micron::is_same_v<T, i128> ) {
+    if constexpr ( micron::is_same_v<T, i128> )
       value = _mm_xor_si128(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, f128> ) {
+    if constexpr ( micron::is_same_v<T, f128> )
       value = _mm_xor_ps(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, d128> ) {
+    if constexpr ( micron::is_same_v<T, d128> )
       value = _mm_xor_pd(value, o.value);
-    }
     return *this;
   }
 
-  inline T
+  inline v128
   operator|(const v128 &o) const
   {
-    T _r;
-    if constexpr ( micron::is_same_v<T, i128> ) {
-      _r = _mm_or_si128(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, f128> ) {
-      _r = _mm_or_ps(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, d128> ) {
-      _r = _mm_or_pd(value, o.value);
-    }
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> )
+      _r.value = _mm_or_si128(value, o.value);
+    if constexpr ( micron::is_same_v<T, f128> )
+      _r.value = _mm_or_ps(value, o.value);
+    if constexpr ( micron::is_same_v<T, d128> )
+      _r.value = _mm_or_pd(value, o.value);
     return _r;
   }
 
-  inline T
+  inline v128
   operator&(const v128 &o) const
   {
-    T _r;
-    if constexpr ( micron::is_same_v<T, i128> ) {
-      _r = _mm_and_si128(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, f128> ) {
-      _r = _mm_and_ps(value, o.value);
-    }
-    if constexpr ( micron::is_same_v<T, d128> ) {
-      _r = _mm_and_pd(value, o.value);
-    }
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> )
+      _r.value = _mm_and_si128(value, o.value);
+    if constexpr ( micron::is_same_v<T, f128> )
+      _r.value = _mm_and_ps(value, o.value);
+    if constexpr ( micron::is_same_v<T, d128> )
+      _r.value = _mm_and_pd(value, o.value);
     return _r;
   }
 
-  inline T
+  inline v128
   operator^(const v128 &o) const
   {
-    T _r;
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> )
+      _r.value = _mm_xor_si128(value, o.value);
+    if constexpr ( micron::is_same_v<T, f128> )
+      _r.value = _mm_xor_ps(value, o.value);
+    if constexpr ( micron::is_same_v<T, d128> )
+      _r.value = _mm_xor_pd(value, o.value);
+    return _r;
+  }
+
+  inline v128
+  operator~() const
+  {
+    v128 _r;
     if constexpr ( micron::is_same_v<T, i128> ) {
-      _r = _mm_xor_si128(value, o.value);
+      _r.value = _mm_xor_si128(value, __all_ones_si128());
     }
     if constexpr ( micron::is_same_v<T, f128> ) {
-      _r = _mm_xor_ps(value, o.value);
+      _r.value = _mm_xor_ps(value, _mm_castsi128_ps(__all_ones_si128()));
     }
     if constexpr ( micron::is_same_v<T, d128> ) {
-      _r = _mm_xor_pd(value, o.value);
+      _r.value = _mm_xor_pd(value, _mm_castsi128_pd(__all_ones_si128()));
     }
     return _r;
   }
 
-  inline T
+  inline v128
   operator<<(int i) const
   {
-    T _r;
+    v128 _r;
     if constexpr ( micron::is_same_v<T, i128> ) {
       if constexpr ( __is_8_wide<F>() ) {
-        _r = _mm_srai_epi8(value, i);
+
+        i128 _s = _mm_slli_epi16(value, i);
+        i128 _m = _mm_set1_epi8(static_cast<i8>(0xFF << i));
+        _r.value = _mm_and_si128(_s, _m);
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm_srai_epi16(value, i);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm_srai_epi32(value, i);
-      }
+      if constexpr ( __is_16_wide<F>() )
+        _r.value = _mm_slli_epi16(value, i);
+      if constexpr ( __is_32_wide<F>() )
+        _r.value = _mm_slli_epi32(value, i);
+      if constexpr ( __is_64_wide<F>() )
+        _r.value = _mm_slli_epi64(value, i);
     }
     return _r;
   }
@@ -1192,32 +1124,38 @@ public:
   {
     if constexpr ( micron::is_same_v<T, i128> ) {
       if constexpr ( __is_8_wide<F>() ) {
-        value = _mm_srai_epi8(value, i);
+        i128 _s = _mm_slli_epi16(value, i);
+        i128 _m = _mm_set1_epi8(static_cast<i8>(0xFF << i));
+        value = _mm_and_si128(_s, _m);
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        value = _mm_srai_epi16(value, i);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        value = _mm_srai_epi32(value, i);
-      }
+      if constexpr ( __is_16_wide<F>() )
+        value = _mm_slli_epi16(value, i);
+      if constexpr ( __is_32_wide<F>() )
+        value = _mm_slli_epi32(value, i);
+      if constexpr ( __is_64_wide<F>() )
+        value = _mm_slli_epi64(value, i);
     }
     return *this;
   }
 
-  inline T
+  inline v128
   operator>>(int i) const
   {
-    T _r;
+    v128 _r;
     if constexpr ( micron::is_same_v<T, i128> ) {
       if constexpr ( __is_8_wide<F>() ) {
-        _r = _mm_slai_epi8(value, i);
+
+        i128 _s = _mm_srai_epi16(value, i);
+        i128 _m = _mm_set1_epi16(0x00FF);
+        _r.value = _mm_and_si128(_s, _m);
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm_slai_epi16(value, i);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm_slai_epi32(value, i);
-      }
+      if constexpr ( __is_16_wide<F>() )
+        _r.value = _mm_srai_epi16(value, i);
+      if constexpr ( __is_32_wide<F>() )
+        _r.value = _mm_srai_epi32(value, i);
+
+      if constexpr ( __is_64_wide<F>() )
+        _r.value = _mm_srli_epi64(value, i);
     }
     return _r;
   }
@@ -1227,27 +1165,25 @@ public:
   {
     if constexpr ( micron::is_same_v<T, i128> ) {
       if constexpr ( __is_8_wide<F>() ) {
-        value = _mm_slai_epi8(value, i);
+        i128 _s = _mm_srai_epi16(value, i);
+        i128 _m = _mm_set1_epi16(0x00FF);
+        value = _mm_and_si128(_s, _m);
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        value = _mm_slai_epi16(value, i);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        value = _mm_slai_epi32(value, i);
-      }
+      if constexpr ( __is_16_wide<F>() )
+        value = _mm_srai_epi16(value, i);
+      if constexpr ( __is_32_wide<F>() )
+        value = _mm_srai_epi32(value, i);
+      if constexpr ( __is_64_wide<F>() )
+        value = _mm_srli_epi64(value, i);
     }
     return *this;
   }
-
-  // BOOLEANS end
-  // divs (f only) and muls
 
   constexpr inline v128 &
   operator/=(double x)
   {
     if constexpr ( micron::is_same_v<T, d128> ) {
-      d128 _r = _mm_set1_pd(x);
-      value = _mm_div_pd(value, _r);
+      value = _mm_div_pd(value, _mm_set1_pd(x));
     }
     return *this;
   }
@@ -1256,30 +1192,27 @@ public:
   operator/=(float x)
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      f128 _r = _mm_set1_ps(x);
-      value = _mm_div_ps(value, _r);
+      value = _mm_div_ps(value, _mm_set1_ps(x));
     }
     return *this;
   }
 
-  constexpr inline T
+  constexpr inline v128
   operator/(double x) const
   {
-    T _d;
+    v128 _d;
     if constexpr ( micron::is_same_v<T, d128> ) {
-      d128 _r = _mm_set1_pd(x);
-      _d = _mm_div_pd(value, _r);
+      _d.value = _mm_div_pd(value, _mm_set1_pd(x));
     }
     return _d;
   }
 
-  constexpr inline T
+  constexpr inline v128
   operator/(float x) const
   {
-    T _d;
+    v128 _d;
     if constexpr ( micron::is_same_v<T, f128> ) {
-      f128 _r = _mm_set1_ps(x);
-      _d = _mm_div_ps(value, _r);
+      _d.value = _mm_div_ps(value, _mm_set1_ps(x));
     }
     return _d;
   }
@@ -1288,8 +1221,7 @@ public:
   operator*=(double x)
   {
     if constexpr ( micron::is_same_v<T, d128> ) {
-      d128 _r = _mm_set1_pd(x);
-      value = _mm_mul_pd(value, _r);
+      value = _mm_mul_pd(value, _mm_set1_pd(x));
     }
     return *this;
   }
@@ -1298,8 +1230,7 @@ public:
   operator*=(float x)
   {
     if constexpr ( micron::is_same_v<T, f128> ) {
-      f128 _r = _mm_set1_ps(x);
-      value = _mm_mul_ps(value, _r);
+      value = _mm_mul_ps(value, _mm_set1_ps(x));
     }
     return *this;
   }
@@ -1311,21 +1242,17 @@ public:
   {
     F x = static_cast<F>(__x);
     if constexpr ( micron::is_same_v<T, i128> ) {
+
       if constexpr ( __is_8_wide<F>() ) {
-        i128 _r = _mm_set1_epi8(x);
-        value = _mm_mullo_epi8(value, _r);
+        static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        i128 _r = _mm_set1_epi16(x);
-        value = _mm_mullo_epi16(value, _r);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        i128 _r = _mm_set1_epi32(x);
-        value = _mm_mullo_epi32(value, _r);
-      }
+      if constexpr ( __is_16_wide<F>() )
+        value = _mm_mullo_epi16(value, _mm_set1_epi16(x));
+      if constexpr ( __is_32_wide<F>() )
+        value = _mm_mullo_epi32(value, _mm_set1_epi32(x));
+
       if constexpr ( __is_64_wide<F>() ) {
-        i128 _r = _mm_set1_epi64(x);
-        value = _mm_mullo_epi64(value, _r);
+        static_assert(!__is_64_wide<F>(), "SSE/AVX have no epi64 multiply");
       }
     }
     return *this;
@@ -1336,8 +1263,7 @@ public:
   {
     v128 _d;
     if constexpr ( micron::is_same_v<T, d128> ) {
-      d128 _r = _mm_set1_pd(x);
-      _d.value = _mm_mul_pd(value, _r);
+      _d.value = _mm_mul_pd(value, _mm_set1_pd(x));
     }
     return _d;
   }
@@ -1347,8 +1273,7 @@ public:
   {
     v128 _d;
     if constexpr ( micron::is_same_v<T, f128> ) {
-      f128 _r = _mm_set1_ps(x);
-      _d.value = _mm_mul_ps(value, _r);
+      _d.value = _mm_mul_ps(value, _mm_set1_ps(x));
     }
     return _d;
   }
@@ -1358,20 +1283,14 @@ public:
   {
     v128 _d;
     if constexpr ( micron::is_same_v<T, i128> ) {
+
       if constexpr ( __is_8_wide<F>() ) {
-        i128 _r = _mm_set1_epi8(x);
-        _d.value = _mm_mullo_epi8(value, _r);
+        static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
-      if constexpr ( __is_16_wide<F>() ) {
-        i128 _r = _mm_set1_epi16(x);
-        _d.value = _mm_mullo_epi16(value, _r);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
-        i128 _r = _mm_set1_epi32(x);
-        _d.value = _mm_mullo_epi32(value, _r);
-      }
-      if constexpr ( __is_64_wide<F>() ) {
-      }
+      if constexpr ( __is_16_wide<F>() )
+        _d.value = _mm_mullo_epi16(value, _mm_set1_epi16(x));
+      if constexpr ( __is_32_wide<F>() )
+        _d.value = _mm_mullo_epi32(value, _mm_set1_epi32(x));
     }
     return _d;
   }
@@ -1388,12 +1307,10 @@ public:
       if constexpr ( __is_8_wide<F>() ) {
         static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
-      if constexpr ( __is_16_wide<F>() ) {
+      if constexpr ( __is_16_wide<F>() )
         _d.value = _mm_mullo_epi16(value, x.value);
-      }
-      if constexpr ( __is_32_wide<F>() ) {
+      if constexpr ( __is_32_wide<F>() )
         _d.value = _mm_mullo_epi32(value, x.value);
-      }
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "SSE has no epi64 multiply");
       }
@@ -1401,20 +1318,17 @@ public:
     return _d;
   }
 
-  // end divs and muls
-
-  // converts to plain arr
   inline void
   get(F *arr) const
   {
     if constexpr ( micron::is_same_v<F, __vf> ) {
-      _mm_storeu_ps(reinterpret_cast<T *>(arr), value);
+      _mm_storeu_ps(reinterpret_cast<float *>(arr), value);
     }
     if constexpr ( micron::is_same_v<F, __vd> ) {
-      _mm_storeu_pd(reinterpret_cast<T *>(arr), value);
+      _mm_storeu_pd(reinterpret_cast<double *>(arr), value);
     }
-    if constexpr ( __is_8_wide<F>() or __is_16_wide<F>() or __is_32_wide<F>() or __is_64_wide<F>() ) {
-      _mm_storeu_si128(reinterpret_cast<T *>(arr), value);
+    if constexpr ( __is_8_wide<F>() || __is_16_wide<F>() || __is_32_wide<F>() || __is_64_wide<F>() ) {
+      _mm_storeu_si128(reinterpret_cast<i128 *>(arr), value);
     }
   }
 
@@ -1422,15 +1336,16 @@ public:
   get_aligned(F *arr) const
   {
     if constexpr ( micron::is_same_v<F, __vf> ) {
-      _mm_store_ps(reinterpret_cast<T *>(arr), value);
+      _mm_store_ps(reinterpret_cast<float *>(arr), value);
     }
     if constexpr ( micron::is_same_v<F, __vd> ) {
-      _mm_store_pd(reinterpret_cast<T *>(arr), value);
+      _mm_store_pd(reinterpret_cast<double *>(arr), value);
     }
-    if constexpr ( __is_8_wide<F>() or __is_16_wide<F>() or __is_32_wide<F>() or __is_64_wide<F>() ) {
-      _mm_store_si128(reinterpret_cast<T *>(arr), value);
+    if constexpr ( __is_8_wide<F>() || __is_16_wide<F>() || __is_32_wide<F>() || __is_64_wide<F>() ) {
+      _mm_store_si128(reinterpret_cast<i128 *>(arr), value);
     }
   }
 };
+
 };     // namespace simd
 };     // namespace micron

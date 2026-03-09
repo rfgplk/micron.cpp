@@ -298,7 +298,7 @@ public:
 
   ~epoll_handle() { close(); }
 
-  explicit epoll_handle(bool cloexec = true) : epfd_(posix::epoll_create1(cloexec ? posix::epoll_cloexec : 0)) {}
+  explicit epoll_handle(bool cloexec) : epfd_(posix::epoll_create1(cloexec ? posix::epoll_cloexec : 0)) {}
 
   static epoll_handle
   legacy(i32 size = 1)
@@ -346,7 +346,7 @@ public:
   close()
   {
     if ( valid() ) {
-      posix::syscall(SYS_close, epfd_);
+      micron::syscall(SYS_close, epfd_);
       epfd_ = invalid_fd;
     }
   }

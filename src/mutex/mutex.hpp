@@ -76,6 +76,73 @@ public:
   mutex &operator=(const mutex &) = delete;
 };
 
+class weak_mutex
+{
+  atomic_token<bool> tk;
+
+  void
+  reset()
+  {
+    tk.store(ATOMIC_OPEN);
+  }
+
+public:
+  ~weak_mutex() = default;
+  weak_mutex() = default;
+
+  auto
+  operator()()
+  {
+    while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order_acq_rel, memory_order_acquire) ) {
+    };
+    return &weak_mutex::reset;
+  }
+
+  bool
+  operator!()
+  {
+    return (tk.get() != ATOMIC_LOCKED);
+  }
+
+  auto
+  lock()
+  {
+    while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order_acq_rel, memory_order_acquire) ) {
+    };
+    return &weak_mutex::reset;
+  }
+
+  bool
+  try_lock() noexcept
+  {
+    return tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order_acq_rel, memory_order_acquire);
+  }
+
+  void
+  unlock() noexcept
+  {
+    tk.store(ATOMIC_OPEN);
+  }
+
+  auto
+  retrieve()
+  {
+    return &weak_mutex::reset;
+  }
+
+  bool
+  is_locked() const noexcept
+  {
+    return tk.get() == ATOMIC_LOCKED;
+  }
+
+  template <typename... T> friend void unlock(T &...);
+
+  weak_mutex(const weak_mutex &) = delete;
+  weak_mutex(weak_mutex &&) = delete;
+  weak_mutex &operator=(const weak_mutex &) = delete;
+};
+
 struct mcs_node {
   atomic_token<mcs_node *> next;     // successor in the queue
   atomic_token<bool> waiting;        // true  → still blocked

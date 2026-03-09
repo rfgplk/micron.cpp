@@ -14,9 +14,7 @@
 
 #include "paths.hpp"
 #include "posix/file.hpp"
-#include "posix/utils.hpp"
 
-#include "entry.hpp"
 #include "file.hpp"
 
 namespace micron
@@ -109,7 +107,7 @@ copy_list(const io::path_t &from, const Paths &...to)
 auto
 file_type_at(const io::path_t &p)
 {
-  return io::get_type_at(p.c_str());
+  return posix::get_type_at(p.c_str());
 }
 };     // namespace fsys
 };     // namespace micron

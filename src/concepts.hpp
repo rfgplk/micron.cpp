@@ -124,6 +124,14 @@ template <typename T>
 concept is_regular_object = micron::copyable<T> and micron::movable<T> and micron::is_copy_constructible_v<T>
                             and micron::is_move_constructible_v<T> and micron::is_copy_assignable_v<T> and micron::is_move_assignable_v<T>;
 
+template <typename M>
+concept is_mutex = requires(M m) {
+  { m.lock() };
+  { m.try_lock() } noexcept -> micron::same_as<bool>;
+  { m.unlock() } noexcept -> micron::same_as<void>;
+  { m.is_locked() } noexcept -> micron::same_as<bool>;
+} && !micron::is_copy_constructible_v<M> && !micron::is_move_constructible_v<M>;
+
 template <typename T, typename I = size_t>
 concept is_iterable_container = requires(T t, I i) {
   { t.data() } -> micron::same_as<typename T::pointer>;

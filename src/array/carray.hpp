@@ -49,7 +49,8 @@ public:
   typedef const T *const_iterator;
   static constexpr size_type length = N;
 
-  ~carray() { __impl_container::destroy<N>(micron::addr(stack[0])); }
+  // NOTE: doesn't zero out memory
+  ~carray() { __impl_container::destroy_fast<N>(micron::addr(stack[0])); }
 
   carray() { __impl_container::zero<N>(micron::addr(stack[0])); }
 
@@ -103,25 +104,25 @@ public:
 
   carray(carray &&o) { __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
-  iterator
+  [[nodiscard]] iterator
   begin() noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
   }
 
-  iterator
+  [[nodiscard]] iterator
   end() noexcept
   {
     return micron::addr(stack[N]);
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   cend() const noexcept
   {
     return micron::addr(stack[N]);
@@ -151,16 +152,23 @@ public:
     return this;
   }
 
-  iterator
+  [[nodiscard]] iterator
   data()
   {
     return stack;
   }
 
-  const_iterator
+  [[nodiscard]] const_iterator
   data() const
   {
     return stack;
+  }
+
+  // hard zeroes out memory
+  void
+  clear()
+  {
+    __impl_container::destroy<N>(micron::addr(stack[0]));
   }
 
   T &

@@ -303,6 +303,9 @@ public:
       clear();
   }
 
+  // NOTE: by default, micron vectors will actually zero out memory they hold
+  // this is done for correctness, even though it's partially enforced at the allocator level
+  // this may incur a heavy performance penalty
   void
   clear()
   {

@@ -43,7 +43,6 @@ inline bool
 isupper(typename T::iterator t)
 {
   if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
-    // ascii
     if ( *t <= 0x5A && *t >= 0x41 )
       return true;
     else
@@ -58,7 +57,6 @@ inline bool
 islower(typename T::iterator t)
 {
   if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
-    // ascii
     if ( *t <= 0x7A && *t >= 0x61 )
       return true;
     else
@@ -73,7 +71,7 @@ inline void
 to_upper(typename T::iterator t)
 {
   if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
-    // ascii
+
     if ( *t <= 0x7A && *t >= 0x61 )
       *t -= 32;
   }
@@ -85,7 +83,7 @@ inline void
 to_lower(typename T::iterator t)
 {
   if constexpr ( micron::is_same_v<typename T::value_type, char> ) {
-    // ascii
+
     if ( *t <= 0x5A && *t >= 0x41 )
       *t += 32;
   }
@@ -98,7 +96,6 @@ inline bool
 isupper(const T t)
 {
   if constexpr ( micron::is_same_v<T, char> ) {
-    // ascii
     if ( t <= 0x5A && t >= 0x41 )
       return true;
     else
@@ -114,7 +111,6 @@ inline bool
 islower(const T t)
 {
   if constexpr ( micron::is_same_v<T, char> ) {
-    // ascii
     if ( t <= 0x7A && t >= 0x61 )
       return true;
     else
@@ -129,51 +125,95 @@ inline T
 to_upper(const T t)
 {
   if constexpr ( micron::is_same_v<T, char> ) {
-    // ascii
-    if ( t <= 0x5A && t >= 0x41 )
-      return (t - 32);
+
+    if ( t >= 0x61 && t <= 0x7A )
+      return static_cast<T>(t - 32);
   }
-  return false;
+  return t;
   // TODO: implement utf8
 }
 
 template <typename T>
-inline bool
+inline T
 to_lower(const T t)
 {
   if constexpr ( micron::is_same_v<T, char> ) {
-    // ascii
-    if ( t <= 0x7A && t >= 0x61 )
-      return (t + 32);
+
+    if ( t >= 0x41 && t <= 0x5A )
+      return static_cast<T>(t + 32);
   }
-  return false;
+  return t;
   // TODO: implement utf8
 }
 
-template <is_string T>
-T &
-casefold(T &str)
+inline void
+to_upper(char *str)
 {
-  auto itr = str.begin();
-  while ( itr != str.end() ) {
-    if ( isupper<T>(itr) )
-      to_lower<T>(itr);
-    ++itr;
+  if ( str == nullptr )
+    return;
+  while ( *str ) {
+    if ( *str >= 0x61 && *str <= 0x7A )
+      *str -= 32;
+    ++str;
   }
-  return str;
 }
 
-template <is_string T>
-T &
-upper(T &str)
+inline void
+to_lower(char *str)
 {
-  auto itr = str.begin();
-  while ( itr != str.end() ) {
-    if ( islower<T>(itr) )
-      to_upper<T>(itr);
-    ++itr;
+  if ( str == nullptr )
+    return;
+  while ( *str ) {
+    if ( *str >= 0x41 && *str <= 0x5A )
+      *str += 32;
+    ++str;
   }
-  return str;
+}
+
+inline hstring<schar>
+to_upper(const char *str, usize len)
+{
+  hstring<schar> result(str);
+  if ( len < result.size() )
+    result.truncate(len);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x61 && *itr <= 0x7A )
+      *itr -= 32;
+  return result;
+}
+
+inline hstring<schar>
+to_lower(const char *str, usize len)
+{
+  hstring<schar> result(str);
+  if ( len < result.size() )
+    result.truncate(len);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x41 && *itr <= 0x5A )
+      *itr += 32;
+  return result;
+}
+
+template <usize N>
+inline hstring<schar>
+to_upper(const char (&str)[N])
+{
+  hstring<schar> result(str);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x61 && *itr <= 0x7A )
+      *itr -= 32;
+  return result;
+}
+
+template <usize N>
+inline hstring<schar>
+to_lower(const char (&str)[N])
+{
+  hstring<schar> result(str);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x41 && *itr <= 0x5A )
+      *itr += 32;
+  return result;
 }
 
 template <typename T>
@@ -754,6 +794,130 @@ isblank_any(const T &str)
   return false;
 }
 
+template <is_string T>
+T &
+casefold(T &str)
+{
+  auto itr = str.begin();
+  while ( itr != str.end() ) {
+    if ( isupper<T>(itr) )
+      to_lower<T>(itr);
+    ++itr;
+  }
+  return str;
+}
+
+template <is_string T>
+T
+casefold(const T &str)
+{
+  T result(str);
+  auto itr = result.begin();
+  while ( itr != result.end() ) {
+    if ( isupper<T>(itr) )
+      to_lower<T>(itr);
+    ++itr;
+  }
+  return result;
+}
+
+inline void
+casefold(char *str)
+{
+  if ( str == nullptr )
+    return;
+  while ( *str ) {
+    if ( *str >= 0x41 && *str <= 0x5A )
+      *str += 32;
+    ++str;
+  }
+}
+
+inline hstring<schar>
+casefold(const char *str, usize len)
+{
+  hstring<schar> result(str);
+  if ( len < result.size() )
+    result.truncate(len);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x41 && *itr <= 0x5A )
+      *itr += 32;
+  return result;
+}
+
+template <usize N>
+inline hstring<schar>
+casefold(const char (&str)[N])
+{
+  hstring<schar> result(str);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x41 && *itr <= 0x5A )
+      *itr += 32;
+  return result;
+}
+
+template <is_string T>
+T &
+upper(T &str)
+{
+  auto itr = str.begin();
+  while ( itr != str.end() ) {
+    if ( islower<T>(itr) )
+      to_upper<T>(itr);
+    ++itr;
+  }
+  return str;
+}
+
+template <is_string T>
+T
+upper(const T &str)
+{
+  T result(str);
+  auto itr = result.begin();
+  while ( itr != result.end() ) {
+    if ( islower<T>(itr) )
+      to_upper<T>(itr);
+    ++itr;
+  }
+  return result;
+}
+
+inline void
+upper(char *str)
+{
+  if ( str == nullptr )
+    return;
+  while ( *str ) {
+    if ( *str >= 0x61 && *str <= 0x7A )
+      *str -= 32;
+    ++str;
+  }
+}
+
+inline hstring<schar>
+upper(const char *str, usize len)
+{
+  hstring<schar> result(str);
+  if ( len < result.size() )
+    result.truncate(len);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x61 && *itr <= 0x7A )
+      *itr -= 32;
+  return result;
+}
+
+template <usize N>
+inline hstring<schar>
+upper(const char (&str)[N])
+{
+  hstring<schar> result(str);
+  for ( auto itr = result.begin(); itr != result.end(); ++itr )
+    if ( *itr >= 0x61 && *itr <= 0x7A )
+      *itr -= 32;
+  return result;
+}
+
 template <char Tk = ' ', is_string T>
 T &
 strip(T &data)
@@ -777,6 +941,51 @@ strip(T &data)
   return data;
 }
 
+template <char Tk = ' ', is_string T>
+T
+strip(const T &data)
+{
+  T result(data);
+  return strip<Tk>(result);
+}
+
+template <char Tk = ' '>
+char *
+strip(char *data, usize &len)
+{
+  if ( data == nullptr || len == 0 )
+    return data;
+  usize start = 0;
+  while ( start < len && data[start] == Tk )
+    ++start;
+  usize end = len;
+  while ( end > start && data[end - 1] == Tk )
+    --end;
+  usize new_len = end - start;
+  micron::bytemove(data, data + start, new_len);
+  data[new_len] = 0;
+  len = new_len;
+  return data;
+}
+
+template <char Tk = ' '>
+hstring<schar>
+strip(const char *data, usize len)
+{
+  hstring<schar> result(data);
+  if ( len < result.size() )
+    result.truncate(len);
+  return strip<Tk>(result);
+}
+
+template <char Tk = ' ', usize N>
+hstring<schar>
+strip(const char (&data)[N])
+{
+  hstring<schar> result(data);
+  return strip<Tk>(result);
+}
+
 template <is_string T>
 bool
 ends_with(const T &data, const char *fnd)
@@ -792,11 +1001,44 @@ template <is_string T>
 bool
 ends_with(const T &data, const T &fnd)
 {
-  // auto buf = data.substr((data.size()) - fnd.size(), fnd.size());
-  if ( strcmp(data.end() - fnd.size() - 1, fnd.begin()) == 0 )
+  if ( strcmp(data.end() - fnd.size(), fnd.begin()) == 0 )
     return true;
   else
     return false;
+}
+
+inline bool
+ends_with(const char *data, usize data_len, const char *fnd)
+{
+  if ( data == nullptr || fnd == nullptr )
+    return false;
+  usize fnd_len = micron::strlen(fnd);
+  if ( fnd_len > data_len )
+    return false;
+  return strcmp(data + data_len - fnd_len, fnd) == 0;
+}
+
+template <is_string T>
+bool
+ends_with(const char *data, usize data_len, const T &fnd)
+{
+  if ( data == nullptr || fnd.empty() )
+    return false;
+  if ( fnd.size() > data_len )
+    return false;
+  return strcmp(data + data_len - fnd.size(), fnd.begin()) == 0;
+}
+
+template <usize N, usize M>
+inline bool
+ends_with(const char (&data)[N], const char (&fnd)[M])
+{
+
+  constexpr usize data_len = N - 1;
+  constexpr usize fnd_len = M - 1;
+  if constexpr ( fnd_len > data_len )
+    return false;
+  return strcmp(data + data_len - fnd_len, fnd) == 0;
 }
 
 template <is_string T>
@@ -804,8 +1046,10 @@ bool
 starts_with(const T &data, const char *fnd)
 {
   auto sz = micron::strlen(fnd);
+  if ( sz > data.size() )
+    return false;
   auto buf = data.substr(0, sz);
-  if ( strcmp(data.begin(), &fnd[0]) == 0 )
+  if ( strcmp(buf.begin(), &fnd[0]) == 0 )
     return true;
   else
     return false;
@@ -815,11 +1059,46 @@ template <is_string T>
 bool
 starts_with(const T &data, const T &fnd)
 {
+  if ( fnd.size() > data.size() )
+    return false;
   auto buf = data.substr(0, fnd.size());
-  if ( strcmp(data.begin(), fnd.begin()) == 0 )
+  if ( strcmp(buf.begin(), fnd.begin()) == 0 )
     return true;
   else
     return false;
+}
+
+inline bool
+starts_with(const char *data, usize data_len, const char *fnd)
+{
+  if ( data == nullptr || fnd == nullptr )
+    return false;
+  usize fnd_len = micron::strlen(fnd);
+  if ( fnd_len > data_len )
+    return false;
+  return strncmp(data, fnd, fnd_len) == 0;
+}
+
+template <is_string T>
+bool
+starts_with(const char *data, usize data_len, const T &fnd)
+{
+  if ( data == nullptr || fnd.empty() )
+    return false;
+  if ( fnd.size() > data_len )
+    return false;
+  return strncmp(data, fnd.begin(), fnd.size()) == 0;
+}
+
+template <usize N, usize M>
+inline bool
+starts_with(const char (&data)[N], const char (&fnd)[M])
+{
+  constexpr usize data_len = N - 1;
+  constexpr usize fnd_len = M - 1;
+  if constexpr ( fnd_len > data_len )
+    return false;
+  return strncmp(data, fnd, fnd_len) == 0;
 }
 
 template <is_string T>
@@ -878,6 +1157,34 @@ concat(const T &...strs)
   return str;
 }
 
+inline hstring<schar>
+concat(const char *lhs, usize lhs_len, const char *rhs, usize rhs_len)
+{
+  hstring<schar> str(lhs_len + rhs_len + 1);
+  str.append(lhs, lhs_len + 1);     // append(F*, n) subtracts 1 for null
+  str.append(rhs, rhs_len + 1);
+  return str;
+}
+
+template <usize N, usize M>
+inline hstring<schar>
+concat(const char (&lhs)[N], const char (&rhs)[M])
+{
+  hstring<schar> str;
+  str += lhs;
+  str += rhs;
+  return str;
+}
+
+template <is_string T>
+T
+concat(const T &lhs, const T &rhs)
+{
+  T str(lhs);
+  str += rhs;
+  return str;
+}
+
 template <is_string T>
 T
 split(const T &data, usize at = 0)
@@ -898,7 +1205,38 @@ split(const T &data, typename T::const_iterator itr)
   return data.substr(data.begin(), itr);
 }
 
-// BM start
+inline hstring<schar>
+split(const char *data, usize len, usize at = 0)
+{
+  if ( data == nullptr )
+    exc<except::library_error>("micron::split() null pointer.");
+  if ( at > len )
+    exc<except::library_error>("micron::split() out of bounds.");
+  usize pos = at ? at : len / 2;
+  return hstring<schar>(data + pos, data + len);
+}
+
+inline hstring<schar>
+split_delim(const char *data, usize len, char delim)
+{
+  if ( data == nullptr )
+    exc<except::library_error>("micron::split() null pointer.");
+  for ( usize i = 0; i < len; ++i )
+    if ( data[i] == delim )
+      return hstring<schar>(data, data + i);
+  return hstring<schar>(data, data + len);
+}
+
+template <usize N>
+inline hstring<schar>
+split(const char (&data)[N], usize at = 0)
+{
+  constexpr usize len = N - 1;
+  if ( at > len )
+    exc<except::library_error>("micron::split() out of bounds.");
+  usize pos = at ? at : len / 2;
+  return hstring<schar>(data + pos, data + len);
+}
 
 template <is_string T>
 micron::fvector<int>
@@ -1012,8 +1350,6 @@ bm_find(const char (&text)[N], const char (&pattern)[Pt], usize &found_count)
   return result;
 }
 
-// end BM
-
 template <is_string T>
 auto
 fast_find(const T &data, const char *fnd) -> typename T::const_iterator
@@ -1042,6 +1378,72 @@ fast_find(const T &data, const char *fnd) -> typename T::const_iterator
 
     unsigned char nextc = (unsigned char)*(it + m - 1);
     it += shift[nextc];
+  }
+  return data.end();
+}
+
+inline const char *
+fast_find(const char *data, usize n, const char *fnd)
+{
+  if ( data == nullptr || fnd == nullptr )
+    return nullptr;
+  usize m = micron::strlen(fnd);
+  if ( m == 0 || m > n )
+    return nullptr;
+
+  usize shift[256];
+  for ( usize i = 0; i < 256; ++i )
+    shift[i] = m;
+  for ( usize i = 0; i < m - 1; ++i )
+    shift[(unsigned char)fnd[i]] = m - 1 - i;
+
+  const char *it = data;
+  const char *end_it = data + (n - m + 1);
+
+  while ( it != end_it ) {
+    usize j = m;
+    while ( j > 0 && *(it + j - 1) == fnd[j - 1] )
+      --j;
+    if ( j == 0 )
+      return it;
+    it += shift[(unsigned char)*(it + m - 1)];
+  }
+  return nullptr;
+}
+
+template <usize N, usize M>
+inline const char *
+fast_find(const char (&data)[N], const char (&fnd)[M])
+{
+  return fast_find(static_cast<const char *>(data), N - 1, static_cast<const char *>(fnd));
+}
+
+template <is_string T>
+auto
+fast_find(const T &data, const T &fnd) -> typename T::const_iterator
+{
+  usize n = data.size();
+  usize m = fnd.size();
+
+  if ( m == 0 || m > n )
+    return data.end();
+
+  usize shift[256];
+  for ( usize i = 0; i < 256; ++i )
+    shift[i] = m;
+  for ( usize i = 0; i < m - 1; ++i )
+    shift[(unsigned char)fnd[i]] = m - 1 - i;
+
+  auto it = data.begin();
+  auto end_it = data.begin() + (n - m + 1);
+
+  while ( it != end_it ) {
+    usize j = m;
+    while ( j > 0 && *(it + j - 1) == fnd[j - 1] )
+      --j;
+    if ( j == 0 )
+      return it;
+    it += shift[(unsigned char)*(it + m - 1)];
   }
   return data.end();
 }
@@ -1151,9 +1553,45 @@ contains(const T &data, const T &fnd)
   return false;
 }
 
+inline bool
+contains(const char *data, usize len, const char fnd)
+{
+  if ( data == nullptr || len == 0 )
+    return false;
+  for ( usize i = 0; i < len; ++i )
+    if ( data[i] == fnd )
+      return true;
+  return false;
+}
+
+inline bool
+contains(const char *data, usize len, const char *fnd)
+{
+  if ( data == nullptr || fnd == nullptr )
+    return false;
+  usize sz = micron::strlen(fnd);
+  if ( sz == 0 || sz > len )
+    return false;
+  for ( usize i = 0; i <= len - sz; ++i ) {
+    usize j = 0;
+    while ( j < sz && data[i + j] == fnd[j] )
+      ++j;
+    if ( j == sz )
+      return true;
+  }
+  return false;
+}
+
+template <usize N, usize M>
+inline bool
+contains(const char (&data)[N], const char (&fnd)[M])
+{
+  return contains(static_cast<const char *>(data), N - 1, static_cast<const char *>(fnd));
+}
+
 template <is_string T>
 auto
-find(const T &data, const char fnd) -> typename T::iterator
+find(const T &data, const char fnd) -> typename T::const_iterator
 {
   if ( data.empty() )
     return nullptr;
@@ -1277,6 +1715,69 @@ find(const T &data, typename T::iterator from, const char *fnd) -> typename T::i
 
 template <is_string T>
 auto
+find(const T &data, const T &fnd) -> typename T::iterator
+{
+  if ( fnd.size() > data.size() )
+    return nullptr;
+  if ( data.empty() or fnd.empty() )
+    return nullptr;
+  for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
+    u64 j = 0;
+    while ( (itr + j) != data.end() && j <= fnd.size() && *(itr + j) == fnd[j] ) {
+      ++j;
+    }
+    if ( j == fnd.size() ) {
+      return itr;
+    }
+  }
+  return nullptr;
+}
+
+inline const char *
+find(const char *data, usize len, const char fnd)
+{
+  if ( data == nullptr || len == 0 )
+    return nullptr;
+  for ( usize i = 0; i < len; ++i )
+    if ( data[i] == fnd )
+      return data + i;
+  return nullptr;
+}
+
+inline const char *
+find(const char *data, usize len, const char *fnd)
+{
+  if ( data == nullptr || fnd == nullptr )
+    return nullptr;
+  usize sz = micron::strlen(fnd);
+  if ( sz == 0 || sz > len )
+    return nullptr;
+  for ( usize i = 0; i <= len - sz; ++i ) {
+    u64 j = 0;
+    while ( j < sz && data[i + j] == fnd[j] )
+      ++j;
+    if ( j == sz )
+      return data + i;
+  }
+  return nullptr;
+}
+
+template <usize N>
+inline const char *
+find(const char (&data)[N], const char fnd)
+{
+  return find(static_cast<const char *>(data), N - 1, fnd);
+}
+
+template <usize N, usize M>
+inline const char *
+find(const char (&data)[N], const char (&fnd)[M])
+{
+  return find(static_cast<const char *>(data), N - 1, static_cast<const char *>(fnd));
+}
+
+template <is_string T>
+auto
 find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> typename T::const_iterator
 {
   if ( from < data.begin() or from >= data.end() )
@@ -1288,16 +1789,20 @@ find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> ty
     return nullptr;
   if ( data.empty() or sz == 0 )
     return nullptr;
-  for ( auto itr = from; itr != data.begin(); --itr ) {
+
+  for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.begin() && j <= sz && *(itr + j) == fnd[j] ) {
+
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
       return itr;
     }
+    if ( itr == data.begin() )
+      break;
   }
-  return (typename T::iterator) nullptr;
+  return (typename T::const_iterator) nullptr;
 }
 
 template <is_string T>
@@ -1313,16 +1818,18 @@ find_reverse(const T &data, typename T::const_iterator from, const char *fnd) ->
     return nullptr;
   if ( data.empty() or sz == 0 )
     return nullptr;
-  for ( auto itr = from; itr != data.begin(); --itr ) {
+  for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.begin() && j <= sz && *(itr + j) == fnd[j] ) {
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
       return itr;
     }
+    if ( itr == data.begin() )
+      break;
   }
-  return (typename T::iterator) nullptr;
+  return (typename T::const_iterator) nullptr;
 }
 
 template <is_string T>
@@ -1338,14 +1845,16 @@ find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename
     return nullptr;
   if ( data.empty() or sz == 0 )
     return nullptr;
-  for ( auto itr = from; itr != data.begin(); --itr ) {
+  for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.begin() && j <= sz && *(itr + j) == fnd[j] ) {
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
       return itr;
     }
+    if ( itr == data.begin() )
+      break;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1363,36 +1872,63 @@ find_reverse(const T &data, typename T::iterator from, const char *fnd) -> typen
     return nullptr;
   if ( data.empty() or sz == 0 )
     return nullptr;
-  for ( auto itr = from; itr != data.begin(); --itr ) {
+  for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.begin() && j <= sz && *(itr + j) == fnd[j] ) {
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) {
       ++j;
     }
     if ( j == sz ) {
       return itr;
     }
+    if ( itr == data.begin() )
+      break;
   }
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
-auto
-find(const T &data, const T &fnd) -> typename T::iterator
+inline const char *
+find_reverse(const char *data, usize len, usize from, const char fnd)
 {
-  if ( fnd.size() > data.size() )
+  if ( data == nullptr || from >= len )
     return nullptr;
-  if ( data.empty() or fnd.empty() )
+  for ( usize i = from + 1; i-- > 0; )
+    if ( data[i] == fnd )
+      return data + i;
+  return nullptr;
+}
+
+inline const char *
+find_reverse(const char *data, usize len, usize from, const char *fnd)
+{
+  if ( data == nullptr || fnd == nullptr )
     return nullptr;
-  for ( auto itr = data.begin(); itr != data.end(); ++itr ) {
+  usize sz = micron::strlen(fnd);
+  if ( sz == 0 || sz > len || from >= len )
+    return nullptr;
+
+  usize effective = (from <= len - sz) ? from : len - sz;
+  for ( usize i = effective + 1; i-- > 0; ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j <= fnd.size() && *(itr + j) == fnd[j] ) {
+    while ( j < sz && data[i + j] == fnd[j] )
       ++j;
-    }
-    if ( j == fnd.size() ) {
-      return itr;
-    }
+    if ( j == sz )
+      return data + i;
   }
   return nullptr;
+}
+
+template <usize N>
+inline const char *
+find_reverse(const char (&data)[N], usize from, const char fnd)
+{
+  return find_reverse(static_cast<const char *>(data), N - 1, from, fnd);
+}
+
+template <usize N, usize M>
+inline const char *
+find_reverse(const char (&data)[N], usize from, const char (&fnd)[M])
+{
+  return find_reverse(static_cast<const char *>(data), N - 1, from, static_cast<const char *>(fnd));
 }
 
 template <is_string T>
@@ -1437,6 +1973,44 @@ is_in(const T &data, const T &fnd)
   return find(data, fnd) == nullptr ? false : true;
 }
 
+inline bool
+is_not_in(const char *data, usize len, const char *fnd)
+{
+  return find(data, len, fnd) == nullptr;
+}
+
+inline bool
+is_not_in(const char *data, usize len, const char fnd)
+{
+  return find(data, len, fnd) == nullptr;
+}
+
+inline bool
+is_in(const char *data, usize len, const char *fnd)
+{
+  return find(data, len, fnd) != nullptr;
+}
+
+inline bool
+is_in(const char *data, usize len, const char fnd)
+{
+  return find(data, len, fnd) != nullptr;
+}
+
+template <usize N, usize M>
+inline bool
+is_not_in(const char (&data)[N], const char (&fnd)[M])
+{
+  return find(data, fnd) == nullptr;
+}
+
+template <usize N, usize M>
+inline bool
+is_in(const char (&data)[N], const char (&fnd)[M])
+{
+  return find(data, fnd) != nullptr;
+}
+
 template <is_string T>
 T &
 replace(T &str, const char *lhs, const char *rhs)
@@ -1444,30 +2018,84 @@ replace(T &str, const char *lhs, const char *rhs)
   auto sz = str.size();
   auto szl = micron::strlen(lhs);
   auto szr = micron::strlen(rhs);
-  if ( (szr - szl) + sz > str.max_size() )
-    exc<except::library_error>("concat range error.");
+  if ( szr > szl && (sz - szl + szr) > str.max_size() )
+    exc<except::library_error>("replace range error.");
   typename T::iterator itr = find(str, lhs);
+  if ( itr == nullptr )
+    return str;
+  usize pos = static_cast<usize>(itr - str.begin());
+  usize tail_len = sz - pos - szl;
+  micron::bytemove(itr + szr, itr + szl, tail_len);
   micron::memcpy(itr, rhs, szr);
-  micron::bytemove(itr + szr, itr + szl, sz - ((szr - szl) > 0 ? (szr - szl) : 0));
-  str.set_size(str.size() - ((szr - szl) > 0 ? (szr - szl) : 0));
+  str.set_size(sz - szl + szr);
   return str;
+}
+
+template <is_string T>
+T
+replace(const T &str, const char *lhs, const char *rhs)
+{
+  T result(str);
+  return replace(result, lhs, rhs);
+}
+
+inline char *
+replace(char *str, usize &len, const char *lhs, const char *rhs)
+{
+  if ( str == nullptr || lhs == nullptr || rhs == nullptr )
+    return str;
+  usize szl = micron::strlen(lhs);
+  usize szr = micron::strlen(rhs);
+  if ( szl == 0 || szl > len )
+    return str;
+
+  char *itr = nullptr;
+  for ( usize i = 0; i <= len - szl; ++i ) {
+    u64 j = 0;
+    while ( j < szl && str[i + j] == lhs[j] )
+      ++j;
+    if ( j == szl ) {
+      itr = str + i;
+      break;
+    }
+  }
+  if ( itr == nullptr )
+    return str;
+  usize pos = static_cast<usize>(itr - str);
+  usize tail_len = len - pos - szl;
+  micron::bytemove(itr + szr, itr + szl, tail_len);
+  micron::memcpy(itr, rhs, szr);
+  len = len - szl + szr;
+  str[len] = 0;
+  return str;
+}
+
+template <usize N, usize M, usize R>
+inline hstring<schar>
+replace(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
+{
+  hstring<schar> result(str);
+  return replace(result, static_cast<const char *>(lhs), static_cast<const char *>(rhs));
 }
 
 template <is_string T>
 T &
 replace_all(T &str, const char *lhs, const char *rhs)
 {
-  auto sz = str.size();
+  if ( micron::strcmp(lhs, rhs) == 0 )
+    return str;
   auto szl = micron::strlen(lhs);
   auto szr = micron::strlen(rhs);
-  if ( (szr - szl) + sz > str.max_size() )
-    exc<except::library_error>("concat range error.");
   typename T::iterator itr = find(str, lhs);
   while ( itr != nullptr ) {
-    sz = str.size();
+    auto sz = str.size();
+    if ( szr > szl && (sz - szl + szr) > str.max_size() )
+      exc<except::library_error>("replace_all range error.");
+    usize pos = static_cast<usize>(itr - str.begin());
+    usize tail_len = sz - pos - szl;
+    micron::bytemove(itr + szr, itr + szl, tail_len);
     micron::memcpy(itr, rhs, szr);
-    micron::bytemove(itr + szr, itr + szl, sz - ((szr - szl) > 0 ? (szr - szl) : 0));
-    str.set_size(str.size() - math::abs(szl - szr));
+    str.set_size(sz - szl + szr);
     itr = find(str, lhs);
   }
   return str;
@@ -1492,6 +2120,52 @@ replace_all(T &str, const char *lhs)
   return str;
 }
 
+template <is_string T>
+T
+replace_all(const T &str, const char *lhs, const char *rhs)
+{
+  T result(str);
+  return replace_all(result, lhs, rhs);
+}
+
+inline char *
+replace_all(char *str, usize &len, const char *lhs, const char *rhs)
+{
+  if ( micron::strcmp(lhs, rhs) == 0 )
+    return str;
+  if ( str == nullptr || lhs == nullptr || rhs == nullptr )
+    return str;
+  usize szl = micron::strlen(lhs);
+  usize szr = micron::strlen(rhs);
+  if ( szl == 0 )
+    return str;
+  usize pos = 0;
+  while ( pos + szl <= len ) {
+    u64 j = 0;
+    while ( j < szl && str[pos + j] == lhs[j] )
+      ++j;
+    if ( j == szl ) {
+      usize tail_len = len - pos - szl;
+      micron::bytemove(str + pos + szr, str + pos + szl, tail_len);
+      micron::memcpy(str + pos, rhs, szr);
+      len = len - szl + szr;
+      str[len] = 0;
+      pos += szr;
+    } else {
+      ++pos;
+    }
+  }
+  return str;
+}
+
+template <usize N, usize M, usize R>
+inline hstring<schar>
+replace_all(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
+{
+  hstring<schar> result(str);
+  return replace_all(result, static_cast<const char *>(lhs), static_cast<const char *>(rhs));
+}
+
 template <typename T>
 f32
 to_float(const T &o)
@@ -1507,7 +2181,7 @@ to_float(const T &o)
       ++c;
       continue;
     }
-    if ( *(buf + c) == ',' ) {
+    if ( *(buf + c) == '.' ) {
       fl_dec = true;
     } else if ( fl_dec ) {
       div *= 10.0f;
@@ -1520,12 +2194,91 @@ to_float(const T &o)
   return res;
 }
 
+inline f32
+to_float(const char *buf)
+{
+  if ( buf == nullptr )
+    return 0.0f;
+  f32 res = 0.0f;
+  f32 div = 1.0f;
+  bool fl_dec = false;
+  bool negative = false;
+  i64 c = 0;
+  while ( buf[c] == ' ' )
+    ++c;
+  if ( buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( buf[c] == '+' ) {
+    ++c;
+  }
+  while ( buf[c] ) {
+    if ( buf[c] == '.' ) {
+      fl_dec = true;
+    } else if ( buf[c] >= '0' && buf[c] <= '9' ) {
+      if ( fl_dec ) {
+        div *= 10.0f;
+        res += (buf[c] - '0') / div;
+      } else {
+        res = res * 10.0f + (buf[c] - '0');
+      }
+    } else {
+      break;
+    }
+    ++c;
+  }
+  return negative ? -res : res;
+}
+
+inline f32
+to_float(const char *buf, usize len)
+{
+  if ( buf == nullptr || len == 0 )
+    return 0.0f;
+  f32 res = 0.0f;
+  f32 div = 1.0f;
+  bool fl_dec = false;
+  bool negative = false;
+  usize c = 0;
+  while ( c < len && buf[c] == ' ' )
+    ++c;
+  if ( c < len && buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( c < len && buf[c] == '+' ) {
+    ++c;
+  }
+  while ( c < len && buf[c] ) {
+    if ( buf[c] == '.' ) {
+      fl_dec = true;
+    } else if ( buf[c] >= '0' && buf[c] <= '9' ) {
+      if ( fl_dec ) {
+        div *= 10.0f;
+        res += (buf[c] - '0') / div;
+      } else {
+        res = res * 10.0f + (buf[c] - '0');
+      }
+    } else {
+      break;
+    }
+    ++c;
+  }
+  return negative ? -res : res;
+}
+
+template <usize N>
+inline f32
+to_float(const char (&buf)[N])
+{
+  return to_float(static_cast<const char *>(buf), N - 1);
+}
+
 template <typename T>
 f64
 to_double(const T &o)
 {
-  f64 res = 0.0f;
-  f64 div = 1.0f;
+  f64 res = 0.0;
+  f64 div = 1.0;
   bool fl_dec = false;
 
   i64 c = 0;
@@ -1535,17 +2288,96 @@ to_double(const T &o)
       ++c;
       continue;
     }
-    if ( *(buf + c) == ',' ) {
+    if ( *(buf + c) == '.' ) {
       fl_dec = true;
     } else if ( fl_dec ) {
-      div *= 10.0f;
+      div *= 10.0;
       res += (*(buf + c) - '0') / div;
     } else {
-      res = res * 10.0f + (*(buf + c) - '0');
+      res = res * 10.0 + (*(buf + c) - '0');
     }
     ++c;
   }
   return res;
+}
+
+inline f64
+to_double(const char *buf)
+{
+  if ( buf == nullptr )
+    return 0.0;
+  f64 res = 0.0;
+  f64 div = 1.0;
+  bool fl_dec = false;
+  bool negative = false;
+  i64 c = 0;
+  while ( buf[c] == ' ' )
+    ++c;
+  if ( buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( buf[c] == '+' ) {
+    ++c;
+  }
+  while ( buf[c] ) {
+    if ( buf[c] == '.' ) {
+      fl_dec = true;
+    } else if ( buf[c] >= '0' && buf[c] <= '9' ) {
+      if ( fl_dec ) {
+        div *= 10.0;
+        res += (buf[c] - '0') / div;
+      } else {
+        res = res * 10.0 + (buf[c] - '0');
+      }
+    } else {
+      break;
+    }
+    ++c;
+  }
+  return negative ? -res : res;
+}
+
+inline f64
+to_double(const char *buf, usize len)
+{
+  if ( buf == nullptr || len == 0 )
+    return 0.0;
+  f64 res = 0.0;
+  f64 div = 1.0;
+  bool fl_dec = false;
+  bool negative = false;
+  usize c = 0;
+  while ( c < len && buf[c] == ' ' )
+    ++c;
+  if ( c < len && buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( c < len && buf[c] == '+' ) {
+    ++c;
+  }
+  while ( c < len && buf[c] ) {
+    if ( buf[c] == '.' ) {
+      fl_dec = true;
+    } else if ( buf[c] >= '0' && buf[c] <= '9' ) {
+      if ( fl_dec ) {
+        div *= 10.0;
+        res += (buf[c] - '0') / div;
+      } else {
+        res = res * 10.0 + (buf[c] - '0');
+      }
+    } else {
+      break;
+    }
+    ++c;
+  }
+  return negative ? -res : res;
+}
+
+template <usize N>
+inline f64
+to_double(const char (&buf)[N])
+{
+  return to_double(static_cast<const char *>(buf), N - 1);
 }
 
 template <typename T>
@@ -1566,6 +2398,59 @@ to_integer(const T &o)
   return t;
 }
 
+inline i32
+to_integer(const char *buf)
+{
+  if ( buf == nullptr )
+    return 0;
+  i32 t = 0;
+  bool negative = false;
+  i64 c = 0;
+  while ( buf[c] == ' ' )
+    ++c;
+  if ( buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( buf[c] == '+' ) {
+    ++c;
+  }
+  while ( buf[c] >= '0' && buf[c] <= '9' ) {
+    t = t * 10 + (buf[c] - '0');
+    ++c;
+  }
+  return negative ? -t : t;
+}
+
+inline i32
+to_integer(const char *buf, usize len)
+{
+  if ( buf == nullptr || len == 0 )
+    return 0;
+  i32 t = 0;
+  bool negative = false;
+  usize c = 0;
+  while ( c < len && buf[c] == ' ' )
+    ++c;
+  if ( c < len && buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( c < len && buf[c] == '+' ) {
+    ++c;
+  }
+  while ( c < len && buf[c] >= '0' && buf[c] <= '9' ) {
+    t = t * 10 + (buf[c] - '0');
+    ++c;
+  }
+  return negative ? -t : t;
+}
+
+template <usize N>
+inline i32
+to_integer(const char (&buf)[N])
+{
+  return to_integer(static_cast<const char *>(buf), N - 1);
+}
+
 constexpr int
 xdigit_to_val(char c) noexcept
 {
@@ -1578,7 +2463,6 @@ xdigit_to_val(char c) noexcept
   return -1;
 }
 
-// Parse decimal number from string
 constexpr u32
 parse_decimal(const char *cp) noexcept
 {
@@ -1590,7 +2474,6 @@ parse_decimal(const char *cp) noexcept
   return val;
 }
 
-// Parse hex number from string
 constexpr u32
 parse_hex(const char *cp) noexcept
 {
@@ -1644,7 +2527,7 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
     i++;
 
   if ( base == 16 && start[i] == '0' && (start[i + 1] == 'x' || start[i + 1] == 'X') ) {
-    i += 2;     // Skip "0x" or "0X" for hexadecimal
+    i += 2;
   }
 
   while ( start[i] != '\0' ) {
@@ -1658,11 +2541,11 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
     } else if ( start + i == end ) {
       break;
     } else {
-      break;     // Invalid character for the given base
+      break;
     }
 
     if ( digit >= base )
-      break;     // Out of range digit
+      break;
 
     result = result * base + digit;
     i++;
@@ -1687,6 +2570,60 @@ to_long(const T &o)
   }
   return t;
 }
+
+inline i64
+to_long(const char *buf)
+{
+  if ( buf == nullptr )
+    return 0;
+  i64 t = 0;
+  bool negative = false;
+  i64 c = 0;
+  while ( buf[c] == ' ' )
+    ++c;
+  if ( buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( buf[c] == '+' ) {
+    ++c;
+  }
+  while ( buf[c] >= '0' && buf[c] <= '9' ) {
+    t = t * 10 + (buf[c] - '0');
+    ++c;
+  }
+  return negative ? -t : t;
+}
+
+inline i64
+to_long(const char *buf, usize len)
+{
+  if ( buf == nullptr || len == 0 )
+    return 0;
+  i64 t = 0;
+  bool negative = false;
+  usize c = 0;
+  while ( c < len && buf[c] == ' ' )
+    ++c;
+  if ( c < len && buf[c] == '-' ) {
+    negative = true;
+    ++c;
+  } else if ( c < len && buf[c] == '+' ) {
+    ++c;
+  }
+  while ( c < len && buf[c] >= '0' && buf[c] <= '9' ) {
+    t = t * 10 + (buf[c] - '0');
+    ++c;
+  }
+  return negative ? -t : t;
+}
+
+template <usize N>
+inline i64
+to_long(const char (&buf)[N])
+{
+  return to_long(static_cast<const char *>(buf), N - 1);
+}
+
 };     // namespace format
 };     // namespace micron
 

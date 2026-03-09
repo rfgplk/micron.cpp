@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-0.5.12.0-red)
+![Version](https://img.shields.io/badge/version-0.6.0.0-red)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -35,18 +35,17 @@ Features
   - written entirely in c++23
   - a high performance, cache-aware algorithmic base architecture
   - provides an innovative foundation for systems-level development, reimagining conventional approaches to low-level programming
-  - uses a modular design allowing for reduced compiled binary sizes and easier vetting of include dependencies
 
 Who is this Library for?
 -------------------------
 
-The idea behind this library is that you shouldn't need anything more than a compliant C++ compiler to actually build useful applications. If you are in need of a truly portable (meaning any Linux system), high-performance freestanding library that offers all utilities & functions needed to program and control your system in a single repository with a relatively small footprint, this is for you.
+The idea behind this library is that you shouldn't need anything more than a compliant C++ compiler to actually build and compile useful applications. If you are in need of a truly portable (meaning any Linux system), high-performance freestanding library that offers all utilities & functions needed to program and control your system in a single repository with a relatively small footprint (run-on sentence, I guess), this is for you. Based on the latest count, this library has a footprint of roughly ~10-15% of glibc, while providing (nearly) all functionality. 
 
 
 Using the Library
 -------------------
 
-All necessary code is self-contained within the `src/` directory. Since *micron* is freestanding, it relies on no external sources; no other files or libraries are necessary (*with the sole exception of `pthread.h`, more on that below*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
+All necessary code is self-contained within the `src/` directory. Since *micron* is freestanding, it relies on no external sources; no other files or libraries are necessary (*with the sole exception of `libm` and `pthreads`, more on that below*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
 
 
 #### Installation
@@ -76,6 +75,22 @@ Philosophy
 in short:
 - the written code, in its explicit form, stands as the ultimate arbiter of truth, unyielding and devoid of ambiguity, embodying the essence of how code should perform.
 
+Is micron entirely self-sufficient?
+--------------------------------------
+
+Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), or any of the math functions, you **must** link against pthread and libm. I will get around eventually to implementing a threading model/math lib from scratch, just haven't had the time lately. 
+
+Architecture Support
+----------------------
+
+*micron* is primarily developed for the x86_64 arch. As of v0.5, it hosts experimental ARM32/ARM64 support.
+
+
+Code Coverage & Validation
+--------------------------
+
+Currently we are aiming for (near) 100% code coverage, of all functions and for (within reason) all inputs/domains. However, as of now the testing suites are still being written/generated. 
+
 
 Motivation
 ----------
@@ -91,16 +106,6 @@ Motivation
 <p align="justify"> 
 
   Since *micron* is specifically developed with Linux in mind, all library code is meticulously optimized for the nuances of the Linux kernel and its underlying system calls. This singular focus allows for an unparalleled level of integration and efficiency, leveraging Linux-specific features without the overhead of cross-platform abstractions. Consequently, the library achieves a degree of performance and system coherence that is unattainable in more generalized, platform-agnostic designs, solidifying its role as an indispensable tool for high-performance Linux development.</p>
-
-Is micron entirely self-sufficient?
---------------------------------------
-
-Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), you **must** link against pthread.
-
-Architecture Support
-----------------------
-
-*micron* is primarily developed for the x86_64 arch. As of v0.5, it hosts experimental ARM32/ARM64 support.
 
 Conformance with the STL
 -------------------------

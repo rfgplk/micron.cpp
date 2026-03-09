@@ -16,6 +16,17 @@
 // /usr/lib/gcc/x86_64-redhat-linux/15/include/mm_malloc.h:27, from
 // /usr/lib/gcc/x86_64-redhat-linux/15/include/xmmintrin.h:34, from ../simd/intrin.hpp:18
 
+#if defined(__micron_arm_neon)
+#include <arm_acle.h>
+#include <arm_bf16.h>
+#include <arm_cde.h>
+#include <arm_fp16.h>
+#include <arm_mve.h>
+#include <arm_neon.h>
+#include <arm_sme.h>
+#include <arm_sve.h>
+#elif defined(__micron_arch_x86) || defined(__micron_arch_amd64)
+
 // TODO: eventually dynamically include headers depending on comp. target to speed up comp times.
 // include everything
 #include <mmintrin.h>
@@ -161,3 +172,17 @@
 #include <movrsintrin.h>
 
 #include <amxmovrsintrin.h>
+#include <avx10_2bf16intrin.h>
+#include <avx10_2convertintrin.h>
+#include <avx10_2copyintrin.h>
+#include <avx10_2mediaintrin.h>
+#include <avx10_2minmaxintrin.h>
+#include <avx10_2satcvtintrin.h>
+
+#include <avx10_2-512bf16intrin.h>
+#include <avx10_2-512convertintrin.h>
+#include <avx10_2-512mediaintrin.h>
+#include <avx10_2-512minmaxintrin.h>
+#include <avx10_2-512satcvtintrin.h>
+
+#endif

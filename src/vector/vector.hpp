@@ -27,9 +27,8 @@
 
 namespace micron
 {
-// Regular vector class, always safe, mutable, notthread safe, cannot be
-// copied for performance reasons (just move it, or use a slice for that)
-template <is_regular_object T, class Alloc = micron::allocator_serial<>> class vector : public __mutable_memory_resource<T, Alloc>
+// Regular vector class, always safe, mutable, notthread safe, can be copied
+template <typename T, class Alloc = micron::allocator_serial<>> class vector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
 
@@ -833,12 +832,12 @@ public:
   inline void
   erase(iterator first, iterator last)
   {
-    if ( first < begin() || last > end() || first >= last )
+    if ( first < begin() or last > end() or first >= last )
       exc<except::library_error>("micron::vector erase(): invalid iterator range");
 
     size_type count = last - first;
 
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( T *p = first; p < last; ++p )
         p->~T();
     }
@@ -859,12 +858,12 @@ public:
   inline void
   erase(size_type from, size_type to)
   {
-    if ( from >= to || to > __mem::length )
+    if ( from >= to or to > __mem::length )
       exc<except::library_error>("micron::vector erase(): invalid range");
 
     size_type count = to - from;
 
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       for ( size_type i = from; i < to; ++i )
         (__mem::memory)[i].~T();
     }
@@ -900,10 +899,10 @@ public:
   inline void
   erase(iterator it)
   {
-    if ( it < begin() || it >= end() )
+    if ( it < begin() or it >= end() )
       exc<except::library_error>("micron::vector erase(): out of allocated memory range.");
 
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
       it->~T();
 
     for ( T *p = it; p < (__mem::memory + __mem::length - 1); ++p )
@@ -920,7 +919,806 @@ public:
     if ( n >= __mem::length )
       exc<except::library_error>("micron::vector erase(): out of allocated memory range.");
 
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+      (__mem::memory)[n].~T();
+
+    for ( size_type i = n; i < __mem::length - 1; ++i )
+      (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
+
+    czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
+
+    --__mem::length;
+  }
+
+  // NOTE: by default, micron vectors will actually zero out memory they hold
+  // this is done for correctness, even though it's partially enforced at the allocator level
+  // this may incur a heavy performance penalty
+  // fvector doesn't manually zero out trivial types
+  inline void
+  clear()
+  {
+    if ( !__mem::length )
+      return;
+    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __mem::length = 0;
+  }
+
+  void
+  fast_clear()
+  {
+    if constexpr ( !micron::is_class_v<T> ) {
+      __mem::length = 0;
+    } else
+      clear();
+  }
+
+  inline const T &
+  front() const
+  {
+    return (__mem::memory)[0];
+  }
+
+  inline const T &
+  back() const
+  {
+    return (__mem::memory)[__mem::length - 1];
+  }
+
+  inline T &
+  front()
+  {
+    return (__mem::memory)[0];
+  }
+
+  inline T &
+  back()
+  {
+    return (__mem::memory)[__mem::length - 1];
+  }
+
+  // access at element
+  static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v<T>;
+  }
+
+  static constexpr bool
+  is_class_type() noexcept
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
+  }
+};
+
+// no-copy specialization
+template <typename T, class Alloc>
+  requires(!micron::is_regular_object<T> and micron::movable<T> and !micron::copyable<T>)
+class vector<T, Alloc> : public __mutable_memory_resource_move_only<T, Alloc>
+{
+  using __mem = __mutable_memory_resource_move_only<T, Alloc>;
+
+public:
+  using category_type = vector_tag;
+  using mutability_type = mutable_tag;
+  using memory_type = heap_tag;
+  typedef usize size_type;
+  typedef T value_type;
+  typedef T &reference;
+  typedef T &ref;
+  typedef const T &const_reference;
+  typedef const T &const_ref;
+  typedef T *pointer;
+  typedef const T *const_pointer;
+  typedef T *iterator;
+  typedef const T *const_iterator;
+
+  // NOTE: by convetion destructors should be the first method, adjust all other classes to be in the same order
+  ~vector()
+  {
+    if ( __mem::is_zero() )
+      return;
+    clear();
+  }
+
+  vector(const std::initializer_list<T> &lst) : __mem(lst.size())
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
+      size_type i = 0;
+      for ( T &&value : lst ) {
+        new (&__mem::memory[i++]) T(micron::move(value));
+      }
+      __mem::length = lst.size();
+    } else {
+      size_type i = 0;
+      for ( auto &&value : lst ) {
+        __mem::memory[i++] = value;
+      }
+      __mem::length = lst.size();
+    }
+  };
+
+  vector(void) : __mem() {};
+
+  vector(const size_type n) : __mem(n)
+  {
+    __impl_container::set(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+  };
+
+  template <typename Fn>
+    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+  vector(const size_type n, Fn &&fn) : __mem(n)
+  {
+    __impl_container::set(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+    micron::generate(begin(), end(), fn);
+  }
+
+  template <typename Fn>
+    requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
+  vector(const size_type n, Fn &&fn) : __mem(n)
+  {
+    __impl_container::set(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+    micron::transform(begin(), end(), fn);
+  }
+
+  template <typename... Args>
+    requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
+  vector(size_type n, Args &&...args) : __mem(n)
+  {
+    for ( size_type i = 0; i < n; i++ )
+      new (&__mem::memory[i]) T(forward<Args>(args)...);
+    __mem::length = n;
+  };
+
+  vector(size_type n, const T &init_value) : __mem(n)
+  {
+    __impl_container::set(micron::addr(__mem::memory[0]), init_value, n);
+    __mem::length = n;
+  };
+
+  vector(const vector &o) = delete;
+
+  vector(chunk<byte> &&m) : __mem(m) { m = nullptr; };
+
+  template <typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) {}
+
+  vector(vector &&o) : __mem(micron::move(o)) {}
+
+  vector &operator=(const vector &o) = delete;
+
+  vector &
+  operator=(vector &&o)
+  {
+    if ( __mem::memory ) {
+      // kill old memory first
+      clear();
+      __mem::free();
+    }
+    __mem::operator=(micron::move(o));
+    return *this;
+  }
+
+  template <typename... Args>
+  vector &
+  operator+=(Args &&...args)
+  {
+    push_back(micron::move(args)...);
+    return *this;
+  }
+
+  // equivalent of .data() sortof
+  chunk<byte>
+  operator*() const
+  {
+    return __mem::data();
+  }
+
+  const_pointer
+  data() const
+  {
+    return &__mem::memory[0];
+  }
+
+  pointer
+  data()
+  {
+    return &__mem::memory[0];
+  }
+
+  bool
+  operator!() const
+  {
+    return empty();
+  }
+
+  // overload this to always point to mem
+  byte *
+  operator&()
+  {
+    return reinterpret_cast<byte *>(__mem::memory);
+  }
+
+  const byte *
+  operator&() const
+  {
+    return reinterpret_cast<byte *>(__mem::memory);
+  }
+
+  auto *
+  addr()
+  {
+    return this;
+  }
+
+  const auto *
+  addr() const
+  {
+    return this;
+  }
+
+  inline slice<T>
+  operator[]()
+  {
+    return slice<T>(begin(), end());
+  }
+
+  inline const slice<T>
+  operator[]() const
+  {
+    return slice<T>(begin(), end());
+  }
+
+  // copies vector out
+  inline __attribute__((always_inline)) const slice<T> operator[](size_type from, size_type to) const = delete;
+
+  inline __attribute__((always_inline)) slice<T> operator[](size_type from, size_type to) = delete;
+
+  // NOTE: yes operator[] are correct, this is meant to check against capacity, not length. reasoning being you're
+  // allowed to look through all allocated memory within the scope of the vector, not just set memory (at() is for that)
+  template <typename R>
+    requires(micron::is_integral_v<R>)
+  inline __attribute__((always_inline)) const T &
+  operator[](R n) const
+  {
+    // meant to be safe so this is here
+    if ( static_cast<size_type>(n) > __mem::capacity ) [[unlikely]]
+      exc<except::library_error>("micron::vector operator[] out of allocated memory range.");
+    return (__mem::memory)[n];
+  }
+
+  template <typename R>
+    requires(micron::is_integral_v<R>)
+  inline __attribute__((always_inline)) T &
+  operator[](R n)
+  {
+    // meant to be safe so this is here
+    if ( static_cast<size_type>(n) > __mem::capacity ) [[unlikely]]
+      exc<except::library_error>("micron::vector operator[] out of allocated memory range.");
+    return (__mem::memory)[n];
+  }
+
+  inline __attribute__((always_inline)) T &
+  at(size_type n)
+  {
+    if ( n >= __mem::length )
+      exc<except::library_error>("micron::vector at() out of bounds");
+    return (__mem::memory)[n];
+  }
+
+  size_type
+  at_n(iterator i) const
+  {
+    if ( i - begin() >= __mem::length )
+      exc<except::library_error>("micron::ivector at_n() out of bounds");
+    return static_cast<size_type>(i - begin());
+  }
+
+  T *
+  itr(size_type n)
+  {
+    if ( n >= __mem::length )
+      exc<except::library_error>("micron::vector at() out of bounds");
+    return &(__mem::memory)[n];
+  }
+
+  template <typename F>
+    requires(sizeof(T) == sizeof(F))
+  inline vector &append(const vector<F> &o) = delete;
+
+  template <typename F>
+    requires(sizeof(T) == sizeof(F))
+  inline vector &
+  weld(vector<F> &&o)
+  {
+    if ( !__mem::has_space(o.length) )
+      reserve(__mem::capacity + o.max_size());
+    __impl_container::copy(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
+    // micron::memcpy(&(__mem::memory)[__mem::length],
+    // &o.memory[0],
+    //                o.length);
+    __mem::length += o.length;
+    return *this;
+  }
+
+  template <typename C = T>
+  void
+  swap(vector<C> &o) noexcept
+  {
+    micron::swap(__mem::memory, o.memory);
+    micron::swap(__mem::length, o.length);
+  }
+
+  size_type
+  max_size() const
+  {
+    return __mem::capacity;
+  }
+
+  size_type
+  size() const
+  {
+    return __mem::length;
+  }
+
+  void
+  set_size(const size_type n)
+  {
+    __mem::length = n;
+  }
+
+  bool
+  empty() const
+  {
+    return __mem::length == 0 ? true : false;
+  }
+
+  // grow container
+  inline void
+  reserve(const size_type n)
+  {
+    if ( n < __mem::capacity )
+      return;
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
+    __mem::expand(n);
+  }
+
+  inline void
+  try_reserve(const size_type n)
+  {
+    if ( n < __mem::capacity )
+      exc<except::memory_error>("micron vector failed to reserve memory");
+    if ( __mem::is_zero() ) {
+      // NOTE: if a container has been moved out, we need to reinit. memor
+      __mem::realloc(n);
+      return;
+    }
+    __mem::expand(n);
+  }
+
+  inline slice<byte>
+  into_bytes()
+  {
+    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
+  }
+
+  inline vector<T>
+  clone(void)
+  {
+    return vector<T>(*this);
+  }
+
+  void
+  fill(const T &v)
+  {
+    for ( size_type i = 0; i < __mem::length; i++ )
+      __mem::memory[i] = v;
+  }
+
+  // resize to how much and fill with a value v
+  void
+  resize(size_type n)
+  {
+    if ( !(n > __mem::length) ) {
+      return;
+    }
+    if ( n >= __mem::capacity ) {
+      reserve(n);
+    }
+    T *f_ptr = __mem::memory;
+    for ( size_type i = __mem::length; i < n; i++ )
+      new (&f_ptr[i]) T{};
+
+    __mem::length = n;
+  }
+
+  void
+  resize(size_type n, const T &v)
+  {
+    if ( !(n > __mem::length) ) {
+      return;
+    }
+    if ( n >= __mem::capacity ) {
+      reserve(n);
+    }
+    T *f_ptr = __mem::memory;
+    for ( size_type i = __mem::length; i < n; i++ )
+      new (&f_ptr[i]) T(v);
+
+    __mem::length = n;
+  }
+
+  template <typename... Args>
+  void
+  emplace_back(Args &&...v)
+  {
+    if ( __mem::length < __mem::capacity ) {
+      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
+      return;
+    } else {
+      reserve(__mem::capacity + 1);
+      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
+    }
+  }
+
+  void
+  move_back(T &&t)
+  {
+    if ( __mem::length < __mem::capacity ) {
+      __mem::memory[__mem::length++] = micron::move(t);
+      return;
+    } else {
+      reserve(__mem::capacity + 1);
+      __mem::memory[__mem::length++] = micron::move(t);
+    }
+  }
+
+  inline iterator
+  get(const size_type n)
+  {
+    if ( n > __mem::length )
+      exc<except::library_error>("micron::vector get() out of range");
+    return &(__mem::memory[n]);
+  }
+
+  inline const_iterator
+  get(const size_type n) const
+  {
+    if ( n > __mem::length )
+      exc<except::library_error>("micron::vector get() out of range");
+    return &(__mem::memory[n]);
+  }
+
+  inline const_iterator
+  cget(const size_type n) const
+  {
+    if ( n > __mem::length )
+      exc<except::library_error>("micron::vector cget() out of range");
+    return &(__mem::memory[n]);
+  }
+
+  inline iterator
+  find(const T &o)
+  {
+    T *f_ptr = __mem::memory;
+    for ( size_type i = 0; i < __mem::length; i++ )
+      if ( f_ptr[i] == o )
+        return &f_ptr[i];
+    return nullptr;
+  }
+
+  inline const_iterator
+  find(const T &o) const
+  {
+    T *f_ptr = __mem::memory;
+    for ( size_type i = 0; i < __mem::length; i++ )
+      if ( f_ptr[i] == o )
+        return &f_ptr[i];
+    return nullptr;
+  }
+
+  inline iterator
+  begin()
+  {
+    return (__mem::memory);
+  }
+
+  inline const_iterator
+  begin() const
+  {
+    return (__mem::memory);
+  }
+
+  inline const_iterator
+  cbegin() const
+  {
+    return (__mem::memory);
+  }
+
+  inline iterator
+  end()
+  {
+    return (__mem::memory) + (__mem::length);
+  }
+
+  inline const_iterator
+  end() const
+  {
+    return (__mem::memory) + (__mem::length);
+  }
+
+  inline iterator
+  last()
+  {
+    return (__mem::memory) + (__mem::length - 1);
+  }
+
+  inline const_iterator
+  last() const
+  {
+    return (__mem::memory) + (__mem::length - 1);
+  }
+
+  inline const_iterator
+  cend() const
+  {
+    return (__mem::memory) + (__mem::length);
+  }
+
+  inline iterator insert(size_type n, const T &val, size_type cnt) = delete;
+
+  inline iterator insert(size_type n, const T &val) = delete;
+
+  inline iterator
+  insert(size_type n, T &&val)
+  {
+    if ( !__mem::length ) {
+      emplace_back(val);
+      return begin();
+    }
+    if ( __mem::length + 1 > __mem::capacity )
+      reserve(__mem::capacity + 1);
+    if ( n >= __mem::length )
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
+    T *its = itr(n);
+    T *ite = end();
+    micron::memmove(its + 1, its, (ite - its));
+    //*its = (val);
+    new (its) T(micron::move(val));
+    __mem::length++;
+    return its;
+  }
+
+  inline iterator
+  insert(iterator it, T &&val)
+  {
+    if ( !__mem::length ) {
+      push_back(val);
+      return begin();
+    }
+    if ( (__mem::length) >= __mem::capacity ) {
+      size_type dif = static_cast<size_type>(it - __mem::memory);
+      reserve(__mem::capacity + 1);
+      it = __mem::memory + dif;
+    }     // invalidated if
+    if ( it >= end() or it < begin() )
+      exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
+    T *ite = end();
+    micron::memmove(it + 1, it, ite - it);
+    new (it) T(micron::move(val));
+    //*it = (val);
+    __mem::length++;
+    return it;
+  }
+
+  inline iterator insert(iterator it, const T &val, const size_type cnt) = delete;
+
+  inline iterator insert(iterator it, const T &val) = delete;
+
+  inline void
+  sort(void)
+  {
+    if ( size() < 100000 )
+      micron::sort::heap(*this);     // NOTE: need an inplace sort since *this cannot be copied
+    else
+      micron::sort::quick(*this);
+  }
+
+  template <typename U = T>
+  iterator
+  insert_sort(U &&val)
+  {
+    if ( __mem::length == 0 ) {
+      push_back(micron::move(val));
+      return begin();
+    }
+
+    if ( __mem::length + 1 > __mem::capacity )
+      reserve(__mem::capacity + 1);
+
+    // Find first element > val (stable insertion)
+    size_type pos = 0;
+    for ( ; pos < __mem::length; ++pos ) {
+      if ( __mem::memory[pos] > val )
+        break;
+    }
+
+    T *it = __mem::memory + pos;
+    T *end = __mem::memory + __mem::length;
+
+    // Shift right
+    micron::memmove(it + 1, it, (end - it));
+
+    // Construct element
+    new (it) T(micron::move(val));
+
+    ++__mem::length;
+    return it;
+  }
+
+  inline vector &assign(const size_type cnt, const T &val) = delete;
+
+  __attribute__((always_inline)) void inline_push_back(const T &v) = delete;
+
+  __attribute__((always_inline)) void
+  inline_push_back(T &&v)
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      if ( (__mem::length + 1 <= __mem::capacity) ) {
+        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+        return;
+      } else {
+        reserve(__mem::capacity * sizeof(T) + 1);
+        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+      }
+    } else {
+      if ( (__mem::length + 1 <= __mem::capacity) ) {
+        __mem::memory[__mem::length++] = micron::move(v);
+        return;
+      } else {
+        reserve(__mem::capacity * sizeof(T) + 1);
+        __mem::memory[__mem::length++] = micron::move(v);
+      }
+    }
+  }
+
+  void push_back(const T &v) = delete;
+
+  void
+  push_back(T &&v)
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      if ( (__mem::length + 1 <= __mem::capacity) ) {
+        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+        return;
+      } else {
+        reserve(__mem::capacity * sizeof(T) + 1);
+        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+      }
+    } else {
+      if ( (__mem::length + 1 <= __mem::capacity) ) {
+        __mem::memory[__mem::length++] = micron::move(v);
+        return;
+      } else {
+        reserve(__mem::capacity * sizeof(T) + 1);
+        __mem::memory[__mem::length++] = micron::move(v);
+      }
+    }
+  }
+
+  inline void
+  pop_back()
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      (__mem::memory)[(__mem::length - 1)].~T();
+    } else {
+      (__mem::memory)[(__mem::length - 1)] = T{};
+    }
+    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
+  }
+
+  inline void
+  erase(iterator first, iterator last)
+  {
+    if ( first < begin() or last > end() or first >= last )
+      exc<except::library_error>("micron::vector erase(): invalid iterator range");
+
+    size_type count = last - first;
+
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( T *p = first; p < last; ++p )
+        p->~T();
+    }
+
+    T *it = first;
+    T *src = last;
+    T *end_ptr = __mem::memory + __mem::length;
+
+    while ( src < end_ptr )
+      *it++ = micron::move(*src++);
+
+    for ( T *p = it; p < end_ptr; ++p )
+      czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(p));
+
+    __mem::length -= count;
+  }
+
+  inline void
+  erase(size_type from, size_type to)
+  {
+    if ( from >= to or to > __mem::length )
+      exc<except::library_error>("micron::vector erase(): invalid range");
+
+    size_type count = to - from;
+
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( size_type i = from; i < to; ++i )
+        (__mem::memory)[i].~T();
+    }
+
+    for ( size_type i = to; i < __mem::length; ++i )
+      (__mem::memory)[i - count] = micron::move((__mem::memory)[i]);
+
+    for ( size_type i = __mem::length - count; i < __mem::length; ++i )
+      czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[i]));
+
+    __mem::length -= count;
+  }
+
+  inline void
+  __remove(const T &val)
+  {
+  remove_goto:
+    auto itr = find(val);
+    if ( itr == nullptr )
+      return;
+    erase(itr);
+    goto remove_goto;     // until all elements are removed
+  }
+
+  template <typename... Args>
+    requires(micron::convertible_to<T, Args> && ...)
+  inline void
+  remove(const Args &...val)
+  {
+    (__remove(static_cast<T>(val)), ...);
+  }
+
+  inline void
+  erase(iterator it)
+  {
+    if ( it < begin() or it >= end() )
+      exc<except::library_error>("micron::vector erase(): out of allocated memory range.");
+
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+      it->~T();
+
+    for ( T *p = it; p < (__mem::memory + __mem::length - 1); ++p )
+      *p = micron::move(*(p + 1));
+
+    czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
+
+    --__mem::length;
+  }
+
+  inline void
+  erase(const size_type n)
+  {
+    if ( n >= __mem::length )
+      exc<except::library_error>("micron::vector erase(): out of allocated memory range.");
+
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
       (__mem::memory)[n].~T();
 
     for ( size_type i = n; i < __mem::length - 1; ++i )
@@ -992,4 +1790,5 @@ public:
     return micron::is_trivial_v<T>;
   }
 };
+
 };     // namespace micron

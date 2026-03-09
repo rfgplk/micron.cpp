@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "../../../control.hpp"
 #include "../../../except.hpp"
 #include "../../../memory/addr.hpp"
 #include "../../../types.hpp"
