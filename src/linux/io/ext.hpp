@@ -14,6 +14,7 @@
 #include "../sys/types.hpp"
 
 #include "io_structs.hpp"
+#include "inode.hpp"
 
 #include "sys.hpp"
 
@@ -286,8 +287,26 @@ path_exists(const char *path)
   return posix::access(path, f_ok) == 0;
 }
 
+template <typename T>
 inline max_t
-write_all(fd_t fd, const void *buf, usize len)
+write_all(fd_t fd, const T &buf, usize len)
+{
+  usize written = 0;
+  const byte *p = real_addr_as<const byte>(buf);
+  while ( written < len ) {
+    max_t r = posix::write(fd.fd, p + written, len - written);
+    if ( r < 0 )
+      return r;
+    if ( r == 0 )
+      break;
+    written += static_cast<usize>(r);
+  }
+  return static_cast<max_t>(written);
+}
+
+template <typename T>
+inline max_t
+write_all(fd_t fd, const T *buf, usize len)
 {
   usize written = 0;
   const byte *p = static_cast<const byte *>(buf);
@@ -302,8 +321,9 @@ write_all(fd_t fd, const void *buf, usize len)
   return static_cast<max_t>(written);
 }
 
+template <typename T>
 inline max_t
-read_all(fd_t fd, void *buf, usize len)
+read_all(fd_t fd, T *buf, usize len)
 {
   usize got = 0;
   byte *p = static_cast<byte *>(buf);
