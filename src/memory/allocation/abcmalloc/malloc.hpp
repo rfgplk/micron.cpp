@@ -51,6 +51,14 @@ is_present(byte *ptr)
   return is_present(reinterpret_cast<addr_t *>(ptr));
 }
 
+template <typename T>
+  requires(!micron::same_as<T, byte>)
+bool
+is_present(T *ptr)
+{
+  return is_present(reinterpret_cast<addr_t *>(ptr));
+}
+
 // checks if pointer is addressable at any known page of the allocator, if it is it's valid
 bool
 within(const addr_t *ptr)
@@ -93,6 +101,15 @@ relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets aren
   }
   __start_abcmalloc_init();
   __main_arena->reset_page(ptr);
+}
+
+template <typename T>
+  requires(!micron::same_as<T, byte>)
+void
+relinquish(T *__ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely (NOTE: this will
+{
+  byte *ptr = reinterpret_cast<byte *>(__ptr);
+  relinquish(ptr);
 }
 
 byte *mark_at(byte *ptr, usize size);       // hard mark memory at addr. overrides previous entries
@@ -157,6 +174,15 @@ retire(byte *ptr)
   }     // wasn't able to throw, add an error
 }
 
+template <typename T>
+  requires(!micron::same_as<T, byte>)
+void
+retire(T *__ptr)
+{
+  byte *ptr = reinterpret_cast<byte *>(__ptr);
+  retire(ptr);
+}
+
 __attribute__((malloc, alloc_size(1))) auto
 alloc(usize size) -> byte *     // allocates memory, near iden. func. to malloc
 {
@@ -206,6 +232,24 @@ dealloc(byte *ptr, usize len)
   }     // wasn't able to throw, add an error
 }
 
+template <typename T>
+  requires(!micron::same_as<T, byte>)
+void
+dealloc(T *__ptr)
+{
+  byte *ptr = reinterpret_cast<byte *>(__ptr);
+  dealloc(ptr);
+}
+
+template <typename T>
+  requires(!micron::same_as<T, byte>)
+void
+dealloc(T *__ptr, usize len)
+{
+  byte *ptr = reinterpret_cast<byte *>(__ptr);
+  dealloc(ptr, len);
+}
+
 void
 freeze(byte *ptr)
 {
@@ -221,7 +265,14 @@ freeze(byte *ptr)
   if ( __main_arena->freeze(ptr) ) {
   }
 }
-
+template <typename T>
+  requires(!micron::same_as<T, byte>)
+void
+freeze(T *__ptr)
+{
+  byte *ptr = reinterpret_cast<byte *>(__ptr);
+  free(ptr);
+}
 // gets all pointers alloc'd by abc
 void
 which(void)

@@ -26,11 +26,11 @@ template <system_clocks C = system_clocks::monotonic> class timerfd_t
       break;
     case unit::microseconds :
       ts.tv_sec = static_cast<time_t>(value / 1'000'000LL);
-      ts.tv_nsec = static_cast<long>(value % 1'000'000LL) * 1'000L;
+      ts.tv_nsec = static_cast<long>(static_cast<long>(value) % 1'000'000LL) * 1'000L;
       break;
     case unit::milliseconds :
       ts.tv_sec = static_cast<time_t>(value / 1'000LL);
-      ts.tv_nsec = static_cast<long>(value % 1'000LL) * 1'000'000L;
+      ts.tv_nsec = static_cast<long>( static_cast<long>(value) % 1'000LL) * 1'000'000L;
       break;
     case unit::seconds :
       ts.tv_sec = static_cast<time_t>(value);
