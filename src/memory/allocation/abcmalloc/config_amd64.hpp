@@ -85,7 +85,7 @@ constexpr static const float __default_oom_limit_error = 0.2f;
 constexpr static const bool __default_enforce_provenance = false;
 // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation
 // UNLESS the page on which it resides has been unmapped
-constexpr static const bool __default_tombstone = true;
+constexpr static const bool __default_tombstone = false;
 constexpr static const bool __default_insert_guard_pages = true;
 constexpr static const int __default_guard_page_perms = micron::prot_none;
 

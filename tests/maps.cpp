@@ -15,7 +15,6 @@
 int
 main(void)
 {
-  micron::exc<mc::except::memory_error>("test error");
   mc::stack_swiss_map<mc::string, int, 128> ms;
   ms.insert("bla", 1);
   mc::console(*ms.find("bla"));
@@ -27,14 +26,8 @@ main(void)
     } catch ( mc::except::library_error &e ) {
     }
   }
-  mc::console(hmp[500]);
+  mc::console(hmp);
   mc::console("Done");
-  mc::console("Done");
-  mc::bmap<mc::string, float> bm;
-  bm.insert("hi", 2.0f);
-  bm.insert("bye", 5.0f);
-  mc::console(bm.find("bb"));
-  mc::console(*bm.find("hi"));
   return 1;
   mc::map<mc::string, int> mp;
   mc::console(mp.size());

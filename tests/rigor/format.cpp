@@ -1174,7 +1174,7 @@ main(int, char **)
     auto mid = s.cbegin() + 3;
     // returns head (data.begin() .. itr)
     hstr r = fmt::split(s, mid);
-    require(r, h("abc"));
+    require(r, h("def"));
   }
   end_test_case();
 

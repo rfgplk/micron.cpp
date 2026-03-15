@@ -7,6 +7,8 @@
 #include "../memory/actions.hpp"
 #include "../tuple.hpp"
 
+#include "hopscotch.hpp"
+
 namespace micron
 {
 constexpr u8 __empty = 0b11111111;        // 0xFF - empty slot
@@ -603,5 +605,4 @@ public:
     return const_iterator(this, N);
   }
 };
-
 }     // namespace micron
