@@ -15,6 +15,8 @@
 #include "../types.hpp"
 #include "../vector/fvector.hpp"
 
+#include "bits.hpp"
+
 namespace micron
 {
 

@@ -10,6 +10,11 @@
 #include "type_traits.hpp"
 #include "types.hpp"
 
+#include "tags.hpp"
+
+// for string concepts
+#include "string/unitypes.hpp"
+
 // all concepts go here
 namespace micron
 {
@@ -228,6 +233,23 @@ concept is_constexpr_container = requires {
 };
 
 template <typename T>
+concept has_cstr = requires(T t) {
+  { t.c_str() } -> micron::same_as<const char *>;
+};
+
+template <typename T>
+concept is_char_ptr
+    = micron::is_same_v<T, char *> || micron::is_same_v<T, schar *> || micron::is_same_v<T, wide *> || micron::is_same_v<T, unicode8 *>
+      || micron::is_same_v<T, unicode32 *> || micron::is_same_v<T, const char *> || micron::is_same_v<T, const schar *>
+      || micron::is_same_v<T, const wide *> || micron::is_same_v<T, const unicode8 *> || micron::is_same_v<T, const unicode32 *>;
+
+template <typename T>
+concept is_char_elem
+    = micron::is_same_v<T, char> || micron::is_same_v<T, schar> || micron::is_same_v<T, wide> || micron::is_same_v<T, unicode8>
+      || micron::is_same_v<T, unicode32> || micron::is_same_v<T, const char> || micron::is_same_v<T, const schar>
+      || micron::is_same_v<T, const wide> || micron::is_same_v<T, const unicode8> || micron::is_same_v<T, const unicode32>;
+
+template <typename T>
 concept is_string_ascii = requires(T t) {
   typename T::value_type;
   requires micron::is_same_v<typename T::value_type, char>;
@@ -251,6 +273,25 @@ concept is_string = requires(T t) {
   { t.cend() } -> micron::same_as<typename T::const_iterator>;
 };
 
+template <typename, typename = void> struct is_string_tt : micron::false_type {
+};
+
+template <typename T>
+struct is_string_tt<
+    T, micron::void_t<decltype(micron::declval<T>().c_str()), decltype(micron::declval<T>().data()), decltype(micron::declval<T>().size()),
+                      decltype(micron::declval<T>().begin()), decltype(micron::declval<T>().end()), decltype(micron::declval<T>().cbegin()),
+                      decltype(micron::declval<T>().cend()), typename T::pointer, typename T::iterator, typename T::const_iterator>>
+    : micron::bool_constant<micron::same_as<decltype(micron::declval<T>().c_str()), const char *>
+                            && micron::same_as<decltype(micron::declval<T>().data()), typename T::pointer>
+                            && micron::convertible_to<decltype(micron::declval<T>().size()), size_t>
+                            && micron::same_as<decltype(micron::declval<T>().begin()), typename T::iterator>
+                            && micron::same_as<decltype(micron::declval<T>().end()), typename T::iterator>
+                            && micron::same_as<decltype(micron::declval<T>().cbegin()), typename T::const_iterator>
+                            && micron::same_as<decltype(micron::declval<T>().cend()), typename T::const_iterator>> {
+};
+
+template <typename T> inline constexpr bool is_string_v = is_string_tt<T>::value;
+
 template <typename T>
 concept is_string_on_stack = requires(T t) {
   typename T::stack_tag;
@@ -262,4 +303,33 @@ concept is_string_on_stack = requires(T t) {
   { t.cbegin() } -> micron::same_as<typename T::iterator>;
   { t.cend() } -> micron::same_as<typename T::iterator>;
 };
+
+template <typename T>
+concept is_tagged_map = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
+};
+template <typename T>
+concept is_map = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
+} || requires(micron::remove_cvref_t<T> t) {
+  { t.size() } -> micron::convertible_to<usize>;
+  { t.capacity() } -> micron::convertible_to<usize>;
+  { t.empty() } -> micron::convertible_to<bool>;
+  { t.clear() };
+  { t.begin() };
+  { t.end() };
+};
+
+template <typename T>
+concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
+  { t.capacity() } -> micron::convertible_to<usize>;
+  { t.size() } -> micron::convertible_to<usize>;
+  { t.begin() };
+  { t.end() };
+  { (*t.begin()).a };
+  { (*t.begin()).b };
+} && !is_tagged_map<T> && !has_cstr<T>;
+
 };     // namespace micron
