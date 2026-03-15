@@ -139,6 +139,29 @@ loadu(T *ptr)
 
 template <is_simd_type B, typename T>
 inline B
+loadu(const T *ptr)
+{
+  if constexpr ( micron::is_same_v<B, i128> ) {
+    return _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr));
+  }
+  if constexpr ( micron::is_same_v<B, f128> ) {
+    return _mm_loadu_ps(reinterpret_cast<const float *>(ptr));
+  }
+  if constexpr ( micron::is_same_v<B, d128> ) {
+    return _mm_loadu_pd(reinterpret_cast<const double *>(ptr));
+  }
+  if constexpr ( micron::is_same_v<B, i256> ) {
+    return _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr));
+  }
+  if constexpr ( micron::is_same_v<B, f256> ) {
+    return _mm256_loadu_ps(reinterpret_cast<const float *>(ptr));
+  }
+  if constexpr ( micron::is_same_v<B, d256> ) {
+    return _mm256_loadu_pd(reinterpret_cast<const double *>(ptr));
+  }
+}
+template <is_simd_type B, typename T>
+inline B
 loadu(T &ref)
 {
   return loadu<B, T>(&ref);

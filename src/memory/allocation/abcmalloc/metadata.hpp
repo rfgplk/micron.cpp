@@ -19,12 +19,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
-
+#include "../../../memory/pointers/sentinel.hpp"
 #include "../../../types.hpp"
 
 namespace abc
 {
+// shared spec for both alloc systems
+using ret_flag = micron::sentinel_pointer;
+constexpr static const uintptr_t __flag_invalid = 0;
+constexpr static const uintptr_t __flag_failure = -1;
+constexpr static const uintptr_t __flag_out_of_space = -2;
+constexpr static const uintptr_t __flag_tombstoned = -3;
+constexpr static const uintptr_t __flag_ok = 1;
+
+struct block_header {
+  i32 order;
+  i32 flags;
+};
+
+enum block_flags : i32 {
+  __block_free = 0,
+  __block_alloc = 1,
+  __block_tombstone = 2,
+  __block_temporal = 4,
+};
+
 constexpr static usize __hdr_offset = sizeof(micron::simd::i256);
+
+inline block_header *
+get_block_header(byte *user_ptr)
+{
+  return reinterpret_cast<block_header *>(user_ptr - __hdr_offset);
+}
 
 inline addr_t *
 get_metadata_addr(addr_t *ptr)

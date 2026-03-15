@@ -199,25 +199,9 @@ public:
     __mem::length = o.length;
   };
 
-  template <typename F> constexpr hstring(hstring<F> &&o)
-  {
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
-  }
+  template <typename F> constexpr hstring(hstring<F> &&o) : __mem(micron::move(o)) {}
 
-  constexpr hstring(hstring &&o)
-  {
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
-  }
+  constexpr hstring(hstring &&o) : __mem(micron::move(o)) {}
 
   template <typename F> constexpr hstring(const hstring<F> &o) : __mem(o.capacity)
   {
