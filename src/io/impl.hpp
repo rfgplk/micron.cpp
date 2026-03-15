@@ -7,6 +7,8 @@
 
 #include "../types.hpp"
 
+// NOTE: de facto deprecated use string/format.hpp
+
 namespace micron
 {
 namespace io
