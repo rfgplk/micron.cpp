@@ -566,9 +566,9 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     u64 pow5[2];
     pow5_compute_inv(static_cast<u32>(q), pow5);
 
-    vr = shift_mul128(mv, pow5, i);
-    vp = shift_mul128(mv + 2, pow5, i);
-    vm = shift_mul128(mv - 1 - mmShift, pow5, i);
+    vr = shift_mul64(mv, pow5, i);
+    vp = shift_mul64(mv + 2, pow5, i);
+    vm = shift_mul64(mv - 1 - mmShift, pow5, i);
 
     if ( q <= 21 ) {
       if ( mv % 5 == 0 )
@@ -589,9 +589,9 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     u64 pow5[2];
     pow5_compute(static_cast<u32>(i), pow5);
 
-    vr = shift_mul128(mv, pow5, j);
-    vp = shift_mul128(mv + 2, pow5, j);
-    vm = shift_mul128(mv - 1 - mmShift, pow5, j);
+    vr = shift_mul64(mv, pow5, j);
+    vp = shift_mul64(mv + 2, pow5, j);
+    vm = shift_mul64(mv - 1 - mmShift, pow5, j);
 
     if ( q <= 1 ) {
       trailingVr = true;
