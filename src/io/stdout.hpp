@@ -18,10 +18,15 @@
 #include "__std.hpp"
 
 #include "../string/conversions/bits.hpp"
+<<<<<<< HEAD
 #include "../string/format.hpp"
 #include "../string/unistring.hpp"
 
 #include "../maps/bits.hpp"
+=======
+#include "../string/conversions/floating_point.hpp"
+#include "../string/format.hpp"
+>>>>>>> master
 
 namespace micron
 {
@@ -30,6 +35,7 @@ namespace io
 namespace __impl
 {
 
+<<<<<<< HEAD
 template <int outstream>
 inline void
 emit(const char *s)
@@ -180,6 +186,226 @@ sprintk(const char *c, usize len)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: class with .c_str() (strings)
 
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// concepts
+
+template <typename T>
+concept is_container = requires(T t) {
+  { t.cbegin() } -> micron::same_as<typename T::const_iterator>;
+  { t.cend() } -> micron::same_as<typename T::const_iterator>;
+  { t.begin() } -> micron::same_as<typename T::iterator>;
+  { t.end() } -> micron::same_as<typename T::iterator>;
+} && !requires(T t) {
+  { t.c_str() } -> micron::same_as<const char *>;
+};
+
+template <typename T>
+concept has_cstr = requires(T t) {
+  { t.c_str() } -> micron::same_as<const char *>;
+};
+
+// is_map: detects hopscotch_map, robin_map, stack_swiss_map, dictionary_t
+template <typename T>
+concept is_map = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
+} || requires(micron::remove_cvref_t<T> t) {
+  { t.size() } -> micron::convertible_to<usize>;
+  { t.capacity() } -> micron::convertible_to<usize>;
+  { t.empty() } -> micron::convertible_to<bool>;
+  { t.clear() };
+  { t.begin() };
+  { t.end() };
+};
+
+// is_tagged_map: has category_type = map_tag (hopscotch, robin)
+template <typename T>
+concept is_tagged_map = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
+};
+
+// is_swiss_map: stack_swiss_map: iterator already skips empty/deleted,
+template <typename T>
+concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
+  { t.capacity() } -> micron::convertible_to<usize>;
+  { t.size() } -> micron::convertible_to<usize>;
+  { t.begin() };
+  { t.end() };
+  { (*t.begin()).a };
+  { (*t.begin()).b };
+} && !is_tagged_map<T> && !has_cstr<T>;
+
+template <typename T>
+concept is_char_ptr
+    = micron::is_same_v<T, char *> || micron::is_same_v<T, schar *> || micron::is_same_v<T, wide *> || micron::is_same_v<T, unicode8 *>
+      || micron::is_same_v<T, unicode32 *> || micron::is_same_v<T, const char *> || micron::is_same_v<T, const schar *>
+      || micron::is_same_v<T, const wide *> || micron::is_same_v<T, const unicode8 *> || micron::is_same_v<T, const unicode32 *>;
+
+template <typename T>
+concept is_char_elem
+    = micron::is_same_v<T, char> || micron::is_same_v<T, schar> || micron::is_same_v<T, wide> || micron::is_same_v<T, unicode8>
+      || micron::is_same_v<T, unicode32> || micron::is_same_v<T, const char> || micron::is_same_v<T, const schar>
+      || micron::is_same_v<T, const wide> || micron::is_same_v<T, const unicode8> || micron::is_same_v<T, const unicode32>;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// stream emit helpers
+
+namespace __impl
+{
+
+template <int outstream>
+inline void
+emit(const char *s)
+{
+  if constexpr ( outstream == stdout_fileno )
+    io::fput(s, io::stdout);
+  else
+    io::fput(s, io::stderr);
+}
+
+template <int outstream>
+inline void
+emit(const char *s, usize len)
+{
+  if constexpr ( outstream == stdout_fileno )
+    io::fput(s, len, io::stdout);
+  else
+    io::fput(s, len, io::stderr);
+}
+
+template <int outstream>
+inline void
+emit(char c)
+{
+  if constexpr ( outstream == stdout_fileno )
+    io::fput(c, io::stdout);
+  else
+    io::fput(c, io::stderr);
+}
+
+template <int outstream>
+inline void
+emit_nl()
+{
+  emit<outstream>("\n");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// buffers
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, i64 val)
+{
+  return micron::format::__impl::fmt_int_to_buf(buf, buf_sz, val, 10, false);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, u64 val)
+{
+  return micron::format::__impl::fmt_uint_to_buf(buf, buf_sz, val, 10, false);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, f32 val)
+{
+  return micron::__impl::__ryu::__f32::f2s_buffered(val, buf);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, f64 val)
+{
+  return micron::__impl::__ryu::d2s_buffered(val, buf);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, long double val)
+{
+  return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, bool val)
+{
+  return micron::format::__impl::bool_to_buf(buf, buf_sz, val);
+}
+
+inline usize
+ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
+{
+  return micron::format::__impl::ptr_to_buf(buf, buf_sz, ptr);
+}
+
+};     // namespace __impl
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// forward declarations (needed for recursive container/map/pair printing)
+
+template <typename T, int outstream>
+  requires micron::is_arithmetic_v<T>
+void printk(const T &x);
+
+template <has_cstr T, int outstream>
+  requires micron::is_class_v<T>
+void printk(const T &str);
+
+template <int outstream, typename T, usize M>
+  requires is_char_elem<T>
+inline void printk(T (&c)[M]);
+
+template <int outstream> inline void printk(char c);
+
+template <int outstream, typename T>
+  requires is_char_ptr<T>
+inline void printk(const T &c);
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk: char array literal
+
+template <int outstream = stdout_fileno, typename T, usize M>
+  requires is_char_elem<T>
+inline void
+printk(T (&c)[M])
+{
+  __impl::emit<outstream>(reinterpret_cast<const char *>(c));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk: char pointer
+
+template <int outstream = stdout_fileno, typename T>
+  requires is_char_ptr<T>
+inline void
+printk(const T &c)
+{
+  __impl::emit<outstream>(reinterpret_cast<const char *>(c));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk: single char
+
+template <int outstream = stdout_fileno>
+inline void
+printk(char c)
+{
+  __impl::emit<outstream>(c);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// sprintk: raw print with explicit length
+
+template <int outstream = stdout_fileno>
+inline void
+sprintk(const char *c, usize len)
+{
+  __impl::emit<outstream>(c, len);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk: class with .c_str() (strings)
+
+>>>>>>> master
 template <has_cstr T, int outstream = stdout_fileno>
   requires micron::is_class_v<T>
 void
@@ -203,7 +429,24 @@ printk(const T &x)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 // printk: arithmetic (unified)
+=======
+// printks
+//
+// for all types:
+//   bool
+//   char, signed char, unsigned char
+//   wchar_t, char8_t, char16_t, char32_t
+//   short, unsigned short
+//   int, unsigned int
+//   long, unsigned long
+//   long long, unsigned long long
+//   i8, u8, i16, u16, i32, u32, i64, u64
+//   max_t, umax_t, usize
+//   float, double, long double
+//   f32, f64, flong, f128
+>>>>>>> master
 
 template <typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
@@ -233,7 +476,11 @@ printk(const T &x)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: volatile arithmetic
+<<<<<<< HEAD
 
+=======
+// strip volatile qualifier, read once, delegate
+>>>>>>> master
 
 template <typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
@@ -285,7 +532,11 @@ printk(T ptr, usize len)
     delete[] buf;
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 // printk: container (non-string, non-map iterable)
 
 template <is_container T, int outstream = stdout_fileno>
@@ -312,9 +563,15 @@ printk(T &&ctr)
   printk<T, outstream>(static_cast<const T &>(ctr));
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: tagged map (hopscotch_map, robin_map, dictionary_t)
 
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk: tagged map (hopscotch_map, robin_map, dictionary_t)
+// iterates all slots, skips empty (key == 0), prints as { hash: value, ... }
+>>>>>>> master
 
 template <is_tagged_map T, int outstream = stdout_fileno>
 void
@@ -346,9 +603,15 @@ printk(T &&m)
   printk<T, outstream>(static_cast<const T &>(m));
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: swiss map (stack_swiss_map)
 
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk: swiss map (stack_swiss_map)
+// iterator already skips empty/deleted; dereferences to pair with .a and .b
+>>>>>>> master
 
 template <is_swiss_map T, int outstream = stdout_fileno>
 void
@@ -399,7 +662,10 @@ printk(pair<A, B> &&p)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printkn: appends newline
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 // char array
 template <int outstream = stdout_fileno, typename T, usize M>
   requires is_char_elem<T>

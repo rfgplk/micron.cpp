@@ -19,7 +19,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
-
 #include "book.hpp"
 #include "config.hpp"
 #include "harden.hpp"
@@ -28,7 +27,6 @@
 
 namespace abc
 {
-
 struct cache {
   micron::__chunk<byte>
   __heap_grow(const usize sz)
@@ -65,5 +63,4 @@ struct cache {
     __heap_shrink(sz);
   }
 };
-
 };     // namespace abc

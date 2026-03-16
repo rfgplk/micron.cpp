@@ -25,52 +25,348 @@
 
 #include "../../../mem.hpp"
 #include "../../../memory/cmemory.hpp"
-#include "../../../memory/pointers/sentinel.hpp"
 #include "../../../simd/types.hpp"
 #include "../../../type_traits.hpp"
 #include "../../../types.hpp"
 
 namespace abc
 {
-
-using ret_flag = micron::sentinel_pointer;
-constexpr static const uintptr_t __flag_invalid = 0;
-constexpr static const uintptr_t __flag_failure = -1;
-constexpr static const uintptr_t __flag_out_of_space = -2;
-constexpr static const uintptr_t __flag_tombstoned = -3;
-
 template <typename T, i64 Min, i32 Mx = 64>
   requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T> and (bool)((Min & (Min - 1)) == 0))
 struct __buddy_list {
+
+  static_assert(Min >= alignof(block_header), "Min block size must be at least alignof(block_header)");
+  static_assert(Mx <= 64, "Mx must fit in u64 free_mask");
+
   struct free_block {
     free_block *next;
   };
 
-  // usize min_block;
+  static constexpr int __log2_min = []() constexpr {
+    int r = 0;
+    i64 v = Min;
+    while ( v > 1 ) {
+      v >>= 1;
+      ++r;
+    }
+    return r;
+  }();
+
+  // bit 7 = __tag_free  bits 0..6 = order.
+  // (order | 0x80): free block start at this order.
+  // (order): allocated block start at this order.
+  // 0xFF: not a block start / uninitialised.
+  static constexpr u8 __tag_free = 0x80;
+  static constexpr u8 __tag_none = 0xFF;
+
+  static constexpr i32 __cache_cap = 4;
+
+  // __log2_tbl[v] = ceil(log2(v))
+  static constexpr u8 __log2_tbl[66] = {
+    0, 0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+  };
+
   byte *base;
   usize total;
   i64 max_order;
   usize allocated_bytes;
   usize tombstoned_bytes;
-  free_block *free_lists[Mx];     // on the stack
-  free_block *active[Mx];
+  u64 free_mask;       // main bitmap for o(1): bit i set iff free_lists[i] != nullptr
+  u8 *block_tags;      // one tag per min-block
+  usize tag_count;     // == total >> __log2_min
+  bool tags_external;
+  usize order_sizes[Mx];     // order_sizes[i] = Min << i
+  free_block *free_lists[Mx];
+  free_block *active[Mx];     // single active temporal block per order
+
+  free_block *tcache[Mx];
+  i32 tcache_count[Mx];
+
+  __attribute__((always_inline)) static inline int
+  ceil_log2_u64(u64 v) noexcept
+  {
+    if ( v <= 64 ) [[likely]]
+      return __log2_tbl[v];
+    return 64 - __builtin_clzll(v - 1);
+  }
+
+  __attribute__((always_inline)) inline int
+  order_for_size(usize n) const noexcept
+  {
+    usize units = (n + Min - 1) >> __log2_min;
+    if ( units <= 1 )
+      return 0;
+    return ceil_log2_u64(units);
+  }
+
+  __attribute__((always_inline)) inline usize
+  order_size(i64 o) const noexcept
+  {
+    return order_sizes[o];
+  }
+
+  __attribute__((always_inline)) inline usize
+  tag_index_of(usize off) const noexcept
+  {
+    return off >> __log2_min;
+  }
+
+  __attribute__((always_inline)) inline usize
+  tag_index(byte *addr) const noexcept
+  {
+    return tag_index_of((usize)(addr - base));
+  }
+
+  __attribute__((always_inline)) inline void
+  tag_set_free(byte *addr, i64 o) noexcept
+  {
+    block_tags[tag_index(addr)] = (u8)(o | __tag_free);
+  }
+
+  __attribute__((always_inline)) inline void
+  tag_set_free_at(usize tidx, i64 o) noexcept
+  {
+    block_tags[tidx] = (u8)(o | __tag_free);
+  }
+
+  __attribute__((always_inline)) inline void
+  tag_set_alloc(byte *addr, i64 o) noexcept
+  {
+    block_tags[tag_index(addr)] = (u8)(o);
+  }
+
+  __attribute__((always_inline)) inline bool
+  tag_is_free_at_off(usize off, i64 o) const noexcept
+  {
+    u8 expected = (u8)(o | __tag_free);
+    return block_tags[off >> __log2_min] == expected;
+  }
+
+  __attribute__((always_inline)) inline bool
+  tag_is_free_at(byte *addr, i64 o) const noexcept
+  {
+    return tag_is_free_at_off((usize)(addr - base), o);
+  }
+
+  __attribute__((always_inline)) inline void
+  mask_set(i64 o) noexcept
+  {
+    free_mask |= (u64(1) << o);
+  }
+
+  __attribute__((always_inline)) inline void
+  mask_clear_if_empty(i64 o) noexcept
+  {
+    // if (!free_lists[o]) free_mask &= ~(1<<o)
+    u64 bit = u64(1) << o;
+    u64 keep = -(u64)(free_lists[o] != nullptr);
+    free_mask = (free_mask & ~bit) | (free_mask & bit & keep);
+  }
+
+  __attribute__((always_inline)) inline i64
+  find_free_order(i64 o) const noexcept
+  {
+    u64 m = free_mask >> o;
+    if ( m == 0 )
+      return max_order;
+    return o + __builtin_ctzll(m);
+  }
+
+  __attribute__((always_inline)) inline void
+  freelist_remove(byte *buddy, i64 o) noexcept
+  {
+    free_block *prev = nullptr;
+    free_block *cur = free_lists[o];
+    while ( cur ) {
+      if ( (byte *)cur == buddy ) {
+        if ( prev )
+          prev->next = cur->next;
+        else
+          free_lists[o] = cur->next;
+        mask_clear_if_empty(o);
+        return;
+      }
+      prev = cur;
+      cur = cur->next;
+    }
+  }
+
+  __attribute__((always_inline)) inline void
+  freelist_push(byte *addr, i64 o) noexcept
+  {
+    free_block *nb = (free_block *)addr;
+    nb->next = free_lists[o];
+    free_lists[o] = nb;
+    mask_set(o);
+    tag_set_free(addr, o);
+  }
+
+  __attribute__((always_inline)) inline void
+  freelist_push_off(byte *addr, i64 o, usize off) noexcept
+  {
+    free_block *nb = (free_block *)addr;
+    nb->next = free_lists[o];
+    free_lists[o] = nb;
+    mask_set(o);
+    tag_set_free_at(off >> __log2_min, o);
+  }
+
+  __attribute__((always_inline)) static inline block_header *
+  hdr_of(byte *user_ptr) noexcept
+  {
+    return reinterpret_cast<block_header *>(user_ptr - __hdr_offset);
+  }
+
+  __attribute__((always_inline)) static inline block_header *
+  hdr_of_raw(byte *block_start) noexcept
+  {
+    return reinterpret_cast<block_header *>(block_start);
+  }
+
+  __attribute__((always_inline)) inline free_block *
+  tcache_pop(i64 o) noexcept
+  {
+    if ( tcache_count[o] <= 0 )
+      return nullptr;
+    free_block *blk = tcache[o];
+    tcache[o] = blk->next;
+    --tcache_count[o];
+    return blk;
+  }
+
+  __attribute__((always_inline)) inline bool
+  tcache_push(free_block *blk, i64 o) noexcept
+  {
+    if ( tcache_count[o] >= __cache_cap )
+      return false;
+    blk->next = tcache[o];
+    tcache[o] = blk;
+    ++tcache_count[o];
+    return true;
+  }
 
   void
-  __impl_init_memory(byte *_ptr, usize _len)
+  tcache_flush(i64 o) noexcept
+  {
+    while ( tcache[o] ) {
+      free_block *blk = tcache[o];
+      tcache[o] = blk->next;
+      --tcache_count[o];
+
+      byte *addr = (byte *)blk;
+      __merge_and_free(addr, o);
+    }
+  }
+
+  void
+  tcache_flush_all() noexcept
+  {
+    for ( i64 i = 0; i < max_order; ++i )
+      tcache_flush(i);
+  }
+
+  void
+  __merge_and_free(byte *addr, i64 o) noexcept
+  {
+    usize off = (usize)(addr - base);
+
+    while ( o < max_order - 1 ) {
+      usize blk_sz = order_sizes[o];
+      usize buddy_off = off ^ blk_sz;
+
+      if ( !tag_is_free_at_off(buddy_off, o) )
+        break;
+
+      freelist_remove(base + buddy_off, o);
+      block_tags[buddy_off >> __log2_min] = __tag_none;
+
+      off = (buddy_off < off) ? buddy_off : off;
+      addr = base + off;
+      ++o;
+    }
+
+    freelist_push_off(addr, o, off);
+  }
+
+  void
+  __impl_zero_arrays() noexcept
+  {
+    free_mask = 0;
+    for ( i64 i = 0; i < Mx; ++i ) {
+      order_sizes[i] = (usize)Min << i;
+      free_lists[i] = nullptr;
+      active[i] = nullptr;
+      tcache[i] = nullptr;
+      tcache_count[i] = 0;
+    }
+  }
+
+  void
+  __impl_init_memory(byte *_ptr, usize _len, u8 *ext_tags = nullptr)
   {
     uintptr_t ptr = (uintptr_t)_ptr;
     uintptr_t a = alignof(void *);
     uintptr_t r = (ptr + (a - 1)) & ~(a - 1);
-    base = (byte *)r;
     usize adjust = r - ptr;
-    if ( _len <= adjust )
+    if ( _len <= adjust ) {
+      base = nullptr;
+      total = 0;
+      max_order = 0;
+      tag_count = 0;
+      block_tags = nullptr;
+      tags_external = false;
       return;
+    }
+
+    byte *aligned = (byte *)r;
     usize usable = _len - adjust;
 
-    usable = (usable / Min) * Min;
-    if ( usable < Min )
-      return;
-    total = usable;
+    if ( ext_tags ) {
+
+      tags_external = true;
+      block_tags = ext_tags;
+      base = aligned;
+      usize data_usable = (usable / Min) * Min;
+      if ( data_usable < Min ) {
+        base = nullptr;
+        total = 0;
+        max_order = 0;
+        tag_count = 0;
+        block_tags = nullptr;
+        tags_external = false;
+        return;
+      }
+      total = data_usable;
+    } else {
+
+      tags_external = false;
+      usize approx_tags = (usable + Min) / (Min + 1);
+      usize tag_area = (approx_tags + Min - 1) & ~(usize)(Min - 1);
+      if ( tag_area >= usable ) {
+        base = nullptr;
+        total = 0;
+        max_order = 0;
+        tag_count = 0;
+        block_tags = nullptr;
+        return;
+      }
+      block_tags = aligned;
+      base = aligned + tag_area;
+      usize data_usable = usable - tag_area;
+      data_usable = (data_usable / Min) * Min;
+      if ( data_usable < Min ) {
+        base = nullptr;
+        total = 0;
+        max_order = 0;
+        tag_count = 0;
+        block_tags = nullptr;
+        return;
+      }
+      total = data_usable;
+    }
+
+    tag_count = total >> __log2_min;
 
     int m = 0;
     usize blk = Min;
@@ -80,37 +376,67 @@ struct __buddy_list {
     }
     max_order = m;
 
-    for ( i64 i = 0; i < max_order; ++i )
-      free_lists[i] = nullptr;
+    __impl_zero_arrays();
+
+    for ( usize i = 0; i < tag_count; ++i )
+      block_tags[i] = __tag_none;
+
     free_lists[max_order - 1] = (free_block *)base;
     free_lists[max_order - 1]->next = nullptr;
+    mask_set(max_order - 1);
+    tag_set_free(base, max_order - 1);
   }
 
-  ~__buddy_list() noexcept = default;
+  ~__buddy_list() noexcept {}
+
   __buddy_list(void) = delete;
 
-  //__buddy_list(void *mem, usize bytes) noexcept : base(nullptr), total(0), max_order(0)
-  __buddy_list(const T &mem) noexcept : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0)
+  __buddy_list(const T &mem) noexcept
+      : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0), free_mask(0), block_tags(nullptr), tag_count(0),
+        tags_external(false)
   {
+    __impl_zero_arrays();
     if ( mem.zero() or mem.len < Min )
       micron::abort();
     __impl_init_memory(mem.ptr, mem.len);
   }
 
+  __buddy_list(const T &mem, u8 *tag_buf) noexcept
+      : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0), free_mask(0), block_tags(nullptr), tag_count(0),
+        tags_external(true)
+  {
+    __impl_zero_arrays();
+    if ( mem.zero() or mem.len < Min )
+      micron::abort();
+    __impl_init_memory(mem.ptr, mem.len, tag_buf);
+  }
+
   __buddy_list(const __buddy_list &) = delete;
 
   __buddy_list(__buddy_list &&o)
-      : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes), tombstoned_bytes(o.tombstoned_bytes)
+      : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes), tombstoned_bytes(o.tombstoned_bytes),
+        free_mask(o.free_mask), block_tags(o.block_tags), tag_count(o.tag_count), tags_external(o.tags_external)
   {
     o.base = nullptr;
     o.total = 0;
     o.max_order = 0;
     o.allocated_bytes = 0;
     o.tombstoned_bytes = 0;
+    o.free_mask = 0;
+    o.block_tags = nullptr;
+    o.tag_count = 0;
+    o.tags_external = false;
 
-    for ( i64 i = 0; i < max_order; ++i ) {
+    for ( i64 i = 0; i < Mx; ++i ) {
       free_lists[i] = o.free_lists[i];
+      active[i] = o.active[i];
+      order_sizes[i] = o.order_sizes[i];
+      tcache[i] = o.tcache[i];
+      tcache_count[i] = o.tcache_count[i];
       o.free_lists[i] = nullptr;
+      o.active[i] = nullptr;
+      o.tcache[i] = nullptr;
+      o.tcache_count[i] = 0;
     }
   }
 
@@ -119,43 +445,41 @@ struct __buddy_list {
   __buddy_list &
   operator=(__buddy_list &&o)
   {
+
+    tcache_flush_all();
+
     base = o.base;
     total = o.total;
     max_order = o.max_order;
     allocated_bytes = o.allocated_bytes;
     tombstoned_bytes = o.tombstoned_bytes;
+    free_mask = o.free_mask;
+    block_tags = o.block_tags;
+    tag_count = o.tag_count;
+    tags_external = o.tags_external;
 
     o.base = nullptr;
     o.total = 0;
     o.max_order = 0;
     o.allocated_bytes = 0;
     o.tombstoned_bytes = 0;
-    for ( i64 i = 0; i < max_order; ++i ) {
+    o.free_mask = 0;
+    o.block_tags = nullptr;
+    o.tag_count = 0;
+    o.tags_external = false;
+
+    for ( i64 i = 0; i < Mx; ++i ) {
       free_lists[i] = o.free_lists[i];
+      active[i] = o.active[i];
+      order_sizes[i] = o.order_sizes[i];
+      tcache[i] = o.tcache[i];
+      tcache_count[i] = o.tcache_count[i];
       o.free_lists[i] = nullptr;
+      o.active[i] = nullptr;
+      o.tcache[i] = nullptr;
+      o.tcache_count[i] = 0;
     }
     return *this;
-  }
-
-  static inline int
-  ceil_log2_u64(u64 v) noexcept
-  {
-    if ( v <= 1 )
-      return 0;
-    return 64 - __builtin_clzll(v - 1);
-  }
-
-  inline int
-  order_for_size(usize n) const noexcept
-  {
-    usize units = (n + Min - 1) / Min;
-    return ceil_log2_u64(units);
-  }
-
-  inline usize
-  order_size(i64 o) const noexcept
-  {
-    return Min << o;
   }
 
   T
@@ -167,34 +491,32 @@ struct __buddy_list {
     if ( !base )
       return { nullptr, 0 };
     usize needed = (n + Min - 1) & ~(Min - 1);
-    needed += sizeof(i64);
+    needed += sizeof(block_header);
     i64 o = order_for_size(needed);
     if ( o >= max_order )
       return { nullptr, 0 };
-    i64 i = o;
-    while ( i < max_order && free_lists[i] == nullptr )
-      ++i;
 
-    // max order has been hit, send it back and notify
-    if ( i == max_order ) {
+    i64 i = find_free_order(o);
+    if ( i >= max_order )
       return { nullptr, 0 };
-    }     //  return { nullptr, 0 };
+
     free_block *blk = free_lists[i];
     free_lists[i] = blk->next;
+    mask_clear_if_empty(i);
+
     while ( i > o ) {
       --i;
-      usize len = order_size(i);
-      byte *right = (byte *)blk + len;
-      free_block *buddy = (free_block *)right;
-      buddy->next = free_lists[i];
-      free_lists[i] = buddy;
+      byte *right = (byte *)blk + order_sizes[i];
+      freelist_push(right, i);
     }
-    i64 *hdr = reinterpret_cast<i64 *>(blk);
-    *hdr = static_cast<i64>(i);
-    allocated_bytes += order_size(i);
-    // NOTE: this is here due to alignment, plus we might add on later other info to the metadata, so we get a little
-    // leeway. the offset is 256-bit to account properly for AVX2.
-    return { ((byte *)blk + __hdr_offset), order_size(i) - __hdr_offset };
+
+    block_header *hdr = hdr_of_raw((byte *)blk);
+    hdr->order = static_cast<i32>(o);
+    hdr->flags = __block_alloc;
+    tag_set_alloc((byte *)blk, o);
+    allocated_bytes += order_sizes[o];
+
+    return { ((byte *)blk + __hdr_offset), order_sizes[o] - __hdr_offset };
   }
 
   T
@@ -207,37 +529,46 @@ struct __buddy_list {
       return { nullptr, 0 };
 
     usize needed = (n + Min - 1) & ~(Min - 1);
-    needed += sizeof(i64);
+    needed += sizeof(block_header);
     i64 o = order_for_size(needed);
     if ( o >= max_order )
       return { nullptr, 0 };
 
-    usize target_size = order_size(o);
+    usize target_size = order_sizes[o];
 
-    // reuse existing allocation if this order was already allocated
     if ( active[o] != nullptr ) {
       return { reinterpret_cast<byte *>(active[o]) + __hdr_offset, target_size - __hdr_offset };
     }
 
-    i64 i = o;
-    while ( i < max_order && free_lists[i] == nullptr )
-      ++i;
-    if ( i == max_order )
+    free_block *cached = tcache_pop(o);
+    if ( cached ) {
+      block_header *hdr = hdr_of_raw((byte *)cached);
+      hdr->order = static_cast<i32>(o);
+      hdr->flags = __block_alloc | __block_temporal;
+      tag_set_alloc((byte *)cached, o);
+      allocated_bytes += target_size;
+      active[o] = cached;
+      return { ((byte *)cached + __hdr_offset), target_size - __hdr_offset };
+    }
+
+    i64 i = find_free_order(o);
+    if ( i >= max_order )
       return { nullptr, 0 };
 
     free_block *blk = free_lists[i];
     free_lists[i] = blk->next;
+    mask_clear_if_empty(i);
+
     while ( i > o ) {
       --i;
-      usize len = order_size(i);
-      byte *right = (byte *)blk + len;
-      free_block *buddy = (free_block *)right;
-      buddy->next = free_lists[i];
-      free_lists[i] = buddy;
+      byte *right = (byte *)blk + order_sizes[i];
+      freelist_push(right, i);
     }
 
-    i64 *hdr = reinterpret_cast<i64 *>(blk);
-    *hdr = static_cast<i64>(o);
+    block_header *hdr = hdr_of_raw((byte *)blk);
+    hdr->order = static_cast<i32>(o);
+    hdr->flags = __block_alloc | __block_temporal;
+    tag_set_alloc((byte *)blk, o);
     allocated_bytes += target_size;
 
     active[o] = blk;
@@ -259,29 +590,33 @@ struct __buddy_list {
       return { nullptr, 0 };
     if ( !free_lists[o] )
       return { nullptr, 0 };
+
     free_block *blk = free_lists[o];
     free_lists[o] = blk->next;
-    i64 *hdr = reinterpret_cast<i64 *>(blk);
-    *hdr = static_cast<int>(o);
-    allocated_bytes += order_size(o);
-    // NOTE: this is here due to alignment, plus we might add on later other info to the metadata, so we get a little
-    // leeway. the offset is 256-bit to account properly for AVX2.
-    return { ((byte *)blk + __hdr_offset), order_size(o) - __hdr_offset };
+    mask_clear_if_empty(o);
+
+    block_header *hdr = hdr_of_raw((byte *)blk);
+    hdr->order = static_cast<i32>(o);
+    hdr->flags = __block_alloc;
+    tag_set_alloc((byte *)blk, o);
+    allocated_bytes += order_sizes[o];
+
+    return { ((byte *)blk + __hdr_offset), order_sizes[o] - __hdr_offset };
   }
 
   ret_flag
   tombstone(byte *ptr) noexcept
   {
-    byte *addr = ptr - (__hdr_offset - sizeof(micron::simd::i128));
-    i8 *ts = reinterpret_cast<i8 *>(addr);
-    *ts = 1;
-
-    i64 *hdr = reinterpret_cast<i64 *>(ptr - __hdr_offset);
-    i64 o = static_cast<i64>(*hdr);
+    block_header *hdr = hdr_of(ptr);
+    i64 o = static_cast<i64>(hdr->order);
     if ( o < 0 || o >= max_order )
       return { __flag_invalid };
-    allocated_bytes -= order_size(o);
-    tombstoned_bytes += order_size(o);
+    if ( !(hdr->flags & __block_alloc) )
+      return { __flag_invalid };
+
+    hdr->flags = __block_tombstone;
+    allocated_bytes -= order_sizes[o];
+    tombstoned_bytes += order_sizes[o];
 
     return __flag_tombstoned;
   }
@@ -297,62 +632,39 @@ struct __buddy_list {
   bool
   is_tombstoned(byte *ptr) noexcept
   {
-    byte *addr = ptr - (__hdr_offset - sizeof(micron::simd::i128));
-    i8 *ts = reinterpret_cast<i8 *>(addr);
-    if ( *ts )
-      return true;
-    return false;
+    block_header *hdr = hdr_of(ptr);
+    return (hdr->flags & __block_tombstone) != 0;
   }
 
   ret_flag
   deallocate(byte *ptr) noexcept
   {
-    byte *addr = ptr - __hdr_offset;     // start of block including header
-    i64 *hdr = reinterpret_cast<i64 *>(addr);
-    i64 o = static_cast<i64>(*hdr);
-    if ( o < 0 || o >= max_order )
+    byte *addr = ptr - __hdr_offset;
+    block_header *hdr = hdr_of_raw(addr);
+    const i64 original_o = static_cast<i64>(hdr->order);
+    if ( original_o < 0 || original_o >= max_order )
       return { __flag_invalid };
-    allocated_bytes -= order_size(o);
-    if ( !base || !addr || o == 0 )
+    if ( !base || !addr )
       return __flag_failure;
-    if ( o >= max_order )
-      o = max_order - 1;
-    while ( true ) {
-      usize blk_sz = order_size(o);
-      usize off = (usize)(addr - base);
-      usize buddy_off = off ^ blk_sz;
-      byte *buddy = base + buddy_off;
-      free_block *prev = nullptr;
-      free_block *cur = free_lists[o];
-      while ( cur ) {
-        if ( (byte *)cur == buddy ) {
-          if ( prev )
-            prev->next = cur->next;
-          else
-            free_lists[o] = cur->next;
-          if ( buddy < addr )
-            addr = buddy;
-          ++o;
-          if ( o >= max_order ) {
-            o = max_order - 1;
-            break;
-          }
-          goto merged;
-        }
-        prev = cur;
-        cur = cur->next;
-      }
-      {
-        free_block *nb = (free_block *)addr;
-        nb->next = free_lists[o];
-        free_lists[o] = nb;
-        active[o] = nullptr;
-        return addr;
-      }
-    merged:
-      continue;
+
+    allocated_bytes -= order_sizes[original_o];
+    if ( hdr->flags & __block_tombstone )
+      tombstoned_bytes -= order_sizes[original_o];
+
+    bool was_temporal = (hdr->flags & __block_temporal) != 0;
+    hdr->flags = __block_free;
+
+    if ( active[original_o] == (free_block *)addr )
+      active[original_o] = nullptr;
+
+    if ( was_temporal && tcache_push((free_block *)addr, original_o) ) {
+
+      block_tags[tag_index(addr)] = __tag_none;
+      return { __flag_ok };
     }
-    return __flag_out_of_space;
+
+    __merge_and_free(addr, original_o);
+    return { __flag_ok };
   }
 
   ret_flag
@@ -421,13 +733,12 @@ struct __buddy_list {
       return 0;
     if ( ptr < base || ptr >= base + total )
       return 0;
-    for ( i64 o = 0; o < max_order; ++o ) {
-      usize len = order_size(o);
-      usize off = (usize)(ptr - base);
-      if ( (off & (len - 1)) == 0 )
-        return len;
-    }
-    return 0;
+    const block_header *hdr = hdr_of(ptr);
+    i64 o = static_cast<i64>(hdr->order);
+
+    if ( (u64)o >= (u64)max_order )
+      return 0;
+    return order_sizes[o];
   }
 
   bool
@@ -435,35 +746,17 @@ struct __buddy_list {
   {
     if ( !ptr || !base || ptr < base || ptr >= base + total )
       return false;
+    u8 tag = block_tags[tag_index(ptr - __hdr_offset)];
 
-    // check all free lists
-    for ( i64 i = 0; i < max_order; ++i ) {
-      free_block *cur = free_lists[i];
-      while ( cur ) {
-        if ( reinterpret_cast<byte *>(cur) == ptr - sizeof(i64) )
-          return false;
-        cur = cur->next;
-      }
-    }
-    return true;
+    return (tag & __tag_free) == 0 && tag < (u8)max_order;
   }
 
-  bool
+  usize
   allocated_size(byte *ptr) const noexcept
   {
-    if ( !base || !ptr )
-      return false;
-    if ( ptr < base || ptr >= base + total )
-      return false;
-    for ( i64 i = 0; i < max_order; ++i ) {
-      free_block *cur = free_lists[i];
-      while ( cur ) {
-        if ( (byte *)cur == ptr )
-          return false;
-        cur = cur->next;
-      }
-    }
-    return true;
+    if ( !is_allocated(ptr) )
+      return 0;
+    return block_size(ptr);
   }
 };
 };     // namespace abc

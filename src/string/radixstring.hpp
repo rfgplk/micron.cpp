@@ -130,6 +130,7 @@ emit_lead8(char *buf, u32 v)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 <<<<<<< HEAD
+<<<<<<< HEAD
 // full u64 → decimal string via table
 //
 // splits into 1e8 blocks, uses emit8/emit_lead8.
@@ -137,6 +138,9 @@ emit_lead8(char *buf, u32 v)
 // correction step after each division ensures remainder stays in [0, 1e8)
 // even if the reciprocal constant underestimates at exact multiples.
 // returns number of chars written.
+=======
+// full u64: decimal string via table
+>>>>>>> master
 =======
 // full u64: decimal string via table
 >>>>>>> master
@@ -161,7 +165,10 @@ rtable_u64(char *buf, u64 val)
     u64 q = micron::__impl::fast_div1e8(val);
     u32 lo = static_cast<u32>(val - q * B);
 <<<<<<< HEAD
+<<<<<<< HEAD
     // correction: reciprocal may underestimate at exact multiples
+=======
+>>>>>>> master
 =======
 >>>>>>> master
     if ( lo >= B ) {
@@ -195,7 +202,11 @@ rtable_u64(char *buf, u64 val)
 };     // namespace __impl
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 =======
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 >>>>>>> master
@@ -207,7 +218,10 @@ inline micron::hstring<C>
 int_to_string(I n)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   // table-driven decimal conversion
+=======
+>>>>>>> master
 =======
 >>>>>>> master
   char tmp[24];
@@ -252,7 +266,11 @@ uint_to_string(I n)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 =======
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 >>>>>>> master
@@ -311,9 +329,14 @@ uint_to_string_stack(I n)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_base / uint_to_string_base
 // decimal uses radix table, other bases delegate to bits.hpp backward-write
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// int_to_string_base / uint_to_string_base
+>>>>>>> master
 =======
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_base / uint_to_string_base
@@ -373,7 +396,11 @@ uint_to_string_base(I n, u32 base, bool upper = false)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 =======
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%
 >>>>>>> master
@@ -404,7 +431,11 @@ to_bin(I n)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 =======
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 >>>>>>> master
