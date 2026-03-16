@@ -7,6 +7,10 @@
 
 #include "bits.hpp"
 
+<<<<<<< HEAD
+=======
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>>>> master
 // integral conversions
 // (uses 10^8 method, minimal divisions)
 

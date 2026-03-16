@@ -129,6 +129,7 @@ emit_lead8(char *buf, u32 v)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+<<<<<<< HEAD
 // full u64 → decimal string via table
 //
 // splits into 1e8 blocks, uses emit8/emit_lead8.
@@ -136,6 +137,9 @@ emit_lead8(char *buf, u32 v)
 // correction step after each division ensures remainder stays in [0, 1e8)
 // even if the reciprocal constant underestimates at exact multiples.
 // returns number of chars written.
+=======
+// full u64: decimal string via table
+>>>>>>> master
 
 inline usize
 rtable_u64(char *buf, u64 val)
@@ -156,7 +160,10 @@ rtable_u64(char *buf, u64 val)
     // two blocks: leading (1-8 digits) + fixed (8 digits)
     u64 q = micron::__impl::fast_div1e8(val);
     u32 lo = static_cast<u32>(val - q * B);
+<<<<<<< HEAD
     // correction: reciprocal may underestimate at exact multiples
+=======
+>>>>>>> master
     if ( lo >= B ) {
       ++q;
       lo -= static_cast<u32>(B);
@@ -187,7 +194,11 @@ rtable_u64(char *buf, u64 val)
 
 };     // namespace __impl
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 // int_to_string / uint_to_string
 
 template <typename I, typename C = char>
@@ -195,7 +206,10 @@ template <typename I, typename C = char>
 inline micron::hstring<C>
 int_to_string(I n)
 {
+<<<<<<< HEAD
   // table-driven decimal conversion
+=======
+>>>>>>> master
   char tmp[24];
   using U = micron::make_unsigned_t<I>;
   U uval;
@@ -237,7 +251,11 @@ uint_to_string(I n)
   return result;
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 // int_to_string_stack / uint_to_string_stack
 
 template <typename I, typename C = char, usize N>
@@ -292,9 +310,14 @@ uint_to_string_stack(I n)
   return result;
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_base / uint_to_string_base
 // decimal uses radix table, other bases delegate to bits.hpp backward-write
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// int_to_string_base / uint_to_string_base
+>>>>>>> master
 
 template <typename I, typename C = char>
   requires micron::is_integral_v<I>
@@ -349,7 +372,11 @@ uint_to_string_base(I n, u32 base, bool upper = false)
   return result;
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 // to_hex / to_oct / to_bin
 
 template <typename I, typename C = char>
@@ -376,7 +403,11 @@ to_bin(I n)
   return uint_to_string_base<I, C>(n, 2, false);
 }
 
+<<<<<<< HEAD
 //%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> master
 // to_hex_fixed / to_bin_fixed
 
 template <typename I, typename C = char>
