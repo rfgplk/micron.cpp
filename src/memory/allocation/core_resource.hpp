@@ -13,6 +13,9 @@
 
 #include "../../except.hpp"
 
+#include <iostream>
+#include <typeinfo>
+
 namespace micron
 {
 
@@ -54,9 +57,13 @@ template <typename T> struct __core_memory_resource {
   __core_memory_resource(chunk<byte> &&b)
   {
     auto addr = reinterpret_cast<uintptr_t>(b.ptr);
-    if ( addr % alignof(T) != 0 )
+    if ( addr % alignof(T) != 0 ) {
+      std::cout << addr << std::endl;
+      std::cout << b.len << std::endl;
+      std::cout << alignof(T) << std::endl;
+      std::cout << typeid(T).name() << std::endl;
       exc<except::memory_error>("__core_memory_resource, address isn't aligned");
-
+    }
     memory = reinterpret_cast<T *>(b.ptr);
     capacity = b.len / sizeof(T);
     b = nullptr;
