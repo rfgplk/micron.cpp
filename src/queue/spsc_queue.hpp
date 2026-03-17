@@ -27,7 +27,7 @@ namespace micron
 inline constexpr u64 __cache_line = cache_line_size();
 
 template <is_movable_object T, usize N, class Alloc = micron::allocator_serial<>>
-class spsc_queue : public __mutable_memory_resource<T, Alloc>
+class spsc_queue : public __mutable_memory_resource_move_only<T, Alloc>
 {
   constexpr static usize
   __next_pow2(usize n)
@@ -42,7 +42,7 @@ class spsc_queue : public __mutable_memory_resource<T, Alloc>
     return n + 1;
   }
 
-  using __mem = __mutable_memory_resource<T, Alloc>;
+  using __mem = __mutable_memory_resource_move_only<T, Alloc>;
 
   static constexpr usize __spsc_capacity = __next_pow2(N);
   static constexpr usize __mask = __spsc_capacity - 1;

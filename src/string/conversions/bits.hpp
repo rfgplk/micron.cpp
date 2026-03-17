@@ -531,45 +531,24 @@ struct decimal64 {
 inline decimal64
 d2d(u64 ieeeMantissa, u32 ieeeExponent)
 {
-<<<<<<< HEAD
-  // hell honestly
-=======
   const int __mantissa_bits = 52;
   const int __bias = 1023;
 
->>>>>>> master
   i32 e2;
   u64 m2;
 
   if ( ieeeExponent == 0 ) {
-<<<<<<< HEAD
-    e2 = 1 - __bias - __mantissa_bits - 2;
-    m2 = ieeeMantissa;
-  } else {
-    e2 = static_cast<i32>(ieeeExponent) - __bias - __mantissa_bits - 2;
-=======
     // subnormal
     e2 = 1 - __bias - __mantissa_bits;
     m2 = ieeeMantissa;
   } else {
     e2 = static_cast<i32>(ieeeExponent) - __bias - __mantissa_bits;
->>>>>>> master
     m2 = (1ull << __mantissa_bits) | ieeeMantissa;
   }
 
   bool even = (m2 & 1) == 0;
   bool acceptBounds = even;
 
-<<<<<<< HEAD
-  u64 mv = 4 * m2;
-  u32 mmshft = (ieeeMantissa != 0 || ieeeExponent <= 1) ? 1 : 0;
-
-  u64 vr, vp, vm;
-  i32 e10;
-  bool trailing_vm = false, trailing_vr = false;
-
-  if ( e2 >= 0 ) {
-=======
   __uint128_t mv = static_cast<__uint128_t>(m2) << 2;
   u32 mmShift = (ieeeMantissa != 0 || ieeeExponent <= 1) ? 1 : 0;
 
@@ -579,7 +558,6 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
 
   if ( e2 >= 0 ) {
     // positive exponent
->>>>>>> master
     i32 q = log10_pow2(e2) - (e2 > 3 ? 1 : 0);
     e10 = q;
     i32 k = static_cast<i32>(__pow5_inv_bitcount + pow5bits(static_cast<u32>(q))) - 1;
@@ -588,35 +566,20 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     u64 pow5[2];
     pow5_compute_inv(static_cast<u32>(q), pow5);
 
-<<<<<<< HEAD
     vr = shift_mul64(mv, pow5, i);
     vp = shift_mul64(mv + 2, pow5, i);
-    vm = shift_mul64(mv - 1 - mmshft, pow5, i);
-
-    if ( q <= 21 ) {
-      if ( mv % 5 == 0 )
-        trailing_vr = pow5_multiple(mv, static_cast<u32>(q));
-      else if ( acceptBounds )
-        trailing_vm = pow5_multiple(mv - 1 - mmshft, static_cast<u32>(q));
-=======
-    vr = shift_mul128(mv, pow5, i);
-    vp = shift_mul128(mv + 2, pow5, i);
-    vm = shift_mul128(mv - 1 - mmShift, pow5, i);
+    vm = shift_mul64(mv - 1 - mmShift, pow5, i);
 
     if ( q <= 21 ) {
       if ( mv % 5 == 0 )
         trailingVr = pow5_multiple(mv, static_cast<u32>(q));
       else if ( acceptBounds )
         trailingVm = pow5_multiple(mv - 1 - mmShift, static_cast<u32>(q));
->>>>>>> master
       else
         vp -= pow5_multiple(mv + 2, static_cast<u32>(q)) ? 1 : 0;
     }
   } else {
-<<<<<<< HEAD
-=======
     // negative exponent
->>>>>>> master
     i32 q = log10_pow5(-e2) - (-e2 > 1 ? 1 : 0);
     e10 = q + e2;
     i32 i = -e2 - q;
@@ -626,39 +589,9 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     u64 pow5[2];
     pow5_compute(static_cast<u32>(i), pow5);
 
-<<<<<<< HEAD
     vr = shift_mul64(mv, pow5, j);
     vp = shift_mul64(mv + 2, pow5, j);
-    vm = shift_mul64(mv - 1 - mmshft, pow5, j);
-
-    if ( q <= 1 ) {
-      trailing_vr = true;
-      if ( acceptBounds )
-        trailing_vm = (mmshft == 1);
-      else
-        --vp;
-    } else if ( q < 63 ) {
-      trailing_vr = pow2_multiple(mv, static_cast<u32>(q));
-    }
-  }
-
-  i32 removed = 0;
-  u8 last_removed = 0;
-
-  if ( trailing_vm || trailing_vr ) {
-    for ( ;; ) {
-      u64 vpD = vp / 10, vmD = vm / 10;
-      if ( vpD <= vmD )
-        break;
-      u64 vrD = vr / 10;
-      u32 vrM = static_cast<u32>(vr - 10 * vrD);
-      trailing_vm &= (vm - 10 * vmD == 0);
-      trailing_vr &= (last_removed == 0);
-      last_removed = static_cast<u8>(vrM);
-=======
-    vr = shift_mul128(mv, pow5, j);
-    vp = shift_mul128(mv + 2, pow5, j);
-    vm = shift_mul128(mv - 1 - mmShift, pow5, j);
+    vm = shift_mul64(mv - 1 - mmShift, pow5, j);
 
     if ( q <= 1 ) {
       trailingVr = true;
@@ -682,23 +615,11 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
       trailingVm &= (vm - 10 * vmD == 0);
       trailingVr &= (lastRemoved == 0);
       lastRemoved = static_cast<u8>(vrM);
->>>>>>> master
       vr = vrD;
       vp = vpD;
       vm = vmD;
       ++removed;
     }
-<<<<<<< HEAD
-    if ( trailing_vm ) {
-      for ( ;; ) {
-        u64 vmD = vm / 10;
-        if ( vm - 10 * vmD != 0 )
-          break;
-        u64 vpD = vp / 10, vrD = vr / 10;
-        u32 vrM = static_cast<u32>(vr - 10 * vrD);
-        trailing_vr &= (last_removed == 0);
-        last_removed = static_cast<u8>(vrM);
-=======
     if ( trailingVm ) {
       for ( ;; ) {
         __uint128_t vmD = vm / 10;
@@ -708,39 +629,24 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
         u32 vrM = static_cast<u32>(vr - 10 * vrD);
         trailingVr &= (lastRemoved == 0);
         lastRemoved = static_cast<u8>(vrM);
->>>>>>> master
         vr = vrD;
         vp = vpD;
         vm = vmD;
         ++removed;
       }
     }
-<<<<<<< HEAD
-    if ( trailing_vr && last_removed == 5 && (vr & 1) == 0 )
-      last_removed = 4;
-
-    u64 out = vr + ((vr == vm && (!acceptBounds || !trailing_vm)) || last_removed >= 5 ? 1ull : 0ull);
-=======
     if ( trailingVr && lastRemoved == 5 && (vr & 1) == 0 )
       lastRemoved = 4;
 
     u64 out = static_cast<u64>(vr + ((vr == vm && (!acceptBounds || !trailingVm)) || lastRemoved >= 5 ? 1ull : 0ull));
->>>>>>> master
     return { out, e10 + removed };
   } else {
     bool roundUp = false;
     for ( ;; ) {
-<<<<<<< HEAD
-      u64 vpD = vp / 10, vmD = vm / 10;
-      if ( vpD <= vmD )
-        break;
-      u64 vrD = vr / 10;
-=======
       __uint128_t vpD = vp / 10, vmD = vm / 10;
       if ( vpD <= vmD )
         break;
       __uint128_t vrD = vr / 10;
->>>>>>> master
       u32 vrM = static_cast<u32>(vr - 10 * vrD);
       roundUp = (vrM >= 5);
       vr = vrD;
@@ -748,11 +654,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
       vm = vmD;
       ++removed;
     }
-<<<<<<< HEAD
-    u64 out = vr + ((vr == vm || roundUp) ? 1ull : 0ull);
-=======
     u64 out = static_cast<u64>(vr + ((vr == vm || roundUp) ? 1ull : 0ull));
->>>>>>> master
     return { out, e10 + removed };
   }
 }
@@ -794,18 +696,11 @@ inline usize
 d2s_buffered(f64 value, char *buf)
 {
   u64 bits;
-<<<<<<< HEAD
-  const char *src = reinterpret_cast<const char *>(&value);
-  char *dst = reinterpret_cast<char *>(&bits);
-  for ( int k = 0; k < 8; ++k )
-    dst[k] = src[k];
-=======
   memcpy(&bits, &value, sizeof(u64));
   // const char *src = reinterpret_cast<const char *>(&value);
   // char *dst = reinterpret_cast<char *>(&bits);
   // for ( int k = 0; k < 8; ++k )
   //   dst[k] = src[k];
->>>>>>> master
 
   bool sign = (bits >> 63) != 0;
   u64 ieeeMantissa = bits & ((1ull << 52) - 1);
@@ -913,11 +808,11 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
     return 0;
   usize pos = 0;
 
-  bool negative = false;
+  //bool negative = false;
   if ( val < 0.0 ) {
     buf[pos++] = '-';
     val = -val;
-    negative = true;
+    //negative = true;
   }
 
   u64 bits;

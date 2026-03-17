@@ -308,19 +308,19 @@ arith_to_buf(char *buf, usize buf_sz, u64 val)
 }
 
 inline usize
-arith_to_buf(char *buf, usize buf_sz, f32 val)
+arith_to_buf(char *buf, [[maybe_unused]]usize buf_sz, f32 val)
 {
   return micron::__impl::__ryu::__f32::f2s_buffered(val, buf);
 }
 
 inline usize
-arith_to_buf(char *buf, usize buf_sz, f64 val)
+arith_to_buf(char *buf, [[maybe_unused]]usize buf_sz, f64 val)
 {
   return micron::__impl::__ryu::d2s_buffered(val, buf);
 }
 
 inline usize
-arith_to_buf(char *buf, usize buf_sz, long double val)
+arith_to_buf(char *buf, [[maybe_unused]]usize buf_sz, long double val)
 {
   return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
 }
@@ -549,7 +549,9 @@ printk(const T &ctr)
   for ( auto itr = ctr.cbegin(); itr != ctr.cend(); ++itr ) {
     if ( !first )
       __impl::emit<outstream>(", ");
-    printk<decltype(*itr), outstream>(*itr);
+    // NOTE: old approach of decltype was wonky for cv-qualified types (ie printing const cont& et al)
+    // this works BUT the container must define a value_type (STL does so does micron)
+    printk<typename T::value_type, outstream>(*itr);
     first = false;
   }
   __impl::emit<outstream>(" }");
@@ -667,17 +669,16 @@ printk(pair<A, B> &&p)
 =======
 >>>>>>> master
 // char array
-template <int outstream = stdout_fileno, typename T, usize M>
-  requires is_char_elem<T>
+template <typename T, int outstream = stdout_fileno>
 void
-printkn(T (&c)[M])
+printkn(T& c)
 {
   printk<outstream>(c);
   __impl::emit_nl<outstream>();
 }
 
 // char pointer
-template <int outstream = stdout_fileno, typename T>
+template <typename T, int outstream = stdout_fileno>
   requires is_char_ptr<T>
 void
 printkn(const T &c)
