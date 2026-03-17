@@ -121,8 +121,9 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   }
 };
 
+// necessarily allow copyable types
 template <typename T, typename Alloc = allocator_serial<>>
-  requires(micron::is_move_constructible_v<T> and (!micron::is_copy_constructible_v<T>))
+  requires(micron::is_move_constructible_v<T>)// and (!micron::is_copy_constructible_v<T>))
 struct __mutable_memory_resource_move_only : public __core_memory_resource<T> {
   typename __core_memory_resource<T>::size_type length;
 

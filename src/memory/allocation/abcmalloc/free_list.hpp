@@ -35,8 +35,15 @@ template <typename T, i64 Min, i32 Mx = 64>
   requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T> and (bool)((Min & (Min - 1)) == 0))
 struct __buddy_list {
 
-  static_assert(Min >= alignof(block_header), "Min block size must be at least alignof(block_header)");
+  static_assert(Min >= __hdr_offset, "Min block size must be at least __hdr_offset");
   static_assert(Mx <= 64, "Mx must fit in u64 free_mask");
+
+  // header is placed at the TAIL of each region
+  //   [ usable region | __hdr_offset bytes ]
+  //                    ^block_start + order_size - __hdr_offset
+  //                    block_header lives here remaining bytes are spare for
+  //                    future metadata expansion (sizeof(block_header) < __hdr_offset)
+  //   ^-- block_start == user_ptr  (naturally aligned)
 
   struct free_block {
     free_block *next;
@@ -158,7 +165,6 @@ struct __buddy_list {
   __attribute__((always_inline)) inline void
   mask_clear_if_empty(i64 o) noexcept
   {
-    // if (!free_lists[o]) free_mask &= ~(1<<o)
     u64 bit = u64(1) << o;
     u64 keep = -(u64)(free_lists[o] != nullptr);
     free_mask = (free_mask & ~bit) | (free_mask & bit & keep);
@@ -171,6 +177,26 @@ struct __buddy_list {
     if ( m == 0 )
       return max_order;
     return o + __builtin_ctzll(m);
+  }
+
+  __attribute__((always_inline)) inline block_header *
+  hdr_of(byte *block_start, i64 o) const noexcept
+  {
+    return reinterpret_cast<block_header *>(block_start + order_sizes[o] - __hdr_offset);
+  }
+
+  __attribute__((always_inline)) inline const block_header *
+  hdr_of(const byte *block_start, i64 o) const noexcept
+  {
+    return reinterpret_cast<const block_header *>(block_start + order_sizes[o] - __hdr_offset);
+  }
+
+  __attribute__((always_inline)) inline block_header *
+  hdr_of_tagged(byte *block_start) const noexcept
+  {
+    u8 tag = block_tags[tag_index(block_start)];
+    i64 o = static_cast<i64>(tag & ~__tag_free);
+    return hdr_of(block_start, o);
   }
 
   __attribute__((always_inline)) inline void
@@ -210,18 +236,6 @@ struct __buddy_list {
     free_lists[o] = nb;
     mask_set(o);
     tag_set_free_at(off >> __log2_min, o);
-  }
-
-  __attribute__((always_inline)) static inline block_header *
-  hdr_of(byte *user_ptr) noexcept
-  {
-    return reinterpret_cast<block_header *>(user_ptr - __hdr_offset);
-  }
-
-  __attribute__((always_inline)) static inline block_header *
-  hdr_of_raw(byte *block_start) noexcept
-  {
-    return reinterpret_cast<block_header *>(block_start);
   }
 
   __attribute__((always_inline)) inline free_block *
@@ -485,13 +499,12 @@ struct __buddy_list {
   T
   allocate(usize n) noexcept
   {
-    n += sizeof(micron::simd::i256);
+    n += __hdr_offset;
     if ( n == 0 )
       n = 1;
     if ( !base )
       return { nullptr, 0 };
     usize needed = (n + Min - 1) & ~(Min - 1);
-    needed += sizeof(block_header);
     i64 o = order_for_size(needed);
     if ( o >= max_order )
       return { nullptr, 0 };
@@ -510,26 +523,26 @@ struct __buddy_list {
       freelist_push(right, i);
     }
 
-    block_header *hdr = hdr_of_raw((byte *)blk);
+    // write header at the tail of the block
+    block_header *hdr = hdr_of((byte *)blk, o);
     hdr->order = static_cast<i32>(o);
     hdr->flags = __block_alloc;
     tag_set_alloc((byte *)blk, o);
     allocated_bytes += order_sizes[o];
 
-    return { ((byte *)blk + __hdr_offset), order_sizes[o] - __hdr_offset };
+    return { (byte *)blk, order_sizes[o] - __hdr_offset };
   }
 
   T
   temporal_allocate(usize n) noexcept
   {
-    n += sizeof(micron::simd::i256);
+    n += __hdr_offset;
     if ( n == 0 )
       n = 1;
     if ( !base )
       return { nullptr, 0 };
 
     usize needed = (n + Min - 1) & ~(Min - 1);
-    needed += sizeof(block_header);
     i64 o = order_for_size(needed);
     if ( o >= max_order )
       return { nullptr, 0 };
@@ -537,18 +550,18 @@ struct __buddy_list {
     usize target_size = order_sizes[o];
 
     if ( active[o] != nullptr ) {
-      return { reinterpret_cast<byte *>(active[o]) + __hdr_offset, target_size - __hdr_offset };
+      return { reinterpret_cast<byte *>(active[o]), target_size - __hdr_offset };
     }
 
     free_block *cached = tcache_pop(o);
     if ( cached ) {
-      block_header *hdr = hdr_of_raw((byte *)cached);
+      block_header *hdr = hdr_of((byte *)cached, o);
       hdr->order = static_cast<i32>(o);
       hdr->flags = __block_alloc | __block_temporal;
       tag_set_alloc((byte *)cached, o);
       allocated_bytes += target_size;
       active[o] = cached;
-      return { ((byte *)cached + __hdr_offset), target_size - __hdr_offset };
+      return { (byte *)cached, target_size - __hdr_offset };
     }
 
     i64 i = find_free_order(o);
@@ -565,7 +578,7 @@ struct __buddy_list {
       freelist_push(right, i);
     }
 
-    block_header *hdr = hdr_of_raw((byte *)blk);
+    block_header *hdr = hdr_of((byte *)blk, o);
     hdr->order = static_cast<i32>(o);
     hdr->flags = __block_alloc | __block_temporal;
     tag_set_alloc((byte *)blk, o);
@@ -573,7 +586,7 @@ struct __buddy_list {
 
     active[o] = blk;
 
-    return { ((byte *)blk + __hdr_offset), target_size - __hdr_offset };
+    return { (byte *)blk, target_size - __hdr_offset };
   }
 
   T
@@ -595,19 +608,19 @@ struct __buddy_list {
     free_lists[o] = blk->next;
     mask_clear_if_empty(o);
 
-    block_header *hdr = hdr_of_raw((byte *)blk);
+    block_header *hdr = hdr_of((byte *)blk, o);
     hdr->order = static_cast<i32>(o);
     hdr->flags = __block_alloc;
     tag_set_alloc((byte *)blk, o);
     allocated_bytes += order_sizes[o];
 
-    return { ((byte *)blk + __hdr_offset), order_sizes[o] - __hdr_offset };
+    return { (byte *)blk, order_sizes[o] - __hdr_offset };
   }
 
   ret_flag
   tombstone(byte *ptr) noexcept
   {
-    block_header *hdr = hdr_of(ptr);
+    block_header *hdr = hdr_of_tagged(ptr);
     i64 o = static_cast<i64>(hdr->order);
     if ( o < 0 || o >= max_order )
       return { __flag_invalid };
@@ -632,15 +645,15 @@ struct __buddy_list {
   bool
   is_tombstoned(byte *ptr) noexcept
   {
-    block_header *hdr = hdr_of(ptr);
+    block_header *hdr = hdr_of_tagged(ptr);
     return (hdr->flags & __block_tombstone) != 0;
   }
 
   ret_flag
   deallocate(byte *ptr) noexcept
   {
-    byte *addr = ptr - __hdr_offset;
-    block_header *hdr = hdr_of_raw(addr);
+    byte *addr = ptr;
+    block_header *hdr = hdr_of_tagged(addr);
     const i64 original_o = static_cast<i64>(hdr->order);
     if ( original_o < 0 || original_o >= max_order )
       return { __flag_invalid };
@@ -658,7 +671,6 @@ struct __buddy_list {
       active[original_o] = nullptr;
 
     if ( was_temporal && tcache_push((free_block *)addr, original_o) ) {
-
       block_tags[tag_index(addr)] = __tag_none;
       return { __flag_ok };
     }
@@ -733,9 +745,8 @@ struct __buddy_list {
       return 0;
     if ( ptr < base || ptr >= base + total )
       return 0;
-    const block_header *hdr = hdr_of(ptr);
-    i64 o = static_cast<i64>(hdr->order);
-
+    u8 tag = block_tags[tag_index(ptr)];
+    i64 o = static_cast<i64>(tag & ~__tag_free);
     if ( (u64)o >= (u64)max_order )
       return 0;
     return order_sizes[o];
@@ -746,8 +757,8 @@ struct __buddy_list {
   {
     if ( !ptr || !base || ptr < base || ptr >= base + total )
       return false;
-    u8 tag = block_tags[tag_index(ptr - __hdr_offset)];
-
+    // ptr == block_start
+    u8 tag = block_tags[tag_index(ptr)];
     return (tag & __tag_free) == 0 && tag < (u8)max_order;
   }
 
