@@ -1721,4 +1721,41 @@ template <typename... Ts> using index_sequence_for = make_index_sequence<sizeof.
 
 template <typename T> using remove_cvref_t = __remove_cvref_t<T>;
 
+
+template <typename F> struct arg_type; // primary
+
+
+// strip pointers
+template <typename F>
+struct arg_type<F*> : arg_type<F> {};
+
+// strip lvalue references
+template <typename F>
+struct arg_type<F&> : arg_type<F> {};
+
+// strip rvalue references
+template <typename F>
+struct arg_type<F&&> : arg_type<F> {};
+
+// free function
+template <typename R, typename T>
+struct arg_type<R(T)> { using type = T; };
+
+// function pointer
+template <typename R, typename T>
+struct arg_type<R(*)(T)> { using type = T; };
+
+// member function
+template <typename R, typename C, typename T>
+struct arg_type<R(C::*)(T)> { using type = T; };
+
+// const member function
+template <typename R, typename C, typename T>
+struct arg_type<R(C::*)(T) const> { using type = T; };
+
+// helper alias
+template <typename F>
+using arg_type_t = typename arg_type<F>::type;
+
+
 };     // namespace micron

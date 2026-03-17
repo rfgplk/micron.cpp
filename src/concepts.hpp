@@ -332,4 +332,9 @@ concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
   { (*t.begin()).b };
 } && !is_tagged_map<T> && !has_cstr<T>;
 
+template <typename F, typename Arg>
+concept strict_invocable
+    = (is_invocable_v<F, Arg>
+       && (same_as<Arg, remove_cvref_t<Arg>> || same_as<Arg, remove_cvref_t<Arg> &> || same_as<Arg, const remove_cvref_t<Arg> &>));
+
 };     // namespace micron
