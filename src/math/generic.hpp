@@ -324,7 +324,7 @@ constexpr T
 fmax(T x, T y)
 {
   if constexpr ( micron::same_as<T, f32> ) {
-    return maxf(x, y);
+    return maxf32(x, y);
   }
   if constexpr ( micron::same_as<T, f64> ) {
     return maxf64(x, y);

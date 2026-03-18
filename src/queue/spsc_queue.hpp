@@ -1,4 +1,3 @@
-
 //  Copyright (c) 2024- David Lucius Severus
 //
 //  Distributed under the Boost Software License, Version 1.0.
@@ -136,11 +135,11 @@ public:
     const usize t = tail.get(memory_order_relaxed);
     const usize __next = t + 1;
 
-    usize avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (t - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
-      avail = __spsc_capacity - (__next - cached_head);
+      avail = __spsc_capacity - (t - cached_head);
 
       if ( avail == 0 )
         return false;
@@ -164,11 +163,11 @@ public:
     const usize t = tail.get(memory_order_relaxed);
     const usize __next = t + 1;
 
-    usize avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (t - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
-      avail = __spsc_capacity - (__next - cached_head);
+      avail = __spsc_capacity - (t - cached_head);
 
       if ( avail == 0 )
         return false;
@@ -192,11 +191,11 @@ public:
     const usize t = tail.get(memory_order_relaxed);
     const usize __next = t + 1;
 
-    usize avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (t - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
-      avail = __spsc_capacity - (__next - cached_head);
+      avail = __spsc_capacity - (t - cached_head);
 
       if ( avail == 0 )
         return false;
@@ -221,11 +220,11 @@ public:
     const usize t = tail.get(memory_order_relaxed);
     const usize __next = t + 1;
 
-    usize avail = __spsc_capacity - (__next - cached_head);
+    usize avail = __spsc_capacity - (t - cached_head);
 
     if ( avail == 0 ) [[unlikely]] {
       cached_head = head.get(memory_order_acquire);
-      avail = __spsc_capacity - (__next - cached_head);
+      avail = __spsc_capacity - (t - cached_head);
 
       if ( avail == 0 )
         return false;
@@ -335,6 +334,7 @@ public:
   push_batch(const T *items, usize count)
   {
     const usize t = tail.get(memory_order_relaxed);
+    // push_batch already used `t` correctly -- no change needed here
     usize avail = __spsc_capacity - (t - cached_head);
 
     if ( avail < count ) [[unlikely]] {

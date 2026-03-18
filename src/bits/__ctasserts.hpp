@@ -7,8 +7,13 @@
 
 #include "__arch.hpp"
 
+#if !defined(__cplusplus)
+#pragma GCC error "Micron was made for C++, please compile with an appropriate compiler"
+#endif
+
 #if !defined(__micron_lang_cpp23)
-#error "Micron needs C++23 compiler support to compile properly"
+#pragma GCC error                                                                                                                          \
+    "Micron _requires_ full support for C++23 features, such as multidimensional subscript operators, constexpr and lambda changes). Please use a compliant compiler"
 #endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

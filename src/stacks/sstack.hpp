@@ -333,7 +333,7 @@ public:
   fsstack &
   operator=(const fsstack &o)
   {
-    __impl_container::copy(&stack[0], &o.stack[0], N);
+    __impl_container::copy_assign(&stack[0], &o.stack[0], N);
     length = o.length;
     return *this;
   }
@@ -343,9 +343,9 @@ public:
   operator=(const fsstack<C, M> &o)
   {
     if constexpr ( N >= M ) {
-      __impl_container::copy(stack, o.stack, N);
+      __impl_container::copy_assign(stack, o.stack, N);
     } else {
-      __impl_container::copy(stack, o.stack, M);
+      __impl_container::copy_assign(stack, o.stack, M);
     }
     length = o.length;
     return *this;
@@ -354,7 +354,7 @@ public:
   fsstack &
   operator=(fsstack &&o)
   {
-    __impl_container::move(&stack[0], &o.stack[0], N);
+    __impl_container::move_assign(&stack[0], &o.stack[0], N);
     length = o.length;
     o.length = 0;
     return *this;

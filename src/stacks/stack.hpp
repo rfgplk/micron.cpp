@@ -85,7 +85,7 @@ public:
   {
     if ( o.length >= __mem::capacity )
       reserve(o.length);
-    __impl_container::copy(__mem::memory, o.memory, o.length);
+    __impl_container::copy_assign(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
   }

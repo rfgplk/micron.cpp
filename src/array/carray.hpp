@@ -58,7 +58,7 @@ public:
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   carray(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::generate(begin(), end(), fn);
   }
 
@@ -66,11 +66,11 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   carray(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::transform(begin(), end(), fn);
   }
 
-  carray(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
+  carray(const T &o) { __impl_container::construct<N>(micron::addr(stack[0]), o); }
 
   carray(const std::initializer_list<T> &&lst)
   {
@@ -246,7 +246,7 @@ public:
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
   {
-    __impl_container::copy<N, T>(micron::addr(&stack[0]), &o[0]);
+    __impl_container::copy_assign<N, T>(micron::addr(&stack[0]), &o[0]);
     // micron::copy<N, T><N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
@@ -265,9 +265,9 @@ public:
   operator=(const A &o)
   {
     if constexpr ( N <= A::length ) {
-      __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+      __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     } else {
-      __impl_container::copy<A::length>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+      __impl_container::copy_assign<A::length>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     }
     return *this;
   }
@@ -278,9 +278,9 @@ public:
   operator=(const A &o)
   {
     if ( N <= o.size() ) {
-      __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+      __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     } else {
-      __impl_container::copy(micron::addr(stack[0]), micron::addr(o.stack[0]), o.size());
+      __impl_container::copy_assign(micron::addr(stack[0]), micron::addr(o.stack[0]), o.size());
     }
     return *this;
   }
@@ -288,14 +288,14 @@ public:
   carray &
   operator=(const carray &o)
   {
-    __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
   carray &
   operator=(carray &&o)
   {
-    __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    __impl_container::move_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
