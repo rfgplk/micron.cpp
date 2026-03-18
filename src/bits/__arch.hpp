@@ -8,6 +8,11 @@
 // this is here so we don't clutter the root dir
 // TODO: change all code macros to use these defs
 
+#if defined(__GNUC__)
+#define GCC_VERSION_FULL (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100)
+#endif
+
 #if defined(__x86_64__) || defined(_M_X64) || defined(__amd64__)
 #define __micron_arch_amd64 1
 #define __micron_arch_width_64 1

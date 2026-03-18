@@ -54,7 +54,7 @@ public:
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   farray(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::generate(begin(), end(), fn);
   }
 
@@ -62,7 +62,7 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   farray(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::transform(begin(), end(), fn);
   }
 
@@ -75,6 +75,8 @@ public:
     size_type i = 0;
     for ( T value : lst )
       stack[i++] = micron::move(value);
+    if ( lst.size() < N )
+      __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
   template <is_container A>
@@ -91,7 +93,7 @@ public:
     micron::copy<N, T>(&o[0], &stack[0]);
   }
 
-  farray(const farray &o) { micron::copy<N, T>(&o.stack[0], &stack[0]); }
+  farray(const farray &o) { __impl_container::copy<N>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
   farray(farray &&o)
   {
@@ -187,7 +189,7 @@ public:
   {
     if ( n >= N )
       exc<except::library_error>("micron::array get() out of range");
-    return micron::addr(stack + n);
+    return (stack + n);
   }
 
   inline const_iterator
@@ -195,7 +197,7 @@ public:
   {
     if ( n >= N )
       exc<except::library_error>("micron::array get() out of range");
-    return micron::addr(stack + n);
+    return (stack + n);
   }
 
   inline const_iterator
@@ -203,7 +205,7 @@ public:
   {
     if ( n >= N )
       exc<except::library_error>("micron::array get() out of range");
-    return micron::addr(stack + n);
+    return (stack + n);
   }
 
   inline T &
@@ -261,10 +263,8 @@ public:
     return *this;
   }
 
-  template <typename F>
   farray &
-  operator=(const F &o)
-    requires micron::is_fundamental_v<F>
+  operator=(T o)
   {
     micron::ctypeset<N>(&stack[0], o);
     return *this;
@@ -273,7 +273,7 @@ public:
   farray &
   operator=(const farray &o)
   {
-    micron::copy<N, T>(&o.stack[0], &stack[0]);
+    __impl_container::copy_assign<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
@@ -281,7 +281,7 @@ public:
   farray &
   operator=(const A &o)
   {
-    micron::copy<N, T>(&o[0], &stack[0]);
+    __impl_container::copy_assign<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
@@ -290,7 +290,7 @@ public:
   farray &
   operator=(const A &o)
   {
-    micron::copy<N, T>(&o[0], &stack[0]);
+    __impl_container::copy_assign<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 

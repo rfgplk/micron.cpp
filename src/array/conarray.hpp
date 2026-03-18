@@ -60,7 +60,7 @@ public:
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   conarray(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::generate(const_cast<iterator>(begin()), const_cast<iterator>(end()), fn);
   }
 
@@ -68,11 +68,11 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   conarray(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::transform(const_cast<iterator>(begin()), const_cast<iterator>(end()), fn);
   }
 
-  conarray(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
+  conarray(const T &o) { __impl_container::construct<N>(micron::addr(stack[0]), o); }
 
   conarray(const std::initializer_list<T> &&lst)
   {
@@ -183,8 +183,8 @@ public:
     requires micron::is_array_v<F> && (M <= N)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __impl_container::copy<N>(micron::addr(o.stack[0]), &o[0]);
-    // micron::copy<N>(micron::addr(o.stack[0], &o[0]);
+    __impl_container::copy_assign<N>(micron::addr(o.stack[0]), &o[0]);
+    // micron::copy_assign<N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
 
@@ -202,7 +202,7 @@ public:
   operator=(const conarray &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __impl_container::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::copy_assign<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
 
@@ -210,7 +210,7 @@ public:
   operator=(conarray &&o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __impl_container::move<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
+    __impl_container::move_assign<N>(micron::addr(o.stack[0]), micron::addr(stack[0]));
     return *this;
   }
 

@@ -99,6 +99,20 @@ pi_t<long double>() noexcept
 template <typename T> constexpr T default_eps() noexcept;
 
 template <>
+constexpr _Float32
+default_eps<_Float32>() noexcept
+{
+  return 1e-6f;
+}
+
+template <>
+constexpr _Float64
+default_eps<_Float64>() noexcept
+{
+  return 1e-12;
+}
+
+template <>
 constexpr float
 default_eps<float>() noexcept
 {

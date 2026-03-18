@@ -9,6 +9,8 @@
 #include "except.hpp"
 #include "types.hpp"
 
+#include "../array/carray.hpp"
+
 namespace micron
 {
 
@@ -35,7 +37,7 @@ class circle_vector
   inline void
   __shallow_copy(T *dest, const T *src, usize cnt)
   {
-    micron::bytecpy<byte>(dest, src, cnt * sizeof(T));
+    micron::bytecpy<T>(dest, src, cnt * sizeof(T));
   }
 
   template <typename U>
@@ -347,7 +349,8 @@ public:
     }
   }
 
-  T &&
+  // rvo
+  T
   pop() noexcept
   {
     T val = micron::move(__buffer[__tail]);

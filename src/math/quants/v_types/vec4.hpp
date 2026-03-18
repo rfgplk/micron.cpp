@@ -108,6 +108,12 @@ struct vector_4 {
     return { x / s, y / s, z / s, w / s };
   }
 
+  constexpr vector_4<T>
+  operator/(const vector_4<T> &v)
+  {
+    return { x / v.x, y / v.y, z / v.z, w / v.w };
+  }
+
   constexpr vector_4<T> &
   operator/=(T s)
   {

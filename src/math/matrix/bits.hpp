@@ -4,14 +4,14 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
-#include "../__special/initializer_list"
-#include "../except.hpp"
-#include "../memory/cmemory.hpp"
-#include "../tags.hpp"
-#include "../type_traits.hpp"
-#include "../types.hpp"
+#include "../../__special/initializer_list"
+#include "../../except.hpp"
+#include "../../memory/cmemory.hpp"
+#include "../../tags.hpp"
+#include "../../type_traits.hpp"
+#include "../../types.hpp"
 
-#include "control.hpp"
+#include "../../control.hpp"
 
 namespace micron
 {
@@ -55,7 +55,7 @@ public:
   {
     if ( lst.size() != __size )
       exc<except::library_error>("micron::int8x8 initializer_list out of bounds");
-    micron::bytecpy(__mat, lst.data(), __size * sizeof(B));
+    micron::bytecpy(__mat, lst.begin(), __size * sizeof(B));
   }
 
   int_matrix_base_avx(const int_matrix_base_avx &o) { micron::cmemcpy<__size>(__mat, o.__mat); }
@@ -86,7 +86,7 @@ public:
   int_matrix_base_avx &
   operator=(B sc)
   {
-    micron::memset(&__mat[0], sc, __size);
+    micron::typeset(&__mat[0], sc, __size);
     return *this;
   }
 
