@@ -5,22 +5,39 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "attributes.hpp"
-
-#include "cmpl.hpp"
-#include "control.hpp"
-#include "endian.hpp"
-#include "errno.hpp"
+// types FIRST
+#include "concepts.hpp"
 #include "linux/sys/types.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
+
+// comptime
+#include "bits/__arch.hpp"
+#include "bits/__ctasserts.hpp"
+
+#include "cmalloc.hpp"
+#include "defs.hpp"
+
+#include "alloc.hpp"
+
+#include "attributes.hpp"
+
+#include "endian.hpp"
+
+// includes sleeps through sync/pause
+#include "control.hpp"
+
+// exceptions
+#include "errno.hpp"
+#include "except.hpp"
 
 #include "io/__std.hpp"
 #include "linux/sys/signal.hpp"
 
 #include "version.hpp"
 
-#include "bits/__ctasserts.hpp"
+// syscall
+#include "syscall.hpp"
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"

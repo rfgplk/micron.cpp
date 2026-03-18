@@ -37,7 +37,11 @@ template <typename T> struct __core_memory_resource {
   T *memory;     // capacity implied due to byte / sizeof(T)
   usize capacity;
 
-  ~__core_memory_resource() = default;
+  ~__core_memory_resource()
+  {
+    memory = nullptr;
+    capacity = 0;
+  };
 
   __core_memory_resource(void) : memory(nullptr), capacity(0) {}
 

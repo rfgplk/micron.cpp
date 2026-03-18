@@ -52,13 +52,13 @@ public:
   // NOTE: zeroes out memory
   ~array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  array() { __impl_container::set<N>(micron::addr(stack[0]), T{}); }
+  array() { __impl_container::construct<N>(micron::addr(stack[0]), T{}); }
 
   template <typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   array(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::generate(begin(), end(), fn);
   }
 
@@ -66,11 +66,11 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   array(Fn &&fn)
   {
-    __impl_container::set<N>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N>(micron::addr(stack[0]), T{});
     micron::transform(begin(), end(), fn);
   }
 
-  array(const T &o) { __impl_container::set<N>(micron::addr(stack[0]), o); }
+  array(const T &o) { __impl_container::construct<N>(micron::addr(stack[0]), o); }
 
   array(const std::initializer_list<T> &&lst)
   {
@@ -79,6 +79,8 @@ public:
     size_type i = 0;
     for ( auto &&value : lst )
       stack[i++] = micron::move(value);
+    if ( lst.size() < N )
+      __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
   template <is_container A>
@@ -265,7 +267,7 @@ public:
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
   {
-    __impl_container::copy<N, T>(micron::addr(&stack[0]), micron::addr(o[0]));
+    __impl_container::copy_assign<N, T>(micron::addr(&stack[0]), micron::addr(o[0]));
     // micron::copy<N, T><N>(micron::addr(o.stack[0], &o[0]);
     return *this;
   }
@@ -284,9 +286,9 @@ public:
   operator=(const A &o)
   {
     if constexpr ( N <= A::length ) {
-      __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+      __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     } else {
-      __impl_container::copy<A::length>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+      __impl_container::copy_assign<A::length>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     }
     return *this;
   }
@@ -297,9 +299,9 @@ public:
   operator=(const A &o)
   {
     if ( N <= o.size() ) {
-      __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+      __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     } else {
-      __impl_container::copy(micron::addr(stack[0]), micron::addr(o.stack[0]), o.size());
+      __impl_container::copy_assign(micron::addr(stack[0]), micron::addr(o.stack[0]), o.size());
     }
     return *this;
   }
@@ -307,14 +309,14 @@ public:
   array &
   operator=(const array &o)
   {
-    __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 
   array &
   operator=(array &&o)
   {
-    __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    __impl_container::move_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
 

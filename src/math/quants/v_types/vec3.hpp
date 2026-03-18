@@ -120,6 +120,13 @@ struct vector_3 {
   }
 
   constexpr vector_3<T>
+  operator/(const vector_3<T> &v)
+  {
+    return { x / v.x, y / v.y, z / v.z };
+  }
+
+
+  constexpr vector_3<T>
   operator+(T s) const
   {
     return { x + s, y + s, z + s };

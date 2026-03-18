@@ -54,7 +54,7 @@ public:
   {
     if ( cnt > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): cnt exceeds stack capacity N");
-    __impl_container::set(micron::addr(stack[0]), T{}, cnt);
+    __impl_container::construct(micron::addr(stack[0]), T{}, cnt);
     length = cnt;
   }
 
@@ -62,7 +62,7 @@ public:
   {
     if ( cnt > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): cnt exceeds stack capacity N");
-    __impl_container::set(micron::addr(stack[0]), val, cnt);
+    __impl_container::construct(micron::addr(stack[0]), val, cnt);
     length = cnt;
   }
 
@@ -104,7 +104,7 @@ public:
   {
     if ( cnt > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): cnt exceeds stack capacity N");
-    __impl_container::set(micron::addr(stack[0]), T{}, cnt);
+    __impl_container::construct(micron::addr(stack[0]), T{}, cnt);
     length = cnt;
     micron::generate(begin(), end(), fn);
   }
@@ -115,7 +115,7 @@ public:
   {
     if ( cnt > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): cnt exceeds stack capacity N");
-    __impl_container::set(micron::addr(stack[0]), T{}, cnt);
+    __impl_container::construct(micron::addr(stack[0]), T{}, cnt);
     length = cnt;
     micron::transform(begin(), end(), fn);
   }

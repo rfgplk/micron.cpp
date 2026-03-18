@@ -130,6 +130,12 @@ struct vector_8 {
     return *this;
   }
 
+  constexpr vector_8<T>
+  operator/(const vector_8<T> &v)
+  {
+    return { x / v.x, y / v.y, z / v.z, w / v.w, a / v.a, b / v.b, c / v.c, d / v.d };
+  }
+
   friend constexpr vector_8<T>
   operator/(T s, const vector_8<T> &v)
   {
@@ -307,8 +313,10 @@ struct vector_8 {
 
                               constexpr vector_8<T> sign() const
   {
-    return { static_cast<T>(isign(x)), static_cast<T>(isign(y)), static_cast<T>(isign(z)), static_cast<T>(isign(w)),
-             static_cast<T>(isign(a)), static_cast<T>(isign(b)), static_cast<T>(isign(c)), static_cast<T>(isign(d)) };
+    return {
+      static_cast<T>(math::isign(x)), static_cast<T>(math::isign(y)), static_cast<T>(math::isign(z)), static_cast<T>(math::isign(w)),
+      static_cast<T>(math::isign(a)), static_cast<T>(math::isign(b)), static_cast<T>(math::isign(c)), static_cast<T>(math::isign(d))
+    };
   }
 
   constexpr vector_8<T>
@@ -562,15 +570,15 @@ struct vector_8 {
   constexpr vector_8<T>
   fma(const vector_8<T> &v, const vector_8<T> &u) const
   {
-    return { math::ffma(x, v.x, u.x), math::ffma(y, v.y, u.y), math::ffma(z, v.z, u.z), math::ffma(w, v.w, u.w),
-             math::ffma(a, v.a, u.a), math::ffma(b, v.b, u.b), math::ffma(c, v.c, u.c), math::ffma(d, v.d, u.d) };
+    return vector_8<T>( math::ffma(x, v.x, u.x), math::ffma(y, v.y, u.y), math::ffma(z, v.z, u.z), math::ffma(w, v.w, u.w),
+                        math::ffma(a, v.a, u.a), math::ffma(b, v.b, u.b), math::ffma(c, v.c, u.c), math::ffma(d, v.d, u.d) );
   }
 
   constexpr vector_8<T>
   fma(T s, const vector_8<T> &u) const
   {
-    return { math::ffma(x, s, u.x), math::ffma(y, s, u.y), math::ffma(z, s, u.z), math::ffma(w, s, u.w),
-             math::ffma(a, s, u.a), math::ffma(b, s, u.b), math::ffma(c, s, u.c), math::ffma(d, s, u.d) };
+    return vector_8<T>( math::ffma(x, s, u.x), math::ffma(y, s, u.y), math::ffma(z, s, u.z), math::ffma(w, s, u.w),
+                        math::ffma(a, s, u.a), math::ffma(b, s, u.b), math::ffma(c, s, u.c), math::ffma(d, s, u.d) );
   }
 
   constexpr vector_8<T>
