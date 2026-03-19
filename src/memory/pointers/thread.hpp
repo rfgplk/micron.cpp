@@ -10,7 +10,8 @@
 
 namespace micron
 {
-
+// shared_pointer implementation for use in threading
+// threadsafe
 template <class Type> class thread_pointer
 {
   shared_handler<Type> *control;

@@ -27,24 +27,24 @@ public:
 
   using __alloc = __internal_pointer_alloc<Type>;
 
-  ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
+  ~unique_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer); };
 
-  unique_pointer(void) : internal_pointer(nullptr) {};
+  unique_pointer(void) noexcept : internal_pointer(nullptr) {};
   template <typename V>
     requires micron::is_null_pointer_v<V>
-  unique_pointer(V) : internal_pointer(nullptr){};
+  unique_pointer(V) noexcept : internal_pointer(nullptr){};
 
-  unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+  unique_pointer(Type *&&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
   template <class... Args>
     requires(sizeof...(Args) > 0)
   unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
-  unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+  unique_pointer(unique_pointer &&p) noexcept : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
   unique_pointer(const unique_pointer &p) = delete;
 
   unique_pointer &
-  operator=(unique_pointer &&t)
+  operator=(unique_pointer &&t) noexcept
   {
     if ( this != &t ) {
       __alloc::__impl_dealloc(internal_pointer);
@@ -119,6 +119,15 @@ public:
   };
 
   Type *
+  operator->()
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer;
+    else
+      exc<except::memory_error>("unique_pointer operator->(): internal_pointer was null");
+  }
+
+  const Type *
   operator->() const
   {
     if ( internal_pointer != nullptr )
@@ -166,6 +175,21 @@ public:
   }
 
   inline void
+  reset(Type *p = nullptr) noexcept
+  {
+    __alloc::__impl_dealloc(internal_pointer);
+    internal_pointer = p;
+  }
+
+  inline void
+  swap(unique_pointer &o) noexcept
+  {
+    Type *tmp = internal_pointer;
+    internal_pointer = o.internal_pointer;
+    o.internal_pointer = tmp;
+  }
+
+  inline void
   clear()
   {
     __alloc::__impl_dealloc(internal_pointer);
@@ -186,12 +210,12 @@ public:
 
   using __alloc = __internal_pointer_arralloc<Type>;
 
-  ~unique_pointer() { __alloc::__impl_dealloc(internal_pointer); };
+  ~unique_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer); };
 
-  unique_pointer(void) : internal_pointer(nullptr) {};
+  unique_pointer(void) noexcept : internal_pointer(nullptr) {};
   template <typename V>
     requires micron::is_null_pointer_v<V>
-  unique_pointer(V) : internal_pointer(nullptr){};
+  unique_pointer(V) noexcept : internal_pointer(nullptr){};
 
   template <typename... Args>
     requires(sizeof...(Args) > 0)
@@ -199,17 +223,17 @@ public:
   {
   }
 
-  unique_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+  unique_pointer(Type *&&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  unique_pointer(unique_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+  unique_pointer(unique_pointer &&p) noexcept : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
   unique_pointer(const unique_pointer &p) = delete;
   unique_pointer &operator=(const unique_pointer &) = delete;
 
   unique_pointer &
-  operator=(unique_pointer &&t)
+  operator=(unique_pointer &&t) noexcept
   {
-    if ( this != &t ) {
+    if ( this != addr(t) ) {
       __alloc::__impl_dealloc(internal_pointer);
       internal_pointer = t.internal_pointer;
       t.internal_pointer = nullptr;
@@ -251,13 +275,13 @@ public:
   };
 
   const Type *
-  operator()() const
+  operator()() const noexcept
   {
     return internal_pointer;
   }
 
   const Type *
-  operator&() const
+  operator&() const noexcept
   {
     return internal_pointer;
   }
@@ -280,6 +304,21 @@ public:
   active() const noexcept
   {
     return (internal_pointer != nullptr);
+  }
+
+  inline void
+  reset(Type *p = nullptr) noexcept
+  {
+    __alloc::__impl_dealloc(internal_pointer);
+    internal_pointer = p;
+  }
+
+  inline void
+  swap(unique_pointer &o) noexcept
+  {
+    Type *tmp = internal_pointer;
+    internal_pointer = o.internal_pointer;
+    o.internal_pointer = tmp;
   }
 
   inline void
@@ -307,8 +346,9 @@ public:
       exc<except::memory_error>("unique_pointer[] operator*(): internal_pointer was null");
   };
 
-  const Type *
-  operator->() const
+  // Bug fix: const overload was returning Type* instead of const Type*
+  Type *
+  operator->()
   {
     if ( internal_pointer != nullptr )
       return internal_pointer;
@@ -316,8 +356,8 @@ public:
       exc<except::memory_error>("unique_pointer[] operator->(): internal_pointer was null");
   };
 
-  Type *
-  operator->()
+  const Type *
+  operator->() const
   {
     if ( internal_pointer != nullptr )
       return internal_pointer;
@@ -331,5 +371,12 @@ public:
     return internal_pointer != nullptr;
   }
 };
+
+template <typename T>
+inline void
+swap(unique_pointer<T> &a, unique_pointer<T> &b) noexcept
+{
+  a.swap(b);
+}
 
 };     // namespace micron

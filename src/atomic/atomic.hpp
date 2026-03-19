@@ -59,7 +59,7 @@ template <is_atomic_type T> struct atomic_token {
   T
   fetch_add(T set, memory_order order) noexcept
   {
-    return atom::fetch_sub(&v, set, (int)order);
+    return atom::fetch_add(&v, set, (int)order);
   };
 
   T

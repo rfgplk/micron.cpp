@@ -319,8 +319,9 @@ public:
   void
   clear()
   {
-    for ( auto &entry : entries ) {
-      entry.clear();
+    usize sz = entries.max_size();
+    for ( usize i = 0; i < sz; ++i ) {
+      entries[i].clear();
     }
     length = 0;
   }

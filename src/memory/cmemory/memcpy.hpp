@@ -322,7 +322,7 @@ template <typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) )
     return false;
 
   F *d = &dest;

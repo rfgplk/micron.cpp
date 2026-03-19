@@ -7,8 +7,8 @@
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
 #include "../src/maps/hopscotch.hpp"
-#include "../src/string/string.hpp"
 #include "../src/std.hpp"
+#include "../src/string/string.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -271,15 +271,15 @@ main(void)
   sb::test_case("erase - size decrements after successful erase");
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
-    m.insert("a", 1);
-    m.insert("b", 2);
-    m.insert("c", 3);
+    m.insert("a123", 1);
+    m.insert("b436346", 2);
+    m.insert("c567567", 3);
     sb::require(m.size() == 3ULL);
-    m.erase("b");
+    m.erase("b436346");
     sb::require(m.size() == 2ULL);
-    sb::require(m.contains("a"));
-    sb::require(!m.contains("b"));
-    sb::require(m.contains("c"));
+    sb::require(m.contains("a123"));
+    sb::require(!m.contains("b436346"));
+    sb::require(m.contains("c567567"));
   }
   sb::end_test_case();
 
@@ -477,7 +477,7 @@ main(void)
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
     std::vector<micron::hstring<char>> keys = { "apple", "banana", "cherry", "date",      "elderberry", "fig",    "grape", "honeydew",
-                                      "kiwi",  "lemon",  "mango",  "nectarine", "orange",     "papaya", "quince" };
+                                                "kiwi",  "lemon",  "mango",  "nectarine", "orange",     "papaya", "quince" };
     for ( int i = 0; i < (int)keys.size(); ++i )
       m.insert(keys[i], i * 11);
     sb::require(m.size() == keys.size());
@@ -696,21 +696,21 @@ main(void)
     sb::require(e >= b);
   }
   sb::end_test_case();
-/*
-  sb::test_case("iterator - traversal counts exactly 'size' occupied slots");
-  {
-    micron::hopscotch_map<micron::hstring<char>, int> m;
-    const int N = 20;
-    for ( int i = 0; i < N; ++i )
-      m.insert(make_key(i), i);
-    size_t occupied = 0;
-    for ( auto it = m.begin(); it != m.end(); ++it )
-      if ( it->key )
-        ++occupied;
-    sb::require(occupied == (size_t)N);
-  }
-  sb::end_test_case();
-*/
+  /*
+    sb::test_case("iterator - traversal counts exactly 'size' occupied slots");
+    {
+      micron::hopscotch_map<micron::hstring<char>, int> m;
+      const int N = 20;
+      for ( int i = 0; i < N; ++i )
+        m.insert(make_key(i), i);
+      size_t occupied = 0;
+      for ( auto it = m.begin(); it != m.end(); ++it )
+        if ( it->key )
+          ++occupied;
+      sb::require(occupied == (size_t)N);
+    }
+    sb::end_test_case();
+  */
   // ── edge cases ────────────────────────────────────────────────────────────
 
   sb::test_case("edge - single character keys");

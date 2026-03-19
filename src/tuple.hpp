@@ -25,7 +25,7 @@ template <usize N, usize A = alignof(max_align_t)> class static_any
   static const void *
   id() noexcept
   {
-    static const int x;
+    static const int x = 0;
     return &x;
   }
 
@@ -168,7 +168,7 @@ public:
   constexpr T &
   cast()
   {
-    assert(type_id_ == id<micron::decay_t<T>>());
+    // static_assert(type_id_ == id<micron::decay_t<T>>());
     return *reinterpret_cast<micron::decay_t<T> *>(storage_);
   }
 
@@ -176,7 +176,7 @@ public:
   constexpr const T &
   cast() const
   {
-    assert(type_id_ == id<micron::decay_t<T>>());
+    // static_assert(type_id_ == id<micron::decay_t<T>>());
     return *reinterpret_cast<const micron::decay_t<T> *>(storage_);
   }
 

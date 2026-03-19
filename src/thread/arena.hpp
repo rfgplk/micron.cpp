@@ -151,7 +151,7 @@ public:
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     threads.emplace(cpu_t<true>(), micron::move(attrs), f, micron::forward<Args>(args)...);
-    sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 16>(threads.size());
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     return threads.top();
@@ -174,7 +174,7 @@ public:
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
-    sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 16>(threads.size());
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
 
@@ -198,7 +198,7 @@ public:
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_fifo, stack_ptr, Sz, 1);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
-    sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 16>(threads.size());
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
 
@@ -239,7 +239,7 @@ public:
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
-    sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 16>(threads.size());
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     // posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());
@@ -278,7 +278,7 @@ public:
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_fifo, stack_ptr, Sz, 1);
     pthread::set_affinity(attrs, c.get());
     threads.emplace(c, micron::move(attrs), f, micron::forward<Args>(args)...);
-    sstring<16> thread_name = "arena/" + int_to_string_stack<umax_t, char, 16>(threads.size());
+    sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 16>(threads.size());
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     // posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());
@@ -592,7 +592,7 @@ public:
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs), f, micron::forward<Args>(args)... };
-    sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(counter);
+    sstring<16> thread_name = "c/" + int_to_string_stack<u32, char, 16>(counter);
     thread_name[15] = 0x0;
     pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
@@ -610,7 +610,7 @@ public:
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };
-    sstring<16> thread_name = "c/" + int_to_string_stack<umax_t, char, 16>(counter);
+    sstring<16> thread_name = "c/" + int_to_string_stack<u32, char, 16>(counter);
     thread_name[15] = 0x0;
     pthread::set_name(threads.mut(counter).thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
