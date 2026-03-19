@@ -52,7 +52,7 @@ main()
     rand.read(str);
     for ( u64 k = 1; k < 32; ++k ) {
       for ( usize i = 0; i < iters; ++i ) {
-        hashes[i] = mc::zzz64(&str, 123, 4096);
+        hashes[i] = mc::hashes::zzz64(&str, 123, 4096);
         str.set_size(0);
         rand.read(str);
       }

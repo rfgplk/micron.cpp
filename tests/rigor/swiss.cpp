@@ -15,6 +15,7 @@
 #include <climits>
 #include <vector>
 
+// NOTE: these tests highly depend on the hash used (ie collision specific - beware!)
 // TODO: investigate
 
 // ─── small helpers ───────────────────────────────────────────────────────────

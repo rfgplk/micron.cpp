@@ -13,8 +13,8 @@
 #include "../sys/stat.hpp"
 #include "../sys/types.hpp"
 
-#include "io_structs.hpp"
 #include "inode.hpp"
+#include "io_structs.hpp"
 
 #include "sys.hpp"
 

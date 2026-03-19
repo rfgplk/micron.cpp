@@ -160,6 +160,7 @@ loadu(const T *ptr)
     return _mm256_loadu_pd(reinterpret_cast<const double *>(ptr));
   }
 }
+
 template <is_simd_type B, typename T>
 inline B
 loadu(T &ref)

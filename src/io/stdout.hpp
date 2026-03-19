@@ -147,19 +147,19 @@ arith_to_buf(char *buf, usize buf_sz, u64 val)
 }
 
 inline usize
-arith_to_buf(char *buf, [[maybe_unused]]usize buf_sz, f32 val)
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f32 val)
 {
   return micron::__impl::__ryu::__f32::f2s_buffered(val, buf);
 }
 
 inline usize
-arith_to_buf(char *buf, [[maybe_unused]]usize buf_sz, f64 val)
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f64 val)
 {
   return micron::__impl::__ryu::d2s_buffered(val, buf);
 }
 
 inline usize
-arith_to_buf(char *buf, [[maybe_unused]]usize buf_sz, long double val)
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, long double val)
 {
   return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
 }
@@ -481,7 +481,7 @@ printk(pair<A, B> &&p)
 // char array
 template <typename T, int outstream = stdout_fileno>
 void
-printkn(T& c)
+printkn(T &c)
 {
   printk<outstream>(c);
   __impl::emit_nl<outstream>();

@@ -27,7 +27,7 @@ main()
 
     alignas(32) u64 scratch[4] = {};
     for ( usize i = 0; i < iters; ++i ) {
-      mc::zzz(&str, 1234 + i, str.size(), scratch);
+      mc::hashes::zzz(&str, 1234 + i, str.size(), scratch);
     }
     mc::console(scratch);
   };

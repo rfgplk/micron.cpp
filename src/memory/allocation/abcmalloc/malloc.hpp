@@ -265,6 +265,7 @@ freeze(byte *ptr)
   if ( __main_arena->freeze(ptr) ) {
   }
 }
+
 template <typename T>
   requires(!micron::same_as<T, byte>)
 void
@@ -273,6 +274,7 @@ freeze(T *__ptr)
   byte *ptr = reinterpret_cast<byte *>(__ptr);
   free(ptr);
 }
+
 // gets all pointers alloc'd by abc
 void
 which(void)

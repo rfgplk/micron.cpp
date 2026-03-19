@@ -15,7 +15,7 @@
 
 #include "../src/sort/quick.hpp"
 
-double
+float
 count_equiv(mc::slice<u64> &vec)
 {
   mc::sort::quick<mc::slice<u64>>(vec.begin(), vec.end());
@@ -34,20 +34,20 @@ count_equiv(mc::slice<u64> &vec)
 
   u64 n = vec.size();
   u64 total_possible_pairs = n * (n - 1) / 2;
-  return static_cast<double>(total_pairs) / total_possible_pairs * 100.0;
+  return static_cast<float>(total_pairs) / total_possible_pairs * 100.0;
 }
 
 int
 main()
 {
-  constexpr u64 iters = 100'000;
+  constexpr u64 iters = 1'000'000;
   enable_scope()
   {
     mc::slice<u64> hashes(iters);
     {
       alignas(8) byte str[32] = {};
       for ( usize i = 0; i < iters; ++i ) {
-        hashes[i] = mc::zz64(reinterpret_cast<const byte *>(str), 123, 32);
+        hashes[i] = mc::hashes::zz64(reinterpret_cast<const byte *>(str), 123, 32);
         for ( i32 j = 0; j < 8; ++j ) {
           str[j] = ((i) >> (j * 8)) & 0xFF;
         }
@@ -58,7 +58,7 @@ main()
     for ( u64 k = 1; k < 65; ++k ) {
       alignas(8) byte str[32] = {};
       for ( usize i = 0; i < iters; ++i ) {
-        hashes[i] = mc::zz64(reinterpret_cast<const byte *>(str), 123, 32);
+        hashes[i] = mc::hashes::zz64(reinterpret_cast<const byte *>(str), 123, 32);
         // mc::console(hashes[i]);
         for ( i32 j = 0; j < 8; ++j ) {
           str[j] = ((i * k) >> (j * 8)) & 0xFF;

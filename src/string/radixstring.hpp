@@ -16,7 +16,6 @@
 // radix table implementation for int to string conv
 // roughly ~52 cycles per int for first 1 billion ints
 
-
 namespace micron
 {
 namespace rtable
