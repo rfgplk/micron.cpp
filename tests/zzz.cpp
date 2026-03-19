@@ -22,7 +22,7 @@ main()
     volatile u64 out = 0;
     // 32GiB
     for ( usize i = 0; i < 1'000'000'000; ++i )
-      out = mc::zzz64(reinterpret_cast<const byte *>(&str), i, 32);
+      out = mc::hashes::zzz64(reinterpret_cast<const byte *>(&str), i, 32);
     mc::console(static_cast<u64>(out));
   };
 }

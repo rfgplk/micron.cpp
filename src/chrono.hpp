@@ -410,25 +410,25 @@ template <typename C = system_clock<>, typename D = fduration_t> struct time_poi
   }
 };
 
-template <typename C, typename D>
+template <typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
 constexpr time_point<C, D>
-operator+(const time_point<C, D> &tp, const D &d)
+operator+(const time_point<C, D> &tp, const S &s)
 {
-  return time_point<C, D>(tp.time_since_epoch() + d);
+  return time_point<C, D>(tp.time_since_epoch() + static_cast<D>(s));
 }
 
-template <typename C, typename D>
+template <typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
 constexpr time_point<C, D>
-operator+(const D &d, const time_point<C, D> &tp)
+operator+(const S &s, const time_point<C, D> &tp)
 {
-  return tp + d;
+  return time_point<C, D>(tp.time_since_epoch() + static_cast<D>(s));
 }
 
-template <typename C, typename D>
+template <typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
 constexpr time_point<C, D>
-operator-(const time_point<C, D> &tp, const D &d)
+operator-(const time_point<C, D> &tp, const S &s)
 {
-  return time_point<C, D>(tp.time_since_epoch() - d);
+  return time_point<C, D>(tp.time_since_epoch() - static_cast<D>(s));
 }
 
 template <typename C, typename D>

@@ -15,16 +15,18 @@
 #include "fnv.hpp"
 #include "murmur.hpp"
 #include "xx.hpp"
+#include "zzz.hpp"
 
 namespace micron
 {
 
-enum class hash_types { bernstein32, murmur128, xxhash64 };
+enum class hash_types { bernstein32, murmur128, xxhash64, zzz128, zzz, zz, z };
 
 // TODO: add more hash variants
-constexpr hash_types default_hash_128 = hash_types::murmur128;
-constexpr hash_types default_hash_64 = hash_types::xxhash64;
-constexpr u32 default_seed = 0x567E24FA;
+// default to homegrown zzz
+constexpr hash_types default_hash_128 = hash_types::zzz128;
+constexpr hash_types default_hash_64 = hash_types::zzz;
+constexpr u32 default_seed = 0x51B0D35A;     // try to keep it in signed i32 range
 
 typedef u32 hash32_t;
 typedef u64 hash64_t;
@@ -44,6 +46,8 @@ hash128(const byte *data, usize len)
 {
   if constexpr ( default_hash_128 == hash_types::murmur128 )
     return hashes::murmur<seed>(data, len);
+  if constexpr ( default_hash_128 == hash_types::zzz128 )
+    return hashes::zzz128<seed>(data, len);
 }
 
 template <u32 seed = default_seed>
@@ -52,6 +56,8 @@ hash128(const char *data)
 {
   if constexpr ( default_hash_128 == hash_types::murmur128 )
     return hashes::murmur<seed>(data, micron::strlen(data));
+  if constexpr ( default_hash_128 == hash_types::zzz128 )
+    return hashes::zzz128<seed>(data, micron::strlen(data));
 }
 
 template <u64 seed = default_seed, is_container_or_string T>
@@ -60,6 +66,12 @@ hash64(const T &data)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+  if constexpr ( default_hash_64 == hash_types::zzz )
+    return hashes::zzz64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+  if constexpr ( default_hash_64 == hash_types::zz )
+    return hashes::zz64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+  if constexpr ( default_hash_64 == hash_types::z )
+    return hashes::z64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
 }
 
 template <u64 seed = default_seed>
@@ -68,6 +80,12 @@ hash64(const char *data)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64<seed>(reinterpret_cast<const byte *>(data), micron::strlen(data));
+  if constexpr ( default_hash_64 == hash_types::zzz )
+    return hashes::zzz64<seed>(reinterpret_cast<const byte *>(data), micron::strlen(data));
+  if constexpr ( default_hash_64 == hash_types::zz )
+    return hashes::zz64<seed>(reinterpret_cast<const byte *>(data), micron::strlen(data));
+  if constexpr ( default_hash_64 == hash_types::z )
+    return hashes::z64<seed>(reinterpret_cast<const byte *>(data), micron::strlen(data));
 }
 
 template <u64 seed = default_seed>
@@ -76,6 +94,12 @@ hash64(const byte *data, usize len)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64<seed>(data, len);
+  if constexpr ( default_hash_64 == hash_types::zzz )
+    return hashes::zzz64<seed>(data, len);
+  if constexpr ( default_hash_64 == hash_types::zz )
+    return hashes::zz64<seed>(data, len);
+  if constexpr ( default_hash_64 == hash_types::z )
+    return hashes::z64<seed>(data, len);
 }
 
 template <typename T>
@@ -84,6 +108,12 @@ hash64(const T *data, usize len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64_rtseed(reinterpret_cast<const byte *>(data), seed, len);
+  if constexpr ( default_hash_64 == hash_types::zzz )
+    return hashes::zzz64(reinterpret_cast<const byte *>(data), seed, len);
+  if constexpr ( default_hash_64 == hash_types::zz )
+    return hashes::zz64(reinterpret_cast<const byte *>(data), seed, len);
+  if constexpr ( default_hash_64 == hash_types::z )
+    return hashes::z64(reinterpret_cast<const byte *>(data), seed, len);
 }
 
 hash64_t
@@ -91,6 +121,12 @@ hash64(const byte *data, usize len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 )
     return hashes::xxhash64_rtseed(data, seed, len);
+  if constexpr ( default_hash_64 == hash_types::zzz )
+    return hashes::zzz64(data, seed, len);
+  if constexpr ( default_hash_64 == hash_types::zz )
+    return hashes::zz64(data, seed, len);
+  if constexpr ( default_hash_64 == hash_types::z )
+    return hashes::z64(data, seed, len);
 }
 
 template <typename R = hash64_t, u32 seed = default_seed>

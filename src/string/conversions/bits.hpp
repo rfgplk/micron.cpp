@@ -808,11 +808,11 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
     return 0;
   usize pos = 0;
 
-  //bool negative = false;
+  // bool negative = false;
   if ( val < 0.0 ) {
     buf[pos++] = '-';
     val = -val;
-    //negative = true;
+    // negative = true;
   }
 
   u64 bits;

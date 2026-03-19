@@ -9,5 +9,6 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
-namespace micron {
+namespace micron
+{
 };
