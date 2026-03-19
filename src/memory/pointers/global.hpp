@@ -27,33 +27,38 @@ public:
   using __alloc = __internal_pointer_alloc<Type>;
 
   ~__global_pointer() { /*nothing*/ };
-  __global_pointer(void) : internal_pointer(__alloc::__impl_alloc()) {};
+
+  __global_pointer(void) noexcept : internal_pointer(__alloc::__impl_alloc()) {};
+
   template <typename V>
     requires micron::is_null_pointer_v<V>
-  __global_pointer(V) : internal_pointer(nullptr){};
+  __global_pointer(V) noexcept : internal_pointer(nullptr){};
 
-  __global_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+  __global_pointer(Type *&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+
   template <class... Args>
     requires(sizeof...(Args) > 0)
-  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};     // new Type(args...)){};
+  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
-  __global_pointer(__global_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+  __global_pointer(__global_pointer &&p) noexcept : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
   __global_pointer(const __global_pointer &p) = delete;
 
   __global_pointer &
-  operator=(__global_pointer &&t)
+  operator=(__global_pointer &&t) noexcept
   {
-    __alloc::__impl_dealloc(internal_pointer);
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
+    if ( this != &t ) {
+      __alloc::__impl_dealloc(internal_pointer);
+      internal_pointer = t.internal_pointer;
+      t.internal_pointer = nullptr;
+    }
     return *this;
   };
 
   __global_pointer &operator=(const __global_pointer &) = delete;
 
   __global_pointer &
-  operator=(Type *&&t) noexcept
+  operator=(Type *&t) noexcept
   {
     __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
@@ -103,12 +108,21 @@ public:
   };
 
   Type *
+  operator->()
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer;
+    else
+      exc<except::memory_error>("__global_pointer operator->(): internal_pointer was null");
+  }
+
+  const Type *
   operator->() const
   {
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      exc<except::memory_error>("__global_pointer operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer operator->(): internal_pointer was null");
   }
 
   Type &
@@ -153,10 +167,11 @@ public:
   clear()
   {
     __alloc::__impl_dealloc(internal_pointer);
+    internal_pointer = nullptr;
   };
 };
 
-template <class Type> class __global_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
+template <class Type> class __global_pointer<Type[]> : private __internal_pointer_arralloc<Type>
 {
   Type *internal_pointer;
 
@@ -165,46 +180,56 @@ public:
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
   using value_type = Type;
+  using element_type = Type;
 
-  using __alloc = __internal_pointer_arralloc<Type[]>;
+  using __alloc = __internal_pointer_arralloc<Type>;
 
   ~__global_pointer() { /*nothing*/ };
   __global_pointer(void) = delete;
 
   template <typename... Args>
     requires(sizeof...(Args) > 0)
-  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
-  {
-  }     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
+  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
-  __global_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
+  __global_pointer(Type *&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  __global_pointer(__global_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
+  __global_pointer(__global_pointer &&p) noexcept : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
   __global_pointer(const __global_pointer &p) = delete;
   __global_pointer(__global_pointer &p) = delete;
   __global_pointer &operator=(const __global_pointer &) = delete;
 
   __global_pointer &
-  operator=(__global_pointer &&t)
+  operator=(__global_pointer &&t) noexcept
   {
-    __alloc::__impl_dealloc(internal_pointer);
-    internal_pointer = t.internal_pointer;
-    t.internal_pointer = nullptr;
+    if ( this != addr(t) ) {
+      __alloc::__impl_dealloc(internal_pointer);
+      internal_pointer = t.internal_pointer;
+      t.internal_pointer = nullptr;
+    }
     return *this;
   };
 
-  const Type &
+  Type &
   operator[](const usize n)
   {
     if ( internal_pointer != nullptr )
-      return (*internal_pointer)[n];
+      return internal_pointer[n];
+    else
+      exc<except::memory_error>("__global_pointer[] operator[](): internal_pointer was null");
+  };
+
+  const Type &
+  operator[](const usize n) const
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer[n];
     else
       exc<except::memory_error>("__global_pointer[] operator[](): internal_pointer was null");
   };
 
   __global_pointer &
-  operator=(Type *&&t)
+  operator=(Type *&t) noexcept
   {
     __alloc::__impl_dealloc(internal_pointer);
     internal_pointer = t;
@@ -213,19 +238,31 @@ public:
   };
 
   const Type *
-  operator()() const
+  operator()() const noexcept
   {
     return internal_pointer;
   }
 
   const Type *
-  operator&() const
+  operator&() const noexcept
   {
     return internal_pointer;
   }
 
+  constexpr explicit
+  operator bool() const noexcept
+  {
+    return internal_pointer != nullptr;
+  }
+
+  bool
+  operator!(void) const noexcept
+  {
+    return internal_pointer == nullptr;
+  };
+
   inline Type *
-  release()
+  release() noexcept
   {
     auto *temp = internal_pointer;
     internal_pointer = nullptr;
@@ -241,7 +278,8 @@ public:
   inline void
   clear()
   {
-    __impl_dealloc(internal_pointer);
+    __alloc::__impl_dealloc(internal_pointer);
+    internal_pointer = nullptr;
   };
 
   Type &
@@ -262,22 +300,22 @@ public:
       exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
   };
 
-  const Type *
-  operator->() const
-  {
-    if ( internal_pointer != nullptr )
-      return internal_pointer;
-    else
-      exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
-  };
-
   Type *
   operator->()
   {
     if ( internal_pointer != nullptr )
       return internal_pointer;
     else
-      exc<except::memory_error>("__global_pointer[] operator*(): internal_pointer was null");
+      exc<except::memory_error>("__global_pointer[] operator->(): internal_pointer was null");
+  };
+
+  const Type *
+  operator->() const
+  {
+    if ( internal_pointer != nullptr )
+      return internal_pointer;
+    else
+      exc<except::memory_error>("__global_pointer[] operator->(): internal_pointer was null");
   };
 };
 

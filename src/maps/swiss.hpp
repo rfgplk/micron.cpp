@@ -76,8 +76,9 @@ class stack_swiss_map
   __mask
   __match(u8 hash_val, usize ind) const
   {
+    // NOTE: must be unaligned load, no guarantee ind will always be aligned
     simd::i128 match = _mm_set1_epi8(static_cast<i8>(hash_val));
-    simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
+    simd::i128 meta = _mm_loadu_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
     int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(match, meta));
     return __mask(mask);
   }
@@ -86,7 +87,7 @@ class stack_swiss_map
   __match_empty(usize ind) const
   {
     simd::i128 empty = _mm_set1_epi8(static_cast<i8>(__empty));
-    simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
+    simd::i128 meta = _mm_loadu_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
     int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(empty, meta));
     return __mask(mask);
   }
@@ -94,9 +95,10 @@ class stack_swiss_map
   __mask
   __match_empty_or_deleted(usize ind) const
   {
-    simd::i128 meta = _mm_load_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
-    simd::i128 sentinel = _mm_set1_epi8(static_cast<i8>(__sentinel));
-    int mask = _mm_movemask_epi8(_mm_cmpgt_epi8(meta, sentinel) | _mm_cmpeq_epi8(meta, _mm_set1_epi8(static_cast<i8>(__deleted))));
+    simd::i128 meta = _mm_loadu_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
+    simd::i128 empty = _mm_set1_epi8(static_cast<i8>(__empty));
+    simd::i128 deleted = _mm_set1_epi8(static_cast<i8>(__deleted));
+    int mask = _mm_movemask_epi8(_mm_or_si128(_mm_cmpeq_epi8(meta, empty), _mm_cmpeq_epi8(meta, deleted)));
     return __mask(mask);
   }
 
@@ -126,7 +128,7 @@ class stack_swiss_map
           __control_bytes[probe] = h2;
           __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
           ++__size;
-          return { true, &__entries[probe].value };
+          return { true, addr(__entries[probe].value) };
         }
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
@@ -135,7 +137,7 @@ class stack_swiss_map
             __control_bytes[probe] = h2;
             __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
             ++__size;
-            return { true, &__entries[probe].value };
+            return { true, addr(__entries[probe].value) };
           }
         }
       }
@@ -275,7 +277,7 @@ public:
   micron::pair<bool, V *>
   insert(const micron::pair<K, V> &kv)
   {
-    return insert(kv.first, kv.second);
+    return insert(kv.a, kv.b);
   }
 
   template <typename... Args>
@@ -373,7 +375,7 @@ public:
         while ( m.any() ) {
           usize probe = group_start + m.lowest();
           if ( __entries[probe].key == key ) {
-            return &__entries[probe].value;
+            return addr(__entries[probe].value);
           }
           m.clear_lowest();
         }
@@ -381,7 +383,7 @@ public:
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
-            return &__entries[probe].value;
+            return addr(__entries[probe].value);
           }
         }
       }
@@ -411,16 +413,11 @@ public:
   V &
   operator[](const K &key)
   {
-    V *v = find(key);
-    if ( v ) {
-      return *v;
-    }
-
     auto result = insert(key, V{});
-    if ( !result.first ) {
+    if ( !result.b ) {
       exc<except::library_error>("micron stack_swiss_map::operator[](): map is full");
     }
-    return *result.second;
+    return *result.b;
   }
 
   V &

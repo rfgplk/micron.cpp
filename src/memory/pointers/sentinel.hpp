@@ -10,14 +10,14 @@
 
 namespace micron
 {
-
 // A sentinel pointer
+// only keeps around a pointer value, nothing else
 class sentinel_pointer
 {
   const byte *const internal_pointer;
 
 public:
-  using pointer_type = owning_pointer_tag;
+  using pointer_type = void_pointer_tag;
   using category_type = pointer_tag;
   using mutability_type = immutable_tag;
   using element_type = void;
@@ -25,15 +25,17 @@ public:
 
   ~sentinel_pointer() = default;
 
-  sentinel_pointer(byte *P) : internal_pointer(P) {}     // internal_pointer(new Type()) {};
+  sentinel_pointer(const byte *P) noexcept : internal_pointer(P) {}
 
-  sentinel_pointer(uintptr_t F) : internal_pointer(reinterpret_cast<byte *>(uintptr_t(F))) {}     // internal_pointer(new Type()) {};
+  sentinel_pointer(uintptr_t F) noexcept     // fix 5
+      : internal_pointer(reinterpret_cast<byte *>(F))
+  {
+  }
 
-  sentinel_pointer(sentinel_pointer &&p) = delete;
-  sentinel_pointer(const sentinel_pointer &p) = delete;
-
+  sentinel_pointer(sentinel_pointer &&) = delete;
+  sentinel_pointer(const sentinel_pointer &) = delete;
   sentinel_pointer &operator=(const sentinel_pointer &) = delete;
-  sentinel_pointer &operator=(sentinel_pointer &&t) = delete;
+  sentinel_pointer &operator=(sentinel_pointer &&) = delete;
 
   const byte *
   operator()() const noexcept
@@ -42,39 +44,37 @@ public:
   }
 
   bool
-  operator!(void) const noexcept
+  operator!() const noexcept
   {
     return internal_pointer == nullptr;
-  };
+  }
 
-  template <typename T>
-  bool
-  operator==(T *v) const noexcept
-  {
-    return internal_pointer == v;
-  };
-
-  bool
-  operator==(uintptr_t u) const noexcept
-  {
-    return internal_pointer == reinterpret_cast<byte *>(u);
-  };
-
-  constexpr explicit
+  explicit
   operator bool() const noexcept
   {
     return internal_pointer != nullptr;
   }
 
-  byte *operator->() = delete;
-
-  const byte *
-  operator*() const
+  bool
+  operator==(const void *v) const noexcept
   {
-    return internal_pointer;
+    return internal_pointer == v;
   }
 
-  inline byte *release() = delete;
+  bool
+  operator==(uintptr_t u) const noexcept
+  {
+    return internal_pointer == reinterpret_cast<const byte *>(u);
+  }
+
+  const byte &
+  operator*() const
+  {
+    return *internal_pointer;
+  }
+
+  byte *operator->() = delete;
+  byte *release() = delete;
   void clear() = delete;
 };
 

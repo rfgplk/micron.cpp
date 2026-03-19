@@ -159,7 +159,7 @@ template <typename F, typename D, u64 alignment = 1>
 bool
 rsbytemove(F &_dest, D &_src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
+  if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) )
     return false;
 
   byte *dest = reinterpret_cast<byte *>(&_dest);
@@ -207,7 +207,7 @@ template <u64 M, typename F, typename D, u64 alignment = 1>
 bool
 rscrbytemove(F &_dest, D &_src) noexcept
 {
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
+  if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) )
     return false;
 
   byte *dest = reinterpret_cast<byte *>(&_dest);
@@ -351,7 +351,7 @@ template <typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemmove(F &dest, D &src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) )
     return false;
 
   F *d = &dest;
@@ -394,7 +394,7 @@ template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 bool
 rscmemmove(F &dest, D &src) noexcept
 {
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) )
     return false;
 
   F *d = &dest;

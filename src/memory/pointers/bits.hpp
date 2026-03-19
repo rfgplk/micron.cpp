@@ -78,6 +78,14 @@ template <class Type> struct __internal_pointer_arralloc {
       __delete_arr(pointer);
     }
   }
+
+  static inline __attribute__((always_inline)) void
+  __impl_constdealloc(const Type *const pointer)
+  {
+    if ( pointer != nullptr ) {
+      __const_delete_arr(pointer);
+    }
+  }
 };
 
 template <typename T> struct shared_handler {

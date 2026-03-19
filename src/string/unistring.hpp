@@ -260,23 +260,24 @@ to_string(const C *str)
   return micron::hstring<C>(str);
 }
 
+/*
 template <usize N, typename C>
 inline micron::hstring<C>
 to_string(const C (&str)[N])
 {
   return micron::hstring<C>(str);
 }
-
+*/
 template <typename C = char>
 inline micron::hstring<C>
-to_string(f32 val)
+to_string_f32(f32 val)
 {
   return float_to_string<C>(val);
 }
 
 template <typename C = char>
 inline micron::hstring<C>
-to_string(f64 val)
+to_string_f64(f64 val)
 {
   return double_to_string<C>(val);
 }

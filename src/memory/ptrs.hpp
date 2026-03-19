@@ -9,6 +9,7 @@
 #include "pointers/free.hpp"
 #include "pointers/global.hpp"
 // #include "pointers/hazard.hpp"
+#include "pointers/atomic.hpp"
 #include "pointers/node.hpp"
 #include "pointers/sentinel.hpp"
 #include "pointers/shared.hpp"
