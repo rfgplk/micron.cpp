@@ -740,8 +740,8 @@ public:
       reserve(__mem::capacity + cnt);
       itr = __mem::memory + dif;
     }
-
-    __safety_check<&hstring::__iterator_check, except::library_error>("micron::hstring insert() iterator out of range", itr);
+    __safety_check<static_cast<bool (hstring::*)(char *)>(&hstring::__iterator_check), except::library_error>(
+        "micron::hstring insert() iterator out of range", itr);
 
     micron::bytemove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
     micron::memset(itr, ch, cnt);
@@ -1019,7 +1019,10 @@ public:
   inline hstring<F> &
   truncate(iterator itr)
   {
-    __safety_check<&hstring::__iterator_check, except::library_error>("micron::hstring truncate() iterator out of range", itr);
+    using self = hstring<T, Sf, Alloc>;
+
+    __safety_check<static_cast<bool (self::*)(T *) const>(&self::__iterator_check), except::library_error>(
+        "micron::hstring truncate() iterator out of range", itr);
 
     if ( itr >= end() )
       return *this;
@@ -1034,7 +1037,10 @@ public:
   inline hstring<F> &
   truncate(const_iterator itr)
   {
-    __safety_check<&hstring::__iterator_check, except::library_error>("micron::hstring truncate() iterator out of range", itr);
+    using self = hstring<T, Sf, Alloc>;
+
+    __safety_check<static_cast<bool (self::*)(const T *) const>(&self::__iterator_check), except::library_error>(
+        "micron::hstring truncate() iterator out of range", itr);
 
     if ( itr >= cend() )
       return *this;
