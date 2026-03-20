@@ -23,10 +23,10 @@
 
 #include "../../../closures.hpp"
 #include "../../../concepts.hpp"
+#include "../../../memory/allocation/kmemory.hpp"
 #include "../../../numerics.hpp"
 #include "../../../type_traits.hpp"
 #include "../../../types.hpp"
-#include "../kmemory.hpp"
 
 #include "../../../linux/sys/sysinfo.hpp"
 
@@ -113,6 +113,8 @@ __page_round(usize sz)
 class __arena : private cache
 {
   template <typename T> struct alignas(16) node {
+    using sheet_type = T;
+
     T *nd;
     node<T> *nxt;
   };
@@ -136,18 +138,19 @@ class __arena : private cache
   node<sheet<__class_huge>> _huge_buckets;
   node<sheet<__class_huge>> *_tail_huge_buckets;
 
+  // __dispatch is kept for read-only / freeze paths only
   template <typename Fn>
   inline __attribute__((always_inline)) bool
   __dispatch(Fn &&fn)
   {
-    return fn(&_cache_buffer) || fn(&_small_buckets) || fn(&_medium_buckets) || fn(&_large_buckets) || fn(&_huge_buckets);
+    return fn(&_cache_buffer) or fn(&_small_buckets) or fn(&_medium_buckets) or fn(&_large_buckets) or fn(&_huge_buckets);
   }
 
   template <typename Fn>
   inline __attribute__((always_inline)) bool
   __dispatch(Fn &&fn) const
   {
-    return fn(&_cache_buffer) || fn(&_small_buckets) || fn(&_medium_buckets) || fn(&_large_buckets) || fn(&_huge_buckets);
+    return fn(&_cache_buffer) or fn(&_small_buckets) or fn(&_medium_buckets) or fn(&_large_buckets) or fn(&_huge_buckets);
   }
 
   void
@@ -157,6 +160,30 @@ class __arena : private cache
     __debug_print("__reload_arena_buf(): arena metadata buf remaining: ", __available_buffer());
     __expand_bucket_arena<__class_arena_internal>(&_arena_buffer, _tail_arena_buffer, _tail_arena_buffer->nd->allocated() * 2);
     __debug_print("__reload_arena_buf(): arena buf expanded, new allocated: ", _tail_arena_buffer->nd->allocated());
+  }
+
+  inline __attribute__((always_inline)) micron::__chunk<byte>
+  __mark_arena(usize sz)
+  {
+  retry_mark:
+    micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(sz);
+    if ( buf.failed_allocation() ) [[unlikely]] {
+      __debug_print("__mark_arena(): arena buf exhausted, triggering reload", 0);
+      __reload_arena_buf();
+      goto retry_mark;
+    }
+    return buf;
+  }
+
+  // unmark arena
+  // NOTE: type of node and sheet are incredibly important
+  // different sizes WILL cause different/errneous frees and memory corruption
+  template <typename Nd>
+  void
+  __unmark_arena(byte *addr)
+  {
+    using Sh = typename Nd::sheet_type;
+    __find_and_remove_arena(&_arena_buffer, micron::__chunk<byte>(addr, sizeof(Nd) + sizeof(Sh)));
   }
 
   template <u64 Sz, typename F, typename G>
@@ -211,14 +238,7 @@ class __arena : private cache
     __debug_print("__expand_tlsf(): requested backing region: ", sz);
     while ( nd->nxt != nullptr )
       nd = nd->nxt;
-  retry_tlsf:
-    usize pair_sz = sizeof(node<tlsf_sheet<Sz>>) + sizeof(tlsf_sheet<Sz>);
-    micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(pair_sz);
-    if ( buf.failed_allocation() ) [[unlikely]] {
-      __debug_print("__expand_tlsf(): arena buf exhausted, triggering reload for class: ", Sz);
-      __reload_arena_buf();
-      goto retry_tlsf;
-    }
+    micron::__chunk<byte> buf = __mark_arena(sizeof(node<tlsf_sheet<Sz>>) + sizeof(tlsf_sheet<Sz>));
     byte *p = buf.ptr;
     nd->nxt = new (p) node<tlsf_sheet<Sz>>();
     p += sizeof(node<tlsf_sheet<Sz>>);
@@ -263,14 +283,7 @@ class __arena : private cache
     __debug_print("__expand_bucket(): requested expansion size: ", sz);
     while ( nd->nxt != nullptr )
       nd = nd->nxt;
-  retry_buddy:
-    usize pair_sz = sizeof(node<sheet<Sz>>) + sizeof(sheet<Sz>);
-    micron::__chunk<byte> buf = _tail_arena_buffer->nd->try_mark(pair_sz);
-    if ( buf.failed_allocation() ) [[unlikely]] {
-      __debug_print("__expand_bucket(): arena buf exhausted during expansion, class: ", Sz);
-      __reload_arena_buf();
-      goto retry_buddy;
-    }
+    micron::__chunk<byte> buf = __mark_arena(sizeof(node<sheet<Sz>>) + sizeof(sheet<Sz>));
     byte *p = buf.ptr;
     nd->nxt = new (p) node<sheet<Sz>>();
     p += sizeof(node<sheet<Sz>>);
@@ -394,6 +407,10 @@ class __arena : private cache
     micron::__chunk<byte> memory = { nullptr, 0 };
     while ( nd != nullptr ) {
       __builtin_prefetch(nd->nxt, 0, 1);
+      if ( !nd->nd ) {
+        nd = nd->nxt;
+        continue;
+      }
       auto &sh = *nd->nd;
       if constexpr ( __default_launder ) {
         if ( memory = sh.temporal_mark(sz); !memory.zero() )
@@ -423,7 +440,7 @@ class __arena : private cache
 
   template <typename F>
   bool
-  __find_and_tombstone(F *__node, const micron::__chunk<byte> &memory)
+  __find_and_tombstone(F *__node, F *&__tail, const micron::__chunk<byte> &memory)
   {
     F *__p_head = __node;
     while ( __node != nullptr ) {
@@ -440,10 +457,14 @@ class __arena : private cache
         usize ft = sh.ftotal();
         __debug_print("__find_and_tombstone(): tombstoned count: ", ts);
         __debug_print("__find_and_tombstone(): ftotal: ", ft);
-        if ( ts > (ft >> 1) and sh.used() == 0 ) {
+        if ( (ts > (ft >> 1)) and sh.used() == 0 ) {
           __debug_print("__find_and_tombstone(): tombstone ratio exceeded threshold, resetting sheet", 0);
           sh.reset();
           __p_head->nxt = __node->nxt;
+          // NOTE: MUST repair tail, dangling pointers otherwise
+          if ( __node == __tail )
+            __tail = __p_head;
+          __unmark_arena<F>(reinterpret_cast<byte *>(__node));
         }
         return true;
       }
@@ -456,7 +477,7 @@ class __arena : private cache
 
   template <typename F>
   bool
-  __find_and_tombstone(F *__node, byte *addr)
+  __find_and_tombstone(F *__node, F *&__tail, byte *addr)
   {
     F *__p_head = __node;
     while ( __node != nullptr ) {
@@ -473,10 +494,13 @@ class __arena : private cache
         usize ft = sh.ftotal();
         __debug_print("__find_and_tombstone() addr: tombstoned count: ", ts);
         __debug_print("__find_and_tombstone() addr: ftotal: ", ft);
-        if ( ts > (ft >> 1) and sh.used() == 0 ) {
+        if ( (ts > (ft >> 1)) and sh.used() == 0 ) {
           __debug_print("__find_and_tombstone() addr: tombstone ratio exceeded threshold, resetting sheet", 0);
           sh.reset();
           __p_head->nxt = __node->nxt;
+          if ( __node == __tail )
+            __tail = __p_head;
+          __unmark_arena<F>(reinterpret_cast<byte *>(__node));
         }
         return true;
       }
@@ -489,7 +513,33 @@ class __arena : private cache
 
   template <typename F>
   bool
-  __find_and_remove(F *__node, const micron::__chunk<byte> &memory)
+  __find_and_remove_arena(F *__node, const micron::__chunk<byte> &memory)
+  {
+    __debug_print_addr("__find_and_remove_arena(): searching for ", memory.ptr);
+    while ( __node != nullptr ) {
+      __builtin_prefetch(__node->nxt, 0, 1);
+      if ( !__node->nd ) {
+        __node = __node->nxt;
+        continue;
+      }
+      auto &sh = *__node->nd;
+      if ( sh.is_at(reinterpret_cast<addr_t *>(memory.ptr)) ) [[unlikely]] {
+        __debug_print_addr("__find_and_remove_arena(): found in sheet at addr: ", memory.ptr);
+        if ( sh.try_unmark(memory) ) {
+          __debug_print("__find_and_remove_arena(): unmark succeeded, sheet used: ", sh.used());
+          return true;
+        }
+        __debug_print_addr("__find_and_remove_arena(): WARNING try_unmark failed for: ", memory.ptr);
+      }
+      __node = __node->nxt;
+    }
+    __debug_print_addr("__find_and_remove_arena(): WARNING address not found in any sheet: ", memory.ptr);
+    abort_state();
+  }
+
+  template <typename F>
+  bool
+  __find_and_remove(F *__node, F *&__tail, const micron::__chunk<byte> &memory)
   {
     F *__init_nd = __node;
     F *__p_head = __node;
@@ -511,6 +561,10 @@ class __arena : private cache
               __debug_print("__find_and_remove(): sheet fully drained, unlinking and resetting", 0);
               sh.reset();
               __p_head->nxt = __node->nxt;
+              // NOTE: must repair tail, dangling pointers otherwise
+              if ( __node == __tail )
+                __tail = __p_head;
+              __unmark_arena<F>(reinterpret_cast<byte *>(__node));
             }
             return true;
           }
@@ -521,10 +575,13 @@ class __arena : private cache
             usize ft = sh.ftotal();
             __debug_print("__find_and_remove(): tombstone set, tombstoned: ", ts);
             __debug_print("__find_and_remove(): ftotal: ", ft);
-            if ( ts > (ft >> 1) and sh.used() == 0 ) {
+            if ( (ts > (ft >> 1)) and sh.used() == 0 ) {
               __debug_print("__find_and_remove(): tombstone threshold crossed, compacting sheet", 0);
               sh.reset();
               __p_head->nxt = __node->nxt;
+              if ( __node == __tail )
+                __tail = __p_head;
+              __unmark_arena<F>(reinterpret_cast<byte *>(__node));
             }
             return true;
           }
@@ -539,7 +596,7 @@ class __arena : private cache
 
   template <typename F>
   bool
-  __find_and_remove(F *__node, byte *addr)
+  __find_and_remove(F *__node, F *&__tail, byte *addr)
   {
     F *__init_nd = __node;
     F *__p_head = __node;
@@ -561,6 +618,9 @@ class __arena : private cache
               __debug_print("__find_and_remove() addr: sheet fully drained, unlinking and resetting", 0);
               sh.reset();
               __p_head->nxt = __node->nxt;
+              if ( __node == __tail )
+                __tail = __p_head;
+              __unmark_arena<F>(reinterpret_cast<byte *>(__node));
             }
             return true;
           }
@@ -575,6 +635,9 @@ class __arena : private cache
               __debug_print("__find_and_remove() addr: tombstone threshold crossed, compacting sheet", 0);
               sh.reset();
               __p_head->nxt = __node->nxt;
+              if ( __node == __tail )
+                __tail = __p_head;
+              __unmark_arena<F>(reinterpret_cast<byte *>(__node));
             }
             return true;
           }
@@ -638,13 +701,19 @@ class __arena : private cache
   bool
   __vmap_tombstone(const micron::__chunk<byte> &m)
   {
-    return __dispatch([&](auto *nd) { return __find_and_remove(nd, m); });
+    return __find_and_remove(&_cache_buffer, _tail_cache_buffer, m) or __find_and_remove(&_small_buckets, _tail_small_buckets, m)
+           or __find_and_remove(&_medium_buckets, _tail_medium_buckets, m) or __find_and_remove(&_large_buckets, _tail_large_buckets, m)
+           or __find_and_remove(&_huge_buckets, _tail_huge_buckets, m);
   }
 
   bool
   __vmap_tombstone_at(byte *addr)
   {
-    return __dispatch([&](auto *nd) { return __find_and_tombstone(nd, addr); });
+    return __find_and_tombstone(&_cache_buffer, _tail_cache_buffer, addr)
+           or __find_and_tombstone(&_small_buckets, _tail_small_buckets, addr)
+           or __find_and_tombstone(&_medium_buckets, _tail_medium_buckets, addr)
+           or __find_and_tombstone(&_large_buckets, _tail_large_buckets, addr)
+           or __find_and_tombstone(&_huge_buckets, _tail_huge_buckets, addr);
   }
 
   bool
@@ -656,13 +725,17 @@ class __arena : private cache
   bool
   __vmap_remove(const micron::__chunk<byte> &m)
   {
-    return __dispatch([&](auto *nd) { return __find_and_remove(nd, m); });
+    return __find_and_remove(&_cache_buffer, _tail_cache_buffer, m) or __find_and_remove(&_small_buckets, _tail_small_buckets, m)
+           or __find_and_remove(&_medium_buckets, _tail_medium_buckets, m) or __find_and_remove(&_large_buckets, _tail_large_buckets, m)
+           or __find_and_remove(&_huge_buckets, _tail_huge_buckets, m);
   }
 
   bool
   __vmap_remove_at(byte *addr)
   {
-    return __dispatch([&](auto *nd) { return __find_and_remove(nd, addr); });
+    return __find_and_remove(&_cache_buffer, _tail_cache_buffer, addr) or __find_and_remove(&_small_buckets, _tail_small_buckets, addr)
+           or __find_and_remove(&_medium_buckets, _tail_medium_buckets, addr)
+           or __find_and_remove(&_large_buckets, _tail_large_buckets, addr) or __find_and_remove(&_huge_buckets, _tail_huge_buckets, addr);
   }
 
   bool
@@ -1205,7 +1278,7 @@ or thread storage duration exits via an exception, the function std::terminate i
   __size_of_alloc(addr_t *addr) const
   {
     // tlsf classes: block header at ptr - __hdr_offset, first u32 is bsize
-    if ( __within(&_cache_buffer, addr) || __within(&_small_buckets, addr) ) {
+    if ( __within(&_cache_buffer, addr) or __within(&_small_buckets, addr) ) {
       u32 bsz = *reinterpret_cast<u32 *>(reinterpret_cast<byte *>(addr) - __hdr_offset);
       __debug_print("__size_of_alloc(): tlsf block size recovered: ", (usize)bsz);
       return (usize)bsz;
