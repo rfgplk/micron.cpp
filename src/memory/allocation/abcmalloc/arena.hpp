@@ -534,7 +534,9 @@ class __arena : private cache
       __node = __node->nxt;
     }
     __debug_print_addr("__find_and_remove_arena(): WARNING address not found in any sheet: ", memory.ptr);
-    abort_state();
+    // abort_state();
+    // don't hard fail
+    return false;
   }
 
   template <typename F>
