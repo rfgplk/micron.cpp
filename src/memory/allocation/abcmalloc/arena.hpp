@@ -515,13 +515,10 @@ class __arena : private cache
   bool
   __find_and_remove_arena(F *__node, const micron::__chunk<byte> &memory)
   {
-    F *__init_nd = __node;
-    F *__p_head = __node;
     __debug_print_addr("__find_and_remove_arena(): searching for ", memory.ptr);
     while ( __node != nullptr ) {
       __builtin_prefetch(__node->nxt, 0, 1);
       if ( !__node->nd ) {
-        __p_head = __node;
         __node = __node->nxt;
         continue;
       }
@@ -534,7 +531,6 @@ class __arena : private cache
         }
         __debug_print_addr("__find_and_remove_arena(): WARNING try_unmark failed for: ", memory.ptr);
       }
-      __p_head = __node;
       __node = __node->nxt;
     }
     __debug_print_addr("__find_and_remove_arena(): WARNING address not found in any sheet: ", memory.ptr);
