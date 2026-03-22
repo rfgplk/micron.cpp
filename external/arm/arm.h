@@ -1,10 +1,5 @@
-//  Copyright (c) 2024- David Lucius Severus
-//
-//  Distributed under the Boost Software License, Version 1.0.
-//  See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt
-// nanoflagsx86 (for C99 and onwards)
-// https://github.com/rfgplk/nanoflagsx86
+// nanoflagsarm (for C99 and onwards)
+// https://github.com/rfgplk/nanoflagsarm
 //
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 // SPDX-License-Identifier: MIT
@@ -30,11 +25,14 @@
 
 #pragma once
 
-#include "cpuid.h"
 #include "macros.h"
+#include "sysreg.h"
+#include "model.h"
 #include "parser.h"
 #include "processor.h"
 
-char vendor(const cstruct_t *__restrict__ const);
+char vendor(const unsigned long);
 void spec(processor_t *__restrict__ const);
 void info(processor_t *__restrict__ const);
+char have_idreg(void);
+int maximum_arch(void);

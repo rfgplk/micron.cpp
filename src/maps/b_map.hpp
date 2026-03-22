@@ -16,6 +16,8 @@
 
 #include "../concepts.hpp"
 
+// NOTE: sort of broken and de facto deprecated
+
 namespace micron
 {
 

@@ -49,7 +49,7 @@ constexpr static const u64 __alloc_limit = 0;     // forbid any allocations grea
 
 // these two switches determine the number of *pages* to allocate on initialization, by default, it's 512 pages for the
 // internal abcmalloc metabuffer, and a minimum of 16 per each new sheet allocation
-constexpr static const u64 __default_cache_size_factor = (1 << 12);     // 1 MB total (mults by class_precise)
+constexpr static const u64 __default_cache_size_factor = (1 << 13);     // 1 MB total (mults by class_precise)
 constexpr static const u64 __default_arena_page_buf = 512;              // 2MiB for now... ~81k rnd allocations
 constexpr static const u64 __default_magic_size = micron::numeric_limits<u64>::max();
 constexpr static const u64 __default_minimum_page_mul = 16;         // 65kB minimum per sheet, larger buckets will exceed this
@@ -62,6 +62,12 @@ constexpr static const bool __default_lazy_construct = true;       // should buc
 constexpr static const bool __default_single_instance = true;      // enable an allocator per thread (DEPRECATED for now)
 constexpr static const bool __default_global_instance = false;     // enable a single global allocator (DEPRECATED for now)
 constexpr static const bool __default_multithread_safe = true;     // essentially, enables locks across API calls
+constexpr static const bool __default_eager_hot_tiers
+    = true;     // eagerly preallocate precise/small/medium with weight-based shares even if __default_lazy_construct is true
+
+// 0 == per-dealloc tombstone ratio check (pre 1.1 behav.)
+// >0 == batch only sweep a tier's sheets every N deallocations
+constexpr static const u32 __default_tombstone_sweep_interval = 64;
 
 static_assert(__default_single_instance != __default_global_instance,
               "abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.");
@@ -85,12 +91,12 @@ constexpr static const float __default_oom_limit_error = 0.2f;
 constexpr static const bool __default_enforce_provenance = false;
 // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation
 // UNLESS the page on which it resides has been unmapped
-constexpr static const bool __default_tombstone = false;
+constexpr static const bool __default_tombstone = true;
 constexpr static const bool __default_insert_guard_pages = true;
 constexpr static const int __default_guard_page_perms = micron::prot_none;
 
 // NOTE: all of these cost a lot of performance
-constexpr static const bool __default_self_cleanup = true;
+constexpr static const bool __default_self_cleanup = false;
 constexpr static const bool __default_debug_notices = false;
 constexpr static const bool __default_zero_on_alloc = false;
 constexpr static const bool __default_zero_on_free = false;
@@ -99,4 +105,28 @@ constexpr static const bool __default_sanitize = false;
 constexpr static const byte __default_sanitize_with_on_alloc = 0xcc;
 
 constexpr static const bool __default_collect_stats = false;
+constexpr static const byte __default_double_free_action = 2;
+// 0 == ignore silently (return false, no log)
+// 1 == log diagnostic return false
+// 2 == abort
+
+constexpr static const bool __default_guard_arena_metadata = true;
+// insert guard pages at the trail of each arena metadata
+// same protection flags as __default_guard_page_perms
+
+constexpr static const bool __default_unsafe_size_recovery = false;
+// when true, sz==0 scrub paths read size from addr - __hdr_offset (only for TLSF) when false sz==0 scrubs are skipped
+
+constexpr static const bool __default_check_alignment = false;     // verify that addresses passed to pop/freeze are naturally aligned
+
+constexpr static const bool __default_poison_on_free = false;
+// fill freed regions with __default_poison_byte to detect use-after-free.
+
+constexpr static const byte __default_poison_byte = 0x7B;
+
+constexpr static const bool __default_redzone = false;     // insert canary bytes before/after user region on TLSF allocations
+                                                           // NOTE: uses 2 * __default_redzone_size bytes per alloc
+
+constexpr static const byte __default_redzone_byte = 0xC1;
+constexpr static const usize __default_redzone_size = 8;
 };     // namespace abc

@@ -1,8 +1,3 @@
-//  Copyright (c) 2024- David Lucius Severus
-//
-//  Distributed under the Boost Software License, Version 1.0.
-//  See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt
 // nanoflagsx86 (for C99 and onwards)
 // https://github.com/rfgplk/nanoflagsx86
 //
@@ -17,8 +12,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,7 +23,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 #pragma once
 
 #include "macros.h"
@@ -37,8 +31,7 @@ BEGIN_C_NS
 
 #define __cpuid(level, a, b, c, d) __asm__("cpuid\n\t" : "=a"(a), "=b"(b), "=c"(c), "=d"(d) : "0"(level))
 
-#define __cpuid_count(level, count, a, b, c, d)                                                                         \
-  __asm__("cpuid\n\t" : "=a"(a), "=b"(b), "=c"(c), "=d"(d) : "0"(level), "2"(count))
+#define __cpuid_count(level, count, a, b, c, d) __asm__("cpuid\n\t" : "=a"(a), "=b"(b), "=c"(c), "=d"(d) : "0"(level), "2"(count))
 
 #define __rdtscp(rax, rdx, aux) __asm__ volatile("rdtscp\n" : "=a"(rax), "=d"(rdx), "=c"(aux) : :);
 
@@ -66,9 +59,9 @@ rbit(const unsigned long r, const unsigned long from, const unsigned long to)
 {
   const unsigned long long bits = from - to + 1;
   const unsigned long long mask = (1ULL << bits) - 1ULL;
-  return static_cast<unsigned int>((r >> to) & mask);
-  // return (r >> to) & ((1ULL << ((from - to + 1) - 1ULL)));
+  return (unsigned int)((r >> to) & mask);
 }
+
 __inline__ char
 bit(const unsigned long r, const unsigned long b)
 {
@@ -94,18 +87,17 @@ have_cpuid(void)
           : "=&r"(eax), "=&r"(ebx)
           : "i"(0x00200000));
 #endif
-
   if ( !((eax ^ ebx) & 0x00200000) )
     return 0;
   return 1;
 }
 
-long unsigned int
+int
 maximum_leaf(void)
 {
   cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = 0, .edx = 0 };
   cpuid(0x00, &cs);
-  return cs.eax;
+  return (int)cs.eax;
 }
 
 END_C_NS

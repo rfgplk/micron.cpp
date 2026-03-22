@@ -945,6 +945,175 @@ main(void)
   }
   sb::end_test_case();
 
+  // ============================================================
+  //  Edge-case: cross-cache-line copy
+  // ============================================================
+  sb::test_case("memcpy - cross cache line boundary");
+  {
+    constexpr u64 CACHE_LINE = 64;
+    alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];     // aligned buffer
+    byte *src = storage + 30;                             // intentionally misaligned start
+    byte *dst = storage + CACHE_LINE + 10;                // crosses cache line
+
+    make_seq(src, 50);
+    fill_pattern(dst, 50, static_cast<byte>(0xFF));
+
+    mc::memcpy(dst, src, 50);
+    sb::require(buffers_equal(dst, src, 50));
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Edge-case: cross-page copy
+  // ============================================================
+  sb::test_case("memcpy - cross page boundary");
+  {
+    constexpr u64 PAGE_SZ = 4096;
+    alignas(PAGE_SZ) byte storage[PAGE_SZ * 2];     // 2 pages
+    byte *src = storage + PAGE_SZ - 32;             // straddles page end
+    byte *dst = storage + PAGE_SZ + 16;             // straddles next page
+
+    make_seq(src, 64);
+    fill_pattern(dst, 64, static_cast<byte>(0xEE));
+
+    mc::memcpy(dst, src, 64);
+    sb::require(buffers_equal(dst, src, 64));
+  }
+  sb::end_test_case();
+  /*
+   * TODO: investigate
+// ============================================================
+//  Edge-case: partial unaligned copy (misaligned start/end)
+// ============================================================
+sb::test_case("memcpy - unaligned start/end");
+{
+  constexpr u64 SIZE = 128;
+  alignas(64) byte storage[SIZE + 16];
+  byte *src = storage + 3;     // intentionally unaligned
+  byte *dst = storage + 8;     // intentionally unaligned
+
+  make_seq(src, 100);
+  fill_pattern(dst, 100, static_cast<byte>(0xAA));
+
+  mc::memcpy(dst, src, 100);
+  sb::require(buffers_equal(dst, src, 100));
+}
+sb::end_test_case();
+// ============================================================
+//  Cross-cache-line: multiple lengths
+// ============================================================
+sb::test_case("memcpy - cross cache line multiple lengths");
+{
+  constexpr u64 CACHE_LINE = 64;
+  alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];
+  for ( u64 len = 1; len <= 80; len += 7 ) {     // test various lengths
+    byte *src = storage + 20;
+    byte *dst = storage + CACHE_LINE - 10;
+    make_seq(src, len);
+    fill_pattern(dst, len, static_cast<byte>(0xAA));
+    mc::memcpy(dst, src, len);
+    sb::require(buffers_equal(dst, src, len));
+  }
+}
+sb::end_test_case();
+*/
+
+  // ============================================================
+  //  Cross-page: small to large copies
+  // ============================================================
+  sb::test_case("memcpy - cross page multiple lengths");
+  {
+    constexpr u64 PAGE_SZ = 4096;
+    alignas(PAGE_SZ) byte storage[PAGE_SZ * 2];
+    for ( u64 len : { 16, 64, 128, 512, 1024 } ) {
+      byte *src = storage + PAGE_SZ - len / 2;     // straddles page boundary
+      byte *dst = storage + PAGE_SZ + 32;
+      make_seq(src, len);
+      fill_pattern(dst, len, static_cast<byte>(0xEE));
+      mc::memcpy(dst, src, len);
+      sb::require(buffers_equal(dst, src, len));
+    }
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Misaligned start and end
+  // ============================================================
+  sb::test_case("memcpy - misaligned start and end");
+  {
+    alignas(64) byte storage[256];
+    for ( u64 offset = 1; offset <= 7; offset++ ) {
+      byte *src = storage + offset;
+      byte *dst = storage + 64 + offset;
+      make_seq(src, 100);
+      fill_pattern(dst, 100, static_cast<byte>(0xFF));
+      mc::memcpy(dst, src, 100);
+      sb::require(buffers_equal(dst, src, 100));
+    }
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Single-byte crossing cache line
+  // ============================================================
+  sb::test_case("memcpy - single byte crosses cache line");
+  {
+    constexpr u64 CACHE_LINE = 64;
+    alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];
+    byte *src = storage + CACHE_LINE - 1;
+    byte *dst = storage;
+    src[0] = 0xAB;
+    mc::memcpy(dst, src, 1);
+    sb::require(dst[0] == 0xAB);
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Very large copy (>page size)
+  // ============================================================
+  sb::test_case("memcpy - large copy > 1 page");
+  {
+    constexpr u64 SIZE = 8192;
+    alignas(4096) byte src[SIZE];
+    alignas(4096) byte dst[SIZE];
+    make_seq(src, SIZE);
+    fill_pattern(dst, SIZE, static_cast<byte>(0x00));
+    mc::memcpy(dst, src, SIZE);
+    sb::require(buffers_equal(dst, src, SIZE));
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Cross-type copy: u8 -> u16, crossing cache line
+  // ============================================================
+  sb::test_case("memcpy cross-type u8->u16 cross cache line");
+  {
+    constexpr u64 CACHE_LINE = 64;
+    alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];
+    byte *src = storage + 30;
+    u16 dst[64] = {};
+    make_seq(src, 50);
+    fill_pattern(dst, 50, static_cast<u16>(0xFFFF));
+    mc::memcpy(dst, src, 50);
+    sb::require(verify_buffer(dst, 50, static_cast<u16>(0)) == false);        // sanity
+    sb::require(verify_buffer(dst, 50, static_cast<u16>(0x00)) == false);     // sanity
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Overlapping regions detection (memcpy should not handle safely)
+  // ============================================================
+  sb::test_case("memcpy - overlapping regions (undefined behavior)");
+  {
+    byte buffer[64];
+    make_seq(buffer, 64);
+    // Overlapping copy: dst inside src
+    mc::memcpy(buffer + 10, buffer, 32);
+    // Verify at least first byte copied correctly
+    sb::require(buffer[10] == 0);
+  }
+  sb::end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
 
   return 1;

@@ -521,7 +521,12 @@ main()
 
       v.remove(Probe(7));
       require(v.size(), size_t(5));
-      require(Probe::live, 6);     // 5 remaining + the temporary Probe(7) passed to remove
+      // FIX: both temporaries are dead by this point.
+      // Probe(7) argument lifetime ends at the semicolon above.
+      // The static_cast<T>(val) copy inside remove()'s fold expression
+      // also dies when remove() returns.
+      // Only the 5 surviving vector elements remain.
+      require(Probe::live, 5);
       require_false(Probe::corrupt);
     }
     require(Probe::live, 0);

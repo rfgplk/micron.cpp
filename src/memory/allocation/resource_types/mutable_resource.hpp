@@ -29,6 +29,8 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     }
   }
 
+  __mutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) {}
+
   __mutable_memory_resource(void)
       : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
   {
@@ -141,6 +143,8 @@ struct __mutable_memory_resource_move_only : public __core_memory_resource<T> {
       : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
   {
   }
+
+  __mutable_memory_resource_move_only(nullptr_t) : __core_memory_resource<T>(), length(0) {}
 
   explicit __mutable_memory_resource_move_only(usize n_elements)
       : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0)

@@ -1,8 +1,3 @@
-//  Copyright (c) 2024- David Lucius Severus
-//
-//  Distributed under the Boost Software License, Version 1.0.
-//  See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt
 // nanoflagsx86 (for C99 and onwards)
 // https://github.com/rfgplk/nanoflagsx86
 //
@@ -50,6 +45,7 @@ enum vendors_t {
   VIA_VIA_VIA_,
   Vortex86_SoC
 };
+
 enum architectures_t {
   i386,
   i486,
@@ -106,58 +102,140 @@ enum architectures_t {
 };
 
 typedef struct features {
-  char adx;
-  char aes;
-  char erms;
-  char f16c;
+  /* leaf 1 ecx */
+  char sse3;
+  char pclmulqdq;
+  char monitor;
+  char ssse3;
   char fma;
   char fma3;
-  char fma4;
-  char vpclmulqdq;
-  char bmi1;
-  char bmi2;
   char smx;
-  char sha;
-  char sse;
-  char sse2;
-  char sse3;
-  char ssse3;
   char sse4_1;
   char sse4_2;
+  char movbe;
+  char popcnt;
+  char aes;
+  char xsave;
+  char osxsave;
   char avx;
+  char f16c;
+  char rdrand;
+  char hypervisor;
+
+  /* leaf 1 edx */
+  char fpu;
+  char tsc;
+  char cmov;
+  char mmx;
+  char sse;
+  char sse2;
+  char htt;
+
+  /* leaf 7 sub 0 ebx */
+  char fsgsbase;
+  char tsc_adjust;
+  char sgx;
+  char bmi1;
+  char hle;
   char avx2;
+  char smep;
+  char bmi2;
+  char erms;
+  char invpcid;
+  char rtm;
+  char mpx;
   char avx512f;
-  char avx512cd;
-  char avx512er;
-  char avx512pf;
-  char avx512bw;
   char avx512dq;
-  char avx512vl;
+  char rdseed;
+  char adx;
+  char smap;
   char avx512ifma;
+  char clflushopt;
+  char clwb;
+  char avx512pf;
+  char avx512er;
+  char avx512cd;
+  char sha;
+  char avx512bw;
+  char avx512vl;
+
+  /* leaf 7 sub 0 ecx */
+  char prefetchwt1;
   char avx512vbmi;
+  char umip;
+  char pku;
+  char waitpkg;
   char avx512vbmi2;
+  char gfni;
+  char vaes;
+  char vpclmulqdq;
   char avx512vnni;
   char avx512bitalg;
   char avx512vpopcntdq;
-  char avx512_4vnniw;
-  char avx512_4vbmi2;
-  char avx512_4fmaps;
+  char rdpid;
+  char cldemote;
+  char movdiri;
+  char movdir64b;
 
-  char popcnt;
-  char htt;
-  char mpx;
-  char sgx;
-  char amd_3dnow;
-  char amd_3dnowext;
-  char rdrand;
-  char hypervisor;
-  char mmx;
-  char cmov;
+  /* leaf 7 sub 0 edx */
+  char avx512_4vnniw;
+  char avx512_4fmaps;
+  char fsrm;
+  char avx512_vp2intersect;
+  char serialize;
+  char tsxldtrk;
+  char pconfig;
+  char ibt;
+  char amx_bf16;
+  char avx512_fp16;
+  char amx_tile;
+  char amx_int8;
   char spec_ctrl;
-  char tsc;
+
+  /* leaf 7 sub 1 eax */
+  char sha512;
+  char sm3;
+  char sm4;
+  char rao_int;
+  char avx_vnni;
+  char avx512_bf16;
+  char cmpccxadd;
+  char amx_fp16;
+  char avx_ifma;
+
+  /* leaf 7 sub 1 edx */
+  char avx_vnni_int8;
+  char avx_ne_convert;
+  char amx_complex;
+  char avx_vnni_int16;
+  char prefetchiti;
+  char avx10;
+  char apx_f;
+
+  /* leaf 0x24 sub 0 (AVX10) */
+  char avx10_version;
+  char avx10_128;
+  char avx10_256;
+  char avx10_512;
+
+  /* extended leaf 0x80000001 ecx */
+  char lahf_lm;
+  char abm;
+  char sse4a;
+  char misalignsse;
+  char prefetchw;
+  char xop;
+  char fma4;
+  char tbm;
+
+  /* extended leaf 0x80000001 edx */
   char syscall;
-  char fpu;
   char nx;
+  char amd_3dnowext;
+  char amd_3dnow;
+
+  /* extended leaf 0x80000008 ebx */
+  char wbnoinvd;
 } features_t;
 
 #define NO_CACHE 0

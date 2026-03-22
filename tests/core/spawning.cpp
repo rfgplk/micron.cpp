@@ -40,7 +40,10 @@ fn_loop(void)
   }
   return 5;
 }
-void fn_rt(void){
+
+void
+fn_rt(void)
+{
 }
 
 int
@@ -51,6 +54,7 @@ main(void)
   auto &thread = mc::go(fn_loop);
   mc::sleep(500);
   auto list = mc::threads();
+  mc::console(list.size());
   for ( auto &n : list ) {
     mc::console(n->name());
   }

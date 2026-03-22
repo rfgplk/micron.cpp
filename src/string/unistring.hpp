@@ -242,8 +242,7 @@ u32_check(const char32_t *str, usize n)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// to_string — heap (hstring) overloads
-// C controls the internal character type of the returned string
+// to_strings
 
 template <typename I, typename C = char>
   requires micron::is_integral_v<I>
@@ -297,7 +296,7 @@ to_string(f64 val, u32 prec)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// to_string_stack — stack (sstring) overloads
+// to_string_stack -- stack (sstring) overloads
 // Sz controls the buffer size, C controls the character type
 // user can write: to_string_stack<i32, 32>(n) or to_string_stack<i32, 32, wchar_t>(n)
 

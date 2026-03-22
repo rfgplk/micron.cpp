@@ -8,9 +8,13 @@
 #include "../__special/initializer_list"
 #include "../type_traits.hpp"
 
+#include "../bits/__container.hpp"
+
+#include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
-#include "../allocator.hpp"
+#include "../concepts.hpp"
 #include "../container_safety.hpp"
+#include "../except.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
@@ -23,61 +27,117 @@
 
 namespace micron
 {
-// (Immutable) vector class. ivector, contiguous in memory, O(1) access,
-// iterators never invalidated, always safe, immutable, always thread safe as
-// fast as raw arrays
-template <is_movable_object T, class Alloc = micron::allocator_serial<>>
+// immutable vector class, contiguous in memory, O(1) access, iterators never invalidated, always safe, immutable, always thread safe as
+template <is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
 class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
 
-  // grow container, private - only int. can call
-  inline void
-  reserve(usize n)
+  inline __attribute__((always_inline)) bool
+  __empty_check() const
   {
-    __mem::accept_new_memory(this->grow(reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T), sizeof(T) * n));
+    return __mem::length == 0 || __mem::memory == nullptr;
   }
 
-  // shallow copy routine
-  inline void
-  shallow_copy(T *dest, T *src, usize cnt)
+  inline __attribute__((always_inline)) bool
+  __null_check() const
   {
-    micron::memcpy256(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src),
-                      cnt * (sizeof(T) / sizeof(byte)));     // always is page aligned, 256 is
-                                                             // fine, just realign back to bytes
-  };
+    return __mem::memory == nullptr;
+  }
 
-  // deep copy routine, nec. if obj. has const/dest (can be ignored but WILL
-  // cause segfaulting if underlying doesn't account for double deletes)
-  inline void
-  deep_copy(T *dest, T *src, usize cnt)
+  inline __attribute__((always_inline)) bool
+  __index_check(size_t n) const
   {
-    for ( usize i = 0; i < cnt; i++ )
-      dest[i] = src[i];
-  };
+    return n >= __mem::length;
+  }
 
-  inline void
-  __impl_copy(T *dest, T *src, usize cnt)
+  inline __attribute__((always_inline)) bool
+  __capacity_check(size_t n) const
   {
-    if constexpr ( micron::is_class<T>::value ) {
-      deep_copy(dest, src, cnt);
-    } else {
-      shallow_copy(dest, src, cnt);
+    return n >= __mem::capacity;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_check(const T *it) const
+  {
+    return it < __mem::memory || it > __mem::memory + __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_strict(const T *it) const
+  {
+    return it < __mem::memory || it >= __mem::memory + __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __range_check(size_t from, size_t to) const
+  {
+    return from >= to || to > __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __cap_range_check(size_t from, size_t to) const
+  {
+    return from >= to || from >= __mem::capacity || to > __mem::capacity;
+  }
+
+  template <auto Fn, typename E, typename... Args>
+  inline __attribute__((always_inline)) void
+  __safety_check(const char *msg, Args &&...args) const
+  {
+    if constexpr ( Sf == true ) {
+      if ( (this->*Fn)(micron::forward<Args>(args)...) )
+        exc<E>(msg);
     }
   }
 
-  T *
-  __itr(usize n)
+  struct __cap_tag {
+  };
+
+  ivector(__cap_tag, usize n) : __mem(n) { __mem::length = 0; }
+
+  // grow container, private
+  inline void
+  reserve(usize n)
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::ivector itr() out of bounds");
-    return &(__mem::memory)[n];
+    if ( n < __mem::capacity )
+      return;
+    if ( __mem::is_zero() ) {
+      __mem::realloc(n);
+      return;
+    }
+    __mem::expand(n);
+  }
+
+  inline void
+  __clear()
+  {
+    if ( !__mem::length )
+      return;
+    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __mem::length = 0;
+  }
+
+  typedef T *iterator;
+
+  // mutable iterators
+  inline iterator
+  __begin()
+  {
+    return __mem::memory;
+  }
+
+  inline iterator
+  __end()
+  {
+    return __mem::memory + __mem::length;
   }
 
 public:
   using category_type = vector_tag;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
+  typedef usize size_type;
   typedef T value_type;
   typedef T &reference;
   typedef T &ref;
@@ -86,472 +146,237 @@ public:
   typedef T *pointer;
   typedef const T *const_pointer;
 
-  typedef T *iterator;
   typedef const T *const_iterator;
 
-  // disallow empty creation, for simplicity
   ivector() = delete;
 
-  // initialize empty with n reserve
-  template <typename S = usize>
-    requires micron::is_arithmetic_v<S>
-  ivector(S n) : __mem(n)
+  ~ivector()
   {
-    __mem::length = 0;
-  };
+    if ( __mem::is_zero() )
+      return;
+    __clear();
+  }
+
+  ivector(usize n) : __mem(n)
+  {
+    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+  }
+
+  template <typename... Args>
+    requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
+  ivector(usize n, Args &&...args) : __mem(n)
+  {
+    for ( usize i = 0; i < n; i++ )
+      new (&__mem::memory[i]) T(forward<Args>(args)...);
+    __mem::length = n;
+  }
+
+  ivector(usize n, const T &init_value) : __mem(n)
+  {
+    __impl_container::construct(micron::addr(__mem::memory[0]), init_value, n);
+    __mem::length = n;
+  }
+
+  ivector(usize n, T &&init_value) : __mem(n)
+  {
+    T tmp = micron::move(init_value);
+    __impl_container::construct(micron::addr(__mem::memory[0]), tmp, n);
+    __mem::length = n;
+  }
 
   template <typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
-  ivector(Fn &&fn) : __mem()
+  ivector(usize n, Fn &&fn) : __mem(n)
   {
-    micron::generate(begin(), end(), fn);
+    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+    micron::generate(__begin(), __end(), fn);
   }
 
   template <typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
-  ivector(Fn &&fn)
+  ivector(usize n, Fn &&fn) : __mem(n)
   {
-    micron::transform(begin(), end(), fn);
+    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __mem::length = n;
+    micron::transform(__begin(), __end(), fn);
   }
 
-  // two main functions when it comes to copying over data
+  // initializer list
+  ivector(const std::initializer_list<T> &lst) : __mem(lst.size())
+  {
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
+      usize i = 0;
+      for ( T &&value : lst )
+        new (&__mem::memory[i++]) T(micron::move(value));
+      __mem::length = lst.size();
+    } else {
+      usize i = 0;
+      for ( auto &&value : lst )
+        __mem::memory[i++] = value;
+      __mem::length = lst.size();
+    }
+  }
+
+  // copy
   ivector(const ivector &o) : __mem(o.capacity())
   {
-    micron::memcpy256(&__mem::memory[0], o.__itr(0),
-                      o.capacity);     // always is page aligned, 256 is fine.
-    __mem::length = o.size();
+    __impl_container::copy(__mem::memory, o.memory, o.length);
+    __mem::length = o.length;
   }
 
   ivector &
   operator=(const ivector &o)
   {
-    if ( o.capacity >= __mem::capacity )
-      reserve(o.capacity);
-    micron::memcpy256(&__mem::memory[0], o.__itr(0),
-                      o.capacity);     // always is page aligned, 256 is fine.
-    __mem::length = o.size();
-  };
+    if ( o.capacity() >= __mem::capacity )
+      reserve(o.capacity());
+    __impl_container::copy_assign(__mem::memory, o.memory, o.length);
+    __mem::length = o.length;
+    return *this;
+  }
 
-  // data must be page aligned and cleanly / 256, otherwise will not function
-  // correctly. if using an avx512 cpu, replace with 512 (but not needed,
-  // will be faster like this regardless)
-
-  // identical to regular vector
-  ivector(const std::initializer_list<T> &lst) : __mem(lst.size())
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      usize i = 0;
-      for ( T &&value : lst ) {
-        new (&__mem::memory[i++]) T(micron::move(value));
-      }
-      __mem::length = lst.size();
-    } else {
-      usize i = 0;
-      for ( T value : lst ) {
-        __mem::memory[i++] = value;
-      }
-      __mem::length = lst.size();
-    }
-  };
-
+  // from mutable vector
   ivector(const vector<T> &o) : __mem(o.size())
   {
-    micron::memcpy(&__mem::memory[0], o.data(), o.size());
+    __impl_container::copy(__mem::memory, o.data(), o.size());
     __mem::length = o.size();
   }
 
-  ivector(usize n) : __mem(n)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( usize i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T();
-    } else {
-      for ( usize i = 0; i < n; i++ )
-        __mem::memory[i] = T{};
-    }
-    __mem::length = n;
-  };
+  // move
+  ivector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template <typename... Args>
-    requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
-  ivector(usize n, Args... args) : __mem(n)
-  {
-    for ( usize i = 0; i < n; i++ )
-      new (&__mem::memory[i]) T(args...);
-    __mem::length = n;
-  };
+  template <typename C = T> ivector(ivector<C> &&o) : __mem(micron::move(o)) {}
 
-  ivector(usize n, const T &init_value) : __mem(n)
-  {
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( usize i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T(init_value);
-    } else {
-      for ( usize i = 0; i < n; i++ )
-        __mem::memory[i] = init_value;
-    }
-    __mem::length = n;
-  };
-
-  ivector(usize n, T &&init_value) : __mem(n)
-  {
-    T tmp = micron::move(init_value);
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( usize i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T(tmp);
-    } else {
-      for ( usize i = 0; i < n; i++ )
-        __mem::memory[i] = init_value;
-    }
-    __mem::length = n;
-  };
-
-  ivector(chunk<byte> &&m) : __mem(m) { m = nullptr; };
-
-  template <typename C = T> ivector(ivector<C> &&o) : __mem(o.data()) { o.~__mem(); }
+  ivector(ivector &&o) : __mem(micron::move(o)) {}
 
   ivector &
   operator=(ivector &&o)
   {
     if ( __mem::memory ) {
-      // kill old memory first
-      clear();
-      __mem::free();
+      __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
     }
     __mem::operator=(micron::move(o));
     return *this;
   }
 
-  ~ivector()
-  {
-    if ( __mem::memory == nullptr )
-      return;
-
-    if constexpr ( micron::is_class<T>::value ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        (__mem::memory)[i].~T();
-    }
-    this->destroy(to_chunk(__mem::memory, __mem::capacity));
-  }
-
-  // equivalent of .data() sortof
   chunk<byte>
-  operator*()
+  operator*() const
   {
     return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
   }
 
-  // always direct
+  const_pointer
+  data() const
+  {
+    return __mem::memory;
+  }
+
+  bool
+  operator!() const
+  {
+    return empty();
+  }
+
   template <typename R>
     requires(micron::is_integral_v<R>)
-  inline const T &
+  inline __attribute__((always_inline)) const T &
   operator[](R n) const
   {
+    __safety_check<&ivector::__capacity_check, except::library_error>("micron::ivector operator[] out of allocated memory range.",
+                                                                      static_cast<size_type>(n));
     return (__mem::memory)[n];
   }
 
-  T
-  at(usize n) const
+  inline __attribute__((always_inline)) const slice<T>
+  operator[](size_type from, size_type to) const
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::ivector at() out of bounds");
+    __safety_check<&ivector::__cap_range_check, except::library_error>("micron::ivector operator[] out of allocated memory range.", from,
+                                                                       to);
+    return slice<T>(__mem::memory + from, __mem::memory + to);
+  }
+
+  inline __attribute__((always_inline)) const T &
+  at(size_type n) const
+  {
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector at() out of bounds", n);
     return (__mem::memory)[n];
   }
 
-  usize
-  at_n(iterator i) const
+  size_type
+  at_n(const_iterator i) const
   {
-    if ( i - begin() >= __mem::length )
-      exc<except::library_error>("micron::ivector at_n() out of bounds");
-    return static_cast<usize>(i - begin());
+    __safety_check<&ivector::__iterator_check, except::library_error>("micron::ivector at_n() iterator out of range",
+                                                                      static_cast<const T *>(i));
+    return static_cast<size_type>(i - begin());
   }
 
-  // return const iterator, immutable
   const_iterator
-  itr(usize n) const
+  itr(size_type n) const
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::ivector itr() out of bounds");
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector itr() out of bounds", n);
     return &(__mem::memory)[n];
   }
 
-  template <typename F>
-    requires(sizeof(T) == sizeof(F))
-  inline ivector<T>
-  append(const ivector<F> &o) const
-  {
-    micron::ivector<T> buf(__mem::capacity + o.capacity);
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-    __impl_copy(&buf.memory[__mem::length], &o.memory[0], o.capacity);
-    buf.length = __mem::length + o.length;
-    return buf;
-  }
-
-  template <typename C = T>
-  void
-  swap(ivector<C> &&o)
-  {
-    micron::swap(__mem::memory, o.memory);
-    micron::swap(__mem::length, o.length);
-    micron::swap(__mem::capacity, o.capacity);
-  }
-
-  usize
-  capacity() const
-  {
-    return __mem::capacity;
-  }
-
-  usize
-  size() const
-  {
-    return __mem::length;
-  }
-
-  // no resize
-  // + instead of +=
-  ivector
-  operator+(const ivector &o)
-  {
-    return append(o);     // equivalent
-  }
-
-  template <typename... Args>
-  inline ivector
-  emplace_back(Args &&...v)
-  {
-    micron::ivector<T> buf(__mem::capacity + sizeof...(Args) * sizeof(T));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-
-    new (&buf.memory[buf.size()]) T(micron::move(micron::forward<Args>(v)...));
-    return buf;
-  }
-
   inline const_iterator
-  get(const usize n)
+  get(const size_type n) const
   {
-    if ( n > __mem::length )
-      exc<except::library_error>("micron::ivector get() out of range");
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector get() out of range", n);
     return &(__mem::memory[n]);
   }
 
   inline const_iterator
-  cget(const usize n)
+  cget(const size_type n) const
   {
-    if ( n > __mem::length )
-      exc<except::library_error>("micron::ivector cget() out of range");
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector cget() out of range", n);
     return &(__mem::memory[n]);
   }
 
   inline const_iterator
-  find(const T &o)
+  find(const T &o) const
   {
-    T *f_ptr = __mem::memory;
-    for ( usize i = 0; i < __mem::length; i++ )
+    const T *f_ptr = __mem::memory;
+    for ( size_type i = 0; i < __mem::length; i++ )
       if ( f_ptr[i] == o )
         return &f_ptr[i];
     return nullptr;
   }
 
-  inline const_iterator
-  begin() const
+  size_type
+  capacity() const
   {
-    return (__mem::memory);
+    return __mem::capacity;
   }
 
-  inline iterator
-  begin()
+  size_type
+  max_size() const
   {
-    return (__mem::memory);
+    return __mem::capacity;
   }
 
-  inline const_iterator
-  cbegin() const
+  size_type
+  size() const
   {
-    return (__mem::memory);
+    return __mem::length;
   }
 
-  inline iterator
-  end()
+  bool
+  empty() const
   {
-    return (__mem::memory) + (__mem::length);
+    return __mem::length == 0;
   }
 
-  inline const_iterator
-  end() const
+  inline const T &
+  front() const
   {
-    return (__mem::memory) + (__mem::length);
-  }
-
-  inline const_iterator
-  cend() const
-  {
-    return (__mem::memory) + (__mem::length);
-  }
-
-  inline slice<byte>
-  into_bytes()
-  {
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
-  }
-
-  inline ivector<T>
-  insert(usize n, const T &val)
-  {
-    micron::ivector<T> buf(__mem::capacity + sizeof(T));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-    auto i = __mem::length;
-    buf.length = i + 1;
-    T *its = &(buf.memory)[n];
-    T *ite = &(buf.memory)[i - 1];
-    micron::memmove(its + 1, its, ite - its);
-    //*its = (val);
-    new (its) T(val);
-    return buf;
-  }
-
-  inline ivector<T>
-  insert(usize n, T &&val)
-  {
-    micron::ivector<T> buf(__mem::capacity + sizeof(T));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-    auto i = __mem::length;
-    buf.length = i + 1;
-    T *its = &(buf.memory)[n];
-    T *ite = &(buf.memory)[i - 1];
-    micron::memmove(its + 1, its, ite - its);
-    //*its = (val);
-    new (its) T(val);
-    return buf;
-  }
-
-  inline ivector<T>
-  insert(const_iterator it, T &&val)
-  {
-    micron::ivector<T> buf(__mem::capacity + sizeof(T));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-    auto i = __mem::length;
-    buf.length = i + 1;
-    T *ite = &(buf.memory)[i - 1];
-    micron::memmove(it + 1, it, ite - it);
-    new (it) T(micron::move(val));
-    return buf;
-  }
-
-  inline ivector<T>
-  insert(const_iterator it, const T &val)
-  {
-    micron::ivector<T> buf(__mem::capacity + sizeof(T));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-    auto i = __mem::length;
-    buf.length = i + 1;
-    T *ite = &(buf.memory)[i - 1];
-    micron::memmove(it + 1, it, ite - it);
-    new (it) T(val);
-    return buf;
-  }
-
-  inline ivector<T>
-  assign(const usize cnt, const T &val)
-  {
-    micron::ivector<T> buf(__mem::capacity + (sizeof(T) * cnt));
-    auto *i = buf.begin();
-    for ( usize j = 0; j < cnt; j++ ) {
-      new ((T *)(i + j)) T(val);
-    }
-    buf.length = __mem::length + cnt;
-    return buf;
-  }
-
-  inline ivector<T>
-  push_back(const T &v)
-  {
-    micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-
-    new (&buf.__itr(__mem::length)) T(v);
-
-    buf.length = __mem::length + 1;
-    return buf;
-  }
-
-  inline ivector<T>
-  push_back(T &&v)
-  {
-    micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
-    __impl_copy(&buf.memory[0], &__mem::memory[0], __mem::capacity);
-
-    new (buf.__itr(__mem::length)) T(micron::move(v));
-
-    buf.length = __mem::length + 1;
-    return buf;
-  }
-
-  inline ivector<T>
-  push_front(const T &v)
-  {
-    micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
-    __impl_copy(&buf.memory[1], &__mem::memory[0], __mem::capacity);
-
-    new (&buf.__itr(0)) T(v);
-
-    buf.length = __mem::length + 1;
-    return buf;
-  }
-
-  inline ivector<T>
-  push_front(T &&v)
-  {
-    micron::ivector<T> buf(__mem::capacity + (sizeof(T)));
-    __impl_copy(&buf.memory[1], &__mem::memory[0], __mem::capacity);
-
-    new (buf.__itr(0)) T(micron::move(v));
-
-    buf.length = __mem::length + 1;
-    return buf;
-  }
-
-  inline void
-  erase(const_iterator n)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      *n->~T();
-    } else {
-    }
-    for ( usize i = n; i < (__mem::length - 1); i++ )
-      (*n)[i] = micron::move((__mem::memory)[i + 1]);
-
-    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
-  }
-
-  inline void
-  erase(const usize n)
-  {
-    if constexpr ( micron::is_class<T>::value ) {
-      ~(__mem::memory)[n]();
-    } else {
-    }
-    for ( usize i = n; i < (__mem::length - 1); i++ )
-      (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
-    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
-    __mem::length--;
-  }
-
-  inline ivector<T>
-  clear()
-  {
-    return ivector<T>(micron::move(__mem::capacity));
-  }
-
-  inline T
-  front()
-  {
+    __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector front() called on empty vector");
     return (__mem::memory)[0];
   }
 
-  inline T
-  back()
+  inline const T &
+  back() const
   {
+    __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector back() called on empty vector");
     return (__mem::memory)[__mem::length - 1];
   }
 
@@ -561,14 +386,272 @@ public:
     return micron::is_pod_v<T>;
   }
 
-  // access at element
+  static constexpr bool
+  is_class_type() noexcept
+  {
+    return micron::is_class_v<T>;
+  }
+
+  static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v<T>;
+  }
+
+  inline const_iterator
+  begin() const
+  {
+    return __mem::memory;
+  }
+
+  inline const_iterator
+  cbegin() const
+  {
+    return __mem::memory;
+  }
+
+  inline const_iterator
+  end() const
+  {
+    return __mem::memory + __mem::length;
+  }
+
+  inline const_iterator
+  cend() const
+  {
+    return __mem::memory + __mem::length;
+  }
+
+  inline const_iterator
+  last() const
+  {
+    __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector last() called on empty vector");
+    return __mem::memory + (__mem::length - 1);
+  }
+
+  inline slice<byte>
+  into_bytes() const
+  {
+    if ( __mem::memory == nullptr || __mem::length == 0 )
+      return slice<byte>(nullptr, nullptr);
+    return slice<byte>(reinterpret_cast<const byte *>(&__mem::memory[0]), reinterpret_cast<const byte *>(&__mem::memory[__mem::length]));
+  }
+
+  template <typename F>
+    requires(sizeof(T) == sizeof(F))
+  inline ivector<T, Alloc, Sf>
+  append(const ivector<F, Alloc, Sf> &o) const
+  {
+    ivector<T, Alloc, Sf> buf(__cap_tag{}, __mem::length + o.length);
+    __impl_container::copy(&buf.memory[0], __mem::memory, __mem::length);
+    __impl_container::copy(&buf.memory[__mem::length], o.memory, o.length);
+    buf.length = __mem::length + o.length;
+    return buf;
+  }
+
+  ivector
+  operator+(const ivector &o) const
+  {
+    return append(o);
+  }
+
+  template <typename C = T>
+  void
+  swap(ivector<C, Alloc, Sf> &&o)
+  {
+    micron::swap(__mem::memory, o.memory);
+    micron::swap(__mem::length, o.length);
+    micron::swap(__mem::capacity, o.capacity);
+  }
+
+  inline ivector
+  push_back(const T &v) const
+  {
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    __impl_container::copy(&buf.memory[0], __mem::memory, __mem::length);
+    new (&buf.memory[__mem::length]) T(v);
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  inline ivector
+  push_back(T &&v) const
+  {
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    __impl_container::copy(&buf.memory[0], __mem::memory, __mem::length);
+    new (&buf.memory[__mem::length]) T(micron::move(v));
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  inline ivector
+  push_front(const T &v) const
+  {
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    new (&buf.memory[0]) T(v);
+    __impl_container::copy(&buf.memory[1], __mem::memory, __mem::length);
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  inline ivector
+  push_front(T &&v) const
+  {
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    new (&buf.memory[0]) T(micron::move(v));
+    __impl_container::copy(&buf.memory[1], __mem::memory, __mem::length);
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  template <typename... Args>
+  inline ivector
+  emplace_back(Args &&...v) const
+  {
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    __impl_container::copy(&buf.memory[0], __mem::memory, __mem::length);
+    new (&buf.memory[__mem::length]) T(micron::forward<Args>(v)...);
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  inline ivector
+  insert(size_type n, const T &val) const
+  {
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector insert() out of bounds", n);
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    // copy [0, n)
+    if ( n > 0 )
+      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    // place new element
+    new (&buf.memory[n]) T(val);
+    // copy [n, length)
+    if ( n < __mem::length )
+      __impl_container::copy(&buf.memory[n + 1], &__mem::memory[n], __mem::length - n);
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  inline ivector
+  insert(size_type n, T &&val) const
+  {
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector insert() out of bounds", n);
+    ivector buf(__cap_tag{}, __mem::length + 1);
+    if ( n > 0 )
+      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    new (&buf.memory[n]) T(micron::move(val));
+    if ( n < __mem::length )
+      __impl_container::copy(&buf.memory[n + 1], &__mem::memory[n], __mem::length - n);
+    buf.length = __mem::length + 1;
+    return buf;
+  }
+
+  inline ivector
+  insert(const_iterator it, const T &val) const
+  {
+    size_type n = static_cast<size_type>(it - begin());
+    return insert(n, val);
+  }
+
+  inline ivector
+  insert(const_iterator it, T &&val) const
+  {
+    size_type n = static_cast<size_type>(it - begin());
+    return insert(n, micron::move(val));
+  }
+
+  inline ivector
+  insert(size_type n, const T &val, size_type cnt) const
+  {
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector insert() out of bounds", n);
+    ivector buf(__cap_tag{}, __mem::length + cnt);
+    if ( n > 0 )
+      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    for ( size_type i = 0; i < cnt; ++i )
+      new (&buf.memory[n + i]) T(val);
+    if ( n < __mem::length )
+      __impl_container::copy(&buf.memory[n + cnt], &__mem::memory[n], __mem::length - n);
+    buf.length = __mem::length + cnt;
+    return buf;
+  }
+
+  inline ivector
+  assign(const size_type cnt, const T &val) const
+  {
+    ivector buf(__cap_tag{}, cnt);
+    __impl_container::construct(micron::addr(buf.memory[0]), val, cnt);
+    buf.length = cnt;
+    return buf;
+  }
+
+  inline ivector
+  erase(size_type n) const
+  {
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector erase() out of bounds", n);
+    ivector buf(__cap_tag{}, __mem::length - 1);
+    // copy [0, n)
+    if ( n > 0 )
+      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    // copy [n+1, length)
+    if ( n + 1 < __mem::length )
+      __impl_container::copy(&buf.memory[n], &__mem::memory[n + 1], __mem::length - n - 1);
+    buf.length = __mem::length - 1;
+    return buf;
+  }
+
+  inline ivector
+  erase(const_iterator it) const
+  {
+    size_type n = static_cast<size_type>(it - begin());
+    return erase(n);
+  }
+
+  inline ivector
+  erase(size_type from, size_type to) const
+  {
+    __safety_check<&ivector::__range_check, except::library_error>("micron::ivector erase() invalid range", from, to);
+    size_type count = to - from;
+    ivector buf(__cap_tag{}, __mem::length - count);
+    // copy [0, from)
+    if ( from > 0 )
+      __impl_container::copy(&buf.memory[0], __mem::memory, from);
+    // copy [to, length)
+    if ( to < __mem::length )
+      __impl_container::copy(&buf.memory[from], &__mem::memory[to], __mem::length - to);
+    buf.length = __mem::length - count;
+    return buf;
+  }
+
+  inline ivector
+  erase(const_iterator first, const_iterator last) const
+  {
+    size_type from = static_cast<size_type>(first - begin());
+    size_type to = static_cast<size_type>(last - begin());
+    return erase(from, to);
+  }
+
+  inline ivector
+  pop_back() const
+  {
+    __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector pop_back() called on empty vector");
+    ivector buf(__cap_tag{}, __mem::length - 1);
+    __impl_container::copy(&buf.memory[0], __mem::memory, __mem::length - 1);
+    buf.length = __mem::length - 1;
+    return buf;
+  }
+
+  inline ivector
+  clear() const
+  {
+    return ivector(__cap_tag{}, __mem::capacity);
+  }
 };
 
 template <typename T>
 auto
-to_persist(micron::vector<T> &vec)
+to_persist(const micron::vector<T> &vec)
 {
-  return ivector<T>();
+  return ivector<T>(vec);
 }
 
 };     // namespace micron

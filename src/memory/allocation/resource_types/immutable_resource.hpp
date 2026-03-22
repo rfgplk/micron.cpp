@@ -28,6 +28,8 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
     }
   }
 
+  __immutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) {}
+
   __immutable_memory_resource(void)
       : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
   {

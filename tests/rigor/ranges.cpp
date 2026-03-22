@@ -1157,5 +1157,5 @@ main()
 
   sb::print("=========================");
   sb::print("ALL TESTS COMPLETED");
-  return 0;
+  return 1;
 }

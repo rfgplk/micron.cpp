@@ -124,7 +124,7 @@ ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
   usize dlen = static_cast<usize>(tend - tstart);
   if ( dlen + 2 > buf_sz )
     dlen = buf_sz - 2;
-  micron::memcpy(buf + 2, tstart, dlen);
+  micron::bytecpy(buf + 2, tstart, dlen);
   return 2 + dlen;
 }
 
@@ -142,7 +142,7 @@ fmt_uint_to_buf(char *buf, usize buf_sz, u64 val, u32 base, bool upper)
   usize len = static_cast<usize>(tend - start);
   if ( len > buf_sz )
     len = buf_sz;
-  micron::memcpy(buf, start, len);
+  micron::bytecpy(buf, start, len);
   return len;
 }
 
@@ -1287,7 +1287,7 @@ concat(sstring<N, T> &lhs, const char *rhs)
     exc<except::library_error>("concat range error.");
   auto *p = lhs.begin();
   micron::bytemove(p + sz, p, lhs.size());
-  micron::memcpy(p, rhs, sz);
+  micron::bytecpy(p, rhs, sz);
   lhs.set_size(lhs.size() + sz);
   return lhs;
 }
@@ -1301,7 +1301,7 @@ concat(const char *lhs, sstring<N, T> &rhs)
     exc<except::library_error>("concat range error.");
   auto *p = rhs.begin();
   micron::bytemove(p + sz, p, rhs.size());
-  micron::memcpy(p, lhs, sz);
+  micron::bytecpy(p, lhs, sz);
   rhs.set_size(rhs.size() + sz);
   return rhs;
 }
@@ -2105,7 +2105,7 @@ replace(T &str, const char *lhs, const char *rhs)
   usize pos = static_cast<usize>(itr - str.begin());
   usize tail_len = sz - pos - szl;
   micron::bytemove(itr + szr, itr + szl, tail_len);
-  micron::memcpy(itr, rhs, szr);
+  micron::bytecpy(itr, rhs, szr);
   str.set_size(sz - szl + szr);
   return str;
 }
@@ -2142,7 +2142,7 @@ replace(char *str, usize &len, const char *lhs, const char *rhs)
   usize pos = static_cast<usize>(itr - str);
   usize tail_len = len - pos - szl;
   micron::bytemove(itr + szr, itr + szl, tail_len);
-  micron::memcpy(itr, rhs, szr);
+  micron::bytecpy(itr, rhs, szr);
   len = len - szl + szr;
   str[len] = 0;
   return str;
@@ -2172,7 +2172,7 @@ replace_all(T &str, const char *lhs, const char *rhs)
     usize pos = static_cast<usize>(itr - str.begin());
     usize tail_len = sz - pos - szl;
     micron::bytemove(itr + szr, itr + szl, tail_len);
-    micron::memcpy(itr, rhs, szr);
+    micron::bytecpy(itr, rhs, szr);
     str.set_size(sz - szl + szr);
     itr = find(str, str.begin() + pos + szr, lhs);
   }
@@ -2224,7 +2224,7 @@ replace_all(char *str, usize &len, const char *lhs, const char *rhs)
     if ( j == szl ) {
       usize tail_len = len - pos - szl;
       micron::bytemove(str + pos + szr, str + pos + szl, tail_len);
-      micron::memcpy(str + pos, rhs, szr);
+      micron::bytecpy(str + pos, rhs, szr);
       len = len - szl + szr;
       str[len] = 0;
       pos += szr;
@@ -3215,7 +3215,7 @@ template <> struct formatter<const char *> {
       len = spec.prec;
     if ( len > buf_sz )
       len = buf_sz;
-    micron::memcpy(buf, val, len);
+    micron::bytecpy(buf, val, len);
     return len;
   }
 };
@@ -3237,7 +3237,7 @@ template <typename T> struct formatter<T, micron::enable_if_t<micron::is_string_
       len = spec.prec;
     if ( len > buf_sz )
       len = buf_sz;
-    micron::memcpy(buf, val.begin(), len);
+    micron::bytecpy(buf, val.begin(), len);
     return len;
   }
 };
@@ -4155,7 +4155,7 @@ replace_n(const T &str, const char *old_s, const char *new_s, i64 count = -1)
     usize pos = static_cast<usize>(itr - result.begin());
     usize tail_len = sz - pos - szl;
     micron::bytemove(itr + szr, itr + szl, tail_len);
-    micron::memcpy(itr, new_s, szr);
+    micron::bytecpy(itr, new_s, szr);
     result.set_size(sz - szl + szr);
     ++replaced;
     itr = find(result, result.begin() + pos + szr, old_s);
