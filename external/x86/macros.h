@@ -1,8 +1,3 @@
-//  Copyright (c) 2024- David Lucius Severus
-//
-//  Distributed under the Boost Software License, Version 1.0.
-//  See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt
 // nanoflagsx86 (for C99 and onwards)
 // https://github.com/rfgplk/nanoflagsx86
 //
@@ -27,7 +22,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 
 #pragma once
 
@@ -73,12 +67,13 @@
 #define OPENMO defined(_OPENMP)
 #define OPTIMIZING defined(__OPTIMIZE__)
 #define ALIGNMENT defined(__BIGGEST_ALIGNMENT__)
-//#define LITTLE_ENDIAN defined(__ORDER_LITTLE_ENDIAN__)
-//#define BIG_ENDIAN defined(__ORDER_BIG_ENDIAN__)
+#define F_LITTLE_ENDIAN defined(__ORDER_LITTLE_ENDIAN__)
+#define F_BIG_ENDIAN defined(__ORDER_BIG_ENDIAN__)
 
 #define AMD_3DNow defined(__3dNOW__)
 #define AMD64 defined(__amd64__)
 #define x64 defined(__x86_64__)
+
 #define ADX defined(__ADX__)
 #define FMA defined(__FMA__)
 #define MMX defined(__MMX__)
@@ -104,3 +99,46 @@
 #define AVX512BW defined(__AVX512BW__)
 #define AVX512CD defined(__AVX512CD__)
 #define AVX512VL defined(__AVX512VL__)
+#define AVX512DQ defined(__AVX512DQ__)
+#define AVX512ER defined(__AVX512ER__)
+#define AVX512PF defined(__AVX512PF__)
+#define AVX512IFMA defined(__AVX512IFMA__)
+#define AVX512VBMI defined(__AVX512VBMI__)
+#define AVX512VBMI2 defined(__AVX512VBMI2__)
+#define AVX512VNNI defined(__AVX512VNNI__)
+#define AVX512BITALG defined(__AVX512BITALG__)
+#define AVX512VPOPCNTDQ defined(__AVX512VPOPCNTDQ__)
+#define AVX512VP2INTERSECT defined(__AVX512VP2INTERSECT__)
+#define AVX512FP16 defined(__AVX512FP16__)
+#define AVX512BF16 defined(__AVX512BF16__)
+#define AVXVNNI defined(__AVXVNNI__)
+#define AVXIFMA defined(__AVXIFMA__)
+#define AVXVNNIINT8 defined(__AVXVNNIINT8__)
+#define AVXNECONVERT defined(__AVXNECONVERT__)
+#define AVXVNNIINT16 defined(__AVXVNNIINT16__)
+#define AVX10_1 defined(__AVX10_1__)
+#define AVX10_1_256 defined(__AVX10_1_256__)
+#define AVX10_1_512 defined(__AVX10_1_512__)
+#define GFNI defined(__GFNI__)
+#define VAES defined(__VAES__)
+#define VPCLMULQDQ defined(__VPCLMULQDQ__)
+#define MOVBE defined(__MOVBE__)
+#define SERIALIZE defined(__SERIALIZE__)
+#define TSXLDTRK defined(__TSXLDTRK__)
+#define AMXBF16 defined(__AMX_BF16__)
+#define AMXTILE defined(__AMX_TILE__)
+#define AMXINT8 defined(__AMX_INT8__)
+#define AMXFP16 defined(__AMX_FP16__)
+#define AMXCOMPLEX defined(__AMX_COMPLEX__)
+#define CLFLUSHOPT defined(__CLFLUSHOPT__)
+#define CLWB defined(__CLWB__)
+#define MOVDIRI defined(__MOVDIRI__)
+#define MOVDIR64B defined(__MOVDIR64B__)
+#define WAITPKG defined(__WAITPKG__)
+#define CMPCCXADD defined(__CMPCCXADD__)
+#define PREFETCHI defined(__PREFETCHI__)
+#define RAOINI defined(__RAOINT__)
+#define SM3 defined(__SM3__)
+#define SM4 defined(__SM4__)
+#define SHA512 defined(__SHA512__)
+#define APXF defined(__APX_F__)

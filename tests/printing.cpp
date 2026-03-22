@@ -3,15 +3,15 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
-#include "../src/string/strings.hpp"
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
+#include "../src/string/strings.hpp"
 
-#include "../src/vector/vector.hpp"
-#include <vector>
-#include <string>
-#include "../src/math/generic.hpp"
 #include "../src/bitfield.hpp"
+#include "../src/math/generic.hpp"
+#include "../src/vector/vector.hpp"
+#include <string>
+#include <vector>
 
 #include <bitset>
 
@@ -20,8 +20,8 @@ main(void)
 {
   mc::sstr<10> mm1 = "multiple";
   mc::sstr<10> mm2 = "messages";
-  const char* mmc = "!";
-  const char* mes1 = "First message!";
+  const char *mmc = "!";
+  const char *mes1 = "First message!";
   mc::ustr8 str = "Another message";
   mc::console("Hello World!");
   mc::infolog("Log message");
@@ -31,9 +31,7 @@ main(void)
   mc::console("Output of ", mm1, " ", mm2, mmc);
   try {
     mc::cerror("This is an error");
-  }
-  catch (mc::except::standard_error& e)
-  {
+  } catch ( mc::except::standard_error &e ) {
     mc::console("The error was <", e.what(), ">");
   }
 

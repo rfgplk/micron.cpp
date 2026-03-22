@@ -53,7 +53,6 @@ class path
     return out;
   }
 
-  // Join two path strings correctly (avoids double slashes).
   static path_t
   __join(const path_t &base, const path_t &rel)
   {
@@ -72,24 +71,20 @@ class path
   }
 
 public:
-  // ── pruning & normalisation ───────────────────────────────────────────────
-
-  // Collapse double slashes, excess dots, and trailing slashes.
-  // The result is a clean absolute or relative path string.
   static path_t
   prune(path_t &&str)
   {
-    // collapse "//"
-    auto itr_slashes = micron::format::find(str, "//");
-    if ( itr_slashes )
-      micron::format::replace_all(str, "//", "/");
 
-    // collapse "..." → ".." (excess dots are not a valid path component)
+    auto itr_slashes = micron::format::find(str, "
+    if ( itr_slashes )
+      micron::format::replace_all(str, "
+
+    
     auto itr_dots = micron::format::find(str, "...");
     if ( itr_dots )
       micron::format::replace_all(str, "...", "..");
 
-    // strip trailing slash (except bare root "/")
+    
     while ( str.size() > 1 && str[str.size() - 1] == '/' )
       str.erase(str.last());
 
@@ -103,10 +98,6 @@ public:
     return prune(micron::move(copy));
   }
 
-  // ── validation ────────────────────────────────────────────────────────────
-
-  // Returns true if the path string is syntactically non-empty and
-  // contains no NUL bytes before the terminator.
   static bool
   is_valid_string(const char *s) noexcept
   {
@@ -120,14 +111,12 @@ public:
     return posix::verify(s);
   }
 
-  // True if the current path exists on the filesystem (follows symlinks).
   bool
   exists() const
   {
     return posix::exists(nd.path.name().c_str());
   }
 
-  // True if the path exists without following a terminal symlink.
   bool
   lexists() const
   {
@@ -152,15 +141,12 @@ public:
     return posix::is_mountpoint(nd.path.name().c_str());
   }
 
-  // True if the path points at the filesystem root.
   bool
   is_root() const noexcept
   {
     const auto &n = nd.path.name();
     return n.size() == 1 && n[0] == '/';
   }
-
-  // ── node-type predicates (on the path itself) ─────────────────────────────
 
   bool
   is_file() const
@@ -215,8 +201,6 @@ public:
   {
     return is_block_device() || is_char_device();
   }
-
-  // ── node-type predicates on named children of current path ───────────────
 
   bool
   directory(const char *name) const
@@ -348,9 +332,6 @@ public:
     return node_exists(s.c_str());
   }
 
-  // ── POSIX access checks ───────────────────────────────────────────────────
-  // These reflect the real effective-user/group access via access(2).
-
   bool
   readable() const
   {
@@ -369,7 +350,6 @@ public:
     return posix::is_executable(nd.path.name().c_str());
   }
 
-  // Access checks on a named child relative to the current path.
   bool
   readable(const char *name) const
   {
@@ -409,8 +389,6 @@ public:
     return executable(s.c_str());
   }
 
-  // ── permissions ───────────────────────────────────────────────────────────
-
   linux_permissions
   permissions()
   {
@@ -430,14 +408,12 @@ public:
     return permissions(name.c_str());
   }
 
-  // Set permissions on the current path directory fd.
   void
   set_permissions(const linux_permissions &p)
   {
     nd.path.set_permissions(p);
   }
 
-  // Set permissions on a named child.
   i32
   set_permissions(const char *name, const linux_permissions &p)
   {
@@ -451,7 +427,6 @@ public:
     return set_permissions(name.c_str(), p);
   }
 
-  // Individual permission bit queries on the current path.
   bool
   owner_read()
   {
@@ -524,8 +499,6 @@ public:
     return nd.path.has_sticky();
   }
 
-  // ── ownership ─────────────────────────────────────────────────────────────
-
   posix::uid_t
   uid()
   {
@@ -568,8 +541,6 @@ public:
   {
     return chown(name.c_str(), uid, gid);
   }
-
-  // ── stat queries on the current path ─────────────────────────────────────
 
   posix::off_t
   size()
@@ -619,7 +590,6 @@ public:
     return nd.path.mode();
   }
 
-  // stat queries on a named child
   posix::off_t
   child_size(const char *name) const
   {
@@ -633,24 +603,18 @@ public:
     return child_size(name.c_str());
   }
 
-  // ── path string decomposition ─────────────────────────────────────────────
-
-  // The current path string (normalised).
   const auto &
   get() const
   {
     return nd.path.name();
   }
 
-  // The parent path string.
   const auto &
   get_parent() const
   {
     return nd.parent.name();
   }
 
-  // The final component of the path (basename).
-  // "/home/user/docs" → "docs"
   path_t
   basename() const
   {
@@ -671,9 +635,6 @@ public:
     return out;
   }
 
-  // The extension of the final component (including the leading dot).
-  // "archive.tar.gz" → ".gz"
-  // Returns empty string if no extension.
   path_t
   extension() const
   {
@@ -681,7 +642,7 @@ public:
     const char *s = base.c_str();
     usize l = base.size();
     if ( l == 0 || s[0] == '.' )
-      return path_t();     // hidden file, no extension
+      return path_t();
 
     usize dot = l;
     while ( dot > 0 && s[dot - 1] != '.' )
@@ -695,8 +656,6 @@ public:
     return out;
   }
 
-  // The stem — basename without its extension.
-  // "archive.tar.gz" → "archive.tar"
   path_t
   stem() const
   {
@@ -712,31 +671,24 @@ public:
     return out;
   }
 
-  // dirname — everything except the final component (mirrors POSIX dirname).
   path_t
   dirname() const
   {
     return __parent_of(nd.path.name());
   }
 
-  // Split the path into individual name components (no separators).
   auto
   components() const
   {
     return nd.path.path_components();
   }
 
-  // Depth from root (number of path components).
   usize
   depth() const noexcept
   {
     return nd.path.depth();
   }
 
-  // ── path joining & resolution ─────────────────────────────────────────────
-
-  // Append a relative segment to the current path and return the result.
-  // Does not navigate the live pnode_t — use set() or down() for that.
   path_t
   join(const char *rel) const
   {
@@ -750,8 +702,6 @@ public:
     return join(rel.c_str());
   }
 
-  // Resolve symlinks and ".." components via realpath(3)-equivalent.
-  // Returns the canonical absolute path string, or an empty string on failure.
   path_t
   canonical() const
   {
@@ -762,8 +712,6 @@ public:
     return out;
   }
 
-  // relative_to(base) — express the current path relative to base.
-  // Both must be absolute.  Returns empty on failure.
   path_t
   relative_to(const char *base) const
   {
@@ -773,7 +721,6 @@ public:
     while ( base[bl] )
       ++bl;
 
-    // find common prefix length (align on '/' boundaries)
     usize common = 0;
     usize i = 0;
     while ( i < pl && i < bl && p[i] == base[i] ) {
@@ -784,7 +731,6 @@ public:
     if ( i == bl && (p[i] == '/' || p[i] == '\0') )
       common = i + (p[i] == '/');
 
-    // count remaining components in base past common
     usize up = 0;
     for ( usize j = common; j < bl; ++j )
       if ( base[j] == '/' )
@@ -816,9 +762,6 @@ public:
     return relative_to(base.c_str());
   }
 
-  // ── listing helpers ───────────────────────────────────────────────────────
-
-  // Return a vector of name strings for every regular file in this directory.
   auto
   files()
   {
@@ -830,7 +773,6 @@ public:
     return paths;
   }
 
-  // Return a vector of name strings for every subdirectory.
   auto
   dirs()
   {
@@ -842,7 +784,6 @@ public:
     return paths;
   }
 
-  // Return a vector of name strings for every entry regardless of type.
   auto
   all()
   {
@@ -853,7 +794,6 @@ public:
     return paths;
   }
 
-  // Return name strings filtered by type.
   auto
   sockets()
   {
@@ -909,9 +849,6 @@ public:
     return paths;
   }
 
-  // ── absolute path computation ─────────────────────────────────────────────
-
-  // Walk up from n, collecting path strings until "/" is reached.
   micron::vector<path_t>
   absolute(const path_t &n)
   {
@@ -950,8 +887,6 @@ public:
     return prune(path_t(abs.c_str()));
   }
 
-  // ── resolve ───────────────────────────────────────────────────────────────
-
   path_t
   resolve(const char *cstr)
   {
@@ -978,9 +913,6 @@ public:
     return prune(path_t(str.c_str()));
   }
 
-  // ── navigation ────────────────────────────────────────────────────────────
-
-  // Move up one level: current path becomes parent, parent is recalculated.
   void
   up()
   {
@@ -988,7 +920,6 @@ public:
     nd.parent = dir(__parent_of(nd.path.name()));
   }
 
-  // Move down into a named subdirectory child.
   void
   down(const char *name)
   {
@@ -1006,7 +937,6 @@ public:
     down(name.c_str());
   }
 
-  // Navigate to an arbitrary path string (may be relative or absolute).
   void
   set(const char *str)
   {
@@ -1023,7 +953,6 @@ public:
     set(str.c_str());
   }
 
-  // Navigate to the filesystem root.
   void
   to_root()
   {
@@ -1031,16 +960,12 @@ public:
     nd.path = dir("/");
   }
 
-  // Change the actual process working directory to the current path.
   i32
   chdir() const
   {
     return nd.path.chdir();
   }
 
-  // ── same-file check ───────────────────────────────────────────────────────
-
-  // True if this path and other refer to the same inode on the same device.
   bool
   is_same_as(const path &other) const
   {
@@ -1059,12 +984,6 @@ public:
   {
     return is_same_as(other.c_str());
   }
-
-  // ── comparison operators ──────────────────────────────────────────────────
-  //
-  // Lexicographic on the normalised path string.  These do NOT stat the
-  // filesystem — they compare path strings only.  Use is_same_as() for
-  // inode-level identity.
 
   bool
   operator==(const path &o) const noexcept
@@ -1113,7 +1032,6 @@ public:
     return !(*this < o);
   }
 
-  // Compare directly against a string.
   bool
   operator==(const char *s) const noexcept
   {
@@ -1140,7 +1058,6 @@ public:
     return nd.path.name() != s;
   }
 
-  // operator/ — path join syntax:  path p; auto q = p / "subdir/file.txt";
   path_t
   operator/(const char *rel) const
   {
@@ -1154,9 +1071,6 @@ public:
     return join(rel);
   }
 
-  // ── construction ─────────────────────────────────────────────────────────
-
-  // Default — current working directory and its parent.
   path() : nd({ dir(resolve("..")), dir(resolve(".")) }) {}
 
   path(const char *name)

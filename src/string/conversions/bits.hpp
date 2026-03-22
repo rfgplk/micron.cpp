@@ -11,16 +11,17 @@
 #include "../string.hpp"
 #include "../unitypes.hpp"
 
+// WARNING: SUSPECT FOR DOUBLES
+
 namespace micron
 {
 namespace __impl
 {
-#if defined(__SIZEOF_INT128__)
 struct __fmt_uint128_t {
   u64 lo;
   u64 hi;
 };
-
+#if defined(__SIZEOF_INT128__)
 inline __fmt_uint128_t
 umul128(u64 a, u64 b)
 {
@@ -61,9 +62,10 @@ shiftleft128(u64 lo, u64 hi, u32 dist)
 {
   if ( dist == 0 )
     return hi;
-  if ( dist >= 64 )
+  if ( dist < 64 )
+    return (hi << dist) | (lo >> (64 - dist));
+  else
     return lo << (dist - 64);
-  return (hi << dist) | (lo >> (64 - dist));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,6 +142,10 @@ fast_mod1e8(u64 x, u64 q)
 }
 
 template <typename I> struct max_digits;
+
+template <> struct max_digits<char> {
+  static constexpr usize value = 5;
+};
 
 template <> struct max_digits<i8> {
   static constexpr usize value = 5;
@@ -336,8 +342,8 @@ namespace __ryu
 constexpr static const u32 __mantissa_bits = 52;
 constexpr static const u32 __exponent_bits = 11;
 constexpr static const i32 __bias = 1023;
-constexpr static const u32 __pow5_inv_bitcount = 122;
-constexpr static const u32 __pow5_bitcount = 121;
+constexpr static const u32 __pow5_inv_bitcount = 126;
+constexpr static const u32 __pow5_bitcount = 125;
 
 constexpr static const u64 __pow5_table[26] = { 1ull,
                                                 5ull,
@@ -531,28 +537,25 @@ struct decimal64 {
 inline decimal64
 d2d(u64 ieeeMantissa, u32 ieeeExponent)
 {
-  const int __mantissa_bits = 52;
-  const int __bias = 1023;
-
   i32 e2;
   u64 m2;
 
   if ( ieeeExponent == 0 ) {
     // subnormal
-    e2 = 1 - __bias - __mantissa_bits;
+    e2 = 1 - __bias - static_cast<i32>(__mantissa_bits);
     m2 = ieeeMantissa;
   } else {
-    e2 = static_cast<i32>(ieeeExponent) - __bias - __mantissa_bits;
+    e2 = static_cast<i32>(ieeeExponent) - __bias - static_cast<i32>(__mantissa_bits);
     m2 = (1ull << __mantissa_bits) | ieeeMantissa;
   }
 
   bool even = (m2 & 1) == 0;
   bool acceptBounds = even;
 
-  __uint128_t mv = static_cast<__uint128_t>(m2) << 2;
+  u64 mv = m2 << 2;
   u32 mmShift = (ieeeMantissa != 0 || ieeeExponent <= 1) ? 1 : 0;
 
-  __uint128_t vr, vp, vm;
+  u64 vr, vp, vm;
   i32 e10;
   bool trailingVr = false, trailingVm = false;
 
@@ -607,10 +610,10 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
 
   if ( trailingVm || trailingVr ) {
     for ( ;; ) {
-      __uint128_t vpD = vp / 10, vmD = vm / 10;
+      u64 vpD = vp / 10, vmD = vm / 10;
       if ( vpD <= vmD )
         break;
-      __uint128_t vrD = vr / 10;
+      u64 vrD = vr / 10;
       u32 vrM = static_cast<u32>(vr - 10 * vrD);
       trailingVm &= (vm - 10 * vmD == 0);
       trailingVr &= (lastRemoved == 0);
@@ -622,10 +625,10 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     }
     if ( trailingVm ) {
       for ( ;; ) {
-        __uint128_t vmD = vm / 10;
+        u64 vmD = vm / 10;
         if ( vm - 10 * vmD != 0 )
           break;
-        __uint128_t vpD = vp / 10, vrD = vr / 10;
+        u64 vpD = vp / 10, vrD = vr / 10;
         u32 vrM = static_cast<u32>(vr - 10 * vrD);
         trailingVr &= (lastRemoved == 0);
         lastRemoved = static_cast<u8>(vrM);
@@ -638,15 +641,15 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     if ( trailingVr && lastRemoved == 5 && (vr & 1) == 0 )
       lastRemoved = 4;
 
-    u64 out = static_cast<u64>(vr + ((vr == vm && (!acceptBounds || !trailingVm)) || lastRemoved >= 5 ? 1ull : 0ull));
+    u64 out = vr + ((vr == vm && (!acceptBounds || !trailingVm)) || lastRemoved >= 5 ? 1ull : 0ull);
     return { out, e10 + removed };
   } else {
     bool roundUp = false;
     for ( ;; ) {
-      __uint128_t vpD = vp / 10, vmD = vm / 10;
+      u64 vpD = vp / 10, vmD = vm / 10;
       if ( vpD <= vmD )
         break;
-      __uint128_t vrD = vr / 10;
+      u64 vrD = vr / 10;
       u32 vrM = static_cast<u32>(vr - 10 * vrD);
       roundUp = (vrM >= 5);
       vr = vrD;
@@ -654,7 +657,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
       vm = vmD;
       ++removed;
     }
-    u64 out = static_cast<u64>(vr + ((vr == vm || roundUp) ? 1ull : 0ull));
+    u64 out = vr + ((vr == vm || roundUp) ? 1ull : 0ull);
     return { out, e10 + removed };
   }
 }
@@ -691,16 +694,16 @@ decimalLength(u64 v)
   return approx + (v >= __pow10[approx] ? 1 : 0);
 }
 
-// ryu shortest representation
 inline usize
 d2s_buffered(f64 value, char *buf)
 {
-  u64 bits;
-  memcpy(&bits, &value, sizeof(u64));
-  // const char *src = reinterpret_cast<const char *>(&value);
-  // char *dst = reinterpret_cast<char *>(&bits);
-  // for ( int k = 0; k < 8; ++k )
-  //   dst[k] = src[k];
+  union {
+    f64 f;
+    u64 u;
+  } conv;
+
+  conv.f = value;
+  u64 bits = conv.u;
 
   bool sign = (bits >> 63) != 0;
   u64 ieeeMantissa = bits & ((1ull << 52) - 1);
@@ -817,10 +820,13 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 
   u64 bits;
   {
-    const char *src = reinterpret_cast<const char *>(&val);
-    char *dst = reinterpret_cast<char *>(&bits);
-    for ( int k = 0; k < 8; ++k )
-      dst[k] = src[k];
+    union {
+      f64 f;
+      u64 u;
+    } conv;
+
+    conv.f = val;
+    bits = conv.u;
   }
 
   u64 ieeeMantissa = bits & ((1ull << 52) - 1);
@@ -921,10 +927,13 @@ d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 
   u64 bits;
   {
-    const char *src = reinterpret_cast<const char *>(&val);
-    char *dst = reinterpret_cast<char *>(&bits);
-    for ( int k = 0; k < 8; ++k )
-      dst[k] = src[k];
+    union {
+      f64 f;
+      u64 u;
+    } conv;
+
+    conv.f = val;
+    bits = conv.u;
   }
 
   u64 ieeeMantissa = bits & ((1ull << 52) - 1);

@@ -198,7 +198,6 @@ public:
     return slice<T>(begin(), end());
   }
 
-  // Unchecked slice — caller ensures from < to <= capacity
   inline __attribute__((always_inline)) const slice<T>
   operator[](size_type from, size_type to) const
   {
@@ -211,7 +210,6 @@ public:
     return slice<T>(__mem::memory + from, __mem::memory + to);
   }
 
-  // Unchecked element access — caller ensures n < capacity
   inline __attribute__((always_inline)) const T &
   operator[](size_type n) const
   {
@@ -390,7 +388,6 @@ public:
     }
   }
 
-  // Unchecked get — caller ensures n < length
   inline iterator
   get(const size_type n)
   {
@@ -463,7 +460,6 @@ public:
     return __mem::memory + __mem::length;
   }
 
-  // Unchecked — caller ensures non-empty
   inline iterator
   last()
   {
@@ -814,7 +810,6 @@ public:
     __mem::length = 0;
   }
 
-  // Unchecked — caller ensures non-empty
   inline const T &
   front() const
   {

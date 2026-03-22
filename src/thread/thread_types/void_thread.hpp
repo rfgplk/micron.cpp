@@ -212,7 +212,7 @@ public:
   void
   stop(void)
   {
-    payload.should_die.store(1, memory_order_release);
+    payload.should_die.store(1, memory_order_seq_cst);
     micron::release_futex(payload.has_work.ptr(), 1);
   }
 

@@ -199,7 +199,7 @@ srli_si(T &o, int imm8)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// sll — scalar count
+// sll -- scalar count
 
 template <is_neon_simd_class T>
 inline T
@@ -301,7 +301,7 @@ sllv(T &o, T &count)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// srl — logical right shift
+// srl -- logical right shift
 
 template <is_neon_simd_class T>
 inline T

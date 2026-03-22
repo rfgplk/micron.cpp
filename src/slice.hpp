@@ -210,7 +210,16 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
 
   slice(void) : __mem(Alloc::auto_size()) { __mem::length = __mem::capacity; }
 
-  slice(T *a, T *b) : __mem(static_cast<size_t>(b - a) / sizeof(T))
+  // support const ptrs as well -- be careful!!
+  slice(const T *a, const T *b) : __mem(static_cast<size_t>(b - a))
+  {
+    micron::memcpy(micron::addr(__mem::memory[0]), const_cast<T *>(a), b - a);
+    __mem::length = b - a;
+  }
+
+  slice(nullptr_t, nullptr_t) : __mem(nullptr) { __mem::length = 0; }
+
+  slice(T *a, T *b) : __mem(static_cast<size_t>(b - a))
   {
     micron::memcpy(micron::addr(__mem::memory[0]), a, b - a);
     __mem::length = b - a;
