@@ -16,6 +16,22 @@ constexpr int byte = 8;
 constexpr int _char = 8;
 };     // namespace bits
 
+#if __wordsize == 64
+#define __micron_long_bits 64
+#define __micron_long_max 9223372036854775807L
+#define __micron_long_min (-9223372036854775807L - 1)
+#define __micron_ulong_max 18446744073709551615UL
+#define __micron_long_digits 63
+#define __micron_long_digits10 18
+#elif __wordsize == 32
+#define __micron_long_bits 32
+#define __micron_long_max 2147483647L
+#define __micron_long_min (-2147483647L - 1)
+#define __micron_ulong_max 4294967295UL
+#define __micron_long_digits 31
+#define __micron_long_digits10 9
+#endif
+
 namespace maximum
 {
 
@@ -1174,23 +1190,23 @@ public:
   static constexpr long
   min() noexcept
   {
-    return -2147483648L;
+    return __micron_long_min;
   }
 
   static constexpr long
   max() noexcept
   {
-    return 2147483647L;
+    return __micron_long_max;
   }
 
   static constexpr long
   lowest() noexcept
   {
-    return -2147483648L;
+    return __micron_long_min;
   }
 
-  static constexpr int digits = 31;
-  static constexpr int digits10 = 9;
+  static constexpr int digits = __micron_long_digits;
+  static constexpr int digits10 = __micron_long_digits10;
   static constexpr int max_digits10 = 0;
 
   static constexpr bool is_signed = true;
@@ -1266,7 +1282,7 @@ public:
   static constexpr unsigned long
   max() noexcept
   {
-    return 4294967295UL;
+    return __micron_ulong_max;
   }
 
   static constexpr unsigned long
@@ -1275,8 +1291,8 @@ public:
     return 0;
   }
 
-  static constexpr int digits = 32;
-  static constexpr int digits10 = 9;
+  static constexpr int digits = __micron_long_digits;
+  static constexpr int digits10 = __micron_long_digits10;
   static constexpr int max_digits10 = 0;
 
   static constexpr bool is_signed = false;

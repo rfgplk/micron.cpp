@@ -66,14 +66,12 @@ public:
 
   free_guard(atomic_flag *f, try_to_lock_t) : flag(f), owned(try_acquire()) {}
 
-  // move construction — drain the source completely, leaving it inert
   free_guard(free_guard &&o) noexcept : flag(o.flag), owned(o.owned)
   {
     o.flag = nullptr;
     o.owned = false;
   }
 
-  // move assignment — release any lock we currently hold, then steal from source
   free_guard &
   operator=(free_guard &&o) noexcept
   {

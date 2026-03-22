@@ -1016,9 +1016,6 @@ public:
   }
 };
 
-// ------------------------------------------------------------------ //
-//  Move-only specialisation — no copy, no assign from lvalue         //
-// ------------------------------------------------------------------ //
 template <typename T, class Alloc, bool Sf>
   requires(!micron::is_regular_object<T> and micron::movable<T> and !micron::copyable<T>)
 class vector<T, Alloc, Sf> : public __mutable_memory_resource_move_only<T, Alloc>

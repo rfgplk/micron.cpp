@@ -1079,5 +1079,5 @@ main()
 
   sb::print("====================================");
   sb::print("ALL PRECISION TESTS COMPLETED");
-  return 0;
+  return 1;
 }

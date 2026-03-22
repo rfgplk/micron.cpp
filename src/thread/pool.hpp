@@ -28,6 +28,15 @@ __make_threadarena(void)
   __global_threadpool = &local_pool;
 };
 
+__attribute__((destructor)) void
+__destroy_threadarena(void)
+{
+  if ( __global_threadpool != nullptr ) {
+    (*__global_threadpool).~standard_arena();
+    __global_threadpool = nullptr;
+  }
+};
+
 #if defined(__micron_enable_concurrency_at_startup_var)
 __attribute__((constructor)) void
 #else
@@ -43,12 +52,31 @@ __make_parallelarena(void)
     local_pool.create();
 };
 
+#if defined(__micron_enable_concurrency_at_startup_var)
+__attribute__((destructor)) void
+#else
+inline __attribute__((always_inline)) void
+#endif
+__destroy_parallelarena(void)
+{
+  if ( __global_parallelpool != nullptr ) {
+    (*__global_parallelpool).~concurrent_arena();
+    __global_parallelpool = nullptr;
+  }
+};
+
 void
 start_concurrent_pools(void)
 {
 #if !defined(__micron_enable_concurrency_at_startup_var)
   __make_parallelarena();
 #endif
+}
+
+void
+end_concurrent_pools(void)
+{
+  __destroy_parallelarena();
 }
 
 };     // namespace micron

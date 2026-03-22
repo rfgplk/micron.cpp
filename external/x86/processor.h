@@ -1,8 +1,3 @@
-//  Copyright (c) 2024- David Lucius Severus
-//
-//  Distributed under the Boost Software License, Version 1.0.
-//  See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt
 // nanoflagsx86 (for C99 and onwards)
 // https://github.com/rfgplk/nanoflagsx86
 //
@@ -36,7 +31,6 @@
 #include "macros.h"
 
 #define CACHE_NULL 0x00
-// #define iTLB_4KB_PAGE_32e 0x01
 #define iTLB_4MB_PAGE_2e 0x02
 #define dTLB_4KB_PAGE_64e 0x03
 #define dTLB_4MB_PAGE_8e 0x04
@@ -171,17 +165,17 @@ cache_sets(void)
 inline void
 cache(const char level, cache_t *const __restrict__ r)
 {
-  cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = (unsigned char)level, .edx = 0 };
+  cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = (unsigned int)level, .edx = 0 };
   cpuid_c(0x04, level, &cs);
 
   r->associative_cache = bit(cs.eax, 9);
   r->self_init = bit(cs.eax, 8);
-  r->level = rbit(cs.eax, 7, 5);
-  r->type = rbit(cs.eax, 4, 0);
-  r->associativity = rbit(cs.ebx, 31, 22) + 1;
-  r->phys_line = rbit(cs.ebx, 21, 12) + 1;
-  r->coherency = rbit(cs.ebx, 11, 0) + 1;
-  r->sets = rbit(cs.ecx, 31, 0) + 1;
+  r->level = (char)rbit(cs.eax, 7, 5);
+  r->type = (char)rbit(cs.eax, 4, 0);
+  r->associativity = (short unsigned int)rbit(cs.ebx, 31, 22) + 1;
+  r->phys_line = (short unsigned int)rbit(cs.ebx, 21, 12) + 1;
+  r->coherency = (short unsigned int)rbit(cs.ebx, 11, 0) + 1;
+  r->sets = (short unsigned int)rbit(cs.ecx, 31, 0) + 1;
 
   r->size = r->associativity * r->phys_line * r->coherency * r->sets;
 }
@@ -210,19 +204,19 @@ cores_all(char *__restrict__ total, core_t (*ptr)[256])
   unsigned int tmp_c = 0;
 
   cpuid_c(0x04, 0x00, &cs);
-  *total = rbit(cs.eax, 31, 26) + 1;
+  *total = (char)rbit(cs.eax, 31, 26) + 1;
   while ( 1 ) {
     unsigned int tmp = *total;
     cpuid_c(0x0B, tmp_c++, &cs);
-    char bits = rbit(cs.eax, 4, 0);
-    char apic = rbit(cs.edx, 31, 0);
+    char bits = (char)rbit(cs.eax, 4, 0);
+    char apic = (char)rbit(cs.edx, 31, 0);
 
-    if ( rbit(cs.eax, 4, 0) == 0 && rbit(cs.ebx, 15, 0) == 0 )
+    if ( (char)rbit(cs.eax, 4, 0) == 0 && (char)rbit(cs.ebx, 15, 0) == 0 )
       break;
     while ( tmp-- ) {
       apic >>= bits;
       (*ptr)[counter].apic = apic;
-      (*ptr)[counter++].type = tmp_c;
+      (*ptr)[counter++].type = (char)tmp_c;
     }
   };
   for ( ; counter < 256; counter++ )

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../external/x86.h"
+#include "../../external/x86/x86.h"
 
 namespace micron
 {

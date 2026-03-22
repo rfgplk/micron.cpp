@@ -232,8 +232,6 @@ public:
   };
 
   // allow construction from - to iterator (be careful!)
-  // NOTE: exc() in initialiser list intentionally left in place — __safety_check
-  //       cannot be invoked before the object is fully constructed.
   constexpr hstring(iterator __start, iterator __end)
       : __mem((__start < __end ? ((max_t)Alloc::auto_size() < static_cast<usize>(__end - __start) ? static_cast<usize>(__end - __start)
                                                                                                   : Alloc::auto_size())
@@ -955,7 +953,7 @@ public:
   inline hstring<F>
   substr(usize pos = 0, usize cnt = npos) const
   {
-    if ( cnt == npos )     // logic sentinel — kept for both Sf modes
+    if ( cnt == npos )
       cnt = (pos <= __mem::length) ? __mem::length - pos : 0;
 
     __safety_check<&hstring::__range_pos_cnt, except::library_error>("micron::hstring substr() invalid range", pos, cnt);
@@ -970,7 +968,7 @@ public:
   inline hstring<F>
   substr(iterator _start, iterator _end = nullptr) const
   {
-    if ( _end == nullptr )     // logic default — kept for both Sf modes
+    if ( _end == nullptr )
       _end = end();
 
     __safety_check<&hstring::__iter_substr_check, except::library_error>("micron::hstring substr() invalid range",

@@ -181,12 +181,12 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 smemcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
-  if ( _src == nullptr || _dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) || !__is_valid_address(_dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( _src == nullptr or _dest == nullptr )
+    return micron::numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
+    return micron::numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
+    return micron::numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   for ( u64 i = 0; i < cnt; i++ )
@@ -200,9 +200,9 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 i64
 rsmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) || !__is_valid_address(_dest, cnt) )
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
@@ -217,11 +217,11 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 scmemcmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
-  if ( _src == nullptr || _dest == nullptr )
+  if ( _src == nullptr or _dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) || !__is_valid_address(_dest, M) )
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
@@ -247,9 +247,9 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 i64
 rscmemcmp_safe(const F &_src, const F &_dest) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) || !__is_valid_address(_dest, M) )
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
@@ -446,11 +446,11 @@ template <u64 alignment = 1>
 __attribute__((nonnull)) i64
 sbytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
-  if ( src == nullptr || dest == nullptr )
+  if ( src == nullptr or dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) || !__is_aligned_to(dest, alignment) )
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) || !__is_valid_address(dest, cnt) )
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
     return numeric_limits<i64>::min();
   for ( u64 i = 0; i < cnt; i++ )
     if ( src[i] != dest[i] )
@@ -469,9 +469,9 @@ template <u64 alignment = 1>
 i64
 rsbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(src, alignment) || !__is_aligned_to_r(dest, alignment) )
+  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) || !__is_valid_address(dest, cnt) )
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
     return numeric_limits<i64>::min();
   const byte *s = &src;
   const byte *d = &dest;
@@ -492,11 +492,11 @@ template <u64 N, u64 alignment = 1>
 __attribute__((nonnull)) i64
 scbytecmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
-  if ( src == nullptr || dest == nullptr )
+  if ( src == nullptr or dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) || !__is_aligned_to(dest, alignment) )
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, N) || !__is_valid_address(dest, N) )
+  if ( !__is_valid_address(src, N) or !__is_valid_address(dest, N) )
     return numeric_limits<i64>::min();
   if constexpr ( N % 4 == 0 )
     for ( u64 i = 0; i < N; i += 4 ) {
@@ -527,9 +527,9 @@ template <u64 N, u64 alignment = 1>
 i64
 rscbytecmp_safe(const byte &src, const byte &dest) noexcept
 {
-  if ( !__is_aligned_to_r(src, alignment) || !__is_aligned_to_r(dest, alignment) )
+  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, N) || !__is_valid_address(dest, N) )
+  if ( !__is_valid_address(src, N) or !__is_valid_address(dest, N) )
     return numeric_limits<i64>::min();
   const byte *s = &src;
   const byte *d = &dest;
@@ -640,11 +640,11 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 stypecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
-  if ( _src == nullptr || _dest == nullptr )
+  if ( _src == nullptr or _dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) || !__is_valid_address(_dest, cnt) )
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
@@ -659,9 +659,9 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 i64
 rstypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) || !__is_valid_address(_dest, cnt) )
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
@@ -675,11 +675,11 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 sctypecmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
-  if ( _src == nullptr || _dest == nullptr )
+  if ( _src == nullptr or _dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) || !__is_valid_address(_dest, M) )
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
@@ -705,9 +705,9 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 i64
 rsctypecmp_safe(const F &_src, const F &_dest) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) || !__is_aligned_to(_dest, alignment) )
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) || !__is_valid_address(_dest, M) )
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
     return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
@@ -843,11 +843,11 @@ template <u64 alignment = alignof(word)>
 __attribute__((nonnull)) i64
 swordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
-  if ( src == nullptr || dest == nullptr )
+  if ( src == nullptr or dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) || !__is_aligned_to(dest, alignment) )
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) || !__is_valid_address(dest, cnt) )
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
     return numeric_limits<i64>::min();
   for ( u64 i = 0; i < cnt; i++ )
     if ( src[i] != dest[i] )
@@ -859,9 +859,9 @@ template <u64 alignment = alignof(word)>
 i64
 rswordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(src, alignment) || !__is_aligned_to_r(dest, alignment) )
+  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) || !__is_valid_address(dest, cnt) )
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
     return numeric_limits<i64>::min();
   const word *s = &src;
   const word *d = &dest;
@@ -876,11 +876,11 @@ template <u64 M, u64 alignment = alignof(word)>
 __attribute__((nonnull)) i64
 scwordcmp_safe(const word *__restrict src, const word *__restrict dest) noexcept
 {
-  if ( src == nullptr || dest == nullptr )
+  if ( src == nullptr or dest == nullptr )
     return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) || !__is_aligned_to(dest, alignment) )
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
     return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, M) || !__is_valid_address(dest, M) )
+  if ( !__is_valid_address(src, M) or !__is_valid_address(dest, M) )
     return numeric_limits<i64>::min();
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {

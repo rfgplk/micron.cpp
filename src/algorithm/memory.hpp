@@ -422,14 +422,14 @@ cset_n(T *restrict dst, const byte val)
   else if constexpr ( N % 16 == 0 )
     memset128(dst, val, N);
   else
-    cmemset<N>(dst, val);
+    cmemset<N * sizeof(T)>(dst, val);
 #elif __micron_x86_simd_width >= 128
   if constexpr ( N % 16 == 0 )
     memset128(dst, val, N);
   else
-    cmemset<N>(dst, val);
+    cmemset<N * sizeof(T)>(dst, val);
 #else
-  cmemset<N>(dst, val);
+  cmemset<N * sizeof(T)>(dst, val);
 #endif
   return dst;
 }
@@ -505,6 +505,7 @@ template <usize N, typename T>
 T *
 czero_n(T *restrict dst)
 {
+  // memset is elements, cmemset is BYTES
   if ( dst == nullptr )
     exc<except::library_error>("micron::czero_n invalid pointer.");
 #if __micron_x86_simd_width >= 256
@@ -513,14 +514,14 @@ czero_n(T *restrict dst)
   else if constexpr ( N % 16 == 0 )
     memset128(dst, 0x0, N);
   else
-    cmemset<N>(dst, 0x0);
+    cmemset<N * sizeof(T)>(dst, 0x0);
 #elif __micron_x86_simd_width >= 128
   if constexpr ( N % 16 == 0 )
     memset128(dst, 0x0, N);
   else
-    cmemset<N>(dst, 0x0);
+    cmemset<N * sizeof(T)>(dst, 0x0);
 #else
-  cmemset<N>(dst, 0x0);
+  cmemset<N * sizeof(T)>(dst, 0x0);
 #endif
   return dst;
 }

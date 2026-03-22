@@ -35,6 +35,7 @@ constexpr static const u32 memory_errno = 0x7f00 + 17;
 constexpr static const u32 thread_errno = 0x7f00 + 18;
 constexpr static const u32 filesystem_errno = 0x7f00 + 19;
 constexpr static const u32 network_errno = 0x7f00 + 20;
+constexpr static const u32 critical_errno = 0x7f00 + 0xff;     // for critical library errors -- use sparingly
 
 // NOTE: will get truncd to lowest 8 bits, offset is for compat. with errno
 
@@ -91,6 +92,7 @@ MICRON_EXCEPTION_TEMP(standard_error, standard_errno)
 MICRON_EXCEPTION_TEMP(library_error, library_errno)
 MICRON_EXCEPTION_TEMP(hardware_error, hardware_errno)
 MICRON_EXCEPTION_TEMP(memory_error, memory_errno)
+MICRON_EXCEPTION_TEMP(critical_error, critical_errno)
 MICRON_EXCEPTION_TEMP(thread_error, thread_errno)
 MICRON_EXCEPTION_TEMP(filesystem_error, filesystem_errno)
 MICRON_EXCEPTION_TEMP(network_error, network_errno)
@@ -113,6 +115,7 @@ using standard = except::standard_error;
 using library = except::library_error;
 using hardware = except::hardware_error;
 using memory_err = except::memory_error;
+using critical_err = except::critical_error;
 using thread_err = except::thread_error;
 using fs_error = except::filesystem_error;
 using net_error = except::network_error;

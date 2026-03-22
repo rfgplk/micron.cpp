@@ -12,6 +12,7 @@
 
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
+#include "../concepts.hpp"
 #include "../container_safety.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
@@ -29,25 +30,76 @@
 
 namespace micron
 {
-// Regular convector class, always safe, mutable, notthread safe, cannot be
-// copied for performance reasons (just move it, or use a slice for that)
-template <is_movable_object T, class Alloc = micron::allocator_serial<>> class convector : public __mutable_memory_resource<T, Alloc>
+
+// concurrent vector class, always safe, mutable, thread safe via internal mutex
+template <is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
+class convector : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
   micron::mutex __mtx;
 
-  inline void
-  __unlocked_clear()
+  inline __attribute__((always_inline)) bool
+  __empty_check() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !__mem::length )
-      return;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        (__mem::memory)[i].~T();
+    return __mem::length == 0 || __mem::memory == nullptr;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __null_check() const
+  {
+    return __mem::memory == nullptr;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __index_check(size_t n) const
+  {
+    return n >= __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __capacity_check(size_t n) const
+  {
+    return n >= __mem::capacity;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __get_check(size_t n) const
+  {
+    return n >= __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_check(const T *it) const
+  {
+    return it < __mem::memory || it > __mem::memory + __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __iterator_strict(const T *it) const
+  {
+    return it < __mem::memory || it >= __mem::memory + __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __range_check(size_t from, size_t to) const
+  {
+    return from >= to || to > __mem::length;
+  }
+
+  inline __attribute__((always_inline)) bool
+  __cap_range_check(size_t from, size_t to) const
+  {
+    return from >= to || from >= __mem::capacity || to > __mem::capacity;
+  }
+
+  template <auto Fn, typename E, typename... Args>
+  inline __attribute__((always_inline)) void
+  __safety_check(const char *msg, Args &&...args) const
+  {
+    if constexpr ( Sf == true ) {
+      if ( (this->*Fn)(micron::forward<Args>(args)...) )
+        exc<E>(msg);
     }
-    micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
-    __mem::length = 0;
   }
 
   inline void
@@ -56,55 +108,64 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> class c
     if ( n < __mem::capacity )
       return;
     if ( __mem::is_zero() ) {
-      // NOTE: if a container has been moved out, we need to reinit. memor
       __mem::realloc(n);
       return;
     }
-
     __mem::expand(n);
+  }
+
+  inline void
+  __unlocked_clear()
+  {
+    if ( !__mem::length )
+      return;
+    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __mem::length = 0;
   }
 
   inline void
   __unlocked_push_back(const T &v)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
+    if ( __mem::length + 1 <= __mem::capacity ) {
+      if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
         new (&__mem::memory[__mem::length++]) T(v);
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        new (&__mem::memory[__mem::length++]) T(v);
-      }
+      else
+        __mem::memory[__mem::length++] = v;
     } else {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+      if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+        new (&__mem::memory[__mem::length++]) T(v);
+      else
         __mem::memory[__mem::length++] = v;
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        __mem::memory[__mem::length++] = v;
-      }
     }
   }
 
   inline void
   __unlocked_push_back(T &&v)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
-        new (&__mem::memory[__mem::length++]) T(v);
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        new (&__mem::memory[__mem::length++]) T(v);
-      }
+    if ( __mem::length + 1 <= __mem::capacity ) {
+      if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+      else
+        __mem::memory[__mem::length++] = micron::move(v);
     } else {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+      if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+      else
         __mem::memory[__mem::length++] = micron::move(v);
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        __mem::memory[__mem::length++] = micron::move(v);
-      }
+    }
+  }
+
+  template <typename... Args>
+  inline void
+  __unlocked_emplace_back(Args &&...v)
+  {
+    if ( __mem::length < __mem::capacity ) {
+      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
+    } else {
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
     }
   }
 
@@ -123,78 +184,59 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  // NOTE: by convetion destructors should be the first method, adjust all other classes to be in the same order
   ~convector()
   {
     if ( __mem::is_zero() )
       return;
-    clear();
+    if ( __mem::length )
+      __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __mem::length = 0;
   }
+
+  convector(void) : __mem() {}
 
   convector(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      usize i = 0;
-      for ( T &&value : lst ) {
+      size_type i = 0;
+      for ( T &&value : lst )
         new (&__mem::memory[i++]) T(micron::move(value));
-      }
       __mem::length = lst.size();
     } else {
-      usize i = 0;
-      for ( T value : lst ) {
+      size_type i = 0;
+      for ( auto &&value : lst )
         __mem::memory[i++] = value;
-      }
       __mem::length = lst.size();
     }
-  };
+  }
 
-  convector(void) : __mem() {};
-
-  convector(const usize n) : __mem(n)
+  convector(const size_type n) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( usize i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T();
-    } else {
-      for ( usize i = 0; i < n; i++ )
-        __mem::memory[i] = T{};
-    }
+    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
     __mem::length = n;
-  };
+  }
 
   template <typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
-  convector(usize n, Args... args) : __mem(n)
+  convector(size_type n, Args &&...args) : __mem(n)
   {
-    for ( usize i = 0; i < n; i++ )
-      new (&__mem::memory[i]) T(args...);
+    for ( size_type i = 0; i < n; i++ )
+      new (&__mem::memory[i]) T(forward<Args>(args)...);
     __mem::length = n;
-  };
+  }
 
-  convector(usize n, const T &init_value) : __mem(n)
+  convector(size_type n, const T &init_value) : __mem(n)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( usize i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T(init_value);
-    } else {
-      for ( usize i = 0; i < n; i++ )
-        __mem::memory[i] = init_value;
-    }
+    __impl_container::construct(micron::addr(__mem::memory[0]), init_value, n);
     __mem::length = n;
-  };
+  }
 
-  convector(usize n, T &&init_value) : __mem(n)
+  convector(size_type n, T &&init_value) : __mem(n)
   {
     T tmp = micron::move(init_value);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      for ( usize i = 0; i < n; i++ )
-        new (&__mem::memory[i]) T(tmp);
-    } else {
-      for ( usize i = 0; i < n; i++ )
-        __mem::memory[i] = init_value;
-    }
+    __impl_container::construct(micron::addr(__mem::memory[0]), tmp, n);
     __mem::length = n;
-  };
+  }
 
   convector(const convector &o) : __mem(o.length)
   {
@@ -202,7 +244,7 @@ public:
     __mem::length = o.length;
   }
 
-  convector(chunk<byte> &&m) : __mem(m) { m = nullptr; };
+  convector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
   template <typename C = T> convector(convector<C> &&o) : __mem(micron::move(o)) {}
 
@@ -212,11 +254,13 @@ public:
   operator=(const convector &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __mem::memory = nullptr;
-    __mem::capacity = 0;
-    realloc(o.length);
-    __mem::length = o.length;
+    if ( __mem::memory ) {
+      __unlocked_clear();
+      __mem::free();
+    }
+    __mem::realloc(o.length);
     __impl_container::copy(__mem::memory, o.memory, o.length);
+    __mem::length = o.length;
     return *this;
   }
 
@@ -225,8 +269,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::memory ) {
-      // kill old memory first
-      clear();
+      __unlocked_clear();
       __mem::free();
     }
     __mem::operator=(micron::move(o));
@@ -238,110 +281,337 @@ public:
   operator+=(Args &&...args)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __unlocked_push_back(micron::move(args)...);
+    (__unlocked_push_back(micron::forward<Args>(args)), ...);
     return *this;
   }
 
   const_pointer
   data() const
   {
-    return &__mem::memory[0];
+    return __mem::memory;
+  }
+
+  pointer
+  data()
+  {
+    return __mem::memory;
   }
 
   bool
   operator!() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return empty();
+    return __mem::length == 0;
   }
 
-  // overload this to always point to mem
   const byte *
-  operator&() const volatile
+  operator&() const
+  {
+    return reinterpret_cast<const byte *>(__mem::memory);
+  }
+
+  byte *
+  operator&()
+  {
+    return reinterpret_cast<byte *>(__mem::memory);
+  }
+
+  auto *
+  addr()
+  {
+    return this;
+  }
+
+  const auto *
+  addr() const
+  {
+    return this;
+  }
+
+  chunk<byte>
+  operator*() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return reinterpret_cast<byte *>(__mem::memory);
+    return __mem::data();
   }
 
   inline slice<T>
   operator[]()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return slice<T>(begin(), end());
+    return slice<T>(__mem::memory, __mem::memory + __mem::length);
   }
 
   inline const slice<T>
   operator[]() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return slice<T>(begin(), end());
+    return slice<T>(__mem::memory, __mem::memory + __mem::length);
   }
 
-  // copies convector out
   inline __attribute__((always_inline)) const slice<T>
-  operator[](usize from, usize to) const
+  operator[](size_type from, size_type to) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    // meant to be safe so this is here
-    if ( from >= to or from > __mem::capacity or to > __mem::capacity )
-      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
-    return slice<T>(get(from), get(to));
+    __safety_check<&convector::__cap_range_check, except::library_error>("micron::convector operator[] out of allocated memory range.",
+                                                                         from, to);
+    return slice<T>(__mem::memory + from, __mem::memory + to);
   }
 
   inline __attribute__((always_inline)) slice<T>
-  operator[](usize from, usize to)
+  operator[](size_type from, size_type to)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    // meant to be safe so this is here
-    if ( from >= to or from > __mem::capacity or to > __mem::capacity )
-      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
-    return slice<T>(get(from), get(to));
+    __safety_check<&convector::__cap_range_check, except::library_error>("micron::convector operator[] out of allocated memory range.",
+                                                                         from, to);
+    return slice<T>(__mem::memory + from, __mem::memory + to);
+  }
+
+  template <typename R>
+    requires(micron::is_integral_v<R>)
+  inline __attribute__((always_inline)) const T &
+  operator[](R n) const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__capacity_check, except::library_error>("micron::convector operator[] out of allocated memory range.",
+                                                                        static_cast<size_type>(n));
+    return (__mem::memory)[n];
+  }
+
+  template <typename R>
+    requires(micron::is_integral_v<R>)
+  inline __attribute__((always_inline)) T &
+  operator[](R n)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__capacity_check, except::library_error>("micron::convector operator[] out of allocated memory range.",
+                                                                        static_cast<size_type>(n));
+    return (__mem::memory)[n];
+  }
+
+  inline __attribute__((always_inline)) T &
+  at(size_type n)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector at() out of bounds", n);
+    return (__mem::memory)[n];
   }
 
   inline __attribute__((always_inline)) const T &
-  operator[](size_type n) const
+  at(size_type n) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    // meant to be safe so this is here
-    if ( n > __mem::capacity )
-      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector at() out of bounds", n);
     return (__mem::memory)[n];
   }
 
-  inline __attribute__((always_inline)) T &
-  operator[](size_type n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    // meant to be safe so this is here
-    if ( n > __mem::capacity )
-      exc<except::library_error>("micron::convector operator[] out of allocated memory range.");
-    return (__mem::memory)[n];
-  }
-
-  inline __attribute__((always_inline)) T &
-  at(usize n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::convector at() out of bounds");
-    return (__mem::memory)[n];
-  }
-
-  usize
+  size_type
   at_n(iterator i) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( i - begin() >= __mem::length )
-      exc<except::library_error>("micron::iconvector at_n() out of bounds");
-    return static_cast<usize>(i - begin());
+    __safety_check<&convector::__iterator_check, except::library_error>("micron::convector at_n() iterator out of range",
+                                                                        static_cast<const T *>(i));
+    return static_cast<size_type>(i - __mem::memory);
+  }
+
+  T *
+  itr(size_type n)
+  {
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector itr() out of bounds", n);
+    return &(__mem::memory)[n];
   }
 
   const T *
-  itr(usize n) const
+  itr(size_type n) const
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::convector at() out of bounds");
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector itr() out of bounds", n);
     return &(__mem::memory)[n];
+  }
+
+  size_type
+  max_size() const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    return __mem::capacity;
+  }
+
+  size_type
+  size() const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    return __mem::length;
+  }
+
+  void
+  set_size(const size_type n)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __mem::length = n;
+  }
+
+  bool
+  empty() const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    return __mem::length == 0;
+  }
+
+  inline void
+  reserve(const size_type n)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __unlocked_reserve(n);
+  }
+
+  inline void
+  try_reserve(const size_type n)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( n < __mem::capacity )
+      exc<except::memory_error>("micron convector failed to reserve memory");
+    __unlocked_reserve(n);
+  }
+
+  // NOTE: no lock
+  inline iterator
+  begin()
+  {
+    return __mem::memory;
+  }
+
+  inline const_iterator
+  begin() const
+  {
+    return __mem::memory;
+  }
+
+  inline const_iterator
+  cbegin() const
+  {
+    return __mem::memory;
+  }
+
+  inline iterator
+  end()
+  {
+    return __mem::memory + __mem::length;
+  }
+
+  inline const_iterator
+  end() const
+  {
+    return __mem::memory + __mem::length;
+  }
+
+  inline const_iterator
+  cend() const
+  {
+    return __mem::memory + __mem::length;
+  }
+
+  inline iterator
+  last()
+  {
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector last() called on empty vector");
+    return __mem::memory + (__mem::length - 1);
+  }
+
+  inline const_iterator
+  last() const
+  {
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector last() called on empty vector");
+    return __mem::memory + (__mem::length - 1);
+  }
+
+  inline iterator
+  get(const size_type n)
+  {
+    __safety_check<&convector::__get_check, except::library_error>("micron::convector get() out of range", n);
+    return &(__mem::memory[n]);
+  }
+
+  inline const_iterator
+  get(const size_type n) const
+  {
+    __safety_check<&convector::__get_check, except::library_error>("micron::convector get() out of range", n);
+    return &(__mem::memory[n]);
+  }
+
+  inline const_iterator
+  cget(const size_type n) const
+  {
+    __safety_check<&convector::__get_check, except::library_error>("micron::convector cget() out of range", n);
+    return &(__mem::memory[n]);
+  }
+
+  inline iterator
+  find(const T &o)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    T *f_ptr = __mem::memory;
+    for ( size_type i = 0; i < __mem::length; i++ )
+      if ( f_ptr[i] == o )
+        return &f_ptr[i];
+    return nullptr;
+  }
+
+  inline const_iterator
+  find(const T &o) const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    const T *f_ptr = __mem::memory;
+    for ( size_type i = 0; i < __mem::length; i++ )
+      if ( f_ptr[i] == o )
+        return &f_ptr[i];
+    return nullptr;
+  }
+
+  inline const T &
+  front() const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector front() called on empty vector");
+    return (__mem::memory)[0];
+  }
+
+  inline const T &
+  back() const
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector back() called on empty vector");
+    return (__mem::memory)[__mem::length - 1];
+  }
+
+  inline T &
+  front()
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector front() called on empty vector");
+    return (__mem::memory)[0];
+  }
+
+  inline T &
+  back()
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector back() called on empty vector");
+    return (__mem::memory)[__mem::length - 1];
+  }
+
+  inline slice<byte>
+  into_bytes()
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( __mem::memory == nullptr || __mem::length == 0 )
+      return slice<byte>(nullptr, nullptr);
+    return slice<byte>(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<byte *>(__mem::memory + __mem::length));
+  }
+
+  inline convector<T>
+  clone(void)
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    return convector<T>(*this);
   }
 
   template <typename F>
@@ -354,11 +624,7 @@ public:
       return *this;
     if ( !__mem::has_space(o.length) )
       __unlocked_reserve(__mem::capacity + o.max_size());
-
-    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
-    // micron::memcpy(&(__mem::memory)[__mem::length],
-    // &o.memory[0],
-    //                o.length);
+    __impl_container::copy_assign(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -371,10 +637,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::has_space(o.length) )
       __unlocked_reserve(__mem::capacity + o.max_size());
-    __impl_container::copy(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
-    // micron::memcpy(&(__mem::memory)[__mem::length],
-    // &o.memory[0],
-    //                o.length);
+    __impl_container::copy_assign(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -386,119 +649,41 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
-  }
-
-  usize
-  max_size() const
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return __mem::capacity;
-  }
-
-  usize
-  size() const
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return __mem::length;
-  }
-
-  void
-  set_size(const usize n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __mem::length = n;
-  }
-
-  bool
-  empty() const
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return __mem::length == 0 ? true : false;
-  }
-
-  // grow container
-  inline void
-  reserve(const usize n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n < __mem::capacity )
-      return;
-    if ( __mem::is_zero() ) {
-      // NOTE: if a container has been moved out, we need to reinit. memor
-      __mem::realloc(n);
-      return;
-    }
-    __mem::expand(n);
-  }
-
-  inline void
-  try_reserve(const usize n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n < __mem::capacity )
-      exc<except::memory_error>("micron convector failed to reserve memory");
-    if ( __mem::is_zero() ) {
-      // NOTE: if a container has been moved out, we need to reinit. memor
-      __mem::realloc(n);
-      return;
-    }
-    __mem::expand(n);
-  }
-
-  inline slice<byte>
-  into_bytes()
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return slice<byte>(reinterpret_cast<byte *>(&__mem::memory[0]), reinterpret_cast<byte *>(&__mem::memory[__mem::length]));
-  }
-
-  inline convector<T>
-  clone(void)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return convector<T>(*this);
+    micron::swap(__mem::capacity, o.capacity);
   }
 
   void
   fill(const T &v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    for ( usize i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = v;
+    __impl_container::set(micron::addr(__mem::memory[0]), v, __mem::length);
   }
 
-  // resize to how much and fill with a value v
   void
-  resize(usize n)
+  resize(size_type n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !(n > __mem::length) ) {
+    if ( !(n > __mem::length) )
       return;
-    }
-    if ( n >= __mem::capacity ) {
+    if ( n >= __mem::capacity )
       __unlocked_reserve(n);
-    }
     T *f_ptr = __mem::memory;
-    for ( usize i = __mem::length; i < n; i++ )
+    for ( size_type i = __mem::length; i < n; i++ )
       new (&f_ptr[i]) T{};
-
     __mem::length = n;
   }
 
   void
-  resize(usize n, const T &v)
+  resize(size_type n, const T &v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !(n > __mem::length) ) {
+    if ( !(n > __mem::length) )
       return;
-    }
-    if ( n >= __mem::capacity ) {
+    if ( n >= __mem::capacity )
       __unlocked_reserve(n);
-    }
     T *f_ptr = __mem::memory;
-    for ( usize i = __mem::length; i < n; i++ )
+    for ( size_type i = __mem::length; i < n; i++ )
       new (&f_ptr[i]) T(v);
-
     __mem::length = n;
   }
 
@@ -507,13 +692,7 @@ public:
   emplace_back(Args &&...v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length < __mem::capacity ) {
-      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
-      return;
-    } else {
-      __unlocked_reserve(__mem::capacity + 1);
-      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
-    }
+    __unlocked_emplace_back(micron::forward<Args>(v)...);
   }
 
   inline void
@@ -521,142 +700,93 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::length < __mem::capacity ) {
-      __mem::memory[__mem::length++] = micron::move(t);
-      return;
+      new (&__mem::memory[__mem::length++]) T(micron::move(t));
     } else {
-      __unlocked_reserve(__mem::capacity + 1);
-      __mem::memory[__mem::length++] = micron::move(t);
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+      new (&__mem::memory[__mem::length++]) T(micron::move(t));
     }
   }
 
-  inline const_iterator
-  get(const usize n) const
+  void
+  push_back(const T &v)
   {
-    if ( n > __mem::length )
-      exc<except::library_error>("micron::convector get() out of range");
-    return &(__mem::memory[n]);
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __unlocked_push_back(v);
   }
 
-  inline const_iterator
-  cget(const usize n) const
+  void
+  push_back(T &&v)
   {
-    if ( n > __mem::length )
-      exc<except::library_error>("micron::convector cget() out of range");
-    return &(__mem::memory[n]);
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __unlocked_push_back(micron::move(v));
+  }
+
+  inline void
+  pop_back()
+  {
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__empty_check, except::library_error>("micron::convector pop_back() called on empty vector");
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+      (__mem::memory)[__mem::length - 1].~T();
+    else
+      (__mem::memory)[__mem::length - 1] = T{};
+    czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[--__mem::length]));
   }
 
   inline iterator
-  find(const T &o)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    T *f_ptr = __mem::memory;
-    for ( usize i = 0; i < __mem::length; i++ )
-      if ( f_ptr[i] == o )
-        return &f_ptr[i];
-    return nullptr;
-  }
-
-  inline const_iterator
-  find(const T &o) const
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    T *f_ptr = __mem::memory;
-    for ( usize i = 0; i < __mem::length; i++ )
-      if ( f_ptr[i] == o )
-        return &f_ptr[i];
-    return nullptr;
-  }
-
-  inline const_iterator
-  begin() const
-  {
-    return (__mem::memory);
-  }
-
-  inline const_iterator
-  cbegin() const
-  {
-    return (__mem::memory);
-  }
-
-  inline const_iterator
-  end() const
-  {
-    return (__mem::memory) + (__mem::length);
-  }
-
-  inline const_iterator
-  last() const
-  {
-    return (__mem::memory) + (__mem::length - 1);
-  }
-
-  inline const_iterator
-  cend() const
-  {
-    return (__mem::memory) + (__mem::length);
-  }
-
-  inline iterator
-  insert(usize n, const T &val, usize cnt)
+  insert(size_type n, const T &val, size_type cnt)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
-      for ( usize i = 0; i < cnt; ++i )
+      for ( size_type i = 0; i < cnt; ++i )
         __unlocked_push_back(val);
-      return begin();
+      return __mem::memory;
     }
     if ( __mem::length + cnt > __mem::capacity )
-      __unlocked_reserve(__mem::capacity + 1);
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
+      __unlocked_reserve(__impl::grow(__mem::capacity + cnt));
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     T *its = &(__mem::memory)[n];
-    T *ite = &(__mem::memory)[__mem::length - 1];
+    T *ite = &(__mem::memory)[__mem::length];
     micron::memmove(its + cnt, its, ite - its);
-    //*its = (val);
-    for ( usize i = 0; i < cnt; ++i )
+    for ( size_type i = 0; i < cnt; ++i )
       new (its + i) T(val);
     __mem::length += cnt;
     return its;
   }
 
   inline iterator
-  insert(usize n, const T &val)
+  insert(size_type n, const T &val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
       __unlocked_push_back(val);
-      return begin();
+      return __mem::memory;
     }
     if ( __mem::length + 1 > __mem::capacity )
-      __unlocked_reserve(__mem::capacity + 1);
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     T *its = &(__mem::memory)[n];
-    T *ite = &(__mem::memory)[__mem::length - 1];
+    T *ite = &(__mem::memory)[__mem::length];
     micron::memmove(its + 1, its, ite - its);
-    //*its = (val);
     new (its) T(val);
     __mem::length++;
     return its;
   }
 
   inline iterator
-  insert(usize n, T &&val)
+  insert(size_type n, T &&val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
-      __unlocked_emplace_back(val);
-      return begin();
+      __unlocked_emplace_back(micron::move(val));
+      return __mem::memory;
     }
     if ( __mem::length + 1 > __mem::capacity )
-      __unlocked_reserve(__mem::capacity + 1);
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
-    T *its = itr(n);
-    T *ite = end();
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
+    T *its = &(__mem::memory)[n];
+    T *ite = &(__mem::memory)[__mem::length];
     micron::memmove(its + 1, its, (ite - its));
-    //*its = (val);
     new (its) T(micron::move(val));
     __mem::length++;
     return its;
@@ -667,46 +797,44 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
-      __unlocked_push_back(val);
-      return begin();
+      __unlocked_emplace_back(micron::move(val));
+      return __mem::memory;
     }
-    if ( (__mem::length) >= __mem::capacity ) {
-      usize dif = static_cast<usize>(it - __mem::memory);
-      __unlocked_reserve(__mem::capacity + 1);
+    if ( __mem::length >= __mem::capacity ) {
+      size_type dif = static_cast<size_type>(it - __mem::memory);
+      __unlocked_reserve(__impl::grow(__mem::capacity));
       it = __mem::memory + dif;
-    }     // invalidated if
-    if ( it >= end() or it < begin() )
-      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
-    T *ite = end();
+    }
+    if ( it > __mem::memory + __mem::length or it < __mem::memory )
+      exc<except::library_error>("micron::convector insert(): iterator out of range.");
+    T *ite = __mem::memory + __mem::length;
     micron::memmove(it + 1, it, ite - it);
     new (it) T(micron::move(val));
-    //*it = (val);
     __mem::length++;
     return it;
   }
 
   inline iterator
-  insert(iterator it, const T &val, const usize cnt)
+  insert(iterator it, const T &val, const size_type cnt)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
-      for ( usize i = 0; i < cnt; ++i )
+      for ( size_type i = 0; i < cnt; ++i )
         __unlocked_push_back(val);
-      return begin();
+      return __mem::memory;
     }
-    if ( __mem::length >= __mem::capacity ) {
-      usize dif = it - __mem::memory;
-      __unlocked_reserve(__mem::capacity + 1);
+    if ( __mem::length + cnt > __mem::capacity ) {
+      size_type dif = static_cast<size_type>(it - __mem::memory);
+      __unlocked_reserve(__impl::grow(__mem::capacity + cnt));
       it = __mem::memory + dif;
     }
-    if ( it >= end() or it < begin() )
-      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
-    T *ite = end();
+    if ( it > __mem::memory + __mem::length or it < __mem::memory )
+      exc<except::library_error>("micron::convector insert(): iterator out of range.");
+    T *ite = __mem::memory + __mem::length;
     micron::memmove(it + cnt, it, ite - it);
-    //*it = (val);
-    for ( usize i = 0; i < cnt; ++i )
+    for ( size_type i = 0; i < cnt; ++i )
       new (it + i) T(val);
-    __mem::length++;
+    __mem::length += cnt;
     return it;
   }
 
@@ -716,18 +844,17 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) {
       __unlocked_push_back(val);
-      return begin();
+      return __mem::memory;
     }
     if ( __mem::length >= __mem::capacity ) {
-      usize dif = it - __mem::memory;
-      __unlocked_reserve(__mem::capacity + 1);
+      size_type dif = static_cast<size_type>(it - __mem::memory);
+      __unlocked_reserve(__impl::grow(__mem::capacity));
       it = __mem::memory + dif;
     }
-    if ( it >= end() or it < begin() )
-      exc<except::library_error>("micron::convector insert(): out of allocated memory range.");
-    T *ite = end();
+    if ( it > __mem::memory + __mem::length or it < __mem::memory )
+      exc<except::library_error>("micron::convector insert(): iterator out of range.");
+    T *ite = __mem::memory + __mem::length;
     micron::memmove(it + 1, it, ite - it);
-    //*it = (val);
     new (it) T(val);
     __mem::length++;
     return it;
@@ -737,197 +864,166 @@ public:
   sort(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( size() < 100000 )
-      micron::sort::heap(*this);     // NOTE: need an inplace sort since *this cannot be copied
+    if ( __mem::length < 100000 )
+      micron::sort::heap(*this);
     else
       micron::sort::quick(*this);
   }
 
-  inline iterator
-  insert_sort(T &&val)     // NOTE: we won't check if this is presort, bad things will happen if it isn't
+  template <typename U = T>
+  iterator
+  insert_sort(U &&val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !__mem::length ) {
-      __unlocked_push_back(val);
-      return begin();
+    if ( __mem::length == 0 ) {
+      __unlocked_push_back(micron::move(val));
+      return __mem::memory;
     }
-    if ( (__mem::length + 1) >= __mem::capacity ) {
-      __unlocked_reserve(__mem::capacity + 1);
-    }     // invalidated if
-    T *ite = end();
-    usize i = 0;
-    for ( ; i < size() - 1; i++ ) {
-      if ( __mem::memory[i] >= val ) {
-        i++;
+    if ( __mem::length + 1 > __mem::capacity )
+      __unlocked_reserve(__impl::grow(__mem::capacity));
+
+    size_type pos = 0;
+    for ( ; pos < __mem::length; ++pos )
+      if ( __mem::memory[pos] > val )
         break;
-      }
-    }
-    // if i == size() - 1 it's the largest element
-    if ( i == size() - 1 )
-      i++;
-    T *it = &__mem::memory[i];
-    micron::memmove(it + 1, it, ite - it);
+
+    T *it = __mem::memory + pos;
+    T *end_ = __mem::memory + __mem::length;
+    micron::memmove(it + 1, it, (end_ - it) * sizeof(T));
     new (it) T(micron::move(val));
-    __mem::length++;
+    ++__mem::length;
     return it;
   }
 
   inline convector &
-  assign(const usize cnt, const T &val)
+  assign(const size_type cnt, const T &val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( (cnt * (sizeof(T) / sizeof(byte))) >= __mem::capacity ) {
-      __unlocked_reserve(__mem::capacity + (cnt) * sizeof(T));
-    }
-    __unlocked_clear();     // clear the vec
-    for ( usize i = 0; i < cnt; i++ ) {
-      //(__mem::memory)[i] = val;
+    if ( cnt > __mem::capacity )
+      __unlocked_reserve(cnt);
+    __unlocked_clear();
+    for ( size_type i = 0; i < cnt; i++ )
       new (&__mem::memory[i]) T(val);
-    }
     __mem::length = cnt;
     return *this;
   }
 
   inline void
-  push_back(const T &v)
+  erase(iterator first, iterator last)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( first < __mem::memory or last > __mem::memory + __mem::length or first >= last )
+      exc<except::library_error>("micron::convector erase(): invalid iterator range");
+
+    size_type count = last - first;
+
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
-        new (&__mem::memory[__mem::length++]) T(v);
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        new (&__mem::memory[__mem::length++]) T(v);
-      }
-    } else {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
-        __mem::memory[__mem::length++] = v;
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        __mem::memory[__mem::length++] = v;
-      }
+      for ( T *p = first; p < last; ++p )
+        p->~T();
     }
+
+    T *it = first;
+    T *src = last;
+    T *end_ptr = __mem::memory + __mem::length;
+
+    while ( src < end_ptr )
+      *it++ = micron::move(*src++);
+
+    for ( T *p = it; p < end_ptr; ++p )
+      czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(p));
+
+    __mem::length -= count;
   }
 
   inline void
-  push_back(T &&v)
+  erase(size_type from, size_type to)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __safety_check<&convector::__range_check, except::library_error>("micron::convector erase(): invalid range", from, to);
+
+    size_type count = to - from;
+
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
-        new (&__mem::memory[__mem::length++]) T(v);
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        new (&__mem::memory[__mem::length++]) T(v);
-      }
-    } else {
-      if ( (__mem::length + 1 <= __mem::capacity) ) {
-        __mem::memory[__mem::length++] = micron::move(v);
-        return;
-      } else {
-        __unlocked_reserve(__mem::capacity * sizeof(T) + 1);
-        __mem::memory[__mem::length++] = micron::move(v);
-      }
+      for ( size_type i = from; i < to; ++i )
+        (__mem::memory)[i].~T();
     }
+
+    for ( size_type i = to; i < __mem::length; ++i )
+      (__mem::memory)[i - count] = micron::move((__mem::memory)[i]);
+
+    for ( size_type i = __mem::length - count; i < __mem::length; ++i )
+      czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[i]));
+
+    __mem::length -= count;
   }
 
   inline void
-  pop_back()
+  erase(iterator it)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      (__mem::memory)[(__mem::length - 1)].~T();
-    } else {
-      (__mem::memory)[(__mem::length - 1)] = 0x0;
-    }
-    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
-  }
-
-  inline void
-  erase(iterator n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n >= end() or n < begin() )
+    if ( it < __mem::memory or it >= __mem::memory + __mem::length )
       exc<except::library_error>("micron::convector erase(): out of allocated memory range.");
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      n->~T();
-    } else {
-    }
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      usize _n = (n - cbegin());
-      for ( usize i = _n; i < (__mem::length - 1); i++ )
-        (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
-    } else {
-      __impl_container::copy(n, n + 1, __mem::length);
-    }
-    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
+
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+      it->~T();
+
+    for ( T *p = it; p < (__mem::memory + __mem::length - 1); ++p )
+      *p = micron::move(*(p + 1));
+
+    czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
+    --__mem::length;
   }
 
   inline void
-  erase(const usize n)
+  erase(const size_type n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n >= size() )
-      exc<except::library_error>("micron::convector erase(): out of allocated memory range.");
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      ~(__mem::memory)[n]();
-    } else {
-    }
+    __safety_check<&convector::__index_check, except::library_error>("micron::convector erase(): out of allocated memory range.", n);
 
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      usize _n = (n - cbegin());
-      for ( usize i = n; i < (__mem::length - 1); i++ )
-        (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
-    } else {
-      __impl_container::copy(__mem::memory[n], __mem::memory[n + 1], __mem::length);
-    }
-    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&(__mem::memory)[__mem::length-- - 1]));
-    __mem::length--;
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+      (__mem::memory)[n].~T();
+
+    for ( size_type i = n; i < __mem::length - 1; ++i )
+      (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
+
+    czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
+    --__mem::length;
+  }
+
+  inline void
+  __remove(const T &val)
+  {
+  remove_goto:
+    auto itr = find(val);
+    if ( itr == nullptr )
+      return;
+    erase(itr);
+    goto remove_goto;
+  }
+
+  template <typename... Args>
+    requires(micron::convertible_to<T, Args> && ...)
+  inline void
+  remove(const Args &...val)
+  {
+    (__remove(static_cast<T>(val)), ...);
   }
 
   inline void
   clear()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !__mem::length )
-      return;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        (__mem::memory)[i].~T();
-    }
-    micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
-    __mem::length = 0;
+    __unlocked_clear();
   }
 
-  inline const T &
-  front() const
+  void
+  fast_clear()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return (__mem::memory)[0];
-  }
-
-  inline const T &
-  back() const
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return (__mem::memory)[__mem::length - 1];
-  }
-
-  inline T &
-  front()
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return (__mem::memory)[0];
-  }
-
-  inline T &
-  back()
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return (__mem::memory)[__mem::length - 1];
+    if constexpr ( !micron::is_class_v<T> )
+      __mem::length = 0;
+    else
+      __unlocked_clear();
   }
 
   static constexpr bool
@@ -947,7 +1043,6 @@ public:
   {
     return micron::is_trivial_v<T>;
   }
-
-  // access at element
 };
+
 };     // namespace micron
