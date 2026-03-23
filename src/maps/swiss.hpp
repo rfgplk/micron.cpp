@@ -1,8 +1,8 @@
 #pragma once
 #include "../bits.hpp"
+#include "../hash/hash.hpp"
 #include "../simd/types.hpp"
 #include "../types.hpp"
-#include "hash/hash.hpp"
 
 #include "../memory/actions.hpp"
 #include "../tuple.hpp"
@@ -602,4 +602,6 @@ public:
     return const_iterator(this, N);
   }
 };
+
+template <typename K, typename V, usize N, usize NH = 16> using swiss = stack_swiss_map<K, V, N, NH>;
 }     // namespace micron

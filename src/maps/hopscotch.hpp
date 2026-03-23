@@ -619,4 +619,6 @@ public:
   }
 };
 
+template <typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, V>> using hopscotch = hopscotch_map<K, V, MH, Nd>;
+
 }     // namespace micron

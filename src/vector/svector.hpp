@@ -27,13 +27,13 @@ template <is_regular_object T, usize N = 64, bool Sf = true> class svector
   usize length = 0;
 
   inline bool
-  __empty_check() const
+  __empty_check(void) const
   {
     return length == 0;
   }
 
   inline bool
-  __full_check() const
+  __full_check(void) const
   {
     return length >= N;
   }
@@ -51,7 +51,7 @@ template <is_regular_object T, usize N = 64, bool Sf = true> class svector
   }
 
   inline bool
-  __push_check() const
+  __push_check(void) const
   {
     return length >= N;
   }
@@ -100,7 +100,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  ~svector()
+  ~svector(void)
   {
     __impl_container::destroy(micron::addr(stack[0]), length);
     length = 0;
@@ -256,96 +256,96 @@ public:
   }
 
   T &
-  front()
+  front(void)
   {
     __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector front() called on empty vector");
     return stack[0];
   }
 
   const T &
-  front() const
+  front(void) const
   {
     __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector front() called on empty vector");
     return stack[0];
   }
 
   T &
-  back()
+  back(void)
   {
     __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector back() called on empty vector");
     return stack[length - 1];
   }
 
   const T &
-  back() const
+  back(void) const
   {
     __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector back() called on empty vector");
     return stack[length - 1];
   }
 
   iterator
-  begin()
+  begin(void)
   {
     return micron::real_addr_as<T>(stack[0]);
   }
 
   const_iterator
-  begin() const
+  begin(void) const
   {
     return micron::real_addr_as<T>(stack[0]);
   }
 
   const_iterator
-  cbegin() const
+  cbegin(void) const
   {
     return micron::real_addr_as<T>(stack[0]);
   }
 
   iterator
-  end()
+  end(void)
   {
     return micron::real_addr_as<T>(stack[length]);
   }
 
   const_iterator
-  end() const
+  end(void) const
   {
     return micron::real_addr_as<T>(stack[length]);
   }
 
   const_iterator
-  cend() const
+  cend(void) const
   {
     return micron::real_addr_as<T>(stack[length]);
   }
 
   // full when no more elements can be appended (length == N)
   inline bool
-  full() const
+  full(void) const
   {
     return length >= N;
   }
 
   inline bool
-  overflowed() const
+  overflowed(void) const
   {
     return length > N;
   }
 
   inline bool
-  full_or_overflowed() const
+  full_or_overflowed(void) const
   {
     return length >= N;
   }
 
   size_type
-  size() const
+  size(void) const
   {
     return length;
   }
 
   size_type
-  max_size() const
+  max_size(void) const
   {
     return N;
   }
@@ -357,7 +357,7 @@ public:
   }
 
   void
-  fast_clear()
+  fast_clear(void)
   {
     if constexpr ( !micron::is_class_v<T> )
       length = 0;
@@ -366,26 +366,26 @@ public:
   }
 
   void
-  clear()
+  clear(void)
   {
     __impl_container::destroy(micron::real_addr_as<T>(stack), length);
     length = 0;
   }
 
   iterator
-  data()
+  data(void)
   {
     return &stack[0];
   }
 
   const_iterator
-  data() const
+  data(void) const
   {
     return &stack[0];
   }
 
   bool
-  operator!() const
+  operator!(void) const
   {
     return empty();
   }
@@ -397,37 +397,37 @@ public:
   }
 
   byte *
-  operator&()
+  operator&(void)
   {
     return reinterpret_cast<byte *>(stack);
   }
 
   const byte *
-  operator&() const
+  operator&(void) const
   {
     return reinterpret_cast<const byte *>(stack);
   }
 
   auto *
-  addr()
+  addr(void)
   {
     return this;
   }
 
   const auto *
-  addr() const
+  addr(void) const
   {
     return this;
   }
 
   inline slice<T>
-  operator[]()
+  operator[](void)
   {
     return slice<T>(begin(), end());
   }
 
   inline const slice<T>
-  operator[]() const
+  operator[](void) const
   {
     return slice<T>(begin(), end());
   }
@@ -582,19 +582,19 @@ public:
   }
 
   static constexpr bool
-  is_pod()
+  is_pod(void)
   {
     return micron::is_pod_v<T>;
   }
 
   static constexpr bool
-  is_class_type() noexcept
+  is_class_type(void) noexcept
   {
     return micron::is_class_v<T>;
   }
 
   static constexpr bool
-  is_trivial() noexcept
+  is_trivial(void) noexcept
   {
     return micron::is_trivial_v<T>;
   }
