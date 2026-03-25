@@ -24,8 +24,8 @@ template <is_movable_object T, usize K = 5, usize H = 3>
   requires(K > 0 && K <= 6 && H > 0 && H <= 8)
 class parray
 {
-  static constexpr usize B = usize(1) << K;
-  static constexpr usize MASK = B - 1;
+  static constexpr usize B = static_cast<usize>(1) << K;
+  static constexpr usize __mask = B - 1;
 
   static constexpr usize
   __cpow(usize base, usize exp)
@@ -125,7 +125,7 @@ class parray
   {
     if constexpr ( Lvl == 0 ) {
       // leaf level
-      const usize slot = idx & MASK;
+      const usize slot = idx & __mask;
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
 
@@ -151,7 +151,7 @@ class parray
 
     } else {
       // internal level
-      const usize slot = (idx >> (Lvl * K)) & MASK;
+      const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
       fresh->refs = 1;
 
@@ -190,9 +190,9 @@ class parray
       return __default_val();
 
     if constexpr ( Lvl == 0 ) {
-      return static_cast<const __leaf *>(p)->values[idx & MASK];
+      return static_cast<const __leaf *>(p)->values[idx & __mask];
     } else {
-      const usize slot = (idx >> (Lvl * K)) & MASK;
+      const usize slot = (idx >> (Lvl * K)) & __mask;
       return __get_impl<Lvl - 1>(static_cast<const __node *>(p)->children[slot], idx);
     }
   }
@@ -255,7 +255,7 @@ class parray
   __update_impl(void *p, usize idx, Fn &&fn)
   {
     if constexpr ( Lvl == 0 ) {
-      const usize slot = idx & MASK;
+      const usize slot = idx & __mask;
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
 
@@ -281,7 +281,7 @@ class parray
       return fresh;
 
     } else {
-      const usize slot = (idx >> (Lvl * K)) & MASK;
+      const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
       fresh->refs = 1;
 
@@ -556,7 +556,7 @@ public:
     void *root = __retain<__root_level>(__root);
     // fold: for each pair, apply set and release old root
     auto apply_one = [&root](auto &&pair) {
-      void *next = __set_impl<__root_level>(root, pair.first, static_cast<decltype(pair.second) &&>(pair.second));
+      void *next = __set_impl<__root_level>(root, pair.a, static_cast<decltype(pair.b) &&>(pair.b));
       __release<__root_level>(root);
       root = next;
     };

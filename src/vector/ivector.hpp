@@ -34,13 +34,13 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   using __mem = __immutable_memory_resource<T, Alloc>;
 
   inline __attribute__((always_inline)) bool
-  __empty_check() const
+  __empty_check(void) const
   {
     return __mem::length == 0 || __mem::memory == nullptr;
   }
 
   inline __attribute__((always_inline)) bool
-  __null_check() const
+  __null_check(void) const
   {
     return __mem::memory == nullptr;
   }
@@ -110,7 +110,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   }
 
   inline void
-  __clear()
+  __clear(void)
   {
     if ( !__mem::length )
       return;
@@ -122,13 +122,13 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
 
   // mutable iterators
   inline iterator
-  __begin()
+  __begin(void)
   {
     return __mem::memory;
   }
 
   inline iterator
-  __end()
+  __end(void)
   {
     return __mem::memory + __mem::length;
   }
@@ -150,7 +150,7 @@ public:
 
   ivector() = delete;
 
-  ~ivector()
+  ~ivector(void)
   {
     if ( __mem::is_zero() )
       return;
@@ -261,19 +261,19 @@ public:
   }
 
   chunk<byte>
-  operator*() const
+  operator*(void) const
   {
     return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
   }
 
   const_pointer
-  data() const
+  data(void) const
   {
     return __mem::memory;
   }
 
   bool
-  operator!() const
+  operator!(void) const
   {
     return empty();
   }
@@ -343,94 +343,94 @@ public:
   }
 
   size_type
-  capacity() const
+  capacity(void) const
   {
     return __mem::capacity;
   }
 
   size_type
-  max_size() const
+  max_size(void) const
   {
     return __mem::capacity;
   }
 
   size_type
-  size() const
+  size(void) const
   {
     return __mem::length;
   }
 
   bool
-  empty() const
+  empty(void) const
   {
     return __mem::length == 0;
   }
 
   inline const T &
-  front() const
+  front(void) const
   {
     __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector front() called on empty vector");
     return (__mem::memory)[0];
   }
 
   inline const T &
-  back() const
+  back(void) const
   {
     __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector back() called on empty vector");
     return (__mem::memory)[__mem::length - 1];
   }
 
   static constexpr bool
-  is_pod()
+  is_pod(void)
   {
     return micron::is_pod_v<T>;
   }
 
   static constexpr bool
-  is_class_type() noexcept
+  is_class_type(void) noexcept
   {
     return micron::is_class_v<T>;
   }
 
   static constexpr bool
-  is_trivial() noexcept
+  is_trivial(void) noexcept
   {
     return micron::is_trivial_v<T>;
   }
 
   inline const_iterator
-  begin() const
+  begin(void) const
   {
     return __mem::memory;
   }
 
   inline const_iterator
-  cbegin() const
+  cbegin(void) const
   {
     return __mem::memory;
   }
 
   inline const_iterator
-  end() const
+  end(void) const
   {
     return __mem::memory + __mem::length;
   }
 
   inline const_iterator
-  cend() const
+  cend(void) const
   {
     return __mem::memory + __mem::length;
   }
 
   inline const_iterator
-  last() const
+  last(void) const
   {
     __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector last() called on empty vector");
     return __mem::memory + (__mem::length - 1);
   }
 
   inline slice<byte>
-  into_bytes() const
+  into_bytes(void) const
   {
     if ( __mem::memory == nullptr || __mem::length == 0 )
       return slice<byte>(nullptr, nullptr);
@@ -631,7 +631,7 @@ public:
   }
 
   inline ivector
-  pop_back() const
+  pop_back(void) const
   {
     __safety_check<&ivector::__empty_check, except::library_error>("micron::ivector pop_back() called on empty vector");
     ivector buf(__cap_tag{}, __mem::length - 1);
@@ -641,7 +641,7 @@ public:
   }
 
   inline ivector
-  clear() const
+  clear(void) const
   {
     return ivector(__cap_tag{}, __mem::capacity);
   }

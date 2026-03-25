@@ -39,13 +39,13 @@ class convector : public __mutable_memory_resource<T, Alloc>
   micron::mutex __mtx;
 
   inline __attribute__((always_inline)) bool
-  __empty_check() const
+  __empty_check(void) const
   {
     return __mem::length == 0 || __mem::memory == nullptr;
   }
 
   inline __attribute__((always_inline)) bool
-  __null_check() const
+  __null_check(void) const
   {
     return __mem::memory == nullptr;
   }
@@ -115,7 +115,7 @@ class convector : public __mutable_memory_resource<T, Alloc>
   }
 
   inline void
-  __unlocked_clear()
+  __unlocked_clear(void)
   {
     if ( !__mem::length )
       return;
@@ -184,7 +184,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  ~convector()
+  ~convector(void)
   {
     if ( __mem::is_zero() )
       return;
@@ -286,64 +286,64 @@ public:
   }
 
   const_pointer
-  data() const
+  data(void) const
   {
     return __mem::memory;
   }
 
   pointer
-  data()
+  data(void)
   {
     return __mem::memory;
   }
 
   bool
-  operator!() const
+  operator!(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::length == 0;
   }
 
   const byte *
-  operator&() const
+  operator&(void) const
   {
     return reinterpret_cast<const byte *>(__mem::memory);
   }
 
   byte *
-  operator&()
+  operator&(void)
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
 
   auto *
-  addr()
+  addr(void)
   {
     return this;
   }
 
   const auto *
-  addr() const
+  addr(void) const
   {
     return this;
   }
 
   chunk<byte>
-  operator*() const
+  operator*(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::data();
   }
 
   inline slice<T>
-  operator[]()
+  operator[](void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return slice<T>(__mem::memory, __mem::memory + __mem::length);
   }
 
   inline const slice<T>
-  operator[]() const
+  operator[](void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return slice<T>(__mem::memory, __mem::memory + __mem::length);
@@ -429,14 +429,14 @@ public:
   }
 
   size_type
-  max_size() const
+  max_size(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::capacity;
   }
 
   size_type
-  size() const
+  size(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::length;
@@ -450,7 +450,7 @@ public:
   }
 
   bool
-  empty() const
+  empty(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return __mem::length == 0;
@@ -474,50 +474,50 @@ public:
 
   // NOTE: no lock
   inline iterator
-  begin()
+  begin(void)
   {
     return __mem::memory;
   }
 
   inline const_iterator
-  begin() const
+  begin(void) const
   {
     return __mem::memory;
   }
 
   inline const_iterator
-  cbegin() const
+  cbegin(void) const
   {
     return __mem::memory;
   }
 
   inline iterator
-  end()
+  end(void)
   {
     return __mem::memory + __mem::length;
   }
 
   inline const_iterator
-  end() const
+  end(void) const
   {
     return __mem::memory + __mem::length;
   }
 
   inline const_iterator
-  cend() const
+  cend(void) const
   {
     return __mem::memory + __mem::length;
   }
 
   inline iterator
-  last()
+  last(void)
   {
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector last() called on empty vector");
     return __mem::memory + (__mem::length - 1);
   }
 
   inline const_iterator
-  last() const
+  last(void) const
   {
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector last() called on empty vector");
     return __mem::memory + (__mem::length - 1);
@@ -567,7 +567,7 @@ public:
   }
 
   inline const T &
-  front() const
+  front(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector front() called on empty vector");
@@ -575,7 +575,7 @@ public:
   }
 
   inline const T &
-  back() const
+  back(void) const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector back() called on empty vector");
@@ -583,7 +583,7 @@ public:
   }
 
   inline T &
-  front()
+  front(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector front() called on empty vector");
@@ -591,7 +591,7 @@ public:
   }
 
   inline T &
-  back()
+  back(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector back() called on empty vector");
@@ -599,7 +599,7 @@ public:
   }
 
   inline slice<byte>
-  into_bytes()
+  into_bytes(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::memory == nullptr || __mem::length == 0 )
@@ -722,7 +722,7 @@ public:
   }
 
   inline void
-  pop_back()
+  pop_back(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector pop_back() called on empty vector");
@@ -1010,14 +1010,14 @@ public:
   }
 
   inline void
-  clear()
+  clear(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     __unlocked_clear();
   }
 
   void
-  fast_clear()
+  fast_clear(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if constexpr ( !micron::is_class_v<T> )
@@ -1027,19 +1027,19 @@ public:
   }
 
   static constexpr bool
-  is_pod() noexcept
+  is_pod(void) noexcept
   {
     return micron::is_pod_v<T>;
   }
 
   static constexpr bool
-  is_class_type() noexcept
+  is_class_type(void) noexcept
   {
     return micron::is_class_v<T>;
   }
 
   static constexpr bool
-  is_trivial() noexcept
+  is_trivial(void) noexcept
   {
     return micron::is_trivial_v<T>;
   }

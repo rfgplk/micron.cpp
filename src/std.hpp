@@ -20,6 +20,9 @@
 
 #include "alloc.hpp"
 
+#include "range.hpp"
+#include "match.hpp"
+
 #include "attributes.hpp"
 
 #include "endian.hpp"

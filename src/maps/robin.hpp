@@ -751,4 +751,6 @@ public:
     return ctrl_ && i < n_slots_ && occupied(i);
   }
 };
+
+template <typename K, typename V> using robin = robin_map<K, V>;
 };     // namespace micron

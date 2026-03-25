@@ -7,6 +7,10 @@
 
 #include "../concepts.hpp"
 #include "format.hpp"
+
+// include all string types
+#include "rope.hpp"
+#include "sstring.hpp"
 #include "string.hpp"
 
 namespace micron

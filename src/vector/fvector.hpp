@@ -19,6 +19,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
+#include "../memory/new.hpp"
 #include "../pointer.hpp"
 #include "../slice.hpp"
 #include "../sort/heap.hpp"
@@ -58,7 +59,7 @@ public:
   typedef const T *const_iterator;
 
   // NOTE: by convention destructors are first
-  ~fvector()
+  ~fvector(void)
   {
     if ( __mem::is_zero() )
       return;
@@ -151,49 +152,49 @@ public:
   }
 
   chunk<byte>
-  operator*() const
+  operator*(void) const
   {
     return __mem::data();
   }
 
   const_pointer
-  data() const
+  data(void) const
   {
     return __mem::memory;
   }
 
   pointer
-  data()
+  data(void)
   {
     return __mem::memory;
   }
 
   bool
-  operator!() const
+  operator!(void) const
   {
     return empty();
   }
 
   byte *
-  operator&()
+  operator&(void)
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
 
   const byte *
-  operator&() const
+  operator&(void) const
   {
     return reinterpret_cast<byte *>(__mem::memory);
   }
 
   inline slice<T>
-  operator[]()
+  operator[](void)
   {
     return slice<T>(begin(), end());
   }
 
   inline const slice<T>
-  operator[]() const
+  operator[](void) const
   {
     return slice<T>(begin(), end());
   }
@@ -275,13 +276,13 @@ public:
   }
 
   size_type
-  max_size() const
+  max_size(void) const
   {
     return __mem::capacity;
   }
 
   size_type
-  size() const
+  size(void) const
   {
     return __mem::length;
   }
@@ -293,7 +294,7 @@ public:
   }
 
   bool
-  empty() const
+  empty(void) const
   {
     return __mem::length == 0;
   }
@@ -321,7 +322,7 @@ public:
   }
 
   inline slice<byte>
-  into_bytes()
+  into_bytes(void)
   {
     if ( __mem::memory == nullptr || __mem::length == 0 )
       return slice<byte>(nullptr, nullptr);
@@ -425,49 +426,49 @@ public:
   }
 
   inline iterator
-  begin()
+  begin(void)
   {
     return __mem::memory;
   }
 
   inline const_iterator
-  begin() const
+  begin(void) const
   {
     return __mem::memory;
   }
 
   inline const_iterator
-  cbegin() const
+  cbegin(void) const
   {
     return __mem::memory;
   }
 
   inline iterator
-  end()
+  end(void)
   {
     return __mem::memory + __mem::length;
   }
 
   inline const_iterator
-  end() const
+  end(void) const
   {
     return __mem::memory + __mem::length;
   }
 
   inline const_iterator
-  cend() const
+  cend(void) const
   {
     return __mem::memory + __mem::length;
   }
 
   inline iterator
-  last()
+  last(void)
   {
     return __mem::memory + (__mem::length - 1);
   }
 
   inline const_iterator
-  last() const
+  last(void) const
   {
     return __mem::memory + (__mem::length - 1);
   }
@@ -710,7 +711,7 @@ public:
   }
 
   inline void
-  pop_back()
+  pop_back(void)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
       (__mem::memory)[__mem::length - 1].~T();
@@ -793,7 +794,7 @@ public:
   }
 
   inline void
-  fast_clear()
+  fast_clear(void)
   {
     if constexpr ( !micron::is_class_v<T> )
       __mem::length = 0;
@@ -802,7 +803,7 @@ public:
   }
 
   inline void
-  clear()
+  clear(void)
   {
     if ( !__mem::length )
       return;
@@ -811,31 +812,31 @@ public:
   }
 
   inline const T &
-  front() const
+  front(void) const
   {
     return (__mem::memory)[0];
   }
 
   inline const T &
-  back() const
+  back(void) const
   {
     return (__mem::memory)[__mem::length - 1];
   }
 
   inline T &
-  front()
+  front(void)
   {
     return (__mem::memory)[0];
   }
 
   inline T &
-  back()
+  back(void)
   {
     return (__mem::memory)[__mem::length - 1];
   }
 
   static constexpr bool
-  is_pod()
+  is_pod(void)
   {
     return micron::is_pod_v<T>;
   }

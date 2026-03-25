@@ -295,7 +295,7 @@ sigdelset(posix::sigset_t &a, int sig)
   a.__val[word] &= ~mask;
 }
 
-constexpr u64 __sig_syscall_size = 8;     // NOT THIS sizeof(posix::sigset_t);
+constexpr u64 __sig_syscall_size = sizeof(posix::sigset_t);
 
 // start of syscalls
 inline int

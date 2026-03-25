@@ -988,6 +988,17 @@ public:
     return *this;
   };
 
+  template <typename F = T>
+  inline sstring &
+  operator+=(const slice<F> &data)
+  {
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.length);
+
+    micron::memcpy(&(memory)[length], data.begin(), data.size() - 1);
+    length += data.size() - 1;
+    return *this;
+  };
+
   inline sstring &
   append(const sstring &o)
   {
@@ -998,6 +1009,17 @@ public:
 
     micron::memcpy(&memory[length], &o.memory[0], o.length);
     length += o.length;
+    return *this;
+  }
+
+  template <typename F>
+  inline sstring &
+  append(const slice<F> &f, usize n)
+  {
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring append() out of memory", n);
+
+    micron::memcpy(&(memory)[length], &f[0], n);
+    length += n;
     return *this;
   }
 
