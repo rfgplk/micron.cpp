@@ -73,6 +73,12 @@ class stack_swiss_map
     return __h1(hash<hash64_t>(k)) % N;
   }
 
+  static constexpr usize
+  __b_index_key(hash64_t k)
+  {
+    return __h1(k) % N;
+  }
+
   __mask
   __match(u8 hash_val, usize ind) const
   {
@@ -136,6 +142,52 @@ class stack_swiss_map
           if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
             __control_bytes[probe] = h2;
             __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
+            ++__size;
+            return { true, addr(__entries[probe].value) };
+          }
+        }
+      }
+    }
+
+    return { false, nullptr };
+  }
+
+  template <typename VV>
+    requires(micron::same_as<K, u64>)
+  micron::pair<bool, V *>
+  __load_impl(hash64_t key, VV &&value)
+  {
+    V *existing = exists(key);
+    if ( existing ) {
+      return { false, existing };
+    }
+
+    if ( __size >= N ) {
+      return { false, nullptr };
+    }
+
+    u8 h2 = __h2(key);
+    usize start = __b_index_key(key);
+
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
+
+      if ( group_start + 16 <= N ) {
+        __mask m = __match_empty_or_deleted(group_start);
+        if ( m.any() ) {
+          usize probe = group_start + m.lowest();
+          __control_bytes[probe] = h2;
+          // NOTE: treat the hash as the key itself, obviously will only be valid for u64 keys
+          __entries[probe] = __swiss_entry{ key, micron::forward<VV>(value) };
+          ++__size;
+          return { true, addr(__entries[probe].value) };
+        }
+      } else {
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
+          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
+            __control_bytes[probe] = h2;
+            __entries[probe] = __swiss_entry{ key, micron::forward<VV>(value) };
             ++__size;
             return { true, addr(__entries[probe].value) };
           }
@@ -262,6 +314,36 @@ public:
     __size = 0;
   }
 
+  // prehashed
+  // NOTE: external hash MUST match internal hash
+  template <typename X = void>
+    requires(micron::same_as<K, u64>)
+  micron::pair<bool, V *>
+  load(hash64_t key, const V &value)
+  {
+    return __load_impl(key, value);
+  }
+
+  template <typename X = void>
+    requires(micron::same_as<K, u64>)
+  micron::pair<bool, V *>
+  load(hash64_t key, V &&value)
+  {
+    return __load_impl(key, micron::move(value));
+  }
+
+  template <typename X = void>
+    requires(micron::same_as<K, u64>)
+  V &
+  load_find(hash64_t key)
+  {
+    auto result = load(key, V{});
+    if ( !result.b ) {
+      exc<except::library_error>("micron stack_swiss_map::operator[](): map is full");
+    }
+    return *result.b;
+  }
+
   micron::pair<bool, V *>
   insert(const K &key, const V &value)
   {
@@ -278,6 +360,75 @@ public:
   insert(const micron::pair<K, V> &kv)
   {
     return insert(kv.a, kv.b);
+  }
+
+  template <typename KK, typename VV>
+  micron::pair<bool, V *>
+  insert_or_assign(KK &&key, VV &&value)
+  {
+    u8 h2 = __hash(key);
+    usize start = __b_index(key);
+
+    // first pass: check for existing key and overwrite
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
+
+      if ( group_start + 16 <= N ) {
+        __mask m = __match(h2, group_start);
+        while ( m.any() ) {
+          usize probe = group_start + m.lowest();
+          if ( __entries[probe].key == key ) {
+            __entries[probe].value = micron::forward<VV>(value);
+            return { false, addr(__entries[probe].value) };
+          }
+          m.clear_lowest();
+        }
+        if ( __match_empty(group_start).any() )
+          break;
+      } else {
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
+          if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
+            __entries[probe].value = micron::forward<VV>(value);
+            return { false, addr(__entries[probe].value) };
+          }
+          if ( __control_bytes[probe] == __empty )
+            goto insert;
+        }
+      }
+    }
+
+  insert:
+    if ( __size >= N )
+      return { false, nullptr };
+
+    // second pass: find first empty or deleted slot
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
+
+      if ( group_start + 16 <= N ) {
+        __mask m = __match_empty_or_deleted(group_start);
+        if ( m.any() ) {
+          usize probe = group_start + m.lowest();
+          __control_bytes[probe] = h2;
+          __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
+          ++__size;
+          return { true, addr(__entries[probe].value) };
+        }
+      } else {
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
+          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
+            __control_bytes[probe] = h2;
+            __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
+            ++__size;
+            return { true, addr(__entries[probe].value) };
+          }
+        }
+      }
+    }
+
+    return { false, nullptr };
   }
 
   template <typename... Args>
@@ -398,6 +549,47 @@ public:
     return const_cast<stack_swiss_map *>(this)->find(key);
   }
 
+  template <typename X = void>
+    requires(micron::same_as<K, u64>)
+  V *
+  exists(const hash64_t key)
+  {
+    u8 h2 = __h2(key);
+    usize start = __b_index_key(key);
+
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
+
+      if ( group_start + 16 <= N ) {
+        __mask m = __match(h2, group_start);
+        while ( m.any() ) {
+          usize probe = group_start + m.lowest();
+          if ( __entries[probe].key == key ) {
+            return addr(__entries[probe].value);
+          }
+          m.clear_lowest();
+        }
+      } else {
+        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
+          usize probe = (start + i + j) % N;
+          if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
+            return addr(__entries[probe].value);
+          }
+        }
+      }
+    }
+
+    return nullptr;
+  }
+
+  template <typename X = void>
+    requires(micron::same_as<K, u64>)
+  const V *
+  exists(const hash64_t &key) const
+  {
+    return const_cast<stack_swiss_map *>(this)->exists(key);
+  }
+
   bool
   contains(const K &key) const
   {
@@ -410,6 +602,7 @@ public:
     return contains(key) ? 1 : 0;
   }
 
+  // impossible to disambiguate these, prefer load_find
   V &
   operator[](const K &key)
   {

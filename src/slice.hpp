@@ -284,6 +284,13 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return __mem::data();
   }
 
+  // was missing
+  const byte *
+  operator&() const volatile
+  {
+    return reinterpret_cast<byte *>(__mem::memory);
+  }
+
   byte *
   operator&() volatile
   {

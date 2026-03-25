@@ -1367,6 +1367,16 @@ split(const T &data, typename T::const_iterator itr)
   return data.substr(pos, data.size() - pos);
 }
 
+template <is_string T, is_string O>
+O
+split(const T &data, typename T::const_iterator itr)
+{
+  if ( itr >= data.end() or itr < data.begin() )
+    exc<except::library_error>("micron::split() out of bounds.");
+  usize pos = static_cast<usize>(itr - data.begin());
+  return data.substr(pos, data.size() - pos);
+}
+
 inline hstring<schar>
 split(const char *data, usize len, usize at = 0)
 {
