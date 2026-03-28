@@ -7,9 +7,6 @@
 namespace micron
 {
 
-constexpr static const bool exec_wait = true;
-constexpr static const bool exec_continue = false;
-
 /*void
 memexecute(uelf_t &elf)
 {
@@ -57,7 +54,8 @@ rexecute(const T &t, const R &...args)
   }
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), static_cast<char *>(nullptr) };
 
-  (argv.insert(argv.begin() + 1, &args[0]), ...);
+  (argv.push_back(const_cast<char *>(args.c_str())), ...);
+  argv.push_back(nullptr);
 
   micron::inplace_spawn(pid, t.c_str(), &argv[0], environ);
   __builtin_unreachable();
@@ -114,7 +112,8 @@ rexecute(const char *t, R *...args)
   }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
 
-  (argv.insert(argv.begin() + 1, const_cast<char *>(args)), ...);
+  (argv.push_back(const_cast<char *>(args.c_str())), ...);
+  argv.push_back(nullptr);
 
   micron::inplace_spawn(pid, t, &argv[0], environ);
   __builtin_unreachable();

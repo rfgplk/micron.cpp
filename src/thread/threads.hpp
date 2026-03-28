@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "type_traits.hpp"
-#include "types.hpp"
+#include "../type_traits.hpp"
+#include "../types.hpp"
 
 #include "../linux/__includes.hpp"
 #include "../linux/sys/__threads.hpp"

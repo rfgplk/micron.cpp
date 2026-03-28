@@ -295,10 +295,10 @@ printk(const T &x)
   } else if constexpr ( micron::is_same_v<T, f32> || micron::is_same_v<T, float> ) {
     n = __impl::arith_to_buf(buf, 128, static_cast<f32>(x));
   } else if constexpr ( micron::is_same_v<T, f64> || micron::is_same_v<T, double> ) {
-    __impl::emit<outstream>("WARNING: double outputting is currently bugged, using float path (you'll lose precision).\n");
+    //__impl::emit<outstream>("WARNING: double outputting is currently bugged, using float path (you'll lose precision).\n");
     n = __impl::arith_to_buf(buf, 128, static_cast<f32>(x));
   } else if constexpr ( micron::is_same_v<T, long double> || micron::is_same_v<T, flong> ) {
-    __impl::emit<outstream>("WARNING: long double outputting is currently bugged, using float path (you'll lose precision).\n");
+    //__impl::emit<outstream>("WARNING: long double outputting is currently bugged, using float path (you'll lose precision).\n");
     __impl::emit<outstream>(buf);
     n = __impl::arith_to_buf(buf, 128, static_cast<f32>(x));
   } else if constexpr ( micron::is_signed_v<T> ) {
