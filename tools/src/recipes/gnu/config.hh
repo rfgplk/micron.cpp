@@ -348,7 +348,7 @@ parse_argv_build(int argc, char **argv)
         sstr.push_back('/');
       conf.target.insert(conf.target.begin(), sstr);
     }
-    conf.standard = gcc::__standard_cxx23;
+    conf.standard = gcc::__standard_cxx26;
     conf.compile_type = __comp_type::linked;
     conf.bin_dir = "bin/";
 
@@ -366,7 +366,7 @@ parse_argv_build_single(int argc, char **argv)
 {
   config_t conf{};
   conf.target = argv[0];
-  conf.standard = gcc::__standard_cxx23;
+  conf.standard = gcc::__standard_cxx26;
   conf.compile_type = __comp_type::linked;
   conf.bin_dir = "bin/";
   conf.include_path = "./src";

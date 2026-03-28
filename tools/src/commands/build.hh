@@ -37,7 +37,7 @@ build(const recipes::gnu::config_t &conf)
     return 0;
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
-  mc::console("Compilation took: ", end - start, " milliseconds");
+  mc::console("Compilation took: ", (end - start)/1000, " seconds");
   mc::set_color(mc::color::reset);
   return 0;
 }
@@ -69,7 +69,7 @@ build_debug(recipes::gnu::config_t &conf)
   };
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
-  mc::console("Compilation took: ", end - start, " milliseconds");
+  mc::console("Compilation took: ", (end - start)/1000, " seconds");
   mc::set_color(mc::color::reset);
   return 0;
 }

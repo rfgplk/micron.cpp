@@ -42,7 +42,7 @@ cicd_test(const auto &cfs)
     auto start = mc::now();
     stats.emplace_back(conf.target_out, mc::execute<mc::exec_wait>(conf.target_out));
     auto end = mc::now();
-    mc::console("Execution took: ", end - start, " milliseconds");
+    mc::console("Execution took: ", (end - start)/1000, " milliseconds");
   }
   for ( auto &n : stats )
     mc::console("[ ", n.name, " returned: ", mc::wexitstatus(n.stat.status), " ]");
