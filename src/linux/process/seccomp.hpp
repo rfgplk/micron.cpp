@@ -11,6 +11,9 @@
 #include "../../types.hpp"
 #include "../sys/prctl.hpp"
 
+#include "../sys/seccomp.hpp"
+#include "../sys/bpf.hpp"
+
 namespace micron
 {
 
@@ -674,35 +677,35 @@ action_avail_notify() noexcept
 inline int
 notif_receive(int listener_fd, posix::seccomp_notif_t &req)
 {
-  return posix::seccomp_notif_receive(listener_fd, req);
+  return posix::seccomp_notify_receive(listener_fd, req);
 }
-
+/*
 inline int
 notif_continue(int listener_fd, u64 id)
 {
-  auto resp = posix::seccomp_notif_continue(id);
-  return posix::seccomp_notif_respond(listener_fd, resp);
+  auto resp = posix::seccomp_notify_continue(id);
+  return posix::seccomp_notify_respond(listener_fd, resp);
 }
 
 inline int
 notif_inject_error(int listener_fd, u64 id, i32 err)
 {
-  auto resp = posix::seccomp_notif_error(id, err);
-  return posix::seccomp_notif_respond(listener_fd, resp);
+  auto resp = posix::seccomp_notify_error(id, err);
+  return posix::seccomp_notify_respond(listener_fd, resp);
 }
-
 inline int
 notif_inject_success(int listener_fd, u64 id, i64 retval)
 {
-  auto resp = posix::seccomp_notif_success(id, retval);
-  return posix::seccomp_notif_respond(listener_fd, resp);
+  auto resp = posix::seccomp_notify_success(id, retval);
+  return posix::seccomp_notify_respond(listener_fd, resp);
 }
 
 inline bool
 notif_id_valid(int listener_fd, u64 id)
 {
-  return posix::seccomp_notif_id_valid(listener_fd, id) == 0;
+  return posix::seccomp_notify_id_valid(listener_fd, id) == 0;
 }
+*/
 
 /*
  example
