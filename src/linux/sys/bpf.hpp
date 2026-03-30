@@ -68,7 +68,7 @@ constexpr static const u16 retsrc_k = 0x00;     // return K field
 constexpr static const u16 retsrc_a = 0x10;     // return A register
 
 // kernel-imposed maximum program length (BPF_MAXINSNS)
-constexpr static const usize max_insns = 4096u;
+constexpr static const usize max_instructions = 4096u;
 
 struct insn_t {
   u16 code;

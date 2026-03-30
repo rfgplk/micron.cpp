@@ -48,6 +48,7 @@ constexpr unsigned long ms_private = (1uL << 18);
 constexpr unsigned long ms_remount = 32uL;
 constexpr unsigned long ms_strictatime = (1uL << 24);
 
+/*
 constexpr i32 clone_newns = 0x00020000;
 constexpr i32 clone_newuts = 0x04000000;
 constexpr i32 clone_newipc = 0x08000000;
@@ -55,6 +56,6 @@ constexpr i32 clone_newpid = 0x20000000;
 constexpr i32 clone_newnet = 0x40000000;
 constexpr i32 clone_newuser = 0x10000000;
 constexpr i32 clone_newcgroup = 0x02000000;
-
+*/
 };     // namespace posix
 };     // namespace micron

@@ -64,6 +64,18 @@ seccomp_data_arg_hi_off(u32 n) noexcept
   return 16u + n * 8u + 4u;
 }
 
+[[nodiscard]] constexpr u32
+seccomp_data_arg_second_off(u32 n) noexcept
+{
+  return 16u + n * 8u;
+}
+
+[[nodiscard]] constexpr u32
+seccomp_data_arg_first_off(u32 n) noexcept
+{
+  return 16u + n * 8u + 4u;
+}
+
 // NOTE: needs kernel >5.0
 struct __attribute__((packed)) seccomp_notif_t {
   u64 id;
@@ -112,7 +124,7 @@ seccomp_action_avail(u32 action)
 }
 
 inline int
-seccomp_get_notif_sizes(seccomp_notif_sizes_t &out)
+seccomp_notif_sizes(seccomp_notif_sizes_t &out)
 {
   return static_cast<int>(seccomp(seccomp_get_notif_sizes, 0, &out));
 }
@@ -133,19 +145,19 @@ constexpr static const u32 seccomp_ioctl_notif_addfd = 0xc0182103u;
 inline int
 seccomp_notify_receive(int fd, seccomp_notif_t &req)
 {
-  return static_cast<int>(micron::ioctl(fd, seccomp_ioctl_notif_recv, &req));
+  return static_cast<int>(micron::posix::ioctl(fd, seccomp_ioctl_notif_recv, &req));
 }
 
 inline int
 seccomp_notify_respond(int fd, seccomp_notif_resp_t &resp)
 {
-  return static_cast<int>(micron::ioctl(fd, seccomp_ioctl_notif_send, &resp));
+  return static_cast<int>(micron::posix::ioctl(fd, seccomp_ioctl_notif_send, &resp));
 }
 
 inline int
 seccomp_notify_id_valid(int fd, u64 id)
 {
-  return static_cast<int>(micron::ioctl(fd, seccomp_ioctl_notif_id_valid, &id));
+  return static_cast<int>(micron::posix::ioctl(fd, seccomp_ioctl_notif_id_valid, &id));
 }
 
 };     // namespace posix
