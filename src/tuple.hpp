@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "concepts.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
 
@@ -929,4 +930,5 @@ make_from_tuple(Tp &&t)
 {
   return impl::make_from_tuple_impl<T>(micron::forward<Tp>(t), make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
 }
+
 };     // namespace micron
