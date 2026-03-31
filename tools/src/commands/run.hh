@@ -37,7 +37,10 @@ build_and_run(const recipes::gnu::config_t &conf)
   };
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
-  mc::console("Compilation took: ", (end - start)/1000, " milliseconds");
+  if ( end - start > 1000 )
+    mc::console("Compilation took: ", (end - start) / 1000, " seconds");
+  else
+    mc::console("Execution took: ", (end - start), " milliseconds");
   mc::set_color(mc::color::reset);
   mc::console("Running: ", conf.target_out);
   mc::rexecute(conf.target_out);

@@ -1325,5 +1325,5 @@ main()
   end_test_case();
 
   print("=== ALL PARRAY TESTS PASSED ===");
-  return 0;
+  return 1;
 }

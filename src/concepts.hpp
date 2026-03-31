@@ -27,6 +27,9 @@ concept __same_as = is_same_v<T, U>;
 template <typename T, typename U>
 concept same_as = __same_as<T, U> and __same_as<U, T>;
 
+template <typename T, typename U>
+concept distinct = !__same_as<T, U> and !__same_as<U, T>;
+
 template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
 
 template <typename F, typename T>
@@ -42,6 +45,7 @@ template <typename L, typename R>
 concept assignable_from = requires(L &lhs, R &&rhs) {
   { lhs = micron::forward<R>(rhs) } -> micron::same_as<L>;
 };
+
 template <typename T>
 concept equality_comparable = requires(const T &a, const T &b) {
   { a == b } -> micron::convertible_to<bool>;
@@ -49,14 +53,12 @@ concept equality_comparable = requires(const T &a, const T &b) {
 };
 
 template <typename T, typename U>
-concept equality_comparable_with = micron::__same_as<micron::remove_cvref_t<T>, micron::remove_cvref_t<T>>
-                                   && micron::__same_as<micron::remove_cvref_t<U>, micron::remove_cvref_t<U>>
-                                   && micron::equality_comparable<T> && micron::equality_comparable<U> && requires(const T &t, const U &u) {
-                                        { t == u } -> micron::convertible_to<bool>;
-                                        { t != u } -> micron::convertible_to<bool>;
-                                        { u == t } -> micron::convertible_to<bool>;
-                                        { u != t } -> micron::convertible_to<bool>;
-                                      };
+concept equality_comparable_with = micron::equality_comparable<T> && micron::equality_comparable<U> && requires(const T &t, const U &u) {
+  { t == u } -> micron::convertible_to<bool>;
+  { t != u } -> micron::convertible_to<bool>;
+  { u == t } -> micron::convertible_to<bool>;
+  { u != t } -> micron::convertible_to<bool>;
+};
 
 template <typename T>
 concept boolean_testable = micron::convertible_to<T, bool>;
@@ -81,6 +83,7 @@ concept totally_ordered_with = micron::totally_ordered<T> && micron::totally_ord
                                     { u <= t } -> micron::boolean_testable;
                                     { u >= t } -> micron::boolean_testable;
                                   };
+
 template <typename T, typename U>
 concept comparable_with = micron::totally_ordered<T> && micron::totally_ordered<U> && micron::equality_comparable_with<T, U>
                           && requires(const T &t, const U &u) {
@@ -93,6 +96,7 @@ concept comparable_with = micron::totally_ordered<T> && micron::totally_ordered<
                                { u <= t } -> micron::boolean_testable;
                                { u >= t } -> micron::boolean_testable;
                              };
+
 template <typename T>
 concept movable = micron::constructible_from<T &&, T> and micron::assignable_from<T &, T> and micron::destructible<T>;
 
@@ -156,6 +160,7 @@ concept is_iterable = requires(T t, I i) {
   { t.begin() } -> micron::same_as<typename T::value_type *>;
   { t.end() } -> micron::same_as<typename T::value_type *>;
 };
+
 template <typename T>
 concept addressable = requires(T t) {
   { &t } -> micron::same_as<T *>;
@@ -176,6 +181,7 @@ concept is_general_pointer_class = requires(T t) {
   typename T::element_type;
   { t.get() } -> micron::same_as<typename T::element_type *>;
 };
+
 template <typename T>
 concept is_micron_structure = requires(T a) {
   { *a } -> micron::same_as<chunk<byte>>;
@@ -214,6 +220,7 @@ concept is_container = requires(T t) {
 } and !requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
+
 template <typename C>
 concept is_constexpr_container = requires {
   []() consteval {
@@ -309,6 +316,7 @@ concept is_tagged_map = requires {
   typename micron::remove_cvref_t<T>::category_type;
   requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
 };
+
 template <typename T>
 concept is_map = requires {
   typename micron::remove_cvref_t<T>::category_type;
@@ -336,5 +344,144 @@ template <typename F, typename Arg>
 concept strict_invocable
     = (is_invocable_v<F, Arg>
        && (same_as<Arg, remove_cvref_t<Arg>> || same_as<Arg, remove_cvref_t<Arg> &> || same_as<Arg, const remove_cvref_t<Arg> &>));
+
+template <typename Derived, typename Base>
+concept derived_from = micron::is_base_of_v<Base, Derived> && micron::is_convertible_v<const volatile Derived *, const volatile Base *>;
+
+template <typename T>
+concept floating_point = micron::is_floating_point_v<T>;
+
+namespace __impl
+{
+template <typename T, typename U, typename = void> struct __has_common_type : micron::false_type {
+};
+
+template <typename T, typename U> struct __has_common_type<T, U, micron::void_t<micron::common_type_t<T, U>>> : micron::true_type {
+};
+}     // namespace __impl
+
+template <typename T, typename U>
+concept common_reference_with = __impl::__has_common_type<micron::remove_cvref_t<T>, micron::remove_cvref_t<U>>::value
+                                && micron::convertible_to<T, micron::common_type_t<micron::remove_cvref_t<T>, micron::remove_cvref_t<U>>>
+                                && micron::convertible_to<U, micron::common_type_t<micron::remove_cvref_t<T>, micron::remove_cvref_t<U>>>;
+
+template <typename T, typename U>
+concept common_with = common_reference_with<T, U> && requires {
+  // common_type_t must be constructible from both sides symmetrically
+  static_cast<micron::common_type_t<T, U>>(micron::declval<T>());
+  static_cast<micron::common_type_t<T, U>>(micron::declval<U>());
+} && micron::equality_comparable<micron::common_type_t<T, U>>;
+
+template <typename T>
+concept swappable = micron::is_swappable_v<T>;
+
+template <typename T, typename U>
+concept swappable_with = micron::is_swappable_with_v<T, U> && micron::is_swappable_with_v<U, T> && micron::common_reference_with<T, U>;
+
+// F must be invocable with Args... and its result must be convertible to bool
+template <typename F, typename... Args>
+concept predicate = micron::is_invocable_v<F, Args...> && micron::boolean_testable<micron::invoke_result_t<F, Args...>>;
+
+template <typename R, typename T, typename U>
+concept relation = micron::predicate<R, T, T> && micron::predicate<R, U, U> && micron::predicate<R, T, U> && micron::predicate<R, U, T>;
+
+template <typename R, typename T, typename U>
+concept equivalence_relation = micron::relation<R, T, U>;
+
+template <typename R, typename T, typename U>
+concept strict_weak_order = micron::relation<R, T, U>;
+
+template <typename T>
+concept immutable = micron::copyable<T> && !micron::movable<T> && micron::destructible<T>;
+
+template <typename F, typename... Args>
+concept function_like = requires(F f, Args... args) {
+  { f(args...) };
+};
+// one arg
+template <typename F, typename Arg>
+concept unary_function = requires(F f, Arg a) {
+  { f(a) };
+};
+// two args
+template <typename F, typename A, typename B>
+concept binary_function = requires(F f, A a, B b) {
+  { f(a, b) };
+};
+
+template <typename F, typename Arg, typename Ret>
+concept pure_function = requires(F f, Arg a) {
+  { f(a) } -> micron::convertible_to<Ret>;
+};
+
+template <typename T>
+concept has_index = requires(const T &t) {
+  { t.index() } -> micron::convertible_to<usize>;
+};
+
+template <typename T>
+concept has_value_check = requires(const T &t) {
+  { t.has_value() } -> micron::convertible_to<bool>;
+};
+
+template <typename T>
+concept is_sum_type = has_index<T> && has_value_check<T> && requires(T t) {
+  { t.reset() };
+};
+
+template <typename T>
+concept is_option = is_sum_type<T> && requires(const T &t) {
+  { t.is_first() } -> micron::convertible_to<bool>;
+  { t.is_second() } -> micron::convertible_to<bool>;
+};
+
+template <typename T>
+concept is_variant = is_sum_type<T> && requires(T t) {
+  { t.template is<bool>() } -> micron::convertible_to<bool>;
+  { t.template cast<bool>() };
+};
+
+template <typename T>
+concept is_thunk = requires(T t) {
+  { t() };     // callable with no arguments
+} && micron::copyable<T>;
+
+template <typename F>
+concept is_functor = requires { typename F::value_type; } && requires(F ft) {
+  {
+    fmap([](typename F::value_type v) { return v; }, ft)
+  };
+};
+
+template <typename F>
+concept is_applicative = is_functor<F> && requires {
+  // pure(v) constructs an F from a bare value_type
+  { F::pure(micron::declval<typename F::value_type>()) } -> micron::same_as<F>;
+};
+
+// is_monad
+//   bind : F<T> -> (T -> F<U>) -> F<U>    (>>=)
+template <typename F>
+concept is_monad = is_applicative<F> && requires(F ft) {
+  {
+    bind(ft, [](typename F::value_type v) {
+      return ft; /* same monad, identity */
+    })
+  };
+};
+
+// nullable: a monad-like type that may or may not contain a value
+template <typename T>
+concept nullable = has_value_check<T> && requires(T t) {
+  { t.reset() };
+  // must be constructible in the empty / none state
+  { T{} };
+};
+
+template <typename T>
+concept result_like = is_option<T> && requires(const T &t) {
+  { t.is_first() } -> micron::convertible_to<bool>;      // 'ok'  branch
+  { t.is_second() } -> micron::convertible_to<bool>;     // 'err' branch
+};
 
 };     // namespace micron
