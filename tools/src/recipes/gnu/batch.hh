@@ -94,8 +94,9 @@ batch_cmp(const config_t &conf)
                                 : (conf.compile_type == __comp_type::preprocessed) ? "-E"
                                                                                    : "";
   const string_type bin_type = (conf.static_binary) ? make_flags(gcc::linker_flags::flags::static_link) : "";
+  const string_type freestanding = (conf.freestanding) ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib, gcc::linker_flags::flags::nostdlib_pp) : "";
   const string_type arch_width = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
-  string_type compile_libs = "-lm -lpthread";
+  string_type compile_libs = conf.freestanding ? "": "-lm -lpthread";
   if ( !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
       compile_libs += " -l";
@@ -136,10 +137,10 @@ batch_cmp(const config_t &conf)
       = conf.static_binary ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp) : "";
 
   string_type command_pre
-      = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, arch_width, flags_warn_base,
+      = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, arch_width, flags_warn_base,
                                      flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions, flags_warn_ignore,
                                      flags_extensions_supple)
-                      : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, arch_width, flags_warn_base,
+                      : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, arch_width, flags_warn_base,
                                      flags_warn_ignore, flags_extensions, flags_warn_ignore, flags_extensions_supple);
 
   string_type command_post = make_command(compile_libs, includes_location, libs_location);

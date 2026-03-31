@@ -89,6 +89,7 @@ struct config_t {
   mc::vector<string_type> bonus_libs;
   bool warnings = false;
   bool static_binary = false;
+  bool freestanding = false;
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
@@ -247,6 +248,9 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.warnings = true;
     } else if ( mc::strcmp(argv[i], "-s") == 0 ) {
       conf.static_binary = true;
+    } else if ( mc::strcmp(argv[i], "-k") == 0 ) {
+      // k for "kernel"
+      conf.freestanding = true;
     } else if ( mc::strcmp(argv[i], "--obj") == 0 ) {
       conf.compile_type = __comp_type::object;
       user_provided_type = true;
