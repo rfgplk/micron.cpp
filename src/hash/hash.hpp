@@ -26,7 +26,7 @@ enum class hash_types { bernstein32, murmur128, xxhash64, zzz128, zzz, zz, z };
 // default to homegrown zzz
 constexpr hash_types default_hash_128 = hash_types::zzz128;
 constexpr hash_types default_hash_64 = hash_types::zzz;
-constexpr u32 default_seed = 0x369bd65914cf0616;     // try to keep it in signed i32 range
+constexpr u64 default_seed = 0x369bd65914cf0616;     // try to keep it in signed i32 range
 
 typedef u32 hash32_t;
 typedef u64 hash64_t;

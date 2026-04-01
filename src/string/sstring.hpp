@@ -1052,8 +1052,7 @@ public:
   inline sstring &
   operator+=(const buffer &data)
   {
-    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory",
-                                                                  static_cast<size_type>(data.size()));
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.size());
 
     micron::memcpy(&memory[length], &data, data.size());
     length += data.size();
@@ -1067,7 +1066,7 @@ public:
     if ( M == 1 and data[0] == 0x0 )
       return *this;
 
-    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", static_cast<size_type>(M));
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", M);
 
     micron::memcpy(&memory[length], &data[0], M);
     length += M - 1;

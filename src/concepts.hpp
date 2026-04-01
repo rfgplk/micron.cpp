@@ -18,8 +18,81 @@
 // all concepts go here
 namespace micron
 {
+
+template <typename F, typename T>
+concept convertible_to = is_convertible_v<F, T> and requires { static_cast<T>(declval<F>()); };
+
 template <typename T>
 concept integral = micron::is_integral_v<T>;
+
+template <typename Fn, typename... Args>
+concept invocable = micron::is_invocable_v<Fn, Args...>;
+
+template <typename Fn, typename D>
+concept fn_domain = micron::is_invocable_v<Fn, D>;
+
+// Fn(D) -> D  (endomorphism)
+template <typename Fn, typename D>
+concept fn_codomain = micron::is_same_v<micron::invoke_result_t<Fn, D>, D>;
+
+template <typename Fn, typename D>
+concept fn_return = micron::is_same_v<micron::invoke_result_t<Fn, D>, D>;
+
+// ---- paste these into concepts.hpp after the existing fn_codomain / fn_return ----
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// function-type concepts for FP dispatch
+
+// Fn(A) -> B  (heterogeneous mapping)
+template <typename Fn, typename A, typename B>
+concept fn_arrow = micron::is_invocable_v<Fn, A> && micron::is_same_v<micron::invoke_result_t<Fn, A>, B>;
+
+// Fn(A) -> bool-convertible
+template <typename Fn, typename A>
+concept fn_predicate = micron::is_invocable_v<Fn, A> && micron::is_convertible_v<micron::invoke_result_t<Fn, A>, bool>;
+
+// Fn(R, T) -> R  (left-fold accumulator shape)
+template <typename Fn, typename R, typename T>
+concept fn_fold = micron::is_invocable_v<Fn, R, T> && micron::is_same_v<micron::invoke_result_t<Fn, R, T>, R>;
+
+// Fn(T, R) -> R  (right-fold accumulator shape)
+template <typename Fn, typename T, typename R>
+concept fn_fold_r = micron::is_invocable_v<Fn, T, R> && micron::is_same_v<micron::invoke_result_t<Fn, T, R>, R>;
+
+// Fn(T, T) -> T  (binary endomorphism)
+template <typename Fn, typename T>
+concept fn_binary_codomain = micron::is_invocable_v<Fn, T, T> && micron::is_same_v<micron::invoke_result_t<Fn, T, T>, T>;
+
+// Fn(T, T) -> bool
+template <typename Fn, typename T>
+concept fn_binary_predicate = micron::is_invocable_v<Fn, T, T> && micron::is_convertible_v<micron::invoke_result_t<Fn, T, T>, bool>;
+
+template <typename T>
+concept is_option = requires(const T &t) {
+  { t.is_first() } -> micron::convertible_to<bool>;
+  { t.is_second() } -> micron::convertible_to<bool>;
+};
+
+// Fn(T) -> option<U,E>  (Kleisli arrow)
+template <typename Fn, typename T>
+concept fn_option_arrow = micron::is_invocable_v<Fn, T> && micron::is_option<micron::invoke_result_t<Fn, T>>;
+
+template <typename T, typename = void> struct option_traits {
+};
+
+template <typename T>
+  requires requires {
+    typename T::first_type;
+    typename T::second_type;
+  }
+struct option_traits<T> {
+  using value_type = typename T::first_type;
+  using error_type = typename T::second_type;
+};
+
+template <typename T> using option_value_t = typename option_traits<micron::remove_cvref_t<T>>::value_type;
+
+template <typename T> using option_error_t = typename option_traits<micron::remove_cvref_t<T>>::error_type;
 
 template <typename T, typename U>
 concept __same_as = is_same_v<T, U>;
@@ -31,10 +104,6 @@ template <typename T, typename U>
 concept distinct = !__same_as<T, U> and !__same_as<U, T>;
 
 template <typename T, size_t N> constexpr bool size_of = (sizeof(T) == N);
-
-template <typename F, typename T>
-concept convertible_to = is_convertible_v<F, T> and requires { static_cast<T>(declval<F>()); };
-
 template <typename T>
 concept destructible = micron::is_nothrow_destructible_v<T>;
 
@@ -428,13 +497,6 @@ template <typename T>
 concept is_sum_type = has_index<T> && has_value_check<T> && requires(T t) {
   { t.reset() };
 };
-
-template <typename T>
-concept is_option = is_sum_type<T> && requires(const T &t) {
-  { t.is_first() } -> micron::convertible_to<bool>;
-  { t.is_second() } -> micron::convertible_to<bool>;
-};
-
 template <typename T>
 concept is_variant = is_sum_type<T> && requires(T t) {
   { t.template is<bool>() } -> micron::convertible_to<bool>;
@@ -482,6 +544,13 @@ template <typename T>
 concept result_like = is_option<T> && requires(const T &t) {
   { t.is_first() } -> micron::convertible_to<bool>;      // 'ok'  branch
   { t.is_second() } -> micron::convertible_to<bool>;     // 'err' branch
+};
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// compile-time size detection for unrolling
+template <typename C>
+concept has_static_size = requires {
+  { C::static_size } -> micron::convertible_to<usize>;
 };
 
 };     // namespace micron

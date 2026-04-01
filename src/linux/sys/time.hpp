@@ -175,67 +175,67 @@ double difftime(time_t t0, time_t t1);
 i32
 timerfd_create(clockid_t clockid, i32 flags)
 {
-  return micron::syscall(SYS_timerfd_create, clockid, flags);
+  return static_cast<i32>(micron::syscall(SYS_timerfd_create, clockid, flags));
 }
 
 i32
 timerfd_settime(i32 fd, i32 flags, const itimerspec_t &new_val, itimerspec_t *old_val)
 {
-  return micron::syscall(SYS_timerfd_settime, fd, flags, &new_val, old_val);
+  return static_cast<i32>(micron::syscall(SYS_timerfd_settime, fd, flags, &new_val, old_val));
 }
 
 i32
 timerfd_settime(i32 fd, i32 flags, const itimerspec_t &new_val)
 {
-  return micron::syscall(SYS_timerfd_settime, fd, flags, &new_val, nullptr);
+  return static_cast<i32>(micron::syscall(SYS_timerfd_settime, fd, flags, &new_val, nullptr));
 }
 
 i32
 timerfd_gettime(i32 fd, itimerspec_t &cur)
 {
-  return micron::syscall(SYS_timerfd_gettime, fd, &cur);
+  return static_cast<i32>(micron::syscall(SYS_timerfd_gettime, fd, &cur));
 }
 
 i32
 timer_create(clockid_t clockid, sigevent_t *sevp, timer_t &timerid)
 {
-  return micron::syscall(SYS_timer_create, clockid, sevp, &timerid);
+  return static_cast<i32>(micron::syscall(SYS_timer_create, clockid, sevp, &timerid));
 }
 
 i32
 timer_create(clockid_t clockid, timer_t &timerid)
 {
-  return micron::syscall(SYS_timer_create, clockid, nullptr, &timerid);
+  return static_cast<i32>(micron::syscall(SYS_timer_create, clockid, nullptr, &timerid));
 }
 
 i32
 timer_delete(timer_t timerid)
 {
-  return micron::syscall(SYS_timer_delete, timerid);
+  return static_cast<i32>(micron::syscall(SYS_timer_delete, timerid));
 }
 
 i32
 timer_settime(timer_t timerid, i32 flags, const itimerspec_t &new_val, itimerspec_t *old_val)
 {
-  return micron::syscall(SYS_timer_settime, timerid, flags, &new_val, old_val);
+  return static_cast<i32>(micron::syscall(SYS_timer_settime, timerid, flags, &new_val, old_val));
 }
 
 i32
 timer_settime(timer_t timerid, i32 flags, const itimerspec_t &new_val)
 {
-  return micron::syscall(SYS_timer_settime, timerid, flags, &new_val, nullptr);
+  return static_cast<i32>(micron::syscall(SYS_timer_settime, timerid, flags, &new_val, nullptr));
 }
 
 i32
 timer_gettime(timer_t timerid, itimerspec_t &cur)
 {
-  return micron::syscall(SYS_timer_gettime, timerid, &cur);
+  return static_cast<i32>(micron::syscall(SYS_timer_gettime, timerid, &cur));
 }
 
 i32
 timer_getoverrun(timer_t timerid)
 {
-  return micron::syscall(SYS_timer_getoverrun, timerid);
+  return static_cast<i32>(micron::syscall(SYS_timer_getoverrun, timerid));
 }
 
 // legacy
@@ -243,25 +243,25 @@ timer_getoverrun(timer_t timerid)
 i32
 setitimer(i32 which, const itimerval_t &new_val, itimerval_t *old_val)
 {
-  return micron::syscall(SYS_setitimer, which, &new_val, old_val);
+  return static_cast<i32>(micron::syscall(SYS_setitimer, which, &new_val, old_val));
 }
 
 i32
 setitimer(i32 which, const itimerval_t &new_val)
 {
-  return micron::syscall(SYS_setitimer, which, &new_val, nullptr);
+  return static_cast<i32>(micron::syscall(SYS_setitimer, which, &new_val, nullptr));
 }
 
 i32
 getitimer(i32 which, itimerval_t &cur)
 {
-  return micron::syscall(SYS_getitimer, which, &cur);
+  return static_cast<i32>(micron::syscall(SYS_getitimer, which, &cur));
 }
 
 u32
 alarm(u32 seconds)
 {
-  return micron::syscall(SYS_alarm, seconds);
+  return static_cast<i32>(micron::syscall(SYS_alarm, seconds));
 }
 
 i32

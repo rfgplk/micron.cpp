@@ -393,6 +393,9 @@ class option
   }
 
 public:
+  using first_type = T;
+  using second_type = F;
+
   ~option() { reset_impl(); }
 
   explicit option(tag<T>) { emplace<T>(); }
@@ -580,6 +583,27 @@ public:
       }
     }
     return *this;
+  }
+
+  template <typename U>
+    requires(micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>)
+  operator U &() &
+  {
+    return cast<U>();
+  }
+
+  template <typename U>
+    requires(micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>)
+  operator const U &() const &
+  {
+    return cast<U>();
+  }
+
+  template <typename U>
+    requires(micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>)
+  operator U() &&
+  {
+    return micron::move(cast<U>());
   }
 };
 };     // namespace micron

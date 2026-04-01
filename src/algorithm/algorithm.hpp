@@ -86,7 +86,7 @@ fill(T *first, T *end, const P &value) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn> && requires(Fn f) {
+  requires micron::invocable<Fn> && requires(Fn f) {
     { f() } -> micron::same_as<T>;
   }
 constexpr void
@@ -106,7 +106,7 @@ fill_n(T *first, usize n, const P &value) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn> && requires(Fn f) {
+  requires micron::invocable<Fn> && requires(Fn f) {
     { f() } -> micron::same_as<T>;
   }
 constexpr T *
@@ -126,7 +126,7 @@ fill(C &c, const P &value) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn> && requires(Fn f) {
+  requires micron::invocable<Fn> && requires(Fn f) {
     { f() } -> micron::same_as<typename C::value_type>;
   }
 constexpr C &
@@ -145,7 +145,7 @@ fill_n(C &c, usize n, const P &value) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn> && requires(Fn f) {
+  requires micron::invocable<Fn> && requires(Fn f) {
     { f() } -> micron::same_as<typename C::value_type>;
   }
 constexpr C &
@@ -191,7 +191,7 @@ generate(C &c, Args &&...args) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn> && requires(Fn f) {
+  requires micron::invocable<Fn> && requires(Fn f) {
     { f() } -> micron::same_as<T>;
   }
 constexpr void
@@ -202,7 +202,7 @@ generate(T *first, T *end, Fn fn) noexcept
 }
 
 template <typename T, typename Fn, typename... Args>
-  requires micron::is_invocable_v<Fn, Args...>
+  requires micron::invocable<Fn, Args...>
 constexpr void
 generate(T *first, T *end, Fn fn, Args &&...args) noexcept
 {
@@ -211,7 +211,7 @@ generate(T *first, T *end, Fn fn, Args &&...args) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn> && requires(Fn f) {
+  requires micron::invocable<Fn> && requires(Fn f) {
     { f() } -> micron::same_as<typename C::value_type>;
   }
 constexpr C &
@@ -222,7 +222,7 @@ generate(C &c, Fn fn) noexcept
 }
 
 template <is_iterable_container C, typename Fn, typename... Args>
-  requires micron::is_invocable_v<Fn, Args...>
+  requires micron::invocable<Fn, Args...>
 constexpr C &
 generate(C &c, Fn fn, Args &&...args) noexcept
 {
@@ -237,7 +237,7 @@ template <auto Fn, typename T>
 constexpr void
 transform(T *first, T *end) noexcept
 {
-  if constexpr ( micron::is_invocable_v<decltype(Fn), T *> ) {
+  if constexpr ( micron::invocable<decltype(Fn), T *> ) {
     for ( ; first != end; ++first )
       *first = Fn(first);
   } else {
@@ -250,7 +250,7 @@ template <auto Fn, typename T, typename O>
 constexpr O *
 transform(const T *first1, const T *end1, const T *first2, O *out) noexcept
 {
-  if constexpr ( micron::is_invocable_v<decltype(Fn), const T *, const T *> ) {
+  if constexpr ( micron::invocable<decltype(Fn), const T *, const T *> ) {
     for ( ; first1 != end1; ++first1, ++first2, ++out )
       *out = Fn(first1, first2);
   } else {
@@ -278,7 +278,7 @@ transform(const C &a, const C &b, O &out) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, T *>
+  requires micron::invocable<Fn, T *>
 constexpr void
 transform(T *first, T *end, Fn fn) noexcept
 {
@@ -287,7 +287,7 @@ transform(T *first, T *end, Fn fn) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, T>
+  requires micron::invocable<Fn, T>
 constexpr void
 transform(T *first, T *end, Fn fn) noexcept
 {
@@ -296,7 +296,7 @@ transform(T *first, T *end, Fn fn) noexcept
 }
 
 template <typename T, typename O, typename Fn>
-  requires micron::is_invocable_v<Fn, T, T>
+  requires micron::invocable<Fn, T, T>
 constexpr O *
 transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexcept
 {
@@ -306,7 +306,7 @@ transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexce
 }
 
 template <typename T, typename O, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *, const T *>
+  requires micron::invocable<Fn, const T *, const T *>
 constexpr O *
 transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexcept
 {
@@ -316,7 +316,7 @@ transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexce
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, typename C::value_type *>
+  requires micron::invocable<Fn, typename C::value_type *>
 constexpr C &
 transform(C &c, Fn fn) noexcept
 {
@@ -325,7 +325,7 @@ transform(C &c, Fn fn) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, typename C::value_type>
+  requires micron::invocable<Fn, typename C::value_type>
 constexpr C &
 transform(C &c, Fn fn) noexcept
 {
@@ -335,7 +335,7 @@ transform(C &c, Fn fn) noexcept
 
 template <is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_same_v<typename C::value_type, typename C::value_type>
-           && micron::is_invocable_v<Fn, typename C::value_type, typename C::value_type>
+           && micron::invocable<Fn, typename C::value_type, typename C::value_type>
 constexpr O &
 transform(const C &a, const C &b, O &out, Fn fn) noexcept
 {
@@ -350,7 +350,7 @@ template <auto Fn, typename T>
 constexpr T *
 where(const T *first, const T *end, T *out) noexcept
 {
-  if constexpr ( micron::is_invocable_v<decltype(Fn), const T *> ) {
+  if constexpr ( micron::invocable<decltype(Fn), const T *> ) {
     for ( ; first != end; ++first )
       if ( Fn(first) )
         *out++ = *first;
@@ -374,7 +374,7 @@ where(const C &c)
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, T>
+  requires micron::invocable<Fn, T>
 constexpr T *
 where(const T *first, const T *end, T *out, Fn fn) noexcept
 {
@@ -385,7 +385,7 @@ where(const T *first, const T *end, T *out, Fn fn) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires micron::invocable<Fn, const T *>
 constexpr T *
 where(const T *first, const T *end, T *out, Fn fn) noexcept
 {
@@ -396,7 +396,7 @@ where(const T *first, const T *end, T *out, Fn fn) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, typename C::value_type>
+  requires micron::invocable<Fn, typename C::value_type>
 C
 where(const C &c, Fn fn)
 {
@@ -408,7 +408,7 @@ where(const C &c, Fn fn)
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
+  requires micron::invocable<Fn, const typename C::value_type *>
 C
 where(const C &c, Fn fn)
 {
@@ -659,7 +659,7 @@ reverse(T __restrict first, T __restrict end) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *, const T *>
+  requires micron::invocable<Fn, const T *, const T *>
 constexpr void
 reverse(T *first, T *end, Fn fn) noexcept
 {
@@ -675,7 +675,7 @@ reverse(T *first, T *end, Fn fn) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, T, T>
+  requires micron::invocable<Fn, T, T>
 constexpr void
 reverse(T *first, T *end, Fn fn) noexcept
 {
@@ -699,7 +699,7 @@ reverse(C &c) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
+  requires micron::invocable<Fn, const typename C::value_type *, const typename C::value_type *>
 constexpr C &
 reverse(C &c, Fn fn) noexcept
 {
@@ -708,7 +708,7 @@ reverse(C &c, Fn fn) noexcept
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, typename C::value_type, typename C::value_type>
+  requires micron::invocable<Fn, typename C::value_type, typename C::value_type>
 constexpr C &
 reverse(C &c, Fn fn) noexcept
 {
@@ -724,7 +724,7 @@ constexpr void
 reverse(T *first, T *end) noexcept
 {
   while ( first < end ) {
-    if constexpr ( micron::is_invocable_v<decltype(Fn), const T *, const T *> ) {
+    if constexpr ( micron::invocable<decltype(Fn), const T *, const T *> ) {
       if ( Fn(first, end) ) {
         auto tmp = *first;
         *first = *end;
@@ -757,7 +757,7 @@ reverse_copy(const T *first, const T *end, T *out) noexcept
   const T *it = end;
   while ( it != first ) {
     --it;
-    if constexpr ( micron::is_invocable_v<decltype(Fn), const T *> ) {
+    if constexpr ( micron::invocable<decltype(Fn), const T *> ) {
       if ( Fn(it) )
         *out++ = *it;
     } else {
@@ -789,7 +789,7 @@ reverse_copy(const T *first, const T *end, T *out) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires micron::invocable<Fn, const T *>
 constexpr T *
 reverse_copy(const T *first, const T *end, T *out, Fn fn) noexcept
 {
@@ -803,7 +803,7 @@ reverse_copy(const T *first, const T *end, T *out, Fn fn) noexcept
 }
 
 template <typename T, typename Fn>
-  requires micron::is_invocable_v<Fn, T>
+  requires micron::invocable<Fn, T>
 constexpr T *
 reverse_copy(const T *first, const T *end, T *out, Fn fn) noexcept
 {
@@ -836,7 +836,7 @@ reverse_copy(const C &c, O &out)
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
+  requires micron::invocable<Fn, const typename C::value_type *>
 C
 reverse_copy(const C &c, Fn fn)
 {
@@ -848,7 +848,7 @@ reverse_copy(const C &c, Fn fn)
 }
 
 template <is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, typename C::value_type>
+  requires micron::invocable<Fn, typename C::value_type>
 C
 reverse_copy(const C &c, Fn fn)
 {
