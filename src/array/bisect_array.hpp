@@ -73,6 +73,8 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+  static constexpr size_type __length = N;
+  static constexpr size_type static_size = __length;
 
   ~bisect_array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 

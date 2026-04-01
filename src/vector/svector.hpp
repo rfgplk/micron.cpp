@@ -99,6 +99,7 @@ public:
   typedef const T *const_pointer;
   typedef T *iterator;
   typedef const T *const_iterator;
+  static constexpr size_type static_size = N;
 
   ~svector(void)
   {

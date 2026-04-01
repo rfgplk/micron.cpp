@@ -29,6 +29,6 @@ fnv_32(const byte *data, u32 seed, usize sz)
     hash = hash ^ (unsigned char)data[i];
     hash = hash * 1099511628211ULL;
   }
-  return hash;
+  return static_cast<u32>(hash);
 }
 }     // namespace micron

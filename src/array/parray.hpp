@@ -431,6 +431,7 @@ public:
   typedef const T &const_ref;
   typedef const T *const_pointer;
   static constexpr size_type length = __cpow(B, H);
+  static constexpr size_type static_size = length;
   static constexpr usize branching = B;
   static constexpr usize height = H;
 

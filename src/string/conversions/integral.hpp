@@ -252,7 +252,7 @@ try_string_to_int64(const micron::hstring<T> &buf, i64 &out)
   if ( ptr == end )
     return false;
   i64 acc = 0;
-  constexpr i64 lim = -static_cast<i64>(0x7FFFFFFFFFFFFFFF) - 1;
+  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFuLL - 1;
   constexpr i64 lim_div = lim / 10;
   constexpr i64 lim_mod = -(lim % 10);
   while ( ptr != end ) {
