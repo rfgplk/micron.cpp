@@ -707,6 +707,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
   static constexpr size_type length = N;
+  static constexpr size_type static_size = length;
 
   // NOTE: destroy_fast
   ~carray() { __impl_container::destroy_fast<N, T>(micron::addr(stack[0])); }

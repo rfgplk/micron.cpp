@@ -12,6 +12,9 @@
 #include "../unitypes.hpp"
 
 // WARNING: SUSPECT FOR DOUBLES
+// must surpress int128 extensions
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 namespace micron
 {
@@ -1039,4 +1042,5 @@ digit_val(char c, u32 base)
 
 };     // namespace __impl
 
+#pragma GCC diagnostic pop
 };     // namespace micron

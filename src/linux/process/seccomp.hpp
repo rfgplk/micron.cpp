@@ -11,8 +11,8 @@
 #include "../../types.hpp"
 #include "../sys/prctl.hpp"
 
-#include "../sys/seccomp.hpp"
 #include "../sys/bpf.hpp"
+#include "../sys/seccomp.hpp"
 
 namespace micron
 {
@@ -679,6 +679,7 @@ notif_receive(int listener_fd, posix::seccomp_notif_t &req)
 {
   return posix::seccomp_notify_receive(listener_fd, req);
 }
+
 /*
 inline int
 notif_continue(int listener_fd, u64 id)
