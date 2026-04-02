@@ -178,7 +178,7 @@ public:
 
   template <size_type M, typename F> constexpr sstring(const F (&str)[M])
   {
-    static_assert(N >= M, "micron::sstring sstring(cconst) too large.");
+    static_assert(N > M, "micron::sstring sstring(cconst) too large.");
     micron::memcpy(&memory[0], &str[0], M);
     length = M - 1;     // cut null
   };
@@ -319,7 +319,7 @@ public:
       length = 0;
       return *this;
     }
-    static_assert(N >= M, "micron::sstring operator= too large.");
+    static_assert(N > M, "micron::sstring operator= too large.");
     clear();
     micron::memcpy(&memory[0], &o.memory[0], M);
     length = o.length;
@@ -334,7 +334,7 @@ public:
       length = 0;
       return *this;
     }
-    static_assert(N >= M, "micron::sstring operator= too large.");
+    static_assert(N > M, "micron::sstring operator= too large.");
     clear();
     micron::memcpy(&memory[0], &o.memory[0], M);
     micron::constexpr_zero(&o.memory[0], M);
