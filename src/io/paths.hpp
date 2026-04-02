@@ -851,16 +851,22 @@ public:
   absolute(const path_t &n)
   {
     micron::vector<path_t> paths;
-    paths.emplace_back(path_t());
-    micron::realpath(n.c_str(), &paths.back()[0]);
-    paths.back().adjust_size();
 
-    dir d(n);
+    path_t abs;
+    if ( !micron::realpath(n.c_str(), &abs[0]) )
+      return paths;
+
+    abs.adjust_size();
+
+    paths.emplace_back(abs);
+
+    dir d(abs);
     while ( d.name() != "/" ) {
       dir parent = d.up();
       paths.emplace_back(parent.name());
       d = micron::move(parent);
     }
+
     return paths;
   }
 

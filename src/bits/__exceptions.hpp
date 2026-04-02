@@ -80,6 +80,19 @@ raise(Args &&...args)
 
 template <typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
+raise(u32 eno, Args &&...args)
+{
+  T ex(args...);
+  __write("exception raised: ");
+  __write_n(ex.what());
+  __write("errno: ");
+  __write_unsigned(eno);
+  __write("\n");
+  abort(ex.which());
+}
+
+template <typename T, typename... Args>
+__attribute__((always_inline, noreturn)) inline void
 raise_silent(Args &&...args)
 {
   T ex(args...);
@@ -109,4 +122,17 @@ exc(Args &&...args)
     except::raise<T>(micron::forward<Args>(args)...);
   }
 }
+
+// exc with explicit errno
+template <typename T, typename... Args>
+__attribute__((always_inline, noreturn)) inline void
+exc(i32 eno, Args &&...args)
+{
+  if constexpr ( micron::except::__use_exceptions )
+    throw T(micron::forward<Args>(args)...);
+  else {
+    except::raise<T>(static_cast<u32>(-eno), micron::forward<Args>(args)...);
+  }
+}
+
 };     // namespace micron

@@ -20,5 +20,9 @@
 namespace micron::except
 {
 // NOTE: this must be enabled for tests
+#ifndef __DUCK_TESTING
+constexpr static const bool __use_exceptions = false;
+#else
 constexpr static const bool __use_exceptions = true;
+#endif
 };     // namespace micron::except
