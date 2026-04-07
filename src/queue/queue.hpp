@@ -52,7 +52,7 @@ public:
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       usize i = __mem::capacity - 1;
       for ( T &&value : lst ) {
-        new (&__mem::memory[i--]) T(micron::move(value));
+        new (micron::addr(__mem::memory[i--])) T(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
@@ -216,7 +216,7 @@ public:
     if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
       reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (&__mem::memory[needle - __mem::length++]) T{};
+      new (micron::addr(__mem::memory[needle - __mem::length++])) T{};
     } else {
       __mem::memory[needle - __mem::length++] = T{};
     }
@@ -229,7 +229,7 @@ public:
     if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
       reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (&__mem::memory[needle - __mem::length++]) T{ micron::move(val) };
+      new (micron::addr(__mem::memory[needle - __mem::length++])) T{ micron::move(val) };
     } else {
       __mem::memory[needle - __mem::length++] = micron::move(val);
     }
@@ -242,7 +242,7 @@ public:
     if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
       reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (&__mem::memory[needle - __mem::length++]) T{ val };
+      new (micron::addr(__mem::memory[needle - __mem::length++])) T{ val };
     } else {
       __mem::memory[needle - __mem::length++] = val;
     }

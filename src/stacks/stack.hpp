@@ -62,7 +62,7 @@ public:
     if constexpr ( micron::is_class_v<T> ) {
       usize i = 0;
       for ( const T &value : lst )
-        new (&__mem::memory[i++]) T(micron::move(const_cast<T &>(value)));
+        new (micron::addr(__mem::memory[i++])) T(micron::move(const_cast<T &>(value)));
       __mem::length = lst.size();
     } else {
       usize i = 0;
@@ -153,7 +153,7 @@ public:
   {
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) T{};
+    new (micron::addr(__mem::memory[__mem::length++])) T{};
   }
 
   inline void
@@ -162,7 +162,7 @@ public:
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_constructible_v<T> )
-      new (&__mem::memory[__mem::length++]) T(v);
+      new (micron::addr(__mem::memory[__mem::length++])) T(v);
     else
       __mem::memory[__mem::length++] = v;
   }
@@ -172,7 +172,7 @@ public:
   {
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) T(micron::move(v));
+    new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
   }
 
   inline void
@@ -195,7 +195,7 @@ public:
   {
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(args)...);
+    new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(args)...);
   }
 
   inline T

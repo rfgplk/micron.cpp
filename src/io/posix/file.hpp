@@ -641,6 +641,12 @@ public:
     return valid();
   }
 
+  constexpr
+  operator fd_t(void) const noexcept
+  {
+    return __handle;
+  }
+
   fd_t
   fd(void) const noexcept
   {
@@ -1724,6 +1730,12 @@ struct regular_file : public file {
   create_new(const T &p)
   {
     return create_new(p.c_str());
+  }
+
+  constexpr
+  operator fd_t(void) const noexcept
+  {
+    return __handle;
   }
 
   bool

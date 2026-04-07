@@ -142,7 +142,7 @@ public:
   {
     if ( length >= N )
       exc<except::library_error>("sstack overflow on emplace");
-    new (&stack[length++]) T(micron::forward<Args &&>(args)...);
+    new (micron::addr(stack[length++])) T(micron::forward<Args &&>(args)...);
   }
 
   void
@@ -150,7 +150,7 @@ public:
   {
     if ( length >= N )
       exc<except::library_error>("sstack overflow on push");
-    new (&stack[length++]) T();
+    new (micron::addr(stack[length++])) T();
   }
 
   void
@@ -158,7 +158,7 @@ public:
   {
     if ( length >= N )
       exc<except::library_error>("sstack overflow on push");
-    new (&stack[length++]) T(v);
+    new (micron::addr(stack[length++])) T(v);
   }
 
   void
@@ -166,7 +166,7 @@ public:
   {
     if ( length >= N )
       exc<except::library_error>("sstack overflow on push");
-    new (&stack[length++]) T(micron::move(v));
+    new (micron::addr(stack[length++])) T(micron::move(v));
   }
 
   inline void
@@ -286,7 +286,7 @@ public:
     if constexpr ( micron::is_class_v<t> ) {
       usize i = 0;
       for ( auto &&value : lst )
-        new (&stack[i++]) t(value);
+        new (micron::addr(stack[i++])) t(value);
     } else {
       usize i = 0;
       for ( t value : lst )
@@ -399,25 +399,25 @@ public:
   inline void
   emplace(Args &&...args)
   {
-    new (&stack[length++]) t(micron::forward<Args &&>(args)...);
+    new (micron::addr(stack[length++])) t(micron::forward<Args &&>(args)...);
   }
 
   inline void
   push(void)
   {
-    new (&stack[length++]) t();
+    new (micron::addr(stack[length++])) t();
   }
 
   inline void
   push(const t &v)
   {
-    new (&stack[length++]) t(v);
+    new (micron::addr(stack[length++])) t(v);
   }
 
   inline void
   move(t &&v)
   {
-    new (&stack[length++]) t(micron::move(v));
+    new (micron::addr(stack[length++])) t(micron::move(v));
   }
 
   inline void

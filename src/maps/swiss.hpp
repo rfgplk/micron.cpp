@@ -456,7 +456,7 @@ public:
           usize probe = group_start + m.lowest();
           __control_bytes[probe] = h2;
           __entries[probe].key = key;
-          new (&__entries[probe].value) V(micron::forward<Args>(args)...);
+          new (micron::addr(__entries[probe].value)) V(micron::forward<Args>(args)...);
           ++__size;
           return { true, &__entries[probe].value };
         }
@@ -466,7 +466,7 @@ public:
           if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
             __control_bytes[probe] = h2;
             __entries[probe].key = key;
-            new (&__entries[probe].value) V(micron::forward<Args>(args)...);
+            new (micron::addr(__entries[probe].value)) V(micron::forward<Args>(args)...);
             ++__size;
             return { true, &__entries[probe].value };
           }
