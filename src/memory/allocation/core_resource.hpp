@@ -55,7 +55,7 @@ template <typename T> struct __core_memory_resource {
 
   template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity){};
 
-  __core_memory_resource(chunk<byte> &&b)
+  explicit __core_memory_resource(chunk<byte> &&b)
   {
     auto addr = reinterpret_cast<uintptr_t>(b.ptr);
     if ( addr % alignof(T) != 0 ) {

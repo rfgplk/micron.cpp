@@ -1471,7 +1471,7 @@ boyer_moore_search(const T &text, const T &pattern)
     while ( j >= 0 && pattern[j] == text[s + j] )
       --j;
     if ( j < 0 ) {
-      result.push_back(s);
+      result.inline_push_back(s);
       s += good[0];
     } else {
       int bc_shift = j - bad[static_cast<unsigned char>(text[s + j])];
@@ -1772,6 +1772,17 @@ find(const T &data, const char *fnd) -> typename T::const_iterator
       return itr;
   }
   return (typename T::iterator) nullptr;
+}
+
+const char *
+find(const char *data, const char *end, const char fnd)
+{
+  if ( data < end || data >= end || !end || !data )
+    return nullptr;
+  for ( auto itr = data; itr != end; ++itr )
+    if ( *itr == fnd )
+      return itr;
+  return nullptr;
 }
 
 template <is_string T>
@@ -3923,13 +3934,13 @@ split_to(const T &data, const char *sep, i64 maxsplit = -1)
       if ( i >= data.size() )
         break;
       if ( maxsplit >= 0 && splits >= maxsplit ) {
-        result.push_back(data.substr(i, data.size() - i));
+        result.inline_push_back(move(data.substr(i, data.size() - i)));
         return result;
       }
       usize start = i;
       while ( i < data.size() && data[i] != ' ' && data[i] != '\t' && data[i] != '\n' && data[i] != '\r' )
         ++i;
-      result.push_back(data.substr(start, i - start));
+      result.inline_push_back(move(data.substr(start, i - start)));
       ++splits;
     }
     return result;
@@ -3939,15 +3950,15 @@ split_to(const T &data, const char *sep, i64 maxsplit = -1)
   i64 splits = 0;
   while ( start <= data.size() ) {
     if ( maxsplit >= 0 && splits >= maxsplit ) {
-      result.push_back(data.substr(start, data.size() - start));
+      result.inline_push_back(move(data.substr(start, data.size() - start)));
       return result;
     }
     usize pos = find_pos(data, sep, start);
     if ( pos == npos ) {
-      result.push_back(data.substr(start, data.size() - start));
+      result.inline_push_back(move(data.substr(start, data.size() - start)));
       return result;
     }
-    result.push_back(data.substr(start, pos - start));
+    result.inline_push_back(move(data.substr(start, pos - start)));
     start = pos + sep_len;
     ++splits;
   }
@@ -3966,15 +3977,15 @@ split_to(const T &data, char sep, i64 maxsplit = -1)
   for ( usize i = 0; i < data.size(); ++i ) {
     if ( data[i] == sep ) {
       if ( maxsplit >= 0 && splits >= maxsplit ) {
-        result.push_back(data.substr(start, data.size() - start));
+        result.inline_push_back(move(data.substr(start, data.size() - start)));
         return result;
       }
-      result.push_back(data.substr(start, i - start));
+      result.inline_push_back(move(data.substr(start, i - start)));
       start = i + 1;
       ++splits;
     }
   }
-  result.push_back(data.substr(start, data.size() - start));
+  result.inline_push_back(move(data.substr(start, data.size() - start)));
   return result;
 }
 
@@ -3992,12 +4003,12 @@ rsplit_to(const T &data, char sep, i64 maxsplit = -1)
     if ( data[i] == sep ) {
       if ( maxsplit >= 0 && splits >= maxsplit )
         break;
-      parts.push_back(data.substr(i + 1, end_pos - i - 1));
+      parts.inline_push_back(data.substr(i + 1, end_pos - i - 1));
       end_pos = i;
       ++splits;
     }
   }
-  parts.push_back(data.substr(0, end_pos));
+  parts.inline_push_back(data.substr(0, end_pos));
   // reverse
   for ( usize i = 0, j = parts.size() - 1; i < j; ++i, --j ) {
     T tmp = micron::move(parts[i]);
@@ -4009,36 +4020,43 @@ rsplit_to(const T &data, char sep, i64 maxsplit = -1)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // splitlines
-
 template <is_string T>
-micron::fvector<T>
+micron::vector<T>
 splitlines(const T &data, bool keepends = false)
 {
-  micron::fvector<T> result;
+  micron::vector<T> result;
   if ( data.empty() )
     return result;
+
+  usize sz = data.size();
   usize start = 0;
-  for ( usize i = 0; i < data.size(); ++i ) {
-    bool is_end = false;
-    usize end_len = 1;
+  usize i = 0;
+
+  while ( i < sz ) {
     if ( data[i] == '\n' ) {
-      is_end = true;
-    } else if ( data[i] == '\r' ) {
-      is_end = true;
-      if ( i + 1 < data.size() && data[i + 1] == '\n' )
-        end_len = 2;
-    }
-    if ( is_end ) {
+      usize end_len = 1;
       if ( keepends )
-        result.push_back(data.substr(start, i - start + end_len));
+        result.move_back(data.substr(start, i - start + end_len));
       else
-        result.push_back(data.substr(start, i - start));
+        result.move_back(data.substr(start, i - start));
       start = i + end_len;
-      i = start - 1;
+      i = start;
+    } else if ( data[i] == '\r' ) {
+      usize end_len = (i + 1 < sz && data[i + 1] == '\n') ? 2 : 1;
+      if ( keepends )
+        result.move_back(data.substr(start, i - start + end_len));
+      else
+        result.move_back(data.substr(start, i - start));
+      start = i + end_len;
+      i = start;
+    } else {
+      ++i;
     }
   }
-  if ( start < data.size() )
-    result.push_back(data.substr(start, data.size() - start));
+
+  if ( start < sz )
+    result.move_back(data.substr(start, sz - start));
+
   return result;
 }
 

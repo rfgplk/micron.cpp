@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include <iostream>
+
 #include "../except.hpp"
 #include "../type_traits.hpp"
 
@@ -195,7 +197,9 @@ public:
 
   constexpr hstring(const hstring &o) : __mem(o.capacity)
   {
-    micron::strcpy(__mem::memory, o.memory);
+    // WARNING: important
+    micron::memcpy(__mem::memory, o.memory, o.length);
+    __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
   };
 
@@ -205,7 +209,7 @@ public:
 
   template <typename F> constexpr hstring(const hstring<F> &o) : __mem(o.capacity)
   {
-    micron::strcpy(__mem::memory, o.memory);
+    micron::memcpy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
   };
 
@@ -256,7 +260,7 @@ public:
     if ( __mem::capacity < o.capacity )
       reserve(o.capacity + 1);
     micron::zero(__mem::memory, __mem::capacity);
-    micron::strcpy(__mem::memory, o.memory);
+    micron::memcpy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
   }
@@ -955,7 +959,6 @@ public:
   {
     if ( cnt == npos )
       cnt = (pos <= __mem::length) ? __mem::length - pos : 0;
-
     __safety_check<&hstring::__range_pos_cnt, except::library_error>("micron::hstring substr() invalid range", pos, cnt);
 
     hstring<F> buf(cnt + 1);
