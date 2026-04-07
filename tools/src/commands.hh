@@ -73,7 +73,7 @@ parse_main(int argc, char **argv)
       mc::cerror("File doesn't exist");
     mc::string batchfile;
     auto __f = mc::io::open_file(argv[2]);
-    batchfile.set_size(__f.read(batchfile));
+    mc::io::read(__f, batchfile);
 
     auto lines = mc::fmt::splitlines(batchfile);
 

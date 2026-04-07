@@ -90,6 +90,7 @@ struct config_t {
   bool warnings = false;
   bool static_binary = false;
   bool freestanding = false;
+  bool check_compileability = true; // check include paths for updates - default true
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
@@ -251,6 +252,8 @@ parse_config(config_t &conf, int argc, char **argv)
     } else if ( mc::strcmp(argv[i], "-k") == 0 ) {
       // k for "kernel"
       conf.freestanding = true;
+    } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
+      conf.check_compileability = false;
     } else if ( mc::strcmp(argv[i], "--obj") == 0 ) {
       conf.compile_type = __comp_type::object;
       user_provided_type = true;

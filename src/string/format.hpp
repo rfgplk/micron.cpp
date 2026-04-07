@@ -1899,6 +1899,21 @@ find(const char (&data)[N], const char (&fnd)[M])
 
 template <is_string T>
 auto
+find_reverse(const T &data, typename T::const_iterator from, const char fnd) -> typename T::const_iterator
+{
+  if ( from < data.begin() || from >= data.end() || !from )
+    return nullptr;
+  for ( auto itr = from;; --itr ) {
+    if ( *(itr) == fnd )
+      return itr;
+    if ( itr == data.begin() )
+      break;
+  }
+  return (typename T::const_iterator) nullptr;
+}
+
+template <is_string T>
+auto
 find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> typename T::const_iterator
 {
   if ( from < data.begin() || from >= data.end() || !from )

@@ -11,11 +11,18 @@
 
 #include "../recipe.hh"
 
+#include "verify.hh"
+
 template <bool Wait = mc::exec_wait>
   requires(recipes::__using_gnu)
 int
 build(const recipes::gnu::config_t &conf)
 {
+  // if ( conf.check_compileability and !verify_compileability(0, conf.target) ) {
+  //   mc::console("No changes to any source files; nothing to build!");
+  //   mc::console("Hint: run duck with the -f flag to ignore modified checks (duck checks mtime)");
+  //   return 1;
+  // }
   mc::set_color(mc::color::blue);
   mc::consoled("Building ");
   mc::set_color(mc::color::green);

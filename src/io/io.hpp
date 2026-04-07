@@ -33,6 +33,11 @@ namespace micron
 {
 namespace io
 {
+template <typename T>
+concept has_set_size = requires(T t, usize n) {
+  { t.set_size(n) };
+};
+
 // no seeking alignment, just read
 template <typename T>
 max_t
@@ -102,7 +107,11 @@ read(i32 fd, T &buf, const usize cnt)
   // check alloc'd cap
   if ( buf.max_size() < cnt ) [[unlikely]]
     return -error::invalid_arg;
-  return posix::read(fd, buf.data(), cnt);
+  max_t r = posix::read(fd, buf.data(), cnt);
+  if constexpr ( has_set_size<T> ) {
+    buf.set_size(r);
+  }
+  return r;
 }
 
 template <is_iterable_container T>
@@ -115,7 +124,11 @@ read(fd_t fd, T &buf, const usize cnt)
   // check alloc'd cap
   if ( buf.max_size() < cnt ) [[unlikely]]
     return -error::invalid_arg;
-  return posix::read(fd.fd, buf.data(), cnt);
+  max_t r = posix::read(fd.fd, buf.data(), cnt);
+  if constexpr ( has_set_size<T> ) {
+    buf.set_size(r);
+  }
+  return r;
 }
 
 template <is_iterable_container T>
@@ -125,7 +138,11 @@ read(i32 fd, T &buf)
 {
   if ( fd < 0 )
     return -error::bad_fd;
-  return posix::read(fd, buf.data(), buf.max_size());
+  max_t r = posix::read(fd, buf.data(), buf.max_size());
+  if constexpr ( has_set_size<T> ) {
+    buf.set_size(r);
+  }
+  return r;
 }
 
 template <is_iterable_container T>
@@ -135,7 +152,11 @@ read(fd_t fd, T &buf)
 {
   if ( fd.invalid() ) [[unlikely]]
     return -error::bad_fd;
-  return posix::read(fd.fd, buf.data(), buf.max_size());
+  max_t r = posix::read(fd.fd, buf.data(), buf.max_size());
+  if constexpr ( has_set_size<T> ) {
+    buf.set_size(r);
+  }
+  return r;
 }
 
 template <typename T = byte>

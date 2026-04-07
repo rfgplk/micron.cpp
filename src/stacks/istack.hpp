@@ -33,7 +33,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
   {
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) t();
+    new (micron::addr(__mem::memory[__mem::length++])) t();
   }
 
   inline void
@@ -41,7 +41,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
   {
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) t(v);
+    new (micron::addr(__mem::memory[__mem::length++])) t(v);
   }
 
   inline void
@@ -49,7 +49,7 @@ class istack : public __immutable_memory_resource<t, Alloc>
   {
     if ( __mem::length >= __mem::capacity )
       reserve(__mem::capacity * 2);
-    new (&__mem::memory[__mem::length++]) t(micron::move(v));
+    new (micron::addr(__mem::memory[__mem::length++])) t(micron::move(v));
   }
 
   inline void
@@ -95,7 +95,7 @@ public:
     if constexpr ( micron::is_class_v<t> ) {
       usize i = 0;
       for ( t &&value : lst ) {
-        new (&__mem::memory[i++]) t(micron::move(value));
+        new (micron::addr(__mem::memory[i++])) t(micron::move(value));
       }
       __mem::length = lst.size();
     } else {

@@ -148,7 +148,7 @@ public:
     const usize idx = t & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (&__mem::memory[idx]) T{};
+      new (micron::addr(__mem::memory[idx])) T{};
     } else {
       __mem::memory[idx] = T{};
     }
@@ -176,7 +176,7 @@ public:
     const usize idx = t & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (&__mem::memory[idx]) T{ micron::move(val) };
+      new (micron::addr(__mem::memory[idx])) T{ micron::move(val) };
     } else {
       __mem::memory[idx] = micron::move(val);
     }
@@ -204,7 +204,7 @@ public:
     const usize idx = t & __mask;
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (&__mem::memory[idx]) T{ val };
+      new (micron::addr(__mem::memory[idx])) T{ val };
     } else {
       __mem::memory[idx] = val;
     }
@@ -232,7 +232,7 @@ public:
 
     const usize idx = t & __mask;
 
-    new (&__mem::memory[idx]) T{ micron::forward<Args>(args)... };
+    new (micron::addr(__mem::memory[idx])) T{ micron::forward<Args>(args)... };
 
     tail.store(__next, memory_order_release);
     return true;
@@ -347,7 +347,7 @@ public:
     for ( usize i = 0; i < to_push; ++i ) {
       const usize idx = (t + i) & __mask;
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-        new (&__mem::memory[idx]) T{ items[i] };
+        new (micron::addr(__mem::memory[idx])) T{ items[i] };
       } else {
         __mem::memory[idx] = items[i];
       }
