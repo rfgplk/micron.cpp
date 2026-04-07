@@ -217,6 +217,8 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     __mem::length = b - a;
   }
 
+  slice(nullptr_t) : __mem(nullptr) { __mem::length = 0; }
+
   slice(nullptr_t, nullptr_t) : __mem(nullptr) { __mem::length = 0; }
 
   slice(T *a, T *b) : __mem(static_cast<size_t>(b - a))

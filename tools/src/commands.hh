@@ -5,7 +5,9 @@
 #include "commands/run.hh"
 #include "commands/test.hh"
 
-enum class __modes : i32 { build, link, compile, debug, run, make, test, recipes, __end };
+#include "../../src/io/io.hpp"
+
+enum class __modes : i32 { build, batch, link, compile, debug, run, make, test, recipes, __end };
 
 template <typename T = void>
 auto
@@ -15,6 +17,9 @@ match(char **argv) -> __modes
   // builds file/project - if file build single file, if dir, every file in dir
   if ( mc::strcmp(argv[1], "build") == 0 )
     return __modes::build;
+  // reads a sh/makefile like file and executes argv from it sequentially
+  else if ( mc::strcmp(argv[1], "batch") == 0 )
+    return __modes::batch;
   // links obj files together
   else if ( mc::strcmp(argv[1], "link") == 0 )
     return __modes::link;
@@ -40,7 +45,7 @@ match(char **argv) -> __modes
 }
 
 template <typename T = void>
-inline __attribute__((always_inline)) int
+inline int
 parse_main(int argc, char **argv)
   requires(recipes::__using_gnu)
 {
@@ -59,6 +64,40 @@ parse_main(int argc, char **argv)
     auto confs = parse_argv_build(argc - 2, argv + 2);
     for ( auto &conf : confs )
       build<mc::exec_wait>(conf);
+    break;
+  }
+  case __modes::batch : {
+    if ( argc != 3 )
+      mc::cerror("Must provide a sole path to a valid batchfile");
+    if ( !mc::posix::exists(argv[2]) )
+      mc::cerror("File doesn't exist");
+    mc::string batchfile;
+    auto __f = mc::io::open_file(argv[2]);
+    batchfile.set_size(__f.read(batchfile));
+
+    auto lines = mc::fmt::splitlines(batchfile);
+
+    for ( auto &line : lines ) {
+      // strip comments and blank lines
+      mc::fmt::strip(line);
+      if ( line.empty() || line[0] == '#' )
+        continue;
+
+      auto tokens = mc::fmt::split_to(line, "");
+
+      if ( tokens.empty() )
+        continue;
+
+      // first entry is nullptr, parse_main expects the first arg to be bin name (posix convention)
+      mc::vector<char *> __argv;
+      __argv.push_back(nullptr);
+
+      for ( auto &tok : tokens )
+        __argv.push_back(tok.begin());
+
+      parse_main(static_cast<int>(__argv.size()), __argv.data());
+    }
+
     break;
   }
   case __modes::compile : {

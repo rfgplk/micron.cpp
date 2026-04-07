@@ -392,9 +392,9 @@ public:
   operator=(const A &o)
   {
     if constexpr ( N <= A::length )
-      __impl_container::copy_assign<N, T>(&stack[0], addr(o[0]));
+      __impl_container::copy_assign<N, T>(&stack[0], micron::addr(o[0]));
     else
-      __impl_container::copy_assign<A::length, T>(&stack[0], addr(o[0]));
+      __impl_container::copy_assign<A::length, T>(&stack[0], micron::addr(o[0]));
     return *this;
   }
 
@@ -404,7 +404,7 @@ public:
   operator=(const A &o)
   {
     if ( N <= o.size() )
-      __impl_container::copy_assign<N, T>(&stack[0], addr(o[0]));
+      __impl_container::copy_assign<N, T>(&stack[0], micron::addr(o[0]));
     else
       micron::copy_n(&o[0], &stack[0], o.size() * sizeof(T));
     return *this;

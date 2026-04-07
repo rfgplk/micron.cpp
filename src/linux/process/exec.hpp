@@ -52,7 +52,7 @@ rexecute(const T &t, const R &...args)
   if ( posix::spawnattr_init(flags) != 0 ) {
     exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
-  micron::vector<char *> argv = { const_cast<char *>(t.c_str()), static_cast<char *>(nullptr) };
+  micron::vector<char *> argv = { const_cast<char *>(t.c_str()) };
 
   (argv.push_back(const_cast<char *>(args.c_str())), ...);
   argv.push_back(nullptr);
@@ -110,7 +110,7 @@ rexecute(const char *t, R *...args)
   if ( posix::spawnattr_init(flags) != 0 ) {
     exc<except::system_error>("micron process failed to init posix::spawnattrs");
   }
-  micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
+  micron::vector<char *> argv = { const_cast<char *>(t) };
 
   (argv.push_back(const_cast<char *>(args.c_str())), ...);
   argv.push_back(nullptr);

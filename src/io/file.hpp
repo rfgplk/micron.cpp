@@ -438,6 +438,22 @@ public:
     posix::lseek(__handle.fd, seek, posix::seek_set);
   }
 
+  // allow simple external writing
+  void
+  write(const byte *data_ptr, usize at, usize len)
+  {
+    __need_fd("fsys::file::write_raw");
+    posix::off_t dst_off = at;
+    posix::pwrite(__handle.fd, data_ptr, len, dst_off);
+  }
+
+  template <is_string Tp>
+  void
+  write(const Tp &str)
+  {
+    append_raw(reinterpret_cast<const byte *>(str.c_str()), str.size() * sizeof(typename Tp::value_type));
+  }
+
   auto
   buffer_size() const
   {

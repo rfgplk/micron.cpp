@@ -1124,7 +1124,7 @@ private:
 
     __handle.fd = (posix::open(str, posix::o_rdonly | posix::o_directory | posix::o_cloexec));
     if ( auto r = __handle.has_error() )
-      exc<except::io_error>(r, "micron::dir, failed to open.");
+      exc_e<except::io_error>(r, "micron::dir, failed to open.");
 
     fname = str;
     micron::zero(&sd);

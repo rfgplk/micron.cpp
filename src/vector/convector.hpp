@@ -128,13 +128,13 @@ class convector : public __mutable_memory_resource<T, Alloc>
   {
     if ( __mem::length + 1 <= __mem::capacity ) {
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
-        new (&__mem::memory[__mem::length++]) T(v);
+        new (micron::addr(__mem::memory[__mem::length++])) T(v);
       else
         __mem::memory[__mem::length++] = v;
     } else {
       __unlocked_reserve(__impl::grow(__mem::capacity));
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
-        new (&__mem::memory[__mem::length++]) T(v);
+        new (micron::addr(__mem::memory[__mem::length++])) T(v);
       else
         __mem::memory[__mem::length++] = v;
     }
@@ -145,13 +145,13 @@ class convector : public __mutable_memory_resource<T, Alloc>
   {
     if ( __mem::length + 1 <= __mem::capacity ) {
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
-        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+        new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
       else
         __mem::memory[__mem::length++] = micron::move(v);
     } else {
       __unlocked_reserve(__impl::grow(__mem::capacity));
       if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
-        new (&__mem::memory[__mem::length++]) T(micron::move(v));
+        new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
       else
         __mem::memory[__mem::length++] = micron::move(v);
     }
@@ -162,10 +162,10 @@ class convector : public __mutable_memory_resource<T, Alloc>
   __unlocked_emplace_back(Args &&...v)
   {
     if ( __mem::length < __mem::capacity ) {
-      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
+      new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(v)...);
     } else {
       __unlocked_reserve(__impl::grow(__mem::capacity));
-      new (&__mem::memory[__mem::length++]) T(micron::forward<Args>(v)...);
+      new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(v)...);
     }
   }
 
@@ -200,7 +200,7 @@ public:
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       size_type i = 0;
       for ( T &&value : lst )
-        new (&__mem::memory[i++]) T(micron::move(value));
+        new (micron::addr(__mem::memory[i++])) T(micron::move(value));
       __mem::length = lst.size();
     } else {
       size_type i = 0;
@@ -221,7 +221,7 @@ public:
   convector(size_type n, Args &&...args) : __mem(n)
   {
     for ( size_type i = 0; i < n; i++ )
-      new (&__mem::memory[i]) T(forward<Args>(args)...);
+      new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
     __mem::length = n;
   }
 
@@ -669,7 +669,7 @@ public:
       __unlocked_reserve(n);
     T *f_ptr = __mem::memory;
     for ( size_type i = __mem::length; i < n; i++ )
-      new (&f_ptr[i]) T{};
+      new (micron::addr(f_ptr[i])) T{};
     __mem::length = n;
   }
 
@@ -683,7 +683,7 @@ public:
       __unlocked_reserve(n);
     T *f_ptr = __mem::memory;
     for ( size_type i = __mem::length; i < n; i++ )
-      new (&f_ptr[i]) T(v);
+      new (micron::addr(f_ptr[i])) T(v);
     __mem::length = n;
   }
 
@@ -700,10 +700,10 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::length < __mem::capacity ) {
-      new (&__mem::memory[__mem::length++]) T(micron::move(t));
+      new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(t));
     } else {
       __unlocked_reserve(__impl::grow(__mem::capacity));
-      new (&__mem::memory[__mem::length++]) T(micron::move(t));
+      new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(t));
     }
   }
 
@@ -903,7 +903,7 @@ public:
       __unlocked_reserve(cnt);
     __unlocked_clear();
     for ( size_type i = 0; i < cnt; i++ )
-      new (&__mem::memory[i]) T(val);
+      new (micron::addr(__mem::memory[i])) T(val);
     __mem::length = cnt;
     return *this;
   }

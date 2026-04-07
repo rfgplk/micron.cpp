@@ -114,7 +114,7 @@ public:
   svector(First first, Rest... rest)
   {
     for ( size_type n = 0; n < N; n++ )
-      new (&stack[n]) T{ first, rest... };
+      new (micron::addr(stack[n])) T{ first, rest... };
     length = N;
   }
 
@@ -185,7 +185,7 @@ public:
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
       for ( const T &value : lst )
-        new (&stack[i++]) T(value);
+        new (micron::addr(stack[i++])) T(value);
     } else {
       size_type i = 0;
       for ( T value : lst )
@@ -489,7 +489,7 @@ public:
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector emplace_back() out of range.");
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (&stack[length]) T(micron::forward<Args>(args)...);
+      new (micron::addr(stack[length])) T(micron::forward<Args>(args)...);
     else
       stack[length] = T(micron::forward<Args>(args)...);
     ++length;
@@ -501,7 +501,7 @@ public:
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector move_back() out of range.");
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (&stack[length]) T(micron::move(i));
+      new (micron::addr(stack[length])) T(micron::move(i));
     else
       stack[length] = micron::move(i);
     ++length;
@@ -514,7 +514,7 @@ public:
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector push_back() out of range.");
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (&stack[length]) T(i);
+      new (micron::addr(stack[length])) T(i);
     else
       stack[length] = i;
     ++length;
@@ -537,7 +537,7 @@ public:
       exc<except::runtime_error>("micron::svector insert() index past end.");
     micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (&stack[ind]) T(i);
+      new (micron::addr(stack[ind])) T(i);
     else
       stack[ind] = i;
     ++length;

@@ -1,0 +1,2 @@
+test tests/rigor/parray.cpp
+test tests/rigor/vector.cpp

@@ -126,7 +126,7 @@ exc(Args &&...args)
 // exc with explicit errno
 template <typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
-exc(i32 eno, Args &&...args)
+exc_e(i32 eno, Args &&...args)
 {
   if constexpr ( micron::except::__use_exceptions )
     throw T(micron::forward<Args>(args)...);
