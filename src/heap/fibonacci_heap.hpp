@@ -53,8 +53,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
   void
   consolidate() noexcept
   {
-    if ( !min_root )
-      return;
+    if ( !min_root ) return;
     usize max_degree = 64;
     node *A[max_degree] = { nullptr };
 
@@ -65,8 +64,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
       usize d = x->degree;
       while ( A[d] ) {
         node *y = A[d];
-        if ( x->value < y->value )
-          micron::swap(x, y);
+        if ( x->value < y->value ) micron::swap(x, y);
         link(y, x);
         A[d] = nullptr;
         d++;
@@ -86,8 +84,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
           A[i]->right = min_root->right;
           min_root->right->left = A[i];
           min_root->right = A[i];
-          if ( A[i]->value > min_root->value )
-            min_root = A[i];
+          if ( A[i]->value > min_root->value ) min_root = A[i];
         }
       }
     }
@@ -96,8 +93,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class fibonacci_
   void
   cut(node *x, node *y) noexcept
   {
-    if ( y->child == x )
-      y->child = (x->right != x ? x->right : nullptr);
+    if ( y->child == x ) y->child = (x->right != x ? x->right : nullptr);
     x->left->right = x->right;
     x->right->left = x->left;
     y->degree--;
@@ -171,8 +167,7 @@ public:
       n->right = min_root->right;
       min_root->right->left = n;
       min_root->right = n;
-      if ( n->value > min_root->value )
-        min_root = n;
+      if ( n->value > min_root->value ) min_root = n;
     }
     total_nodes++;
   }
@@ -198,16 +193,14 @@ public:
   reference
   max()
   {
-    if ( !min_root )
-      exc<except::library_error>("fibonacci_heap::max() empty");
+    if ( !min_root ) exc<except::library_error>("fibonacci_heap::max() empty");
     return min_root->value;
   }
 
   T
   pop()
   {
-    if ( !min_root )
-      exc<except::library_error>("fibonacci_heap::pop() empty");
+    if ( !min_root ) exc<except::library_error>("fibonacci_heap::pop() empty");
     node *z = min_root;
     if ( z->child ) {
       node *c = z->child;
@@ -241,8 +234,7 @@ public:
   void
   clear() noexcept
   {
-    if ( !min_root )
-      return;
+    if ( !min_root ) return;
     node *start = min_root;
     do {
       node *n = start;
@@ -257,8 +249,7 @@ private:
   void
   delete_subtree(node *n) noexcept
   {
-    if ( !n )
-      return;
+    if ( !n ) return;
     if ( n->child ) {
       node *c = n->child;
       do {

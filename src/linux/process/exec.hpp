@@ -18,8 +18,7 @@ __attribute__((noreturn)) void
 rexecute(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); i++ )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
@@ -134,8 +133,7 @@ void
 execute(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); i++ )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
@@ -159,8 +157,7 @@ execute(const T &t)
   if ( micron::spawn(status.pid, t.c_str(), &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -182,8 +179,7 @@ execute(const T &t, const R &...args)
   if ( micron::spawn(status.pid, t.c_str(), &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -213,8 +209,7 @@ execute(const T &t, A &__argv)
   if ( micron::spawn(status.pid, t.c_str(), &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   __argv.clear();
   return status;
 }
@@ -233,8 +228,7 @@ execute(const char *t)
   if ( micron::spawn(status.pid, t, &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -255,8 +249,7 @@ execute(const char *t, R *...args)
   if ( micron::spawn(status.pid, t, &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -269,8 +262,7 @@ execute(const char *t, char **args)
   if ( micron::spawn(status.pid, t, args, environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 

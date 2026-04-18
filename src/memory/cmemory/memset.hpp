@@ -36,8 +36,7 @@ memset(F *s, const byte in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -56,8 +55,7 @@ rmemset(F &s, const byte in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return s;
 };
 
@@ -74,8 +72,7 @@ constexpr_memset(F *src, const byte in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return src;
 };
 
@@ -94,8 +91,7 @@ memset(F *s) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -113,8 +109,7 @@ cmemset(F *s, const byte in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -132,8 +127,7 @@ rcmemset(F &s, const byte in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return s;
 };
 
@@ -151,8 +145,7 @@ scmemset(F *s, const byte in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   __mem_barrier();
   return s;
 };
@@ -171,8 +164,7 @@ rscmemset(F &s, const byte in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   __mem_barrier();
   return s;
 };
@@ -238,12 +230,9 @@ template <typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 smemset(F *s, const byte in, const u64 cnt) noexcept
 {
-  if ( s == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(s, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( s == nullptr ) return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
   byte *src = reinterpret_cast<byte *>(s);
   if ( cnt % 4 == 0 )
     for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -253,8 +242,7 @@ smemset(F *s, const byte in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -264,10 +252,8 @@ template <typename F, u64 alignment = alignof(F)>
 bool
 rsmemset(F &s, const byte in, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, cnt) )
-    return false;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, cnt) ) return false;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if ( cnt % 4 == 0 )
@@ -278,8 +264,7 @@ rsmemset(F &s, const byte in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return true;
 };
 
@@ -288,12 +273,9 @@ template <u64 M, typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 scmemset_safe(F *s, const byte in) noexcept
 {
-  if ( s == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(s, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(s, M) )
-    return nullptr;
+  if ( s == nullptr ) return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return nullptr;
+  if ( !__is_valid_address(s, M) ) return nullptr;
 
   byte *src = reinterpret_cast<byte *>(s);
   if constexpr ( M % 4 == 0 )
@@ -304,8 +286,7 @@ scmemset_safe(F *s, const byte in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -314,10 +295,8 @@ template <u64 M, typename F, u64 alignment = alignof(F)>
 bool
 rscmemset_safe(F &s, const byte in) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, M) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, M) ) return nullptr;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if constexpr ( M % 4 == 0 )
@@ -328,8 +307,7 @@ rscmemset_safe(F &s, const byte in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return true;
 };
 
@@ -350,8 +328,7 @@ byteset(F *s, const byte in, const u64 cnt) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = in;
   return reinterpret_cast<F *>(src);
 };
 
@@ -379,8 +356,7 @@ rbyteset(F &s, const byte in, const u64 cnt) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = in;
   return s;
 };
 
@@ -407,8 +383,7 @@ cbyteset(F *s, const byte in) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < N; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < N; n++ ) src[n] = in;
   return reinterpret_cast<F *>(src);
 };
 
@@ -434,8 +409,7 @@ rcbyteset(F &s, const byte in) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < N; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < N; n++ ) src[n] = in;
   return s;
 };
 
@@ -461,8 +435,7 @@ scbyteset(F *s, const byte in) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < N; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < N; n++ ) src[n] = in;
   __mem_barrier();
   return s;
 };
@@ -489,8 +462,7 @@ rscbyteset(F &s, const byte in) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < N; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < N; n++ ) src[n] = in;
   __mem_barrier();
   return s;
 };
@@ -518,8 +490,7 @@ byteset(F *s) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -625,12 +596,9 @@ template <typename F, u64 alignment = 1>
 __attribute__((nonnull)) F *
 sbyteset(F *s, const byte in, const u64 cnt) noexcept
 {
-  if ( s == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(s, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( s == nullptr ) return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   byte *src = reinterpret_cast<byte *>(s);
   if ( cnt % 4 == 0 )
@@ -641,8 +609,7 @@ sbyteset(F *s, const byte in, const u64 cnt) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = in;
   return reinterpret_cast<F *>(src);
 };
 
@@ -661,10 +628,8 @@ template <typename F, u64 alignment = 1>
 bool
 rsbyteset(F &s, const byte in, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if ( cnt % 4 == 0 )
@@ -675,8 +640,7 @@ rsbyteset(F &s, const byte in, const u64 cnt) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = in;
   return true;
 };
 
@@ -694,12 +658,9 @@ template <u64 N, typename F, u64 alignment = 1>
 __attribute__((nonnull)) F *
 scbyteset_safe(F *s, const byte in) noexcept
 {
-  if ( s == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(s, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(s, N) )
-    return nullptr;
+  if ( s == nullptr ) return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return nullptr;
+  if ( !__is_valid_address(s, N) ) return nullptr;
 
   byte *src = reinterpret_cast<byte *>(s);
   if constexpr ( N % 4 == 0 )
@@ -710,8 +671,7 @@ scbyteset_safe(F *s, const byte in) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < N; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < N; n++ ) src[n] = in;
   return reinterpret_cast<F *>(src);
 };
 
@@ -728,10 +688,8 @@ template <u64 N, typename F, u64 alignment = 1>
 bool
 rscbyteset_safe(F &s, const byte in) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, N) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, N) ) return nullptr;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if constexpr ( N % 4 == 0 )
@@ -742,8 +700,7 @@ rscbyteset_safe(F &s, const byte in) noexcept
       src[n + 3] = in;
     }
   else
-    for ( u64 n = 0; n < N; n++ )
-      src[n] = in;
+    for ( u64 n = 0; n < N; n++ ) src[n] = in;
   return true;
 };
 
@@ -771,8 +728,7 @@ constexpr F &
 cbzero(F &_src) noexcept
 {
   byte *src = reinterpret_cast<byte *>(&_src);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   return _src;
 };
 
@@ -783,8 +739,7 @@ constexpr F *
 cbzero(F *_src) noexcept
 {
   byte *src = reinterpret_cast<byte *>(_src);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   return reinterpret_cast<F *>(src);
 };
 
@@ -795,8 +750,7 @@ constexpr F &
 scbzero(F &_src) noexcept
 {
   volatile byte *src = reinterpret_cast<volatile byte *>(&_src);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   __mem_barrier();
   return _src;
 };
@@ -808,8 +762,7 @@ constexpr F *
 scbzero(F *_src) noexcept
 {
   volatile byte *src = reinterpret_cast<volatile byte *>(_src);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   __mem_barrier();
   return _src;
 };
@@ -831,8 +784,7 @@ typeset(F *s, const T in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -851,8 +803,7 @@ rtypeset(F &s, const T in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return s;
 };
 
@@ -870,8 +821,7 @@ ctypeset(F *s, const T in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -889,8 +839,7 @@ rctypeset(F &s, const T in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return s;
 };
 
@@ -908,8 +857,7 @@ sctypeset(F *s, const T in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   __mem_barrier();
   return s;
 };
@@ -928,8 +876,7 @@ rsctypeset(F &s, const T in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   __mem_barrier();
   return s;
 };
@@ -940,12 +887,9 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) F *
 stypeset(F *s, const T in, const u64 cnt) noexcept
 {
-  if ( s == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(s, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( s == nullptr ) return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   T *src = reinterpret_cast<T *>(s);
   if ( cnt % 4 == 0 )
@@ -956,8 +900,7 @@ stypeset(F *s, const T in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -967,10 +910,8 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 bool
 rstypeset(F &s, const T in, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   T *src = reinterpret_cast<T *>(&s);
   if ( cnt % 4 == 0 )
@@ -981,8 +922,7 @@ rstypeset(F &s, const T in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return true;
 };
 
@@ -991,12 +931,9 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) F *
 sctypeset_safe(F *s, const T in) noexcept
 {
-  if ( s == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(s, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(s, M) )
-    return nullptr;
+  if ( s == nullptr ) return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return nullptr;
+  if ( !__is_valid_address(s, M) ) return nullptr;
 
   T *src = reinterpret_cast<T *>(s);
   if constexpr ( M % 4 == 0 )
@@ -1007,8 +944,7 @@ sctypeset_safe(F *s, const T in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return reinterpret_cast<F *>(src);
 };
 
@@ -1017,10 +953,8 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 bool
 rsctypeset_safe(F &s, const T in) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, M) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, M) ) return nullptr;
 
   T *src = reinterpret_cast<T *>(&s);
   if constexpr ( M % 4 == 0 )
@@ -1031,8 +965,7 @@ rsctypeset_safe(F &s, const T in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return true;
 };
 
@@ -1050,8 +983,7 @@ wordset(word *src, const word in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return src;
 };
 
@@ -1068,8 +1000,7 @@ rwordset(word &s, const word in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return s;
 };
 
@@ -1086,8 +1017,7 @@ cwordset(word *src, const word in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return src;
 };
 
@@ -1105,8 +1035,7 @@ rcwordset(word &s, const word in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return s;
 };
 
@@ -1124,8 +1053,7 @@ scwordset(word *src, const word in) noexcept
       vsrc[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      vsrc[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) vsrc[n] = (in);
   __mem_barrier();
   return src;
 };
@@ -1144,8 +1072,7 @@ rscwordset(word &s, const word in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   __mem_barrier();
   return s;
 };
@@ -1163,8 +1090,7 @@ wordset(word *src) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return src;
 };
 
@@ -1265,12 +1191,9 @@ template <u64 alignment = alignof(word)>
 word *
 swordset(word *src, const word in, const u64 cnt) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(src, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(src, cnt) )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(src, alignment) ) return nullptr;
+  if ( !__is_valid_address(src, cnt) ) return nullptr;
 
   if ( cnt % 4 == 0 )
     for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -1280,8 +1203,7 @@ swordset(word *src, const word in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return src;
 };
 
@@ -1290,10 +1212,8 @@ template <u64 alignment = alignof(word)>
 bool
 rswordset(word &s, const word in, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( !__is_aligned_to_r(s, alignment) ) return false;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   word *src = reinterpret_cast<word *>(&s);
   if ( cnt % 4 == 0 )
@@ -1304,8 +1224,7 @@ rswordset(word &s, const word in, const u64 cnt) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
   return true;
 };
 
@@ -1314,12 +1233,9 @@ template <u64 M, u64 alignment = alignof(word)>
 word *
 scwordset_safe(word *src, const word in) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(src, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(src, M) )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(src, alignment) ) return nullptr;
+  if ( !__is_valid_address(src, M) ) return nullptr;
 
   if constexpr ( M % 4 == 0 )
     for ( u64 n = 0; n < M; n += 4 ) {
@@ -1329,8 +1245,7 @@ scwordset_safe(word *src, const word in) noexcept
       src[n + 3] = (in);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      src[n] = (in);
+    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
   return src;
 };
 
@@ -1357,8 +1272,7 @@ template <typename F, typename M = u64>
 F &
 rzero(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] = 0x0;
+  for ( M n = 0; n < cnt; n++ ) s[n] = 0x0;
   return s;
 };
 
@@ -1391,8 +1305,7 @@ constexpr F &
 sczero(F &s) noexcept
 {
   volatile F *src = reinterpret_cast<volatile F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   __mem_barrier();
   return s;
 };
@@ -1404,8 +1317,7 @@ constexpr F *
 sczero(F *s) noexcept
 {
   volatile F *src = reinterpret_cast<volatile F *>(s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   __mem_barrier();
   return s;
 };
@@ -1507,8 +1419,7 @@ template <typename F, typename M = u64>
 constexpr F *
 full(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0xFF;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0xFF;
   return reinterpret_cast<F *>(src);
 };
 
@@ -1517,8 +1428,7 @@ template <typename F, typename M = u64>
 constexpr F &
 rfull(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] = 0xFF;
+  for ( M n = 0; n < cnt; n++ ) s[n] = 0xFF;
   return s;
 };
 
@@ -1527,8 +1437,7 @@ template <u64 M, typename F>
 constexpr F &
 rcfull(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] = 0xFF;
+  for ( u64 n = 0; n < M; n++ ) s[n] = 0xFF;
   return s;
 };
 
@@ -1536,8 +1445,7 @@ template <u64 M, typename F>
 constexpr F *
 cfull(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0xFF;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0xFF;
   return reinterpret_cast<F *>(src);
 };
 
@@ -1547,8 +1455,7 @@ constexpr F *
 scfull(F *s) noexcept
 {
   volatile F *src = reinterpret_cast<volatile F *>(s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0xFF;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0xFF;
   __mem_barrier();
   return s;
 };
@@ -1558,8 +1465,7 @@ template <u64 M, typename F>
 constexpr F &
 rscfull(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] = 0xFF;
+  for ( u64 n = 0; n < M; n++ ) s[n] = 0xFF;
   __mem_barrier();
   return s;
 };
@@ -1661,15 +1567,11 @@ template <typename F, typename M = u64, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 szero(F *src, const M cnt) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(src, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(src, cnt) )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(src, alignment) ) return nullptr;
+  if ( !__is_valid_address(src, cnt) ) return nullptr;
 
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x0;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x0;
   return src;
 };
 
@@ -1678,14 +1580,11 @@ template <typename F, typename M = u64, u64 alignment = alignof(F)>
 bool
 rszero(F &s, const M cnt) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x0;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x0;
   return true;
 };
 
@@ -1694,15 +1593,11 @@ template <u64 M, typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 sczero(F *src) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(src, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(src, M) )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(src, alignment) ) return nullptr;
+  if ( !__is_valid_address(src, M) ) return nullptr;
 
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   return src;
 };
 
@@ -1711,14 +1606,11 @@ template <u64 M, typename F, u64 alignment = alignof(F)>
 bool
 rsczero(F &s) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, M) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, M) ) return nullptr;
 
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   return true;
 };
 
@@ -1727,15 +1619,11 @@ template <typename F, typename M = u64, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 sfull(F *src, const M cnt) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(src, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(src, cnt) )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(src, alignment) ) return nullptr;
+  if ( !__is_valid_address(src, cnt) ) return nullptr;
 
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0xFF;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0xFF;
   return src;
 };
 
@@ -1744,14 +1632,11 @@ template <typename F, typename M = u64, u64 alignment = alignof(F)>
 bool
 rsfull(F &s, const M cnt) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, cnt) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, cnt) ) return nullptr;
 
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0xFF;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0xFF;
   return true;
 };
 
@@ -1760,15 +1645,11 @@ template <u64 M, typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 scfull_safe(F *src) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(src, alignment) )
-    return nullptr;
-  if ( !__is_valid_address(src, M) )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(src, alignment) ) return nullptr;
+  if ( !__is_valid_address(src, M) ) return nullptr;
 
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0xFF;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0xFF;
   return src;
 };
 
@@ -1777,14 +1658,11 @@ template <u64 M, typename F, u64 alignment = alignof(F)>
 bool
 rscfull_safe(F &s) noexcept
 {
-  if ( !__is_aligned_to(s, alignment) )
-    return false;
-  if ( !__is_valid_address(s, M) )
-    return nullptr;
+  if ( !__is_aligned_to(s, alignment) ) return false;
+  if ( !__is_valid_address(s, M) ) return nullptr;
 
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0xFF;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0xFF;
   return true;
 };
 
@@ -1793,8 +1671,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 one(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x01;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x01;
   return src;
 };
 
@@ -1804,8 +1681,7 @@ F &
 rone(F &s, const M cnt) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x01;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x01;
   return s;
 };
 
@@ -1814,8 +1690,7 @@ template <u64 M, typename F>
 constexpr F *
 cone(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x01;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x01;
   return src;
 };
 
@@ -1825,8 +1700,7 @@ constexpr F &
 rcone(F &s) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x01;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x01;
   return s;
 };
 
@@ -1835,8 +1709,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 pattern(F *src, const u8 p, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = p;
+  for ( M n = 0; n < cnt; n++ ) src[n] = p;
   return src;
 };
 
@@ -1846,8 +1719,7 @@ F &
 rpattern(F &s, const u8 p, const M cnt) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = p;
+  for ( M n = 0; n < cnt; n++ ) src[n] = p;
   return s;
 };
 
@@ -1856,8 +1728,7 @@ template <u64 M, typename F>
 constexpr F *
 cpattern(F *src, const u8 p) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = p;
+  for ( u64 n = 0; n < M; n++ ) src[n] = p;
   return src;
 };
 
@@ -1867,8 +1738,7 @@ constexpr F &
 rcpattern(F &s, const u8 p) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = p;
+  for ( u64 n = 0; n < M; n++ ) src[n] = p;
   return s;
 };
 
@@ -1877,8 +1747,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 alternating_aa(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0xAA;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0xAA;
   return src;
 };
 
@@ -1888,8 +1757,7 @@ F &
 ralternating_aa(F &s, const M cnt) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0xAA;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0xAA;
   return s;
 };
 
@@ -1898,8 +1766,7 @@ template <u64 M, typename F>
 constexpr F *
 calternating_aa(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0xAA;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0xAA;
   return src;
 };
 
@@ -1909,8 +1776,7 @@ constexpr F &
 rcalternating_aa(F &s) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0xAA;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0xAA;
   return s;
 };
 
@@ -1919,8 +1785,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 alternating_55(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x55;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x55;
   return src;
 };
 
@@ -1930,8 +1795,7 @@ F &
 ralternating_55(F &s, const M cnt) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x55;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x55;
   return s;
 };
 
@@ -1940,8 +1804,7 @@ template <u64 M, typename F>
 constexpr F *
 calternating_55(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x55;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x55;
   return src;
 };
 
@@ -1951,8 +1814,7 @@ constexpr F &
 rcalternating_55(F &s) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x55;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x55;
   return s;
 };
 
@@ -1961,8 +1823,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 high_bit(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x80;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x80;
   return src;
 };
 
@@ -1972,8 +1833,7 @@ F &
 rhigh_bit(F &s, const M cnt) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x80;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x80;
   return s;
 };
 
@@ -1982,8 +1842,7 @@ template <u64 M, typename F>
 constexpr F *
 chigh_bit(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x80;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x80;
   return src;
 };
 
@@ -1993,8 +1852,7 @@ constexpr F &
 rchigh_bit(F &s) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x80;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x80;
   return s;
 };
 
@@ -2003,8 +1861,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 low_bit(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x01;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x01;
   return src;
 };
 
@@ -2014,8 +1871,7 @@ F &
 rlow_bit(F &s, const M cnt) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0x01;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0x01;
   return s;
 };
 
@@ -2024,8 +1880,7 @@ template <u64 M, typename F>
 constexpr F *
 clow_bit(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x01;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x01;
   return src;
 };
 
@@ -2035,8 +1890,7 @@ constexpr F &
 rclow_bit(F &s) noexcept
 {
   F *src = reinterpret_cast<F *>(&s);
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0x01;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0x01;
   return s;
 };
 
@@ -2045,8 +1899,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 set(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = static_cast<F>(~static_cast<F>(0));
+  for ( M n = 0; n < cnt; n++ ) src[n] = static_cast<F>(~static_cast<F>(0));
   return src;
 };
 
@@ -2055,8 +1908,7 @@ template <typename F, typename M = u64>
 F &
 rset(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] = static_cast<F>(~static_cast<F>(0));
+  for ( M n = 0; n < cnt; n++ ) s[n] = static_cast<F>(~static_cast<F>(0));
   return s;
 };
 
@@ -2065,8 +1917,7 @@ template <u64 M, typename F>
 constexpr F *
 cset(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = static_cast<F>(~static_cast<F>(0));
+  for ( u64 n = 0; n < M; n++ ) src[n] = static_cast<F>(~static_cast<F>(0));
   return src;
 };
 
@@ -2075,8 +1926,7 @@ template <u64 M, typename F>
 constexpr F &
 rcset(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] = static_cast<F>(~static_cast<F>(0));
+  for ( u64 n = 0; n < M; n++ ) s[n] = static_cast<F>(~static_cast<F>(0));
   return s;
 };
 
@@ -2085,8 +1935,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 clear(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = 0;
+  for ( M n = 0; n < cnt; n++ ) src[n] = 0;
   return src;
 };
 
@@ -2095,8 +1944,7 @@ template <typename F, typename M = u64>
 F &
 rclear(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] = 0;
+  for ( M n = 0; n < cnt; n++ ) s[n] = 0;
   return s;
 };
 
@@ -2105,8 +1953,7 @@ template <u64 M, typename F>
 constexpr F *
 cclear(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = 0;
+  for ( u64 n = 0; n < M; n++ ) src[n] = 0;
   return src;
 };
 
@@ -2115,8 +1962,7 @@ template <u64 M, typename F>
 constexpr F &
 rcclear(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] = 0;
+  for ( u64 n = 0; n < M; n++ ) s[n] = 0;
   return s;
 };
 
@@ -2125,8 +1971,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 mask(F *src, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = static_cast<F>(m);
+  for ( M n = 0; n < cnt; n++ ) src[n] = static_cast<F>(m);
   return src;
 };
 
@@ -2135,8 +1980,7 @@ template <typename F, typename M = u64>
 F &
 rmask(F &s, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] = static_cast<F>(m);
+  for ( M n = 0; n < cnt; n++ ) s[n] = static_cast<F>(m);
   return s;
 };
 
@@ -2145,8 +1989,7 @@ template <u64 M, typename F>
 constexpr F *
 cmask(F *src, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = static_cast<F>(m);
+  for ( u64 n = 0; n < M; n++ ) src[n] = static_cast<F>(m);
   return src;
 };
 
@@ -2155,8 +1998,7 @@ template <u64 M, typename F>
 constexpr F &
 rcmask(F &s, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] = static_cast<F>(m);
+  for ( u64 n = 0; n < M; n++ ) s[n] = static_cast<F>(m);
   return s;
 };
 
@@ -2165,8 +2007,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 invert(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] = ~src[n];
+  for ( M n = 0; n < cnt; n++ ) src[n] = ~src[n];
   return src;
 };
 
@@ -2183,8 +2024,7 @@ template <typename F, typename M = u64>
 F &
 rinvert(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] = ~s[n];
+  for ( M n = 0; n < cnt; n++ ) s[n] = ~s[n];
   return s;
 };
 
@@ -2193,8 +2033,7 @@ template <u64 M, typename F>
 constexpr F *
 cinvert(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] = ~src[n];
+  for ( u64 n = 0; n < M; n++ ) src[n] = ~src[n];
   return src;
 };
 
@@ -2203,8 +2042,7 @@ template <u64 M, typename F>
 constexpr F &
 rcinvert(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] = ~s[n];
+  for ( u64 n = 0; n < M; n++ ) s[n] = ~s[n];
   return s;
 };
 
@@ -2213,8 +2051,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 and_mask(F *src, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] &= m;
+  for ( M n = 0; n < cnt; n++ ) src[n] &= m;
   return src;
 };
 
@@ -2223,8 +2060,7 @@ template <typename F, typename M = u64>
 F &
 rand_mask(F &s, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] &= m;
+  for ( M n = 0; n < cnt; n++ ) s[n] &= m;
   return s;
 };
 
@@ -2233,8 +2069,7 @@ template <u64 M, typename F>
 constexpr F *
 cand_mask(F *src, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] &= m;
+  for ( u64 n = 0; n < M; n++ ) src[n] &= m;
   return src;
 };
 
@@ -2243,8 +2078,7 @@ template <u64 M, typename F>
 constexpr F &
 rcand_mask(F &s, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] &= m;
+  for ( u64 n = 0; n < M; n++ ) s[n] &= m;
   return s;
 };
 
@@ -2253,8 +2087,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 or_mask(F *src, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] |= m;
+  for ( M n = 0; n < cnt; n++ ) src[n] |= m;
   return src;
 };
 
@@ -2263,8 +2096,7 @@ template <typename F, typename M = u64>
 F &
 ror_mask(F &s, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] |= m;
+  for ( M n = 0; n < cnt; n++ ) s[n] |= m;
   return s;
 };
 
@@ -2273,8 +2105,7 @@ template <u64 M, typename F>
 constexpr F *
 cor_mask(F *src, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] |= m;
+  for ( u64 n = 0; n < M; n++ ) src[n] |= m;
   return src;
 };
 
@@ -2283,8 +2114,7 @@ template <u64 M, typename F>
 constexpr F &
 rcor_mask(F &s, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] |= m;
+  for ( u64 n = 0; n < M; n++ ) s[n] |= m;
   return s;
 };
 
@@ -2293,8 +2123,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 xor_mask(F *src, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] ^= m;
+  for ( M n = 0; n < cnt; n++ ) src[n] ^= m;
   return src;
 };
 
@@ -2303,8 +2132,7 @@ template <typename F, typename M = u64>
 F &
 rxor_mask(F &s, const u8 m, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] ^= m;
+  for ( M n = 0; n < cnt; n++ ) s[n] ^= m;
   return s;
 };
 
@@ -2313,8 +2141,7 @@ template <u64 M, typename F>
 constexpr F *
 cxor_mask(F *src, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] ^= m;
+  for ( u64 n = 0; n < M; n++ ) src[n] ^= m;
   return src;
 };
 
@@ -2323,8 +2150,7 @@ template <u64 M, typename F>
 constexpr F &
 rcxor_mask(F &s, const u8 m) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] ^= m;
+  for ( u64 n = 0; n < M; n++ ) s[n] ^= m;
   return s;
 };
 
@@ -2333,8 +2159,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 increment(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    ++src[n];
+  for ( M n = 0; n < cnt; n++ ) ++src[n];
   return src;
 };
 
@@ -2343,8 +2168,7 @@ template <typename F, typename M = u64>
 F &
 rincrement(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    ++s[n];
+  for ( M n = 0; n < cnt; n++ ) ++s[n];
   return s;
 };
 
@@ -2353,8 +2177,7 @@ template <u64 M, typename F>
 constexpr F *
 cincrement(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    ++src[n];
+  for ( u64 n = 0; n < M; n++ ) ++src[n];
   return src;
 };
 
@@ -2363,8 +2186,7 @@ template <u64 M, typename F>
 constexpr F &
 rcincrement(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    ++s[n];
+  for ( u64 n = 0; n < M; n++ ) ++s[n];
   return s;
 };
 
@@ -2373,8 +2195,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 decrement(F *src, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    --src[n];
+  for ( M n = 0; n < cnt; n++ ) --src[n];
   return src;
 };
 
@@ -2383,8 +2204,7 @@ template <typename F, typename M = u64>
 F &
 rdecrement(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    --s[n];
+  for ( M n = 0; n < cnt; n++ ) --s[n];
   return s;
 };
 
@@ -2393,8 +2213,7 @@ template <u64 M, typename F>
 constexpr F *
 cdecrement(F *src) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    --src[n];
+  for ( u64 n = 0; n < M; n++ ) --src[n];
   return src;
 };
 
@@ -2403,8 +2222,7 @@ template <u64 M, typename F>
 constexpr F &
 rcdecrement(F &s) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    --s[n];
+  for ( u64 n = 0; n < M; n++ ) --s[n];
   return s;
 };
 
@@ -2413,8 +2231,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 add(F *src, const u8 v, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] += v;
+  for ( M n = 0; n < cnt; n++ ) src[n] += v;
   return src;
 };
 
@@ -2423,8 +2240,7 @@ template <typename F, typename M = u64>
 F &
 radd(F &s, const u8 v, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] += v;
+  for ( M n = 0; n < cnt; n++ ) s[n] += v;
   return s;
 };
 
@@ -2433,8 +2249,7 @@ template <u64 M, typename F>
 constexpr F *
 cadd(F *src, const u8 v) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] += v;
+  for ( u64 n = 0; n < M; n++ ) src[n] += v;
   return src;
 };
 
@@ -2443,8 +2258,7 @@ template <u64 M, typename F>
 constexpr F &
 rcadd(F &s, const u8 v) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] += v;
+  for ( u64 n = 0; n < M; n++ ) s[n] += v;
   return s;
 };
 
@@ -2453,8 +2267,7 @@ template <typename F, typename M = u64>
 __attribute__((nonnull)) F *
 sub(F *src, const u8 v, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    src[n] -= v;
+  for ( M n = 0; n < cnt; n++ ) src[n] -= v;
   return src;
 };
 
@@ -2463,8 +2276,7 @@ template <typename F, typename M = u64>
 F &
 rsub(F &s, const u8 v, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ )
-    s[n] -= v;
+  for ( M n = 0; n < cnt; n++ ) s[n] -= v;
   return s;
 };
 
@@ -2473,8 +2285,7 @@ template <u64 M, typename F>
 constexpr F *
 csub(F *src, const u8 v) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    src[n] -= v;
+  for ( u64 n = 0; n < M; n++ ) src[n] -= v;
   return src;
 };
 
@@ -2483,8 +2294,7 @@ template <u64 M, typename F>
 constexpr F &
 rcsub(F &s, const u8 v) noexcept
 {
-  for ( u64 n = 0; n < M; n++ )
-    s[n] -= v;
+  for ( u64 n = 0; n < M; n++ ) s[n] -= v;
   return s;
 };
 
@@ -2494,8 +2304,7 @@ __attribute__((nonnull)) F *
 memfrob(F *src, u64 n) noexcept
 {
   F *a = src;
-  while ( n-- > 0 )
-    *a++ ^= 0x15;
+  while ( n-- > 0 ) *a++ ^= 0x15;
   return a;
 }
 };     // namespace micron

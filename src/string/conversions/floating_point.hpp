@@ -101,8 +101,7 @@ pow5fac(u32 v)
   u32 c = 0;
   while ( v > 0 ) {
     u32 q = v / 5, r = v - 5 * q;
-    if ( r != 0 )
-      break;
+    if ( r != 0 ) break;
     v = q;
     ++c;
   }
@@ -124,22 +123,14 @@ mul_of_2(u32 v, u32 p)
 inline u32
 dlen9(u32 v)
 {
-  if ( v >= 100000000 )
-    return 9;
-  if ( v >= 10000000 )
-    return 8;
-  if ( v >= 1000000 )
-    return 7;
-  if ( v >= 100000 )
-    return 6;
-  if ( v >= 10000 )
-    return 5;
-  if ( v >= 1000 )
-    return 4;
-  if ( v >= 100 )
-    return 3;
-  if ( v >= 10 )
-    return 2;
+  if ( v >= 100000000 ) return 9;
+  if ( v >= 10000000 ) return 8;
+  if ( v >= 1000000 ) return 7;
+  if ( v >= 100000 ) return 6;
+  if ( v >= 10000 ) return 5;
+  if ( v >= 1000 ) return 4;
+  if ( v >= 100 ) return 3;
+  if ( v >= 10 ) return 2;
   return 1;
 }
 
@@ -237,8 +228,7 @@ f2d(u32 ieeeMant, u32 ieeeExp)
         ++removed;
       }
     }
-    if ( vrTZ && lastDig == 5 && vr % 2 == 0 )
-      lastDig = 4;
+    if ( vrTZ && lastDig == 5 && vr % 2 == 0 ) lastDig = 4;
     output = vr + ((vr == vm && !(acceptBounds && vmTZ)) || lastDig >= 5 ? 1 : 0);
   } else {
     bool roundUp = false;
@@ -294,8 +284,7 @@ f2s_buffered(f32 val, char *buf)
   }
   // Inf
   if ( ieeeExp == 0xFF ) {
-    if ( sign )
-      buf[idx++] = '-';
+    if ( sign ) buf[idx++] = '-';
     buf[idx++] = 'I';
     buf[idx++] = 'n';
     buf[idx++] = 'f';
@@ -303,16 +292,14 @@ f2s_buffered(f32 val, char *buf)
   }
   // zero
   if ( ieeeExp == 0 && ieeeMant == 0 ) {
-    if ( sign )
-      buf[idx++] = '-';
+    if ( sign ) buf[idx++] = '-';
     buf[idx++] = '0';
     buf[idx++] = 'E';
     buf[idx++] = '0';
     return idx;
   }
 
-  if ( sign )
-    buf[idx++] = '-';
+  if ( sign ) buf[idx++] = '-';
 
   f2d_t v = f2d(ieeeMant, ieeeExp);
   u32 olength = dlen9(v.m);
@@ -330,8 +317,7 @@ f2s_buffered(f32 val, char *buf)
   buf[idx++] = dtmp[dpos - 1];
   if ( dpos > 1 ) {
     buf[idx++] = '.';
-    for ( u32 j = dpos - 1; j-- > 0; )
-      buf[idx++] = dtmp[j];
+    for ( u32 j = dpos - 1; j-- > 0; ) buf[idx++] = dtmp[j];
   }
 
   i32 exp10 = v.e + static_cast<i32>(olength) - 1;
@@ -340,8 +326,7 @@ f2s_buffered(f32 val, char *buf)
     buf[idx++] = '-';
     exp10 = -exp10;
   }
-  if ( exp10 >= 10 )
-    buf[idx++] = '0' + static_cast<char>(exp10 / 10);
+  if ( exp10 >= 10 ) buf[idx++] = '0' + static_cast<char>(exp10 / 10);
   buf[idx++] = '0' + static_cast<char>(exp10 % 10);
 
   return idx;
@@ -432,14 +417,12 @@ to_general(f64 val, u32 precision = 6)
         exp10 = exp10 * 10 + (shortest[j] - '0');
         ++j;
       }
-      if ( eneg )
-        exp10 = -exp10;
+      if ( eneg ) exp10 = -exp10;
       break;
     }
   }
 
-  if ( exp10 < -4 || exp10 >= static_cast<i32>(precision) )
-    return to_scientific<C>(val, precision > 0 ? precision - 1 : 0);
+  if ( exp10 < -4 || exp10 >= static_cast<i32>(precision) ) return to_scientific<C>(val, precision > 0 ? precision - 1 : 0);
   return to_fixed<C>(val, precision);
 }
 

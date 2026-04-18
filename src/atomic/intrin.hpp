@@ -15,8 +15,10 @@ constexpr static const i32 atomic_consume = __ATOMIC_CONSUME;
 constexpr static const i32 atomic_acquire = __ATOMIC_ACQUIRE;
 constexpr static const i32 atomic_release = __ATOMIC_RELEASE;
 constexpr static const i32 atomic_acq_rel = __ATOMIC_ACQ_REL;
+#if defined(__micron_arch_amd64)
 constexpr static const i32 atomic_hle_acquire = __ATOMIC_HLE_ACQUIRE;
 constexpr static const i32 atomic_hle_release = __ATOMIC_HLE_RELEASE;
+#endif
 
 namespace atom
 {

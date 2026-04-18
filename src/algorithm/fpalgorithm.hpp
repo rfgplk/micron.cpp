@@ -49,8 +49,7 @@ fmap(Fn &&fn, C c)
   } else {
     auto *first = c.begin();
     const auto *last = c.end();
-    for ( ; first != last; ++first )
-      *first = fn(first);
+    for ( ; first != last; ++first ) *first = fn(first);
   }
   return c;
 }
@@ -63,8 +62,7 @@ fmap(Fn &&fn, C c)
 {
   auto *first = c.begin();
   const auto *last = c.end();
-  for ( ; first != last; ++first )
-    *first = fn(static_cast<const typename C::value_type *>(first));
+  for ( ; first != last; ++first ) *first = fn(static_cast<const typename C::value_type *>(first));
   return c;
 }
 
@@ -74,8 +72,7 @@ fmap(micron::function<typename C::value_type(typename C::value_type)> fn, C c)
 {
   auto *first = c.begin();
   const auto *last = c.end();
-  for ( ; first != last; ++first )
-    *first = fn(*first);
+  for ( ; first != last; ++first ) *first = fn(*first);
   return c;
 }
 
@@ -85,8 +82,7 @@ fmap(micron::function<typename C::value_type(typename C::value_type *)> fn, C c)
 {
   auto *first = c.begin();
   const auto *last = c.end();
-  for ( ; first != last; ++first )
-    *first = fn(first);
+  for ( ; first != last; ++first ) *first = fn(first);
   return c;
 }
 
@@ -96,8 +92,7 @@ fmap(micron::function<typename C::value_type(const typename C::value_type &)> fn
 {
   auto *first = c.begin();
   const auto *last = c.end();
-  for ( ; first != last; ++first )
-    *first = fn(*first);
+  for ( ; first != last; ++first ) *first = fn(*first);
   return c;
 }
 
@@ -113,8 +108,7 @@ fmap_into(Fn &&fn, const C &c)
   const auto *first = c.begin();
   const auto *last = c.end();
   auto *dst = out.begin();
-  for ( ; first != last; ++first, ++dst )
-    *dst = fn(*first);
+  for ( ; first != last; ++first, ++dst ) *dst = fn(*first);
   return out;
 }
 
@@ -129,8 +123,7 @@ fmap_into(Fn &&fn, const C &c)
   const auto *first = c.begin();
   const auto *last = c.end();
   auto *dst = out.begin();
-  for ( ; first != last; ++first, ++dst )
-    *dst = fn(first);
+  for ( ; first != last; ++first, ++dst ) *dst = fn(first);
   return out;
 }
 
@@ -143,8 +136,7 @@ fmap_into(micron::function<typename Out::value_type(typename C::value_type)> fn,
   const auto *first = c.begin();
   const auto *last = c.end();
   auto *dst = out.begin();
-  for ( ; first != last; ++first, ++dst )
-    *dst = fn(*first);
+  for ( ; first != last; ++first, ++dst ) *dst = fn(*first);
   return out;
 }
 
@@ -285,8 +277,7 @@ template <is_iterable_container C, typename Fn>
 micron::option<C, bad_zip_error>
 zip_with(const C &a, const C &b, Fn fn)
 {
-  if ( a.size() != b.size() )
-    return micron::option<C, bad_zip_error>{ bad_zip_error{} };
+  if ( a.size() != b.size() ) return micron::option<C, bad_zip_error>{ bad_zip_error{} };
   C out;
   out.resize(a.size());
   const auto *fa = a.begin();
@@ -296,8 +287,7 @@ zip_with(const C &a, const C &b, Fn fn)
   if constexpr ( has_static_size<C> ) {
     __impl::__unroll_transform_bin(fa, fb, dst, fn, make_index_sequence<C::static_size>{});
   } else {
-    for ( ; fa != end; ++fa, ++fb, ++dst )
-      *dst = fn(*fa, *fb);
+    for ( ; fa != end; ++fa, ++fb, ++dst ) *dst = fn(*fa, *fb);
   }
   return micron::option<C, bad_zip_error>{ micron::move(out) };
 }
@@ -310,16 +300,14 @@ template <is_iterable_container C, typename Fn>
 micron::option<C, bad_zip_error>
 zip_with(const C &a, const C &b, Fn fn)
 {
-  if ( a.size() != b.size() )
-    return micron::option<C, bad_zip_error>{ bad_zip_error{} };
+  if ( a.size() != b.size() ) return micron::option<C, bad_zip_error>{ bad_zip_error{} };
   C out;
   out.resize(a.size());
   const auto *fa = a.begin();
   const auto *fb = b.begin();
   auto *dst = out.begin();
   const auto *end = a.end();
-  for ( ; fa != end; ++fa, ++fb, ++dst )
-    *dst = fn(fa, fb);
+  for ( ; fa != end; ++fa, ++fb, ++dst ) *dst = fn(fa, fb);
   return micron::option<C, bad_zip_error>{ micron::move(out) };
 }
 
@@ -327,16 +315,14 @@ template <is_iterable_container C>
 micron::option<C, bad_zip_error>
 zip_with(const C &a, const C &b, micron::function<typename C::value_type(typename C::value_type, typename C::value_type)> fn)
 {
-  if ( a.size() != b.size() )
-    return micron::option<C, bad_zip_error>{ bad_zip_error{} };
+  if ( a.size() != b.size() ) return micron::option<C, bad_zip_error>{ bad_zip_error{} };
   C out;
   out.resize(a.size());
   const auto *fa = a.begin();
   const auto *fb = b.begin();
   auto *dst = out.begin();
   const auto *end = a.end();
-  for ( ; fa != end; ++fa, ++fb, ++dst )
-    *dst = fn(*fa, *fb);
+  for ( ; fa != end; ++fa, ++fb, ++dst ) *dst = fn(*fa, *fb);
   return micron::option<C, bad_zip_error>{ micron::move(out) };
 }
 
@@ -353,8 +339,7 @@ zip_with_trunc(const C &a, const C &b, Fn fn)
   const auto *fa = a.begin();
   const auto *fb = b.begin();
   auto *dst = out.begin();
-  for ( usize i = 0; i < n; ++i, ++fa, ++fb, ++dst )
-    *dst = fn(*fa, *fb);
+  for ( usize i = 0; i < n; ++i, ++fa, ++fb, ++dst ) *dst = fn(*fa, *fb);
   return out;
 }
 
@@ -372,8 +357,7 @@ zip_with_trunc(const C &a, const C &b, Fn fn)
   const auto *fa = a.begin();
   const auto *fb = b.begin();
   auto *dst = out.begin();
-  for ( usize i = 0; i < n; ++i, ++fa, ++fb, ++dst )
-    *dst = fn(fa, fb);
+  for ( usize i = 0; i < n; ++i, ++fa, ++fb, ++dst ) *dst = fn(fa, fb);
   return out;
 }
 
@@ -428,8 +412,7 @@ traverse(const C &c, Fn fn) -> micron::option<C, typename micron::remove_cvref_t
   auto *dst = out.begin();
   for ( ; first != last; ++first, ++dst ) {
     auto result = fn(*first);
-    if ( !result.is_first() )
-      return micron::option<C, E>{ result.template cast<E>() };
+    if ( !result.is_first() ) return micron::option<C, E>{ result.template cast<E>() };
     *dst = result.template cast<T>();
   }
   return micron::option<C, E>{ micron::move(out) };
@@ -449,8 +432,7 @@ traverse(const C &c, Fn fn) -> micron::option<C, typename micron::remove_cvref_t
   auto *dst = out.begin();
   for ( ; first != last; ++first, ++dst ) {
     auto result = fn(first);
-    if ( !result.is_first() )
-      return micron::option<C, E>{ result.template cast<E>() };
+    if ( !result.is_first() ) return micron::option<C, E>{ result.template cast<E>() };
     *dst = result.template cast<T>();
   }
   return micron::option<C, E>{ micron::move(out) };
@@ -474,8 +456,7 @@ sequence_check(const C &c) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( !first->is_first() )
-      return false;
+    if ( !first->is_first() ) return false;
   return true;
 }
 
@@ -491,8 +472,7 @@ sequence(const C &c) -> micron::option<C, typename micron::remove_cvref_t<typena
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( const auto *it = first; it != last; ++it )
-    if ( !it->is_first() )
-      return micron::option<C, E>{ it->template cast<E>() };
+    if ( !it->is_first() ) return micron::option<C, E>{ it->template cast<E>() };
   // all ok — return copy
   return micron::option<C, E>{ c };
 }
@@ -514,15 +494,13 @@ sequence_extract(const C &c) -> micron::option<In, typename micron::remove_cvref
 
   // check for errors
   for ( const auto *it = first; it != last; ++it )
-    if ( !it->is_first() )
-      return micron::option<In, E>{ it->template cast<E>() };
+    if ( !it->is_first() ) return micron::option<In, E>{ it->template cast<E>() };
 
   // extract
   In out;
   out.resize(c.size());
   auto *dst = out.begin();
-  for ( const auto *it = first; it != last; ++it, ++dst )
-    *dst = it->template cast<T>();
+  for ( const auto *it = first; it != last; ++it, ++dst ) *dst = it->template cast<T>();
 
   return micron::option<In, E>{ micron::move(out) };
 }
@@ -533,8 +511,7 @@ template <is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 safe_max(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   return micron::option<typename C::value_type, empty_container_error>{ micron::max(c) };
 }
 
@@ -542,8 +519,7 @@ template <is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 safe_min(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   return micron::option<typename C::value_type, empty_container_error>{ micron::min(c) };
 }
 
@@ -552,8 +528,7 @@ template <is_iterable_container C>
 micron::option<umax_t, empty_container_error>
 safe_sum(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<umax_t, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<umax_t, empty_container_error>{ empty_container_error{} };
   return micron::option<umax_t, empty_container_error>{ micron::sum(c) };
 }
 
@@ -562,8 +537,7 @@ template <is_iterable_container C>
 micron::option<f128, empty_container_error>
 safe_sum(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<f128, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<f128, empty_container_error>{ empty_container_error{} };
   return micron::option<f128, empty_container_error>{ micron::sum(c) };
 }
 
@@ -571,8 +545,7 @@ template <typename R = f64, is_iterable_container C>
 micron::option<R, empty_container_error>
 safe_mean(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<R, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<R, empty_container_error>{ empty_container_error{} };
   return micron::option<R, empty_container_error>{ micron::mean<R>(c) };
 }
 
@@ -580,8 +553,7 @@ template <typename R = flong, is_iterable_container C>
 micron::option<R, empty_container_error>
 safe_geomean(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<R, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<R, empty_container_error>{ empty_container_error{} };
   return micron::option<R, empty_container_error>{ micron::geomean<R>(c) };
 }
 
@@ -589,8 +561,7 @@ template <typename R = flong, is_iterable_container C>
 micron::option<R, empty_container_error>
 safe_harmonicmean(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<R, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<R, empty_container_error>{ empty_container_error{} };
   return micron::option<R, empty_container_error>{ micron::harmonicmean<R>(c) };
 }
 
@@ -627,8 +598,7 @@ replicate(usize n, const typename C::value_type &v)
   out.resize(n);
   auto *first = out.begin();
   const auto *last = out.end();
-  for ( ; first != last; ++first )
-    *first = v;
+  for ( ; first != last; ++first ) *first = v;
   return out;
 }
 
@@ -647,16 +617,14 @@ template <is_iterable_container CFns, is_iterable_container CVals>
 micron::option<CVals, bad_zip_error>
 ap(const CFns &fns, const CVals &vals)
 {
-  if ( fns.size() != vals.size() )
-    return micron::option<CVals, bad_zip_error>{ bad_zip_error{} };
+  if ( fns.size() != vals.size() ) return micron::option<CVals, bad_zip_error>{ bad_zip_error{} };
   CVals out;
   out.resize(vals.size());
   const auto *ff = fns.begin();
   const auto *fv = vals.begin();
   auto *dst = out.begin();
   const auto *end = fns.end();
-  for ( ; ff != end; ++ff, ++fv, ++dst )
-    *dst = (*ff)(*fv);
+  for ( ; ff != end; ++ff, ++fv, ++dst ) *dst = (*ff)(*fv);
   return micron::option<CVals, bad_zip_error>{ micron::move(out) };
 }
 
@@ -733,8 +701,7 @@ clamp_each_c(const T lo, const T hi) noexcept
     } else {
       auto *first = c.begin();
       const auto *last = c.end();
-      for ( ; first != last; ++first )
-        *first = micron::clamp(*first, lo, hi);
+      for ( ; first != last; ++first ) *first = micron::clamp(*first, lo, hi);
     }
     return c;
   };
@@ -747,8 +714,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 fmap(Fn &&fn, micron::option<C, E> opt)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::fmap(micron::forward<Fn>(fn), opt.template cast<C>()) };
 }
 
@@ -757,8 +723,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 fmap(Fn &&fn, micron::option<C, E> opt)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::fmap(micron::forward<Fn>(fn), opt.template cast<C>()) };
 }
 
@@ -768,8 +733,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 fmap(Fn &&fn, micron::option<C, E> opt)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::fmap(micron::forward<Fn>(fn), opt.template cast<C>()) };
 }
 

@@ -64,8 +64,7 @@ destroy(T &mem)
   requires micron::is_array<T>::value
 {
   if constexpr ( micron::is_class<T>::value ) {
-    for ( usize i = 0; i < N; i++ )
-      mem[i].~T();
+    for ( usize i = 0; i < N; i++ ) mem[i].~T();
   } else if constexpr ( micron::is_pointer<T>::value && !micron::is_null_pointer<T>::value ) {
     delete[] mem;
   }
@@ -110,12 +109,10 @@ template <typename T>
 inline bool
 is_zero(const T *src)
 {
-  if ( src == nullptr )
-    exc<except::library_error>("micron::is_zero invalid pointer.");
+  if ( src == nullptr ) exc<except::library_error>("micron::is_zero invalid pointer.");
   const byte *b_ptr = reinterpret_cast<const byte *>(src);
   for ( usize i = 0; i < sizeof(T); i++ )
-    if ( *b_ptr++ != 0x0 )
-      return false;
+    if ( *b_ptr++ != 0x0 ) return false;
   return true;
 }
 
@@ -126,8 +123,7 @@ template <typename N, typename T, typename F>
 F *
 copy_n(const T *restrict src, F *restrict dst, const N cnt)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::copy_n invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::copy_n invalid pointers.");
 #if __micron_x86_simd_width >= 256
   if ( cnt % 32 == 0 )
     simd::memcpy256(dst, src, cnt);
@@ -153,8 +149,7 @@ template <usize N, typename T, typename F>
 F *
 copy(const T *restrict src, F *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::copy invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::copy invalid pointers.");
 #if __micron_x86_simd_width >= 256
   if constexpr ( (N / sizeof(T)) <= 32 )
     __memcpy_32(dst, src, N * sizeof(T));
@@ -213,8 +208,7 @@ template <usize N, typename T, typename F>
 F *
 copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 {
-  if ( (end_src - start_src) < 0 )
-    exc<except::library_error>("micron::copy invalid pointers.");
+  if ( (end_src - start_src) < 0 ) exc<except::library_error>("micron::copy invalid pointers.");
   const usize len = static_cast<usize>(end_src - start_src);
 #if __micron_x86_simd_width >= 256
   if ( N % 32 == 0 )
@@ -241,11 +235,9 @@ template <usize N, typename T, typename F>
 F *
 ccopy(const T *restrict src, F *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::ccopy invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::ccopy invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
-    for ( usize i = 0; i < N; i++ )
-      dst[i] = src[i];
+    for ( usize i = 0; i < N; i++ ) dst[i] = src[i];
     return dst;
   }
 #if __micron_x86_simd_width >= 256
@@ -279,8 +271,7 @@ scopy(const T &restrict src, T &restrict dst)
 {
   auto smlr = src.size() < dst.size() ? src.size() : dst.size();
   if constexpr ( micron::is_class_v<T> or micron::is_object_v<T> ) {
-    for ( usize i = 0; i < smlr; i++ )
-      dst[i] = src[i];
+    for ( usize i = 0; i < smlr; i++ ) dst[i] = src[i];
     return;
   }
   smlr = smlr * sizeof(typename T::value_type);
@@ -312,11 +303,9 @@ template <usize N, typename T, typename F>
 F *
 cmove(const T *restrict src, F *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::cmove invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::cmove invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {
-    for ( usize i = 0; i < N; i++ )
-      dst[i] = micron::move(src[i]);
+    for ( usize i = 0; i < N; i++ ) dst[i] = micron::move(src[i]);
     return dst;
   }
 #if __micron_x86_simd_width >= 256
@@ -359,8 +348,7 @@ template <typename N, typename T, typename F>
 F *
 move_n(T *restrict src, F *restrict dst, const N cnt)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::move_n invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::move_n invalid pointers.");
 #if __micron_x86_simd_width >= 256
   if ( cnt % 32 == 0 )
     simd::memcpy256(dst, src, cnt);
@@ -387,8 +375,7 @@ template <typename T, typename N>
 T *
 set_n(T *restrict dst, const byte val, const N cnt)
 {
-  if ( dst == nullptr )
-    exc<except::library_error>("micron::set_n invalid pointer.");
+  if ( dst == nullptr ) exc<except::library_error>("micron::set_n invalid pointer.");
 #if __micron_x86_simd_width >= 256
   if ( cnt % 32 == 0 )
     memset256(dst, val, cnt);
@@ -414,8 +401,7 @@ template <usize N, typename T>
 T *
 cset_n(T *restrict dst, const byte val)
 {
-  if ( dst == nullptr )
-    exc<except::library_error>("micron::cset_n invalid pointer.");
+  if ( dst == nullptr ) exc<except::library_error>("micron::cset_n invalid pointer.");
 #if __micron_x86_simd_width >= 256
   if constexpr ( N % 32 == 0 )
     memset256(dst, val, N);
@@ -478,8 +464,7 @@ template <typename T, typename N>
 T *
 zero_n(T *restrict dst, const N cnt)
 {
-  if ( dst == nullptr )
-    exc<except::library_error>("micron::zero_n invalid pointer.");
+  if ( dst == nullptr ) exc<except::library_error>("micron::zero_n invalid pointer.");
 #if __micron_x86_simd_width >= 256
   if ( cnt % 32 == 0 )
     memset256(dst, 0x0, cnt);
@@ -506,8 +491,7 @@ T *
 czero_n(T *restrict dst)
 {
   // memset is elements, cmemset is BYTES
-  if ( dst == nullptr )
-    exc<except::library_error>("micron::czero_n invalid pointer.");
+  if ( dst == nullptr ) exc<except::library_error>("micron::czero_n invalid pointer.");
 #if __micron_x86_simd_width >= 256
   if constexpr ( N % 32 == 0 )
     memset256(dst, 0x0, N);
@@ -533,8 +517,7 @@ template <typename N, typename T>
 i64
 compare_n(const T *restrict src, const T *restrict dst, const N cnt)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::compare_n invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::compare_n invalid pointers.");
 #if __micron_x86_simd_width >= 256
   if ( cnt % 32 == 0 )
     return simd::memcmp256(src, dst, cnt);
@@ -559,8 +542,7 @@ template <usize N, typename T>
 i64
 ccompare_n(const T *restrict src, const T *restrict dst)
 {
-  if ( src == nullptr or dst == nullptr )
-    exc<except::library_error>("micron::ccompare_n invalid pointers.");
+  if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::ccompare_n invalid pointers.");
 #if __micron_x86_simd_width >= 256
   if constexpr ( N % 32 == 0 )
     return simd::memcmp256(src, dst, N);
@@ -605,8 +587,7 @@ template <typename N, typename T>
 void
 swap_n(T *restrict a, T *restrict b, const N cnt)
 {
-  if ( a == nullptr or b == nullptr )
-    exc<except::library_error>("micron::swap_n invalid pointers.");
+  if ( a == nullptr or b == nullptr ) exc<except::library_error>("micron::swap_n invalid pointers.");
   byte tmp[32];
   byte *pa = reinterpret_cast<byte *>(a);
   byte *pb = reinterpret_cast<byte *>(b);
@@ -633,8 +614,7 @@ template <usize N, typename T>
 void
 cswap_n(T *restrict a, T *restrict b)
 {
-  if ( a == nullptr or b == nullptr )
-    exc<except::library_error>("micron::cswap_n invalid pointers.");
+  if ( a == nullptr or b == nullptr ) exc<except::library_error>("micron::cswap_n invalid pointers.");
   byte tmp[N];
   cmemcpy<N>(tmp, reinterpret_cast<const byte *>(a));
   cmemcpy<N>(reinterpret_cast<byte *>(a), reinterpret_cast<const byte *>(b));

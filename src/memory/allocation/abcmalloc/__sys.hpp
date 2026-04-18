@@ -33,18 +33,12 @@ namespace micron
 inline bool
 __validate_mmap_addr(addr_t *ptr)
 {
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::out_of_memory) )
-    return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::overflow) )
-    return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::invalid_arg) )
-    return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::file_exists) )
-    return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::permissions) )
-    return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::try_again) )
-    return false;
+  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::out_of_memory) ) return false;
+  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::overflow) ) return false;
+  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::invalid_arg) ) return false;
+  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::file_exists) ) return false;
+  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::permissions) ) return false;
+  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::try_again) ) return false;
   return true;
 }
 
@@ -63,8 +57,7 @@ struct sys_allocator {
       ptr = micron::map_normal(nullptr, n);
     else if constexpr ( Sz == large_page_size )
       ptr = micron::map_large(nullptr, n);
-    if ( !__validate_mmap_addr(ptr) )
-      exc<except::memory_error>("sys_allocator::alloc(): mmap() failed");
+    if ( !__validate_mmap_addr(ptr) ) exc<except::memory_error>("sys_allocator::alloc(): mmap() failed");
 
     if ( micron::madvise(ptr, n, micron::madv_dontneed) != 0 ) {
     }
@@ -75,11 +68,9 @@ struct sys_allocator {
   static void
   dealloc(T *mem, usize len)
   {     // deallocate at location N
-    if ( mem == nullptr )
-      exc<except::memory_error>("sys_allocator::dealloc(): nullptr was provided");
+    if ( mem == nullptr ) exc<except::memory_error>("sys_allocator::dealloc(): nullptr was provided");
     // micron::munmap(mem, len);
-    if ( micron::munmap(mem, len) == -1 )
-      exc<except::memory_error>("sys_allocator::dealloc(): munmap() failed");
+    if ( micron::munmap(mem, len) == -1 ) exc<except::memory_error>("sys_allocator::dealloc(): munmap() failed");
     mem = nullptr;
   }
 };

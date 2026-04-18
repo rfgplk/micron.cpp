@@ -40,16 +40,14 @@ struct fd_t {
   constexpr inline bool
   invalid() const
   {
-    if ( fd < 0 )
-      return true;
+    if ( fd < 0 ) return true;
     return false;
   }
 
   constexpr inline auto
   has_error() const -> u32
   {
-    if ( fd < 0 )
-      return fd * -1;
+    if ( fd < 0 ) return fd * -1;
     return 0;
   }
 

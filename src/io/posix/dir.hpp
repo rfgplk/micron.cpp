@@ -53,15 +53,12 @@ struct pred_ext {
     const char *n = e.d_name.c_str();
     usize nl = e.d_name.size();
     usize el = _ext.size();
-    if ( el == 0 || nl <= el )
-      return false;
-    if ( n[nl - el - 1] != '.' )
-      return false;
+    if ( el == 0 || nl <= el ) return false;
+    if ( n[nl - el - 1] != '.' ) return false;
     const char *s = n + nl - el;
     const char *ex = _ext.c_str();
     for ( usize i = 0; i < el; ++i )
-      if ( s[i] != ex[i] )
-        return false;
+      if ( s[i] != ex[i] ) return false;
     return true;
   }
 };
@@ -80,10 +77,8 @@ struct pred_name_contains {
     const char *ndl = _sub.c_str();
     usize hl = e.d_name.size();
     usize nl = _sub.size();
-    if ( nl == 0 )
-      return true;
-    if ( nl > hl )
-      return false;
+    if ( nl == 0 ) return true;
+    if ( nl > hl ) return false;
     for ( usize i = 0; i <= hl - nl; ++i ) {
       bool ok = true;
       for ( usize j = 0; j < nl; ++j ) {
@@ -92,8 +87,7 @@ struct pred_name_contains {
           break;
         }
       }
-      if ( ok )
-        return true;
+      if ( ok ) return true;
     }
     return false;
   }
@@ -417,8 +411,7 @@ struct dir : public file {
   void
   rewind(void)
   {
-    if ( __handle.closed() )
-      return;
+    if ( __handle.closed() ) return;
     posix::seek_to(__handle, 0);
     micron::zero(&_ctx);
   }
@@ -427,8 +420,7 @@ struct dir : public file {
   void
   for_each(Fn &&fn)
   {
-    if ( fname.size() )
-      posix::for_each_entry(fname.c_str(), fn);
+    if ( fname.size() ) posix::for_each_entry(fname.c_str(), fn);
   }
 
   template <typename Fn>
@@ -436,8 +428,7 @@ struct dir : public file {
   for_each_entry(Fn &&fn)
   {
     get_children();
-    for ( auto &e : _entries )
-      fn(e);
+    for ( auto &e : _entries ) fn(e);
   }
 
   template <typename Fn>
@@ -446,8 +437,7 @@ struct dir : public file {
   {
     get_children();
     for ( auto &e : _entries ) {
-      if ( !fn(e) )
-        break;
+      if ( !fn(e) ) break;
     }
   }
 
@@ -465,8 +455,7 @@ struct dir : public file {
   get_children(void)
   {
     __alive();
-    if ( _entries.empty() )
-      _read_entries();
+    if ( _entries.empty() ) _read_entries();
     return _entries;
   }
 
@@ -486,8 +475,7 @@ struct dir : public file {
     get_children();
     micron::vector<posix::__impl_dir> out;
     for ( const auto &e : _entries )
-      if ( pred(e) )
-        out.push_back(e);
+      if ( pred(e) ) out.push_back(e);
     return out;
   }
 
@@ -499,13 +487,10 @@ struct dir : public file {
     get_children();
     micron::vector<posix::__impl_dir> out;
     for ( const auto &e : _entries ) {
-      if ( !e.is_reg() )
-        continue;
+      if ( !e.is_reg() ) continue;
       stat_t b{};
-      if ( !posix::__impl::__fstatat(__handle, e.d_name.c_str(), b) )
-        continue;
-      if ( pred(b.st_size) )
-        out.push_back(e);
+      if ( !posix::__impl::__fstatat(__handle, e.d_name.c_str(), b) ) continue;
+      if ( pred(b.st_size) ) out.push_back(e);
     }
     return out;
   }
@@ -554,8 +539,7 @@ struct dir : public file {
   {
     get_children();
     for ( const auto &e : _entries )
-      if ( e.d_name == name )
-        return true;
+      if ( e.d_name == name ) return true;
     return false;
   }
 
@@ -570,18 +554,15 @@ struct dir : public file {
   up(void) const
   {
     __alive_dir();
-    if ( fname.size() == 0 )
-      exc<except::io_error>("micron::dir::up(), no path stored.");
+    if ( fname.size() == 0 ) exc<except::io_error>("micron::dir::up(), no path stored.");
 
     const char *p = fname.c_str();
     usize n = fname.size();
 
-    while ( n > 1 && p[n - 1] == '/' )
-      --n;
+    while ( n > 1 && p[n - 1] == '/' ) --n;
 
     usize sep = n;
-    while ( sep > 0 && p[sep - 1] != '/' )
-      --sep;
+    while ( sep > 0 && p[sep - 1] != '/' ) --sep;
 
     char parent[posix::path_max];
 
@@ -593,8 +574,7 @@ struct dir : public file {
       parent[1] = '\0';
     } else {
       usize pl = sep - 1;
-      for ( usize i = 0; i < pl; ++i )
-        parent[i] = p[i];
+      for ( usize i = 0; i < pl; ++i ) parent[i] = p[i];
       parent[pl] = '\0';
     }
 
@@ -611,33 +591,26 @@ struct dir : public file {
   down(const char *name) const
   {
     __alive_dir();
-    if ( fname.size() == 0 )
-      exc<except::io_error>("micron::dir::down(), no path stored.");
-    if ( !child_is_dir(name) )
-      exc<except::io_error>("micron::dir::down(), child is not a directory.");
+    if ( fname.size() == 0 ) exc<except::io_error>("micron::dir::down(), no path stored.");
+    if ( !child_is_dir(name) ) exc<except::io_error>("micron::dir::down(), child is not a directory.");
 
     const char *base = fname.c_str();
     usize bl = fname.size();
     usize nl = 0;
-    while ( name[nl] )
-      ++nl;
+    while ( name[nl] ) ++nl;
 
-    if ( bl + 1 + nl >= posix::path_max )
-      exc<except::io_error>("micron::dir::down(), path too long.");
+    if ( bl + 1 + nl >= posix::path_max ) exc<except::io_error>("micron::dir::down(), path too long.");
 
     char child[posix::path_max];
-    for ( usize i = 0; i < bl; ++i )
-      child[i] = base[i];
+    for ( usize i = 0; i < bl; ++i ) child[i] = base[i];
 
     if ( bl == 1 && base[0] == '/' ) {
 
-      for ( usize i = 0; i < nl; ++i )
-        child[1 + i] = name[i];
+      for ( usize i = 0; i < nl; ++i ) child[1 + i] = name[i];
       child[1 + nl] = '\0';
     } else {
       child[bl] = '/';
-      for ( usize i = 0; i < nl; ++i )
-        child[bl + 1 + i] = name[i];
+      for ( usize i = 0; i < nl; ++i ) child[bl + 1 + i] = name[i];
       child[bl + 1 + nl] = '\0';
     }
 
@@ -656,8 +629,7 @@ struct dir : public file {
   {
     get_children();
     for ( const auto &e : _entries )
-      if ( e.is_dir() )
-        return down(e.d_name.c_str());
+      if ( e.is_dir() ) return down(e.d_name.c_str());
     exc<except::io_error>("micron::dir::down_first(), no subdirectory children.");
     __builtin_unreachable();
   }
@@ -666,8 +638,7 @@ struct dir : public file {
   path_components(void) const
   {
     micron::vector<micron::sstr<posix::name_max + 1>> out;
-    if ( fname.size() == 0 )
-      return out;
+    if ( fname.size() == 0 ) return out;
     const char *p = fname.c_str();
     usize n = fname.size();
     usize start = 0;
@@ -675,8 +646,7 @@ struct dir : public file {
       if ( p[i] == '/' || p[i] == '\0' ) {
         if ( i > start ) {
           micron::sstr<posix::name_max + 1> comp;
-          for ( usize j = start; j < i; ++j )
-            comp += p[j];
+          for ( usize j = start; j < i; ++j ) comp += p[j];
           out.push_back(comp);
         }
         start = i + 1;
@@ -688,8 +658,7 @@ struct dir : public file {
   usize
   depth(void) const noexcept
   {
-    if ( fname.size() == 0 )
-      return 0;
+    if ( fname.size() == 0 ) return 0;
     const char *p = fname.c_str();
     usize n = fname.size();
     usize d = 0;
@@ -872,8 +841,7 @@ struct dir : public file {
   {
     __alive_dir();
     stat_t b{};
-    if ( !posix::__impl::__fstatat(__handle, name, b) )
-      return linux_permissions::none();
+    if ( !posix::__impl::__fstatat(__handle, name, b) ) return linux_permissions::none();
     linux_permissions p = linux_permissions::from_mode(b.st_mode);
     p.setuid = (b.st_mode & posix::s_isuid) != 0;
     p.setgid = (b.st_mode & posix::s_isgid) != 0;
@@ -914,8 +882,7 @@ struct dir : public file {
   {
     __alive();
     i32 r = posix::mkdir_at(__handle, name, p.to_mode());
-    if ( r == 0 )
-      refresh();
+    if ( r == 0 ) refresh();
     return r;
   }
 
@@ -924,8 +891,7 @@ struct dir : public file {
   {
     __alive();
     i32 r = (micron::unlinkat(__handle.fd, name, 0));
-    if ( r == 0 )
-      refresh();
+    if ( r == 0 ) refresh();
     return r;
   }
 
@@ -934,8 +900,7 @@ struct dir : public file {
   {
     __alive();
     i32 r = (micron::unlinkat(__handle.fd, name, posix::at_removedir));
-    if ( r == 0 )
-      refresh();
+    if ( r == 0 ) refresh();
     return r;
   }
 
@@ -944,8 +909,7 @@ struct dir : public file {
   {
     __alive();
     i32 r = (posix::renameat(__handle, oldname, __handle, newname));
-    if ( r == 0 )
-      refresh();
+    if ( r == 0 ) refresh();
     return r;
   }
 
@@ -976,8 +940,7 @@ struct dir : public file {
   {
     __alive();
     i32 r = (posix::symlinkat(target, __handle, linkname));
-    if ( r == 0 )
-      refresh();
+    if ( r == 0 ) refresh();
     return r;
   }
 
@@ -986,8 +949,7 @@ struct dir : public file {
   {
     __alive();
     i32 r = (posix::linkat(__handle, oldname, __handle, newname, 0));
-    if ( r == 0 )
-      refresh();
+    if ( r == 0 ) refresh();
     return r;
   }
 
@@ -1093,8 +1055,7 @@ private:
   inline void
   __alive_dir(void) const
   {
-    if ( __handle.fd == posix::invalid_fd )
-      exc<except::io_error>("micron::dir, fd isn't open.");
+    if ( __handle.fd == posix::invalid_fd ) exc<except::io_error>("micron::dir, fd isn't open.");
   }
 
   void
@@ -1104,10 +1065,8 @@ private:
     posix::seek_to(__handle, 0);
     for ( ;; ) {
       posix::__impl_dir e = posix::readdir_r(__handle, ctx);
-      if ( e.at_end() )
-        break;
-      if ( posix::is_dot_entry(e.d_name.c_str()) )
-        continue;
+      if ( e.at_end() ) break;
+      if ( posix::is_dot_entry(e.d_name.c_str()) ) continue;
       _entries.push_back(e);
     }
   }
@@ -1115,16 +1074,12 @@ private:
   inline void
   __open_dir(const char *str)
   {
-    if ( !posix::verify(str) )
-      exc<except::io_error>("error in creating micron::dir, malformed string.");
-    if ( !posix::exists(str) )
-      exc<except::io_error>("micron::dir, path doesn't exist.");
-    if ( !posix::is_dir(str) )
-      exc<except::io_error>("micron::dir, path isn't a directory.");
+    if ( !posix::verify(str) ) exc<except::io_error>("error in creating micron::dir, malformed string.");
+    if ( !posix::exists(str) ) exc<except::io_error>("micron::dir, path doesn't exist.");
+    if ( !posix::is_dir(str) ) exc<except::io_error>("micron::dir, path isn't a directory.");
 
     __handle.fd = (posix::open(str, posix::o_rdonly | posix::o_directory | posix::o_cloexec));
-    if ( auto r = __handle.has_error() )
-      exc_e<except::io_error>(r, "micron::dir, failed to open.");
+    if ( auto r = __handle.has_error() ) exc_e<except::io_error>(r, "micron::dir, failed to open.");
 
     fname = str;
     micron::zero(&sd);

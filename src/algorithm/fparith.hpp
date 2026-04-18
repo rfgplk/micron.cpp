@@ -98,8 +98,7 @@ template <is_iterable_container C, typename Y>
 micron::option<C, division_by_zero_error>
 safe_divide(C cont, const Y y) noexcept
 {
-  if ( y == Y{} )
-    return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
+  if ( y == Y{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
   if constexpr ( has_static_size<C> ) {
     __impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
@@ -123,8 +122,7 @@ template <is_iterable_container C, typename E, typename Y>
 micron::option<C, E>
 add(micron::option<C, E> opt, const Y y) noexcept
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   if constexpr ( has_static_size<C> ) {
     __impl::__unroll_add(cont.begin(), y, make_index_sequence<C::static_size>{});
@@ -139,8 +137,7 @@ template <is_iterable_container C, typename E, typename Y>
 micron::option<C, E>
 subtract(micron::option<C, E> opt, const Y y) noexcept
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   if constexpr ( has_static_size<C> ) {
     __impl::__unroll_subtract(cont.begin(), y, make_index_sequence<C::static_size>{});
@@ -155,8 +152,7 @@ template <is_iterable_container C, typename E, typename Y>
 micron::option<C, E>
 multiply(micron::option<C, E> opt, const Y y) noexcept
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   if constexpr ( has_static_size<C> ) {
     __impl::__unroll_multiply(cont.begin(), y, make_index_sequence<C::static_size>{});
@@ -171,10 +167,8 @@ template <is_iterable_container C, typename E, typename Y>
 micron::option<C, division_by_zero_error>
 divide(micron::option<C, E> opt, const Y y) noexcept
 {
-  if ( !opt.is_first() )
-    return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
-  if ( y == Y{} )
-    return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
+  if ( !opt.is_first() ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
+  if ( y == Y{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
   auto cont = opt.template cast<C>();
   if constexpr ( has_static_size<C> ) {
     __impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
@@ -188,8 +182,7 @@ template <is_iterable_container C, typename E, typename Y>
 micron::option<C, E>
 pow(micron::option<C, E> opt, const Y y) noexcept
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   micron::pow(cont, y);
   return micron::option<C, E>{ micron::move(cont) };
@@ -207,8 +200,7 @@ add_zip(C a, const C &b) noexcept
     auto *fa = a.begin();
     const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb )
-      *fa = *fa + *fb;
+    for ( ; fa != ea; ++fa, ++fb ) *fa = *fa + *fb;
   }
   return a;
 }
@@ -223,8 +215,7 @@ subtract_zip(C a, const C &b) noexcept
     auto *fa = a.begin();
     const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb )
-      *fa = *fa - *fb;
+    for ( ; fa != ea; ++fa, ++fb ) *fa = *fa - *fb;
   }
   return a;
 }
@@ -239,8 +230,7 @@ multiply_zip(C a, const C &b) noexcept
     auto *fa = a.begin();
     const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb )
-      *fa = *fa * *fb;
+    for ( ; fa != ea; ++fa, ++fb ) *fa = *fa * *fb;
   }
   return a;
 }
@@ -253,8 +243,7 @@ divide_zip(C a, const C &b) noexcept
   const auto *ea = a.end();
   const auto *fb = b.begin();
   for ( ; fa != ea; ++fa, ++fb ) {
-    if ( *fb == typename C::value_type{} )
-      return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
+    if ( *fb == typename C::value_type{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
     *fa = *fa / *fb;
   }
   return micron::option<C, division_by_zero_error>{ micron::move(a) };
@@ -272,8 +261,7 @@ inner_product(const C &a, const C &b, R init = R{}) noexcept
     const auto *fa = a.begin();
     const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb )
-      init = init + (*fa * *fb);
+    for ( ; fa != ea; ++fa, ++fb ) init = init + (*fa * *fb);
     return init;
   }
 }
@@ -286,8 +274,7 @@ inner_product(const C &a, const C &b, R init, AddFn add_fn, MulFn mul_fn) noexce
   const auto *fa = a.begin();
   const auto *ea = a.end();
   const auto *fb = b.begin();
-  for ( ; fa != ea; ++fa, ++fb )
-    init = add_fn(micron::move(init), mul_fn(*fa, *fb));
+  for ( ; fa != ea; ++fa, ++fb ) init = add_fn(micron::move(init), mul_fn(*fa, *fb));
   return init;
 }
 
@@ -300,8 +287,7 @@ inner_product(const C &a, const C &b, R init, AddFn add_fn, MulFn mul_fn) noexce
   const auto *fa = a.begin();
   const auto *ea = a.end();
   const auto *fb = b.begin();
-  for ( ; fa != ea; ++fa, ++fb )
-    init = add_fn(micron::move(init), mul_fn(fa, fb));
+  for ( ; fa != ea; ++fa, ++fb ) init = add_fn(micron::move(init), mul_fn(fa, fb));
   return init;
 }
 
@@ -313,8 +299,7 @@ inner_product(const C &a, const C &b, R init, micron::function<R(R, R)> add_fn,
   const auto *fa = a.begin();
   const auto *ea = a.end();
   const auto *fb = b.begin();
-  for ( ; fa != ea; ++fa, ++fb )
-    init = add_fn(micron::move(init), mul_fn(*fa, *fb));
+  for ( ; fa != ea; ++fa, ++fb ) init = add_fn(micron::move(init), mul_fn(*fa, *fb));
   return init;
 }
 
@@ -329,8 +314,7 @@ negate(C cont) noexcept
   } else {
     auto *first = cont.begin();
     const auto *end = cont.end();
-    for ( ; first != end; ++first )
-      *first = -(*first);
+    for ( ; first != end; ++first ) *first = -(*first);
   }
   return cont;
 }
@@ -339,8 +323,7 @@ template <is_iterable_container C, typename E>
 micron::option<C, E>
 negate(micron::option<C, E> opt) noexcept
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::negate(opt.template cast<C>()) };
 }
 
@@ -353,8 +336,7 @@ abs(C cont) noexcept
 {
   auto *first = cont.begin();
   const auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = (*first < typename C::value_type{}) ? -(*first) : *first;
+  for ( ; first != end; ++first ) *first = (*first < typename C::value_type{}) ? -(*first) : *first;
   return cont;
 }
 
@@ -363,8 +345,7 @@ template <is_iterable_container C, typename E>
 micron::option<C, E>
 abs(micron::option<C, E> opt) noexcept
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::abs(opt.template cast<C>()) };
 }
 
@@ -374,8 +355,7 @@ template <is_iterable_container C, typename R = typename C::value_type>
 micron::option<R, bad_zip_error>
 safe_inner_product(const C &a, const C &b, R init = R{}) noexcept
 {
-  if ( a.size() != b.size() )
-    return micron::option<R, bad_zip_error>{ bad_zip_error{} };
+  if ( a.size() != b.size() ) return micron::option<R, bad_zip_error>{ bad_zip_error{} };
   return micron::option<R, bad_zip_error>{ fp::inner_product(a, b, init) };
 }
 

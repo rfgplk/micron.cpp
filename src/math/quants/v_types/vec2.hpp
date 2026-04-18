@@ -36,8 +36,7 @@ struct vector_2 {
 
   constexpr vector_2(const std::initializer_list<T> &o)
   {
-    if ( o.size() != 2 )
-      exc<except::library_error>("vector_2(): initializer_list size isn't equal to 2");
+    if ( o.size() != 2 ) exc<except::library_error>("vector_2(): initializer_list size isn't equal to 2");
     auto it = o.begin();
     x = *it++;
     y = *it++;
@@ -283,8 +282,7 @@ struct vector_2 {
   {
     T nd = dot(normal);
     T k = T{ 1 } - eta * eta * (T{ 1 } - nd * nd);
-    if ( k < T{ 0 } )
-      return {};
+    if ( k < T{ 0 } ) return {};
     return *this * eta - normal * (eta * nd + math::fsqrt(k));
   }
 

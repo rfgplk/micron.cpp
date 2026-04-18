@@ -41,8 +41,7 @@ reject(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( !fn(*first) )
-      *dst++ = *first;
+    if ( !fn(*first) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -58,8 +57,7 @@ reject(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( !fn(first) )
-      *dst++ = *first;
+    if ( !fn(first) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -83,8 +81,7 @@ reject(const C &c, micron::function<bool(typename C::value_type)> fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( !fn(*first) )
-      *dst++ = *first;
+    if ( !fn(*first) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -103,8 +100,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 filter(micron::option<C, E> opt, Fn fn)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ micron::filter(opt.template cast<C>(), micron::move(fn)) };
 }
 
@@ -113,8 +109,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 filter(micron::option<C, E> opt, Fn fn)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ micron::filter(opt.template cast<C>(), micron::move(fn)) };
 }
 
@@ -123,8 +118,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 reject(micron::option<C, E> opt, Fn fn)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::reject(opt.template cast<C>(), micron::move(fn)) };
 }
 
@@ -133,8 +127,7 @@ template <is_iterable_container C, typename E, typename Fn>
 micron::option<C, E>
 reject(micron::option<C, E> opt, Fn fn)
 {
-  if ( !opt.is_first() )
-    return opt;
+  if ( !opt.is_first() ) return opt;
   return micron::option<C, E>{ fp::reject(opt.template cast<C>(), micron::move(fn)) };
 }
 
@@ -226,8 +219,7 @@ take(const C &c, usize n) noexcept
   out.resize(sz);
   const auto *first = c.begin();
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    *dst++ = first[i];
+  for ( usize i = 0; i < sz; ++i ) *dst++ = first[i];
   return out;
 }
 
@@ -244,8 +236,7 @@ drop(const C &c, usize n) noexcept
   out.resize(sz);
   const auto *first = c.begin() + n;
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    *dst++ = first[i];
+  for ( usize i = 0; i < sz; ++i ) *dst++ = first[i];
   return out;
 }
 
@@ -271,14 +262,12 @@ take_while(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *it = first;
-  while ( it != last && fn(*it) )
-    ++it;
+  while ( it != last && fn(*it) ) ++it;
   const usize sz = static_cast<usize>(it - first);
   C out;
   out.resize(sz);
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    dst[i] = first[i];
+  for ( usize i = 0; i < sz; ++i ) dst[i] = first[i];
   return out;
 }
 
@@ -290,14 +279,12 @@ take_while(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *it = first;
-  while ( it != last && fn(it) )
-    ++it;
+  while ( it != last && fn(it) ) ++it;
   const usize sz = static_cast<usize>(it - first);
   C out;
   out.resize(sz);
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    dst[i] = first[i];
+  for ( usize i = 0; i < sz; ++i ) dst[i] = first[i];
   return out;
 }
 
@@ -308,14 +295,12 @@ take_while(const C &c, micron::function<bool(typename C::value_type)> fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *it = first;
-  while ( it != last && fn(*it) )
-    ++it;
+  while ( it != last && fn(*it) ) ++it;
   const usize sz = static_cast<usize>(it - first);
   C out;
   out.resize(sz);
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    dst[i] = first[i];
+  for ( usize i = 0; i < sz; ++i ) dst[i] = first[i];
   return out;
 }
 
@@ -327,14 +312,12 @@ drop_while(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *it = first;
-  while ( it != last && fn(*it) )
-    ++it;
+  while ( it != last && fn(*it) ) ++it;
   const usize sz = static_cast<usize>(last - it);
   C out;
   out.resize(sz);
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    dst[i] = it[i];
+  for ( usize i = 0; i < sz; ++i ) dst[i] = it[i];
   return out;
 }
 
@@ -346,14 +329,12 @@ drop_while(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *it = first;
-  while ( it != last && fn(it) )
-    ++it;
+  while ( it != last && fn(it) ) ++it;
   const usize sz = static_cast<usize>(last - it);
   C out;
   out.resize(sz);
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    dst[i] = it[i];
+  for ( usize i = 0; i < sz; ++i ) dst[i] = it[i];
   return out;
 }
 
@@ -364,14 +345,12 @@ drop_while(const C &c, micron::function<bool(typename C::value_type)> fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *it = first;
-  while ( it != last && fn(*it) )
-    ++it;
+  while ( it != last && fn(*it) ) ++it;
   const usize sz = static_cast<usize>(last - it);
   C out;
   out.resize(sz);
   auto *dst = out.begin();
-  for ( usize i = 0; i < sz; ++i )
-    dst[i] = it[i];
+  for ( usize i = 0; i < sz; ++i ) dst[i] = it[i];
   return out;
 }
 
@@ -399,17 +378,14 @@ span(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *split = first;
-  while ( split != last && fn(*split) )
-    ++split;
+  while ( split != last && fn(*split) ) ++split;
   const usize n_yes = static_cast<usize>(split - first);
   const usize n_no = static_cast<usize>(last - split);
   C yes, no;
   yes.resize(n_yes);
   no.resize(n_no);
-  for ( usize i = 0; i < n_yes; ++i )
-    yes.begin()[i] = first[i];
-  for ( usize i = 0; i < n_no; ++i )
-    no.begin()[i] = split[i];
+  for ( usize i = 0; i < n_yes; ++i ) yes.begin()[i] = first[i];
+  for ( usize i = 0; i < n_no; ++i ) no.begin()[i] = split[i];
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
@@ -421,17 +397,14 @@ span(const C &c, Fn fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *split = first;
-  while ( split != last && fn(split) )
-    ++split;
+  while ( split != last && fn(split) ) ++split;
   const usize n_yes = static_cast<usize>(split - first);
   const usize n_no = static_cast<usize>(last - split);
   C yes, no;
   yes.resize(n_yes);
   no.resize(n_no);
-  for ( usize i = 0; i < n_yes; ++i )
-    yes.begin()[i] = first[i];
-  for ( usize i = 0; i < n_no; ++i )
-    no.begin()[i] = split[i];
+  for ( usize i = 0; i < n_yes; ++i ) yes.begin()[i] = first[i];
+  for ( usize i = 0; i < n_no; ++i ) no.begin()[i] = split[i];
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
@@ -442,17 +415,14 @@ span(const C &c, micron::function<bool(typename C::value_type)> fn)
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *split = first;
-  while ( split != last && fn(*split) )
-    ++split;
+  while ( split != last && fn(*split) ) ++split;
   const usize n_yes = static_cast<usize>(split - first);
   const usize n_no = static_cast<usize>(last - split);
   C yes, no;
   yes.resize(n_yes);
   no.resize(n_no);
-  for ( usize i = 0; i < n_yes; ++i )
-    yes.begin()[i] = first[i];
-  for ( usize i = 0; i < n_no; ++i )
-    no.begin()[i] = split[i];
+  for ( usize i = 0; i < n_yes; ++i ) yes.begin()[i] = first[i];
+  for ( usize i = 0; i < n_no; ++i ) no.begin()[i] = split[i];
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
@@ -478,8 +448,7 @@ template <is_iterable_container C>
 C
 unique(const C &c)
 {
-  if ( c.size() == 0 )
-    return c;
+  if ( c.size() == 0 ) return c;
   C out;
   out.resize(c.size());
   auto *dst = out.begin();
@@ -487,8 +456,7 @@ unique(const C &c)
   const auto *last = c.end();
   *dst++ = *first++;
   for ( ; first != last; ++first )
-    if ( !(*first == *(dst - 1)) )
-      *dst++ = *first;
+    if ( !(*first == *(dst - 1)) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -498,8 +466,7 @@ template <is_iterable_container C, typename EqFn>
 C
 unique(const C &c, EqFn eq)
 {
-  if ( c.size() == 0 )
-    return c;
+  if ( c.size() == 0 ) return c;
   C out;
   out.resize(c.size());
   auto *dst = out.begin();
@@ -507,8 +474,7 @@ unique(const C &c, EqFn eq)
   const auto *last = c.end();
   *dst++ = *first++;
   for ( ; first != last; ++first )
-    if ( !eq(*first, *(dst - 1)) )
-      *dst++ = *first;
+    if ( !eq(*first, *(dst - 1)) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -520,8 +486,7 @@ template <is_iterable_container C, typename EqFn>
 C
 unique(const C &c, EqFn eq)
 {
-  if ( c.size() == 0 )
-    return c;
+  if ( c.size() == 0 ) return c;
   C out;
   out.resize(c.size());
   auto *dst = out.begin();
@@ -529,8 +494,7 @@ unique(const C &c, EqFn eq)
   const auto *last = c.end();
   *dst++ = *first++;
   for ( ; first != last; ++first )
-    if ( !eq(first, dst - 1) )
-      *dst++ = *first;
+    if ( !eq(first, dst - 1) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -540,8 +504,7 @@ template <is_iterable_container C>
 C
 unique(const C &c, micron::function<bool(typename C::value_type, typename C::value_type)> eq)
 {
-  if ( c.size() == 0 )
-    return c;
+  if ( c.size() == 0 ) return c;
   C out;
   out.resize(c.size());
   auto *dst = out.begin();
@@ -549,8 +512,7 @@ unique(const C &c, micron::function<bool(typename C::value_type, typename C::val
   const auto *last = c.end();
   *dst++ = *first++;
   for ( ; first != last; ++first )
-    if ( !eq(*first, *(dst - 1)) )
-      *dst++ = *first;
+    if ( !eq(*first, *(dst - 1)) ) *dst++ = *first;
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }
@@ -574,8 +536,7 @@ nub(const C &c)
         break;
       }
     }
-    if ( !found )
-      *dst++ = *it;
+    if ( !found ) *dst++ = *it;
   }
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
@@ -649,8 +610,7 @@ count(const C &c, Fn fn) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( fn(*first) )
-      ++n;
+    if ( fn(*first) ) ++n;
   return n;
 }
 
@@ -663,8 +623,7 @@ count(const C &c, Fn fn) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( fn(first) )
-      ++n;
+    if ( fn(first) ) ++n;
   return n;
 }
 

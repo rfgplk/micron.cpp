@@ -201,10 +201,8 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
 
   ~slice()
   {
-    if ( __mem::memory == nullptr )
-      return;
-    if ( __mem::length == 0 )
-      return;     // viewing memory, do not free
+    if ( __mem::memory == nullptr ) return;
+    if ( __mem::length == 0 ) return;     // viewing memory, do not free
     __mem::free();
   }
 
@@ -232,8 +230,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice(const size_t n, const T &r) : __mem(n)
   {
     __mem::length = n;
-    for ( size_t i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = r;
+    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = r;
   }
 
   template <typename Fn, typename R>
@@ -241,8 +238,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice(Fn &&fn, const R &r) : __mem(r.size())
   {
     __mem::length = r.size();
-    for ( size_t i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = fn(r[i]);
+    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = fn(r[i]);
   }
 
   slice(const slice &) = delete;
@@ -254,8 +250,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   operator=(slice &&o)
   {
-    if ( __mem::memory )
-      __mem::free();
+    if ( __mem::memory ) __mem::free();
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -268,8 +263,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   set(const T n)
   {
-    for ( size_t i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = n;
+    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = n;
     return *this;
   }
 
@@ -404,8 +398,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   end() const
   {
     // guard against mark(0)
-    if ( !__mem::length )
-      return micron::addr(__mem::memory[__mem::length]);
+    if ( !__mem::length ) return micron::addr(__mem::memory[__mem::length]);
     return micron::addr(__mem::memory[__mem::length - 1]);
   }
 
@@ -419,8 +412,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   cend() const
   {
     // guard against mark(0)
-    if ( !__mem::length )
-      return micron::addr(__mem::memory[__mem::length]);
+    if ( !__mem::length ) return micron::addr(__mem::memory[__mem::length]);
     return micron::addr(__mem::memory[__mem::length - 1]);
   }
 
@@ -787,8 +779,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
         ++count;
       }
     }
-    if ( start < __mem::length )
-      callback(raw_slice<T>(__mem::memory + start, __mem::length - start));
+    if ( start < __mem::length ) callback(raw_slice<T>(__mem::memory + start, __mem::length - start));
     return count + 1;
   }
 
@@ -805,8 +796,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   size_t
   splitn(size_t n, Fn pred, Cb callback) const
   {
-    if ( n == 0 )
-      return 0;
+    if ( n == 0 ) return 0;
     size_t count = 0, start = 0;
     for ( size_t i = 0; i < __mem::length && count + 1 < n; i++ ) {
       if ( pred(__mem::memory[i]) ) {
@@ -857,8 +847,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   size_t
   rsplitn(size_t n, Fn pred, Cb callback) const
   {
-    if ( n == 0 )
-      return 0;
+    if ( n == 0 ) return 0;
     size_t count = 0, end_idx = __mem::length;
     for ( size_t i = __mem::length; i-- > 0 && count + 1 < n; ) {
       if ( pred(__mem::memory[i]) ) {
@@ -895,8 +884,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   split_once(Fn pred) const
   {
     for ( size_t i = 0; i < __mem::length; i++ ) {
-      if ( pred(__mem::memory[i]) )
-        return { raw_slice<T>(__mem::memory, i), raw_slice<T>(__mem::memory + i + 1, __mem::length - i - 1) };
+      if ( pred(__mem::memory[i]) ) return { raw_slice<T>(__mem::memory, i), raw_slice<T>(__mem::memory + i + 1, __mem::length - i - 1) };
     }
     return { raw_slice<T>(), raw_slice<T>() };
   }
@@ -917,8 +905,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   rsplit_once(Fn pred) const
   {
     for ( size_t i = __mem::length; i-- > 0; ) {
-      if ( pred(__mem::memory[i]) )
-        return { raw_slice<T>(__mem::memory, i), raw_slice<T>(__mem::memory + i + 1, __mem::length - i - 1) };
+      if ( pred(__mem::memory[i]) ) return { raw_slice<T>(__mem::memory, i), raw_slice<T>(__mem::memory + i + 1, __mem::length - i - 1) };
     }
     return { raw_slice<T>(), raw_slice<T>() };
   }
@@ -937,10 +924,8 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   split_off_first()
   {
     T val = micron::move(__mem::memory[0]);
-    for ( size_t i = 0; i + 1 < __mem::length; i++ )
-      __mem::memory[i] = micron::move(__mem::memory[i + 1]);
-    if ( __mem::length > 0 )
-      __mem::length--;
+    for ( size_t i = 0; i + 1 < __mem::length; i++ ) __mem::memory[i] = micron::move(__mem::memory[i + 1]);
+    if ( __mem::length > 0 ) __mem::length--;
     return val;
   }
 
@@ -950,8 +935,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     if ( __mem::length == 0 ) [[unlikely]]
       return {};
     raw_slice<T> view{ __mem::memory, 1 };
-    for ( size_t i = 0; i + 1 < __mem::length; i++ )
-      __mem::memory[i] = micron::move(__mem::memory[i + 1]);
+    for ( size_t i = 0; i + 1 < __mem::length; i++ ) __mem::memory[i] = micron::move(__mem::memory[i + 1]);
     __mem::length--;
     return view;
   }
@@ -989,8 +973,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   contains(const T &value) const
   {
     for ( size_t i = 0; i < __mem::length; i++ )
-      if ( __mem::memory[i] == value )
-        return true;
+      if ( __mem::memory[i] == value ) return true;
     return false;
   }
 
@@ -1000,19 +983,16 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   contains(Fn pred) const
   {
     for ( size_t i = 0; i < __mem::length; i++ )
-      if ( pred(__mem::memory[i]) )
-        return true;
+      if ( pred(__mem::memory[i]) ) return true;
     return false;
   }
 
   bool
   starts_with(const raw_slice<T> &needle) const
   {
-    if ( needle.len > __mem::length )
-      return false;
+    if ( needle.len > __mem::length ) return false;
     for ( size_t i = 0; i < needle.len; i++ )
-      if ( __mem::memory[i] != needle.ptr[i] )
-        return false;
+      if ( __mem::memory[i] != needle.ptr[i] ) return false;
     return true;
   }
 
@@ -1025,12 +1005,10 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   bool
   ends_with(const raw_slice<T> &needle) const
   {
-    if ( needle.len > __mem::length )
-      return false;
+    if ( needle.len > __mem::length ) return false;
     size_t offset = __mem::length - needle.len;
     for ( size_t i = 0; i < needle.len; i++ )
-      if ( __mem::memory[offset + i] != needle.ptr[i] )
-        return false;
+      if ( __mem::memory[offset + i] != needle.ptr[i] ) return false;
     return true;
   }
 
@@ -1043,8 +1021,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   raw_slice<T>
   strip_prefix(const raw_slice<T> &prefix) const
   {
-    if ( !starts_with(prefix) )
-      return {};
+    if ( !starts_with(prefix) ) return {};
     return { __mem::memory + prefix.len, __mem::length - prefix.len };
   }
 
@@ -1057,8 +1034,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   raw_slice<T>
   strip_suffix(const raw_slice<T> &suffix) const
   {
-    if ( !ends_with(suffix) )
-      return {};
+    if ( !ends_with(suffix) ) return {};
     return { __mem::memory, __mem::length - suffix.len };
   }
 
@@ -1071,10 +1047,8 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   raw_slice<T>
   strip_circumfix(const raw_slice<T> &prefix, const raw_slice<T> &suffix) const
   {
-    if ( prefix.len + suffix.len > __mem::length )
-      return {};
-    if ( !starts_with(prefix) || !ends_with(suffix) )
-      return {};
+    if ( prefix.len + suffix.len > __mem::length ) return {};
+    if ( !starts_with(prefix) || !ends_with(suffix) ) return {};
     return { __mem::memory + prefix.len, __mem::length - prefix.len - suffix.len };
   }
 
@@ -1093,8 +1067,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   fill(const T &value)
   {
-    for ( size_t i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = value;
+    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = value;
     return *this;
   }
 
@@ -1103,8 +1076,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   fill_with(Fn gen)
   {
-    for ( size_t i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = gen();
+    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = gen();
     return *this;
   }
 
@@ -1166,8 +1138,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   reverse()
   {
-    if ( __mem::length < 2 )
-      return *this;
+    if ( __mem::length < 2 ) return *this;
     pointer lo = __mem::memory;
     pointer hi = __mem::memory + __mem::length - 1;
     while ( lo < hi ) {
@@ -1183,11 +1154,9 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   rotate_left(size_t n)
   {
-    if ( __mem::length == 0 )
-      return *this;
+    if ( __mem::length == 0 ) return *this;
     n %= __mem::length;
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     auto rev = [](pointer a, pointer b) {
       while ( a < b ) {
         T tmp = micron::move(*a);
@@ -1206,11 +1175,9 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   rotate_right(size_t n)
   {
-    if ( __mem::length == 0 )
-      return *this;
+    if ( __mem::length == 0 ) return *this;
     n %= __mem::length;
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     rotate_left(__mem::length - n);
     return *this;
   }
@@ -1218,8 +1185,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice
   repeat(size_t n) const
   {
-    if ( n == 0 )
-      return slice(size_t(0));
+    if ( n == 0 ) return slice(size_t(0));
     slice out(__mem::length * n);
     for ( size_t rep = 0; rep < n; rep++ )
       micron::memcpy(micron::addr(out.__mem::memory[rep * __mem::length]), __mem::memory, __mem::length * sizeof(T));
@@ -1262,8 +1228,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   write_clone_of_slice(const raw_slice<T> &src)
   {
     const size_t n = src.len < __mem::length ? src.len : __mem::length;
-    for ( size_t i = 0; i < n; i++ )
-      __mem::memory[i] = src.ptr[i];
+    for ( size_t i = 0; i < n; i++ ) __mem::memory[i] = src.ptr[i];
     return *this;
   }
 
@@ -1278,8 +1243,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   slice &
   write_with(Fn gen)
   {
-    for ( size_t i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = gen(i);
+    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = gen(i);
     return *this;
   }
 
@@ -1288,8 +1252,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   write_iter(InputIt first, InputIt last)
   {
     size_t i = 0;
-    for ( ; first != last && i < __mem::length; ++first, ++i )
-      __mem::memory[i] = *first;
+    for ( ; first != last && i < __mem::length; ++first, ++i ) __mem::memory[i] = *first;
     return *this;
   }
 
@@ -1336,10 +1299,8 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
 
     size_t prefix_bytes = 0;
     auto raw_addr = reinterpret_cast<uintptr_t>(raw);
-    if ( raw_addr % align != 0 )
-      prefix_bytes = align - (raw_addr % align);
-    if ( prefix_bytes > total )
-      prefix_bytes = total;
+    if ( raw_addr % align != 0 ) prefix_bytes = align - (raw_addr % align);
+    if ( prefix_bytes > total ) prefix_bytes = total;
 
     size_t remaining = total - prefix_bytes;
     size_t middle_count = remaining / sizeof(U);
@@ -1366,8 +1327,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     requires(micron::is_same_v<T, byte> || micron::is_same_v<T, char>)
   {
     for ( size_t i = 0; i < __mem::length; i++ )
-      if ( static_cast<unsigned char>(__mem::memory[i]) >= 128 )
-        return false;
+      if ( static_cast<unsigned char>(__mem::memory[i]) >= 128 ) return false;
     return true;
   }
 
@@ -1375,8 +1335,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   as_ascii() const
     requires(micron::is_same_v<T, byte> || micron::is_same_v<T, char>)
   {
-    if ( !is_ascii() )
-      return {};
+    if ( !is_ascii() ) return {};
     return { reinterpret_cast<const byte *>(__mem::memory), __mem::length };
   }
 
@@ -1393,8 +1352,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   {
     for ( size_t i = 0; i < __mem::length; i++ ) {
       auto c = static_cast<unsigned char>(__mem::memory[i]);
-      if ( c >= 'a' && c <= 'z' )
-        __mem::memory[i] = static_cast<T>(c - 32);
+      if ( c >= 'a' && c <= 'z' ) __mem::memory[i] = static_cast<T>(c - 32);
     }
     return *this;
   }
@@ -1405,8 +1363,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   {
     for ( size_t i = 0; i < __mem::length; i++ ) {
       auto c = static_cast<unsigned char>(__mem::memory[i]);
-      if ( c >= 'A' && c <= 'Z' )
-        __mem::memory[i] = static_cast<T>(c + 32);
+      if ( c >= 'A' && c <= 'Z' ) __mem::memory[i] = static_cast<T>(c + 32);
     }
     return *this;
   }
@@ -1418,8 +1375,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     size_t i = 0;
     while ( i < __mem::length ) {
       auto c = static_cast<unsigned char>(__mem::memory[i]);
-      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' )
-        break;
+      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' ) break;
       ++i;
     }
     return { __mem::memory + i, __mem::length - i };
@@ -1432,8 +1388,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     size_t j = __mem::length;
     while ( j > 0 ) {
       auto c = static_cast<unsigned char>(__mem::memory[j - 1]);
-      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' )
-        break;
+      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' ) break;
       --j;
     }
     return { __mem::memory, j };
@@ -1447,8 +1402,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     size_t j = leading.len;
     while ( j > 0 ) {
       auto c = static_cast<unsigned char>(leading.ptr[j - 1]);
-      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' )
-        break;
+      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' ) break;
       --j;
     }
     return { leading.ptr, j };

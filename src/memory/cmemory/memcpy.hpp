@@ -22,8 +22,7 @@ template <typename T, typename F, typename S = u64>
 T *
 __memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
 {
-  if ( n == 0 )
-    return d;
+  if ( n == 0 ) return d;
 
   byte *dest = reinterpret_cast<byte *>(d);
   const byte *src = reinterpret_cast<const byte *>(s);
@@ -72,104 +71,79 @@ __memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
     dest[6] = src[6];
     break;
   case 8 :
-    for ( u64 i = 0; i < 8; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 8; i++ ) dest[i] = src[i];
     break;
   case 9 :
-    for ( u64 i = 0; i < 9; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 9; i++ ) dest[i] = src[i];
     break;
   case 10 :
-    for ( u64 i = 0; i < 10; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 10; i++ ) dest[i] = src[i];
     break;
   case 11 :
-    for ( u64 i = 0; i < 11; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 11; i++ ) dest[i] = src[i];
     break;
   case 12 :
-    for ( u64 i = 0; i < 12; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 12; i++ ) dest[i] = src[i];
     break;
   case 13 :
-    for ( u64 i = 0; i < 13; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 13; i++ ) dest[i] = src[i];
     break;
   case 14 :
-    for ( u64 i = 0; i < 14; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 14; i++ ) dest[i] = src[i];
     break;
   case 15 :
-    for ( u64 i = 0; i < 15; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 15; i++ ) dest[i] = src[i];
     break;
   case 16 :
-    for ( u64 i = 0; i < 16; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 16; i++ ) dest[i] = src[i];
     break;
   case 17 :
-    for ( u64 i = 0; i < 17; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 17; i++ ) dest[i] = src[i];
     break;
   case 18 :
-    for ( u64 i = 0; i < 18; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 18; i++ ) dest[i] = src[i];
     break;
   case 19 :
-    for ( u64 i = 0; i < 19; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 19; i++ ) dest[i] = src[i];
     break;
   case 20 :
-    for ( u64 i = 0; i < 20; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 20; i++ ) dest[i] = src[i];
     break;
   case 21 :
-    for ( u64 i = 0; i < 21; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 21; i++ ) dest[i] = src[i];
     break;
   case 22 :
-    for ( u64 i = 0; i < 22; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 22; i++ ) dest[i] = src[i];
     break;
   case 23 :
-    for ( u64 i = 0; i < 23; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 23; i++ ) dest[i] = src[i];
     break;
   case 24 :
-    for ( u64 i = 0; i < 24; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 24; i++ ) dest[i] = src[i];
     break;
   case 25 :
-    for ( u64 i = 0; i < 25; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 25; i++ ) dest[i] = src[i];
     break;
   case 26 :
-    for ( u64 i = 0; i < 26; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 26; i++ ) dest[i] = src[i];
     break;
   case 27 :
-    for ( u64 i = 0; i < 27; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 27; i++ ) dest[i] = src[i];
     break;
   case 28 :
-    for ( u64 i = 0; i < 28; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 28; i++ ) dest[i] = src[i];
     break;
   case 29 :
-    for ( u64 i = 0; i < 29; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 29; i++ ) dest[i] = src[i];
     break;
   case 30 :
-    for ( u64 i = 0; i < 30; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 30; i++ ) dest[i] = src[i];
     break;
   case 31 :
-    for ( u64 i = 0; i < 31; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 31; i++ ) dest[i] = src[i];
     break;
   case 32 :
-    for ( u64 i = 0; i < 32; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < 32; i++ ) dest[i] = src[i];
     break;
   }
   return d;
@@ -196,8 +170,7 @@ memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
       dest[n + 3] = static_cast<F>(src[n + 3]);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = static_cast<F>(src[n]);
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
   return dest;
 };
 
@@ -215,8 +188,7 @@ rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
       d[n + 3] = static_cast<F>(s[n + 3]);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      d[n] = static_cast<F>(s[n]);
+    for ( u64 n = 0; n < cnt; n++ ) d[n] = static_cast<F>(s[n]);
   return dest;
 };
 
@@ -233,8 +205,7 @@ constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcep
       dest[n + 3] = static_cast<F>(src[n + 3]);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = static_cast<F>(src[n]);
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
   return dest;
 };
 
@@ -253,8 +224,7 @@ constexpr_rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexce
       d[n + 3] = static_cast<F>(s[n + 3]);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      d[n] = static_cast<F>(s[n]);
+    for ( u64 n = 0; n < cnt; n++ ) d[n] = static_cast<F>(s[n]);
   return dest;
 };
 
@@ -270,8 +240,7 @@ cmemcpy(F *restrict dest, const D *restrict src) noexcept
       dest[n + 3] = static_cast<F>(src[n + 3]);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      dest[n] = static_cast<F>(src[n]);
+    for ( u64 n = 0; n < M; n++ ) dest[n] = static_cast<F>(src[n]);
   return dest;
 };
 
@@ -289,8 +258,7 @@ crmemcpy(F &restrict dest, const D &restrict src) noexcept
       d[n + 3] = static_cast<F>(s[n + 3]);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      d[n] = static_cast<F>(s[n]);
+    for ( u64 n = 0; n < M; n++ ) d[n] = static_cast<F>(s[n]);
   return dest;
 };
 
@@ -298,10 +266,8 @@ template <typename F, typename D, u64 alignment = alignof(F)>
 F *
 smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
-  if ( dest == nullptr || src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
-    return nullptr;
+  if ( dest == nullptr || src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
 
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
@@ -311,8 +277,7 @@ smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
       dest[n + 3] = static_cast<F>(src[n + 3]);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = static_cast<F>(src[n]);
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
 
   __mem_barrier();
   return dest;
@@ -322,8 +287,7 @@ template <typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) )
-    return false;
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) ) return false;
 
   F *d = &dest;
   const D *s = &src;
@@ -335,8 +299,7 @@ rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
       d[n + 3] = static_cast<F>(s[n + 3]);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      d[n] = static_cast<F>(s[n]);
+    for ( u64 n = 0; n < cnt; n++ ) d[n] = static_cast<F>(s[n]);
 
   __mem_barrier();
   return true;
@@ -346,10 +309,8 @@ template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 F *
 scmemcpy(F *restrict dest, const D *restrict src) noexcept
 {
-  if ( dest == nullptr || src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
-    return nullptr;
+  if ( dest == nullptr || src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
 
   if constexpr ( M % 4 == 0 )
     for ( u64 n = 0; n < M; n += 4 ) {
@@ -359,8 +320,7 @@ scmemcpy(F *restrict dest, const D *restrict src) noexcept
       dest[n + 3] = static_cast<F>(src[n + 3]);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      dest[n] = static_cast<F>(src[n]);
+    for ( u64 n = 0; n < M; n++ ) dest[n] = static_cast<F>(src[n]);
 
   __mem_barrier();
   return dest;
@@ -370,8 +330,7 @@ template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 bool
 rscmemcpy(F &restrict dest, const D &restrict src) noexcept
 {
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
-    return false;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return false;
 
   F *d = &dest;
   const D *s = &src;
@@ -383,8 +342,7 @@ rscmemcpy(F &restrict dest, const D &restrict src) noexcept
       d[n + 3] = static_cast<F>(s[n + 3]);
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      d[n] = static_cast<F>(s[n]);
+    for ( u64 n = 0; n < M; n++ ) d[n] = static_cast<F>(s[n]);
 
   __mem_barrier();
   return true;
@@ -406,8 +364,7 @@ bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   return _dest;
 };
@@ -428,8 +385,7 @@ rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   return _dest;
 };
@@ -450,8 +406,7 @@ constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noex
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   return _dest;
 };
@@ -472,8 +427,7 @@ cbytecpy(F *restrict _dest, const D *restrict _src) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
 
   return _dest;
 };
@@ -494,8 +448,7 @@ crbytecpy(F &restrict _dest, const D &restrict _src) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
 
   return _dest;
 };
@@ -505,10 +458,8 @@ template <typename F, typename D, u64 alignment = 1>
 F *
 sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
 {
-  if ( _dest == nullptr || _src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return nullptr;
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
 
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
@@ -521,8 +472,7 @@ sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   __mem_barrier();
   return _dest;
@@ -533,8 +483,7 @@ template <typename F, typename D, u64 alignment = 1>
 bool
 rsbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return false;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return false;
 
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
@@ -547,8 +496,7 @@ rsbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   __mem_barrier();
   return true;
@@ -559,10 +507,8 @@ template <u64 M, typename F, typename D, u64 alignment = 1>
 F *
 scbytecpy(F *restrict _dest, const D *restrict _src) noexcept
 {
-  if ( _dest == nullptr || _src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return nullptr;
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
 
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
@@ -575,8 +521,7 @@ scbytecpy(F *restrict _dest, const D *restrict _src) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
 
   __mem_barrier();
   return _dest;
@@ -587,8 +532,7 @@ template <u64 M, typename F, typename D, u64 alignment = 1>
 bool
 rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
 {
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return false;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return false;
 
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
@@ -601,8 +545,7 @@ rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < M; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
 
   __mem_barrier();
   return true;
@@ -622,8 +565,7 @@ voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   return _dest;
 };
@@ -632,10 +574,8 @@ template <u64 alignment = 1>
 void *
 svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
-  if ( _dest == nullptr || _src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return nullptr;
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
 
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
@@ -648,8 +588,7 @@ svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcep
       dest[n + 3] = src[n + 3];
     }
   else
-    for ( u64 n = 0; n < cnt; n++ )
-      dest[n] = src[n];
+    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
   __mem_barrier();
   return _dest;

@@ -32,8 +32,7 @@ public:
 
   weak_pointer(weak_pointer &&p) : internal_pointer(p.internal_pointer)
   {
-    if ( &p != this )
-      p.internal_pointer = nullptr;
+    if ( &p != this ) p.internal_pointer = nullptr;
   }
 
   weak_pointer(const weak_pointer &p) : internal_pointer(p.internal_pointer) {}
@@ -51,8 +50,7 @@ public:
   weak_pointer &
   operator=(const weak_pointer &t)
   {
-    if ( this != &t )
-      internal_pointer = t.internal_pointer;
+    if ( this != &t ) internal_pointer = t.internal_pointer;
     return *this;
   }
 

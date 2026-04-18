@@ -129,13 +129,13 @@ epoll_pwait(int epfd, epoll_event *events, int maxevents, int timeout, const sig
 }
 
 inline int
-epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec *timeout, const sigset_t *sigmask)
+epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec_t *timeout, const sigset_t *sigmask)
 {
   return static_cast<int>(micron::syscall(SYS_epoll_pwait2, epfd, events, maxevents, timeout, sigmask, sizeof(sigset_t)));
 }
 
 inline int
-epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec &timeout, const sigset_t &sigmask)
+epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec_t &timeout, const sigset_t &sigmask)
 {
   return epoll_pwait2(epfd, events, maxevents, &timeout, &sigmask);
 }
@@ -143,7 +143,7 @@ epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec &timeo
 inline int
 epoll_pwait2_block(int epfd, epoll_event *events, int maxevents)
 {
-  return epoll_pwait2(epfd, events, maxevents, static_cast<const timespec *>(nullptr), static_cast<const sigset_t *>(nullptr));
+  return epoll_pwait2(epfd, events, maxevents, static_cast<const timespec_t *>(nullptr), static_cast<const sigset_t *>(nullptr));
 }
 };     // namespace posix
 };     // namespace micron

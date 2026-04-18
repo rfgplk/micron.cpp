@@ -34,8 +34,7 @@ public:
 
   ~memory_block()
   {
-    if ( !memory.zero() )
-      this->destroy(memory);
+    if ( !memory.zero() ) this->destroy(memory);
   }
 
   memory_block() = delete;
@@ -88,8 +87,7 @@ public:
   void
   resize(size_t n)
   {
-    if ( n <= memory.len )
-      return;
+    if ( n <= memory.len ) return;
     chunk<byte> tmp = micron::move(memory);
     memory = this->create(n);
     micron::memcpy(memory.ptr, tmp.ptr, tmp.len);

@@ -24,19 +24,15 @@ template <is_simd_128_type T, is_flag_type F> class v128
   inline void
   __impl_zero_init(void)
   {
-    if constexpr ( micron::same_as<T, f128> )
-      value = vdupq_n_f32(0.0f);
-    if constexpr ( micron::same_as<T, i128> )
-      value = vdupq_n_s32(0);
+    if constexpr ( micron::same_as<T, f128> ) value = vdupq_n_f32(0.0f);
+    if constexpr ( micron::same_as<T, i128> ) value = vdupq_n_s32(0);
   }
 
   inline void
   __impl_one_init(void)
   {
-    if constexpr ( micron::same_as<T, f128> )
-      value = vreinterpretq_f32_s32(vdupq_n_s32(-1));
-    if constexpr ( micron::same_as<T, i128> )
-      value = vdupq_n_s32(-1);
+    if constexpr ( micron::same_as<T, f128> ) value = vreinterpretq_f32_s32(vdupq_n_s32(-1));
+    if constexpr ( micron::same_as<T, i128> ) value = vdupq_n_s32(-1);
   }
 
   static inline i128
@@ -53,19 +49,14 @@ public:
   inline v128 &
   operator=(std::initializer_list<float> lst)
   {
-    if ( lst.size() != 4 )
-      return *this;
+    if ( lst.size() != 4 ) return *this;
     float a = 0, b = 0, c = 0, d = 0;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
-      if ( _f == 2 )
-        c = *itr;
-      if ( _f == 3 )
-        d = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
       _f++;
     }
     const float arr[4] = { a, b, c, d };
@@ -76,15 +67,12 @@ public:
   inline v128 &
   operator=(std::initializer_list<i64> lst)
   {
-    if ( lst.size() != 2 )
-      return *this;
+    if ( lst.size() != 2 ) return *this;
     i64 a = 0, b = 0;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
       _f++;
     }
     const int64_t arr[2] = { static_cast<int64_t>(a), static_cast<int64_t>(b) };
@@ -95,12 +83,10 @@ public:
   inline v128 &
   operator=(std::initializer_list<i32> lst)
   {
-    if ( lst.size() != 4 )
-      return *this;
+    if ( lst.size() != 4 ) return *this;
     i32 __arr[4];
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = vld1q_s32(__arr);
     return *this;
   }
@@ -108,12 +94,10 @@ public:
   inline v128 &
   operator=(std::initializer_list<i16> lst)
   {
-    if ( lst.size() != 8 )
-      return *this;
+    if ( lst.size() != 8 ) return *this;
     i16 __arr[8];
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = vreinterpretq_s32_s16(vld1q_s16(__arr));
     return *this;
   }
@@ -121,12 +105,10 @@ public:
   inline v128 &
   operator=(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 16 )
-      return *this;
+    if ( lst.size() != 16 ) return *this;
     i8 __arr[16];
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = vreinterpretq_s32_s8(vld1q_s8(__arr));
     return *this;
   }
@@ -230,10 +212,8 @@ public:
 
   v128(v128 &&o) : value(o.value)
   {
-    if constexpr ( micron::same_as<T, f128> )
-      o.value = vdupq_n_f32(0.0f);
-    if constexpr ( micron::same_as<T, i128> )
-      o.value = vdupq_n_s32(0);
+    if constexpr ( micron::same_as<T, f128> ) o.value = vdupq_n_f32(0.0f);
+    if constexpr ( micron::same_as<T, i128> ) o.value = vdupq_n_s32(0);
   }
 
   inline v128 &
@@ -297,14 +277,10 @@ public:
     if constexpr ( micron::is_same_v<T, f128> )
       return 4;
     else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_64_wide<F>() )
-        return 2;
-      if constexpr ( __is_32_wide<F>() )
-        return 4;
-      if constexpr ( __is_16_wide<F>() )
-        return 8;
-      if constexpr ( __is_8_wide<F>() )
-        return 16;
+      if constexpr ( __is_64_wide<F>() ) return 2;
+      if constexpr ( __is_32_wide<F>() ) return 4;
+      if constexpr ( __is_16_wide<F>() ) return 8;
+      if constexpr ( __is_8_wide<F>() ) return 16;
     }
   }
 
@@ -457,12 +433,10 @@ public:
       return neon_movemask_f32(vreinterpretq_f32_u32(vceqq_f32(value, o.value)));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       i128 _r;
-      if constexpr ( __is_8_wide<F>() )
-        _r = vreinterpretq_s32_u8(vceqq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) _r = vreinterpretq_s32_u8(vceqq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         _r = vreinterpretq_s32_u16(vceqq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _r = vreinterpretq_s32_u32(vceqq_s32(value, o.value));
+      if constexpr ( __is_32_wide<F>() ) _r = vreinterpretq_s32_u32(vceqq_s32(value, o.value));
       if constexpr ( __is_64_wide<F>() )
         _r = vreinterpretq_s32_u64(neon_v7_ceqq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
       return neon_movemask_si128(_r);
@@ -478,12 +452,10 @@ public:
       return neon_movemask_f32(vreinterpretq_f32_u32(_ne));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       i128 _eq;
-      if constexpr ( __is_8_wide<F>() )
-        _eq = vreinterpretq_s32_u8(vceqq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) _eq = vreinterpretq_s32_u8(vceqq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         _eq = vreinterpretq_s32_u16(vceqq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _eq = vreinterpretq_s32_u32(vceqq_s32(value, o.value));
+      if constexpr ( __is_32_wide<F>() ) _eq = vreinterpretq_s32_u32(vceqq_s32(value, o.value));
       if constexpr ( __is_64_wide<F>() )
         _eq = vreinterpretq_s32_u64(neon_v7_ceqq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
       return neon_movemask_si128(veorq_s32(_eq, neon_all_ones_si128()));
@@ -498,12 +470,10 @@ public:
       return neon_movemask_f32(vreinterpretq_f32_u32(vcgeq_f32(value, o.value)));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       i128 _r;
-      if constexpr ( __is_8_wide<F>() )
-        _r = vreinterpretq_s32_u8(vcgeq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) _r = vreinterpretq_s32_u8(vcgeq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         _r = vreinterpretq_s32_u16(vcgeq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _r = vreinterpretq_s32_u32(vcgeq_s32(value, o.value));
+      if constexpr ( __is_32_wide<F>() ) _r = vreinterpretq_s32_u32(vcgeq_s32(value, o.value));
       if constexpr ( __is_64_wide<F>() )
         _r = vreinterpretq_s32_u64(neon_v7_cgeq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
       return neon_movemask_si128(_r);
@@ -518,12 +488,10 @@ public:
       return neon_movemask_f32(vreinterpretq_f32_u32(vcgtq_f32(value, o.value)));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       i128 _r;
-      if constexpr ( __is_8_wide<F>() )
-        _r = vreinterpretq_s32_u8(vcgtq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) _r = vreinterpretq_s32_u8(vcgtq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         _r = vreinterpretq_s32_u16(vcgtq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _r = vreinterpretq_s32_u32(vcgtq_s32(value, o.value));
+      if constexpr ( __is_32_wide<F>() ) _r = vreinterpretq_s32_u32(vcgtq_s32(value, o.value));
       if constexpr ( __is_64_wide<F>() )
         _r = vreinterpretq_s32_u64(neon_v7_cgtq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
       return neon_movemask_si128(_r);
@@ -538,12 +506,10 @@ public:
       return neon_movemask_f32(vreinterpretq_f32_u32(vcltq_f32(value, o.value)));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       i128 _r;
-      if constexpr ( __is_8_wide<F>() )
-        _r = vreinterpretq_s32_u8(vcltq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) _r = vreinterpretq_s32_u8(vcltq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         _r = vreinterpretq_s32_u16(vcltq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _r = vreinterpretq_s32_u32(vcltq_s32(value, o.value));
+      if constexpr ( __is_32_wide<F>() ) _r = vreinterpretq_s32_u32(vcltq_s32(value, o.value));
       if constexpr ( __is_64_wide<F>() )
         _r = vreinterpretq_s32_u64(neon_v7_cltq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
       return neon_movemask_si128(_r);
@@ -558,12 +524,10 @@ public:
       return neon_movemask_f32(vreinterpretq_f32_u32(vcleq_f32(value, o.value)));
     } else if constexpr ( micron::is_same_v<T, i128> ) {
       i128 _r;
-      if constexpr ( __is_8_wide<F>() )
-        _r = vreinterpretq_s32_u8(vcleq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) _r = vreinterpretq_s32_u8(vcleq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         _r = vreinterpretq_s32_u16(vcleq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _r = vreinterpretq_s32_u32(vcleq_s32(value, o.value));
+      if constexpr ( __is_32_wide<F>() ) _r = vreinterpretq_s32_u32(vcleq_s32(value, o.value));
       if constexpr ( __is_64_wide<F>() )
         _r = vreinterpretq_s32_u64(neon_v7_cleq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
       return neon_movemask_si128(_r);
@@ -574,8 +538,7 @@ public:
   constexpr inline v128 &
   operator+=(float x)
   {
-    if constexpr ( micron::is_same_v<T, f128> )
-      value = vaddq_f32(value, vdupq_n_f32(x));
+    if constexpr ( micron::is_same_v<T, f128> ) value = vaddq_f32(value, vdupq_n_f32(x));
     return *this;
   }
 
@@ -590,8 +553,7 @@ public:
         value = vreinterpretq_s32_s8(vaddq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(x))));
       if constexpr ( __is_16_wide<F>() )
         value = vreinterpretq_s32_s16(vaddq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(x))));
-      if constexpr ( __is_32_wide<F>() )
-        value = vaddq_s32(value, vdupq_n_s32(static_cast<int32_t>(x)));
+      if constexpr ( __is_32_wide<F>() ) value = vaddq_s32(value, vdupq_n_s32(static_cast<int32_t>(x)));
       if constexpr ( __is_64_wide<F>() )
         value = vreinterpretq_s32_s64(vaddq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(x))));
     }
@@ -604,12 +566,10 @@ public:
     if constexpr ( micron::is_same_v<T, f128> ) {
       value = vaddq_f32(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() )
-        value = vreinterpretq_s32_s8(vaddq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) value = vreinterpretq_s32_s8(vaddq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         value = vreinterpretq_s32_s16(vaddq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        value = vaddq_s32(value, o.value);
+      if constexpr ( __is_32_wide<F>() ) value = vaddq_s32(value, o.value);
       if constexpr ( __is_64_wide<F>() )
         value = vreinterpretq_s32_s64(vaddq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
     }
@@ -619,8 +579,7 @@ public:
   constexpr inline v128 &
   operator-=(float x)
   {
-    if constexpr ( micron::is_same_v<T, f128> )
-      value = vsubq_f32(value, vdupq_n_f32(x));
+    if constexpr ( micron::is_same_v<T, f128> ) value = vsubq_f32(value, vdupq_n_f32(x));
     return *this;
   }
 
@@ -648,12 +607,10 @@ public:
     if constexpr ( micron::is_same_v<T, f128> ) {
       value = vsubq_f32(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() )
-        value = vreinterpretq_s32_s8(vsubq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_8_wide<F>() ) value = vreinterpretq_s32_s8(vsubq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
       if constexpr ( __is_16_wide<F>() )
         value = vreinterpretq_s32_s16(vsubq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        value = vsubq_s32(value, o.value);
+      if constexpr ( __is_32_wide<F>() ) value = vsubq_s32(value, o.value);
       if constexpr ( __is_64_wide<F>() )
         value = vreinterpretq_s32_s64(vsubq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
     }
@@ -671,8 +628,7 @@ public:
       }
       if constexpr ( __is_16_wide<F>() )
         value = vreinterpretq_s32_s16(vmulq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
-      if constexpr ( __is_32_wide<F>() )
-        value = vmulq_s32(value, o.value);
+      if constexpr ( __is_32_wide<F>() ) value = vmulq_s32(value, o.value);
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "No epi64 SIMD multiply (ARMv7)");
       }
@@ -805,8 +761,7 @@ public:
   inline v128 &
   load(B *mem)
   {
-    if ( !is_aligned<128>(mem) )
-      return *this;
+    if ( !is_aligned<128>(mem) ) return *this;
     value = ::micron::simd::load<T, B>(mem);
     return *this;
   }
@@ -825,8 +780,7 @@ public:
   inline v128 &
   operator|=(const v128 &o)
   {
-    if constexpr ( micron::is_same_v<T, i128> )
-      value = vorrq_s32(value, o.value);
+    if constexpr ( micron::is_same_v<T, i128> ) value = vorrq_s32(value, o.value);
     if constexpr ( micron::is_same_v<T, f128> )
       value = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_f32(o.value)));
     return *this;
@@ -835,8 +789,7 @@ public:
   inline v128 &
   operator&=(const v128 &o)
   {
-    if constexpr ( micron::is_same_v<T, i128> )
-      value = vandq_s32(value, o.value);
+    if constexpr ( micron::is_same_v<T, i128> ) value = vandq_s32(value, o.value);
     if constexpr ( micron::is_same_v<T, f128> )
       value = vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_f32(o.value)));
     return *this;
@@ -845,8 +798,7 @@ public:
   inline v128 &
   operator^=(const v128 &o)
   {
-    if constexpr ( micron::is_same_v<T, i128> )
-      value = veorq_s32(value, o.value);
+    if constexpr ( micron::is_same_v<T, i128> ) value = veorq_s32(value, o.value);
     if constexpr ( micron::is_same_v<T, f128> )
       value = vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_f32(o.value)));
     return *this;
@@ -880,8 +832,7 @@ public:
   operator~() const
   {
     v128 _r;
-    if constexpr ( micron::is_same_v<T, i128> )
-      _r.value = veorq_s32(value, neon_all_ones_si128());
+    if constexpr ( micron::is_same_v<T, i128> ) _r.value = veorq_s32(value, neon_all_ones_si128());
     if constexpr ( micron::is_same_v<T, f128> )
       _r.value = vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_s32(neon_all_ones_si128())));
     return _r;
@@ -896,8 +847,7 @@ public:
         _r.value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(i))));
       if constexpr ( __is_16_wide<F>() )
         _r.value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(i))));
-      if constexpr ( __is_32_wide<F>() )
-        _r.value = vshlq_s32(value, vdupq_n_s32(i));
+      if constexpr ( __is_32_wide<F>() ) _r.value = vshlq_s32(value, vdupq_n_s32(i));
       if constexpr ( __is_64_wide<F>() )
         _r.value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(i))));
     }
@@ -912,8 +862,7 @@ public:
         value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(i))));
       if constexpr ( __is_16_wide<F>() )
         value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(i))));
-      if constexpr ( __is_32_wide<F>() )
-        value = vshlq_s32(value, vdupq_n_s32(i));
+      if constexpr ( __is_32_wide<F>() ) value = vshlq_s32(value, vdupq_n_s32(i));
       if constexpr ( __is_64_wide<F>() )
         value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(i))));
     }
@@ -935,8 +884,7 @@ public:
   constexpr inline v128 &
   operator/=(float x)
   {
-    if constexpr ( micron::is_same_v<T, f128> )
-      value = neon_v7_divq_f32(value, vdupq_n_f32(x));
+    if constexpr ( micron::is_same_v<T, f128> ) value = neon_v7_divq_f32(value, vdupq_n_f32(x));
     return *this;
   }
 
@@ -944,16 +892,14 @@ public:
   operator/(float x) const
   {
     v128 _d;
-    if constexpr ( micron::is_same_v<T, f128> )
-      _d.value = neon_v7_divq_f32(value, vdupq_n_f32(x));
+    if constexpr ( micron::is_same_v<T, f128> ) _d.value = neon_v7_divq_f32(value, vdupq_n_f32(x));
     return _d;
   }
 
   constexpr inline v128 &
   operator*=(float x)
   {
-    if constexpr ( micron::is_same_v<T, f128> )
-      value = vmulq_f32(value, vdupq_n_f32(x));
+    if constexpr ( micron::is_same_v<T, f128> ) value = vmulq_f32(value, vdupq_n_f32(x));
     return *this;
   }
 
@@ -969,8 +915,7 @@ public:
       }
       if constexpr ( __is_16_wide<F>() )
         value = vreinterpretq_s32_s16(vmulq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(x))));
-      if constexpr ( __is_32_wide<F>() )
-        value = vmulq_s32(value, vdupq_n_s32(static_cast<int32_t>(x)));
+      if constexpr ( __is_32_wide<F>() ) value = vmulq_s32(value, vdupq_n_s32(static_cast<int32_t>(x)));
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "No epi64 SIMD multiply (ARMv7)");
       }
@@ -982,8 +927,7 @@ public:
   operator*(float x) const
   {
     v128 _d;
-    if constexpr ( micron::is_same_v<T, f128> )
-      _d.value = vmulq_f32(value, vdupq_n_f32(x));
+    if constexpr ( micron::is_same_v<T, f128> ) _d.value = vmulq_f32(value, vdupq_n_f32(x));
     return _d;
   }
 
@@ -999,8 +943,7 @@ public:
       }
       if constexpr ( __is_16_wide<F>() )
         _d.value = vreinterpretq_s32_s16(vmulq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(x.value)));
-      if constexpr ( __is_32_wide<F>() )
-        _d.value = vmulq_s32(value, x.value);
+      if constexpr ( __is_32_wide<F>() ) _d.value = vmulq_s32(value, x.value);
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "No epi64 SIMD multiply (ARMv7)");
       }
@@ -1011,8 +954,7 @@ public:
   inline void
   get(F *arr) const
   {
-    if constexpr ( micron::is_same_v<F, __vf> )
-      vst1q_f32(reinterpret_cast<float *>(arr), value);
+    if constexpr ( micron::is_same_v<F, __vf> ) vst1q_f32(reinterpret_cast<float *>(arr), value);
     if constexpr ( __is_8_wide<F>() || __is_16_wide<F>() || __is_32_wide<F>() || __is_64_wide<F>() )
       vst1q_s32(reinterpret_cast<int32_t *>(arr), value);
   }

@@ -250,8 +250,7 @@ inline ucap_set_t
 get_caps(pid_t pid = 0)
 {
   posix::cap_data_t data[2]{};
-  if ( posix::capget_pid(pid, data) < 0 )
-    return ucap_set_t{};
+  if ( posix::capget_pid(pid, data) < 0 ) return ucap_set_t{};
 
   ucap_set_t cs{};
   posix::data_to_caps(data, cs.effective, cs.permitted, cs.inheritable);
@@ -289,12 +288,9 @@ has_cap(cap c)
   posix::capget_pid(0, data);
   u64 eff, prm, inh;
   posix::data_to_caps(data, eff, prm, inh);
-  if constexpr ( Effective )
-    return (eff & cap_bit(c)) != 0;
-  if constexpr ( Permitted )
-    return (prm & cap_bit(c)) != 0;
-  if constexpr ( Inheritable )
-    return (inh & cap_bit(c)) != 0;
+  if constexpr ( Effective ) return (eff & cap_bit(c)) != 0;
+  if constexpr ( Permitted ) return (prm & cap_bit(c)) != 0;
+  if constexpr ( Inheritable ) return (inh & cap_bit(c)) != 0;
   return false;
 }
 
@@ -364,21 +360,18 @@ apply_caps_child(const Caps &cs) noexcept
 
   u64 drop_bnd = ~want_bnd & cap_all_mask;
   for ( u32 i = 0; i <= posix::cap_last_cap; ++i ) {
-    if ( drop_bnd & (u64(1) << i) )
-      posix::cap_bset_drop(i);
+    if ( drop_bnd & (u64(1) << i) ) posix::cap_bset_drop(i);
   }
 
   posix::cap_data_t data[2]{};
   posix::caps_to_data(cs.effective, cs.permitted, cs.inheritable, data);
   int r = posix::capset_self(data);
-  if ( r < 0 )
-    return r;
+  if ( r < 0 ) return r;
 
   if constexpr ( requires { cs.ambient; } ) {
     u64 amb = static_cast<u64>(cs.ambient) & static_cast<u64>(cs.inheritable);
     for ( u32 i = 0; i <= posix::cap_last_cap; ++i ) {
-      if ( amb & (u64(1) << i) )
-        posix::cap_ambient_raise(i);
+      if ( amb & (u64(1) << i) ) posix::cap_ambient_raise(i);
     }
   }
 

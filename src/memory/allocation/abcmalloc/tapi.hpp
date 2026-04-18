@@ -70,8 +70,7 @@ __start_abcmalloc_init(void)
       return __main_arena;
     }
   }
-  while ( __global_abc_state.get(micron::memory_order_acquire) != __abc_ready )
-    __cpu_pause();
+  while ( __global_abc_state.get(micron::memory_order_acquire) != __abc_ready ) __cpu_pause();
   return __main_arena;
 }
 

@@ -297,8 +297,7 @@ private:
   constexpr filter_builder &
   push(const bpf::insn_t &i) noexcept
   {
-    if ( count < Max )
-      insns[count++] = i;
+    if ( count < Max ) insns[count++] = i;
     return *this;
   }
 
@@ -389,8 +388,7 @@ public:
   constexpr filter_builder &
   require_arch(arch a) noexcept
   {
-    if ( remaining() < 3 )
-      return *this;
+    if ( remaining() < 3 ) return *this;
     push(load_arch());
     push(jeq_k(static_cast<u32>(a), 1, 0));
     push(ret_k(posix::seccomp_ret_kill_process));
@@ -407,10 +405,8 @@ public:
   constexpr filter_builder &
   allow(i32 nr) noexcept
   {
-    if ( sealed )
-      return *this;
-    if ( remaining() < 3 )
-      return *this;
+    if ( sealed ) return *this;
+    if ( remaining() < 3 ) return *this;
     push(load_syscall_nr());
     push(jeq_k(static_cast<u32>(nr), 0, 1));
     push(ret_k(posix::seccomp_ret_allow));
@@ -420,10 +416,8 @@ public:
   constexpr filter_builder &
   deny(i32 nr, u32 action = posix::seccomp_ret_kill_process) noexcept
   {
-    if ( sealed )
-      return *this;
-    if ( remaining() < 3 )
-      return *this;
+    if ( sealed ) return *this;
+    if ( remaining() < 3 ) return *this;
     push(load_syscall_nr());
     push(jeq_k(static_cast<u32>(nr), 0, 1));
     push(ret_k(action));
@@ -447,11 +441,9 @@ public:
   constexpr filter_builder &
   allow_batch() noexcept
   {
-    if ( sealed )
-      return *this;
+    if ( sealed ) return *this;
     constexpr usize N = sizeof...(Nrs);
-    if ( remaining() < N + 2 )
-      return *this;
+    if ( remaining() < N + 2 ) return *this;
 
     push(load_syscall_nr());
 
@@ -472,10 +464,8 @@ public:
   constexpr filter_builder &
   allow_range(i32 lo_nr, i32 hi_nr) noexcept
   {
-    if ( sealed )
-      return *this;
-    if ( remaining() < 4 )
-      return *this;
+    if ( sealed ) return *this;
+    if ( remaining() < 4 ) return *this;
     push(load_syscall_nr());
     push(jge_k(static_cast<u32>(lo_nr), 0, 2));
     push(jgt_k(static_cast<u32>(hi_nr), 1, 0));
@@ -486,10 +476,8 @@ public:
   constexpr filter_builder &
   deny_range(i32 lo_nr, i32 hi_nr, u32 action = posix::seccomp_ret_kill_process) noexcept
   {
-    if ( sealed )
-      return *this;
-    if ( remaining() < 4 )
-      return *this;
+    if ( sealed ) return *this;
+    if ( remaining() < 4 ) return *this;
     push(load_syscall_nr());
     push(jge_k(static_cast<u32>(lo_nr), 0, 2));
     push(jgt_k(static_cast<u32>(hi_nr), 1, 0));
@@ -500,11 +488,9 @@ public:
   constexpr filter_builder &
   action_if(i32 nr, const arg_cmp_t &ac, u32 action) noexcept
   {
-    if ( sealed )
-      return *this;
+    if ( sealed ) return *this;
     const usize psize = pred_insns(ac.op);
-    if ( psize == 0 || remaining() < psize + 2 )
-      return *this;
+    if ( psize == 0 || remaining() < psize + 2 ) return *this;
     push(load_syscall_nr());
     push(jeq_k(static_cast<u32>(nr), 0, static_cast<u8>(psize)));
     emit_pred(ac, action);
@@ -588,18 +574,15 @@ public:
   constexpr filter_builder &
   finalize() noexcept
   {
-    if ( !sealed )
-      default_kill();
+    if ( !sealed ) default_kill();
     return *this;
   }
 
   constexpr bool
   valid() const noexcept
   {
-    if ( !arch_ok )
-      return false;
-    if ( count == 0 || !sealed )
-      return false;
+    if ( !arch_ok ) return false;
+    if ( count == 0 || !sealed ) return false;
     const u16 last_class = insns[count - 1].code & 0x07u;
     return last_class == bpf::ret;
   }
@@ -607,10 +590,8 @@ public:
   bpf::fprog_t
   prog() noexcept
   {
-    if ( !arch_ok )
-      finalize();
-    if ( !sealed )
-      finalize();
+    if ( !arch_ok ) finalize();
+    if ( !sealed ) finalize();
     return bpf::fprog_t{ static_cast<u16>(count), insns };
   }
 };
@@ -619,8 +600,7 @@ template <usize N>
 inline int
 load(filter_builder<N> &fb, bool set_no_new_privs = true, u32 extra_flags = 0)
 {
-  if ( set_no_new_privs )
-    micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+  if ( set_no_new_privs ) micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
   auto p = fb.prog();
   return posix::seccomp_load_filter(p, extra_flags);
 }
@@ -636,8 +616,7 @@ template <usize N>
 inline int
 load_notif(filter_builder<N> &fb, bool set_no_new_privs = true)
 {
-  if ( set_no_new_privs )
-    micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+  if ( set_no_new_privs ) micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
   auto p = fb.prog();
   return posix::seccomp_load_filter_notif(p);
 }
@@ -645,8 +624,7 @@ load_notif(filter_builder<N> &fb, bool set_no_new_privs = true)
 inline int
 load_raw(bpf::fprog_t &prog, bool set_no_new_privs = true, u32 flags = 0)
 {
-  if ( set_no_new_privs )
-    micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+  if ( set_no_new_privs ) micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
   return posix::seccomp_load_filter(prog, flags);
 }
 

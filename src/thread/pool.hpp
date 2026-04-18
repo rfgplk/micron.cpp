@@ -48,8 +48,7 @@ __make_parallelarena(void)
   __global_parallelpool = &local_pool;
   // init here
   umax_t c = cpu_count();
-  for ( umax_t i = 0; i < c; ++i )
-    local_pool.create();
+  for ( umax_t i = 0; i < c; ++i ) local_pool.create();
 };
 
 #if defined(__micron_enable_concurrency_at_startup_var)

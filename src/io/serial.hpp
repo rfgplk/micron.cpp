@@ -24,8 +24,7 @@ serialize_bytes(fsys::file<T> &f, const byte *b, usize n)
 {
   usize pb = n < C ? n : C;
   usize p = 0;
-  if ( f.buffer_size() < C )
-    pb = f.buffer_size();
+  if ( f.buffer_size() < C ) pb = f.buffer_size();
   do {
     if ( pb > n )     // more than leftover
       pb = n;
@@ -43,8 +42,7 @@ serialize_bytes(fsys::file<T> &f, const R *_b, usize n)
   const byte *b = reinterpret_cast<const byte *>(_b);     // overloading like this so we don't have to check for return type of operator&
   usize pb = n < C ? n : C;
   usize p = 0;
-  if ( f.buffer_size() < C )
-    pb = f.buffer_size();
+  if ( f.buffer_size() < C ) pb = f.buffer_size();
   do {
     if ( pb > n )     // more than leftover
       pb = n;

@@ -87,12 +87,10 @@ template <typename T = void> class rcu_domain
 
       for ( usize i = 0; i < num_readers; ++i ) {
         rcu_reader_state *reader = *readers[i].get();
-        if ( !reader )
-          continue;
+        if ( !reader ) continue;
 
         bool is_active = reader->active.get(memory_order_acquire);
-        if ( !is_active )
-          continue;
+        if ( !is_active ) continue;
 
         usize reader_epoch = reader->epoch.get(memory_order_acquire);
         if ( reader_epoch < target_epoch ) {
@@ -101,8 +99,7 @@ template <typename T = void> class rcu_domain
         }
       }
 
-      if ( all_clear )
-        break;
+      if ( all_clear ) break;
 
       __cpu_pause();
     }

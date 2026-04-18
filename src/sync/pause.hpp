@@ -91,8 +91,7 @@ can_wait(int tid)
   // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
   micron::posix::siginfo_t i;
   micron::waitid(P_PID, tid, i, exited | nowait);
-  if ( i.si_code == posix::cld_exited or i.si_code == posix::cld_dumped or i.si_code == posix::cld_killed )
-    return true;
+  if ( i.si_code == posix::cld_exited or i.si_code == posix::cld_dumped or i.si_code == posix::cld_killed ) return true;
   return false;
 }
 
@@ -114,11 +113,9 @@ await(Args... args)
   micron::posix::sigset_t signal;
   micron::posix::sigemptyset(signal);
   (micron::posix::sigaddset(signal, args), ...);
-  if ( micron::posix::sigprocmask(posix::sig_setmask, signal, &old) < 0 )
-    return -1;
+  if ( micron::posix::sigprocmask(posix::sig_setmask, signal, &old) < 0 ) return -1;
   micron::posix::sigwait(signal, save);
-  if ( micron::posix::sigprocmask(posix::sig_setmask, old, nullptr) < 0 )
-    return -1;
+  if ( micron::posix::sigprocmask(posix::sig_setmask, old, nullptr) < 0 ) return -1;
   return 0;
 }
 
@@ -129,8 +126,7 @@ spin_for(fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
   for ( ;; ) {
-    if ( (micron::system_clock<>::now() - start >= timeout) )
-      break;
+    if ( (micron::system_clock<>::now() - start >= timeout) ) break;
     __cpu_pause();
   }
 }
@@ -140,8 +136,7 @@ wait_for(fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
   for ( ;; ) {
-    if ( (micron::system_clock<>::now() - start >= timeout) )
-      break;
+    if ( (micron::system_clock<>::now() - start >= timeout) ) break;
     // since its a ms dt
     cpu_pause<1000>();
   }

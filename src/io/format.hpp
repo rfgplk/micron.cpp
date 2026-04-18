@@ -27,14 +27,11 @@ namespace io
 inline path_t
 prune(path_t &&str)
 {
-  if ( micron::format::find(str, "//") )
-    micron::format::replace_all(str, "//", "/");
+  if ( micron::format::find(str, "//") ) micron::format::replace_all(str, "//", "/");
 
-  if ( micron::format::find(str, "...") )
-    micron::format::replace_all(str, "...", "..");
+  if ( micron::format::find(str, "...") ) micron::format::replace_all(str, "...", "..");
 
-  while ( str.size() > 1 && str[str.size() - 1] == '/' )
-    str.erase(str.last());
+  while ( str.size() > 1 && str[str.size() - 1] == '/' ) str.erase(str.last());
 
   return str;
 }
@@ -65,26 +62,20 @@ prune(const T &str)
 inline path_t
 trim(const char *str)
 {
-  if ( !str || str[0] == '\0' )
-    return path_t();
+  if ( !str || str[0] == '\0' ) return path_t();
 
   usize start = 0;
-  while ( str[start] == ' ' || str[start] == '\t' || str[start] == '\r' || str[start] == '\n' )
-    ++start;
+  while ( str[start] == ' ' || str[start] == '\t' || str[start] == '\r' || str[start] == '\n' ) ++start;
 
   usize end = start;
-  while ( str[end] )
-    ++end;
+  while ( str[end] ) ++end;
 
-  while ( end > start && (str[end - 1] == ' ' || str[end - 1] == '\t' || str[end - 1] == '\r' || str[end - 1] == '\n') )
-    --end;
+  while ( end > start && (str[end - 1] == ' ' || str[end - 1] == '\t' || str[end - 1] == '\r' || str[end - 1] == '\n') ) --end;
 
-  if ( end <= start )
-    return path_t();
+  if ( end <= start ) return path_t();
 
   path_t out;
-  for ( usize i = start; i < end; ++i )
-    out += str[i];
+  for ( usize i = start; i < end; ++i ) out += str[i];
 
   return prune(micron::move(out));
 }
@@ -92,8 +83,7 @@ trim(const char *str)
 inline path_t
 trim(const path_t &str)
 {
-  if ( str.empty() )
-    return path_t();
+  if ( str.empty() ) return path_t();
 
   const char first = str[0];
   const char last = str[str.size() - 1];
@@ -115,8 +105,7 @@ trim(const T &str)
 inline path_t
 collapse(const char *str)
 {
-  if ( !str || str[0] == '\0' )
-    return path_t();
+  if ( !str || str[0] == '\0' ) return path_t();
 
   path_t in = prune(path_t(str));
   bool abs = (in.size() > 0 && in[0] == '/');
@@ -141,15 +130,13 @@ collapse(const char *str)
       }
 
       if ( len == 2 && s[start] == '.' && s[start + 1] == '.' ) {
-        if ( depth > 0 )
-          --depth;
+        if ( depth > 0 ) --depth;
         start = i + 1;
         continue;
       }
       if ( depth < max_depth ) {
         path_t comp;
-        for ( usize j = start; j < i; ++j )
-          comp += s[j];
+        for ( usize j = start; j < i; ++j ) comp += s[j];
         stack[depth++] = micron::move(comp);
       }
       start = i + 1;
@@ -157,23 +144,19 @@ collapse(const char *str)
   }
 
   path_t out;
-  if ( abs )
-    out += '/';
+  if ( abs ) out += '/';
   for ( usize i = 0; i < depth; ++i ) {
-    if ( i )
-      out += '/';
+    if ( i ) out += '/';
     out += stack[i];
   }
-  if ( out.empty() )
-    out += (abs ? '/' : '.');
+  if ( out.empty() ) out += (abs ? '/' : '.');
   return out;
 }
 
 inline path_t
 collapse(const path_t &str)
 {
-  if ( !micron::format::find(str, ".") )
-    return prune(str);
+  if ( !micron::format::find(str, ".") ) return prune(str);
   return collapse(str.c_str());
 }
 
@@ -209,16 +192,14 @@ valid(const T &s) noexcept
 inline path_t
 validate(const char *str)
 {
-  if ( !posix::verify(str) )
-    exc<except::filesystem_error>("io::validate — path string is not valid.");
+  if ( !posix::verify(str) ) exc<except::filesystem_error>("io::validate — path string is not valid.");
   return prune(path_t(str));
 }
 
 inline path_t
 validate(const path_t &str)
 {
-  if ( !posix::verify(str.c_str()) )
-    exc<except::filesystem_error>("io::validate — path string is not valid.");
+  if ( !posix::verify(str.c_str()) ) exc<except::filesystem_error>("io::validate — path string is not valid.");
   return prune(str);
 }
 
@@ -233,8 +214,7 @@ inline bool
 has_nul(const char *str, usize len) noexcept
 {
   for ( usize i = 0; i < len; ++i )
-    if ( str[i] == '\0' )
-      return true;
+    if ( str[i] == '\0' ) return true;
   return false;
 }
 
@@ -257,13 +237,11 @@ has_nul(const T &s) noexcept
 inline bool
 well_formed(const char *str) noexcept
 {
-  if ( !posix::verify(str) )
-    return false;
+  if ( !posix::verify(str) ) return false;
   usize total = 0;
   usize comp = 0;
   for ( ; *str; ++str, ++total ) {
-    if ( total >= static_cast<usize>(posix::path_max) )
-      return false;
+    if ( total >= static_cast<usize>(posix::path_max) ) return false;
     if ( *str == '/' ) {
       comp = 0;
     } else if ( ++comp > static_cast<usize>(posix::name_max) )
@@ -639,26 +617,20 @@ is_mountpoint(const T &s) noexcept
 inline bool
 is_hidden(const char *str) noexcept
 {
-  if ( !str || !*str )
-    return false;
+  if ( !str || !*str ) return false;
   const char *last = str;
   for ( const char *p = str; *p; ++p )
-    if ( *p == '/' && *(p + 1) )
-      last = p + 1;
-  if ( last[0] != '.' )
-    return false;
-  if ( last[1] == '\0' || (last[1] == '.' && last[2] == '\0') )
-    return false;
+    if ( *p == '/' && *(p + 1) ) last = p + 1;
+  if ( last[0] != '.' ) return false;
+  if ( last[1] == '\0' || (last[1] == '.' && last[2] == '\0') ) return false;
   return true;
 }
 
 inline bool
 is_hidden(const path_t &str) noexcept
 {
-  if ( str.empty() )
-    return false;
-  if ( !micron::format::find(str, "/.") && str[0] != '.' )
-    return false;
+  if ( str.empty() ) return false;
+  if ( !micron::format::find(str, "/.") && str[0] != '.' ) return false;
   return is_hidden(str.c_str());
 }
 
@@ -703,22 +675,17 @@ same_file(const A &a, const B &b) noexcept
 inline path_t
 basename(const char *str) noexcept
 {
-  if ( !str || !*str )
-    return path_t();
+  if ( !str || !*str ) return path_t();
 
   usize n = 0;
-  while ( str[n] )
-    ++n;
-  while ( n > 1 && str[n - 1] == '/' )
-    --n;
+  while ( str[n] ) ++n;
+  while ( n > 1 && str[n - 1] == '/' ) --n;
 
   usize sep = n;
-  while ( sep > 0 && str[sep - 1] != '/' )
-    --sep;
+  while ( sep > 0 && str[sep - 1] != '/' ) --sep;
 
   path_t out;
-  for ( usize i = sep; i < n; ++i )
-    out += str[i];
+  for ( usize i = sep; i < n; ++i ) out += str[i];
   return out.empty() ? path_t("/") : out;
 }
 
@@ -738,27 +705,20 @@ basename(const T &s) noexcept
 inline path_t
 dirname(const char *str) noexcept
 {
-  if ( !str || !*str )
-    return path_t(".");
+  if ( !str || !*str ) return path_t(".");
 
   usize n = 0;
-  while ( str[n] )
-    ++n;
-  while ( n > 1 && str[n - 1] == '/' )
-    --n;
+  while ( str[n] ) ++n;
+  while ( n > 1 && str[n - 1] == '/' ) --n;
 
   usize sep = n;
-  while ( sep > 0 && str[sep - 1] != '/' )
-    --sep;
+  while ( sep > 0 && str[sep - 1] != '/' ) --sep;
 
-  if ( sep == 0 )
-    return path_t(".");
-  if ( sep == 1 )
-    return path_t("/");
+  if ( sep == 0 ) return path_t(".");
+  if ( sep == 1 ) return path_t("/");
 
   path_t out;
-  for ( usize i = 0; i < sep - 1; ++i )
-    out += str[i];
+  for ( usize i = 0; i < sep - 1; ++i ) out += str[i];
   return out;
 }
 
@@ -782,20 +742,15 @@ extension(const char *str) noexcept
   const char *s = base.c_str();
   usize l = base.size();
 
-  if ( l == 0 || s[0] == '.' )
-    return path_t();
-  if ( !micron::format::find(base, ".") )
-    return path_t();
+  if ( l == 0 || s[0] == '.' ) return path_t();
+  if ( !micron::format::find(base, ".") ) return path_t();
 
   usize dot = l;
-  while ( dot > 0 && s[dot - 1] != '.' )
-    --dot;
-  if ( dot == 0 )
-    return path_t();
+  while ( dot > 0 && s[dot - 1] != '.' ) --dot;
+  if ( dot == 0 ) return path_t();
 
   path_t out;
-  for ( usize i = dot - 1; i < l; ++i )
-    out += s[i];
+  for ( usize i = dot - 1; i < l; ++i ) out += s[i];
   return out;
 }
 
@@ -817,13 +772,11 @@ stem(const char *str) noexcept
 {
   path_t base = basename(str);
   path_t ext = extension(str);
-  if ( ext.empty() )
-    return base;
+  if ( ext.empty() ) return base;
 
   path_t out;
   usize keep = base.size() - ext.size();
-  for ( usize i = 0; i < keep; ++i )
-    out += base[i];
+  for ( usize i = 0; i < keep; ++i ) out += base[i];
   return out;
 }
 
@@ -843,16 +796,12 @@ stem(const T &s) noexcept
 inline path_t
 join(const char *base, const char *rel)
 {
-  if ( !rel || rel[0] == '\0' )
-    return prune(path_t(base ? base : ""));
-  if ( rel[0] == '/' )
-    return prune(path_t(rel));
-  if ( !base || base[0] == '\0' )
-    return prune(path_t(rel));
+  if ( !rel || rel[0] == '\0' ) return prune(path_t(base ? base : ""));
+  if ( rel[0] == '/' ) return prune(path_t(rel));
+  if ( !base || base[0] == '\0' ) return prune(path_t(rel));
 
   usize bl = 0;
-  while ( base[bl] )
-    ++bl;
+  while ( base[bl] ) ++bl;
 
   if ( bl > 0 && base[bl - 1] == '/' ) {
 
@@ -913,8 +862,7 @@ inline path_t
 canonical(const char *str)
 {
   path_t out;
-  if ( micron::realpath(str, &out[0]) == nullptr )
-    return path_t();
+  if ( micron::realpath(str, &out[0]) == nullptr ) return path_t();
   out.adjust_size();
   return out;
 }
@@ -937,8 +885,7 @@ relative_to(const char *path_str, const char *base_str)
 {
   path_t ps(path_str), bs(base_str);
 
-  if ( ps == bs )
-    return path_t(".");
+  if ( ps == bs ) return path_t(".");
 
   usize pl = ps.size();
   usize bl = bs.size();
@@ -946,34 +893,26 @@ relative_to(const char *path_str, const char *base_str)
   usize common = 0;
   usize i = 0;
   while ( i < pl && i < bl && path_str[i] == base_str[i] ) {
-    if ( path_str[i] == '/' )
-      common = i + 1;
+    if ( path_str[i] == '/' ) common = i + 1;
     ++i;
   }
-  if ( i == bl && (path_str[i] == '/' || path_str[i] == '\0') )
-    common = i + (path_str[i] == '/' ? 1u : 0u);
+  if ( i == bl && (path_str[i] == '/' || path_str[i] == '\0') ) common = i + (path_str[i] == '/' ? 1u : 0u);
 
   usize up = 0;
   for ( usize j = common; j < bl; ++j )
-    if ( base_str[j] == '/' )
-      ++up;
-  if ( common < bl )
-    ++up;
+    if ( base_str[j] == '/' ) ++up;
+  if ( common < bl ) ++up;
 
   path_t out;
   for ( usize j = 0; j < up; ++j ) {
-    if ( !out.empty() )
-      out += '/';
+    if ( !out.empty() ) out += '/';
     out += "..";
   }
   if ( common < pl ) {
-    if ( !out.empty() )
-      out += '/';
-    for ( usize j = common; j < pl; ++j )
-      out += path_str[j];
+    if ( !out.empty() ) out += '/';
+    for ( usize j = common; j < pl; ++j ) out += path_str[j];
   }
-  if ( out.empty() )
-    out += '.';
+  if ( out.empty() ) out += '.';
   return out;
 }
 
@@ -1010,15 +949,13 @@ with_extension(const char *str, const char *ext)
 
   path_t dot_ext;
   if ( ext && ext[0] != '\0' ) {
-    if ( ext[0] != '.' )
-      dot_ext += '.';
+    if ( ext[0] != '.' ) dot_ext += '.';
     dot_ext += ext;
   }
 
   path_t new_base = micron::format::concat<path_t>(st.c_str(), dot_ext.c_str());
 
-  if ( dir_ == "." )
-    return new_base;
+  if ( dir_ == "." ) return new_base;
   return join(dir_, new_base);
 }
 

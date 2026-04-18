@@ -41,8 +41,7 @@ template <is_string T = micron::string> class file : public io::file
   void
   __need_fd(const char *where) const
   {
-    if ( __handle.closed() )
-      exc<except::filesystem_error>(where);
+    if ( __handle.closed() ) exc<except::filesystem_error>(where);
   }
 
   max_t
@@ -58,8 +57,7 @@ template <is_string T = micron::string> class file : public io::file
     byte *p = static_cast<byte *>(dst);
     while ( got < len ) {
       max_t r = posix::pread(__handle.fd, p + got, len - got, off + static_cast<posix::off_t>(got));
-      if ( r <= 0 )
-        return r == 0 ? static_cast<max_t>(got) : r;
+      if ( r <= 0 ) return r == 0 ? static_cast<max_t>(got) : r;
       got += static_cast<usize>(r);
     }
     return static_cast<max_t>(got);
@@ -70,8 +68,7 @@ template <is_string T = micron::string> class file : public io::file
   static void
   __kmp_table(const byte *pat, usize plen, usize *tbl)
   {
-    if ( plen == 0 )
-      return;
+    if ( plen == 0 ) return;
     tbl[0] = 0;
     usize k = 0;
     for ( usize i = 1; i < plen; ) {
@@ -91,17 +88,14 @@ template <is_string T = micron::string> class file : public io::file
   static usize
   __kmp_search(const byte *hay, usize hlen, const byte *pat, usize plen, const usize *tbl)
   {
-    if ( plen == 0 )
-      return 0;
-    if ( plen > hlen )
-      return hlen;
+    if ( plen == 0 ) return 0;
+    if ( plen > hlen ) return hlen;
     usize k = 0;
     for ( usize i = 0; i < hlen; ) {
       if ( hay[i] == pat[k] ) {
         ++k;
         ++i;
-        if ( k == plen )
-          return i - k;
+        if ( k == plen ) return i - k;
       } else if ( k ) {
         k = tbl[k - 1];
       } else {
@@ -359,15 +353,13 @@ public:
   {
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
-    if ( __handle.closed() )
-      exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
 
     data.reserve(sz + 1);
     do {
       posix::lseek(__handle.fd, seek, posix::seek_set);
       max_t bytes_read = io::read(__handle.fd, *bf, ((buffer_sz > sz) ? sz : buffer_sz));
-      if ( bytes_read == 0 )
-        break;
+      if ( bytes_read == 0 ) break;
       if ( bytes_read == -1 ) [[unlikely]]
         exc<except::io_error>("micron::fsys::file error reading file");
       seek += static_cast<usize>(bytes_read);
@@ -389,16 +381,14 @@ public:
   void
   load(void)
   {
-    if ( __handle.closed() )
-      exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
     auto s = size();
     data.reserve(s + 1);
     posix::lseek(__handle.fd, 0, posix::seek_set);
     max_t read_bytes = 0;
     do {
       read_bytes = io::read(__handle.fd, data, s);
-      if ( read_bytes < (s) )
-        break;
+      if ( read_bytes < (s) ) break;
     } while ( read_bytes );
     data._buf_set_length(s);
   }
@@ -406,34 +396,27 @@ public:
   void
   load_kernel(void)
   {
-    if ( __handle.closed() )
-      exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
     posix::lseek(__handle.fd, 0, posix::seek_set);
     usize s = 0;
     max_t read_bytes = 0;
     do {
       read_bytes = io::read(__handle.fd, data[s], 1);
       s += read_bytes;
-      if ( s == data.max_size() )
-        data.reserve(data.max_size() * 3);
+      if ( s == data.max_size() ) data.reserve(data.max_size() * 3);
     } while ( read_bytes );
-    if ( s )
-      data._buf_set_length(s);
+    if ( s ) data._buf_set_length(s);
   }
 
   void
   write(void)
   {
-    if ( !data )
-      return;
-    if ( __handle.closed() )
-      exc<except::filesystem_error>("micron::fsys::file fd isn't open");
+    if ( !data ) return;
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open");
     posix::lseek(__handle.fd, seek, posix::seek_set);
     max_t sz = io::write(__handle.fd, &data, data.size());
-    if ( sz == -1 )
-      exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
-    if ( sz < (max_t)data.size() )
-      exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
+    if ( sz == -1 ) exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
+    if ( sz < (max_t)data.size() ) exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
     seek += sz;
     posix::lseek(__handle.fd, seek, posix::seek_set);
   }
@@ -467,8 +450,7 @@ public:
   {
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
-    if ( n > buffer_sz )
-      exc<except::filesystem_error>("micron::fsys::file trying to load buffer with too much data");
+    if ( n > buffer_sz ) exc<except::filesystem_error>("micron::fsys::file trying to load buffer with too much data");
     micron::bytecpy(&(*bf), b, n);
   }
 
@@ -477,8 +459,7 @@ public:
   {
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
-    if ( __handle.closed() )
-      exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
     posix::lseek(__handle.fd, seek, posix::seek_set);
     max_t bytes_written = io::write(__handle.fd, &(*bf), ((buffer_sz > sz) ? sz : buffer_sz));
     if ( bytes_written == -1 ) [[unlikely]]
@@ -492,14 +473,11 @@ public:
   void
   flush(void)
   {
-    if ( !data )
-      return;
-    if ( __handle.closed() )
-      exc<except::filesystem_error>("micron::fsys::file fd isn't open");
+    if ( !data ) return;
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open");
     posix::lseek(__handle.fd, seek, posix::seek_set);
     usize sz = io::write(__handle.fd, &data, data.size());
-    if ( sz < data.size() )
-      exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
+    if ( sz < data.size() ) exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
     seek += sz;
     posix::lseek(__handle.fd, seek, posix::seek_set);
     clear();
@@ -682,8 +660,7 @@ public:
     __need_fd("fsys::file::slice");
     micron::buffer out(len);
     max_t n = __pread_exact(out.begin(), len, off);
-    if ( n < 0 || static_cast<usize>(n) < len )
-      exc<except::io_error>("fsys::file::slice: short read.");
+    if ( n < 0 || static_cast<usize>(n) < len ) exc<except::io_error>("fsys::file::slice: short read.");
     return out;
   }
 
@@ -691,11 +668,9 @@ public:
   slice_into(micron::buffer &dst, posix::off_t off, usize len) const
   {
     __need_fd("fsys::file::slice_into");
-    if ( dst.size() < len )
-      dst.resize(len);
+    if ( dst.size() < len ) dst.resize(len);
     max_t n = __pread_exact(dst.begin(), len, off);
-    if ( n < 0 || static_cast<usize>(n) < len )
-      exc<except::io_error>("fsys::file::slice_into: short read.");
+    if ( n < 0 || static_cast<usize>(n) < len ) exc<except::io_error>("fsys::file::slice_into: short read.");
   }
 
   void
@@ -719,8 +694,7 @@ public:
   search(const byte *pat, usize plen, usize window_sz = default_search_window) const
   {
     __need_fd("fsys::file::search");
-    if ( plen == 0 )
-      return { true, 0, 0 };
+    if ( plen == 0 ) return { true, 0, 0 };
 
     micron::buffer tbl_buf(plen * sizeof(usize));
     usize *tbl = reinterpret_cast<usize *>(tbl_buf.begin());
@@ -735,20 +709,17 @@ public:
     usize work_fill = 0;
 
     while ( static_cast<usize>(off) < file_sz ) {
-      if ( overlap && work_fill >= overlap )
-        micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
+      if ( overlap && work_fill >= overlap ) micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
 
       max_t n = posix::pread(__handle.fd, work.begin() + overlap, window_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
 
       work_fill = overlap + static_cast<usize>(n);
       usize pos = __kmp_search(work.begin(), work_fill, pat, plen, tbl);
 
       if ( pos < work_fill ) {
         usize file_pos = static_cast<usize>(off) + pos;
-        if ( pos >= overlap )
-          file_pos = static_cast<usize>(off) + (pos - overlap);
+        if ( pos >= overlap ) file_pos = static_cast<usize>(off) + (pos - overlap);
         return { true, file_pos, plen };
       }
       off += static_cast<posix::off_t>(n);
@@ -760,8 +731,7 @@ public:
   search(const char *pat, usize window_sz = default_search_window) const
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return search(reinterpret_cast<const byte *>(pat), l, window_sz);
   }
 
@@ -796,8 +766,7 @@ public:
   {
     __need_fd("fsys::file::find_all");
     micron::vector<io::bin_match_t> out;
-    if ( plen == 0 )
-      return out;
+    if ( plen == 0 ) return out;
 
     micron::buffer tbl_buf(plen * sizeof(usize));
     usize *tbl = reinterpret_cast<usize *>(tbl_buf.begin());
@@ -812,24 +781,20 @@ public:
     usize work_fill = 0;
 
     while ( static_cast<usize>(off) < file_sz ) {
-      if ( overlap && work_fill >= overlap )
-        micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
+      if ( overlap && work_fill >= overlap ) micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
 
       max_t n = posix::pread(__handle.fd, work.begin() + overlap, window_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
 
       work_fill = overlap + static_cast<usize>(n);
       usize scan = 0;
 
       while ( scan < work_fill ) {
         usize pos = __kmp_search(work.begin() + scan, work_fill - scan, pat, plen, tbl);
-        if ( pos == work_fill - scan )
-          break;
+        if ( pos == work_fill - scan ) break;
 
         usize abs = static_cast<usize>(off) + (scan + pos);
-        if ( (scan + pos) >= overlap )
-          abs = static_cast<usize>(off) + ((scan + pos) - overlap);
+        if ( (scan + pos) >= overlap ) abs = static_cast<usize>(off) + ((scan + pos) - overlap);
 
         out.push_back({ true, abs, plen });
         scan += pos + plen;
@@ -843,8 +808,7 @@ public:
   find_all(const char *pat, usize window_sz = default_search_window) const
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return find_all(reinterpret_cast<const byte *>(pat), l, window_sz);
   }
 
@@ -870,8 +834,7 @@ public:
 
     while ( static_cast<usize>(off) < file_sz ) {
       max_t n = posix::pread(__handle.fd, win.begin(), window_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       const byte *p = win.begin();
       for ( max_t i = 0; i < n; ++i ) {
         byte b = p[i];
@@ -879,30 +842,24 @@ public:
         total++;
         if ( b == 0x00 ) {
           st.zero_bytes++;
-          if ( ++cur_zero > st.longest_zero_run )
-            st.longest_zero_run = cur_zero;
+          if ( ++cur_zero > st.longest_zero_run ) st.longest_zero_run = cur_zero;
           cur_nz = 0;
         } else {
-          if ( ++cur_nz > st.longest_nonzero_run )
-            st.longest_nonzero_run = cur_nz;
+          if ( ++cur_nz > st.longest_nonzero_run ) st.longest_nonzero_run = cur_nz;
           cur_zero = 0;
         }
-        if ( b >= 0x20 && b <= 0x7e )
-          st.printable_bytes++;
-        if ( b >= 0x80 )
-          st.high_bytes++;
+        if ( b >= 0x20 && b <= 0x7e ) st.printable_bytes++;
+        if ( b >= 0x80 ) st.high_bytes++;
       }
       off += n;
     }
 
     st.total_bytes = total;
-    for ( usize i = 0; i < 256; ++i )
-      st.freq[i] = freq[i];
+    for ( usize i = 0; i < 256; ++i ) st.freq[i] = freq[i];
 
     double H = 0.0;
     for ( usize i = 0; i < 256; ++i ) {
-      if ( !freq[i] )
-        continue;
+      if ( !freq[i] ) continue;
       double pi = static_cast<double>(freq[i]) / static_cast<double>(total);
       H -= pi * math::log2(pi);
     }
@@ -923,8 +880,7 @@ public:
 
     while ( static_cast<usize>(off) < file_sz ) {
       max_t n = posix::pread(__handle.fd, win.begin(), window_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       const byte *p = win.begin();
       for ( max_t i = 0; i < n; ++i ) {
         freq[p[i]]++;
@@ -935,8 +891,7 @@ public:
 
     double H = 0.0;
     for ( usize i = 0; i < 256; ++i ) {
-      if ( !freq[i] )
-        continue;
+      if ( !freq[i] ) continue;
       double pi = static_cast<double>(freq[i]) / static_cast<double>(total);
       H -= pi * math::log2(pi);
     }
@@ -956,12 +911,10 @@ public:
   from_stream(io::stream<SZ, CK> &s)
   {
     __need_fd("fsys::file::from_stream");
-    if ( s.empty() )
-      return;
+    if ( s.empty() ) return;
     posix::lseek(__handle.fd, static_cast<posix::off_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, s.data(), static_cast<usize>(s.size()));
-    if ( n > 0 )
-      seek += static_cast<usize>(n);
+    if ( n > 0 ) seek += static_cast<usize>(n);
     s.rewind();
   }
 
@@ -969,8 +922,7 @@ public:
   void
   flush_to_stream(io::stream<SZ, CK> &s) const
   {
-    if ( !data )
-      return;
+    if ( !data ) return;
     s << data;
   }
 
@@ -984,8 +936,7 @@ public:
     usize out_len = fn(out.begin(), reinterpret_cast<const byte *>(src.c_str()), src_len);
     posix::lseek(__handle.fd, static_cast<posix::off_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, out.begin(), out_len);
-    if ( n > 0 )
-      seek += static_cast<usize>(n);
+    if ( n > 0 ) seek += static_cast<usize>(n);
   }
 
   template <io::encode_fn Fn>
@@ -997,8 +948,7 @@ public:
     usize out_len = fn(out.begin(), src, src_len);
     posix::lseek(__handle.fd, static_cast<posix::off_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, out.begin(), out_len);
-    if ( n > 0 )
-      seek += static_cast<usize>(n);
+    if ( n > 0 ) seek += static_cast<usize>(n);
   }
 
   template <io::encode_fn Fn, is_string Tp>
@@ -1130,8 +1080,7 @@ public:
     if ( posix::ftruncate(__handle.fd, static_cast<posix::off_t>(new_size)) != 0 )
       exc<except::filesystem_error>("fsys::file::truncate failed.");
     usize cur = static_cast<usize>(size());
-    if ( seek > new_size )
-      seek = new_size;
+    if ( seek > new_size ) seek = new_size;
     (void)cur;
   }
 
@@ -1140,8 +1089,7 @@ public:
   append_file(const file<U> &other, usize chunk_sz = 65536u)
   {
     __need_fd("fsys::file::append_file");
-    if ( other.__handle.closed() )
-      exc<except::filesystem_error>("fsys::file::append_file: source file is closed.");
+    if ( other.__handle.closed() ) exc<except::filesystem_error>("fsys::file::append_file: source file is closed.");
 
     posix::off_t src_off = 0;
     usize src_sz = static_cast<usize>(other.size());
@@ -1150,8 +1098,7 @@ public:
     micron::buffer win(chunk_sz);
     while ( static_cast<usize>(src_off) < src_sz ) {
       max_t n = posix::pread(other.__handle.fd, win.begin(), chunk_sz, src_off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       posix::pwrite(__handle.fd, win.begin(), static_cast<usize>(n), dst_off);
       src_off += n;
       dst_off += n;
@@ -1179,8 +1126,7 @@ public:
     __need_fd("fsys::file::copy_to");
     posix::fd_t out{ (posix::openat(posix::at_fdcwd, dest_path, posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_cloexec,
                                     posix::mode_file)) };
-    if ( !out )
-      exc<except::filesystem_error>("fsys::file::copy_to: failed to open destination.");
+    if ( !out ) exc<except::filesystem_error>("fsys::file::copy_to: failed to open destination.");
 
     usize src_sz = static_cast<usize>(size());
     posix::off_t src_off = 0;
@@ -1188,8 +1134,7 @@ public:
 
     while ( static_cast<usize>(src_off) < src_sz ) {
       max_t n = posix::pread(__handle.fd, win.begin(), chunk_sz, src_off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       posix::write(out.fd, win.begin(), static_cast<usize>(n));
       src_off += n;
     }
@@ -1208,8 +1153,7 @@ public:
   compare_to(const file<U> &other, usize chunk_sz = 65536u) const
   {
     __need_fd("fsys::file::compare_to");
-    if ( other.__handle.closed() )
-      exc<except::filesystem_error>("fsys::file::compare_to: other file is closed.");
+    if ( other.__handle.closed() ) exc<except::filesystem_error>("fsys::file::compare_to: other file is closed.");
 
     usize a_sz = static_cast<usize>(size());
     usize b_sz = static_cast<usize>(other.size());
@@ -1222,24 +1166,19 @@ public:
 
       max_t na = posix::pread(__handle.fd, wa.begin(), take, static_cast<posix::off_t>(scan));
       max_t nb = posix::pread(other.__handle.fd, wb.begin(), take, static_cast<posix::off_t>(scan));
-      if ( na <= 0 || nb <= 0 )
-        break;
+      if ( na <= 0 || nb <= 0 ) break;
 
       usize cmp_n = static_cast<usize>(na) < static_cast<usize>(nb) ? static_cast<usize>(na) : static_cast<usize>(nb);
 
       for ( usize i = 0; i < cmp_n; ++i ) {
-        if ( wa[i] < wb[i] )
-          return -1;
-        if ( wa[i] > wb[i] )
-          return 1;
+        if ( wa[i] < wb[i] ) return -1;
+        if ( wa[i] > wb[i] ) return 1;
       }
       scan += cmp_n;
     }
 
-    if ( a_sz < b_sz )
-      return -1;
-    if ( a_sz > b_sz )
-      return 1;
+    if ( a_sz < b_sz ) return -1;
+    if ( a_sz > b_sz ) return 1;
     return 0;
   }
 
@@ -1257,8 +1196,7 @@ public:
 
     while ( static_cast<usize>(off) < file_sz ) {
       max_t n = posix::pread(__handle.fd, win.begin(), chunk_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       fn(win.begin(), static_cast<usize>(n));
       data.append(*reinterpret_cast<const T *>(win.begin()), static_cast<usize>(n));
       off += n;
@@ -1268,8 +1206,7 @@ public:
   void
   atomic_replace(const byte *new_data, usize new_len)
   {
-    if ( fname.empty() )
-      exc<except::filesystem_error>("fsys::file::atomic_replace: no filename recorded.");
+    if ( fname.empty() ) exc<except::filesystem_error>("fsys::file::atomic_replace: no filename recorded.");
 
     micron::sstr<io::max_name> tmp_name(fname);
     tmp_name += ".tmp.";
@@ -1295,8 +1232,7 @@ public:
 
     posix::fd_t tmp{ (posix::openat(posix::at_fdcwd, tmp_name.c_str(),
                                     posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_cloexec, posix::mode_file)) };
-    if ( !tmp )
-      exc<except::filesystem_error>("fsys::file::atomic_replace: failed to create temp file.");
+    if ( !tmp ) exc<except::filesystem_error>("fsys::file::atomic_replace: failed to create temp file.");
 
     usize written = 0;
     while ( written < new_len ) {

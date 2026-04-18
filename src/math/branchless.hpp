@@ -191,8 +191,7 @@ mul_const(int x, int k)
 {
   int res = 0;
   for ( int i = 0; k; ++i ) {
-    if ( k & 1 )
-      res += x << i;
+    if ( k & 1 ) res += x << i;
     k >>= 1;
   }
   return res;
@@ -590,8 +589,7 @@ popcount64(u64 x)
 constexpr int
 clz(u32 x)
 {
-  if ( x == 0 )
-    return 32;
+  if ( x == 0 ) return 32;
   int n = 0;
   if ( (x >> 16) == 0 ) {
     n += 16;
@@ -609,16 +607,14 @@ clz(u32 x)
     n += 2;
     x <<= 2;
   }
-  if ( (x >> 31) == 0 )
-    n += 1;
+  if ( (x >> 31) == 0 ) n += 1;
   return n;
 }
 
 constexpr int
 clz64(u64 x)
 {
-  if ( x == 0 )
-    return 64;
+  if ( x == 0 ) return 64;
   int n = 0;
   if ( (x >> 32) == 0 ) {
     n += 32;
@@ -640,8 +636,7 @@ clz64(u64 x)
     n += 2;
     x <<= 2;
   }
-  if ( (x >> 63) == 0 )
-    n += 1;
+  if ( (x >> 63) == 0 ) n += 1;
   return n;
 }
 

@@ -145,8 +145,7 @@ rerun_worker:
     wait_futex(payload->has_work.ptr(), 0);
   }
   // doesn't need to be atomic
-  if ( *payload->should_die.ptr() )
-    return return_force;
+  if ( *payload->should_die.ptr() ) return return_force;
   payload->queue.execute();
 
   if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) )
@@ -166,13 +165,11 @@ template <typename Fn, typename... Args>
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &fn, Args &...args)
 {
-  if ( payload == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): invalid arguments");
+  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): invalid arguments");
 
   pthread_t pid = pthread::create_thread(attrs, __thread_kernel<Fn &, Args &...>, payload, fn, args...);
 
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
+  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
 
   return pid;
 }
@@ -183,8 +180,7 @@ template <typename Fn, typename... Args>
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &&fn, Args &&...args)
 {
-  if ( payload == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
+  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
 
   pthread_t pid
       = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
@@ -200,8 +196,7 @@ template <typename Fn, typename... Args>
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, const Fn &fn, const Args &...args)
 {
-  if ( payload == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
+  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
 
   pthread_t pid = pthread::create_thread(attrs, __thread_kernel<const Fn &, const Args &...>, payload, fn, args...);
 
@@ -217,13 +212,11 @@ template <auto Fn = __worker_kernel, typename P, typename... Args>
 pthread_t
 __as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, P *payload)
 {
-  if ( payload == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_unprepared_worker_thread_attached(): invalid arguments");
+  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_worker_thread_attached(): invalid arguments");
 
   pthread_t pid = pthread::create_thread(attrs, Fn, payload);
 
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
+  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
 
   return pid;
 }
@@ -245,8 +238,7 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &fn, Args &..
 
   pthread_t pid = pthread::create_thread(attrs, __thread_kernel<Fn &, Args &...>, payload, fn, args...);
 
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
+  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
 
   return pid;
 }
@@ -267,8 +259,7 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&
   pthread_t pid
       = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
 
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
+  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
   return pid;
 }
 
@@ -287,8 +278,7 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, const Fn &fn, co
 
   pthread_t pid = pthread::create_thread(attrs, __thread_kernel<const Fn &, const Args &...>, payload, fn, args...);
 
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
+  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
 
   return pid;
 }

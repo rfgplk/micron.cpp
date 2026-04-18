@@ -70,8 +70,7 @@ template <typename F>
 constexpr bool
 __is_64_wide(void)
 {
-  if constexpr ( micron::is_same_v<F, __v64> or micron::is_same_v<F, __uv64> )
-    return true;
+  if constexpr ( micron::is_same_v<F, __v64> or micron::is_same_v<F, __uv64> ) return true;
   return false;
 }
 
@@ -79,8 +78,7 @@ template <typename F>
 constexpr bool
 __is_32_wide(void)
 {
-  if constexpr ( micron::is_same_v<F, __v32> or micron::is_same_v<F, __uv32> )
-    return true;
+  if constexpr ( micron::is_same_v<F, __v32> or micron::is_same_v<F, __uv32> ) return true;
   return false;
 }
 
@@ -88,8 +86,7 @@ template <typename F>
 constexpr bool
 __is_16_wide(void)
 {
-  if constexpr ( micron::is_same_v<F, __v16> or micron::is_same_v<F, __uv16> )
-    return true;
+  if constexpr ( micron::is_same_v<F, __v16> or micron::is_same_v<F, __uv16> ) return true;
   return false;
 }
 
@@ -97,8 +94,7 @@ template <typename F>
 constexpr bool
 __is_8_wide(void)
 {
-  if constexpr ( micron::is_same_v<F, __v8> or micron::is_same_v<F, __uv8> )
-    return true;
+  if constexpr ( micron::is_same_v<F, __v8> or micron::is_same_v<F, __uv8> ) return true;
   return false;
 }
 

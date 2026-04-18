@@ -28,8 +28,7 @@ template <is_iterable_container T>
 constexpr T &
 sin(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::sin(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::sin(static_cast<double>(*it));
   return cont;
 }
 
@@ -37,8 +36,7 @@ template <is_iterable_container T>
 constexpr T &
 cos(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::cos(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::cos(static_cast<double>(*it));
   return cont;
 }
 
@@ -46,8 +44,7 @@ template <is_iterable_container T>
 constexpr T &
 tan(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::tan(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::tan(static_cast<double>(*it));
   return cont;
 }
 
@@ -55,8 +52,7 @@ template <is_iterable_container T>
 constexpr T &
 asin(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::asin(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::asin(static_cast<double>(*it));
   return cont;
 }
 
@@ -64,8 +60,7 @@ template <is_iterable_container T>
 constexpr T &
 acos(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::acos(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::acos(static_cast<double>(*it));
   return cont;
 }
 
@@ -73,8 +68,7 @@ template <is_iterable_container T>
 constexpr T &
 atan(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::atan(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::atan(static_cast<double>(*it));
   return cont;
 }
 
@@ -82,8 +76,7 @@ template <is_iterable_container T>
 constexpr T &
 sinh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::sinh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::sinh(static_cast<double>(*it));
   return cont;
 }
 
@@ -91,8 +84,7 @@ template <is_iterable_container T>
 constexpr T &
 cosh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::cosh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::cosh(static_cast<double>(*it));
   return cont;
 }
 
@@ -100,8 +92,7 @@ template <is_iterable_container T>
 constexpr T &
 tanh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::tanh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::tanh(static_cast<double>(*it));
   return cont;
 }
 
@@ -109,8 +100,7 @@ template <is_iterable_container T>
 constexpr T &
 exp(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::exp(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::exp(static_cast<double>(*it));
   return cont;
 }
 
@@ -118,8 +108,7 @@ template <is_iterable_container T>
 constexpr T &
 log(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::log(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::log(static_cast<double>(*it));
   return cont;
 }
 
@@ -127,8 +116,7 @@ template <is_iterable_container T>
 constexpr T &
 log10(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::log10(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::log10(static_cast<double>(*it));
   return cont;
 }
 
@@ -136,8 +124,7 @@ template <is_iterable_container T>
 constexpr T &
 sqrt(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::sqrt(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::sqrt(static_cast<double>(*it));
   return cont;
 }
 
@@ -145,8 +132,7 @@ template <is_iterable_container T>
 constexpr T &
 cbrt(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::cbrt(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::cbrt(static_cast<double>(*it));
   return cont;
 }
 
@@ -154,8 +140,7 @@ template <is_iterable_container T>
 constexpr T &
 absolute(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::abs(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::abs(static_cast<double>(*it));
   return cont;
 }
 
@@ -163,8 +148,7 @@ template <is_iterable_container T>
 constexpr T &
 sign(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = (*it > 0) - (*it < 0);
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = (*it > 0) - (*it < 0);
   return cont;
 }
 
@@ -172,8 +156,7 @@ template <is_iterable_container T>
 constexpr T &
 clip(T &cont, const typename T::value_type lo, const typename T::value_type hi) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = (*it < lo) ? lo : ((*it > hi) ? hi : *it);
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = (*it < lo) ? lo : ((*it > hi) ? hi : *it);
   return cont;
 }
 
@@ -181,8 +164,7 @@ template <is_iterable_container T>
 constexpr T &
 degrees(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = *it * (180.0 / math::pi);
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = *it * (180.0 / math::pi);
   return cont;
 }
 
@@ -190,8 +172,7 @@ template <is_iterable_container T>
 constexpr T &
 radians(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = *it * (math::pi / 180.0);
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = *it * (math::pi / 180.0);
   return cont;
 }
 
@@ -199,8 +180,7 @@ template <is_iterable_container T>
 constexpr T &
 asinh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::asinh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::asinh(static_cast<double>(*it));
   return cont;
 }
 
@@ -208,8 +188,7 @@ template <is_iterable_container T>
 constexpr T &
 acosh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::acosh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::acosh(static_cast<double>(*it));
   return cont;
 }
 
@@ -217,8 +196,7 @@ template <is_iterable_container T>
 constexpr T &
 atanh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it )
-    *it = math::atanh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::atanh(static_cast<double>(*it));
   return cont;
 }
 

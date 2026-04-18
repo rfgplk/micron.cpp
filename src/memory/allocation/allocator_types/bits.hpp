@@ -99,8 +99,7 @@ template <typename T> class stl_allocator
   allocate(usize cnt)
   {
     const auto ptr = micron::__alloc(sizeof(T) * cnt);
-    if ( !ptr )
-      exc<except::memory_error>();
+    if ( !ptr ) exc<except::memory_error>();
     return static_cast<T *>(ptr);
   }
 

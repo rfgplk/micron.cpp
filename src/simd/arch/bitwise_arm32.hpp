@@ -13,7 +13,7 @@ namespace micron
 namespace simd
 {
 
-[[gnu::always_inline]] static inline uint32_t
+__attribute__((always_inline)) static inline uint32_t
 __neon_movemask_u8(uint8x16_t v) noexcept
 {
   static const uint8x16_t kBitMask = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
@@ -36,12 +36,10 @@ find_first_set_128(const void *_ptr, usize len, const char b)
     uint8x16_t chunk = vld1q_u8(ptr + i);
     uint8x16_t cmp = vceqq_u8(chunk, char_reg);
     uint32_t mask = __neon_movemask_u8(cmp);
-    if ( mask )
-      return i + static_cast<usize>(__builtin_ctz(mask));
+    if ( mask ) return i + static_cast<usize>(__builtin_ctz(mask));
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == static_cast<unsigned char>(b) )
-      return i;
+    if ( ptr[i] == static_cast<unsigned char>(b) ) return i;
   return len;
 }
 
@@ -58,8 +56,7 @@ count_set_128(const void *_ptr, usize len, const char b)
     cnt += static_cast<usize>(__builtin_popcount(__neon_movemask_u8(cmp)));
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == static_cast<unsigned char>(b) )
-      ++cnt;
+    if ( ptr[i] == static_cast<unsigned char>(b) ) ++cnt;
   return cnt;
 }
 
@@ -72,12 +69,10 @@ any_set_128(const void *_ptr, usize len, const char b)
   for ( ; i + 15 < len; i += 16 ) {
     uint8x16_t chunk = vld1q_u8(ptr + i);
     uint8x16_t cmp = vceqq_u8(chunk, char_reg);
-    if ( __neon_movemask_u8(cmp) )
-      return true;
+    if ( __neon_movemask_u8(cmp) ) return true;
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == static_cast<unsigned char>(b) )
-      return true;
+    if ( ptr[i] == static_cast<unsigned char>(b) ) return true;
   return false;
 }
 
@@ -90,12 +85,10 @@ all_set_128(const void *_ptr, usize len, const char b)
   for ( ; i + 15 < len; i += 16 ) {
     uint8x16_t chunk = vld1q_u8(ptr + i);
     uint8x16_t cmp = vceqq_u8(chunk, char_reg);
-    if ( __neon_movemask_u8(cmp) != 0xFFFFu )
-      return false;
+    if ( __neon_movemask_u8(cmp) != 0xFFFFu ) return false;
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] != static_cast<unsigned char>(b) )
-      return false;
+    if ( ptr[i] != static_cast<unsigned char>(b) ) return false;
   return true;
 }
 
@@ -108,12 +101,10 @@ none_set_128(const void *_ptr, usize len, const char b)
   for ( ; i + 15 < len; i += 16 ) {
     uint8x16_t chunk = vld1q_u8(ptr + i);
     uint8x16_t cmp = vceqq_u8(chunk, char_reg);
-    if ( __neon_movemask_u8(cmp) )
-      return false;
+    if ( __neon_movemask_u8(cmp) ) return false;
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == static_cast<unsigned char>(b) )
-      return false;
+    if ( ptr[i] == static_cast<unsigned char>(b) ) return false;
   return true;
 }
 

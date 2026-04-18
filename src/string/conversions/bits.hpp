@@ -53,18 +53,15 @@ umul128(u64 a, u64 b)
 inline u64
 shiftright128(u64 lo, u64 hi, u32 dist)
 {
-  if ( dist == 0 )
-    return lo;
-  if ( dist >= 64 )
-    return hi >> (dist - 64);
+  if ( dist == 0 ) return lo;
+  if ( dist >= 64 ) return hi >> (dist - 64);
   return (lo >> dist) | (hi << (64 - dist));
 }
 
 inline u64
 shiftleft128(u64 lo, u64 hi, u32 dist)
 {
-  if ( dist == 0 )
-    return hi;
+  if ( dist == 0 ) return hi;
   if ( dist < 64 )
     return (hi << dist) | (lo >> (64 - dist));
   else
@@ -279,8 +276,7 @@ uint_to_buf_backward(char *end, u64 val)
 inline char *
 uint_to_buf_base_backward(char *end, u64 val, u32 base, bool upper)
 {
-  if ( base < 2 || base > 36 )
-    base = 10;
+  if ( base < 2 || base > 36 ) base = 10;
   if ( val == 0 ) {
     *--end = '0';
     return end;
@@ -442,8 +438,7 @@ pow5_factor(u64 v)
   u32 count = 0;
   while ( true ) {
     u64 q = v * inv5;
-    if ( q > thresh5 )
-      break;
+    if ( q > thresh5 ) break;
     v = q;
     ++count;
   }
@@ -614,8 +609,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
   if ( trailingVm || trailingVr ) {
     for ( ;; ) {
       u64 vpD = vp / 10, vmD = vm / 10;
-      if ( vpD <= vmD )
-        break;
+      if ( vpD <= vmD ) break;
       u64 vrD = vr / 10;
       u32 vrM = static_cast<u32>(vr - 10 * vrD);
       trailingVm &= (vm - 10 * vmD == 0);
@@ -629,8 +623,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     if ( trailingVm ) {
       for ( ;; ) {
         u64 vmD = vm / 10;
-        if ( vm - 10 * vmD != 0 )
-          break;
+        if ( vm - 10 * vmD != 0 ) break;
         u64 vpD = vp / 10, vrD = vr / 10;
         u32 vrM = static_cast<u32>(vr - 10 * vrD);
         trailingVr &= (lastRemoved == 0);
@@ -641,8 +634,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
         ++removed;
       }
     }
-    if ( trailingVr && lastRemoved == 5 && (vr & 1) == 0 )
-      lastRemoved = 4;
+    if ( trailingVr && lastRemoved == 5 && (vr & 1) == 0 ) lastRemoved = 4;
 
     u64 out = vr + ((vr == vm && (!acceptBounds || !trailingVm)) || lastRemoved >= 5 ? 1ull : 0ull);
     return { out, e10 + removed };
@@ -650,8 +642,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
     bool roundUp = false;
     for ( ;; ) {
       u64 vpD = vp / 10, vmD = vm / 10;
-      if ( vpD <= vmD )
-        break;
+      if ( vpD <= vmD ) break;
       u64 vrD = vr / 10;
       u32 vrM = static_cast<u32>(vr - 10 * vrD);
       roundUp = (vrM >= 5);
@@ -721,8 +712,7 @@ d2s_buffered(f64 value, char *buf)
       buf[2] = 'n';
       return 3;
     }
-    if ( sign )
-      buf[pos++] = '-';
+    if ( sign ) buf[pos++] = '-';
     buf[pos] = 'i';
     buf[pos + 1] = 'n';
     buf[pos + 2] = 'f';
@@ -730,16 +720,14 @@ d2s_buffered(f64 value, char *buf)
   }
 
   if ( ieeeExponent == 0 && ieeeMantissa == 0 ) {
-    if ( sign )
-      buf[pos++] = '-';
+    if ( sign ) buf[pos++] = '-';
     buf[pos] = '0';
     buf[pos + 1] = '.';
     buf[pos + 2] = '0';
     return pos + 3;
   }
 
-  if ( sign )
-    buf[pos++] = '-';
+  if ( sign ) buf[pos++] = '-';
 
   decimal64 dec = d2d(ieeeMantissa, ieeeExponent);
   u64 output = dec.mantissa;
@@ -755,34 +743,27 @@ d2s_buffered(f64 value, char *buf)
 
   if ( sciExp >= -3 && sciExp <= 7 ) {
     if ( exp >= 0 ) {
-      for ( usize i = 0; i < dlen; ++i )
-        buf[pos++] = dstart[i];
-      for ( i32 i = 0; i < exp; ++i )
-        buf[pos++] = '0';
+      for ( usize i = 0; i < dlen; ++i ) buf[pos++] = dstart[i];
+      for ( i32 i = 0; i < exp; ++i ) buf[pos++] = '0';
       buf[pos++] = '.';
       buf[pos++] = '0';
     } else if ( exp + static_cast<i32>(olength) > 0 ) {
       i32 intDigits = static_cast<i32>(olength) + exp;
-      for ( i32 i = 0; i < intDigits; ++i )
-        buf[pos++] = dstart[i];
+      for ( i32 i = 0; i < intDigits; ++i ) buf[pos++] = dstart[i];
       buf[pos++] = '.';
-      for ( usize i = static_cast<usize>(intDigits); i < dlen; ++i )
-        buf[pos++] = dstart[i];
+      for ( usize i = static_cast<usize>(intDigits); i < dlen; ++i ) buf[pos++] = dstart[i];
     } else {
       buf[pos++] = '0';
       buf[pos++] = '.';
       i32 leadingZeros = -(exp + static_cast<i32>(olength));
-      for ( i32 i = 0; i < leadingZeros; ++i )
-        buf[pos++] = '0';
-      for ( usize i = 0; i < dlen; ++i )
-        buf[pos++] = dstart[i];
+      for ( i32 i = 0; i < leadingZeros; ++i ) buf[pos++] = '0';
+      for ( usize i = 0; i < dlen; ++i ) buf[pos++] = dstart[i];
     }
   } else {
     buf[pos++] = dstart[0];
     if ( dlen > 1 ) {
       buf[pos++] = '.';
-      for ( usize i = 1; i < dlen; ++i )
-        buf[pos++] = dstart[i];
+      for ( usize i = 1; i < dlen; ++i ) buf[pos++] = dstart[i];
     }
     buf[pos++] = 'e';
     if ( sciExp >= 0 ) {
@@ -810,8 +791,7 @@ d2s_buffered(f64 value, char *buf)
 inline usize
 d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 {
-  if ( buf_sz < 4 )
-    return 0;
+  if ( buf_sz < 4 ) return 0;
   usize pos = 0;
 
   // bool negative = false;
@@ -840,8 +820,7 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
     buf[pos++] = '0';
     if ( precision > 0 ) {
       buf[pos++] = '.';
-      for ( u32 d = 0; d < precision && pos < buf_sz; ++d )
-        buf[pos++] = '0';
+      for ( u32 d = 0; d < precision && pos < buf_sz; ++d ) buf[pos++] = '0';
     }
     return pos;
   }
@@ -881,11 +860,9 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
     if ( precision > 0 && pos < buf_sz ) {
       buf[pos++] = '.';
       u32 leadZeros = static_cast<u32>(-intDigits);
-      for ( u32 d = 0; d < leadZeros && d < precision && pos < buf_sz; ++d )
-        buf[pos++] = '0';
+      for ( u32 d = 0; d < leadZeros && d < precision && pos < buf_sz; ++d ) buf[pos++] = '0';
       u32 emitted = leadZeros;
-      for ( u32 d = 0; emitted < precision && d < ryuLen && pos < buf_sz; ++d, ++emitted )
-        buf[pos++] = rstart[d];
+      for ( u32 d = 0; emitted < precision && d < ryuLen && pos < buf_sz; ++d, ++emitted ) buf[pos++] = rstart[d];
       while ( emitted < precision && pos < buf_sz ) {
         buf[pos++] = '0';
         ++emitted;
@@ -919,8 +896,7 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 inline usize
 d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 {
-  if ( buf_sz < 8 )
-    return 0;
+  if ( buf_sz < 8 ) return 0;
   usize pos = 0;
 
   if ( val < 0.0 ) {
@@ -946,8 +922,7 @@ d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
     buf[pos++] = '0';
     if ( precision > 0 ) {
       buf[pos++] = '.';
-      for ( u32 d = 0; d < precision && pos < buf_sz - 5; ++d )
-        buf[pos++] = '0';
+      for ( u32 d = 0; d < precision && pos < buf_sz - 5; ++d ) buf[pos++] = '0';
     }
     buf[pos++] = 'e';
     buf[pos++] = '+';
@@ -1018,12 +993,9 @@ d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 inline constexpr int
 hex_digit_val(char c)
 {
-  if ( c >= '0' && c <= '9' )
-    return c - '0';
-  if ( c >= 'a' && c <= 'f' )
-    return c - 'a' + 10;
-  if ( c >= 'A' && c <= 'F' )
-    return c - 'A' + 10;
+  if ( c >= '0' && c <= '9' ) return c - '0';
+  if ( c >= 'a' && c <= 'f' ) return c - 'a' + 10;
+  if ( c >= 'A' && c <= 'F' ) return c - 'A' + 10;
   return -1;
 }
 

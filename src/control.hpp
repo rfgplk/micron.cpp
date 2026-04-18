@@ -38,8 +38,7 @@ crash(void)
     // assert(false);
   } else if constexpr ( x ) {
     char *a = nullptr;
-    for ( int i = 0;; i++ )
-      *(a + i) = 0xFF;
+    for ( int i = 0;; i++ ) *(a + i) = 0xFF;
   }
 }
 
@@ -48,8 +47,7 @@ halt()
 {
   auto pid = posix::getpid();
   int r = posix::kill(pid, static_cast<int>(signal::terminate));
-  if ( r < 0 )
-    r = posix::kill(pid, static_cast<int>(signal::kill9));
+  if ( r < 0 ) r = posix::kill(pid, static_cast<int>(signal::kill9));
 }
 
 inline void

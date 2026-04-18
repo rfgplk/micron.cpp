@@ -48,23 +48,20 @@ public:
   void
   insert(const T &key)
   {
-    for ( usize i = 0; i < L; i++ )
-      bits.set(hash_round(key, i));
+    for ( usize i = 0; i < L; i++ ) bits.set(hash_round(key, i));
   }
 
   void
   emplace(T &&key)
   {
-    for ( usize i = 0; i < L; i++ )
-      bits.set(hash_round(key, i));
+    for ( usize i = 0; i < L; i++ ) bits.set(hash_round(key, i));
   }
 
   bool
   contains(const T &key)
   {
     bool f = true;
-    for ( usize i = 0; i < L; i++ )
-      f = f && bits[hash_round(key, i)];
+    for ( usize i = 0; i < L; i++ ) f = f && bits[hash_round(key, i)];
     return f;
   }
 };

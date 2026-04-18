@@ -37,8 +37,7 @@ public:
     if ( !mtx ) {
       rmtx = mtx();
     } else {
-      if ( fptr )
-        fptr(&mtx, rmtx);
+      if ( fptr ) fptr(&mtx, rmtx);
       return false;
     }
     return true;

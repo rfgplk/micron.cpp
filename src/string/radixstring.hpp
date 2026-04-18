@@ -118,8 +118,7 @@ inline usize
 emit_lead8(char *buf, u32 v)
 {
   // v in [0, 99999999], nonzero
-  if ( v < 10000 )
-    return emit_lead4(buf, v);
+  if ( v < 10000 ) return emit_lead4(buf, v);
   u32 hi = static_cast<u32>(micron::__impl::fast_div10000(static_cast<u64>(v)));
   u32 lo = v - hi * 10000;
   usize hlen = emit_lead4(buf, hi);
@@ -203,8 +202,7 @@ int_to_string(I n)
   }
 
   usize off = 0;
-  if ( neg )
-    tmp[off++] = '-';
+  if ( neg ) tmp[off++] = '-';
   usize dlen = __impl::rtable_u64(tmp + off, static_cast<u64>(uval));
   usize total = off + dlen;
 
@@ -252,15 +250,13 @@ int_to_string_stack(I n)
   }
 
   usize off = 0;
-  if ( neg )
-    tmp[off++] = '-';
+  if ( neg ) tmp[off++] = '-';
   usize dlen = __impl::rtable_u64(tmp + off, static_cast<u64>(uval));
   usize total = off + dlen;
 
   micron::sstring<N, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < total; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < total; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[total] = '\0';
   result._buf_set_length(total);
   return result;
@@ -276,8 +272,7 @@ uint_to_string_stack(I n)
   usize len = __impl::rtable_u64(tmp, static_cast<u64>(static_cast<U>(n)));
   micron::sstring<N, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < len; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -291,8 +286,7 @@ template <typename I, typename C = char>
 inline micron::hstring<C>
 int_to_string_base(I n, u32 base, bool upper = false)
 {
-  if ( base == 10 )
-    return int_to_string<I, C>(n);
+  if ( base == 10 ) return int_to_string<I, C>(n);
 
   char tmp[72];
   char *tend = tmp + 72;
@@ -311,8 +305,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
   }
 
   char *start = micron::__impl::uint_to_buf_base_backward(tend, static_cast<u64>(uval), base, upper);
-  if ( neg )
-    *--start = '-';
+  if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::hstring<C> result(len);
   micron::memcpy(&result[0], start, len);
@@ -325,8 +318,7 @@ template <typename I, typename C = char>
 inline micron::hstring<C>
 uint_to_string_base(I n, u32 base, bool upper = false)
 {
-  if ( base == 10 )
-    return uint_to_string<I, C>(n);
+  if ( base == 10 ) return uint_to_string<I, C>(n);
 
   using U = micron::make_unsigned_t<I>;
   char tmp[72];
@@ -411,8 +403,7 @@ inline micron::hstring<C>
 int_to_string_padded(I n, usize width)
 {
   micron::hstring<C> raw = int_to_string<I, C>(n);
-  if ( raw.size() >= width )
-    return raw;
+  if ( raw.size() >= width ) return raw;
   micron::hstring<C> result(width + 1);
   C *out = &result[0];
   usize cstart = 0;
@@ -423,12 +414,9 @@ int_to_string_padded(I n, usize width)
   }
   usize pad = width - raw.size();
   usize pos = 0;
-  if ( neg )
-    out[pos++] = '-';
-  for ( usize i = 0; i < pad; ++i )
-    out[pos++] = '0';
-  for ( usize i = cstart; i < raw.size(); ++i )
-    out[pos++] = raw[i];
+  if ( neg ) out[pos++] = '-';
+  for ( usize i = 0; i < pad; ++i ) out[pos++] = '0';
+  for ( usize i = cstart; i < raw.size(); ++i ) out[pos++] = raw[i];
   result._buf_set_length(pos);
   return result;
 }

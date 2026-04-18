@@ -26,6 +26,10 @@ constexpr const string_type __compiler_gpp = "/usr/bin/g++";
 constexpr const string_type __compiler_clangpp = "/usr/bin/clang++";
 constexpr const string_type __assembler_nasm = "/usr/bin/nasm";
 
+// Fedora cross compiler paths (linaro sourced, not standard!)
+constexpr const string_type __compiler_gcc_arm_cross = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-gcc";
+constexpr const string_type __compiler_gpp_arm_cross = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-c++";
+
 struct std_entry {
   const string_type *full;
   const char *suffix;
@@ -90,7 +94,7 @@ struct config_t {
   bool warnings = false;
   bool static_binary = false;
   bool freestanding = false;
-  bool check_compileability = true; // check include paths for updates - default true
+  bool check_compileability = true;     // check include paths for updates - default true
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
@@ -189,10 +193,17 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     conf.compiler_path = __assembler_nasm;
     break;
   case __compilers::gnucc :
-    if ( conf.language == __languages::c )
-      conf.compiler_path = __compiler_gcc;
-    else if ( conf.language == __languages::cpp )
-      conf.compiler_path = __compiler_gpp;
+    if ( conf.arch == __arch::x86 ) {
+      if ( conf.language == __languages::c )
+        conf.compiler_path = __compiler_gcc;
+      else if ( conf.language == __languages::cpp )
+        conf.compiler_path = __compiler_gpp;
+    } else if ( conf.arch == __arch::arm ) {
+      if ( conf.language == __languages::c )
+        conf.compiler_path = __compiler_gcc_arm_cross;
+      else if ( conf.language == __languages::cpp )
+        conf.compiler_path = __compiler_gpp_arm_cross;
+    }
     break;
   case __compilers::clang :
     if ( conf.language == __languages::c )

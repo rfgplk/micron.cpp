@@ -21,8 +21,7 @@ template <is_string S = micron::string, char C = '\n'>
 inline bool
 __read_from(S &buf, const fd_t &handle)
 {
-  if ( handle.has_error() or !handle.open() )
-    return false;
+  if ( handle.has_error() or !handle.open() ) return false;
   // micron::slice<char> buf(4096);
   usize needle = 0;
   buf.push_back('0');
@@ -30,8 +29,7 @@ __read_from(S &buf, const fd_t &handle)
   while ( buf[needle] != C )     // stop char to look for, if any
   {
     if constexpr ( requires { typename S::memory_type; } and micron::is_same_v<typename S::memory_type, stack_tag> ) {
-      if ( needle >= buf.max_size() )
-        break;
+      if ( needle >= buf.max_size() ) break;
     }
     buf.push_back('0');
     io::fget_byte(buf.end() - 1, handle);
@@ -52,18 +50,15 @@ template <is_string S = micron::string, bool Echo = false>
 void
 terminal(S &bf)
 {
-  if ( !io::__read_from<S, '\n'>(bf, micron::io::stdin) )
-    exc<except::io_error>("from_terminal(): failed to read from stream.");
-  if constexpr ( Echo )
-    io::println(bf);
+  if ( !io::__read_from<S, '\n'>(bf, micron::io::stdin) ) exc<except::io_error>("from_terminal(): failed to read from stream.");
+  if constexpr ( Echo ) io::println(bf);
 }
 
 template <is_string S = micron::string, char End = '\n'>
 void
 from_terminal(S &bf)
 {
-  if ( !io::__read_from<S, End>(bf, micron::io::stdin) )
-    exc<except::io_error>("from_terminal(): failed to read from stream.");
+  if ( !io::__read_from<S, End>(bf, micron::io::stdin) ) exc<except::io_error>("from_terminal(): failed to read from stream.");
 }
 
 template <is_string S = micron::string, char End = '\n'>
@@ -71,8 +66,7 @@ S
 from_terminal(void)
 {
   S bf{};
-  if ( !io::__read_from<S, End>(bf, micron::io::stdin) )
-    exc<except::io_error>("from_terminal(): failed to read from stream.");
+  if ( !io::__read_from<S, End>(bf, micron::io::stdin) ) exc<except::io_error>("from_terminal(): failed to read from stream.");
   return bf;
 }
 
@@ -81,10 +75,8 @@ S
 terminal(void)
 {
   S bf;
-  if ( !io::__read_from<S, '\n'>(bf, micron::io::stdin) )
-    exc<except::io_error>("from_terminal(): failed to read from stream.");
-  if constexpr ( Echo )
-    io::println(bf);
+  if ( !io::__read_from<S, '\n'>(bf, micron::io::stdin) ) exc<except::io_error>("from_terminal(): failed to read from stream.");
+  if constexpr ( Echo ) io::println(bf);
   return bf;
 }
 

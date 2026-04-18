@@ -44,8 +44,7 @@ public:
 
   ~conqueue()
   {
-    if ( __mem::memory == nullptr )
-      return;
+    if ( __mem::memory == nullptr ) return;
     clear();
   }
 
@@ -71,15 +70,13 @@ public:
   conqueue(const umax_t n, const T val) : __mem(n), needle(__mem::capacity - 1)
 
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push(val);
+    for ( umax_t i = 0; i < n; i++ ) push(val);
   }
 
   conqueue(const umax_t n) : __mem(n), needle(__mem::capacity - 1)
 
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push();
+    for ( umax_t i = 0; i < n; i++ ) push();
   }
 
   conqueue(const conqueue &o) : __mem(o.length), needle(o.needle)
@@ -95,8 +92,7 @@ public:
   operator=(const conqueue &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::capacity <= o.length )
-      resize(o.length + 1);
+    if ( __mem::capacity <= o.length ) resize(o.length + 1);
     __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     needle = o.needle;
@@ -107,11 +103,9 @@ public:
   clear()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !__mem::length )
-      return;
+    if ( !__mem::length ) return;
     if constexpr ( micron::is_class_v<T> ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        (__mem::memory)[i].~T();
+      for ( usize i = 0; i < __mem::length; i++ ) (__mem::memory)[i].~T();
     }
     micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
     __mem::length = 0;
@@ -234,8 +228,7 @@ public:
   push(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{};
     } else {
@@ -248,8 +241,7 @@ public:
   push(T &&val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{ micron::move(val) };
     } else {
@@ -262,8 +254,7 @@ public:
   push(const T &val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{ val };
     } else {
@@ -276,8 +267,7 @@ public:
   pop(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length == 0 or needle == 0 )
-      return *this;
+    if ( __mem::length == 0 or needle == 0 ) return *this;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
       (__mem::memory)[needle].~T();
     } else {

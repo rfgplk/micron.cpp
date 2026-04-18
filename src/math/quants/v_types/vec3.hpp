@@ -36,8 +36,7 @@ struct vector_3 {
 
   constexpr vector_3(const std::initializer_list<T> &o)
   {
-    if ( o.size() != 3 )
-      exc<except::library_error>("vector_3(): initializer_list size isn't equal to 3");
+    if ( o.size() != 3 ) exc<except::library_error>("vector_3(): initializer_list size isn't equal to 3");
     auto it = o.begin();
     x = *it++;
     y = *it++;
@@ -288,8 +287,7 @@ struct vector_3 {
   {
     T nd = dot(normal);
     T k = T{ 1 } - eta * eta * (T{ 1 } - nd * nd);
-    if ( k < T{ 0 } )
-      return {};
+    if ( k < T{ 0 } ) return {};
     return *this * eta - normal * (eta * nd + math::fsqrt(k));
   }
 
@@ -554,20 +552,16 @@ struct vector_3 {
   constexpr int
   argmin() const
   {
-    if ( x <= y && x <= z )
-      return 0;
-    if ( y <= z )
-      return 1;
+    if ( x <= y && x <= z ) return 0;
+    if ( y <= z ) return 1;
     return 2;
   }
 
   constexpr int
   argmax() const
   {
-    if ( x >= y && x >= z )
-      return 0;
-    if ( y >= z )
-      return 1;
+    if ( x >= y && x >= z ) return 0;
+    if ( y >= z ) return 1;
     return 2;
   }
 

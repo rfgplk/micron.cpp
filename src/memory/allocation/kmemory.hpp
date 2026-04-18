@@ -34,8 +34,7 @@ template <typename T = byte> struct alignas(16) __chunk {     // total memory al
   bool
   zero(void) const noexcept
   {
-    if ( ptr == nullptr or len == 0 )
-      return true;
+    if ( ptr == nullptr or len == 0 ) return true;
     return false;
   }
 

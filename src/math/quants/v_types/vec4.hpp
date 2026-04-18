@@ -36,8 +36,7 @@ struct vector_4 {
 
   constexpr vector_4(const std::initializer_list<T> &o)
   {
-    if ( o.size() != 4 )
-      exc<except::library_error>("vector_4(): initializer_list size isn't equal to 4");
+    if ( o.size() != 4 ) exc<except::library_error>("vector_4(): initializer_list size isn't equal to 4");
     auto it = o.begin();
     x = *it++;
     y = *it++;
@@ -290,8 +289,7 @@ struct vector_4 {
   {
     T nd = dot(normal);
     T k = T{ 1 } - eta * eta * (T{ 1 } - nd * nd);
-    if ( k < T{ 0 } )
-      return {};
+    if ( k < T{ 0 } ) return {};
     return *this * eta - normal * (eta * nd + math::fsqrt(k));
   }
 

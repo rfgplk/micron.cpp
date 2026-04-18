@@ -50,8 +50,7 @@ public:
 
   ~istring()
   {
-    if ( __mem::is_zero() )
-      return;
+    if ( __mem::is_zero() ) return;
     clear();
   }
 
@@ -204,32 +203,28 @@ public:
   inline sstring<256, T>
   stack(void) const
   {
-    if ( __mem::size >= 255 )
-      exc<except::library_error>("micron::istring stack() out of memory.");
+    if ( __mem::size >= 255 ) exc<except::library_error>("micron::istring stack() out of memory.");
     return sstr<512, T>(c_str());
   };
 
   inline const char *
   c_str() const
   {
-    if ( __mem::memory == nullptr )
-      return _null_str;
+    if ( __mem::memory == nullptr ) return _null_str;
     return reinterpret_cast<const char *>(&(__mem::memory)[0]);
   };
 
   inline const wide *
   w_str() const
   {
-    if ( __mem::memory == nullptr )
-      return _null_wstr;
+    if ( __mem::memory == nullptr ) return _null_wstr;
     return reinterpret_cast<const wide *>(&(__mem::memory)[0]);
   };
 
   inline const unicode32 *
   uni_str() const
   {
-    if ( __mem::memory == nullptr )
-      return _null_u32str;
+    if ( __mem::memory == nullptr ) return _null_u32str;
     return reinterpret_cast<const unicode32 *>(&(__mem::memory)[0]);
   };
 
@@ -257,8 +252,7 @@ public:
   find(F ch, usize pos = 0) const
   {
     for ( ; pos < __mem::length; pos++ ) {
-      if ( (__mem::memory)[pos] == ch )
-        return pos;
+      if ( (__mem::memory)[pos] == ch ) return pos;
     }
     return npos;
   }
@@ -471,15 +465,13 @@ public:
   insert(usize ind, const char (&str)[M], usize cnt = 1)
   {
     usize str_len = M - 1;
-    if ( ind > __mem::length )
-      exc<except::library_error>("micron:string at() out of range");
+    if ( ind > __mem::length ) exc<except::library_error>("micron:string at() out of range");
 
     istring t(__mem::length + cnt * str_len);
 
     micron::memcpy(t.memory, __mem::memory, ind);
 
-    for ( usize i = 0; i < cnt; ++i )
-      micron::memcpy(t.memory + ind + i * str_len, str, str_len);
+    for ( usize i = 0; i < cnt; ++i ) micron::memcpy(t.memory + ind + i * str_len, str, str_len);
 
     micron::memcpy(t.memory + ind + cnt * str_len, __mem::memory + ind, __mem::length - ind);
 
@@ -506,24 +498,21 @@ public:
   inline const T &
   at(const usize n) const
   {
-    if ( n >= __mem::length )
-      exc<except::library_error>("micron:string at() out of range");
+    if ( n >= __mem::length ) exc<except::library_error>("micron:string at() out of range");
     return (__mem::memory)[n];
   };
 
   inline usize
   at(const_iterator n) const
   {
-    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 ) exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
 
   inline usize
   at(iterator n) const
   {
-    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 )
-      exc<except::library_error>("micron:sstring at() out of range");
+    if ( n - &__mem::memory[0] > 256 or n - &__mem::memory[0] < 0 ) exc<except::library_error>("micron:sstring at() out of range");
     return n - &__mem::memory[0];
   };
 
@@ -622,8 +611,7 @@ public:
   inline istring<F>
   substr(usize pos = 0, usize cnt = 0) const
   {
-    if ( pos > __mem::length or (cnt + pos) > __mem::capacity )
-      exc<except::library_error>("error micron::string substr invalid range.");
+    if ( pos > __mem::length or (cnt + pos) > __mem::capacity ) exc<except::library_error>("error micron::string substr invalid range.");
     istring<F> buf(__mem::capacity);
     micron::memcpy(&buf[0], &__mem::memory[pos], cnt);
     buf[cnt] = '\0';
@@ -641,8 +629,7 @@ public:
     usize M = strlen(data);
     if ( M == __mem::length ) {
       for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
+        if ( data[i] != __mem::memory[i] ) return false;
     } else
       return false;
     return true;
@@ -654,8 +641,7 @@ public:
   {
     if ( M == __mem::length ) {
       for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
+        if ( data[i] != __mem::memory[i] ) return false;
     } else
       return false;
     return true;
@@ -667,8 +653,7 @@ public:
   {
     if ( data.length == __mem::length ) {
       for ( usize i = 0; i < __mem::length; i++ )
-        if ( data.memory[i] != __mem::memory[i] )
-          return false;
+        if ( data.memory[i] != __mem::memory[i] ) return false;
     } else
       return false;
     return true;
@@ -680,8 +665,7 @@ public:
     usize M = strlen(data);
     if ( M == __mem::length ) {
       for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
+        if ( data[i] != __mem::memory[i] ) return false;
     } else
       return false;
     return true;
@@ -693,8 +677,7 @@ public:
   {
     if ( M == __mem::length ) {
       for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] )
-          return false;
+        if ( data[i] != __mem::memory[i] ) return false;
     } else
       return false;
     return true;
@@ -706,8 +689,7 @@ public:
   {
     if ( data.length == __mem::length ) {
       for ( usize i = 0; i < __mem::length; i++ )
-        if ( data.memory[i] != __mem::memory[i] )
-          return false;
+        if ( data.memory[i] != __mem::memory[i] ) return false;
     } else
       return false;
     return true;

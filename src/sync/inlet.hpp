@@ -43,8 +43,7 @@ public:
   public:
     ~handle_t()
     {
-      if ( src )
-        src->mtx.unlock();
+      if ( src ) src->mtx.unlock();
     }
 
     handle_t(const handle_t &) = delete;

@@ -21,7 +21,7 @@ namespace micron::except
 {
 // NOTE: this must be enabled for tests
 #ifndef __DUCK_TESTING
-constexpr static const bool __use_exceptions = false;
+constexpr static const bool __use_exceptions = true;
 #else
 constexpr static const bool __use_exceptions = true;
 #endif

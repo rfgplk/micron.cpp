@@ -56,8 +56,7 @@ class radix_node
 
     ~node()
     {
-      for ( auto c : children )
-        delete c;
+      for ( auto c : children ) delete c;
     }
   };
 
@@ -67,8 +66,7 @@ class radix_node
   common_prefix_length(const Key &a, const Key &b)
   {
     usize i = 0;
-    while ( i < a.size() && i < b.size() && a[i] == b[i] )
-      i++;
+    while ( i < a.size() && i < b.size() && a[i] == b[i] ) i++;
     return i;
   }
 
@@ -162,8 +160,7 @@ public:
       usize prefix = common_prefix_length(cur->key_fragment, k.substr(pos));
       if ( prefix == cur->key_fragment.size() ) {
         pos += prefix;
-        if ( pos == k.size() )
-          return cur->is_leaf ? &cur->value : nullptr;
+        if ( pos == k.size() ) return cur->is_leaf ? &cur->value : nullptr;
         bool found = false;
         for ( auto c : cur->children ) {
           if ( c->key_fragment[0] == k[pos] ) {
@@ -172,8 +169,7 @@ public:
             break;
           }
         }
-        if ( !found )
-          return nullptr;
+        if ( !found ) return nullptr;
       } else
         return nullptr;
     }

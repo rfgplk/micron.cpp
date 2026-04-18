@@ -20,16 +20,14 @@ template <lock_starts S, is_mutex M = mutex> class unique_lock
   void
   __verify()
   {
-    if ( !mtx )
-      exc<except::library_error>("micron::unique_lock lock() no mtx");
+    if ( !mtx ) exc<except::library_error>("micron::unique_lock lock() no mtx");
   }
 
 public:
   ~unique_lock()
   {
     if ( rptr )
-      if ( mtx )
-        (mtx->*rptr)();
+      if ( mtx ) (mtx->*rptr)();
   }
 
   unique_lock(M *m)
@@ -88,8 +86,7 @@ public:
   {
     __verify();
     if ( !rptr ) {
-      if ( (*mtx).operator!() )
-        rptr = (*mtx).operator()();
+      if ( (*mtx).operator!() ) rptr = (*mtx).operator()();
     }
   }
 
@@ -97,8 +94,7 @@ public:
   unlocks()
   {
     __verify();
-    if ( rptr )
-      (mtx->*rptr)();
+    if ( rptr ) (mtx->*rptr)();
     rptr = nullptr;
   }
 

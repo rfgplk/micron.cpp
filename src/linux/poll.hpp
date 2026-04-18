@@ -24,8 +24,7 @@ template <i32 Events = posix::poll_in>
 inline pollfd
 make_poll(const io::fd_t &hnd)
 {
-  if ( hnd.has_error() )
-    return {};
+  if ( hnd.has_error() ) return {};
   pollfd pfd{};
   pfd.fd = hnd.fd;
   pfd.events = static_cast<i16>(Events);
@@ -45,8 +44,7 @@ make_poll(i32 raw_fd)
 inline pollfd
 make_poll(const io::fd_t &hnd, i32 events)
 {
-  if ( hnd.has_error() )
-    return {};
+  if ( hnd.has_error() ) return {};
   pollfd pfd{};
   pfd.fd = hnd.fd;
   pfd.events = static_cast<i16>(events);
@@ -78,16 +76,14 @@ template <usize N>
 inline void
 make_poll(const io::fd_t (&handles)[N], pollfd (&out)[N], i32 events = posix::poll_in)
 {
-  for ( usize i = 0; i < N; ++i )
-    out[i] = make_poll(handles[i], events);
+  for ( usize i = 0; i < N; ++i ) out[i] = make_poll(handles[i], events);
 }
 
 template <usize N>
 inline void
 make_poll(const i32 (&fds)[N], pollfd (&out)[N], i32 events = posix::poll_in)
 {
-  for ( usize i = 0; i < N; ++i )
-    out[i] = make_poll(fds[i], events);
+  for ( usize i = 0; i < N; ++i ) out[i] = make_poll(fds[i], events);
 }
 
 inline i32
@@ -473,13 +469,13 @@ public:
   }
 
   i32
-  wait_ns(epoll_event *events, i32 maxevents, const timespec &timeout, const sigset_t &mask) const
+  wait_ns(epoll_event *events, i32 maxevents, const timespec_t &timeout, const sigset_t &mask) const
   {
     return posix::epoll_pwait2(epfd_, events, maxevents, timeout, mask);
   }
 
   i32
-  wait_ns(epoll_event *events, i32 maxevents, const timespec &timeout) const
+  wait_ns(epoll_event *events, i32 maxevents, const timespec_t &timeout) const
   {
     return posix::epoll_pwait2(epfd_, events, maxevents, &timeout, nullptr);
   }
@@ -492,7 +488,7 @@ public:
 
   template <usize N>
   i32
-  wait_ns(epoll_event (&events)[N], const timespec &timeout, const sigset_t &mask) const
+  wait_ns(epoll_event (&events)[N], const timespec_t &timeout, const sigset_t &mask) const
   {
     return posix::epoll_pwait2(epfd_, events, static_cast<i32>(N), timeout, mask);
   }

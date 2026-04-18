@@ -401,15 +401,12 @@ protected:
   inline __attribute__((always_inline)) void
   __open_linux(const T &str, const modes mode)
   {
-    if ( !posix::verify(str) )
-      exc<except::io_error>("error in creating micron::file, malformed string.");
+    if ( !posix::verify(str) ) exc<except::io_error>("error in creating micron::file, malformed string.");
 
     if ( mode != modes::append && mode != modes::create && mode != modes::readwritecreate ) {
-      if ( !posix::exists(str) )
-        exc<except::io_error>("micron::file file doesn't exist");
+      if ( !posix::exists(str) ) exc<except::io_error>("micron::file file doesn't exist");
       // NOTE: allow opening character devices as a file
-      if ( !posix::is_file(str) and !posix::is_char_device(str) )
-        exc<except::io_error>("micron::file file isn't a file (check type)");
+      if ( !posix::is_file(str) and !posix::is_char_device(str) ) exc<except::io_error>("micron::file file isn't a file (check type)");
     }
 
     if constexpr ( is_string<T> ) {
@@ -418,8 +415,7 @@ protected:
       __handle.fd = static_cast<int>(__syscall_open(str, mode));
     }
 
-    if ( __handle.has_error() )
-      exc<except::io_error>("micron::file failed to open");
+    if ( __handle.has_error() ) exc<except::io_error>("micron::file failed to open");
 
     fname = str;
     micron::zero(&sd);
@@ -481,8 +477,7 @@ public:
   file &
   operator=(const char *name)
   {
-    if ( !name )
-      return *this;
+    if ( !name ) return *this;
     close();
     fname = name;
     reopen();
@@ -492,8 +487,7 @@ public:
   file &
   operator=(const micron::sstr<max_name> &name)
   {
-    if ( name.empty() )
-      return *this;
+    if ( name.empty() ) return *this;
     close();
     fname = name;
     reopen();
@@ -504,8 +498,7 @@ public:
   file &
   operator=(const T &name)
   {
-    if ( name.empty() )
-      return *this;
+    if ( name.empty() ) return *this;
     close();
     fname = name;
     reopen();
@@ -515,8 +508,7 @@ public:
   void
   close(void)
   {
-    if ( __handle.closed() )
-      return;
+    if ( __handle.closed() ) return;
     posix::close(__handle.fd);
     __handle.fd = posix::invalid_fd.fd;
   }
@@ -524,8 +516,7 @@ public:
   bool
   reopen(const modes mode = modes::read)
   {
-    if ( fname.size() == 0 )
-      return false;
+    if ( fname.size() == 0 ) return false;
     close();
     __handle.fd = static_cast<int>(__syscall_open(fname.c_str(), mode));
     micron::zero(&sd);
@@ -535,11 +526,9 @@ public:
   bool
   reopen(const char *name, const modes mode)
   {
-    if ( !name )
-      return false;
+    if ( !name ) return false;
     fname = name;
-    if ( fname.size() == 0 )
-      return false;
+    if ( fname.size() == 0 ) return false;
     close();
     __handle.fd = static_cast<int>(__syscall_open(fname.c_str(), mode));
     micron::zero(&sd);
@@ -551,15 +540,12 @@ public:
   stat(void) const
   {
     if constexpr ( B == STAT_EXISTING ) {
-      if ( !micron::is_zero(&sd) )
-        return;
+      if ( !micron::is_zero(&sd) ) return;
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd )
-        exc<except::io_error>("micron::file, fstat failed.");
+      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::file, fstat failed.");
     } else if constexpr ( B == STAT_OVERRIDE ) {
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd )
-        exc<except::io_error>("micron::file, fstat failed.");
+      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::file, fstat failed.");
     }
   }
 
@@ -961,8 +947,7 @@ public:
   {
     __alive();
     i32 r = (micron::fchown(__handle.fd, uid, gid));
-    if ( r == 0 )
-      micron::zero(&sd);
+    if ( r == 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -1053,8 +1038,7 @@ public:
   file &
   operator<<(const char *str)
   {
-    if ( !__alive() || str == nullptr )
-      return *this;
+    if ( !__alive() || str == nullptr ) return *this;
     posix::write(__handle.fd, str, micron::strlen(str));
     return *this;
   }
@@ -1221,8 +1205,7 @@ public:
   {
     __alive();
     i32 r = posix::truncate(__handle, length);
-    if ( r == 0 )
-      micron::zero(&sd);
+    if ( r == 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -1258,8 +1241,7 @@ public:
   {
     __alive();
     i32 r = (micron::fchmod(__handle.fd, mode));
-    if ( r == 0 )
-      micron::zero(&sd);
+    if ( r == 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -1274,8 +1256,7 @@ public:
   {
     __alive();
     i32 r = (micron::fchown(__handle.fd, uid, gid));
-    if ( r == 0 )
-      micron::zero(&sd);
+    if ( r == 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -1283,11 +1264,9 @@ public:
   rename(const char *newpath)
   {
     __alive();
-    if ( fname.size() == 0 )
-      return -1;
+    if ( fname.size() == 0 ) return -1;
     i32 r = (micron::rename(fname.c_str(), newpath));
-    if ( r == 0 )
-      fname = newpath;
+    if ( r == 0 ) fname = newpath;
     return r;
   }
 
@@ -1303,8 +1282,7 @@ public:
   unlink(void)
   {
     __alive();
-    if ( fname.size() == 0 )
-      return -1;
+    if ( fname.size() == 0 ) return -1;
     return micron::unlink(fname.c_str());
   }
 
@@ -1312,8 +1290,7 @@ public:
   link(const char *newpath) const
   {
     __alive();
-    if ( fname.size() == 0 )
-      return -1;
+    if ( fname.size() == 0 ) return -1;
     return micron::link(fname.c_str(), newpath);
   }
 
@@ -1329,8 +1306,7 @@ public:
   symlink(const char *linkpath) const
   {
     __alive();
-    if ( fname.size() == 0 )
-      return -1;
+    if ( fname.size() == 0 ) return -1;
     return micron::symlink(fname.c_str(), linkpath);
   }
 
@@ -1395,8 +1371,7 @@ public:
   set_cloexec(bool on = true)
   {
     i32 cur = get_fd_flags();
-    if ( cur < 0 )
-      return cur;
+    if ( cur < 0 ) return cur;
     return set_fd_flags(on ? (cur | 1) : (cur & ~1));
   }
 
@@ -1411,8 +1386,7 @@ public:
   set_nonblock(bool on = true)
   {
     i32 cur = get_status_flags();
-    if ( cur < 0 )
-      return cur;
+    if ( cur < 0 ) return cur;
     return set_status_flags(on ? (cur | posix::o_nonblock) : (cur & ~posix::o_nonblock));
   }
 
@@ -1420,8 +1394,7 @@ public:
   set_append(bool on = true)
   {
     i32 cur = get_status_flags();
-    if ( cur < 0 )
-      return cur;
+    if ( cur < 0 ) return cur;
     return set_status_flags(on ? (cur | posix::o_append) : (cur & ~posix::o_append));
   }
 
@@ -1495,8 +1468,7 @@ public:
   {
     __alive();
     i32 r = (micron::fallocate(__handle.fd, mode_flags, offset, len));
-    if ( r == 0 )
-      micron::zero(&sd);
+    if ( r == 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -1536,8 +1508,7 @@ public:
   {
     __alive();
     max_t r = posix::copy_fd(__handle, src, count);
-    if ( r > 0 )
-      micron::zero(&sd);
+    if ( r > 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -1776,11 +1747,9 @@ protected:
   void
   _load_stat(void) const
   {
-    if ( !_st_dirty )
-      return;
+    if ( !_st_dirty ) return;
     _st_dirty = false;
-    if ( __path[0] )
-      posix::__impl::__lstat(__path, _st);
+    if ( __path[0] ) posix::__impl::__lstat(__path, _st);
   }
 
 public:
@@ -1894,8 +1863,7 @@ public:
   create(const char *target)
   {
     i32 r = (posix::symlink(target, __path));
-    if ( r == 0 )
-      _st_dirty = true;
+    if ( r == 0 ) _st_dirty = true;
     return r;
   }
 
@@ -1917,8 +1885,7 @@ public:
   {
     char buf[posix::path_max];
     max_t n = read_target(buf, posix::path_max - 1);
-    if ( n <= 0 )
-      return micron::sstr<posix::path_max>{};
+    if ( n <= 0 ) return micron::sstr<posix::path_max>{};
     buf[n] = '\0';
     return micron::sstr<posix::path_max>{ buf };
   }
@@ -1933,8 +1900,7 @@ public:
   chown(posix::uid_t uid, posix::gid_t gid)
   {
     i32 r = (micron::fchownat(posix::at_fdcwd, __path, uid, gid, posix::at_symlink_nofollow));
-    if ( r == 0 )
-      _st_dirty = true;
+    if ( r == 0 ) _st_dirty = true;
     return r;
   }
 
@@ -1977,8 +1943,7 @@ struct directory_file : public file {
   void
   for_each(Fn &&fn)
   {
-    if ( fname.size() )
-      posix::for_each_entry(fname.c_str(), fn);
+    if ( fname.size() ) posix::for_each_entry(fname.c_str(), fn);
   }
 
   bool

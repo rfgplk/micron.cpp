@@ -86,14 +86,12 @@ __calculate_space_bulk(usize sz)
 {
   // logarithmic taper
   long double factor = 1.0 + 0.1 * micron::math::logf128(static_cast<double>(sz) / (1024 * 1024 * 1024));
-  if ( factor < 1.0 )
-    factor = 1.0;     // never shrink
+  if ( factor < 1.0 ) factor = 1.0;     // never shrink
 
   usize t = static_cast<usize>(sz * factor);
 
   usize pow2_sz = 1;
-  while ( pow2_sz < t )
-    pow2_sz <<= 1;
+  while ( pow2_sz < t ) pow2_sz <<= 1;
   return pow2_sz;
 }
 

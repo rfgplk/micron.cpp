@@ -39,8 +39,7 @@ struct vector_8 {
 
   constexpr vector_8(const std::initializer_list<T> &o)
   {
-    if ( o.size() != 8 )
-      exc<except::library_error>("vector_8(): initializer_list size isn't equal to 8");
+    if ( o.size() != 8 ) exc<except::library_error>("vector_8(): initializer_list size isn't equal to 8");
     auto it = o.begin();
     x = *it++;
     y = *it++;
@@ -294,8 +293,7 @@ struct vector_8 {
   {
     T nd = dot(normal);
     T k = T{ 1 } - eta * eta * (T{ 1 } - nd * nd);
-    if ( k < T{ 0 } )
-      return {};
+    if ( k < T{ 0 } ) return {};
     return *this * eta - normal * (eta * nd + math::fsqrt(k));
   }
 
@@ -406,8 +404,7 @@ struct vector_8 {
     const T vs[8] = { x, y, z, w, a, b, c, d };
     int idx = 0;
     for ( int i = 1; i < 8; ++i )
-      if ( vs[i] < vs[idx] )
-        idx = i;
+      if ( vs[i] < vs[idx] ) idx = i;
     return idx;
   }
 
@@ -417,8 +414,7 @@ struct vector_8 {
     const T vs[8] = { x, y, z, w, a, b, c, d };
     int idx = 0;
     for ( int i = 1; i < 8; ++i )
-      if ( vs[i] > vs[idx] )
-        idx = i;
+      if ( vs[i] > vs[idx] ) idx = i;
     return idx;
   }
 

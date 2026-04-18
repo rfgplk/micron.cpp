@@ -24,8 +24,7 @@ make_uinput(void)
 {
   int r = 0;
   io::fd_t handle(posix::open("/dev/uinput", o_nonblock | o_wronly));
-  if ( handle.has_error() )
-    set_errno(5);
+  if ( handle.has_error() ) set_errno(5);
   return handle;
 }
 
@@ -45,8 +44,7 @@ template <typename... Args>
 void
 set_keys(const io::fd_t &handle, Args... args)
 {
-  if ( r = (micron::posix::ioctl(handle.fd, micron::ui_set_keybit(), args), ...); r != 0 )
-    set_errno(-r);
+  if ( r = (micron::posix::ioctl(handle.fd, micron::ui_set_keybit(), args), ...); r != 0 ) set_errno(-r);
 }
 
 void

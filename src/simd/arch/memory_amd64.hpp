@@ -35,10 +35,8 @@ memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
   const u64 rem = bytes % 16;
   if ( rem ) {
     u8 tmp[16] = {};
-    for ( u64 i = 0; i < rem; i++ )
-      tmp[i] = s[n * 16 + i];
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = tmp[i];
+    for ( u64 i = 0; i < rem; i++ ) tmp[i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = tmp[i];
   }
 
   return dest;
@@ -64,10 +62,8 @@ memcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
   const u64 rem = bytes % 32;
   if ( rem ) {
     u8 tmp[32] = {};
-    for ( u64 i = 0; i < rem; i++ )
-      tmp[i] = s[n * 32 + i];
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 32 + i] = tmp[i];
+    for ( u64 i = 0; i < rem; i++ ) tmp[i] = s[n * 32 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 32 + i] = tmp[i];
   }
 
   return dest;
@@ -93,10 +89,8 @@ memcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
   const u64 rem = bytes % 64;
   if ( rem ) {
     u8 tmp[64] = {};
-    for ( u64 i = 0; i < rem; i++ )
-      tmp[i] = s[n * 64 + i];
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 64 + i] = tmp[i];
+    for ( u64 i = 0; i < rem; i++ ) tmp[i] = s[n * 64 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 64 + i] = tmp[i];
   }
 
   return dest;
@@ -124,8 +118,7 @@ amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
   }
 
   return dest;
@@ -150,8 +143,7 @@ amemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 
   const u64 rem = bytes % 32;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 32 + i] = s[n * 32 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
   }
 
   return dest;
@@ -176,8 +168,7 @@ amemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 
   const u64 rem = bytes % 64;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 64 + i] = s[n * 64 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
   }
 
   return dest;
@@ -207,8 +198,7 @@ ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexce
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
   }
 
   return dest;
@@ -235,8 +225,7 @@ ntmemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexce
 
   const u64 rem = bytes % 32;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 32 + i] = s[n * 32 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
   }
 
   return dest;
@@ -263,8 +252,7 @@ ntmemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexce
 
   const u64 rem = bytes % 64;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 64 + i] = s[n * 64 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
   }
 
   return dest;
@@ -286,8 +274,7 @@ rmemcpy128(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
   }
   const u64 rem = (cnt * sizeof(D)) % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
   }
   return dest;
 }
@@ -305,8 +292,7 @@ rmemcpy256(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
   }
   const u64 rem = (cnt * sizeof(D)) % 32;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 32 + i] = s[n * 32 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
   }
   return dest;
 }
@@ -324,8 +310,7 @@ rmemcpy512(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
   }
   const u64 rem = (cnt * sizeof(D)) % 64;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 64 + i] = s[n * 64 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
   }
   return dest;
 }
@@ -343,8 +328,7 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(src);
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     // non-overlapping or dest is before src: forward copy
@@ -355,16 +339,14 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 16 + i] = s[n * 16 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
     }
   } else {
     // overlapping: dest is after src, must copy backward to avoid clobbering
     const u64 n = bytes / 16;
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 16 + i - 1] = s[n * 16 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       i128 pkt = _mm_loadu_si128(reinterpret_cast<const i128 *>(s + (i - 1) * 16));
@@ -385,8 +367,7 @@ memmove256(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(src);
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 32;
@@ -396,15 +377,13 @@ memmove256(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 32;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 32 + i] = s[n * 32 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
     }
   } else {
     const u64 n = bytes / 32;
     const u64 rem = bytes % 32;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 32 + i - 1] = s[n * 32 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 32 + i - 1] = s[n * 32 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       i256 pkt = _mm256_loadu_si256(reinterpret_cast<const i256 *>(s + (i - 1) * 32));
@@ -425,8 +404,7 @@ memmove512(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(src);
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 64;
@@ -436,15 +414,13 @@ memmove512(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 64;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 64 + i] = s[n * 64 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
     }
   } else {
     const u64 n = bytes / 64;
     const u64 rem = bytes % 64;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 64 + i - 1] = s[n * 64 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 64 + i - 1] = s[n * 64 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       i512 pkt = _mm512_loadu_si512(reinterpret_cast<const i512 *>(s + (i - 1) * 64));
@@ -468,8 +444,7 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(__builtin_assume_aligned(src, 16));
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 16;
@@ -479,15 +454,13 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 16 + i] = s[n * 16 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
     }
   } else {
     const u64 n = bytes / 16;
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 16 + i - 1] = s[n * 16 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       i128 pkt = _mm_load_si128(reinterpret_cast<const i128 *>(s + (i - 1) * 16));
@@ -508,8 +481,7 @@ amemmove256(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(__builtin_assume_aligned(src, 32));
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 32;
@@ -519,15 +491,13 @@ amemmove256(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 32;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 32 + i] = s[n * 32 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
     }
   } else {
     const u64 n = bytes / 32;
     const u64 rem = bytes % 32;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 32 + i - 1] = s[n * 32 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 32 + i - 1] = s[n * 32 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       i256 pkt = _mm256_load_si256(reinterpret_cast<const i256 *>(s + (i - 1) * 32));
@@ -548,8 +518,7 @@ amemmove512(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(__builtin_assume_aligned(src, 64));
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 64;
@@ -559,15 +528,13 @@ amemmove512(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 64;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 64 + i] = s[n * 64 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
     }
   } else {
     const u64 n = bytes / 64;
     const u64 rem = bytes % 64;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 64 + i - 1] = s[n * 64 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 64 + i - 1] = s[n * 64 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       i512 pkt = _mm512_load_si512(reinterpret_cast<const i512 *>(s + (i - 1) * 64));
@@ -592,13 +559,11 @@ memset128(T *__restrict src, const u8 in, const u64 count) noexcept
   // broadcast byte to fill entire register
   const i128 v = _mm_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm_storeu_si128(reinterpret_cast<i128 *>(s + i * 16), v);
+  for ( u64 i = 0; i < n; i++ ) _mm_storeu_si128(reinterpret_cast<i128 *>(s + i * 16), v);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 16 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 16 + i] = in;
   }
 
   return src;
@@ -614,13 +579,11 @@ memset256(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i256 v = _mm256_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm256_storeu_si256(reinterpret_cast<i256 *>(s + i * 32), v);
+  for ( u64 i = 0; i < n; i++ ) _mm256_storeu_si256(reinterpret_cast<i256 *>(s + i * 32), v);
 
   const u64 rem = bytes % 32;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 32 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 32 + i] = in;
   }
 
   return src;
@@ -636,13 +599,11 @@ memset512(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i512 v = _mm512_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm512_storeu_si512(reinterpret_cast<i512 *>(s + i * 64), v);
+  for ( u64 i = 0; i < n; i++ ) _mm512_storeu_si512(reinterpret_cast<i512 *>(s + i * 64), v);
 
   const u64 rem = bytes % 64;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 64 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 64 + i] = in;
   }
 
   return src;
@@ -661,13 +622,11 @@ amemset128(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i128 v = _mm_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm_store_si128(reinterpret_cast<i128 *>(s + i * 16), v);
+  for ( u64 i = 0; i < n; i++ ) _mm_store_si128(reinterpret_cast<i128 *>(s + i * 16), v);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 16 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 16 + i] = in;
   }
 
   return src;
@@ -683,13 +642,11 @@ amemset256(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i256 v = _mm256_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm256_store_si256(reinterpret_cast<i256 *>(s + i * 32), v);
+  for ( u64 i = 0; i < n; i++ ) _mm256_store_si256(reinterpret_cast<i256 *>(s + i * 32), v);
 
   const u64 rem = bytes % 32;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 32 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 32 + i] = in;
   }
 
   return src;
@@ -705,13 +662,11 @@ amemset512(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i512 v = _mm512_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm512_storeu_si512(reinterpret_cast<i512 *>(s + i * 64), v);
+  for ( u64 i = 0; i < n; i++ ) _mm512_storeu_si512(reinterpret_cast<i512 *>(s + i * 64), v);
 
   const u64 rem = bytes % 64;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 64 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 64 + i] = in;
   }
 
   return src;
@@ -730,15 +685,13 @@ ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i128 v = _mm_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm_stream_si128(reinterpret_cast<i128 *>(s + i * 16), v);
+  for ( u64 i = 0; i < n; i++ ) _mm_stream_si128(reinterpret_cast<i128 *>(s + i * 16), v);
 
   _mm_sfence();
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 16 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 16 + i] = in;
   }
 
   return src;
@@ -754,15 +707,13 @@ ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i256 v = _mm256_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm256_stream_si256(reinterpret_cast<i256 *>(s + i * 32), v);
+  for ( u64 i = 0; i < n; i++ ) _mm256_stream_si256(reinterpret_cast<i256 *>(s + i * 32), v);
 
   _mm_sfence();
 
   const u64 rem = bytes % 32;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 32 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 32 + i] = in;
   }
 
   return src;
@@ -778,15 +729,13 @@ ntmemset512(T *__restrict src, const u8 in, const u64 count) noexcept
 
   const i512 v = _mm512_set1_epi8(static_cast<char>(in));
 
-  for ( u64 i = 0; i < n; i++ )
-    _mm512_stream_si512(reinterpret_cast<i512 *>(s + i * 64), v);
+  for ( u64 i = 0; i < n; i++ ) _mm512_stream_si512(reinterpret_cast<i512 *>(s + i * 64), v);
 
   _mm_sfence();
 
   const u64 rem = bytes % 64;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 64 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 64 + i] = in;
   }
 
   return src;
@@ -813,8 +762,7 @@ memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) no
       const u64 base = i * 16;
       const u64 limit = base + 16 < bytes ? base + 16 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
     }
   }
 
@@ -822,8 +770,7 @@ memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) no
   if ( rem ) {
     const u64 base = n * 16;
     for ( u64 i = 0; i < rem; i++ )
-      if ( s[base + i] != d[base + i] )
-        return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
+      if ( s[base + i] != d[base + i] ) return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
   }
 
   return 0;
@@ -847,8 +794,7 @@ memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) no
       const u64 base = i * 32;
       const u64 limit = base + 32 < bytes ? base + 32 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
     }
   }
 
@@ -856,8 +802,7 @@ memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) no
   if ( rem ) {
     const u64 base = n * 32;
     for ( u64 i = 0; i < rem; i++ )
-      if ( s[base + i] != d[base + i] )
-        return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
+      if ( s[base + i] != d[base + i] ) return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
   }
 
   return 0;
@@ -880,8 +825,7 @@ memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) no
       const u64 base = i * 64;
       const u64 limit = base + 64 < bytes ? base + 64 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
     }
   }
 
@@ -889,8 +833,7 @@ memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) no
   if ( rem ) {
     const u64 base = n * 64;
     for ( u64 i = 0; i < rem; i++ )
-      if ( s[base + i] != d[base + i] )
-        return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
+      if ( s[base + i] != d[base + i] ) return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
   }
 
   return 0;
@@ -917,8 +860,7 @@ amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) n
       const u64 base = i * 16;
       const u64 limit = base + 16 < bytes ? base + 16 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
     }
   }
 
@@ -926,8 +868,7 @@ amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) n
   if ( rem ) {
     const u64 base = n * 16;
     for ( u64 i = 0; i < rem; i++ )
-      if ( s[base + i] != d[base + i] )
-        return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
+      if ( s[base + i] != d[base + i] ) return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
   }
 
   return 0;
@@ -951,8 +892,7 @@ amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) n
       const u64 base = i * 32;
       const u64 limit = base + 32 < bytes ? base + 32 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
     }
   }
 
@@ -960,8 +900,7 @@ amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) n
   if ( rem ) {
     const u64 base = n * 32;
     for ( u64 i = 0; i < rem; i++ )
-      if ( s[base + i] != d[base + i] )
-        return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
+      if ( s[base + i] != d[base + i] ) return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
   }
 
   return 0;
@@ -984,8 +923,7 @@ amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) n
       const u64 base = i * 64;
       const u64 limit = base + 64 < bytes ? base + 64 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j]) - static_cast<unsigned>(d[j]));
     }
   }
 
@@ -993,8 +931,7 @@ amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) n
   if ( rem ) {
     const u64 base = n * 64;
     for ( u64 i = 0; i < rem; i++ )
-      if ( s[base + i] != d[base + i] )
-        return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
+      if ( s[base + i] != d[base + i] ) return static_cast<i64>(static_cast<unsigned>(s[base + i]) - static_cast<unsigned>(d[base + i]));
   }
 
   return 0;

@@ -40,8 +40,7 @@ struct auto_fd {
   auto_fd &
   operator=(auto_fd &&o) noexcept
   {
-    if ( fd.open() )
-      posix::close(fd.fd);
+    if ( fd.open() ) posix::close(fd.fd);
     fd = o.fd;
     o.fd.reset();
     return *this;
@@ -49,8 +48,7 @@ struct auto_fd {
 
   ~auto_fd()
   {
-    if ( fd.open() )
-      posix::close(fd.fd);
+    if ( fd.open() ) posix::close(fd.fd);
   }
 
   bool
@@ -204,8 +202,7 @@ readdir(const fd_t &_f)
   if ( __readdir_bufpos >= __readdir_nread ) {
     __readdir_nread = static_cast<usize>(posix::getdents64(_f.fd, &__readdir_buf, sizeof(__readdir_buf)));
     __readdir_bufpos = 0;
-    if ( __readdir_nread <= 0 )
-      return __impl_dir{ "", dt_end, 0 };
+    if ( __readdir_nread <= 0 ) return __impl_dir{ "", dt_end, 0 };
   }
 
   __linux_kernel_dirent64 *p = reinterpret_cast<__linux_kernel_dirent64 *>(__readdir_buf + __readdir_bufpos);
@@ -225,8 +222,7 @@ readdir_r(const fd_t &_f, readdir_ctx &ctx)
   if ( ctx.bufpos >= ctx.nread ) {
     ctx.nread = static_cast<usize>(posix::getdents64(_f.fd, ctx.buf, sizeof(ctx.buf)));
     ctx.bufpos = 0;
-    if ( ctx.nread <= 0 )
-      return { "", dt_end, 0 };
+    if ( ctx.nread <= 0 ) return { "", dt_end, 0 };
   }
 
   __linux_kernel_dirent64 *p = reinterpret_cast<__linux_kernel_dirent64 *>(ctx.buf + ctx.bufpos);
@@ -264,8 +260,7 @@ mkdir_p(const char *path, u32 mode = mode_dir)
       buf[j] = '\0';
       i32 r = posix::mkdir(buf, mode);
       // eexist, not loading in errno
-      if ( r < 0 && static_cast<u32>(-r) != 17u )
-        return r;
+      if ( r < 0 && static_cast<u32>(-r) != 17u ) return r;
       buf[j] = saved;
     }
   }
@@ -276,8 +271,7 @@ inline i32
 remove(const char *path)
 {
   i32 r = posix::unlink(path);
-  if ( r < 0 )
-    r = (posix::rmdir(path));
+  if ( r < 0 ) r = (posix::rmdir(path));
   return r;
 }
 
@@ -295,10 +289,8 @@ write_all(fd_t fd, const T &buf, usize len)
   const byte *p = real_addr_as<const byte>(buf);
   while ( written < len ) {
     max_t r = posix::write(fd.fd, p + written, len - written);
-    if ( r < 0 )
-      return r;
-    if ( r == 0 )
-      break;
+    if ( r < 0 ) return r;
+    if ( r == 0 ) break;
     written += static_cast<usize>(r);
   }
   return static_cast<max_t>(written);
@@ -312,10 +304,8 @@ write_all(fd_t fd, const T *buf, usize len)
   const byte *p = static_cast<const byte *>(buf);
   while ( written < len ) {
     max_t r = posix::write(fd.fd, p + written, len - written);
-    if ( r < 0 )
-      return r;
-    if ( r == 0 )
-      break;
+    if ( r < 0 ) return r;
+    if ( r == 0 ) break;
     written += static_cast<usize>(r);
   }
   return static_cast<max_t>(written);
@@ -329,10 +319,8 @@ read_all(fd_t fd, T *buf, usize len)
   byte *p = static_cast<byte *>(buf);
   while ( got < len ) {
     max_t r = posix::read(fd.fd, p + got, len - got);
-    if ( r < 0 )
-      return r;
-    if ( r == 0 )
-      break;     // EOF
+    if ( r < 0 ) return r;
+    if ( r == 0 ) break;     // EOF
     got += static_cast<usize>(r);
   }
   return static_cast<max_t>(got);
@@ -390,8 +378,7 @@ inline i32
 copy_file(const char *src, const char *dst, u32 mode = mode_file)
 {
   fd_t in = open_read(src);
-  if ( !in )
-    return in.fd;
+  if ( !in ) return in.fd;
 
   fd_t out = open_write(dst, mode);
   if ( !out ) {
@@ -426,8 +413,7 @@ struct dir_handle {
 
   ~dir_handle()
   {
-    if ( fd.open() )
-      close_fd(fd);
+    if ( fd.open() ) close_fd(fd);
   }
 
   bool
@@ -445,8 +431,7 @@ struct dir_handle {
   __impl_dir
   next()
   {
-    if ( !valid() )
-      return { "", dt_end, 0 };
+    if ( !valid() ) return { "", dt_end, 0 };
     return readdir(fd);
   }
 
@@ -462,17 +447,14 @@ inline void
 for_each_entry(const char *path, Fn &&fn)
 {
   dir_handle dh(path);
-  if ( !dh )
-    return;
+  if ( !dh ) return;
 
   readdir_ctx ctx{};
   for ( ;; ) {
     __impl_dir e = readdir_r(dh.fd, ctx);
-    if ( e.at_end() )
-      break;
+    if ( e.at_end() ) break;
     // Skip self and parent entries
-    if ( e.d_name[0] == '.' && (e.d_name[1] == '\0' || (e.d_name[1] == '.' && e.d_name[2] == '\0')) )
-      continue;
+    if ( e.d_name[0] == '.' && (e.d_name[1] == '\0' || (e.d_name[1] == '.' && e.d_name[2] == '\0')) ) continue;
     fn(e);
   }
 }

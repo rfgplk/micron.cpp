@@ -161,8 +161,7 @@ f64_to_char(f64 n, char *frm)
     *fptr++ = static_cast<char>('0' + (fpart % 10));
     fpart /= 10;
   } while ( fpart );
-  while ( fptr != fstr )
-    *buf++ = *--fptr;
+  while ( fptr != fstr ) *buf++ = *--fptr;
 
   *buf = '\0';
   return frm;
@@ -200,8 +199,7 @@ f32_to_char(f32 n, char *frm)
     *fptr++ = static_cast<char>('0' + (fpart % 10));
     fpart /= 10;
   } while ( fpart );
-  while ( fptr != fstr )
-    *buf++ = *--fptr;
+  while ( fptr != fstr ) *buf++ = *--fptr;
 
   *buf = '\0';
   return frm;
@@ -239,8 +237,7 @@ flong_to_char(flong n, char *frm)
     *fptr++ = static_cast<char>('0' + (fpart % 10));
     fpart /= 10;
   } while ( fpart );
-  while ( fptr != fstr )
-    *buf++ = *--fptr;
+  while ( fptr != fstr ) *buf++ = *--fptr;
 
   *buf = '\0';
   return frm;
@@ -278,8 +275,7 @@ f128_to_char(f128 n, char *frm)
     *fptr++ = static_cast<char>('0' + (fpart % 10));
     fpart /= 10;
   } while ( fpart );
-  while ( fptr != fstr )
-    *buf++ = *--fptr;
+  while ( fptr != fstr ) *buf++ = *--fptr;
 
   *buf = '\0';
   return frm;

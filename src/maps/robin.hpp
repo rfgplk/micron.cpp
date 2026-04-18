@@ -48,8 +48,7 @@ ctrl_scan_avx2(const u8 *__restrict__ p, usize plen) noexcept
   __m256i th_s = _mm256_xor_si256(thres, flip);
   __m256i gt = _mm256_cmpgt_epi8(cv_s, th_s);
   uint32_t mask = static_cast<uint32_t>(_mm256_movemask_epi8(gt));
-  if ( mask == 0xFFFF'FFFFu )
-    return 32;
+  if ( mask == 0xFFFF'FFFFu ) return 32;
   return static_cast<usize>(__builtin_ctz(~mask));
 }
 
@@ -68,8 +67,7 @@ ctrl_scan_sse2(const u8 *__restrict__ p, usize plen) noexcept
   __m128i th_s = _mm_xor_si128(thres, flip);
   __m128i gt = _mm_cmpgt_epi8(cv_s, th_s);
   uint32_t mask = static_cast<uint32_t>(static_cast<uint16_t>(_mm_movemask_epi8(gt)));
-  if ( mask == 0xFFFFu )
-    return 16;
+  if ( mask == 0xFFFFu ) return 16;
   return static_cast<usize>(__builtin_ctz(~mask));
 }
 
@@ -96,8 +94,7 @@ ctrl_scan_neon(const u8 *__restrict__ p, usize plen) noexcept
   r = vpadd_u8(r, r);
   r = vpadd_u8(r, r);
   uint16_t mask = static_cast<uint16_t>(vget_lane_u8(r, 0)) | (static_cast<uint16_t>(vget_lane_u8(r, 1)) << 8u);
-  if ( mask == 0xFFFFu )
-    return 16;
+  if ( mask == 0xFFFFu ) return 16;
   return static_cast<usize>(__builtin_ctz(~static_cast<uint32_t>(mask)));
 }
 #endif
@@ -191,11 +188,9 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
   static usize
   round_pow2(usize n) noexcept
   {
-    if ( n <= __min_cap )
-      return __min_cap;
+    if ( n <= __min_cap ) return __min_cap;
     usize p = 1;
-    while ( p < n )
-      p <<= 1;
+    while ( p < n ) p <<= 1;
     return p;
   }
 
@@ -286,8 +281,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
   __attribute__((always_inline)) void
   destroy_at(usize i) noexcept
   {
-    if constexpr ( !micron::is_trivially_destructible_v<Nd> )
-      node_at(i).~Nd();
+    if constexpr ( !micron::is_trivially_destructible_v<Nd> ) node_at(i).~Nd();
     ctrl_[i] = 0;
   }
 
@@ -299,8 +293,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
     for ( ;; ) {
       usize j = (i + 1u) & mask_;
 
-      if ( !occupied(j) || stored_dist(j) == 0u )
-        break;
+      if ( !occupied(j) || stored_dist(j) == 0u ) break;
 
       // prefetch 2 ctrl bytes ahead ctrl is 1 byte so +2 = next iter + 1
       __builtin_prefetch(&ctrl_[(j + 2u) & mask_], 0, 1);
@@ -348,10 +341,8 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
       hash64_t dh = (kh ^ node_at(index).hash) & hmask;
       kh ^= dh;
       node_at(index).hash ^= dh;
-      if ( steal )
-        micron::swap(orig_key, node_at(index).key);
-      if ( steal )
-        micron::swap(value, node_at(index).value);
+      if ( steal ) micron::swap(orig_key, node_at(index).key);
+      if ( steal ) micron::swap(value, node_at(index).value);
       ctrl_[index] = steal ? encode_dist(plen) : ctrl_[index];
       plen = steal ? sd : plen;
 
@@ -366,8 +357,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
   V *
   probe_find(hash64_t kh, const K &orig_key) noexcept
   {
-    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) )
-      return nullptr;
+    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return nullptr;
 
     usize index = static_cast<usize>(kh) & mask_;
     usize plen = 0;
@@ -382,12 +372,10 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
       usize stop = __impl::ctrl_scan(&ctrl_[index], plen);
 
       for ( usize i = 0; i < stop; ++i ) {
-        if ( node_at(index + i).hash == kh && __builtin_expect(node_at(index + i).key == orig_key, 0) )
-          return value_ptr(index + i);
+        if ( node_at(index + i).hash == kh && __builtin_expect(node_at(index + i).key == orig_key, 0) ) return value_ptr(index + i);
       }
 
-      if ( __builtin_expect(stop < W, 0) )
-        return nullptr;
+      if ( __builtin_expect(stop < W, 0) ) return nullptr;
 
       plen += W;
       index = (index + W) & mask_;
@@ -402,8 +390,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
       __builtin_prefetch(&ctrl_[(index + 16u) & mask_], 0, 1);
       __builtin_prefetch(node_ptr((index + 4u) & mask_), 0, 0);
 
-      if ( node_at(index).hash == kh && node_at(index).key == orig_key )
-        return value_ptr(index);
+      if ( node_at(index).hash == kh && node_at(index).key == orig_key ) return value_ptr(index);
       ++plen;
       index = (index + 1u) & mask_;
     }
@@ -413,8 +400,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
   const V *
   probe_find(hash64_t kh, const K &orig_key) const noexcept
   {
-    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) )
-      return nullptr;
+    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return nullptr;
 
     usize index = static_cast<usize>(kh) & mask_;
     usize plen = 0;
@@ -428,12 +414,10 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
       usize stop = __impl::ctrl_scan(&ctrl_[index], plen);
 
       for ( usize i = 0; i < stop; ++i ) {
-        if ( node_at(index + i).hash == kh && __builtin_expect(node_at(index + i).key == orig_key, 0) )
-          return value_ptr(index + i);
+        if ( node_at(index + i).hash == kh && __builtin_expect(node_at(index + i).key == orig_key, 0) ) return value_ptr(index + i);
       }
 
-      if ( __builtin_expect(stop < W, 0) )
-        return nullptr;
+      if ( __builtin_expect(stop < W, 0) ) return nullptr;
 
       plen += W;
       index = (index + W) & mask_;
@@ -447,8 +431,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
       __builtin_prefetch(&ctrl_[(index + 16u) & mask_], 0, 1);
       __builtin_prefetch(node_ptr((index + 4u) & mask_), 0, 0);
 
-      if ( node_at(index).hash == kh && node_at(index).key == orig_key )
-        return value_ptr(index);
+      if ( node_at(index).hash == kh && node_at(index).key == orig_key ) return value_ptr(index);
       ++plen;
       index = (index + 1u) & mask_;
     }
@@ -473,8 +456,7 @@ public:
   // dest always first
   ~robin_map()
   {
-    if ( !__mem::memory )
-      return;
+    if ( !__mem::memory ) return;
     clear();
     free_ctrl();
   }
@@ -497,10 +479,8 @@ public:
   robin_map &
   operator=(robin_map &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
-    if ( __mem::memory )
-      clear();
+    if ( this == &o ) return *this;
+    if ( __mem::memory ) clear();
     free_ctrl();
     __mem::memory = o.memory;
     __mem::length = o.length;
@@ -559,11 +539,9 @@ public:
   {
     if constexpr ( !micron::is_trivially_destructible_v<Nd> ) {
       for ( usize i = 0u; i < n_slots_; ++i )
-        if ( occupied(i) )
-          node_at(i).~Nd();
+        if ( occupied(i) ) node_at(i).~Nd();
     }
-    if ( ctrl_ )
-      micron::memset(ctrl_, 0u, n_slots_);
+    if ( ctrl_ ) micron::memset(ctrl_, 0u, n_slots_);
     __mem::length = 0;
   }
 
@@ -668,8 +646,7 @@ public:
   bool
   erase_hash(hash64_t kh, const K &orig_key)
   {
-    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) )
-      return false;
+    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return false;
     usize index = static_cast<usize>(kh) & mask_;
     usize plen = 0;
     while ( ctrl_[index] > plen ) {

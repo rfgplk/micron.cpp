@@ -94,8 +94,7 @@ namespace __bin_impl
 inline void
 kmp_table(const byte *pat, usize pat_len, usize *table)
 {
-  if ( pat_len == 0 )
-    return;
+  if ( pat_len == 0 ) return;
   table[0] = 0;
   usize k = 0;
   for ( usize i = 1; i < pat_len; ) {
@@ -115,18 +114,15 @@ kmp_table(const byte *pat, usize pat_len, usize *table)
 inline usize
 kmp_search(const byte *hay, usize hay_len, const byte *pat, usize pat_len, const usize *table)
 {
-  if ( pat_len == 0 )
-    return 0;
-  if ( pat_len > hay_len )
-    return hay_len;
+  if ( pat_len == 0 ) return 0;
+  if ( pat_len > hay_len ) return hay_len;
 
   usize k = 0;
   for ( usize i = 0; i < hay_len; ) {
     if ( hay[i] == pat[k] ) {
       ++k;
       ++i;
-      if ( k == pat_len )
-        return i - k;
+      if ( k == pat_len ) return i - k;
     } else if ( k ) {
       k = table[k - 1];
     } else {
@@ -139,8 +135,7 @@ kmp_search(const byte *hay, usize hay_len, const byte *pat, usize pat_len, const
 inline usize
 reverse_search(const byte *hay, usize hay_len, const byte *pat, usize pat_len)
 {
-  if ( pat_len == 0 || pat_len > hay_len )
-    return hay_len;
+  if ( pat_len == 0 || pat_len > hay_len ) return hay_len;
   usize i = hay_len - pat_len;
   for ( ;; ) {
     bool ok = true;
@@ -150,10 +145,8 @@ reverse_search(const byte *hay, usize hay_len, const byte *pat, usize pat_len)
         break;
       }
     }
-    if ( ok )
-      return i;
-    if ( i == 0 )
-      break;
+    if ( ok ) return i;
+    if ( i == 0 ) break;
     --i;
   }
   return hay_len;
@@ -162,8 +155,7 @@ reverse_search(const byte *hay, usize hay_len, const byte *pat, usize pat_len)
 inline double
 fast_log2(double x)
 {
-  if ( x <= 0.0 )
-    return 0.0;
+  if ( x <= 0.0 ) return 0.0;
   int exp = 0;
   while ( x >= 2.0 ) {
     x *= 0.5;
@@ -201,8 +193,7 @@ template <is_string T = micron::string> class binary : public io::file
   void
   __require_buf(void) const
   {
-    if ( !__buf )
-      exc<except::filesystem_error>("micron::binary, no buffer allocated — open with a buffer size.");
+    if ( !__buf ) exc<except::filesystem_error>("micron::binary, no buffer allocated — open with a buffer size.");
   }
 
   void
@@ -216,17 +207,14 @@ template <is_string T = micron::string> class binary : public io::file
   inline bin_match_t
   search(const byte *hay, usize hay_len, const byte *pat, usize pat_len)
   {
-    if ( pat_len == 0 )
-      return { true, 0, 0 };
-    if ( pat_len > hay_len )
-      return no_match;
+    if ( pat_len == 0 ) return { true, 0, 0 };
+    if ( pat_len > hay_len ) return no_match;
 
     usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
     __bin_impl::kmp_table(pat, pat_len, table);
 
     usize pos = __bin_impl::kmp_search(hay, hay_len, pat, pat_len, table);
-    if ( pos == hay_len )
-      return no_match;
+    if ( pos == hay_len ) return no_match;
     return { true, pos, pat_len };
   }
 
@@ -240,8 +228,7 @@ template <is_string T = micron::string> class binary : public io::file
   search(bin_range_t range, const char *pat)
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return search(range.ptr, range.len, reinterpret_cast<const byte *>(pat), l);
   }
 
@@ -446,24 +433,21 @@ public:
   {
     __require_buf();
     posix::off_t next = __buf_off + static_cast<posix::off_t>(__buf_valid ? __buf_valid : __buf_sz);
-    if ( static_cast<usize>(next) >= static_cast<usize>(size()) )
-      return 0;
+    if ( static_cast<usize>(next) >= static_cast<usize>(size()) ) return 0;
     return fill(next);
   }
 
   bool
   at_end(void) const
   {
-    if ( __buf_valid == 0 )
-      return true;
+    if ( __buf_valid == 0 ) return true;
     return (static_cast<usize>(__buf_off) + __buf_valid) >= static_cast<usize>(size());
   }
 
   bool
   buf_covers(posix::off_t off, usize len) const noexcept
   {
-    if ( !__buf || __buf_valid == 0 )
-      return false;
+    if ( !__buf || __buf_valid == 0 ) return false;
     return off >= __buf_off && (static_cast<usize>(off) + len) <= (static_cast<usize>(__buf_off) + __buf_valid);
   }
 
@@ -480,8 +464,7 @@ public:
     byte *p = static_cast<byte *>(dst);
     while ( got < len ) {
       max_t r = posix::pread(__handle.fd, p + got, len - got, off + static_cast<posix::off_t>(got));
-      if ( r <= 0 )
-        return r == 0 ? static_cast<max_t>(got) : r;
+      if ( r <= 0 ) return r == 0 ? static_cast<max_t>(got) : r;
       got += static_cast<usize>(r);
     }
     return static_cast<max_t>(got);
@@ -496,8 +479,7 @@ public:
       return static_cast<max_t>(len);
     }
     max_t n = fill(off);
-    if ( n <= 0 )
-      return n;
+    if ( n <= 0 ) return n;
     usize copy = static_cast<usize>(n) < len ? static_cast<usize>(n) : len;
     micron::memcpy(static_cast<byte *>(dst), __buf->begin(), copy);
     return static_cast<max_t>(copy);
@@ -512,10 +494,8 @@ public:
   bin_range_t
   window(usize offset = 0, usize len = usize(-1)) const noexcept
   {
-    if ( !__buf || __buf_valid == 0 )
-      return { nullptr, 0 };
-    if ( offset >= __buf_valid )
-      return { nullptr, 0 };
+    if ( !__buf || __buf_valid == 0 ) return { nullptr, 0 };
+    if ( offset >= __buf_valid ) return { nullptr, 0 };
     usize avail = __buf_valid - offset;
     usize take = len < avail ? len : avail;
     return { __buf->begin() + offset, take };
@@ -524,8 +504,7 @@ public:
   bin_range_t
   window_at(posix::off_t file_off, usize len = usize(-1)) const noexcept
   {
-    if ( !buf_covers(file_off, 0) )
-      return { nullptr, 0 };
+    if ( !buf_covers(file_off, 0) ) return { nullptr, 0 };
     usize delta = static_cast<usize>(file_off - __buf_off);
     usize avail = __buf_valid - delta;
     usize take = len < avail ? len : avail;
@@ -650,37 +629,31 @@ public:
   {
     micron::buffer out(len);
     max_t n = read_exact(out.begin(), len, off);
-    if ( n < 0 || static_cast<usize>(n) < len )
-      exc<except::io_error>("micron::binary::slice failed to read requested range.");
+    if ( n < 0 || static_cast<usize>(n) < len ) exc<except::io_error>("micron::binary::slice failed to read requested range.");
     return out;
   }
 
   void
   slice_into(micron::buffer &dst, posix::off_t off, usize len) const
   {
-    if ( dst.size() < len )
-      dst.resize(len);
+    if ( dst.size() < len ) dst.resize(len);
     max_t n = read_exact(dst.begin(), len, off);
-    if ( n < 0 || static_cast<usize>(n) < len )
-      exc<except::io_error>("micron::binary::slice_into failed to read requested range.");
+    if ( n < 0 || static_cast<usize>(n) < len ) exc<except::io_error>("micron::binary::slice_into failed to read requested range.");
   }
 
   bin_match_t
   search(const byte *pat, usize pat_len) const
   {
     __require_buf();
-    if ( __buf_valid == 0 || pat_len == 0 )
-      return no_match;
-    if ( pat_len > __buf_valid )
-      return no_match;
+    if ( __buf_valid == 0 || pat_len == 0 ) return no_match;
+    if ( pat_len > __buf_valid ) return no_match;
 
     usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
     __bin_impl::kmp_table(pat, pat_len, table);
 
     const byte *hay = __buf->begin();
     usize pos = __bin_impl::kmp_search(hay, __buf_valid, pat, pat_len, table);
-    if ( pos == __buf_valid )
-      return no_match;
+    if ( pos == __buf_valid ) return no_match;
 
     return { true, static_cast<usize>(__buf_off) + pos, pat_len };
   }
@@ -689,8 +662,7 @@ public:
   search(const char *pat) const
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return search(reinterpret_cast<const byte *>(pat), l);
   }
 
@@ -705,13 +677,11 @@ public:
   search_back(const byte *pat, usize pat_len) const
   {
     __require_buf();
-    if ( __buf_valid == 0 || pat_len == 0 )
-      return no_match;
+    if ( __buf_valid == 0 || pat_len == 0 ) return no_match;
 
     const byte *hay = __buf->begin();
     usize pos = __bin_impl::reverse_search(hay, __buf_valid, pat, pat_len);
-    if ( pos == __buf_valid )
-      return no_match;
+    if ( pos == __buf_valid ) return no_match;
 
     return { true, static_cast<usize>(__buf_off) + pos, pat_len };
   }
@@ -720,20 +690,17 @@ public:
   search_back(const char *pat) const
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return search_back(reinterpret_cast<const byte *>(pat), l);
   }
 
   bin_match_t
   search_byte(byte val) const noexcept
   {
-    if ( !__buf || __buf_valid == 0 )
-      return no_match;
+    if ( !__buf || __buf_valid == 0 ) return no_match;
     const byte *p = __buf->begin();
     for ( usize i = 0; i < __buf_valid; ++i ) {
-      if ( p[i] == val )
-        return { true, static_cast<usize>(__buf_off) + i, 1 };
+      if ( p[i] == val ) return { true, static_cast<usize>(__buf_off) + i, 1 };
     }
     return no_match;
   }
@@ -741,13 +708,11 @@ public:
   bin_match_t
   search_byte_back(byte val) const noexcept
   {
-    if ( !__buf || __buf_valid == 0 )
-      return no_match;
+    if ( !__buf || __buf_valid == 0 ) return no_match;
     const byte *p = __buf->begin();
     usize i = __buf_valid;
     while ( i-- ) {
-      if ( p[i] == val )
-        return { true, static_cast<usize>(__buf_off) + i, 1 };
+      if ( p[i] == val ) return { true, static_cast<usize>(__buf_off) + i, 1 };
     }
     return no_match;
   }
@@ -756,8 +721,7 @@ public:
   search_file(const byte *pat, usize pat_len)
   {
     __require_buf();
-    if ( pat_len == 0 )
-      return { true, 0, 0 };
+    if ( pat_len == 0 ) return { true, 0, 0 };
 
     usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
     __bin_impl::kmp_table(pat, pat_len, table);
@@ -772,12 +736,10 @@ public:
 
     while ( static_cast<usize>(file_off) < file_size ) {
 
-      if ( overlap && work_fill >= overlap )
-        micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
+      if ( overlap && work_fill >= overlap ) micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
 
       max_t n = posix::pread(__handle.fd, work.begin() + overlap, __buf_sz, file_off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
 
       work_fill = overlap + static_cast<usize>(n);
 
@@ -785,8 +747,7 @@ public:
       if ( pos < work_fill ) {
 
         usize file_pos = static_cast<usize>(file_off) + pos;
-        if ( pos >= overlap )
-          file_pos = static_cast<usize>(file_off) + (pos - overlap);
+        if ( pos >= overlap ) file_pos = static_cast<usize>(file_off) + (pos - overlap);
         return { true, file_pos, pat_len };
       }
 
@@ -800,8 +761,7 @@ public:
   search_file(const char *pat)
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return search_file(reinterpret_cast<const byte *>(pat), l);
   }
 
@@ -824,8 +784,7 @@ public:
   {
     __require_buf();
     micron::vector<bin_match_t> out;
-    if ( pat_len == 0 )
-      return out;
+    if ( pat_len == 0 ) return out;
 
     usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
     __bin_impl::kmp_table(pat, pat_len, table);
@@ -839,24 +798,20 @@ public:
     usize work_fill = 0;
 
     while ( static_cast<usize>(file_off) < file_size ) {
-      if ( overlap && work_fill >= overlap )
-        micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
+      if ( overlap && work_fill >= overlap ) micron::memcpy(work.begin(), work.begin() + (work_fill - overlap), overlap);
 
       max_t n = posix::pread(__handle.fd, work.begin() + overlap, __buf_sz, file_off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
 
       work_fill = overlap + static_cast<usize>(n);
 
       usize scan = 0;
       while ( scan < work_fill ) {
         usize pos = __bin_impl::kmp_search(work.begin() + scan, work_fill - scan, pat, pat_len, table);
-        if ( pos == work_fill - scan )
-          break;
+        if ( pos == work_fill - scan ) break;
 
         usize abs = static_cast<usize>(file_off) + (scan + pos);
-        if ( (scan + pos) >= overlap )
-          abs = static_cast<usize>(file_off) + ((scan + pos) - overlap);
+        if ( (scan + pos) >= overlap ) abs = static_cast<usize>(file_off) + ((scan + pos) - overlap);
 
         out.push_back({ true, abs, pat_len });
         scan += pos + pat_len;
@@ -871,8 +826,7 @@ public:
   find_all(const char *pat)
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return find_all(reinterpret_cast<const byte *>(pat), l);
   }
 
@@ -889,10 +843,8 @@ public:
     __require_window(off, len);
     const byte *p = __buf->begin() + off;
     for ( usize i = 0; i < len; ++i ) {
-      if ( p[i] < other[i] )
-        return -1;
-      if ( p[i] > other[i] )
-        return 1;
+      if ( p[i] < other[i] ) return -1;
+      if ( p[i] > other[i] ) return 1;
     }
     return 0;
   }
@@ -901,16 +853,14 @@ public:
   compare(usize off, const char *other) const
   {
     usize l = 0;
-    while ( other[l] )
-      ++l;
+    while ( other[l] ) ++l;
     return compare(off, reinterpret_cast<const byte *>(other), l);
   }
 
   bool
   starts_with(const byte *pat, usize pat_len) const noexcept
   {
-    if ( !__buf || __buf_valid < pat_len )
-      return false;
+    if ( !__buf || __buf_valid < pat_len ) return false;
     return compare(0, pat, pat_len) == 0;
   }
 
@@ -918,16 +868,14 @@ public:
   starts_with(const char *pat) const noexcept
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return starts_with(reinterpret_cast<const byte *>(pat), l);
   }
 
   bool
   ends_with(const byte *pat, usize pat_len) const noexcept
   {
-    if ( !__buf || __buf_valid < pat_len )
-      return false;
+    if ( !__buf || __buf_valid < pat_len ) return false;
     usize off = __buf_valid - pat_len;
     return compare(off, pat, pat_len) == 0;
   }
@@ -936,21 +884,18 @@ public:
   ends_with(const char *pat) const noexcept
   {
     usize l = 0;
-    while ( pat[l] )
-      ++l;
+    while ( pat[l] ) ++l;
     return ends_with(reinterpret_cast<const byte *>(pat), l);
   }
 
   usize
   count_byte(byte val) const noexcept
   {
-    if ( !__buf || __buf_valid == 0 )
-      return 0;
+    if ( !__buf || __buf_valid == 0 ) return 0;
     const byte *p = __buf->begin();
     usize n = 0;
     for ( usize i = 0; i < __buf_valid; ++i )
-      if ( p[i] == val )
-        ++n;
+      if ( p[i] == val ) ++n;
     return n;
   }
 
@@ -963,12 +908,10 @@ public:
     usize file_sz = static_cast<usize>(size());
     while ( static_cast<usize>(off) < file_sz ) {
       max_t n = posix::pread(__handle.fd, __buf->begin(), __buf_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       const byte *p = __buf->begin();
       for ( max_t i = 0; i < n; ++i )
-        if ( p[i] == val )
-          ++count;
+        if ( p[i] == val ) ++count;
       off += n;
     }
     return count;
@@ -984,15 +927,13 @@ public:
   longest_run(void) const noexcept
   {
     run_t best{ 0, 0, 0 };
-    if ( !__buf || __buf_valid == 0 )
-      return best;
+    if ( !__buf || __buf_valid == 0 ) return best;
     const byte *p = __buf->begin();
     usize start = 0;
     while ( start < __buf_valid ) {
       byte cur = p[start];
       usize end = start + 1;
-      while ( end < __buf_valid && p[end] == cur )
-        ++end;
+      while ( end < __buf_valid && p[end] == cur ) ++end;
       usize len = end - start;
       if ( len > best.len ) {
         best = { cur, start, len };
@@ -1005,23 +946,19 @@ public:
   usize
   skip_byte(byte val, usize from = 0) const noexcept
   {
-    if ( !__buf )
-      return 0;
+    if ( !__buf ) return 0;
     const byte *p = __buf->begin();
-    while ( from < __buf_valid && p[from] == val )
-      ++from;
+    while ( from < __buf_valid && p[from] == val ) ++from;
     return from;
   }
 
   usize
   find_byte(byte val, usize from = 0) const noexcept
   {
-    if ( !__buf )
-      return __buf_valid;
+    if ( !__buf ) return __buf_valid;
     const byte *p = __buf->begin();
     for ( usize i = from; i < __buf_valid; ++i )
-      if ( p[i] == val )
-        return i;
+      if ( p[i] == val ) return i;
     return __buf_valid;
   }
 
@@ -1035,8 +972,7 @@ public:
       p = range.ptr;
       n = range.len;
     } else {
-      if ( !__buf || __buf_valid == 0 )
-        return st;
+      if ( !__buf || __buf_valid == 0 ) return st;
       p = __buf->begin();
       n = __buf_valid;
     }
@@ -1049,28 +985,23 @@ public:
       st.freq[b]++;
       if ( b == 0x00 ) {
         st.zero_bytes++;
-        if ( ++cur_zero > st.longest_zero_run )
-          st.longest_zero_run = cur_zero;
+        if ( ++cur_zero > st.longest_zero_run ) st.longest_zero_run = cur_zero;
         if ( cur_nz ) {
           cur_nz = 0;
         }
       } else {
-        if ( ++cur_nz > st.longest_nonzero_run )
-          st.longest_nonzero_run = cur_nz;
+        if ( ++cur_nz > st.longest_nonzero_run ) st.longest_nonzero_run = cur_nz;
         if ( cur_zero ) {
           cur_zero = 0;
         }
       }
-      if ( b >= 0x20 && b <= 0x7e )
-        st.printable_bytes++;
-      if ( b >= 0x80 )
-        st.high_bytes++;
+      if ( b >= 0x20 && b <= 0x7e ) st.printable_bytes++;
+      if ( b >= 0x80 ) st.high_bytes++;
     }
 
     double H = 0.0;
     for ( usize i = 0; i < 256; ++i ) {
-      if ( st.freq[i] == 0 )
-        continue;
+      if ( st.freq[i] == 0 ) continue;
       double pi = static_cast<double>(st.freq[i]) / static_cast<double>(n);
       H -= pi * __bin_impl::fast_log2(pi);
     }
@@ -1090,19 +1021,16 @@ public:
 
     while ( static_cast<usize>(off) < file_sz ) {
       max_t n = posix::pread(__handle.fd, __buf->begin(), __buf_sz, off);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       const byte *p = __buf->begin();
-      for ( max_t i = 0; i < n; ++i )
-        freq[p[i]]++;
+      for ( max_t i = 0; i < n; ++i ) freq[p[i]]++;
       total += static_cast<usize>(n);
       off += n;
     }
 
     double H = 0.0;
     for ( usize i = 0; i < 256; ++i ) {
-      if ( !freq[i] )
-        continue;
+      if ( !freq[i] ) continue;
       double pi = static_cast<double>(freq[i]) / static_cast<double>(total);
       H -= pi * __bin_impl::fast_log2(pi);
     }

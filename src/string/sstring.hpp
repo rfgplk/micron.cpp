@@ -130,15 +130,11 @@ private:
     for ( size_type i = 0; i < common; ++i ) {
       auto ca = static_cast<unsigned char>(a[i]);
       auto cb = static_cast<unsigned char>(b[i]);
-      if ( ca < cb )
-        return -1;
-      if ( ca > cb )
-        return 1;
+      if ( ca < cb ) return -1;
+      if ( ca > cb ) return 1;
     }
-    if ( alen < blen )
-      return -1;
-    if ( alen > blen )
-      return 1;
+    if ( alen < blen ) return -1;
+    if ( alen > blen ) return 1;
     return 0;
   }
 
@@ -160,8 +156,7 @@ public:
   {
     micron::constexpr_zero(&memory[0], N);
     size_type sz = strlen(str);
-    if ( sz > N )
-      exc<except::library_error>("sstring::sstring() const char* too large.");
+    if ( sz > N ) exc<except::library_error>("sstring::sstring() const char* too large.");
     micron::memcpy(&memory[0], &str[0], sz + 1);
     length = sz;
   };
@@ -169,8 +164,7 @@ public:
   constexpr sstring(char *ptr)
   {
     size_type n = micron::strlen(ptr);
-    if ( n >= N )
-      exc<except::library_error>("sstring::sstring(): char* too large.");
+    if ( n >= N ) exc<except::library_error>("sstring::sstring(): char* too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], ptr, n);
     length = n;
@@ -187,10 +181,8 @@ public:
 
   constexpr sstring(iterator __start, iterator __end)
   {
-    if ( __start >= __end )
-      exc<except::library_error>("micron::sstring sstring() wrong iterators");
-    if ( static_cast<usize>(__end - __start) + 1 > N )
-      exc<except::library_error>("sstring(iter,iter): range too large.");
+    if ( __start >= __end ) exc<except::library_error>("micron::sstring sstring() wrong iterators");
+    if ( static_cast<usize>(__end - __start) + 1 > N ) exc<except::library_error>("sstring(iter,iter): range too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
@@ -198,10 +190,8 @@ public:
 
   constexpr sstring(const_iterator __start, const_iterator __end)
   {
-    if ( __start >= __end )
-      exc<except::library_error>("micron::sstring sstring() wrong iterators");
-    if ( static_cast<usize>(__end - __start) + 1 > N )
-      exc<except::library_error>("sstring(iter,iter): range too large.");
+    if ( __start >= __end ) exc<except::library_error>("micron::sstring sstring() wrong iterators");
+    if ( static_cast<usize>(__end - __start) + 1 > N ) exc<except::library_error>("sstring(iter,iter): range too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], __start, __end - __start);
     length = __end - __start;
@@ -346,8 +336,7 @@ public:
   sstring &
   operator=(char *ptr)
   {
-    if ( ptr == nullptr )
-      return *this;
+    if ( ptr == nullptr ) return *this;
     clear();
     size_type n = strlen(ptr);
     micron::constexpr_zero(&memory[0], N);
@@ -359,8 +348,7 @@ public:
   sstring &
   operator=(const char *ptr)
   {
-    if ( ptr == nullptr )
-      return *this;
+    if ( ptr == nullptr ) return *this;
     clear();
     size_type n = strlen(ptr);
     micron::constexpr_zero(&memory[0], N);
@@ -512,10 +500,8 @@ public:
   find(char ch, size_type pos = 0) const
   {
     for ( ;; pos++ ) {
-      if ( memory[pos] == '\0' )
-        return npos;
-      if ( memory[pos] == ch )
-        return pos;
+      if ( memory[pos] == '\0' ) return npos;
+      if ( memory[pos] == ch ) return pos;
     }
     return npos;
   }
@@ -525,10 +511,8 @@ public:
   find(F ch, size_type pos = 0) const
   {
     for ( ;; pos++ ) {
-      if ( memory[pos] == NULL )
-        return npos;
-      if ( memory[pos] == ch )
-        return pos;
+      if ( memory[pos] == NULL ) return npos;
+      if ( memory[pos] == ch ) return pos;
     }
     return npos;
   }
@@ -606,16 +590,14 @@ public:
   inline sstring &
   pop_back(void)
   {
-    if ( (length) > 0 )
-      (memory)[--length] = 0x0;
+    if ( (length) > 0 ) (memory)[--length] = 0x0;
     return *this;
   }
 
   inline sstring &
   push_back(char ch)
   {
-    if ( (length + 1) < N )
-      memory[length++] = ch;
+    if ( (length + 1) < N ) memory[length++] = ch;
     return *this;
   }
 
@@ -623,8 +605,7 @@ public:
   inline sstring &
   push_back(F ch)
   {
-    if ( (length + 1) < N )
-      memory[length++] = ch;
+    if ( (length + 1) < N ) memory[length++] = ch;
     return *this;
   }
 
@@ -632,8 +613,7 @@ public:
   inline sstring &
   pop_back(void)
   {
-    if ( length > 0 )
-      memory[length--] = 0x0;
+    if ( length > 0 ) memory[length--] = 0x0;
     return *this;
   }
 
@@ -689,15 +669,12 @@ public:
   inline size_type
   find_substr(const T *needle, size_type needle_len, size_type pos = 0) const
   {
-    if ( needle_len == 0 or needle_len > length )
-      return npos;
+    if ( needle_len == 0 or needle_len > length ) return npos;
     size_type limit = length - needle_len;
     for ( size_type i = pos; i <= limit; ++i ) {
       size_type j = 0;
-      while ( j < needle_len and memory[i + j] == needle[j] )
-        ++j;
-      if ( j == needle_len )
-        return i;
+      while ( j < needle_len and memory[i + j] == needle[j] ) ++j;
+      if ( j == needle_len ) return i;
     }
     return npos;
   }
@@ -709,12 +686,10 @@ public:
                                                                   static_cast<const void *>(needle));
 
     size_type needle_len = micron::strlen(needle);
-    if ( needle_len == 0 )
-      return *this;
+    if ( needle_len == 0 ) return *this;
 
     size_type pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
-    if ( pos == npos )
-      return *this;
+    if ( pos == npos ) return *this;
 
     micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
     micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
@@ -727,12 +702,10 @@ public:
   remove(const T (&needle)[M])
   {
     constexpr size_type needle_len = M - 1;
-    if constexpr ( needle_len == 0 )
-      return *this;
+    if constexpr ( needle_len == 0 ) return *this;
 
     size_type pos = find_substr(&needle[0], needle_len);
-    if ( pos == npos )
-      return *this;
+    if ( pos == npos ) return *this;
 
     micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
     micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
@@ -744,12 +717,10 @@ public:
   inline sstring &
   remove(const sstring<M, F, X> &needle)
   {
-    if ( needle.empty() )
-      return *this;
+    if ( needle.empty() ) return *this;
 
     size_type pos = find_substr(needle.memory, needle.length);
-    if ( pos == npos )
-      return *this;
+    if ( pos == npos ) return *this;
 
     micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
     micron::typeset<T>(&memory[length - needle.length], 0x0, needle.length);
@@ -764,8 +735,7 @@ public:
                                                                   static_cast<const void *>(needle));
 
     size_type needle_len = micron::strlen(needle);
-    if ( needle_len == 0 )
-      return *this;
+    if ( needle_len == 0 ) return *this;
 
     size_type pos = 0;
     while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
@@ -781,8 +751,7 @@ public:
   remove_all(const T (&needle)[M])
   {
     constexpr size_type needle_len = M - 1;
-    if constexpr ( needle_len == 0 )
-      return *this;
+    if constexpr ( needle_len == 0 ) return *this;
 
     size_type pos = 0;
     while ( (pos = find_substr(&needle[0], needle_len, pos)) != npos ) {
@@ -797,8 +766,7 @@ public:
   inline sstring &
   remove_all(const sstring<M, F, X> &needle)
   {
-    if ( needle.empty() )
-      return *this;
+    if ( needle.empty() ) return *this;
 
     size_type pos = 0;
     while ( (pos = find_substr(needle.memory, needle.length, pos)) != npos ) {
@@ -841,8 +809,7 @@ public:
                                                                         static_cast<size_type>(ind), cnt * str_len);
 
     micron::bytemove(&memory[ind + cnt * str_len], &memory[ind], length - ind);
-    for ( size_type i = 0; i < cnt; ++i )
-      micron::memcpy(&memory[ind + i * str_len], str, str_len);
+    for ( size_type i = 0; i < cnt; ++i ) micron::memcpy(&memory[ind + i * str_len], str, str_len);
 
     length += (cnt * str_len);
     return *this;
@@ -875,8 +842,7 @@ public:
                                                                          static_cast<const T *>(itr), cnt * str_len);
 
     micron::bytemove(itr + cnt * str_len, itr, (memory + length) - itr);
-    for ( size_type i = 0; i < cnt; ++i )
-      micron::memcpy(itr + i * str_len, str, str_len);
+    for ( size_type i = 0; i < cnt; ++i ) micron::memcpy(itr + i * str_len, str, str_len);
     length += (cnt * str_len);
     return *this;
   }
@@ -978,8 +944,7 @@ public:
   inline sstring &
   operator+=(const sstring &data)
   {
-    if ( data.empty() )
-      return *this;
+    if ( data.empty() ) return *this;
 
     __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.length);
 
@@ -1002,8 +967,7 @@ public:
   inline sstring &
   append(const sstring &o)
   {
-    if ( o.empty() )
-      return *this;
+    if ( o.empty() ) return *this;
 
     __safety_check<&sstring::__size_check, except::library_error>("micron::sstring append() out of memory", o.length);
 
@@ -1063,8 +1027,7 @@ public:
   inline sstring &
   operator+=(const char (&data)[M])
   {
-    if ( M == 1 and data[0] == 0x0 )
-      return *this;
+    if ( M == 1 and data[0] == 0x0 ) return *this;
 
     __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", M);
 
@@ -1090,14 +1053,12 @@ public:
   inline sstring<M, F>
   substr(usize pos = 0, usize cnt = npos) const
   {
-    if ( cnt == npos )
-      cnt = (pos < length) ? (length - pos) : 0;
+    if ( cnt == npos ) cnt = (pos < length) ? (length - pos) : 0;
 
     __safety_check<&sstring::__range_pos_cnt, except::library_error>("micron::sstring substr() invalid range", static_cast<size_type>(pos),
                                                                      static_cast<size_type>(cnt));
 
-    if ( cnt >= M )
-      exc<except::library_error>("micron::sstring substr() result too large for target.");
+    if ( cnt >= M ) exc<except::library_error>("micron::sstring substr() result too large for target.");
 
     sstring<M, F, X> buf;
     micron::memcpy(&buf.data()[0], &memory[pos], cnt);
@@ -1109,15 +1070,13 @@ public:
   inline sstring<M, F>
   substr(const_iterator _start, const_iterator _end = nullptr) const
   {
-    if ( _end == nullptr )
-      _end = cend();
+    if ( _end == nullptr ) _end = cend();
 
     __safety_check<&sstring::__iter_substr_check, except::library_error>("micron::sstring substr() invalid range", _start, _end);
 
     size_type len = static_cast<size_type>(_end - _start);
 
-    if ( len >= M )
-      exc<except::library_error>("micron::sstring substr() result too large for target.");
+    if ( len >= M ) exc<except::library_error>("micron::sstring substr() result too large for target.");
 
     sstring<M, F, X> buf;
     micron::memcpy(&buf.data()[0], _start, len);
@@ -1130,10 +1089,8 @@ public:
   inline sstring &
   truncate(I n)
   {
-    if ( static_cast<size_type>(n) >= length )
-      return *this;
-    if ( static_cast<size_type>(n) > N )
-      n = N;
+    if ( static_cast<size_type>(n) >= length ) return *this;
+    if ( static_cast<size_type>(n) > N ) n = N;
     micron::typeset<T>(&memory[static_cast<size_type>(n)], 0x0, length - static_cast<size_type>(n));
     length = n;
     return *this;
@@ -1144,8 +1101,7 @@ public:
   {
     __safety_check<&sstring::__iterator_check, except::library_error>("micron::sstring truncate() iterator out of range", itr);
 
-    if ( itr >= end() )
-      return *this;
+    if ( itr >= end() ) return *this;
 
     size_type n = static_cast<size_type>(itr - begin());
     micron::typeset<T>(&memory[n], 0x0, length - n);
@@ -1158,8 +1114,7 @@ public:
   {
     __safety_check<&sstring::__iterator_check, except::library_error>("micron::sstring truncate() iterator out of range", itr);
 
-    if ( itr >= cend() )
-      return *this;
+    if ( itr >= cend() ) return *this;
 
     size_type n = static_cast<size_type>(itr - cbegin());
     micron::typeset<T>(&memory[n], 0x0, length - n);

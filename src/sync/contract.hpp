@@ -40,10 +40,8 @@ violation(contract<S, T> *c, Fn *fn)
 {
   if ( c->State == contract_state::lenient ) {
   } else if ( c->State == contract_state::enforcing ) {
-    if ( fn == nullptr )
-      exc<except::future_error>("contract::violation(): no enforcing function provided");
-    if ( fn->call() )
-      mc::abort();
+    if ( fn == nullptr ) exc<except::future_error>("contract::violation(): no enforcing function provided");
+    if ( fn->call() ) mc::abort();
   } else if ( c->State == contract_state::strict ) {
     exc<except::future_error>("contract::violation(): strict enforcement, contract violation detected");
   }
@@ -89,12 +87,10 @@ template <contract_state S, typename T> class contract
   {
     while ( !__requirements.empty() ) {
       auto &req = __requirements.front();
-      if ( !req->get(memory_order_acquire) )
-        violation(this, __enforcing_fn);
+      if ( !req->get(memory_order_acquire) ) violation(this, __enforcing_fn);
       __requirements.pop();
     }
-    if ( !__condition_fn->call() )
-      violation(this, __enforcing_fn);
+    if ( !__condition_fn->call() ) violation(this, __enforcing_fn);
   }
 
 public:
@@ -107,16 +103,12 @@ public:
     if ( __condition_fn ) {
       {
         //  if contract has been signed, cannot destroy, stall
-        while ( is_signed.get(memory_order::acquire) )
-          cpu_pause<5000>();
+        while ( is_signed.get(memory_order::acquire) ) cpu_pause<5000>();
         __check_reqs();
-        if ( __condition_fn )
-          delete __condition_fn;
+        if ( __condition_fn ) delete __condition_fn;
       }
-      if ( __enforcing_fn )
-        delete __enforcing_fn;
-      if ( __condition_fn )
-        delete __condition_fn;
+      if ( __enforcing_fn ) delete __enforcing_fn;
+      if ( __condition_fn ) delete __condition_fn;
     }
   }
 
@@ -153,8 +145,7 @@ public:
       resleep:
         // if the condition hasn't been met cannot proceed
         sleep_duration(this->__duration);
-        if ( !__condition_fn->call() )
-          goto resleep;
+        if ( !__condition_fn->call() ) goto resleep;
         __check_reqs();
       }
       {
@@ -172,8 +163,7 @@ public:
   {
     if ( is_signed.get(memory_order::acquire) ) [[unlikely]]
       exc<except::future_error>("contract::sign(): was already signed");
-    if ( __enforcing_fn != nullptr )
-      exc<except::future_error>("contract::sign(): already has a stored enforcing function");
+    if ( __enforcing_fn != nullptr ) exc<except::future_error>("contract::sign(): already has a stored enforcing function");
     auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { return f(a...); };
     __enforcing_fn = new fn_t<decltype(__fn)>(micron::move(__fn));
     is_signed.store(true, memory_order::acquire);
@@ -181,8 +171,7 @@ public:
       if ( this->__condition_fn != nullptr ) {
       resleep:
         sleep_duration(this->__duration);
-        if ( !__condition_fn->call() )
-          goto resleep;
+        if ( !__condition_fn->call() ) goto resleep;
         __check_reqs();
       }
       {
@@ -209,8 +198,7 @@ public:
   void
   enforce(Fn &&fn, Args &&...args)
   {
-    if ( __enforcing_fn != nullptr )
-      delete __enforcing_fn;
+    if ( __enforcing_fn != nullptr ) delete __enforcing_fn;
     auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { return f(a...); };
     __enforcing_fn = new fn_t<decltype(__fn)>(micron::move(__fn));
   }

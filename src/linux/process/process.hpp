@@ -114,8 +114,7 @@ load_stack_heap_pid(pid_t pid)
   sys[path.c_str()] >> dt;
 
   runtime_t rt{ nullptr, nullptr };
-  if ( dt.empty() )
-    return rt;
+  if ( dt.empty() ) return rt;
 
   micron::string::iterator stck = micron::format::find(dt, "[stack]");
   micron::string::iterator heap = micron::format::find(dt, "[heap]");
@@ -184,8 +183,7 @@ struct uprocess_t {
         t = i;
         envp.emplace_back(str.begin() + k, str.begin() + t);
         // our vector can only hold 64 elements, and as it turns out environ could easily exceed that
-        if ( envp.full_or_overflowed() )
-          break;
+        if ( envp.full_or_overflowed() ) break;
         k = t + 1;
       }
     }
@@ -271,8 +269,7 @@ run_processes(process_list_t &n)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
-    for ( usize i = 0; i < t.argv.size(); i++ )
-      argv.push_back(&t.argv[i][0]);
+    for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();
     t.pids.gid = posix::getgid();
@@ -291,8 +288,7 @@ daemon(F f, Args &&...args)
   int pid = micron::fork();     // much nicer to do this
   if ( pid > 0 )                // parent
     micron::posix::exit(0);
-  if ( posix::setsid() < 0 )
-    exc<except::runtime_error>("micron process daemon failed to create new session");
+  if ( posix::setsid() < 0 ) exc<except::runtime_error>("micron process daemon failed to create new session");
   // don't change dir
   micron::umask(0);
   micron::close(stdin_fileno);
@@ -333,14 +329,12 @@ namespace __impl
 inline void
 read_exe(pid_t pid, char *buf, usize bufsz)
 {
-  if ( bufsz == 0 )
-    return;
+  if ( bufsz == 0 ) return;
   buf[0] = '\0';
   auto path = __impl::proc_path(pid, "exe");
   // readlink syscall
   max_t n = micron::readlink(path.c_str(), buf, bufsz - 1);
-  if ( n > 0 )
-    buf[n] = '\0';
+  if ( n > 0 ) buf[n] = '\0';
 }
 
 };     // namespace __impl
@@ -417,12 +411,12 @@ wait_and_collect(pid_t pid)
   // reap
   micron::wait4(pid, &wstatus, 0, &r.usage);
 
-  if ( WIFEXITED(wstatus) ) {
+  if ( wifexited(wstatus) ) {
     r.exited_normally = true;
-    r.exit_code = WEXITSTATUS(wstatus);
-  } else if ( WIFSIGNALED(wstatus) ) {
+    r.exit_code = wexitstatus(wstatus);
+  } else if ( wifsignaled(wstatus) ) {
     r.signaled = true;
-    r.term_signal = WTERMSIG(wstatus);
+    r.term_signal = wtermsig(wstatus);
     r.exit_code = -r.term_signal;
   }
   return r;
@@ -434,13 +428,11 @@ run_processes(process_list_t &n, const Caps &caps)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
-    for ( usize i = 0; i < t.argv.size(); i++ )
-      argv.push_back(&t.argv[i][0]);
+    for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();
     t.pids.gid = posix::getgid();
-    if ( spawn(t.pids.pid, t.path.c_str(), &argv[0], environ, caps) )
-      exc<except::system_error>("micron process failed to start spawn");
+    if ( spawn(t.pids.pid, t.path.c_str(), &argv[0], environ, caps) ) exc<except::system_error>("micron process failed to start spawn");
   }
 }
 
@@ -450,14 +442,12 @@ run_processes_limited(process_list_t &n, const Lims &lims)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
-    for ( usize i = 0; i < t.argv.size(); i++ )
-      argv.push_back(&t.argv[i][0]);
+    for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();
     t.pids.gid = posix::getgid();
     // Each child gets a fresh copy of the same limits
-    if ( spawn(t.pids.pid, t.path.c_str(), &argv[0], environ, lims) )
-      exc<except::system_error>("micron process failed to start spawn");
+    if ( spawn(t.pids.pid, t.path.c_str(), &argv[0], environ, lims) ) exc<except::system_error>("micron process failed to start spawn");
   }
 }
 
@@ -465,8 +455,7 @@ micron::fvector<child_result_t>
 wait_and_collect(micron::fvector<uprocess_t> &procs)
 {
   micron::fvector<child_result_t> results;
-  for ( auto &p : procs )
-    results.emplace_back(wait_and_collect(p.pids.pid));
+  for ( auto &p : procs ) results.emplace_back(wait_and_collect(p.pids.pid));
   return results;
 }
 
@@ -477,8 +466,7 @@ inline int
 spawn(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
@@ -492,8 +480,7 @@ inline int
 spawn(uprocess_t &t, const Caps &caps)
 {
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
@@ -507,8 +494,7 @@ inline int
 spawn(uprocess_t &t, const Lims &lims)
 {
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
@@ -522,8 +508,7 @@ inline int
 spawn(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
   t.pids.gid = posix::getgid();
@@ -540,12 +525,10 @@ template <is_cap_set Caps, bool W = exec_continue>
 status_t
 execute(uprocess_t &t, const Caps &caps)
 {
-  if ( spawn(t, caps) )
-    exc<except::system_error>("micron process failed to start");
+  if ( spawn(t, caps) ) exc<except::system_error>("micron process failed to start");
   status_t status;
   status.pid = t.pids.pid;
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -553,12 +536,10 @@ template <bool W = exec_continue, is_limits_set Lims>
 status_t
 execute(uprocess_t &t, const Lims &lims)
 {
-  if ( spawn(t, lims) )
-    exc<except::system_error>("micron process failed to start");
+  if ( spawn(t, lims) ) exc<except::system_error>("micron process failed to start");
   status_t status;
   status.pid = t.pids.pid;
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -566,12 +547,10 @@ template <bool W = exec_continue, is_cap_set Caps, is_limits_set Lims>
 status_t
 execute(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
-  if ( spawn(t, caps, lims) )
-    exc<except::system_error>("micron process failed to start");
+  if ( spawn(t, caps, lims) ) exc<except::system_error>("micron process failed to start");
   status_t status;
   status.pid = t.pids.pid;
-  if constexpr ( W )
-    micron::waitpid(status);
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -581,10 +560,8 @@ execute(const T &t, const Caps &caps)
 {
   status_t status;
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), nullptr };
-  if ( spawn(status.pid, t.c_str(), &argv[0], environ, caps) )
-    exc<except::system_error>("micron process failed to start");
-  if constexpr ( W )
-    micron::waitpid(status);
+  if ( spawn(status.pid, t.c_str(), &argv[0], environ, caps) ) exc<except::system_error>("micron process failed to start");
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -594,10 +571,8 @@ execute(const T &t, const Lims &lims)
 {
   status_t status;
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), nullptr };
-  if ( spawn(status.pid, t.c_str(), &argv[0], environ, lims) )
-    exc<except::system_error>("micron process failed to start");
-  if constexpr ( W )
-    micron::waitpid(status);
+  if ( spawn(status.pid, t.c_str(), &argv[0], environ, lims) ) exc<except::system_error>("micron process failed to start");
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -607,10 +582,8 @@ execute(const T &t, const Caps &caps, const Lims &lims)
 {
   status_t status;
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), nullptr };
-  if ( spawn(status.pid, t.c_str(), &argv[0], environ, caps, lims) )
-    exc<except::system_error>("micron process failed to start");
-  if constexpr ( W )
-    micron::waitpid(status);
+  if ( spawn(status.pid, t.c_str(), &argv[0], environ, caps, lims) ) exc<except::system_error>("micron process failed to start");
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -622,10 +595,8 @@ execute_with_caps(const T &t, const Caps &caps, const R &...args)
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), nullptr };
   (argv.push_back(const_cast<char *>(args.c_str())), ...);
   argv.push_back(nullptr);
-  if ( spawn(status.pid, t.c_str(), &argv[0], environ, caps) )
-    exc<except::system_error>("micron process failed to start");
-  if constexpr ( W )
-    micron::waitpid(status);
+  if ( spawn(status.pid, t.c_str(), &argv[0], environ, caps) ) exc<except::system_error>("micron process failed to start");
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -637,10 +608,8 @@ execute_with_limits(const T &t, const Lims &lims, const R &...args)
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), nullptr };
   (argv.push_back(const_cast<char *>(args.c_str())), ...);
   argv.push_back(nullptr);
-  if ( spawn(status.pid, t.c_str(), &argv[0], environ, lims) )
-    exc<except::system_error>("micron process failed to start");
-  if constexpr ( W )
-    micron::waitpid(status);
+  if ( spawn(status.pid, t.c_str(), &argv[0], environ, lims) ) exc<except::system_error>("micron process failed to start");
+  if constexpr ( W ) micron::waitpid(status);
   return status;
 }
 
@@ -665,8 +634,7 @@ rexecute(uprocess_t &t, const Caps &caps)
 {
   apply_caps_child(caps);
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
   __builtin_unreachable();
@@ -678,8 +646,7 @@ rexecute(uprocess_t &t, const Lims &lims)
 {
   child_apply_limits(lims);
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
   __builtin_unreachable();
@@ -692,8 +659,7 @@ rexecute(uprocess_t &t, const Caps &caps, const Lims &lims)
   child_apply_limits(lims);     // limits first
   apply_caps_child(caps);
   micron::svector<char *> argv;
-  for ( usize i = 0; i < t.argv.size(); ++i )
-    argv.push_back(&t.argv[i][0]);
+  for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
   __builtin_unreachable();

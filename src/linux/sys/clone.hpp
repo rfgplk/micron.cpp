@@ -114,8 +114,7 @@ template <usize Sz, auto Fn, typename... Args>
 pid_t
 clone(addr_t *stack, int flags, Args &&...args)
 {
-  if ( !stack )
-    return -EINVAL;
+  if ( !stack ) return -EINVAL;
   posix::clone_args clone_args{};
   clone_args.flags = static_cast<u64>(flags);
   if ( flags & clone_parent or (flags & clone_sighand and flags & clone_thread) )
@@ -181,8 +180,7 @@ __fork_clone(int exit_signal)
 pid_t
 clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nullptr, void *tls = nullptr, int *child_tid = nullptr)
 {
-  if ( !stack )
-    return -EINVAL;
+  if ( !stack ) return -EINVAL;
 
   uintptr_t sp = reinterpret_cast<uintptr_t>(stack);
   sp += 1024 * 1024;

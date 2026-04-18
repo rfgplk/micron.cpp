@@ -107,8 +107,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   {
     if ( len == 0 ) [[unlikely]]
       return;
-    if ( __core_memory_resource<T>::alive() )
-      Alloc::destroy(__core_memory_resource<T>::operator*());
+    if ( __core_memory_resource<T>::alive() ) Alloc::destroy(__core_memory_resource<T>::operator*());
     __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
   }
 
@@ -213,8 +212,7 @@ struct __mutable_memory_resource_move_only : public __core_memory_resource<T> {
   {
     if ( len == 0 ) [[unlikely]]
       return;
-    if ( __core_memory_resource<T>::alive() )
-      Alloc::destroy(__core_memory_resource<T>::operator*());
+    if ( __core_memory_resource<T>::alive() ) Alloc::destroy(__core_memory_resource<T>::operator*());
     __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
   }
 

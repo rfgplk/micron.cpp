@@ -53,8 +53,7 @@ public:
   {
     i32 old = counter.get(memory_order::relaxed);
     while ( old > 0 ) {
-      if ( counter.compare_exchange_weak(old, old - 1, memory_order::acquire, memory_order::relaxed) )
-        return true;
+      if ( counter.compare_exchange_weak(old, old - 1, memory_order::acquire, memory_order::relaxed) ) return true;
     }
     return false;
   }
@@ -131,8 +130,7 @@ public:
   void
   permit_ahead(u64 n)
   {
-    for ( ; n > 0; --n )
-      sem.flag();
+    for ( ; n > 0; --n ) sem.flag();
   }
 };
 

@@ -165,8 +165,7 @@ rotl(const T x, const i8 r)
 {
   constexpr int w = sizeof(T) * 8;
   const i8 s = r & (w - 1);
-  if ( s == 0 )
-    return x;
+  if ( s == 0 ) return x;
   return static_cast<T>((x << s) | (x >> (w - s)));
 }
 
@@ -176,8 +175,7 @@ rotr(const T x, const i8 r)
 {
   constexpr int w = sizeof(T) * 8;
   const i8 s = r & (w - 1);
-  if ( s == 0 )
-    return x;
+  if ( s == 0 ) return x;
   return static_cast<T>((x >> s) | (x << (w - s)));
 }
 
@@ -191,8 +189,7 @@ reverse_bits(T t)
   T c{};
   unsigned char *p = reinterpret_cast<unsigned char *>(&t);
   unsigned char *q = reinterpret_cast<unsigned char *>(&c);
-  for ( size_t i = 0; i < sizeof(T); ++i )
-    q[sizeof(T) - 1 - i] = BitReverseTable256[p[i]];
+  for ( size_t i = 0; i < sizeof(T); ++i ) q[sizeof(T) - 1 - i] = BitReverseTable256[p[i]];
   return c;
 }
 
@@ -242,10 +239,8 @@ template <typename T = word>
 constexpr T
 mask_low(int n) noexcept
 {
-  if ( n == 0 )
-    return T(0);
-  if ( n >= static_cast<int>(sizeof(T) * 8) )
-    return ~T(0);
+  if ( n == 0 ) return T(0);
+  if ( n >= static_cast<int>(sizeof(T) * 8) ) return ~T(0);
   return (T(1) << n) - T(1);
 }
 
@@ -441,8 +436,7 @@ template <typename T>
 constexpr int
 countl_zero(T x) noexcept
 {
-  if ( x == 0 )
-    return static_cast<int>(sizeof(T) * 8);
+  if ( x == 0 ) return static_cast<int>(sizeof(T) * 8);
   if constexpr ( micron::is_same_v<T, int> || micron::is_same_v<T, unsigned int> )
     return __builtin_clz(static_cast<unsigned int>(x));
   else if constexpr ( micron::is_same_v<T, long> || micron::is_same_v<T, unsigned long> )
@@ -458,8 +452,7 @@ template <typename T>
 constexpr int
 countr_zero(T x) noexcept
 {
-  if ( x == 0 )
-    return static_cast<int>(sizeof(T) * 8);
+  if ( x == 0 ) return static_cast<int>(sizeof(T) * 8);
   if constexpr ( micron::is_same_v<T, int> || micron::is_same_v<T, unsigned int> )
     return __builtin_ctz(static_cast<unsigned int>(x));
   else if constexpr ( micron::is_same_v<T, long> || micron::is_same_v<T, unsigned long> )
@@ -491,8 +484,7 @@ template <typename T>
 constexpr int
 bit_width(T x) noexcept
 {
-  if ( x == 0 )
-    return 0;
+  if ( x == 0 ) return 0;
   return static_cast<int>(sizeof(T) * 8) - countl_zero(x);
 }
 
@@ -509,8 +501,7 @@ template <typename T>
 constexpr int
 log2_ceil(T x) noexcept
 {
-  if ( x <= 1 )
-    return 0;
+  if ( x <= 1 ) return 0;
   return bit_width(static_cast<T>(x - 1));
 }
 
@@ -528,8 +519,7 @@ template <typename T>
 constexpr T
 bit_floor(T x) noexcept
 {
-  if ( x == 0 )
-    return 0;
+  if ( x == 0 ) return 0;
   return T(1) << log2_floor(x);
 }
 
@@ -538,8 +528,7 @@ template <typename T>
 constexpr T
 bit_ceil(T x) noexcept
 {
-  if ( x <= 1 )
-    return 1;
+  if ( x <= 1 ) return 1;
   return T(1) << log2_ceil(x);
 }
 
@@ -588,8 +577,7 @@ template <typename T>
 constexpr T
 highest_set_bit(T x) noexcept
 {
-  if ( x == 0 )
-    return 0;
+  if ( x == 0 ) return 0;
   return T(1) << log2_floor(x);
 }
 
@@ -598,8 +586,7 @@ template <typename T>
 constexpr T
 fill_from_highest(T x) noexcept
 {
-  if ( x == 0 )
-    return 0;
+  if ( x == 0 ) return 0;
   return mask_low<T>(log2_floor(x) + 1);
 }
 
@@ -608,8 +595,7 @@ template <typename T>
 constexpr T
 nth_set_bit(T x, int n) noexcept
 {
-  for ( int i = 0; i < n; ++i )
-    x = clear_lowest_set_bit(x);
+  for ( int i = 0; i < n; ++i ) x = clear_lowest_set_bit(x);
   return lowest_set_bit(x);
 }
 
@@ -803,8 +789,7 @@ template <typename T>
 constexpr bool
 mul_overflows(T a, T b) noexcept
 {
-  if ( a == 0 )
-    return false;
+  if ( a == 0 ) return false;
   return b > (~T(0) / a);
 }
 
@@ -850,8 +835,7 @@ pext(T x, T mask) noexcept
 {
   T result = 0, out = 1;
   while ( mask ) {
-    if ( x & lowest_set_bit(mask) )
-      result |= out;
+    if ( x & lowest_set_bit(mask) ) result |= out;
     mask &= mask - 1;
     out <<= 1;
   }
@@ -865,8 +849,7 @@ pdep(T x, T mask) noexcept
 {
   T result = 0, src = 1;
   while ( mask ) {
-    if ( x & src )
-      result |= lowest_set_bit(mask);
+    if ( x & src ) result |= lowest_set_bit(mask);
     mask &= mask - 1;
     src <<= 1;
   }

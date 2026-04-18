@@ -240,8 +240,7 @@ struct signal_mask_guard {
 
   ~signal_mask_guard()
   {
-    if ( active )
-      micron::posix::sigprocmask(posix::sig_setmask, saved, nullptr);
+    if ( active ) micron::posix::sigprocmask(posix::sig_setmask, saved, nullptr);
   }
 
   signal_mask_guard() = default;
@@ -436,8 +435,7 @@ public:
   int
   on_signal(const micron::signal s, void (*fhandler)(int))
   {
-    if ( (u64)s > __acts.size() )
-      return -1;
+    if ( (u64)s > __acts.size() ) return -1;
     __acts[(i32)s].sigaction_handler.sa_handler = fhandler;
     return posix::sigaction((i32)s, __acts[(i32)s], nullptr);
   }

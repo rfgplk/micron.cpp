@@ -59,8 +59,7 @@ template <usize N> struct lambda_queue {
   inline node_base_t *
   pop()
   {
-    if ( head.get(memory_order_acquire) == tail.get(memory_order_acquire) )
-      return nullptr;
+    if ( head.get(memory_order_acquire) == tail.get(memory_order_acquire) ) return nullptr;
 
     usize idx = head.fetch_add(1, memory_order_acquire) % N;
     node_base_t *task = __q[idx];

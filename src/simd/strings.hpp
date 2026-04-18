@@ -15,8 +15,7 @@ sse_strlen(const char *str)
   i128 zero = _mm_setzero_si128();
 
   while ( reinterpret_cast<uintptr_t>(p) & 0xF ) {
-    if ( *p == '\0' )
-      return p - str;
+    if ( *p == '\0' ) return p - str;
     ++p;
   }
 

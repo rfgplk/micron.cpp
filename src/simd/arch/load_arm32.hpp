@@ -26,10 +26,8 @@ template <is_simd_type B>
 inline B
 load(B *ptr)
 {
-  if constexpr ( micron::is_same_v<B, f128> )
-    return vld1q_f32(reinterpret_cast<const float *>(ptr));
-  if constexpr ( micron::is_same_v<B, i128> )
-    return vreinterpretq_s32_u8(vld1q_u8(reinterpret_cast<const u8 *>(ptr)));
+  if constexpr ( micron::is_same_v<B, f128> ) return vld1q_f32(reinterpret_cast<const float *>(ptr));
+  if constexpr ( micron::is_same_v<B, i128> ) return vreinterpretq_s32_u8(vld1q_u8(reinterpret_cast<const u8 *>(ptr)));
 }
 
 template <is_simd_type B>
@@ -43,10 +41,8 @@ template <is_simd_type B, typename T>
 inline B
 load(T *ptr)
 {
-  if constexpr ( micron::is_same_v<B, f128> )
-    return vld1q_f32(reinterpret_cast<const float *>(ptr));
-  if constexpr ( micron::is_same_v<B, i128> )
-    return vreinterpretq_s32_u8(vld1q_u8(reinterpret_cast<const u8 *>(ptr)));
+  if constexpr ( micron::is_same_v<B, f128> ) return vld1q_f32(reinterpret_cast<const float *>(ptr));
+  if constexpr ( micron::is_same_v<B, i128> ) return vreinterpretq_s32_u8(vld1q_u8(reinterpret_cast<const u8 *>(ptr)));
 }
 
 template <is_simd_type B, typename T>
@@ -308,8 +304,7 @@ gather_32_i32(int *base, i128 vindex)
 {
   int32_t idx[4], out[4];
   vst1q_s32(idx, vindex);
-  for ( int i = 0; i < 4; ++i )
-    __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
+  for ( int i = 0; i < 4; ++i ) __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
   return vld1q_s32(out);
 }
 
@@ -327,8 +322,7 @@ gather_ps_i32(float *base, i128 vindex)
   int32_t idx[4];
   float out[4];
   vst1q_s32(idx, vindex);
-  for ( int i = 0; i < 4; ++i )
-    __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
+  for ( int i = 0; i < 4; ++i ) __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
   return vld1q_f32(out);
 }
 
@@ -346,8 +340,7 @@ gather_64_i32(long long *base, i128 vindex)
   int32_t idx[4];
   i64 out[2];
   vst1q_s32(idx, vindex);
-  for ( int i = 0; i < 2; ++i )
-    __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 8);
+  for ( int i = 0; i < 2; ++i ) __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 8);
   return vreinterpretq_s32_s64(vld1q_s64(out));
 }
 
@@ -365,8 +358,7 @@ gather_32_i64(int *base, i128 vindex)
   i64 idx[2];
   int32_t out[4] = {};
   vst1q_s64(idx, vreinterpretq_s64_s32(vindex));
-  for ( int i = 0; i < 2; ++i )
-    __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
+  for ( int i = 0; i < 2; ++i ) __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
   return vld1q_s32(out);
 }
 
@@ -384,8 +376,7 @@ gather_ps_i64(float *base, i128 vindex)
   i64 idx[2];
   float out[4] = {};
   vst1q_s64(idx, vreinterpretq_s64_s32(vindex));
-  for ( int i = 0; i < 2; ++i )
-    __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
+  for ( int i = 0; i < 2; ++i ) __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 4);
   return vld1q_f32(out);
 }
 
@@ -402,8 +393,7 @@ gather_64_i64(long long *base, i128 vindex)
 {
   i64 idx[2], out[2];
   vst1q_s64(idx, vreinterpretq_s64_s32(vindex));
-  for ( int i = 0; i < 2; ++i )
-    __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 8);
+  for ( int i = 0; i < 2; ++i ) __builtin_memcpy(&out[i], __neon_scale_ptr<scale>(base, idx[i]), 8);
   return vreinterpretq_s32_s64(vld1q_s64(out));
 }
 

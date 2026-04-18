@@ -49,8 +49,7 @@ public:
   const T
   operator[](const size_t n) const
   {
-    if ( n > (_end - start) )
-      exc<except::library_error>("micron::view operator[] out of memory range");
+    if ( n > (_end - start) ) exc<except::library_error>("micron::view operator[] out of memory range");
     return &start[n];
   }
 

@@ -25,7 +25,7 @@ restore_rt(void)
                "syscall\n\t"
                "ud2\n\t");
 }
-#elif defined(_M_ARM)
+#elif defined(__micron_arch_arm32)
 naked_fn
 restore_rt(void)
 {
@@ -33,7 +33,7 @@ restore_rt(void)
                "svc #0\n\t"
                "udf #0\n\t");
 }
-#elif defined(__aarch64__)
+#elif defined(__micron_arch_arm64)
 naked_fn
 restore_rt(void)
 {
@@ -229,16 +229,14 @@ inline void
 sigemptyset(posix::sigset_t &set)
 {
   auto cnt = __sigsize;
-  while ( --cnt >= 0 )
-    set.__val[cnt] = 0;
+  while ( --cnt >= 0 ) set.__val[cnt] = 0;
 }
 
 inline void
 sigfillset(posix::sigset_t &set)
 {
   auto cnt = __sigwords;
-  while ( --cnt >= 0 )
-    set.__val[cnt] = ~0UL;
+  while ( --cnt >= 0 ) set.__val[cnt] = ~0UL;
 }
 
 inline int
@@ -246,8 +244,7 @@ sigisemptyset(const posix::sigset_t &set)
 {
   auto cnt = __sigwords;
   u64 ret = set.__val[--cnt];
-  while ( ret == 0 && --cnt >= 0 )
-    ret = set.__val[cnt];
+  while ( ret == 0 && --cnt >= 0 ) ret = set.__val[cnt];
   return (ret == 0);
 }
 
@@ -256,8 +253,7 @@ sigandset(const posix::sigset_t &a, const posix::sigset_t &b)
 {
   posix::sigset_t ret;
   auto cnt = __sigwords;
-  while ( --cnt >= 0 )
-    ret.__val[cnt] = a.__val[cnt] & b.__val[cnt];
+  while ( --cnt >= 0 ) ret.__val[cnt] = a.__val[cnt] & b.__val[cnt];
   return ret;
 }
 
@@ -266,8 +262,7 @@ sigorset(const posix::sigset_t &a, const posix::sigset_t &b)
 {
   posix::sigset_t ret;
   auto cnt = __sigwords;
-  while ( --cnt >= 0 )
-    ret.__val[cnt] = a.__val[cnt] | b.__val[cnt];
+  while ( --cnt >= 0 ) ret.__val[cnt] = a.__val[cnt] | b.__val[cnt];
   return ret;
 }
 
@@ -335,8 +330,7 @@ sigwait(const posix::sigset_t &set, int &sig)
   do {
     ret = static_cast<int>(micron::syscall(SYS_rt_sigtimedwait, &set, &info, nullptr, __sig_syscall_size));
   } while ( ret < 0 && errno == EINTR );
-  if ( ret < 0 )
-    return errno;
+  if ( ret < 0 ) return errno;
   sig = info.si_signo;
   return 0;
 }

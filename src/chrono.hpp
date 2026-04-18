@@ -598,8 +598,7 @@ template <system_clocks C = system_clocks::realtime> struct auto_timer {
   ~auto_timer()
   {
     clk.stop();
-    if ( out )
-      *out = clk.template read<unit::seconds>();
+    if ( out ) *out = clk.template read<unit::seconds>();
   }
 
   auto_timer(const auto_timer &) = delete;

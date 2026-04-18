@@ -50,8 +50,7 @@ class volatile_t
   __create(const char *name, unsigned int flags)
   {
     __handle.fd = micron::memfd_create(name, flags);
-    if ( __handle.has_error() )
-      exc<except::io_error>("micron::volatile_t, memfd_create failed.");
+    if ( __handle.has_error() ) exc<except::io_error>("micron::volatile_t, memfd_create failed.");
     micron::zero(&sd);
   }
 
@@ -60,12 +59,10 @@ class volatile_t
   {
     if ( hint_size == 0 ) {
       stat_t tmp{};
-      if ( posix::fstat(fd_t{ src_fd }, tmp) != posix::invalid_fd )
-        hint_size = static_cast<usize>(tmp.st_size);
+      if ( posix::fstat(fd_t{ src_fd }, tmp) != posix::invalid_fd ) hint_size = static_cast<usize>(tmp.st_size);
     }
 
-    if ( hint_size > 0 )
-      posix::ftruncate(__handle, static_cast<posix::off_t>(hint_size));
+    if ( hint_size > 0 ) posix::ftruncate(__handle, static_cast<posix::off_t>(hint_size));
 
     posix::off_t src_off = 0;
     posix::off_t dst_off = 0;
@@ -76,8 +73,7 @@ class volatile_t
       while ( remaining > 0 ) {
         usize want = remaining < chunk ? remaining : chunk;
         max_t n = micron::copy_file_range(src_fd, &src_off, __handle.fd, &dst_off, want, 0u);
-        if ( n <= 0 )
-          break;
+        if ( n <= 0 ) break;
         remaining -= static_cast<usize>(n);
       }
     } else {
@@ -121,8 +117,7 @@ public:
   volatile_t(const volatile_t &o) : fname(o.fname), __handle(-1), sd()
   {
     __create(fname.c_str(), mfd_cloexec);
-    if ( o.__handle.fd != posix::invalid_fd.fd )
-      __clone_fd(o.__handle.fd);
+    if ( o.__handle.fd != posix::invalid_fd.fd ) __clone_fd(o.__handle.fd);
   }
 
   volatile_t(volatile_t &&o) noexcept : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
@@ -146,13 +141,11 @@ public:
   volatile_t &
   operator=(const volatile_t &o)
   {
-    if ( this == &o )
-      return *this;
+    if ( this == &o ) return *this;
     close();
     fname = o.fname;
     __create(fname.c_str(), mfd_cloexec);
-    if ( o.__handle.fd != posix::invalid_fd.fd )
-      __clone_fd(o.__handle.fd);
+    if ( o.__handle.fd != posix::invalid_fd.fd ) __clone_fd(o.__handle.fd);
     return *this;
   }
 
@@ -177,8 +170,7 @@ public:
   void
   close(void)
   {
-    if ( __handle.closed() )
-      return;
+    if ( __handle.closed() ) return;
     posix::close(__handle.fd);
     __handle.fd = posix::invalid_fd.fd;
   }
@@ -218,15 +210,12 @@ public:
   stat(void) const
   {
     if constexpr ( B == STAT_EXISTING ) {
-      if ( !micron::is_zero(&sd) )
-        return;
+      if ( !micron::is_zero(&sd) ) return;
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd )
-        exc<except::io_error>("micron::volatile_t, fstat failed.");
+      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::volatile_t, fstat failed.");
     } else {
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd )
-        exc<except::io_error>("micron::volatile_t, fstat failed.");
+      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::volatile_t, fstat failed.");
     }
   }
 
@@ -355,8 +344,7 @@ public:
   max_t
   read(T *ptr, usize len) const
   {
-    if ( __handle.invalid() || ptr == nullptr )
-      return -1;
+    if ( __handle.invalid() || ptr == nullptr ) return -1;
     return posix::read(__handle.fd, static_cast<void *>(ptr), len);
   }
 
@@ -364,8 +352,7 @@ public:
   max_t
   write(const T *ptr, usize len)
   {
-    if ( __handle.invalid() || ptr == nullptr )
-      return -1;
+    if ( __handle.invalid() || ptr == nullptr ) return -1;
     return posix::write(__handle.fd, static_cast<const void *>(ptr), len);
   }
 
@@ -373,8 +360,7 @@ public:
   max_t
   read_all(T *ptr, usize len) const
   {
-    if ( __handle.invalid() || ptr == nullptr )
-      return -1;
+    if ( __handle.invalid() || ptr == nullptr ) return -1;
     return posix::read_all(__handle, static_cast<void *>(ptr), len);
   }
 
@@ -382,8 +368,7 @@ public:
   max_t
   write_all(const T *ptr, usize len)
   {
-    if ( __handle.invalid() || ptr == nullptr )
-      return -1;
+    if ( __handle.invalid() || ptr == nullptr ) return -1;
     return posix::write_all(__handle, static_cast<const void *>(ptr), len);
   }
 
@@ -391,8 +376,7 @@ public:
   max_t
   read(T &buf) const
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return posix::read(__handle.fd, buf.data(), buf.max_size());
   }
 
@@ -400,8 +384,7 @@ public:
   max_t
   write(const T &buf)
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return posix::write(__handle.fd, buf.data(), buf.size());
   }
 
@@ -409,8 +392,7 @@ public:
   max_t
   read_all(T &buf) const
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return posix::read_all(__handle, buf.data(), buf.max_size());
   }
 
@@ -418,8 +400,7 @@ public:
   max_t
   write_all(const T &buf)
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return posix::write_all(__handle, buf.data(), buf.size());
   }
 
@@ -427,8 +408,7 @@ public:
   max_t
   write_all(const T &str)
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return posix::write_all(__handle, str.data(), str.size());
   }
 
@@ -469,8 +449,7 @@ public:
   volatile_t &
   operator<<(const char *str)
   {
-    if ( __handle.invalid() || str == nullptr )
-      return *this;
+    if ( __handle.invalid() || str == nullptr ) return *this;
     posix::write(__handle.fd, str, micron::strlen(str));
     return *this;
   }
@@ -479,8 +458,7 @@ public:
   max_t
   pread(T &buf, usize len, posix::off_t offset) const
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return micron::pread(__handle.fd, buf.data(), len, offset);
   }
 
@@ -488,8 +466,7 @@ public:
   max_t
   pwrite(const T &buf, usize len, posix::off_t offset)
   {
-    if ( __handle.invalid() )
-      return -1;
+    if ( __handle.invalid() ) return -1;
     return micron::pwrite(__handle.fd, buf.data(), len, offset);
   }
 
@@ -541,8 +518,7 @@ public:
   truncate(posix::off_t length)
   {
     i32 r = posix::ftruncate(__handle, length);
-    if ( r == 0 )
-      micron::zero(&sd);
+    if ( r == 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -556,16 +532,14 @@ public:
   clear(void)
   {
     i32 r = truncate(0);
-    if ( r == 0 )
-      rewind();
+    if ( r == 0 ) rewind();
     return r;
   }
 
   i32
   reserve(posix::off_t size)
   {
-    if ( this->size() < size )
-      return truncate(size);
+    if ( this->size() < size ) return truncate(size);
     return 0;
   }
 
@@ -592,8 +566,7 @@ public:
   {
     __alive();
     usize sz = static_cast<usize>(size());
-    if ( sz == 0 )
-      return nullptr;
+    if ( sz == 0 ) return nullptr;
     void *p = micron::mmap(nullptr, sz, prot_read, map_shared, __handle.fd, 0);
     return micron::mmap_failed(p) ? nullptr : p;
   }
@@ -603,8 +576,7 @@ public:
   {
     __alive();
     usize sz = static_cast<usize>(size());
-    if ( sz == 0 )
-      return nullptr;
+    if ( sz == 0 ) return nullptr;
     void *p = micron::mmap(nullptr, sz, prot_read | prot_write, map_shared, __handle.fd, 0);
     return micron::mmap_failed(p) ? nullptr : p;
   }
@@ -734,8 +706,7 @@ public:
     posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
     posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     max_t r = micron::copy_file_range(src.raw_fd(), sp, __handle.fd, dp, count, 0u);
-    if ( r > 0 )
-      micron::zero(&sd);
+    if ( r > 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -745,8 +716,7 @@ public:
     posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
     posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     max_t r = micron::copy_file_range(src.__handle.fd, sp, __handle.fd, dp, count, 0u);
-    if ( r > 0 )
-      micron::zero(&sd);
+    if ( r > 0 ) micron::zero(&sd);
     return r;
   }
 
@@ -766,8 +736,7 @@ public:
   clone(void) const
   {
     volatile_t v(fname.c_str(), mfd_cloexec);
-    if ( __handle.fd != posix::invalid_fd.fd )
-      v.__clone_fd(__handle.fd, static_cast<usize>(size()));
+    if ( __handle.fd != posix::invalid_fd.fd ) v.__clone_fd(__handle.fd, static_cast<usize>(size()));
     return v;
   }
 
@@ -806,8 +775,7 @@ public:
   set_cloexec(bool on = true)
   {
     i32 cur = get_fd_flags();
-    if ( cur < 0 )
-      return cur;
+    if ( cur < 0 ) return cur;
     return set_fd_flags(on ? (cur | 1) : (cur & ~1));
   }
 
@@ -822,8 +790,7 @@ public:
   set_nonblock(bool on = true)
   {
     i32 cur = get_status_flags();
-    if ( cur < 0 )
-      return cur;
+    if ( cur < 0 ) return cur;
     return set_status_flags(on ? (cur | posix::o_nonblock) : (cur & ~posix::o_nonblock));
   }
 

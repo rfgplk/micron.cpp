@@ -17,8 +17,7 @@ template <class Type> class empty_pointer
 public:
   ~empty_pointer()
   {
-    if ( internal_pointer != nullptr )
-      exc<except::memory_error>("empty_pointer ~(): pointer is not empty");
+    if ( internal_pointer != nullptr ) exc<except::memory_error>("empty_pointer ~(): pointer is not empty");
   }
 
   empty_pointer(void) : internal_pointer(occupied) {}
@@ -32,8 +31,7 @@ public:
   empty_pointer &
   operator=(empty_pointer &&o)
   {
-    if ( internal_pointer != nullptr )
-      exc<except::memory_error>("empty_pointer operator=(): pointer is not empty");
+    if ( internal_pointer != nullptr ) exc<except::memory_error>("empty_pointer operator=(): pointer is not empty");
     internal_pointer = o.internal_pointer;
     o.internal_pointer = nullptr;
     return *this;

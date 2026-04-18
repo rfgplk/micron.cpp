@@ -30,10 +30,15 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   char *result_buf = resolved_path;
   bool allocated = false;
 
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   if ( !resolved_path ) {
     result_buf = (reinterpret_cast<char *>(
         micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0)));
-
+#elif defined(__micron_arch_arm32)
+  if ( !resolved_path ) {
+    result_buf = (reinterpret_cast<char *>(
+        micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0)));
+#endif
     allocated = true;
   }
 

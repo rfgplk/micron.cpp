@@ -167,8 +167,7 @@ template <auto... Fs, typename... Ts>
 constexpr void
 match(any<Ts...> &a)
 {
-  if ( !a.has_value() )
-    return;
+  if ( !a.has_value() ) return;
   bool found = false;
   (
       [&]<typename T>() {
@@ -184,8 +183,7 @@ template <auto... Fs, typename... Ts>
 constexpr void
 match(const any<Ts...> &a)
 {
-  if ( !a.has_value() )
-    return;
+  if ( !a.has_value() ) return;
   bool found = false;
   (
       [&]<typename T>() {
@@ -201,8 +199,7 @@ template <auto... Fs, typename... Ts>
 constexpr void
 lazy_match(any<Ts...> &a)
 {
-  if ( !a.has_value() )
-    return;
+  if ( !a.has_value() ) return;
   bool found = false;
   (
       [&]<typename T>() {
@@ -218,8 +215,7 @@ template <auto... Fs, typename... Ts>
 constexpr void
 lazy_match(const any<Ts...> &a)
 {
-  if ( !a.has_value() )
-    return;
+  if ( !a.has_value() ) return;
   bool found = false;
   (
       [&]<typename T>() {
@@ -238,8 +234,7 @@ template <auto... Fs, typename T, typename F>
 constexpr void
 match(option<T, F> &o)
 {
-  if ( !o.has_value() )
-    return;
+  if ( !o.has_value() ) return;
   if ( o.template is<T>() )
     __dispatch_one_strict(o.template cast<T>(), Fs...);
   else
@@ -250,8 +245,7 @@ template <auto... Fs, typename T, typename F>
 constexpr void
 match(const option<T, F> &o)
 {
-  if ( !o.has_value() )
-    return;
+  if ( !o.has_value() ) return;
   if ( o.template is<T>() )
     __dispatch_one_strict(o.template cast<T>(), Fs...);
   else
@@ -262,8 +256,7 @@ template <auto... Fs, typename T, typename F>
 constexpr void
 lazy_match(option<T, F> &o)
 {
-  if ( !o.has_value() )
-    return;
+  if ( !o.has_value() ) return;
   if ( o.template is<T>() )
     __dispatch_one_permissible(o.template cast<T>(), Fs...);
   else
@@ -274,8 +267,7 @@ template <auto... Fs, typename T, typename F>
 constexpr void
 lazy_match(const option<T, F> &o)
 {
-  if ( !o.has_value() )
-    return;
+  if ( !o.has_value() ) return;
   if ( o.template is<T>() )
     __dispatch_one_permissible(o.template cast<T>(), Fs...);
   else

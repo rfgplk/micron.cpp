@@ -20,8 +20,7 @@ int
 __base_fork()
 {
   int pid = micron::posix::__fork_clone(posix::sig_chld);     // should be posix::sig_chld
-  if ( pid == -1 )
-    exc<except::system_error>("micron process failed to fork()");
+  if ( pid == -1 ) exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 
@@ -31,11 +30,9 @@ int
 __base_fork(Args &&...args)
 {
   addr_t *fstack = micron::addrmap(Stack);
-  if ( micron::mmap_failed(fstack) )
-    exc<except::system_error>("micron process micron::mmap failed to allocate stack");
+  if ( micron::mmap_failed(fstack) ) exc<except::system_error>("micron process micron::mmap failed to allocate stack");
   int pid = micron::posix::clone<Stack, Fn>(fstack, __fork_flags_std, micron::forward<Args>(args)...);
-  if ( pid == -1 )
-    exc<except::system_error>("micron process failed to fork()");
+  if ( pid == -1 ) exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 
@@ -52,15 +49,13 @@ int
 wfork()
 {
   int pid = __base_fork();
-  if ( pid == 0 )
-    return pid;
+  if ( pid == 0 ) return pid;
   if ( pid < 1 ) {
     return pid;
   }
   int status = 0;
   micron::waitpid(pid, &status, 0);
-  if ( micron::wifexited(status) )
-    return micron::wexitstatus(status);
+  if ( micron::wifexited(status) ) return micron::wexitstatus(status);
   return status;
 }
 
@@ -76,15 +71,13 @@ int
 wfork(Args &&...args)
 {
   int pid = __base_fork<Fn>(micron::forward<Args>(args)...);
-  if ( pid == 0 )
-    return pid;
+  if ( pid == 0 ) return pid;
   if ( pid < 1 ) {
     return pid;
   }
   int status = 0;
   micron::waitpid(pid, &status, 0);
-  if ( micron::wifexited(status) )
-    return micron::wexitstatus(status);
+  if ( micron::wifexited(status) ) return micron::wexitstatus(status);
   return status;
 }
 

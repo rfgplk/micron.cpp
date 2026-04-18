@@ -191,16 +191,14 @@ public:
   auto &
   operator[](const usize n)
   {
-    if ( internal_pointer != nullptr )
-      return (*internal_pointer)[n];
+    if ( internal_pointer != nullptr ) return (*internal_pointer)[n];
     throw nullptr;
   };
 
   const auto &
   operator[](const usize n) const
   {
-    if ( internal_pointer != nullptr )
-      return (*internal_pointer)[n];
+    if ( internal_pointer != nullptr ) return (*internal_pointer)[n];
     exc<except::memory_error>("free_pointer[] operator[](): internal_pointer was null");
   };
 

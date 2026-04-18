@@ -76,8 +76,7 @@ template <usize N> struct __cpu_set_t {
   constexpr void
   cpu_zero()
   {
-    for ( auto &b : __bits )
-      b = 0;
+    for ( auto &b : __bits ) b = 0;
   }
 
   constexpr usize
@@ -86,8 +85,7 @@ template <usize N> struct __cpu_set_t {
     usize cnt = 0;
     for ( auto b : __bits ) {
       for ( int i = 0; i < __ncpubits; ++i )
-        if ( b & (1UL << i) )
-          ++cnt;
+        if ( b & (1UL << i) ) ++cnt;
     }
     return cnt;
   }
@@ -95,30 +93,26 @@ template <usize N> struct __cpu_set_t {
   constexpr void
   cpu_and(const __cpu_set_t &other)
   {
-    for ( usize i = 0; i < __bits.size(); ++i )
-      __bits[i] &= other.__bits[i];
+    for ( usize i = 0; i < __bits.size(); ++i ) __bits[i] &= other.__bits[i];
   }
 
   constexpr void
   cpu_or(const __cpu_set_t &other)
   {
-    for ( usize i = 0; i < __bits.size(); ++i )
-      __bits[i] |= other.__bits[i];
+    for ( usize i = 0; i < __bits.size(); ++i ) __bits[i] |= other.__bits[i];
   }
 
   constexpr void
   cpu_xor(const __cpu_set_t &other)
   {
-    for ( usize i = 0; i < __bits.size(); ++i )
-      __bits[i] ^= other.__bits[i];
+    for ( usize i = 0; i < __bits.size(); ++i ) __bits[i] ^= other.__bits[i];
   }
 
   constexpr bool
   cpu_equal(const __cpu_set_t &other) const
   {
     for ( usize i = 0; i < __bits.size(); ++i )
-      if ( __bits[i] != other.__bits[i] )
-        return false;
+      if ( __bits[i] != other.__bits[i] ) return false;
     return true;
   }
 
@@ -153,8 +147,7 @@ template <usize N> struct __cpu_set_s_t {
   constexpr void
   cpu_zero_s()
   {
-    for ( auto &b : __bits )
-      b = 0;
+    for ( auto &b : __bits ) b = 0;
   }
 
   constexpr usize
@@ -163,8 +156,7 @@ template <usize N> struct __cpu_set_s_t {
     usize cnt = 0;
     for ( auto b : __bits ) {
       for ( int i = 0; i < __ncpubits; ++i )
-        if ( b & (1UL << i) )
-          ++cnt;
+        if ( b & (1UL << i) ) ++cnt;
     }
     return cnt;
   }
@@ -172,30 +164,26 @@ template <usize N> struct __cpu_set_s_t {
   constexpr void
   cpu_and_s(const __cpu_set_s_t &other)
   {
-    for ( usize i = 0; i < __bits.size(); ++i )
-      __bits[i] &= other.__bits[i];
+    for ( usize i = 0; i < __bits.size(); ++i ) __bits[i] &= other.__bits[i];
   }
 
   constexpr void
   cpu_or_s(const __cpu_set_s_t &other)
   {
-    for ( usize i = 0; i < __bits.size(); ++i )
-      __bits[i] |= other.__bits[i];
+    for ( usize i = 0; i < __bits.size(); ++i ) __bits[i] |= other.__bits[i];
   }
 
   constexpr void
   cpu_xor_s(const __cpu_set_s_t &other)
   {
-    for ( usize i = 0; i < __bits.size(); ++i )
-      __bits[i] ^= other.__bits[i];
+    for ( usize i = 0; i < __bits.size(); ++i ) __bits[i] ^= other.__bits[i];
   }
 
   constexpr bool
   cpu_equal_s(const __cpu_set_s_t &other) const
   {
     for ( usize i = 0; i < __bits.size(); ++i )
-      if ( __bits[i] != other.__bits[i] )
-        return false;
+      if ( __bits[i] != other.__bits[i] ) return false;
     return true;
   }
 };

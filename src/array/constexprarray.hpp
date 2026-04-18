@@ -63,42 +63,36 @@ struct constexpr_array {
 */
   constexpr constexpr_array(const T &val)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = val;
+    for ( usize i = 0; i < N; ++i ) stack[i] = val;
   }
 
   constexpr constexpr_array(const std::initializer_list<T> &lst)
   {
     usize i = 0;
-    for ( auto &v : lst )
-      stack[i++] = v;
+    for ( auto &v : lst ) stack[i++] = v;
   }
 
   constexpr constexpr_array(const constexpr_array &o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = o.stack[i];
+    for ( usize i = 0; i < N; ++i ) stack[i] = o.stack[i];
   }
 
   constexpr constexpr_array(constexpr_array &&o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = micron::move(o.stack[i]);
+    for ( usize i = 0; i < N; ++i ) stack[i] = micron::move(o.stack[i]);
   }
 
   constexpr constexpr_array &
   operator=(const constexpr_array &o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = o.stack[i];
+    for ( usize i = 0; i < N; ++i ) stack[i] = o.stack[i];
     return *this;
   }
 
   constexpr constexpr_array &
   operator=(constexpr_array &&o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = micron::move(o.stack[i]);
+    for ( usize i = 0; i < N; ++i ) stack[i] = micron::move(o.stack[i]);
     return *this;
   }
 
@@ -161,40 +155,35 @@ struct constexpr_array {
   constexpr constexpr_array &
   fill(F val)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = val;
+    for ( usize i = 0; i < N; ++i ) stack[i] = val;
     return *this;
   }
 
   constexpr constexpr_array &
   operator+=(const T &o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] += o;
+    for ( usize i = 0; i < N; ++i ) stack[i] += o;
     return *this;
   }
 
   constexpr constexpr_array &
   operator-=(const T &o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] -= o;
+    for ( usize i = 0; i < N; ++i ) stack[i] -= o;
     return *this;
   }
 
   constexpr constexpr_array &
   operator*=(const T &o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] *= o;
+    for ( usize i = 0; i < N; ++i ) stack[i] *= o;
     return *this;
   }
 
   constexpr constexpr_array &
   operator/=(const T &o)
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] /= o;
+    for ( usize i = 0; i < N; ++i ) stack[i] /= o;
     return *this;
   }
 
@@ -203,8 +192,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator+=(const constexpr_array<T, M> &o)
   {
-    for ( usize i = 0; i < M; ++i )
-      stack[i] += o.stack[i];
+    for ( usize i = 0; i < M; ++i ) stack[i] += o.stack[i];
     return *this;
   }
 
@@ -213,8 +201,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator-=(const constexpr_array<T, M> &o)
   {
-    for ( usize i = 0; i < M; ++i )
-      stack[i] -= o.stack[i];
+    for ( usize i = 0; i < M; ++i ) stack[i] -= o.stack[i];
     return *this;
   }
 
@@ -223,8 +210,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator*=(const constexpr_array<T, M> &o)
   {
-    for ( usize i = 0; i < M; ++i )
-      stack[i] *= o.stack[i];
+    for ( usize i = 0; i < M; ++i ) stack[i] *= o.stack[i];
     return *this;
   }
 
@@ -233,8 +219,7 @@ struct constexpr_array {
   constexpr constexpr_array &
   operator/=(const constexpr_array<T, M> &o)
   {
-    for ( usize i = 0; i < M; ++i )
-      stack[i] /= o.stack[i];
+    for ( usize i = 0; i < M; ++i ) stack[i] /= o.stack[i];
     return *this;
   }
 
@@ -242,8 +227,7 @@ struct constexpr_array {
   sum() const
   {
     T sm{};
-    for ( usize i = 0; i < N; ++i )
-      sm += stack[i];
+    for ( usize i = 0; i < N; ++i ) sm += stack[i];
     return sm;
   }
 
@@ -251,8 +235,7 @@ struct constexpr_array {
   mul() const
   {
     T prod = stack[0];
-    for ( usize i = 1; i < N; ++i )
-      prod *= stack[i];
+    for ( usize i = 1; i < N; ++i ) prod *= stack[i];
     return prod;
   }
 
@@ -260,8 +243,7 @@ struct constexpr_array {
   all(const T &val) const
   {
     for ( usize i = 0; i < N; ++i )
-      if ( stack[i] != val )
-        return false;
+      if ( stack[i] != val ) return false;
     return true;
   }
 
@@ -269,16 +251,14 @@ struct constexpr_array {
   any(const T &val) const
   {
     for ( usize i = 0; i < N; ++i )
-      if ( stack[i] == val )
-        return true;
+      if ( stack[i] == val ) return true;
     return false;
   }
 
   constexpr constexpr_array &
   sqrt()
   {
-    for ( usize i = 0; i < N; ++i )
-      stack[i] = static_cast<T>(math::sqrt(static_cast<double>(stack[i])));
+    for ( usize i = 0; i < N; ++i ) stack[i] = static_cast<T>(math::sqrt(static_cast<double>(stack[i])));
     return *this;
   }
 

@@ -8,6 +8,8 @@
 #include "../../types.hpp"
 #include "../sys/types.hpp"
 
+#include "time.hpp"
+
 namespace micron
 {
 namespace posix
@@ -90,6 +92,7 @@ constexpr i32 S_IXOTH = (S_IXGRP >> 3); /* Execute by others.  */
 /* Read, write, and execute by others.  */
 constexpr i32 S_IRWXO = (S_IRWXG >> 3);
 
+// 64-bit explicit
 #if __wordsize == 64
 struct stat_t {
   posix::dev_t st_dev;     /* Device.  */
@@ -106,9 +109,10 @@ struct stat_t {
 
   posix::blkcnt_t st_blocks; /* Number of 512-byte blocks allocated. */
 
-  struct timespec st_atim;      /* Time of last access.  */
-  struct timespec st_mtim;      /* Time of last modification.  */
-  struct timespec st_ctim;      /* Time of last status change.  */
+  // NOTE: was using pthread linked timespec instead of time.hpp defined timespec_t
+  struct timespec_t st_atim;    /* Time of last access.  */
+  struct timespec_t st_mtim;    /* Time of last modification.  */
+  struct timespec_t st_ctim;    /* Time of last status change.  */
 #define st_atime st_atim.tv_sec /* Backward compatibility.  */
 #define st_mtime st_mtim.tv_sec
 #define st_ctime st_ctim.tv_sec
@@ -127,12 +131,15 @@ struct stat_t {
     return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
   }
 };
+
+// 32-bit explicit
 #elif __wordsize == 32
 // ARCH
-struct stat {
+/*
+struct stat_t {
   dev_t st_dev;
   unsigned short int __pad1;
-  ino_t __st_ino;
+  ino_t st_ino;
   mode_t st_mode;
   nlink_t st_nlink;
   uid_t st_uid;
@@ -142,26 +149,28 @@ struct stat {
   off_t st_size;
   blksize_t st_blksize;
   blkcnt_t st_blocks;
-  struct timespec st_atim;
-  struct timespec st_mtim;
-  struct timespec st_ctim;
+  struct timespec_t st_atime;
+  struct timespec_t st_mtime;
+  struct timespec_t st_ctime;
   unsigned long int __glibc_reserved4;
   unsigned long int __glibc_reserved5;
 
   bool
   operator!=(const stat_t &o) const
   {
-    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+    // NOTE: addr_t != dev_t
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
   }
 
   bool
   operator==(const stat_t &o) const
   {
-    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+    // NOTE: addr_t != dev_t
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
   }
 };
-
-struct stat64 {
+*/
+struct stat64_t {
   dev_t st_dev;
   unsigned short int __pad1;
   ino_t __st_ino;
@@ -173,24 +182,31 @@ struct stat64 {
   unsigned short int __pad2;
   off64_t st_size;
   blksize_t st_blksize;
-  blkcnt64_t st_blocks;
-  struct timespec st_atim;
-  struct timespec st_mtim;
-  struct timespec st_ctim;
+  __blkcnt64_t_type st_blocks;
+  struct timespec_t st_atim;
+  struct timespec_t st_mtim;
+  struct timespec_t st_ctim;
+#define st_atime st_atim.tv_sec /* Backward compatibility.  */
+#define st_mtime st_mtim.tv_sec
+#define st_ctime st_ctim.tv_sec
   ino64_t st_ino;
 
   bool
-  operator!=(const stat_t &o) const
+  operator!=(const stat64_t &o) const
   {
-    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+    // NOTE: addr_t != dev_t
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
   }
 
   bool
-  operator==(const stat_t &o) const
+  operator==(const stat64_t &o) const
   {
-    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
   }
 };
+
+using stat_t = stat64_t;
+
 #endif
 };     // namespace posix
 };     // namespace micron

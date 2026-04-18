@@ -39,8 +39,7 @@ open_nonblock(type_t __type)
       res.push_back({ n, {} });
     }
   }
-  if ( res.empty() )
-    exc<except::library_error>("uxin open(): couldn't open device");
+  if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
   return res[];
 }
 
@@ -85,8 +84,7 @@ open(type_t __type)
       res.push_back({ n, {} });
     }
   }
-  if ( res.empty() )
-    exc<except::library_error>("uxin open(): couldn't open device");
+  if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
   return res[];
 }
 
@@ -134,10 +132,8 @@ template <typename... Args>
 void
 read(input_t &t, Args &&...__input_packet)
 {
-  if ( !is_loaded(t.device) )
-    exc<except::library_error>("uxin read(): device isn't loaded");
-  if ( !is_bound(t.device) )
-    exc<except::library_error>("uxin read(): device isn't bound");
+  if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
+  if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   mc::uxin::poll(t, micron::forward<Args>(__input_packet)...);
 }
 
@@ -147,10 +143,8 @@ void
 read(slice<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
-    if ( !is_loaded(t.device) )
-      exc<except::library_error>("uxin read(): device isn't loaded");
-    if ( !is_bound(t.device) )
-      exc<except::library_error>("uxin read(): device isn't bound");
+    if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
+    if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   }
   mc::uxin::poll_pack(inputs, micron::forward<Args>(__input_packet)...);
 }
@@ -162,10 +156,8 @@ void
 read_rt(slice<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
-    if ( !is_loaded(t.device) )
-      exc<except::library_error>("uxin read(): device isn't loaded");
-    if ( !is_bound(t.device) )
-      exc<except::library_error>("uxin read(): device isn't bound");
+    if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
+    if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   }
   mc::uxin::poll_pack_rt(inputs, micron::forward<Args>(__input_packet)...);
 }
@@ -176,10 +168,8 @@ void
 read_once(slice<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
-    if ( !is_loaded(t.device) )
-      exc<except::library_error>("uxin read(): device isn't loaded");
-    if ( !is_bound(t.device) )
-      exc<except::library_error>("uxin read(): device isn't bound");
+    if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
+    if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   }
   mc::uxin::poll_pack_once(inputs, micron::forward<Args>(__input_packet)...);
 }

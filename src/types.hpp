@@ -30,10 +30,12 @@ using int8_t = __INT8_TYPE__;
 using int16_t = __INT16_TYPE__;
 using int32_t = __INT32_TYPE__;
 using int64_t = __INT64_TYPE__;
-#if __wordsize == 64
-using int128_t = __int128;
-using uint128_t = __uint128_t;
-#endif
+
+// NOTE: moved to bits/__int128
+// #if __wordsize == 64
+// using int128_t = __int128;
+// using uint128_t = __uint128_t;
+// #endif
 
 using ptrdiff_t = __PTRDIFF_TYPE__;
 using intptr_t = __INTPTR_TYPE__;
@@ -63,9 +65,11 @@ using intmax_t = __INTMAX_TYPE__;
 using uintmax_t = __UINTMAX_TYPE__;
 using max_t = __INTMAX_TYPE__;
 using umax_t = __UINTMAX_TYPE__;
-using ssize_t = max_t;
-using size_t = umax_t;
-using usize = umax_t;
+// more correct
+// TODO: replace all usize types with umax_t in the codebase
+using ssize_t = __INTPTR_TYPE__;
+using size_t = __UINTPTR_TYPE__;
+using usize = size_t;
 
 // time block
 using clock_t = __clock_t;
@@ -129,12 +133,13 @@ using u64 = uint64_t;
 using p8 = fint8_t;
 using p16 = fint16_t;
 using p32 = fint32_t;
-using p64 = fint64_t;
+// using p64 = fint64_t;
 
-#if __wordsize == 64
+#include "bits/__int128.hpp"
+
+// always now
 using u128 = uint128_t;
 using i128 = int128_t;
-#endif
 
 using byte = uint8_t;
 using p64 = uintptr_t;
@@ -144,13 +149,17 @@ constexpr u32 byte_width = 8;
 
 using pnt_t = byte;
 // using time_t = uint64_t;
-// TODO: implement time.h
 
-#if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L
+#if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L && defined(__micron_arch_amd64)
 using f16 = _Float16;
 using f32 = _Float32;
 using f64 = _Float64;
 using f128 = _Float128;
+#elif defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L
+using f16 = float;
+using f32 = float;
+using f64 = double;
+using f128 = double;
 #elif (defined(__clang__))
 using f16 = float;
 using f32 = float;

@@ -77,8 +77,7 @@ struct block : public file {
 
   ~block(void)
   {
-    if ( _buf_dirty )
-      flush_buf();
+    if ( _buf_dirty ) flush_buf();
   }
 
   block() = delete;
@@ -112,10 +111,8 @@ struct block : public file {
   block &
   operator=(block &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
-    if ( _buf_dirty )
-      flush_buf();
+    if ( this == &o ) return *this;
+    if ( _buf_dirty ) flush_buf();
     file::operator=(micron::move(o));
     _buf = micron::move(o._buf);
     _buf_off = o._buf_off;
@@ -133,10 +130,8 @@ struct block : public file {
   block &
   operator=(const block &o)
   {
-    if ( this == &o )
-      return *this;
-    if ( _buf_dirty )
-      flush_buf();
+    if ( this == &o ) return *this;
+    if ( _buf_dirty ) flush_buf();
     file::operator=(o);
     _buf = o._buf;
     _buf_off = o._buf_off;
@@ -208,8 +203,7 @@ struct block : public file {
   void
   resize_buf(usize new_sz)
   {
-    if ( _buf_dirty )
-      flush_buf();
+    if ( _buf_dirty ) flush_buf();
     _buf.recreate(new_sz);
     invalidate_buf();
   }
@@ -218,8 +212,7 @@ struct block : public file {
   fill(posix::off_t dev_offset = 0)
   {
     __alive();
-    if ( _buf_dirty )
-      flush_buf();
+    if ( _buf_dirty ) flush_buf();
     max_t n = posix::pread(__handle.fd, _buf.begin(), _buf.size(), dev_offset);
     if ( n > 0 ) {
       _buf_off = dev_offset;
@@ -233,28 +226,24 @@ struct block : public file {
   max_t
   flush_buf(void)
   {
-    if ( !_buf_dirty || _buf_valid == 0 )
-      return 0;
+    if ( !_buf_dirty || _buf_valid == 0 ) return 0;
     __alive();
     max_t n = posix::pwrite(__handle.fd, _buf.begin(), _buf_valid, _buf_off);
-    if ( n >= 0 )
-      _buf_dirty = false;
+    if ( n >= 0 ) _buf_dirty = false;
     return n;
   }
 
   bool
   buf_covers(posix::off_t offset, usize size) const noexcept
   {
-    if ( _buf_valid == 0 )
-      return false;
+    if ( _buf_valid == 0 ) return false;
     return offset >= _buf_off && (static_cast<u64>(offset) + size) <= (static_cast<u64>(_buf_off) + _buf_valid);
   }
 
   max_t
   write_buf(const void *src, usize size, posix::off_t dev_offset)
   {
-    if ( !buf_covers(dev_offset, size) )
-      return -1;
+    if ( !buf_covers(dev_offset, size) ) return -1;
     usize delta = static_cast<usize>(dev_offset - _buf_off);
     micron::memcpy(_buf.begin() + delta, static_cast<const byte *>(src), size);
     _buf_dirty = true;
@@ -271,8 +260,7 @@ struct block : public file {
       return static_cast<max_t>(size);
     }
     max_t n = fill(offset);
-    if ( n <= 0 )
-      return n;
+    if ( n <= 0 ) return n;
     usize copy = static_cast<usize>(n) < size ? static_cast<usize>(n) : size;
     micron::memcpy(static_cast<byte *>(dst), _buf.begin(), copy);
     return static_cast<max_t>(copy);
@@ -292,8 +280,7 @@ struct block : public file {
     __alive();
     u32 bsz = __bsz();
     usize total = static_cast<usize>(count) * static_cast<usize>(bsz);
-    if ( _buf.size() < total )
-      resize_buf(total);
+    if ( _buf.size() < total ) resize_buf(total);
     return fill(__block_off(block_no));
   }
 
@@ -430,8 +417,7 @@ struct block : public file {
   const block_info_t &
   info(void) const
   {
-    if ( !_info_valid )
-      query_info();
+    if ( !_info_valid ) query_info();
     return _info;
   }
 
@@ -547,8 +533,7 @@ struct block : public file {
   {
     __alive();
     i32 r = static_cast<i32>(posix::ioctl(__handle.fd, blkraset, sectors));
-    if ( r == 0 && _info_valid )
-      _info.readahead_sectors = sectors;
+    if ( r == 0 && _info_valid ) _info.readahead_sectors = sectors;
     return r;
   }
 
@@ -693,8 +678,7 @@ struct block : public file {
     __alive();
     i32 val = on ? 1 : 0;
     i32 r = static_cast<i32>(posix::ioctl(__handle.fd, blkroset, &val));
-    if ( r == 0 && _info_valid )
-      _info.read_only = on;
+    if ( r == 0 && _info_valid ) _info.read_only = on;
     return r;
   }
 
@@ -733,8 +717,7 @@ struct block : public file {
   {
     __alive();
     posix::off_t next = _buf_off + static_cast<posix::off_t>(_buf_valid ? _buf_valid : _buf.size());
-    if ( static_cast<u64>(next) >= device_size() )
-      return 0;
+    if ( static_cast<u64>(next) >= device_size() ) return 0;
     return fill(next);
   }
 
@@ -748,8 +731,7 @@ struct block : public file {
   bool
   at_end(void) const
   {
-    if ( _buf_valid == 0 )
-      return true;
+    if ( _buf_valid == 0 ) return true;
     return (static_cast<u64>(_buf_off) + _buf_valid) >= device_size();
   }
 
@@ -796,15 +778,13 @@ private:
   inline void
   alive_c(void) const
   {
-    if ( __handle.fd == -1 )
-      exc<except::io_error>("micron::block, fd isn't open.");
+    if ( __handle.fd == -1 ) exc<except::io_error>("micron::block, fd isn't open.");
   }
 
   u32
   __bsz(void) const
   {
-    if ( !_info_valid )
-      query_info();
+    if ( !_info_valid ) query_info();
     return _info.logical_block_size ? _info.logical_block_size : 512u;
   }
 
@@ -817,12 +797,9 @@ private:
   void
   __open_block(const char *str, const modes mode)
   {
-    if ( !posix::verify(str) )
-      exc<except::io_error>("micron::block, malformed path.");
-    if ( !posix::exists(str) )
-      exc<except::io_error>("micron::block, path doesn't exist.");
-    if ( !posix::is_block_device(str) )
-      exc<except::io_error>("micron::block, path is not a block device.");
+    if ( !posix::verify(str) ) exc<except::io_error>("micron::block, malformed path.");
+    if ( !posix::exists(str) ) exc<except::io_error>("micron::block, path doesn't exist.");
+    if ( !posix::is_block_device(str) ) exc<except::io_error>("micron::block, path is not a block device.");
 
     i32 flags = 0;
     switch ( mode ) {
@@ -845,8 +822,7 @@ private:
     }
 
     __handle.fd = static_cast<i32>(posix::open(str, flags));
-    if ( __handle.has_error() )
-      exc<except::io_error>("micron::block, failed to open device.");
+    if ( __handle.has_error() ) exc<except::io_error>("micron::block, failed to open device.");
 
     fname = str;
     micron::zero(&sd);

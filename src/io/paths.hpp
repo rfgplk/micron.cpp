@@ -35,37 +35,28 @@ class path
     const char *s = p.c_str();
     usize n = p.size();
 
-    while ( n > 1 && s[n - 1] == '/' )
-      --n;
+    while ( n > 1 && s[n - 1] == '/' ) --n;
 
     usize sep = n;
-    while ( sep > 0 && s[sep - 1] != '/' )
-      --sep;
+    while ( sep > 0 && s[sep - 1] != '/' ) --sep;
 
-    if ( sep == 0 )
-      return path_t(".");
-    if ( sep == 1 )
-      return path_t("/");
+    if ( sep == 0 ) return path_t(".");
+    if ( sep == 1 ) return path_t("/");
 
     path_t out;
-    for ( usize i = 0; i < sep - 1; ++i )
-      out += s[i];
+    for ( usize i = 0; i < sep - 1; ++i ) out += s[i];
     return out;
   }
 
   static path_t
   __join(const path_t &base, const path_t &rel)
   {
-    if ( rel.size() == 0 )
-      return base;
-    if ( rel[0] == '/' )
-      return rel;
-    if ( base.size() == 0 )
-      return rel;
+    if ( rel.size() == 0 ) return base;
+    if ( rel[0] == '/' ) return rel;
+    if ( base.size() == 0 ) return rel;
 
     path_t out(base);
-    if ( out[out.size() - 1] != '/' )
-      out += '/';
+    if ( out[out.size() - 1] != '/' ) out += '/';
     out += rel;
     return prune(micron::move(out));
   }
@@ -76,15 +67,12 @@ public:
   {
 
     auto itr_slashes = micron::format::find(str, "//");
-    if ( itr_slashes )
-      micron::format::replace_all(str, "//", "/");
+    if ( itr_slashes ) micron::format::replace_all(str, "//", "/");
 
     auto itr_dots = micron::format::find(str, "...");
-    if ( itr_dots )
-      micron::format::replace_all(str, "...", "..");
+    if ( itr_dots ) micron::format::replace_all(str, "...", "..");
 
-    while ( str.size() > 1 && str[str.size() - 1] == '/' )
-      str.erase(str.last());
+    while ( str.size() > 1 && str[str.size() - 1] == '/' ) str.erase(str.last());
 
     return str;
   }
@@ -620,16 +608,13 @@ public:
     const char *s = n.c_str();
     usize l = n.size();
 
-    while ( l > 1 && s[l - 1] == '/' )
-      --l;
+    while ( l > 1 && s[l - 1] == '/' ) --l;
 
     usize sep = l;
-    while ( sep > 0 && s[sep - 1] != '/' )
-      --sep;
+    while ( sep > 0 && s[sep - 1] != '/' ) --sep;
 
     path_t out;
-    for ( usize i = sep; i < l; ++i )
-      out += s[i];
+    for ( usize i = sep; i < l; ++i ) out += s[i];
     return out;
   }
 
@@ -639,18 +624,14 @@ public:
     path_t base = basename();
     const char *s = base.c_str();
     usize l = base.size();
-    if ( l == 0 || s[0] == '.' )
-      return path_t();
+    if ( l == 0 || s[0] == '.' ) return path_t();
 
     usize dot = l;
-    while ( dot > 0 && s[dot - 1] != '.' )
-      --dot;
-    if ( dot == 0 )
-      return path_t();
+    while ( dot > 0 && s[dot - 1] != '.' ) --dot;
+    if ( dot == 0 ) return path_t();
 
     path_t out;
-    for ( usize i = dot - 1; i < l; ++i )
-      out += s[i];
+    for ( usize i = dot - 1; i < l; ++i ) out += s[i];
     return out;
   }
 
@@ -659,13 +640,11 @@ public:
   {
     path_t base = basename();
     path_t ext = extension();
-    if ( ext.size() == 0 )
-      return base;
+    if ( ext.size() == 0 ) return base;
 
     path_t out;
     usize keep = base.size() - ext.size();
-    for ( usize i = 0; i < keep; ++i )
-      out += base[i];
+    for ( usize i = 0; i < keep; ++i ) out += base[i];
     return out;
   }
 
@@ -704,8 +683,7 @@ public:
   canonical() const
   {
     path_t out;
-    if ( micron::realpath(nd.path.name().c_str(), &out[0]) == nullptr )
-      return path_t();
+    if ( micron::realpath(nd.path.name().c_str(), &out[0]) == nullptr ) return path_t();
     out.adjust_size();
     return out;
   }
@@ -716,40 +694,31 @@ public:
     const char *p = nd.path.name().c_str();
     usize pl = nd.path.name().size();
     usize bl = 0;
-    while ( base[bl] )
-      ++bl;
+    while ( base[bl] ) ++bl;
 
     usize common = 0;
     usize i = 0;
     while ( i < pl && i < bl && p[i] == base[i] ) {
-      if ( p[i] == '/' )
-        common = i + 1;
+      if ( p[i] == '/' ) common = i + 1;
       ++i;
     }
-    if ( i == bl && (p[i] == '/' || p[i] == '\0') )
-      common = i + (p[i] == '/');
+    if ( i == bl && (p[i] == '/' || p[i] == '\0') ) common = i + (p[i] == '/');
 
     usize up = 0;
     for ( usize j = common; j < bl; ++j )
-      if ( base[j] == '/' )
-        ++up;
-    if ( common < bl )
-      ++up;
+      if ( base[j] == '/' ) ++up;
+    if ( common < bl ) ++up;
 
     path_t out;
     for ( usize j = 0; j < up; ++j ) {
-      if ( out.size() )
-        out += '/';
+      if ( out.size() ) out += '/';
       out += "..";
     }
     if ( common < pl ) {
-      if ( out.size() )
-        out += '/';
-      for ( usize j = common; j < pl; ++j )
-        out += p[j];
+      if ( out.size() ) out += '/';
+      for ( usize j = common; j < pl; ++j ) out += p[j];
     }
-    if ( out.size() == 0 )
-      out += '.';
+    if ( out.size() == 0 ) out += '.';
     return out;
   }
 
@@ -766,8 +735,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( file(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( file(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -777,8 +745,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( directory(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( directory(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -787,8 +754,7 @@ public:
   {
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      paths.emplace_back(n.d_name);
+    for ( auto &n : p ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -798,8 +764,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( socket(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( socket(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -809,8 +774,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( symlink(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( symlink(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -820,8 +784,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( block_device(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( block_device(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -831,8 +794,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( char_device(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( char_device(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -842,8 +804,7 @@ public:
     micron::fvector<path_t> paths;
     auto &p = nd.path.get_children();
     for ( auto &n : p )
-      if ( fifo(n.d_name.c_str()) )
-        paths.emplace_back(n.d_name);
+      if ( fifo(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
     return paths;
   }
 
@@ -853,8 +814,7 @@ public:
     micron::vector<path_t> paths;
 
     path_t abs;
-    if ( !micron::realpath(n.c_str(), &abs[0]) )
-      return paths;
+    if ( !micron::realpath(n.c_str(), &abs[0]) ) return paths;
 
     abs.adjust_size();
 
@@ -894,13 +854,10 @@ public:
   path_t
   resolve(const char *cstr)
   {
-    if ( micron::strlen(cstr) >= max_name )
-      exc<except::library_error>("io::path::resolve out of range.");
+    if ( micron::strlen(cstr) >= max_name ) exc<except::library_error>("io::path::resolve out of range.");
     path_t str(cstr);
-    if ( str == "." )
-      return absolute(str).at(0);
-    if ( str == ".." || micron::format::ends_with(str, "..") )
-      return absolute(str).at(1);
+    if ( str == "." ) return absolute(str).at(0);
+    if ( str == ".." || micron::format::ends_with(str, "..") ) return absolute(str).at(1);
     return prune(micron::move(str));
   }
 
@@ -908,12 +865,9 @@ public:
   path_t
   resolve(T &&str)
   {
-    if ( str == "/" )
-      return path_t(str.c_str());
-    if ( str == "." )
-      return absolute(path_t(str.c_str())).at(0);
-    if ( str == ".." || micron::format::ends_with(str, "..") )
-      return absolute(path_t(str.c_str())).at(1);
+    if ( str == "/" ) return path_t(str.c_str());
+    if ( str == "." ) return absolute(path_t(str.c_str())).at(0);
+    if ( str == ".." || micron::format::ends_with(str, "..") ) return absolute(path_t(str.c_str())).at(1);
     return prune(path_t(str.c_str()));
   }
 
@@ -927,8 +881,7 @@ public:
   void
   down(const char *name)
   {
-    if ( !directory(name) )
-      exc<except::io_error>("io::path::down(), child is not a directory.");
+    if ( !directory(name) ) exc<except::io_error>("io::path::down(), child is not a directory.");
     dir child = nd.path.down(name);
     nd.parent = micron::move(nd.path);
     nd.path = micron::move(child);
@@ -1010,10 +963,8 @@ public:
     usize bl = o.nd.path.name().size();
     usize n = al < bl ? al : bl;
     for ( usize i = 0; i < n; ++i ) {
-      if ( (unsigned char)a[i] < (unsigned char)b[i] )
-        return true;
-      if ( (unsigned char)a[i] > (unsigned char)b[i] )
-        return false;
+      if ( (unsigned char)a[i] < (unsigned char)b[i] ) return true;
+      if ( (unsigned char)a[i] > (unsigned char)b[i] ) return false;
     }
     return al < bl;
   }

@@ -89,11 +89,9 @@ public:
       exc<except::library_error>("error micron::span(): initializer_list exceeds stack capacity N");
     size_type i = 0;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      for ( const T &val : lst )
-        stack[i++] = val;
+      for ( const T &val : lst ) stack[i++] = val;
     } else {
-      for ( auto &&val : lst )
-        stack[i++] = micron::move(val);
+      for ( auto &&val : lst ) stack[i++] = micron::move(val);
     }
     length = static_cast<size_type>(lst.size());
   }
@@ -535,16 +533,14 @@ public:
   span &
   set(const T &val)
   {
-    for ( size_type i = 0; i < length; i++ )
-      stack[i] = val;
+    for ( size_type i = 0; i < length; i++ ) stack[i] = val;
     return *this;
   }
 
   span &
   fill(const T &val)
   {
-    for ( size_type i = 0; i < length; i++ )
-      stack[i] = val;
+    for ( size_type i = 0; i < length; i++ ) stack[i] = val;
     return *this;
   }
 
@@ -553,8 +549,7 @@ public:
   span &
   fill_with(Fn gen)
   {
-    for ( size_type i = 0; i < length; i++ )
-      stack[i] = gen();
+    for ( size_type i = 0; i < length; i++ ) stack[i] = gen();
     return *this;
   }
 
@@ -689,8 +684,7 @@ public:
         ++count;
       }
     }
-    if ( start < length )
-      callback(raw_slice<T>(stack + start, length - start));
+    if ( start < length ) callback(raw_slice<T>(stack + start, length - start));
     return count + 1;
   }
 
@@ -707,8 +701,7 @@ public:
   size_type
   splitn(size_type n, Fn pred, Cb callback) const
   {
-    if ( n == 0 )
-      return 0;
+    if ( n == 0 ) return 0;
     size_type count = 0, start = 0;
     for ( size_type i = 0; i < length && count + 1 < n; i++ ) {
       if ( pred(stack[i]) ) {
@@ -759,8 +752,7 @@ public:
   size_type
   rsplitn(size_type n, Fn pred, Cb callback) const
   {
-    if ( n == 0 )
-      return 0;
+    if ( n == 0 ) return 0;
     size_type count = 0, end_idx = length;
     for ( size_type i = length; i-- > 0 && count + 1 < n; ) {
       if ( pred(stack[i]) ) {
@@ -785,8 +777,7 @@ public:
   split_once(const T &delim) const
   {
     for ( size_type i = 0; i < length; i++ ) {
-      if ( stack[i] == delim )
-        return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
+      if ( stack[i] == delim ) return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
     }
     return { raw_slice<T>(), raw_slice<T>() };
   }
@@ -797,8 +788,7 @@ public:
   split_once(Fn pred) const
   {
     for ( size_type i = 0; i < length; i++ ) {
-      if ( pred(stack[i]) )
-        return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
+      if ( pred(stack[i]) ) return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
     }
     return { raw_slice<T>(), raw_slice<T>() };
   }
@@ -807,8 +797,7 @@ public:
   rsplit_once(const T &delim) const
   {
     for ( size_type i = length; i-- > 0; ) {
-      if ( stack[i] == delim )
-        return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
+      if ( stack[i] == delim ) return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
     }
     return { raw_slice<T>(), raw_slice<T>() };
   }
@@ -819,8 +808,7 @@ public:
   rsplit_once(Fn pred) const
   {
     for ( size_type i = length; i-- > 0; ) {
-      if ( pred(stack[i]) )
-        return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
+      if ( pred(stack[i]) ) return { raw_slice<T>(stack, i), raw_slice<T>(stack + i + 1, length - i - 1) };
     }
     return { raw_slice<T>(), raw_slice<T>() };
   }
@@ -878,8 +866,7 @@ public:
   contains(const T &value) const
   {
     for ( size_type i = 0; i < length; i++ )
-      if ( stack[i] == value )
-        return true;
+      if ( stack[i] == value ) return true;
     return false;
   }
 
@@ -889,8 +876,7 @@ public:
   contains(Fn pred) const
   {
     for ( size_type i = 0; i < length; i++ )
-      if ( pred(stack[i]) )
-        return true;
+      if ( pred(stack[i]) ) return true;
     return false;
   }
 
@@ -905,11 +891,9 @@ public:
   bool
   starts_with(const raw_slice<T> &needle) const
   {
-    if ( needle.len > length )
-      return false;
+    if ( needle.len > length ) return false;
     for ( size_type i = 0; i < needle.len; i++ )
-      if ( stack[i] != needle.ptr[i] )
-        return false;
+      if ( stack[i] != needle.ptr[i] ) return false;
     return true;
   }
 
@@ -922,12 +906,10 @@ public:
   bool
   ends_with(const raw_slice<T> &needle) const
   {
-    if ( needle.len > length )
-      return false;
+    if ( needle.len > length ) return false;
     const size_type offset = length - needle.len;
     for ( size_type i = 0; i < needle.len; i++ )
-      if ( stack[offset + i] != needle.ptr[i] )
-        return false;
+      if ( stack[offset + i] != needle.ptr[i] ) return false;
     return true;
   }
 
@@ -940,8 +922,7 @@ public:
   raw_slice<T>
   strip_prefix(const raw_slice<T> &prefix) const
   {
-    if ( !starts_with(prefix) )
-      return {};
+    if ( !starts_with(prefix) ) return {};
     return { stack + prefix.len, length - prefix.len };
   }
 
@@ -954,8 +935,7 @@ public:
   raw_slice<T>
   strip_suffix(const raw_slice<T> &suffix) const
   {
-    if ( !ends_with(suffix) )
-      return {};
+    if ( !ends_with(suffix) ) return {};
     return { stack, length - suffix.len };
   }
 
@@ -968,10 +948,8 @@ public:
   raw_slice<T>
   strip_circumfix(const raw_slice<T> &prefix, const raw_slice<T> &suffix) const
   {
-    if ( prefix.len + suffix.len > length )
-      return {};
-    if ( !starts_with(prefix) || !ends_with(suffix) )
-      return {};
+    if ( prefix.len + suffix.len > length ) return {};
+    if ( !starts_with(prefix) || !ends_with(suffix) ) return {};
     return { stack + prefix.len, length - prefix.len - suffix.len };
   }
 
@@ -1020,8 +998,7 @@ public:
   write_clone_of_slice(const raw_slice<T> &src)
   {
     const size_type n = (src.len < length) ? src.len : length;
-    for ( size_type i = 0; i < n; i++ )
-      stack[i] = src.ptr[i];
+    for ( size_type i = 0; i < n; i++ ) stack[i] = src.ptr[i];
     return *this;
   }
 
@@ -1036,8 +1013,7 @@ public:
   span &
   write_with(Fn gen)
   {
-    for ( size_type i = 0; i < length; i++ )
-      stack[i] = gen(i);
+    for ( size_type i = 0; i < length; i++ ) stack[i] = gen(i);
     return *this;
   }
 
@@ -1046,8 +1022,7 @@ public:
   write_iter(InputIt first_it, InputIt last_it)
   {
     size_type i = 0;
-    for ( ; first_it != last_it && i < length; ++first_it, ++i )
-      stack[i] = *first_it;
+    for ( ; first_it != last_it && i < length; ++first_it, ++i ) stack[i] = *first_it;
     return *this;
   }
 
@@ -1086,8 +1061,7 @@ public:
   span &
   reverse()
   {
-    if ( length < 2 )
-      return *this;
+    if ( length < 2 ) return *this;
     pointer lo = stack;
     pointer hi = stack + length - 1;
     while ( lo < hi ) {
@@ -1103,11 +1077,9 @@ public:
   span &
   rotate_left(size_type n)
   {
-    if ( length == 0 )
-      return *this;
+    if ( length == 0 ) return *this;
     n %= length;
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     auto rev = [](pointer a, pointer b) {
       while ( a < b ) {
         T tmp = micron::move(*a);
@@ -1126,11 +1098,9 @@ public:
   span &
   rotate_right(size_type n)
   {
-    if ( length == 0 )
-      return *this;
+    if ( length == 0 ) return *this;
     n %= length;
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     rotate_left(length - n);
     return *this;
   }
@@ -1178,10 +1148,8 @@ public:
 
     size_type prefix_bytes = 0;
     auto raw_addr = reinterpret_cast<uintptr_t>(raw);
-    if ( raw_addr % align != 0 )
-      prefix_bytes = align - (raw_addr % align);
-    if ( prefix_bytes > total )
-      prefix_bytes = total;
+    if ( raw_addr % align != 0 ) prefix_bytes = align - (raw_addr % align);
+    if ( prefix_bytes > total ) prefix_bytes = total;
 
     size_type remaining = total - prefix_bytes;
     size_type middle_count = remaining / sizeof(U);
@@ -1206,8 +1174,7 @@ public:
     requires(micron::is_same_v<T, byte> || micron::is_same_v<T, char>)
   {
     for ( size_type i = 0; i < length; i++ )
-      if ( static_cast<unsigned char>(stack[i]) >= 128 )
-        return false;
+      if ( static_cast<unsigned char>(stack[i]) >= 128 ) return false;
     return true;
   }
 
@@ -1215,8 +1182,7 @@ public:
   as_ascii() const
     requires(micron::is_same_v<T, byte> || micron::is_same_v<T, char>)
   {
-    if ( !is_ascii() )
-      return {};
+    if ( !is_ascii() ) return {};
     return { reinterpret_cast<const byte *>(stack), length };
   }
 
@@ -1233,8 +1199,7 @@ public:
   {
     for ( size_type i = 0; i < length; i++ ) {
       auto c = static_cast<unsigned char>(stack[i]);
-      if ( c >= 'a' && c <= 'z' )
-        stack[i] = static_cast<T>(c - 32);
+      if ( c >= 'a' && c <= 'z' ) stack[i] = static_cast<T>(c - 32);
     }
     return *this;
   }
@@ -1245,8 +1210,7 @@ public:
   {
     for ( size_type i = 0; i < length; i++ ) {
       auto c = static_cast<unsigned char>(stack[i]);
-      if ( c >= 'A' && c <= 'Z' )
-        stack[i] = static_cast<T>(c + 32);
+      if ( c >= 'A' && c <= 'Z' ) stack[i] = static_cast<T>(c + 32);
     }
     return *this;
   }
@@ -1258,8 +1222,7 @@ public:
     size_type i = 0;
     while ( i < length ) {
       auto c = static_cast<unsigned char>(stack[i]);
-      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' )
-        break;
+      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' ) break;
       ++i;
     }
     return { stack + i, length - i };
@@ -1272,8 +1235,7 @@ public:
     size_type j = length;
     while ( j > 0 ) {
       auto c = static_cast<unsigned char>(stack[j - 1]);
-      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' )
-        break;
+      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' ) break;
       --j;
     }
     return { stack, j };
@@ -1287,8 +1249,7 @@ public:
     size_type j = leading.len;
     while ( j > 0 ) {
       auto c = static_cast<unsigned char>(leading.ptr[j - 1]);
-      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' )
-        break;
+      if ( c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' ) break;
       --j;
     }
     return { leading.ptr, j };

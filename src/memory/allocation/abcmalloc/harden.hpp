@@ -158,8 +158,7 @@ sanitize_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
   if constexpr ( __default_sanitize ) {
     if ( sz == 0 ) {
       sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 )
-        return;
+      if ( sz == 0 ) return;
     }
     micron::memset(addr, __default_sanitize_with_on_alloc, sz);
   } else {
@@ -173,8 +172,7 @@ zero_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
   if constexpr ( __default_zero_on_alloc ) {
     if ( sz == 0 ) {
       sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 )
-        return;
+      if ( sz == 0 ) return;
     }
     micron::bzero(addr, sz);
   } else {
@@ -188,8 +186,7 @@ poison_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
   if constexpr ( __default_poison_on_free ) {
     if ( sz == 0 ) {
       sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 )
-        return;
+      if ( sz == 0 ) return;
     }
     micron::memset(addr, __default_poison_byte, sz);
   } else {
@@ -203,8 +200,7 @@ zero_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
   if constexpr ( __default_zero_on_free ) {
     if ( sz == 0 ) {
       sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 )
-        return;
+      if ( sz == 0 ) return;
     }
     micron::bzero(addr, sz);
   } else {
@@ -218,8 +214,7 @@ full_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
   if constexpr ( __default_full_on_free ) {
     if ( sz == 0 ) {
       sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 )
-        return;
+      if ( sz == 0 ) return;
     }
     micron::memset(addr, 0xFF, sz);
   } else {
@@ -263,8 +258,7 @@ inline __attribute__((always_inline)) bool
 verify_redzone([[maybe_unused]] const byte *user_ptr, [[maybe_unused]] usize user_sz)
 {
   if constexpr ( __default_redzone ) {
-    if ( !verify_redzone_leading(user_ptr) )
-      return false;
+    if ( !verify_redzone_leading(user_ptr) ) return false;
     const byte *hi = user_ptr + user_sz;
     for ( usize i = 0; i < __default_redzone_size; ++i ) {
       if ( hi[i] != __default_redzone_byte ) {
@@ -298,8 +292,7 @@ check_ptr_valid(const addr_t *ptr)
 inline __attribute__((always_inline)) bool
 check_chunk_valid(const byte *ptr, usize len)
 {
-  if ( !check_ptr_valid(ptr) )
-    return false;
+  if ( !check_ptr_valid(ptr) ) return false;
   if ( len == 0 ) [[unlikely]] {
     __debug_print("check_chunk_valid(): zero-length chunk", 0);
     return false;

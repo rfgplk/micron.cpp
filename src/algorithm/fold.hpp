@@ -30,8 +30,7 @@ template <class T, class A, typename Fn>
 A
 fold_left(const T *first, const T *end, A init, Fn fn)
 {
-  for ( ; first != end; ++first )
-    init = fn(init, first);
+  for ( ; first != end; ++first ) init = fn(init, first);
   return init;
 }
 
@@ -52,8 +51,7 @@ template <class T, class A, typename Fn>
 A
 fold_left(const T *first, const T *end, A init, Fn fn, usize limit)
 {
-  for ( u64 i = 0; first != end and i < limit; ++first, ++i )
-    init = fn(init, first);
+  for ( u64 i = 0; first != end and i < limit; ++first, ++i ) init = fn(init, first);
   return init;
 }
 
@@ -90,8 +88,7 @@ template <class T, class A, typename Fn>
 A
 fold_right(const T *first, const T *end, Fn fn, A init)
 {
-  if ( first == end )
-    return init;
+  if ( first == end ) return init;
 
   const T *it = end;
   while ( it != first ) {
@@ -106,8 +103,7 @@ template <class T, class A, class U, typename Fn>
 A
 fold_right(const T *first, const T *end, Fn fn, A init)
 {
-  if ( first == end )
-    return init;
+  if ( first == end ) return init;
 
   const T *it = end;
   while ( it != first ) {
@@ -188,8 +184,7 @@ micron::pair<A, usize>
 fold_left_counted(const T *first, const T *end, A init, Fn fn)
 {
   usize count = 0;
-  for ( ; first != end; ++first, ++count )
-    init = fn(init, first);
+  for ( ; first != end; ++first, ++count ) init = fn(init, first);
   return { init, count };
 }
 
@@ -206,8 +201,7 @@ template <class T, class A, typename Fn, typename P>
 A
 fold_left_while(const T *first, const T *end, A init, Fn fn, P pred)
 {
-  for ( ; first != end and pred(init, first); ++first )
-    init = fn(init, first);
+  for ( ; first != end and pred(init, first); ++first ) init = fn(init, first);
   return init;
 }
 

@@ -41,8 +41,7 @@ inline auto
 c_str(const T &str) -> const char *
 {
   // guard against empty strings
-  if ( str.empty() )
-    return "";
+  if ( str.empty() ) return "";
   return reinterpret_cast<const char *>(&str[0]);
 }
 
@@ -84,16 +83,14 @@ inline usize
 bool_to_buf(char *buf, usize buf_sz, bool val)
 {
   if ( val ) {
-    if ( buf_sz < 4 )
-      return 0;
+    if ( buf_sz < 4 ) return 0;
     buf[0] = 't';
     buf[1] = 'r';
     buf[2] = 'u';
     buf[3] = 'e';
     return 4;
   } else {
-    if ( buf_sz < 5 )
-      return 0;
+    if ( buf_sz < 5 ) return 0;
     buf[0] = 'f';
     buf[1] = 'a';
     buf[2] = 'l';
@@ -107,8 +104,7 @@ inline usize
 ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
 {
 
-  if ( buf_sz < 4 )
-    return 0;
+  if ( buf_sz < 4 ) return 0;
   if ( ptr == nullptr ) {
     buf[0] = '0';
     buf[1] = 'x';
@@ -122,8 +118,7 @@ ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
   char *tend = tmp + 20;
   char *tstart = micron::__impl::uint_to_buf_base_backward(tend, reinterpret_cast<u64>(ptr), 16, false);
   usize dlen = static_cast<usize>(tend - tstart);
-  if ( dlen + 2 > buf_sz )
-    dlen = buf_sz - 2;
+  if ( dlen + 2 > buf_sz ) dlen = buf_sz - 2;
   micron::bytecpy(buf + 2, tstart, dlen);
   return 2 + dlen;
 }
@@ -140,8 +135,7 @@ fmt_uint_to_buf(char *buf, usize buf_sz, u64 val, u32 base, bool upper)
   else
     start = micron::__impl::uint_to_buf_base_backward(tend, val, base, upper);
   usize len = static_cast<usize>(tend - start);
-  if ( len > buf_sz )
-    len = buf_sz;
+  if ( len > buf_sz ) len = buf_sz;
   micron::bytecpy(buf, start, len);
   return len;
 }
@@ -152,8 +146,7 @@ fmt_int_to_buf(char *buf, usize buf_sz, i64 val, u32 base, bool upper)
   usize off = 0;
   u64 uval;
   if ( val < 0 && base == 10 ) {
-    if ( buf_sz == 0 )
-      return 0;
+    if ( buf_sz == 0 ) return 0;
     buf[0] = '-';
     off = 1;
     uval = static_cast<u64>(-(val + 1)) + 1ull;
@@ -187,8 +180,7 @@ parse_spec(const char *start, const char *end)
 {
   fmt_spec s{};
   const char *p = start;
-  if ( p >= end )
-    return s;
+  if ( p >= end ) return s;
 
   // fill + align
   if ( (end - p) >= 2 && (p[1] == '<' || p[1] == '>' || p[1] == '^') ) {
@@ -250,21 +242,17 @@ apply_padding(hstring<schar> &out, const char *content, usize content_len, const
   }
 
   if ( align == '>' ) {
-    for ( usize i = 0; i < pad_total; ++i )
-      out += fill;
+    for ( usize i = 0; i < pad_total; ++i ) out += fill;
     out.append(content, content_len);
   } else if ( align == '<' ) {
     out.append(content, content_len);
-    for ( usize i = 0; i < pad_total; ++i )
-      out += fill;
+    for ( usize i = 0; i < pad_total; ++i ) out += fill;
   } else {
     usize left = pad_total / 2;
     usize right = pad_total - left;
-    for ( usize i = 0; i < left; ++i )
-      out += fill;
+    for ( usize i = 0; i < left; ++i ) out += fill;
     out.append(content, content_len);
-    for ( usize i = 0; i < right; ++i )
-      out += fill;
+    for ( usize i = 0; i < right; ++i ) out += fill;
   }
 }
 
@@ -301,8 +289,7 @@ constexpr inline T
 to_upper(const T t)
 {
   if constexpr ( micron::is_same_v<T, char> ) {
-    if ( t >= 0x61 && t <= 0x7A )
-      return static_cast<T>(t - 32);
+    if ( t >= 0x61 && t <= 0x7A ) return static_cast<T>(t - 32);
   }
   return t;
 }
@@ -313,8 +300,7 @@ constexpr inline T
 to_lower(const T t)
 {
   if constexpr ( micron::is_same_v<T, char> ) {
-    if ( t >= 0x41 && t <= 0x5A )
-      return static_cast<T>(t + 32);
+    if ( t >= 0x41 && t <= 0x5A ) return static_cast<T>(t + 32);
   }
   return t;
 }
@@ -554,11 +540,9 @@ isblank(typename T::iterator t)
 inline void
 to_upper(char *str)
 {
-  if ( str == nullptr )
-    return;
+  if ( str == nullptr ) return;
   while ( *str ) {
-    if ( *str >= 0x61 && *str <= 0x7A )
-      *str -= 32;
+    if ( *str >= 0x61 && *str <= 0x7A ) *str -= 32;
     ++str;
   }
 }
@@ -566,11 +550,9 @@ to_upper(char *str)
 inline void
 to_lower(char *str)
 {
-  if ( str == nullptr )
-    return;
+  if ( str == nullptr ) return;
   while ( *str ) {
-    if ( *str >= 0x41 && *str <= 0x5A )
-      *str += 32;
+    if ( *str >= 0x41 && *str <= 0x5A ) *str += 32;
     ++str;
   }
 }
@@ -579,11 +561,9 @@ inline hstring<schar>
 to_upper(const char *str, usize len)
 {
   hstring<schar> result(str);
-  if ( len < result.size() )
-    result.truncate(len);
+  if ( len < result.size() ) result.truncate(len);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x61 && *itr <= 0x7A )
-      *itr -= 32;
+    if ( *itr >= 0x61 && *itr <= 0x7A ) *itr -= 32;
   return result;
 }
 
@@ -591,11 +571,9 @@ inline hstring<schar>
 to_lower(const char *str, usize len)
 {
   hstring<schar> result(str);
-  if ( len < result.size() )
-    result.truncate(len);
+  if ( len < result.size() ) result.truncate(len);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x41 && *itr <= 0x5A )
-      *itr += 32;
+    if ( *itr >= 0x41 && *itr <= 0x5A ) *itr += 32;
   return result;
 }
 
@@ -605,8 +583,7 @@ to_upper(const char (&str)[N])
 {
   hstring<schar> result(str);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x61 && *itr <= 0x7A )
-      *itr -= 32;
+    if ( *itr >= 0x61 && *itr <= 0x7A ) *itr -= 32;
   return result;
 }
 
@@ -616,8 +593,7 @@ to_lower(const char (&str)[N])
 {
   hstring<schar> result(str);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x41 && *itr <= 0x5A )
-      *itr += 32;
+    if ( *itr >= 0x41 && *itr <= 0x5A ) *itr += 32;
   return result;
 }
 
@@ -628,11 +604,9 @@ template <is_string T>
 bool
 isalnum_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isalnum<T>(itr) )
-      return false;
+    if ( !isalnum<T>(itr) ) return false;
   }
   return true;
 }
@@ -641,11 +615,9 @@ template <is_string T>
 bool
 isalpha_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isalpha<T>(itr) )
-      return false;
+    if ( !isalpha<T>(itr) ) return false;
   }
   return true;
 }
@@ -654,11 +626,9 @@ template <is_string T>
 bool
 iscntrl_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !iscntrl<T>(itr) )
-      return false;
+    if ( !iscntrl<T>(itr) ) return false;
   }
   return true;
 }
@@ -667,11 +637,9 @@ template <is_string T>
 bool
 isdigit_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isdigit<T>(itr) )
-      return false;
+    if ( !isdigit<T>(itr) ) return false;
   }
   return true;
 }
@@ -680,11 +648,9 @@ template <is_string T>
 bool
 isgraph_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isgraph<T>(itr) )
-      return false;
+    if ( !isgraph<T>(itr) ) return false;
   }
   return true;
 }
@@ -693,11 +659,9 @@ template <is_string T>
 bool
 islower_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !islower<T>(itr) )
-      return false;
+    if ( !islower<T>(itr) ) return false;
   }
   return true;
 }
@@ -706,11 +670,9 @@ template <is_string T>
 bool
 isupper_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isupper<T>(itr) )
-      return false;
+    if ( !isupper<T>(itr) ) return false;
   }
   return true;
 }
@@ -719,11 +681,9 @@ template <is_string T>
 bool
 isprint_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isprint<T>(itr) )
-      return false;
+    if ( !isprint<T>(itr) ) return false;
   }
   return true;
 }
@@ -732,11 +692,9 @@ template <is_string T>
 bool
 ispunct_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !ispunct<T>(itr) )
-      return false;
+    if ( !ispunct<T>(itr) ) return false;
   }
   return true;
 }
@@ -745,11 +703,9 @@ template <is_string T>
 bool
 isspace_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isspace<T>(itr) )
-      return false;
+    if ( !isspace<T>(itr) ) return false;
   }
   return true;
 }
@@ -758,11 +714,9 @@ template <is_string T>
 bool
 isxdigit_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isxdigit<T>(itr) )
-      return false;
+    if ( !isxdigit<T>(itr) ) return false;
   }
   return true;
 }
@@ -771,11 +725,9 @@ template <is_string T>
 bool
 isascii_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isascii<T>(itr) )
-      return false;
+    if ( !isascii<T>(itr) ) return false;
   }
   return true;
 }
@@ -784,11 +736,9 @@ template <is_string T>
 bool
 isblank_all(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( !isblank<T>(itr) )
-      return false;
+    if ( !isblank<T>(itr) ) return false;
   }
   return true;
 }
@@ -797,11 +747,9 @@ template <is_string T>
 bool
 isalnum_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isalnum<T>(itr) )
-      return true;
+    if ( isalnum<T>(itr) ) return true;
   }
   return false;
 }
@@ -810,11 +758,9 @@ template <is_string T>
 bool
 isalpha_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isalpha<T>(itr) )
-      return true;
+    if ( isalpha<T>(itr) ) return true;
   }
   return false;
 }
@@ -823,11 +769,9 @@ template <is_string T>
 bool
 iscntrl_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( iscntrl<T>(itr) )
-      return true;
+    if ( iscntrl<T>(itr) ) return true;
   }
   return false;
 }
@@ -836,11 +780,9 @@ template <is_string T>
 bool
 isdigit_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isdigit<T>(itr) )
-      return true;
+    if ( isdigit<T>(itr) ) return true;
   }
   return false;
 }
@@ -849,11 +791,9 @@ template <is_string T>
 bool
 isgraph_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isgraph<T>(itr) )
-      return true;
+    if ( isgraph<T>(itr) ) return true;
   }
   return false;
 }
@@ -862,11 +802,9 @@ template <is_string T>
 bool
 islower_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( islower<T>(itr) )
-      return true;
+    if ( islower<T>(itr) ) return true;
   }
   return false;
 }
@@ -875,11 +813,9 @@ template <is_string T>
 bool
 isupper_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isupper<T>(itr) )
-      return true;
+    if ( isupper<T>(itr) ) return true;
   }
   return false;
 }
@@ -888,11 +824,9 @@ template <is_string T>
 bool
 isprint_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isprint<T>(itr) )
-      return true;
+    if ( isprint<T>(itr) ) return true;
   }
   return false;
 }
@@ -901,11 +835,9 @@ template <is_string T>
 bool
 ispunct_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( ispunct<T>(itr) )
-      return true;
+    if ( ispunct<T>(itr) ) return true;
   }
   return false;
 }
@@ -914,11 +846,9 @@ template <is_string T>
 bool
 isspace_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isspace<T>(itr) )
-      return true;
+    if ( isspace<T>(itr) ) return true;
   }
   return false;
 }
@@ -927,11 +857,9 @@ template <is_string T>
 bool
 isxdigit_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isxdigit<T>(itr) )
-      return true;
+    if ( isxdigit<T>(itr) ) return true;
   }
   return false;
 }
@@ -940,11 +868,9 @@ template <is_string T>
 bool
 isascii_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isascii<T>(itr) )
-      return true;
+    if ( isascii<T>(itr) ) return true;
   }
   return false;
 }
@@ -953,11 +879,9 @@ template <is_string T>
 bool
 isblank_any(const T &str)
 {
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   for ( auto itr = str.begin(); itr != str.end(); ++itr ) {
-    if ( isblank<T>(itr) )
-      return true;
+    if ( isblank<T>(itr) ) return true;
   }
   return false;
 }
@@ -971,8 +895,7 @@ casefold(T &str)
 {
   auto itr = str.begin();
   while ( itr != str.end() ) {
-    if ( isupper<T>(itr) )
-      to_lower<T>(itr);
+    if ( isupper<T>(itr) ) to_lower<T>(itr);
     ++itr;
   }
   return str;
@@ -989,11 +912,9 @@ casefold(const T &str)
 inline void
 casefold(char *str)
 {
-  if ( str == nullptr )
-    return;
+  if ( str == nullptr ) return;
   while ( *str ) {
-    if ( *str >= 0x41 && *str <= 0x5A )
-      *str += 32;
+    if ( *str >= 0x41 && *str <= 0x5A ) *str += 32;
     ++str;
   }
 }
@@ -1002,11 +923,9 @@ inline hstring<schar>
 casefold(const char *str, usize len)
 {
   hstring<schar> result(str);
-  if ( len < result.size() )
-    result.truncate(len);
+  if ( len < result.size() ) result.truncate(len);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x41 && *itr <= 0x5A )
-      *itr += 32;
+    if ( *itr >= 0x41 && *itr <= 0x5A ) *itr += 32;
   return result;
 }
 
@@ -1016,8 +935,7 @@ casefold(const char (&str)[N])
 {
   hstring<schar> result(str);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x41 && *itr <= 0x5A )
-      *itr += 32;
+    if ( *itr >= 0x41 && *itr <= 0x5A ) *itr += 32;
   return result;
 }
 
@@ -1027,8 +945,7 @@ upper(T &str)
 {
   auto itr = str.begin();
   while ( itr != str.end() ) {
-    if ( islower<T>(itr) )
-      to_upper<T>(itr);
+    if ( islower<T>(itr) ) to_upper<T>(itr);
     ++itr;
   }
   return str;
@@ -1045,11 +962,9 @@ upper(const T &str)
 inline void
 upper(char *str)
 {
-  if ( str == nullptr )
-    return;
+  if ( str == nullptr ) return;
   while ( *str ) {
-    if ( *str >= 0x61 && *str <= 0x7A )
-      *str -= 32;
+    if ( *str >= 0x61 && *str <= 0x7A ) *str -= 32;
     ++str;
   }
 }
@@ -1058,11 +973,9 @@ inline hstring<schar>
 upper(const char *str, usize len)
 {
   hstring<schar> result(str);
-  if ( len < result.size() )
-    result.truncate(len);
+  if ( len < result.size() ) result.truncate(len);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x61 && *itr <= 0x7A )
-      *itr -= 32;
+    if ( *itr >= 0x61 && *itr <= 0x7A ) *itr -= 32;
   return result;
 }
 
@@ -1072,8 +985,7 @@ upper(const char (&str)[N])
 {
   hstring<schar> result(str);
   for ( auto itr = result.begin(); itr != result.end(); ++itr )
-    if ( *itr >= 0x61 && *itr <= 0x7A )
-      *itr -= 32;
+    if ( *itr >= 0x61 && *itr <= 0x7A ) *itr -= 32;
   return result;
 }
 
@@ -1084,19 +996,14 @@ template <char Tk = ' ', is_string T>
 T &
 strip(T &data)
 {
-  if ( data.empty() )
-    return data;
+  if ( data.empty() ) return data;
   auto start = data.begin();
   auto stop = data.end();
-  while ( start != stop && *start == Tk )
-    ++start;
-  while ( stop != start && *(stop - 1) == Tk )
-    --stop;
-  if ( start == data.begin() && stop == data.end() )
-    return data;
+  while ( start != stop && *start == Tk ) ++start;
+  while ( stop != start && *(stop - 1) == Tk ) --stop;
+  if ( start == data.begin() && stop == data.end() ) return data;
   usize new_len = static_cast<usize>(stop - start);
-  if ( start != data.begin() )
-    micron::bytemove(data.begin(), start, new_len);
+  if ( start != data.begin() ) micron::bytemove(data.begin(), start, new_len);
   data.set_size(new_len);
   return data;
 }
@@ -1113,17 +1020,13 @@ template <char Tk = ' '>
 char *
 strip(char *data, usize &len)
 {
-  if ( data == nullptr || len == 0 )
-    return data;
+  if ( data == nullptr || len == 0 ) return data;
   usize start = 0;
-  while ( start < len && data[start] == Tk )
-    ++start;
+  while ( start < len && data[start] == Tk ) ++start;
   usize end = len;
-  while ( end > start && data[end - 1] == Tk )
-    --end;
+  while ( end > start && data[end - 1] == Tk ) --end;
   usize new_len = end - start;
-  if ( start > 0 )
-    micron::bytemove(data, data + start, new_len);
+  if ( start > 0 ) micron::bytemove(data, data + start, new_len);
   data[new_len] = 0;
   len = new_len;
   return data;
@@ -1134,8 +1037,7 @@ hstring<schar>
 strip(const char *data, usize len)
 {
   hstring<schar> result(data);
-  if ( len < result.size() )
-    result.truncate(len);
+  if ( len < result.size() ) result.truncate(len);
   return strip<Tk>(result);
 }
 
@@ -1155,8 +1057,7 @@ bool
 ends_with(const T &data, const char *fnd)
 {
   auto sz = micron::strlen(fnd);
-  if ( sz > data.size() )
-    return false;
+  if ( sz > data.size() ) return false;
   return strcmp(data.end() - sz, &fnd[0]) == 0;
 }
 
@@ -1164,19 +1065,16 @@ template <is_string T>
 bool
 ends_with(const T &data, const T &fnd)
 {
-  if ( fnd.size() > data.size() )
-    return false;
+  if ( fnd.size() > data.size() ) return false;
   return strcmp(data.end() - fnd.size(), fnd.begin()) == 0;
 }
 
 inline bool
 ends_with(const char *data, usize data_len, const char *fnd)
 {
-  if ( data == nullptr || fnd == nullptr )
-    return false;
+  if ( data == nullptr || fnd == nullptr ) return false;
   usize fnd_len = micron::strlen(fnd);
-  if ( fnd_len > data_len )
-    return false;
+  if ( fnd_len > data_len ) return false;
   return strcmp(data + data_len - fnd_len, fnd) == 0;
 }
 
@@ -1184,10 +1082,8 @@ template <is_string T>
 bool
 ends_with(const char *data, usize data_len, const T &fnd)
 {
-  if ( data == nullptr || fnd.empty() )
-    return false;
-  if ( fnd.size() > data_len )
-    return false;
+  if ( data == nullptr || fnd.empty() ) return false;
+  if ( fnd.size() > data_len ) return false;
   return strcmp(data + data_len - fnd.size(), fnd.begin()) == 0;
 }
 
@@ -1197,8 +1093,7 @@ ends_with(const char (&data)[N], const char (&fnd)[M])
 {
   constexpr usize data_len = N - 1;
   constexpr usize fnd_len = M - 1;
-  if constexpr ( fnd_len > data_len )
-    return false;
+  if constexpr ( fnd_len > data_len ) return false;
   return strcmp(data + data_len - fnd_len, fnd) == 0;
 }
 
@@ -1207,8 +1102,7 @@ bool
 starts_with(const T &data, const char *fnd)
 {
   auto sz = micron::strlen(fnd);
-  if ( sz > data.size() )
-    return false;
+  if ( sz > data.size() ) return false;
   auto buf = data.substr(0, sz);
   return strcmp(buf.begin(), &fnd[0]) == 0;
 }
@@ -1217,8 +1111,7 @@ template <is_string T>
 bool
 starts_with(const T &data, const T &fnd)
 {
-  if ( fnd.size() > data.size() )
-    return false;
+  if ( fnd.size() > data.size() ) return false;
   auto buf = data.substr(0, fnd.size());
   return strcmp(buf.begin(), fnd.begin()) == 0;
 }
@@ -1226,11 +1119,9 @@ starts_with(const T &data, const T &fnd)
 inline bool
 starts_with(const char *data, usize data_len, const char *fnd)
 {
-  if ( data == nullptr || fnd == nullptr )
-    return false;
+  if ( data == nullptr || fnd == nullptr ) return false;
   usize fnd_len = micron::strlen(fnd);
-  if ( fnd_len > data_len )
-    return false;
+  if ( fnd_len > data_len ) return false;
   return strncmp(data, fnd, fnd_len) == 0;
 }
 
@@ -1238,10 +1129,8 @@ template <is_string T>
 bool
 starts_with(const char *data, usize data_len, const T &fnd)
 {
-  if ( data == nullptr || fnd.empty() )
-    return false;
-  if ( fnd.size() > data_len )
-    return false;
+  if ( data == nullptr || fnd.empty() ) return false;
+  if ( fnd.size() > data_len ) return false;
   return strncmp(data, fnd.begin(), fnd.size()) == 0;
 }
 
@@ -1251,8 +1140,7 @@ starts_with(const char (&data)[N], const char (&fnd)[M])
 {
   constexpr usize data_len = N - 1;
   constexpr usize fnd_len = M - 1;
-  if constexpr ( fnd_len > data_len )
-    return false;
+  if constexpr ( fnd_len > data_len ) return false;
   return strncmp(data, fnd, fnd_len) == 0;
 }
 
@@ -1283,8 +1171,7 @@ sstring<N, T> &
 concat(sstring<N, T> &lhs, const char *rhs)
 {
   auto sz = micron::strlen(rhs);
-  if ( sz + lhs.size() > lhs.max_size() )
-    exc<except::library_error>("concat range error.");
+  if ( sz + lhs.size() > lhs.max_size() ) exc<except::library_error>("concat range error.");
   auto *p = lhs.begin();
   micron::bytemove(p + sz, p, lhs.size());
   micron::bytecpy(p, rhs, sz);
@@ -1297,8 +1184,7 @@ sstring<N, T> &
 concat(const char *lhs, sstring<N, T> &rhs)
 {
   auto sz = micron::strlen(lhs);
-  if ( sz + rhs.size() > rhs.max_size() )
-    exc<except::library_error>("concat range error.");
+  if ( sz + rhs.size() > rhs.max_size() ) exc<except::library_error>("concat range error.");
   auto *p = rhs.begin();
   micron::bytemove(p + sz, p, rhs.size());
   micron::bytecpy(p, lhs, sz);
@@ -1350,10 +1236,8 @@ template <is_string T>
 T
 split(const T &data, usize at = 0)
 {
-  if ( at > data.size() )
-    exc<except::library_error>("micron::split() out of bounds.");
-  if ( !at )
-    return data.substr(data.size() / 2, data.size() - (data.size() / 2));
+  if ( at > data.size() ) exc<except::library_error>("micron::split() out of bounds.");
+  if ( !at ) return data.substr(data.size() / 2, data.size() - (data.size() / 2));
   return data.substr(at, data.size() - at);
 }
 
@@ -1361,8 +1245,7 @@ template <is_string T>
 T
 split(const T &data, typename T::const_iterator itr)
 {
-  if ( itr >= data.end() or itr < data.begin() )
-    exc<except::library_error>("micron::split() out of bounds.");
+  if ( itr >= data.end() or itr < data.begin() ) exc<except::library_error>("micron::split() out of bounds.");
   usize pos = static_cast<usize>(itr - data.begin());
   return data.substr(pos, data.size() - pos);
 }
@@ -1371,8 +1254,7 @@ template <is_string T, is_string O>
 O
 split(const T &data, typename T::const_iterator itr)
 {
-  if ( itr >= data.end() or itr < data.begin() )
-    exc<except::library_error>("micron::split() out of bounds.");
+  if ( itr >= data.end() or itr < data.begin() ) exc<except::library_error>("micron::split() out of bounds.");
   usize pos = static_cast<usize>(itr - data.begin());
   return data.substr(pos, data.size() - pos);
 }
@@ -1380,10 +1262,8 @@ split(const T &data, typename T::const_iterator itr)
 inline hstring<schar>
 split(const char *data, usize len, usize at = 0)
 {
-  if ( data == nullptr )
-    exc<except::library_error>("micron::split() null pointer.");
-  if ( at > len )
-    exc<except::library_error>("micron::split() out of bounds.");
+  if ( data == nullptr ) exc<except::library_error>("micron::split() null pointer.");
+  if ( at > len ) exc<except::library_error>("micron::split() out of bounds.");
   usize pos = at ? at : len / 2;
   return hstring<schar>(data + pos, data + len);
 }
@@ -1391,11 +1271,9 @@ split(const char *data, usize len, usize at = 0)
 inline hstring<schar>
 split_delim(const char *data, usize len, char delim)
 {
-  if ( data == nullptr )
-    exc<except::library_error>("micron::split() null pointer.");
+  if ( data == nullptr ) exc<except::library_error>("micron::split() null pointer.");
   for ( usize i = 0; i < len; ++i )
-    if ( data[i] == delim )
-      return hstring<schar>(data, data + i);
+    if ( data[i] == delim ) return hstring<schar>(data, data + i);
   return hstring<schar>(data, data + len);
 }
 
@@ -1404,8 +1282,7 @@ inline hstring<schar>
 split(const char (&data)[N], usize at = 0)
 {
   constexpr usize len = N - 1;
-  if ( at > len )
-    exc<except::library_error>("micron::split() out of bounds.");
+  if ( at > len ) exc<except::library_error>("micron::split() out of bounds.");
   usize pos = at ? at : len / 2;
   return hstring<schar>(data + pos, data + len);
 }
@@ -1418,8 +1295,7 @@ micron::fvector<int>
 build_bad_char(const T &pattern)
 {
   micron::fvector<int> bad(256, -1);
-  for ( usize i = 0; i < pattern.size(); ++i )
-    bad[static_cast<unsigned char>(pattern[i])] = i;
+  for ( usize i = 0; i < pattern.size(); ++i ) bad[static_cast<unsigned char>(pattern[i])] = i;
   return bad;
 }
 
@@ -1430,14 +1306,12 @@ build_good_suffix(const T &pattern)
   usize m = pattern.size();
   micron::fvector<int> shift(m + 1, 0);
   micron::fvector<int> border(m + 1, 0);
-  for ( usize k = 0; k <= m; ++k )
-    shift[k] = m;
+  for ( usize k = 0; k <= m; ++k ) shift[k] = m;
   int i = m, j = m + 1;
   border[i] = j;
   while ( i > 0 ) {
     while ( j <= static_cast<int>(m) && pattern[i - 1] != pattern[j - 1] ) {
-      if ( shift[j] == static_cast<int>(m) )
-        shift[j] = j - i;
+      if ( shift[j] == static_cast<int>(m) ) shift[j] = j - i;
       j = border[j];
     }
     --i;
@@ -1446,10 +1320,8 @@ build_good_suffix(const T &pattern)
   }
   j = border[0];
   for ( i = 0; i <= static_cast<int>(m); ++i ) {
-    if ( shift[i] == static_cast<int>(m) )
-      shift[i] = j;
-    if ( i == j )
-      j = border[j];
+    if ( shift[i] == static_cast<int>(m) ) shift[i] = j;
+    if ( i == j ) j = border[j];
   }
   return shift;
 }
@@ -1460,16 +1332,14 @@ boyer_moore_search(const T &text, const T &pattern)
 {
   micron::fvector<int> result;
   usize n = text.size(), m = pattern.size();
-  if ( m == 0 )
-    return result;
+  if ( m == 0 ) return result;
   result.reserve(n / (m ? m : 1));
   auto bad = build_bad_char(pattern);
   auto good = build_good_suffix(pattern);
   usize s = 0;
   while ( s <= n - m ) {
     int j = m - 1;
-    while ( j >= 0 && pattern[j] == text[s + j] )
-      --j;
+    while ( j >= 0 && pattern[j] == text[s + j] ) --j;
     if ( j < 0 ) {
       result.inline_push_back(s);
       s += good[0];
@@ -1490,31 +1360,26 @@ bm_find(const char (&text)[N], const char (&pattern)[Pt], usize &found_count)
   micron::carray<usize, N> result{};
   found_count = 0;
   bad.fill(-1);
-  for ( usize i = 0; i < Pt - 1; ++i )
-    bad[static_cast<unsigned char>(pattern[i])] = i;
+  for ( usize i = 0; i < Pt - 1; ++i ) bad[static_cast<unsigned char>(pattern[i])] = i;
   micron::carray<int, Pt + 1> border{};
   usize m = Pt - 1;
   int i = m, j = m + 1;
   border[i] = j;
   while ( i > 0 ) {
-    while ( j <= static_cast<int>(m) && pattern[i - 1] != pattern[j - 1] )
-      j = border[j];
+    while ( j <= static_cast<int>(m) && pattern[i - 1] != pattern[j - 1] ) j = border[j];
     --i;
     --j;
     border[i] = j;
   }
   j = border[0];
   for ( i = 0; i <= static_cast<int>(m); ++i ) {
-    if ( good[i] == 0 )
-      good[i] = j;
-    if ( i == j )
-      j = border[j];
+    if ( good[i] == 0 ) good[i] = j;
+    if ( i == j ) j = border[j];
   }
   usize s = 0;
   while ( s <= N - Pt ) {
     int k = Pt - 1;
-    while ( k >= 0 && pattern[k] == text[s + k] )
-      --k;
+    while ( k >= 0 && pattern[k] == text[s + k] ) --k;
     if ( k < 0 ) {
       result[found_count++] = s;
       s += good[0];
@@ -1534,21 +1399,16 @@ auto
 fast_find(const T &data, const char *fnd) -> typename T::const_iterator
 {
   usize n = data.size(), m = micron::strlen(fnd);
-  if ( m == 0 || m > n )
-    return data.end();
+  if ( m == 0 || m > n ) return data.end();
   u16 shift[256];
-  for ( usize i = 0; i < 256; ++i )
-    shift[i] = static_cast<u16>(m);
-  for ( usize i = 0; i < m - 1; ++i )
-    shift[static_cast<unsigned char>(fnd[i])] = static_cast<u16>(m - 1 - i);
+  for ( usize i = 0; i < 256; ++i ) shift[i] = static_cast<u16>(m);
+  for ( usize i = 0; i < m - 1; ++i ) shift[static_cast<unsigned char>(fnd[i])] = static_cast<u16>(m - 1 - i);
   auto it = data.begin();
   auto end_it = data.begin() + (n - m + 1);
   while ( it != end_it ) {
     usize j = m;
-    while ( j > 0 && (*(it + j - 1) == fnd[j - 1]) )
-      --j;
-    if ( j == 0 )
-      return it;
+    while ( j > 0 && (*(it + j - 1) == fnd[j - 1]) ) --j;
+    if ( j == 0 ) return it;
     it += shift[static_cast<unsigned char>(*(it + m - 1))];
   }
   return data.end();
@@ -1557,24 +1417,18 @@ fast_find(const T &data, const char *fnd) -> typename T::const_iterator
 inline const char *
 fast_find(const char *data, usize n, const char *fnd)
 {
-  if ( data == nullptr || fnd == nullptr )
-    return nullptr;
+  if ( data == nullptr || fnd == nullptr ) return nullptr;
   usize m = micron::strlen(fnd);
-  if ( m == 0 || m > n )
-    return nullptr;
+  if ( m == 0 || m > n ) return nullptr;
   u16 shift[256];
-  for ( usize i = 0; i < 256; ++i )
-    shift[i] = static_cast<u16>(m);
-  for ( usize i = 0; i < m - 1; ++i )
-    shift[static_cast<unsigned char>(fnd[i])] = static_cast<u16>(m - 1 - i);
+  for ( usize i = 0; i < 256; ++i ) shift[i] = static_cast<u16>(m);
+  for ( usize i = 0; i < m - 1; ++i ) shift[static_cast<unsigned char>(fnd[i])] = static_cast<u16>(m - 1 - i);
   const char *it = data;
   const char *end_it = data + (n - m + 1);
   while ( it != end_it ) {
     usize j = m;
-    while ( j > 0 && *(it + j - 1) == fnd[j - 1] )
-      --j;
-    if ( j == 0 )
-      return it;
+    while ( j > 0 && *(it + j - 1) == fnd[j - 1] ) --j;
+    if ( j == 0 ) return it;
     it += shift[static_cast<unsigned char>(*(it + m - 1))];
   }
   return nullptr;
@@ -1592,21 +1446,16 @@ auto
 fast_find(const T &data, const T &fnd) -> typename T::const_iterator
 {
   usize n = data.size(), m = fnd.size();
-  if ( m == 0 || m > n )
-    return data.end();
+  if ( m == 0 || m > n ) return data.end();
   u16 shift[256];
-  for ( usize i = 0; i < 256; ++i )
-    shift[i] = static_cast<u16>(m);
-  for ( usize i = 0; i < m - 1; ++i )
-    shift[static_cast<unsigned char>(fnd[i])] = static_cast<u16>(m - 1 - i);
+  for ( usize i = 0; i < 256; ++i ) shift[i] = static_cast<u16>(m);
+  for ( usize i = 0; i < m - 1; ++i ) shift[static_cast<unsigned char>(fnd[i])] = static_cast<u16>(m - 1 - i);
   auto it = data.begin();
   auto end_it = data.begin() + (n - m + 1);
   while ( it != end_it ) {
     usize j = m;
-    while ( j > 0 && *(it + j - 1) == fnd[j - 1] )
-      --j;
-    if ( j == 0 )
-      return it;
+    while ( j > 0 && *(it + j - 1) == fnd[j - 1] ) --j;
+    if ( j == 0 ) return it;
     it += shift[static_cast<unsigned char>(*(it + m - 1))];
   }
   return data.end();
@@ -1619,11 +1468,9 @@ template <is_string T>
 auto
 contains(const T &data, typename T::const_iterator from, const char fnd) -> bool
 {
-  if ( data.empty() || from < data.begin() || from >= data.end() )
-    return false;
+  if ( data.empty() || from < data.begin() || from >= data.end() ) return false;
   for ( auto itr = from; itr != data.end(); ++itr )
-    if ( *itr == fnd )
-      return true;
+    if ( *itr == fnd ) return true;
   return false;
 }
 
@@ -1632,14 +1479,11 @@ auto
 contains(const T &data, typename T::const_iterator from, const char *fnd) -> bool
 {
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 || from < data.begin() || from >= data.end() )
-    return false;
+  if ( sz > data.size() || data.empty() || sz == 0 || from < data.begin() || from >= data.end() ) return false;
   for ( auto itr = from; itr != data.end(); ++itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return true;
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return true;
   }
   return false;
 }
@@ -1648,11 +1492,9 @@ template <is_string T>
 auto
 contains(const T &data, const char fnd) -> bool
 {
-  if ( data.empty() )
-    return false;
+  if ( data.empty() ) return false;
   for ( auto itr = data.begin(); itr != data.end(); ++itr )
-    if ( *itr == fnd )
-      return true;
+    if ( *itr == fnd ) return true;
   return false;
 }
 
@@ -1661,14 +1503,11 @@ auto
 contains(const T &data, const char *fnd) -> bool
 {
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return false;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return false;
   for ( auto itr = data.begin(); itr + sz <= data.end(); ++itr ) {
     u64 j = 0;
-    while ( j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return true;
+    while ( j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return true;
   }
   return false;
 }
@@ -1677,14 +1516,11 @@ template <is_string T>
 bool
 contains(const T &data, const T &fnd)
 {
-  if ( fnd.empty() || fnd.size() > data.size() )
-    return false;
+  if ( fnd.empty() || fnd.size() > data.size() ) return false;
   for ( auto itr = data.begin(); itr + fnd.size() <= data.end(); ++itr ) {
     usize j = 0;
-    while ( j < fnd.size() && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == fnd.size() )
-      return true;
+    while ( j < fnd.size() && *(itr + j) == fnd[j] ) ++j;
+    if ( j == fnd.size() ) return true;
   }
   return false;
 }
@@ -1692,28 +1528,22 @@ contains(const T &data, const T &fnd)
 inline bool
 contains(const char *data, usize len, const char fnd)
 {
-  if ( data == nullptr || len == 0 )
-    return false;
+  if ( data == nullptr || len == 0 ) return false;
   for ( usize i = 0; i < len; ++i )
-    if ( data[i] == fnd )
-      return true;
+    if ( data[i] == fnd ) return true;
   return false;
 }
 
 inline bool
 contains(const char *data, usize len, const char *fnd)
 {
-  if ( data == nullptr || fnd == nullptr )
-    return false;
+  if ( data == nullptr || fnd == nullptr ) return false;
   usize sz = micron::strlen(fnd);
-  if ( sz == 0 || sz > len )
-    return false;
+  if ( sz == 0 || sz > len ) return false;
   for ( usize i = 0; i <= len - sz; ++i ) {
     usize j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return true;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return true;
   }
   return false;
 }
@@ -1732,11 +1562,9 @@ template <is_string T>
 auto
 find(const T &data, const char fnd) -> typename T::const_iterator
 {
-  if ( data.empty() )
-    return nullptr;
+  if ( data.empty() ) return nullptr;
   for ( auto itr = data.begin(); itr != data.end(); ++itr )
-    if ( *itr == fnd )
-      return itr;
+    if ( *itr == fnd ) return itr;
   return (typename T::iterator) nullptr;
 }
 
@@ -1745,14 +1573,11 @@ auto
 find(T &data, const char *fnd) -> typename T::iterator
 {
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = data.begin(); itr + sz <= data.end(); ++itr ) {
     u64 j = 0;
-    while ( j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
+    while ( j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1762,14 +1587,11 @@ auto
 find(const T &data, const char *fnd) -> typename T::const_iterator
 {
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = data.begin(); itr + sz <= data.end(); ++itr ) {
     u64 j = 0;
-    while ( j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
+    while ( j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1777,11 +1599,9 @@ find(const T &data, const char *fnd) -> typename T::const_iterator
 const char *
 find(const char *data, const char *end, const char fnd)
 {
-  if ( data < end || data >= end || !end || !data )
-    return nullptr;
+  if ( data < end || data >= end || !end || !data ) return nullptr;
   for ( auto itr = data; itr != end; ++itr )
-    if ( *itr == fnd )
-      return itr;
+    if ( *itr == fnd ) return itr;
   return nullptr;
 }
 
@@ -1789,11 +1609,9 @@ template <is_string T>
 auto
 find(const T &data, typename T::const_iterator from, const char fnd) -> typename T::const_iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from || data.empty() )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from || data.empty() ) return nullptr;
   for ( auto itr = from; itr != data.end(); ++itr )
-    if ( *itr == fnd )
-      return itr;
+    if ( *itr == fnd ) return itr;
   return (typename T::iterator) nullptr;
 }
 
@@ -1801,17 +1619,13 @@ template <is_string T>
 auto
 find(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   usize sz = fnd.size();
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = from; itr + sz <= data.end(); ++itr ) {
     u64 j = 0;
-    while ( j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
+    while ( j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1820,17 +1634,13 @@ template <is_string T>
 auto
 find(const T &data, typename T::iterator from, const char *fnd) -> typename T::iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = from; itr + sz <= data.end(); ++itr ) {
     u64 j = 0;
-    while ( j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
+    while ( j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1839,14 +1649,11 @@ template <is_string T>
 auto
 find(const T &data, const T &fnd) -> typename T::iterator
 {
-  if ( fnd.size() > data.size() || data.empty() || fnd.empty() )
-    return nullptr;
+  if ( fnd.size() > data.size() || data.empty() || fnd.empty() ) return nullptr;
   for ( auto itr = data.begin(); itr + fnd.size() <= data.end(); ++itr ) {
     u64 j = 0;
-    while ( j < fnd.size() && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == fnd.size() )
-      return itr;
+    while ( j < fnd.size() && *(itr + j) == fnd[j] ) ++j;
+    if ( j == fnd.size() ) return itr;
   }
   return nullptr;
 }
@@ -1854,28 +1661,22 @@ find(const T &data, const T &fnd) -> typename T::iterator
 inline const char *
 find(const char *data, usize len, const char fnd)
 {
-  if ( data == nullptr || len == 0 )
-    return nullptr;
+  if ( data == nullptr || len == 0 ) return nullptr;
   for ( usize i = 0; i < len; ++i )
-    if ( data[i] == fnd )
-      return data + i;
+    if ( data[i] == fnd ) return data + i;
   return nullptr;
 }
 
 inline const char *
 find(const char *data, usize len, const char *fnd)
 {
-  if ( data == nullptr || fnd == nullptr )
-    return nullptr;
+  if ( data == nullptr || fnd == nullptr ) return nullptr;
   usize sz = micron::strlen(fnd);
-  if ( sz == 0 || sz > len )
-    return nullptr;
+  if ( sz == 0 || sz > len ) return nullptr;
   for ( usize i = 0; i <= len - sz; ++i ) {
     u64 j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return data + i;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return data + i;
   }
   return nullptr;
 }
@@ -1901,13 +1702,10 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::const_iterator from, const char fnd) -> typename T::const_iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   for ( auto itr = from;; --itr ) {
-    if ( *(itr) == fnd )
-      return itr;
-    if ( itr == data.begin() )
-      break;
+    if ( *(itr) == fnd ) return itr;
+    if ( itr == data.begin() ) break;
   }
   return (typename T::const_iterator) nullptr;
 }
@@ -1916,19 +1714,14 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> typename T::const_iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   usize sz = fnd.size();
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
-    if ( itr == data.begin() )
-      break;
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
+    if ( itr == data.begin() ) break;
   }
   return (typename T::const_iterator) nullptr;
 }
@@ -1937,19 +1730,14 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::const_iterator from, const char *fnd) -> typename T::const_iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
-    if ( itr == data.begin() )
-      break;
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
+    if ( itr == data.begin() ) break;
   }
   return (typename T::const_iterator) nullptr;
 }
@@ -1958,19 +1746,14 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   usize sz = fnd.size();
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
-    if ( itr == data.begin() )
-      break;
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
+    if ( itr == data.begin() ) break;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1979,19 +1762,14 @@ template <is_string T>
 auto
 find_reverse(const T &data, typename T::iterator from, const char *fnd) -> typename T::iterator
 {
-  if ( from < data.begin() || from >= data.end() || !from )
-    return nullptr;
+  if ( from < data.begin() || from >= data.end() || !from ) return nullptr;
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() || sz == 0 )
-    return nullptr;
+  if ( sz > data.size() || data.empty() || sz == 0 ) return nullptr;
   for ( auto itr = from;; --itr ) {
     u64 j = 0;
-    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return itr;
-    if ( itr == data.begin() )
-      break;
+    while ( (itr + j) != data.end() && j < sz && *(itr + j) == fnd[j] ) ++j;
+    if ( j == sz ) return itr;
+    if ( itr == data.begin() ) break;
   }
   return (typename T::iterator) nullptr;
 }
@@ -1999,29 +1777,23 @@ find_reverse(const T &data, typename T::iterator from, const char *fnd) -> typen
 inline const char *
 find_reverse(const char *data, usize len, usize from, const char fnd)
 {
-  if ( data == nullptr || from >= len )
-    return nullptr;
+  if ( data == nullptr || from >= len ) return nullptr;
   for ( usize i = from + 1; i-- > 0; )
-    if ( data[i] == fnd )
-      return data + i;
+    if ( data[i] == fnd ) return data + i;
   return nullptr;
 }
 
 inline const char *
 find_reverse(const char *data, usize len, usize from, const char *fnd)
 {
-  if ( data == nullptr || fnd == nullptr )
-    return nullptr;
+  if ( data == nullptr || fnd == nullptr ) return nullptr;
   usize sz = micron::strlen(fnd);
-  if ( sz == 0 || sz > len || from >= len )
-    return nullptr;
+  if ( sz == 0 || sz > len || from >= len ) return nullptr;
   usize effective = (from <= len - sz) ? from : len - sz;
   for ( usize i = effective + 1; i-- > 0; ) {
     u64 j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return data + i;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return data + i;
   }
   return nullptr;
 }
@@ -2133,11 +1905,9 @@ replace(T &str, const char *lhs, const char *rhs)
   auto sz = str.size();
   auto szl = micron::strlen(lhs);
   auto szr = micron::strlen(rhs);
-  if ( szr > szl && (sz - szl + szr) > str.max_size() )
-    exc<except::library_error>("replace range error.");
+  if ( szr > szl && (sz - szl + szr) > str.max_size() ) exc<except::library_error>("replace range error.");
   typename T::iterator itr = find(str, lhs);
-  if ( itr == nullptr )
-    return str;
+  if ( itr == nullptr ) return str;
   usize pos = static_cast<usize>(itr - str.begin());
   usize tail_len = sz - pos - szl;
   micron::bytemove(itr + szr, itr + szl, tail_len);
@@ -2157,24 +1927,20 @@ replace(const T &str, const char *lhs, const char *rhs)
 inline char *
 replace(char *str, usize &len, const char *lhs, const char *rhs)
 {
-  if ( str == nullptr || lhs == nullptr || rhs == nullptr )
-    return str;
+  if ( str == nullptr || lhs == nullptr || rhs == nullptr ) return str;
   usize szl = micron::strlen(lhs);
   usize szr = micron::strlen(rhs);
-  if ( szl == 0 || szl > len )
-    return str;
+  if ( szl == 0 || szl > len ) return str;
   char *itr = nullptr;
   for ( usize i = 0; i <= len - szl; ++i ) {
     u64 j = 0;
-    while ( j < szl && str[i + j] == lhs[j] )
-      ++j;
+    while ( j < szl && str[i + j] == lhs[j] ) ++j;
     if ( j == szl ) {
       itr = str + i;
       break;
     }
   }
-  if ( itr == nullptr )
-    return str;
+  if ( itr == nullptr ) return str;
   usize pos = static_cast<usize>(itr - str);
   usize tail_len = len - pos - szl;
   micron::bytemove(itr + szr, itr + szl, tail_len);
@@ -2196,15 +1962,13 @@ template <is_string T>
 T &
 replace_all(T &str, const char *lhs, const char *rhs)
 {
-  if ( micron::strcmp(lhs, rhs) == 0 )
-    return str;
+  if ( micron::strcmp(lhs, rhs) == 0 ) return str;
   auto szl = micron::strlen(lhs);
   auto szr = micron::strlen(rhs);
   typename T::iterator itr = find(str, lhs);
   while ( itr != nullptr ) {
     auto sz = str.size();
-    if ( szr > szl && (sz - szl + szr) > str.max_size() )
-      exc<except::library_error>("replace_all range error.");
+    if ( szr > szl && (sz - szl + szr) > str.max_size() ) exc<except::library_error>("replace_all range error.");
     usize pos = static_cast<usize>(itr - str.begin());
     usize tail_len = sz - pos - szl;
     micron::bytemove(itr + szr, itr + szl, tail_len);
@@ -2221,8 +1985,7 @@ replace_all(T &str, const char *lhs)
 {
   auto sz = str.size();
   auto szl = micron::strlen(lhs);
-  if ( (szl) + sz > str.max_size() )
-    exc<except::library_error>("concat range error.");
+  if ( (szl) + sz > str.max_size() ) exc<except::library_error>("concat range error.");
   typename T::iterator itr = find(str, lhs);
   while ( itr != nullptr ) {
     sz = str.size();
@@ -2246,17 +2009,14 @@ replace_all(const T &str, const char *lhs, const char *rhs)
 inline char *
 replace_all(char *str, usize &len, const char *lhs, const char *rhs)
 {
-  if ( micron::strcmp(lhs, rhs) == 0 || str == nullptr || lhs == nullptr || rhs == nullptr )
-    return str;
+  if ( micron::strcmp(lhs, rhs) == 0 || str == nullptr || lhs == nullptr || rhs == nullptr ) return str;
   usize szl = micron::strlen(lhs);
   usize szr = micron::strlen(rhs);
-  if ( szl == 0 )
-    return str;
+  if ( szl == 0 ) return str;
   usize pos = 0;
   while ( pos + szl <= len ) {
     u64 j = 0;
-    while ( j < szl && str[pos + j] == lhs[j] )
-      ++j;
+    while ( j < szl && str[pos + j] == lhs[j] ) ++j;
     if ( j == szl ) {
       usize tail_len = len - pos - szl;
       micron::bytemove(str + pos + szr, str + pos + szl, tail_len);
@@ -2287,8 +2047,7 @@ to_float(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
   // skip leading whitespace
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2297,8 +2056,7 @@ to_float(const T &o)
     ++p;
   // integer part
   u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    ipart = ipart * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
   // fractional part
   u64 frac = 0;
   usize fdigits = 0;
@@ -2313,19 +2071,16 @@ to_float(const T &o)
     }
   }
   f32 result = static_cast<f32>(ipart);
-  if ( fdigits > 0 )
-    result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
+  if ( fdigits > 0 ) result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
   return neg ? -result : result;
 }
 
 inline f32
 to_float(const char *buf)
 {
-  if ( buf == nullptr )
-    return 0.0f;
+  if ( buf == nullptr ) return 0.0f;
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2333,8 +2088,7 @@ to_float(const char *buf)
   } else if ( *p == '+' )
     ++p;
   u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    ipart = ipart * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
   u64 frac = 0;
   usize fdigits = 0;
   if ( *p == '.' ) {
@@ -2348,20 +2102,17 @@ to_float(const char *buf)
     }
   }
   f32 result = static_cast<f32>(ipart);
-  if ( fdigits > 0 )
-    result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
+  if ( fdigits > 0 ) result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
   return neg ? -result : result;
 }
 
 inline f32
 to_float(const char *buf, usize len)
 {
-  if ( buf == nullptr || len == 0 )
-    return 0.0f;
+  if ( buf == nullptr || len == 0 ) return 0.0f;
   const char *p = buf;
   const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') )
-    ++p;
+  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
   bool neg = false;
   if ( p < end && *p == '-' ) {
     neg = true;
@@ -2369,8 +2120,7 @@ to_float(const char *buf, usize len)
   } else if ( p < end && *p == '+' )
     ++p;
   u64 ipart = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 )
-    ipart = ipart * 10 + (*p++ - '0');
+  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
   u64 frac = 0;
   usize fdigits = 0;
   if ( p < end && *p == '.' ) {
@@ -2384,8 +2134,7 @@ to_float(const char *buf, usize len)
     }
   }
   f32 result = static_cast<f32>(ipart);
-  if ( fdigits > 0 )
-    result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
+  if ( fdigits > 0 ) result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
   return neg ? -result : result;
 }
 
@@ -2401,8 +2150,7 @@ f64
 to_double(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2410,8 +2158,7 @@ to_double(const T &o)
   } else if ( *p == '+' )
     ++p;
   u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    ipart = ipart * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
   u64 frac = 0;
   usize fdigits = 0;
   if ( *p == '.' ) {
@@ -2425,19 +2172,16 @@ to_double(const T &o)
     }
   }
   f64 result = static_cast<f64>(ipart);
-  if ( fdigits > 0 )
-    result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
+  if ( fdigits > 0 ) result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
   return neg ? -result : result;
 }
 
 inline f64
 to_double(const char *buf)
 {
-  if ( buf == nullptr )
-    return 0.0;
+  if ( buf == nullptr ) return 0.0;
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2445,8 +2189,7 @@ to_double(const char *buf)
   } else if ( *p == '+' )
     ++p;
   u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    ipart = ipart * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
   u64 frac = 0;
   usize fdigits = 0;
   if ( *p == '.' ) {
@@ -2460,20 +2203,17 @@ to_double(const char *buf)
     }
   }
   f64 result = static_cast<f64>(ipart);
-  if ( fdigits > 0 )
-    result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
+  if ( fdigits > 0 ) result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
   return neg ? -result : result;
 }
 
 inline f64
 to_double(const char *buf, usize len)
 {
-  if ( buf == nullptr || len == 0 )
-    return 0.0;
+  if ( buf == nullptr || len == 0 ) return 0.0;
   const char *p = buf;
   const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') )
-    ++p;
+  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
   bool neg = false;
   if ( p < end && *p == '-' ) {
     neg = true;
@@ -2481,8 +2221,7 @@ to_double(const char *buf, usize len)
   } else if ( p < end && *p == '+' )
     ++p;
   u64 ipart = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 )
-    ipart = ipart * 10 + (*p++ - '0');
+  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
   u64 frac = 0;
   usize fdigits = 0;
   if ( p < end && *p == '.' ) {
@@ -2496,8 +2235,7 @@ to_double(const char *buf, usize len)
     }
   }
   f64 result = static_cast<f64>(ipart);
-  if ( fdigits > 0 )
-    result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
+  if ( fdigits > 0 ) result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
   return neg ? -result : result;
 }
 
@@ -2513,8 +2251,7 @@ i32
 to_integer(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2522,19 +2259,16 @@ to_integer(const T &o)
   } else if ( *p == '+' )
     ++p;
   u32 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    acc = acc * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
   return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
 }
 
 inline i32
 to_integer(const char *buf)
 {
-  if ( buf == nullptr )
-    return 0;
+  if ( buf == nullptr ) return 0;
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2542,20 +2276,17 @@ to_integer(const char *buf)
   } else if ( *p == '+' )
     ++p;
   u32 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    acc = acc * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
   return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
 }
 
 inline i32
 to_integer(const char *buf, usize len)
 {
-  if ( buf == nullptr || len == 0 )
-    return 0;
+  if ( buf == nullptr || len == 0 ) return 0;
   const char *p = buf;
   const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') )
-    ++p;
+  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
   bool neg = false;
   if ( p < end && *p == '-' ) {
     neg = true;
@@ -2563,8 +2294,7 @@ to_integer(const char *buf, usize len)
   } else if ( p < end && *p == '+' )
     ++p;
   u32 acc = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 )
-    acc = acc * 10 + (*p++ - '0');
+  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
   return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
 }
 
@@ -2578,12 +2308,9 @@ to_integer(const char (&buf)[N])
 constexpr int
 xdigit_to_val(char c) noexcept
 {
-  if ( c >= '0' && c <= '9' )
-    return c - '0';
-  if ( c >= 'a' && c <= 'f' )
-    return c - 'a' + 10;
-  if ( c >= 'A' && c <= 'F' )
-    return c - 'A' + 10;
+  if ( c >= '0' && c <= '9' ) return c - '0';
+  if ( c >= 'a' && c <= 'f' ) return c - 'a' + 10;
+  if ( c >= 'A' && c <= 'F' ) return c - 'A' + 10;
   return -1;
 }
 
@@ -2614,8 +2341,7 @@ constexpr int
 parse_hex_byte(const char *&p) noexcept
 {
   int d = xdigit_to_val(*p);
-  if ( d < 0 )
-    return -1;
+  if ( d < 0 ) return -1;
   ++p;
   int d2 = xdigit_to_val(*p);
   if ( d2 >= 0 ) {
@@ -2648,10 +2374,8 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
 {
   const char *p = reinterpret_cast<const char *>(start);
   const char *pe = reinterpret_cast<const char *>(end);
-  while ( p < pe && (*p == ' ' || *p == '\t') )
-    ++p;
-  if ( base == 16 && p + 1 < pe && p[0] == '0' && (p[1] == 'x' || p[1] == 'X') )
-    p += 2;
+  while ( p < pe && (*p == ' ' || *p == '\t') ) ++p;
+  if ( base == 16 && p + 1 < pe && p[0] == '0' && (p[1] == 'x' || p[1] == 'X') ) p += 2;
   u64 result = 0;
   while ( p < pe ) {
     u32 digit;
@@ -2664,8 +2388,7 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
       digit = ch - 'a' + 10;
     else
       break;
-    if ( digit >= base )
-      break;
+    if ( digit >= base ) break;
     result = result * base + digit;
     ++p;
   }
@@ -2677,8 +2400,7 @@ i64
 to_long(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2686,8 +2408,7 @@ to_long(const T &o)
   } else if ( *p == '+' )
     ++p;
   u64 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    acc = acc * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
   return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
 }
 
@@ -2695,11 +2416,9 @@ to_long(const T &o)
 inline i64
 to_long(const char *buf)
 {
-  if ( buf == nullptr )
-    return 0;
+  if ( buf == nullptr ) return 0;
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   bool neg = false;
   if ( *p == '-' ) {
     neg = true;
@@ -2707,8 +2426,7 @@ to_long(const char *buf)
   } else if ( *p == '+' )
     ++p;
   u64 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 )
-    acc = acc * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
   return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
 }
 
@@ -2716,12 +2434,10 @@ to_long(const char *buf)
 inline i64
 to_long(const char *buf, usize len)
 {
-  if ( buf == nullptr || len == 0 )
-    return 0;
+  if ( buf == nullptr || len == 0 ) return 0;
   const char *p = buf;
   const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') )
-    ++p;
+  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
   bool neg = false;
   if ( p < end && *p == '-' ) {
     neg = true;
@@ -2729,8 +2445,7 @@ to_long(const char *buf, usize len)
   } else if ( p < end && *p == '+' )
     ++p;
   u64 acc = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 )
-    acc = acc * 10 + (*p++ - '0');
+  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
   return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
 }
 
@@ -2748,11 +2463,9 @@ template <is_string T>
 T
 pad_left(const T &str, usize width, char fill = ' ')
 {
-  if ( str.size() >= width )
-    return str;
+  if ( str.size() >= width ) return str;
   T result;
-  for ( usize i = 0; i < width - str.size(); ++i )
-    result += fill;
+  for ( usize i = 0; i < width - str.size(); ++i ) result += fill;
   result += str;
   return result;
 }
@@ -2761,11 +2474,9 @@ template <is_string T>
 T
 pad_right(const T &str, usize width, char fill = ' ')
 {
-  if ( str.size() >= width )
-    return str;
+  if ( str.size() >= width ) return str;
   T result(str);
-  for ( usize i = 0; i < width - str.size(); ++i )
-    result += fill;
+  for ( usize i = 0; i < width - str.size(); ++i ) result += fill;
   return result;
 }
 
@@ -2773,16 +2484,13 @@ template <is_string T>
 T
 pad_center(const T &str, usize width, char fill = ' ')
 {
-  if ( str.size() >= width )
-    return str;
+  if ( str.size() >= width ) return str;
   T result;
   usize pad = width - str.size();
   usize left = pad / 2;
-  for ( usize i = 0; i < left; ++i )
-    result += fill;
+  for ( usize i = 0; i < left; ++i ) result += fill;
   result += str;
-  for ( usize i = 0; i < pad - left; ++i )
-    result += fill;
+  for ( usize i = 0; i < pad - left; ++i ) result += fill;
   return result;
 }
 
@@ -2811,8 +2519,7 @@ template <is_string T>
 T
 truncate(const T &str, usize width)
 {
-  if ( str.size() <= width )
-    return str;
+  if ( str.size() <= width ) return str;
   return str.substr(0, width);
 }
 
@@ -2865,17 +2572,14 @@ template <is_string T>
 T
 capitalize(const T &str)
 {
-  if ( str.empty() )
-    return str;
+  if ( str.empty() ) return str;
   T result(str);
   auto itr = result.begin();
   while ( itr != result.end() ) {
-    if ( isupper<typename T::value_type>(*itr) )
-      *itr = to_lower<typename T::value_type>(*itr);
+    if ( isupper<typename T::value_type>(*itr) ) *itr = to_lower<typename T::value_type>(*itr);
     ++itr;
   }
-  if ( islower<typename T::value_type>(*result.begin()) )
-    *result.begin() = to_upper<typename T::value_type>(*result.begin());
+  if ( islower<typename T::value_type>(*result.begin()) ) *result.begin() = to_upper<typename T::value_type>(*result.begin());
   return result;
 }
 
@@ -2890,8 +2594,7 @@ inline hstring<schar>
 capitalize(const char *str, usize len)
 {
   hstring<schar> s(str);
-  if ( len < s.size() )
-    s.truncate(len);
+  if ( len < s.size() ) s.truncate(len);
   return capitalize(s);
 }
 
@@ -2907,20 +2610,17 @@ template <is_string T>
 T
 title_case(const T &str)
 {
-  if ( str.empty() )
-    return str;
+  if ( str.empty() ) return str;
   T result(str);
   bool word_start = true;
   for ( auto itr = result.begin(); itr != result.end(); ++itr ) {
     if ( isspace<typename T::value_type>(*itr) || ispunct<typename T::value_type>(*itr) )
       word_start = true;
     else if ( word_start ) {
-      if ( islower<typename T::value_type>(*itr) )
-        *itr = to_upper<typename T::value_type>(*itr);
+      if ( islower<typename T::value_type>(*itr) ) *itr = to_upper<typename T::value_type>(*itr);
       word_start = false;
     } else {
-      if ( isupper<typename T::value_type>(*itr) )
-        *itr = to_lower<typename T::value_type>(*itr);
+      if ( isupper<typename T::value_type>(*itr) ) *itr = to_lower<typename T::value_type>(*itr);
     }
   }
   return result;
@@ -2937,8 +2637,7 @@ inline hstring<schar>
 title_case(const char *str, usize len)
 {
   hstring<schar> s(str);
-  if ( len < s.size() )
-    s.truncate(len);
+  if ( len < s.size() ) s.truncate(len);
   return title_case(s);
 }
 
@@ -2954,8 +2653,7 @@ template <is_string T>
 T
 swap_case(const T &str)
 {
-  if ( str.empty() )
-    return str;
+  if ( str.empty() ) return str;
   T result(str);
   for ( auto itr = result.begin(); itr != result.end(); ++itr ) {
     if ( isupper<typename T::value_type>(*itr) )
@@ -2977,8 +2675,7 @@ inline hstring<schar>
 swap_case(const char *str, usize len)
 {
   hstring<schar> s(str);
-  if ( len < s.size() )
-    s.truncate(len);
+  if ( len < s.size() ) s.truncate(len);
   return swap_case(s);
 }
 
@@ -2998,8 +2695,7 @@ T
 repeat(const T &str, usize count)
 {
   T result;
-  for ( usize i = 0; i < count; ++i )
-    result += str;
+  for ( usize i = 0; i < count; ++i ) result += str;
   return result;
 }
 
@@ -3007,8 +2703,7 @@ inline hstring<schar>
 repeat(const char *str, usize count)
 {
   hstring<schar> result;
-  for ( usize i = 0; i < count; ++i )
-    result += str;
+  for ( usize i = 0; i < count; ++i ) result += str;
   return result;
 }
 
@@ -3016,8 +2711,7 @@ inline hstring<schar>
 repeat(char c, usize count)
 {
   hstring<schar> result;
-  for ( usize i = 0; i < count; ++i )
-    result += c;
+  for ( usize i = 0; i < count; ++i ) result += c;
   return result;
 }
 
@@ -3224,8 +2918,7 @@ template <> struct formatter<char> {
   static inline usize
   write(char *buf, usize buf_sz, char val, const __impl::fmt_spec &)
   {
-    if ( buf_sz == 0 )
-      return 0;
+    if ( buf_sz == 0 ) return 0;
     buf[0] = val;
     return 1;
   }
@@ -3236,8 +2929,7 @@ template <> struct formatter<const char *> {
   write(char *buf, usize buf_sz, const char *val, const __impl::fmt_spec &spec)
   {
     if ( val == nullptr ) {
-      if ( buf_sz < 6 )
-        return 0;
+      if ( buf_sz < 6 ) return 0;
       buf[0] = '(';
       buf[1] = 'n';
       buf[2] = 'u';
@@ -3247,10 +2939,8 @@ template <> struct formatter<const char *> {
       return 6;
     }
     usize len = micron::strlen(val);
-    if ( spec.has_prec && spec.prec < len )
-      len = spec.prec;
-    if ( len > buf_sz )
-      len = buf_sz;
+    if ( spec.has_prec && spec.prec < len ) len = spec.prec;
+    if ( len > buf_sz ) len = buf_sz;
     micron::bytecpy(buf, val, len);
     return len;
   }
@@ -3269,10 +2959,8 @@ template <typename T> struct formatter<T, micron::enable_if_t<micron::is_string_
   write(char *buf, usize buf_sz, const T &val, const __impl::fmt_spec &spec)
   {
     usize len = val.size();
-    if ( spec.has_prec && spec.prec < len )
-      len = spec.prec;
-    if ( len > buf_sz )
-      len = buf_sz;
+    if ( spec.has_prec && spec.prec < len ) len = spec.prec;
+    if ( len > buf_sz ) len = buf_sz;
     micron::bytecpy(buf, val.begin(), len);
     return len;
   }
@@ -3310,8 +2998,7 @@ join(const Container &items, const char *delimiter)
   usize delim_len = micron::strlen(delimiter);
   bool first = true;
   for ( auto itr = items.begin(); itr != items.end(); ++itr ) {
-    if ( !first )
-      result.append(delimiter, delim_len);
+    if ( !first ) result.append(delimiter, delim_len);
     result += format_value(*itr);
     first = false;
   }
@@ -3336,8 +3023,7 @@ join(const Container &items, const Delim &delimiter)
   hstring<schar> result;
   bool first = true;
   for ( auto itr = items.begin(); itr != items.end(); ++itr ) {
-    if ( !first )
-      result += delimiter;
+    if ( !first ) result += delimiter;
     result += format_value(*itr);
     first = false;
   }
@@ -3352,8 +3038,7 @@ join_strings(const micron::fvector<T> &items, const char *delimiter)
   usize delim_len = micron::strlen(delimiter);
   bool first = true;
   for ( usize i = 0; i < items.size(); ++i ) {
-    if ( !first )
-      result.append(delimiter, delim_len);
+    if ( !first ) result.append(delimiter, delim_len);
     result += items[i];
     first = false;
   }
@@ -3393,8 +3078,7 @@ inline hstring<schar>
 format(const char *fmt, const Args &...args)
 {
   hstring<schar> out;
-  if ( fmt == nullptr )
-    return out;
+  if ( fmt == nullptr ) return out;
   usize auto_index = 0;
   const char *p = fmt;
   while ( *p ) {
@@ -3406,13 +3090,10 @@ format(const char *fmt, const Args &...args)
       }
       ++p;
       const char *close = p;
-      while ( *close && *close != '}' )
-        ++close;
-      if ( *close != '}' )
-        break;
+      while ( *close && *close != '}' ) ++close;
+      if ( *close != '}' ) break;
       const char *colon = p;
-      while ( colon < close && *colon != ':' )
-        ++colon;
+      while ( colon < close && *colon != ':' ) ++colon;
       usize index = auto_index;
       bool has_explicit_index = false;
       if ( colon > p ) {
@@ -3462,15 +3143,12 @@ usize
 count(const T &data, const char *sub, usize start = 0, usize end_pos = ~static_cast<usize>(0))
 {
   usize sz = micron::strlen(sub);
-  if ( sz == 0 || data.empty() || start >= data.size() )
-    return 0;
-  if ( end_pos > data.size() )
-    end_pos = data.size();
+  if ( sz == 0 || data.empty() || start >= data.size() ) return 0;
+  if ( end_pos > data.size() ) end_pos = data.size();
   usize n = 0;
   for ( usize i = start; i + sz <= end_pos; ++i ) {
     usize j = 0;
-    while ( j < sz && data[i + j] == sub[j] )
-      ++j;
+    while ( j < sz && data[i + j] == sub[j] ) ++j;
     if ( j == sz ) {
       ++n;
       i += sz - 1;
@@ -3483,15 +3161,12 @@ template <is_string T>
 usize
 count(const T &data, const T &sub, usize start = 0, usize end_pos = ~static_cast<usize>(0))
 {
-  if ( sub.empty() || data.empty() || start >= data.size() )
-    return 0;
-  if ( end_pos > data.size() )
-    end_pos = data.size();
+  if ( sub.empty() || data.empty() || start >= data.size() ) return 0;
+  if ( end_pos > data.size() ) end_pos = data.size();
   usize n = 0;
   for ( usize i = start; i + sub.size() <= end_pos; ++i ) {
     usize j = 0;
-    while ( j < sub.size() && data[i + j] == sub[j] )
-      ++j;
+    while ( j < sub.size() && data[i + j] == sub[j] ) ++j;
     if ( j == sub.size() ) {
       ++n;
       i += sub.size() - 1;
@@ -3504,14 +3179,11 @@ template <is_string T>
 usize
 count(const T &data, char ch, usize start = 0, usize end_pos = ~static_cast<usize>(0))
 {
-  if ( data.empty() || start >= data.size() )
-    return 0;
-  if ( end_pos > data.size() )
-    end_pos = data.size();
+  if ( data.empty() || start >= data.size() ) return 0;
+  if ( end_pos > data.size() ) end_pos = data.size();
   usize n = 0;
   for ( usize i = start; i < end_pos; ++i )
-    if ( data[i] == ch )
-      ++n;
+    if ( data[i] == ch ) ++n;
   return n;
 }
 
@@ -3519,13 +3191,11 @@ inline usize
 count(const char *data, usize len, const char *sub)
 {
   usize sz = micron::strlen(sub);
-  if ( sz == 0 || len == 0 )
-    return 0;
+  if ( sz == 0 || len == 0 ) return 0;
   usize n = 0;
   for ( usize i = 0; i + sz <= len; ++i ) {
     usize j = 0;
-    while ( j < sz && data[i + j] == sub[j] )
-      ++j;
+    while ( j < sz && data[i + j] == sub[j] ) ++j;
     if ( j == sz ) {
       ++n;
       i += sz - 1;
@@ -3541,15 +3211,12 @@ template <is_string T>
 usize
 index(const T &data, const char *fnd, usize start = 0)
 {
-  if ( start >= data.size() )
-    exc<except::library_error>("substring not found");
+  if ( start >= data.size() ) exc<except::library_error>("substring not found");
   for ( usize i = start; i + micron::strlen(fnd) <= data.size(); ++i ) {
     usize sz = micron::strlen(fnd);
     usize j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return i;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return i;
   }
   exc<except::library_error>("substring not found");
   return ~static_cast<usize>(0);
@@ -3559,14 +3226,11 @@ template <is_string T>
 usize
 index(const T &data, const T &fnd, usize start = 0)
 {
-  if ( start >= data.size() || fnd.empty() )
-    exc<except::library_error>("substring not found");
+  if ( start >= data.size() || fnd.empty() ) exc<except::library_error>("substring not found");
   for ( usize i = start; i + fnd.size() <= data.size(); ++i ) {
     usize j = 0;
-    while ( j < fnd.size() && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == fnd.size() )
-      return i;
+    while ( j < fnd.size() && data[i + j] == fnd[j] ) ++j;
+    if ( j == fnd.size() ) return i;
   }
   exc<except::library_error>("substring not found");
   return ~static_cast<usize>(0);
@@ -3577,15 +3241,12 @@ usize
 rindex(const T &data, const char *fnd, usize start = ~static_cast<usize>(0))
 {
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() )
-    exc<except::library_error>("substring not found");
+  if ( sz > data.size() || data.empty() ) exc<except::library_error>("substring not found");
   usize from = (start > data.size() - sz) ? data.size() - sz : start;
   for ( usize i = from + 1; i-- > 0; ) {
     usize j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return i;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return i;
   }
   exc<except::library_error>("substring not found");
   return ~static_cast<usize>(0);
@@ -3595,15 +3256,12 @@ template <is_string T>
 usize
 rindex(const T &data, const T &fnd, usize start = ~static_cast<usize>(0))
 {
-  if ( fnd.size() > data.size() || data.empty() )
-    exc<except::library_error>("substring not found");
+  if ( fnd.size() > data.size() || data.empty() ) exc<except::library_error>("substring not found");
   usize from = (start > data.size() - fnd.size()) ? data.size() - fnd.size() : start;
   for ( usize i = from + 1; i-- > 0; ) {
     usize j = 0;
-    while ( j < fnd.size() && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == fnd.size() )
-      return i;
+    while ( j < fnd.size() && data[i + j] == fnd[j] ) ++j;
+    if ( j == fnd.size() ) return i;
   }
   exc<except::library_error>("substring not found");
   return ~static_cast<usize>(0);
@@ -3619,14 +3277,11 @@ usize
 find_pos(const T &data, const char *fnd, usize start = 0)
 {
   usize sz = micron::strlen(fnd);
-  if ( sz == 0 || sz > data.size() || start >= data.size() )
-    return npos;
+  if ( sz == 0 || sz > data.size() || start >= data.size() ) return npos;
   for ( usize i = start; i + sz <= data.size(); ++i ) {
     usize j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return i;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return i;
   }
   return npos;
 }
@@ -3635,14 +3290,11 @@ template <is_string T>
 usize
 find_pos(const T &data, const T &fnd, usize start = 0)
 {
-  if ( fnd.empty() || fnd.size() > data.size() || start >= data.size() )
-    return npos;
+  if ( fnd.empty() || fnd.size() > data.size() || start >= data.size() ) return npos;
   for ( usize i = start; i + fnd.size() <= data.size(); ++i ) {
     usize j = 0;
-    while ( j < fnd.size() && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == fnd.size() )
-      return i;
+    while ( j < fnd.size() && data[i + j] == fnd[j] ) ++j;
+    if ( j == fnd.size() ) return i;
   }
   return npos;
 }
@@ -3652,8 +3304,7 @@ usize
 find_pos(const T &data, char ch, usize start = 0)
 {
   for ( usize i = start; i < data.size(); ++i )
-    if ( data[i] == ch )
-      return i;
+    if ( data[i] == ch ) return i;
   return npos;
 }
 
@@ -3662,15 +3313,12 @@ usize
 rfind_pos(const T &data, const char *fnd, usize start = ~static_cast<usize>(0))
 {
   usize sz = micron::strlen(fnd);
-  if ( sz > data.size() || data.empty() )
-    return npos;
+  if ( sz > data.size() || data.empty() ) return npos;
   usize from = (start > data.size() - sz) ? data.size() - sz : start;
   for ( usize i = from + 1; i-- > 0; ) {
     usize j = 0;
-    while ( j < sz && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == sz )
-      return i;
+    while ( j < sz && data[i + j] == fnd[j] ) ++j;
+    if ( j == sz ) return i;
   }
   return npos;
 }
@@ -3679,15 +3327,12 @@ template <is_string T>
 usize
 rfind_pos(const T &data, const T &fnd, usize start = ~static_cast<usize>(0))
 {
-  if ( fnd.size() > data.size() || data.empty() )
-    return npos;
+  if ( fnd.size() > data.size() || data.empty() ) return npos;
   usize from = (start > data.size() - fnd.size()) ? data.size() - fnd.size() : start;
   for ( usize i = from + 1; i-- > 0; ) {
     usize j = 0;
-    while ( j < fnd.size() && data[i + j] == fnd[j] )
-      ++j;
-    if ( j == fnd.size() )
-      return i;
+    while ( j < fnd.size() && data[i + j] == fnd[j] ) ++j;
+    if ( j == fnd.size() ) return i;
   }
   return npos;
 }
@@ -3696,12 +3341,10 @@ template <is_string T>
 usize
 rfind_pos(const T &data, char ch, usize start = ~static_cast<usize>(0))
 {
-  if ( data.empty() )
-    return npos;
+  if ( data.empty() ) return npos;
   usize from = (start >= data.size()) ? data.size() - 1 : start;
   for ( usize i = from + 1; i-- > 0; )
-    if ( data[i] == ch )
-      return i;
+    if ( data[i] == ch ) return i;
   return npos;
 }
 
@@ -3729,15 +3372,12 @@ bool
 isidentifier(const T &str)
 {
   // C/C++ identifier: starts with alpha or _, then alnum or _
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   char first = str[0];
-  if ( !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_') )
-    return false;
+  if ( !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_') ) return false;
   for ( usize i = 1; i < str.size(); ++i ) {
     char c = str[i];
-    if ( !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') )
-      return false;
+    if ( !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') ) return false;
   }
   return true;
 }
@@ -3747,8 +3387,7 @@ bool
 istitle(const T &str)
 {
   // every word starts with uppercase, rest lowercase
-  if ( str.empty() )
-    return false;
+  if ( str.empty() ) return false;
   bool word_start = true;
   bool any_cased = false;
   for ( usize i = 0; i < str.size(); ++i ) {
@@ -3756,20 +3395,16 @@ istitle(const T &str)
     bool up = (c >= 'A' && c <= 'Z');
     bool lo = (c >= 'a' && c <= 'z');
     if ( word_start ) {
-      if ( lo )
-        return false;
+      if ( lo ) return false;
       if ( up ) {
         any_cased = true;
         word_start = false;
       }
     } else {
-      if ( up )
-        return false;
-      if ( lo )
-        any_cased = true;
+      if ( up ) return false;
+      if ( lo ) any_cased = true;
     }
-    if ( !up && !lo )
-      word_start = true;
+    if ( !up && !lo ) word_start = true;
   }
   return any_cased;
 }
@@ -3781,13 +3416,10 @@ template <char Tk = ' ', is_string T>
 T &
 lstrip(T &data)
 {
-  if ( data.empty() )
-    return data;
+  if ( data.empty() ) return data;
   auto start = data.begin();
-  while ( start != data.end() && *start == Tk )
-    ++start;
-  if ( start == data.begin() )
-    return data;
+  while ( start != data.end() && *start == Tk ) ++start;
+  if ( start == data.begin() ) return data;
   usize new_len = static_cast<usize>(data.end() - start);
   micron::bytemove(data.begin(), start, new_len);
   data.set_size(new_len);
@@ -3806,11 +3438,9 @@ template <char Tk = ' ', is_string T>
 T &
 rstrip(T &data)
 {
-  if ( data.empty() )
-    return data;
+  if ( data.empty() ) return data;
   auto stop = data.end();
-  while ( stop != data.begin() && *(stop - 1) == Tk )
-    --stop;
+  while ( stop != data.begin() && *(stop - 1) == Tk ) --stop;
   usize new_len = static_cast<usize>(stop - data.begin());
   data.set_size(new_len);
   return data;
@@ -3830,8 +3460,7 @@ T
 lstrip_chars(const T &data, const char *chars)
 {
   T result(data);
-  if ( result.empty() || chars == nullptr )
-    return result;
+  if ( result.empty() || chars == nullptr ) return result;
   usize clen = micron::strlen(chars);
   usize start = 0;
   while ( start < result.size() ) {
@@ -3842,8 +3471,7 @@ lstrip_chars(const T &data, const char *chars)
         break;
       }
     }
-    if ( !found )
-      break;
+    if ( !found ) break;
     ++start;
   }
   if ( start > 0 ) {
@@ -3859,8 +3487,7 @@ T
 rstrip_chars(const T &data, const char *chars)
 {
   T result(data);
-  if ( result.empty() || chars == nullptr )
-    return result;
+  if ( result.empty() || chars == nullptr ) return result;
   usize clen = micron::strlen(chars);
   usize end_pos = result.size();
   while ( end_pos > 0 ) {
@@ -3871,8 +3498,7 @@ rstrip_chars(const T &data, const char *chars)
         break;
       }
     }
-    if ( !found )
-      break;
+    if ( !found ) break;
     --end_pos;
   }
   result.set_size(end_pos);
@@ -3910,8 +3536,7 @@ template <is_string T>
 T
 zfill(const T &str, usize width)
 {
-  if ( str.size() >= width )
-    return str;
+  if ( str.size() >= width ) return str;
   T result;
   usize pad = width - str.size();
   usize content_start = 0;
@@ -3920,10 +3545,8 @@ zfill(const T &str, usize width)
     result += str[0];
     content_start = 1;
   }
-  for ( usize i = 0; i < pad; ++i )
-    result += '0';
-  for ( usize i = content_start; i < str.size(); ++i )
-    result += str[i];
+  for ( usize i = 0; i < pad; ++i ) result += '0';
+  for ( usize i = content_start; i < str.size(); ++i ) result += str[i];
   return result;
 }
 
@@ -3935,8 +3558,7 @@ micron::fvector<T>
 split_to(const T &data, const char *sep, i64 maxsplit = -1)
 {
   micron::fvector<T> result;
-  if ( data.empty() )
-    return result;
+  if ( data.empty() ) return result;
 
   usize sep_len = micron::strlen(sep);
   if ( sep_len == 0 ) {
@@ -3944,17 +3566,14 @@ split_to(const T &data, const char *sep, i64 maxsplit = -1)
     usize i = 0;
     i64 splits = 0;
     while ( i < data.size() ) {
-      while ( i < data.size() && (data[i] == ' ' || data[i] == '\t' || data[i] == '\n' || data[i] == '\r') )
-        ++i;
-      if ( i >= data.size() )
-        break;
+      while ( i < data.size() && (data[i] == ' ' || data[i] == '\t' || data[i] == '\n' || data[i] == '\r') ) ++i;
+      if ( i >= data.size() ) break;
       if ( maxsplit >= 0 && splits >= maxsplit ) {
         result.inline_push_back(move(data.substr(i, data.size() - i)));
         return result;
       }
       usize start = i;
-      while ( i < data.size() && data[i] != ' ' && data[i] != '\t' && data[i] != '\n' && data[i] != '\r' )
-        ++i;
+      while ( i < data.size() && data[i] != ' ' && data[i] != '\t' && data[i] != '\n' && data[i] != '\r' ) ++i;
       result.inline_push_back(move(data.substr(start, i - start)));
       ++splits;
     }
@@ -3985,8 +3604,7 @@ micron::fvector<T>
 split_to(const T &data, char sep, i64 maxsplit = -1)
 {
   micron::fvector<T> result;
-  if ( data.empty() )
-    return result;
+  if ( data.empty() ) return result;
   usize start = 0;
   i64 splits = 0;
   for ( usize i = 0; i < data.size(); ++i ) {
@@ -4010,14 +3628,12 @@ micron::fvector<T>
 rsplit_to(const T &data, char sep, i64 maxsplit = -1)
 {
   micron::fvector<T> parts;
-  if ( data.empty() )
-    return parts;
+  if ( data.empty() ) return parts;
   usize end_pos = data.size();
   i64 splits = 0;
   for ( usize i = data.size(); i-- > 0; ) {
     if ( data[i] == sep ) {
-      if ( maxsplit >= 0 && splits >= maxsplit )
-        break;
+      if ( maxsplit >= 0 && splits >= maxsplit ) break;
       parts.inline_push_back(data.substr(i + 1, end_pos - i - 1));
       end_pos = i;
       ++splits;
@@ -4040,8 +3656,7 @@ micron::vector<T>
 splitlines(const T &data, bool keepends = false)
 {
   micron::vector<T> result;
-  if ( data.empty() )
-    return result;
+  if ( data.empty() ) return result;
 
   usize sz = data.size();
   usize start = 0;
@@ -4069,8 +3684,7 @@ splitlines(const T &data, bool keepends = false)
     }
   }
 
-  if ( start < sz )
-    result.move_back(data.substr(start, sz - start));
+  if ( start < sz ) result.move_back(data.substr(start, sz - start));
 
   return result;
 }
@@ -4083,8 +3697,7 @@ micron::tuple<T, T, T>
 partition(const T &data, const char *sep)
 {
   usize pos = find_pos(data, sep);
-  if ( pos == npos )
-    return micron::tuple<T, T, T>(data, T(), T());
+  if ( pos == npos ) return micron::tuple<T, T, T>(data, T(), T());
   usize sep_len = micron::strlen(sep);
   return micron::tuple<T, T, T>(data.substr(0, pos), data.substr(pos, sep_len), data.substr(pos + sep_len, data.size() - pos - sep_len));
 }
@@ -4094,8 +3707,7 @@ micron::tuple<T, T, T>
 partition(const T &data, const T &sep)
 {
   usize pos = find_pos(data, sep);
-  if ( pos == npos )
-    return micron::tuple<T, T, T>(data, T(), T());
+  if ( pos == npos ) return micron::tuple<T, T, T>(data, T(), T());
   return micron::tuple<T, T, T>(data.substr(0, pos), data.substr(pos, sep.size()),
                                 data.substr(pos + sep.size(), data.size() - pos - sep.size()));
 }
@@ -4105,8 +3717,7 @@ micron::tuple<T, T, T>
 rpartition(const T &data, const char *sep)
 {
   usize pos = rfind_pos(data, sep);
-  if ( pos == npos )
-    return micron::tuple<T, T, T>(T(), T(), data);
+  if ( pos == npos ) return micron::tuple<T, T, T>(T(), T(), data);
   usize sep_len = micron::strlen(sep);
   return micron::tuple<T, T, T>(data.substr(0, pos), data.substr(pos, sep_len), data.substr(pos + sep_len, data.size() - pos - sep_len));
 }
@@ -4116,8 +3727,7 @@ micron::tuple<T, T, T>
 rpartition(const T &data, const T &sep)
 {
   usize pos = rfind_pos(data, sep);
-  if ( pos == npos )
-    return micron::tuple<T, T, T>(T(), T(), data);
+  if ( pos == npos ) return micron::tuple<T, T, T>(T(), T(), data);
   return micron::tuple<T, T, T>(data.substr(0, pos), data.substr(pos, sep.size()),
                                 data.substr(pos + sep.size(), data.size() - pos - sep.size()));
 }
@@ -4131,8 +3741,7 @@ struct trans_table {
 
   trans_table()
   {
-    for ( int i = 0; i < 256; ++i )
-      mapping[i] = static_cast<i16>(i);
+    for ( int i = 0; i < 256; ++i ) mapping[i] = static_cast<i16>(i);
   }
 };
 
@@ -4144,8 +3753,7 @@ maketrans(const char *from, const char *to)
   usize flen = micron::strlen(from);
   usize tlen = micron::strlen(to);
   usize len = flen < tlen ? flen : tlen;
-  for ( usize i = 0; i < len; ++i )
-    t.mapping[static_cast<unsigned char>(from[i])] = static_cast<i16>(static_cast<unsigned char>(to[i]));
+  for ( usize i = 0; i < len; ++i ) t.mapping[static_cast<unsigned char>(from[i])] = static_cast<i16>(static_cast<unsigned char>(to[i]));
   return t;
 }
 
@@ -4156,8 +3764,7 @@ maketrans(const char *from, const char *to, const char *del)
   trans_table t = maketrans(from, to);
   if ( del ) {
     usize dlen = micron::strlen(del);
-    for ( usize i = 0; i < dlen; ++i )
-      t.mapping[static_cast<unsigned char>(del[i])] = -1;
+    for ( usize i = 0; i < dlen; ++i ) t.mapping[static_cast<unsigned char>(del[i])] = -1;
   }
   return t;
 }
@@ -4169,8 +3776,7 @@ translate(const T &str, const trans_table &table)
   T result;
   for ( usize i = 0; i < str.size(); ++i ) {
     i16 m = table.mapping[static_cast<unsigned char>(str[i])];
-    if ( m >= 0 )
-      result += static_cast<char>(m);
+    if ( m >= 0 ) result += static_cast<char>(m);
     // m == -1: delete
   }
   return result;
@@ -4184,11 +3790,9 @@ template <is_string T>
 T
 replace_n(const T &str, const char *old_s, const char *new_s, i64 count = -1)
 {
-  if ( count == 0 )
-    return str;
+  if ( count == 0 ) return str;
   T result(str);
-  if ( count < 0 )
-    return replace_all(result, old_s, new_s);
+  if ( count < 0 ) return replace_all(result, old_s, new_s);
   auto szl = micron::strlen(old_s);
   auto szr = micron::strlen(new_s);
   i64 replaced = 0;
@@ -4220,8 +3824,7 @@ replace_char(const T &str, char old_c, char new_c)
 {
   T result(str);
   for ( usize i = 0; i < result.size(); ++i )
-    if ( result[i] == old_c )
-      result[i] = new_c;
+    if ( result[i] == old_c ) result[i] = new_c;
   return result;
 }
 
@@ -4246,16 +3849,12 @@ template <is_string T>
 T
 replace_range(const T &str, usize start, usize end_pos, const char *replacement)
 {
-  if ( start >= str.size() )
-    return str;
-  if ( end_pos > str.size() )
-    end_pos = str.size();
+  if ( start >= str.size() ) return str;
+  if ( end_pos > str.size() ) end_pos = str.size();
   T result;
-  for ( usize i = 0; i < start; ++i )
-    result += str[i];
+  for ( usize i = 0; i < start; ++i ) result += str[i];
   result += replacement;
-  for ( usize i = end_pos; i < str.size(); ++i )
-    result += str[i];
+  for ( usize i = end_pos; i < str.size(); ++i ) result += str[i];
   return result;
 }
 
@@ -4273,8 +3872,7 @@ erase_char(const T &str, char ch)
 {
   T result;
   for ( usize i = 0; i < str.size(); ++i )
-    if ( str[i] != ch )
-      result += str[i];
+    if ( str[i] != ch ) result += str[i];
   return result;
 }
 
@@ -4299,8 +3897,7 @@ join_char(char sep, const micron::fvector<T> &items)
   hstring<schar> result;
   bool first = true;
   for ( usize i = 0; i < items.size(); ++i ) {
-    if ( !first )
-      result += sep;
+    if ( !first ) result += sep;
     result += items[i];
     first = false;
   }
@@ -4346,14 +3943,11 @@ zfill_stack(const T &str, usize width)
   usize pad = (str.size() >= width) ? 0 : width - str.size();
   usize content_start = 0;
   if ( str.size() > 0 && (str[0] == '-' || str[0] == '+') ) {
-    if ( pos < Sz - 1 )
-      out[pos++] = str[0];
+    if ( pos < Sz - 1 ) out[pos++] = str[0];
     content_start = 1;
   }
-  for ( usize i = 0; i < pad && pos < Sz - 1; ++i )
-    out[pos++] = '0';
-  for ( usize i = content_start; i < str.size() && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(str[i]);
+  for ( usize i = 0; i < pad && pos < Sz - 1; ++i ) out[pos++] = '0';
+  for ( usize i = content_start; i < str.size() && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(str[i]);
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -4366,8 +3960,7 @@ lower_stack(const T &str)
   micron::sstring<Sz, C> result;
   C *out = &result[0];
   usize len = str.size();
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   for ( usize i = 0; i < len; ++i ) {
     char c = str[i];
     out[i] = static_cast<C>((c >= 'A' && c <= 'Z') ? c + 32 : c);
@@ -4384,8 +3977,7 @@ upper_stack(const T &str)
   micron::sstring<Sz, C> result;
   C *out = &result[0];
   usize len = str.size();
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   for ( usize i = 0; i < len; ++i ) {
     char c = str[i];
     out[i] = static_cast<C>((c >= 'a' && c <= 'z') ? c - 32 : c);
@@ -4402,8 +3994,7 @@ capitalize_stack(const T &str)
   micron::sstring<Sz, C> result = lower_stack<Sz, C>(str);
   if ( result.size() > 0 ) {
     char c = result[0];
-    if ( c >= 'a' && c <= 'z' )
-      result[0] = static_cast<C>(c - 32);
+    if ( c >= 'a' && c <= 'z' ) result[0] = static_cast<C>(c - 32);
   }
   return result;
 }
@@ -4415,8 +4006,7 @@ title_case_stack(const T &str)
   micron::sstring<Sz, C> result;
   C *out = &result[0];
   usize len = str.size();
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   bool word_start = true;
   for ( usize i = 0; i < len; ++i ) {
     char c = str[i];
@@ -4444,8 +4034,7 @@ swap_case_stack(const T &str)
   micron::sstring<Sz, C> result;
   C *out = &result[0];
   usize len = str.size();
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   for ( usize i = 0; i < len; ++i ) {
     char c = str[i];
     if ( c >= 'A' && c <= 'Z' )
@@ -4469,8 +4058,7 @@ center_stack(const T &str, usize width, char fillchar = ' ')
   usize len = str.size();
   if ( len >= width || len >= Sz - 1 ) {
     usize clen = len > Sz - 1 ? Sz - 1 : len;
-    for ( usize i = 0; i < clen; ++i )
-      out[i] = static_cast<C>(str[i]);
+    for ( usize i = 0; i < clen; ++i ) out[i] = static_cast<C>(str[i]);
     out[clen] = '\0';
     result._buf_set_length(clen);
     return result;
@@ -4479,12 +4067,9 @@ center_stack(const T &str, usize width, char fillchar = ' ')
   usize left = pad / 2;
   usize right = pad - left;
   usize pos = 0;
-  for ( usize i = 0; i < left && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(fillchar);
-  for ( usize i = 0; i < len && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(str[i]);
-  for ( usize i = 0; i < right && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(fillchar);
+  for ( usize i = 0; i < left && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(fillchar);
+  for ( usize i = 0; i < len && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(str[i]);
+  for ( usize i = 0; i < right && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(fillchar);
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -4498,10 +4083,8 @@ ljust_stack(const T &str, usize width, char fillchar = ' ')
   C *out = &result[0];
   usize len = str.size();
   usize pos = 0;
-  for ( usize i = 0; i < len && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(str[i]);
-  while ( pos < width && pos < Sz - 1 )
-    out[pos++] = static_cast<C>(fillchar);
+  for ( usize i = 0; i < len && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(str[i]);
+  while ( pos < width && pos < Sz - 1 ) out[pos++] = static_cast<C>(fillchar);
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -4516,10 +4099,8 @@ rjust_stack(const T &str, usize width, char fillchar = ' ')
   usize len = str.size();
   usize pad = (len >= width) ? 0 : width - len;
   usize pos = 0;
-  for ( usize i = 0; i < pad && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(fillchar);
-  for ( usize i = 0; i < len && pos < Sz - 1; ++i )
-    out[pos++] = static_cast<C>(str[i]);
+  for ( usize i = 0; i < pad && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(fillchar);
+  for ( usize i = 0; i < len && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(str[i]);
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -4534,8 +4115,7 @@ translate_stack(const T &str, const trans_table &table)
   usize pos = 0;
   for ( usize i = 0; i < str.size() && pos < Sz - 1; ++i ) {
     i16 m = table.mapping[static_cast<unsigned char>(str[i])];
-    if ( m >= 0 )
-      out[pos++] = static_cast<C>(m);
+    if ( m >= 0 ) out[pos++] = static_cast<C>(m);
   }
   out[pos] = '\0';
   result._buf_set_length(pos);
@@ -4549,10 +4129,8 @@ replace_char_stack(const T &str, char old_c, char new_c)
   micron::sstring<Sz, C> result;
   C *out = &result[0];
   usize len = str.size();
-  if ( len > Sz - 1 )
-    len = Sz - 1;
-  for ( usize i = 0; i < len; ++i )
-    out[i] = static_cast<C>(str[i] == old_c ? new_c : str[i]);
+  if ( len > Sz - 1 ) len = Sz - 1;
+  for ( usize i = 0; i < len; ++i ) out[i] = static_cast<C>(str[i] == old_c ? new_c : str[i]);
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -4566,8 +4144,7 @@ erase_char_stack(const T &str, char ch)
   C *out = &result[0];
   usize pos = 0;
   for ( usize i = 0; i < str.size() && pos < Sz - 1; ++i )
-    if ( str[i] != ch )
-      out[pos++] = static_cast<C>(str[i]);
+    if ( str[i] != ch ) out[pos++] = static_cast<C>(str[i]);
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -4581,8 +4158,7 @@ repeat_stack(const T &str, usize n)
   C *out = &result[0];
   usize pos = 0;
   for ( usize r = 0; r < n; ++r )
-    for ( usize i = 0; i < str.size() && pos < Sz - 1; ++i )
-      out[pos++] = static_cast<C>(str[i]);
+    for ( usize i = 0; i < str.size() && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(str[i]);
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;

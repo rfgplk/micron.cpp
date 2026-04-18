@@ -53,8 +53,7 @@ __read_node(const char *path, char *buf, usize cap)
 {
   buf[0] = '\0';
   i32 fd = __open_rd(path);
-  if ( fd < 0 )
-    return 0;
+  if ( fd < 0 ) return 0;
   max_t n = posix::read(fd, buf, cap - 1);
   __close(fd);
   if ( n <= 0 ) {
@@ -74,8 +73,7 @@ inline bool
 __write_node(const char *path, const char *data, usize len)
 {
   i32 fd = __open_wr(path);
-  if ( fd < 0 )
-    return false;
+  if ( fd < 0 ) return false;
   posix::write(fd, const_cast<char *>(data), len);
   __close(fd);
   return true;
@@ -86,10 +84,8 @@ __parse_u64(const char *buf)
 {
   u64 val = 0;
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' || *p == '\n' )
-    ++p;
-  while ( *p >= '0' && *p <= '9' )
-    val = val * 10 + static_cast<u64>(*p++ - '0');
+  while ( *p == ' ' || *p == '\t' || *p == '\n' ) ++p;
+  while ( *p >= '0' && *p <= '9' ) val = val * 10 + static_cast<u64>(*p++ - '0');
   return val;
 }
 
@@ -97,21 +93,17 @@ inline u32
 __parse_range_count(const char *buf)
 {
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' )
-    ++p;
+  while ( *p == ' ' || *p == '\t' ) ++p;
   const char *dash = p;
-  while ( *dash && *dash != '-' )
-    ++dash;
+  while ( *dash && *dash != '-' ) ++dash;
   if ( *dash == '-' ) {
     ++dash;
     u32 hi = 0;
-    while ( *dash >= '0' && *dash <= '9' )
-      hi = hi * 10 + static_cast<u32>(*dash++ - '0');
+    while ( *dash >= '0' && *dash <= '9' ) hi = hi * 10 + static_cast<u32>(*dash++ - '0');
     return hi + 1;
   }
   u32 val = 0;
-  while ( *p >= '0' && *p <= '9' )
-    val = val * 10 + static_cast<u32>(*p++ - '0');
+  while ( *p >= '0' && *p <= '9' ) val = val * 10 + static_cast<u32>(*p++ - '0');
   return val + 1;
 }
 
@@ -120,8 +112,7 @@ __parse_size(const char *buf)
 {
   u64 val = 0;
   const char *p = buf;
-  while ( *p >= '0' && *p <= '9' )
-    val = val * 10 + static_cast<u64>(*p++ - '0');
+  while ( *p >= '0' && *p <= '9' ) val = val * 10 + static_cast<u64>(*p++ - '0');
   if ( *p == 'K' || *p == 'k' )
     val *= 1024ULL;
   else if ( *p == 'M' || *p == 'm' )
@@ -164,8 +155,7 @@ read_str(const char *path)
   char buf[N];
   usize n = __impl::__read_node(path, buf, N);
   char *out = &result[0];
-  for ( usize i = 0; i < n; i++ )
-    out[i] = buf[i];
+  for ( usize i = 0; i < n; i++ ) out[i] = buf[i];
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -184,8 +174,7 @@ read_i64(const char *path)
 {
   char buf[64];
   usize n = __impl::__read_node(path, buf, 64);
-  if ( n == 0 )
-    return 0;
+  if ( n == 0 ) return 0;
   const char *p = buf;
   bool neg = false;
   if ( *p == '-' ) {
@@ -216,8 +205,7 @@ inline bool
 write_str(const char *path, const char *val)
 {
   usize len = 0;
-  while ( val[len] )
-    ++len;
+  while ( val[len] ) ++len;
   return __impl::__write_node(path, val, len);
 }
 
@@ -239,8 +227,7 @@ inline bool
 exists(const char *path)
 {
   i32 fd = __impl::__open_rd(path);
-  if ( fd < 0 )
-    return false;
+  if ( fd < 0 ) return false;
   __impl::__close(fd);
   return true;
 }
@@ -384,8 +371,7 @@ inline bool
 set_governor_all(const char *gov, u32 ncpus)
 {
   bool ok = true;
-  for ( u32 i = 0; i < ncpus; i++ )
-    ok &= set_scaling_governor(i, gov);
+  for ( u32 i = 0; i < ncpus; i++ ) ok &= set_scaling_governor(i, gov);
   return ok;
 }
 
@@ -404,8 +390,7 @@ set_powersave_all(u32 ncpus)
 inline bool
 is_online(u32 cpu_id)
 {
-  if ( cpu_id == 0 )
-    return true;
+  if ( cpu_id == 0 ) return true;
   auto p = __impl::__cpu_path(cpu_id, "/online");
   return read_bool(&p[0]);
 }
@@ -413,8 +398,7 @@ is_online(u32 cpu_id)
 inline bool
 set_online(u32 cpu_id, bool on)
 {
-  if ( cpu_id == 0 )
-    return false;
+  if ( cpu_id == 0 ) return false;
   auto p = __impl::__cpu_path(cpu_id, "/online");
   return write_bool(&p[0], on);
 }
@@ -536,12 +520,9 @@ size(u32 cpu_id, u32 index)
 inline u16
 __parse_type(const char *s)
 {
-  if ( s[0] == 'D' )
-    return data_cache;
-  if ( s[0] == 'I' )
-    return instruction_cache;
-  if ( s[0] == 'U' )
-    return unified_cache;
+  if ( s[0] == 'D' ) return data_cache;
+  if ( s[0] == 'I' ) return instruction_cache;
+  if ( s[0] == 'U' ) return unified_cache;
   return no_cache;
 }
 
@@ -567,8 +548,7 @@ read_info(u32 cpu_id, u32 index)
   c.sets = number_of_sets(cpu_id, index);
   c.size = size(cpu_id, index);
 
-  if ( c.size == 0 && c.line_size > 0 )
-    c.size = static_cast<u64>(c.line_size) * c.associativity * c.sets;
+  if ( c.size == 0 && c.line_size > 0 ) c.size = static_cast<u64>(c.line_size) * c.associativity * c.sets;
 
   return c;
 }
@@ -581,8 +561,7 @@ read_all(u32 cpu_id, info_t *out, u32 max_n = max_indices)
   u32 count = 0;
   for ( u32 i = 0; i < max_n; i++ ) {
     auto p = __impl::__cache_path(cpu_id, i, "type");
-    if ( !exists(&p[0]) )
-      break;
+    if ( !exists(&p[0]) ) break;
     out[count++] = read_info(cpu_id, i);
   }
   return count;
@@ -593,10 +572,8 @@ l1d_line_size(u32 cpu_id = 0)
 {
   for ( u32 i = 0; i < max_indices; i++ ) {
     info_t c = read_info(cpu_id, i);
-    if ( c.type == data_cache && c.level == 1 )
-      return c.line_size;
-    if ( c.type == no_cache )
-      break;
+    if ( c.type == data_cache && c.level == 1 ) return c.line_size;
+    if ( c.type == no_cache ) break;
   }
   return 64;
 }

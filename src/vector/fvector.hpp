@@ -61,8 +61,7 @@ public:
   // NOTE: by convention destructors are first
   ~fvector(void)
   {
-    if ( __mem::is_zero() )
-      return;
+    if ( __mem::is_zero() ) return;
     clear();
   }
 
@@ -70,13 +69,11 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
-      for ( T &&value : lst )
-        new (addr(__mem::memory[i++])) T(micron::move(value));
+      for ( T &&value : lst ) new (addr(__mem::memory[i++])) T(micron::move(value));
       __mem::length = lst.size();
     } else {
       size_type i = 0;
-      for ( T value : lst )
-        __mem::memory[i++] = value;
+      for ( T value : lst ) __mem::memory[i++] = value;
       __mem::length = lst.size();
     }
   }
@@ -111,8 +108,7 @@ public:
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   fvector(size_type n, Args... args) : __mem(n)
   {
-    for ( size_type i = 0; i < n; i++ )
-      new (addr(__mem::memory[i])) T(args...);
+    for ( size_type i = 0; i < n; i++ ) new (addr(__mem::memory[i])) T(args...);
     __mem::length = n;
   }
 
@@ -246,10 +242,8 @@ public:
   inline fvector &
   append(const fvector<F> &o)
   {
-    if ( o.empty() )
-      return *this;
-    if ( !__mem::has_space(o.length) )
-      reserve(__mem::capacity + o.max_size());
+    if ( o.empty() ) return *this;
+    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
     __impl_container::copy_assign(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
@@ -260,8 +254,7 @@ public:
   inline fvector &
   weld(fvector<F> &&o)
   {
-    if ( !__mem::has_space(o.length) )
-      reserve(__mem::capacity + o.max_size());
+    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
     __impl_container::copy_assign(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
     __mem::length += o.length;
     return *this;
@@ -302,8 +295,7 @@ public:
   inline void
   reserve(const size_type n)
   {
-    if ( n < __mem::capacity )
-      return;
+    if ( n < __mem::capacity ) return;
     if ( __mem::is_zero() ) {
       __mem::realloc(n);
       return;
@@ -324,8 +316,7 @@ public:
   inline slice<byte>
   into_bytes(void)
   {
-    if ( __mem::memory == nullptr || __mem::length == 0 )
-      return slice<byte>(nullptr, nullptr);
+    if ( __mem::memory == nullptr || __mem::length == 0 ) return slice<byte>(nullptr, nullptr);
     return slice<byte>(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<byte *>(__mem::memory + __mem::length));
   }
 
@@ -338,31 +329,24 @@ public:
   void
   fill(const T &v)
   {
-    for ( size_type i = 0; i < __mem::length; i++ )
-      __mem::memory[i] = v;
+    for ( size_type i = 0; i < __mem::length; i++ ) __mem::memory[i] = v;
   }
 
   void
   resize(size_type n, const T &v)
   {
-    if ( !(n > __mem::length) )
-      return;
-    if ( n >= __mem::capacity )
-      reserve(n);
-    for ( size_type i = __mem::length; i < n; i++ )
-      new (addr(__mem::memory[i])) T(v);
+    if ( !(n > __mem::length) ) return;
+    if ( n >= __mem::capacity ) reserve(n);
+    for ( size_type i = __mem::length; i < n; i++ ) new (addr(__mem::memory[i])) T(v);
     __mem::length = n;
   }
 
   void
   resize(size_type n)
   {
-    if ( !(n > __mem::length) )
-      return;
-    if ( n >= __mem::capacity )
-      reserve(n);
-    for ( size_type i = __mem::length; i < n; i++ )
-      new (addr(__mem::memory[i])) T{};
+    if ( !(n > __mem::length) ) return;
+    if ( n >= __mem::capacity ) reserve(n);
+    for ( size_type i = __mem::length; i < n; i++ ) new (addr(__mem::memory[i])) T{};
     __mem::length = n;
   }
 
@@ -411,8 +395,7 @@ public:
   find(const T &o)
   {
     for ( size_type i = 0; i < __mem::length; i++ )
-      if ( __mem::memory[i] == o )
-        return &__mem::memory[i];
+      if ( __mem::memory[i] == o ) return &__mem::memory[i];
     return nullptr;
   }
 
@@ -420,8 +403,7 @@ public:
   find(const T &o) const
   {
     for ( size_type i = 0; i < __mem::length; i++ )
-      if ( __mem::memory[i] == o )
-        return &__mem::memory[i];
+      if ( __mem::memory[i] == o ) return &__mem::memory[i];
     return nullptr;
   }
 
@@ -477,17 +459,14 @@ public:
   insert(size_type n, const T &val, size_type cnt)
   {
     if ( !__mem::length ) {
-      for ( size_type i = 0; i < cnt; ++i )
-        push_back(val);
+      for ( size_type i = 0; i < cnt; ++i ) push_back(val);
       return begin();
     }
-    if ( __mem::length + cnt > __mem::capacity )
-      reserve(__impl::fgrow(__mem::capacity));
+    if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     T *its = addr((__mem::memory)[n]);
     T *ite = addr((__mem::memory)[__mem::length - 1]);
     micron::memmove(its + cnt, its, ite - its);
-    for ( size_type i = 0; i < cnt; ++i )
-      new (its + i) T(val);
+    for ( size_type i = 0; i < cnt; ++i ) new (its + i) T(val);
     __mem::length += cnt;
     return its;
   }
@@ -499,8 +478,7 @@ public:
       push_back(val);
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity )
-      reserve(__impl::fgrow(__mem::capacity));
+    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     T *its = addr((__mem::memory)[n]);
     T *ite = addr((__mem::memory)[__mem::length - 1]);
     micron::memmove(its + 1, its, ite - its);
@@ -516,8 +494,7 @@ public:
       emplace_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity )
-      reserve(__impl::fgrow(__mem::capacity));
+    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     T *its = itr(n);
     T *ite = end();
     micron::memmove(its + 1, its, (ite - its));
@@ -530,8 +507,7 @@ public:
   insert(iterator it, const T &val, const size_type cnt)
   {
     if ( !__mem::length ) {
-      for ( size_type i = 0; i < cnt; ++i )
-        push_back(val);
+      for ( size_type i = 0; i < cnt; ++i ) push_back(val);
       return begin();
     }
     if ( __mem::length + cnt > __mem::capacity ) {
@@ -541,8 +517,7 @@ public:
     }
     T *ite = end();
     micron::memmove(it + cnt, it, ite - it);
-    for ( size_type i = 0; i < cnt; ++i )
-      new (it + i) T(val);
+    for ( size_type i = 0; i < cnt; ++i ) new (it + i) T(val);
     __mem::length += cnt;
     return it;
   }
@@ -602,13 +577,11 @@ public:
       push_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 >= __mem::capacity )
-      reserve(__impl::fgrow(__mem::capacity));
+    if ( __mem::length + 1 >= __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
 
     size_type pos = 0;
     for ( ; pos < __mem::length; ++pos )
-      if ( __mem::memory[pos] >= val )
-        break;
+      if ( __mem::memory[pos] >= val ) break;
 
     T *it = __mem::memory + pos;
     T *ite = end();
@@ -621,11 +594,9 @@ public:
   inline fvector &
   assign(const size_type cnt, const T &val)
   {
-    if ( cnt >= __mem::capacity )
-      reserve(__impl::fgrow(__mem::capacity > cnt ? __mem::capacity : cnt));
+    if ( cnt >= __mem::capacity ) reserve(__impl::fgrow(__mem::capacity > cnt ? __mem::capacity : cnt));
     clear();
-    for ( size_type i = 0; i < cnt; i++ )
-      new (addr(__mem::memory[i])) T(val);
+    for ( size_type i = 0; i < cnt; i++ ) new (addr(__mem::memory[i])) T(val);
     __mem::length = cnt;
     return *this;
   }
@@ -673,8 +644,10 @@ public:
   void
   push_back(const T &v)
   {
-    // WARNING: for all qualifiable containers, be sure to ALWAYS use addr() or addr() semantically equivalent calls (yields true pointer/addr to object of type object), operator& may be overloaded, causing construction to point to junk memory or worse (likely will cause catastrophic UB/segfaulting)
-    // for types where the two operations are equivalent (operator& yielding a byte* to internal storage), this will silently succeed (in cases where operator& yields a byte*)
+    // WARNING: for all qualifiable containers, be sure to ALWAYS use addr() or addr() semantically equivalent calls (yields true
+    // pointer/addr to object of type object), operator& may be overloaded, causing construction to point to junk memory or worse (likely
+    // will cause catastrophic UB/segfaulting) for types where the two operations are equivalent (operator& yielding a byte* to internal
+    // storage), this will silently succeed (in cases where operator& yields a byte*)
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       if ( __mem::length + 1 <= __mem::capacity ) {
         new (addr(__mem::memory[__mem::length++])) T(v);
@@ -728,8 +701,7 @@ public:
   {
   remove_goto:
     auto itr = find(val);
-    if ( itr == nullptr )
-      return;
+    if ( itr == nullptr ) return;
     erase(itr);
     goto remove_goto;
   }
@@ -747,14 +719,11 @@ public:
   {
     size_type count = last - first;
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
-      for ( T *p = first; p < last; ++p )
-        p->~T();
+      for ( T *p = first; p < last; ++p ) p->~T();
     T *it = first, *src = last;
     T *end_ptr = __mem::memory + __mem::length;
-    while ( src < end_ptr )
-      *it++ = micron::move(*src++);
-    for ( T *p = it; p < end_ptr; ++p )
-      czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(p));
+    while ( src < end_ptr ) *it++ = micron::move(*src++);
+    for ( T *p = it; p < end_ptr; ++p ) czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(p));
     __mem::length -= count;
   }
 
@@ -763,10 +732,8 @@ public:
   {
     size_type count = to - from;
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
-      for ( size_type i = from; i < to; ++i )
-        (__mem::memory)[i].~T();
-    for ( size_type i = to; i < __mem::length; ++i )
-      (__mem::memory)[i - count] = micron::move((__mem::memory)[i]);
+      for ( size_type i = from; i < to; ++i ) (__mem::memory)[i].~T();
+    for ( size_type i = to; i < __mem::length; ++i ) (__mem::memory)[i - count] = micron::move((__mem::memory)[i]);
     for ( size_type i = __mem::length - count; i < __mem::length; ++i )
       czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[i]));
     __mem::length -= count;
@@ -775,11 +742,9 @@ public:
   inline void
   erase(iterator it)
   {
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
-      it->~T();
+    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> ) it->~T();
     size_type idx = it - __mem::memory;
-    for ( size_type i = idx; i + 1 < __mem::length; ++i )
-      __mem::memory[i] = micron::move(__mem::memory[i + 1]);
+    for ( size_type i = idx; i + 1 < __mem::length; ++i ) __mem::memory[i] = micron::move(__mem::memory[i + 1]);
     czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
     --__mem::length;
   }
@@ -787,10 +752,8 @@ public:
   inline void
   erase(const size_type n)
   {
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> )
-      (__mem::memory)[n].~T();
-    for ( size_type i = n; i < __mem::length - 1; ++i )
-      (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
+    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_copyable_v<T> ) (__mem::memory)[n].~T();
+    for ( size_type i = n; i < __mem::length - 1; ++i ) (__mem::memory)[i] = micron::move((__mem::memory)[i + 1]);
     czero<sizeof(T) / sizeof(byte)>(reinterpret_cast<byte *>(&(__mem::memory)[__mem::length - 1]));
     --__mem::length;
   }
@@ -807,8 +770,7 @@ public:
   inline void
   clear(void)
   {
-    if ( !__mem::length )
-      return;
+    if ( !__mem::length ) return;
     __impl_container::destroy_fast(micron::addr(__mem::memory[0]), __mem::length);
     __mem::length = 0;
   }

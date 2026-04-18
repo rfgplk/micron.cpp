@@ -102,8 +102,7 @@ struct __buddy_list {
   order_for_size(usize n) const noexcept
   {
     usize units = (n + Min - 1) >> __log2_min;
-    if ( units <= 1 )
-      return 0;
+    if ( units <= 1 ) return 0;
     return ceil_log2_u64(units);
   }
 
@@ -174,8 +173,7 @@ struct __buddy_list {
   find_free_order(i64 o) const noexcept
   {
     u64 m = free_mask >> o;
-    if ( m == 0 )
-      return max_order;
+    if ( m == 0 ) return max_order;
     return o + __builtin_ctzll(m);
   }
 
@@ -241,8 +239,7 @@ struct __buddy_list {
   __attribute__((always_inline)) inline free_block *
   tcache_pop(i64 o) noexcept
   {
-    if ( tcache_count[o] <= 0 )
-      return nullptr;
+    if ( tcache_count[o] <= 0 ) return nullptr;
     free_block *blk = tcache[o];
     tcache[o] = blk->next;
     --tcache_count[o];
@@ -252,8 +249,7 @@ struct __buddy_list {
   __attribute__((always_inline)) inline bool
   tcache_push(free_block *blk, i64 o) noexcept
   {
-    if ( tcache_count[o] >= __cache_cap )
-      return false;
+    if ( tcache_count[o] >= __cache_cap ) return false;
     blk->next = tcache[o];
     tcache[o] = blk;
     ++tcache_count[o];
@@ -276,8 +272,7 @@ struct __buddy_list {
   void
   tcache_flush_all() noexcept
   {
-    for ( i64 i = 0; i < max_order; ++i )
-      tcache_flush(i);
+    for ( i64 i = 0; i < max_order; ++i ) tcache_flush(i);
   }
 
   void
@@ -289,8 +284,7 @@ struct __buddy_list {
       usize blk_sz = order_sizes[o];
       usize buddy_off = off ^ blk_sz;
 
-      if ( !tag_is_free_at_off(buddy_off, o) )
-        break;
+      if ( !tag_is_free_at_off(buddy_off, o) ) break;
 
       freelist_remove(base + buddy_off, o);
       block_tags[buddy_off >> __log2_min] = __tag_none;
@@ -392,8 +386,7 @@ struct __buddy_list {
 
     __impl_zero_arrays();
 
-    for ( usize i = 0; i < tag_count; ++i )
-      block_tags[i] = __tag_none;
+    for ( usize i = 0; i < tag_count; ++i ) block_tags[i] = __tag_none;
 
     free_lists[max_order - 1] = (free_block *)base;
     free_lists[max_order - 1]->next = nullptr;
@@ -410,8 +403,7 @@ struct __buddy_list {
         tags_external(false)
   {
     __impl_zero_arrays();
-    if ( mem.zero() or mem.len < Min )
-      micron::abort();
+    if ( mem.zero() or mem.len < Min ) micron::abort();
     __impl_init_memory(mem.ptr, mem.len);
   }
 
@@ -420,8 +412,7 @@ struct __buddy_list {
         tags_external(true)
   {
     __impl_zero_arrays();
-    if ( mem.zero() or mem.len < Min )
-      micron::abort();
+    if ( mem.zero() or mem.len < Min ) micron::abort();
     __impl_init_memory(mem.ptr, mem.len, tag_buf);
   }
 
@@ -500,18 +491,14 @@ struct __buddy_list {
   allocate(usize n) noexcept
   {
     n += __hdr_offset;
-    if ( n == 0 )
-      n = 1;
-    if ( !base )
-      return { nullptr, 0 };
+    if ( n == 0 ) n = 1;
+    if ( !base ) return { nullptr, 0 };
     usize needed = (n + Min - 1) & ~(Min - 1);
     i64 o = order_for_size(needed);
-    if ( o >= max_order )
-      return { nullptr, 0 };
+    if ( o >= max_order ) return { nullptr, 0 };
 
     i64 i = find_free_order(o);
-    if ( i >= max_order )
-      return { nullptr, 0 };
+    if ( i >= max_order ) return { nullptr, 0 };
 
     free_block *blk = free_lists[i];
     free_lists[i] = blk->next;
@@ -537,15 +524,12 @@ struct __buddy_list {
   temporal_allocate(usize n) noexcept
   {
     n += __hdr_offset;
-    if ( n == 0 )
-      n = 1;
-    if ( !base )
-      return { nullptr, 0 };
+    if ( n == 0 ) n = 1;
+    if ( !base ) return { nullptr, 0 };
 
     usize needed = (n + Min - 1) & ~(Min - 1);
     i64 o = order_for_size(needed);
-    if ( o >= max_order )
-      return { nullptr, 0 };
+    if ( o >= max_order ) return { nullptr, 0 };
 
     usize target_size = order_sizes[o];
 
@@ -565,8 +549,7 @@ struct __buddy_list {
     }
 
     i64 i = find_free_order(o);
-    if ( i >= max_order )
-      return { nullptr, 0 };
+    if ( i >= max_order ) return { nullptr, 0 };
 
     free_block *blk = free_lists[i];
     free_lists[i] = blk->next;
@@ -592,17 +575,12 @@ struct __buddy_list {
   T
   allocate_exact(usize n) noexcept
   {
-    if ( !base )
-      return { nullptr, 0 };
-    if ( n < Min )
-      return { nullptr, 0 };
-    if ( (n & (n - 1)) != 0 )
-      return { nullptr, 0 };
+    if ( !base ) return { nullptr, 0 };
+    if ( n < Min ) return { nullptr, 0 };
+    if ( (n & (n - 1)) != 0 ) return { nullptr, 0 };
     i64 o = order_for_size(n);
-    if ( o >= max_order )
-      return { nullptr, 0 };
-    if ( !free_lists[o] )
-      return { nullptr, 0 };
+    if ( o >= max_order ) return { nullptr, 0 };
+    if ( !free_lists[o] ) return { nullptr, 0 };
 
     free_block *blk = free_lists[o];
     free_lists[o] = blk->next;
@@ -622,10 +600,8 @@ struct __buddy_list {
   {
     block_header *hdr = hdr_of_tagged(ptr);
     i64 o = static_cast<i64>(hdr->order);
-    if ( o < 0 || o >= max_order )
-      return { __flag_invalid };
-    if ( !(hdr->flags & __block_alloc) )
-      return { __flag_invalid };
+    if ( o < 0 || o >= max_order ) return { __flag_invalid };
+    if ( !(hdr->flags & __block_alloc) ) return { __flag_invalid };
 
     hdr->flags = __block_tombstone;
     allocated_bytes -= order_sizes[o];
@@ -637,8 +613,7 @@ struct __buddy_list {
   ret_flag
   tombstone(T &node) noexcept
   {
-    if ( !node.ptr or node.len == 0 )
-      return __flag_invalid;
+    if ( !node.ptr or node.len == 0 ) return __flag_invalid;
     return tombstone(node.ptr);
   }
 
@@ -655,20 +630,16 @@ struct __buddy_list {
     byte *addr = ptr;
     block_header *hdr = hdr_of_tagged(addr);
     const i64 original_o = static_cast<i64>(hdr->order);
-    if ( original_o < 0 || original_o >= max_order )
-      return { __flag_invalid };
-    if ( !base || !addr )
-      return __flag_failure;
+    if ( original_o < 0 || original_o >= max_order ) return { __flag_invalid };
+    if ( !base || !addr ) return __flag_failure;
 
     allocated_bytes -= order_sizes[original_o];
-    if ( hdr->flags & __block_tombstone )
-      tombstoned_bytes -= order_sizes[original_o];
+    if ( hdr->flags & __block_tombstone ) tombstoned_bytes -= order_sizes[original_o];
 
     bool was_temporal = (hdr->flags & __block_temporal) != 0;
     hdr->flags = __block_free;
 
-    if ( active[original_o] == (free_block *)addr )
-      active[original_o] = nullptr;
+    if ( active[original_o] == (free_block *)addr ) active[original_o] = nullptr;
 
     if ( was_temporal && tcache_push((free_block *)addr, original_o) ) {
       block_tags[tag_index(addr)] = __tag_none;
@@ -682,29 +653,24 @@ struct __buddy_list {
   ret_flag
   deallocate(T &node) noexcept
   {
-    if ( !node.ptr or node.len == 0 )
-      return __flag_invalid;
+    if ( !node.ptr or node.len == 0 ) return __flag_invalid;
     return deallocate(node.ptr);
   }
 
   T
   reallocate(T node, usize new_size) noexcept
   {
-    if ( !base )
-      return { nullptr, 0 };
-    if ( !node.ptr )
-      return allocate(new_size);
+    if ( !base ) return { nullptr, 0 };
+    if ( !node.ptr ) return allocate(new_size);
     if ( new_size == 0 ) {
       deallocate(node);
       return { nullptr, 0 };
     }
 
-    if ( node.len >= new_size && new_size > (node.len >> 1) )
-      return node;
+    if ( node.len >= new_size && new_size > (node.len >> 1) ) return node;
 
     T nnode = allocate(new_size);
-    if ( !nnode.ptr )
-      return { nullptr, 0 };
+    if ( !nnode.ptr ) return { nullptr, 0 };
 
     usize to_copy = (node.len < nnode.len) ? node.len : nnode.len;
     micron::memcpy(nnode.ptr, node.ptr, to_copy);
@@ -715,8 +681,7 @@ struct __buddy_list {
   usize
   available() const noexcept
   {
-    if ( !base )
-      return 0;
+    if ( !base ) return 0;
     return total - allocated_bytes;
   }
 
@@ -741,22 +706,18 @@ struct __buddy_list {
   usize
   block_size(byte *ptr) const noexcept
   {
-    if ( !base || !ptr )
-      return 0;
-    if ( ptr < base || ptr >= base + total )
-      return 0;
+    if ( !base || !ptr ) return 0;
+    if ( ptr < base || ptr >= base + total ) return 0;
     u8 tag = block_tags[tag_index(ptr)];
     i64 o = static_cast<i64>(tag & ~__tag_free);
-    if ( (u64)o >= (u64)max_order )
-      return 0;
+    if ( (u64)o >= (u64)max_order ) return 0;
     return order_sizes[o];
   }
 
   bool
   is_allocated(byte *ptr) const noexcept
   {
-    if ( !ptr || !base || ptr < base || ptr >= base + total )
-      return false;
+    if ( !ptr || !base || ptr < base || ptr >= base + total ) return false;
     // ptr == block_start
     u8 tag = block_tags[tag_index(ptr)];
     return (tag & __tag_free) == 0 && tag < (u8)max_order;
@@ -765,8 +726,7 @@ struct __buddy_list {
   usize
   allocated_size(byte *ptr) const noexcept
   {
-    if ( !is_allocated(ptr) )
-      return 0;
+    if ( !is_allocated(ptr) ) return 0;
     return block_size(ptr);
   }
 };

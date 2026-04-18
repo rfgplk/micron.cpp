@@ -20,8 +20,7 @@ template <class T, typename Acc>
 Acc
 accumulate(const T *first, const T *end, Acc init) noexcept
 {
-  for ( ; first != end; ++first )
-    init = micron::move(init) + *first;
+  for ( ; first != end; ++first ) init = micron::move(init) + *first;
   return init;
 }
 
@@ -30,8 +29,7 @@ template <class T, typename Acc, typename Fn>
 Acc
 accumulate(const T *first, const T *end, Acc init, Fn fn) noexcept
 {
-  for ( ; first != end; ++first )
-    init = fn(micron::move(init), *first);
+  for ( ; first != end; ++first ) init = fn(micron::move(init), *first);
   return init;
 }
 
@@ -39,8 +37,7 @@ template <class T, typename Acc>
 Acc
 accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
 {
-  for ( u64 i = 0; first != end and i < limit; ++first, ++i )
-    init = micron::move(init) + *first;
+  for ( u64 i = 0; first != end and i < limit; ++first, ++i ) init = micron::move(init) + *first;
   return init;
 }
 
@@ -49,8 +46,7 @@ template <class T, typename Acc, typename Fn>
 Acc
 accumulate(const T *first, const T *end, Acc init, Fn fn, usize limit) noexcept
 {
-  for ( u64 i = 0; first != end and i < limit; ++first, ++i )
-    init = fn(micron::move(init), *first);
+  for ( u64 i = 0; first != end and i < limit; ++first, ++i ) init = fn(micron::move(init), *first);
   return init;
 }
 
@@ -88,8 +84,7 @@ template <auto Fn, typename T, typename Acc>
 constexpr Acc
 accumulate(const T *first, const T *end, Acc init) noexcept
 {
-  for ( ; first != end; ++first )
-    init = Fn(micron::move(init), *first);
+  for ( ; first != end; ++first ) init = Fn(micron::move(init), *first);
   return init;
 }
 
@@ -97,8 +92,7 @@ template <auto Fn, typename T, typename Acc>
 constexpr Acc
 accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
 {
-  for ( u64 i = 0; first != end && i < limit; ++first, ++i )
-    init = Fn(micron::move(init), *first);
+  for ( u64 i = 0; first != end && i < limit; ++first, ++i ) init = Fn(micron::move(init), *first);
   return init;
 }
 

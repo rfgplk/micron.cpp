@@ -20,26 +20,21 @@ template <typename T = char>
 i64
 hex_string_to_int64(const micron::hstring<T> &buf)
 {
-  if ( buf.empty() )
-    return 0;
+  if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   i64 result = 0;
   bool neg = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
     neg = true;
     ++ptr;
   } else if ( ptr != end && *ptr == '+' )
     ++ptr;
-  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') )
-    ptr += 2;
+  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') ) ptr += 2;
   while ( ptr != end ) {
     int dv = __impl::hex_digit_val(*ptr);
-    if ( dv < 0 )
-      break;
-    if ( static_cast<u64>(result) > (0x7FFFFFFFFFFFFFFFull >> 4) )
-      break;
+    if ( dv < 0 ) break;
+    if ( static_cast<u64>(result) > (0x7FFFFFFFFFFFFFFFull >> 4) ) break;
     result = (result << 4) | dv;
     ++ptr;
   }
@@ -50,20 +45,15 @@ template <typename T = char>
 u64
 hex_string_to_uint64(const micron::hstring<T> &buf)
 {
-  if ( buf.empty() )
-    return 0;
+  if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   u64 result = 0;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') )
-    ptr += 2;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') ) ptr += 2;
   while ( ptr != end ) {
     int dv = __impl::hex_digit_val(*ptr);
-    if ( dv < 0 )
-      break;
-    if ( result > (0xFFFFFFFFFFFFFFFFull >> 4) )
-      break;
+    if ( dv < 0 ) break;
+    if ( result > (0xFFFFFFFFFFFFFFFFull >> 4) ) break;
     result = (result << 4) | static_cast<u64>(dv);
     ++ptr;
   }
@@ -74,22 +64,18 @@ template <typename T = char>
 u64
 oct_string_to_uint64(const micron::hstring<T> &buf)
 {
-  if ( buf.empty() )
-    return 0;
+  if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   u64 result = 0;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'o' || *(ptr + 1) == 'O') )
     ptr += 2;
   else if ( ptr != end && *ptr == '0' )
     ++ptr;
   while ( ptr != end ) {
     char c = *ptr;
-    if ( c < '0' || c > '7' )
-      break;
-    if ( result > (0xFFFFFFFFFFFFFFFFull >> 3) )
-      break;
+    if ( c < '0' || c > '7' ) break;
+    if ( result > (0xFFFFFFFFFFFFFFFFull >> 3) ) break;
     result = (result << 3) | static_cast<u64>(c - '0');
     ++ptr;
   }
@@ -100,20 +86,15 @@ template <typename T = char>
 u64
 bin_string_to_uint64(const micron::hstring<T> &buf)
 {
-  if ( buf.empty() )
-    return 0;
+  if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   u64 result = 0;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'b' || *(ptr + 1) == 'B') )
-    ptr += 2;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'b' || *(ptr + 1) == 'B') ) ptr += 2;
   while ( ptr != end ) {
     char c = *ptr;
-    if ( c != '0' && c != '1' )
-      break;
-    if ( result > (0xFFFFFFFFFFFFFFFFull >> 1) )
-      break;
+    if ( c != '0' && c != '1' ) break;
+    if ( result > (0xFFFFFFFFFFFFFFFFull >> 1) ) break;
     result = (result << 1) | static_cast<u64>(c - '0');
     ++ptr;
   }
@@ -124,13 +105,11 @@ template <typename T = char>
 i64
 string_to_int64(const micron::hstring<T> &buf)
 {
-  if ( buf.empty() )
-    return 0;
+  if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   i64 result = 0;
   bool neg = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
     neg = true;
     ++ptr;
@@ -138,8 +117,7 @@ string_to_int64(const micron::hstring<T> &buf)
     ++ptr;
   while ( ptr != end ) {
     char c = *ptr;
-    if ( c < '0' || c > '9' )
-      break;
+    if ( c < '0' || c > '9' ) break;
     result = result * 10 + (c - '0');
     ++ptr;
   }
@@ -150,18 +128,14 @@ template <typename T = char>
 u64
 string_to_uint64(const micron::hstring<T> &buf)
 {
-  if ( buf.empty() )
-    return 0;
+  if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   u64 result = 0;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr != end && *ptr == '+' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr != end && *ptr == '+' ) ++ptr;
   while ( ptr != end ) {
     char c = *ptr;
-    if ( c < '0' || c > '9' )
-      break;
+    if ( c < '0' || c > '9' ) break;
     result = result * 10 + static_cast<u64>(c - '0');
     ++ptr;
   }
@@ -172,13 +146,11 @@ template <typename T = char>
 i64
 string_to_int_base(const micron::hstring<T> &buf, u32 base)
 {
-  if ( buf.empty() || base < 2 || base > 36 )
-    return 0;
+  if ( buf.empty() || base < 2 || base > 36 ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   i64 result = 0;
   bool neg = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
     neg = true;
     ++ptr;
@@ -192,8 +164,7 @@ string_to_int_base(const micron::hstring<T> &buf, u32 base)
     ptr += 2;
   while ( ptr != end ) {
     int dv = __impl::digit_val(*ptr, base);
-    if ( dv < 0 )
-      break;
+    if ( dv < 0 ) break;
     result = result * static_cast<i64>(base) + dv;
     ++ptr;
   }
@@ -204,14 +175,11 @@ template <typename T = char>
 u64
 string_to_uint_base(const micron::hstring<T> &buf, u32 base)
 {
-  if ( buf.empty() || base < 2 || base > 36 )
-    return 0;
+  if ( buf.empty() || base < 2 || base > 36 ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
   u64 result = 0;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr != end && *ptr == '+' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr != end && *ptr == '+' ) ++ptr;
   if ( base == 16 && ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') )
     ptr += 2;
   else if ( base == 8 && ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'o' || *(ptr + 1) == 'O') )
@@ -220,8 +188,7 @@ string_to_uint_base(const micron::hstring<T> &buf, u32 base)
     ptr += 2;
   while ( ptr != end ) {
     int dv = __impl::digit_val(*ptr, base);
-    if ( dv < 0 )
-      break;
+    if ( dv < 0 ) break;
     result = result * static_cast<u64>(base) + static_cast<u64>(dv);
     ++ptr;
   }
@@ -236,21 +203,17 @@ bool
 try_string_to_int64(const micron::hstring<T> &buf, i64 &out)
 {
   out = 0;
-  if ( buf.empty() )
-    return false;
+  if ( buf.empty() ) return false;
   const T *ptr = buf.begin(), *end = buf.end();
   bool neg = false, any = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr == end )
-    return false;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr == end ) return false;
   if ( *ptr == '-' ) {
     neg = true;
     ++ptr;
   } else if ( *ptr == '+' )
     ++ptr;
-  if ( ptr == end )
-    return false;
+  if ( ptr == end ) return false;
   i64 acc = 0;
   constexpr i64 lim = -0x7FFFFFFFFFFFFFFFuLL - 1;
   constexpr i64 lim_div = lim / 10;
@@ -258,24 +221,20 @@ try_string_to_int64(const micron::hstring<T> &buf, i64 &out)
   while ( ptr != end ) {
     char c = *ptr;
     if ( c < '0' || c > '9' ) {
-      while ( ptr != end && *ptr == ' ' )
-        ++ptr;
+      while ( ptr != end && *ptr == ' ' ) ++ptr;
       break;
     }
     int d = c - '0';
     any = true;
-    if ( acc < lim_div || (acc == lim_div && d > lim_mod) )
-      return false;
+    if ( acc < lim_div || (acc == lim_div && d > lim_mod) ) return false;
     acc = acc * 10 - d;
     ++ptr;
   }
-  if ( !any || ptr != end )
-    return false;
+  if ( !any || ptr != end ) return false;
   if ( neg )
     out = acc;
   else {
-    if ( acc == lim )
-      return false;
+    if ( acc == lim ) return false;
     out = -acc;
   }
   return true;
@@ -286,37 +245,29 @@ bool
 try_string_to_uint64(const micron::hstring<T> &buf, u64 &out)
 {
   out = 0;
-  if ( buf.empty() )
-    return false;
+  if ( buf.empty() ) return false;
   const T *ptr = buf.begin(), *end = buf.end();
   bool any = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr != end && *ptr == '+' )
-    ++ptr;
-  if ( ptr == end )
-    return false;
-  if ( ptr != end && *ptr == '-' )
-    return false;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr != end && *ptr == '+' ) ++ptr;
+  if ( ptr == end ) return false;
+  if ( ptr != end && *ptr == '-' ) return false;
   constexpr u64 mx = 0xFFFFFFFFFFFFFFFFull;
   constexpr u64 mx_d = mx / 10, mx_m = mx % 10;
   u64 acc = 0;
   while ( ptr != end ) {
     char c = *ptr;
     if ( c < '0' || c > '9' ) {
-      while ( ptr != end && *ptr == ' ' )
-        ++ptr;
+      while ( ptr != end && *ptr == ' ' ) ++ptr;
       break;
     }
     u64 d = static_cast<u64>(c - '0');
     any = true;
-    if ( acc > mx_d || (acc == mx_d && d > mx_m) )
-      return false;
+    if ( acc > mx_d || (acc == mx_d && d > mx_m) ) return false;
     acc = acc * 10 + d;
     ++ptr;
   }
-  if ( !any || ptr != end )
-    return false;
+  if ( !any || ptr != end ) return false;
   out = acc;
   return true;
 }
@@ -364,8 +315,7 @@ parse_int(const char *&ptr, const char *end)
 {
   i64 result = 0;
   bool neg = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
     neg = true;
     ++ptr;
@@ -382,10 +332,8 @@ inline u64
 parse_uint(const char *&ptr, const char *end)
 {
   u64 result = 0;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
-  if ( ptr != end && *ptr == '+' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr != end && *ptr == '+' ) ++ptr;
   while ( ptr != end && *ptr >= '0' && *ptr <= '9' ) {
     result = result * 10 + static_cast<u64>(*ptr - '0');
     ++ptr;
@@ -398,18 +346,15 @@ parse_hex(const char *&ptr, const char *end)
 {
   i64 result = 0;
   bool neg = false;
-  while ( ptr != end && *ptr == ' ' )
-    ++ptr;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
     neg = true;
     ++ptr;
   }
-  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') )
-    ptr += 2;
+  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') ) ptr += 2;
   while ( ptr != end ) {
     int dv = __impl::hex_digit_val(*ptr);
-    if ( dv < 0 )
-      break;
+    if ( dv < 0 ) break;
     result = (result << 4) | dv;
     ++ptr;
   }
@@ -442,8 +387,7 @@ int_to_string(I n)
     uval = static_cast<U>(n);
   }
   char *start = __impl::uint_to_buf_backward(tend, static_cast<u64>(uval));
-  if ( neg )
-    *--start = '-';
+  if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
@@ -490,13 +434,11 @@ int_to_string_stack(I n)
     uval = static_cast<U>(n);
   }
   char *start = __impl::uint_to_buf_backward(tend, static_cast<u64>(uval));
-  if ( neg )
-    *--start = '-';
+  if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::sstring<N, T> result;
   T *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = static_cast<T>(start[i]);
+  for ( usize i = 0; i < len; ++i ) out[i] = static_cast<T>(start[i]);
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -515,8 +457,7 @@ uint_to_string_stack(I n)
   usize len = static_cast<usize>(tend - start);
   micron::sstring<N, T> result;
   T *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = static_cast<T>(start[i]);
+  for ( usize i = 0; i < len; ++i ) out[i] = static_cast<T>(start[i]);
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -546,8 +487,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
     uval = static_cast<U>(n);
   }
   char *start = __impl::uint_to_buf_base_backward(tend, static_cast<u64>(uval), base, upper);
-  if ( neg )
-    *--start = '-';
+  if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
@@ -640,8 +580,7 @@ inline micron::hstring<T>
 int_to_string_padded(I n, usize width)
 {
   micron::hstring<T> raw = int_to_string<I, T>(n);
-  if ( raw.size() >= width )
-    return raw;
+  if ( raw.size() >= width ) return raw;
   micron::hstring<T> result(width + 1);
   T *out = &result[0];
   usize content_start = 0;
@@ -652,12 +591,9 @@ int_to_string_padded(I n, usize width)
   }
   usize pad = width - raw.size();
   usize pos = 0;
-  if ( neg )
-    out[pos++] = '-';
-  for ( usize i = 0; i < pad; ++i )
-    out[pos++] = '0';
-  for ( usize i = content_start; i < raw.size(); ++i )
-    out[pos++] = raw[i];
+  if ( neg ) out[pos++] = '-';
+  for ( usize i = 0; i < pad; ++i ) out[pos++] = '0';
+  for ( usize i = content_start; i < raw.size(); ++i ) out[pos++] = raw[i];
   result._buf_set_length(pos);
   return result;
 }

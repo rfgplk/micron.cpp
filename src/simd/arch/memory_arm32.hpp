@@ -13,13 +13,13 @@ namespace micron
 namespace simd
 {
 
-[[gnu::always_inline]] static inline void
+__attribute__((always_inline)) static inline void
 __neon_sfence(void) noexcept
 {
   __asm__ volatile("dmb st" ::: "memory");
 }
 
-[[gnu::always_inline]] static inline bool
+__attribute__((always_inline)) static inline bool
 __neon_v7_all_eq(uint8x16_t ceq) noexcept
 {
   const uint64x2_t v64 = vreinterpretq_u64_u8(ceq);
@@ -45,10 +45,8 @@ memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
   const u64 rem = bytes % 16;
   if ( rem ) {
     u8 tmp[16] = {};
-    for ( u64 i = 0; i < rem; i++ )
-      tmp[i] = s[n * 16 + i];
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = tmp[i];
+    for ( u64 i = 0; i < rem; i++ ) tmp[i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = tmp[i];
   }
 
   return dest;
@@ -72,8 +70,7 @@ amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
   }
 
   return dest;
@@ -99,8 +96,7 @@ ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexce
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
   }
 
   return dest;
@@ -119,8 +115,7 @@ rmemcpy128(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
   }
   const u64 rem = (cnt * sizeof(D)) % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      d[n * 16 + i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
   }
   return dest;
 }
@@ -135,8 +130,7 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(src);
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 16;
@@ -145,15 +139,13 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 16 + i] = s[n * 16 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
     }
   } else {
     const u64 n = bytes / 16;
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 16 + i - 1] = s[n * 16 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       vst1q_u8(d + (i - 1) * 16, vld1q_u8(s + (i - 1) * 16));
@@ -173,8 +165,7 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
   const auto *s = reinterpret_cast<const u8 *>(__builtin_assume_aligned(src, 16));
   const u64 bytes = count * sizeof(T);
 
-  if ( d == s || bytes == 0 )
-    return dest;
+  if ( d == s || bytes == 0 ) return dest;
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 16;
@@ -183,15 +174,13 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
     }
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = 0; i < rem; i++ )
-        d[n * 16 + i] = s[n * 16 + i];
+      for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
     }
   } else {
     const u64 n = bytes / 16;
     const u64 rem = bytes % 16;
     if ( rem ) {
-      for ( u64 i = rem; i > 0; i-- )
-        d[n * 16 + i - 1] = s[n * 16 + i - 1];
+      for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
     for ( u64 i = n; i > 0; i-- ) {
       vst1q_u8(d + (i - 1) * 16, vld1q_u8(s + (i - 1) * 16));
@@ -210,13 +199,11 @@ memset128(T *__restrict src, const u8 in, const u64 count) noexcept
   const u64 n = bytes / 16;
   const uint8x16_t v = vdupq_n_u8(in);
 
-  for ( u64 i = 0; i < n; i++ )
-    vst1q_u8(s + i * 16, v);
+  for ( u64 i = 0; i < n; i++ ) vst1q_u8(s + i * 16, v);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 16 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 16 + i] = in;
   }
 
   return src;
@@ -231,13 +218,11 @@ amemset128(T *__restrict src, const u8 in, const u64 count) noexcept
   const u64 n = bytes / 16;
   const uint8x16_t v = vdupq_n_u8(in);
 
-  for ( u64 i = 0; i < n; i++ )
-    vst1q_u8(s + i * 16, v);
+  for ( u64 i = 0; i < n; i++ ) vst1q_u8(s + i * 16, v);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 16 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 16 + i] = in;
   }
 
   return src;
@@ -252,15 +237,13 @@ ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept
   const u64 n = bytes / 16;
   const uint8x16_t v = vdupq_n_u8(in);
 
-  for ( u64 i = 0; i < n; i++ )
-    vst1q_u8(s + i * 16, v);
+  for ( u64 i = 0; i < n; i++ ) vst1q_u8(s + i * 16, v);
 
   __neon_sfence();
 
   const u64 rem = bytes % 16;
   if ( rem ) {
-    for ( u64 i = 0; i < rem; i++ )
-      s[n * 16 + i] = in;
+    for ( u64 i = 0; i < rem; i++ ) s[n * 16 + i] = in;
   }
 
   return src;
@@ -283,8 +266,7 @@ memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) no
       const u64 base = i * 16;
       const u64 limit = (base + 16 < bytes) ? base + 16 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j])) - static_cast<i64>(static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j])) - static_cast<i64>(static_cast<unsigned>(d[j]));
     }
   }
 
@@ -316,8 +298,7 @@ amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) n
       const u64 base = i * 16;
       const u64 limit = (base + 16 < bytes) ? base + 16 : bytes;
       for ( u64 j = base; j < limit; j++ )
-        if ( s[j] != d[j] )
-          return static_cast<i64>(static_cast<unsigned>(s[j])) - static_cast<i64>(static_cast<unsigned>(d[j]));
+        if ( s[j] != d[j] ) return static_cast<i64>(static_cast<unsigned>(s[j])) - static_cast<i64>(static_cast<unsigned>(d[j]));
     }
   }
 

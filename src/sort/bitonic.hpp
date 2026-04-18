@@ -23,8 +23,7 @@ bitonic(T &arr)
         for ( i64 i = 0; i < n; i++ ) {
           i64 l = i ^ j;
           if ( l > i )
-            if ( ((i & k) == 0 and arr[i] > arr[l]) or (((i & k) != 0) and (arr[i] < arr[l])) )
-              swap(arr[i], arr[l]);
+            if ( ((i & k) == 0 and arr[i] > arr[l]) or (((i & k) != 0) and (arr[i] < arr[l])) ) swap(arr[i], arr[l]);
         }
       }
     }

@@ -117,8 +117,7 @@ prepare_generic_keyboard_us(void) -> input_packet_t
   const byte __end = key_kpdot;
   input_packet_t __input = { ev_key, sizeof(button_t) * (__end - __first), nullptr, nullptr, nullptr };
 
-  for ( byte i = 0; i < (__end - __first); ++i )
-    __input.button_mask[i] = __first + i;
+  for ( byte i = 0; i < (__end - __first); ++i ) __input.button_mask[i] = __first + i;
 
   return __input;
 };
@@ -132,16 +131,14 @@ prepare_generic_keyboard_us(void (*fn_cb)(const micron::timeval_t &, u16, i32),
   const byte __end = key_kpdot;
   input_packet_t __input = { ev_key, sizeof(button_t) * (__end - __first), fn_cb, fn_acb, fn_rcb };
 
-  for ( byte i = 0; i < (__end - __first); ++i )
-    __input.button_mask[i] = __first + i;
+  for ( byte i = 0; i < (__end - __first); ++i ) __input.button_mask[i] = __first + i;
   return __input;
 };
 
 bool
 read_raw(const device_t &dev, input_event &event)
 {
-  if ( dev.bound_fd.has_error() )
-    return false;
+  if ( dev.bound_fd.has_error() ) return false;
 
   i64 read_bytes = posix::read(dev.bound_fd.fd, &event, sizeof(input_event));
   return (read_bytes == sizeof(input_event));

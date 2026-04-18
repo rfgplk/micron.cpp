@@ -33,10 +33,8 @@ constexpr bool
 lexi_compare(U a, U b, V c, V d)
 {
   for ( ; a != b && c != d; ++a, ++c ) {
-    if ( *a < *c )
-      return true;
-    if ( *c < *a )
-      return false;
+    if ( *a < *c ) return true;
+    if ( *c < *a ) return false;
   }
   return (a == b) && (c != d);
 }

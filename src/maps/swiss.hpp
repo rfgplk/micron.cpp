@@ -383,8 +383,7 @@ public:
           }
           m.clear_lowest();
         }
-        if ( __match_empty(group_start).any() )
-          break;
+        if ( __match_empty(group_start).any() ) break;
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
@@ -392,15 +391,13 @@ public:
             __entries[probe].value = micron::forward<VV>(value);
             return { false, addr(__entries[probe].value) };
           }
-          if ( __control_bytes[probe] == __empty )
-            goto insert;
+          if ( __control_bytes[probe] == __empty ) goto insert;
         }
       }
     }
 
   insert:
-    if ( __size >= N )
-      return { false, nullptr };
+    if ( __size >= N ) return { false, nullptr };
 
     // second pass: find first empty or deleted slot
     for ( usize i = 0; i < NH; i += 16 ) {

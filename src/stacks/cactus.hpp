@@ -70,8 +70,7 @@ class cactus_stack
   void
   __destruct(i32 i) noexcept
   {
-    if constexpr ( micron::is_class_v<T> )
-      __val(i)->~T();
+    if constexpr ( micron::is_class_v<T> ) __val(i)->~T();
   }
 
   void
@@ -80,8 +79,7 @@ class cactus_stack
 
     i32 spine[N];
     size_type cnt = 0;
-    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent )
-      spine[cnt++] = c;
+    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) spine[cnt++] = c;
 
     for ( size_type i = 0; i < cnt; ++i )
       _construct(static_cast<i32>(i), *src.__val(spine[cnt - 1 - i]), (i == 0) ? __none : static_cast<i32>(i - 1));
@@ -96,8 +94,7 @@ class cactus_stack
   {
     i32 spine[N];
     size_type cnt = 0;
-    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent )
-      spine[cnt++] = c;
+    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) spine[cnt++] = c;
 
     for ( size_type i = 0; i < cnt; ++i ) {
       i32 s = spine[cnt - 1 - i];
@@ -116,8 +113,7 @@ class cactus_stack
           on_spine = true;
           break;
         }
-      if ( !on_spine )
-        src.__destruct(i);
+      if ( !on_spine ) src.__destruct(i);
     }
 
     src.__used = 0;
@@ -184,8 +180,7 @@ public:
 
   ~cactus_stack()
   {
-    for ( i32 i = 0; i < __used; ++i )
-      __destruct(i);
+    for ( i32 i = 0; i < __used; ++i ) __destruct(i);
   }
 
   cactus_stack() noexcept : __used(0), __head(__none), __depth(0) {}
@@ -197,10 +192,8 @@ public:
   cactus_stack &
   operator=(const cactus_stack &o)
   {
-    if ( this == &o )
-      return *this;
-    for ( i32 i = 0; i < __used; ++i )
-      __destruct(i);
+    if ( this == &o ) return *this;
+    for ( i32 i = 0; i < __used; ++i ) __destruct(i);
     __used = 0;
     __head = __none;
     __depth = 0;
@@ -211,10 +204,8 @@ public:
   cactus_stack &
   operator=(cactus_stack &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
-    for ( i32 i = 0; i < __used; ++i )
-      __destruct(i);
+    if ( this == &o ) return *this;
+    for ( i32 i = 0; i < __used; ++i ) __destruct(i);
     __used = 0;
     __head = __none;
     __depth = 0;
@@ -477,8 +468,7 @@ public:
 
       i32 spine[N];
       size_type cnt = 0;
-      for ( i32 c = cur; c != __none; c = owner->__slot(c)->parent )
-        spine[cnt++] = c;
+      for ( i32 c = cur; c != __none; c = owner->__slot(c)->parent ) spine[cnt++] = c;
 
       cactus_stack snap;
       for ( size_type i = 0; i < cnt; ++i )
@@ -515,12 +505,10 @@ public:
   bool
   operator==(const cactus_stack &o) const noexcept
   {
-    if ( __depth != o.__depth )
-      return false;
+    if ( __depth != o.__depth ) return false;
     i32 a = __head, b = o.__head;
     while ( a != __none && b != __none ) {
-      if ( !(*__val(a) == *o.__val(b)) )
-        return false;
+      if ( !(*__val(a) == *o.__val(b)) ) return false;
       a = __slot(a)->parent;
       b = o.__slot(b)->parent;
     }
@@ -538,18 +526,14 @@ public:
   {
     i32 as_[N], bs_[N];
     size_type ac = 0, bc = 0;
-    for ( i32 c = __head; c != __none; c = __slot(c)->parent )
-      as_[ac++] = c;
-    for ( i32 c = o.__head; c != __none; c = o.__slot(c)->parent )
-      bs_[bc++] = c;
+    for ( i32 c = __head; c != __none; c = __slot(c)->parent ) as_[ac++] = c;
+    for ( i32 c = o.__head; c != __none; c = o.__slot(c)->parent ) bs_[bc++] = c;
     size_type n = (ac < bc) ? ac : bc;
     for ( size_type i = 0; i < n; ++i ) {
       const T &av = *__val(as_[ac - 1 - i]);
       const T &bv = *o.__val(bs_[bc - 1 - i]);
-      if ( av < bv )
-        return true;
-      if ( bv < av )
-        return false;
+      if ( av < bv ) return true;
+      if ( bv < av ) return false;
     }
     return ac < bc;
   }
@@ -597,19 +581,16 @@ class fixed_stack
   void
   __destruct(usize i) noexcept
   {
-    if constexpr ( micron::is_class_v<T> )
-      __at(i)->~T();
+    if constexpr ( micron::is_class_v<T> ) __at(i)->~T();
   }
 
   void
   __bulk_copy(const fixed_stack &src, usize cnt) noexcept
   {
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
-      if ( cnt )
-        micron::memcpy(stack, src.stack, cnt * sizeof(T));
+      if ( cnt ) micron::memcpy(stack, src.stack, cnt * sizeof(T));
     } else {
-      for ( usize i = 0; i < cnt; ++i )
-        new (__at(i)) T(*src.__at(i));
+      for ( usize i = 0; i < cnt; ++i ) new (__at(i)) T(*src.__at(i));
     }
     _depth = cnt;
   }
@@ -618,8 +599,7 @@ class fixed_stack
   __bulk_move(fixed_stack &src, usize cnt) noexcept
   {
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
-      if ( cnt )
-        micron::memcpy(stack, src.stack, cnt * sizeof(T));
+      if ( cnt ) micron::memcpy(stack, src.stack, cnt * sizeof(T));
 
     } else {
       for ( usize i = 0; i < cnt; ++i ) {
@@ -670,8 +650,7 @@ public:
   ~fixed_stack()
   {
 
-    for ( usize i = 0; i < _depth; ++i )
-      __destruct(i);
+    for ( usize i = 0; i < _depth; ++i ) __destruct(i);
   }
 
   fixed_stack() noexcept : _depth(0) {}
@@ -683,10 +662,8 @@ public:
   fixed_stack &
   operator=(const fixed_stack &o)
   {
-    if ( this == &o )
-      return *this;
-    for ( usize i = 0; i < _depth; ++i )
-      __destruct(i);
+    if ( this == &o ) return *this;
+    for ( usize i = 0; i < _depth; ++i ) __destruct(i);
     _depth = 0;
     __bulk_copy(o, o._depth);
     return *this;
@@ -695,10 +672,8 @@ public:
   fixed_stack &
   operator=(fixed_stack &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
-    for ( usize i = 0; i < _depth; ++i )
-      __destruct(i);
+    if ( this == &o ) return *this;
+    for ( usize i = 0; i < _depth; ++i ) __destruct(i);
     _depth = 0;
     __bulk_move(o, o._depth);
     return *this;
@@ -972,11 +947,9 @@ public:
       fixed_stack snap;
       usize cnt = (usize)(cur + 1);
       if constexpr ( micron::is_trivially_copyable_v<T> ) {
-        if ( cnt )
-          micron::memcpy(snap.stack, owner->stack, cnt * sizeof(T));
+        if ( cnt ) micron::memcpy(snap.stack, owner->stack, cnt * sizeof(T));
       } else {
-        for ( usize i = 0; i < cnt; ++i )
-          new (snap.__at(i)) T(*owner->__at(i));
+        for ( usize i = 0; i < cnt; ++i ) new (snap.__at(i)) T(*owner->__at(i));
       }
       snap._depth = cnt;
       return snap;
@@ -1009,11 +982,9 @@ public:
   bool
   operator==(const fixed_stack &o) const noexcept
   {
-    if ( _depth != o._depth )
-      return false;
+    if ( _depth != o._depth ) return false;
     for ( usize i = 0; i < _depth; ++i )
-      if ( !(*__at(i) == *o.__at(i)) )
-        return false;
+      if ( !(*__at(i) == *o.__at(i)) ) return false;
     return true;
   }
 
@@ -1028,10 +999,8 @@ public:
   {
     usize n = (_depth < o._depth) ? _depth : o._depth;
     for ( usize i = 0; i < n; ++i ) {
-      if ( *__at(i) < *o.__at(i) )
-        return true;
-      if ( *o.__at(i) < *__at(i) )
-        return false;
+      if ( *__at(i) < *o.__at(i) ) return true;
+      if ( *o.__at(i) < *__at(i) ) return false;
     }
     return _depth < o._depth;
   }

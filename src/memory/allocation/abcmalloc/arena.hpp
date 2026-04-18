@@ -91,15 +91,13 @@ __prealloc_share(u64 total)
 
   if constexpr ( __wordsize == 64 ) {
     u64 frac = static_cast<u64>((static_cast<u128>(total) * w) / __class_weight_denom);
-    if ( frac % __system_pagesize != 0 )
-      frac += __system_pagesize - (frac % __system_pagesize);
+    if ( frac % __system_pagesize != 0 ) frac += __system_pagesize - (frac % __system_pagesize);
     return frac;
   } else {
     u64 scaled = total / __class_weight_denom;
     u64 rem = total % __class_weight_denom;
     u64 frac = scaled * w + (rem * w) / __class_weight_denom;
-    if ( frac % __system_pagesize != 0 )
-      frac += __system_pagesize - (frac % __system_pagesize);
+    if ( frac % __system_pagesize != 0 ) frac += __system_pagesize - (frac % __system_pagesize);
     return frac;
   }
 }
@@ -180,20 +178,16 @@ class __arena : private cache
     {
       nd->prev = tail;
       nd->nxt = nullptr;
-      if ( tail )
-        tail->nxt = nd;
+      if ( tail ) tail->nxt = nd;
       tail = nd;
     }
 
     inline __attribute__((always_inline)) void
     unlink_node(node<sheet_type> *nd)
     {
-      if ( nd->prev )
-        nd->prev->nxt = nd->nxt;
-      if ( nd->nxt )
-        nd->nxt->prev = nd->prev;
-      if ( nd == tail )
-        tail = nd->prev;
+      if ( nd->prev ) nd->prev->nxt = nd->nxt;
+      if ( nd->nxt ) nd->nxt->prev = nd->prev;
+      if ( nd == tail ) tail = nd->prev;
     }
 
     u32
@@ -206,12 +200,10 @@ class __arena : private cache
       addr_t *hi = nd->nd->addr_end();
 
       u32 pos = 0;
-      while ( pos < __count and __idx[pos].lo < lo )
-        ++pos;
+      while ( pos < __count and __idx[pos].lo < lo ) ++pos;
 
       // shift entries right
-      for ( u32 i = __count; i > pos; --i )
-        __idx[i] = __idx[i - 1];
+      for ( u32 i = __count; i > pos; --i ) __idx[i] = __idx[i - 1];
 
       __idx[pos] = { lo, hi, nd };
 
@@ -220,8 +212,7 @@ class __arena : private cache
       u64 hi_mask = (__space_mask >> pos) << (pos + 1);
       __space_mask = lo_mask | hi_mask | (1ULL << pos);
 
-      if ( __last_hit != __no_hit and pos <= __last_hit and __last_hit + 1 < __max_sheets )
-        ++__last_hit;
+      if ( __last_hit != __no_hit and pos <= __last_hit and __last_hit + 1 < __max_sheets ) ++__last_hit;
 
       ++__count;
       return pos;
@@ -230,12 +221,10 @@ class __arena : private cache
     void
     unregister(u32 pos)
     {
-      if ( pos >= __count )
-        return;
+      if ( pos >= __count ) return;
 
       // shift entries left
-      for ( u32 i = pos; i + 1 < __count; ++i )
-        __idx[i] = __idx[i + 1];
+      for ( u32 i = pos; i + 1 < __count; ++i ) __idx[i] = __idx[i + 1];
 
       // collapse space_mask: remove bit at pos, shift upper bits down
       u64 lo_mask = __space_mask & ((1ULL << pos) - 1);
@@ -311,8 +300,7 @@ class __arena : private cache
       using Rt = micron::lambda_return_t<decltype(fn)>;
       Rt ret{};
       for ( u32 i = 0; i < __count; ++i ) {
-        if ( __idx[i].nd and __idx[i].nd->nd )
-          ret += fn(__idx[i].nd->nd);
+        if ( __idx[i].nd and __idx[i].nd->nd ) ret += fn(__idx[i].nd->nd);
       }
       return ret;
     }
@@ -322,8 +310,7 @@ class __arena : private cache
     for_each_void(Fn fn) const
     {
       for ( u32 i = 0; i < __count; ++i ) {
-        if ( __idx[i].nd and __idx[i].nd->nd )
-          fn(__idx[i].nd->nd);
+        if ( __idx[i].nd and __idx[i].nd->nd ) fn(__idx[i].nd->nd);
       }
     }
   };
@@ -689,8 +676,7 @@ class __arena : private cache
       } else {
         mem = sh.mark(sz);
       }
-      if ( !mem.zero() )
-        return mem;
+      if ( !mem.zero() ) return mem;
       tier.mark_exhausted(lh);
     }
 
@@ -724,8 +710,7 @@ class __arena : private cache
     u32 lh = tier.__last_hit;
     if ( lh < tier.__count and (tier.__space_mask & (1ULL << lh)) ) {
       micron::__chunk<byte> mem = tier.__idx[lh].nd->nd->temporal_mark(sz);
-      if ( !mem.zero() )
-        return mem;
+      if ( !mem.zero() ) return mem;
       tier.mark_exhausted(lh);
     }
 
@@ -750,8 +735,7 @@ class __arena : private cache
   {
     if constexpr ( __default_redzone ) {
       usize inflated = sz + 2 * __default_redzone_size;
-      if ( inflated < __class_medium )
-        return inflated;
+      if ( inflated < __class_medium ) return inflated;
     }
     return sz;
   }
@@ -790,12 +774,9 @@ class __arena : private cache
   micron::__chunk<byte>
   __vmap_launder(const usize sz)
   {
-    if ( sz < __class_medium )
-      return __bucket_insert_temporal(_small, sz);
-    if ( sz <= __class_large )
-      return __bucket_insert_temporal(_medium, sz);
-    if ( sz <= __class_huge )
-      return __bucket_insert_temporal(_large, sz);
+    if ( sz < __class_medium ) return __bucket_insert_temporal(_small, sz);
+    if ( sz <= __class_large ) return __bucket_insert_temporal(_medium, sz);
+    if ( sz <= __class_huge ) return __bucket_insert_temporal(_large, sz);
     return __bucket_insert_temporal(_huge, sz);
   }
 
@@ -804,16 +785,11 @@ class __arena : private cache
   __dispatch_addr(addr_t *addr, Fn &&fn)
   {
     i32 idx;
-    if ( (idx = _precise.find_range(addr)) >= 0 )
-      return fn(_precise, idx);
-    if ( (idx = _small.find_range(addr)) >= 0 )
-      return fn(_small, idx);
-    if ( (idx = _medium.find_range(addr)) >= 0 )
-      return fn(_medium, idx);
-    if ( (idx = _large.find_range(addr)) >= 0 )
-      return fn(_large, idx);
-    if ( (idx = _huge.find_range(addr)) >= 0 )
-      return fn(_huge, idx);
+    if ( (idx = _precise.find_range(addr)) >= 0 ) return fn(_precise, idx);
+    if ( (idx = _small.find_range(addr)) >= 0 ) return fn(_small, idx);
+    if ( (idx = _medium.find_range(addr)) >= 0 ) return fn(_medium, idx);
+    if ( (idx = _large.find_range(addr)) >= 0 ) return fn(_large, idx);
+    if ( (idx = _huge.find_range(addr)) >= 0 ) return fn(_huge, idx);
     return false;
   }
 
@@ -822,16 +798,11 @@ class __arena : private cache
   __dispatch_addr(addr_t *addr, Fn &&fn) const
   {
     i32 idx;
-    if ( (idx = _precise.find_range(addr)) >= 0 )
-      return fn(_precise, idx);
-    if ( (idx = _small.find_range(addr)) >= 0 )
-      return fn(_small, idx);
-    if ( (idx = _medium.find_range(addr)) >= 0 )
-      return fn(_medium, idx);
-    if ( (idx = _large.find_range(addr)) >= 0 )
-      return fn(_large, idx);
-    if ( (idx = _huge.find_range(addr)) >= 0 )
-      return fn(_huge, idx);
+    if ( (idx = _precise.find_range(addr)) >= 0 ) return fn(_precise, idx);
+    if ( (idx = _small.find_range(addr)) >= 0 ) return fn(_small, idx);
+    if ( (idx = _medium.find_range(addr)) >= 0 ) return fn(_medium, idx);
+    if ( (idx = _large.find_range(addr)) >= 0 ) return fn(_large, idx);
+    if ( (idx = _huge.find_range(addr)) >= 0 ) return fn(_huge, idx);
     return false;
   }
 
@@ -843,11 +814,9 @@ class __arena : private cache
     tier.__dealloc_count = 0;
     for ( i32 i = static_cast<i32>(tier.__count) - 1; i >= 0; --i ) {
       auto *nd = tier.__idx[i].nd;
-      if ( !nd or !nd->nd or nd == &tier.head )
-        continue;
+      if ( !nd or !nd->nd or nd == &tier.head ) continue;
       auto &sh = *nd->nd;
-      if ( sh.used() != 0 )
-        continue;
+      if ( sh.used() != 0 ) continue;
       usize ts = sh.tombstoned();
       usize ft = sh.ftotal();
       __debug_print("__sweep_tier_tombstones(): sheet tombstoned: ", ts);
@@ -913,8 +882,7 @@ class __arena : private cache
           return;
         }
       }
-      if ( tier.bump_dealloc() )
-        __sweep_tier_tombstones(tier);
+      if ( tier.bump_dealloc() ) __sweep_tier_tombstones(tier);
     }
   }
 
@@ -1027,12 +995,9 @@ class __arena : private cache
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
         return __tier_remove(_small, idx, adj);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 )
-        return __tier_remove(_medium, idx, m);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 )
-        return __tier_remove(_large, idx, m);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 )
-        return __tier_remove(_huge, idx, m);
+      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_remove(_medium, idx, m);
+      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_remove(_large, idx, m);
+      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_remove(_huge, idx, m);
       __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
       return false;
     }
@@ -1061,12 +1026,9 @@ class __arena : private cache
         }
         return __tier_remove_at(_small, idx, addr - __default_redzone_size);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 )
-        return __tier_remove_at(_medium, idx, addr);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 )
-        return __tier_remove_at(_large, idx, addr);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 )
-        return __tier_remove_at(_huge, idx, addr);
+      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_medium, idx, addr);
+      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_large, idx, addr);
+      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_huge, idx, addr);
       __debug_print_addr("__vmap_remove_at(): WARNING address not found in any tier: ", addr);
       return false;
     }
@@ -1102,12 +1064,9 @@ class __arena : private cache
         }
         return __tier_tombstone_at(_small, idx, addr - __default_redzone_size);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 )
-        return __tier_tombstone_at(_medium, idx, addr);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 )
-        return __tier_tombstone_at(_large, idx, addr);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 )
-        return __tier_tombstone_at(_huge, idx, addr);
+      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_medium, idx, addr);
+      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_large, idx, addr);
+      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_huge, idx, addr);
       __debug_print_addr("__vmap_tombstone_at(): WARNING address not found in any tier: ", addr);
       return false;
     }
@@ -1126,8 +1085,7 @@ class __arena : private cache
   bool
   __vmap_locate_at(addr_t *addr) const
   {
-    if constexpr ( !__default_tombstone )
-      return false;
+    if constexpr ( !__default_tombstone ) return false;
     if constexpr ( __default_redzone ) {
       i32 idx;
       // NOTE: for TLSF adjust pointer before calling find
@@ -1135,12 +1093,9 @@ class __arena : private cache
         return _precise.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr) - __default_redzone_size);
       if ( (idx = _small.find_range(addr)) >= 0 )
         return _small.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr) - __default_redzone_size);
-      if ( (idx = _medium.find_range(addr)) >= 0 )
-        return _medium.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr));
-      if ( (idx = _large.find_range(addr)) >= 0 )
-        return _large.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr));
-      if ( (idx = _huge.find_range(addr)) >= 0 )
-        return _huge.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr));
+      if ( (idx = _medium.find_range(addr)) >= 0 ) return _medium.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr));
+      if ( (idx = _large.find_range(addr)) >= 0 ) return _large.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr));
+      if ( (idx = _huge.find_range(addr)) >= 0 ) return _huge.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr));
       return false;
     }
     return __dispatch_addr(addr, [&](const auto &tier, i32 idx) { return tier.__idx[idx].nd->nd->find(reinterpret_cast<byte *>(addr)); });
@@ -1174,8 +1129,7 @@ class __arena : private cache
   {
     auto *nd = &tier.head;
     while ( nd != nullptr ) {
-      if ( nd->nd )
-        nd->nd->release();
+      if ( nd->nd ) nd->nd->release();
       nd = nd->nxt;
     }
   }
@@ -1282,8 +1236,7 @@ public:
 
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
       if ( memory = __vmap_alloc(alloc_sz); !memory.zero() ) [[likely]] {
-        if ( rz_active )
-          __rz_apply(memory, sz);
+        if ( rz_active ) __rz_apply(memory, sz);
         __debug_print("push(): allocated bytes: ", memory.len);
         zero_on_alloc(memory.ptr, memory.len);
         sanitize_on_alloc(memory.ptr, memory.len);
@@ -1369,8 +1322,7 @@ public:
     micron::__chunk<byte> memory;
     for ( u64 i = 0; i < __default_max_retries; ++i ) {
       if ( memory = __vmap_launder(alloc_sz); !memory.zero() ) {
-        if ( rz_active )
-          __rz_apply(memory, sz);
+        if ( rz_active ) __rz_apply(memory, sz);
         __debug_print("launder(): allocated bytes: ", memory.len);
         zero_on_alloc(memory.ptr, memory.len);
         sanitize_on_alloc(memory.ptr, memory.len);
@@ -1405,8 +1357,7 @@ public:
   pop(const micron::__chunk<byte> &mem)
   {
     __debug_print_addr("pop() address: ", mem.ptr);
-    if ( mem.zero() )
-      return true;
+    if ( mem.zero() ) return true;
     if ( !check_ptr_valid(mem.ptr) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem.ptr) ) [[unlikely]]
@@ -1431,8 +1382,7 @@ public:
   pop(byte *mem)
   {
     __debug_print_addr("pop() address: ", mem);
-    if ( mem == nullptr )
-      return true;
+    if ( mem == nullptr ) return true;
     if ( !check_ptr_valid(mem) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem) ) [[unlikely]]
@@ -1467,8 +1417,7 @@ public:
   bool
   pop(byte *mem, usize len)
   {
-    if ( !mem )
-      return false;
+    if ( !mem ) return false;
     if ( !check_chunk_valid(mem, len) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem) ) [[unlikely]]
@@ -1491,8 +1440,7 @@ public:
   bool
   ts_pop(const micron::__chunk<byte> &mem)
   {
-    if ( mem.zero() )
-      return false;
+    if ( mem.zero() ) return false;
     if ( !check_ptr_valid(mem.ptr) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem.ptr) ) [[unlikely]]
@@ -1516,8 +1464,7 @@ public:
   bool
   ts_pop(byte *mem)
   {
-    if ( !mem )
-      return false;
+    if ( !mem ) return false;
     if ( !check_ptr_valid(mem) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem) ) [[unlikely]]
@@ -1540,8 +1487,7 @@ public:
   bool
   ts_pop(byte *mem, usize len)
   {
-    if ( !mem )
-      return false;
+    if ( !mem ) return false;
     if ( !check_chunk_valid(mem, len) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem) ) [[unlikely]]
@@ -1564,8 +1510,7 @@ public:
   bool
   freeze(const micron::__chunk<byte> &mem)
   {
-    if ( mem.zero() )
-      return false;
+    if ( mem.zero() ) return false;
     if ( !check_ptr_valid(mem.ptr) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem.ptr) ) [[unlikely]]
@@ -1583,8 +1528,7 @@ public:
   bool
   freeze(byte *mem)
   {
-    if ( !mem )
-      return false;
+    if ( !mem ) return false;
     if ( !check_ptr_valid(mem) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem) ) [[unlikely]]
@@ -1602,8 +1546,7 @@ public:
   bool
   freeze(byte *mem, usize len)
   {
-    if ( !mem )
-      return false;
+    if ( !mem ) return false;
     if ( !check_chunk_valid(mem, len) ) [[unlikely]]
       return fail_state();
     if ( !check_alignment(mem) ) [[unlikely]]
@@ -1657,8 +1600,7 @@ public:
     addr_t *addr = reinterpret_cast<addr_t *>(ptr);
     auto do_reset = [&](auto &tier) {
       i32 idx = tier.find_range(addr);
-      if ( idx >= 0 )
-        tier.__idx[idx].nd->nd->reset();
+      if ( idx >= 0 ) tier.__idx[idx].nd->nd->reset();
     };
     do_reset(_precise);
     do_reset(_small);

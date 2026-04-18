@@ -85,8 +85,7 @@ template <usize Stack_Size = auto_thread_stack_size> class auto_thread
   void
   __safe_release(void)
   {
-    if ( alive() )
-      micron::exc<except::thread_error>("micron thread::__safe_release(): tried to release a running thread");
+    if ( alive() ) micron::exc<except::thread_error>("micron thread::__safe_release(): tried to release a running thread");
     __release();
   }
 
@@ -106,8 +105,7 @@ template <usize Stack_Size = auto_thread_stack_size> class auto_thread
 public:
   ~auto_thread()
   {
-    if ( parent_pid == 0 and pid == 0 )
-      return;
+    if ( parent_pid == 0 and pid == 0 ) return;
     __join();
   }
 
@@ -178,8 +176,7 @@ public:
   inline posix::rusage_t
   stats(void) const
   {
-    if ( alive() )
-      return {};
+    if ( alive() ) return {};
     return payload.usage;
   }
 
@@ -203,8 +200,7 @@ public:
     if ( r == 0 ) {
       return 1;
     }
-    if ( r == error::busy or r == error::invalid_arg )
-      return r;
+    if ( r == error::busy or r == error::invalid_arg ) return r;
     return 0;
   }
 
@@ -240,8 +236,7 @@ public:
       __safe_release();
       return 1;
     }
-    if ( r == error::busy or r == error::invalid_arg )
-      return r;
+    if ( r == error::busy or r == error::invalid_arg ) return r;
     return error::busy;
   }
 

@@ -40,8 +40,7 @@ public:
 
   ~queue()
   {
-    if ( __mem::memory == nullptr )
-      return;
+    if ( __mem::memory == nullptr ) return;
     clear();
   }
 
@@ -67,15 +66,13 @@ public:
   queue(const umax_t n, const T val) : __mem(n), needle(__mem::capacity - 1)
 
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push(val);
+    for ( umax_t i = 0; i < n; i++ ) push(val);
   }
 
   queue(const umax_t n) : __mem(n), needle(__mem::capacity - 1)
 
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push();
+    for ( umax_t i = 0; i < n; i++ ) push();
   }
 
   queue(const queue &o) = delete;
@@ -87,8 +84,7 @@ public:
   inline void
   clear()
   {
-    if ( !__mem::length )
-      return;
+    if ( !__mem::length ) return;
     __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::capacity);
     needle = __mem::capacity - 1;
     __mem::length = 0;
@@ -101,8 +97,7 @@ public:
     const usize old_needle = needle;
     const usize len = __mem::length;
 
-    if ( n <= old_capacity )
-      return;
+    if ( n <= old_capacity ) return;
 
     __mem::expand(n);
 
@@ -213,8 +208,7 @@ public:
   inline queue &
   push(void)
   {
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{};
     } else {
@@ -226,8 +220,7 @@ public:
   inline queue &
   push(T &&val)
   {
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{ micron::move(val) };
     } else {
@@ -239,8 +232,7 @@ public:
   inline queue &
   push(const T &val)
   {
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{ val };
     } else {
@@ -252,8 +244,7 @@ public:
   inline queue &
   pop(void)
   {
-    if ( __mem::length == 0 or needle == 0 )
-      return *this;
+    if ( __mem::length == 0 or needle == 0 ) return *this;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
       (__mem::memory)[needle].~T();
     } else {

@@ -141,8 +141,7 @@ public:
       cached_head = head.get(memory_order_acquire);
       avail = __spsc_capacity - (t - cached_head);
 
-      if ( avail == 0 )
-        return false;
+      if ( avail == 0 ) return false;
     }
 
     const usize idx = t & __mask;
@@ -169,8 +168,7 @@ public:
       cached_head = head.get(memory_order_acquire);
       avail = __spsc_capacity - (t - cached_head);
 
-      if ( avail == 0 )
-        return false;
+      if ( avail == 0 ) return false;
     }
 
     const usize idx = t & __mask;
@@ -197,8 +195,7 @@ public:
       cached_head = head.get(memory_order_acquire);
       avail = __spsc_capacity - (t - cached_head);
 
-      if ( avail == 0 )
-        return false;
+      if ( avail == 0 ) return false;
     }
 
     const usize idx = t & __mask;
@@ -226,8 +223,7 @@ public:
       cached_head = head.get(memory_order_acquire);
       avail = __spsc_capacity - (t - cached_head);
 
-      if ( avail == 0 )
-        return false;
+      if ( avail == 0 ) return false;
     }
 
     const usize idx = t & __mask;
@@ -249,8 +245,7 @@ public:
       cached_tail = tail.get(memory_order_acquire);
       avail = cached_tail - h;
 
-      if ( avail == 0 )
-        return false;
+      if ( avail == 0 ) return false;
     }
 
     const usize idx = h & __mask;
@@ -277,8 +272,7 @@ public:
       cached_tail = tail.get(memory_order_acquire);
       avail = cached_tail - h;
 
-      if ( avail == 0 )
-        return false;
+      if ( avail == 0 ) return false;
     }
 
     const usize idx = h & __mask;

@@ -88,8 +88,7 @@ proc_path(pid_t pid, const char *file)
       buf[n++] = char('0' + t % 10);
       t /= 10;
     } while ( t );
-    for ( int i = n - 1; i >= 0; --i )
-      p += buf[i];
+    for ( int i = n - 1; i >= 0; --i ) p += buf[i];
     p += '/';
   }
   p += file;
@@ -99,33 +98,27 @@ proc_path(pid_t pid, const char *file)
 inline i64
 parse_i64(const char *&itr, const char *end)
 {
-  while ( itr < end && (*itr == ' ' || *itr == '\t' || *itr == '\n') )
-    ++itr;
+  while ( itr < end && (*itr == ' ' || *itr == '\t' || *itr == '\n') ) ++itr;
   bool neg = (itr < end && *itr == '-');
-  if ( neg )
-    ++itr;
+  if ( neg ) ++itr;
   i64 v = 0;
-  while ( itr < end && *itr >= '0' && *itr <= '9' )
-    v = v * 10 + (*itr++ - '0');
+  while ( itr < end && *itr >= '0' && *itr <= '9' ) v = v * 10 + (*itr++ - '0');
   return neg ? -v : v;
 }
 
 inline u64
 parse_u64(const char *&itr, const char *end)
 {
-  while ( itr < end && (*itr == ' ' || *itr == '\t' || *itr == '\n') )
-    ++itr;
+  while ( itr < end && (*itr == ' ' || *itr == '\t' || *itr == '\n') ) ++itr;
   u64 v = 0;
-  while ( itr < end && *itr >= '0' && *itr <= '9' )
-    v = v * 10 + (*itr++ - '0');
+  while ( itr < end && *itr >= '0' && *itr <= '9' ) v = v * 10 + (*itr++ - '0');
   return v;
 }
 
 inline u64
 parse_hex(const char *&itr, const char *end)
 {
-  while ( itr < end && (*itr == ' ' || *itr == '\t' || *itr == '\n') )
-    ++itr;
+  while ( itr < end && (*itr == ' ' || *itr == '\t' || *itr == '\n') ) ++itr;
   u64 v = 0;
   while ( itr < end ) {
     char c = *itr;
@@ -148,8 +141,7 @@ inline const char *
 find_ch(const char *p, const char *end, char needle)
 {
   for ( ; p < end; ++p )
-    if ( *p == needle )
-      return p;
+    if ( *p == needle ) return p;
   return nullptr;
 }
 
@@ -157,8 +149,7 @@ inline void
 parse_status_line(proc_status_t &s, const char *ls, const char *le)
 {
   const char *colon = find_ch(ls, le, ':');
-  if ( !colon )
-    return;
+  if ( !colon ) return;
   usize klen = static_cast<usize>(colon - ls);
   const char *val = colon + 1;
 
@@ -166,15 +157,12 @@ parse_status_line(proc_status_t &s, const char *ls, const char *le)
 
   if ( KIS("Name") ) {
     usize n = 0;
-    while ( val + n < le && val[n] != '\n' && n < 255 )
-      ++n;
+    while ( val + n < le && val[n] != '\n' && n < 255 ) ++n;
     micron::memcpy(s.name, val, n);
     s.name[n] = '\0';
   } else if ( KIS("State") ) {
-    while ( val < le && *val == ' ' )
-      ++val;
-    if ( val < le )
-      s.state = *val;
+    while ( val < le && *val == ' ' ) ++val;
+    if ( val < le ) s.state = *val;
   } else if ( KIS("Pid") ) {
     s.pid = static_cast<pid_t>(parse_i64(val, le));
   } else if ( KIS("PPid") ) {
@@ -182,11 +170,9 @@ parse_status_line(proc_status_t &s, const char *ls, const char *le)
   } else if ( KIS("TracerPid") ) {
     s.tracerpid = static_cast<pid_t>(parse_i64(val, le));
   } else if ( KIS("Uid") ) {
-    for ( int i = 0; i < 4; ++i )
-      s.uid[i] = static_cast<uid_t>(parse_u64(val, le));
+    for ( int i = 0; i < 4; ++i ) s.uid[i] = static_cast<uid_t>(parse_u64(val, le));
   } else if ( KIS("Gid") ) {
-    for ( int i = 0; i < 4; ++i )
-      s.gid[i] = static_cast<gid_t>(parse_u64(val, le));
+    for ( int i = 0; i < 4; ++i ) s.gid[i] = static_cast<gid_t>(parse_u64(val, le));
   } else if ( KIS("FDSize") ) {
     s.fd_size = static_cast<i32>(parse_i64(val, le));
   } else if ( KIS("VmPeak") ) {
@@ -253,8 +239,7 @@ read_proc_stat(pid_t pid = 0)
   micron::string raw;
   fsys::system<micron::io::rd> sys;
   sys[__impl::proc_path(pid, "stat").c_str()] >> raw;
-  if ( raw.empty() )
-    return s;
+  if ( raw.empty() ) return s;
 
   const char *p = raw.cbegin();
   const char *end = raw.cend();
@@ -262,27 +247,22 @@ read_proc_stat(pid_t pid = 0)
   s.pid = static_cast<pid_t>(__impl::parse_i64(p, end));
 
   // comm is inside parentheses; find them from both ends to handle embedded ')'
-  while ( p < end && *p != '(' )
-    ++p;
+  while ( p < end && *p != '(' ) ++p;
   const char *cn_s = ++p;
-  while ( p < end && *p != ')' )
-    ++p;     // last ')' found via reverse search is safer
+  while ( p < end && *p != ')' ) ++p;     // last ')' found via reverse search is safer
   // find the last ')' from end
   {
     const char *rp = end - 1;
-    while ( rp > cn_s && *rp != ')' )
-      --rp;
+    while ( rp > cn_s && *rp != ')' ) --rp;
     usize cn = static_cast<usize>(rp - cn_s);
-    if ( cn >= 255 )
-      cn = 255;
+    if ( cn >= 255 ) cn = 255;
     micron::memcpy(s.comm, cn_s, cn);
     s.comm[cn] = '\0';
     p = rp + 1;
   }
 
   // state
-  while ( p < end && *p == ' ' )
-    ++p;
+  while ( p < end && *p == ' ' ) ++p;
   if ( p < end ) {
     s.state = *p;
     ++p;
@@ -320,15 +300,13 @@ read_proc_status(pid_t pid = 0)
   micron::string raw;
   fsys::system<micron::io::rd> sys;
   sys[__impl::proc_path(pid, "status").c_str()] >> raw;
-  if ( raw.empty() )
-    return s;
+  if ( raw.empty() ) return s;
 
   const char *p = raw.cbegin();
   const char *end = raw.cend();
   while ( p < end ) {
     const char *le = __impl::find_ch(p, end, '\n');
-    if ( !le )
-      le = end;
+    if ( !le ) le = end;
     __impl::parse_status_line(s, p, le);
     p = le + 1;
   }
@@ -378,8 +356,7 @@ apply_limits(pid_t pid, const posix::limits_t &lims)
   for ( rlim_t i = 0; i < posix::rlimit_nlimits; ++i ) {
     auto rl = lims.lim[i];
     auto r = posix::set_process_limits(pid, i, rl);
-    if ( r < 0 && err == 0 )
-      err = static_cast<int>(r);
+    if ( r < 0 && err == 0 ) err = static_cast<int>(r);
   }
   return err;
 }

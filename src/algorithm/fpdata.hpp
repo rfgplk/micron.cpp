@@ -30,16 +30,14 @@ flatten(const O &outer)
   usize total = 0;
   const auto *ofirst = outer.begin();
   const auto *olast = outer.end();
-  for ( const auto *it = ofirst; it != olast; ++it )
-    total += it->size();
+  for ( const auto *it = ofirst; it != olast; ++it ) total += it->size();
   Inner out;
   out.resize(total);
   auto *dst = out.begin();
   for ( const auto *it = ofirst; it != olast; ++it ) {
     const auto *ifirst = it->begin();
     const auto *ilast = it->end();
-    for ( ; ifirst != ilast; ++ifirst )
-      *dst++ = *ifirst;
+    for ( ; ifirst != ilast; ++ifirst ) *dst++ = *ifirst;
   }
   return out;
 }
@@ -58,8 +56,7 @@ flat_map(const C &c, Fn fn)
     auto inner = fn(*it);
     const auto *ifirst = inner.begin();
     const auto *ilast = inner.end();
-    for ( ; ifirst != ilast; ++ifirst )
-      out.push_back(*ifirst);
+    for ( ; ifirst != ilast; ++ifirst ) out.push_back(*ifirst);
   }
   return out;
 }
@@ -77,8 +74,7 @@ flat_map(const C &c, Fn fn)
     auto inner = fn(it);
     const auto *ifirst = inner.begin();
     const auto *ilast = inner.end();
-    for ( ; ifirst != ilast; ++ifirst )
-      out.push_back(*ifirst);
+    for ( ; ifirst != ilast; ++ifirst ) out.push_back(*ifirst);
   }
   return out;
 }
@@ -95,8 +91,7 @@ flat_map(const C &c, micron::function<C(typename C::value_type)> fn)
     auto inner = fn(*it);
     const auto *ifirst = inner.begin();
     const auto *ilast = inner.end();
-    for ( ; ifirst != ilast; ++ifirst )
-      out.push_back(*ifirst);
+    for ( ; ifirst != ilast; ++ifirst ) out.push_back(*ifirst);
   }
   return out;
 }
@@ -114,8 +109,7 @@ template <is_iterable_container C>
 micron::option<C, empty_container_error>
 chunk(const C &c, usize n)
 {
-  if ( n == 0 )
-    return micron::option<C, empty_container_error>{ empty_container_error{} };
+  if ( n == 0 ) return micron::option<C, empty_container_error>{ empty_container_error{} };
   return micron::option<C, empty_container_error>{ c };
 }
 
@@ -125,8 +119,7 @@ C
 chunk_into(const C &c, usize n)
 {
   C out;
-  if ( n == 0 || c.size() == 0 )
-    return out;
+  if ( n == 0 || c.size() == 0 ) return out;
   const usize total = c.size();
   const auto *first = c.begin();
   usize i = 0;
@@ -134,8 +127,7 @@ chunk_into(const C &c, usize n)
     Inner chunk_val;
     usize end = (i + n < total) ? i + n : total;
     chunk_val.resize(end - i);
-    for ( usize k = 0; k < (end - i); ++k )
-      chunk_val.begin()[k] = first[i + k];
+    for ( usize k = 0; k < (end - i); ++k ) chunk_val.begin()[k] = first[i + k];
     out.push_back(micron::move(chunk_val));
     i = end;
   }
@@ -151,15 +143,13 @@ sliding(const C &c, usize n)
 {
   C out;
   const usize total = c.size();
-  if ( n == 0 || total < n )
-    return out;
+  if ( n == 0 || total < n ) return out;
   const auto *first = c.begin();
   const usize windows = total - n + 1;
   for ( usize i = 0; i < windows; ++i ) {
     Inner w;
     w.resize(n);
-    for ( usize k = 0; k < n; ++k )
-      w.begin()[k] = first[i + k];
+    for ( usize k = 0; k < n; ++k ) w.begin()[k] = first[i + k];
     out.push_back(micron::move(w));
   }
   return out;
@@ -171,8 +161,7 @@ template <is_iterable_container C>
 C
 intersperse(const C &c, const typename C::value_type &sep)
 {
-  if ( c.size() < 2 )
-    return c;
+  if ( c.size() < 2 ) return c;
   C out;
   out.resize(2 * c.size() - 1);
   auto *dst = out.begin();
@@ -200,8 +189,7 @@ typename O::value_type
 intercalate(const typename O::value_type &sep, const O &outer)
 {
   using Inner = typename O::value_type;
-  if ( outer.size() == 0 )
-    return Inner{};
+  if ( outer.size() == 0 ) return Inner{};
 
   Inner out;
   const auto *ofirst = outer.begin();
@@ -211,13 +199,11 @@ intercalate(const typename O::value_type &sep, const O &outer)
     if ( !first_chunk ) {
       const auto *sfirst = sep.begin();
       const auto *slast = sep.end();
-      for ( ; sfirst != slast; ++sfirst )
-        out.push_back(*sfirst);
+      for ( ; sfirst != slast; ++sfirst ) out.push_back(*sfirst);
     }
     const auto *ifirst = oit->begin();
     const auto *ilast = oit->end();
-    for ( ; ifirst != ilast; ++ifirst )
-      out.push_back(*ifirst);
+    for ( ; ifirst != ilast; ++ifirst ) out.push_back(*ifirst);
     first_chunk = false;
   }
   return out;
@@ -231,8 +217,7 @@ C
 group_by(const C &c, EqFn eq)
 {
   C out;
-  if ( c.size() == 0 )
-    return out;
+  if ( c.size() == 0 ) return out;
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *run_start = first++;
@@ -260,8 +245,7 @@ C
 group_by(const C &c, EqFn eq)
 {
   C out;
-  if ( c.size() == 0 )
-    return out;
+  if ( c.size() == 0 ) return out;
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *run_start = first++;
@@ -287,8 +271,7 @@ C
 group_by(const C &c, micron::function<bool(typename C::value_type, typename C::value_type)> eq)
 {
   C out;
-  if ( c.size() == 0 )
-    return out;
+  if ( c.size() == 0 ) return out;
   const auto *first = c.begin();
   const auto *last = c.end();
   const auto *run_start = first++;
@@ -325,19 +308,16 @@ transpose(const O &mat)
 {
   using Inner = typename O::value_type;
   const usize rows = mat.size();
-  if ( rows == 0 )
-    return micron::option<O, bad_zip_error>{ O{} };
+  if ( rows == 0 ) return micron::option<O, bad_zip_error>{ O{} };
   const usize cols = mat.begin()->size();
   for ( const auto *row = mat.begin(); row != mat.end(); ++row )
-    if ( row->size() != cols )
-      return micron::option<O, bad_zip_error>{ bad_zip_error{} };
+    if ( row->size() != cols ) return micron::option<O, bad_zip_error>{ bad_zip_error{} };
 
   O out;
   for ( usize c = 0; c < cols; ++c ) {
     Inner row;
     row.resize(rows);
-    for ( usize r = 0; r < rows; ++r )
-      row.begin()[r] = mat.begin()[r].begin()[c];
+    for ( usize r = 0; r < rows; ++r ) row.begin()[r] = mat.begin()[r].begin()[c];
     out.push_back(micron::move(row));
   }
   return micron::option<O, bad_zip_error>{ micron::move(out) };
@@ -363,8 +343,7 @@ template <is_iterable_container C, typename E>
 micron::option<C, E>
 merge(micron::option<C, E> opt_a, const C &b)
 {
-  if ( !opt_a.is_first() )
-    return opt_a;
+  if ( !opt_a.is_first() ) return opt_a;
   return micron::option<C, E>{ micron::merge(opt_a.template cast<C>(), b) };
 }
 
@@ -372,10 +351,8 @@ template <is_iterable_container C, typename E>
 micron::option<C, E>
 merge(micron::option<C, E> opt_a, micron::option<C, E> opt_b)
 {
-  if ( !opt_a.is_first() )
-    return opt_a;
-  if ( !opt_b.is_first() )
-    return opt_b;
+  if ( !opt_a.is_first() ) return opt_a;
+  if ( !opt_b.is_first() ) return opt_b;
   return micron::option<C, E>{ micron::merge(opt_a.template cast<C>(), opt_b.template cast<C>()) };
 }
 
@@ -383,8 +360,7 @@ template <is_iterable_container C, typename E>
 micron::option<C, E>
 concat(micron::option<C, E> opt_a, const C &b)
 {
-  if ( !opt_a.is_first() )
-    return opt_a;
+  if ( !opt_a.is_first() ) return opt_a;
   return micron::option<C, E>{ micron::concat(opt_a.template cast<C>(), b) };
 }
 
@@ -394,8 +370,7 @@ template <is_iterable_container C>
 micron::option<typename C::value_type, index_out_of_bounds_error>
 at(const C &c, usize i) noexcept
 {
-  if ( i >= c.size() )
-    return micron::option<typename C::value_type, index_out_of_bounds_error>{ index_out_of_bounds_error{} };
+  if ( i >= c.size() ) return micron::option<typename C::value_type, index_out_of_bounds_error>{ index_out_of_bounds_error{} };
   return micron::option<typename C::value_type, index_out_of_bounds_error>{ c.begin()[i] };
 }
 
@@ -409,8 +384,7 @@ find_first(const C &c, Fn fn) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( fn(*first) )
-      return micron::option<typename C::value_type, empty_container_error>{ *first };
+    if ( fn(*first) ) return micron::option<typename C::value_type, empty_container_error>{ *first };
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
@@ -422,8 +396,7 @@ find_first(const C &c, Fn fn) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( fn(first) )
-      return micron::option<typename C::value_type, empty_container_error>{ *first };
+    if ( fn(first) ) return micron::option<typename C::value_type, empty_container_error>{ *first };
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
@@ -434,8 +407,7 @@ find_first(const C &c, micron::function<bool(typename C::value_type)> fn) noexce
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( fn(*first) )
-      return micron::option<typename C::value_type, empty_container_error>{ *first };
+    if ( fn(*first) ) return micron::option<typename C::value_type, empty_container_error>{ *first };
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
@@ -444,14 +416,12 @@ template <is_iterable_container C, typename Fn>
 micron::option<typename C::value_type, empty_container_error>
 find_last(const C &c, Fn fn) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   const auto *first = c.begin();
   const auto *it = c.end();
   while ( it != first ) {
     --it;
-    if ( fn(*it) )
-      return micron::option<typename C::value_type, empty_container_error>{ *it };
+    if ( fn(*it) ) return micron::option<typename C::value_type, empty_container_error>{ *it };
   }
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
@@ -461,14 +431,12 @@ template <is_iterable_container C, typename Fn>
 micron::option<typename C::value_type, empty_container_error>
 find_last(const C &c, Fn fn) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   const auto *first = c.begin();
   const auto *it = c.end();
   while ( it != first ) {
     --it;
-    if ( fn(it) )
-      return micron::option<typename C::value_type, empty_container_error>{ *it };
+    if ( fn(it) ) return micron::option<typename C::value_type, empty_container_error>{ *it };
   }
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
@@ -477,14 +445,12 @@ template <is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 find_last(const C &c, micron::function<bool(typename C::value_type)> fn) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   const auto *first = c.begin();
   const auto *it = c.end();
   while ( it != first ) {
     --it;
-    if ( fn(*it) )
-      return micron::option<typename C::value_type, empty_container_error>{ *it };
+    if ( fn(*it) ) return micron::option<typename C::value_type, empty_container_error>{ *it };
   }
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
@@ -499,8 +465,7 @@ find_index(const C &c, Fn fn) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( usize i = 0; first != last; ++first, ++i )
-    if ( fn(*first) )
-      return micron::option<usize, empty_container_error>{ i };
+    if ( fn(*first) ) return micron::option<usize, empty_container_error>{ i };
   return micron::option<usize, empty_container_error>{ empty_container_error{} };
 }
 
@@ -512,8 +477,7 @@ find_index(const C &c, Fn fn) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( usize i = 0; first != last; ++first, ++i )
-    if ( fn(first) )
-      return micron::option<usize, empty_container_error>{ i };
+    if ( fn(first) ) return micron::option<usize, empty_container_error>{ i };
   return micron::option<usize, empty_container_error>{ empty_container_error{} };
 }
 
@@ -523,8 +487,7 @@ template <is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 head(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   return micron::option<typename C::value_type, empty_container_error>{ *c.begin() };
 }
 
@@ -532,8 +495,7 @@ template <is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 last(const C &c) noexcept
 {
-  if ( c.size() == 0 )
-    return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
   return micron::option<typename C::value_type, empty_container_error>{ *(c.end() - 1) };
 }
 
@@ -541,15 +503,13 @@ template <is_iterable_container C>
 micron::option<C, empty_container_error>
 tail(const C &c)
 {
-  if ( c.size() == 0 )
-    return micron::option<C, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<C, empty_container_error>{ empty_container_error{} };
   C out;
   out.resize(c.size() - 1);
   const auto *first = c.begin() + 1;
   const auto *last_ptr = c.end();
   auto *dst = out.begin();
-  for ( ; first != last_ptr; ++first )
-    *dst++ = *first;
+  for ( ; first != last_ptr; ++first ) *dst++ = *first;
   return micron::option<C, empty_container_error>{ micron::move(out) };
 }
 
@@ -557,14 +517,12 @@ template <is_iterable_container C>
 micron::option<C, empty_container_error>
 init(const C &c)
 {
-  if ( c.size() == 0 )
-    return micron::option<C, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<C, empty_container_error>{ empty_container_error{} };
   C out;
   out.resize(c.size() - 1);
   const auto *first = c.begin();
   auto *dst = out.begin();
-  for ( usize i = 0; i < c.size() - 1; ++i )
-    dst[i] = first[i];
+  for ( usize i = 0; i < c.size() - 1; ++i ) dst[i] = first[i];
   return micron::option<C, empty_container_error>{ micron::move(out) };
 }
 
@@ -578,8 +536,7 @@ snoc(const C &c, const typename C::value_type &v)
   out.resize(c.size() + 1);
   const auto *first = c.begin();
   auto *dst = out.begin();
-  for ( usize i = 0; i < c.size(); ++i )
-    dst[i] = first[i];
+  for ( usize i = 0; i < c.size(); ++i ) dst[i] = first[i];
   dst[c.size()] = v;
   return micron::option<C, empty_container_error>{ micron::move(out) };
 }
@@ -592,8 +549,7 @@ uncons(const C &c)
 {
   using T = typename C::value_type;
   using R = micron::tuple<T, C>;
-  if ( c.size() == 0 )
-    return micron::option<R, empty_container_error>{ empty_container_error{} };
+  if ( c.size() == 0 ) return micron::option<R, empty_container_error>{ empty_container_error{} };
   auto tl = fp::tail(c);
   return micron::option<R, empty_container_error>{ micron::make_tuple(*c.begin(), tl.template cast<C>()) };
 }
@@ -607,8 +563,7 @@ elem(const C &c, const typename C::value_type &v) noexcept
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first )
-    if ( *first == v )
-      return true;
+    if ( *first == v ) return true;
   return false;
 }
 
@@ -621,8 +576,7 @@ enumerate(const C &c)
   Out out;
   const auto *first = c.begin();
   const auto *last = c.end();
-  for ( usize i = 0; first != last; ++first, ++i )
-    out.push_back(micron::make_tuple(i, *first));
+  for ( usize i = 0; first != last; ++first, ++i ) out.push_back(micron::make_tuple(i, *first));
   return out;
 }
 
@@ -684,8 +638,7 @@ unfold(Fn fn, B seed)
   C out;
   for ( ;; ) {
     auto result = fn(seed);
-    if ( !result.is_first() )
-      break;
+    if ( !result.is_first() ) break;
     auto tup = result.template cast<typename micron::remove_cvref_t<micron::invoke_result_t<Fn, B>>::first_type>();
     out.push_back(micron::get<0>(tup));
     seed = micron::get<1>(tup);

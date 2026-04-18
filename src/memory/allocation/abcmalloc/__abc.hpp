@@ -40,8 +40,7 @@ struct __abc_allocator {
   calloc(usize n) -> micron::__chunk<byte>     // allocate 'smartly'
   {
     auto mem = abc::fetch(n);
-    if ( mem.ptr == (void *)-1 )
-      micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
+    if ( mem.ptr == (void *)-1 ) micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
     return mem;
   };
 
@@ -49,16 +48,14 @@ struct __abc_allocator {
   alloc(usize n)     // allocate 'smartly'
   {
     T *ptr = abc::alloc(n);
-    if ( ptr == (void *)-1 )
-      micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
+    if ( ptr == (void *)-1 ) micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
     return ptr;
   };
 
   static void
   dealloc(T *mem, usize len)
   {     // deallocate at location N
-    if ( mem == nullptr )
-      micron::exc<micron::except::memory_error>("abc_allocator::dealloc(): nullptr was provided");
+    if ( mem == nullptr ) micron::exc<micron::except::memory_error>("abc_allocator::dealloc(): nullptr was provided");
     abc::dealloc(mem, len);
     mem = nullptr;
   }

@@ -46,10 +46,8 @@ template <typename T> class heapq
       usize right = 2 * idx + 2;
       usize smallest = idx;
 
-      if ( left < n && heap[left] < heap[smallest] )
-        smallest = left;
-      if ( right < n && heap[right] < heap[smallest] )
-        smallest = right;
+      if ( left < n && heap[left] < heap[smallest] ) smallest = left;
+      if ( right < n && heap[right] < heap[smallest] ) smallest = right;
 
       if ( smallest != idx ) {
         micron::swap(heap[idx], heap[smallest]);
@@ -85,8 +83,7 @@ public:
 
   explicit heapq(const micron::fvector<T> &v) : heap(v)
   {
-    for ( int i = static_cast<int>(heap.size() / 2) - 1; i >= 0; --i )
-      sift_down(i);
+    for ( int i = static_cast<int>(heap.size() / 2) - 1; i >= 0; --i ) sift_down(i);
   }
 
   void
@@ -101,14 +98,12 @@ public:
   pop()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( heap.empty() )
-      exc<except::library_error>("micron::heapq::top() is empty");
+    if ( heap.empty() ) exc<except::library_error>("micron::heapq::top() is empty");
 
     T min_val = heap[0];
     heap[0] = heap.back();
     heap.pop_back();
-    if ( !heap.empty() )
-      sift_down(0);
+    if ( !heap.empty() ) sift_down(0);
     return min_val;
   }
 
@@ -116,8 +111,7 @@ public:
   top() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( heap.empty() )
-      exc<except::library_error>("micron::heapq::top() is empty");
+    if ( heap.empty() ) exc<except::library_error>("micron::heapq::top() is empty");
     return heap[0];
   }
 

@@ -166,8 +166,7 @@ public:
     if ( r == 0 ) {
       return 1;
     }
-    if ( r == error::busy or r == error::invalid_arg )
-      return r;
+    if ( r == error::busy or r == error::invalid_arg ) return r;
     return 0;
   }
 

@@ -22,12 +22,10 @@ find_first_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
     int mask = _mm_movemask_epi8(cmp);
-    if ( mask )
-      return i + __builtin_ctz(mask);
+    if ( mask ) return i + __builtin_ctz(mask);
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      return i;
+    if ( ptr[i] == b ) return i;
   return len;
 }
 
@@ -41,12 +39,10 @@ find_first_set_256(const void *_ptr, usize len, const char b)
     i256 chunk = _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr + i));
     i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
     int mask = _mm256_movemask_epi8(cmp);
-    if ( mask )
-      return i + __builtin_ctz(mask);
+    if ( mask ) return i + __builtin_ctz(mask);
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      return i;
+    if ( ptr[i] == b ) return i;
   return len;
 }
 
@@ -63,8 +59,7 @@ count_set_128(const void *_ptr, usize len, const char b)
     cnt += _mm_popcnt_u32(_mm_movemask_epi8(cmp));
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      ++cnt;
+    if ( ptr[i] == b ) ++cnt;
   return cnt;
 }
 
@@ -81,8 +76,7 @@ count_set_256(const void *_ptr, usize len, const char b)
     cnt += _mm_popcnt_u32(_mm256_movemask_epi8(cmp));
   }
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      ++cnt;
+    if ( ptr[i] == b ) ++cnt;
   return cnt;
 }
 
@@ -96,13 +90,11 @@ any_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm_movemask_epi8(cmp) )
-      return true;
+    if ( _mm_movemask_epi8(cmp) ) return true;
   }
   // scalar tail
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      return true;
+    if ( ptr[i] == b ) return true;
   return false;
 }
 
@@ -116,13 +108,11 @@ any_set_256(const void *_ptr, usize len, const char b)
     i256 chunk = _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr + i));
     i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm256_movemask_epi8(cmp) )
-      return true;
+    if ( _mm256_movemask_epi8(cmp) ) return true;
   }
   // scalar tail
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      return true;
+    if ( ptr[i] == b ) return true;
   return false;
 }
 
@@ -136,13 +126,11 @@ all_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm_movemask_epi8(cmp) != -1 )
-      return false;
+    if ( _mm_movemask_epi8(cmp) != -1 ) return false;
   }
   // scalar tail
   for ( ; i < len; ++i )
-    if ( ptr[i] != b )
-      return false;
+    if ( ptr[i] != b ) return false;
   return true;
 }
 
@@ -156,13 +144,11 @@ all_set_256(const void *_ptr, usize len, const char b)
     i256 chunk = _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr + i));
     i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm256_movemask_epi8(cmp) != (int)0xFFFFFFFF )
-      return false;
+    if ( _mm256_movemask_epi8(cmp) != (int)0xFFFFFFFF ) return false;
   }
   // scalar tail
   for ( ; i < len; ++i )
-    if ( ptr[i] != b )
-      return false;
+    if ( ptr[i] != b ) return false;
   return true;
 }
 
@@ -176,13 +162,11 @@ none_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm_movemask_epi8(cmp) )
-      return false;
+    if ( _mm_movemask_epi8(cmp) ) return false;
   }
   // scalar tail
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      return false;
+    if ( ptr[i] == b ) return false;
   return true;
 }
 
@@ -196,13 +180,11 @@ none_set_256(const void *_ptr, usize len, const char b)
     i256 chunk = _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr + i));
     i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm256_movemask_epi8(cmp) )
-      return false;
+    if ( _mm256_movemask_epi8(cmp) ) return false;
   }
   // scalar tail
   for ( ; i < len; ++i )
-    if ( ptr[i] == b )
-      return false;
+    if ( ptr[i] == b ) return false;
   return true;
 }
 

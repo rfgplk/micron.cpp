@@ -240,15 +240,13 @@ class carray
     if constexpr ( __v256 && __is_f32 ) {
       __m256 sv = _mm256_set1_ps(scalar);
       for ( usize i = 0; i < __vbulk; i += __velems ) {
-        if constexpr ( __use_prefetch )
-          __builtin_prefetch(stack + i + __prefetch_dist, 0, 1);
+        if constexpr ( __use_prefetch ) __builtin_prefetch(stack + i + __prefetch_dist, 0, 1);
         _mm256_store_ps(stack + i, _mm256_add_ps(_mm256_load_ps(stack + i), sv));
       }
     } else if constexpr ( __v256 && __is_f64 ) {
       __m256d sv = _mm256_set1_pd(scalar);
       for ( usize i = 0; i < __vbulk; i += __velems ) {
-        if constexpr ( __use_prefetch )
-          __builtin_prefetch(stack + i + __prefetch_dist, 0, 1);
+        if constexpr ( __use_prefetch ) __builtin_prefetch(stack + i + __prefetch_dist, 0, 1);
         _mm256_store_pd(stack + i, _mm256_add_pd(_mm256_load_pd(stack + i), sv));
       }
     } else if constexpr ( __v256 && __is_i32 ) {
@@ -258,12 +256,10 @@ class carray
                            _mm256_add_epi32(_mm256_load_si256(reinterpret_cast<const __m256i *>(stack + i)), sv));
     } else if constexpr ( __v128_only && __is_f32 ) {
       __m128 sv = _mm_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_add_ps(_mm_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_add_ps(_mm_load_ps(stack + i), sv));
     } else if constexpr ( __v128_only && __is_f64 ) {
       __m128d sv = _mm_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_add_pd(_mm_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_add_pd(_mm_load_pd(stack + i), sv));
     } else if constexpr ( __v128_only && __is_i32 ) {
       __m128i sv = _mm_set1_epi32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
@@ -273,16 +269,14 @@ class carray
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
       float32x4_t sv = vdupq_n_f32(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        vst1q_f32(stack + i, vaddq_f32(vld1q_f32(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) vst1q_f32(stack + i, vaddq_f32(vld1q_f32(stack + i), sv));
     } else if constexpr ( __have_neon && __is_i32 ) {
       int32x4_t sv = vdupq_n_s32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
         vst1q_s32(reinterpret_cast<int *>(stack + i), vaddq_s32(vld1q_s32(reinterpret_cast<const int *>(stack + i)), sv));
     }
 #endif
-    if constexpr ( __vtail > 0 )
-      __tail_add_scalar(scalar, micron::make_index_sequence<__vtail>{});
+    if constexpr ( __vtail > 0 ) __tail_add_scalar(scalar, micron::make_index_sequence<__vtail>{});
   }
 
   inline __attribute__((always_inline)) void
@@ -291,12 +285,10 @@ class carray
 #if defined(__micron_arch_x86_any) && __micron_x86_simd_width >= 128
     if constexpr ( __v256 && __is_f32 ) {
       __m256 sv = _mm256_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm256_store_ps(stack + i, _mm256_sub_ps(_mm256_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm256_store_ps(stack + i, _mm256_sub_ps(_mm256_load_ps(stack + i), sv));
     } else if constexpr ( __v256 && __is_f64 ) {
       __m256d sv = _mm256_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm256_store_pd(stack + i, _mm256_sub_pd(_mm256_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm256_store_pd(stack + i, _mm256_sub_pd(_mm256_load_pd(stack + i), sv));
     } else if constexpr ( __v256 && __is_i32 ) {
       __m256i sv = _mm256_set1_epi32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
@@ -304,12 +296,10 @@ class carray
                            _mm256_sub_epi32(_mm256_load_si256(reinterpret_cast<const __m256i *>(stack + i)), sv));
     } else if constexpr ( __v128_only && __is_f32 ) {
       __m128 sv = _mm_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_sub_ps(_mm_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_sub_ps(_mm_load_ps(stack + i), sv));
     } else if constexpr ( __v128_only && __is_f64 ) {
       __m128d sv = _mm_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_sub_pd(_mm_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_sub_pd(_mm_load_pd(stack + i), sv));
     } else if constexpr ( __v128_only && __is_i32 ) {
       __m128i sv = _mm_set1_epi32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
@@ -319,16 +309,14 @@ class carray
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
       float32x4_t sv = vdupq_n_f32(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        vst1q_f32(stack + i, vsubq_f32(vld1q_f32(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) vst1q_f32(stack + i, vsubq_f32(vld1q_f32(stack + i), sv));
     } else if constexpr ( __have_neon && __is_i32 ) {
       int32x4_t sv = vdupq_n_s32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
         vst1q_s32(reinterpret_cast<int *>(stack + i), vsubq_s32(vld1q_s32(reinterpret_cast<const int *>(stack + i)), sv));
     }
 #endif
-    if constexpr ( __vtail > 0 )
-      __tail_sub_scalar(scalar, micron::make_index_sequence<__vtail>{});
+    if constexpr ( __vtail > 0 ) __tail_sub_scalar(scalar, micron::make_index_sequence<__vtail>{});
   }
 
   inline __attribute__((always_inline)) void
@@ -337,12 +325,10 @@ class carray
 #if defined(__micron_arch_x86_any) && __micron_x86_simd_width >= 128
     if constexpr ( __v256 && __is_f32 ) {
       __m256 sv = _mm256_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm256_store_ps(stack + i, _mm256_mul_ps(_mm256_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm256_store_ps(stack + i, _mm256_mul_ps(_mm256_load_ps(stack + i), sv));
     } else if constexpr ( __v256 && __is_f64 ) {
       __m256d sv = _mm256_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm256_store_pd(stack + i, _mm256_mul_pd(_mm256_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm256_store_pd(stack + i, _mm256_mul_pd(_mm256_load_pd(stack + i), sv));
     } else if constexpr ( __v256 && __is_i32 && __can_simd_mul_int ) {
       __m256i sv = _mm256_set1_epi32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
@@ -350,12 +336,10 @@ class carray
                            _mm256_mullo_epi32(_mm256_load_si256(reinterpret_cast<const __m256i *>(stack + i)), sv));
     } else if constexpr ( __v128_only && __is_f32 ) {
       __m128 sv = _mm_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_mul_ps(_mm_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_mul_ps(_mm_load_ps(stack + i), sv));
     } else if constexpr ( __v128_only && __is_f64 ) {
       __m128d sv = _mm_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_mul_pd(_mm_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_mul_pd(_mm_load_pd(stack + i), sv));
     } else if constexpr ( __v128_only && __is_i32 && __can_simd_mul_int ) {
       __m128i sv = _mm_set1_epi32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
@@ -365,16 +349,14 @@ class carray
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
       float32x4_t sv = vdupq_n_f32(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        vst1q_f32(stack + i, vmulq_f32(vld1q_f32(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) vst1q_f32(stack + i, vmulq_f32(vld1q_f32(stack + i), sv));
     } else if constexpr ( __have_neon && __is_i32 ) {
       int32x4_t sv = vdupq_n_s32(static_cast<int>(scalar));
       for ( usize i = 0; i < __vbulk; i += __velems )
         vst1q_s32(reinterpret_cast<int *>(stack + i), vmulq_s32(vld1q_s32(reinterpret_cast<const int *>(stack + i)), sv));
     }
 #endif
-    if constexpr ( __vtail > 0 )
-      __tail_mul_scalar(scalar, micron::make_index_sequence<__vtail>{});
+    if constexpr ( __vtail > 0 ) __tail_mul_scalar(scalar, micron::make_index_sequence<__vtail>{});
   }
 
   inline __attribute__((always_inline)) void
@@ -384,30 +366,24 @@ class carray
 #if defined(__micron_arch_x86_any) && __micron_x86_simd_width >= 128
     if constexpr ( __v256 && __is_f32 ) {
       __m256 sv = _mm256_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm256_store_ps(stack + i, _mm256_div_ps(_mm256_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm256_store_ps(stack + i, _mm256_div_ps(_mm256_load_ps(stack + i), sv));
     } else if constexpr ( __v256 && __is_f64 ) {
       __m256d sv = _mm256_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm256_store_pd(stack + i, _mm256_div_pd(_mm256_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm256_store_pd(stack + i, _mm256_div_pd(_mm256_load_pd(stack + i), sv));
     } else if constexpr ( __v128_only && __is_f32 ) {
       __m128 sv = _mm_set1_ps(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_div_ps(_mm_load_ps(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_div_ps(_mm_load_ps(stack + i), sv));
     } else if constexpr ( __v128_only && __is_f64 ) {
       __m128d sv = _mm_set1_pd(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_div_pd(_mm_load_pd(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_div_pd(_mm_load_pd(stack + i), sv));
     }
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
       float32x4_t sv = vdupq_n_f32(scalar);
-      for ( usize i = 0; i < __vbulk; i += __velems )
-        vst1q_f32(stack + i, vdivq_f32(vld1q_f32(stack + i), sv));
+      for ( usize i = 0; i < __vbulk; i += __velems ) vst1q_f32(stack + i, vdivq_f32(vld1q_f32(stack + i), sv));
     }
 #endif
-    if constexpr ( __vtail > 0 )
-      __tail_div_scalar(scalar, micron::make_index_sequence<__vtail>{});
+    if constexpr ( __vtail > 0 ) __tail_div_scalar(scalar, micron::make_index_sequence<__vtail>{});
   }
 
   template <usize M>
@@ -429,11 +405,9 @@ class carray
                            _mm256_add_epi32(_mm256_load_si256(reinterpret_cast<const __m256i *>(stack + i)),
                                             _mm256_load_si256(reinterpret_cast<const __m256i *>(src + i))));
     } else if constexpr ( __v128_only && __is_f32 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_add_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) _mm_store_ps(stack + i, _mm_add_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
     } else if constexpr ( __v128_only && __is_f64 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_add_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) _mm_store_pd(stack + i, _mm_add_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
     } else if constexpr ( __v128_only && __is_i32 ) {
       for ( usize i = 0; i < bulk; i += __velems )
         _mm_store_si128(reinterpret_cast<__m128i *>(stack + i), _mm_add_epi32(_mm_load_si128(reinterpret_cast<const __m128i *>(stack + i)),
@@ -441,8 +415,7 @@ class carray
     }
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        vst1q_f32(stack + i, vaddq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) vst1q_f32(stack + i, vaddq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
     } else if constexpr ( __have_neon && __is_i32 ) {
       for ( usize i = 0; i < bulk; i += __velems )
         vst1q_s32(reinterpret_cast<int *>(stack + i),
@@ -450,8 +423,7 @@ class carray
     }
 #endif
     if constexpr ( tail > 0 )
-      for ( usize i = bulk; i < M; i++ )
-        stack[i] += src[i];
+      for ( usize i = bulk; i < M; i++ ) stack[i] += src[i];
   }
 
   template <usize M>
@@ -473,11 +445,9 @@ class carray
                            _mm256_sub_epi32(_mm256_load_si256(reinterpret_cast<const __m256i *>(stack + i)),
                                             _mm256_load_si256(reinterpret_cast<const __m256i *>(src + i))));
     } else if constexpr ( __v128_only && __is_f32 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_sub_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) _mm_store_ps(stack + i, _mm_sub_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
     } else if constexpr ( __v128_only && __is_f64 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_sub_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) _mm_store_pd(stack + i, _mm_sub_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
     } else if constexpr ( __v128_only && __is_i32 ) {
       for ( usize i = 0; i < bulk; i += __velems )
         _mm_store_si128(reinterpret_cast<__m128i *>(stack + i), _mm_sub_epi32(_mm_load_si128(reinterpret_cast<const __m128i *>(stack + i)),
@@ -485,8 +455,7 @@ class carray
     }
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        vst1q_f32(stack + i, vsubq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) vst1q_f32(stack + i, vsubq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
     } else if constexpr ( __have_neon && __is_i32 ) {
       for ( usize i = 0; i < bulk; i += __velems )
         vst1q_s32(reinterpret_cast<int *>(stack + i),
@@ -494,8 +463,7 @@ class carray
     }
 #endif
     if constexpr ( tail > 0 )
-      for ( usize i = bulk; i < M; i++ )
-        stack[i] -= src[i];
+      for ( usize i = bulk; i < M; i++ ) stack[i] -= src[i];
   }
 
   template <usize M>
@@ -517,11 +485,9 @@ class carray
                            _mm256_mullo_epi32(_mm256_load_si256(reinterpret_cast<const __m256i *>(stack + i)),
                                               _mm256_load_si256(reinterpret_cast<const __m256i *>(src + i))));
     } else if constexpr ( __v128_only && __is_f32 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        _mm_store_ps(stack + i, _mm_mul_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) _mm_store_ps(stack + i, _mm_mul_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
     } else if constexpr ( __v128_only && __is_f64 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        _mm_store_pd(stack + i, _mm_mul_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) _mm_store_pd(stack + i, _mm_mul_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
     } else if constexpr ( __v128_only && __is_i32 && __can_simd_mul_int ) {
       for ( usize i = 0; i < bulk; i += __velems )
         _mm_store_si128(reinterpret_cast<__m128i *>(stack + i),
@@ -530,8 +496,7 @@ class carray
     }
 #elif defined(__micron_arm_neon)
     if constexpr ( __have_neon && __is_f32 ) {
-      for ( usize i = 0; i < bulk; i += __velems )
-        vst1q_f32(stack + i, vmulq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
+      for ( usize i = 0; i < bulk; i += __velems ) vst1q_f32(stack + i, vmulq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
     } else if constexpr ( __have_neon && __is_i32 ) {
       for ( usize i = 0; i < bulk; i += __velems )
         vst1q_s32(reinterpret_cast<int *>(stack + i),
@@ -539,8 +504,7 @@ class carray
     }
 #endif
     if constexpr ( tail > 0 )
-      for ( usize i = bulk; i < M; i++ )
-        stack[i] *= src[i];
+      for ( usize i = bulk; i < M; i++ ) stack[i] *= src[i];
   }
 
   template <typename U>
@@ -555,16 +519,14 @@ class carray
       else {
         T *__restrict dst = stack;
 #pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ )
-          dst[i] += static_cast<T>(v);
+        for ( usize i = 0; i < N; i++ ) dst[i] += static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ )
-        dst[i] += src[i];
+      for ( usize i = 0; i < bound; i++ ) dst[i] += src[i];
     }
   }
 
@@ -580,16 +542,14 @@ class carray
       else {
         T *__restrict dst = stack;
 #pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ )
-          dst[i] -= static_cast<T>(v);
+        for ( usize i = 0; i < N; i++ ) dst[i] -= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ )
-        dst[i] -= src[i];
+      for ( usize i = 0; i < bound; i++ ) dst[i] -= src[i];
     }
   }
 
@@ -605,16 +565,14 @@ class carray
       else {
         T *__restrict dst = stack;
 #pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ )
-          dst[i] *= static_cast<T>(v);
+        for ( usize i = 0; i < N; i++ ) dst[i] *= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ )
-        dst[i] *= src[i];
+      for ( usize i = 0; i < bound; i++ ) dst[i] *= src[i];
     }
   }
 
@@ -630,16 +588,14 @@ class carray
       else {
         T *__restrict dst = stack;
 #pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ )
-          dst[i] /= static_cast<T>(v);
+        for ( usize i = 0; i < N; i++ ) dst[i] /= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ )
-        dst[i] /= src[i];
+      for ( usize i = 0; i < bound; i++ ) dst[i] /= src[i];
     }
   }
 
@@ -654,16 +610,14 @@ class carray
       else {
         T *__restrict dst = stack;
 #pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ )
-          dst[i] %= static_cast<T>(v);
+        for ( usize i = 0; i < N; i++ ) dst[i] %= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ )
-        dst[i] %= src[i];
+      for ( usize i = 0; i < bound; i++ ) dst[i] %= src[i];
     }
   }
 
@@ -734,21 +688,17 @@ public:
 
   carray(const std::initializer_list<T> &&lst)
   {
-    if ( lst.size() > N )
-      exc<except::runtime_error>("micron::carray init_list too large.");
+    if ( lst.size() > N ) exc<except::runtime_error>("micron::carray init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst )
-      stack[i++] = micron::move(value);
-    if ( lst.size() < N )
-      __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
+    for ( auto &&value : lst ) stack[i++] = micron::move(value);
+    if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
   template <is_container A>
     requires(!micron::is_same_v<A, carray>)
   carray(A &&o)
   {
-    if ( o.size() < N )
-      exc<except::runtime_error>("micron::carray carray(A&&) invalid size");
+    if ( o.size() < N ) exc<except::runtime_error>("micron::carray carray(A&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
       __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
     else
@@ -759,8 +709,7 @@ public:
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
-    if ( bound < N )
-      __impl_container::construct(micron::addr(stack[bound]), T{}, N - bound);
+    if ( bound < N ) __impl_container::construct(micron::addr(stack[bound]), T{}, N - bound);
   }
 
   carray(const carray &o) { __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
@@ -1029,8 +978,7 @@ public:
       arr.__ur_div_array(src, micron::make_index_sequence<M>{});
     else {
 #pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ )
-        dst[i] /= src[i];
+      for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     }
     return arr;
   }
@@ -1047,8 +995,7 @@ public:
       arr.__ur_mod_array(src, micron::make_index_sequence<M>{});
     else {
 #pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ )
-        dst[i] %= src[i];
+      for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     }
     return arr;
   }
@@ -1062,8 +1009,7 @@ public:
     const T *__restrict src = stack;
     T sm = T{};
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      sm += src[i];
+    for ( size_type i = 0; i < N; i++ ) sm += src[i];
     return sm;
   }
 
@@ -1073,8 +1019,7 @@ public:
     const T *__restrict src = stack;
     T m = src[0];
 #pragma GCC ivdep
-    for ( size_type i = 1; i < N; i++ )
-      m *= src[i];
+    for ( size_type i = 1; i < N; i++ ) m *= src[i];
     return m;
   }
 
@@ -1119,8 +1064,7 @@ public:
     else {
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ )
-        dst[i] %= o;
+      for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
     }
     return *this;
   }
@@ -1166,8 +1110,7 @@ public:
       T *__restrict dst = stack;
       const T *__restrict src = o.stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ )
-        dst[i] /= src[i];
+      for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     }
     return *this;
   }
@@ -1183,8 +1126,7 @@ public:
       T *__restrict dst = stack;
       const T *__restrict src = o.stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ )
-        dst[i] %= src[i];
+      for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     }
     return *this;
   }
@@ -1197,8 +1139,7 @@ public:
   {
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] *= n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
   }
 
   void
@@ -1206,8 +1147,7 @@ public:
   {
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] /= n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
   }
 
   void
@@ -1215,8 +1155,7 @@ public:
   {
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] -= n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
   }
 
   void
@@ -1224,8 +1163,7 @@ public:
   {
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] += n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1235,8 +1173,7 @@ public:
   all(const T &o) const noexcept
   {
     for ( size_type i = 0; i < N; i++ )
-      if ( stack[i] != o )
-        return false;
+      if ( stack[i] != o ) return false;
     return true;
   }
 
@@ -1244,8 +1181,7 @@ public:
   any(const T &o) const noexcept
   {
     for ( size_type i = 0; i < N; i++ )
-      if ( stack[i] == o )
-        return true;
+      if ( stack[i] == o ) return true;
     return false;
   }
 
@@ -1253,8 +1189,7 @@ public:
   sqrt(void)
   {
     T *__restrict dst = stack;
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
   }
 
   template <typename F>

@@ -123,11 +123,9 @@ public:
   micron::__chunk<byte>
   mark(usize mem_sz)
   {
-    if ( empty() )
-      return { nullptr, 0 };
+    if ( empty() ) return { nullptr, 0 };
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
-    if ( _p.zero() or _p.invalid() )
-      return { nullptr, 0 };
+    if ( _p.zero() or _p.invalid() ) return { nullptr, 0 };
     return _p;
   }
 
@@ -135,11 +133,9 @@ public:
   micron::__chunk<byte>
   temporal_mark(usize mem_sz)
   {
-    if ( empty() )
-      return { nullptr, 0 };
+    if ( empty() ) return { nullptr, 0 };
     micron::__chunk<byte> _p = __book.temporal_allocate(mem_sz);
-    if ( _p.zero() or _p.invalid() )
-      return { nullptr, 0 };
+    if ( _p.zero() or _p.invalid() ) return { nullptr, 0 };
     return _p;
   }
 
@@ -147,12 +143,10 @@ public:
   micron::__chunk<byte>
   try_mark(usize mem_sz)
   {
-    if ( empty() )
-      micron::abort();
+    if ( empty() ) micron::abort();
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
 
-    if ( _p.zero() or _p.invalid() )
-      return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
+    if ( _p.zero() or _p.invalid() ) return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
     return _p;
   }
 
@@ -160,40 +154,30 @@ public:
   bool
   try_unmark(micron::__chunk<byte> _p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p.zero() )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p.zero() ) micron::abort();
     auto r = __book.deallocate(_p);
-    if ( r == __flag_out_of_space )
-      return false;
-    if ( r == __flag_invalid or r == __flag_failure )
-      return false;
+    if ( r == __flag_out_of_space ) return false;
+    if ( r == __flag_invalid or r == __flag_failure ) return false;
     return true;
   }
 
   bool
   try_tombstone(micron::__chunk<byte> _p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p.zero() )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p.zero() ) micron::abort();
     auto r = __book.tombstone(_p);
-    if ( r == __flag_out_of_space )
-      return false;
-    if ( r == __flag_invalid or r == __flag_failure )
-      return false;
+    if ( r == __flag_out_of_space ) return false;
+    if ( r == __flag_invalid or r == __flag_failure ) return false;
     return true;
   }
 
   bool
   try_unmark_no_size(byte *_p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p == nullptr )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p == nullptr ) micron::abort();
     __book.deallocate(_p);
     return true;
   }
@@ -202,10 +186,8 @@ public:
   bool
   try_tombstone_no_size(byte *_p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p == nullptr )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p == nullptr ) micron::abort();
     __book.tombstone(_p);
     return true;
   }
@@ -213,28 +195,23 @@ public:
   bool
   find(byte *_p)
   {
-    if ( _p == nullptr )
-      return false;
-    if ( empty() )
-      micron::abort();
-    if ( _p == nullptr )
-      micron::abort();
+    if ( _p == nullptr ) return false;
+    if ( empty() ) micron::abort();
+    if ( _p == nullptr ) micron::abort();
     return !__book.is_tombstoned(_p);
   }
 
   usize
   available() const
   {
-    if ( empty() )
-      return 0;
+    if ( empty() ) return 0;
     return __book.available();
   }
 
   usize
   total() const
   {
-    if ( empty() )
-      return 0;
+    if ( empty() ) return 0;
     return __book.__total();
   }
 
@@ -278,8 +255,7 @@ public:
   bool
   is_at(addr_t *_addr) const
   {
-    if ( _addr >= addr() and _addr < addr_end() )
-      return true;
+    if ( _addr >= addr() and _addr < addr_end() ) return true;
     return false;
   }
 
@@ -312,8 +288,7 @@ template <u64 Sz> class tlsf_sheet
   __impl_release(void)
   {
     if ( !__kernel_memory.zero() ) {
-      if ( micron::munmap(reinterpret_cast<addr_t *>(__kernel_memory.ptr), __kernel_memory.len) == -1 )
-        micron::abort();
+      if ( micron::munmap(reinterpret_cast<addr_t *>(__kernel_memory.ptr), __kernel_memory.len) == -1 ) micron::abort();
       __kernel_memory.ptr = nullptr;
       __kernel_memory.len = 0;
     }
@@ -354,16 +329,14 @@ public:
   bool
   freeze(void)
   {
-    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, micron::prot_read) != 0 )
-      return false;
+    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, micron::prot_read) != 0 ) return false;
     return true;
   }
 
   bool
   freeze(int prot)
   {
-    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, prot) != 0 )
-      return false;
+    if ( micron::mprotect(__kernel_memory.ptr, __kernel_memory.len, prot) != 0 ) return false;
     return true;
   }
 
@@ -382,73 +355,57 @@ public:
   micron::__chunk<byte>
   mark(usize mem_sz)
   {
-    if ( empty() )
-      return { nullptr, 0 };
+    if ( empty() ) return { nullptr, 0 };
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
-    if ( _p.zero() or _p.invalid() )
-      return { nullptr, 0 };
+    if ( _p.zero() or _p.invalid() ) return { nullptr, 0 };
     return _p;
   }
 
   micron::__chunk<byte>
   temporal_mark(usize mem_sz)
   {
-    if ( empty() )
-      return { nullptr, 0 };
+    if ( empty() ) return { nullptr, 0 };
     micron::__chunk<byte> _p = __book.temporal_allocate(mem_sz);
-    if ( _p.zero() or _p.invalid() )
-      return { nullptr, 0 };
+    if ( _p.zero() or _p.invalid() ) return { nullptr, 0 };
     return _p;
   }
 
   micron::__chunk<byte>
   try_mark(usize mem_sz)
   {
-    if ( empty() )
-      micron::abort();
+    if ( empty() ) micron::abort();
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
-    if ( _p.zero() or _p.invalid() )
-      return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
+    if ( _p.zero() or _p.invalid() ) return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
     return _p;
   }
 
   bool
   try_unmark(micron::__chunk<byte> _p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p.zero() )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p.zero() ) micron::abort();
     auto r = __book.deallocate(_p);
-    if ( r == __flag_out_of_space )
-      return false;
-    if ( r == __flag_invalid or r == __flag_failure )
-      return false;
+    if ( r == __flag_out_of_space ) return false;
+    if ( r == __flag_invalid or r == __flag_failure ) return false;
     return true;
   }
 
   bool
   try_tombstone(micron::__chunk<byte> _p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p.zero() )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p.zero() ) micron::abort();
     auto r = __book.tombstone(_p);
-    if ( r == __flag_out_of_space )
-      return false;
-    if ( r == __flag_invalid or r == __flag_failure )
-      return false;
+    if ( r == __flag_out_of_space ) return false;
+    if ( r == __flag_invalid or r == __flag_failure ) return false;
     return true;
   }
 
   bool
   try_unmark_no_size(byte *_p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p == nullptr )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p == nullptr ) micron::abort();
     __book.deallocate(_p);
     return true;
   }
@@ -456,10 +413,8 @@ public:
   bool
   try_tombstone_no_size(byte *_p)
   {
-    if ( empty() )
-      micron::abort();
-    if ( _p == nullptr )
-      micron::abort();
+    if ( empty() ) micron::abort();
+    if ( _p == nullptr ) micron::abort();
     __book.tombstone(_p);
     return true;
   }
@@ -467,12 +422,9 @@ public:
   bool
   find(byte *_p)
   {
-    if ( _p == nullptr )
-      return false;
-    if ( empty() )
-      micron::abort();
-    if ( _p == nullptr )
-      micron::abort();
+    if ( _p == nullptr ) return false;
+    if ( empty() ) micron::abort();
+    if ( _p == nullptr ) micron::abort();
     return !__book.is_tombstoned(_p);
   }
 
@@ -533,8 +485,7 @@ public:
   bool
   is_at(addr_t *_addr) const
   {
-    if ( _addr >= addr() and _addr < addr_end() )
-      return true;
+    if ( _addr >= addr() and _addr < addr_end() ) return true;
     return false;
   }
 

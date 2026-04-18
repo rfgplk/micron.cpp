@@ -150,8 +150,7 @@ public:
   function(const function &o)
   {
     if ( !o.__empty() ) {
-      if ( !o.__vt->copy )
-        exc<except::bad_function_call>();     // stored type is move-only
+      if ( !o.__vt->copy ) exc<except::bad_function_call>();     // stored type is move-only
       if ( o.__heap ) {
         __heap = ::operator new(__function_smallobj_size * 4);     // conservative
         o.__vt->copy(__heap, o.__heap);
@@ -228,16 +227,14 @@ public:
   R
   operator()(Args... args)
   {
-    if ( __empty() )
-      exc<except::bad_function_call>();
+    if ( __empty() ) exc<except::bad_function_call>();
     return __vt->call(__self(), micron::forward<Args>(args)...);
   }
 
   R
   operator()(Args... args) const
   {
-    if ( __empty() )
-      exc<except::bad_function_call>();
+    if ( __empty() ) exc<except::bad_function_call>();
     return __vt->call(__self(), micron::forward<Args>(args)...);
   }
 
@@ -265,8 +262,7 @@ public:
   G *
   target() noexcept
   {
-    if ( __empty() || __vt->type_tag != __fn_type_tag<micron::decay_t<G>>() )
-      return nullptr;
+    if ( __empty() || __vt->type_tag != __fn_type_tag<micron::decay_t<G>>() ) return nullptr;
     return static_cast<G *>(__self());
   }
 
@@ -274,8 +270,7 @@ public:
   const G *
   target() const noexcept
   {
-    if ( __empty() || __vt->type_tag != __fn_type_tag<micron::decay_t<G>>() )
-      return nullptr;
+    if ( __empty() || __vt->type_tag != __fn_type_tag<micron::decay_t<G>>() ) return nullptr;
     return static_cast<const G *>(__self());
   }
 
@@ -513,8 +508,7 @@ template <typename T, typename E>
 T
 value(const micron::option<T, E> &opt, T &&def)
 {
-  if ( opt.is_first() )
-    return opt.template cast<T>();
+  if ( opt.is_first() ) return opt.template cast<T>();
   return micron::forward<T>(def);
 }
 
@@ -522,8 +516,7 @@ template <typename T, typename E>
 T
 value(micron::option<T, E> &&opt, T &&def)
 {
-  if ( opt.is_first() )
-    return micron::move(opt.template cast<T>());
+  if ( opt.is_first() ) return micron::move(opt.template cast<T>());
   return micron::forward<T>(def);
 }
 
@@ -715,8 +708,7 @@ template <typename T, typename E, typename Fn>
 const micron::option<T, E> &
 tap(const micron::option<T, E> &opt, Fn &&fn)
 {
-  if ( opt.is_first() )
-    micron::forward<Fn>(fn)(opt.template cast<T>());
+  if ( opt.is_first() ) micron::forward<Fn>(fn)(opt.template cast<T>());
   return opt;
 }
 
@@ -725,8 +717,7 @@ template <typename T, typename E, typename Fn>
 const micron::option<T, E> &
 tap(const micron::option<T, E> &opt, Fn &&fn)
 {
-  if ( opt.is_first() )
-    micron::forward<Fn>(fn)(&opt.template cast<T>());
+  if ( opt.is_first() ) micron::forward<Fn>(fn)(&opt.template cast<T>());
   return opt;
 }
 
@@ -736,8 +727,7 @@ template <typename T, typename E, typename Fn>
 const micron::option<T, E> &
 tap_error(const micron::option<T, E> &opt, Fn &&fn)
 {
-  if ( opt.is_second() )
-    micron::forward<Fn>(fn)(opt.template cast<E>());
+  if ( opt.is_second() ) micron::forward<Fn>(fn)(opt.template cast<E>());
   return opt;
 }
 
@@ -746,10 +736,8 @@ template <typename T, typename U, typename E>
 micron::option<micron::tuple<T, U>, E>
 sequence_pair(const micron::option<T, E> &oa, const micron::option<U, E> &ob)
 {
-  if ( !oa.is_first() )
-    return micron::option<micron::tuple<T, U>, E>{ oa.template cast<E>() };
-  if ( !ob.is_first() )
-    return micron::option<micron::tuple<T, U>, E>{ ob.template cast<E>() };
+  if ( !oa.is_first() ) return micron::option<micron::tuple<T, U>, E>{ oa.template cast<E>() };
+  if ( !ob.is_first() ) return micron::option<micron::tuple<T, U>, E>{ ob.template cast<E>() };
   return micron::option<micron::tuple<T, U>, E>{ micron::make_tuple(oa.template cast<T>(), ob.template cast<U>()) };
 }
 
@@ -757,10 +745,8 @@ template <typename T, typename U, typename E>
 micron::option<micron::tuple<T, U>, E>
 sequence_pair(micron::option<T, E> &&oa, micron::option<U, E> &&ob)
 {
-  if ( !oa.is_first() )
-    return micron::option<micron::tuple<T, U>, E>{ micron::move(oa.template cast<E>()) };
-  if ( !ob.is_first() )
-    return micron::option<micron::tuple<T, U>, E>{ micron::move(ob.template cast<E>()) };
+  if ( !oa.is_first() ) return micron::option<micron::tuple<T, U>, E>{ micron::move(oa.template cast<E>()) };
+  if ( !ob.is_first() ) return micron::option<micron::tuple<T, U>, E>{ micron::move(ob.template cast<E>()) };
   return micron::option<micron::tuple<T, U>, E>{ micron::make_tuple(micron::move(oa.template cast<T>()),
                                                                     micron::move(ob.template cast<U>())) };
 }
@@ -773,12 +759,9 @@ map3(Fn &&fn, const micron::option<T, E> &oa, const micron::option<U, E> &ob, co
     -> micron::option<micron::invoke_result_t<Fn, T, U, V>, E>
 {
   using W = micron::invoke_result_t<Fn, T, U, V>;
-  if ( !oa.is_first() )
-    return micron::option<W, E>{ oa.template cast<E>() };
-  if ( !ob.is_first() )
-    return micron::option<W, E>{ ob.template cast<E>() };
-  if ( !oc.is_first() )
-    return micron::option<W, E>{ oc.template cast<E>() };
+  if ( !oa.is_first() ) return micron::option<W, E>{ oa.template cast<E>() };
+  if ( !ob.is_first() ) return micron::option<W, E>{ ob.template cast<E>() };
+  if ( !oc.is_first() ) return micron::option<W, E>{ oc.template cast<E>() };
   return micron::option<W, E>{ micron::forward<Fn>(fn)(oa.template cast<T>(), ob.template cast<U>(), oc.template cast<V>()) };
 }
 
@@ -787,8 +770,7 @@ template <typename T, typename E>
 micron::option<T, E>
 when_first(bool cond, T &&v)
 {
-  if ( cond )
-    return micron::option<T, E>{ micron::forward<T>(v) };
+  if ( cond ) return micron::option<T, E>{ micron::forward<T>(v) };
   return micron::option<T, E>{ E{} };
 }
 
@@ -798,8 +780,7 @@ template <typename T, typename E>
 micron::option<T, E>
 unless_first(bool cond, T &&v)
 {
-  if ( !cond )
-    return micron::option<T, E>{ micron::forward<T>(v) };
+  if ( !cond ) return micron::option<T, E>{ micron::forward<T>(v) };
   return micron::option<T, E>{ E{} };
 }
 
@@ -816,8 +797,7 @@ template <typename E>
 micron::option<micron::tuple<>, E>
 from_bool(bool cond)
 {
-  if ( cond )
-    return micron::option<micron::tuple<>, E>{ micron::tuple<>{} };
+  if ( cond ) return micron::option<micron::tuple<>, E>{ micron::tuple<>{} };
   return micron::option<micron::tuple<>, E>{ E{} };
 }
 
@@ -828,10 +808,8 @@ template <typename T, typename E, typename Fn>
 micron::option<T, E>
 ensure(const micron::option<T, E> &opt, Fn &&fn, E err = E{})
 {
-  if ( !opt.is_first() )
-    return opt;
-  if ( micron::forward<Fn>(fn)(opt.template cast<T>()) )
-    return opt;
+  if ( !opt.is_first() ) return opt;
+  if ( micron::forward<Fn>(fn)(opt.template cast<T>()) ) return opt;
   return micron::option<T, E>{ micron::move(err) };
 }
 
@@ -840,10 +818,8 @@ template <typename T, typename E, typename Fn>
 micron::option<T, E>
 ensure(micron::option<T, E> &&opt, Fn &&fn, E err = E{})
 {
-  if ( !opt.is_first() )
-    return micron::move(opt);
-  if ( micron::forward<Fn>(fn)(opt.template cast<T>()) )
-    return micron::move(opt);
+  if ( !opt.is_first() ) return micron::move(opt);
+  if ( micron::forward<Fn>(fn)(opt.template cast<T>()) ) return micron::move(opt);
   return micron::option<T, E>{ micron::move(err) };
 }
 
@@ -851,10 +827,8 @@ template <typename T, typename E>
 micron::option<T, E>
 ensure(const micron::option<T, E> &opt, micron::function<bool(T)> fn, E err = E{})
 {
-  if ( !opt.is_first() )
-    return opt;
-  if ( fn(opt.template cast<T>()) )
-    return opt;
+  if ( !opt.is_first() ) return opt;
+  if ( fn(opt.template cast<T>()) ) return opt;
   return micron::option<T, E>{ micron::move(err) };
 }
 
@@ -1022,8 +996,7 @@ struct __thunk {
 
   ~__thunk()
   {
-    if ( __evaluated )
-      reinterpret_cast<value_type *>(__storage)->~value_type();
+    if ( __evaluated ) reinterpret_cast<value_type *>(__storage)->~value_type();
   }
 
   const value_type &

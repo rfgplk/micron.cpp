@@ -28,8 +28,7 @@ public:
 
   ~scoped_lock()
   {
-    if ( held && mtx )
-      mtx->unlock(node);
+    if ( held && mtx ) mtx->unlock(node);
   }
 
   void

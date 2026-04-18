@@ -43,8 +43,7 @@ template <memory_order Aq = memory_order::acquire, memory_order Rl = memory_orde
   void
   acquire() noexcept
   {
-    while ( !try_acquire() )
-      ;
+    while ( !try_acquire() );
   }
 
 public:
@@ -75,12 +74,10 @@ public:
   free_guard &
   operator=(free_guard &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
+    if ( this == &o ) return *this;
 
     // drop our current acquisition before overwriting state
-    if ( owned && flag )
-      flag->clear(Rl);
+    if ( owned && flag ) flag->clear(Rl);
 
     flag = o.flag;
     owned = o.owned;
@@ -92,8 +89,7 @@ public:
 
   ~free_guard()
   {
-    if ( owned && flag )
-      flag->clear(Rl);
+    if ( owned && flag ) flag->clear(Rl);
   }
 
   bool
@@ -105,8 +101,7 @@ public:
   bool
   lock() noexcept
   {
-    if ( owned || !flag )
-      return false;
+    if ( owned || !flag ) return false;
     acquire();
     owned = true;
     return true;
@@ -115,8 +110,7 @@ public:
   bool
   try_lock() noexcept
   {
-    if ( owned || !flag )
-      return false;
+    if ( owned || !flag ) return false;
     owned = try_acquire();
     return owned;
   }

@@ -35,20 +35,16 @@ micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffe
 i32
 __verify_open(void)
 {
-  if ( micron::posix::fcntl(0, posix::f_getfl) == -1 )
-    return -1;
-  if ( micron::posix::fcntl(1, posix::f_getfl) == -1 )
-    return -2;
-  if ( micron::posix::fcntl(2, posix::f_getfl) == -1 )
-    return -3;
+  if ( micron::posix::fcntl(0, posix::f_getfl) == -1 ) return -1;
+  if ( micron::posix::fcntl(1, posix::f_getfl) == -1 ) return -2;
+  if ( micron::posix::fcntl(2, posix::f_getfl) == -1 ) return -3;
   return 0;
 }
 
 bool
 __load_stdfd(void)
 {
-  if ( __verify_open() < 0 )
-    return false;
+  if ( __verify_open() < 0 ) return false;
   stdin = { stdin_fileno };
   stdout = { stdout_fileno };
   stderr = { stderr_fileno };
@@ -58,8 +54,7 @@ __load_stdfd(void)
 void
 __close_stdin(void)
 {
-  if ( !stdin.open() or stdin.has_error() )
-    return;
+  if ( !stdin.open() or stdin.has_error() ) return;
   micron::posix::close(stdin.fd);
   stdin.reset();
 }
@@ -67,8 +62,7 @@ __close_stdin(void)
 void
 __close_stdout(void)
 {
-  if ( !stdout.open() or stdout.has_error() )
-    return;
+  if ( !stdout.open() or stdout.has_error() ) return;
   micron::posix::close(stdout.fd);
   stdout.reset();
 }
@@ -76,8 +70,7 @@ __close_stdout(void)
 void
 __close_stderr(void)
 {
-  if ( !stderr.open() or stderr.has_error() )
-    return;
+  if ( !stderr.open() or stderr.has_error() ) return;
   micron::posix::close(stderr.fd);
   stderr.reset();
 }

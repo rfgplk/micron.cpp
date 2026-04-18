@@ -9,39 +9,23 @@
 // we don't need
 
 //these _might_ get included REGARDLESS via immintrin...
-//using pthread_t = unsigned long int;
-//
-//typedef union {
-//  char __size[__sizeof_pthread_mutexattr_t];
-//  int __align;
-//} pthread_mutexattr_t;
-//
-//typedef union {
-//  char __size[__sizeof_pthread_condattr_t];
-//  int __align;
-//} pthread_condattr_t;
-//
-//using pthread_key_t = unsigned int;
-//
-//union pthread_attr_t {
-//  char __size[__sizeof_pthread_attr_t];
-//  long int __align;
-//};
-//typedef union pthread_attr_t pthread_attr_t;
-//
-///* POSIX spinlock data type.  */
-//typedef volatile int pthread_spinlock_t;
-//
-//typedef union {
-//  char __size[__sizeof_pthread_barrier_t];
-//  long int __align;
-//} pthread_barrier_t;
-//
-//typedef union {
-//  char __size[__sizeof_pthread_barrierattr_t];
-//  int __align;
-//} pthread_barrierattr_t;
-//
+// HACK: if we're not including immitrin force through the defs
+#if !defined(__micron_arch_amd64)
+using pthread_t = unsigned long int;
+
+// HACK: super hacky, if this fails to compile it likely means you're including these from somewhere else whereby it isn't gated by these guards, update them accordingly
+
+#ifndef ____sigset_t_defined
+#define ____sigset_t_defined
+#define __sigset_words_h (1024/(8*sizeof(unsigned long int)))
+typedef struct {
+    unsigned long sig[__sigset_words_h];
+} __sigset_t;
+#endif
+
+#include <bits/pthreadtypes.h>
+
+#endif
 
 extern "C" pid_t pthread_gettid_np (pthread_t __thread_id);
 

@@ -45,33 +45,27 @@ public:
 
   sstack(usize n) : length(n)
   {
-    if ( n > N )
-      exc<except::library_error>("sstack size exceeds capacity");
-    for ( usize i = 0; i < n; ++i )
-      push();
+    if ( n > N ) exc<except::library_error>("sstack size exceeds capacity");
+    for ( usize i = 0; i < n; ++i ) push();
   }
 
   sstack(const std::initializer_list<T> &lst) : length(lst.size())
   {
-    if ( lst.size() > N )
-      exc<except::library_error>("initializer_list size exceeds capacity");
+    if ( lst.size() > N ) exc<except::library_error>("initializer_list size exceeds capacity");
     usize i = 0;
-    for ( const T &v : lst )
-      push(v);
+    for ( const T &v : lst ) push(v);
   }
 
   sstack(const sstack &o) : length(o.length)
   {
     usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i )
-      push(o.stack[i]);
+    for ( usize i = 0; i < n; ++i ) push(o.stack[i]);
   }
 
   sstack(sstack &&o) noexcept : length(o.length)
   {
     usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i )
-      push(micron::move(o.stack[i]));
+    for ( usize i = 0; i < n; ++i ) push(micron::move(o.stack[i]));
     o.clear();
   }
 
@@ -80,8 +74,7 @@ public:
   {
     clear();
     usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i )
-      push(o.stack[i]);
+    for ( usize i = 0; i < n; ++i ) push(o.stack[i]);
     return *this;
   }
 
@@ -90,8 +83,7 @@ public:
   {
     clear();
     usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i )
-      push(micron::move(o.stack[i]));
+    for ( usize i = 0; i < n; ++i ) push(micron::move(o.stack[i]));
     o.clear();
     return *this;
   }
@@ -99,32 +91,28 @@ public:
   reference
   operator[](usize n)
   {
-    if ( n >= length )
-      exc<except::library_error>("sstack index out of bounds");
+    if ( n >= length ) exc<except::library_error>("sstack index out of bounds");
     return stack[length - n - 1];
   }
 
   const_reference
   operator[](usize n) const
   {
-    if ( n >= length )
-      exc<except::library_error>("sstack index out of bounds");
+    if ( n >= length ) exc<except::library_error>("sstack index out of bounds");
     return stack[length - n - 1];
   }
 
   reference
   top()
   {
-    if ( empty() )
-      exc<except::library_error>("sstack top() called on empty stack");
+    if ( empty() ) exc<except::library_error>("sstack top() called on empty stack");
     return stack[length - 1];
   }
 
   const_reference
   top() const
   {
-    if ( empty() )
-      exc<except::library_error>("sstack top() called on empty stack");
+    if ( empty() ) exc<except::library_error>("sstack top() called on empty stack");
     return stack[length - 1];
   }
 
@@ -140,32 +128,28 @@ public:
   void
   emplace(Args &&...args)
   {
-    if ( length >= N )
-      exc<except::library_error>("sstack overflow on emplace");
+    if ( length >= N ) exc<except::library_error>("sstack overflow on emplace");
     new (micron::addr(stack[length++])) T(micron::forward<Args &&>(args)...);
   }
 
   void
   push()
   {
-    if ( length >= N )
-      exc<except::library_error>("sstack overflow on push");
+    if ( length >= N ) exc<except::library_error>("sstack overflow on push");
     new (micron::addr(stack[length++])) T();
   }
 
   void
   push(const T &v)
   {
-    if ( length >= N )
-      exc<except::library_error>("sstack overflow on push");
+    if ( length >= N ) exc<except::library_error>("sstack overflow on push");
     new (micron::addr(stack[length++])) T(v);
   }
 
   void
   move(T &&v)
   {
-    if ( length >= N )
-      exc<except::library_error>("sstack overflow on push");
+    if ( length >= N ) exc<except::library_error>("sstack overflow on push");
     new (micron::addr(stack[length++])) T(micron::move(v));
   }
 
@@ -183,8 +167,7 @@ public:
   clear()
   {
     if constexpr ( micron::is_class<T>::value ) {
-      for ( usize i = 0; i < length; ++i )
-        stack[i].~T();
+      for ( usize i = 0; i < length; ++i ) stack[i].~T();
     }
     length = 0;
   }
@@ -193,15 +176,12 @@ public:
   swap(sstack &o) noexcept
   {
     usize min_len = micron::min(length, o.length);
-    for ( usize i = 0; i < min_len; ++i )
-      micron::swap(stack[i], o.stack[i]);
+    for ( usize i = 0; i < min_len; ++i ) micron::swap(stack[i], o.stack[i]);
     if ( length > o.length ) {
-      for ( usize i = min_len; i < length; ++i )
-        o.push(micron::move(stack[i]));
+      for ( usize i = min_len; i < length; ++i ) o.push(micron::move(stack[i]));
       length = o.length;
     } else if ( o.length > length ) {
-      for ( usize i = min_len; i < o.length; ++i )
-        push(micron::move(o.stack[i]));
+      for ( usize i = min_len; i < o.length; ++i ) push(micron::move(o.stack[i]));
       o.length = length;
     }
   }
@@ -275,22 +255,18 @@ public:
 
   fsstack(const umax_t n) : stack{}, length(0)
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push();
+    for ( umax_t i = 0; i < n; i++ ) push();
   }
 
   fsstack(const std::initializer_list<t> &lst) : length(lst.size())
   {
-    if ( lst.size() > N )
-      exc<except::library_error>("micron::fsstack() initializer_list out of bounds");
+    if ( lst.size() > N ) exc<except::library_error>("micron::fsstack() initializer_list out of bounds");
     if constexpr ( micron::is_class_v<t> ) {
       usize i = 0;
-      for ( auto &&value : lst )
-        new (micron::addr(stack[i++])) t(value);
+      for ( auto &&value : lst ) new (micron::addr(stack[i++])) t(value);
     } else {
       usize i = 0;
-      for ( t value : lst )
-        stack[i++] = value;
+      for ( t value : lst ) stack[i++] = value;
     }
   }
 
@@ -433,11 +409,9 @@ public:
   inline void
   clear()
   {
-    if ( !length )
-      return;
+    if ( !length ) return;
     if constexpr ( micron::is_class<t>::value ) {
-      for ( usize i = 0; i < length; i++ )
-        (stack)[i].~t();
+      for ( usize i = 0; i < length; i++ ) (stack)[i].~t();
     }
     micron::zero((byte *)micron::voidify(&(stack)[0]), N * (sizeof(t) / sizeof(byte)));
     length = 0;

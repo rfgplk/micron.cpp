@@ -25,8 +25,7 @@ constexpr bool
 all_of(const T *first, const T *end, const C &comp) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first != comp )
-      return false;
+    if ( *first != comp ) return false;
   return true;
 }
 
@@ -36,8 +35,7 @@ constexpr bool
 all_of(const T *first, const T *end, const C &comp) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first != comp )
-      return false;
+    if ( *first != comp ) return false;
   return true;
 }
 
@@ -47,8 +45,7 @@ constexpr bool
 all_of(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(*first) )
-      return false;
+    if ( !fn(*first) ) return false;
   return true;
 }
 
@@ -58,8 +55,7 @@ constexpr bool
 all_of(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      return false;
+    if ( !fn(first) ) return false;
   return true;
 }
 
@@ -69,8 +65,7 @@ constexpr bool
 any_of(const T *first, const T *end, const C &comp) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first == comp )
-      return true;
+    if ( *first == comp ) return true;
   return false;
 }
 
@@ -80,8 +75,7 @@ constexpr bool
 any_of(const T *first, const T *end, const C &comp) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first == comp )
-      return true;
+    if ( *first == comp ) return true;
   return false;
 }
 
@@ -91,8 +85,7 @@ constexpr bool
 any_of(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      return true;
+    if ( fn(*first) ) return true;
   return false;
 }
 
@@ -102,8 +95,7 @@ constexpr bool
 any_of(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      return true;
+    if ( fn(first) ) return true;
   return false;
 }
 
@@ -113,8 +105,7 @@ constexpr bool
 none_of(const T *first, const T *end, const C &comp) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first == comp )
-      return false;
+    if ( *first == comp ) return false;
   return true;
 }
 
@@ -124,8 +115,7 @@ constexpr bool
 none_of(const T *first, const T *end, const C &comp) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first == comp )
-      return false;
+    if ( *first == comp ) return false;
   return true;
 }
 
@@ -135,8 +125,7 @@ constexpr bool
 none_of(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      return false;
+    if ( fn(*first) ) return false;
   return true;
 }
 
@@ -146,8 +135,7 @@ constexpr bool
 none_of(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      return false;
+    if ( fn(first) ) return false;
   return true;
 }
 
@@ -225,8 +213,7 @@ constexpr bool
 all_of(const T *first, const T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !Fn(first) )
-      return false;
+    if ( !Fn(first) ) return false;
   return true;
 }
 
@@ -235,8 +222,7 @@ constexpr bool
 any_of(const T *first, const T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      return true;
+    if ( Fn(first) ) return true;
   return false;
 }
 
@@ -245,8 +231,7 @@ constexpr bool
 none_of(const T *first, const T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      return false;
+    if ( Fn(first) ) return false;
   return true;
 }
 
@@ -277,8 +262,7 @@ constexpr T *
 find(T *first, T *end, const P &f) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) )
-      return first;
+    if ( *first == static_cast<T>(f) ) return first;
   return nullptr;
 }
 
@@ -288,8 +272,7 @@ constexpr const T *
 find(const T *first, const T *end, const P &f) noexcept
 {
   for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) )
-      return first;
+    if ( *first == static_cast<T>(f) ) return first;
   return nullptr;
 }
 
@@ -299,8 +282,7 @@ constexpr const T *
 find_if(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      return first;
+    if ( fn(*first) ) return first;
   return nullptr;
 }
 
@@ -310,8 +292,7 @@ constexpr T *
 find_if(T *first, T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      return first;
+    if ( fn(*first) ) return first;
   return nullptr;
 }
 
@@ -321,8 +302,7 @@ constexpr const T *
 find_if(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      return first;
+    if ( fn(first) ) return first;
   return nullptr;
 }
 
@@ -332,8 +312,7 @@ constexpr T *
 find_if(T *first, T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      return first;
+    if ( fn(first) ) return first;
   return nullptr;
 }
 
@@ -343,8 +322,7 @@ constexpr const T *
 find_if_not(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      return first;
+    if ( !fn(first) ) return first;
   return nullptr;
 }
 
@@ -354,8 +332,7 @@ constexpr T *
 find_if_not(T *first, T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      return first;
+    if ( !fn(first) ) return first;
   return nullptr;
 }
 
@@ -365,8 +342,7 @@ constexpr const T *
 find_if_not(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      return first;
+    if ( !fn(first) ) return first;
   return nullptr;
 }
 
@@ -376,8 +352,7 @@ constexpr T *
 find_if_not(T *first, T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      return first;
+    if ( !fn(first) ) return first;
   return nullptr;
 }
 
@@ -468,8 +443,7 @@ find_last(T *first, T *end, const P &f) noexcept
 {
   T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) )
-      found = first;
+    if ( *first == static_cast<T>(f) ) found = first;
   return found;
 }
 
@@ -480,8 +454,7 @@ find_last(const T *first, const T *end, const P &f) noexcept
 {
   const T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) )
-      found = first;
+    if ( *first == static_cast<T>(f) ) found = first;
   return found;
 }
 
@@ -492,8 +465,7 @@ find_last_if(const T *first, const T *end, Fn fn) noexcept
 {
   const T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      found = first;
+    if ( fn(*first) ) found = first;
   return found;
 }
 
@@ -504,8 +476,7 @@ find_last_if(T *first, T *end, Fn fn) noexcept
 {
   T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      found = first;
+    if ( fn(*first) ) found = first;
   return found;
 }
 
@@ -516,8 +487,7 @@ find_last_if(const T *first, const T *end, Fn fn) noexcept
 {
   const T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      found = first;
+    if ( fn(first) ) found = first;
   return found;
 }
 
@@ -528,8 +498,7 @@ find_last_if(T *first, T *end, Fn fn) noexcept
 {
   T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      found = first;
+    if ( fn(first) ) found = first;
   return found;
 }
 
@@ -540,8 +509,7 @@ find_last_if_not(const T *first, const T *end, Fn fn) noexcept
 {
   const T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      found = first;
+    if ( !fn(first) ) found = first;
   return found;
 }
 
@@ -552,8 +520,7 @@ find_last_if_not(T *first, T *end, Fn fn) noexcept
 {
   T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( !fn(first) )
-      found = first;
+    if ( !fn(first) ) found = first;
   return found;
 }
 
@@ -609,8 +576,7 @@ template <typename T, class P>
 const T *
 find_end(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
-  if ( pfirst == pend )
-    return end;
+  if ( pfirst == pend ) return end;
   const T *result = nullptr;
   for ( ; first != end; ++first ) {
     const T *it1 = first;
@@ -619,8 +585,7 @@ find_end(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
       ++it1;
       ++it2;
     }
-    if ( it2 == pend )
-      result = first;
+    if ( it2 == pend ) result = first;
   }
   return result;
 }
@@ -630,8 +595,7 @@ template <typename T, class P, typename Fn>
 const T *
 find_end(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noexcept
 {
-  if ( pfirst == pend )
-    return end;
+  if ( pfirst == pend ) return end;
   const T *result = nullptr;
   for ( ; first != end; ++first ) {
     const T *it1 = first;
@@ -640,8 +604,7 @@ find_end(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) no
       ++it1;
       ++it2;
     }
-    if ( it2 == pend )
-      result = first;
+    if ( it2 == pend ) result = first;
   }
   return result;
 }
@@ -667,8 +630,7 @@ find_first_of(const T *first, const T *end, const P *sfirst, const P *send) noex
 {
   for ( ; first != end; ++first )
     for ( const P *s = sfirst; s != send; ++s )
-      if ( *first == static_cast<T>(*s) )
-        return first;
+      if ( *first == static_cast<T>(*s) ) return first;
   return nullptr;
 }
 
@@ -679,8 +641,7 @@ find_first_of(const T *first, const T *end, const P *sfirst, const P *send, Fn f
 {
   for ( ; first != end; ++first )
     for ( const P *s = sfirst; s != send; ++s )
-      if ( fn(first, s) )
-        return first;
+      if ( fn(first, s) ) return first;
   return nullptr;
 }
 
@@ -705,8 +666,7 @@ constexpr const T *
 find_if(const T *first, const T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      return first;
+    if ( Fn(first) ) return first;
   return nullptr;
 }
 
@@ -715,8 +675,7 @@ constexpr T *
 find_if(T *first, T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      return first;
+    if ( Fn(first) ) return first;
   return nullptr;
 }
 
@@ -725,8 +684,7 @@ constexpr const T *
 find_if_not(const T *first, const T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !Fn(first) )
-      return first;
+    if ( !Fn(first) ) return first;
   return nullptr;
 }
 
@@ -735,8 +693,7 @@ constexpr T *
 find_if_not(T *first, T *end) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !Fn(first) )
-      return first;
+    if ( !Fn(first) ) return first;
   return nullptr;
 }
 
@@ -746,8 +703,7 @@ find_last_if(const T *first, const T *end) noexcept
 {
   const T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      found = first;
+    if ( Fn(first) ) found = first;
   return found;
 }
 
@@ -757,8 +713,7 @@ find_last_if(T *first, T *end) noexcept
 {
   T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      found = first;
+    if ( Fn(first) ) found = first;
   return found;
 }
 
@@ -768,8 +723,7 @@ find_last_if_not(const T *first, const T *end) noexcept
 {
   const T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( !Fn(first) )
-      found = first;
+    if ( !Fn(first) ) found = first;
   return found;
 }
 
@@ -779,8 +733,7 @@ find_last_if_not(T *first, T *end) noexcept
 {
   T *found = nullptr;
   for ( ; first != end; ++first )
-    if ( !Fn(first) )
-      found = first;
+    if ( !Fn(first) ) found = first;
   return found;
 }
 
@@ -844,11 +797,9 @@ template <typename T>
 constexpr const T *
 adjacent_find(const T *first, const T *end) noexcept
 {
-  if ( first == end )
-    return nullptr;
+  if ( first == end ) return nullptr;
   for ( const T *next = first + 1; next != end; ++first, ++next )
-    if ( *first == *next )
-      return first;
+    if ( *first == *next ) return first;
   return nullptr;
 }
 
@@ -856,11 +807,9 @@ template <typename T>
 constexpr T *
 adjacent_find(T *first, T *end) noexcept
 {
-  if ( first == end )
-    return nullptr;
+  if ( first == end ) return nullptr;
   for ( T *next = first + 1; next != end; ++first, ++next )
-    if ( *first == *next )
-      return first;
+    if ( *first == *next ) return first;
   return nullptr;
 }
 
@@ -869,11 +818,9 @@ template <typename T, typename Fn>
 constexpr const T *
 adjacent_find(const T *first, const T *end, Fn fn) noexcept
 {
-  if ( first == end )
-    return nullptr;
+  if ( first == end ) return nullptr;
   for ( const T *next = first + 1; next != end; ++first, ++next )
-    if ( fn(first, next) )
-      return first;
+    if ( fn(first, next) ) return first;
   return nullptr;
 }
 
@@ -882,11 +829,9 @@ template <typename T, typename Fn>
 constexpr T *
 adjacent_find(T *first, T *end, Fn fn) noexcept
 {
-  if ( first == end )
-    return nullptr;
+  if ( first == end ) return nullptr;
   for ( T *next = first + 1; next != end; ++first, ++next )
-    if ( fn(first, next) )
-      return first;
+    if ( fn(first, next) ) return first;
   return nullptr;
 }
 
@@ -927,8 +872,7 @@ count(const T *first, const T *end, const P &v) noexcept
 {
   umax_t n = 0;
   for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(v) )
-      ++n;
+    if ( *first == static_cast<T>(v) ) ++n;
   return n;
 }
 
@@ -939,8 +883,7 @@ count_if(const T *first, const T *end, Fn fn) noexcept
 {
   umax_t n = 0;
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      ++n;
+    if ( fn(*first) ) ++n;
   return n;
 }
 
@@ -951,8 +894,7 @@ count_if(const T *first, const T *end, Fn fn) noexcept
 {
   umax_t n = 0;
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      ++n;
+    if ( fn(first) ) ++n;
   return n;
 }
 
@@ -986,8 +928,7 @@ count_if(const T *first, const T *end) noexcept
 {
   umax_t n = 0;
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      ++n;
+    if ( Fn(first) ) ++n;
   return n;
 }
 
@@ -1002,8 +943,7 @@ template <typename T>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2) noexcept
 {
-  for ( ; first1 != end1 && *first1 == *first2; ++first1, ++first2 )
-    ;
+  for ( ; first1 != end1 && *first1 == *first2; ++first1, ++first2 );
   return { first1, first2 };
 }
 
@@ -1011,8 +951,7 @@ template <typename T>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, const T *end2) noexcept
 {
-  for ( ; first1 != end1 && first2 != end2 && *first1 == *first2; ++first1, ++first2 )
-    ;
+  for ( ; first1 != end1 && first2 != end2 && *first1 == *first2; ++first1, ++first2 );
   return { first1, first2 };
 }
 
@@ -1021,8 +960,7 @@ template <typename T, typename Fn>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, Fn fn) noexcept
 {
-  for ( ; first1 != end1 && fn(first1, first2); ++first1, ++first2 )
-    ;
+  for ( ; first1 != end1 && fn(first1, first2); ++first1, ++first2 );
   return { first1, first2 };
 }
 
@@ -1031,8 +969,7 @@ template <typename T, typename Fn>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, const T *end2, Fn fn) noexcept
 {
-  for ( ; first1 != end1 && first2 != end2 && fn(first1, first2); ++first1, ++first2 )
-    ;
+  for ( ; first1 != end1 && first2 != end2 && fn(first1, first2); ++first1, ++first2 );
   return { first1, first2 };
 }
 
@@ -1057,8 +994,7 @@ constexpr bool
 equal(const T *first1, const T *end1, const T *first2) noexcept
 {
   for ( ; first1 != end1; ++first1, ++first2 )
-    if ( !(*first1 == *first2) )
-      return false;
+    if ( !(*first1 == *first2) ) return false;
   return true;
 }
 
@@ -1066,8 +1002,7 @@ template <typename T>
 constexpr bool
 equal(const T *first1, const T *end1, const T *first2, const T *end2) noexcept
 {
-  if ( (end1 - first1) != (end2 - first2) )
-    return false;
+  if ( (end1 - first1) != (end2 - first2) ) return false;
   return equal(first1, end1, first2);
 }
 
@@ -1077,8 +1012,7 @@ constexpr bool
 equal(const T *first1, const T *end1, const T *first2, Fn fn) noexcept
 {
   for ( ; first1 != end1; ++first1, ++first2 )
-    if ( !fn(first1, first2) )
-      return false;
+    if ( !fn(first1, first2) ) return false;
   return true;
 }
 
@@ -1095,8 +1029,7 @@ template <is_iterable_container C1, is_iterable_container C2, typename Fn>
 bool
 equal(const C1 &a, const C2 &b, Fn fn) noexcept
 {
-  if ( a.size() != b.size() )
-    return false;
+  if ( a.size() != b.size() ) return false;
   return equal(a.begin(), a.end(), b.begin(), fn);
 }
 
@@ -1111,8 +1044,7 @@ search(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
       ++it1;
       ++it2;
     }
-    if ( it2 == pend )
-      return first;
+    if ( it2 == pend ) return first;
   }
   return nullptr;
 }
@@ -1129,8 +1061,7 @@ search(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noex
       ++it1;
       ++it2;
     }
-    if ( it2 == pend )
-      return first;
+    if ( it2 == pend ) return first;
   }
   return nullptr;
 }
@@ -1141,10 +1072,8 @@ search_n(const T *first, const T *end, usize n, const P &value) noexcept
 {
   for ( ; first != end; ++first ) {
     usize i = 0;
-    while ( first + i != end && i < n && *(first + i) == static_cast<T>(value) )
-      ++i;
-    if ( i == n )
-      return first;
+    while ( first + i != end && i < n && *(first + i) == static_cast<T>(value) ) ++i;
+    if ( i == n ) return first;
   }
   return nullptr;
 }
@@ -1156,10 +1085,8 @@ search_n(const T *first, const T *end, usize n, const P &value, Fn fn) noexcept
 {
   for ( ; first != end; ++first ) {
     usize i = 0;
-    while ( first + i != end && i < n && fn(first + i, &value) )
-      ++i;
-    if ( i == n )
-      return first;
+    while ( first + i != end && i < n && fn(first + i, &value) ) ++i;
+    if ( i == n ) return first;
   }
   return nullptr;
 }
@@ -1238,8 +1165,7 @@ constexpr bool
 starts_with(const T *first, const T *end, const T *pfirst, const T *pend) noexcept
 {
   for ( ; pfirst != pend; ++first, ++pfirst ) {
-    if ( first == end || !(*first == *pfirst) )
-      return false;
+    if ( first == end || !(*first == *pfirst) ) return false;
   }
   return true;
 }
@@ -1250,8 +1176,7 @@ constexpr bool
 starts_with(const T *first, const T *end, const T *pfirst, const T *pend, Fn fn) noexcept
 {
   for ( ; pfirst != pend; ++first, ++pfirst ) {
-    if ( first == end || !fn(first, pfirst) )
-      return false;
+    if ( first == end || !fn(first, pfirst) ) return false;
   }
   return true;
 }
@@ -1262,8 +1187,7 @@ ends_with(const T *first, const T *end, const T *pfirst, const T *pend) noexcept
 {
   const auto n = end - first;
   const auto pn = pend - pfirst;
-  if ( pn > n )
-    return false;
+  if ( pn > n ) return false;
   return equal(end - pn, end, pend - pn);
 }
 
@@ -1274,8 +1198,7 @@ ends_with(const T *first, const T *end, const T *pfirst, const T *pend, Fn fn) n
 {
   const auto n = end - first;
   const auto pn = pend - pfirst;
-  if ( pn > n )
-    return false;
+  if ( pn > n ) return false;
   return equal(end - pn, end, pend - pn, fn);
 }
 

@@ -64,8 +64,7 @@ class parallel_system
   {
     for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p )
-        return i;
+      if ( __access(*entries[i]).name() == p ) return i;
     }
     return __max_fs;
   }
@@ -75,8 +74,7 @@ class parallel_system
   {
     for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p )
-        return __access(*entries[i]);
+      if ( __access(*entries[i]).name() == p ) return __access(*entries[i]);
     }
     exc<except::filesystem_error>("micron fsys wasn't able to find file");
   }
@@ -120,8 +118,7 @@ class parallel_system
   inline __attribute__((always_inline)) void
   __limit()
   {
-    if ( sz == N )
-      exc<except::filesystem_error>("micron::fsys too many file handles open");
+    if ( sz == N ) exc<except::filesystem_error>("micron::fsys too many file handles open");
   }
 
   void
@@ -156,8 +153,7 @@ public:
   ~parallel_system()
   {
     for ( usize i = 0; i < N; i++ ) {
-      if ( i < sz )
-        (*entries[i]).sync();     // we'll automatically mandate syncing to underlying storage on dest call
+      if ( i < sz ) (*entries[i]).sync();     // we'll automatically mandate syncing to underlying storage on dest call
       entries[i].clear();
     }
   }
@@ -199,8 +195,7 @@ public:
     __limit();
     for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p )
-        return __access(*entries[i]);
+      if ( __access(*entries[i]).name() == p ) return __access(*entries[i]);
     }     // as with maps, if file doesn't exist open it
     return append(p, c, nd);
   }
@@ -209,8 +204,7 @@ public:
   append(const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
   {
     __limit();
-    if ( nd == io::node_types::regular_file )
-      return file(p, c);
+    if ( nd == io::node_types::regular_file ) return file(p, c);
     exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
   }
 
@@ -226,8 +220,7 @@ public:
         break;
       }
     }
-    for ( ++i; i < sz; i++ )
-      entries[i - 1] = micron::move(entries[i]);
+    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
     __unlock();
   }
 
@@ -243,8 +236,7 @@ public:
         break;
       }
     }
-    for ( ++i; i < sz; i++ )
-      entries[i - 1] = micron::move(entries[i]);
+    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
     __unlock();
   }
 
@@ -379,8 +371,7 @@ public:
   is_opened(const io::path_t &path) const
   {
     for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == path )
-        return true;
+      if ( entries[i]->name() == path ) return true;
     return false;
   }
 
@@ -440,10 +431,8 @@ public:
   file_type(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return io::node_types::not_found;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return io::node_types::not_found;
     return io::get_type(f);
   }
 
@@ -452,10 +441,8 @@ public:
   is_virtual_file(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_virtual_file(f);
   }
 
@@ -463,10 +450,8 @@ public:
   is_regular_file(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_file(f);
   }
 
@@ -474,10 +459,8 @@ public:
   is_block_device(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_block_device(f);
   }
 
@@ -485,10 +468,8 @@ public:
   is_directory(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_dir(f);
   }
 
@@ -496,10 +477,8 @@ public:
   is_socket(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_socket(f);
   }
 
@@ -507,10 +486,8 @@ public:
   is_symlink(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_symlink(f);
   }
 
@@ -518,10 +495,8 @@ public:
   is_fifo(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return io::is_fifo(f);
   }
 

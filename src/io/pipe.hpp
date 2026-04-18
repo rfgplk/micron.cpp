@@ -50,10 +50,8 @@ class upipe
     usize done = 0;
     while ( done < len ) {
       max_t n = posix::write(fd, src + done, len - done);
-      if ( n == 0 )
-        break;
-      if ( n < 0 )
-        return n;
+      if ( n == 0 ) break;
+      if ( n < 0 ) return n;
       done += static_cast<usize>(n);
     }
     return static_cast<max_t>(done);
@@ -65,10 +63,8 @@ class upipe
     usize done = 0;
     while ( done < len ) {
       max_t n = posix::read(fd, dst + done, len - done);
-      if ( n == 0 )
-        break;
-      if ( n < 0 )
-        return n;
+      if ( n == 0 ) break;
+      if ( n < 0 ) return n;
       done += static_cast<usize>(n);
     }
     return static_cast<max_t>(done);
@@ -78,8 +74,7 @@ class upipe
   _set_nonblock(int fd, bool on)
   {
     i32 flags = static_cast<i32>(micron::syscall(SYS_fcntl, fd, posix::f_getfl, 0));
-    if ( flags < 0 )
-      return flags;
+    if ( flags < 0 ) return flags;
     if ( on )
       flags |= posix::o_nonblock;
     else
@@ -91,8 +86,7 @@ class upipe
   _set_cloexec(int fd, bool on)
   {
     i32 flags = static_cast<i32>(micron::syscall(SYS_fcntl, fd, posix::f_getfd, 0));
-    if ( flags < 0 )
-      return flags;
+    if ( flags < 0 ) return flags;
     if ( on )
       flags |= posix::fd_cloexec;
     else
@@ -121,21 +115,18 @@ public:
 
   upipe() : __r_open(true), __w_open(true), tp(utype::upipe_writer)
   {
-    if ( posix::pipe(fd) == -1 )
-      exc<except::io_error>("micron::upipe failed to open pipe");
+    if ( posix::pipe(fd) == -1 ) exc<except::io_error>("micron::upipe failed to open pipe");
   }
 
   explicit upipe(utype t) : __r_open(true), __w_open(true), tp(t)
   {
-    if ( posix::pipe(fd) == -1 )
-      exc<except::io_error>("micron::upipe failed to open pipe");
+    if ( posix::pipe(fd) == -1 ) exc<except::io_error>("micron::upipe failed to open pipe");
   }
 
   explicit upipe(bool cloexec) : __r_open(true), __w_open(true), tp(utype::upipe_writer)
   {
     i32 flags = cloexec ? posix::o_cloexec : 0;
-    if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) == -1 )
-      exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
+    if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) == -1 ) exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
   }
 
   upipe(const upipe &o) : __r_open(o.__r_open), __w_open(o.__w_open), tp(o.tp)
@@ -168,12 +159,9 @@ public:
   upipe &
   operator=(upipe &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
-    if ( __r_open )
-      posix::close(fd[__r]);
-    if ( __w_open )
-      posix::close(fd[__w]);
+    if ( this == &o ) return *this;
+    if ( __r_open ) posix::close(fd[__r]);
+    if ( __w_open ) posix::close(fd[__w]);
     fd[__r] = o.fd[__r];
     fd[__w] = o.fd[__w];
     __r_open = o.__r_open;
@@ -298,8 +286,7 @@ public:
   capacity() const
   {
     int target = __w_open ? fd[__w] : (__r_open ? fd[__r] : -1);
-    if ( target < 0 )
-      return -1;
+    if ( target < 0 ) return -1;
     return static_cast<i32>(micron::syscall(SYS_fcntl, target, posix::f_getpipe_sz));
   }
 
@@ -307,54 +294,46 @@ public:
   set_capacity(i32 new_size)
   {
     int target = __w_open ? fd[__w] : (__r_open ? fd[__r] : -1);
-    if ( target < 0 )
-      return -1;
+    if ( target < 0 ) return -1;
     return static_cast<i32>(micron::syscall(SYS_fcntl, target, posix::f_setpipe_sz, new_size));
   }
 
   i32
   dup_write_to(int newfd)
   {
-    if ( !__w_open )
-      return -1;
+    if ( !__w_open ) return -1;
     return static_cast<i32>(micron::syscall(SYS_dup2, fd[__w], newfd));
   }
 
   i32
   dup_read_to(int newfd)
   {
-    if ( !__r_open )
-      return -1;
+    if ( !__r_open ) return -1;
     return static_cast<i32>(micron::syscall(SYS_dup2, fd[__r], newfd));
   }
 
   pipe_result_t
   write_bytes(const byte *src, usize len)
   {
-    if ( !__w_open )
-      return { false, 0, false };
+    if ( !__w_open ) return { false, 0, false };
     max_t n = _write_all(fd[__w], src, len);
-    if ( n < 0 )
-      return { false, 0, false };
+    if ( n < 0 ) return { false, 0, false };
     return { true, static_cast<usize>(n), false };
   }
 
   pipe_result_t
   read_bytes(byte *dst, usize len)
   {
-    if ( !__r_open )
-      return { false, 0, false };
+    if ( !__r_open ) return { false, 0, false };
     max_t n = __read_all(fd[__r], dst, len);
-    if ( n < 0 )
-      return { false, 0, false };
+    if ( n < 0 ) return { false, 0, false };
     return { true, static_cast<usize>(n), n == 0 };
   }
 
   bool
   peek(byte &out)
   {
-    if ( !__r_open )
-      return false;
+    if ( !__r_open ) return false;
     max_t n = posix::read(fd[__r], &out, 1);
     return n == 1;
   }
@@ -370,8 +349,7 @@ public:
   pipe_result_t
   read(T &t)
   {
-    if ( t.size() == 0 )
-      return { true, 0, false };
+    if ( t.size() == 0 ) return { true, 0, false };
     return read_bytes(reinterpret_cast<byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
@@ -383,8 +361,7 @@ public:
     micron::buffer win(chunk_sz);
     for ( ;; ) {
       max_t n = posix::read(fd[__r], win.begin(), chunk_sz);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       t.append(reinterpret_cast<const typename T::value_type *>(win.begin()), static_cast<usize>(n));
       total += static_cast<usize>(n);
     }
@@ -434,8 +411,7 @@ public:
   upipe &
   operator<<(io::stream<SZ, CK> &s)
   {
-    if ( !__w_open || s.empty() )
-      return *this;
+    if ( !__w_open || s.empty() ) return *this;
     _write_all(fd[__w], s.data(), static_cast<usize>(s.size()));
     s.rewind();
     return *this;
@@ -445,15 +421,12 @@ public:
   upipe &
   operator>>(io::stream<SZ, CK> &s)
   {
-    if ( !__r_open )
-      return *this;
+    if ( !__r_open ) return *this;
     usize cap = s.max_size() - static_cast<usize>(s.size());
-    if ( cap == 0 )
-      return *this;
+    if ( cap == 0 ) return *this;
     micron::buffer win(cap);
     max_t n = posix::read(fd[__r], win.begin(), cap);
-    if ( n > 0 )
-      s.append(win.begin(), static_cast<usize>(n));
+    if ( n > 0 ) s.append(win.begin(), static_cast<usize>(n));
     return *this;
   }
 
@@ -461,18 +434,15 @@ public:
   usize
   drain_to_stream(io::stream<SZ, CK> &s)
   {
-    if ( !__r_open )
-      return 0;
+    if ( !__r_open ) return 0;
     usize total = 0;
     micron::buffer win(static_cast<usize>(SZ));
     for ( ;; ) {
       usize avail = s.max_size() - static_cast<usize>(s.size());
-      if ( avail == 0 )
-        break;
+      if ( avail == 0 ) break;
       usize chunk = static_cast<usize>(SZ) < avail ? static_cast<usize>(SZ) : avail;
       max_t n = posix::read(fd[__r], win.begin(), chunk);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       s.append(win.begin(), static_cast<usize>(n));
       total += static_cast<usize>(n);
     }
@@ -482,8 +452,7 @@ public:
   max_t
   splice_to(int out_fd, usize len, bool more = false)
   {
-    if ( !__r_open )
-      return -1;
+    if ( !__r_open ) return -1;
     u32 flags = more ? posix::splice_f_more | posix::splice_f_move : posix::splice_f_move;
     return micron::syscall(SYS_splice, fd[__r], nullptr, out_fd, nullptr, len, flags);
   }
@@ -491,8 +460,7 @@ public:
   max_t
   splice_from(int in_fd, usize len, bool more = false)
   {
-    if ( !__w_open )
-      return -1;
+    if ( !__w_open ) return -1;
     u32 flags = more ? posix::splice_f_more | posix::splice_f_move : posix::splice_f_move;
     return micron::syscall(SYS_splice, in_fd, nullptr, fd[__w], nullptr, len, flags);
   }
@@ -500,16 +468,14 @@ public:
   max_t
   splice_to_pipe(upipe &dst, usize len)
   {
-    if ( !__r_open || !dst.__w_open )
-      return -1;
+    if ( !__r_open || !dst.__w_open ) return -1;
     return splice_to(dst.fd[__w], len);
   }
 
   max_t
   tee_to(upipe &dst, usize len, bool nonblock = false)
   {
-    if ( !__r_open || !dst.__w_open )
-      return -1;
+    if ( !__r_open || !dst.__w_open ) return -1;
     u32 flags = nonblock ? posix::splice_f_nonblock : 0u;
     return micron::syscall(SYS_tee, fd[__r], dst.fd[__w], len, flags);
   }
@@ -517,8 +483,7 @@ public:
   max_t
   sendfile_from(int in_fd, usize count, posix::off_t *offset = nullptr)
   {
-    if ( !__w_open )
-      return -1;
+    if ( !__w_open ) return -1;
     return micron::syscall(SYS_sendfile, fd[__w], in_fd, offset, count);
   }
 
@@ -527,8 +492,7 @@ public:
   {
     micron::buffer out(hint);
     max_t n = posix::read(fd[__r], out.begin(), hint);
-    if ( n < 0 )
-      n = 0;
+    if ( n < 0 ) n = 0;
     return out;
   }
 
@@ -554,10 +518,8 @@ class npipe
     usize done = 0;
     while ( done < len ) {
       max_t n = posix::write(fd, src + done, len - done);
-      if ( n == 0 )
-        break;
-      if ( n < 0 )
-        return n;
+      if ( n == 0 ) break;
+      if ( n < 0 ) return n;
       done += static_cast<usize>(n);
     }
     return static_cast<max_t>(done);
@@ -569,10 +531,8 @@ class npipe
     usize done = 0;
     while ( done < len ) {
       max_t n = posix::read(fd, dst + done, len - done);
-      if ( n == 0 )
-        break;
-      if ( n < 0 )
-        return n;
+      if ( n == 0 ) break;
+      if ( n < 0 ) return n;
       done += static_cast<usize>(n);
     }
     return static_cast<max_t>(done);
@@ -585,8 +545,7 @@ public:
       posix::close(_fd);
       _open = false;
     }
-    if ( _owns_file )
-      micron::syscall(SYS_unlink, pipe_name.c_str());
+    if ( _owns_file ) micron::syscall(SYS_unlink, pipe_name.c_str());
   }
 
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str), _fd(-1), _open(false), _owns_file(true)
@@ -594,8 +553,7 @@ public:
     if ( micron::mkfifo(pipe_name.c_str(), static_cast<posix::mode_t>(perms)) == -1 )
       exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe");
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), posix::o_rdwr));
-    if ( _fd == -1 )
-      exc<except::io_error>("micron::npipe(open) failed to open pipe file");
+    if ( _fd == -1 ) exc<except::io_error>("micron::npipe(open) failed to open pipe file");
     _open = true;
   }
 
@@ -603,8 +561,7 @@ public:
       : pipe_name(str), _fd(-1), _open(false), _owns_file(false)
   {
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), flags));
-    if ( _fd == -1 )
-      exc<except::io_error>("micron::npipe(open existing) failed to open pipe file");
+    if ( _fd == -1 ) exc<except::io_error>("micron::npipe(open existing) failed to open pipe file");
     _open = true;
   }
 
@@ -622,12 +579,9 @@ public:
   npipe &
   operator=(npipe &&o) noexcept
   {
-    if ( this == &o )
-      return *this;
-    if ( _open )
-      posix::close(_fd);
-    if ( _owns_file )
-      micron::syscall(SYS_unlink, pipe_name.c_str());
+    if ( this == &o ) return *this;
+    if ( _open ) posix::close(_fd);
+    if ( _owns_file ) micron::syscall(SYS_unlink, pipe_name.c_str());
     pipe_name = micron::move(o.pipe_name);
     _fd = o._fd;
     _open = o._open;
@@ -678,22 +632,18 @@ public:
   void
   reopen(int flags = posix::o_rdwr)
   {
-    if ( _open )
-      close();
+    if ( _open ) close();
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), flags));
-    if ( _fd == -1 )
-      exc<except::io_error>("micron::npipe::reopen failed");
+    if ( _fd == -1 ) exc<except::io_error>("micron::npipe::reopen failed");
     _open = true;
   }
 
   i32
   set_nonblocking(bool on = true)
   {
-    if ( !valid() )
-      return -1;
+    if ( !valid() ) return -1;
     i32 flags = static_cast<i32>(micron::syscall(SYS_fcntl, _fd, posix::f_getfl, 0));
-    if ( flags < 0 )
-      return flags;
+    if ( flags < 0 ) return flags;
     if ( on )
       flags |= posix::o_nonblock;
     else
@@ -704,11 +654,9 @@ public:
   i32
   set_cloexec(bool on = true)
   {
-    if ( !valid() )
-      return -1;
+    if ( !valid() ) return -1;
     i32 flags = static_cast<i32>(micron::syscall(SYS_fcntl, _fd, posix::f_getfd, 0));
-    if ( flags < 0 )
-      return flags;
+    if ( flags < 0 ) return flags;
     if ( on )
       flags |= posix::fd_cloexec;
     else
@@ -725,24 +673,21 @@ public:
   posix::off_t
   size() const
   {
-    if ( !valid() )
-      return -1;
+    if ( !valid() ) return -1;
     return posix::get_size(_fd);
   }
 
   posix::mode_t
   permissions() const
   {
-    if ( !valid() )
-      return 0;
+    if ( !valid() ) return 0;
     return posix::get_permissions(_fd);
   }
 
   i32
   chmod(posix::mode_t mode)
   {
-    if ( pipe_name.empty() )
-      return -1;
+    if ( pipe_name.empty() ) return -1;
     return static_cast<i32>(micron::syscall(SYS_chmod, pipe_name.c_str(), mode));
   }
 
@@ -767,22 +712,18 @@ public:
   pipe_result_t
   write(const byte *src, usize len)
   {
-    if ( !valid() )
-      return { false, 0, false };
+    if ( !valid() ) return { false, 0, false };
     max_t n = _write_all(_fd, src, len);
-    if ( n < 0 )
-      return { false, 0, false };
+    if ( n < 0 ) return { false, 0, false };
     return { true, static_cast<usize>(n), false };
   }
 
   pipe_result_t
   read(byte *dst, usize len)
   {
-    if ( !valid() )
-      return { false, 0, false };
+    if ( !valid() ) return { false, 0, false };
     max_t n = __read_all_exact(_fd, dst, len);
-    if ( n < 0 )
-      return { false, 0, false };
+    if ( n < 0 ) return { false, 0, false };
     return { true, static_cast<usize>(n), n == 0 };
   }
 
@@ -791,16 +732,14 @@ public:
   void
   write(T &t)
   {
-    if ( !valid() )
-      return;
+    if ( !valid() ) return;
     _write_all(_fd, reinterpret_cast<const byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
   void
   write(const byte *t, usize sz)
   {
-    if ( !valid() )
-      return;
+    if ( !valid() ) return;
     _write_all(_fd, t, sz);
   }
 
@@ -808,8 +747,7 @@ public:
   void
   write(const T &t)
   {
-    if ( !valid() )
-      return;
+    if ( !valid() ) return;
     _write_all(_fd, reinterpret_cast<const byte *>(t.c_str()), t.size() * sizeof(typename T::value_type));
   }
 
@@ -818,16 +756,14 @@ public:
   void
   read(T &t)
   {
-    if ( !valid() || t.size() == 0 )
-      return;
+    if ( !valid() || t.size() == 0 ) return;
     __read_all_exact(_fd, reinterpret_cast<byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
   void
   read(byte *t, usize sz)
   {
-    if ( !valid() )
-      return;
+    if ( !valid() ) return;
     __read_all_exact(_fd, t, sz);
   }
 
@@ -835,8 +771,7 @@ public:
   void
   read(T &t)
   {
-    if ( !valid() || t.size() == 0 )
-      return;
+    if ( !valid() || t.size() == 0 ) return;
     __read_all_exact(_fd, reinterpret_cast<byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
@@ -844,14 +779,12 @@ public:
   usize
   read_all(T &t, usize chunk_sz = _chunk)
   {
-    if ( !valid() )
-      return 0;
+    if ( !valid() ) return 0;
     usize total = 0;
     micron::buffer win(chunk_sz);
     for ( ;; ) {
       max_t n = posix::read(_fd, win.begin(), chunk_sz);
-      if ( n <= 0 )
-        break;
+      if ( n <= 0 ) break;
       t.append(reinterpret_cast<const typename T::value_type *>(win.begin()), static_cast<usize>(n));
       total += static_cast<usize>(n);
     }
@@ -869,8 +802,7 @@ public:
   {
     micron::buffer out(hint);
     max_t n = posix::read(_fd, out.begin(), hint);
-    if ( n < 0 )
-      n = 0;
+    if ( n < 0 ) n = 0;
     return out;
   }
 
@@ -894,8 +826,7 @@ public:
   npipe &
   operator<<(io::stream<SZ, CK> &s)
   {
-    if ( !valid() || s.empty() )
-      return *this;
+    if ( !valid() || s.empty() ) return *this;
     _write_all(_fd, s.data(), static_cast<usize>(s.size()));
     s.rewind();
     return *this;
@@ -905,31 +836,26 @@ public:
   npipe &
   operator>>(io::stream<SZ, CK> &s)
   {
-    if ( !valid() )
-      return *this;
+    if ( !valid() ) return *this;
     usize avail = s.max_size() - static_cast<usize>(s.size());
-    if ( avail == 0 )
-      return *this;
+    if ( avail == 0 ) return *this;
     micron::buffer win(avail);
     max_t n = posix::read(_fd, win.begin(), avail);
-    if ( n > 0 )
-      s.append(win.begin(), static_cast<usize>(n));
+    if ( n > 0 ) s.append(win.begin(), static_cast<usize>(n));
     return *this;
   }
 
   max_t
   splice_to(int out_fd, usize len)
   {
-    if ( !valid() )
-      return -1;
+    if ( !valid() ) return -1;
     return micron::syscall(SYS_splice, _fd, nullptr, out_fd, nullptr, len, posix::splice_f_move);
   }
 
   max_t
   splice_from(int in_fd, usize len)
   {
-    if ( !valid() )
-      return -1;
+    if ( !valid() ) return -1;
     return micron::syscall(SYS_splice, in_fd, nullptr, _fd, nullptr, len, posix::splice_f_move);
   }
 

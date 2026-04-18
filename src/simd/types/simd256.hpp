@@ -53,19 +53,14 @@ public:
   inline v256 &
   operator=(std::initializer_list<double> lst)
   {
-    if ( lst.size() != 4 )
-      return *this;
+    if ( lst.size() != 4 ) return *this;
     double a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
-      if ( _f == 2 )
-        c = *itr;
-      if ( _f == 3 )
-        d = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
       _f++;
     }
     value = _mm256_set_pd(d, c, b, a);
@@ -75,14 +70,12 @@ public:
   inline v256 &
   operator=(std::initializer_list<float> lst)
   {
-    if ( lst.size() != 8 )
-      return *this;
+    if ( lst.size() != 8 ) return *this;
 
     float __arr[8];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = _mm256_set_ps(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
@@ -90,19 +83,14 @@ public:
   inline v256 &
   operator=(std::initializer_list<i64> lst)
   {
-    if ( lst.size() != 4 )
-      return *this;
+    if ( lst.size() != 4 ) return *this;
     i64 a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
-      if ( _f == 2 )
-        c = *itr;
-      if ( _f == 3 )
-        d = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
       _f++;
     }
     value = _mm256_set_epi64x(d, c, b, a);
@@ -112,13 +100,11 @@ public:
   inline v256 &
   operator=(std::initializer_list<i32> lst)
   {
-    if ( lst.size() != 8 )
-      return *this;
+    if ( lst.size() != 8 ) return *this;
     i32 __arr[8];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = _mm256_set_epi32(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
   }
@@ -126,13 +112,11 @@ public:
   inline v256 &
   operator=(std::initializer_list<i16> lst)
   {
-    if ( lst.size() != 16 )
-      return *this;
+    if ( lst.size() != 16 ) return *this;
     i16 __arr[16];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
                              __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
     return *this;
@@ -141,13 +125,11 @@ public:
   inline v256 &
   operator=(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 32 )
-      return *this;
+    if ( lst.size() != 32 ) return *this;
     i8 __arr[32];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
 
     value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
                             __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
@@ -194,19 +176,14 @@ public:
 
   v256(std::initializer_list<double> lst)
   {
-    if ( lst.size() != 4 )
-      return;
+    if ( lst.size() != 4 ) return;
     double a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
-      if ( _f == 2 )
-        c = *itr;
-      if ( _f == 3 )
-        d = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
       _f++;
     }
     value = _mm256_set_pd(d, c, b, a);
@@ -214,27 +191,18 @@ public:
 
   v256(std::initializer_list<float> lst)
   {
-    if ( lst.size() != 8 )
-      return;
+    if ( lst.size() != 8 ) return;
     float a, b, c, d, e, f, g, h;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
-      if ( _f == 2 )
-        c = *itr;
-      if ( _f == 3 )
-        d = *itr;
-      if ( _f == 4 )
-        e = *itr;
-      if ( _f == 5 )
-        f = *itr;
-      if ( _f == 6 )
-        g = *itr;
-      if ( _f == 7 )
-        h = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
+      if ( _f == 4 ) e = *itr;
+      if ( _f == 5 ) f = *itr;
+      if ( _f == 6 ) g = *itr;
+      if ( _f == 7 ) h = *itr;
       _f++;
     }
     value = _mm256_set_ps(h, g, f, e, d, c, b, a);
@@ -243,19 +211,14 @@ public:
   // start of ints
   v256(std::initializer_list<i64> lst)
   {
-    if ( lst.size() != 4 )
-      return;
+    if ( lst.size() != 4 ) return;
     i64 a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 )
-        a = *itr;
-      if ( _f == 1 )
-        b = *itr;
-      if ( _f == 2 )
-        c = *itr;
-      if ( _f == 3 )
-        d = *itr;
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
       _f++;
     }
     value = _mm256_set_epi64x(d, c, b, a);
@@ -263,38 +226,32 @@ public:
 
   v256(std::initializer_list<i32> lst)
   {
-    if ( lst.size() != 8 )
-      return;
+    if ( lst.size() != 8 ) return;
     i32 __arr[8];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = _mm256_set_epi32(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
 
   v256(std::initializer_list<i16> lst)
   {
-    if ( lst.size() != 16 )
-      return;
+    if ( lst.size() != 16 ) return;
     i16 __arr[16];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = _mm256_set_epi16(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
                              __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
 
   v256(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 32 )
-      return;
+    if ( lst.size() != 32 ) return;
     i8 __arr[32];
 
     int __i = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr )
-      __arr[__i++] = *itr;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
     value = _mm256_set_epi8(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
                             __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
                             __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
@@ -1232,8 +1189,7 @@ public:
   inline v256 &
   load(B *mem)
   {
-    if ( !is_aligned<256>(mem) )
-      return *this;     // silent fail
+    if ( !is_aligned<256>(mem) ) return *this;     // silent fail
     value = load<T>(mem);
     return *this;
   }

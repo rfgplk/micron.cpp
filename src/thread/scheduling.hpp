@@ -33,8 +33,7 @@ schedulers
 get_scheduler(void)
 {
   auto r = posix::get_scheduler(posix::getpid());     //::sched_getscheduler(posix::getpid());
-  if ( r == -1 )
-    exc<except::system_error>("micron::scheduling unable to get scheduler");
+  if ( r == -1 ) exc<except::system_error>("micron::scheduling unable to get scheduler");
   return static_cast<schedulers>(r);
 }
 
@@ -45,12 +44,10 @@ class scheduler_t
   {
     if ( is_scheduled() ) {
       posix::sched_param prio = { .sched_priority = 0 };     // must be zero
-      if ( posix::set_scheduler(pid, (int)sched, prio) == -1 )
-        exc<except::system_error>("micron::scheduler_t set() failed");
+      if ( posix::set_scheduler(pid, (int)sched, prio) == -1 ) exc<except::system_error>("micron::scheduler_t set() failed");
     } else {
       posix::sched_param prio = { .sched_priority = 99 };
-      if ( posix::set_scheduler(pid, (int)sched, prio) == -1 )
-        exc<except::system_error>("micron::scheduler_t set() failed");
+      if ( posix::set_scheduler(pid, (int)sched, prio) == -1 ) exc<except::system_error>("micron::scheduler_t set() failed");
     }
   }
 
@@ -62,8 +59,7 @@ public:
 
   scheduler_t(pid_t pid)
   {
-    if ( posix::get_attrs(pid, properties, 0) == -1 )
-      exc<except::system_error>("micron::scheduler_t unable to get scheduling attributes");
+    if ( posix::get_attrs(pid, properties, 0) == -1 ) exc<except::system_error>("micron::scheduler_t unable to get scheduling attributes");
     sched = static_cast<schedulers>(properties.sched_policy);
   }
 
@@ -117,8 +113,7 @@ public:
       properties.sched_deadline = 0x0;
       properties.sched_period = 0x0;
     }
-    if ( is_realtime(s) )
-      properties.sched_priority = 99;
+    if ( is_realtime(s) ) properties.sched_priority = 99;
     if ( is_deadline(s) ) {
       properties.sched_runtime = 0xDEAD;
       properties.sched_deadline = 0xDEAD;
@@ -130,8 +125,7 @@ public:
   void
   enable_deadline(u64 time)
   {
-    if ( !is_deadline() or time < 1024 )
-      return;
+    if ( !is_deadline() or time < 1024 ) return;
     properties.sched_runtime = static_cast<u64>((double)time * 0.5);
     properties.sched_deadline = static_cast<u64>((double)time * 0.75);
     properties.sched_period = time;
@@ -141,55 +135,48 @@ public:
   load_scheduler(const pid_t pid)
   {
     __set(pid);
-    if ( posix::set_attrs(pid, properties, 0x00) == -1 )
-      exc<except::system_error>("micron::scheduling unable to set scheduler");
+    if ( posix::set_attrs(pid, properties, 0x00) == -1 ) exc<except::system_error>("micron::scheduling unable to set scheduler");
   }
 
   static bool
   is_realtime(const schedulers s)
   {
-    if ( s == schedulers::fifo or s == schedulers::roundrobin )
-      return true;
+    if ( s == schedulers::fifo or s == schedulers::roundrobin ) return true;
     return false;
   }
 
   static bool
   is_scheduled(const schedulers s)
   {
-    if ( s == schedulers::normal or s == schedulers::batch or s == schedulers::idle )
-      return true;
+    if ( s == schedulers::normal or s == schedulers::batch or s == schedulers::idle ) return true;
     return false;
   }
 
   static bool
   is_deadline(const schedulers s)
   {
-    if ( s == schedulers::deadline )
-      return true;
+    if ( s == schedulers::deadline ) return true;
     return false;
   }
 
   bool
   is_realtime(void) const
   {
-    if ( sched == schedulers::fifo or sched == schedulers::roundrobin )
-      return true;
+    if ( sched == schedulers::fifo or sched == schedulers::roundrobin ) return true;
     return false;
   }
 
   bool
   is_scheduled(void) const
   {
-    if ( sched == schedulers::normal or sched == schedulers::batch or sched == schedulers::idle )
-      return true;
+    if ( sched == schedulers::normal or sched == schedulers::batch or sched == schedulers::idle ) return true;
     return false;
   }
 
   bool
   is_deadline(void) const
   {
-    if ( sched == schedulers::deadline )
-      return true;
+    if ( sched == schedulers::deadline ) return true;
     return false;
   }
 };

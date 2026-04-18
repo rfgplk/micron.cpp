@@ -88,8 +88,7 @@ enable_all_cores(pid_t pid = 0)
 {
   posix::cpu_set_t set;
   auto count = cpu_count();
-  for ( usize i = 0; i <= count; i++ )
-    set.cpu_set(i);
+  for ( usize i = 0; i <= count; i++ ) set.cpu_set(i);
   posix::sched_setaffinity(pid, sizeof(set), set);
 }
 
@@ -151,16 +150,14 @@ public:
   cpu_t(void) : scheduler_t(posix::getpid()), pid(posix::getpid()), procs(), count(cpu_count())
   {
     if constexpr ( D ) {
-      for ( usize i = 0; i <= count; i++ )
-        procs.cpu_set(i);
+      for ( usize i = 0; i <= count; i++ ) procs.cpu_set(i);
     }     // default to all threads
   }
 
   bool
   operator[](const usize n) const
   {
-    if ( n >= count )
-      exc<except::library_error>("micron cpu_t::operator[] out of range");
+    if ( n >= count ) exc<except::library_error>("micron cpu_t::operator[] out of range");
     return procs.cpu_isset(n);
   }
 
@@ -185,16 +182,14 @@ public:
   bool
   at(const usize n) const
   {
-    if ( n >= count )
-      exc<except::library_error>("micron cpu_t::at out of range");
+    if ( n >= count ) exc<except::library_error>("micron cpu_t::at out of range");
     return procs.cpu_isset(n);
   }
 
   void
   set_core(const usize n)
   {
-    if ( n >= count )
-      exc<except::library_error>("micron cpu_t::set_core out of range");
+    if ( n >= count ) exc<except::library_error>("micron cpu_t::set_core out of range");
     procs.cpu_set(n);
   }
 
@@ -221,16 +216,14 @@ public:
   void
   clear_core(const usize n)
   {
-    if ( n >= count )
-      exc<except::library_error>("micron cpu_t::clear_core out of range");
+    if ( n >= count ) exc<except::library_error>("micron cpu_t::clear_core out of range");
     procs.cpu_clr(n);
   }
 
   void
   set_all()
   {
-    for ( usize i = 0; i <= count; i++ )
-      procs.cpu_set(i);
+    for ( usize i = 0; i <= count; i++ ) procs.cpu_set(i);
   }
 
   usize
@@ -242,8 +235,7 @@ public:
   unsigned
   pin(unsigned c = 0xFFFFFFFF)
   {
-    if ( c == 0xFFFFFFFF )
-      c = posix::getcpu();
+    if ( c == 0xFFFFFFFF ) c = posix::getcpu();
     procs.cpu_zero();
     procs.cpu_set(c);
     posix::sched_setaffinity(pid, sizeof(procs), procs);
@@ -846,8 +838,7 @@ public:
   operator=(proc_t &&o) noexcept
   {
     if ( this != &o ) {
-      if ( data_ )
-        micron::syscall(SYS_munmap, data_, sizeof(__data));
+      if ( data_ ) micron::syscall(SYS_munmap, data_, sizeof(__data));
       data_ = o.data_;
       features_ = o.features_;
       vendor_ = o.vendor_;
@@ -875,8 +866,7 @@ public:
     if ( !data_ ) {
       // don't include mman due to spaghetti
       void *p = reinterpret_cast<void *>(micron::syscall(SYS_mmap, nullptr, sizeof(__data), 0x3, 0x22, -1, 0));
-      if ( reinterpret_cast<max_t>(p) < 0 )
-        return;
+      if ( reinterpret_cast<max_t>(p) < 0 ) return;
       data_ = static_cast<__data *>(p);
       micron::memset(data_, 0, sizeof(__data));
     }
@@ -885,11 +875,9 @@ public:
   void
   probe()
   {
-    if ( probed_ )
-      return;
+    if ( probed_ ) return;
 
-    if ( !__impl::__have_cpuid() )
-      return;
+    if ( !__impl::__have_cpuid() ) return;
 
     __ensure_data();
     info(&data_->raw);
@@ -904,16 +892,13 @@ public:
   void
   probe_full()
   {
-    if ( !probed_ )
-      probe();
-    if ( probed_full_ || !data_ )
-      return;
+    if ( !probed_ ) probe();
+    if ( probed_full_ || !data_ ) return;
 
     spec(&data_->raw);
 
     int n = static_cast<int>(count_);
-    if ( n > 256 )
-      n = 256;
+    if ( n > 256 ) n = 256;
     __impl::__fill_caches(data_->raw, data_->cores, n);
 
     probed_full_ = true;
@@ -1128,8 +1113,7 @@ public:
   const cache_info_t *
   l1d(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ )
-      return nullptr;
+    if ( !probed_full_ || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
       if ( data_->cores[core_id].caches[i].level == 1 && data_->cores[core_id].caches[i].type == DATA_CACHE )
         return &data_->cores[core_id].caches[i];
@@ -1139,8 +1123,7 @@ public:
   const cache_info_t *
   l1i(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ )
-      return nullptr;
+    if ( !probed_full_ || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
       if ( data_->cores[core_id].caches[i].level == 1 && data_->cores[core_id].caches[i].type == INSTRUCTION_CACHE )
         return &data_->cores[core_id].caches[i];
@@ -1150,22 +1133,18 @@ public:
   const cache_info_t *
   l2(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ )
-      return nullptr;
+    if ( !probed_full_ || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
-      if ( data_->cores[core_id].caches[i].level == 2 )
-        return &data_->cores[core_id].caches[i];
+      if ( data_->cores[core_id].caches[i].level == 2 ) return &data_->cores[core_id].caches[i];
     return nullptr;
   }
 
   const cache_info_t *
   l3(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ )
-      return nullptr;
+    if ( !probed_full_ || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
-      if ( data_->cores[core_id].caches[i].level == 3 )
-        return &data_->cores[core_id].caches[i];
+      if ( data_->cores[core_id].caches[i].level == 3 ) return &data_->cores[core_id].caches[i];
     return nullptr;
   }
 

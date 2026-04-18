@@ -356,16 +356,14 @@ struct range {
   static void
   perform(F &f)
   {
-    for ( umax_t i = From; i < To; i++ )
-      f();
+    for ( umax_t i = From; i < To; i++ ) f();
   }
 
   template <class C, typename... Fargs>
   static void
   perform(C &obj, void (C::*f)(Fargs...), Fargs &&...args)
   {
-    for ( umax_t i = From; i < To; i++ )
-      (obj.*f)(args...);
+    for ( umax_t i = From; i < To; i++ ) (obj.*f)(args...);
   }
 
   static constexpr iterator
@@ -459,32 +457,28 @@ struct count_range {
   static void
   perform(F &f)
   {
-    for ( T i = From; i < To; i++ )
-      f(i);
+    for ( T i = From; i < To; i++ ) f(i);
   }
 
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(const Arg &))
   {
-    for ( T i = From; i < To; i++ )
-      (obj.*f)(i);
+    for ( T i = From; i < To; i++ ) (obj.*f)(i);
   }
 
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg))
   {
-    for ( T i = From; i < To; i++ )
-      (obj.*f)(i);
+    for ( T i = From; i < To; i++ ) (obj.*f)(i);
   }
 
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg &&))
   {
-    for ( T i = From; i < To; i++ )
-      (obj.*f)(i);
+    for ( T i = From; i < To; i++ ) (obj.*f)(i);
   }
 
   static constexpr iterator
@@ -568,8 +562,7 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
   perform(C &obj, F f)
   {
     typename T::iterator end = obj.begin() + static_cast<typename T::size_type>(Cnt);
-    for ( typename T::iterator itr = obj.begin(); itr != end; ++itr )
-      f(*itr);
+    for ( typename T::iterator itr = obj.begin(); itr != end; ++itr ) f(*itr);
   }
 
   template <typename C> struct view {

@@ -35,8 +35,7 @@ template <io::modes __default_mode = io::modes::read, usize N = 256> class syste
   __find_fd(const io::path_t &p) -> int
   {
     for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p )
-        return (*entries[i]).get_fd();
+      if ( entries[i]->name() == p ) return (*entries[i]).get_fd();
     return -1;
   }
 
@@ -44,8 +43,7 @@ template <io::modes __default_mode = io::modes::read, usize N = 256> class syste
   __find_id(const io::path_t &p) -> usize
   {
     for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p )
-        return i;
+      if ( entries[i]->name() == p ) return i;
     return __max_fs;
   }
 
@@ -53,8 +51,7 @@ template <io::modes __default_mode = io::modes::read, usize N = 256> class syste
   __find(const io::path_t &p)
   {
     for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p )
-        return *entries[i];
+      if ( entries[i]->name() == p ) return *entries[i];
     exc<except::filesystem_error>("micron fsys wasn't able to find file");
   }
 
@@ -108,16 +105,14 @@ template <io::modes __default_mode = io::modes::read, usize N = 256> class syste
   inline __attribute__((always_inline)) void
   __limit()
   {
-    if ( sz == N )
-      exc<except::filesystem_error>("micron::fsys too many file handles open");
+    if ( sz == N ) exc<except::filesystem_error>("micron::fsys too many file handles open");
   }
 
 public:
   ~system()
   {
     for ( usize i = 0; i < N; i++ ) {
-      if ( i < sz )
-        (*entries[i]).sync();
+      if ( i < sz ) (*entries[i]).sync();
       entries[i].clear();
     }
   }
@@ -157,8 +152,7 @@ public:
   {
     __limit();
     for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p )
-        return *entries[i];
+      if ( entries[i]->name() == p ) return *entries[i];
     return append(p, c, nd);
   }
 
@@ -166,8 +160,7 @@ public:
   append(const io::path_t &p, const io::modes c = __default_mode, const posix::node_types nd = posix::node_types::regular_file)
   {
     __limit();
-    if ( nd == posix::node_types::regular_file )
-      return file(p, c);
+    if ( nd == posix::node_types::regular_file ) return file(p, c);
     exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
   }
 
@@ -182,8 +175,7 @@ public:
         break;
       }
     }
-    for ( ++i; i < sz; i++ )
-      entries[i - 1] = micron::move(entries[i]);
+    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
   }
 
   inline void
@@ -197,8 +189,7 @@ public:
         break;
       }
     }
-    for ( ++i; i < sz; i++ )
-      entries[i - 1] = micron::move(entries[i]);
+    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
   }
 
   void to_persist() = delete;
@@ -207,8 +198,7 @@ public:
   list(void) const
   {
     micron::vector<micron::sstr<posix::name_max>> names;
-    for ( usize i = 0; i < sz; i++ )
-      names.push_back(entries[i]->name());
+    for ( usize i = 0; i < sz; i++ ) names.push_back(entries[i]->name());
     return names;
   }
 
@@ -287,8 +277,7 @@ public:
   is_opened(const io::path_t &path) const
   {
     for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == path )
-        return true;
+      if ( entries[i]->name() == path ) return true;
     return false;
   }
 
@@ -344,10 +333,8 @@ public:
   file_type(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return posix::node_types::not_found;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return posix::node_types::not_found;
     return posix::get_type(f);
   }
 
@@ -355,10 +342,8 @@ public:
   is_virtual_file(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_virtual_file(f);
   }
 
@@ -366,10 +351,8 @@ public:
   is_regular_file(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_file(f);
   }
 
@@ -377,10 +360,8 @@ public:
   is_block_device(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_block_device(f);
   }
 
@@ -388,10 +369,8 @@ public:
   is_directory(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_dir(f);
   }
 
@@ -399,10 +378,8 @@ public:
   is_socket(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_socket(f);
   }
 
@@ -410,10 +387,8 @@ public:
   is_symlink(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_symlink(f);
   }
 
@@ -421,58 +396,50 @@ public:
   is_fifo(const io::path_t &p) const
   {
     auto f = __find_fd(p);
-    if ( f == -1 )
-      f = this->operator[](p).get_fd();
-    if ( f == -1 )
-      return false;
+    if ( f == -1 ) f = this->operator[](p).get_fd();
+    if ( f == -1 ) return false;
     return posix::is_fifo(f);
   }
 
   bool
   is_regular_file(void) const
   {
-    if ( !!entries[sz - 1] )
-      return posix::is_file((*entries[sz - 1]).get_fd());
+    if ( !!entries[sz - 1] ) return posix::is_file((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_block_device(void) const
   {
-    if ( !!entries[sz - 1] )
-      return posix::is_block_device((*entries[sz - 1]).get_fd());
+    if ( !!entries[sz - 1] ) return posix::is_block_device((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_directory(void) const
   {
-    if ( !!entries[sz - 1] )
-      return posix::is_dir((*entries[sz - 1]).get_fd());
+    if ( !!entries[sz - 1] ) return posix::is_dir((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_socket(void) const
   {
-    if ( !!entries[sz - 1] )
-      return posix::is_socket((*entries[sz - 1]).get_fd());
+    if ( !!entries[sz - 1] ) return posix::is_socket((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_symlink(void) const
   {
-    if ( !!entries[sz - 1] )
-      return posix::is_symlink((*entries[sz - 1]).get_fd());
+    if ( !!entries[sz - 1] ) return posix::is_symlink((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_fifo(void) const
   {
-    if ( !!entries[sz - 1] )
-      return posix::is_fifo((*entries[sz - 1]).get_fd());
+    if ( !!entries[sz - 1] ) return posix::is_fifo((*entries[sz - 1]).get_fd());
     return false;
   }
 
@@ -503,15 +470,13 @@ public:
   void
   sync()
   {
-    for ( usize i = 0; i < sz; i++ )
-      entries[i]->sync();
+    for ( usize i = 0; i < sz; i++ ) entries[i]->sync();
   }
 
   void
   flush_all()
   {
-    for ( usize i = 0; i < sz; i++ )
-      entries[i]->flush();
+    for ( usize i = 0; i < sz; i++ ) entries[i]->flush();
   }
 
   void
@@ -1103,24 +1068,21 @@ public:
   at(const io::path_t &p) const
   {
     usize id = __find_id(p);
-    if ( id == __max_fs )
-      exc<except::filesystem_error>("micron::fsys::system::at — file not open.");
+    if ( id == __max_fs ) exc<except::filesystem_error>("micron::fsys::system::at — file not open.");
     return *entries[id];
   }
 
   fsys::file<> &
   at(usize idx)
   {
-    if ( idx >= sz )
-      exc<except::filesystem_error>("micron::fsys::system::at — index out of range.");
+    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at — index out of range.");
     return *entries[idx];
   }
 
   const fsys::file<> &
   at(usize idx) const
   {
-    if ( idx >= sz )
-      exc<except::filesystem_error>("micron::fsys::system::at — index out of range.");
+    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at — index out of range.");
     return *entries[idx];
   }
 
@@ -1133,8 +1095,7 @@ public:
   void
   unlink(const io::path_t &p)
   {
-    if ( __find_id(p) != __max_fs )
-      remove(p);
+    if ( __find_id(p) != __max_fs ) remove(p);
     posix::unlink(p.c_str());
   }
 
@@ -1143,24 +1104,21 @@ public:
   sync_if(Fn &&pred)
   {
     for ( usize i = 0; i < sz; i++ )
-      if ( pred(*entries[i]) )
-        entries[i]->sync();
+      if ( pred(*entries[i]) ) entries[i]->sync();
   }
 
   template <typename Fn>
   void
   for_each(Fn &&fn)
   {
-    for ( usize i = 0; i < sz; i++ )
-      fn(*entries[i]);
+    for ( usize i = 0; i < sz; i++ ) fn(*entries[i]);
   }
 
   template <typename Fn>
   void
   for_each(Fn &&fn) const
   {
-    for ( usize i = 0; i < sz; i++ )
-      fn(static_cast<const fsys::file<> &>(*entries[i]));
+    for ( usize i = 0; i < sz; i++ ) fn(static_cast<const fsys::file<> &>(*entries[i]));
   }
 };
 

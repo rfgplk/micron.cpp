@@ -86,8 +86,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   __safety_check(const char *msg, Args &&...args) const
   {
     if constexpr ( Sf == true ) {
-      if ( (this->*Fn)(micron::forward<Args>(args)...) )
-        exc<E>(msg);
+      if ( (this->*Fn)(micron::forward<Args>(args)...) ) exc<E>(msg);
     }
   }
 
@@ -100,8 +99,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   inline void
   reserve(usize n)
   {
-    if ( n < __mem::capacity )
-      return;
+    if ( n < __mem::capacity ) return;
     if ( __mem::is_zero() ) {
       __mem::realloc(n);
       return;
@@ -112,8 +110,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
   inline void
   __clear(void)
   {
-    if ( !__mem::length )
-      return;
+    if ( !__mem::length ) return;
     __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
     __mem::length = 0;
   }
@@ -152,8 +149,7 @@ public:
 
   ~ivector(void)
   {
-    if ( __mem::is_zero() )
-      return;
+    if ( __mem::is_zero() ) return;
     __clear();
   }
 
@@ -167,8 +163,7 @@ public:
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   ivector(usize n, Args &&...args) : __mem(n)
   {
-    for ( usize i = 0; i < n; i++ )
-      new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+    for ( usize i = 0; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
     __mem::length = n;
   }
 
@@ -208,13 +203,11 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       usize i = 0;
-      for ( T &&value : lst )
-        new (micron::addr(__mem::memory[i++])) T(micron::move(value));
+      for ( T &&value : lst ) new (micron::addr(__mem::memory[i++])) T(micron::move(value));
       __mem::length = lst.size();
     } else {
       usize i = 0;
-      for ( auto &&value : lst )
-        __mem::memory[i++] = value;
+      for ( auto &&value : lst ) __mem::memory[i++] = value;
       __mem::length = lst.size();
     }
   }
@@ -229,8 +222,7 @@ public:
   ivector &
   operator=(const ivector &o)
   {
-    if ( o.capacity() >= __mem::capacity )
-      reserve(o.capacity());
+    if ( o.capacity() >= __mem::capacity ) reserve(o.capacity());
     __impl_container::copy_assign(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
@@ -337,8 +329,7 @@ public:
   {
     const T *f_ptr = __mem::memory;
     for ( size_type i = 0; i < __mem::length; i++ )
-      if ( f_ptr[i] == o )
-        return &f_ptr[i];
+      if ( f_ptr[i] == o ) return &f_ptr[i];
     return nullptr;
   }
 
@@ -432,8 +423,7 @@ public:
   inline slice<byte>
   into_bytes(void) const
   {
-    if ( __mem::memory == nullptr || __mem::length == 0 )
-      return slice<byte>(nullptr, nullptr);
+    if ( __mem::memory == nullptr || __mem::length == 0 ) return slice<byte>(nullptr, nullptr);
     return slice<byte>(reinterpret_cast<const byte *>(&__mem::memory[0]), reinterpret_cast<const byte *>(&__mem::memory[__mem::length]));
   }
 
@@ -521,13 +511,11 @@ public:
     __safety_check<&ivector::__index_check, except::library_error>("micron::ivector insert() out of bounds", n);
     ivector buf(__cap_tag{}, __mem::length + 1);
     // copy [0, n)
-    if ( n > 0 )
-      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    if ( n > 0 ) __impl_container::copy(&buf.memory[0], __mem::memory, n);
     // place new element
     new (micron::addr(buf.memory[n])) T(val);
     // copy [n, length)
-    if ( n < __mem::length )
-      __impl_container::copy(&buf.memory[n + 1], &__mem::memory[n], __mem::length - n);
+    if ( n < __mem::length ) __impl_container::copy(&buf.memory[n + 1], &__mem::memory[n], __mem::length - n);
     buf.length = __mem::length + 1;
     return buf;
   }
@@ -537,11 +525,9 @@ public:
   {
     __safety_check<&ivector::__index_check, except::library_error>("micron::ivector insert() out of bounds", n);
     ivector buf(__cap_tag{}, __mem::length + 1);
-    if ( n > 0 )
-      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    if ( n > 0 ) __impl_container::copy(&buf.memory[0], __mem::memory, n);
     new (micron::addr(buf.memory[n])) T(micron::move(val));
-    if ( n < __mem::length )
-      __impl_container::copy(&buf.memory[n + 1], &__mem::memory[n], __mem::length - n);
+    if ( n < __mem::length ) __impl_container::copy(&buf.memory[n + 1], &__mem::memory[n], __mem::length - n);
     buf.length = __mem::length + 1;
     return buf;
   }
@@ -565,12 +551,9 @@ public:
   {
     __safety_check<&ivector::__index_check, except::library_error>("micron::ivector insert() out of bounds", n);
     ivector buf(__cap_tag{}, __mem::length + cnt);
-    if ( n > 0 )
-      __impl_container::copy(&buf.memory[0], __mem::memory, n);
-    for ( size_type i = 0; i < cnt; ++i )
-      new (micron::addr(buf.memory[n + i])) T(val);
-    if ( n < __mem::length )
-      __impl_container::copy(&buf.memory[n + cnt], &__mem::memory[n], __mem::length - n);
+    if ( n > 0 ) __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    for ( size_type i = 0; i < cnt; ++i ) new (micron::addr(buf.memory[n + i])) T(val);
+    if ( n < __mem::length ) __impl_container::copy(&buf.memory[n + cnt], &__mem::memory[n], __mem::length - n);
     buf.length = __mem::length + cnt;
     return buf;
   }
@@ -590,11 +573,9 @@ public:
     __safety_check<&ivector::__index_check, except::library_error>("micron::ivector erase() out of bounds", n);
     ivector buf(__cap_tag{}, __mem::length - 1);
     // copy [0, n)
-    if ( n > 0 )
-      __impl_container::copy(&buf.memory[0], __mem::memory, n);
+    if ( n > 0 ) __impl_container::copy(&buf.memory[0], __mem::memory, n);
     // copy [n+1, length)
-    if ( n + 1 < __mem::length )
-      __impl_container::copy(&buf.memory[n], &__mem::memory[n + 1], __mem::length - n - 1);
+    if ( n + 1 < __mem::length ) __impl_container::copy(&buf.memory[n], &__mem::memory[n + 1], __mem::length - n - 1);
     buf.length = __mem::length - 1;
     return buf;
   }
@@ -613,11 +594,9 @@ public:
     size_type count = to - from;
     ivector buf(__cap_tag{}, __mem::length - count);
     // copy [0, from)
-    if ( from > 0 )
-      __impl_container::copy(&buf.memory[0], __mem::memory, from);
+    if ( from > 0 ) __impl_container::copy(&buf.memory[0], __mem::memory, from);
     // copy [to, length)
-    if ( to < __mem::length )
-      __impl_container::copy(&buf.memory[from], &__mem::memory[to], __mem::length - to);
+    if ( to < __mem::length ) __impl_container::copy(&buf.memory[from], &__mem::memory[to], __mem::length - to);
     buf.length = __mem::length - count;
     return buf;
   }

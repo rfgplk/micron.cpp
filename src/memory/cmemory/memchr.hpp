@@ -14,11 +14,9 @@ template <typename T>
 T *
 memchr(const T &restrict src, byte c, u64 n) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
   for ( u64 i = 0; i < n; i++ )
-    if ( src[i] == c )
-      return const_cast<T *>(src + i);
+    if ( src[i] == c ) return const_cast<T *>(src + i);
   return nullptr;
 }
 
@@ -27,11 +25,9 @@ template <typename T>
 T *
 memchr(const T *restrict src, byte c, u64 n) noexcept
 {
-  if ( src == nullptr )
-    return nullptr;
+  if ( src == nullptr ) return nullptr;
   for ( u64 i = 0; i < n; i++ )
-    if ( src[i] == c )
-      return const_cast<T *>(src + i);
+    if ( src[i] == c ) return const_cast<T *>(src + i);
   return nullptr;
 }
 

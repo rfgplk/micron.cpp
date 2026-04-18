@@ -383,16 +383,14 @@ malloc(usize size)     // alloc memory of size 'size', prefer using alloc
 void *
 calloc(usize num, usize size)     // alloc's zero'd out memory, prefer using salloc()
 {
-  if ( num == 0 or size == 0 )
-    return nullptr;
+  if ( num == 0 or size == 0 ) return nullptr;
 
   usize total;
   if ( check_mul_overflow(num, size, total) ) [[unlikely]]
     return nullptr;
 
   byte *mem = abc::alloc(total);
-  if ( !mem )
-    return nullptr;
+  if ( !mem ) return nullptr;
   micron::zero(mem, total);
   return mem;
 }
@@ -400,8 +398,7 @@ calloc(usize num, usize size)     // alloc's zero'd out memory, prefer using sal
 void *
 realloc(void *ptr, usize size)     // reallocates memory
 {
-  if ( !ptr )
-    return reinterpret_cast<void *>(abc::alloc(size));
+  if ( !ptr ) return reinterpret_cast<void *>(abc::alloc(size));
 
   if ( size == 0 ) {
     abc::dealloc(reinterpret_cast<byte *>(ptr));
@@ -416,8 +413,7 @@ realloc(void *ptr, usize size)     // reallocates memory
   }
 
   // if the existing block is already large enough and not wastefully oversized, reuse it
-  if ( old_size >= size and size > (old_size >> 1) )
-    return ptr;
+  if ( old_size >= size and size > (old_size >> 1) ) return ptr;
 
   byte *new_block = abc::alloc(size);
   if ( !new_block ) [[unlikely]]
@@ -459,8 +455,7 @@ aligned_alloc(usize alignment, usize size)
   if ( size == 0 ) [[unlikely]]
     return nullptr;
 
-  if ( alignment <= __hdr_offset )
-    return reinterpret_cast<void *>(abc::alloc(size));
+  if ( alignment <= __hdr_offset ) return reinterpret_cast<void *>(abc::alloc(size));
 
   usize overhead = alignment + sizeof(void *);
   usize total;

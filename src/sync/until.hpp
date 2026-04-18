@@ -25,8 +25,7 @@ until(const T &cond, F f, Args &&...args)
   using ret_t = micron::invoke_result_t<F, Args...>;
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
     __cpu_pause();
   }
 }
@@ -87,11 +86,9 @@ until_timeout(auto cond, fduration_t timeout, F f, Args &&...args)
 
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      return true;
+    if ( res == cond ) return true;
 
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
 
     __cpu_pause();
   }
@@ -104,8 +101,7 @@ until_timeout(fduration_t timeout, P pred)
   auto start = micron::system_clock<>::now();
 
   while ( !pred() ) {
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
     __cpu_pause();
   }
   return true;
@@ -119,8 +115,7 @@ until_max_iter(auto cond, usize max_iters, F f, Args &&...args)
 
   for ( usize i = 0; i < max_iters; ++i ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      return true;
+    if ( res == cond ) return true;
     __cpu_pause();
   }
   return false;
@@ -143,8 +138,7 @@ until_ready_timeout(F &fut, fduration_t timeout)
   auto start = micron::system_clock<>::now();
 
   while ( fut.wait_for(fduration_t(0)) != micron::future_status::ready ) {
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
     __cpu_pause();
   }
   return true;
@@ -158,8 +152,7 @@ until_with_wait(const T &cond, Fn wait, F f, Args &&...args)
 
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
     wait();
   }
 }
@@ -173,8 +166,7 @@ until_with_callback(const T &cond, Cb cb, F f, Args &&...args)
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
     cb(res);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
     __cpu_pause();
   }
 }
@@ -187,8 +179,7 @@ until_any(F f, C &&...conds)
 
   for ( ;; ) {
     ret_t res = f();
-    if ( ((res == conds) || ...) )
-      break;
+    if ( ((res == conds) || ...) ) break;
     __cpu_pause();
   }
 }
@@ -248,15 +239,13 @@ until_backoff(auto cond, F f, Args &&...args)
 
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
-    if ( backoff < max_backoff )
-      backoff *= 2;
+    if ( backoff < max_backoff ) backoff *= 2;
   }
 }
 
@@ -268,8 +257,7 @@ until_in_range(const T &min, const T &max, F f, Args &&...args)
 
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res >= min && res <= max )
-      break;
+    if ( res >= min && res <= max ) break;
     __cpu_pause();
   }
 }
@@ -282,8 +270,7 @@ until_not(auto cond, F f, Args &&...args)
 
   for ( ;; ) {
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res != cond )
-      break;
+    if ( res != cond ) break;
     __cpu_pause();
   }
 }
@@ -295,12 +282,10 @@ until_or_future(const T &cond, Fut &fut, F f, Args &&...args)
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     __cpu_pause();
   }
@@ -311,8 +296,7 @@ void
 until_or_future(const T &cond, const T &var, Fut &fut)
 {
   while ( var != cond ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
     __cpu_pause();
   }
 }
@@ -322,8 +306,7 @@ void
 until_or_future(const T &cond, const micron::atomic<T> &var, Fut &fut)
 {
   while ( var.__get(micron::memory_order_acquire) != cond ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
     __cpu_pause();
   }
 }
@@ -334,8 +317,7 @@ void
 until_or_future(P pred, Fut &fut)
 {
   while ( !pred() ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
     __cpu_pause();
   }
 }
@@ -346,8 +328,7 @@ void
 until_true_or_future(P pred, Fut &fut, Args &&...args)
 {
   while ( !micron::invoke(pred, micron::forward<Args>(args)...) ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
     __cpu_pause();
   }
 }
@@ -360,15 +341,12 @@ until_timeout_or_future(auto cond, fduration_t timeout, Fut &fut, F f, Args &&..
   auto start = micron::system_clock<>::now();
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      return false;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) return false;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      return true;
+    if ( res == cond ) return true;
 
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
 
     __cpu_pause();
   }
@@ -381,11 +359,9 @@ until_timeout_or_future(fduration_t timeout, Fut &fut, P pred)
   auto start = micron::system_clock<>::now();
 
   while ( !pred() ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      return false;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) return false;
 
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
 
     __cpu_pause();
   }
@@ -399,12 +375,10 @@ until_with_wait_or_future(const T &cond, Fut &fut, Fn wait, F f, Args &&...args)
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     wait();
   }
@@ -419,19 +393,16 @@ until_backoff_or_future(auto cond, Fut &fut, F f, Args &&...args)
   constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
-    if ( backoff < max_backoff )
-      backoff *= 2;
+    if ( backoff < max_backoff ) backoff *= 2;
   }
 }
 
@@ -442,12 +413,10 @@ until_or_flag(const T &cond, const micron::atomic<bool> &flag, F f, Args &&...ar
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     __cpu_pause();
   }
@@ -458,8 +427,7 @@ void
 until_or_flag(const T &cond, const T &var, const micron::atomic<bool> &flag)
 {
   while ( var != cond ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
     __cpu_pause();
   }
 }
@@ -469,8 +437,7 @@ void
 until_or_flag(const T &cond, const micron::atomic<T> &var, const micron::atomic<bool> &flag)
 {
   while ( var.__get(micron::memory_order_acquire) != cond ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
     __cpu_pause();
   }
 }
@@ -481,8 +448,7 @@ void
 until_or_flag(P pred, const micron::atomic<bool> &flag)
 {
   while ( !pred() ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
     __cpu_pause();
   }
 }
@@ -493,8 +459,7 @@ void
 until_true_or_flag(P pred, const micron::atomic<bool> &flag, Args &&...args)
 {
   while ( !micron::invoke(pred, micron::forward<Args>(args)...) ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
     __cpu_pause();
   }
 }
@@ -507,15 +472,12 @@ until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic<bool>
   auto start = micron::system_clock<>::now();
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      return false;
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      return true;
+    if ( res == cond ) return true;
 
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
 
     __cpu_pause();
   }
@@ -528,11 +490,9 @@ until_timeout_or_flag(fduration_t timeout, const micron::atomic<bool> &flag, P p
   auto start = micron::system_clock<>::now();
 
   while ( !pred() ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      return false;
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
 
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
 
     __cpu_pause();
   }
@@ -546,12 +506,10 @@ until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic<bool> &f
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( usize i = 0; i < max_iters; ++i ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      return false;
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      return true;
+    if ( res == cond ) return true;
 
     __cpu_pause();
   }
@@ -565,12 +523,10 @@ until_with_wait_or_flag(const T &cond, const micron::atomic<bool> &flag, Fn wait
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     wait();
   }
@@ -583,13 +539,11 @@ until_with_callback_or_flag(const T &cond, const micron::atomic<bool> &flag, Cb 
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
     cb(res);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     __cpu_pause();
   }
@@ -604,19 +558,16 @@ until_backoff_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&.
   constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
-    if ( backoff < max_backoff )
-      backoff *= 2;
+    if ( backoff < max_backoff ) backoff *= 2;
   }
 }
 
@@ -627,12 +578,10 @@ until_in_range_or_flag(const T &min, const T &max, const micron::atomic<bool> &f
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res >= min && res <= max )
-      break;
+    if ( res >= min && res <= max ) break;
 
     __cpu_pause();
   }
@@ -645,12 +594,10 @@ until_not_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&...ar
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res != cond )
-      break;
+    if ( res != cond ) break;
 
     __cpu_pause();
   }
@@ -663,12 +610,10 @@ until_any_or_flag(const micron::atomic<bool> &flag, F f, C &&...conds)
   using ret_t = micron::invoke_result_t<F>;
 
   for ( ;; ) {
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = f();
-    if ( ((res == conds) || ...) )
-      break;
+    if ( ((res == conds) || ...) ) break;
 
     __cpu_pause();
   }
@@ -681,15 +626,12 @@ until_or_future_or_flag(const T &cond, Fut &fut, const micron::atomic<bool> &fla
   using ret_t = micron::invoke_result_t<F, Args...>;
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     __cpu_pause();
   }
@@ -700,11 +642,9 @@ void
 until_or_future_or_flag(const T &cond, const micron::atomic<T> &var, Fut &fut, const micron::atomic<bool> &flag)
 {
   while ( var.__get(micron::memory_order_acquire) != cond ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     __cpu_pause();
   }
@@ -716,11 +656,9 @@ void
 until_or_future_or_flag(P pred, Fut &fut, const micron::atomic<bool> &flag)
 {
   while ( !pred() ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     __cpu_pause();
   }
@@ -734,18 +672,14 @@ until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &fut, const 
   auto start = micron::system_clock<>::now();
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      return false;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) return false;
 
-    if ( flag.__get(micron::memory_order_acquire) )
-      return false;
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      return true;
+    if ( res == cond ) return true;
 
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
 
     __cpu_pause();
   }
@@ -760,22 +694,18 @@ until_backoff_or_future_or_flag(auto cond, Fut &fut, const micron::atomic<bool> 
   constexpr usize max_backoff = 1024;
 
   for ( ;; ) {
-    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready )
-      break;
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
 
-    if ( flag.__get(micron::memory_order_acquire) )
-      break;
+    if ( flag.__get(micron::memory_order_acquire) ) break;
 
     ret_t res = micron::invoke(f, micron::forward<Args>(args)...);
-    if ( res == cond )
-      break;
+    if ( res == cond ) break;
 
     for ( usize i = 0; i < backoff; ++i ) {
       __cpu_pause();
     }
 
-    if ( backoff < max_backoff )
-      backoff *= 2;
+    if ( backoff < max_backoff ) backoff *= 2;
   }
 }
 
@@ -804,8 +734,7 @@ until_flag_set_timeout(const A &flag, fduration_t timeout)
   auto start = micron::system_clock<>::now();
 
   while ( !flag.__get(micron::memory_order_acquire) ) {
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
     __cpu_pause();
   }
   return true;
@@ -818,8 +747,7 @@ until_flag_clear_timeout(const A &flag, fduration_t timeout)
   auto start = micron::system_clock<>::now();
 
   while ( flag.__get(micron::memory_order_acquire) ) {
-    if ( micron::system_clock<>::now() - start >= timeout )
-      return false;
+    if ( micron::system_clock<>::now() - start >= timeout ) return false;
     __cpu_pause();
   }
   return true;
@@ -846,8 +774,7 @@ until_flag_set_backoff(const A &flag)
       __cpu_pause();
     }
 
-    if ( backoff < max_backoff )
-      backoff *= 2;
+    if ( backoff < max_backoff ) backoff *= 2;
   }
 }
 

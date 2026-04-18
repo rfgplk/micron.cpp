@@ -197,8 +197,7 @@ class immutable_table
       }
       p = c1;
     }
-    while ( depth > 0 )
-      __release_tagged(stack[--depth]);
+    while ( depth > 0 ) __release_tagged(stack[--depth]);
   }
 
   // descend to the leaf that the search key reaches
@@ -382,8 +381,7 @@ public:
 
     if ( !erased ) [[likely]]
       return *this;
-    if ( !nr )
-      return immutable_table(0, 0);
+    if ( !nr ) return immutable_table(0, 0);
     return immutable_table(nr, __length - 1);
   }
 
@@ -466,13 +464,11 @@ public:
   {
     if ( __root == o.__root ) [[unlikely]]
       return true;
-    if ( __length != o.__length )
-      return false;
+    if ( __length != o.__length ) return false;
     auto a = begin(), ae = end();
     auto b = o.begin();
     for ( ; a != ae; ++a, ++b ) {
-      if ( a.key() != b.key() || a.value() != b.value() )
-        return false;
+      if ( a.key() != b.key() || a.value() != b.value() ) return false;
     }
     return true;
   }
@@ -498,8 +494,7 @@ public:
   update_or(K key, V default_val, Fn &&fn) const
   {
     const V *v = find(key);
-    if ( v )
-      return insert(key, fn(*v));
+    if ( v ) return insert(key, fn(*v));
     return insert(key, fn(default_val));
   }
 
@@ -525,8 +520,7 @@ public:
 
     explicit const_iterator(uintptr_t root) : __depth(0), __current(nullptr)
     {
-      if ( root )
-        __descend_left(root);
+      if ( root ) __descend_left(root);
     }
 
     bool
@@ -631,8 +625,7 @@ public:
       }
       fn(__to_leaf(node)->key, __to_leaf(node)->value);
 
-      if ( depth == 0 )
-        return;
+      if ( depth == 0 ) return;
       node = stack[--depth]->child[1];
     }
   }

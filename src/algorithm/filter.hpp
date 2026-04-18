@@ -23,8 +23,7 @@ T *
 filter(const T *first, const T *end, Fn fn, T *out)
 {
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      *out++ = *first;
+    if ( fn(first) ) *out++ = *first;
   return out;
 }
 
@@ -99,8 +98,7 @@ filter_inplace(C &c, F fn)
   auto *last = c.end();
   C *out = first;
   for ( ; first != last; ++first )
-    if ( fn(first) )
-      *out++ = *first;
+    if ( fn(first) ) *out++ = *first;
   c.resize(out - c.begin());
   return c;
 }
@@ -154,8 +152,7 @@ constexpr T *
 filter(const T *first, const T *end, T *out) noexcept
 {
   for ( ; first != end; ++first )
-    if ( Fn(first) )
-      *out++ = *first;
+    if ( Fn(first) ) *out++ = *first;
   return out;
 }
 

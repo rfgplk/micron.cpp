@@ -41,12 +41,10 @@ __has_alnum_keys(const micron::ustr8 &buf)
     byte __first = key_1;
     byte __last = key_help;
     for ( ; __first < __last; __first++ ) {
-      if ( k & (1 << __first) )
-        __count++;
+      if ( k & (1 << __first) ) __count++;
     }
     auto _next = micron::format::find(buf, _start + 1, ' ');
-    if ( _next == nullptr )
-      break;
+    if ( _next == nullptr ) break;
     _ss = micron::move(buf.substr(_start + 1, _next));
     _start = _next;
   }
@@ -90,8 +88,7 @@ get_devices()
       micron::ustr8 buf;
       sys[pt] >> buf;
 
-      if ( !format::contains(buf, "EV") )
-        continue;
+      if ( !format::contains(buf, "EV") ) continue;
       i64 ev = hex_string_to_int64(__parse_device("EV", buf));
       if ( ev & (1 << ev_key) )     // likely keyboard
       {
@@ -105,8 +102,7 @@ get_devices()
           }
         }
       }
-      if ( !format::contains(buf, "REL") )
-        continue;
+      if ( !format::contains(buf, "REL") ) continue;
       if ( (ev & (1 << ev_rel) and ev & (1 << ev_abs)) and ev & (1 << ev_syn) )     // likely mouse
       {
         auto name = __parse_device("NAME", buf);
@@ -125,11 +121,9 @@ get_devices()
 int
 nonblock_bind_device(device_t &dev)
 {
-  if ( dev.i_path.empty() )
-    return -1;
+  if ( dev.i_path.empty() ) return -1;
   int fd = static_cast<int>(posix::open(dev.i_path.c_str(), posix::o_nonblock | posix::o_rdonly));
-  if ( fd < 0 )
-    return fd;
+  if ( fd < 0 ) return fd;
   dev.bound_fd = fd;
   return fd;
 }
@@ -137,11 +131,9 @@ nonblock_bind_device(device_t &dev)
 int
 bind_device(device_t &dev)
 {
-  if ( dev.i_path.empty() )
-    return -1;
+  if ( dev.i_path.empty() ) return -1;
   int fd = static_cast<int>(posix::open(dev.i_path.c_str(), posix::o_rdonly));
-  if ( fd < 0 )
-    return fd;
+  if ( fd < 0 ) return fd;
   dev.bound_fd = fd;
 
   return fd;
@@ -150,8 +142,7 @@ bind_device(device_t &dev)
 void
 unbind_device(device_t &dev)
 {
-  if ( dev.bound_fd.has_error() )
-    posix::close(dev.bound_fd.fd);
+  if ( dev.bound_fd.has_error() ) posix::close(dev.bound_fd.fd);
   dev.bound_fd = -1;
 }
 };     // namespace uxin

@@ -591,268 +591,139 @@ template <int e>
 inline constexpr auto
 const_get_errno()
 {
-  if constexpr ( e == permissions )
-    return permissions_msg;
-  if constexpr ( e == no_entry )
-    return no_entry_msg;
-  if constexpr ( e == no_process )
-    return no_process_msg;
-  if constexpr ( e == interrupted )
-    return interrupted_msg;
-  if constexpr ( e == io_error )
-    return io_error_msg;
-  if constexpr ( e == no_such_device )
-    return no_such_device_msg;
-  if constexpr ( e == arguments_too_big )
-    return arguments_too_big_msg;
-  if constexpr ( e == exec_error )
-    return exec_error_msg;
-  if constexpr ( e == bad_file_number )
-    return bad_file_number_msg;
-  if constexpr ( e == no_child_process )
-    return no_child_process_msg;
+  if constexpr ( e == permissions ) return permissions_msg;
+  if constexpr ( e == no_entry ) return no_entry_msg;
+  if constexpr ( e == no_process ) return no_process_msg;
+  if constexpr ( e == interrupted ) return interrupted_msg;
+  if constexpr ( e == io_error ) return io_error_msg;
+  if constexpr ( e == no_such_device ) return no_such_device_msg;
+  if constexpr ( e == arguments_too_big ) return arguments_too_big_msg;
+  if constexpr ( e == exec_error ) return exec_error_msg;
+  if constexpr ( e == bad_file_number ) return bad_file_number_msg;
+  if constexpr ( e == no_child_process ) return no_child_process_msg;
   if constexpr ( e == try_again )     // also covers would_block
     return try_again_msg;
-  if constexpr ( e == out_of_memory )
-    return out_of_memory_msg;
-  if constexpr ( e == permission_denied )
-    return permission_denied_msg;
-  if constexpr ( e == bad_address )
-    return bad_address_msg;
-  if constexpr ( e == block_device_req )
-    return block_device_req_msg;
+  if constexpr ( e == out_of_memory ) return out_of_memory_msg;
+  if constexpr ( e == permission_denied ) return permission_denied_msg;
+  if constexpr ( e == bad_address ) return bad_address_msg;
+  if constexpr ( e == block_device_req ) return block_device_req_msg;
   if constexpr ( e == device_busy )     // also covers busy
     return device_busy_msg;
-  if constexpr ( e == file_exists )
-    return file_exists_msg;
-  if constexpr ( e == cross_device_link )
-    return cross_device_link_msg;
-  if constexpr ( e == no_device )
-    return no_device_msg;
-  if constexpr ( e == not_a_dir )
-    return not_a_dir_msg;
-  if constexpr ( e == is_a_dir )
-    return is_a_dir_msg;
-  if constexpr ( e == invalid_arg )
-    return invalid_arg_msg;
-  if constexpr ( e == file_table_ovflw )
-    return file_table_ovflw_msg;
-  if constexpr ( e == too_many_files )
-    return too_many_files_msg;
-  if constexpr ( e == not_a_tty )
-    return not_a_tty_msg;
-  if constexpr ( e == text_busy )
-    return text_busy_msg;
-  if constexpr ( e == file_too_big )
-    return file_too_big_msg;
-  if constexpr ( e == no_space )
-    return no_space_msg;
-  if constexpr ( e == illegal_seek )
-    return illegal_seek_msg;
-  if constexpr ( e == read_only_fs )
-    return read_only_fs_msg;
-  if constexpr ( e == too_many_links )
-    return too_many_links_msg;
-  if constexpr ( e == broken_pipe )
-    return broken_pipe_msg;
-  if constexpr ( e == out_of_domain )
-    return out_of_domain_msg;
-  if constexpr ( e == not_representable )
-    return not_representable_msg;
-  if constexpr ( e == deadlock )
-    return deadlock_msg;
-  if constexpr ( e == name_too_long )
-    return name_too_long_msg;
-  if constexpr ( e == no_record_locks )
-    return no_record_locks_msg;
-  if constexpr ( e == bad_syscall )
-    return bad_syscall_msg;
-  if constexpr ( e == dir_not_empty )
-    return dir_not_empty_msg;
-  if constexpr ( e == too_many_symlinks )
-    return too_many_symlinks_msg;
-  if constexpr ( e == no_message )
-    return no_message_msg;
-  if constexpr ( e == identifier_removed )
-    return identifier_removed_msg;
-  if constexpr ( e == channel_out_of_range )
-    return channel_out_of_range_msg;
-  if constexpr ( e == level2_not_synced )
-    return level2_not_synced_msg;
-  if constexpr ( e == level3_halted )
-    return level3_halted_msg;
-  if constexpr ( e == level3_reset )
-    return level3_reset_msg;
-  if constexpr ( e == link_num_out_of_range )
-    return link_num_out_of_range_msg;
-  if constexpr ( e == proto_driver_not_attached )
-    return proto_driver_not_attached_msg;
-  if constexpr ( e == no_csi_structure )
-    return no_csi_structure_msg;
-  if constexpr ( e == level2_halted )
-    return level2_halted_msg;
-  if constexpr ( e == invalid_exchange )
-    return invalid_exchange_msg;
-  if constexpr ( e == invalid_request_desc )
-    return invalid_request_desc_msg;
-  if constexpr ( e == exchange_full )
-    return exchange_full_msg;
-  if constexpr ( e == no_anode )
-    return no_anode_msg;
-  if constexpr ( e == invalid_request_code )
-    return invalid_request_code_msg;
-  if constexpr ( e == invalid_slot )
-    return invalid_slot_msg;
-  if constexpr ( e == bad_font_file )
-    return bad_font_file_msg;
-  if constexpr ( e == not_a_stream )
-    return not_a_stream_msg;
-  if constexpr ( e == no_data_available )
-    return no_data_available_msg;
-  if constexpr ( e == timer_expired )
-    return timer_expired_msg;
-  if constexpr ( e == no_stream_resources )
-    return no_stream_resources_msg;
-  if constexpr ( e == not_on_network )
-    return not_on_network_msg;
-  if constexpr ( e == package_not_installed )
-    return package_not_installed_msg;
-  if constexpr ( e == object_is_remote )
-    return object_is_remote_msg;
-  if constexpr ( e == link_severed )
-    return link_severed_msg;
-  if constexpr ( e == advertise_error )
-    return advertise_error_msg;
-  if constexpr ( e == srmount_error )
-    return srmount_error_msg;
-  if constexpr ( e == comm_error_on_send )
-    return comm_error_on_send_msg;
-  if constexpr ( e == proto_error )
-    return proto_error_msg;
-  if constexpr ( e == multihop_attempted )
-    return multihop_attempted_msg;
-  if constexpr ( e == rfs_specific_error )
-    return rfs_specific_error_msg;
-  if constexpr ( e == not_a_data_message )
-    return not_a_data_message_msg;
-  if constexpr ( e == overflow )
-    return overflow_msg;
-  if constexpr ( e == name_not_unique )
-    return name_not_unique_msg;
-  if constexpr ( e == bad_fd )
-    return bad_fd_msg;
-  if constexpr ( e == remote_addr_changed )
-    return remote_addr_changed_msg;
-  if constexpr ( e == shared_lib_inaccessible )
-    return shared_lib_inaccessible_msg;
-  if constexpr ( e == shared_lib_corrupted )
-    return shared_lib_corrupted_msg;
-  if constexpr ( e == shared_lib_section_bad )
-    return shared_lib_section_bad_msg;
-  if constexpr ( e == too_many_shared_libs )
-    return too_many_shared_libs_msg;
-  if constexpr ( e == cannot_exec_shared_lib )
-    return cannot_exec_shared_lib_msg;
-  if constexpr ( e == illegal_byte_sequence )
-    return illegal_byte_sequence_msg;
-  if constexpr ( e == restarted )
-    return restarted_msg;
-  if constexpr ( e == streams_pipe_error )
-    return streams_pipe_error_msg;
-  if constexpr ( e == too_many_users )
-    return too_many_users_msg;
-  if constexpr ( e == not_a_socket )
-    return not_a_socket_msg;
-  if constexpr ( e == dest_addr_required )
-    return dest_addr_required_msg;
-  if constexpr ( e == message_too_long )
-    return message_too_long_msg;
-  if constexpr ( e == wrong_protocol )
-    return wrong_protocol_msg;
-  if constexpr ( e == proto_not_available )
-    return proto_not_available_msg;
-  if constexpr ( e == proto_not_supported )
-    return proto_not_supported_msg;
-  if constexpr ( e == socket_not_supported )
-    return socket_not_supported_msg;
-  if constexpr ( e == op_not_supported )
-    return op_not_supported_msg;
-  if constexpr ( e == proto_family_not_supported )
-    return proto_family_not_supported_msg;
-  if constexpr ( e == addr_family_not_supported )
-    return addr_family_not_supported_msg;
-  if constexpr ( e == addr_in_use )
-    return addr_in_use_msg;
-  if constexpr ( e == addr_not_available )
-    return addr_not_available_msg;
-  if constexpr ( e == network_down )
-    return network_down_msg;
-  if constexpr ( e == network_unreachable )
-    return network_unreachable_msg;
-  if constexpr ( e == network_reset )
-    return network_reset_msg;
-  if constexpr ( e == connection_aborted )
-    return connection_aborted_msg;
-  if constexpr ( e == connection_reset )
-    return connection_reset_msg;
-  if constexpr ( e == no_buffer_space )
-    return no_buffer_space_msg;
-  if constexpr ( e == is_connected )
-    return is_connected_msg;
-  if constexpr ( e == not_connected )
-    return not_connected_msg;
-  if constexpr ( e == endpoint_shutdown )
-    return endpoint_shutdown_msg;
-  if constexpr ( e == too_many_refs )
-    return too_many_refs_msg;
-  if constexpr ( e == timed_out )
-    return timed_out_msg;
-  if constexpr ( e == connection_refused )
-    return connection_refused_msg;
-  if constexpr ( e == host_down )
-    return host_down_msg;
-  if constexpr ( e == host_unreachable )
-    return host_unreachable_msg;
-  if constexpr ( e == already_in_progress )
-    return already_in_progress_msg;
-  if constexpr ( e == in_progress )
-    return in_progress_msg;
-  if constexpr ( e == stale_file_handle )
-    return stale_file_handle_msg;
-  if constexpr ( e == needs_cleaning )
-    return needs_cleaning_msg;
-  if constexpr ( e == not_xenix_named )
-    return not_xenix_named_msg;
-  if constexpr ( e == no_xenix_semaphores )
-    return no_xenix_semaphores_msg;
-  if constexpr ( e == is_named_type )
-    return is_named_type_msg;
-  if constexpr ( e == remote_io_error )
-    return remote_io_error_msg;
-  if constexpr ( e == quota_exceeded )
-    return quota_exceeded_msg;
-  if constexpr ( e == no_medium )
-    return no_medium_msg;
-  if constexpr ( e == wrong_medium_type )
-    return wrong_medium_type_msg;
-  if constexpr ( e == operation_canceled )
-    return operation_canceled_msg;
-  if constexpr ( e == key_not_available )
-    return key_not_available_msg;
-  if constexpr ( e == key_expired )
-    return key_expired_msg;
-  if constexpr ( e == key_revoked )
-    return key_revoked_msg;
-  if constexpr ( e == key_rejected )
-    return key_rejected_msg;
-  if constexpr ( e == owner_died )
-    return owner_died_msg;
-  if constexpr ( e == state_not_recoverable )
-    return state_not_recoverable_msg;
-  if constexpr ( e == rf_kill )
-    return rf_kill_msg;
-  if constexpr ( e == hardware_memory_error )
-    return hardware_memory_error_msg;
+  if constexpr ( e == file_exists ) return file_exists_msg;
+  if constexpr ( e == cross_device_link ) return cross_device_link_msg;
+  if constexpr ( e == no_device ) return no_device_msg;
+  if constexpr ( e == not_a_dir ) return not_a_dir_msg;
+  if constexpr ( e == is_a_dir ) return is_a_dir_msg;
+  if constexpr ( e == invalid_arg ) return invalid_arg_msg;
+  if constexpr ( e == file_table_ovflw ) return file_table_ovflw_msg;
+  if constexpr ( e == too_many_files ) return too_many_files_msg;
+  if constexpr ( e == not_a_tty ) return not_a_tty_msg;
+  if constexpr ( e == text_busy ) return text_busy_msg;
+  if constexpr ( e == file_too_big ) return file_too_big_msg;
+  if constexpr ( e == no_space ) return no_space_msg;
+  if constexpr ( e == illegal_seek ) return illegal_seek_msg;
+  if constexpr ( e == read_only_fs ) return read_only_fs_msg;
+  if constexpr ( e == too_many_links ) return too_many_links_msg;
+  if constexpr ( e == broken_pipe ) return broken_pipe_msg;
+  if constexpr ( e == out_of_domain ) return out_of_domain_msg;
+  if constexpr ( e == not_representable ) return not_representable_msg;
+  if constexpr ( e == deadlock ) return deadlock_msg;
+  if constexpr ( e == name_too_long ) return name_too_long_msg;
+  if constexpr ( e == no_record_locks ) return no_record_locks_msg;
+  if constexpr ( e == bad_syscall ) return bad_syscall_msg;
+  if constexpr ( e == dir_not_empty ) return dir_not_empty_msg;
+  if constexpr ( e == too_many_symlinks ) return too_many_symlinks_msg;
+  if constexpr ( e == no_message ) return no_message_msg;
+  if constexpr ( e == identifier_removed ) return identifier_removed_msg;
+  if constexpr ( e == channel_out_of_range ) return channel_out_of_range_msg;
+  if constexpr ( e == level2_not_synced ) return level2_not_synced_msg;
+  if constexpr ( e == level3_halted ) return level3_halted_msg;
+  if constexpr ( e == level3_reset ) return level3_reset_msg;
+  if constexpr ( e == link_num_out_of_range ) return link_num_out_of_range_msg;
+  if constexpr ( e == proto_driver_not_attached ) return proto_driver_not_attached_msg;
+  if constexpr ( e == no_csi_structure ) return no_csi_structure_msg;
+  if constexpr ( e == level2_halted ) return level2_halted_msg;
+  if constexpr ( e == invalid_exchange ) return invalid_exchange_msg;
+  if constexpr ( e == invalid_request_desc ) return invalid_request_desc_msg;
+  if constexpr ( e == exchange_full ) return exchange_full_msg;
+  if constexpr ( e == no_anode ) return no_anode_msg;
+  if constexpr ( e == invalid_request_code ) return invalid_request_code_msg;
+  if constexpr ( e == invalid_slot ) return invalid_slot_msg;
+  if constexpr ( e == bad_font_file ) return bad_font_file_msg;
+  if constexpr ( e == not_a_stream ) return not_a_stream_msg;
+  if constexpr ( e == no_data_available ) return no_data_available_msg;
+  if constexpr ( e == timer_expired ) return timer_expired_msg;
+  if constexpr ( e == no_stream_resources ) return no_stream_resources_msg;
+  if constexpr ( e == not_on_network ) return not_on_network_msg;
+  if constexpr ( e == package_not_installed ) return package_not_installed_msg;
+  if constexpr ( e == object_is_remote ) return object_is_remote_msg;
+  if constexpr ( e == link_severed ) return link_severed_msg;
+  if constexpr ( e == advertise_error ) return advertise_error_msg;
+  if constexpr ( e == srmount_error ) return srmount_error_msg;
+  if constexpr ( e == comm_error_on_send ) return comm_error_on_send_msg;
+  if constexpr ( e == proto_error ) return proto_error_msg;
+  if constexpr ( e == multihop_attempted ) return multihop_attempted_msg;
+  if constexpr ( e == rfs_specific_error ) return rfs_specific_error_msg;
+  if constexpr ( e == not_a_data_message ) return not_a_data_message_msg;
+  if constexpr ( e == overflow ) return overflow_msg;
+  if constexpr ( e == name_not_unique ) return name_not_unique_msg;
+  if constexpr ( e == bad_fd ) return bad_fd_msg;
+  if constexpr ( e == remote_addr_changed ) return remote_addr_changed_msg;
+  if constexpr ( e == shared_lib_inaccessible ) return shared_lib_inaccessible_msg;
+  if constexpr ( e == shared_lib_corrupted ) return shared_lib_corrupted_msg;
+  if constexpr ( e == shared_lib_section_bad ) return shared_lib_section_bad_msg;
+  if constexpr ( e == too_many_shared_libs ) return too_many_shared_libs_msg;
+  if constexpr ( e == cannot_exec_shared_lib ) return cannot_exec_shared_lib_msg;
+  if constexpr ( e == illegal_byte_sequence ) return illegal_byte_sequence_msg;
+  if constexpr ( e == restarted ) return restarted_msg;
+  if constexpr ( e == streams_pipe_error ) return streams_pipe_error_msg;
+  if constexpr ( e == too_many_users ) return too_many_users_msg;
+  if constexpr ( e == not_a_socket ) return not_a_socket_msg;
+  if constexpr ( e == dest_addr_required ) return dest_addr_required_msg;
+  if constexpr ( e == message_too_long ) return message_too_long_msg;
+  if constexpr ( e == wrong_protocol ) return wrong_protocol_msg;
+  if constexpr ( e == proto_not_available ) return proto_not_available_msg;
+  if constexpr ( e == proto_not_supported ) return proto_not_supported_msg;
+  if constexpr ( e == socket_not_supported ) return socket_not_supported_msg;
+  if constexpr ( e == op_not_supported ) return op_not_supported_msg;
+  if constexpr ( e == proto_family_not_supported ) return proto_family_not_supported_msg;
+  if constexpr ( e == addr_family_not_supported ) return addr_family_not_supported_msg;
+  if constexpr ( e == addr_in_use ) return addr_in_use_msg;
+  if constexpr ( e == addr_not_available ) return addr_not_available_msg;
+  if constexpr ( e == network_down ) return network_down_msg;
+  if constexpr ( e == network_unreachable ) return network_unreachable_msg;
+  if constexpr ( e == network_reset ) return network_reset_msg;
+  if constexpr ( e == connection_aborted ) return connection_aborted_msg;
+  if constexpr ( e == connection_reset ) return connection_reset_msg;
+  if constexpr ( e == no_buffer_space ) return no_buffer_space_msg;
+  if constexpr ( e == is_connected ) return is_connected_msg;
+  if constexpr ( e == not_connected ) return not_connected_msg;
+  if constexpr ( e == endpoint_shutdown ) return endpoint_shutdown_msg;
+  if constexpr ( e == too_many_refs ) return too_many_refs_msg;
+  if constexpr ( e == timed_out ) return timed_out_msg;
+  if constexpr ( e == connection_refused ) return connection_refused_msg;
+  if constexpr ( e == host_down ) return host_down_msg;
+  if constexpr ( e == host_unreachable ) return host_unreachable_msg;
+  if constexpr ( e == already_in_progress ) return already_in_progress_msg;
+  if constexpr ( e == in_progress ) return in_progress_msg;
+  if constexpr ( e == stale_file_handle ) return stale_file_handle_msg;
+  if constexpr ( e == needs_cleaning ) return needs_cleaning_msg;
+  if constexpr ( e == not_xenix_named ) return not_xenix_named_msg;
+  if constexpr ( e == no_xenix_semaphores ) return no_xenix_semaphores_msg;
+  if constexpr ( e == is_named_type ) return is_named_type_msg;
+  if constexpr ( e == remote_io_error ) return remote_io_error_msg;
+  if constexpr ( e == quota_exceeded ) return quota_exceeded_msg;
+  if constexpr ( e == no_medium ) return no_medium_msg;
+  if constexpr ( e == wrong_medium_type ) return wrong_medium_type_msg;
+  if constexpr ( e == operation_canceled ) return operation_canceled_msg;
+  if constexpr ( e == key_not_available ) return key_not_available_msg;
+  if constexpr ( e == key_expired ) return key_expired_msg;
+  if constexpr ( e == key_revoked ) return key_revoked_msg;
+  if constexpr ( e == key_rejected ) return key_rejected_msg;
+  if constexpr ( e == owner_died ) return owner_died_msg;
+  if constexpr ( e == state_not_recoverable ) return state_not_recoverable_msg;
+  if constexpr ( e == rf_kill ) return rf_kill_msg;
+  if constexpr ( e == hardware_memory_error ) return hardware_memory_error_msg;
 
   return no_msg;
 }

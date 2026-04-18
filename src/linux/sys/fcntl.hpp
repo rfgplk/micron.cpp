@@ -26,13 +26,27 @@ fcntl(i32 fd, i32 cmd, Args &&...args) -> i32
 auto
 fadvise(i32 fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 {
+  // apparently doesn't exist
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return static_cast<i32>(micron::syscall(SYS_fadvise64, fd, offset, len, advice));
+#elif defined(__micron_arch_arm32)
+  return static_cast<i32>(micron::syscall(SYS_arm_fadvise64_64, fd, static_cast<u32>(offset >> 32), static_cast<u32>(offset & 0xffffffffu),
+                                          static_cast<u32>(len >> 32), static_cast<u32>(len & 0xffffffffu), advice));
+#endif
 }
 
 auto
 fadvise(fd_t fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 {
+
+  // apparently doesn't exist
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return static_cast<i32>(micron::syscall(SYS_fadvise64, fd.fd, offset, len, advice));
+#elif defined(__micron_arch_arm32)
+  return static_cast<i32>(micron::syscall(SYS_arm_fadvise64_64, fd.fd, static_cast<u32>(offset >> 32),
+                                          static_cast<u32>(offset & 0xffffffffu), static_cast<u32>(len >> 32),
+                                          static_cast<u32>(len & 0xffffffffu), advice));
+#endif
 }
 
 template <typename... Args>

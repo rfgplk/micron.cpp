@@ -25,8 +25,7 @@ pow(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = math::powerf(*first, y);     // for clarity
+  for ( ; first != end; ++first ) *first = math::powerf(*first, y);     // for clarity
 }
 
 template <is_iterable_container T, typename Y>
@@ -36,8 +35,7 @@ pow(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = math::powerf(*first, y);     // for clarity
+  for ( ; first != end; ++first ) *first = math::powerf(*first, y);     // for clarity
 }
 
 template <is_iterable_container T, typename Y>
@@ -47,8 +45,7 @@ pow(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = math::power(*first, y);     // for clarity
+  for ( ; first != end; ++first ) *first = math::power(*first, y);     // for clarity
 }
 
 template <typename T, typename Y>
@@ -56,8 +53,7 @@ template <typename T, typename Y>
 void
 pow(T *__restrict first, T *__restrict end, const Y y) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = math::powerf(*first, y);     // for clarity
+  for ( ; first != end; ++first ) *first = math::powerf(*first, y);     // for clarity
 }
 
 template <typename T, typename Y>
@@ -65,8 +61,7 @@ template <typename T, typename Y>
 void
 pow(T *__restrict first, T *__restrict end, const Y y) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = math::power(*first, y);     // for clarity
+  for ( ; first != end; ++first ) *first = math::power(*first, y);     // for clarity
 }
 
 template <is_iterable_container T>
@@ -75,8 +70,7 @@ add(T &cont, const typename T::value_type y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = *first + y;     // for clarity
+  for ( ; first != end; ++first ) *first = *first + y;     // for clarity
 }
 
 template <is_iterable_container T>
@@ -86,8 +80,7 @@ multiply(T &cont) noexcept
   typename T::value_type r = 1;
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    r *= *first;     // for clarity
+  for ( ; first != end; ++first ) r *= *first;     // for clarity
   return r;
 }
 
@@ -97,8 +90,7 @@ multiply(T &cont, const typename T::value_type y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = *first * y;     // for clarity
+  for ( ; first != end; ++first ) *first = *first * y;     // for clarity
 }
 
 template <is_iterable_container T>
@@ -122,8 +114,7 @@ divide(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = *first / y;     // for clarity
+  for ( ; first != end; ++first ) *first = *first / y;     // for clarity
 }
 
 template <is_iterable_container T, typename Y>
@@ -133,8 +124,7 @@ subtract(T &cont, const Y y) noexcept
 {
   auto *first = cont.begin();
   auto *end = cont.end();
-  for ( ; first != end; ++first )
-    *first = *first - y;     // for clarity
+  for ( ; first != end; ++first ) *first = *first - y;     // for clarity
 }
 
 template <is_iterable_container T, typename... Args>
@@ -143,8 +133,7 @@ add(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
 
 template <is_iterable_container T, typename... Args>
@@ -153,8 +142,7 @@ multiply(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
 
 template <is_iterable_container T, typename... Args>
@@ -163,8 +151,7 @@ divide(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
 
 template <is_iterable_container T, typename... Args>
@@ -173,8 +160,7 @@ subtract(T &cont, const Args *__restrict... args) noexcept
 {
   auto *first = cont.begin();
   auto n = cont.size();
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
 }
 
 template <class T, typename Y>
@@ -182,8 +168,7 @@ template <class T, typename Y>
 void
 add(T *first, T *end, const Y y) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = *first + y;
+  for ( ; first != end; ++first ) *first = *first + y;
 }
 
 template <class T, typename Y>
@@ -191,8 +176,7 @@ template <class T, typename Y>
 void
 multiply(T *first, T *end, const Y y) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = *first * y;
+  for ( ; first != end; ++first ) *first = *first * y;
 }
 
 template <class T, typename Y>
@@ -200,8 +184,7 @@ template <class T, typename Y>
 void
 divide(T *first, T *end, const Y y) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = *first / y;
+  for ( ; first != end; ++first ) *first = *first / y;
 }
 
 template <class T, typename Y>
@@ -209,39 +192,34 @@ template <class T, typename Y>
 void
 subtract(T *first, T *end, const Y y) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = *first - y;
+  for ( ; first != end; ++first ) *first = *first - y;
 }
 
 template <class T, typename... Args>
 void
 add(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
 }
 
 template <class T, typename... Args>
 void
 multiply(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
 }
 
 template <class T, typename... Args>
 void
 divide(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
 }
 
 template <class T, typename... Args>
 void
 subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
-  for ( usize i = 0; i < n; i++ )
-    (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
+  for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
 }
 };     // namespace micron

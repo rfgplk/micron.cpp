@@ -355,8 +355,7 @@ public:
   {
     T val = micron::move(__buffer[__tail]);
     __tail = (__tail + 1) & __mask;
-    if ( __size > 0 )
-      --__size;
+    if ( __size > 0 ) --__size;
     return val;
   }
 
@@ -416,16 +415,14 @@ public:
   reference
   at(size_type idx)
   {
-    if ( idx >= __size )
-      exc<except::library_error>("circle_vector::at");
+    if ( idx >= __size ) exc<except::library_error>("circle_vector::at");
     return __buffer[(__tail + idx) & __mask];
   }
 
   const_reference
   at(size_type idx) const
   {
-    if ( idx >= __size )
-      exc<except::library_error>("circle_vector::at");
+    if ( idx >= __size ) exc<except::library_error>("circle_vector::at");
     return __buffer[(__tail + idx) & __mask];
   }
 

@@ -174,8 +174,7 @@ cap_bset_read_all()
 {
   u64 mask = 0;
   for ( u32 i = 0; i <= cap_last_cap; ++i ) {
-    if ( cap_bset_read(i) > 0 )
-      mask |= u64(1) << i;
+    if ( cap_bset_read(i) > 0 ) mask |= u64(1) << i;
   }
   return mask;
 }
@@ -185,8 +184,7 @@ cap_ambient_read_all()
 {
   u64 mask = 0;
   for ( u32 i = 0; i <= cap_last_cap; ++i ) {
-    if ( cap_ambient_is_set(i) > 0 )
-      mask |= u64(1) << i;
+    if ( cap_ambient_is_set(i) > 0 ) mask |= u64(1) << i;
   }
   return mask;
 }

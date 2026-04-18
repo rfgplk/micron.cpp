@@ -140,8 +140,7 @@ struct __tlsf_list {
     tlsf_hdr *head = heads[i];
     block->next_free = head;
     block->prev_free = nullptr;
-    if ( head )
-      head->prev_free = block;
+    if ( head ) head->prev_free = block;
     heads[i] = block;
 
     block->flags = __block_free;
@@ -161,13 +160,11 @@ struct __tlsf_list {
     else
       heads[i] = block->next_free;
 
-    if ( block->next_free )
-      block->next_free->prev_free = block->prev_free;
+    if ( block->next_free ) block->next_free->prev_free = block->prev_free;
 
     if ( !heads[i] ) {
       sl_bitmap[fi] &= ~(1u << si);
-      if ( !sl_bitmap[fi] )
-        fl_bitmap &= ~(1u << fi);
+      if ( !sl_bitmap[fi] ) fl_bitmap &= ~(1u << fi);
     }
   }
 
@@ -176,15 +173,13 @@ struct __tlsf_list {
   {
     i32 fi, si;
     mapping_search(needed, fi, si);
-    if ( fi >= fl_count )
-      return nullptr;
+    if ( fi >= fl_count ) return nullptr;
 
     u32 sl_map = sl_bitmap[fi] & (~0u << si);
     if ( !sl_map ) {
 
       u32 fl_map = fl_bitmap & (~0u << (fi + 1));
-      if ( !fl_map )
-        return nullptr;
+      if ( !fl_map ) return nullptr;
       fi = __builtin_ctz(fl_map);
       sl_map = sl_bitmap[fi];
     }
@@ -199,8 +194,7 @@ struct __tlsf_list {
   try_split(tlsf_hdr *block, usize needed) noexcept
   {
     usize remain = (usize)block->bsize - needed;
-    if ( remain < __min_block )
-      return;
+    if ( remain < __min_block ) return;
 
     block->bsize = (u32)needed;
 
@@ -244,8 +238,7 @@ struct __tlsf_list {
   __impl_zero_arrays() noexcept
   {
     fl_bitmap = 0;
-    for ( i32 i = 0; i < __fl_count; ++i )
-      sl_bitmap[i] = 0;
+    for ( i32 i = 0; i < __fl_count; ++i ) sl_bitmap[i] = 0;
     for ( i32 i = 0; i < __list_count; ++i ) {
       heads[i] = nullptr;
       temporal_active[i] = nullptr;
@@ -258,31 +251,26 @@ struct __tlsf_list {
     uintptr_t p = (uintptr_t)_ptr;
     uintptr_t r = align_up(p, __block_align);
     usize adjust = r - p;
-    if ( _len <= adjust )
-      goto fail;
+    if ( _len <= adjust ) goto fail;
     {
       byte *aligned = (byte *)r;
       usize usable = _len - adjust;
       usable = (usable / __block_align) * __block_align;
 
       // need start-sentinel + at least __min_block + end-sentinel
-      if ( usable < 2 * __block_align + __min_block )
-        goto fail;
+      if ( usable < 2 * __block_align + __min_block ) goto fail;
 
       // u32 bsize guard — reject pools > 4 GiB
       usize data = usable - 2 * __block_align;
-      if ( data > (usize)0xFFFFFFFFu )
-        goto fail;
+      if ( data > (usize)0xFFFFFFFFu ) goto fail;
 
       base = aligned;
       total = data;
 
       i32 fl = fls64(total);
       fl_count = fl - __fl_shift + 1;
-      if ( fl_count > __fl_count )
-        fl_count = __fl_count;
-      if ( fl_count < 1 )
-        fl_count = 1;
+      if ( fl_count > __fl_count ) fl_count = __fl_count;
+      if ( fl_count < 1 ) fl_count = 1;
 
       __impl_zero_arrays();
 
@@ -322,8 +310,7 @@ struct __tlsf_list {
   __tlsf_list(const T &mem) noexcept : base(nullptr), total(0), fl_count(0), allocated_bytes(0), tombstoned_bytes(0), fl_bitmap(0)
   {
     __impl_zero_arrays();
-    if ( mem.zero() or mem.len < (usize)Min )
-      micron::abort();
+    if ( mem.zero() or mem.len < (usize)Min ) micron::abort();
     __impl_init_memory(mem.ptr, mem.len);
   }
 
@@ -397,16 +384,13 @@ struct __tlsf_list {
   allocate(usize n) noexcept
   {
     n += sizeof(micron::simd::i256);
-    if ( n == 0 )
-      n = 1;
-    if ( !base )
-      return { nullptr, 0 };
+    if ( n == 0 ) n = 1;
+    if ( !base ) return { nullptr, 0 };
 
     usize needed = adjusted_block_size(n);
 
     tlsf_hdr *block = find_free(needed);
-    if ( !block )
-      return { nullptr, 0 };
+    if ( !block ) return { nullptr, 0 };
 
     try_split(block, needed);
     block->flags = __block_alloc;
@@ -419,10 +403,8 @@ struct __tlsf_list {
   temporal_allocate(usize n) noexcept
   {
     n += sizeof(micron::simd::i256);
-    if ( n == 0 )
-      n = 1;
-    if ( !base )
-      return { nullptr, 0 };
+    if ( n == 0 ) n = 1;
+    if ( !base ) return { nullptr, 0 };
 
     usize needed = adjusted_block_size(n);
 
@@ -437,15 +419,13 @@ struct __tlsf_list {
     }
 
     tlsf_hdr *block = find_free(needed);
-    if ( !block )
-      return { nullptr, 0 };
+    if ( !block ) return { nullptr, 0 };
 
     try_split(block, needed);
     block->flags = __block_alloc | __block_temporal;
     allocated_bytes += (usize)block->bsize;
 
-    if ( fi >= 0 && fi < fl_count )
-      temporal_active[idx(fi, si)] = block;
+    if ( fi >= 0 && fi < fl_count ) temporal_active[idx(fi, si)] = block;
 
     return { reinterpret_cast<byte *>(block) + __hdr_offset, (usize)block->bsize - __hdr_offset };
   }
@@ -453,21 +433,16 @@ struct __tlsf_list {
   T
   allocate_exact(usize n) noexcept
   {
-    if ( !base )
-      return { nullptr, 0 };
-    if ( n < __min_block )
-      return { nullptr, 0 };
-    if ( (n & (n - 1)) != 0 )
-      return { nullptr, 0 };
+    if ( !base ) return { nullptr, 0 };
+    if ( n < __min_block ) return { nullptr, 0 };
+    if ( (n & (n - 1)) != 0 ) return { nullptr, 0 };
 
     i32 fi, si;
     mapping_insert(n, fi, si);
-    if ( fi < 0 || fi >= fl_count )
-      return { nullptr, 0 };
+    if ( fi < 0 || fi >= fl_count ) return { nullptr, 0 };
 
     i32 i = idx(fi, si);
-    if ( !heads[i] )
-      return { nullptr, 0 };
+    if ( !heads[i] ) return { nullptr, 0 };
 
     tlsf_hdr *block = heads[i];
     fl_remove(block);
@@ -481,8 +456,7 @@ struct __tlsf_list {
   tombstone(byte *ptr) noexcept
   {
     tlsf_hdr *hdr = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
-    if ( !(hdr->flags & __block_alloc) )
-      return { __flag_invalid };
+    if ( !(hdr->flags & __block_alloc) ) return { __flag_invalid };
 
     usize bsz = (usize)hdr->bsize;
     hdr->flags = __block_tombstone;
@@ -495,8 +469,7 @@ struct __tlsf_list {
   ret_flag
   tombstone(T &node) noexcept
   {
-    if ( !node.ptr or node.len == 0 )
-      return __flag_invalid;
+    if ( !node.ptr or node.len == 0 ) return __flag_invalid;
     return tombstone(node.ptr);
   }
 
@@ -510,26 +483,22 @@ struct __tlsf_list {
   ret_flag
   deallocate(byte *ptr) noexcept
   {
-    if ( !ptr || !base )
-      return __flag_failure;
+    if ( !ptr || !base ) return __flag_failure;
 
     tlsf_hdr *block = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
     usize bsz = (usize)block->bsize;
 
-    if ( block->flags == __block_free )
-      return { __flag_invalid };
+    if ( block->flags == __block_free ) return { __flag_invalid };
 
     allocated_bytes -= bsz;
-    if ( block->flags & __block_tombstone )
-      tombstoned_bytes -= bsz;
+    if ( block->flags & __block_tombstone ) tombstoned_bytes -= bsz;
 
     if ( block->flags & __block_temporal ) {
       i32 fi, si;
       mapping_insert(bsz, fi, si);
       if ( fi >= 0 && fi < fl_count ) {
         i32 i = idx(fi, si);
-        if ( temporal_active[i] == block )
-          temporal_active[i] = nullptr;
+        if ( temporal_active[i] == block ) temporal_active[i] = nullptr;
       }
     }
 
@@ -540,29 +509,24 @@ struct __tlsf_list {
   ret_flag
   deallocate(T &node) noexcept
   {
-    if ( !node.ptr or node.len == 0 )
-      return __flag_invalid;
+    if ( !node.ptr or node.len == 0 ) return __flag_invalid;
     return deallocate(node.ptr);
   }
 
   T
   reallocate(T node, usize new_size) noexcept
   {
-    if ( !base )
-      return { nullptr, 0 };
-    if ( !node.ptr )
-      return allocate(new_size);
+    if ( !base ) return { nullptr, 0 };
+    if ( !node.ptr ) return allocate(new_size);
     if ( new_size == 0 ) {
       deallocate(node);
       return { nullptr, 0 };
     }
 
-    if ( node.len >= new_size && new_size > (node.len >> 1) )
-      return node;
+    if ( node.len >= new_size && new_size > (node.len >> 1) ) return node;
 
     T nnode = allocate(new_size);
-    if ( !nnode.ptr )
-      return { nullptr, 0 };
+    if ( !nnode.ptr ) return { nullptr, 0 };
 
     usize to_copy = (node.len < nnode.len) ? node.len : nnode.len;
     micron::memcpy(nnode.ptr, node.ptr, to_copy);
@@ -573,8 +537,7 @@ struct __tlsf_list {
   usize
   available() const noexcept
   {
-    if ( !base )
-      return 0;
+    if ( !base ) return 0;
     return total - allocated_bytes;
   }
 
@@ -599,13 +562,11 @@ struct __tlsf_list {
   usize
   block_size(byte *ptr) const noexcept
   {
-    if ( !base || !ptr )
-      return 0;
+    if ( !base || !ptr ) return 0;
     byte *data_lo = base + __block_align;
     byte *data_hi = base + __block_align + total;
     byte *blk = ptr - __hdr_offset;
-    if ( blk < data_lo || blk >= data_hi )
-      return 0;
+    if ( blk < data_lo || blk >= data_hi ) return 0;
     const tlsf_hdr *hdr = reinterpret_cast<const tlsf_hdr *>(blk);
     return (usize)hdr->bsize;
   }
@@ -613,13 +574,11 @@ struct __tlsf_list {
   bool
   is_allocated(byte *ptr) const noexcept
   {
-    if ( !ptr || !base )
-      return false;
+    if ( !ptr || !base ) return false;
     byte *data_lo = base + __block_align;
     byte *data_hi = base + __block_align + total;
     byte *blk = ptr - __hdr_offset;
-    if ( blk < data_lo || blk >= data_hi )
-      return false;
+    if ( blk < data_lo || blk >= data_hi ) return false;
     const tlsf_hdr *hdr = reinterpret_cast<const tlsf_hdr *>(blk);
 
     return hdr->flags != __block_free;
@@ -628,8 +587,7 @@ struct __tlsf_list {
   usize
   allocated_size(byte *ptr) const noexcept
   {
-    if ( !is_allocated(ptr) )
-      return 0;
+    if ( !is_allocated(ptr) ) return 0;
     return block_size(ptr);
   }
 };

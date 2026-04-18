@@ -36,7 +36,7 @@ namespace simd
 #define _ru32f(x) vreinterpretq_u32_f32(x)
 #define _rf32u(x) vreinterpretq_f32_u32(x)
 
-[[gnu::always_inline]] static inline uint16x8_t
+__attribute__((always_inline)) static inline uint16x8_t
 __expand_mask_u16(uint8_t k) noexcept
 {
   static const uint16_t bp[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
@@ -44,7 +44,7 @@ __expand_mask_u16(uint8_t k) noexcept
   return vceqq_u16(vandq_u16(m, p), p);
 }
 
-[[gnu::always_inline]] static inline uint32x4_t
+__attribute__((always_inline)) static inline uint32x4_t
 __expand_mask_u32(uint8_t k) noexcept
 {
   static const uint32_t bp[4] = { 1, 2, 4, 8 };
@@ -52,14 +52,14 @@ __expand_mask_u32(uint8_t k) noexcept
   return vceqq_u32(vandq_u32(m, p), p);
 }
 
-[[gnu::always_inline]] static inline uint64x2_t
+__attribute__((always_inline)) static inline uint64x2_t
 __expand_mask_u64(uint8_t k) noexcept
 {
   uint64_t lanes[2] = { (k & 1) ? UINT64_MAX : 0ULL, (k & 2) ? UINT64_MAX : 0ULL };
   return vld1q_u64(lanes);
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __scalar_f32x4(float32x4_t a, float (*fn)(float)) noexcept
 {
   float r[4];
@@ -71,7 +71,7 @@ __scalar_f32x4(float32x4_t a, float (*fn)(float)) noexcept
   return vld1q_f32(r);
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __scalar2_f32x4(float32x4_t a, float32x4_t b, float (*fn)(float, float)) noexcept
 {
   float ra[4], rb[4];
@@ -81,7 +81,7 @@ __scalar2_f32x4(float32x4_t a, float32x4_t b, float (*fn)(float, float)) noexcep
   return vld1q_f32(rc);
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __neon_v7_sqrtq_f32(float32x4_t a) noexcept
 {
   float32x4_t r = vrsqrteq_f32(a);
@@ -92,7 +92,7 @@ __neon_v7_sqrtq_f32(float32x4_t a) noexcept
   return vbslq_f32(zero, vdupq_n_f32(0.f), result);
 }
 
-[[gnu::always_inline]] static inline int64x2_t
+__attribute__((always_inline)) static inline int64x2_t
 __neon_v7_absq_s64(int64x2_t a) noexcept
 {
   int64x2_t mask = vshrq_n_s64(a, 63);
@@ -212,14 +212,14 @@ maskz_sqrt_ss(M k, f128 a, f128 b)
   return (k & 1) ? vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(b, 0)), a, 0) : vdupq_n_f32(0.f);
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __neon_rsqrt_ps(float32x4_t a) noexcept
 {
   float32x4_t x = vrsqrteq_f32(a);
   return vmulq_f32(x, vrsqrtsq_f32(vmulq_f32(a, x), x));
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __neon_rsqrt14_ps(float32x4_t a) noexcept
 {
   float32x4_t x = vrsqrteq_f32(a);
@@ -266,14 +266,14 @@ maskz_rsqrt14_ss(M k, f128 a, f128 b)
   return (k & 1) ? rsqrt14_ss(a, b) : vdupq_n_f32(0.f);
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __neon_rcp_ps(float32x4_t a) noexcept
 {
   float32x4_t x = vrecpeq_f32(a);
   return vmulq_f32(x, vrecpsq_f32(a, x));
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __neon_rcp14_ps(float32x4_t a) noexcept
 {
   float32x4_t x = vrecpeq_f32(a);
@@ -818,7 +818,7 @@ mask_reduce_min_u8(M k, i128 &o)
   return reduce_min_u8(m);
 }
 
-[[gnu::always_inline]] static inline float32x4_t
+__attribute__((always_inline)) static inline float32x4_t
 __v7_roundq(float32x4_t a, float (*fn)(float)) noexcept
 {
   float r[4];

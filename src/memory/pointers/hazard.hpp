@@ -55,8 +55,7 @@ class hazard_pointer
   inline __attribute__((always_inline)) void
   __update_seqcst(T *_ptr)
   {
-    if ( _id == _end )
-      _id = __emplace_hazard();
+    if ( _id == _end ) _id = __emplace_hazard();
     if ( _id != _end ) [[likely]]
       __hazard_table[_id].ptr.__store(static_cast<void *>(_ptr), memory_order::seq_cst);
   }
@@ -103,8 +102,7 @@ public:
     for ( ;; ) {
       T *ptr = src.__get(memory_order::acquire);
       __update_seqcst(ptr);
-      if ( ptr == src.load(memory_order::acquire) )
-        return ptr;
+      if ( ptr == src.load(memory_order::acquire) ) return ptr;
     }
   }
 
@@ -126,8 +124,7 @@ public:
   void
   reset_protection(const T *ptr) noexcept
   {
-    if ( _id == _end )
-      return;
+    if ( _id == _end ) return;
     T *expected = const_cast<T *>(ptr);
     __hazard_table[_id].ptr.compare_exchange_strong(expected, (bool)nullptr, memory_order::acq_rel, memory_order::acquire);
   }
@@ -135,8 +132,7 @@ public:
   void
   reset_protection(nullptr_t = nullptr) noexcept
   {
-    if ( _id == _end )
-      return;
+    if ( _id == _end ) return;
     __hazard_table[_id].ptr.__store(0, memory_order::release);
   }
 };

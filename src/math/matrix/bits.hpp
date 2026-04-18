@@ -53,8 +53,7 @@ public:
 
   int_matrix_base_avx(const std::initializer_list<B> &lst)
   {
-    if ( lst.size() != __size )
-      exc<except::library_error>("micron::int8x8 initializer_list out of bounds");
+    if ( lst.size() != __size ) exc<except::library_error>("micron::int8x8 initializer_list out of bounds");
     micron::bytecpy(__mat, lst.begin(), __size * sizeof(B));
   }
 
@@ -214,32 +213,28 @@ public:
   int_matrix_base_avx &
   operator+=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ )
-      __mat[i] += o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) __mat[i] += o.__mat[i];
     return *this;
   }
 
   int_matrix_base_avx &
   operator-=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ )
-      __mat[i] -= o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) __mat[i] -= o.__mat[i];
     return *this;
   }
 
   int_matrix_base_avx &
   operator*=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ )
-      __mat[i] *= o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) __mat[i] *= o.__mat[i];
     return *this;
   }
 
   int_matrix_base_avx &
   operator/=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ )
-      __mat[i] /= o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) __mat[i] /= o.__mat[i];
     return *this;
   }
 
@@ -247,8 +242,7 @@ public:
   div_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i )
-      result.__mat[i] = __mat[i] / sc;
+    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] / sc;
     return result;
   }
 
@@ -257,8 +251,7 @@ public:
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; ++i )
-      for ( usize j = 0; j < C; ++j )
-        result[j, i] = (*this)[i, j];
+      for ( usize j = 0; j < C; ++j ) result[j, i] = (*this)[i, j];
     return result;
   }
 
@@ -266,8 +259,7 @@ public:
   add_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i )
-      result.__mat[i] = __mat[i] + sc;
+    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] + sc;
     return result;
   }
 
@@ -275,8 +267,7 @@ public:
   sub_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i )
-      result.__mat[i] = __mat[i] - sc;
+    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] - sc;
     return result;
   }
 
@@ -284,8 +275,7 @@ public:
   scale(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i )
-      result.__mat[i] = __mat[i] * sc;
+    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] * sc;
     return result;
   }
 
@@ -295,8 +285,7 @@ public:
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; i++ ) {
       for ( usize j = 0; j < C; j++ )
-        for ( usize k = 0; k < C; k++ )
-          result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
+        for ( usize k = 0; k < C; k++ ) result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
     }
     return result;
   }
@@ -307,8 +296,7 @@ public:
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; ++i )
-      for ( usize j = 0; j < C; ++j )
-        result[i, j] = (*this)[i, j] * o[i, j];
+      for ( usize j = 0; j < C; ++j ) result[i, j] = (*this)[i, j] * o[i, j];
     return result;
   }
 
@@ -317,8 +305,7 @@ public:
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; ++i )
-      for ( usize j = 0; j < C; ++j )
-        result[i, j] = (*this)[i, j] + o[i, j];
+      for ( usize j = 0; j < C; ++j ) result[i, j] = (*this)[i, j] + o[i, j];
     return result;
   }
 
@@ -327,8 +314,7 @@ public:
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; ++i )
-      for ( usize j = 0; j < C; ++j )
-        result[i, j] = (*this)[i, j] - o[i, j];
+      for ( usize j = 0; j < C; ++j ) result[i, j] = (*this)[i, j] - o[i, j];
     return result;
   }
 
@@ -337,8 +323,7 @@ public:
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; ++i )
-      for ( usize j = 0; j < C; ++j )
-        result[i, j] = (*this)[i, j] / o[i, j];
+      for ( usize j = 0; j < C; ++j ) result[i, j] = (*this)[i, j] / o[i, j];
     return result;
   }
 };

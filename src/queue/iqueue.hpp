@@ -58,8 +58,7 @@ class immutable_queue
   static inline void
   __dealloc_node(__node *n)
   {
-    if constexpr ( !micron::is_trivially_destructible_v<T> )
-      n->value.~T();
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) n->value.~T();
     abc::dealloc(reinterpret_cast<byte *>(n));
   }
 
@@ -381,8 +380,7 @@ public:
       return __rear->value;
     //  rear empty: walk front to tail
     const __node *n = __front;
-    while ( n->next )
-      n = n->next;
+    while ( n->next ) n = n->next;
     return n->value;
   }
 
@@ -394,8 +392,7 @@ public:
 
     if ( idx < __f_len ) {
       const __node *n = __front;
-      for ( usize i = 0; i < idx; ++i )
-        n = n->next;
+      for ( usize i = 0; i < idx; ++i ) n = n->next;
       return n->value;
     }
 
@@ -404,8 +401,7 @@ public:
     //  rear list position (from head): __r_len - 1 - (idx - __f_len)
     usize rear_pos = __r_len - 1 - (idx - __f_len);
     const __node *n = __rear;
-    for ( usize i = 0; i < rear_pos; ++i )
-      n = n->next;
+    for ( usize i = 0; i < rear_pos; ++i ) n = n->next;
     return n->value;
   }
 
@@ -438,13 +434,11 @@ public:
   {
     if ( __front == o.__front && __rear == o.__rear ) [[unlikely]]
       return true;
-    if ( size() != o.size() )
-      return false;
+    if ( size() != o.size() ) return false;
     auto a = begin(), ae = end();
     auto b = o.begin();
     for ( ; a != ae; ++a, ++b ) {
-      if ( *a != *b )
-        return false;
+      if ( *a != *b ) return false;
     }
     return true;
   }
@@ -474,8 +468,7 @@ public:
       cur = cur->next;
     }
 
-    if ( !__rear )
-      return;
+    if ( !__rear ) return;
 
     constexpr usize __stack_cap = 128;
     if ( __r_len <= __stack_cap ) {
@@ -486,8 +479,7 @@ public:
         stack[depth++] = cur;
         cur = cur->next;
       }
-      while ( depth > 0 )
-        fn(static_cast<const T &>(stack[--depth]->value));
+      while ( depth > 0 ) fn(static_cast<const T &>(stack[--depth]->value));
     } else {
       //  heap fallback for very large rear lists
       auto *buf = reinterpret_cast<const __node **>(abc::alloc(__r_len * sizeof(const __node *)));
@@ -497,8 +489,7 @@ public:
         buf[depth++] = cur;
         cur = cur->next;
       }
-      while ( depth > 0 )
-        fn(static_cast<const T &>(buf[--depth]->value));
+      while ( depth > 0 ) fn(static_cast<const T &>(buf[--depth]->value));
       abc::dealloc(reinterpret_cast<byte *>(buf));
     }
   }
@@ -530,10 +521,8 @@ public:
     bool
     operator==(const const_iterator &o) const
     {
-      if ( __cur != o.__cur )
-        return false;
-      if ( __cur )
-        return true;     // both in front phase, same node
+      if ( __cur != o.__cur ) return false;
+      if ( __cur ) return true;     // both in front phase, same node
       return __rear_top == o.__rear_top;
     }
 
@@ -546,8 +535,7 @@ public:
     const T &
     value(void) const
     {
-      if ( __cur )
-        return __cur->value;
+      if ( __cur ) return __cur->value;
       return __stack[__rear_top - 1]->value;
     }
 
@@ -560,8 +548,7 @@ public:
     const T *
     operator->(void) const
     {
-      if ( __cur )
-        return &__cur->value;
+      if ( __cur ) return &__cur->value;
       return &__stack[__rear_top - 1]->value;
     }
 

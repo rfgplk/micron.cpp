@@ -70,8 +70,7 @@ public:
   double_list(const size_t cnt) : root(nullptr)
   {
     __impl_heap(micron::move(T()), &root);
-    if ( root == nullptr )
-      exc<except::runtime_error>("micron::double_list() heap allocation failure");
+    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list() heap allocation failure");
     double_list_node_t *ptr = root;
     double_list_node_t *ptr_prev = nullptr;
     for ( size_t i = 0; i < cnt; i++ ) {
@@ -84,8 +83,7 @@ public:
   double_list(const size_t cnt, const T &t)
   {
     __impl_heap(t, &root);
-    if ( root == nullptr )
-      exc<except::runtime_error>("micron::double_list() heap allocation failure");
+    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list() heap allocation failure");
     double_list_node_t *ptr = root;
     double_list_node_t *ptr_prev = nullptr;
     for ( size_t i = 0; i < cnt; i++ ) {
@@ -117,11 +115,9 @@ public:
 
   ~double_list()
   {
-    if ( root == nullptr )
-      return;
+    if ( root == nullptr ) return;
     size_t cnt = size();
-    if ( cnt == 0 )
-      return;
+    if ( cnt == 0 ) return;
     size_t i = 0;
     double_list_node_t *ptr = root;
     double_list_node_t **ptrs = new double_list_node_t *[cnt + 1];
@@ -131,8 +127,7 @@ public:
       ptr->data.~T();
       ptr = ptr->next;
     };
-    for ( size_t j = 0; j < i; j++ )
-      delete ptrs[j];
+    for ( size_t j = 0; j < i; j++ ) delete ptrs[j];
     delete[] ptrs;
   }
 
@@ -140,8 +135,7 @@ public:
   iend() const
   {
     double_list_node_t *ptr = root;
-    while ( ptr->next != nullptr )
-      ptr = ptr->next;
+    while ( ptr->next != nullptr ) ptr = ptr->next;
     return ptr;
   }
 
@@ -155,8 +149,7 @@ public:
   end() const
   {
     double_list_node_t *ptr = root;
-    while ( ptr->next != nullptr )
-      ptr = ptr->next;
+    while ( ptr->next != nullptr ) ptr = ptr->next;
     return &ptr->data;
   }
 
@@ -189,8 +182,7 @@ public:
   {
     auto *ptr = root;
     while ( ptr != nullptr ) {
-      if ( ptr->data == srch )
-        break;
+      if ( ptr->data == srch ) break;
       ptr = ptr->next;
     }     // ptr is found node
     return &ptr->data;     // nullptr if no hit :/
@@ -200,11 +192,9 @@ public:
   const_pointer
   next(const_pointer itr, const size_t n = 0)
   {
-    if ( itr == nullptr )
-      exc<except::runtime_error>("micron::next invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::next invalid iterator.");
     for ( size_t i = 0; i < (n + 1); i++ ) {
-      if ( itr->next == nullptr )
-        break;
+      if ( itr->next == nullptr ) break;
       itr = itr->next;
     }
     return itr;
@@ -214,11 +204,9 @@ public:
   const_pointer
   prev(const_pointer itr, const size_t n = 0)
   {
-    if ( itr == nullptr )
-      exc<except::runtime_error>("micron::next invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::next invalid iterator.");
     for ( size_t i = 0; i < (n + 1); i++ ) {
-      if ( itr->prev == nullptr )
-        break;
+      if ( itr->prev == nullptr ) break;
       itr = itr->prev;
     }
     return itr;
@@ -227,8 +215,7 @@ public:
   void
   erase(const_pointer itr)
   {
-    if ( itr == nullptr )
-      exc<except::runtime_error>("micron::erase invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::erase invalid iterator.");
     auto *ptr = root;
     while ( ptr != nullptr ) {
       if ( ptr->next == itr )     // if parent found
@@ -243,8 +230,7 @@ public:
   void
   insert(const_pointer itr, T &&v)
   {
-    if ( itr == nullptr )
-      exc<except::runtime_error>("micron::insert invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
     __impl_heap(micron::move(v), &ptr);     // allocate ptr
     ptr->next = itr->next;
@@ -254,8 +240,7 @@ public:
   void
   insert(const_pointer itr, const T &v)
   {
-    if ( itr == nullptr )
-      exc<except::runtime_error>("micron::insert invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
     __impl_heap(v, &ptr);     // allocate ptr
     ptr->next = itr->next;
@@ -265,8 +250,7 @@ public:
   void
   emplace(const_pointer itr, T &&v)
   {
-    if ( itr == nullptr )
-      exc<except::runtime_error>("micron::insert invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
     __impl_heap(micron::forward(v), &ptr);     // allocate ptr
     ptr->next = itr->next;
@@ -276,24 +260,21 @@ public:
   T
   front() const
   {
-    if ( root == nullptr )
-      exc<except::runtime_error>("micron::double_list front() is empty");
+    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list front() is empty");
     return root->data;
   }
 
   T
   back() const
   {
-    if ( root == nullptr )
-      exc<except::runtime_error>("micron::double_list front() is empty");
+    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list front() is empty");
     return end()->data;
   }
 
   void
   merge(double_list &o)
   {
-    if ( &o == this )
-      return;
+    if ( &o == this ) return;
     auto *end_ptr = const_cast<pointer>(iend());
     end_ptr->next = o.root;
     o.root = nullptr;
@@ -302,8 +283,7 @@ public:
   void
   merge(double_list &&o)
   {
-    if ( o == *this )
-      return;
+    if ( o == *this ) return;
     auto *end_ptr = const_cast<pointer>(iend());     // dirty
     end_ptr->next = o.root;
     o.root = nullptr;
@@ -312,8 +292,7 @@ public:
   void
   splice(const_pointer pos, double_list &o)
   {
-    if ( o == *this )
-      return;
+    if ( o == *this ) return;
     auto *ptr = o.iend();
     ptr->next = pos->next;
     pos->next = nullptr;
@@ -331,8 +310,7 @@ public:
   size_t
   size() const
   {
-    if ( root == nullptr )
-      return 0;
+    if ( root == nullptr ) return 0;
     size_t cnt = 0;
     auto *ptr = root->next;
     while ( ptr != nullptr ) {

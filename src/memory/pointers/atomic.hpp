@@ -87,8 +87,7 @@ public:
   operator->()
   {
     Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return p;
+    if ( p != nullptr ) return p;
     exc<except::memory_error>("atomic_pointer operator->(): internal_pointer was null");
   }
 
@@ -96,8 +95,7 @@ public:
   operator->() const
   {
     const Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return p;
+    if ( p != nullptr ) return p;
     exc<except::memory_error>("atomic_pointer operator->(): internal_pointer was null");
   }
 
@@ -105,8 +103,7 @@ public:
   operator*()
   {
     Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return *p;
+    if ( p != nullptr ) return *p;
     exc<except::memory_error>("atomic_pointer operator*(): internal_pointer was null");
   }
 
@@ -114,8 +111,7 @@ public:
   operator*() const
   {
     const Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return *p;
+    if ( p != nullptr ) return *p;
     exc<except::memory_error>("atomic_pointer operator*(): internal_pointer was null");
   }
 
@@ -295,8 +291,7 @@ public:
   operator[](const usize n)
   {
     Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return p[n];
+    if ( p != nullptr ) return p[n];
     exc<except::memory_error>("atomic_pointer[] operator[](): internal_pointer was null");
   }
 
@@ -304,8 +299,7 @@ public:
   operator[](const usize n) const
   {
     const Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return p[n];
+    if ( p != nullptr ) return p[n];
     exc<except::memory_error>("atomic_pointer[] operator[](): internal_pointer was null");
   }
 
@@ -313,8 +307,7 @@ public:
   operator->()
   {
     Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return p;
+    if ( p != nullptr ) return p;
     exc<except::memory_error>("atomic_pointer[] operator->(): internal_pointer was null");
   }
 
@@ -322,8 +315,7 @@ public:
   operator->() const
   {
     const Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return p;
+    if ( p != nullptr ) return p;
     exc<except::memory_error>("atomic_pointer[] operator->(): internal_pointer was null");
   }
 
@@ -331,8 +323,7 @@ public:
   operator*()
   {
     Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return *p;
+    if ( p != nullptr ) return *p;
     exc<except::memory_error>("atomic_pointer[] operator*(): internal_pointer was null");
   }
 
@@ -340,8 +331,7 @@ public:
   operator*() const
   {
     const Type *p = internal_pointer.get(memory_order_acquire);
-    if ( p != nullptr )
-      return *p;
+    if ( p != nullptr ) return *p;
     exc<except::memory_error>("atomic_pointer[] operator*(): internal_pointer was null");
   }
 

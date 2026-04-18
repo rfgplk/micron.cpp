@@ -87,8 +87,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   find_key(const K &key) const
   {
     int i = 0;
-    while ( i < nkeys && pairs[i].key < key )
-      ++i;
+    while ( i < nkeys && pairs[i].key < key ) ++i;
     return i;
   }
 
@@ -96,24 +95,20 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   traverse(void (*visit)(const K &, V &))
   {
     for ( int i = 0; i < nkeys; ++i ) {
-      if ( chld[i] )
-        chld[i]->traverse(visit);
+      if ( chld[i] ) chld[i]->traverse(visit);
       visit(pairs[i].key, pairs[i].value);
     }
-    if ( chld[nkeys] )
-      chld[nkeys]->traverse(visit);
+    if ( chld[nkeys] ) chld[nkeys]->traverse(visit);
   }
 
   inline void
   traverse_const(void (*visit)(const K &, const V &)) const
   {
     for ( int i = 0; i < nkeys; ++i ) {
-      if ( chld[i] )
-        chld[i]->traverse_const(visit);
+      if ( chld[i] ) chld[i]->traverse_const(visit);
       visit(pairs[i].key, pairs[i].value);
     }
-    if ( chld[nkeys] )
-      chld[nkeys]->traverse_const(visit);
+    if ( chld[nkeys] ) chld[nkeys]->traverse_const(visit);
   }
 
   inline btree_map_node *
@@ -121,8 +116,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   {
     int i = find_key(key);
     if ( i < nkeys && pairs[i].key == key ) {
-      if ( out_index )
-        *out_index = i;
+      if ( out_index ) *out_index = i;
       return this;
     }
     return chld[i] ? chld[i]->search(key, out_index) : nullptr;
@@ -133,8 +127,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   {
     int i = find_key(key);
     if ( i < nkeys && pairs[i].key == key ) {
-      if ( out_index )
-        *out_index = i;
+      if ( out_index ) *out_index = i;
       return this;
     }
     return chld[i] ? chld[i]->search(key, out_index) : nullptr;
@@ -147,8 +140,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
     btree_map_node *z = new btree_map_node();
     z->nkeys = Dg - 1;
 
-    for ( int j = 0; j < Dg - 1; ++j )
-      z->pairs[j] = micron::move(y->pairs[j + Dg]);
+    for ( int j = 0; j < Dg - 1; ++j ) z->pairs[j] = micron::move(y->pairs[j + Dg]);
 
     if ( y->chld[0] ) {
       for ( int j = 0; j < Dg; ++j ) {
@@ -159,12 +151,10 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
 
     y->nkeys = Dg - 1;
 
-    for ( int j = nkeys; j >= idx + 1; --j )
-      chld[j + 1] = chld[j];
+    for ( int j = nkeys; j >= idx + 1; --j ) chld[j + 1] = chld[j];
     chld[idx + 1] = z;
 
-    for ( int j = nkeys - 1; j >= idx; --j )
-      pairs[j + 1] = micron::move(pairs[j]);
+    for ( int j = nkeys - 1; j >= idx; --j ) pairs[j + 1] = micron::move(pairs[j]);
 
     pairs[idx] = micron::move(y->pairs[Dg - 1]);
     ++nkeys;
@@ -183,25 +173,21 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
 
       if ( i >= 0 && pairs[i].key == key ) {
         pairs[i].value = micron::move(value);
-        if ( inserted )
-          *inserted = false;
+        if ( inserted ) *inserted = false;
         return &pairs[i].value;
       }
 
       pairs[i + 1] = kv_pair{ key, micron::move(value) };
       ++nkeys;
-      if ( inserted )
-        *inserted = true;
+      if ( inserted ) *inserted = true;
       return &pairs[i + 1].value;
     } else {     // internal
-      while ( i >= 0 && key < pairs[i].key )
-        --i;
+      while ( i >= 0 && key < pairs[i].key ) --i;
       ++i;
 
       if ( i > 0 && pairs[i - 1].key == key ) {
         pairs[i - 1].value = micron::move(value);
-        if ( inserted )
-          *inserted = false;
+        if ( inserted ) *inserted = false;
         return &pairs[i - 1].value;
       }
 
@@ -211,8 +197,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
           ++i;
         else if ( key == pairs[i].key ) {
           pairs[i].value = micron::move(value);
-          if ( inserted )
-            *inserted = false;
+          if ( inserted ) *inserted = false;
           return &pairs[i].value;
         }
       }
@@ -225,8 +210,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   get_pred(int idx)
   {
     btree_map_node *cur = chld[idx];
-    while ( cur->chld[cur->nkeys] )
-      cur = cur->chld[cur->nkeys];
+    while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
     return cur->pairs[cur->nkeys - 1];
   }
 
@@ -234,8 +218,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
   get_succ(int idx)
   {
     btree_map_node *cur = chld[idx + 1];
-    while ( cur->chld[0] )
-      cur = cur->chld[0];
+    while ( cur->chld[0] ) cur = cur->chld[0];
     return cur->pairs[0];
   }
 
@@ -258,12 +241,10 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
     btree_map_node *child = chld[idx];
     btree_map_node *sibling = chld[idx - 1];
 
-    for ( int i = child->nkeys - 1; i >= 0; --i )
-      child->pairs[i + 1] = micron::move(child->pairs[i]);
+    for ( int i = child->nkeys - 1; i >= 0; --i ) child->pairs[i + 1] = micron::move(child->pairs[i]);
 
     if ( child->chld[0] ) {
-      for ( int i = child->nkeys; i >= 0; --i )
-        child->chld[i + 1] = child->chld[i];
+      for ( int i = child->nkeys; i >= 0; --i ) child->chld[i + 1] = child->chld[i];
       child->chld[0] = sibling->chld[sibling->nkeys];
     }
 
@@ -282,17 +263,14 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
 
     child->pairs[child->nkeys] = micron::move(pairs[idx]);
 
-    if ( child->chld[0] )
-      child->chld[child->nkeys + 1] = sibling->chld[0];
+    if ( child->chld[0] ) child->chld[child->nkeys + 1] = sibling->chld[0];
 
     pairs[idx] = micron::move(sibling->pairs[0]);
 
-    for ( int i = 1; i < sibling->nkeys; ++i )
-      sibling->pairs[i - 1] = micron::move(sibling->pairs[i]);
+    for ( int i = 1; i < sibling->nkeys; ++i ) sibling->pairs[i - 1] = micron::move(sibling->pairs[i]);
 
     if ( sibling->chld[0] ) {
-      for ( int i = 1; i <= sibling->nkeys; ++i )
-        sibling->chld[i - 1] = sibling->chld[i];
+      for ( int i = 1; i <= sibling->nkeys; ++i ) sibling->chld[i - 1] = sibling->chld[i];
     }
 
     --sibling->nkeys;
@@ -307,19 +285,15 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
 
     child->pairs[Dg - 1] = micron::move(pairs[idx]);
 
-    for ( int i = 0; i < sibling->nkeys; ++i )
-      child->pairs[i + Dg] = micron::move(sibling->pairs[i]);
+    for ( int i = 0; i < sibling->nkeys; ++i ) child->pairs[i + Dg] = micron::move(sibling->pairs[i]);
 
     if ( child->chld[0] ) {
-      for ( int i = 0; i <= sibling->nkeys; ++i )
-        child->chld[i + Dg] = sibling->chld[i];
+      for ( int i = 0; i <= sibling->nkeys; ++i ) child->chld[i + Dg] = sibling->chld[i];
     }
 
-    for ( int i = idx + 1; i < nkeys; ++i )
-      pairs[i - 1] = micron::move(pairs[i]);
+    for ( int i = idx + 1; i < nkeys; ++i ) pairs[i - 1] = micron::move(pairs[i]);
 
-    for ( int i = idx + 2; i <= nkeys; ++i )
-      chld[i - 1] = chld[i];
+    for ( int i = idx + 2; i <= nkeys; ++i ) chld[i - 1] = chld[i];
 
     child->nkeys += sibling->nkeys + 1;
     --nkeys;
@@ -334,8 +308,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
 
     if ( idx < nkeys && pairs[idx].key == key ) {
       if ( !chld[0] ) {     // leaf
-        for ( int i = idx + 1; i < nkeys; ++i )
-          pairs[i - 1] = micron::move(pairs[i]);
+        for ( int i = idx + 1; i < nkeys; ++i ) pairs[i - 1] = micron::move(pairs[i]);
         --nkeys;
         return true;
       } else {     // internal
@@ -355,8 +328,7 @@ template <is_regular_object K, is_regular_object V, int Dg> struct btree_map_nod
     } else if ( chld[0] ) {     // internal
       bool in_subtree = (idx == nkeys);
 
-      if ( chld[idx]->nkeys < Dg )
-        fill(idx);
+      if ( chld[idx]->nkeys < Dg ) fill(idx);
 
       if ( in_subtree && idx > nkeys )
         return chld[idx - 1]->remove(key);
@@ -471,8 +443,7 @@ public:
   inline bool
   erase(const K &key)
   {
-    if ( !root )
-      return false;
+    if ( !root ) return false;
 
     bool removed = root->remove(key);
 
@@ -502,8 +473,7 @@ public:
   inline V *
   find(const K &key)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     int idx = -1;
     node_type *node = root->search(key, &idx);
@@ -513,8 +483,7 @@ public:
   inline const V *
   find(const K &key) const
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     int idx = -1;
     const node_type *node = root->search(key, &idx);
@@ -563,8 +532,7 @@ public:
   operator[](const K &key)
   {
     V *val = find(key);
-    if ( val )
-      return *val;
+    if ( val ) return *val;
 
     return insert(key, V{});
   }
@@ -572,12 +540,10 @@ public:
   inline V *
   min()
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     node_type *cur = root.get();
-    while ( cur->chld[0] )
-      cur = cur->chld[0];
+    while ( cur->chld[0] ) cur = cur->chld[0];
 
     return cur->nkeys > 0 ? &cur->pairs[0].value : nullptr;
   }
@@ -585,12 +551,10 @@ public:
   inline const V *
   min() const
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     const node_type *cur = root.get();
-    while ( cur->chld[0] )
-      cur = cur->chld[0];
+    while ( cur->chld[0] ) cur = cur->chld[0];
 
     return cur->nkeys > 0 ? &cur->pairs[0].value : nullptr;
   }
@@ -598,12 +562,10 @@ public:
   inline V *
   max()
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     node_type *cur = root.get();
-    while ( cur->chld[cur->nkeys] )
-      cur = cur->chld[cur->nkeys];
+    while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
 
     return cur->nkeys > 0 ? &cur->pairs[cur->nkeys - 1].value : nullptr;
   }
@@ -611,12 +573,10 @@ public:
   inline const V *
   max() const
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     const node_type *cur = root.get();
-    while ( cur->chld[cur->nkeys] )
-      cur = cur->chld[cur->nkeys];
+    while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
 
     return cur->nkeys > 0 ? &cur->pairs[cur->nkeys - 1].value : nullptr;
   }
@@ -624,16 +584,14 @@ public:
   inline V *
   lower_bound(const K &key)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     node_type *cur = root.get();
     V *result = nullptr;
 
     while ( cur ) {
       int i = 0;
-      while ( i < cur->nkeys && cur->pairs[i].key < key )
-        ++i;
+      while ( i < cur->nkeys && cur->pairs[i].key < key ) ++i;
 
       if ( i < cur->nkeys ) {
         result = &cur->pairs[i].value;
@@ -655,16 +613,14 @@ public:
   inline V *
   upper_bound(const K &key)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     node_type *cur = root.get();
     V *result = nullptr;
 
     while ( cur ) {
       int i = 0;
-      while ( i < cur->nkeys && cur->pairs[i].key <= key )
-        ++i;
+      while ( i < cur->nkeys && cur->pairs[i].key <= key ) ++i;
 
       if ( i < cur->nkeys ) {
         result = &cur->pairs[i].value;
@@ -686,18 +642,15 @@ public:
   inline V *
   predecessor(const K &key)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     int idx = -1;
     node_type *node = root->search(key, &idx);
-    if ( !node || idx < 0 )
-      return nullptr;
+    if ( !node || idx < 0 ) return nullptr;
 
     if ( node->chld[idx] ) {
       node_type *cur = node->chld[idx];
-      while ( cur->chld[cur->nkeys] )
-        cur = cur->chld[cur->nkeys];
+      while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
       return &cur->pairs[cur->nkeys - 1].value;
     }
 
@@ -713,18 +666,15 @@ public:
   inline V *
   successor(const K &key)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
     int idx = -1;
     node_type *node = root->search(key, &idx);
-    if ( !node || idx < 0 )
-      return nullptr;
+    if ( !node || idx < 0 ) return nullptr;
 
     if ( node->chld[idx + 1] ) {
       node_type *cur = node->chld[idx + 1];
-      while ( cur->chld[0] )
-        cur = cur->chld[0];
+      while ( cur->chld[0] ) cur = cur->chld[0];
       return &cur->pairs[0].value;
     }
 
@@ -752,15 +702,13 @@ public:
   inline void
   traverse(void (*visit)(const K &, V &))
   {
-    if ( root )
-      root->traverse(visit);
+    if ( root ) root->traverse(visit);
   }
 
   inline void
   traverse(void (*visit)(const K &, const V &)) const
   {
-    if ( root )
-      root->traverse_const(visit);
+    if ( root ) root->traverse_const(visit);
   }
 };
 

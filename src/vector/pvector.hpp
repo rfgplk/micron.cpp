@@ -34,8 +34,7 @@ class pvector
   __cpow(usize base, usize exp)
   {
     usize r = 1;
-    for ( usize i = 0; i < exp; ++i )
-      r *= base;
+    for ( usize i = 0; i < exp; ++i ) r *= base;
     return r;
   }
 
@@ -122,8 +121,7 @@ class pvector
   __safety_check(const char *msg, Args &&...args) const
   {
     if constexpr ( Sf ) {
-      if ( (this->*Fn)(micron::forward<Args>(args)...) )
-        exc<E>(msg);
+      if ( (this->*Fn)(micron::forward<Args>(args)...) ) exc<E>(msg);
     }
   }
 
@@ -132,8 +130,7 @@ class pvector
   {
     __node *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
     n->refs = 1;
-    for ( usize i = 0; i < B; ++i )
-      n->children[i] = nullptr;
+    for ( usize i = 0; i < B; ++i ) n->children[i] = nullptr;
     return n;
   }
 
@@ -147,8 +144,7 @@ class pvector
   __dealloc_leaf(__leaf *l)
   {
     if constexpr ( !micron::is_trivially_destructible_v<T> ) {
-      for ( usize i = 0; i < B; ++i )
-        l->values[i].~T();
+      for ( usize i = 0; i < B; ++i ) l->values[i].~T();
     }
     abc::dealloc(reinterpret_cast<byte *>(l));
   }
@@ -180,8 +176,7 @@ class pvector
     } else {
       __node *n = __as_node(p);
       if ( --n->refs == 0 ) [[unlikely]] {
-        for ( usize i = 0; i < B; ++i )
-          __release<Lvl - 1>(n->children[i]);
+        for ( usize i = 0; i < B; ++i ) __release<Lvl - 1>(n->children[i]);
         abc::dealloc(reinterpret_cast<byte *>(n));
       }
     }
@@ -201,11 +196,9 @@ class pvector
         if constexpr ( micron::is_trivially_copyable_v<T> )
           micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
         else
-          for ( usize i = 0; i < B; ++i )
-            new (micron::addr(fresh->values[i])) T(old->values[i]);
+          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T(old->values[i]);
       } else {
-        for ( usize i = 0; i < B; ++i )
-          new (micron::addr(fresh->values[i])) T();
+        for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
       }
 
       if constexpr ( micron::is_trivially_copyable_v<T> )
@@ -282,8 +275,7 @@ class pvector
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
-      for ( usize i = 0; i < B; ++i )
-        n->children[i] = __build_from<Lvl - 1>(data, count, base + i * child_span);
+      for ( usize i = 0; i < B; ++i ) n->children[i] = __build_from<Lvl - 1>(data, count, base + i * child_span);
       return static_cast<void *>(n);
     }
   }
@@ -308,8 +300,7 @@ class pvector
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
-      for ( usize i = 0; i < B; ++i )
-        n->children[i] = __build_filled<Lvl - 1>(val, count, base + i * child_span);
+      for ( usize i = 0; i < B; ++i ) n->children[i] = __build_filled<Lvl - 1>(val, count, base + i * child_span);
       return static_cast<void *>(n);
     }
   }
@@ -328,11 +319,9 @@ class pvector
         if constexpr ( micron::is_trivially_copyable_v<T> )
           micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
         else
-          for ( usize i = 0; i < B; ++i )
-            new (micron::addr(fresh->values[i])) T(old->values[i]);
+          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T(old->values[i]);
       } else {
-        for ( usize i = 0; i < B; ++i )
-          new (micron::addr(fresh->values[i])) T();
+        for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
       }
 
       T result = fn(static_cast<const T &>(fresh->values[slot]));
@@ -372,20 +361,17 @@ class pvector
   static void
   __for_each_impl(const void *p, usize base, usize sz, Fn &&fn)
   {
-    if ( !p || base >= sz )
-      return;
+    if ( !p || base >= sz ) return;
 
     if constexpr ( Lvl == 0 ) {
       const __leaf *l = __as_leaf(p);
-      for ( usize i = 0; i < B && base + i < sz; ++i )
-        fn(base + i, static_cast<const T &>(l->values[i]));
+      for ( usize i = 0; i < B && base + i < sz; ++i ) fn(base + i, static_cast<const T &>(l->values[i]));
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
       const __node *n = __as_node(p);
       for ( usize i = 0; i < B; ++i ) {
         usize child_base = base + i * child_span;
-        if ( child_base >= sz )
-          break;
+        if ( child_base >= sz ) break;
         __for_each_impl<Lvl - 1>(n->children[i], child_base, sz, static_cast<Fn &&>(fn));
       }
     }
@@ -401,12 +387,9 @@ class pvector
       usize largest = i;
       usize l = 2 * i + 1;
       usize r = 2 * i + 2;
-      if ( l < n && arr[largest] < arr[l] )
-        largest = l;
-      if ( r < n && arr[largest] < arr[r] )
-        largest = r;
-      if ( largest == i )
-        break;
+      if ( l < n && arr[largest] < arr[l] ) largest = l;
+      if ( r < n && arr[largest] < arr[r] ) largest = r;
+      if ( largest == i ) break;
       T tmp = micron::move(arr[i]);
       arr[i] = micron::move(arr[largest]);
       arr[largest] = micron::move(tmp);
@@ -420,10 +403,8 @@ class pvector
       { a < b };
     }
   {
-    if ( n < 2 )
-      return;
-    for ( usize i = n / 2; i-- > 0; )
-      __sift_down(arr, n, i);
+    if ( n < 2 ) return;
+    for ( usize i = n / 2; i-- > 0; ) __sift_down(arr, n, i);
     for ( usize i = n - 1; i > 0; --i ) {
       T tmp = micron::move(arr[0]);
       arr[0] = micron::move(arr[i]);
@@ -493,20 +474,16 @@ public:
 
   explicit pvector(size_type n) : __root(nullptr), __size(0)
   {
-    if ( n > capacity )
-      exc<except::runtime_error>("micron::pvector size exceeds capacity");
-    if ( n == 0 )
-      return;
+    if ( n > capacity ) exc<except::runtime_error>("micron::pvector size exceeds capacity");
+    if ( n == 0 ) return;
     __root = __build_filled<__root_level>(T{}, n, 0);
     __size = n;
   }
 
   pvector(size_type n, const T &val) : __root(nullptr), __size(0)
   {
-    if ( n > capacity )
-      exc<except::runtime_error>("micron::pvector size exceeds capacity");
-    if ( n == 0 )
-      return;
+    if ( n > capacity ) exc<except::runtime_error>("micron::pvector size exceeds capacity");
+    if ( n == 0 ) return;
     __root = __build_filled<__root_level>(val, n, 0);
     __size = n;
   }
@@ -514,20 +491,16 @@ public:
   // initializer list
   pvector(const std::initializer_list<T> &&lst) : __root(nullptr), __size(0)
   {
-    if ( lst.size() > capacity )
-      exc<except::runtime_error>("micron::pvector init_list exceeds capacity");
-    if ( lst.size() == 0 )
-      return;
+    if ( lst.size() > capacity ) exc<except::runtime_error>("micron::pvector init_list exceeds capacity");
+    if ( lst.size() == 0 ) return;
     __root = __build_from<__root_level>(lst.begin(), lst.size(), 0);
     __size = lst.size();
   }
 
   pvector(const T *data, usize count) : __root(nullptr), __size(0)
   {
-    if ( count > capacity )
-      exc<except::runtime_error>("micron::pvector data exceeds capacity");
-    if ( count == 0 || !data )
-      return;
+    if ( count > capacity ) exc<except::runtime_error>("micron::pvector data exceeds capacity");
+    if ( count == 0 || !data ) return;
     __root = __build_from<__root_level>(data, count, 0);
     __size = count;
   }
@@ -537,8 +510,7 @@ public:
   template <usize N> pvector(const T (&arr)[N]) : __root(nullptr), __size(0)
   {
     static_assert(N <= capacity, "micron::pvector array exceeds capacity");
-    if constexpr ( N == 0 )
-      return;
+    if constexpr ( N == 0 ) return;
     __root = __build_from<__root_level>(arr, N, 0);
     __size = N;
   }
@@ -548,10 +520,8 @@ public:
   pvector(const C &c) : __root(nullptr), __size(0)
   {
     const usize n = static_cast<usize>(c.size());
-    if ( n > capacity )
-      exc<except::runtime_error>("micron::pvector container exceeds capacity");
-    if ( n == 0 )
-      return;
+    if ( n > capacity ) exc<except::runtime_error>("micron::pvector container exceeds capacity");
+    if ( n == 0 ) return;
     if constexpr ( micron::is_same_v<typename C::value_type, T> && requires { c.data(); } ) {
       __root = __build_from<__root_level>(c.data(), n, 0);
     } else {
@@ -572,8 +542,7 @@ public:
     requires(micron::is_invocable_v<Fn, usize>)
   explicit pvector(Fn &&fn, usize count) : __root(nullptr), __size(0)
   {
-    if ( count > capacity )
-      exc<except::runtime_error>("micron::pvector generator count exceeds capacity");
+    if ( count > capacity ) exc<except::runtime_error>("micron::pvector generator count exceeds capacity");
     void *root = nullptr;
     for ( usize i = 0; i < count; ++i ) {
       void *next = __set_impl<__root_level>(root, i, fn(i));
@@ -603,8 +572,7 @@ public:
   {
     __safety_check<&pvector::__range_check, except::runtime_error>("micron::pvector operator[] invalid range", from, to);
     const usize cnt = to - from;
-    if ( cnt == 0 )
-      return pvector();
+    if ( cnt == 0 ) return pvector();
     void *root = nullptr;
     for ( usize i = 0; i < cnt; ++i ) {
       const T &v = __get_impl<__root_level>(__root, from + i);
@@ -830,8 +798,7 @@ public:
   {
     if ( n > capacity ) [[unlikely]]
       exc<except::runtime_error>("micron::pvector resize() exceeds capacity");
-    if ( n == __size )
-      return pvector(*this);
+    if ( n == __size ) return pvector(*this);
 
     void *root = __retain<__root_level>(__root);
     if ( n < __size ) {
@@ -855,8 +822,7 @@ public:
   {
     if ( n > capacity ) [[unlikely]]
       exc<except::runtime_error>("micron::pvector resize() exceeds capacity");
-    if ( n == __size )
-      return pvector(*this);
+    if ( n == __size ) return pvector(*this);
 
     void *root = __retain<__root_level>(__root);
     if ( n < __size ) {
@@ -1084,11 +1050,9 @@ public:
       { a *= b };
     }
   {
-    if ( __size == 0 )
-      return T{};
+    if ( __size == 0 ) return T{};
     T m = get(0);
-    for ( usize i = 1; i < __size; ++i )
-      m *= get(i);
+    for ( usize i = 1; i < __size; ++i ) m *= get(i);
     return m;
   }
 
@@ -1098,11 +1062,9 @@ public:
       { a -= b };
     }
   {
-    if ( __size == 0 )
-      return T{};
+    if ( __size == 0 ) return T{};
     T d = get(0);
-    for ( usize i = 1; i < __size; ++i )
-      d -= get(i);
+    for ( usize i = 1; i < __size; ++i ) d -= get(i);
     return d;
   }
 
@@ -1112,11 +1074,9 @@ public:
       { a /= b };
     }
   {
-    if ( __size == 0 )
-      return T{};
+    if ( __size == 0 ) return T{};
     T q = get(0);
-    for ( usize i = 1; i < __size; ++i )
-      q /= get(i);
+    for ( usize i = 1; i < __size; ++i ) q /= get(i);
     return q;
   }
 
@@ -1130,8 +1090,7 @@ public:
     T m = get(0);
     for ( usize i = 1; i < __size; ++i ) {
       const T &v = get(i);
-      if ( v < m )
-        m = v;
+      if ( v < m ) m = v;
     }
     return m;
   }
@@ -1146,8 +1105,7 @@ public:
     T m = get(0);
     for ( usize i = 1; i < __size; ++i ) {
       const T &v = get(i);
-      if ( m < v )
-        m = v;
+      if ( m < v ) m = v;
     }
     return m;
   }
@@ -1158,8 +1116,7 @@ public:
   {
     __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector reduce() on empty vector");
     T acc = get(0);
-    for ( usize i = 1; i < __size; ++i )
-      acc = fn(acc, get(i));
+    for ( usize i = 1; i < __size; ++i ) acc = fn(acc, get(i));
     return acc;
   }
 
@@ -1168,8 +1125,7 @@ public:
   reduce(const T &init, Fn &&fn) const
   {
     T acc = init;
-    for ( usize i = 0; i < __size; ++i )
-      acc = fn(acc, get(i));
+    for ( usize i = 0; i < __size; ++i ) acc = fn(acc, get(i));
     return acc;
   }
 
@@ -1177,8 +1133,7 @@ public:
   all(const T &o) const
   {
     for ( usize i = 0; i < __size; ++i )
-      if ( !(get(i) == o) )
-        return false;
+      if ( !(get(i) == o) ) return false;
     return true;
   }
 
@@ -1186,8 +1141,7 @@ public:
   any(const T &o) const
   {
     for ( usize i = 0; i < __size; ++i )
-      if ( get(i) == o )
-        return true;
+      if ( get(i) == o ) return true;
     return false;
   }
 
@@ -1196,8 +1150,7 @@ public:
   all_of(Fn &&pred) const
   {
     for ( usize i = 0; i < __size; ++i )
-      if ( !pred(get(i)) )
-        return false;
+      if ( !pred(get(i)) ) return false;
     return true;
   }
 
@@ -1206,8 +1159,7 @@ public:
   any_of(Fn &&pred) const
   {
     for ( usize i = 0; i < __size; ++i )
-      if ( pred(get(i)) )
-        return true;
+      if ( pred(get(i)) ) return true;
     return false;
   }
 
@@ -1224,21 +1176,18 @@ public:
       { a < b };
     }
   {
-    if ( __size < 2 )
-      return pvector(*this);
+    if ( __size < 2 ) return pvector(*this);
 
     byte *buf = reinterpret_cast<byte *>(abc::alloc(__size * sizeof(T)));
     T *arr = reinterpret_cast<T *>(buf);
-    for ( usize i = 0; i < __size; ++i )
-      new (micron::addr(arr[i])) T(get(i));
+    for ( usize i = 0; i < __size; ++i ) new (micron::addr(arr[i])) T(get(i));
 
     __heap_sort(arr, __size);
 
     void *root = __build_from<__root_level>(arr, __size, 0);
 
     if constexpr ( !micron::is_trivially_destructible_v<T> ) {
-      for ( usize i = 0; i < __size; ++i )
-        arr[i].~T();
+      for ( usize i = 0; i < __size; ++i ) arr[i].~T();
     }
     abc::dealloc(buf);
 
@@ -1249,21 +1198,17 @@ public:
   contains(const T &val) const
   {
     for ( usize i = 0; i < __size; ++i )
-      if ( get(i) == val )
-        return true;
+      if ( get(i) == val ) return true;
     return false;
   }
 
   bool
   operator==(const pvector &o) const
   {
-    if ( __size != o.__size )
-      return false;
-    if ( __root == o.__root )
-      return true;
+    if ( __size != o.__size ) return false;
+    if ( __root == o.__root ) return true;
     for ( usize i = 0; i < __size; ++i )
-      if ( !(get(i) == o.get(i)) )
-        return false;
+      if ( !(get(i) == o.get(i)) ) return false;
     return true;
   }
 
@@ -1420,8 +1365,7 @@ public:
   find(const T &val) const
   {
     for ( usize i = 0; i < __size; ++i )
-      if ( get(i) == val )
-        return const_iterator(this, i);
+      if ( get(i) == val ) return const_iterator(this, i);
     return end();
   }
 

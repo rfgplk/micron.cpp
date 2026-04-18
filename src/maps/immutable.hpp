@@ -122,10 +122,8 @@ class immutable_map
   static inline void
   __dealloc_node(__node *n)
   {
-    if constexpr ( !micron::is_trivially_destructible_v<K> )
-      n->key.~K();
-    if constexpr ( !micron::is_trivially_destructible_v<V> )
-      n->value.~V();
+    if constexpr ( !micron::is_trivially_destructible_v<K> ) n->key.~K();
+    if constexpr ( !micron::is_trivially_destructible_v<V> ) n->value.~V();
     abc::dealloc(reinterpret_cast<byte *>(n));
   }
 
@@ -159,8 +157,7 @@ class immutable_map
       }
       n = r;
     }
-    while ( depth > 0 )
-      __release(stack[--depth]);
+    while ( depth > 0 ) __release(stack[--depth]);
   }
 
   static inline __node *
@@ -373,8 +370,7 @@ class immutable_map
   static const __node *
   __find_min(const __node *h)
   {
-    while ( h && h->left() )
-      h = h->left();
+    while ( h && h->left() ) h = h->left();
     return h;
   }
 
@@ -384,8 +380,7 @@ class immutable_map
     if ( !h ) [[unlikely]]
       return nullptr;
 
-    if ( !h->left() )
-      return nullptr;
+    if ( !h->left() ) return nullptr;
 
     __node *n = __acquire_mutable(h);
 
@@ -445,10 +440,8 @@ class immutable_map
       if ( equal ) [[unlikely]] {
         const __node *m = __find_min(n->right);
 
-        if constexpr ( !micron::is_trivially_destructible_v<K> )
-          n->key.~K();
-        if constexpr ( !micron::is_trivially_destructible_v<V> )
-          n->value.~V();
+        if constexpr ( !micron::is_trivially_destructible_v<K> ) n->key.~K();
+        if constexpr ( !micron::is_trivially_destructible_v<V> ) n->value.~V();
 
         if constexpr ( micron::is_trivially_copyable_v<K> )
           micron::bytecpy(reinterpret_cast<byte *>(micron::addr(n->key)), reinterpret_cast<const byte *>(micron::addr(m->key)), sizeof(K));
@@ -672,13 +665,11 @@ public:
   {
     if ( __root == o.__root ) [[unlikely]]
       return true;
-    if ( __length != o.__length )
-      return false;
+    if ( __length != o.__length ) return false;
     auto a = begin(), ae = end();
     auto b = o.begin();
     for ( ; a != ae; ++a, ++b ) {
-      if ( a.key() != b.key() || a.value() != b.value() )
-        return false;
+      if ( a.key() != b.key() || a.value() != b.value() ) return false;
     }
     return true;
   }
@@ -704,8 +695,7 @@ public:
   update_or(const K &k, const V &default_val, Fn &&fn) const
   {
     const __node *n = __find_impl(__root, k);
-    if ( n )
-      return insert(k, fn(n->value));
+    if ( n ) return insert(k, fn(n->value));
     return insert(k, fn(default_val));
   }
 
@@ -734,16 +724,14 @@ public:
     bool
     operator==(const const_iterator &o) const
     {
-      if ( __depth != o.__depth )
-        return false;
+      if ( __depth != o.__depth ) return false;
       return __depth == 0 || __stack[__depth - 1] == o.__stack[o.__depth - 1];
     }
 
     bool
     operator!=(const const_iterator &o) const
     {
-      if ( __depth != o.__depth )
-        return true;
+      if ( __depth != o.__depth ) return true;
       return __depth != 0 && __stack[__depth - 1] != o.__stack[o.__depth - 1];
     }
 
@@ -832,8 +820,7 @@ public:
         cur = cur->right;
       } else {
         __node *pred = cur->left();
-        while ( pred->right && pred->right != cur )
-          pred = pred->right;
+        while ( pred->right && pred->right != cur ) pred = pred->right;
 
         if ( !pred->right ) {
           pred->right = cur;     // thread

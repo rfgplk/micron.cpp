@@ -80,8 +80,7 @@ template <is_regular_object T, usize N = 64, bool Sf = true> class svector
   __safety_check(const char *msg, Args &&...args) const
   {
     if constexpr ( Sf == true ) {
-      if ( (this->*Fn)(micron::forward<Args>(args)...) )
-        exc<E>(msg);
+      if ( (this->*Fn)(micron::forward<Args>(args)...) ) exc<E>(msg);
     }
   }
 
@@ -113,8 +112,7 @@ public:
     requires(micron::is_class_v<T> and !micron::is_integral_v<micron::remove_cvref_t<First>>)
   svector(First first, Rest... rest)
   {
-    for ( size_type n = 0; n < N; n++ )
-      new (micron::addr(stack[n])) T{ first, rest... };
+    for ( size_type n = 0; n < N; n++ ) new (micron::addr(stack[n])) T{ first, rest... };
     length = N;
   }
 
@@ -179,17 +177,14 @@ public:
 
   svector(const std::initializer_list<T> &lst)
   {
-    if ( lst.size() > N )
-      exc<except::runtime_error>("error micron::svector() initializer_list too large.");
+    if ( lst.size() > N ) exc<except::runtime_error>("error micron::svector() initializer_list too large.");
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
-      for ( const T &value : lst )
-        new (micron::addr(stack[i++])) T(value);
+      for ( const T &value : lst ) new (micron::addr(stack[i++])) T(value);
     } else {
       size_type i = 0;
-      for ( T value : lst )
-        stack[i++] = value;
+      for ( T value : lst ) stack[i++] = value;
     }
     length = lst.size();
   }
@@ -466,10 +461,8 @@ public:
   svector &
   append(const svector<C, M> &o)
   {
-    if ( length + o.size() > N )
-      exc<except::runtime_error>("micron::svector append() out of range.");
-    for ( size_type i = length, j = 0; j < o.size(); i++, j++ )
-      stack[i] = o[j];
+    if ( length + o.size() > N ) exc<except::runtime_error>("micron::svector append() out of range.");
+    for ( size_type i = length, j = 0; j < o.size(); i++, j++ ) stack[i] = o[j];
     length += o.size();
     return *this;
   }
@@ -533,8 +526,7 @@ public:
   insert(size_type ind, const C &i)
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector insert() out of range.");
-    if ( ind > length )
-      exc<except::runtime_error>("micron::svector insert() index past end.");
+    if ( ind > length ) exc<except::runtime_error>("micron::svector insert() index past end.");
     micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
       new (micron::addr(stack[ind])) T(i);

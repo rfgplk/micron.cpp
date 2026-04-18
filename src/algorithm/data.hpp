@@ -48,8 +48,7 @@ cut(const T &obj, const T &bins)
   out.resize(obj.size());
   for ( umax_t i = 0; i < obj.size(); i++ ) {
     umax_t bin_index = 0;
-    while ( bin_index < bins.size() - 1 && obj[i] > bins[bin_index + 1] )
-      bin_index++;
+    while ( bin_index < bins.size() - 1 && obj[i] > bins[bin_index + 1] ) bin_index++;
     out[i] = bin_index;
   }
   return out;
@@ -66,10 +65,8 @@ merge(I first1, I last1, J first2, J last2, O d_first)
       *d_first++ = *first1++;
     }
   }
-  while ( first1 != last1 )
-    *d_first++ = *first1++;
-  while ( first2 != last2 )
-    *d_first++ = *first2++;
+  while ( first1 != last1 ) *d_first++ = *first1++;
+  while ( first2 != last2 ) *d_first++ = *first2++;
   return d_first;
 }
 
@@ -105,8 +102,7 @@ template <typename I>
 I
 rotate(I first, I n_first, I last)
 {
-  if ( first == n_first || n_first == last )
-    return last;
+  if ( first == n_first || n_first == last ) return last;
 
   I read = n_first;
   I write = first;
@@ -118,8 +114,7 @@ rotate(I first, I n_first, I last)
 
     ++write;
     ++read;
-    if ( read == last )
-      read = n_first;
+    if ( read == last ) read = n_first;
   }
 
   I new_first = write;
@@ -140,8 +135,7 @@ template <typename I>
 I
 cycle_rotate(I first, I n_first, I last)
 {
-  if ( first == n_first || n_first == last )
-    return last;
+  if ( first == n_first || n_first == last ) return last;
 
   using diff_t = ptrdiff_t;
   diff_t n = last - first;
@@ -154,10 +148,8 @@ cycle_rotate(I first, I n_first, I last)
 
     while ( true ) {
       diff_t m = j + k;
-      if ( m >= n )
-        m -= n;
-      if ( m == i )
-        break;
+      if ( m >= n ) m -= n;
+      if ( m == i ) break;
       *(first + j) = *(first + m);
       j = m;
     }
@@ -175,10 +167,8 @@ __sift_down(T *first, umax_t start, umax_t end, Cmp comp)
   umax_t root = start;
   while ( true ) {
     umax_t child = 2 * root + 1;
-    if ( child >= end )
-      break;
-    if ( child + 1 < end && comp(first[child], first[child + 1]) )
-      child++;
+    if ( child >= end ) break;
+    if ( child + 1 < end && comp(first[child], first[child + 1]) ) child++;
     if ( comp(first[root], first[child]) ) {
       micron::swap(first[root], first[child]);
       root = child;
@@ -195,8 +185,7 @@ __sift_up(T *first, umax_t idx, Cmp comp) noexcept
   while ( idx > 0 ) {
     umax_t parent = (idx - 1) >> 1;
 
-    if ( !comp(first[parent], first[idx]) )
-      return;
+    if ( !comp(first[parent], first[idx]) ) return;
 
     auto tmp = micron::move(first[parent]);
     first[parent] = micron::move(first[idx]);
@@ -214,8 +203,7 @@ make_heap(C &c) noexcept
   auto comp = [](const T &a, const T &b) { return a < b; };
 
   umax_t n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   for ( umax_t i = (n >> 1); i > 0; ) {
     --i;
@@ -228,8 +216,7 @@ constexpr void
 make_heap(C &c, Cmp comp) noexcept
 {
   umax_t n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   for ( umax_t i = (n >> 1); i > 0; ) {
     --i;
@@ -244,8 +231,7 @@ make_heap(C &c, typename C::umax_type lim) noexcept
   using T = typename C::value_type;
   auto comp = [](const T &a, const T &b) { return a < b; };
 
-  if ( lim < 2 )
-    return;
+  if ( lim < 2 ) return;
 
   for ( umax_t i = (lim >> 1); i > 0; ) {
     --i;
@@ -257,8 +243,7 @@ template <is_iterable_container C, typename Cmp>
 constexpr void
 make_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
 {
-  if ( lim < 2 )
-    return;
+  if ( lim < 2 ) return;
 
   for ( umax_t i = (lim >> 1); i > 0; ) {
     --i;
@@ -274,8 +259,7 @@ push_heap(C &c) noexcept
   auto comp = [](const T &a, const T &b) { return a < b; };
 
   umax_t n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   __sift_up(c.begin(), n - 1, comp);
 }
@@ -284,8 +268,7 @@ template <is_iterable_container C, typename Cmp>
 constexpr void
 push_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
 {
-  if ( lim < 2 )
-    return;
+  if ( lim < 2 ) return;
 
   __sift_up(c.begin(), lim - 1, comp);
 }
@@ -297,8 +280,7 @@ push_heap(C &c, typename C::umax_type lim) noexcept
   using T = typename C::value_type;
   auto comp = [](const T &a, const T &b) { return a < b; };
 
-  if ( lim < 2 )
-    return;
+  if ( lim < 2 ) return;
 
   __sift_up(c.begin(), lim - 1, comp);
 }
@@ -308,8 +290,7 @@ constexpr void
 push_heap(C &c, Cmp comp) noexcept
 {
   umax_t n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   __sift_up(c.begin(), n - 1, comp);
 }
@@ -322,8 +303,7 @@ pop_heap(C &c) noexcept
   auto comp = [](const T &a, const T &b) { return a < b; };
 
   umax_t n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   auto *first = c.begin();
 
@@ -339,8 +319,7 @@ constexpr void
 pop_heap(C &c, Cmp comp) noexcept
 {
   umax_t n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   auto *first = c.begin();
 
@@ -358,8 +337,7 @@ pop_heap(C &c, typename C::umax_type lim) noexcept
   using T = typename C::value_type;
   auto comp = [](const T &a, const T &b) { return a < b; };
 
-  if ( lim < 2 )
-    return;
+  if ( lim < 2 ) return;
 
   auto *first = c.begin();
 
@@ -374,8 +352,7 @@ template <is_iterable_container C, typename Cmp>
 constexpr void
 pop_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
 {
-  if ( lim < 2 )
-    return;
+  if ( lim < 2 ) return;
 
   auto *first = c.begin();
 
@@ -453,8 +430,7 @@ is_heap(const C &c) noexcept
 
   for ( umax_t i = 1; i < n; ++i ) {
     umax_t parent = (i - 1) >> 1;
-    if ( comp(first[parent], first[i]) )
-      return false;
+    if ( comp(first[parent], first[i]) ) return false;
   }
 
   return true;
@@ -469,8 +445,7 @@ is_heap(const C &c, Cmp comp) noexcept
 
   for ( umax_t i = 1; i < n; ++i ) {
     umax_t parent = (i - 1) >> 1;
-    if ( comp(first[parent], first[i]) )
-      return false;
+    if ( comp(first[parent], first[i]) ) return false;
   }
 
   return true;

@@ -19,8 +19,7 @@ template <typename F> struct __defer_guard {
 
   constexpr ~__defer_guard() noexcept(noexcept(f()))
   {
-    if ( active )
-      f();
+    if ( active ) f();
   }
 };
 

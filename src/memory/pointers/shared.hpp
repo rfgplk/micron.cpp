@@ -55,14 +55,12 @@ public:
 
   shared_pointer(const shared_pointer &t) noexcept : control(t.control)
   {
-    if ( control )
-      ++control->refs;
+    if ( control ) ++control->refs;
   }
 
   shared_pointer(shared_pointer &t) noexcept : control(t.control)
   {
-    if ( control )
-      ++control->refs;
+    if ( control ) ++control->refs;
   }
 
   shared_pointer(shared_pointer &&t) noexcept : control(t.control) { t.control = nullptr; }
@@ -85,8 +83,7 @@ public:
   {
     if ( this != &o ) {
 
-      if ( o.control )
-        ++o.control->refs;
+      if ( o.control ) ++o.control->refs;
       __release();
       control = o.control;
     }
@@ -168,16 +165,14 @@ public:
   Type &
   operator*()
   {
-    if ( !control || !control->pnt )
-      exc<except::memory_error>("shared_pointer operator*(): pointer was null");
+    if ( !control || !control->pnt ) exc<except::memory_error>("shared_pointer operator*(): pointer was null");
     return *control->pnt;
   }
 
   const Type &
   operator*() const
   {
-    if ( !control || !control->pnt )
-      exc<except::memory_error>("shared_pointer operator*(): pointer was null");
+    if ( !control || !control->pnt ) exc<except::memory_error>("shared_pointer operator*(): pointer was null");
     return *control->pnt;
   }
 

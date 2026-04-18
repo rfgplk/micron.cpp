@@ -201,12 +201,9 @@ template <typename T, typename F> struct pair {
   {
     size_t i = 0;
     for ( C val : lst ) {
-      if ( (i++) == 0 )
-        a = static_cast<T>(micron::move(val));
-      if ( (i++) == 1 )
-        b = static_cast<F>(micron::move(val));
-      if ( (i++) > 1 )
-        break;
+      if ( (i++) == 0 ) a = static_cast<T>(micron::move(val));
+      if ( (i++) == 1 ) b = static_cast<F>(micron::move(val));
+      if ( (i++) > 1 ) break;
     }
   }
 
@@ -217,12 +214,9 @@ template <typename T, typename F> struct pair {
   {
     size_t i = 0;
     for ( C val : lst ) {
-      if ( (i++) == 0 )
-        a = static_cast<T>(micron::move(val));
-      if ( (i++) == 1 )
-        b = static_cast<F>(micron::move(val));
-      if ( (i++) > 1 )
-        break;
+      if ( (i++) == 0 ) a = static_cast<T>(micron::move(val));
+      if ( (i++) == 1 ) b = static_cast<F>(micron::move(val));
+      if ( (i++) > 1 ) break;
     }
   }
 

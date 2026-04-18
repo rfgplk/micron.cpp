@@ -76,8 +76,7 @@ template <typename F>
 constexpr bool
 __is_aligned_to_s(const F *ptr, const u64 alignment) noexcept
 {
-  if ( ptr == nullptr )
-    return false;
+  if ( ptr == nullptr ) return false;
   return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0;
 };
 
@@ -85,8 +84,7 @@ template <typename F>
 constexpr bool
 __is_aligned_s(const F *ptr) noexcept
 {
-  if ( ptr == nullptr )
-    return false;
+  if ( ptr == nullptr ) return false;
   return (reinterpret_cast<uintptr_t>(ptr) % alignof(F)) == 0;
 };
 
@@ -94,8 +92,7 @@ template <typename F>
 constexpr bool
 __is_region_aligned_to_s(const F *ptr, const u64 size, const u64 alignment) noexcept
 {
-  if ( ptr == nullptr )
-    return false;
+  if ( ptr == nullptr ) return false;
   return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0 && (size % alignment) == 0;
 };
 
@@ -107,8 +104,7 @@ __is_at_stack(const F *ptr, const u64 size) noexcept
 {
   const addr_t *addr = reinterpret_cast<const addr_t *>(ptr);
   stack_t st = get_stack();
-  if ( (addr < st.start) or (addr + size >= st.start + st.size) )
-    return false;
+  if ( (addr < st.start) or (addr + size >= st.start + st.size) ) return false;
   return true;
 }
 
@@ -118,8 +114,7 @@ __is_at_stack(F &ref, const u64 size) noexcept
 {
   addr_t *addr = reinterpret_cast<addr_t *>(ref);
   stack_t st = get_stack();
-  if ( (addr < st.start) or ((addr + size) >= (st.start + st.size)) )
-    return false;
+  if ( (addr < st.start) or ((addr + size) >= (st.start + st.size)) ) return false;
   return true;
 }
 
@@ -129,8 +124,7 @@ __is_at_stack(const F &ref, const u64 size) noexcept
 {
   addr_t *const addr = reinterpret_cast<addr_t *const>(ref);
   stack_t st = get_stack();
-  if ( (addr < st.start) or (addr + size >= st.start + st.size) )
-    return false;
+  if ( (addr < st.start) or (addr + size >= st.start + st.size) ) return false;
   return true;
 }
 

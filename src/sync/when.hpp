@@ -27,8 +27,7 @@ when(D *result, Fn &&fn, Args &&...args)
 {
   go(
       [&](D *res) {
-        while ( *res != true )
-          cpu_pause<500>();
+        while ( *res != true ) cpu_pause<500>();
         fn(micron::forward<Args>(args)...);
       },
       result);
@@ -39,8 +38,7 @@ void
 when_any(Fn &&fn, Args &&...args, D *...result)
 {
   (go([&] {
-     while ( *result != true )
-       cpu_pause<500>();
+     while ( *result != true ) cpu_pause<500>();
      fn(micron::forward<Args>(args)...);
    }),
    ...);

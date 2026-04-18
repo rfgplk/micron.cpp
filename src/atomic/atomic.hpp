@@ -273,8 +273,7 @@ template <class T> class atomic
   void
   lock_check()
   {
-    while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) )
-      ;
+    while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) );
   }
 
   void
@@ -761,8 +760,7 @@ public:
   {
     P old = load();
     P desired = old + n;
-    while ( !tk.compare_and_swap(old, desired) )
-      desired = old + n;
+    while ( !tk.compare_and_swap(old, desired) ) desired = old + n;
     return *this;
   }
 
@@ -771,8 +769,7 @@ public:
   {
     P old = load();
     P desired = old - n;
-    while ( !tk.compare_and_swap(old, desired) )
-      desired = old - n;
+    while ( !tk.compare_and_swap(old, desired) ) desired = old - n;
     return *this;
   }
 
@@ -781,8 +778,7 @@ public:
   {
     P old = load();
     P desired = old + 1;
-    while ( !tk.compare_and_swap(old, desired) )
-      desired = old + 1;
+    while ( !tk.compare_and_swap(old, desired) ) desired = old + 1;
     return desired;
   }
 
@@ -791,8 +787,7 @@ public:
   {
     P old = load();
     P desired = old + 1;
-    while ( !tk.compare_and_swap(old, desired) )
-      desired = old + 1;
+    while ( !tk.compare_and_swap(old, desired) ) desired = old + 1;
     return old;
   }
 
@@ -801,8 +796,7 @@ public:
   {
     P old = load();
     P desired = old - 1;
-    while ( !tk.compare_and_swap(old, desired) )
-      desired = old - 1;
+    while ( !tk.compare_and_swap(old, desired) ) desired = old - 1;
     return desired;
   }
 
@@ -811,8 +805,7 @@ public:
   {
     P old = load();
     P desired = old - 1;
-    while ( !tk.compare_and_swap(old, desired) )
-      desired = old - 1;
+    while ( !tk.compare_and_swap(old, desired) ) desired = old - 1;
     return old;
   }
 };

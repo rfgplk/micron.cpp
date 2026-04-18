@@ -3,6 +3,8 @@
 #ifndef _INITIALIZER_LIST
 #define _INITIALIZER_LIST
 
+#pragma GCC system_header
+
 // NOTE: this file must look *exactly* like this, including keeping the std:: namespace. initializer_list is special, it is not viable to reimplement it in another way.
 
 namespace std

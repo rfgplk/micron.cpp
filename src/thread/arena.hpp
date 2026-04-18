@@ -66,8 +66,7 @@ template <typename Tr> struct thread_t {
   name() const
   {
     sstring<32, char> n = {};
-    if ( pthread::get_name(thread.native_handle(), n.data(), 32) != 0 )
-      n = "couldn't get name";
+    if ( pthread::get_name(thread.native_handle(), n.data(), 32) != 0 ) n = "couldn't get name";
     return n;
   }
 
@@ -106,16 +105,14 @@ class __default_arena
   __create_stack(void) const
   {
     addr_t *fstack = micron::addrmap(Sz);
-    if ( micron::mmap_failed(fstack) )
-      micron::exc<except::thread_error>("micron arena::__create_stack(): failed to allocate stack");
+    if ( micron::mmap_failed(fstack) ) micron::exc<except::thread_error>("micron arena::__create_stack(): failed to allocate stack");
     return fstack;
   }
 
   bool
   __verify_domain(thread_t<Tr> *ptr)
   {
-    if ( ptr < reinterpret_cast<thread_t<Tr> *>(&threads) or ptr > &threads.top() )
-      return false;
+    if ( ptr < reinterpret_cast<thread_t<Tr> *>(&threads) or ptr > &threads.top() ) return false;
     return true;
   }
 
@@ -222,8 +219,7 @@ public:
       c.clear();
       posix::sched_getaffinity(threads[i].thread.thread_id(), sizeof(c.get()), c.get());
       for ( u64 k = 0; k < cores.size(); ++k )
-        if ( c[k] )
-          cores[k]++;
+        if ( c[k] ) cores[k]++;
     }
 
     fvector<i32>::const_iterator smallest = min_at(cores);
@@ -261,8 +257,7 @@ public:
       c.clear();
       posix::sched_getaffinity(threads[i].thread.thread_id(), sizeof(c.get()), c.get());
       for ( u64 k = 0; k < cores.size(); ++k )
-        if ( c[k] )
-          cores[k]++;
+        if ( c[k] ) cores[k]++;
     }
 
     fvector<i32>::const_iterator smallest = min_at(cores);
@@ -368,8 +363,7 @@ public:
       retry_join:
         if ( r = solo::try_join(threads.top().thread); r == error::busy ) {
           __cpu_pause();
-          if ( --retries != 0 )
-            goto retry_join;
+          if ( --retries != 0 ) goto retry_join;
         }
       } else if ( r == error::invalid_arg ) {
         return r;
@@ -391,8 +385,7 @@ public:
   {
     micron::lock_guard l(mtx);
     ivector<const thread_t<Tr> *> r(0);
-    for ( umax_t i = 0; i < threads.size(); ++i )
-      r = r.push_back(&threads[i]);
+    for ( umax_t i = 0; i < threads.size(); ++i ) r = r.push_back(&threads[i]);
     return r;
   }
 
@@ -400,8 +393,7 @@ public:
   lower_priority(thread_t<Tr> &rf, const int n = 1)
   {
     micron::lock_guard l(mtx);
-    if ( !__verify_domain(&rf) )
-      micron::exc<except::thread_error>("micron arena::lower_priority(): invalid thread");
+    if ( !__verify_domain(&rf) ) micron::exc<except::thread_error>("micron arena::lower_priority(): invalid thread");
     micron::set_priority(rf.priority + n, rf.thread.thread_id());
   }
 
@@ -409,8 +401,7 @@ public:
   increase_priority(thread_t<Tr> &rf, const int n = 1)
   {
     micron::lock_guard l(mtx);
-    if ( !__verify_domain(&rf) )
-      micron::exc<except::thread_error>("micron arena::increase_priority(): invalid thread");
+    if ( !__verify_domain(&rf) ) micron::exc<except::thread_error>("micron arena::increase_priority(): invalid thread");
     micron::set_priority(rf.priority - n, rf.thread.thread_id());
     // NOTE: can't go below 0 without root or CAP_SYS_NICE
   }
@@ -420,8 +411,7 @@ public:
   {
     micron::lock_guard l(mtx);
 
-    if ( !__verify_domain(&rf) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&rf) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     rf.cpu_mask.clear();
     rf.cpu_mask.set_core(to_core);
     posix::sched_setaffinity(rf.thread_id(), sizeof(rf.get()), rf.get());
@@ -433,8 +423,7 @@ public:
   {
     micron::lock_guard l(mtx);
     for ( u64 i = 0; i < threads.size(); ++i )
-      if ( threads[i].thread.native_handle() == t.native_handle() )
-        return true;
+      if ( threads[i].thread.native_handle() == t.native_handle() ) return true;
     return false;
   }
 
@@ -443,8 +432,7 @@ public:
   {
     micron::lock_guard l(mtx);
     for ( u64 i = 0; i < threads.size(); ++i )
-      if ( threads[i].thread.native_handle() == pid )
-        return true;
+      if ( threads[i].thread.native_handle() == pid ) return true;
     return false;
   }
 
@@ -453,48 +441,42 @@ public:
   {
     micron::lock_guard l(mtx);
     for ( u64 i = 0; i < threads.size(); ++i )
-      if ( threads[i].thread.native_handle() == pid )
-        return threads[i].thread.stats();
+      if ( threads[i].thread.native_handle() == pid ) return threads[i].thread.stats();
     return posix::rusage_t{};
   }
 
   posix::rusage_t
   stats(const thread_t<Tr> &t) const
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t.stats();
   }
 
   auto
   sleep(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().sleep();
   }
 
   auto
   awaken(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().awaken();
   }
 
   void
   throttle(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().sleep_second();
   }
 
   auto
   cancel(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().cancel();
   }
 
@@ -503,8 +485,7 @@ public:
   auto
   await(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().wait_for();
   }
 
@@ -551,8 +532,7 @@ class __concurrent_arena
   bool
   __verify_domain(thread_t<Tr> *ptr)
   {
-    if ( ptr < reinterpret_cast<thread_t<Tr> *>(&threads) or ptr > &threads.top() )
-      return false;
+    if ( ptr < reinterpret_cast<thread_t<Tr> *>(&threads) or ptr > &threads.top() ) return false;
     return true;
   }
 
@@ -566,8 +546,7 @@ public:
     stop_all();
     join_all();
     // NOTE: we must manually free the stacks
-    for ( umax_t i = 0; i < counter; ++i )
-      __free_stack(i);
+    for ( umax_t i = 0; i < counter; ++i ) __free_stack(i);
   }
 
   __concurrent_arena(void) : counter{ 0 }, threads() {}
@@ -584,8 +563,7 @@ public:
   auto &
   create(Func f, Args &&...args)
   {
-    if ( counter >= concurrent_threads )
-      micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
+    if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
     micron::lock_guard l(mtx);
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
@@ -601,8 +579,7 @@ public:
   auto &
   create(void)
   {
-    if ( counter >= concurrent_threads )
-      micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
+    if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
     micron::lock_guard l(mtx);
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
@@ -626,12 +603,10 @@ public:
   {
     micron::lock_guard l(mtx);
     static umax_t __ct = 0;
-    if ( !counter )
-      micron::exc<except::thread_error>("micron concurrect_arena::add(): empty arena");
+    if ( !counter ) micron::exc<except::thread_error>("micron concurrect_arena::add(): empty arena");
     threads.mut(__ct).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
     umax_t __ot = __ct;
-    if ( ++__ct >= counter )
-      __ct = 0;
+    if ( ++__ct >= counter ) __ct = 0;
     return threads[__ot];
   }
 
@@ -666,8 +641,7 @@ public:
   {
     micron::lock_guard l(mtx);
     ivector<const thread_t<Tr> *> r(0);
-    for ( umax_t i = 0; i < threads.size(); ++i )
-      r = r.push_back(&threads[i]);
+    for ( umax_t i = 0; i < threads.size(); ++i ) r = r.push_back(&threads[i]);
     return r;
   }
 
@@ -675,8 +649,7 @@ public:
   lower_priority(thread_t<Tr> &rf, const int n = 1)
   {
     micron::lock_guard l(mtx);
-    if ( !__verify_domain(&rf) )
-      micron::exc<except::thread_error>("micron arena::lower_priority(): invalid thread");
+    if ( !__verify_domain(&rf) ) micron::exc<except::thread_error>("micron arena::lower_priority(): invalid thread");
     micron::set_priority(rf.priority + n, rf.thread.thread_id());
   }
 
@@ -684,8 +657,7 @@ public:
   increase_priority(thread_t<Tr> &rf, const int n = 1)
   {
     micron::lock_guard l(mtx);
-    if ( !__verify_domain(&rf) )
-      micron::exc<except::thread_error>("micron arena::increase_priority(): invalid thread");
+    if ( !__verify_domain(&rf) ) micron::exc<except::thread_error>("micron arena::increase_priority(): invalid thread");
     micron::set_priority(rf.priority - n, rf.thread.thread_id());
     // NOTE: can't go below 0 without root or CAP_SYS_NICE
   }
@@ -696,8 +668,7 @@ public:
   {
     micron::lock_guard l(mtx);
     for ( u64 i = 0; i < threads.size(); ++i )
-      if ( threads[i].thread.native_handle() == t.native_handle() )
-        return true;
+      if ( threads[i].thread.native_handle() == t.native_handle() ) return true;
     return false;
   }
 
@@ -706,8 +677,7 @@ public:
   {
     micron::lock_guard l(mtx);
     for ( u64 i = 0; i < threads.size(); ++i )
-      if ( threads[i].thread.native_handle() == pid )
-        return true;
+      if ( threads[i].thread.native_handle() == pid ) return true;
     return false;
   }
 
@@ -716,48 +686,42 @@ public:
   {
     micron::lock_guard l(mtx);
     for ( u64 i = 0; i < threads.size(); ++i )
-      if ( threads[i].thread.native_handle() == pid )
-        return threads[i].thread.stats();
+      if ( threads[i].thread.native_handle() == pid ) return threads[i].thread.stats();
     return posix::rusage_t{};
   }
 
   posix::rusage_t
   stats(const thread_t<Tr> &t) const
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t.stats();
   }
 
   auto
   sleep(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().sleep();
   }
 
   auto
   awaken(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     return t().awaken();
   }
 
   void
   throttle(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().sleep_second();
   }
 
   auto
   cancel(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().cancel();
   }
 
@@ -766,8 +730,7 @@ public:
   auto
   await(thread_t<Tr> &t)
   {
-    if ( !__verify_domain(&t) )
-      micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
+    if ( !__verify_domain(&t) ) micron::exc<except::thread_error>("micron arena::move_thread(): invalid thread");
     t().wait_for();
   }
 

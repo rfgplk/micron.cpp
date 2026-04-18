@@ -25,8 +25,7 @@ input_event
 get_event(const device_t &dev)
 {
   input_event event_buf;
-  if ( !read_raw(dev, event_buf) )
-    return {};
+  if ( !read_raw(dev, event_buf) ) return {};
   return event_buf;
 }
 
@@ -35,21 +34,17 @@ template <umax_t S = 250, auto Fn = get_event, typename... Args>
 poll_flag
 poll(const device_t &dev, Args &&...raw_in)
 {
-  if ( dev.bound_fd.has_error() )
-    return -1;
+  if ( dev.bound_fd.has_error() ) return -1;
   auto for_every = [](const input_event &event, input_packet_t &__raw_in) {
     if ( __raw_in.mask_type == event.type ) {
       for ( const auto &mask : __raw_in.button_mask ) {
         if ( mask == event.code ) {
           // pressed
-          if ( __raw_in.callback )
-            __raw_in.callback(event.time, event.code, event.value);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
           if ( event.value ) {
-            if ( __raw_in.actuate_callback )
-              __raw_in.actuate_callback(event.time, event.code, event.value);
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
           } else {
-            if ( __raw_in.release_callback )
-              __raw_in.release_callback(event.time, event.code, event.value);
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
             // unpressed
           }
         }
@@ -76,21 +71,17 @@ template <umax_t S = 250, auto Fn = get_event, typename... Args>
 poll_flag
 poll(input_t &inp, Args &&...raw_in)
 {
-  if ( inp.device.bound_fd.has_error() )
-    return -1;
+  if ( inp.device.bound_fd.has_error() ) return -1;
   auto for_every = [&](const input_event &event, input_packet_t &__raw_in) {
     if ( __raw_in.mask_type == event.type ) {
       for ( const auto &mask : __raw_in.button_mask ) {
         if ( mask == event.code ) {
           inp.history.push(event);
-          if ( __raw_in.callback )
-            __raw_in.callback(event.time, event.code, event.value);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
           if ( event.value ) {
-            if ( __raw_in.actuate_callback )
-              __raw_in.actuate_callback(event.time, event.code, event.value);
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
           } else {
-            if ( __raw_in.release_callback )
-              __raw_in.release_callback(event.time, event.code, event.value);
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
             // unpressed
           }
         }
@@ -125,21 +116,17 @@ poll_flag
 poll_pack(slice<input_t> &inp, Args &&...raw_in)
 {
   for ( const auto &_inp : inp )
-    if ( _inp.device.bound_fd.has_error() )
-      return -1;
+    if ( _inp.device.bound_fd.has_error() ) return -1;
   auto for_every = [](input_t &_inp, const input_event &event, input_packet_t &__raw_in) {
     if ( __raw_in.mask_type == event.type ) {
       for ( const auto &mask : __raw_in.button_mask ) {
         if ( mask == event.code ) {
           _inp.history.push(event);
-          if ( __raw_in.callback )
-            __raw_in.callback(event.time, event.code, event.value);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
           if ( event.value ) {
-            if ( __raw_in.actuate_callback )
-              __raw_in.actuate_callback(event.time, event.code, event.value);
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
           } else {
-            if ( __raw_in.release_callback )
-              __raw_in.release_callback(event.time, event.code, event.value);
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
             // unpressed
           }
         }
@@ -171,21 +158,17 @@ poll_flag
 poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
 {
   for ( const auto &_inp : inp )
-    if ( _inp.device.bound_fd.has_error() )
-      return -1;
+    if ( _inp.device.bound_fd.has_error() ) return -1;
   auto for_every = [](input_t &_inp, const input_event &event, input_packet_t &__raw_in) {
     if ( __raw_in.mask_type == event.type ) {
       for ( const auto &mask : __raw_in.button_mask ) {
         if ( mask == event.code ) {
           _inp.history.push(event);
-          if ( __raw_in.callback )
-            __raw_in.callback(event.time, event.code, event.value);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
           if ( event.value ) {
-            if ( __raw_in.actuate_callback )
-              __raw_in.actuate_callback(event.time, event.code, event.value);
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
           } else {
-            if ( __raw_in.release_callback )
-              __raw_in.release_callback(event.time, event.code, event.value);
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
             // unpressed
           }
         }
@@ -208,21 +191,17 @@ poll_flag
 poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
 {
   for ( const auto &_inp : inp )
-    if ( _inp.device.bound_fd.has_error() )
-      return -1;
+    if ( _inp.device.bound_fd.has_error() ) return -1;
   auto for_every = [](input_t &_inp, const input_event &event, input_packet_t &__raw_in) {
     if ( __raw_in.mask_type == event.type ) {
       for ( const auto &mask : __raw_in.button_mask ) {
         if ( mask == event.code ) {
           _inp.history.push(event);
-          if ( __raw_in.callback )
-            __raw_in.callback(event.time, event.code, event.value);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
           if ( event.value ) {
-            if ( __raw_in.actuate_callback )
-              __raw_in.actuate_callback(event.time, event.code, event.value);
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
           } else {
-            if ( __raw_in.release_callback )
-              __raw_in.release_callback(event.time, event.code, event.value);
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
             // unpressed
           }
         }

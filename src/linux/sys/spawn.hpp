@@ -82,8 +82,7 @@ spawnattr_init(spawnattr_t &attr)
 
   attr.cgroup = -1;
 
-  for ( int i = 0; i < 15; ++i )
-    attr.pad[i] = 0;
+  for ( int i = 0; i < 15; ++i ) attr.pad[i] = 0;
 
   return 0;
 }
@@ -97,8 +96,7 @@ __apply_file_actions(const spawn_file_actions_t &fa)
     switch ( a.type ) {
     case SPAWN_ACTION_OPEN : {
       auto fd = micron::openat(at_fdcwd, a.path, a.oflag, a.mode);
-      if ( fd < 0 )
-        return -errno;
+      if ( fd < 0 ) return -errno;
       if ( fd != a.fd ) {
         micron::dup3(fd, a.fd, 0);
         micron::close(fd);
@@ -122,24 +120,19 @@ __apply_spawnattr(const spawnattr_t &attr)
 {
   // TODO: push as separate file
   if ( attr.__flags & posix_spawn_setpgroup )
-    if ( micron::syscall(SYS_setpgid, 0, attr.pgrp) < 0 )
-      return -errno;
+    if ( micron::syscall(SYS_setpgid, 0, attr.pgrp) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setsigmask )
-    if ( micron::syscall(SYS_rt_sigprocmask, sig_setmask, &attr.ss, nullptr, sizeof(sigset_t)) < 0 )
-      return -errno;
+    if ( micron::syscall(SYS_rt_sigprocmask, sig_setmask, &attr.ss, nullptr, sizeof(sigset_t)) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setsigdef )
-    if ( micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, sizeof(sigset_t)) < 0 )
-      return -errno;
+    if ( micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, sizeof(sigset_t)) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setscheduler )
-    if ( micron::syscall(SYS_sched_setscheduler, 0, attr.policy, &attr.__sp) < 0 )
-      return -errno;
+    if ( micron::syscall(SYS_sched_setscheduler, 0, attr.policy, &attr.__sp) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setschedparam )
-    if ( micron::syscall(SYS_sched_setparam, 0, &attr.__sp) < 0 )
-      return -errno;
+    if ( micron::syscall(SYS_sched_setparam, 0, &attr.__sp) < 0 ) return -errno;
 
   // if ( attr.cgroup >= 0 )
   //   if ( micron::syscall(SYS_setns, attr.cgroup, CLONE_NEWCGROUP) < 0 )
@@ -154,14 +147,12 @@ spawn_process(spawn_ctx *ctx)
 
   if ( ctx->fa ) {
     int r = __apply_file_actions(*ctx->fa);
-    if ( r < 0 )
-      goto fail;
+    if ( r < 0 ) goto fail;
   }
 
   if ( ctx->attr ) {
     int r = __apply_spawnattr(*ctx->attr);
-    if ( r < 0 )
-      goto fail;
+    if ( r < 0 ) goto fail;
   }
   posix::execve(ctx->path, ctx->argv, ctx->envp);
 
@@ -178,14 +169,12 @@ spawn_process(spawn_ctx &ctx)
 
   if ( ctx.fa ) {
     int r = __apply_file_actions(*ctx.fa);
-    if ( r < 0 )
-      goto fail;
+    if ( r < 0 ) goto fail;
   }
 
   if ( ctx.attr ) {
     int r = __apply_spawnattr(*ctx.attr);
-    if ( r < 0 )
-      goto fail;
+    if ( r < 0 ) goto fail;
   }
   posix::execve(ctx.path, ctx.argv, ctx.envp);
 

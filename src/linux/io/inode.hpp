@@ -67,11 +67,20 @@ __fstat(posix::fd_t fd, stat_t &out)
   return posix::fstat(fd, out) == 0;
 }
 
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
 inline bool
 __fstatat(posix::fd_t dirfd, const char *path, stat_t &out, i32 flags = 0)
 {
   return posix::fstatat(dirfd, path, out, flags) == 0;
 }
+#elif defined(__micron_arch_arm32)
+// explicit stat64 variant
+inline bool
+__fstatat(posix::fd_t dirfd, const char *path, stat64_t &out, i32 flags = 0)
+{
+  return posix::fstatat(dirfd, path, out, flags) == 0;
+}
+#endif
 
 inline bool
 stat_is_reg(const stat_t &b)
@@ -307,8 +316,7 @@ inline bool
 is_inode_type(const char *path, stat_t &buf)
 {
   bool ok = (Tp == node_types::symlink) ? __impl::__lstat(path, buf) : __impl::__stat(path, buf);
-  if ( !ok )
-    return false;
+  if ( !ok ) return false;
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
@@ -323,8 +331,7 @@ template <node_types Tp>
 inline bool
 is_inode_type(posix::fd_t fd, stat_t &buf)
 {
-  if ( !__impl::__fstat(fd, buf) )
-    return false;
+  if ( !__impl::__fstat(fd, buf) ) return false;
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
@@ -377,8 +384,7 @@ inline bool
 is_inode_type_at(posix::fd_t dirfd, const char *path, stat_t &buf)
 {
   i32 flags = (Tp == node_types::symlink) ? posix::at_symlink_nofollow : 0;
-  if ( !__impl::__fstatat(dirfd, path, buf, flags) )
-    return false;
+  if ( !__impl::__fstatat(dirfd, path, buf, flags) ) return false;
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
@@ -441,8 +447,7 @@ get_type(const stat_t &buf)
 inline node_types
 get_type(const char *path, stat_t &buf)
 {
-  if ( !__impl::__stat(path, buf) )
-    return node_types::not_found;
+  if ( !__impl::__stat(path, buf) ) return node_types::not_found;
   return static_cast<node_types>(buf.st_mode & __format_mask);
 }
 
@@ -456,8 +461,7 @@ get_type(const T &path, stat_t &buf)
 inline node_types
 get_type(posix::fd_t fd, stat_t &buf)
 {
-  if ( !__impl::__fstat(fd, buf) )
-    return node_types::not_found;
+  if ( !__impl::__fstat(fd, buf) ) return node_types::not_found;
   return static_cast<node_types>(buf.st_mode & __format_mask);
 }
 
@@ -498,16 +502,14 @@ inline node_types
 get_type_at(const char *path)
 {
   stat_t buf{};
-  if ( !__impl::__stat(path, buf) )
-    return node_types::not_found;
+  if ( !__impl::__stat(path, buf) ) return node_types::not_found;
   return static_cast<node_types>(buf.st_mode & __format_mask);
 }
 
 inline node_types
 get_type_at(posix::fd_t dirfd, const char *path, stat_t &buf)
 {
-  if ( !__impl::__fstatat(dirfd, path, buf) )
-    return node_types::not_found;
+  if ( !__impl::__fstatat(dirfd, path, buf) ) return node_types::not_found;
   return static_cast<node_types>(buf.st_mode & __format_mask);
 }
 
@@ -1248,15 +1250,13 @@ inline bool
 is_empty_dir(posix::fd_t fd)
 {
   posix::fd_t tmp{ static_cast<i32>(micron::syscall(SYS_dup, fd.fd)) };
-  if ( !tmp )
-    return false;
+  if ( !tmp ) return false;
   micron::syscall(SYS_lseek, tmp.fd, 0, posix::seek_set);
   char buf[512];
   bool empty = true;
   for ( ;; ) {
     max_t n = micron::syscall(SYS_getdents64, tmp.fd, buf, sizeof(buf));
-    if ( n <= 0 )
-      break;
+    if ( n <= 0 ) break;
     usize pos = 0;
     while ( pos < static_cast<usize>(n) ) {
       auto *d = reinterpret_cast<posix::__linux_kernel_dirent64 *>(buf + pos);
@@ -1283,8 +1283,7 @@ is_empty_dir(const char *path)
 {
   posix::fd_t fd{ static_cast<i32>(
       micron::syscall(SYS_openat, posix::at_fdcwd, path, posix::o_rdonly | posix::o_directory | posix::o_cloexec, 0)) };
-  if ( !fd )
-    return false;
+  if ( !fd ) return false;
   bool r = is_empty_dir(fd);
   micron::syscall(SYS_close, fd.fd);
   return r;
@@ -1300,20 +1299,16 @@ is_empty_dir(const T &s)
 inline bool
 is_empty_node(const stat_t &buf)
 {
-  if ( __impl::stat_is_reg(buf) )
-    return buf.st_size == 0;
+  if ( __impl::stat_is_reg(buf) ) return buf.st_size == 0;
   return false;
 }
 
 inline bool
 is_empty_node(posix::fd_t fd, stat_t &buf)
 {
-  if ( !__impl::__fstat(fd, buf) )
-    return false;
-  if ( __impl::stat_is_reg(buf) )
-    return buf.st_size == 0;
-  if ( __impl::stat_is_dir(buf) )
-    return is_empty_dir(fd);
+  if ( !__impl::__fstat(fd, buf) ) return false;
+  if ( __impl::stat_is_reg(buf) ) return buf.st_size == 0;
+  if ( __impl::stat_is_dir(buf) ) return is_empty_dir(fd);
   return false;
 }
 
@@ -1339,12 +1334,9 @@ is_empty_node(i32 fd)
 inline bool
 is_empty_node(const char *path, stat_t &buf)
 {
-  if ( !__impl::__stat(path, buf) )
-    return false;
-  if ( __impl::stat_is_reg(buf) )
-    return buf.st_size == 0;
-  if ( __impl::stat_is_dir(buf) )
-    return is_empty_dir(path);
+  if ( !__impl::__stat(path, buf) ) return false;
+  if ( __impl::stat_is_reg(buf) ) return buf.st_size == 0;
+  if ( __impl::stat_is_dir(buf) ) return is_empty_dir(path);
   return false;
 }
 
@@ -1403,14 +1395,11 @@ has_content(const T &s)
 inline bool
 is_mountpoint(const char *path)
 {
-  if ( path == nullptr || path[0] == '\0' )
-    return false;
-  if ( path[0] == '/' && path[1] == '\0' )
-    return true;
+  if ( path == nullptr || path[0] == '\0' ) return false;
+  if ( path[0] == '/' && path[1] == '\0' ) return true;
 
   stat_t self{}, parent{};
-  if ( !__impl::__stat(path, self) )
-    return false;
+  if ( !__impl::__stat(path, self) ) return false;
 
   char par[posix::path_max];
   usize i = 0;
@@ -1420,20 +1409,16 @@ is_mountpoint(const char *path)
   }
   par[i] = '\0';
 
-  while ( i > 1 && par[i - 1] == '/' )
-    --i;
-  while ( i > 1 && par[i - 1] != '/' )
-    --i;
-  if ( i > 1 && par[i - 1] == '/' )
-    --i;
+  while ( i > 1 && par[i - 1] == '/' ) --i;
+  while ( i > 1 && par[i - 1] != '/' ) --i;
+  if ( i > 1 && par[i - 1] == '/' ) --i;
   if ( i == 0 ) {
     par[0] = '/';
     i = 1;
   }
   par[i] = '\0';
 
-  if ( !__impl::__stat(par, parent) )
-    return false;
+  if ( !__impl::__stat(par, parent) ) return false;
   return self.st_dev != parent.st_dev;
 }
 

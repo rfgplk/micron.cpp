@@ -114,8 +114,7 @@ fresh_deep_copy(D &dest, const S &src)
   auto dit = dest.begin();
   auto sit = src.cbegin();
   using T = __impl_fresh::elem_t<D>;
-  for ( ; dit != dest.end() && sit != src.cend(); ++dit, ++sit )
-    new (micron::addr(*dit)) T(*sit);
+  for ( ; dit != dest.end() && sit != src.cend(); ++dit, ++sit ) new (micron::addr(*dit)) T(*sit);
 }
 
 template <is_iterable_container D, is_iterable_container S>
@@ -125,8 +124,7 @@ fresh_deep_copy(D &dest, S &src)
   auto dit = dest.begin();
   auto sit = src.begin();
   using T = __impl_fresh::elem_t<D>;
-  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit )
-    new (micron::addr(*dit)) T(*sit);
+  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit ) new (micron::addr(*dit)) T(*sit);
 }
 
 template <is_iterable D, is_iterable S>
@@ -137,8 +135,7 @@ fresh_deep_copy(D &dest, S &src)
   auto dit = dest.begin();
   auto sit = src.begin();
   using T = __impl_fresh::elem_t<D>;
-  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit )
-    new (micron::addr(*dit)) T(*sit);
+  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit ) new (micron::addr(*dit)) T(*sit);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,8 +176,7 @@ fresh_deep_copy_assign(D &dest, const S &src)
 {
   auto dit = dest.begin();
   auto sit = src.cbegin();
-  for ( ; dit != dest.end() && sit != src.cend(); ++dit, ++sit )
-    *dit = *sit;
+  for ( ; dit != dest.end() && sit != src.cend(); ++dit, ++sit ) *dit = *sit;
 }
 
 template <is_iterable_container D, is_iterable_container S>
@@ -189,8 +185,7 @@ fresh_deep_copy_assign(D &dest, S &src)
 {
   auto dit = dest.begin();
   auto sit = src.begin();
-  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit )
-    *dit = *sit;
+  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit ) *dit = *sit;
 }
 
 template <is_iterable D, is_iterable S>
@@ -200,8 +195,7 @@ fresh_deep_copy_assign(D &dest, S &src)
 {
   auto dit = dest.begin();
   auto sit = src.begin();
-  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit )
-    *dit = *sit;
+  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit ) *dit = *sit;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,8 +292,7 @@ fresh_deep_move_assign(D &dest, S &src)
 {
   auto dit = dest.begin();
   auto sit = src.begin();
-  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit )
-    *dit = micron::move(*sit);
+  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit ) *dit = micron::move(*sit);
 }
 
 template <is_iterable D, is_iterable S>
@@ -309,8 +302,7 @@ fresh_deep_move_assign(D &dest, S &src)
 {
   auto dit = dest.begin();
   auto sit = src.begin();
-  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit )
-    *dit = micron::move(*sit);
+  for ( ; dit != dest.end() && sit != src.end(); ++dit, ++sit ) *dit = micron::move(*sit);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -482,8 +474,7 @@ fresh_destroy(C &c)
 {
   using T = __impl_fresh::elem_t<C>;
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
-    for ( auto it = c.begin(); it != c.end(); ++it )
-      it->~T();
+    for ( auto it = c.begin(); it != c.end(); ++it ) it->~T();
   }
 }
 
@@ -519,8 +510,7 @@ fresh_destroy_fast(C &c)
 {
   using T = __impl_fresh::elem_t<C>;
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
-    for ( auto it = c.begin(); it != c.end(); ++it )
-      it->~T();
+    for ( auto it = c.begin(); it != c.end(); ++it ) it->~T();
   }
 }
 
@@ -578,8 +568,7 @@ template <is_iterable C>
 inline void
 fresh_set(C &c, const __impl_fresh::elem_t<C> &val)
 {
-  for ( auto it = c.begin(); it != c.end(); ++it )
-    *it = val;
+  for ( auto it = c.begin(); it != c.end(); ++it ) *it = val;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -612,8 +601,7 @@ inline void
 fresh_construct(C &c, const __impl_fresh::elem_t<C> &val)
 {
   using T = __impl_fresh::elem_t<C>;
-  for ( auto it = c.begin(); it != c.end(); ++it )
-    new (micron::addr(*it)) T(val);
+  for ( auto it = c.begin(); it != c.end(); ++it ) new (micron::addr(*it)) T(val);
 }
 
 };     // namespace micron

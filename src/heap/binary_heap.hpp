@@ -64,8 +64,7 @@ public:
 
   ~binary_heap()
   {
-    if ( __mem::memory == nullptr )
-      return;
+    if ( __mem::memory == nullptr ) return;
     clear();
   }
 
@@ -104,8 +103,7 @@ public:
   binary_heap &
   insert(T &&v)
   {
-    if ( __mem::length == __mem::capacity )
-      return;
+    if ( __mem::length == __mem::capacity ) return;
     if constexpr ( micron::is_class_v<T> )
       __mem::memory[__mem::length] = micron::move(v);
     else
@@ -116,8 +114,7 @@ public:
   T
   get()
   {
-    if ( !__mem::length )
-      exc<except::library_error>("micron::binary_heap::get() is empty");
+    if ( !__mem::length ) exc<except::library_error>("micron::binary_heap::get() is empty");
     if constexpr ( micron::is_class_v<T> ) {
       T v = micron::move(__mem::memory[0]);
       __mem::memory[0] = micron::move(__mem::memory[__mem::length - 1]);
@@ -148,8 +145,7 @@ public:
   T
   max() const
   {
-    if ( __mem::memory == nullptr )
-      exc<except::library_error>("micron::binary_heap::max() is empty.");
+    if ( __mem::memory == nullptr ) exc<except::library_error>("micron::binary_heap::max() is empty.");
     return __mem::memory[0];
   }
 };

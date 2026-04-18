@@ -48,8 +48,7 @@ int
 __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 )
-    return errno;
+  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 ) return errno;
   micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, pipefd[1] };
   pid = micron::fork();
   if ( pid == 0 ) {
@@ -77,21 +76,18 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
              [[maybe_unused]] const Caps *caps = nullptr)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 )
-    return errno;
+  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 ) return errno;
 
   pid = micron::fork();
   if ( pid == 0 ) {
     micron::close(pipefd[0]);
 
     if constexpr ( Lim ) {
-      if ( lims )
-        child_apply_limits(*lims);
+      if ( lims ) child_apply_limits(*lims);
     }
 
     if constexpr ( Cap ) {
-      if ( caps )
-        apply_caps_child(*caps);
+      if ( caps ) apply_caps_child(*caps);
     }
 
     posix::spawn_ctx ctx{ path, argv, envp, nullptr, nullptr, pipefd[1] };
@@ -152,14 +148,12 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
         const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 )
-    return errno;
+  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 ) return errno;
 
   constexpr usize stack_size = 1 << 20;
   void *stack
       = reinterpret_cast<void *>(micron::mmap(nullptr, stack_size + 4096, prot_read | prot_write, map_private | map_anonymous, -1, 0));
-  if ( mmap_failed(stack) )
-    return errno;
+  if ( mmap_failed(stack) ) return errno;
 
   micron::mprotect(stack, 4096, prot_none);
   constexpr u32 red_zone = 128;
@@ -189,8 +183,7 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
     return err;
   }
 
-  if ( pid )
-    pid = child;
+  if ( pid ) pid = child;
 
   return 0;
 }

@@ -199,8 +199,7 @@ make_pipe(i32 flags = 0)
 {
   i32 fds[2];
   i32 r = (flags == 0) ? static_cast<i32>(micron::syscall(SYS_pipe, fds)) : static_cast<i32>(micron::syscall(SYS_pipe2, fds, flags));
-  if ( r < 0 )
-    return { fd_t{ r }, fd_t{ r } };
+  if ( r < 0 ) return { fd_t{ r }, fd_t{ r } };
   return { fd_t{ fds[0] }, fd_t{ fds[1] } };
 }
 

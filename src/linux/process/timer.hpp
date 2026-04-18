@@ -58,8 +58,7 @@ public:
 
   ~timerfd_t()
   {
-    if ( fd >= 0 )
-      micron::syscall(SYS_close, fd);
+    if ( fd >= 0 ) micron::syscall(SYS_close, fd);
   }
 
   timerfd_t()
@@ -67,8 +66,7 @@ public:
     micron::memset(&current, 0x0, sizeof(itimerspec_t));
 
     fd = micron::timerfd_create(static_cast<clockid_t>(C), tfd_cloexec);
-    if ( fd < 0 )
-      exc<except::runtime_error>("micron::timerfd_t failed to create timerfd");
+    if ( fd < 0 ) exc<except::runtime_error>("micron::timerfd_t failed to create timerfd");
   }
 
   static timerfd_t
@@ -77,8 +75,7 @@ public:
     timerfd_t t;
     micron::syscall(SYS_close, t.fd);
     t.fd = micron::timerfd_create(static_cast<clockid_t>(C), tfd_cloexec | tfd_nonblock);
-    if ( t.fd < 0 )
-      exc<except::runtime_error>("micron::timerfd_t::nonblocking failed to create timerfd");
+    if ( t.fd < 0 ) exc<except::runtime_error>("micron::timerfd_t::nonblocking failed to create timerfd");
     return t;
   }
 
@@ -94,8 +91,7 @@ public:
   timerfd_t &
   operator=(timerfd_t &&o) noexcept
   {
-    if ( fd >= 0 )
-      micron::syscall(SYS_close, fd);
+    if ( fd >= 0 ) micron::syscall(SYS_close, fd);
     fd = o.fd;
     current = o.current;
     o.fd = -1;
@@ -109,8 +105,7 @@ public:
     timespec_t ts = __to_timespec(interval, u);
     current.it_interval = ts;
     current.it_value = ts; /* first expiry == interval */
-    if ( micron::timerfd_settime(fd, 0, current) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::arm failed");
+    if ( micron::timerfd_settime(fd, 0, current) != 0 ) exc<except::runtime_error>("micron::timerfd_t::arm failed");
   }
 
   inline __attribute__((always_inline)) void
@@ -118,16 +113,14 @@ public:
   {
     current.it_value = __to_timespec(initial, iu);
     current.it_interval = __to_timespec(interval, u);
-    if ( micron::timerfd_settime(fd, 0, current) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::arm failed");
+    if ( micron::timerfd_settime(fd, 0, current) != 0 ) exc<except::runtime_error>("micron::timerfd_t::arm failed");
   }
 
   inline __attribute__((always_inline)) void
   arm(const itimerspec_t &spec, int flags = 0)
   {
     current = spec;
-    if ( micron::timerfd_settime(fd, flags, current) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::arm failed");
+    if ( micron::timerfd_settime(fd, flags, current) != 0 ) exc<except::runtime_error>("micron::timerfd_t::arm failed");
   }
 
   inline __attribute__((always_inline)) void
@@ -135,8 +128,7 @@ public:
   {
     micron::memset(&current, 0x0, sizeof(itimerspec_t));
     current.it_value = __to_timespec(delay, u);
-    if ( micron::timerfd_settime(fd, 0, current) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::arm_oneshot failed");
+    if ( micron::timerfd_settime(fd, 0, current) != 0 ) exc<except::runtime_error>("micron::timerfd_t::arm_oneshot failed");
   }
 
   inline __attribute__((always_inline)) void
@@ -144,16 +136,14 @@ public:
   {
     current.it_value = abs_expiry;
     current.it_interval = interval;
-    if ( micron::timerfd_settime(fd, tfd_timer_abstime, current) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::arm_abs failed");
+    if ( micron::timerfd_settime(fd, tfd_timer_abstime, current) != 0 ) exc<except::runtime_error>("micron::timerfd_t::arm_abs failed");
   }
 
   inline __attribute__((always_inline)) void
   disarm()
   {
     micron::memset(&current, 0x0, sizeof(itimerspec_t));
-    if ( micron::timerfd_settime(fd, 0, current) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::disarm failed");
+    if ( micron::timerfd_settime(fd, 0, current) != 0 ) exc<except::runtime_error>("micron::timerfd_t::disarm failed");
   }
 
   inline __attribute__((always_inline)) unsigned long long
@@ -161,8 +151,7 @@ public:
   {
     unsigned long long count = 0;
     long r = micron::syscall(SYS_read, fd, &count, sizeof(count));
-    if ( r < 0 )
-      exc<except::runtime_error>("micron::timerfd_t::wait read failed");
+    if ( r < 0 ) exc<except::runtime_error>("micron::timerfd_t::wait read failed");
     return count;
   }
 
@@ -179,8 +168,7 @@ public:
   gettime() const
   {
     itimerspec_t spec;
-    if ( micron::timerfd_gettime(fd, spec) != 0 )
-      exc<except::runtime_error>("micron::timerfd_t::gettime failed");
+    if ( micron::timerfd_gettime(fd, spec) != 0 ) exc<except::runtime_error>("micron::timerfd_t::gettime failed");
     return spec;
   }
 
@@ -196,8 +184,7 @@ public:
   armed() const noexcept
   {
     itimerspec_t spec;
-    if ( micron::timerfd_gettime(fd, spec) != 0 )
-      return false;
+    if ( micron::timerfd_gettime(fd, spec) != 0 ) return false;
     return spec.it_value.tv_sec != 0 || spec.it_value.tv_nsec != 0;
   }
 

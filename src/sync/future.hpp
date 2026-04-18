@@ -52,8 +52,7 @@ public:
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready )
-          return;
+        if ( ready ) return;
       }
       __cpu_pause();
     }
@@ -67,8 +66,7 @@ public:
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready or (micron::system_clock<>::now() - start >= timeout) )
-          break;
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) break;
       }
       __cpu_pause();
     }
@@ -136,8 +134,7 @@ public:
     while ( true ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready )
-          return;
+        if ( ready ) return;
       }
       __cpu_pause();
     }
@@ -150,8 +147,7 @@ public:
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready or (micron::system_clock<>::now() - start >= timeout) )
-          break;
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) break;
       }
       __cpu_pause();
     }
@@ -215,8 +211,7 @@ public:
     while ( true ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready )
-          return;
+        if ( ready ) return;
       }
       __cpu_pause();
     }
@@ -230,8 +225,7 @@ public:
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready or (micron::system_clock<>::now() - start >= timeout) )
-          break;
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) break;
       }
       __cpu_pause();
     }

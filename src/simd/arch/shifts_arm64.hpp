@@ -44,7 +44,7 @@ concept is_neon_simd_class = requires {
 };
 
 template <is_neon_simd_class T>
-[[gnu::always_inline]] static inline typename T::bit_width
+__attribute__((always_inline)) static inline typename T::bit_width
 __r(T &v) noexcept
 {
   return static_cast<typename T::bit_width>(v);
@@ -67,13 +67,13 @@ __r(T &v) noexcept
 #define _ru32r(x) vreinterpretq_s32_u32(x)
 #define _ru64r(x) vreinterpretq_s32_u64(x)
 
-[[gnu::always_inline]] static inline int
+__attribute__((always_inline)) static inline int
 __scalar_cnt(int32x4_t cnt) noexcept
 {
   return static_cast<int>(vgetq_lane_s64(vreinterpretq_s64_s32(cnt), 0));
 }
 
-[[gnu::always_inline]] static inline uint16x8_t
+__attribute__((always_inline)) static inline uint16x8_t
 __expand_mask_u16(uint8_t k) noexcept
 {
   static const uint16_t bp[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
@@ -82,7 +82,7 @@ __expand_mask_u16(uint8_t k) noexcept
   return vceqq_u16(vandq_u16(m, p), p);
 }
 
-[[gnu::always_inline]] static inline uint32x4_t
+__attribute__((always_inline)) static inline uint32x4_t
 __expand_mask_u32(uint8_t k) noexcept
 {
   static const uint32_t bp[4] = { 1, 2, 4, 8 };
@@ -91,7 +91,7 @@ __expand_mask_u32(uint8_t k) noexcept
   return vceqq_u32(vandq_u32(m, p), p);
 }
 
-[[gnu::always_inline]] static inline uint64x2_t
+__attribute__((always_inline)) static inline uint64x2_t
 __expand_mask_u64(uint8_t k) noexcept
 {
   static const uint64_t bp[2] = { 1, 2 };
@@ -100,13 +100,11 @@ __expand_mask_u64(uint8_t k) noexcept
   return vceqq_u64(vandq_u64(m, p), p);
 }
 
-[[gnu::always_inline]] static inline int32x4_t
+__attribute__((always_inline)) static inline int32x4_t
 __neon_bslli(int32x4_t v, int n) noexcept
 {
-  if ( n <= 0 )
-    return v;
-  if ( n >= 16 )
-    return vdupq_n_s32(0);
+  if ( n <= 0 ) return v;
+  if ( n >= 16 ) return vdupq_n_s32(0);
   uint8x16_t a = _ru8(v), z = vdupq_n_u8(0);
   switch ( n ) {
   case 1 :
@@ -144,13 +142,11 @@ __neon_bslli(int32x4_t v, int n) noexcept
   }
 }
 
-[[gnu::always_inline]] static inline int32x4_t
+__attribute__((always_inline)) static inline int32x4_t
 __neon_bsrli(int32x4_t v, int n) noexcept
 {
-  if ( n <= 0 )
-    return v;
-  if ( n >= 16 )
-    return vdupq_n_s32(0);
+  if ( n <= 0 ) return v;
+  if ( n >= 16 ) return vdupq_n_s32(0);
   uint8x16_t a = _ru8(v), z = vdupq_n_u8(0);
   switch ( n ) {
   case 1 :
@@ -248,12 +244,9 @@ template <is_neon_simd_class T>
 inline T
 sll(T &o, i128 count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return sll_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return sll_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return sll_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return sll_16(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sll_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sll_64(o, count);
 }
 
 template <is_neon_simd_class T>
@@ -281,12 +274,9 @@ template <is_neon_simd_class T>
 inline T
 slli(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return slli_16(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return slli_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return slli_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return slli_16(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return slli_32(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return slli_64(o, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -314,12 +304,9 @@ template <is_neon_simd_class T>
 inline T
 sllv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return sllv_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return sllv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return sllv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return sllv_16(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sllv_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sllv_64(o, count);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,12 +338,9 @@ template <is_neon_simd_class T>
 inline T
 srl(T &o, i128 count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return srl_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return srl_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return srl_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srl_16(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srl_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srl_64(o, count);
 }
 
 template <is_neon_simd_class T>
@@ -384,12 +368,9 @@ template <is_neon_simd_class T>
 inline T
 srli(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return srli_16(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return srli_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return srli_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srli_16(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srli_32(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srli_64(o, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -417,12 +398,9 @@ template <is_neon_simd_class T>
 inline T
 srlv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return srlv_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return srlv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return srlv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srlv_16(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srlv_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srlv_64(o, count);
 }
 
 template <is_neon_simd_class T>
@@ -451,12 +429,9 @@ template <is_neon_simd_class T>
 inline T
 sra(T &o, i128 count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return sra_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return sra_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return sra_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return sra_16(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sra_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sra_64(o, count);
 }
 
 template <is_neon_simd_class T>
@@ -484,12 +459,9 @@ template <is_neon_simd_class T>
 inline T
 srai(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return srai_16(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return srai_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return srai_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srai_16(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srai_32(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srai_64(o, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -517,12 +489,9 @@ template <is_neon_simd_class T>
 inline T
 srav(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return srav_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return srav_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return srav_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srav_16(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srav_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srav_64(o, count);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,10 +518,8 @@ template <is_neon_simd_class T>
 inline T
 rol(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return rol_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return rol_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return rol_32(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return rol_64(o, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -579,10 +546,8 @@ template <is_neon_simd_class T>
 inline T
 rolv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return rolv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return rolv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return rolv_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return rolv_64(o, count);
 }
 
 template <is_neon_simd_class T>
@@ -606,10 +571,8 @@ template <is_neon_simd_class T>
 inline T
 ror(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return ror_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return ror_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return ror_32(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return ror_64(o, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -636,10 +599,8 @@ template <is_neon_simd_class T>
 inline T
 rorv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return rorv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return rorv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return rorv_32(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return rorv_64(o, count);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -678,12 +639,9 @@ template <is_neon_simd_class T>
 inline T
 shldi(T &a, T &b, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return shldi_16(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return shldi_32(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return shldi_64(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shldi_16(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shldi_32(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shldi_64(a, b, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -723,12 +681,9 @@ template <is_neon_simd_class T>
 inline T
 shldv(T &a, T &b, T &c)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return shldv_16(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return shldv_32(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return shldv_64(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shldv_16(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shldv_32(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shldv_64(a, b, c);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -767,12 +722,9 @@ template <is_neon_simd_class T>
 inline T
 shrdi(T &a, T &b, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return shrdi_16(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return shrdi_32(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return shrdi_64(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shrdi_16(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shrdi_32(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shrdi_64(a, b, imm8);
 }
 
 template <is_neon_simd_class T>
@@ -812,12 +764,9 @@ template <is_neon_simd_class T>
 inline T
 shrdv(T &a, T &b, T &c)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
-    return shrdv_16(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
-    return shrdv_32(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
-    return shrdv_64(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shrdv_16(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shrdv_32(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shrdv_64(a, b, c);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -19,7 +19,11 @@ namespace micron
 inline __attribute__((always_inline)) addr_t *
 mmap(addr_t *__restrict addr, usize len, int prot, int flags, int fd, posix::off_t offset)
 {
+#if !defined(__micron_arch_arm32)
   return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
+#else
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap2, addr, len, prot, flags, fd, offset));
+#endif
 }
 
 // addr_t *mmap64();
@@ -66,11 +70,13 @@ memfd_create(const char *name, unsigned int flags)
   return (int)micron::syscall(SYS_memfd_create, name, flags);
 }
 
+#if !defined(__micron_arch_arm32)
 int
 memfd_secret(const char *name, unsigned int flags)
 {
   return (int)micron::syscall(SYS_memfd_secret, name, flags);
 }
+#endif
 
 int mlockall();
 int munlockall();
@@ -149,8 +155,7 @@ template <typename T>
 inline auto
 try_unmap(T *addr, usize sz)
 {
-  if ( addr != nullptr )
-    return munmap(reinterpret_cast<addr_t *>(addr), sz);
+  if ( addr != nullptr ) return munmap(reinterpret_cast<addr_t *>(addr), sz);
   return 1;
 }
 

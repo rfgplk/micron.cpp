@@ -43,15 +43,13 @@ class conarray
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ )
-        dst[i] += v;
+      for ( size_type i = 0; i < N; i++ ) dst[i] += v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < bound; i++ )
-        dst[i] += src[i];
+      for ( size_type i = 0; i < bound; i++ ) dst[i] += src[i];
     }
   }
 
@@ -62,15 +60,13 @@ class conarray
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ )
-        dst[i] -= v;
+      for ( size_type i = 0; i < N; i++ ) dst[i] -= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < bound; i++ )
-        dst[i] -= src[i];
+      for ( size_type i = 0; i < bound; i++ ) dst[i] -= src[i];
     }
   }
 
@@ -81,15 +77,13 @@ class conarray
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ )
-        dst[i] *= v;
+      for ( size_type i = 0; i < N; i++ ) dst[i] *= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < bound; i++ )
-        dst[i] *= src[i];
+      for ( size_type i = 0; i < bound; i++ ) dst[i] *= src[i];
     }
   }
 
@@ -100,15 +94,13 @@ class conarray
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ )
-        dst[i] /= v;
+      for ( size_type i = 0; i < N; i++ ) dst[i] /= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < bound; i++ )
-        dst[i] /= src[i];
+      for ( size_type i = 0; i < bound; i++ ) dst[i] /= src[i];
     }
   }
 
@@ -119,15 +111,13 @@ class conarray
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ )
-        dst[i] %= v;
+      for ( size_type i = 0; i < N; i++ ) dst[i] %= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
 #pragma GCC ivdep
-      for ( size_type i = 0; i < bound; i++ )
-        dst[i] %= src[i];
+      for ( size_type i = 0; i < bound; i++ ) dst[i] %= src[i];
     }
   }
 
@@ -172,21 +162,17 @@ public:
 
   conarray(const std::initializer_list<T> &&lst)
   {
-    if ( lst.size() > N )
-      exc<except::runtime_error>("micron::conarray conarray(init_list): init_list too large.");
+    if ( lst.size() > N ) exc<except::runtime_error>("micron::conarray conarray(init_list): init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst )
-      stack[i++] = micron::move(value);
-    if ( lst.size() < N )
-      __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
+    for ( auto &&value : lst ) stack[i++] = micron::move(value);
+    if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
   template <is_container A>
     requires(!micron::is_same_v<A, conarray>)
   conarray(A &&o)
   {
-    if ( o.size() < N )
-      exc<except::runtime_error>("micron::conarray conarray(A&&) invalid size");
+    if ( o.size() < N ) exc<except::runtime_error>("micron::conarray conarray(A&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
       __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
     else
@@ -197,8 +183,7 @@ public:
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
-    if ( bound < N )
-      __impl_container::construct(micron::addr(stack[bound]), T{}, N - bound);
+    if ( bound < N ) __impl_container::construct(micron::addr(stack[bound]), T{}, N - bound);
   }
 
   conarray(const conarray &o)
@@ -311,8 +296,7 @@ public:
   T
   at(const size_type i) const
   {
-    if ( i >= N )
-      exc<except::runtime_error>("micron::conarray at() out of range.");
+    if ( i >= N ) exc<except::runtime_error>("micron::conarray at() out of range.");
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     return stack[i];
   }
@@ -320,8 +304,7 @@ public:
   void
   at(const size_type i, const T &val)
   {
-    if ( i >= N )
-      exc<except::runtime_error>("micron::conarray at() out of range.");
+    if ( i >= N ) exc<except::runtime_error>("micron::conarray at() out of range.");
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     stack[i] = val;
   }
@@ -329,16 +312,14 @@ public:
   inline const_iterator
   get(const size_type n) const
   {
-    if ( n >= N )
-      exc<except::library_error>("micron::conarray get() out of range");
+    if ( n >= N ) exc<except::library_error>("micron::conarray get() out of range");
     return micron::addr(stack + n);
   }
 
   inline const_iterator
   cget(const size_type n) const
   {
-    if ( n >= N )
-      exc<except::library_error>("micron::conarray cget() out of range");
+    if ( n >= N ) exc<except::library_error>("micron::conarray cget() out of range");
     return micron::addr(stack + n);
   }
 
@@ -373,8 +354,7 @@ public:
   inline __attribute__((always_inline)) const slice<T, C>
   operator[](size_type from, size_type to) const
   {
-    if ( from >= to or from > N or to > N )
-      exc<except::library_error>("micron::conarray operator[] out of allocated memory range.");
+    if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::conarray operator[] out of allocated memory range.");
     return slice<T, C>(get(from), get(to));
   }
 
@@ -382,8 +362,7 @@ public:
   inline __attribute__((always_inline)) slice<T, C>
   operator[](size_type from, size_type to)
   {
-    if ( from >= to or from > N or to > N )
-      exc<except::library_error>("micron::conarray operator[] out of allocated memory range.");
+    if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::conarray operator[] out of allocated memory range.");
     return slice<T, C>(get(from), get(to));
   }
 
@@ -482,8 +461,7 @@ public:
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] += src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
     return arr;
   }
 
@@ -497,8 +475,7 @@ public:
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] -= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
     return arr;
   }
 
@@ -512,8 +489,7 @@ public:
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] *= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
     return arr;
   }
 
@@ -527,8 +503,7 @@ public:
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] /= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     return arr;
   }
 
@@ -542,8 +517,7 @@ public:
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] %= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     return arr;
   }
 
@@ -557,8 +531,7 @@ public:
     const T *__restrict src = stack;
     T sm = T{};
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      sm += src[i];
+    for ( size_type i = 0; i < N; i++ ) sm += src[i];
     return sm;
   }
 
@@ -569,8 +542,7 @@ public:
     const T *__restrict src = stack;
     T m = src[0];
 #pragma GCC ivdep
-    for ( size_type i = 1; i < N; i++ )
-      m *= src[i];
+    for ( size_type i = 1; i < N; i++ ) m *= src[i];
     return m;
   }
 
@@ -583,8 +555,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] += o;
+    for ( size_type i = 0; i < N; i++ ) dst[i] += o;
     return *this;
   }
 
@@ -594,8 +565,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] -= o;
+    for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
     return *this;
   }
 
@@ -605,8 +575,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] *= o;
+    for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
     return *this;
   }
 
@@ -616,8 +585,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] /= o;
+    for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
     return *this;
   }
 
@@ -628,8 +596,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] %= o;
+    for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
     return *this;
   }
 
@@ -645,8 +612,7 @@ public:
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] += src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
     return *this;
   }
 
@@ -659,8 +625,7 @@ public:
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] -= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
     return *this;
   }
 
@@ -673,8 +638,7 @@ public:
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] *= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
     return *this;
   }
 
@@ -687,8 +651,7 @@ public:
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] /= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     return *this;
   }
 
@@ -701,8 +664,7 @@ public:
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ )
-      dst[i] %= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     return *this;
   }
 
@@ -768,8 +730,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] *= n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
   }
 
   void
@@ -778,8 +739,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] /= n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
   }
 
   void
@@ -788,8 +748,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] -= n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
   }
 
   void
@@ -798,8 +757,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] += n;
+    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -810,8 +768,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     for ( size_type i = 0; i < N; i++ )
-      if ( stack[i] != o )
-        return false;
+      if ( stack[i] != o ) return false;
     return true;
   }
 
@@ -820,8 +777,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     for ( size_type i = 0; i < N; i++ )
-      if ( stack[i] == o )
-        return true;
+      if ( stack[i] == o ) return true;
     return false;
   }
 
@@ -830,8 +786,7 @@ public:
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     T *__restrict dst = stack;
-    for ( size_type i = 0; i < N; i++ )
-      dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
   }
 
   template <typename F>

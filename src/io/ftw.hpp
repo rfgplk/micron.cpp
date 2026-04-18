@@ -23,8 +23,7 @@ ftw(path &&p)
   micron::fvector<path_t> rslt;
   // look how much prettier this is compared to nftw
   micron::fvector<path_t> dirs = p.dirs();
-  if ( dirs.empty() or dirs.size() == 2 )
-    return rslt;
+  if ( dirs.empty() or dirs.size() == 2 ) return rslt;
   // rslt.append(dirs);
   //  micron::string cur_path(4096);
   //  if ( posix::getcwd(cur_path.data(), 4096) == NULL )
@@ -32,8 +31,7 @@ ftw(path &&p)
   //  cur_path.adjust_size();
   path_t total_path;
   for ( auto &n : dirs ) {
-    if ( n == "." or n == ".." )
-      continue;
+    if ( n == "." or n == ".." ) continue;
     total_path = p.get();
     total_path.adjust_size();     // TODO: fix up len's and remove this eventually
     total_path.insert(total_path.end(), '/');
@@ -55,8 +53,7 @@ ftw_all(path &&p)
   micron::fvector<path_t> rslt;
   // look how much prettier this is compared to nftw
   micron::fvector<path_t> all = p.all();
-  if ( all.empty() or all.size() == 2 )
-    return rslt;
+  if ( all.empty() or all.size() == 2 ) return rslt;
   // rslt.append(dirs);
   //  micron::string cur_path(4096);
   //  if ( posix::getcwd(cur_path.data(), 4096) == NULL )
@@ -64,8 +61,7 @@ ftw_all(path &&p)
   //  cur_path.adjust_size();
   path_t total_path;
   for ( auto &n : all ) {
-    if ( n == "." or n == ".." )
-      continue;
+    if ( n == "." or n == ".." ) continue;
     total_path = p.get();
     total_path.adjust_size();
     total_path.insert(total_path.end(), '/');
@@ -87,8 +83,7 @@ ftw_files(path &&p)
   micron::fvector<path_t> rslt;
   // look how much prettier this is compared to nftw
   micron::fvector<path_t> all = p.files();
-  if ( all.empty() or all.size() == 2 )
-    return rslt;
+  if ( all.empty() or all.size() == 2 ) return rslt;
   // rslt.append(dirs);
   //  micron::string cur_path(4096);
   //  if ( posix::getcwd(cur_path.data(), 4096) == NULL )
@@ -96,8 +91,7 @@ ftw_files(path &&p)
   //  cur_path.adjust_size();
   path_t total_path;
   for ( auto &n : all ) {
-    if ( n == "." or n == ".." )
-      continue;
+    if ( n == "." or n == ".." ) continue;
     total_path = p.get();
     total_path.adjust_size();
     total_path.insert(total_path.end(), '/');

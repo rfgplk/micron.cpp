@@ -106,16 +106,14 @@ public:
   rb_node *
   uncle() const noexcept
   {
-    if ( !parent || !parent->parent )
-      return nullptr;
+    if ( !parent || !parent->parent ) return nullptr;
     return parent == parent->parent->left ? parent->parent->right : parent->parent->left;
   }
 
   rb_node *
   sibling() const noexcept
   {
-    if ( !parent )
-      return nullptr;
+    if ( !parent ) return nullptr;
     return this == parent->left ? parent->right : parent->left;
   }
 
@@ -206,16 +204,14 @@ private:
   static node *
   minimum(node *x)
   {
-    while ( x && x->left )
-      x = x->left;
+    while ( x && x->left ) x = x->left;
     return x;
   }
 
   static node *
   maximum(node *x)
   {
-    while ( x && x->right )
-      x = x->right;
+    while ( x && x->right ) x = x->right;
     return x;
   }
 
@@ -224,8 +220,7 @@ private:
   {
     node *y = x->right;
     x->right = y->left;
-    if ( y->left )
-      y->left->parent = x;
+    if ( y->left ) y->left->parent = x;
     y->parent = x->parent;
     if ( !x->parent )
       root_ = y;
@@ -242,8 +237,7 @@ private:
   {
     node *y = x->left;
     x->left = y->right;
-    if ( y->right )
-      y->right->parent = x;
+    if ( y->right ) y->right->parent = x;
     y->parent = x->parent;
     if ( !x->parent )
       root_ = y;
@@ -305,8 +299,7 @@ private:
       u->parent->left = v;
     else
       u->parent->right = v;
-    if ( v )
-      v->parent = u->parent;
+    if ( v ) v->parent = u->parent;
   }
 
   void
@@ -322,28 +315,20 @@ private:
           w = x_parent->right;
         }
         if ( (!w || (!w->left || w->left->color == RBColor::BLACK)) && (!w || (!w->right || w->right->color == RBColor::BLACK)) ) {
-          if ( w )
-            w->color = RBColor::RED;
+          if ( w ) w->color = RBColor::RED;
           x = x_parent;
           x_parent = x ? x->parent : nullptr;
         } else {
           if ( !w || !w->right || w->right->color == RBColor::BLACK ) {
-            if ( w && w->left )
-              w->left->color = RBColor::BLACK;
-            if ( w )
-              w->color = RBColor::RED;
-            if ( x_parent )
-              rotate_right(w);
+            if ( w && w->left ) w->left->color = RBColor::BLACK;
+            if ( w ) w->color = RBColor::RED;
+            if ( x_parent ) rotate_right(w);
             w = x_parent ? x_parent->right : nullptr;
           }
-          if ( w )
-            w->color = x_parent ? x_parent->color : RBColor::BLACK;
-          if ( x_parent )
-            x_parent->color = RBColor::BLACK;
-          if ( w && w->right )
-            w->right->color = RBColor::BLACK;
-          if ( x_parent )
-            rotate_left(x_parent);
+          if ( w ) w->color = x_parent ? x_parent->color : RBColor::BLACK;
+          if ( x_parent ) x_parent->color = RBColor::BLACK;
+          if ( w && w->right ) w->right->color = RBColor::BLACK;
+          if ( x_parent ) rotate_left(x_parent);
           x = root_;
           x_parent = nullptr;
         }
@@ -356,35 +341,26 @@ private:
           w = x_parent->left;
         }
         if ( (!w || (!w->right || w->right->color == RBColor::BLACK)) && (!w || (!w->left || w->left->color == RBColor::BLACK)) ) {
-          if ( w )
-            w->color = RBColor::RED;
+          if ( w ) w->color = RBColor::RED;
           x = x_parent;
           x_parent = x ? x->parent : nullptr;
         } else {
           if ( !w || !w->left || w->left->color == RBColor::BLACK ) {
-            if ( w && w->right )
-              w->right->color = RBColor::BLACK;
-            if ( w )
-              w->color = RBColor::RED;
-            if ( x_parent )
-              rotate_left(w);
+            if ( w && w->right ) w->right->color = RBColor::BLACK;
+            if ( w ) w->color = RBColor::RED;
+            if ( x_parent ) rotate_left(w);
             w = x_parent ? x_parent->left : nullptr;
           }
-          if ( w )
-            w->color = x_parent ? x_parent->color : RBColor::BLACK;
-          if ( x_parent )
-            x_parent->color = RBColor::BLACK;
-          if ( w && w->left )
-            w->left->color = RBColor::BLACK;
-          if ( x_parent )
-            rotate_right(x_parent);
+          if ( w ) w->color = x_parent ? x_parent->color : RBColor::BLACK;
+          if ( x_parent ) x_parent->color = RBColor::BLACK;
+          if ( w && w->left ) w->left->color = RBColor::BLACK;
+          if ( x_parent ) rotate_right(x_parent);
           x = root_;
           x_parent = nullptr;
         }
       }
     }
-    if ( x )
-      x->color = RBColor::BLACK;
+    if ( x ) x->color = RBColor::BLACK;
   }
 
   node *
@@ -405,8 +381,7 @@ private:
   static node *
   clone_subtree(node *src, node *parent)
   {
-    if ( !src )
-      return nullptr;
+    if ( !src ) return nullptr;
     node *n = new node(src->data);
     n->color = src->color;
     n->parent = parent;
@@ -419,8 +394,7 @@ private:
   static void
   clear_recursive(node *x)
   {
-    if ( !x )
-      return;
+    if ( !x ) return;
     clear_recursive(x->left);
     clear_recursive(x->right);
     destroy_node(x);
@@ -610,8 +584,7 @@ public:
   erase(const T &key)
   {
     node *z = find_node(key);
-    if ( !z )
-      return false;
+    if ( !z ) return false;
 
     node *y = z;
     RBColor y_original_color = y->color;
@@ -631,28 +604,24 @@ public:
       y_original_color = y->color;
       x = y->right;
       if ( y->parent == z ) {
-        if ( x )
-          x->parent = y;
+        if ( x ) x->parent = y;
         x_parent = y;
       } else {
         transplant(y, y->right);
         y->right = z->right;
-        if ( y->right )
-          y->right->parent = y;
+        if ( y->right ) y->right->parent = y;
         x_parent = y->parent;
       }
       transplant(z, y);
       y->left = z->left;
-      if ( y->left )
-        y->left->parent = y;
+      if ( y->left ) y->left->parent = y;
       y->color = z->color;
     }
 
     destroy_node(z);
     --size_;
 
-    if ( y_original_color == RBColor::BLACK )
-      erase_fixup(x, x_parent);
+    if ( y_original_color == RBColor::BLACK ) erase_fixup(x, x_parent);
     return true;
   }
 

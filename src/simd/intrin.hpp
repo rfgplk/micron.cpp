@@ -21,10 +21,12 @@
 #include <arm_bf16.h>
 #include <arm_cde.h>
 #include <arm_fp16.h>
-#include <arm_mve.h>
+// NOTE: cross comp doesn't support this
+// #include <arm_mve.h>
 #include <arm_neon.h>
-#include <arm_sme.h>
-#include <arm_sve.h>
+// NOTE: likewise
+// #include <arm_sme.h>
+// #include <arm_sve.h>
 #elif defined(__micron_arch_x86) || defined(__micron_arch_amd64)
 
 // TODO: eventually dynamically include headers depending on comp. target to speed up comp times.

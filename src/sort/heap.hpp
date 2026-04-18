@@ -23,19 +23,15 @@ __sift_down(C &c, usize start, usize n, Compare comp) noexcept
 
   for ( ;; ) {
     usize left = (root << 1) + 1;
-    if ( left >= n )
-      break;
+    if ( left >= n ) break;
 
     usize swap_i = root;
-    if ( comp(first[swap_i], first[left]) )
-      swap_i = left;
+    if ( comp(first[swap_i], first[left]) ) swap_i = left;
 
     usize right = left + 1;
-    if ( right < n && comp(first[swap_i], first[right]) )
-      swap_i = right;
+    if ( right < n && comp(first[swap_i], first[right]) ) swap_i = right;
 
-    if ( swap_i == root )
-      return;
+    if ( swap_i == root ) return;
 
     auto tmp = micron::move(first[root]);
     first[root] = micron::move(first[swap_i]);
@@ -50,11 +46,9 @@ constexpr void
 __make_heap(C &c, Compare comp) noexcept
 {
   usize n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
-  for ( usize i = n / 2; i-- > 0; )
-    __sift_down(c, i, n, comp);
+  for ( usize i = n / 2; i-- > 0; ) __sift_down(c, i, n, comp);
 }
 
 template <is_iterable_container C>
@@ -76,8 +70,7 @@ constexpr void
 __sort_heap(C &c, Compare comp) noexcept
 {
   usize n = c.size();
-  if ( n < 2 )
-    return;
+  if ( n < 2 ) return;
 
   while ( n > 1 ) {
     auto tmp = micron::move(c[0]);
@@ -124,8 +117,7 @@ template <is_iterable_container C>
 constexpr C &
 as_heap(C &c, typename C::size_type lim) noexcept
 {
-  if ( lim < 2 )
-    return c;
+  if ( lim < 2 ) return c;
   __make_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
   __sort_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
   return c;
@@ -135,8 +127,7 @@ template <is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr C &
 as_heap(C &c, typename C::size_type lim, Cmp comp) noexcept
 {
-  if ( lim < 2 )
-    return c;
+  if ( lim < 2 ) return c;
   __make_heap(c, comp);
   __sort_heap(c, comp);
   return c;

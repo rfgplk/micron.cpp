@@ -84,8 +84,7 @@ public:
   [[nodiscard]] inline usize
   predict_size(const usize n) const noexcept
   {
-    if ( __builtin_expect(running_div == 0, 0) )
-      return align_to_page(n);
+    if ( __builtin_expect(running_div == 0, 0) ) return align_to_page(n);
 
     const usize mean_alloc = running_sum / running_div;
 

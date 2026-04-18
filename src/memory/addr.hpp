@@ -28,16 +28,14 @@ template <typename T, typename P>
 T
 cast(P &&p)
 {
-  if constexpr ( micron::is_pointer_v<T> && micron::is_pointer_v<P> )
-    return reinterpret_cast<T>(p);
+  if constexpr ( micron::is_pointer_v<T> && micron::is_pointer_v<P> ) return reinterpret_cast<T>(p);
   if constexpr ( (!micron::is_pointer_v<T>) && (!micron::is_pointer_v<P>) && micron::is_convertible_v<T, P> ) {
     if constexpr ( micron::is_const_v<T>(p) )
       return const_cast<T>(static_cast<micron::remove_const<T>::type>(p));
     else
       return static_cast<T>(p);
   }
-  if constexpr ( micron::is_const_v<T>(p) )
-    return const_cast<T>(p);
+  if constexpr ( micron::is_const_v<T>(p) ) return const_cast<T>(p);
 }
 
 template <typename T>

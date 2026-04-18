@@ -31,24 +31,18 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
   update_size(node *n) noexcept
   {
     n->size = 1;
-    if ( n->left )
-      n->size += n->left->size;
-    if ( n->right )
-      n->size += n->right->size;
+    if ( n->left ) n->size += n->left->size;
+    if ( n->right ) n->size += n->right->size;
   }
 
   node *
   merge(node *a, node *b) noexcept
   {
-    if ( !a )
-      return b;
-    if ( !b )
-      return a;
-    if ( a->value < b->value )
-      micron::swap(a, b);
+    if ( !a ) return b;
+    if ( !b ) return a;
+    if ( a->value < b->value ) micron::swap(a, b);
     a->right = merge(a->right, b);
-    if ( !a->left || a->left->size < a->right->size )
-      micron::swap(a->left, a->right);
+    if ( !a->left || a->left->size < a->right->size ) micron::swap(a->left, a->right);
     update_size(a);
     return a;
   }
@@ -63,8 +57,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
   node *
   pop_node(node *root, T &out)
   {
-    if ( !root )
-      exc<except::library_error>("quake_heap::pop() empty");
+    if ( !root ) exc<except::library_error>("quake_heap::pop() empty");
     out = micron::move(root->value);
     node *res = merge(root->left, root->right);
     delete root;
@@ -74,8 +67,7 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
   void
   clear_tree(node *n) noexcept
   {
-    if ( !n )
-      return;
+    if ( !n ) return;
     clear_tree(n->left);
     clear_tree(n->right);
     delete n;
@@ -93,8 +85,7 @@ public:
   quake_heap(usize max_levels = 32) : levels(max_levels)
   {
     roots = static_cast<node **>(this->create(levels * sizeof(node *)));
-    for ( usize i = 0; i < levels; i++ )
-      roots[i] = nullptr;
+    for ( usize i = 0; i < levels; i++ ) roots[i] = nullptr;
   }
 
   ~quake_heap()
@@ -151,12 +142,10 @@ public:
     usize max__n = SIZE_MAX;
     for ( usize i = 0; i < levels; i++ ) {
       if ( roots[i] ) {
-        if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value )
-          max__n = i;
+        if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value ) max__n = i;
       }
     }
-    if ( max__n == SIZE_MAX )
-      exc<except::library_error>("quake_heap::max() empty");
+    if ( max__n == SIZE_MAX ) exc<except::library_error>("quake_heap::max() empty");
     return roots[max__n]->value;
   }
 
@@ -166,12 +155,10 @@ public:
     usize max__n = SIZE_MAX;
     for ( usize i = 0; i < levels; i++ ) {
       if ( roots[i] ) {
-        if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value )
-          max__n = i;
+        if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value ) max__n = i;
       }
     }
-    if ( max__n == SIZE_MAX )
-      exc<except::library_error>("quake_heap::pop() empty");
+    if ( max__n == SIZE_MAX ) exc<except::library_error>("quake_heap::pop() empty");
     T v;
     roots[max__n] = pop_node(roots[max__n], v);
     return v;
@@ -181,8 +168,7 @@ public:
   empty() const noexcept
   {
     for ( usize i = 0; i < levels; i++ )
-      if ( roots[i] )
-        return false;
+      if ( roots[i] ) return false;
     return true;
   }
 
@@ -191,8 +177,7 @@ public:
   {
     usize total = 0;
     for ( usize i = 0; i < levels; i++ )
-      if ( roots[i] )
-        total += roots[i]->size;
+      if ( roots[i] ) total += roots[i]->size;
     return total;
   }
 

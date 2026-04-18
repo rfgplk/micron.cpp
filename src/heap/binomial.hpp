@@ -56,10 +56,8 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline node_type *
   merge_root_lists(node_type *h1, node_type *h2)
   {
-    if ( !h1 )
-      return h2;
-    if ( !h2 )
-      return h1;
+    if ( !h1 ) return h2;
+    if ( !h2 ) return h1;
 
     node_type *head;
     node_type **pos = &head;
@@ -82,8 +80,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline void
   union_heap(__binomial_heap &other)
   {
-    if ( !other.root_list )
-      return;
+    if ( !other.root_list ) return;
 
     root_list = merge_root_lists(root_list, other.root_list);
     other.root_list = nullptr;
@@ -137,8 +134,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
     node_type *curr = root_list->sibling;
 
     while ( curr ) {
-      if ( comp(curr->value, min_node->value) )
-        min_node = curr;
+      if ( comp(curr->value, min_node->value) ) min_node = curr;
       curr = curr->sibling;
     }
   }
@@ -192,8 +188,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline T
   extract_min()
   {
-    if ( !min_node )
-      return T{};
+    if ( !min_node ) return T{};
 
     T min_value = micron::move(min_node->value);
 
@@ -236,8 +231,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline void
   decrease_key(node_type *node, const T &new_value)
   {
-    if ( !comp(new_value, node->value) )
-      return;
+    if ( !comp(new_value, node->value) ) return;
 
     node->value = new_value;
 
@@ -250,8 +244,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
       parent = curr->parent;
     }
 
-    if ( !min_node || comp(node->value, min_node->value) )
-      min_node = node;
+    if ( !min_node || comp(node->value, min_node->value) ) min_node = node;
   }
 
   inline void
@@ -278,15 +271,12 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline node_type *
   find_recursive(node_type *root, const T &value)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
 
-    if ( root->value == value )
-      return root;
+    if ( root->value == value ) return root;
 
     node_type *result = find_recursive(root->child, value);
-    if ( result )
-      return result;
+    if ( result ) return result;
 
     return find_recursive(root->sibling, value);
   }
@@ -309,8 +299,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline void
   clear_recursive(node_type *node)
   {
-    if ( !node )
-      return;
+    if ( !node ) return;
 
     clear_recursive(node->child);
     clear_recursive(node->sibling);

@@ -44,16 +44,14 @@ template <auto Fn, typename T>
 constexpr void
 fill(T *first, T *end) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = Fn();
+  for ( ; first != end; ++first ) *first = Fn();
 }
 
 template <auto Fn, typename T>
 constexpr T *
 fill_n(T *first, usize n) noexcept
 {
-  for ( usize i = 0; i < n; ++i, ++first )
-    *first = Fn();
+  for ( usize i = 0; i < n; ++i, ++first ) *first = Fn();
   return first;
 }
 
@@ -78,8 +76,7 @@ constexpr void
 fill(T *first, T *end, const P &value) noexcept
 {
   if constexpr ( micron::is_class_v<T> ) {
-    for ( ; first != end; ++first )
-      *first = value;
+    for ( ; first != end; ++first ) *first = value;
   } else {
     constexpr_memset(first, value, end - first);
   }
@@ -92,16 +89,14 @@ template <typename T, typename Fn>
 constexpr void
 fill(T *first, T *end, Fn fn) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = fn();
+  for ( ; first != end; ++first ) *first = fn();
 }
 
 template <typename T, class P>
 constexpr T *
 fill_n(T *first, usize n, const P &value) noexcept
 {
-  for ( usize i = 0; i < n; ++i, ++first )
-    *first = value;
+  for ( usize i = 0; i < n; ++i, ++first ) *first = value;
   return first;
 }
 
@@ -112,8 +107,7 @@ template <typename T, typename Fn>
 constexpr T *
 fill_n(T *first, usize n, Fn fn) noexcept
 {
-  for ( usize i = 0; i < n; ++i, ++first )
-    *first = fn();
+  for ( usize i = 0; i < n; ++i, ++first ) *first = fn();
   return first;
 }
 
@@ -162,16 +156,14 @@ template <auto Fn, typename T>
 constexpr void
 generate(T *first, T *end) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = Fn();
+  for ( ; first != end; ++first ) *first = Fn();
 }
 
 template <auto Fn, typename T, typename... Args>
 constexpr void
 generate(T *first, T *end, Args &&...args) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = Fn(micron::forward<Args>(args)...);
+  for ( ; first != end; ++first ) *first = Fn(micron::forward<Args>(args)...);
 }
 
 template <auto Fn, is_iterable_container C>
@@ -197,8 +189,7 @@ template <typename T, typename Fn>
 constexpr void
 generate(T *first, T *end, Fn fn) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = fn();
+  for ( ; first != end; ++first ) *first = fn();
 }
 
 template <typename T, typename Fn, typename... Args>
@@ -206,8 +197,7 @@ template <typename T, typename Fn, typename... Args>
 constexpr void
 generate(T *first, T *end, Fn fn, Args &&...args) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = fn(micron::forward<Args>(args)...);
+  for ( ; first != end; ++first ) *first = fn(micron::forward<Args>(args)...);
 }
 
 template <is_iterable_container C, typename Fn>
@@ -238,11 +228,9 @@ constexpr void
 transform(T *first, T *end) noexcept
 {
   if constexpr ( micron::invocable<decltype(Fn), T *> ) {
-    for ( ; first != end; ++first )
-      *first = Fn(first);
+    for ( ; first != end; ++first ) *first = Fn(first);
   } else {
-    for ( ; first != end; ++first )
-      *first = Fn(*first);
+    for ( ; first != end; ++first ) *first = Fn(*first);
   }
 }
 
@@ -251,11 +239,9 @@ constexpr O *
 transform(const T *first1, const T *end1, const T *first2, O *out) noexcept
 {
   if constexpr ( micron::invocable<decltype(Fn), const T *, const T *> ) {
-    for ( ; first1 != end1; ++first1, ++first2, ++out )
-      *out = Fn(first1, first2);
+    for ( ; first1 != end1; ++first1, ++first2, ++out ) *out = Fn(first1, first2);
   } else {
-    for ( ; first1 != end1; ++first1, ++first2, ++out )
-      *out = Fn(*first1, *first2);
+    for ( ; first1 != end1; ++first1, ++first2, ++out ) *out = Fn(*first1, *first2);
   }
   return out;
 }
@@ -282,8 +268,7 @@ template <typename T, typename Fn>
 constexpr void
 transform(T *first, T *end, Fn fn) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = fn(first);
+  for ( ; first != end; ++first ) *first = fn(first);
 }
 
 template <typename T, typename Fn>
@@ -291,8 +276,7 @@ template <typename T, typename Fn>
 constexpr void
 transform(T *first, T *end, Fn fn) noexcept
 {
-  for ( ; first != end; ++first )
-    *first = fn(*first);
+  for ( ; first != end; ++first ) *first = fn(*first);
 }
 
 template <typename T, typename O, typename Fn>
@@ -300,8 +284,7 @@ template <typename T, typename O, typename Fn>
 constexpr O *
 transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexcept
 {
-  for ( ; first1 != end1; ++first1, ++first2, ++out )
-    *out = fn(*first1, *first2);
+  for ( ; first1 != end1; ++first1, ++first2, ++out ) *out = fn(*first1, *first2);
   return out;
 }
 
@@ -310,8 +293,7 @@ template <typename T, typename O, typename Fn>
 constexpr O *
 transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexcept
 {
-  for ( ; first1 != end1; ++first1, ++first2, ++out )
-    *out = fn(first1, first2);
+  for ( ; first1 != end1; ++first1, ++first2, ++out ) *out = fn(first1, first2);
   return out;
 }
 
@@ -352,12 +334,10 @@ where(const T *first, const T *end, T *out) noexcept
 {
   if constexpr ( micron::invocable<decltype(Fn), const T *> ) {
     for ( ; first != end; ++first )
-      if ( Fn(first) )
-        *out++ = *first;
+      if ( Fn(first) ) *out++ = *first;
   } else {
     for ( ; first != end; ++first )
-      if ( Fn(*first) )
-        *out++ = *first;
+      if ( Fn(*first) ) *out++ = *first;
   }
   return out;
 }
@@ -379,8 +359,7 @@ constexpr T *
 where(const T *first, const T *end, T *out, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(*first) )
-      *out++ = *first;
+    if ( fn(*first) ) *out++ = *first;
   return out;
 }
 
@@ -390,8 +369,7 @@ constexpr T *
 where(const T *first, const T *end, T *out, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( fn(first) )
-      *out++ = *first;
+    if ( fn(first) ) *out++ = *first;
   return out;
 }
 
@@ -425,18 +403,14 @@ template <typename T>
 constexpr T *
 shift_left(T *first, T *end, usize n) noexcept
 {
-  if ( n == 0 || first == end )
-    return end;
+  if ( n == 0 || first == end ) return end;
   const usize len = static_cast<usize>(end - first);
   if ( n >= len ) {
-    for ( T *p = first; p != end; ++p )
-      *p = T{};
+    for ( T *p = first; p != end; ++p ) *p = T{};
     return first;
   }
-  for ( usize i = 0; i + n < len; ++i )
-    first[i] = micron::move(first[i + n]);
-  for ( usize i = len - n; i < len; ++i )
-    first[i] = T{};
+  for ( usize i = 0; i + n < len; ++i ) first[i] = micron::move(first[i + n]);
+  for ( usize i = len - n; i < len; ++i ) first[i] = T{};
   return first + (len - n);
 }
 
@@ -444,18 +418,14 @@ template <typename T>
 constexpr T *
 shift_right(T *first, T *end, usize n) noexcept
 {
-  if ( n == 0 || first == end )
-    return first;
+  if ( n == 0 || first == end ) return first;
   const usize len = static_cast<usize>(end - first);
   if ( n >= len ) {
-    for ( T *p = first; p != end; ++p )
-      *p = T{};
+    for ( T *p = first; p != end; ++p ) *p = T{};
     return end;
   }
-  for ( usize i = len; i-- > n; )
-    first[i] = micron::move(first[i - n]);
-  for ( usize i = 0; i < n; ++i )
-    first[i] = T{};
+  for ( usize i = len; i-- > n; ) first[i] = micron::move(first[i - n]);
+  for ( usize i = 0; i < n; ++i ) first[i] = T{};
   return first + n;
 }
 
@@ -480,11 +450,9 @@ constexpr void
 rotate_left(T *first, T *end, usize n) noexcept
 {
   const usize len = static_cast<usize>(end - first);
-  if ( len == 0 )
-    return;
+  if ( len == 0 ) return;
   n %= len;
-  if ( n == 0 )
-    return;
+  if ( n == 0 ) return;
   auto rev = [](T *a, T *b) {
     while ( a < b ) {
       auto tmp = *a;
@@ -504,11 +472,9 @@ constexpr void
 rotate_right(T *first, T *end, usize n) noexcept
 {
   const usize len = static_cast<usize>(end - first);
-  if ( len == 0 )
-    return;
+  if ( len == 0 ) return;
   n %= len;
-  if ( n == 0 )
-    return;
+  if ( n == 0 ) return;
   rotate_left(first, end, len - n);
 }
 
@@ -536,8 +502,7 @@ constexpr f128
 sum(const T &src) noexcept
 {
   f128 sm = 0;
-  for ( usize i = 0; i < src.size(); i++ )
-    sm += static_cast<f128>(src[i]);
+  for ( usize i = 0; i < src.size(); i++ ) sm += static_cast<f128>(src[i]);
   return sm;
 }
 
@@ -547,8 +512,7 @@ constexpr umax_t
 sum(const T &src) noexcept
 {
   umax_t sm = 0;
-  for ( usize i = 0; i < src.size(); i++ )
-    sm += static_cast<umax_t>(src[i]);
+  for ( usize i = 0; i < src.size(); i++ ) sm += static_cast<umax_t>(src[i]);
   return sm;
 }
 
@@ -557,8 +521,7 @@ constexpr T &
 clear(T &src, const R r = 0) noexcept
 {
   if constexpr ( micron::is_object_v<micron::remove_cv_t<typename T::value_type>> ) {
-    for ( auto &n : src )
-      n = r;
+    for ( auto &n : src ) n = r;
   } else if constexpr ( micron::is_fundamental_v<micron::remove_cv_t<typename T::value_type>> ) {
     constexpr_memset(src.begin(), r, src.size());
   }
@@ -579,8 +542,7 @@ constexpr R
 geomean(const T &src) noexcept
 {
   R mulsm = static_cast<R>(src[0]);
-  for ( usize i = 1; i < src.size(); i++ )
-    mulsm *= static_cast<R>(src[i]);
+  for ( usize i = 1; i < src.size(); i++ ) mulsm *= static_cast<R>(src[i]);
   return math::powerflong(mulsm, static_cast<R>(R(1) / R(src.size())));
 }
 
@@ -590,8 +552,7 @@ constexpr R
 harmonicmean(const T &src) noexcept
 {
   R recsum = 0;
-  for ( usize i = 0; i < src.size(); i++ )
-    recsum += (R(1) / static_cast<R>(src[i]));
+  for ( usize i = 0; i < src.size(); i++ ) recsum += (R(1) / static_cast<R>(src[i]));
   return static_cast<R>(src.size()) / recsum;
 }
 
@@ -600,8 +561,7 @@ template <typename T>
 constexpr void
 round(T *__restrict start, T *__restrict end) noexcept
 {
-  for ( ; start != end; ++start )
-    *start = math::round(*start);
+  for ( ; start != end; ++start ) *start = math::round(*start);
 }
 
 template <typename T>
@@ -616,8 +576,7 @@ template <typename T>
 constexpr void
 ceil(T *__restrict start, T *__restrict end) noexcept
 {
-  for ( ; start != end; ++start )
-    *start = math::ceil(*start);
+  for ( ; start != end; ++start ) *start = math::ceil(*start);
 }
 
 template <is_iterable_container T>
@@ -633,8 +592,7 @@ template <typename T>
 constexpr void
 floor(T *__restrict start, T *__restrict end) noexcept
 {
-  for ( ; start != end; ++start )
-    *start = math::floor(*start);
+  for ( ; start != end; ++start ) *start = math::floor(*start);
 }
 
 template <typename T>
@@ -758,11 +716,9 @@ reverse_copy(const T *first, const T *end, T *out) noexcept
   while ( it != first ) {
     --it;
     if constexpr ( micron::invocable<decltype(Fn), const T *> ) {
-      if ( Fn(it) )
-        *out++ = *it;
+      if ( Fn(it) ) *out++ = *it;
     } else {
-      if ( Fn(*it) )
-        *out++ = *it;
+      if ( Fn(*it) ) *out++ = *it;
     }
   }
   return out;
@@ -783,8 +739,7 @@ template <typename T>
 constexpr T *
 reverse_copy(const T *first, const T *end, T *out) noexcept
 {
-  while ( end != first )
-    *out++ = *--end;
+  while ( end != first ) *out++ = *--end;
   return out;
 }
 
@@ -796,8 +751,7 @@ reverse_copy(const T *first, const T *end, T *out, Fn fn) noexcept
   const T *it = end;
   while ( it != first ) {
     --it;
-    if ( fn(it) )
-      *out++ = *it;
+    if ( fn(it) ) *out++ = *it;
   }
   return out;
 }
@@ -810,8 +764,7 @@ reverse_copy(const T *first, const T *end, T *out, Fn fn) noexcept
   const T *it = end;
   while ( it != first ) {
     --it;
-    if ( fn(*it) )
-      *out++ = *it;
+    if ( fn(*it) ) *out++ = *it;
   }
   return out;
 }
@@ -867,8 +820,7 @@ max_at(const T &arr) noexcept
   auto end = arr.cend();
   typename T::const_iterator max_v = it;
   for ( ; it != end; ++it )
-    if ( *it > *max_v )
-      max_v = it;
+    if ( *it > *max_v ) max_v = it;
   return max_v;
 }
 
@@ -880,8 +832,7 @@ min_at(const T &arr) noexcept
   auto end = arr.cend();
   typename T::const_iterator min_v = it;
   for ( ; it != end; ++it )
-    if ( *it < *min_v )
-      min_v = it;
+    if ( *it < *min_v ) min_v = it;
   return min_v;
 }
 
@@ -891,8 +842,7 @@ max_at(const T *first, const T *end) noexcept
 {
   typename T::const_iterator max_v = first;
   for ( ; first != end; ++first )
-    if ( *first > *max_v )
-      max_v = first;
+    if ( *first > *max_v ) max_v = first;
   return max_v;
 }
 
@@ -902,8 +852,7 @@ min_at(const T *first, const T *end) noexcept
 {
   typename T::const_iterator min_v = first;
   for ( ; first != end; ++first )
-    if ( *first < *min_v )
-      min_v = first;
+    if ( *first < *min_v ) min_v = first;
   return min_v;
 }
 
@@ -915,8 +864,7 @@ max(const T &arr) noexcept
   auto end = arr.cend();
   typename T::value_type max_v = *it++;
   for ( ; it != end; ++it )
-    if ( *it > max_v )
-      max_v = *it;
+    if ( *it > max_v ) max_v = *it;
   return max_v;
 }
 
@@ -928,8 +876,7 @@ min(const T &arr) noexcept
   auto end = arr.cend();
   typename T::value_type min_v = *it++;
   for ( ; it != end; ++it )
-    if ( *it < min_v )
-      min_v = *it;
+    if ( *it < min_v ) min_v = *it;
   return min_v;
 }
 
@@ -939,8 +886,7 @@ max(const T *first, const T *end) noexcept
 {
   T max_v = *first++;
   for ( ; first != end; ++first )
-    if ( *first > max_v )
-      max_v = *first;
+    if ( *first > max_v ) max_v = *first;
   return max_v;
 }
 
@@ -950,8 +896,7 @@ min(const T *first, const T *end) noexcept
 {
   T min_v = *first++;
   for ( ; first != end; ++first )
-    if ( *first < min_v )
-      min_v = *first;
+    if ( *first < min_v ) min_v = *first;
   return min_v;
 }
 

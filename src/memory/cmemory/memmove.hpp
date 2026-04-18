@@ -24,11 +24,9 @@ bytemove(F *_dest, D *_src, const u64 cnt) noexcept
   byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   return _dest;
@@ -43,11 +41,9 @@ rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
   byte *src = reinterpret_cast<byte *>(&_src);
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   return _dest;
@@ -62,11 +58,9 @@ constexpr_bytemove(F *_dest, D *_src, const u64 cnt) noexcept
   byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   return _dest;
@@ -81,11 +75,9 @@ constexpr_rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
   byte *src = reinterpret_cast<byte *>(&_src);
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   return _dest;
@@ -100,11 +92,9 @@ cbytemove(F *_dest, D *_src) noexcept
   byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   return _dest;
@@ -119,11 +109,9 @@ crbytemove(F &_dest, D &_src) noexcept
   byte *src = reinterpret_cast<byte *>(&_src);
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   return _dest;
@@ -134,20 +122,16 @@ template <typename F, typename D, u64 alignment = 1>
 F *
 sbytemove(F *_dest, D *_src, const u64 cnt) noexcept
 {
-  if ( _dest == nullptr || _src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return nullptr;
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
 
   byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
   byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   __mem_barrier();
@@ -159,18 +143,15 @@ template <typename F, typename D, u64 alignment = 1>
 bool
 rsbytemove(F &_dest, D &_src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) )
-    return false;
+  if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) ) return false;
 
   byte *dest = reinterpret_cast<byte *>(&_dest);
   byte *src = reinterpret_cast<byte *>(&_src);
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   __mem_barrier();
@@ -182,20 +163,16 @@ template <u64 M, typename F, typename D, u64 alignment = 1>
 F *
 scbytemove(F *_dest, D *_src) noexcept
 {
-  if ( _dest == nullptr || _src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) )
-    return nullptr;
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
 
   byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
   byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   __mem_barrier();
@@ -207,18 +184,15 @@ template <u64 M, typename F, typename D, u64 alignment = 1>
 bool
 rscrbytemove(F &_dest, D &_src) noexcept
 {
-  if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) )
-    return false;
+  if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) ) return false;
 
   byte *dest = reinterpret_cast<byte *>(&_dest);
   byte *src = reinterpret_cast<byte *>(&_src);
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ )
-      dest[i] = src[i];
+    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
   } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i )
-      dest[i - 1] = src[i - 1];
+    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
   }
 
   __mem_barrier();
@@ -230,11 +204,9 @@ F *
 memmove(F *dest, D *src, const u64 cnt) noexcept
 {
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = static_cast<F>(src[i]);
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = static_cast<F>(src[i - 1]);
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
   }
 
   return dest;
@@ -248,11 +220,9 @@ rmemmove(F &dest, D &src, const u64 cnt) noexcept
   D *s = &src;
 
   if ( d < s ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      d[i] = static_cast<F>(s[i]);
+    for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
   } else if ( d > s ) {
-    for ( u64 i = cnt; i > 0; --i )
-      d[i - 1] = static_cast<F>(s[i - 1]);
+    for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
   }
 
   return dest;
@@ -264,11 +234,9 @@ constexpr F *
 constexpr_memmove(F *dest, D *src, const u64 cnt) noexcept
 {
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = static_cast<F>(src[i]);
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = static_cast<F>(src[i - 1]);
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
   }
 
   return dest;
@@ -283,11 +251,9 @@ constexpr_rmemmove(F &dest, D &src, const u64 cnt) noexcept
   D *s = &src;
 
   if ( d < s ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      d[i] = static_cast<F>(s[i]);
+    for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
   } else if ( d > s ) {
-    for ( u64 i = cnt; i > 0; --i )
-      d[i - 1] = static_cast<F>(s[i - 1]);
+    for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
   }
 
   return dest;
@@ -298,11 +264,9 @@ F *
 cmemmove(F *dest, D *src) noexcept
 {
   if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ )
-      dest[i] = static_cast<F>(src[i]);
+    for ( u64 i = 0; i < M; i++ ) dest[i] = static_cast<F>(src[i]);
   } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i )
-      dest[i - 1] = static_cast<F>(src[i - 1]);
+    for ( u64 i = M; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
   }
 
   return dest;
@@ -316,11 +280,9 @@ crmemmove(F &dest, D &src) noexcept
   D *s = &src;
 
   if ( d < s ) {
-    for ( u64 i = 0; i < M; i++ )
-      d[i] = static_cast<F>(s[i]);
+    for ( u64 i = 0; i < M; i++ ) d[i] = static_cast<F>(s[i]);
   } else if ( d > s ) {
-    for ( u64 i = M; i > 0; --i )
-      d[i - 1] = static_cast<F>(s[i - 1]);
+    for ( u64 i = M; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
   }
 
   return dest;
@@ -330,17 +292,13 @@ template <typename F, typename D, u64 alignment = alignof(F)>
 F *
 smemmove(F *dest, D *src, const u64 cnt) noexcept
 {
-  if ( dest == nullptr || src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
-    return nullptr;
+  if ( dest == nullptr || src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      dest[i] = static_cast<F>(src[i]);
+    for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
   } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i )
-      dest[i - 1] = static_cast<F>(src[i - 1]);
+    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
   }
 
   __mem_barrier();
@@ -351,18 +309,15 @@ template <typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemmove(F &dest, D &src, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) )
-    return false;
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) ) return false;
 
   F *d = &dest;
   D *s = &src;
 
   if ( d < s ) {
-    for ( u64 i = 0; i < cnt; i++ )
-      d[i] = static_cast<F>(s[i]);
+    for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
   } else if ( d > s ) {
-    for ( u64 i = cnt; i > 0; --i )
-      d[i - 1] = static_cast<F>(s[i - 1]);
+    for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
   }
 
   __mem_barrier();
@@ -373,17 +328,13 @@ template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 F *
 scmemmove(F *dest, D *src) noexcept
 {
-  if ( dest == nullptr || src == nullptr )
-    return nullptr;
-  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) )
-    return nullptr;
+  if ( dest == nullptr || src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
 
   if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ )
-      dest[i] = static_cast<F>(src[i]);
+    for ( u64 i = 0; i < M; i++ ) dest[i] = static_cast<F>(src[i]);
   } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i )
-      dest[i - 1] = static_cast<F>(src[i - 1]);
+    for ( u64 i = M; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
   }
 
   __mem_barrier();
@@ -394,18 +345,15 @@ template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 bool
 rscmemmove(F &dest, D &src) noexcept
 {
-  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) )
-    return false;
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) ) return false;
 
   F *d = &dest;
   D *s = &src;
 
   if ( d < s ) {
-    for ( u64 i = 0; i < M; i++ )
-      d[i] = static_cast<F>(s[i]);
+    for ( u64 i = 0; i < M; i++ ) d[i] = static_cast<F>(s[i]);
   } else if ( d > s ) {
-    for ( u64 i = M; i > 0; --i )
-      d[i - 1] = static_cast<F>(s[i - 1]);
+    for ( u64 i = M; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
   }
 
   __mem_barrier();

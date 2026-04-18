@@ -19,24 +19,38 @@ namespace micron
 {
 namespace posix
 {
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
 auto
 fstatat(posix::fd_t dirfd, const char *__restrict name, stat_t &__restrict buf, int flags) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_newfstatat, dirfd.fd, name, &buf, flags));     // why?
 }
-
+#elif defined(__micron_arch_arm32)
+auto
+fstatat(posix::fd_t dirfd, const char *__restrict name, stat64_t &__restrict buf, int flags) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_fstatat64, dirfd.fd, name, &buf, flags));     // why?
+}
+#endif
 auto
 fstat(posix::fd_t fd, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_fstat, fd.fd, &buf));
 }
 
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
 auto
 fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags));     // why?
 }
-
+#elif defined(__micron_arch_arm32)
+auto
+fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_fstatat64, dirfd, name, &buf, flags));     // why?
+}
+#endif
 auto
 fstat(int fd, stat_t &buf) -> i32
 {

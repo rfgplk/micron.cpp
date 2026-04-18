@@ -33,8 +33,7 @@ int
 __default_callback(void *)
 {
   lock_guard l(__global_callback_mtx);
-  if ( !__global_callback_size )
-    return -1;
+  if ( !__global_callback_size ) return -1;
   __global_callback_ptrs.at(--__global_callback_size)();
   l.~lock_guard();
   return 0;
@@ -43,8 +42,7 @@ __default_callback(void *)
 int
 __default_daemon_callback(void *)
 {
-  if ( posix::setsid() < 0 )
-    exc<except::runtime_error>("micron process daemon failed to create new session");
+  if ( posix::setsid() < 0 ) exc<except::runtime_error>("micron process daemon failed to create new session");
   // don't change dir
   posix::umask(0);
   posix::close(stdin_fileno);
@@ -54,8 +52,7 @@ __default_daemon_callback(void *)
   posix::open("/dev/null", O_RDWR);
   micron::dup(0);
   micron::dup(0);
-  if ( !__global_callback_size )
-    return -1;
+  if ( !__global_callback_size ) return -1;
   __global_callback_ptrs.at(__global_callback_size--)();
   return 0;
 }
@@ -63,7 +60,8 @@ __default_daemon_callback(void *)
 int
 __default_stop_callback(void *)
 {
-  _Exit(1);
+  // NOTE: must be _exit
+  micron::syscall(SYS_exit, 1);
   return 1;
 }
 
@@ -72,8 +70,7 @@ __default_sleep_callback(void *)
 {
   pause();
   lock_guard l(__global_callback_mtx);
-  if ( !__global_callback_size )
-    return -1;
+  if ( !__global_callback_size ) return -1;
   __global_callback_ptrs.at(__global_callback_size--)();
   l.~lock_guard();
   return 0;

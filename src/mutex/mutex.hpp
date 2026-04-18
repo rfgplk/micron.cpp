@@ -169,8 +169,7 @@ private:
       if ( tail.compare_and_swap(me, nullptr) ) {
         return;
       }
-      while ( !(expected_next = node.next.get(memory_order::acquire)) )
-        __cpu_pause();
+      while ( !(expected_next = node.next.get(memory_order::acquire)) ) __cpu_pause();
     }
 
     expected_next->waiting.store(false, memory_order::release);
@@ -193,8 +192,7 @@ public:
 
     if ( prev ) {
       prev->next.store(&node, memory_order::release);
-      while ( node.waiting.get(memory_order::acquire) )
-        __cpu_pause();
+      while ( node.waiting.get(memory_order::acquire) ) __cpu_pause();
     }
     return &queuing_mutex::do_unlock;
   }

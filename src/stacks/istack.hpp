@@ -31,24 +31,21 @@ class istack : public __immutable_memory_resource<t, Alloc>
   inline void
   _push(void)
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) t();
   }
 
   inline void
   _push(const t &v)
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) t(v);
   }
 
   inline void
   _push(t &&v)
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) t(micron::move(v));
   }
 
@@ -77,8 +74,7 @@ public:
 
   ~istack()
   {
-    if ( __mem::is_zero() )
-      return;
+    if ( __mem::is_zero() ) return;
     // clear(); CANT BE HERE DON'T WILL INF REC LOOP
   }
 
@@ -86,8 +82,7 @@ public:
 
   istack(const umax_t n) : __mem(n)
   {
-    for ( umax_t i = 0; i < n; i++ )
-      _push();
+    for ( umax_t i = 0; i < n; i++ ) _push();
   }
 
   istack(const std::initializer_list<t> &lst) : __mem(lst.size())
@@ -112,8 +107,7 @@ public:
   istack(const stack<K> &o) : __mem(o.size())
   {
     // TODO: optimize
-    for ( usize i = o.size(); i > 0; --i )
-      _push(o[i]);     // we want it to be inverse aka as it is in memory
+    for ( usize i = o.size(); i > 0; --i ) _push(o[i]);     // we want it to be inverse aka as it is in memory
     _push(o[0]);
   }
 
@@ -123,8 +117,7 @@ public:
 
   istack(const istack *o) : __mem(o->capacity * sizeof(t))
   {
-    for ( usize i = 0; i < o->length; i++ )
-      __mem::memory[i] = o->memory[i];
+    for ( usize i = 0; i < o->length; i++ ) __mem::memory[i] = o->memory[i];
     __mem::length = o->length;
   }
 
@@ -185,8 +178,7 @@ public:
   inline void
   reserve(const usize n)
   {
-    if ( n < __mem::capacity )
-      return;
+    if ( n < __mem::capacity ) return;
     __mem::expand(n);
   }
 

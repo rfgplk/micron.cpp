@@ -132,7 +132,7 @@ get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace c_flags
 
 namespace cpp_flags
 {
@@ -501,7 +501,7 @@ get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace cpp_flags
 
 namespace diagnostic_flags
 {
@@ -566,7 +566,7 @@ enum class flags : i32 {
   diagnostics_escape_format = flag_diagnostics_escape_format,
   diagnostics_text_art_charset = flag_diagnostics_text_art_charset
 };
-}
+}     // namespace diagnostic_flags
 
 namespace w_flags
 {
@@ -1304,7 +1304,7 @@ get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace w_flags
 
 namespace opt_flags
 {
@@ -2087,7 +2087,7 @@ get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace opt_flags
 
 namespace analyzer_flags
 {
@@ -2248,7 +2248,7 @@ enum class flags : i32 {
   w_no_analyzer_write_to_const = flag_w_no_analyzer_write_to_const,
   w_no_analyzer_write_to_string_literal = flag_w_no_analyzer_write_to_string_literal
 };
-}
+}     // namespace analyzer_flags
 
 namespace debug_flags
 {
@@ -2425,7 +2425,7 @@ get_string_flag(flags f)
   return flag_strings[static_cast<i32>(f)];
 }
 
-}
+}     // namespace debug_flags
 
 namespace profiling_flags
 {
@@ -2635,7 +2635,7 @@ get_string_flag(flags f)
   return flag_strings[static_cast<i32>(f)];
 }
 
-}
+}     // namespace profiling_flags
 
 namespace preprocessor_flags
 {
@@ -2803,7 +2803,7 @@ get_string_flag(flags f)
   return flag_strings[static_cast<i32>(f)];
 }
 
-}
+}     // namespace preprocessor_flags
 
 namespace linker_flags
 {
@@ -2914,7 +2914,7 @@ get_string_flag(flags f)
   return flag_strings[static_cast<i32>(f)];
 }
 
-}
+}     // namespace linker_flags
 
 namespace x86_flags
 {
@@ -3546,7 +3546,7 @@ get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace x86_flags
 
 namespace aarch64_flags
 {
@@ -3665,7 +3665,7 @@ get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace aarch64_flags
 
 namespace arm_flags
 {
@@ -3727,6 +3727,11 @@ constexpr static const i32 flag_mstack_protector_guard = 54;
 constexpr static const i32 flag_mstack_protector_guard_offset = 55;
 constexpr static const i32 flag_mfdpic = 56;
 constexpr static const i32 flag_mbranch_protection = 57;
+constexpr static const i32 flag_march_armv7 = 58;
+constexpr static const i32 flag_march_armv7_a = 59;
+constexpr static const i32 flag_march_armv8_a = 60;
+constexpr static const i32 flag_mfpu_neon = 61;
+constexpr static const i32 flag_mfloat_abi_hard = 62;
 
 enum class flags : i32 {
   mapcs_frame = flag_mapcs_frame,
@@ -3786,7 +3791,12 @@ enum class flags : i32 {
   mstack_protector_guard = flag_mstack_protector_guard,
   mstack_protector_guard_offset = flag_mstack_protector_guard_offset,
   mfdpic = flag_mfdpic,
-  mbranch_protection = flag_mbranch_protection
+  mbranch_protection = flag_mbranch_protection,
+  march_armv7 = flag_march_armv7,
+  march_armv7_a = flag_march_armv7_a,
+  march_armv8_a = flag_march_armv8_a,
+  mfpu_neon = flag_mfpu_neon,
+  mfloat_abi_hard = flag_mfloat_abi_hard
 };
 
 constexpr static const char *flag_strings[] = { "-mapcs-frame",
@@ -3846,13 +3856,19 @@ constexpr static const char *flag_strings[] = { "-mapcs-frame",
                                                 "-mstack-protector-guard=",
                                                 "-mstack-protector-guard-offset=",
                                                 "-mfdpic",
-                                                "-mbranch-protection=" };
+                                                "-mbranch-protection=",
+                                                "-march=armv7",
+                                                "-march=armv7-a",
+                                                "-march=armv8-a",
+                                                "-mfpu=neon",
+                                                "-mfloat-abi=hard"
+};
 
 constexpr const char *
 get_string_flag(flags f)
 {
   return flag_strings[static_cast<i32>(f)];
 }
-}
+}     // namespace arm_flags
 
 }     // namespace gcc

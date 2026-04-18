@@ -40,8 +40,7 @@ public:
   template <typename T> constexpr bitfield(const T *ch, const T zero = '0', const T one = '1')     // standard modified
   {
     size_t sz = micron::strlen(ch);
-    if ( sz > (N) )
-      exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
+    if ( sz > (N) ) exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
     for ( size_t i = 0; i < (sz / 8); i++ ) {
       if ( ch[i] == zero ) [[likely]] {
       } else if ( ch[i] == one )     // zero by default so no need for that
@@ -51,8 +50,7 @@ public:
 
   template <is_string T> bitfield(const T &str, const T zero = '0', const T one = '1')     // standard modified
   {
-    if ( str.size() > (N) )
-      exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
+    if ( str.size() > (N) ) exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
     for ( size_t i = 0; i < (str.size() / 8); i++ ) {
       if ( str[i] == zero ) [[likely]] {
       } else if ( str[i] == one )     // zero by default so no need for that
@@ -113,16 +111,14 @@ public:
   constexpr R
   at(const size_t n)
   {
-    if ( n >= N / 8 )
-      exc<except::out_of_range_error>("micron::bitfield at() out of range");
+    if ( n >= N / 8 ) exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
 
   constexpr const R
   at(const size_t n) const
   {
-    if ( n >= N / 8 )
-      exc<except::out_of_range_error>("micron::bitfield at() out of range");
+    if ( n >= N / 8 ) exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
 
@@ -130,8 +126,7 @@ public:
   all(void) const
   {
     for ( size_t i = 0; i < (N / 8); i++ )
-      if ( bits[i] != 0xFF )
-        return false;
+      if ( bits[i] != 0xFF ) return false;
     return true;
   }
 
@@ -139,8 +134,7 @@ public:
   any(void) const
   {
     for ( size_t i = 0; i < (N / 8); i++ )
-      if ( bits[i] > 0x00 )
-        return true;
+      if ( bits[i] > 0x00 ) return true;
     return false;
   }
 
@@ -148,8 +142,7 @@ public:
   none(void) const
   {
     for ( size_t i = 0; i < (N / 8); i++ )
-      if ( bits[i] != 0x00 )
-        return false;
+      if ( bits[i] != 0x00 ) return false;
     return true;
   }
 
@@ -162,24 +155,21 @@ public:
   constexpr bitfield &
   operator&=(const bitfield &o)
   {
-    for ( size_t i = 0; i < (N / 8); i++ )
-      bits[i] &= o[i];
+    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] &= o[i];
     return *this;
   }
 
   constexpr bitfield &
   operator|=(const bitfield &o)
   {
-    for ( size_t i = 0; i < (N / 8); i++ )
-      bits[i] |= o[i];
+    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] |= o[i];
     return *this;
   }
 
   constexpr bitfield &
   operator^=(const bitfield &o)
   {
-    for ( size_t i = 0; i < (N / 8); i++ )
-      bits[i] ^= o[i];
+    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] ^= o[i];
     return *this;
   }
 

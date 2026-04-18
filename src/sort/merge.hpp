@@ -24,10 +24,8 @@ __merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
   T *L = new T[n1];
   T *R = new T[n2];
 
-  for ( max_t i = 0; i < n1; ++i )
-    L[i] = arr[left + i];
-  for ( max_t j = 0; j < n2; ++j )
-    R[j] = arr[mid + 1 + j];
+  for ( max_t i = 0; i < n1; ++i ) L[i] = arr[left + i];
+  for ( max_t j = 0; j < n2; ++j ) R[j] = arr[mid + 1 + j];
 
   max_t i = 0, j = 0, k = left;
 
@@ -39,11 +37,9 @@ __merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
     }
   }
 
-  while ( i < n1 )
-    arr[k++] = L[i++];
+  while ( i < n1 ) arr[k++] = L[i++];
 
-  while ( j < n2 )
-    arr[k++] = R[j++];
+  while ( j < n2 ) arr[k++] = R[j++];
 
   delete[] L;
   delete[] R;
@@ -60,8 +56,7 @@ template <typename T, typename Cmp>
 static void
 __merge_sort(T *arr, max_t left, max_t right, Cmp comp)
 {
-  if ( left >= right )
-    return;
+  if ( left >= right ) return;
 
   max_t mid = left + ((right - left) >> 1);
 
@@ -81,8 +76,7 @@ template <is_iterable_container C>
 C &
 merge(C &arr)
 {
-  if ( arr.size() > 1 )
-    __merge_sort(&arr[0], 0, arr.size() - 1);
+  if ( arr.size() > 1 ) __merge_sort(&arr[0], 0, arr.size() - 1);
   return arr;
 }
 
@@ -90,8 +84,7 @@ template <is_iterable_container C, is_valid_comp<C> Cmp>
 C &
 merge(C &arr, Cmp comp)
 {
-  if ( arr.size() > 1 )
-    __merge_sort(&arr[0], 0, arr.size() - 1, comp);
+  if ( arr.size() > 1 ) __merge_sort(&arr[0], 0, arr.size() - 1, comp);
   return arr;
 }
 
@@ -106,10 +99,8 @@ __merge_sort_bottom_up(T *arr, max_t n, Cmp comp)
       max_t mid = i + width - 1;
       max_t right = i + (width << 1) - 1;
 
-      if ( mid >= n )
-        continue;
-      if ( right >= n )
-        right = n - 1;
+      if ( mid >= n ) continue;
+      if ( right >= n ) right = n - 1;
 
       __merge(arr, left, mid, right, comp);
     }
@@ -127,8 +118,7 @@ template <is_iterable_container C>
 C &
 merge_bottom_up(C &arr)
 {
-  if ( arr.size() > 1 )
-    __merge_sort_bottom_up(arr.data(), arr.size());
+  if ( arr.size() > 1 ) __merge_sort_bottom_up(arr.data(), arr.size());
   return arr;
 }
 
@@ -136,8 +126,7 @@ template <is_iterable_container C, is_valid_comp<C> Cmp>
 C &
 merge_bottom_up(C &arr, Cmp comp)
 {
-  if ( arr.size() > 1 )
-    __merge_sort_bottom_up(arr.data(), arr.size(), comp);
+  if ( arr.size() > 1 ) __merge_sort_bottom_up(arr.data(), arr.size(), comp);
   return arr;
 }
 

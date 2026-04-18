@@ -32,8 +32,7 @@ memcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexc
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -45,8 +44,7 @@ rmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -55,8 +53,7 @@ constexpr i64
 constexpr_memcmp(const F *src, const F *dest, const u64 cnt) noexcept
 {
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -69,19 +66,14 @@ cmemcmp(const F *__restrict _src, const F *__restrict _dest) noexcept
   const T *dest = reinterpret_cast<const T *>(_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -93,19 +85,14 @@ rcmemcmp(const F &_src, const F &_dest) noexcept
   const T *dest = reinterpret_cast<const T *>(&_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -118,13 +105,11 @@ memcmp_8b(const F *src, const F *dest) noexcept
 {
   const u64 *a = reinterpret_cast<const u64 *>(src);
   const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] )
-    return 0;
+  if ( a[0] == b[0] ) return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
   for ( int i = 0; i < 8; i++ )
-    if ( sa[i] != da[i] )
-      return &sa[i] - &da[i];
+    if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
 };
 
@@ -134,13 +119,11 @@ memcmp_16b(const F *src, const F *dest) noexcept
 {
   const u64 *a = reinterpret_cast<const u64 *>(src);
   const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] )
-    return 0;
+  if ( a[0] == b[0] && a[1] == b[1] ) return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
   for ( int i = 0; i < 16; i++ )
-    if ( sa[i] != da[i] )
-      return &sa[i] - &da[i];
+    if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
 };
 
@@ -150,13 +133,11 @@ memcmp_32b(const F *src, const F *dest) noexcept
 {
   const u64 *a = reinterpret_cast<const u64 *>(src);
   const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] )
-    return 0;
+  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] ) return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
   for ( int i = 0; i < 32; i++ )
-    if ( sa[i] != da[i] )
-      return &sa[i] - &da[i];
+    if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
 };
 
@@ -171,8 +152,7 @@ memcmp_64b(const F *src, const F *dest) noexcept
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
   for ( int i = 0; i < 64; i++ )
-    if ( sa[i] != da[i] )
-      return &sa[i] - &da[i];
+    if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
 };
 
@@ -181,17 +161,13 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 smemcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
-  if ( _src == nullptr or _dest == nullptr )
-    return micron::numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return micron::numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
-    return micron::numeric_limits<i64>::min();
+  if ( _src == nullptr or _dest == nullptr ) return micron::numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return micron::numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) ) return micron::numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -200,15 +176,12 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 i64
 rsmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -217,29 +190,21 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 scmemcmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
-  if ( _src == nullptr or _dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
-    return numeric_limits<i64>::min();
+  if ( _src == nullptr or _dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -247,27 +212,20 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 i64
 rscmemcmp_safe(const F &_src, const F &_dest) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -278,8 +236,7 @@ __attribute__((nonnull)) i64
 bytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return &src[i] - &dest[i];
+    if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -295,8 +252,7 @@ rbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
   const byte *s = &src;
   const byte *d = &dest;
   for ( u64 i = 0; i < cnt; i++ )
-    if ( s[i] != d[i] )
-      return &s[i] - &d[i];
+    if ( s[i] != d[i] ) return &s[i] - &d[i];
   return 0;
 };
 
@@ -312,19 +268,14 @@ cbytecmp(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   if constexpr ( N % 4 == 0 )
     for ( u64 i = 0; i < N; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return &src[i] - &dest[i];
-      if ( src[i + 1] != dest[i + 1] )
-        return &src[i + 1] - &dest[i + 1];
-      if ( src[i + 2] != dest[i + 2] )
-        return &src[i + 2] - &dest[i + 2];
-      if ( src[i + 3] != dest[i + 3] )
-        return &src[i + 3] - &dest[i + 3];
+      if ( src[i] != dest[i] ) return &src[i] - &dest[i];
+      if ( src[i + 1] != dest[i + 1] ) return &src[i + 1] - &dest[i + 1];
+      if ( src[i + 2] != dest[i + 2] ) return &src[i + 2] - &dest[i + 2];
+      if ( src[i + 3] != dest[i + 3] ) return &src[i + 3] - &dest[i + 3];
     }
   else
     for ( u64 i = 0; i < N; i++ )
-      if ( src[i] != dest[i] )
-        return &src[i] - &dest[i];
+      if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -343,19 +294,14 @@ rcbytecmp(const byte &src, const byte &dest) noexcept
   const byte *d = &dest;
   if constexpr ( N % 4 == 0 )
     for ( u64 i = 0; i < N; i += 4 ) {
-      if ( s[i] != d[i] )
-        return &s[i] - &d[i];
-      if ( s[i + 1] != d[i + 1] )
-        return &s[i + 1] - &d[i + 1];
-      if ( s[i + 2] != d[i + 2] )
-        return &s[i + 2] - &d[i + 2];
-      if ( s[i + 3] != d[i + 3] )
-        return &s[i + 3] - &d[i + 3];
+      if ( s[i] != d[i] ) return &s[i] - &d[i];
+      if ( s[i + 1] != d[i + 1] ) return &s[i + 1] - &d[i + 1];
+      if ( s[i + 2] != d[i + 2] ) return &s[i + 2] - &d[i + 2];
+      if ( s[i + 3] != d[i + 3] ) return &s[i + 3] - &d[i + 3];
     }
   else
     for ( u64 i = 0; i < N; i++ )
-      if ( s[i] != d[i] )
-        return &s[i] - &d[i];
+      if ( s[i] != d[i] ) return &s[i] - &d[i];
   return 0;
 };
 
@@ -371,11 +317,9 @@ bytecmp_8b(const byte *src, const byte *dest) noexcept
 {
   const u64 a = *reinterpret_cast<const u64 *>(src);
   const u64 b = *reinterpret_cast<const u64 *>(dest);
-  if ( a == b )
-    return 0;
+  if ( a == b ) return 0;
   for ( int i = 0; i < 8; i++ )
-    if ( src[i] != dest[i] )
-      return &src[i] - &dest[i];
+    if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -390,11 +334,9 @@ bytecmp_16b(const byte *src, const byte *dest) noexcept
 {
   const u64 *a = reinterpret_cast<const u64 *>(src);
   const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] )
-    return 0;
+  if ( a[0] == b[0] && a[1] == b[1] ) return 0;
   for ( int i = 0; i < 16; i++ )
-    if ( src[i] != dest[i] )
-      return &src[i] - &dest[i];
+    if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -409,11 +351,9 @@ bytecmp_32b(const byte *src, const byte *dest) noexcept
 {
   const u64 *a = reinterpret_cast<const u64 *>(src);
   const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] )
-    return 0;
+  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] ) return 0;
   for ( int i = 0; i < 32; i++ )
-    if ( src[i] != dest[i] )
-      return &src[i] - &dest[i];
+    if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -431,8 +371,7 @@ bytecmp_64b(const byte *src, const byte *dest) noexcept
   if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] && a[4] == b[4] && a[5] == b[5] && a[6] == b[6] && a[7] == b[7] )
     return 0;
   for ( int i = 0; i < 64; i++ )
-    if ( src[i] != dest[i] )
-      return &src[i] - &dest[i];
+    if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -446,15 +385,11 @@ template <u64 alignment = 1>
 __attribute__((nonnull)) i64
 sbytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
-  if ( src == nullptr or dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) ) return numeric_limits<i64>::min();
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return &src[i] - &dest[i];
+    if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -469,15 +404,12 @@ template <u64 alignment = 1>
 i64
 rsbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) ) return numeric_limits<i64>::min();
   const byte *s = &src;
   const byte *d = &dest;
   for ( u64 i = 0; i < cnt; i++ )
-    if ( s[i] != d[i] )
-      return &s[i] - &d[i];
+    if ( s[i] != d[i] ) return &s[i] - &d[i];
   return 0;
 };
 
@@ -492,27 +424,19 @@ template <u64 N, u64 alignment = 1>
 __attribute__((nonnull)) i64
 scbytecmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
-  if ( src == nullptr or dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, N) or !__is_valid_address(dest, N) )
-    return numeric_limits<i64>::min();
+  if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, N) or !__is_valid_address(dest, N) ) return numeric_limits<i64>::min();
   if constexpr ( N % 4 == 0 )
     for ( u64 i = 0; i < N; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return &src[i] - &dest[i];
-      if ( src[i + 1] != dest[i + 1] )
-        return &src[i + 1] - &dest[i + 1];
-      if ( src[i + 2] != dest[i + 2] )
-        return &src[i + 2] - &dest[i + 2];
-      if ( src[i + 3] != dest[i + 3] )
-        return &src[i + 3] - &dest[i + 3];
+      if ( src[i] != dest[i] ) return &src[i] - &dest[i];
+      if ( src[i + 1] != dest[i + 1] ) return &src[i + 1] - &dest[i + 1];
+      if ( src[i + 2] != dest[i + 2] ) return &src[i + 2] - &dest[i + 2];
+      if ( src[i + 3] != dest[i + 3] ) return &src[i + 3] - &dest[i + 3];
     }
   else
     for ( u64 i = 0; i < N; i++ )
-      if ( src[i] != dest[i] )
-        return &src[i] - &dest[i];
+      if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
 };
 
@@ -527,27 +451,20 @@ template <u64 N, u64 alignment = 1>
 i64
 rscbytecmp_safe(const byte &src, const byte &dest) noexcept
 {
-  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, N) or !__is_valid_address(dest, N) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, N) or !__is_valid_address(dest, N) ) return numeric_limits<i64>::min();
   const byte *s = &src;
   const byte *d = &dest;
   if constexpr ( N % 4 == 0 )
     for ( u64 i = 0; i < N; i += 4 ) {
-      if ( s[i] != d[i] )
-        return &s[i] - &d[i];
-      if ( s[i + 1] != d[i + 1] )
-        return &s[i + 1] - &d[i + 1];
-      if ( s[i + 2] != d[i + 2] )
-        return &s[i + 2] - &d[i + 2];
-      if ( s[i + 3] != d[i + 3] )
-        return &s[i + 3] - &d[i + 3];
+      if ( s[i] != d[i] ) return &s[i] - &d[i];
+      if ( s[i + 1] != d[i + 1] ) return &s[i + 1] - &d[i + 1];
+      if ( s[i + 2] != d[i + 2] ) return &s[i + 2] - &d[i + 2];
+      if ( s[i + 3] != d[i + 3] ) return &s[i + 3] - &d[i + 3];
     }
   else
     for ( u64 i = 0; i < N; i++ )
-      if ( s[i] != d[i] )
-        return &s[i] - &d[i];
+      if ( s[i] != d[i] ) return &s[i] - &d[i];
   return 0;
 };
 
@@ -569,8 +486,7 @@ typecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noex
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -582,8 +498,7 @@ rtypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -595,19 +510,14 @@ ctypecmp(const F *__restrict _src, const F *__restrict _dest) noexcept
   const T *dest = reinterpret_cast<const T *>(_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -619,19 +529,14 @@ rctypecmp(const F &_src, const F &_dest) noexcept
   const T *dest = reinterpret_cast<const T *>(&_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -640,17 +545,13 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 stypecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
-  if ( _src == nullptr or _dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( _src == nullptr or _dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -659,15 +560,12 @@ template <typename T, typename F, u64 alignment = alignof(T)>
 i64
 rstypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, cnt) or !__is_valid_address(_dest, cnt) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -675,29 +573,21 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 sctypecmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
-  if ( _src == nullptr or _dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
-    return numeric_limits<i64>::min();
+  if ( _src == nullptr or _dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(_src);
   const T *dest = reinterpret_cast<const T *>(_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -705,27 +595,20 @@ template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
 i64
 rsctypecmp_safe(const F &_src, const F &_dest) noexcept
 {
-  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(_src, alignment) or !__is_aligned_to(_dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(_src, M) or !__is_valid_address(_dest, M) ) return numeric_limits<i64>::min();
   const T *src = reinterpret_cast<const T *>(&_src);
   const T *dest = reinterpret_cast<const T *>(&_dest);
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -736,8 +619,7 @@ __attribute__((nonnull)) i64
 wordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -747,8 +629,7 @@ rwordcmp(const word &src, const word &dest, const u64 cnt) noexcept
   const word *s = &src;
   const word *d = &dest;
   for ( u64 i = 0; i < cnt; i++ )
-    if ( s[i] != d[i] )
-      return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
+    if ( s[i] != d[i] ) return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
   return 0;
 };
 
@@ -758,19 +639,14 @@ cwordcmp(const word *__restrict src, const word *__restrict dest) noexcept
 {
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -782,33 +658,24 @@ rcwordcmp(const word &src, const word &dest) noexcept
   const word *d = &dest;
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( s[i] != d[i] )
-        return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
-      if ( s[i + 1] != d[i + 1] )
-        return reinterpret_cast<const byte *>(&s[i + 1]) - reinterpret_cast<const byte *>(&d[i + 1]);
-      if ( s[i + 2] != d[i + 2] )
-        return reinterpret_cast<const byte *>(&s[i + 2]) - reinterpret_cast<const byte *>(&d[i + 2]);
-      if ( s[i + 3] != d[i + 3] )
-        return reinterpret_cast<const byte *>(&s[i + 3]) - reinterpret_cast<const byte *>(&d[i + 3]);
+      if ( s[i] != d[i] ) return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
+      if ( s[i + 1] != d[i + 1] ) return reinterpret_cast<const byte *>(&s[i + 1]) - reinterpret_cast<const byte *>(&d[i + 1]);
+      if ( s[i + 2] != d[i + 2] ) return reinterpret_cast<const byte *>(&s[i + 2]) - reinterpret_cast<const byte *>(&d[i + 2]);
+      if ( s[i + 3] != d[i + 3] ) return reinterpret_cast<const byte *>(&s[i + 3]) - reinterpret_cast<const byte *>(&d[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( s[i] != d[i] )
-        return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
+      if ( s[i] != d[i] ) return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
   return 0;
 };
 
 inline i64
 wordcmp_4w(const word *src, const word *dest) noexcept
 {
-  if ( src[0] != dest[0] )
-    return reinterpret_cast<const byte *>(&src[0]) - reinterpret_cast<const byte *>(&dest[0]);
-  if ( src[1] != dest[1] )
-    return reinterpret_cast<const byte *>(&src[1]) - reinterpret_cast<const byte *>(&dest[1]);
-  if ( src[2] != dest[2] )
-    return reinterpret_cast<const byte *>(&src[2]) - reinterpret_cast<const byte *>(&dest[2]);
-  if ( src[3] != dest[3] )
-    return reinterpret_cast<const byte *>(&src[3]) - reinterpret_cast<const byte *>(&dest[3]);
+  if ( src[0] != dest[0] ) return reinterpret_cast<const byte *>(&src[0]) - reinterpret_cast<const byte *>(&dest[0]);
+  if ( src[1] != dest[1] ) return reinterpret_cast<const byte *>(&src[1]) - reinterpret_cast<const byte *>(&dest[1]);
+  if ( src[2] != dest[2] ) return reinterpret_cast<const byte *>(&src[2]) - reinterpret_cast<const byte *>(&dest[2]);
+  if ( src[3] != dest[3] ) return reinterpret_cast<const byte *>(&src[3]) - reinterpret_cast<const byte *>(&dest[3]);
   return 0;
 };
 
@@ -816,8 +683,7 @@ inline i64
 wordcmp_8w(const word *src, const word *dest) noexcept
 {
   for ( int i = 0; i < 8; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -825,8 +691,7 @@ inline i64
 wordcmp_16w(const word *src, const word *dest) noexcept
 {
   for ( int i = 0; i < 16; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -834,8 +699,7 @@ inline i64
 wordcmp_32w(const word *src, const word *dest) noexcept
 {
   for ( int i = 0; i < 32; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -843,15 +707,11 @@ template <u64 alignment = alignof(word)>
 __attribute__((nonnull)) i64
 swordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
-  if ( src == nullptr or dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) ) return numeric_limits<i64>::min();
   for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] )
-      return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 
@@ -859,15 +719,12 @@ template <u64 alignment = alignof(word)>
 i64
 rswordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 {
-  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) )
-    return numeric_limits<i64>::min();
+  if ( !__is_aligned_to_r(src, alignment) or !__is_aligned_to_r(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, cnt) or !__is_valid_address(dest, cnt) ) return numeric_limits<i64>::min();
   const word *s = &src;
   const word *d = &dest;
   for ( u64 i = 0; i < cnt; i++ )
-    if ( s[i] != d[i] )
-      return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
+    if ( s[i] != d[i] ) return reinterpret_cast<const byte *>(&s[i]) - reinterpret_cast<const byte *>(&d[i]);
   return 0;
 };
 
@@ -876,27 +733,19 @@ template <u64 M, u64 alignment = alignof(word)>
 __attribute__((nonnull)) i64
 scwordcmp_safe(const word *__restrict src, const word *__restrict dest) noexcept
 {
-  if ( src == nullptr or dest == nullptr )
-    return numeric_limits<i64>::min();
-  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) )
-    return numeric_limits<i64>::min();
-  if ( !__is_valid_address(src, M) or !__is_valid_address(dest, M) )
-    return numeric_limits<i64>::min();
+  if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
+  if ( !__is_aligned_to(src, alignment) or !__is_aligned_to(dest, alignment) ) return numeric_limits<i64>::min();
+  if ( !__is_valid_address(src, M) or !__is_valid_address(dest, M) ) return numeric_limits<i64>::min();
   if constexpr ( M % 4 == 0 )
     for ( u64 i = 0; i < M; i += 4 ) {
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-      if ( src[i + 1] != dest[i + 1] )
-        return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-      if ( src[i + 2] != dest[i + 2] )
-        return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-      if ( src[i + 3] != dest[i + 3] )
-        return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
+      if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
+      if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
     }
   else
     for ( u64 i = 0; i < M; i++ )
-      if ( src[i] != dest[i] )
-        return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
+      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
   return 0;
 };
 

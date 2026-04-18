@@ -83,8 +83,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
     n->right = nullptr;
     n->refs = 1;
     n->__length = len;
-    if ( len )
-      micron::memcpy(__leaf_data(n), data, len);
+    if ( len ) micron::memcpy(__leaf_data(n), data, len);
     return n;
   }
 
@@ -172,18 +171,15 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
       }
       n = r;
     }
-    while ( depth > 0 )
-      __release(stack[--depth]);
+    while ( depth > 0 ) __release(stack[--depth]);
   }
 
   // construct a balanced tree from contiguous data
   static __node *
   __build_balanced(const T *data, usize len)
   {
-    if ( len == 0 )
-      return nullptr;
-    if ( len <= __max_leaf )
-      return __make_leaf(data, len);
+    if ( len == 0 ) return nullptr;
+    if ( len <= __max_leaf ) return __make_leaf(data, len);
     usize mid = len / 2;
     __node *left = __build_balanced(data, mid);
     __node *right = __build_balanced(data + mid, len - mid);
@@ -194,10 +190,8 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   static __node *
   __build_fill(T ch, usize len)
   {
-    if ( len == 0 )
-      return nullptr;
-    if ( len <= __max_leaf )
-      return __make_leaf_fill(ch, len);
+    if ( len == 0 ) return nullptr;
+    if ( len <= __max_leaf ) return __make_leaf_fill(ch, len);
     usize mid = len / 2;
     __node *left = __build_fill(ch, mid);
     __node *right = __build_fill(ch, len - mid);
@@ -207,10 +201,8 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   static __node *
   __concat(__node *l, __node *r)
   {
-    if ( !l )
-      return r;
-    if ( !r )
-      return l;
+    if ( !l ) return r;
+    if ( !r ) return l;
 
     // merge small leaves to prevent degenerate single-char chains
     if ( __is_leaf(l) && __is_leaf(r) && l->__length + r->__length <= __max_leaf ) {
@@ -232,12 +224,9 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   static __split_result
   __split(const __node *n, usize idx)
   {
-    if ( !n )
-      return { nullptr, nullptr };
-    if ( idx == 0 )
-      return { nullptr, __retain(const_cast<__node *>(n)) };
-    if ( idx >= n->__length )
-      return { __retain(const_cast<__node *>(n)), nullptr };
+    if ( !n ) return { nullptr, nullptr };
+    if ( idx == 0 ) return { nullptr, __retain(const_cast<__node *>(n)) };
+    if ( idx >= n->__length ) return { __retain(const_cast<__node *>(n)), nullptr };
 
     if ( __is_leaf(n) ) {
       const T *data = __leaf_data(n);
@@ -280,12 +269,10 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   static __node *
   __push_back_impl(const __node *n, T ch)
   {
-    if ( !n )
-      return __make_leaf(&ch, 1);
+    if ( !n ) return __make_leaf(&ch, 1);
 
     if ( __is_leaf(n) ) {
-      if ( n->__length < __max_leaf )
-        return __make_leaf_push(n, ch);
+      if ( n->__length < __max_leaf ) return __make_leaf_push(n, ch);
       __node *tail = __make_leaf(&ch, 1);
       return __make_branch(__retain(const_cast<__node *>(n)), tail);
     }
@@ -300,8 +287,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   static bool
   __for_each_chunk(const __node *root, Fn &&fn)
   {
-    if ( !root )
-      return true;
+    if ( !root ) return true;
 
     constexpr usize __max_depth = 64;
     const __node *stack[__max_depth];
@@ -314,8 +300,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
         cur = cur->left;
       }
       if ( cur ) {
-        if ( !fn(__leaf_data(cur), cur->__length) )
-          return false;
+        if ( !fn(__leaf_data(cur), cur->__length) ) return false;
       }
       if ( depth > 0 )
         cur = stack[--depth]->right;
@@ -334,8 +319,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
 
     __for_each_chunk(root, [&](const T *data, usize len) -> bool {
       usize check = len;
-      if ( pos + check > common )
-        check = common - pos;
+      if ( pos + check > common ) check = common - pos;
       for ( usize i = 0; i < check; i++ ) {
         auto ca = static_cast<unsigned char>(data[i]);
         auto cb = static_cast<unsigned char>(b[pos + i]);
@@ -352,12 +336,9 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
       return pos < common;
     });
 
-    if ( result != 0 )
-      return result;
-    if ( alen < blen )
-      return -1;
-    if ( alen > blen )
-      return 1;
+    if ( result != 0 ) return result;
+    if ( alen < blen ) return -1;
+    if ( alen > blen ) return 1;
     return 0;
   }
 
@@ -399,8 +380,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   __safety_check(const char *msg, Args &&...args) const
   {
     if constexpr ( Sf == true ) {
-      if ( (this->*Fn)(micron::forward<Args>(args)...) )
-        exc<E>(msg);
+      if ( (this->*Fn)(micron::forward<Args>(args)...) ) exc<E>(msg);
     }
   }
 
@@ -423,8 +403,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   void
   __ensure_flat(void) const
   {
-    if ( __flat )
-      return;
+    if ( __flat ) return;
     __flat = reinterpret_cast<T *>(abc::alloc((__length + 1) * sizeof(T)));
     usize pos = 0;
     __for_each_chunk(__root, [&](const T *data, usize len) -> bool {
@@ -475,8 +454,7 @@ public:
 
     explicit const_iterator(const __node *root, usize start_index = 0) : __depth(0), __leaf(nullptr), __pos(0), __index(start_index)
     {
-      if ( root )
-        __push_to_leftmost(root);
+      if ( root ) __push_to_leftmost(root);
     }
 
     usize
@@ -488,8 +466,7 @@ public:
     bool
     operator==(const const_iterator &o) const
     {
-      if ( !__leaf && !o.__leaf )
-        return true;
+      if ( !__leaf && !o.__leaf ) return true;
       return __leaf == o.__leaf && __pos == o.__pos;
     }
 
@@ -515,8 +492,7 @@ public:
     operator++(void)
     {
       ++__index;
-      if ( ++__pos < __leaf->__length )
-        return *this;
+      if ( ++__pos < __leaf->__length ) return *this;
       if ( __depth > 0 ) {
         const __node *parent = __stack[--__depth];
         __push_to_leftmost(parent->right);
@@ -699,8 +675,7 @@ public:
   inline const char *
   c_str(void) const
   {
-    if ( !__root )
-      return __rope_null_str;
+    if ( !__root ) return __rope_null_str;
     __ensure_flat();
     return reinterpret_cast<const char *>(__flat);
   }
@@ -708,8 +683,7 @@ public:
   inline const wide *
   w_str(void) const
   {
-    if ( !__root )
-      return __rope_null_wstr;
+    if ( !__root ) return __rope_null_wstr;
     __ensure_flat();
     return reinterpret_cast<const wide *>(__flat);
   }
@@ -717,8 +691,7 @@ public:
   inline const unicode32 *
   uni_str(void) const
   {
-    if ( !__root )
-      return __rope_null_u32str;
+    if ( !__root ) return __rope_null_u32str;
     __ensure_flat();
     return reinterpret_cast<const unicode32 *>(__flat);
   }
@@ -753,8 +726,7 @@ public:
   rope
   flatten(void) const
   {
-    if ( !__root )
-      return rope();
+    if ( !__root ) return rope();
     __ensure_flat();
     return rope(__build_balanced(__flat, __length), __length);
   }
@@ -788,8 +760,7 @@ public:
   usize
   find(F ch, usize pos = 0) const
   {
-    if ( !__root || pos >= __length )
-      return npos;
+    if ( !__root || pos >= __length ) return npos;
     usize idx = 0;
     usize result = npos;
 
@@ -811,16 +782,13 @@ public:
   inline usize
   find_substr(const T *needle, usize needle_len, usize pos = 0) const
   {
-    if ( needle_len == 0 || needle_len > __length )
-      return npos;
+    if ( needle_len == 0 || needle_len > __length ) return npos;
     __ensure_flat();
     usize limit = __length - needle_len;
     for ( usize i = pos; i <= limit; ++i ) {
       usize j = 0;
-      while ( j < needle_len && __flat[i + j] == needle[j] )
-        ++j;
-      if ( j == needle_len )
-        return i;
+      while ( j < needle_len && __flat[i + j] == needle[j] ) ++j;
+      if ( j == needle_len ) return i;
     }
     return npos;
   }
@@ -829,8 +797,7 @@ public:
   usize
   find(const rope<F> &str, usize pos = 0) const
   {
-    if ( str.empty() )
-      return npos;
+    if ( str.empty() ) return npos;
     str.__ensure_flat();
     return find_substr(reinterpret_cast<const T *>(str.__flat), str.__length, pos);
   }
@@ -891,8 +858,7 @@ public:
   push_back(const F (&str)[M]) const
   {
     usize len = M - 1;
-    if ( len == 0 )
-      return *this;
+    if ( len == 0 ) return *this;
     __node *leaf = __make_leaf(reinterpret_cast<const T *>(str), len);
     return rope(__concat(__retain(__root), leaf), __length + len);
   }
@@ -901,16 +867,14 @@ public:
   rope
   push_back(const rope<F> &o) const
   {
-    if ( o.empty() )
-      return *this;
+    if ( o.empty() ) return *this;
     return rope(__concat(__retain(__root), __retain(o.__root)), __length + o.__length);
   }
 
   rope
   pop_back(void) const
   {
-    if ( __length == 0 )
-      return rope();
+    if ( __length == 0 ) return rope();
     auto [left, right] = __split(__root, __length - 1);
     __release(right);
     return rope(left, __length - 1);
@@ -919,8 +883,7 @@ public:
   inline rope
   append(const buffer &f, usize n) const
   {
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(&f[0]), n);
     return rope(__concat(__retain(__root), leaf), __length + n);
   }
@@ -929,8 +892,7 @@ public:
   inline rope
   append(const slice<F> &f, usize n) const
   {
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(&f[0]), n);
     return rope(__concat(__retain(__root), leaf), __length + n);
   }
@@ -939,8 +901,7 @@ public:
   inline rope
   append(const F *f, usize n) const
   {
-    if ( n == 0 )
-      return *this;
+    if ( n == 0 ) return *this;
     usize len = n - 1;     // match hstring convention (includes null)
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(f), len);
     return rope(__concat(__retain(__root), leaf), __length + len);
@@ -951,8 +912,7 @@ public:
   append(const F (&str)[M]) const
   {
     usize len = M - 1;
-    if ( len == 0 )
-      return *this;
+    if ( len == 0 ) return *this;
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(str), len);
     return rope(__concat(__retain(__root), leaf), __length + len);
   }
@@ -961,8 +921,7 @@ public:
   inline rope
   append(const rope<F> &o) const
   {
-    if ( o.empty() )
-      return *this;
+    if ( o.empty() ) return *this;
     return rope(__concat(__retain(__root), __retain(o.__root)), __length + o.__length);
   }
 
@@ -970,8 +929,7 @@ public:
   inline rope
   append(const S &o) const
   {
-    if ( o.size() == 0 )
-      return *this;
+    if ( o.size() == 0 ) return *this;
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(o.c_str()), o.size());
     return rope(__concat(__retain(__root), leaf), __length + o.size());
   }
@@ -996,8 +954,7 @@ public:
 
     usize str_len = M - 1;
     usize total = str_len * cnt;
-    if ( total == 0 )
-      return *this;
+    if ( total == 0 ) return *this;
 
     // build the insertion payload (repeat str cnt times)
     __node *payload = nullptr;
@@ -1015,8 +972,7 @@ public:
   rope
   insert(usize ind, const rope<F> &o) const
   {
-    if ( o.empty() )
-      return *this;
+    if ( o.empty() ) return *this;
     auto [left, right] = __split(__root, ind);
     __node *result = __concat(__concat(left, __retain(o.__root)), right);
     return rope(result, __length + o.__length);
@@ -1026,8 +982,7 @@ public:
   rope
   insert(usize ind, const S &o) const
   {
-    if ( o.size() == 0 )
-      return *this;
+    if ( o.size() == 0 ) return *this;
     __node *seg = __build_balanced(reinterpret_cast<const T *>(o.c_str()), o.size());
     auto [left, right] = __split(__root, ind);
     __node *result = __concat(__concat(left, seg), right);
@@ -1072,8 +1027,7 @@ public:
     __safety_check<&rope::__valid_cnt, except::library_error>("micron::rope erase() invalid count", cnt);
     __safety_check<&rope::__erase_check, except::library_error>("micron::rope erase() out of range", ind, cnt);
 
-    if ( cnt == 0 )
-      return *this;
+    if ( cnt == 0 ) return *this;
 
     auto [left, rest] = __split(__root, ind);
     auto [removed, right] = __split(rest ? rest : nullptr, cnt);
@@ -1094,13 +1048,11 @@ public:
   rope
   substr(usize pos = 0, usize cnt = npos) const
   {
-    if ( cnt == npos )
-      cnt = (pos <= __length) ? __length - pos : 0;
+    if ( cnt == npos ) cnt = (pos <= __length) ? __length - pos : 0;
 
     __safety_check<&rope::__range_pos_cnt, except::library_error>("micron::rope substr() invalid range", pos, cnt);
 
-    if ( pos == 0 && cnt == __length )
-      return *this;
+    if ( pos == 0 && cnt == __length ) return *this;
 
     auto [left, rest] = __split(__root, pos);
     auto [sub, right] = __split(rest, cnt);
@@ -1116,8 +1068,7 @@ public:
   {
     usize pos = _start.index();
     usize end_pos = _end.index();
-    if ( end_pos <= pos )
-      return rope();
+    if ( end_pos <= pos ) return rope();
     return substr(pos, end_pos - pos);
   }
 
@@ -1127,8 +1078,7 @@ public:
   truncate(I n) const
   {
     usize idx = static_cast<usize>(n);
-    if ( idx >= __length )
-      return *this;
+    if ( idx >= __length ) return *this;
     auto [left, right] = __split(__root, idx);
     __release(right);
     return rope(left, idx);
@@ -1147,8 +1097,7 @@ public:
   rope
   resize(usize n, const T ch) const
   {
-    if ( n <= __length )
-      return truncate(n);
+    if ( n <= __length ) return truncate(n);
     usize fill = n - __length;
     __node *tail = __build_fill(ch, fill);
     return rope(__concat(__retain(__root), tail), n);
@@ -1161,12 +1110,10 @@ public:
     __safety_check<&rope::__null_check, except::library_error>("micron::rope remove() null needle", static_cast<const void *>(needle));
 
     usize needle_len = micron::strlen(needle);
-    if ( needle_len == 0 || !__root )
-      return *this;
+    if ( needle_len == 0 || !__root ) return *this;
 
     usize pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
-    if ( pos == npos )
-      return *this;
+    if ( pos == npos ) return *this;
 
     return erase(pos, needle_len);
   }
@@ -1175,13 +1122,11 @@ public:
   rope
   remove(const rope<F> &needle) const
   {
-    if ( needle.empty() )
-      return *this;
+    if ( needle.empty() ) return *this;
 
     needle.__ensure_flat();
     usize pos = find_substr(reinterpret_cast<const T *>(needle.__flat), needle.__length);
-    if ( pos == npos )
-      return *this;
+    if ( pos == npos ) return *this;
 
     return erase(pos, needle.__length);
   }
@@ -1190,12 +1135,10 @@ public:
   rope
   remove(const S &needle) const
   {
-    if ( needle.size() == 0 )
-      return *this;
+    if ( needle.size() == 0 ) return *this;
 
     usize pos = find_substr(reinterpret_cast<const T *>(needle.c_str()), needle.size());
-    if ( pos == npos )
-      return *this;
+    if ( pos == npos ) return *this;
 
     return erase(pos, needle.size());
   }
@@ -1207,13 +1150,11 @@ public:
     __safety_check<&rope::__null_check, except::library_error>("micron::rope remove_all() null needle", static_cast<const void *>(needle));
 
     usize needle_len = micron::strlen(needle);
-    if ( needle_len == 0 || !__root )
-      return *this;
+    if ( needle_len == 0 || !__root ) return *this;
 
     rope cur = *this;
     usize pos = 0;
-    while ( (pos = cur.find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos )
-      cur = cur.erase(pos, needle_len);
+    while ( (pos = cur.find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) cur = cur.erase(pos, needle_len);
     return cur;
   }
 
@@ -1221,8 +1162,7 @@ public:
   rope
   remove_all(const rope<F> &needle) const
   {
-    if ( needle.empty() )
-      return *this;
+    if ( needle.empty() ) return *this;
 
     needle.__ensure_flat();
     rope cur = *this;
@@ -1236,8 +1176,7 @@ public:
   rope
   remove_all(const S &needle) const
   {
-    if ( needle.size() == 0 )
-      return *this;
+    if ( needle.size() == 0 ) return *this;
 
     rope cur = *this;
     usize pos = 0;
@@ -1320,13 +1259,11 @@ public:
   {
     if ( __root == o.__root ) [[unlikely]]
       return true;
-    if ( __length != o.__length )
-      return false;
+    if ( __length != o.__length ) return false;
     auto a = begin(), ae = end();
     auto b = o.begin();
     for ( ; a != ae; ++a, ++b ) {
-      if ( *a != *b )
-        return false;
+      if ( *a != *b ) return false;
     }
     return true;
   }
@@ -1427,8 +1364,7 @@ public:
   {
     if ( __root == data.__root ) [[unlikely]]
       return true;
-    if ( __length != data.__length )
-      return false;
+    if ( __length != data.__length ) return false;
     data.__ensure_flat();
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(data.__flat), data.__length) == 0;
   }
@@ -1520,8 +1456,7 @@ public:
   for_each(Fn &&fn) const
   {
     __for_each_chunk(__root, [&](const T *data, usize len) -> bool {
-      for ( usize i = 0; i < len; ++i )
-        fn(static_cast<const T &>(data[i]));
+      for ( usize i = 0; i < len; ++i ) fn(static_cast<const T &>(data[i]));
       return true;
     });
   }

@@ -84,8 +84,7 @@ public:
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(const A &o)
   {
-    if ( o.size() < N )
-      exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
+    if ( o.size() < N ) exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
     __impl_container::copy<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
@@ -93,8 +92,7 @@ public:
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(A &&o)
   {
-    if ( o.size() < N )
-      exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
+    if ( o.size() < N ) exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
     __impl_container::move<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
@@ -147,24 +145,21 @@ public:
   inline iterator
   get(const size_type n)
   {
-    if ( n >= N )
-      exc<except::library_error>("micron::array get() out of range");
+    if ( n >= N ) exc<except::library_error>("micron::array get() out of range");
     return micron::addr(stack + n);
   }
 
   inline const_iterator
   get(const size_type n) const
   {
-    if ( n >= N )
-      exc<except::library_error>("micron::array get() out of range");
+    if ( n >= N ) exc<except::library_error>("micron::array get() out of range");
     return micron::addr(stack + n);
   }
 
   inline const_iterator
   cget(const size_type n) const
   {
-    if ( n >= N )
-      exc<except::library_error>("micron::array get() out of range");
+    if ( n >= N ) exc<except::library_error>("micron::array get() out of range");
     return micron::addr(stack + n);
   }
 
@@ -195,19 +190,16 @@ public:
   const T &
   operator[](usize idx) const
   {
-    if ( idx >= length )
-      exc<except::library_error>("micron::bisect_array::erase(): out of range");
+    if ( idx >= length ) exc<except::library_error>("micron::bisect_array::erase(): out of range");
     return stack[idx];
   }
 
   void
   insert(const T &val)
   {
-    if ( full() )
-      exc<except::library_error>("micron::bisect_array::erase(): max capacity reached");
+    if ( full() ) exc<except::library_error>("micron::bisect_array::erase(): max capacity reached");
     usize idx = __bisect_right(val);
-    for ( usize i = length; i > idx; --i )
-      stack[i] = stack[i - 1];
+    for ( usize i = length; i > idx; --i ) stack[i] = stack[i - 1];
     stack[idx] = val;
     ++length;
   }
@@ -215,10 +207,8 @@ public:
   void
   erase(usize idx)
   {
-    if ( idx >= length )
-      exc<except::library_error>("micron::bisect_array::erase(): out of range");
-    for ( usize i = idx; i + 1 < length; ++i )
-      stack[i] = stack[i + 1];
+    if ( idx >= length ) exc<except::library_error>("micron::bisect_array::erase(): out of range");
+    for ( usize i = idx; i + 1 < length; ++i ) stack[i] = stack[i + 1];
     --length;
   }
 

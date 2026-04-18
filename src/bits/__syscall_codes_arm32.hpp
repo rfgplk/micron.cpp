@@ -1,449 +1,917 @@
-// ported over from kernel include headers. hoping this works
-
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-/* SPDX-License-Identifier: GPL-2.0-only */
-/*
- *  arch/arm/include/asm/unistd.h
- *
- *  Copyright (C) 2001-2005 Russell King
- *
- * Please forward _all_ changes to this file to rmk@arm.linux.org.uk,
- * no matter what the change is.  Thanks!
- */
-#ifndef __ASM_ARM_UNISTD_H
-#define __ASM_ARM_UNISTD_H
+using __nr_t = int;
 
-#ifndef _UAPI__ASM_ARM_UNISTD_H
-#define _UAPI__ASM_ARM_UNISTD_H
+// set base to 0x900000 if OABI needed
+template <__nr_t __nr_Base = 0> struct arm32_syscalls {
+  struct nr {
+    static constexpr __nr_t syscall_base = __nr_Base;
 
-#define __NR_OABI_SYSCALL_BASE 0x900000
-#define __NR_SYSCALL_MASK 0x0fffff
+    static constexpr __nr_t restart_syscall = __nr_Base + 0;
+    static constexpr __nr_t exit = __nr_Base + 1;
+    static constexpr __nr_t fork = __nr_Base + 2;
+    static constexpr __nr_t read = __nr_Base + 3;
+    static constexpr __nr_t write = __nr_Base + 4;
+    static constexpr __nr_t open = __nr_Base + 5;
+    static constexpr __nr_t close = __nr_Base + 6;
+    // __nr_Base +   7:sys_waitpid (removed)
+    static constexpr __nr_t creat = __nr_Base + 8;
+    static constexpr __nr_t link = __nr_Base + 9;
+    static constexpr __nr_t unlink = __nr_Base + 10;
+    static constexpr __nr_t execve = __nr_Base + 11;
+    static constexpr __nr_t chdir = __nr_Base + 12;
+    // __nr_Base +  13: sys_time (OABI only)
+    static constexpr __nr_t mknod = __nr_Base + 14;
+    static constexpr __nr_t chmod = __nr_Base + 15;
+    static constexpr __nr_t lchown = __nr_Base + 16;
+    // __nr_Base +  17: sys_break (removed)
+    // __nr_Base +  18: sys_stat  (removed)
+    static constexpr __nr_t lseek = __nr_Base + 19;
+    static constexpr __nr_t getpid = __nr_Base + 20;
+    static constexpr __nr_t mount = __nr_Base + 21;
+    // __nr_Base +  22: sys_umount (OABI only)
+    static constexpr __nr_t setuid = __nr_Base + 23;
+    static constexpr __nr_t getuid = __nr_Base + 24;
+    // __nr_Base +  25: sys_stime (OABI only)
+    static constexpr __nr_t ptrace = __nr_Base + 26;
+    // __nr_Base +  27: sys_alarm (OABI only)
+    // __nr_Base +  28: sys_fstat (removed)
+    static constexpr __nr_t pause = __nr_Base + 29;
+    // __nr_Base +  30: sys_utime (OABI only)
+    // __nr_Base +  31: sys_stty  (removed)
+    // __nr_Base +  32: sys_gtty  (removed)
+    static constexpr __nr_t access = __nr_Base + 33;
+    static constexpr __nr_t nice = __nr_Base + 34;
+    // __nr_Base +  35: sys_ftime (removed)
+    static constexpr __nr_t sync = __nr_Base + 36;
+    static constexpr __nr_t kill = __nr_Base + 37;
+    static constexpr __nr_t rename = __nr_Base + 38;
+    static constexpr __nr_t mkdir = __nr_Base + 39;
+    static constexpr __nr_t rmdir = __nr_Base + 40;
+    static constexpr __nr_t dup = __nr_Base + 41;
+    static constexpr __nr_t pipe = __nr_Base + 42;
+    static constexpr __nr_t times = __nr_Base + 43;
+    // __nr_Base +  44: sys_prof (removed)
+    static constexpr __nr_t brk = __nr_Base + 45;
+    static constexpr __nr_t setgid = __nr_Base + 46;
+    static constexpr __nr_t getgid = __nr_Base + 47;
+    // __nr_Base +  48: sys_signal (removed)
+    static constexpr __nr_t geteuid = __nr_Base + 49;
+    static constexpr __nr_t getegid = __nr_Base + 50;
+    static constexpr __nr_t acct = __nr_Base + 51;
+    static constexpr __nr_t umount2 = __nr_Base + 52;
+    // __nr_Base +  53: sys_lock (removed)
+    static constexpr __nr_t ioctl = __nr_Base + 54;
+    static constexpr __nr_t fcntl = __nr_Base + 55;
+    // __nr_Base +  56: sys_mpx (removed)
+    static constexpr __nr_t setpgid = __nr_Base + 57;
+    // __nr_Base +  58: sys_ulimit   (removed)
+    // __nr_Base +  59: sys_olduname (removed)
+    static constexpr __nr_t umask = __nr_Base + 60;
+    static constexpr __nr_t chroot = __nr_Base + 61;
+    static constexpr __nr_t ustat = __nr_Base + 62;
+    static constexpr __nr_t dup2 = __nr_Base + 63;
+    static constexpr __nr_t getppid = __nr_Base + 64;
+    static constexpr __nr_t getpgrp = __nr_Base + 65;
+    static constexpr __nr_t setsid = __nr_Base + 66;
+    static constexpr __nr_t sigaction = __nr_Base + 67;
+    // __nr_Base +  68: sys_sgetmask (removed)
+    // __nr_Base +  69: sys_ssetmask (removed)
+    static constexpr __nr_t setreuid = __nr_Base + 70;
+    static constexpr __nr_t setregid = __nr_Base + 71;
+    static constexpr __nr_t sigsuspend = __nr_Base + 72;
+    static constexpr __nr_t sigpending = __nr_Base + 73;
+    static constexpr __nr_t sethostname = __nr_Base + 74;
+    static constexpr __nr_t setrlimit = __nr_Base + 75;
+    // __nr_Base +  76: sys_getrlimit (OABI only; use ugetrlimit at +191)
+    static constexpr __nr_t getrusage = __nr_Base + 77;
+    static constexpr __nr_t gettimeofday = __nr_Base + 78;
+    static constexpr __nr_t settimeofday = __nr_Base + 79;
+    static constexpr __nr_t getgroups = __nr_Base + 80;
+    static constexpr __nr_t setgroups = __nr_Base + 81;
+    // __nr_Base +  82: sys_select (OABI only; use _newselect at +142)
+    static constexpr __nr_t symlink = __nr_Base + 83;
+    // __nr_Base +  84: sys_lstat (removed)
+    static constexpr __nr_t readlink = __nr_Base + 85;
+    static constexpr __nr_t uselib = __nr_Base + 86;
+    static constexpr __nr_t swapon = __nr_Base + 87;
+    static constexpr __nr_t reboot = __nr_Base + 88;
+    // __nr_Base +  89: sys_readdir (OABI only)
+    // __nr_Base +  90: sys_mmap    (OABI only; use mmap2 at +192)
+    static constexpr __nr_t munmap = __nr_Base + 91;
+    static constexpr __nr_t truncate = __nr_Base + 92;
+    static constexpr __nr_t ftruncate = __nr_Base + 93;
+    static constexpr __nr_t fchmod = __nr_Base + 94;
+    static constexpr __nr_t fchown = __nr_Base + 95;
+    static constexpr __nr_t getpriority = __nr_Base + 96;
+    static constexpr __nr_t setpriority = __nr_Base + 97;
+    // __nr_Base +  98: sys_profil (removed)
+    static constexpr __nr_t statfs = __nr_Base + 99;
+    static constexpr __nr_t fstatfs = __nr_Base + 100;
+    // __nr_Base + 101: sys_ioperm (removed)
+    // __nr_Base + 102: sys_socketcall (OABI only; individual sockets at +281)
+    static constexpr __nr_t syslog = __nr_Base + 103;
+    static constexpr __nr_t setitimer = __nr_Base + 104;
+    static constexpr __nr_t getitimer = __nr_Base + 105;
+    static constexpr __nr_t stat = __nr_Base + 106;
+    static constexpr __nr_t lstat = __nr_Base + 107;
+    static constexpr __nr_t fstat = __nr_Base + 108;
+    // __nr_Base + 109: sys_uname  (removed)
+    // __nr_Base + 110: sys_iopl   (removed)
+    static constexpr __nr_t vhangup = __nr_Base + 111;
+    // __nr_Base + 112: sys_idle   (removed)
+    // __nr_Base + 113: sys_syscall (OABI only)
+    static constexpr __nr_t wait4 = __nr_Base + 114;
+    static constexpr __nr_t swapoff = __nr_Base + 115;
+    static constexpr __nr_t sysinfo = __nr_Base + 116;
+    // __nr_Base + 117: sys_ipc (OABI only; individual IPC at +298)
+    static constexpr __nr_t fsync = __nr_Base + 118;
+    static constexpr __nr_t sigreturn = __nr_Base + 119;
+    static constexpr __nr_t clone = __nr_Base + 120;
+    static constexpr __nr_t setdomainname = __nr_Base + 121;
+    static constexpr __nr_t uname = __nr_Base + 122;
+    // __nr_Base + 123: sys_modify_ldt (removed)
+    static constexpr __nr_t adjtimex = __nr_Base + 124;
+    static constexpr __nr_t mprotect = __nr_Base + 125;
+    static constexpr __nr_t sigprocmask = __nr_Base + 126;
+    // __nr_Base + 127: sys_create_module (removed)
+    static constexpr __nr_t init_module = __nr_Base + 128;
+    static constexpr __nr_t delete_module = __nr_Base + 129;
+    // __nr_Base + 130: sys_get_kernel_syms (removed)
+    static constexpr __nr_t quotactl = __nr_Base + 131;
+    static constexpr __nr_t getpgid = __nr_Base + 132;
+    static constexpr __nr_t fchdir = __nr_Base + 133;
+    static constexpr __nr_t bdflush = __nr_Base + 134;
+    static constexpr __nr_t sysfs = __nr_Base + 135;
+    static constexpr __nr_t personality = __nr_Base + 136;
+    // __nr_Base + 137: sys_afs_syscall (removed)
+    static constexpr __nr_t setfsuid = __nr_Base + 138;
+    static constexpr __nr_t setfsgid = __nr_Base + 139;
+    static constexpr __nr_t _llseek = __nr_Base + 140;
+    static constexpr __nr_t getdents = __nr_Base + 141;
+    static constexpr __nr_t _newselect = __nr_Base + 142;
+    static constexpr __nr_t flock = __nr_Base + 143;
+    static constexpr __nr_t msync = __nr_Base + 144;
+    static constexpr __nr_t readv = __nr_Base + 145;
+    static constexpr __nr_t writev = __nr_Base + 146;
+    static constexpr __nr_t getsid = __nr_Base + 147;
+    static constexpr __nr_t fdatasync = __nr_Base + 148;
+    static constexpr __nr_t _sysctl = __nr_Base + 149;
+    static constexpr __nr_t mlock = __nr_Base + 150;
+    static constexpr __nr_t munlock = __nr_Base + 151;
+    static constexpr __nr_t mlockall = __nr_Base + 152;
+    static constexpr __nr_t munlockall = __nr_Base + 153;
+    static constexpr __nr_t sched_setparam = __nr_Base + 154;
+    static constexpr __nr_t sched_getparam = __nr_Base + 155;
+    static constexpr __nr_t sched_setscheduler = __nr_Base + 156;
+    static constexpr __nr_t sched_getscheduler = __nr_Base + 157;
+    static constexpr __nr_t sched_yield = __nr_Base + 158;
+    static constexpr __nr_t sched_get_priority_max = __nr_Base + 159;
+    static constexpr __nr_t sched_get_priority_min = __nr_Base + 160;
+    static constexpr __nr_t sched_rr_get_interval = __nr_Base + 161;
+    static constexpr __nr_t nanosleep = __nr_Base + 162;
+    static constexpr __nr_t mremap = __nr_Base + 163;
+    static constexpr __nr_t setresuid = __nr_Base + 164;
+    static constexpr __nr_t getresuid = __nr_Base + 165;
+    // __nr_Base + 166: sys_vm86         (removed)
+    // __nr_Base + 167: sys_query_module (removed)
+    static constexpr __nr_t poll = __nr_Base + 168;
+    static constexpr __nr_t nfsservctl = __nr_Base + 169;
+    static constexpr __nr_t setresgid = __nr_Base + 170;
+    static constexpr __nr_t getresgid = __nr_Base + 171;
+    static constexpr __nr_t prctl = __nr_Base + 172;
+    static constexpr __nr_t rt_sigreturn = __nr_Base + 173;
+    static constexpr __nr_t rt_sigaction = __nr_Base + 174;
+    static constexpr __nr_t rt_sigprocmask = __nr_Base + 175;
+    static constexpr __nr_t rt_sigpending = __nr_Base + 176;
+    static constexpr __nr_t rt_sigtimedwait = __nr_Base + 177;
+    static constexpr __nr_t rt_sigqueueinfo = __nr_Base + 178;
+    static constexpr __nr_t rt_sigsuspend = __nr_Base + 179;
+    static constexpr __nr_t pread64 = __nr_Base + 180;
+    static constexpr __nr_t pwrite64 = __nr_Base + 181;
+    static constexpr __nr_t chown = __nr_Base + 182;
+    static constexpr __nr_t getcwd = __nr_Base + 183;
+    static constexpr __nr_t capget = __nr_Base + 184;
+    static constexpr __nr_t capset = __nr_Base + 185;
+    static constexpr __nr_t sigaltstack = __nr_Base + 186;
+    static constexpr __nr_t sendfile = __nr_Base + 187;
+    // __nr_Base + 188: reserved
+    // __nr_Base + 189: reserved
+    static constexpr __nr_t vfork = __nr_Base + 190;
+    static constexpr __nr_t ugetrlimit = __nr_Base + 191;
+    static constexpr __nr_t mmap2 = __nr_Base + 192;
+    static constexpr __nr_t truncate64 = __nr_Base + 193;
+    static constexpr __nr_t ftruncate64 = __nr_Base + 194;
+    static constexpr __nr_t stat64 = __nr_Base + 195;
+    static constexpr __nr_t lstat64 = __nr_Base + 196;
+    static constexpr __nr_t fstat64 = __nr_Base + 197;
+    static constexpr __nr_t lchown32 = __nr_Base + 198;
+    static constexpr __nr_t getuid32 = __nr_Base + 199;
+    static constexpr __nr_t getgid32 = __nr_Base + 200;
+    static constexpr __nr_t geteuid32 = __nr_Base + 201;
+    static constexpr __nr_t getegid32 = __nr_Base + 202;
+    static constexpr __nr_t setreuid32 = __nr_Base + 203;
+    static constexpr __nr_t setregid32 = __nr_Base + 204;
+    static constexpr __nr_t getgroups32 = __nr_Base + 205;
+    static constexpr __nr_t setgroups32 = __nr_Base + 206;
+    static constexpr __nr_t fchown32 = __nr_Base + 207;
+    static constexpr __nr_t setresuid32 = __nr_Base + 208;
+    static constexpr __nr_t getresuid32 = __nr_Base + 209;
+    static constexpr __nr_t setresgid32 = __nr_Base + 210;
+    static constexpr __nr_t getresgid32 = __nr_Base + 211;
+    static constexpr __nr_t chown32 = __nr_Base + 212;
+    static constexpr __nr_t setuid32 = __nr_Base + 213;
+    static constexpr __nr_t setgid32 = __nr_Base + 214;
+    static constexpr __nr_t setfsuid32 = __nr_Base + 215;
+    static constexpr __nr_t setfsgid32 = __nr_Base + 216;
+    static constexpr __nr_t getdents64 = __nr_Base + 217;
+    static constexpr __nr_t pivot_root = __nr_Base + 218;
+    static constexpr __nr_t mincore = __nr_Base + 219;
+    static constexpr __nr_t madvise = __nr_Base + 220;
+    static constexpr __nr_t fcntl64 = __nr_Base + 221;
+    // __nr_Base + 222: tux (never merged)
+    // __nr_Base + 223: unused
+    static constexpr __nr_t gettid = __nr_Base + 224;
+    static constexpr __nr_t readahead = __nr_Base + 225;
+    static constexpr __nr_t setxattr = __nr_Base + 226;
+    static constexpr __nr_t lsetxattr = __nr_Base + 227;
+    static constexpr __nr_t fsetxattr = __nr_Base + 228;
+    static constexpr __nr_t getxattr = __nr_Base + 229;
+    static constexpr __nr_t lgetxattr = __nr_Base + 230;
+    static constexpr __nr_t fgetxattr = __nr_Base + 231;
+    static constexpr __nr_t listxattr = __nr_Base + 232;
+    static constexpr __nr_t llistxattr = __nr_Base + 233;
+    static constexpr __nr_t flistxattr = __nr_Base + 234;
+    static constexpr __nr_t removexattr = __nr_Base + 235;
+    static constexpr __nr_t lremovexattr = __nr_Base + 236;
+    static constexpr __nr_t fremovexattr = __nr_Base + 237;
+    static constexpr __nr_t tkill = __nr_Base + 238;
+    static constexpr __nr_t sendfile64 = __nr_Base + 239;
+    static constexpr __nr_t futex = __nr_Base + 240;
+    static constexpr __nr_t sched_setaffinity = __nr_Base + 241;
+    static constexpr __nr_t sched_getaffinity = __nr_Base + 242;
+    static constexpr __nr_t io_setup = __nr_Base + 243;
+    static constexpr __nr_t io_destroy = __nr_Base + 244;
+    static constexpr __nr_t io_getevents = __nr_Base + 245;
+    static constexpr __nr_t io_submit = __nr_Base + 246;
+    static constexpr __nr_t io_cancel = __nr_Base + 247;
+    static constexpr __nr_t exit_group = __nr_Base + 248;
+    static constexpr __nr_t lookup_dcookie = __nr_Base + 249;
+    static constexpr __nr_t epoll_create = __nr_Base + 250;
+    static constexpr __nr_t epoll_ctl = __nr_Base + 251;
+    static constexpr __nr_t epoll_wait = __nr_Base + 252;
+    static constexpr __nr_t remap_file_pages = __nr_Base + 253;
+    // __nr_Base + 254: set_thread_area (x86 only)
+    // __nr_Base + 255: get_thread_area (x86 only)
+    static constexpr __nr_t set_tid_address = __nr_Base + 256;
+    static constexpr __nr_t timer_create = __nr_Base + 257;
+    static constexpr __nr_t timer_settime = __nr_Base + 258;
+    static constexpr __nr_t timer_gettime = __nr_Base + 259;
+    static constexpr __nr_t timer_getoverrun = __nr_Base + 260;
+    static constexpr __nr_t timer_delete = __nr_Base + 261;
+    static constexpr __nr_t clock_settime = __nr_Base + 262;
+    static constexpr __nr_t clock_gettime = __nr_Base + 263;
+    static constexpr __nr_t clock_getres = __nr_Base + 264;
+    static constexpr __nr_t clock_nanosleep = __nr_Base + 265;
+    static constexpr __nr_t statfs64 = __nr_Base + 266;
+    static constexpr __nr_t fstatfs64 = __nr_Base + 267;
+    static constexpr __nr_t tgkill = __nr_Base + 268;
+    static constexpr __nr_t utimes = __nr_Base + 269;
+    static constexpr __nr_t arm_fadvise64_64 = __nr_Base + 270;
+    static constexpr __nr_t pciconfig_iobase = __nr_Base + 271;
+    static constexpr __nr_t pciconfig_read = __nr_Base + 272;
+    static constexpr __nr_t pciconfig_write = __nr_Base + 273;
+    static constexpr __nr_t mq_open = __nr_Base + 274;
+    static constexpr __nr_t mq_unlink = __nr_Base + 275;
+    static constexpr __nr_t mq_timedsend = __nr_Base + 276;
+    static constexpr __nr_t mq_timedreceive = __nr_Base + 277;
+    static constexpr __nr_t mq_notify = __nr_Base + 278;
+    static constexpr __nr_t mq_getsetattr = __nr_Base + 279;
+    static constexpr __nr_t waitid = __nr_Base + 280;
+    static constexpr __nr_t socket = __nr_Base + 281;
+    static constexpr __nr_t bind = __nr_Base + 282;
+    static constexpr __nr_t connect = __nr_Base + 283;
+    static constexpr __nr_t listen = __nr_Base + 284;
+    static constexpr __nr_t accept = __nr_Base + 285;
+    static constexpr __nr_t getsockname = __nr_Base + 286;
+    static constexpr __nr_t getpeername = __nr_Base + 287;
+    static constexpr __nr_t socketpair = __nr_Base + 288;
+    static constexpr __nr_t send = __nr_Base + 289;
+    static constexpr __nr_t sendto = __nr_Base + 290;
+    static constexpr __nr_t recv = __nr_Base + 291;
+    static constexpr __nr_t recvfrom = __nr_Base + 292;
+    static constexpr __nr_t shutdown = __nr_Base + 293;
+    static constexpr __nr_t setsockopt = __nr_Base + 294;
+    static constexpr __nr_t getsockopt = __nr_Base + 295;
+    static constexpr __nr_t sendmsg = __nr_Base + 296;
+    static constexpr __nr_t recvmsg = __nr_Base + 297;
+    static constexpr __nr_t semop = __nr_Base + 298;
+    static constexpr __nr_t semget = __nr_Base + 299;
+    static constexpr __nr_t semctl = __nr_Base + 300;
+    static constexpr __nr_t msgsnd = __nr_Base + 301;
+    static constexpr __nr_t msgrcv = __nr_Base + 302;
+    static constexpr __nr_t msgget = __nr_Base + 303;
+    static constexpr __nr_t msgctl = __nr_Base + 304;
+    static constexpr __nr_t shmat = __nr_Base + 305;
+    static constexpr __nr_t shmdt = __nr_Base + 306;
+    static constexpr __nr_t shmget = __nr_Base + 307;
+    static constexpr __nr_t shmctl = __nr_Base + 308;
+    static constexpr __nr_t add_key = __nr_Base + 309;
+    static constexpr __nr_t request_key = __nr_Base + 310;
+    static constexpr __nr_t keyctl = __nr_Base + 311;
+    static constexpr __nr_t semtimedop = __nr_Base + 312;
+    static constexpr __nr_t vserver = __nr_Base + 313;
+    static constexpr __nr_t ioprio_set = __nr_Base + 314;
+    static constexpr __nr_t ioprio_get = __nr_Base + 315;
+    static constexpr __nr_t inotify_init = __nr_Base + 316;
+    static constexpr __nr_t inotify_add_watch = __nr_Base + 317;
+    static constexpr __nr_t inotify_rm_watch = __nr_Base + 318;
+    static constexpr __nr_t mbind = __nr_Base + 319;
+    static constexpr __nr_t get_mempolicy = __nr_Base + 320;
+    static constexpr __nr_t set_mempolicy = __nr_Base + 321;
+    static constexpr __nr_t openat = __nr_Base + 322;
+    static constexpr __nr_t mkdirat = __nr_Base + 323;
+    static constexpr __nr_t mknodat = __nr_Base + 324;
+    static constexpr __nr_t fchownat = __nr_Base + 325;
+    static constexpr __nr_t futimesat = __nr_Base + 326;
+    static constexpr __nr_t fstatat64 = __nr_Base + 327;
+    static constexpr __nr_t unlinkat = __nr_Base + 328;
+    static constexpr __nr_t renameat = __nr_Base + 329;
+    static constexpr __nr_t linkat = __nr_Base + 330;
+    static constexpr __nr_t symlinkat = __nr_Base + 331;
+    static constexpr __nr_t readlinkat = __nr_Base + 332;
+    static constexpr __nr_t fchmodat = __nr_Base + 333;
+    static constexpr __nr_t faccessat = __nr_Base + 334;
+    static constexpr __nr_t pselect6 = __nr_Base + 335;
+    static constexpr __nr_t ppoll = __nr_Base + 336;
+    static constexpr __nr_t unshare = __nr_Base + 337;
+    static constexpr __nr_t set_robust_list = __nr_Base + 338;
+    static constexpr __nr_t get_robust_list = __nr_Base + 339;
+    static constexpr __nr_t splice = __nr_Base + 340;
+    static constexpr __nr_t arm_sync_file_range = __nr_Base + 341;
+    static constexpr __nr_t sync_file_range2 = arm_sync_file_range;
+    static constexpr __nr_t tee = __nr_Base + 342;
+    static constexpr __nr_t vmsplice = __nr_Base + 343;
+    static constexpr __nr_t move_pages = __nr_Base + 344;
+    static constexpr __nr_t getcpu = __nr_Base + 345;
+    static constexpr __nr_t epoll_pwait = __nr_Base + 346;
+    static constexpr __nr_t kexec_load = __nr_Base + 347;
+    static constexpr __nr_t utimensat = __nr_Base + 348;
+    static constexpr __nr_t signalfd = __nr_Base + 349;
+    static constexpr __nr_t timerfd_create = __nr_Base + 350;
+    static constexpr __nr_t eventfd = __nr_Base + 351;
+    static constexpr __nr_t fallocate = __nr_Base + 352;
+    static constexpr __nr_t timerfd_settime = __nr_Base + 353;
+    static constexpr __nr_t timerfd_gettime = __nr_Base + 354;
+    static constexpr __nr_t signalfd4 = __nr_Base + 355;
+    static constexpr __nr_t eventfd2 = __nr_Base + 356;
+    static constexpr __nr_t epoll_create1 = __nr_Base + 357;
+    static constexpr __nr_t dup3 = __nr_Base + 358;
+    static constexpr __nr_t pipe2 = __nr_Base + 359;
+    static constexpr __nr_t inotify_init1 = __nr_Base + 360;
+    static constexpr __nr_t preadv = __nr_Base + 361;
+    static constexpr __nr_t pwritev = __nr_Base + 362;
+    static constexpr __nr_t rt_tgsigqueueinfo = __nr_Base + 363;
+    static constexpr __nr_t perf_event_open = __nr_Base + 364;
+    static constexpr __nr_t recvmmsg = __nr_Base + 365;
+    static constexpr __nr_t accept4 = __nr_Base + 366;
+    static constexpr __nr_t fanotify_init = __nr_Base + 367;
+    static constexpr __nr_t fanotify_mark = __nr_Base + 368;
+    static constexpr __nr_t prlimit64 = __nr_Base + 369;
+    static constexpr __nr_t name_to_handle_at = __nr_Base + 370;
+    static constexpr __nr_t open_by_handle_at = __nr_Base + 371;
+    static constexpr __nr_t clock_adjtime = __nr_Base + 372;
+    static constexpr __nr_t syncfs = __nr_Base + 373;
+    static constexpr __nr_t sendmmsg = __nr_Base + 374;
+    static constexpr __nr_t setns = __nr_Base + 375;
+    static constexpr __nr_t process_vm_readv = __nr_Base + 376;
+    static constexpr __nr_t process_vm_writev = __nr_Base + 377;
+    static constexpr __nr_t kcmp = __nr_Base + 378;
+    static constexpr __nr_t finit_module = __nr_Base + 379;
+    static constexpr __nr_t sched_setattr = __nr_Base + 380;
+    static constexpr __nr_t sched_getattr = __nr_Base + 381;
+    static constexpr __nr_t renameat2 = __nr_Base + 382;
+    static constexpr __nr_t seccomp = __nr_Base + 383;
+    static constexpr __nr_t getrandom = __nr_Base + 384;
+    static constexpr __nr_t memfd_create = __nr_Base + 385;
+    static constexpr __nr_t bpf = __nr_Base + 386;
+    static constexpr __nr_t execveat = __nr_Base + 387;
+    static constexpr __nr_t userfaultfd = __nr_Base + 388;
+    static constexpr __nr_t membarrier = __nr_Base + 389;
+    static constexpr __nr_t mlock2 = __nr_Base + 390;
+    static constexpr __nr_t copy_file_range = __nr_Base + 391;
+    static constexpr __nr_t preadv2 = __nr_Base + 392;
+    static constexpr __nr_t pwritev2 = __nr_Base + 393;
+    static constexpr __nr_t pkey_mprotect = __nr_Base + 394;
+    static constexpr __nr_t pkey_alloc = __nr_Base + 395;
+    static constexpr __nr_t pkey_free = __nr_Base + 396;
+    static constexpr __nr_t statx = __nr_Base + 397;
+    static constexpr __nr_t rseq = __nr_Base + 398;
+    static constexpr __nr_t io_pgetevents = __nr_Base + 399;
+    static constexpr __nr_t migrate_pages = __nr_Base + 400;
+    static constexpr __nr_t kexec_file_load = __nr_Base + 401;
+    // __nr_Base + 402: unused
+    static constexpr __nr_t clock_gettime64 = __nr_Base + 403;
+    static constexpr __nr_t clock_settime64 = __nr_Base + 404;
+    static constexpr __nr_t clock_adjtime64 = __nr_Base + 405;
+    static constexpr __nr_t clock_getres_time64 = __nr_Base + 406;
+    static constexpr __nr_t clock_nanosleep_time64 = __nr_Base + 407;
+    static constexpr __nr_t timer_gettime64 = __nr_Base + 408;
+    static constexpr __nr_t timer_settime64 = __nr_Base + 409;
+    static constexpr __nr_t timerfd_gettime64 = __nr_Base + 410;
+    static constexpr __nr_t timerfd_settime64 = __nr_Base + 411;
+    static constexpr __nr_t utimensat_time64 = __nr_Base + 412;
+    static constexpr __nr_t pselect6_time64 = __nr_Base + 413;
+    static constexpr __nr_t ppoll_time64 = __nr_Base + 414;
+    // __nr_Base + 415: unused
+    static constexpr __nr_t io_pgetevents_time64 = __nr_Base + 416;
+    static constexpr __nr_t recvmmsg_time64 = __nr_Base + 417;
+    static constexpr __nr_t mq_timedsend_time64 = __nr_Base + 418;
+    static constexpr __nr_t mq_timedreceive_time64 = __nr_Base + 419;
+    static constexpr __nr_t semtimedop_time64 = __nr_Base + 420;
+    static constexpr __nr_t rt_sigtimedwait_time64 = __nr_Base + 421;
+    static constexpr __nr_t futex_time64 = __nr_Base + 422;
+    static constexpr __nr_t sched_rr_get_interval_time64 = __nr_Base + 423;
+    static constexpr __nr_t pidfd_send_signal = __nr_Base + 424;
+    static constexpr __nr_t io_uring_setup = __nr_Base + 425;
+    static constexpr __nr_t io_uring_enter = __nr_Base + 426;
+    static constexpr __nr_t io_uring_register = __nr_Base + 427;
+    static constexpr __nr_t open_tree = __nr_Base + 428;
+    static constexpr __nr_t move_mount = __nr_Base + 429;
+    static constexpr __nr_t fsopen = __nr_Base + 430;
+    static constexpr __nr_t fsconfig = __nr_Base + 431;
+    static constexpr __nr_t fsmount = __nr_Base + 432;
+    static constexpr __nr_t fspick = __nr_Base + 433;
+    static constexpr __nr_t pidfd_open = __nr_Base + 434;
+    static constexpr __nr_t clone3 = __nr_Base + 435;
+    static constexpr __nr_t close_range = __nr_Base + 436;
+    static constexpr __nr_t openat2 = __nr_Base + 437;
+    static constexpr __nr_t pidfd_getfd = __nr_Base + 438;
+    static constexpr __nr_t faccessat2 = __nr_Base + 439;
+    static constexpr __nr_t process_madvise = __nr_Base + 440;
+    static constexpr __nr_t epoll_pwait2 = __nr_Base + 441;
+    static constexpr __nr_t mount_setattr = __nr_Base + 442;
+    static constexpr __nr_t quotactl_fd = __nr_Base + 443;
+    static constexpr __nr_t landlock_create_ruleset = __nr_Base + 444;
+    static constexpr __nr_t landlock_add_rule = __nr_Base + 445;
+    static constexpr __nr_t landlock_restrict_self = __nr_Base + 446;
+    // __nr_Base + 447: memfd_secret (not wired on ARM)
+    static constexpr __nr_t process_mrelease = __nr_Base + 448;
+    static constexpr __nr_t futex_waitv = __nr_Base + 449;
+    static constexpr __nr_t set_mempolicy_home_node = __nr_Base + 450;
+    static constexpr __nr_t cachestat = __nr_Base + 451;
+    static constexpr __nr_t fchmodat2 = __nr_Base + 452;
+    // __nr_Base + 453: map_shadow_stack (x86 only)
+    static constexpr __nr_t futex_wake = __nr_Base + 454;
+    static constexpr __nr_t futex_wait = __nr_Base + 455;
+    static constexpr __nr_t futex_requeue = __nr_Base + 456;
+    static constexpr __nr_t statmount = __nr_Base + 457;
+    static constexpr __nr_t listmount = __nr_Base + 458;
+    static constexpr __nr_t lsm_get_self_attr = __nr_Base + 459;
+    static constexpr __nr_t lsm_set_self_attr = __nr_Base + 460;
+    static constexpr __nr_t lsm_list_modules = __nr_Base + 461;
+    static constexpr __nr_t mseal = __nr_Base + 462;
 
-#if defined(__thumb__) || defined(__ARM_EABI__)
-#define __NR_SYSCALL_BASE 0
-#else
-#define __NR_SYSCALL_BASE __NR_OABI_SYSCALL_BASE
-#ifndef _UAPI_ASM_ARM_UNISTD_OABI_H
-#define _UAPI_ASM_ARM_UNISTD_OABI_H 1
-#define __NR_time (__NR_SYSCALL_BASE + 13)
-#define __NR_umount (__NR_SYSCALL_BASE + 22)
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-#define __NR_stime (__NR_SYSCALL_BASE + 25)
-#define __NR_alarm (__NR_SYSCALL_BASE + 27)
-#define __NR_utime (__NR_SYSCALL_BASE + 30)
-#define __NR_getrlimit (__NR_SYSCALL_BASE + 76)
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-#define __NR_select (__NR_SYSCALL_BASE + 82)
-#define __NR_readdir (__NR_SYSCALL_BASE + 89)
-#define __NR_mmap (__NR_SYSCALL_BASE + 90)
-#define __NR_socketcall (__NR_SYSCALL_BASE + 102)
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-#define __NR_syscall (__NR_SYSCALL_BASE + 113)
-#define __NR_ipc (__NR_SYSCALL_BASE + 117)
-#endif
+    // private SWIs
+    static constexpr __nr_t arm_private_base = __nr_Base + 0x0f0000;
+    static constexpr __nr_t arm_breakpoint = arm_private_base + 1;
+    static constexpr __nr_t arm_cacheflush = arm_private_base + 2;
+    static constexpr __nr_t arm_usr26 = arm_private_base + 3;
+    static constexpr __nr_t arm_usr32 = arm_private_base + 4;
+    static constexpr __nr_t arm_set_tls = arm_private_base + 5;
+    static constexpr __nr_t arm_get_tls = arm_private_base + 6;
+  };
+};
 
-#define __NR_sync_file_range2 __NR_arm_sync_file_range
+using arm32_eabi = arm32_syscalls<0>;
+using arm32_oabi = arm32_syscalls<0x900000>;
 
-/*
- * The following SWIs are ARM private.
- */
-#define __ARM_NR_BASE (__NR_SYSCALL_BASE + 0x0f0000)
-#define __ARM_NR_breakpoint (__ARM_NR_BASE + 1)
-#define __ARM_NR_cacheflush (__ARM_NR_BASE + 2)
-#define __ARM_NR_usr26 (__ARM_NR_BASE + 3)
-#define __ARM_NR_usr32 (__ARM_NR_BASE + 4)
-#define __ARM_NR_set_tls (__ARM_NR_BASE + 5)
-#define __ARM_NR_get_tls (__ARM_NR_BASE + 6)
+// legacy backcom
+inline constexpr __nr_t SYS_restart_syscall = arm32_eabi::nr::restart_syscall;
+inline constexpr __nr_t SYS_exit = arm32_eabi::nr::exit;
+inline constexpr __nr_t SYS_fork = arm32_eabi::nr::fork;
+inline constexpr __nr_t SYS_read = arm32_eabi::nr::read;
+inline constexpr __nr_t SYS_write = arm32_eabi::nr::write;
+inline constexpr __nr_t SYS_open = arm32_eabi::nr::open;
+inline constexpr __nr_t SYS_close = arm32_eabi::nr::close;
+inline constexpr __nr_t SYS_creat = arm32_eabi::nr::creat;
+inline constexpr __nr_t SYS_link = arm32_eabi::nr::link;
+inline constexpr __nr_t SYS_unlink = arm32_eabi::nr::unlink;
+inline constexpr __nr_t SYS_execve = arm32_eabi::nr::execve;
+inline constexpr __nr_t SYS_chdir = arm32_eabi::nr::chdir;
+inline constexpr __nr_t SYS_mknod = arm32_eabi::nr::mknod;
+inline constexpr __nr_t SYS_chmod = arm32_eabi::nr::chmod;
+inline constexpr __nr_t SYS_lchown = arm32_eabi::nr::lchown;
+inline constexpr __nr_t SYS_lseek = arm32_eabi::nr::lseek;
+inline constexpr __nr_t SYS_getpid = arm32_eabi::nr::getpid;
+inline constexpr __nr_t SYS_mount = arm32_eabi::nr::mount;
+inline constexpr __nr_t SYS_setuid = arm32_eabi::nr::setuid;
+inline constexpr __nr_t SYS_getuid = arm32_eabi::nr::getuid;
+inline constexpr __nr_t SYS_ptrace = arm32_eabi::nr::ptrace;
+inline constexpr __nr_t SYS_pause = arm32_eabi::nr::pause;
+inline constexpr __nr_t SYS_access = arm32_eabi::nr::access;
+inline constexpr __nr_t SYS_nice = arm32_eabi::nr::nice;
+inline constexpr __nr_t SYS_sync = arm32_eabi::nr::sync;
+inline constexpr __nr_t SYS_kill = arm32_eabi::nr::kill;
+inline constexpr __nr_t SYS_rename = arm32_eabi::nr::rename;
+inline constexpr __nr_t SYS_mkdir = arm32_eabi::nr::mkdir;
+inline constexpr __nr_t SYS_rmdir = arm32_eabi::nr::rmdir;
+inline constexpr __nr_t SYS_dup = arm32_eabi::nr::dup;
+inline constexpr __nr_t SYS_pipe = arm32_eabi::nr::pipe;
+inline constexpr __nr_t SYS_times = arm32_eabi::nr::times;
+inline constexpr __nr_t SYS_brk = arm32_eabi::nr::brk;
+inline constexpr __nr_t SYS_setgid = arm32_eabi::nr::setgid;
+inline constexpr __nr_t SYS_getgid = arm32_eabi::nr::getgid;
+inline constexpr __nr_t SYS_geteuid = arm32_eabi::nr::geteuid;
+inline constexpr __nr_t SYS_getegid = arm32_eabi::nr::getegid;
+inline constexpr __nr_t SYS_acct = arm32_eabi::nr::acct;
+inline constexpr __nr_t SYS_umount2 = arm32_eabi::nr::umount2;
+inline constexpr __nr_t SYS_ioctl = arm32_eabi::nr::ioctl;
+inline constexpr __nr_t SYS_fcntl = arm32_eabi::nr::fcntl;
+inline constexpr __nr_t SYS_setpgid = arm32_eabi::nr::setpgid;
+inline constexpr __nr_t SYS_umask = arm32_eabi::nr::umask;
+inline constexpr __nr_t SYS_chroot = arm32_eabi::nr::chroot;
+inline constexpr __nr_t SYS_ustat = arm32_eabi::nr::ustat;
+inline constexpr __nr_t SYS_dup2 = arm32_eabi::nr::dup2;
+inline constexpr __nr_t SYS_getppid = arm32_eabi::nr::getppid;
+inline constexpr __nr_t SYS_getpgrp = arm32_eabi::nr::getpgrp;
+inline constexpr __nr_t SYS_setsid = arm32_eabi::nr::setsid;
+inline constexpr __nr_t SYS_sigaction = arm32_eabi::nr::sigaction;
+inline constexpr __nr_t SYS_setreuid = arm32_eabi::nr::setreuid;
+inline constexpr __nr_t SYS_setregid = arm32_eabi::nr::setregid;
+inline constexpr __nr_t SYS_sigsuspend = arm32_eabi::nr::sigsuspend;
+inline constexpr __nr_t SYS_sigpending = arm32_eabi::nr::sigpending;
+inline constexpr __nr_t SYS_sethostname = arm32_eabi::nr::sethostname;
+inline constexpr __nr_t SYS_setrlimit = arm32_eabi::nr::setrlimit;
+inline constexpr __nr_t SYS_getrusage = arm32_eabi::nr::getrusage;
+inline constexpr __nr_t SYS_gettimeofday = arm32_eabi::nr::gettimeofday;
+inline constexpr __nr_t SYS_settimeofday = arm32_eabi::nr::settimeofday;
+inline constexpr __nr_t SYS_getgroups = arm32_eabi::nr::getgroups;
+inline constexpr __nr_t SYS_setgroups = arm32_eabi::nr::setgroups;
+inline constexpr __nr_t SYS_symlink = arm32_eabi::nr::symlink;
+inline constexpr __nr_t SYS_readlink = arm32_eabi::nr::readlink;
+inline constexpr __nr_t SYS_uselib = arm32_eabi::nr::uselib;
+inline constexpr __nr_t SYS_swapon = arm32_eabi::nr::swapon;
+inline constexpr __nr_t SYS_reboot = arm32_eabi::nr::reboot;
+inline constexpr __nr_t SYS_munmap = arm32_eabi::nr::munmap;
+inline constexpr __nr_t SYS_truncate = arm32_eabi::nr::truncate;
+inline constexpr __nr_t SYS_ftruncate = arm32_eabi::nr::ftruncate;
+inline constexpr __nr_t SYS_fchmod = arm32_eabi::nr::fchmod;
+inline constexpr __nr_t SYS_fchown = arm32_eabi::nr::fchown;
+inline constexpr __nr_t SYS_getpriority = arm32_eabi::nr::getpriority;
+inline constexpr __nr_t SYS_setpriority = arm32_eabi::nr::setpriority;
+inline constexpr __nr_t SYS_statfs = arm32_eabi::nr::statfs;
+inline constexpr __nr_t SYS_fstatfs = arm32_eabi::nr::fstatfs;
+inline constexpr __nr_t SYS_syslog = arm32_eabi::nr::syslog;
+inline constexpr __nr_t SYS_setitimer = arm32_eabi::nr::setitimer;
+inline constexpr __nr_t SYS_getitimer = arm32_eabi::nr::getitimer;
+inline constexpr __nr_t SYS_stat = arm32_eabi::nr::stat;
+inline constexpr __nr_t SYS_lstat = arm32_eabi::nr::lstat;
+inline constexpr __nr_t SYS_fstat = arm32_eabi::nr::fstat;
+inline constexpr __nr_t SYS_vhangup = arm32_eabi::nr::vhangup;
+inline constexpr __nr_t SYS_wait4 = arm32_eabi::nr::wait4;
+inline constexpr __nr_t SYS_swapoff = arm32_eabi::nr::swapoff;
+inline constexpr __nr_t SYS_sysinfo = arm32_eabi::nr::sysinfo;
+inline constexpr __nr_t SYS_fsync = arm32_eabi::nr::fsync;
+inline constexpr __nr_t SYS_sigreturn = arm32_eabi::nr::sigreturn;
+inline constexpr __nr_t SYS_clone = arm32_eabi::nr::clone;
+inline constexpr __nr_t SYS_setdomainname = arm32_eabi::nr::setdomainname;
+inline constexpr __nr_t SYS_uname = arm32_eabi::nr::uname;
+inline constexpr __nr_t SYS_adjtimex = arm32_eabi::nr::adjtimex;
+inline constexpr __nr_t SYS_mprotect = arm32_eabi::nr::mprotect;
+inline constexpr __nr_t SYS_sigprocmask = arm32_eabi::nr::sigprocmask;
+inline constexpr __nr_t SYS_init_module = arm32_eabi::nr::init_module;
+inline constexpr __nr_t SYS_delete_module = arm32_eabi::nr::delete_module;
+inline constexpr __nr_t SYS_quotactl = arm32_eabi::nr::quotactl;
+inline constexpr __nr_t SYS_getpgid = arm32_eabi::nr::getpgid;
+inline constexpr __nr_t SYS_fchdir = arm32_eabi::nr::fchdir;
+inline constexpr __nr_t SYS_bdflush = arm32_eabi::nr::bdflush;
+inline constexpr __nr_t SYS_sysfs = arm32_eabi::nr::sysfs;
+inline constexpr __nr_t SYS_personality = arm32_eabi::nr::personality;
+inline constexpr __nr_t SYS_setfsuid = arm32_eabi::nr::setfsuid;
+inline constexpr __nr_t SYS_setfsgid = arm32_eabi::nr::setfsgid;
+inline constexpr __nr_t SYS__llseek = arm32_eabi::nr::_llseek;
+inline constexpr __nr_t SYS_getdents = arm32_eabi::nr::getdents;
+inline constexpr __nr_t SYS__newselect = arm32_eabi::nr::_newselect;
+inline constexpr __nr_t SYS_flock = arm32_eabi::nr::flock;
+inline constexpr __nr_t SYS_msync = arm32_eabi::nr::msync;
+inline constexpr __nr_t SYS_readv = arm32_eabi::nr::readv;
+inline constexpr __nr_t SYS_writev = arm32_eabi::nr::writev;
+inline constexpr __nr_t SYS_getsid = arm32_eabi::nr::getsid;
+inline constexpr __nr_t SYS_fdatasync = arm32_eabi::nr::fdatasync;
+inline constexpr __nr_t SYS__sysctl = arm32_eabi::nr::_sysctl;
+inline constexpr __nr_t SYS_mlock = arm32_eabi::nr::mlock;
+inline constexpr __nr_t SYS_munlock = arm32_eabi::nr::munlock;
+inline constexpr __nr_t SYS_mlockall = arm32_eabi::nr::mlockall;
+inline constexpr __nr_t SYS_munlockall = arm32_eabi::nr::munlockall;
+inline constexpr __nr_t SYS_sched_setparam = arm32_eabi::nr::sched_setparam;
+inline constexpr __nr_t SYS_sched_getparam = arm32_eabi::nr::sched_getparam;
+inline constexpr __nr_t SYS_sched_setscheduler = arm32_eabi::nr::sched_setscheduler;
+inline constexpr __nr_t SYS_sched_getscheduler = arm32_eabi::nr::sched_getscheduler;
+inline constexpr __nr_t SYS_sched_yield = arm32_eabi::nr::sched_yield;
+inline constexpr __nr_t SYS_sched_get_priority_max = arm32_eabi::nr::sched_get_priority_max;
+inline constexpr __nr_t SYS_sched_get_priority_min = arm32_eabi::nr::sched_get_priority_min;
+inline constexpr __nr_t SYS_sched_rr_get_interval = arm32_eabi::nr::sched_rr_get_interval;
+inline constexpr __nr_t SYS_nanosleep = arm32_eabi::nr::nanosleep;
+inline constexpr __nr_t SYS_mremap = arm32_eabi::nr::mremap;
+inline constexpr __nr_t SYS_setresuid = arm32_eabi::nr::setresuid;
+inline constexpr __nr_t SYS_getresuid = arm32_eabi::nr::getresuid;
+inline constexpr __nr_t SYS_poll = arm32_eabi::nr::poll;
+inline constexpr __nr_t SYS_nfsservctl = arm32_eabi::nr::nfsservctl;
+inline constexpr __nr_t SYS_setresgid = arm32_eabi::nr::setresgid;
+inline constexpr __nr_t SYS_getresgid = arm32_eabi::nr::getresgid;
+inline constexpr __nr_t SYS_prctl = arm32_eabi::nr::prctl;
+inline constexpr __nr_t SYS_rt_sigreturn = arm32_eabi::nr::rt_sigreturn;
+inline constexpr __nr_t SYS_rt_sigaction = arm32_eabi::nr::rt_sigaction;
+inline constexpr __nr_t SYS_rt_sigprocmask = arm32_eabi::nr::rt_sigprocmask;
+inline constexpr __nr_t SYS_rt_sigpending = arm32_eabi::nr::rt_sigpending;
+inline constexpr __nr_t SYS_rt_sigtimedwait = arm32_eabi::nr::rt_sigtimedwait;
+inline constexpr __nr_t SYS_rt_sigqueueinfo = arm32_eabi::nr::rt_sigqueueinfo;
+inline constexpr __nr_t SYS_rt_sigsuspend = arm32_eabi::nr::rt_sigsuspend;
+inline constexpr __nr_t SYS_pread64 = arm32_eabi::nr::pread64;
+inline constexpr __nr_t SYS_pwrite64 = arm32_eabi::nr::pwrite64;
+inline constexpr __nr_t SYS_chown = arm32_eabi::nr::chown;
+inline constexpr __nr_t SYS_getcwd = arm32_eabi::nr::getcwd;
+inline constexpr __nr_t SYS_capget = arm32_eabi::nr::capget;
+inline constexpr __nr_t SYS_capset = arm32_eabi::nr::capset;
+inline constexpr __nr_t SYS_sigaltstack = arm32_eabi::nr::sigaltstack;
+inline constexpr __nr_t SYS_sendfile = arm32_eabi::nr::sendfile;
+inline constexpr __nr_t SYS_vfork = arm32_eabi::nr::vfork;
+inline constexpr __nr_t SYS_ugetrlimit = arm32_eabi::nr::ugetrlimit;
+inline constexpr __nr_t SYS_mmap2 = arm32_eabi::nr::mmap2;
+inline constexpr __nr_t SYS_truncate64 = arm32_eabi::nr::truncate64;
+inline constexpr __nr_t SYS_ftruncate64 = arm32_eabi::nr::ftruncate64;
+inline constexpr __nr_t SYS_stat64 = arm32_eabi::nr::stat64;
+inline constexpr __nr_t SYS_lstat64 = arm32_eabi::nr::lstat64;
+inline constexpr __nr_t SYS_fstat64 = arm32_eabi::nr::fstat64;
+inline constexpr __nr_t SYS_lchown32 = arm32_eabi::nr::lchown32;
+inline constexpr __nr_t SYS_getuid32 = arm32_eabi::nr::getuid32;
+inline constexpr __nr_t SYS_getgid32 = arm32_eabi::nr::getgid32;
+inline constexpr __nr_t SYS_geteuid32 = arm32_eabi::nr::geteuid32;
+inline constexpr __nr_t SYS_getegid32 = arm32_eabi::nr::getegid32;
+inline constexpr __nr_t SYS_setreuid32 = arm32_eabi::nr::setreuid32;
+inline constexpr __nr_t SYS_setregid32 = arm32_eabi::nr::setregid32;
+inline constexpr __nr_t SYS_getgroups32 = arm32_eabi::nr::getgroups32;
+inline constexpr __nr_t SYS_setgroups32 = arm32_eabi::nr::setgroups32;
+inline constexpr __nr_t SYS_fchown32 = arm32_eabi::nr::fchown32;
+inline constexpr __nr_t SYS_setresuid32 = arm32_eabi::nr::setresuid32;
+inline constexpr __nr_t SYS_getresuid32 = arm32_eabi::nr::getresuid32;
+inline constexpr __nr_t SYS_setresgid32 = arm32_eabi::nr::setresgid32;
+inline constexpr __nr_t SYS_getresgid32 = arm32_eabi::nr::getresgid32;
+inline constexpr __nr_t SYS_chown32 = arm32_eabi::nr::chown32;
+inline constexpr __nr_t SYS_setuid32 = arm32_eabi::nr::setuid32;
+inline constexpr __nr_t SYS_setgid32 = arm32_eabi::nr::setgid32;
+inline constexpr __nr_t SYS_setfsuid32 = arm32_eabi::nr::setfsuid32;
+inline constexpr __nr_t SYS_setfsgid32 = arm32_eabi::nr::setfsgid32;
+inline constexpr __nr_t SYS_getdents64 = arm32_eabi::nr::getdents64;
+inline constexpr __nr_t SYS_pivot_root = arm32_eabi::nr::pivot_root;
+inline constexpr __nr_t SYS_mincore = arm32_eabi::nr::mincore;
+inline constexpr __nr_t SYS_madvise = arm32_eabi::nr::madvise;
+inline constexpr __nr_t SYS_fcntl64 = arm32_eabi::nr::fcntl64;
+inline constexpr __nr_t SYS_gettid = arm32_eabi::nr::gettid;
+inline constexpr __nr_t SYS_readahead = arm32_eabi::nr::readahead;
+inline constexpr __nr_t SYS_setxattr = arm32_eabi::nr::setxattr;
+inline constexpr __nr_t SYS_lsetxattr = arm32_eabi::nr::lsetxattr;
+inline constexpr __nr_t SYS_fsetxattr = arm32_eabi::nr::fsetxattr;
+inline constexpr __nr_t SYS_getxattr = arm32_eabi::nr::getxattr;
+inline constexpr __nr_t SYS_lgetxattr = arm32_eabi::nr::lgetxattr;
+inline constexpr __nr_t SYS_fgetxattr = arm32_eabi::nr::fgetxattr;
+inline constexpr __nr_t SYS_listxattr = arm32_eabi::nr::listxattr;
+inline constexpr __nr_t SYS_llistxattr = arm32_eabi::nr::llistxattr;
+inline constexpr __nr_t SYS_flistxattr = arm32_eabi::nr::flistxattr;
+inline constexpr __nr_t SYS_removexattr = arm32_eabi::nr::removexattr;
+inline constexpr __nr_t SYS_lremovexattr = arm32_eabi::nr::lremovexattr;
+inline constexpr __nr_t SYS_fremovexattr = arm32_eabi::nr::fremovexattr;
+inline constexpr __nr_t SYS_tkill = arm32_eabi::nr::tkill;
+inline constexpr __nr_t SYS_sendfile64 = arm32_eabi::nr::sendfile64;
+inline constexpr __nr_t SYS_futex = arm32_eabi::nr::futex;
+inline constexpr __nr_t SYS_sched_setaffinity = arm32_eabi::nr::sched_setaffinity;
+inline constexpr __nr_t SYS_sched_getaffinity = arm32_eabi::nr::sched_getaffinity;
+inline constexpr __nr_t SYS_io_setup = arm32_eabi::nr::io_setup;
+inline constexpr __nr_t SYS_io_destroy = arm32_eabi::nr::io_destroy;
+inline constexpr __nr_t SYS_io_getevents = arm32_eabi::nr::io_getevents;
+inline constexpr __nr_t SYS_io_submit = arm32_eabi::nr::io_submit;
+inline constexpr __nr_t SYS_io_cancel = arm32_eabi::nr::io_cancel;
+inline constexpr __nr_t SYS_exit_group = arm32_eabi::nr::exit_group;
+inline constexpr __nr_t SYS_lookup_dcookie = arm32_eabi::nr::lookup_dcookie;
+inline constexpr __nr_t SYS_epoll_create = arm32_eabi::nr::epoll_create;
+inline constexpr __nr_t SYS_epoll_ctl = arm32_eabi::nr::epoll_ctl;
+inline constexpr __nr_t SYS_epoll_wait = arm32_eabi::nr::epoll_wait;
+inline constexpr __nr_t SYS_remap_file_pages = arm32_eabi::nr::remap_file_pages;
+inline constexpr __nr_t SYS_set_tid_address = arm32_eabi::nr::set_tid_address;
+inline constexpr __nr_t SYS_timer_create = arm32_eabi::nr::timer_create;
+inline constexpr __nr_t SYS_timer_settime = arm32_eabi::nr::timer_settime;
+inline constexpr __nr_t SYS_timer_gettime = arm32_eabi::nr::timer_gettime;
+inline constexpr __nr_t SYS_timer_getoverrun = arm32_eabi::nr::timer_getoverrun;
+inline constexpr __nr_t SYS_timer_delete = arm32_eabi::nr::timer_delete;
+inline constexpr __nr_t SYS_clock_settime = arm32_eabi::nr::clock_settime;
+inline constexpr __nr_t SYS_clock_gettime = arm32_eabi::nr::clock_gettime;
+inline constexpr __nr_t SYS_clock_getres = arm32_eabi::nr::clock_getres;
+inline constexpr __nr_t SYS_clock_nanosleep = arm32_eabi::nr::clock_nanosleep;
+inline constexpr __nr_t SYS_statfs64 = arm32_eabi::nr::statfs64;
+inline constexpr __nr_t SYS_fstatfs64 = arm32_eabi::nr::fstatfs64;
+inline constexpr __nr_t SYS_tgkill = arm32_eabi::nr::tgkill;
+inline constexpr __nr_t SYS_utimes = arm32_eabi::nr::utimes;
+inline constexpr __nr_t SYS_arm_fadvise64_64 = arm32_eabi::nr::arm_fadvise64_64;
+inline constexpr __nr_t SYS_pciconfig_iobase = arm32_eabi::nr::pciconfig_iobase;
+inline constexpr __nr_t SYS_pciconfig_read = arm32_eabi::nr::pciconfig_read;
+inline constexpr __nr_t SYS_pciconfig_write = arm32_eabi::nr::pciconfig_write;
+inline constexpr __nr_t SYS_mq_open = arm32_eabi::nr::mq_open;
+inline constexpr __nr_t SYS_mq_unlink = arm32_eabi::nr::mq_unlink;
+inline constexpr __nr_t SYS_mq_timedsend = arm32_eabi::nr::mq_timedsend;
+inline constexpr __nr_t SYS_mq_timedreceive = arm32_eabi::nr::mq_timedreceive;
+inline constexpr __nr_t SYS_mq_notify = arm32_eabi::nr::mq_notify;
+inline constexpr __nr_t SYS_mq_getsetattr = arm32_eabi::nr::mq_getsetattr;
+inline constexpr __nr_t SYS_waitid = arm32_eabi::nr::waitid;
+inline constexpr __nr_t SYS_socket = arm32_eabi::nr::socket;
+inline constexpr __nr_t SYS_bind = arm32_eabi::nr::bind;
+inline constexpr __nr_t SYS_connect = arm32_eabi::nr::connect;
+inline constexpr __nr_t SYS_listen = arm32_eabi::nr::listen;
+inline constexpr __nr_t SYS_accept = arm32_eabi::nr::accept;
+inline constexpr __nr_t SYS_getsockname = arm32_eabi::nr::getsockname;
+inline constexpr __nr_t SYS_getpeername = arm32_eabi::nr::getpeername;
+inline constexpr __nr_t SYS_socketpair = arm32_eabi::nr::socketpair;
+inline constexpr __nr_t SYS_send = arm32_eabi::nr::send;
+inline constexpr __nr_t SYS_sendto = arm32_eabi::nr::sendto;
+inline constexpr __nr_t SYS_recv = arm32_eabi::nr::recv;
+inline constexpr __nr_t SYS_recvfrom = arm32_eabi::nr::recvfrom;
+inline constexpr __nr_t SYS_shutdown = arm32_eabi::nr::shutdown;
+inline constexpr __nr_t SYS_setsockopt = arm32_eabi::nr::setsockopt;
+inline constexpr __nr_t SYS_getsockopt = arm32_eabi::nr::getsockopt;
+inline constexpr __nr_t SYS_sendmsg = arm32_eabi::nr::sendmsg;
+inline constexpr __nr_t SYS_recvmsg = arm32_eabi::nr::recvmsg;
+inline constexpr __nr_t SYS_semop = arm32_eabi::nr::semop;
+inline constexpr __nr_t SYS_semget = arm32_eabi::nr::semget;
+inline constexpr __nr_t SYS_semctl = arm32_eabi::nr::semctl;
+inline constexpr __nr_t SYS_msgsnd = arm32_eabi::nr::msgsnd;
+inline constexpr __nr_t SYS_msgrcv = arm32_eabi::nr::msgrcv;
+inline constexpr __nr_t SYS_msgget = arm32_eabi::nr::msgget;
+inline constexpr __nr_t SYS_msgctl = arm32_eabi::nr::msgctl;
+inline constexpr __nr_t SYS_shmat = arm32_eabi::nr::shmat;
+inline constexpr __nr_t SYS_shmdt = arm32_eabi::nr::shmdt;
+inline constexpr __nr_t SYS_shmget = arm32_eabi::nr::shmget;
+inline constexpr __nr_t SYS_shmctl = arm32_eabi::nr::shmctl;
+inline constexpr __nr_t SYS_add_key = arm32_eabi::nr::add_key;
+inline constexpr __nr_t SYS_request_key = arm32_eabi::nr::request_key;
+inline constexpr __nr_t SYS_keyctl = arm32_eabi::nr::keyctl;
+inline constexpr __nr_t SYS_semtimedop = arm32_eabi::nr::semtimedop;
+inline constexpr __nr_t SYS_vserver = arm32_eabi::nr::vserver;
+inline constexpr __nr_t SYS_ioprio_set = arm32_eabi::nr::ioprio_set;
+inline constexpr __nr_t SYS_ioprio_get = arm32_eabi::nr::ioprio_get;
+inline constexpr __nr_t SYS_inotify_init = arm32_eabi::nr::inotify_init;
+inline constexpr __nr_t SYS_inotify_add_watch = arm32_eabi::nr::inotify_add_watch;
+inline constexpr __nr_t SYS_inotify_rm_watch = arm32_eabi::nr::inotify_rm_watch;
+inline constexpr __nr_t SYS_mbind = arm32_eabi::nr::mbind;
+inline constexpr __nr_t SYS_get_mempolicy = arm32_eabi::nr::get_mempolicy;
+inline constexpr __nr_t SYS_set_mempolicy = arm32_eabi::nr::set_mempolicy;
+inline constexpr __nr_t SYS_openat = arm32_eabi::nr::openat;
+inline constexpr __nr_t SYS_mkdirat = arm32_eabi::nr::mkdirat;
+inline constexpr __nr_t SYS_mknodat = arm32_eabi::nr::mknodat;
+inline constexpr __nr_t SYS_fchownat = arm32_eabi::nr::fchownat;
+inline constexpr __nr_t SYS_futimesat = arm32_eabi::nr::futimesat;
+inline constexpr __nr_t SYS_fstatat64 = arm32_eabi::nr::fstatat64;
+inline constexpr __nr_t SYS_unlinkat = arm32_eabi::nr::unlinkat;
+inline constexpr __nr_t SYS_renameat = arm32_eabi::nr::renameat;
+inline constexpr __nr_t SYS_linkat = arm32_eabi::nr::linkat;
+inline constexpr __nr_t SYS_symlinkat = arm32_eabi::nr::symlinkat;
+inline constexpr __nr_t SYS_readlinkat = arm32_eabi::nr::readlinkat;
+inline constexpr __nr_t SYS_fchmodat = arm32_eabi::nr::fchmodat;
+inline constexpr __nr_t SYS_faccessat = arm32_eabi::nr::faccessat;
+inline constexpr __nr_t SYS_pselect6 = arm32_eabi::nr::pselect6;
+inline constexpr __nr_t SYS_ppoll = arm32_eabi::nr::ppoll;
+inline constexpr __nr_t SYS_unshare = arm32_eabi::nr::unshare;
+inline constexpr __nr_t SYS_set_robust_list = arm32_eabi::nr::set_robust_list;
+inline constexpr __nr_t SYS_get_robust_list = arm32_eabi::nr::get_robust_list;
+inline constexpr __nr_t SYS_splice = arm32_eabi::nr::splice;
+inline constexpr __nr_t SYS_arm_sync_file_range = arm32_eabi::nr::arm_sync_file_range;
+inline constexpr __nr_t SYS_sync_file_range2 = arm32_eabi::nr::sync_file_range2;
+inline constexpr __nr_t SYS_tee = arm32_eabi::nr::tee;
+inline constexpr __nr_t SYS_vmsplice = arm32_eabi::nr::vmsplice;
+inline constexpr __nr_t SYS_move_pages = arm32_eabi::nr::move_pages;
+inline constexpr __nr_t SYS_getcpu = arm32_eabi::nr::getcpu;
+inline constexpr __nr_t SYS_epoll_pwait = arm32_eabi::nr::epoll_pwait;
+inline constexpr __nr_t SYS_kexec_load = arm32_eabi::nr::kexec_load;
+inline constexpr __nr_t SYS_utimensat = arm32_eabi::nr::utimensat;
+inline constexpr __nr_t SYS_signalfd = arm32_eabi::nr::signalfd;
+inline constexpr __nr_t SYS_timerfd_create = arm32_eabi::nr::timerfd_create;
+inline constexpr __nr_t SYS_eventfd = arm32_eabi::nr::eventfd;
+inline constexpr __nr_t SYS_fallocate = arm32_eabi::nr::fallocate;
+inline constexpr __nr_t SYS_timerfd_settime = arm32_eabi::nr::timerfd_settime;
+inline constexpr __nr_t SYS_timerfd_gettime = arm32_eabi::nr::timerfd_gettime;
+inline constexpr __nr_t SYS_signalfd4 = arm32_eabi::nr::signalfd4;
+inline constexpr __nr_t SYS_eventfd2 = arm32_eabi::nr::eventfd2;
+inline constexpr __nr_t SYS_epoll_create1 = arm32_eabi::nr::epoll_create1;
+inline constexpr __nr_t SYS_dup3 = arm32_eabi::nr::dup3;
+inline constexpr __nr_t SYS_pipe2 = arm32_eabi::nr::pipe2;
+inline constexpr __nr_t SYS_inotify_init1 = arm32_eabi::nr::inotify_init1;
+inline constexpr __nr_t SYS_preadv = arm32_eabi::nr::preadv;
+inline constexpr __nr_t SYS_pwritev = arm32_eabi::nr::pwritev;
+inline constexpr __nr_t SYS_rt_tgsigqueueinfo = arm32_eabi::nr::rt_tgsigqueueinfo;
+inline constexpr __nr_t SYS_perf_event_open = arm32_eabi::nr::perf_event_open;
+inline constexpr __nr_t SYS_recvmmsg = arm32_eabi::nr::recvmmsg;
+inline constexpr __nr_t SYS_accept4 = arm32_eabi::nr::accept4;
+inline constexpr __nr_t SYS_fanotify_init = arm32_eabi::nr::fanotify_init;
+inline constexpr __nr_t SYS_fanotify_mark = arm32_eabi::nr::fanotify_mark;
+inline constexpr __nr_t SYS_prlimit64 = arm32_eabi::nr::prlimit64;
+inline constexpr __nr_t SYS_name_to_handle_at = arm32_eabi::nr::name_to_handle_at;
+inline constexpr __nr_t SYS_open_by_handle_at = arm32_eabi::nr::open_by_handle_at;
+inline constexpr __nr_t SYS_clock_adjtime = arm32_eabi::nr::clock_adjtime;
+inline constexpr __nr_t SYS_syncfs = arm32_eabi::nr::syncfs;
+inline constexpr __nr_t SYS_sendmmsg = arm32_eabi::nr::sendmmsg;
+inline constexpr __nr_t SYS_setns = arm32_eabi::nr::setns;
+inline constexpr __nr_t SYS_process_vm_readv = arm32_eabi::nr::process_vm_readv;
+inline constexpr __nr_t SYS_process_vm_writev = arm32_eabi::nr::process_vm_writev;
+inline constexpr __nr_t SYS_kcmp = arm32_eabi::nr::kcmp;
+inline constexpr __nr_t SYS_finit_module = arm32_eabi::nr::finit_module;
+inline constexpr __nr_t SYS_sched_setattr = arm32_eabi::nr::sched_setattr;
+inline constexpr __nr_t SYS_sched_getattr = arm32_eabi::nr::sched_getattr;
+inline constexpr __nr_t SYS_renameat2 = arm32_eabi::nr::renameat2;
+inline constexpr __nr_t SYS_seccomp = arm32_eabi::nr::seccomp;
+inline constexpr __nr_t SYS_getrandom = arm32_eabi::nr::getrandom;
+inline constexpr __nr_t SYS_memfd_create = arm32_eabi::nr::memfd_create;
+inline constexpr __nr_t SYS_bpf = arm32_eabi::nr::bpf;
+inline constexpr __nr_t SYS_execveat = arm32_eabi::nr::execveat;
+inline constexpr __nr_t SYS_userfaultfd = arm32_eabi::nr::userfaultfd;
+inline constexpr __nr_t SYS_membarrier = arm32_eabi::nr::membarrier;
+inline constexpr __nr_t SYS_mlock2 = arm32_eabi::nr::mlock2;
+inline constexpr __nr_t SYS_copy_file_range = arm32_eabi::nr::copy_file_range;
+inline constexpr __nr_t SYS_preadv2 = arm32_eabi::nr::preadv2;
+inline constexpr __nr_t SYS_pwritev2 = arm32_eabi::nr::pwritev2;
+inline constexpr __nr_t SYS_pkey_mprotect = arm32_eabi::nr::pkey_mprotect;
+inline constexpr __nr_t SYS_pkey_alloc = arm32_eabi::nr::pkey_alloc;
+inline constexpr __nr_t SYS_pkey_free = arm32_eabi::nr::pkey_free;
+inline constexpr __nr_t SYS_statx = arm32_eabi::nr::statx;
+inline constexpr __nr_t SYS_rseq = arm32_eabi::nr::rseq;
+inline constexpr __nr_t SYS_io_pgetevents = arm32_eabi::nr::io_pgetevents;
+inline constexpr __nr_t SYS_migrate_pages = arm32_eabi::nr::migrate_pages;
+inline constexpr __nr_t SYS_kexec_file_load = arm32_eabi::nr::kexec_file_load;
+inline constexpr __nr_t SYS_clock_gettime64 = arm32_eabi::nr::clock_gettime64;
+inline constexpr __nr_t SYS_clock_settime64 = arm32_eabi::nr::clock_settime64;
+inline constexpr __nr_t SYS_clock_adjtime64 = arm32_eabi::nr::clock_adjtime64;
+inline constexpr __nr_t SYS_clock_getres_time64 = arm32_eabi::nr::clock_getres_time64;
+inline constexpr __nr_t SYS_clock_nanosleep_time64 = arm32_eabi::nr::clock_nanosleep_time64;
+inline constexpr __nr_t SYS_timer_gettime64 = arm32_eabi::nr::timer_gettime64;
+inline constexpr __nr_t SYS_timer_settime64 = arm32_eabi::nr::timer_settime64;
+inline constexpr __nr_t SYS_timerfd_gettime64 = arm32_eabi::nr::timerfd_gettime64;
+inline constexpr __nr_t SYS_timerfd_settime64 = arm32_eabi::nr::timerfd_settime64;
+inline constexpr __nr_t SYS_utimensat_time64 = arm32_eabi::nr::utimensat_time64;
+inline constexpr __nr_t SYS_pselect6_time64 = arm32_eabi::nr::pselect6_time64;
+inline constexpr __nr_t SYS_ppoll_time64 = arm32_eabi::nr::ppoll_time64;
+inline constexpr __nr_t SYS_io_pgetevents_time64 = arm32_eabi::nr::io_pgetevents_time64;
+inline constexpr __nr_t SYS_recvmmsg_time64 = arm32_eabi::nr::recvmmsg_time64;
+inline constexpr __nr_t SYS_mq_timedsend_time64 = arm32_eabi::nr::mq_timedsend_time64;
+inline constexpr __nr_t SYS_mq_timedreceive_time64 = arm32_eabi::nr::mq_timedreceive_time64;
+inline constexpr __nr_t SYS_semtimedop_time64 = arm32_eabi::nr::semtimedop_time64;
+inline constexpr __nr_t SYS_rt_sigtimedwait_time64 = arm32_eabi::nr::rt_sigtimedwait_time64;
+inline constexpr __nr_t SYS_futex_time64 = arm32_eabi::nr::futex_time64;
+inline constexpr __nr_t SYS_sched_rr_get_interval_time64 = arm32_eabi::nr::sched_rr_get_interval_time64;
+inline constexpr __nr_t SYS_pidfd_send_signal = arm32_eabi::nr::pidfd_send_signal;
+inline constexpr __nr_t SYS_io_uring_setup = arm32_eabi::nr::io_uring_setup;
+inline constexpr __nr_t SYS_io_uring_enter = arm32_eabi::nr::io_uring_enter;
+inline constexpr __nr_t SYS_io_uring_register = arm32_eabi::nr::io_uring_register;
+inline constexpr __nr_t SYS_open_tree = arm32_eabi::nr::open_tree;
+inline constexpr __nr_t SYS_move_mount = arm32_eabi::nr::move_mount;
+inline constexpr __nr_t SYS_fsopen = arm32_eabi::nr::fsopen;
+inline constexpr __nr_t SYS_fsconfig = arm32_eabi::nr::fsconfig;
+inline constexpr __nr_t SYS_fsmount = arm32_eabi::nr::fsmount;
+inline constexpr __nr_t SYS_fspick = arm32_eabi::nr::fspick;
+inline constexpr __nr_t SYS_pidfd_open = arm32_eabi::nr::pidfd_open;
+inline constexpr __nr_t SYS_clone3 = arm32_eabi::nr::clone3;
+inline constexpr __nr_t SYS_close_range = arm32_eabi::nr::close_range;
+inline constexpr __nr_t SYS_openat2 = arm32_eabi::nr::openat2;
+inline constexpr __nr_t SYS_pidfd_getfd = arm32_eabi::nr::pidfd_getfd;
+inline constexpr __nr_t SYS_faccessat2 = arm32_eabi::nr::faccessat2;
+inline constexpr __nr_t SYS_process_madvise = arm32_eabi::nr::process_madvise;
+inline constexpr __nr_t SYS_epoll_pwait2 = arm32_eabi::nr::epoll_pwait2;
+inline constexpr __nr_t SYS_mount_setattr = arm32_eabi::nr::mount_setattr;
+inline constexpr __nr_t SYS_quotactl_fd = arm32_eabi::nr::quotactl_fd;
+inline constexpr __nr_t SYS_landlock_create_ruleset = arm32_eabi::nr::landlock_create_ruleset;
+inline constexpr __nr_t SYS_landlock_add_rule = arm32_eabi::nr::landlock_add_rule;
+inline constexpr __nr_t SYS_landlock_restrict_self = arm32_eabi::nr::landlock_restrict_self;
+inline constexpr __nr_t SYS_process_mrelease = arm32_eabi::nr::process_mrelease;
+inline constexpr __nr_t SYS_futex_waitv = arm32_eabi::nr::futex_waitv;
+inline constexpr __nr_t SYS_set_mempolicy_home_node = arm32_eabi::nr::set_mempolicy_home_node;
+inline constexpr __nr_t SYS_cachestat = arm32_eabi::nr::cachestat;
+inline constexpr __nr_t SYS_fchmodat2 = arm32_eabi::nr::fchmodat2;
+inline constexpr __nr_t SYS_futex_wake = arm32_eabi::nr::futex_wake;
+inline constexpr __nr_t SYS_futex_wait = arm32_eabi::nr::futex_wait;
+inline constexpr __nr_t SYS_futex_requeue = arm32_eabi::nr::futex_requeue;
+inline constexpr __nr_t SYS_statmount = arm32_eabi::nr::statmount;
+inline constexpr __nr_t SYS_listmount = arm32_eabi::nr::listmount;
+inline constexpr __nr_t SYS_lsm_get_self_attr = arm32_eabi::nr::lsm_get_self_attr;
+inline constexpr __nr_t SYS_lsm_set_self_attr = arm32_eabi::nr::lsm_set_self_attr;
+inline constexpr __nr_t SYS_lsm_list_modules = arm32_eabi::nr::lsm_list_modules;
+inline constexpr __nr_t SYS_mseal = arm32_eabi::nr::mseal;
 
-#define __NR_OABI_SYSCALL_BASE 0x900000
-#if defined(__thumb__) || defined(__ARM_EABI__)
-#define __NR_SYSCALL_BASE 0
-#else
-#define __NR_SYSCALL_BASE __NR_OABI_SYSCALL_BASE
-#endif
-/*
- * This file contains the system call numbers.
- */
-#define __NR_restart_syscall (__NR_SYSCALL_BASE + 0)
-#define __NR_exit (__NR_SYSCALL_BASE + 1)
-#define __NR_fork (__NR_SYSCALL_BASE + 2)
-#define __NR_read (__NR_SYSCALL_BASE + 3)
-#define __NR_write (__NR_SYSCALL_BASE + 4)
-#define __NR_open (__NR_SYSCALL_BASE + 5)
-#define __NR_close (__NR_SYSCALL_BASE + 6)
-/* 7 was sys_waitpid */
-#define __NR_creat (__NR_SYSCALL_BASE + 8)
-#define __NR_link (__NR_SYSCALL_BASE + 9)
-#define __NR_unlink (__NR_SYSCALL_BASE + 10)
-#define __NR_execve (__NR_SYSCALL_BASE + 11)
-#define __NR_chdir (__NR_SYSCALL_BASE + 12)
-#define __NR_time (__NR_SYSCALL_BASE + 13)
-#define __NR_mknod (__NR_SYSCALL_BASE + 14)
-#define __NR_chmod (__NR_SYSCALL_BASE + 15)
-#define __NR_lchown (__NR_SYSCALL_BASE + 16)
-/* 17 was sys_break */
-/* 18 was sys_stat */
-#define __NR_lseek (__NR_SYSCALL_BASE + 19)
-#define __NR_getpid (__NR_SYSCALL_BASE + 20)
-#define __NR_mount (__NR_SYSCALL_BASE + 21)
-#define __NR_umount (__NR_SYSCALL_BASE + 22)
-#define __NR_setuid (__NR_SYSCALL_BASE + 23)
-#define __NR_getuid (__NR_SYSCALL_BASE + 24)
-#define __NR_stime (__NR_SYSCALL_BASE + 25)
-#define __NR_ptrace (__NR_SYSCALL_BASE + 26)
-#define __NR_alarm (__NR_SYSCALL_BASE + 27)
-/* 28 was sys_fstat */
-#define __NR_pause (__NR_SYSCALL_BASE + 29)
-#define __NR_utime (__NR_SYSCALL_BASE + 30)
-/* 31 was sys_stty */
-/* 32 was sys_gtty */
-#define __NR_access (__NR_SYSCALL_BASE + 33)
-#define __NR_nice (__NR_SYSCALL_BASE + 34)
-/* 35 was sys_ftime */
-#define __NR_sync (__NR_SYSCALL_BASE + 36)
-#define __NR_kill (__NR_SYSCALL_BASE + 37)
-#define __NR_rename (__NR_SYSCALL_BASE + 38)
-#define __NR_mkdir (__NR_SYSCALL_BASE + 39)
-#define __NR_rmdir (__NR_SYSCALL_BASE + 40)
-#define __NR_dup (__NR_SYSCALL_BASE + 41)
-#define __NR_pipe (__NR_SYSCALL_BASE + 42)
-#define __NR_times (__NR_SYSCALL_BASE + 43)
-/* 44 was sys_prof */
-#define __NR_brk (__NR_SYSCALL_BASE + 45)
-#define __NR_setgid (__NR_SYSCALL_BASE + 46)
-#define __NR_getgid (__NR_SYSCALL_BASE + 47)
-/* 48 was sys_signal */
-#define __NR_geteuid (__NR_SYSCALL_BASE + 49)
-#define __NR_getegid (__NR_SYSCALL_BASE + 50)
-#define __NR_acct (__NR_SYSCALL_BASE + 51)
-#define __NR_umount2 (__NR_SYSCALL_BASE + 52)
-/* 53 was sys_lock */
-#define __NR_ioctl (__NR_SYSCALL_BASE + 54)
-#define __NR_fcntl (__NR_SYSCALL_BASE + 55)
-/* 56 was sys_mpx */
-#define __NR_setpgid (__NR_SYSCALL_BASE + 57)
-/* 58 was sys_ulimit */
-/* 59 was sys_olduname */
-#define __NR_umask (__NR_SYSCALL_BASE + 60)
-#define __NR_chroot (__NR_SYSCALL_BASE + 61)
-#define __NR_ustat (__NR_SYSCALL_BASE + 62)
-#define __NR_dup2 (__NR_SYSCALL_BASE + 63)
-#define __NR_getppid (__NR_SYSCALL_BASE + 64)
-#define __NR_getpgrp (__NR_SYSCALL_BASE + 65)
-#define __NR_setsid (__NR_SYSCALL_BASE + 66)
-#define __NR_sigaction (__NR_SYSCALL_BASE + 67)
-/* 68 was sys_sgetmask */
-/* 69 was sys_ssetmask */
-#define __NR_setreuid (__NR_SYSCALL_BASE + 70)
-#define __NR_setregid (__NR_SYSCALL_BASE + 71)
-#define __NR_sigsuspend (__NR_SYSCALL_BASE + 72)
-#define __NR_sigpending (__NR_SYSCALL_BASE + 73)
-#define __NR_sethostname (__NR_SYSCALL_BASE + 74)
-#define __NR_setrlimit (__NR_SYSCALL_BASE + 75)
-#define __NR_getrlimit (__NR_SYSCALL_BASE + 76) /* Back compat 2GB limited rlimit */
-#define __NR_getrusage (__NR_SYSCALL_BASE + 77)
-#define __NR_gettimeofday (__NR_SYSCALL_BASE + 78)
-#define __NR_settimeofday (__NR_SYSCALL_BASE + 79)
-#define __NR_getgroups (__NR_SYSCALL_BASE + 80)
-#define __NR_setgroups (__NR_SYSCALL_BASE + 81)
-#define __NR_select (__NR_SYSCALL_BASE + 82)
-#define __NR_symlink (__NR_SYSCALL_BASE + 83)
-/* 84 was sys_lstat */
-#define __NR_readlink (__NR_SYSCALL_BASE + 85)
-#define __NR_uselib (__NR_SYSCALL_BASE + 86)
-#define __NR_swapon (__NR_SYSCALL_BASE + 87)
-#define __NR_reboot (__NR_SYSCALL_BASE + 88)
-#define __NR_readdir (__NR_SYSCALL_BASE + 89)
-#define __NR_mmap (__NR_SYSCALL_BASE + 90)
-#define __NR_munmap (__NR_SYSCALL_BASE + 91)
-#define __NR_truncate (__NR_SYSCALL_BASE + 92)
-#define __NR_ftruncate (__NR_SYSCALL_BASE + 93)
-#define __NR_fchmod (__NR_SYSCALL_BASE + 94)
-#define __NR_fchown (__NR_SYSCALL_BASE + 95)
-#define __NR_getpriority (__NR_SYSCALL_BASE + 96)
-#define __NR_setpriority (__NR_SYSCALL_BASE + 97)
-/* 98 was sys_profil */
-#define __NR_statfs (__NR_SYSCALL_BASE + 99)
-#define __NR_fstatfs (__NR_SYSCALL_BASE + 100)
-/* 101 was sys_ioperm */
-#define __NR_socketcall (__NR_SYSCALL_BASE + 102)
-#define __NR_syslog (__NR_SYSCALL_BASE + 103)
-#define __NR_setitimer (__NR_SYSCALL_BASE + 104)
-#define __NR_getitimer (__NR_SYSCALL_BASE + 105)
-#define __NR_stat (__NR_SYSCALL_BASE + 106)
-#define __NR_lstat (__NR_SYSCALL_BASE + 107)
-#define __NR_fstat (__NR_SYSCALL_BASE + 108)
-/* 109 was sys_uname */
-/* 110 was sys_iopl */
-#define __NR_vhangup (__NR_SYSCALL_BASE + 111)
-/* 112 was sys_idle */
-#define __NR_syscall (__NR_SYSCALL_BASE + 113) /* syscall to call a syscall! */
-#define __NR_wait4 (__NR_SYSCALL_BASE + 114)
-#define __NR_swapoff (__NR_SYSCALL_BASE + 115)
-#define __NR_sysinfo (__NR_SYSCALL_BASE + 116)
-#define __NR_ipc (__NR_SYSCALL_BASE + 117)
-#define __NR_fsync (__NR_SYSCALL_BASE + 118)
-#define __NR_sigreturn (__NR_SYSCALL_BASE + 119)
-#define __NR_clone (__NR_SYSCALL_BASE + 120)
-#define __NR_setdomainname (__NR_SYSCALL_BASE + 121)
-#define __NR_uname (__NR_SYSCALL_BASE + 122)
-/* 123 was sys_modify_ldt */
-#define __NR_adjtimex (__NR_SYSCALL_BASE + 124)
-#define __NR_mprotect (__NR_SYSCALL_BASE + 125)
-#define __NR_sigprocmask (__NR_SYSCALL_BASE + 126)
-/* 127 was sys_create_module */
-#define __NR_init_module (__NR_SYSCALL_BASE + 128)
-#define __NR_delete_module (__NR_SYSCALL_BASE + 129)
-/* 130 was sys_get_kernel_syms */
-#define __NR_quotactl (__NR_SYSCALL_BASE + 131)
-#define __NR_getpgid (__NR_SYSCALL_BASE + 132)
-#define __NR_fchdir (__NR_SYSCALL_BASE + 133)
-#define __NR_bdflush (__NR_SYSCALL_BASE + 134)
-#define __NR_sysfs (__NR_SYSCALL_BASE + 135)
-#define __NR_personality (__NR_SYSCALL_BASE + 136)
-/* 137 was sys_afs_syscall */
-#define __NR_setfsuid (__NR_SYSCALL_BASE + 138)
-#define __NR_setfsgid (__NR_SYSCALL_BASE + 139)
-#define __NR__llseek (__NR_SYSCALL_BASE + 140)
-#define __NR_getdents (__NR_SYSCALL_BASE + 141)
-#define __NR__newselect (__NR_SYSCALL_BASE + 142)
-#define __NR_flock (__NR_SYSCALL_BASE + 143)
-#define __NR_msync (__NR_SYSCALL_BASE + 144)
-#define __NR_readv (__NR_SYSCALL_BASE + 145)
-#define __NR_writev (__NR_SYSCALL_BASE + 146)
-#define __NR_getsid (__NR_SYSCALL_BASE + 147)
-#define __NR_fdatasync (__NR_SYSCALL_BASE + 148)
-#define __NR__sysctl (__NR_SYSCALL_BASE + 149)
-#define __NR_mlock (__NR_SYSCALL_BASE + 150)
-#define __NR_munlock (__NR_SYSCALL_BASE + 151)
-#define __NR_mlockall (__NR_SYSCALL_BASE + 152)
-#define __NR_munlockall (__NR_SYSCALL_BASE + 153)
-#define __NR_sched_setparam (__NR_SYSCALL_BASE + 154)
-#define __NR_sched_getparam (__NR_SYSCALL_BASE + 155)
-#define __NR_sched_setscheduler (__NR_SYSCALL_BASE + 156)
-#define __NR_sched_getscheduler (__NR_SYSCALL_BASE + 157)
-#define __NR_sched_yield (__NR_SYSCALL_BASE + 158)
-#define __NR_sched_get_priority_max (__NR_SYSCALL_BASE + 159)
-#define __NR_sched_get_priority_min (__NR_SYSCALL_BASE + 160)
-#define __NR_sched_rr_get_interval (__NR_SYSCALL_BASE + 161)
-#define __NR_nanosleep (__NR_SYSCALL_BASE + 162)
-#define __NR_mremap (__NR_SYSCALL_BASE + 163)
-#define __NR_setresuid (__NR_SYSCALL_BASE + 164)
-#define __NR_getresuid (__NR_SYSCALL_BASE + 165)
-/* 166 was sys_vm86 */
-/* 167 was sys_query_module */
-#define __NR_poll (__NR_SYSCALL_BASE + 168)
-#define __NR_nfsservctl (__NR_SYSCALL_BASE + 169)
-#define __NR_setresgid (__NR_SYSCALL_BASE + 170)
-#define __NR_getresgid (__NR_SYSCALL_BASE + 171)
-#define __NR_prctl (__NR_SYSCALL_BASE + 172)
-#define __NR_rt_sigreturn (__NR_SYSCALL_BASE + 173)
-#define __NR_rt_sigaction (__NR_SYSCALL_BASE + 174)
-#define __NR_rt_sigprocmask (__NR_SYSCALL_BASE + 175)
-#define __NR_rt_sigpending (__NR_SYSCALL_BASE + 176)
-#define __NR_rt_sigtimedwait (__NR_SYSCALL_BASE + 177)
-#define __NR_rt_sigqueueinfo (__NR_SYSCALL_BASE + 178)
-#define __NR_rt_sigsuspend (__NR_SYSCALL_BASE + 179)
-#define __NR_pread64 (__NR_SYSCALL_BASE + 180)
-#define __NR_pwrite64 (__NR_SYSCALL_BASE + 181)
-#define __NR_chown (__NR_SYSCALL_BASE + 182)
-#define __NR_getcwd (__NR_SYSCALL_BASE + 183)
-#define __NR_capget (__NR_SYSCALL_BASE + 184)
-#define __NR_capset (__NR_SYSCALL_BASE + 185)
-#define __NR_sigaltstack (__NR_SYSCALL_BASE + 186)
-#define __NR_sendfile (__NR_SYSCALL_BASE + 187)
-/* 188 reserved */
-/* 189 reserved */
-#define __NR_vfork (__NR_SYSCALL_BASE + 190)
-#define __NR_ugetrlimit (__NR_SYSCALL_BASE + 191) /* SuS compliant getrlimit */
-#define __NR_mmap2 (__NR_SYSCALL_BASE + 192)
-#define __NR_truncate64 (__NR_SYSCALL_BASE + 193)
-#define __NR_ftruncate64 (__NR_SYSCALL_BASE + 194)
-#define __NR_stat64 (__NR_SYSCALL_BASE + 195)
-#define __NR_lstat64 (__NR_SYSCALL_BASE + 196)
-#define __NR_fstat64 (__NR_SYSCALL_BASE + 197)
-#define __NR_lchown32 (__NR_SYSCALL_BASE + 198)
-#define __NR_getuid32 (__NR_SYSCALL_BASE + 199)
-#define __NR_getgid32 (__NR_SYSCALL_BASE + 200)
-#define __NR_geteuid32 (__NR_SYSCALL_BASE + 201)
-#define __NR_getegid32 (__NR_SYSCALL_BASE + 202)
-#define __NR_setreuid32 (__NR_SYSCALL_BASE + 203)
-#define __NR_setregid32 (__NR_SYSCALL_BASE + 204)
-#define __NR_getgroups32 (__NR_SYSCALL_BASE + 205)
-#define __NR_setgroups32 (__NR_SYSCALL_BASE + 206)
-#define __NR_fchown32 (__NR_SYSCALL_BASE + 207)
-#define __NR_setresuid32 (__NR_SYSCALL_BASE + 208)
-#define __NR_getresuid32 (__NR_SYSCALL_BASE + 209)
-#define __NR_setresgid32 (__NR_SYSCALL_BASE + 210)
-#define __NR_getresgid32 (__NR_SYSCALL_BASE + 211)
-#define __NR_chown32 (__NR_SYSCALL_BASE + 212)
-#define __NR_setuid32 (__NR_SYSCALL_BASE + 213)
-#define __NR_setgid32 (__NR_SYSCALL_BASE + 214)
-#define __NR_setfsuid32 (__NR_SYSCALL_BASE + 215)
-#define __NR_setfsgid32 (__NR_SYSCALL_BASE + 216)
-#define __NR_getdents64 (__NR_SYSCALL_BASE + 217)
-#define __NR_pivot_root (__NR_SYSCALL_BASE + 218)
-#define __NR_mincore (__NR_SYSCALL_BASE + 219)
-#define __NR_madvise (__NR_SYSCALL_BASE + 220)
-#define __NR_fcntl64 (__NR_SYSCALL_BASE + 221)
-/* 222 for tux */
-/* 223 is unused */
-#define __NR_gettid (__NR_SYSCALL_BASE + 224)
-#define __NR_readahead (__NR_SYSCALL_BASE + 225)
-#define __NR_setxattr (__NR_SYSCALL_BASE + 226)
-#define __NR_lsetxattr (__NR_SYSCALL_BASE + 227)
-#define __NR_fsetxattr (__NR_SYSCALL_BASE + 228)
-#define __NR_getxattr (__NR_SYSCALL_BASE + 229)
-#define __NR_lgetxattr (__NR_SYSCALL_BASE + 230)
-#define __NR_fgetxattr (__NR_SYSCALL_BASE + 231)
-#define __NR_listxattr (__NR_SYSCALL_BASE + 232)
-#define __NR_llistxattr (__NR_SYSCALL_BASE + 233)
-#define __NR_flistxattr (__NR_SYSCALL_BASE + 234)
-#define __NR_removexattr (__NR_SYSCALL_BASE + 235)
-#define __NR_lremovexattr (__NR_SYSCALL_BASE + 236)
-#define __NR_fremovexattr (__NR_SYSCALL_BASE + 237)
-#define __NR_tkill (__NR_SYSCALL_BASE + 238)
-#define __NR_sendfile64 (__NR_SYSCALL_BASE + 239)
-#define __NR_futex (__NR_SYSCALL_BASE + 240)
-#define __NR_sched_setaffinity (__NR_SYSCALL_BASE + 241)
-#define __NR_sched_getaffinity (__NR_SYSCALL_BASE + 242)
-#define __NR_io_setup (__NR_SYSCALL_BASE + 243)
-#define __NR_io_destroy (__NR_SYSCALL_BASE + 244)
-#define __NR_io_getevents (__NR_SYSCALL_BASE + 245)
-#define __NR_io_submit (__NR_SYSCALL_BASE + 246)
-#define __NR_io_cancel (__NR_SYSCALL_BASE + 247)
-#define __NR_exit_group (__NR_SYSCALL_BASE + 248)
-#define __NR_lookup_dcookie (__NR_SYSCALL_BASE + 249)
-#define __NR_epoll_create (__NR_SYSCALL_BASE + 250)
-#define __NR_epoll_ctl (__NR_SYSCALL_BASE + 251)
-#define __NR_epoll_wait (__NR_SYSCALL_BASE + 252)
-#define __NR_remap_file_pages (__NR_SYSCALL_BASE + 253)
-/* 254 for set_thread_area */
-/* 255 for get_thread_area */
-#define __NR_set_tid_address (__NR_SYSCALL_BASE + 256)
-#define __NR_timer_create (__NR_SYSCALL_BASE + 257)
-#define __NR_timer_settime (__NR_SYSCALL_BASE + 258)
-#define __NR_timer_gettime (__NR_SYSCALL_BASE + 259)
-#define __NR_timer_getoverrun (__NR_SYSCALL_BASE + 260)
-#define __NR_timer_delete (__NR_SYSCALL_BASE + 261)
-#define __NR_clock_settime (__NR_SYSCALL_BASE + 262)
-#define __NR_clock_gettime (__NR_SYSCALL_BASE + 263)
-#define __NR_clock_getres (__NR_SYSCALL_BASE + 264)
-#define __NR_clock_nanosleep (__NR_SYSCALL_BASE + 265)
-#define __NR_statfs64 (__NR_SYSCALL_BASE + 266)
-#define __NR_fstatfs64 (__NR_SYSCALL_BASE + 267)
-#define __NR_tgkill (__NR_SYSCALL_BASE + 268)
-#define __NR_utimes (__NR_SYSCALL_BASE + 269)
-#define __NR_arm_fadvise64_64 (__NR_SYSCALL_BASE + 270)
-#define __NR_pciconfig_iobase (__NR_SYSCALL_BASE + 271)
-#define __NR_pciconfig_read (__NR_SYSCALL_BASE + 272)
-#define __NR_pciconfig_write (__NR_SYSCALL_BASE + 273)
-#define __NR_mq_open (__NR_SYSCALL_BASE + 274)
-#define __NR_mq_unlink (__NR_SYSCALL_BASE + 275)
-#define __NR_mq_timedsend (__NR_SYSCALL_BASE + 276)
-#define __NR_mq_timedreceive (__NR_SYSCALL_BASE + 277)
-#define __NR_mq_notify (__NR_SYSCALL_BASE + 278)
-#define __NR_mq_getsetattr (__NR_SYSCALL_BASE + 279)
-#define __NR_waitid (__NR_SYSCALL_BASE + 280)
-#define __NR_socket (__NR_SYSCALL_BASE + 281)
-#define __NR_bind (__NR_SYSCALL_BASE + 282)
-#define __NR_connect (__NR_SYSCALL_BASE + 283)
-#define __NR_listen (__NR_SYSCALL_BASE + 284)
-#define __NR_accept (__NR_SYSCALL_BASE + 285)
-#define __NR_getsockname (__NR_SYSCALL_BASE + 286)
-#define __NR_getpeername (__NR_SYSCALL_BASE + 287)
-#define __NR_socketpair (__NR_SYSCALL_BASE + 288)
-#define __NR_send (__NR_SYSCALL_BASE + 289)
-#define __NR_sendto (__NR_SYSCALL_BASE + 290)
-#define __NR_recv (__NR_SYSCALL_BASE + 291)
-#define __NR_recvfrom (__NR_SYSCALL_BASE + 292)
-#define __NR_shutdown (__NR_SYSCALL_BASE + 293)
-#define __NR_setsockopt (__NR_SYSCALL_BASE + 294)
-#define __NR_getsockopt (__NR_SYSCALL_BASE + 295)
-#define __NR_sendmsg (__NR_SYSCALL_BASE + 296)
-#define __NR_recvmsg (__NR_SYSCALL_BASE + 297)
-#define __NR_semop (__NR_SYSCALL_BASE + 298)
-#define __NR_semget (__NR_SYSCALL_BASE + 299)
-#define __NR_semctl (__NR_SYSCALL_BASE + 300)
-#define __NR_msgsnd (__NR_SYSCALL_BASE + 301)
-#define __NR_msgrcv (__NR_SYSCALL_BASE + 302)
-#define __NR_msgget (__NR_SYSCALL_BASE + 303)
-#define __NR_msgctl (__NR_SYSCALL_BASE + 304)
-#define __NR_shmat (__NR_SYSCALL_BASE + 305)
-#define __NR_shmdt (__NR_SYSCALL_BASE + 306)
-#define __NR_shmget (__NR_SYSCALL_BASE + 307)
-#define __NR_shmctl (__NR_SYSCALL_BASE + 308)
-#define __NR_add_key (__NR_SYSCALL_BASE + 309)
-#define __NR_request_key (__NR_SYSCALL_BASE + 310)
-#define __NR_keyctl (__NR_SYSCALL_BASE + 311)
-#define __NR_semtimedop (__NR_SYSCALL_BASE + 312)
-#define __NR_vserver (__NR_SYSCALL_BASE + 313)
-#define __NR_ioprio_set (__NR_SYSCALL_BASE + 314)
-#define __NR_ioprio_get (__NR_SYSCALL_BASE + 315)
-#define __NR_inotify_init (__NR_SYSCALL_BASE + 316)
-#define __NR_inotify_add_watch (__NR_SYSCALL_BASE + 317)
-#define __NR_inotify_rm_watch (__NR_SYSCALL_BASE + 318)
-#define __NR_mbind (__NR_SYSCALL_BASE + 319)
-#define __NR_get_mempolicy (__NR_SYSCALL_BASE + 320)
-#define __NR_set_mempolicy (__NR_SYSCALL_BASE + 321)
-/*
- * The following SWIs are ARM private.
- */
-#define __ARM_NR_BASE (__NR_SYSCALL_BASE + 0x0f0000)
-#define __ARM_NR_breakpoint (__ARM_NR_BASE + 1)
-#define __ARM_NR_cacheflush (__ARM_NR_BASE + 2)
-#define __ARM_NR_usr26 (__ARM_NR_BASE + 3)
-#define __ARM_NR_usr32 (__ARM_NR_BASE + 4)
-#define __ARM_NR_set_tls (__ARM_NR_BASE + 5)
-
-#define __ARCH_WANT_NEW_STAT
-#define __ARCH_WANT_STAT64
-#define __ARCH_WANT_SYS_GETHOSTNAME
-#define __ARCH_WANT_SYS_PAUSE
-#define __ARCH_WANT_SYS_GETPGRP
-#define __ARCH_WANT_SYS_NICE
-#define __ARCH_WANT_SYS_SIGPENDING
-#define __ARCH_WANT_SYS_SIGPROCMASK
-#define __ARCH_WANT_SYS_OLD_MMAP
-#define __ARCH_WANT_SYS_OLD_SELECT
-#define __ARCH_WANT_SYS_UTIME32
-
-#if !defined(CONFIG_AEABI) || defined(CONFIG_OABI_COMPAT)
-#define __ARCH_WANT_SYS_TIME32
-#define __ARCH_WANT_SYS_IPC
-#define __ARCH_WANT_SYS_OLDUMOUNT
-#define __ARCH_WANT_SYS_ALARM
-#define __ARCH_WANT_SYS_OLD_GETRLIMIT
-#define __ARCH_WANT_OLD_READDIR
-#define __ARCH_WANT_SYS_SOCKETCALL
-#endif
-#define __ARCH_WANT_SYS_FORK
-#define __ARCH_WANT_SYS_VFORK
-#define __ARCH_WANT_SYS_CLONE
-
-/*
- * Unimplemented (or alternatively implemented) syscalls
- */
-#define __IGNORE_fadvise64_64
-
-#ifdef __ARM_EABI__
-/*
- * The following syscalls are obsolete and no longer available for EABI:
- *  __NR_time
- *  __NR_umount
- *  __NR_stime
- *  __NR_alarm
- *  __NR_utime
- *  __NR_getrlimit
- *  __NR_select
- *  __NR_readdir
- *  __NR_mmap
- *  __NR_socketcall
- *  __NR_syscall
- *  __NR_ipc
- */
-#define __IGNORE_getrlimit
-#endif
-
-#endif /* __ASM_ARM_UNISTD_H */
+// arm private swis
+inline constexpr __nr_t SYS_arm_breakpoint = arm32_eabi::nr::arm_breakpoint;
+inline constexpr __nr_t SYS_arm_cacheflush = arm32_eabi::nr::arm_cacheflush;
+inline constexpr __nr_t SYS_arm_usr26 = arm32_eabi::nr::arm_usr26;
+inline constexpr __nr_t SYS_arm_usr32 = arm32_eabi::nr::arm_usr32;
+inline constexpr __nr_t SYS_arm_set_tls = arm32_eabi::nr::arm_set_tls;
+inline constexpr __nr_t SYS_arm_get_tls = arm32_eabi::nr::arm_get_tls;

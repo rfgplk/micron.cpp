@@ -34,8 +34,7 @@ template <typename T, int Dg> struct b_node {
   find_key(const T &key) const
   {
     int i = 0;
-    while ( i < nkeys && keys[i] < key )
-      ++i;
+    while ( i < nkeys && keys[i] < key ) ++i;
     return i;
   }
 
@@ -43,12 +42,10 @@ template <typename T, int Dg> struct b_node {
   traverse(void (*visit)(const T &)) const
   {
     for ( int i = 0; i < nkeys; ++i ) {
-      if ( chld[i] )
-        chld[i]->traverse(visit);
+      if ( chld[i] ) chld[i]->traverse(visit);
       visit(keys[i]);
     }
-    if ( chld[nkeys] )
-      chld[nkeys]->traverse(visit);
+    if ( chld[nkeys] ) chld[nkeys]->traverse(visit);
   }
 
   inline b_node *
@@ -56,8 +53,7 @@ template <typename T, int Dg> struct b_node {
   {
     int i = find_key(key);
     if ( i < nkeys && keys[i] == key ) {
-      if ( out_index )
-        *out_index = i;
+      if ( out_index ) *out_index = i;
       return this;
     }
     return chld[i] ? chld[i]->search(key, out_index) : nullptr;
@@ -70,8 +66,7 @@ template <typename T, int Dg> struct b_node {
     b_node *z = new b_node();
     z->nkeys = Dg - 1;
 
-    for ( int j = 0; j < Dg - 1; ++j )
-      z->keys[j] = micron::move(y->keys[j + Dg]);
+    for ( int j = 0; j < Dg - 1; ++j ) z->keys[j] = micron::move(y->keys[j + Dg]);
     for ( int j = 0; j < Dg; ++j ) {
       z->chld[j] = y->chld[j + Dg];
       y->chld[j + Dg] = nullptr;
@@ -79,12 +74,10 @@ template <typename T, int Dg> struct b_node {
 
     y->nkeys = Dg - 1;
 
-    for ( int j = nkeys; j >= _k + 1; --j )
-      chld[j + 1] = chld[j];
+    for ( int j = nkeys; j >= _k + 1; --j ) chld[j + 1] = chld[j];
     chld[_k + 1] = z;
 
-    for ( int j = nkeys - 1; j >= _k; --j )
-      keys[j + 1] = micron::move(keys[j]);
+    for ( int j = nkeys - 1; j >= _k; --j ) keys[j + 1] = micron::move(keys[j]);
     keys[_k] = micron::move(y->keys[Dg - 1]);
     ++nkeys;
   }
@@ -101,13 +94,11 @@ template <typename T, int Dg> struct b_node {
       keys[i + 1] = key;
       ++nkeys;
     } else {
-      while ( i >= 0 && key < keys[i] )
-        --i;
+      while ( i >= 0 && key < keys[i] ) --i;
       ++i;
       if ( chld[i]->nkeys == 2 * Dg - 1 ) {
         split_child(i);
-        if ( key > keys[i] )
-          ++i;
+        if ( key > keys[i] ) ++i;
       }
       chld[i]->insert_nonfull(key);
     }
@@ -117,8 +108,7 @@ template <typename T, int Dg> struct b_node {
   get_pred(int _k)
   {
     b_node *cur = chld[_k];
-    while ( cur->chld[0] )
-      cur = cur->chld[cur->nkeys];
+    while ( cur->chld[0] ) cur = cur->chld[cur->nkeys];
     return cur->keys[cur->nkeys - 1];
   }
 
@@ -126,8 +116,7 @@ template <typename T, int Dg> struct b_node {
   get_succ(int _k)
   {
     b_node *cur = chld[_k + 1];
-    while ( cur->chld[0] )
-      cur = cur->chld[0];
+    while ( cur->chld[0] ) cur = cur->chld[0];
     return cur->keys[0];
   }
 
@@ -150,11 +139,9 @@ template <typename T, int Dg> struct b_node {
     b_node *child = chld[_k];
     b_node *sibling = chld[_k - 1];
 
-    for ( int i = child->nkeys - 1; i >= 0; --i )
-      child->keys[i + 1] = micron::move(child->keys[i]);
+    for ( int i = child->nkeys - 1; i >= 0; --i ) child->keys[i + 1] = micron::move(child->keys[i]);
     if ( child->chld[0] ) {
-      for ( int i = child->nkeys; i >= 0; --i )
-        child->chld[i + 1] = child->chld[i];
+      for ( int i = child->nkeys; i >= 0; --i ) child->chld[i + 1] = child->chld[i];
       child->chld[0] = sibling->chld[sibling->nkeys];
     }
 
@@ -171,16 +158,13 @@ template <typename T, int Dg> struct b_node {
     b_node *sibling = chld[_k + 1];
 
     child->keys[child->nkeys] = micron::move(keys[_k]);
-    if ( child->chld[0] )
-      child->chld[child->nkeys + 1] = sibling->chld[0];
+    if ( child->chld[0] ) child->chld[child->nkeys + 1] = sibling->chld[0];
 
     keys[_k] = micron::move(sibling->keys[0]);
 
-    for ( int i = 1; i < sibling->nkeys; ++i )
-      sibling->keys[i - 1] = micron::move(sibling->keys[i]);
+    for ( int i = 1; i < sibling->nkeys; ++i ) sibling->keys[i - 1] = micron::move(sibling->keys[i]);
     if ( sibling->chld[0] ) {
-      for ( int i = 1; i <= sibling->nkeys; ++i )
-        sibling->chld[i - 1] = sibling->chld[i];
+      for ( int i = 1; i <= sibling->nkeys; ++i ) sibling->chld[i - 1] = sibling->chld[i];
     }
 
     --sibling->nkeys;
@@ -194,15 +178,11 @@ template <typename T, int Dg> struct b_node {
     b_node *sibling = chld[_k + 1];
 
     child->keys[Dg - 1] = micron::move(keys[_k]);
-    for ( int i = 0; i < sibling->nkeys; ++i )
-      child->keys[i + Dg] = micron::move(sibling->keys[i]);
-    for ( int i = 0; i <= sibling->nkeys; ++i )
-      child->chld[i + Dg] = sibling->chld[i];
+    for ( int i = 0; i < sibling->nkeys; ++i ) child->keys[i + Dg] = micron::move(sibling->keys[i]);
+    for ( int i = 0; i <= sibling->nkeys; ++i ) child->chld[i + Dg] = sibling->chld[i];
 
-    for ( int i = _k + 1; i < nkeys; ++i )
-      keys[i - 1] = micron::move(keys[i]);
-    for ( int i = _k + 2; i <= nkeys; ++i )
-      chld[i - 1] = chld[i];
+    for ( int i = _k + 1; i < nkeys; ++i ) keys[i - 1] = micron::move(keys[i]);
+    for ( int i = _k + 2; i <= nkeys; ++i ) chld[i - 1] = chld[i];
 
     child->nkeys += sibling->nkeys + 1;
     --nkeys;
@@ -216,8 +196,7 @@ template <typename T, int Dg> struct b_node {
 
     if ( _k < nkeys && keys[_k] == key ) {
       if ( !chld[0] ) {
-        for ( int i = _k + 1; i < nkeys; ++i )
-          keys[i - 1] = micron::move(keys[i]);
+        for ( int i = _k + 1; i < nkeys; ++i ) keys[i - 1] = micron::move(keys[i]);
         --nkeys;
       } else {
         if ( chld[_k]->nkeys >= Dg ) {
@@ -233,8 +212,7 @@ template <typename T, int Dg> struct b_node {
       }
     } else if ( chld[0] ) {
       bool flag = (_k == nkeys);
-      if ( chld[_k]->nkeys < Dg )
-        fill(_k);
+      if ( chld[_k]->nkeys < Dg ) fill(_k);
       if ( flag && _k > nkeys )
         chld[_k - 1]->remove(key);
       else
@@ -291,8 +269,7 @@ template <typename T, int Dg> struct b_tree {
   inline void
   remove(const T &key)
   {
-    if ( !root )
-      return;
+    if ( !root ) return;
     root->remove(key);
     if ( root->nkeys == 0 ) {
       b_node<T, Dg> *tmp = root.release();
@@ -305,15 +282,13 @@ template <typename T, int Dg> struct b_tree {
   inline void
   traverse(void (*visit)(const T &)) const
   {
-    if ( root.get() )
-      root->traverse(visit);
+    if ( root.get() ) root->traverse(visit);
   }
 
   inline T *
   get(const T &key)
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
     int idx = -1;
     b_node<T, Dg> *n = root->search(key, &idx);
     return (n && idx >= 0) ? &n->keys[idx] : nullptr;
@@ -322,12 +297,10 @@ template <typename T, int Dg> struct b_tree {
   inline micron::array<b_node<T, Dg> *, 2>
   get_near_children(const T &key)
   {
-    if ( !root )
-      return { nullptr, nullptr };
+    if ( !root ) return { nullptr, nullptr };
     int idx = -1;
     b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 )
-      return { nullptr, nullptr };
+    if ( !n || idx < 0 ) return { nullptr, nullptr };
     return { n->chld[idx], n->chld[idx + 1] };
   }
 
@@ -344,22 +317,18 @@ template <typename T, int Dg> struct b_tree {
   inline T *
   min() const
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
     b_node<T, Dg> *cur = root.get();
-    while ( cur->chld[0] )
-      cur = cur->chld[0];
+    while ( cur->chld[0] ) cur = cur->chld[0];
     return &cur->keys[0];
   }
 
   inline T *
   max() const
   {
-    if ( !root )
-      return nullptr;
+    if ( !root ) return nullptr;
     b_node<T, Dg> *cur = root.get();
-    while ( cur->chld[cur->nkeys] )
-      cur = cur->chld[cur->nkeys];
+    while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
     return &cur->keys[cur->nkeys - 1];
   }
 
@@ -369,10 +338,8 @@ template <typename T, int Dg> struct b_tree {
     b_node<T, Dg> *cur = root.get();
     while ( cur ) {
       int i = 0;
-      while ( i < cur->nkeys && cur->keys[i] < key )
-        ++i;
-      if ( i < cur->nkeys && cur->keys[i] >= key )
-        return &cur->keys[i];
+      while ( i < cur->nkeys && cur->keys[i] < key ) ++i;
+      if ( i < cur->nkeys && cur->keys[i] >= key ) return &cur->keys[i];
       cur = cur->chld[i];
     }
     return nullptr;
@@ -384,10 +351,8 @@ template <typename T, int Dg> struct b_tree {
     b_node<T, Dg> *cur = root.get();
     while ( cur ) {
       int i = 0;
-      while ( i < cur->nkeys && cur->keys[i] <= key )
-        ++i;
-      if ( i < cur->nkeys )
-        return &cur->keys[i];
+      while ( i < cur->nkeys && cur->keys[i] <= key ) ++i;
+      if ( i < cur->nkeys ) return &cur->keys[i];
       cur = cur->chld[i];
     }
     return nullptr;
@@ -398,12 +363,10 @@ template <typename T, int Dg> struct b_tree {
   {
     int idx = -1;
     b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 )
-      return nullptr;
+    if ( !n || idx < 0 ) return nullptr;
     if ( n->chld[idx] ) {     // left subtree exists
       b_node<T, Dg> *cur = n->chld[idx];
-      while ( cur->chld[cur->nkeys] )
-        cur = cur->chld[cur->nkeys];
+      while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
       return &cur->keys[cur->nkeys - 1];
     }
     return (idx > 0) ? &n->keys[idx - 1] : nullptr;
@@ -414,12 +377,10 @@ template <typename T, int Dg> struct b_tree {
   {
     int idx = -1;
     b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 )
-      return nullptr;
+    if ( !n || idx < 0 ) return nullptr;
     if ( n->chld[idx + 1] ) {
       b_node<T, Dg> *cur = n->chld[idx + 1];
-      while ( cur->chld[0] )
-        cur = cur->chld[0];
+      while ( cur->chld[0] ) cur = cur->chld[0];
       return &cur->keys[0];
     }
     return (idx < n->nkeys - 1) ? &n->keys[idx + 1] : nullptr;
@@ -441,16 +402,13 @@ template <typename T, int Dg> struct b_tree {
   get_children(const T &key)
   {
     micron::fvector<b_node<T, Dg> *> result;
-    if ( !root )
-      return result;
+    if ( !root ) return result;
     int idx = -1;
     b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 )
-      return result;
+    if ( !n || idx < 0 ) return result;
 
     for ( int i = 0; i <= n->nkeys; ++i ) {
-      if ( n->chld[i] )
-        result.emplace_back(n->chld[i]);
+      if ( n->chld[i] ) result.emplace_back(n->chld[i]);
     }
     return result;
   }

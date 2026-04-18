@@ -110,8 +110,7 @@ public:
   pointer
   nth(const size_t n)
   {
-    for ( size_t i = 0; i < n; i++ )
-      next();
+    for ( size_t i = 0; i < n; i++ ) next();
     return this->operator()();
   }
 
@@ -150,8 +149,7 @@ public:
   count(void)
   {
     size_t c = 0;
-    while ( next() != end_ptr )
-      c++;     // hehe
+    while ( next() != end_ptr ) c++;     // hehe
     return c;
   }
 
@@ -194,8 +192,7 @@ public:
   inline void
   skip(F f)
   {
-    if ( f(*peek()) )
-      next();
+    if ( f(*peek()) ) next();
   }
 
   inline pointer

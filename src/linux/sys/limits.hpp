@@ -92,7 +92,12 @@ struct rlimit_t {
 auto
 getrlimit(limits lm, rlimit_t &rl)
 {
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return micron::syscall(SYS_getrlimit, static_cast<i32>(lm), &rl);
+#elif defined(__micron_arch_arm32)
+  // NOTE: 32-bit limited not equiv
+  return micron::syscall(SYS_ugetrlimit, static_cast<i32>(lm), &rl);
+#endif
 }
 
 auto
@@ -104,7 +109,12 @@ setrlimit(limits lm, rlimit_t &rl)
 auto
 get_limits(limits lm, rlimit_t &rl)
 {
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return micron::syscall(SYS_getrlimit, static_cast<i32>(lm), &rl);
+#elif defined(__micron_arch_arm32)
+  // NOTE: 32-bit limited not equiv
+  return micron::syscall(SYS_ugetrlimit, static_cast<i32>(lm), &rl);
+#endif
 }
 
 auto
@@ -158,8 +168,7 @@ struct limits_t {
 
   limits_t(const pid_t proc = 0)     // for us by default
   {
-    for ( rlim_t i = 0; i < rlimit_nlimits; i++ )
-      get_process_limits(proc, i, lim[i]);
+    for ( rlim_t i = 0; i < rlimit_nlimits; i++ ) get_process_limits(proc, i, lim[i]);
   }
 
   limits_t(const limits_t &o) { micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16); }

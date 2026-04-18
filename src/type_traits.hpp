@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__arch.hpp"
+
 // NOTE: type_traits has been implemented _exactly_ to current cpp23 spec
 // should perform vis-a-vis to the stl
 namespace micron
@@ -12,8 +14,12 @@ namespace micron
 using __tt_size_t = long unsigned int;
 using __tt_nullptr_t = decltype(nullptr);
 
+// hard float workaround
+#if !defined(__micron_arch_arm32)
 using __bfloat16_t = __decltype(0.0bf16);
-
+#else
+using __bfloat_16_t = float;
+#endif
 template <typename T> class reference_wrapper;
 
 template <typename T, T V> struct integral_constant {
@@ -224,13 +230,13 @@ template <> struct __is_integral_helper<long long> : public true_type {
 
 template <> struct __is_integral_helper<unsigned long long> : public true_type {
 };
-
+#if defined(__micron_arch_amd64)
 __extension__ template <> struct __is_integral_helper<__int128> : public true_type {
 };
 
 __extension__ template <> struct __is_integral_helper<unsigned __int128> : public true_type {
 };
-
+#endif
 template <typename T> struct is_integral : public __is_integral_helper<__remove_cv_t<T>>::type {
 };
 
@@ -246,7 +252,9 @@ template <> struct __is_floating_point_helper<double> : public true_type {
 template <> struct __is_floating_point_helper<long double> : public true_type {
 };
 
+#if defined(__micron_arch_amd64)
 #if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L
+
 template <> struct __is_floating_point_helper<_Float16> : public true_type {
 };
 
@@ -262,7 +270,7 @@ template <> struct __is_floating_point_helper<_Float128> : public true_type {
 #endif
 template <> struct __is_floating_point_helper<__float128> : public true_type {
 };
-
+#endif
 template <typename T> struct is_floating_point : public __is_floating_point_helper<__remove_cv_t<T>>::type {
 };
 
@@ -348,6 +356,7 @@ template <typename, typename> struct is_same;
 
 template <typename T, typename... _Types> using __is_one_of = __or_<is_same<T, _Types>...>;
 
+#if defined(__micron_arch_amd64)
 __extension__ template <typename T>
 using __is_signed_integer = __is_one_of<__remove_cv_t<T>, signed char, signed short, signed int, signed long, signed long long
 
@@ -359,7 +368,17 @@ using __is_unsigned_integer = __is_one_of<__remove_cv_t<T>, unsigned char, unsig
 
                                           ,
                                           unsigned __int128>;
+#else
+__extension__ template <typename T>
+using __is_signed_integer = __is_one_of<__remove_cv_t<T>, signed char, signed short, signed int, signed long, signed long long
 
+                                        >;
+
+__extension__ template <typename T>
+using __is_unsigned_integer = __is_one_of<__remove_cv_t<T>, unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long
+
+                                          >;
+#endif
 template <typename T> using __is_standard_integer = __or_<__is_signed_integer<T>, __is_unsigned_integer<T>>;
 
 template <typename...> using Void_t = void;
@@ -811,7 +830,9 @@ template <> struct __make_unsigned<long> { using __type = unsigned long; };
 
 template <> struct __make_unsigned<long long> { using __type = unsigned long long; };
 
+#if defined(__micron_arch_amd64)
 __extension__ template <> struct __make_unsigned<__int128> { using __type = unsigned __int128; };
+#endif
 template <typename T, bool _IsInt = is_integral<T>::value, bool _IsEnum = __is_enum(T)> class __make_unsigned_selector;
 
 template <typename T> class __make_unsigned_selector<T, true, false>
@@ -886,8 +907,9 @@ template <> struct __make_signed<unsigned long long> { using __type = signed lon
 template <> struct __make_signed<float> { using __type = float; };
 
 template <> struct __make_signed<double> { using __type = double; };
-
+#if defined(__micron_arch_amd64)
 __extension__ template <> struct __make_signed<unsigned __int128> { using __type = __int128; };
+#endif
 template <typename T, bool _IsInt = is_integral<T>::value, bool _IsEnum = __is_enum(T)> class __make_signed_selector;
 
 template <typename T> class __make_signed_selector<T, true, false>

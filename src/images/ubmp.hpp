@@ -66,8 +66,7 @@ struct writer {
     output.resize(bmp_header.size);
     auto append = []<typename T>(S &out, T header, u64 offset) {
       u8 *start = reinterpret_cast<u8 *>(&header);
-      for ( u64 i = offset; i < sizeof(header); ++i )
-        out[i] = *(start + (i - offset));
+      for ( u64 i = offset; i < sizeof(header); ++i ) out[i] = *(start + (i - offset));
     };
     append(output, bmp_header, 0);
     append(output, dib_header, sizeof(bmp_header));

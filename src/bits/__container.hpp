@@ -41,16 +41,14 @@ inline void
 deep_copy(T *__restrict dest, T *__restrict src, usize cnt)
 {
   // guard against copying into uninit memory
-  for ( usize i = 0; i < cnt; ++i )
-    new (addr(dest[i])) T(src[i]);
+  for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
 };
 
 template <typename T>
 inline void
 deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)
 {
-  for ( usize i = 0; i < cnt; ++i )
-    new (addr(dest[i])) T(src[i]);
+  for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
 };
 
 template <typename T>
@@ -58,16 +56,14 @@ inline void
 deep_copy_assign(T *__restrict dest, T *__restrict src, usize cnt)
 {
   // guard against copying into uninit memory
-  for ( usize i = 0; i < cnt; ++i )
-    dest[i] = src[i];
+  for ( usize i = 0; i < cnt; ++i ) dest[i] = src[i];
 };
 
 template <typename T>
 inline void
 deep_copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)
 {
-  for ( usize i = 0; i < cnt; ++i )
-    dest[i] = src[i];
+  for ( usize i = 0; i < cnt; ++i ) dest[i] = src[i];
 };
 
 template <typename T>
@@ -93,40 +89,35 @@ template <typename T>
 inline void
 deep_move_assign(T *__restrict dest, T *__restrict src, usize cnt)
 {
-  for ( usize i = 0; i < cnt; ++i )
-    dest[i] = micron::move(src[i]);
+  for ( usize i = 0; i < cnt; ++i ) dest[i] = micron::move(src[i]);
 };
 
 template <usize N, typename T>
 inline void
 deep_copy(T *__restrict dest, T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i )
-    new (addr(dest[i])) T(src[i]);
+  for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
 };
 
 template <usize N, typename T>
 inline void
 deep_copy(T *__restrict dest, const T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i )
-    new (addr(dest[i])) T(src[i]);
+  for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
 };
 
 template <usize N, typename T>
 inline void
 deep_copy_assign(T *__restrict dest, T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i )
-    dest[i] = src[i];
+  for ( usize i = 0; i < N; ++i ) dest[i] = src[i];
 };
 
 template <usize N, typename T>
 inline void
 deep_copy_assign(T *__restrict dest, const T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i )
-    dest[i] = src[i];
+  for ( usize i = 0; i < N; ++i ) dest[i] = src[i];
 };
 
 template <usize N, typename T>
@@ -152,8 +143,7 @@ template <usize N, typename T>
 inline void
 deep_move_assign(T *__restrict dest, T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i )
-    dest[i] = micron::move(src[i]);
+  for ( usize i = 0; i < N; ++i ) dest[i] = micron::move(src[i]);
 };
 
 template <usize N, typename T>
@@ -319,8 +309,7 @@ destroy(T *src)
         src[i + 3].~T();
       }
     } else {
-      for ( usize i = 0; i < N; ++i )
-        src[i].~T();
+      for ( usize i = 0; i < N; ++i ) src[i].~T();
     }
     // WARNING:after calling destructors, manually zero it out, wasteful but necessary for edge case correctness
     // in case you're wondering why, there seem to be edge cases when applying aggressive optimization options where the compiler opts NOT
@@ -338,8 +327,7 @@ inline void
 destroy(T *src, usize cnt)
 {
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
-    for ( usize i = 0; i < cnt; ++i )
-      src[i].~T();
+    for ( usize i = 0; i < cnt; ++i ) src[i].~T();
     // WARNING: after calling destructors, manually zero it out, wasteful but necessary for edge case correctness
     micron::byteset(src, 0x0, cnt * sizeof(T));
   } else {
@@ -360,8 +348,7 @@ destroy_fast(T *src)
         src[i + 3].~T();
       }
     } else {
-      for ( usize i = 0; i < N; ++i )
-        src[i].~T();
+      for ( usize i = 0; i < N; ++i ) src[i].~T();
     }
   } else {
   }
@@ -372,8 +359,7 @@ inline void
 destroy_fast(T *src, usize cnt)
 {
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
-    for ( usize i = 0; i < cnt; ++i )
-      src[i].~T();
+    for ( usize i = 0; i < cnt; ++i ) src[i].~T();
   } else {
   }
 }
@@ -398,8 +384,7 @@ set(T *__restrict src, const T &val)
         src[i + 3] = val;
       }
     } else {
-      for ( usize i = 0; i < N; ++i )
-        src[i] = val;
+      for ( usize i = 0; i < N; ++i ) src[i] = val;
     }
   } else {
     micron::ctypeset<N>(src, val);
@@ -412,8 +397,7 @@ set(T *__restrict src, const T &val, usize cnt)
 {
   if constexpr ( !micron::is_trivially_assignable_v<T, T> ) {
 
-    for ( usize i = 0; i < cnt; ++i )
-      src[i] = val;
+    for ( usize i = 0; i < cnt; ++i ) src[i] = val;
   } else {
     micron::typeset(src, val, cnt);
   }
@@ -432,8 +416,7 @@ construct(T *__restrict src, const T &val)
         new (addr(src[i + 3])) T(val);
       }
     } else {
-      for ( usize i = 0; i < N; ++i )
-        new (addr(src[i])) T(val);
+      for ( usize i = 0; i < N; ++i ) new (addr(src[i])) T(val);
     }
   } else {
     micron::ctypeset<N>(src, val);
@@ -445,8 +428,7 @@ void
 construct(T *__restrict src, const T &val, usize cnt)
 {
   if constexpr ( !micron::is_trivially_constructible_v<T, const T &> ) {
-    for ( usize i = 0; i < cnt; ++i )
-      new (addr(src[i])) T(val);
+    for ( usize i = 0; i < cnt; ++i ) new (addr(src[i])) T(val);
   } else {
     micron::typeset(src, val, cnt);
   }

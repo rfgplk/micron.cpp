@@ -159,15 +159,18 @@ clock_t
 clock(void)
 {
   timespec_t tm;
-  if ( clock_gettime(clock_process_cputime_id, tm) != 0 )
-    return -1;
+  if ( clock_gettime(clock_process_cputime_id, tm) != 0 ) return -1;
   return (tm.tv_sec * clocks_per_sec + tm.tv_nsec / (1000000000 / clocks_per_sec));
 }
 
 time_t
 time(void)
 {
+#if !defined(__micron_arch_arm32)
   return micron::syscall(SYS_time, nullptr);
+#else
+  return micron::syscall(SYS_clock_gettime, nullptr);
+#endif
 }
 
 double difftime(time_t t0, time_t t1);
@@ -261,7 +264,11 @@ getitimer(i32 which, itimerval_t &cur)
 u32
 alarm(u32 seconds)
 {
+#if !defined(__micron_arch_arm32)
   return static_cast<i32>(micron::syscall(SYS_alarm, seconds));
+#else
+  return 0;
+#endif
 }
 
 i32
@@ -270,8 +277,7 @@ clock_getcpuclockid(posix::pid_t pid, clockid_t &clc)
   clc = static_cast<clockid_t>(~(static_cast<u32>(pid) << 3));
   timespec_t probe;
   long r = micron::syscall(SYS_clock_gettime, clc, &probe);
-  if ( r != 0 )
-    return static_cast<i32>(-r); /* return positive errno */
+  if ( r != 0 ) return static_cast<i32>(-r); /* return positive errno */
   return 0;
 }
 

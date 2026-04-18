@@ -43,8 +43,7 @@ public:
 
   ~fstack()
   {
-    if ( __mem::is_zero() )
-      return;
+    if ( __mem::is_zero() ) return;
     clear();
   }
 
@@ -52,21 +51,18 @@ public:
 
   explicit fstack(const umax_t n) : __mem(n)
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push();
+    for ( umax_t i = 0; i < n; i++ ) push();
   }
 
   fstack(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> ) {
       usize i = 0;
-      for ( T &&value : lst )
-        new (micron::addr(__mem::memory[i++])) T(micron::move(value));
+      for ( T &&value : lst ) new (micron::addr(__mem::memory[i++])) T(micron::move(value));
       __mem::length = lst.size();
     } else {
       usize i = 0;
-      for ( T value : lst )
-        __mem::memory[i++] = value;
+      for ( T value : lst ) __mem::memory[i++] = value;
       __mem::length = lst.size();
     }
   }
@@ -82,8 +78,7 @@ public:
   fstack &
   operator=(const fstack &o)
   {
-    if ( o.length >= __mem::capacity )
-      reserve(o.length);
+    if ( o.length >= __mem::capacity ) reserve(o.length);
     __impl_container::copy_assign(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
@@ -92,8 +87,7 @@ public:
   fstack &
   operator=(fstack &&o)
   {
-    if ( __mem::memory )
-      __mem::free();
+    if ( __mem::memory ) __mem::free();
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -138,16 +132,14 @@ public:
   inline void
   push() noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T{};
   }
 
   inline void
   push(const T &v) noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_constructible_v<T> )
       new (micron::addr(__mem::memory[__mem::length++])) T(v);
     else
@@ -157,8 +149,7 @@ public:
   inline void
   push(T &&v) noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
   }
 
@@ -180,8 +171,7 @@ public:
   inline void
   emplace(Args &&...args) noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(args)...);
   }
 
@@ -189,8 +179,7 @@ public:
   pop() noexcept
   {
     T val = micron::move(__mem::memory[__mem::length - 1]);
-    if constexpr ( micron::is_class_v<T> )
-      __mem::memory[__mem::length - 1].~T();
+    if constexpr ( micron::is_class_v<T> ) __mem::memory[__mem::length - 1].~T();
     czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&__mem::memory[__mem::length-- - 1]));
     return val;
   }
@@ -205,16 +194,14 @@ public:
   inline void
   reserve(const usize n) noexcept
   {
-    if ( n < __mem::capacity )
-      return;
+    if ( n < __mem::capacity ) return;
     __mem::expand(n);
   }
 
   inline void
   clear() noexcept
   {
-    if ( !__mem::length )
-      return;
+    if ( !__mem::length ) return;
     __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
     __mem::length = 0;
   }
@@ -338,11 +325,9 @@ public:
   bool
   operator==(const fstack &o) const noexcept
   {
-    if ( __mem::length != o.length )
-      return false;
+    if ( __mem::length != o.length ) return false;
     for ( usize i = 0; i < __mem::length; ++i )
-      if ( __mem::memory[i] != o.memory[i] )
-        return false;
+      if ( __mem::memory[i] != o.memory[i] ) return false;
     return true;
   }
 
@@ -357,10 +342,8 @@ public:
   {
     usize n = __mem::length < o.length ? __mem::length : o.length;
     for ( usize i = 0; i < n; ++i ) {
-      if ( __mem::memory[i] < o.memory[i] )
-        return true;
-      if ( o.memory[i] < __mem::memory[i] )
-        return false;
+      if ( __mem::memory[i] < o.memory[i] ) return true;
+      if ( o.memory[i] < __mem::memory[i] ) return false;
     }
     return __mem::length < o.length;
   }
@@ -406,8 +389,7 @@ public:
 
   ~fstack()
   {
-    if ( __mem::is_zero() )
-      return;
+    if ( __mem::is_zero() ) return;
     clear();
   }
 
@@ -415,21 +397,18 @@ public:
 
   explicit fstack(const umax_t n) : __mem(n)
   {
-    for ( umax_t i = 0; i < n; i++ )
-      push();
+    for ( umax_t i = 0; i < n; i++ ) push();
   }
 
   fstack(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> ) {
       usize i = 0;
-      for ( T &&value : lst )
-        new (micron::addr(__mem::memory[i++])) T(micron::move(value));
+      for ( T &&value : lst ) new (micron::addr(__mem::memory[i++])) T(micron::move(value));
       __mem::length = lst.size();
     } else {
       usize i = 0;
-      for ( T value : lst )
-        __mem::memory[i++] = value;
+      for ( T value : lst ) __mem::memory[i++] = value;
       __mem::length = lst.size();
     }
   }
@@ -443,8 +422,7 @@ public:
   fstack &
   operator=(fstack &&o)
   {
-    if ( __mem::memory )
-      __mem::free();
+    if ( __mem::memory ) __mem::free();
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -489,8 +467,7 @@ public:
   inline void
   push() noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T{};
   }
 
@@ -499,8 +476,7 @@ public:
   inline void
   push(T &&v) noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
   }
 
@@ -522,8 +498,7 @@ public:
   inline void
   emplace(Args &&...args) noexcept
   {
-    if ( __mem::length >= __mem::capacity )
-      reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(args)...);
   }
 
@@ -531,8 +506,7 @@ public:
   pop() noexcept
   {
     T val = micron::move(__mem::memory[__mem::length - 1]);
-    if constexpr ( micron::is_class_v<T> )
-      __mem::memory[__mem::length - 1].~T();
+    if constexpr ( micron::is_class_v<T> ) __mem::memory[__mem::length - 1].~T();
     czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&__mem::memory[__mem::length-- - 1]));
     return val;
   }
@@ -547,16 +521,14 @@ public:
   inline void
   reserve(const usize n) noexcept
   {
-    if ( n < __mem::capacity )
-      return;
+    if ( n < __mem::capacity ) return;
     __mem::expand(n);
   }
 
   inline void
   clear() noexcept
   {
-    if ( !__mem::length )
-      return;
+    if ( !__mem::length ) return;
     __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
     __mem::length = 0;
   }
@@ -680,11 +652,9 @@ public:
   bool
   operator==(const fstack &o) const noexcept
   {
-    if ( __mem::length != o.length )
-      return false;
+    if ( __mem::length != o.length ) return false;
     for ( usize i = 0; i < __mem::length; ++i )
-      if ( __mem::memory[i] != o.memory[i] )
-        return false;
+      if ( __mem::memory[i] != o.memory[i] ) return false;
     return true;
   }
 
@@ -699,10 +669,8 @@ public:
   {
     usize n = __mem::length < o.length ? __mem::length : o.length;
     for ( usize i = 0; i < n; ++i ) {
-      if ( __mem::memory[i] < o.memory[i] )
-        return true;
-      if ( o.memory[i] < __mem::memory[i] )
-        return false;
+      if ( __mem::memory[i] < o.memory[i] ) return true;
+      if ( o.memory[i] < __mem::memory[i] ) return false;
     }
     return __mem::length < o.length;
   }

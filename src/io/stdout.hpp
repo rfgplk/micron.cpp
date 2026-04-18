@@ -361,8 +361,7 @@ printk(T ptr, usize len)
   micron::memcpy(buf, ptr, len);
   buf[len] = '\0';
   __impl::emit<outstream>(buf);
-  if ( buf != stk )
-    delete[] buf;
+  if ( buf != stk ) delete[] buf;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -376,8 +375,7 @@ printk(const T &ctr)
   __impl::emit<outstream>("{ ");
   bool first = true;
   for ( auto itr = ctr.cbegin(); itr != ctr.cend(); ++itr ) {
-    if ( !first )
-      __impl::emit<outstream>(", ");
+    if ( !first ) __impl::emit<outstream>(", ");
     // NOTE: old approach of decltype was wonky for cv-qualified types (ie printing const cont& et al)
     // this works BUT the container must define a value_type (STL does so does micron)
     printk<typename T::value_type, outstream>(*itr);
@@ -405,10 +403,8 @@ printk(const T &m)
   __impl::emit<outstream>("{ ");
   bool first = true;
   for ( auto itr = m.begin(); itr != m.end(); ++itr ) {
-    if ( !itr->key )
-      continue;
-    if ( !first )
-      __impl::emit<outstream>(", ");
+    if ( !itr->key ) continue;
+    if ( !first ) __impl::emit<outstream>(", ");
     // print hash key as decimal
     char kbuf[24];
     usize kn = __impl::arith_to_buf(kbuf, 24, static_cast<u64>(itr->key));
@@ -439,8 +435,7 @@ printk(const T &m)
   __impl::emit<outstream>("{ ");
   bool first = true;
   for ( auto itr = m.begin(); itr != m.end(); ++itr ) {
-    if ( !first )
-      __impl::emit<outstream>(", ");
+    if ( !first ) __impl::emit<outstream>(", ");
     auto entry = *itr;
     printk<decltype(entry.a), outstream>(entry.a);
     __impl::emit<outstream>(": ");

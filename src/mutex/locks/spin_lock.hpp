@@ -37,10 +37,8 @@ public:
   operator()()
   {
     for ( ;; ) {
-      while ( tk.get(memory_order::acquire) )
-        __cpu_pause();
-      if ( tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) )
-        break;
+      while ( tk.get(memory_order::acquire) ) __cpu_pause();
+      if ( tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) break;
     }
     return &spin_lock::reset;
   }
@@ -54,8 +52,7 @@ public:
   bool
   try_lock() noexcept
   {
-    if ( tk.get(memory_order::relaxed) )
-      return false;
+    if ( tk.get(memory_order::relaxed) ) return false;
     return tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED);
   }
 

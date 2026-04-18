@@ -96,8 +96,7 @@ template <typename T> struct __core_memory_resource {
   accept(const chunk<byte> &o)
   {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
-    if ( addr % alignof(T) != 0 )
-      exc<except::memory_error>("__core_memory_resource, address isn't aligned");
+    if ( addr % alignof(T) != 0 ) exc<except::memory_error>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
@@ -107,8 +106,7 @@ template <typename T> struct __core_memory_resource {
   accept(chunk<byte> &&o)
   {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
-    if ( addr % alignof(T) != 0 )
-      exc<except::memory_error>("__core_memory_resource, address isn't aligned");
+    if ( addr % alignof(T) != 0 ) exc<except::memory_error>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
@@ -130,20 +128,16 @@ template <typename T> struct __core_memory_resource {
   inline reference
   ref()
   {
-    if ( memory == nullptr )
-      __builtin_exit(1);
-    if ( capacity == 0 )
-      __builtin_exit(1);
+    if ( memory == nullptr ) __builtin_exit(1);
+    if ( capacity == 0 ) __builtin_exit(1);
     return *cast();
   }
 
   inline const_reference
   ref() const
   {
-    if ( memory == nullptr )
-      __builtin_exit(1);
-    if ( capacity == 0 )
-      __builtin_exit(1);
+    if ( memory == nullptr ) __builtin_exit(1);
+    if ( capacity == 0 ) __builtin_exit(1);
     return *cast();
   }
 

@@ -59,10 +59,8 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
       ptr += 32;
     } else {
       u8 tmp[32];
-      for ( usize i = 0; i < remaining; ++i )
-        tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i )
-        tmp[i] = __zero_block[i];     // fill with static zero
+      for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];     // fill with static zero
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -109,10 +107,8 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       ptr += 32;
     } else {
       u8 tmp[32];
-      for ( usize i = 0; i < remaining; ++i )
-        tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i )
-        tmp[i] = __zero_block[i];     // fill with static zero
+      for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];     // fill with static zero
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -168,10 +164,8 @@ zz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       ptr += 32;
     } else {
       u8 tmp[32];
-      for ( usize i = 0; i < remaining; ++i )
-        tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i )
-        tmp[i] = __zero_block[i];
+      for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -251,10 +245,8 @@ zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       ptr += 32;
     } else {
       u8 tmp[32];
-      for ( usize i = 0; i < remaining; ++i )
-        tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i )
-        tmp[i] = __zero_block[i];
+      for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -325,10 +317,8 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       ptr += 32;
     } else {
       u8 tmp[32];
-      for ( usize i = 0; i < remaining; ++i )
-        tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i )
-        tmp[i] = __zero_block[i];
+      for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -415,10 +405,8 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       ptr += 32;
     } else {
       u8 tmp[32];
-      for ( usize i = 0; i < remaining; ++i )
-        tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i )
-        tmp[i] = __zero_block[i];
+      for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }

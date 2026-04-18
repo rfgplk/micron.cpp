@@ -24,10 +24,8 @@ gcd(T a, T b)
 {
   using U = micron::make_unsigned_t<T>;
 
-  if ( a == 0 )
-    return b < 0 ? -b : b;
-  if ( b == 0 )
-    return a < 0 ? -a : a;
+  if ( a == 0 ) return b < 0 ? -b : b;
+  if ( b == 0 ) return a < 0 ? -a : a;
 
   U ua = a < 0 ? U(-a) : U(a);
   U ub = b < 0 ? U(-b) : U(b);
@@ -47,8 +45,7 @@ gcd(T a, T b)
       ub = tmp;
     }
     ub -= ua;
-    if ( !ub )
-      return T(ua << k);
+    if ( !ub ) return T(ua << k);
     ub >>= countr_zero(ub);
   }
 }
@@ -73,8 +70,7 @@ digits(T x)
   using U = micron::make_unsigned_t<T>;
   U v = x < 0 ? U(-x) : U(x);
 
-  if ( v == 0 )
-    return 1;
+  if ( v == 0 ) return 1;
 
   int count = 0;
   while ( v ) {
@@ -89,48 +85,28 @@ int
 __digits(T x)
 {
   x = abs(x);
-  if ( x < (T)1e1 )
-    return 1;
-  if ( x < (T)1e2 )
-    return 2;
-  if ( x < (T)1e3 )
-    return 3;
-  if ( x < (T)1e4 )
-    return 4;
-  if ( x < (T)1e5 )
-    return 5;
-  if ( x < (T)1e6 )
-    return 6;
-  if ( x < (T)1e7 )
-    return 7;
-  if ( x < (T)1e8 )
-    return 8;
-  if ( x < (T)1e9 )
-    return 9;
+  if ( x < (T)1e1 ) return 1;
+  if ( x < (T)1e2 ) return 2;
+  if ( x < (T)1e3 ) return 3;
+  if ( x < (T)1e4 ) return 4;
+  if ( x < (T)1e5 ) return 5;
+  if ( x < (T)1e6 ) return 6;
+  if ( x < (T)1e7 ) return 7;
+  if ( x < (T)1e8 ) return 8;
+  if ( x < (T)1e9 ) return 9;
   // only for larger types
   if constexpr ( sizeof(T) > 4 ) {
-    if ( x < (T)1e10 )
-      return 10;
-    if ( x < (T)1e11 )
-      return 11;
-    if ( x < (T)1e12 )
-      return 12;
-    if ( x < (T)1e13 )
-      return 13;
-    if ( x < (T)1e14 )
-      return 14;
-    if ( x < (T)1e15 )
-      return 15;
-    if ( x < (T)1e16 )
-      return 16;
-    if ( x < (T)1e17 )
-      return 17;
-    if ( x < (T)1e18 )
-      return 18;
-    if ( x < (T)1e19 )
-      return 19;
-    if ( x < (T)1e20 )
-      return 20;
+    if ( x < (T)1e10 ) return 10;
+    if ( x < (T)1e11 ) return 11;
+    if ( x < (T)1e12 ) return 12;
+    if ( x < (T)1e13 ) return 13;
+    if ( x < (T)1e14 ) return 14;
+    if ( x < (T)1e15 ) return 15;
+    if ( x < (T)1e16 ) return 16;
+    if ( x < (T)1e17 ) return 17;
+    if ( x < (T)1e18 ) return 18;
+    if ( x < (T)1e19 ) return 19;
+    if ( x < (T)1e20 ) return 20;
   }
   return 0;
 }
@@ -140,12 +116,10 @@ template <typename T, typename F>
 constexpr T
 power_loop(T x, F p)
 {
-  if ( p < 0 )
-    return 0;
+  if ( p < 0 ) return 0;
 
   T r = 1;
-  for ( ; p > 0; --p )
-    r *= x;
+  for ( ; p > 0; --p ) r *= x;
   return r;
 }
 
@@ -154,11 +128,9 @@ template <typename T, typename F>
 constexpr T
 power(T x, F p)
 {
-  if ( p < 0 )
-    return 0;
+  if ( p < 0 ) return 0;
 
-  if ( p == 0 )
-    return 1;
+  if ( p == 0 ) return 1;
 
   if ( p % 2 == 0 ) {
     T t = power(x, p / 2);
@@ -174,13 +146,11 @@ template <typename T>
 constexpr T
 pow(T base, i32 exp)
 {
-  if ( exp < 0 )
-    return T(0);
+  if ( exp < 0 ) return T(0);
 
   T result = 1;
   while ( exp > 0 ) {
-    if ( exp & 1 )
-      result *= base;
+    if ( exp & 1 ) result *= base;
     base *= base;
     exp >>= 1;
   }
@@ -365,16 +335,14 @@ flog2(long double x) noexcept
 constexpr i32
 log2(i32 x)
 {
-  if ( x <= 0 )
-    return -1;
+  if ( x <= 0 ) return -1;
   return 31 - __builtin_clz(x);
 }
 
 constexpr i64
 log2ll(i64 x)
 {
-  if ( x <= 0 )
-    return -1;
+  if ( x <= 0 ) return -1;
   return (i64)63 - (i64)__builtin_clzll(x);
 }
 
@@ -419,8 +387,7 @@ template <typename T>
 constexpr T
 nearest_pow2(T x)
 {
-  if ( x <= 0 )
-    return 1;
+  if ( x <= 0 ) return 1;
 
   u32 v = (u32)x;
 
@@ -436,8 +403,7 @@ template <typename T>
 constexpr T
 nearest_pow2ll(T x)
 {
-  if ( x <= 0 )
-    return 1;
+  if ( x <= 0 ) return 1;
 
   u64 v = (u64)x;
 
@@ -492,8 +458,7 @@ constexpr T
 ceil(T s)
 {
   i64 i = (i64)s;
-  if ( s > T(i) )
-    return T(i + 1);
+  if ( s > T(i) ) return T(i + 1);
   return T(i);
 }
 
@@ -503,8 +468,7 @@ constexpr T
 floor(T s)
 {
   i64 i = (i64)s;
-  if ( s < T(i) )
-    return T(i - 1);
+  if ( s < T(i) ) return T(i - 1);
   return T(i);
 }
 
@@ -525,8 +489,7 @@ constexpr R
 ceil(T s)
 {
   i64 i = (i64)s;
-  if ( s > T(i) )
-    return static_cast<R>((i + 1));
+  if ( s > T(i) ) return static_cast<R>((i + 1));
   return static_cast<R>(T(i));
 }
 
@@ -536,8 +499,7 @@ constexpr R
 floor(T s)
 {
   i64 i = (i64)s;
-  if ( s < T(i) )
-    return static_cast<R>(T(i - 1));
+  if ( s < T(i) ) return static_cast<R>(T(i - 1));
   return static_cast<R>(T(i));
 }
 

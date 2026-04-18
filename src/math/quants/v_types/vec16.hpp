@@ -47,8 +47,7 @@ struct vector_16 {
 
   constexpr vector_16(const std::initializer_list<T> &o)
   {
-    if ( o.size() != 16 )
-      exc<except::library_error>("vector_16(): initializer_list size isn't equal to 16");
+    if ( o.size() != 16 ) exc<except::library_error>("vector_16(): initializer_list size isn't equal to 16");
     auto it = o.begin();
     x = *it++;
     y = *it++;
@@ -444,8 +443,7 @@ struct vector_16 {
   {
     T nd = dot(normal);
     T kk = T{ 1 } - eta * eta * (T{ 1 } - nd * nd);
-    if ( kk < T{ 0 } )
-      return {};
+    if ( kk < T{ 0 } ) return {};
     return *this * eta - normal * (eta * nd + math::fsqrt(kk));
   }
 
@@ -577,8 +575,7 @@ struct vector_16 {
     const T vs[16] = { x, y, z, w, a, b, c, d, e, f, g, h, i, j, k, l };
     int idx = 0;
     for ( int n = 1; n < 16; ++n )
-      if ( vs[n] < vs[idx] )
-        idx = n;
+      if ( vs[n] < vs[idx] ) idx = n;
     return idx;
   }
 
@@ -588,8 +585,7 @@ struct vector_16 {
     const T vs[16] = { x, y, z, w, a, b, c, d, e, f, g, h, i, j, k, l };
     int idx = 0;
     for ( int n = 1; n < 16; ++n )
-      if ( vs[n] > vs[idx] )
-        idx = n;
+      if ( vs[n] > vs[idx] ) idx = n;
     return idx;
   }
 

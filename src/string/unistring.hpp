@@ -47,8 +47,7 @@ template <is_string T>
 inline void
 invert(T &str)
 {
-  if ( str.size() <= 1 )
-    return;
+  if ( str.size() <= 1 ) return;
   typename T::iterator start = str.begin();
   typename T::iterator end = str.end() - 1;
   while ( start < end ) {
@@ -92,10 +91,8 @@ constexpr_int_to_string(I n)
   }
   char *out = &result[0];
   usize out_pos = 0;
-  if ( neg )
-    out[out_pos++] = '-';
-  for ( usize i = pos; i > 0; --i )
-    out[out_pos++] = tmp[i - 1];
+  if ( neg ) out[out_pos++] = '-';
+  for ( usize i = pos; i > 0; --i ) out[out_pos++] = tmp[i - 1];
   out[out_pos] = '\0';
   result._buf_set_length(out_pos);
   return result;
@@ -121,8 +118,7 @@ constexpr_hex(I n, bool upper = false)
     }
   }
   char *out = &result[0];
-  for ( usize i = pos; i > 0; --i )
-    out[pos - i] = tmp[i - 1];
+  for ( usize i = pos; i > 0; --i ) out[pos - i] = tmp[i - 1];
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -147,8 +143,7 @@ constexpr_bin(I n)
     }
   }
   char *out = &result[0];
-  for ( usize i = pos; i > 0; --i )
-    out[pos - i] = tmp[i - 1];
+  for ( usize i = pos; i > 0; --i ) out[pos - i] = tmp[i - 1];
   out[pos] = '\0';
   result._buf_set_length(pos);
   return result;
@@ -182,24 +177,17 @@ u8_check(const char *str, usize n)
       return nullptr;
     ++str;
     for ( usize j = 1; j < seq; ++j ) {
-      if ( str >= end )
-        return nullptr;
+      if ( str >= end ) return nullptr;
       u8 cont = static_cast<u8>(*str);
-      if ( (cont & 0xC0) != 0x80 )
-        return nullptr;
+      if ( (cont & 0xC0) != 0x80 ) return nullptr;
       cp = (cp << 6) | (cont & 0x3F);
       ++str;
     }
-    if ( seq == 2 && cp < 0x80 )
-      return nullptr;
-    if ( seq == 3 && cp < 0x800 )
-      return nullptr;
-    if ( seq == 4 && cp < 0x10000 )
-      return nullptr;
-    if ( cp >= 0xD800 && cp <= 0xDFFF )
-      return nullptr;
-    if ( cp > 0x10FFFF )
-      return nullptr;
+    if ( seq == 2 && cp < 0x80 ) return nullptr;
+    if ( seq == 3 && cp < 0x800 ) return nullptr;
+    if ( seq == 4 && cp < 0x10000 ) return nullptr;
+    if ( cp >= 0xD800 && cp <= 0xDFFF ) return nullptr;
+    if ( cp > 0x10FFFF ) return nullptr;
   }
   return str;
 }
@@ -211,14 +199,11 @@ u16_check(const char16_t *str, usize n)
   while ( str < end ) {
     u16 c = static_cast<u16>(*str);
     ++str;
-    if ( c < 0xD800 || c > 0xDFFF )
-      continue;
+    if ( c < 0xD800 || c > 0xDFFF ) continue;
     if ( c >= 0xD800 && c <= 0xDBFF ) {
-      if ( str >= end )
-        return nullptr;
+      if ( str >= end ) return nullptr;
       u16 low = static_cast<u16>(*str);
-      if ( low < 0xDC00 || low > 0xDFFF )
-        return nullptr;
+      if ( low < 0xDC00 || low > 0xDFFF ) return nullptr;
       ++str;
     } else
       return nullptr;
@@ -233,10 +218,8 @@ u32_check(const char32_t *str, usize n)
   while ( str < end ) {
     u32 c = static_cast<u32>(*str);
     ++str;
-    if ( c >= 0xD800 && c <= 0xDFFF )
-      return nullptr;
-    if ( c > 0x10FFFF )
-      return nullptr;
+    if ( c >= 0xD800 && c <= 0xDFFF ) return nullptr;
+    if ( c > 0x10FFFF ) return nullptr;
   }
   return str;
 }
@@ -315,11 +298,9 @@ to_string_stack(const C *str)
   // copy c-string into stack string
   micron::sstring<Sz, C> result;
   usize len = micron::strlen(str);
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   C *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = str[i];
+  for ( usize i = 0; i < len; ++i ) out[i] = str[i];
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -333,8 +314,7 @@ to_string_stack(const C (&str)[N])
   micron::sstring<Sz, C> result;
   constexpr usize len = N - 1;
   C *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = str[i];
+  for ( usize i = 0; i < len; ++i ) out[i] = str[i];
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -347,12 +327,10 @@ to_string_stack(f32 val)
   // shortest representation via ryu, then copy to stack
   char tmp[32];
   usize n = __impl::__ryu::d2s_buffered(static_cast<f64>(val), tmp);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -365,12 +343,10 @@ to_string_stack(f64 val)
   // shortest representation via ryu, then copy to stack
   char tmp[32];
   usize n = __impl::__ryu::d2s_buffered(val, tmp);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -383,12 +359,10 @@ to_string_stack(f32 val, u32 prec)
   // fixed-precision via ryu, then copy to stack
   char tmp[48];
   usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), tmp, 48, prec);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -401,12 +375,10 @@ to_string_stack(f64 val, u32 prec)
   // fixed-precision via ryu, then copy to stack
   char tmp[64];
   usize n = __impl::__ryu::d2f_buffered(val, tmp, 64, prec);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -422,12 +394,10 @@ float_to_string_stack(f32 val)
 {
   char tmp[32];
   usize n = __impl::__ryu::d2s_buffered(static_cast<f64>(val), tmp);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -439,12 +409,10 @@ double_to_string_stack(f64 val)
 {
   char tmp[32];
   usize n = __impl::__ryu::d2s_buffered(val, tmp);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -456,12 +424,10 @@ float_to_string_stack(f32 val, u32 prec)
 {
   char tmp[48];
   usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), tmp, 48, prec);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -473,12 +439,10 @@ double_to_string_stack(f64 val, u32 prec)
 {
   char tmp[64];
   usize n = __impl::__ryu::d2f_buffered(val, tmp, 64, prec);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -493,12 +457,10 @@ to_fixed_stack(f64 val, u32 precision = 6)
 {
   char tmp[64];
   usize n = __impl::__ryu::d2f_buffered(val, tmp, 64, precision);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -510,12 +472,10 @@ to_scientific_stack(f64 val, u32 precision = 6)
 {
   char tmp[80];
   usize n = __impl::__ryu::d2e_buffered(val, tmp, 80, precision);
-  if ( n > Sz - 1 )
-    n = Sz - 1;
+  if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < n; ++i )
-    out[i] = static_cast<C>(tmp[i]);
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
   out[n] = '\0';
   result._buf_set_length(n);
   return result;
@@ -537,8 +497,7 @@ to_general_stack(f64 val, u32 precision = 6)
       tmp *= 10.0;
       --exp;
     }
-    if ( exp < -4 || exp >= static_cast<i32>(precision) )
-      return to_scientific_stack<Sz, C>(val, precision > 0 ? precision - 1 : 0);
+    if ( exp < -4 || exp >= static_cast<i32>(precision) ) return to_scientific_stack<Sz, C>(val, precision > 0 ? precision - 1 : 0);
   }
   return to_fixed_stack<Sz, C>(val, precision);
 }
@@ -568,15 +527,12 @@ int_to_string_base_stack(I n, u32 base, bool upper = false)
     uval = static_cast<U>(n);
   }
   char *start = __impl::uint_to_buf_base_backward(tend, static_cast<u64>(uval), base, upper);
-  if ( neg )
-    *--start = '-';
+  if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = static_cast<C>(start[i]);
+  for ( usize i = 0; i < len; ++i ) out[i] = static_cast<C>(start[i]);
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -592,12 +548,10 @@ uint_to_string_base_stack(I n, u32 base, bool upper = false)
   char *tend = tmp + 72;
   char *start = __impl::uint_to_buf_base_backward(tend, static_cast<u64>(static_cast<U>(n)), base, upper);
   usize len = static_cast<usize>(tend - start);
-  if ( len > Sz - 1 )
-    len = Sz - 1;
+  if ( len > Sz - 1 ) len = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
-  for ( usize i = 0; i < len; ++i )
-    out[i] = static_cast<C>(start[i]);
+  for ( usize i = 0; i < len; ++i ) out[i] = static_cast<C>(start[i]);
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
@@ -641,8 +595,7 @@ to_hex_fixed_stack(I n, usize digits, bool upper = false)
   using U = micron::make_unsigned_t<I>;
   U uval = static_cast<U>(n);
   usize dlen = digits;
-  if ( dlen > Sz - 1 )
-    dlen = Sz - 1;
+  if ( dlen > Sz - 1 ) dlen = Sz - 1;
   micron::sstring<Sz, C> buf;
   const char *hex = upper ? __impl::__hex_upper : __impl::__hex_lower;
   C *out = &buf[0];
@@ -663,8 +616,7 @@ to_bin_fixed_stack(I n, usize digits)
   using U = micron::make_unsigned_t<I>;
   U uval = static_cast<U>(n);
   usize dlen = digits;
-  if ( dlen > Sz - 1 )
-    dlen = Sz - 1;
+  if ( dlen > Sz - 1 ) dlen = Sz - 1;
   micron::sstring<Sz, C> buf;
   C *out = &buf[0];
   for ( usize i = dlen; i > 0; --i ) {
@@ -700,8 +652,7 @@ int_to_string_padded_stack(I n, usize width)
     uval = static_cast<U>(n);
   }
   usize off = 0;
-  if ( neg )
-    tmp[off++] = '-';
+  if ( neg ) tmp[off++] = '-';
   char dtmp[24];
   char *dend = dtmp + 24;
   char *dstart = __impl::uint_to_buf_backward(dend, static_cast<u64>(uval));
@@ -715,18 +666,13 @@ int_to_string_padded_stack(I n, usize width)
 
   if ( raw_len >= width ) {
     // no padding needed
-    if ( neg )
-      out[pos++] = '-';
-    for ( usize i = 0; i < dlen && pos < Sz - 1; ++i )
-      out[pos++] = static_cast<C>(dstart[i]);
+    if ( neg ) out[pos++] = '-';
+    for ( usize i = 0; i < dlen && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(dstart[i]);
   } else {
     usize pad = width - raw_len;
-    if ( neg )
-      out[pos++] = '-';
-    for ( usize i = 0; i < pad && pos < Sz - 1; ++i )
-      out[pos++] = '0';
-    for ( usize i = 0; i < dlen && pos < Sz - 1; ++i )
-      out[pos++] = static_cast<C>(dstart[i]);
+    if ( neg ) out[pos++] = '-';
+    for ( usize i = 0; i < pad && pos < Sz - 1; ++i ) out[pos++] = '0';
+    for ( usize i = 0; i < dlen && pos < Sz - 1; ++i ) out[pos++] = static_cast<C>(dstart[i]);
   }
   out[pos] = '\0';
   result._buf_set_length(pos);

@@ -46,8 +46,7 @@ struct atomic_flag {
   void
   wait(bool old, memory_order order = memory_order::seq_cst) const noexcept
   {
-    while ( tk.get(order) == old )
-      ;
+    while ( tk.get(order) == old );
   }
 };
 };     // namespace micron
