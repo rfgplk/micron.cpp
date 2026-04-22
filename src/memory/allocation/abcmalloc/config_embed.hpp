@@ -27,48 +27,48 @@ namespace abc
 {
 
 constexpr static const bool __is_constrained = true;
-constexpr static const u64 __system_pagesize = micron::page_size;     // 4096 on ARMv7
+constexpr static const usize __system_pagesize = micron::page_size;     // 4096 on ARMv7
 
 // shifts defined like this so we can easily pull them up in code
-constexpr static const u64 __class_arena_internal = 1024;
-constexpr static const u64 __class_precise_shift = 8;
-constexpr static const u64 __class_small_shift = 9;
-constexpr static const u64 __class_medium_shift = 12;
-constexpr static const u64 __class_large_shift = 15;
-constexpr static const u64 __class_huge_shift = 18;
-constexpr static const u64 __class_1mb_shift = 20;
-constexpr static const u64 __class_gb_shift = 29;
-constexpr static const u64 __class_precise = (1 << __class_precise_shift);
-constexpr static const u64 __class_small = (1 << __class_small_shift);
-constexpr static const u64 __class_medium = (1 << __class_medium_shift);
-constexpr static const u64 __class_large = (1 << __class_large_shift);
-constexpr static const u64 __class_huge = (1 << __class_huge_shift);
-constexpr static const u64 __class_1mb = (1 << __class_1mb_shift);
-constexpr static const u64 __class_gb = (1 << __class_gb_shift);
+constexpr static const usize __class_arena_internal = 1024;
+constexpr static const usize __class_precise_shift = 8;
+constexpr static const usize __class_small_shift = 9;
+constexpr static const usize __class_medium_shift = 12;
+constexpr static const usize __class_large_shift = 15;
+constexpr static const usize __class_huge_shift = 18;
+constexpr static const usize __class_1mb_shift = 20;
+constexpr static const usize __class_gb_shift = 29;
+constexpr static const usize __class_precise = (1 << __class_precise_shift);
+constexpr static const usize __class_small = (1 << __class_small_shift);
+constexpr static const usize __class_medium = (1 << __class_medium_shift);
+constexpr static const usize __class_large = (1 << __class_large_shift);
+constexpr static const usize __class_huge = (1 << __class_huge_shift);
+constexpr static const usize __class_1mb = (1 << __class_1mb_shift);
+constexpr static const usize __class_gb = (1 << __class_gb_shift);
 
 // 32 MB hard ceiling
-constexpr static const u64 __alloc_limit = (32 << 20);
+constexpr static const usize __alloc_limit = (32 << 20);
 
 // these two switches determine the number of *pages* to allocate on initialization, by default, it's 512 pages for the
 // internal abcmalloc metabuffer, and a minimum of 16 per each new sheet allocation
 
 // 512 KB of TLSF cache roughly ~2000 max-size precise blocks
-constexpr static const u64 __default_cache_size_factor = (1 << 10);
+constexpr static const usize __default_cache_size_factor = (1 << 10);
 
 // 64 pages = 256 KB of arena metadata
 // 256 KB supports cca 3200 sheet expansions before needing a reload
-constexpr static const u64 __default_arena_page_buf = 64;
+constexpr static const usize __default_arena_page_buf = 64;
 
-constexpr static const u64 __default_magic_size = micron::numeric_limits<u64>::max();
+constexpr static const usize __default_magic_size = micron::numeric_limits<usize>::max();
 
 // 65 KB minimum per sheet, larger buckets will exceed this
-constexpr static const u64 __default_minimum_page_mul = 16;
+constexpr static const usize __default_minimum_page_mul = 16;
 
 // 2% of total system RAM. on 128 MB that's 2.6 MB, 256MB -- 5.2MB
 constexpr static const f32 __default_prealloc_factor = 0.02f;
 
 // 384 precise blocks per expansion (384 * 256 = 96 KB)
-constexpr static const u64 __default_cache_step = 384;
+constexpr static const usize __default_cache_step = 384;
 
 constexpr static const bool __default_launder
     = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address
@@ -91,13 +91,13 @@ constexpr static const byte __default_fail_result = 0;
 
 // only 1 retry. on a constrained system, if the first expansion fails (OOM or alloc_limit hit), a second attempt will almost certainly fail
 // too
-constexpr static const u64 __default_max_retries = 1;
+constexpr static const usize __default_max_retries = 1;
 
 // in pages (each page is 4096)
 constexpr static const bool __default_saturated_mode = true;     // enables a saturation buffer, which checks the rate at which new requests
                                                                  // are coming in. adjusts allocation space accordingly
 
-constexpr static const u64 __default_overcommit = 1;
+constexpr static const usize __default_overcommit = 1;
 
 constexpr static const bool __default_init_large_pages = false;
 

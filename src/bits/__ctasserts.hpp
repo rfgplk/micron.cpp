@@ -77,7 +77,8 @@ struct __ct_type_checker {
     static_assert(sizeof(uint32_t) == 4, "uint32_t must be 4 bytes");
     static_assert(sizeof(int64_t) == 8, "int64_t must be 8 bytes");
     static_assert(sizeof(uint64_t) == 8, "uint64_t must be 8 bytes");
-    // static_assert(sizeof(uint64_t) == sizeof(usize), "uint64_t should match usize");
+    // restore to spec
+    static_assert(sizeof(uintptr_t) == sizeof(usize), "uintptr_t should match usize");
     static_assert(sizeof(uint64_t) == sizeof(umax_t), "uint64_t should match umax_t");
 
     static_assert(sizeof(int8_t) == sizeof(i8), "int8_t must be equaequal to i8");
@@ -139,7 +140,7 @@ struct __ct_type_checker {
     static_assert(sizeof(__slongword_type) == sizeof(long), "__slongword_type must match long");
     static_assert(sizeof(__ulongword_type) == sizeof(unsigned long), "__ulongword_type must match unsigned long");
 
-    static_assert(sizeof(__sword_type) == sizeof(size_t), "__sword_type must match size_t");
+    static_assert(sizeof(__sword_type) == sizeof(ssize_t), "__sword_type must match ssize_t");
     static_assert(sizeof(__uword_type) == sizeof(usize), "__uword_type must match usize");
     static_assert(sizeof(__squad_type) == 8 || sizeof(__squad_type) == sizeof(long), "__squad_type must be 8 bytes or long");
     static_assert(sizeof(__uquad_type) == 8 || sizeof(__uquad_type) == sizeof(unsigned long),

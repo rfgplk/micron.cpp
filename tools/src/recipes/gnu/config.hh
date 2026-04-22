@@ -10,6 +10,17 @@ namespace recipes
 namespace gnu
 {
 
+inline bool
+__is_cpp_standard(const string_type &__std)
+{
+  if ( __std != gcc::__standard_c90 or __std != gcc::__standard_iso9899_1990 or gcc::__standard_iso9899_199409
+       or __std != gcc::__standard_c99 or __std != gcc::__standard_c11 or __std != gcc::__standard_c17
+       or __std != gcc::__standard_iso9899_2017 or __std != gcc::__standard_iso9899_2011 or __std != gcc::__standard_c18
+       or __std != gcc::__standard_c23 or __std != gcc::__standard_iso9899_2023 )
+    return false;
+  return true;
+}
+
 enum __arch : u32 { x86 = 0, arm };
 
 enum __compilers : u32 { gnucc = 0, clang, nasm };
@@ -127,8 +138,7 @@ __determine_source(config_t &conf, string_type &&str)
 inline void
 __make_name(config_t &conf)
 {
-  if ( conf.target.empty() )
-    return;
+  if ( conf.target.empty() ) return;
   auto itr = mc::format::find_reverse(conf.target, conf.target.end() - 1, ".");
   if ( itr == nullptr )
     itr = conf.target.end();
@@ -155,8 +165,7 @@ __make_name(config_t &conf)
 inline void
 finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_type, bool user_provided_opt)
 {
-  if ( conf.mode == __opt_modes::debug && !user_provided_opt )
-    conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
+  if ( conf.mode == __opt_modes::debug && !user_provided_opt ) conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
 
   conf.target_out.insert(conf.target_out.begin(), conf.bin_dir);
 
@@ -194,21 +203,25 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     break;
   case __compilers::gnucc :
     if ( conf.arch == __arch::x86 ) {
-      if ( conf.language == __languages::c )
+      if ( conf.language == __languages::c ) {
         conf.compiler_path = __compiler_gcc;
-      else if ( conf.language == __languages::cpp )
+        // we'll default to c11 since it's reasonable
+        conf.standard = gcc::__standard_c11;
+      } else if ( conf.language == __languages::cpp )
         conf.compiler_path = __compiler_gpp;
     } else if ( conf.arch == __arch::arm ) {
-      if ( conf.language == __languages::c )
+      if ( conf.language == __languages::c ) {
         conf.compiler_path = __compiler_gcc_arm_cross;
-      else if ( conf.language == __languages::cpp )
+        conf.standard = gcc::__standard_c11;
+      } else if ( conf.language == __languages::cpp )
         conf.compiler_path = __compiler_gpp_arm_cross;
     }
     break;
   case __compilers::clang :
-    if ( conf.language == __languages::c )
+    if ( conf.language == __languages::c ) {
       conf.compiler_path = __compiler_clang;
-    else if ( conf.language == __languages::cpp )
+      conf.standard = gcc::__standard_c11;
+    } else if ( conf.language == __languages::cpp )
       conf.compiler_path = __compiler_clangpp;
     break;
   }
@@ -228,13 +241,10 @@ parse_config(config_t &conf, int argc, char **argv)
     if ( mc::strcmp(argv[i], "-d") == 0 or mc::strcmp(argv[i], "-g") == 0 ) {
       conf.mode = __opt_modes::debug;
     } else if ( mc::strcmp(argv[i], "-o") == 0 ) {
-      if ( ++i >= argc )
-        mc::cerror("the -o flag must be followed by a path");
+      if ( ++i >= argc ) mc::cerror("the -o flag must be followed by a path");
       conf.bin_dir = argv[i];
-      if ( conf.bin_dir.empty() )
-        mc::cerror("bin_dir is empty");
-      if ( *(conf.bin_dir.end() - 1) != '/' )
-        conf.bin_dir.insert(conf.bin_dir.end(), '/');
+      if ( conf.bin_dir.empty() ) mc::cerror("bin_dir is empty");
+      if ( *(conf.bin_dir.end() - 1) != '/' ) conf.bin_dir.insert(conf.bin_dir.end(), '/');
       __make_name(conf);
     } else if ( mc::strcmp(argv[i], "-32") == 0 ) {
       conf.width = 32;
@@ -245,16 +255,13 @@ parse_config(config_t &conf, int argc, char **argv)
     } else if ( mc::strcmp(argv[i], "--arm") == 0 ) {
       conf.arch = __arch::arm;
     } else if ( mc::strcmp(argv[i], "-i") == 0 ) {
-      if ( ++i >= argc )
-        mc::cerror("the -i flag must be followed by a path");
+      if ( ++i >= argc ) mc::cerror("the -i flag must be followed by a path");
       conf.include_path = argv[i];
     } else if ( mc::strcmp(argv[i], "-l") == 0 ) {
-      if ( ++i >= argc )
-        mc::cerror("the -l flag must be followed by a path");
+      if ( ++i >= argc ) mc::cerror("the -l flag must be followed by a path");
       conf.lib_path = argv[i];
     } else if ( mc::strcmp(argv[i], "--lib") == 0 ) {
-      if ( ++i >= argc )
-        mc::cerror("the --lib flag must be followed by a library name (-l)name");
+      if ( ++i >= argc ) mc::cerror("the --lib flag must be followed by a library name (-l)name");
       conf.bonus_libs.push_back(argv[i]);
     } else if ( mc::strcmp(argv[i], "-w") == 0 ) {
       conf.warnings = true;
@@ -289,8 +296,7 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.language = __languages::lasm;
       conf.compiler = __compilers::nasm;
     } else if ( mc::strcmp(argv[i], "--std") == 0 ) {
-      if ( ++i >= argc )
-        mc::cerror("the --std flag must be followed by a valid standard type");
+      if ( ++i >= argc ) mc::cerror("the --std flag must be followed by a valid standard type");
       for ( const auto &e : std_table ) {
         if ( mc::strcmp(argv[i], e.suffix) == 0 ) {
           conf.standard = *e.full;
@@ -315,8 +321,7 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.opt_mode = gcc::opt_flags::flags::optimize_z;
       user_provided_opt = true;
     } else {
-      if ( __determine_source(conf, string_type{ argv[i] }) )
-        user_provided_out = true;
+      if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
   }
 
@@ -347,8 +352,7 @@ parse_argv_build(int argc, char **argv)
     };
 
     for ( auto &n : files )
-      if ( match_ext(n.d_name) )
-        sources.emplace_back(n.d_name);
+      if ( match_ext(n.d_name) ) sources.emplace_back(n.d_name);
   } else {
     sources.emplace_back(argv[0]);
     __dir_mode = false;
@@ -362,10 +366,10 @@ parse_argv_build(int argc, char **argv)
     conf.lib_path = "./libs/";
     if ( __dir_mode ) {
       string_type sstr = argv[0];
-      if ( *(sstr.end() - 1) != '/' )
-        sstr.push_back('/');
+      if ( *(sstr.end() - 1) != '/' ) sstr.push_back('/');
       conf.target.insert(conf.target.begin(), sstr);
     }
+    // placeholder, update correctly in parse_config
     conf.standard = gcc::__standard_cxx26;
     conf.compile_type = __comp_type::linked;
     conf.bin_dir = "bin/";
@@ -384,6 +388,7 @@ parse_argv_build_single(int argc, char **argv)
 {
   config_t conf{};
   conf.target = argv[0];
+  // placeholder, update correctly in parse_config
   conf.standard = gcc::__standard_cxx26;
   conf.compile_type = __comp_type::linked;
   conf.bin_dir = "bin/";

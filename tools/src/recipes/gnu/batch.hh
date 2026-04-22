@@ -46,8 +46,7 @@ make_command(Ts &&...ts)
    }()),
    ...);
   if constexpr ( sizeof...(Ts) > 0 )
-    if ( !r.empty() )
-      r.pop_back();
+    if ( !r.empty() ) r.pop_back();
   return r;
 }
 
@@ -57,8 +56,7 @@ make_flags(Fs &&...fs)
 {
   string_type r;
   ((r += get_string_flag(fs), r += ' '), ...);
-  if constexpr ( sizeof...(Fs) > 0 )
-    r.pop_back();
+  if constexpr ( sizeof...(Fs) > 0 ) r.pop_back();
   return r;
 }
 
@@ -71,8 +69,7 @@ make_flags(const mc::constarray<F> flags)
     r += n;
     r += ' ';
   }
-  if constexpr ( flags.size() > 1 )
-    r.pop_back();
+  if constexpr ( flags.size() > 1 ) r.pop_back();
   return r;
 }
 
@@ -129,9 +126,14 @@ batch_cmp(const config_t &conf)
   const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
 
   const string_type flags_extensions
-      = make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                   gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals, gcc::opt_flags::flags::lto);
-  const string_type flags_extensions_supple = "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2";
+      = __is_cpp_standard(conf.standard)
+            ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
+                         gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals,
+                         gcc::opt_flags::flags::lto)
+            : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
+                         gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto);
+  const string_type flags_extensions_supple
+      = __is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "";
 
   const string_type libs_location = "-L" + conf.lib_path;
   const string_type includes_location = "-I" + conf.include_path;
@@ -201,9 +203,14 @@ batch_cmp_armv7(const config_t &conf)
   const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
 
   const string_type flags_extensions
-      = make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                   gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals, gcc::opt_flags::flags::lto);
-  const string_type flags_extensions_supple = "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2";
+      = __is_cpp_standard(conf.standard)
+            ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
+                         gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals,
+                         gcc::opt_flags::flags::lto)
+            : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
+                         gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto);
+  const string_type flags_extensions_supple
+      = __is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "";
 
   const string_type libs_location = "-L" + conf.lib_path;
   const string_type includes_location = "-I" + conf.include_path;

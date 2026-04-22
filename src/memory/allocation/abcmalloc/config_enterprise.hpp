@@ -27,46 +27,46 @@ namespace abc
 {
 
 constexpr static const bool __is_constrained = false;
-constexpr static const u64 __system_pagesize = micron::page_size;
+constexpr static const usize __system_pagesize = micron::page_size;
 
 // shifts defined like this so we can easily pull them up in code
-constexpr static const u64 __class_arena_internal = 1024;
-constexpr static const u64 __class_precise_shift = 8;
-constexpr static const u64 __class_small_shift = 9;
-constexpr static const u64 __class_medium_shift = 12;
-constexpr static const u64 __class_large_shift = 15;
-constexpr static const u64 __class_huge_shift = 18;
-constexpr static const u64 __class_1mb_shift = 20;
-constexpr static const u64 __class_gb_shift = 29;
-constexpr static const u64 __class_precise = (1 << __class_precise_shift);
-constexpr static const u64 __class_small = (1 << __class_small_shift);
-constexpr static const u64 __class_medium = (1 << __class_medium_shift);
-constexpr static const u64 __class_large = (1 << __class_large_shift);
-constexpr static const u64 __class_huge = (1 << __class_huge_shift);
-constexpr static const u64 __class_1mb = (1 << __class_1mb_shift);
-constexpr static const u64 __class_gb = (1 << __class_gb_shift);
+constexpr static const usize __class_arena_internal = 1024;
+constexpr static const usize __class_precise_shift = 8;
+constexpr static const usize __class_small_shift = 9;
+constexpr static const usize __class_medium_shift = 12;
+constexpr static const usize __class_large_shift = 15;
+constexpr static const usize __class_huge_shift = 18;
+constexpr static const usize __class_1mb_shift = 20;
+constexpr static const usize __class_gb_shift = 29;
+constexpr static const usize __class_precise = (1 << __class_precise_shift);
+constexpr static const usize __class_small = (1 << __class_small_shift);
+constexpr static const usize __class_medium = (1 << __class_medium_shift);
+constexpr static const usize __class_large = (1 << __class_large_shift);
+constexpr static const usize __class_huge = (1 << __class_huge_shift);
+constexpr static const usize __class_1mb = (1 << __class_1mb_shift);
+constexpr static const usize __class_gb = (1 << __class_gb_shift);
 
-constexpr static const u64 __alloc_limit = 0;
+constexpr static const usize __alloc_limit = 0;
 
 // these two switches determine the number of *pages* to allocate on initialization, by default, it's 512 pages for the
 // internal abcmalloc metabuffer, and a minimum of 16 per each new sheet allocation
 
 // 16 MB TLSF precise cache. Zen4 L3 is 32 MB per CCD
 // a 16 MB cache sits comfortably within one CCD's L3 slice and holds ~54000 max-size precise blocks
-constexpr static const u64 __default_cache_size_factor = (1 << 16);
+constexpr static const usize __default_cache_size_factor = (1 << 16);
 
 // 2048 pages = 8 MB arena metadata
 // at ~80 bytes per node+sheet pair, supports ~100k sheet expansions
-constexpr static const u64 __default_arena_page_buf = 2048;
+constexpr static const usize __default_arena_page_buf = 2048;
 
-constexpr static const u64 __default_magic_size = micron::numeric_limits<u64>::max();
-constexpr static const u64 __default_minimum_page_mul = 16;     // 65kB minimum per sheet, larger buckets will exceed this
+constexpr static const usize __default_magic_size = micron::numeric_limits<usize>::max();
+constexpr static const usize __default_minimum_page_mul = 16;     // 65kB minimum per sheet, larger buckets will exceed this
 
 // 1% of system RAM. on 256 GB this is ~2.6 GB distributed across all five size classes by weight
 constexpr static const f32 __default_prealloc_factor = 0.01f;
 
 // 8192 precise blocks per expansion = 2 MB
-constexpr static const u64 __default_cache_step = 8192;
+constexpr static const usize __default_cache_step = 8192;
 
 constexpr static const bool __default_launder
     = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address
@@ -90,13 +90,13 @@ constexpr static const byte __default_fail_result = 0;
 
 // 3 retries. on a 256 GB system, the first expansion failure is likely transient (fragmentation, not true exhaustion).
 // gives the predictor two more chances to find a viable size lets the overcommit + predictor heuristic converge.
-constexpr static const u64 __default_max_retries = 3;
+constexpr static const usize __default_max_retries = 3;
 
 // in pages (each page is 4096)
 constexpr static const bool __default_saturated_mode = true;     // enables a saturation buffer, which checks the rate at which new requests
                                                                  // are coming in. adjusts allocation space accordingly
 
-constexpr static const u64 __default_overcommit = 2;
+constexpr static const usize __default_overcommit = 2;
 
 constexpr static const bool __default_init_large_pages = true;
 
