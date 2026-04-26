@@ -324,7 +324,7 @@ parse_config(config_t &conf, int argc, char **argv)
       if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
   }
-
+  if ( !mc::posix::exists(conf.bin_dir) ) mc::posix::mkdir(conf.bin_dir.c_str(), mc::io::perm_dir_default.to_mode());
   finalize_and_infer(conf, user_provided_out, user_provided_type, user_provided_opt);
 }
 

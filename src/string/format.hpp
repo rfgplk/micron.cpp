@@ -3068,7 +3068,8 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
   fmt_spec spec = parse_spec(spec_start, spec_end);
   char buf[__fmt_buf_size];
   usize n = formatter<T>::write(buf, __fmt_buf_size, val, spec);
-  apply_padding(out, buf, n, spec);
+  apply_padding(out, buf, n + 1, spec);     // off by one apparently
+                                            // TODO: identify EXACTLY where the offshoot is, this is a dirty fix
 }
 
 }     // namespace __impl
