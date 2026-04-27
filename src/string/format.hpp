@@ -2717,8 +2717,19 @@ repeat(char c, usize count)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // formatter traits
-
 template <typename T, typename Enable = void> struct formatter;
+
+template <typename CharT> struct formatter<micron::hstring<CharT>> {
+  static usize
+  write(char *buf, usize buf_sz, const micron::hstring<CharT> &val, const __impl::fmt_spec &spec)
+  {
+    usize len = val.size();
+    if ( spec.has_prec && len > spec.prec ) len = spec.prec;
+    usize n = len < buf_sz ? len : buf_sz;
+    micron::bytecpy(buf, val.data(), n);
+    return n;
+  }
+};
 
 template <> struct formatter<i32> {
   static inline usize
@@ -2939,6 +2950,30 @@ template <> struct formatter<const char *> {
       return 6;
     }
     usize len = micron::strlen(val);
+    if ( spec.has_prec && spec.prec < len ) len = spec.prec;
+    if ( len > buf_sz ) len = buf_sz;
+    micron::bytecpy(buf, val, len);
+    return len;
+  }
+};
+
+
+// was missing this
+template <usize N> struct formatter<char[N]> {
+  static inline usize
+  write(char *buf, usize buf_sz, const char (&val)[N], const __impl::fmt_spec &spec)
+  {
+    if ( val == nullptr ) {
+      if ( buf_sz < 6 ) return 0;
+      buf[0] = '(';
+      buf[1] = 'n';
+      buf[2] = 'u';
+      buf[3] = 'l';
+      buf[4] = 'l';
+      buf[5] = ')';
+      return 6;
+    }
+    usize len = N - 1;
     if ( spec.has_prec && spec.prec < len ) len = spec.prec;
     if ( len > buf_sz ) len = buf_sz;
     micron::bytecpy(buf, val, len);

@@ -15,7 +15,7 @@ main(void)
   mc::console(mc::format::format(mc::ansi::CSI[mc::ansi::csi_code::cursor_style], 6));
   mc::console(mc::format::format(mc::ansi::CSI[mc::ansi::csi_code::cursor_up], 20));
   mc::console(mc::ansi::C0[mc::ansi::c0_code::bel]);
-  //mc::console(mc::format::format(mc::ansi::CSI[mc::ansi::csi_code::cursor_forward], 50));
+  // mc::console(mc::format::format(mc::ansi::CSI[mc::ansi::csi_code::cursor_forward], 50));
   for ( ;; ) mc::sleep(100);
   return 1;
 }

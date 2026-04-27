@@ -39,6 +39,34 @@ template <usize N, is_scalar_literal T = schar, bool Sf = true> struct sstring {
   size_type length;
 
 private:
+  inline __attribute__((always_inline)) size_type
+  __rfind_substr(const T *needle, size_type needle_len, size_type pos = npos) const noexcept
+  {
+    if ( needle_len == 0 ) return (pos == npos || pos > length) ? length : pos;
+    if ( needle_len > length ) return npos;
+    size_type limit = (pos == npos || pos > length - needle_len) ? length - needle_len : pos;
+    for ( size_type i = limit + 1; i-- > 0; ) {
+      size_type j = 0;
+      while ( j < needle_len && memory[i + j] == needle[j] ) ++j;
+      if ( j == needle_len ) return i;
+    }
+    return npos;
+  }
+
+  inline __attribute__((always_inline)) sstring &
+  __replace_impl(size_type pos, size_type cnt, const T *with, size_type with_len)
+  {
+    if constexpr ( Sf ) {
+      if ( length - cnt + with_len >= N ) exc<except::library_error>("micron::sstring replace() result exceeds capacity");
+    }
+    size_type tail = length - (pos + cnt);
+    micron::bytemove(&memory[pos + with_len], &memory[pos + cnt], tail);
+    if ( with_len < cnt ) micron::typeset<T>(&memory[pos + with_len + tail], 0x0, cnt - with_len);
+    if ( with_len > 0 ) micron::memcpy(&memory[pos], with, with_len);
+    length = length - cnt + with_len;
+    return *this;
+  }
+
   inline __attribute__((always_inline)) bool
   __null_check(const void *ptr) const noexcept
   {
@@ -496,6 +524,442 @@ public:
     length = ln;
   }
 
+  // most of these live within format, but bringing them here for ease of use
+  // TODO: do the same for hstring
+  inline size_type
+  rfind(char ch, size_type pos = npos) const
+  {
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      if ( memory[i] == static_cast<T>(ch) ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  inline size_type
+  rfind(const T *needle, size_type pos = npos) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring rfind() null needle", static_cast<const void *>(needle));
+    return __rfind_substr(needle, micron::strlen(needle), pos);
+  }
+
+  template <size_type M>
+  inline size_type
+  rfind(const T (&needle)[M], size_type pos = npos) const
+  {
+    constexpr size_type needle_len = M - 1;
+    return __rfind_substr(&needle[0], needle_len, pos);
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline size_type
+  rfind(const sstring<M, F, X> &str, size_type pos = npos) const
+  {
+    return __rfind_substr(reinterpret_cast<const T *>(str.memory), str.length, pos);
+  }
+
+  inline size_type
+  find_first_of(const T *chars, size_type pos = 0) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring find_first_of() null", static_cast<const void *>(chars));
+    for ( size_type i = pos; i < length; ++i )
+      for ( size_type j = 0; chars[j] != 0x0; ++j )
+        if ( memory[i] == chars[j] ) return i;
+    return npos;
+  }
+
+  template <size_type M>
+  inline size_type
+  find_first_of(const T (&chars)[M], size_type pos = 0) const
+  {
+    for ( size_type i = pos; i < length; ++i )
+      for ( size_type j = 0; j < M - 1; ++j )
+        if ( memory[i] == chars[j] ) return i;
+    return npos;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline size_type
+  find_first_of(const sstring<M, F, X> &chars, size_type pos = 0) const
+  {
+    for ( size_type i = pos; i < length; ++i )
+      for ( size_type j = 0; j < chars.length; ++j )
+        if ( memory[i] == static_cast<T>(chars.memory[j]) ) return i;
+    return npos;
+  }
+
+  inline size_type
+  find_last_of(const T *chars, size_type pos = npos) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring find_last_of() null", static_cast<const void *>(chars));
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      for ( size_type j = 0; chars[j] != 0x0; ++j )
+        if ( memory[i] == chars[j] ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  template <size_type M>
+  inline size_type
+  find_last_of(const T (&chars)[M], size_type pos = npos) const
+  {
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      for ( size_type j = 0; j < M - 1; ++j )
+        if ( memory[i] == chars[j] ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline size_type
+  find_last_of(const sstring<M, F, X> &chars, size_type pos = npos) const
+  {
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      for ( size_type j = 0; j < chars.length; ++j )
+        if ( memory[i] == static_cast<T>(chars.memory[j]) ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  inline size_type
+  find_first_not_of(const T *chars, size_type pos = 0) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring find_first_not_of() null",
+                                                                  static_cast<const void *>(chars));
+    for ( size_type i = pos; i < length; ++i ) {
+      bool hit = false;
+      for ( size_type j = 0; chars[j] != 0x0; ++j )
+        if ( memory[i] == chars[j] ) {
+          hit = true;
+          break;
+        }
+      if ( !hit ) return i;
+    }
+    return npos;
+  }
+
+  template <size_type M>
+  inline size_type
+  find_first_not_of(const T (&chars)[M], size_type pos = 0) const
+  {
+    for ( size_type i = pos; i < length; ++i ) {
+      bool hit = false;
+      for ( size_type j = 0; j < M - 1; ++j )
+        if ( memory[i] == chars[j] ) {
+          hit = true;
+          break;
+        }
+      if ( !hit ) return i;
+    }
+    return npos;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline size_type
+  find_first_not_of(const sstring<M, F, X> &chars, size_type pos = 0) const
+  {
+    for ( size_type i = pos; i < length; ++i ) {
+      bool hit = false;
+      for ( size_type j = 0; j < chars.length; ++j )
+        if ( memory[i] == static_cast<T>(chars.memory[j]) ) {
+          hit = true;
+          break;
+        }
+      if ( !hit ) return i;
+    }
+    return npos;
+  }
+
+  inline size_type
+  find_last_not_of(const T *chars, size_type pos = npos) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring find_last_not_of() null",
+                                                                  static_cast<const void *>(chars));
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      bool hit = false;
+      for ( size_type j = 0; chars[j] != 0x0; ++j )
+        if ( memory[i] == chars[j] ) {
+          hit = true;
+          break;
+        }
+      if ( !hit ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  template <size_type M>
+  inline size_type
+  find_last_not_of(const T (&chars)[M], size_type pos = npos) const
+  {
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      bool hit = false;
+      for ( size_type j = 0; j < M - 1; ++j )
+        if ( memory[i] == chars[j] ) {
+          hit = true;
+          break;
+        }
+      if ( !hit ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline size_type
+  find_last_not_of(const sstring<M, F, X> &chars, size_type pos = npos) const
+  {
+    if ( length == 0 ) return npos;
+    size_type i = (pos == npos || pos >= length) ? length - 1 : pos;
+    for ( ;; ) {
+      bool hit = false;
+      for ( size_type j = 0; j < chars.length; ++j )
+        if ( memory[i] == static_cast<T>(chars.memory[j]) ) {
+          hit = true;
+          break;
+        }
+      if ( !hit ) return i;
+      if ( i == 0 ) break;
+      --i;
+    }
+    return npos;
+  }
+
+  inline bool
+  starts_with(T ch) const
+  {
+    return length > 0 && memory[0] == ch;
+  }
+
+  inline bool
+  starts_with(const T *prefix) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring starts_with() null", static_cast<const void *>(prefix));
+    size_type prefix_len = micron::strlen(prefix);
+    if ( prefix_len > length ) return false;
+    for ( size_type i = 0; i < prefix_len; ++i )
+      if ( memory[i] != prefix[i] ) return false;
+    return true;
+  }
+
+  template <size_type M>
+  inline bool
+  starts_with(const T (&prefix)[M]) const
+  {
+    constexpr size_type prefix_len = M - 1;
+    if constexpr ( prefix_len == 0 ) return true;
+    if ( prefix_len > length ) return false;
+    for ( size_type i = 0; i < prefix_len; ++i )
+      if ( memory[i] != prefix[i] ) return false;
+    return true;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline bool
+  starts_with(const sstring<M, F, X> &prefix) const
+  {
+    if ( prefix.empty() ) return true;
+    if ( prefix.length > length ) return false;
+    for ( size_type i = 0; i < prefix.length; ++i )
+      if ( memory[i] != static_cast<T>(prefix.memory[i]) ) return false;
+    return true;
+  }
+
+  inline bool
+  ends_with(T ch) const
+  {
+    return length > 0 && memory[length - 1] == ch;
+  }
+
+  inline bool
+  ends_with(const T *suffix) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring ends_with() null", static_cast<const void *>(suffix));
+    size_type suffix_len = micron::strlen(suffix);
+    if ( suffix_len > length ) return false;
+    size_type offset = length - suffix_len;
+    for ( size_type i = 0; i < suffix_len; ++i )
+      if ( memory[offset + i] != suffix[i] ) return false;
+    return true;
+  }
+
+  template <size_type M>
+  inline bool
+  ends_with(const T (&suffix)[M]) const
+  {
+    constexpr size_type suffix_len = M - 1;
+    if constexpr ( suffix_len == 0 ) return true;
+    if ( suffix_len > length ) return false;
+    size_type offset = length - suffix_len;
+    for ( size_type i = 0; i < suffix_len; ++i )
+      if ( memory[offset + i] != suffix[i] ) return false;
+    return true;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline bool
+  ends_with(const sstring<M, F, X> &suffix) const
+  {
+    if ( suffix.empty() ) return true;
+    if ( suffix.length > length ) return false;
+    size_type offset = length - suffix.length;
+    for ( size_type i = 0; i < suffix.length; ++i )
+      if ( memory[offset + i] != static_cast<T>(suffix.memory[i]) ) return false;
+    return true;
+  }
+
+  inline bool
+  contains(T ch) const
+  {
+    return find(ch) != npos;
+  }
+
+  inline bool
+  contains(const T *needle) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring contains() null", static_cast<const void *>(needle));
+    return find_substr(needle, micron::strlen(needle)) != npos;
+  }
+
+  template <size_type M>
+  inline bool
+  contains(const T (&needle)[M]) const
+  {
+    constexpr size_type needle_len = M - 1;
+    if constexpr ( needle_len == 0 ) return true;
+    return find_substr(&needle[0], needle_len) != npos;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline bool
+  contains(const sstring<M, F, X> &needle) const
+  {
+    if ( needle.empty() ) return true;
+    return find_substr(reinterpret_cast<const T *>(needle.memory), needle.length) != npos;
+  }
+
+  inline sstring &
+  replace(size_type pos, size_type cnt, const T *with)
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring replace() null replacement",
+                                                                  static_cast<const void *>(with));
+    __safety_check<&sstring::__range_pos_cnt, except::library_error>("micron::sstring replace() out of range", pos, cnt);
+    return __replace_impl(pos, cnt, with, micron::strlen(with));
+  }
+
+  template <size_type M>
+  inline sstring &
+  replace(size_type pos, size_type cnt, const T (&with)[M])
+  {
+    __safety_check<&sstring::__range_pos_cnt, except::library_error>("micron::sstring replace() out of range", pos, cnt);
+    return __replace_impl(pos, cnt, &with[0], M - 1);
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline sstring &
+  replace(size_type pos, size_type cnt, const sstring<M, F, X> &with)
+  {
+    __safety_check<&sstring::__range_pos_cnt, except::library_error>("micron::sstring replace() out of range", pos, cnt);
+    return __replace_impl(pos, cnt, reinterpret_cast<const T *>(with.memory), with.length);
+  }
+
+  inline sstring &
+  replace(iterator first, iterator last, const T *with)
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring replace() null replacement",
+                                                                  static_cast<const void *>(with));
+    __safety_check<&sstring::__iterator_check, except::library_error>("micron::sstring replace() iterator out of range", first);
+    return __replace_impl(static_cast<size_type>(first - &memory[0]), static_cast<size_type>(last - first), with, micron::strlen(with));
+  }
+
+  inline sstring &
+  replace_all(const T *needle, const T *with)
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring replace_all() null needle",
+                                                                  static_cast<const void *>(needle));
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring replace_all() null replacement",
+                                                                  static_cast<const void *>(with));
+    size_type needle_len = micron::strlen(needle);
+    size_type with_len = micron::strlen(with);
+    if ( needle_len == 0 ) return *this;
+    size_type pos = 0;
+    while ( (pos = find_substr(needle, needle_len, pos)) != npos ) {
+      __replace_impl(pos, needle_len, with, with_len);
+      pos += with_len;     // advance past replacement to avoid re-matching
+    }
+    return *this;
+  }
+
+  template <size_type M, size_type K>
+  inline sstring &
+  replace_all(const T (&needle)[M], const T (&with)[K])
+  {
+    constexpr size_type needle_len = M - 1;
+    constexpr size_type with_len = K - 1;
+    if constexpr ( needle_len == 0 ) return *this;
+    size_type pos = 0;
+    while ( (pos = find_substr(&needle[0], needle_len, pos)) != npos ) {
+      __replace_impl(pos, needle_len, &with[0], with_len);
+      pos += with_len;
+    }
+    return *this;
+  }
+
+  template <size_type M, size_type K, typename F, typename G, bool X = Sf, bool Y = Sf>
+  inline sstring &
+  replace_all(const sstring<M, F, X> &needle, const sstring<K, G, Y> &with)
+  {
+    if ( needle.empty() ) return *this;
+    size_type pos = 0;
+    while ( (pos = find_substr(reinterpret_cast<const T *>(needle.memory), needle.length, pos)) != npos ) {
+      __replace_impl(pos, needle.length, reinterpret_cast<const T *>(with.memory), with.length);
+      pos += with.length;
+    }
+    return *this;
+  }
+
+  inline int
+  compare(const T *other) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring compare() null", static_cast<const void *>(other));
+    return __lexcmp(memory, length, other, micron::strlen(other));
+  }
+
+  template <size_type M>
+  inline int
+  compare(const T (&other)[M]) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(&other[0]), M - 1);
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline int
+  compare(const sstring<M, F, X> &other) const
+  {
+    return __lexcmp(memory, length, reinterpret_cast<const T *>(other.memory), other.length);
+  }
+
   size_type
   find(char ch, size_type pos = 0) const
   {
@@ -517,13 +981,176 @@ public:
     return npos;
   }
 
-  template <size_type M = N, typename F = T, bool X = Sf>
+  size_type
+  find(const T *needle, size_type pos = 0) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring find() null needle", static_cast<const void *>(needle));
+
+    size_type needle_len = micron::strlen(needle);
+    if ( needle_len == 0 ) return pos;     // vacuous match, mirrors std::string
+
+    return find_substr(reinterpret_cast<const T *>(needle), needle_len, pos);
+  }
+
+  template <size_type M>
+  size_type
+  find(const T (&needle)[M], size_type pos = 0) const
+  {
+    constexpr size_type needle_len = M - 1;
+    if constexpr ( needle_len == 0 ) return pos;
+
+    return find_substr(&needle[0], needle_len, pos);
+  }
+
+  template <size_type M, typename F, bool X = Sf>
   size_type
   find(const sstring<M, F, X> &str, size_type pos = 0) const
   {
-    for ( ;; pos++ ) {
+    if ( str.empty() ) return pos;     // vacuous match
+
+    return find_substr(reinterpret_cast<const T *>(str.memory), str.length, pos);
+  }
+
+  inline sstring &
+  to_lower()
+  {
+    for ( size_type i = 0; i < length; ++i )
+      if ( memory[i] >= static_cast<T>('A') && memory[i] <= static_cast<T>('Z') ) memory[i] += static_cast<T>('a' - 'A');
+    return *this;
+  }
+
+  inline sstring &
+  to_upper()
+  {
+    for ( size_type i = 0; i < length; ++i )
+      if ( memory[i] >= static_cast<T>('a') && memory[i] <= static_cast<T>('z') ) memory[i] -= static_cast<T>('a' - 'A');
+    return *this;
+  }
+
+  inline sstring &
+  trim_left()
+  {
+    size_type i = 0;
+    while ( i < length
+            && (memory[i] == static_cast<T>(' ') || memory[i] == static_cast<T>('\t') || memory[i] == static_cast<T>('\n')
+                || memory[i] == static_cast<T>('\r')) )
+      ++i;
+    if ( i > 0 ) {
+      micron::bytemove(&memory[0], &memory[i], length - i);
+      micron::typeset<T>(&memory[length - i], 0x0, i);
+      length -= i;
     }
-    return npos;
+    return *this;
+  }
+
+  inline sstring &
+  trim_right()
+  {
+    while ( length > 0
+            && (memory[length - 1] == static_cast<T>(' ') || memory[length - 1] == static_cast<T>('\t')
+                || memory[length - 1] == static_cast<T>('\n') || memory[length - 1] == static_cast<T>('\r')) )
+      memory[--length] = 0x0;
+    return *this;
+  }
+
+  inline sstring &
+  trim()
+  {
+    return trim_left().trim_right();
+  }
+
+  inline sstring &
+  reverse()
+  {
+    if ( length <= 1 ) return *this;
+    size_type lo = 0, hi = length - 1;
+    while ( lo < hi ) {
+      T tmp = memory[lo];
+      memory[lo] = memory[hi];
+      memory[hi] = tmp;
+      ++lo;
+      --hi;
+    }
+    return *this;
+  }
+
+  inline size_type
+  count(T ch) const
+  {
+    size_type n = 0;
+    for ( size_type i = 0; i < length; ++i )
+      if ( memory[i] == ch ) ++n;
+    return n;
+  }
+
+  inline size_type
+  count(const T *needle) const
+  {
+    __safety_check<&sstring::__null_check, except::library_error>("micron::sstring count() null needle", static_cast<const void *>(needle));
+    size_type needle_len = micron::strlen(needle);
+    if ( needle_len == 0 ) return 0;
+    size_type n = 0, pos = 0;
+    while ( (pos = find_substr(needle, needle_len, pos)) != npos ) {
+      ++n;
+      pos += needle_len;
+    }
+    return n;
+  }
+
+  template <size_type M>
+  inline size_type
+  count(const T (&needle)[M]) const
+  {
+    constexpr size_type needle_len = M - 1;
+    if constexpr ( needle_len == 0 ) return 0;
+    size_type n = 0, pos = 0;
+    while ( (pos = find_substr(&needle[0], needle_len, pos)) != npos ) {
+      ++n;
+      pos += needle_len;
+    }
+    return n;
+  }
+
+  template <size_type M, typename F, bool X = Sf>
+  inline size_type
+  count(const sstring<M, F, X> &needle) const
+  {
+    if ( needle.empty() ) return 0;
+    size_type n = 0, pos = 0;
+    while ( (pos = find_substr(reinterpret_cast<const T *>(needle.memory), needle.length, pos)) != npos ) {
+      ++n;
+      pos += needle.length;
+    }
+    return n;
+  }
+
+  inline sstring &
+  fill(T ch, size_type cnt = N - 1)
+  {
+    size_type n = cnt < N ? cnt : N - 1;
+    micron::typeset<T>(&memory[0], ch, n);
+    memory[n] = 0x0;
+    length = n;
+    return *this;
+  }
+
+  inline sstring &
+  repeat(size_type n)
+  {
+    if ( n == 0 ) {
+      clear();
+      return *this;
+    }
+    if ( n == 1 || length == 0 ) return *this;
+    size_type orig = length;
+    for ( size_type i = 1; i < n; ++i ) {
+      if constexpr ( Sf ) {
+        if ( length + orig >= N ) exc<except::library_error>("micron::sstring repeat() result exceeds capacity");
+      }
+      micron::memcpy(&memory[length], &memory[0], orig);
+      length += orig;
+    }
+    return *this;
   }
 
   inline constexpr const_iterator
