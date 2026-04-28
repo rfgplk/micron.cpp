@@ -148,8 +148,7 @@ template <int Fd = 1>     // stdin
 int
 terminal_setattr(const termios_t &buf)
 {
-  // TODO: implement proper ioctl lookup fn
-  if ( micron::ioctl(Fd, micron::tcsets, &buf) < 0 ) return -1;
+  if ( micron::posix::ioctl(Fd, micron::posix::tcsets, &buf) < 0 ) return -1;
   return 0;
 }
 
@@ -157,8 +156,7 @@ template <int Fd = 1>     // stdin
 int
 terminal_getattr(termios_t &buf)
 {
-  // TODO: implement proper ioctl lookup fn
-  if ( micron::ioctl(Fd, micron::tcgets, &buf) < 0 ) return -1;
+  if ( micron::posix::ioctl(Fd, micron::posix::tcgets, &buf) < 0 ) return -1;
   return 0;
 }
 };     // namespace posix

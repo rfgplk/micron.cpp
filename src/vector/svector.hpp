@@ -69,6 +69,12 @@ template <is_regular_object T, usize N = 64, bool Sf = true> class svector
   }
 
   inline bool
+  __iterator_capacity_check(const T *it) const
+  {
+    return it < stack || it >= stack + N;
+  }
+
+  inline bool
   __count_check(usize cnt, usize ind) const
   {
     // checks that ind is valid and there is room for cnt more elements
@@ -99,6 +105,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
   static constexpr size_type static_size = N;
+  static constexpr size_type npos = N;
 
   ~svector(void)
   {
@@ -249,6 +256,25 @@ public:
   {
     __safety_check<&svector::__index_check, except::runtime_error>("micron::svector at() out of range.", n);
     return stack[n];
+  }
+
+  template <typename X = iterator>
+    requires(micron::is_pointer_v<X>)
+  T &
+  at(X itr)
+  {
+    __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector at() iterator out of range.",
+                                                                      static_cast<const T *>(itr));
+    return *itr;
+  }
+
+  template <typename X = const_iterator>
+    requires(micron::is_pointer_v<X>)
+  const T &
+  at(X itr) const
+  {
+    __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector at() iterator out of range.", itr);
+    return *itr;
   }
 
   T &
@@ -445,6 +471,14 @@ public:
   void resize(const size_type n) = delete;
   void reserve(const size_type n) = delete;
 
+  void
+  swap(svector &o)
+  {
+    svector tmp = micron::move(*this);
+    *this = micron::move(o);
+    o = micron::move(tmp);
+  }
+
   svector &
   erase(size_type n)
   {
@@ -453,6 +487,53 @@ public:
     micron::memmove(micron::real_addr_as<T>(stack[n]), micron::real_addr_as<T>(stack[n + 1]), (length - n - 1));
     __impl_container::destroy(micron::real_addr_as<T>(stack[length - 1]), 1);
     --length;
+    return *this;
+  }
+
+  template <typename X = iterator>
+    requires(micron::is_pointer_v<X>)
+  svector &
+  erase(X itr)
+  {
+    __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector erase() iterator out of range.",
+                                                                      static_cast<const T *>(itr));
+    itr->~T();
+    const usize tail = static_cast<usize>(end() - itr) - 1u;
+    micron::memmove(itr, itr + 1, tail);
+    __impl_container::destroy(micron::real_addr_as<T>(stack[length - 1]), 1);
+    --length;
+    return *this;
+  }
+
+  svector &
+  erase(size_type from, size_type to)
+  {
+    if constexpr ( Sf ) {
+      if ( from >= to || to > length ) exc<except::runtime_error>("micron::svector erase() range out of bounds.");
+    }
+    const usize count = to - from;
+    for ( size_type i = from; i < to; i++ ) stack[i].~T();
+    micron::memmove(micron::real_addr_as<T>(stack[from]), micron::real_addr_as<T>(stack[to]), (length - to));
+    __impl_container::destroy(micron::real_addr_as<T>(stack[length - count]), count);
+    length -= count;
+    return *this;
+  }
+
+  template <typename X = iterator>
+    requires(micron::is_pointer_v<X>)
+  svector &
+  erase(X first, X last)
+  {
+    if constexpr ( Sf ) {
+      if ( first < stack || last > stack + length || first > last )
+        exc<except::runtime_error>("micron::svector erase() iterator range out of bounds.");
+    }
+    const usize count = static_cast<usize>(last - first);
+    for ( iterator it = first; it != last; ++it ) it->~T();
+    const usize tail = static_cast<usize>(end() - last);
+    micron::memmove(first, last, tail);
+    __impl_container::destroy(micron::real_addr_as<T>(stack[length - count]), count);
+    length -= count;
     return *this;
   }
 
@@ -521,6 +602,27 @@ public:
     return push_back(i);
   }
 
+  T
+  pop_back(void)
+  {
+    __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector pop_back() called on empty vector");
+    T val = micron::move(stack[length - 1]);
+    stack[length - 1].~T();
+    --length;
+    return val;
+  }
+
+  T
+  pop_front(void)
+  {
+    __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector pop_front() called on empty vector");
+    T val = micron::move(stack[0]);
+    stack[0].~T();
+    micron::memmove(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(stack[1]), length - 1u);
+    --length;
+    return val;
+  }
+
   template <typename C = T>
   svector &
   insert(size_type ind, const C &i)
@@ -553,6 +655,62 @@ public:
     return *this;
   }
 
+  svector &
+  move_insert(size_type ind, T &&i)
+  {
+    __safety_check<&svector::__push_check, except::runtime_error>("micron::svector move_insert() out of range.");
+    if ( ind > length ) exc<except::runtime_error>("micron::svector move_insert() index past end.");
+    micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
+      new (micron::addr(stack[ind])) T(micron::move(i));
+    else
+      stack[ind] = micron::move(i);
+    ++length;
+    return *this;
+  }
+
+  svector &
+  move_insert(iterator itr, T &&i)
+  {
+    __safety_check<&svector::__push_check, except::runtime_error>("micron::svector move_insert() out of range.");
+    __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector move_insert() iterator out of range.",
+                                                                      static_cast<const T *>(itr));
+    const usize tail_bytes = static_cast<usize>(end() - itr) * sizeof(T);
+    micron::bytemove(itr + 1, itr, tail_bytes);
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
+      new (itr) T(micron::move(i));
+    else
+      *itr = micron::move(i);
+    ++length;
+    return *this;
+  }
+
+  template <typename... Args>
+  svector &
+  emplace(size_type ind, Args &&...args)
+  {
+    __safety_check<&svector::__push_check, except::runtime_error>("micron::svector emplace() out of range.");
+    if ( ind > length ) exc<except::runtime_error>("micron::svector emplace() index past end.");
+    micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
+    new (micron::addr(stack[ind])) T(micron::forward<Args>(args)...);
+    ++length;
+    return *this;
+  }
+
+  template <typename... Args>
+  svector &
+  emplace(iterator itr, Args &&...args)
+  {
+    __safety_check<&svector::__push_check, except::runtime_error>("micron::svector emplace() out of range.");
+    __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector emplace() iterator out of range.",
+                                                                      static_cast<const T *>(itr));
+    const usize tail_bytes = static_cast<usize>(end() - itr) * sizeof(T);
+    micron::bytemove(itr + 1, itr, tail_bytes);
+    new (itr) T(micron::forward<Args>(args)...);
+    ++length;
+    return *this;
+  }
+
   inline iterator
   get(const size_type n)
   {
@@ -572,6 +730,91 @@ public:
   {
     __safety_check<&svector::__capacity_check, except::library_error>("micron::svector cget() out of range", n);
     return micron::addr(stack[n]);
+  }
+
+  template <typename X = iterator>
+    requires(micron::is_pointer_v<X>)
+  inline X
+  get(X itr)
+  {
+    __safety_check<&svector::__iterator_capacity_check, except::library_error>("micron::svector get() iterator out of range",
+                                                                               static_cast<const T *>(itr));
+    return itr;
+  }
+
+  template <typename X = const_iterator>
+    requires(micron::is_pointer_v<X>)
+  inline X
+  get(X itr) const
+  {
+    __safety_check<&svector::__iterator_capacity_check, except::library_error>("micron::svector get() iterator out of range", itr);
+    return itr;
+  }
+
+  template <typename X = const_iterator>
+    requires(micron::is_pointer_v<X>)
+  inline X
+  cget(X itr) const
+  {
+    __safety_check<&svector::__iterator_capacity_check, except::library_error>("micron::svector cget() iterator out of range", itr);
+    return itr;
+  }
+
+  void
+  fill(const T &v)
+  {
+    for ( size_type i = 0; i < length; i++ ) stack[i] = v;
+  }
+
+  void
+  fill(size_type from, size_type to, const T &v)
+  {
+    if constexpr ( Sf ) {
+      if ( from >= to || to > length ) exc<except::runtime_error>("micron::svector fill() index range out of bounds.");
+    }
+    for ( size_type i = from; i < to; i++ ) stack[i] = v;
+  }
+
+  void
+  fill(iterator first, iterator last, const T &v)
+  {
+    if constexpr ( Sf ) {
+      if ( first < stack || last > stack + length || first > last )
+        exc<except::runtime_error>("micron::svector fill() iterator range out of bounds.");
+    }
+    for ( iterator it = first; it != last; ++it ) *it = v;
+  }
+
+  bool
+  contains(const T &v) const
+  {
+    for ( size_type i = 0; i < length; i++ )
+      if ( stack[i] == v ) return true;
+    return false;
+  }
+
+  iterator
+  find(const T &v)
+  {
+    for ( iterator it = begin(); it != end(); ++it )
+      if ( *it == v ) return it;
+    return end();
+  }
+
+  const_iterator
+  find(const T &v) const
+  {
+    for ( const_iterator it = begin(); it != end(); ++it )
+      if ( *it == v ) return it;
+    return end();
+  }
+
+  size_type
+  find_index(const T &v) const
+  {
+    for ( size_type i = 0; i < length; i++ )
+      if ( stack[i] == v ) return i;
+    return npos;
   }
 
   static constexpr bool
