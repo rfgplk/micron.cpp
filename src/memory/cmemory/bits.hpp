@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../bits/__arch.hpp"
+
 #include "../../attributes.hpp"
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
@@ -20,7 +22,11 @@ auto get_stack_size(void) -> usize;
 inline void
 __mem_barrier() noexcept
 {
-  __asm__ __volatile__("" : : : "memory");
+#if defined(__micron_arch_arm32)
+  __asm__ __volatile__("dmb ish" ::: "memory");
+#elif defined(__micron_arch_amd64) || defined(__micron_arch_x86)
+  __asm__ __volatile__("" ::: "memory");
+#endif
 }
 
 constexpr umax_t
@@ -102,6 +108,7 @@ template <typename F>
 bool
 __is_at_stack(const F *ptr, const u64 size) noexcept
 {
+  if ( ptr == nullptr ) return false;
   const addr_t *addr = reinterpret_cast<const addr_t *>(ptr);
   stack_t st = get_stack();
   if ( (addr < st.start) or (addr + size >= st.start + st.size) ) return false;
