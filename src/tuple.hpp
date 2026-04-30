@@ -227,6 +227,7 @@ template <typename T, typename F> struct pair {
     if ( it != lst.end() ) {
       b = static_cast<F>(*it);
     }
+    return *this;
   }
 
   template <typename K, typename L>
