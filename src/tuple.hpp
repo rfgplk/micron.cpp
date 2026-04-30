@@ -199,11 +199,16 @@ template <typename T, typename F> struct pair {
     requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
   pair(std::initializer_list<C> &&lst)
   {
-    size_t i = 0;
-    for ( C val : lst ) {
-      if ( (i++) == 0 ) a = static_cast<T>(micron::move(val));
-      if ( (i++) == 1 ) b = static_cast<F>(micron::move(val));
-      if ( (i++) > 1 ) break;
+    // fix
+    auto it = lst.begin();
+
+    if ( it != lst.end() ) {
+      a = static_cast<T>(*it);
+      ++it;
+    }
+
+    if ( it != lst.end() ) {
+      b = static_cast<F>(*it);
     }
   }
 
@@ -212,11 +217,15 @@ template <typename T, typename F> struct pair {
   pair &
   operator=(std::initializer_list<C> &&lst)
   {
-    size_t i = 0;
-    for ( C val : lst ) {
-      if ( (i++) == 0 ) a = static_cast<T>(micron::move(val));
-      if ( (i++) == 1 ) b = static_cast<F>(micron::move(val));
-      if ( (i++) > 1 ) break;
+    auto it = lst.begin();
+
+    if ( it != lst.end() ) {
+      a = static_cast<T>(*it);
+      ++it;
+    }
+
+    if ( it != lst.end() ) {
+      b = static_cast<F>(*it);
     }
   }
 
