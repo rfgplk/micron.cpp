@@ -610,7 +610,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) __unlocked_reserve(__mem::capacity + o.max_size());
-    __impl_container::copy_assign(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
+    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -621,9 +621,11 @@ public:
   weld(convector<F> &&o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) __unlocked_reserve(__mem::capacity + o.max_size());
-    __impl_container::copy_assign(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
+    __impl_container::move(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
     __mem::length += o.length;
+    o.length = 0;
     return *this;
   }
 
@@ -859,7 +861,7 @@ public:
 
     T *it = __mem::memory + pos;
     T *end_ = __mem::memory + __mem::length;
-    micron::memmove(it + 1, it, (end_ - it) * sizeof(T));
+    micron::memmove(it + 1, it, (end_ - it));
     new (it) T(micron::move(val));
     ++__mem::length;
     return it;

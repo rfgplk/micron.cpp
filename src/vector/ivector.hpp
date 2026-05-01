@@ -222,8 +222,11 @@ public:
   ivector &
   operator=(const ivector &o)
   {
+    if ( this == micron::addressof(const_cast<ivector &>(o)) ) return *this;
     if ( o.capacity() >= __mem::capacity ) reserve(o.capacity());
-    __impl_container::copy_assign(__mem::memory, o.memory, o.length);
+    __impl_container::destroy(__mem::memory, __mem::length);
+    __mem::length = 0;
+    __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
   }

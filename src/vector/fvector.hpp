@@ -244,7 +244,7 @@ public:
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
-    __impl_container::copy_assign(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
+    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -254,9 +254,11 @@ public:
   inline fvector &
   weld(fvector<F> &&o)
   {
+    if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
-    __impl_container::copy_assign(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
+    __impl_container::move(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
     __mem::length += o.length;
+    o.length = 0;
     return *this;
   }
 
@@ -585,7 +587,7 @@ public:
 
     T *it = __mem::memory + pos;
     T *ite = end();
-    micron::memmove(it + 1, it, (ite - it) * sizeof(T));
+    micron::memmove(it + 1, it, (ite - it));
     new (it) T(micron::move(val));
     __mem::length++;
     return it;
