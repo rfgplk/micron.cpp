@@ -400,27 +400,22 @@ template <typename C = char>
 inline micron::hstring<C>
 to_general(f64 val, u32 precision = 6)
 {
-  char shortest[26];
-  usize slen = __impl::__ryu::d2s_buffered(val, shortest);
+  // derive sciExp directly from the Ryu decomposition
+  union {
+    f64 f;
+    u64 u;
+  } conv;
 
-  // parse exponent from "...E[-]digits" format
-  i32 exp10 = 0;
-  for ( usize i = 0; i < slen; ++i ) {
-    if ( shortest[i] == 'E' ) {
-      bool eneg = false;
-      usize j = i + 1;
-      if ( j < slen && shortest[j] == '-' ) {
-        eneg = true;
-        ++j;
-      }
-      while ( j < slen && static_cast<u32>(shortest[j] - '0') <= 9 ) {
-        exp10 = exp10 * 10 + (shortest[j] - '0');
-        ++j;
-      }
-      if ( eneg ) exp10 = -exp10;
-      break;
-    }
-  }
+  conv.f = val;
+  u64 ieeeMantissa = conv.u & ((1ull << 52) - 1);
+  u32 ieeeExponent = static_cast<u32>((conv.u >> 52) & 0x7FF);
+
+  // specials & zero pass through to_fixed
+  if ( ieeeExponent == 0x7FF || (ieeeExponent == 0 && ieeeMantissa == 0) ) return to_fixed<C>(val, precision);
+
+  __impl::__ryu::decimal64 dec = __impl::__ryu::d2d(ieeeMantissa, ieeeExponent);
+  u32 olength = __impl::__ryu::decimalLength(dec.mantissa);
+  i32 exp10 = dec.exponent + static_cast<i32>(olength) - 1;
 
   if ( exp10 < -4 || exp10 >= static_cast<i32>(precision) ) return to_scientific<C>(val, precision > 0 ? precision - 1 : 0);
   return to_fixed<C>(val, precision);

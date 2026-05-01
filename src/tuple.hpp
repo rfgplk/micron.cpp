@@ -243,7 +243,11 @@ template <typename T, typename F> struct pair {
   {
   }
 
-  pair(T &&x, F &&y) : a(micron::move(x)), b(micron::move(y)) {}
+  pair(T &&x, F &&y)
+    requires(!micron::is_reference_v<T> && !micron::is_reference_v<F>)
+      : a(micron::move(x)), b(micron::move(y))
+  {
+  }
 
   pair(const T &x, const F &y) : a(x), b(y) {}
 
@@ -362,22 +366,6 @@ tie(std::initializer_list<C> &&lst)
   return c;
 }
 
-template <typename C, typename D>
-micron::pair<C, D>
-tie(const C &c, const D &d)
-{
-  micron::pair<C, D> p(c, d);
-  return p;
-}
-
-template <typename C, typename D>
-micron::pair<C, D>
-tie(C &&c, D &&d)
-{
-  micron::pair<C, D> p(micron::move(c), micron::move(d));
-  return p;
-}
-
 template <typename... Ts> class tuple;
 
 template <size_t I, typename T> struct tuple_element;
@@ -492,14 +480,14 @@ public:
   template <typename... Us>
     requires(sizeof...(Us) == sizeof...(Ts)) && (micron::is_constructible_v<Ts, const Us &> && ...)
   constexpr explicit(!(micron::is_convertible_v<const Us &, Ts> && ...)) tuple(const tuple<Us...> &other)
-      : base_type(static_cast<const tuple_impl<index_sequence_for<Us...>, Us...> &>(other))
+      : tuple(other, index_sequence_for<Ts...>{})
   {
   }
 
   template <typename... Us>
     requires(sizeof...(Us) == sizeof...(Ts)) && (micron::is_constructible_v<Ts, Us> && ...)
   constexpr explicit(!(micron::is_convertible_v<Us, Ts> && ...)) tuple(tuple<Us...> &&other)
-      : base_type(static_cast<tuple_impl<index_sequence_for<Us...>, Us...> &&>(other))
+      : tuple(micron::move(other), index_sequence_for<Ts...>{})
   {
   }
 
@@ -533,6 +521,11 @@ public:
   }
 
 private:
+  template <typename Tup, size_t... Is>
+  constexpr tuple(Tup &&other, index_sequence<Is...>) : base_type(get<Is>(micron::forward<Tup>(other))...)
+  {
+  }
+
   template <typename... Us, size_t... Is>
   constexpr void
   assign_impl(const tuple<Us...> &other, index_sequence<Is...>)
@@ -749,25 +742,48 @@ struct tuple_cat_result<tuple<Ts...>, tuple<Us...>, Rest...> : tuple_cat_result<
 
 template <typename... Tps> using tuple_cat_result_t = typename tuple_cat_result<micron::remove_cvref_t<Tps>...>::type;
 
-template <typename Tp, size_t... Is>
-constexpr auto
-tuple_to_args_impl(Tp &&t, index_sequence<Is...>)
-{
-  return forward_as_tuple(get<Is>(micron::forward<Tp>(t))...);
-}
-
-template <typename Tp>
-constexpr auto
-tuple_to_args(Tp &&t)
-{
-  return tuple_to_args_impl(micron::forward<Tp>(t), make_index_sequence<tuple_size_v<micron::remove_cvref_t<Tp>>>{});
-}
-
 template <typename Result, typename Tp, size_t... Is>
 constexpr Result
 make_from_tuple_impl(Tp &&t, index_sequence<Is...>)
 {
   return Result(get<Is>(micron::forward<Tp>(t))...);
+}
+
+template <typename T1, typename T2, size_t... I1, size_t... I2>
+constexpr tuple<tuple_element_t<I1, micron::remove_cvref_t<T1>>..., tuple_element_t<I2, micron::remove_cvref_t<T2>>...>
+tuple_cat_two(T1 &&t1, T2 &&t2, index_sequence<I1...>, index_sequence<I2...>)
+{
+  return tuple<tuple_element_t<I1, micron::remove_cvref_t<T1>>..., tuple_element_t<I2, micron::remove_cvref_t<T2>>...>(
+      get<I1>(micron::forward<T1>(t1))..., get<I2>(micron::forward<T2>(t2))...);
+}
+
+template <typename T1, typename T2>
+constexpr auto
+tuple_cat_pair(T1 &&t1, T2 &&t2)
+{
+  return tuple_cat_two(micron::forward<T1>(t1), micron::forward<T2>(t2), make_index_sequence<tuple_size_v<micron::remove_cvref_t<T1>>>{},
+                       make_index_sequence<tuple_size_v<micron::remove_cvref_t<T2>>>{});
+}
+
+template <typename Result>
+constexpr Result
+tuple_cat_fold()
+{
+  return Result{};
+}
+
+template <typename Result, typename T>
+constexpr Result
+tuple_cat_fold(T &&t)
+{
+  return Result(micron::forward<T>(t));
+}
+
+template <typename Result, typename T1, typename T2, typename... Rest>
+constexpr Result
+tuple_cat_fold(T1 &&t1, T2 &&t2, Rest &&...rest)
+{
+  return tuple_cat_fold<Result>(tuple_cat_pair(micron::forward<T1>(t1), micron::forward<T2>(t2)), micron::forward<Rest>(rest)...);
 }
 }     // namespace impl
 
@@ -775,9 +791,7 @@ template <typename... Tps>
 constexpr impl::tuple_cat_result_t<Tps...>
 tuple_cat(Tps &&...tuples)
 {
-  auto all_args = make_tuple(impl::tuple_to_args(micron::forward<Tps>(tuples))...);
-
-  return impl::make_from_tuple_impl<impl::tuple_cat_result_t<Tps...>>(all_args, make_index_sequence<tuple_size_v<decltype(all_args)>>{});
+  return impl::tuple_cat_fold<impl::tuple_cat_result_t<Tps...>>(micron::forward<Tps>(tuples)...);
 }
 
 namespace impl

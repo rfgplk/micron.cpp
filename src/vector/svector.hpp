@@ -23,7 +23,11 @@ namespace micron
 // svector: vector on the stack, fixed capacity N, mutable.
 template <is_regular_object T, usize N = 64, bool Sf = true> class svector
 {
-  alignas(T) T stack[N];
+  // NOTE: T[N] inside an anonymous union so non-trivial T is __NOT__ default constructed when the svector is created
+  union {
+    alignas(T) T stack[N];
+  };
+
   usize length = 0;
 
   inline bool
@@ -214,7 +218,11 @@ public:
   svector &
   operator=(const svector &o)
   {
-    __impl_container::copy_assign(stack, o.stack, o.length);
+    // needed
+    if ( this == micron::addressof(const_cast<svector &>(o)) ) return *this;
+    __impl_container::destroy(micron::real_addr_as<T>(stack[0]), length);
+    length = 0;
+    __impl_container::copy(stack, o.stack, o.length);
     length = o.length;
     return *this;
   }
@@ -222,7 +230,11 @@ public:
   svector &
   operator=(svector &&o)
   {
-    __impl_container::move_assign(stack, o.stack, o.length);
+    // needed
+    if ( this == micron::addressof(o) ) return *this;
+    __impl_container::destroy(micron::real_addr_as<T>(stack[0]), length);
+    length = 0;
+    __impl_container::move(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(o.stack[0]), o.length);
     length = o.length;
     o.length = 0;
     return *this;
@@ -483,9 +495,12 @@ public:
   erase(size_type n)
   {
     __safety_check<&svector::__index_check, except::runtime_error>("micron::svector erase() out of range.", n);
-    stack[n].~T();
-    micron::memmove(micron::real_addr_as<T>(stack[n]), micron::real_addr_as<T>(stack[n + 1]), (length - n - 1));
-    __impl_container::destroy(micron::real_addr_as<T>(stack[length - 1]), 1);
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( size_type i = n; i + 1 < length; ++i ) stack[i] = micron::move(stack[i + 1]);
+      stack[length - 1].~T();
+    } else {
+      micron::memmove(micron::real_addr_as<T>(stack[n]), micron::real_addr_as<T>(stack[n + 1]), (length - n - 1));
+    }
     --length;
     return *this;
   }
@@ -497,10 +512,13 @@ public:
   {
     __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector erase() iterator out of range.",
                                                                       static_cast<const T *>(itr));
-    itr->~T();
-    const usize tail = static_cast<usize>(end() - itr) - 1u;
-    micron::memmove(itr, itr + 1, tail);
-    __impl_container::destroy(micron::real_addr_as<T>(stack[length - 1]), 1);
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( T *p = itr; p + 1 < end(); ++p ) *p = micron::move(*(p + 1));
+      stack[length - 1].~T();
+    } else {
+      const usize tail = static_cast<usize>(end() - itr) - 1u;
+      micron::memmove(itr, itr + 1, tail);
+    }
     --length;
     return *this;
   }
@@ -512,9 +530,12 @@ public:
       if ( from >= to || to > length ) exc<except::runtime_error>("micron::svector erase() range out of bounds.");
     }
     const usize count = to - from;
-    for ( size_type i = from; i < to; i++ ) stack[i].~T();
-    micron::memmove(micron::real_addr_as<T>(stack[from]), micron::real_addr_as<T>(stack[to]), (length - to));
-    __impl_container::destroy(micron::real_addr_as<T>(stack[length - count]), count);
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      for ( size_type i = 0; i + to < length; ++i ) stack[from + i] = micron::move(stack[to + i]);
+      for ( size_type i = length - count; i < length; ++i ) stack[i].~T();
+    } else {
+      micron::memmove(micron::real_addr_as<T>(stack[from]), micron::real_addr_as<T>(stack[to]), (length - to));
+    }
     length -= count;
     return *this;
   }
@@ -529,10 +550,14 @@ public:
         exc<except::runtime_error>("micron::svector erase() iterator range out of bounds.");
     }
     const usize count = static_cast<usize>(last - first);
-    for ( iterator it = first; it != last; ++it ) it->~T();
-    const usize tail = static_cast<usize>(end() - last);
-    micron::memmove(first, last, tail);
-    __impl_container::destroy(micron::real_addr_as<T>(stack[length - count]), count);
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+      const usize tail = static_cast<usize>(end() - last);
+      for ( usize i = 0; i < tail; ++i ) first[i] = micron::move(last[i]);
+      for ( iterator it = end() - count; it != end(); ++it ) it->~T();
+    } else {
+      const usize tail = static_cast<usize>(end() - last);
+      micron::memmove(first, last, tail);
+    }
     length -= count;
     return *this;
   }
