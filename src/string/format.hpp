@@ -162,6 +162,52 @@ fmt_float_to_buf(char *buf, usize buf_sz, f64 val, u32 precision)
   return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
 }
 
+inline usize
+fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char type, bool has_prec)
+{
+  switch ( type ) {
+  case 'e' :
+  case 'E' :
+    return micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, precision);
+  case 'g' :
+  case 'G' : {
+    char tmp[26];
+    usize n = micron::__impl::__ryu::d2s_buffered(val, tmp);
+    i32 exp10 = 0;
+    bool found_e = false;
+    for ( usize i = 0; i < n; ++i ) {
+      if ( tmp[i] == 'e' || tmp[i] == 'E' ) {
+        found_e = true;
+        bool eneg = false;
+        usize j = i + 1;
+        if ( j < n && tmp[j] == '-' ) {
+          eneg = true;
+          ++j;
+        } else if ( j < n && tmp[j] == '+' ) {
+          ++j;
+        }
+        while ( j < n && tmp[j] >= '0' && tmp[j] <= '9' ) {
+          exp10 = exp10 * 10 + (tmp[j] - '0');
+          ++j;
+        }
+        if ( eneg ) exp10 = -exp10;
+        break;
+      }
+    }
+    if ( !found_e ) {
+      return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
+    }
+    u32 g_prec = has_prec ? (precision == 0 ? 1u : precision) : 6u;
+    if ( exp10 < -4 || exp10 >= static_cast<i32>(g_prec) ) return micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, g_prec - 1);
+    return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, g_prec - 1 - exp10);
+  }
+  case 'f' :
+  case 'F' :
+  default :
+    return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
+  }
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // format spec parser: {[index][:[[fill]align][width][.precision][type]]}
 
@@ -2904,7 +2950,7 @@ template <> struct formatter<f32> {
   write(char *buf, usize buf_sz, f32 val, const __impl::fmt_spec &spec)
   {
     u32 prec = spec.has_prec ? spec.prec : 6;
-    return __impl::fmt_float_to_buf(buf, buf_sz, static_cast<f64>(val), prec);
+    return __impl::fmt_float_to_buf_typed(buf, buf_sz, static_cast<f64>(val), prec, spec.type, spec.has_prec);
   }
 };
 
@@ -2913,7 +2959,7 @@ template <> struct formatter<f64> {
   write(char *buf, usize buf_sz, f64 val, const __impl::fmt_spec &spec)
   {
     u32 prec = spec.has_prec ? spec.prec : 6;
-    return __impl::fmt_float_to_buf(buf, buf_sz, val, prec);
+    return __impl::fmt_float_to_buf_typed(buf, buf_sz, val, prec, spec.type, spec.has_prec);
   }
 };
 
@@ -2956,7 +3002,6 @@ template <> struct formatter<const char *> {
     return len;
   }
 };
-
 
 // was missing this
 template <usize N> struct formatter<char[N]> {

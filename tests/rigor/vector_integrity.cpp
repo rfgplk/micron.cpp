@@ -1045,5 +1045,5 @@ main()
   end_test_case();
 
   sb::print("=== ALL INTEGRITY TESTS PASSED ===");
-  return 0;
+  return 1;
 }

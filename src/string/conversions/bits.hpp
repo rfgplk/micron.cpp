@@ -11,7 +11,6 @@
 #include "../string.hpp"
 #include "../unitypes.hpp"
 
-// WARNING: SUSPECT FOR DOUBLES
 // must surpress int128 extensions
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -116,11 +115,12 @@ fast_div10000(u64 x)
   return umul128(x, 0xD1B71758E219652CULL).hi >> 13;
 }
 
-// floor(x/1e8) via reciprocal
+// NOTE: single word constant division does not work over the full u64 range for divisor 10^8 
 inline u64
 fast_div1e8(u64 x)
 {
-  return umul128(x, 0xABCC77118461CEFCULL).hi >> 26;
+  // TODO: figure out an alternative to this
+  return x / 100000000ull;
 }
 
 inline u32
@@ -341,7 +341,7 @@ namespace __ryu
 constexpr static const u32 __mantissa_bits = 52;
 constexpr static const u32 __exponent_bits = 11;
 constexpr static const i32 __bias = 1023;
-constexpr static const u32 __pow5_inv_bitcount = 126;
+constexpr static const u32 __pow5_inv_bitcount = 125;
 constexpr static const u32 __pow5_bitcount = 125;
 
 constexpr static const u64 __pow5_table[26] = { 1ull,
@@ -482,8 +482,8 @@ pow5_compute(u32 i, u64 result[2])
   u32 delta = pow5bits(i) - pow5bits(base2);
   u32 corr = (__pow5_offsets[i / 16] >> ((i % 16) << 1)) & 3;
 
-  result[0] = shiftleft128(b0.lo, mid, delta) + corr;
-  result[1] = shiftleft128(mid, high, delta);
+  result[0] = shiftleft128(b0.lo, mid, 64 - delta) + corr;
+  result[1] = shiftleft128(mid, high, 64 - delta);
 }
 
 inline void
@@ -511,8 +511,8 @@ pow5_compute_inv(u32 i, u64 result[2])
   u32 delta = pow5bits(base2) - pow5bits(i);
   u32 corr = (__pow5_inv_offsets[i / 16] >> ((i % 16) << 1)) & 3;
 
-  result[0] = shiftleft128(b0.lo, mid, delta) + corr + 1;
-  result[1] = shiftleft128(mid, high, delta);
+  result[0] = shiftleft128(b0.lo, mid, 64 - delta) + corr + 1;
+  result[1] = shiftleft128(mid, high, 64 - delta);
 }
 
 inline u64
@@ -539,11 +539,11 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
   u64 m2;
 
   if ( ieeeExponent == 0 ) {
-    // subnormal
-    e2 = 1 - __bias - static_cast<i32>(__mantissa_bits);
+    // -2 absorbs the factor of 4 in mv = 4*m2
+    e2 = 1 - __bias - static_cast<i32>(__mantissa_bits) - 2;
     m2 = ieeeMantissa;
   } else {
-    e2 = static_cast<i32>(ieeeExponent) - __bias - static_cast<i32>(__mantissa_bits);
+    e2 = static_cast<i32>(ieeeExponent) - __bias - static_cast<i32>(__mantissa_bits) - 2;
     m2 = (1ull << __mantissa_bits) | ieeeMantissa;
   }
 
