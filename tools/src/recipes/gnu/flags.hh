@@ -1565,6 +1565,7 @@ constexpr static const i32 flag_optimize_fast = 252;
 constexpr static const i32 flag_optimize_debug = 253;
 constexpr static const i32 flag_optimize_z = 254;
 constexpr static const i32 flag_param = 255;
+constexpr static const i32 flag_lto_eight = 256;
 
 enum class flags : i32 {
   aggressive_loop_optimizations = flag_aggressive_loop_optimizations,
@@ -1822,7 +1823,8 @@ enum class flags : i32 {
   optimize_fast = flag_optimize_fast,
   optimize_debug = flag_optimize_debug,
   optimize_z = flag_optimize_z,
-  param = flag_param
+  param = flag_param,
+  lto_eight = flag_lto_eight
 };
 
 constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations",
@@ -2080,7 +2082,7 @@ constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations
                                                 "-Ofast",
                                                 "-Og",
                                                 "-Oz",
-                                                "--param " };
+                                                "--param ", "-flto=8" };
 
 constexpr const char *
 get_string_flag(flags f)
@@ -3861,8 +3863,7 @@ constexpr static const char *flag_strings[] = { "-mapcs-frame",
                                                 "-march=armv7-a",
                                                 "-march=armv8-a",
                                                 "-mfpu=neon",
-                                                "-mfloat-abi=hard"
-};
+                                                "-mfloat-abi=hard" };
 
 constexpr const char *
 get_string_flag(flags f)

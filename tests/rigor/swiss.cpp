@@ -24,7 +24,7 @@ static micron::hstring<char>
 make_key(int i)
 {
   char buf[32];
-  std::snprintf(buf, sizeof(buf), "key_%04d", i);
+  //std::snprintf(buf, sizeof(buf), "key_%04d", i);
   return buf;
 }
 
