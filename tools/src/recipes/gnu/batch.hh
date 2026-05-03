@@ -129,9 +129,9 @@ batch_cmp(const config_t &conf)
       = __is_cpp_standard(conf.standard)
             ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                          gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals,
-                         gcc::opt_flags::flags::lto)
+                         gcc::opt_flags::flags::lto_eight)
             : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                         gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto);
+                         gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto_eight);
   const string_type flags_extensions_supple
       = __is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "";
 
@@ -206,9 +206,9 @@ batch_cmp_armv7(const config_t &conf)
       = __is_cpp_standard(conf.standard)
             ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                          gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals,
-                         gcc::opt_flags::flags::lto)
+                         gcc::opt_flags::flags::lto_eight)
             : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                         gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto);
+                         gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto_eight);
   const string_type flags_extensions_supple
       = __is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "";
 

@@ -39,7 +39,7 @@ template <usize N, is_scalar_literal T = schar, bool Sf = true> struct sstring {
   size_type length;
 
 private:
-  inline __attribute__((always_inline)) size_type
+  inline size_type
   __rfind_substr(const T *needle, size_type needle_len, size_type pos = npos) const noexcept
   {
     if ( needle_len == 0 ) return (pos == npos || pos > length) ? length : pos;
@@ -53,7 +53,7 @@ private:
     return npos;
   }
 
-  inline __attribute__((always_inline)) sstring &
+  inline sstring &
   __replace_impl(size_type pos, size_type cnt, const T *with, size_type with_len)
   {
     if constexpr ( Sf ) {

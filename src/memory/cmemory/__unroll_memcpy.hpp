@@ -17,145 +17,175 @@
 namespace micron
 {
 
-// NOTE: memcpy_32 (unlike other memcpies) works off of bytes and not elements
+namespace experimental
+{
+namespace __unroll
+{
+
+template <typename F, typename D, usize... I>
+inline __attribute__((always_inline)) void
+copy(F *__restrict dest, const D *__restrict src, micron::index_sequence<I...>) noexcept
+{
+  ((dest[I] = static_cast<F>(src[I])), ...);
+}
+
+template <usize... I>
+inline __attribute__((always_inline)) void
+bcopy(byte *__restrict dest, const byte *__restrict src, micron::index_sequence<I...>) noexcept
+{
+  ((dest[I] = src[I]), ...);
+}
+
+inline constexpr u64 unroll_limit = 1024;
+};     // namespace __unroll
+
+template <u64 N, typename T, typename F>
+inline __attribute__((always_inline)) T *
+__memcpy_ur(T *__restrict dest, const F *__restrict src) noexcept
+{
+  byte *d = reinterpret_cast<byte *>(dest);
+  const byte *s = reinterpret_cast<const byte *>(src);
+  __unroll::bcopy(d, s, micron::make_index_sequence<N>{});
+  return dest;
+}
+
 template <typename T, typename F, typename S = u64>
 T *
 __memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
 {
-  if ( n == 0 ) return d;
-
-  byte *dest = reinterpret_cast<byte *>(d);
-  const byte *src = reinterpret_cast<const byte *>(s);
-
   switch ( n ) {
+  case 0 :
+    return d;
   case 1 :
-    dest[0] = src[0];
-    break;
+    return __memcpy_ur<1>(d, s);
   case 2 :
-    dest[0] = src[0];
-    dest[1] = src[1];
-    break;
+    return __memcpy_ur<2>(d, s);
   case 3 :
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
-    break;
+    return __memcpy_ur<3>(d, s);
   case 4 :
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
-    dest[3] = src[3];
-    break;
+    return __memcpy_ur<4>(d, s);
   case 5 :
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
-    dest[3] = src[3];
-    dest[4] = src[4];
-    break;
+    return __memcpy_ur<5>(d, s);
   case 6 :
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
-    dest[3] = src[3];
-    dest[4] = src[4];
-    dest[5] = src[5];
-    break;
+    return __memcpy_ur<6>(d, s);
   case 7 :
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
-    dest[3] = src[3];
-    dest[4] = src[4];
-    dest[5] = src[5];
-    dest[6] = src[6];
-    break;
+    return __memcpy_ur<7>(d, s);
   case 8 :
-    for ( u64 i = 0; i < 8; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<8>(d, s);
   case 9 :
-    for ( u64 i = 0; i < 9; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<9>(d, s);
   case 10 :
-    for ( u64 i = 0; i < 10; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<10>(d, s);
   case 11 :
-    for ( u64 i = 0; i < 11; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<11>(d, s);
   case 12 :
-    for ( u64 i = 0; i < 12; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<12>(d, s);
   case 13 :
-    for ( u64 i = 0; i < 13; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<13>(d, s);
   case 14 :
-    for ( u64 i = 0; i < 14; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<14>(d, s);
   case 15 :
-    for ( u64 i = 0; i < 15; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<15>(d, s);
   case 16 :
-    for ( u64 i = 0; i < 16; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<16>(d, s);
   case 17 :
-    for ( u64 i = 0; i < 17; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<17>(d, s);
   case 18 :
-    for ( u64 i = 0; i < 18; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<18>(d, s);
   case 19 :
-    for ( u64 i = 0; i < 19; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<19>(d, s);
   case 20 :
-    for ( u64 i = 0; i < 20; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<20>(d, s);
   case 21 :
-    for ( u64 i = 0; i < 21; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<21>(d, s);
   case 22 :
-    for ( u64 i = 0; i < 22; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<22>(d, s);
   case 23 :
-    for ( u64 i = 0; i < 23; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<23>(d, s);
   case 24 :
-    for ( u64 i = 0; i < 24; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<24>(d, s);
   case 25 :
-    for ( u64 i = 0; i < 25; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<25>(d, s);
   case 26 :
-    for ( u64 i = 0; i < 26; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<26>(d, s);
   case 27 :
-    for ( u64 i = 0; i < 27; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<27>(d, s);
   case 28 :
-    for ( u64 i = 0; i < 28; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<28>(d, s);
   case 29 :
-    for ( u64 i = 0; i < 29; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<29>(d, s);
   case 30 :
-    for ( u64 i = 0; i < 30; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<30>(d, s);
   case 31 :
-    for ( u64 i = 0; i < 31; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<31>(d, s);
   case 32 :
-    for ( u64 i = 0; i < 32; i++ ) dest[i] = src[i];
-    break;
+    return __memcpy_ur<32>(d, s);
+  default :
+    return d;
   }
-  return d;
 }
 
 template <typename T, typename F, typename S = u64>
 T *
 _rmemcpy_32(T &restrict _d, const F &restrict _s, const S n) noexcept
 {
-  T *d = &_d;
-  const F *s = &_s;
-  return __memcpy_32(d, s, n);
+  return __memcpy_32(&_d, &_s, n);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_8b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<8>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_16b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<16>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_32b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<32>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_64b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<64>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_128b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<128>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_256b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<256>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_512b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<512>(dest, src);
+}
+
+template <typename F, typename D>
+inline F *
+memcpy_1024b(F *__restrict dest, const D *__restrict src) noexcept
+{
+  return __memcpy_ur<1024>(dest, src);
 }
 
 template <typename F, typename D>
@@ -172,7 +202,7 @@ memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
   return dest;
-};
+}
 
 template <typename F, typename D>
 F &
@@ -190,7 +220,7 @@ rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
   else
     for ( u64 n = 0; n < cnt; n++ ) d[n] = static_cast<F>(s[n]);
   return dest;
-};
+}
 
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -207,7 +237,7 @@ constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcep
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
   return dest;
-};
+}
 
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -226,23 +256,19 @@ constexpr_rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexce
   else
     for ( u64 n = 0; n < cnt; n++ ) d[n] = static_cast<F>(s[n]);
   return dest;
-};
+}
 
 template <u64 M, typename F, typename D>
 F *
 cmemcpy(F *restrict dest, const D *restrict src) noexcept
 {
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = static_cast<F>(src[n]);
-      dest[n + 1] = static_cast<F>(src[n + 1]);
-      dest[n + 2] = static_cast<F>(src[n + 2]);
-      dest[n + 3] = static_cast<F>(src[n + 3]);
-    }
-  else
+  if constexpr ( M * sizeof(F) <= __unroll::unroll_limit ) {
+    __unroll::copy(dest, src, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) dest[n] = static_cast<F>(src[n]);
+  }
   return dest;
-};
+}
 
 template <u64 M, typename F, typename D>
 F &
@@ -250,17 +276,13 @@ crmemcpy(F &restrict dest, const D &restrict src) noexcept
 {
   F *d = &dest;
   const D *s = &src;
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      d[n] = static_cast<F>(s[n]);
-      d[n + 1] = static_cast<F>(s[n + 1]);
-      d[n + 2] = static_cast<F>(s[n + 2]);
-      d[n + 3] = static_cast<F>(s[n + 3]);
-    }
-  else
+  if constexpr ( M * sizeof(F) <= __unroll::unroll_limit ) {
+    __unroll::copy(d, s, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) d[n] = static_cast<F>(s[n]);
+  }
   return dest;
-};
+}
 
 template <typename F, typename D, u64 alignment = alignof(F)>
 F *
@@ -268,7 +290,6 @@ smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
   if ( dest == nullptr || src == nullptr ) return nullptr;
   if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = static_cast<F>(src[n]);
@@ -278,17 +299,15 @@ smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
-
   __mem_barrier();
   return dest;
-};
+}
 
 template <typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) ) return false;
-
   F *d = &dest;
   const D *s = &src;
   if ( cnt % 4 == 0 ) [[likely]]
@@ -300,10 +319,9 @@ rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) d[n] = static_cast<F>(s[n]);
-
   __mem_barrier();
   return true;
-};
+}
 
 template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 F *
@@ -311,42 +329,30 @@ scmemcpy(F *restrict dest, const D *restrict src) noexcept
 {
   if ( dest == nullptr || src == nullptr ) return nullptr;
   if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
-
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = static_cast<F>(src[n]);
-      dest[n + 1] = static_cast<F>(src[n + 1]);
-      dest[n + 2] = static_cast<F>(src[n + 2]);
-      dest[n + 3] = static_cast<F>(src[n + 3]);
-    }
-  else
+  if constexpr ( M * sizeof(F) <= __unroll::unroll_limit ) {
+    __unroll::copy(dest, src, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) dest[n] = static_cast<F>(src[n]);
-
+  }
   __mem_barrier();
   return dest;
-};
+}
 
 template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
 bool
 rscmemcpy(F &restrict dest, const D &restrict src) noexcept
 {
   if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return false;
-
   F *d = &dest;
   const D *s = &src;
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      d[n] = static_cast<F>(s[n]);
-      d[n + 1] = static_cast<F>(s[n + 1]);
-      d[n + 2] = static_cast<F>(s[n + 2]);
-      d[n + 3] = static_cast<F>(s[n + 3]);
-    }
-  else
+  if constexpr ( M * sizeof(F) <= __unroll::unroll_limit ) {
+    __unroll::copy(d, s, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) d[n] = static_cast<F>(s[n]);
-
+  }
   __mem_barrier();
   return true;
-};
+}
 
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -355,7 +361,6 @@ bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -365,9 +370,8 @@ bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   return _dest;
-};
+}
 
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -376,7 +380,6 @@ rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -386,9 +389,8 @@ rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   return _dest;
-};
+}
 
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -397,7 +399,6 @@ constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noex
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
   if ( cnt % 4 == 0 )
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -407,9 +408,8 @@ constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noex
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   return _dest;
-};
+}
 
 template <u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -418,19 +418,13 @@ cbytecpy(F *restrict _dest, const D *restrict _src) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = src[n];
-      dest[n + 1] = src[n + 1];
-      dest[n + 2] = src[n + 2];
-      dest[n + 3] = src[n + 3];
-    }
-  else
+  if constexpr ( M <= __unroll::unroll_limit ) {
+    __unroll::bcopy(dest, src, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
-
+  }
   return _dest;
-};
+}
 
 template <u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -439,19 +433,13 @@ crbytecpy(F &restrict _dest, const D &restrict _src) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
-
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = src[n];
-      dest[n + 1] = src[n + 1];
-      dest[n + 2] = src[n + 2];
-      dest[n + 3] = src[n + 3];
-    }
-  else
+  if constexpr ( M <= __unroll::unroll_limit ) {
+    __unroll::bcopy(dest, src, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
-
+  }
   return _dest;
-};
+}
 
 template <typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -460,10 +448,8 @@ sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
 {
   if ( _dest == nullptr || _src == nullptr ) return nullptr;
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
-
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -473,10 +459,9 @@ sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   __mem_barrier();
   return _dest;
-};
+}
 
 template <typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -484,10 +469,8 @@ bool
 rsbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return false;
-
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -497,10 +480,9 @@ rsbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   __mem_barrier();
   return true;
-};
+}
 
 template <u64 M, typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -509,23 +491,16 @@ scbytecpy(F *restrict _dest, const D *restrict _src) noexcept
 {
   if ( _dest == nullptr || _src == nullptr ) return nullptr;
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
-
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = src[n];
-      dest[n + 1] = src[n + 1];
-      dest[n + 2] = src[n + 2];
-      dest[n + 3] = src[n + 3];
-    }
-  else
+  if constexpr ( M <= __unroll::unroll_limit ) {
+    __unroll::bcopy(dest, src, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
-
+  }
   __mem_barrier();
   return _dest;
-};
+}
 
 template <u64 M, typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
@@ -533,30 +508,22 @@ bool
 rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
 {
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return false;
-
   byte *dest = reinterpret_cast<byte *>(&_dest);
   const byte *src = reinterpret_cast<const byte *>(&_src);
-
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      dest[n] = src[n];
-      dest[n + 1] = src[n + 1];
-      dest[n + 2] = src[n + 2];
-      dest[n + 3] = src[n + 3];
-    }
-  else
+  if constexpr ( M <= __unroll::unroll_limit ) {
+    __unroll::bcopy(dest, src, micron::make_index_sequence<M>{});
+  } else {
     for ( u64 n = 0; n < M; n++ ) dest[n] = src[n];
-
+  }
   __mem_barrier();
   return true;
-};
+}
 
 void *
 voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -566,9 +533,8 @@ voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   return _dest;
-};
+}
 
 template <u64 alignment = 1>
 void *
@@ -576,10 +542,8 @@ svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcep
 {
   if ( _dest == nullptr || _src == nullptr ) return nullptr;
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
-
   byte *dest = reinterpret_cast<byte *>(_dest);
   const byte *src = reinterpret_cast<const byte *>(_src);
-
   if ( cnt % 4 == 0 ) [[likely]]
     for ( u64 n = 0; n < cnt; n += 4 ) {
       dest[n] = src[n];
@@ -589,9 +553,8 @@ svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcep
     }
   else
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
-
   __mem_barrier();
   return _dest;
-};
-
+}
+};     // namespace experimental
 };     // namespace micron
