@@ -133,7 +133,11 @@ batch_cmp(const config_t &conf)
             : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                          gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto_eight);
   const string_type flags_extensions_supple
-      = __is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "";
+      = conf.doctor ? (__is_cpp_standard(conf.standard)
+                           ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2 -ftime-report -ftime-report-details -fmem-report "
+                             "-fopt-info -fopt-info-missed"
+                           : "-ftime-report -ftime-report-details -fmem-report -fopt-info -fopt-info-missed")
+                    : (__is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "");
 
   const string_type libs_location = "-L" + conf.lib_path;
   const string_type includes_location = "-I" + conf.include_path;
@@ -210,7 +214,12 @@ batch_cmp_armv7(const config_t &conf)
             : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                          gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto_eight);
   const string_type flags_extensions_supple
-      = __is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "";
+
+      = conf.doctor ? (__is_cpp_standard(conf.standard)
+                           ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2 -ftime-report -ftime-report-details -fmem-report "
+                             "-fopt-info -fopt-info-missed"
+                           : "-ftime-report -ftime-report-details -fmem-report -fopt-info -fopt-info-missed")
+                    : (__is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "");
 
   const string_type libs_location = "-L" + conf.lib_path;
   const string_type includes_location = "-I" + conf.include_path;
