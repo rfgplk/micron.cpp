@@ -327,7 +327,7 @@ public:
   }
 
   inline bool
-  operator!() const
+  operator!(void) const
   {
     return empty();
   }
@@ -339,19 +339,25 @@ public:
   }
 
   const byte *
-  operator&() const
+  operator&(void) const
   {
     return reinterpret_cast<const byte *>(__mem::memory);
   }
 
   bool
-  empty() const
+  empty(void) const
   {
     return (__mem::length == 0 or __mem::memory == nullptr);
   };
 
   usize
-  size() const
+  size(void) const
+  {
+    return __mem::length;
+  }
+
+  usize
+  len(void) const
   {
     return __mem::length;
   }
@@ -370,7 +376,7 @@ public:
   }
 
   usize
-  max_size() const
+  max_size(void) const
   {
     return __mem::capacity;
   }
@@ -382,13 +388,13 @@ public:
   };
 
   const_iterator
-  data() const
+  data(void) const
   {
     return __mem::memory;
   };
 
   const_iterator
-  cdata() const
+  cdata(void) const
   {
     return __mem::memory;
   };
@@ -401,28 +407,28 @@ public:
   };
 
   inline const char *
-  c_str() const
+  c_str(void) const
   {
     if ( __mem::memory == nullptr ) return _null_str;
     return reinterpret_cast<const char *>(&(__mem::memory)[0]);
   };
 
   inline const wide *
-  w_str() const
+  w_str(void) const
   {
     if ( __mem::memory == nullptr ) return _null_wstr;
     return reinterpret_cast<const wide *>(&(__mem::memory)[0]);
   };
 
   inline const unicode32 *
-  uni_str() const
+  uni_str(void) const
   {
     if ( __mem::memory == nullptr ) return _null_u32str;
     return reinterpret_cast<const unicode32 *>(&(__mem::memory)[0]);
   };
 
   inline slice<T>
-  into_chars() const
+  into_chars(void) const
   {
     return slice<T>(&__mem::memory[0], &__mem::memory[__mem::length]);
   }
@@ -453,7 +459,7 @@ public:
   }
 
   inline const T &
-  front() const
+  front(void) const
   {
     return __mem::memory[0];
   }
@@ -465,7 +471,7 @@ public:
   }
 
   inline const T &
-  back() const
+  back(void) const
   {
     return __mem::memory[__mem::length - 1];
   }
@@ -506,13 +512,13 @@ public:
   }
 
   inline iterator
-  begin() const
+  begin(void) const
   {
     return const_cast<iterator>(&(__mem::memory)[0]);
   }
 
   inline iterator
-  end() const
+  end(void) const
   {
     return const_cast<iterator>(&(__mem::memory)[__mem::length]);
   }
@@ -524,19 +530,19 @@ public:
   }
 
   inline iterator
-  last() const
+  last(void) const
   {
     return const_cast<iterator>(&(__mem::memory)[__mem::length - 1]);
   }
 
   inline const_iterator
-  cbegin() const
+  cbegin(void) const
   {
     return &(__mem::memory)[0];
   }
 
   inline const_iterator
-  cend() const
+  cend(void) const
   {
     return &(__mem::memory)[__mem::length];
   }
@@ -1210,7 +1216,7 @@ public:
   }
 
   explicit inline
-  operator bool() const noexcept
+  operator bool(void) const noexcept
   {
     return !empty();
   }

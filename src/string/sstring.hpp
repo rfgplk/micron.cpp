@@ -439,6 +439,12 @@ public:
   }
 
   constexpr size_type
+  len(void) const
+  {
+    return length;
+  }
+
+  constexpr size_type
   size(void) const
   {
     return length;
