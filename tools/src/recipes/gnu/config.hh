@@ -103,6 +103,7 @@ struct config_t {
   mc::vector<string_type> bonus_objs;
   mc::vector<string_type> bonus_libs;
   bool warnings = false;
+  bool doctor = false;
   bool static_binary = false;
   bool freestanding = false;
   bool check_compileability = true;     // check include paths for updates - default true

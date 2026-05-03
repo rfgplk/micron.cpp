@@ -1,5 +1,6 @@
 #pragma once
 
+#include "commands/doctor.hh"
 #include "commands/build.hh"
 #include "commands/help.hh"
 #include "commands/run.hh"
@@ -7,7 +8,7 @@
 
 #include "../../src/io/io.hpp"
 
-enum class __modes : i32 { build, batch, link, compile, debug, run, make, test, recipes, __end };
+enum class __modes : i32 { build, batch, link, compile, debug, run, make, test, doctor, recipes, __end };
 
 template <typename T = void>
 auto
@@ -15,8 +16,7 @@ match(char **argv) -> __modes
   requires(recipes::__using_gnu)
 {
   // builds file/project - if file build single file, if dir, every file in dir
-  if ( mc::strcmp(argv[1], "build") == 0 )
-    return __modes::build;
+  if ( mc::strcmp(argv[1], "build") == 0 ) return __modes::build;
   // reads a sh/makefile like file and executes argv from it sequentially
   else if ( mc::strcmp(argv[1], "batch") == 0 )
     return __modes::batch;
@@ -38,6 +38,8 @@ match(char **argv) -> __modes
   // builds test files and runs, verifies if each exits with '1' (success) or '0' (fail)
   else if ( mc::strcmp(argv[1], "test") == 0 )
     return __modes::test;
+  else if ( mc::strcmp(argv[1], "doctor") == 0 )
+    return __modes::doctor;
   else if ( mc::strcmp(argv[1], "recipes") == 0 )
     return __modes::recipes;
   // nothing
@@ -62,15 +64,12 @@ parse_main(int argc, char **argv)
   switch ( mode ) {
   case __modes::build : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs )
-      build<mc::exec_wait>(conf);
+    for ( auto &conf : confs ) build<mc::exec_wait>(conf);
     break;
   }
   case __modes::batch : {
-    if ( argc != 3 )
-      mc::cerror("Must provide a sole path to a valid batchfile");
-    if ( !mc::posix::exists(argv[2]) )
-      mc::cerror("File doesn't exist");
+    if ( argc != 3 ) mc::cerror("Must provide a sole path to a valid batchfile");
+    if ( !mc::posix::exists(argv[2]) ) mc::cerror("File doesn't exist");
     mc::string batchfile;
     auto __f = mc::io::open_file(argv[2]);
     mc::io::read(__f, batchfile);
@@ -80,20 +79,17 @@ parse_main(int argc, char **argv)
     for ( auto &line : lines ) {
       // strip comments and blank lines
       mc::fmt::strip(line);
-      if ( line.empty() || line[0] == '#' )
-        continue;
+      if ( line.empty() || line[0] == '#' ) continue;
 
       auto tokens = mc::fmt::split_to(line, "");
 
-      if ( tokens.empty() )
-        continue;
+      if ( tokens.empty() ) continue;
 
       // first entry is nullptr, parse_main expects the first arg to be bin name (posix convention)
       mc::vector<char *> __argv;
       __argv.push_back(nullptr);
 
-      for ( auto &tok : tokens )
-        __argv.push_back(tok.begin());
+      for ( auto &tok : tokens ) __argv.push_back(tok.begin());
 
       parse_main(static_cast<int>(__argv.size()), __argv.data());
     }
@@ -102,20 +98,17 @@ parse_main(int argc, char **argv)
   }
   case __modes::compile : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs )
-      build<mc::exec_continue>(conf);
+    for ( auto &conf : confs ) build<mc::exec_continue>(conf);
     break;
   }
   case __modes::link : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs )
-      build<mc::exec_continue>(conf);
+    for ( auto &conf : confs ) build<mc::exec_continue>(conf);
     break;
   }
   case __modes::debug : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs )
-      build_debug(conf);
+    for ( auto &conf : confs ) build_debug(conf);
     break;
   }
   case __modes::run : {
@@ -132,6 +125,11 @@ parse_main(int argc, char **argv)
   case __modes::test : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
     cicd_test(confs);
+    break;
+  }
+  case __modes::doctor : {
+    auto confs = parse_argv_build(argc - 2, argv + 2);
+    for ( auto &conf : confs ) doctor<mc::exec_wait>(conf);
     break;
   }
   case __modes::recipes : {
