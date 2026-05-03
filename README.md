@@ -36,11 +36,6 @@ Features
   - a high performance, cache-aware algorithmic base architecture
   - provides an innovative foundation for systems-level development, reimagining conventional approaches to low-level programming
 
-Who is this Library for?
--------------------------
-
-The idea behind this library is that you shouldn't need anything more than a compliant C++ compiler to actually build and compile useful applications. If you are in need of a truly portable (meaning any Linux system), high-performance freestanding library that offers all utilities & functions needed to program and control your system in a single repository with a relatively small footprint (run-on sentence, I guess), this is for you. Based on the latest count, this library has a footprint of roughly ~10-15% of glibc, while providing (nearly) all functionality. 
-
 
 Using the Library
 -------------------
