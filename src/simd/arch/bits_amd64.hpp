@@ -19,11 +19,11 @@ is_aligned(B *ptr)
   return reinterpret_cast<uintptr_t>(ptr) % (A / 8) == 0;
 }
 
-template <typename B>
+template <int H, typename B>
 void
-prefetch(B *ptr, int s = _MM_HINT_T0)
+prefetch(B *ptr)
 {
-  _mm_prefetch(ptr, s);
+  _mm_prefetch(ptr, H);
 }
 
 template <typename T>

@@ -6,6 +6,11 @@
 #pragma once
 
 // this is here so we can include the following headers directly.
+// clang/llvm
+#ifndef __IMMINTRIN_H
+#define __IMMINTRIN_H
+#endif
+// gnu gcc
 #ifndef _IMMINTRIN_H_INCLUDED
 #define _IMMINTRIN_H_INCLUDED
 #endif
@@ -83,25 +88,35 @@
 
 #include <avx512vbmi2intrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <avx512vbmi2vlintrin.h>
+#endif
 
 #include <avx512vnniintrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <avx512vnnivlintrin.h>
+#endif
 
 #include <avx512vpopcntdqvlintrin.h>
 
 #include <avx512bitalgintrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <avx512bitalgvlintrin.h>
+#endif
 
 #include <avx512vp2intersectintrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <avx512vp2intersectvlintrin.h>
+#endif
 
 #include <avx512fp16intrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <avx512fp16vlintrin.h>
+#endif
 
 #include <shaintrin.h>
 
@@ -121,14 +136,16 @@
 
 #include <vpclmulqdqintrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <avx512bf16vlintrin.h>
+#endif
 
 #include <avx512bf16intrin.h>
 
 #include <avxneconvertintrin.h>
 
+#if defined(__micron_compiler_gcc)
 #include <amxtileintrin.h>
-
 #include <amxint8intrin.h>
 
 #include <amxbf16intrin.h>
@@ -186,5 +203,6 @@
 #include <avx10_2-512mediaintrin.h>
 #include <avx10_2-512minmaxintrin.h>
 #include <avx10_2-512satcvtintrin.h>
+#endif
 
 #endif

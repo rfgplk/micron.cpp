@@ -296,7 +296,7 @@ bool
 rscmemset_safe(F &s, const byte in) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, M) ) return nullptr;
+  if ( !__is_valid_address(s, M) ) return false;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if constexpr ( M % 4 == 0 )
@@ -629,7 +629,7 @@ bool
 rsbyteset(F &s, const byte in, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, cnt) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return false;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if ( cnt % 4 == 0 )
@@ -689,7 +689,7 @@ bool
 rscbyteset_safe(F &s, const byte in) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, N) ) return nullptr;
+  if ( !__is_valid_address(s, N) ) return false;
 
   byte *src = reinterpret_cast<byte *>(&s);
   if constexpr ( N % 4 == 0 )
@@ -911,7 +911,7 @@ bool
 rstypeset(F &s, const T in, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, cnt) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return false;
 
   T *src = reinterpret_cast<T *>(&s);
   if ( cnt % 4 == 0 )
@@ -954,7 +954,7 @@ bool
 rsctypeset_safe(F &s, const T in) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, M) ) return nullptr;
+  if ( !__is_valid_address(s, M) ) return false;
 
   T *src = reinterpret_cast<T *>(&s);
   if constexpr ( M % 4 == 0 )
@@ -1213,7 +1213,7 @@ bool
 rswordset(word &s, const word in, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to_r(s, alignment) ) return false;
-  if ( !__is_valid_address(s, cnt) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return false;
 
   word *src = reinterpret_cast<word *>(&s);
   if ( cnt % 4 == 0 )
@@ -1581,7 +1581,7 @@ bool
 rszero(F &s, const M cnt) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, cnt) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return false;
 
   F *src = reinterpret_cast<F *>(&s);
   for ( M n = 0; n < cnt; n++ ) src[n] = 0x0;
@@ -1607,7 +1607,7 @@ bool
 rsczero(F &s) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, M) ) return nullptr;
+  if ( !__is_valid_address(s, M) ) return false;
 
   F *src = reinterpret_cast<F *>(&s);
   for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
@@ -1633,7 +1633,7 @@ bool
 rsfull(F &s, const M cnt) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, cnt) ) return nullptr;
+  if ( !__is_valid_address(s, cnt) ) return false;
 
   F *src = reinterpret_cast<F *>(&s);
   for ( M n = 0; n < cnt; n++ ) src[n] = 0xFF;
@@ -1659,7 +1659,7 @@ bool
 rscfull_safe(F &s) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
-  if ( !__is_valid_address(s, M) ) return nullptr;
+  if ( !__is_valid_address(s, M) ) return false;
 
   F *src = reinterpret_cast<F *>(&s);
   for ( u64 n = 0; n < M; n++ ) src[n] = 0xFF;

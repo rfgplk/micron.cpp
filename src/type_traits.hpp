@@ -15,7 +15,7 @@ using __tt_size_t = long unsigned int;
 using __tt_nullptr_t = decltype(nullptr);
 
 // hard float workaround
-#if !defined(__micron_arch_arm32)
+#if !defined(__micron_arch_arm32) && defined(__micron_compiler_gcc)
 using __bfloat16_t = __decltype(0.0bf16);
 #else
 using __bfloat_16_t = float;
@@ -770,9 +770,23 @@ template <typename T> using add_volatile_t = typename add_volatile<T>::type;
 
 template <typename T> using add_cv_t = typename add_cv<T>::type;
 
+#if defined (__micron_compiler_gcc)
 template <typename T> struct remove_reference {
   using type = __remove_reference(T);
 };
+#else
+template <typename T> struct remove_reference {
+  using type = T;
+};
+
+template <typename T> struct remove_reference<T&> {
+  using type = T;
+};
+
+template <typename T> struct remove_reference<T&&> {
+  using type = T;
+};
+#endif
 
 template <typename T> struct add_lvalue_reference {
   using type = __add_lval_ref_t<T>;
@@ -1535,9 +1549,11 @@ template <typename Fn, typename... Args> using invoke_result_t = typename invoke
 
 template <typename Fn, typename... _ArgTypes>
 struct is_invocable
-
+#if defined(__micron_compiler_gcc)
     : public __bool_constant<__is_invocable(Fn, _ArgTypes...)>
-
+#else
+    : __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, void>::type
+#endif
 {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}), "Fn must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
@@ -1554,9 +1570,11 @@ struct is_invocable_r : __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, R
 
 template <typename Fn, typename... _ArgTypes>
 struct is_nothrow_invocable
-
+#if defined(__micron_compiler_gcc)
     : public __bool_constant<__is_nothrow_invocable(Fn, _ArgTypes...)>
-
+#else
+    : __and_<__is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, void>, __call_is_nothrow_<Fn, _ArgTypes...>>::type
+#endif
 {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<Fn>{}), "Fn must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),
