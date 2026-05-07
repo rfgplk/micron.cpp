@@ -18,6 +18,8 @@
 
 #include "v_types/vec16.hpp"
 
+#include "dynvec.hpp"
+
 namespace micron
 {
 using vec2 = vector_2<f32>;

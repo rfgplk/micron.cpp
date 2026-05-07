@@ -16,6 +16,7 @@
 #include <cstring>
 #include <set>
 #include <vector>
+#include <iostream>
 
 // NOTE: these tests highly depend on the hash used (ie collision specific - beware!)
 

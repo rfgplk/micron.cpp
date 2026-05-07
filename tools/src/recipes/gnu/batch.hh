@@ -95,7 +95,7 @@ batch_cmp(const config_t &conf)
                                                                     gcc::linker_flags::flags::nostdlib_pp)
                                                        : "";
   const string_type arch_width = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
-  string_type compile_libs = conf.freestanding ? "" : "-lm -lpthread";
+  string_type compile_libs = conf.freestanding ? "" : "-lpthread";
   if ( !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
       compile_libs += " -l";
@@ -176,7 +176,7 @@ batch_cmp_armv7(const config_t &conf)
   const string_type freestanding = (conf.freestanding) ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
                                                                     gcc::linker_flags::flags::nostdlib_pp)
                                                        : "";
-  string_type compile_libs = conf.freestanding ? "" : "-lm -lpthread";
+  string_type compile_libs = conf.freestanding ? "" : "-lpthread";
   if ( !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
       compile_libs += " -l";

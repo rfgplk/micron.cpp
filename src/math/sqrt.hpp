@@ -11,7 +11,11 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "bits/sqrt.hpp"
+
 #include "generic.hpp"
+
+#include "__asm/hw.hpp"
 
 namespace micron
 {
@@ -39,61 +43,61 @@ cbrtdl(const flong x)
 constexpr float
 fsqrt(float x) noexcept
 {
-  return __builtin_sqrtf(x);
+  return float(mkbits::sqrt_ns::sqrt<f32>(f32(x)));
 }
 
 constexpr double
 fsqrt(double x) noexcept
 {
-  return __builtin_sqrt(x);
+  return double(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
 constexpr long double
 fsqrt(long double x) noexcept
 {
-  return __builtin_sqrtl(x);
+  return static_cast<long double>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
 constexpr float
 frsqrt(float x) noexcept
 {
-  return 1.f / __builtin_sqrtf(x);
+  return float(mkbits::sqrt_ns::rsqrt<f32>(f32(x)));
 }
 
 constexpr double
 frsqrt(double x) noexcept
 {
-  return 1.0 / __builtin_sqrt(x);
+  return double(mkbits::sqrt_ns::rsqrt<f64>(f64(x)));
 }
 
 constexpr long double
 frsqrt(long double x) noexcept
 {
-  return 1.0L / __builtin_sqrtl(x);
+  return static_cast<long double>(mkbits::sqrt_ns::rsqrt<f64>(f64(x)));
 }
 
 constexpr u32
 fsqrt(u32 x) noexcept
 {
-  return static_cast<u32>(__builtin_sqrt(static_cast<double>(x)));
+  return static_cast<u32>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
 constexpr u64
 fsqrt(u64 x) noexcept
 {
-  return static_cast<u64>(__builtin_sqrtl(static_cast<long double>(x)));
+  return static_cast<u64>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
 constexpr i32
 fsqrt(i32 x) noexcept
 {
-  return x < 0 ? 0 : static_cast<i32>(__builtin_sqrt(static_cast<double>(x)));
+  return x < 0 ? 0 : static_cast<i32>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
 constexpr i64
 fsqrt(i64 x) noexcept
 {
-  return x < 0 ? 0 : static_cast<i64>(__builtin_sqrtl(static_cast<long double>(x)));
+  return x < 0 ? 0 : static_cast<i64>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
 template <typename T>
@@ -107,7 +111,7 @@ sqrt(T x) noexcept
 inline float
 gsqrt(const float x)
 {
-  return static_cast<float>(__builtin_sqrt(x));
+  return static_cast<float>(hw::sqrt_sd(f64(x)));
 };
 
 inline float
@@ -117,8 +121,10 @@ fsqrt_simd(const float x)
   return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+  return float(hw::sqrt_ss(f32(x)));
 #else
-  return __builtin_sqrtf(x);
+  return float(hw::sqrt_ss(f32(x)));
 #endif
 }
 
@@ -129,8 +135,10 @@ ss_sqrt(const float x)
   return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+#elif defined(__micron_arch_arm32)
+  return float(hw::sqrt_ss(f32(x)));
 #else
-  return __builtin_sqrtf(x);
+  return float(hw::sqrt_ss(f32(x)));
 #endif
 }
 
@@ -141,8 +149,10 @@ ss_rsqrt(const float x)
   return 1.0f / _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return 1.0f / vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+  return vgetq_lane_f32(vrsqrteq_f32(vdupq_n_f32(x)), 0);
 #else
-  return 1.0f / __builtin_sqrtf(x);
+  return 1.0f / float(hw::sqrt_ss(f32(x)));
 #endif
 }
 
@@ -153,8 +163,10 @@ sd_sqrt(const double x)
   return _mm_cvtsd_f64(_mm_sqrt_sd(_mm_setzero_pd(), _mm_set_sd(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return vgetq_lane_f64(vsqrtq_f64(vdupq_n_f64(x)), 0);
+#elif defined(__micron_arch_arm32)
+  return double(hw::sqrt_sd(f64(x)));
 #else
-  return __builtin_sqrt(x);
+  return double(hw::sqrt_sd(f64(x)));
 #endif
 }
 
@@ -165,8 +177,10 @@ sd_rsqrt(const double x)
   return 1.0 / _mm_cvtsd_f64(_mm_sqrt_sd(_mm_setzero_pd(), _mm_set_sd(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return 1.0 / vgetq_lane_f64(vsqrtq_f64(vdupq_n_f64(x)), 0);
+#elif defined(__micron_arch_arm32)
+  return 1.0 / double(hw::sqrt_sd(f64(x)));
 #else
-  return 1.0 / __builtin_sqrt(x);
+  return 1.0 / double(hw::sqrt_sd(f64(x)));
 #endif
 }
 
@@ -197,10 +211,10 @@ vsqrt(simd::f128 v) noexcept
 #else
   float tmp[4];
   vst1q_f32(tmp, v);
-  tmp[0] = __builtin_sqrtf(tmp[0]);
-  tmp[1] = __builtin_sqrtf(tmp[1]);
-  tmp[2] = __builtin_sqrtf(tmp[2]);
-  tmp[3] = __builtin_sqrtf(tmp[3]);
+  tmp[0] = float(hw::sqrt_ss(f32(tmp[0])));
+  tmp[1] = float(hw::sqrt_ss(f32(tmp[1])));
+  tmp[2] = float(hw::sqrt_ss(f32(tmp[2])));
+  tmp[3] = float(hw::sqrt_ss(f32(tmp[3])));
   return vld1q_f32(tmp);
 #endif
 }

@@ -11,7 +11,8 @@
 // should perform vis-a-vis to the stl
 namespace micron
 {
-using __tt_size_t = long unsigned int;
+// armv7 compat
+using __tt_size_t = __SIZE_TYPE__;     // long unsigned int;
 using __tt_nullptr_t = decltype(nullptr);
 
 // hard float workaround
@@ -770,7 +771,7 @@ template <typename T> using add_volatile_t = typename add_volatile<T>::type;
 
 template <typename T> using add_cv_t = typename add_cv<T>::type;
 
-#if defined (__micron_compiler_gcc)
+#if defined(__micron_compiler_gcc)
 template <typename T> struct remove_reference {
   using type = __remove_reference(T);
 };
@@ -779,11 +780,11 @@ template <typename T> struct remove_reference {
   using type = T;
 };
 
-template <typename T> struct remove_reference<T&> {
+template <typename T> struct remove_reference<T &> {
   using type = T;
 };
 
-template <typename T> struct remove_reference<T&&> {
+template <typename T> struct remove_reference<T &&> {
   using type = T;
 };
 #endif

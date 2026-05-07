@@ -52,9 +52,9 @@ constexpr static const usize __alloc_limit = 0;     // forbid any allocations gr
 constexpr static const usize __default_cache_size_factor = (1 << 13);     // 1 MB total (mults by class_precise)
 constexpr static const usize __default_arena_page_buf = 512;              // 2MiB for now... ~81k rnd allocations
 constexpr static const usize __default_magic_size = micron::numeric_limits<usize>::max();
-constexpr static const usize __default_minimum_page_mul = 16;         // 65kB minimum per sheet, larger buckets will exceed this
+constexpr static const usize __default_minimum_page_mul = 16;       // 65kB minimum per sheet, larger buckets will exceed this
 constexpr static const f32 __default_prealloc_factor = 0.0075f;     // 0.75% of total system mem
-constexpr static const usize __default_cache_step = 768;              // ~5.9MB
+constexpr static const usize __default_cache_step = 768;            // ~5.9MB
 
 constexpr static const bool __default_launder
     = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address

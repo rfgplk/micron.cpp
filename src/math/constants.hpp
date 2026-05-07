@@ -98,6 +98,8 @@ pi_t<long double>() noexcept
 
 template <typename T> constexpr T default_eps() noexcept;
 
+// gate for clang
+#if defined(__micron_compiler_gcc) && defined(__micron_arch_amd64) && __cplusplus >= 202300L
 template <>
 constexpr _Float32
 default_eps<_Float32>() noexcept
@@ -111,6 +113,7 @@ default_eps<_Float64>() noexcept
 {
   return 1e-12;
 }
+#endif
 
 template <>
 constexpr float

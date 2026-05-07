@@ -10,3 +10,5 @@
 #include "int4x4.hpp"
 #include "int64x1.hpp"
 #include "int8x8.hpp"
+
+#include "dynmat.hpp"

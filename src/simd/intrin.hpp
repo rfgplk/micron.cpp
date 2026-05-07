@@ -145,8 +145,8 @@
 #include <avxneconvertintrin.h>
 
 #if defined(__micron_compiler_gcc)
-#include <amxtileintrin.h>
 #include <amxint8intrin.h>
+#include <amxtileintrin.h>
 
 #include <amxbf16intrin.h>
 

@@ -7,8 +7,11 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
+#include "../../log.hpp"
+#include "../../mk.hpp"
 #include "../../sqrt.hpp"
 #include "../../trig.hpp"
 
@@ -22,7 +25,7 @@ namespace micron
 
 template <typename T = float>
   requires micron::is_floating_point_v<T>
-struct vector_2 {
+struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   T x, y;
 
   ~vector_2() = default;
@@ -200,7 +203,7 @@ struct vector_2 {
   constexpr T
   lp_norm(T p) const
   {
-    return math::fpow(fpow(math::fabs(x), p) + math::fpow(math::fabs(y), p), T{ 1 } / p);
+    return math::pow(math::pow(math::fabs(x), p) + math::pow(math::fabs(y), p), T{ 1 } / p);
   }
 
   constexpr T
@@ -244,7 +247,7 @@ struct vector_2 {
     T c = cos_angle(v);
 
     c = math::fclamp(c, T{ -1 }, T{ 1 });
-    return math::facos(c);
+    return math::acos(c);
   }
 
   constexpr T
@@ -361,103 +364,103 @@ struct vector_2 {
   constexpr vector_2<T>
   exp() const
   {
-    return { math::fexp(x), math::fexp(y) };
+    return { math::exp(x), math::exp(y) };
   }
 
   constexpr vector_2<T>
   exp2() const
   {
-    return { math::fexp2(x), math::fexp2(y) };
+    return { math::exp2(x), math::exp2(y) };
   }
 
   constexpr vector_2<T>
   log() const
   {
-    return { math::flog(x), math::flog(y) };
+    return { math::log(x), math::log(y) };
   }
 
   constexpr vector_2<T>
   log2() const
   {
-    return { math::flog2(x), math::flog2(y) };
+    return { math::log2(x), math::log2(y) };
   }
 
   constexpr vector_2<T>
   log10() const
   {
-    return { math::flog10(x), math::flog10(y) };
+    return { math::log10(x), math::log10(y) };
   }
 
   constexpr vector_2<T>
   sin() const
   {
-    return { math::fsin(x), math::fsin(y) };
+    return { math::sin(x), math::sin(y) };
   }
 
   constexpr vector_2<T>
   cos() const
   {
-    return { math::fcos(x), math::fcos(y) };
+    return { math::cos(x), math::cos(y) };
   }
 
   constexpr vector_2<T>
   tan() const
   {
-    return { math::ftan(x), math::ftan(y) };
+    return { math::tan(x), math::tan(y) };
   }
 
   constexpr vector_2<T>
   asin() const
   {
-    return { math::fasin(x), math::fasin(y) };
+    return { math::asin(x), math::asin(y) };
   }
 
   constexpr vector_2<T>
   acos() const
   {
-    return { math::facos(x), math::facos(y) };
+    return { math::acos(x), math::acos(y) };
   }
 
   constexpr vector_2<T>
   atan() const
   {
-    return { math::fatan(x), math::fatan(y) };
+    return { math::atan(x), math::atan(y) };
   }
 
   constexpr vector_2<T>
   sinh() const
   {
-    return { math::fsinh(x), math::fsinh(y) };
+    return { math::sinh(x), math::sinh(y) };
   }
 
   constexpr vector_2<T>
   cosh() const
   {
-    return { math::fcosh(x), math::fcosh(y) };
+    return { math::cosh(x), math::cosh(y) };
   }
 
   constexpr vector_2<T>
   tanh() const
   {
-    return { math::ftanh(x), math::ftanh(y) };
+    return { math::tanh(x), math::tanh(y) };
   }
 
   constexpr vector_2<T>
   erf() const
   {
-    return { math::ferf(x), math::ferf(y) };
+    return { math::erf(x), math::erf(y) };
   }
 
   constexpr vector_2<T>
   erfc() const
   {
-    return { math::ferfc(x), math::ferfc(y) };
+    return { math::erfc(x), math::erfc(y) };
   }
 
   constexpr vector_2<T>
   gamma() const
   {
-    return { math::fgamma(x), math::fgamma(y) };
+    return { math::tgamma(x), math::tgamma(y) };
   }
 
   constexpr vector_2<T>
@@ -487,31 +490,31 @@ struct vector_2 {
   constexpr vector_2<T>
   pow(const vector_2<T> &v) const
   {
-    return { math::fpow(x, v.x), math::fpow(y, v.y) };
+    return { math::pow(x, v.x), math::pow(y, v.y) };
   }
 
   constexpr vector_2<T>
   pow(T s) const
   {
-    return { math::fpow(x, s), math::fpow(y, s) };
+    return { math::pow(x, s), math::pow(y, s) };
   }
 
   friend constexpr vector_2<T>
   pow(T s, const vector_2<T> &v)
   {
-    return { math::fpow(s, v.x), math::fpow(s, v.y) };
+    return { math::pow(s, v.x), math::pow(s, v.y) };
   }
 
   constexpr vector_2<T>
   atan2(const vector_2<T> &v) const
   {
-    return { math::fatan2(x, v.x), math::fatan2(y, v.y) };
+    return { math::atan2(x, v.x), math::atan2(y, v.y) };
   }
 
   constexpr vector_2<T>
   atan2(T s) const
   {
-    return { math::fatan2(x, s), math::fatan2(y, s) };
+    return { math::atan2(x, s), math::atan2(y, s) };
   }
 
   constexpr T
@@ -817,15 +820,15 @@ struct vector_2 {
   constexpr vector_2<T>
   rotated(T theta) const
   {
-    T c = math::fcos(theta);
-    T s_ = math::fsin(theta);
+    T c = math::cos(theta);
+    T s_ = math::sin(theta);
     return { x * c - y * s_, x * s_ + y * c };
   }
 
   constexpr T
   heading() const
   {
-    return math::fatan2(y, x);
+    return math::atan2(y, x);
   }
 };
 

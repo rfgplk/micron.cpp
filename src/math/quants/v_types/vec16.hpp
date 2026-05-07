@@ -7,8 +7,11 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
+#include "../../log.hpp"
+#include "../../mk.hpp"
 #include "../../sqrt.hpp"
 #include "../../trig.hpp"
 
@@ -26,7 +29,7 @@ namespace micron
 
 template <typename T = float>
   requires micron::is_floating_point_v<T>
-struct vector_16 {
+struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
 
   T x, y, z, w, a, b, c, d, e, f, g, h, i, j, k, l;
 
@@ -345,12 +348,12 @@ struct vector_16 {
   constexpr T
   lp_norm(T p) const
   {
-    return math::fpow(
-        math::fpow(math::fabs(x), p) + math::fpow(math::fabs(y), p) + math::fpow(math::fabs(z), p) + math::fpow(math::fabs(w), p)
-            + math::fpow(math::fabs(a), p) + math::fpow(math::fabs(b), p) + math::fpow(math::fabs(c), p) + math::fpow(math::fabs(d), p)
-            + math::fpow(math::fabs(e), p) + math::fpow(math::fabs(f), p) + math::fpow(math::fabs(g), p) + math::fpow(math::fabs(h), p)
-            + math::fpow(math::fabs(i), p) + math::fpow(math::fabs(j), p) + math::fpow(math::fabs(k), p) + math::fpow(math::fabs(l), p),
-        T{ 1 } / p);
+    return math::pow(math::pow(math::fabs(x), p) + math::pow(math::fabs(y), p) + math::pow(math::fabs(z), p) + math::pow(math::fabs(w), p)
+                         + math::pow(math::fabs(a), p) + math::pow(math::fabs(b), p) + math::pow(math::fabs(c), p)
+                         + math::pow(math::fabs(d), p) + math::pow(math::fabs(e), p) + math::pow(math::fabs(f), p)
+                         + math::pow(math::fabs(g), p) + math::pow(math::fabs(h), p) + math::pow(math::fabs(i), p)
+                         + math::pow(math::fabs(j), p) + math::pow(math::fabs(k), p) + math::pow(math::fabs(l), p),
+                     T{ 1 } / p);
   }
 
   constexpr T
@@ -411,7 +414,7 @@ struct vector_16 {
   constexpr T
   angle(const vector_16<T> &v) const
   {
-    return math::facos(math::fclamp(cos_angle(v), T{ -1 }, T{ 1 }));
+    return math::acos(math::fclamp(cos_angle(v), T{ -1 }, T{ 1 }));
   }
 
   constexpr T
@@ -454,11 +457,11 @@ struct vector_16 {
   }
   __v16_unop(abs, math::fabs) __v16_unop(floor, math::ffloor) __v16_unop(ceil, math::fceil) __v16_unop(round, math::fround)
       __v16_unop(trunc, math::ftrunc) __v16_unop(frac, math::ffract) __v16_unop(sqrt, math::fsqrt) __v16_unop(rsqrt, math::frsqrt)
-          __v16_unop(exp, math::fexp) __v16_unop(exp2, math::fexp2) __v16_unop(log, math::flog) __v16_unop(log2, math::flog2)
-              __v16_unop(log10, math::flog10) __v16_unop(sin, math::fsin) __v16_unop(cos, math::fcos) __v16_unop(tan, math::ftan)
-                  __v16_unop(asin, math::fasin) __v16_unop(acos, math::facos) __v16_unop(atan, math::fatan) __v16_unop(sinh, math::fsinh)
-                      __v16_unop(cosh, math::fcosh) __v16_unop(tanh, math::ftanh) __v16_unop(erf, math::ferf) __v16_unop(erfc, math::ferfc)
-                          __v16_unop(gamma, math::fgamma)
+          __v16_unop(exp, math::exp) __v16_unop(exp2, math::exp2) __v16_unop(log, math::log) __v16_unop(log2, math::log2)
+              __v16_unop(log10, math::log10) __v16_unop(sin, math::sin) __v16_unop(cos, math::cos) __v16_unop(tan, math::tan)
+                  __v16_unop(asin, math::asin) __v16_unop(acos, math::acos) __v16_unop(atan, math::atan) __v16_unop(sinh, math::sinh)
+                      __v16_unop(cosh, math::cosh) __v16_unop(tanh, math::tanh) __v16_unop(erf, math::erf) __v16_unop(erfc, math::erfc)
+                          __v16_unop(gamma, math::tgamma)
 #undef __v16_unop
 
                               constexpr vector_16<T> sign() const
@@ -505,30 +508,30 @@ struct vector_16 {
              fn(e, v.e), fn(f, v.f), fn(g, v.g), fn(h, v.h), fn(i, v.i), fn(j, v.j), fn(k, v.k), fn(l, v.l) };                             \
   }
   __v16_binop2(min, math::fmin) __v16_binop2(max, math::fmax) __v16_binop2(fmin, math::fmin) __v16_binop2(fmax, math::fmax)
-      __v16_binop2(pow, math::fpow) __v16_binop2(atan2, math::fatan2)
+      __v16_binop2(pow, math::pow) __v16_binop2(atan2, math::atan2)
 #undef __v16_binop2
 
           constexpr vector_16<T> pow(T s) const
   {
-    return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s), math::fpow(w, s), math::fpow(a, s), math::fpow(b, s),
-             math::fpow(c, s), math::fpow(d, s), math::fpow(e, s), math::fpow(f, s), math::fpow(g, s), math::fpow(h, s),
-             math::fpow(i, s), math::fpow(j, s), math::fpow(k, s), math::fpow(l, s) };
+    return { math::pow(x, s), math::pow(y, s), math::pow(z, s), math::pow(w, s), math::pow(a, s), math::pow(b, s),
+             math::pow(c, s), math::pow(d, s), math::pow(e, s), math::pow(f, s), math::pow(g, s), math::pow(h, s),
+             math::pow(i, s), math::pow(j, s), math::pow(k, s), math::pow(l, s) };
   }
 
   friend constexpr vector_16<T>
   pow(T s, const vector_16<T> &v)
   {
-    return { math::fpow(s, v.x), math::fpow(s, v.y), math::fpow(s, v.z), math::fpow(s, v.w), math::fpow(s, v.a), math::fpow(s, v.b),
-             math::fpow(s, v.c), math::fpow(s, v.d), math::fpow(s, v.e), math::fpow(s, v.f), math::fpow(s, v.g), math::fpow(s, v.h),
-             math::fpow(s, v.i), math::fpow(s, v.j), math::fpow(s, v.k), math::fpow(s, v.l) };
+    return { math::pow(s, v.x), math::pow(s, v.y), math::pow(s, v.z), math::pow(s, v.w), math::pow(s, v.a), math::pow(s, v.b),
+             math::pow(s, v.c), math::pow(s, v.d), math::pow(s, v.e), math::pow(s, v.f), math::pow(s, v.g), math::pow(s, v.h),
+             math::pow(s, v.i), math::pow(s, v.j), math::pow(s, v.k), math::pow(s, v.l) };
   }
 
   constexpr vector_16<T>
   atan2(T s) const
   {
-    return { math::fatan2(x, s), math::fatan2(y, s), math::fatan2(z, s), math::fatan2(w, s), math::fatan2(a, s), math::fatan2(b, s),
-             math::fatan2(c, s), math::fatan2(d, s), math::fatan2(e, s), math::fatan2(f, s), math::fatan2(g, s), math::fatan2(h, s),
-             math::fatan2(i, s), math::fatan2(j, s), math::fatan2(k, s), math::fatan2(l, s) };
+    return { math::atan2(x, s), math::atan2(y, s), math::atan2(z, s), math::atan2(w, s), math::atan2(a, s), math::atan2(b, s),
+             math::atan2(c, s), math::atan2(d, s), math::atan2(e, s), math::atan2(f, s), math::atan2(g, s), math::atan2(h, s),
+             math::atan2(i, s), math::atan2(j, s), math::atan2(k, s), math::atan2(l, s) };
   }
 
   constexpr T

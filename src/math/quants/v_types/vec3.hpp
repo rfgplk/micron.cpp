@@ -7,8 +7,11 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
+#include "../../log.hpp"
+#include "../../mk.hpp"
 #include "../../sqrt.hpp"
 #include "../../trig.hpp"
 
@@ -20,9 +23,19 @@
 namespace micron
 {
 
+// SIMD-friendly layout: alignas(16) for f32 → sizeof(vector_3<f32>) == 16
+// (one xmm register + 4 bytes of trailing pad).  alignas(32) for f64 →
+// sizeof(vector_3<f64>) == 32 (one ymm register + 8 bytes of pad).
+// The implicit pad is undefined on read but always safe to load: SIMD
+// code may do `_mm_load_ps(&v.x)` to read all four lanes; the 4th lane
+// holds whatever the constructor or last assignment left there (typically 0
+// since the value-init constructor zeroes the named members).  Stores
+// of all four lanes back into `&v.x` are also safe — the pad is owned
+// by `vector_3` and the next `vector_3` in an array starts at the next
+// alignment boundary, so a 4-wide store does not corrupt a neighbour.
 template <typename T = float>
   requires micron::is_floating_point_v<T>
-struct vector_3 {
+struct alignas(micron::math::vec_align_v<T, 3>) vector_3 {
   T x, y, z;
 
   ~vector_3() = default;
@@ -205,7 +218,7 @@ struct vector_3 {
   constexpr T
   lp_norm(T p) const
   {
-    return math::fpow(math::fpow(math::fabs(x), p) + math::fpow(math::fabs(y), p) + math::fpow(math::fabs(z), p), T{ 1 } / p);
+    return math::pow(math::pow(math::fabs(x), p) + math::pow(math::fabs(y), p) + math::pow(math::fabs(z), p), T{ 1 } / p);
   }
 
   constexpr T
@@ -249,7 +262,7 @@ struct vector_3 {
   {
     T c = cos_angle(v);
     c = math::fclamp(c, T{ -1 }, T{ 1 });
-    return math::facos(c);
+    return math::acos(c);
   }
 
   constexpr T
@@ -366,103 +379,103 @@ struct vector_3 {
   constexpr vector_3<T>
   exp() const
   {
-    return { math::fexp(x), math::fexp(y), math::fexp(z) };
+    return { math::exp(x), math::exp(y), math::exp(z) };
   }
 
   constexpr vector_3<T>
   exp2() const
   {
-    return { math::fexp2(x), math::fexp2(y), math::fexp2(z) };
+    return { math::exp2(x), math::exp2(y), math::exp2(z) };
   }
 
   constexpr vector_3<T>
   log() const
   {
-    return { math::flog(x), math::flog(y), math::flog(z) };
+    return { math::log(x), math::log(y), math::log(z) };
   }
 
   constexpr vector_3<T>
   log2() const
   {
-    return { math::flog2(x), math::flog2(y), math::flog2(z) };
+    return { math::log2(x), math::log2(y), math::log2(z) };
   }
 
   constexpr vector_3<T>
   log10() const
   {
-    return { math::flog10(x), math::flog10(y), math::flog10(z) };
+    return { math::log10(x), math::log10(y), math::log10(z) };
   }
 
   constexpr vector_3<T>
   sin() const
   {
-    return { math::fsin(x), math::fsin(y), math::fsin(z) };
+    return { math::sin(x), math::sin(y), math::sin(z) };
   }
 
   constexpr vector_3<T>
   cos() const
   {
-    return { math::fcos(x), math::fcos(y), math::fcos(z) };
+    return { math::cos(x), math::cos(y), math::cos(z) };
   }
 
   constexpr vector_3<T>
   tan() const
   {
-    return { math::ftan(x), math::ftan(y), math::ftan(z) };
+    return { math::tan(x), math::tan(y), math::tan(z) };
   }
 
   constexpr vector_3<T>
   asin() const
   {
-    return { math::fasin(x), math::fasin(y), math::fasin(z) };
+    return { math::asin(x), math::asin(y), math::asin(z) };
   }
 
   constexpr vector_3<T>
   acos() const
   {
-    return { math::facos(x), math::facos(y), math::facos(z) };
+    return { math::acos(x), math::acos(y), math::acos(z) };
   }
 
   constexpr vector_3<T>
   atan() const
   {
-    return { math::fatan(x), math::fatan(y), math::fatan(z) };
+    return { math::atan(x), math::atan(y), math::atan(z) };
   }
 
   constexpr vector_3<T>
   sinh() const
   {
-    return { math::fsinh(x), math::fsinh(y), math::fsinh(z) };
+    return { math::sinh(x), math::sinh(y), math::sinh(z) };
   }
 
   constexpr vector_3<T>
   cosh() const
   {
-    return { math::fcosh(x), math::fcosh(y), math::fcosh(z) };
+    return { math::cosh(x), math::cosh(y), math::cosh(z) };
   }
 
   constexpr vector_3<T>
   tanh() const
   {
-    return { math::ftanh(x), math::ftanh(y), math::ftanh(z) };
+    return { math::tanh(x), math::tanh(y), math::tanh(z) };
   }
 
   constexpr vector_3<T>
   erf() const
   {
-    return { math::ferf(x), math::ferf(y), math::ferf(z) };
+    return { math::erf(x), math::erf(y), math::erf(z) };
   }
 
   constexpr vector_3<T>
   erfc() const
   {
-    return { math::ferfc(x), math::ferfc(y), math::ferfc(z) };
+    return { math::erfc(x), math::erfc(y), math::erfc(z) };
   }
 
   constexpr vector_3<T>
   gamma() const
   {
-    return { math::fgamma(x), math::fgamma(y), math::fgamma(z) };
+    return { math::tgamma(x), math::tgamma(y), math::tgamma(z) };
   }
 
   constexpr vector_3<T>
@@ -492,31 +505,31 @@ struct vector_3 {
   constexpr vector_3<T>
   pow(const vector_3<T> &v) const
   {
-    return { math::fpow(x, v.x), math::fpow(y, v.y), math::fpow(z, v.z) };
+    return { math::pow(x, v.x), math::pow(y, v.y), math::pow(z, v.z) };
   }
 
   constexpr vector_3<T>
   pow(T s) const
   {
-    return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s) };
+    return { math::pow(x, s), math::pow(y, s), math::pow(z, s) };
   }
 
   friend constexpr vector_3<T>
   pow(T s, const vector_3<T> &v)
   {
-    return { math::fpow(s, v.x), math::fpow(s, v.y), math::fpow(s, v.z) };
+    return { math::pow(s, v.x), math::pow(s, v.y), math::pow(s, v.z) };
   }
 
   constexpr vector_3<T>
   atan2(const vector_3<T> &v) const
   {
-    return { math::fatan2(x, v.x), math::fatan2(y, v.y), math::fatan2(z, v.z) };
+    return { math::atan2(x, v.x), math::atan2(y, v.y), math::atan2(z, v.z) };
   }
 
   constexpr vector_3<T>
   atan2(T s) const
   {
-    return { math::fatan2(x, s), math::fatan2(y, s), math::fatan2(z, s) };
+    return { math::atan2(x, s), math::atan2(y, s), math::atan2(z, s) };
   }
 
   constexpr T
@@ -904,8 +917,8 @@ struct vector_3 {
   constexpr vector_3<T>
   rotated(const vector_3<T> &axis, T theta) const
   {
-    T c = math::fcos(theta);
-    T s_ = math::fsin(theta);
+    T c = math::cos(theta);
+    T s_ = math::sin(theta);
     return *this * c + axis.cross(*this) * s_ + axis * (axis.dot(*this) * (T{ 1 } - c));
   }
 };

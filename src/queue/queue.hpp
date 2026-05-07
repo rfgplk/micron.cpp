@@ -22,7 +22,20 @@ template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = mi
 class queue : public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
-  usize needle;
+  // index of the oldest live element
+  usize head;
+
+  inline void
+  __ensure_tail_space()
+  {
+    if ( head + __mem::length < __mem::capacity ) return;
+    if ( head > 0 ) {
+      micron::memmove(&__mem::memory[0], &__mem::memory[head], __mem::length);
+      head = 0;
+      if ( __mem::length < __mem::capacity ) return;
+    }
+    reserve(__mem::capacity + 1);
+  }
 
 public:
   using category_type = buffer_tag;
@@ -44,32 +57,32 @@ public:
     clear();
   }
 
-  queue(void) : __mem(N), needle(__mem::capacity - 1) {}
+  queue(void) : __mem(N), head(0) {}
 
-  queue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
+  queue(const std::initializer_list<T> &lst) : __mem(lst.size()), head(0)
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      usize i = __mem::capacity - 1;
+      usize i = 0;
       for ( T &&value : lst ) {
-        new (micron::addr(__mem::memory[i--])) T(micron::move(value));
+        new (micron::addr(__mem::memory[i++])) T(micron::move(value));
       }
       __mem::length = lst.size();
     } else {
-      usize i = __mem::capacity - 1;
+      usize i = 0;
       for ( T value : lst ) {
-        __mem::memory[i--] = value;
+        __mem::memory[i++] = value;
       }
       __mem::length = lst.size();
     }
   };
 
-  queue(const umax_t n, const T val) : __mem(n), needle(__mem::capacity - 1)
+  queue(const umax_t n, const T val) : __mem(n), head(0)
 
   {
     for ( umax_t i = 0; i < n; i++ ) push(val);
   }
 
-  queue(const umax_t n) : __mem(n), needle(__mem::capacity - 1)
+  queue(const umax_t n) : __mem(n), head(0)
 
   {
     for ( umax_t i = 0; i < n; i++ ) push();
@@ -77,7 +90,7 @@ public:
 
   queue(const queue &o) = delete;
 
-  queue(queue &&o) : __mem(micron::move(o)), needle(o.needle) { o.needle = 0; }
+  queue(queue &&o) : __mem(micron::move(o)), head(o.head) { o.head = 0; }
 
   queue &operator=(const queue &o) = delete;
 
@@ -85,36 +98,16 @@ public:
   clear()
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::capacity);
-    needle = __mem::capacity - 1;
+    __impl_container::destroy(micron::addr(__mem::memory[head]), __mem::length);
+    head = 0;
     __mem::length = 0;
   }
 
   inline void
   reserve(const usize n)
   {
-    const usize old_capacity = __mem::capacity;
-    const usize old_needle = needle;
-    const usize len = __mem::length;
-
-    if ( n <= old_capacity ) return;
-
+    if ( n <= __mem::capacity ) return;
     __mem::expand(n);
-
-    if ( len == 0 ) {
-      needle = __mem::capacity - 1;
-      return;
-    }
-
-    const usize new_capacity = __mem::capacity;
-    const usize new_needle = new_capacity - 1;
-
-    T *const old_begin = &__mem::memory[old_needle - len + 1];
-    T *const new_begin = &__mem::memory[new_needle - len + 1];
-
-    micron::memmove(new_begin, old_begin, len);
-
-    needle = new_needle;
   }
 
   inline void
@@ -123,7 +116,7 @@ public:
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);
-    micron::swap(needle, o.needle);
+    micron::swap(head, o.head);
   }
 
   inline bool
@@ -147,111 +140,115 @@ public:
   inline T &
   last()
   {
-    return __mem::memory[needle];
+    return __mem::memory[head];
   }
 
   inline const T &
   last() const
   {
-    return __mem::memory[needle];
+    return __mem::memory[head];
   }
 
   inline T &
   front()
   {
-    return __mem::memory[needle - __mem::length + 1];
+    return __mem::memory[head + __mem::length - 1];
   }
 
   inline const T &
   front() const
   {
-    return __mem::memory[needle - __mem::length + 1];
+    return __mem::memory[head + __mem::length - 1];
   }
 
   inline T *
   begin()
   {
-    return &__mem::memory[needle - __mem::length + 1];
+    return &__mem::memory[head];
   }
 
   inline const T *
   begin() const
   {
-    return &__mem::memory[needle - __mem::length + 1];
+    return &__mem::memory[head];
   }
 
   inline const T *
   cbegin() const
   {
-    return &__mem::memory[needle - __mem::length + 1];
+    return &__mem::memory[head];
   }
 
   // one past
   inline T *
   end()
   {
-    return &__mem::memory[needle + 1];
+    return &__mem::memory[head + __mem::length];
   }
 
   inline const T *
   end() const
   {
-    return &__mem::memory[needle + 1];
+    return &__mem::memory[head + __mem::length];
   }
 
   inline const T *
   cend() const
   {
-    return &__mem::memory[needle + 1];
+    return &__mem::memory[head + __mem::length];
   }
 
   inline queue &
   push(void)
   {
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
+    __ensure_tail_space();
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (micron::addr(__mem::memory[needle - __mem::length++])) T{};
+      new (micron::addr(__mem::memory[head + __mem::length])) T{};
     } else {
-      __mem::memory[needle - __mem::length++] = T{};
+      __mem::memory[head + __mem::length] = T{};
     }
+    __mem::length++;
     return *this;
   }
 
   inline queue &
   push(T &&val)
   {
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
+    __ensure_tail_space();
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (micron::addr(__mem::memory[needle - __mem::length++])) T{ micron::move(val) };
+      new (micron::addr(__mem::memory[head + __mem::length])) T{ micron::move(val) };
     } else {
-      __mem::memory[needle - __mem::length++] = micron::move(val);
+      __mem::memory[head + __mem::length] = micron::move(val);
     }
+    __mem::length++;
     return *this;
   }
 
   inline queue &
   push(const T &val)
   {
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
+    __ensure_tail_space();
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (micron::addr(__mem::memory[needle - __mem::length++])) T{ val };
+      new (micron::addr(__mem::memory[head + __mem::length])) T{ val };
     } else {
-      __mem::memory[needle - __mem::length++] = val;
+      __mem::memory[head + __mem::length] = val;
     }
+    __mem::length++;
     return *this;
   }
 
   inline queue &
   pop(void)
   {
-    if ( __mem::length == 0 or needle == 0 ) return *this;
+    if ( __mem::length == 0 ) return *this;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
-      (__mem::memory)[needle].~T();
+      (__mem::memory)[head].~T();
     } else {
-      (__mem::memory)[needle] = 0x0;
+      (__mem::memory)[head] = 0x0;
     }
-    needle--;
+    head++;
     __mem::length--;
+    if ( __mem::length == 0 ) head = 0;
     return *this;
   }
 };

@@ -7,8 +7,11 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
+#include "../../log.hpp"
+#include "../../mk.hpp"
 #include "../../sqrt.hpp"
 #include "../../trig.hpp"
 
@@ -22,7 +25,7 @@ namespace micron
 
 template <typename T = float>
   requires micron::is_floating_point_v<T>
-struct vector_4 {
+struct alignas(micron::math::vec_align_v<T, 4>) vector_4 {
   T x, y, z, w;
 
   ~vector_4() = default;
@@ -204,9 +207,8 @@ struct vector_4 {
   constexpr T
   lp_norm(T p) const
   {
-    return math::fpow(math::fpow(math::fabs(x), p) + math::fpow(math::fabs(y), p) + math::fpow(math::fabs(z), p)
-                          + math::fpow(math::fabs(w), p),
-                      T{ 1 } / p);
+    return math::pow(math::pow(math::fabs(x), p) + math::pow(math::fabs(y), p) + math::pow(math::fabs(z), p) + math::pow(math::fabs(w), p),
+                     T{ 1 } / p);
   }
 
   constexpr T
@@ -251,7 +253,7 @@ struct vector_4 {
   {
     T c = cos_angle(v);
     c = math::fclamp(c, T{ -1 }, T{ 1 });
-    return math::facos(c);
+    return math::acos(c);
   }
 
   constexpr T
@@ -369,103 +371,103 @@ struct vector_4 {
   constexpr vector_4<T>
   exp() const
   {
-    return { math::fexp(x), math::fexp(y), math::fexp(z), math::fexp(w) };
+    return { math::exp(x), math::exp(y), math::exp(z), math::exp(w) };
   }
 
   constexpr vector_4<T>
   exp2() const
   {
-    return { math::fexp2(x), math::fexp2(y), math::fexp2(z), math::fexp2(w) };
+    return { math::exp2(x), math::exp2(y), math::exp2(z), math::exp2(w) };
   }
 
   constexpr vector_4<T>
   log() const
   {
-    return { math::flog(x), math::flog(y), math::flog(z), math::flog(w) };
+    return { math::log(x), math::log(y), math::log(z), math::log(w) };
   }
 
   constexpr vector_4<T>
   log2() const
   {
-    return { math::flog2(x), math::flog2(y), math::flog2(z), math::flog2(w) };
+    return { math::log2(x), math::log2(y), math::log2(z), math::log2(w) };
   }
 
   constexpr vector_4<T>
   log10() const
   {
-    return { math::flog10(x), math::flog10(y), math::flog10(z), math::flog10(w) };
+    return { math::log10(x), math::log10(y), math::log10(z), math::log10(w) };
   }
 
   constexpr vector_4<T>
   sin() const
   {
-    return { math::fsin(x), math::fsin(y), math::fsin(z), math::fsin(w) };
+    return { math::sin(x), math::sin(y), math::sin(z), math::sin(w) };
   }
 
   constexpr vector_4<T>
   cos() const
   {
-    return { math::fcos(x), math::fcos(y), math::fcos(z), math::fcos(w) };
+    return { math::cos(x), math::cos(y), math::cos(z), math::cos(w) };
   }
 
   constexpr vector_4<T>
   tan() const
   {
-    return { math::ftan(x), math::ftan(y), math::ftan(z), math::ftan(w) };
+    return { math::tan(x), math::tan(y), math::tan(z), math::tan(w) };
   }
 
   constexpr vector_4<T>
   asin() const
   {
-    return { math::fasin(x), math::fasin(y), math::fasin(z), math::fasin(w) };
+    return { math::asin(x), math::asin(y), math::asin(z), math::asin(w) };
   }
 
   constexpr vector_4<T>
   acos() const
   {
-    return { math::facos(x), math::facos(y), math::facos(z), math::facos(w) };
+    return { math::acos(x), math::acos(y), math::acos(z), math::acos(w) };
   }
 
   constexpr vector_4<T>
   atan() const
   {
-    return { math::fatan(x), math::fatan(y), math::fatan(z), math::fatan(w) };
+    return { math::atan(x), math::atan(y), math::atan(z), math::atan(w) };
   }
 
   constexpr vector_4<T>
   sinh() const
   {
-    return { math::fsinh(x), math::fsinh(y), math::fsinh(z), math::fsinh(w) };
+    return { math::sinh(x), math::sinh(y), math::sinh(z), math::sinh(w) };
   }
 
   constexpr vector_4<T>
   cosh() const
   {
-    return { math::fcosh(x), math::fcosh(y), math::fcosh(z), math::fcosh(w) };
+    return { math::cosh(x), math::cosh(y), math::cosh(z), math::cosh(w) };
   }
 
   constexpr vector_4<T>
   tanh() const
   {
-    return { math::ftanh(x), math::ftanh(y), math::ftanh(z), math::ftanh(w) };
+    return { math::tanh(x), math::tanh(y), math::tanh(z), math::tanh(w) };
   }
 
   constexpr vector_4<T>
   erf() const
   {
-    return { math::ferf(x), math::ferf(y), math::ferf(z), math::ferf(w) };
+    return { math::erf(x), math::erf(y), math::erf(z), math::erf(w) };
   }
 
   constexpr vector_4<T>
   erfc() const
   {
-    return { math::ferfc(x), math::ferfc(y), math::ferfc(z), math::ferfc(w) };
+    return { math::erfc(x), math::erfc(y), math::erfc(z), math::erfc(w) };
   }
 
   constexpr vector_4<T>
   gamma() const
   {
-    return { math::fgamma(x), math::fgamma(y), math::fgamma(z), math::fgamma(w) };
+    return { math::tgamma(x), math::tgamma(y), math::tgamma(z), math::tgamma(w) };
   }
 
   constexpr vector_4<T>
@@ -495,31 +497,31 @@ struct vector_4 {
   constexpr vector_4<T>
   pow(const vector_4<T> &v) const
   {
-    return { math::fpow(x, v.x), math::fpow(y, v.y), math::fpow(z, v.z), math::fpow(w, v.w) };
+    return { math::pow(x, v.x), math::pow(y, v.y), math::pow(z, v.z), math::pow(w, v.w) };
   }
 
   constexpr vector_4<T>
   pow(T s) const
   {
-    return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s), math::fpow(w, s) };
+    return { math::pow(x, s), math::pow(y, s), math::pow(z, s), math::pow(w, s) };
   }
 
   friend constexpr vector_4<T>
   pow(T s, const vector_4<T> &v)
   {
-    return { math::fpow(s, v.x), math::fpow(s, v.y), math::fpow(s, v.z), math::fpow(s, v.w) };
+    return { math::pow(s, v.x), math::pow(s, v.y), math::pow(s, v.z), math::pow(s, v.w) };
   }
 
   constexpr vector_4<T>
   atan2(const vector_4<T> &v) const
   {
-    return { math::fatan2(x, v.x), math::fatan2(y, v.y), math::fatan2(z, v.z), math::fatan2(w, v.w) };
+    return { math::atan2(x, v.x), math::atan2(y, v.y), math::atan2(z, v.z), math::atan2(w, v.w) };
   }
 
   constexpr vector_4<T>
   atan2(T s) const
   {
-    return { math::fatan2(x, s), math::fatan2(y, s), math::fatan2(z, s), math::fatan2(w, s) };
+    return { math::atan2(x, s), math::atan2(y, s), math::atan2(z, s), math::atan2(w, s) };
   }
 
   constexpr T

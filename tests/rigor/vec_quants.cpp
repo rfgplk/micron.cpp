@@ -985,5 +985,5 @@ main()
   end_test_case();
 
   sb::print("=== ALL VEC8 TESTS PASSED ===");
-  return 0;
+  return 1;
 }

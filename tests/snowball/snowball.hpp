@@ -80,6 +80,15 @@ __print_error(const T &...args)
 inline void
 __print_stack()
 {
+#if defined(__micron_arch_arm32)
+  // arm32 thumb pins r7 as FP, but -Ofast omits the FP and frees r7 for
+  // general allocation. Lowering __builtin_frame_address(0) under LTO then
+  // emits an r7 reference into contexts where r7 is busy, producing
+  // "r7 cannot be used in 'asm' here". Stack tracing requires a real FP, so
+  // skip the walk on arm32.
+  __print("Start of call stack:\n\r");
+  __print("(unavailable on arm32; build without -fomit-frame-pointer for traces)\n\r");
+#else
   constexpr int max_frames = 64;
   void *buffer[max_frames];
   int n = 0;
@@ -106,6 +115,7 @@ __print_stack()
     __print(buffer[i]);
     __print("\n\r");
   }
+#endif
 }
 
 inline void
@@ -914,6 +924,26 @@ __xorshift64(u64 &s)
   s ^= s << 17;
   return s;
 }
+
+[[gnu::always_inline]] inline u64
+__cycle_counter() noexcept
+{
+#if defined(__micron_arch_amd64)
+  u32 lo = 0, hi = 0;
+  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+  return (u64(hi) << 32) | u64(lo);
+#elif defined(__micron_arch_arm64)
+  u64 v;
+  asm volatile("mrs %0, cntvct_el0" : "=r"(v));
+  return v;
+#elif defined(__micron_arch_arm32)
+  u32 lo, hi;
+  asm volatile("mrrc p15, 1, %0, %1, c14" : "=r"(lo), "=r"(hi));
+  return (u64(hi) << 32) | u64(lo);
+#else
+  return 0;
+#endif
+}
 };     // namespace __impl
 
 template <typename Fn>
@@ -925,7 +955,7 @@ fuzz(Fn &&fn, size_t cnt)
     typename traits::template arg_type<0> var{};
 
     static u64 __seed = []() {
-      u64 s = __builtin_ia32_rdtsc();
+      u64 s = __impl::__cycle_counter();
       return s ? s : 0xdeadbeefULL;
     }();
 

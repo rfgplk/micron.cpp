@@ -116,7 +116,7 @@ main(void)
   sb::test_case("unique_pointer<T>: raw-pointer move construction takes ownership");
   {
     int *raw = new int(99);
-    mc::unique_pointer<int> p(std::move(raw));
+    mc::unique_pointer<int> p(micron::move(raw));
     sb::require(raw == nullptr);     // ownership transferred, raw nulled
     sb::require(p.active());
     sb::require(*p == 99);
@@ -152,7 +152,7 @@ main(void)
   {
     mc::unique_pointer<int> a(100);
     int *raw_before = a.get();
-    mc::unique_pointer<int> b(std::move(a));
+    mc::unique_pointer<int> b(micron::move(a));
     sb::require(!a.active());     // source is empty
     sb::require(a.get() == nullptr);
     sb::require(b.active());
@@ -166,7 +166,7 @@ main(void)
     mc::unique_pointer<int> a(200);
     mc::unique_pointer<int> b;
     int *raw_before = a.get();
-    b = std::move(a);
+    b = micron::move(a);
     sb::require(!a.active());
     sb::require(b.active());
     sb::require(b.get() == raw_before);
@@ -180,7 +180,7 @@ main(void)
     {
       mc::unique_pointer<Tracker> a(1);
       mc::unique_pointer<Tracker> b(2);
-      b = std::move(a);                            // b's old object must be freed
+      b = micron::move(a);                            // b's old object must be freed
       sb::require(Tracker::destructions == 1);     // old b freed
       sb::require(b->value == 1);
       sb::require(!a.active());
@@ -193,7 +193,7 @@ main(void)
   {
     mc::unique_pointer<int> p(55);
     int *raw = p.get();
-    p = std::move(p);
+    p = micron::move(p);
     // after self-move the pointer must remain consistent
     // (either still valid or null — must not crash / double-free)
     // implementation guards with `if (this != &t)`
@@ -206,7 +206,7 @@ main(void)
   {
     int *raw = new int(77);
     mc::unique_pointer<int> p;
-    p = std::move(raw);
+    p = micron::move(raw);
     sb::require(raw == nullptr);
     sb::require(*p == 77);
   }
@@ -336,7 +336,7 @@ main(void)
     mc::unique_pointer<int> b;
     // b = a.get() via raw pointer move so they point to same address
     int *raw = a.release();
-    mc::unique_pointer<int> c(std::move(raw));
+    mc::unique_pointer<int> c(micron::move(raw));
     // a and c now both existed at same raw; b is null
     // just test that two nulls are equal via bool check
     sb::require(!a.active());
@@ -391,8 +391,8 @@ main(void)
     Tracker::reset();
     {
       mc::unique_pointer<Tracker> a(1);
-      mc::unique_pointer<Tracker> b(std::move(a));
-      mc::unique_pointer<Tracker> c(std::move(b));
+      mc::unique_pointer<Tracker> b(micron::move(a));
+      mc::unique_pointer<Tracker> c(micron::move(b));
     }
     sb::require(Tracker::balanced());
   }
@@ -404,7 +404,7 @@ main(void)
     {
       mc::unique_pointer<Tracker> p(10);
       mc::unique_pointer<Tracker> q(20);
-      p = std::move(q);     // p's old object freed, q emptied
+      p = micron::move(q);     // p's old object freed, q emptied
     }
     sb::require(Tracker::balanced());
   }
@@ -466,7 +466,7 @@ main(void)
   sb::test_case("unique_pointer<T[]>: raw-pointer move construction takes ownership");
   {
     int *raw = new int[4]{ 1, 2, 3, 4 };
-    mc::unique_pointer<int[]> p(std::move(raw));
+    mc::unique_pointer<int[]> p(micron::move(raw));
     sb::require(raw == nullptr);
     sb::require(p.active());
     sb::require(p[0] == 1);
@@ -507,7 +507,7 @@ main(void)
   sb::test_case("unique_pointer<T[]>: const operator[] read access");
   {
     int *raw = new int[3]{ 7, 8, 9 };
-    const mc::unique_pointer<int[]> p(std::move(raw));
+    const mc::unique_pointer<int[]> p(micron::move(raw));
     sb::require(p[0] == 7);
     sb::require(p[2] == 9);
   }
@@ -523,7 +523,7 @@ main(void)
   sb::test_case("unique_pointer<T[]>: operator* returns reference to first element");
   {
     int *raw = new int[4]{ 55, 66, 77, 88 };
-    mc::unique_pointer<int[]> p(std::move(raw));
+    mc::unique_pointer<int[]> p(micron::move(raw));
     sb::require(*p == 55);
   }
   sb::end_test_case();
@@ -548,7 +548,7 @@ main(void)
     a[2] = 3;
     a[3] = 4;
     int *raw_before = a.get();
-    mc::unique_pointer<int[]> b(std::move(a));
+    mc::unique_pointer<int[]> b(micron::move(a));
     sb::require(!a.active());
     sb::require(b.get() == raw_before);
     sb::require(b[0] == 1 && b[3] == 4);
@@ -560,7 +560,7 @@ main(void)
     mc::unique_pointer<int[]> a(4);
     a[0] = 42;
     mc::unique_pointer<int[]> b;
-    b = std::move(a);
+    b = micron::move(a);
     sb::require(!a.active());
     sb::require(b.active());
     sb::require(b[0] == 42);
@@ -573,7 +573,7 @@ main(void)
     {
       mc::unique_pointer<Tracker[]> a(2);
       mc::unique_pointer<Tracker[]> b(3);
-      b = std::move(a);
+      b = micron::move(a);
       // b's old 3-element array freed, a's 2-element array now owned by b
       sb::require(!a.active());
       sb::require(b.active());
@@ -586,7 +586,7 @@ main(void)
   {
     int *raw = new int[2]{ 10, 20 };
     mc::unique_pointer<int[]> p;
-    p = std::move(raw);
+    p = micron::move(raw);
     sb::require(raw == nullptr);
     sb::require(p[0] == 10);
     sb::require(p[1] == 20);
@@ -683,8 +683,8 @@ main(void)
     Tracker::reset();
     {
       mc::unique_pointer<Tracker[]> a(3);
-      mc::unique_pointer<Tracker[]> b(std::move(a));
-      mc::unique_pointer<Tracker[]> c(std::move(b));
+      mc::unique_pointer<Tracker[]> b(micron::move(a));
+      mc::unique_pointer<Tracker[]> c(micron::move(b));
     }
     sb::require(Tracker::balanced());
   }
@@ -696,7 +696,7 @@ main(void)
     {
       mc::unique_pointer<Tracker[]> p(4);
       mc::unique_pointer<Tracker[]> q(6);
-      p = std::move(q);
+      p = micron::move(q);
     }
     sb::require(Tracker::balanced());
   }
@@ -731,7 +731,7 @@ main(void)
   sb::test_case("unique_pointer<NoCopy>: move from one pointer to another");
   {
     mc::unique_pointer<NoCopy> a(7);
-    mc::unique_pointer<NoCopy> b(std::move(a));
+    mc::unique_pointer<NoCopy> b(micron::move(a));
     sb::require(!a.active());
     sb::require(b->data == 7);
   }
@@ -758,7 +758,7 @@ main(void)
       mc::unique_pointer<Tracker> p(0);
       for ( int i = 1; i < 1000; i++ ) {
         mc::unique_pointer<Tracker> q(i);
-        p = std::move(q);
+        p = micron::move(q);
       }
     }
     sb::require(Tracker::balanced());

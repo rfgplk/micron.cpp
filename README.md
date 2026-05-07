@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-0.7.2.1-red)
+![Version](https://img.shields.io/badge/version-0.8.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -40,7 +40,7 @@ Features
 Using the Library
 -------------------
 
-All necessary code is self-contained within the `src/` directory. Since *micron* is freestanding, it relies on no external sources; no other files or libraries are necessary (*with the sole exception of `libm` and `pthreads`, more on that below*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
+All necessary code is self-contained within the `src/` directory. Since *micron* is freestanding, it relies on no external sources; no other files or libraries are necessary (*with the sole exception of `pthreads` for multi-threading, more on that below*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
 
 
 #### Installation
@@ -73,7 +73,7 @@ in short:
 Is micron entirely self-sufficient?
 --------------------------------------
 
-Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), or any of the math functions, you **must** link against pthread and libm. I will get around eventually to implementing a threading model/math lib from scratch, just haven't had the time lately. 
+Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++/clang++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), you **must** link against pthread. I will get around eventually to implementing a threading model from scratch, just haven't had the time lately. 
 
 Architecture Support
 ----------------------
@@ -114,25 +114,63 @@ Conformance with the STL
 Libraries
 -----------
 
-### currently, micron provides the following core C++ libraries:
-- [algorithm]
-- [allocation]
-- [array]
-- [hash]
-- [maps]
-- [math]
-- [matrix]
-- [memory]
-- [parallel]
-- [quants]
-- [queue]
-- [simd]
-- [sort]
-- [string]
-- [sync]
-- [thread]
-- [trees]
-- [vector]
+All headers live under `src/` and may be included directly. Each top-level module exposes an umbrella header (e.g. `array.hpp`, `vector.hpp`, `math.hpp`) that re-exports its submodule, and a matching directory containing the individual implementations. The following list groups the modules by purpose:
+
+#### Containers and data structures
+- **`array/`** -- fixed-size, constexpr, immutable, persistent, frozen, contiguous and bisecting array variants
+- **`vector/`** -- growable contiguous sequences (`vector`, `ivector`, `fvector`, `pvector`, `svector`, `convector`, `circle_vector`)
+- **`string/`** -- string types and views (`sstring`, `istring`, `rope`, `unistring`, `string_view`), formatting and numeric conversions
+- **`maps/`** -- open-addressing and tree-backed hash maps (`robin`, `hopscotch`, `swiss`, `b_map`, `immutable`, `itable`)
+- **`trees/`** -- tree containers (B-tree, red-black, radix)
+- **`heap/`** -- heap and priority structures (binary, binomial, fibonacci, quake, bloom filter, heapq)
+- **`queue/`** -- FIFO queues (`queue`, `conqueue`, `iqueue`, `lambda_queue`, `spsc_queue`)
+- **`stacks/`** -- LIFO stacks (`stack`, `fstack`, `istack`, `sstack`, `constack`, `cactus`)
+- **`linux/`** -- Linux/POSIX layer covering syscalls, sysctl, polling, users and ELF parsing
+- **`images/`** -- minimal in-memory bitmap formats (BMP, PPM)
+- **`hash/`** -- hash function family (`zzz`, `xxhash`, `fnv`, `murmur`, `crc`, `bernstein`, `fib`, `checksum`); prefer `zzz`
+- **`sort/`** -- sorting algorithms (quick, merge, heap, radix, bitonic, comb, counting, insertion, bubble, stable, selection)
+- **`algorithm/`** -- generic container algorithms (`find`, `filter`, `fold`, `accumulate`, arithmetic, data, unroll) plus a functional-programming variant suite (`fp*`)
+- **`simd/`** -- SIMD primitives, intrinsics, dispatch and per-architecture backends (`amd64`, `arm32`, `arm64`) for 128/256/512-bit registers and NEON
+
+#### Memory
+- **`memory/`** -- allocation, addressing, lifetime, and pointer machinery; the home of micron's memory stack
+- **`memory/cmemory/`** -- vectorized `memcpy`/`memmove`/`memset`/`memcmp`/`memchr` routines (use these whenever possible)
+- **`memory/allocation/`** -- allocators, memory resources, kernel-side allocation, and the `abcmalloc` general-purpose allocator
+- **`memory/pointers/`** -- smart-pointer family (`unique`, `shared`, `weak`, `atomic`, `hazard`, `sentinel`, `global`, `thread`, `void`)
+
+#### Numerics and compute
+- **`math/`** -- arithmetic, trigonometry, logarithms, square roots, activations, special functions, branchless helpers and dispatch
+- **`math/blas/`** -- BLAS levels 1–3 with extensions and tag-based dispatch
+- **`math/linalg/`** -- linear algebra (decompositions, polynomials, Householder, pseudoinverse, Schur)
+- **`math/matrix/`** -- fixed- and dynamic-shape matrices with packed and viewed forms
+- **`math/quants/`** -- vectors, tensors, quaternions and dynamic vector quantities
+- **`math/quaternions/`** -- quaternion algebra, Euler conversions, rotations, kinematics, interpolation
+- **`math/integrate/`** -- numerical integration (quadrature, Romberg, Simpson, Gauss, Monte Carlo, derivatives)
+- **`math/splines/`** -- interpolation primitives (linear, cubic, monotone-cubic, B-spline, ND curves, smoothing)
+- **`math/manifolds/`** -- differential-geometry primitives (embedded manifolds, Lie groups, tangent spaces, metrics)
+- **`math/rng/`** -- random-number engines, distributions, hardware sources, Ziggurat sampler
+- **`math/simd/`** -- SIMD-accelerated transcendentals (`exp`, `log`, `sqrt`, `trig`, manipulation)
+- **`math/__asm/`** -- hand-written x86 assembly kernels (rsqrt/sqrt/divps for SSE and AVX, hardware RNG)
+
+#### Concurrency
+- **`thread/`** -- thread primitives, pools, arenas, scheduling, CPU pinning, callbacks and thread-type variants
+- **`mutex/`** -- mutex / lock implementations (`spin`, `queue`, `recursive`, `unique`, `guard`, `auto`), barriers, RCU, once-flags, tokens
+- **`atomic/`** -- atomic operations, atomic flags and low-level intrinsics
+- **`sync/`** -- synchronization primitives (`futex`, `future`/`promise`, `latch`, `semaphore`, `channel`, `async`, `defer`, `expect`, `inlet`, `invoke`, `pause`, `until`, `when`, `yield`, `contract`)
+- **`parallel/`** -- parallel-execution helpers (`for`, `pipeline`, `poll`)
+- **`tasks/`** -- lightweight task abstraction
+
+#### OS and I/O
+- **`io/`** -- high-level I/O: files, filesystems (incl. concurrent), paths, pipes, streams, formatting, console, serial, stdin/stdout/stderr, FTW, real-path resolution
+- **`io/posix/`** -- POSIX I/O wrappers (block, dir, file, terminal, volatile, iosys)
+- **`io/term/`** -- ANSI terminal helpers
+- **`io/uxin/`** -- input-device layer (event devices, key mapping, polling, virtual devices, Wayland reader)
+
+#### Internal
+- **`bits/`** -- compile-time architecture, container, exception and syscall-code dispatch headers
+- **`asm/`** -- `_start` entry stub and C-side bootstrap
+- **`__special/`** -- compiler-required STL replacements (`initializer_list`, `index_sequence`, `pthread` shim)
+- **`std.hpp`** -- single mega-header that pulls in the whole library
 
 
 ## License

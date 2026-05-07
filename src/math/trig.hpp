@@ -5,983 +5,566 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// compiler provided
+// doesn't use __builtins anymore; reroutes through to the math kernel qualified namespaces (mkbits::)
+
+// NOTE: logs have been moved to log.hpp
+
+#include "../types.hpp"
+#include "bits/exp.hpp"
+#include "bits/hyp.hpp"
+#include "bits/log.hpp"
+#include "bits/manip.hpp"
+#include "bits/pow.hpp"
+#include "bits/rem.hpp"
+#include "bits/round.hpp"
+#include "bits/special.hpp"
+#include "bits/sqrt.hpp"
+#include "bits/trig.hpp"
 
 namespace micron
 {
-// NOTE: using these builtin functions forces the inclusion of libm
 namespace math
 {
 
+#define __micron_trig_unary_fn(NAME, KERNEL_NS, KERNEL_FN)                                                                                 \
+  constexpr float NAME(float x) noexcept { return float(mkbits::KERNEL_NS::KERNEL_FN<f32>(f32(x))); }                                      \
+  constexpr double NAME(double x) noexcept { return double(mkbits::KERNEL_NS::KERNEL_FN<f64>(f64(x))); }                                   \
+  constexpr long double NAME(long double x) noexcept { return static_cast<long double>(mkbits::KERNEL_NS::KERNEL_FN<f64>(f64(x))); }
+
+#define __micron_trig_binary_fn(NAME, KERNEL_NS, KERNEL_FN)                                                                                \
+  constexpr float NAME(float x, float y) noexcept { return float(mkbits::KERNEL_NS::KERNEL_FN<f32>(f32(x), f32(y))); }                     \
+  constexpr double NAME(double x, double y) noexcept { return double(mkbits::KERNEL_NS::KERNEL_FN<f64>(f64(x), f64(y))); }                 \
+  constexpr long double NAME(long double x, long double y) noexcept                                                                        \
+  {                                                                                                                                        \
+    return static_cast<long double>(mkbits::KERNEL_NS::KERNEL_FN<f64>(f64(x), f64(y)));                                                    \
+  }
+
+__micron_trig_unary_fn(sin, trig_ns, sin);
+__micron_trig_unary_fn(cos, trig_ns, cos);
+__micron_trig_unary_fn(tan, trig_ns, tan);
+__micron_trig_unary_fn(asin, trig_ns, asin);
+__micron_trig_unary_fn(acos, trig_ns, acos);
+__micron_trig_unary_fn(atan, trig_ns, atan);
+__micron_trig_binary_fn(atan2, trig_ns, atan2);
+__micron_trig_unary_fn(sinh, hyp_ns, sinh);
+__micron_trig_unary_fn(cosh, hyp_ns, cosh);
+__micron_trig_unary_fn(tanh, hyp_ns, tanh);
+__micron_trig_unary_fn(exp, exp_ns, exp);
+__micron_trig_unary_fn(sqrt, sqrt_ns, sqrt);
+__micron_trig_binary_fn(pow, pow_ns, pow);
+__micron_trig_unary_fn(floor, round_ns, floor);
+__micron_trig_unary_fn(ceil, round_ns, ceil);
+__micron_trig_unary_fn(fabs, manip, fabs);
+__micron_trig_binary_fn(fmod, rem, fmod);
+
+#undef __micron_trig_unary_fn
+#undef __micron_trig_binary_fn
+
+inline float
+frexp(float x, int *e) noexcept
+{
+  return float(mkbits::manip::frexp<f32>(f32(x), e));
+}
+
+inline double
+frexp(double x, int *e) noexcept
+{
+  return double(mkbits::manip::frexp<f64>(f64(x), e));
+}
+
+inline long double
+frexp(long double x, int *e) noexcept
+{
+  return static_cast<long double>(mkbits::manip::frexp<f64>(f64(x), e));
+}
+
+constexpr float
+ldexp(float x, int n) noexcept
+{
+  return float(mkbits::manip::ldexp<f32>(f32(x), n));
+}
+
+constexpr double
+ldexp(double x, int n) noexcept
+{
+  return double(mkbits::manip::ldexp<f64>(f64(x), n));
+}
+
+constexpr long double
+ldexp(long double x, int n) noexcept
+{
+  return static_cast<long double>(mkbits::manip::ldexp<f64>(f64(x), n));
+}
+
+inline float
+modf(float x, float *iptr) noexcept
+{
+  float i = float(mkbits::round_ns::trunc<f32>(f32(x)));
+  *iptr = i;
+  return float(x - i);
+}
+
+inline double
+modf(double x, double *iptr) noexcept
+{
+  double i = double(mkbits::round_ns::trunc<f64>(f64(x)));
+  *iptr = i;
+  return double(x - i);
+}
+
+inline long double
+modf(long double x, long double *iptr) noexcept
+{
+  long double i = static_cast<long double>(mkbits::round_ns::trunc<f64>(f64(x)));
+  *iptr = i;
+  return x - i;
+}
+
+constexpr float
+erf(float x) noexcept
+{
+  return float(mkbits::special_ns::erf<f32>(f32(x)));
+}
+
+constexpr double
+erf(double x) noexcept
+{
+  return double(mkbits::special_ns::erf<f64>(f64(x)));
+}
+
+constexpr long double
+erf(long double x) noexcept
+{
+  return static_cast<long double>(mkbits::special_ns::erf<f64>(f64(x)));
+}
+
+constexpr float
+erfc(float x) noexcept
+{
+  return float(mkbits::special_ns::erfc<f32>(f32(x)));
+}
+
+constexpr double
+erfc(double x) noexcept
+{
+  return double(mkbits::special_ns::erfc<f64>(f64(x)));
+}
+
+constexpr long double
+erfc(long double x) noexcept
+{
+  return static_cast<long double>(mkbits::special_ns::erfc<f64>(f64(x)));
+}
+
+constexpr float
+tgamma(float x) noexcept
+{
+  return float(mkbits::special_ns::tgamma<f32>(f32(x)));
+}
+
+constexpr double
+tgamma(double x) noexcept
+{
+  return double(mkbits::special_ns::tgamma<f64>(f64(x)));
+}
+
+constexpr long double
+tgamma(long double x) noexcept
+{
+  return static_cast<long double>(mkbits::special_ns::tgamma<f64>(f64(x)));
+}
+
+constexpr float
+exp2(float x) noexcept
+{
+  return float(mkbits::exp_ns::exp2<f32>(f32(x)));
+}
+
+constexpr double
+exp2(double x) noexcept
+{
+  return double(mkbits::exp_ns::exp2<f64>(f64(x)));
+}
+
+constexpr long double
+exp2(long double x) noexcept
+{
+  return static_cast<long double>(mkbits::exp_ns::exp2<f64>(f64(x)));
+}
+
 #if defined(__STDCPP_FLOAT16_T__) && defined(_GLIBCXX_FLOAT_IS_IEEE_BINARY32)
 constexpr _Float16
-acos(_Float16 __x)
+sin(_Float16 x) noexcept
 {
-  return _Float16(__builtin_acosf(__x));
+  return _Float16(mkbits::trig_ns::sin<f32>(f32(x)));
 }
 
 constexpr _Float16
-asin(_Float16 __x)
+cos(_Float16 x) noexcept
 {
-  return _Float16(__builtin_asinf(__x));
+  return _Float16(mkbits::trig_ns::cos<f32>(f32(x)));
 }
 
 constexpr _Float16
-atan(_Float16 __x)
+tan(_Float16 x) noexcept
 {
-  return _Float16(__builtin_atanf(__x));
+  return _Float16(mkbits::trig_ns::tan<f32>(f32(x)));
 }
 
 constexpr _Float16
-atan2(_Float16 __y, _Float16 __x)
+asin(_Float16 x) noexcept
 {
-  return _Float16(__builtin_atan2f(__y, __x));
+  return _Float16(mkbits::trig_ns::asin<f32>(f32(x)));
 }
 
 constexpr _Float16
-ceil(_Float16 __x)
+acos(_Float16 x) noexcept
 {
-  return _Float16(__builtin_ceilf(__x));
+  return _Float16(mkbits::trig_ns::acos<f32>(f32(x)));
 }
 
 constexpr _Float16
-cos(_Float16 __x)
+atan(_Float16 x) noexcept
 {
-  return _Float16(__builtin_cosf(__x));
+  return _Float16(mkbits::trig_ns::atan<f32>(f32(x)));
 }
 
 constexpr _Float16
-cosh(_Float16 __x)
+atan2(_Float16 y, _Float16 x) noexcept
 {
-  return _Float16(__builtin_coshf(__x));
+  return _Float16(mkbits::trig_ns::atan2<f32>(f32(y), f32(x)));
 }
 
 constexpr _Float16
-acosh(_Float16 __x)
+sinh(_Float16 x) noexcept
 {
-  return _Float16(__builtin_acoshf(__x));
+  return _Float16(mkbits::hyp_ns::sinh<f32>(f32(x)));
 }
 
 constexpr _Float16
-exp(_Float16 __x)
+cosh(_Float16 x) noexcept
 {
-  return _Float16(__builtin_expf(__x));
+  return _Float16(mkbits::hyp_ns::cosh<f32>(f32(x)));
 }
 
 constexpr _Float16
-fabs(_Float16 __x)
+tanh(_Float16 x) noexcept
 {
-  return _Float16(__builtin_fabsf(__x));
+  return _Float16(mkbits::hyp_ns::tanh<f32>(f32(x)));
 }
 
 constexpr _Float16
-floor(_Float16 __x)
+asinh(_Float16 x) noexcept
 {
-  return _Float16(__builtin_floorf(__x));
+  return _Float16(mkbits::hyp_ns::asinh<f32>(f32(x)));
 }
 
 constexpr _Float16
-fmod(_Float16 __x, _Float16 __y)
+acosh(_Float16 x) noexcept
 {
-  return _Float16(__builtin_fmodf(__x, __y));
+  return _Float16(mkbits::hyp_ns::acosh<f32>(f32(x)));
+}
+
+constexpr _Float16
+atanh(_Float16 x) noexcept
+{
+  return _Float16(mkbits::hyp_ns::atanh<f32>(f32(x)));
+}
+
+constexpr _Float16
+exp(_Float16 x) noexcept
+{
+  return _Float16(mkbits::exp_ns::exp<f32>(f32(x)));
+}
+
+constexpr _Float16
+sqrt(_Float16 x) noexcept
+{
+  return _Float16(mkbits::sqrt_ns::sqrt<f32>(f32(x)));
+}
+
+constexpr _Float16
+pow(_Float16 x, _Float16 y) noexcept
+{
+  return _Float16(mkbits::pow_ns::pow<f32>(f32(x), f32(y)));
+}
+
+constexpr _Float16
+floor(_Float16 x) noexcept
+{
+  return _Float16(mkbits::round_ns::floor<f32>(f32(x)));
+}
+
+constexpr _Float16
+ceil(_Float16 x) noexcept
+{
+  return _Float16(mkbits::round_ns::ceil<f32>(f32(x)));
+}
+
+constexpr _Float16
+fabs(_Float16 x) noexcept
+{
+  return _Float16(mkbits::manip::fabs<f32>(f32(x)));
+}
+
+constexpr _Float16
+fmod(_Float16 x, _Float16 y) noexcept
+{
+  return _Float16(mkbits::rem::fmod<f32>(f32(x), f32(y)));
 }
 
 inline _Float16
-frexp(_Float16 __x, int *__exp)
+frexp(_Float16 x, int *e) noexcept
 {
-  return _Float16(__builtin_frexpf(__x, __exp));
+  return _Float16(mkbits::manip::frexp<f32>(f32(x), e));
 }
 
 constexpr _Float16
-ldexp(_Float16 __x, int __exp)
+ldexp(_Float16 x, int n) noexcept
 {
-  return _Float16(__builtin_ldexpf(__x, __exp));
-}
-
-constexpr _Float16
-log(_Float16 __x)
-{
-  return _Float16(__builtin_logf(__x));
-}
-
-constexpr _Float16
-log10(_Float16 __x)
-{
-  return _Float16(__builtin_log10f(__x));
+  return _Float16(mkbits::manip::ldexp<f32>(f32(x), n));
 }
 
 inline _Float16
-modf(_Float16 __x, _Float16 *__iptr)
+modf(_Float16 x, _Float16 *iptr) noexcept
 {
-  float __i, __ret = __builtin_modff(__x, &__i);
-  *__iptr = _Float16(__i);
-  return _Float16(__ret);
+  f32 i = f32(mkbits::round_ns::trunc<f32>(f32(x)));
+  *iptr = _Float16(i);
+  return _Float16(f32(x) - i);
+}
+#endif
+
+#if defined(__STDCPP_FLOAT128_T__) && defined(_GLIBCXX_HAVE_FLOAT128_MATH)
+constexpr _Float128
+sin(_Float128 x) noexcept
+{
+  return _Float128(mkbits::trig_ns::sin<f64>(f64(x)));
 }
 
-constexpr _Float16
-pow(_Float16 __x, _Float16 __y)
+constexpr _Float128
+cos(_Float128 x) noexcept
 {
-  return _Float16(__builtin_powf(__x, __y));
+  return _Float128(mkbits::trig_ns::cos<f64>(f64(x)));
 }
+
+constexpr _Float128
+tan(_Float128 x) noexcept
+{
+  return _Float128(mkbits::trig_ns::tan<f64>(f64(x)));
+}
+
+constexpr _Float128
+asin(_Float128 x) noexcept
+{
+  return _Float128(mkbits::trig_ns::asin<f64>(f64(x)));
+}
+
+constexpr _Float128
+acos(_Float128 x) noexcept
+{
+  return _Float128(mkbits::trig_ns::acos<f64>(f64(x)));
+}
+
+constexpr _Float128
+atan(_Float128 x) noexcept
+{
+  return _Float128(mkbits::trig_ns::atan<f64>(f64(x)));
+}
+
+constexpr _Float128
+atan2(_Float128 y, _Float128 x) noexcept
+{
+  return _Float128(mkbits::trig_ns::atan2<f64>(f64(y), f64(x)));
+}
+
+constexpr _Float128
+sinh(_Float128 x) noexcept
+{
+  return _Float128(mkbits::hyp_ns::sinh<f64>(f64(x)));
+}
+
+constexpr _Float128
+cosh(_Float128 x) noexcept
+{
+  return _Float128(mkbits::hyp_ns::cosh<f64>(f64(x)));
+}
+
+constexpr _Float128
+tanh(_Float128 x) noexcept
+{
+  return _Float128(mkbits::hyp_ns::tanh<f64>(f64(x)));
+}
+
+constexpr _Float128
+exp(_Float128 x) noexcept
+{
+  return _Float128(mkbits::exp_ns::exp<f64>(f64(x)));
+}
+
+constexpr _Float128
+sqrt(_Float128 x) noexcept
+{
+  return _Float128(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
+}
+
+constexpr _Float128
+pow(_Float128 x, _Float128 y) noexcept
+{
+  return _Float128(mkbits::pow_ns::pow<f64>(f64(x), f64(y)));
+}
+
+constexpr _Float128
+floor(_Float128 x) noexcept
+{
+  return _Float128(mkbits::round_ns::floor<f64>(f64(x)));
+}
+
+constexpr _Float128
+ceil(_Float128 x) noexcept
+{
+  return _Float128(mkbits::round_ns::ceil<f64>(f64(x)));
+}
+
+constexpr _Float128
+fabs(_Float128 x) noexcept
+{
+  return _Float128(mkbits::manip::fabs<f64>(f64(x)));
+}
+
+constexpr _Float128
+fmod(_Float128 x, _Float128 y) noexcept
+{
+  return _Float128(mkbits::rem::fmod<f64>(f64(x), f64(y)));
+}
+
+inline _Float128
+frexp(_Float128 x, int *e) noexcept
+{
+  return _Float128(mkbits::manip::frexp<f64>(f64(x), e));
+}
+
+constexpr _Float128
+ldexp(_Float128 x, int n) noexcept
+{
+  return _Float128(mkbits::manip::ldexp<f64>(f64(x), n));
+}
+
+inline _Float128
+modf(_Float128 x, _Float128 *iptr) noexcept
+{
+  f64 i = f64(mkbits::round_ns::trunc<f64>(f64(x)));
+  *iptr = _Float128(i);
+  return _Float128(f64(x) - i);
+}
+#endif
 
 constexpr float
 fcos(float x) noexcept
 {
-  return __builtin_cosf(x);
+  return float(mkbits::trig_ns::cos<f32>(f32(x)));
 }
 
 constexpr double
 fcos(double x) noexcept
 {
-  return __builtin_cos(x);
+  return double(mkbits::trig_ns::cos<f64>(f64(x)));
 }
 
 constexpr long double
 fcos(long double x) noexcept
 {
-  return __builtin_cosl(x);
+  return static_cast<long double>(mkbits::trig_ns::cos<f64>(f64(x)));
 }
 
 constexpr float
 ftan(float x) noexcept
 {
-  return __builtin_tanf(x);
+  return float(mkbits::trig_ns::tan<f32>(f32(x)));
 }
 
 constexpr double
 ftan(double x) noexcept
 {
-  return __builtin_tan(x);
+  return double(mkbits::trig_ns::tan<f64>(f64(x)));
 }
 
 constexpr long double
 ftan(long double x) noexcept
 {
-  return __builtin_tanl(x);
+  return static_cast<long double>(mkbits::trig_ns::tan<f64>(f64(x)));
 }
 
 constexpr float
 fasin(float x) noexcept
 {
-  return __builtin_asinf(x);
+  return float(mkbits::trig_ns::asin<f32>(f32(x)));
 }
 
 constexpr double
 fasin(double x) noexcept
 {
-  return __builtin_asin(x);
+  return double(mkbits::trig_ns::asin<f64>(f64(x)));
 }
 
 constexpr long double
 fasin(long double x) noexcept
 {
-  return __builtin_asinl(x);
+  return static_cast<long double>(mkbits::trig_ns::asin<f64>(f64(x)));
 }
 
 constexpr float
 facos(float x) noexcept
 {
-  return __builtin_acosf(x);
+  return float(mkbits::trig_ns::acos<f32>(f32(x)));
 }
 
 constexpr double
 facos(double x) noexcept
 {
-  return __builtin_acos(x);
+  return double(mkbits::trig_ns::acos<f64>(f64(x)));
 }
 
 constexpr long double
 facos(long double x) noexcept
 {
-  return __builtin_acosl(x);
+  return static_cast<long double>(mkbits::trig_ns::acos<f64>(f64(x)));
 }
 
 constexpr float
 fatan(float x) noexcept
 {
-  return __builtin_atanf(x);
+  return float(mkbits::trig_ns::atan<f32>(f32(x)));
 }
 
 constexpr double
 fatan(double x) noexcept
 {
-  return __builtin_atan(x);
+  return double(mkbits::trig_ns::atan<f64>(f64(x)));
 }
 
 constexpr long double
 fatan(long double x) noexcept
 {
-  return __builtin_atanl(x);
+  return static_cast<long double>(mkbits::trig_ns::atan<f64>(f64(x)));
 }
 
 constexpr float
 fatan2(float y, float x) noexcept
 {
-  return __builtin_atan2f(y, x);
+  return float(mkbits::trig_ns::atan2<f32>(f32(y), f32(x)));
 }
 
 constexpr double
 fatan2(double y, double x) noexcept
 {
-  return __builtin_atan2(y, x);
+  return double(mkbits::trig_ns::atan2<f64>(f64(y), f64(x)));
 }
 
 constexpr long double
 fatan2(long double y, long double x) noexcept
 {
-  return __builtin_atan2l(y, x);
+  return static_cast<long double>(mkbits::trig_ns::atan2<f64>(f64(y), f64(x)));
 }
 
-constexpr float
-fsinh(float x) noexcept
-{
-  return __builtin_sinhf(x);
-}
-
-constexpr double
-fsinh(double x) noexcept
-{
-  return __builtin_sinh(x);
-}
-
-constexpr long double
-fsinh(long double x) noexcept
-{
-  return __builtin_sinhl(x);
-}
-
-constexpr float
-fcosh(float x) noexcept
-{
-  return __builtin_coshf(x);
-}
-
-constexpr double
-fcosh(double x) noexcept
-{
-  return __builtin_cosh(x);
-}
-
-constexpr long double
-fcosh(long double x) noexcept
-{
-  return __builtin_coshl(x);
-}
-
-constexpr float
-ftanh(float x) noexcept
-{
-  return __builtin_tanhf(x);
-}
-
-constexpr double
-ftanh(double x) noexcept
-{
-  return __builtin_tanh(x);
-}
-
-constexpr long double
-ftanh(long double x) noexcept
-{
-  return __builtin_tanhl(x);
-}
-
-constexpr float
-fsin(float x) noexcept
-{
-  return __builtin_sinf(x);
-}
-
-constexpr double
-fsin(double x) noexcept
-{
-  return __builtin_sin(x);
-}
-
-constexpr long double
-fsin(long double x) noexcept
-{
-  return __builtin_sinl(x);
-}
-
-constexpr float
-fgamma(float x) noexcept
-{
-  return __builtin_tgammaf(x);
-}
-
-constexpr double
-fgamma(double x) noexcept
-{
-  return __builtin_tgamma(x);
-}
-
-constexpr long double
-fgamma(long double x) noexcept
-{
-  return __builtin_tgammal(x);
-}
-
-constexpr float
-ferfc(float x) noexcept
-{
-  return __builtin_erfcf(x);
-}
-
-constexpr double
-ferfc(double x) noexcept
-{
-  return __builtin_erfc(x);
-}
-
-constexpr long double
-ferfc(long double x) noexcept
-{
-  return __builtin_erfcl(x);
-}
-
-constexpr float
-ferf(float x) noexcept
-{
-  return __builtin_erff(x);
-}
-
-constexpr double
-ferf(double x) noexcept
-{
-  return __builtin_erf(x);
-}
-
-constexpr long double
-ferf(long double x) noexcept
-{
-  return __builtin_erfl(x);
-}
-
-constexpr float
-fexp2(float x) noexcept
-{
-  return __builtin_exp2f(x);
-}
-
-constexpr double
-fexp2(double x) noexcept
-{
-  return __builtin_exp2(x);
-}
-
-constexpr long double
-fexp2(long double x) noexcept
-{
-  return __builtin_exp2l(x);
-}
-
-constexpr _Float16
-sin(_Float16 __x)
-{
-  return _Float16(__builtin_sinf(__x));
-}
-
-constexpr _Float16
-sinh(_Float16 __x)
-{
-  return _Float16(__builtin_sinhf(__x));
-}
-
-constexpr _Float16
-asinh(_Float16 __x)
-{
-  return _Float16(__builtin_asinhf(__x));
-}
-
-constexpr _Float16
-sqrt(_Float16 __x)
-{
-  return _Float16(__builtin_sqrtf(__x));
-}
-
-constexpr _Float16
-tan(_Float16 __x)
-{
-  return _Float16(__builtin_tanf(__x));
-}
-
-constexpr _Float16
-atanh(_Float16 __x)
-{
-  return _Float16(__builtin_atanhf(__x));
-}
-
-constexpr _Float16
-tanh(_Float16 __x)
-{
-  return _Float16(__builtin_tanhf(__x));
-}
-#endif
-
-#if defined(__STDCPP_FLOAT32_T__) && defined(_GLIBCXX_FLOAT_IS_IEEE_BINARY32)
-constexpr _Float32
-acos(_Float32 __x)
-{
-  return __builtin_acosf(__x);
-}
-
-constexpr _Float32
-asin(_Float32 __x)
-{
-  return __builtin_asinf(__x);
-}
-
-constexpr _Float32
-atan(_Float32 __x)
-{
-  return __builtin_atanf(__x);
-}
-
-constexpr _Float32
-atan2(_Float32 __y, _Float32 __x)
-{
-  return __builtin_atan2f(__y, __x);
-}
-
-constexpr _Float32
-ceil(_Float32 __x)
-{
-  return __builtin_ceilf(__x);
-}
-
-constexpr _Float32
-cos(_Float32 __x)
-{
-  return __builtin_cosf(__x);
-}
-
-constexpr _Float32
-cosh(_Float32 __x)
-{
-  return __builtin_coshf(__x);
-}
-
-constexpr _Float32
-exp(_Float32 __x)
-{
-  return __builtin_expf(__x);
-}
-
-constexpr _Float32
-floor(_Float32 __x)
-{
-  return __builtin_floorf(__x);
-}
-
-constexpr _Float32
-fmod(_Float32 __x, _Float32 __y)
-{
-  return __builtin_fmodf(__x, __y);
-}
-
-inline _Float32
-frexp(_Float32 __x, int *__exp)
-{
-  return __builtin_frexpf(__x, __exp);
-}
-
-constexpr _Float32
-ldexp(_Float32 __x, int __exp)
-{
-  return __builtin_ldexpf(__x, __exp);
-}
-
-constexpr _Float32
-log(_Float32 __x)
-{
-  return __builtin_logf(__x);
-}
-
-constexpr _Float32
-log10(_Float32 __x)
-{
-  return __builtin_log10f(__x);
-}
-
-inline _Float32
-modf(_Float32 __x, _Float32 *__iptr)
-{
-  float __i, __ret = __builtin_modff(__x, &__i);
-  *__iptr = __i;
-  return __ret;
-}
-
-constexpr _Float32
-pow(_Float32 __x, _Float32 __y)
-{
-  return __builtin_powf(__x, __y);
-}
-
-constexpr _Float32
-sin(_Float32 __x)
-{
-  return __builtin_sinf(__x);
-}
-
-constexpr _Float32
-sinh(_Float32 __x)
-{
-  return __builtin_sinhf(__x);
-}
-
-constexpr _Float32
-sqrt(_Float32 __x)
-{
-  return __builtin_sqrtf(__x);
-}
-
-constexpr _Float32
-tan(_Float32 __x)
-{
-  return __builtin_tanf(__x);
-}
-
-constexpr _Float32
-tanh(_Float32 __x)
-{
-  return __builtin_tanhf(__x);
-}
-#endif
-
-#if defined(__STDCPP_FLOAT64_T__) && defined(_GLIBCXX_DOUBLE_IS_IEEE_BINARY64)
-constexpr _Float64
-acos(_Float64 __x)
-{
-  return __builtin_acos(__x);
-}
-
-constexpr _Float64
-asin(_Float64 __x)
-{
-  return __builtin_asin(__x);
-}
-
-constexpr _Float64
-atan(_Float64 __x)
-{
-  return __builtin_atan(__x);
-}
-
-constexpr _Float64
-atan2(_Float64 __y, _Float64 __x)
-{
-  return __builtin_atan2(__y, __x);
-}
-
-constexpr _Float64
-ceil(_Float64 __x)
-{
-  return __builtin_ceil(__x);
-}
-
-constexpr _Float64
-cos(_Float64 __x)
-{
-  return __builtin_cos(__x);
-}
-
-constexpr _Float64
-cosh(_Float64 __x)
-{
-  return __builtin_cosh(__x);
-}
-
-constexpr _Float64
-exp(_Float64 __x)
-{
-  return __builtin_exp(__x);
-}
-
-constexpr _Float64
-floor(_Float64 __x)
-{
-  return __builtin_floor(__x);
-}
-
-constexpr _Float64
-fmod(_Float64 __x, _Float64 __y)
-{
-  return __builtin_fmod(__x, __y);
-}
-
-inline _Float64
-frexp(_Float64 __x, int *__exp)
-{
-  return __builtin_frexp(__x, __exp);
-}
-
-constexpr _Float64
-ldexp(_Float64 __x, int __exp)
-{
-  return __builtin_ldexp(__x, __exp);
-}
-
-constexpr _Float64
-log(_Float64 __x)
-{
-  return __builtin_log(__x);
-}
-
-constexpr _Float64
-log10(_Float64 __x)
-{
-  return __builtin_log10(__x);
-}
-
-inline _Float64
-modf(_Float64 __x, _Float64 *__iptr)
-{
-  double __i, __ret = __builtin_modf(__x, &__i);
-  *__iptr = __i;
-  return __ret;
-}
-
-constexpr _Float64
-pow(_Float64 __x, _Float64 __y)
-{
-  return __builtin_pow(__x, __y);
-}
-
-constexpr _Float64
-sin(_Float64 __x)
-{
-  return __builtin_sin(__x);
-}
-
-constexpr _Float64
-sinh(_Float64 __x)
-{
-  return __builtin_sinh(__x);
-}
-
-constexpr _Float64
-sqrt(_Float64 __x)
-{
-  return __builtin_sqrt(__x);
-}
-
-constexpr _Float64
-tan(_Float64 __x)
-{
-  return __builtin_tan(__x);
-}
-
-constexpr _Float64
-tanh(_Float64 __x)
-{
-  return __builtin_tanh(__x);
-}
-#endif
-
-#if defined(__STDCPP_FLOAT128_T__) && defined(_GLIBCXX_LDOUBLE_IS_IEEE_BINARY128)
-constexpr _Float128
-acos(_Float128 __x)
-{
-  return __builtin_acosl(__x);
-}
-
-constexpr _Float128
-asin(_Float128 __x)
-{
-  return __builtin_asinl(__x);
-}
-
-constexpr _Float128
-atan(_Float128 __x)
-{
-  return __builtin_atanl(__x);
-}
-
-constexpr _Float128
-atan2(_Float128 __y, _Float128 __x)
-{
-  return __builtin_atan2l(__y, __x);
-}
-
-constexpr _Float128
-ceil(_Float128 __x)
-{
-  return __builtin_ceill(__x);
-}
-
-constexpr _Float128
-cos(_Float128 __x)
-{
-  return __builtin_cosl(__x);
-}
-
-constexpr _Float128
-cosh(_Float128 __x)
-{
-  return __builtin_coshl(__x);
-}
-
-constexpr _Float128
-exp(_Float128 __x)
-{
-  return __builtin_expl(__x);
-}
-
-constexpr _Float128
-fabs(_Float128 __x)
-{
-  return __builtin_fabsl(__x);
-}
-
-constexpr _Float128
-floor(_Float128 __x)
-{
-  return __builtin_floorl(__x);
-}
-
-constexpr _Float128
-fmod(_Float128 __x, _Float128 __y)
-{
-  return __builtin_fmodl(__x, __y);
-}
-
-inline _Float128
-frexp(_Float128 __x, int *__exp)
-{
-  return __builtin_frexpl(__x, __exp);
-}
-
-constexpr _Float128
-ldexp(_Float128 __x, int __exp)
-{
-  return __builtin_ldexpl(__x, __exp);
-}
-
-constexpr _Float128
-log(_Float128 __x)
-{
-  return __builtin_logl(__x);
-}
-
-constexpr _Float128
-log10(_Float128 __x)
-{
-  return __builtin_log10l(__x);
-}
-
-inline _Float128
-modf(_Float128 __x, _Float128 *__iptr)
-{
-  long double __i, __ret = __builtin_modfl(__x, &__i);
-  *__iptr = __i;
-  return __ret;
-}
-
-constexpr _Float128
-pow(_Float128 __x, _Float128 __y)
-{
-  return __builtin_powl(__x, __y);
-}
-
-constexpr _Float128
-sin(_Float128 __x)
-{
-  return __builtin_sinl(__x);
-}
-
-constexpr _Float128
-sinh(_Float128 __x)
-{
-  return __builtin_sinhl(__x);
-}
-
-constexpr _Float128
-sqrt(_Float128 __x)
-{
-  return __builtin_sqrtl(__x);
-}
-
-constexpr _Float128
-tan(_Float128 __x)
-{
-  return __builtin_tanl(__x);
-}
-
-constexpr _Float128
-tanh(_Float128 __x)
-{
-  return __builtin_tanhl(__x);
-}
-#elif defined(__STDCPP_FLOAT128_T__) && defined(_GLIBCXX_HAVE_FLOAT128_MATH)
-constexpr _Float128
-acos(_Float128 __x)
-{
-  return __builtin_acosf128(__x);
-}
-
-constexpr _Float128
-asin(_Float128 __x)
-{
-  return __builtin_asinf128(__x);
-}
-
-constexpr _Float128
-atan(_Float128 __x)
-{
-  return __builtin_atanf128(__x);
-}
-
-constexpr _Float128
-atan2(_Float128 __y, _Float128 __x)
-{
-  return __builtin_atan2f128(__y, __x);
-}
-
-constexpr _Float128
-ceil(_Float128 __x)
-{
-  return __builtin_ceilf128(__x);
-}
-
-constexpr _Float128
-cos(_Float128 __x)
-{
-  return __builtin_cosf128(__x);
-}
-
-constexpr _Float128
-cosh(_Float128 __x)
-{
-  return __builtin_coshf128(__x);
-}
-
-constexpr _Float128
-exp(_Float128 __x)
-{
-  return __builtin_expf128(__x);
-}
-
-constexpr _Float128
-fabs(_Float128 __x)
-{
-  return __builtin_fabsf128(__x);
-}
-
-constexpr _Float128
-floor(_Float128 __x)
-{
-  return __builtin_floorf128(__x);
-}
-
-constexpr _Float128
-fmod(_Float128 __x, _Float128 __y)
-{
-  return __builtin_fmodf128(__x, __y);
-}
-
-inline _Float128
-frexp(_Float128 __x, int *__exp)
-{
-  return __builtin_frexpf128(__x, __exp);
-}
-
-constexpr _Float128
-ldexp(_Float128 __x, int __exp)
-{
-  return __builtin_ldexpf128(__x, __exp);
-}
-
-constexpr _Float128
-log(_Float128 __x)
-{
-  return __builtin_logf128(__x);
-}
-
-constexpr _Float128
-log10(_Float128 __x)
-{
-  return __builtin_log10f128(__x);
-}
-
-inline _Float128
-modf(_Float128 __x, _Float128 *__iptr)
-{
-  return __builtin_modff128(__x, __iptr);
-}
-
-constexpr _Float128
-pow(_Float128 __x, _Float128 __y)
-{
-  return __builtin_powf128(__x, __y);
-}
-
-constexpr _Float128
-sin(_Float128 __x)
-{
-  return __builtin_sinf128(__x);
-}
-
-constexpr _Float128
-sinh(_Float128 __x)
-{
-  return __builtin_sinhf128(__x);
-}
-
-constexpr _Float128
-sqrt(_Float128 __x)
-{
-  return __builtin_sqrtf128(__x);
-}
-
-constexpr _Float128
-tan(_Float128 __x)
-{
-  return __builtin_tanf128(__x);
-}
-
-constexpr _Float128
-tanh(_Float128 __x)
-{
-  return __builtin_tanhf128(__x);
-}
-
-constexpr float
-flog(float x) noexcept
-{
-  return logf32(x);
-}
-
-constexpr double
-flog(double x) noexcept
-{
-  return logf64(x);
-}
-
-constexpr long double
-flog(long double x) noexcept
-{
-  return logf128(x);
-}
-
-constexpr float
-flog10(float x) noexcept
-{
-  return log10f32(x);
-}
-
-constexpr double
-flog10(double x) noexcept
-{
-  return log10f64(x);
-}
-
-constexpr long double
-flog10(long double x) noexcept
-{
-  return log10f128(x);
-}
-
-#endif
 };     // namespace math
 };     // namespace micron

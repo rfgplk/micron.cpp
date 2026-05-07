@@ -12,6 +12,13 @@
 
 #include "../concepts.hpp"
 
+#include "bits/exp.hpp"
+#include "bits/log.hpp"
+#include "bits/manip.hpp"
+#include "bits/pow.hpp"
+#include "bits/rem.hpp"
+#include "bits/round.hpp"
+
 namespace micron
 {
 namespace math
@@ -157,27 +164,24 @@ pow(T base, i32 exp)
   return result;
 }
 
-// due to the extensive complexity of implementing ieee754 fully
-// (arch-specific), builtins will handle this, until i get around to
-// porting it in full
 static constexpr double huge = 1.0e300, tiny = 1.0e-300;
 
 constexpr f32
 powerf32(f32 x, f32 y)
 {
-  return __builtin_powf(x, y);
+  return f32(mkbits::pow_ns::pow<f32>(f32(x), f32(y)));
 }
 
 constexpr f64
 powerf(f64 x, f64 y)
 {
-  return __builtin_pow(x, y);
+  return f64(mkbits::pow_ns::pow<f64>(f64(x), f64(y)));
 }
 
 constexpr flong
 powerflong(flong x, flong y)
 {
-  return __builtin_powl(x, y);
+  return static_cast<flong>(mkbits::pow_ns::pow<f64>(f64(x), f64(y)));
 }
 
 constexpr float
@@ -201,19 +205,19 @@ fpow(long double x, long double y) noexcept
 constexpr f64
 expf64(f64 x)
 {
-  return __builtin_exp(x);
+  return f64(mkbits::exp_ns::exp<f64>(f64(x)));
 }
 
 constexpr f32
 expf32(f32 x)
 {
-  return __builtin_expf(x);
+  return f32(mkbits::exp_ns::exp<f32>(f32(x)));
 }
 
 constexpr flong
 expf128(flong x)
 {
-  return __builtin_expl(x);
+  return static_cast<flong>(mkbits::exp_ns::exp<f64>(f64(x)));
 }
 
 constexpr float
@@ -237,55 +241,55 @@ fexp(long double x) noexcept
 constexpr f32
 logf32(f32 x)
 {
-  return __builtin_logf(x);
+  return f32(mkbits::log_ns::log<f32>(f32(x)));
 }
 
 constexpr f64
 logf64(f64 x)
 {
-  return __builtin_log(x);
+  return f64(mkbits::log_ns::log<f64>(f64(x)));
 }
 
 constexpr flong
 logf128(flong x)
 {
-  return __builtin_logl(x);
+  return static_cast<flong>(mkbits::log_ns::log<f64>(f64(x)));
 }
 
 constexpr f32
 roundf32(f32 x)
 {
-  return __builtin_roundf(x);
+  return f32(mkbits::round_ns::round<f32>(f32(x)));
 }
 
 constexpr f64
 roundf64(f64 x)
 {
-  return __builtin_round(x);
+  return f64(mkbits::round_ns::round<f64>(f64(x)));
 }
 
 constexpr flong
 roundf128(flong x)
 {
-  return __builtin_roundl(x);
+  return static_cast<flong>(mkbits::round_ns::round<f64>(f64(x)));
 }
 
 constexpr f32
 maxf32(f32 x, f32 y)
 {
-  return __builtin_fmaxf(x, y);
+  return f32(mkbits::manip::fmax<f32>(f32(x), f32(y)));
 }
 
 constexpr f64
 maxf64(f64 x, f64 y)
 {
-  return __builtin_fmax(x, y);
+  return f64(mkbits::manip::fmax<f64>(f64(x), f64(y)));
 }
 
 constexpr flong
 maxf128(flong x, flong y)
 {
-  return __builtin_fmaxl(x, y);
+  return static_cast<flong>(mkbits::manip::fmax<f64>(f64(x), f64(y)));
 }
 
 template <typename T>
@@ -312,24 +316,22 @@ fmin(T a, T b)
   return (a < b) ? a : b;
 }
 
-// NOTE: in case the compiler can't constant fold these at ct, the log10 func from GLIBC is needed, compile with -lm if
-// that's the case
 constexpr float
 flog2(float x) noexcept
 {
-  return __builtin_log2f(x);
+  return float(mkbits::log_ns::log2<f32>(f32(x)));
 }
 
 constexpr double
 flog2(double x) noexcept
 {
-  return __builtin_log2(x);
+  return double(mkbits::log_ns::log2<f64>(f64(x)));
 }
 
 constexpr long double
 flog2(long double x) noexcept
 {
-  return __builtin_log2l(x);
+  return static_cast<long double>(mkbits::log_ns::log2<f64>(f64(x)));
 }
 
 constexpr i32
@@ -349,37 +351,37 @@ log2ll(i64 x)
 constexpr f32
 log10f32(f32 x)
 {
-  return __builtin_log10f(x);
+  return f32(mkbits::log_ns::log10<f32>(f32(x)));
 }
 
 constexpr f64
 log10f64(f64 x)
 {
-  return __builtin_log10(x);
+  return f64(mkbits::log_ns::log10<f64>(f64(x)));
 }
 
 constexpr flong
 log10f128(flong x)
 {
-  return __builtin_log10l(x);
+  return static_cast<flong>(mkbits::log_ns::log10<f64>(f64(x)));
 }
 
 constexpr f64
 remainderf64(f64 x, f64 y)
 {
-  return __builtin_remainder(x, y);
+  return f64(mkbits::rem::remainder<f64>(f64(x), f64(y)));
 }
 
 constexpr flong
 remainderf128(flong x, flong y)
 {
-  return __builtin_remainderl(x, y);
+  return static_cast<flong>(mkbits::rem::remainder<f64>(f64(x), f64(y)));
 }
 
 constexpr flong
 remainderf128(flong x, f32 y)
 {
-  return __builtin_remainderl(x, y);
+  return static_cast<flong>(mkbits::rem::remainder<f64>(f64(x), f64(y)));
 }
 
 template <typename T>
@@ -531,6 +533,8 @@ ftrunc(T x) noexcept
   return static_cast<T>(static_cast<long long>(x));
 }
 
+// the compiler won't use libm for these
+
 constexpr int
 isfinite(f32 x)
 {
@@ -673,98 +677,101 @@ isunordered(f64 a, f64 b)
 constexpr f32
 rint(f32 x)
 {
-  return __builtin_rintf(x);
+  return f32(mkbits::round_ns::rint<f32>(f32(x)));
 }
 
 constexpr f64
 rint(f64 x)
 {
-  return __builtin_rint(x);
+  return f64(mkbits::round_ns::rint<f64>(f64(x)));
 }
 
 constexpr long
 lrint(f32 x)
 {
-  return __builtin_lrintf(x);
+  return mkbits::round_ns::lrint<f32>(f32(x));
 }
 
 constexpr long
 lrint(f64 x)
 {
-  return __builtin_lrint(x);
+  return mkbits::round_ns::lrint<f64>(f64(x));
 }
 
 constexpr long long
 llrint(f32 x)
 {
-  return __builtin_llrintf(x);
+  return mkbits::round_ns::llrint<f32>(f32(x));
 }
 
 constexpr long long
 llrint(f64 x)
 {
-  return __builtin_llrint(x);
+  return mkbits::round_ns::llrint<f64>(f64(x));
 }
 
 constexpr f32
 nearbyint(f32 x)
 {
-  return __builtin_nearbyintf(x);
+  return f32(mkbits::round_ns::nearbyint<f32>(f32(x)));
 }
 
 constexpr f64
 nearbyint(f64 x)
 {
-  return __builtin_nearbyint(x);
+  return f64(mkbits::round_ns::nearbyint<f64>(f64(x)));
 }
 
 constexpr f32
 scalbn(f32 x, int n)
 {
-  return __builtin_scalbnf(x, n);
+  return f32(mkbits::manip::scalbn<f32>(f32(x), n));
 }
 
 constexpr f64
 scalbn(f64 x, int n)
 {
-  return __builtin_scalbn(x, n);
+  return f64(mkbits::manip::scalbn<f64>(f64(x), n));
 }
 
 constexpr f32
 scalbln(f32 x, long n)
 {
-  return __builtin_scalblnf(x, n);
+  return f32(mkbits::manip::scalbn<f32>(f32(x), int(n)));
 }
 
 constexpr f64
 scalbln(f64 x, long n)
 {
-  return __builtin_scalbln(x, n);
+  return f64(mkbits::manip::scalbn<f64>(f64(x), int(n)));
 }
 
 constexpr f32
 copysign(f32 x, f32 y)
 {
-  return __builtin_copysignf(x, y);
+  return f32(mkbits::manip::copysign<f32>(f32(x), f32(y)));
 }
 
 constexpr f64
 copysign(f64 x, f64 y)
 {
-  return __builtin_copysign(x, y);
+  return f64(mkbits::manip::copysign<f64>(f64(x), f64(y)));
 }
 
+#if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L && defined(__micron_arch_amd64)
+// f32/f64 are distinct from float/double here
 constexpr f32
 fabs(f32 x)
 {
-  return __builtin_fabsf(x);
+  return f32(mkbits::manip::fabs<f32>(f32(x)));
 }
 
 constexpr f64
 fabs(f64 x)
 {
-  return __builtin_fabs(x);
+  return f64(mkbits::manip::fabs<f64>(f64(x)));
 }
+#endif
 
 template <typename T>
 constexpr T
@@ -776,25 +783,25 @@ fabsmax(T a, T b)
 constexpr f32
 remainder(f32 x, f32 y)
 {
-  return __builtin_remainderf(x, y);
+  return f32(mkbits::rem::remainder<f32>(f32(x), f32(y)));
 }
 
 constexpr f64
 remainder(f64 x, f64 y)
 {
-  return __builtin_remainder(x, y);
+  return f64(mkbits::rem::remainder<f64>(f64(x), f64(y)));
 }
 
 inline f32
 remquo(f32 x, f32 y, int *q)
 {
-  return __builtin_remquof(x, y, q);
+  return f32(mkbits::rem::remquo<f32>(f32(x), f32(y), q));
 }
 
 inline f64
 remquo(f64 x, f64 y, int *q)
 {
-  return __builtin_remquo(x, y, q);
+  return f64(mkbits::rem::remquo<f64>(f64(x), f64(y), q));
 }
 
 inline f32

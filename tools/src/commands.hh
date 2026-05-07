@@ -1,7 +1,7 @@
 #pragma once
 
-#include "commands/doctor.hh"
 #include "commands/build.hh"
+#include "commands/doctor.hh"
 #include "commands/help.hh"
 #include "commands/run.hh"
 #include "commands/test.hh"
@@ -54,7 +54,8 @@ parse_main(int argc, char **argv)
   using namespace recipes::gnu;
   if ( argc < 3 ) [[unlikely]] {
     if ( argc == 2 )
-      if ( mc::strcmp(argv[1], "help") == 0 ) {
+      if ( (mc::strcmp(argv[1], "help") == 0) or (mc::strcmp(argv[1], "--help")) or (mc::strcmp(argv[1], "--h"))
+           or (mc::strcmp(argv[1], "-h")) ) {
         help();
         return 0;
       }

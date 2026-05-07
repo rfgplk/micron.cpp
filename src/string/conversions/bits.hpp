@@ -115,7 +115,7 @@ fast_div10000(u64 x)
   return umul128(x, 0xD1B71758E219652CULL).hi >> 13;
 }
 
-// NOTE: single word constant division does not work over the full u64 range for divisor 10^8 
+// NOTE: single word constant division does not work over the full u64 range for divisor 10^8
 inline u64
 fast_div1e8(u64 x)
 {

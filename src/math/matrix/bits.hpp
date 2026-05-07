@@ -16,11 +16,15 @@
 namespace micron
 {
 
+template <typename B, usize C, usize R>
+inline constexpr usize int_matrix_align_v = (C * R * sizeof(B) <= 16)   ? 16
+                                            : (C * R * sizeof(B) <= 32) ? 32
+                                                                        : 64;
+
 // NOTE: row major
-template <typename B, u32 C, u32 R>
-  requires(micron::is_arithmetic_v<B> and ((C * sizeof(C)) * (R * sizeof(R)) <= (4096 / sizeof(byte)))
-           && ((((C * R * sizeof(R))) % 64) == 0))
-class int_matrix_base_avx
+template <typename B, usize C, usize R>
+  requires(micron::is_arithmetic_v<B> && C >= 1 && R >= 1 && (C * R * sizeof(B) <= 4096))
+class alignas(int_matrix_align_v<B, C, R>) int_matrix_base_avx
 {
   using category_type = type_tag;
   using mutability_type = mutable_tag;
@@ -37,204 +41,159 @@ class int_matrix_base_avx
   typedef const B *const_iterator;
 
 public:
-  static constexpr u32 __size = C * R;
-  B alignas(64) __mat[__size];     // yes, public for conv.
+  static constexpr usize __size = C * R;
+  B data[__size];     // public for conv.  Class alignas carries through.
   ~int_matrix_base_avx(void) = default;
 
-  int_matrix_base_avx(void) : __mat{} { micron::czero<__size>(__mat); }
+  int_matrix_base_avx(void) : data{} { micron::czero<__size>(data); }
 
-  int_matrix_base_avx(B n) : __mat{} { micron::ctypeset<__size, B>(__mat, n); }
+  int_matrix_base_avx(B n) : data{} { micron::ctypeset<__size, B>(data, n); }
 
   template <typename... Args>
     requires(sizeof...(Args) == __size)
-  int_matrix_base_avx(Args... args) : __mat{ args... }
+  int_matrix_base_avx(Args... args) : data{ args... }
   {
   }
 
   int_matrix_base_avx(const std::initializer_list<B> &lst)
   {
-    if ( lst.size() != __size ) exc<except::library_error>("micron::int8x8 initializer_list out of bounds");
-    micron::bytecpy(__mat, lst.begin(), __size * sizeof(B));
+    if ( lst.size() != __size ) exc<except::library_error>("micron::int_matrix_base_avx initializer_list out of bounds");
+    micron::bytecpy(data, lst.begin(), __size * sizeof(B));
   }
 
-  int_matrix_base_avx(const int_matrix_base_avx &o) { micron::cmemcpy<__size>(__mat, o.__mat); }
+  int_matrix_base_avx(const int_matrix_base_avx &o) { micron::cmemcpy<__size>(data, o.data); }
 
   int_matrix_base_avx(int_matrix_base_avx &&o)
   {
-    micron::cmemcpy<__size>(__mat, o.__mat);
-    micron::czero<__size>(o.__mat);
+    micron::cmemcpy<__size>(data, o.data);
+    micron::czero<__size>(o.data);
   }
 
   int_matrix_base_avx &
   operator=(const int_matrix_base_avx &o)
   {
-    micron::cmemcpy<__size>(__mat, o.__mat);
+    micron::cmemcpy<__size>(data, o.data);
     return *this;
   }
 
   int_matrix_base_avx &
   operator=(int_matrix_base_avx &&o)
   {
-    micron::cmemcpy<__size>(__mat, o.__mat);
-    micron::czero<__size>(o.__mat);
+    micron::cmemcpy<__size>(data, o.data);
+    micron::czero<__size>(o.data);
     return *this;
   }
 
-  // start of scalar funcs
-  // scalar addition
   int_matrix_base_avx &
   operator=(B sc)
   {
-    micron::typeset(&__mat[0], sc, __size);
+    micron::typeset(&data[0], sc, __size);
     return *this;
   }
 
   int_matrix_base_avx &
   operator+=(B sc)
   {
-    // NOTE: this will autovectorize or entirely get opt out during ct. ie
-    // (mov    $res,%edi)
-    for ( usize i = 0; i < __size; i += 8 ) {
-      __mat[i] += sc;
-      __mat[i + 1] += sc;
-      __mat[i + 2] += sc;
-      __mat[i + 3] += sc;
-      __mat[i + 4] += sc;
-      __mat[i + 5] += sc;
-      __mat[i + 6] += sc;
-      __mat[i + 7] += sc;
-    }
+    // dropping the hand unrolling so this works for any size
+    for ( usize i = 0; i < __size; ++i ) data[i] += sc;
     return *this;
   }
 
   int_matrix_base_avx &
   operator-=(B sc)
   {
-    // NOTE: this will autovectorize or entirely get opt out during ct. ie
-    // (mov    $res,%edi)
-    for ( usize i = 0; i < __size; i += 8 ) {
-      __mat[i] -= sc;
-      __mat[i + 1] -= sc;
-      __mat[i + 2] -= sc;
-      __mat[i + 3] -= sc;
-      __mat[i + 4] -= sc;
-      __mat[i + 5] -= sc;
-      __mat[i + 6] -= sc;
-      __mat[i + 7] -= sc;
-    }
+    for ( usize i = 0; i < __size; ++i ) data[i] -= sc;
     return *this;
   }
 
   int_matrix_base_avx &
   operator/=(B sc)
   {
-    // NOTE: this will autovectorize or entirely get opt out during ct. ie
-    // (mov    $res,%edi)
-    for ( usize i = 0; i < __size; i += 8 ) {
-      __mat[i] /= sc;
-      __mat[i + 1] /= sc;
-      __mat[i + 2] /= sc;
-      __mat[i + 3] /= sc;
-      __mat[i + 4] /= sc;
-      __mat[i + 5] /= sc;
-      __mat[i + 6] /= sc;
-      __mat[i + 7] /= sc;
-    }
+    for ( usize i = 0; i < __size; ++i ) data[i] /= sc;
     return *this;
   }
 
   int_matrix_base_avx &
   operator*=(B sc)
   {
-    // NOTE: this will autovectorize or entirely get opt out during ct. ie
-    // (mov    $res,%edi)
-    for ( usize i = 0; i < __size; i += 8 ) {
-      __mat[i] *= sc;
-      __mat[i + 1] *= sc;
-      __mat[i + 2] *= sc;
-      __mat[i + 3] *= sc;
-      __mat[i + 4] *= sc;
-      __mat[i + 5] *= sc;
-      __mat[i + 6] *= sc;
-      __mat[i + 7] *= sc;
-    }
+    for ( usize i = 0; i < __size; ++i ) data[i] *= sc;
     return *this;
   }
 
   // end of scalar funcs
   B &
-  col(u32 c)
+  col(usize c)
   {
-    return __mat[c];
+    return data[c];
   }
 
   B &
-  row(u32 r)
+  row(usize r)
   {
-    return __mat[r * C];
+    return data[r * C];
   }
 
   B &
-  operator[](u32 r)
+  operator[](usize r)
   {
-    return __mat[r * C];
+    return data[r * C];
   }
 
   B &
-  operator[](u32 r, u32 c)
+  operator[](usize r, usize c)
   {
-    return __mat[r * C + c];
+    return data[r * C + c];
   }
 
   const B &
-  col(u32 c) const
+  col(usize c) const
   {
-    return __mat[c];
+    return data[c];
   }
 
   const B &
-  row(u32 r) const
+  row(usize r) const
   {
-    return __mat[r * C];
+    return data[r * C];
   }
 
   const B &
-  operator[](u32 r) const
+  operator[](usize r) const
   {
-    return __mat[r * C];
+    return data[r * C];
   }
 
   const B &
-  operator[](u32 r, u32 c) const
+  operator[](usize r, usize c) const
   {
-    return __mat[r * C + c];
+    return data[r * C + c];
   }
 
   int_matrix_base_avx &
   operator+=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ ) __mat[i] += o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) data[i] += o.data[i];
     return *this;
   }
 
   int_matrix_base_avx &
   operator-=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ ) __mat[i] -= o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) data[i] -= o.data[i];
     return *this;
   }
 
   int_matrix_base_avx &
   operator*=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ ) __mat[i] *= o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) data[i] *= o.data[i];
     return *this;
   }
 
   int_matrix_base_avx &
   operator/=(const int_matrix_base_avx &o)
   {
-    for ( usize i = 0; i < __size; i++ ) __mat[i] /= o.__mat[i];
+    for ( usize i = 0; i < __size; i++ ) data[i] /= o.data[i];
     return *this;
   }
 
@@ -242,7 +201,7 @@ public:
   div_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] / sc;
+    for ( usize i = 0; i < __size; ++i ) result.data[i] = data[i] / sc;
     return result;
   }
 
@@ -259,7 +218,7 @@ public:
   add_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] + sc;
+    for ( usize i = 0; i < __size; ++i ) result.data[i] = data[i] + sc;
     return result;
   }
 
@@ -267,7 +226,7 @@ public:
   sub_scalar(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] - sc;
+    for ( usize i = 0; i < __size; ++i ) result.data[i] = data[i] - sc;
     return result;
   }
 
@@ -275,7 +234,7 @@ public:
   scale(B sc) const
   {
     int_matrix_base_avx result;
-    for ( usize i = 0; i < __size; ++i ) result.__mat[i] = __mat[i] * sc;
+    for ( usize i = 0; i < __size; ++i ) result.data[i] = data[i] * sc;
     return result;
   }
 
@@ -285,7 +244,7 @@ public:
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; i++ ) {
       for ( usize j = 0; j < C; j++ )
-        for ( usize k = 0; k < C; k++ ) result[i, j] += __mat[i * C + k] * o.__mat[k * C + j];
+        for ( usize k = 0; k < C; k++ ) result[i, j] += data[i * C + k] * o.data[k * C + j];
     }
     return result;
   }
@@ -328,6 +287,6 @@ public:
   }
 };
 
-template <typename B, u32 C, u32 R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
+template <typename B, usize C, usize R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
 
 };     // namespace micron

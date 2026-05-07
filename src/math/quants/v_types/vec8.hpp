@@ -7,8 +7,11 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
+#include "../../log.hpp"
+#include "../../mk.hpp"
 #include "../../sqrt.hpp"
 #include "../../trig.hpp"
 
@@ -25,7 +28,7 @@ namespace micron
 
 template <typename T = float>
   requires micron::is_floating_point_v<T>
-struct vector_8 {
+struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   T x, y, z, w, a, b, c, d;
 
   ~vector_8() = default;
@@ -206,10 +209,10 @@ struct vector_8 {
   constexpr T
   lp_norm(T p) const
   {
-    return math::fpow(math::fpow(math::fabs(x), p) + math::fpow(math::fabs(y), p) + math::fpow(math::fabs(z), p)
-                          + math::fpow(math::fabs(w), p) + math::fpow(math::fabs(a), p) + math::fpow(math::fabs(b), p)
-                          + math::fpow(math::fabs(c), p) + math::fpow(math::fabs(d), p),
-                      T{ 1 } / p);
+    return math::pow(math::pow(math::fabs(x), p) + math::pow(math::fabs(y), p) + math::pow(math::fabs(z), p) + math::pow(math::fabs(w), p)
+                         + math::pow(math::fabs(a), p) + math::pow(math::fabs(b), p) + math::pow(math::fabs(c), p)
+                         + math::pow(math::fabs(d), p),
+                     T{ 1 } / p);
   }
 
   constexpr T
@@ -261,7 +264,7 @@ struct vector_8 {
   constexpr T
   angle(const vector_8<T> &v) const
   {
-    return math::facos(math::fclamp(cos_angle(v), T{ -1 }, T{ 1 }));
+    return math::acos(math::fclamp(cos_angle(v), T{ -1 }, T{ 1 }));
   }
 
   constexpr T
@@ -302,11 +305,11 @@ struct vector_8 {
 
   __b8_unop(abs, math::fabs) __b8_unop(floor, math::ffloor) __b8_unop(ceil, math::fceil) __b8_unop(round, math::fround)
       __b8_unop(trunc, math::ftrunc) __b8_unop(frac, math::ffract) __b8_unop(sqrt, math::fsqrt) __b8_unop(rsqrt, math::frsqrt)
-          __b8_unop(exp, math::fexp) __b8_unop(exp2, math::fexp2) __b8_unop(log, math::flog) __b8_unop(log2, math::flog2)
-              __b8_unop(log10, math::flog10) __b8_unop(sin, math::fsin) __b8_unop(cos, math::fcos) __b8_unop(tan, math::ftan)
-                  __b8_unop(asin, math::fasin) __b8_unop(acos, math::facos) __b8_unop(atan, math::fatan) __b8_unop(sinh, math::fsinh)
-                      __b8_unop(cosh, math::fcosh) __b8_unop(tanh, math::ftanh) __b8_unop(erf, math::ferf) __b8_unop(erfc, math::ferfc)
-                          __b8_unop(gamma, math::fgamma)
+          __b8_unop(exp, math::exp) __b8_unop(exp2, math::exp2) __b8_unop(log, math::log) __b8_unop(log2, math::log2)
+              __b8_unop(log10, math::log10) __b8_unop(sin, math::sin) __b8_unop(cos, math::cos) __b8_unop(tan, math::tan)
+                  __b8_unop(asin, math::asin) __b8_unop(acos, math::acos) __b8_unop(atan, math::atan) __b8_unop(sinh, math::sinh)
+                      __b8_unop(cosh, math::cosh) __b8_unop(tanh, math::tanh) __b8_unop(erf, math::erf) __b8_unop(erfc, math::erfc)
+                          __b8_unop(gamma, math::tgamma)
 #undef __b8_unop
 
                               constexpr vector_8<T> sign() const
@@ -345,27 +348,27 @@ struct vector_8 {
     return { fn(x, v.x), fn(y, v.y), fn(z, v.z), fn(w, v.w), fn(a, v.a), fn(b, v.b), fn(c, v.c), fn(d, v.d) };                             \
   }
   __v8_binop2(min, math::fmin) __v8_binop2(max, math::fmax) __v8_binop2(fmin, math::fmin) __v8_binop2(fmax, math::fmax)
-      __v8_binop2(pow, math::fpow) __v8_binop2(atan2, math::fatan2)
+      __v8_binop2(pow, math::pow) __v8_binop2(atan2, math::atan2)
 #undef __v8_binop2
 
           constexpr vector_8<T> pow(T s) const
   {
-    return { math::fpow(x, s), math::fpow(y, s), math::fpow(z, s), math::fpow(w, s),
-             math::fpow(a, s), math::fpow(b, s), math::fpow(c, s), math::fpow(d, s) };
+    return { math::pow(x, s), math::pow(y, s), math::pow(z, s), math::pow(w, s),
+             math::pow(a, s), math::pow(b, s), math::pow(c, s), math::pow(d, s) };
   }
 
   friend constexpr vector_8<T>
   pow(T s, const vector_8<T> &v)
   {
-    return { math::fpow(s, v.x), math::fpow(s, v.y), math::fpow(s, v.z), math::fpow(s, v.w),
-             math::fpow(s, v.a), math::fpow(s, v.b), math::fpow(s, v.c), math::fpow(s, v.d) };
+    return { math::pow(s, v.x), math::pow(s, v.y), math::pow(s, v.z), math::pow(s, v.w),
+             math::pow(s, v.a), math::pow(s, v.b), math::pow(s, v.c), math::pow(s, v.d) };
   }
 
   constexpr vector_8<T>
   atan2(T s) const
   {
-    return { math::fatan2(x, s), math::fatan2(y, s), math::fatan2(z, s), math::fatan2(w, s),
-             math::fatan2(a, s), math::fatan2(b, s), math::fatan2(c, s), math::fatan2(d, s) };
+    return { math::atan2(x, s), math::atan2(y, s), math::atan2(z, s), math::atan2(w, s),
+             math::atan2(a, s), math::atan2(b, s), math::atan2(c, s), math::atan2(d, s) };
   }
 
   constexpr T

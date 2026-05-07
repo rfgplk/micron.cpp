@@ -122,7 +122,7 @@ test_move_ctor()
 {
   test_case("move ctor");
   micron::fsstack<T, N> a{ T(1), T(2), T(3) };
-  micron::fsstack<T, N> b(std::move(a));
+  micron::fsstack<T, N> b(micron::move(a));
   require(b.size(), size_t(3));
   require(b.top(), T(3));
   end_test_case();
@@ -148,7 +148,7 @@ test_move_assign()
   test_case("move assignment");
   micron::fsstack<T, N> a{ T(7), T(8) };
   micron::fsstack<T, N> b;
-  b = std::move(a);
+  b = micron::move(a);
   require(b.size(), size_t(2));
   require(b.top(), T(8));
   end_test_case();
