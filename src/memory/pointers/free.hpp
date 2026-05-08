@@ -28,12 +28,12 @@ public:
 
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr){};
+  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr) {};
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
   template <class... Args>
   free_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type(args...)){};
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) {};     // internal_pointer(new Type(args...)){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
@@ -171,11 +171,11 @@ public:
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr){};
+  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr) {};
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
   template <class... Args>
   free_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)){};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) {};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 

@@ -320,8 +320,8 @@ public:
   }
 
   atomic() : type(), tk() {};
-  template <typename F> atomic(std::initializer_list<F> list) : type(list), tk(){};
-  template <typename... Args> atomic(Args... args) : type(args...), tk(){};
+  template <typename F> atomic(std::initializer_list<F> list) : type(list), tk() {};
+  template <typename... Args> atomic(Args... args) : type(args...), tk() {};
   atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) {};
   atomic(const atomic<T> &o) : type(o.type), tk(o.tk) {};
 

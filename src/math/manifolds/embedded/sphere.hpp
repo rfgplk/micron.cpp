@@ -78,7 +78,6 @@ struct sphere {
     if ( dot_pq < F(-1) ) dot_pq = F(-1);
     if ( dot_pq <= F(-1) + math::default_eps<F>() ) exc<except::domain_error>("sphere::log_map: antipodal points have no unique geodesic");
     if ( dot_pq >= F(1) - math::default_eps<F>() ) {
-      // q ≈ p — first-order log is q − p projected onto T_p.
       vec<F, N> r{};
       for ( usize i = 0; i < N; ++i ) r.data[i] = q.data[i] - p.data[i];
       return project_to_tangent(p, r);

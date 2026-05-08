@@ -56,7 +56,7 @@ enum c0_code : usize {
   can,     // 0x18  Cancel  (aborts in-progress escape sequence)
   em,      // 0x19  End of Medium
   sub,     // 0x1A  Substitute
-  esc,     // 0x1B  Escape — introducer for all escape sequences
+  esc,     // 0x1B  Escape
   is4,     // 0x1C  Information Separator Four
   is3,     // 0x1D  Information Separator Three
   is2,     // 0x1E  Information Separator Two

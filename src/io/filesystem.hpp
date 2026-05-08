@@ -1068,21 +1068,21 @@ public:
   at(const io::path_t &p) const
   {
     usize id = __find_id(p);
-    if ( id == __max_fs ) exc<except::filesystem_error>("micron::fsys::system::at — file not open.");
+    if ( id == __max_fs ) exc<except::filesystem_error>("micron::fsys::system::at(): file not open.");
     return *entries[id];
   }
 
   fsys::file<> &
   at(usize idx)
   {
-    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at — index out of range.");
+    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at(): index out of range.");
     return *entries[idx];
   }
 
   const fsys::file<> &
   at(usize idx) const
   {
-    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at — index out of range.");
+    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at(): index out of range.");
     return *entries[idx];
   }
 

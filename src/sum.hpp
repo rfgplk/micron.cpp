@@ -63,8 +63,8 @@ template <typename T, typename... Ts> inline constexpr usize any_type_idx_v = an
 
 };     // namespace __impl
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  any<Ts...>  —  cpp sum type/tagged union
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//  any<Ts...>
 //
 //  a value holds __exactly one__ alternative, tracked by a usize discriminant (npos/empty/valueless)
 //

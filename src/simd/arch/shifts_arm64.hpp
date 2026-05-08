@@ -216,7 +216,7 @@ srli_si(T &o, int imm8)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// sll — scalar count from i128 container
+// sll
 
 template <is_neon_simd_class T>
 inline T
@@ -310,7 +310,7 @@ sllv(T &o, T &count)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// srl — logical right shift (scalar count)
+// srl
 
 template <is_neon_simd_class T>
 inline T

@@ -91,8 +91,8 @@
 #define GNUCC
 #endif
 #define COMPILER "GNU"
-#if __GNUC__ != 15
-#pragma GCC warning "This version of micron was made for GCC 15.x"
+#if __GNUC__ < 15
+#pragma GCC warning "This version of micron was made for GCC 15.x and up"
 #endif
 #elif defined(_MSC_VER)
 #define COMPILER "MSVC"

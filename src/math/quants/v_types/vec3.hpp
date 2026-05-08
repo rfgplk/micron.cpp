@@ -23,16 +23,6 @@
 namespace micron
 {
 
-// SIMD-friendly layout: alignas(16) for f32 → sizeof(vector_3<f32>) == 16
-// (one xmm register + 4 bytes of trailing pad).  alignas(32) for f64 →
-// sizeof(vector_3<f64>) == 32 (one ymm register + 8 bytes of pad).
-// The implicit pad is undefined on read but always safe to load: SIMD
-// code may do `_mm_load_ps(&v.x)` to read all four lanes; the 4th lane
-// holds whatever the constructor or last assignment left there (typically 0
-// since the value-init constructor zeroes the named members).  Stores
-// of all four lanes back into `&v.x` are also safe — the pad is owned
-// by `vector_3` and the next `vector_3` in an array starts at the next
-// alignment boundary, so a 4-wide store does not corrupt a neighbour.
 template <typename T = float>
   requires micron::is_floating_point_v<T>
 struct alignas(micron::math::vec_align_v<T, 3>) vector_3 {

@@ -26,8 +26,8 @@
 #elif defined(__micron_compiler_gcc)
 #define GNUCC
 #define COMPILER "GNU"
-#if __micron_compiler_gcc_major != 15
-#pragma GCC warning "This version of micron was made for GCC 15.x"
+#if __micron_compiler_gcc_major < 15
+#pragma GCC warning "This version of micron was made for GCC 15.x and up"
 #endif
 #elif defined(__micron_compiler_msvc)
 #define COMPILER "MSVC"
@@ -206,3 +206,10 @@ struct __ct_type_checker {
 // Compile-time trigger
 constexpr bool __type_sizes_ok = __ct_type_checker::check();
 constexpr bool __posix_type_sizes_ok = __ct_type_checker::check_posix();
+
+// freestanding self test
+#if defined(__micron_freestanding)
+#if defined(_STDLIB_H) || defined(_SYS_TYPES_H) || defined(_FEATURES_H) || defined(__MM_MALLOC_H_INCLUDED)
+#error "libc code leaked into a freestanding micron build"
+#endif
+#endif

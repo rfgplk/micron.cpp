@@ -473,7 +473,6 @@ sequence(const C &c) -> micron::option<C, typename micron::remove_cvref_t<typena
   const auto *last = c.end();
   for ( const auto *it = first; it != last; ++it )
     if ( !it->is_first() ) return micron::option<C, E>{ it->template cast<E>() };
-  // all ok — return copy
   return micron::option<C, E>{ c };
 }
 

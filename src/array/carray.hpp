@@ -23,13 +23,7 @@
 
 #include "../concepts.hpp"
 
-#if defined(__micron_arch_x86_any) && __micron_x86_simd_width >= 128
-#include <immintrin.h>
-#endif
-
-#if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
-#include <arm_neon.h>
-#endif
+#include "../simd/intrin.hpp"
 
 namespace micron
 {

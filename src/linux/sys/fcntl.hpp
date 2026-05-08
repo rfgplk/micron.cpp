@@ -128,9 +128,9 @@ constexpr i32 f_getown_ex = 16;
 inline constexpr i32 fadv_normal = 0;         // no specific advice
 inline constexpr i32 fadv_random = 1;         // expect random access
 inline constexpr i32 fadv_sequential = 2;     // expect sequential access
-inline constexpr i32 fadv_willneed = 3;       // prefetch — will access soon
+inline constexpr i32 fadv_willneed = 3;       // prefetch
 inline constexpr i32 fadv_dontneed = 4;       // drop from page cache
-inline constexpr i32 fadv_noreuse = 5;        // access once — bypass cache
+inline constexpr i32 fadv_noreuse = 5;        // access once
 
 };     // namespace posix
 };     // namespace micron

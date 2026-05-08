@@ -193,7 +193,7 @@ template <is_string T = micron::string> class binary : public io::file
   void
   __require_buf(void) const
   {
-    if ( !__buf ) exc<except::filesystem_error>("micron::binary, no buffer allocated — open with a buffer size.");
+    if ( !__buf ) exc<except::filesystem_error>("micron::binary, no buffer allocated, open with a buffer size.");
   }
 
   void
@@ -201,7 +201,7 @@ template <is_string T = micron::string> class binary : public io::file
   {
     __require_buf();
     if ( __buf_valid == 0 || off + len > __buf_valid )
-      exc<except::io_error>("micron::binary, access outside current window — call fill() first.");
+      exc<except::io_error>("micron::binary, access outside current window, call fill() first.");
   }
 
   inline bin_match_t

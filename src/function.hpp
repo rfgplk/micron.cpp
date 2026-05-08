@@ -411,7 +411,6 @@ bind(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
     return micron::forward<Fn>(fn)(opt.template cast<T>());
   else {
     using Ret = micron::invoke_result_t<Fn, T>;
-    // Propagate the error branch — Ret must hold E.
     return Ret{ opt.template cast<E>() };
   }
 }

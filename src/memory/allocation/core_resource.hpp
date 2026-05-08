@@ -53,7 +53,7 @@ template <typename T> struct __core_memory_resource {
     o.capacity = 0;
   };
 
-  template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity){};
+  template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity) {};
 
   explicit __core_memory_resource(chunk<byte> &&b)
   {

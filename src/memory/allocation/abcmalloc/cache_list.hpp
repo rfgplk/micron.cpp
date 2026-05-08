@@ -33,7 +33,7 @@ namespace abc
 {
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-//  __tlsf_list — O(1) two level segregated fit
+//  __tlsf_list: O(1) two level segregated fit
 // our buddy list greatly underperformed on lots of small tiny allocations
 // this has been implemented to alleviate that pressure and speed up performance for general purpose code
 // all ops are o(1)
@@ -260,7 +260,7 @@ struct __tlsf_list {
       // need start-sentinel + at least __min_block + end-sentinel
       if ( usable < 2 * __block_align + __min_block ) goto fail;
 
-      // u32 bsize guard — reject pools > 4 GiB
+      // reject pools > 4 GiB
       usize data = usable - 2 * __block_align;
       if ( data > (usize)0xFFFFFFFFu ) goto fail;
 

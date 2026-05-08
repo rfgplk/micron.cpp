@@ -6,13 +6,7 @@
 #pragma once
 
 #include "../bits/__arch.hpp"
-
-#if defined(__micron_x86_sse2)
-#include <immintrin.h>
-#endif
-#if defined(__micron_arm_neon)
-#include <arm_neon.h>
-#endif
+#include "../simd/intrin.hpp"
 
 #include "../hash/hash.hpp"
 #include "../memory/actions.hpp"

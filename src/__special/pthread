@@ -5,27 +5,101 @@
 
 #undef __USE_GUN
 
-// NOTE: this is here so we can avoid directly including pthread.h, since technically it would pull it a lot of libc code
-// we don't need
+// NOTE: this is here so we can avoid directly including pthread.h, since technically it would pull it a lot of libc code we don't need
+#ifndef _BITS_PTHREADTYPES_COMMON_H
+#define _BITS_PTHREADTYPES_COMMON_H 1
+#endif
+#ifndef _BITS_PTHREADTYPES_ARCH_H
+#define _BITS_PTHREADTYPES_ARCH_H 1
+#endif
+#ifndef _THREAD_SHARED_TYPES_H
+#define _THREAD_SHARED_TYPES_H 1
+#endif
+#ifndef _BITS_TYPES_STRUCT___MUTEX_H
+#define _BITS_TYPES_STRUCT___MUTEX_H 1
+#endif
+#ifndef ____sigset_t_defined
+#define ____sigset_t_defined 1
+#endif
+#ifndef _SIGSET_NWORDS
+#define _SIGSET_NWORDS (1024 / (8 * sizeof(unsigned long int)))
+#endif
 
-//these _might_ get included REGARDLESS via immintrin...
-// HACK: if we're not including immitrin force through the defs
-#if !defined(__micron_arch_amd64)
+#define __sigset_words_h _SIGSET_NWORDS
+typedef struct {
+    unsigned long __val[_SIGSET_NWORDS];
+} __sigset_t;
+
 using pthread_t = unsigned long int;
 
-// HACK: super hacky, if this fails to compile it likely means you're including these from somewhere else whereby it isn't gated by these guards, update them accordingly
+#define __SIZEOF_PTHREAD_ATTR_T 56
+#define __SIZEOF_PTHREAD_MUTEX_T 40
+#define __SIZEOF_PTHREAD_MUTEXATTR_T 4
+#define __SIZEOF_PTHREAD_COND_T 48
+#define __SIZEOF_PTHREAD_CONDATTR_T 4
+#define __SIZEOF_PTHREAD_RWLOCK_T 56
+#define __SIZEOF_PTHREAD_RWLOCKATTR_T 8
+#define __SIZEOF_PTHREAD_BARRIER_T 32
+#define __SIZEOF_PTHREAD_BARRIERATTR_T 4
 
-#ifndef ____sigset_t_defined
-#define ____sigset_t_defined
-#define __sigset_words_h (1024/(8*sizeof(unsigned long int)))
-typedef struct {
-    unsigned long sig[__sigset_words_h];
-} __sigset_t;
-#endif
+union pthread_attr_t {
+  char __size[__SIZEOF_PTHREAD_ATTR_T];
+  long int __align;
+};
+typedef union pthread_attr_t pthread_attr_t;
 
-#include <bits/pthreadtypes.h>
+union pthread_mutex_t {
+  char __size[__SIZEOF_PTHREAD_MUTEX_T];
+  long int __align;
+};
+typedef union pthread_mutex_t pthread_mutex_t;
 
-#endif
+union pthread_mutexattr_t {
+  char __size[__SIZEOF_PTHREAD_MUTEXATTR_T];
+  int __align;
+};
+typedef union pthread_mutexattr_t pthread_mutexattr_t;
+
+union pthread_cond_t {
+  char __size[__SIZEOF_PTHREAD_COND_T];
+  long long int __align;
+};
+typedef union pthread_cond_t pthread_cond_t;
+
+union pthread_condattr_t {
+  char __size[__SIZEOF_PTHREAD_CONDATTR_T];
+  int __align;
+};
+typedef union pthread_condattr_t pthread_condattr_t;
+
+typedef unsigned int pthread_key_t;
+typedef int pthread_once_t;
+
+union pthread_rwlock_t {
+  char __size[__SIZEOF_PTHREAD_RWLOCK_T];
+  long int __align;
+};
+typedef union pthread_rwlock_t pthread_rwlock_t;
+
+union pthread_rwlockattr_t {
+  char __size[__SIZEOF_PTHREAD_RWLOCKATTR_T];
+  long int __align;
+};
+typedef union pthread_rwlockattr_t pthread_rwlockattr_t;
+
+typedef volatile int pthread_spinlock_t;
+
+union pthread_barrier_t {
+  char __size[__SIZEOF_PTHREAD_BARRIER_T];
+  long int __align;
+};
+typedef union pthread_barrier_t pthread_barrier_t;
+
+union pthread_barrierattr_t {
+  char __size[__SIZEOF_PTHREAD_BARRIERATTR_T];
+  int __align;
+};
+typedef union pthread_barrierattr_t pthread_barrierattr_t;
 
 extern "C" pid_t pthread_gettid_np (pthread_t __thread_id);
 

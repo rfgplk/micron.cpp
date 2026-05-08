@@ -188,7 +188,7 @@ public:
     node.next.store(nullptr, memory_order::relaxed);
     node.waiting.store(true, memory_order::relaxed);
 
-    mcs_node *prev = tail.swap(&node);     // xchg — seq_cst
+    mcs_node *prev = tail.swap(&node);
 
     if ( prev ) {
       prev->next.store(&node, memory_order::release);

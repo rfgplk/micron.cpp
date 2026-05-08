@@ -192,14 +192,14 @@ valid(const T &s) noexcept
 inline path_t
 validate(const char *str)
 {
-  if ( !posix::verify(str) ) exc<except::filesystem_error>("io::validate — path string is not valid.");
+  if ( !posix::verify(str) ) exc<except::filesystem_error>("io::validate(): path string is not valid.");
   return prune(path_t(str));
 }
 
 inline path_t
 validate(const path_t &str)
 {
-  if ( !posix::verify(str.c_str()) ) exc<except::filesystem_error>("io::validate — path string is not valid.");
+  if ( !posix::verify(str.c_str()) ) exc<except::filesystem_error>("io::validate(): path string is not valid.");
   return prune(str);
 }
 
