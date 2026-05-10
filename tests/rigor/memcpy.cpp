@@ -25,16 +25,14 @@ template <typename T, u64 N>
 void
 fill_pattern(T (&buf)[N], T val)
 {
-  for ( u64 i = 0; i < N; i++ )
-    buf[i] = val;
+  for ( u64 i = 0; i < N; i++ ) buf[i] = val;
 }
 
 template <typename T>
 void
 fill_pattern(T *buf, u64 n, T val)
 {
-  for ( u64 i = 0; i < n; i++ )
-    buf[i] = val;
+  for ( u64 i = 0; i < n; i++ ) buf[i] = val;
 }
 
 // Verify every element of a fixed-size array equals expected
@@ -43,8 +41,7 @@ bool
 verify_buffer(T (&buf)[N], T expected)
 {
   for ( u64 i = 0; i < N; i++ )
-    if ( buf[i] != expected )
-      return false;
+    if ( buf[i] != expected ) return false;
   return true;
 }
 
@@ -53,8 +50,7 @@ bool
 verify_buffer(T *buf, u64 n, T expected)
 {
   for ( u64 i = 0; i < n; i++ )
-    if ( buf[i] != expected )
-      return false;
+    if ( buf[i] != expected ) return false;
   return true;
 }
 
@@ -64,8 +60,7 @@ bool
 buffers_equal(const D *dest, const S *src, u64 n)
 {
   for ( u64 i = 0; i < n; i++ )
-    if ( static_cast<D>(src[i]) != dest[i] )
-      return false;
+    if ( static_cast<D>(src[i]) != dest[i] ) return false;
   return true;
 }
 
@@ -76,8 +71,7 @@ is_zeroed(T (&buf)[N])
 {
   const byte *p = reinterpret_cast<const byte *>(buf);
   for ( u64 i = 0; i < N * sizeof(T); i++ )
-    if ( p[i] != 0 )
-      return false;
+    if ( p[i] != 0 ) return false;
   return true;
 }
 
@@ -97,8 +91,7 @@ struct GuardedBuffer {
 
   GuardedBuffer()
   {
-    for ( u64 i = 0; i < sizeof(data); i++ )
-      data[i] = CANARY;
+    for ( u64 i = 0; i < sizeof(data); i++ ) data[i] = CANARY;
   }
 
   byte *
@@ -118,11 +111,9 @@ struct GuardedBuffer {
   guards_intact() const
   {
     for ( u64 i = 0; i < GUARD_SZ; i++ )
-      if ( data[i] != CANARY )
-        return false;
+      if ( data[i] != CANARY ) return false;
     for ( u64 i = GUARD_SZ + 512; i < sizeof(data); i++ )
-      if ( data[i] != CANARY )
-        return false;
+      if ( data[i] != CANARY ) return false;
     return true;
   }
 };
@@ -135,12 +126,10 @@ no_overrun(const GuardedBuffer &gb, u64 written_bytes)
   // Trailing guard (relative to payload start)
   const byte *after = gb.payload() + written_bytes;
   for ( u64 i = 0; i < GUARD_SZ; i++ )
-    if ( after[i] != CANARY )
-      return false;
+    if ( after[i] != CANARY ) return false;
   // Leading guard
   for ( u64 i = 0; i < GUARD_SZ; i++ )
-    if ( gb.data[i] != CANARY )
-      return false;
+    if ( gb.data[i] != CANARY ) return false;
   return true;
 }
 
@@ -152,16 +141,14 @@ template <typename T, u64 N>
 void
 make_seq(T (&buf)[N])
 {
-  for ( u64 i = 0; i < N; i++ )
-    buf[i] = static_cast<T>(i & 0xFF);
+  for ( u64 i = 0; i < N; i++ ) buf[i] = static_cast<T>(i & 0xFF);
 }
 
 template <typename T>
 void
 make_seq(T *buf, u64 n)
 {
-  for ( u64 i = 0; i < n; i++ )
-    buf[i] = static_cast<T>(i & 0xFF);
+  for ( u64 i = 0; i < n; i++ ) buf[i] = static_cast<T>(i & 0xFF);
 }
 
 // ============================================================
@@ -347,8 +334,7 @@ main(void)
     mc::memcpy(dst, src, 8);                        // copy only first 8
     sb::require(buffers_equal(dst, src, 8));
     // tail must be original noise, not src values or zeros
-    for ( u64 i = 8; i < 16; i++ )
-      sb::require(dst[i] == static_cast<byte>(0xFF));
+    for ( u64 i = 8; i < 16; i++ ) sb::require(dst[i] == static_cast<byte>(0xFF));
   }
   sb::end_test_case();
 
@@ -823,8 +809,7 @@ main(void)
       fill_pattern(dst, static_cast<byte>(0xEE));
       mc::__memcpy_32(dst, src, n);
       sb::require(buffers_equal(dst, src, n));
-      if ( n < 33 )
-        sb::require(dst[n] == static_cast<byte>(0xEE));     // sentinel byte
+      if ( n < 33 ) sb::require(dst[n] == static_cast<byte>(0xEE));     // sentinel byte
     }
   }
   sb::end_test_case();
@@ -937,8 +922,7 @@ main(void)
   {
     byte src[32];
     byte dst[32];
-    for ( u64 i = 0; i < 32; i++ )
-      src[i] = (i % 2 == 0) ? 0xAA : 0x55;
+    for ( u64 i = 0; i < 32; i++ ) src[i] = (i % 2 == 0) ? 0xAA : 0x55;
     fill_pattern(dst, static_cast<byte>(0x00));
     mc::memcpy(dst, src, 32);
     sb::require(buffers_equal(dst, src, 32));
@@ -965,13 +949,18 @@ main(void)
 
   // ============================================================
   //  Edge-case: cross-page copy
+  //
+  //  Both src and dst straddle their respective page boundaries; using
+  //  TWO separate page-aligned storage buffers avoids any src/dst overlap
+  //  (mc::memcpy is undefined for overlap; that's mc::memmove's job).
   // ============================================================
   sb::test_case("memcpy - cross page boundary");
   {
     constexpr u64 PAGE_SZ = 4096;
-    alignas(PAGE_SZ) byte storage[PAGE_SZ * 2];     // 2 pages
-    byte *src = storage + PAGE_SZ - 32;             // straddles page end
-    byte *dst = storage + PAGE_SZ + 16;             // straddles next page
+    alignas(PAGE_SZ) byte src_storage[PAGE_SZ * 2];
+    alignas(PAGE_SZ) byte dst_storage[PAGE_SZ * 2];
+    byte *src = src_storage + PAGE_SZ - 32;     // straddles src page end
+    byte *dst = dst_storage + PAGE_SZ - 16;     // straddles dst page end
 
     make_seq(src, 64);
     fill_pattern(dst, 64, static_cast<byte>(0xEE));
@@ -980,54 +969,55 @@ main(void)
     sb::require(buffers_equal(dst, src, 64));
   }
   sb::end_test_case();
-  /*
-   * TODO: investigate
-// ============================================================
-//  Edge-case: partial unaligned copy (misaligned start/end)
-// ============================================================
-sb::test_case("memcpy - unaligned start/end");
-{
-  constexpr u64 SIZE = 128;
-  alignas(64) byte storage[SIZE + 16];
-  byte *src = storage + 3;     // intentionally unaligned
-  byte *dst = storage + 8;     // intentionally unaligned
-
-  make_seq(src, 100);
-  fill_pattern(dst, 100, static_cast<byte>(0xAA));
-
-  mc::memcpy(dst, src, 100);
-  sb::require(buffers_equal(dst, src, 100));
-}
-sb::end_test_case();
-// ============================================================
-//  Cross-cache-line: multiple lengths
-// ============================================================
-sb::test_case("memcpy - cross cache line multiple lengths");
-{
-  constexpr u64 CACHE_LINE = 64;
-  alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];
-  for ( u64 len = 1; len <= 80; len += 7 ) {     // test various lengths
-    byte *src = storage + 20;
-    byte *dst = storage + CACHE_LINE - 10;
-    make_seq(src, len);
-    fill_pattern(dst, len, static_cast<byte>(0xAA));
-    mc::memcpy(dst, src, len);
-    sb::require(buffers_equal(dst, src, len));
-  }
-}
-sb::end_test_case();
-*/
 
   // ============================================================
-  //  Cross-page: small to large copies
+  //  Edge-case: partial unaligned copy (misaligned start AND end)
+  // ============================================================
+  sb::test_case("memcpy - unaligned start/end (separate buffers)");
+  {
+    alignas(64) byte src_storage[256];
+    alignas(64) byte dst_storage[256];
+    byte *src = src_storage + 3;     // intentionally unaligned
+    byte *dst = dst_storage + 8;     // intentionally unaligned, different offset
+
+    make_seq(src, 100);
+    fill_pattern(dst, 100, static_cast<byte>(0xAA));
+
+    mc::memcpy(dst, src, 100);
+    sb::require(buffers_equal(dst, src, 100));
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Cross-cache-line: multiple lengths through the boundary
+  // ============================================================
+  sb::test_case("memcpy - cross cache line multiple lengths");
+  {
+    constexpr u64 CACHE_LINE = 64;
+    alignas(CACHE_LINE) byte src_storage[2 * CACHE_LINE];
+    alignas(CACHE_LINE) byte dst_storage[2 * CACHE_LINE];
+    for ( u64 len = 1; len <= 80; len += 7 ) {
+      byte *src = src_storage + 20;                  // crosses cache line
+      byte *dst = dst_storage + CACHE_LINE - 10;     // also crosses
+      make_seq(src, len);
+      fill_pattern(dst, len, static_cast<byte>(0xAA));
+      mc::memcpy(dst, src, len);
+      sb::require(buffers_equal(dst, src, len));
+    }
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Cross-page: small to large copies (separate buffers)
   // ============================================================
   sb::test_case("memcpy - cross page multiple lengths");
   {
     constexpr u64 PAGE_SZ = 4096;
-    alignas(PAGE_SZ) byte storage[PAGE_SZ * 2];
+    alignas(PAGE_SZ) byte src_storage[PAGE_SZ * 2];
+    alignas(PAGE_SZ) byte dst_storage[PAGE_SZ * 2];
     for ( u64 len : { 16, 64, 128, 512, 1024 } ) {
-      byte *src = storage + PAGE_SZ - len / 2;     // straddles page boundary
-      byte *dst = storage + PAGE_SZ + 32;
+      byte *src = src_storage + PAGE_SZ - len / 2;     // straddles page boundary
+      byte *dst = dst_storage + PAGE_SZ + 32;          // also crosses, but in dst storage
       make_seq(src, len);
       fill_pattern(dst, len, static_cast<byte>(0xEE));
       mc::memcpy(dst, src, len);
@@ -1037,14 +1027,15 @@ sb::end_test_case();
   sb::end_test_case();
 
   // ============================================================
-  //  Misaligned start and end
+  //  Misaligned start and end (separate buffers, sweep offsets)
   // ============================================================
   sb::test_case("memcpy - misaligned start and end");
   {
-    alignas(64) byte storage[256];
+    alignas(64) byte src_storage[256];
+    alignas(64) byte dst_storage[256];
     for ( u64 offset = 1; offset <= 7; offset++ ) {
-      byte *src = storage + offset;
-      byte *dst = storage + 64 + offset;
+      byte *src = src_storage + offset;
+      byte *dst = dst_storage + offset;     // same offset on both, still non-overlapping
       make_seq(src, 100);
       fill_pattern(dst, 100, static_cast<byte>(0xFF));
       mc::memcpy(dst, src, 100);
@@ -1111,6 +1102,99 @@ sb::end_test_case();
     mc::memcpy(buffer + 10, buffer, 32);
     // Verify at least first byte copied correctly
     sb::require(buffer[10] == 0);
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Exhaustive size sweep — every size 0..512, with guards.
+  //  Catches off-by-one bugs at any size boundary, including the
+  //  __memcpy_32 [17, 32] SIMD-block range.
+  // ============================================================
+  sb::test_case("memcpy - exhaustive size sweep [0, 512]");
+  {
+    alignas(64) byte src[520];
+    alignas(64) byte dst[520];
+    make_seq(src, 520);
+    for ( u64 sz = 0; sz <= 512; sz++ ) {
+      fill_pattern(dst, 520, static_cast<byte>(0xEE));
+      mc::memcpy(dst, src, sz);
+      sb::require(buffers_equal(dst, src, sz));
+      // sentinel: dst[sz] must still be untouched
+      if ( sz < 520 ) sb::require(dst[sz] == 0xEE);
+    }
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Alignment matrix: for each interesting size, sweep the
+  //  src+dst offsets 0..63 inside their respective cache lines.
+  //  This catches alignment-dependent SIMD bugs like the arm32
+  //  D-vs-Q register issue.
+  // ============================================================
+  sb::test_case("memcpy - alignment matrix (size x src_off x dst_off)");
+  {
+    alignas(64) byte src_storage[256 + 64];
+    alignas(64) byte dst_storage[256 + 64];
+    for ( u64 sz : { (u64)1, (u64)15, (u64)16, (u64)17, (u64)31, (u64)32, (u64)33, (u64)63, (u64)64, (u64)65, (u64)127, (u64)128, (u64)129,
+                     (u64)255, (u64)256 } ) {
+      for ( u64 so = 0; so < 64; so += 7 ) {              // src offset stride 7 → 0,7,14,...,63
+        for ( u64 doff = 0; doff < 64; doff += 11 ) {     // dst offset stride 11 → 0,11,22,...,55
+          for ( u64 i = 0; i < sz; i++ ) src_storage[so + i] = static_cast<byte>((i * 31 + 17) & 0xFF);
+          fill_pattern(dst_storage, 256 + 64, static_cast<byte>(0xAA));
+          mc::memcpy(dst_storage + doff, src_storage + so, sz);
+          sb::require(buffers_equal(dst_storage + doff, src_storage + so, sz));
+          if ( doff + sz < 256 + 64 ) sb::require(dst_storage[doff + sz] == 0xAA);
+        }
+      }
+    }
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  Pseudo-random fuzz: 4096 trials of (size, src_off, dst_off,
+  //  content). Reproducible via fixed seed.
+  // ============================================================
+  sb::test_case("memcpy - pseudo-random fuzz (4096 trials)");
+  {
+    alignas(64) byte src_storage[1024];
+    alignas(64) byte dst_storage[1024];
+    u64 seed = 0xa5a5dead1ULL;
+    auto rnd = [&seed]() {
+      seed ^= seed << 13;
+      seed ^= seed >> 7;
+      seed ^= seed << 17;
+      return seed;
+    };
+    for ( u64 trial = 0; trial < 4096; trial++ ) {
+      u64 sz = rnd() % 513;
+      u64 so = rnd() % 256;
+      u64 doff = rnd() % 256;
+      for ( u64 i = 0; i < sz; i++ ) src_storage[so + i] = static_cast<byte>(rnd() & 0xFF);
+      fill_pattern(dst_storage, 1024, static_cast<byte>(0xBB));
+      mc::memcpy(dst_storage + doff, src_storage + so, sz);
+      sb::require(buffers_equal(dst_storage + doff, src_storage + so, sz));
+      if ( doff + sz < 1024 ) sb::require(dst_storage[doff + sz] == 0xBB);
+    }
+  }
+  sb::end_test_case();
+
+  // ============================================================
+  //  mempcpy — return value contract: dest + n. Exercise dispatch
+  //  thresholds (≤32 scalar fast path vs ≥32 SIMD).
+  // ============================================================
+  sb::test_case("mempcpy - returns d + n; copies correctly across boundaries");
+  {
+    alignas(64) byte src_storage[2048];
+    alignas(64) byte dst_storage[2048];
+    for ( u64 i = 0; i < 2048; i++ ) src_storage[i] = static_cast<byte>(i & 0xFF);
+    for ( u64 sz :
+          { (u64)0, (u64)1, (u64)15, (u64)16, (u64)17, (u64)31, (u64)32, (u64)33, (u64)63, (u64)64, (u64)65, (u64)128, (u64)1024 } ) {
+      fill_pattern<byte>(dst_storage, 2048, static_cast<byte>(0xBB));
+      byte *r = mc::mempcpy(dst_storage, src_storage, sz);
+      sb::require(r == dst_storage + sz);
+      sb::require(buffers_equal(dst_storage, src_storage, sz));
+      if ( sz < 2048 ) sb::require(dst_storage[sz] == 0xBB);
+    }
   }
   sb::end_test_case();
 

@@ -44,7 +44,7 @@ main()
 
   test_case("trapezoid uniform samples");
   {
-    f64 y[5] = { 0, 1, 4, 9, 16 };       // f(x) = x² at x = 0,1,2,3,4 → ∫_0^4 x² dx = 64/3 ≈ 21.333
+    f64 y[5] = { 0, 1, 4, 9, 16 };     // f(x) = x² at x = 0,1,2,3,4 → ∫_0^4 x² dx = 64/3 ≈ 21.333
     f64 r = integrate::trapezoid<f64>(y, 5, 1.0);
     // Trapezoid with 5 samples: (0/2 + 1 + 4 + 9 + 16/2) · 1 = 22
     require_true(near(r, 22.0));
@@ -54,7 +54,7 @@ main()
   test_case("trapezoid non-uniform xs/ys");
   {
     f64 xs[4] = { 0, 1, 3, 7 };
-    f64 ys[4] = { 0, 1, 9, 49 };          // f(x) = x²
+    f64 ys[4] = { 0, 1, 9, 49 };     // f(x) = x²
     f64 r = integrate::trapezoid<f64>(xs, ys, 4);
     // (0+1)/2·1 + (1+9)/2·2 + (9+49)/2·4 = 0.5 + 10 + 116 = 126.5
     require_true(near(r, 126.5));
@@ -95,13 +95,13 @@ main()
     f64 cum[5];
     integrate::cum_trapezoid<f64>(xs, ys, cum, 5);
     require_true(near(cum[0], 0.0));
-    require_true(near(cum[1], 0.5));     // (0+1)/2
-    require_true(near(cum[2], 3.0));     // 0.5 + (1+4)/2
-    require_true(near(cum[3], 9.5));     // 3 + (4+9)/2
-    require_true(near(cum[4], 22.0));    // 9.5 + (9+16)/2
+    require_true(near(cum[1], 0.5));      // (0+1)/2
+    require_true(near(cum[2], 3.0));      // 0.5 + (1+4)/2
+    require_true(near(cum[3], 9.5));      // 3 + (4+9)/2
+    require_true(near(cum[4], 22.0));     // 9.5 + (9+16)/2
   }
   end_test_case();
 
   print("=== integrate trapezoid/simpson/samples ok ===");
-  return 1;
+  return 0;
 }

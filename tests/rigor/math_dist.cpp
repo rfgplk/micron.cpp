@@ -242,5 +242,5 @@ main()
   end_test_case();
 
   print("=== dists ok ===");
-  return 1;
+  return 0;
 }

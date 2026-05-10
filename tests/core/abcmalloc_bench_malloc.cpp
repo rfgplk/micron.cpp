@@ -6,7 +6,6 @@ void *volatile escaped;
 #include <cstdlib>
 #include <random>
 
-
 int
 main()
 {

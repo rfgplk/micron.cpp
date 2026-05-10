@@ -28,9 +28,15 @@ __attribute__((noreturn)) void
 crash(void)
 {
   if constexpr ( !x ) {
-    __asm__ __volatile__("hlt");     // illegal instruction, the worst kind of userspace violation. immediately killthe
-                                     // running program (including all children & threads), uncatchable and unstoppable,
-                                     // guaranteed to work on any OS/kernel running x64 cpus. cannot be optimized away
+    // illegal instruction, the worst kind of userspace violation. immediately kills the running program
+    // (including all children & threads), uncatchable and unstoppable. cannot be optimized away.
+#if defined(__micron_arch_x86_any)
+    __asm__ __volatile__("hlt");
+#elif defined(__micron_arch_arm_any)
+    __asm__ __volatile__("udf #0");
+#else
+    __builtin_trap();
+#endif
   }
   if constexpr ( x == 1 ) {
     posix::raise(posix::sig_segv);

@@ -12,7 +12,7 @@
 namespace micron
 {
 
-__attribute__((noreturn)) void
+__attribute__((noreturn)) inline void
 sys_exit(int ret)
 {
   micron::syscall(SYS_exit, ret);
@@ -21,28 +21,28 @@ sys_exit(int ret)
 
 constexpr static const int exit_ok = 0;
 
-__attribute__((noreturn)) void
+__attribute__((noreturn)) inline void
 exit(int s = exit_ok)
 {
   sys_exit(s);
   __builtin_unreachable();
 }
 
-__attribute__((noreturn)) void
+__attribute__((noreturn)) inline void
 abort(void)
 {
   sys_exit(6);
   __builtin_unreachable();
 }
 
-__attribute__((noreturn)) void
+__attribute__((noreturn)) inline void
 abort(int ret)
 {
   sys_exit(ret);
   __builtin_unreachable();
 }
 
-__attribute__((noreturn)) void
+__attribute__((noreturn)) inline void
 quick_exit(const int s)
 {
   sys_exit(s);

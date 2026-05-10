@@ -295,5 +295,5 @@ main()
   end_test_case();
 
   print("=== MATH::LINALG TESTS PASSED ===");
-  return 1;
+  return 0;
 }

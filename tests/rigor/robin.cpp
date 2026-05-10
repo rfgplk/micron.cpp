@@ -4,9 +4,9 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+#include "../src/maps/robin.hpp"
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
-#include "../src/maps/robin.hpp"
 #include "../src/std.hpp"
 #include "../src/string/string.hpp"
 
@@ -322,8 +322,7 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m;
     std::vector<micron::hstring<char>> words = { "cat", "dog", "cat", "bird", "dog", "cat" };
-    for ( const auto &w : words )
-      m[w] += 1;
+    for ( const auto &w : words ) m[w] += 1;
     sb::require(*m.find("cat") == 3);
     sb::require(*m.find("dog") == 2);
     sb::require(*m.find("bird") == 1);
@@ -544,8 +543,7 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(256);
     usize cap_before = m.max_size();
-    for ( int i = 0; i < 50; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < 50; ++i ) m.insert(make_key(i), i);
     m.clear();
     sb::require(m.max_size() == cap_before);
   }
@@ -587,8 +585,7 @@ main(void)
   sb::test_case("load_factor - within [0.0, 1.0] at all times");
   {
     micron::robin_map<micron::hstring<char>, int> m(256);
-    for ( int i = 0; i < 100; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < 100; ++i ) m.insert(make_key(i), i);
     float lf = m.load_factor();
     sb::require(lf >= 0.0f);
     sb::require(lf <= 1.0f);
@@ -598,8 +595,7 @@ main(void)
   sb::test_case("load_factor - decreases after erase");
   {
     micron::robin_map<micron::hstring<char>, int> m(256);
-    for ( int i = 0; i < 50; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < 50; ++i ) m.insert(make_key(i), i);
     float before = m.load_factor();
     m.erase(make_key(0));
     sb::require(m.load_factor() < before);
@@ -719,8 +715,7 @@ main(void)
     for ( char c = 'a'; c <= 'z' && ok; ++c ) {
       micron::hstring<char> k(1, c);
       int *v = m.find(k);
-      if ( !v || *v != (int)(c - 'a') )
-        ok = false;
+      if ( !v || *v != (int)(c - 'a') ) ok = false;
     }
     sb::require(ok);
   }
@@ -831,8 +826,7 @@ main(void)
     bool ok = true;
     for ( int i = 0; i < (int)inserted.size() && ok; ++i ) {
       int *v = m.find(inserted[i]);
-      if ( !v || *v != i * 7 )
-        ok = false;
+      if ( !v || *v != i * 7 ) ok = false;
     }
     sb::require(ok);
   }
@@ -842,19 +836,16 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(32);
     // Insert enough to guarantee some probe chains.
-    for ( int i = 0; i < 12; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < 12; ++i ) m.insert(make_key(i), i);
     // Erase a key in the middle of the likely probe range.
     m.erase(make_key(5));
     sb::require(m.find(make_key(5)) == nullptr);
     // Every other key must still be found with the correct value.
     bool ok = true;
     for ( int i = 0; i < 12 && ok; ++i ) {
-      if ( i == 5 )
-        continue;
+      if ( i == 5 ) continue;
       int *v = m.find(make_key(i));
-      if ( !v || *v != i )
-        ok = false;
+      if ( !v || *v != i ) ok = false;
     }
     sb::require(ok);
   }
@@ -901,23 +892,19 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(64);
     const int N = 30;
-    for ( int i = 0; i < N; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < N; ++i ) m.insert(make_key(i), i);
     // Erase even-indexed keys.
-    for ( int i = 0; i < N; i += 2 )
-      m.erase(make_key(i));
+    for ( int i = 0; i < N; i += 2 ) m.erase(make_key(i));
     sb::require(m.size() == (usize)(N / 2));
     bool ok = true;
     // Odd keys must still be present with correct values.
     for ( int i = 1; i < N && ok; i += 2 ) {
       int *v = m.find(make_key(i));
-      if ( !v || *v != i )
-        ok = false;
+      if ( !v || *v != i ) ok = false;
     }
     // Even keys must be absent.
     for ( int i = 0; i < N && ok; i += 2 )
-      if ( m.find(make_key(i)) != nullptr )
-        ok = false;
+      if ( m.find(make_key(i)) != nullptr ) ok = false;
     sb::require(ok);
   }
   sb::end_test_case();
@@ -926,11 +913,9 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(64);
     const int N = 30;
-    for ( int i = 0; i < N; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < N; ++i ) m.insert(make_key(i), i);
     sb::require(m.size() == (usize)N);
-    for ( int i = 0; i < N; ++i )
-      m.erase(make_key(i));
+    for ( int i = 0; i < N; ++i ) m.erase(make_key(i));
     sb::require(m.empty());
     sb::require(m.size() == 0ULL);
   }
@@ -942,14 +927,12 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(128);
     const int N = 50;
-    for ( int i = 0; i < N; ++i )
-      m.insert(make_key(i), i * 3);
+    for ( int i = 0; i < N; ++i ) m.insert(make_key(i), i * 3);
     sb::require(m.size() == (usize)N);
     bool ok = true;
     for ( int i = 0; i < N && ok; ++i ) {
       int *v = m.find(make_key(i));
-      if ( !v || *v != i * 3 )
-        ok = false;
+      if ( !v || *v != i * 3 ) ok = false;
     }
     sb::require(ok);
   }
@@ -959,14 +942,12 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(128);
     const int N = 40;
-    for ( int i = 0; i < N; ++i )
-      m.insert(make_wide_key(i), i * 11);
+    for ( int i = 0; i < N; ++i ) m.insert(make_wide_key(i), i * 11);
     sb::require(m.size() == (usize)N);
     bool ok = true;
     for ( int i = 0; i < N && ok; ++i ) {
       int *v = m.find(make_wide_key(i));
-      if ( !v || *v != i * 11 )
-        ok = false;
+      if ( !v || *v != i * 11 ) ok = false;
     }
     sb::require(ok);
   }
@@ -977,14 +958,12 @@ main(void)
     micron::robin_map<micron::hstring<char>, int> m;
     std::vector<micron::hstring<char>> keys
         = { "apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "kiwi", "nectarine", "orange" };
-    for ( int i = 0; i < (int)keys.size(); ++i )
-      m.insert(keys[i], i * 11);
+    for ( int i = 0; i < (int)keys.size(); ++i ) m.insert(keys[i], i * 11);
     sb::require(m.size() == keys.size());
     bool ok = true;
     for ( int i = 0; i < (int)keys.size() && ok; ++i ) {
       int *v = m.find(keys[i]);
-      if ( !v || *v != i * 11 )
-        ok = false;
+      if ( !v || *v != i * 11 ) ok = false;
     }
     sb::require(ok);
   }
@@ -995,13 +974,11 @@ main(void)
     micron::robin_map<micron::hstring<char>, int> m(128);
     bool ok = true;
     for ( int round = 0; round < 5 && ok; ++round ) {
-      for ( int i = 0; i < 40; ++i )
-        m.insert(make_key(i), i + round);
+      for ( int i = 0; i < 40; ++i ) m.insert(make_key(i), i + round);
       sb::require(m.size() == 40ULL);
       for ( int i = 0; i < 40 && ok; ++i ) {
         int *v = m.find(make_key(i));
-        if ( !v || *v != i + round )
-          ok = false;
+        if ( !v || *v != i + round ) ok = false;
       }
       m.clear();
       sb::require(m.empty());
@@ -1034,14 +1011,12 @@ main(void)
       a.insert(make_key(i), i);
       b.insert(make_key(i), i * 2);
     }
-    for ( int i = 0; i < 10; i += 2 )
-      a.erase(make_key(i));
+    for ( int i = 0; i < 10; i += 2 ) a.erase(make_key(i));
     // b must be completely intact
     bool ok = true;
     for ( int i = 0; i < 10 && ok; ++i ) {
       int *v = b.find(make_key(i));
-      if ( !v || *v != i * 2 )
-        ok = false;
+      if ( !v || *v != i * 2 ) ok = false;
     }
     sb::require(ok);
   }
@@ -1066,12 +1041,10 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> m(64);
     const int N = 20;
-    for ( int i = 0; i < N; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < N; ++i ) m.insert(make_key(i), i);
     usize occupied = 0;
     for ( usize i = 0; i < m.max_size(); ++i )
-      if ( m.slot_occupied(i) )
-        ++occupied;
+      if ( m.slot_occupied(i) ) ++occupied;
     sb::require(occupied == (usize)N);
   }
   sb::end_test_case();
@@ -1087,8 +1060,7 @@ main(void)
     }
     std::set<int> found;
     for ( usize i = 0; i < m.max_size(); ++i )
-      if ( m.slot_occupied(i) )
-        found.insert(m.begin()[i].value);
+      if ( m.slot_occupied(i) ) found.insert(m.begin()[i].value);
     sb::require(found == expected);
   }
   sb::end_test_case();
@@ -1113,10 +1085,8 @@ main(void)
   {
     micron::robin_map<micron::hstring<char>, int> a(64);
     micron::robin_map<micron::hstring<char>, int> b(64);
-    for ( int i = 0; i < 5; ++i )
-      a.insert(make_key(i), i);
-    for ( int i = 0; i < 3; ++i )
-      b.insert(make_wide_key(i), i);
+    for ( int i = 0; i < 5; ++i ) a.insert(make_key(i), i);
+    for ( int i = 0; i < 3; ++i ) b.insert(make_wide_key(i), i);
     a.swap(b);
     sb::require(a.size() == 3ULL);
     sb::require(b.size() == 5ULL);

@@ -3,8 +3,6 @@
 #include "../../src/io/console.hpp"
 #include "../../src/std.hpp"
 
-
-
 int
 main()
 {

@@ -22,6 +22,7 @@ namespace __bits
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 

@@ -4,8 +4,8 @@
 #include "../../src/queue/spsc_queue.hpp"
 #include "../../src/std.hpp"
 
-#include "../snowball/snowball.hpp"
 #include "../../src/io/console.hpp"
+#include "../snowball/snowball.hpp"
 
 #include <atomic>
 #include <thread>
@@ -210,8 +210,7 @@ main()
     constexpr size_t CAP = 8;
     micron::spsc_queue<int, CAP> q;
 
-    for ( size_t i = 0; i < CAP; ++i )
-        require_true(q.push((int)i));
+    for ( size_t i = 0; i < CAP; ++i ) require_true(q.push((int)i));
     // one more must fail
     require_false(q.push(999));
     require(q.size(), CAP);
@@ -333,8 +332,7 @@ main()
   {
     constexpr int N = 64;
     micron::spsc_queue<int, 64> q;
-    for ( int i = 0; i < N; ++i )
-      q.push(i);
+    for ( int i = 0; i < N; ++i ) q.push(i);
     for ( int i = 0; i < N; ++i ) {
       int out = -1;
       q.pop(out);
@@ -349,15 +347,13 @@ main()
   {
     // capacity = 8; fill 4, drain 4, fill 8 – forces wrap
     micron::spsc_queue<int, 8> q;
-    for ( int i = 0; i < 4; ++i )
-      q.push(i);
+    for ( int i = 0; i < 4; ++i ) q.push(i);
     for ( int i = 0; i < 4; ++i ) {
       int o;
       q.pop(o);
     }
     // now tail and head have advanced; next push wraps the ring
-    for ( int i = 10; i < 18; ++i )
-      q.push(i);
+    for ( int i = 10; i < 18; ++i ) q.push(i);
     for ( int i = 10; i < 18; ++i ) {
       int o = -1;
       q.pop(o);
@@ -371,8 +367,7 @@ main()
   test_case("clear resets queue to empty state");
   {
     micron::spsc_queue<int, 16> q;
-    for ( int i = 0; i < 10; ++i )
-      q.push(i);
+    for ( int i = 0; i < 10; ++i ) q.push(i);
     q.clear();
     require_true(q.empty());
     require(q.size(), size_t(0));
@@ -392,8 +387,7 @@ main()
     reset_tracked();
     {
       micron::spsc_queue<Tracked, 16> q;
-      for ( int i = 0; i < 8; ++i )
-        q.emplace(i);
+      for ( int i = 0; i < 8; ++i ) q.emplace(i);
       size_t before_clear_ctor = Tracked::ctor;
       q.clear();
       // every constructed element must have been destroyed
@@ -408,8 +402,7 @@ main()
     reset_tracked();
     {
       micron::spsc_queue<Tracked, 16> q;
-      for ( int i = 0; i < 10; ++i )
-        q.emplace(i);
+      for ( int i = 0; i < 10; ++i ) q.emplace(i);
       // 3 consumed
       Tracked tmp;
       q.pop(tmp);
@@ -441,8 +434,7 @@ main()
   {
     micron::spsc_queue<int, 8> q;
     // fill first
-    for ( int i = 0; i < 8; ++i )
-      q.push(i);
+    for ( int i = 0; i < 8; ++i ) q.push(i);
 
     int items[4] = { 9, 10, 11, 12 };
     size_t pushed = q.push_batch(items, 4);
@@ -454,14 +446,12 @@ main()
   test_case("pop_batch pops up to available elements");
   {
     micron::spsc_queue<int, 16> q;
-    for ( int i = 0; i < 10; ++i )
-      q.push(i);
+    for ( int i = 0; i < 10; ++i ) q.push(i);
 
     int out[16] = {};
     size_t popped = q.pop_batch(out, 6);
     require(popped, size_t(6));
-    for ( int i = 0; i < 6; ++i )
-      require(out[i], i);
+    for ( int i = 0; i < 6; ++i ) require(out[i], i);
 
     require(q.size(), size_t(4));
   }
@@ -482,16 +472,14 @@ main()
   {
     micron::spsc_queue<int, 32> q;
     int src[16];
-    for ( int i = 0; i < 16; ++i )
-      src[i] = i * 2;
+    for ( int i = 0; i < 16; ++i ) src[i] = i * 2;
 
     q.push_batch(src, 16);
 
     int dst[16] = {};
     q.pop_batch(dst, 16);
 
-    for ( int i = 0; i < 16; ++i )
-      require(dst[i], src[i]);
+    for ( int i = 0; i < 16; ++i ) require(dst[i], src[i]);
   }
   end_test_case();
 
@@ -533,8 +521,7 @@ main()
   {
     micron::spsc_queue<int, 16> q;
     for ( int cycle = 0; cycle < 200; ++cycle ) {
-      for ( int i = 0; i < 16; ++i )
-        require_true(q.push(i));
+      for ( int i = 0; i < 16; ++i ) require_true(q.push(i));
       for ( int i = 0; i < 16; ++i ) {
         int o;
         require_true(q.pop(o));
@@ -626,8 +613,7 @@ main()
 
     std::thread producer([&]() {
       for ( int i = 0; i < TOTAL; ++i ) {
-        while ( !q.push(i) )
-          ;     // spin until slot available
+        while ( !q.push(i) );     // spin until slot available
       }
     });
 
@@ -637,8 +623,7 @@ main()
     std::thread consumer([&]() {
       int out;
       while ( (int)received.size() < TOTAL ) {
-        if ( q.pop(out) )
-          received.push_back(out);
+        if ( q.pop(out) ) received.push_back(out);
       }
     });
 
@@ -646,8 +631,7 @@ main()
     consumer.join();
 
     require(received.size(), size_t(TOTAL));
-    for ( int i = 0; i < TOTAL; ++i )
-      require(received[i], i);
+    for ( int i = 0; i < TOTAL; ++i ) require(received[i], i);
   }
   end_test_case();
 
@@ -663,11 +647,9 @@ main()
       int sent = 0;
       while ( sent < TOTAL ) {
         int chunk = (TOTAL - sent < BATCH) ? (TOTAL - sent) : BATCH;
-        for ( int i = 0; i < chunk; ++i )
-          src[i] = sent + i;
+        for ( int i = 0; i < chunk; ++i ) src[i] = sent + i;
         size_t pushed = 0;
-        while ( (int)pushed < chunk )
-          pushed += q.push_batch(src + pushed, chunk - pushed);
+        while ( (int)pushed < chunk ) pushed += q.push_batch(src + pushed, chunk - pushed);
         sent += chunk;
       }
     });
@@ -679,8 +661,7 @@ main()
       int dst[BATCH];
       while ( (int)received.size() < TOTAL ) {
         size_t got = q.pop_batch(dst, BATCH);
-        for ( size_t i = 0; i < got; ++i )
-          received.push_back(dst[i]);
+        for ( size_t i = 0; i < got; ++i ) received.push_back(dst[i]);
       }
     });
 
@@ -688,8 +669,7 @@ main()
     consumer.join();
 
     require(received.size(), size_t(TOTAL));
-    for ( int i = 0; i < TOTAL; ++i )
-      require(received[i], i);
+    for ( int i = 0; i < TOTAL; ++i ) require(received[i], i);
   }
   end_test_case();
 
@@ -697,14 +677,12 @@ main()
   test_case("reuse after clear in threaded context");
   {
     micron::spsc_queue<int, 64> q;
-    for ( int i = 0; i < 32; ++i )
-      q.push(i);
+    for ( int i = 0; i < 32; ++i ) q.push(i);
     q.clear();
     require_true(q.empty());
 
     // Confirm fully operational after clear in single-thread
-    for ( int i = 0; i < 64; ++i )
-      require_true(q.push(i));
+    for ( int i = 0; i < 64; ++i ) require_true(q.push(i));
     require_false(q.push(999));
 
     for ( int i = 0; i < 64; ++i ) {

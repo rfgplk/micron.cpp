@@ -128,16 +128,16 @@ template <typename T> struct __core_memory_resource {
   inline reference
   ref()
   {
-    if ( memory == nullptr ) __builtin_exit(1);
-    if ( capacity == 0 ) __builtin_exit(1);
+    if ( memory == nullptr ) __builtin_trap();
+    if ( capacity == 0 ) __builtin_trap();
     return *cast();
   }
 
   inline const_reference
   ref() const
   {
-    if ( memory == nullptr ) __builtin_exit(1);
-    if ( capacity == 0 ) __builtin_exit(1);
+    if ( memory == nullptr ) __builtin_trap();
+    if ( capacity == 0 ) __builtin_trap();
     return *cast();
   }
 

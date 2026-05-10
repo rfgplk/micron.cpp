@@ -23,20 +23,26 @@ struct Tracked {
   static inline size_t ctor = 0;
   static inline size_t dtor = 0;
   int v;
+
   Tracked() : v(0) { ++ctor; }
+
   explicit Tracked(int x) : v(x) { ++ctor; }
+
   Tracked(const Tracked &o) : v(o.v) { ++ctor; }
+
   Tracked(Tracked &&o) noexcept : v(o.v)
   {
     o.v = 0;
     ++ctor;
   }
+
   Tracked &
   operator=(const Tracked &o)
   {
     v = o.v;
     return *this;
   }
+
   Tracked &
   operator=(Tracked &&o) noexcept
   {
@@ -44,12 +50,15 @@ struct Tracked {
     o.v = 0;
     return *this;
   }
+
   ~Tracked() { ++dtor; }
+
   bool
   operator==(const Tracked &o) const
   {
     return v == o.v;
   }
+
   bool
   operator>(const Tracked &o) const
   {
@@ -86,8 +95,7 @@ main()
   {
     micron::vector<int> v(10);
     require(v.size(), size_t(10));
-    for ( size_t i = 0; i < v.size(); ++i )
-      require(v[i], 0);
+    for ( size_t i = 0; i < v.size(); ++i ) require(v[i], 0);
   }
   end_test_case();
 
@@ -118,8 +126,7 @@ main()
   test_case("push_back and pop_back");
   {
     micron::vector<int> v;
-    for ( int i = 0; i < 1000; ++i )
-      v.push_back(i);
+    for ( int i = 0; i < 1000; ++i ) v.push_back(i);
     require(v.size(), size_t(1000));
     for ( int i = 999; i >= 0; --i ) {
       require(v.back(), i);
@@ -171,8 +178,7 @@ main()
     micron::vector<int> v{ 1, 2, 4 };
     v.insert(size_t(2), 3);
     require(v.size(), size_t(4));
-    for ( int i = 0; i < 4; ++i )
-      require(v[i], i + 1);
+    for ( int i = 0; i < 4; ++i ) require(v[i], i + 1);
   }
   end_test_case();
 
@@ -183,8 +189,7 @@ main()
     auto it = v.begin() + 1;
     v.insert(it, 2);
     require(v.size(), size_t(4));
-    for ( int i = 0; i < 4; ++i )
-      require(v[i], i + 1);
+    for ( int i = 0; i < 4; ++i ) require(v[i], i + 1);
   }
   end_test_case();
 
@@ -252,8 +257,7 @@ main()
   {
     micron::vector<int> v{ 5, 1, 4, 3, 2 };
     v.sort();
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], i + 1);
+    for ( int i = 0; i < 5; ++i ) require(v[i], i + 1);
 
     micron::vector<int> w;
     w.insert_sort(3);
@@ -271,8 +275,7 @@ main()
     reset_tracked();
     {
       micron::vector<Tracked> v;
-      for ( int i = 0; i < 100; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 100; ++i ) v.emplace_back(i);
       require(v.size(), size_t(100));
     }
     require(Tracked::ctor, Tracked::dtor);
@@ -284,10 +287,8 @@ main()
   {
     micron::vector<int> v;
     for ( int r = 0; r < 100; ++r ) {
-      for ( int i = 0; i < 1000; ++i )
-        v.push_back(i);
-      for ( int i = 0; i < 500; ++i )
-        v.erase(size_t(0));
+      for ( int i = 0; i < 1000; ++i ) v.push_back(i);
+      for ( int i = 0; i < 500; ++i ) v.erase(size_t(0));
       v.clear();
       require_true(v.empty());
     }

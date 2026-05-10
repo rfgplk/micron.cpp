@@ -30,15 +30,8 @@ main()
   test_case("gemm row × row × row: C ← A·B");
   {
     // A = 2x3, B = 3x2, C = 2x2
-    f64 A[6] = {
-      1, 2, 3,
-      4, 5, 6
-    };
-    f64 B[6] = {
-      7, 8,
-      9, 10,
-      11, 12
-    };
+    f64 A[6] = { 1, 2, 3, 4, 5, 6 };
+    f64 B[6] = { 7, 8, 9, 10, 11, 12 };
     f64 C[4] = { 0, 0, 0, 0 };
     auto Av = matrix::row_view<f64>::from(A, 2, 3);
     auto Bv = matrix::row_view<f64>::from(B, 3, 2);
@@ -74,16 +67,8 @@ main()
   test_case("gemm transpose A: C ← Aᵀ·B");
   {
     // A = 3x2 stored row-major, Aᵀ = 2x3
-    f64 A[6] = {
-      1, 4,
-      2, 5,
-      3, 6
-    };
-    f64 B[9] = {
-      7, 8, 9,
-      10, 11, 12,
-      13, 14, 15
-    };
+    f64 A[6] = { 1, 4, 2, 5, 3, 6 };
+    f64 B[9] = { 7, 8, 9, 10, 11, 12, 13, 14, 15 };
     f64 C[6] = { 0, 0, 0, 0, 0, 0 };
     auto Av = matrix::row_view<f64>::from(A, 3, 2);
     auto Bv = matrix::row_view<f64>::from(B, 3, 3);
@@ -105,8 +90,8 @@ main()
   test_case("gemm row × col: mixed-layout still computes A·B");
   {
     // A is 2x2 row-major; B is 2x2 col-major (same numeric values arranged differently).
-    f64 A[4] = { 1, 2, 3, 4 };          // row-major: [[1,2];[3,4]]
-    f64 B_col[4] = { 5, 7, 6, 8 };      // col-major: col0=[5,7], col1=[6,8] → matrix [[5,6];[7,8]]
+    f64 A[4] = { 1, 2, 3, 4 };         // row-major: [[1,2];[3,4]]
+    f64 B_col[4] = { 5, 7, 6, 8 };     // col-major: col0=[5,7], col1=[6,8] → matrix [[5,6];[7,8]]
     f64 C[4] = { 0, 0, 0, 0 };
     auto Av = matrix::row_view<f64>::from(A, 2, 2);
     auto Bv = matrix::col_view<f64>::from(B_col, 2, 2);
@@ -123,10 +108,7 @@ main()
   test_case("syrk upper: C ← α·A·Aᵀ + β·C");
   {
     // A = 2x3 row-major
-    f64 A[6] = {
-      1, 2, 3,
-      4, 5, 6
-    };
+    f64 A[6] = { 1, 2, 3, 4, 5, 6 };
     f64 C[4] = { 0, 0, 0, 0 };
     auto Av = matrix::row_view<f64>::from(A, 2, 3);
     matrix::sym_row_view<f64, blas::uplo::upper> Cv{ C, 2, 2, 2 };
@@ -180,7 +162,7 @@ main()
   {
     // A = [[2,1];[1,3]],  B = [[1,2];[3,4]]
     // A·B = [[2*1+1*3, 2*2+1*4];[1*1+3*3, 1*2+3*4]] = [[5,8];[10,14]]
-    f64 A[4] = { 2, 1, 0, 3 };          // upper-stored
+    f64 A[4] = { 2, 1, 0, 3 };     // upper-stored
     f64 B[4] = { 1, 2, 3, 4 };
     f64 C[4] = { 0, 0, 0, 0 };
     matrix::sym_row_view<f64, blas::uplo::upper> Av{ A, 2, 2, 2 };
@@ -197,18 +179,8 @@ main()
   test_case("gemm 4x4 f64 — exercises AVX2 register-tile fast path");
   {
     // 4×4 = 4×4 · 4×4. Forces dispatch to gemm_4x4_avx2_f64.
-    f64 A[16] = {
-      1, 2, 3, 4,
-      5, 6, 7, 8,
-      9, 10, 11, 12,
-      13, 14, 15, 16
-    };
-    f64 B[16] = {
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    };
+    f64 A[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    f64 B[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
     f64 C[16];
     for ( usize i = 0; i < 16; ++i ) C[i] = 0;
     auto Av = matrix::row_view<f64>::from(A, 4, 4);
@@ -246,5 +218,5 @@ main()
   end_test_case();
 
   print("=== blas L3 ok ===");
-  return 1;
+  return 0;
 }

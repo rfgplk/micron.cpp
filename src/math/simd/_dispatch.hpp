@@ -10,6 +10,10 @@
 #include "../../simd/types.hpp"
 #include "../../types.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 namespace micron
 {
 namespace math
@@ -99,3 +103,5 @@ template <typename V> using elem_t = typename elem_of<V>::type;
 };     // namespace mk
 };     // namespace math
 };     // namespace micron
+
+#pragma GCC diagnostic pop

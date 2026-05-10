@@ -16,12 +16,10 @@ int
 main()
 {
   try {
-  auto device_type = mc::uxin::type_t::mouse;
-  auto input_handle = mc::uxin::open(device_type);
-  mc::uxin::read(input_handle, mc::uxin::prepare_listener(device_type));
-  }
-  catch(mc::except::memory_error& e)
-  {
+    auto device_type = mc::uxin::type_t::mouse;
+    auto input_handle = mc::uxin::open(device_type);
+    mc::uxin::read(input_handle, mc::uxin::prepare_listener(device_type));
+  } catch ( mc::except::memory_error &e ) {
     mc::console(e.what());
   }
   // auto dev = mc::uxin::get_devices();

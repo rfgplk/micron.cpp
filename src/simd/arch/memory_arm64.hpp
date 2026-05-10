@@ -7,6 +7,8 @@
 
 #include "../namespace.hpp"
 
+#include "../__bits/__asm_blocks_arm64.hpp"
+
 namespace micron
 {
 namespace simd
@@ -29,10 +31,7 @@ memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 16;
 
-  for ( u64 i = 0; i < n; i++ ) {
-    uint8x16_t pkt = vld1q_u8(s + i * 16);
-    vst1q_u8(d + i * 16, pkt);
-  }
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
@@ -55,10 +54,7 @@ amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 16;
 
-  for ( u64 i = 0; i < n; i++ ) {
-    uint8x16_t pkt = vld1q_u8(s + i * 16);
-    vst1q_u8(d + i * 16, pkt);
-  }
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_copy_16_a(d + i * 16, s + i * 16);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
@@ -78,11 +74,13 @@ ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexce
   const auto *__restrict s = reinterpret_cast<const u8 *>(src);
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 16;
+  const u64 pairs = n / 2;
 
-  for ( u64 i = 0; i < n; i++ ) {
-    uint8x16_t pkt = vld1q_u8(s + i * 16);
-    vst1q_u8(d + i * 16, pkt);
-  }
+  // Use STNP Q,Q (paired non-temporal store) for inner pairs of 16-byte
+  // blocks; tail single block falls back to plain STR Q.
+  for ( u64 i = 0; i < pairs; i++ ) __bits::__block_copy_pair_16_nt(d + i * 32, s + i * 32);
+
+  if ( n & 1 ) __bits::__block_copy_16(d + (n - 1) * 16, s + (n - 1) * 16);
 
   __neon_sfence();
 
@@ -101,10 +99,7 @@ rmemcpy128(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
   const u64 n = (cnt * sizeof(D)) / 16;
   auto *__restrict d = reinterpret_cast<u8 *>(&dest);
   const auto *__restrict s = reinterpret_cast<const u8 *>(&src);
-  for ( u64 i = 0; i < n; i++ ) {
-    uint8x16_t pkt = vld1q_u8(s + i * 16);
-    vst1q_u8(d + i * 16, pkt);
-  }
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
   const u64 rem = (cnt * sizeof(D)) % 16;
   if ( rem ) {
     for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
@@ -127,9 +122,7 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
   if ( d < s || d >= s + bytes ) {
 
     const u64 n = bytes / 16;
-    for ( u64 i = 0; i < n; i++ ) {
-      vst1q_u8(d + i * 16, vld1q_u8(s + i * 16));
-    }
+    for ( u64 i = 0; i < n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
     const u64 rem = bytes % 16;
     if ( rem ) {
       for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
@@ -141,9 +134,7 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
     if ( rem ) {
       for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
-    for ( u64 i = n; i > 0; i-- ) {
-      vst1q_u8(d + (i - 1) * 16, vld1q_u8(s + (i - 1) * 16));
-    }
+    for ( u64 i = n; i > 0; i-- ) __bits::__block_copy_16(d + (i - 1) * 16, s + (i - 1) * 16);
   }
 
   return dest;
@@ -163,9 +154,7 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
 
   if ( d < s || d >= s + bytes ) {
     const u64 n = bytes / 16;
-    for ( u64 i = 0; i < n; i++ ) {
-      vst1q_u8(d + i * 16, vld1q_u8(s + i * 16));
-    }
+    for ( u64 i = 0; i < n; i++ ) __bits::__block_copy_16_a(d + i * 16, s + i * 16);
     const u64 rem = bytes % 16;
     if ( rem ) {
       for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
@@ -176,9 +165,7 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
     if ( rem ) {
       for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
-    for ( u64 i = n; i > 0; i-- ) {
-      vst1q_u8(d + (i - 1) * 16, vld1q_u8(s + (i - 1) * 16));
-    }
+    for ( u64 i = n; i > 0; i-- ) __bits::__block_copy_16_a(d + (i - 1) * 16, s + (i - 1) * 16);
   }
 
   return dest;
@@ -191,9 +178,9 @@ memset128(T *__restrict src, const u8 in, const u64 count) noexcept
   auto *s = reinterpret_cast<u8 *>(src);
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 16;
-  const uint8x16_t v = vdupq_n_u8(in);
+  const uint8x16_t v = __bits::__broadcast_byte_16(in);
 
-  for ( u64 i = 0; i < n; i++ ) vst1q_u8(s + i * 16, v);
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_set_16(s + i * 16, v);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
@@ -210,9 +197,9 @@ amemset128(T *__restrict src, const u8 in, const u64 count) noexcept
   auto *s = reinterpret_cast<u8 *>(__builtin_assume_aligned(src, 16));
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 16;
-  const uint8x16_t v = vdupq_n_u8(in);
+  const uint8x16_t v = __bits::__broadcast_byte_16(in);
 
-  for ( u64 i = 0; i < n; i++ ) vst1q_u8(s + i * 16, v);
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_set_16_a(s + i * 16, v);
 
   const u64 rem = bytes % 16;
   if ( rem ) {
@@ -229,9 +216,12 @@ ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept
   auto *s = reinterpret_cast<u8 *>(__builtin_assume_aligned(src, 16));
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 16;
-  const uint8x16_t v = vdupq_n_u8(in);
+  const u64 pairs = n / 2;
+  const uint8x16_t v = __bits::__broadcast_byte_16(in);
 
-  for ( u64 i = 0; i < n; i++ ) vst1q_u8(s + i * 16, v);
+  for ( u64 i = 0; i < pairs; i++ ) __bits::__block_set_pair_16_nt(s + i * 32, v);
+
+  if ( n & 1 ) __bits::__block_set_16(s + (n - 1) * 16, v);
 
   __neon_sfence();
 
@@ -253,11 +243,7 @@ memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) no
   const u64 n = bytes / 16;
 
   for ( u64 i = 0; i < n; i++ ) {
-    uint8x16_t va = vld1q_u8(s + i * 16);
-    uint8x16_t vb = vld1q_u8(d + i * 16);
-    uint8x16_t ceq = vceqq_u8(va, vb);
-    if ( vminvq_u8(ceq) != 0xFF ) {
-
+    if ( !__bits::__block_all_eq_16(s + i * 16, d + i * 16) ) {
       const u64 base = i * 16;
       const u64 limit = (base + 16 < bytes) ? base + 16 : bytes;
       for ( u64 j = base; j < limit; j++ )
@@ -286,10 +272,7 @@ amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) n
   const u64 n = bytes / 16;
 
   for ( u64 i = 0; i < n; i++ ) {
-    uint8x16_t va = vld1q_u8(s + i * 16);
-    uint8x16_t vb = vld1q_u8(d + i * 16);
-    uint8x16_t ceq = vceqq_u8(va, vb);
-    if ( vminvq_u8(ceq) != 0xFF ) {
+    if ( !__bits::__block_all_eq_16(s + i * 16, d + i * 16) ) {
       const u64 base = i * 16;
       const u64 limit = (base + 16 < bytes) ? base + 16 : bytes;
       for ( u64 j = base; j < limit; j++ )
@@ -306,6 +289,168 @@ amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) n
   }
 
   return 0;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// wordset - splat a u64 across the buffer (bytes count)
+
+__attribute__((nonnull)) static inline u8 *
+wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
+{
+  const u64 n = bytes / 16;
+  const uint8x16_t v = __bits::__broadcast_word_16(in);
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_set_16(src + i * 16, v);
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    u8 buf[16];
+    __bits::__block_set_16(buf, v);
+    for ( u64 i = 0; i < rem; i++ ) src[n * 16 + i] = buf[i];
+  }
+  return src;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// memchr - byte search
+
+template <typename T>
+__attribute__((nonnull)) T *
+memchr128(const T *src, u8 c, const u64 count) noexcept
+{
+  const auto *p = reinterpret_cast<const u8 *>(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i < n; i++ ) {
+    const u64 m = __bits::__block_eq_mask_16(p + i * 16, c);
+    if ( m ) return const_cast<T *>(reinterpret_cast<const T *>(p + i * 16 + (__builtin_ctzll(m) >> 2)));
+  }
+
+  const u64 base = n * 16;
+  const u64 rem = bytes % 16;
+  for ( u64 i = 0; i < rem; i++ )
+    if ( p[base + i] == c ) return const_cast<T *>(reinterpret_cast<const T *>(p + base + i));
+
+  return nullptr;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// memrchr - reverse byte search
+
+template <typename T>
+__attribute__((nonnull)) T *
+memrchr128(const T *src, u8 c, const u64 count) noexcept
+{
+  const auto *p = reinterpret_cast<const u8 *>(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+  const u64 rem = bytes % 16;
+  const u64 base = n * 16;
+
+  for ( u64 i = rem; i > 0; i-- )
+    if ( p[base + i - 1] == c ) return const_cast<T *>(reinterpret_cast<const T *>(p + base + i - 1));
+
+  for ( u64 i = n; i > 0; i-- ) {
+    const u64 m = __bits::__block_eq_mask_16(p + (i - 1) * 16, c);
+    if ( m ) {
+      const u32 hi = (63u - __builtin_clzll(m)) >> 2;
+      return const_cast<T *>(reinterpret_cast<const T *>(p + (i - 1) * 16 + hi));
+    }
+  }
+
+  return nullptr;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// mempcpy - memcpy returning d + n
+
+template <typename T>
+__attribute__((nonnull)) T *
+mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v<T>, "mempcpy128 requires trivially copyable type");
+
+  auto *__restrict d = reinterpret_cast<u8 *>(dest);
+  const auto *__restrict s = reinterpret_cast<const u8 *>(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i < n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    u8 tmp[16] = {};
+    for ( u64 i = 0; i < rem; i++ ) tmp[i] = s[n * 16 + i];
+    for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = tmp[i];
+  }
+
+  return reinterpret_cast<T *>(d + bytes);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// memmem - substring search
+
+template <typename T>
+T *
+memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
+{
+  const auto *h = reinterpret_cast<const u8 *>(hay);
+  const auto *ne = reinterpret_cast<const u8 *>(nee);
+  const u64 hbytes = hlen * sizeof(T);
+  const u64 nbytes = nlen * sizeof(T);
+
+  if ( nbytes == 0 ) return const_cast<T *>(hay);
+  if ( nbytes > hbytes ) return nullptr;
+
+  const u64 limit = hbytes - nbytes + 1;
+  const u8 first = ne[0];
+
+  u64 i = 0;
+  while ( i + 16 <= limit ) {
+    const u64 m = __bits::__block_eq_mask_16(h + i, first);
+    if ( m ) {
+      u64 mm = m;
+      while ( mm ) {
+        const u32 off = __builtin_ctzll(mm) >> 2;
+        const u64 cand = i + off;
+        if ( cand >= limit ) return nullptr;
+        if ( nbytes == 1 ) return const_cast<T *>(reinterpret_cast<const T *>(h + cand));
+        bool match = true;
+        u64 j = 1;
+        while ( j + 16 <= nbytes ) {
+          if ( !__bits::__block_all_eq_16(h + cand + j, ne + j) ) {
+            match = false;
+            break;
+          }
+          j += 16;
+        }
+        if ( match ) {
+          for ( ; j < nbytes; j++ )
+            if ( h[cand + j] != ne[j] ) {
+              match = false;
+              break;
+            }
+        }
+        if ( match ) return const_cast<T *>(reinterpret_cast<const T *>(h + cand));
+        // clear lowest set nibble (4 bits)
+        mm &= ~(0xFull << (__builtin_ctzll(mm) & ~3u));
+      }
+    }
+    i += 16;
+  }
+
+  for ( ; i < limit; i++ ) {
+    if ( h[i] != first ) continue;
+    bool match = true;
+    for ( u64 j = 1; j < nbytes; j++ )
+      if ( h[i + j] != ne[j] ) {
+        match = false;
+        break;
+      }
+    if ( match ) return const_cast<T *>(reinterpret_cast<const T *>(h + i));
+  }
+
+  return nullptr;
 }
 
 };     // namespace simd

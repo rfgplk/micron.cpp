@@ -22,8 +22,7 @@ main(int, char **)
     require(s.capacity(), 64u);
     require(s.max_size(), 64u);
     // internal buffer must be all zeroes
-    for ( size_t i = 0; i < 64; ++i )
-      require(s[i], '\0');
+    for ( size_t i = 0; i < 64; ++i ) require(s[i], '\0');
   }
   end_test_case();
 
@@ -229,8 +228,7 @@ main(int, char **)
   {
     micron::sstring<64> s("abc");
     size_t count = 0;
-    for ( auto it = s.begin(); it != s.end(); ++it )
-      ++count;
+    for ( auto it = s.begin(); it != s.end(); ++it ) ++count;
     require(count, 3u);
   }
   end_test_case();
@@ -950,7 +948,7 @@ main(int, char **)
   test_case("addr() returns pointer to sstring object itself");
   {
     micron::sstring<64> s("abc");
-    require(s.addr() == reinterpret_cast<micron::sstring<64>*>(&s), true); // will be same addr
+    require(s.addr() == reinterpret_cast<micron::sstring<64> *>(&s), true);     // will be same addr
     // addr() returns `this` (the sstring*), operator& returns &memory[0]
     require((void *)s.addr(), (void *)&s);
   }

@@ -30,8 +30,7 @@ region_is_byte(const void *ptr, size_t n, unsigned char val)
 {
   const unsigned char *p = static_cast<const unsigned char *>(ptr);
   for ( size_t i = 0; i < n; ++i )
-    if ( p[i] != val )
-      return false;
+    if ( p[i] != val ) return false;
   return true;
 }
 
@@ -184,8 +183,7 @@ main(void)
   {
     int *arr = static_cast<int *>(malloc(16 * sizeof(int)));
     sb::require(arr != nullptr);
-    for ( int i = 0; i < 16; ++i )
-      arr[i] = i * i;
+    for ( int i = 0; i < 16; ++i ) arr[i] = i * i;
     bool ok = true;
     for ( int i = 0; i < 16; ++i )
       if ( arr[i] != i * i ) {
@@ -201,8 +199,7 @@ main(void)
   {
     uint64_t *arr = static_cast<uint64_t *>(malloc(8 * sizeof(uint64_t)));
     sb::require(arr != nullptr);
-    for ( int i = 0; i < 8; ++i )
-      arr[i] = 0xDEADBEEFCAFEBABEULL + i;
+    for ( int i = 0; i < 8; ++i ) arr[i] = 0xDEADBEEFCAFEBABEULL + i;
     bool ok = true;
     for ( int i = 0; i < 8; ++i )
       if ( arr[i] != 0xDEADBEEFCAFEBABEULL + (uint64_t)i ) {
@@ -258,8 +255,7 @@ main(void)
     }
 
     for ( int i = 0; i < N; ++i )
-      if ( ptrs[i] )
-        free(ptrs[i]);
+      if ( ptrs[i] ) free(ptrs[i]);
 
     sb::require(all_ok);
   }
@@ -271,8 +267,7 @@ main(void)
     void *ptrs[N];
     bool all_unique = true;
 
-    for ( int i = 0; i < N; ++i )
-      ptrs[i] = malloc(16);
+    for ( int i = 0; i < N; ++i ) ptrs[i] = malloc(16);
 
     std::set<void *> seen;
     for ( int i = 0; i < N; ++i ) {
@@ -284,8 +279,7 @@ main(void)
     }
 
     for ( int i = 0; i < N; ++i )
-      if ( ptrs[i] )
-        free(ptrs[i]);
+      if ( ptrs[i] ) free(ptrs[i]);
 
     sb::require(all_unique);
   }
@@ -371,8 +365,7 @@ main(void)
       }
       std::memset(a, 0xAA, 64);
       std::memset(b, 0x55, 128);
-      if ( !region_is_byte(a, 64, 0xAA) || !region_is_byte(b, 128, 0x55) )
-        ok = false;
+      if ( !region_is_byte(a, 64, 0xAA) || !region_is_byte(b, 128, 0x55) ) ok = false;
       free(a);
       free(b);
     }
@@ -437,8 +430,7 @@ main(void)
   {
     unsigned char *p = static_cast<unsigned char *>(calloc(1, 256));
     sb::require(p != nullptr);
-    for ( int i = 0; i < 256; ++i )
-      p[i] = (unsigned char)i;
+    for ( int i = 0; i < 256; ++i ) p[i] = (unsigned char)i;
     bool ok = true;
     for ( int i = 0; i < 256; ++i )
       if ( p[i] != (unsigned char)i ) {
@@ -454,11 +446,9 @@ main(void)
   {
     void *p = calloc(0, 64);
     // Result is implementation-defined (may be nullptr or unique ptr)
-    if ( p )
-      free(p);
+    if ( p ) free(p);
     void *q = calloc(64, 0);
-    if ( q )
-      free(q);
+    if ( q ) free(q);
     sb::require(true);     // reaching here is success
   }
   sb::end_test_case();
@@ -492,8 +482,7 @@ main(void)
     }
 
     for ( int i = 0; i < N; ++i )
-      if ( ptrs[i] )
-        free(ptrs[i]);
+      if ( ptrs[i] ) free(ptrs[i]);
 
     sb::require(ok);
   }
@@ -567,8 +556,7 @@ main(void)
     sb::require(p != nullptr);
     void *q = realloc(p, 0);
     // May return nullptr or a unique pointer; either way p must not be used
-    if ( q )
-      free(q);
+    if ( q ) free(q);
     sb::require(true);
   }
   sb::end_test_case();
@@ -598,8 +586,7 @@ main(void)
       p = q;
     }
 
-    if ( p )
-      free(p);
+    if ( p ) free(p);
     sb::require(ok);
   }
   sb::end_test_case();
@@ -626,8 +613,7 @@ main(void)
       p = q;
     }
 
-    if ( p )
-      free(p);
+    if ( p ) free(p);
     sb::require(ok);
   }
   sb::end_test_case();
@@ -770,8 +756,7 @@ main(void)
     void *ptrs[N];
     bool ok = true;
 
-    for ( int i = 0; i < N; ++i )
-      ptrs[i] = malloc((size_t)(i % 8 + 1) * 16);
+    for ( int i = 0; i < N; ++i ) ptrs[i] = malloc((size_t)(i % 8 + 1) * 16);
 
     // free every other
     for ( int i = 0; i < N; i += 2 ) {
@@ -789,8 +774,7 @@ main(void)
     }
 
     for ( int i = 0; i < N; ++i )
-      if ( ptrs[i] )
-        free(ptrs[i]);
+      if ( ptrs[i] ) free(ptrs[i]);
 
     sb::require(ok);
   }
@@ -839,8 +823,7 @@ main(void)
     void *p = calloc(SIZE_MAX, 2);
     // Must return nullptr; if it returns non-null something is very wrong.
     // Some implementations handle this differently; we just require no crash.
-    if ( p )
-      free(p);
+    if ( p ) free(p);
     sb::require(true);
   }
   sb::end_test_case();
@@ -848,8 +831,7 @@ main(void)
   sb::test_case("realloc - realloc(nullptr, 0): implementation-defined, must not crash");
   {
     void *p = realloc(nullptr, 0);
-    if ( p )
-      free(p);
+    if ( p ) free(p);
     sb::require(true);
   }
   sb::end_test_case();
@@ -925,8 +907,7 @@ main(void)
       std::memset(static_cast<char *>(p) + sz / 2, 0xAB, sz / 2);
     }
 
-    if ( p )
-      free(p);
+    if ( p ) free(p);
     sb::require(ok);
   }
   sb::end_test_case();
@@ -987,12 +968,10 @@ main(void)
     }
 
     for ( int i = 0; i < N && ok; ++i )
-      if ( !region_is_byte(ptrs[i], 16, (unsigned char)i) )
-        ok = false;
+      if ( !region_is_byte(ptrs[i], 16, (unsigned char)i) ) ok = false;
 
     for ( int i = 0; i < N; ++i )
-      if ( ptrs[i] )
-        free(ptrs[i]);
+      if ( ptrs[i] ) free(ptrs[i]);
     free(ptrs);
 
     sb::require(ok);
@@ -1043,11 +1022,9 @@ main(void)
       }
     }
     std::set<void *> unique_ptrs(ptrs.begin(), ptrs.end());
-    if ( unique_ptrs.size() != (size_t)N )
-      ok = false;
+    if ( unique_ptrs.size() != (size_t)N ) ok = false;
     for ( auto p : ptrs )
-      if ( p )
-        free(p);
+      if ( p ) free(p);
     sb::require(ok);
   }
   sb::end_test_case();

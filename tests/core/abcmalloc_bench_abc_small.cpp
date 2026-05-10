@@ -4,6 +4,7 @@
 
 void *volatile escaped;
 #include <random>
+
 int
 main()
 {
@@ -11,7 +12,7 @@ main()
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(1, 255);
-    for ( size_t n = 0; n < 2e7; ++n ) { 
+    for ( size_t n = 0; n < 2e7; ++n ) {
       void *dont_optimize = abc::malloc(dist(gen));
       escaped = dont_optimize;
     }

@@ -14,8 +14,7 @@ main()
   constexpr usize N = 100'000'000;
   mc::fvector<usize> vec;
   vec.reserve(N);
-  for ( usize i = 0; i < N; i++ )
-    vec.emplace_back(i);
+  for ( usize i = 0; i < N; i++ ) vec.emplace_back(i);
   mc::console(vec[100], vec[1000], vec[1000000]);
   return 0;
 }

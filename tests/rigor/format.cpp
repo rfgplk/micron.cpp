@@ -71,8 +71,7 @@ main(int, char **)
 
   test_case("isdigit – all digit chars and edges");
   {
-    for ( char c = '0'; c <= '9'; ++c )
-      require_true(fmt::isdigit(c));
+    for ( char c = '0'; c <= '9'; ++c ) require_true(fmt::isdigit(c));
     require_false(fmt::isdigit('/'));     // 0x2F, one below '0'
     require_false(fmt::isdigit(':'));     // 0x3A, one above '9'
     require_false(fmt::isdigit('a'));
@@ -153,12 +152,9 @@ main(int, char **)
 
   test_case("isxdigit – hex digits");
   {
-    for ( char c = '0'; c <= '9'; ++c )
-      require_true(fmt::isxdigit(c));
-    for ( char c = 'a'; c <= 'f'; ++c )
-      require_true(fmt::isxdigit(c));
-    for ( char c = 'A'; c <= 'F'; ++c )
-      require_true(fmt::isxdigit(c));
+    for ( char c = '0'; c <= '9'; ++c ) require_true(fmt::isxdigit(c));
+    for ( char c = 'a'; c <= 'f'; ++c ) require_true(fmt::isxdigit(c));
+    for ( char c = 'A'; c <= 'F'; ++c ) require_true(fmt::isxdigit(c));
     require_false(fmt::isxdigit('g'));
     require_false(fmt::isxdigit('G'));
     require_false(fmt::isxdigit('x'));

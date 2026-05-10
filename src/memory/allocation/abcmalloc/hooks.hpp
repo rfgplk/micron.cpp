@@ -118,7 +118,7 @@ template <typename T>
 inline T
 __get_kernel_chunk(u64 sz)
 {
-  return { micron::sys_allocator<byte>::alloc(sz), sz };
+  return { micron::sys_allocator<byte>::alloc(sz), static_cast<usize>(sz) };
 }
 
 template <typename T>

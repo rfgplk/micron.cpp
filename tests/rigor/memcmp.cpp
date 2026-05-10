@@ -13,7 +13,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <limits>
+#include "../../src/numerics.hpp"
 
 // ============================================================
 //  Notes on return-value semantics
@@ -36,7 +36,7 @@
 //  count window does NOT produce a non-zero result (off-by-one guard).
 // ============================================================
 
-static constexpr i64 ERR = std::numeric_limits<i64>::min();
+static constexpr i64 ERR = micron::numeric_limits<i64>::min();
 
 // ============================================================
 //  Helpers
@@ -46,16 +46,14 @@ template <typename T, u64 N>
 void
 fill(T (&buf)[N], T val)
 {
-  for ( u64 i = 0; i < N; i++ )
-    buf[i] = val;
+  for ( u64 i = 0; i < N; i++ ) buf[i] = val;
 }
 
 template <typename T>
 void
 fill(T *buf, u64 n, T val)
 {
-  for ( u64 i = 0; i < n; i++ )
-    buf[i] = val;
+  for ( u64 i = 0; i < n; i++ ) buf[i] = val;
 }
 
 // Build two identical buffers, then corrupt exactly one position in src
@@ -1511,8 +1509,7 @@ main(void)
       // Should detect at position pos
       sb::require(mc::bytecmp(a, b, 64) != 0);
       // Count ending just before pos: should return 0
-      if ( pos > 0 )
-        sb::require(mc::bytecmp(a, b, pos) == 0);
+      if ( pos > 0 ) sb::require(mc::bytecmp(a, b, pos) == 0);
     }
   }
   sb::end_test_case();
@@ -1533,8 +1530,7 @@ main(void)
   sb::test_case("Stress: compare against self always returns 0");
   {
     byte buf[64];
-    for ( u64 i = 0; i < 64; i++ )
-      buf[i] = static_cast<byte>(i);
+    for ( u64 i = 0; i < 64; i++ ) buf[i] = static_cast<byte>(i);
     sb::require(mc::bytecmp(buf, buf, 64) == 0);
     sb::require(mc::memcmp<byte>(buf, buf, 64) == 0);
     sb::require(mc::wordcmp(reinterpret_cast<word *>(buf), reinterpret_cast<word *>(buf), 64 / sizeof(word)) == 0);

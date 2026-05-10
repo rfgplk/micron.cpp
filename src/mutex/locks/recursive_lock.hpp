@@ -23,7 +23,11 @@ class recursive_lock
   static usize
   current_thread() noexcept
   {
+#if defined(__micron_freestanding)
+    return 0;
+#else
     return pthread::self();
+#endif
   }
 
   void

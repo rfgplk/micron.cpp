@@ -4,14 +4,15 @@
 
 void *volatile escaped;
 #include <random>
+
 int
 main()
 {
   if constexpr ( true ) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(1e6, 1e7-1);
-    for ( size_t n = 0; n < 1e3; ++n ) { // 5-10gb
+    std::uniform_int_distribution<int> dist(1e6, 1e7 - 1);
+    for ( size_t n = 0; n < 1e3; ++n ) {     // 5-10gb
       void *dont_optimize = abc::malloc(dist(gen));
       escaped = dont_optimize;
     }

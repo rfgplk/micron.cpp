@@ -22,7 +22,7 @@ main()
   enable_scope()
   {
     auto rand = mc::io::virtual_file("/dev/urandom");
-    mc::string str(1<<20);
+    mc::string str(1 << 20);
     str.set_size(rand.read(str));
 
     alignas(32) u64 scratch[4] = {};

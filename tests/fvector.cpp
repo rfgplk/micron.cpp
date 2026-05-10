@@ -18,8 +18,7 @@ main()
   {
     sb::test_case("mc::fvector(), testing insertions and erasures");
     mc::fvector<int> vec;
-    for ( int i = 0; i < 10; i++ )
-      vec.push_back(i);
+    for ( int i = 0; i < 10; i++ ) vec.push_back(i);
     vec.erase(vec.begin());
     vec.erase(vec.begin() + 3);
     vec.erase(vec.begin() + 7);

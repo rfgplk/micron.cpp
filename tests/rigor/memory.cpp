@@ -18,18 +18,17 @@ bool
 verify_buffer(T (&buf)[N], F expected)
 {
   for ( u64 i = 0; i < N; i++ ) {
-    if ( buf[i] != expected )
-      return false;
+    if ( buf[i] != expected ) return false;
   }
   return true;
 }
+
 template <typename T, typename F>
 bool
 verify_buffer(T *buf, size_t size, F expected)
 {
   for ( size_t i = 0; i < size; ++i )
-    if ( buf[i] != expected )
-      return false;
+    if ( buf[i] != expected ) return false;
   return true;
 }
 

@@ -11,6 +11,10 @@
 #include "../bits/coeff/log_f64.hpp"
 #include "_dispatch.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+
 namespace micron
 {
 namespace math
@@ -263,3 +267,5 @@ log10(simd::d128 x) noexcept
 };     // namespace mk
 };     // namespace math
 };     // namespace micron
+
+#pragma GCC diagnostic pop

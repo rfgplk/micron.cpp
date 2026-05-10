@@ -11,8 +11,7 @@ int x = 0;
 int
 is_ten(void)
 {
-  if ( x == 10 )
-    return x;
+  if ( x == 10 ) return x;
   return x;
 }
 
@@ -28,7 +27,10 @@ int
 main()
 {
   // Simulating work
-  mc::go([&x](){ mc::ssleep(2); x = 10; });
+  mc::go([&x]() {
+    mc::ssleep(2);
+    x = 10;
+  });
   enable_scope() { mc::contract<mc::contract_state::lenient, int> contract(is_ten); };
   enable_scope()
   {

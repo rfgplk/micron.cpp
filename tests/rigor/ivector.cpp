@@ -27,19 +27,16 @@ bool
 all_eq(const ivec &v, int val)
 {
   for ( usize i = 0; i < v.size(); ++i )
-    if ( v[i] != val )
-      return false;
+    if ( v[i] != val ) return false;
   return true;
 }
 
 bool
 vec_eq(const ivec &a, const ivec &b)
 {
-  if ( a.size() != b.size() )
-    return false;
+  if ( a.size() != b.size() ) return false;
   for ( usize i = 0; i < a.size(); ++i )
-    if ( a[i] != b[i] )
-      return false;
+    if ( a[i] != b[i] ) return false;
   return true;
 }
 
@@ -117,8 +114,7 @@ main()
     int counter = 0;
     ivec v(8, [&counter]() { return counter++; });
     require(v.size(), usize(8));
-    for ( int i = 0; i < 8; ++i )
-      require(v[i], i);
+    for ( int i = 0; i < 8; ++i ) require(v[i], i);
   }
   end_test_case();
 
@@ -127,8 +123,7 @@ main()
   {
     auto v = make_seq(256, 0);
     require(v.size(), usize(256));
-    for ( int i = 0; i < 256; ++i )
-      require(v[i], i);
+    for ( int i = 0; i < 256; ++i ) require(v[i], i);
   }
   end_test_case();
 
@@ -178,12 +173,10 @@ main()
   test_case("construction from mutable vector");
   {
     micron::vector<int> mv;
-    for ( usize i = 0; i < 8; ++i )
-      mv.push_back((int)i);
+    for ( usize i = 0; i < 8; ++i ) mv.push_back((int)i);
     ivec v(mv);
     require(v.size(), usize(8));
-    for ( int i = 0; i < 8; ++i )
-      require(v[i], i);
+    for ( int i = 0; i < 8; ++i ) require(v[i], i);
   }
   end_test_case();
 
@@ -245,8 +238,7 @@ main()
   test_case("at() reads correct elements");
   {
     auto v = make_seq(8, 0);
-    for ( usize i = 0; i < 8; ++i )
-      require(v.at(i), (int)i);
+    for ( usize i = 0; i < 8; ++i ) require(v.at(i), (int)i);
   }
   end_test_case();
 
@@ -338,8 +330,7 @@ main()
   {
     auto v = make_seq(8, 0);
     int expected = 0;
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = v.begin(); it != v.end(); ++it ) require(*it, expected++);
     require(expected, 8);
   }
   end_test_case();
@@ -349,8 +340,7 @@ main()
   {
     auto v = make_seq(8, 1);
     int expected = 1;
-    for ( auto it = v.cbegin(); it != v.cend(); ++it )
-      require(*it, expected++);
+    for ( auto it = v.cbegin(); it != v.cend(); ++it ) require(*it, expected++);
     require(expected, 9);
   }
   end_test_case();
@@ -360,8 +350,7 @@ main()
   {
     auto v = make_seq(8, 0);
     int sum = 0;
-    for ( int val : v )
-      sum += val;
+    for ( int val : v ) sum += val;
     require(sum, 28);     // 0+1+...+7
   }
   end_test_case();
@@ -485,8 +474,7 @@ main()
     ivec v(1, 0);
     auto v2 = v.push_back(1).push_back(2).push_back(3);
     require(v2.size(), usize(4));
-    for ( int i = 0; i < 4; ++i )
-      require(v2[i], i);
+    for ( int i = 0; i < 4; ++i ) require(v2[i], i);
     require(v.size(), usize(1));
   }
   end_test_case();
@@ -544,8 +532,7 @@ main()
     ivec v{ 1, 2, 4, 5 };
     auto v2 = v.insert(usize(2), 3);
     require(v2.size(), usize(5));
-    for ( int i = 0; i < 5; ++i )
-      require(v2[i], i + 1);
+    for ( int i = 0; i < 5; ++i ) require(v2[i], i + 1);
 
     require(v.size(), usize(4));
     require(v[2], 4);
@@ -757,8 +744,7 @@ main()
     ivec b{ 4, 5, 6 };
     auto c = a.append(b);
     require(c.size(), usize(6));
-    for ( int i = 0; i < 6; ++i )
-      require(c[i], i + 1);
+    for ( int i = 0; i < 6; ++i ) require(c[i], i + 1);
 
     require(a.size(), usize(3));
     require(b.size(), usize(3));
@@ -806,7 +792,7 @@ main()
     require_true(v2.empty());
     // clear preserves capacity
     // NOTE: no guarantee, allocator may alloc a different cap
-    //require(v2.capacity(), orig_cap);
+    // require(v2.capacity(), orig_cap);
 
     require(v.size(), usize(3));
     require(v[0], 1);
@@ -852,11 +838,9 @@ main()
   test_case("large vector – 1000 elements via push_back chain");
   {
     ivec v(1, 0);
-    for ( int i = 1; i < 1000; ++i )
-      v = v.push_back(i);
+    for ( int i = 1; i < 1000; ++i ) v = v.push_back(i);
     require(v.size(), usize(1000));
-    for ( int i = 0; i < 1000; ++i )
-      require(v[i], i);
+    for ( int i = 0; i < 1000; ++i ) require(v[i], i);
   }
   end_test_case();
 
@@ -865,8 +849,7 @@ main()
   {
     auto v = make_seq(1024, 0);
     require(v.size(), usize(1024));
-    for ( int i = 0; i < 1024; ++i )
-      require(v[i], i);
+    for ( int i = 0; i < 1024; ++i ) require(v[i], i);
   }
   end_test_case();
 
@@ -1021,8 +1004,7 @@ main()
     }
     // v should have accumulated 501 elements: [0, 1, 2, ..., 500]
     require(v.size(), usize(501));
-    for ( int i = 0; i <= 500; ++i )
-      require(v[i], i);
+    for ( int i = 0; i <= 500; ++i ) require(v[i], i);
   }
   end_test_case();
 
@@ -1069,11 +1051,9 @@ main()
     auto v = make_seq(10, 0);
     auto v2 = v.insert(usize(5), 999);
     require(v2.size(), usize(11));
-    for ( int i = 0; i < 5; ++i )
-      require(v2[i], i);
+    for ( int i = 0; i < 5; ++i ) require(v2[i], i);
     require(v2[5], 999);
-    for ( int i = 5; i < 10; ++i )
-      require(v2[i + 1], i);
+    for ( int i = 5; i < 10; ++i ) require(v2[i + 1], i);
   }
   end_test_case();
 
@@ -1083,10 +1063,8 @@ main()
     auto v = make_seq(10, 0);
     auto v2 = v.erase(usize(5));
     require(v2.size(), usize(9));
-    for ( int i = 0; i < 5; ++i )
-      require(v2[i], i);
-    for ( int i = 5; i < 9; ++i )
-      require(v2[i], i + 1);
+    for ( int i = 0; i < 5; ++i ) require(v2[i], i);
+    for ( int i = 5; i < 9; ++i ) require(v2[i], i + 1);
   }
   end_test_case();
 

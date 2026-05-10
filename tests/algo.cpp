@@ -26,6 +26,6 @@ main(void)
   mc::console(mc::generate(v, [](int x) { return x; }, 5));
   mc::vector<float> vf(10);
   float i = 0;
-  mc::console(mc::generate(vf, [](float& x) { return ++x; }, i));
+  mc::console(mc::generate(vf, [](float &x) { return ++x; }, i));
   mc::console(mc::sin(vf));
 }

@@ -22,6 +22,7 @@ namespace __bits
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpsabi"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #if defined(__ARM_FP16_FORMAT_IEEE) || defined(__ARM_FP16_FORMAT_ALTERNATIVE) || defined(__micron_arm_fp16)
 using float16_t = __fp16;
@@ -33,7 +34,6 @@ using poly16_t = ::i16;
 
 #if defined(__ARM_FEATURE_CRYPTO) || defined(__micron_arm_crypto)
 using poly64_t = ::i64;
-using poly128_t = signed __int128;
 #endif
 
 #if defined(__ARM_FEATURE_BF16) || defined(__micron_arm_bf16)
@@ -272,7 +272,7 @@ using ::micron::simd::__bits::uint8x16x3_t;
 using ::micron::simd::__bits::uint8x16x4_t;
 
 #if defined(__ARM_FEATURE_CRYPTO) || defined(__micron_arm_crypto)
-using ::micron::simd::__bits::poly128_t;
+// poly128_t is omitted on arm32 (see above note in the type-decl block).
 using ::micron::simd::__bits::poly64_t;
 using ::micron::simd::__bits::poly64x1_t;
 using ::micron::simd::__bits::poly64x1x2_t;

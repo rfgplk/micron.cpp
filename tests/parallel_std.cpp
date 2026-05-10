@@ -11,16 +11,13 @@ main()
 
   std::for_each(std::execution::par, vec.begin(), vec.end(), [](auto &x) { x = 1; });
   for ( auto &n : vec )
-    if ( n != 1 )
-      throw std::runtime_error("Wasn't equal to one");
+    if ( n != 1 ) throw std::runtime_error("Wasn't equal to one");
   std::for_each(std::execution::par, vec.begin(), vec.end(), [](auto &x) { x = 5; });
   for ( auto &n : vec )
-    if ( n != 5 )
-      throw std::runtime_error("Wasn't equal to 5");
-   std::for_each(std::execution::par, vec.begin(), vec.end(), [](auto &x) { x = 10; });
+    if ( n != 5 ) throw std::runtime_error("Wasn't equal to 5");
+  std::for_each(std::execution::par, vec.begin(), vec.end(), [](auto &x) { x = 10; });
   for ( auto &n : vec )
-    if ( n != 10 )
-      throw std::runtime_error("Wasn't equal to 10");
- 
+    if ( n != 10 ) throw std::runtime_error("Wasn't equal to 10");
+
   return 0;
 }

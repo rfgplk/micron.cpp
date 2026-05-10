@@ -587,8 +587,7 @@ main(void)
         p.reset(raw);
       });
     }
-    for ( auto &t : threads )
-      t.join();
+    for ( auto &t : threads ) t.join();
 
     // Exactly one Counted should survive (the last winner of the resets)
     sb::require(p.active());
@@ -603,8 +602,7 @@ main(void)
 
     std::thread t1([&p]() {
       Counted *raw = p.release();
-      if ( raw )
-        delete raw;
+      if ( raw ) delete raw;
     });
 
     std::thread t2([&p]() { p.reset(new Counted(1)); });
@@ -637,13 +635,11 @@ main(void)
         released[i] = p.exchange(micron::move(raw));
       });
     }
-    for ( auto &t : threads )
-      t.join();
+    for ( auto &t : threads ) t.join();
 
     // Free all the pointers threads got back from exchange
     for ( auto *r : released )
-      if ( r )
-        delete r;
+      if ( r ) delete r;
 
     // One Counted remains in p
     p.clear();

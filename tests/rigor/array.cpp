@@ -2,8 +2,8 @@
 // Rigorous adversarial test suite for micron::array<T, N>
 
 #include "../../src/array/array.hpp"
-#include "../../src/vector/vector.hpp"
 #include "../../src/io/console.hpp"
+#include "../../src/vector/vector.hpp"
 #include "../snowball/snowball.hpp"
 
 using sb::end_test_case;
@@ -26,18 +26,22 @@ struct Tracked {
   int v;
 
   Tracked() : v(0) { ++ctor; }
+
   explicit Tracked(int x) : v(x) { ++ctor; }
+
   Tracked(const Tracked &o) : v(o.v)
   {
     ++ctor;
     ++copy;
   }
+
   Tracked(Tracked &&o) noexcept : v(o.v)
   {
     o.v = -1;
     ++ctor;
     ++move;
   }
+
   ~Tracked() { ++dtor; }
 
   Tracked &
@@ -62,6 +66,7 @@ struct Tracked {
   {
     return v == o.v;
   }
+
   bool
   operator!=(const Tracked &o) const
   {
@@ -87,8 +92,7 @@ main()
   test_case("default construction zero-init");
   {
     micron::array<int, 8> a;
-    for ( size_t i = 0; i < 8; ++i )
-      require(a[i], 0);
+    for ( size_t i = 0; i < 8; ++i ) require(a[i], 0);
   }
   end_test_case();
 
@@ -96,8 +100,7 @@ main()
   test_case("fill constructor");
   {
     micron::array<int, 8> a(7);
-    for ( size_t i = 0; i < 8; ++i )
-      require(a[i], 7);
+    for ( size_t i = 0; i < 8; ++i ) require(a[i], 7);
   }
   end_test_case();
 
@@ -123,8 +126,7 @@ main()
   {
     micron::array<int, 4> a{ 1, 2, 3, 4 };
     micron::array<int, 4> b(a);
-    for ( size_t i = 0; i < 4; ++i )
-      require(a[i], b[i]);
+    for ( size_t i = 0; i < 4; ++i ) require(a[i], b[i]);
   }
   end_test_case();
 
@@ -133,8 +135,7 @@ main()
   {
     micron::array<int, 4> a{ 5, 6, 7, 8 };
     micron::array<int, 4> b(micron::move(a));
-    for ( size_t i = 0; i < 4; ++i )
-      require(b[i], int(5 + i));
+    for ( size_t i = 0; i < 4; ++i ) require(b[i], int(5 + i));
   }
   end_test_case();
 
@@ -144,8 +145,7 @@ main()
     micron::array<int, 4> a{ 1, 2, 3, 4 };
     micron::array<int, 4> b;
     b = a;
-    for ( size_t i = 0; i < 4; ++i )
-      require(b[i], a[i]);
+    for ( size_t i = 0; i < 4; ++i ) require(b[i], a[i]);
   }
   end_test_case();
 
@@ -155,8 +155,7 @@ main()
     micron::array<int, 4> a{ 9, 8, 7, 6 };
     micron::array<int, 4> b;
     b = micron::move(a);
-    for ( size_t i = 0; i < 4; ++i )
-      require(b[i], int(9 - i));
+    for ( size_t i = 0; i < 4; ++i ) require(b[i], int(9 - i));
   }
   end_test_case();
 
@@ -174,8 +173,7 @@ main()
   {
     micron::array<int, 4> a{ 1, 2, 3, 4 };
     int sum = 0;
-    for ( auto it = a.begin(); it != a.end(); ++it )
-      sum += *it;
+    for ( auto it = a.begin(); it != a.end(); ++it ) sum += *it;
     require(sum, 10);
   }
   end_test_case();
@@ -219,10 +217,9 @@ main()
     Tracked::reset();
     {
       micron::array<Tracked, 8> a;
-      for ( size_t i = 0; i < 8; ++i )
-        a[i] = Tracked(int(i));
+      for ( size_t i = 0; i < 8; ++i ) a[i] = Tracked(int(i));
     }
-    //require(Tracked::ctor, Tracked::dtor);
+    // require(Tracked::ctor, Tracked::dtor);
   }
   end_test_case();
 

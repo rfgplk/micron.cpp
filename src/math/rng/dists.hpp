@@ -906,6 +906,9 @@ choice(const C &c, Rng &g) noexcept
   return choice<typename C::value_type>(c.cbegin(), c.size(), g);
 }
 
+template <ieee754_floating F = f64> using gamma_dist = __gammadist<F>;
+template <ieee754_floating F = f64> using beta_dist = __betadist<F>;
+
 };     // namespace dists
 };     // namespace rng
 };     // namespace math

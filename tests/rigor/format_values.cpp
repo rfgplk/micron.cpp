@@ -116,8 +116,8 @@ main(int, char **)
 
   test_case("int_to_string – every length-boundary (powers of 10 +/- 1)");
   {
-    const char *expected[] = { "1",        "10",       "100",       "1000",       "10000",       "100000",
-                               "1000000",  "10000000", "100000000", "1000000000", "10000000000", "100000000000" };
+    const char *expected[]
+        = { "1", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "100000000", "1000000000", "10000000000", "100000000000" };
     u64 v = 1ull;
     for ( usize i = 0; i < sizeof(expected) / sizeof(expected[0]); ++i ) {
       require_true(eq(micron::uint_to_string<u64>(v), expected[i]));
@@ -228,6 +228,7 @@ main(int, char **)
       f32 f;
       u32 u;
     } pz, nz, inf_p, inf_n, nan_v;
+
     pz.u = 0u;
     nz.u = 0x80000000u;
     inf_p.u = 0x7F800000u;
@@ -281,6 +282,7 @@ main(int, char **)
       f64 f;
       u64 u;
     } pz, nz, inf_p, inf_n, nan_v;
+
     pz.u = 0ull;
     nz.u = 0x8000000000000000ull;
     inf_p.u = 0x7FF0000000000000ull;
@@ -323,8 +325,8 @@ main(int, char **)
 
   test_case("d2s – scientific format threshold (sciExp < -3 or > 7)");
   {
-    require_true(eq(d2s(1e-3), "0.001"));     // sciExp = -3, fixed
-    require_true(eq(d2s(1e-4), "1e-4"));      // sciExp = -4, scientific
+    require_true(eq(d2s(1e-3), "0.001"));         // sciExp = -3, fixed
+    require_true(eq(d2s(1e-4), "1e-4"));          // sciExp = -4, scientific
     require_true(eq(d2s(1e7), "10000000.0"));     // sciExp = 7, fixed
     require_true(eq(d2s(1e8), "1e+8"));           // sciExp = 8, scientific
   }
@@ -344,7 +346,7 @@ main(int, char **)
 
   test_case("d2s – subnormals & DBL_MIN");
   {
-    require_true(eq(d2s(4.9406564584124654e-324), "5e-324"));     // smallest denormal
+    require_true(eq(d2s(4.9406564584124654e-324), "5e-324"));                      // smallest denormal
     require_true(eq(d2s(2.2250738585072014e-308), "2.2250738585072014e-308"));     // DBL_MIN
     require_true(eq(d2s(1e-300), "1e-300"));
     require_true(eq(d2s(-1e-200), "-1e-200"));
@@ -402,10 +404,10 @@ main(int, char **)
     // exp10 in [-4, prec): fixed with `precision` digits after the dot;
     // otherwise scientific with prec-1 digits after the dot.
     // (note: scientific path truncates rather than round-half-even.)
-    require_true(eq(micron::to_general(0.0001, 6u), "0.000100"));     // exp10=-4 → fixed
+    require_true(eq(micron::to_general(0.0001, 6u), "0.000100"));            // exp10=-4 → fixed
     require_true(eq(micron::to_general(123456.0, 6u), "123456.000000"));     // exp10=5 → fixed
-    require_true(eq(micron::to_general(1234567.0, 6u), "1.23456e+06"));     // exp10=6 → scientific
-    require_true(eq(micron::to_general(1e-5, 6u), "1.00000e-05"));     // exp10=-5 → scientific
+    require_true(eq(micron::to_general(1234567.0, 6u), "1.23456e+06"));      // exp10=6 → scientific
+    require_true(eq(micron::to_general(1e-5, 6u), "1.00000e-05"));           // exp10=-5 → scientific
   }
   end_test_case();
 
@@ -615,11 +617,13 @@ main(int, char **)
       usize n = micron::__impl::__ryu::d2s_buffered(v, buf);
       hstr s(buf, buf + n);
       f64 back = fmt::to_double(s);
+
       // exact equality on bit pattern
       union {
         f64 f;
         u64 u;
       } a, b;
+
       a.f = v;
       b.f = back;
       require(a.u, b.u);
@@ -654,12 +658,15 @@ main(int, char **)
     } cases[] = {
       { "0", 0.0f }, { "1", 1.0f }, { "-1", -1.0f }, { "0.5", 0.5f }, { "0.25", 0.25f }, { "3.14", 3.14f }, { "-273.15", -273.15f },
     };
+
     for ( auto &c : cases ) {
       f32 back = fmt::to_float(c.s);
+
       union {
         f32 f;
         u32 u;
       } a, b;
+
       a.f = c.expected;
       b.f = back;
       require(a.u, b.u);
@@ -675,15 +682,14 @@ main(int, char **)
   test_case("uint_to_buf_backward – every length boundary is digit-correct");
   {
     // direct test of the third branch (val >= 1e16) which used to corrupt the leading digit
-    u64 vals[] = { 9999999999999999ull,        10000000000000000ull,    10000000000000001ull,    20000000000000000ull,
-                   30000000000000004ull,       99999999999999999ull,    100000000000000000ull,   100000000000000001ull,
-                   1000000000000000000ull,     9999999999999999999ull,  10000000000000000000ull, 18446744073709551614ull,
-                   18446744073709551615ull };
+    u64 vals[] = { 9999999999999999ull,     10000000000000000ull,    10000000000000001ull,   20000000000000000ull,   30000000000000004ull,
+                   99999999999999999ull,    100000000000000000ull,   100000000000000001ull,  1000000000000000000ull, 9999999999999999999ull,
+                   10000000000000000000ull, 18446744073709551614ull, 18446744073709551615ull };
 
-    const char *expected[] = { "9999999999999999",     "10000000000000000",   "10000000000000001",    "20000000000000000",
-                               "30000000000000004",    "99999999999999999",   "100000000000000000",   "100000000000000001",
-                               "1000000000000000000",  "9999999999999999999", "10000000000000000000", "18446744073709551614",
-                               "18446744073709551615" };
+    const char *expected[]
+        = { "9999999999999999",     "10000000000000000",    "10000000000000001",   "20000000000000000",   "30000000000000004",
+            "99999999999999999",    "100000000000000000",   "100000000000000001",  "1000000000000000000", "9999999999999999999",
+            "10000000000000000000", "18446744073709551614", "18446744073709551615" };
 
     for ( usize i = 0; i < sizeof(vals) / sizeof(vals[0]); ++i ) {
       char buf[24];
@@ -711,5 +717,5 @@ main(int, char **)
 
   // ===========================================================
   sb::print("=== ALL VALUE-CONVERSION TESTS PASSED ===");
-  return 1;
+  return 0;
 }

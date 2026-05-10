@@ -36,8 +36,7 @@ main()
     static_assert(math::bits::ror64(2ULL, 1) == 1);
     static_assert(math::bits::rol32(1u, 1) == 2);
     static_assert(math::bits::ror32(2u, 1) == 1);
-    require(math::bits::rol64(0xFEDCBA0987654321ULL, 16),
-            ((u64)0xFEDCBA0987654321ULL << 16) | ((u64)0xFEDCBA0987654321ULL >> 48));
+    require(math::bits::rol64(0xFEDCBA0987654321ULL, 16), ((u64)0xFEDCBA0987654321ULL << 16) | ((u64)0xFEDCBA0987654321ULL >> 48));
   }
   end_test_case();
 
@@ -112,7 +111,7 @@ main()
   {
     f64 v = math::ieee::pack<f64>(0, 0, 0);     // = 1.0
     require(v, 1.0);
-    f64 v2 = math::ieee::pack<f64>(1, 1, 0);    // = -2.0
+    f64 v2 = math::ieee::pack<f64>(1, 1, 0);     // = -2.0
     require(v2, -2.0);
   }
   end_test_case();
@@ -255,5 +254,5 @@ main()
   end_test_case();
 
   print("=== MATH::KERN TESTS PASSED ===");
-  return 1;
+  return 0;
 }

@@ -11,7 +11,9 @@
 #define MICRON_ABCMALLOC_STD 1
 #endif
 
+#if !defined(__micron_freestanding)
 #define TWORKERS 1
+#endif
 
 #ifdef TWORKERS
 #define __micron_enable_concurrency_at_startup_var
@@ -20,8 +22,8 @@
 namespace micron::except
 {
 // NOTE: this must be enabled for tests
-#ifndef __DUCK_TESTING
-constexpr static const bool __use_exceptions = true;
+#if defined(__micron_freestanding)
+constexpr static const bool __use_exceptions = false;
 #else
 constexpr static const bool __use_exceptions = true;
 #endif

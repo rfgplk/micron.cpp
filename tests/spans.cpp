@@ -7,6 +7,7 @@
 #include "../src/io/console.hpp"
 #include "../src/span.hpp"
 #include "../src/std.hpp"
+
 int
 main(void)
 {

@@ -4,6 +4,7 @@
 
 void *volatile escaped;
 #include <random>
+
 int
 main()
 {

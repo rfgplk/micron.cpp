@@ -9,7 +9,6 @@
 #include "../src/linux/io/io_structs.hpp"
 #include "../src/linux/io/sys.hpp"
 
-
 #include "../src/control.hpp"
 #include "../src/errno.hpp"
 #include "../src/io/console.hpp"
@@ -21,8 +20,6 @@
 int
 main(void)
 {
-  enable_scope() {
-    auto fd = mc::posix::open("/etc/fedora-release", 0, 0);
-  }
+  enable_scope() { auto fd = mc::posix::open("/etc/fedora-release", 0, 0); }
   return 0;
 }

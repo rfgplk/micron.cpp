@@ -69,9 +69,9 @@ main()
     };
     f64 out[3] = { 0, 0, 0 };
     blas::ext::dot_batched<f64>(3, xs, ys, out);
-    require_true(near(out[0], 32.0));    // a·b = 4+10+18
-    require_true(near(out[1], 1.0));     // a·c = 1
-    require_true(near(out[2], 4.0));     // b·c = 4
+    require_true(near(out[0], 32.0));     // a·b = 4+10+18
+    require_true(near(out[1], 1.0));      // a·c = 1
+    require_true(near(out[2], 4.0));      // b·c = 4
   }
   end_test_case();
 
@@ -152,5 +152,5 @@ main()
   end_test_case();
 
   print("=== blas batched/ext ok ===");
-  return 1;
+  return 0;
 }

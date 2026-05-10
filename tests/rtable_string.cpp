@@ -18,8 +18,7 @@ int
 main(void)
 {
   mc::sstring<256, char> buf{};
-  for ( usize i = 0; i < (1'000'000'000); ++i )
-    buf = mc::move(micron::rtable::int_to_string_stack<usize, char, 256>(i));
+  for ( usize i = 0; i < (1'000'000'000); ++i ) buf = mc::move(micron::rtable::int_to_string_stack<usize, char, 256>(i));
   mc::console(buf);
   return 1;
 };

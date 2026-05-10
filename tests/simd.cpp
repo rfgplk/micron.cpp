@@ -9,6 +9,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+
 int
 main()
 {
@@ -64,23 +65,20 @@ main()
   e.to_zero();
   sb::require(e[0], 0);
   mc::simd::v256<mc::simd::i256, mc::simd::__v32> f(5);
-  for ( int i = 0; i < 10; ++i )
-    f *= 2;     // (5*(2^10)) == 5120
+  for ( int i = 0; i < 10; ++i ) f *= 2;     // (5*(2^10)) == 5120
   mc::console(f[5]);
   sb::require(f[5], 5120);
 
   mc::w32 arr32 = {};
 
-  for ( int i = 0; i < 30; ++i )
-    arr32 += (3 * i);
+  for ( int i = 0; i < 30; ++i ) arr32 += (3 * i);
   i32 arr[8] = {};
   arr32.get(arr);
-  for ( int i = 0; i < 8; ++i )
-    sb::require(arr[i], 1305);
+  for ( int i = 0; i < 8; ++i ) sb::require(arr[i], 1305);
   arr32 = arr;
-  for ( int i = 0; i < 8; ++i )
-    sb::require(arr32[i], 1305);
+  for ( int i = 0; i < 8; ++i ) sb::require(arr32[i], 1305);
   mc::console("Done");
   return 0;
 }
+
 #pragma GCC diagnostic pop

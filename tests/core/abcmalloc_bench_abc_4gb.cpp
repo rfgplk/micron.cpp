@@ -3,16 +3,17 @@
 #include "../../src/std.hpp"
 
 void *volatile escaped;
+
 int
 main()
 {
-  char *dont_optimize = reinterpret_cast<char*>(abc::malloc(1ULL << 32));
+  char *dont_optimize = reinterpret_cast<char *>(abc::malloc(1ULL << 32));
   escaped = dont_optimize;
   mc::console(escaped);
-  //mc::io::stdout("\n");
-  //mc::io::stdout((const char)dont_optimize[345456]);
-  //mc::io::stdout("\n");
-  //mc::io::stdout((const char)dont_optimize[456]);
-  //mc::io::stdout("\n");
+  // mc::io::stdout("\n");
+  // mc::io::stdout((const char)dont_optimize[345456]);
+  // mc::io::stdout("\n");
+  // mc::io::stdout((const char)dont_optimize[456]);
+  // mc::io::stdout("\n");
   return 0;
 }

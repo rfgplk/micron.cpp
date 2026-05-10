@@ -8,11 +8,11 @@
 
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
+#include "../src/string/string.hpp"
 #include "../src/vector/convector.hpp"
 #include "../src/vector/fvector.hpp"
 #include "../src/vector/svector.hpp"
 #include "../src/vector/vector.hpp"
-#include "../src/string/string.hpp"
 
 int
 main()
@@ -23,8 +23,7 @@ main()
   {
     sb::test_case("micron::vector(), testing insertions and erasures");
     micron::fvector<int> vec;
-    for ( int i = 0; i < 10; i++ )
-      vec.push_back(i);
+    for ( int i = 0; i < 10; i++ ) vec.push_back(i);
     vec.erase(vec.begin());
     vec.erase(vec.begin() + 3);
     vec.erase(vec.begin() + 7);
@@ -34,7 +33,10 @@ main()
   enable_scope()
   {
     sb::test_case("micron::vector(), testing closures");
-    micron::fvector<int> vec(10, [&](int* p){ if(p != vec.begin())*p = *(p - 1) + 5; return *p;});
+    micron::fvector<int> vec(10, [&](int *p) {
+      if ( p != vec.begin() ) *p = *(p - 1) + 5;
+      return *p;
+    });
     micron::console(vec);
   };
   mc::convector<float> conf;
@@ -42,7 +44,7 @@ main()
   conf.fill(5.5f);
   mc::console(conf[40]);
   micron::console("Redo");
-  micron::vector<u16> test_vec = {1, 2,  2, 2, 3, 4, 5, 5, 6, 7, 7, 7, 7, 8, 9};
+  micron::vector<u16> test_vec = { 1, 2, 2, 2, 3, 4, 5, 5, 6, 7, 7, 7, 7, 8, 9 };
   micron::console(test_vec);
   test_vec.remove(2, 7, 9);
   micron::console(test_vec);
@@ -57,11 +59,9 @@ main()
   micron::console(bb);
 
   micron::vector<size_t> buf = { 1, 2, 3, 4 };
-  for ( auto x : buf )
-    micron::console(x);
+  for ( auto x : buf ) micron::console(x);
   buf.assign(10, 9999);
-  for ( size_t i = 0; i < buf.size(); i++ )
-    micron::console(buf[i]);
+  for ( size_t i = 0; i < buf.size(); i++ ) micron::console(buf[i]);
   micron::svector<int> stack_vec;
   micron::vector<byte> byte_data;
   micron::vector<char> char_data;

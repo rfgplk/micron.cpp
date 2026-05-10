@@ -58,6 +58,15 @@ using simd::ntmemset128;
 using simd::amemcmp128;
 using simd::memcmp128;
 
+// memchr / memrchr / mempcpy / memmem
+using simd::memchr128;
+using simd::memmem128;
+using simd::mempcpy128;
+using simd::memrchr128;
+
+// wordset (u64 broadcast)
+using simd::wordset128;
+
 #endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,6 +103,15 @@ using simd::amemcmp256;
 using simd::amemcmp512;
 using simd::memcmp256;
 using simd::memcmp512;
+
+// memchr / memrchr / mempcpy / memmem
+using simd::memchr256;
+using simd::memmem256;
+using simd::mempcpy256;
+using simd::memrchr256;
+
+// wordset 256-bit
+using simd::wordset256;
 
 #endif
 

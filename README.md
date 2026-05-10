@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-0.8.1.0-green)
+![Version](https://img.shields.io/badge/version-0.9.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -54,7 +54,25 @@ or https:
 `git clone --depth=1 https://github.com/rfgplk/micron.cpp.git`
 
 
-Then, install to your desired location either via `cp`, `rsync`, or `scripts/install_local.py`, a simple script which copies all header files to `/usr/local/micron`
+Below are the specific steps you need to take to properly set up micron for your desired target.
+
+##### amd64 / x86_64
+
+The simplest, most straightforward installation; just copy all the files in `src/` and `external/` to either your desired location; or to the system header include directories `/usr/include/` or `/usr/local/include/`. Either use `cp -r`, `rsync`, or you can run `scripts/install_local.py` and `scripts/install_externals.py`, which will automatically copy all files to `/usr/include/micron` and `/usr/include/external` (NOTE: directories will be created if they don't exist).
+
+##### armv7-a (ARM32)
+
+The same exact steps as above. If you are cross compiling on amd64 for arm32, you should manually copy the source files to the include path of your cross compiler, which usually differs from system wide include paths. `scripts/install_local_linaro.py` will do that for you (if using the linaro toolchain on fedora), but exact paths may differ based on your configuration, so double check. Hint: `echo | /usr/gcc-linaro/bin/arm-none-linux-gnueabihf-c++ -E -Wp,-v -` will tell you which include directories the compiler uses. 
+
+###### Freestanding builds
+ 
+In order to compile micron binaries in freestanding mode (not linking against glibc or any system objects), you'll first need to run `scripts/install_start.py` which copies over all the `start/` files (containing _start and various other init code) to `/usr/src/mc_start`. Then you'll need to compile your binaries by providing the path to the start source files, example: 
+
+```bash
+/usr/bin/g++ -std=c++26 -Ofast -mavx2 -mbmi -march=native -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las -ffreestanding -nostdlib -nostdlib++ -fno-stack-protector -fno-exceptions -fno-rtti -m64 -Wall -Wextra -Wpedantic -Wno-variadic-macros -Wno-inline -flto=8 -Wno-odr -Wno-lto-type-mismatch -Wno-variadic-macros -Wno-inline tools/src/main.cc /usr/src/mc_start/start.s /usr/src/mc_start/start.cpp -I./src -L./libs/ -o bin/duck
+```
+
+This installation guide serves only as a rough suggestion, exact paths may depend on your use case and configuration.
 
 Philosophy
 ----------

@@ -79,10 +79,13 @@ constexpr static const rlim_t rlimit_rttime = 15;
 
 constexpr static const rlim_t rlimit_nlimits = 16;
 
-constexpr static const rlim_t rlim_infinity = 0xFFFFFFFFFFFFFFFFuLL;
-constexpr static const rlim_t rlim64_infinity = 0xFFFFFFFFFFFFFFFFuLL;
-constexpr static const unsigned long long rlim_saved_max = rlim_infinity;
-constexpr static const unsigned long long rlim_saved_cur = rlim_infinity;
+// rlim_t is unsigned long, which is 32-bit on armhf and 64-bit on amd64.
+// the canonical "infinity" value is all-bits-set; build it from rlim_t so
+// the constant matches the type's actual width without overflow warnings.
+constexpr static const rlim_t rlim_infinity = ~static_cast<rlim_t>(0);
+constexpr static const rlim_t rlim64_infinity = ~static_cast<rlim_t>(0);
+constexpr static const unsigned long long rlim_saved_max = ~static_cast<unsigned long long>(0);
+constexpr static const unsigned long long rlim_saved_cur = ~static_cast<unsigned long long>(0);
 
 struct rlimit_t {
   rlim_t rlim_cur;

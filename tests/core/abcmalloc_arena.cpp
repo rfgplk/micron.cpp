@@ -5,6 +5,7 @@
 #include "../../src/std.hpp"
 
 #include <random>
+
 int
 main()
 {
@@ -28,7 +29,7 @@ main()
     size_t req_total = 0;
     for ( size_t n = 0; n < 120000; ++n ) {
       std::malloc(dist(gen));
-      //arena.push(dist(gen));
+      // arena.push(dist(gen));
     }
   }
   if constexpr ( false ) {
@@ -54,8 +55,7 @@ main()
     for ( size_t n = 0; n < (2 << 10); ++n ) {
       auto mem = arena.push(dist(gen));
       mc::console("#", n, " - Allocated memory, with size of: ", mem.len, " at address: ", mem.ptr);
-      if ( arena.pop(mem) == false )
-        mc::console("Failed to pop memory at: ", mem.ptr);
+      if ( arena.pop(mem) == false ) mc::console("Failed to pop memory at: ", mem.ptr);
     }
     abc::stats_t stats = abc::get_stats();
     mc::console("Total number of memory allocations: ", stats.alloc_requests);
@@ -74,8 +74,7 @@ main()
       auto tmp = dist(gen);
       req_total += tmp;
       auto mem = arena.push(tmp);
-      if ( mem.ptr == (byte *)-1 )
-        mc::console("Allocation failed");
+      if ( mem.ptr == (byte *)-1 ) mc::console("Allocation failed");
       // info
       mc::console("#", n);
       mc::console("Free internal buffer: ", arena.__available_buffer());
@@ -92,8 +91,7 @@ main()
       for ( int i = 0;; ++i ) {
         abc::__arena arena;
         for ( size_t n = 0; n < (2 << 12); ++n ) {
-          if ( arena.push(256).ptr == (byte *)-1 )
-            mc::console("Error");
+          if ( arena.push(256).ptr == (byte *)-1 ) mc::console("Error");
         }
         mc::infolog("Success");
         mc::console("Attempt #: ", j++);
@@ -114,8 +112,7 @@ main()
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 12); ++n ) {
       mc::console("Free internal buffer: ", arena.__available_buffer());
-      if ( arena.push(256).ptr == (byte *)-1 )
-        mc::console("Error");
+      if ( arena.push(256).ptr == (byte *)-1 ) mc::console("Error");
     }
     mc::infolog("Success");
   }
@@ -128,10 +125,8 @@ main()
       mc::console("#", n);
       mc::console("Free internal buffer: ", arena.__available_buffer());
       auto mem = arena.push(dist(gen));
-      if ( mem.ptr == (byte *)-1 )
-        mc::console("Allocation failed");
-      for ( int i = 0; i < mem.len; i++ )
-        mem.ptr[i] = 0xF3;
+      if ( mem.ptr == (byte *)-1 ) mc::console("Allocation failed");
+      for ( int i = 0; i < mem.len; i++ ) mem.ptr[i] = 0xF3;
       // NOTE: verified manually that this is properly packed
       // in gdb
       // shell cat /proc/self/maps | grep heap
@@ -150,8 +145,7 @@ main()
       mc::console("#", n);
       mc::console("Free internal buffer: ", arena.__available_buffer());
       auto mem = arena.push(dist(gen));
-      if ( mem.ptr == (byte *)-1 )
-        mc::console("Allocation failed");
+      if ( mem.ptr == (byte *)-1 ) mc::console("Allocation failed");
     }
     mc::infolog("Success");
   }
@@ -162,8 +156,7 @@ main()
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 14); ++n ) {
       auto mem = arena.push(dist(gen));
-      if ( mem.ptr == (byte *)-1 )
-        mc::console("Allocation failed");
+      if ( mem.ptr == (byte *)-1 ) mc::console("Allocation failed");
     }
     mc::infolog("Success");
   }
@@ -189,8 +182,7 @@ main()
         *p_ptr = 0x1;
       }
     }
-    if ( *p_ptr == 0x1 )
-      mc::console("Valid");
+    if ( *p_ptr == 0x1 ) mc::console("Valid");
   }
   if constexpr ( false ) {
     std::random_device rd;
@@ -199,8 +191,7 @@ main()
     abc::__arena arena;
     for ( size_t n = 0; n < (2 << 30); ++n ) {
       mc::console("Free internal buffer: ", arena.__available_buffer());
-      if ( arena.push(dist(gen)).ptr == (byte *)-1 )
-        mc::console("Error");
+      if ( arena.push(dist(gen)).ptr == (byte *)-1 ) mc::console("Error");
       mc::console(n);
     }
     mc::infolog("Success");

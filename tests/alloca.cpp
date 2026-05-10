@@ -20,8 +20,7 @@ main()
     sb::test_case("mc::balloca()");
     int *arr = alloca(250, int);
     return 1;
-    for ( usize i = 0; i < 250; ++i )
-      arr[i] = i;
+    for ( usize i = 0; i < 250; ++i ) arr[i] = i;
     mc::console(arr[5]);
     mc::console(arr[50]);
     mc::console(arr[200]);

@@ -83,8 +83,7 @@ main()
   {
     auto v = ivec({ 3, 7, 99, 0 });
     micron::pow(v, 0);
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      require(*it, 1);
+    for ( auto it = v.begin(); it != v.end(); ++it ) require(*it, 1);
   }
   end_test_case();
 
@@ -127,8 +126,7 @@ main()
   {
     auto v = ivec({ 1, 2, 3, 4, 5 });
     micron::add(v, 10);
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], i + 11);
+    for ( int i = 0; i < 5; ++i ) require(v[i], i + 11);
   }
   end_test_case();
 
@@ -166,8 +164,7 @@ main()
   {
     micron::array<int, 5> a{ 0, 1, 2, 3, 4 };
     micron::add(a.begin(), a.end(), 100);
-    for ( int i = 0; i < 5; ++i )
-      require(a[i], i + 100);
+    for ( int i = 0; i < 5; ++i ) require(a[i], i + 100);
   }
   end_test_case();
 
@@ -241,8 +238,7 @@ main()
     auto v = ivec({ 1, 2, 3, 4, 5 });
     micron::multiply(v, 3);
     int expected[] = { 3, 6, 9, 12, 15 };
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], expected[i]);
+    for ( int i = 0; i < 5; ++i ) require(v[i], expected[i]);
   }
   end_test_case();
 
@@ -260,8 +256,7 @@ main()
   {
     auto v = ivec({ 5, 10, 15, 20 });
     micron::multiply(v, 0);
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      require(*it, 0);
+    for ( auto it = v.begin(); it != v.end(); ++it ) require(*it, 0);
   }
   end_test_case();
 
@@ -453,8 +448,7 @@ main()
   {
     auto v = ivec({ 10, 20, 30, 40, 50 });
     micron::subtract(v, 5);
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], (i + 1) * 10 - 5);
+    for ( int i = 0; i < 5; ++i ) require(v[i], (i + 1) * 10 - 5);
   }
   end_test_case();
 
@@ -570,8 +564,7 @@ main()
     auto v = dvec({ 1.0, 2.0, 3.0, 4.0 });
     micron::multiply(v, 7.0);
     micron::divide(v, 7.0);
-    for ( int i = 0; i < 4; ++i )
-      require_true(near(v[i], static_cast<double>(i + 1)));
+    for ( int i = 0; i < 4; ++i ) require_true(near(v[i], static_cast<double>(i + 1)));
   }
   end_test_case();
 
@@ -581,8 +574,7 @@ main()
     micron::pow(v, 0.5);     // sqrt
     micron::pow(v, 2.0);     // square again
     double expected[] = { 1.0, 4.0, 9.0, 16.0, 25.0 };
-    for ( int i = 0; i < 5; ++i )
-      require_true(near(v[i], expected[i], 1e-5));
+    for ( int i = 0; i < 5; ++i ) require_true(near(v[i], expected[i], 1e-5));
   }
   end_test_case();
 
@@ -639,8 +631,7 @@ main()
     micron::subtract(N, dst.begin(), src.begin());     // all 4
     micron::divide(N, dst.begin(), src.begin());       // all 2
 
-    for ( size_t i = 0; i < N; ++i )
-      require(dst[i], 2);
+    for ( size_t i = 0; i < N; ++i ) require(dst[i], 2);
   }
   end_test_case();
 

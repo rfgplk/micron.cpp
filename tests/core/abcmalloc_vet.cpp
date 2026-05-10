@@ -12,6 +12,7 @@ struct s {
   int x;
   int y;
 };
+
 int
 main()
 {

@@ -18,6 +18,5 @@ main(void)
     mc::memset_64b(&buf[0], 6);
     x++;
   }
-  for ( int i = 0; i < 64; i++ )
-    mc::io::print((int)buf[i]);
+  for ( int i = 0; i < 64; i++ ) mc::io::print((int)buf[i]);
 }

@@ -87,10 +87,81 @@ operator delete[](void *ptr, usize size) noexcept
   micron::__free(ptr);
 }
 
-/*
- * TODO: introduce align_val variants eventually
- *
- */
+// §17.6.3 — aligned scalar/array new and delete
+//
+// abc::aligned_alloc routes to abc::alloc() when alignment <= 32 (__hdr_offset) and to a shifted aligned-pointer scheme when alignment > 32
+//
+// NOTE: std::align_val_t is implicitly defined by the compiler under -faligned-new (default for -std=c++17 and later), so we don't need new
+
+namespace micron
+{
+namespace __aligned_new
+{
+[[nodiscard, gnu::always_inline]] inline void *
+__do_alloc(usize size, usize align)
+{
+  const usize padded = (size + align - 1) & ~(align - 1);
+  return abc::aligned_alloc(align, padded ? padded : align);
+}
+
+[[gnu::always_inline]] inline void
+__do_free(void *ptr, usize align)
+{
+  if ( align <= 32 ) {
+    micron::__free(ptr);     // alignment fits in the abc header offset, raw alloc was used
+  } else {
+    abc::aligned_free(ptr);
+  }
+}
+};     // namespace __aligned_new
+};     // namespace micron
+
+[[nodiscard]] void *
+operator new(usize size, std::align_val_t al)
+{
+  ALLOC_MESSAGE("new(", size, ", align=", static_cast<usize>(al), ")");
+  if ( void *ptr = micron::__aligned_new::__do_alloc(size, static_cast<usize>(al)) ) return ptr;
+  micron::exc<micron::except::memory_error>("micron::operator new(align): aligned_alloc failed");
+}
+
+[[nodiscard]] void *
+operator new[](usize size, std::align_val_t al)
+{
+  ALLOC_MESSAGE("new[](", size, ", align=", static_cast<usize>(al), ")");
+  if ( void *ptr = micron::__aligned_new::__do_alloc(size, static_cast<usize>(al)) ) return ptr;
+  micron::exc<micron::except::memory_error>("micron::operator new[](align): aligned_alloc failed");
+}
+
+void
+operator delete(void *ptr, std::align_val_t al) noexcept
+{
+  ALLOC_MESSAGE("delete(", ptr, ", align=", static_cast<usize>(al), ")");
+  micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
+}
+
+void
+operator delete[](void *ptr, std::align_val_t al) noexcept
+{
+  ALLOC_MESSAGE("delete[](", ptr, ", align=", static_cast<usize>(al), ")");
+  micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
+}
+
+void
+operator delete(void *ptr, usize size, std::align_val_t al) noexcept
+{
+  (void)size;
+  ALLOC_MESSAGE("delete(", ptr, ") size=", size, ", align=", static_cast<usize>(al));
+  micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
+}
+
+void
+operator delete[](void *ptr, usize size, std::align_val_t al) noexcept
+{
+  (void)size;
+  ALLOC_MESSAGE("delete[](", ptr, ") size=", size, ", align=", static_cast<usize>(al));
+  micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
+}
+
 namespace micron
 {
 template <typename Type, typename... Args>

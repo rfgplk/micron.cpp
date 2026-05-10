@@ -74,6 +74,15 @@ __start_abcmalloc_init(void)
   return __main_arena;
 }
 
+extern "C" void
+__boot_abcmalloc(void)
+{
+  static __arena local_arena;
+  __main_arena = &local_arena;
+  __abcmalloc_init = true;
+  __global_abc_state.store(__abc_ready, micron::memory_order_release);
+}
+
 /*
 // initialize abcmalloc, once per thread
 inline __attribute__((always_inline)) void

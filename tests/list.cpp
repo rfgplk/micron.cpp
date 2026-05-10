@@ -33,8 +33,7 @@ main()
   }
   {
     micron::list<micron::sstring<40>> lst(20, "Test");
-    for ( size_t i = 0; i < 20; i++ )
-      lst.push_front("ABCD");
+    for ( size_t i = 0; i < 20; i++ ) lst.push_front("ABCD");
     auto *start = lst.ibegin();
     while ( start->next != nullptr ) {
       std::cout << (start->data) << std::endl;

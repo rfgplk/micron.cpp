@@ -2,8 +2,8 @@
 // Rigorous snowball test suite for micron::stack<T> and micron::fstack<T>
 
 #include "../../src/stack.hpp"
-#include "../../src/std.hpp"
 #include "../../src/io/console.hpp"
+#include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -169,8 +169,7 @@ main()
     micron::stack<int> s(8);
     require(s.size(), size_t(8));
     // all values must be zero-initialised
-    for ( size_t i = 0; i < s.size(); ++i )
-      require(s[i], 0);
+    for ( size_t i = 0; i < s.size(); ++i ) require(s[i], 0);
   }
   end_test_case();
 
@@ -492,8 +491,7 @@ main()
     micron::stack<int> s{ 1, 2, 3 };
     // underlying storage is bottom-first: [1, 2, 3]
     int expected = 1;
-    for ( auto it = s.begin(); it != s.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = s.begin(); it != s.end(); ++it ) require(*it, expected++);
     require(expected, 4);
   }
   end_test_case();
@@ -503,8 +501,7 @@ main()
   {
     const micron::stack<int> s{ 5, 6, 7 };
     int expected = 5;
-    for ( auto it = s.cbegin(); it != s.cend(); ++it )
-      require(*it, expected++);
+    for ( auto it = s.cbegin(); it != s.cend(); ++it ) require(*it, expected++);
   }
   end_test_case();
 
@@ -537,10 +534,8 @@ main()
     reset_tracked();
     {
       micron::stack<Tracked> s;
-      for ( int i = 0; i < 64; ++i )
-        s.push(Tracked(i));
-      for ( int i = 0; i < 32; ++i )
-        (void)s.pop();
+      for ( int i = 0; i < 64; ++i ) s.push(Tracked(i));
+      for ( int i = 0; i < 32; ++i ) (void)s.pop();
       // destructor called on remaining 32 elements at scope exit
     }
     require(Tracked::ctor, Tracked::dtor);
@@ -582,8 +577,7 @@ main()
   {
     micron::stack<int> s;
     constexpr int N = 100000;
-    for ( int i = 0; i < N; ++i )
-      s.push(i);
+    for ( int i = 0; i < N; ++i ) s.push(i);
     require(s.size(), size_t(N));
     for ( int i = N - 1; i >= 0; --i ) {
       int v = s.pop();
@@ -598,8 +592,7 @@ main()
   {
     micron::stack<int> s;
     for ( int r = 0; r < 200; ++r ) {
-      for ( int i = 0; i < 500; ++i )
-        s.push(i);
+      for ( int i = 0; i < 500; ++i ) s.push(i);
       s.clear();
       require_true(s.empty());
     }
@@ -666,8 +659,7 @@ main()
   {
     micron::fstack<int> s(6);
     require(s.size(), size_t(6));
-    for ( size_t i = 0; i < s.size(); ++i )
-      require(s[i], 0);
+    for ( size_t i = 0; i < s.size(); ++i ) require(s[i], 0);
   }
   end_test_case();
 
@@ -879,12 +871,10 @@ main()
   {
     micron::fstack<int> s{ 1, 2, 3 };
     int expected = 1;
-    for ( auto it = s.begin(); it != s.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = s.begin(); it != s.end(); ++it ) require(*it, expected++);
     const micron::fstack<int> cs{ 4, 5, 6 };
     expected = 4;
-    for ( auto it = cs.cbegin(); it != cs.cend(); ++it )
-      require(*it, expected++);
+    for ( auto it = cs.cbegin(); it != cs.cend(); ++it ) require(*it, expected++);
   }
   end_test_case();
 
@@ -913,10 +903,8 @@ main()
     reset_tracked();
     {
       micron::fstack<Tracked> s;
-      for ( int i = 0; i < 50; ++i )
-        s.push(Tracked(i));
-      for ( int i = 0; i < 25; ++i )
-        (void)s.pop();
+      for ( int i = 0; i < 50; ++i ) s.push(Tracked(i));
+      for ( int i = 0; i < 25; ++i ) (void)s.pop();
     }
     require(Tracked::ctor, Tracked::dtor);
   }
@@ -945,11 +933,9 @@ main()
   {
     micron::fstack<int> s;
     constexpr int N = 100000;
-    for ( int i = 0; i < N; ++i )
-      s.push(i);
+    for ( int i = 0; i < N; ++i ) s.push(i);
     require(s.size(), size_t(N));
-    for ( int i = N - 1; i >= 0; --i )
-      require(s.pop(), i);
+    for ( int i = N - 1; i >= 0; --i ) require(s.pop(), i);
     require_true(s.empty());
   }
   end_test_case();
@@ -959,8 +945,7 @@ main()
   {
     micron::fstack<int> s;
     for ( int r = 0; r < 200; ++r ) {
-      for ( int i = 0; i < 500; ++i )
-        s.push(i);
+      for ( int i = 0; i < 500; ++i ) s.push(i);
       s.clear();
       require_true(s.empty());
     }
@@ -1015,8 +1000,7 @@ main()
     safe.push_range(1, 2, 3, 4, 5);
     fast.push_range(1, 2, 3, 4, 5);
     require(safe.size(), fast.size());
-    for ( size_t i = 0; i < safe.size(); ++i )
-      require(safe[i], fast[i]);
+    for ( size_t i = 0; i < safe.size(); ++i ) require(safe[i], fast[i]);
   }
   end_test_case();
 

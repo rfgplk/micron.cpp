@@ -124,7 +124,7 @@ main()
 
   test_case("nquad<2>: matches dblquad");
   {
-    auto f = [](const f64 (&x)[2]) noexcept -> f64 { return x[0] * x[0] * x[1]; };
+    auto f = [](const f64(&x)[2]) noexcept -> f64 { return x[0] * x[0] * x[1]; };
     f64 lo[2] = { 0, 0 };
     f64 hi[2] = { 1, 1 };
     auto r = integrate::nquad<2, f64>(f, lo, hi, f64(1e-9), f64(1e-7));
@@ -134,7 +134,7 @@ main()
 
   test_case("nquad<3>: ∫∫∫ x·y·z over unit cube = 1/8");
   {
-    auto f = [](const f64 (&x)[3]) noexcept -> f64 { return x[0] * x[1] * x[2]; };
+    auto f = [](const f64(&x)[3]) noexcept -> f64 { return x[0] * x[1] * x[2]; };
     f64 lo[3] = { 0, 0, 0 };
     f64 hi[3] = { 1, 1, 1 };
     auto r = integrate::nquad<3, f64>(f, lo, hi, f64(1e-8), f64(1e-6));
@@ -143,5 +143,5 @@ main()
   end_test_case();
 
   print("=== integrate quad/nquad/gauss/romberg ok ===");
-  return 1;
+  return 0;
 }

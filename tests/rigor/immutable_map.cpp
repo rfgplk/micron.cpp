@@ -29,8 +29,7 @@ imap
 make_seq(int n)
 {
   imap m;
-  for ( int i = 0; i < n; ++i )
-    m = m.insert(i, i * 10);
+  for ( int i = 0; i < n; ++i ) m = m.insert(i, i * 10);
   return m;
 }
 
@@ -38,12 +37,10 @@ make_seq(int n)
 bool
 verify_seq(const imap &m, int n)
 {
-  if ( (int)m.size() != n )
-    return false;
+  if ( (int)m.size() != n ) return false;
   for ( int i = 0; i < n; ++i ) {
     const int *v = m.find(i);
-    if ( !v || *v != i * 10 )
-      return false;
+    if ( !v || *v != i * 10 ) return false;
   }
   return true;
 }
@@ -54,8 +51,7 @@ contains_seq(const imap &m, int n)
 {
   for ( int i = 0; i < n; ++i ) {
     const int *v = m.find(i);
-    if ( !v || *v != i * 10 )
-      return false;
+    if ( !v || *v != i * 10 ) return false;
   }
   return true;
 }
@@ -315,8 +311,7 @@ main()
   test_case("contains returns correct bool");
   {
     auto m = make_seq(5);
-    for ( int i = 0; i < 5; ++i )
-      require_true(m.contains(i));
+    for ( int i = 0; i < 5; ++i ) require_true(m.contains(i));
     require_false(m.contains(5));
     require_false(m.contains(-1));
     require_false(m.contains(999));
@@ -327,8 +322,7 @@ main()
   test_case("at() returns correct reference");
   {
     auto m = make_seq(5);
-    for ( int i = 0; i < 5; ++i )
-      require(m.at(i), i * 10);
+    for ( int i = 0; i < 5; ++i ) require(m.at(i), i * 10);
   }
   end_test_case();
 
@@ -851,8 +845,7 @@ main()
   test_case("stress: insert 1000 then erase all");
   {
     auto m = make_seq(1000);
-    for ( int i = 0; i < 1000; ++i )
-      m = m.erase(i);
+    for ( int i = 0; i < 1000; ++i ) m = m.erase(i);
     require(m.size(), usize(0));
     require_true(m.empty());
   }
@@ -862,8 +855,7 @@ main()
   test_case("stress: insert 1000 in reverse order");
   {
     imap m;
-    for ( int i = 999; i >= 0; --i )
-      m = m.insert(i, i * 10);
+    for ( int i = 999; i >= 0; --i ) m = m.insert(i, i * 10);
     require(m.size(), usize(1000));
     require_true(verify_seq(m, 1000));
 
@@ -881,8 +873,7 @@ main()
     imap m;
     for ( int i = 0; i < 500; ++i ) {
       m = m.insert(i, i);
-      if ( i > 0 && i % 3 == 0 )
-        m = m.erase(i / 3);
+      if ( i > 0 && i % 3 == 0 ) m = m.erase(i / 3);
     }
     m.for_each([&](const int &k, const int &v) {
       require(v, k);
@@ -896,18 +887,14 @@ main()
   {
     imap versions[100];
     versions[0] = imap();
-    for ( int i = 1; i < 100; ++i )
-      versions[i] = versions[i - 1].insert(i, i * 10);
+    for ( int i = 1; i < 100; ++i ) versions[i] = versions[i - 1].insert(i, i * 10);
 
-    for ( int i = 0; i < 100; ++i )
-      require(versions[i].size(), usize(i));
+    for ( int i = 0; i < 100; ++i ) require(versions[i].size(), usize(i));
 
-    for ( int k = 1; k <= 50; ++k )
-      require(*versions[50].find(k), k * 10);
+    for ( int k = 1; k <= 50; ++k ) require(*versions[50].find(k), k * 10);
     require_true(versions[50].find(51) == nullptr);
 
-    for ( int k = 1; k <= 99; ++k )
-      require(*versions[99].find(k), k * 10);
+    for ( int k = 1; k <= 99; ++k ) require(*versions[99].find(k), k * 10);
   }
   end_test_case();
 
@@ -916,8 +903,7 @@ main()
   {
     auto base = make_seq(10);
     imap branches[50];
-    for ( int i = 0; i < 50; ++i )
-      branches[i] = base.insert(1000 + i, i);
+    for ( int i = 0; i < 50; ++i ) branches[i] = base.insert(1000 + i, i);
 
     require(base.size(), usize(10));
     require_true(verify_seq(base, 10));
@@ -925,8 +911,7 @@ main()
     for ( int i = 0; i < 50; ++i ) {
       require(branches[i].size(), usize(11));
       require(*branches[i].find(1000 + i), i);
-      if ( i > 0 )
-        require_false(branches[i].contains(1000 + i - 1));
+      if ( i > 0 ) require_false(branches[i].contains(1000 + i - 1));
     }
   }
   end_test_case();
@@ -935,8 +920,7 @@ main()
   test_case("stress: rapid update same key – version chain");
   {
     auto m = imap().insert(1, 0);
-    for ( int i = 1; i <= 500; ++i )
-      m = m.insert(1, i);
+    for ( int i = 1; i <= 500; ++i ) m = m.insert(1, i);
     require(m.size(), usize(1));
     require(*m.find(1), 500);
   }
@@ -946,16 +930,12 @@ main()
   test_case("stress: erase evens then odds");
   {
     auto m = make_seq(100);
-    for ( int i = 0; i < 100; i += 2 )
-      m = m.erase(i);
+    for ( int i = 0; i < 100; i += 2 ) m = m.erase(i);
     require(m.size(), usize(50));
-    for ( int i = 0; i < 100; i += 2 )
-      require_false(m.contains(i));
-    for ( int i = 1; i < 100; i += 2 )
-      require_true(m.contains(i));
+    for ( int i = 0; i < 100; i += 2 ) require_false(m.contains(i));
+    for ( int i = 1; i < 100; i += 2 ) require_true(m.contains(i));
 
-    for ( int i = 1; i < 100; i += 2 )
-      m = m.erase(i);
+    for ( int i = 1; i < 100; i += 2 ) m = m.erase(i);
     require(m.size(), usize(0));
   }
   end_test_case();
@@ -1069,8 +1049,7 @@ main()
     for ( int n : { 0, 1, 5, 10, 50, 100 } ) {
       auto m = make_seq(n);
       int count = 0;
-      for ( auto it = m.begin(); it != m.end(); ++it )
-        ++count;
+      for ( auto it = m.begin(); it != m.end(); ++it ) ++count;
       require(count, n);
       require(m.size(), usize(n));
     }

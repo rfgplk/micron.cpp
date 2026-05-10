@@ -26,16 +26,14 @@ template <typename T, u64 N>
 void
 fill_pattern(T (&buf)[N], T val)
 {
-  for ( u64 i = 0; i < N; i++ )
-    buf[i] = val;
+  for ( u64 i = 0; i < N; i++ ) buf[i] = val;
 }
 
 template <typename T>
 void
 fill_pattern(T *buf, u64 n, T val)
 {
-  for ( u64 i = 0; i < n; i++ )
-    buf[i] = val;
+  for ( u64 i = 0; i < n; i++ ) buf[i] = val;
 }
 
 // Fill with sequential values 0,1,2,...(mod 256)
@@ -43,16 +41,14 @@ template <typename T, u64 N>
 void
 make_seq(T (&buf)[N])
 {
-  for ( u64 i = 0; i < N; i++ )
-    buf[i] = static_cast<T>(i & 0xFF);
+  for ( u64 i = 0; i < N; i++ ) buf[i] = static_cast<T>(i & 0xFF);
 }
 
 template <typename T>
 void
 make_seq(T *buf, u64 n)
 {
-  for ( u64 i = 0; i < n; i++ )
-    buf[i] = static_cast<T>(i & 0xFF);
+  for ( u64 i = 0; i < n; i++ ) buf[i] = static_cast<T>(i & 0xFF);
 }
 
 // Snapshot: copy n elements from src into a plain array for later comparison
@@ -60,8 +56,7 @@ template <typename T>
 void
 snapshot(const T *src, T *snap, u64 n)
 {
-  for ( u64 i = 0; i < n; i++ )
-    snap[i] = src[i];
+  for ( u64 i = 0; i < n; i++ ) snap[i] = src[i];
 }
 
 // Verify dest[0..n) matches snap[0..n) exactly
@@ -70,8 +65,7 @@ bool
 matches_snapshot(const T *dest, const T *snap, u64 n)
 {
   for ( u64 i = 0; i < n; i++ )
-    if ( dest[i] != snap[i] )
-      return false;
+    if ( dest[i] != snap[i] ) return false;
   return true;
 }
 
@@ -81,8 +75,7 @@ bool
 verify_buffer(T (&buf)[N], T expected)
 {
   for ( u64 i = 0; i < N; i++ )
-    if ( buf[i] != expected )
-      return false;
+    if ( buf[i] != expected ) return false;
   return true;
 }
 
@@ -91,8 +84,7 @@ bool
 verify_buffer(T *buf, u64 n, T expected)
 {
   for ( u64 i = 0; i < n; i++ )
-    if ( buf[i] != expected )
-      return false;
+    if ( buf[i] != expected ) return false;
   return true;
 }
 
@@ -103,8 +95,7 @@ is_zeroed(T (&buf)[N])
 {
   const byte *p = reinterpret_cast<const byte *>(buf);
   for ( u64 i = 0; i < N * sizeof(T); i++ )
-    if ( p[i] != 0 )
-      return false;
+    if ( p[i] != 0 ) return false;
   return true;
 }
 
@@ -120,8 +111,7 @@ struct GuardedBuffer {
 
   GuardedBuffer()
   {
-    for ( u64 i = 0; i < sizeof(data); i++ )
-      data[i] = CANARY;
+    for ( u64 i = 0; i < sizeof(data); i++ ) data[i] = CANARY;
   }
 
   byte *
@@ -140,11 +130,9 @@ struct GuardedBuffer {
   guards_intact() const
   {
     for ( u64 i = 0; i < GUARD_SZ; i++ )
-      if ( data[i] != CANARY )
-        return false;
+      if ( data[i] != CANARY ) return false;
     for ( u64 i = GUARD_SZ + 512; i < sizeof(data); i++ )
-      if ( data[i] != CANARY )
-        return false;
+      if ( data[i] != CANARY ) return false;
     return true;
   }
 
@@ -154,11 +142,9 @@ struct GuardedBuffer {
   {
     const byte *after = payload() + written_bytes;
     for ( u64 i = 0; i < GUARD_SZ; i++ )
-      if ( after[i] != CANARY )
-        return false;
+      if ( after[i] != CANARY ) return false;
     for ( u64 i = 0; i < GUARD_SZ; i++ )
-      if ( data[i] != CANARY )
-        return false;
+      if ( data[i] != CANARY ) return false;
     return true;
   }
 };

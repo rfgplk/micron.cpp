@@ -105,13 +105,13 @@ main()
 
   test_case("strided axpy/dot via inc != 1");
   {
-    f64 x[6] = { 1, 9, 2, 9, 3, 9 };               // values at incx=2 are {1,2,3}
-    f64 y[6] = { 10, 8, 20, 8, 30, 8 };            // values at incy=2 are {10,20,30}
+    f64 x[6] = { 1, 9, 2, 9, 3, 9 };        // values at incx=2 are {1,2,3}
+    f64 y[6] = { 10, 8, 20, 8, 30, 8 };     // values at incy=2 are {10,20,30}
     blas::level1::axpy<f64>(3, 2.0, x, 2, y, 2);
     require_true(near(y[0], 12.0));
     require_true(near(y[2], 24.0));
     require_true(near(y[4], 36.0));
-    require_true(near(y[1], 8.0));                 // untouched
+    require_true(near(y[1], 8.0));     // untouched
     require_true(near(blas::level1::dot<f64>(3, x, 2, y, 2), 12 + 48 + 108));
   }
   end_test_case();
@@ -120,7 +120,7 @@ main()
   {
     f64 a = 3.0, b = 4.0, c, s;
     blas::level1::rotg<f64>(a, b, c, s);
-    require_true(near(a, 5.0, 1e-12));             // r = sqrt(9+16) = 5
+    require_true(near(a, 5.0, 1e-12));     // r = sqrt(9+16) = 5
     // Apply to 1-element vectors x={3}, y={4} — should produce x={5}, y≈0
     f64 xs[1] = { 3.0 };
     f64 ys[1] = { 4.0 };
@@ -134,8 +134,12 @@ main()
   {
     micron::vector<f64> x(3, 0.0);
     micron::vector<f64> y(3, 0.0);
-    x[0] = 1; x[1] = 2; x[2] = 3;
-    y[0] = 4; y[1] = 5; y[2] = 6;
+    x[0] = 1;
+    x[1] = 2;
+    x[2] = 3;
+    y[0] = 4;
+    y[1] = 5;
+    y[2] = 6;
     require_true(near(blas::level1::dot(x, y), 32.0));
     require_true(near(blas::level1::asum(x), 6.0));
     require_true(near(blas::level1::nrm2(y), 8.774964387392123, 1e-10));
@@ -144,12 +148,12 @@ main()
     quants::vec_view<f64> vy = quants::vec_view<f64>::from(y);
     require_true(near(blas::level1::dot<f64>(vx, vy), 32.0));
     blas::level1::axpy<f64>(2.0, vx, vy);
-    require_true(near(y[0], 6.0));     // 4 + 2*1
-    require_true(near(y[1], 9.0));     // 5 + 2*2
-    require_true(near(y[2], 12.0));    // 6 + 2*3
+    require_true(near(y[0], 6.0));      // 4 + 2*1
+    require_true(near(y[1], 9.0));      // 5 + 2*2
+    require_true(near(y[2], 12.0));     // 6 + 2*3
   }
   end_test_case();
 
   print("=== blas L1 ok ===");
-  return 1;
+  return 0;
 }

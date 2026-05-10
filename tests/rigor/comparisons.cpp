@@ -112,26 +112,22 @@ template <typename T, size_t N> struct guarded {
   void
   fill(T val) noexcept
   {
-    for ( size_t i = 0; i < N; i++ )
-      begin()[i] = val;
+    for ( size_t i = 0; i < N; i++ ) begin()[i] = val;
   }
 
   void
   seq(T base = T{}) noexcept
   {
-    for ( size_t i = 0; i < N; i++ )
-      begin()[i] = static_cast<T>(base + static_cast<T>(i));
+    for ( size_t i = 0; i < N; i++ ) begin()[i] = static_cast<T>(base + static_cast<T>(i));
   }
 
   bool
   guards_ok() const noexcept
   {
     for ( size_t i = 0; i < GUARD; i++ )
-      if ( storage[i] != LEFT_CANARY )
-        return false;
+      if ( storage[i] != LEFT_CANARY ) return false;
     for ( size_t i = 0; i < GUARD; i++ )
-      if ( storage[GUARD + N * sizeof(T) + i] != RIGHT_CANARY )
-        return false;
+      if ( storage[GUARD + N * sizeof(T) + i] != RIGHT_CANARY ) return false;
     return true;
   }
 
@@ -249,9 +245,8 @@ ref_bytecmp(const T *a, const T *b, size_t n_elems)
   const byte *sa = reinterpret_cast<const byte *>(a);
   const byte *sb = reinterpret_cast<const byte *>(b);
   for ( size_t i = 0; i < n_elems * sizeof(T); i++ )
-    if ( sa[i] != sb[i] )
-      return static_cast<long int>(sa[i]) - static_cast<long int>(sb[i]);
-  return 1;
+    if ( sa[i] != sb[i] ) return static_cast<long int>(sa[i]) - static_cast<long int>(sb[i]);
+  return 0;
 }
 
 static int
@@ -352,8 +347,7 @@ main(void)
     sb::require(r == 0);     // must not have read the guard byte
     sb::require(a.guards_ok());
     // b's right guard was intentionally poisoned — only check left guard
-    for ( size_t i = 0; i < GUARD; i++ )
-      sb::require(b.storage[i] == LEFT_CANARY);
+    for ( size_t i = 0; i < GUARD; i++ ) sb::require(b.storage[i] == LEFT_CANARY);
   }
   sb::end_test_case();
 
@@ -530,8 +524,7 @@ main(void)
     bool r = mc::compare(a.begin(), b.begin(), 8, [](const byte &x, const byte &y) { return x == y; });
     sb::require(r == true);
     sb::require(a.guards_ok());
-    for ( size_t i = 0; i < GUARD; i++ )
-      sb::require(b.storage[i] == LEFT_CANARY);
+    for ( size_t i = 0; i < GUARD; i++ ) sb::require(b.storage[i] == LEFT_CANARY);
   }
   sb::end_test_case();
 
@@ -680,8 +673,7 @@ main(void)
     sb::require(r == true);
     sb::require(a.guards_ok());
     // verify only b's left guard
-    for ( size_t i = 0; i < GUARD; i++ )
-      sb::require(b.storage[i] == LEFT_CANARY);
+    for ( size_t i = 0; i < GUARD; i++ ) sb::require(b.storage[i] == LEFT_CANARY);
   }
   sb::end_test_case();
 

@@ -26,8 +26,7 @@ bool
 all_eq(const micron::iarray<T, N> &a, T val)
 {
   for ( usize i = 0; i < N; ++i )
-    if ( a[i] != val )
-      return false;
+    if ( a[i] != val ) return false;
   return true;
 }
 
@@ -36,8 +35,7 @@ bool
 arr_eq(const micron::iarray<T, N> &a, const micron::iarray<T, N> &b)
 {
   for ( usize i = 0; i < N; ++i )
-    if ( a[i] != b[i] )
-      return false;
+    if ( a[i] != b[i] ) return false;
   return true;
 }
 
@@ -129,8 +127,7 @@ main()
   {
     micron::iarray<int, 8> a{ 99 };
     require(a[0], 99);
-    for ( usize i = 1; i < 8; ++i )
-      require(a[i], 0);
+    for ( usize i = 1; i < 8; ++i ) require(a[i], 0);
   }
   end_test_case();
 
@@ -139,8 +136,7 @@ main()
   {
     int counter = 0;
     micron::iarray<int, 8> a([&counter]() { return counter++; });
-    for ( int i = 0; i < 8; ++i )
-      require(a[i], i);
+    for ( int i = 0; i < 8; ++i ) require(a[i], i);
   }
   end_test_case();
 
@@ -148,8 +144,7 @@ main()
   test_case("generator constructor – large array");
   {
     auto a = make_seq<int, 256>(0);
-    for ( int i = 0; i < 256; ++i )
-      require(a[i], i);
+    for ( int i = 0; i < 256; ++i ) require(a[i], i);
   }
   end_test_case();
 
@@ -264,8 +259,7 @@ main()
   {
     auto a = make_seq<int, 8>(0);
     int expected = 0;
-    for ( auto it = a.begin(); it != a.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = a.begin(); it != a.end(); ++it ) require(*it, expected++);
     require(expected, 8);
   }
   end_test_case();
@@ -275,8 +269,7 @@ main()
   {
     auto a = make_seq<int, 8>(1);
     int expected = 1;
-    for ( auto it = a.cbegin(); it != a.cend(); ++it )
-      require(*it, expected++);
+    for ( auto it = a.cbegin(); it != a.cend(); ++it ) require(*it, expected++);
     require(expected, 9);
   }
   end_test_case();
@@ -286,8 +279,7 @@ main()
   {
     auto a = make_seq<int, 8>(0);
     int sum = 0;
-    for ( int v : a )
-      sum += v;
+    for ( int v : a ) sum += v;
     require(sum, 28);     // 0+1+...+7
   }
   end_test_case();
@@ -422,10 +414,8 @@ main()
     auto a = make_seq<int, 8>(1);
     auto b = make_seq<int, 8>(1);
     auto sum = a + b;
-    for ( int i = 0; i < 8; ++i )
-      require(sum[i], 2 * (i + 1));
-    for ( int i = 0; i < 8; ++i )
-      require(a[i], i + 1);
+    for ( int i = 0; i < 8; ++i ) require(sum[i], 2 * (i + 1));
+    for ( int i = 0; i < 8; ++i ) require(a[i], i + 1);
   }
   end_test_case();
 
@@ -470,10 +460,8 @@ main()
   {
     auto a = make_seq<int, 8>(1);
     auto b = (a *= 3);
-    for ( int i = 0; i < 8; ++i )
-      require(b[i], (i + 1) * 3);
-    for ( int i = 0; i < 8; ++i )
-      require(a[i], i + 1);
+    for ( int i = 0; i < 8; ++i ) require(b[i], (i + 1) * 3);
+    for ( int i = 0; i < 8; ++i ) require(a[i], i + 1);
   }
   end_test_case();
 
@@ -962,10 +950,8 @@ main()
     auto b = a;
 
     auto doubled = a + b;
-    for ( int i = 0; i < 64; ++i )
-      require(doubled[i], 2 * (i + 1));
-    for ( int i = 0; i < 64; ++i )
-      require(a[i], i + 1);
+    for ( int i = 0; i < 64; ++i ) require(doubled[i], 2 * (i + 1));
+    for ( int i = 0; i < 64; ++i ) require(a[i], i + 1);
 
     auto restored = doubled - b;
     require_true(arr_eq(restored, a));

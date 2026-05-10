@@ -21,7 +21,7 @@ main()
     mc::console(pvec);
     mc::console(pvec.set(1, { 5, 5, 5, 5 }));
     // should look like this
-    //5
+    // 5
     //{ {  }, {  }, {  }, {  }, {  } }
     //{ {  }, { 5, 5, 5, 5 }, {  }, {  }, {  } }
   }

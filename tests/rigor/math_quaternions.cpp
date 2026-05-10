@@ -295,5 +295,171 @@ main()
   }
   end_test_case();
 
-  return 1;
+  test_case("algebra: Hamilton product is associative up to tolerance");
+  {
+    qq a{ 0.3, -0.7, 1.2, 0.4 };
+    qq b{ -1.1, 0.5, -0.2, 0.9 };
+    qq c{ 0.6, 0.8, 0.1, -0.5 };
+    auto lhs = quaternions::multiply(quaternions::multiply(a, b), c);
+    auto rhs = quaternions::multiply(a, quaternions::multiply(b, c));
+    require_true(near_q(lhs, rhs, 1e-12));
+  }
+  end_test_case();
+
+  test_case("algebra: norm multiplicativity |a ⊗ b| = |a| · |b|");
+  {
+    qq a{ 1.0, 2.0, 3.0, 4.0 };
+    qq b{ -0.5, 0.7, -1.3, 2.1 };
+    auto p = quaternions::multiply(a, b);
+    f64 lhs = p.magnitude();
+    f64 rhs = a.magnitude() * b.magnitude();
+    require_true(near(lhs, rhs, 1e-12));
+  }
+  end_test_case();
+
+  test_case("algebra: inverse_unit equals conjugate on unit q and avoids division error");
+  {
+    auto q = quaternions::from_axis_angle<f64>(0.5, -0.3, 0.8, 1.7);
+    auto inv_u = quaternions::inverse_unit(q);
+    auto inv_g = quaternions::inverse(q);
+    auto conj = quaternions::conjugate(q);
+    // bit-exact: inverse_unit is conjugate, no division at all
+    require_true(inv_u.x == conj.x && inv_u.y == conj.y && inv_u.z == conj.z && inv_u.w == conj.w);
+    require_true(near_q(inv_u, inv_g, 1e-12));
+  }
+  end_test_case();
+
+  test_case("algebra: rotation is preserved under repeated composition");
+  {
+    auto q = quaternions::from_axis_angle<f64>(0.6, 0.0, 0.8, 0.13);
+    auto qn = q;
+    for ( int i = 0; i < 32; ++i ) qn = quaternions::multiply(qn, q).normalized();
+    auto qref = quaternions::from_axis_angle<f64>(0.6, 0.0, 0.8, 0.13 * 33.0);
+    f64 d = qn.dot(qref);
+    if ( d < 0 ) {
+      qn.x = -qn.x;
+      qn.y = -qn.y;
+      qn.z = -qn.z;
+      qn.w = -qn.w;
+    }
+    require_true(near_q(qn, qref, 1e-10));
+    require_true(near(qn.squared_norm(), 1.0, 1e-12));
+  }
+  end_test_case();
+
+  test_case("algebra: degenerate inputs propagate NaN rather than silent identity");
+  {
+    // -Ofast (-ffinite-math-only) forbids the compiler from emitting branches
+    // that distinguish NaN from finite values, so we inspect the bit pattern
+    // directly: the qnan_v sentinel has the IEEE-754 NaN exponent (all ones).
+    auto is_nan_bits = [](f64 v) -> bool {
+      auto u = math::ieee::to_bits<f64>(v);
+      using T = math::ieee::traits<f64>;
+      return ((u & T::exp_mask) == T::exp_mask) && ((u & T::mant_mask) != 0);
+    };
+    qq zero{ 0.0, 0.0, 0.0, 0.0 };
+    auto inv_zero = quaternions::inverse(zero);
+    require_true(is_nan_bits(inv_zero.x));
+    require_true(is_nan_bits(inv_zero.y));
+    require_true(is_nan_bits(inv_zero.z));
+    require_true(is_nan_bits(inv_zero.w));
+    auto norm_zero = zero.normalized();
+    require_true(is_nan_bits(norm_zero.w));
+    require_true(!zero.is_normalized());
+  }
+  end_test_case();
+
+  test_case("algebra: factory methods build the expected quaternion");
+  {
+    auto i = quaternions::quaternion<f64>::identity();
+    require_true(near(i.w, 1.0) && near(i.x, 0.0) && near(i.y, 0.0) && near(i.z, 0.0));
+    auto p = quaternions::quaternion<f64>::pure(1.5, -2.5, 3.5);
+    require_true(near(p.x, 1.5) && near(p.y, -2.5) && near(p.z, 3.5) && near(p.w, 0.0));
+    auto s = quaternions::quaternion<f64>::scalar(7.0);
+    require_true(near(s.w, 7.0) && near(s.x, 0.0) && near(s.y, 0.0) && near(s.z, 0.0));
+  }
+  end_test_case();
+
+  test_case("kinematics: integrate dispatches to Taylor for tiny ω·dt without 0/0");
+  {
+    auto q0 = quaternions::from_axis_angle<f64>(0.6, 0.0, 0.8, 0.5);
+    v3 omega{ 1e-200, 0.0, 0.0 };     // n^2 underflows to 0 in f64; old code's `n2==0` branch returned q
+    f64 dt = 1e-100;                  // |ω|·dt ~ 1e-300 — solidly in the Taylor regime
+    auto q1 = quaternions::integrate<f64>(q0, omega, dt);
+    require_true(q1.all_finite());
+    require_true(near(q1.squared_norm(), 1.0, 1e-12));
+    require_true(near_q(q1, q0, 1e-12));     // negligible motion
+  }
+  end_test_case();
+
+  test_case("kinematics: integrate_pade renormalizes against accumulated drift");
+  {
+    auto q = quaternions::identity<f64>();
+    v3 omega{ 0.7, -0.4, 0.5 };
+    f64 dt = 0.05;
+    for ( int i = 0; i < 4096; ++i ) q = quaternions::integrate_pade<f64>(q, omega, dt);
+    require_true(near(q.squared_norm(), 1.0, 1e-12));
+  }
+  end_test_case();
+
+  test_case("kinematics: angular_velocity returns NaN for near-zero dt");
+  {
+    auto q0 = quaternions::identity<f64>();
+    auto q1 = quaternions::from_axis_angle<f64>(0, 0, 1, 0.1);
+    auto w = quaternions::angular_velocity<f64>(q0, q1, 0.0);
+    auto u = math::ieee::to_bits<f64>(w.x);
+    using T = math::ieee::traits<f64>;
+    require_true(((u & T::exp_mask) == T::exp_mask) && ((u & T::mant_mask) != 0));
+  }
+  end_test_case();
+
+  test_case("kinematics: log_map_pade falls back to exact for near-π rotations");
+  {
+    // Full angle 2.9 rad (≈ 166°): cw = cos(1.45) ≈ 0.121, well below the Padé safe floor.
+    f64 angle = 2.9;
+    v3 axis{ 0.0, 0.0, 1.0 };
+    auto q = quaternions::from_axis_angle(axis, angle);
+    auto v = quaternions::log_map_pade<f64>(q);
+    // Old code would divide by tiny `cw` here. The fallback path delegates to
+    // to_axis_angle and gives the exact log map.
+    require_true(near(v.x, 0.0, 1e-10));
+    require_true(near(v.y, 0.0, 1e-10));
+    require_true(near(v.z, angle, 1e-10));
+  }
+  end_test_case();
+
+  test_case("kinematics: angular_velocity uses conjugate path (no division by |q0|^2)");
+  {
+    // Same q0 with components scaled so squared_norm() differs subtly from 1.0
+    // would silently corrupt the old `inverse(q0)` path; the conjugate path is
+    // bit-exact for the unit precondition. Just sanity-check ordinary inputs
+    // here — proper invariance is covered by the round-trip test above.
+    auto q0 = quaternions::from_axis_angle<f64>(0.0, 1.0, 0.0, 0.4);
+    v3 omega{ 0.0, 0.0, 0.7 };
+    f64 dt = 0.1;
+    auto q1 = quaternions::integrate<f64>(q0, omega, dt);
+    auto wr = quaternions::angular_velocity<f64>(q0, q1, dt);
+    require_true(near(wr.x, omega.x, 1e-10));
+    require_true(near(wr.y, omega.y, 1e-10));
+    require_true(near(wr.z, omega.z, 1e-10));
+  }
+  end_test_case();
+
+  test_case("algebra: self-aliased multiply(q, q) squares the rotation");
+  {
+    auto q = quaternions::from_axis_angle<f64>(0, 0, 1, 0.4);
+    auto q2_alias = quaternions::multiply(q, q);     // same reference twice
+    auto q2_ref = quaternions::from_axis_angle<f64>(0, 0, 1, 0.8);
+    f64 d = q2_alias.dot(q2_ref);
+    if ( d < 0 ) {
+      q2_alias.x = -q2_alias.x;
+      q2_alias.y = -q2_alias.y;
+      q2_alias.z = -q2_alias.z;
+      q2_alias.w = -q2_alias.w;
+    }
+    require_true(near_q(q2_alias, q2_ref, 1e-12));
+  }
+  end_test_case();
+
+  return 0;
 }

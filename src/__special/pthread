@@ -5,6 +5,26 @@
 
 #undef __USE_GUN
 
+// glibc-internal annotation macros. on amd64 they come transitively from
+// <sys/cdefs.h>; on cross toolchains they aren't always defined when this
+// file is processed in isolation. fall through to no-ops so the function
+// declarations below parse without dragging libc in.
+#ifndef __THROW
+#define __THROW
+#endif
+#ifndef __THROWNL
+#define __THROWNL
+#endif
+#ifndef __nonnull
+#define __nonnull(a)
+#endif
+#ifndef __attribute_deprecated__
+#define __attribute_deprecated__
+#endif
+#ifndef __restrict
+#define __restrict
+#endif
+
 // NOTE: this is here so we can avoid directly including pthread.h, since technically it would pull it a lot of libc code we don't need
 #ifndef _BITS_PTHREADTYPES_COMMON_H
 #define _BITS_PTHREADTYPES_COMMON_H 1

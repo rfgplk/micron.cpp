@@ -12,6 +12,12 @@
 #include "../../types.hpp"
 #include "../intrin.hpp"
 
+// f128 / i128 are GCC `__attribute__((vector_size(16)))` types; passing them
+// to `same_as<T, f128>` strips type attributes, which GCC reports under
+// -Wignored-attributes. Suppression is purely cosmetic.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // aarch32 types
 // dispatched via ns
@@ -189,3 +195,5 @@ neon_v7_cneq_s64(int64x2_t a, int64x2_t b) noexcept
 
 };     // namespace simd
 };     // namespace micron
+
+#pragma GCC diagnostic pop

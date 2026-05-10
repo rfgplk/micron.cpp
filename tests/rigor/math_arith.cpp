@@ -190,5 +190,5 @@ main()
   end_test_case();
 
   print("=== MATH::ARITH TESTS PASSED ===");
-  return 1;
+  return 0;
 }

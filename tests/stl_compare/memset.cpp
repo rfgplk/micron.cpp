@@ -13,6 +13,5 @@ main()
     ++x;
   }
 
-  for ( auto b : buf )
-    std::cout << static_cast<int>(b) << ' ';
+  for ( auto b : buf ) std::cout << static_cast<int>(b) << ' ';
 }

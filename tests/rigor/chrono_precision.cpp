@@ -30,8 +30,7 @@ static bool
 feq(micron::fduration_t a, micron::fduration_t b, micron::fduration_t eps = ABS_EPS)
 {
   micron::fduration_t diff = a - b;
-  if ( diff < 0 )
-    diff = -diff;
+  if ( diff < 0 ) diff = -diff;
   return diff <= eps;
 }
 
@@ -653,8 +652,7 @@ test_time_point_precision()
   sb::test_case("zero start: 1000 increments of 0.001 == 1.0");
   {
     micron::time_point<> tp{ 0.0 };
-    for ( int i = 0; i < 1000; ++i )
-      tp += micron::fduration_t{ 0.001 };
+    for ( int i = 0; i < 1000; ++i ) tp += micron::fduration_t{ 0.001 };
     sb::require_true(feq(tp.time_since_epoch(), micron::fduration_t{ 1.0 }, micron::fduration_t{ 1e-6 }));     // tighter: 1us tolerance
   }
   sb::end_test_case();
@@ -662,8 +660,7 @@ test_time_point_precision()
   sb::test_case("1000 decrements of 0.001 from 1.0 returns to 0.0");
   {
     micron::time_point<> tp{ micron::fduration_t{ 1.0 } };
-    for ( int i = 0; i < 1000; ++i )
-      tp -= micron::fduration_t{ 0.001 };
+    for ( int i = 0; i < 1000; ++i ) tp -= micron::fduration_t{ 0.001 };
     sb::require_true(feq(tp.time_since_epoch(), micron::fduration_t{ 0.0 }, micron::fduration_t{ 1e-6 }));
   }
   sb::end_test_case();
@@ -946,8 +943,7 @@ test_calendar_precision()
     } ly[] = { { 1970, false }, { 1972, true }, { 1980, true },  { 1900, false }, { 2000, true },  { 2100, false },
                { 2096, true },  { 2024, true }, { 2023, false }, { 1600, true },  { 1700, false }, { 1800, false } };
 
-    for ( auto &lc : ly )
-      sb::require(micron::year{ lc.y }.is_leap(), lc.leap);
+    for ( auto &lc : ly ) sb::require(micron::year{ lc.y }.is_leap(), lc.leap);
   }
   sb::end_test_case();
 }

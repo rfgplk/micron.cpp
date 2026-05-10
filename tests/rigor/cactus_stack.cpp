@@ -270,8 +270,7 @@ main()
   {
     // N=32 is safe; base grows to depth 10, branches to depth 11
     micron::cactus_stack<int, 32> base;
-    for ( int i = 0; i < 10; ++i )
-      base = base.push(i);
+    for ( int i = 0; i < 10; ++i ) base = base.push(i);
 
     auto d1 = base.push(100);
     auto d2 = base.push(200);
@@ -442,8 +441,7 @@ main()
     auto c = micron::cactus_stack<int>{}.child(1).child(2).child(3);
     int expected[] = { 3, 2, 1 };
     int idx = 0;
-    for ( const int &v : c.vals() )
-      require(v, expected[idx++]);
+    for ( const int &v : c.vals() ) require(v, expected[idx++]);
     require(idx, 3);
   }
   end_test_case();
@@ -463,8 +461,7 @@ main()
   test_case("vals() count matches size()");
   {
     auto c = micron::cactus_stack<int, 16>{};
-    for ( int i = 0; i < 12; ++i )
-      c = c.push(i);
+    for ( int i = 0; i < 12; ++i ) c = c.push(i);
     size_t cnt = 0;
     for ( const int &v : c.vals() ) {
       (void)v;
@@ -654,8 +651,7 @@ main()
     reset_tracked();
     {
       micron::cactus_stack<Tracked, 16> c;
-      for ( int i = 0; i < 12; ++i )
-        c = c.push(Tracked(i));
+      for ( int i = 0; i < 12; ++i ) c = c.push(Tracked(i));
       require(c.size(), size_t(12));
     }
     require(Tracked::ctor, Tracked::dtor);
@@ -667,11 +663,9 @@ main()
     reset_tracked();
     {
       micron::cactus_stack<Tracked, 8> c;
-      for ( int i = 0; i < 6; ++i )
-        c = c.push(Tracked(i));
+      for ( int i = 0; i < 6; ++i ) c = c.push(Tracked(i));
       c = c.pop().pop().pop();     // orphans 3 slots
-      for ( int i = 0; i < 3; ++i )
-        c = c.push(Tracked(100 + i));
+      for ( int i = 0; i < 3; ++i ) c = c.push(Tracked(100 + i));
     }
     require(Tracked::ctor, Tracked::dtor);
   }
@@ -776,8 +770,7 @@ main()
     // N=128 >= depth 100; no issues
     constexpr int K = 100;
     micron::cactus_stack<int, 128> c;
-    for ( int i = 0; i < K; ++i )
-      c = c.push(i);
+    for ( int i = 0; i < K; ++i ) c = c.push(i);
     require(c.size(), size_t(K));
     for ( int i = K - 1; i >= 0; --i ) {
       require(c.val(), i);
@@ -790,11 +783,9 @@ main()
   test_case("vals() over 50 elements matches push order");
   {
     micron::cactus_stack<int, 64> c;
-    for ( int i = 1; i <= 50; ++i )
-      c = c.push(i);
+    for ( int i = 1; i <= 50; ++i ) c = c.push(i);
     int expect = 50;
-    for ( const int &v : c.vals() )
-      require(v, expect--);
+    for ( const int &v : c.vals() ) require(v, expect--);
     require(expect, 0);
   }
   end_test_case();
@@ -818,8 +809,7 @@ main()
     reset_tracked();
     {
       micron::cactus_stack<Tracked, 64> c;
-      for ( int i = 0; i < 50; ++i )
-        c = c.push(Tracked(i));
+      for ( int i = 0; i < 50; ++i ) c = c.push(Tracked(i));
     }
     require(Tracked::ctor, Tracked::dtor);
   }
@@ -831,10 +821,8 @@ main()
     {
       micron::cactus_stack<Tracked, 32> c;
       for ( int round = 0; round < 10; ++round ) {
-        for ( int i = 0; i < 10; ++i )
-          c = c.push(Tracked(round * 10 + i));
-        for ( int i = 0; i < 8; ++i )
-          c = c.pop();
+        for ( int i = 0; i < 10; ++i ) c = c.push(Tracked(round * 10 + i));
+        for ( int i = 0; i < 8; ++i ) c = c.pop();
       }
     }
     require(Tracked::ctor, Tracked::dtor);
@@ -880,8 +868,7 @@ main()
     auto c = micron::cactus_stack<int>{}.child(3).child(2).child(1);
     int expected[] = { 1, 2, 3 };
     int idx = 0;
-    for ( const int &v : c.vals() )
-      require(v, expected[idx++]);
+    for ( const int &v : c.vals() ) require(v, expected[idx++]);
     require(idx, 3);
   }
   end_test_case();

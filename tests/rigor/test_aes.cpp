@@ -5,8 +5,8 @@
 //   - aes::dec_round(aes::dec_round_last(...), ...) shape is sane
 //   - keygen_assist with rcon=0x01 produces vendor's documented test vector
 
-#include "../snowball/snowball.hpp"
 #include "../../src/simd/aliases/aes.hpp"
+#include "../snowball/snowball.hpp"
 
 namespace ma = ::micron::simd::aes;
 
@@ -35,10 +35,10 @@ main()
 
   test_case("aes: enc -> dec one round != identity (state changes)");
   __m128i state = _mm_setr_epi32(0x11223344, 0x55667788, 0x99aabbcc, (int)0xddeeff00u);
-  __m128i key   = _mm_set1_epi32(int(0xa5a5a5a5u));
-  __m128i e1    = ma::enc_round(state, key);
+  __m128i key = _mm_set1_epi32(int(0xa5a5a5a5u));
+  __m128i e1 = ma::enc_round(state, key);
   require_true(v_eq(e1, state) == false);
-  __m128i e2    = ma::dec_round(e1, key);
+  __m128i e2 = ma::dec_round(e1, key);
   require_true(v_eq(e2, state) == false);     // one enc + one dec is NOT identity
   end_test_case();
 
@@ -47,22 +47,22 @@ main()
   // where c is the 16-byte vector with each lane = SubBytes(0) = 0x63. since
   // ShiftRows preserves an all-equal state and MixColumns of 0x63x16 is
   // 0x63x16 (linear, columns equal), AESENC(0, 0) = splat(0x63).
-  __m128i z   = _mm_setzero_si128();
-  __m128i ez  = ma::enc_round(z, z);
+  __m128i z = _mm_setzero_si128();
+  __m128i ez = ma::enc_round(z, z);
   alignas(16) unsigned char ezb[16];
-  _mm_storeu_si128((__m128i*)ezb, ez);
-  for (int i = 0; i < 16; ++i) require_true(ezb[i] == 0x63);
+  _mm_storeu_si128((__m128i *)ezb, ez);
+  for ( int i = 0; i < 16; ++i ) require_true(ezb[i] == 0x63);
 
   // dec_round_last is the exact inverse of enc_round_last when state is XOR-ed
   // with k beforehand: AESDECLAST(AESENCLAST(s ^ k, 0), 0) ^ k = s. easier to
   // just verify aesdeclast undoes aesenclast for s=0, k=0.
-  __m128i el  = ma::enc_round_last(z, z);
-  __m128i dl  = ma::dec_round_last(el, z);
+  __m128i el = ma::enc_round_last(z, z);
+  __m128i dl = ma::dec_round_last(el, z);
   require_true(v_eq(dl, z) == true);
 
   // inv_mix_columns is its own inverse on a state where MixColumns leaves it
   // unchanged: e.g. zero. (the proper inverse-key relation needs the schedule.)
-  __m128i im  = ma::inv_mix_columns(z);
+  __m128i im = ma::inv_mix_columns(z);
   require_true(v_eq(im, z) == true);
   end_test_case();
 
@@ -72,7 +72,7 @@ main()
   // intel manual: RotWord(SubWord(0_u32)) = 0x63636363 rotr by 8 = 0x63636363,
   // XOR with rcon byte 0x01 in the low byte: 0x63636362
   alignas(16) unsigned int lanes[4];
-  _mm_storeu_si128((__m128i*)lanes, kg);
+  _mm_storeu_si128((__m128i *)lanes, kg);
   require_true(lanes[1] == 0x63636362u);
   end_test_case();
 

@@ -36,20 +36,16 @@ main(void)
   mc::io::stdoutln(fitr.next_value(), " ", ditr.next_value());
   mc::io::stdoutln(fitr.count());
   mc::vector<int> vints;
-  for ( int i = 0; i < (int)80; i++ )
-    vints.emplace_back(i * 3);
+  for ( int i = 0; i < (int)80; i++ ) vints.emplace_back(i * 3);
   mc::iterator<int> ints(vints);
   mc::io::stdoutln(*ints.nth(20));
-  for ( auto n : vints )
-    mc::io::stdout(n, " ");
+  for ( auto n : vints ) mc::io::stdout(n, " ");
   mc::io::stdout("\n");
   ints.for_each(dbl);
-  for ( auto n : vints )
-    mc::io::stdout(n, " ");
+  for ( auto n : vints ) mc::io::stdout(n, " ");
   mc::io::stdout("\n");
 
-  for ( size_t i = 0; i < vints.size(); i++ )
-    vints[i] = i;
+  for ( size_t i = 0; i < vints.size(); i++ ) vints[i] = i;
   ints = mc::iterator<int>(vints);
   ints.skip(skip2);
   mc::io::stdoutln(*ints.peek());

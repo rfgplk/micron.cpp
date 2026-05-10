@@ -23,7 +23,7 @@ main(void)
   mc::console(*robin.find("hello"));
 
   mc::robin_map<mc::string, int> robin_stress(10000);
-  for ( u64 i; i < 1000; ++i ){
+  for ( u64 i; i < 1000; ++i ) {
     mc::console(i);
     robin_stress.insert(mc::to_string(i + 1143), i * 2 >> 2);
   }

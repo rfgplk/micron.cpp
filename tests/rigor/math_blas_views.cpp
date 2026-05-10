@@ -1,9 +1,9 @@
 // math_blas_views.cpp — Snowball tests for BLAS view types
 
+#include "../../src/array/array.hpp"
 #include "../../src/math/blas/blas.hpp"
 #include "../../src/std.hpp"
 #include "../../src/vector/vector.hpp"
-#include "../../src/array/array.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -45,7 +45,10 @@ main()
 
     // micron::vector
     micron::vector<f64> mv(4, 0.0);
-    mv[0] = 10; mv[1] = 20; mv[2] = 30; mv[3] = 40;
+    mv[0] = 10;
+    mv[1] = 20;
+    mv[2] = 30;
+    mv[3] = 40;
     auto v3 = quants::vec_view<f64>::from(mv);
     require_true(v3.n == 4);
     require_true(near(v3[0], 10.0));
@@ -53,7 +56,10 @@ main()
 
     // micron::array
     micron::array<f64, 4> ma{};
-    ma[0] = 5; ma[1] = 6; ma[2] = 7; ma[3] = 8;
+    ma[0] = 5;
+    ma[1] = 6;
+    ma[2] = 7;
+    ma[3] = 8;
     auto v4 = quants::vec_view<f64>::from(ma);
     require_true(v4.n == 4);
     require_true(near(v4[2], 7.0));
@@ -73,8 +79,8 @@ main()
 
   test_case("row_view + col_view: at(r,c) honours layout");
   {
-    f64 row_buf[6] = { 1, 2, 3, 4, 5, 6 };       // 2x3 row-major
-    f64 col_buf[6] = { 1, 4, 2, 5, 3, 6 };       // same matrix, col-major
+    f64 row_buf[6] = { 1, 2, 3, 4, 5, 6 };     // 2x3 row-major
+    f64 col_buf[6] = { 1, 4, 2, 5, 3, 6 };     // same matrix, col-major
 
     auto rv = matrix::row_view<f64>::from(row_buf, 2, 3);
     auto cv = matrix::col_view<f64>::from(col_buf, 2, 3);
@@ -86,9 +92,9 @@ main()
 
   test_case("transpose_view: zero-copy rebind");
   {
-    f64 buf[6] = { 1, 2, 3, 4, 5, 6 };           // 2x3 row-major
+    f64 buf[6] = { 1, 2, 3, 4, 5, 6 };     // 2x3 row-major
     auto rv = matrix::row_view<f64>::from(buf, 2, 3);
-    auto tv = matrix::transpose_view(rv);        // now 3x2 col-major over same data
+    auto tv = matrix::transpose_view(rv);     // now 3x2 col-major over same data
 
     require_true(tv.rows == 3);
     require_true(tv.cols == 2);
@@ -108,14 +114,9 @@ main()
   test_case("row_view::submat: ld preserved");
   {
     // 4x4 row-major
-    f64 buf[16] = {
-       1,  2,  3,  4,
-       5,  6,  7,  8,
-       9, 10, 11, 12,
-      13, 14, 15, 16
-    };
+    f64 buf[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
     auto v = matrix::row_view<f64>::from(buf, 4, 4);
-    auto sub = v.submat(1, 1, 2, 2);          // [[6,7];[10,11]]
+    auto sub = v.submat(1, 1, 2, 2);     // [[6,7];[10,11]]
     require_true(sub.rows == 2);
     require_true(sub.cols == 2);
     require_true(sub.ld == 4);
@@ -151,5 +152,5 @@ main()
   end_test_case();
 
   print("=== blas views ok ===");
-  return 1;
+  return 0;
 }

@@ -750,12 +750,10 @@ main(void)
   {
     mc::shared_pointer<int> root(0);
     mc::shared_pointer<int> copies[100];
-    for ( int i = 0; i < 100; i++ )
-      copies[i] = root;
+    for ( int i = 0; i < 100; i++ ) copies[i] = root;
     sb::require(root.refs() == 101);
     *root = 42;
-    for ( int i = 0; i < 100; i++ )
-      sb::require(*copies[i] == 42);
+    for ( int i = 0; i < 100; i++ ) sb::require(*copies[i] == 42);
   }
   sb::end_test_case();
 

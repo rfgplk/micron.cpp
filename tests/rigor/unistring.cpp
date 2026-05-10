@@ -551,8 +551,7 @@ main(void)
     auto s = micron::to_scientific_stack(1.0, 2u);
     bool has_exp = false;
     for ( usize i = 0; i < s.size(); ++i )
-      if ( s[i] == 'e' || s[i] == 'E' )
-        has_exp = true;
+      if ( s[i] == 'e' || s[i] == 'E' ) has_exp = true;
     sb::require(has_exp);
   }
   sb::end_test_case();
@@ -572,8 +571,7 @@ main(void)
     // fixed form — should not contain 'e'
     bool has_exp = false;
     for ( usize i = 0; i < s.size(); ++i )
-      if ( s[i] == 'e' || s[i] == 'E' )
-        has_exp = true;
+      if ( s[i] == 'e' || s[i] == 'E' ) has_exp = true;
     sb::require(!has_exp);
   }
   sb::end_test_case();
@@ -583,8 +581,7 @@ main(void)
     auto s = micron::to_general_stack(0.0000001, 6u);
     bool has_exp = false;
     for ( usize i = 0; i < s.size(); ++i )
-      if ( s[i] == 'e' || s[i] == 'E' )
-        has_exp = true;
+      if ( s[i] == 'e' || s[i] == 'E' ) has_exp = true;
     sb::require(has_exp);
   }
   sb::end_test_case();
@@ -594,8 +591,7 @@ main(void)
     auto s = micron::to_general_stack(1e20, 6u);
     bool has_exp = false;
     for ( usize i = 0; i < s.size(); ++i )
-      if ( s[i] == 'e' || s[i] == 'E' )
-        has_exp = true;
+      if ( s[i] == 'e' || s[i] == 'E' ) has_exp = true;
     sb::require(has_exp);
   }
   sb::end_test_case();

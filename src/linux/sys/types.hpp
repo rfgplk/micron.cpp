@@ -42,4 +42,31 @@ using ino64_t = __ino64_t;
 using daddr_t = __s32_type;
 };     // namespace posix
 
+// REEXPORT GLOBALLY
+using posix::blkcnt_t;
+using posix::blksize_t;
+using posix::clock_t;
+using posix::dev_t;
+using posix::gid_t;
+using posix::id_t;
+using posix::ino64_t;
+using posix::ino_t;
+using posix::key_t;
+using posix::mode_t;
+using posix::nlink_t;
+using posix::off64_t;
+using posix::off_t;
+using posix::pid_t;
+using posix::rlim_t;
+using posix::time_t;
+using posix::uid_t;
+
 };     // namespace micron
+
+// WARNING: __special/pthread is extern "C" and uses bare pid_t at file scope
+#include "../../bits/__arch.hpp"
+#if defined(__micron_arch_arm_any)
+using pid_t = ::micron::posix::pid_t;
+using uid_t = ::micron::posix::uid_t;
+using gid_t = ::micron::posix::gid_t;
+#endif

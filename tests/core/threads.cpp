@@ -8,8 +8,8 @@
 #include "../../src/linux/std.hpp"
 #include "../../src/mutex/locks/spin_lock.hpp"
 #include "../../src/std.hpp"
-#include "../../src/sync/yield.hpp"
 #include "../../src/sync/contract.hpp"
+#include "../../src/sync/yield.hpp"
 #include "../../src/thread/thread.hpp"
 #include "../../src/vector/vector.hpp"
 
@@ -49,6 +49,7 @@ fn_objs(const micron::vector<int> &a)
   mc::console("Size is: ", a.size());
   return 2;
 }
+
 int
 fn_ptrs_all(int **a, int **b, int **c)
 {
@@ -57,6 +58,7 @@ fn_ptrs_all(int **a, int **b, int **c)
   mc::console(c);
   return 7;
 }
+
 int
 fn_ptrs(int **a, int **b, int c)
 {
@@ -75,12 +77,14 @@ fn_forever(void)
   }
   return 0;
 }
+
 int
 fn_void(void)
 {
   mc::console("Void!");
   return 1001;
 }
+
 #include "../../src/sync/when.hpp"
 
 int

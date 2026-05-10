@@ -155,8 +155,7 @@ main()
   test_case("fill to capacity – full() becomes true");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 8; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 8; ++i ) cv.push(i);
     require_true(cv.full());
     require(cv.size(), size_t(8));
   }
@@ -166,8 +165,7 @@ main()
   test_case("FIFO ordering – push N elements, pop N in order");
   {
     micron::circle_vector<int, 16> cv;
-    for ( int i = 0; i < 16; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 16; ++i ) cv.push(i);
     for ( int i = 0; i < 16; ++i ) {
       require(cv.front(), i);
       cv.pop_front();
@@ -180,10 +178,8 @@ main()
   test_case("operator[] logical indexing");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 5; ++i )
-      cv.push(i * 10);
-    for ( size_t i = 0; i < 5; ++i )
-      require(cv[i], (int)(i * 10));
+    for ( int i = 0; i < 5; ++i ) cv.push(i * 10);
+    for ( size_t i = 0; i < 5; ++i ) require(cv[i], (int)(i * 10));
   }
   end_test_case();
 
@@ -191,8 +187,7 @@ main()
   test_case("at() returns correct element");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 4; ++i )
-      cv.push(i + 1);
+    for ( int i = 0; i < 4; ++i ) cv.push(i + 1);
     require(cv.at(0), 1);
     require(cv.at(3), 4);
   }
@@ -224,8 +219,7 @@ main()
   {
     micron::circle_vector<int, 4> cv;
     // fill: [0,1,2,3]
-    for ( int i = 0; i < 4; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 4; ++i ) cv.push(i);
     require_true(cv.full());
     require(cv.size(), size_t(4));
 
@@ -242,13 +236,11 @@ main()
   test_case("overwrite N times preserves last N elements in order");
   {
     micron::circle_vector<int, 4> cv;
-    for ( int i = 0; i < 20; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 20; ++i ) cv.push(i);
 
     // After 20 pushes into cap-4, the last 4 values are 16,17,18,19
     require(cv.size(), size_t(4));
-    for ( int i = 0; i < 4; ++i )
-      require(cv[i], 16 + i);
+    for ( int i = 0; i < 4; ++i ) require(cv[i], 16 + i);
   }
   end_test_case();
 
@@ -282,8 +274,7 @@ main()
   test_case("clear resets to empty");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 8; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 8; ++i ) cv.push(i);
     cv.clear();
     require_true(cv.empty());
     require_false(cv.full());
@@ -295,14 +286,11 @@ main()
   test_case("reuse after clear works correctly");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 8; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 8; ++i ) cv.push(i);
     cv.clear();
-    for ( int i = 100; i < 108; ++i )
-      cv.push(i);
+    for ( int i = 100; i < 108; ++i ) cv.push(i);
     require_true(cv.full());
-    for ( int i = 0; i < 8; ++i )
-      require(cv[i], 100 + i);
+    for ( int i = 0; i < 8; ++i ) require(cv[i], 100 + i);
   }
   end_test_case();
 
@@ -347,13 +335,11 @@ main()
   test_case("copy construction produces independent clone");
   {
     micron::circle_vector<int, 8> a;
-    for ( int i = 0; i < 5; ++i )
-      a.push(i);
+    for ( int i = 0; i < 5; ++i ) a.push(i);
 
     micron::circle_vector<int, 8> b(a);
     require(b.size(), a.size());
-    for ( size_t i = 0; i < b.size(); ++i )
-      require(b[i], a[i]);
+    for ( size_t i = 0; i < b.size(); ++i ) require(b[i], a[i]);
 
     // mutate b – a must be unaffected
     b.push(99);
@@ -366,14 +352,12 @@ main()
   test_case("copy assignment produces independent clone");
   {
     micron::circle_vector<int, 8> a;
-    for ( int i = 0; i < 4; ++i )
-      a.push(i * 3);
+    for ( int i = 0; i < 4; ++i ) a.push(i * 3);
 
     micron::circle_vector<int, 8> b;
     b = a;
     require(b.size(), a.size());
-    for ( size_t i = 0; i < b.size(); ++i )
-      require(b[i], a[i]);
+    for ( size_t i = 0; i < b.size(); ++i ) require(b[i], a[i]);
 
     b.clear();
     require(a.size(), size_t(4));
@@ -397,13 +381,11 @@ main()
   test_case("move construction transfers content and clears source");
   {
     micron::circle_vector<int, 8> a;
-    for ( int i = 0; i < 5; ++i )
-      a.push(i);
+    for ( int i = 0; i < 5; ++i ) a.push(i);
 
     micron::circle_vector<int, 8> b(micron::move(a));
     require(b.size(), size_t(5));
-    for ( int i = 0; i < 5; ++i )
-      require(b[i], i);
+    for ( int i = 0; i < 5; ++i ) require(b[i], i);
 
     require_true(a.empty());
   }
@@ -413,14 +395,12 @@ main()
   test_case("move assignment transfers content and clears source");
   {
     micron::circle_vector<int, 8> a;
-    for ( int i = 0; i < 6; ++i )
-      a.push(i + 10);
+    for ( int i = 0; i < 6; ++i ) a.push(i + 10);
 
     micron::circle_vector<int, 8> b;
     b = micron::move(a);
     require(b.size(), size_t(6));
-    for ( int i = 0; i < 6; ++i )
-      require(b[i], i + 10);
+    for ( int i = 0; i < 6; ++i ) require(b[i], i + 10);
 
     require_true(a.empty());
   }
@@ -430,8 +410,7 @@ main()
   test_case("iterator begin/end covers all elements in order");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 6; ++i )
-      cv.push(i * 2);
+    for ( int i = 0; i < 6; ++i ) cv.push(i * 2);
 
     int expected = 0;
     for ( auto it = cv.begin(); it != cv.end(); ++it ) {
@@ -446,12 +425,10 @@ main()
   test_case("range-for loop iterates correctly");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 1; i <= 5; ++i )
-      cv.push(i);
+    for ( int i = 1; i <= 5; ++i ) cv.push(i);
 
     int sum = 0;
-    for ( auto v : cv )
-      sum += v;
+    for ( auto v : cv ) sum += v;
     require(sum, 15);
   }
   end_test_case();
@@ -465,8 +442,7 @@ main()
     cv.push(9);
 
     int product = 1;
-    for ( auto it = cv.cbegin(); it != cv.cend(); ++it )
-      product *= *it;
+    for ( auto it = cv.cbegin(); it != cv.cend(); ++it ) product *= *it;
     require(product, 162);
   }
   end_test_case();
@@ -475,8 +451,7 @@ main()
   test_case("iterator pre/post increment and decrement");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 4; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 4; ++i ) cv.push(i);
 
     auto it = cv.begin();
     require(*it, 0);
@@ -497,8 +472,7 @@ main()
   test_case("iterator arithmetic and subscript");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 6; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 6; ++i ) cv.push(i);
 
     auto it = cv.begin();
     require(*(it + 3), 3);
@@ -514,8 +488,7 @@ main()
   test_case("iterator comparison operators");
   {
     micron::circle_vector<int, 8> cv;
-    for ( int i = 0; i < 4; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 4; ++i ) cv.push(i);
 
     auto a = cv.begin();
     auto b = cv.begin() + 2;
@@ -539,8 +512,7 @@ main()
   {
     // Push 4+3 into cap-4 so head has wrapped; iterate and verify order
     micron::circle_vector<int, 4> cv;
-    for ( int i = 0; i < 7; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 7; ++i ) cv.push(i);
     // last 4 pushed: 3,4,5,6
     int expected = 3;
     for ( auto v : cv ) {
@@ -595,11 +567,9 @@ main()
   {
     constexpr size_t CAP = 16;
     micron::circle_vector<int, CAP> cv;
-    for ( int i = 0; i < 10000; ++i )
-      cv.push(i);
+    for ( int i = 0; i < 10000; ++i ) cv.push(i);
 
-    for ( size_t i = 0; i < CAP; ++i )
-      require(cv[i], (int)(10000 - CAP + i));
+    for ( size_t i = 0; i < CAP; ++i ) require(cv[i], (int)(10000 - CAP + i));
   }
   end_test_case();
 
@@ -608,8 +578,7 @@ main()
   {
     micron::circle_vector<int, 8> cv;
     for ( int round = 0; round < 1000; ++round ) {
-      for ( int i = 0; i < 8; ++i )
-        cv.push(i);
+      for ( int i = 0; i < 8; ++i ) cv.push(i);
       require_true(cv.full());
       cv.clear();
       require_true(cv.empty());
@@ -622,12 +591,10 @@ main()
   {
     reset_tracked();
     micron::circle_vector<Tracked, 8> a;
-    for ( int i = 0; i < 5; ++i )
-      a.emplace_back(i);
+    for ( int i = 0; i < 5; ++i ) a.emplace_back(i);
 
     micron::circle_vector<Tracked, 8> b(a);
-    for ( size_t i = 0; i < 5; ++i )
-      require(b[i].v, (int)i);
+    for ( size_t i = 0; i < 5; ++i ) require(b[i].v, (int)i);
   }
   end_test_case();
 

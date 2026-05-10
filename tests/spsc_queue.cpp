@@ -17,23 +17,20 @@ main()
   enable_scope()
   {
     micron::spsc_queue<int, 64> qu;
-    for ( int i = 0; i < 50; i++ )
-      qu.push(i);
+    for ( int i = 0; i < 50; i++ ) qu.push(i);
     while ( !qu.empty() ) {
       mc::console("Back: ", qu.front());
       qu.pop();
     }
     qu.clear();
-    for ( int i = 20; i < 140; i++ )
-      qu.push(i);
+    for ( int i = 20; i < 140; i++ ) qu.push(i);
     mc::console(qu.front());
   };
 
   disable_scope()
   {
     micron::queue<int> qu;
-    for ( int i = 3; i < 10; i++ )
-      qu.push(i);
+    for ( int i = 3; i < 10; i++ ) qu.push(i);
     while ( !qu.empty() ) {
       mc::console("Front: ", qu.front());
       mc::console("Back: ", qu.last());
@@ -43,11 +40,9 @@ main()
   disable_scope()
   {
     micron::queue<int> qu;
-    for ( int i = 0; i < 50; i++ )
-      qu.push(i);
+    for ( int i = 0; i < 50; i++ ) qu.push(i);
     qu.reserve(65536);
-    for ( int i = 50; i < 60; i++ )
-      qu.push(i);
+    for ( int i = 50; i < 60; i++ ) qu.push(i);
     while ( !qu.empty() ) {
       mc::console("Front: ", qu.front());
       mc::console("Back: ", qu.last());

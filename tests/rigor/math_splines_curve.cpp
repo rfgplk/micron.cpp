@@ -55,8 +55,7 @@ main()
       { 7.0, -1.0, 0.0 },
     };
     auto c = make_linear_curve<f64, 3>(raw_slice<const f64>(ts, 4), pts, 4);
-    for ( usize i = 0; i < 4; ++i )
-      require_true(near_v<3>(evaluate<f64, 3>(c, ts[i]), pts[i], 1e-13));
+    for ( usize i = 0; i < 4; ++i ) require_true(near_v<3>(evaluate<f64, 3>(c, ts[i]), pts[i], 1e-13));
     // Midpoint between pts[0] and pts[1]:
     auto m = evaluate<f64, 3>(c, 0.5);
     require_true(near(m.data[0], 0.5, 1e-13));
@@ -69,12 +68,9 @@ main()
   test_case("cubic_curve_nd<f64, 2>: interpolates exactly at parameter knots");
   {
     f64 ts[6] = { 0.0, 0.5, 1.2, 2.0, 3.1, 4.0 };
-    vec<f64, 2> pts[6] = {
-      { 0.0, 1.0 }, { 1.0, 0.5 }, { 2.0, -0.3 }, { 3.0, 2.5 }, { 1.5, 4.0 }, { -1.0, 3.0 }
-    };
+    vec<f64, 2> pts[6] = { { 0.0, 1.0 }, { 1.0, 0.5 }, { 2.0, -0.3 }, { 3.0, 2.5 }, { 1.5, 4.0 }, { -1.0, 3.0 } };
     auto c = make_cubic_curve<f64, 2>(raw_slice<const f64>(ts, 6), pts, 6, bc_kind::natural);
-    for ( usize i = 0; i < 6; ++i )
-      require_true(near_v<2>(evaluate<f64, 2>(c, ts[i]), pts[i], 1e-12));
+    for ( usize i = 0; i < 6; ++i ) require_true(near_v<2>(evaluate<f64, 2>(c, ts[i]), pts[i], 1e-12));
   }
   end_test_case();
 
@@ -123,10 +119,8 @@ main()
   test_case("regular_cubic_curve_nd<f64, 3>: uniform-spacing path");
   {
     constexpr usize n = 6;
-    vec<f64, 3> pts[n] = {
-      { 0.0, 0.0, 0.0 }, { 1.0, 0.5, 0.2 }, { 2.0, -0.3, 0.7 },
-      { 3.0, 2.5, -1.0 }, { 1.5, 4.0, 0.0 }, { -1.0, 3.0, 1.5 }
-    };
+    vec<f64, 3> pts[n]
+        = { { 0.0, 0.0, 0.0 }, { 1.0, 0.5, 0.2 }, { 2.0, -0.3, 0.7 }, { 3.0, 2.5, -1.0 }, { 1.5, 4.0, 0.0 }, { -1.0, 3.0, 1.5 } };
     const f64 t0 = 0.0, dt = 0.4;
     auto c = make_regular_cubic_curve<f64, 3>(t0, dt, pts, n, bc_kind::natural);
 
@@ -142,10 +136,7 @@ main()
   test_case("regular_cubic_curve_nd: matches general cubic_curve_nd on uniform ts");
   {
     constexpr usize n = 7;
-    vec<f64, 2> pts[n] = {
-      { 0.0, 1.0 }, { 1.0, 0.5 }, { 2.0, -0.3 }, { 3.0, 2.5 },
-      { 1.5, 4.0 }, { -1.0, 3.0 }, { -2.0, 2.5 }
-    };
+    vec<f64, 2> pts[n] = { { 0.0, 1.0 }, { 1.0, 0.5 }, { 2.0, -0.3 }, { 3.0, 2.5 }, { 1.5, 4.0 }, { -1.0, 3.0 }, { -2.0, 2.5 } };
     const f64 t0 = 0.0, dt = 1.0;
     f64 ts[n];
     for ( usize i = 0; i < n; ++i ) ts[i] = t0 + dt * f64(i);
@@ -180,9 +171,7 @@ main()
   test_case("cubic_curve_nd: linear-continue extrapolation respects per-axis slope");
   {
     f64 ts[5] = { 0, 1, 2, 3, 4 };
-    vec<f64, 2> pts[5] = {
-      { 0, 0 }, { 1, 1 }, { 2, 4 }, { 3, 9 }, { 4, 16 }
-    };
+    vec<f64, 2> pts[5] = { { 0, 0 }, { 1, 1 }, { 2, 4 }, { 3, 9 }, { 4, 16 } };
     auto c = make_cubic_curve<f64, 2>(raw_slice<const f64>(ts, 5), pts, 5, bc_kind::natural);
     c.mode = extrap::linear_continue;
     // Just check the extrap path executes and returns finite values.
@@ -194,5 +183,5 @@ main()
   end_test_case();
 
   print("=== CURVE_ND TESTS PASSED ===");
-  return 1;
+  return 0;
 }

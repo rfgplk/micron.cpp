@@ -4,9 +4,9 @@
 
 #include "../../src/algorithm/algorithm.hpp"
 #include "../../src/array/array.hpp"
+#include "../../src/io/console.hpp"
 #include "../../src/std.hpp"
 #include "../../src/vector/vector.hpp"
-#include "../../src/io/console.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -86,8 +86,7 @@ main()
   {
     auto v = make_vec({ 0, 0, 0, 0 });
     micron::fill(v, 7);
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      require(*it, 7);
+    for ( auto it = v.begin(); it != v.end(); ++it ) require(*it, 7);
   }
   end_test_case();
 
@@ -95,8 +94,7 @@ main()
   {
     micron::array<int, 6> a;
     micron::fill(a.begin(), a.end(), 42);
-    for ( size_t i = 0; i < a.size(); ++i )
-      require(a[i], 42);
+    for ( size_t i = 0; i < a.size(); ++i ) require(a[i], 42);
   }
   end_test_case();
 
@@ -104,11 +102,9 @@ main()
   {
     micron::array<int, 8> a{};
     micron::fill_n(a.begin(), 4, 99);
-    for ( size_t i = 0; i < 4; ++i )
-      require(a[i], 99);
+    for ( size_t i = 0; i < 4; ++i ) require(a[i], 99);
     // remainder untouched (default 0)
-    for ( size_t i = 4; i < 8; ++i )
-      require(a[i], 0);
+    for ( size_t i = 4; i < 8; ++i ) require(a[i], 0);
   }
   end_test_case();
 
@@ -116,8 +112,7 @@ main()
   {
     micron::vector<int> v(8, 0);
     micron::fill_n(v, 5, 3);
-    for ( size_t i = 0; i < 5; ++i )
-      require(v[i], 3);
+    for ( size_t i = 0; i < 5; ++i ) require(v[i], 3);
   }
   end_test_case();
 
@@ -143,8 +138,7 @@ main()
   {
     auto v = make_vec({ 5, 10, 15, 20 });
     micron::clear(v);
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      require(*it, 0);
+    for ( auto it = v.begin(); it != v.end(); ++it ) require(*it, 0);
   }
   end_test_case();
 
@@ -189,8 +183,7 @@ main()
     auto v = make_vec({ 1, 2, 3, 4, 5 });
     micron::reverse(v);
     int expected[] = { 5, 4, 3, 2, 1 };
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], expected[i]);
+    for ( int i = 0; i < 5; ++i ) require(v[i], expected[i]);
   }
   end_test_case();
 
@@ -228,8 +221,7 @@ main()
     micron::array<int, 5> a{ 1, 2, 3, 4, 5 };
     micron::transform(a.begin(), a.end(), [](int x) { return x * x; });
     int expected[] = { 1, 4, 9, 16, 25 };
-    for ( int i = 0; i < 5; ++i )
-      require(a[i], expected[i]);
+    for ( int i = 0; i < 5; ++i ) require(a[i], expected[i]);
   }
   end_test_case();
 
@@ -237,8 +229,7 @@ main()
   {
     auto v = make_vec({ 1, 2, 3, 4, 5 });
     micron::transform(v, [](int x) { return x + 10; });
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], i + 11);
+    for ( int i = 0; i < 5; ++i ) require(v[i], i + 11);
   }
   end_test_case();
 
@@ -299,8 +290,7 @@ main()
     micron::array<int, 5> a{};
     int counter = 0;
     micron::generate(a.begin(), a.end(), [&]() { return ++counter; });
-    for ( size_t i = 0; i < 5; ++i )
-      require(a[i], static_cast<int>(i + 1));
+    for ( size_t i = 0; i < 5; ++i ) require(a[i], static_cast<int>(i + 1));
   }
   end_test_case();
 
@@ -309,8 +299,7 @@ main()
     micron::vector<int> v(6, 0);
     int n = 0;
     micron::generate(v, [&]() { return n += 2; });
-    for ( int i = 0; i < 6; ++i )
-      require(v[i], (i + 1) * 2);
+    for ( int i = 0; i < 6; ++i ) require(v[i], (i + 1) * 2);
   }
   end_test_case();
 

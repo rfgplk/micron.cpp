@@ -78,9 +78,8 @@ struct Probe {
 
   ~Probe()
   {
-    if ( sentinel != MAGIC && sentinel != 0 )
-      corrupt = true;          // double-free or use-after-move corruption
-    sentinel = 0xCDCDCDCD;     // poison
+    if ( sentinel != MAGIC && sentinel != 0 ) corrupt = true;     // double-free or use-after-move corruption
+    sentinel = 0xCDCDCDCD;                                        // poison
     --live;
   }
 
@@ -105,8 +104,7 @@ struct Probe {
   static void
   check(const Probe &o)
   {
-    if ( o.sentinel != MAGIC )
-      corrupt = true;
+    if ( o.sentinel != MAGIC ) corrupt = true;
   }
 
   static void
@@ -194,8 +192,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 256; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 256; ++i ) v.emplace_back(i);
       require(Probe::live, 256);
     }
     require(Probe::live, 0);
@@ -210,8 +207,7 @@ main()
     {
       micron::vector<Probe> v;
       Probe src(42);
-      for ( int i = 0; i < 128; ++i )
-        v.push_back(src);
+      for ( int i = 0; i < 128; ++i ) v.push_back(src);
       // src + 128 copies alive
       require(Probe::live, 129);
     }
@@ -227,8 +223,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 64; ++i )
-        v.push_back(Probe(i));
+      for ( int i = 0; i < 64; ++i ) v.push_back(Probe(i));
       require(Probe::live, 64);
     }
     require(Probe::live, 0);
@@ -242,15 +237,13 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 8; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) v.emplace_back(i);
       int live_before = Probe::live;
       v.reserve(4096);
       // All objects must still be alive and uncorrupted
       require(Probe::live, live_before);
       require_false(Probe::corrupt);
-      for ( int i = 0; i < 8; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 8; ++i ) require(v[i].id, i);
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -263,10 +256,8 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 32; ++i )
-        v.emplace_back(i);
-      for ( size_t cap : { 64, 128, 256, 512, 1024 } )
-        v.reserve(cap);
+      for ( int i = 0; i < 32; ++i ) v.emplace_back(i);
+      for ( size_t cap : { 64, 128, 256, 512, 1024 } ) v.reserve(cap);
       require(Probe::live, 32);
       require_false(Probe::corrupt);
     }
@@ -280,8 +271,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 16; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
       require(Probe::live, 16);
 
       v.erase(size_t(0));
@@ -302,8 +292,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 32; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 32; ++i ) v.emplace_back(i);
 
       v.erase(size_t(4), size_t(12));     // 8 elements erased
       require(Probe::live, 24);
@@ -320,8 +309,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 64; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 64; ++i ) v.emplace_back(i);
       for ( int i = 63; i >= 0; --i ) {
         require(Probe::live, i + 1);
         v.pop_back();
@@ -340,16 +328,14 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 100; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 100; ++i ) v.emplace_back(i);
       require(Probe::live, 100);
       v.clear();
       require(Probe::live, 0);
       require_true(v.empty());
 
       // second fill after clear – should not double-destroy previous objects
-      for ( int i = 0; i < 50; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 50; ++i ) v.emplace_back(i);
       require(Probe::live, 50);
     }
     require(Probe::live, 0);
@@ -363,15 +349,13 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a;
-      for ( int i = 0; i < 32; ++i )
-        a.emplace_back(i);
+      for ( int i = 0; i < 32; ++i ) a.emplace_back(i);
       int after_fill = Probe::live;
 
       micron::vector<Probe> b(a);
       require(Probe::live, after_fill * 2);
       require(b.size(), a.size());
-      for ( size_t i = 0; i < a.size(); ++i )
-        require(b[i].id, a[i].id);
+      for ( size_t i = 0; i < a.size(); ++i ) require(b[i].id, a[i].id);
 
       // mutating b must not affect a
       b[0] = Probe(999);
@@ -388,10 +372,8 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a, b;
-      for ( int i = 0; i < 16; ++i )
-        a.emplace_back(i);
-      for ( int i = 0; i < 8; ++i )
-        b.emplace_back(100 + i);
+      for ( int i = 0; i < 16; ++i ) a.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) b.emplace_back(100 + i);
 
       int before = Probe::live;     // 24
       b = a;
@@ -410,8 +392,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a;
-      for ( int i = 0; i < 32; ++i )
-        a.emplace_back(i);
+      for ( int i = 0; i < 32; ++i ) a.emplace_back(i);
       require(Probe::live, 32);
 
       micron::vector<Probe> b(micron::move(a));
@@ -431,10 +412,8 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a, b;
-      for ( int i = 0; i < 20; ++i )
-        a.emplace_back(i);
-      for ( int i = 0; i < 10; ++i )
-        b.emplace_back(i);
+      for ( int i = 0; i < 20; ++i ) a.emplace_back(i);
+      for ( int i = 0; i < 10; ++i ) b.emplace_back(i);
       require(Probe::live, 30);
 
       b = micron::move(a);
@@ -454,13 +433,11 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 8; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) v.emplace_back(i);
       v.resize(32);
       require(Probe::live, 32);
       // original elements preserved
-      for ( int i = 0; i < 8; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 8; ++i ) require(v[i].id, i);
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -474,12 +451,10 @@ main()
     {
       Probe filler(77);
       micron::vector<Probe> v;
-      for ( int i = 0; i < 4; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 4; ++i ) v.emplace_back(i);
       v.resize(20, filler);
       require(Probe::live, 21);     // 4 originals + 16 copies + filler
-      for ( size_t i = 4; i < 20; ++i )
-        require(v[i].id, 77);
+      for ( size_t i = 4; i < 20; ++i ) require(v[i].id, 77);
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -492,8 +467,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 8; ++i )
-        v.emplace_back(i * 10);
+      for ( int i = 0; i < 8; ++i ) v.emplace_back(i * 10);
       require(Probe::live, 8);
 
       Probe p(999);
@@ -513,10 +487,8 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 5; ++i )
-        v.emplace_back(7);
-      for ( int i = 0; i < 5; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 5; ++i ) v.emplace_back(7);
+      for ( int i = 0; i < 5; ++i ) v.emplace_back(i);
       require(Probe::live, 10);
 
       v.remove(Probe(7));
@@ -539,18 +511,15 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a, b;
-      for ( int i = 0; i < 16; ++i )
-        a.emplace_back(i);
-      for ( int i = 16; i < 32; ++i )
-        b.emplace_back(i);
+      for ( int i = 0; i < 16; ++i ) a.emplace_back(i);
+      for ( int i = 16; i < 32; ++i ) b.emplace_back(i);
       require(Probe::live, 32);
 
       a.append(b);
       require(a.size(), size_t(32));
       require(b.size(), size_t(16));     // b untouched
       require(Probe::live, 48);          // 32 in a + 16 still in b
-      for ( size_t i = 0; i < 32; ++i )
-        require(a[i].id, (int)i);
+      for ( size_t i = 0; i < 32; ++i ) require(a[i].id, (int)i);
       require_false(Probe::corrupt);
     }
     require(Probe::live, 0);
@@ -563,16 +532,13 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a, b;
-      for ( int i = 0; i < 8; ++i )
-        a.emplace_back(i);
-      for ( int i = 8; i < 16; ++i )
-        b.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) a.emplace_back(i);
+      for ( int i = 8; i < 16; ++i ) b.emplace_back(i);
       int before = Probe::live;
 
       a.weld(micron::move(b));
       require(a.size(), size_t(16));
-      for ( size_t i = 0; i < 16; ++i )
-        require(a[i].id, (int)i);
+      for ( size_t i = 0; i < 16; ++i ) require(a[i].id, (int)i);
       require(Probe::live, before);     // total count unchanged (no new constructions)
     }
     require(Probe::live, 0);
@@ -588,8 +554,7 @@ main()
     MoveOnlyProbe::reset();
     {
       micron::vector<MoveOnlyProbe> v;
-      for ( int i = 0; i < 64; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 64; ++i ) v.emplace_back(i);
       require(MoveOnlyProbe::live, 64);
     }
     require(MoveOnlyProbe::live, 0);
@@ -602,8 +567,7 @@ main()
     MoveOnlyProbe::reset();
     {
       micron::vector<MoveOnlyProbe> a;
-      for ( int i = 0; i < 32; ++i )
-        a.emplace_back(i);
+      for ( int i = 0; i < 32; ++i ) a.emplace_back(i);
 
       micron::vector<MoveOnlyProbe> b(micron::move(a));
       require(MoveOnlyProbe::live, 32);
@@ -620,11 +584,9 @@ main()
     MoveOnlyProbe::reset();
     {
       micron::vector<MoveOnlyProbe> v;
-      for ( int i = 0; i < 16; ++i )
-        v.push_back(MoveOnlyProbe(i));
+      for ( int i = 0; i < 16; ++i ) v.push_back(MoveOnlyProbe(i));
       require(MoveOnlyProbe::live, 16);
-      for ( int i = 0; i < 16; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 16; ++i ) require(v[i].id, i);
     }
     require(MoveOnlyProbe::live, 0);
   }
@@ -638,8 +600,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 8; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) v.emplace_back(i);
 
       require_throw([&]() { (void)v.at(8); });
       require_throw([&]() { (void)v.at(99); });
@@ -647,8 +608,7 @@ main()
       // vector must be fully intact after throws
       require(v.size(), size_t(8));
       require(Probe::live, 8);
-      for ( int i = 0; i < 8; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 8; ++i ) require(v[i].id, i);
     }
     require(Probe::live, 0);
   }
@@ -660,8 +620,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 4; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 4; ++i ) v.emplace_back(i);
 
       require_throw([&]() { v.erase(size_t(4)); });
       require_throw([&]() { v.erase(size_t(99)); });
@@ -707,8 +666,7 @@ main()
   {
     micron::vector<int> v;
     v.reserve(16);
-    for ( int i = 0; i < 8; ++i )
-      v.push_back(i);
+    for ( int i = 0; i < 8; ++i ) v.push_back(i);
     // capacity is >=16, length is 8
     // operator[] checks against capacity (per implementation note)
     // so indices 0..capacity-1 are valid reads per design
@@ -726,13 +684,11 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 16; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
       v = v;     // must not crash or corrupt
       require(v.size(), size_t(16));
       require(Probe::live, 16);
-      for ( int i = 0; i < 16; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 16; ++i ) require(v[i].id, i);
     }
     require(Probe::live, 0);
   }
@@ -744,8 +700,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 16; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
       v = micron::move(v);
       // implementation may clear or keep; either way must not corrupt
       require_false(Probe::corrupt);
@@ -762,8 +717,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 100000; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 100000; ++i ) v.emplace_back(i);
       require(Probe::live, 100000);
       require_false(Probe::corrupt);
     }
@@ -778,8 +732,7 @@ main()
     {
       micron::vector<Probe> v;
       for ( int round = 0; round < 1000; ++round ) {
-        for ( int i = 0; i < 100; ++i )
-          v.emplace_back(i);
+        for ( int i = 0; i < 100; ++i ) v.emplace_back(i);
         require(Probe::live, 100);
         v.clear();
         require(Probe::live, 0);
@@ -818,13 +771,11 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 99; i >= 0; --i )
-        v.emplace_back(i);
+      for ( int i = 99; i >= 0; --i ) v.emplace_back(i);
       v.sort();
       require(Probe::live, 100);
       require_false(Probe::corrupt);
-      for ( int i = 0; i < 100; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 100; ++i ) require(v[i].id, i);
     }
     require(Probe::live, 0);
   }
@@ -836,12 +787,10 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 999; i >= 0; --i )
-        v.insert_sort(Probe(i));
+      for ( int i = 999; i >= 0; --i ) v.insert_sort(Probe(i));
       require(Probe::live, 1000);
       require_false(Probe::corrupt);
-      for ( int i = 0; i < 1000; ++i )
-        require(v[i].id, i);
+      for ( int i = 0; i < 1000; ++i ) require(v[i].id, i);
     }
     require(Probe::live, 0);
   }
@@ -853,8 +802,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 512; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 512; ++i ) v.emplace_back(i);
       for ( int i = 0; i < 256; ++i ) {
         require(v[0].id, i);
         v.erase(size_t(0));
@@ -872,8 +820,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 100; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 100; ++i ) v.emplace_back(i);
       Probe filler(42);
       for ( int round = 0; round < 100; ++round ) {
         v.assign(50, filler);
@@ -946,8 +893,7 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> v;
-      for ( int i = 0; i < 16; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
       v.resize(4);     // resize to smaller – implementation skips per code
       require(v.size(), size_t(16));
       require(Probe::live, 16);
@@ -984,15 +930,13 @@ main()
       micron::vector<micron::vector<int>> outer;
       for ( int i = 0; i < 16; ++i ) {
         micron::vector<int> inner;
-        for ( int j = 0; j < 16; ++j )
-          inner.push_back(i * 16 + j);
+        for ( int j = 0; j < 16; ++j ) inner.push_back(i * 16 + j);
         outer.push_back(micron::move(inner));
       }
       require(outer.size(), size_t(16));
       for ( int i = 0; i < 16; ++i ) {
         require(outer[i].size(), size_t(16));
-        for ( int j = 0; j < 16; ++j )
-          require(outer[i][j], i * 16 + j);
+        for ( int j = 0; j < 16; ++j ) require(outer[i][j], i * 16 + j);
       }
     }
     // Valgrind must report 0 leaks here
@@ -1005,10 +949,8 @@ main()
     Probe::reset();
     {
       micron::vector<Probe> a, b;
-      for ( int i = 0; i < 8; ++i )
-        a.emplace_back(i);
-      for ( int i = 8; i < 24; ++i )
-        b.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) a.emplace_back(i);
+      for ( int i = 8; i < 24; ++i ) b.emplace_back(i);
       require(Probe::live, 24);
 
       a.swap(b);
@@ -1045,5 +987,5 @@ main()
   end_test_case();
 
   sb::print("=== ALL INTEGRITY TESTS PASSED ===");
-  return 1;
+  return 0;
 }

@@ -22,6 +22,7 @@ namespace __bits
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpsabi"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #if defined(__ARM_FP16_FORMAT_IEEE) || defined(__ARM_FP16_FORMAT_ALTERNATIVE) || defined(__micron_arm_fp16)
 using float16_t = __fp16;

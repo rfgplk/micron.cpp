@@ -4,8 +4,8 @@
 // without -mavx512f. runtime tests RUN only when the host actually has
 // AVX-512 (probed via __AVX512F__ at compile time + cpuid at runtime).
 
-#include "../snowball/snowball.hpp"
 #include "../../src/simd/aliases/avx512.hpp"
+#include "../snowball/snowball.hpp"
 
 namespace mz = ::micron::simd::avx512;
 
@@ -31,19 +31,20 @@ v_eq(T a, T b) noexcept
 #pragma GCC target("avx512f,avx512bw,avx512dq,avx512vl")
 
 [[gnu::noinline]] static int
-kernel_f32(const float* in)
+kernel_f32(const float *in)
 {
   __m512 a = mz::loadu_f32(in);
   __m512 b = mz::add_f32(a, a);
   __m512 c = mz::mul_f32(b, mz::splat_f32(0.5f));
   alignas(64) float out[16];
   mz::storeu_f32(out, c);
-  for (int i = 0; i < 16; ++i) if (out[i] != in[i] * 1.0f) return 0;
+  for ( int i = 0; i < 16; ++i )
+    if ( out[i] != in[i] * 1.0f ) return 0;
   return 1;
 }
 
 [[gnu::noinline]] static int
-kernel_i32(const int* in)
+kernel_i32(const int *in)
 {
   __m512i a = mz::loadu_i512(in);
   __m512i b = mz::add_i32(a, mz::splat_i32(7));
@@ -53,7 +54,7 @@ kernel_i32(const int* in)
 }
 
 [[gnu::noinline]] static int
-kernel_minmax(const int* in)
+kernel_minmax(const int *in)
 {
   __m512i a = mz::loadu_i512(in);
   __m512i b = mz::splat_i32(0);
@@ -63,12 +64,13 @@ kernel_minmax(const int* in)
   alignas(64) int outx[16];
   mz::storeu_i512(outm, mn);
   mz::storeu_i512(outx, mx);
-  for (int i = 0; i < 16; ++i) if (outm[i] > 0 || outx[i] < 0) return 0;
+  for ( int i = 0; i < 16; ++i )
+    if ( outm[i] > 0 || outx[i] < 0 ) return 0;
   return 1;
 }
 
 [[gnu::noinline]] static int
-kernel_bitwise(const int* in)
+kernel_bitwise(const int *in)
 {
   __m512i a = mz::loadu_i512(in);
   __m512i b = mz::splat_i32(int(0xFF00FF00u));
@@ -83,7 +85,7 @@ kernel_bitwise(const int* in)
 #pragma GCC target("avx512bw,avx512f")
 
 [[gnu::noinline]] static int
-kernel_bw(const char* in)
+kernel_bw(const char *in)
 {
   __m512i a = mz::loadu_i512(in);
   __m512i b = mz::splat_i8(7);
@@ -95,8 +97,8 @@ kernel_bw(const char* in)
   (void)m;
   alignas(64) signed char out[64];
   mz::storeu_i512(out, s);
-  for (int i = 0; i < 64; ++i)
-    if (out[i] != (signed char)(in[i] + 7)) return 0;
+  for ( int i = 0; i < 64; ++i )
+    if ( out[i] != (signed char)(in[i] + 7) ) return 0;
   return 1;
 }
 
@@ -119,27 +121,27 @@ main()
   require_true(kernel_minmax(idata) == 1);
   require_true(kernel_bitwise(idata) == 1);
   end_test_case();
-#  if defined(__AVX512BW__)
+#if defined(__AVX512BW__)
   test_case("avx512bw: byte arith");
   alignas(64) char bdata[64];
-  for (int i = 0; i < 64; ++i) bdata[i] = (char)(i + 1);
+  for ( int i = 0; i < 64; ++i ) bdata[i] = (char)(i + 1);
   require_true(kernel_bw(bdata) == 1);
   end_test_case();
-#  endif
+#endif
   print("[TEST AVX-512 OK - host has AVX-512]");
 #else
   // host lacks AVX-512; the kernels above still COMPILE thanks to
   // `#pragma GCC target` but cannot be executed here. confirm the alias
   // names exist by taking pointers to them at link time.
   test_case("avx512: link-only (host has no AVX-512)");
-  using fp_kernel_f32_t      = int (*)(const float*);
-  using fp_kernel_i32_t      = int (*)(const int*);
-  using fp_kernel_minmax_t   = int (*)(const int*);
-  using fp_kernel_bitwise_t  = int (*)(const int*);
-  fp_kernel_f32_t      f1 = &kernel_f32;
-  fp_kernel_i32_t      f2 = &kernel_i32;
-  fp_kernel_minmax_t   f3 = &kernel_minmax;
-  fp_kernel_bitwise_t  f4 = &kernel_bitwise;
+  using fp_kernel_f32_t = int (*)(const float *);
+  using fp_kernel_i32_t = int (*)(const int *);
+  using fp_kernel_minmax_t = int (*)(const int *);
+  using fp_kernel_bitwise_t = int (*)(const int *);
+  fp_kernel_f32_t f1 = &kernel_f32;
+  fp_kernel_i32_t f2 = &kernel_i32;
+  fp_kernel_minmax_t f3 = &kernel_minmax;
+  fp_kernel_bitwise_t f4 = &kernel_bitwise;
   require_true(f1 != nullptr);
   require_true(f2 != nullptr);
   require_true(f3 != nullptr);

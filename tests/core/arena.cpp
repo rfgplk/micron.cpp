@@ -36,8 +36,7 @@ main(void)
     for ( size_t i = 0; i < 10; i++ ) {
       arena.create_at(0, fn);
     }
-    if ( x++ < 50 )
-      goto redo_fs;
+    if ( x++ < 50 ) goto redo_fs;
     mc::sleep(250);
     arena.force_clean();
   }
@@ -51,8 +50,7 @@ main(void)
     for ( size_t i = 0; i < 10; i++ ) {
       arena.create_at(0, fn);
     }
-    if ( x++ < 50 )
-      goto redo;
+    if ( x++ < 50 ) goto redo;
     arena.clean();
   }
   }
@@ -75,11 +73,13 @@ main(void)
     mc::console("Maximum threads = ", mc::maximum_threads);
     mc::standard_arena arena;
     for ( int i = 0; i < 12; i++ ) {
-      arena.create_burden([&](int x) -> int {
-          mc::sleep(x * 100);
-          mc::console(x);
-        return 0;
-      }, i);     // throws because console isn't ts, fix it
+      arena.create_burden(
+          [&](int x) -> int {
+            mc::sleep(x * 100);
+            mc::console(x);
+            return 0;
+          },
+          i);     // throws because console isn't ts, fix it
     }
     arena.join_all();
   }

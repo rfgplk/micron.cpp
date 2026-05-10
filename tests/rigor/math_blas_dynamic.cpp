@@ -35,7 +35,7 @@ main()
     dynvec<f64> u(4);
     dynvec<f64> v(4);
     for ( usize i = 0; i < 4; ++i ) {
-      u[i] = f64(i + 1);     // 1,2,3,4
+      u[i] = f64(i + 1);         // 1,2,3,4
       v[i] = f64(2 * i + 1);     // 1,3,5,7
     }
     f64 d = blas::level1::dot(as_view(u), as_view(v));
@@ -78,7 +78,7 @@ main()
     x[2] = 1;
     dynvec<f64> y(2, 0.0);
     blas::level2::gemv(f64(1.0), as_row_view(A), as_view(x), f64(0.0), as_view(y));
-    require_true(near(y[0], 6.0));     // 1+2+3
+    require_true(near(y[0], 6.0));      // 1+2+3
     require_true(near(y[1], 15.0));     // 4+5+6
   }
   end_test_case();
@@ -159,5 +159,5 @@ main()
   }
   end_test_case();
 
-  return 1;
+  return 0;
 }

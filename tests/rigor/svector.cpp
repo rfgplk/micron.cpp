@@ -74,8 +74,7 @@ struct Probe {
 
   ~Probe()
   {
-    if ( sentinel != MAGIC && sentinel != 0 )
-      corrupt = true;
+    if ( sentinel != MAGIC && sentinel != 0 ) corrupt = true;
     sentinel = 0xDEAD;
     --live;
   }
@@ -101,8 +100,7 @@ struct Probe {
   static void
   check(const Probe &o)
   {
-    if ( o.sentinel != MAGIC )
-      corrupt = true;
+    if ( o.sentinel != MAGIC ) corrupt = true;
   }
 
   static void
@@ -141,8 +139,7 @@ main()
     micron::svector<int, 32> v(8);
     require(v.size(), size_t(8));
     require_false(v.empty());
-    for ( size_t i = 0; i < 8; ++i )
-      require(v[i], 0);
+    for ( size_t i = 0; i < 8; ++i ) require(v[i], 0);
   }
   end_test_case();
 
@@ -158,8 +155,7 @@ main()
   {
     micron::svector<int, 8> v(6, 42);
     require(v.size(), size_t(6));
-    for ( size_t i = 0; i < 6; ++i )
-      require(v[i], 42);
+    for ( size_t i = 0; i < 6; ++i ) require(v[i], 42);
   }
   end_test_case();
 
@@ -169,8 +165,7 @@ main()
     // svector(size_type, const T&) — primitive T, single fill value
     micron::svector<int, 8> v(4, 7);
     require(v.size(), size_t(4));
-    for ( size_t i = 0; i < 4; ++i )
-      require(v[i], 7);
+    for ( size_t i = 0; i < 4; ++i ) require(v[i], 7);
   }
   end_test_case();
 
@@ -183,8 +178,7 @@ main()
       Probe filler(99);
       micron::svector<Probe, 8> v(size_t(4), filler);
       require(v.size(), size_t(4));
-      for ( size_t i = 0; i < 4; ++i )
-        require(v[i].id, 99);
+      for ( size_t i = 0; i < 4; ++i ) require(v[i].id, 99);
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -237,8 +231,7 @@ main()
     micron::svector<int, 8> a{ 1, 2, 3, 4 };
     micron::svector<int, 8> b(a);
     require(b.size(), size_t(4));
-    for ( size_t i = 0; i < 4; ++i )
-      require(b[i], a[i]);
+    for ( size_t i = 0; i < 4; ++i ) require(b[i], a[i]);
 
     b[0] = 99;
     require(a[0], 1);     // a unaffected
@@ -251,14 +244,12 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 8> a;
-      for ( int i = 0; i < 4; ++i )
-        a.emplace_back(i);
+      for ( int i = 0; i < 4; ++i ) a.emplace_back(i);
       require(Probe::live, 4);
 
       micron::svector<Probe, 8> b(a);
       require(Probe::live, 8);
-      for ( size_t i = 0; i < 4; ++i )
-        require(b[i].id, a[i].id);
+      for ( size_t i = 0; i < 4; ++i ) require(b[i].id, a[i].id);
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -283,8 +274,7 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 8> a;
-      for ( int i = 0; i < 4; ++i )
-        a.emplace_back(i);
+      for ( int i = 0; i < 4; ++i ) a.emplace_back(i);
       int live_before = Probe::live;
 
       micron::svector<Probe, 8> b(micron::move(a));
@@ -304,8 +294,7 @@ main()
     micron::svector<int, 8> b{ 9, 8 };
     b = a;
     require(b.size(), size_t(3));
-    for ( size_t i = 0; i < 3; ++i )
-      require(b[i], a[i]);
+    for ( size_t i = 0; i < 3; ++i ) require(b[i], a[i]);
     b[0] = 77;
     require(a[0], 1);
   }
@@ -545,8 +534,7 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 8> v;
-      for ( int i = 0; i < 6; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 6; ++i ) v.emplace_back(i);
       require(Probe::live, 6);
 
       v.clear();
@@ -594,8 +582,7 @@ main()
   {
     micron::svector<int, 8> v{ 1, 2, 3, 4, 5 };
     int expected = 1;
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = v.begin(); it != v.end(); ++it ) require(*it, expected++);
     require(expected, 6);
   }
   end_test_case();
@@ -605,8 +592,7 @@ main()
   {
     const micron::svector<int, 8> cv{ 10, 20, 30 };
     int sum = 0;
-    for ( auto it = cv.cbegin(); it != cv.cend(); ++it )
-      sum += *it;
+    for ( auto it = cv.cbegin(); it != cv.cend(); ++it ) sum += *it;
     require(sum, 60);
   }
   end_test_case();
@@ -616,8 +602,7 @@ main()
   {
     micron::svector<int, 8> v{ 1, 2, 3, 4 };
     int sum = 0;
-    for ( int x : v )
-      sum += x;
+    for ( int x : v ) sum += x;
     require(sum, 10);
   }
   end_test_case();
@@ -682,8 +667,7 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 8> v;
-      for ( int i = 0; i < 5; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 5; ++i ) v.emplace_back(i);
       require(Probe::live, 5);
 
       v.erase(size_t(2));
@@ -703,8 +687,7 @@ main()
     micron::svector<int, 8> v{ 1, 2, 4, 5 };
     v.insert(size_t(2), 3);
     require(v.size(), size_t(5));
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], i + 1);
+    for ( int i = 0; i < 5; ++i ) require(v[i], i + 1);
   }
   end_test_case();
 
@@ -744,8 +727,7 @@ main()
     auto it = v.begin() + 2;
     v.insert(it, 3);
     require(v.size(), size_t(4));
-    for ( int i = 0; i < 4; ++i )
-      require(v[i], i + 1);
+    for ( int i = 0; i < 4; ++i ) require(v[i], i + 1);
   }
   end_test_case();
 
@@ -767,8 +749,7 @@ main()
     micron::svector<int, 8> b{ 3, 4 };
     a.append(b);
     require(a.size(), size_t(4));
-    for ( int i = 0; i < 4; ++i )
-      require(a[i], i + 1);
+    for ( int i = 0; i < 4; ++i ) require(a[i], i + 1);
     require(b.size(), size_t(2));     // b unmodified
   }
   end_test_case();
@@ -847,11 +828,9 @@ main()
   test_case("svector<float, 8> – basic ops");
   {
     micron::svector<float, 8> v;
-    for ( int i = 0; i < 8; ++i )
-      v.push_back((float)i * 1.5f);
+    for ( int i = 0; i < 8; ++i ) v.push_back((float)i * 1.5f);
     require_true(v.full());
-    for ( int i = 0; i < 8; ++i )
-      require(v[i], (float)i * 1.5f);
+    for ( int i = 0; i < 8; ++i ) require(v[i], (float)i * 1.5f);
   }
   end_test_case();
 
@@ -860,8 +839,7 @@ main()
   {
     micron::svector<char, 32> v;
     const char *hello = "hello";
-    for ( int i = 0; hello[i]; ++i )
-      v.push_back(hello[i]);
+    for ( int i = 0; hello[i]; ++i ) v.push_back(hello[i]);
     require(v.size(), size_t(5));
     require(v[0], 'h');
     require(v[4], 'o');
@@ -876,8 +854,7 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 16> v;
-      for ( int i = 0; i < 12; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 12; ++i ) v.emplace_back(i);
       require(Probe::live, 12);
     }
     require(Probe::live, 0);
@@ -891,17 +868,14 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 8> a, b;
-      for ( int i = 0; i < 4; ++i )
-        a.emplace_back(i);
-      for ( int i = 0; i < 3; ++i )
-        b.emplace_back(100 + i);
+      for ( int i = 0; i < 4; ++i ) a.emplace_back(i);
+      for ( int i = 0; i < 3; ++i ) b.emplace_back(100 + i);
       require(Probe::live, 7);
 
       b = a;
       // b's old elements are overwritten (slots re-assigned), a's copied in
       require(b.size(), size_t(4));
-      for ( size_t i = 0; i < 4; ++i )
-        require(b[i].id, a[i].id);
+      for ( size_t i = 0; i < 4; ++i ) require(b[i].id, a[i].id);
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -914,16 +888,13 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 8> v;
-      for ( int i = 0; i < 8; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) v.emplace_back(i);
       require(Probe::live, 8);
 
-      for ( int i = 0; i < 4; ++i )
-        v.erase(size_t(0));
+      for ( int i = 0; i < 4; ++i ) v.erase(size_t(0));
       require(Probe::live, 4);
 
-      for ( int i = 0; i < 4; ++i )
-        v.emplace_back(10 + i);
+      for ( int i = 0; i < 4; ++i ) v.emplace_back(10 + i);
       require(Probe::live, 8);
     }
     require(Probe::live, 0);
@@ -969,8 +940,7 @@ main()
     v.insert(size_t(1), 2);
     v.insert(size_t(3), 4);
     require(v.size(), size_t(5));
-    for ( int i = 0; i < 5; ++i )
-      require(v[i], (i % 2 == 0) ? i + 1 : i + 1);     // 1,2,3,4,5
+    for ( int i = 0; i < 5; ++i ) require(v[i], (i % 2 == 0) ? i + 1 : i + 1);     // 1,2,3,4,5
 
     v.erase(size_t(2));
     require(v.size(), size_t(4));
@@ -985,10 +955,8 @@ main()
   test_case("edge: operator[] all 64 slots of default N");
   {
     micron::svector<int, 64> v(64);
-    for ( int i = 0; i < 64; ++i )
-      v[i] = i * 2;
-    for ( int i = 0; i < 64; ++i )
-      require(v[i], i * 2);
+    for ( int i = 0; i < 64; ++i ) v[i] = i * 2;
+    for ( int i = 0; i < 64; ++i ) require(v[i], i * 2);
   }
   end_test_case();
 
@@ -1000,8 +968,7 @@ main()
     Probe::reset();
     micron::svector<Probe, 32> v;
     for ( int round = 0; round < 1000; ++round ) {
-      for ( int i = 0; i < 32; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 32; ++i ) v.emplace_back(i);
       require(Probe::live, 32);
       v.clear();
       require(Probe::live, 0);
@@ -1016,8 +983,7 @@ main()
     Probe::reset();
     {
       micron::svector<Probe, 64> v;
-      for ( int i = 0; i < 64; ++i )
-        v.emplace_back(i);
+      for ( int i = 0; i < 64; ++i ) v.emplace_back(i);
       require(Probe::live, 64);
 
       for ( int i = 0; i < 64; ++i ) {
@@ -1061,8 +1027,7 @@ main()
     a.append(b);
     a.append(c);
     require(a.size(), size_t(24));
-    for ( int i = 0; i < 24; ++i )
-      require(a[i], i + 1);
+    for ( int i = 0; i < 24; ++i ) require(a[i], i + 1);
   }
   end_test_case();
 

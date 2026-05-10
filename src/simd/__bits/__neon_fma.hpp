@@ -25,10 +25,46 @@ namespace __bits
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpsabi"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #if defined(__micron_compiler_gcc)
+
+#if defined(__micron_arch_arm32)
+__inline_g float32x4_t
+vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  float32x4_t r = a;
+  __asm__("vfma.f32 %q0, %q1, %q2" : "+w"(r) : "w"(b), "w"(c));
+  return r;
+}
+
+__inline_g float32x2_t
+vfma_f32(float32x2_t a, float32x2_t b, float32x2_t c) noexcept
+{
+  float32x2_t r = a;
+  __asm__("vfma.f32 %P0, %P1, %P2" : "+w"(r) : "w"(b), "w"(c));
+  return r;
+}
+
+__inline_g float32x4_t
+vfmsq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  float32x4_t r = a;
+  __asm__("vfms.f32 %q0, %q1, %q2" : "+w"(r) : "w"(b), "w"(c));
+  return r;
+}
+
+__inline_g float32x2_t
+vfms_f32(float32x2_t a, float32x2_t b, float32x2_t c) noexcept
+{
+  float32x2_t r = a;
+  __asm__("vfms.f32 %P0, %P1, %P2" : "+w"(r) : "w"(b), "w"(c));
+  return r;
+}
+
+#else     // arm64
 
 __inline_g float32x4_t
 vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
@@ -53,6 +89,8 @@ vfms_f32(float32x2_t a, float32x2_t b, float32x2_t c) noexcept
 {
   return __builtin_aarch64_fmav2sf(-b, c, a);
 }
+
+#endif     // arm32 vs arm64
 
 #if defined(__micron_arch_arm64)
 __inline_g float64x2_t

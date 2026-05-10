@@ -490,8 +490,7 @@ main(void)
     micron::__global_pointer<int[]> p(raw);
     bool ok = true;
     for ( usize i = 0; i < 5 && ok; ++i )
-      if ( p[i] != (int)(i + 1) )
-        ok = false;
+      if ( p[i] != (int)(i + 1) ) ok = false;
     sb::require(ok);
     p.clear();
   }

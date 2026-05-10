@@ -16,7 +16,7 @@ main(void)
   mc::atomic<char> a;
   a = 10;
   mc::console(*a.get());
-  mc::atomic_ptr<int*> ptr;
+  mc::atomic_ptr<int *> ptr;
   ptr = 0x50;
   mc::console(ptr.get());
   return 0;

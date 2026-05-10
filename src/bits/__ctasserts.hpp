@@ -55,10 +55,9 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arches
 #if defined(__micron_arch_arm_any)
-#pragma GCC warning "Limited support for ARM platforms currently. Be careful!"
 #elif defined(__micron_arch_amd64)
 #else
-#error "This version of the Micron standard library is designed for amd64, with limited support for ARM platforms."
+#error "This version of the Micron standard library is designed for amd64 or ARM (armv7-a / aarch64)."
 #endif
 
 struct __ct_type_checker {
@@ -98,11 +97,16 @@ struct __ct_type_checker {
     // static_assert(sizeof(usize) == sizeof(void *), "usize must match pointer size");
     // static_assert(sizeof(max_t) == sizeof(ptrdiff_t), "max_t must match ptrdiff_t");
 
-#if __micron_arch_amd64 || __micron_arch_x86
-    static_assert(sizeof(long) == (__micron_arch_amd64 ? 8 : 4), "long must match LP64/ILP32 model");
-#elif __micron_arch_arm64
+    // NOTE: each branch must use only macros defined on its arch; referring
+    // to a macro that isn't `#define`d as a bare C++ identifier fails on
+    // clang (which doesn't auto-substitute 0 outside of `#if` directives).
+#if defined(__micron_arch_amd64)
+    static_assert(sizeof(long) == 8, "AMD64 long must be 64-bit (LP64)");
+#elif defined(__micron_arch_x86)
+    static_assert(sizeof(long) == 4, "x86 long must be 32-bit (ILP32)");
+#elif defined(__micron_arch_arm64)
     static_assert(sizeof(long) == 8, "ARM64 long must be 64-bit");
-#elif __micron_arch_arm32
+#elif defined(__micron_arch_arm32)
     static_assert(sizeof(long) == 4, "ARM32 long must be 32-bit");
 #endif
 

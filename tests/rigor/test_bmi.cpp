@@ -1,8 +1,8 @@
 // test_bmi.cpp
 // Behavioral coverage for `micron::simd::bmi::*`.
 
-#include "../snowball/snowball.hpp"
 #include "../../src/simd/aliases/bmi.hpp"
+#include "../snowball/snowball.hpp"
 
 namespace mb = ::micron::simd::bmi;
 
@@ -45,7 +45,7 @@ main()
   // pdep: scatter consecutive low bits to mask positions
   require_true(mb::parallel_deposit_u32(0xFu, 0xF0u) == 0xF0u);
   // pext . pdep round-trip with mask=all-ones is identity
-  for (unsigned x : { 0u, 1u, 0xCAFEu, 0xDEADBEEFu }) {
+  for ( unsigned x : { 0u, 1u, 0xCAFEu, 0xDEADBEEFu } ) {
     require_true(mb::parallel_extract_u32(mb::parallel_deposit_u32(x, 0xFFFFFFFFu), 0xFFFFFFFFu) == x);
   }
   end_test_case();

@@ -3,8 +3,8 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
-#include "../src/io/console.hpp"
 #include "../src/sort/sorts.hpp"
+#include "../src/io/console.hpp"
 #include "../src/vector/fvector.hpp"
 
 #include "../src/std.hpp"
@@ -17,12 +17,7 @@ main(void)
   mc::console(vf);
   mc::fvector<u32> vec(10);
   u32 i = 3453463438;
-  mc::generate(
-      vec,
-      [](u32 &x) {
-        return x /= 2;
-      },
-      i);
+  mc::generate(vec, [](u32 &x) { return x /= 2; }, i);
   mc::sort::quick<mc::fvector<u32>>(vec.begin(), vec.end());
   mc::console(vec);
   return 1;

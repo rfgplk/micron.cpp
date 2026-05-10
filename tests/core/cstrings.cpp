@@ -3,27 +3,29 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
+#include "../../src/io/console.hpp"
 #include "../../src/memory/memory.hpp"
 #include "../../src/string/unistring.hpp"
-#include "../../src/io/console.hpp"
 
-#include "../../src/string/istring.hpp"
 #include "../../src/std.hpp"
+#include "../../src/string/istring.hpp"
+
 int
-main(void) {
-  const unicode8* a8 = u8"fdgjfidgiodfg";
-  const unicode16* a16 = u"fdgjfidgiodfg";
-  const unicode32* a32 = U"fdgjfidgiodfg";
+main(void)
+{
+  const unicode8 *a8 = u8"fdgjfidgiodfg";
+  const unicode16 *a16 = u"fdgjfidgiodfg";
+  const unicode32 *a32 = U"fdgjfidgiodfg";
   micron::console(micron::u8_check(a8, micron::strlen(a8)) == nullptr);
   micron::console(micron::u16_check(a16, micron::u16strlen(a16)) == nullptr);
   micron::console(micron::u32_check(a32, micron::ustrlen(a32)) == nullptr);
-  const char* a = "fdgjfidgiodfg";
-  const char* b = "fdgjfidgiodfg";
-  const char* c = "dfg";
+  const char *a = "fdgjfidgiodfg";
+  const char *b = "fdgjfidgiodfg";
+  const char *c = "dfg";
   micron::console(mc::strcmp(a, b));
   micron::console(mc::strcmp(b, a));
   micron::console(mc::strcmp(b, c));
-  
+
   mc::istring ic = "Hello!";
   auto id = ic.append("hi");
   auto ie = id += "bye";

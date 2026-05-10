@@ -19,6 +19,73 @@
 namespace micron
 {
 
+[[gnu::always_inline]] static inline byte *
+__memset_bytes(byte *restrict d, const byte v, const u64 bytes) noexcept
+{
+  if ( bytes == 0 ) return d;
+  if ( bytes < __simd_dispatch_threshold ) {
+    if ( bytes % 4 == 0 ) [[likely]]
+      for ( u64 n = 0; n < bytes; n += 4 ) {
+        d[n] = v;
+        d[n + 1] = v;
+        d[n + 2] = v;
+        d[n + 3] = v;
+      }
+    else
+      for ( u64 n = 0; n < bytes; n++ ) d[n] = v;
+    return d;
+  }
+#if defined(__micron_x86_avx512f)
+  if ( bytes >= 64 ) return simd::memset512<byte>(d, v, bytes);
+#endif
+#if defined(__micron_x86_avx2)
+  return simd::memset256<byte>(d, v, bytes);
+#else
+  return simd::memset128<byte>(d, v, bytes);
+#endif
+}
+
+[[gnu::always_inline]] static inline byte *
+__memset_words(byte *restrict d, const u64 w, const u64 bytes) noexcept
+{
+  if ( bytes == 0 ) return d;
+  const byte b0 = static_cast<byte>(w);
+  if ( w == broadcast_byte(b0) ) return __memset_bytes(d, b0, bytes);
+  if ( bytes < __simd_dispatch_threshold ) {
+    const u64 wn = bytes / sizeof(u64);
+    u64 *wp = reinterpret_cast<u64 *>(d);
+    for ( u64 i = 0; i < wn; i++ ) wp[i] = w;
+    const u64 rem = bytes % sizeof(u64);
+    if ( rem ) {
+      const byte *wb = reinterpret_cast<const byte *>(&w);
+      for ( u64 i = 0; i < rem; i++ ) d[wn * sizeof(u64) + i] = wb[i];
+    }
+    return d;
+  }
+#if defined(__micron_x86_avx2)
+  return simd::wordset256(d, w, bytes);
+#else
+  return simd::wordset128(d, w, bytes);
+#endif
+}
+
+template <typename T>
+[[gnu::always_inline]] static inline byte *
+__typeset_dispatch(byte *restrict d, const T in, const u64 cnt) noexcept
+{
+  if constexpr ( sizeof(T) == 1 ) {
+    return __memset_bytes(d, static_cast<byte>(*reinterpret_cast<const unsigned char *>(&in)), cnt);
+  } else if constexpr ( sizeof(T) == 8 ) {
+    u64 w;
+    __builtin_memcpy(&w, &in, 8);
+    return __memset_words(d, w, cnt * sizeof(T));
+  } else {
+    T *tp = reinterpret_cast<T *>(d);
+    for ( u64 i = 0; i < cnt; i++ ) tp[i] = in;
+    return d;
+  }
+}
+
 // START MEMSET
 
 // BASIC MEMSET - RUNTIME COUNT
@@ -27,17 +94,8 @@ template <typename F>
 __attribute__((nonnull)) F *
 memset(F *s, const byte in, const u64 cnt) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __memset_bytes(reinterpret_cast<byte *>(s), in, cnt);
+  return s;
 };
 
 // MEMSET WITH REFERENCE RETURN
@@ -46,16 +104,7 @@ template <typename F>
 F &
 rmemset(F &s, const byte in, const u64 cnt) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __memset_bytes(reinterpret_cast<byte *>(&s), in, cnt);
   return s;
 };
 
@@ -100,17 +149,8 @@ template <u64 M, typename F>
 __attribute__((nonnull)) F *
 cmemset(F *s, const byte in) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __memset_bytes(reinterpret_cast<byte *>(s), in, M);
+  return s;
 };
 
 // COMPILE-TIME CONSTANT MEMSET WITH REFERENCE RETURN
@@ -118,16 +158,7 @@ template <u64 M, typename F>
 F &
 rcmemset(F &s, const byte in) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(&s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
+  __memset_bytes(reinterpret_cast<byte *>(&s), in, M);
   return s;
 };
 
@@ -233,17 +264,8 @@ smemset(F *s, const byte in, const u64 cnt) noexcept
   if ( s == nullptr ) return nullptr;
   if ( !__is_aligned_to(s, alignment) ) return nullptr;
   if ( !__is_valid_address(s, cnt) ) return nullptr;
-  byte *src = reinterpret_cast<byte *>(s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __memset_bytes(reinterpret_cast<byte *>(s), in, cnt);
+  return s;
 };
 
 // SAFE MEMSET WITH REFERENCE RETURN
@@ -254,17 +276,7 @@ rsmemset(F &s, const byte in, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
   if ( !__is_valid_address(s, cnt) ) return false;
-
-  byte *src = reinterpret_cast<byte *>(&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __memset_bytes(reinterpret_cast<byte *>(&s), in, cnt);
   return true;
 };
 
@@ -276,18 +288,8 @@ scmemset_safe(F *s, const byte in) noexcept
   if ( s == nullptr ) return nullptr;
   if ( !__is_aligned_to(s, alignment) ) return nullptr;
   if ( !__is_valid_address(s, M) ) return nullptr;
-
-  byte *src = reinterpret_cast<byte *>(s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __memset_bytes(reinterpret_cast<byte *>(s), in, M);
+  return s;
 };
 
 // SAFE COMPILE-TIME CONSTANT MEMSET WITH REFERENCE RETURN
@@ -319,17 +321,8 @@ template <typename F>
 __attribute__((nonnull)) F *
 byteset(F *s, const byte in, const u64 cnt) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = in;
-      src[n + 1] = in;
-      src[n + 2] = in;
-      src[n + 3] = in;
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = in;
-  return reinterpret_cast<F *>(src);
+  __memset_bytes(reinterpret_cast<byte *>(s), in, cnt);
+  return s;
 };
 
 // BYTESET ALIAS (BSET)
@@ -347,16 +340,7 @@ template <typename F>
 F &
 rbyteset(F &s, const byte in, const u64 cnt) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = in;
-      src[n + 1] = in;
-      src[n + 2] = in;
-      src[n + 3] = in;
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = in;
+  __memset_bytes(reinterpret_cast<byte *>(&s), in, cnt);
   return s;
 };
 
@@ -374,17 +358,8 @@ template <u64 N, typename F>
 __attribute__((nonnull)) F *
 cbyteset(F *s, const byte in) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(s);
-  if constexpr ( N % 4 == 0 )
-    for ( u64 n = 0; n < N; n += 4 ) {
-      src[n] = in;
-      src[n + 1] = in;
-      src[n + 2] = in;
-      src[n + 3] = in;
-    }
-  else
-    for ( u64 n = 0; n < N; n++ ) src[n] = in;
-  return reinterpret_cast<F *>(src);
+  __memset_bytes(reinterpret_cast<byte *>(s), in, N);
+  return s;
 };
 
 // COMPILE-TIME CONSTANT BYTESET ALIAS (CBSET)
@@ -400,16 +375,7 @@ template <u64 N, typename F>
 F &
 rcbyteset(F &s, const byte in) noexcept
 {
-  byte *src = reinterpret_cast<byte *>(&s);
-  if constexpr ( N % 4 == 0 )
-    for ( u64 n = 0; n < N; n += 4 ) {
-      src[n] = in;
-      src[n + 1] = in;
-      src[n + 2] = in;
-      src[n + 3] = in;
-    }
-  else
-    for ( u64 n = 0; n < N; n++ ) src[n] = in;
+  __memset_bytes(reinterpret_cast<byte *>(&s), in, N);
   return s;
 };
 
@@ -727,6 +693,10 @@ template <u64 M, typename F>
 constexpr F &
 cbzero(F &_src) noexcept
 {
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(&_src), static_cast<byte>(0), M);
+    return _src;
+  }
   byte *src = reinterpret_cast<byte *>(&_src);
   for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
   return _src;
@@ -738,9 +708,13 @@ template <u64 M, typename F>
 constexpr F *
 cbzero(F *_src) noexcept
 {
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(_src), static_cast<byte>(0), M);
+    return _src;
+  }
   byte *src = reinterpret_cast<byte *>(_src);
   for ( u64 n = 0; n < M; n++ ) src[n] = 0x0;
-  return reinterpret_cast<F *>(src);
+  return _src;
 };
 
 // SECURE BYTE-LEVEL ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN
@@ -775,17 +749,8 @@ template <typename T, typename F>
 __attribute__((nonnull)) F *
 typeset(F *s, const T in, const u64 cnt) noexcept
 {
-  T *src = reinterpret_cast<T *>(s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(s), in, cnt);
+  return s;
 };
 
 // TYPESET WITH REFERENCE RETURN
@@ -794,16 +759,7 @@ template <typename T, typename F>
 F &
 rtypeset(F &s, const T in, const u64 cnt) noexcept
 {
-  T *src = reinterpret_cast<T *>(&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(&s), in, cnt);
   return s;
 };
 
@@ -812,17 +768,8 @@ template <u64 M, typename T, typename F>
 __attribute__((nonnull)) F *
 ctypeset(F *s, const T in) noexcept
 {
-  T *src = reinterpret_cast<T *>(s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(s), in, M);
+  return s;
 };
 
 // COMPILE-TIME CONSTANT TYPESET WITH REFERENCE RETURN
@@ -830,16 +777,7 @@ template <u64 M, typename T, typename F>
 F &
 rctypeset(F &s, const T in) noexcept
 {
-  T *src = reinterpret_cast<T *>(&s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(&s), in, M);
   return s;
 };
 
@@ -890,18 +828,8 @@ stypeset(F *s, const T in, const u64 cnt) noexcept
   if ( s == nullptr ) return nullptr;
   if ( !__is_aligned_to(s, alignment) ) return nullptr;
   if ( !__is_valid_address(s, cnt) ) return nullptr;
-
-  T *src = reinterpret_cast<T *>(s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(s), in, cnt);
+  return s;
 };
 
 // SAFE TYPESET WITH REFERENCE RETURN
@@ -912,17 +840,7 @@ rstypeset(F &s, const T in, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
   if ( !__is_valid_address(s, cnt) ) return false;
-
-  T *src = reinterpret_cast<T *>(&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(&s), in, cnt);
   return true;
 };
 
@@ -934,18 +852,8 @@ sctypeset_safe(F *s, const T in) noexcept
   if ( s == nullptr ) return nullptr;
   if ( !__is_aligned_to(s, alignment) ) return nullptr;
   if ( !__is_valid_address(s, M) ) return nullptr;
-
-  T *src = reinterpret_cast<T *>(s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
-  return reinterpret_cast<F *>(src);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(s), in, M);
+  return s;
 };
 
 // SAFE COMPILE-TIME CONSTANT TYPESET WITH REFERENCE RETURN
@@ -955,17 +863,7 @@ rsctypeset_safe(F &s, const T in) noexcept
 {
   if ( !__is_aligned_to(s, alignment) ) return false;
   if ( !__is_valid_address(s, M) ) return false;
-
-  T *src = reinterpret_cast<T *>(&s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
+  __typeset_dispatch<T>(reinterpret_cast<byte *>(&s), in, M);
   return true;
 };
 
@@ -975,15 +873,7 @@ rsctypeset_safe(F &s, const T in) noexcept
 word *
 wordset(word *src, const word in, const u64 cnt) noexcept
 {
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(src), static_cast<u64>(in), cnt * sizeof(word));
   return src;
 };
 
@@ -991,16 +881,7 @@ wordset(word *src, const word in, const u64 cnt) noexcept
 word &
 rwordset(word &s, const word in, const u64 cnt) noexcept
 {
-  word *src = (&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(&s), static_cast<u64>(in), cnt * sizeof(word));
   return s;
 };
 
@@ -1009,15 +890,7 @@ template <u64 M>
 word *
 cwordset(word *src, const word in) noexcept
 {
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(src), static_cast<u64>(in), M * sizeof(word));
   return src;
 };
 
@@ -1026,16 +899,7 @@ template <u64 M>
 word &
 rcwordset(word &s, const word in) noexcept
 {
-  word *src = reinterpret_cast<word *>(&s);
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(&s), static_cast<u64>(in), M * sizeof(word));
   return s;
 };
 
@@ -1194,16 +1058,7 @@ swordset(word *src, const word in, const u64 cnt) noexcept
   if ( src == nullptr ) return nullptr;
   if ( !__is_aligned_to(src, alignment) ) return nullptr;
   if ( !__is_valid_address(src, cnt) ) return nullptr;
-
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(src), static_cast<u64>(in), cnt * sizeof(word));
   return src;
 };
 
@@ -1214,17 +1069,7 @@ rswordset(word &s, const word in, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to_r(s, alignment) ) return false;
   if ( !__is_valid_address(s, cnt) ) return false;
-
-  word *src = reinterpret_cast<word *>(&s);
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(&s), static_cast<u64>(in), cnt * sizeof(word));
   return true;
 };
 
@@ -1236,16 +1081,7 @@ scwordset_safe(word *src, const word in) noexcept
   if ( src == nullptr ) return nullptr;
   if ( !__is_aligned_to(src, alignment) ) return nullptr;
   if ( !__is_valid_address(src, M) ) return nullptr;
-
-  if constexpr ( M % 4 == 0 )
-    for ( u64 n = 0; n < M; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
-    }
-  else
-    for ( u64 n = 0; n < M; n++ ) src[n] = (in);
+  __memset_words(reinterpret_cast<byte *>(src), static_cast<u64>(in), M * sizeof(word));
   return src;
 };
 
@@ -1272,7 +1108,7 @@ template <typename F, typename M = u64>
 F &
 rzero(F &s, const M cnt) noexcept
 {
-  for ( M n = 0; n < cnt; n++ ) s[n] = 0x0;
+  __memset_bytes(reinterpret_cast<byte *>(&s), static_cast<byte>(0), static_cast<u64>(cnt) * sizeof(F));
   return s;
 };
 
@@ -1419,8 +1255,12 @@ template <typename F, typename M = u64>
 constexpr F *
 full(F *src, const M cnt) noexcept
 {
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(src), static_cast<byte>(0xFF), static_cast<u64>(cnt) * sizeof(F));
+    return src;
+  }
   for ( M n = 0; n < cnt; n++ ) src[n] = 0xFF;
-  return reinterpret_cast<F *>(src);
+  return src;
 };
 
 // FILL WITH 0XFF - REFERENCE RETURN
@@ -1428,6 +1268,10 @@ template <typename F, typename M = u64>
 constexpr F &
 rfull(F &s, const M cnt) noexcept
 {
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(&s), static_cast<byte>(0xFF), static_cast<u64>(cnt) * sizeof(F));
+    return s;
+  }
   for ( M n = 0; n < cnt; n++ ) s[n] = 0xFF;
   return s;
 };
@@ -1437,6 +1281,10 @@ template <u64 M, typename F>
 constexpr F &
 rcfull(F &s) noexcept
 {
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(&s), static_cast<byte>(0xFF), M * sizeof(F));
+    return s;
+  }
   for ( u64 n = 0; n < M; n++ ) s[n] = 0xFF;
   return s;
 };
@@ -1445,8 +1293,12 @@ template <u64 M, typename F>
 constexpr F *
 cfull(F *src) noexcept
 {
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(src), static_cast<byte>(0xFF), M * sizeof(F));
+    return src;
+  }
   for ( u64 n = 0; n < M; n++ ) src[n] = 0xFF;
-  return reinterpret_cast<F *>(src);
+  return src;
 };
 
 // SECURE FILL WITH 0XFF - COMPILE-TIME CONSTANT COUNT
@@ -2308,3 +2160,13 @@ memfrob(F *src, u64 n) noexcept
   return a;
 }
 };     // namespace micron
+
+#if defined(__micron_freestanding)
+// c-abi - dispatches to handrolled-asm tier (scalar splat ≤32 B, simd::memset* otherwise)
+extern "C" __attribute__((used, optimize("-fno-tree-loop-distribute-patterns"))) inline void *
+memset(void *s, int c, __SIZE_TYPE__ n) noexcept
+{
+  micron::__memset_bytes(static_cast<byte *>(s), static_cast<byte>(c), static_cast<u64>(n));
+  return s;
+}
+#endif

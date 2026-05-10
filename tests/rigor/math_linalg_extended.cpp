@@ -85,8 +85,7 @@ main()
   // Hessenberg reduction
   test_case("hessenberg<5> — Q*H*Qᵀ == A");
   {
-    mat<f64, 5, 5> A{ 4, 1, -2, 2, 1, 1, 2, 0, 1, -1, -2, 0, 3, -2, 0,
-                      2, 1, -2, 5, 1, 1, -1, 0, 1, 4 };
+    mat<f64, 5, 5> A{ 4, 1, -2, 2, 1, 1, 2, 0, 1, -1, -2, 0, 3, -2, 0, 2, 1, -2, 5, 1, 1, -1, 0, 1, 4 };
     auto h = hessenberg<f64, 5>(A);
     auto Qt = transpose(h.Q);
     auto QH = gemm(h.Q, h.H);
@@ -264,8 +263,7 @@ main()
 
   test_case("schur<5> — Z*T*Zᵀ == A and Z orthogonal");
   {
-    mat<f64, 5, 5> A{ 4, 1, -2, 2, 1, 1, 2, 0, 1, -1, -2, 0, 3, -2, 0,
-                      2, 1, -2, 5, 1, 1, -1, 0, 1, 4 };
+    mat<f64, 5, 5> A{ 4, 1, -2, 2, 1, 1, 2, 0, 1, -1, -2, 0, 3, -2, 0, 2, 1, -2, 5, 1, 1, -1, 0, 1, 4 };
     auto s = schur<f64, 5>(A);
     require_true(s.converged);
     auto Zt = transpose(s.Z);
@@ -512,5 +510,5 @@ main()
   end_test_case();
 
   print("=== MATH::LINALG EXTENDED TESTS PASSED ===");
-  return 1;
+  return 0;
 }

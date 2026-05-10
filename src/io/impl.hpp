@@ -19,11 +19,11 @@ const char *
 bytes_to_hex(byte *ptr, usize len, char *frm)
 {
   const char *hex = "0123456789ABCDEF";
-  char *buf = frm;
+  // char *buf = frm;
   for ( usize i = 0; i < len; i++ ) {
     *frm = hex[*ptr >> 4];
     *frm = hex[*ptr & 0x0F];
-    ++buf;
+    // ++buf;
     ++ptr;
   }
   return frm;

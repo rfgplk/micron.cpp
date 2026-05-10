@@ -5,11 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/linux/process/process.hpp"
-#include "../src/linux/process/exec.hpp"
 #include "../src/control.hpp"
+#include "../src/linux/process/exec.hpp"
 #include "../src/linux/process/fork.hpp"
-#include "../src/std.hpp"
 #include "../src/linux/process/signals.hpp"
+#include "../src/std.hpp"
 
 #include "../src/io/console.hpp"
 #include "../src/io/filesystem.hpp"
@@ -34,6 +34,7 @@ test2(void)
     micron::sleep(2500);
   }
 }
+
 void
 forever(int x)
 {

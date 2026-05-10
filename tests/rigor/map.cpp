@@ -16,7 +16,6 @@
 #include <cstring>
 #include <set>
 #include <vector>
-#include <iostream>
 
 // NOTE: these tests highly depend on the hash used (ie collision specific - beware!)
 
@@ -415,8 +414,7 @@ main(void)
   sb::test_case("load_factor - within [0,1] range");
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
-    for ( int i = 0; i < 50; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < 50; ++i ) m.insert(make_key(i), i);
     float lf = m.load_factor();
     sb::require(lf >= 0.0f);
     sb::require(lf <= 1.0f);
@@ -481,14 +479,12 @@ main(void)
     micron::hopscotch_map<micron::hstring<char>, int> m;
     std::vector<micron::hstring<char>> keys = { "apple", "banana", "cherry", "date",      "elderberry", "fig",    "grape", "honeydew",
                                                 "kiwi",  "lemon",  "mango",  "nectarine", "orange",     "papaya", "quince" };
-    for ( int i = 0; i < (int)keys.size(); ++i )
-      m.insert(keys[i], i * 11);
+    for ( int i = 0; i < (int)keys.size(); ++i ) m.insert(keys[i], i * 11);
     sb::require(m.size() == keys.size());
     bool ok = true;
     for ( int i = 0; i < (int)keys.size() && ok; ++i ) {
       int *v = m.find(keys[i]);
-      if ( !v || *v != i * 11 )
-        ok = false;
+      if ( !v || *v != i * 11 ) ok = false;
     }
     sb::require(ok);
   }
@@ -677,8 +673,7 @@ main(void)
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
     std::vector<micron::hstring<char>> words = { "cat", "dog", "cat", "bird", "dog", "cat" };
-    for ( const auto &w : words )
-      m[w] += 1;
+    for ( const auto &w : words ) m[w] += 1;
     sb::require(*m.find("cat") == 3);
     sb::require(*m.find("dog") == 2);
     sb::require(*m.find("bird") == 1);
@@ -728,8 +723,7 @@ main(void)
     for ( char c = 'a'; c <= 'z' && ok; ++c ) {
       micron::hstring<char> k(1, c);
       int *v = m.find(k);
-      if ( !v || *v != (int)(c - 'a') )
-        ok = false;
+      if ( !v || *v != (int)(c - 'a') ) ok = false;
     }
     sb::require(ok);
   }
@@ -827,8 +821,7 @@ main(void)
   sb::test_case("edge - capacity never shrinks below min_size after clear");
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
-    for ( int i = 0; i < 500; ++i )
-      m.insert(make_key(i), i);
+    for ( int i = 0; i < 500; ++i ) m.insert(make_key(i), i);
     size_t cap_before_clear = m.capacity();
     m.clear();
     sb::require(m.capacity() >= 64ULL);

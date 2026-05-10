@@ -17,8 +17,7 @@ main()
   mc::hstring<char, micron::allocator_tiny<>> tstr;
   mc::console("Starting size: ", tstr.size());
   mc::console("Starting capacity: ", tstr.max_size());
-  for ( u32 i = 0; i < 1000000000; i++ )
-  {
+  for ( u32 i = 0; i < 1000000000; i++ ) {
     tstr += "qwertyuiop";
   }
   mc::console("Ending size: ", tstr.size());

@@ -5,13 +5,25 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+
+#if defined(__micron_arch_x86_any)
 #include "../../external/x86/x86.h"
+#endif
+
+#include "../attributes.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 namespace micron
 {
 
 namespace simd
 {
+
+#if defined(__micron_arch_x86_any)
 
 struct __simd_flags {
   char fma;
@@ -72,12 +84,12 @@ __has_avx256(const __simd_flags &flags)
 }
 
 #ifdef SIMD_RUNTIME_CHECKING
-__attribute__((constructor)) void
-__runtime_check(void)
-{
-  static __simd_flags flags = __get_runtime_flags;
-}
+start_fn(void, 100) __runtime_check(void) { static __simd_flags flags = __get_runtime_flags; }
 #endif
+
+#endif     // __micron_arch_x86_any
 
 };     // namespace simd
 };     // namespace micron
+
+#pragma GCC diagnostic pop

@@ -15,8 +15,7 @@ constexpr int loops = 50000;
 void
 fn(mc::channel<int> *c, int x)
 {
-  for ( int i = 0; i < loops; i++ )
-    *c >> (x * i);
+  for ( int i = 0; i < loops; i++ ) *c >> (x * i);
   return;
 }
 

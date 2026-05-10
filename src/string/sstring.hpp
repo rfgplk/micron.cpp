@@ -981,7 +981,7 @@ public:
   find(F ch, size_type pos = 0) const
   {
     for ( ;; pos++ ) {
-      if ( memory[pos] == NULL ) return npos;
+      if ( memory[pos] == 0 ) return npos;
       if ( memory[pos] == ch ) return pos;
     }
     return npos;

@@ -97,8 +97,7 @@ main()
     micron::queue<int> q(8, 42);
     require(q.size(), size_t(8));
     // every element should be 42
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it, 42);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it, 42);
   }
   end_test_case();
 
@@ -107,8 +106,7 @@ main()
   {
     micron::queue<int> q(5);
     require(q.size(), size_t(5));
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it, 0);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it, 0);
   }
   end_test_case();
 
@@ -185,8 +183,7 @@ main()
   test_case("front and last accessors");
   {
     micron::queue<int> q;
-    for ( int i = 1; i <= 5; ++i )
-      q.push(i);
+    for ( int i = 1; i <= 5; ++i ) q.push(i);
     // push order: 1, 2, 3, 4, 5
     // last() is oldest = 1, front() is newest = 5
     require(q.last(), 1);
@@ -236,13 +233,11 @@ main()
   test_case("reserve preserves element order");
   {
     micron::queue<int> q;
-    for ( int i = 0; i < 10; ++i )
-      q.push(i);
+    for ( int i = 0; i < 10; ++i ) q.push(i);
     q.reserve(q.max_size() + 64);
     // iteration must still yield 0..9 in push order (begin→end)
     int expected = 0;
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it == expected++);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it == expected++);
   }
   end_test_case();
 
@@ -263,11 +258,9 @@ main()
   test_case("iterator begin/end traversal");
   {
     micron::queue<int> q;
-    for ( int i = 0; i < 20; ++i )
-      q.push(i);
+    for ( int i = 0; i < 20; ++i ) q.push(i);
     int expected = 0;
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it, expected++);
     require(expected == 20);
   }
   end_test_case();
@@ -275,8 +268,7 @@ main()
   test_case("size and max_size are consistent");
   {
     micron::queue<int> q;
-    for ( int i = 0; i < 50; ++i )
-      q.push(i);
+    for ( int i = 0; i < 50; ++i ) q.push(i);
     require(q.size(), size_t(50));
     require_greater(q.max_size(), q.size());
   }
@@ -287,13 +279,11 @@ main()
   {
     // start with a tiny queue and keep pushing past capacity
     micron::queue<int, 2> q;
-    for ( int i = 0; i < 512; ++i )
-      q.push(i);
+    for ( int i = 0; i < 512; ++i ) q.push(i);
     require(q.size(), size_t(512));
     // verify content integrity
     int expected = 0;
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it, expected++);
   }
   end_test_case();
 
@@ -302,8 +292,7 @@ main()
   {
     micron::queue<int> q;
     constexpr int N = 10000;
-    for ( int i = 0; i < N; ++i )
-      q.push(i);
+    for ( int i = 0; i < N; ++i ) q.push(i);
     require(q.size(), size_t(N));
     for ( int i = 0; i < N; ++i ) {
       require(q.last(), i);
@@ -319,8 +308,7 @@ main()
     micron::queue<int> q;
     // push 5, pop 2, push 5, pop 3 ...
     for ( int round = 0; round < 50; ++round ) {
-      for ( int i = 0; i < 5; ++i )
-        q.push(round * 5 + i);
+      for ( int i = 0; i < 5; ++i ) q.push(round * 5 + i);
       q.pop();
       q.pop();
     }
@@ -337,8 +325,7 @@ main()
     q.push();
     q.push();
     require(q.size(), size_t(3));
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it, 0);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it, 0);
   }
   end_test_case();
 
@@ -348,11 +335,9 @@ main()
     reset_tracked();
     {
       micron::queue<Tracked> q;
-      for ( int i = 0; i < 64; ++i )
-        q.push(Tracked(i));
+      for ( int i = 0; i < 64; ++i ) q.push(Tracked(i));
       require(q.size(), size_t(64));
-      for ( int i = 0; i < 32; ++i )
-        q.pop();
+      for ( int i = 0; i < 32; ++i ) q.pop();
       require(q.size(), size_t(32));
     }     // destructor runs here
     // every constructed object must have been destroyed exactly once
@@ -366,8 +351,7 @@ main()
     reset_tracked();
     {
       micron::queue<Tracked> q;
-      for ( int i = 0; i < 100; ++i )
-        q.push(Tracked(i));
+      for ( int i = 0; i < 100; ++i ) q.push(Tracked(i));
       q.clear();
       require_true(q.empty());
     }
@@ -380,18 +364,15 @@ main()
   {
     micron::queue<int> q;
     for ( int round = 0; round < 100; ++round ) {
-      for ( int i = 0; i < 500; ++i )
-        q.push(i);
+      for ( int i = 0; i < 500; ++i ) q.push(i);
       q.clear();
       require_true(q.empty());
     }
     // final fill and integrity check
-    for ( int i = 0; i < 200; ++i )
-      q.push(i);
+    for ( int i = 0; i < 200; ++i ) q.push(i);
     require(q.size(), size_t(200));
     int expected = 0;
-    for ( auto it = q.begin(); it != q.end(); ++it )
-      require(*it, expected++);
+    for ( auto it = q.begin(); it != q.end(); ++it ) require(*it, expected++);
   }
   end_test_case();
 
@@ -399,8 +380,7 @@ main()
   test_case("queue of floats");
   {
     micron::queue<float> q;
-    for ( int i = 0; i < 10; ++i )
-      q.push(static_cast<float>(i) * 0.5f);
+    for ( int i = 0; i < 10; ++i ) q.push(static_cast<float>(i) * 0.5f);
     require(q.size(), size_t(10));
     float expected = 0.0f;
     for ( auto it = q.begin(); it != q.end(); ++it ) {
@@ -415,8 +395,7 @@ main()
   {
     int arr[5] = { 10, 20, 30, 40, 50 };
     micron::queue<int *> q;
-    for ( int i = 0; i < 5; ++i )
-      q.push(&arr[i]);
+    for ( int i = 0; i < 5; ++i ) q.push(&arr[i]);
     require(q.size(), size_t(5));
     int expected = 10;
     for ( auto it = q.begin(); it != q.end(); ++it ) {

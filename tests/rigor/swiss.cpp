@@ -4,15 +4,14 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+#include "../src/maps/swiss.hpp"
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
-#include "../src/maps/swiss.hpp"
 #include "../src/std.hpp"
 #include "../src/string/string.hpp"
 
 #include "../snowball/snowball.hpp"
 
-#include <iostream>
 #include <climits>
 #include <vector>
 
@@ -188,8 +187,7 @@ main(void)
     int inserted = 0;
     for ( int i = 0; i < 16; ++i ) {
       auto [ok, ptr] = m.insert(make_key(i), i);
-      if ( ok )
-        ++inserted;
+      if ( ok ) ++inserted;
     }
     // Now map is full — any further insert of a new key must fail
     auto [ok, ptr] = m.insert("overflow_key", 999);
@@ -541,11 +539,9 @@ main(void)
   sb::test_case("clear - clears tombstones: re-insert succeeds cleanly");
   {
     micron::stack_swiss_map<micron::hstring<char>, int, 16> m;
-    for ( int i = 0; i < 8; ++i )
-      m.insert(make_key(i), i);
-    for ( int i = 0; i < 8; ++i )
-      m.erase(make_key(i));     // leaves tombstones
-    m.clear();                  // should reset everything including tombstones
+    for ( int i = 0; i < 8; ++i ) m.insert(make_key(i), i);
+    for ( int i = 0; i < 8; ++i ) m.erase(make_key(i));     // leaves tombstones
+    m.clear();                                              // should reset everything including tombstones
     sb::require(m.empty());
     for ( int i = 0; i < 8; ++i ) {
       auto [ok, ptr] = m.insert(make_key(i), i * 2);
@@ -815,8 +811,7 @@ main(void)
     m.insert("iter_b", 2);
     m.insert("iter_c", 3);
     usize count = 0;
-    for ( auto it = m.begin(); it != m.end(); ++it )
-      ++count;
+    for ( auto it = m.begin(); it != m.end(); ++it ) ++count;
     sb::require(count == 3ULL);
   }
   sb::end_test_case();
@@ -829,8 +824,7 @@ main(void)
     m.insert("keep_c", 3);
     m.erase("del_b");
     usize count = 0;
-    for ( auto it = m.begin(); it != m.end(); ++it )
-      ++count;
+    for ( auto it = m.begin(); it != m.end(); ++it ) ++count;
     sb::require(count == 2ULL);
   }
   sb::end_test_case();
@@ -858,8 +852,7 @@ main(void)
     m.insert("cb", 20);
     const auto &cm = m;
     usize count = 0;
-    for ( auto it = cm.cbegin(); it != cm.cend(); ++it )
-      ++count;
+    for ( auto it = cm.cbegin(); it != cm.cend(); ++it ) ++count;
     sb::require(count == 2ULL);
   }
   sb::end_test_case();

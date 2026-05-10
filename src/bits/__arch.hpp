@@ -13,19 +13,16 @@
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100)
 #endif
 
+// NOTE: ARM checks come before the x86/ILP32 fallback because clang on
+// armv7 defines `__ILP32__` (pointers are 32-bit) in addition to `__arm__`.
+// If x86/ILP32 was checked first, clang arm32 would misroute as 32-bit x86
+// and never reach the arm32 branch below.
 #if defined(__x86_64__) || defined(_M_X64) || defined(__amd64__)
 #define __micron_arch_amd64 1
 #define __micron_arch_width_64 1
 #define __wordsize 64
 #define __syscall_wordsize 64
 inline constexpr unsigned __micron_arch = __micron_arch_amd64;
-inline constexpr unsigned __micron_width = __wordsize;
-#elif defined(__i386__) || defined(_M_IX86) || defined(__ILP32__)
-#define __micron_arch_x86 2
-#define __micron_arch_width_32 1
-#define __wordsize 32
-#define __syscall_wordsize 32
-inline constexpr unsigned __micron_arch = __micron_arch_x86;
 inline constexpr unsigned __micron_width = __wordsize;
 #elif defined(__aarch64__) || defined(__AARCH64EL__) || defined(__AARCH64EB__)
 #define __micron_arch_arm64 3
@@ -40,6 +37,13 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __wordsize 32
 #define __syscall_wordsize 32
 inline constexpr unsigned __micron_arch = __micron_arch_arm32;
+inline constexpr unsigned __micron_width = __wordsize;
+#elif defined(__i386__) || defined(_M_IX86) || defined(__ILP32__)
+#define __micron_arch_x86 2
+#define __micron_arch_width_32 1
+#define __wordsize 32
+#define __syscall_wordsize 32
+inline constexpr unsigned __micron_arch = __micron_arch_x86;
 inline constexpr unsigned __micron_width = __wordsize;
 #else
 #error "Unsupported architecture. Is your compiler working properly?"

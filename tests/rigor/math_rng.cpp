@@ -196,8 +196,7 @@ main()
     auto g = rng::xoshiro256ss::from_seed(23);
     f64 buf[256];
     rng::fill::fill_uniform<f64>(buf, 256, g);
-    for ( int i = 0; i < 256; ++i )
-      require_true(buf[i] >= 0.0 && buf[i] < 1.0);
+    for ( int i = 0; i < 256; ++i ) require_true(buf[i] >= 0.0 && buf[i] < 1.0);
   }
   end_test_case();
 
@@ -233,5 +232,5 @@ main()
   end_test_case();
 
   print("=== MATH::RNG TESTS PASSED ===");
-  return 1;
+  return 0;
 }

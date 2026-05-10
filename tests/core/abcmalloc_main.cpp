@@ -11,6 +11,7 @@ struct s {
   int x;
   int y;
 };
+
 int
 main()
 {
@@ -20,8 +21,7 @@ main()
     mc::sstr<32> *tst = new (buf) mc::sstr<32>("Hello World!");
     mc::console(tst->c_str());
     volatile byte *p;
-    for ( int i = 0; i < 1000; i++ )
-      p = abc::alloc(65536);
+    for ( int i = 0; i < 1000; i++ ) p = abc::alloc(65536);
     mc::console(p);
     mc::console(tst->c_str());
     auto st = abc::fetch<s>();

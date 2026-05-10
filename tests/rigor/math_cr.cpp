@@ -41,14 +41,53 @@ using namespace micron;
 using namespace micron::math;
 
 // reference-via-builtin (libm's correctly-rounded sin/cos/log/exp).
-static f64 ref_log(f64 x)  { return __builtin_log(x); }
-static f64 ref_exp(f64 x)  { return __builtin_exp(x); }
-static f64 ref_sin(f64 x)  { return __builtin_sin(x); }
-static f64 ref_cos(f64 x)  { return __builtin_cos(x); }
-static f32 ref_logf(f32 x) { return __builtin_logf(x); }
-static f32 ref_expf(f32 x) { return __builtin_expf(x); }
-static f32 ref_sinf(f32 x) { return __builtin_sinf(x); }
-static f32 ref_cosf(f32 x) { return __builtin_cosf(x); }
+static f64
+ref_log(f64 x)
+{
+  return __builtin_log(x);
+}
+
+static f64
+ref_exp(f64 x)
+{
+  return __builtin_exp(x);
+}
+
+static f64
+ref_sin(f64 x)
+{
+  return __builtin_sin(x);
+}
+
+static f64
+ref_cos(f64 x)
+{
+  return __builtin_cos(x);
+}
+
+static f32
+ref_logf(f32 x)
+{
+  return __builtin_logf(x);
+}
+
+static f32
+ref_expf(f32 x)
+{
+  return __builtin_expf(x);
+}
+
+static f32
+ref_sinf(f32 x)
+{
+  return __builtin_sinf(x);
+}
+
+static f32
+ref_cosf(f32 x)
+{
+  return __builtin_cosf(x);
+}
 
 template <typename F>
 static bool
@@ -126,9 +165,9 @@ main()
   test_case("cr::log f64 vs faithful — within 1 ulp across the range");
   {
     static const f64 xs[] = {
-      0x1.0p-1000, 0x1.0p-100, 0.001, 0.01, 0.1, 0.25, 0.5,
-      0.999, 1.0, 1.001, 1.5, 2.0, 2.71828, 3.14159, 7.0,
-      10.0, 100.0, 1.5e10, 1e100, 1e200, 0x1.fffffffffffffp+1023,
+      0x1.0p-1000, 0x1.0p-100, 0.001, 0.01,   0.1,   0.25,    0.5,
+      0.999,       1.0,        1.001, 1.5,    2.0,   2.71828, 3.14159,
+      7.0,         10.0,       100.0, 1.5e10, 1e100, 1e200,   0x1.fffffffffffffp+1023,
     };
     for ( f64 x : xs ) {
       f64 cr_v = cr::log<f64>(x);
@@ -183,8 +222,7 @@ main()
   test_case("cr::exp f64 vs faithful — within 1 ulp across the range");
   {
     static const f64 xs[] = {
-      -700.0, -100.0, -10.0, -1.0, -0.5, -0x1.0p-30,
-      0.0, 0x1.0p-30, 0.5, 1.0, 2.0, 10.0, 100.0, 700.0,
+      -700.0, -100.0, -10.0, -1.0, -0.5, -0x1.0p-30, 0.0, 0x1.0p-30, 0.5, 1.0, 2.0, 10.0, 100.0, 700.0,
     };
     for ( f64 x : xs ) {
       f64 cr_v = cr::exp<f64>(x);
@@ -237,10 +275,18 @@ main()
   test_case("cr::sin f64 vs faithful — within 1 ulp on safe inputs");
   {
     static const f64 xs[] = {
-      -10.0, -1.0, -0.5, -0x1.0p-30, 0.0, 0x1.0p-30,
-      0.5, 1.0, 1.0471975511965976,         // π/3
-      0.7853981633974483,                    // π/4
-      10.0, 100.0,
+      -10.0,
+      -1.0,
+      -0.5,
+      -0x1.0p-30,
+      0.0,
+      0x1.0p-30,
+      0.5,
+      1.0,
+      1.0471975511965976,     // π/3
+      0.7853981633974483,     // π/4
+      10.0,
+      100.0,
     };
     for ( f64 x : xs ) {
       f64 cr_v = cr::sin<f64>(x);
@@ -253,9 +299,13 @@ main()
   test_case("cr::sin f64 vs libm — within 1 ulp on smooth inputs");
   {
     static const f64 xs[] = {
-      -1.0, -0.5, 0.0, 0.5, 1.0,
-      0.7853981633974483,                    // π/4
-      1.0471975511965976,                    // π/3
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0,
+      0.7853981633974483,     // π/4
+      1.0471975511965976,     // π/3
     };
     for ( f64 x : xs ) {
       f64 got = cr::sin<f64>(x);
@@ -270,10 +320,10 @@ main()
   test_case("cr::sin f64 — near zeros of sin (post pio2_lo fix)");
   {
     static const f64 xs[] = {
-      3.14159265,           // ≈ π − 3.59e-9
+      3.14159265,     // ≈ π − 3.59e-9
       -3.14159265,
-      6.283185307,          // ≈ 2π
-      9.42477796,           // ≈ 3π
+      6.283185307,     // ≈ 2π
+      9.42477796,      // ≈ 3π
     };
     for ( f64 x : xs ) {
       f64 got = cr::sin<f64>(x);
@@ -286,9 +336,7 @@ main()
   test_case("cr::cos f64 vs faithful — within 1 ulp on safe inputs");
   {
     static const f64 xs[] = {
-      -10.0, -1.0, -0.5, 0.0, 0.5, 1.0,
-      0.7853981633974483, 1.0471975511965976,
-      10.0, 100.0,
+      -10.0, -1.0, -0.5, 0.0, 0.5, 1.0, 0.7853981633974483, 1.0471975511965976, 10.0, 100.0,
     };
     for ( f64 x : xs ) {
       f64 cr_v = cr::cos<f64>(x);
@@ -301,8 +349,7 @@ main()
   test_case("cr::cos f64 vs libm — within 1 ulp on smooth inputs");
   {
     static const f64 xs[] = {
-      -1.0, -0.5, 0.0, 0.5, 1.0,
-      0.7853981633974483, 1.0471975511965976,
+      -1.0, -0.5, 0.0, 0.5, 1.0, 0.7853981633974483, 1.0471975511965976,
     };
     for ( f64 x : xs ) {
       f64 got = cr::cos<f64>(x);
@@ -316,9 +363,9 @@ main()
   test_case("cr::cos f64 — near zeros of cos (post pio2_lo fix)");
   {
     static const f64 xs[] = {
-      1.5707963,            // ≈ π/2
+      1.5707963,     // ≈ π/2
       -1.5707963,
-      4.7123889,            // ≈ 3π/2
+      4.7123889,     // ≈ 3π/2
     };
     for ( f64 x : xs ) {
       f64 got = cr::cos<f64>(x);
@@ -366,5 +413,5 @@ main()
   end_test_case();
 
   print("=== MATH::CR TESTS DONE ===");
-  return 1;
+  return 0;
 }

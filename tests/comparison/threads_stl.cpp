@@ -12,7 +12,6 @@ main()
   }
 
   for ( auto &t : threads ) {
-    if ( t.joinable() )
-      t.join();
+    if ( t.joinable() ) t.join();
   }
 }

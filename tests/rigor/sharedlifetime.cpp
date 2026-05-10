@@ -96,10 +96,8 @@ main(void)
   {
     mc::shared_pointer<mc::vector<int>> p(10);
     assert_sole_owner(p);
-    for ( int i = 0; i < 10; i++ )
-      (*p)[i] = i * 2;
-    for ( int i = 0; i < 10; i++ )
-      sb::require((*p)[i] == i * 2);
+    for ( int i = 0; i < 10; i++ ) (*p)[i] = i * 2;
+    for ( int i = 0; i < 10; i++ ) sb::require((*p)[i] == i * 2);
   }
   sb::end_test_case();
 
@@ -131,8 +129,7 @@ main(void)
   sb::test_case("shared_pointer<vector<int>>: push_back through operator-> grows vector");
   {
     mc::shared_pointer<mc::vector<int>> p(mc::vector<int>{});
-    for ( int i = 0; i < 100; i++ )
-      p->push_back(i);
+    for ( int i = 0; i < 100; i++ ) p->push_back(i);
     sb::require(p->size() == 100);
     sb::require((*p)[0] == 0);
     sb::require((*p)[99] == 99);
@@ -161,8 +158,7 @@ main(void)
   sb::test_case("shared_pointer<vector<int>>: erase through shared pointer");
   {
     mc::shared_pointer<mc::vector<int>> p(mc::vector<int>{});
-    for ( int i = 0; i < 5; i++ )
-      p->push_back(i);
+    for ( int i = 0; i < 5; i++ ) p->push_back(i);
     p->erase(static_cast<usize>(0));     // erase first element
     sb::require(p->size() == 4);
     sb::require((*p)[0] == 1);
@@ -215,7 +211,7 @@ main(void)
       // Temporaries from push_back have already been destroyed; snapshot
       // the destruction count now so we can measure the delta from the move.
       int before = Tracker::destructions;
-      b = micron::move(a);     // b's old vector (2 live Trackers) freed
+      b = std::move(a);     // b's old vector (2 live Trackers) freed
       sb::require(Tracker::destructions - before == 2);
       sb::require(b->size() == 1);
       sb::require((*b)[0].value == 1);
@@ -238,10 +234,8 @@ main(void)
   {
     mc::shared_pointer<mc::vector<int>> p(mc::vector<int>{});
     p->reserve(64);
-    for ( int i = 0; i < 64; i++ )
-      p->push_back(i);
-    for ( int i = 0; i < 64; i++ )
-      sb::require((*p)[static_cast<usize>(i)] == i);
+    for ( int i = 0; i < 64; i++ ) p->push_back(i);
+    for ( int i = 0; i < 64; i++ ) sb::require((*p)[static_cast<usize>(i)] == i);
     assert_sole_owner(p);
   }
   sb::end_test_case();
@@ -261,8 +255,7 @@ main(void)
   {
     mc::shared_pointer<mc::vector<int>> p(mc::vector<int>{});
     p->reserve(64);
-    for ( int i = 0; i < 64; i++ )
-      p->push_back(0xAB);
+    for ( int i = 0; i < 64; i++ ) p->push_back(0xAB);
     bool all_match = true;
     for ( usize i = 0; i < p->size(); i++ )
       if ( (*p)[i] != 0xAB ) {
@@ -277,11 +270,9 @@ main(void)
   {
     mc::shared_pointer<mc::vector<int>> p(mc::vector<int>{});
     p->reserve(64);
-    for ( int i = 0; i < 64; i++ )
-      p->push_back(1);
+    for ( int i = 0; i < 64; i++ ) p->push_back(1);
     int sum = 0;
-    for ( usize i = 0; i < p->size(); i++ )
-      sum += (*p)[i];
+    for ( usize i = 0; i < p->size(); i++ ) sum += (*p)[i];
     sb::require(sum == 64);
   }
   sb::end_test_case();
@@ -680,8 +671,7 @@ main(void)
       root->push_back(Tracker(1));
 
       mc::shared_pointer<mc::vector<Tracker>> copies[100];
-      for ( int i = 0; i < 100; i++ )
-        copies[i] = root;
+      for ( int i = 0; i < 100; i++ ) copies[i] = root;
 
       sb::require(root.refs() == 101);
 
@@ -690,8 +680,7 @@ main(void)
       sb::require(copies[99]->size() == 2);
 
       // Release all copies
-      for ( int i = 0; i < 100; i++ )
-        copies[i] = nullptr;
+      for ( int i = 0; i < 100; i++ ) copies[i] = nullptr;
 
       sb::require(root.refs() == 1);
       sb::require(root->size() == 2);

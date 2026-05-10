@@ -12,7 +12,7 @@ main()
 {
   enable_scope()
   {
-    mc::vector<int> a { 1, 2, 3, 4 };
+    mc::vector<int> a{ 1, 2, 3, 4 };
     mc::spin_inlet<mc::vector<int>> inlet("test");
     mc::console(inlet.tag());
     inlet.store(a);

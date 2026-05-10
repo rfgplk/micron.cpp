@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__arch.hpp"
+
 #define restrict __restrict
 #define chot __attribute__((hot))
 #define ccold __attribute__((cold))
@@ -14,9 +16,18 @@
 #define cconst __attribute__((const))
 #define cnoreorder __attribute__((no_reorder))
 #define gconstructor_ __attribute__((constructor))
+#if !defined(__micron_freestanding)
 #define gconstructor(x) __attribute__((constructor(x)))
+#else
+#define gconstructor(x)
+#endif
+#if !defined(__micron_freestanding)
 #define gdestructor_ __attribute__((destructor))
 #define gdestructor(x) __attribute__((destructor(x)))
+#else
+#define destructor_
+#define gdestructor(x)
+#endif
 
 #define inline_fn(x) cinline x
 #define hot_fn(x) chot x

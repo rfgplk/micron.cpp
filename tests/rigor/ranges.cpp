@@ -368,8 +368,7 @@ test_range()
   sb::test_case("range-based-for accumulates correct sum");
   {
     umax_t sum = 0;
-    for ( auto v : micron::range<1, 6>{} )
-      sum += v;
+    for ( auto v : micron::range<1, 6>{} ) sum += v;
     sb::require(sum, umax_t{ 15 });
   }
   sb::end_test_case();
@@ -377,8 +376,7 @@ test_range()
   sb::test_case("range-based-for iterates exactly (To-From) times");
   {
     int count = 0;
-    for ( [[maybe_unused]] auto v : micron::range<0, 10>{} )
-      ++count;
+    for ( [[maybe_unused]] auto v : micron::range<0, 10>{} ) ++count;
     sb::require(count, 10);
   }
   sb::end_test_case();
@@ -388,8 +386,7 @@ test_range()
     umax_t last = 0;
     auto rb = micron::range<3, 8>::rbegin();
     auto re = micron::range<3, 8>::rend();
-    for ( ; rb != re; ++rb )
-      last = *rb;
+    for ( ; rb != re; ++rb ) last = *rb;
     sb::require(last, umax_t{ 3 });
   }
   sb::end_test_case();
@@ -445,8 +442,7 @@ test_count_range()
   sb::test_case("int_range range-based-for sum");
   {
     int sum = 0;
-    for ( auto v : micron::int_range<1, 5>{} )
-      sum += v;
+    for ( auto v : micron::int_range<1, 5>{} ) sum += v;
     sb::require(sum, 10);
   }
   sb::end_test_case();
@@ -455,8 +451,7 @@ test_count_range()
   {
     int first = 0, last = 0, idx = 0;
     for ( auto v : micron::int_range<-3, 3>{} ) {
-      if ( idx == 0 )
-        first = v;
+      if ( idx == 0 ) first = v;
       last = v;
       ++idx;
     }
@@ -485,8 +480,7 @@ test_count_range()
   sb::test_case("micron::u64_range sum over small window");
   {
     u64 sum = 0;
-    for ( auto v : micron::u64_range<100ULL, 104ULL>{} )
-      sum += v;
+    for ( auto v : micron::u64_range<100ULL, 104ULL>{} ) sum += v;
     sb::require(sum, u64{ 100 + 101 + 102 + 103 });
   }
   sb::end_test_case();
@@ -494,8 +488,7 @@ test_count_range()
   sb::test_case("float_range sum");
   {
     float sum = 0.f;
-    for ( auto v : micron::float_range<0.f, 5.f>{} )
-      sum += v;
+    for ( auto v : micron::float_range<0.f, 5.f>{} ) sum += v;
     sb::require(sum, 0.f + 1.f + 2.f + 3.f + 4.f);
   }
   sb::end_test_case();
@@ -503,8 +496,7 @@ test_count_range()
   sb::test_case("micron::i64_range count across zero");
   {
     i64 count = 0;
-    for ( [[maybe_unused]] auto v : micron::i64_range<-5LL, 5LL>{} )
-      ++count;
+    for ( [[maybe_unused]] auto v : micron::i64_range<-5LL, 5LL>{} ) ++count;
     sb::require(count, i64{ 10 });
   }
   sb::end_test_case();
@@ -572,8 +564,7 @@ test_range_of()
     auto v = RO5::bind(arr);
     int out[5];
     int i = 0;
-    for ( auto it = v.begin(); it != v.end(); ++it )
-      out[i++] = *it;
+    for ( auto it = v.begin(); it != v.end(); ++it ) out[i++] = *it;
     sb::require(i, 5);
     sb::require(out[0], 10);
     sb::require(out[4], 50);
@@ -584,8 +575,7 @@ test_range_of()
   {
     Arr arr = { 1, 2, 3, 4, 5, 6, 7, 8 };
     int sum = 0;
-    for ( auto x : RO5::bind(arr) )
-      sum += x;
+    for ( auto x : RO5::bind(arr) ) sum += x;
     sb::require(sum, 1 + 2 + 3 + 4 + 5);
   }
   sb::end_test_case();
@@ -596,8 +586,7 @@ test_range_of()
     auto v = RO5::bind(arr);
     int out[5];
     int i = 0;
-    for ( auto it = v.cbegin(); it != v.cend(); ++it )
-      out[i++] = *it;
+    for ( auto it = v.cbegin(); it != v.cend(); ++it ) out[i++] = *it;
     sb::require(out[0], 5);
     sb::require(out[4], 1);
   }
@@ -634,8 +623,7 @@ test_range_of()
     auto v = RO5::bind(arr);
     int out[5];
     int i = 0;
-    for ( auto it = v.rbegin(); it != v.rend(); ++it )
-      out[i++] = *it;
+    for ( auto it = v.rbegin(); it != v.rend(); ++it ) out[i++] = *it;
     sb::require(out[0], 5);
     sb::require(out[4], 1);
   }
@@ -659,8 +647,7 @@ test_range_of()
     Arr arr = { 1, 2, 3, 4, 5, 99, 99, 99 };
     int max_seen = 0;
     for ( auto x : RO5::bind(arr) )
-      if ( x > max_seen )
-        max_seen = x;
+      if ( x > max_seen ) max_seen = x;
     sb::require(max_seen, 5);
   }
   sb::end_test_case();
@@ -980,8 +967,7 @@ test_for_loop_patterns()
   {
     int count = 0;
     for ( [[maybe_unused]] auto i : micron::range<0, 3>{} )
-      for ( [[maybe_unused]] auto j : micron::int_range<0, 4>{} )
-        ++count;
+      for ( [[maybe_unused]] auto j : micron::int_range<0, 4>{} ) ++count;
     sb::require(count, 12);
   }
   sb::end_test_case();
@@ -990,8 +976,7 @@ test_for_loop_patterns()
   {
     int out[5] = {};
     int idx = 0;
-    for ( auto v : micron::int_range<10, 15>{} )
-      out[idx++] = v;
+    for ( auto v : micron::int_range<10, 15>{} ) out[idx++] = v;
     sb::require(out[0], 10);
     sb::require(out[4], 14);
   }
@@ -1003,8 +988,7 @@ test_for_loop_patterns()
     int idx = 0;
     auto rb = micron::int_range<0, 5>::rbegin();
     auto re = micron::int_range<0, 5>::rend();
-    for ( ; rb != re; ++rb )
-      out[idx++] = *rb;
+    for ( ; rb != re; ++rb ) out[idx++] = *rb;
     sb::require(out[0], 4);
     sb::require(out[4], 0);
   }
@@ -1014,8 +998,7 @@ test_for_loop_patterns()
   {
     micron::int_range<0, 4> r;
     int sum = 0;
-    for ( auto it = micron::ranges::begin(r); it != micron::ranges::end(r); ++it )
-      sum += *it;
+    for ( auto it = micron::ranges::begin(r); it != micron::ranges::end(r); ++it ) sum += *it;
     sb::require(sum, 0 + 1 + 2 + 3);
   }
   sb::end_test_case();
@@ -1025,8 +1008,7 @@ test_for_loop_patterns()
     int count = 0;
     float first = 0.f, last = 0.f;
     for ( auto v : micron::float_range<2.f, 6.f>{} ) {
-      if ( count == 0 )
-        first = v;
+      if ( count == 0 ) first = v;
       last = v;
       ++count;
     }
@@ -1041,8 +1023,7 @@ test_for_loop_patterns()
     flat_array<int, 10> arr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     int sum = 0;
     auto view = micron::range_of<flat_array<int, 10>, 4>::bind(arr);
-    for ( auto it = micron::ranges::begin(view); it != micron::ranges::end(view); ++it )
-      sum += *it;
+    for ( auto it = micron::ranges::begin(view); it != micron::ranges::end(view); ++it ) sum += *it;
     sb::require(sum, 1 + 2 + 3 + 4);
   }
   sb::end_test_case();
@@ -1061,8 +1042,7 @@ test_stress()
   {
     // Σ(0..999) = 999*1000/2 = 499500
     long long sum = 0;
-    for ( auto v : micron::int_range<0, 1000>{} )
-      sum += v;
+    for ( auto v : micron::int_range<0, 1000>{} ) sum += v;
     sb::require(sum, 499500LL);
   }
   sb::end_test_case();
@@ -1070,8 +1050,7 @@ test_stress()
   sb::test_case("range<0, 1000> iterates 1000 times exactly");
   {
     int count = 0;
-    for ( [[maybe_unused]] auto v : micron::range<0, 1000>{} )
-      ++count;
+    for ( [[maybe_unused]] auto v : micron::range<0, 1000>{} ) ++count;
     sb::require(count, 1000);
   }
   sb::end_test_case();
@@ -1096,8 +1075,7 @@ test_stress()
     int count = 0;
     auto rb = micron::int_range<0, 500>::rbegin();
     auto re = micron::int_range<0, 500>::rend();
-    for ( ; rb != re; ++rb )
-      ++count;
+    for ( ; rb != re; ++rb ) ++count;
     sb::require(count, 500);
   }
   sb::end_test_case();
@@ -1105,12 +1083,10 @@ test_stress()
   sb::test_case("range_of view over 1024-element array visits exactly Cnt elements");
   {
     flat_array<int, 1024> arr;
-    for ( usize i = 0; i < 1024; ++i )
-      arr[i] = static_cast<int>(i);
+    for ( usize i = 0; i < 1024; ++i ) arr[i] = static_cast<int>(i);
 
     int count = 0;
-    for ( [[maybe_unused]] auto x : micron::range_of<flat_array<int, 1024>, 256>::bind(arr) )
-      ++count;
+    for ( [[maybe_unused]] auto x : micron::range_of<flat_array<int, 1024>, 256>::bind(arr) ) ++count;
     sb::require(count, 256);
   }
   sb::end_test_case();

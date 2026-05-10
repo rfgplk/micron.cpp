@@ -29,7 +29,7 @@ execveat(int dirfd, const char *path, char *const argv[], char *const envp[], in
 int
 fexecve(int fd, char *const argv[], char *const envp[])
 {
-  if ( fd < 0 || argv == NULL || envp == NULL ) {
+  if ( fd < 0 || argv == nullptr || envp == nullptr ) {
     set_errno<error::invalid_arg>();
     return -1;
   }

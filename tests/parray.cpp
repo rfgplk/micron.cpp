@@ -13,7 +13,6 @@ main()
   mc::console(parr[5]);
   mc::console(parr.set(1, 25));     // yields new arr
   mc::console(parr);
-  for ( u64 i : mc::u64_range<1, 16>() )
-    mc::console(parr.set(i, i * i));
+  for ( u64 i : mc::u64_range<1, 16>() ) mc::console(parr.set(i, i * i));
   return 1;
 }

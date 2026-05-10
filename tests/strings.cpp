@@ -14,6 +14,7 @@
 #include "snowball/snowball.hpp"
 
 using namespace micron::format;
+
 int
 main(void)
 {
@@ -44,8 +45,7 @@ main(void)
   mc::console("Size check: (true) ", test.size() == mc::strlen("Hello World!"));
   mc::console("Size check: (true) ", test.size() == mc::strlen(test.c_str()));
   mc::console(test_stack);
-  for ( size_t i = 0; i < 10; i++ )
-    test.insert(5, "u90drgzdjiopbqa3e90gikos0rkbv90rsib90-srj90pvsri,90phi");
+  for ( size_t i = 0; i < 10; i++ ) test.insert(5, "u90drgzdjiopbqa3e90gikos0rkbv90rsib90-srj90pvsri,90phi");
   mc::console("Inserted");
   mc::string first = "John";
   mc::string second = "Bananaseed";

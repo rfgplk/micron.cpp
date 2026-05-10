@@ -349,8 +349,7 @@ main(void)
     micron::const_pointer<int[]> p(raw, 5);
     bool ok = true;
     for ( usize i = 0; i < 5 && ok; ++i )
-      if ( p[i] != (int)(i + 1) )
-        ok = false;
+      if ( p[i] != (int)(i + 1) ) ok = false;
     sb::require(ok);
   }
   sb::end_test_case();

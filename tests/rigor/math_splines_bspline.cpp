@@ -132,8 +132,7 @@ main()
     f64 knots[5] = { 0, 0, 0, 1, 1 };     // wrong size for n_ctrl=4 deg=3 (need 8)
     f64 ctrl[4] = { 0, 1, 2, 3 };
     build_info<f64> info{};
-    auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots, 5),
-                                          raw_slice<const f64>(ctrl, 4), 3, &info);
+    auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots, 5), raw_slice<const f64>(ctrl, 4), 3, &info);
     require_true(info.status == build_status::size_mismatch);
     // Returned struct should be empty (knots / ctrl not populated).
     require_true(s.knots.size() == 0);
@@ -146,8 +145,7 @@ main()
     f64 knots[3] = { 0, 0, 1 };
     f64 ctrl[2] = { 1, 2 };
     build_info<f64> info{};
-    auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots, 3),
-                                          raw_slice<const f64>(ctrl, 2), 0, &info);
+    auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots, 3), raw_slice<const f64>(ctrl, 2), 0, &info);
     require_true(info.status == build_status::invalid_argument);
   }
   end_test_case();
@@ -157,8 +155,7 @@ main()
   {
     auto knots = make_uniform_clamped_knots<f64>(6, 3, 0.0, 1.0);
     f64 ctrl[6] = { 1, 2, 3, 4, 5, 6 };
-    auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots.data(), knots.size()),
-                                          raw_slice<const f64>(ctrl, 6), 3);
+    auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots.data(), knots.size()), raw_slice<const f64>(ctrl, 6), 3);
     require_true(near(evaluate<f64>(s, -10.0), 1.0, 1e-13));
     require_true(near(evaluate<f64>(s, 10.0), 6.0, 1e-13));
   }
@@ -174,8 +171,7 @@ main()
       ys[i] = mk::trig::sin<f64>(xs[i]);
     }
     build_info<f64> info{};
-    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, n),
-                                              raw_slice<const f64>(ys, n), 3, &info);
+    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), 3, &info);
     require_true(info.status == build_status::ok);
     require_true(s.degree == 3);
     require_true(s.ctrl.size() == n);
@@ -190,8 +186,7 @@ main()
     constexpr usize n = 7;
     f64 xs[n] = { 0.0, 0.7, 1.5, 2.4, 3.1, 4.0, 5.0 };
     f64 ys[n] = { 1.0, -0.5, 2.3, 0.0, -1.2, 3.7, 2.0 };
-    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, n),
-                                              raw_slice<const f64>(ys, n), 2);
+    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), 2);
     for ( usize i = 0; i < n; ++i ) require_true(near(evaluate<f64>(s, xs[i]), ys[i], 1e-10));
   }
   end_test_case();
@@ -206,8 +201,7 @@ main()
       xs[i] = -1.5 + 3.0 * f64(i) / f64(n - 1);
       ys[i] = mk::exp_ns::exp<f64>(-xs[i] * xs[i]);
     }
-    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, n),
-                                              raw_slice<const f64>(ys, n), 3);
+    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), 3);
     // Sampled max-error on a fine grid: cubic B-spline interpolation is
     // O(h^4) for a smooth function; 24 points over a span of 3 ⇒ h ≈ 0.13,
     // h^4 ≈ 3e-4.  Allow 5e-3 to absorb the f^(4)/24 prefactor.
@@ -228,8 +222,7 @@ main()
     f64 xs[5] = { 0, 1, 0.5, 2, 3 };     // non-monotone
     f64 ys[5] = { 1, 2, 3, 4, 5 };
     build_info<f64> info{};
-    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, 5),
-                                              raw_slice<const f64>(ys, 5), 3, &info);
+    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5), 3, &info);
     require_true(info.status == build_status::non_monotonic_x);
     require_true(s.knots.size() == 0);
   }
@@ -241,12 +234,11 @@ main()
     f64 xs[3] = { 0, 1, 2 };
     f64 ys[3] = { 0, 1, 4 };
     build_info<f64> info{};
-    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, 3),
-                                              raw_slice<const f64>(ys, 3), 3, &info);
+    auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, 3), raw_slice<const f64>(ys, 3), 3, &info);
     require_true(info.status == build_status::too_few_points);
   }
   end_test_case();
 
   print("=== BSPLINE TESTS PASSED ===");
-  return 1;
+  return 0;
 }

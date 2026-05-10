@@ -29,6 +29,69 @@ namespace __bits
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #if defined(__micron_compiler_gcc)
+#if defined(__micron_arch_arm32)
+__inline_g ::u32
+__crc32b(::u32 a, ::u8 b) noexcept
+{
+  ::u32 r;
+  __asm__("crc32b %0, %1, %2" : "=r"(r) : "r"(a), "r"((::u32)b));
+  return r;
+}
+
+__inline_g ::u32
+__crc32h(::u32 a, ::u16 b) noexcept
+{
+  ::u32 r;
+  __asm__("crc32h %0, %1, %2" : "=r"(r) : "r"(a), "r"((::u32)b));
+  return r;
+}
+
+__inline_g ::u32
+__crc32w(::u32 a, ::u32 b) noexcept
+{
+  ::u32 r;
+  __asm__("crc32w %0, %1, %2" : "=r"(r) : "r"(a), "r"(b));
+  return r;
+}
+
+__inline_g ::u32
+__crc32d(::u32 a, ::u64 b) noexcept
+{
+  ::u32 r = __crc32w(a, (::u32)b);
+  return __crc32w(r, (::u32)(b >> 32));
+}
+
+__inline_g ::u32
+__crc32cb(::u32 a, ::u8 b) noexcept
+{
+  ::u32 r;
+  __asm__("crc32cb %0, %1, %2" : "=r"(r) : "r"(a), "r"((::u32)b));
+  return r;
+}
+
+__inline_g ::u32
+__crc32ch(::u32 a, ::u16 b) noexcept
+{
+  ::u32 r;
+  __asm__("crc32ch %0, %1, %2" : "=r"(r) : "r"(a), "r"((::u32)b));
+  return r;
+}
+
+__inline_g ::u32
+__crc32cw(::u32 a, ::u32 b) noexcept
+{
+  ::u32 r;
+  __asm__("crc32cw %0, %1, %2" : "=r"(r) : "r"(a), "r"(b));
+  return r;
+}
+
+__inline_g ::u32
+__crc32cd(::u32 a, ::u64 b) noexcept
+{
+  ::u32 r = __crc32cw(a, (::u32)b);
+  return __crc32cw(r, (::u32)(b >> 32));
+}
+#else      // arm64
 __inline_g ::u32
 __crc32b(::u32 a, ::u8 b) noexcept
 {
@@ -76,6 +139,7 @@ __crc32cd(::u32 a, ::u64 b) noexcept
 {
   return __builtin_aarch64_crc32cx(a, b);
 }
+#endif     // arm32 vs arm64
 #elif defined(__micron_compiler_clang)
 __inline_g ::u32
 __crc32b(::u32 a, ::u8 b) noexcept

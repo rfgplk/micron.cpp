@@ -49,8 +49,6 @@ main(void)
   mc::io::stdoutln("First value is: ", s.a);
   mc::io::stdoutln("Second value is: ", s.b);
   mc::vector<mc::pair<float, bool>> vecpair;
-  for ( auto i = 0; i < 20; i++ )
-    vecpair.emplace_back(mc::tie(5.33f, false));
-  for ( auto rtt : vecpair )
-    mc::io::stdoutln(rtt.a, ", ", rtt.b);
+  for ( auto i = 0; i < 20; i++ ) vecpair.emplace_back(mc::tie(5.33f, false));
+  for ( auto rtt : vecpair ) mc::io::stdoutln(rtt.a, ", ", rtt.b);
 };

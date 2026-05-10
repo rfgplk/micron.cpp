@@ -91,6 +91,7 @@ static_assert(alignof(int_matrix_base<u32, 16, 16>) == 64);
 struct __stuff {
   int_matrix_base<i32, 4, 4> m;
 };
+
 static_assert(alignof(__stuff) == 64);
 
 int
@@ -103,5 +104,5 @@ main()
   }
   end_test_case();
   print("=== alignment ok ===");
-  return 1;
+  return 0;
 }

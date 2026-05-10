@@ -175,5 +175,5 @@ main()
   }
   end_test_case();
 
-  return 1;
+  return 0;
 }

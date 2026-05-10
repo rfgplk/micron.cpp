@@ -1703,22 +1703,23 @@ template <> class numeric_limits<long double>
 public:
   static constexpr bool is_specialized = true;
 
+  // NOTE: hardcoding 80-bit-extended (x86_64) long-double values overflows on targets where long double is binary64
   static constexpr long double
   min() noexcept
   {
-    return 3.36210314311209350626e-4932L;
+    return __LDBL_MIN__;
   }
 
   static constexpr long double
   max() noexcept
   {
-    return 1.18973149535723176502e+4932L;
+    return __LDBL_MAX__;
   }
 
   static constexpr long double
   lowest() noexcept
   {
-    return -1.18973149535723176502e+4932L;
+    return -__LDBL_MAX__;
   }
 
   static constexpr int digits = 64;
@@ -1773,7 +1774,7 @@ public:
   static constexpr long double
   denorm_min() noexcept
   {
-    return 3.64519953188247460253e-4951L;
+    return __LDBL_DENORM_MIN__;
   }
 
   static constexpr bool is_iec559 = true;

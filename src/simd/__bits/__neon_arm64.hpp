@@ -22,6 +22,7 @@ namespace __bits
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpsabi"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
@@ -43,22 +44,36 @@ namespace __bits
   }                                                                                                                                        \
   __inline_g void vst1_##suffix(ETYPE *p, T v) noexcept { __builtin_memcpy(p, &v, sizeof(T)); }
 
-__neon_ldst(int8x16_t, s8, signed char) __neon_ldst(int16x8_t, s16, signed short) __neon_ldst(int32x4_t, s32, signed int)
-    __neon_ldst(int64x2_t, s64, signed long long) __neon_ldst(uint8x16_t, u8, unsigned char) __neon_ldst(uint16x8_t, u16, unsigned short)
-        __neon_ldst(uint32x4_t, u32, unsigned int) __neon_ldst(uint64x2_t, u64, unsigned long long) __neon_ldst(float32x4_t, f32, float)
-            __neon_ldst(float64x2_t, f64, double) __neon_ldst(poly8x16_t, p8, poly8_t) __neon_ldst(poly16x8_t, p16, poly16_t)
-                __neon_ldst(poly64x2_t, p64, poly64_t)
+__neon_ldst(int8x16_t, s8, signed char);
+__neon_ldst(int16x8_t, s16, signed short);
+__neon_ldst(int32x4_t, s32, signed int);
+__neon_ldst(int64x2_t, s64, signed long long);
+__neon_ldst(uint8x16_t, u8, unsigned char);
+__neon_ldst(uint16x8_t, u16, unsigned short);
+__neon_ldst(uint32x4_t, u32, unsigned int);
+__neon_ldst(uint64x2_t, u64, unsigned long long);
+__neon_ldst(float32x4_t, f32, float);
+__neon_ldst(float64x2_t, f64, double);
+__neon_ldst(poly8x16_t, p8, poly8_t);
+__neon_ldst(poly16x8_t, p16, poly16_t);
+__neon_ldst(poly64x2_t, p64, poly64_t);
 
-                    __neon_ldst_64(int8x8_t, s8, signed char) __neon_ldst_64(int16x4_t, s16, signed short)
-                        __neon_ldst_64(int32x2_t, s32, signed int) __neon_ldst_64(int64x1_t, s64, signed long long)
-                            __neon_ldst_64(uint8x8_t, u8, unsigned char) __neon_ldst_64(uint16x4_t, u16, unsigned short)
-                                __neon_ldst_64(uint32x2_t, u32, unsigned int) __neon_ldst_64(uint64x1_t, u64, unsigned long long)
-                                    __neon_ldst_64(float32x2_t, f32, float) __neon_ldst_64(float64x1_t, f64, double)
+__neon_ldst_64(int8x8_t, s8, signed char);
+__neon_ldst_64(int16x4_t, s16, signed short);
+__neon_ldst_64(int32x2_t, s32, signed int);
+__neon_ldst_64(int64x1_t, s64, signed long long);
+__neon_ldst_64(uint8x8_t, u8, unsigned char);
+__neon_ldst_64(uint16x4_t, u16, unsigned short);
+__neon_ldst_64(uint32x2_t, u32, unsigned int);
+__neon_ldst_64(uint64x1_t, u64, unsigned long long);
+__neon_ldst_64(float32x2_t, f32, float);
+__neon_ldst_64(float64x1_t, f64, double);
 
 #undef __neon_ldst
 #undef __neon_ldst_64
 
-                                        __inline_g int8x16_t vdupq_n_s8(signed char v) noexcept
+__inline_g int8x16_t
+vdupq_n_s8(signed char v) noexcept
 {
   return (int8x16_t){ v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v };
 }
@@ -1033,15 +1048,22 @@ vshrq_n_s64(int64x2_t a, const int n) noexcept
               __neon_reinterpret(u32, uint32x4_t, SUFFIX_FROM, T_FROM) __neon_reinterpret(u64, uint64x2_t, SUFFIX_FROM, T_FROM)            \
                   __neon_reinterpret(f32, float32x4_t, SUFFIX_FROM, T_FROM) __neon_reinterpret(f64, float64x2_t, SUFFIX_FROM, T_FROM)
 
-__neon_reinterpret_ALL_FROM(s8, int8x16_t) __neon_reinterpret_ALL_FROM(s16, int16x8_t) __neon_reinterpret_ALL_FROM(s32, int32x4_t)
-    __neon_reinterpret_ALL_FROM(s64, int64x2_t) __neon_reinterpret_ALL_FROM(u8, uint8x16_t) __neon_reinterpret_ALL_FROM(u16, uint16x8_t)
-        __neon_reinterpret_ALL_FROM(u32, uint32x4_t) __neon_reinterpret_ALL_FROM(u64, uint64x2_t)
-            __neon_reinterpret_ALL_FROM(f32, float32x4_t) __neon_reinterpret_ALL_FROM(f64, float64x2_t)
+__neon_reinterpret_ALL_FROM(s8, int8x16_t);
+__neon_reinterpret_ALL_FROM(s16, int16x8_t);
+__neon_reinterpret_ALL_FROM(s32, int32x4_t);
+__neon_reinterpret_ALL_FROM(s64, int64x2_t);
+__neon_reinterpret_ALL_FROM(u8, uint8x16_t);
+__neon_reinterpret_ALL_FROM(u16, uint16x8_t);
+__neon_reinterpret_ALL_FROM(u32, uint32x4_t);
+__neon_reinterpret_ALL_FROM(u64, uint64x2_t);
+__neon_reinterpret_ALL_FROM(f32, float32x4_t);
+__neon_reinterpret_ALL_FROM(f64, float64x2_t);
 
 #undef __neon_reinterpret_ALL_FROM
 #undef __neon_reinterpret
 
-                __inline_g signed char vgetq_lane_s8(int8x16_t v, const int n) noexcept
+__inline_g signed char
+vgetq_lane_s8(int8x16_t v, const int n) noexcept
 {
   return v[n];
 }

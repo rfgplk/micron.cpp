@@ -20,7 +20,8 @@
 int
 main(void)
 {
-  enable_scope() {
+  enable_scope()
+  {
     mc::string str;
     auto file = mc::io::open_file("/etc/bashrc");
     file.read(str);
@@ -36,8 +37,9 @@ main(void)
     mc::console("Inode: ", file.inode());
     mc::console("Device: ", file.device());
   }
-  disable_scope() {
-    mc::sstring<1<<16> str;
+  disable_scope()
+  {
+    mc::sstring<1 << 16> str;
     auto file = mc::io::open_file("tools/src/main.cc");
     file.read(str);
 

@@ -262,11 +262,12 @@ getitimer(i32 which, itimerval_t &cur)
 }
 
 u32
-alarm(u32 seconds)
+alarm([[maybe_unused]] u32 seconds)
 {
 #if !defined(__micron_arch_arm32)
   return static_cast<i32>(micron::syscall(SYS_alarm, seconds));
 #else
+  // SYS_alarm doesn't exist on arm32 EABI -- callers must use SYS_setitimer.
   return 0;
 #endif
 }

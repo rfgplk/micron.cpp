@@ -17,12 +17,10 @@ main()
   enable_scope()
   {
     alignas(8) byte str[32] = {};
-    for ( u64 i = 0; i < 32; ++i )
-      str[i] = i;
+    for ( u64 i = 0; i < 32; ++i ) str[i] = i;
     volatile u64 out = 0;
     // 32GiB
-    for ( usize i = 0; i < 1'000'000'000; ++i )
-      out = mc::hashes::zzz64(reinterpret_cast<const byte *>(&str), i, 32);
+    for ( usize i = 0; i < 1'000'000'000; ++i ) out = mc::hashes::zzz64(reinterpret_cast<const byte *>(&str), i, 32);
     mc::console(static_cast<u64>(out));
   };
 }

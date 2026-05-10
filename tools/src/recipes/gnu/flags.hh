@@ -812,6 +812,8 @@ constexpr static const i32 flag_w_no_vexing_parse = 237;
 constexpr static const i32 flag_w_virtual_inheritance = 238;
 constexpr static const i32 flag_w_no_virtual_move_assign = 239;
 constexpr static const i32 flag_w_volatile = 240;
+constexpr static const i32 flag_w_no_odr = 241;
+constexpr static const i32 flag_w_no_lto_type_mismatch = 242;
 
 enum class flags : i32 {
   fsyntax_only = flag_fsyntax_only,
@@ -1054,7 +1056,9 @@ enum class flags : i32 {
   Wno_vexing_parse = flag_w_no_vexing_parse,
   Wvirtual_inheritance = flag_w_virtual_inheritance,
   Wno_virtual_move_assign = flag_w_no_virtual_move_assign,
-  Wvolatile = flag_w_volatile
+  Wvolatile = flag_w_volatile,
+  Wno_odr = flag_w_no_odr,
+  Wno_lto_type_mismatch = flag_w_no_lto_type_mismatch
 };
 
 constexpr static const char *flag_strings[] = { "-fsyntax-only",
@@ -1297,7 +1301,9 @@ constexpr static const char *flag_strings[] = { "-fsyntax-only",
                                                 "-Wno-vexing-parse",
                                                 "-Wvirtual-inheritance",
                                                 "-Wno-virtual-move-assign",
-                                                "-Wvolatile" };
+                                                "-Wvolatile",
+                                                "-Wno-odr",
+                                                "-Wno-lto-type-mismatch" };
 
 constexpr const char *
 get_string_flag(flags f)
@@ -2082,7 +2088,8 @@ constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations
                                                 "-Ofast",
                                                 "-Og",
                                                 "-Oz",
-                                                "--param ", "-flto=8" };
+                                                "--param ",
+                                                "-flto=8" };
 
 constexpr const char *
 get_string_flag(flags f)
@@ -2495,6 +2502,8 @@ constexpr static const i32 flag_profile_prefix_map = 60;
 constexpr static const i32 flag_patchable_function_entry = 61;
 constexpr static const i32 flag_stack_clash_protection = 62;
 constexpr static const i32 flag_strict_overflow = 63;
+constexpr static const i32 flag_nostack_protector = 64;
+constexpr static const i32 flag_no_exceptions = 65;
 
 enum class flags : i32 {
   p = flag_p,
@@ -2560,7 +2569,9 @@ enum class flags : i32 {
   profile_prefix_map = flag_profile_prefix_map,
   patchable_function_entry = flag_patchable_function_entry,
   stack_clash_protection = flag_stack_clash_protection,
-  strict_overflow = flag_strict_overflow
+  strict_overflow = flag_strict_overflow,
+  nostack_protector = flag_nostack_protector,
+  no_exceptions = flag_no_exceptions,
 };
 
 // String literals for profiling flags
@@ -2628,7 +2639,9 @@ constexpr static const char *flag_strings[] = {
   "-fprofile-prefix-map=",                             // 60 flag_profile_prefix_map
   "-fpatchable-function-entry=",
   "-fstack-clash-protection",     // 61 flag_patchable_function_entry
-  "-fstrict-overflow"             // 61 flag_patchable_function_entry
+  "-fstrict-overflow",            // 62
+  "-fno-stack-protector",          // 63
+  "-fno-exceptions",              // 64
 };
 
 constexpr const char *

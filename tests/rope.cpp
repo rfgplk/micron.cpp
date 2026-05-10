@@ -20,8 +20,7 @@ main(void)
   mc::rope str("Hello World!");
   mc::console(str);
   mc::rope rst;
-  for ( u64 i : mc::u64_range<1, 100000>() )
-    rst = mc::move(str.insert(6, i, i));
+  for ( u64 i : mc::u64_range<1, 100000>() ) rst = mc::move(str.insert(6, i, i));
   mc::console(rst);
   //~30s
   /*

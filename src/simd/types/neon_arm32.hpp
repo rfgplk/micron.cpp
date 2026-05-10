@@ -693,7 +693,7 @@ public:
       return neon_movemask_f32(value) == 0xF;
     else if constexpr ( micron::is_same_v<T, i128> ) {
       const uint64x2_t v64 = vreinterpretq_u64_s32(value);
-      return (vgetq_lane_u64(v64, 0) & vgetq_lane_u64(v64, 1)) == UINT64_MAX;
+      return (vgetq_lane_u64(v64, 0) & vgetq_lane_u64(v64, 1)) == ~static_cast<u64>(0);
     }
   }
 

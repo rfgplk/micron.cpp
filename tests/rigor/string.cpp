@@ -5,6 +5,7 @@
 
 #include "../snowball/snowball.hpp"
 using namespace snowball;
+
 int
 main(int, char **)
 {
@@ -192,8 +193,8 @@ main(int, char **)
     require(s1 != s3, true);
     require(s1 < s3, true);
     require(s3 > s2, true);
-    //require(s1 <= s2, true);
-    //require(s3 >= s2, true);
+    // require(s1 <= s2, true);
+    // require(s3 >= s2, true);
   }
   end_test_case();
 

@@ -12,23 +12,40 @@
 #include "../../simd/intrin.hpp"
 #include "../../simd/memory.hpp"
 
+#include "bits.hpp"
+
 namespace micron
 {
+
+[[gnu::always_inline]] static inline byte *
+__memmove_bytes(byte *d, const byte *s, const u64 bytes) noexcept
+{
+  if ( bytes == 0 ) return d;
+  if ( bytes < __simd_dispatch_threshold ) {
+    if ( d < s ) {
+      for ( u64 i = 0; i < bytes; i++ ) d[i] = s[i];
+    } else if ( d > s ) {
+      for ( u64 i = bytes; i > 0; --i ) d[i - 1] = s[i - 1];
+    }
+    return d;
+  }
+#if defined(__micron_x86_avx512f)
+  if ( bytes >= 64 ) return simd::memmove512<byte>(d, s, bytes);
+#endif
+#if defined(__micron_x86_avx2)
+  return simd::memmove256<byte>(d, s, bytes);
+#else
+  return simd::memmove128<byte>(d, s, bytes);
+#endif
+}
 
 template <typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 bytemove(F *_dest, D *_src, const u64 cnt) noexcept
 {
-  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
-  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest)),
+                  reinterpret_cast<const byte *>(const_cast<micron::remove_cv_t<D> *>(_src)), cnt);
   return _dest;
 };
 
@@ -37,15 +54,7 @@ template <typename F, typename D>
 F &
 rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
 {
-  byte *dest = reinterpret_cast<byte *>(&_dest);
-  byte *src = reinterpret_cast<byte *>(&_src);
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(&_dest), reinterpret_cast<const byte *>(&_src), cnt);
   return _dest;
 };
 
@@ -88,15 +97,8 @@ template <u64 M, typename F, typename D>
 F *
 cbytemove(F *_dest, D *_src) noexcept
 {
-  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
-  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest)),
+                  reinterpret_cast<const byte *>(const_cast<micron::remove_cv_t<D> *>(_src)), M);
   return _dest;
 };
 
@@ -105,15 +107,7 @@ template <u64 M, typename F, typename D>
 F &
 crbytemove(F &_dest, D &_src) noexcept
 {
-  byte *dest = reinterpret_cast<byte *>(&_dest);
-  byte *src = reinterpret_cast<byte *>(&_src);
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(&_dest), reinterpret_cast<const byte *>(&_src), M);
   return _dest;
 };
 
@@ -124,16 +118,8 @@ sbytemove(F *_dest, D *_src, const u64 cnt) noexcept
 {
   if ( _dest == nullptr || _src == nullptr ) return nullptr;
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
-
-  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
-  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest)),
+                  reinterpret_cast<const byte *>(const_cast<micron::remove_cv_t<D> *>(_src)), cnt);
   __mem_barrier();
   return _dest;
 };
@@ -144,16 +130,7 @@ bool
 rsbytemove(F &_dest, D &_src, const u64 cnt) noexcept
 {
   if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) ) return false;
-
-  byte *dest = reinterpret_cast<byte *>(&_dest);
-  byte *src = reinterpret_cast<byte *>(&_src);
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(&_dest), reinterpret_cast<const byte *>(&_src), cnt);
   __mem_barrier();
   return true;
 };
@@ -165,16 +142,8 @@ scbytemove(F *_dest, D *_src) noexcept
 {
   if ( _dest == nullptr || _src == nullptr ) return nullptr;
   if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
-
-  byte *dest = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest));
-  byte *src = reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<D> *>(_src));
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(const_cast<micron::remove_cv_t<F> *>(_dest)),
+                  reinterpret_cast<const byte *>(const_cast<micron::remove_cv_t<D> *>(_src)), M);
   __mem_barrier();
   return _dest;
 };
@@ -185,16 +154,7 @@ bool
 rscrbytemove(F &_dest, D &_src) noexcept
 {
   if ( !__is_aligned_to_r(_dest, alignment) || !__is_aligned_to_r(_src, alignment) ) return false;
-
-  byte *dest = reinterpret_cast<byte *>(&_dest);
-  byte *src = reinterpret_cast<byte *>(&_src);
-
-  if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ ) dest[i] = src[i];
-  } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i ) dest[i - 1] = src[i - 1];
-  }
-
+  __memmove_bytes(reinterpret_cast<byte *>(&_dest), reinterpret_cast<const byte *>(&_src), M);
   __mem_barrier();
   return true;
 };
@@ -203,13 +163,17 @@ template <typename F, typename D>
 F *
 memmove(F *dest, D *src, const u64 cnt) noexcept
 {
-  if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
-  } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src), cnt * sizeof(D));
+    return dest;
+  } else {
+    if ( dest < src ) {
+      for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
+    } else if ( dest > src ) {
+      for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+    }
+    return dest;
   }
-
-  return dest;
 };
 
 template <typename F, typename D>
@@ -218,14 +182,17 @@ rmemmove(F &dest, D &src, const u64 cnt) noexcept
 {
   F *d = &dest;
   D *s = &src;
-
-  if ( d < s ) {
-    for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
-  } else if ( d > s ) {
-    for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(d), reinterpret_cast<const byte *>(s), cnt * sizeof(D));
+    return dest;
+  } else {
+    if ( d < s ) {
+      for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
+    } else if ( d > s ) {
+      for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+    }
+    return dest;
   }
-
-  return dest;
 };
 
 template <typename F, typename D>
@@ -263,13 +230,17 @@ template <u64 M, typename F, typename D>
 F *
 cmemmove(F *dest, D *src) noexcept
 {
-  if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ ) dest[i] = static_cast<F>(src[i]);
-  } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src), M * sizeof(D));
+    return dest;
+  } else {
+    if ( dest < src ) {
+      for ( u64 i = 0; i < M; i++ ) dest[i] = static_cast<F>(src[i]);
+    } else if ( dest > src ) {
+      for ( u64 i = M; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+    }
+    return dest;
   }
-
-  return dest;
 };
 
 template <u64 M, typename F, typename D>
@@ -278,14 +249,17 @@ crmemmove(F &dest, D &src) noexcept
 {
   F *d = &dest;
   D *s = &src;
-
-  if ( d < s ) {
-    for ( u64 i = 0; i < M; i++ ) d[i] = static_cast<F>(s[i]);
-  } else if ( d > s ) {
-    for ( u64 i = M; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(d), reinterpret_cast<const byte *>(s), M * sizeof(D));
+    return dest;
+  } else {
+    if ( d < s ) {
+      for ( u64 i = 0; i < M; i++ ) d[i] = static_cast<F>(s[i]);
+    } else if ( d > s ) {
+      for ( u64 i = M; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+    }
+    return dest;
   }
-
-  return dest;
 };
 
 template <typename F, typename D, u64 alignment = alignof(F)>
@@ -295,10 +269,14 @@ smemmove(F *dest, D *src, const u64 cnt) noexcept
   if ( dest == nullptr || src == nullptr ) return nullptr;
   if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
 
-  if ( dest < src ) {
-    for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
-  } else if ( dest > src ) {
-    for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src), cnt * sizeof(D));
+  } else {
+    if ( dest < src ) {
+      for ( u64 i = 0; i < cnt; i++ ) dest[i] = static_cast<F>(src[i]);
+    } else if ( dest > src ) {
+      for ( u64 i = cnt; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+    }
   }
 
   __mem_barrier();
@@ -313,11 +291,14 @@ rsmemmove(F &dest, D &src, const u64 cnt) noexcept
 
   F *d = &dest;
   D *s = &src;
-
-  if ( d < s ) {
-    for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
-  } else if ( d > s ) {
-    for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(d), reinterpret_cast<const byte *>(s), cnt * sizeof(D));
+  } else {
+    if ( d < s ) {
+      for ( u64 i = 0; i < cnt; i++ ) d[i] = static_cast<F>(s[i]);
+    } else if ( d > s ) {
+      for ( u64 i = cnt; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+    }
   }
 
   __mem_barrier();
@@ -331,10 +312,14 @@ scmemmove(F *dest, D *src) noexcept
   if ( dest == nullptr || src == nullptr ) return nullptr;
   if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
 
-  if ( dest < src ) {
-    for ( u64 i = 0; i < M; i++ ) dest[i] = static_cast<F>(src[i]);
-  } else if ( dest > src ) {
-    for ( u64 i = M; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src), M * sizeof(D));
+  } else {
+    if ( dest < src ) {
+      for ( u64 i = 0; i < M; i++ ) dest[i] = static_cast<F>(src[i]);
+    } else if ( dest > src ) {
+      for ( u64 i = M; i > 0; --i ) dest[i - 1] = static_cast<F>(src[i - 1]);
+    }
   }
 
   __mem_barrier();
@@ -349,11 +334,14 @@ rscmemmove(F &dest, D &src) noexcept
 
   F *d = &dest;
   D *s = &src;
-
-  if ( d < s ) {
-    for ( u64 i = 0; i < M; i++ ) d[i] = static_cast<F>(s[i]);
-  } else if ( d > s ) {
-    for ( u64 i = M; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+  if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
+    __memmove_bytes(reinterpret_cast<byte *>(d), reinterpret_cast<const byte *>(s), M * sizeof(D));
+  } else {
+    if ( d < s ) {
+      for ( u64 i = 0; i < M; i++ ) d[i] = static_cast<F>(s[i]);
+    } else if ( d > s ) {
+      for ( u64 i = M; i > 0; --i ) d[i - 1] = static_cast<F>(s[i - 1]);
+    }
   }
 
   __mem_barrier();
@@ -361,3 +349,13 @@ rscmemmove(F &dest, D &src) noexcept
 };
 
 };     // namespace micron
+
+#if defined(__micron_freestanding)
+// c-abi
+extern "C" __attribute__((used, optimize("-fno-tree-loop-distribute-patterns"))) inline void *
+memmove(void *d, const void *s, __SIZE_TYPE__ n) noexcept
+{
+  micron::__memmove_bytes(static_cast<byte *>(d), static_cast<const byte *>(s), static_cast<u64>(n));
+  return d;
+}
+#endif

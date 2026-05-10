@@ -67,8 +67,7 @@ main()
     simd::f256 vf = _mm256_set_ps(64.0f, 49.0f, 36.0f, 25.0f, 16.0f, 9.0f, 4.0f, 1.0f);
     f32 outf[8];
     store_f256<f32>(mk::pow_ns::sqrt<simd::f256>(vf), outf);
-    for ( int i = 0; i < 8; ++i )
-      require_true(near_f(outf[i], f32(i + 1), 1e-6f));
+    for ( int i = 0; i < 8; ++i ) require_true(near_f(outf[i], f32(i + 1), 1e-6f));
   }
   end_test_case();
 
@@ -159,7 +158,7 @@ main()
   end_test_case();
 
   print("=== simd ok ===");
-  return 1;
+  return 0;
 }
 
 #else
@@ -168,7 +167,7 @@ int
 main()
 {
   print("=== SIMD KERNEL TESTS — skipped (no AVX2/FMA) ===");
-  return 1;
+  return 0;
 }
 
 #endif

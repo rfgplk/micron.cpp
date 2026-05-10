@@ -135,8 +135,7 @@ pa_small
 make_seq_small(int n)
 {
   pa_small m;
-  for ( int i = 0; i < n && (usize)i < pa_small::length; ++i )
-    m = m.set((usize)i, i * 10);
+  for ( int i = 0; i < n && (usize)i < pa_small::length; ++i ) m = m.set((usize)i, i * 10);
   return m;
 }
 
@@ -144,8 +143,7 @@ pa_int
 make_seq(int n)
 {
   pa_int m;
-  for ( int i = 0; i < n && (usize)i < pa_int::length; ++i )
-    m = m.set((usize)i, i * 10);
+  for ( int i = 0; i < n && (usize)i < pa_int::length; ++i ) m = m.set((usize)i, i * 10);
   return m;
 }
 
@@ -153,8 +151,7 @@ bool
 verify_seq_small(const pa_small &m, int n)
 {
   for ( int i = 0; i < n; ++i )
-    if ( m.get((usize)i) != i * 10 )
-      return false;
+    if ( m.get((usize)i) != i * 10 ) return false;
   return true;
 }
 
@@ -178,8 +175,7 @@ main()
     require_true(m.identity() == nullptr);
 
     // all slots default-initialized to T{}
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m.get(i), 0);
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m.get(i), 0);
   }
   end_test_case();
 
@@ -188,8 +184,7 @@ main()
   {
     pa_small m(42);
     require_true(m.identity() != nullptr);
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m.get(i), 42);
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m.get(i), 42);
   }
   end_test_case();
 
@@ -202,8 +197,7 @@ main()
     require(m.get(2), 3);
     require(m.get(3), 4);
     // remaining slots default
-    for ( usize i = 4; i < pa_small::length; ++i )
-      require(m.get(i), 0);
+    for ( usize i = 4; i < pa_small::length; ++i ) require(m.get(i), 0);
   }
   end_test_case();
 
@@ -215,8 +209,7 @@ main()
     require(m.get(0), 10);
     require(m.get(1), 20);
     require(m.get(2), 30);
-    for ( usize i = 3; i < pa_small::length; ++i )
-      require(m.get(i), 0);
+    for ( usize i = 3; i < pa_small::length; ++i ) require(m.get(i), 0);
   }
   end_test_case();
 
@@ -224,8 +217,7 @@ main()
   test_case("generator construction");
   {
     pa_small m([](usize i) -> int { return (int)(i * i); }, 8);
-    for ( usize i = 0; i < 8; ++i )
-      require(m.get(i), (int)(i * i));
+    for ( usize i = 0; i < 8; ++i ) require(m.get(i), (int)(i * i));
   }
   end_test_case();
 
@@ -333,8 +325,7 @@ main()
   test_case("get returns default for null subtree");
   {
     pa_small m;
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m.get(i), 0);
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m.get(i), 0);
   }
   end_test_case();
 
@@ -342,8 +333,7 @@ main()
   test_case("at returns correct value");
   {
     auto m = make_seq_small(10);
-    for ( usize i = 0; i < 10; ++i )
-      require(m.at(i), (int)(i * 10));
+    for ( usize i = 0; i < 10; ++i ) require(m.at(i), (int)(i * 10));
   }
   end_test_case();
 
@@ -368,8 +358,7 @@ main()
   test_case("operator[] matches get");
   {
     auto m = make_seq_small(8);
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m[i], m.get(i));
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m[i], m.get(i));
   }
   end_test_case();
 
@@ -382,8 +371,7 @@ main()
     auto m2 = m.clear();
 
     require_true(m2.identity() == nullptr);
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m2.get(i), 0);
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m2.get(i), 0);
 
     // original intact
     require_true(verify_seq_small(m, 8));
@@ -396,8 +384,7 @@ main()
     auto m = make_seq_small(8);
     auto m2 = m.fill(99);
 
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m2.get(i), 99);
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m2.get(i), 99);
 
     require_true(verify_seq_small(m, 8));
   }
@@ -547,13 +534,11 @@ main()
   {
     pa_small versions[16];
     versions[0] = pa_small();
-    for ( usize i = 1; i < 16 && i < pa_small::length; ++i )
-      versions[i] = versions[i - 1].set(i, (int)(i * 100));
+    for ( usize i = 1; i < 16 && i < pa_small::length; ++i ) versions[i] = versions[i - 1].set(i, (int)(i * 100));
 
     // each version has exactly the values set up to its point
     for ( usize v = 1; v < 16 && v < pa_small::length; ++v ) {
-      for ( usize slot = 1; slot <= v; ++slot )
-        require(versions[v].get(slot), (int)(slot * 100));
+      for ( usize slot = 1; slot <= v; ++slot ) require(versions[v].get(slot), (int)(slot * 100));
       // slot 0 is always default
       require(versions[v].get(0), 0);
     }
@@ -752,8 +737,7 @@ main()
   {
     auto m = make_seq_small(8);
     int count = 0;
-    for ( auto it = m.begin(); it != m.end(); ++it )
-      ++count;
+    for ( auto it = m.begin(); it != m.end(); ++it ) ++count;
     require(count, (int)pa_small::length);
   }
   end_test_case();
@@ -763,8 +747,7 @@ main()
   {
     auto m = make_seq_small(10);
     usize idx = 0;
-    for ( auto it = m.begin(); it != m.end(); ++it, ++idx )
-      require(*it, m.get(idx));
+    for ( auto it = m.begin(); it != m.end(); ++it, ++idx ) require(*it, m.get(idx));
   }
   end_test_case();
 
@@ -947,8 +930,7 @@ main()
     int before = g_alive;
     {
       pa_tracked m(Tracked(7));
-      for ( usize i = 0; i < pa_tracked::length; ++i )
-        require(m.get(i).val, 7);
+      for ( usize i = 0; i < pa_tracked::length; ++i ) require(m.get(i).val, 7);
     }
     require(g_alive, before);
   }
@@ -990,8 +972,7 @@ main()
     int before = g_alive;
     {
       pa_tracked m;
-      for ( int i = 0; i < 50; ++i )
-        m = m.set(0, Tracked(i));
+      for ( int i = 0; i < 50; ++i ) m = m.set(0, Tracked(i));
       require(m.get(0).val, 49);
     }
     require(g_alive, before);
@@ -1064,11 +1045,9 @@ main()
   test_case("set and read every slot in capacity");
   {
     pa_small m;
-    for ( usize i = 0; i < pa_small::length; ++i )
-      m = m.set(i, (int)(i + 1));
+    for ( usize i = 0; i < pa_small::length; ++i ) m = m.set(i, (int)(i + 1));
 
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(m.get(i), (int)(i + 1));
+    for ( usize i = 0; i < pa_small::length; ++i ) require(m.get(i), (int)(i + 1));
   }
   end_test_case();
 
@@ -1076,8 +1055,7 @@ main()
   test_case("overwrite every slot – original always intact");
   {
     pa_small orig;
-    for ( usize i = 0; i < pa_small::length; ++i )
-      orig = orig.set(i, (int)i);
+    for ( usize i = 0; i < pa_small::length; ++i ) orig = orig.set(i, (int)i);
 
     for ( usize i = 0; i < pa_small::length; ++i ) {
       auto derived = orig.set(i, 999);
@@ -1091,8 +1069,7 @@ main()
   test_case("set same slot 100 times – final value correct");
   {
     pa_small m;
-    for ( int i = 0; i < 100; ++i )
-      m = m.set(0, i);
+    for ( int i = 0; i < 100; ++i ) m = m.set(0, i);
     require(m.get(0), 99);
   }
   end_test_case();
@@ -1119,11 +1096,9 @@ main()
   test_case("stress: set all 32768 slots (default config)");
   {
     pa_int m;
-    for ( usize i = 0; i < 1000; ++i )
-      m = m.set(i, (int)(i * 7));
+    for ( usize i = 0; i < 1000; ++i ) m = m.set(i, (int)(i * 7));
 
-    for ( usize i = 0; i < 1000; ++i )
-      require(m.get(i), (int)(i * 7));
+    for ( usize i = 0; i < 1000; ++i ) require(m.get(i), (int)(i * 7));
   }
   end_test_case();
 
@@ -1131,11 +1106,9 @@ main()
   test_case("stress: set 1000 slots in reverse order");
   {
     pa_int m;
-    for ( int i = 999; i >= 0; --i )
-      m = m.set((usize)i, i * 3);
+    for ( int i = 999; i >= 0; --i ) m = m.set((usize)i, i * 3);
 
-    for ( usize i = 0; i < 1000; ++i )
-      require(m.get(i), (int)(i * 3));
+    for ( usize i = 0; i < 1000; ++i ) require(m.get(i), (int)(i * 3));
   }
   end_test_case();
 
@@ -1144,16 +1117,13 @@ main()
   {
     pa_small versions[16];
     versions[0] = pa_small();
-    for ( usize i = 1; i < 16 && i < pa_small::length; ++i )
-      versions[i] = versions[i - 1].set(i, (int)(i * 10));
+    for ( usize i = 1; i < 16 && i < pa_small::length; ++i ) versions[i] = versions[i - 1].set(i, (int)(i * 10));
 
     // each version has its slot set, earlier slots from parent
-    for ( usize v = 1; v < 16 && v < pa_small::length; ++v )
-      require(versions[v].get(v), (int)(v * 10));
+    for ( usize v = 1; v < 16 && v < pa_small::length; ++v ) require(versions[v].get(v), (int)(v * 10));
 
     // version 0 is all defaults
-    for ( usize i = 0; i < pa_small::length; ++i )
-      require(versions[0].get(i), 0);
+    for ( usize i = 0; i < pa_small::length; ++i ) require(versions[0].get(i), 0);
   }
   end_test_case();
 
@@ -1163,8 +1133,7 @@ main()
     auto base = make_seq_small(8);
     pa_small branches[16];     // limited to capacity
 
-    for ( usize i = 0; i < 16 && i < pa_small::length; ++i )
-      branches[i] = base.set(i, 9999);
+    for ( usize i = 0; i < 16 && i < pa_small::length; ++i ) branches[i] = base.set(i, 9999);
 
     // base intact
     require_true(verify_seq_small(base, 8));
@@ -1174,8 +1143,7 @@ main()
       require(branches[i].get(i), 9999);
       // other modified slots match base
       for ( usize j = 0; j < 8; ++j ) {
-        if ( j != i )
-          require(branches[i].get(j), (int)(j * 10));
+        if ( j != i ) require(branches[i].get(j), (int)(j * 10));
       }
     }
   }
@@ -1188,12 +1156,10 @@ main()
     {
       pa_tracked versions[16];
       versions[0] = pa_tracked();
-      for ( usize i = 1; i < 16 && i < pa_tracked::length; ++i )
-        versions[i] = versions[i - 1].set(i, Tracked((int)i));
+      for ( usize i = 1; i < 16 && i < pa_tracked::length; ++i ) versions[i] = versions[i - 1].set(i, Tracked((int)i));
 
       // verify last version
-      for ( usize i = 1; i < 16 && i < pa_tracked::length; ++i )
-        require(versions[15].get(i).val, (int)i);
+      for ( usize i = 1; i < 16 && i < pa_tracked::length; ++i ) require(versions[15].get(i).val, (int)i);
     }
     require(g_alive, before);
   }
@@ -1234,8 +1200,7 @@ main()
   {
     // build the same array two different ways
     pa_small a;
-    for ( usize i = 0; i < pa_small::length; ++i )
-      a = a.set(i, (int)(i * 5));
+    for ( usize i = 0; i < pa_small::length; ++i ) a = a.set(i, (int)(i * 5));
 
     pa_small b([](usize i) -> int { return (int)(i * 5); }, pa_small::length);
 
@@ -1249,8 +1214,7 @@ main()
     auto m = make_seq(500);
     usize idx = 0;
     for ( auto it = m.begin(); it != m.end(); ++it, ++idx ) {
-      if ( idx < 500 )
-        require(*it, (int)(idx * 10));
+      if ( idx < 500 ) require(*it, (int)(idx * 10));
     }
   }
   end_test_case();

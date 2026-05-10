@@ -82,8 +82,7 @@ test_construction()
   {
     micron::string s(5, 'z');
     sb::require(s.size(), usize{ 5 });
-    for ( usize i = 0; i < 5; ++i )
-      sb::require(s[i], 'z');
+    for ( usize i = 0; i < 5; ++i ) sb::require(s[i], 'z');
   }
   sb::end_test_case();
 
@@ -193,8 +192,7 @@ test_assignment()
   sb::test_case("copy assignment when dest capacity < src: grows destination");
   {
     micron::string a(256u);
-    for ( int i = 0; i < 200; ++i )
-      a.push_back('a');
+    for ( int i = 0; i < 200; ++i ) a.push_back('a');
     micron::string b;
     b = a;
     sb::require(b.size(), a.size());
@@ -339,8 +337,7 @@ test_lifetime()
   {
     {
       micron::string s;
-      for ( int i = 0; i < 500; ++i )
-        s.push_back('x');
+      for ( int i = 0; i < 500; ++i ) s.push_back('x');
       sb::require(s.size(), usize{ 500 });
     }
     sb::require_true(true);
@@ -401,8 +398,7 @@ test_mutation()
   sb::test_case("push_back 100 chars: size == 100");
   {
     micron::string s;
-    for ( int i = 0; i < 100; ++i )
-      s.push_back(static_cast<char>('a' + (i % 26)));
+    for ( int i = 0; i < 100; ++i ) s.push_back(static_cast<char>('a' + (i % 26)));
     sb::require(s.size(), usize{ 100 });
   }
   sb::end_test_case();
@@ -411,8 +407,7 @@ test_mutation()
   {
     micron::string s("seed");
     usize original_cap = s.max_size();
-    while ( s.size() < original_cap + 16 )
-      s.push_back('X');
+    while ( s.size() < original_cap + 16 ) s.push_back('X');
     sb::require(s[0], 's');
     sb::require(s[1], 'e');
     sb::require(s[2], 'e');
@@ -524,8 +519,7 @@ test_mutation()
   sb::test_case("repeated append does not corrupt earlier content");
   {
     micron::string s("A");
-    for ( int i = 0; i < 50; ++i )
-      s.append("BC");
+    for ( int i = 0; i < 50; ++i ) s.append("BC");
     sb::require(s[0], 'A');
     sb::require(s.size(), usize{ 1 + 50 * 2 });
   }
@@ -597,8 +591,7 @@ test_insert_erase()
     micron::string s("headtail");
     usize cap = s.max_size();
     // fill to near capacity to force a realloc on insert
-    while ( s.size() < cap - 2 )
-      s.push_back('.');
+    while ( s.size() < cap - 2 ) s.push_back('.');
     s.insert(4u, "MID");
     sb::require(s[0], 'h');
     sb::require(s[1], 'e');
@@ -942,8 +935,7 @@ test_iterators()
     micron::string s("abcde");
     char buf[6] = {};
     int i = 0;
-    for ( char c : s )
-      buf[i++] = c;
+    for ( char c : s ) buf[i++] = c;
     sb::require(buf[0], 'a');
     sb::require(buf[4], 'e');
     sb::require(i, 5);
@@ -1116,8 +1108,7 @@ test_reserve()
   {
     micron::string s;
     s.reserve(256);
-    for ( int i = 0; i < 200; ++i )
-      s.push_back('x');
+    for ( int i = 0; i < 200; ++i ) s.push_back('x');
     sb::require(s.size(), usize{ 200 });
   }
   sb::end_test_case();
@@ -1302,8 +1293,7 @@ test_stress()
   sb::test_case("build a 10000-char string via push_back: size correct");
   {
     micron::string s;
-    for ( int i = 0; i < 10000; ++i )
-      s.push_back(static_cast<char>('a' + (i % 26)));
+    for ( int i = 0; i < 10000; ++i ) s.push_back(static_cast<char>('a' + (i % 26)));
     sb::require(s.size(), usize{ 10000 });
     sb::require(s[0], 'a');
     sb::require(s[25], 'z');
@@ -1327,8 +1317,7 @@ test_stress()
   sb::test_case("insert at 0 in a loop: prefix order preserved");
   {
     micron::string s("Z");
-    for ( char c = 'A'; c < 'Z'; ++c )
-      s.insert((usize)0u, c);
+    for ( char c = 'A'; c < 'Z'; ++c ) s.insert((usize)0u, c);
     sb::require(s[0], 'Y');     // last inserted is at front
     sb::require(s.back(), 'Z');
   }
@@ -1361,14 +1350,12 @@ test_stress()
   sb::test_case("remove_all in tight loop: string shrinks monotonically");
   {
     micron::string s;
-    for ( int i = 0; i < 200; ++i )
-      s.push_back(i % 2 == 0 ? 'A' : 'B');     // "ABABAB..."
+    for ( int i = 0; i < 200; ++i ) s.push_back(i % 2 == 0 ? 'A' : 'B');     // "ABABAB..."
     usize before = s.size();
     s.remove_all("A");
     sb::require_smaller(s.size(), before);
     // no 'A' should remain
-    for ( usize i = 0; i < s.size(); ++i )
-      sb::require(s[i], 'B');
+    for ( usize i = 0; i < s.size(); ++i ) sb::require(s[i], 'B');
   }
   sb::end_test_case();
 
@@ -1378,8 +1365,7 @@ test_stress()
     s.reserve(64);
     usize cap = s.max_size();
     usize fill = cap - 4;
-    for ( usize i = 0; i < fill; ++i )
-      s.push_back('x');
+    for ( usize i = 0; i < fill; ++i ) s.push_back('x');
     sb::require(s.size(), fill);
     sb::require_true(s.max_size() >= fill);
   }

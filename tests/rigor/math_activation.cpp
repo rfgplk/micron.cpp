@@ -84,7 +84,9 @@ main()
     require_true(near(x[3], 2.0));
 
     micron::vector<f64> v(3, 0.0);
-    v[0] = -1; v[1] = 0; v[2] = 1;
+    v[0] = -1;
+    v[1] = 0;
+    v[2] = 1;
     activation::silu(v);
     require_true(near(v[0], -0.2689414213699951, 1e-7));
     require_true(near(v[1], 0.0));
@@ -93,5 +95,5 @@ main()
   end_test_case();
 
   print("=== activation ok ===");
-  return 1;
+  return 0;
 }

@@ -18,8 +18,7 @@ main()
   {
     mc::iqueue<int> qu;
     mc::iqueue<int> rst;
-    for (u64 i : mc::u64_range<1, (u64)1e8>() )
-      rst = mc::move(qu.push(i));
+    for ( u64 i : mc::u64_range<1, (u64)1e8>() ) rst = mc::move(qu.push(i));
     mc::console(qu.empty());
   };
   return 0;

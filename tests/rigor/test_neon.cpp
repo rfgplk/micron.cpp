@@ -7,8 +7,8 @@
 
 #if defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
 
-#include "../snowball/snowball.hpp"
 #include "../../src/simd/aliases/neon.hpp"
+#include "../snowball/snowball.hpp"
 
 namespace mn = ::micron::simd::neon;
 
@@ -37,12 +37,12 @@ main()
 
   test_case("neon: load / store / splat (uint8x16)");
   alignas(16) unsigned char buf[16];
-  for (int i = 0; i < 16; ++i) buf[i] = (unsigned char)i;
+  for ( int i = 0; i < 16; ++i ) buf[i] = (unsigned char)i;
   uint8x16_t v = mn::load_u8(buf);
   uint8x16_t s = mn::splat_u8(7);
   alignas(16) unsigned char out[16];
   mn::store_u8(out, mn::add(v, s));
-  for (int i = 0; i < 16; ++i) require_true(out[i] == (unsigned char)(i + 7));
+  for ( int i = 0; i < 16; ++i ) require_true(out[i] == (unsigned char)(i + 7));
   end_test_case();
 
   test_case("neon: arith on float32x4");
@@ -51,11 +51,11 @@ main()
   float32x4_t fr = mn::add(fv, mn::splat_f32(0.5f));
   alignas(16) float fout[4];
   mn::store_f32(fout, fr);
-  for (int i = 0; i < 4; ++i) require_true(fout[i] == fbuf[i] + 0.5f);
+  for ( int i = 0; i < 4; ++i ) require_true(fout[i] == fbuf[i] + 0.5f);
 
   float32x4_t fp = mn::mul(fv, fv);
   mn::store_f32(fout, fp);
-  for (int i = 0; i < 4; ++i) require_true(fout[i] == fbuf[i] * fbuf[i]);
+  for ( int i = 0; i < 4; ++i ) require_true(fout[i] == fbuf[i] * fbuf[i]);
   end_test_case();
 
   test_case("neon: bitwise + compare on uint32x4");
@@ -76,7 +76,7 @@ main()
   require_true(ebuf[0] == (0x10u ^ 0x30u));
   end_test_case();
 
-#  if defined(__micron_arch_arm64)
+#if defined(__micron_arch_arm64)
   test_case("neon: aarch64 min / max / abs / fma");
   float32x4_t mn_v = mn::min(fv, mn::splat_f32(2.5f));
   float32x4_t mx_v = mn::max(fv, mn::splat_f32(2.5f));
@@ -85,13 +85,11 @@ main()
   mn::store_f32(fout, mx_v);
   require_true(fout[0] == 2.5f && fout[3] == 4.0f);
 
-  float32x4_t fma_v = mn::fma(mn::splat_f32(10.0f),
-                              mn::splat_f32(2.0f),
-                              mn::splat_f32(3.0f));
+  float32x4_t fma_v = mn::fma(mn::splat_f32(10.0f), mn::splat_f32(2.0f), mn::splat_f32(3.0f));
   mn::store_f32(fout, fma_v);
-  for (int i = 0; i < 4; ++i) require_true(fout[i] == 10.0f + 2.0f * 3.0f);
+  for ( int i = 0; i < 4; ++i ) require_true(fout[i] == 10.0f + 2.0f * 3.0f);
   end_test_case();
-#  endif
+#endif
 
   print("[TEST NEON OK]");
   return 0;
@@ -103,7 +101,9 @@ main()
 // configured for ARM by force-defining the right arch macros around a
 // secondary include of the file. this is a syntax check, not a runtime test.
 #include "../snowball/snowball.hpp"
-int main()
+
+int
+main()
 {
   ::sb::print("=== TEST NEON ===");
   ::sb::print("[TEST NEON skipped on x86 host - cross-compile to arm64/armv7 to exercise]");

@@ -15,6 +15,9 @@
 
 namespace micron
 {
+// byte threshold below which mem* dispatch uses the scalar fast path
+constexpr u64 __simd_dispatch_threshold = 32;
+
 auto get_stack(void) -> stack_t;
 auto get_stack_start(void) -> addr_t *;
 auto get_stack_size(void) -> usize;

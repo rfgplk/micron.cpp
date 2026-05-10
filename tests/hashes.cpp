@@ -3,11 +3,12 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
-#include "../src/slice.hpp"
-#include "../src/io/console.hpp"
-#include "../src/std.hpp"
 #include "../src/hash/hash.hpp"
+#include "../src/io/console.hpp"
+#include "../src/slice.hpp"
+#include "../src/std.hpp"
 #include "../src/string/strings.hpp"
+
 int
 main(void)
 {
@@ -17,8 +18,7 @@ main(void)
   auto hstr = mc::hash<mc::hash128_t>(key_str);
   u64 c = mc::hash(key);
   volatile int x = 0;
-  for(size_t i = 0; i < 5e9; i++)
-  {
+  for ( size_t i = 0; i < 5e9; i++ ) {
     auto d = mc::hash(key);
     x++;
   }

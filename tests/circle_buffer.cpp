@@ -6,9 +6,9 @@
 
 #include "snowball/snowball.hpp"
 
+#include "../src/circle_buffer.hpp"
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
-#include "../src/circle_buffer.hpp"
 
 int
 main()
@@ -18,7 +18,6 @@ main()
   {
     sb::test_case("mc::circle_buffer(), testing insertions and erasures");
     mc::circular<int, 512> buf;
-    for ( int i = 0; i < 10; i++ )
-      buf.emplace_back(i);
+    for ( int i = 0; i < 10; i++ ) buf.emplace_back(i);
   };
 }

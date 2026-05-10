@@ -924,8 +924,7 @@ main()
     micron::dvec8 s = v.sin();
     micron::dvec8 c = v.cos();
     micron::dvec8 id = s * s + c * c;
-    for ( int i = 0; i < 8; ++i )
-      require_true(feq((&id.x)[i], 1.0, 1e-12));
+    for ( int i = 0; i < 8; ++i ) require_true(feq((&id.x)[i], 1.0, 1e-12));
   }
   end_test_case();
 
@@ -985,5 +984,5 @@ main()
   end_test_case();
 
   sb::print("=== ALL VEC8 TESTS PASSED ===");
-  return 1;
+  return 0;
 }

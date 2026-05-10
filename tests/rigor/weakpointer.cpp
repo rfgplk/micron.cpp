@@ -157,8 +157,7 @@ main(void)
   {
     mc::weak_pointer<int> w;
     bool reached = false;
-    if ( w.get() != nullptr )
-      reached = true;
+    if ( w.get() != nullptr ) reached = true;
     sb::require(reached == false);
   }
   sb::end_test_case();
@@ -233,7 +232,7 @@ main(void)
     mc::unique_pointer<int> u(55);
     mc::weak_pointer<int> a(u);
     int *raw = a.get();
-    mc::weak_pointer<int> b(micron::move(a));
+    mc::weak_pointer<int> b(std::move(a));
     sb::require(a.get() == nullptr);
     sb::require(!a);
     sb::require(b.get() == raw);
@@ -246,7 +245,7 @@ main(void)
     mc::unique_pointer<int> u(66);
     mc::weak_pointer<int> a(u);
     mc::weak_pointer<int> b;
-    b = micron::move(a);
+    b = std::move(a);
     sb::require(a.get() == nullptr);
     sb::require(*b == 66);
   }
@@ -257,7 +256,7 @@ main(void)
     mc::unique_pointer<int> u(42);
     mc::weak_pointer<int> w(u);
     int *raw = w.get();
-    w = micron::move(w);     // must not null w
+    w = std::move(w);     // must not null w
     sb::require(w.get() == raw);
     sb::require(*w == 42);
   }
@@ -269,7 +268,7 @@ main(void)
     mc::unique_pointer<Tracker> u(4);
     {
       mc::weak_pointer<Tracker> a(u);
-      mc::weak_pointer<Tracker> b(micron::move(a));
+      mc::weak_pointer<Tracker> b(std::move(a));
     }
     sb::require(Tracker::destructions == 0);
   }
@@ -583,8 +582,8 @@ main(void)
     mc::unique_pointer<Tracker> u(42);
     mc::weak_pointer<Tracker> w(u);
     for ( int i = 0; i < 100; i++ ) {
-      mc::weak_pointer<Tracker> next(micron::move(w));
-      w = micron::move(next);
+      mc::weak_pointer<Tracker> next(std::move(w));
+      w = std::move(next);
     }
     sb::require(w.get() == u.get());
     sb::require(w->value == 42);

@@ -39,8 +39,7 @@ micron::int8x8_t
 identity8()
 {
   micron::int8x8_t m;
-  for ( u32 i = 0; i < 8; ++i )
-    m[i, i] = 1;
+  for ( u32 i = 0; i < 8; ++i ) m[i, i] = 1;
   return m;
 }
 
@@ -49,8 +48,7 @@ micron::int16x16_t
 identity16()
 {
   micron::int16x16_t m;
-  for ( u32 i = 0; i < 16; ++i )
-    m[i, i] = 1;
+  for ( u32 i = 0; i < 16; ++i ) m[i, i] = 1;
   return m;
 }
 
@@ -60,8 +58,7 @@ all8(const micron::int8x8_t &m, i32 val)
 {
   for ( u32 r = 0; r < 8; ++r )
     for ( u32 c = 0; c < 8; ++c )
-      if ( m[r, c] != val )
-        return false;
+      if ( m[r, c] != val ) return false;
   return true;
 }
 
@@ -70,8 +67,7 @@ all16(const micron::int16x16_t &m, i32 val)
 {
   for ( u32 r = 0; r < 16; ++r )
     for ( u32 c = 0; c < 16; ++c )
-      if ( m[r, c] != val )
-        return false;
+      if ( m[r, c] != val ) return false;
   return true;
 }
 
@@ -80,8 +76,7 @@ eq8(const micron::int8x8_t &a, const micron::int8x8_t &b)
 {
   for ( u32 r = 0; r < 8; ++r )
     for ( u32 c = 0; c < 8; ++c )
-      if ( a[r, c] != b[r, c] )
-        return false;
+      if ( a[r, c] != b[r, c] ) return false;
   return true;
 }
 
@@ -90,8 +85,7 @@ eq16(const micron::int16x16_t &a, const micron::int16x16_t &b)
 {
   for ( u32 r = 0; r < 16; ++r )
     for ( u32 c = 0; c < 16; ++c )
-      if ( a[r, c] != b[r, c] )
-        return false;
+      if ( a[r, c] != b[r, c] ) return false;
   return true;
 }
 
@@ -132,8 +126,7 @@ main()
     micron::int8x8_t m = make_seq8(0);
     // row-major: element [r][c] = r*8 + c
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(m[r, c], (i32)(r * 8 + c));
+      for ( u32 c = 0; c < 8; ++c ) require(m[r, c], (i32)(r * 8 + c));
   }
   end_test_case();
 
@@ -237,8 +230,7 @@ main()
   {
     micron::int8x8_t m = make_seq8(0);
     // row(r) == __mat[r*C] == element [r][0]
-    for ( u32 r = 0; r < 8; ++r )
-      require(m.row(r), (i32)(r * 8));
+    for ( u32 r = 0; r < 8; ++r ) require(m.row(r), (i32)(r * 8));
   }
   end_test_case();
 
@@ -247,8 +239,7 @@ main()
   {
     micron::int8x8_t m = make_seq8(0);
     // col(c) == __mat[c] == element [0][c]
-    for ( u32 c = 0; c < 8; ++c )
-      require(m.col(c), (i32)c);
+    for ( u32 c = 0; c < 8; ++c ) require(m.col(c), (i32)c);
   }
   end_test_case();
 
@@ -418,8 +409,7 @@ main()
     micron::int8x8_t b = make_seq8(0);
     micron::int8x8_t c = a + b;
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 col = 0; col < 8; ++col )
-        require(c[r, col], (i32)((r * 8 + col) * 2));
+      for ( u32 col = 0; col < 8; ++col ) require(c[r, col], (i32)((r * 8 + col) * 2));
   }
   end_test_case();
 
@@ -439,8 +429,7 @@ main()
     micron::int8x8_t t = m.transpose();
     // original[r][c] == transposed[c][r]
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(t[c, r], m[r, c]);
+      for ( u32 c = 0; c < 8; ++c ) require(t[c, r], m[r, c]);
   }
   end_test_case();
 
@@ -511,8 +500,7 @@ main()
   test_case("int8x8_t – mul: scalar matrix (kI) * A == k*A");
   {
     micron::int8x8_t kI;
-    for ( u32 i = 0; i < 8; ++i )
-      kI[i, i] = 3;     // 3*Identity
+    for ( u32 i = 0; i < 8; ++i ) kI[i, i] = 3;     // 3*Identity
     micron::int8x8_t a = make_seq8(0);
     micron::int8x8_t r = kI.mul(a);
     micron::int8x8_t ka = a.scale(3);
@@ -537,8 +525,7 @@ main()
     // A[i,k] = i+1 (constant in k), B[k,j] = j+1 (constant in k)
     // R[i,j] = 8*(i+1)*(j+1)
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(R[r, c], (i32)(8 * (r + 1) * (c + 1)));
+      for ( u32 c = 0; c < 8; ++c ) require(R[r, c], (i32)(8 * (r + 1) * (c + 1)));
   }
   end_test_case();
 
@@ -549,8 +536,7 @@ main()
   {
     micron::uint8x8_t m;
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(m[r, c], 0u);
+      for ( u32 c = 0; c < 8; ++c ) require(m[r, c], 0u);
   }
   end_test_case();
 
@@ -560,18 +546,15 @@ main()
     micron::uint8x8_t m(10u);
     m += 5u;
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(m[r, c], 15u);
+      for ( u32 c = 0; c < 8; ++c ) require(m[r, c], 15u);
 
     m *= 2u;
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(m[r, c], 30u);
+      for ( u32 c = 0; c < 8; ++c ) require(m[r, c], 30u);
 
     m /= 3u;
     for ( u32 r = 0; r < 8; ++r )
-      for ( u32 c = 0; c < 8; ++c )
-        require(m[r, c], 10u);
+      for ( u32 c = 0; c < 8; ++c ) require(m[r, c], 10u);
   }
   end_test_case();
 
@@ -590,8 +573,7 @@ main()
   test_case("uint8x8_t – identity mul and transpose");
   {
     micron::uint8x8_t id;
-    for ( u32 i = 0; i < 8; ++i )
-      id[i, i] = 1u;
+    for ( u32 i = 0; i < 8; ++i ) id[i, i] = 1u;
 
     micron::uint8x8_t a(5u);
     a[0, 0] = 99u;
@@ -601,12 +583,10 @@ main()
     require(r[1, 1], 5u);
 
     micron::uint8x8_t tid = id.transpose();
-    for ( u32 i = 0; i < 8; ++i )
-      require(tid[i, i], 1u);
+    for ( u32 i = 0; i < 8; ++i ) require(tid[i, i], 1u);
     for ( u32 r2 = 0; r2 < 8; ++r2 )
       for ( u32 c = 0; c < 8; ++c )
-        if ( r2 != c )
-          require(tid[r2, c], 0u);
+        if ( r2 != c ) require(tid[r2, c], 0u);
   }
   end_test_case();
 
@@ -649,8 +629,7 @@ main()
             240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
     micron::int16x16_t m(lst);
     for ( u32 r = 0; r < 16; ++r )
-      for ( u32 c = 0; c < 16; ++c )
-        require(m[r, c], (i32)(r * 16 + c));
+      for ( u32 c = 0; c < 16; ++c ) require(m[r, c], (i32)(r * 16 + c));
   }
   end_test_case();
 
@@ -721,8 +700,7 @@ main()
     micron::int16x16_t m(lst);
     micron::int16x16_t t = m.transpose();
     for ( u32 r = 0; r < 16; ++r )
-      for ( u32 c = 0; c < 16; ++c )
-        require(t[c, r], m[r, c]);
+      for ( u32 c = 0; c < 16; ++c ) require(t[c, r], m[r, c]);
   }
   end_test_case();
 
@@ -730,8 +708,7 @@ main()
   test_case("int16x16_t – double transpose yields original");
   {
     micron::int16x16_t m(3);
-    for ( u32 i = 0; i < 16; ++i )
-      m[i, i] = i;
+    for ( u32 i = 0; i < 16; ++i ) m[i, i] = i;
     require_true(eq16(m.transpose().transpose(), m));
   }
   end_test_case();
@@ -750,8 +727,7 @@ main()
   {
     micron::int16x16_t id = identity16();
     micron::int16x16_t a(5);
-    for ( u32 i = 0; i < 16; ++i )
-      a[i, i] = i;
+    for ( u32 i = 0; i < 16; ++i ) a[i, i] = i;
     require_true(eq16(id.mul(a), a));
   }
   end_test_case();
@@ -778,8 +754,7 @@ main()
       }
     micron::int16x16_t R = A.mul(B);
     for ( u32 r = 0; r < 16; ++r )
-      for ( u32 c = 0; c < 16; ++c )
-        require(R[r, c], (i32)(16 * (r + 1) * (c + 1)));
+      for ( u32 c = 0; c < 16; ++c ) require(R[r, c], (i32)(16 * (r + 1) * (c + 1)));
   }
   end_test_case();
 
@@ -798,8 +773,7 @@ main()
   {
     micron::uint16x16_t m;
     for ( u32 r = 0; r < 16; ++r )
-      for ( u32 c = 0; c < 16; ++c )
-        require(m[r, c], 0u);
+      for ( u32 c = 0; c < 16; ++c ) require(m[r, c], 0u);
   }
   end_test_case();
 
@@ -809,13 +783,11 @@ main()
     micron::uint16x16_t m(8u);
     m += 4u;
     for ( u32 r = 0; r < 16; ++r )
-      for ( u32 c = 0; c < 16; ++c )
-        require(m[r, c], 12u);
+      for ( u32 c = 0; c < 16; ++c ) require(m[r, c], 12u);
 
     m *= 3u;
     for ( u32 r = 0; r < 16; ++r )
-      for ( u32 c = 0; c < 16; ++c )
-        require(m[r, c], 36u);
+      for ( u32 c = 0; c < 16; ++c ) require(m[r, c], 36u);
   }
   end_test_case();
 
@@ -823,8 +795,7 @@ main()
   test_case("uint16x16_t – identity mul");
   {
     micron::uint16x16_t id;
-    for ( u32 i = 0; i < 16; ++i )
-      id[i, i] = 1u;
+    for ( u32 i = 0; i < 16; ++i ) id[i, i] = 1u;
 
     micron::uint16x16_t a(3u);
     a[0, 0] = 100u;
@@ -860,8 +831,7 @@ main()
   {
     micron::int8x8_t a = make_seq8(0);
     micron::int8x8_t kI;
-    for ( u32 i = 0; i < 8; ++i )
-      kI[i, i] = 2;
+    for ( u32 i = 0; i < 8; ++i ) kI[i, i] = 2;
 
     require_true(eq8(a.scale(2), a.mul(kI)));
   }

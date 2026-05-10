@@ -4,11 +4,11 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/string/strings.hpp"
-#include "../src/string/format.hpp"
 #include "../src/attributes.hpp"
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
+#include "../src/string/format.hpp"
+#include "../src/string/strings.hpp"
 
 int
 main(void)

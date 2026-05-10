@@ -3,17 +3,17 @@
 
 #include "../snowball/snowball.hpp"
 
+#include "../../src/io/console.hpp"
 #include "../../src/stack.hpp"
 #include "../../src/std.hpp"
-#include "../../src/io/console.hpp"
 
 #include <cstddef>
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
 
-using sb::print;
 using sb::end_test_case;
+using sb::print;
 using sb::require;
 using sb::require_false;
 using sb::require_nothrow;
@@ -27,7 +27,9 @@ using umax_t = std::size_t;
 
 struct Trivial {
   int v;
+
   constexpr Trivial(int x = 0) : v(x) {}
+
   constexpr bool
   operator==(const Trivial &o) const
   {
@@ -43,12 +45,15 @@ struct NonTrivial {
   static inline int move = 0;
 
   NonTrivial(int x = 0) : v(x) { ++ctor; }
+
   NonTrivial(const NonTrivial &o) : v(o.v) { ++copy; }
+
   NonTrivial(NonTrivial &&o) noexcept : v(o.v)
   {
     o.v = -1;
     ++move;
   }
+
   ~NonTrivial() { ++dtor; }
 
   bool
@@ -122,7 +127,7 @@ test_move_ctor()
 {
   test_case("move ctor");
   micron::fsstack<T, N> a{ T(1), T(2), T(3) };
-  micron::fsstack<T, N> b(micron::move(a));
+  micron::fsstack<T, N> b(std::move(a));
   require(b.size(), size_t(3));
   require(b.top(), T(3));
   end_test_case();
@@ -148,7 +153,7 @@ test_move_assign()
   test_case("move assignment");
   micron::fsstack<T, N> a{ T(7), T(8) };
   micron::fsstack<T, N> b;
-  b = micron::move(a);
+  b = std::move(a);
   require(b.size(), size_t(2));
   require(b.top(), T(8));
   end_test_case();
@@ -160,8 +165,7 @@ test_push_pop()
 {
   test_case("push/pop");
   micron::fsstack<T, N> s;
-  for ( size_t i = 0; i < N; ++i )
-    s.push(T(int(i)));
+  for ( size_t i = 0; i < N; ++i ) s.push(T(int(i)));
   require(s.size(), size_t(N));
   for ( size_t i = N; i-- > 0; ) {
     require(s.top(), T(int(i)));
@@ -232,8 +236,7 @@ stress_lifo()
   test_case("stress LIFO");
   micron::fsstack<T, N> s;
   for ( size_t r = 0; r < 1000; ++r ) {
-    for ( size_t i = 0; i < N; ++i )
-      s.push(T(int(i)));
+    for ( size_t i = 0; i < N; ++i ) s.push(T(int(i)));
     for ( size_t i = N; i-- > 0; ) {
       require(s.top(), T(int(i)));
       s.pop();
@@ -261,7 +264,7 @@ main()
   test_operator_call<int, 16>();
   test_clear<int, 16>();
 
-  //test_nontrivial_lifetime<16>();
+  // test_nontrivial_lifetime<16>();
   stress_lifo<int, 32>();
   print("=== ALL STACK TESTS PASSED ===");
 

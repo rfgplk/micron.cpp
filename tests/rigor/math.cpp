@@ -215,8 +215,7 @@ main()
 
   test_case("power – zero exponent always yields 1");
   {
-    for ( int base : { -100, -1, 0, 1, 100, 999 } )
-      require(micron::math::power(base, 0), 1);
+    for ( int base : { -100, -1, 0, 1, 100, 999 } ) require(micron::math::power(base, 0), 1);
   }
   end_test_case();
 
@@ -909,8 +908,7 @@ main()
     for ( int base : { 2, 3, 5, 7 } ) {
       for ( int exp = 1; exp <= 8; ++exp ) {
         int brute = 1;
-        for ( int k = 0; k < exp; ++k )
-          brute *= base;
+        for ( int k = 0; k < exp; ++k ) brute *= base;
         require(micron::math::pow(base, exp), brute);
       }
     }
@@ -932,11 +930,10 @@ main()
   test_case("invariant: nearest_pow2 result is a power of two");
   {
     auto is_pow2 = [](int x) { return x > 0 && (x & (x - 1)) == 0; };
-    for ( int v = 1; v <= 1000; ++v )
-      require_true(is_pow2(micron::math::nearest_pow2(v)));
+    for ( int v = 1; v <= 1000; ++v ) require_true(is_pow2(micron::math::nearest_pow2(v)));
   }
   end_test_case();
 
   sb::print("=== ALL MATH TESTS PASSED ===");
-  return 1;
+  return 0;
 }

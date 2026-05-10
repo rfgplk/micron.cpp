@@ -45,10 +45,8 @@ main()
       ys[i] = mk::trig::sin<f64>(xs[i]);
     }
     raw_slice<const f64> empty_w(static_cast<const f64 *>(nullptr), 0);
-    auto smooth0 = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                       empty_w, 0.0);
-    auto interp = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                  bc_kind::natural);
+    auto smooth0 = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), empty_w, 0.0);
+    auto interp = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::natural);
     for ( usize i = 0; i < n; ++i ) require_true(near(evaluate<f64>(smooth0, xs[i]), ys[i], 1e-12));
     for ( usize i = 0; i < 30; ++i ) {
       const f64 t = 0.05 + 0.13 * f64(i);
@@ -72,10 +70,8 @@ main()
       ys[i] = truth[i] + noise;
     }
     raw_slice<const f64> empty_w(static_cast<const f64 *>(nullptr), 0);
-    auto interp = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                  bc_kind::natural);
-    auto smooth = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                      empty_w, 0.05);
+    auto interp = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::natural);
+    auto smooth = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), empty_w, 0.05);
 
     // RMS error vs truth on a fine grid.
     f64 err_interp = 0, err_smooth = 0;
@@ -108,8 +104,7 @@ main()
     }
     raw_slice<const f64> empty_w(static_cast<const f64 *>(nullptr), 0);
     build_info<f64> info{};
-    auto smooth = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                      empty_w, 1e10, &info);
+    auto smooth = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), empty_w, 1e10, &info);
     require_true(info.status == build_status::ok);
     // Verify result is monotone-increasing (the affine trend dominates).
     f64 prev = evaluate<f64>(smooth, xs[0]);
@@ -136,8 +131,7 @@ main()
     }
     raw_slice<const f64> empty_w(static_cast<const f64 *>(nullptr), 0);
     build_info<f64> info{};
-    auto s = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                 empty_w, -1.0, &info);
+    auto s = make_smoothing<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), empty_w, -1.0, &info);
     require_true(info.status == build_status::ok);
     require_true(s.xs.size() == n);
     // Status should report the GCV-selected lambda in residual.
@@ -147,8 +141,7 @@ main()
     require_true(info.n_iterations > 4);
 
     // GCV-fit reconstruction beats no-smoothing (interpolant) on the truth.
-    auto interp = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                  bc_kind::natural);
+    auto interp = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::natural);
     f64 err_interp = 0, err_gcv = 0;
     usize m = 0;
     for ( usize i = 0; i < 200; ++i ) {
@@ -175,8 +168,7 @@ main()
       ys[i] = mk::trig::sin<f64>(2.0 * xs[i]);     // smooth
     }
     build_info<f64> info{};
-    auto s = make_adaptive_knots<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                      0.005, 30, &info);
+    auto s = make_adaptive_knots<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), 0.005, 30, &info);
     require_true(info.status == build_status::ok || info.status == build_status::max_iter);
     // Verify the residual at every original sample is close.
     f64 worst = 0;
@@ -201,8 +193,7 @@ main()
       ys[i] = mk::trig::sin<f64>(15.0 * xs[i]) + (i % 3 == 0 ? 1.0 : 0.0);
     }
     build_info<f64> info{};
-    auto s = make_adaptive_knots<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                                      1e-9, 6, &info);
+    auto s = make_adaptive_knots<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), 1e-9, 6, &info);
     require_true(s.xs.size() <= 6);
     // Status should be max_iter (since we couldn't reach 1e-9).
     require_true(info.status == build_status::max_iter || info.status == build_status::ok);
@@ -210,5 +201,5 @@ main()
   end_test_case();
 
   print("=== SMOOTHING / ADAPTIVE-KNOTS TESTS PASSED ===");
-  return 1;
+  return 0;
 }

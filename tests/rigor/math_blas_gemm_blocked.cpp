@@ -38,10 +38,8 @@ fabs_(T x) noexcept
 // Computes C = α·op(A)·op(B) + β·C with op selected by trA / trB.
 template <typename T>
 static void
-ref_gemm(bool trA, bool trB, usize m, usize n, usize k,
-         T alpha, const T *A, usize lda,
-         const T *B, usize ldb,
-         T beta, T *C, usize ldc) noexcept
+ref_gemm(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept
 {
   for ( usize i = 0; i < m; ++i ) {
     for ( usize j = 0; j < n; ++j ) {
@@ -110,18 +108,19 @@ run_case(usize m, usize n, usize k, bool trA, bool trB, T alpha, T beta, u64 see
   dynmat<T> C_ref = C0;
   dynmat<T> C_blas = C0;
 
-  ref_gemm<T>(trA, trB, m, n, k, alpha,
-              A.data(), a_cols,
-              B.data(), b_cols,
-              beta, C_ref.data(), n);
+  ref_gemm<T>(trA, trB, m, n, k, alpha, A.data(), a_cols, B.data(), b_cols, beta, C_ref.data(), n);
 
   auto Av = as_row_view(A);
   auto Bv = as_row_view(B);
   auto Cv = as_row_view(C_blas);
-  if ( !trA && !trB ) blas::level3::gemm(alpha, Av, Bv, beta, Cv);
-  else if ( !trA && trB ) blas::level3::gemm<blas::op::none, blas::op::trans>(alpha, Av, Bv, beta, Cv);
-  else if ( trA && !trB ) blas::level3::gemm<blas::op::trans, blas::op::none>(alpha, Av, Bv, beta, Cv);
-  else blas::level3::gemm<blas::op::trans, blas::op::trans>(alpha, Av, Bv, beta, Cv);
+  if ( !trA && !trB )
+    blas::level3::gemm(alpha, Av, Bv, beta, Cv);
+  else if ( !trA && trB )
+    blas::level3::gemm<blas::op::none, blas::op::trans>(alpha, Av, Bv, beta, Cv);
+  else if ( trA && !trB )
+    blas::level3::gemm<blas::op::trans, blas::op::none>(alpha, Av, Bv, beta, Cv);
+  else
+    blas::level3::gemm<blas::op::trans, blas::op::trans>(alpha, Av, Bv, beta, Cv);
 
   const T r = max_rel_residual<T>(C_blas.data(), C_ref.data(), m * n);
   require_true(r < tol);
@@ -207,10 +206,7 @@ main()
     dynmat<f64> C_ref = AC;     // same contents as A initially
 
     // reference: read from a separate copy of A, write to C_ref
-    ref_gemm<f64>(false, false, m, n, k, 1.0,
-                  A_orig.data(), k,
-                  B.data(), n,
-                  0.5, C_ref.data(), n);
+    ref_gemm<f64>(false, false, m, n, k, 1.0, A_orig.data(), k, B.data(), n, 0.5, C_ref.data(), n);
 
     // aliased: A and C share the same buffer
     auto Av = as_row_view(AC);
@@ -233,10 +229,7 @@ main()
     dynmat<f64> B_orig = BC;
     dynmat<f64> C_ref = BC;
 
-    ref_gemm<f64>(false, false, m, n, k, 1.0,
-                  A.data(), k,
-                  B_orig.data(), n,
-                  -0.25, C_ref.data(), n);
+    ref_gemm<f64>(false, false, m, n, k, 1.0, A.data(), k, B_orig.data(), n, -0.25, C_ref.data(), n);
 
     auto Av = as_row_view(A);
     auto Bv = as_row_view(BC);
@@ -248,5 +241,5 @@ main()
   }
   end_test_case();
 
-  return 1;
+  return 0;
 }

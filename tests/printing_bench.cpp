@@ -12,8 +12,7 @@
 int
 main(void)
 {
-  for ( size_t i = 0; i < (size_t)1e6; i++ )
-    mc::console(i);
+  for ( size_t i = 0; i < (size_t)1e6; i++ ) mc::console(i);
 /*mc::ustr8 str = "Another message";
 for(size_t i = 0; i < (size_t)1e6; i++)
       mc::console(mc::c_str(str));

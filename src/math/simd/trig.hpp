@@ -14,6 +14,10 @@
 #include "_dispatch.hpp"
 #include "manip.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+
 namespace micron
 {
 namespace math
@@ -406,3 +410,5 @@ tan(simd::d128 x) noexcept
 };     // namespace mk
 };     // namespace math
 };     // namespace micron
+
+#pragma GCC diagnostic pop

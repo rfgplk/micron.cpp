@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
-#include "../src/string/strings.hpp"
 #include "../src/string/format.hpp"
+#include "../src/string/strings.hpp"
 #include "../src/string/unistring.hpp"
 
 int

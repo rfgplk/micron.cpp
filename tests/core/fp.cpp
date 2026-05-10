@@ -39,7 +39,6 @@ n(int b)
   mc::console(b >> 1);     // 50
 }
 
-
 int
 main(void)
 {
@@ -54,8 +53,8 @@ main(void)
 
   int c = 0;
   mc::vector<int> vec(50, [&c](int *x) { return c++; });
-  mc::vector<int> vec2(50, [&c](int *x) { return c+=2; });
-  mc::vector<int> res = (mc::fp::zip_with(vec, vec2, [](int x, int y)->int{ return x+y; }));
+  mc::vector<int> vec2(50, [&c](int *x) { return c += 2; });
+  mc::vector<int> res = (mc::fp::zip_with(vec, vec2, [](int x, int y) -> int { return x + y; }));
   mc::console(res);
   return 0;
 }

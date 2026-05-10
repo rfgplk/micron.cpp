@@ -9,9 +9,9 @@
 #include "posix/iosys.hpp"
 
 #include "stream.hpp"
-#ifdef __COMPILED_WITH_GLIBC
-/*permitted*/ #include<stdio.h>
-#endif
+
+#include "../attributes.hpp"
+
 namespace micron
 {
 
@@ -75,8 +75,20 @@ __close_stderr(void)
   stderr.reset();
 }
 
-__attribute__((constructor)) void
+void __attribute__((constructor))
 __init_io_buffer(void)
+{
+  __load_stdfd();
+  if ( !__global_buffer_stdout ) {
+    __global_buffer_stdout = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
+  }
+  if ( !__global_buffer_stderr ) {
+    __global_buffer_stderr = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
+  }
+}
+
+extern "C" void
+__boot_io_buffers(void)
 {
   __load_stdfd();
   if ( !__global_buffer_stdout ) {

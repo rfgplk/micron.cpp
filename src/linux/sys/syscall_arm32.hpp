@@ -59,7 +59,7 @@ __count_slots() noexcept
 
 template <__tt_size_t Slot>
 constexpr void
-__fill(long int *[[maybe_unused]]) noexcept
+__fill(long int *) noexcept
 {
 }
 
@@ -81,81 +81,125 @@ __fill(long int *__slots, A0 __a0, Rest... __rest) noexcept
 
 };     // namespace __impl
 
+// WARNING:
+// on ARMv7-A Linux EABI, r7 is the syscall number register
+// the obvious implementation is register long int __r7 asm("r7") = __n;
+// plus a matching "r"(__r7) operand. That works ONLY when -fomit-frame-pointer is in effect
+//
+// However, in Thumb-2 mode, r7 is the architectural frame pointer;
+// under -fno-omit-frame-pointer, GCC reserves r7 for the function prologue/epilogue and refuses any register T x asm("r7")
+//   "error: r7 cannot be used in 'asm' here"
+
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0");
-  asm volatile("svc #0" : "=r"(__r0) : "r"(__r7) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "=r"(__r0)
+               : [n] "r"(__n)
+               : "memory");
   return __r0;
 }
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n, long int __a1) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0") = __a1;
-  asm volatile("svc #0" : "+r"(__r0) : "r"(__r7) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "+r"(__r0)
+               : [n] "r"(__n)
+               : "memory");
   return __r0;
 }
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n, long int __a1, long int __a2) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0") = __a1;
   register long int __r1 asm("r1") = __a2;
-  asm volatile("svc #0" : "+r"(__r0) : "r"(__r7), "r"(__r1) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "+r"(__r0)
+               : [n] "r"(__n), "r"(__r1)
+               : "memory");
   return __r0;
 }
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n, long int __a1, long int __a2, long int __a3) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0") = __a1;
   register long int __r1 asm("r1") = __a2;
   register long int __r2 asm("r2") = __a3;
-  asm volatile("svc #0" : "+r"(__r0) : "r"(__r7), "r"(__r1), "r"(__r2) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "+r"(__r0)
+               : [n] "r"(__n), "r"(__r1), "r"(__r2)
+               : "memory");
   return __r0;
 }
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0") = __a1;
   register long int __r1 asm("r1") = __a2;
   register long int __r2 asm("r2") = __a3;
   register long int __r3 asm("r3") = __a4;
-  asm volatile("svc #0" : "+r"(__r0) : "r"(__r7), "r"(__r1), "r"(__r2), "r"(__r3) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "+r"(__r0)
+               : [n] "r"(__n), "r"(__r1), "r"(__r2), "r"(__r3)
+               : "memory");
   return __r0;
 }
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0") = __a1;
   register long int __r1 asm("r1") = __a2;
   register long int __r2 asm("r2") = __a3;
   register long int __r3 asm("r3") = __a4;
   register long int __r4 asm("r4") = __a5;
-  asm volatile("svc #0" : "+r"(__r0) : "r"(__r7), "r"(__r1), "r"(__r2), "r"(__r3), "r"(__r4) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "+r"(__r0)
+               : [n] "r"(__n), "r"(__r1), "r"(__r2), "r"(__r3), "r"(__r4)
+               : "memory");
   return __r0;
 }
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5, long int __a6) noexcept
 {
-  register long int __r7 asm("r7") = __n;
   register long int __r0 asm("r0") = __a1;
   register long int __r1 asm("r1") = __a2;
   register long int __r2 asm("r2") = __a3;
   register long int __r3 asm("r3") = __a4;
   register long int __r4 asm("r4") = __a5;
   register long int __r5 asm("r5") = __a6;
-  asm volatile("svc #0" : "+r"(__r0) : "r"(__r7), "r"(__r1), "r"(__r2), "r"(__r3), "r"(__r4), "r"(__r5) : "memory");
+  asm volatile("push {r7}\n\t"
+               "mov r7, %[n]\n\t"
+               "svc #0\n\t"
+               "pop {r7}"
+               : "+r"(__r0)
+               : [n] "r"(__n), "r"(__r1), "r"(__r2), "r"(__r3), "r"(__r4), "r"(__r5)
+               : "memory");
   return __r0;
 }
 

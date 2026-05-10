@@ -75,7 +75,7 @@ main()
 
   test_case("gradient: ∇(x·y·z) at (1,2,3) = (yz, xz, xy) = (6,3,2)");
   {
-    auto f = [](const f64 (&x)[3]) noexcept -> f64 { return x[0] * x[1] * x[2]; };
+    auto f = [](const f64(&x)[3]) noexcept -> f64 { return x[0] * x[1] * x[2]; };
     f64 x[3] = { 1.0, 2.0, 3.0 };
     auto g = integrate::derive::gradient<3, f64>(f, x, 1e-4);
     require_true(near(g.data[0], 6.0, 1e-6));
@@ -87,7 +87,7 @@ main()
   test_case("jacobian: polar→cartesian (r·cosθ, r·sinθ) at (r=1, θ=π/4)");
   {
     // f: (r, θ) → (r·cosθ, r·sinθ)
-    auto f = [](const f64 (&x)[2]) noexcept -> vec<f64, 2> {
+    auto f = [](const f64(&x)[2]) noexcept -> vec<f64, 2> {
       const f64 r = x[0], th = x[1];
       return vec<f64, 2>{ { r * mk::trig::cos<f64>(th), r * mk::trig::sin<f64>(th) } };
     };
@@ -105,7 +105,7 @@ main()
 
   test_case("hessian: of (x²+y²)/2 at any point = identity");
   {
-    auto f = [](const f64 (&x)[2]) noexcept -> f64 { return 0.5 * (x[0] * x[0] + x[1] * x[1]); };
+    auto f = [](const f64(&x)[2]) noexcept -> f64 { return 0.5 * (x[0] * x[0] + x[1] * x[1]); };
     f64 x[2] = { 3.0, 5.0 };
     auto H = integrate::derive::hessian<2, f64>(f, x, 1e-3);
     require_true(near(H.data[0], 1.0, 1e-6));
@@ -117,7 +117,7 @@ main()
 
   test_case("hessian: of x*y at any point = [[0,1],[1,0]]");
   {
-    auto f = [](const f64 (&x)[2]) noexcept -> f64 { return x[0] * x[1]; };
+    auto f = [](const f64(&x)[2]) noexcept -> f64 { return x[0] * x[1]; };
     f64 x[2] = { 7.0, -3.0 };
     auto H = integrate::derive::hessian<2, f64>(f, x, 1e-3);
     require_true(near(H.data[0], 0.0, 1e-5));
@@ -177,5 +177,5 @@ main()
   end_test_case();
 
   print("=== integrate derive ok ===");
-  return 1;
+  return 0;
 }

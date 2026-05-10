@@ -4,6 +4,7 @@
 #include "../../src/std.hpp"
 
 #include <random>
+
 int
 main()
 {
@@ -13,7 +14,7 @@ main()
     std::uniform_int_distribution<int> dist(1, 1000000);
     abc::__init_abcmalloc();
     size_t req_total = 0;
-    for ( size_t n = 0; n < (2<<8); ++n ) {
+    for ( size_t n = 0; n < (2 << 8); ++n ) {
       abc::__main_arena->push(dist(gen));
     }
     mc::infolog("Success");

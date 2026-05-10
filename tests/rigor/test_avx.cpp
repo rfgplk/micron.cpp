@@ -3,8 +3,8 @@
 // 256-bit load / store / cast / movemask / convert / broadcast / horizontal
 // / testz family).
 
-#include "../snowball/snowball.hpp"
 #include "../../src/simd/aliases/avx.hpp"
+#include "../snowball/snowball.hpp"
 
 namespace ma = ::micron::simd::avx;
 
@@ -26,40 +26,42 @@ v_eq(T a, T b) noexcept
   return true;
 }
 
-static void test_set_load_store()
+static void
+test_set_load_store()
 {
   test_case("avx: set / splat / load / store");
   auto z = ma::zero_f32();
   alignas(32) float zb[8];
   ma::storeu_f32(zb, z);
-  for (int i = 0; i < 8; ++i) require_true(zb[i] == 0.0f);
+  for ( int i = 0; i < 8; ++i ) require_true(zb[i] == 0.0f);
 
   auto v = ma::splat_f32(1.5f);
   ma::storeu_f32(zb, v);
-  for (int i = 0; i < 8; ++i) require_true(zb[i] == 1.5f);
+  for ( int i = 0; i < 8; ++i ) require_true(zb[i] == 1.5f);
 
   alignas(32) double db[4] = { 1, 2, 3, 4 };
   alignas(32) double db2[4];
   auto vd = ma::load_f64(db);
   ma::store_f64(db2, vd);
-  for (int i = 0; i < 4; ++i) require_true(db[i] == db2[i]);
+  for ( int i = 0; i < 4; ++i ) require_true(db[i] == db2[i]);
   end_test_case();
 }
 
-static void test_arith_fp()
+static void
+test_arith_fp()
 {
   test_case("avx: fp arith / sqrt / min / max / hadd / addsub");
   auto a = ma::setr_f32(1, 2, 3, 4, 5, 6, 7, 8);
   auto b = ma::splat_f32(0.5f);
   alignas(32) float sb[8];
   ma::storeu_f32(sb, ma::add_f32(a, b));
-  for (int i = 0; i < 8; ++i) require_true(sb[i] == float(i + 1) + 0.5f);
+  for ( int i = 0; i < 8; ++i ) require_true(sb[i] == float(i + 1) + 0.5f);
 
   ma::storeu_f32(sb, ma::mul_f32(a, ma::splat_f32(2.0f)));
-  for (int i = 0; i < 8; ++i) require_true(sb[i] == float(i + 1) * 2.0f);
+  for ( int i = 0; i < 8; ++i ) require_true(sb[i] == float(i + 1) * 2.0f);
 
   ma::storeu_f32(sb, ma::sqrt_f32(ma::splat_f32(16.0f)));
-  for (int i = 0; i < 8; ++i) require_true(sb[i] == 4.0f);
+  for ( int i = 0; i < 8; ++i ) require_true(sb[i] == 4.0f);
 
   // hadd: pairwise within 128-bit lanes.
   ma::storeu_f32(sb, ma::hadd_f32(a, b));
@@ -75,7 +77,8 @@ static void test_arith_fp()
   end_test_case();
 }
 
-static void test_bitwise_movemask()
+static void
+test_bitwise_movemask()
 {
   test_case("avx: bitwise / movemask");
   auto a = ma::splat_f32(-1.0f);
@@ -91,20 +94,21 @@ static void test_bitwise_movemask()
   end_test_case();
 }
 
-static void test_convert_extract()
+static void
+test_convert_extract()
 {
   test_case("avx: convert / extract");
   auto i = ma::cast_lo128_to_i256(_mm_setr_epi32(1, 2, 3, 4));
   // upper half is undefined when using cast (not zext). ignore upper.
   alignas(32) int ib[8] = {};
-  ma::storeu_i256((__m256i_u*)ib, ma::zext_i256_from_lo128(_mm_setr_epi32(10, 20, 30, 40)));
+  ma::storeu_i256((__m256i_u *)ib, ma::zext_i256_from_lo128(_mm_setr_epi32(10, 20, 30, 40)));
   require_true(ib[0] == 10 && ib[3] == 40 && ib[4] == 0 && ib[7] == 0);
   (void)i;
 
   auto fi = ma::setr_f32(1.4f, 2.6f, -0.5f, 3.7f, 4.4f, 5.6f, 6.5f, 7.7f);
   auto trunc = ma::convert_trunc_f32_to_i32(fi);
   alignas(32) int tb[8];
-  ma::storeu_i256((__m256i_u*)tb, trunc);
+  ma::storeu_i256((__m256i_u *)tb, trunc);
   require_true(tb[0] == 1 && tb[1] == 2 && tb[2] == 0 && tb[3] == 3);
   require_true(tb[4] == 4 && tb[5] == 5 && tb[6] == 6 && tb[7] == 7);
 
@@ -115,18 +119,19 @@ static void test_convert_extract()
   end_test_case();
 }
 
-static void test_broadcast()
+static void
+test_broadcast()
 {
   test_case("avx: broadcast / dup");
   float v = 9.25f;
   auto bv = ma::broadcast_f32_from_mem(&v);
   alignas(32) float sb[8];
   ma::storeu_f32(sb, bv);
-  for (int i = 0; i < 8; ++i) require_true(sb[i] == 9.25f);
+  for ( int i = 0; i < 8; ++i ) require_true(sb[i] == 9.25f);
 
-  auto a   = ma::setr_f32(1, 2, 3, 4, 5, 6, 7, 8);
-  auto hi  = ma::movehdup_f32(a);
-  auto lo  = ma::moveldup_f32(a);
+  auto a = ma::setr_f32(1, 2, 3, 4, 5, 6, 7, 8);
+  auto hi = ma::movehdup_f32(a);
+  auto lo = ma::moveldup_f32(a);
   ma::storeu_f32(sb, hi);
   require_true(sb[0] == 2 && sb[1] == 2 && sb[2] == 4 && sb[3] == 4);
   ma::storeu_f32(sb, lo);
@@ -134,7 +139,8 @@ static void test_broadcast()
   end_test_case();
 }
 
-static void test_test_family()
+static void
+test_test_family()
 {
   test_case("avx: testz / testc / testnzc");
   auto z = ma::zero_i256();

@@ -82,8 +82,7 @@ main()
     evaluate<f64>(s, sorted_q, out_sorted, 6);
     evaluate<f64>(s, unsorted_q, out_unsorted, 6);
     // permute unsorted result back into sorted positions for comparison
-    f64 reordered[6] = { out_unsorted[1], out_unsorted[3], out_unsorted[5],
-                         out_unsorted[2], out_unsorted[4], out_unsorted[0] };
+    f64 reordered[6] = { out_unsorted[1], out_unsorted[3], out_unsorted[5], out_unsorted[2], out_unsorted[4], out_unsorted[0] };
     for ( usize i = 0; i < 6; ++i ) require_true(near(out_sorted[i], reordered[i], 1e-14));
   }
   end_test_case();
@@ -108,9 +107,7 @@ main()
   test_case("cubic_natural: reproduces cubic polynomial within 1e-12");
   {
     // y = 1 + 2x + 3x^2 + 4x^3
-    auto poly = [](f64 x) noexcept -> f64 {
-      return 1.0 + 2.0 * x + 3.0 * x * x + 4.0 * x * x * x;
-    };
+    auto poly = [](f64 x) noexcept -> f64 { return 1.0 + 2.0 * x + 3.0 * x * x + 4.0 * x * x * x; };
     constexpr usize n = 12;
     f64 xs[n], ys[n];
     for ( usize i = 0; i < n; ++i ) {
@@ -120,8 +117,7 @@ main()
     // Natural BC won't reproduce a generic cubic exactly (S''=0 at ends); use clamped.
     const f64 lhs_slope = 2.0 + 6.0 * xs[0] + 12.0 * xs[0] * xs[0];
     const f64 rhs_slope = 2.0 + 6.0 * xs[n - 1] + 12.0 * xs[n - 1] * xs[n - 1];
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                             bc_kind::clamped, lhs_slope, rhs_slope);
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::clamped, lhs_slope, rhs_slope);
     // Sample at off-knot points.
     f64 max_err = 0;
     for ( usize i = 0; i < 50; ++i ) {
@@ -138,10 +134,8 @@ main()
   {
     f64 xs[6] = { 0.0, 1.0, 2.5, 3.7, 5.1, 6.0 };
     f64 ys[6] = { 0.0, 1.0, 0.5, 1.2, -0.3, 0.0 };
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, 6), raw_slice<const f64>(ys, 6),
-                             bc_kind::natural);
-    for ( usize i = 0; i < 6; ++i )
-      require_true(near(evaluate<f64>(s, xs[i]), ys[i], 1e-12));
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, 6), raw_slice<const f64>(ys, 6), bc_kind::natural);
+    for ( usize i = 0; i < 6; ++i ) require_true(near(evaluate<f64>(s, xs[i]), ys[i], 1e-12));
   }
   end_test_case();
 
@@ -150,8 +144,7 @@ main()
   {
     f64 xs[5] = { 0, 1, 2, 3, 4 };
     f64 ys[5] = { 1, 4, 9, 16, 25 };
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5),
-                             bc_kind::natural);
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5), bc_kind::natural);
     require_true(near(derivative<f64>(s, xs[0], 2), 0.0, 1e-12));
     require_true(near(derivative<f64>(s, xs[4], 2), 0.0, 1e-12));
   }
@@ -164,8 +157,7 @@ main()
     f64 ys[5] = { 0, 1, 4, 9, 16 };
     const f64 lhs = 0.5;
     const f64 rhs = 7.5;
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5),
-                             bc_kind::clamped, lhs, rhs);
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5), bc_kind::clamped, lhs, rhs);
     require_true(near(derivative<f64>(s, xs[0], 1), lhs, 1e-12));
     require_true(near(derivative<f64>(s, xs[4], 1), rhs, 1e-12));
   }
@@ -174,17 +166,14 @@ main()
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   test_case("cubic_not_a_knot: reproduces cubic polynomial within 1e-12");
   {
-    auto poly = [](f64 x) noexcept -> f64 {
-      return -2.0 + 0.5 * x - 1.5 * x * x + 0.25 * x * x * x;
-    };
+    auto poly = [](f64 x) noexcept -> f64 { return -2.0 + 0.5 * x - 1.5 * x * x + 0.25 * x * x * x; };
     constexpr usize n = 8;
     f64 xs[n], ys[n];
     for ( usize i = 0; i < n; ++i ) {
       xs[i] = 0.5 * f64(i);
       ys[i] = poly(xs[i]);
     }
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                             bc_kind::not_a_knot);
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::not_a_knot);
     f64 max_err = 0;
     for ( usize i = 0; i < 50; ++i ) {
       const f64 x = 0.05 + 0.07 * f64(i);
@@ -202,15 +191,12 @@ main()
     // For y = sin(x) sampled densely, ∫ S'(x) dx from a to b should ≈ S(b)-S(a).
     constexpr usize n = 33;
     f64 xs[n], ys[n];
-    auto sf = [](f64 x) noexcept -> f64 {
-      return mk::trig::sin<f64>(x);
-    };
+    auto sf = [](f64 x) noexcept -> f64 { return mk::trig::sin<f64>(x); };
     for ( usize i = 0; i < n; ++i ) {
       xs[i] = -3.14159 + (6.28318 / f64(n - 1)) * f64(i);
       ys[i] = sf(xs[i]);
     }
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                             bc_kind::not_a_knot);
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::not_a_knot);
     const f64 a = -1.0, b = 2.0;
     const f64 sb_minus_sa = evaluate<f64>(s, b) - evaluate<f64>(s, a);
     const f64 integral_deriv_ratio = sb_minus_sa - integral<f64>(s, a, b);
@@ -231,8 +217,7 @@ main()
     f64 xs[7] = { 0, 1, 2, 3, 4, 5, 6 };
     f64 ys[7] = { 0, 1, 1.01, 1.02, 5, 5.01, 5.02 };     // mostly flat then steep
     auto s = make_pchip<f64>(raw_slice<const f64>(xs, 7), raw_slice<const f64>(ys, 7));
-    for ( usize i = 0; i < 7; ++i )
-      require_true(near(evaluate<f64>(s, xs[i]), ys[i], 1e-12));
+    for ( usize i = 0; i < 7; ++i ) require_true(near(evaluate<f64>(s, xs[i]), ys[i], 1e-12));
     // Sample on a dense grid; require strict non-decrease.
     f64 prev = evaluate<f64>(s, xs[0]);
     for ( usize i = 1; i < 600; ++i ) {
@@ -253,8 +238,7 @@ main()
       xs[i] = 0.5 * f64(i);
       ys[i] = mk::exp_ns::exp<f64>(-xs[i]);
     }
-    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n),
-                             bc_kind::not_a_knot);
+    auto s = make_cubic<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), bc_kind::not_a_knot);
     f64 q[20];
     for ( usize i = 0; i < 20; ++i ) q[i] = 0.05 + 0.22 * f64(i);
     f64 batch_out[20], scalar_out[20];
@@ -288,5 +272,5 @@ main()
   end_test_case();
 
   print("=== SPLINES 1-D TESTS PASSED ===");
-  return 1;
+  return 0;
 }

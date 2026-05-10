@@ -43,11 +43,11 @@ main()
   {
     mc::option<int, bool> opt(4);
     mc::console(opt.cast<int>());
-    mc::any<int, bool, mc::string> anys{false};
+    mc::any<int, bool, mc::string> anys{ false };
     mc::console(anys.cast<bool>());
     bool __t = anys;
     mc::console(__t);
-    anys = mc::string{"hello world"};
+    anys = mc::string{ "hello world" };
     mc::console(anys.cast<mc::string>());
     mc::string __s = anys;
     mc::console(__s);

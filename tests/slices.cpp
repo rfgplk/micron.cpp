@@ -7,6 +7,7 @@
 #include "../src/io/console.hpp"
 #include "../src/slice.hpp"
 #include "../src/std.hpp"
+
 int
 main(void)
 {

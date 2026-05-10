@@ -107,8 +107,7 @@ main()
   {
     micron::span<int, 16> s(8);
     require(s.size(), size_t(8));
-    for ( size_t i = 0; i < 8; ++i )
-      require(s[i], 0);
+    for ( size_t i = 0; i < 8; ++i ) require(s[i], 0);
   }
   end_test_case();
 
@@ -117,8 +116,7 @@ main()
   {
     micron::span<int, 32> s(10, 42);
     require(s.size(), size_t(10));
-    for ( size_t i = 0; i < 10; ++i )
-      require(s[i], 42);
+    for ( size_t i = 0; i < 10; ++i ) require(s[i], 42);
   }
   end_test_case();
 
@@ -128,8 +126,7 @@ main()
     int src[5] = { 10, 20, 30, 40, 50 };
     micron::span<int, 16> s(src, src + 5);
     require(s.size(), size_t(5));
-    for ( int i = 0; i < 5; ++i )
-      require(s[i], src[i]);
+    for ( int i = 0; i < 5; ++i ) require(s[i], src[i]);
     // mutation of src must not affect s
     src[0] = 999;
     require(s[0], 10);
@@ -143,8 +140,7 @@ main()
     micron::raw_slice<int> view(arr, 3);
     micron::span<int, 16> s(view);
     require(s.size(), size_t(3));
-    for ( int i = 0; i < 3; ++i )
-      require(s[i], arr[i]);
+    for ( int i = 0; i < 3; ++i ) require(s[i], arr[i]);
     // mutation of arr must not affect s
     arr[1] = 0;
     require(s[1], 14);
@@ -168,8 +164,7 @@ main()
   {
     int counter = 0;
     micron::span<int, 16> s(6, [&counter]() -> int { return counter++; });
-    for ( int i = 0; i < 6; ++i )
-      require(s[i], i);
+    for ( int i = 0; i < 6; ++i ) require(s[i], i);
   }
   end_test_case();
 
@@ -179,8 +174,7 @@ main()
     micron::span<int, 8> a(4, 77);
     micron::span<int, 8> b(a);
     require(b.size(), a.size());
-    for ( size_t i = 0; i < b.size(); ++i )
-      require(b[i], 77);
+    for ( size_t i = 0; i < b.size(); ++i ) require(b[i], 77);
     // mutate b — a must be unaffected
     b[0] = 0;
     require(a[0], 77);
@@ -193,8 +187,7 @@ main()
     micron::span<int, 8> small(4, 3);
     micron::span<int, 16> large(small);
     require(large.size(), size_t(4));
-    for ( size_t i = 0; i < large.size(); ++i )
-      require(large[i], 3);
+    for ( size_t i = 0; i < large.size(); ++i ) require(large[i], 3);
   }
   end_test_case();
 
@@ -204,8 +197,7 @@ main()
     micron::span<int, 8> a(4, 55);
     micron::span<int, 8> b(micron::move(a));
     require(b.size(), size_t(4));
-    for ( size_t i = 0; i < b.size(); ++i )
-      require(b[i], 55);
+    for ( size_t i = 0; i < b.size(); ++i ) require(b[i], 55);
     require(a.size(), size_t(0));
   }
   end_test_case();
@@ -244,8 +236,7 @@ main()
     micron::span<int, 8> b;
     b = micron::move(a);
     require(b.size(), size_t(5));
-    for ( size_t i = 0; i < b.size(); ++i )
-      require(b[i], 3);
+    for ( size_t i = 0; i < b.size(); ++i ) require(b[i], 3);
     require(a.size(), size_t(0));
   }
   end_test_case();
@@ -254,10 +245,8 @@ main()
   test_case("operator[] read and write");
   {
     micron::span<int, 16> s(6, 0);
-    for ( size_t i = 0; i < 6; ++i )
-      s[i] = static_cast<int>(i * 5);
-    for ( size_t i = 0; i < 6; ++i )
-      require(s[i], static_cast<int>(i * 5));
+    for ( size_t i = 0; i < 6; ++i ) s[i] = static_cast<int>(i * 5);
+    for ( size_t i = 0; i < 6; ++i ) require(s[i], static_cast<int>(i * 5));
   }
   end_test_case();
 
@@ -290,8 +279,7 @@ main()
     micron::span<int, 8> s(4, 0xFFFFFFFF);
     s = static_cast<byte>(0x00);
     // all bytes should now be zero
-    for ( size_t i = 0; i < s.size(); ++i )
-      require(s[i], 0);
+    for ( size_t i = 0; i < s.size(); ++i ) require(s[i], 0);
   }
   end_test_case();
 
@@ -309,11 +297,9 @@ main()
   test_case("push_back appends elements and grows length");
   {
     micron::span<int, 16> s;
-    for ( int i = 0; i < 5; ++i )
-      s.push_back(i * 2);
+    for ( int i = 0; i < 5; ++i ) s.push_back(i * 2);
     require(s.size(), size_t(5));
-    for ( int i = 0; i < 5; ++i )
-      require(s[i], i * 2);
+    for ( int i = 0; i < 5; ++i ) require(s[i], i * 2);
   }
   end_test_case();
 
@@ -462,8 +448,7 @@ main()
     require(s.size(), size_t(2));
     s.reset();
     require(s.size(), size_t(8));
-    for ( size_t i = 0; i < 8; ++i )
-      require(s[i], 0);
+    for ( size_t i = 0; i < 8; ++i ) require(s[i], 0);
   }
   end_test_case();
 
@@ -472,8 +457,7 @@ main()
   {
     micron::span<int, 16> s(6, 0);
     s.set(33);
-    for ( size_t i = 0; i < s.size(); ++i )
-      require(s[i], 33);
+    for ( size_t i = 0; i < s.size(); ++i ) require(s[i], 33);
   }
   end_test_case();
 
@@ -482,8 +466,7 @@ main()
   {
     micron::span<int, 16> s(5, 0);
     s.fill(77);
-    for ( size_t i = 0; i < s.size(); ++i )
-      require(s[i], 77);
+    for ( size_t i = 0; i < s.size(); ++i ) require(s[i], 77);
   }
   end_test_case();
 
@@ -493,8 +476,7 @@ main()
     micron::span<int, 16> s(6, 0);
     int counter = 0;
     s.fill_with([&counter]() -> int { return counter++; });
-    for ( int i = 0; i < 6; ++i )
-      require(s[i], i);
+    for ( int i = 0; i < 6; ++i ) require(s[i], i);
   }
   end_test_case();
 
@@ -503,8 +485,7 @@ main()
   {
     micron::span<int, 8> s(4, 0);
     s.write_filled(55);
-    for ( size_t i = 0; i < s.size(); ++i )
-      require(s[i], 55);
+    for ( size_t i = 0; i < s.size(); ++i ) require(s[i], 55);
   }
   end_test_case();
 
@@ -513,8 +494,7 @@ main()
   {
     micron::span<int, 16> s(5, 0);
     s.write_with([](size_t i) -> int { return static_cast<int>(i * i); });
-    for ( size_t i = 0; i < 5; ++i )
-      require(s[i], static_cast<int>(i * i));
+    for ( size_t i = 0; i < 5; ++i ) require(s[i], static_cast<int>(i * i));
   }
   end_test_case();
 
@@ -524,8 +504,7 @@ main()
     int src[] = { 5, 4, 3, 2, 1 };
     micron::span<int, 8> s(5, 0);
     s.write_iter(src, src + 5);
-    for ( int i = 0; i < 5; ++i )
-      require(s[i], src[i]);
+    for ( int i = 0; i < 5; ++i ) require(s[i], src[i]);
   }
   end_test_case();
 
@@ -536,8 +515,7 @@ main()
     micron::raw_slice<int> view(src, 5);
     micron::span<int, 16> s(5, 0);
     s.copy_from_slice(view);
-    for ( int i = 0; i < 5; ++i )
-      require(s[i], src[i]);
+    for ( int i = 0; i < 5; ++i ) require(s[i], src[i]);
   }
   end_test_case();
 
@@ -549,13 +527,11 @@ main()
 
     micron::span<int, 8> sc(3, 0);
     sc.write_copy_of_slice(view);
-    for ( int i = 0; i < 3; ++i )
-      require(sc[i], src[i]);
+    for ( int i = 0; i < 3; ++i ) require(sc[i], src[i]);
 
     micron::span<int, 8> sk(3, 0);
     sk.write_clone_of_slice(view);
-    for ( int i = 0; i < 3; ++i )
-      require(sk[i], src[i]);
+    for ( int i = 0; i < 3; ++i ) require(sk[i], src[i]);
   }
   end_test_case();
 
@@ -591,8 +567,7 @@ main()
     require_true(r.begin != nullptr);
     require_true(r.end != nullptr);
     require(static_cast<size_t>(r.end - r.begin), s.size());
-    for ( int i = 0; i < 4; ++i )
-      require(r.begin[i], i);
+    for ( int i = 0; i < 4; ++i ) require(r.begin[i], i);
   }
   end_test_case();
 
@@ -624,8 +599,7 @@ main()
     micron::span<int, 8> s({ 2, 4, 6, 8 });
     auto view = s.iter();
     require(view.size(), s.size());
-    for ( size_t i = 0; i < view.size(); ++i )
-      require(view[i], s[i]);
+    for ( size_t i = 0; i < view.size(); ++i ) require(view[i], s[i]);
 
     auto mut = s.iter_mut();
     mut[0] = 100;
@@ -638,14 +612,12 @@ main()
   {
     micron::span<int, 16> s({ 0, 1, 2, 3, 4 });
     int sum = 0;
-    for ( auto *it = s.begin(); it != s.end(); ++it )
-      sum += *it;
+    for ( auto *it = s.begin(); it != s.end(); ++it ) sum += *it;
     require(sum, 0 + 1 + 2 + 3 + 4);
 
     int csum = 0;
     const auto &cs = s;
-    for ( auto *it = cs.cbegin(); it != cs.cend(); ++it )
-      csum += *it;
+    for ( auto *it = cs.cbegin(); it != cs.cend(); ++it ) csum += *it;
     require(csum, sum);
   }
   end_test_case();
@@ -765,8 +737,7 @@ main()
   {
     // [0,1,0,1,0,1,0] — split on 1
     micron::span<int, 16> s;
-    for ( int i = 0; i < 7; ++i )
-      s.push_back((i % 2 == 1) ? 1 : 0);
+    for ( int i = 0; i < 7; ++i ) s.push_back((i % 2 == 1) ? 1 : 0);
 
     size_t pieces = 0;
     size_t total_elems = 0;
@@ -789,8 +760,7 @@ main()
     s.split_inclusive([](const int &v) { return v == 3; },
                       [&](micron::raw_slice<int> sub) {
                         ++pieces;
-                        if ( pieces == 1 )
-                          last_of_first_is_3 = (sub[sub.size() - 1] == 3);
+                        if ( pieces == 1 ) last_of_first_is_3 = (sub[sub.size() - 1] == 3);
                       });
     require(pieces, size_t(2));
     require_true(last_of_first_is_3);
@@ -1134,8 +1104,7 @@ main()
   {
     micron::span<int, 8> s({ 0, 1, 2, 3, 4 });
     s.reverse();
-    for ( int i = 0; i < 5; ++i )
-      require(s[i], 4 - i);
+    for ( int i = 0; i < 5; ++i ) require(s[i], 4 - i);
 
     // idempotent on single element
     micron::span<int, 8> one(1, 7);
@@ -1185,12 +1154,10 @@ main()
   test_case("rotate_left and rotate_right are mutual inverses");
   {
     micron::span<int, 16> s;
-    for ( int i = 0; i < 7; ++i )
-      s.push_back(i);
+    for ( int i = 0; i < 7; ++i ) s.push_back(i);
     s.rotate_left(3);
     s.rotate_right(3);
-    for ( int i = 0; i < 7; ++i )
-      require(s[i], i);
+    for ( int i = 0; i < 7; ++i ) require(s[i], i);
   }
   end_test_case();
 
@@ -1210,8 +1177,7 @@ main()
     micron::span<int, 8> s(1, 0xFFFFFFFF);
     auto bytes = s.as_bytes_mut();
     require(bytes.size(), sizeof(int));
-    for ( size_t i = 0; i < bytes.size(); ++i )
-      bytes.ptr[i] = 0;
+    for ( size_t i = 0; i < bytes.size(); ++i ) bytes.ptr[i] = 0;
     require(s[0], 0);
   }
   end_test_case();
@@ -1252,8 +1218,7 @@ main()
   test_case("ASCII: is_ascii() returns true for pure ASCII content");
   {
     micron::span<char, 64> s;
-    for ( char c : { 'H', 'e', 'l', 'l', 'o' } )
-      s.push_back(c);
+    for ( char c : { 'H', 'e', 'l', 'l', 'o' } ) s.push_back(c);
     require_true(s.is_ascii());
   }
   end_test_case();
@@ -1385,8 +1350,7 @@ main()
     reset_tracked();
     {
       micron::span<Tracked, 16> s;
-      for ( int i = 0; i < 8; ++i )
-        s.emplace_back(i);
+      for ( int i = 0; i < 8; ++i ) s.emplace_back(i);
     }
     require(Tracked::ctor, Tracked::dtor);
   }
@@ -1397,8 +1361,7 @@ main()
   {
     reset_tracked();
     micron::span<Tracked, 16> s;
-    for ( int i = 0; i < 6; ++i )
-      s.emplace_back(i);
+    for ( int i = 0; i < 6; ++i ) s.emplace_back(i);
     size_t before_clear = Tracked::dtor;
     s.clear();
     require(Tracked::dtor - before_clear, size_t(6));
@@ -1425,8 +1388,7 @@ main()
   {
     constexpr int N = 60;
     micron::span<int, 64> s;
-    for ( int i = 0; i < N; ++i )
-      s.push_back(i);
+    for ( int i = 0; i < N; ++i ) s.push_back(i);
     require(s.size(), size_t(N));
     for ( int i = N - 1; i >= 0; --i ) {
       require(s[static_cast<size_t>(i)], i);
@@ -1440,8 +1402,7 @@ main()
   test_case("stress insert / erase at middle");
   {
     micron::span<int, 64> s;
-    for ( int i = 0; i < 10; ++i )
-      s.push_back(i);
+    for ( int i = 0; i < 10; ++i ) s.push_back(i);
     // insert 99 at position 5
     s.insert(size_t(5), 99);
     require(s[5], 99);
@@ -1449,8 +1410,7 @@ main()
     // erase it back
     s.erase(size_t(5));
     require(s.size(), size_t(10));
-    for ( int i = 0; i < 10; ++i )
-      require(s[static_cast<size_t>(i)], i);
+    for ( int i = 0; i < 10; ++i ) require(s[static_cast<size_t>(i)], i);
   }
   end_test_case();
 
@@ -1459,15 +1419,13 @@ main()
   {
     constexpr size_t N = 60;
     micron::span<int, 64> s;
-    for ( size_t i = 0; i < N; ++i )
-      s.push_back(static_cast<int>(i));
+    for ( size_t i = 0; i < N; ++i ) s.push_back(static_cast<int>(i));
 
     for ( size_t r = 1; r < N; ++r ) {
       s.rotate_left(1);
       s.rotate_right(1);
     }
-    for ( size_t i = 0; i < N; ++i )
-      require(s[i], static_cast<int>(i));
+    for ( size_t i = 0; i < N; ++i ) require(s[i], static_cast<int>(i));
   }
   end_test_case();
 
@@ -1476,12 +1434,10 @@ main()
   {
     constexpr size_t N = 50;
     micron::span<int, 64> s;
-    for ( size_t i = 0; i < N; ++i )
-      s.push_back(static_cast<int>(i));
+    for ( size_t i = 0; i < N; ++i ) s.push_back(static_cast<int>(i));
     s.reverse();
     s.reverse();
-    for ( size_t i = 0; i < N; ++i )
-      require(s[i], static_cast<int>(i));
+    for ( size_t i = 0; i < N; ++i ) require(s[i], static_cast<int>(i));
   }
   end_test_case();
 
@@ -1489,8 +1445,7 @@ main()
   test_case("stress split / contains consistency");
   {
     micron::span<int, 64> s;
-    for ( int i = 0; i < 32; ++i )
-      s.push_back(i % 2 == 0 ? 0 : 1);
+    for ( int i = 0; i < 32; ++i ) s.push_back(i % 2 == 0 ? 0 : 1);
 
     // every odd element is a 1 — contains must agree
     require_true(s.contains(1));

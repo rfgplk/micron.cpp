@@ -29,7 +29,7 @@ main()
 
   test_case("monte_carlo: ∫∫ 1 dx dy on unit square = 1");
   {
-    auto f = [](const f64 (&)[2]) noexcept -> f64 { return 1.0; };
+    auto f = [](const f64(&)[2]) noexcept -> f64 { return 1.0; };
     f64 lo[2] = { 0, 0 };
     f64 hi[2] = { 1, 1 };
     rng::xoshiro256ss g{ rng::xoshiro256ss::from_seed(42u) };
@@ -40,7 +40,7 @@ main()
 
   test_case("monte_carlo: ∫∫ x²+y² on unit square ≈ 2/3");
   {
-    auto f = [](const f64 (&x)[2]) noexcept -> f64 { return x[0] * x[0] + x[1] * x[1]; };
+    auto f = [](const f64(&x)[2]) noexcept -> f64 { return x[0] * x[0] + x[1] * x[1]; };
     f64 lo[2] = { 0, 0 };
     f64 hi[2] = { 1, 1 };
     rng::xoshiro256ss g{ rng::xoshiro256ss::from_seed(123u) };
@@ -52,7 +52,7 @@ main()
 
   test_case("quasi_monte_carlo (Halton): tighter convergence than MC");
   {
-    auto f = [](const f64 (&x)[3]) noexcept -> f64 { return x[0] * x[1] * x[2]; };
+    auto f = [](const f64(&x)[3]) noexcept -> f64 { return x[0] * x[1] * x[2]; };
     f64 lo[3] = { 0, 0, 0 };
     f64 hi[3] = { 1, 1, 1 };
     f64 r = integrate::quasi_monte_carlo<3, f64>(f, lo, hi, 4096);
@@ -63,7 +63,7 @@ main()
 
   test_case("monte_carlo: 4D unit hypercube, ∫ x_i sum");
   {
-    auto f = [](const f64 (&x)[4]) noexcept -> f64 { return x[0] + x[1] + x[2] + x[3]; };
+    auto f = [](const f64(&x)[4]) noexcept -> f64 { return x[0] + x[1] + x[2] + x[3]; };
     f64 lo[4] = { 0, 0, 0, 0 };
     f64 hi[4] = { 1, 1, 1, 1 };
     rng::xoshiro256ss g{ rng::xoshiro256ss::from_seed(0xc0ffeeULL) };
@@ -74,5 +74,5 @@ main()
   end_test_case();
 
   print("=== integrate monte_carlo ok ===");
-  return 1;
+  return 0;
 }

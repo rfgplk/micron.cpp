@@ -3,8 +3,8 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
-#include "../src/io/fsys.hpp"
 #include "../src/io/filesystem.hpp"
+#include "../src/io/fsys.hpp"
 #include "../src/io/paths.hpp"
 #include "../src/io/serial.hpp"
 #include "../src/std.hpp"
@@ -65,8 +65,7 @@ main(void)
     mc::console("List?");
     auto p = sys.list();
     mc::console("!!!!!!!!!");
-    for ( const auto &n : p )
-      mc::console(n);
+    for ( const auto &n : p ) mc::console(n);
     mc::console("Is opened /usr/include/err.h: ", sys.is_opened("/usr/include/err.h"));
     mc::console("Is opened /tmp/second: ", sys.is_opened("/tmp/second"));
     // mc::console(str);

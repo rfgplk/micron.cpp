@@ -153,7 +153,8 @@ main()
   {
     vec<f64, 3> p{ 1, 0, 0 };
     vec<f64, 3> q_targets[] = {
-      vec<f64, 3>{ 0, 1, 0 }, vec<f64, 3>{ 0, 0, 1 },
+      vec<f64, 3>{ 0, 1, 0 },
+      vec<f64, 3>{ 0, 0, 1 },
       // 60° away from p in the xy plane
       vec<f64, 3>{ 0.5, math::fsqrt(0.75), 0.0 },
       // generic point
@@ -660,5 +661,5 @@ main()
   }
   end_test_case();
 
-  return 1;
+  return 0;
 }

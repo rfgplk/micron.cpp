@@ -18,8 +18,7 @@ static void
 busy_wait_ms(int ms)
 {
   micron::system_clock<micron::system_clocks::monotonic> clk;
-  while ( clk.elapsed<micron::unit::milliseconds>() < static_cast<micron::fduration_t>(ms) )
-    ;
+  while ( clk.elapsed<micron::unit::milliseconds>() < static_cast<micron::fduration_t>(ms) );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1099,11 +1098,9 @@ test_stress()
   sb::test_case("time_point arithmetic chain consistent");
   {
     micron::time_point<> tp{ 0.0 };
-    for ( int i = 0; i < 100; ++i )
-      tp += 1.0;
+    for ( int i = 0; i < 100; ++i ) tp += 1.0;
     sb::require(tp.time_since_epoch(), 100.0);
-    for ( int i = 0; i < 50; ++i )
-      tp -= 1.0;
+    for ( int i = 0; i < 50; ++i ) tp -= 1.0;
     sb::require(tp.time_since_epoch(), 50.0);
   }
   sb::end_test_case();

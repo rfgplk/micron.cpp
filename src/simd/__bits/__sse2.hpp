@@ -24,6 +24,7 @@ namespace __bits
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpsabi"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 #define __inline_g_T(...) [[gnu::always_inline, gnu::artificial, gnu::target(__VA_ARGS__)]] static inline
@@ -1300,6 +1301,18 @@ _mm_unpacklo_ps(__m128 a, __m128 b) noexcept
   return (__m128)__builtin_ia32_unpcklps((__v4sf)a, (__v4sf)b);
 }
 
+__inline_g __m128
+_mm_movehl_ps(__m128 a, __m128 b) noexcept
+{
+  return (__m128)__builtin_ia32_movhlps((__v4sf)a, (__v4sf)b);
+}
+
+__inline_g __m128
+_mm_movelh_ps(__m128 a, __m128 b) noexcept
+{
+  return (__m128)__builtin_ia32_movlhps((__v4sf)a, (__v4sf)b);
+}
+
 __inline_g __m128d
 _mm_unpackhi_pd(__m128d a, __m128d b) noexcept
 {
@@ -1688,6 +1701,8 @@ __inject_i(_mm_unpackhi_ps);
 __inject_i(_mm_unpacklo_ps);
 __inject_i(_mm_unpackhi_pd);
 __inject_i(_mm_unpacklo_pd);
+__inject_i(_mm_movehl_ps);
+__inject_i(_mm_movelh_ps);
 __inject_i(_mm_movemask_epi8);
 __inject_i(_mm_cvtps_epi32);
 __inject_i(_mm_cvttps_epi32);

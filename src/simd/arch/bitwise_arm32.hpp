@@ -14,12 +14,12 @@ namespace simd
 {
 
 __attribute__((always_inline)) static inline uint32_t
-__neon_movemask_u8(uint8x16_t v) noexcept
+__neon_movemask_u8(__bits::uint8x16_t v) noexcept
 {
-  static const uint8x16_t kBitMask = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
-  uint8x16_t bits = vandq_u8(v, kBitMask);
-  uint8x8_t lo = vget_low_u8(bits);
-  uint8x8_t hi = vget_high_u8(bits);
+  static const __bits::uint8x16_t kBitMask = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+  __bits::uint8x16_t bits = vandq_u8(v, kBitMask);
+  __bits::uint8x8_t lo = vget_low_u8(bits);
+  __bits::uint8x8_t hi = vget_high_u8(bits);
   lo = vpadd_u8(lo, hi);
   lo = vpadd_u8(lo, lo);
   lo = vpadd_u8(lo, lo);

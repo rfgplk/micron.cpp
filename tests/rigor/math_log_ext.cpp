@@ -134,5 +134,5 @@ main()
   end_test_case();
 
   print("=== MATH::LOG_EXT TESTS PASSED ===");
-  return 1;
+  return 0;
 }

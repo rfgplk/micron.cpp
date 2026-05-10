@@ -207,8 +207,7 @@ main(void)
     micron::sentinel_pointer sentinel(end);
 
     byte *cursor = buf;
-    while ( !(sentinel == static_cast<void *>(cursor)) )
-      ++cursor;
+    while ( !(sentinel == static_cast<void *>(cursor)) ) ++cursor;
 
     sb::require(cursor == end);
   }
@@ -237,8 +236,7 @@ main(void)
 
     bool matched = false;
     for ( byte *p = buf; p < buf + 4; ++p )
-      if ( null_sentinel == static_cast<void *>(p) )
-        matched = true;
+      if ( null_sentinel == static_cast<void *>(p) ) matched = true;
 
     sb::require(matched == false);
   }

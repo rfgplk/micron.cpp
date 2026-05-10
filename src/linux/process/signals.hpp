@@ -404,7 +404,7 @@ public:
     // revert all changes to default
     posix::sigset_t default_signal;
     posix::sigemptyset(default_signal);
-    posix::sigprocmask(posix::sig_setmask, default_signal, NULL);
+    posix::sigprocmask(posix::sig_setmask, default_signal, nullptr);
   }
 
   signal_t(void) : __acts(), __sig(0) { posix::sigemptyset(__signal); }

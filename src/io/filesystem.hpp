@@ -24,7 +24,7 @@ namespace micron
 namespace fsys
 {
 
-constexpr static const usize __max_fs = 0xFFFFFFFFFFFFFFFF;
+constexpr static const usize __max_fs = ~static_cast<usize>(0);
 
 template <io::modes __default_mode = io::modes::read, usize N = 256> class system
 {

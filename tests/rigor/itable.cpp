@@ -29,8 +29,7 @@ itab
 make_seq(int n)
 {
   itab t;
-  for ( int i = 0; i < n; ++i )
-    t = t.insert(i, i * 10);
+  for ( int i = 0; i < n; ++i ) t = t.insert(i, i * 10);
   return t;
 }
 
@@ -38,12 +37,10 @@ make_seq(int n)
 bool
 verify_seq(const itab &t, int n)
 {
-  if ( (int)t.size() != n )
-    return false;
+  if ( (int)t.size() != n ) return false;
   for ( int i = 0; i < n; ++i ) {
     const int *v = t.find(i);
-    if ( !v || *v != i * 10 )
-      return false;
+    if ( !v || *v != i * 10 ) return false;
   }
   return true;
 }
@@ -54,8 +51,7 @@ contains_seq(const itab &t, int n)
 {
   for ( int i = 0; i < n; ++i ) {
     const int *v = t.find(i);
-    if ( !v || *v != i * 10 )
-      return false;
+    if ( !v || *v != i * 10 ) return false;
   }
   return true;
 }
@@ -283,8 +279,7 @@ main()
   test_case("contains returns correct bool");
   {
     auto t = make_seq(5);
-    for ( int i = 0; i < 5; ++i )
-      require_true(t.contains(i));
+    for ( int i = 0; i < 5; ++i ) require_true(t.contains(i));
     require_false(t.contains(5));
     require_false(t.contains(-1));
     require_false(t.contains(999));
@@ -295,8 +290,7 @@ main()
   test_case("at() returns correct value");
   {
     auto t = make_seq(5);
-    for ( int i = 0; i < 5; ++i )
-      require(t.at(i), i * 10);
+    for ( int i = 0; i < 5; ++i ) require(t.at(i), i * 10);
   }
   end_test_case();
 
@@ -684,8 +678,7 @@ main()
     itab t;
     // insert in scrambled order including extremes
     int keys[] = { 0, -1, 1, -100, 100, -2, 2, -50, 50 };
-    for ( int k : keys )
-      t = t.insert(k, k * 10);
+    for ( int k : keys ) t = t.insert(k, k * 10);
 
     int prev = -9999;
     t.for_each([&](int k, int) {
@@ -861,8 +854,7 @@ main()
     unsigned prev = 0;
     bool first = true;
     t3.for_each([&](unsigned k, unsigned) {
-      if ( !first )
-        require_greater(k, prev);
+      if ( !first ) require_greater(k, prev);
       prev = k;
       first = false;
     });
@@ -891,12 +883,10 @@ main()
   test_case("u8 key/value type");
   {
     micron::immutable_table<u8, u8> t;
-    for ( u8 i = 0; i < 50; ++i )
-      t = t.insert(i, (u8)(i * 2));
+    for ( u8 i = 0; i < 50; ++i ) t = t.insert(i, (u8)(i * 2));
 
     require(t.size(), usize(50));
-    for ( u8 i = 0; i < 50; ++i )
-      require(*t.find(i), (u8)(i * 2));
+    for ( u8 i = 0; i < 50; ++i ) require(*t.find(i), (u8)(i * 2));
   }
   end_test_case();
 
@@ -992,8 +982,7 @@ main()
   test_case("stress: insert 1000 then erase all");
   {
     auto t = make_seq(1000);
-    for ( int i = 0; i < 1000; ++i )
-      t = t.erase(i);
+    for ( int i = 0; i < 1000; ++i ) t = t.erase(i);
     require(t.size(), usize(0));
     require_true(t.empty());
   }
@@ -1003,8 +992,7 @@ main()
   test_case("stress: insert 1000 in reverse order");
   {
     itab t;
-    for ( int i = 999; i >= 0; --i )
-      t = t.insert(i, i * 10);
+    for ( int i = 999; i >= 0; --i ) t = t.insert(i, i * 10);
     require(t.size(), usize(1000));
     require_true(verify_seq(t, 1000));
 
@@ -1022,8 +1010,7 @@ main()
     itab t;
     for ( int i = 0; i < 500; ++i ) {
       t = t.insert(i, i);
-      if ( i > 0 && i % 3 == 0 )
-        t = t.erase(i / 3);
+      if ( i > 0 && i % 3 == 0 ) t = t.erase(i / 3);
     }
     t.for_each([&](int k, int v) {
       require(v, k);
@@ -1037,18 +1024,14 @@ main()
   {
     itab versions[100];
     versions[0] = itab();
-    for ( int i = 1; i < 100; ++i )
-      versions[i] = versions[i - 1].insert(i, i * 10);
+    for ( int i = 1; i < 100; ++i ) versions[i] = versions[i - 1].insert(i, i * 10);
 
-    for ( int i = 0; i < 100; ++i )
-      require(versions[i].size(), usize(i));
+    for ( int i = 0; i < 100; ++i ) require(versions[i].size(), usize(i));
 
-    for ( int k = 1; k <= 50; ++k )
-      require(*versions[50].find(k), k * 10);
+    for ( int k = 1; k <= 50; ++k ) require(*versions[50].find(k), k * 10);
     require_true(versions[50].find(51) == nullptr);
 
-    for ( int k = 1; k <= 99; ++k )
-      require(*versions[99].find(k), k * 10);
+    for ( int k = 1; k <= 99; ++k ) require(*versions[99].find(k), k * 10);
   }
   end_test_case();
 
@@ -1057,8 +1040,7 @@ main()
   {
     auto base = make_seq(10);
     itab branches[50];
-    for ( int i = 0; i < 50; ++i )
-      branches[i] = base.insert(1000 + i, i);
+    for ( int i = 0; i < 50; ++i ) branches[i] = base.insert(1000 + i, i);
 
     require(base.size(), usize(10));
     require_true(verify_seq(base, 10));
@@ -1066,8 +1048,7 @@ main()
     for ( int i = 0; i < 50; ++i ) {
       require(branches[i].size(), usize(11));
       require(*branches[i].find(1000 + i), i);
-      if ( i > 0 )
-        require_false(branches[i].contains(1000 + i - 1));
+      if ( i > 0 ) require_false(branches[i].contains(1000 + i - 1));
     }
   }
   end_test_case();
@@ -1076,8 +1057,7 @@ main()
   test_case("stress: rapid update same key");
   {
     auto t = itab().insert(1, 0);
-    for ( int i = 1; i <= 500; ++i )
-      t = t.insert(1, i);
+    for ( int i = 1; i <= 500; ++i ) t = t.insert(1, i);
     require(t.size(), usize(1));
     require(*t.find(1), 500);
   }
@@ -1087,16 +1067,12 @@ main()
   test_case("stress: erase evens then odds");
   {
     auto t = make_seq(100);
-    for ( int i = 0; i < 100; i += 2 )
-      t = t.erase(i);
+    for ( int i = 0; i < 100; i += 2 ) t = t.erase(i);
     require(t.size(), usize(50));
-    for ( int i = 0; i < 100; i += 2 )
-      require_false(t.contains(i));
-    for ( int i = 1; i < 100; i += 2 )
-      require_true(t.contains(i));
+    for ( int i = 0; i < 100; i += 2 ) require_false(t.contains(i));
+    for ( int i = 1; i < 100; i += 2 ) require_true(t.contains(i));
 
-    for ( int i = 1; i < 100; i += 2 )
-      t = t.erase(i);
+    for ( int i = 1; i < 100; i += 2 ) t = t.erase(i);
     require(t.size(), usize(0));
   }
   end_test_case();
@@ -1120,8 +1096,7 @@ main()
   test_case("stress: negative key range");
   {
     itab t;
-    for ( int i = -500; i < 500; ++i )
-      t = t.insert(i, i);
+    for ( int i = -500; i < 500; ++i ) t = t.insert(i, i);
     require(t.size(), usize(1000));
 
     // verify sorted
@@ -1136,8 +1111,7 @@ main()
     require(count, 1000);
 
     // erase negatives
-    for ( int i = -500; i < 0; ++i )
-      t = t.erase(i);
+    for ( int i = -500; i < 0; ++i ) t = t.erase(i);
     require(t.size(), usize(500));
     require_false(t.contains(-1));
     require_true(t.contains(0));
@@ -1236,8 +1210,7 @@ main()
     for ( int n : { 0, 1, 5, 10, 50, 100 } ) {
       auto t = make_seq(n);
       int count = 0;
-      for ( auto it = t.begin(); it != t.end(); ++it )
-        ++count;
+      for ( auto it = t.begin(); it != t.end(); ++it ) ++count;
       require(count, n);
       require(t.size(), usize(n));
     }
