@@ -44,28 +44,28 @@ template <typename T> struct counting_iter {
   using pointer = const T *;
   using reference = T;
 
-  T _val;
+  T val__;
 
-  constexpr counting_iter() noexcept : _val{} {}
+  constexpr counting_iter() noexcept : val__{} {}
 
-  constexpr explicit counting_iter(T v) noexcept : _val(v) {}
+  constexpr explicit counting_iter(T v) noexcept : val__(v) {}
 
   constexpr T
   operator*() const noexcept
   {
-    return _val;
+    return val__;
   }
 
   constexpr T
   operator[](difference_type n) const noexcept
   {
-    return _val + static_cast<T>(n);
+    return val__ + static_cast<T>(n);
   }
 
   constexpr counting_iter &
   operator++() noexcept
   {
-    ++_val;
+    ++val__;
     return *this;
   }
 
@@ -73,14 +73,14 @@ template <typename T> struct counting_iter {
   operator++(int) noexcept
   {
     auto t = *this;
-    ++_val;
+    ++val__;
     return t;
   }
 
   constexpr counting_iter &
   operator--() noexcept
   {
-    --_val;
+    --val__;
     return *this;
   }
 
@@ -88,82 +88,225 @@ template <typename T> struct counting_iter {
   operator--(int) noexcept
   {
     auto t = *this;
-    --_val;
+    --val__;
     return t;
   }
 
   constexpr counting_iter
   operator+(difference_type n) const noexcept
   {
-    return counting_iter(_val + static_cast<T>(n));
+    return counting_iter(val__ + static_cast<T>(n));
   }
 
   constexpr counting_iter
   operator-(difference_type n) const noexcept
   {
-    return counting_iter(_val - static_cast<T>(n));
+    return counting_iter(val__ - static_cast<T>(n));
   }
 
   constexpr counting_iter &
   operator+=(difference_type n) noexcept
   {
-    _val += static_cast<T>(n);
+    val__ += static_cast<T>(n);
     return *this;
   }
 
   constexpr counting_iter &
   operator-=(difference_type n) noexcept
   {
-    _val -= static_cast<T>(n);
+    val__ -= static_cast<T>(n);
     return *this;
   }
 
   constexpr difference_type
   operator-(const counting_iter &o) const noexcept
   {
-    return static_cast<difference_type>(_val) - static_cast<difference_type>(o._val);
+    return static_cast<difference_type>(val__) - static_cast<difference_type>(o.val__);
   }
 
   friend constexpr counting_iter
   operator+(difference_type n, const counting_iter &it) noexcept
   {
-    return counting_iter(it._val + static_cast<T>(n));
+    return counting_iter(it.val__ + static_cast<T>(n));
   }
 
   constexpr bool
   operator==(const counting_iter &o) const noexcept
   {
-    return _val == o._val;
+    return val__ == o.val__;
   }
 
   constexpr bool
   operator!=(const counting_iter &o) const noexcept
   {
-    return _val != o._val;
+    return val__ != o.val__;
   }
 
   constexpr bool
   operator<(const counting_iter &o) const noexcept
   {
-    return _val < o._val;
+    return val__ < o.val__;
   }
 
   constexpr bool
   operator>(const counting_iter &o) const noexcept
   {
-    return _val > o._val;
+    return val__ > o.val__;
   }
 
   constexpr bool
   operator<=(const counting_iter &o) const noexcept
   {
-    return _val <= o._val;
+    return val__ <= o.val__;
   }
 
   constexpr bool
   operator>=(const counting_iter &o) const noexcept
   {
-    return _val >= o._val;
+    return val__ >= o.val__;
+  }
+};
+
+// WARNING: a raw ++val__ stalls once the value exceeds the mantissa's integer range (2^24 for float, 2^53 for double)
+template <typename T>
+  requires micron::is_floating_point_v<T>
+struct counting_iter<T> {
+  using value_type = T;
+  using difference_type = micron::iter_difference_t<T>;
+  using pointer = const T *;
+  using reference = T;
+
+  T val__;
+  max_t cnt__;
+
+  constexpr counting_iter() noexcept : val__{}, cnt__{ 0 } {}
+
+  constexpr explicit counting_iter(T v) noexcept : val__(v), cnt__{ 0 } {}
+
+  constexpr counting_iter(T v, max_t c) noexcept : val__(v), cnt__(c) {}
+
+  constexpr T
+  operator*() const noexcept
+  {
+    return val__ + static_cast<T>(cnt__);
+  }
+
+  constexpr T
+  operator[](difference_type n) const noexcept
+  {
+    return val__ + static_cast<T>(cnt__) + n;
+  }
+
+  constexpr counting_iter &
+  operator++() noexcept
+  {
+    ++cnt__;
+    return *this;
+  }
+
+  constexpr counting_iter
+  operator++(int) noexcept
+  {
+    auto t = *this;
+    ++cnt__;
+    return t;
+  }
+
+  constexpr counting_iter &
+  operator--() noexcept
+  {
+    --cnt__;
+    return *this;
+  }
+
+  constexpr counting_iter
+  operator--(int) noexcept
+  {
+    auto t = *this;
+    --cnt__;
+    return t;
+  }
+
+  constexpr counting_iter
+  operator+(difference_type n) const noexcept
+  {
+    counting_iter t = *this;
+    t.cnt__ += static_cast<max_t>(n);
+    return t;
+  }
+
+  constexpr counting_iter
+  operator-(difference_type n) const noexcept
+  {
+    counting_iter t = *this;
+    t.cnt__ -= static_cast<max_t>(n);
+    return t;
+  }
+
+  constexpr counting_iter &
+  operator+=(difference_type n) noexcept
+  {
+    cnt__ += static_cast<max_t>(n);
+    return *this;
+  }
+
+  constexpr counting_iter &
+  operator-=(difference_type n) noexcept
+  {
+    cnt__ -= static_cast<max_t>(n);
+    return *this;
+  }
+
+  constexpr difference_type
+  operator-(const counting_iter &o) const noexcept
+  {
+    return (val__ + static_cast<T>(cnt__)) - (o.val__ + static_cast<T>(o.cnt__));
+  }
+
+  friend constexpr counting_iter
+  operator+(difference_type n, const counting_iter &it) noexcept
+  {
+    return it + n;
+  }
+
+  // Iterators that share the same base (the common case: begin()/end() of one
+  // range) compare integer counters directly — exact, immune to float rounding
+  // at the To boundary. Iterators with different bases fall back to comparing
+  // computed values, which is best-effort but still terminates.
+  constexpr bool
+  operator==(const counting_iter &o) const noexcept
+  {
+    return val__ == o.val__ ? cnt__ == o.cnt__ : (val__ + static_cast<T>(cnt__)) == (o.val__ + static_cast<T>(o.cnt__));
+  }
+
+  constexpr bool
+  operator!=(const counting_iter &o) const noexcept
+  {
+    return val__ == o.val__ ? cnt__ != o.cnt__ : (val__ + static_cast<T>(cnt__)) != (o.val__ + static_cast<T>(o.cnt__));
+  }
+
+  constexpr bool
+  operator<(const counting_iter &o) const noexcept
+  {
+    return val__ == o.val__ ? cnt__ < o.cnt__ : (val__ + static_cast<T>(cnt__)) < (o.val__ + static_cast<T>(o.cnt__));
+  }
+
+  constexpr bool
+  operator>(const counting_iter &o) const noexcept
+  {
+    return val__ == o.val__ ? cnt__ > o.cnt__ : (val__ + static_cast<T>(cnt__)) > (o.val__ + static_cast<T>(o.cnt__));
+  }
+
+  constexpr bool
+  operator<=(const counting_iter &o) const noexcept
+  {
+    return val__ == o.val__ ? cnt__ <= o.cnt__ : (val__ + static_cast<T>(cnt__)) <= (o.val__ + static_cast<T>(o.cnt__));
+  }
+
+  constexpr bool
+  operator>=(const counting_iter &o) const noexcept
+  {
+    return val__ == o.val__ ? cnt__ >= o.cnt__ : (val__ + static_cast<T>(cnt__)) >= (o.val__ + static_cast<T>(o.cnt__));
   }
 };
 
@@ -452,33 +595,37 @@ struct count_range {
   count_range &operator=(const count_range &) = delete;
   count_range &operator=(count_range &&) = delete;
 
+  // Drive iteration through counting_iter so the floating-point
+  // specialization (integer-counter step) is reused here too — a raw
+  // `for ( T i = From; i < To; i++ )` would spin forever for any
+  // float-step beyond its mantissa's integer range.
   template <typename F>
     requires micron::is_invocable_v<F, T>
   static void
   perform(F &f)
   {
-    for ( T i = From; i < To; i++ ) f(i);
+    for ( auto it = begin(); it != end(); ++it ) f(*it);
   }
 
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(const Arg &))
   {
-    for ( T i = From; i < To; i++ ) (obj.*f)(i);
+    for ( auto it = begin(); it != end(); ++it ) (obj.*f)(*it);
   }
 
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg))
   {
-    for ( T i = From; i < To; i++ ) (obj.*f)(i);
+    for ( auto it = begin(); it != end(); ++it ) (obj.*f)(*it);
   }
 
   template <class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg &&))
   {
-    for ( T i = From; i < To; i++ ) (obj.*f)(i);
+    for ( auto it = begin(); it != end(); ++it ) (obj.*f)(*it);
   }
 
   static constexpr iterator
@@ -487,10 +634,14 @@ struct count_range {
     return iterator{ From };
   }
 
+  // WARNING: if T is a float, anchor end() at the same base as begin() and use the integer step counter to mark the position
   static constexpr iterator
   end() noexcept
   {
-    return iterator{ To };
+    if constexpr ( micron::is_floating_point_v<T> )
+      return iterator{ From, static_cast<max_t>(static_cast<T>(To) - From) };
+    else
+      return iterator{ To };
   }
 
   static constexpr const_iterator
@@ -502,7 +653,10 @@ struct count_range {
   static constexpr const_iterator
   cend() noexcept
   {
-    return const_iterator{ To };
+    if constexpr ( micron::is_floating_point_v<T> )
+      return const_iterator{ From, static_cast<max_t>(static_cast<T>(To) - From) };
+    else
+      return const_iterator{ To };
   }
 
   static constexpr reverse_iterator
@@ -576,44 +730,44 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
     using pointer = typename C::pointer;
     using const_pointer = const value_type *;
 
-    C &_c;
+    C &c__;
 
-    explicit constexpr view(C &c) noexcept : _c(c) {}
+    explicit constexpr view(C &c) noexcept : c__(c) {}
 
     constexpr iterator
     begin() noexcept
     {
-      return _c.begin();
+      return c__.begin();
     }
 
     constexpr iterator
     end() noexcept
     {
-      return _c.begin() + static_cast<difference_type>(Cnt);
+      return c__.begin() + static_cast<difference_type>(Cnt);
     }
 
     constexpr const_iterator
     begin() const noexcept
     {
-      return _c.cbegin();
+      return c__.cbegin();
     }
 
     constexpr const_iterator
     end() const noexcept
     {
-      return _c.cbegin() + static_cast<difference_type>(Cnt);
+      return c__.cbegin() + static_cast<difference_type>(Cnt);
     }
 
     constexpr const_iterator
     cbegin() const noexcept
     {
-      return _c.cbegin();
+      return c__.cbegin();
     }
 
     constexpr const_iterator
     cend() const noexcept
     {
-      return _c.cbegin() + static_cast<difference_type>(Cnt);
+      return c__.cbegin() + static_cast<difference_type>(Cnt);
     }
 
     constexpr reverse_iterator
@@ -661,25 +815,25 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
     constexpr pointer
     data() noexcept
     {
-      return _c.data();
+      return c__.data();
     }
 
     constexpr const_pointer
     cdata() const noexcept
     {
-      return _c.data();
+      return c__.data();
     }
 
     constexpr auto &
     operator[](size_type i) noexcept
     {
-      return _c[i];
+      return c__[i];
     }
 
     constexpr const auto &
     operator[](size_type i) const noexcept
     {
-      return _c[i];
+      return c__[i];
     }
   };
 
