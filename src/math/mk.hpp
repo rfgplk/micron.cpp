@@ -19,6 +19,7 @@
 #include "ieee.hpp"
 #include "policy.hpp"
 
+#include "bits/cordic.hpp"
 #include "bits/exp.hpp"
 #include "bits/hyp.hpp"
 #include "bits/log.hpp"
@@ -204,6 +205,122 @@ atan2(F y, F x, P = {}) noexcept
 }
 
 };     // namespace trig
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// CORDIC-based trig (shift+add)
+namespace cordic
+{
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
+sin(F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_sin<F>(x);
+  }
+  return mkbits::cordic_ns::sin<F>(x);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
+cos(F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_cos<F>(x);
+  }
+  return mkbits::cordic_ns::cos<F>(x);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
+tan(F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_tan<F>(x);
+  }
+  return mkbits::cordic_ns::tan<F>(x);
+}
+
+template <ieee754_floating F>
+[[gnu::flatten]] inline constexpr void
+sincos(F x, F &s, F &c) noexcept
+{
+  if consteval {
+    s = mkbits::bi_sin<F>(x);
+    c = mkbits::bi_cos<F>(x);
+    return;
+  }
+  mkbits::cordic_ns::sincos<F>(x, s, c);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+atan(F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_atan<F>(x);
+  }
+  return mkbits::cordic_ns::atan<F>(x);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+atan2(F y, F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_atan2<F>(y, x);
+  }
+  return mkbits::cordic_ns::atan2<F>(y, x);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+asin(F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_asin<F>(x);
+  }
+  return mkbits::cordic_ns::asin<F>(x);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+acos(F x) noexcept
+{
+  if consteval {
+    return mkbits::bi_acos<F>(x);
+  }
+  return mkbits::cordic_ns::acos<F>(x);
+}
+
+template <mk::packed_real V>
+[[nodiscard, gnu::always_inline]] inline V
+sin(V x) noexcept
+{
+  return mk::sin_cordic(x);
+}
+
+template <mk::packed_real V>
+[[nodiscard, gnu::always_inline]] inline V
+cos(V x) noexcept
+{
+  return mk::cos_cordic(x);
+}
+
+template <mk::packed_real V>
+[[nodiscard, gnu::always_inline]] inline V
+tan(V x) noexcept
+{
+  return mk::tan_cordic(x);
+}
+
+template <mk::packed_real V>
+[[gnu::always_inline]] inline void
+sincos(V x, V &s, V &c) noexcept
+{
+  s = mk::sin_cordic(x);
+  c = mk::cos_cordic(x);
+}
+};     // namespace cordic
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trig hyps
@@ -932,6 +1049,44 @@ sincos(F x, F &s, F &c) noexcept
 {
   mk::trig::sincos<F>(x, s, c);
 }
+
+#define __micron_math_export_cordic(NAME)                                                                                                  \
+  template <ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME##_cordic(F x) noexcept                           \
+  {                                                                                                                                        \
+    return mk::cordic::NAME<F>(x);                                                                                                         \
+  }
+
+__micron_math_export_cordic(sin);
+__micron_math_export_cordic(cos);
+__micron_math_export_cordic(tan);
+__micron_math_export_cordic(asin);
+__micron_math_export_cordic(acos);
+__micron_math_export_cordic(atan);
+
+template <ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+atan2_cordic(F y, F x) noexcept
+{
+  return mk::cordic::atan2<F>(y, x);
+}
+
+template <ieee754_floating F>
+[[gnu::always_inline]] inline constexpr void
+sincos_cordic(F x, F &s, F &c) noexcept
+{
+  mk::cordic::sincos<F>(x, s, c);
+}
+
+#undef __micron_math_export_cordic
+
+using mk::cos;
+using mk::cos_cordic;
+using mk::sin;
+using mk::sin_cordic;
+using mk::sincos;
+using mk::sincos_cordic;
+using mk::tan;
+using mk::tan_cordic;
 
 // hyp
 __micron_math_export_fn(sinh, hyp);

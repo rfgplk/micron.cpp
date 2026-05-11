@@ -720,6 +720,12 @@ public:
   }
 
   [[nodiscard]] const_iterator
+  begin() const noexcept
+  {
+    return micron::addr(stack[0]);
+  }
+
+  [[nodiscard]] const_iterator
   cbegin() const noexcept
   {
     return micron::addr(stack[0]);
@@ -727,6 +733,12 @@ public:
 
   [[nodiscard]] iterator
   end() noexcept
+  {
+    return micron::addr(stack[N]);
+  }
+
+  [[nodiscard]] const_iterator
+  end() const noexcept
   {
     return micron::addr(stack[N]);
   }

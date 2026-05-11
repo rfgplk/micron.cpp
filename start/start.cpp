@@ -8,6 +8,8 @@
 #include "__crt.hpp"
 #include "__tls.hpp"
 
+#include <micron/exit.hpp>     // micron::exit + __exit_internal::__push
+
 // call user declared main from out __micron_user_main
 // NOTE: we need to surpress Wodr because the compiler complains about multiple main definitions; we're okay though
 #pragma GCC diagnostic push
@@ -38,12 +40,11 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   __boot_io_buffers();
   const int rc = __micron_user_main(argc, argv, envp);
 
-  for ( void (**p)(void) = __fini_array_end; p > __fini_array_start; ) {
-    --p;
-    (*p)();
-  }
-
-  return rc;
+  // Route normal-return through the soft exit path so atexit/__cxa_atexit
+  // registrations and .fini_array share a single LIFO unwinder. noreturn --
+  // the trailing `return rc;` keeps the signature intact for the asm shim
+  // but is unreachable.
+  micron::exit(rc);
 }
 
 #if defined(__micron_arch_width_64)
@@ -86,10 +87,13 @@ __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
 
 extern "C" {
 
+// NOTE: globals with non-trivial destructors emit a call to __cxa_atexit from their __static_initialization_and_destruction_0 path (Itanium
+// C++ ABI)
 int
-__cxa_atexit(void (*)(void *), void *, void *) noexcept
+__cxa_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
 {
-  return 0;
+  if ( dtor == nullptr ) return -1;
+  return micron::__exit_internal::__push(dtor, arg);
 }
 
 int
@@ -109,18 +113,19 @@ __cxa_guard_abort(long long int *)
 {
 }
 
-// __dso_handle is referenced by every TU that schedules a global destructor via __cxa_atexit/__aeabi_atexit
-// normally provided by crtbegin.o
+// __dso_handle is referenced by every TU that schedules a global destructor via
+// __cxa_atexit/__aeabi_atexit. crtbegin.o normally provides it -- in
 __attribute__((used, visibility("hidden"))) void *__dso_handle = &__dso_handle;
 
 }     // extern "C"
 
 #if defined(__micron_arch_arm32)
 
-// WARNING: armv7-a does not have hardware 64-bit divide, 64-bit count-trailing-zeroes, 64-bit signed/unsigned to float/double conversions
-// nor hardware double-precision FMA
-// GCC normally emits AEABI helper calls for all of these
-// libgcc would satisfy them, but micron is freestanding so we provide our own
+// armv7-a does not have hardware 64-bit divide, 64-bit count-trailing-zeros,
+// 64-bit signed/unsigned <-> float/double conversions, or hardware double-
+// precision FMA. GCC emits AEABI helper calls for all of these. libgcc would
+// satisfy them, but micron is freestanding so we provide our own.
+
 namespace
 {
 [[gnu::always_inline]] inline void
@@ -129,6 +134,8 @@ __udivmod64(unsigned long long n, unsigned long long d, unsigned long long &q_ou
   if ( d == 0 ) __builtin_trap();
   unsigned long long q = 0;
   unsigned long long r = 0;
+  // 64-iteration shift-subtract; constant shifts only, GCC lowers to native
+  // adds/adcs and subs/sbcs sequences without any AEABI dispatch.
   for ( int i = 0; i < 64; ++i ) {
     r = (r << 1) | (n >> 63);
     n <<= 1;
@@ -170,8 +177,8 @@ __aeabi_atexit(void *object, void (*destructor)(void *), void *dso_handle) noexc
   return __cxa_atexit(destructor, object, dso_handle);
 }
 
-// NOTE: ARMv7-A NEON has hardware FMA only for f32 (vfma.f32); double-precision __builtin_fma therefore lowers to a libm call which is
-// absent in -nostdlib
+// double-precision __builtin_fma therefore lowers to a libm call which is
+// absent in -nostdlib. The mul-then-add fallback is not bit-exact IEEE-754 fma
 __attribute__((used, weak)) double
 fma(double a, double b, double c) noexcept
 {

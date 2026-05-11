@@ -61,8 +61,9 @@ nan_vec() noexcept
 
 };     // namespace __impl_kinematics
 
-// NOTE: omega is the angular velocity in the body frame;
-// for the world frame use 1/2 x (0, omega) X q
+// q_dot = (1/2) * q (X) (omega, 0)
+// NOTE: omega is the angular velocity in the BODY frame
+// For a world-frame angular velocity omega_w, use (1/2) * (omega_w, 0) (X) q
 template <ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 derivative(const quaternion<T> &q, const micron::vector_3<T> &omega) noexcept

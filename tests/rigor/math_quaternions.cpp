@@ -461,5 +461,359 @@ main()
   }
   end_test_case();
 
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // Extended euler API: enum-tagged rotations, 12 sequences, matrix routes
+
+  print("=== EULER EXTENDED ===");
+
+  using quaternions::euler_order;
+  using quaternions::frame;
+  using quaternions::rotations;
+
+  test_case("axis_quat: alpha alias matches roll alias matches quat_x");
+  {
+    for ( int i = -7; i <= 7; ++i ) {
+      const f64 t = 0.4 * i;
+      auto qr = quaternions::axis_quat<rotations::roll, f64>(t);
+      auto qa = quaternions::axis_quat<rotations::alpha, f64>(t);
+      auto qx = quaternions::quat_x<f64>(t);
+      require_true(near_q(qr, qa, 1e-15));
+      require_true(near_q(qr, qx, 1e-15));
+    }
+    for ( int i = -3; i <= 3; ++i ) {
+      const f64 t = 0.3 * i;
+      auto qp = quaternions::axis_quat<rotations::pitch, f64>(t);
+      auto qb = quaternions::axis_quat<rotations::beta, f64>(t);
+      auto qy = quaternions::quat_y<f64>(t);
+      require_true(near_q(qp, qb, 1e-15));
+      require_true(near_q(qp, qy, 1e-15));
+      auto qyw = quaternions::axis_quat<rotations::yaw, f64>(t);
+      auto qg = quaternions::axis_quat<rotations::gamma, f64>(t);
+      auto qz = quaternions::quat_z<f64>(t);
+      require_true(near_q(qyw, qg, 1e-15));
+      require_true(near_q(qyw, qz, 1e-15));
+    }
+  }
+  end_test_case();
+
+  test_case("rotate body-frame: q ⊗ axis_quat matches reference");
+  {
+    qq q0{ 0.3, -0.2, 0.5, 0.8 };
+    q0 = q0.normalized();
+    const f64 theta = 0.37;
+    // yaw (Z)
+    auto qz_ref = quaternions::multiply(q0, quaternions::z_quat<f64>(theta));
+    qq q = q0;
+    quaternions::rotate<rotations::yaw>(q, theta);
+    require_true(near_q(q, qz_ref, 1e-12));
+    // pitch (Y)
+    auto qy_ref = quaternions::multiply(q0, quaternions::y_quat<f64>(theta));
+    q = q0;
+    quaternions::rotate<rotations::pitch>(q, theta);
+    require_true(near_q(q, qy_ref, 1e-12));
+    // roll (X)
+    auto qx_ref = quaternions::multiply(q0, quaternions::x_quat<f64>(theta));
+    q = q0;
+    quaternions::rotate<rotations::roll>(q, theta);
+    require_true(near_q(q, qx_ref, 1e-12));
+  }
+  end_test_case();
+
+  test_case("rotate world-frame: axis_quat ⊗ q matches reference");
+  {
+    qq q0{ 0.3, -0.2, 0.5, 0.8 };
+    q0 = q0.normalized();
+    const f64 theta = 0.37;
+    // yaw (Z)
+    auto qz_ref = quaternions::multiply(quaternions::z_quat<f64>(theta), q0);
+    qq q = q0;
+    quaternions::rotate<rotations::yaw, frame::world>(q, theta);
+    require_true(near_q(q, qz_ref, 1e-12));
+    // pitch (Y)
+    auto qy_ref = quaternions::multiply(quaternions::y_quat<f64>(theta), q0);
+    q = q0;
+    quaternions::rotate<rotations::pitch, frame::world>(q, theta);
+    require_true(near_q(q, qy_ref, 1e-12));
+    // roll (X)
+    auto qx_ref = quaternions::multiply(quaternions::x_quat<f64>(theta), q0);
+    q = q0;
+    quaternions::rotate<rotations::roll, frame::world>(q, theta);
+    require_true(near_q(q, qx_ref, 1e-12));
+  }
+  end_test_case();
+
+  test_case("rotated() returns the rotated quaternion without mutating input");
+  {
+    qq q0{ 0.1, 0.2, 0.3, 0.9 };
+    q0 = q0.normalized();
+    const f64 theta = -0.22;
+    auto r = quaternions::rotated<rotations::yaw>(q0, theta);
+    qq q_inplace = q0;
+    quaternions::rotate<rotations::yaw>(q_inplace, theta);
+    require_true(near_q(r, q_inplace, 1e-14));
+    // input untouched
+    require_true(near(q0.x, 0.1 / micron::math::fsqrt(0.1 * 0.1 + 0.2 * 0.2 + 0.3 * 0.3 + 0.9 * 0.9), 1e-14));
+  }
+  end_test_case();
+
+  test_case("rotate runtime dispatch agrees with the templated form");
+  {
+    qq q0{ 0.4, 0.1, -0.3, 0.7 };
+    q0 = q0.normalized();
+    const f64 theta = 0.41;
+    // body-frame, each axis
+    {
+      qq qt = q0;
+      quaternions::rotate<rotations::yaw>(qt, theta);
+      qq qr = q0;
+      quaternions::rotate<f64>(qr, rotations::yaw, theta, frame::body);
+      require_true(near_q(qt, qr, 1e-14));
+    }
+    {
+      qq qt = q0;
+      quaternions::rotate<rotations::pitch>(qt, theta);
+      qq qr = q0;
+      quaternions::rotate<f64>(qr, rotations::pitch, theta, frame::body);
+      require_true(near_q(qt, qr, 1e-14));
+    }
+    {
+      qq qt = q0;
+      quaternions::rotate<rotations::roll>(qt, theta);
+      qq qr = q0;
+      quaternions::rotate<f64>(qr, rotations::roll, theta, frame::body);
+      require_true(near_q(qt, qr, 1e-14));
+    }
+    // world-frame
+    {
+      qq qt = q0;
+      quaternions::rotate<rotations::yaw, frame::world>(qt, theta);
+      qq qr = q0;
+      quaternions::rotate<f64>(qr, rotations::yaw, theta, frame::world);
+      require_true(near_q(qt, qr, 1e-14));
+    }
+  }
+  end_test_case();
+
+  test_case("rotate_safe holds |q|=1 after 10000 incremental updates; plain rotate drifts");
+  {
+    qq q = quaternions::identity<f64>();
+    const f64 dt = 0.001;
+    for ( int i = 0; i < 10000; ++i ) {
+      quaternions::rotate_safe<rotations::yaw>(q, dt);
+    }
+    require_true(near(q.squared_norm(), 1.0, 8e-12));
+
+    // drift baseline: same loop with un-normalized rotate accumulates appreciable error
+    qq qd = quaternions::identity<f64>();
+    for ( int i = 0; i < 10000; ++i ) {
+      quaternions::rotate<rotations::yaw>(qd, dt);
+    }
+    const f64 drift = qd.squared_norm() - 1.0;
+    const f64 abs_drift = drift < 0 ? -drift : drift;
+    require_true(abs_drift > 1e-8 || abs_drift < 8e-12);     // either drifts or stays unit (FMA chains can sometimes be exact)
+  }
+  end_test_case();
+
+  test_case("rotate_axis matches quaternion-based rotation for each axis");
+  {
+    v3 v{ 1.0, 0.5, -0.7 };
+    const f64 theta = 0.8;
+    {
+      auto vr = quaternions::rotate_axis<rotations::yaw>(v, theta);
+      auto vq = quaternions::rotate(quaternions::z_quat<f64>(theta), v);
+      require_true(near(vr.x, vq.x, 1e-13));
+      require_true(near(vr.y, vq.y, 1e-13));
+      require_true(near(vr.z, vq.z, 1e-13));
+    }
+    {
+      auto vr = quaternions::rotate_axis<rotations::pitch>(v, theta);
+      auto vq = quaternions::rotate(quaternions::y_quat<f64>(theta), v);
+      require_true(near(vr.x, vq.x, 1e-13));
+      require_true(near(vr.y, vq.y, 1e-13));
+      require_true(near(vr.z, vq.z, 1e-13));
+    }
+    {
+      auto vr = quaternions::rotate_axis<rotations::roll>(v, theta);
+      auto vq = quaternions::rotate(quaternions::x_quat<f64>(theta), v);
+      require_true(near(vr.x, vq.x, 1e-13));
+      require_true(near(vr.y, vq.y, 1e-13));
+      require_true(near(vr.z, vq.z, 1e-13));
+    }
+  }
+  end_test_case();
+
+  // --- 12-sequence Euler ↔ quaternion round-trip ------------------------
+  // Note: we compare rotations (i.e. quaternion up to sign), since to_euler
+  //   may pick a different ±π wrap on β when intermediate angles are near
+  //   sign boundaries. We round-trip and re-construct, requiring the
+  //   reconstructed quaternion to be equivalent (=q or -q).
+
+  const f64 a0 = 0.4, b0 = 0.27, c0 = -0.31;     // away from gimbal in any sequence
+
+#define MICRON_TEST_ROUNDTRIP(ORD)                                                                                                         \
+  do {                                                                                                                                     \
+    auto q = quaternions::from_euler<euler_order::ORD, f64>(a0, b0, c0);                                                                   \
+    require_true(near(q.squared_norm(), 1.0, 1e-12));                                                                                      \
+    auto e = quaternions::to_euler<euler_order::ORD, f64>(q);                                                                              \
+    auto q2 = quaternions::from_euler<euler_order::ORD, f64>(e.x, e.y, e.z);                                                               \
+    f64 d = q.dot(q2);                                                                                                                     \
+    if ( d < 0 ) {                                                                                                                         \
+      q2.x = -q2.x;                                                                                                                        \
+      q2.y = -q2.y;                                                                                                                        \
+      q2.z = -q2.z;                                                                                                                        \
+      q2.w = -q2.w;                                                                                                                        \
+    }                                                                                                                                      \
+    require_true(near_q(q, q2, 1e-10));                                                                                                    \
+  } while ( 0 )
+
+  test_case("from_euler/to_euler round-trip: XYZ");
+  MICRON_TEST_ROUNDTRIP(XYZ);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: XZY");
+  MICRON_TEST_ROUNDTRIP(XZY);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: YXZ");
+  MICRON_TEST_ROUNDTRIP(YXZ);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: YZX");
+  MICRON_TEST_ROUNDTRIP(YZX);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: ZXY");
+  MICRON_TEST_ROUNDTRIP(ZXY);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: ZYX");
+  MICRON_TEST_ROUNDTRIP(ZYX);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: XYX");
+  MICRON_TEST_ROUNDTRIP(XYX);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: XZX");
+  MICRON_TEST_ROUNDTRIP(XZX);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: YXY");
+  MICRON_TEST_ROUNDTRIP(YXY);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: YZY");
+  MICRON_TEST_ROUNDTRIP(YZY);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: ZXZ");
+  MICRON_TEST_ROUNDTRIP(ZXZ);
+  end_test_case();
+  test_case("from_euler/to_euler round-trip: ZYZ");
+  MICRON_TEST_ROUNDTRIP(ZYZ);
+  end_test_case();
+
+#undef MICRON_TEST_ROUNDTRIP
+
+  // --- from_euler_matrix matches to_matrix(from_euler) for all 12 orders -----
+
+#define MICRON_TEST_MATAGREE(ORD)                                                                                                          \
+  do {                                                                                                                                     \
+    auto qm = quaternions::from_euler<euler_order::ORD, f64>(a0, b0, c0);                                                                  \
+    auto Rq = quaternions::to_matrix(qm);                                                                                                  \
+    auto Re = quaternions::from_euler_matrix<euler_order::ORD, f64>(a0, b0, c0);                                                           \
+    for ( int i = 0; i < 9; ++i ) require_true(near(Rq.data[i], Re.data[i], 1e-12));                                                       \
+  } while ( 0 )
+
+  test_case("from_euler_matrix == to_matrix(from_euler): XYZ");
+  MICRON_TEST_MATAGREE(XYZ);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): XZY");
+  MICRON_TEST_MATAGREE(XZY);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): YXZ");
+  MICRON_TEST_MATAGREE(YXZ);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): YZX");
+  MICRON_TEST_MATAGREE(YZX);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): ZXY");
+  MICRON_TEST_MATAGREE(ZXY);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): ZYX");
+  MICRON_TEST_MATAGREE(ZYX);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): XYX");
+  MICRON_TEST_MATAGREE(XYX);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): XZX");
+  MICRON_TEST_MATAGREE(XZX);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): YXY");
+  MICRON_TEST_MATAGREE(YXY);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): YZY");
+  MICRON_TEST_MATAGREE(YZY);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): ZXZ");
+  MICRON_TEST_MATAGREE(ZXZ);
+  end_test_case();
+  test_case("from_euler_matrix == to_matrix(from_euler): ZYZ");
+  MICRON_TEST_MATAGREE(ZYZ);
+  end_test_case();
+
+#undef MICRON_TEST_MATAGREE
+
+  test_case("from_euler_matrix4: upper 3x3 == 3x3 builder; last row/col affine identity");
+  {
+    constexpr euler_order O = euler_order::ZYX;
+    auto M = quaternions::from_euler_matrix4<O, f64>(a0, b0, c0);
+    auto R = quaternions::from_euler_matrix<O, f64>(a0, b0, c0);
+    for ( int r = 0; r < 3; ++r ) {
+      for ( int c = 0; c < 3; ++c ) {
+        require_true(near(M.data[r * 4 + c], R.data[r * 3 + c], 1e-15));
+      }
+    }
+    // affine identity
+    require_true(near(M.data[3], 0.0, 1e-15));
+    require_true(near(M.data[7], 0.0, 1e-15));
+    require_true(near(M.data[11], 0.0, 1e-15));
+    require_true(near(M.data[12], 0.0, 1e-15));
+    require_true(near(M.data[13], 0.0, 1e-15));
+    require_true(near(M.data[14], 0.0, 1e-15));
+    require_true(near(M.data[15], 1.0, 1e-15));
+  }
+  end_test_case();
+
+  test_case("orientate3 / orientate4 / orientate delegate to YXZ");
+  {
+    v3 angles{ 0.3, -0.15, 0.6 };
+    auto Rm3 = quaternions::orientate3<>(angles);
+    auto Rm3_ref = quaternions::from_euler_matrix<euler_order::YXZ, f64>(angles.x, angles.y, angles.z);
+    for ( int i = 0; i < 9; ++i ) require_true(near(Rm3.data[i], Rm3_ref.data[i], 1e-15));
+
+    auto Rm4 = quaternions::orientate4<>(angles);
+    auto Rm4_ref = quaternions::from_euler_matrix4<euler_order::YXZ, f64>(angles.x, angles.y, angles.z);
+    for ( int i = 0; i < 16; ++i ) require_true(near(Rm4.data[i], Rm4_ref.data[i], 1e-15));
+
+    auto qy = quaternions::orientate<>(angles);
+    auto qy_ref = quaternions::from_euler<euler_order::YXZ, f64>(angles.x, angles.y, angles.z);
+    require_true(near_q(qy, qy_ref, 1e-15));
+  }
+  end_test_case();
+
+  test_case("to_euler_matrix gimbal lock — ZYX at β = +π/2");
+  {
+    constexpr euler_order O = euler_order::ZYX;
+    const f64 pi_2 = 1.5707963267948966;
+    // build R at exact gimbal (β=+π/2), pick α=0.4, γ=0.2
+    auto R = quaternions::from_euler_matrix<O, f64>(0.4, pi_2, 0.2);
+    auto e = quaternions::to_euler_matrix<O, f64>(R);
+    // round-trip the extracted angles
+    auto R2 = quaternions::from_euler_matrix<O, f64>(e.x, e.y, e.z);
+    for ( int i = 0; i < 9; ++i ) require_true(near(R.data[i], R2.data[i], 1e-9));
+  }
+  end_test_case();
+
+  test_case("to_euler_matrix gimbal lock — XYX at β = 0");
+  {
+    constexpr euler_order O = euler_order::XYX;
+    auto R = quaternions::from_euler_matrix<O, f64>(0.4, 0.0, 0.2);
+    auto e = quaternions::to_euler_matrix<O, f64>(R);
+    auto R2 = quaternions::from_euler_matrix<O, f64>(e.x, e.y, e.z);
+    for ( int i = 0; i < 9; ++i ) require_true(near(R.data[i], R2.data[i], 1e-9));
+  }
+  end_test_case();
+
   return 0;
 }

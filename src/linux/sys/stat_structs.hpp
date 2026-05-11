@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits/__arch.hpp"
 #include "../../types.hpp"
 #include "../sys/types.hpp"
 
@@ -92,8 +93,8 @@ constexpr i32 S_IXOTH = (S_IXGRP >> 3); /* Execute by others.  */
 /* Read, write, and execute by others.  */
 constexpr i32 S_IRWXO = (S_IRWXG >> 3);
 
-// 64-bit explicit
-#if __wordsize == 64
+// 64-bit explicit, amd64 native layout
+#if defined(__micron_arch_amd64)
 struct stat_t {
   posix::dev_t st_dev;     /* Device.  */
   posix::ino64_t st_ino;   /* File serial number.  */
@@ -132,8 +133,52 @@ struct stat_t {
   }
 };
 
-// 32-bit explicit
-#elif __wordsize == 32
+// 64-bit explicit, aarch64 / asm-generic layout
+#elif defined(__micron_arch_arm64)
+struct stat_t {
+  posix::dev_t st_dev;   /* Device.  */
+  posix::ino64_t st_ino; /* File serial number.  */
+
+  __u32_type st_mode;  /* File mode (kernel uses unsigned int, not ulong).  */
+  __u32_type st_nlink; /* Link count (kernel uses unsigned int).  */
+
+  posix::uid_t st_uid; /* User ID of the file’s owner.  */
+  posix::gid_t st_gid; /* Group ID of the file’s group. */
+
+  posix::dev_t st_rdev; /* Device number, if device.  */
+  __syscall_ulong_type __pad1;
+  posix::off64_t st_size; /* Size of file, in bytes.  */
+
+  __s32_type st_blksize; /* Optimal block size (kernel uses int).  */
+  __s32_type __pad2;
+
+  posix::blkcnt_t st_blocks; /* Number of 512-byte blocks allocated. */
+
+  struct timespec_t st_atim; /* Time of last access.  */
+  struct timespec_t st_mtim; /* Time of last modification.  */
+  struct timespec_t st_ctim; /* Time of last status change.  */
+#define st_atime st_atim.tv_sec /* Backward compatibility.  */
+#define st_mtime st_mtim.tv_sec
+#define st_ctime st_ctim.tv_sec
+
+  __u32_type __unused4;
+  __u32_type __unused5;
+
+  bool
+  operator!=(const stat_t &o) const
+  {
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
+  }
+
+  bool
+  operator==(const stat_t &o) const
+  {
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
+  }
+};
+
+// 32-bit explicit (arm32 EABI and x86/i386 share the same stat64 layout)
+#elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
 // ARCH
 /*
 struct stat_t {

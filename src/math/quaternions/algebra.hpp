@@ -5,8 +5,55 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Hamilton algebra
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// micron quaternions -- conventions (apply to every file in this directory)
+//
+// Coordinate system
+//   - 3D Cartesian, right-handed: x_hat x y_hat = z_hat.
+//   - Vectors are column vectors. v = (vx, vy, vz)^T is acted on by R from the left:  v' = R v
+//   - all rotations are active (alibi): the operator rotates the object, not the coordinate frame
+//
+// Quaternion storage and basis
+//   - quaternion<T> stores (x, y, z, w). The scalar part is w; the vector (imaginary) part is (x, y, z)
+//     written as q = w + x i + y j + z k
+//   - Hamilton basis: i^2 = j^2 = k^2 = i j k = -1,  ij = k,  jk = i,  ki = j
+//
+// Multiplication and composition
+//   - multiply(a, b) computes the Hamilton product a (X) b
+//   - compose(a, b) = a (X) b
+//        as an operator on a column vector:
+//         (a (X) b) . v  =  a . (b . v)
+//     i.e. b is applied first, then a; left-to-right reading order means
+//     "innermost first": the rightmost quaternion acts first
+//
+// Active rotation of a vector
+//   - For unit q = (n sin(theta/2), cos(theta/2)) with unit axis n and
+//     angle theta, rotate(q, v) implements
+//         v' = q . v . q^{-1}
+//     (treating v as a pure quaternion)
+//
+// Quaternion <-> rotation matrix
+//   - to_matrix(q) returns the row-major 3x3 active rotation matrix for
+//     column vectors:
+//         R = [ 1-2(y^2+z^2)   2(xy-wz)     2(xz+wy)   ]
+//             [ 2(xy+wz)      1-2(x^2+z^2)  2(yz-wx)   ]
+//             [ 2(xz-wy)       2(yz+wx)    1-2(x^2+y^2)]
+//     so v' = R v applies the same rotation as rotate(q, v)
+//   - from_matrix(R) is the Shepperd inverse map
+//
+// Euler angle conventions  (see euler.hpp)
+//   - euler_order::ABC means INTRINSIC body-frame ABC composition:
+//         from_euler<ABC>(alpha, beta, gamma)
+//             = quat_A(alpha) (X) quat_B(beta) (X) quat_C(gamma)
+//     i.e. rotate first about body-A by alpha, then about the (new) body-B
+//     by beta, then about the (new) body-C by gamma; this is identical to
+//     the EXTRINSIC CBA composition about fixed world axes
+//     (R_C(gamma) R_B(beta) R_A(alpha) applied left-to-right on a column
+//     vector)
+//   - rotate<Axis, frame::body>  performs  q <- q (X) axis_quat(theta)
+//     (post-multiply: rotate about the latest body axis)
+//   - rotate<Axis, frame::world> performs  q <- axis_quat(theta) (X) q
+//     (pre-multiply: rotate about the fixed world axis)
 
 #include "../../concepts.hpp"
 #include "../../type_traits.hpp"

@@ -36,6 +36,14 @@
 #include "../../simd/arch/types_amd64.hpp"
 #endif
 
+#if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+#if defined(__micron_arch_arm64)
+#include "../../simd/arch/types_arm64.hpp"
+#else
+#include "../../simd/arch/types_arm32.hpp"
+#endif
+#endif
+
 namespace micron
 {
 namespace math
@@ -215,7 +223,519 @@ asum_packed_f32(const float *__restrict__ x, usize n) noexcept
   return r;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// scal
+// 4-chain unroll: 16 doubles / 32 floats per outer iteration
+
+[[gnu::flatten]] inline void
+scal_packed_f64(double alpha, double *__restrict__ x, usize n) noexcept
+{
+  const __m256d va = _mm256_set1_pd(alpha);
+  usize i = 0;
+  for ( ; i + 16 <= n; i += 16 ) {
+    __m256d x0 = _mm256_loadu_pd(x + i + 0);
+    __m256d x1 = _mm256_loadu_pd(x + i + 4);
+    __m256d x2 = _mm256_loadu_pd(x + i + 8);
+    __m256d x3 = _mm256_loadu_pd(x + i + 12);
+    _mm256_storeu_pd(x + i + 0, _mm256_mul_pd(x0, va));
+    _mm256_storeu_pd(x + i + 4, _mm256_mul_pd(x1, va));
+    _mm256_storeu_pd(x + i + 8, _mm256_mul_pd(x2, va));
+    _mm256_storeu_pd(x + i + 12, _mm256_mul_pd(x3, va));
+  }
+  for ( ; i + 4 <= n; i += 4 ) {
+    _mm256_storeu_pd(x + i, _mm256_mul_pd(_mm256_loadu_pd(x + i), va));
+  }
+  for ( ; i < n; ++i ) x[i] = x[i] * alpha;
+}
+
+[[gnu::flatten]] inline void
+scal_packed_f32(float alpha, float *__restrict__ x, usize n) noexcept
+{
+  const __m256 va = _mm256_set1_ps(alpha);
+  usize i = 0;
+  for ( ; i + 32 <= n; i += 32 ) {
+    __m256 x0 = _mm256_loadu_ps(x + i + 0);
+    __m256 x1 = _mm256_loadu_ps(x + i + 8);
+    __m256 x2 = _mm256_loadu_ps(x + i + 16);
+    __m256 x3 = _mm256_loadu_ps(x + i + 24);
+    _mm256_storeu_ps(x + i + 0, _mm256_mul_ps(x0, va));
+    _mm256_storeu_ps(x + i + 8, _mm256_mul_ps(x1, va));
+    _mm256_storeu_ps(x + i + 16, _mm256_mul_ps(x2, va));
+    _mm256_storeu_ps(x + i + 24, _mm256_mul_ps(x3, va));
+  }
+  for ( ; i + 8 <= n; i += 8 ) {
+    _mm256_storeu_ps(x + i, _mm256_mul_ps(_mm256_loadu_ps(x + i), va));
+  }
+  for ( ; i < n; ++i ) x[i] = x[i] * alpha;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// nrm2_fast: sum-of-squares with a single sqrt at the end
+// WARNING: NOT overflow safe
+[[nodiscard, gnu::flatten]] inline f64
+nrm2_fast_packed_f64(const double *__restrict__ x, usize n) noexcept
+{
+  __m256d s0 = _mm256_setzero_pd();
+  __m256d s1 = _mm256_setzero_pd();
+  __m256d s2 = _mm256_setzero_pd();
+  __m256d s3 = _mm256_setzero_pd();
+  usize i = 0;
+  for ( ; i + 16 <= n; i += 16 ) {
+    __m256d x0 = _mm256_loadu_pd(x + i + 0);
+    __m256d x1 = _mm256_loadu_pd(x + i + 4);
+    __m256d x2 = _mm256_loadu_pd(x + i + 8);
+    __m256d x3 = _mm256_loadu_pd(x + i + 12);
+    s0 = _mm256_fmadd_pd(x0, x0, s0);
+    s1 = _mm256_fmadd_pd(x1, x1, s1);
+    s2 = _mm256_fmadd_pd(x2, x2, s2);
+    s3 = _mm256_fmadd_pd(x3, x3, s3);
+  }
+  for ( ; i + 4 <= n; i += 4 ) {
+    __m256d xv = _mm256_loadu_pd(x + i);
+    s0 = _mm256_fmadd_pd(xv, xv, s0);
+  }
+  __m256d sum = _mm256_add_pd(_mm256_add_pd(s0, s1), _mm256_add_pd(s2, s3));
+  __m128d hi = _mm256_extractf128_pd(sum, 1);
+  __m128d lo = _mm256_castpd256_pd128(sum);
+  __m128d half = _mm_add_pd(hi, lo);
+  __m128d hh = _mm_unpackhi_pd(half, half);
+  f64 r = _mm_cvtsd_f64(_mm_add_sd(half, hh));
+  for ( ; i < n; ++i ) r = math::fma<f64>(x[i], x[i], r);
+  return r;
+}
+
+[[nodiscard, gnu::flatten]] inline f32
+nrm2_fast_packed_f32(const float *__restrict__ x, usize n) noexcept
+{
+  __m256 s0 = _mm256_setzero_ps();
+  __m256 s1 = _mm256_setzero_ps();
+  __m256 s2 = _mm256_setzero_ps();
+  __m256 s3 = _mm256_setzero_ps();
+  usize i = 0;
+  for ( ; i + 32 <= n; i += 32 ) {
+    __m256 x0 = _mm256_loadu_ps(x + i + 0);
+    __m256 x1 = _mm256_loadu_ps(x + i + 8);
+    __m256 x2 = _mm256_loadu_ps(x + i + 16);
+    __m256 x3 = _mm256_loadu_ps(x + i + 24);
+    s0 = _mm256_fmadd_ps(x0, x0, s0);
+    s1 = _mm256_fmadd_ps(x1, x1, s1);
+    s2 = _mm256_fmadd_ps(x2, x2, s2);
+    s3 = _mm256_fmadd_ps(x3, x3, s3);
+  }
+  for ( ; i + 8 <= n; i += 8 ) {
+    __m256 xv = _mm256_loadu_ps(x + i);
+    s0 = _mm256_fmadd_ps(xv, xv, s0);
+  }
+  __m256 sum = _mm256_add_ps(_mm256_add_ps(s0, s1), _mm256_add_ps(s2, s3));
+  __m128 hi = _mm256_extractf128_ps(sum, 1);
+  __m128 lo = _mm256_castps256_ps128(sum);
+  __m128 q4 = _mm_add_ps(hi, lo);
+  __m128 q2 = _mm_add_ps(q4, _mm_movehl_ps(q4, q4));
+  __m128 q1 = _mm_add_ss(q2, _mm_shuffle_ps(q2, q2, 0x1));
+  f32 r = _mm_cvtss_f32(q1);
+  for ( ; i < n; ++i ) r = math::fma<f32>(x[i], x[i], r);
+  return r;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// iamax
+[[nodiscard, gnu::flatten]] inline usize
+iamax_packed_f64(const double *__restrict__ x, usize n) noexcept
+{
+  if ( n == 0 ) return 0;
+  if ( n < 8 ) {
+    double mx = mk::manip::fabs<f64>(x[0]);
+    usize idx = 0;
+    for ( usize k = 1; k < n; ++k ) {
+      const double a = mk::manip::fabs<f64>(x[k]);
+      if ( a > mx ) { mx = a; idx = k; }
+    }
+    return idx;
+  }
+  // 2-chain unroll
+  const __m256d abs_mask = _mm256_castsi256_pd(_mm256_set1_epi64x(0x7FFFFFFFFFFFFFFFLL));
+  __m256d vmax0 = _mm256_and_pd(_mm256_loadu_pd(x + 0), abs_mask);
+  __m256d vmax1 = _mm256_and_pd(_mm256_loadu_pd(x + 4), abs_mask);
+  __m256i vidx0 = _mm256_setr_epi64x(0, 1, 2, 3);
+  __m256i vidx1 = _mm256_setr_epi64x(4, 5, 6, 7);
+  __m256i vcand0 = _mm256_setr_epi64x(8, 9, 10, 11);
+  __m256i vcand1 = _mm256_setr_epi64x(12, 13, 14, 15);
+  const __m256i step8 = _mm256_set1_epi64x(8);
+  const __m256i step4 = _mm256_set1_epi64x(4);
+  usize i = 8;
+  for ( ; i + 8 <= n; i += 8 ) {
+    __m256d v0 = _mm256_and_pd(_mm256_loadu_pd(x + i + 0), abs_mask);
+    __m256d v1 = _mm256_and_pd(_mm256_loadu_pd(x + i + 4), abs_mask);
+    __m256d gt0 = _mm256_cmp_pd(v0, vmax0, _CMP_GT_OQ);
+    __m256d gt1 = _mm256_cmp_pd(v1, vmax1, _CMP_GT_OQ);
+    vmax0 = _mm256_blendv_pd(vmax0, v0, gt0);
+    vmax1 = _mm256_blendv_pd(vmax1, v1, gt1);
+    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castpd_si256(gt0));
+    vidx1 = _mm256_blendv_epi8(vidx1, vcand1, _mm256_castpd_si256(gt1));
+    vcand0 = _mm256_add_epi64(vcand0, step8);
+    vcand1 = _mm256_add_epi64(vcand1, step8);
+  }
+  for ( ; i + 4 <= n; i += 4 ) {
+    __m256d v = _mm256_and_pd(_mm256_loadu_pd(x + i), abs_mask);
+    __m256d gt = _mm256_cmp_pd(v, vmax0, _CMP_GT_OQ);
+    vmax0 = _mm256_blendv_pd(vmax0, v, gt);
+    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castpd_si256(gt));
+    vcand0 = _mm256_add_epi64(vcand0, step4);
+  }
+  alignas(32) double lanes_v0[4], lanes_v1[4];
+  alignas(32) i64 lanes_i0[4], lanes_i1[4];
+  _mm256_store_pd(lanes_v0, vmax0);
+  _mm256_store_pd(lanes_v1, vmax1);
+  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i0), vidx0);
+  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i1), vidx1);
+  double best = lanes_v0[0];
+  usize best_idx = usize(lanes_i0[0]);
+  for ( int k = 1; k < 4; ++k ) {
+    const double a = lanes_v0[k];
+    const usize j = usize(lanes_i0[k]);
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( int k = 0; k < 4; ++k ) {
+    const double a = lanes_v1[k];
+    const usize j = usize(lanes_i1[k]);
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( ; i < n; ++i ) {
+    const double a = mk::manip::fabs<f64>(x[i]);
+    if ( a > best ) { best = a; best_idx = i; }
+  }
+  return best_idx;
+}
+
+[[nodiscard, gnu::flatten]] inline usize
+iamax_packed_f32(const float *__restrict__ x, usize n) noexcept
+{
+  if ( n == 0 ) return 0;
+  if ( n < 16 ) {
+    float mx = mk::manip::fabs<f32>(x[0]);
+    usize idx = 0;
+    for ( usize k = 1; k < n; ++k ) {
+      const float a = mk::manip::fabs<f32>(x[k]);
+      if ( a > mx ) { mx = a; idx = k; }
+    }
+    return idx;
+  }
+  // 2-chain unroll: 16 floats per outer iter, two independent dep chains
+  const __m256 abs_mask = _mm256_castsi256_ps(_mm256_set1_epi32(0x7FFFFFFF));
+  __m256 vmax0 = _mm256_and_ps(_mm256_loadu_ps(x + 0), abs_mask);
+  __m256 vmax1 = _mm256_and_ps(_mm256_loadu_ps(x + 8), abs_mask);
+  __m256i vidx0 = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+  __m256i vidx1 = _mm256_setr_epi32(8, 9, 10, 11, 12, 13, 14, 15);
+  __m256i vcand0 = _mm256_setr_epi32(16, 17, 18, 19, 20, 21, 22, 23);
+  __m256i vcand1 = _mm256_setr_epi32(24, 25, 26, 27, 28, 29, 30, 31);
+  const __m256i step16 = _mm256_set1_epi32(16);
+  const __m256i step8 = _mm256_set1_epi32(8);
+  usize i = 16;
+  for ( ; i + 16 <= n; i += 16 ) {
+    __m256 v0 = _mm256_and_ps(_mm256_loadu_ps(x + i + 0), abs_mask);
+    __m256 v1 = _mm256_and_ps(_mm256_loadu_ps(x + i + 8), abs_mask);
+    __m256 gt0 = _mm256_cmp_ps(v0, vmax0, _CMP_GT_OQ);
+    __m256 gt1 = _mm256_cmp_ps(v1, vmax1, _CMP_GT_OQ);
+    vmax0 = _mm256_blendv_ps(vmax0, v0, gt0);
+    vmax1 = _mm256_blendv_ps(vmax1, v1, gt1);
+    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castps_si256(gt0));
+    vidx1 = _mm256_blendv_epi8(vidx1, vcand1, _mm256_castps_si256(gt1));
+    vcand0 = _mm256_add_epi32(vcand0, step16);
+    vcand1 = _mm256_add_epi32(vcand1, step16);
+  }
+  for ( ; i + 8 <= n; i += 8 ) {
+    __m256 v = _mm256_and_ps(_mm256_loadu_ps(x + i), abs_mask);
+    __m256 gt = _mm256_cmp_ps(v, vmax0, _CMP_GT_OQ);
+    vmax0 = _mm256_blendv_ps(vmax0, v, gt);
+    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castps_si256(gt));
+    vcand0 = _mm256_add_epi32(vcand0, step8);
+  }
+  alignas(32) float lanes_v0[8], lanes_v1[8];
+  alignas(32) i32 lanes_i0[8], lanes_i1[8];
+  _mm256_store_ps(lanes_v0, vmax0);
+  _mm256_store_ps(lanes_v1, vmax1);
+  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i0), vidx0);
+  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i1), vidx1);
+  float best = lanes_v0[0];
+  usize best_idx = usize(u32(lanes_i0[0]));
+  for ( int k = 1; k < 8; ++k ) {
+    const float a = lanes_v0[k];
+    const usize j = usize(u32(lanes_i0[k]));
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( int k = 0; k < 8; ++k ) {
+    const float a = lanes_v1[k];
+    const usize j = usize(u32(lanes_i1[k]));
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( ; i < n; ++i ) {
+    const float a = mk::manip::fabs<f32>(x[i]);
+    if ( a > best ) { best = a; best_idx = i; }
+  }
+  return best_idx;
+}
+
 #endif     // AVX2 + FMA
+
+#if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// NEON scal
+[[gnu::flatten]] inline void
+scal_packed_f32_neon(float alpha, float *__restrict__ x, usize n) noexcept
+{
+  const float32x4_t va = vdupq_n_f32(alpha);
+  usize i = 0;
+  for ( ; i + 16 <= n; i += 16 ) {
+    float32x4_t x0 = vld1q_f32(x + i + 0);
+    float32x4_t x1 = vld1q_f32(x + i + 4);
+    float32x4_t x2 = vld1q_f32(x + i + 8);
+    float32x4_t x3 = vld1q_f32(x + i + 12);
+    vst1q_f32(x + i + 0, vmulq_f32(x0, va));
+    vst1q_f32(x + i + 4, vmulq_f32(x1, va));
+    vst1q_f32(x + i + 8, vmulq_f32(x2, va));
+    vst1q_f32(x + i + 12, vmulq_f32(x3, va));
+  }
+  for ( ; i + 4 <= n; i += 4 ) {
+    vst1q_f32(x + i, vmulq_f32(vld1q_f32(x + i), va));
+  }
+  for ( ; i < n; ++i ) x[i] = x[i] * alpha;
+}
+
+#if defined(__micron_arch_arm64)
+[[gnu::flatten]] inline void
+scal_packed_f64_neon(double alpha, double *__restrict__ x, usize n) noexcept
+{
+  const float64x2_t va = vdupq_n_f64(alpha);
+  usize i = 0;
+  for ( ; i + 8 <= n; i += 8 ) {
+    float64x2_t x0 = vld1q_f64(x + i + 0);
+    float64x2_t x1 = vld1q_f64(x + i + 2);
+    float64x2_t x2 = vld1q_f64(x + i + 4);
+    float64x2_t x3 = vld1q_f64(x + i + 6);
+    vst1q_f64(x + i + 0, vmulq_f64(x0, va));
+    vst1q_f64(x + i + 2, vmulq_f64(x1, va));
+    vst1q_f64(x + i + 4, vmulq_f64(x2, va));
+    vst1q_f64(x + i + 6, vmulq_f64(x3, va));
+  }
+  for ( ; i + 2 <= n; i += 2 ) {
+    vst1q_f64(x + i, vmulq_f64(vld1q_f64(x + i), va));
+  }
+  for ( ; i < n; ++i ) x[i] = x[i] * alpha;
+}
+#endif     // arm64
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// NEON nrm2_fast
+
+[[nodiscard, gnu::flatten]] inline f32
+nrm2_fast_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
+{
+  float32x4_t s0 = vdupq_n_f32(0.0f);
+  float32x4_t s1 = vdupq_n_f32(0.0f);
+  float32x4_t s2 = vdupq_n_f32(0.0f);
+  float32x4_t s3 = vdupq_n_f32(0.0f);
+  usize i = 0;
+  for ( ; i + 16 <= n; i += 16 ) {
+    float32x4_t a = vld1q_f32(x + i + 0);
+    float32x4_t b = vld1q_f32(x + i + 4);
+    float32x4_t c = vld1q_f32(x + i + 8);
+    float32x4_t d = vld1q_f32(x + i + 12);
+#if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
+    s0 = vfmaq_f32(s0, a, a);
+    s1 = vfmaq_f32(s1, b, b);
+    s2 = vfmaq_f32(s2, c, c);
+    s3 = vfmaq_f32(s3, d, d);
+#else
+    s0 = vmlaq_f32(s0, a, a);
+    s1 = vmlaq_f32(s1, b, b);
+    s2 = vmlaq_f32(s2, c, c);
+    s3 = vmlaq_f32(s3, d, d);
+#endif
+  }
+  for ( ; i + 4 <= n; i += 4 ) {
+    float32x4_t a = vld1q_f32(x + i);
+#if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
+    s0 = vfmaq_f32(s0, a, a);
+#else
+    s0 = vmlaq_f32(s0, a, a);
+#endif
+  }
+  float32x4_t s = vaddq_f32(vaddq_f32(s0, s1), vaddq_f32(s2, s3));
+  f32 r = vgetq_lane_f32(s, 0) + vgetq_lane_f32(s, 1) + vgetq_lane_f32(s, 2) + vgetq_lane_f32(s, 3);
+  for ( ; i < n; ++i ) r = math::fma<f32>(x[i], x[i], r);
+  return r;
+}
+
+#if defined(__micron_arch_arm64)
+[[nodiscard, gnu::flatten]] inline f64
+nrm2_fast_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
+{
+  float64x2_t s0 = vdupq_n_f64(0.0);
+  float64x2_t s1 = vdupq_n_f64(0.0);
+  float64x2_t s2 = vdupq_n_f64(0.0);
+  float64x2_t s3 = vdupq_n_f64(0.0);
+  usize i = 0;
+  for ( ; i + 8 <= n; i += 8 ) {
+    float64x2_t a = vld1q_f64(x + i + 0);
+    float64x2_t b = vld1q_f64(x + i + 2);
+    float64x2_t c = vld1q_f64(x + i + 4);
+    float64x2_t d = vld1q_f64(x + i + 6);
+    s0 = vfmaq_f64(s0, a, a);
+    s1 = vfmaq_f64(s1, b, b);
+    s2 = vfmaq_f64(s2, c, c);
+    s3 = vfmaq_f64(s3, d, d);
+  }
+  for ( ; i + 2 <= n; i += 2 ) {
+    float64x2_t a = vld1q_f64(x + i);
+    s0 = vfmaq_f64(s0, a, a);
+  }
+  float64x2_t s = vaddq_f64(vaddq_f64(s0, s1), vaddq_f64(s2, s3));
+  f64 r = vgetq_lane_f64(s, 0) + vgetq_lane_f64(s, 1);
+  for ( ; i < n; ++i ) r = math::fma<f64>(x[i], x[i], r);
+  return r;
+}
+#endif     // arm64
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// NEON iamax
+[[nodiscard, gnu::flatten]] inline usize
+iamax_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
+{
+  if ( n == 0 ) return 0;
+  if ( n < 8 ) {
+    float mx = mk::manip::fabs<f32>(x[0]);
+    usize idx = 0;
+    for ( usize k = 1; k < n; ++k ) {
+      const float a = mk::manip::fabs<f32>(x[k]);
+      if ( a > mx ) { mx = a; idx = k; }
+    }
+    return idx;
+  }
+  // 2 independent chains, 8 floats per outer iter.
+  float32x4_t vmax0 = vabsq_f32(vld1q_f32(x + 0));
+  float32x4_t vmax1 = vabsq_f32(vld1q_f32(x + 4));
+  uint32x4_t vidx0 = (uint32x4_t){ 0u, 1u, 2u, 3u };
+  uint32x4_t vidx1 = (uint32x4_t){ 4u, 5u, 6u, 7u };
+  uint32x4_t vcand0 = (uint32x4_t){ 8u, 9u, 10u, 11u };
+  uint32x4_t vcand1 = (uint32x4_t){ 12u, 13u, 14u, 15u };
+  const uint32x4_t step8 = vdupq_n_u32(8);
+  const uint32x4_t step4 = vdupq_n_u32(4);
+  usize i = 8;
+  for ( ; i + 8 <= n; i += 8 ) {
+    float32x4_t v0 = vabsq_f32(vld1q_f32(x + i + 0));
+    float32x4_t v1 = vabsq_f32(vld1q_f32(x + i + 4));
+    uint32x4_t gt0 = vcgtq_f32(v0, vmax0);
+    uint32x4_t gt1 = vcgtq_f32(v1, vmax1);
+    vmax0 = vbslq_f32(gt0, v0, vmax0);
+    vmax1 = vbslq_f32(gt1, v1, vmax1);
+    vidx0 = vbslq_u32(gt0, vcand0, vidx0);
+    vidx1 = vbslq_u32(gt1, vcand1, vidx1);
+    vcand0 = vaddq_u32(vcand0, step8);
+    vcand1 = vaddq_u32(vcand1, step8);
+  }
+  for ( ; i + 4 <= n; i += 4 ) {
+    float32x4_t v = vabsq_f32(vld1q_f32(x + i));
+    uint32x4_t gt = vcgtq_f32(v, vmax0);
+    vmax0 = vbslq_f32(gt, v, vmax0);
+    vidx0 = vbslq_u32(gt, vcand0, vidx0);
+    vcand0 = vaddq_u32(vcand0, step4);
+  }
+  alignas(16) float lanes_v0[4], lanes_v1[4];
+  alignas(16) u32 lanes_i0[4], lanes_i1[4];
+  vst1q_f32(lanes_v0, vmax0);
+  vst1q_f32(lanes_v1, vmax1);
+  vst1q_u32(lanes_i0, vidx0);
+  vst1q_u32(lanes_i1, vidx1);
+  float best = lanes_v0[0];
+  usize best_idx = usize(lanes_i0[0]);
+  for ( int k = 1; k < 4; ++k ) {
+    const float a = lanes_v0[k];
+    const usize j = usize(lanes_i0[k]);
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( int k = 0; k < 4; ++k ) {
+    const float a = lanes_v1[k];
+    const usize j = usize(lanes_i1[k]);
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( ; i < n; ++i ) {
+    const float a = mk::manip::fabs<f32>(x[i]);
+    if ( a > best ) { best = a; best_idx = i; }
+  }
+  return best_idx;
+}
+
+#if defined(__micron_arch_arm64)
+[[nodiscard, gnu::flatten]] inline usize
+iamax_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
+{
+  if ( n == 0 ) return 0;
+  if ( n < 4 ) {
+    double mx = mk::manip::fabs<f64>(x[0]);
+    usize idx = 0;
+    for ( usize k = 1; k < n; ++k ) {
+      const double a = mk::manip::fabs<f64>(x[k]);
+      if ( a > mx ) { mx = a; idx = k; }
+    }
+    return idx;
+  }
+  // 2 independent chains, 4 doubles per outer iter.
+  float64x2_t vmax0 = vabsq_f64(vld1q_f64(x + 0));
+  float64x2_t vmax1 = vabsq_f64(vld1q_f64(x + 2));
+  uint64x2_t vidx0 = (uint64x2_t){ 0ULL, 1ULL };
+  uint64x2_t vidx1 = (uint64x2_t){ 2ULL, 3ULL };
+  uint64x2_t vcand0 = (uint64x2_t){ 4ULL, 5ULL };
+  uint64x2_t vcand1 = (uint64x2_t){ 6ULL, 7ULL };
+  const uint64x2_t step4 = vdupq_n_u64(4);
+  const uint64x2_t step2 = vdupq_n_u64(2);
+  usize i = 4;
+  for ( ; i + 4 <= n; i += 4 ) {
+    float64x2_t v0 = vabsq_f64(vld1q_f64(x + i + 0));
+    float64x2_t v1 = vabsq_f64(vld1q_f64(x + i + 2));
+    uint64x2_t gt0 = vcgtq_f64(v0, vmax0);
+    uint64x2_t gt1 = vcgtq_f64(v1, vmax1);
+    vmax0 = vbslq_f64(gt0, v0, vmax0);
+    vmax1 = vbslq_f64(gt1, v1, vmax1);
+    vidx0 = vbslq_u64(gt0, vcand0, vidx0);
+    vidx1 = vbslq_u64(gt1, vcand1, vidx1);
+    vcand0 = vaddq_u64(vcand0, step4);
+    vcand1 = vaddq_u64(vcand1, step4);
+  }
+  for ( ; i + 2 <= n; i += 2 ) {
+    float64x2_t v = vabsq_f64(vld1q_f64(x + i));
+    uint64x2_t gt = vcgtq_f64(v, vmax0);
+    vmax0 = vbslq_f64(gt, v, vmax0);
+    vidx0 = vbslq_u64(gt, vcand0, vidx0);
+    vcand0 = vaddq_u64(vcand0, step2);
+  }
+  alignas(16) double lanes_v0[2], lanes_v1[2];
+  alignas(16) u64 lanes_i0[2], lanes_i1[2];
+  vst1q_f64(lanes_v0, vmax0);
+  vst1q_f64(lanes_v1, vmax1);
+  vst1q_u64(lanes_i0, vidx0);
+  vst1q_u64(lanes_i1, vidx1);
+  double best = lanes_v0[0];
+  usize best_idx = usize(lanes_i0[0]);
+  {
+    const double a = lanes_v0[1];
+    const usize j = usize(lanes_i0[1]);
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( int k = 0; k < 2; ++k ) {
+    const double a = lanes_v1[k];
+    const usize j = usize(lanes_i1[k]);
+    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+  }
+  for ( ; i < n; ++i ) {
+    const double a = mk::manip::fabs<f64>(x[i]);
+    if ( a > best ) { best = a; best_idx = i; }
+  }
+  return best_idx;
+}
+#endif     // arm64
+
+#endif     // NEON
 
 };     // namespace __impl_level1
 
@@ -334,7 +854,42 @@ template <typename T>
 [[gnu::flatten]] inline constexpr void
 scal(T alpha, T *first, T *last) noexcept
 {
-  for ( ; first != last; ++first ) *first = *first * alpha;
+  const usize n = usize(last - first);
+#if defined(__AVX2__) && defined(__FMA__)
+  if !consteval {
+    if constexpr ( ieee754_floating<T> ) {
+      if constexpr ( sizeof(T) == 8 ) {
+        __impl_level1::scal_packed_f64(double(alpha), reinterpret_cast<double *>(first), n);
+        return;
+      } else if constexpr ( sizeof(T) == 4 ) {
+        __impl_level1::scal_packed_f32(float(alpha), reinterpret_cast<float *>(first), n);
+        return;
+      }
+    }
+  }
+#elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
+  if !consteval {
+    if constexpr ( ieee754_floating<T> ) {
+      if constexpr ( sizeof(T) == 8 ) {
+        __impl_level1::scal_packed_f64_neon(double(alpha), reinterpret_cast<double *>(first), n);
+        return;
+      } else if constexpr ( sizeof(T) == 4 ) {
+        __impl_level1::scal_packed_f32_neon(float(alpha), reinterpret_cast<float *>(first), n);
+        return;
+      }
+    }
+  }
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+  if !consteval {
+    if constexpr ( ieee754_floating<T> ) {
+      if constexpr ( sizeof(T) == 4 ) {
+        __impl_level1::scal_packed_f32_neon(float(alpha), reinterpret_cast<float *>(first), n);
+        return;
+      }
+    }
+  }
+#endif
+  for ( usize i = 0; i < n; ++i ) first[i] = first[i] * alpha;
 }
 
 template <typename T>
@@ -496,6 +1051,87 @@ nrm2(const vec_view<F> &x) noexcept
   return nrm2<F>(x.n, x.data, x.inc);
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// nrm2_fast
+template <ieee754_floating F>
+[[nodiscard, gnu::flatten]] inline constexpr F
+nrm2_fast(const F *first, const F *last) noexcept
+{
+  const usize n = usize(last - first);
+#if defined(__AVX2__) && defined(__FMA__)
+  if !consteval {
+    if constexpr ( sizeof(F) == 8 ) {
+      return F(mk::pow_ns::sqrt<f64>(
+          __impl_level1::nrm2_fast_packed_f64(reinterpret_cast<const double *>(first), n)));
+    } else if constexpr ( sizeof(F) == 4 ) {
+      return F(mk::pow_ns::sqrt<f32>(
+          __impl_level1::nrm2_fast_packed_f32(reinterpret_cast<const float *>(first), n)));
+    }
+  }
+#elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
+  if !consteval {
+    if constexpr ( sizeof(F) == 8 ) {
+      return F(mk::pow_ns::sqrt<f64>(
+          __impl_level1::nrm2_fast_packed_f64_neon(reinterpret_cast<const double *>(first), n)));
+    } else if constexpr ( sizeof(F) == 4 ) {
+      return F(mk::pow_ns::sqrt<f32>(
+          __impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
+    }
+  }
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+  if !consteval {
+    if constexpr ( sizeof(F) == 4 ) {
+      return F(mk::pow_ns::sqrt<f32>(
+          __impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
+    }
+  }
+#endif
+  F s0 = F(0), s1 = F(0), s2 = F(0), s3 = F(0);
+  usize i = 0;
+  for ( ; i + 4 <= n; i += 4 ) {
+    s0 = math::fma<F>(first[i + 0], first[i + 0], s0);
+    s1 = math::fma<F>(first[i + 1], first[i + 1], s1);
+    s2 = math::fma<F>(first[i + 2], first[i + 2], s2);
+    s3 = math::fma<F>(first[i + 3], first[i + 3], s3);
+  }
+  F tail = F(0);
+  for ( ; i < n; ++i ) tail = math::fma<F>(first[i], first[i], tail);
+  return mk::pow_ns::sqrt<F>(((s0 + s1) + (s2 + s3)) + tail);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::flatten]] inline constexpr F
+nrm2_fast(usize n, const F *x, ssize_t incx) noexcept
+{
+  if ( incx == 1 ) return nrm2_fast<F>(x, x + n);
+  if ( n == 0 ) return F(0);
+  F s0 = F(0), s1 = F(0), s2 = F(0), s3 = F(0);
+  usize i = 0;
+  for ( ; i + 4 <= n; i += 4 ) {
+    const F a0 = __impl_level1::ref(x, i + 0, incx);
+    const F a1 = __impl_level1::ref(x, i + 1, incx);
+    const F a2 = __impl_level1::ref(x, i + 2, incx);
+    const F a3 = __impl_level1::ref(x, i + 3, incx);
+    s0 = math::fma<F>(a0, a0, s0);
+    s1 = math::fma<F>(a1, a1, s1);
+    s2 = math::fma<F>(a2, a2, s2);
+    s3 = math::fma<F>(a3, a3, s3);
+  }
+  F tail = F(0);
+  for ( ; i < n; ++i ) {
+    const F a = __impl_level1::ref(x, i, incx);
+    tail = math::fma<F>(a, a, tail);
+  }
+  return mk::pow_ns::sqrt<F>(((s0 + s1) + (s2 + s3)) + tail);
+}
+
+template <ieee754_floating F>
+[[nodiscard, gnu::flatten]] inline constexpr F
+nrm2_fast(const vec_view<F> &x) noexcept
+{
+  return nrm2_fast<F>(x.n, x.data, x.inc);
+}
+
 namespace __impl_level1
 {
 
@@ -518,6 +1154,35 @@ iamax(const T *first, const T *last) noexcept
 {
   if ( first == last ) return 0;
   const usize n = usize(last - first);
+#if defined(__AVX2__) && defined(__FMA__)
+  if !consteval {
+    if constexpr ( ieee754_floating<T> ) {
+      if constexpr ( sizeof(T) == 8 ) {
+        return __impl_level1::iamax_packed_f64(reinterpret_cast<const double *>(first), n);
+      } else if constexpr ( sizeof(T) == 4 ) {
+        return __impl_level1::iamax_packed_f32(reinterpret_cast<const float *>(first), n);
+      }
+    }
+  }
+#elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
+  if !consteval {
+    if constexpr ( ieee754_floating<T> ) {
+      if constexpr ( sizeof(T) == 8 ) {
+        return __impl_level1::iamax_packed_f64_neon(reinterpret_cast<const double *>(first), n);
+      } else if constexpr ( sizeof(T) == 4 ) {
+        return __impl_level1::iamax_packed_f32_neon(reinterpret_cast<const float *>(first), n);
+      }
+    }
+  }
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+  if !consteval {
+    if constexpr ( ieee754_floating<T> ) {
+      if constexpr ( sizeof(T) == 4 ) {
+        return __impl_level1::iamax_packed_f32_neon(reinterpret_cast<const float *>(first), n);
+      }
+    }
+  }
+#endif
   T mx = __impl_level1::abs_v<T>(first[0]);
   usize idx = 0;
   for ( usize i = 1; i < n; ++i ) {

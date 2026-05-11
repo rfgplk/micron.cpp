@@ -58,6 +58,256 @@ fma_acc(T a, T b, T c) noexcept
     return c + a * b;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// gemv transpose panel-packed kernels
+#if defined(__AVX2__) && defined(__FMA__)
+
+[[gnu::flatten]] inline void
+gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
+{
+  constexpr usize NB = 16;      // j-strip width (4 ymm of 4 doubles each)
+  constexpr usize MC = 128;     // m-block height; NB*MC doubles = 16 KiB pack, fits L1
+  alignas(32) double Ap[NB * MC];
+
+  if ( beta == 0.0 ) {
+    const __m256d z = _mm256_setzero_pd();
+    usize j = 0;
+    for ( ; j + 4 <= n; j += 4 ) _mm256_storeu_pd(y + j, z);
+    for ( ; j < n; ++j ) y[j] = 0.0;
+  } else if ( beta != 1.0 ) {
+    const __m256d vbeta = _mm256_set1_pd(beta);
+    usize j = 0;
+    for ( ; j + 4 <= n; j += 4 ) _mm256_storeu_pd(y + j, _mm256_mul_pd(vbeta, _mm256_loadu_pd(y + j)));
+    for ( ; j < n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB <= n; j += NB ) {
+    __m256d y0 = _mm256_loadu_pd(y + j + 0);
+    __m256d y1 = _mm256_loadu_pd(y + j + 4);
+    __m256d y2 = _mm256_loadu_pd(y + j + 8);
+    __m256d y3 = _mm256_loadu_pd(y + j + 12);
+
+    for ( usize ic = 0; ic < m; ic += MC ) {
+      const usize mc = (m - ic < MC) ? (m - ic) : MC;
+
+      for ( usize i = 0; i < mc; ++i ) {
+        const double *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        _mm256_store_pd(Ap + i * NB + 0, _mm256_loadu_pd(src + 0));
+        _mm256_store_pd(Ap + i * NB + 4, _mm256_loadu_pd(src + 4));
+        _mm256_store_pd(Ap + i * NB + 8, _mm256_loadu_pd(src + 8));
+        _mm256_store_pd(Ap + i * NB + 12, _mm256_loadu_pd(src + 12));
+      }
+
+      for ( usize i = 0; i < mc; ++i ) {
+        const __m256d ax = _mm256_set1_pd(alpha * x[ic + i]);
+        const double *ap = Ap + i * NB;
+        y0 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 0), y0);
+        y1 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 4), y1);
+        y2 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 8), y2);
+        y3 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 12), y3);
+      }
+    }
+
+    _mm256_storeu_pd(y + j + 0, y0);
+    _mm256_storeu_pd(y + j + 4, y1);
+    _mm256_storeu_pd(y + j + 8, y2);
+    _mm256_storeu_pd(y + j + 12, y3);
+  }
+
+  // tail
+  for ( ; j < n; ++j ) {
+    double acc = 0.0;
+    for ( usize i = 0; i < m; ++i ) acc = math::fma<double>(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma<double>(alpha, acc, y[j]);
+  }
+}
+
+[[gnu::flatten]] inline void
+gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_A, const float *x, float beta, float *y) noexcept
+{
+  constexpr usize NB = 32;      // 4 ymm of 8 floats each
+  constexpr usize MC = 128;     // pack 32 * 128 * 4 = 16 KiB
+  alignas(32) float Ap[NB * MC];
+
+  if ( beta == 0.0f ) {
+    const __m256 z = _mm256_setzero_ps();
+    usize j = 0;
+    for ( ; j + 8 <= n; j += 8 ) _mm256_storeu_ps(y + j, z);
+    for ( ; j < n; ++j ) y[j] = 0.0f;
+  } else if ( beta != 1.0f ) {
+    const __m256 vbeta = _mm256_set1_ps(beta);
+    usize j = 0;
+    for ( ; j + 8 <= n; j += 8 ) _mm256_storeu_ps(y + j, _mm256_mul_ps(vbeta, _mm256_loadu_ps(y + j)));
+    for ( ; j < n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB <= n; j += NB ) {
+    __m256 y0 = _mm256_loadu_ps(y + j + 0);
+    __m256 y1 = _mm256_loadu_ps(y + j + 8);
+    __m256 y2 = _mm256_loadu_ps(y + j + 16);
+    __m256 y3 = _mm256_loadu_ps(y + j + 24);
+
+    for ( usize ic = 0; ic < m; ic += MC ) {
+      const usize mc = (m - ic < MC) ? (m - ic) : MC;
+      for ( usize i = 0; i < mc; ++i ) {
+        const float *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        _mm256_store_ps(Ap + i * NB + 0, _mm256_loadu_ps(src + 0));
+        _mm256_store_ps(Ap + i * NB + 8, _mm256_loadu_ps(src + 8));
+        _mm256_store_ps(Ap + i * NB + 16, _mm256_loadu_ps(src + 16));
+        _mm256_store_ps(Ap + i * NB + 24, _mm256_loadu_ps(src + 24));
+      }
+      for ( usize i = 0; i < mc; ++i ) {
+        const __m256 ax = _mm256_set1_ps(alpha * x[ic + i]);
+        const float *ap = Ap + i * NB;
+        y0 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 0), y0);
+        y1 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 8), y1);
+        y2 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 16), y2);
+        y3 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 24), y3);
+      }
+    }
+
+    _mm256_storeu_ps(y + j + 0, y0);
+    _mm256_storeu_ps(y + j + 8, y1);
+    _mm256_storeu_ps(y + j + 16, y2);
+    _mm256_storeu_ps(y + j + 24, y3);
+  }
+
+  for ( ; j < n; ++j ) {
+    float acc = 0.0f;
+    for ( usize i = 0; i < m; ++i ) acc = math::fma<float>(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma<float>(alpha, acc, y[j]);
+  }
+}
+
+#endif     // AVX2 + FMA
+
+#if defined(__micron_arch_arm64) && defined(__micron_arm_neon)
+
+[[gnu::flatten]] inline void
+gemv_t_panel_neon_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
+{
+  constexpr usize NB = 8;     // 4 q-regs of 2 doubles each
+  constexpr usize MC = 256;
+  alignas(16) double Ap[NB * MC];
+
+  if ( beta == 0.0 ) {
+    for ( usize j = 0; j < n; ++j ) y[j] = 0.0;
+  } else if ( beta != 1.0 ) {
+    const float64x2_t vbeta = vdupq_n_f64(beta);
+    usize j = 0;
+    for ( ; j + 2 <= n; j += 2 ) vst1q_f64(y + j, vmulq_f64(vbeta, vld1q_f64(y + j)));
+    for ( ; j < n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB <= n; j += NB ) {
+    float64x2_t y0 = vld1q_f64(y + j + 0);
+    float64x2_t y1 = vld1q_f64(y + j + 2);
+    float64x2_t y2 = vld1q_f64(y + j + 4);
+    float64x2_t y3 = vld1q_f64(y + j + 6);
+
+    for ( usize ic = 0; ic < m; ic += MC ) {
+      const usize mc = (m - ic < MC) ? (m - ic) : MC;
+      for ( usize i = 0; i < mc; ++i ) {
+        const double *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        vst1q_f64(Ap + i * NB + 0, vld1q_f64(src + 0));
+        vst1q_f64(Ap + i * NB + 2, vld1q_f64(src + 2));
+        vst1q_f64(Ap + i * NB + 4, vld1q_f64(src + 4));
+        vst1q_f64(Ap + i * NB + 6, vld1q_f64(src + 6));
+      }
+      for ( usize i = 0; i < mc; ++i ) {
+        const float64x2_t ax = vdupq_n_f64(alpha * x[ic + i]);
+        const double *ap = Ap + i * NB;
+        y0 = vfmaq_f64(y0, ax, vld1q_f64(ap + 0));
+        y1 = vfmaq_f64(y1, ax, vld1q_f64(ap + 2));
+        y2 = vfmaq_f64(y2, ax, vld1q_f64(ap + 4));
+        y3 = vfmaq_f64(y3, ax, vld1q_f64(ap + 6));
+      }
+    }
+
+    vst1q_f64(y + j + 0, y0);
+    vst1q_f64(y + j + 2, y1);
+    vst1q_f64(y + j + 4, y2);
+    vst1q_f64(y + j + 6, y3);
+  }
+
+  for ( ; j < n; ++j ) {
+    double acc = 0.0;
+    for ( usize i = 0; i < m; ++i ) acc = math::fma<double>(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma<double>(alpha, acc, y[j]);
+  }
+}
+
+#endif     // arm64 NEON
+
+#if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+
+[[gnu::flatten]] inline void
+gemv_t_panel_neon_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_A, const float *x, float beta, float *y) noexcept
+{
+  constexpr usize NB = 16;     // 4 q-regs of 4 floats each
+  constexpr usize MC = 256;
+  alignas(16) float Ap[NB * MC];
+
+  if ( beta == 0.0f ) {
+    for ( usize j = 0; j < n; ++j ) y[j] = 0.0f;
+  } else if ( beta != 1.0f ) {
+    const float32x4_t vbeta = vdupq_n_f32(beta);
+    usize j = 0;
+    for ( ; j + 4 <= n; j += 4 ) vst1q_f32(y + j, vmulq_f32(vbeta, vld1q_f32(y + j)));
+    for ( ; j < n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB <= n; j += NB ) {
+    float32x4_t y0 = vld1q_f32(y + j + 0);
+    float32x4_t y1 = vld1q_f32(y + j + 4);
+    float32x4_t y2 = vld1q_f32(y + j + 8);
+    float32x4_t y3 = vld1q_f32(y + j + 12);
+
+    for ( usize ic = 0; ic < m; ic += MC ) {
+      const usize mc = (m - ic < MC) ? (m - ic) : MC;
+      for ( usize i = 0; i < mc; ++i ) {
+        const float *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        vst1q_f32(Ap + i * NB + 0, vld1q_f32(src + 0));
+        vst1q_f32(Ap + i * NB + 4, vld1q_f32(src + 4));
+        vst1q_f32(Ap + i * NB + 8, vld1q_f32(src + 8));
+        vst1q_f32(Ap + i * NB + 12, vld1q_f32(src + 12));
+      }
+      for ( usize i = 0; i < mc; ++i ) {
+        const float32x4_t ax = vdupq_n_f32(alpha * x[ic + i]);
+        const float *ap = Ap + i * NB;
+#if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
+        y0 = vfmaq_f32(y0, ax, vld1q_f32(ap + 0));
+        y1 = vfmaq_f32(y1, ax, vld1q_f32(ap + 4));
+        y2 = vfmaq_f32(y2, ax, vld1q_f32(ap + 8));
+        y3 = vfmaq_f32(y3, ax, vld1q_f32(ap + 12));
+#else
+        y0 = vmlaq_f32(y0, ax, vld1q_f32(ap + 0));
+        y1 = vmlaq_f32(y1, ax, vld1q_f32(ap + 4));
+        y2 = vmlaq_f32(y2, ax, vld1q_f32(ap + 8));
+        y3 = vmlaq_f32(y3, ax, vld1q_f32(ap + 12));
+#endif
+      }
+    }
+
+    vst1q_f32(y + j + 0, y0);
+    vst1q_f32(y + j + 4, y1);
+    vst1q_f32(y + j + 8, y2);
+    vst1q_f32(y + j + 12, y3);
+  }
+
+  for ( ; j < n; ++j ) {
+    float acc = 0.0f;
+    for ( usize i = 0; i < m; ++i ) acc = math::fma<float>(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma<float>(alpha, acc, y[j]);
+  }
+}
+
+#endif     // arm any NEON
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%
 // gemv_kernels
 template <typename T>
@@ -65,6 +315,41 @@ template <typename T>
 gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
             ssize_t incy) noexcept
 {
+  // row-major A with tr=true would otherwise walk stride-ld columns of A
+  if !consteval {
+    if ( tr && cs_A == 1 && incx == 1 && incy == 1 ) {
+      if constexpr ( ieee754_floating<T> ) {
+#if defined(__AVX2__) && defined(__FMA__)
+        if constexpr ( sizeof(T) == 8 ) {
+          gemv_t_panel_avx2_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
+                                double(beta), reinterpret_cast<double *>(y));
+          return;
+        } else if constexpr ( sizeof(T) == 4 ) {
+          gemv_t_panel_avx2_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                float(beta), reinterpret_cast<float *>(y));
+          return;
+        }
+#elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
+        if constexpr ( sizeof(T) == 8 ) {
+          gemv_t_panel_neon_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
+                                double(beta), reinterpret_cast<double *>(y));
+          return;
+        } else if constexpr ( sizeof(T) == 4 ) {
+          gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                float(beta), reinterpret_cast<float *>(y));
+          return;
+        }
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+        if constexpr ( sizeof(T) == 4 ) {
+          gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                float(beta), reinterpret_cast<float *>(y));
+          return;
+        }
+#endif
+      }
+    }
+  }
+
   const usize m_out = tr ? n : m;
   const usize n_in = tr ? m : n;
   const ssize_t step_inner = tr ? rs_A : cs_A;
@@ -274,49 +559,101 @@ trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs
   }
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// 4×4-tile GEMM micro-kernel row major C | row walked B
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// small 4×8 AVX2 microkernel
 #if defined(__AVX2__) && defined(__FMA__)
 
 [[gnu::flatten]] inline void
-gemm_4x4_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssize_t a_rs, ssize_t a_cs, const double *B, ssize_t b_rs,
-                  double beta, double *C, ssize_t rs_C) noexcept
+gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssize_t a_rs, ssize_t a_cs, const double *B, ssize_t b_rs,
+                  ssize_t b_cs, double beta, double *C, ssize_t rs_C) noexcept
 {
+  alignas(32) double Bp[8 * 1024];     // stack panel for one 8-col B strip
   const __m256d valpha = _mm256_set1_pd(alpha);
   const bool beta_zero = (beta == 0.0);
-  for ( usize i = 0; i < m; i += 4 ) {
-    const double *a0p = A + ssize_t(i + 0) * a_rs;
-    const double *a1p = A + ssize_t(i + 1) * a_rs;
-    const double *a2p = A + ssize_t(i + 2) * a_rs;
-    const double *a3p = A + ssize_t(i + 3) * a_rs;
-    for ( usize j = 0; j < n; j += 4 ) {
-      __m256d c0 = _mm256_setzero_pd();
-      __m256d c1 = _mm256_setzero_pd();
-      __m256d c2 = _mm256_setzero_pd();
-      __m256d c3 = _mm256_setzero_pd();
+  const bool beta_one = (beta == 1.0);
+  const __m256d vbeta = _mm256_set1_pd(beta);
+
+  for ( usize j = 0; j + 8 <= n; j += 8 ) {
+    // pack B[0:k, j:j+8] into Bp
+    // For NN (b_cs == 1) this is a contiguous copy
+    // for NT/TT (b_cs != 1) it pays one stride traversal up front
+    if ( b_cs == 1 ) {
       for ( usize p = 0; p < k; ++p ) {
+        const double *src = B + ssize_t(p) * b_rs + ssize_t(j);
+        _mm256_store_pd(Bp + p * 8 + 0, _mm256_loadu_pd(src + 0));
+        _mm256_store_pd(Bp + p * 8 + 4, _mm256_loadu_pd(src + 4));
+      }
+    } else {
+      for ( usize p = 0; p < k; ++p ) {
+        const double *base = B + ssize_t(p) * b_rs + ssize_t(j) * b_cs;
+        Bp[p * 8 + 0] = base[0 * b_cs];
+        Bp[p * 8 + 1] = base[1 * b_cs];
+        Bp[p * 8 + 2] = base[2 * b_cs];
+        Bp[p * 8 + 3] = base[3 * b_cs];
+        Bp[p * 8 + 4] = base[4 * b_cs];
+        Bp[p * 8 + 5] = base[5 * b_cs];
+        Bp[p * 8 + 6] = base[6 * b_cs];
+        Bp[p * 8 + 7] = base[7 * b_cs];
+      }
+    }
+
+    for ( usize i = 0; i + 4 <= m; i += 4 ) {
+      const double *a0p = A + ssize_t(i + 0) * a_rs;
+      const double *a1p = A + ssize_t(i + 1) * a_rs;
+      const double *a2p = A + ssize_t(i + 2) * a_rs;
+      const double *a3p = A + ssize_t(i + 3) * a_rs;
+
+      __m256d c00 = _mm256_setzero_pd(), c01 = _mm256_setzero_pd();
+      __m256d c10 = _mm256_setzero_pd(), c11 = _mm256_setzero_pd();
+      __m256d c20 = _mm256_setzero_pd(), c21 = _mm256_setzero_pd();
+      __m256d c30 = _mm256_setzero_pd(), c31 = _mm256_setzero_pd();
+      for ( usize p = 0; p < k; ++p ) {
+        const __m256d b0 = _mm256_load_pd(Bp + p * 8 + 0);
+        const __m256d b1 = _mm256_load_pd(Bp + p * 8 + 4);
         const __m256d a0 = _mm256_set1_pd(a0p[ssize_t(p) * a_cs]);
         const __m256d a1 = _mm256_set1_pd(a1p[ssize_t(p) * a_cs]);
+        c00 = _mm256_fmadd_pd(a0, b0, c00);
+        c01 = _mm256_fmadd_pd(a0, b1, c01);
+        c10 = _mm256_fmadd_pd(a1, b0, c10);
+        c11 = _mm256_fmadd_pd(a1, b1, c11);
         const __m256d a2 = _mm256_set1_pd(a2p[ssize_t(p) * a_cs]);
         const __m256d a3 = _mm256_set1_pd(a3p[ssize_t(p) * a_cs]);
-        const __m256d br = _mm256_loadu_pd(B + ssize_t(p) * b_rs + ssize_t(j));
-        c0 = _mm256_fmadd_pd(a0, br, c0);
-        c1 = _mm256_fmadd_pd(a1, br, c1);
-        c2 = _mm256_fmadd_pd(a2, br, c2);
-        c3 = _mm256_fmadd_pd(a3, br, c3);
+        c20 = _mm256_fmadd_pd(a2, b0, c20);
+        c21 = _mm256_fmadd_pd(a2, b1, c21);
+        c30 = _mm256_fmadd_pd(a3, b0, c30);
+        c31 = _mm256_fmadd_pd(a3, b1, c31);
       }
-      double *cp = C + ssize_t(i) * rs_C + ssize_t(j);
+      double *r0 = C + ssize_t(i + 0) * rs_C + ssize_t(j);
+      double *r1 = C + ssize_t(i + 1) * rs_C + ssize_t(j);
+      double *r2 = C + ssize_t(i + 2) * rs_C + ssize_t(j);
+      double *r3 = C + ssize_t(i + 3) * rs_C + ssize_t(j);
       if ( beta_zero ) {
-        _mm256_storeu_pd(cp + 0 * rs_C, _mm256_mul_pd(valpha, c0));
-        _mm256_storeu_pd(cp + 1 * rs_C, _mm256_mul_pd(valpha, c1));
-        _mm256_storeu_pd(cp + 2 * rs_C, _mm256_mul_pd(valpha, c2));
-        _mm256_storeu_pd(cp + 3 * rs_C, _mm256_mul_pd(valpha, c3));
+        _mm256_storeu_pd(r0 + 0, _mm256_mul_pd(valpha, c00));
+        _mm256_storeu_pd(r0 + 4, _mm256_mul_pd(valpha, c01));
+        _mm256_storeu_pd(r1 + 0, _mm256_mul_pd(valpha, c10));
+        _mm256_storeu_pd(r1 + 4, _mm256_mul_pd(valpha, c11));
+        _mm256_storeu_pd(r2 + 0, _mm256_mul_pd(valpha, c20));
+        _mm256_storeu_pd(r2 + 4, _mm256_mul_pd(valpha, c21));
+        _mm256_storeu_pd(r3 + 0, _mm256_mul_pd(valpha, c30));
+        _mm256_storeu_pd(r3 + 4, _mm256_mul_pd(valpha, c31));
+      } else if ( beta_one ) {
+        _mm256_storeu_pd(r0 + 0, _mm256_fmadd_pd(valpha, c00, _mm256_loadu_pd(r0 + 0)));
+        _mm256_storeu_pd(r0 + 4, _mm256_fmadd_pd(valpha, c01, _mm256_loadu_pd(r0 + 4)));
+        _mm256_storeu_pd(r1 + 0, _mm256_fmadd_pd(valpha, c10, _mm256_loadu_pd(r1 + 0)));
+        _mm256_storeu_pd(r1 + 4, _mm256_fmadd_pd(valpha, c11, _mm256_loadu_pd(r1 + 4)));
+        _mm256_storeu_pd(r2 + 0, _mm256_fmadd_pd(valpha, c20, _mm256_loadu_pd(r2 + 0)));
+        _mm256_storeu_pd(r2 + 4, _mm256_fmadd_pd(valpha, c21, _mm256_loadu_pd(r2 + 4)));
+        _mm256_storeu_pd(r3 + 0, _mm256_fmadd_pd(valpha, c30, _mm256_loadu_pd(r3 + 0)));
+        _mm256_storeu_pd(r3 + 4, _mm256_fmadd_pd(valpha, c31, _mm256_loadu_pd(r3 + 4)));
       } else {
-        const __m256d vbeta = _mm256_set1_pd(beta);
-        _mm256_storeu_pd(cp + 0 * rs_C, _mm256_fmadd_pd(valpha, c0, _mm256_mul_pd(vbeta, _mm256_loadu_pd(cp + 0 * rs_C))));
-        _mm256_storeu_pd(cp + 1 * rs_C, _mm256_fmadd_pd(valpha, c1, _mm256_mul_pd(vbeta, _mm256_loadu_pd(cp + 1 * rs_C))));
-        _mm256_storeu_pd(cp + 2 * rs_C, _mm256_fmadd_pd(valpha, c2, _mm256_mul_pd(vbeta, _mm256_loadu_pd(cp + 2 * rs_C))));
-        _mm256_storeu_pd(cp + 3 * rs_C, _mm256_fmadd_pd(valpha, c3, _mm256_mul_pd(vbeta, _mm256_loadu_pd(cp + 3 * rs_C))));
+        _mm256_storeu_pd(r0 + 0, _mm256_fmadd_pd(valpha, c00, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r0 + 0))));
+        _mm256_storeu_pd(r0 + 4, _mm256_fmadd_pd(valpha, c01, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r0 + 4))));
+        _mm256_storeu_pd(r1 + 0, _mm256_fmadd_pd(valpha, c10, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r1 + 0))));
+        _mm256_storeu_pd(r1 + 4, _mm256_fmadd_pd(valpha, c11, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r1 + 4))));
+        _mm256_storeu_pd(r2 + 0, _mm256_fmadd_pd(valpha, c20, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r2 + 0))));
+        _mm256_storeu_pd(r2 + 4, _mm256_fmadd_pd(valpha, c21, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r2 + 4))));
+        _mm256_storeu_pd(r3 + 0, _mm256_fmadd_pd(valpha, c30, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r3 + 0))));
+        _mm256_storeu_pd(r3 + 4, _mm256_fmadd_pd(valpha, c31, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r3 + 4))));
       }
     }
   }
@@ -324,7 +661,7 @@ gemm_4x4_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssiz
 
 #endif     // AVX2 + FMA
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%
 // gemm_kernel
 template <typename T>
 [[gnu::flatten]] inline constexpr void
@@ -339,25 +676,27 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
   const bool beta_zero = (beta == T(0));
   const bool beta_one = (beta == T(1));
 
-  if !consteval {
-    if ( micron::math::matrix::pack::gemm_should_block<T>(m, n, k) ) {
-      micron::math::matrix::pack::gemm_blocked<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
-      return;
-    }
-  }
-
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
-      if ( cs_C == 1 && b_cs == 1 && (m & 3u) == 0 && (n & 3u) == 0 && k > 0 ) {
-        gemm_4x4_avx2_f64(m, n, k, double(alpha), reinterpret_cast<const double *>(A), a_rs, a_cs, reinterpret_cast<const double *>(B),
-                          b_rs, double(beta), reinterpret_cast<double *>(C), rs_C);
+      if ( cs_C == 1 && (m % 4u) == 0 && (n % 8u) == 0 && k > 0 && k <= 1024 ) {
+        gemm_4x8_avx2_f64(m, n, k, double(alpha), reinterpret_cast<const double *>(A), a_rs, a_cs, reinterpret_cast<const double *>(B),
+                          b_rs, b_cs, double(beta), reinterpret_cast<double *>(C), rs_C);
         return;
       }
     }
   }
 #endif
 
+  // BLIS-style blocked path for anything the inline kernel can't take
+  if !consteval {
+    if ( micron::math::matrix::pack::gemm_should_block_for_layout<T>(m, n, k, b_cs, cs_C) ) {
+      micron::math::matrix::pack::gemm_blocked<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+      return;
+    }
+  }
+
+  // scalar fallback path
   for ( usize i = 0; i < m; ++i ) {
     T *c_row = C + ssize_t(i) * rs_C;
     const T *a_row = A + ssize_t(i) * a_rs;

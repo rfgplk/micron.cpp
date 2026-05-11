@@ -60,7 +60,8 @@ template <ieee754_floating T> struct axis_angle_t {
   T angle;
 };
 
-// NOTE: ses atan2(|v|, w) instead of acos(w) for numerical stability, slower
+// NOTE: uses atan2(|v|, w) instead of acos(w) for numerical stability (slower)
+// returns angle in [0, 2pi] with the recovered axis chosen so that from_axis_angle(axis, angle) reconstructs the input quaternion
 template <ieee754_floating T>
 [[nodiscard]] inline constexpr axis_angle_t<T>
 to_axis_angle(const quaternion<T> &q) noexcept
@@ -196,24 +197,27 @@ template <ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 x_quat(T angle) noexcept
 {
-  const T h = angle * T(0.5);
-  return quaternion<T>{ math::sin<T>(h), T(0), T(0), math::cos<T>(h) };
+  T s, c;
+  math::sincos<T>(angle * T(0.5), s, c);
+  return quaternion<T>{ s, T(0), T(0), c };
 }
 
 template <ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 y_quat(T angle) noexcept
 {
-  const T h = angle * T(0.5);
-  return quaternion<T>{ T(0), math::sin<T>(h), T(0), math::cos<T>(h) };
+  T s, c;
+  math::sincos<T>(angle * T(0.5), s, c);
+  return quaternion<T>{ T(0), s, T(0), c };
 }
 
 template <ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 z_quat(T angle) noexcept
 {
-  const T h = angle * T(0.5);
-  return quaternion<T>{ T(0), T(0), math::sin<T>(h), math::cos<T>(h) };
+  T s, c;
+  math::sincos<T>(angle * T(0.5), s, c);
+  return quaternion<T>{ T(0), T(0), s, c };
 }
 
 };     // namespace quaternions

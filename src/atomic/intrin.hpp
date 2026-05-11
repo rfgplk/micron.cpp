@@ -184,14 +184,12 @@ clear(T *ptr, i32 memorder)
   __atomic_clear(ptr, memorder);
 }
 
-template <typename T>
 constexpr __attribute__((always_inline)) inline void
 thread_fence(i32 memorder)
 {
   return __atomic_thread_fence(memorder);
 }
 
-template <typename T>
 constexpr __attribute__((always_inline)) inline void
 signal_fence(i32 memorder)
 {

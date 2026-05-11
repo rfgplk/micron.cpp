@@ -6,6 +6,7 @@
 #pragma once
 
 #include "simd/_dispatch.hpp"
+#include "simd/cordic.hpp"
 #include "simd/exp.hpp"
 #include "simd/log.hpp"
 #include "simd/manip.hpp"
