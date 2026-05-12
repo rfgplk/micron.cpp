@@ -466,6 +466,7 @@ inline int
 spawn(uprocess_t &t)
 {
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -480,6 +481,7 @@ inline int
 spawn(uprocess_t &t, const Caps &caps)
 {
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -494,6 +496,7 @@ inline int
 spawn(uprocess_t &t, const Lims &lims)
 {
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -508,6 +511,7 @@ inline int
 spawn(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -634,6 +638,7 @@ rexecute(uprocess_t &t, const Caps &caps)
 {
   apply_caps_child(caps);
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
@@ -646,6 +651,7 @@ rexecute(uprocess_t &t, const Lims &lims)
 {
   child_apply_limits(lims);
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
@@ -659,6 +665,7 @@ rexecute(uprocess_t &t, const Caps &caps, const Lims &lims)
   child_apply_limits(lims);     // limits first
   apply_caps_child(caps);
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);

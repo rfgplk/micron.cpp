@@ -4,11 +4,12 @@
 #include "commands/doctor.hh"
 #include "commands/help.hh"
 #include "commands/run.hh"
+#include "commands/emulate.hh"
 #include "commands/test.hh"
 
 #include "../../src/io/io.hpp"
 
-enum class __modes : i32 { build, batch, link, compile, debug, run, make, test, doctor, recipes, __end };
+enum class __modes : i32 { build, batch, link, compile, debug, emulate, run, make, test, doctor, recipes, __end };
 
 template <typename T = void>
 auto
@@ -32,6 +33,9 @@ match(char **argv) -> __modes
   // builds file and runs it, replacing current proc.
   else if ( mc::strcmp(argv[1], "run") == 0 )
     return __modes::run;
+  // same as run, but emulates via qemu
+  else if ( mc::strcmp(argv[1], "emulate") == 0 )
+    return __modes::emulate;
   // makes a new project from template
   else if ( mc::strcmp(argv[1], "make") == 0 )
     return __modes::make;
@@ -116,6 +120,12 @@ parse_main(int argc, char **argv)
     // can't be batched doesn't make sense
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
     build_and_run(conf);
+    break;
+  }
+  case __modes::emulate : {
+    // can't be batched doesn't make sense
+    config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    build_and_emulate(conf);
     break;
   }
   case __modes::make : {
