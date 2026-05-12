@@ -7,6 +7,7 @@
 
 #include "../../bits/__arch.hpp"
 #include "../../concepts.hpp"
+#include "../../simd/aliases.hpp"
 #include "../../simd/intrin.hpp"
 #include "../../types.hpp"
 
@@ -43,7 +44,7 @@ sqrt_ss(f32 x) noexcept
   __asm__("sqrtss %1, %0" : "=x"(r) : "x"(x));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+  return simd::neon::get_lane_f32<0>(simd::neon::sqrt(simd::neon::splat_f32(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   f32 r;
   __asm__("vsqrt.f32 %0, %1" : "=t"(r) : "t"(x));
@@ -64,7 +65,7 @@ sqrt_sd(f64 x) noexcept
   __asm__("sqrtsd %1, %0" : "=x"(r) : "x"(x));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vgetq_lane_f64(vsqrtq_f64(vdupq_n_f64(x)), 0);
+  return simd::neon::get_lane_f64<0>(simd::neon::sqrt(simd::neon::splat_f64(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   f64 r;
   __asm__("vsqrt.f64 %P0, %P1" : "=w"(r) : "w"(x));
@@ -95,7 +96,7 @@ rsqrt_approx_ss(f32 x) noexcept
   __asm__("rsqrtss %1, %0" : "=x"(r) : "x"(x));
   return r;
 #elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
-  return vgetq_lane_f32(vrsqrteq_f32(vdupq_n_f32(x)), 0);
+  return simd::neon::get_lane_f32<0>(simd::neon::rsqrt_est(simd::neon::splat_f32(x)));
 #else
   return 1.0f / sqrt_ss(x);
 #endif
@@ -117,7 +118,7 @@ fmadd_ss(f32 a, f32 b, f32 c) noexcept
   __asm__("vfmadd231ss %2, %1, %0" : "+x"(r) : "x"(a), "x"(b));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vfmas_lane_f32(c, a, vdup_n_f32(b), 0);
+  return vfmas_lane_f32(c, a, simd::neon::splat_h_f32(b), 0);
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_fma) && defined(__micron_arm_neon)
   f32 r = c;
   __asm__("vfma.f32 %0, %1, %2" : "+t"(r) : "t"(a), "t"(b));
@@ -142,7 +143,7 @@ fmadd_sd(f64 a, f64 b, f64 c) noexcept
   __asm__("vfmadd231sd %2, %1, %0" : "+x"(r) : "x"(a), "x"(b));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vfmad_lane_f64(c, a, vdup_n_f64(b), 0);
+  return vfmad_lane_f64(c, a, simd::neon::splat_h_f64(b), 0);
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_fma)
   f64 r = c;
   __asm__("vfma.f64 %P0, %P1, %P2" : "+w"(r) : "w"(a), "w"(b));
@@ -196,22 +197,22 @@ round_ss(f32 x) noexcept
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   if constexpr ( Mode == 0 )
-    return vgetq_lane_f32(vrndnq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::rint(simd::neon::splat_f32(x)));
   else if constexpr ( Mode == 1 )
-    return vgetq_lane_f32(vrndmq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::floor(simd::neon::splat_f32(x)));
   else if constexpr ( Mode == 2 )
-    return vgetq_lane_f32(vrndpq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::ceil(simd::neon::splat_f32(x)));
   else
-    return vgetq_lane_f32(vrndq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::trunc(simd::neon::splat_f32(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon) && defined(__micron_arm_directed_rounding)
   if constexpr ( Mode == 0 )
-    return vgetq_lane_f32(vrndnq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::rint(simd::neon::splat_f32(x)));
   else if constexpr ( Mode == 1 )
-    return vgetq_lane_f32(vrndmq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::floor(simd::neon::splat_f32(x)));
   else if constexpr ( Mode == 2 )
-    return vgetq_lane_f32(vrndpq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::ceil(simd::neon::splat_f32(x)));
   else
-    return vgetq_lane_f32(vrndq_f32(vdupq_n_f32(x)), 0);
+    return simd::neon::get_lane_f32<0>(simd::neon::trunc(simd::neon::splat_f32(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_directed_rounding)
   f32 r;
   if constexpr ( Mode == 0 )
@@ -263,13 +264,13 @@ round_sd(f64 x) noexcept
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   if constexpr ( Mode == 0 )
-    return vgetq_lane_f64(vrndnq_f64(vdupq_n_f64(x)), 0);
+    return simd::neon::get_lane_f64<0>(simd::neon::rint(simd::neon::splat_f64(x)));
   else if constexpr ( Mode == 1 )
-    return vgetq_lane_f64(vrndmq_f64(vdupq_n_f64(x)), 0);
+    return simd::neon::get_lane_f64<0>(simd::neon::floor(simd::neon::splat_f64(x)));
   else if constexpr ( Mode == 2 )
-    return vgetq_lane_f64(vrndpq_f64(vdupq_n_f64(x)), 0);
+    return simd::neon::get_lane_f64<0>(simd::neon::ceil(simd::neon::splat_f64(x)));
   else
-    return vgetq_lane_f64(vrndq_f64(vdupq_n_f64(x)), 0);
+    return simd::neon::get_lane_f64<0>(simd::neon::trunc(simd::neon::splat_f64(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_directed_rounding)
   // Scalar VFP VRINT* on f64 D-register.  No NEON-quad-f64 on AArch32, so
   // the per-element NEON form doesn't apply.

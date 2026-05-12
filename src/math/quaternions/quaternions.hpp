@@ -6,6 +6,7 @@
 #pragma once
 
 #include "algebra.hpp"
+#include "batched.hpp"
 #include "euler.hpp"
 #include "interpolation.hpp"
 #include "kinematics.hpp"

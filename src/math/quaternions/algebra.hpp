@@ -65,6 +65,11 @@
 #include "../quants/vecs.hpp"
 #include "../sqrt.hpp"
 
+#if defined(__AVX2__) && defined(__FMA__)
+#include "../../simd/aliases.hpp"
+#include "../../simd/arch/types_amd64.hpp"
+#endif
+
 namespace micron
 {
 namespace math
@@ -179,13 +184,75 @@ identity() noexcept
 }
 
 template <ieee754_floating T>
-[[nodiscard]] inline constexpr quaternion<T>
-multiply(const quaternion<T> &a, const quaternion<T> &b) noexcept
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
+__multiply_scalar(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
   const T ax = a.x, ay = a.y, az = a.z, aw = a.w;
   const T bx = b.x, by = b.y, bz = b.z, bw = b.w;
   return quaternion<T>{ aw * bx + ax * bw + ay * bz - az * by, aw * by - ax * bz + ay * bw + az * bx, aw * bz + ax * by - ay * bx + az * bw,
                         aw * bw - ax * bx - ay * by - az * bz };
+}
+
+template <ieee754_floating T>
+[[nodiscard]] inline constexpr quaternion<T>
+multiply(const quaternion<T> &a, const quaternion<T> &b) noexcept
+{
+  if !consteval {
+#if defined(__AVX2__) && defined(__FMA__)
+    if constexpr ( sizeof(T) == 8 ) {
+      const __m256d av = simd::avx::loadu_f64(reinterpret_cast<const double *>(&a.x));     // {ax, ay, az, aw}
+      const __m256d bv = simd::avx::loadu_f64(reinterpret_cast<const double *>(&b.x));     // {bx, by, bz, bw}
+
+      const __m256d aw_v = simd::avx2::permute4x64_f64<0xFF>(av);     // broadcast aw   (binary 11_11_11_11)
+      const __m256d ax_v = simd::avx2::permute4x64_f64<0x00>(av);     // broadcast ax   (00_00_00_00)
+      const __m256d ay_v = simd::avx2::permute4x64_f64<0x55>(av);     // broadcast ay   (01_01_01_01)
+      const __m256d az_v = simd::avx2::permute4x64_f64<0xAA>(av);     // broadcast az   (10_10_10_10)
+
+      const __m256d b_wzyx = simd::avx2::permute4x64_f64<0x1B>(bv);     // {bw, bz, by, bx}  (00_01_10_11)
+      const __m256d b_zwxy = simd::avx2::permute4x64_f64<0x4E>(bv);     // {bz, bw, bx, by}  (01_00_11_10)
+      const __m256d b_yxwz = simd::avx2::permute4x64_f64<0xB1>(bv);     // {by, bx, bw, bz}  (10_11_00_01)
+
+      const __m256d sign_x = simd::avx::setr_f64(0.0, -0.0, 0.0, -0.0);     // (+,-,+,-)
+      const __m256d sign_y = simd::avx::setr_f64(0.0, 0.0, -0.0, -0.0);     // (+,+,-,-)
+      const __m256d sign_z = simd::avx::setr_f64(-0.0, 0.0, 0.0, -0.0);     // (-,+,+,-)
+
+      __m256d r = simd::avx::mul_f64(aw_v, bv);
+      r = simd::fma::fma_f64(ax_v, simd::avx::xor_f64(b_wzyx, sign_x), r);
+      r = simd::fma::fma_f64(ay_v, simd::avx::xor_f64(b_zwxy, sign_y), r);
+      r = simd::fma::fma_f64(az_v, simd::avx::xor_f64(b_yxwz, sign_z), r);
+
+      quaternion<T> out;
+      simd::avx::storeu_f64(reinterpret_cast<double *>(&out.x), r);
+      return out;
+    } else if constexpr ( sizeof(T) == 4 ) {
+      const __m128 av = simd::sse::loadu_f32(reinterpret_cast<const float *>(&a.x));     // {ax, ay, az, aw}
+      const __m128 bv = simd::sse::loadu_f32(reinterpret_cast<const float *>(&b.x));
+
+      const __m128 aw_v = simd::sse::shuffle_f32<0xFF>(av, av);     // broadcast aw
+      const __m128 ax_v = simd::sse::shuffle_f32<0x00>(av, av);     // broadcast ax
+      const __m128 ay_v = simd::sse::shuffle_f32<0x55>(av, av);
+      const __m128 az_v = simd::sse::shuffle_f32<0xAA>(av, av);
+
+      const __m128 b_wzyx = simd::sse::shuffle_f32<0x1B>(bv, bv);
+      const __m128 b_zwxy = simd::sse::shuffle_f32<0x4E>(bv, bv);
+      const __m128 b_yxwz = simd::sse::shuffle_f32<0xB1>(bv, bv);
+
+      const __m128 sign_x = simd::sse::setr_f32(0.0f, -0.0f, 0.0f, -0.0f);
+      const __m128 sign_y = simd::sse::setr_f32(0.0f, 0.0f, -0.0f, -0.0f);
+      const __m128 sign_z = simd::sse::setr_f32(-0.0f, 0.0f, 0.0f, -0.0f);
+
+      __m128 r = simd::sse::mul_f32(aw_v, bv);
+      r = simd::fma::fma_f32(ax_v, simd::sse::xor_f32(b_wzyx, sign_x), r);
+      r = simd::fma::fma_f32(ay_v, simd::sse::xor_f32(b_zwxy, sign_y), r);
+      r = simd::fma::fma_f32(az_v, simd::sse::xor_f32(b_yxwz, sign_z), r);
+
+      quaternion<T> out;
+      simd::sse::storeu_f32(reinterpret_cast<float *>(&out.x), r);
+      return out;
+    }
+#endif
+  }
+  return __multiply_scalar<T>(a, b);
 }
 
 template <ieee754_floating T>

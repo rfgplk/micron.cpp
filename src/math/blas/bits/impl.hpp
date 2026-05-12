@@ -18,6 +18,7 @@
 #include "../../matrix/pack.hpp"
 
 #if defined(__AVX2__) && defined(__FMA__)
+#include "../../../simd/aliases.hpp"
 #include "../../../simd/arch/types_amd64.hpp"
 #endif
 
@@ -59,8 +60,149 @@ fma_acc(T a, T b, T c) noexcept
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// gemv transpose panel-packed kernels
+// gemv no-transpose panel kernels
+// y[i] = beta*y[i] + alpha * sum_j A[i,j] * x[j]   for row-major A
 #if defined(__AVX2__) && defined(__FMA__)
+
+[[gnu::flatten, gnu::hot]] inline void
+gemv_n_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
+{
+  if ( beta == 0.0 ) {
+    const __m256d z = simd::avx::zero_f64();
+    usize i = 0;
+    for ( ; i + 4 <= m; i += 4 ) simd::avx::storeu_f64(y + i, z);
+    for ( ; i < m; ++i ) y[i] = 0.0;
+  } else if ( beta != 1.0 ) {
+    const __m256d vbeta = simd::avx::splat_f64(beta);
+    usize i = 0;
+    for ( ; i + 4 <= m; i += 4 ) simd::avx::storeu_f64(y + i, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(y + i)));
+    for ( ; i < m; ++i ) y[i] *= beta;
+  }
+
+  const __m256d valpha = simd::avx::splat_f64(alpha);
+  usize i = 0;
+  // 4-row dot-product fan-out: one x-load shared across 4 row-loads + 4 FMAs
+  for ( ; i + 4 <= m; i += 4 ) {
+    __m256d acc0 = simd::avx::zero_f64();
+    __m256d acc1 = simd::avx::zero_f64();
+    __m256d acc2 = simd::avx::zero_f64();
+    __m256d acc3 = simd::avx::zero_f64();
+    const double *r0 = A + ssize_t(i + 0) * rs_A;
+    const double *r1 = A + ssize_t(i + 1) * rs_A;
+    const double *r2 = A + ssize_t(i + 2) * rs_A;
+    const double *r3 = A + ssize_t(i + 3) * rs_A;
+    usize j = 0;
+    for ( ; j + 4 <= n; j += 4 ) {
+      const __m256d xv = simd::avx::loadu_f64(x + j);
+      acc0 = simd::fma::fma_f64(simd::avx::loadu_f64(r0 + j), xv, acc0);
+      acc1 = simd::fma::fma_f64(simd::avx::loadu_f64(r1 + j), xv, acc1);
+      acc2 = simd::fma::fma_f64(simd::avx::loadu_f64(r2 + j), xv, acc2);
+      acc3 = simd::fma::fma_f64(simd::avx::loadu_f64(r3 + j), xv, acc3);
+    }
+    const __m256d h01 = simd::avx::hadd_f64(acc0, acc1);
+    const __m256d h23 = simd::avx::hadd_f64(acc2, acc3);
+    const __m256d lo = simd::avx::permute2f128_f64<0x20>(h01, h23);
+    const __m256d hi = simd::avx::permute2f128_f64<0x31>(h01, h23);
+    __m256d sums = simd::avx::add_f64(lo, hi);
+
+    // j-tail (n%4)
+    if ( j < n ) {
+      alignas(32) double s[4];
+      simd::avx::store_f64(s, sums);
+      for ( usize jj = j; jj < n; ++jj ) {
+        const double xv = x[jj];
+        s[0] = math::fma<double>(r0[jj], xv, s[0]);
+        s[1] = math::fma<double>(r1[jj], xv, s[1]);
+        s[2] = math::fma<double>(r2[jj], xv, s[2]);
+        s[3] = math::fma<double>(r3[jj], xv, s[3]);
+      }
+      sums = simd::avx::load_f64(s);
+    }
+
+    const __m256d yv = simd::avx::loadu_f64(y + i);
+    simd::avx::storeu_f64(y + i, simd::fma::fma_f64(valpha, sums, yv));
+  }
+  // i-tail
+  for ( ; i < m; ++i ) {
+    __m256d acc = simd::avx::zero_f64();
+    const double *row = A + ssize_t(i) * rs_A;
+    usize j = 0;
+    for ( ; j + 4 <= n; j += 4 ) {
+      acc = simd::fma::fma_f64(simd::avx::loadu_f64(row + j), simd::avx::loadu_f64(x + j), acc);
+    }
+    const __m128d lo = simd::avx::cast_f64_to_lo128(acc);
+    const __m128d hi = simd::avx::extract_f128_f64<1>(acc);
+    const __m128d s2 = simd::sse::add_f64(lo, hi);
+    double tail = simd::sse::extract_low_f64(simd::sse::hadd_f64(s2, s2));
+    for ( ; j < n; ++j ) tail = math::fma<double>(row[j], x[j], tail);
+    y[i] = math::fma<double>(alpha, tail, y[i]);
+  }
+}
+
+[[gnu::flatten, gnu::hot]] inline void
+gemv_n_panel_avx2_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_A, const float *x, float beta, float *y) noexcept
+{
+  if ( beta == 0.0f ) {
+    const __m256 z = simd::avx::zero_f32();
+    usize i = 0;
+    for ( ; i + 8 <= m; i += 8 ) simd::avx::storeu_f32(y + i, z);
+    for ( ; i < m; ++i ) y[i] = 0.0f;
+  } else if ( beta != 1.0f ) {
+    const __m256 vbeta = simd::avx::splat_f32(beta);
+    usize i = 0;
+    for ( ; i + 8 <= m; i += 8 ) simd::avx::storeu_f32(y + i, simd::avx::mul_f32(vbeta, simd::avx::loadu_f32(y + i)));
+    for ( ; i < m; ++i ) y[i] *= beta;
+  }
+
+  usize i = 0;
+  for ( ; i + 4 <= m; i += 4 ) {
+    __m256 acc0 = simd::avx::zero_f32();
+    __m256 acc1 = simd::avx::zero_f32();
+    __m256 acc2 = simd::avx::zero_f32();
+    __m256 acc3 = simd::avx::zero_f32();
+    const float *r0 = A + ssize_t(i + 0) * rs_A;
+    const float *r1 = A + ssize_t(i + 1) * rs_A;
+    const float *r2 = A + ssize_t(i + 2) * rs_A;
+    const float *r3 = A + ssize_t(i + 3) * rs_A;
+    usize j = 0;
+    for ( ; j + 8 <= n; j += 8 ) {
+      const __m256 xv = simd::avx::loadu_f32(x + j);
+      acc0 = simd::fma::fma_f32(simd::avx::loadu_f32(r0 + j), xv, acc0);
+      acc1 = simd::fma::fma_f32(simd::avx::loadu_f32(r1 + j), xv, acc1);
+      acc2 = simd::fma::fma_f32(simd::avx::loadu_f32(r2 + j), xv, acc2);
+      acc3 = simd::fma::fma_f32(simd::avx::loadu_f32(r3 + j), xv, acc3);
+    }
+    auto reduce8 = [](__m256 v) -> float {
+      __m128 lo = simd::avx::cast_f32_to_lo128(v);
+      __m128 hi = simd::avx::extract_f128_f32<1>(v);
+      __m128 s4 = simd::sse::add_f32(lo, hi);
+      __m128 s2 = simd::sse::hadd_f32(s4, s4);
+      __m128 s1 = simd::sse::hadd_f32(s2, s2);
+      return simd::sse::extract_low_f32(s1);
+    };
+    float s0 = reduce8(acc0), s1 = reduce8(acc1);
+    float s2 = reduce8(acc2), s3 = reduce8(acc3);
+    for ( ; j < n; ++j ) {
+      const float xv = x[j];
+      s0 = math::fma<float>(r0[j], xv, s0);
+      s1 = math::fma<float>(r1[j], xv, s1);
+      s2 = math::fma<float>(r2[j], xv, s2);
+      s3 = math::fma<float>(r3[j], xv, s3);
+    }
+    y[i + 0] = math::fma<float>(alpha, s0, y[i + 0]);
+    y[i + 1] = math::fma<float>(alpha, s1, y[i + 1]);
+    y[i + 2] = math::fma<float>(alpha, s2, y[i + 2]);
+    y[i + 3] = math::fma<float>(alpha, s3, y[i + 3]);
+  }
+  for ( ; i < m; ++i ) {
+    float acc = 0.0f;
+    for ( usize j = 0; j < n; ++j ) acc = math::fma<float>(A[ssize_t(i) * rs_A + ssize_t(j)], x[j], acc);
+    y[i] = math::fma<float>(alpha, acc, y[i]);
+  }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// gemv transpose panel-packed kernels
 
 [[gnu::flatten]] inline void
 gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
@@ -70,49 +212,53 @@ gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t r
   alignas(32) double Ap[NB * MC];
 
   if ( beta == 0.0 ) {
-    const __m256d z = _mm256_setzero_pd();
+    const __m256d z = simd::avx::zero_f64();
     usize j = 0;
-    for ( ; j + 4 <= n; j += 4 ) _mm256_storeu_pd(y + j, z);
+    for ( ; j + 4 <= n; j += 4 ) simd::avx::storeu_f64(y + j, z);
     for ( ; j < n; ++j ) y[j] = 0.0;
   } else if ( beta != 1.0 ) {
-    const __m256d vbeta = _mm256_set1_pd(beta);
+    const __m256d vbeta = simd::avx::splat_f64(beta);
     usize j = 0;
-    for ( ; j + 4 <= n; j += 4 ) _mm256_storeu_pd(y + j, _mm256_mul_pd(vbeta, _mm256_loadu_pd(y + j)));
+    for ( ; j + 4 <= n; j += 4 ) simd::avx::storeu_f64(y + j, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(y + j)));
     for ( ; j < n; ++j ) y[j] *= beta;
   }
 
   usize j = 0;
   for ( ; j + NB <= n; j += NB ) {
-    __m256d y0 = _mm256_loadu_pd(y + j + 0);
-    __m256d y1 = _mm256_loadu_pd(y + j + 4);
-    __m256d y2 = _mm256_loadu_pd(y + j + 8);
-    __m256d y3 = _mm256_loadu_pd(y + j + 12);
+    __m256d y0 = simd::avx::loadu_f64(y + j + 0);
+    __m256d y1 = simd::avx::loadu_f64(y + j + 4);
+    __m256d y2 = simd::avx::loadu_f64(y + j + 8);
+    __m256d y3 = simd::avx::loadu_f64(y + j + 12);
 
     for ( usize ic = 0; ic < m; ic += MC ) {
       const usize mc = (m - ic < MC) ? (m - ic) : MC;
 
       for ( usize i = 0; i < mc; ++i ) {
         const double *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
-        _mm256_store_pd(Ap + i * NB + 0, _mm256_loadu_pd(src + 0));
-        _mm256_store_pd(Ap + i * NB + 4, _mm256_loadu_pd(src + 4));
-        _mm256_store_pd(Ap + i * NB + 8, _mm256_loadu_pd(src + 8));
-        _mm256_store_pd(Ap + i * NB + 12, _mm256_loadu_pd(src + 12));
+        // Prefetch the next row 8 ahead
+        if ( i + 8 < mc ) {
+          __builtin_prefetch(A + ssize_t(ic + i + 8) * rs_A + ssize_t(j), 0, 1);
+        }
+        simd::avx::store_f64(Ap + i * NB + 0, simd::avx::loadu_f64(src + 0));
+        simd::avx::store_f64(Ap + i * NB + 4, simd::avx::loadu_f64(src + 4));
+        simd::avx::store_f64(Ap + i * NB + 8, simd::avx::loadu_f64(src + 8));
+        simd::avx::store_f64(Ap + i * NB + 12, simd::avx::loadu_f64(src + 12));
       }
 
       for ( usize i = 0; i < mc; ++i ) {
-        const __m256d ax = _mm256_set1_pd(alpha * x[ic + i]);
+        const __m256d ax = simd::avx::splat_f64(alpha * x[ic + i]);
         const double *ap = Ap + i * NB;
-        y0 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 0), y0);
-        y1 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 4), y1);
-        y2 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 8), y2);
-        y3 = _mm256_fmadd_pd(ax, _mm256_load_pd(ap + 12), y3);
+        y0 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 0), y0);
+        y1 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 4), y1);
+        y2 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 8), y2);
+        y3 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 12), y3);
       }
     }
 
-    _mm256_storeu_pd(y + j + 0, y0);
-    _mm256_storeu_pd(y + j + 4, y1);
-    _mm256_storeu_pd(y + j + 8, y2);
-    _mm256_storeu_pd(y + j + 12, y3);
+    simd::avx::storeu_f64(y + j + 0, y0);
+    simd::avx::storeu_f64(y + j + 4, y1);
+    simd::avx::storeu_f64(y + j + 8, y2);
+    simd::avx::storeu_f64(y + j + 12, y3);
   }
 
   // tail
@@ -131,47 +277,47 @@ gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_
   alignas(32) float Ap[NB * MC];
 
   if ( beta == 0.0f ) {
-    const __m256 z = _mm256_setzero_ps();
+    const __m256 z = simd::avx::zero_f32();
     usize j = 0;
-    for ( ; j + 8 <= n; j += 8 ) _mm256_storeu_ps(y + j, z);
+    for ( ; j + 8 <= n; j += 8 ) simd::avx::storeu_f32(y + j, z);
     for ( ; j < n; ++j ) y[j] = 0.0f;
   } else if ( beta != 1.0f ) {
-    const __m256 vbeta = _mm256_set1_ps(beta);
+    const __m256 vbeta = simd::avx::splat_f32(beta);
     usize j = 0;
-    for ( ; j + 8 <= n; j += 8 ) _mm256_storeu_ps(y + j, _mm256_mul_ps(vbeta, _mm256_loadu_ps(y + j)));
+    for ( ; j + 8 <= n; j += 8 ) simd::avx::storeu_f32(y + j, simd::avx::mul_f32(vbeta, simd::avx::loadu_f32(y + j)));
     for ( ; j < n; ++j ) y[j] *= beta;
   }
 
   usize j = 0;
   for ( ; j + NB <= n; j += NB ) {
-    __m256 y0 = _mm256_loadu_ps(y + j + 0);
-    __m256 y1 = _mm256_loadu_ps(y + j + 8);
-    __m256 y2 = _mm256_loadu_ps(y + j + 16);
-    __m256 y3 = _mm256_loadu_ps(y + j + 24);
+    __m256 y0 = simd::avx::loadu_f32(y + j + 0);
+    __m256 y1 = simd::avx::loadu_f32(y + j + 8);
+    __m256 y2 = simd::avx::loadu_f32(y + j + 16);
+    __m256 y3 = simd::avx::loadu_f32(y + j + 24);
 
     for ( usize ic = 0; ic < m; ic += MC ) {
       const usize mc = (m - ic < MC) ? (m - ic) : MC;
       for ( usize i = 0; i < mc; ++i ) {
         const float *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
-        _mm256_store_ps(Ap + i * NB + 0, _mm256_loadu_ps(src + 0));
-        _mm256_store_ps(Ap + i * NB + 8, _mm256_loadu_ps(src + 8));
-        _mm256_store_ps(Ap + i * NB + 16, _mm256_loadu_ps(src + 16));
-        _mm256_store_ps(Ap + i * NB + 24, _mm256_loadu_ps(src + 24));
+        simd::avx::store_f32(Ap + i * NB + 0, simd::avx::loadu_f32(src + 0));
+        simd::avx::store_f32(Ap + i * NB + 8, simd::avx::loadu_f32(src + 8));
+        simd::avx::store_f32(Ap + i * NB + 16, simd::avx::loadu_f32(src + 16));
+        simd::avx::store_f32(Ap + i * NB + 24, simd::avx::loadu_f32(src + 24));
       }
       for ( usize i = 0; i < mc; ++i ) {
-        const __m256 ax = _mm256_set1_ps(alpha * x[ic + i]);
+        const __m256 ax = simd::avx::splat_f32(alpha * x[ic + i]);
         const float *ap = Ap + i * NB;
-        y0 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 0), y0);
-        y1 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 8), y1);
-        y2 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 16), y2);
-        y3 = _mm256_fmadd_ps(ax, _mm256_load_ps(ap + 24), y3);
+        y0 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 0), y0);
+        y1 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 8), y1);
+        y2 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 16), y2);
+        y3 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 24), y3);
       }
     }
 
-    _mm256_storeu_ps(y + j + 0, y0);
-    _mm256_storeu_ps(y + j + 8, y1);
-    _mm256_storeu_ps(y + j + 16, y2);
-    _mm256_storeu_ps(y + j + 24, y3);
+    simd::avx::storeu_f32(y + j + 0, y0);
+    simd::avx::storeu_f32(y + j + 8, y1);
+    simd::avx::storeu_f32(y + j + 16, y2);
+    simd::avx::storeu_f32(y + j + 24, y3);
   }
 
   for ( ; j < n; ++j ) {
@@ -195,42 +341,42 @@ gemv_t_panel_neon_f64(usize m, usize n, double alpha, const double *A, ssize_t r
   if ( beta == 0.0 ) {
     for ( usize j = 0; j < n; ++j ) y[j] = 0.0;
   } else if ( beta != 1.0 ) {
-    const float64x2_t vbeta = vdupq_n_f64(beta);
+    const float64x2_t vbeta = simd::neon::splat_f64(beta);
     usize j = 0;
-    for ( ; j + 2 <= n; j += 2 ) vst1q_f64(y + j, vmulq_f64(vbeta, vld1q_f64(y + j)));
+    for ( ; j + 2 <= n; j += 2 ) simd::neon::store_f64(y + j, simd::neon::mul(vbeta, simd::neon::load_f64(y + j)));
     for ( ; j < n; ++j ) y[j] *= beta;
   }
 
   usize j = 0;
   for ( ; j + NB <= n; j += NB ) {
-    float64x2_t y0 = vld1q_f64(y + j + 0);
-    float64x2_t y1 = vld1q_f64(y + j + 2);
-    float64x2_t y2 = vld1q_f64(y + j + 4);
-    float64x2_t y3 = vld1q_f64(y + j + 6);
+    float64x2_t y0 = simd::neon::load_f64(y + j + 0);
+    float64x2_t y1 = simd::neon::load_f64(y + j + 2);
+    float64x2_t y2 = simd::neon::load_f64(y + j + 4);
+    float64x2_t y3 = simd::neon::load_f64(y + j + 6);
 
     for ( usize ic = 0; ic < m; ic += MC ) {
       const usize mc = (m - ic < MC) ? (m - ic) : MC;
       for ( usize i = 0; i < mc; ++i ) {
         const double *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
-        vst1q_f64(Ap + i * NB + 0, vld1q_f64(src + 0));
-        vst1q_f64(Ap + i * NB + 2, vld1q_f64(src + 2));
-        vst1q_f64(Ap + i * NB + 4, vld1q_f64(src + 4));
-        vst1q_f64(Ap + i * NB + 6, vld1q_f64(src + 6));
+        simd::neon::store_f64(Ap + i * NB + 0, simd::neon::load_f64(src + 0));
+        simd::neon::store_f64(Ap + i * NB + 2, simd::neon::load_f64(src + 2));
+        simd::neon::store_f64(Ap + i * NB + 4, simd::neon::load_f64(src + 4));
+        simd::neon::store_f64(Ap + i * NB + 6, simd::neon::load_f64(src + 6));
       }
       for ( usize i = 0; i < mc; ++i ) {
-        const float64x2_t ax = vdupq_n_f64(alpha * x[ic + i]);
+        const float64x2_t ax = simd::neon::splat_f64(alpha * x[ic + i]);
         const double *ap = Ap + i * NB;
-        y0 = vfmaq_f64(y0, ax, vld1q_f64(ap + 0));
-        y1 = vfmaq_f64(y1, ax, vld1q_f64(ap + 2));
-        y2 = vfmaq_f64(y2, ax, vld1q_f64(ap + 4));
-        y3 = vfmaq_f64(y3, ax, vld1q_f64(ap + 6));
+        y0 = simd::neon::fma_f64(y0, ax, simd::neon::load_f64(ap + 0));
+        y1 = simd::neon::fma_f64(y1, ax, simd::neon::load_f64(ap + 2));
+        y2 = simd::neon::fma_f64(y2, ax, simd::neon::load_f64(ap + 4));
+        y3 = simd::neon::fma_f64(y3, ax, simd::neon::load_f64(ap + 6));
       }
     }
 
-    vst1q_f64(y + j + 0, y0);
-    vst1q_f64(y + j + 2, y1);
-    vst1q_f64(y + j + 4, y2);
-    vst1q_f64(y + j + 6, y3);
+    simd::neon::store_f64(y + j + 0, y0);
+    simd::neon::store_f64(y + j + 2, y1);
+    simd::neon::store_f64(y + j + 4, y2);
+    simd::neon::store_f64(y + j + 6, y3);
   }
 
   for ( ; j < n; ++j ) {
@@ -254,49 +400,49 @@ gemv_t_panel_neon_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_
   if ( beta == 0.0f ) {
     for ( usize j = 0; j < n; ++j ) y[j] = 0.0f;
   } else if ( beta != 1.0f ) {
-    const float32x4_t vbeta = vdupq_n_f32(beta);
+    const float32x4_t vbeta = simd::neon::splat_f32(beta);
     usize j = 0;
-    for ( ; j + 4 <= n; j += 4 ) vst1q_f32(y + j, vmulq_f32(vbeta, vld1q_f32(y + j)));
+    for ( ; j + 4 <= n; j += 4 ) simd::neon::store_f32(y + j, simd::neon::mul(vbeta, simd::neon::load_f32(y + j)));
     for ( ; j < n; ++j ) y[j] *= beta;
   }
 
   usize j = 0;
   for ( ; j + NB <= n; j += NB ) {
-    float32x4_t y0 = vld1q_f32(y + j + 0);
-    float32x4_t y1 = vld1q_f32(y + j + 4);
-    float32x4_t y2 = vld1q_f32(y + j + 8);
-    float32x4_t y3 = vld1q_f32(y + j + 12);
+    float32x4_t y0 = simd::neon::load_f32(y + j + 0);
+    float32x4_t y1 = simd::neon::load_f32(y + j + 4);
+    float32x4_t y2 = simd::neon::load_f32(y + j + 8);
+    float32x4_t y3 = simd::neon::load_f32(y + j + 12);
 
     for ( usize ic = 0; ic < m; ic += MC ) {
       const usize mc = (m - ic < MC) ? (m - ic) : MC;
       for ( usize i = 0; i < mc; ++i ) {
         const float *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
-        vst1q_f32(Ap + i * NB + 0, vld1q_f32(src + 0));
-        vst1q_f32(Ap + i * NB + 4, vld1q_f32(src + 4));
-        vst1q_f32(Ap + i * NB + 8, vld1q_f32(src + 8));
-        vst1q_f32(Ap + i * NB + 12, vld1q_f32(src + 12));
+        simd::neon::store_f32(Ap + i * NB + 0, simd::neon::load_f32(src + 0));
+        simd::neon::store_f32(Ap + i * NB + 4, simd::neon::load_f32(src + 4));
+        simd::neon::store_f32(Ap + i * NB + 8, simd::neon::load_f32(src + 8));
+        simd::neon::store_f32(Ap + i * NB + 12, simd::neon::load_f32(src + 12));
       }
       for ( usize i = 0; i < mc; ++i ) {
-        const float32x4_t ax = vdupq_n_f32(alpha * x[ic + i]);
+        const float32x4_t ax = simd::neon::splat_f32(alpha * x[ic + i]);
         const float *ap = Ap + i * NB;
 #if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
-        y0 = vfmaq_f32(y0, ax, vld1q_f32(ap + 0));
-        y1 = vfmaq_f32(y1, ax, vld1q_f32(ap + 4));
-        y2 = vfmaq_f32(y2, ax, vld1q_f32(ap + 8));
-        y3 = vfmaq_f32(y3, ax, vld1q_f32(ap + 12));
+        y0 = simd::neon::fma_f32(y0, ax, simd::neon::load_f32(ap + 0));
+        y1 = simd::neon::fma_f32(y1, ax, simd::neon::load_f32(ap + 4));
+        y2 = simd::neon::fma_f32(y2, ax, simd::neon::load_f32(ap + 8));
+        y3 = simd::neon::fma_f32(y3, ax, simd::neon::load_f32(ap + 12));
 #else
-        y0 = vmlaq_f32(y0, ax, vld1q_f32(ap + 0));
-        y1 = vmlaq_f32(y1, ax, vld1q_f32(ap + 4));
-        y2 = vmlaq_f32(y2, ax, vld1q_f32(ap + 8));
-        y3 = vmlaq_f32(y3, ax, vld1q_f32(ap + 12));
+        y0 = simd::neon::mla(y0, ax, simd::neon::load_f32(ap + 0));
+        y1 = simd::neon::mla(y1, ax, simd::neon::load_f32(ap + 4));
+        y2 = simd::neon::mla(y2, ax, simd::neon::load_f32(ap + 8));
+        y3 = simd::neon::mla(y3, ax, simd::neon::load_f32(ap + 12));
 #endif
       }
     }
 
-    vst1q_f32(y + j + 0, y0);
-    vst1q_f32(y + j + 4, y1);
-    vst1q_f32(y + j + 8, y2);
-    vst1q_f32(y + j + 12, y3);
+    simd::neon::store_f32(y + j + 0, y0);
+    simd::neon::store_f32(y + j + 4, y1);
+    simd::neon::store_f32(y + j + 8, y2);
+    simd::neon::store_f32(y + j + 12, y3);
   }
 
   for ( ; j < n; ++j ) {
@@ -315,35 +461,50 @@ template <typename T>
 gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
             ssize_t incy) noexcept
 {
-  // row-major A with tr=true would otherwise walk stride-ld columns of A
+  // row-major A panel kernels: tr-case uses axpy fan-out; no-trans uses
+  // dot-product fan-out across 4 consecutive rows.
   if !consteval {
-    if ( tr && cs_A == 1 && incx == 1 && incy == 1 ) {
+    if ( cs_A == 1 && incx == 1 && incy == 1 ) {
       if constexpr ( ieee754_floating<T> ) {
 #if defined(__AVX2__) && defined(__FMA__)
         if constexpr ( sizeof(T) == 8 ) {
-          gemv_t_panel_avx2_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
-                                double(beta), reinterpret_cast<double *>(y));
+          if ( tr ) {
+            gemv_t_panel_avx2_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
+                                  double(beta), reinterpret_cast<double *>(y));
+          } else {
+            gemv_n_panel_avx2_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
+                                  double(beta), reinterpret_cast<double *>(y));
+          }
           return;
         } else if constexpr ( sizeof(T) == 4 ) {
-          gemv_t_panel_avx2_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
-                                float(beta), reinterpret_cast<float *>(y));
+          if ( tr ) {
+            gemv_t_panel_avx2_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                  float(beta), reinterpret_cast<float *>(y));
+          } else {
+            gemv_n_panel_avx2_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                  float(beta), reinterpret_cast<float *>(y));
+          }
           return;
         }
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-        if constexpr ( sizeof(T) == 8 ) {
-          gemv_t_panel_neon_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
-                                double(beta), reinterpret_cast<double *>(y));
-          return;
-        } else if constexpr ( sizeof(T) == 4 ) {
-          gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
-                                float(beta), reinterpret_cast<float *>(y));
-          return;
+        if ( tr ) {
+          if constexpr ( sizeof(T) == 8 ) {
+            gemv_t_panel_neon_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
+                                  double(beta), reinterpret_cast<double *>(y));
+            return;
+          } else if constexpr ( sizeof(T) == 4 ) {
+            gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                  float(beta), reinterpret_cast<float *>(y));
+            return;
+          }
         }
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
-        if constexpr ( sizeof(T) == 4 ) {
-          gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
-                                float(beta), reinterpret_cast<float *>(y));
-          return;
+        if ( tr ) {
+          if constexpr ( sizeof(T) == 4 ) {
+            gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast<const float *>(A), rs_A, reinterpret_cast<const float *>(x),
+                                  float(beta), reinterpret_cast<float *>(y));
+            return;
+          }
         }
 #endif
       }
@@ -560,7 +721,7 @@ trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// small 4×8 AVX2 microkernel
+// small 4×8 AVX2 dgemm microkernel
 #if defined(__AVX2__) && defined(__FMA__)
 
 [[gnu::flatten]] inline void
@@ -568,20 +729,18 @@ gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssiz
                   ssize_t b_cs, double beta, double *C, ssize_t rs_C) noexcept
 {
   alignas(32) double Bp[8 * 1024];     // stack panel for one 8-col B strip
-  const __m256d valpha = _mm256_set1_pd(alpha);
+  const __m256d valpha = simd::avx::splat_f64(alpha);
   const bool beta_zero = (beta == 0.0);
   const bool beta_one = (beta == 1.0);
-  const __m256d vbeta = _mm256_set1_pd(beta);
+  const __m256d vbeta = simd::avx::splat_f64(beta);
 
   for ( usize j = 0; j + 8 <= n; j += 8 ) {
     // pack B[0:k, j:j+8] into Bp
-    // For NN (b_cs == 1) this is a contiguous copy
-    // for NT/TT (b_cs != 1) it pays one stride traversal up front
     if ( b_cs == 1 ) {
       for ( usize p = 0; p < k; ++p ) {
         const double *src = B + ssize_t(p) * b_rs + ssize_t(j);
-        _mm256_store_pd(Bp + p * 8 + 0, _mm256_loadu_pd(src + 0));
-        _mm256_store_pd(Bp + p * 8 + 4, _mm256_loadu_pd(src + 4));
+        simd::avx::store_f64(Bp + p * 8 + 0, simd::avx::loadu_f64(src + 0));
+        simd::avx::store_f64(Bp + p * 8 + 4, simd::avx::loadu_f64(src + 4));
       }
     } else {
       for ( usize p = 0; p < k; ++p ) {
@@ -603,57 +762,150 @@ gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssiz
       const double *a2p = A + ssize_t(i + 2) * a_rs;
       const double *a3p = A + ssize_t(i + 3) * a_rs;
 
-      __m256d c00 = _mm256_setzero_pd(), c01 = _mm256_setzero_pd();
-      __m256d c10 = _mm256_setzero_pd(), c11 = _mm256_setzero_pd();
-      __m256d c20 = _mm256_setzero_pd(), c21 = _mm256_setzero_pd();
-      __m256d c30 = _mm256_setzero_pd(), c31 = _mm256_setzero_pd();
+      __m256d c00 = simd::avx::zero_f64(), c01 = simd::avx::zero_f64();
+      __m256d c10 = simd::avx::zero_f64(), c11 = simd::avx::zero_f64();
+      __m256d c20 = simd::avx::zero_f64(), c21 = simd::avx::zero_f64();
+      __m256d c30 = simd::avx::zero_f64(), c31 = simd::avx::zero_f64();
       for ( usize p = 0; p < k; ++p ) {
-        const __m256d b0 = _mm256_load_pd(Bp + p * 8 + 0);
-        const __m256d b1 = _mm256_load_pd(Bp + p * 8 + 4);
-        const __m256d a0 = _mm256_set1_pd(a0p[ssize_t(p) * a_cs]);
-        const __m256d a1 = _mm256_set1_pd(a1p[ssize_t(p) * a_cs]);
-        c00 = _mm256_fmadd_pd(a0, b0, c00);
-        c01 = _mm256_fmadd_pd(a0, b1, c01);
-        c10 = _mm256_fmadd_pd(a1, b0, c10);
-        c11 = _mm256_fmadd_pd(a1, b1, c11);
-        const __m256d a2 = _mm256_set1_pd(a2p[ssize_t(p) * a_cs]);
-        const __m256d a3 = _mm256_set1_pd(a3p[ssize_t(p) * a_cs]);
-        c20 = _mm256_fmadd_pd(a2, b0, c20);
-        c21 = _mm256_fmadd_pd(a2, b1, c21);
-        c30 = _mm256_fmadd_pd(a3, b0, c30);
-        c31 = _mm256_fmadd_pd(a3, b1, c31);
+        const __m256d b0 = simd::avx::load_f64(Bp + p * 8 + 0);
+        const __m256d b1 = simd::avx::load_f64(Bp + p * 8 + 4);
+        const __m256d a0 = simd::avx::splat_f64(a0p[ssize_t(p) * a_cs]);
+        const __m256d a1 = simd::avx::splat_f64(a1p[ssize_t(p) * a_cs]);
+        c00 = simd::fma::fma_f64(a0, b0, c00);
+        c01 = simd::fma::fma_f64(a0, b1, c01);
+        c10 = simd::fma::fma_f64(a1, b0, c10);
+        c11 = simd::fma::fma_f64(a1, b1, c11);
+        const __m256d a2 = simd::avx::splat_f64(a2p[ssize_t(p) * a_cs]);
+        const __m256d a3 = simd::avx::splat_f64(a3p[ssize_t(p) * a_cs]);
+        c20 = simd::fma::fma_f64(a2, b0, c20);
+        c21 = simd::fma::fma_f64(a2, b1, c21);
+        c30 = simd::fma::fma_f64(a3, b0, c30);
+        c31 = simd::fma::fma_f64(a3, b1, c31);
       }
       double *r0 = C + ssize_t(i + 0) * rs_C + ssize_t(j);
       double *r1 = C + ssize_t(i + 1) * rs_C + ssize_t(j);
       double *r2 = C + ssize_t(i + 2) * rs_C + ssize_t(j);
       double *r3 = C + ssize_t(i + 3) * rs_C + ssize_t(j);
       if ( beta_zero ) {
-        _mm256_storeu_pd(r0 + 0, _mm256_mul_pd(valpha, c00));
-        _mm256_storeu_pd(r0 + 4, _mm256_mul_pd(valpha, c01));
-        _mm256_storeu_pd(r1 + 0, _mm256_mul_pd(valpha, c10));
-        _mm256_storeu_pd(r1 + 4, _mm256_mul_pd(valpha, c11));
-        _mm256_storeu_pd(r2 + 0, _mm256_mul_pd(valpha, c20));
-        _mm256_storeu_pd(r2 + 4, _mm256_mul_pd(valpha, c21));
-        _mm256_storeu_pd(r3 + 0, _mm256_mul_pd(valpha, c30));
-        _mm256_storeu_pd(r3 + 4, _mm256_mul_pd(valpha, c31));
+        simd::avx::storeu_f64(r0 + 0, simd::avx::mul_f64(valpha, c00));
+        simd::avx::storeu_f64(r0 + 4, simd::avx::mul_f64(valpha, c01));
+        simd::avx::storeu_f64(r1 + 0, simd::avx::mul_f64(valpha, c10));
+        simd::avx::storeu_f64(r1 + 4, simd::avx::mul_f64(valpha, c11));
+        simd::avx::storeu_f64(r2 + 0, simd::avx::mul_f64(valpha, c20));
+        simd::avx::storeu_f64(r2 + 4, simd::avx::mul_f64(valpha, c21));
+        simd::avx::storeu_f64(r3 + 0, simd::avx::mul_f64(valpha, c30));
+        simd::avx::storeu_f64(r3 + 4, simd::avx::mul_f64(valpha, c31));
       } else if ( beta_one ) {
-        _mm256_storeu_pd(r0 + 0, _mm256_fmadd_pd(valpha, c00, _mm256_loadu_pd(r0 + 0)));
-        _mm256_storeu_pd(r0 + 4, _mm256_fmadd_pd(valpha, c01, _mm256_loadu_pd(r0 + 4)));
-        _mm256_storeu_pd(r1 + 0, _mm256_fmadd_pd(valpha, c10, _mm256_loadu_pd(r1 + 0)));
-        _mm256_storeu_pd(r1 + 4, _mm256_fmadd_pd(valpha, c11, _mm256_loadu_pd(r1 + 4)));
-        _mm256_storeu_pd(r2 + 0, _mm256_fmadd_pd(valpha, c20, _mm256_loadu_pd(r2 + 0)));
-        _mm256_storeu_pd(r2 + 4, _mm256_fmadd_pd(valpha, c21, _mm256_loadu_pd(r2 + 4)));
-        _mm256_storeu_pd(r3 + 0, _mm256_fmadd_pd(valpha, c30, _mm256_loadu_pd(r3 + 0)));
-        _mm256_storeu_pd(r3 + 4, _mm256_fmadd_pd(valpha, c31, _mm256_loadu_pd(r3 + 4)));
+        simd::avx::storeu_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::loadu_f64(r0 + 0)));
+        simd::avx::storeu_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::loadu_f64(r0 + 4)));
+        simd::avx::storeu_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::loadu_f64(r1 + 0)));
+        simd::avx::storeu_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::loadu_f64(r1 + 4)));
+        simd::avx::storeu_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::loadu_f64(r2 + 0)));
+        simd::avx::storeu_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::loadu_f64(r2 + 4)));
+        simd::avx::storeu_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::loadu_f64(r3 + 0)));
+        simd::avx::storeu_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::loadu_f64(r3 + 4)));
       } else {
-        _mm256_storeu_pd(r0 + 0, _mm256_fmadd_pd(valpha, c00, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r0 + 0))));
-        _mm256_storeu_pd(r0 + 4, _mm256_fmadd_pd(valpha, c01, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r0 + 4))));
-        _mm256_storeu_pd(r1 + 0, _mm256_fmadd_pd(valpha, c10, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r1 + 0))));
-        _mm256_storeu_pd(r1 + 4, _mm256_fmadd_pd(valpha, c11, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r1 + 4))));
-        _mm256_storeu_pd(r2 + 0, _mm256_fmadd_pd(valpha, c20, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r2 + 0))));
-        _mm256_storeu_pd(r2 + 4, _mm256_fmadd_pd(valpha, c21, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r2 + 4))));
-        _mm256_storeu_pd(r3 + 0, _mm256_fmadd_pd(valpha, c30, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r3 + 0))));
-        _mm256_storeu_pd(r3 + 4, _mm256_fmadd_pd(valpha, c31, _mm256_mul_pd(vbeta, _mm256_loadu_pd(r3 + 4))));
+        simd::avx::storeu_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r0 + 0))));
+        simd::avx::storeu_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r0 + 4))));
+        simd::avx::storeu_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r1 + 0))));
+        simd::avx::storeu_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r1 + 4))));
+        simd::avx::storeu_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r2 + 0))));
+        simd::avx::storeu_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r2 + 4))));
+        simd::avx::storeu_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r3 + 0))));
+        simd::avx::storeu_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r3 + 4))));
+      }
+    }
+  }
+}
+
+[[gnu::flatten]] inline void
+gemm_4x8_avx2_f64_aligned(usize m, usize n, usize k, double alpha, const double *A, ssize_t a_rs, ssize_t a_cs, const double *B,
+                          ssize_t b_rs, ssize_t b_cs, double beta, double *C, ssize_t rs_C) noexcept
+{
+  alignas(32) double Bp[8 * 1024];
+  const __m256d valpha = simd::avx::splat_f64(alpha);
+  const bool beta_zero = (beta == 0.0);
+  const bool beta_one = (beta == 1.0);
+  const __m256d vbeta = simd::avx::splat_f64(beta);
+
+  for ( usize j = 0; j + 8 <= n; j += 8 ) {
+    if ( b_cs == 1 ) {
+      for ( usize p = 0; p < k; ++p ) {
+        const double *src = B + ssize_t(p) * b_rs + ssize_t(j);
+        simd::avx::store_f64(Bp + p * 8 + 0, simd::avx::loadu_f64(src + 0));
+        simd::avx::store_f64(Bp + p * 8 + 4, simd::avx::loadu_f64(src + 4));
+      }
+    } else {
+      for ( usize p = 0; p < k; ++p ) {
+        const double *base = B + ssize_t(p) * b_rs + ssize_t(j) * b_cs;
+        Bp[p * 8 + 0] = base[0 * b_cs];
+        Bp[p * 8 + 1] = base[1 * b_cs];
+        Bp[p * 8 + 2] = base[2 * b_cs];
+        Bp[p * 8 + 3] = base[3 * b_cs];
+        Bp[p * 8 + 4] = base[4 * b_cs];
+        Bp[p * 8 + 5] = base[5 * b_cs];
+        Bp[p * 8 + 6] = base[6 * b_cs];
+        Bp[p * 8 + 7] = base[7 * b_cs];
+      }
+    }
+
+    for ( usize i = 0; i + 4 <= m; i += 4 ) {
+      const double *a0p = A + ssize_t(i + 0) * a_rs;
+      const double *a1p = A + ssize_t(i + 1) * a_rs;
+      const double *a2p = A + ssize_t(i + 2) * a_rs;
+      const double *a3p = A + ssize_t(i + 3) * a_rs;
+
+      __m256d c00 = simd::avx::zero_f64(), c01 = simd::avx::zero_f64();
+      __m256d c10 = simd::avx::zero_f64(), c11 = simd::avx::zero_f64();
+      __m256d c20 = simd::avx::zero_f64(), c21 = simd::avx::zero_f64();
+      __m256d c30 = simd::avx::zero_f64(), c31 = simd::avx::zero_f64();
+      for ( usize p = 0; p < k; ++p ) {
+        const __m256d b0 = simd::avx::load_f64(Bp + p * 8 + 0);
+        const __m256d b1 = simd::avx::load_f64(Bp + p * 8 + 4);
+        const __m256d a0 = simd::avx::splat_f64(a0p[ssize_t(p) * a_cs]);
+        const __m256d a1 = simd::avx::splat_f64(a1p[ssize_t(p) * a_cs]);
+        c00 = simd::fma::fma_f64(a0, b0, c00);
+        c01 = simd::fma::fma_f64(a0, b1, c01);
+        c10 = simd::fma::fma_f64(a1, b0, c10);
+        c11 = simd::fma::fma_f64(a1, b1, c11);
+        const __m256d a2 = simd::avx::splat_f64(a2p[ssize_t(p) * a_cs]);
+        const __m256d a3 = simd::avx::splat_f64(a3p[ssize_t(p) * a_cs]);
+        c20 = simd::fma::fma_f64(a2, b0, c20);
+        c21 = simd::fma::fma_f64(a2, b1, c21);
+        c30 = simd::fma::fma_f64(a3, b0, c30);
+        c31 = simd::fma::fma_f64(a3, b1, c31);
+      }
+      double *r0 = C + ssize_t(i + 0) * rs_C + ssize_t(j);
+      double *r1 = C + ssize_t(i + 1) * rs_C + ssize_t(j);
+      double *r2 = C + ssize_t(i + 2) * rs_C + ssize_t(j);
+      double *r3 = C + ssize_t(i + 3) * rs_C + ssize_t(j);
+      if ( beta_zero ) {
+        simd::avx::store_f64(r0 + 0, simd::avx::mul_f64(valpha, c00));
+        simd::avx::store_f64(r0 + 4, simd::avx::mul_f64(valpha, c01));
+        simd::avx::store_f64(r1 + 0, simd::avx::mul_f64(valpha, c10));
+        simd::avx::store_f64(r1 + 4, simd::avx::mul_f64(valpha, c11));
+        simd::avx::store_f64(r2 + 0, simd::avx::mul_f64(valpha, c20));
+        simd::avx::store_f64(r2 + 4, simd::avx::mul_f64(valpha, c21));
+        simd::avx::store_f64(r3 + 0, simd::avx::mul_f64(valpha, c30));
+        simd::avx::store_f64(r3 + 4, simd::avx::mul_f64(valpha, c31));
+      } else if ( beta_one ) {
+        simd::avx::store_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::load_f64(r0 + 0)));
+        simd::avx::store_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::load_f64(r0 + 4)));
+        simd::avx::store_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::load_f64(r1 + 0)));
+        simd::avx::store_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::load_f64(r1 + 4)));
+        simd::avx::store_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::load_f64(r2 + 0)));
+        simd::avx::store_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::load_f64(r2 + 4)));
+        simd::avx::store_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::load_f64(r3 + 0)));
+        simd::avx::store_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::load_f64(r3 + 4)));
+      } else {
+        simd::avx::store_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r0 + 0))));
+        simd::avx::store_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r0 + 4))));
+        simd::avx::store_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r1 + 0))));
+        simd::avx::store_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r1 + 4))));
+        simd::avx::store_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r2 + 0))));
+        simd::avx::store_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r2 + 4))));
+        simd::avx::store_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r3 + 0))));
+        simd::avx::store_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r3 + 4))));
       }
     }
   }
@@ -676,10 +928,19 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
   const bool beta_zero = (beta == T(0));
   const bool beta_one = (beta == T(1));
 
+  // Fast path for small dgemm: inline 4x8 kernel with no panel packing. The
+  // kernel reads A via splat_f64(a*p[p*a_cs]). When a_cs==1 (NN/NT for
+  // row-major), K-stepping is contig and the kernel is the win up to ~256^3
+  // flops. When a_cs!=1 (trA cases — TN/TT for row-major), K-steps stride
+  // through different cache lines; the blocked path's panel-packed A reads
+  // pay off above ~64^3 flops, so we cap inline 4x8 at that smaller threshold
+  // for the strided case.
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
-      if ( cs_C == 1 && (m % 4u) == 0 && (n % 8u) == 0 && k > 0 && k <= 1024 ) {
+      const u64 nflops = u64(m) * u64(n) * u64(k);
+      const bool size_ok = (a_cs == 1) ? (nflops < (256ull * 256ull * 256ull)) : (nflops < (64ull * 64ull * 64ull));
+      if ( size_ok && cs_C == 1 && (m % 4u) == 0 && (n % 8u) == 0 && k > 0 && k <= 1024 ) {
         gemm_4x8_avx2_f64(m, n, k, double(alpha), reinterpret_cast<const double *>(A), a_rs, a_cs, reinterpret_cast<const double *>(B),
                           b_rs, b_cs, double(beta), reinterpret_cast<double *>(C), rs_C);
         return;
@@ -688,7 +949,7 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
   }
 #endif
 
-  // BLIS-style blocked path for anything the inline kernel can't take
+  // packed/blocked path for everything the inline kernel can't take or for problems large enough that pack overhead amortizes
   if !consteval {
     if ( micron::math::matrix::pack::gemm_should_block_for_layout<T>(m, n, k, b_cs, cs_C) ) {
       micron::math::matrix::pack::gemm_blocked<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
@@ -696,7 +957,7 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
     }
   }
 
-  // scalar fallback path
+  // scalar fallback path (very small problems and consteval)
   for ( usize i = 0; i < m; ++i ) {
     T *c_row = C + ssize_t(i) * rs_C;
     const T *a_row = A + ssize_t(i) * a_rs;
@@ -745,6 +1006,84 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
       }
     }
   }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// gemm_kernel_aligned
+template <typename T>
+[[gnu::flatten]] inline constexpr void
+gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                    ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+
+#if defined(__AVX2__) && defined(__FMA__)
+  if !consteval {
+    if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
+      // Same a_cs-dependent threshold as gemm_kernel: inline 4x8 wins up to
+      // ~256^3 when K is contig (a_cs==1), only up to ~64^3 for trA cases.
+      const u64 nflops = u64(m) * u64(n) * u64(k);
+      const bool size_ok = (a_cs == 1) ? (nflops < (256ull * 256ull * 256ull)) : (nflops < (64ull * 64ull * 64ull));
+      if ( size_ok && cs_C == 1 && (m % 4u) == 0 && (n % 8u) == 0 && k > 0 && k <= 1024 ) {
+        gemm_4x8_avx2_f64_aligned(m, n, k, double(alpha), reinterpret_cast<const double *>(A), a_rs, a_cs,
+                                  reinterpret_cast<const double *>(B), b_rs, b_cs, double(beta), reinterpret_cast<double *>(C), rs_C);
+        return;
+      }
+    }
+  }
+#endif
+
+  if !consteval {
+    if ( micron::math::matrix::pack::gemm_should_block_for_layout<T>(m, n, k, b_cs, cs_C) ) {
+      micron::math::matrix::pack::gemm_blocked_aligned<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+      return;
+    }
+  }
+
+  // Fall back to the unaligned dispatch — handles edge cases / tiny sizes.
+  gemm_kernel<T>(trA, trB, m, n, k, alpha, A, rs_A, cs_A, B, rs_B, cs_B, beta, C, rs_C, cs_C);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// gemm_kernel_aligned experiments — route directly to the experimental blocked
+// drivers; no small-kernel fast path so the new microkernels see all problem sizes.
+template <typename T>
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+  micron::math::matrix::pack::gemm_blocked_aligned_exp_a<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+}
+
+template <typename T>
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+  micron::math::matrix::pack::gemm_blocked_aligned_exp_b<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+}
+
+template <typename T>
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+  micron::math::matrix::pack::gemm_blocked_aligned_exp_c<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

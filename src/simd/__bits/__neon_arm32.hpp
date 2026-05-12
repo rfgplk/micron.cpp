@@ -1108,6 +1108,18 @@ vrsqrtsq_f32(float32x4_t a, float32x4_t b) noexcept
   return r;
 }
 
+// emulate
+__inline_g float32x4_t
+vsqrtq_f32(float32x4_t v) noexcept
+{
+  float a0 = v[0], a1 = v[1], a2 = v[2], a3 = v[3];
+  __asm__("vsqrt.f32 %0, %0" : "+t"(a0));
+  __asm__("vsqrt.f32 %0, %0" : "+t"(a1));
+  __asm__("vsqrt.f32 %0, %0" : "+t"(a2));
+  __asm__("vsqrt.f32 %0, %0" : "+t"(a3));
+  return float32x4_t{ a0, a1, a2, a3 };
+}
+
 #define __mc_vcmpq_batch(NAME, OP)                                                                                                         \
   __inline_g uint8x16_t NAME##q_s8(int8x16_t a, int8x16_t b) noexcept { return (uint8x16_t)(a OP b); }                                     \
   __inline_g uint16x8_t NAME##q_s16(int16x8_t a, int16x8_t b) noexcept { return (uint16x8_t)(a OP b); }                                    \

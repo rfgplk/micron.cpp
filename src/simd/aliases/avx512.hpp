@@ -20,6 +20,7 @@ namespace avx512
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #pragma GCC push_options
 #pragma GCC target("avx512f,avx512bw,avx512dq,avx512vl")
@@ -1044,6 +1045,120 @@ __inline_avx512 __m256i
 mul_lo_i64_v256(__m256i a, __m256i b) noexcept
 {
   return _mm256_mullo_epi64(a, b);
+}
+
+__inline_avx512 __m512
+abs_f32(__m512 a) noexcept
+{
+  return _mm512_abs_ps(a);
+}
+
+__inline_avx512 __m512d
+abs_f64(__m512d a) noexcept
+{
+  return _mm512_abs_pd(a);
+}
+
+__inline_avx512 __m512
+floor_f32(__m512 a) noexcept
+{
+  return _mm512_floor_ps(a);
+}
+
+__inline_avx512 __m512d
+floor_f64(__m512d a) noexcept
+{
+  return _mm512_floor_pd(a);
+}
+
+__inline_avx512 __m512
+ceil_f32(__m512 a) noexcept
+{
+  return _mm512_ceil_ps(a);
+}
+
+__inline_avx512 __m512d
+ceil_f64(__m512d a) noexcept
+{
+  return _mm512_ceil_pd(a);
+}
+
+template <int IMM>
+__inline_avx512 __m512
+roundscale_f32(__m512 a) noexcept
+{
+  return _mm512_roundscale_ps(a, IMM);
+}
+
+template <int IMM>
+__inline_avx512 __m512d
+roundscale_f64(__m512d a) noexcept
+{
+  return _mm512_roundscale_pd(a, IMM);
+}
+
+__inline_avx512 __m512
+rsqrt14_f32(__m512 a) noexcept
+{
+  return _mm512_rsqrt14_ps(a);
+}
+
+__inline_avx512 __m512d
+rsqrt14_f64(__m512d a) noexcept
+{
+  return _mm512_rsqrt14_pd(a);
+}
+
+__inline_avx512 __m512
+rcp14_f32(__m512 a) noexcept
+{
+  return _mm512_rcp14_ps(a);
+}
+
+__inline_avx512 __m512d
+rcp14_f64(__m512d a) noexcept
+{
+  return _mm512_rcp14_pd(a);
+}
+
+__inline_avx512 __m512i
+convert_f64_to_i64(__m512d a) noexcept
+{
+  return _mm512_cvtpd_epi64(a);
+}
+
+__inline_avx512 __m512d
+convert_i64_to_f64(__m512i a) noexcept
+{
+  return _mm512_cvtepi64_pd(a);
+}
+
+template <int SCALE>
+__inline_avx512 __m512
+gather_f32(__m512i idx, const float *base) noexcept
+{
+  return _mm512_i32gather_ps(idx, base, SCALE);
+}
+
+template <int SCALE>
+__inline_avx512 __m512d
+gather_f64(__m512i idx, const double *base) noexcept
+{
+  return _mm512_i64gather_pd(idx, base, SCALE);
+}
+
+template <int SCALE>
+__inline_avx512 __m512i
+gather_i32(__m512i idx, const int *base) noexcept
+{
+  return _mm512_i32gather_epi32(idx, base, SCALE);
+}
+
+template <int SCALE>
+__inline_avx512 __m512i
+gather_i64(__m512i idx, const long long *base) noexcept
+{
+  return _mm512_i64gather_epi64(idx, base, SCALE);
 }
 
 #undef __inline_avx512

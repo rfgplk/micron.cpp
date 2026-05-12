@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../concepts.hpp"
+#include "../simd/aliases.hpp"
 #include "../simd/intrin.hpp"
 #include "../simd/types.hpp"
 #include "../type_traits.hpp"
@@ -118,9 +119,9 @@ inline float
 fsqrt_simd(const float x)
 {
 #if defined(__micron_arch_x86_any)
-  return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
+  return simd::sse::extract_low_f32(simd::sse::sqrt_scalar_f32(simd::sse::set_scalar_f32(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+  return simd::neon::get_lane_f32<0>(simd::neon::sqrt(simd::neon::splat_f32(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   return float(hw::sqrt_ss(f32(x)));
 #else
@@ -132,9 +133,9 @@ inline float
 ss_sqrt(const float x)
 {
 #if defined(__micron_arch_x86_any)
-  return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
+  return simd::sse::extract_low_f32(simd::sse::sqrt_scalar_f32(simd::sse::set_scalar_f32(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+  return simd::neon::get_lane_f32<0>(simd::neon::sqrt(simd::neon::splat_f32(x)));
 #elif defined(__micron_arch_arm32)
   return float(hw::sqrt_ss(f32(x)));
 #else
@@ -146,11 +147,11 @@ inline float
 ss_rsqrt(const float x)
 {
 #if defined(__micron_arch_x86_any)
-  return 1.0f / _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
+  return 1.0f / simd::sse::extract_low_f32(simd::sse::rsqrt_scalar_f32(simd::sse::set_scalar_f32(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return 1.0f / vgetq_lane_f32(vsqrtq_f32(vdupq_n_f32(x)), 0);
+  return 1.0f / simd::neon::get_lane_f32<0>(simd::neon::sqrt(simd::neon::splat_f32(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
-  return vgetq_lane_f32(vrsqrteq_f32(vdupq_n_f32(x)), 0);
+  return simd::neon::get_lane_f32<0>(simd::neon::rsqrt_est(simd::neon::splat_f32(x)));
 #else
   return 1.0f / float(hw::sqrt_ss(f32(x)));
 #endif
@@ -160,9 +161,9 @@ inline double
 sd_sqrt(const double x)
 {
 #if defined(__micron_arch_x86_any)
-  return _mm_cvtsd_f64(_mm_sqrt_sd(_mm_setzero_pd(), _mm_set_sd(x)));
+  return simd::sse::extract_low_f64(simd::sse::sqrt_sd(simd::sse::zero_f64(), simd::sse::set_scalar_f64(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vgetq_lane_f64(vsqrtq_f64(vdupq_n_f64(x)), 0);
+  return simd::neon::get_lane_f64<0>(simd::neon::sqrt(simd::neon::splat_f64(x)));
 #elif defined(__micron_arch_arm32)
   return double(hw::sqrt_sd(f64(x)));
 #else
@@ -174,9 +175,9 @@ inline double
 sd_rsqrt(const double x)
 {
 #if defined(__micron_arch_x86_any)
-  return 1.0 / _mm_cvtsd_f64(_mm_sqrt_sd(_mm_setzero_pd(), _mm_set_sd(x)));
+  return 1.0 / simd::sse::extract_low_f64(simd::sse::sqrt_sd(simd::sse::zero_f64(), simd::sse::set_scalar_f64(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return 1.0 / vgetq_lane_f64(vsqrtq_f64(vdupq_n_f64(x)), 0);
+  return 1.0 / simd::neon::get_lane_f64<0>(simd::neon::sqrt(simd::neon::splat_f64(x)));
 #elif defined(__micron_arch_arm32)
   return 1.0 / double(hw::sqrt_sd(f64(x)));
 #else
@@ -188,34 +189,34 @@ sd_rsqrt(const double x)
 __attribute__((always_inline)) inline simd::f128
 vsqrt(simd::f128 v) noexcept
 {
-  return _mm_sqrt_ps(v);
+  return simd::sse::sqrt_f32(v);
 }
 
 __attribute__((always_inline)) inline simd::d128
 vsqrt(simd::d128 v) noexcept
 {
-  return _mm_sqrt_pd(v);
+  return simd::sse::sqrt_f64(v);
 }
 
 __attribute__((always_inline)) inline simd::f128
 vrsqrt_approx(simd::f128 v) noexcept
 {
-  return _mm_rsqrt_ps(v);
+  return simd::sse::rsqrt_f32(v);
 }
 #elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 __attribute__((always_inline)) inline simd::f128
 vsqrt(simd::f128 v) noexcept
 {
 #if defined(__micron_arch_arm64)
-  return vsqrtq_f32(v);
+  return simd::neon::sqrt(v);
 #else
   float tmp[4];
-  vst1q_f32(tmp, v);
+  simd::neon::store_f32(tmp, v);
   tmp[0] = float(hw::sqrt_ss(f32(tmp[0])));
   tmp[1] = float(hw::sqrt_ss(f32(tmp[1])));
   tmp[2] = float(hw::sqrt_ss(f32(tmp[2])));
   tmp[3] = float(hw::sqrt_ss(f32(tmp[3])));
-  return vld1q_f32(tmp);
+  return simd::neon::load_f32(tmp);
 #endif
 }
 
@@ -223,14 +224,14 @@ vsqrt(simd::f128 v) noexcept
 __attribute__((always_inline)) inline simd::d128
 vsqrt(simd::d128 v) noexcept
 {
-  return vsqrtq_f64(v);
+  return simd::neon::sqrt(v);
 }
 #endif
 
 __attribute__((always_inline)) inline simd::f128
 vrsqrt_approx(simd::f128 v) noexcept
 {
-  return vrsqrteq_f32(v);
+  return simd::neon::rsqrt_est(v);
 }
 #endif
 
@@ -238,19 +239,19 @@ vrsqrt_approx(simd::f128 v) noexcept
 __attribute__((always_inline)) inline simd::f256
 vsqrt(simd::f256 v) noexcept
 {
-  return _mm256_sqrt_ps(v);
+  return simd::avx::sqrt_f32(v);
 }
 
 __attribute__((always_inline)) inline simd::d256
 vsqrt(simd::d256 v) noexcept
 {
-  return _mm256_sqrt_pd(v);
+  return simd::avx::sqrt_f64(v);
 }
 
 __attribute__((always_inline)) inline simd::f256
 vrsqrt_approx(simd::f256 v) noexcept
 {
-  return _mm256_rsqrt_ps(v);
+  return simd::avx::rsqrt_f32(v);
 }
 #endif
 
@@ -258,19 +259,19 @@ vrsqrt_approx(simd::f256 v) noexcept
 __attribute__((always_inline)) inline simd::f512
 vsqrt(simd::f512 v) noexcept
 {
-  return _mm512_sqrt_ps(v);
+  return simd::avx512::sqrt_f32(v);
 }
 
 __attribute__((always_inline)) inline simd::d512
 vsqrt(simd::d512 v) noexcept
 {
-  return _mm512_sqrt_pd(v);
+  return simd::avx512::sqrt_f64(v);
 }
 
 __attribute__((always_inline)) inline simd::f512
 vrsqrt_approx(simd::f512 v) noexcept
 {
-  return _mm512_rsqrt14_ps(v);
+  return simd::avx512::rsqrt14_f32(v);
 }
 #endif
 

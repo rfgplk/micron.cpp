@@ -950,6 +950,102 @@ _knot_mask8(__mmask8 a) noexcept
   return ~a;
 }
 
+__inline_g __m512
+_mm512_abs_ps(__m512 a) noexcept
+{
+  return _mm512_andnot_ps(_mm512_set1_ps(-0.0f), a);
+}
+
+__inline_g __m512d
+_mm512_abs_pd(__m512d a) noexcept
+{
+  return _mm512_andnot_pd(_mm512_set1_pd(-0.0), a);
+}
+
+__inline_g __m512
+_mm512_floor_ps(__m512 a) noexcept
+{
+  return (__m512)__builtin_ia32_rndscaleps_mask((__v16sf)a, 0x01 | 0x00, (__v16sf)_mm512_setzero_ps(), (__mmask16)-1, 4);
+}
+
+__inline_g __m512d
+_mm512_floor_pd(__m512d a) noexcept
+{
+  return (__m512d)__builtin_ia32_rndscalepd_mask((__v8df)a, 0x01 | 0x00, (__v8df)_mm512_setzero_pd(), (__mmask8)-1, 4);
+}
+
+__inline_g __m512
+_mm512_ceil_ps(__m512 a) noexcept
+{
+  return (__m512)__builtin_ia32_rndscaleps_mask((__v16sf)a, 0x02 | 0x00, (__v16sf)_mm512_setzero_ps(), (__mmask16)-1, 4);
+}
+
+__inline_g __m512d
+_mm512_ceil_pd(__m512d a) noexcept
+{
+  return (__m512d)__builtin_ia32_rndscalepd_mask((__v8df)a, 0x02 | 0x00, (__v8df)_mm512_setzero_pd(), (__mmask8)-1, 4);
+}
+
+#define _mm512_roundscale_ps(A, B)                                                                                                         \
+  ((__m512)__builtin_ia32_rndscaleps_mask((__v16sf)(__m512)(A), (int)(B), (__v16sf)::micron::simd::__bits::_mm512_setzero_ps(),            \
+                                          (__mmask16)(-1), 4))
+
+#define _mm512_roundscale_pd(A, B)                                                                                                         \
+  ((__m512d)__builtin_ia32_rndscalepd_mask((__v8df)(__m512d)(A), (int)(B), (__v8df)::micron::simd::__bits::_mm512_setzero_pd(),            \
+                                           (__mmask8)(-1), 4))
+
+__inline_g __m512
+_mm512_rsqrt14_ps(__m512 a) noexcept
+{
+  return (__m512)__builtin_ia32_rsqrt14ps512_mask((__v16sf)a, (__v16sf)_mm512_setzero_ps(), (__mmask16)-1);
+}
+
+__inline_g __m512d
+_mm512_rsqrt14_pd(__m512d a) noexcept
+{
+  return (__m512d)__builtin_ia32_rsqrt14pd512_mask((__v8df)a, (__v8df)_mm512_setzero_pd(), (__mmask8)-1);
+}
+
+__inline_g __m512
+_mm512_rcp14_ps(__m512 a) noexcept
+{
+  return (__m512)__builtin_ia32_rcp14ps512_mask((__v16sf)a, (__v16sf)_mm512_setzero_ps(), (__mmask16)-1);
+}
+
+__inline_g __m512d
+_mm512_rcp14_pd(__m512d a) noexcept
+{
+  return (__m512d)__builtin_ia32_rcp14pd512_mask((__v8df)a, (__v8df)_mm512_setzero_pd(), (__mmask8)-1);
+}
+
+__inline_g __m512i
+_mm512_cvtpd_epi64(__m512d a) noexcept
+{
+  return (__m512i)__builtin_ia32_cvtpd2qq512_mask((__v8df)a, (__v8di)_mm512_setzero_si512(), (__mmask8)-1, 4);
+}
+
+__inline_g __m512d
+_mm512_cvtepi64_pd(__m512i a) noexcept
+{
+  return (__m512d)__builtin_ia32_cvtqq2pd512_mask((__v8di)a, (__v8df)_mm512_setzero_pd(), (__mmask8)-1, 4);
+}
+
+#define _mm512_i32gather_ps(INDEX, ADDR, SCALE)                                                                                            \
+  ((__m512)__builtin_ia32_gathersiv16sf((__v16sf)::micron::simd::__bits::_mm512_setzero_ps(), (void const *)(ADDR),                        \
+                                        (__v16si)(__m512i)(INDEX), (__mmask16)0xFFFF, (int)(SCALE)))
+
+#define _mm512_i64gather_pd(INDEX, ADDR, SCALE)                                                                                            \
+  ((__m512d)__builtin_ia32_gatherdiv8df((__v8df)::micron::simd::__bits::_mm512_setzero_pd(), (void const *)(ADDR),                         \
+                                        (__v8di)(__m512i)(INDEX), (__mmask8)0xFF, (int)(SCALE)))
+
+#define _mm512_i32gather_epi32(INDEX, ADDR, SCALE)                                                                                         \
+  ((__m512i)__builtin_ia32_gathersiv16si((__v16si)::micron::simd::__bits::_mm512_setzero_si512(), (void const *)(ADDR),                    \
+                                         (__v16si)(__m512i)(INDEX), (__mmask16)0xFFFF, (int)(SCALE)))
+
+#define _mm512_i64gather_epi64(INDEX, ADDR, SCALE)                                                                                         \
+  ((__m512i)__builtin_ia32_gatherdiv8di((__v8di)::micron::simd::__bits::_mm512_setzero_si512(), (void const *)(ADDR),                      \
+                                        (__v8di)(__m512i)(INDEX), (__mmask8)0xFF, (int)(SCALE)))
+
 #undef __inline_g
 
 #pragma GCC diagnostic pop

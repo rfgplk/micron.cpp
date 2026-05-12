@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../simd/aliases.hpp"
 #include "../../simd/intrin.hpp"
 #include "../../types.hpp"
 #include "_dispatch.hpp"
@@ -24,58 +25,58 @@ namespace mk
 [[gnu::always_inline]] inline simd::d256
 sqrt(simd::d256 x) noexcept
 {
-  return _mm256_sqrt_pd(x);
+  return simd::avx::sqrt_f64(x);
 }
 
 [[gnu::always_inline]] inline simd::f256
 sqrt(simd::f256 x) noexcept
 {
-  return _mm256_sqrt_ps(x);
+  return simd::avx::sqrt_f32(x);
 }
 
 [[gnu::always_inline]] inline simd::d128
 sqrt(simd::d128 x) noexcept
 {
-  return _mm_sqrt_pd(x);
+  return simd::sse::sqrt_f64(x);
 }
 
 [[gnu::always_inline]] inline simd::f128
 sqrt(simd::f128 x) noexcept
 {
-  return _mm_sqrt_ps(x);
+  return simd::sse::sqrt_f32(x);
 }
 
 [[gnu::always_inline]] inline simd::f256
 rsqrt(simd::f256 x) noexcept
 {
-  simd::f256 r = _mm256_rsqrt_ps(x);
+  simd::f256 r = simd::avx::rsqrt_f32(x);
   // r = r * (1.5 - 0.5 * x * r * r)
-  const simd::f256 half = _mm256_set1_ps(0.5f);
-  const simd::f256 three_h = _mm256_set1_ps(1.5f);
-  const simd::f256 hr = _mm256_mul_ps(_mm256_mul_ps(half, x), r);
-  return _mm256_mul_ps(r, _mm256_sub_ps(three_h, _mm256_mul_ps(hr, r)));
+  const simd::f256 half = simd::avx::splat_f32(0.5f);
+  const simd::f256 three_h = simd::avx::splat_f32(1.5f);
+  const simd::f256 hr = simd::avx::mul_f32(simd::avx::mul_f32(half, x), r);
+  return simd::avx::mul_f32(r, simd::avx::sub_f32(three_h, simd::avx::mul_f32(hr, r)));
 }
 
 [[gnu::always_inline]] inline simd::f128
 rsqrt(simd::f128 x) noexcept
 {
-  simd::f128 r = _mm_rsqrt_ps(x);
-  const simd::f128 half = _mm_set1_ps(0.5f);
-  const simd::f128 three_h = _mm_set1_ps(1.5f);
-  const simd::f128 hr = _mm_mul_ps(_mm_mul_ps(half, x), r);
-  return _mm_mul_ps(r, _mm_sub_ps(three_h, _mm_mul_ps(hr, r)));
+  simd::f128 r = simd::sse::rsqrt_f32(x);
+  const simd::f128 half = simd::sse::splat_f32(0.5f);
+  const simd::f128 three_h = simd::sse::splat_f32(1.5f);
+  const simd::f128 hr = simd::sse::mul_f32(simd::sse::mul_f32(half, x), r);
+  return simd::sse::mul_f32(r, simd::sse::sub_f32(three_h, simd::sse::mul_f32(hr, r)));
 }
 
 [[gnu::always_inline]] inline simd::d256
 rsqrt(simd::d256 x) noexcept
 {
-  return _mm256_div_pd(_mm256_set1_pd(1.0), _mm256_sqrt_pd(x));
+  return simd::avx::div_f64(simd::avx::splat_f64(1.0), simd::avx::sqrt_f64(x));
 }
 
 [[gnu::always_inline]] inline simd::d128
 rsqrt(simd::d128 x) noexcept
 {
-  return _mm_div_pd(_mm_set1_pd(1.0), _mm_sqrt_pd(x));
+  return simd::sse::div_f64(simd::sse::splat_f64(1.0), simd::sse::sqrt_f64(x));
 }
 #endif
 
@@ -131,35 +132,35 @@ rsqrt(simd::d128 x) noexcept
 [[gnu::always_inline]] inline simd::d512
 sqrt(simd::d512 x) noexcept
 {
-  return _mm512_sqrt_pd(x);
+  return simd::avx512::sqrt_f64(x);
 }
 
 [[gnu::always_inline]] inline simd::f512
 sqrt(simd::f512 x) noexcept
 {
-  return _mm512_sqrt_ps(x);
+  return simd::avx512::sqrt_f32(x);
 }
 
 [[gnu::always_inline]] inline simd::f512
 rsqrt(simd::f512 x) noexcept
 {
-  simd::f512 r = _mm512_rsqrt14_ps(x);
-  const simd::f512 half = _mm512_set1_ps(0.5f);
-  const simd::f512 three_h = _mm512_set1_ps(1.5f);
-  const simd::f512 hr = _mm512_mul_ps(_mm512_mul_ps(half, x), r);
-  return _mm512_mul_ps(r, _mm512_sub_ps(three_h, _mm512_mul_ps(hr, r)));
+  simd::f512 r = simd::avx512::rsqrt14_f32(x);
+  const simd::f512 half = simd::avx512::splat_f32(0.5f);
+  const simd::f512 three_h = simd::avx512::splat_f32(1.5f);
+  const simd::f512 hr = simd::avx512::mul_f32(simd::avx512::mul_f32(half, x), r);
+  return simd::avx512::mul_f32(r, simd::avx512::sub_f32(three_h, simd::avx512::mul_f32(hr, r)));
 }
 
 [[gnu::always_inline]] inline simd::d512
 rsqrt(simd::d512 x) noexcept
 {
-  simd::d512 r = _mm512_rsqrt14_pd(x);
+  simd::d512 r = simd::avx512::rsqrt14_f64(x);
 
-  const simd::d512 half = _mm512_set1_pd(0.5);
-  const simd::d512 three_h = _mm512_set1_pd(1.5);
+  const simd::d512 half = simd::avx512::splat_f64(0.5);
+  const simd::d512 three_h = simd::avx512::splat_f64(1.5);
   for ( int i = 0; i < 2; ++i ) {
-    const simd::d512 hr = _mm512_mul_pd(_mm512_mul_pd(half, x), r);
-    r = _mm512_mul_pd(r, _mm512_sub_pd(three_h, _mm512_mul_pd(hr, r)));
+    const simd::d512 hr = simd::avx512::mul_f64(simd::avx512::mul_f64(half, x), r);
+    r = simd::avx512::mul_f64(r, simd::avx512::sub_f64(three_h, simd::avx512::mul_f64(hr, r)));
   }
   return r;
 }
