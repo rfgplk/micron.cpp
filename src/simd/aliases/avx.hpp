@@ -20,6 +20,7 @@ namespace avx
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_avx [[gnu::always_inline, gnu::artificial]] static inline
 
@@ -651,6 +652,240 @@ __inline_avx int
 testnzc_i256(__m256i a, __m256i b) noexcept
 {
   return _mm256_testnzc_si256(a, b);
+}
+
+template <int IMM>
+__inline_avx __m256
+round_f32(__m256 a) noexcept
+{
+  return _mm256_round_ps(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+round_f64(__m256d a) noexcept
+{
+  return _mm256_round_pd(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256
+cmp_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_cmp_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+cmp_f64(__m256d a, __m256d b) noexcept
+{
+  return _mm256_cmp_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256
+permute_f32(__m256 a) noexcept
+{
+  return _mm256_permute_ps(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+permute_f64(__m256d a) noexcept
+{
+  return _mm256_permute_pd(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256
+permute2f128_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_permute2f128_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+permute2f128_f64(__m256d a, __m256d b) noexcept
+{
+  return _mm256_permute2f128_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256i
+permute2f128_i256(__m256i a, __m256i b) noexcept
+{
+  return _mm256_permute2f128_si256(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256
+blend_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_blend_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+blend_f64(__m256d a, __m256d b) noexcept
+{
+  return _mm256_blend_pd(a, b, IMM);
+}
+
+__inline_avx __m256
+blendv_f32(__m256 a, __m256 b, __m256 mask) noexcept
+{
+  return _mm256_blendv_ps(a, b, mask);
+}
+
+__inline_avx __m256d
+blendv_f64(__m256d a, __m256d b, __m256d mask) noexcept
+{
+  return _mm256_blendv_pd(a, b, mask);
+}
+
+template <int IMM>
+__inline_avx __m256
+shuffle_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_shuffle_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+shuffle_f64(__m256d a, __m256d b) noexcept
+{
+  return _mm256_shuffle_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m128
+extract_f128_f32(__m256 a) noexcept
+{
+  return _mm256_extractf128_ps(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m128d
+extract_f128_f64(__m256d a) noexcept
+{
+  return _mm256_extractf128_pd(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m128i
+extract_f128_i256(__m256i a) noexcept
+{
+  return _mm256_extractf128_si256(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256
+insert_f128_f32(__m256 a, __m128 b) noexcept
+{
+  return _mm256_insertf128_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256d
+insert_f128_f64(__m256d a, __m128d b) noexcept
+{
+  return _mm256_insertf128_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256i
+insert_f128_i256(__m256i a, __m128i b) noexcept
+{
+  return _mm256_insertf128_si256(a, b, IMM);
+}
+
+__inline_avx __m256
+unpack_lo_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_unpacklo_ps(a, b);
+}
+
+__inline_avx __m256
+unpack_hi_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_unpackhi_ps(a, b);
+}
+
+__inline_avx __m256d
+unpack_lo_f64(__m256d a, __m256d b) noexcept
+{
+  return _mm256_unpacklo_pd(a, b);
+}
+
+__inline_avx __m256d
+unpack_hi_f64(__m256d a, __m256d b) noexcept
+{
+  return _mm256_unpackhi_pd(a, b);
+}
+
+template <int IMM>
+__inline_avx __m256
+dp_f32(__m256 a, __m256 b) noexcept
+{
+  return _mm256_dp_ps(a, b, IMM);
+}
+
+__inline_avx __m256
+setr_2x_f32(__m128 lo, __m128 hi) noexcept
+{
+  return _mm256_setr_m128(lo, hi);
+}
+
+__inline_avx __m256d
+setr_2x_f64(__m128d lo, __m128d hi) noexcept
+{
+  return _mm256_setr_m128d(lo, hi);
+}
+
+__inline_avx __m256i
+setr_2x_i128(__m128i lo, __m128i hi) noexcept
+{
+  return _mm256_setr_m128i(lo, hi);
+}
+
+__inline_avx __m256i
+set_i32(int a, int b, int c, int d, int e, int f, int g, int h) noexcept
+{
+  return _mm256_set_epi32(a, b, c, d, e, f, g, h);
+}
+
+__inline_avx __m256i
+setr_i32(int a, int b, int c, int d, int e, int f, int g, int h) noexcept
+{
+  return _mm256_setr_epi32(a, b, c, d, e, f, g, h);
+}
+
+__inline_avx __m256i
+set_i64(long long a, long long b, long long c, long long d) noexcept
+{
+  return _mm256_set_epi64x(a, b, c, d);
+}
+
+__inline_avx __m256i
+setr_i64(long long a, long long b, long long c, long long d) noexcept
+{
+  return _mm256_setr_epi64x(a, b, c, d);
+}
+
+__inline_avx __m256i
+set_i16(short s0, short s1, short s2, short s3, short s4, short s5, short s6, short s7, short s8, short s9, short sa, short sb, short sc,
+        short sd, short se, short sf) noexcept
+{
+  return _mm256_set_epi16(s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, sa, sb, sc, sd, se, sf);
+}
+
+__inline_avx __m256i
+set_i8(char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7, char b8, char b9, char ba, char bb, char bc, char bd,
+       char be, char bf, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char ca, char cb,
+       char cc, char cd, char ce, char cf) noexcept
+{
+  return _mm256_set_epi8(b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, ba, bb, bc, bd, be, bf, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, ca, cb, cc,
+                         cd, ce, cf);
 }
 
 #undef __inline_avx

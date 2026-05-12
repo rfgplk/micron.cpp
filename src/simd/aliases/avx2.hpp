@@ -20,6 +20,7 @@ namespace avx2
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_avx [[gnu::always_inline, gnu::artificial]] static inline
 
@@ -789,6 +790,96 @@ __inline_avx __m256i
 widen_u32_to_i64(__m128i a) noexcept
 {
   return _mm256_cvtepu32_epi64(a);
+}
+
+template <int IMM>
+__inline_avx __m256d
+permute4x64_f64(__m256d a) noexcept
+{
+  return _mm256_permute4x64_pd(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256i
+permute4x64_i64(__m256i a) noexcept
+{
+  return _mm256_permute4x64_epi64(a, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256i
+permute2x128_i256(__m256i a, __m256i b) noexcept
+{
+  return _mm256_permute2x128_si256(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256i
+blend_i16(__m256i a, __m256i b) noexcept
+{
+  return _mm256_blend_epi16(a, b, IMM);
+}
+
+template <int IMM>
+__inline_avx __m256i
+blend_i32(__m256i a, __m256i b) noexcept
+{
+  return _mm256_blend_epi32(a, b, IMM);
+}
+
+__inline_avx __m256i
+blendv_i8(__m256i a, __m256i b, __m256i mask) noexcept
+{
+  return _mm256_blendv_epi8(a, b, mask);
+}
+
+template <int IMM>
+__inline_avx __m256i
+shuffle_i32(__m256i a) noexcept
+{
+  return _mm256_shuffle_epi32(a, IMM);
+}
+
+template <int SCALE>
+__inline_avx __m256
+gather_f32(const float *base, __m256i idx) noexcept
+{
+  return _mm256_i32gather_ps(base, idx, SCALE);
+}
+
+template <int SCALE>
+__inline_avx __m256d
+gather_f64(const double *base, __m128i idx) noexcept
+{
+  return _mm256_i32gather_pd(base, idx, SCALE);
+}
+
+template <int SCALE>
+__inline_avx __m256i
+gather_i32(const int *base, __m256i idx) noexcept
+{
+  return _mm256_i32gather_epi32(base, idx, SCALE);
+}
+
+template <int SCALE>
+__inline_avx __m256i
+gather_i64(const long long *base, __m128i idx) noexcept
+{
+  return _mm256_i32gather_epi64(base, idx, SCALE);
+}
+
+template <int IMM>
+__inline_avx long long
+extract_i64(__m256i a) noexcept
+{
+  return _mm256_extract_epi64(a, IMM);
+}
+
+template <int IMM>
+__inline_avx int
+extract_i32(__m256i a) noexcept
+{
+  return _mm256_extract_epi32(a, IMM);
 }
 
 #undef __inline_avx

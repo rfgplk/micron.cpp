@@ -10,10 +10,6 @@
 #include "../src/bitfield.hpp"
 #include "../src/math/generic.hpp"
 #include "../src/vector/vector.hpp"
-#include <string>
-#include <vector>
-
-#include <bitset>
 
 int
 main(void)

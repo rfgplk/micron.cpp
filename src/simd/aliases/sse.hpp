@@ -20,6 +20,7 @@ namespace sse
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 #define __inline_sse [[gnu::always_inline, gnu::artificial]] static inline
 
@@ -1443,6 +1444,234 @@ __inline_sse int
 testnzc_i128(__m128i a, __m128i b) noexcept
 {
   return _mm_testnzc_si128(a, b);
+}
+
+template <int IMM>
+__inline_sse __m128
+round_f32(__m128 a) noexcept
+{
+  return _mm_round_ps(a, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128d
+round_f64(__m128d a) noexcept
+{
+  return _mm_round_pd(a, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128
+shuffle_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_shuffle_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128d
+shuffle_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_shuffle_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128i
+shuffle_i32(__m128i a) noexcept
+{
+  return _mm_shuffle_epi32(a, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128
+blend_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_blend_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128d
+blend_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_blend_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128i
+blend_i16(__m128i a, __m128i b) noexcept
+{
+  return _mm_blend_epi16(a, b, IMM);
+}
+
+__inline_sse __m128
+blendv_f32(__m128 a, __m128 b, __m128 mask) noexcept
+{
+  return _mm_blendv_ps(a, b, mask);
+}
+
+__inline_sse __m128d
+blendv_f64(__m128d a, __m128d b, __m128d mask) noexcept
+{
+  return _mm_blendv_pd(a, b, mask);
+}
+
+__inline_sse __m128i
+blendv_i8(__m128i a, __m128i b, __m128i mask) noexcept
+{
+  return _mm_blendv_epi8(a, b, mask);
+}
+
+template <int IMM>
+__inline_sse __m128
+cmp_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_cmp_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128d
+cmp_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_cmp_pd(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128
+dp_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_dp_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128d
+dp_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_dp_pd(a, b, IMM);
+}
+
+__inline_sse __m128
+move_hl_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_movehl_ps(a, b);
+}
+
+__inline_sse __m128
+move_lh_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_movelh_ps(a, b);
+}
+
+template <int IMM>
+__inline_sse int
+extract_f32(__m128 a) noexcept
+{
+  return _mm_extract_ps(a, IMM);
+}
+
+template <int IMM>
+__inline_sse int
+extract_i8(__m128i a) noexcept
+{
+  return _mm_extract_epi8(a, IMM);
+}
+
+template <int IMM>
+__inline_sse int
+extract_i16(__m128i a) noexcept
+{
+  return _mm_extract_epi16(a, IMM);
+}
+
+template <int IMM>
+__inline_sse int
+extract_i32_imm(__m128i a) noexcept
+{
+  return _mm_extract_epi32(a, IMM);
+}
+
+template <int IMM>
+__inline_sse long long
+extract_i64_imm(__m128i a) noexcept
+{
+  return _mm_extract_epi64(a, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128
+insert_f32(__m128 a, __m128 b) noexcept
+{
+  return _mm_insert_ps(a, b, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128i
+insert_i8(__m128i a, int v) noexcept
+{
+  return _mm_insert_epi8(a, v, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128i
+insert_i16(__m128i a, int v) noexcept
+{
+  return _mm_insert_epi16(a, v, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128i
+insert_i32(__m128i a, int v) noexcept
+{
+  return _mm_insert_epi32(a, v, IMM);
+}
+
+template <int IMM>
+__inline_sse __m128i
+insert_i64(__m128i a, long long v) noexcept
+{
+  return _mm_insert_epi64(a, v, IMM);
+}
+
+template <int SCALE>
+__inline_sse __m128
+gather_f32(const float *base, __m128i idx) noexcept
+{
+  return _mm_i32gather_ps(base, idx, SCALE);
+}
+
+template <int SCALE>
+__inline_sse __m128d
+gather_f64(const double *base, __m128i idx) noexcept
+{
+  return _mm_i32gather_pd(base, idx, SCALE);
+}
+
+__inline_sse __m128d
+sqrt_sd(__m128d a, __m128d b) noexcept
+{
+  return _mm_sqrt_sd(a, b);
+}
+
+__inline_sse __m128d
+add_scalar_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_add_sd(a, b);
+}
+
+__inline_sse __m128d
+sub_scalar_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_sub_sd(a, b);
+}
+
+__inline_sse __m128d
+mul_scalar_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_mul_sd(a, b);
+}
+
+__inline_sse __m128d
+div_scalar_f64(__m128d a, __m128d b) noexcept
+{
+  return _mm_div_sd(a, b);
 }
 
 #undef __inline_sse

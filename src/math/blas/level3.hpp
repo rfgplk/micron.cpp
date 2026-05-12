@@ -124,6 +124,56 @@ gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usi
   bits::gemm_kernel<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
 }
 
+// aligned variant of gemm
+template <op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+  requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC> and micron::same_as<typename VA::value_type, T>
+           and micron::same_as<typename VB::value_type, T> and micron::same_as<typename VC::value_type, T>)
+[[gnu::flatten]] inline constexpr void
+gemm_aligned(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
+{
+  constexpr bool trA = micron::same_as<OpA, op::trans> or micron::same_as<OpA, op::conj_trans>;
+  constexpr bool trB = micron::same_as<OpB, op::trans> or micron::same_as<OpB, op::conj_trans>;
+  const usize m = trA ? A.cols : A.rows;
+  const usize k = trA ? A.rows : A.cols;
+  const usize n = trB ? B.rows : B.cols;
+  bits::gemm_kernel_aligned<T>(trA, trB, m, n, k, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                               __impl_level3::rs_of(B), __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C),
+                               __impl_level3::cs_of(C));
+}
+
+template <blas_scalar T>
+[[gnu::flatten]] inline constexpr void
+gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}
+
+// gemm experimental microkernel overloads
+template <blas_scalar T>
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned_exp_a<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}
+
+template <blas_scalar T>
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned_exp_b<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}
+
+template <blas_scalar T>
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned_exp_c<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}
+
 template <blas_scalar T>
 [[gnu::flatten]] inline constexpr void
 gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,

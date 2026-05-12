@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 //
-// Extensive BLAS / linear algebra benchmark for the micron math kernels
+// Extensive BLAS / linear algebra benchmark for the micron math kernels.
 //
 //   L1: dot, axpy, scal, asum, nrm2, iamax, copy   (linear time)
 //   L2: gemv (no-trans, trans), ger                (quadratic)
@@ -361,6 +361,78 @@ sweep_level2_f64()
 
 constexpr u64 L3_DIMS[] = { 32, 128, 512 };
 
+template <typename T> struct aligned_buf {
+  T *p;
+  u64 n;
+
+  aligned_buf(u64 n_) noexcept : p(nullptr), n(n_) { p = static_cast<T *>(::operator new(n_ * sizeof(T), std::align_val_t{ 64 })); }
+
+  ~aligned_buf() noexcept
+  {
+    if ( p ) ::operator delete(p, std::align_val_t{ 64 });
+  }
+
+  T *
+  data() noexcept
+  {
+    return p;
+  }
+
+  const T *
+  data() const noexcept
+  {
+    return p;
+  }
+};
+
+void
+sweep_level3_f64_aligned()
+{
+  print_header("BLAS L3 f64 aligned", "flops", "flop/cyc");
+  for ( u64 d : L3_DIMS ) {
+    aligned_buf<f64> A(d * d), B(d * d), C(d * d);
+    fill_pattern<f64>(A.data(), d * d, 0x1111);
+    fill_pattern<f64>(B.data(), d * d, 0x2222);
+    fill_pattern<f64>(C.data(), d * d, 0x3333);
+
+    const u64 flops = 2ULL * d * d * d;
+    u64 reps = calibrate_reps(flops);
+    if ( d >= 512 ) reps = reps < 4 ? 4 : (reps > 16 ? 16 : reps);
+
+    print_row(measure("L3 gemm-NN-al  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned<f64>(false, false, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+    print_row(measure("L3 gemm-NT-al  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned<f64>(false, true, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+    print_row(measure("L3 gemm-TN-al  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned<f64>(true, false, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+    print_row(measure("L3 gemm-TT-al  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned<f64>(true, true, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+
+    print_row(measure("L3 gemm-NN-eA  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned_exp_a<f64>(false, false, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+
+    print_row(measure("L3 gemm-NN-eB  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned_exp_b<f64>(false, false, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+
+    print_row(measure("L3 gemm-NN-eC  ", d, flops, reps, [&] {
+      mc::math::blas::level3::gemm_row_aligned_exp_c<f64>(false, false, d, d, d, 1.0, A.data(), d, B.data(), d, 0.0, C.data(), d);
+      clobber(C.data());
+    }));
+  }
+}
+
 void
 sweep_level3_f64()
 {
@@ -483,6 +555,7 @@ main(void)
   sweep_level1_f32();
   sweep_level2_f64();
   sweep_level3_f64();
+  sweep_level3_f64_aligned();
   sweep_level3_f32();
 
   sweep_linalg_static<2>();

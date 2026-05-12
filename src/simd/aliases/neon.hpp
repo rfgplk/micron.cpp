@@ -731,6 +731,30 @@ lt(uint32x4_t a, uint32x4_t b) noexcept
   return vcltq_u32(a, b);
 }
 
+__inline_neon float32x4_t
+min(float32x4_t a, float32x4_t b) noexcept
+{
+  return vminq_f32(a, b);
+}
+
+__inline_neon float32x4_t
+max(float32x4_t a, float32x4_t b) noexcept
+{
+  return vmaxq_f32(a, b);
+}
+
+__inline_neon uint32x4_t
+select(uint32x4_t mask, uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vbslq_u32(mask, a, b);
+}
+
+__inline_neon float32x4_t
+select(uint32x4_t mask, float32x4_t a, float32x4_t b) noexcept
+{
+  return vbslq_f32(mask, a, b);
+}
+
 #if defined(__micron_arch_arm64)
 __inline_neon int8x16_t
 min(int8x16_t a, int8x16_t b) noexcept
@@ -766,12 +790,6 @@ __inline_neon uint32x4_t
 min(uint32x4_t a, uint32x4_t b) noexcept
 {
   return vminq_u32(a, b);
-}
-
-__inline_neon float32x4_t
-min(float32x4_t a, float32x4_t b) noexcept
-{
-  return vminq_f32(a, b);
 }
 
 __inline_neon float64x2_t
@@ -816,12 +834,6 @@ max(uint32x4_t a, uint32x4_t b) noexcept
   return vmaxq_u32(a, b);
 }
 
-__inline_neon float32x4_t
-max(float32x4_t a, float32x4_t b) noexcept
-{
-  return vmaxq_f32(a, b);
-}
-
 __inline_neon float64x2_t
 max(float64x2_t a, float64x2_t b) noexcept
 {
@@ -850,12 +862,6 @@ __inline_neon int64x2_t
 abs(int64x2_t a) noexcept
 {
   return vabsq_s64(a);
-}
-
-__inline_neon float32x4_t
-abs(float32x4_t a) noexcept
-{
-  return vabsq_f32(a);
 }
 
 __inline_neon float64x2_t
@@ -900,12 +906,6 @@ select(uint16x8_t mask, uint16x8_t a, uint16x8_t b) noexcept
   return vbslq_u16(mask, a, b);
 }
 
-__inline_neon uint32x4_t
-select(uint32x4_t mask, uint32x4_t a, uint32x4_t b) noexcept
-{
-  return vbslq_u32(mask, a, b);
-}
-
 __inline_neon uint64x2_t
 select(uint64x2_t mask, uint64x2_t a, uint64x2_t b) noexcept
 {
@@ -918,16 +918,438 @@ select(uint8x16_t mask, int8x16_t a, int8x16_t b) noexcept
   return vbslq_s8(mask, a, b);
 }
 
-__inline_neon float32x4_t
-select(uint32x4_t mask, float32x4_t a, float32x4_t b) noexcept
-{
-  return vbslq_f32(mask, a, b);
-}
-
 __inline_neon float64x2_t
 select(uint64x2_t mask, float64x2_t a, float64x2_t b) noexcept
 {
   return vbslq_f64(mask, a, b);
+}
+#endif
+
+__inline_neon float32x4_t
+abs(float32x4_t a) noexcept
+{
+  return vabsq_f32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+abs(float64x2_t a) noexcept
+{
+  return vabsq_f64(a);
+}
+#endif
+
+__inline_neon float32x4_t
+neg(float32x4_t a) noexcept
+{
+  return vnegq_f32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+neg(float64x2_t a) noexcept
+{
+  return vnegq_f64(a);
+}
+#endif
+
+__inline_neon float32x4_t
+sqrt(float32x4_t a) noexcept
+{
+  return vsqrtq_f32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+sqrt(float64x2_t a) noexcept
+{
+  return vsqrtq_f64(a);
+}
+#endif
+
+__inline_neon float32x4_t
+rsqrt_est(float32x4_t a) noexcept
+{
+  return vrsqrteq_f32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+rsqrt_est(float64x2_t a) noexcept
+{
+  return vrsqrteq_f64(a);
+}
+#endif
+
+__inline_neon float32x4_t
+rsqrt_step(float32x4_t a, float32x4_t b) noexcept
+{
+  return vrsqrtsq_f32(a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+rsqrt_step(float64x2_t a, float64x2_t b) noexcept
+{
+  return vrsqrtsq_f64(a, b);
+}
+#endif
+
+__inline_neon float32x4_t
+rcp_est(float32x4_t a) noexcept
+{
+  return vrecpeq_f32(a);
+}
+
+__inline_neon float32x4_t
+rcp_step(float32x4_t a, float32x4_t b) noexcept
+{
+  return vrecpsq_f32(a, b);
+}
+
+#if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
+__inline_neon float32x4_t
+fma_f32(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
+{
+  return vfmaq_f32(acc, a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+fma_f64(float64x2_t acc, float64x2_t a, float64x2_t b) noexcept
+{
+  return vfmaq_f64(acc, a, b);
+}
+#endif
+
+__inline_neon float32x4_t
+fms_f32(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
+{
+  return vfmsq_f32(acc, a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+fms_f64(float64x2_t acc, float64x2_t a, float64x2_t b) noexcept
+{
+  return vfmsq_f64(acc, a, b);
+}
+#endif
+#endif
+
+__inline_neon float32x4_t
+mla(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
+{
+  return vmlaq_f32(acc, a, b);
+}
+
+#if defined(__micron_arch_arm64) || defined(__micron_arm_directed_rounding)
+__inline_neon float32x4_t
+floor(float32x4_t a) noexcept
+{
+  return vrndmq_f32(a);
+}
+
+__inline_neon float32x4_t
+ceil(float32x4_t a) noexcept
+{
+  return vrndpq_f32(a);
+}
+
+__inline_neon float32x4_t
+trunc(float32x4_t a) noexcept
+{
+  return vrndq_f32(a);
+}
+
+__inline_neon float32x4_t
+rint(float32x4_t a) noexcept
+{
+  return vrndnq_f32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+floor(float64x2_t a) noexcept
+{
+  return vrndmq_f64(a);
+}
+
+__inline_neon float64x2_t
+ceil(float64x2_t a) noexcept
+{
+  return vrndpq_f64(a);
+}
+
+__inline_neon float64x2_t
+trunc(float64x2_t a) noexcept
+{
+  return vrndq_f64(a);
+}
+
+__inline_neon float64x2_t
+rint(float64x2_t a) noexcept
+{
+  return vrndnq_f64(a);
+}
+#endif
+#endif
+
+template <int LANE>
+__inline_neon float
+get_lane_f32(float32x4_t a) noexcept
+{
+  return vgetq_lane_f32(a, LANE);
+}
+
+#if defined(__micron_arch_arm64)
+template <int LANE>
+__inline_neon double
+get_lane_f64(float64x2_t a) noexcept
+{
+  return vgetq_lane_f64(a, LANE);
+}
+#endif
+
+template <int LANE>
+__inline_neon int
+get_lane_i32(int32x4_t a) noexcept
+{
+  return vgetq_lane_s32(a, LANE);
+}
+
+template <int LANE>
+__inline_neon long long
+get_lane_i64(int64x2_t a) noexcept
+{
+  return vgetq_lane_s64(a, LANE);
+}
+
+template <int LANE>
+__inline_neon float32x4_t
+set_lane_f32(float v, float32x4_t a) noexcept
+{
+  return vsetq_lane_f32(v, a, LANE);
+}
+
+#if defined(__micron_arch_arm64)
+template <int LANE>
+__inline_neon float64x2_t
+set_lane_f64(double v, float64x2_t a) noexcept
+{
+  return vsetq_lane_f64(v, a, LANE);
+}
+#endif
+
+__inline_neon uint32x4_t
+bic(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vbicq_u32(a, b);
+}
+
+__inline_neon uint64x2_t
+bic(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return vbicq_u64(a, b);
+}
+
+__inline_neon int64x2_t
+or_(int64x2_t a, int64x2_t b) noexcept
+{
+  return vorrq_s64(a, b);
+}
+
+__inline_neon float32x4_t
+reinterpret_f32_from_u32(uint32x4_t a) noexcept
+{
+  return vreinterpretq_f32_u32(a);
+}
+
+__inline_neon uint32x4_t
+reinterpret_u32_from_f32(float32x4_t a) noexcept
+{
+  return vreinterpretq_u32_f32(a);
+}
+
+__inline_neon float32x4_t
+reinterpret_f32_from_s32(int32x4_t a) noexcept
+{
+  return vreinterpretq_f32_s32(a);
+}
+
+__inline_neon int32x4_t
+reinterpret_s32_from_f32(float32x4_t a) noexcept
+{
+  return vreinterpretq_s32_f32(a);
+}
+
+__inline_neon int32x4_t
+reinterpret_s32_from_u32(uint32x4_t a) noexcept
+{
+  return vreinterpretq_s32_u32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+reinterpret_f64_from_u64(uint64x2_t a) noexcept
+{
+  return vreinterpretq_f64_u64(a);
+}
+
+__inline_neon uint64x2_t
+reinterpret_u64_from_f64(float64x2_t a) noexcept
+{
+  return vreinterpretq_u64_f64(a);
+}
+
+__inline_neon float64x2_t
+reinterpret_f64_from_s64(int64x2_t a) noexcept
+{
+  return vreinterpretq_f64_s64(a);
+}
+
+__inline_neon int64x2_t
+reinterpret_s64_from_f64(float64x2_t a) noexcept
+{
+  return vreinterpretq_s64_f64(a);
+}
+
+__inline_neon int64x2_t
+reinterpret_s64_from_u64(uint64x2_t a) noexcept
+{
+  return vreinterpretq_s64_u64(a);
+}
+#endif
+
+__inline_neon float32x4_t
+convert_i32_to_f32(int32x4_t a) noexcept
+{
+  return vcvtq_f32_s32(a);
+}
+
+__inline_neon int32x4_t
+convert_f32_to_i32(float32x4_t a) noexcept
+{
+  return vcvtq_s32_f32(a);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+convert_i64_to_f64(int64x2_t a) noexcept
+{
+  return vcvtq_f64_s64(a);
+}
+
+__inline_neon int64x2_t
+convert_f64_to_i64(float64x2_t a) noexcept
+{
+  return vcvtq_s64_f64(a);
+}
+#endif
+
+template <int N>
+__inline_neon int32x4_t
+shl_i32(int32x4_t a) noexcept
+{
+  return vshlq_n_s32(a, N);
+}
+
+template <int N>
+__inline_neon int64x2_t
+shl_i64(int64x2_t a) noexcept
+{
+  return vshlq_n_s64(a, N);
+}
+
+template <int N>
+__inline_neon int32x4_t
+shr_arith_i32(int32x4_t a) noexcept
+{
+  return vshrq_n_s32(a, N);
+}
+
+template <int N>
+__inline_neon int64x2_t
+shr_arith_i64(int64x2_t a) noexcept
+{
+  return vshrq_n_s64(a, N);
+}
+
+__inline_neon float32x2_t
+splat_h_f32(float v) noexcept
+{
+  return vdup_n_f32(v);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x1_t
+splat_h_f64(double v) noexcept
+{
+  return vdup_n_f64(v);
+}
+#endif
+
+__inline_neon uint32x4_t
+lt(float32x4_t a, float32x4_t b) noexcept
+{
+  return vcltq_f32(a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon uint64x2_t
+lt(float64x2_t a, float64x2_t b) noexcept
+{
+  return vcltq_f64(a, b);
+}
+
+__inline_neon uint64x2_t
+gt(float64x2_t a, float64x2_t b) noexcept
+{
+  return vcgtq_f64(a, b);
+}
+
+__inline_neon uint64x2_t
+eq(int64x2_t a, int64x2_t b) noexcept
+{
+  return vceqq_s64(a, b);
+}
+#endif
+
+__inline_neon float32x4_t
+zip_lo_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 1, 5);
+}
+
+__inline_neon float32x4_t
+zip_hi_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 2, 6, 3, 7);
+}
+
+__inline_neon float32x4_t
+concat_lo_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 1, 4, 5);
+}
+
+__inline_neon float32x4_t
+concat_hi_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 2, 3, 6, 7);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+zip_lo_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2);
+}
+
+__inline_neon float64x2_t
+zip_hi_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3);
 }
 #endif
 

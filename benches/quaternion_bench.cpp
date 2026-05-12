@@ -305,6 +305,14 @@ sweep_algebra()
     for ( u64 i = 0; i < N; ++i ) sink = mc::math::quaternions::norm_sq<f64>(g_qa_d[i]);
     (void)sink;
   }));
+  print_cell(measure("batched_mul f64    ", [] {
+    mc::math::quaternions::batched_multiply<f64>(g_qa_d, g_qb_d, g_qout_d, N);
+    clobber(g_qout_d);
+  }));
+  print_cell(measure("batched_norm f64   ", [] {
+    mc::math::quaternions::batched_normalize<f64>(g_qa_d, g_qout_d, N);
+    clobber(g_qout_d);
+  }));
 }
 
 void

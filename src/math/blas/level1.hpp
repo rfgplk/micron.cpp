@@ -33,6 +33,7 @@
 #include "../quants/views.hpp"
 
 #if defined(__AVX2__) && defined(__FMA__)
+#include "../../simd/aliases.hpp"
 #include "../../simd/arch/types_amd64.hpp"
 #endif
 
@@ -70,26 +71,26 @@ ref(T *p, usize i, ssize_t inc) noexcept
 [[nodiscard, gnu::flatten]] inline f64
 dot_packed_f64(const double *__restrict__ x, const double *__restrict__ y, usize n) noexcept
 {
-  __m256d s0 = _mm256_setzero_pd();
-  __m256d s1 = _mm256_setzero_pd();
-  __m256d s2 = _mm256_setzero_pd();
-  __m256d s3 = _mm256_setzero_pd();
+  __m256d s0 = simd::avx::zero_f64();
+  __m256d s1 = simd::avx::zero_f64();
+  __m256d s2 = simd::avx::zero_f64();
+  __m256d s3 = simd::avx::zero_f64();
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    s0 = _mm256_fmadd_pd(_mm256_loadu_pd(x + i + 0), _mm256_loadu_pd(y + i + 0), s0);
-    s1 = _mm256_fmadd_pd(_mm256_loadu_pd(x + i + 4), _mm256_loadu_pd(y + i + 4), s1);
-    s2 = _mm256_fmadd_pd(_mm256_loadu_pd(x + i + 8), _mm256_loadu_pd(y + i + 8), s2);
-    s3 = _mm256_fmadd_pd(_mm256_loadu_pd(x + i + 12), _mm256_loadu_pd(y + i + 12), s3);
+    s0 = simd::fma::fma_f64(simd::avx::loadu_f64(x + i + 0), simd::avx::loadu_f64(y + i + 0), s0);
+    s1 = simd::fma::fma_f64(simd::avx::loadu_f64(x + i + 4), simd::avx::loadu_f64(y + i + 4), s1);
+    s2 = simd::fma::fma_f64(simd::avx::loadu_f64(x + i + 8), simd::avx::loadu_f64(y + i + 8), s2);
+    s3 = simd::fma::fma_f64(simd::avx::loadu_f64(x + i + 12), simd::avx::loadu_f64(y + i + 12), s3);
   }
   // 4-wide tail
-  for ( ; i + 4 <= n; i += 4 ) s0 = _mm256_fmadd_pd(_mm256_loadu_pd(x + i), _mm256_loadu_pd(y + i), s0);
+  for ( ; i + 4 <= n; i += 4 ) s0 = simd::fma::fma_f64(simd::avx::loadu_f64(x + i), simd::avx::loadu_f64(y + i), s0);
   // horizontal reduction across the 4 chains
-  __m256d sum = _mm256_add_pd(_mm256_add_pd(s0, s1), _mm256_add_pd(s2, s3));
-  __m128d hi = _mm256_extractf128_pd(sum, 1);
-  __m128d lo = _mm256_castpd256_pd128(sum);
-  __m128d half = _mm_add_pd(hi, lo);
-  __m128d hh = _mm_unpackhi_pd(half, half);
-  f64 r = _mm_cvtsd_f64(_mm_add_sd(half, hh));
+  __m256d sum = simd::avx::add_f64(simd::avx::add_f64(s0, s1), simd::avx::add_f64(s2, s3));
+  __m128d hi = simd::avx::extract_f128_f64<1>(sum);
+  __m128d lo = simd::avx::cast_f64_to_lo128(sum);
+  __m128d half = simd::sse::add_f64(hi, lo);
+  __m128d hh = simd::sse::unpack_hi_f64(half, half);
+  f64 r = simd::sse::extract_low_f64(simd::sse::add_scalar_f64(half, hh));
   // 1-wide scalar epilogue
   for ( ; i < n; ++i ) r = math::fma<f64>(x[i], y[i], r);
   return r;
@@ -98,25 +99,25 @@ dot_packed_f64(const double *__restrict__ x, const double *__restrict__ y, usize
 [[nodiscard, gnu::flatten]] inline f32
 dot_packed_f32(const float *__restrict__ x, const float *__restrict__ y, usize n) noexcept
 {
-  __m256 s0 = _mm256_setzero_ps();
-  __m256 s1 = _mm256_setzero_ps();
-  __m256 s2 = _mm256_setzero_ps();
-  __m256 s3 = _mm256_setzero_ps();
+  __m256 s0 = simd::avx::zero_f32();
+  __m256 s1 = simd::avx::zero_f32();
+  __m256 s2 = simd::avx::zero_f32();
+  __m256 s3 = simd::avx::zero_f32();
   usize i = 0;
   for ( ; i + 32 <= n; i += 32 ) {
-    s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x + i + 0), _mm256_loadu_ps(y + i + 0), s0);
-    s1 = _mm256_fmadd_ps(_mm256_loadu_ps(x + i + 8), _mm256_loadu_ps(y + i + 8), s1);
-    s2 = _mm256_fmadd_ps(_mm256_loadu_ps(x + i + 16), _mm256_loadu_ps(y + i + 16), s2);
-    s3 = _mm256_fmadd_ps(_mm256_loadu_ps(x + i + 24), _mm256_loadu_ps(y + i + 24), s3);
+    s0 = simd::fma::fma_f32(simd::avx::loadu_f32(x + i + 0), simd::avx::loadu_f32(y + i + 0), s0);
+    s1 = simd::fma::fma_f32(simd::avx::loadu_f32(x + i + 8), simd::avx::loadu_f32(y + i + 8), s1);
+    s2 = simd::fma::fma_f32(simd::avx::loadu_f32(x + i + 16), simd::avx::loadu_f32(y + i + 16), s2);
+    s3 = simd::fma::fma_f32(simd::avx::loadu_f32(x + i + 24), simd::avx::loadu_f32(y + i + 24), s3);
   }
-  for ( ; i + 8 <= n; i += 8 ) s0 = _mm256_fmadd_ps(_mm256_loadu_ps(x + i), _mm256_loadu_ps(y + i), s0);
-  __m256 sum = _mm256_add_ps(_mm256_add_ps(s0, s1), _mm256_add_ps(s2, s3));
-  __m128 hi = _mm256_extractf128_ps(sum, 1);
-  __m128 lo = _mm256_castps256_ps128(sum);
-  __m128 q4 = _mm_add_ps(hi, lo);
-  __m128 q2 = _mm_add_ps(q4, _mm_movehl_ps(q4, q4));
-  __m128 q1 = _mm_add_ss(q2, _mm_shuffle_ps(q2, q2, 0x1));
-  f32 r = _mm_cvtss_f32(q1);
+  for ( ; i + 8 <= n; i += 8 ) s0 = simd::fma::fma_f32(simd::avx::loadu_f32(x + i), simd::avx::loadu_f32(y + i), s0);
+  __m256 sum = simd::avx::add_f32(simd::avx::add_f32(s0, s1), simd::avx::add_f32(s2, s3));
+  __m128 hi = simd::avx::extract_f128_f32<1>(sum);
+  __m128 lo = simd::avx::cast_f32_to_lo128(sum);
+  __m128 q4 = simd::sse::add_f32(hi, lo);
+  __m128 q2 = simd::sse::add_f32(q4, simd::sse::move_hl_f32(q4, q4));
+  __m128 q1 = simd::sse::add_scalar_f32(q2, simd::sse::shuffle_f32<0x1>(q2, q2));
+  f32 r = simd::sse::extract_low_f32(q1);
   for ( ; i < n; ++i ) r = math::fma<f32>(x[i], y[i], r);
   return r;
 }
@@ -124,25 +125,25 @@ dot_packed_f32(const float *__restrict__ x, const float *__restrict__ y, usize n
 [[gnu::flatten]] inline void
 axpy_packed_f64(double alpha, const double *__restrict__ x, double *__restrict__ y, usize n) noexcept
 {
-  const __m256d va = _mm256_set1_pd(alpha);
+  const __m256d va = simd::avx::splat_f64(alpha);
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    __m256d y0 = _mm256_loadu_pd(y + i + 0);
-    __m256d y1 = _mm256_loadu_pd(y + i + 4);
-    __m256d y2 = _mm256_loadu_pd(y + i + 8);
-    __m256d y3 = _mm256_loadu_pd(y + i + 12);
-    y0 = _mm256_fmadd_pd(va, _mm256_loadu_pd(x + i + 0), y0);
-    y1 = _mm256_fmadd_pd(va, _mm256_loadu_pd(x + i + 4), y1);
-    y2 = _mm256_fmadd_pd(va, _mm256_loadu_pd(x + i + 8), y2);
-    y3 = _mm256_fmadd_pd(va, _mm256_loadu_pd(x + i + 12), y3);
-    _mm256_storeu_pd(y + i + 0, y0);
-    _mm256_storeu_pd(y + i + 4, y1);
-    _mm256_storeu_pd(y + i + 8, y2);
-    _mm256_storeu_pd(y + i + 12, y3);
+    __m256d y0 = simd::avx::loadu_f64(y + i + 0);
+    __m256d y1 = simd::avx::loadu_f64(y + i + 4);
+    __m256d y2 = simd::avx::loadu_f64(y + i + 8);
+    __m256d y3 = simd::avx::loadu_f64(y + i + 12);
+    y0 = simd::fma::fma_f64(va, simd::avx::loadu_f64(x + i + 0), y0);
+    y1 = simd::fma::fma_f64(va, simd::avx::loadu_f64(x + i + 4), y1);
+    y2 = simd::fma::fma_f64(va, simd::avx::loadu_f64(x + i + 8), y2);
+    y3 = simd::fma::fma_f64(va, simd::avx::loadu_f64(x + i + 12), y3);
+    simd::avx::storeu_f64(y + i + 0, y0);
+    simd::avx::storeu_f64(y + i + 4, y1);
+    simd::avx::storeu_f64(y + i + 8, y2);
+    simd::avx::storeu_f64(y + i + 12, y3);
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    __m256d yk = _mm256_fmadd_pd(va, _mm256_loadu_pd(x + i), _mm256_loadu_pd(y + i));
-    _mm256_storeu_pd(y + i, yk);
+    __m256d yk = simd::fma::fma_f64(va, simd::avx::loadu_f64(x + i), simd::avx::loadu_f64(y + i));
+    simd::avx::storeu_f64(y + i, yk);
   }
   for ( ; i < n; ++i ) y[i] = math::fma<f64>(alpha, x[i], y[i]);
 }
@@ -150,21 +151,21 @@ axpy_packed_f64(double alpha, const double *__restrict__ x, double *__restrict__
 [[gnu::flatten]] inline void
 axpy_packed_f32(float alpha, const float *__restrict__ x, float *__restrict__ y, usize n) noexcept
 {
-  const __m256 va = _mm256_set1_ps(alpha);
+  const __m256 va = simd::avx::splat_f32(alpha);
   usize i = 0;
   for ( ; i + 32 <= n; i += 32 ) {
-    __m256 y0 = _mm256_fmadd_ps(va, _mm256_loadu_ps(x + i + 0), _mm256_loadu_ps(y + i + 0));
-    __m256 y1 = _mm256_fmadd_ps(va, _mm256_loadu_ps(x + i + 8), _mm256_loadu_ps(y + i + 8));
-    __m256 y2 = _mm256_fmadd_ps(va, _mm256_loadu_ps(x + i + 16), _mm256_loadu_ps(y + i + 16));
-    __m256 y3 = _mm256_fmadd_ps(va, _mm256_loadu_ps(x + i + 24), _mm256_loadu_ps(y + i + 24));
-    _mm256_storeu_ps(y + i + 0, y0);
-    _mm256_storeu_ps(y + i + 8, y1);
-    _mm256_storeu_ps(y + i + 16, y2);
-    _mm256_storeu_ps(y + i + 24, y3);
+    __m256 y0 = simd::fma::fma_f32(va, simd::avx::loadu_f32(x + i + 0), simd::avx::loadu_f32(y + i + 0));
+    __m256 y1 = simd::fma::fma_f32(va, simd::avx::loadu_f32(x + i + 8), simd::avx::loadu_f32(y + i + 8));
+    __m256 y2 = simd::fma::fma_f32(va, simd::avx::loadu_f32(x + i + 16), simd::avx::loadu_f32(y + i + 16));
+    __m256 y3 = simd::fma::fma_f32(va, simd::avx::loadu_f32(x + i + 24), simd::avx::loadu_f32(y + i + 24));
+    simd::avx::storeu_f32(y + i + 0, y0);
+    simd::avx::storeu_f32(y + i + 8, y1);
+    simd::avx::storeu_f32(y + i + 16, y2);
+    simd::avx::storeu_f32(y + i + 24, y3);
   }
   for ( ; i + 8 <= n; i += 8 ) {
-    __m256 yk = _mm256_fmadd_ps(va, _mm256_loadu_ps(x + i), _mm256_loadu_ps(y + i));
-    _mm256_storeu_ps(y + i, yk);
+    __m256 yk = simd::fma::fma_f32(va, simd::avx::loadu_f32(x + i), simd::avx::loadu_f32(y + i));
+    simd::avx::storeu_f32(y + i, yk);
   }
   for ( ; i < n; ++i ) y[i] = math::fma<f32>(alpha, x[i], y[i]);
 }
@@ -173,25 +174,25 @@ axpy_packed_f32(float alpha, const float *__restrict__ x, float *__restrict__ y,
 asum_packed_f64(const double *__restrict__ x, usize n) noexcept
 {
   // bit-mask 0x7FFFFFFFFFFFFFFF clears the sign bit (gives |x|).
-  const __m256d sign_mask = _mm256_castsi256_pd(_mm256_set1_epi64x(0x7FFFFFFFFFFFFFFFLL));
-  __m256d s0 = _mm256_setzero_pd();
-  __m256d s1 = _mm256_setzero_pd();
-  __m256d s2 = _mm256_setzero_pd();
-  __m256d s3 = _mm256_setzero_pd();
+  const __m256d sign_mask = simd::avx::cast_i256_to_f64(simd::avx::splat_i64(0x7FFFFFFFFFFFFFFFLL));
+  __m256d s0 = simd::avx::zero_f64();
+  __m256d s1 = simd::avx::zero_f64();
+  __m256d s2 = simd::avx::zero_f64();
+  __m256d s3 = simd::avx::zero_f64();
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    s0 = _mm256_add_pd(s0, _mm256_and_pd(_mm256_loadu_pd(x + i + 0), sign_mask));
-    s1 = _mm256_add_pd(s1, _mm256_and_pd(_mm256_loadu_pd(x + i + 4), sign_mask));
-    s2 = _mm256_add_pd(s2, _mm256_and_pd(_mm256_loadu_pd(x + i + 8), sign_mask));
-    s3 = _mm256_add_pd(s3, _mm256_and_pd(_mm256_loadu_pd(x + i + 12), sign_mask));
+    s0 = simd::avx::add_f64(s0, simd::avx::and_f64(simd::avx::loadu_f64(x + i + 0), sign_mask));
+    s1 = simd::avx::add_f64(s1, simd::avx::and_f64(simd::avx::loadu_f64(x + i + 4), sign_mask));
+    s2 = simd::avx::add_f64(s2, simd::avx::and_f64(simd::avx::loadu_f64(x + i + 8), sign_mask));
+    s3 = simd::avx::add_f64(s3, simd::avx::and_f64(simd::avx::loadu_f64(x + i + 12), sign_mask));
   }
-  for ( ; i + 4 <= n; i += 4 ) s0 = _mm256_add_pd(s0, _mm256_and_pd(_mm256_loadu_pd(x + i), sign_mask));
-  __m256d sum = _mm256_add_pd(_mm256_add_pd(s0, s1), _mm256_add_pd(s2, s3));
-  __m128d hi = _mm256_extractf128_pd(sum, 1);
-  __m128d lo = _mm256_castpd256_pd128(sum);
-  __m128d half = _mm_add_pd(hi, lo);
-  __m128d hh = _mm_unpackhi_pd(half, half);
-  f64 r = _mm_cvtsd_f64(_mm_add_sd(half, hh));
+  for ( ; i + 4 <= n; i += 4 ) s0 = simd::avx::add_f64(s0, simd::avx::and_f64(simd::avx::loadu_f64(x + i), sign_mask));
+  __m256d sum = simd::avx::add_f64(simd::avx::add_f64(s0, s1), simd::avx::add_f64(s2, s3));
+  __m128d hi = simd::avx::extract_f128_f64<1>(sum);
+  __m128d lo = simd::avx::cast_f64_to_lo128(sum);
+  __m128d half = simd::sse::add_f64(hi, lo);
+  __m128d hh = simd::sse::unpack_hi_f64(half, half);
+  f64 r = simd::sse::extract_low_f64(simd::sse::add_scalar_f64(half, hh));
   for ( ; i < n; ++i ) r += mk::manip::fabs<f64>(x[i]);
   return r;
 }
@@ -199,26 +200,26 @@ asum_packed_f64(const double *__restrict__ x, usize n) noexcept
 [[nodiscard, gnu::flatten]] inline f32
 asum_packed_f32(const float *__restrict__ x, usize n) noexcept
 {
-  const __m256 sign_mask = _mm256_castsi256_ps(_mm256_set1_epi32(0x7FFFFFFF));
-  __m256 s0 = _mm256_setzero_ps();
-  __m256 s1 = _mm256_setzero_ps();
-  __m256 s2 = _mm256_setzero_ps();
-  __m256 s3 = _mm256_setzero_ps();
+  const __m256 sign_mask = simd::avx::cast_i256_to_f32(simd::avx::splat_i32(0x7FFFFFFF));
+  __m256 s0 = simd::avx::zero_f32();
+  __m256 s1 = simd::avx::zero_f32();
+  __m256 s2 = simd::avx::zero_f32();
+  __m256 s3 = simd::avx::zero_f32();
   usize i = 0;
   for ( ; i + 32 <= n; i += 32 ) {
-    s0 = _mm256_add_ps(s0, _mm256_and_ps(_mm256_loadu_ps(x + i + 0), sign_mask));
-    s1 = _mm256_add_ps(s1, _mm256_and_ps(_mm256_loadu_ps(x + i + 8), sign_mask));
-    s2 = _mm256_add_ps(s2, _mm256_and_ps(_mm256_loadu_ps(x + i + 16), sign_mask));
-    s3 = _mm256_add_ps(s3, _mm256_and_ps(_mm256_loadu_ps(x + i + 24), sign_mask));
+    s0 = simd::avx::add_f32(s0, simd::avx::and_f32(simd::avx::loadu_f32(x + i + 0), sign_mask));
+    s1 = simd::avx::add_f32(s1, simd::avx::and_f32(simd::avx::loadu_f32(x + i + 8), sign_mask));
+    s2 = simd::avx::add_f32(s2, simd::avx::and_f32(simd::avx::loadu_f32(x + i + 16), sign_mask));
+    s3 = simd::avx::add_f32(s3, simd::avx::and_f32(simd::avx::loadu_f32(x + i + 24), sign_mask));
   }
-  for ( ; i + 8 <= n; i += 8 ) s0 = _mm256_add_ps(s0, _mm256_and_ps(_mm256_loadu_ps(x + i), sign_mask));
-  __m256 sum = _mm256_add_ps(_mm256_add_ps(s0, s1), _mm256_add_ps(s2, s3));
-  __m128 hi = _mm256_extractf128_ps(sum, 1);
-  __m128 lo = _mm256_castps256_ps128(sum);
-  __m128 q4 = _mm_add_ps(hi, lo);
-  __m128 q2 = _mm_add_ps(q4, _mm_movehl_ps(q4, q4));
-  __m128 q1 = _mm_add_ss(q2, _mm_shuffle_ps(q2, q2, 0x1));
-  f32 r = _mm_cvtss_f32(q1);
+  for ( ; i + 8 <= n; i += 8 ) s0 = simd::avx::add_f32(s0, simd::avx::and_f32(simd::avx::loadu_f32(x + i), sign_mask));
+  __m256 sum = simd::avx::add_f32(simd::avx::add_f32(s0, s1), simd::avx::add_f32(s2, s3));
+  __m128 hi = simd::avx::extract_f128_f32<1>(sum);
+  __m128 lo = simd::avx::cast_f32_to_lo128(sum);
+  __m128 q4 = simd::sse::add_f32(hi, lo);
+  __m128 q2 = simd::sse::add_f32(q4, simd::sse::move_hl_f32(q4, q4));
+  __m128 q1 = simd::sse::add_scalar_f32(q2, simd::sse::shuffle_f32<0x1>(q2, q2));
+  f32 r = simd::sse::extract_low_f32(q1);
   for ( ; i < n; ++i ) r += mk::manip::fabs<f32>(x[i]);
   return r;
 }
@@ -230,20 +231,20 @@ asum_packed_f32(const float *__restrict__ x, usize n) noexcept
 [[gnu::flatten]] inline void
 scal_packed_f64(double alpha, double *__restrict__ x, usize n) noexcept
 {
-  const __m256d va = _mm256_set1_pd(alpha);
+  const __m256d va = simd::avx::splat_f64(alpha);
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    __m256d x0 = _mm256_loadu_pd(x + i + 0);
-    __m256d x1 = _mm256_loadu_pd(x + i + 4);
-    __m256d x2 = _mm256_loadu_pd(x + i + 8);
-    __m256d x3 = _mm256_loadu_pd(x + i + 12);
-    _mm256_storeu_pd(x + i + 0, _mm256_mul_pd(x0, va));
-    _mm256_storeu_pd(x + i + 4, _mm256_mul_pd(x1, va));
-    _mm256_storeu_pd(x + i + 8, _mm256_mul_pd(x2, va));
-    _mm256_storeu_pd(x + i + 12, _mm256_mul_pd(x3, va));
+    __m256d x0 = simd::avx::loadu_f64(x + i + 0);
+    __m256d x1 = simd::avx::loadu_f64(x + i + 4);
+    __m256d x2 = simd::avx::loadu_f64(x + i + 8);
+    __m256d x3 = simd::avx::loadu_f64(x + i + 12);
+    simd::avx::storeu_f64(x + i + 0, simd::avx::mul_f64(x0, va));
+    simd::avx::storeu_f64(x + i + 4, simd::avx::mul_f64(x1, va));
+    simd::avx::storeu_f64(x + i + 8, simd::avx::mul_f64(x2, va));
+    simd::avx::storeu_f64(x + i + 12, simd::avx::mul_f64(x3, va));
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    _mm256_storeu_pd(x + i, _mm256_mul_pd(_mm256_loadu_pd(x + i), va));
+    simd::avx::storeu_f64(x + i, simd::avx::mul_f64(simd::avx::loadu_f64(x + i), va));
   }
   for ( ; i < n; ++i ) x[i] = x[i] * alpha;
 }
@@ -251,20 +252,20 @@ scal_packed_f64(double alpha, double *__restrict__ x, usize n) noexcept
 [[gnu::flatten]] inline void
 scal_packed_f32(float alpha, float *__restrict__ x, usize n) noexcept
 {
-  const __m256 va = _mm256_set1_ps(alpha);
+  const __m256 va = simd::avx::splat_f32(alpha);
   usize i = 0;
   for ( ; i + 32 <= n; i += 32 ) {
-    __m256 x0 = _mm256_loadu_ps(x + i + 0);
-    __m256 x1 = _mm256_loadu_ps(x + i + 8);
-    __m256 x2 = _mm256_loadu_ps(x + i + 16);
-    __m256 x3 = _mm256_loadu_ps(x + i + 24);
-    _mm256_storeu_ps(x + i + 0, _mm256_mul_ps(x0, va));
-    _mm256_storeu_ps(x + i + 8, _mm256_mul_ps(x1, va));
-    _mm256_storeu_ps(x + i + 16, _mm256_mul_ps(x2, va));
-    _mm256_storeu_ps(x + i + 24, _mm256_mul_ps(x3, va));
+    __m256 x0 = simd::avx::loadu_f32(x + i + 0);
+    __m256 x1 = simd::avx::loadu_f32(x + i + 8);
+    __m256 x2 = simd::avx::loadu_f32(x + i + 16);
+    __m256 x3 = simd::avx::loadu_f32(x + i + 24);
+    simd::avx::storeu_f32(x + i + 0, simd::avx::mul_f32(x0, va));
+    simd::avx::storeu_f32(x + i + 8, simd::avx::mul_f32(x1, va));
+    simd::avx::storeu_f32(x + i + 16, simd::avx::mul_f32(x2, va));
+    simd::avx::storeu_f32(x + i + 24, simd::avx::mul_f32(x3, va));
   }
   for ( ; i + 8 <= n; i += 8 ) {
-    _mm256_storeu_ps(x + i, _mm256_mul_ps(_mm256_loadu_ps(x + i), va));
+    simd::avx::storeu_f32(x + i, simd::avx::mul_f32(simd::avx::loadu_f32(x + i), va));
   }
   for ( ; i < n; ++i ) x[i] = x[i] * alpha;
 }
@@ -275,31 +276,31 @@ scal_packed_f32(float alpha, float *__restrict__ x, usize n) noexcept
 [[nodiscard, gnu::flatten]] inline f64
 nrm2_fast_packed_f64(const double *__restrict__ x, usize n) noexcept
 {
-  __m256d s0 = _mm256_setzero_pd();
-  __m256d s1 = _mm256_setzero_pd();
-  __m256d s2 = _mm256_setzero_pd();
-  __m256d s3 = _mm256_setzero_pd();
+  __m256d s0 = simd::avx::zero_f64();
+  __m256d s1 = simd::avx::zero_f64();
+  __m256d s2 = simd::avx::zero_f64();
+  __m256d s3 = simd::avx::zero_f64();
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    __m256d x0 = _mm256_loadu_pd(x + i + 0);
-    __m256d x1 = _mm256_loadu_pd(x + i + 4);
-    __m256d x2 = _mm256_loadu_pd(x + i + 8);
-    __m256d x3 = _mm256_loadu_pd(x + i + 12);
-    s0 = _mm256_fmadd_pd(x0, x0, s0);
-    s1 = _mm256_fmadd_pd(x1, x1, s1);
-    s2 = _mm256_fmadd_pd(x2, x2, s2);
-    s3 = _mm256_fmadd_pd(x3, x3, s3);
+    __m256d x0 = simd::avx::loadu_f64(x + i + 0);
+    __m256d x1 = simd::avx::loadu_f64(x + i + 4);
+    __m256d x2 = simd::avx::loadu_f64(x + i + 8);
+    __m256d x3 = simd::avx::loadu_f64(x + i + 12);
+    s0 = simd::fma::fma_f64(x0, x0, s0);
+    s1 = simd::fma::fma_f64(x1, x1, s1);
+    s2 = simd::fma::fma_f64(x2, x2, s2);
+    s3 = simd::fma::fma_f64(x3, x3, s3);
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    __m256d xv = _mm256_loadu_pd(x + i);
-    s0 = _mm256_fmadd_pd(xv, xv, s0);
+    __m256d xv = simd::avx::loadu_f64(x + i);
+    s0 = simd::fma::fma_f64(xv, xv, s0);
   }
-  __m256d sum = _mm256_add_pd(_mm256_add_pd(s0, s1), _mm256_add_pd(s2, s3));
-  __m128d hi = _mm256_extractf128_pd(sum, 1);
-  __m128d lo = _mm256_castpd256_pd128(sum);
-  __m128d half = _mm_add_pd(hi, lo);
-  __m128d hh = _mm_unpackhi_pd(half, half);
-  f64 r = _mm_cvtsd_f64(_mm_add_sd(half, hh));
+  __m256d sum = simd::avx::add_f64(simd::avx::add_f64(s0, s1), simd::avx::add_f64(s2, s3));
+  __m128d hi = simd::avx::extract_f128_f64<1>(sum);
+  __m128d lo = simd::avx::cast_f64_to_lo128(sum);
+  __m128d half = simd::sse::add_f64(hi, lo);
+  __m128d hh = simd::sse::unpack_hi_f64(half, half);
+  f64 r = simd::sse::extract_low_f64(simd::sse::add_scalar_f64(half, hh));
   for ( ; i < n; ++i ) r = math::fma<f64>(x[i], x[i], r);
   return r;
 }
@@ -307,32 +308,32 @@ nrm2_fast_packed_f64(const double *__restrict__ x, usize n) noexcept
 [[nodiscard, gnu::flatten]] inline f32
 nrm2_fast_packed_f32(const float *__restrict__ x, usize n) noexcept
 {
-  __m256 s0 = _mm256_setzero_ps();
-  __m256 s1 = _mm256_setzero_ps();
-  __m256 s2 = _mm256_setzero_ps();
-  __m256 s3 = _mm256_setzero_ps();
+  __m256 s0 = simd::avx::zero_f32();
+  __m256 s1 = simd::avx::zero_f32();
+  __m256 s2 = simd::avx::zero_f32();
+  __m256 s3 = simd::avx::zero_f32();
   usize i = 0;
   for ( ; i + 32 <= n; i += 32 ) {
-    __m256 x0 = _mm256_loadu_ps(x + i + 0);
-    __m256 x1 = _mm256_loadu_ps(x + i + 8);
-    __m256 x2 = _mm256_loadu_ps(x + i + 16);
-    __m256 x3 = _mm256_loadu_ps(x + i + 24);
-    s0 = _mm256_fmadd_ps(x0, x0, s0);
-    s1 = _mm256_fmadd_ps(x1, x1, s1);
-    s2 = _mm256_fmadd_ps(x2, x2, s2);
-    s3 = _mm256_fmadd_ps(x3, x3, s3);
+    __m256 x0 = simd::avx::loadu_f32(x + i + 0);
+    __m256 x1 = simd::avx::loadu_f32(x + i + 8);
+    __m256 x2 = simd::avx::loadu_f32(x + i + 16);
+    __m256 x3 = simd::avx::loadu_f32(x + i + 24);
+    s0 = simd::fma::fma_f32(x0, x0, s0);
+    s1 = simd::fma::fma_f32(x1, x1, s1);
+    s2 = simd::fma::fma_f32(x2, x2, s2);
+    s3 = simd::fma::fma_f32(x3, x3, s3);
   }
   for ( ; i + 8 <= n; i += 8 ) {
-    __m256 xv = _mm256_loadu_ps(x + i);
-    s0 = _mm256_fmadd_ps(xv, xv, s0);
+    __m256 xv = simd::avx::loadu_f32(x + i);
+    s0 = simd::fma::fma_f32(xv, xv, s0);
   }
-  __m256 sum = _mm256_add_ps(_mm256_add_ps(s0, s1), _mm256_add_ps(s2, s3));
-  __m128 hi = _mm256_extractf128_ps(sum, 1);
-  __m128 lo = _mm256_castps256_ps128(sum);
-  __m128 q4 = _mm_add_ps(hi, lo);
-  __m128 q2 = _mm_add_ps(q4, _mm_movehl_ps(q4, q4));
-  __m128 q1 = _mm_add_ss(q2, _mm_shuffle_ps(q2, q2, 0x1));
-  f32 r = _mm_cvtss_f32(q1);
+  __m256 sum = simd::avx::add_f32(simd::avx::add_f32(s0, s1), simd::avx::add_f32(s2, s3));
+  __m128 hi = simd::avx::extract_f128_f32<1>(sum);
+  __m128 lo = simd::avx::cast_f32_to_lo128(sum);
+  __m128 q4 = simd::sse::add_f32(hi, lo);
+  __m128 q2 = simd::sse::add_f32(q4, simd::sse::move_hl_f32(q4, q4));
+  __m128 q1 = simd::sse::add_scalar_f32(q2, simd::sse::shuffle_f32<0x1>(q2, q2));
+  f32 r = simd::sse::extract_low_f32(q1);
   for ( ; i < n; ++i ) r = math::fma<f32>(x[i], x[i], r);
   return r;
 }
@@ -348,61 +349,73 @@ iamax_packed_f64(const double *__restrict__ x, usize n) noexcept
     usize idx = 0;
     for ( usize k = 1; k < n; ++k ) {
       const double a = mk::manip::fabs<f64>(x[k]);
-      if ( a > mx ) { mx = a; idx = k; }
+      if ( a > mx ) {
+        mx = a;
+        idx = k;
+      }
     }
     return idx;
   }
   // 2-chain unroll
-  const __m256d abs_mask = _mm256_castsi256_pd(_mm256_set1_epi64x(0x7FFFFFFFFFFFFFFFLL));
-  __m256d vmax0 = _mm256_and_pd(_mm256_loadu_pd(x + 0), abs_mask);
-  __m256d vmax1 = _mm256_and_pd(_mm256_loadu_pd(x + 4), abs_mask);
-  __m256i vidx0 = _mm256_setr_epi64x(0, 1, 2, 3);
-  __m256i vidx1 = _mm256_setr_epi64x(4, 5, 6, 7);
-  __m256i vcand0 = _mm256_setr_epi64x(8, 9, 10, 11);
-  __m256i vcand1 = _mm256_setr_epi64x(12, 13, 14, 15);
-  const __m256i step8 = _mm256_set1_epi64x(8);
-  const __m256i step4 = _mm256_set1_epi64x(4);
+  const __m256d abs_mask = simd::avx::cast_i256_to_f64(simd::avx::splat_i64(0x7FFFFFFFFFFFFFFFLL));
+  __m256d vmax0 = simd::avx::and_f64(simd::avx::loadu_f64(x + 0), abs_mask);
+  __m256d vmax1 = simd::avx::and_f64(simd::avx::loadu_f64(x + 4), abs_mask);
+  __m256i vidx0 = simd::avx::setr_i64(0, 1, 2, 3);
+  __m256i vidx1 = simd::avx::setr_i64(4, 5, 6, 7);
+  __m256i vcand0 = simd::avx::setr_i64(8, 9, 10, 11);
+  __m256i vcand1 = simd::avx::setr_i64(12, 13, 14, 15);
+  const __m256i step8 = simd::avx::splat_i64(8);
+  const __m256i step4 = simd::avx::splat_i64(4);
   usize i = 8;
   for ( ; i + 8 <= n; i += 8 ) {
-    __m256d v0 = _mm256_and_pd(_mm256_loadu_pd(x + i + 0), abs_mask);
-    __m256d v1 = _mm256_and_pd(_mm256_loadu_pd(x + i + 4), abs_mask);
-    __m256d gt0 = _mm256_cmp_pd(v0, vmax0, _CMP_GT_OQ);
-    __m256d gt1 = _mm256_cmp_pd(v1, vmax1, _CMP_GT_OQ);
-    vmax0 = _mm256_blendv_pd(vmax0, v0, gt0);
-    vmax1 = _mm256_blendv_pd(vmax1, v1, gt1);
-    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castpd_si256(gt0));
-    vidx1 = _mm256_blendv_epi8(vidx1, vcand1, _mm256_castpd_si256(gt1));
-    vcand0 = _mm256_add_epi64(vcand0, step8);
-    vcand1 = _mm256_add_epi64(vcand1, step8);
+    __m256d v0 = simd::avx::and_f64(simd::avx::loadu_f64(x + i + 0), abs_mask);
+    __m256d v1 = simd::avx::and_f64(simd::avx::loadu_f64(x + i + 4), abs_mask);
+    __m256d gt0 = simd::avx::cmp_f64<_CMP_GT_OQ>(v0, vmax0);
+    __m256d gt1 = simd::avx::cmp_f64<_CMP_GT_OQ>(v1, vmax1);
+    vmax0 = simd::avx::blendv_f64(vmax0, v0, gt0);
+    vmax1 = simd::avx::blendv_f64(vmax1, v1, gt1);
+    vidx0 = simd::avx2::blendv_i8(vidx0, vcand0, simd::avx::cast_f64_to_i256(gt0));
+    vidx1 = simd::avx2::blendv_i8(vidx1, vcand1, simd::avx::cast_f64_to_i256(gt1));
+    vcand0 = simd::avx2::add_i64(vcand0, step8);
+    vcand1 = simd::avx2::add_i64(vcand1, step8);
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    __m256d v = _mm256_and_pd(_mm256_loadu_pd(x + i), abs_mask);
-    __m256d gt = _mm256_cmp_pd(v, vmax0, _CMP_GT_OQ);
-    vmax0 = _mm256_blendv_pd(vmax0, v, gt);
-    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castpd_si256(gt));
-    vcand0 = _mm256_add_epi64(vcand0, step4);
+    __m256d v = simd::avx::and_f64(simd::avx::loadu_f64(x + i), abs_mask);
+    __m256d gt = simd::avx::cmp_f64<_CMP_GT_OQ>(v, vmax0);
+    vmax0 = simd::avx::blendv_f64(vmax0, v, gt);
+    vidx0 = simd::avx2::blendv_i8(vidx0, vcand0, simd::avx::cast_f64_to_i256(gt));
+    vcand0 = simd::avx2::add_i64(vcand0, step4);
   }
   alignas(32) double lanes_v0[4], lanes_v1[4];
   alignas(32) i64 lanes_i0[4], lanes_i1[4];
-  _mm256_store_pd(lanes_v0, vmax0);
-  _mm256_store_pd(lanes_v1, vmax1);
-  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i0), vidx0);
-  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i1), vidx1);
+  simd::avx::store_f64(lanes_v0, vmax0);
+  simd::avx::store_f64(lanes_v1, vmax1);
+  simd::avx::store_i256(reinterpret_cast<__m256i *>(lanes_i0), vidx0);
+  simd::avx::store_i256(reinterpret_cast<__m256i *>(lanes_i1), vidx1);
   double best = lanes_v0[0];
   usize best_idx = usize(lanes_i0[0]);
   for ( int k = 1; k < 4; ++k ) {
     const double a = lanes_v0[k];
     const usize j = usize(lanes_i0[k]);
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( int k = 0; k < 4; ++k ) {
     const double a = lanes_v1[k];
     const usize j = usize(lanes_i1[k]);
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( ; i < n; ++i ) {
     const double a = mk::manip::fabs<f64>(x[i]);
-    if ( a > best ) { best = a; best_idx = i; }
+    if ( a > best ) {
+      best = a;
+      best_idx = i;
+    }
   }
   return best_idx;
 }
@@ -416,61 +429,73 @@ iamax_packed_f32(const float *__restrict__ x, usize n) noexcept
     usize idx = 0;
     for ( usize k = 1; k < n; ++k ) {
       const float a = mk::manip::fabs<f32>(x[k]);
-      if ( a > mx ) { mx = a; idx = k; }
+      if ( a > mx ) {
+        mx = a;
+        idx = k;
+      }
     }
     return idx;
   }
   // 2-chain unroll: 16 floats per outer iter, two independent dep chains
-  const __m256 abs_mask = _mm256_castsi256_ps(_mm256_set1_epi32(0x7FFFFFFF));
-  __m256 vmax0 = _mm256_and_ps(_mm256_loadu_ps(x + 0), abs_mask);
-  __m256 vmax1 = _mm256_and_ps(_mm256_loadu_ps(x + 8), abs_mask);
-  __m256i vidx0 = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
-  __m256i vidx1 = _mm256_setr_epi32(8, 9, 10, 11, 12, 13, 14, 15);
-  __m256i vcand0 = _mm256_setr_epi32(16, 17, 18, 19, 20, 21, 22, 23);
-  __m256i vcand1 = _mm256_setr_epi32(24, 25, 26, 27, 28, 29, 30, 31);
-  const __m256i step16 = _mm256_set1_epi32(16);
-  const __m256i step8 = _mm256_set1_epi32(8);
+  const __m256 abs_mask = simd::avx::cast_i256_to_f32(simd::avx::splat_i32(0x7FFFFFFF));
+  __m256 vmax0 = simd::avx::and_f32(simd::avx::loadu_f32(x + 0), abs_mask);
+  __m256 vmax1 = simd::avx::and_f32(simd::avx::loadu_f32(x + 8), abs_mask);
+  __m256i vidx0 = simd::avx::setr_i32(0, 1, 2, 3, 4, 5, 6, 7);
+  __m256i vidx1 = simd::avx::setr_i32(8, 9, 10, 11, 12, 13, 14, 15);
+  __m256i vcand0 = simd::avx::setr_i32(16, 17, 18, 19, 20, 21, 22, 23);
+  __m256i vcand1 = simd::avx::setr_i32(24, 25, 26, 27, 28, 29, 30, 31);
+  const __m256i step16 = simd::avx::splat_i32(16);
+  const __m256i step8 = simd::avx::splat_i32(8);
   usize i = 16;
   for ( ; i + 16 <= n; i += 16 ) {
-    __m256 v0 = _mm256_and_ps(_mm256_loadu_ps(x + i + 0), abs_mask);
-    __m256 v1 = _mm256_and_ps(_mm256_loadu_ps(x + i + 8), abs_mask);
-    __m256 gt0 = _mm256_cmp_ps(v0, vmax0, _CMP_GT_OQ);
-    __m256 gt1 = _mm256_cmp_ps(v1, vmax1, _CMP_GT_OQ);
-    vmax0 = _mm256_blendv_ps(vmax0, v0, gt0);
-    vmax1 = _mm256_blendv_ps(vmax1, v1, gt1);
-    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castps_si256(gt0));
-    vidx1 = _mm256_blendv_epi8(vidx1, vcand1, _mm256_castps_si256(gt1));
-    vcand0 = _mm256_add_epi32(vcand0, step16);
-    vcand1 = _mm256_add_epi32(vcand1, step16);
+    __m256 v0 = simd::avx::and_f32(simd::avx::loadu_f32(x + i + 0), abs_mask);
+    __m256 v1 = simd::avx::and_f32(simd::avx::loadu_f32(x + i + 8), abs_mask);
+    __m256 gt0 = simd::avx::cmp_f32<_CMP_GT_OQ>(v0, vmax0);
+    __m256 gt1 = simd::avx::cmp_f32<_CMP_GT_OQ>(v1, vmax1);
+    vmax0 = simd::avx::blendv_f32(vmax0, v0, gt0);
+    vmax1 = simd::avx::blendv_f32(vmax1, v1, gt1);
+    vidx0 = simd::avx2::blendv_i8(vidx0, vcand0, simd::avx::cast_f32_to_i256(gt0));
+    vidx1 = simd::avx2::blendv_i8(vidx1, vcand1, simd::avx::cast_f32_to_i256(gt1));
+    vcand0 = simd::avx2::add_i32(vcand0, step16);
+    vcand1 = simd::avx2::add_i32(vcand1, step16);
   }
   for ( ; i + 8 <= n; i += 8 ) {
-    __m256 v = _mm256_and_ps(_mm256_loadu_ps(x + i), abs_mask);
-    __m256 gt = _mm256_cmp_ps(v, vmax0, _CMP_GT_OQ);
-    vmax0 = _mm256_blendv_ps(vmax0, v, gt);
-    vidx0 = _mm256_blendv_epi8(vidx0, vcand0, _mm256_castps_si256(gt));
-    vcand0 = _mm256_add_epi32(vcand0, step8);
+    __m256 v = simd::avx::and_f32(simd::avx::loadu_f32(x + i), abs_mask);
+    __m256 gt = simd::avx::cmp_f32<_CMP_GT_OQ>(v, vmax0);
+    vmax0 = simd::avx::blendv_f32(vmax0, v, gt);
+    vidx0 = simd::avx2::blendv_i8(vidx0, vcand0, simd::avx::cast_f32_to_i256(gt));
+    vcand0 = simd::avx2::add_i32(vcand0, step8);
   }
   alignas(32) float lanes_v0[8], lanes_v1[8];
   alignas(32) i32 lanes_i0[8], lanes_i1[8];
-  _mm256_store_ps(lanes_v0, vmax0);
-  _mm256_store_ps(lanes_v1, vmax1);
-  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i0), vidx0);
-  _mm256_store_si256(reinterpret_cast<__m256i *>(lanes_i1), vidx1);
+  simd::avx::store_f32(lanes_v0, vmax0);
+  simd::avx::store_f32(lanes_v1, vmax1);
+  simd::avx::store_i256(reinterpret_cast<__m256i *>(lanes_i0), vidx0);
+  simd::avx::store_i256(reinterpret_cast<__m256i *>(lanes_i1), vidx1);
   float best = lanes_v0[0];
   usize best_idx = usize(u32(lanes_i0[0]));
   for ( int k = 1; k < 8; ++k ) {
     const float a = lanes_v0[k];
     const usize j = usize(u32(lanes_i0[k]));
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( int k = 0; k < 8; ++k ) {
     const float a = lanes_v1[k];
     const usize j = usize(u32(lanes_i1[k]));
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( ; i < n; ++i ) {
     const float a = mk::manip::fabs<f32>(x[i]);
-    if ( a > best ) { best = a; best_idx = i; }
+    if ( a > best ) {
+      best = a;
+      best_idx = i;
+    }
   }
   return best_idx;
 }
@@ -484,20 +509,20 @@ iamax_packed_f32(const float *__restrict__ x, usize n) noexcept
 [[gnu::flatten]] inline void
 scal_packed_f32_neon(float alpha, float *__restrict__ x, usize n) noexcept
 {
-  const float32x4_t va = vdupq_n_f32(alpha);
+  const float32x4_t va = simd::neon::splat_f32(alpha);
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    float32x4_t x0 = vld1q_f32(x + i + 0);
-    float32x4_t x1 = vld1q_f32(x + i + 4);
-    float32x4_t x2 = vld1q_f32(x + i + 8);
-    float32x4_t x3 = vld1q_f32(x + i + 12);
-    vst1q_f32(x + i + 0, vmulq_f32(x0, va));
-    vst1q_f32(x + i + 4, vmulq_f32(x1, va));
-    vst1q_f32(x + i + 8, vmulq_f32(x2, va));
-    vst1q_f32(x + i + 12, vmulq_f32(x3, va));
+    float32x4_t x0 = simd::neon::load_f32(x + i + 0);
+    float32x4_t x1 = simd::neon::load_f32(x + i + 4);
+    float32x4_t x2 = simd::neon::load_f32(x + i + 8);
+    float32x4_t x3 = simd::neon::load_f32(x + i + 12);
+    simd::neon::store_f32(x + i + 0, simd::neon::mul(x0, va));
+    simd::neon::store_f32(x + i + 4, simd::neon::mul(x1, va));
+    simd::neon::store_f32(x + i + 8, simd::neon::mul(x2, va));
+    simd::neon::store_f32(x + i + 12, simd::neon::mul(x3, va));
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    vst1q_f32(x + i, vmulq_f32(vld1q_f32(x + i), va));
+    simd::neon::store_f32(x + i, simd::neon::mul(simd::neon::load_f32(x + i), va));
   }
   for ( ; i < n; ++i ) x[i] = x[i] * alpha;
 }
@@ -506,20 +531,20 @@ scal_packed_f32_neon(float alpha, float *__restrict__ x, usize n) noexcept
 [[gnu::flatten]] inline void
 scal_packed_f64_neon(double alpha, double *__restrict__ x, usize n) noexcept
 {
-  const float64x2_t va = vdupq_n_f64(alpha);
+  const float64x2_t va = simd::neon::splat_f64(alpha);
   usize i = 0;
   for ( ; i + 8 <= n; i += 8 ) {
-    float64x2_t x0 = vld1q_f64(x + i + 0);
-    float64x2_t x1 = vld1q_f64(x + i + 2);
-    float64x2_t x2 = vld1q_f64(x + i + 4);
-    float64x2_t x3 = vld1q_f64(x + i + 6);
-    vst1q_f64(x + i + 0, vmulq_f64(x0, va));
-    vst1q_f64(x + i + 2, vmulq_f64(x1, va));
-    vst1q_f64(x + i + 4, vmulq_f64(x2, va));
-    vst1q_f64(x + i + 6, vmulq_f64(x3, va));
+    float64x2_t x0 = simd::neon::load_f64(x + i + 0);
+    float64x2_t x1 = simd::neon::load_f64(x + i + 2);
+    float64x2_t x2 = simd::neon::load_f64(x + i + 4);
+    float64x2_t x3 = simd::neon::load_f64(x + i + 6);
+    simd::neon::store_f64(x + i + 0, simd::neon::mul(x0, va));
+    simd::neon::store_f64(x + i + 2, simd::neon::mul(x1, va));
+    simd::neon::store_f64(x + i + 4, simd::neon::mul(x2, va));
+    simd::neon::store_f64(x + i + 6, simd::neon::mul(x3, va));
   }
   for ( ; i + 2 <= n; i += 2 ) {
-    vst1q_f64(x + i, vmulq_f64(vld1q_f64(x + i), va));
+    simd::neon::store_f64(x + i, simd::neon::mul(simd::neon::load_f64(x + i), va));
   }
   for ( ; i < n; ++i ) x[i] = x[i] * alpha;
 }
@@ -531,38 +556,38 @@ scal_packed_f64_neon(double alpha, double *__restrict__ x, usize n) noexcept
 [[nodiscard, gnu::flatten]] inline f32
 nrm2_fast_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
 {
-  float32x4_t s0 = vdupq_n_f32(0.0f);
-  float32x4_t s1 = vdupq_n_f32(0.0f);
-  float32x4_t s2 = vdupq_n_f32(0.0f);
-  float32x4_t s3 = vdupq_n_f32(0.0f);
+  float32x4_t s0 = simd::neon::splat_f32(0.0f);
+  float32x4_t s1 = simd::neon::splat_f32(0.0f);
+  float32x4_t s2 = simd::neon::splat_f32(0.0f);
+  float32x4_t s3 = simd::neon::splat_f32(0.0f);
   usize i = 0;
   for ( ; i + 16 <= n; i += 16 ) {
-    float32x4_t a = vld1q_f32(x + i + 0);
-    float32x4_t b = vld1q_f32(x + i + 4);
-    float32x4_t c = vld1q_f32(x + i + 8);
-    float32x4_t d = vld1q_f32(x + i + 12);
+    float32x4_t a = simd::neon::load_f32(x + i + 0);
+    float32x4_t b = simd::neon::load_f32(x + i + 4);
+    float32x4_t c = simd::neon::load_f32(x + i + 8);
+    float32x4_t d = simd::neon::load_f32(x + i + 12);
 #if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
-    s0 = vfmaq_f32(s0, a, a);
-    s1 = vfmaq_f32(s1, b, b);
-    s2 = vfmaq_f32(s2, c, c);
-    s3 = vfmaq_f32(s3, d, d);
+    s0 = simd::neon::fma_f32(s0, a, a);
+    s1 = simd::neon::fma_f32(s1, b, b);
+    s2 = simd::neon::fma_f32(s2, c, c);
+    s3 = simd::neon::fma_f32(s3, d, d);
 #else
-    s0 = vmlaq_f32(s0, a, a);
-    s1 = vmlaq_f32(s1, b, b);
-    s2 = vmlaq_f32(s2, c, c);
-    s3 = vmlaq_f32(s3, d, d);
+    s0 = simd::neon::mla(s0, a, a);
+    s1 = simd::neon::mla(s1, b, b);
+    s2 = simd::neon::mla(s2, c, c);
+    s3 = simd::neon::mla(s3, d, d);
 #endif
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    float32x4_t a = vld1q_f32(x + i);
+    float32x4_t a = simd::neon::load_f32(x + i);
 #if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
-    s0 = vfmaq_f32(s0, a, a);
+    s0 = simd::neon::fma_f32(s0, a, a);
 #else
-    s0 = vmlaq_f32(s0, a, a);
+    s0 = simd::neon::mla(s0, a, a);
 #endif
   }
-  float32x4_t s = vaddq_f32(vaddq_f32(s0, s1), vaddq_f32(s2, s3));
-  f32 r = vgetq_lane_f32(s, 0) + vgetq_lane_f32(s, 1) + vgetq_lane_f32(s, 2) + vgetq_lane_f32(s, 3);
+  float32x4_t s = simd::neon::add(simd::neon::add(s0, s1), simd::neon::add(s2, s3));
+  f32 r = simd::neon::get_lane_f32<0>(s) + simd::neon::get_lane_f32<1>(s) + simd::neon::get_lane_f32<2>(s) + simd::neon::get_lane_f32<3>(s);
   for ( ; i < n; ++i ) r = math::fma<f32>(x[i], x[i], r);
   return r;
 }
@@ -571,27 +596,27 @@ nrm2_fast_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
 [[nodiscard, gnu::flatten]] inline f64
 nrm2_fast_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
 {
-  float64x2_t s0 = vdupq_n_f64(0.0);
-  float64x2_t s1 = vdupq_n_f64(0.0);
-  float64x2_t s2 = vdupq_n_f64(0.0);
-  float64x2_t s3 = vdupq_n_f64(0.0);
+  float64x2_t s0 = simd::neon::splat_f64(0.0);
+  float64x2_t s1 = simd::neon::splat_f64(0.0);
+  float64x2_t s2 = simd::neon::splat_f64(0.0);
+  float64x2_t s3 = simd::neon::splat_f64(0.0);
   usize i = 0;
   for ( ; i + 8 <= n; i += 8 ) {
-    float64x2_t a = vld1q_f64(x + i + 0);
-    float64x2_t b = vld1q_f64(x + i + 2);
-    float64x2_t c = vld1q_f64(x + i + 4);
-    float64x2_t d = vld1q_f64(x + i + 6);
-    s0 = vfmaq_f64(s0, a, a);
-    s1 = vfmaq_f64(s1, b, b);
-    s2 = vfmaq_f64(s2, c, c);
-    s3 = vfmaq_f64(s3, d, d);
+    float64x2_t a = simd::neon::load_f64(x + i + 0);
+    float64x2_t b = simd::neon::load_f64(x + i + 2);
+    float64x2_t c = simd::neon::load_f64(x + i + 4);
+    float64x2_t d = simd::neon::load_f64(x + i + 6);
+    s0 = simd::neon::fma_f64(s0, a, a);
+    s1 = simd::neon::fma_f64(s1, b, b);
+    s2 = simd::neon::fma_f64(s2, c, c);
+    s3 = simd::neon::fma_f64(s3, d, d);
   }
   for ( ; i + 2 <= n; i += 2 ) {
-    float64x2_t a = vld1q_f64(x + i);
-    s0 = vfmaq_f64(s0, a, a);
+    float64x2_t a = simd::neon::load_f64(x + i);
+    s0 = simd::neon::fma_f64(s0, a, a);
   }
-  float64x2_t s = vaddq_f64(vaddq_f64(s0, s1), vaddq_f64(s2, s3));
-  f64 r = vgetq_lane_f64(s, 0) + vgetq_lane_f64(s, 1);
+  float64x2_t s = simd::neon::add(simd::neon::add(s0, s1), simd::neon::add(s2, s3));
+  f64 r = simd::neon::get_lane_f64<0>(s) + simd::neon::get_lane_f64<1>(s);
   for ( ; i < n; ++i ) r = math::fma<f64>(x[i], x[i], r);
   return r;
 }
@@ -608,60 +633,72 @@ iamax_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
     usize idx = 0;
     for ( usize k = 1; k < n; ++k ) {
       const float a = mk::manip::fabs<f32>(x[k]);
-      if ( a > mx ) { mx = a; idx = k; }
+      if ( a > mx ) {
+        mx = a;
+        idx = k;
+      }
     }
     return idx;
   }
   // 2 independent chains, 8 floats per outer iter.
-  float32x4_t vmax0 = vabsq_f32(vld1q_f32(x + 0));
-  float32x4_t vmax1 = vabsq_f32(vld1q_f32(x + 4));
+  float32x4_t vmax0 = simd::neon::abs(simd::neon::load_f32(x + 0));
+  float32x4_t vmax1 = simd::neon::abs(simd::neon::load_f32(x + 4));
   uint32x4_t vidx0 = (uint32x4_t){ 0u, 1u, 2u, 3u };
   uint32x4_t vidx1 = (uint32x4_t){ 4u, 5u, 6u, 7u };
   uint32x4_t vcand0 = (uint32x4_t){ 8u, 9u, 10u, 11u };
   uint32x4_t vcand1 = (uint32x4_t){ 12u, 13u, 14u, 15u };
-  const uint32x4_t step8 = vdupq_n_u32(8);
-  const uint32x4_t step4 = vdupq_n_u32(4);
+  const uint32x4_t step8 = simd::neon::splat_u32(8);
+  const uint32x4_t step4 = simd::neon::splat_u32(4);
   usize i = 8;
   for ( ; i + 8 <= n; i += 8 ) {
-    float32x4_t v0 = vabsq_f32(vld1q_f32(x + i + 0));
-    float32x4_t v1 = vabsq_f32(vld1q_f32(x + i + 4));
-    uint32x4_t gt0 = vcgtq_f32(v0, vmax0);
-    uint32x4_t gt1 = vcgtq_f32(v1, vmax1);
-    vmax0 = vbslq_f32(gt0, v0, vmax0);
-    vmax1 = vbslq_f32(gt1, v1, vmax1);
-    vidx0 = vbslq_u32(gt0, vcand0, vidx0);
-    vidx1 = vbslq_u32(gt1, vcand1, vidx1);
-    vcand0 = vaddq_u32(vcand0, step8);
-    vcand1 = vaddq_u32(vcand1, step8);
+    float32x4_t v0 = simd::neon::abs(simd::neon::load_f32(x + i + 0));
+    float32x4_t v1 = simd::neon::abs(simd::neon::load_f32(x + i + 4));
+    uint32x4_t gt0 = simd::neon::gt(v0, vmax0);
+    uint32x4_t gt1 = simd::neon::gt(v1, vmax1);
+    vmax0 = simd::neon::select(gt0, v0, vmax0);
+    vmax1 = simd::neon::select(gt1, v1, vmax1);
+    vidx0 = simd::neon::select(gt0, vcand0, vidx0);
+    vidx1 = simd::neon::select(gt1, vcand1, vidx1);
+    vcand0 = simd::neon::add(vcand0, step8);
+    vcand1 = simd::neon::add(vcand1, step8);
   }
   for ( ; i + 4 <= n; i += 4 ) {
-    float32x4_t v = vabsq_f32(vld1q_f32(x + i));
-    uint32x4_t gt = vcgtq_f32(v, vmax0);
-    vmax0 = vbslq_f32(gt, v, vmax0);
-    vidx0 = vbslq_u32(gt, vcand0, vidx0);
-    vcand0 = vaddq_u32(vcand0, step4);
+    float32x4_t v = simd::neon::abs(simd::neon::load_f32(x + i));
+    uint32x4_t gt = simd::neon::gt(v, vmax0);
+    vmax0 = simd::neon::select(gt, v, vmax0);
+    vidx0 = simd::neon::select(gt, vcand0, vidx0);
+    vcand0 = simd::neon::add(vcand0, step4);
   }
   alignas(16) float lanes_v0[4], lanes_v1[4];
   alignas(16) u32 lanes_i0[4], lanes_i1[4];
-  vst1q_f32(lanes_v0, vmax0);
-  vst1q_f32(lanes_v1, vmax1);
-  vst1q_u32(lanes_i0, vidx0);
-  vst1q_u32(lanes_i1, vidx1);
+  simd::neon::store_f32(lanes_v0, vmax0);
+  simd::neon::store_f32(lanes_v1, vmax1);
+  simd::neon::store_u32(lanes_i0, vidx0);
+  simd::neon::store_u32(lanes_i1, vidx1);
   float best = lanes_v0[0];
   usize best_idx = usize(lanes_i0[0]);
   for ( int k = 1; k < 4; ++k ) {
     const float a = lanes_v0[k];
     const usize j = usize(lanes_i0[k]);
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( int k = 0; k < 4; ++k ) {
     const float a = lanes_v1[k];
     const usize j = usize(lanes_i1[k]);
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( ; i < n; ++i ) {
     const float a = mk::manip::fabs<f32>(x[i]);
-    if ( a > best ) { best = a; best_idx = i; }
+    if ( a > best ) {
+      best = a;
+      best_idx = i;
+    }
   }
   return best_idx;
 }
@@ -676,60 +713,72 @@ iamax_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
     usize idx = 0;
     for ( usize k = 1; k < n; ++k ) {
       const double a = mk::manip::fabs<f64>(x[k]);
-      if ( a > mx ) { mx = a; idx = k; }
+      if ( a > mx ) {
+        mx = a;
+        idx = k;
+      }
     }
     return idx;
   }
   // 2 independent chains, 4 doubles per outer iter.
-  float64x2_t vmax0 = vabsq_f64(vld1q_f64(x + 0));
-  float64x2_t vmax1 = vabsq_f64(vld1q_f64(x + 2));
+  float64x2_t vmax0 = simd::neon::abs(simd::neon::load_f64(x + 0));
+  float64x2_t vmax1 = simd::neon::abs(simd::neon::load_f64(x + 2));
   uint64x2_t vidx0 = (uint64x2_t){ 0ULL, 1ULL };
   uint64x2_t vidx1 = (uint64x2_t){ 2ULL, 3ULL };
   uint64x2_t vcand0 = (uint64x2_t){ 4ULL, 5ULL };
   uint64x2_t vcand1 = (uint64x2_t){ 6ULL, 7ULL };
-  const uint64x2_t step4 = vdupq_n_u64(4);
-  const uint64x2_t step2 = vdupq_n_u64(2);
+  const uint64x2_t step4 = simd::neon::splat_u64(4);
+  const uint64x2_t step2 = simd::neon::splat_u64(2);
   usize i = 4;
   for ( ; i + 4 <= n; i += 4 ) {
-    float64x2_t v0 = vabsq_f64(vld1q_f64(x + i + 0));
-    float64x2_t v1 = vabsq_f64(vld1q_f64(x + i + 2));
-    uint64x2_t gt0 = vcgtq_f64(v0, vmax0);
-    uint64x2_t gt1 = vcgtq_f64(v1, vmax1);
-    vmax0 = vbslq_f64(gt0, v0, vmax0);
-    vmax1 = vbslq_f64(gt1, v1, vmax1);
-    vidx0 = vbslq_u64(gt0, vcand0, vidx0);
-    vidx1 = vbslq_u64(gt1, vcand1, vidx1);
-    vcand0 = vaddq_u64(vcand0, step4);
-    vcand1 = vaddq_u64(vcand1, step4);
+    float64x2_t v0 = simd::neon::abs(simd::neon::load_f64(x + i + 0));
+    float64x2_t v1 = simd::neon::abs(simd::neon::load_f64(x + i + 2));
+    uint64x2_t gt0 = simd::neon::gt(v0, vmax0);
+    uint64x2_t gt1 = simd::neon::gt(v1, vmax1);
+    vmax0 = simd::neon::select(gt0, v0, vmax0);
+    vmax1 = simd::neon::select(gt1, v1, vmax1);
+    vidx0 = simd::neon::select(gt0, vcand0, vidx0);
+    vidx1 = simd::neon::select(gt1, vcand1, vidx1);
+    vcand0 = simd::neon::add(vcand0, step4);
+    vcand1 = simd::neon::add(vcand1, step4);
   }
   for ( ; i + 2 <= n; i += 2 ) {
-    float64x2_t v = vabsq_f64(vld1q_f64(x + i));
-    uint64x2_t gt = vcgtq_f64(v, vmax0);
-    vmax0 = vbslq_f64(gt, v, vmax0);
-    vidx0 = vbslq_u64(gt, vcand0, vidx0);
-    vcand0 = vaddq_u64(vcand0, step2);
+    float64x2_t v = simd::neon::abs(simd::neon::load_f64(x + i));
+    uint64x2_t gt = simd::neon::gt(v, vmax0);
+    vmax0 = simd::neon::select(gt, v, vmax0);
+    vidx0 = simd::neon::select(gt, vcand0, vidx0);
+    vcand0 = simd::neon::add(vcand0, step2);
   }
   alignas(16) double lanes_v0[2], lanes_v1[2];
   alignas(16) u64 lanes_i0[2], lanes_i1[2];
-  vst1q_f64(lanes_v0, vmax0);
-  vst1q_f64(lanes_v1, vmax1);
-  vst1q_u64(lanes_i0, vidx0);
-  vst1q_u64(lanes_i1, vidx1);
+  simd::neon::store_f64(lanes_v0, vmax0);
+  simd::neon::store_f64(lanes_v1, vmax1);
+  simd::neon::store_u64(lanes_i0, vidx0);
+  simd::neon::store_u64(lanes_i1, vidx1);
   double best = lanes_v0[0];
   usize best_idx = usize(lanes_i0[0]);
   {
     const double a = lanes_v0[1];
     const usize j = usize(lanes_i0[1]);
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( int k = 0; k < 2; ++k ) {
     const double a = lanes_v1[k];
     const usize j = usize(lanes_i1[k]);
-    if ( a > best || (a == best && j < best_idx) ) { best = a; best_idx = j; }
+    if ( a > best || (a == best && j < best_idx) ) {
+      best = a;
+      best_idx = j;
+    }
   }
   for ( ; i < n; ++i ) {
     const double a = mk::manip::fabs<f64>(x[i]);
-    if ( a > best ) { best = a; best_idx = i; }
+    if ( a > best ) {
+      best = a;
+      best_idx = i;
+    }
   }
   return best_idx;
 }
@@ -1061,28 +1110,23 @@ nrm2_fast(const F *first, const F *last) noexcept
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
-      return F(mk::pow_ns::sqrt<f64>(
-          __impl_level1::nrm2_fast_packed_f64(reinterpret_cast<const double *>(first), n)));
+      return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64(reinterpret_cast<const double *>(first), n)));
     } else if constexpr ( sizeof(F) == 4 ) {
-      return F(mk::pow_ns::sqrt<f32>(
-          __impl_level1::nrm2_fast_packed_f32(reinterpret_cast<const float *>(first), n)));
+      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32(reinterpret_cast<const float *>(first), n)));
     }
   }
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
-      return F(mk::pow_ns::sqrt<f64>(
-          __impl_level1::nrm2_fast_packed_f64_neon(reinterpret_cast<const double *>(first), n)));
+      return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64_neon(reinterpret_cast<const double *>(first), n)));
     } else if constexpr ( sizeof(F) == 4 ) {
-      return F(mk::pow_ns::sqrt<f32>(
-          __impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
+      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
     }
   }
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   if !consteval {
     if constexpr ( sizeof(F) == 4 ) {
-      return F(mk::pow_ns::sqrt<f32>(
-          __impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
+      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
     }
   }
 #endif
