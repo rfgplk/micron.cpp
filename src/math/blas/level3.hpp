@@ -149,9 +149,7 @@ gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T
   bits::gemm_kernel_aligned<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
 }
 
-// gemm experimental microkernel overloads. Each calls a different new
-// micro-kernel under the BLIS-style blocked driver. Existing implementations
-// are untouched.
+// gemm experimental microkernel overloads
 template <blas_scalar T>
 [[gnu::flatten]] inline void
 gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
