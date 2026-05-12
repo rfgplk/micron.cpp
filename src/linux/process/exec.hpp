@@ -18,6 +18,7 @@ __attribute__((noreturn)) void
 rexecute(uprocess_t &t)
 {
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -111,7 +112,7 @@ rexecute(const char *t, R *...args)
   }
   micron::vector<char *> argv = { const_cast<char *>(t) };
 
-  (argv.push_back(const_cast<char *>(args.c_str())), ...);
+  (argv.push_back(const_cast<char *>(const_cast<char *>(args))), ...);
   argv.push_back(nullptr);
 
   micron::inplace_spawn(pid, t, &argv[0], environ);
@@ -133,6 +134,7 @@ void
 execute(uprocess_t &t)
 {
   micron::svector<char *> argv;
+  argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
