@@ -212,6 +212,31 @@ main(int, char **)
     require_throw([&] { s.at(100); });
   }
   end_test_case();
+
+  test_case("Copy of empty-literal string");
+  {
+    {
+      const char *e = "";
+      micron::string s{ e };
+      micron::string t{ s };
+      require(t.size(), 0u);
+      require(t == micron::string(""), true);
+    }
+    {
+      micron::string s{ "" };
+      micron::string t{ s };
+      require(t.size(), 0u);
+    }
+    {
+      micron::string s{ static_cast<size_t>(0) };
+      micron::string t{ s };
+      require(t.size(), 0u);
+      t = "hello";
+      require(t.size(), 5u);
+    }
+  }
+  end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

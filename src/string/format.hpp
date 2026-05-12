@@ -1251,8 +1251,8 @@ inline hstring<schar>
 concat(const char *lhs, usize lhs_len, const char *rhs, usize rhs_len)
 {
   hstring<schar> str(lhs_len + rhs_len + 1);
-  str.append(lhs, lhs_len + 1);
-  str.append(rhs, rhs_len + 1);
+  str.append(lhs, lhs_len);
+  str.append(rhs, rhs_len);
   return str;
 }
 
@@ -2765,18 +2765,6 @@ repeat(char c, usize count)
 // formatter traits
 template <typename T, typename Enable = void> struct formatter;
 
-template <typename CharT> struct formatter<micron::hstring<CharT>> {
-  static usize
-  write(char *buf, usize buf_sz, const micron::hstring<CharT> &val, const __impl::fmt_spec &spec)
-  {
-    usize len = val.size();
-    if ( spec.has_prec && len > spec.prec ) len = spec.prec;
-    usize n = len < buf_sz ? len : buf_sz;
-    micron::bytecpy(buf, val.data(), n);
-    return n;
-  }
-};
-
 template <> struct formatter<i32> {
   static inline usize
   write(char *buf, usize buf_sz, i32 val, const __impl::fmt_spec &spec)
@@ -3148,8 +3136,7 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
   fmt_spec spec = parse_spec(spec_start, spec_end);
   char buf[__fmt_buf_size];
   usize n = formatter<T>::write(buf, __fmt_buf_size, val, spec);
-  apply_padding(out, buf, n + 1, spec);     // off by one apparently
-                                            // TODO: identify EXACTLY where the offshoot is, this is a dirty fix
+  apply_padding(out, buf, n, spec);
 }
 
 }     // namespace __impl

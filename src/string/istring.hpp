@@ -33,6 +33,12 @@ class istring : private Alloc, public __immutable_memory_resource<T>
   {
   }
 
+  static inline constexpr __attribute__((always_inline)) usize
+  __alloc_size(usize n) noexcept
+  {
+    return n == 0 ? Alloc::auto_size() : n;
+  }
+
 public:
   using category_type = string_tag;
   using mutability_type = immutable_tag;
@@ -56,22 +62,22 @@ public:
 
   // __mem memory;
   constexpr istring() : __mem(Alloc::auto_size()) {};
-  constexpr istring(const usize n) : __mem(n) {};
+  constexpr istring(const usize n) : __mem(__alloc_size(n)) {};
 
-  istring(usize cnt, T ch) : __mem(cnt)
+  istring(usize cnt, T ch) : __mem(__alloc_size(cnt))
   {
     micron::typeset<T>(&__mem::memory[0], ch, cnt);
     __mem::length = cnt;
   }
 
-  constexpr istring(const char *&str) : __mem(micron::strlen(str))
+  constexpr istring(const char *&str) : __mem(__alloc_size(micron::strlen(str)))
   {
     usize end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
     __mem::length = end;                                   // - 1;
   };
 
-  template <usize M, typename F> constexpr istring(const F (&str)[M]) : __mem(M)
+  template <usize M, typename F> constexpr istring(const F (&str)[M]) : __mem(__alloc_size(M))
   {
     micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
     __mem::length = M - 1;                                            // - 1;
@@ -345,7 +351,7 @@ public:
     t.length += __mem::length;
     micron::memcpy(&(t.memory)[t.length],     // null is here so, overwrite it
                    f, n);
-    t.length += n - 1;
+    t.length += n;
     return t;
   }
 
