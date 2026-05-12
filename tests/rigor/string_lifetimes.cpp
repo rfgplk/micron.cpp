@@ -503,7 +503,20 @@ test_mutation()
   {
     micron::string s("start");
     s.append("_end", 4);
+    sb::require(s.size(), usize{ 9 });
     sb::require(s[5], '_');
+    sb::require(s[8], 'd');
+    sb::require_true(s == "start_end");
+  }
+  sb::end_test_case();
+
+  sb::test_case("append char* one byte at a time");
+  {
+    micron::string s;
+    const char *src = "abcdef";
+    for ( usize i = 0; i < 6; ++i ) s.append(&src[i], 1);
+    sb::require(s.size(), usize{ 6 });
+    sb::require_true(s == "abcdef");
   }
   sb::end_test_case();
 

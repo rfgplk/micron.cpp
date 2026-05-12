@@ -43,6 +43,12 @@ class hstring : private Alloc, public __mutable_memory_resource<T>
     return (cnt > micron::numeric_limits<ssize_t>::max());
   }
 
+  static inline constexpr __attribute__((always_inline)) usize
+  __alloc_size(usize n) noexcept
+  {
+    return n == 0 ? Alloc::auto_size() : n;
+  }
+
   inline constexpr __attribute__((always_inline)) bool
   __size_check(usize cnt) const
   {
@@ -167,28 +173,28 @@ public:
 
   // contiguous_memory<T> memory;
   constexpr hstring() : __mem(Alloc::auto_size()) {};
-  constexpr hstring(const usize n) : __mem(n) {};
+  constexpr hstring(const usize n) : __mem(__alloc_size(n)) {};
 
-  hstring(usize cnt, T ch) : __mem(cnt)
+  hstring(usize cnt, T ch) : __mem(__alloc_size(cnt))
   {
     micron::typeset<T>(&__mem::memory[0], ch, cnt);
     __mem::length = cnt;
   }
 
-  constexpr hstring(const char *str) : __mem(micron::strlen(str))
+  constexpr hstring(const char *str) : __mem(__alloc_size(micron::strlen(str)))
   {
     usize end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);
     __mem::length = end;
   };
 
-  template <usize M, typename F> constexpr hstring(const F (&str)[M]) : __mem((M))
+  template <usize M, typename F> constexpr hstring(const F (&str)[M]) : __mem(__alloc_size(M))
   {
     micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));
     __mem::length = M - 1;
   };
 
-  constexpr hstring(const hstring &o) : __mem(o.capacity)
+  constexpr hstring(const hstring &o) : __mem(__alloc_size(o.capacity))
   {
     // WARNING: important
     micron::memcpy(__mem::memory, o.memory, o.length);
@@ -200,13 +206,13 @@ public:
 
   constexpr hstring(hstring &&o) : __mem(micron::move(o)) {}
 
-  template <typename F> constexpr hstring(const hstring<F> &o) : __mem(o.capacity)
+  template <typename F> constexpr hstring(const hstring<F> &o) : __mem(__alloc_size(o.capacity))
   {
     micron::memcpy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
   };
 
-  template <usize N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(o.length)
+  template <usize N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(__alloc_size(o.length))
   {
     micron::memcpy(&(__mem::memory)[0], &o.memory[0], o.length);
     __mem::length = o.length;
@@ -214,7 +220,7 @@ public:
 
   template <is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
-  constexpr hstring(const F &o) : __mem(o.size())
+  constexpr hstring(const F &o) : __mem(__alloc_size(o.size()))
   {
     micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
     __mem::length = o.size();
@@ -222,7 +228,7 @@ public:
 
   template <is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
-  constexpr hstring(F &&o) : __mem(o.size())
+  constexpr hstring(F &&o) : __mem(__alloc_size(o.size()))
   {
     micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
     __mem::length = o.size();
@@ -585,7 +591,7 @@ public:
   {
     if ( (__mem::length + n) >= __mem::capacity ) reserve(__mem::capacity + n);
     micron::memcpy(&(__mem::memory)[__mem::length], f, n);
-    __mem::length += n - 1;
+    __mem::length += n;
     return *this;
   }
 
