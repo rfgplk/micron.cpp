@@ -37,6 +37,8 @@ help(void)
   mc::console("    debug      shorthand for `build` with the debug recipe (-g, -w, -O0)");
   mc::console("    run        build a single source then exec the resulting binary,");
   mc::console("               replacing the duck process (one source only)");
+  mc::console("    emulate    build a single source then exec the resulting binary via qemu-arm-static,");
+  mc::console("               replacing the duck process (one source only)");
   mc::console("    test       build sources, run each, print exit codes (CI mode)");
   mc::console("    doctor     build with diagnostic flags (-ftime-report,");
   mc::console("               -ftime-report-details, -fmem-report, -fopt-info,");
