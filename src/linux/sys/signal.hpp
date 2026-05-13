@@ -106,8 +106,11 @@ constexpr static const int sa_stack = sa_onstack;
 
 #define ALIGN_UP(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
 
-constexpr static const int __sigwords = 1;                                           // ???
-constexpr static const int __sigsize = (1024 / (8 * sizeof(unsigned long int)));     //__sigwords * sizeof(unsigned long int);
+constexpr static const u64 __kernel_sigset_bytes = 64 / 8;
+
+constexpr static const int __sigwords = static_cast<int>(__kernel_sigset_bytes / sizeof(unsigned long int));
+
+constexpr static const int __sigsize = (1024 / (8 * sizeof(unsigned long int)));
 
 struct sigset_t {
   unsigned long int __val[__sigsize];
@@ -290,7 +293,9 @@ sigdelset(posix::sigset_t &a, int sig)
   a.__val[word] &= ~mask;
 }
 
-constexpr u64 __sig_syscall_size = sizeof(posix::sigset_t);
+// Size handed to rt_sig* syscalls. MUST equal sizeof(kernel sigset_t) == 8 on
+// Linux; passing sizeof(posix::sigset_t) (== 128) yields a silent -EINVAL.
+constexpr u64 __sig_syscall_size = __kernel_sigset_bytes;
 
 // start of syscalls
 inline int

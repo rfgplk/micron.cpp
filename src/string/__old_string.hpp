@@ -15,15 +15,15 @@
 #include "../memory/memory.hpp"
 #include "../memory_block.hpp"
 #include "../pointer.hpp"
-#include "../simd/bitwise.hpp"
-#include "../simd/intrin.hpp"
 #include "../slice.hpp"
 
 #include "unitypes.hpp"
 
-#include "sstring.hpp"
+#include "__old_sstring.hpp"
 
 namespace micron
+{
+namespace __old
 {
 // null terminated
 
@@ -31,7 +31,7 @@ constexpr const char _null_str[1] = "";
 constexpr const wide _null_wstr[1] = L"";
 constexpr const unicode32 _null_u32str[1] = U"";
 
-// string on the heap, mutable, standard replacement of std::string, internally SIMD dispatched
+// string on the heap, mutable, standard replacement of std::string
 // accepts only char simple types
 template <is_scalar_literal T = schar, bool Sf = true, class Alloc = micron::allocator_serial<>>
 class hstring : private Alloc, public __mutable_memory_resource<T>
@@ -128,26 +128,17 @@ class hstring : private Alloc, public __mutable_memory_resource<T>
   inline __attribute__((always_inline)) int
   __lexcmp(const T *a, usize alen, const T *b, usize blen) const noexcept
   {
-    const usize common = alen < blen ? alen : blen;
-    if ( common ) {
-      const i64 d = micron::memcmp<byte>(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), common);
-      if ( d != 0 ) return d < 0 ? -1 : 1;
+    usize common = alen < blen ? alen : blen;
+    for ( usize i = 0; i < common; ++i ) {
+      // promote to unsigned so high-byte chars sort correctly
+      auto ca = static_cast<unsigned char>(a[i]);
+      auto cb = static_cast<unsigned char>(b[i]);
+      if ( ca < cb ) return -1;
+      if ( ca > cb ) return 1;
     }
     if ( alen < blen ) return -1;
     if ( alen > blen ) return 1;
     return 0;
-  }
-
-  [[gnu::always_inline]] static inline usize
-  __simd_find_byte(const T *p, usize len, T ch) noexcept
-  {
-    if ( len == 0 ) return npos;
-#if defined(__micron_x86_avx2)
-    const usize i = micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
-#else
-    const usize i = micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
-#endif
-    return i == len ? npos : i;
   }
 
   template <auto Fn, typename E, typename... Args>
@@ -416,10 +407,15 @@ public:
     return __mem::memory;
   };
 
+  // Parse-fix only: original referenced `__mem::size` (no such member) and
+  // `sstr<512,T>` (sstr is a 1-arg alias). The body was never instantiated by
+  // any caller so the rot was invisible. Patched minimally so this header can
+  // be parsed in arbitrary include order (after strings.hpp brings `sstr` into
+  // scope). Behavioral semantics unchanged because nothing calls stack().
   inline sstring<256, T>
   stack(void) const
   {
-    if ( __mem::length >= 255 ) exc<except::library_error>("micron::hstring stack() out of memory");
+    if ( __mem::length >= 255 ) exc<except::library_error>("micron::hstring stack() out of memory.");
     return sstring<256, T>(c_str());
   };
 
@@ -503,16 +499,17 @@ public:
   usize
   find(F ch, usize pos = 0) const
   {
-    if ( pos >= __mem::length ) return npos;
-    usize r = __simd_find_byte(__mem::memory + pos, __mem::length - pos, static_cast<T>(ch));
-    return r == npos ? npos : pos + r;
+    for ( ; pos < __mem::length; pos++ ) {
+      if ( __mem::memory[pos] == ch ) return pos;
+    }
+    return npos;
   }
 
   template <typename F>
   usize
   find(const hstring<F> &str, usize pos = 0) const
   {
-    return find_substr(reinterpret_cast<const T *>(str.data()), str.size(), pos);
+    return npos;
   }
 
   inline iterator
@@ -679,7 +676,7 @@ public:
     usize end = micron::strlen(o.c_str());
     if ( (__mem::length + end) >= __mem::capacity ) reserve(__mem::capacity + end);
     micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], end);
-    __mem::length += end;
+    __mem::length += end - 1;
     return *this;
   }
 
@@ -772,9 +769,9 @@ public:
       reserve(__mem::capacity + o.length);
       itr = __mem::memory + dif;
     }
-    micron::bytemove(itr + o.length, itr, __mem::length - (itr - &(__mem::memory)[0]));
-    micron::memcpy(itr, &(o.memory)[0], o.length);
-    __mem::length += o.length;
+    micron::bytemove(itr + (o.length - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
+    micron::memcpy(itr, &(o.memory)[0], o.length - 1);
+    __mem::length += o.length - 1;
     return *this;
   }
 
@@ -1123,11 +1120,14 @@ public:
   inline usize
   find_substr(const T *needle, usize needle_len, usize pos = 0) const
   {
-    if ( needle_len == 0 || needle_len > __mem::length ) return npos;
-    if ( pos > __mem::length - needle_len ) return npos;
-    auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(__mem::memory + pos), __mem::length - pos,
-                                   reinterpret_cast<const byte *>(needle), needle_len);
-    return r == nullptr ? npos : static_cast<usize>(reinterpret_cast<const T *>(r) - __mem::memory);
+    if ( needle_len == 0 or needle_len > __mem::length ) return npos;
+    usize limit = __mem::length - needle_len;
+    for ( usize i = pos; i <= limit; ++i ) {
+      usize j = 0;
+      while ( j < needle_len and __mem::memory[i + j] == needle[j] ) ++j;
+      if ( j == needle_len ) return i;
+    }
+    return npos;
   }
 
   template <typename F = T>
@@ -1151,7 +1151,7 @@ public:
 
   template <typename F = T, usize M, typename G>
   inline hstring<F> &
-  remove(const micron::sstring<M, G> &needle)
+  remove(const sstring<M, G> &needle)
   {
     if ( needle.empty() ) return *this;
 
@@ -1200,7 +1200,7 @@ public:
 
   template <typename F = T, usize M, typename G>
   inline hstring<F> &
-  remove_all(const micron::sstring<M, G> &needle)
+  remove_all(const sstring<M, G> &needle)
   {
     if ( needle.empty() ) return *this;
 
@@ -1442,4 +1442,5 @@ public:
   }
 };
 
+};     // namespace __old
 };     // namespace micron
