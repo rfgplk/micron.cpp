@@ -376,7 +376,8 @@ protected:
     case modes::largeread :
       return posix::open(str, posix::o_rdonly | posix::o_sync | posix::o_direct | posix::o_largefile);
     case modes::large :
-      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_sync | posix::o_direct | posix::o_largefile, 0644u);
+      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_sync | posix::o_direct | posix::o_largefile,
+                         0644u);
     case modes::quiet :
       return posix::open(str, posix::o_rdonly | posix::o_noatime, 0644u);
     case modes::create :
@@ -386,9 +387,9 @@ protected:
     case modes::readwrite :
       return posix::open(str, posix::o_rdwr | posix::o_sync);
     case modes::write :
-      return posix::open(str, posix::o_wronly | posix::o_sync);
+      return posix::open(str, posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_sync, 0644u);
     case modes::readwritecreate :
-      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_sync, 0644u);
+      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_sync, 0644u);
     case modes::append :
       return posix::open(str, posix::o_wronly | posix::o_create | posix::o_append | posix::o_sync, 0644u);
     case modes::appendread :
@@ -403,11 +404,9 @@ protected:
   {
     if ( !posix::verify(str) ) exc<except::io_error>("error in creating micron::file, malformed string.");
 
-    if ( mode != modes::append && mode != modes::create && mode != modes::readwritecreate ) {
-      if ( !posix::exists(str) ) exc<except::io_error>("micron::file file doesn't exist");
-      // NOTE: allow opening character devices as a file
-      if ( !posix::is_file(str) and !posix::is_char_device(str) ) exc<except::io_error>("micron::file file isn't a file (check type)");
-    }
+    const bool __read_mode = (mode != modes::append && mode != modes::create && mode != modes::readwritecreate);
+
+    if ( __read_mode && !posix::exists(str) ) exc<except::io_error>("micron::file file doesn't exist");
 
     if constexpr ( is_string<T> ) {
       __handle.fd = static_cast<int>(__syscall_open(str.c_str(), mode));
@@ -416,6 +415,22 @@ protected:
     }
 
     if ( __handle.has_error() ) exc<except::io_error>("micron::file failed to open");
+
+    // WARNING: validate file type via fstat on the opened fd rather than via the path-based posix::is_file
+    // the path-based variants were misclassified regular files on ARM32 + qemu
+    if ( __read_mode ) {
+      stat_t __st{};
+      if ( posix::fstat(__handle, __st) != 0 ) {
+        posix::close(__handle.fd);
+        __handle.fd = posix::invalid_fd.fd;
+        exc<except::io_error>("micron::file fstat failed after open");
+      }
+      if ( !posix::__impl::stat_is_reg(__st) && !posix::__impl::stat_is_chr(__st) ) {
+        posix::close(__handle.fd);
+        __handle.fd = posix::invalid_fd.fd;
+        exc<except::io_error>("micron::file file isn't a file (check type)");
+      }
+    }
 
     fname = str;
     micron::zero(&sd);

@@ -61,6 +61,14 @@ template <typename T> struct any_type_idx<T> {
 
 template <typename T, typename... Ts> inline constexpr usize any_type_idx_v = any_type_idx<T, Ts...>::value;
 
+template <typename U> inline constexpr usize __safe_sizeof = sizeof(U);
+template <> inline constexpr usize __safe_sizeof<void> = 0;
+template <typename U> inline constexpr usize __safe_alignof = alignof(U);
+template <> inline constexpr usize __safe_alignof<void> = 1;
+
+template <typename U> inline constexpr bool __slot_copyable = micron::is_copy_constructible_v<U>;
+template <> inline constexpr bool __slot_copyable<void> = true;
+
 };     // namespace __impl
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +104,13 @@ class any
   static void
   copy_fn(void *dst, const void *src)
   {
-    new (dst) T(*static_cast<const T *>(src));
+    if constexpr ( micron::is_copy_constructible_v<T> ) {
+      new (dst) T(*static_cast<const T *>(src));
+    }
+    // else: any's copy ctor / copy-assign are deleted whenever some
+    // alternative isn't copy-constructible, so this branch can never
+    // run at runtime; keeping the function instantiable lets emplace<U>
+    // assign &copy_fn<U> unconditionally for any U in the pack.
   }
 
   template <typename T>
@@ -121,6 +135,8 @@ class any
 
   // comptime index of U in Ts...
   template <typename U> static constexpr usize idx_of = __impl::any_type_idx_v<U, Ts...>;
+
+  static constexpr bool __copy_eligible = (micron::is_copy_constructible_v<Ts> && ...);
 
 public:
   ~any(void) { reset_impl(); }
@@ -149,6 +165,7 @@ public:
   constexpr any(void) noexcept = default;
 
   any(const any &o)
+    requires(__copy_eligible)
   {
     if ( o.__idx != npos ) {
       o.__copy(storage, o.storage);
@@ -250,6 +267,7 @@ public:
 
   any &
   operator=(const any &o)
+    requires(__copy_eligible)
   {
     if ( this != &o ) {
       reset_impl();
@@ -334,11 +352,13 @@ public:
 //  T and F must be distinct types!
 
 template <typename T, typename F>
-  requires(micron::distinct<T, F>)
+  requires(micron::distinct<T, F> && !micron::is_void_v<F>)
 class option
 {
-  static constexpr usize storage_size = sizeof(T) > sizeof(F) ? sizeof(T) : sizeof(F);
-  static constexpr usize storage_aln = alignof(T) > alignof(F) ? alignof(T) : alignof(F);
+  static constexpr usize __t_size = __impl::__safe_sizeof<T>;
+  static constexpr usize __t_align = __impl::__safe_alignof<T>;
+  static constexpr usize storage_size = __t_size > sizeof(F) ? __t_size : sizeof(F);
+  static constexpr usize storage_aln = __t_align > alignof(F) ? __t_align : alignof(F);
 
   alignas(storage_aln) unsigned char storage[storage_size];
 
@@ -359,7 +379,9 @@ class option
   static void
   copy_fn(void *dst, const void *src)
   {
-    new (dst) U(*static_cast<const U *>(src));
+    if constexpr ( micron::is_copy_constructible_v<U> ) {
+      new (dst) U(*static_cast<const U *>(src));
+    }
   }
 
   template <typename U>
@@ -374,7 +396,7 @@ class option
   reset_impl(void) noexcept
   {
     if ( __active != which::none ) {
-      __destroy(storage);
+      if ( __destroy ) __destroy(storage);
       __active = which::none;
       __destroy = nullptr;
       __copy = nullptr;
@@ -392,6 +414,8 @@ class option
       return which::second;
   }
 
+  static constexpr bool __copy_eligible = __impl::__slot_copyable<T> && __impl::__slot_copyable<F>;
+
 public:
   using first_type = T;
   using second_type = F;
@@ -402,15 +426,29 @@ public:
 
   explicit option(tag<F>) { emplace<F>(); }
 
-  // tag + args
-  template <typename... Args> option(tag<T>, Args &&...args) { emplace<T>(micron::forward<Args>(args)...); }
+  template <typename... Args>
+    requires(!micron::is_void_v<T>)
+  option(tag<T>, Args &&...args)
+  {
+    emplace<T>(micron::forward<Args>(args)...);
+  }
 
   template <typename... Args> option(tag<F>, Args &&...args) { emplace<F>(micron::forward<Args>(args)...); }
 
   // NOTE: use tag<> on ambiguous conversions
-  option(const T &v) { emplace<T>(v); }
+  template <typename Tv>
+    requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
+  option(const Tv &v)
+  {
+    emplace<T>(v);
+  }
 
-  option(T &&v) { emplace<T>(micron::move(v)); }
+  template <typename Tv>
+    requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
+  option(Tv &&v)
+  {
+    emplace<T>(micron::move(v));
+  }
 
   option(const F &v) { emplace<F>(v); }
 
@@ -419,9 +457,10 @@ public:
   constexpr option() noexcept = default;
 
   option(const option &o)
+    requires(__copy_eligible)
   {
     if ( o.__active != which::none ) {
-      o.__copy(storage, o.storage);
+      if ( o.__copy ) o.__copy(storage, o.storage);
       __active = o.__active;
       __destroy = o.__destroy;
       __copy = o.__copy;
@@ -432,7 +471,7 @@ public:
   option(option &&o) noexcept
   {
     if ( o.__active != which::none ) {
-      o.__move(storage, o.storage);
+      if ( o.__move ) o.__move(storage, o.storage);
       __active = o.__active;
       __destroy = o.__destroy;
       __copy = o.__copy;
@@ -446,17 +485,23 @@ public:
 
   template <typename U, typename... Args>
     requires(micron::same_as<micron::decay_t<U>, T> or micron::same_as<micron::decay_t<U>, F>)
-  micron::decay_t<U> &
+  decltype(auto)
   emplace(Args &&...args)
   {
     using D = micron::decay_t<U>;
     reset_impl();
-    new (storage) D(micron::forward<Args>(args)...);
-    __active = which_of<D>();
-    __destroy = &destroy_fn<D>;
-    __copy = &copy_fn<D>;
-    __move = &move_fn<D>;
-    return *reinterpret_cast<D *>(storage);
+    if constexpr ( micron::is_void_v<D> ) {
+      static_assert(sizeof...(Args) == 0, "option::emplace<void>() takes no constructor arguments");
+      __active = which::first;
+      // __destroy/__copy/__move stay nullptr; reset_impl + copy/move null-check
+    } else {
+      new (storage) D(micron::forward<Args>(args)...);
+      __active = which_of<D>();
+      __destroy = &destroy_fn<D>;
+      __copy = &copy_fn<D>;
+      __move = &move_fn<D>;
+      return *reinterpret_cast<D *>(storage);
+    }
   }
 
   void
@@ -493,18 +538,28 @@ public:
 
   template <typename U>
     requires(micron::same_as<micron::decay_t<U>, T> or micron::same_as<micron::decay_t<U>, F>)
-  micron::decay_t<U> &
+  decltype(auto)
   cast()
   {
-    return *reinterpret_cast<micron::decay_t<U> *>(storage);
+    using D = micron::decay_t<U>;
+    if constexpr ( micron::is_void_v<D> ) {
+      return;     // void
+    } else {
+      return *reinterpret_cast<D *>(storage);
+    }
   }
 
   template <typename U>
     requires(micron::same_as<micron::decay_t<U>, T> or micron::same_as<micron::decay_t<U>, F>)
-  const micron::decay_t<U> &
+  decltype(auto)
   cast() const
   {
-    return *reinterpret_cast<const micron::decay_t<U> *>(storage);
+    using D = micron::decay_t<U>;
+    if constexpr ( micron::is_void_v<D> ) {
+      return;     // void
+    } else {
+      return *reinterpret_cast<const D *>(storage);
+    }
   }
 
   option &
@@ -521,15 +576,19 @@ public:
     return *this;
   }
 
+  template <typename Tv>
+    requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
   option &
-  operator=(const T &v)
+  operator=(const Tv &v)
   {
     emplace<T>(v);
     return *this;
   }
 
+  template <typename Tv>
+    requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
   option &
-  operator=(T &&v)
+  operator=(Tv &&v)
   {
     emplace<T>(micron::move(v));
     return *this;
@@ -551,11 +610,12 @@ public:
 
   option &
   operator=(const option &o)
+    requires(__copy_eligible)
   {
     if ( this != &o ) {
       reset_impl();
       if ( o.__active != which::none ) {
-        o.__copy(storage, o.storage);
+        if ( o.__copy ) o.__copy(storage, o.storage);
         __active = o.__active;
         __destroy = o.__destroy;
         __copy = o.__copy;
@@ -571,7 +631,7 @@ public:
     if ( this != &o ) {
       reset_impl();
       if ( o.__active != which::none ) {
-        o.__move(storage, o.storage);
+        if ( o.__move ) o.__move(storage, o.storage);
         __active = o.__active;
         __destroy = o.__destroy;
         __copy = o.__copy;
@@ -586,21 +646,21 @@ public:
   }
 
   template <typename U>
-    requires(micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>)
+    requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator U &() &
   {
     return cast<U>();
   }
 
   template <typename U>
-    requires(micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>)
+    requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator const U &() const &
   {
     return cast<U>();
   }
 
   template <typename U>
-    requires(micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>)
+    requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator U() &&
   {
     return micron::move(cast<U>());

@@ -381,16 +381,30 @@ public:
   void
   load(void)
   {
-    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
-    auto s = size();
-    data.reserve(s + 1);
+    if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open");
+    const auto __s = size();
+    if ( __s <= 0 ) {
+      data._buf_set_length(0);
+      return;
+    }
+    const usize __need = static_cast<usize>(__s);
+    data.reserve(__need + 1);
     posix::lseek(__handle.fd, 0, posix::seek_set);
-    max_t read_bytes = 0;
-    do {
-      read_bytes = io::read(__handle.fd, data, s);
-      if ( read_bytes < (s) ) break;
-    } while ( read_bytes );
-    data._buf_set_length(s);
+    // NOTE: io::read can legally return short for any reason (signals, qemu quirks)
+    // our last loop overwrote data[0..r) on every iteration and on a short read declared _buf_set_length(s)
+    // leaving the trailing bytes uninitialised
+    byte *__p = reinterpret_cast<byte *>(data.data());
+    usize __got = 0;
+    while ( __got < __need ) {
+      max_t __r = posix::read(__handle.fd, __p + __got, __need - __got);
+      if ( __r < 0 ) {
+        if ( -__r == error::interrupted ) continue;
+        exc<except::filesystem_error>("micron::fsys::file read failed");
+      }
+      if ( __r == 0 ) break;
+      __got += static_cast<usize>(__r);
+    }
+    data._buf_set_length(__got);
   }
 
   void

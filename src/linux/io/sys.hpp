@@ -86,33 +86,37 @@ write(fd_t fd, P &buf, usize cnt)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // positionals
+//
+// WARNING: SYS_pread64 and SYS_pwrite64 take a 64bit loff_t
+// promoting off_t to i64 keeps amd64 unchanged and on arm32 lets the syscall layers 64bit splitter route the value through the
+// even aligned register pair the kernel expects; otherwise the high half is whatever was left in the next register
 
 template <typename P>
 max_t
 pread(i32 fd, P *buf, usize cnt, off_t offset)
 {
-  return micron::syscall(SYS_pread64, fd, micron::voidify(buf), cnt, offset);
+  return micron::syscall(SYS_pread64, fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 template <typename P>
 max_t
 pwrite(i32 fd, P *buf, usize cnt, off_t offset)
 {
-  return micron::syscall(SYS_pwrite64, fd, micron::voidify(buf), cnt, offset);
+  return micron::syscall(SYS_pwrite64, fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 template <typename P>
 max_t
 pread(fd_t fd, P *buf, usize cnt, off_t offset)
 {
-  return micron::syscall(SYS_pread64, fd.fd, micron::voidify(buf), cnt, offset);
+  return micron::syscall(SYS_pread64, fd.fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 template <typename P>
 max_t
 pwrite(fd_t fd, P *buf, usize cnt, off_t offset)
 {
-  return micron::syscall(SYS_pwrite64, fd.fd, micron::voidify(buf), cnt, offset);
+  return micron::syscall(SYS_pwrite64, fd.fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,14 +140,24 @@ template <typename T>
 max_t
 preadv(i32 fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
+#if defined(__micron_arch_arm32)
+  u64 __off = static_cast<u64>(static_cast<i64>(offset));
+  return micron::syscall(SYS_preadv, fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
+#else
   return micron::syscall(SYS_preadv, fd, &iov, iovcnt, offset);
+#endif
 }
 
 template <typename T>
 max_t
 pwritev(i32 fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
+#if defined(__micron_arch_arm32)
+  u64 __off = static_cast<u64>(static_cast<i64>(offset));
+  return micron::syscall(SYS_pwritev, fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
+#else
   return micron::syscall(SYS_pwritev, fd, &iov, iovcnt, offset);
+#endif
 }
 
 template <typename T>
@@ -164,14 +178,24 @@ template <typename T>
 max_t
 preadv(fd_t fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
+#if defined(__micron_arch_arm32)
+  u64 __off = static_cast<u64>(static_cast<i64>(offset));
+  return micron::syscall(SYS_preadv, fd.fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
+#else
   return micron::syscall(SYS_preadv, fd.fd, &iov, iovcnt, offset);
+#endif
 }
 
 template <typename T>
 max_t
 pwritev(fd_t fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
+#if defined(__micron_arch_arm32)
+  u64 __off = static_cast<u64>(static_cast<i64>(offset));
+  return micron::syscall(SYS_pwritev, fd.fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
+#else
   return micron::syscall(SYS_pwritev, fd.fd, &iov, iovcnt, offset);
+#endif
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
