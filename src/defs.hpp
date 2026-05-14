@@ -19,6 +19,14 @@
 #define __micron_enable_concurrency_at_startup_var
 #endif
 
+// dynamically fire up the config for abcmalloc depending on target
+#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
+#define __ABC_AMD64
+// technically not always true, but for our use cases it effectively is
+#elif __micron_arch_arm32
+#define __ABC_EMBED
+#endif
+
 namespace micron::except
 {
 // NOTE: this must be enabled for tests
