@@ -1288,6 +1288,2272 @@ vabsq_f64(float64x2_t a) noexcept
   return __builtin_aarch64_absv2df(a);
 }
 
+__inline_g int8x16_t
+vabdq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_sabdv16qi(a, b);
+}
+
+__inline_g int16x8_t
+vabdq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_sabdv8hi(a, b);
+}
+
+__inline_g int32x4_t
+vabdq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_sabdv4si(a, b);
+}
+
+__inline_g uint8x16_t
+vabdq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_uabdv16qi_uuu(a, b);
+}
+
+__inline_g uint16x8_t
+vabdq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uabdv8hi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vabdq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uabdv4si_uuu(a, b);
+}
+
+__inline_g float32x4_t
+vabdq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_aarch64_fabdv4sf(a, b);
+}
+
+__inline_g float64x2_t
+vabdq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_aarch64_fabdv2df(a, b);
+}
+
+__inline_g int8x8_t
+vabd_s8(int8x8_t a, int8x8_t b) noexcept
+{
+  return (int8x8_t)__builtin_aarch64_sabdv8qi(a, b);
+}
+
+__inline_g int16x4_t
+vabd_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  return (int16x4_t)__builtin_aarch64_sabdv4hi(a, b);
+}
+
+__inline_g int32x2_t
+vabd_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  return (int32x2_t)__builtin_aarch64_sabdv2si(a, b);
+}
+
+__inline_g uint8x8_t
+vabd_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint8x8_t)__builtin_aarch64_uabdv8qi_uuu(a, b);
+}
+
+__inline_g uint16x4_t
+vabd_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint16x4_t)__builtin_aarch64_uabdv4hi_uuu(a, b);
+}
+
+__inline_g uint32x2_t
+vabd_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint32x2_t)__builtin_aarch64_uabdv2si_uuu(a, b);
+}
+
+__inline_g float32x2_t
+vabd_f32(float32x2_t a, float32x2_t b) noexcept
+{
+  return __builtin_aarch64_fabdv2sf(a, b);
+}
+
+__inline_g float
+vabds_f32(float a, float b) noexcept
+{
+  return __builtin_fabsf(a - b);
+}
+
+__inline_g double
+vabdd_f64(double a, double b) noexcept
+{
+  return __builtin_fabs(a - b);
+}
+
+__inline_g int16x8_t
+vabdl_s8(int8x8_t a, int8x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_sabdlv8qi(a, b);
+}
+
+__inline_g int32x4_t
+vabdl_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_sabdlv4hi(a, b);
+}
+
+__inline_g int64x2_t
+vabdl_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  return (int64x2_t)__builtin_aarch64_sabdlv2si(a, b);
+}
+
+__inline_g uint16x8_t
+vabdl_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uabdlv8qi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vabdl_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uabdlv4hi_uuu(a, b);
+}
+
+__inline_g uint64x2_t
+vabdl_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint64x2_t)__builtin_aarch64_uabdlv2si_uuu(a, b);
+}
+
+__inline_g int16x8_t
+vabdl_high_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_sabdl2v16qi(a, b);
+}
+
+__inline_g int32x4_t
+vabdl_high_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_sabdl2v8hi(a, b);
+}
+
+__inline_g int64x2_t
+vabdl_high_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int64x2_t)__builtin_aarch64_sabdl2v4si(a, b);
+}
+
+__inline_g uint16x8_t
+vabdl_high_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uabdl2v16qi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vabdl_high_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uabdl2v8hi_uuu(a, b);
+}
+
+__inline_g uint64x2_t
+vabdl_high_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint64x2_t)__builtin_aarch64_uabdl2v4si_uuu(a, b);
+}
+
+__inline_g int8x16_t
+vabaq_s8(int8x16_t acc, int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_sabav16qi(acc, a, b);
+}
+
+__inline_g int16x8_t
+vabaq_s16(int16x8_t acc, int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_sabav8hi(acc, a, b);
+}
+
+__inline_g int32x4_t
+vabaq_s32(int32x4_t acc, int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_sabav4si(acc, a, b);
+}
+
+__inline_g uint8x16_t
+vabaq_u8(uint8x16_t acc, uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_uabav16qi_uuuu(acc, a, b);
+}
+
+__inline_g uint16x8_t
+vabaq_u16(uint16x8_t acc, uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uabav8hi_uuuu(acc, a, b);
+}
+
+__inline_g uint32x4_t
+vabaq_u32(uint32x4_t acc, uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uabav4si_uuuu(acc, a, b);
+}
+
+__inline_g int8x8_t
+vaba_s8(int8x8_t acc, int8x8_t a, int8x8_t b) noexcept
+{
+  return (int8x8_t)__builtin_aarch64_sabav8qi(acc, a, b);
+}
+
+__inline_g int16x4_t
+vaba_s16(int16x4_t acc, int16x4_t a, int16x4_t b) noexcept
+{
+  return (int16x4_t)__builtin_aarch64_sabav4hi(acc, a, b);
+}
+
+__inline_g int32x2_t
+vaba_s32(int32x2_t acc, int32x2_t a, int32x2_t b) noexcept
+{
+  return (int32x2_t)__builtin_aarch64_sabav2si(acc, a, b);
+}
+
+__inline_g uint8x8_t
+vaba_u8(uint8x8_t acc, uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint8x8_t)__builtin_aarch64_uabav8qi_uuuu(acc, a, b);
+}
+
+__inline_g uint16x4_t
+vaba_u16(uint16x4_t acc, uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint16x4_t)__builtin_aarch64_uabav4hi_uuuu(acc, a, b);
+}
+
+__inline_g uint32x2_t
+vaba_u32(uint32x2_t acc, uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint32x2_t)__builtin_aarch64_uabav2si_uuuu(acc, a, b);
+}
+
+__inline_g int16x8_t
+vabal_s8(int16x8_t acc, int8x8_t a, int8x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_sabalv8qi(acc, a, b);
+}
+
+__inline_g int32x4_t
+vabal_s16(int32x4_t acc, int16x4_t a, int16x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_sabalv4hi(acc, a, b);
+}
+
+__inline_g int64x2_t
+vabal_s32(int64x2_t acc, int32x2_t a, int32x2_t b) noexcept
+{
+  return (int64x2_t)__builtin_aarch64_sabalv2si(acc, a, b);
+}
+
+__inline_g uint16x8_t
+vabal_u8(uint16x8_t acc, uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uabalv8qi_uuuu(acc, a, b);
+}
+
+__inline_g uint32x4_t
+vabal_u16(uint32x4_t acc, uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uabalv4hi_uuuu(acc, a, b);
+}
+
+__inline_g uint64x2_t
+vabal_u32(uint64x2_t acc, uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint64x2_t)__builtin_aarch64_uabalv2si_uuuu(acc, a, b);
+}
+
+__inline_g int8x16_t
+vnegq_s8(int8x16_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int16x8_t
+vnegq_s16(int16x8_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int32x4_t
+vnegq_s32(int32x4_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int64x2_t
+vnegq_s64(int64x2_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g float32x4_t
+vnegq_f32(float32x4_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g float64x2_t
+vnegq_f64(float64x2_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int8x8_t
+vneg_s8(int8x8_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int16x4_t
+vneg_s16(int16x4_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int32x2_t
+vneg_s32(int32x2_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int64x1_t
+vneg_s64(int64x1_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g float32x2_t
+vneg_f32(float32x2_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g float64x1_t
+vneg_f64(float64x1_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int64x2_t
+vmulq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return a * b;
+}
+
+__inline_g uint64x2_t
+vmulq_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return a * b;
+}
+
+__inline_g int8x16_t
+vqaddq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_ssaddv16qi(a, b);
+}
+
+__inline_g int16x8_t
+vqaddq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_ssaddv8hi(a, b);
+}
+
+__inline_g int32x4_t
+vqaddq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_ssaddv4si(a, b);
+}
+
+__inline_g int64x2_t
+vqaddq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return (int64x2_t)__builtin_aarch64_ssaddv2di(a, b);
+}
+
+__inline_g uint8x16_t
+vqaddq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_usaddv16qi_uuu(a, b);
+}
+
+__inline_g uint16x8_t
+vqaddq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_usaddv8hi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vqaddq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_usaddv4si_uuu(a, b);
+}
+
+__inline_g uint64x2_t
+vqaddq_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return (uint64x2_t)__builtin_aarch64_usaddv2di_uuu(a, b);
+}
+
+__inline_g int8x16_t
+vqsubq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_sssubv16qi(a, b);
+}
+
+__inline_g int16x8_t
+vqsubq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_sssubv8hi(a, b);
+}
+
+__inline_g int32x4_t
+vqsubq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_sssubv4si(a, b);
+}
+
+__inline_g int64x2_t
+vqsubq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return (int64x2_t)__builtin_aarch64_sssubv2di(a, b);
+}
+
+__inline_g uint8x16_t
+vqsubq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_ussubv16qi_uuu(a, b);
+}
+
+__inline_g uint16x8_t
+vqsubq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_ussubv8hi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vqsubq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_ussubv4si_uuu(a, b);
+}
+
+__inline_g uint64x2_t
+vqsubq_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return (uint64x2_t)__builtin_aarch64_ussubv2di_uuu(a, b);
+}
+
+__inline_g int8x8_t
+vqadd_s8(int8x8_t a, int8x8_t b) noexcept
+{
+  return (int8x8_t)__builtin_aarch64_ssaddv8qi(a, b);
+}
+
+__inline_g int16x4_t
+vqadd_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  return (int16x4_t)__builtin_aarch64_ssaddv4hi(a, b);
+}
+
+__inline_g int32x2_t
+vqadd_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  return (int32x2_t)__builtin_aarch64_ssaddv2si(a, b);
+}
+
+__inline_g uint8x8_t
+vqadd_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint8x8_t)__builtin_aarch64_usaddv8qi_uuu(a, b);
+}
+
+__inline_g uint16x4_t
+vqadd_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint16x4_t)__builtin_aarch64_usaddv4hi_uuu(a, b);
+}
+
+__inline_g uint32x2_t
+vqadd_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint32x2_t)__builtin_aarch64_usaddv2si_uuu(a, b);
+}
+
+__inline_g int8x8_t
+vqsub_s8(int8x8_t a, int8x8_t b) noexcept
+{
+  return (int8x8_t)__builtin_aarch64_sssubv8qi(a, b);
+}
+
+__inline_g int16x4_t
+vqsub_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  return (int16x4_t)__builtin_aarch64_sssubv4hi(a, b);
+}
+
+__inline_g int32x2_t
+vqsub_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  return (int32x2_t)__builtin_aarch64_sssubv2si(a, b);
+}
+
+__inline_g uint8x8_t
+vqsub_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint8x8_t)__builtin_aarch64_ussubv8qi_uuu(a, b);
+}
+
+__inline_g uint16x4_t
+vqsub_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint16x4_t)__builtin_aarch64_ussubv4hi_uuu(a, b);
+}
+
+__inline_g uint32x2_t
+vqsub_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint32x2_t)__builtin_aarch64_ussubv2si_uuu(a, b);
+}
+
+__inline_g int8x16_t
+vhaddq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_shaddv16qi(a, b);
+}
+
+__inline_g int16x8_t
+vhaddq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_shaddv8hi(a, b);
+}
+
+__inline_g int32x4_t
+vhaddq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_shaddv4si(a, b);
+}
+
+__inline_g uint8x16_t
+vhaddq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_uhaddv16qi_uuu(a, b);
+}
+
+__inline_g uint16x8_t
+vhaddq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uhaddv8hi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vhaddq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uhaddv4si_uuu(a, b);
+}
+
+__inline_g int8x16_t
+vhsubq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_shsubv16qi(a, b);
+}
+
+__inline_g int16x8_t
+vhsubq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_shsubv8hi(a, b);
+}
+
+__inline_g int32x4_t
+vhsubq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_shsubv4si(a, b);
+}
+
+__inline_g uint8x16_t
+vhsubq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_uhsubv16qi_uuu(a, b);
+}
+
+__inline_g uint16x8_t
+vhsubq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_uhsubv8hi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vhsubq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_uhsubv4si_uuu(a, b);
+}
+
+__inline_g int8x16_t
+vrhaddq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (int8x16_t)__builtin_aarch64_srhaddv16qi(a, b);
+}
+
+__inline_g int16x8_t
+vrhaddq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (int16x8_t)__builtin_aarch64_srhaddv8hi(a, b);
+}
+
+__inline_g int32x4_t
+vrhaddq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (int32x4_t)__builtin_aarch64_srhaddv4si(a, b);
+}
+
+__inline_g uint8x16_t
+vrhaddq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_urhaddv16qi_uuu(a, b);
+}
+
+__inline_g uint16x8_t
+vrhaddq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)__builtin_aarch64_urhaddv8hi_uuu(a, b);
+}
+
+__inline_g uint32x4_t
+vrhaddq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)__builtin_aarch64_urhaddv4si_uuu(a, b);
+}
+
+__inline_g signed char
+vaddvq_s8(int8x16_t v) noexcept
+{
+  return (signed char)__builtin_aarch64_reduc_plus_scal_v16qi(v);
+}
+
+__inline_g signed short
+vaddvq_s16(int16x8_t v) noexcept
+{
+  return (signed short)__builtin_aarch64_reduc_plus_scal_v8hi(v);
+}
+
+__inline_g signed int
+vaddvq_s32(int32x4_t v) noexcept
+{
+  return (signed int)__builtin_aarch64_reduc_plus_scal_v4si(v);
+}
+
+__inline_g signed long long
+vaddvq_s64(int64x2_t v) noexcept
+{
+  return (signed long long)__builtin_aarch64_reduc_plus_scal_v2di(v);
+}
+
+__inline_g unsigned char
+vaddvq_u8(uint8x16_t v) noexcept
+{
+  return (unsigned char)__builtin_aarch64_reduc_plus_scal_v16qi_uu(v);
+}
+
+__inline_g unsigned short
+vaddvq_u16(uint16x8_t v) noexcept
+{
+  return (unsigned short)__builtin_aarch64_reduc_plus_scal_v8hi_uu(v);
+}
+
+__inline_g unsigned int
+vaddvq_u32(uint32x4_t v) noexcept
+{
+  return (unsigned int)__builtin_aarch64_reduc_plus_scal_v4si_uu(v);
+}
+
+__inline_g unsigned long long
+vaddvq_u64(uint64x2_t v) noexcept
+{
+  return (unsigned long long)__builtin_aarch64_reduc_plus_scal_v2di_uu(v);
+}
+
+__inline_g float
+vaddvq_f32(float32x4_t v) noexcept
+{
+  return __builtin_aarch64_reduc_plus_scal_v4sf(v);
+}
+
+__inline_g double
+vaddvq_f64(float64x2_t v) noexcept
+{
+  return __builtin_aarch64_reduc_plus_scal_v2df(v);
+}
+
+__inline_g signed char
+vmaxvq_s8(int8x16_t v) noexcept
+{
+  return (signed char)__builtin_aarch64_reduc_smax_scal_v16qi(v);
+}
+
+__inline_g signed short
+vmaxvq_s16(int16x8_t v) noexcept
+{
+  return (signed short)__builtin_aarch64_reduc_smax_scal_v8hi(v);
+}
+
+__inline_g signed int
+vmaxvq_s32(int32x4_t v) noexcept
+{
+  return (signed int)__builtin_aarch64_reduc_smax_scal_v4si(v);
+}
+
+__inline_g unsigned char
+vmaxvq_u8(uint8x16_t v) noexcept
+{
+  return (unsigned char)__builtin_aarch64_reduc_umax_scal_v16qi_uu(v);
+}
+
+__inline_g unsigned short
+vmaxvq_u16(uint16x8_t v) noexcept
+{
+  return (unsigned short)__builtin_aarch64_reduc_umax_scal_v8hi_uu(v);
+}
+
+__inline_g unsigned int
+vmaxvq_u32(uint32x4_t v) noexcept
+{
+  return (unsigned int)__builtin_aarch64_reduc_umax_scal_v4si_uu(v);
+}
+
+__inline_g float
+vmaxvq_f32(float32x4_t v) noexcept
+{
+  return __builtin_aarch64_reduc_smax_nan_scal_v4sf(v);
+}
+
+__inline_g double
+vmaxvq_f64(float64x2_t v) noexcept
+{
+  return __builtin_aarch64_reduc_smax_nan_scal_v2df(v);
+}
+
+__inline_g signed char
+vminvq_s8(int8x16_t v) noexcept
+{
+  return (signed char)__builtin_aarch64_reduc_smin_scal_v16qi(v);
+}
+
+__inline_g signed short
+vminvq_s16(int16x8_t v) noexcept
+{
+  return (signed short)__builtin_aarch64_reduc_smin_scal_v8hi(v);
+}
+
+__inline_g signed int
+vminvq_s32(int32x4_t v) noexcept
+{
+  return (signed int)__builtin_aarch64_reduc_smin_scal_v4si(v);
+}
+
+__inline_g unsigned char
+vminvq_u8(uint8x16_t v) noexcept
+{
+  return (unsigned char)__builtin_aarch64_reduc_umin_scal_v16qi_uu(v);
+}
+
+__inline_g unsigned short
+vminvq_u16(uint16x8_t v) noexcept
+{
+  return (unsigned short)__builtin_aarch64_reduc_umin_scal_v8hi_uu(v);
+}
+
+__inline_g unsigned int
+vminvq_u32(uint32x4_t v) noexcept
+{
+  return (unsigned int)__builtin_aarch64_reduc_umin_scal_v4si_uu(v);
+}
+
+__inline_g float
+vminvq_f32(float32x4_t v) noexcept
+{
+  return __builtin_aarch64_reduc_smin_nan_scal_v4sf(v);
+}
+
+__inline_g double
+vminvq_f64(float64x2_t v) noexcept
+{
+  return __builtin_aarch64_reduc_smin_nan_scal_v2df(v);
+}
+
+__inline_g float32x4_t
+vsqrtq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_sqrtv4sf(a);
+}
+
+__inline_g float64x2_t
+vsqrtq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_sqrtv2df(a);
+}
+
+__inline_g float32x2_t
+vsqrt_f32(float32x2_t a) noexcept
+{
+  return __builtin_aarch64_sqrtv2sf(a);
+}
+
+__inline_g float32x4_t
+vrndq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_btruncv4sf(a);
+}
+
+__inline_g float64x2_t
+vrndq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_btruncv2df(a);
+}
+
+__inline_g float32x4_t
+vrndmq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_floorv4sf(a);
+}
+
+__inline_g float64x2_t
+vrndmq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_floorv2df(a);
+}
+
+__inline_g float32x4_t
+vrndpq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_ceilv4sf(a);
+}
+
+__inline_g float64x2_t
+vrndpq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_ceilv2df(a);
+}
+
+__inline_g float32x4_t
+vrndaq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_roundv4sf(a);
+}
+
+__inline_g float64x2_t
+vrndaq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_roundv2df(a);
+}
+
+__inline_g float32x4_t
+vrndnq_f32(float32x4_t a) noexcept
+{
+  float32x4_t r;
+  __asm__("frintn %0.4s, %1.4s" : "=w"(r) : "w"(a));
+  return r;
+}
+
+__inline_g float64x2_t
+vrndnq_f64(float64x2_t a) noexcept
+{
+  float64x2_t r;
+  __asm__("frintn %0.2d, %1.2d" : "=w"(r) : "w"(a));
+  return r;
+}
+
+__inline_g float32x4_t
+vrndiq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_nearbyintv4sf(a);
+}
+
+__inline_g float64x2_t
+vrndiq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_nearbyintv2df(a);
+}
+
+__inline_g float32x4_t
+vrndxq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_rintv4sf(a);
+}
+
+__inline_g float64x2_t
+vrndxq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_rintv2df(a);
+}
+
+__inline_g int16x8_t
+vmovl_s8(int8x8_t v) noexcept
+{
+  return __builtin_convertvector(v, int16x8_t);
+}
+
+__inline_g int32x4_t
+vmovl_s16(int16x4_t v) noexcept
+{
+  return __builtin_convertvector(v, int32x4_t);
+}
+
+__inline_g int64x2_t
+vmovl_s32(int32x2_t v) noexcept
+{
+  return __builtin_convertvector(v, int64x2_t);
+}
+
+__inline_g uint16x8_t
+vmovl_u8(uint8x8_t v) noexcept
+{
+  return __builtin_convertvector(v, uint16x8_t);
+}
+
+__inline_g uint32x4_t
+vmovl_u16(uint16x4_t v) noexcept
+{
+  return __builtin_convertvector(v, uint32x4_t);
+}
+
+__inline_g uint64x2_t
+vmovl_u32(uint32x2_t v) noexcept
+{
+  return __builtin_convertvector(v, uint64x2_t);
+}
+
+__inline_g int16x8_t
+vmovl_high_s8(int8x16_t v) noexcept
+{
+  return __builtin_convertvector(__builtin_shufflevector(v, v, 8, 9, 10, 11, 12, 13, 14, 15), int16x8_t);
+}
+
+__inline_g int32x4_t
+vmovl_high_s16(int16x8_t v) noexcept
+{
+  return __builtin_convertvector(__builtin_shufflevector(v, v, 4, 5, 6, 7), int32x4_t);
+}
+
+__inline_g int64x2_t
+vmovl_high_s32(int32x4_t v) noexcept
+{
+  return __builtin_convertvector(__builtin_shufflevector(v, v, 2, 3), int64x2_t);
+}
+
+__inline_g uint16x8_t
+vmovl_high_u8(uint8x16_t v) noexcept
+{
+  return __builtin_convertvector(__builtin_shufflevector(v, v, 8, 9, 10, 11, 12, 13, 14, 15), uint16x8_t);
+}
+
+__inline_g uint32x4_t
+vmovl_high_u16(uint16x8_t v) noexcept
+{
+  return __builtin_convertvector(__builtin_shufflevector(v, v, 4, 5, 6, 7), uint32x4_t);
+}
+
+__inline_g uint64x2_t
+vmovl_high_u32(uint32x4_t v) noexcept
+{
+  return __builtin_convertvector(__builtin_shufflevector(v, v, 2, 3), uint64x2_t);
+}
+
+__inline_g int8x8_t
+vmovn_s16(int16x8_t v) noexcept
+{
+  return __builtin_convertvector(v, int8x8_t);
+}
+
+__inline_g int16x4_t
+vmovn_s32(int32x4_t v) noexcept
+{
+  return __builtin_convertvector(v, int16x4_t);
+}
+
+__inline_g int32x2_t
+vmovn_s64(int64x2_t v) noexcept
+{
+  return __builtin_convertvector(v, int32x2_t);
+}
+
+__inline_g uint8x8_t
+vmovn_u16(uint16x8_t v) noexcept
+{
+  return __builtin_convertvector(v, uint8x8_t);
+}
+
+__inline_g uint16x4_t
+vmovn_u32(uint32x4_t v) noexcept
+{
+  return __builtin_convertvector(v, uint16x4_t);
+}
+
+__inline_g uint32x2_t
+vmovn_u64(uint64x2_t v) noexcept
+{
+  return __builtin_convertvector(v, uint32x2_t);
+}
+
+__inline_g int8x16_t
+vmovn_high_s16(int8x8_t lo, int16x8_t v) noexcept
+{
+  return __builtin_shufflevector(lo, __builtin_convertvector(v, int8x8_t), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+}
+
+__inline_g int16x8_t
+vmovn_high_s32(int16x4_t lo, int32x4_t v) noexcept
+{
+  return __builtin_shufflevector(lo, __builtin_convertvector(v, int16x4_t), 0, 1, 2, 3, 4, 5, 6, 7);
+}
+
+__inline_g int32x4_t
+vmovn_high_s64(int32x2_t lo, int64x2_t v) noexcept
+{
+  return __builtin_shufflevector(lo, __builtin_convertvector(v, int32x2_t), 0, 1, 2, 3);
+}
+
+__inline_g uint8x16_t
+vmovn_high_u16(uint8x8_t lo, uint16x8_t v) noexcept
+{
+  return __builtin_shufflevector(lo, __builtin_convertvector(v, uint8x8_t), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+}
+
+__inline_g uint16x8_t
+vmovn_high_u32(uint16x4_t lo, uint32x4_t v) noexcept
+{
+  return __builtin_shufflevector(lo, __builtin_convertvector(v, uint16x4_t), 0, 1, 2, 3, 4, 5, 6, 7);
+}
+
+__inline_g uint32x4_t
+vmovn_high_u64(uint32x2_t lo, uint64x2_t v) noexcept
+{
+  return __builtin_shufflevector(lo, __builtin_convertvector(v, uint32x2_t), 0, 1, 2, 3);
+}
+
+__inline_g int16x8_t
+vmull_s8(int8x8_t a, int8x8_t b) noexcept
+{
+  return __builtin_convertvector(a, int16x8_t) * __builtin_convertvector(b, int16x8_t);
+}
+
+__inline_g int32x4_t
+vmull_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  return __builtin_convertvector(a, int32x4_t) * __builtin_convertvector(b, int32x4_t);
+}
+
+__inline_g int64x2_t
+vmull_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  return __builtin_convertvector(a, int64x2_t) * __builtin_convertvector(b, int64x2_t);
+}
+
+__inline_g uint16x8_t
+vmull_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return __builtin_convertvector(a, uint16x8_t) * __builtin_convertvector(b, uint16x8_t);
+}
+
+__inline_g uint32x4_t
+vmull_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return __builtin_convertvector(a, uint32x4_t) * __builtin_convertvector(b, uint32x4_t);
+}
+
+__inline_g uint64x2_t
+vmull_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return __builtin_convertvector(a, uint64x2_t) * __builtin_convertvector(b, uint64x2_t);
+}
+
+__inline_g int8x8_t
+vqmovn_s16(int16x8_t v) noexcept
+{
+  return (int8x8_t)__builtin_aarch64_sqmovnv8hi(v);
+}
+
+__inline_g int16x4_t
+vqmovn_s32(int32x4_t v) noexcept
+{
+  return (int16x4_t)__builtin_aarch64_sqmovnv4si(v);
+}
+
+__inline_g int32x2_t
+vqmovn_s64(int64x2_t v) noexcept
+{
+  return (int32x2_t)__builtin_aarch64_sqmovnv2di(v);
+}
+
+__inline_g uint8x8_t
+vqmovn_u16(uint16x8_t v) noexcept
+{
+  uint8x8_t r;
+  __asm__("uqxtn %0.8b, %1.8h" : "=w"(r) : "w"(v));
+  return r;
+}
+
+__inline_g uint16x4_t
+vqmovn_u32(uint32x4_t v) noexcept
+{
+  uint16x4_t r;
+  __asm__("uqxtn %0.4h, %1.4s" : "=w"(r) : "w"(v));
+  return r;
+}
+
+__inline_g uint32x2_t
+vqmovn_u64(uint64x2_t v) noexcept
+{
+  uint32x2_t r;
+  __asm__("uqxtn %0.2s, %1.2d" : "=w"(r) : "w"(v));
+  return r;
+}
+
+__inline_g uint8x8_t
+vqmovun_s16(int16x8_t v) noexcept
+{
+  return (uint8x8_t)__builtin_aarch64_sqmovunv8hi_us(v);
+}
+
+__inline_g uint16x4_t
+vqmovun_s32(int32x4_t v) noexcept
+{
+  return (uint16x4_t)__builtin_aarch64_sqmovunv4si_us(v);
+}
+
+__inline_g uint32x2_t
+vqmovun_s64(int64x2_t v) noexcept
+{
+  return (uint32x2_t)__builtin_aarch64_sqmovunv2di_us(v);
+}
+
+__inline_g float32x4_t
+vrecpeq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_frecpev4sf(a);
+}
+
+__inline_g float64x2_t
+vrecpeq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_frecpev2df(a);
+}
+
+__inline_g float32x4_t
+vrecpsq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_aarch64_frecpsv4sf(a, b);
+}
+
+__inline_g float64x2_t
+vrecpsq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_aarch64_frecpsv2df(a, b);
+}
+
+__inline_g float32x4_t
+vrsqrteq_f32(float32x4_t a) noexcept
+{
+  return __builtin_aarch64_rsqrtev4sf(a);
+}
+
+__inline_g float64x2_t
+vrsqrteq_f64(float64x2_t a) noexcept
+{
+  return __builtin_aarch64_rsqrtev2df(a);
+}
+
+__inline_g float32x4_t
+vrsqrtsq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_aarch64_rsqrtsv4sf(a, b);
+}
+
+__inline_g float64x2_t
+vrsqrtsq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_aarch64_rsqrtsv2df(a, b);
+}
+
+__inline_g int8x16_t
+vbicq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return a & ~b;
+}
+
+__inline_g int16x8_t
+vbicq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return a & ~b;
+}
+
+__inline_g int32x4_t
+vbicq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return a & ~b;
+}
+
+__inline_g int64x2_t
+vbicq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return a & ~b;
+}
+
+__inline_g int8x16_t
+vmvnq_s8(int8x16_t a) noexcept
+{
+  return ~a;
+}
+
+__inline_g int16x8_t
+vmvnq_s16(int16x8_t a) noexcept
+{
+  return ~a;
+}
+
+__inline_g int32x4_t
+vmvnq_s32(int32x4_t a) noexcept
+{
+  return ~a;
+}
+
+__inline_g float32x4_t
+vorrq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return (float32x4_t)((uint32x4_t)a | (uint32x4_t)b);
+}
+
+__inline_g float64x2_t
+vorrq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return (float64x2_t)((uint64x2_t)a | (uint64x2_t)b);
+}
+
+__inline_g int8x16_t
+vextq_s8(int8x16_t a, int8x16_t b, const int n) noexcept
+{
+  switch ( n & 15 ) {
+  case 0 :
+    return a;
+  case 1 :
+    return __builtin_shufflevector(a, b, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+  case 2 :
+    return __builtin_shufflevector(a, b, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+  case 3 :
+    return __builtin_shufflevector(a, b, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+  case 4 :
+    return __builtin_shufflevector(a, b, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
+  case 5 :
+    return __builtin_shufflevector(a, b, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+  case 6 :
+    return __builtin_shufflevector(a, b, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+  case 7 :
+    return __builtin_shufflevector(a, b, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
+  case 8 :
+    return __builtin_shufflevector(a, b, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
+  case 9 :
+    return __builtin_shufflevector(a, b, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24);
+  case 10 :
+    return __builtin_shufflevector(a, b, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25);
+  case 11 :
+    return __builtin_shufflevector(a, b, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
+  case 12 :
+    return __builtin_shufflevector(a, b, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27);
+  case 13 :
+    return __builtin_shufflevector(a, b, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28);
+  case 14 :
+    return __builtin_shufflevector(a, b, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29);
+  case 15 :
+    return __builtin_shufflevector(a, b, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30);
+  default :
+    return a;
+  }
+}
+
+__inline_g uint8x16_t
+vextq_u8(uint8x16_t a, uint8x16_t b, const int n) noexcept
+{
+  return (uint8x16_t)vextq_s8((int8x16_t)a, (int8x16_t)b, n);
+}
+
+__inline_g int16x8_t
+vextq_s16(int16x8_t a, int16x8_t b, const int n) noexcept
+{
+  switch ( n & 7 ) {
+  case 0 :
+    return a;
+  case 1 :
+    return __builtin_shufflevector(a, b, 1, 2, 3, 4, 5, 6, 7, 8);
+  case 2 :
+    return __builtin_shufflevector(a, b, 2, 3, 4, 5, 6, 7, 8, 9);
+  case 3 :
+    return __builtin_shufflevector(a, b, 3, 4, 5, 6, 7, 8, 9, 10);
+  case 4 :
+    return __builtin_shufflevector(a, b, 4, 5, 6, 7, 8, 9, 10, 11);
+  case 5 :
+    return __builtin_shufflevector(a, b, 5, 6, 7, 8, 9, 10, 11, 12);
+  case 6 :
+    return __builtin_shufflevector(a, b, 6, 7, 8, 9, 10, 11, 12, 13);
+  case 7 :
+    return __builtin_shufflevector(a, b, 7, 8, 9, 10, 11, 12, 13, 14);
+  default :
+    return a;
+  }
+}
+
+__inline_g uint16x8_t
+vextq_u16(uint16x8_t a, uint16x8_t b, const int n) noexcept
+{
+  return (uint16x8_t)vextq_s16((int16x8_t)a, (int16x8_t)b, n);
+}
+
+__inline_g int32x4_t
+vextq_s32(int32x4_t a, int32x4_t b, const int n) noexcept
+{
+  switch ( n & 3 ) {
+  case 0 :
+    return a;
+  case 1 :
+    return __builtin_shufflevector(a, b, 1, 2, 3, 4);
+  case 2 :
+    return __builtin_shufflevector(a, b, 2, 3, 4, 5);
+  case 3 :
+    return __builtin_shufflevector(a, b, 3, 4, 5, 6);
+  default :
+    return a;
+  }
+}
+
+__inline_g uint32x4_t
+vextq_u32(uint32x4_t a, uint32x4_t b, const int n) noexcept
+{
+  return (uint32x4_t)vextq_s32((int32x4_t)a, (int32x4_t)b, n);
+}
+
+__inline_g float32x4_t
+vextq_f32(float32x4_t a, float32x4_t b, const int n) noexcept
+{
+  return (float32x4_t)vextq_s32((int32x4_t)a, (int32x4_t)b, n);
+}
+
+__inline_g int64x2_t
+vextq_s64(int64x2_t a, int64x2_t b, const int n) noexcept
+{
+  return (n & 1) ? __builtin_shufflevector(a, b, 1, 2) : a;
+}
+
+__inline_g uint64x2_t
+vextq_u64(uint64x2_t a, uint64x2_t b, const int n) noexcept
+{
+  return (n & 1) ? __builtin_shufflevector(a, b, 1, 2) : a;
+}
+
+__inline_g float64x2_t
+vextq_f64(float64x2_t a, float64x2_t b, const int n) noexcept
+{
+  return (n & 1) ? __builtin_shufflevector(a, b, 1, 2) : a;
+}
+
+__inline_g signed char
+vget_lane_s8(int8x8_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g signed short
+vget_lane_s16(int16x4_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g signed int
+vget_lane_s32(int32x2_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g signed long long
+vget_lane_s64(int64x1_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g unsigned char
+vget_lane_u8(uint8x8_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g unsigned short
+vget_lane_u16(uint16x4_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g unsigned int
+vget_lane_u32(uint32x2_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g unsigned long long
+vget_lane_u64(uint64x1_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g float
+vget_lane_f32(float32x2_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g double
+vget_lane_f64(float64x1_t v, const int n) noexcept
+{
+  return v[n];
+}
+
+__inline_g int8x8_t
+vset_lane_s8(signed char x, int8x8_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g int16x4_t
+vset_lane_s16(signed short x, int16x4_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g int32x2_t
+vset_lane_s32(signed int x, int32x2_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g int64x1_t
+vset_lane_s64(signed long long x, int64x1_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g uint8x8_t
+vset_lane_u8(unsigned char x, uint8x8_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g uint16x4_t
+vset_lane_u16(unsigned short x, uint16x4_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g uint32x2_t
+vset_lane_u32(unsigned int x, uint32x2_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g uint64x1_t
+vset_lane_u64(unsigned long long x, uint64x1_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g float32x2_t
+vset_lane_f32(float x, float32x2_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g float64x1_t
+vset_lane_f64(double x, float64x1_t v, const int n) noexcept
+{
+  v[n] = x;
+  return v;
+}
+
+__inline_g int8x16_t
+vpaddq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  int8x16_t lo = __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30);
+  int8x16_t hi = __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31);
+  return (int8x16_t)(lo + hi);
+}
+
+__inline_g int16x8_t
+vpaddq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  int16x8_t lo = __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14);
+  int16x8_t hi = __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15);
+  return (int16x8_t)(lo + hi);
+}
+
+__inline_g int32x4_t
+vpaddq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  int32x4_t lo = __builtin_shufflevector(a, b, 0, 2, 4, 6);
+  int32x4_t hi = __builtin_shufflevector(a, b, 1, 3, 5, 7);
+  return (int32x4_t)(lo + hi);
+}
+
+__inline_g int64x2_t
+vpaddq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  int64x2_t lo = __builtin_shufflevector(a, b, 0, 2);
+  int64x2_t hi = __builtin_shufflevector(a, b, 1, 3);
+  return (int64x2_t)(lo + hi);
+}
+
+__inline_g uint8x16_t
+vpaddq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)vpaddq_s8((int8x16_t)a, (int8x16_t)b);
+}
+
+__inline_g uint16x8_t
+vpaddq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)vpaddq_s16((int16x8_t)a, (int16x8_t)b);
+}
+
+__inline_g uint32x4_t
+vpaddq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)vpaddq_s32((int32x4_t)a, (int32x4_t)b);
+}
+
+__inline_g uint64x2_t
+vpaddq_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return (uint64x2_t)vpaddq_s64((int64x2_t)a, (int64x2_t)b);
+}
+
+__inline_g float32x4_t
+vpaddq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  float32x4_t lo = __builtin_shufflevector(a, b, 0, 2, 4, 6);
+  float32x4_t hi = __builtin_shufflevector(a, b, 1, 3, 5, 7);
+  return lo + hi;
+}
+
+__inline_g float64x2_t
+vpaddq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  float64x2_t lo = __builtin_shufflevector(a, b, 0, 2);
+  float64x2_t hi = __builtin_shufflevector(a, b, 1, 3);
+  return lo + hi;
+}
+
+__inline_g int8x8_t
+vpadd_s8(int8x8_t a, int8x8_t b) noexcept
+{
+  int8x8_t lo = __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14);
+  int8x8_t hi = __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15);
+  return (int8x8_t)(lo + hi);
+}
+
+__inline_g int16x4_t
+vpadd_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  int16x4_t lo = __builtin_shufflevector(a, b, 0, 2, 4, 6);
+  int16x4_t hi = __builtin_shufflevector(a, b, 1, 3, 5, 7);
+  return (int16x4_t)(lo + hi);
+}
+
+__inline_g int32x2_t
+vpadd_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  int32x2_t lo = __builtin_shufflevector(a, b, 0, 2);
+  int32x2_t hi = __builtin_shufflevector(a, b, 1, 3);
+  return (int32x2_t)(lo + hi);
+}
+
+__inline_g uint8x8_t
+vpadd_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return (uint8x8_t)vpadd_s8((int8x8_t)a, (int8x8_t)b);
+}
+
+__inline_g uint16x4_t
+vpadd_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return (uint16x4_t)vpadd_s16((int16x4_t)a, (int16x4_t)b);
+}
+
+__inline_g uint32x2_t
+vpadd_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint32x2_t)vpadd_s32((int32x2_t)a, (int32x2_t)b);
+}
+
+__inline_g float32x2_t
+vpadd_f32(float32x2_t a, float32x2_t b) noexcept
+{
+  float32x2_t lo = __builtin_shufflevector(a, b, 0, 2);
+  float32x2_t hi = __builtin_shufflevector(a, b, 1, 3);
+  return lo + hi;
+}
+
+__inline_g int16x8_t
+vpaddlq_s8(int8x16_t v) noexcept
+{
+  int16x8_t lo = __builtin_convertvector(__builtin_shufflevector(v, v, 0, 2, 4, 6, 8, 10, 12, 14), int16x8_t);
+  int16x8_t hi = __builtin_convertvector(__builtin_shufflevector(v, v, 1, 3, 5, 7, 9, 11, 13, 15), int16x8_t);
+  return lo + hi;
+}
+
+__inline_g int32x4_t
+vpaddlq_s16(int16x8_t v) noexcept
+{
+  int32x4_t lo = __builtin_convertvector(__builtin_shufflevector(v, v, 0, 2, 4, 6), int32x4_t);
+  int32x4_t hi = __builtin_convertvector(__builtin_shufflevector(v, v, 1, 3, 5, 7), int32x4_t);
+  return lo + hi;
+}
+
+__inline_g int64x2_t
+vpaddlq_s32(int32x4_t v) noexcept
+{
+  int64x2_t lo = __builtin_convertvector(__builtin_shufflevector(v, v, 0, 2), int64x2_t);
+  int64x2_t hi = __builtin_convertvector(__builtin_shufflevector(v, v, 1, 3), int64x2_t);
+  return lo + hi;
+}
+
+__inline_g uint16x8_t
+vpaddlq_u8(uint8x16_t v) noexcept
+{
+  uint16x8_t lo = __builtin_convertvector(__builtin_shufflevector(v, v, 0, 2, 4, 6, 8, 10, 12, 14), uint16x8_t);
+  uint16x8_t hi = __builtin_convertvector(__builtin_shufflevector(v, v, 1, 3, 5, 7, 9, 11, 13, 15), uint16x8_t);
+  return lo + hi;
+}
+
+__inline_g uint32x4_t
+vpaddlq_u16(uint16x8_t v) noexcept
+{
+  uint32x4_t lo = __builtin_convertvector(__builtin_shufflevector(v, v, 0, 2, 4, 6), uint32x4_t);
+  uint32x4_t hi = __builtin_convertvector(__builtin_shufflevector(v, v, 1, 3, 5, 7), uint32x4_t);
+  return lo + hi;
+}
+
+__inline_g uint64x2_t
+vpaddlq_u32(uint32x4_t v) noexcept
+{
+  uint64x2_t lo = __builtin_convertvector(__builtin_shufflevector(v, v, 0, 2), uint64x2_t);
+  uint64x2_t hi = __builtin_convertvector(__builtin_shufflevector(v, v, 1, 3), uint64x2_t);
+  return lo + hi;
+}
+
+__inline_g int8x16_t
+vrev16q_s8(int8x16_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+}
+
+__inline_g uint8x16_t
+vrev16q_u8(uint8x16_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
+}
+
+__inline_g int8x16_t
+vrev32q_s8(int8x16_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12);
+}
+
+__inline_g uint8x16_t
+vrev32q_u8(uint8x16_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12);
+}
+
+__inline_g int16x8_t
+vrev32q_s16(int16x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6);
+}
+
+__inline_g uint16x8_t
+vrev32q_u16(uint16x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6);
+}
+
+__inline_g int8x16_t
+vrev64q_s8(int8x16_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8);
+}
+
+__inline_g uint8x16_t
+vrev64q_u8(uint8x16_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8);
+}
+
+__inline_g int16x8_t
+vrev64q_s16(int16x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 3, 2, 1, 0, 7, 6, 5, 4);
+}
+
+__inline_g uint16x8_t
+vrev64q_u16(uint16x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 3, 2, 1, 0, 7, 6, 5, 4);
+}
+
+__inline_g int32x4_t
+vrev64q_s32(int32x4_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2);
+}
+
+__inline_g uint32x4_t
+vrev64q_u32(uint32x4_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2);
+}
+
+__inline_g float32x4_t
+vrev64q_f32(float32x4_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2);
+}
+
+__inline_g int8x16_t
+vzip1q_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23);
+}
+
+__inline_g int8x16_t
+vzip2q_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31);
+}
+
+__inline_g uint8x16_t
+vzip1q_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23);
+}
+
+__inline_g uint8x16_t
+vzip2q_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31);
+}
+
+__inline_g int16x8_t
+vzip1q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 8, 1, 9, 2, 10, 3, 11);
+}
+
+__inline_g int16x8_t
+vzip2q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 4, 12, 5, 13, 6, 14, 7, 15);
+}
+
+__inline_g uint16x8_t
+vzip1q_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 8, 1, 9, 2, 10, 3, 11);
+}
+
+__inline_g uint16x8_t
+vzip2q_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 4, 12, 5, 13, 6, 14, 7, 15);
+}
+
+__inline_g int32x4_t
+vzip1q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 1, 5);
+}
+
+__inline_g int32x4_t
+vzip2q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 2, 6, 3, 7);
+}
+
+__inline_g uint32x4_t
+vzip1q_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 1, 5);
+}
+
+__inline_g uint32x4_t
+vzip2q_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 2, 6, 3, 7);
+}
+
+__inline_g float32x4_t
+vzip1q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 1, 5);
+}
+
+__inline_g float32x4_t
+vzip2q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 2, 6, 3, 7);
+}
+
+__inline_g int64x2_t
+vzip1q_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2);
+}
+
+__inline_g int64x2_t
+vzip2q_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3);
+}
+
+__inline_g uint64x2_t
+vzip1q_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2);
+}
+
+__inline_g uint64x2_t
+vzip2q_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3);
+}
+
+__inline_g float64x2_t
+vzip1q_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2);
+}
+
+__inline_g float64x2_t
+vzip2q_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3);
+}
+
+__inline_g int8x16_t
+vuzp1q_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30);
+}
+
+__inline_g int8x16_t
+vuzp2q_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31);
+}
+
+__inline_g uint8x16_t
+vuzp1q_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30);
+}
+
+__inline_g uint8x16_t
+vuzp2q_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31);
+}
+
+__inline_g int16x8_t
+vuzp1q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14);
+}
+
+__inline_g int16x8_t
+vuzp2q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15);
+}
+
+__inline_g uint16x8_t
+vuzp1q_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6, 8, 10, 12, 14);
+}
+
+__inline_g uint16x8_t
+vuzp2q_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7, 9, 11, 13, 15);
+}
+
+__inline_g int32x4_t
+vuzp1q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6);
+}
+
+__inline_g int32x4_t
+vuzp2q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7);
+}
+
+__inline_g uint32x4_t
+vuzp1q_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6);
+}
+
+__inline_g uint32x4_t
+vuzp2q_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7);
+}
+
+__inline_g float32x4_t
+vuzp1q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 2, 4, 6);
+}
+
+__inline_g float32x4_t
+vuzp2q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 3, 5, 7);
+}
+
+__inline_g int8x16_t
+vtrn1q_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 16, 2, 18, 4, 20, 6, 22, 8, 24, 10, 26, 12, 28, 14, 30);
+}
+
+__inline_g int8x16_t
+vtrn2q_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 17, 3, 19, 5, 21, 7, 23, 9, 25, 11, 27, 13, 29, 15, 31);
+}
+
+__inline_g uint8x16_t
+vtrn1q_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 16, 2, 18, 4, 20, 6, 22, 8, 24, 10, 26, 12, 28, 14, 30);
+}
+
+__inline_g uint8x16_t
+vtrn2q_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 17, 3, 19, 5, 21, 7, 23, 9, 25, 11, 27, 13, 29, 15, 31);
+}
+
+__inline_g int16x8_t
+vtrn1q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 8, 2, 10, 4, 12, 6, 14);
+}
+
+__inline_g int16x8_t
+vtrn2q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 9, 3, 11, 5, 13, 7, 15);
+}
+
+__inline_g uint16x8_t
+vtrn1q_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 8, 2, 10, 4, 12, 6, 14);
+}
+
+__inline_g uint16x8_t
+vtrn2q_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 9, 3, 11, 5, 13, 7, 15);
+}
+
+__inline_g int32x4_t
+vtrn1q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 2, 6);
+}
+
+__inline_g int32x4_t
+vtrn2q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 5, 3, 7);
+}
+
+__inline_g uint32x4_t
+vtrn1q_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 2, 6);
+}
+
+__inline_g uint32x4_t
+vtrn2q_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 5, 3, 7);
+}
+
+__inline_g float32x4_t
+vtrn1q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 2, 6);
+}
+
+__inline_g float32x4_t
+vtrn2q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 5, 3, 7);
+}
+
+__inline_g int8x16_t
+vshlq_s8(int8x16_t v, int8x16_t cnt) noexcept
+{
+  return v << cnt;
+}
+
+__inline_g int16x8_t
+vshlq_s16(int16x8_t v, int16x8_t cnt) noexcept
+{
+  return v << cnt;
+}
+
+__inline_g int32x4_t
+vshlq_s32(int32x4_t v, int32x4_t cnt) noexcept
+{
+  return v << cnt;
+}
+
+__inline_g int64x2_t
+vshlq_s64(int64x2_t v, int64x2_t cnt) noexcept
+{
+  return v << cnt;
+}
+
+__inline_g uint8x16_t
+vshlq_u8(uint8x16_t v, int8x16_t cnt) noexcept
+{
+  return v << (uint8x16_t)cnt;
+}
+
+__inline_g uint16x8_t
+vshlq_u16(uint16x8_t v, int16x8_t cnt) noexcept
+{
+  return v << (uint16x8_t)cnt;
+}
+
+__inline_g uint32x4_t
+vshlq_u32(uint32x4_t v, int32x4_t cnt) noexcept
+{
+  return v << (uint32x4_t)cnt;
+}
+
+__inline_g uint64x2_t
+vshlq_u64(uint64x2_t v, int64x2_t cnt) noexcept
+{
+  return v << (uint64x2_t)cnt;
+}
+
+__inline_g int8x8_t
+vshrn_n_s16(int16x8_t v, const int n) noexcept
+{
+  return __builtin_convertvector(v >> (int16x8_t)vdupq_n_s16((signed short)n), int8x8_t);
+}
+
+__inline_g int16x4_t
+vshrn_n_s32(int32x4_t v, const int n) noexcept
+{
+  return __builtin_convertvector(v >> (int32x4_t)vdupq_n_s32(n), int16x4_t);
+}
+
+__inline_g int32x2_t
+vshrn_n_s64(int64x2_t v, const int n) noexcept
+{
+  return __builtin_convertvector(v >> (int64x2_t)vdupq_n_s64((signed long long)n), int32x2_t);
+}
+
+__inline_g uint8x8_t
+vshrn_n_u16(uint16x8_t v, const int n) noexcept
+{
+  return __builtin_convertvector(v >> (uint16x8_t)vdupq_n_u16((unsigned short)n), uint8x8_t);
+}
+
+__inline_g uint16x4_t
+vshrn_n_u32(uint32x4_t v, const int n) noexcept
+{
+  return __builtin_convertvector(v >> (uint32x4_t)vdupq_n_u32((unsigned)n), uint16x4_t);
+}
+
+__inline_g uint32x2_t
+vshrn_n_u64(uint64x2_t v, const int n) noexcept
+{
+  return __builtin_convertvector(v >> (uint64x2_t)vdupq_n_u64((unsigned long long)n), uint32x2_t);
+}
+
+__inline_g uint16x4_t
+vreinterpret_u16_u8(uint8x8_t a) noexcept
+{
+  return (uint16x4_t)a;
+}
+
+__inline_g uint8x8_t
+vreinterpret_u8_u16(uint16x4_t a) noexcept
+{
+  return (uint8x8_t)a;
+}
+
+__inline_g uint16x4_t
+vreinterpret_u16_s16(int16x4_t a) noexcept
+{
+  return (uint16x4_t)a;
+}
+
+__inline_g int16x4_t
+vreinterpret_s16_u16(uint16x4_t a) noexcept
+{
+  return (int16x4_t)a;
+}
+
+__inline_g uint32x2_t
+vreinterpret_u32_u8(uint8x8_t a) noexcept
+{
+  return (uint32x2_t)a;
+}
+
+__inline_g uint32x2_t
+vreinterpret_u32_u16(uint16x4_t a) noexcept
+{
+  return (uint32x2_t)a;
+}
+
+__inline_g uint8x8_t
+vreinterpret_u8_u32(uint32x2_t a) noexcept
+{
+  return (uint8x8_t)a;
+}
+
+__inline_g uint16x4_t
+vreinterpret_u16_u32(uint32x2_t a) noexcept
+{
+  return (uint16x4_t)a;
+}
+
+__inline_g float32x2_t
+vreinterpret_f32_u32(uint32x2_t a) noexcept
+{
+  return (float32x2_t)a;
+}
+
+__inline_g uint32x2_t
+vreinterpret_u32_f32(float32x2_t a) noexcept
+{
+  return (uint32x2_t)a;
+}
+
+#define __mc_vget_low_16(SUF, T_Q, T_D)                                                                                                    \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0, 1, 2, 3, 4, 5, 6, 7); }                          \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 8, 9, 10, 11, 12, 13, 14, 15); }
+
+#define __mc_vget_low_8(SUF, T_Q, T_D)                                                                                                     \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0, 1, 2, 3); }                                      \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 4, 5, 6, 7); }
+
+#define __mc_vget_low_4(SUF, T_Q, T_D)                                                                                                     \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0, 1); }                                            \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 2, 3); }
+
+#define __mc_vget_low_2(SUF, T_Q, T_D)                                                                                                     \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0); }                                               \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 1); }
+
+__mc_vget_low_16(s8, int8x16_t, int8x8_t);
+__mc_vget_low_16(u8, uint8x16_t, uint8x8_t);
+__mc_vget_low_16(p8, poly8x16_t, poly8x8_t);
+__mc_vget_low_8(s16, int16x8_t, int16x4_t);
+__mc_vget_low_8(u16, uint16x8_t, uint16x4_t);
+__mc_vget_low_8(p16, poly16x8_t, poly16x4_t);
+__mc_vget_low_4(s32, int32x4_t, int32x2_t);
+__mc_vget_low_4(u32, uint32x4_t, uint32x2_t);
+__mc_vget_low_4(f32, float32x4_t, float32x2_t);
+__mc_vget_low_2(s64, int64x2_t, int64x1_t);
+__mc_vget_low_2(u64, uint64x2_t, uint64x1_t);
+__mc_vget_low_2(p64, poly64x2_t, poly64x1_t);
+__mc_vget_low_2(f64, float64x2_t, float64x1_t);
+
+#if defined(__ARM_FP16_FORMAT_IEEE) || defined(__micron_arm_fp16)
+__mc_vget_low_8(f16, float16x8_t, float16x4_t);
+#endif
+
+#if defined(__ARM_FEATURE_BF16) || defined(__micron_arm_bf16)
+__mc_vget_low_8(bf16, bfloat16x8_t, bfloat16x4_t);
+#endif
+
+#undef __mc_vget_low_16
+#undef __mc_vget_low_8
+#undef __mc_vget_low_4
+#undef __mc_vget_low_2
+
+#define __mc_vcombine_16(SUF, T_D, T_Q)                                                                                                    \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept                                                                                   \
+  {                                                                                                                                        \
+    return __builtin_shufflevector(lo, hi, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);                                          \
+  }
+
+#define __mc_vcombine_8(SUF, T_D, T_Q)                                                                                                     \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept { return __builtin_shufflevector(lo, hi, 0, 1, 2, 3, 4, 5, 6, 7); }
+
+#define __mc_vcombine_4(SUF, T_D, T_Q)                                                                                                     \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept { return __builtin_shufflevector(lo, hi, 0, 1, 2, 3); }
+
+#define __mc_vcombine_2(SUF, T_D, T_Q)                                                                                                     \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept { return __builtin_shufflevector(lo, hi, 0, 1); }
+
+__mc_vcombine_16(s8, int8x8_t, int8x16_t);
+__mc_vcombine_16(u8, uint8x8_t, uint8x16_t);
+__mc_vcombine_16(p8, poly8x8_t, poly8x16_t);
+__mc_vcombine_8(s16, int16x4_t, int16x8_t);
+__mc_vcombine_8(u16, uint16x4_t, uint16x8_t);
+__mc_vcombine_8(p16, poly16x4_t, poly16x8_t);
+__mc_vcombine_4(s32, int32x2_t, int32x4_t);
+__mc_vcombine_4(u32, uint32x2_t, uint32x4_t);
+__mc_vcombine_4(f32, float32x2_t, float32x4_t);
+__mc_vcombine_2(s64, int64x1_t, int64x2_t);
+__mc_vcombine_2(u64, uint64x1_t, uint64x2_t);
+__mc_vcombine_2(p64, poly64x1_t, poly64x2_t);
+__mc_vcombine_2(f64, float64x1_t, float64x2_t);
+
+#if defined(__ARM_FP16_FORMAT_IEEE) || defined(__micron_arm_fp16)
+__mc_vcombine_8(f16, float16x4_t, float16x8_t);
+#endif
+
+#if defined(__ARM_FEATURE_BF16) || defined(__micron_arm_bf16)
+__mc_vcombine_8(bf16, bfloat16x4_t, bfloat16x8_t);
+#endif
+
+#undef __mc_vcombine_16
+#undef __mc_vcombine_8
+#undef __mc_vcombine_4
+#undef __mc_vcombine_2
+
 #pragma GCC diagnostic pop
 
 };     // namespace __bits

@@ -1353,6 +1353,737 @@ zip_hi_f64(float64x2_t a, float64x2_t b) noexcept
 }
 #endif
 
+#define __mc_neon_alias_low_high(SUF, T_Q, T_D)                                                                                            \
+  __inline_neon T_D low(T_Q v) noexcept { return vget_low_##SUF(v); }                                                                      \
+  __inline_neon T_D high(T_Q v) noexcept { return vget_high_##SUF(v); }
+
+__mc_neon_alias_low_high(s8, int8x16_t, int8x8_t);
+__mc_neon_alias_low_high(u8, uint8x16_t, uint8x8_t);
+__mc_neon_alias_low_high(s16, int16x8_t, int16x4_t);
+__mc_neon_alias_low_high(u16, uint16x8_t, uint16x4_t);
+__mc_neon_alias_low_high(s32, int32x4_t, int32x2_t);
+__mc_neon_alias_low_high(u32, uint32x4_t, uint32x2_t);
+__mc_neon_alias_low_high(s64, int64x2_t, int64x1_t);
+__mc_neon_alias_low_high(u64, uint64x2_t, uint64x1_t);
+__mc_neon_alias_low_high(f32, float32x4_t, float32x2_t);
+#if defined(__micron_arch_arm64)
+__mc_neon_alias_low_high(f64, float64x2_t, float64x1_t);
+#endif
+
+#undef __mc_neon_alias_low_high
+
+#define __mc_neon_alias_combine(SUF, T_D, T_Q)                                                                                             \
+  __inline_neon T_Q combine(T_D lo, T_D hi) noexcept { return vcombine_##SUF(lo, hi); }
+
+__mc_neon_alias_combine(s8, int8x8_t, int8x16_t);
+__mc_neon_alias_combine(u8, uint8x8_t, uint8x16_t);
+__mc_neon_alias_combine(s16, int16x4_t, int16x8_t);
+__mc_neon_alias_combine(u16, uint16x4_t, uint16x8_t);
+__mc_neon_alias_combine(s32, int32x2_t, int32x4_t);
+__mc_neon_alias_combine(u32, uint32x2_t, uint32x4_t);
+__mc_neon_alias_combine(s64, int64x1_t, int64x2_t);
+__mc_neon_alias_combine(u64, uint64x1_t, uint64x2_t);
+__mc_neon_alias_combine(f32, float32x2_t, float32x4_t);
+#if defined(__micron_arch_arm64)
+__mc_neon_alias_combine(f64, float64x1_t, float64x2_t);
+#endif
+
+#undef __mc_neon_alias_combine
+
+__inline_neon int8x16_t
+absdiff(int8x16_t a, int8x16_t b) noexcept
+{
+  return vabdq_s8(a, b);
+}
+
+__inline_neon int16x8_t
+absdiff(int16x8_t a, int16x8_t b) noexcept
+{
+  return vabdq_s16(a, b);
+}
+
+__inline_neon int32x4_t
+absdiff(int32x4_t a, int32x4_t b) noexcept
+{
+  return vabdq_s32(a, b);
+}
+
+__inline_neon uint8x16_t
+absdiff(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vabdq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+absdiff(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vabdq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+absdiff(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vabdq_u32(a, b);
+}
+
+__inline_neon float32x4_t
+absdiff(float32x4_t a, float32x4_t b) noexcept
+{
+  return vabdq_f32(a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+absdiff(float64x2_t a, float64x2_t b) noexcept
+{
+  return vabdq_f64(a, b);
+}
+#endif
+
+__inline_neon int8x8_t
+absdiff(int8x8_t a, int8x8_t b) noexcept
+{
+  return vabd_s8(a, b);
+}
+
+__inline_neon int16x4_t
+absdiff(int16x4_t a, int16x4_t b) noexcept
+{
+  return vabd_s16(a, b);
+}
+
+__inline_neon int32x2_t
+absdiff(int32x2_t a, int32x2_t b) noexcept
+{
+  return vabd_s32(a, b);
+}
+
+__inline_neon uint8x8_t
+absdiff(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vabd_u8(a, b);
+}
+
+__inline_neon uint16x4_t
+absdiff(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return vabd_u16(a, b);
+}
+
+__inline_neon uint32x2_t
+absdiff(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return vabd_u32(a, b);
+}
+
+__inline_neon float32x2_t
+absdiff(float32x2_t a, float32x2_t b) noexcept
+{
+  return vabd_f32(a, b);
+}
+
+__inline_neon int16x8_t
+absdiff_long(int8x8_t a, int8x8_t b) noexcept
+{
+  return vabdl_s8(a, b);
+}
+
+__inline_neon int32x4_t
+absdiff_long(int16x4_t a, int16x4_t b) noexcept
+{
+  return vabdl_s16(a, b);
+}
+
+__inline_neon int64x2_t
+absdiff_long(int32x2_t a, int32x2_t b) noexcept
+{
+  return vabdl_s32(a, b);
+}
+
+__inline_neon uint16x8_t
+absdiff_long(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vabdl_u8(a, b);
+}
+
+__inline_neon uint32x4_t
+absdiff_long(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return vabdl_u16(a, b);
+}
+
+__inline_neon uint64x2_t
+absdiff_long(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return vabdl_u32(a, b);
+}
+
+__inline_neon int8x16_t
+absdiff_acc(int8x16_t acc, int8x16_t a, int8x16_t b) noexcept
+{
+  return vabaq_s8(acc, a, b);
+}
+
+__inline_neon int16x8_t
+absdiff_acc(int16x8_t acc, int16x8_t a, int16x8_t b) noexcept
+{
+  return vabaq_s16(acc, a, b);
+}
+
+__inline_neon int32x4_t
+absdiff_acc(int32x4_t acc, int32x4_t a, int32x4_t b) noexcept
+{
+  return vabaq_s32(acc, a, b);
+}
+
+__inline_neon uint8x16_t
+absdiff_acc(uint8x16_t acc, uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vabaq_u8(acc, a, b);
+}
+
+__inline_neon uint16x8_t
+absdiff_acc(uint16x8_t acc, uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vabaq_u16(acc, a, b);
+}
+
+__inline_neon uint32x4_t
+absdiff_acc(uint32x4_t acc, uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vabaq_u32(acc, a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon int8x16_t
+qadd(int8x16_t a, int8x16_t b) noexcept
+{
+  return vqaddq_s8(a, b);
+}
+
+__inline_neon int16x8_t
+qadd(int16x8_t a, int16x8_t b) noexcept
+{
+  return vqaddq_s16(a, b);
+}
+
+__inline_neon int32x4_t
+qadd(int32x4_t a, int32x4_t b) noexcept
+{
+  return vqaddq_s32(a, b);
+}
+
+__inline_neon int64x2_t
+qadd(int64x2_t a, int64x2_t b) noexcept
+{
+  return vqaddq_s64(a, b);
+}
+
+__inline_neon uint8x16_t
+qadd(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vqaddq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+qadd(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vqaddq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+qadd(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vqaddq_u32(a, b);
+}
+
+__inline_neon uint64x2_t
+qadd(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return vqaddq_u64(a, b);
+}
+
+__inline_neon int8x16_t
+qsub(int8x16_t a, int8x16_t b) noexcept
+{
+  return vqsubq_s8(a, b);
+}
+
+__inline_neon int16x8_t
+qsub(int16x8_t a, int16x8_t b) noexcept
+{
+  return vqsubq_s16(a, b);
+}
+
+__inline_neon int32x4_t
+qsub(int32x4_t a, int32x4_t b) noexcept
+{
+  return vqsubq_s32(a, b);
+}
+
+__inline_neon int64x2_t
+qsub(int64x2_t a, int64x2_t b) noexcept
+{
+  return vqsubq_s64(a, b);
+}
+
+__inline_neon uint8x16_t
+qsub(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vqsubq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+qsub(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vqsubq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+qsub(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vqsubq_u32(a, b);
+}
+
+__inline_neon uint64x2_t
+qsub(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return vqsubq_u64(a, b);
+}
+
+__inline_neon int8x16_t
+hadd(int8x16_t a, int8x16_t b) noexcept
+{
+  return vhaddq_s8(a, b);
+}
+
+__inline_neon int16x8_t
+hadd(int16x8_t a, int16x8_t b) noexcept
+{
+  return vhaddq_s16(a, b);
+}
+
+__inline_neon int32x4_t
+hadd(int32x4_t a, int32x4_t b) noexcept
+{
+  return vhaddq_s32(a, b);
+}
+
+__inline_neon uint8x16_t
+hadd(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vhaddq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+hadd(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vhaddq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+hadd(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vhaddq_u32(a, b);
+}
+
+__inline_neon int8x16_t
+hsub(int8x16_t a, int8x16_t b) noexcept
+{
+  return vhsubq_s8(a, b);
+}
+
+__inline_neon int16x8_t
+hsub(int16x8_t a, int16x8_t b) noexcept
+{
+  return vhsubq_s16(a, b);
+}
+
+__inline_neon int32x4_t
+hsub(int32x4_t a, int32x4_t b) noexcept
+{
+  return vhsubq_s32(a, b);
+}
+
+__inline_neon uint8x16_t
+hsub(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vhsubq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+hsub(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vhsubq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+hsub(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vhsubq_u32(a, b);
+}
+
+__inline_neon int8x16_t
+rhadd(int8x16_t a, int8x16_t b) noexcept
+{
+  return vrhaddq_s8(a, b);
+}
+
+__inline_neon int16x8_t
+rhadd(int16x8_t a, int16x8_t b) noexcept
+{
+  return vrhaddq_s16(a, b);
+}
+
+__inline_neon int32x4_t
+rhadd(int32x4_t a, int32x4_t b) noexcept
+{
+  return vrhaddq_s32(a, b);
+}
+
+__inline_neon uint8x16_t
+rhadd(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vrhaddq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+rhadd(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vrhaddq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+rhadd(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vrhaddq_u32(a, b);
+}
+
+__inline_neon signed char
+reduce_add(int8x16_t v) noexcept
+{
+  return vaddvq_s8(v);
+}
+
+__inline_neon signed short
+reduce_add(int16x8_t v) noexcept
+{
+  return vaddvq_s16(v);
+}
+
+__inline_neon signed int
+reduce_add(int32x4_t v) noexcept
+{
+  return vaddvq_s32(v);
+}
+
+__inline_neon signed long long
+reduce_add(int64x2_t v) noexcept
+{
+  return vaddvq_s64(v);
+}
+
+__inline_neon unsigned char
+reduce_add(uint8x16_t v) noexcept
+{
+  return vaddvq_u8(v);
+}
+
+__inline_neon unsigned short
+reduce_add(uint16x8_t v) noexcept
+{
+  return vaddvq_u16(v);
+}
+
+__inline_neon unsigned int
+reduce_add(uint32x4_t v) noexcept
+{
+  return vaddvq_u32(v);
+}
+
+__inline_neon unsigned long long
+reduce_add(uint64x2_t v) noexcept
+{
+  return vaddvq_u64(v);
+}
+
+__inline_neon float
+reduce_add(float32x4_t v) noexcept
+{
+  return vaddvq_f32(v);
+}
+
+__inline_neon double
+reduce_add(float64x2_t v) noexcept
+{
+  return vaddvq_f64(v);
+}
+
+__inline_neon signed char
+reduce_max(int8x16_t v) noexcept
+{
+  return vmaxvq_s8(v);
+}
+
+__inline_neon signed short
+reduce_max(int16x8_t v) noexcept
+{
+  return vmaxvq_s16(v);
+}
+
+__inline_neon signed int
+reduce_max(int32x4_t v) noexcept
+{
+  return vmaxvq_s32(v);
+}
+
+__inline_neon unsigned char
+reduce_max(uint8x16_t v) noexcept
+{
+  return vmaxvq_u8(v);
+}
+
+__inline_neon unsigned short
+reduce_max(uint16x8_t v) noexcept
+{
+  return vmaxvq_u16(v);
+}
+
+__inline_neon unsigned int
+reduce_max(uint32x4_t v) noexcept
+{
+  return vmaxvq_u32(v);
+}
+
+__inline_neon float
+reduce_max(float32x4_t v) noexcept
+{
+  return vmaxvq_f32(v);
+}
+
+__inline_neon double
+reduce_max(float64x2_t v) noexcept
+{
+  return vmaxvq_f64(v);
+}
+
+__inline_neon signed char
+reduce_min(int8x16_t v) noexcept
+{
+  return vminvq_s8(v);
+}
+
+__inline_neon signed short
+reduce_min(int16x8_t v) noexcept
+{
+  return vminvq_s16(v);
+}
+
+__inline_neon signed int
+reduce_min(int32x4_t v) noexcept
+{
+  return vminvq_s32(v);
+}
+
+__inline_neon unsigned char
+reduce_min(uint8x16_t v) noexcept
+{
+  return vminvq_u8(v);
+}
+
+__inline_neon unsigned short
+reduce_min(uint16x8_t v) noexcept
+{
+  return vminvq_u16(v);
+}
+
+__inline_neon unsigned int
+reduce_min(uint32x4_t v) noexcept
+{
+  return vminvq_u32(v);
+}
+
+__inline_neon float
+reduce_min(float32x4_t v) noexcept
+{
+  return vminvq_f32(v);
+}
+
+__inline_neon double
+reduce_min(float64x2_t v) noexcept
+{
+  return vminvq_f64(v);
+}
+
+__inline_neon int16x8_t
+mul_long(int8x8_t a, int8x8_t b) noexcept
+{
+  return vmull_s8(a, b);
+}
+
+__inline_neon int32x4_t
+mul_long(int16x4_t a, int16x4_t b) noexcept
+{
+  return vmull_s16(a, b);
+}
+
+__inline_neon int64x2_t
+mul_long(int32x2_t a, int32x2_t b) noexcept
+{
+  return vmull_s32(a, b);
+}
+
+__inline_neon uint16x8_t
+mul_long(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vmull_u8(a, b);
+}
+
+__inline_neon uint32x4_t
+mul_long(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return vmull_u16(a, b);
+}
+
+__inline_neon uint64x2_t
+mul_long(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return vmull_u32(a, b);
+}
+
+__inline_neon int16x8_t
+widen(int8x8_t v) noexcept
+{
+  return vmovl_s8(v);
+}
+
+__inline_neon int32x4_t
+widen(int16x4_t v) noexcept
+{
+  return vmovl_s16(v);
+}
+
+__inline_neon int64x2_t
+widen(int32x2_t v) noexcept
+{
+  return vmovl_s32(v);
+}
+
+__inline_neon uint16x8_t
+widen(uint8x8_t v) noexcept
+{
+  return vmovl_u8(v);
+}
+
+__inline_neon uint32x4_t
+widen(uint16x4_t v) noexcept
+{
+  return vmovl_u16(v);
+}
+
+__inline_neon uint64x2_t
+widen(uint32x2_t v) noexcept
+{
+  return vmovl_u32(v);
+}
+
+__inline_neon int8x8_t
+narrow(int16x8_t v) noexcept
+{
+  return vmovn_s16(v);
+}
+
+__inline_neon int16x4_t
+narrow(int32x4_t v) noexcept
+{
+  return vmovn_s32(v);
+}
+
+__inline_neon int32x2_t
+narrow(int64x2_t v) noexcept
+{
+  return vmovn_s64(v);
+}
+
+__inline_neon uint8x8_t
+narrow(uint16x8_t v) noexcept
+{
+  return vmovn_u16(v);
+}
+
+__inline_neon uint16x4_t
+narrow(uint32x4_t v) noexcept
+{
+  return vmovn_u32(v);
+}
+
+__inline_neon uint32x2_t
+narrow(uint64x2_t v) noexcept
+{
+  return vmovn_u64(v);
+}
+
+__inline_neon int8x8_t
+narrow_sat(int16x8_t v) noexcept
+{
+  return vqmovn_s16(v);
+}
+
+__inline_neon int16x4_t
+narrow_sat(int32x4_t v) noexcept
+{
+  return vqmovn_s32(v);
+}
+
+__inline_neon int32x2_t
+narrow_sat(int64x2_t v) noexcept
+{
+  return vqmovn_s64(v);
+}
+
+__inline_neon uint8x8_t
+narrow_sat(uint16x8_t v) noexcept
+{
+  return vqmovn_u16(v);
+}
+
+__inline_neon uint16x4_t
+narrow_sat(uint32x4_t v) noexcept
+{
+  return vqmovn_u32(v);
+}
+
+__inline_neon uint32x2_t
+narrow_sat(uint64x2_t v) noexcept
+{
+  return vqmovn_u64(v);
+}
+
+__inline_neon float32x4_t
+nearest_even(float32x4_t a) noexcept
+{
+  return vrndnq_f32(a);
+}
+
+__inline_neon float64x2_t
+nearest_even(float64x2_t a) noexcept
+{
+  return vrndnq_f64(a);
+}
+
+__inline_neon float32x4_t
+nearest_away(float32x4_t a) noexcept
+{
+  return vrndaq_f32(a);
+}
+
+__inline_neon float64x2_t
+nearest_away(float64x2_t a) noexcept
+{
+  return vrndaq_f64(a);
+}
+#endif
+
 #undef __inline_neon
 
 #pragma GCC diagnostic pop

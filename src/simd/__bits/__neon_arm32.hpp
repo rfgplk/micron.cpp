@@ -289,6 +289,30 @@ vnegq_s8(int8x16_t a) noexcept
   return -a;
 }
 
+__inline_g float32x2_t
+vneg_f32(float32x2_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int32x2_t
+vneg_s32(int32x2_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int16x4_t
+vneg_s16(int16x4_t a) noexcept
+{
+  return -a;
+}
+
+__inline_g int8x8_t
+vneg_s8(int8x8_t a) noexcept
+{
+  return -a;
+}
+
 __inline_g int8x16_t
 vmulq_s8(int8x16_t a, int8x16_t b) noexcept
 {
@@ -751,65 +775,94 @@ vsetq_lane_u8(u8 x, uint8x16_t v, const int lane) noexcept
   return v;
 }
 
-__inline_g uint32x2_t
-vget_low_u32(uint32x4_t v) noexcept
-{
-  return __builtin_shufflevector(v, v, 0, 1);
-}
+#define __mc_vget_low_16(SUF, T_Q, T_D)                                                                                                    \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0, 1, 2, 3, 4, 5, 6, 7); }                          \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 8, 9, 10, 11, 12, 13, 14, 15); }
 
-__inline_g uint32x2_t
-vget_high_u32(uint32x4_t v) noexcept
-{
-  return __builtin_shufflevector(v, v, 2, 3);
-}
+#define __mc_vget_low_8(SUF, T_Q, T_D)                                                                                                     \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0, 1, 2, 3); }                                      \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 4, 5, 6, 7); }
 
-__inline_g uint8x8_t
-vget_low_u8(uint8x16_t v) noexcept
-{
-  return __builtin_shufflevector(v, v, 0, 1, 2, 3, 4, 5, 6, 7);
-}
+#define __mc_vget_low_4(SUF, T_Q, T_D)                                                                                                     \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0, 1); }                                            \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 2, 3); }
 
-__inline_g uint8x8_t
-vget_high_u8(uint8x16_t v) noexcept
-{
-  return __builtin_shufflevector(v, v, 8, 9, 10, 11, 12, 13, 14, 15);
-}
+#define __mc_vget_low_2(SUF, T_Q, T_D)                                                                                                     \
+  __inline_g T_D vget_low_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 0); }                                               \
+  __inline_g T_D vget_high_##SUF(T_Q v) noexcept { return __builtin_shufflevector(v, v, 1); }
 
-__inline_g float32x2_t
-vget_low_f32(float32x4_t v) noexcept
-{
-  return __builtin_shufflevector(v, v, 0, 1);
-}
+__mc_vget_low_16(s8, int8x16_t, int8x8_t);
+__mc_vget_low_16(u8, uint8x16_t, uint8x8_t);
+__mc_vget_low_16(p8, poly8x16_t, poly8x8_t);
+__mc_vget_low_8(s16, int16x8_t, int16x4_t);
+__mc_vget_low_8(u16, uint16x8_t, uint16x4_t);
+__mc_vget_low_8(p16, poly16x8_t, poly16x4_t);
+__mc_vget_low_4(s32, int32x4_t, int32x2_t);
+__mc_vget_low_4(u32, uint32x4_t, uint32x2_t);
+__mc_vget_low_4(f32, float32x4_t, float32x2_t);
+__mc_vget_low_2(s64, int64x2_t, int64x1_t);
+__mc_vget_low_2(u64, uint64x2_t, uint64x1_t);
 
-__inline_g float32x2_t
-vget_high_f32(float32x4_t v) noexcept
-{
-  return __builtin_shufflevector(v, v, 2, 3);
-}
+#if defined(__ARM_FEATURE_CRYPTO) || defined(__micron_arm_crypto)
+__mc_vget_low_2(p64, poly64x2_t, poly64x1_t);
+#endif
 
-__inline_g uint32x4_t
-vcombine_u32(uint32x2_t lo, uint32x2_t hi) noexcept
-{
-  return __builtin_shufflevector(lo, hi, 0, 1, 2, 3);
-}
+#if defined(__ARM_FP16_FORMAT_IEEE) || defined(__micron_arm_fp16)
+__mc_vget_low_8(f16, float16x8_t, float16x4_t);
+#endif
 
-__inline_g uint64x2_t
-vcombine_u64(uint64x1_t lo, uint64x1_t hi) noexcept
-{
-  return __builtin_shufflevector(lo, hi, 0, 1);
-}
+#if defined(__ARM_FEATURE_BF16) || defined(__micron_arm_bf16)
+__mc_vget_low_8(bf16, bfloat16x8_t, bfloat16x4_t);
+#endif
 
-__inline_g int64x2_t
-vcombine_s64(int64x1_t lo, int64x1_t hi) noexcept
-{
-  return __builtin_shufflevector(lo, hi, 0, 1);
-}
+#undef __mc_vget_low_16
+#undef __mc_vget_low_8
+#undef __mc_vget_low_4
+#undef __mc_vget_low_2
 
-__inline_g float32x4_t
-vcombine_f32(float32x2_t lo, float32x2_t hi) noexcept
-{
-  return __builtin_shufflevector(lo, hi, 0, 1, 2, 3);
-}
+#define __mc_vcombine_16(SUF, T_D, T_Q)                                                                                                    \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept                                                                                   \
+  {                                                                                                                                        \
+    return __builtin_shufflevector(lo, hi, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);                                          \
+  }
+
+#define __mc_vcombine_8(SUF, T_D, T_Q)                                                                                                     \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept { return __builtin_shufflevector(lo, hi, 0, 1, 2, 3, 4, 5, 6, 7); }
+
+#define __mc_vcombine_4(SUF, T_D, T_Q)                                                                                                     \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept { return __builtin_shufflevector(lo, hi, 0, 1, 2, 3); }
+
+#define __mc_vcombine_2(SUF, T_D, T_Q)                                                                                                     \
+  __inline_g T_Q vcombine_##SUF(T_D lo, T_D hi) noexcept { return __builtin_shufflevector(lo, hi, 0, 1); }
+
+__mc_vcombine_16(s8, int8x8_t, int8x16_t);
+__mc_vcombine_16(u8, uint8x8_t, uint8x16_t);
+__mc_vcombine_16(p8, poly8x8_t, poly8x16_t);
+__mc_vcombine_8(s16, int16x4_t, int16x8_t);
+__mc_vcombine_8(u16, uint16x4_t, uint16x8_t);
+__mc_vcombine_8(p16, poly16x4_t, poly16x8_t);
+__mc_vcombine_4(s32, int32x2_t, int32x4_t);
+__mc_vcombine_4(u32, uint32x2_t, uint32x4_t);
+__mc_vcombine_4(f32, float32x2_t, float32x4_t);
+__mc_vcombine_2(s64, int64x1_t, int64x2_t);
+__mc_vcombine_2(u64, uint64x1_t, uint64x2_t);
+
+#if defined(__ARM_FEATURE_CRYPTO) || defined(__micron_arm_crypto)
+__mc_vcombine_2(p64, poly64x1_t, poly64x2_t);
+#endif
+
+#if defined(__ARM_FP16_FORMAT_IEEE) || defined(__micron_arm_fp16)
+__mc_vcombine_8(f16, float16x4_t, float16x8_t);
+#endif
+
+#if defined(__ARM_FEATURE_BF16) || defined(__micron_arm_bf16)
+__mc_vcombine_8(bf16, bfloat16x4_t, bfloat16x8_t);
+#endif
+
+#undef __mc_vcombine_16
+#undef __mc_vcombine_8
+#undef __mc_vcombine_4
+#undef __mc_vcombine_2
 
 __inline_g int64x2_t
 vshlq_n_s64(int64x2_t v, const int n) noexcept
@@ -1099,6 +1152,105 @@ vabsq_f32(float32x4_t v) noexcept
   __asm__("vabs.f32 %q0, %q1" : "=w"(r) : "w"(v));
   return r;
 }
+
+#define __mc_vabdq(SUF, ASM, T)                                                                                                            \
+  __inline_g T vabdq_##SUF(T a, T b) noexcept                                                                                              \
+  {                                                                                                                                        \
+    T r;                                                                                                                                   \
+    __asm__("vabd." ASM " %q0, %q1, %q2" : "=w"(r) : "w"(a), "w"(b));                                                                      \
+    return r;                                                                                                                              \
+  }
+
+#define __mc_vabd_d(SUF, ASM, T)                                                                                                           \
+  __inline_g T vabd_##SUF(T a, T b) noexcept                                                                                               \
+  {                                                                                                                                        \
+    T r;                                                                                                                                   \
+    __asm__("vabd." ASM " %P0, %P1, %P2" : "=w"(r) : "w"(a), "w"(b));                                                                      \
+    return r;                                                                                                                              \
+  }
+
+__mc_vabdq(s8, "s8", int8x16_t);
+__mc_vabdq(s16, "s16", int16x8_t);
+__mc_vabdq(s32, "s32", int32x4_t);
+__mc_vabdq(u8, "u8", uint8x16_t);
+__mc_vabdq(u16, "u16", uint16x8_t);
+__mc_vabdq(u32, "u32", uint32x4_t);
+__mc_vabdq(f32, "f32", float32x4_t);
+
+__mc_vabd_d(s8, "s8", int8x8_t);
+__mc_vabd_d(s16, "s16", int16x4_t);
+__mc_vabd_d(s32, "s32", int32x2_t);
+__mc_vabd_d(u8, "u8", uint8x8_t);
+__mc_vabd_d(u16, "u16", uint16x4_t);
+__mc_vabd_d(u32, "u32", uint32x2_t);
+__mc_vabd_d(f32, "f32", float32x2_t);
+
+#undef __mc_vabdq
+#undef __mc_vabd_d
+
+#define __mc_vabdl(SUF, ASM, T_IN, T_OUT)                                                                                                  \
+  __inline_g T_OUT vabdl_##SUF(T_IN a, T_IN b) noexcept                                                                                    \
+  {                                                                                                                                        \
+    T_OUT r;                                                                                                                               \
+    __asm__("vabdl." ASM " %q0, %P1, %P2" : "=w"(r) : "w"(a), "w"(b));                                                                     \
+    return r;                                                                                                                              \
+  }
+
+__mc_vabdl(s8, "s8", int8x8_t, int16x8_t);
+__mc_vabdl(s16, "s16", int16x4_t, int32x4_t);
+__mc_vabdl(s32, "s32", int32x2_t, int64x2_t);
+__mc_vabdl(u8, "u8", uint8x8_t, uint16x8_t);
+__mc_vabdl(u16, "u16", uint16x4_t, uint32x4_t);
+__mc_vabdl(u32, "u32", uint32x2_t, uint64x2_t);
+
+#undef __mc_vabdl
+
+#define __mc_vabaq(SUF, ASM, T)                                                                                                            \
+  __inline_g T vabaq_##SUF(T acc, T a, T b) noexcept                                                                                       \
+  {                                                                                                                                        \
+    __asm__("vaba." ASM " %q0, %q1, %q2" : "+w"(acc) : "w"(a), "w"(b));                                                                    \
+    return acc;                                                                                                                            \
+  }
+
+#define __mc_vaba_d(SUF, ASM, T)                                                                                                           \
+  __inline_g T vaba_##SUF(T acc, T a, T b) noexcept                                                                                        \
+  {                                                                                                                                        \
+    __asm__("vaba." ASM " %P0, %P1, %P2" : "+w"(acc) : "w"(a), "w"(b));                                                                    \
+    return acc;                                                                                                                            \
+  }
+
+__mc_vabaq(s8, "s8", int8x16_t);
+__mc_vabaq(s16, "s16", int16x8_t);
+__mc_vabaq(s32, "s32", int32x4_t);
+__mc_vabaq(u8, "u8", uint8x16_t);
+__mc_vabaq(u16, "u16", uint16x8_t);
+__mc_vabaq(u32, "u32", uint32x4_t);
+
+__mc_vaba_d(s8, "s8", int8x8_t);
+__mc_vaba_d(s16, "s16", int16x4_t);
+__mc_vaba_d(s32, "s32", int32x2_t);
+__mc_vaba_d(u8, "u8", uint8x8_t);
+__mc_vaba_d(u16, "u16", uint16x4_t);
+__mc_vaba_d(u32, "u32", uint32x2_t);
+
+#undef __mc_vabaq
+#undef __mc_vaba_d
+
+#define __mc_vabal(SUF, ASM, T_IN, T_OUT)                                                                                                  \
+  __inline_g T_OUT vabal_##SUF(T_OUT acc, T_IN a, T_IN b) noexcept                                                                         \
+  {                                                                                                                                        \
+    __asm__("vabal." ASM " %q0, %P1, %P2" : "+w"(acc) : "w"(a), "w"(b));                                                                   \
+    return acc;                                                                                                                            \
+  }
+
+__mc_vabal(s8, "s8", int8x8_t, int16x8_t);
+__mc_vabal(s16, "s16", int16x4_t, int32x4_t);
+__mc_vabal(s32, "s32", int32x2_t, int64x2_t);
+__mc_vabal(u8, "u8", uint8x8_t, uint16x8_t);
+__mc_vabal(u16, "u16", uint16x4_t, uint32x4_t);
+__mc_vabal(u32, "u32", uint32x2_t, uint64x2_t);
+
+#undef __mc_vabal
 
 __inline_g float32x4_t
 vrsqrtsq_f32(float32x4_t a, float32x4_t b) noexcept
