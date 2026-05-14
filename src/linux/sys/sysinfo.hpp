@@ -37,6 +37,11 @@ struct sysinfo {
   kernel_ulong_t totalhigh; /* Total high memory size */
   kernel_ulong_t freehigh;  /* Available high memory size */
   u32 mem_unit;             /* Memory unit size in bytes */
+#if __wordsize == 32
+  // WARNING: libc5 ABI tail-padding; kernel sys_sysinfo writes sizeof(struct sysinfo) bytes, which on 32-bit word size is 8 bytes beyond
+  // mem_unit omitting these causes the syscall to clobber the stack canary on arm32
+  char _f[20 - 2 * sizeof(kernel_ulong_t) - sizeof(u32)];
+#endif
 };
 
 constexpr const static int __max_cpus = 65535;
