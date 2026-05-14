@@ -440,6 +440,7 @@ class __arena : private cache
   void
   __init_tlsf(__tier<tlsf_sheet<Sz>> &tier, usize n)
   {
+    if ( n == __default_magic_size ) n = __calculate_space_small(Sz);
     n = __page_round(n);
     __debug_print("__init_tlsf(): class size: ", Sz);
     __debug_print("__init_tlsf(): backing region size: ", n);

@@ -29,6 +29,158 @@ namespace schur
 namespace __impl_matfunc_schur
 {
 
+//   val(x)             f(x) for real x
+//   deriv(x)           f'(x) (used when a 2x2 block has a repeated eigenvalue)
+//   complex(a,b,re,im) real and imaginary parts of f(a + i b)
+template <ieee754_floating F> struct mfn_exp_desc {
+  [[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::exp<F>(x);
+  }
+
+  [[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::exp<F>(x);
+  }
+
+  [[gnu::always_inline]] static inline void
+  complex(F a, F b, F &re, F &im) noexcept
+  {
+    const F ea = math::exp<F>(a);
+    re = ea * math::cos<F>(b);
+    im = ea * math::sin<F>(b);
+  }
+};
+
+template <ieee754_floating F> struct mfn_sin_desc {
+  [[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::sin<F>(x);
+  }
+
+  [[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::cos<F>(x);
+  }
+
+  [[gnu::always_inline]] static inline void
+  complex(F a, F b, F &re, F &im) noexcept
+  {
+    // sin(a+ib) = sin(a) cosh(b) + i cos(a) sinh(b)
+    re = math::sin<F>(a) * math::cosh<F>(b);
+    im = math::cos<F>(a) * math::sinh<F>(b);
+  }
+};
+
+template <ieee754_floating F> struct mfn_cos_desc {
+  [[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::cos<F>(x);
+  }
+
+  [[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return -math::sin<F>(x);
+  }
+
+  [[gnu::always_inline]] static inline void
+  complex(F a, F b, F &re, F &im) noexcept
+  {
+    // cos(a+ib) = cos(a) cosh(b) - i sin(a) sinh(b)
+    re = math::cos<F>(a) * math::cosh<F>(b);
+    im = -math::sin<F>(a) * math::sinh<F>(b);
+  }
+};
+
+template <ieee754_floating F> struct mfn_sinh_desc {
+  [[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::sinh<F>(x);
+  }
+
+  [[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::cosh<F>(x);
+  }
+
+  [[gnu::always_inline]] static inline void
+  complex(F a, F b, F &re, F &im) noexcept
+  {
+    // sinh(a+ib) = sinh(a) cos(b) + i cosh(a) sin(b)
+    re = math::sinh<F>(a) * math::cos<F>(b);
+    im = math::cosh<F>(a) * math::sin<F>(b);
+  }
+};
+
+template <ieee754_floating F> struct mfn_cosh_desc {
+  [[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::cosh<F>(x);
+  }
+
+  [[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::sinh<F>(x);
+  }
+
+  [[gnu::always_inline]] static inline void
+  complex(F a, F b, F &re, F &im) noexcept
+  {
+    // cosh(a+ib) = cosh(a) cos(b) + i sinh(a) sin(b)
+    re = math::cosh<F>(a) * math::cos<F>(b);
+    im = math::sinh<F>(a) * math::sin<F>(b);
+  }
+};
+
+// given a 2x2 block B = [[a, b], [c, d]] from real Schur form, computes the 2x2 matrix function f(B) in the {I, B} basis
+// f(B) = coef_I * I + coef_M * B
+template <typename FnDesc, ieee754_floating F>
+[[gnu::flatten]] inline void
+generic_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
+{
+  const F tr = a + d;
+  const F det = a * d - b * c;
+  const F alpha = tr * F(0.5);
+  const F disc = alpha * alpha - det;
+  F coef_M;
+  F coef_I;
+  if ( disc > F(0) ) {
+    const F sq = math::fsqrt(disc);
+    const F l1 = alpha + sq;
+    const F l2 = alpha - sq;
+    const F f1 = FnDesc::val(l1);
+    const F f2 = FnDesc::val(l2);
+    coef_M = (f1 - f2) / (l1 - l2);
+    coef_I = f1 - coef_M * l1;
+  } else if ( disc < F(0) ) {
+    const F beta = math::fsqrt(-disc);
+    F re_f;
+    F im_f;
+    FnDesc::complex(alpha, beta, re_f, im_f);
+    coef_M = im_f / beta;
+    coef_I = re_f - alpha * coef_M;
+  } else {
+    const F fa = FnDesc::val(alpha);
+    const F fp = FnDesc::deriv(alpha);
+    coef_M = fp;
+    coef_I = fa - alpha * fp;
+  }
+  x00 = coef_M * a + coef_I;
+  x01 = coef_M * b;
+  x10 = coef_M * c;
+  x11 = coef_M * d + coef_I;
+}
+
 template <ieee754_floating F>
 [[gnu::flatten]] inline void
 exp_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
@@ -241,6 +393,95 @@ parlett_exp(const mat<F, N, N> &T) noexcept
   return r;
 }
 
+template <ieee754_floating F, usize N> struct parlett_func_result {
+  mat<F, N, N> F_T;
+  bool converged;
+};
+
+template <typename FnDesc, ieee754_floating F, usize N>
+[[nodiscard]] inline parlett_func_result<F, N>
+parlett_func(const mat<F, N, N> &T) noexcept
+{
+  parlett_func_result<F, N> r{ mat<F, N, N>::zero(), true };
+  if constexpr ( N == 0 ) return r;
+
+  const F eps = default_eps<F>();
+  usize block_starts[N + 1];
+  usize block_sizes[N + 1];
+  for ( usize i = 0; i <= N; ++i ) {
+    block_starts[i] = 0;
+    block_sizes[i] = 0;
+  }
+  const usize n_blocks = matfunc::__impl_matfunc::identify_blocks<F, N>(T, block_starts, block_sizes);
+
+  F *__restrict__ F_T = r.F_T.data;
+  const F *__restrict__ Tp = T.data;
+  for ( usize bk = 0; bk < n_blocks; ++bk ) {
+    const usize i = block_starts[bk];
+    if ( block_sizes[bk] == 1 ) {
+      F_T[i * N + i] = FnDesc::val(Tp[i * N + i]);
+    } else {
+      F a = Tp[i * N + i];
+      F b = Tp[i * N + (i + 1)];
+      F c = Tp[(i + 1) * N + i];
+      F d = Tp[(i + 1) * N + (i + 1)];
+      F x00, x01, x10, x11;
+      generic_2x2_block<FnDesc, F>(x00, x01, x10, x11, a, b, c, d);
+      F_T[i * N + i] = x00;
+      F_T[i * N + (i + 1)] = x01;
+      F_T[(i + 1) * N + i] = x10;
+      F_T[(i + 1) * N + (i + 1)] = x11;
+    }
+  }
+
+  for ( usize offset = 1; offset < n_blocks; ++offset ) {
+    for ( usize bi = 0; bi + offset < n_blocks; ++bi ) {
+      const usize bj = bi + offset;
+      const usize si = block_starts[bi];
+      const usize sj = block_starts[bj];
+      const usize bs_i = block_sizes[bi];
+      const usize bs_j = block_sizes[bj];
+      F rhs[4] = { F(0), F(0), F(0), F(0) };
+      for ( usize ii = 0; ii < bs_i; ++ii ) {
+        for ( usize jj = 0; jj < bs_j; ++jj ) {
+          F sum = F(0);
+          for ( usize kk = 0; kk < bs_i; ++kk ) sum = math::fma<F>(F_T[(si + ii) * N + (si + kk)], Tp[(si + kk) * N + (sj + jj)], sum);
+          for ( usize kk = 0; kk < bs_j; ++kk ) sum = math::fma<F>(-Tp[(si + ii) * N + (sj + kk)], F_T[(sj + kk) * N + (sj + jj)], sum);
+          rhs[ii * bs_j + jj] = sum;
+        }
+      }
+      for ( usize bk = bi + 1; bk < bj; ++bk ) {
+        const usize sk = block_starts[bk];
+        const usize bs_k = block_sizes[bk];
+        for ( usize ii = 0; ii < bs_i; ++ii ) {
+          for ( usize jj = 0; jj < bs_j; ++jj ) {
+            F sum = F(0);
+            for ( usize kk = 0; kk < bs_k; ++kk ) sum = math::fma<F>(F_T[(si + ii) * N + (sk + kk)], Tp[(sk + kk) * N + (sj + jj)], sum);
+            for ( usize kk = 0; kk < bs_k; ++kk ) sum = math::fma<F>(-Tp[(si + ii) * N + (sk + kk)], F_T[(sk + kk) * N + (sj + jj)], sum);
+            rhs[ii * bs_j + jj] += sum;
+          }
+        }
+      }
+      F a00 = Tp[si * N + si];
+      F a01 = (bs_i == 2) ? Tp[si * N + (si + 1)] : F(0);
+      F a10 = (bs_i == 2) ? Tp[(si + 1) * N + si] : F(0);
+      F a11 = (bs_i == 2) ? Tp[(si + 1) * N + (si + 1)] : F(0);
+      F b00 = Tp[sj * N + sj];
+      F b01 = (bs_j == 2) ? Tp[sj * N + (sj + 1)] : F(0);
+      F b10 = (bs_j == 2) ? Tp[(sj + 1) * N + sj] : F(0);
+      F b11 = (bs_j == 2) ? Tp[(sj + 1) * N + (sj + 1)] : F(0);
+      F out[4] = { F(0), F(0), F(0), F(0) };
+      if ( !solve_sylvester_minus<F>(a00, a01, a10, a11, bs_i, b00, b01, b10, b11, bs_j, rhs, out, eps) ) {
+        r.converged = false;
+        return r;
+      }
+      for ( usize ii = 0; ii < bs_i; ++ii )
+        for ( usize jj = 0; jj < bs_j; ++jj ) F_T[(si + ii) * N + (sj + jj)] = out[ii * bs_j + jj];
+    }
+  }
+  return r;
+}
+
 };     // namespace __impl_matfunc_schur
 
 template <ieee754_floating F, usize N> struct expmat_result {
@@ -322,6 +563,277 @@ logmat(const mat<F, N, N> &A) noexcept
 {
   auto r = matfunc::logm<F, N>(A);
   return { r.X, r.real_log_exists, r.converged };
+}
+
+// generic matrix function via Schur + Parlett
+namespace __impl_matfunc_schur
+{
+
+template <ieee754_floating F, usize N>
+inline mat<F, N, N>
+back_transform(const mat<F, N, N> &Z, const mat<F, N, N> &F_T) noexcept
+{
+  // ZF = Z * F_T
+  mat<F, N, N> ZF = mat<F, N, N>::zero();
+  for ( usize i = 0; i < N; ++i ) {
+    F *__restrict__ row_zf = ZF.data + i * N;
+    const F *__restrict__ row_z = Z.data + i * N;
+    for ( usize j = 0; j < N; ++j ) {
+      F s = F(0);
+      const F *__restrict__ col_f = F_T.data + j;
+      for ( usize k = 0; k < N; ++k ) s = math::fma<F>(row_z[k], col_f[k * N], s);
+      row_zf[j] = s;
+    }
+  }
+  // X = ZF * Z_T
+  mat<F, N, N> X = mat<F, N, N>::zero();
+  for ( usize i = 0; i < N; ++i ) {
+    F *__restrict__ row_x = X.data + i * N;
+    const F *__restrict__ row_zf = ZF.data + i * N;
+    for ( usize j = 0; j < N; ++j ) {
+      F s = F(0);
+      const F *__restrict__ row_z_j = Z.data + j * N;     // Zᵀ col j == Z row j
+      for ( usize k = 0; k < N; ++k ) s = math::fma<F>(row_zf[k], row_z_j[k], s);
+      row_x[j] = s;
+    }
+  }
+  return X;
+}
+
+};     // namespace __impl_matfunc_schur
+
+template <ieee754_floating F, usize N> struct sinmat_result {
+  mat<F, N, N> X;
+  bool converged;
+};
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// trigs
+
+template <ieee754_floating F, usize N>
+[[nodiscard]] inline sinmat_result<F, N>
+sinmat(const mat<F, N, N> &A) noexcept
+{
+  sinmat_result<F, N> r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat<F, N, N>::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur<F, N>(A);
+    if ( !sr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_sin_desc<F>, F, N>(sr.T);
+    if ( !pr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}
+
+template <ieee754_floating F, usize N> struct cosmat_result {
+  mat<F, N, N> X;
+  bool converged;
+};
+
+template <ieee754_floating F, usize N>
+[[nodiscard]] inline cosmat_result<F, N>
+cosmat(const mat<F, N, N> &A) noexcept
+{
+  cosmat_result<F, N> r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat<F, N, N>::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur<F, N>(A);
+    if ( !sr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_cos_desc<F>, F, N>(sr.T);
+    if ( !pr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}
+
+template <ieee754_floating F, usize N> struct sinhmat_result {
+  mat<F, N, N> X;
+  bool converged;
+};
+
+template <ieee754_floating F, usize N>
+[[nodiscard]] inline sinhmat_result<F, N>
+sinhmat(const mat<F, N, N> &A) noexcept
+{
+  sinhmat_result<F, N> r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat<F, N, N>::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur<F, N>(A);
+    if ( !sr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_sinh_desc<F>, F, N>(sr.T);
+    if ( !pr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}
+
+template <ieee754_floating F, usize N> struct coshmat_result {
+  mat<F, N, N> X;
+  bool converged;
+};
+
+template <ieee754_floating F, usize N>
+[[nodiscard]] inline coshmat_result<F, N>
+coshmat(const mat<F, N, N> &A) noexcept
+{
+  coshmat_result<F, N> r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat<F, N, N>::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur<F, N>(A);
+    if ( !sr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_cosh_desc<F>, F, N>(sr.T);
+    if ( !pr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}
+
+// matrix power  A^p
+template <ieee754_floating F, usize N> struct powmat_result {
+  mat<F, N, N> X;
+  bool converged;
+};
+
+namespace __impl_matfunc_schur
+{
+
+template <ieee754_floating F, usize N>
+inline mat<F, N, N>
+matmul(const mat<F, N, N> &A, const mat<F, N, N> &B) noexcept
+{
+  mat<F, N, N> C = mat<F, N, N>::zero();
+  for ( usize i = 0; i < N; ++i ) {
+    const F *__restrict__ row_a = A.data + i * N;
+    F *__restrict__ row_c = C.data + i * N;
+    for ( usize j = 0; j < N; ++j ) {
+      F s = F(0);
+      const F *__restrict__ col_b = B.data + j;
+      for ( usize k = 0; k < N; ++k ) s = math::fma<F>(row_a[k], col_b[k * N], s);
+      row_c[j] = s;
+    }
+  }
+  return C;
+}
+
+template <ieee754_floating F>
+[[gnu::always_inline]] inline bool
+is_integer_value(F p) noexcept
+{
+  const F r = F(static_cast<long long>(p));
+  return r == p;
+}
+
+};     // namespace __impl_matfunc_schur
+
+template <ieee754_floating F, usize N>
+[[nodiscard]] inline powmat_result<F, N>
+powmat(const mat<F, N, N> &A, F p) noexcept
+{
+  powmat_result<F, N> r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat<F, N, N>::zero();
+    r.converged = true;
+    return r;
+  } else if ( __impl_matfunc_schur::is_integer_value<F>(p) ) {
+    long long e = static_cast<long long>(p);
+    if ( e == 0 ) {
+      r.X = mat<F, N, N>::identity();
+      r.converged = true;
+      return r;
+    }
+    bool negate = (e < 0);
+    unsigned long long n = negate ? static_cast<unsigned long long>(-e) : static_cast<unsigned long long>(e);
+    mat<F, N, N> base = A;
+    mat<F, N, N> acc = mat<F, N, N>::identity();
+    bool have_acc = false;
+    while ( n > 0 ) {
+      if ( n & 1ULL ) {
+        if ( !have_acc ) {
+          acc = base;
+          have_acc = true;
+        } else {
+          acc = __impl_matfunc_schur::matmul<F, N>(acc, base);
+        }
+      }
+      n >>= 1ULL;
+      if ( n > 0 ) base = __impl_matfunc_schur::matmul<F, N>(base, base);
+    }
+    if ( negate ) {
+      auto inv_r = decomp::inv<F, N>(acc);
+      if ( inv_r.singular ) {
+        r.X = mat<F, N, N>::zero();
+        r.converged = false;
+        return r;
+      }
+      r.X = inv_r.X;
+    } else {
+      r.X = acc;
+    }
+    r.converged = true;
+    return r;
+  } else {
+    auto lr = logmat<F, N>(A);
+    if ( !lr.converged ) {
+      r.X = mat<F, N, N>::zero();
+      r.converged = false;
+      return r;
+    }
+    mat<F, N, N> pL = lr.X;
+    for ( usize i = 0; i < N * N; ++i ) pL.data[i] = p * pL.data[i];
+    auto er = expmat<F, N>(pL);
+    r.X = er.X;
+    r.converged = er.converged;
+    return r;
+  }
 }
 
 };     // namespace schur

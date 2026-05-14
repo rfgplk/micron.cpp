@@ -245,7 +245,7 @@ template <ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 softplus(F x) noexcept
 {
-  constexpr F t = micron::is_same_v<F, float> ? F(15) : F(35);
+  constexpr F t = (micron::is_same_v<F, float> || micron::is_same_v<F, f32>) ? F(15) : F(35);
   if ( x > t ) return x;
   if ( x < -t ) return log_impl::exp<F>(x);
   return log_impl::log1p<F>(log_impl::exp<F>(x));

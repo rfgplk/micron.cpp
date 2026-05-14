@@ -297,14 +297,14 @@ template <typename T>
 constexpr T
 fmax(T x, T y)
 {
-  if constexpr ( micron::same_as<T, f32> ) {
-    return maxf32(x, y);
-  }
-  if constexpr ( micron::same_as<T, f64> ) {
-    return maxf64(x, y);
-  }
-  if constexpr ( micron::same_as<T, f128> ) {
-    return maxf128(x, y);
+  if constexpr ( micron::same_as<T, f32> || micron::same_as<T, float> ) {
+    return static_cast<T>(maxf32(static_cast<f32>(x), static_cast<f32>(y)));
+  } else if constexpr ( micron::same_as<T, f64> || micron::same_as<T, double> ) {
+    return static_cast<T>(maxf64(static_cast<f64>(x), static_cast<f64>(y)));
+  } else if constexpr ( micron::same_as<T, f128> || micron::same_as<T, long double> ) {
+    return static_cast<T>(maxf128(static_cast<flong>(x), static_cast<flong>(y)));
+  } else {
+    return (x > y) ? x : y;
   }
 }
 
@@ -850,22 +850,6 @@ constexpr long double
 ffmal(long double a, long double b, long double c) noexcept
 {
   return __builtin_fmal(a, b, c);
-}
-
-template <typename T>
-  requires(micron::is_floating_point_v<T>)
-constexpr T
-fma(T x, T y)
-{
-  if constexpr ( micron::same_as<T, float> ) {
-    return fmaf(x, y);
-  }
-  if constexpr ( micron::same_as<T, double> ) {
-    return ffma(x, y);
-  }
-  if constexpr ( micron::same_as<T, long double> ) {
-    return ffmal(x, y);
-  }
 }
 
 template <typename T>

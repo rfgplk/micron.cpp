@@ -236,6 +236,80 @@ bidiagonalize(const mat<F, R_, C_> &A) noexcept
   return r;
 }
 
+namespace __impl_decomp
+{
+
+template <ieee754_floating F>
+inline void
+apply_householder_left_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept
+{
+  if ( beta == F(0) ) return;
+  micron::vector<F, micron::allocator_serial<>, false> w(C, F(0));
+  for ( usize i = k0; i < R; ++i ) {
+    F vi = v[i];
+    if ( vi == F(0) ) continue;
+    const F *row = A + i * ld_A;
+    for ( usize j = 0; j < C; ++j ) w.data()[j] = math::fma<F>(vi, row[j], w.data()[j]);
+  }
+  for ( usize i = k0; i < R; ++i ) {
+    F vi = v[i];
+    if ( vi == F(0) ) continue;
+    F bvi = beta * vi;
+    F *row = A + i * ld_A;
+    for ( usize j = 0; j < C; ++j ) row[j] -= bvi * w.data()[j];
+  }
+}
+
+template <ieee754_floating F>
+inline void
+apply_householder_right_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept
+{
+  if ( beta == F(0) ) return;
+  micron::vector<F, micron::allocator_serial<>, false> w(R, F(0));
+  for ( usize i = 0; i < R; ++i ) {
+    F acc = F(0);
+    const F *row = A + i * ld_A;
+    for ( usize j = k0; j < C; ++j ) acc = math::fma<F>(row[j], v[j], acc);
+    w.data()[i] = acc;
+  }
+  for ( usize i = 0; i < R; ++i ) {
+    F bwi = beta * w.data()[i];
+    F *row = A + i * ld_A;
+    for ( usize j = k0; j < C; ++j ) row[j] -= bwi * v[j];
+  }
+}
+
+template <ieee754_floating F>
+inline F
+householder_reflector_dyn(const F *x, usize R, usize k0, F *v_out) noexcept
+{
+  for ( usize i = 0; i < R; ++i ) v_out[i] = F(0);
+  if ( k0 >= R ) return F(0);
+  F xmax = F(0);
+  for ( usize i = k0; i < R; ++i ) {
+    F a = math::fabs(x[i]);
+    if ( a > xmax ) xmax = a;
+  }
+  if ( xmax == F(0) ) return F(0);
+  F sum = F(0);
+  F inv_xmax = F(1) / xmax;
+  for ( usize i = k0; i < R; ++i ) {
+    F s = x[i] * inv_xmax;
+    sum = math::fma<F>(s, s, sum);
+  }
+  F norm_x = xmax * math::fsqrt(sum);
+  F xk = x[k0];
+  F sign_xk = (xk >= F(0)) ? F(1) : F(-1);
+  F alpha = -sign_xk * norm_x;
+  v_out[k0] = xk - alpha;
+  for ( usize i = k0 + 1; i < R; ++i ) v_out[i] = x[i];
+  F vv = v_out[k0] * v_out[k0];
+  for ( usize i = k0 + 1; i < R; ++i ) vv = math::fma<F>(v_out[i], v_out[i], vv);
+  return (vv > F(0)) ? F(2) / vv : F(0);
+}
+
+};     // namespace __impl_decomp
+
 };     // namespace decomp
 };     // namespace linalg
 };     // namespace math

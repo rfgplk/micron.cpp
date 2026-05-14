@@ -40,10 +40,6 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   __boot_io_buffers();
   const int rc = __micron_user_main(argc, argv, envp);
 
-  // Route normal-return through the soft exit path so atexit/__cxa_atexit
-  // registrations and .fini_array share a single LIFO unwinder. noreturn --
-  // the trailing `return rc;` keeps the signature intact for the asm shim
-  // but is unreachable.
   micron::exit(rc);
 }
 
@@ -87,8 +83,6 @@ __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
 
 extern "C" {
 
-// NOTE: globals with non-trivial destructors emit a call to __cxa_atexit from their __static_initialization_and_destruction_0 path (Itanium
-// C++ ABI)
 int
 __cxa_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
 {
@@ -113,8 +107,7 @@ __cxa_guard_abort(long long int *)
 {
 }
 
-// __dso_handle is referenced by every TU that schedules a global destructor via
-// __cxa_atexit/__aeabi_atexit. crtbegin.o normally provides it -- in
+// __dso_handle is referenced by every TU that schedules a global destructor via __cxa_atexit
 __attribute__((used, visibility("hidden"))) void *__dso_handle = &__dso_handle;
 
 }     // extern "C"
@@ -124,7 +117,7 @@ __attribute__((used, visibility("hidden"))) void *__dso_handle = &__dso_handle;
 // armv7-a does not have hardware 64-bit divide, 64-bit count-trailing-zeros,
 // 64-bit signed/unsigned <-> float/double conversions, or hardware double-
 // precision FMA. GCC emits AEABI helper calls for all of these. libgcc would
-// satisfy them, but micron is freestanding so we provide our own.
+// satisfy them, but micron is freestanding so we provide our own
 
 namespace
 {
@@ -177,15 +170,15 @@ __aeabi_atexit(void *object, void (*destructor)(void *), void *dso_handle) noexc
   return __cxa_atexit(destructor, object, dso_handle);
 }
 
-// double-precision __builtin_fma therefore lowers to a libm call which is
-// absent in -nostdlib. The mul-then-add fallback is not bit-exact IEEE-754 fma
-__attribute__((used, weak)) double
+// NOTE: AEABI fns must use the soft-float core-register PCS regardless of -mfloat-abi
+// without pcs("aapcs") a hard-float build receives float/double args in s0/d0
+__attribute__((used, weak, pcs("aapcs"))) double
 fma(double a, double b, double c) noexcept
 {
   return a * b + c;
 }
 
-__attribute__((used, weak)) float
+__attribute__((used, weak, pcs("aapcs"))) float
 fmaf(float a, float b, float c) noexcept
 {
   return a * b + c;
@@ -333,7 +326,9 @@ __ctzdi2(unsigned long long x) noexcept
   return 64;
 }
 
-__attribute__((used)) double
+// same aapcs attribute for these
+
+__attribute__((used, pcs("aapcs"))) double
 __aeabi_ul2d(unsigned long long x) noexcept
 {
   const unsigned int hi = static_cast<unsigned int>(x >> 32);
@@ -341,26 +336,26 @@ __aeabi_ul2d(unsigned long long x) noexcept
   return static_cast<double>(hi) * 4294967296.0 + static_cast<double>(lo);
 }
 
-__attribute__((used)) double
+__attribute__((used, pcs("aapcs"))) double
 __aeabi_l2d(long long x) noexcept
 {
   if ( x < 0 ) return -__aeabi_ul2d(static_cast<unsigned long long>(-x));
   return __aeabi_ul2d(static_cast<unsigned long long>(x));
 }
 
-__attribute__((used)) float
+__attribute__((used, pcs("aapcs"))) float
 __aeabi_ul2f(unsigned long long x) noexcept
 {
   return static_cast<float>(__aeabi_ul2d(x));
 }
 
-__attribute__((used)) float
+__attribute__((used, pcs("aapcs"))) float
 __aeabi_l2f(long long x) noexcept
 {
   return static_cast<float>(__aeabi_l2d(x));
 }
 
-__attribute__((used)) unsigned long long
+__attribute__((used, pcs("aapcs"))) unsigned long long
 __aeabi_d2ulz(double x) noexcept
 {
   if ( !(x >= 0.0) ) return 0;     // negatives and NaN saturate low
@@ -379,7 +374,7 @@ __aeabi_d2ulz(double x) noexcept
   return (static_cast<unsigned long long>(hi) << 32) | lo;
 }
 
-__attribute__((used)) long long
+__attribute__((used, pcs("aapcs"))) long long
 __aeabi_d2lz(double x) noexcept
 {
   if ( x != x ) return 0;     // NaN
@@ -389,13 +384,13 @@ __aeabi_d2lz(double x) noexcept
   return -static_cast<long long>(__aeabi_d2ulz(-x));
 }
 
-__attribute__((used)) unsigned long long
+__attribute__((used, pcs("aapcs"))) unsigned long long
 __aeabi_f2ulz(float x) noexcept
 {
   return __aeabi_d2ulz(static_cast<double>(x));     // VCVT.F64.F32 then 64-bit path
 }
 
-__attribute__((used)) long long
+__attribute__((used, pcs("aapcs"))) long long
 __aeabi_f2lz(float x) noexcept
 {
   return __aeabi_d2lz(static_cast<double>(x));
