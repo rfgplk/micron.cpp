@@ -76,7 +76,7 @@ reduce_pio2(simd::d256 x, simd::i256 *q_out) noexcept
   return t;
 }
 
-};     // namespace __trig_simd
+};      // namespace __trig_simd
 
 [[gnu::flatten]] inline simd::d256
 sin(simd::d256 x) noexcept
@@ -182,14 +182,14 @@ cos(simd::f128 x) noexcept
   return simd::avx::cast_f32_to_lo128(cos(simd::avx::cast_lo128_to_f32(x)));
 }
 
-#endif     // AVX2 + FMA
+#endif      // AVX2 + FMA
 
 #if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 
 namespace __trig_simd_neon
 {
 inline constexpr f32 pio2_hi_f = 0x1.921fb4p+0f;
-inline constexpr f32 pio2_lo_f = 0x1.4442d18p-23f;     // residual to f32 precision
+inline constexpr f32 pio2_lo_f = 0x1.4442d18p-23f;      // residual to f32 precision
 inline constexpr f32 inv_pio2_f = 0x1.45f306p-1f;
 
 [[gnu::always_inline]] inline simd::f128
@@ -251,7 +251,7 @@ reduce_pio2_f128(simd::f128 x, int32x4_t *q_out) noexcept
   return t;
 }
 
-};     // namespace __trig_simd_neon
+};      // namespace __trig_simd_neon
 
 [[gnu::flatten]] inline simd::f128
 sin(simd::f128 x) noexcept
@@ -357,7 +357,7 @@ reduce(simd::d128 x, int64x2_t *q_out) noexcept
   *q_out = simd::neon::convert_f64_to_i64(fN);
   return t;
 }
-};     // namespace __trig_simd_neon_d
+};      // namespace __trig_simd_neon_d
 
 [[gnu::flatten]] inline simd::d128
 sin(simd::d128 x) noexcept
@@ -407,12 +407,12 @@ tan(simd::d128 x) noexcept
   const uint64x2_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
   return simd::neon::select(odd, cot, ratio);
 }
-#endif     // arm64 d128
+#endif      // arm64 d128
 
-#endif     // arm_any && neon
+#endif      // arm_any && neon
 
-};     // namespace mk
-};     // namespace math
-};     // namespace micron
+};      // namespace mk
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC diagnostic pop

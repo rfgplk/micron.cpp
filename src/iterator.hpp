@@ -20,7 +20,7 @@ struct regular_iterator_tag {
 // they provide more powerful ways to iterate over objects, but sacrificing some of the versatility that C++ have.
 // micron iterators are bound to the fundamental type as declared, as such it isn't possible to iterate over different
 // types (nor should you want to). in return you get way more powerful utilities which simplify code
-template <typename P>
+template<typename P>
   requires(micron::is_fundamental_v<P>)
 class iterator
 {
@@ -35,28 +35,28 @@ class iterator
 public:
   iterator() = delete;
 
-  template <typename T>
+  template<typename T>
     requires(micron::is_object_v<T>)
   iterator(T &t) : start_ptr(reinterpret_cast<pointer>(t.begin())), end_ptr(reinterpret_cast<pointer>(t.end()))
   {
   }
 
-  template <typename T>
+  template<typename T>
     requires(micron::is_pointer_v<T>) && (micron::is_convertible_v<T, P>)
   iterator(T &&t, const size_t rng = 0) : start_ptr(reinterpret_cast<pointer>(t)), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {
   }
 
-  template <typename T>
+  template<typename T>
     requires(micron::is_fundamental_v<T>) && (micron::is_convertible_v<T, P>)
   iterator(T &&t, const size_t rng = 0)
       : start_ptr(reinterpret_cast<pointer>(micron::addr(t))), end_ptr(reinterpret_cast<pointer>(micron::addr(t) + rng))
   {
   }
 
-  iterator(pointer sptr, pointer eptr) : start_ptr(sptr), end_ptr(eptr) {}
+  iterator(pointer sptr, pointer eptr) : start_ptr(sptr), end_ptr(eptr) { }
 
-  iterator(const iterator &o) : start_ptr(o.start_ptr), end_ptr(o.end_ptr) {}
+  iterator(const iterator &o) : start_ptr(o.start_ptr), end_ptr(o.end_ptr) { }
 
   iterator(iterator &&o) : start_ptr(o.start_ptr), end_ptr(o.end_ptr)
   {
@@ -149,7 +149,7 @@ public:
   count(void)
   {
     size_t c = 0;
-    while ( next() != end_ptr ) c++;     // hehe
+    while ( next() != end_ptr ) c++;      // hehe
     return c;
   }
 
@@ -159,7 +159,7 @@ public:
     return end_ptr - start_ptr;
   }
 
-  template <typename F>
+  template<typename F>
   void
   for_each(F f)
   {
@@ -188,7 +188,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   inline void
   skip(F f)
   {
@@ -220,4 +220,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

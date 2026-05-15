@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-
 #include "../../concepts.hpp"
 #include "../../types.hpp"
 #include "../ieee.hpp"
@@ -19,7 +18,7 @@ namespace geometry
 {
 
 // axis-aligned bounding box
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
   requires(Dim >= 2 && Dim <= 16)
 struct aligned_box {
   vec<F, Dim> min_corner;
@@ -145,6 +144,6 @@ struct aligned_box {
   }
 };
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

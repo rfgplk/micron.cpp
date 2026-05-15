@@ -27,8 +27,8 @@ inline constexpr f32 Lg2 = 0xccce13.0p-25f;
 inline constexpr f32 Lg3 = 0x91e9eep-25f;
 inline constexpr f32 Lg4 = 0xf89e26.0p-26f;
 
-};     // namespace log_f32_data
-};     // namespace coeff
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace log_f32_data
+};      // namespace coeff
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

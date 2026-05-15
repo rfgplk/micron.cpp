@@ -27,7 +27,7 @@ main()
 
   test_case("from_quat: identity quaternion → I_3");
   {
-    quat<f64> q = quat<f64>::identity();     // {0,0,0,1}
+    quat<f64> q = quat<f64>::identity();      // {0,0,0,1}
     auto R = blas::identities::from_quat<f64>(q);
     for ( usize i = 0; i < 3; ++i )
       for ( usize j = 0; j < 3; ++j ) require_true(near(R.data[i * 3 + j], (i == j) ? 1.0 : 0.0));
@@ -37,7 +37,7 @@ main()
   test_case("from_quat: 90° around z axis rotates x → y");
   {
     // q = (0, 0, sin(45°), cos(45°)) for 90° rotation about z
-    const f64 s = 0.7071067811865476;     // sin(45°) = cos(45°)
+    const f64 s = 0.7071067811865476;      // sin(45°) = cos(45°)
     quat<f64> q{ { 0.0, 0.0, s, s } };
     auto R = blas::identities::from_quat<f64>(q);
     // Apply R · [1,0,0]ᵀ → should be [0,1,0]ᵀ

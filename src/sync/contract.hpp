@@ -32,9 +32,9 @@ namespace micron
 
 enum class contract_state : i32 { lenient, enforcing, strict, __end };
 
-template <contract_state S, typename T> class contract;
+template<contract_state S, typename T> class contract;
 
-template <contract_state S, typename T, typename Fn>
+template<contract_state S, typename T, typename Fn>
 void
 violation(contract<S, T> *c, Fn *fn)
 {
@@ -47,9 +47,9 @@ violation(contract<S, T> *c, Fn *fn)
   }
 }
 
-template <typename T> using requirement_t = micron::atomic_token<T>;
+template<typename T> using requirement_t = micron::atomic_token<T>;
 
-template <contract_state S, typename T> class contract
+template<contract_state S, typename T> class contract
 {
 
   struct fn_base_t {
@@ -57,10 +57,10 @@ template <contract_state S, typename T> class contract
     virtual ~fn_base_t() = default;
   };
 
-  template <typename Fn> struct fn_t : fn_base_t {
+  template<typename Fn> struct fn_t: fn_base_t {
     Fn fn;
 
-    fn_t(Fn &&f) : fn(micron::move(f)) {}
+    fn_t(Fn &&f) : fn(micron::move(f)) { }
 
     bool
     call() override
@@ -114,7 +114,7 @@ public:
 
   contract(void) = delete;
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
   contract(Fn &&fn, Args &&...args) : is_signed{ false }, __duration{ 0 }, __enforcing_fn(nullptr), __requirements{}
   {
     auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { return f(a...); };
@@ -156,7 +156,7 @@ public:
     });
   }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args...>)
   void
   sign(Fn &&fn, Args &&...args)
@@ -194,7 +194,7 @@ public:
     __duration = tm;
   }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
   void
   enforce(Fn &&fn, Args &&...args)
   {
@@ -203,7 +203,7 @@ public:
     __enforcing_fn = new fn_t<decltype(__fn)>(micron::move(__fn));
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::is_same_v<Args, requirement_t<T>>, ...)
   void
   require(Args &&...args)
@@ -211,4 +211,4 @@ public:
     __requirements.emplace_back(micron::forward<Args &&>(args)...);
   }
 };
-};     // namespace micron
+};      // namespace micron

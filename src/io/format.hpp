@@ -49,7 +49,7 @@ prune(const char *str)
   return prune(path_t(str));
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 prune(const T &str)
 {
@@ -92,7 +92,7 @@ trim(const path_t &str)
   return trim(str.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 trim(const T &str)
 {
@@ -160,7 +160,7 @@ collapse(const path_t &str)
   return collapse(str.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 collapse(const T &str)
 {
@@ -182,7 +182,7 @@ valid(const path_t &s) noexcept
   return posix::verify(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 valid(const T &s) noexcept
 {
@@ -203,7 +203,7 @@ validate(const path_t &str)
   return prune(str);
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 validate(const T &str)
 {
@@ -224,7 +224,7 @@ has_nul(const path_t &s) noexcept
   return has_nul(s.c_str(), s.size());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 has_nul(const T &s) noexcept
 {
@@ -256,7 +256,7 @@ well_formed(const path_t &s) noexcept
   return well_formed(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 well_formed(const T &s) noexcept
 {
@@ -278,7 +278,7 @@ exists(const path_t &s) noexcept
   return posix::exists(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists(const T &s) noexcept
 {
@@ -297,7 +297,7 @@ lexists(const path_t &s) noexcept
   return posix::lexists(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 lexists(const T &s) noexcept
 {
@@ -319,7 +319,7 @@ accessible(const path_t &s) noexcept
   return posix::access(s.c_str(), posix::read_ok | posix::execute_ok) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 accessible(const T &s) noexcept
 {
@@ -338,7 +338,7 @@ readable(const path_t &s) noexcept
   return posix::is_readable(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 readable(const T &s) noexcept
 {
@@ -357,7 +357,7 @@ writable(const path_t &s) noexcept
   return posix::is_writable(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 writable(const T &s) noexcept
 {
@@ -376,7 +376,7 @@ executable(const path_t &s) noexcept
   return posix::is_executable(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 executable(const T &s) noexcept
 {
@@ -395,7 +395,7 @@ access(const path_t &s, int m) noexcept
   return posix::access(s.c_str(), m) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 access(const T &s, int m) noexcept
 {
@@ -417,7 +417,7 @@ owned_by_me(const path_t &s) noexcept
   return posix::is_owned_by_me(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 owned_by_me(const T &s) noexcept
 {
@@ -436,7 +436,7 @@ owned_by(const path_t &s, posix::uid_t u) noexcept
   return posix::is_owned_by(s.c_str(), u);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 owned_by(const T &s, posix::uid_t u) noexcept
 {
@@ -455,7 +455,7 @@ in_group(const path_t &s, posix::gid_t g) noexcept
   return posix::is_in_group(s.c_str(), g);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 in_group(const T &s, posix::gid_t g) noexcept
 {
@@ -474,7 +474,7 @@ permissions(const path_t &s)
   return posix::get_permissions(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline linux_permissions
 permissions(const T &s)
 {
@@ -487,7 +487,7 @@ permissions(const T &s)
 #define __MICRON_PATH_PRED(name_, posix_fn_)                                                                                               \
   inline bool name_(const char *s) noexcept { return posix_fn_(s); }                                                                       \
   inline bool name_(const path_t &s) noexcept { return posix_fn_(s.c_str()); }                                                             \
-  template <is_string T> inline bool name_(const T &s) noexcept { return posix_fn_(s.c_str()); }
+  template<is_string T> inline bool name_(const T &s) noexcept { return posix_fn_(s.c_str()); }
 
 __MICRON_PATH_PRED(is_file, posix::is_file)
 __MICRON_PATH_PRED(is_dir, posix::is_dir)
@@ -512,7 +512,7 @@ is_pipe(const path_t &s) noexcept
   return posix::is_fifo(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_pipe(const T &s) noexcept
 {
@@ -531,7 +531,7 @@ is_device(const path_t &s) noexcept
   return posix::is_block_device(s.c_str()) || posix::is_char_device(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_device(const T &s) noexcept
 {
@@ -550,7 +550,7 @@ is_absolute(const path_t &s) noexcept
   return posix::is_absolute(s);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_absolute(const T &s) noexcept
 {
@@ -569,7 +569,7 @@ is_relative(const path_t &s) noexcept
   return posix::is_relative(s);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_relative(const T &s) noexcept
 {
@@ -588,7 +588,7 @@ is_root(const path_t &s) noexcept
   return s.size() == 1 && s[0] == '/';
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_root(const T &s) noexcept
 {
@@ -607,7 +607,7 @@ is_mountpoint(const path_t &s) noexcept
   return posix::is_mountpoint(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_mountpoint(const T &s) noexcept
 {
@@ -634,7 +634,7 @@ is_hidden(const path_t &str) noexcept
   return is_hidden(str.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_hidden(const T &str) noexcept
 {
@@ -665,7 +665,7 @@ same_file(const char *a, const path_t &b) noexcept
   return posix::is_same_file(a, b.c_str());
 }
 
-template <is_string A, is_string B>
+template<is_string A, is_string B>
 inline bool
 same_file(const A &a, const B &b) noexcept
 {
@@ -695,7 +695,7 @@ basename(const path_t &s) noexcept
   return basename(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 basename(const T &s) noexcept
 {
@@ -728,7 +728,7 @@ dirname(const path_t &s) noexcept
   return dirname(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 dirname(const T &s) noexcept
 {
@@ -760,7 +760,7 @@ extension(const path_t &s) noexcept
   return extension(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 extension(const T &s) noexcept
 {
@@ -786,7 +786,7 @@ stem(const path_t &s) noexcept
   return stem(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 stem(const T &s) noexcept
 {
@@ -832,7 +832,7 @@ join(const char *base, const path_t &rel)
   return join(base, rel.c_str());
 }
 
-template <is_string A, is_string B>
+template<is_string A, is_string B>
 inline path_t
 join(const A &base, const B &rel)
 {
@@ -851,7 +851,7 @@ operator/(const path_t &base, const path_t &rel)
   return join(base, rel);
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 operator/(const path_t &base, const T &rel)
 {
@@ -873,7 +873,7 @@ canonical(const path_t &s)
   return canonical(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline path_t
 canonical(const T &s)
 {
@@ -934,7 +934,7 @@ relative_to(const char *p, const path_t &base)
   return relative_to(p, base.c_str());
 }
 
-template <is_string A, is_string B>
+template<is_string A, is_string B>
 inline path_t
 relative_to(const A &p, const B &base)
 {
@@ -971,12 +971,12 @@ with_extension(const path_t &s, const char *ext)
   return with_extension(s.c_str(), ext);
 }
 
-template <is_string A, is_string B>
+template<is_string A, is_string B>
 inline path_t
 with_extension(const A &s, const B &ext)
 {
   return with_extension(s.c_str(), ext.c_str());
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

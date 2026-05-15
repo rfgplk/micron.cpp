@@ -25,8 +25,8 @@ inline constexpr f64 p[9] = {
   12.507343278686905,  -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
 };
 
-};     // namespace lanczos_data
-};     // namespace coeff
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace lanczos_data
+};      // namespace coeff
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

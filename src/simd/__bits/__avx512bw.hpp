@@ -315,6 +315,6 @@ _mm512_cmpgt_epi16_mask(__m512i a, __m512i b) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

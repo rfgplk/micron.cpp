@@ -41,28 +41,28 @@ using __uv64 = u64;
 
 using b64 = uint8x8_t;
 
-using f128 = float32x4_t;     // 4 × f32
-using i128 = int32x4_t;       // 4 × s32 (canonical integer view)
+using f128 = float32x4_t;      // 4 × f32
+using i128 = int32x4_t;        // 4 × s32 (canonical integer view)
 
-using f256 = float32x4x2_t;     // 8 × f32 (.val[0]=lo, .val[1]=hi)
-using i256 = int32x4x2_t;       // 8 × s32 view
+using f256 = float32x4x2_t;      // 8 × f32 (.val[0]=lo, .val[1]=hi)
+using i256 = int32x4x2_t;        // 8 × s32 view
 
-template <typename T>
+template<typename T>
 concept is_simd_128_type = micron::same_as<T, f128> || micron::same_as<T, i128>;
 
-template <typename T>
+template<typename T>
 concept is_simd_256_type = micron::same_as<T, f256> || micron::same_as<T, i256>;
 
-template <typename T>
+template<typename T>
 concept is_int_flag_type
     = micron::same_as<T, __uv8> || micron::same_as<T, __uv16> || micron::same_as<T, __uv32> || micron::same_as<T, __uv64>
       || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32> || micron::same_as<T, __v64>;
 
-template <typename T>
+template<typename T>
 concept is_flag_type = micron::same_as<T, __vf> || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32>
                        || micron::same_as<T, __v64>;
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_64_wide(void)
 {
@@ -70,7 +70,7 @@ __is_64_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_32_wide(void)
 {
@@ -78,7 +78,7 @@ __is_32_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_16_wide(void)
 {
@@ -86,7 +86,7 @@ __is_16_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_8_wide(void)
 {
@@ -193,7 +193,7 @@ neon_v7_cneq_s64(int64x2_t a, int64x2_t b) noexcept
   return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_ceqq_s64(a, b)), vdupq_n_u32(0xFFFFFFFFu)));
 }
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron
 
 #pragma GCC diagnostic pop

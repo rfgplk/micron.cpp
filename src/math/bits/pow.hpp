@@ -34,7 +34,7 @@ namespace pow_ns
 namespace __impl
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr int
 classify_integer(F y) noexcept
 {
@@ -51,7 +51,7 @@ classify_integer(F y) noexcept
   return ((bits >> (T::mant_bits - e)) & 1) ? 2 : 1;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 pow_int(F x, long long n) noexcept
 {
@@ -68,10 +68,10 @@ pow_int(F x, long long n) noexcept
   return neg ? F(F(1) / r) : r;
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 // NOTE: full IEEE 754-2019
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 pow(F x, F y) noexcept
 {
@@ -137,9 +137,9 @@ pow(F x, F y) noexcept
   return (x_neg && yint == 2) ? F(-r) : r;
 }
 
-};     // namespace pow_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace pow_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

@@ -7,7 +7,7 @@
 
 using __nr_t = long;
 
-template <__nr_t __nr_Base = 0> struct amd64_syscalls {
+template<__nr_t __nr_Base = 0> struct amd64_syscalls {
   struct nr {
     static constexpr __nr_t syscall_base = __nr_Base;
 

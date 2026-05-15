@@ -37,9 +37,9 @@ main()
     auto xv = quants::vec_view<f64>::from(x, 4);
     auto yv = quants::vec_view<f64>::from(y, 3);
     blas::level2::gemv<blas::op::none>(f64(1.0), Av, xv, f64(0.0), yv);
-    require_true(near(y[0], 10.0));     // 1+2+3+4
-    require_true(near(y[1], 26.0));     // 5+6+7+8
-    require_true(near(y[2], 42.0));     // 9+10+11+12
+    require_true(near(y[0], 10.0));      // 1+2+3+4
+    require_true(near(y[1], 26.0));      // 5+6+7+8
+    require_true(near(y[2], 42.0));      // 9+10+11+12
   }
   end_test_case();
 
@@ -52,10 +52,10 @@ main()
     auto xv = quants::vec_view<f64>::from(x, 3);
     auto yv = quants::vec_view<f64>::from(y, 4);
     blas::level2::gemv<blas::op::trans>(f64(1.0), Av, xv, f64(0.0), yv);
-    require_true(near(y[0], 15.0));     // 1+5+9
-    require_true(near(y[1], 18.0));     // 2+6+10
-    require_true(near(y[2], 21.0));     // 3+7+11
-    require_true(near(y[3], 24.0));     // 4+8+12
+    require_true(near(y[0], 15.0));      // 1+5+9
+    require_true(near(y[1], 18.0));      // 2+6+10
+    require_true(near(y[2], 21.0));      // 3+7+11
+    require_true(near(y[3], 24.0));      // 4+8+12
   }
   end_test_case();
 
@@ -63,10 +63,10 @@ main()
   {
     // 3 rows x 4 cols stored col-major: data is [col0; col1; col2; col3]
     f64 A[12] = {
-      1, 5, 9,      // col 0
-      2, 6, 10,     // col 1
-      3, 7, 11,     // col 2
-      4, 8, 12      // col 3
+      1, 5, 9,       // col 0
+      2, 6, 10,      // col 1
+      3, 7, 11,      // col 2
+      4, 8, 12       // col 3
     };
     f64 x[4] = { 1, 1, 1, 1 };
     f64 y[3] = { 0, 0, 0 };
@@ -107,9 +107,9 @@ main()
     matrix::tri_row_view<f64, blas::uplo::upper, blas::diag::non_unit> Uv{ U, 3, 3, 3 };
     auto xv = quants::vec_view<f64>::from(x, 3);
     blas::level2::trmv(Uv, xv);
-    require_true(near(x[0], 9.0));      // 2+3+4
-    require_true(near(x[1], 11.0));     // 0+5+6
-    require_true(near(x[2], 7.0));      // 0+0+7
+    require_true(near(x[0], 9.0));       // 2+3+4
+    require_true(near(x[1], 11.0));      // 0+5+6
+    require_true(near(x[2], 7.0));       // 0+0+7
   }
   end_test_case();
 
@@ -132,19 +132,19 @@ main()
 
   test_case("ger: A ← α·x·yᵀ + A");
   {
-    f64 A[6] = { 0, 0, 0, 0, 0, 0 };     // 2x3 row-major
+    f64 A[6] = { 0, 0, 0, 0, 0, 0 };      // 2x3 row-major
     f64 x[2] = { 1, 2 };
     f64 y[3] = { 4, 5, 6 };
     auto Av = matrix::row_view<f64>::from(A, 2, 3);
     auto xv = quants::vec_view<f64>::from(x, 2);
     auto yv = quants::vec_view<f64>::from(y, 3);
     blas::level2::ger(f64(1.0), xv, yv, Av);
-    require_true(near(A[0], 4.0));      // 1*4
-    require_true(near(A[1], 5.0));      // 1*5
-    require_true(near(A[2], 6.0));      // 1*6
-    require_true(near(A[3], 8.0));      // 2*4
-    require_true(near(A[4], 10.0));     // 2*5
-    require_true(near(A[5], 12.0));     // 2*6
+    require_true(near(A[0], 4.0));       // 1*4
+    require_true(near(A[1], 5.0));       // 1*5
+    require_true(near(A[2], 6.0));       // 1*6
+    require_true(near(A[3], 8.0));       // 2*4
+    require_true(near(A[4], 10.0));      // 2*5
+    require_true(near(A[5], 12.0));      // 2*6
   }
   end_test_case();
 

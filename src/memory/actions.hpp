@@ -19,9 +19,9 @@
 
 namespace micron
 {
-template <typename T, typename U> struct __is_same { static constexpr bool value = false; };
+template<typename T, typename U> struct __is_same { static constexpr bool value = false; };
 
-template <typename T> struct __is_same<T, T> { static constexpr bool value = true; };
+template<typename T> struct __is_same<T, T> { static constexpr bool value = true; };
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // allocas
@@ -32,7 +32,7 @@ template <typename T> struct __is_same<T, T> { static constexpr bool value = tru
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // casts
 
-template <typename T>
+template<typename T>
 constexpr micron::remove_cv_t<T> &
 mutable_cast(T &val) noexcept
 {
@@ -42,14 +42,14 @@ mutable_cast(T &val) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%
 // actions
 
-template <typename T>
+template<typename T>
 constexpr T &&
 forward(micron::remove_reference_t<T> &t) noexcept
 {
   return static_cast<T &&>(t);
 }
 
-template <typename T>
+template<typename T>
 constexpr T &&
 forward(micron::remove_reference_t<T> &&t) noexcept
   requires(!micron::is_lvalue_reference_v<T>)
@@ -57,19 +57,19 @@ forward(micron::remove_reference_t<T> &&t) noexcept
   return static_cast<T &&>(t);
 }
 
-template <typename T, typename U>
+template<typename T, typename U>
   requires(!micron::is_lvalue_reference_v<T> || !micron::is_lvalue_reference_v<U>)
 constexpr T &&
 forward_like(U &&u) noexcept
 {
   if constexpr ( micron::is_lvalue_reference_v<U> ) {
-    return static_cast<T &>(u);     // preserve lvalue category
+    return static_cast<T &>(u);      // preserve lvalue category
   } else {
-    return static_cast<T &&>(u);     // preserve rvalue category
+    return static_cast<T &&>(u);      // preserve rvalue category
   }
 }
 
-template <typename T>
+template<typename T>
 constexpr micron::remove_reference_t<T> &&
 move(T &&t) noexcept
 {
@@ -79,7 +79,7 @@ move(T &&t) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // constructions
 
-template <typename T>
+template<typename T>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 void
 swap(T &a, T &b)
@@ -89,7 +89,7 @@ swap(T &a, T &b)
   b = move(tmp);
 }
 
-template <class T, class V = T>
+template<class T, class V = T>
 constexpr T
 exchange(T &obj, V &&v)
 {
@@ -98,7 +98,7 @@ exchange(T &obj, V &&v)
   return old;
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
   requires micron::is_move_constructible_v<T>
 void
 reset(T &a, Args &&...args)
@@ -107,21 +107,21 @@ reset(T &a, Args &&...args)
   a = move(T{ forward<Args>(args)... });
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 constexpr void
 construct(T *p, Args &&...args)
 {
   new (static_cast<void *>(p)) T{ micron::forward<Args>(args)... };
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 constexpr T *
 construct_at(T *p, Args &&...args)
 {
   return new (static_cast<void *>(p)) T{ micron::forward<Args>(args)... };
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 constexpr T *
 construct_at(T &p, Args &&...args)
 {
@@ -129,7 +129,7 @@ construct_at(T &p, Args &&...args)
       T{ micron::forward<Args>(args)... };
 }
 
-template <typename T>
+template<typename T>
 inline void
 destroy(T *ptr)
 {
@@ -138,7 +138,7 @@ destroy(T *ptr)
   }
 }
 
-template <typename T>
+template<typename T>
 inline void
 destroy_at(T *ptr)
 {
@@ -150,7 +150,7 @@ destroy_at(T *ptr)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cmps
 
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr bool
 cmp_equal(T t, F f)
 {
@@ -164,14 +164,14 @@ cmp_equal(T t, F f)
     return f >= 0 && micron::make_unsigned_t<F>(f) == t;
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr bool
 cmp_not_equal(T t, F f)
 {
   return !cmp_equal(t, f);
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr bool
 cmp_less(T t, F f)
 {
@@ -185,70 +185,70 @@ cmp_less(T t, F f)
     return f >= 0 && micron::make_unsigned_t<F>(f) > t;
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr bool
 cmp_greater(T t, F f)
 {
   return cmp_less(f, t);
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr bool
 cmp_less_equal(T t, F f)
 {
   return !cmp_less(f, t);
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 min(T a, T b)
 {
   return (a < b) ? a : b;
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 max(T a, T b)
 {
   return (a > b) ? a : b;
 }
 
-template <typename T, typename... Ts>
+template<typename T, typename... Ts>
 constexpr T
 min(T a, T b, Ts... args)
 {
   return min(min(a, b), args...);
 }
 
-template <typename T, typename... Ts>
+template<typename T, typename... Ts>
 constexpr T
 max(T a, T b, Ts... args)
 {
   return max(max(a, b), args...);
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 less(T a, T b)
 {
   return a < b;
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 greater(T a, T b)
 {
   return a > b;
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 less_equal(T a, T b)
 {
   return a <= b;
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 greater_equal(T a, T b)
 {
@@ -266,4 +266,4 @@ trap(void)
 {
   __builtin_trap();
 }
-};     // namespace micron
+};      // namespace micron

@@ -1,6 +1,8 @@
 #pragma once
 #include "../bits.hpp"
+#include "../bits/__arch.hpp"
 #include "../hash/hash.hpp"
+#include "../simd/aliases.hpp"
 #include "../simd/types.hpp"
 #include "../types.hpp"
 
@@ -11,14 +13,14 @@
 
 namespace micron
 {
-constexpr u8 __empty = 0b11111111;        // 0xFF - empty slot
-constexpr u8 __deleted = 0b11111110;      // 0xFE - tombstone
-constexpr u8 __sentinel = 0b10000000;     // 0x80 - high bit set for occupied
+constexpr u8 __empty = 0b11111111;         // 0xFF - empty slot
+constexpr u8 __deleted = 0b11111110;       // 0xFE - tombstone
+constexpr u8 __sentinel = 0b10000000;      // 0x80 - high bit set for occupied
 
 struct __mask {
   i32 bits;
 
-  explicit __mask(i32 b) : bits(b) {}
+  explicit __mask(i32 b) : bits(b) { }
 
   bool
   any() const
@@ -45,7 +47,7 @@ struct __mask {
   }
 };
 
-template <typename K, typename V, usize N, usize NH = 16>
+template<typename K, typename V, usize N, usize NH = 16>
   requires(N >= 16 and (N % 16) == 0 and NH <= N)
 class stack_swiss_map
 {
@@ -83,32 +85,69 @@ class stack_swiss_map
   __match(u8 hash_val, usize ind) const
   {
     // NOTE: must be unaligned load, no guarantee ind will always be aligned
-    simd::i128 match = _mm_set1_epi8(static_cast<i8>(hash_val));
-    simd::i128 meta = _mm_loadu_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
-    int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(match, meta));
+#if defined(__micron_arch_x86_any)
+    simd::i128 match = simd::sse::splat_i8(static_cast<char>(hash_val));
+    simd::i128 meta = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__control_bytes[ind]));
+    int mask = simd::sse::movemask_i8(simd::sse::eq_i8(match, meta));
     return __mask(mask);
+#elif defined(__micron_arm_neon)
+    uint8x16_t match = simd::neon::splat_u8(hash_val);
+    uint8x16_t meta = simd::neon::load_u8(&__control_bytes[ind]);
+    return __mask(static_cast<i32>(simd::neon::movemask_u8(simd::neon::eq(meta, match))));
+#else
+    i32 mask = 0;
+    for ( usize i = 0; i < 16; ++i )
+      if ( __control_bytes[ind + i] == hash_val ) mask |= (1 << i);
+    return __mask(mask);
+#endif
   }
 
   __mask
   __match_empty(usize ind) const
   {
-    simd::i128 empty = _mm_set1_epi8(static_cast<i8>(__empty));
-    simd::i128 meta = _mm_loadu_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
-    int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(empty, meta));
+#if defined(__micron_arch_x86_any)
+    simd::i128 empty = simd::sse::splat_i8(static_cast<char>(__empty));
+    simd::i128 meta = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__control_bytes[ind]));
+    int mask = simd::sse::movemask_i8(simd::sse::eq_i8(empty, meta));
     return __mask(mask);
+#elif defined(__micron_arm_neon)
+    uint8x16_t empty = simd::neon::splat_u8(__empty);
+    uint8x16_t meta = simd::neon::load_u8(&__control_bytes[ind]);
+    return __mask(static_cast<i32>(simd::neon::movemask_u8(simd::neon::eq(empty, meta))));
+#else
+    i32 mask = 0;
+    for ( usize i = 0; i < 16; ++i )
+      if ( __control_bytes[ind + i] == __empty ) mask |= (1 << i);
+    return __mask(mask);
+#endif
   }
 
   __mask
   __match_empty_or_deleted(usize ind) const
   {
-    simd::i128 meta = _mm_loadu_si128(reinterpret_cast<const simd::i128 *>(&__control_bytes[ind]));
-    simd::i128 empty = _mm_set1_epi8(static_cast<i8>(__empty));
-    simd::i128 deleted = _mm_set1_epi8(static_cast<i8>(__deleted));
-    int mask = _mm_movemask_epi8(_mm_or_si128(_mm_cmpeq_epi8(meta, empty), _mm_cmpeq_epi8(meta, deleted)));
+#if defined(__micron_arch_x86_any)
+    simd::i128 meta = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__control_bytes[ind]));
+    simd::i128 empty = simd::sse::splat_i8(static_cast<char>(__empty));
+    simd::i128 deleted = simd::sse::splat_i8(static_cast<char>(__deleted));
+    int mask = simd::sse::movemask_i8(simd::sse::or_i128(simd::sse::eq_i8(meta, empty), simd::sse::eq_i8(meta, deleted)));
     return __mask(mask);
+#elif defined(__micron_arm_neon)
+    uint8x16_t meta = simd::neon::load_u8(&__control_bytes[ind]);
+    uint8x16_t empty = simd::neon::splat_u8(__empty);
+    uint8x16_t deleted = simd::neon::splat_u8(__deleted);
+    uint8x16_t combined = simd::neon::or_(simd::neon::eq(meta, empty), simd::neon::eq(meta, deleted));
+    return __mask(static_cast<i32>(simd::neon::movemask_u8(combined)));
+#else
+    i32 mask = 0;
+    for ( usize i = 0; i < 16; ++i ) {
+      u8 c = __control_bytes[ind + i];
+      if ( c == __empty || c == __deleted ) mask |= (1 << i);
+    }
+    return __mask(mask);
+#endif
   }
 
-  template <typename KK, typename VV>
+  template<typename KK, typename VV>
   micron::pair<bool, V *>
   __insert_impl(KK &&key, VV &&value)
   {
@@ -152,7 +191,7 @@ class stack_swiss_map
     return { false, nullptr };
   }
 
-  template <typename VV>
+  template<typename VV>
     requires(micron::same_as<K, u64>)
   micron::pair<bool, V *>
   __load_impl(hash64_t key, VV &&value)
@@ -203,11 +242,11 @@ public:
     K key;
     V value;
 
-    __swiss_entry() : key{}, value{} {}
+    __swiss_entry() : key{}, value{} { }
 
-    __swiss_entry(const K &k, const V &v) : key(k), value(v) {}
+    __swiss_entry(const K &k, const V &v) : key(k), value(v) { }
 
-    __swiss_entry(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) {}
+    __swiss_entry(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) { }
   };
 
   alignas(16) u8 __control_bytes[N];
@@ -308,15 +347,39 @@ public:
   void
   clear() noexcept
   {
-    for ( usize i = 0; i < N; ++i ) {
-      __control_bytes[i] = __empty;
+    usize i = 0;
+#if defined(__micron_x86_avx2)
+    const __m256i splat32 = simd::avx::splat_i8(static_cast<char>(__empty));
+    constexpr usize W = 32;
+    for ( ; i + W <= N; i += W ) {
+      simd::avx::storeu_i256(reinterpret_cast<__m256i_u *>(&__control_bytes[i]), splat32);
     }
+#endif
+#if defined(__micron_arch_x86_any)
+    const __m128i splat16 = simd::sse::splat_i8(static_cast<char>(__empty));
+    constexpr usize W16 = 16;
+    for ( ; i + W16 <= N; i += W16 ) {
+      simd::sse::store_i128(reinterpret_cast<__m128i *>(&__control_bytes[i]), splat16);
+    }
+#elif defined(__micron_arm_neon)
+    const uint8x16_t splat16 = simd::neon::splat_u8(__empty);
+    constexpr usize W16 = 16;
+    for ( ; i + W16 <= N; i += W16 ) {
+      simd::neon::store_u8(&__control_bytes[i], splat16);
+    }
+#endif
+    constexpr u64 splat64 = 0xFFFFFFFFFFFFFFFFULL;
+    for ( ; i + 8 <= N; i += 8 ) {
+      *reinterpret_cast<u64 *>(&__control_bytes[i]) = splat64;
+    }
+    // scalar tail
+    for ( ; i < N; ++i ) __control_bytes[i] = __empty;
     __size = 0;
   }
 
   // prehashed
   // NOTE: external hash MUST match internal hash
-  template <typename X = void>
+  template<typename X = void>
     requires(micron::same_as<K, u64>)
   micron::pair<bool, V *>
   load(hash64_t key, const V &value)
@@ -324,7 +387,7 @@ public:
     return __load_impl(key, value);
   }
 
-  template <typename X = void>
+  template<typename X = void>
     requires(micron::same_as<K, u64>)
   micron::pair<bool, V *>
   load(hash64_t key, V &&value)
@@ -332,7 +395,7 @@ public:
     return __load_impl(key, micron::move(value));
   }
 
-  template <typename X = void>
+  template<typename X = void>
     requires(micron::same_as<K, u64>)
   V &
   load_find(hash64_t key)
@@ -362,7 +425,7 @@ public:
     return insert(kv.a, kv.b);
   }
 
-  template <typename KK, typename VV>
+  template<typename KK, typename VV>
   micron::pair<bool, V *>
   insert_or_assign(KK &&key, VV &&value)
   {
@@ -428,7 +491,7 @@ public:
     return { false, nullptr };
   }
 
-  template <typename... Args>
+  template<typename... Args>
   micron::pair<bool, V *>
   emplace(const K &key, Args &&...args)
   {
@@ -546,7 +609,7 @@ public:
     return const_cast<stack_swiss_map *>(this)->find(key);
   }
 
-  template <typename X = void>
+  template<typename X = void>
     requires(micron::same_as<K, u64>)
   V *
   exists(const hash64_t key)
@@ -579,7 +642,7 @@ public:
     return nullptr;
   }
 
-  template <typename X = void>
+  template<typename X = void>
     requires(micron::same_as<K, u64>)
   const V *
   exists(const hash64_t &key) const
@@ -793,5 +856,5 @@ public:
   }
 };
 
-template <typename K, typename V, usize N, usize NH = 16> using swiss = stack_swiss_map<K, V, N, NH>;
-}     // namespace micron
+template<typename K, typename V, usize N, usize NH = 16> using swiss = stack_swiss_map<K, V, N, NH>;
+}      // namespace micron

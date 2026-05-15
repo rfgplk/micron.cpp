@@ -13,7 +13,7 @@ namespace micron
 
 enum class RBColor : i32 { RED, BLACK };
 
-template <typename T>
+template<typename T>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 class rb_node
 {
@@ -28,7 +28,7 @@ private:
   rb_node *right;
   kind_t kind;
 
-  template <typename, typename> friend class rb_tree;
+  template<typename, typename> friend class rb_tree;
 
 public:
   static constexpr auto bits = B;
@@ -169,7 +169,7 @@ public:
   }
 };
 
-template <typename T> struct default_less {
+template<typename T> struct default_less {
   static bool
   lt(const T &a, const T &b)
   {
@@ -177,7 +177,7 @@ template <typename T> struct default_less {
   }
 };
 
-template <typename T, typename Less = default_less<T>>
+template<typename T, typename Less = default_less<T>>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 class rb_tree
 {
@@ -188,7 +188,7 @@ private:
   node *root_;
   usize size_;
 
-  template <class... Args>
+  template<class... Args>
   static node *
   make_node(Args &&...args)
   {
@@ -401,9 +401,9 @@ private:
   }
 
 public:
-  rb_tree() : root_(nullptr), size_(0) {}
+  rb_tree() : root_(nullptr), size_(0) { }
 
-  rb_tree(const rb_tree &o) : root_(clone_subtree(o.root_, nullptr)), size_(o.size_) {}
+  rb_tree(const rb_tree &o) : root_(clone_subtree(o.root_, nullptr)), size_(o.size_) { }
 
   rb_tree(rb_tree &&o) noexcept : root_(o.root_), size_(o.size_)
   {
@@ -497,7 +497,7 @@ public:
     return m ? &m->data : nullptr;
   }
 
-  template <class U>
+  template<class U>
   T &
   insert_or_assign(U &&value)
   {
@@ -543,7 +543,7 @@ public:
     return insert_or_assign(micron::move(v));
   }
 
-  template <class... Args>
+  template<class... Args>
   T &
   emplace(Args &&...args)
   {
@@ -633,4 +633,4 @@ public:
     size_ = 0;
   }
 };
-};     // namespace micron
+};      // namespace micron

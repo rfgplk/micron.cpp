@@ -1083,14 +1083,14 @@ ceil_f64(__m512d a) noexcept
   return _mm512_ceil_pd(a);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx512 __m512
 roundscale_f32(__m512 a) noexcept
 {
   return _mm512_roundscale_ps(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx512 __m512d
 roundscale_f64(__m512d a) noexcept
 {
@@ -1133,28 +1133,28 @@ convert_i64_to_f64(__m512i a) noexcept
   return _mm512_cvtepi64_pd(a);
 }
 
-template <int SCALE>
+template<int SCALE>
 __inline_avx512 __m512
 gather_f32(__m512i idx, const float *base) noexcept
 {
   return _mm512_i32gather_ps(idx, base, SCALE);
 }
 
-template <int SCALE>
+template<int SCALE>
 __inline_avx512 __m512d
 gather_f64(__m512i idx, const double *base) noexcept
 {
   return _mm512_i64gather_pd(idx, base, SCALE);
 }
 
-template <int SCALE>
+template<int SCALE>
 __inline_avx512 __m512i
 gather_i32(__m512i idx, const int *base) noexcept
 {
   return _mm512_i32gather_epi32(idx, base, SCALE);
 }
 
-template <int SCALE>
+template<int SCALE>
 __inline_avx512 __m512i
 gather_i64(__m512i idx, const long long *base) noexcept
 {
@@ -1167,6 +1167,6 @@ gather_i64(__m512i idx, const long long *base) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace avx512
-};     // namespace simd
-};     // namespace micron
+};      // namespace avx512
+};      // namespace simd
+};      // namespace micron

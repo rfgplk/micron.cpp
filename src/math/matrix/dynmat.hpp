@@ -19,7 +19,7 @@ namespace micron
 namespace math
 {
 
-template <arith_scalar T> struct dynmat {
+template<arith_scalar T> struct dynmat {
   using value_type = T;
   using storage_type = micron::vector<T, micron::allocator_serial<>, false>;
 
@@ -30,9 +30,9 @@ template <arith_scalar T> struct dynmat {
 
   dynmat() noexcept = default;
 
-  dynmat(usize r, usize c) : buf(r * c), rows(r), cols(c), ld(c) {}
+  dynmat(usize r, usize c) : buf(r * c), rows(r), cols(c), ld(c) { }
 
-  dynmat(usize r, usize c, const T &fill) : buf(r * c, fill), rows(r), cols(c), ld(c) {}
+  dynmat(usize r, usize c, const T &fill) : buf(r * c, fill), rows(r), cols(c), ld(c) { }
 
   dynmat(const dynmat &) = default;
   dynmat(dynmat &&) noexcept = default;
@@ -118,7 +118,7 @@ template <arith_scalar T> struct dynmat {
     return m;
   }
 
-  template <usize R, usize C>
+  template<usize R, usize C>
   [[nodiscard]] static dynmat
   from(const mat<T, R, C> &fm)
   {
@@ -128,33 +128,33 @@ template <arith_scalar T> struct dynmat {
   }
 };
 
-template <arith_scalar T>
+template<arith_scalar T>
 [[nodiscard, gnu::always_inline]] inline matrix::row_view<T>
 as_row_view(dynmat<T> &m) noexcept
 {
   return matrix::row_view<T>{ m.data(), m.rows, m.cols, m.ld };
 }
 
-template <arith_scalar T>
+template<arith_scalar T>
 [[nodiscard, gnu::always_inline]] inline matrix::row_view<const T>
 as_row_view(const dynmat<T> &m) noexcept
 {
   return matrix::row_view<const T>{ m.data(), m.rows, m.cols, m.ld };
 }
 
-template <arith_scalar T>
+template<arith_scalar T>
 [[nodiscard, gnu::always_inline]] inline matrix::row_view<T>
 submat_view(dynmat<T> &m, usize r0, usize c0, usize nr, usize nc) noexcept
 {
   return matrix::row_view<T>{ m.data() + r0 * m.ld + c0, nr, nc, m.ld };
 }
 
-template <arith_scalar T>
+template<arith_scalar T>
 [[nodiscard, gnu::always_inline]] inline matrix::row_view<const T>
 submat_view(const dynmat<T> &m, usize r0, usize c0, usize nr, usize nc) noexcept
 {
   return matrix::row_view<const T>{ m.data() + r0 * m.ld + c0, nr, nc, m.ld };
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

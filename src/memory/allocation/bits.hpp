@@ -2,7 +2,7 @@
 
 namespace micron
 {
-template <usize Sz = page_size>
+template<usize Sz = page_size>
 constexpr inline usize
 to_page(usize n)
 {
@@ -10,11 +10,11 @@ to_page(usize n)
   return n;
 }
 
-template <u32 G>
+template<u32 G>
 inline constexpr usize
 to_granularity(usize n)
 {
   if ( n % G != 0 ) n += G - (n % G);
   return n;
 }
-};     // namespace micron
+};      // namespace micron

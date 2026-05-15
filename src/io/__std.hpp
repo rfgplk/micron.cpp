@@ -114,5 +114,5 @@ __closeall_default(void)
 }
 #endif
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

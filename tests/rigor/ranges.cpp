@@ -9,14 +9,14 @@
 // Compile:
 //   c++ -std=c++23 -g -Wall -Wextra -o test_ranges test_ranges.cpp && ./test_ranges
 
-#include "../../src/range.hpp"     // adjust path as needed
+#include "../../src/range.hpp"      // adjust path as needed
 #include "../snowball/snowball.hpp"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Minimal stub container satisfying is_iterable_container
 // ─────────────────────────────────────────────────────────────────────────────
 
-template <typename T, usize N> struct flat_array {
+template<typename T, usize N> struct flat_array {
   using value_type = T;
   using pointer = T *;
   using const_pointer = const T *;

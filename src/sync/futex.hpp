@@ -39,7 +39,7 @@ __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2
   return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);
 }
 
-template <typename T>
+template<typename T>
   requires(sizeof(T) == 4)
 void
 wait_futex(T *ptr, decay_t<T> expected)
@@ -53,7 +53,7 @@ wait_futex(T *ptr, decay_t<T> expected)
   }
 }
 
-template <typename T>
+template<typename T>
   requires(sizeof(T) == 4)
 void
 release_futex(T *ptr, decay_t<T> to_store, u32 cnt = 1)
@@ -62,12 +62,12 @@ release_futex(T *ptr, decay_t<T> to_store, u32 cnt = 1)
   __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, cnt, nullptr, nullptr, 0);
 }
 
-template <typename T = u32, T __D = 1>
+template<typename T = u32, T __D = 1>
   requires(micron::is_integral_v<T>)
 struct futex {
   T __value;
   ~futex() = default;
-  futex(void) : __value(__D) {};
+  futex(void) : __value(__D) { };
   futex(const futex &) = delete;
   futex(futex &&) = delete;
   futex &operator=(const futex &) = delete;
@@ -91,4 +91,4 @@ struct futex {
   }
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -29,7 +29,7 @@ namespace sparse
 
 // y := alpha * A * x + beta * y
 // csc native: walk columns, scatter contributions into y
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 inline void
 spmv(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
@@ -56,7 +56,7 @@ spmv(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noex
 }
 
 // CSC transpose: walk columns as dot products into y[j]
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 inline void
 spmv_transposed(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
@@ -82,7 +82,7 @@ spmv_transposed(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<
 }
 
 // row-wise inner products
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 inline void
 spmv(T alpha, const csr<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
@@ -108,7 +108,7 @@ spmv(T alpha, const csr<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noex
 }
 
 // y := alpha * A * X + beta * Y  (A sparse, X/Y dense)
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 inline void
 spmm(T alpha, const csc<T, I> &A, const dynmat<T> &X, T beta, dynmat<T> &Y) noexcept
 {
@@ -126,7 +126,7 @@ spmm(T alpha, const csc<T, I> &A, const dynmat<T> &X, T beta, dynmat<T> &Y) noex
 
 // C := A * B  (both CSC)
 // Gustavson with dense accumulator
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 [[nodiscard]] inline csc<T, I>
 spgemm(const csc<T, I> &A, const csc<T, I> &B) noexcept
 {
@@ -186,6 +186,6 @@ spgemm(const csc<T, I> &A, const csc<T, I> &B) noexcept
   return C;
 }
 
-};     // namespace sparse
-};     // namespace math
-};     // namespace micron
+};      // namespace sparse
+};      // namespace math
+};      // namespace micron

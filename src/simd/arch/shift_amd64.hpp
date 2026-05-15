@@ -17,7 +17,7 @@ namespace simd
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // byteshifts
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 byte_shift_left(T &o, int imm8)
 {
@@ -32,7 +32,7 @@ byte_shift_left(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 byte_shift_right(T &o, int imm8)
 {
@@ -50,21 +50,21 @@ byte_shift_right(T &o, int imm8)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // shift lefts
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 slli_si(T &o, int imm8)
 {
   return byte_shift_left(o, imm8);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srli_si(T &o, int imm8)
 {
   return byte_shift_right(o, imm8);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sll_16(T &o, i128 count)
 {
@@ -79,7 +79,7 @@ sll_16(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sll_32(T &o, i128 count)
 {
@@ -94,7 +94,7 @@ sll_32(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sll_64(T &o, i128 count)
 {
@@ -109,7 +109,7 @@ sll_64(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sll(T &o, i128 count)
 {
@@ -124,7 +124,7 @@ sll(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 slli_16(T &o, int imm8)
 {
@@ -139,7 +139,7 @@ slli_16(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 slli_32(T &o, int imm8)
 {
@@ -154,7 +154,7 @@ slli_32(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 slli_64(T &o, int imm8)
 {
@@ -169,7 +169,7 @@ slli_64(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 slli(T &o, int imm8)
 {
@@ -184,7 +184,7 @@ slli(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sllv_16(T &o, T &count)
 {
@@ -199,7 +199,7 @@ sllv_16(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sllv_32(T &o, T &count)
 {
@@ -214,7 +214,7 @@ sllv_32(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sllv_64(T &o, T &count)
 {
@@ -229,7 +229,7 @@ sllv_64(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sllv(T &o, T &count)
 {
@@ -247,7 +247,7 @@ sllv(T &o, T &count)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // shift rights
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srl_16(T &o, i128 count)
 {
@@ -262,7 +262,7 @@ srl_16(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srl_32(T &o, i128 count)
 {
@@ -277,7 +277,7 @@ srl_32(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srl_64(T &o, i128 count)
 {
@@ -292,7 +292,7 @@ srl_64(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srl(T &o, i128 count)
 {
@@ -307,7 +307,7 @@ srl(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srli_16(T &o, int imm8)
 {
@@ -322,7 +322,7 @@ srli_16(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srli_32(T &o, int imm8)
 {
@@ -337,7 +337,7 @@ srli_32(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srli_64(T &o, int imm8)
 {
@@ -352,7 +352,7 @@ srli_64(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srli(T &o, int imm8)
 {
@@ -367,7 +367,7 @@ srli(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srlv_16(T &o, T &count)
 {
@@ -382,7 +382,7 @@ srlv_16(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srlv_32(T &o, T &count)
 {
@@ -397,7 +397,7 @@ srlv_32(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srlv_64(T &o, T &count)
 {
@@ -412,7 +412,7 @@ srlv_64(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srlv(T &o, T &count)
 {
@@ -427,7 +427,7 @@ srlv(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sra_16(T &o, i128 count)
 {
@@ -442,7 +442,7 @@ sra_16(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sra_32(T &o, i128 count)
 {
@@ -457,7 +457,7 @@ sra_32(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sra_64(T &o, i128 count)
 {
@@ -472,7 +472,7 @@ sra_64(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sra(T &o, i128 count)
 {
@@ -487,7 +487,7 @@ sra(T &o, i128 count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srai_16(T &o, int imm8)
 {
@@ -502,7 +502,7 @@ srai_16(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srai_32(T &o, int imm8)
 {
@@ -517,7 +517,7 @@ srai_32(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srai_64(T &o, int imm8)
 {
@@ -532,7 +532,7 @@ srai_64(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srai(T &o, int imm8)
 {
@@ -547,7 +547,7 @@ srai(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srav_16(T &o, T &count)
 {
@@ -562,7 +562,7 @@ srav_16(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srav_32(T &o, T &count)
 {
@@ -577,7 +577,7 @@ srav_32(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srav_64(T &o, T &count)
 {
@@ -592,7 +592,7 @@ srav_64(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 srav(T &o, T &count)
 {
@@ -610,7 +610,7 @@ srav(T &o, T &count)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // rotates
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rol_32(T &o, int imm8)
 {
@@ -625,7 +625,7 @@ rol_32(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rol_64(T &o, int imm8)
 {
@@ -640,7 +640,7 @@ rol_64(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rol(T &o, int imm8)
 {
@@ -652,7 +652,7 @@ rol(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rolv_32(T &o, T &count)
 {
@@ -667,7 +667,7 @@ rolv_32(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rolv_64(T &o, T &count)
 {
@@ -682,7 +682,7 @@ rolv_64(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rolv(T &o, T &count)
 {
@@ -694,7 +694,7 @@ rolv(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 ror_32(T &o, int imm8)
 {
@@ -709,7 +709,7 @@ ror_32(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 ror_64(T &o, int imm8)
 {
@@ -724,7 +724,7 @@ ror_64(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 ror(T &o, int imm8)
 {
@@ -736,7 +736,7 @@ ror(T &o, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rorv_32(T &o, T &count)
 {
@@ -751,7 +751,7 @@ rorv_32(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rorv_64(T &o, T &count)
 {
@@ -766,7 +766,7 @@ rorv_64(T &o, T &count)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 rorv(T &o, T &count)
 {
@@ -781,7 +781,7 @@ rorv(T &o, T &count)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // double width shleft
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldi_16(T &a, T &b, int imm8)
 {
@@ -796,7 +796,7 @@ shldi_16(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldi_32(T &a, T &b, int imm8)
 {
@@ -811,7 +811,7 @@ shldi_32(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldi_64(T &a, T &b, int imm8)
 {
@@ -826,7 +826,7 @@ shldi_64(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldi(T &a, T &b, int imm8)
 {
@@ -841,7 +841,7 @@ shldi(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldv_16(T &a, T &b, T &c)
 {
@@ -856,7 +856,7 @@ shldv_16(T &a, T &b, T &c)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldv_32(T &a, T &b, T &c)
 {
@@ -871,7 +871,7 @@ shldv_32(T &a, T &b, T &c)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldv_64(T &a, T &b, T &c)
 {
@@ -886,7 +886,7 @@ shldv_64(T &a, T &b, T &c)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shldv(T &a, T &b, T &c)
 {
@@ -904,7 +904,7 @@ shldv(T &a, T &b, T &c)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // double width shift right
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdi_16(T &a, T &b, int imm8)
 {
@@ -919,7 +919,7 @@ shrdi_16(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdi_32(T &a, T &b, int imm8)
 {
@@ -934,7 +934,7 @@ shrdi_32(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdi_64(T &a, T &b, int imm8)
 {
@@ -949,7 +949,7 @@ shrdi_64(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdi(T &a, T &b, int imm8)
 {
@@ -964,7 +964,7 @@ shrdi(T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdv_16(T &a, T &b, T &c)
 {
@@ -979,7 +979,7 @@ shrdv_16(T &a, T &b, T &c)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdv_32(T &a, T &b, T &c)
 {
@@ -994,7 +994,7 @@ shrdv_32(T &a, T &b, T &c)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdv_64(T &a, T &b, T &c)
 {
@@ -1009,7 +1009,7 @@ shrdv_64(T &a, T &b, T &c)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shrdv(T &a, T &b, T &c)
 {
@@ -1027,7 +1027,7 @@ shrdv(T &a, T &b, T &c)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // masks (avx512ext)
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_slli_16(T &src, M k, T &o, int imm8)
 {
@@ -1042,7 +1042,7 @@ mask_slli_16(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_slli_16(M k, T &o, int imm8)
 {
@@ -1057,7 +1057,7 @@ maskz_slli_16(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_slli_32(T &src, M k, T &o, int imm8)
 {
@@ -1072,7 +1072,7 @@ mask_slli_32(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_slli_32(M k, T &o, int imm8)
 {
@@ -1087,7 +1087,7 @@ maskz_slli_32(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_slli_64(T &src, M k, T &o, int imm8)
 {
@@ -1102,7 +1102,7 @@ mask_slli_64(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_slli_64(M k, T &o, int imm8)
 {
@@ -1117,7 +1117,7 @@ maskz_slli_64(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_srli_16(T &src, M k, T &o, int imm8)
 {
@@ -1132,7 +1132,7 @@ mask_srli_16(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_srli_16(M k, T &o, int imm8)
 {
@@ -1147,7 +1147,7 @@ maskz_srli_16(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_srli_32(T &src, M k, T &o, int imm8)
 {
@@ -1162,7 +1162,7 @@ mask_srli_32(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_srli_32(M k, T &o, int imm8)
 {
@@ -1177,7 +1177,7 @@ maskz_srli_32(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_srli_64(T &src, M k, T &o, int imm8)
 {
@@ -1192,7 +1192,7 @@ mask_srli_64(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_srli_64(M k, T &o, int imm8)
 {
@@ -1207,7 +1207,7 @@ maskz_srli_64(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_srai_16(T &src, M k, T &o, int imm8)
 {
@@ -1222,7 +1222,7 @@ mask_srai_16(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_srai_16(M k, T &o, int imm8)
 {
@@ -1237,7 +1237,7 @@ maskz_srai_16(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_srai_32(T &src, M k, T &o, int imm8)
 {
@@ -1252,7 +1252,7 @@ mask_srai_32(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_srai_32(M k, T &o, int imm8)
 {
@@ -1267,7 +1267,7 @@ maskz_srai_32(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_srai_64(T &src, M k, T &o, int imm8)
 {
@@ -1282,7 +1282,7 @@ mask_srai_64(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_srai_64(M k, T &o, int imm8)
 {
@@ -1297,7 +1297,7 @@ maskz_srai_64(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_rol_32(T &src, M k, T &o, int imm8)
 {
@@ -1312,7 +1312,7 @@ mask_rol_32(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_rol_32(M k, T &o, int imm8)
 {
@@ -1327,7 +1327,7 @@ maskz_rol_32(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_rol_64(T &src, M k, T &o, int imm8)
 {
@@ -1342,7 +1342,7 @@ mask_rol_64(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_rol_64(M k, T &o, int imm8)
 {
@@ -1357,7 +1357,7 @@ maskz_rol_64(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_ror_32(T &src, M k, T &o, int imm8)
 {
@@ -1372,7 +1372,7 @@ mask_ror_32(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_ror_32(M k, T &o, int imm8)
 {
@@ -1387,7 +1387,7 @@ maskz_ror_32(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_ror_64(T &src, M k, T &o, int imm8)
 {
@@ -1402,7 +1402,7 @@ mask_ror_64(T &src, M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_ror_64(M k, T &o, int imm8)
 {
@@ -1417,7 +1417,7 @@ maskz_ror_64(M k, T &o, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_shldi_64(T &src, M k, T &a, T &b, int imm8)
 {
@@ -1432,7 +1432,7 @@ mask_shldi_64(T &src, M k, T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_shldi_64(M k, T &a, T &b, int imm8)
 {
@@ -1447,7 +1447,7 @@ maskz_shldi_64(M k, T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 mask_shrdi_64(T &src, M k, T &a, T &b, int imm8)
 {
@@ -1462,7 +1462,7 @@ mask_shrdi_64(T &src, M k, T &a, T &b, int imm8)
   }
 }
 
-template <is_simd_class T, typename M>
+template<is_simd_class T, typename M>
 inline T
 maskz_shrdi_64(M k, T &a, T &b, int imm8)
 {
@@ -1479,5 +1479,5 @@ maskz_shrdi_64(M k, T &a, T &b, int imm8)
 
 #pragma GCC diagnostic pop
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

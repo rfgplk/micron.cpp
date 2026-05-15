@@ -25,7 +25,7 @@ namespace integrate
 
 enum class quad_status : u32 { ok = 0, max_depth = 1, abnormal = 2 };
 
-template <ieee754_floating F> struct quad_result {
+template<ieee754_floating F> struct quad_result {
   F value{ 0 };
   F abs_err{ 0 };
   usize n_evals{ 0 };
@@ -35,7 +35,7 @@ template <ieee754_floating F> struct quad_result {
 namespace __impl_quad
 {
 
-template <ieee754_floating F, typename Fn>
+template<ieee754_floating F, typename Fn>
 [[gnu::always_inline]] inline void
 gk15_7(Fn &f, F a, F b, F &k_out, F &g_out, usize &n_evals_out) noexcept
 {
@@ -55,12 +55,12 @@ gk15_7(Fn &f, F a, F b, F &k_out, F &g_out, usize &n_evals_out) noexcept
   }
   k_out = half_w * sk;
   g_out = half_w * sg;
-  n_evals_out += 15;     // 1 (centre) + 7 pairs
+  n_evals_out += 15;      // 1 (centre) + 7 pairs
 }
 
-};     // namespace __impl_quad
+};      // namespace __impl_quad
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline quad_result<F>
 quad(Fn f, F a, F b, F abs_tol, F rel_tol, usize max_depth = 50, usize max_func_evals = 0) noexcept
 {
@@ -108,6 +108,6 @@ quad(Fn f, F a, F b, F abs_tol, F rel_tol, usize max_depth = 50, usize max_func_
   return res;
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

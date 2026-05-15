@@ -29,14 +29,14 @@ namespace linalg
 namespace decomp
 {
 
-template <ieee754_floating F> struct bidiag_result_dyn {
+template<ieee754_floating F> struct bidiag_result_dyn {
   dynmat<F> B;
   dynmat<F> U;
   dynmat<F> V;
 };
 
 // A = U x B x V^T where B is upper bidiagonal in the top-left K×K block
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bidiag_result_dyn<F>
 bidiagonalize(const dynmat<F> &A) noexcept
 {
@@ -78,7 +78,7 @@ bidiagonalize(const dynmat<F> &A) noexcept
 namespace __impl_svd_bdc
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline F
 pythag(F a, F b) noexcept
 {
@@ -92,14 +92,14 @@ pythag(F a, F b) noexcept
   return absb * math::fsqrt(F(1) + r * r);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline F
 sgn_copy(F a, F b) noexcept
 {
   return (b >= F(0)) ? math::fabs(a) : -math::fabs(a);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 bidiag_svd_diag(F *__restrict__ d, F *__restrict__ e, usize n, F *__restrict__ U_data, usize U_rows, usize U_ld, F *__restrict__ V_data,
                 usize V_rows, usize V_ld, int max_iter) noexcept
@@ -246,7 +246,7 @@ bidiag_svd_diag(F *__restrict__ d, F *__restrict__ e, usize n, F *__restrict__ U
 }
 
 // Cuppen's algorithm to T = B^T B
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline F
 solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_pad, int max_iter) noexcept
 {
@@ -297,7 +297,7 @@ solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_p
 }
 
 // Cuppen's recursive symmetric tridiagonal D&C
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, int max_iter) noexcept
 {
@@ -405,16 +405,16 @@ cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, 
   return true;
 }
 
-};     // namespace __impl_svd_bdc
+};      // namespace __impl_svd_bdc
 
-template <ieee754_floating F> struct svd_bdc_result_dyn {
+template<ieee754_floating F> struct svd_bdc_result_dyn {
   dynmat<F> U;
   dynvec<F> S;
   dynmat<F> V;
   bool converged;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline svd_bdc_result_dyn<F>
 svd_bdc(const dynmat<F> &A, int max_iter = 60) noexcept
 {
@@ -480,7 +480,7 @@ svd_bdc(const dynmat<F> &A, int max_iter = 60) noexcept
 }
 
 // SVD via Cuppen
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline svd_bdc_result_dyn<F>
 svd_bdc_dnc(const dynmat<F> &A, usize threshold = 16, int max_iter = 60) noexcept
 {
@@ -516,7 +516,7 @@ svd_bdc_dnc(const dynmat<F> &A, usize threshold = 16, int max_iter = 60) noexcep
   // build tridiagonal T = B^T B (C x C symmetric, in d_t and e_t)
   micron::vector<F, micron::allocator_serial<>, false> d_t(K, F(0));
   micron::vector<F, micron::allocator_serial<>, false> e_t(K > 0 ? K - 1 : 0, F(0));
-  micron::vector<F, micron::allocator_serial<>, false> d_b(K, F(0));     // diag of B
+  micron::vector<F, micron::allocator_serial<>, false> d_b(K, F(0));      // diag of B
   micron::vector<F, micron::allocator_serial<>, false> e_b(K > 0 ? K - 1 : 0, F(0));
   for ( usize i = 0; i < K; ++i ) d_b.data()[i] = bd.B.at(i, i);
   for ( usize i = 0; i + 1 < K; ++i ) e_b.data()[i] = bd.B.at(i, i + 1);
@@ -604,7 +604,7 @@ svd_bdc_dnc(const dynmat<F> &A, usize threshold = 16, int max_iter = 60) noexcep
   return r;
 }
 
-};     // namespace decomp
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace decomp
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

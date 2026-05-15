@@ -78,7 +78,7 @@ main()
 
   test_case("axis-angle round-trip");
   {
-    v3 axis{ 0.6, 0.0, 0.8 };     // unit axis
+    v3 axis{ 0.6, 0.0, 0.8 };      // unit axis
     f64 angle = 1.234;
     auto q = quaternions::from_axis_angle(axis, angle);
     require_true(near(q.squared_norm(), 1.0, 1e-12));
@@ -133,8 +133,8 @@ main()
 
   test_case("composition: q1 ⊗ q2 rotates v as q1(q2(v))");
   {
-    auto qz = quaternions::from_axis_angle<f64>(0, 0, 1, 1.5707963267948966);     // 90° z
-    auto qx = quaternions::from_axis_angle<f64>(1, 0, 0, 1.5707963267948966);     // 90° x
+    auto qz = quaternions::from_axis_angle<f64>(0, 0, 1, 1.5707963267948966);      // 90° z
+    auto qx = quaternions::from_axis_angle<f64>(1, 0, 0, 1.5707963267948966);      // 90° x
     auto qzx = quaternions::compose(qz, qx);
     v3 v{ 0, 1, 0 };
     auto r1 = quaternions::rotate(qzx, v);
@@ -148,7 +148,7 @@ main()
   test_case("slerp endpoints + halfway angle");
   {
     auto q0 = quaternions::identity<f64>();
-    auto q1 = quaternions::from_axis_angle<f64>(0, 0, 1, 1.0);     // 1 rad about z
+    auto q1 = quaternions::from_axis_angle<f64>(0, 0, 1, 1.0);      // 1 rad about z
     require_true(near_q(quaternions::slerp(q0, q1, 0.0), q0, 1e-12));
     require_true(near_q(quaternions::slerp(q0, q1, 1.0), q1, 1e-10));
     // Midpoint should be a rotation of 0.5 rad about z.
@@ -210,7 +210,7 @@ main()
   {
     auto q0 = quaternions::from_axis_angle<f64>(0.3, 0.8, -0.5, 0.27);
     v3 omega{ 0.5, -0.2, 0.3 };
-    f64 dt = 0.01;     // |ω·dt| ≈ 6e-3 rad — well inside Taylor regime
+    f64 dt = 0.01;      // |ω·dt| ≈ 6e-3 rad — well inside Taylor regime
     auto q_exact = quaternions::integrate<f64>(q0, omega, dt);
     auto q_taylor = quaternions::integrate_small_angle<f64>(q0, omega, dt);
     require_true(near(q_exact.x, q_taylor.x, 1e-12));
@@ -234,7 +234,7 @@ main()
   {
     auto q0 = quaternions::identity<f64>();
     v3 omega{ 0.6, -0.3, 0.9 };
-    f64 dt = 0.5;     // |ω·dt| ≈ 0.57 rad — Padé[2/2] still very accurate
+    f64 dt = 0.5;      // |ω·dt| ≈ 0.57 rad — Padé[2/2] still very accurate
     auto q_exact = quaternions::integrate<f64>(q0, omega, dt);
     auto q_pade = quaternions::integrate_pade<f64>(q0, omega, dt);
     require_true(near(q_pade.squared_norm(), 1.0, 1e-12));
@@ -272,8 +272,8 @@ main()
 
   test_case("kinematics: log_map_pade vs exact axis-angle for moderate rotation");
   {
-    v3 axis{ 0.6, 0.0, 0.8 };     // unit
-    f64 angle = 0.7;              // ~ 40°, well inside Padé safe region
+    v3 axis{ 0.6, 0.0, 0.8 };      // unit
+    f64 angle = 0.7;               // ~ 40°, well inside Padé safe region
     auto q = quaternions::from_axis_angle(axis, angle);
     auto v = quaternions::log_map_pade<f64>(q);
     require_true(near(v.x, axis.x * angle, 1e-4));
@@ -383,12 +383,12 @@ main()
   test_case("kinematics: integrate dispatches to Taylor for tiny ω·dt without 0/0");
   {
     auto q0 = quaternions::from_axis_angle<f64>(0.6, 0.0, 0.8, 0.5);
-    v3 omega{ 1e-200, 0.0, 0.0 };     // n^2 underflows to 0 in f64; old code's `n2==0` branch returned q
-    f64 dt = 1e-100;                  // |ω|·dt ~ 1e-300 — solidly in the Taylor regime
+    v3 omega{ 1e-200, 0.0, 0.0 };      // n^2 underflows to 0 in f64; old code's `n2==0` branch returned q
+    f64 dt = 1e-100;                   // |ω|·dt ~ 1e-300 — solidly in the Taylor regime
     auto q1 = quaternions::integrate<f64>(q0, omega, dt);
     require_true(q1.all_finite());
     require_true(near(q1.squared_norm(), 1.0, 1e-12));
-    require_true(near_q(q1, q0, 1e-12));     // negligible motion
+    require_true(near_q(q1, q0, 1e-12));      // negligible motion
   }
   end_test_case();
 
@@ -448,7 +448,7 @@ main()
   test_case("algebra: self-aliased multiply(q, q) squares the rotation");
   {
     auto q = quaternions::from_axis_angle<f64>(0, 0, 1, 0.4);
-    auto q2_alias = quaternions::multiply(q, q);     // same reference twice
+    auto q2_alias = quaternions::multiply(q, q);      // same reference twice
     auto q2_ref = quaternions::from_axis_angle<f64>(0, 0, 1, 0.8);
     f64 d = q2_alias.dot(q2_ref);
     if ( d < 0 ) {
@@ -610,7 +610,7 @@ main()
     }
     const f64 drift = qd.squared_norm() - 1.0;
     const f64 abs_drift = drift < 0 ? -drift : drift;
-    require_true(abs_drift > 1e-8 || abs_drift < 8e-12);     // either drifts or stays unit (FMA chains can sometimes be exact)
+    require_true(abs_drift > 1e-8 || abs_drift < 8e-12);      // either drifts or stays unit (FMA chains can sometimes be exact)
   }
   end_test_case();
 
@@ -648,7 +648,7 @@ main()
   //   sign boundaries. We round-trip and re-construct, requiring the
   //   reconstructed quaternion to be equivalent (=q or -q).
 
-  const f64 a0 = 0.4, b0 = 0.27, c0 = -0.31;     // away from gimbal in any sequence
+  const f64 a0 = 0.4, b0 = 0.27, c0 = -0.31;      // away from gimbal in any sequence
 
 #define MICRON_TEST_ROUNDTRIP(ORD)                                                                                                         \
   do {                                                                                                                                     \

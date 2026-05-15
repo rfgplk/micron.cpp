@@ -237,7 +237,7 @@ exp10_f32(f32 x) noexcept
   return exp_f32(y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp(F x) noexcept
 {
@@ -247,7 +247,7 @@ exp(F x) noexcept
     return F(exp_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp2(F x) noexcept
 {
@@ -257,7 +257,7 @@ exp2(F x) noexcept
     return F(exp2_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp10(F x) noexcept
 {
@@ -267,7 +267,7 @@ exp10(F x) noexcept
     return F(exp10_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 expm1(F x) noexcept
 {
@@ -331,9 +331,9 @@ exp_dd_f64_with_special(f64 x, bool *handled) noexcept
   return exp_dd_kernel_f64(x);
 }
 
-};     // namespace exp_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace exp_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

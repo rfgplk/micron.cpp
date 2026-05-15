@@ -103,7 +103,7 @@ cxa_dtor_probe g_cxa_probe;
 
 // --- .fini_array entry (tag 6) -- runs AFTER all atexit/cxa handlers ------
 // Also serves as the verifier: writes the verdict to the process exit code.
-}     // namespace
+}      // namespace
 
 extern "C" void __attribute__((destructor))
 fini_verify(void)

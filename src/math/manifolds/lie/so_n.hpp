@@ -26,7 +26,7 @@ namespace manifolds
 namespace lie
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
   requires(N >= 2)
 struct SOn {
   mat<F, N, N> R;
@@ -80,9 +80,9 @@ struct SOn {
   }
 };
 
-};     // namespace lie
+};      // namespace lie
 
-template <ieee754_floating F, usize N> struct traits<lie::SOn<F, N>> {
+template<ieee754_floating F, usize N> struct traits<lie::SOn<F, N>> {
   using point_type = lie::SOn<F, N>;
   using tangent_type = mat<F, N, N>;
   using scalar_type = F;
@@ -91,6 +91,6 @@ template <ieee754_floating F, usize N> struct traits<lie::SOn<F, N>> {
   static constexpr usize ambient_dim = N * N;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

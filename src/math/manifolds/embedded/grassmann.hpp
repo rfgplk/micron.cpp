@@ -29,7 +29,7 @@ namespace manifolds
 namespace __grassmann_impl
 {
 
-template <ieee754_floating F, usize N, usize P>
+template<ieee754_floating F, usize N, usize P>
 [[nodiscard, gnu::flatten]] inline mat<F, P, P>
 xt_y(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
 {
@@ -43,9 +43,9 @@ xt_y(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
   return M;
 }
 
-};     // namespace __grassmann_impl
+};      // namespace __grassmann_impl
 
-template <ieee754_floating F, usize N, usize P>
+template<ieee754_floating F, usize N, usize P>
   requires(N >= P && P >= 1)
 struct grassmann {
   using value_type = F;
@@ -180,7 +180,7 @@ struct grassmann {
   }
 };
 
-template <ieee754_floating F, usize N, usize P> struct traits<grassmann<F, N, P>> {
+template<ieee754_floating F, usize N, usize P> struct traits<grassmann<F, N, P>> {
   using point_type = mat<F, N, P>;
   using tangent_type = mat<F, N, P>;
   using scalar_type = F;
@@ -189,6 +189,6 @@ template <ieee754_floating F, usize N, usize P> struct traits<grassmann<F, N, P>
   static constexpr usize ambient_dim = N * P;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

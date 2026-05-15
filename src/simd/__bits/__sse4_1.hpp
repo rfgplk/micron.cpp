@@ -199,9 +199,9 @@ _mm_testnzc_si128(__m128i a, __m128i b) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 #define __inject_i(name) using ::micron::simd::__bits::name

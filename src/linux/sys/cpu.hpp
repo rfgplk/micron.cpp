@@ -48,7 +48,7 @@ cpu_bits_size(usize count)
   return ((count + __ncpubits - 1) / __ncpubits) * sizeof(__syscall_ulong_type);
 }
 
-template <usize N> struct __cpu_set_t {
+template<usize N> struct __cpu_set_t {
   micron::constexpr_array<unsigned long, (N + __ncpubits - 1) / __ncpubits> __bits{};
 
   constexpr __cpu_set_t(void) { cpu_zero(); }
@@ -123,7 +123,7 @@ template <usize N> struct __cpu_set_t {
   }
 };
 
-template <usize N> struct __cpu_set_s_t {
+template<usize N> struct __cpu_set_s_t {
   micron::constexpr_array<unsigned long, N> __bits{};
 
   constexpr void
@@ -188,7 +188,7 @@ template <usize N> struct __cpu_set_s_t {
   }
 };
 
-template <usize N = cpu_setsize>
+template<usize N = cpu_setsize>
 constexpr auto
 cpu_alloc()
 {
@@ -198,9 +198,9 @@ cpu_alloc()
 constexpr void
 cpu_free(auto &)
 {
-}     // no-op in constexpr context
+}      // no-op in constexpr context
 
 using cpu_set_t = __cpu_set_t<cpu_setsize>;
 
-}     // namespace posix
-};     // namespace micron
+}      // namespace posix
+};      // namespace micron

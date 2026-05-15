@@ -135,7 +135,7 @@ load_stack_heap_pid(pid_t pid)
 micron::ptr_arr<char *>
 vector_to_argv(const micron::svector<micron::string> &vec)
 {
-  auto argv = micron::unique_arr<char *>(vec.size() + 1);     // for nullptr
+  auto argv = micron::unique_arr<char *>(vec.size() + 1);      // for nullptr
   for ( usize i = 0; i < vec.size(); ++i ) {
     argv[i] = const_cast<char *>(vec[i].c_str());
   }
@@ -145,11 +145,11 @@ vector_to_argv(const micron::svector<micron::string> &vec)
 
 // uses containers rather than PODs, redesigned with spawn_ctx as info
 struct uprocess_t {
-  upid_t pids;     // pid of process
+  upid_t pids;      // pid of process
   micron::sstring<posix::path_max + 1> path;
-  micron::svector<micron::string> argv;     // can be variable, up to cca 2 MiB
+  micron::svector<micron::string> argv;      // can be variable, up to cca 2 MiB
   micron::svector<micron::string> envp;
-  posix::limits_t lims;     // limits of the process, slower to get, but makes handling effortless
+  posix::limits_t lims;      // limits of the process, slower to get, but makes handling effortless
   posix::cpu_set_t affinity;
   int status;
   ~uprocess_t() = default;
@@ -190,13 +190,13 @@ struct uprocess_t {
     posix::get_affinity(pids.pid, affinity);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   uprocess_t(const char *str, Args &&...args)
       : pids{}, path(str), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
   {
   }
 
-  template <typename... Args>
+  template<typename... Args>
   uprocess_t(micron::sstring<posix::path_max + 1> &&o, Args &&...args)
       : pids{}, path(micron::move(o)), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
   {
@@ -214,7 +214,7 @@ struct uprocess_t {
     o.status = 0;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   uprocess_t &
   operator=(uprocess_t &&o)
   {
@@ -246,7 +246,7 @@ struct uprocess_t {
 
 typedef micron::fvector<uprocess_t> process_list_t;
 
-template <is_string... S>
+template<is_string... S>
 process_list_t
 create_processes(S... names)
 {
@@ -255,7 +255,7 @@ create_processes(S... names)
   return p;
 }
 
-template <typename... S>
+template<typename... S>
 process_list_t
 create_processes(S... names)
 {
@@ -280,13 +280,13 @@ run_processes(process_list_t &n)
 }
 
 // implementation of daemon
-template <int Stack = default_stack_size, typename F, typename... Args>
+template<int Stack = default_stack_size, typename F, typename... Args>
   requires micron::is_function_v<F> or micron::is_function_v<micron::remove_pointer_t<F>>
 int
 daemon(F f, Args &&...args)
 {
-  int pid = micron::fork();     // much nicer to do this
-  if ( pid > 0 )                // parent
+  int pid = micron::fork();      // much nicer to do this
+  if ( pid > 0 )                 // parent
     micron::posix::exit(0);
   if ( posix::setsid() < 0 ) exc<except::runtime_error>("micron process daemon failed to create new session");
   // don't change dir
@@ -313,15 +313,15 @@ this_process(void)
 // /proc interface
 
 struct proc_info_t {
-  proc_stat_t stat;              // /proc/PID/stat
-  proc_status_t status;          // /proc/PID/status
-  proc_resource_t resources;     // limits (prlimit64) + rusage approximation
-  ucap_set_t caps;               // capability bitmasks
-  runtime_t runtime;             // [stack] and [heap] addresses from /proc/PID/maps
+  proc_stat_t stat;               // /proc/PID/stat
+  proc_status_t status;           // /proc/PID/status
+  proc_resource_t resources;      // limits (prlimit64) + rusage approximation
+  ucap_set_t caps;                // capability bitmasks
+  runtime_t runtime;              // [stack] and [heap] addresses from /proc/PID/maps
   // Process identity
   pid_t pid;
   pid_t ppid;
-  char exe[posix::path_max + 1];     // resolved /proc/PID/exe symlink
+  char exe[posix::path_max + 1];      // resolved /proc/PID/exe symlink
 };
 
 namespace __impl
@@ -337,7 +337,7 @@ read_exe(pid_t pid, char *buf, usize bufsz)
   if ( n > 0 ) buf[n] = '\0';
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 inline proc_info_t
 get_proc_info(pid_t pid)
@@ -422,7 +422,7 @@ wait_and_collect(pid_t pid)
   return r;
 }
 
-template <is_cap_set Caps>
+template<is_cap_set Caps>
 void
 run_processes(process_list_t &n, const Caps &caps)
 {
@@ -436,7 +436,7 @@ run_processes(process_list_t &n, const Caps &caps)
   }
 }
 
-template <is_limits_set Lims>
+template<is_limits_set Lims>
 void
 run_processes_limited(process_list_t &n, const Lims &lims)
 {
@@ -476,7 +476,7 @@ spawn(uprocess_t &t)
   return err;
 }
 
-template <is_cap_set Caps>
+template<is_cap_set Caps>
 inline int
 spawn(uprocess_t &t, const Caps &caps)
 {
@@ -491,7 +491,7 @@ spawn(uprocess_t &t, const Caps &caps)
   return err;
 }
 
-template <is_limits_set Lims>
+template<is_limits_set Lims>
 inline int
 spawn(uprocess_t &t, const Lims &lims)
 {
@@ -506,7 +506,7 @@ spawn(uprocess_t &t, const Lims &lims)
   return err;
 }
 
-template <is_cap_set Caps, is_limits_set Lims>
+template<is_cap_set Caps, is_limits_set Lims>
 inline int
 spawn(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
@@ -525,7 +525,7 @@ spawn(uprocess_t &t, const Caps &caps, const Lims &lims)
 // executes
 // execute in a new process, don't replace current
 
-template <is_cap_set Caps, bool W = exec_continue>
+template<is_cap_set Caps, bool W = exec_continue>
 status_t
 execute(uprocess_t &t, const Caps &caps)
 {
@@ -536,7 +536,7 @@ execute(uprocess_t &t, const Caps &caps)
   return status;
 }
 
-template <bool W = exec_continue, is_limits_set Lims>
+template<bool W = exec_continue, is_limits_set Lims>
 status_t
 execute(uprocess_t &t, const Lims &lims)
 {
@@ -547,7 +547,7 @@ execute(uprocess_t &t, const Lims &lims)
   return status;
 }
 
-template <bool W = exec_continue, is_cap_set Caps, is_limits_set Lims>
+template<bool W = exec_continue, is_cap_set Caps, is_limits_set Lims>
 status_t
 execute(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
@@ -558,7 +558,7 @@ execute(uprocess_t &t, const Caps &caps, const Lims &lims)
   return status;
 }
 
-template <bool W = exec_continue, is_string T, is_cap_set Caps>
+template<bool W = exec_continue, is_string T, is_cap_set Caps>
 status_t
 execute(const T &t, const Caps &caps)
 {
@@ -569,7 +569,7 @@ execute(const T &t, const Caps &caps)
   return status;
 }
 
-template <bool W = exec_continue, is_string T, is_limits_set Lims>
+template<bool W = exec_continue, is_string T, is_limits_set Lims>
 status_t
 execute(const T &t, const Lims &lims)
 {
@@ -580,7 +580,7 @@ execute(const T &t, const Lims &lims)
   return status;
 }
 
-template <bool W = exec_continue, is_string T, is_cap_set Caps, is_limits_set Lims>
+template<bool W = exec_continue, is_string T, is_cap_set Caps, is_limits_set Lims>
 status_t
 execute(const T &t, const Caps &caps, const Lims &lims)
 {
@@ -591,7 +591,7 @@ execute(const T &t, const Caps &caps, const Lims &lims)
   return status;
 }
 
-template <bool W = exec_continue, is_string T, is_string... R, is_cap_set Caps>
+template<bool W = exec_continue, is_string T, is_string... R, is_cap_set Caps>
 status_t
 execute_with_caps(const T &t, const Caps &caps, const R &...args)
 {
@@ -604,7 +604,7 @@ execute_with_caps(const T &t, const Caps &caps, const R &...args)
   return status;
 }
 
-template <bool W = exec_continue, is_string T, is_string... R, is_limits_set Lims>
+template<bool W = exec_continue, is_string T, is_string... R, is_limits_set Lims>
 status_t
 execute_with_limits(const T &t, const Lims &lims, const R &...args)
 {
@@ -621,7 +621,7 @@ execute_with_limits(const T &t, const Lims &lims, const R &...args)
 // rexecutes
 // replace current image with new proc
 
-template <is_string T, is_cap_set Caps>
+template<is_string T, is_cap_set Caps>
 __attribute__((noreturn)) void
 rexecute(const T &path, const Caps &caps)
 {
@@ -632,7 +632,7 @@ rexecute(const T &path, const Caps &caps)
   __builtin_unreachable();
 }
 
-template <is_cap_set Caps>
+template<is_cap_set Caps>
 __attribute__((noreturn)) void
 rexecute(uprocess_t &t, const Caps &caps)
 {
@@ -645,7 +645,7 @@ rexecute(uprocess_t &t, const Caps &caps)
   __builtin_unreachable();
 }
 
-template <is_limits_set Lims>
+template<is_limits_set Lims>
 __attribute__((noreturn)) void
 rexecute(uprocess_t &t, const Lims &lims)
 {
@@ -658,11 +658,11 @@ rexecute(uprocess_t &t, const Lims &lims)
   __builtin_unreachable();
 }
 
-template <is_cap_set Caps, is_limits_set Lims>
+template<is_cap_set Caps, is_limits_set Lims>
 __attribute__((noreturn)) void
 rexecute(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
-  child_apply_limits(lims);     // limits first
+  child_apply_limits(lims);      // limits first
   apply_caps_child(caps);
   micron::svector<char *> argv;
   argv.push_back(&t.path[0]);
@@ -672,4 +672,4 @@ rexecute(uprocess_t &t, const Caps &caps, const Lims &lims)
   __builtin_unreachable();
 }
 
-};     // namespace micron
+};      // namespace micron

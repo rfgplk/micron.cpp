@@ -32,7 +32,7 @@ namespace micron
 // no bounds checks, destroy_fast (no post-destroy zeroing), SIMD-dispatched
 // arithmetic at compile time, index_sequence unrolled for small N
 // default to 64
-template <is_regular_object T, usize N = 64>
+template<is_regular_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))
 class carray
 {
@@ -94,76 +94,76 @@ class carray
 
   // only prefetch when array spans enough cache lines
   static constexpr bool __use_prefetch = (N * sizeof(T)) > 4096;
-  static constexpr usize __prefetch_dist = 256 / sizeof(T);     // 4 cache lines ahead (64bytes per line usually)
+  static constexpr usize __prefetch_dist = 256 / sizeof(T);      // 4 cache lines ahead (64bytes per line usually)
 
   // index_sequence unroll threshold
   static constexpr usize __unroll_threshold = 32;
   static constexpr bool __use_unroll = !__use_simd && N <= __unroll_threshold;
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_add_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[I] += v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_sub_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[I] -= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_mul_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[I] *= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_div_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[I] /= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_mod_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[I] %= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_add_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[I] += src[I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_sub_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[I] -= src[I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_mul_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[I] *= src[I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_div_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[I] /= src[I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __ur_mod_array(const T *__restrict src, micron::index_sequence<I...>)
   {
@@ -171,56 +171,56 @@ class carray
   }
 
   // scalar tails
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_add_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] += v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_sub_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] -= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_mul_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] *= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_div_scalar(const T &v, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] /= v), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_add_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] += src[__vbulk + I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_sub_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] -= src[__vbulk + I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_mul_array(const T *__restrict src, micron::index_sequence<I...>)
   {
     ((stack[__vbulk + I] *= src[__vbulk + I]), ...);
   }
 
-  template <usize... I>
+  template<usize... I>
   inline __attribute__((always_inline)) void
   __tail_div_array(const T *__restrict src, micron::index_sequence<I...>)
   {
@@ -380,7 +380,7 @@ class carray
     if constexpr ( __vtail > 0 ) __tail_div_scalar(scalar, micron::make_index_sequence<__vtail>{});
   }
 
-  template <usize M>
+  template<usize M>
   inline __attribute__((always_inline)) void
   __v_add_elements(const T *__restrict src)
   {
@@ -420,7 +420,7 @@ class carray
       for ( usize i = bulk; i < M; i++ ) stack[i] += src[i];
   }
 
-  template <usize M>
+  template<usize M>
   inline __attribute__((always_inline)) void
   __v_sub_elements(const T *__restrict src)
   {
@@ -460,7 +460,7 @@ class carray
       for ( usize i = bulk; i < M; i++ ) stack[i] -= src[i];
   }
 
-  template <usize M>
+  template<usize M>
   inline __attribute__((always_inline)) void
   __v_mul_elements(const T *__restrict src)
   {
@@ -501,7 +501,7 @@ class carray
       for ( usize i = bulk; i < M; i++ ) stack[i] *= src[i];
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_add(const U &v)
   {
@@ -524,7 +524,7 @@ class carray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_sub(const U &v)
   {
@@ -547,7 +547,7 @@ class carray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_mul(const U &v)
   {
@@ -570,7 +570,7 @@ class carray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_div(const U &v)
   {
@@ -593,7 +593,7 @@ class carray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_mod(const U &v)
   {
@@ -662,7 +662,7 @@ public:
 
   carray() { __impl_container::construct<N, T>(micron::addr(stack[0]), T{}); }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   carray(Fn &&fn)
   {
@@ -670,7 +670,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   carray(Fn &&fn)
   {
@@ -688,7 +688,7 @@ public:
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, carray>)
   carray(A &&o)
   {
@@ -699,7 +699,7 @@ public:
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
 
-  template <class C> carray(const slice<T, C> &o)
+  template<class C> carray(const slice<T, C> &o)
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
@@ -841,28 +841,28 @@ public:
     return stack[i];
   }
 
-  template <class C>
+  template<class C>
   inline slice<T, C>
   operator[]()
   {
     return slice<T, C>(begin(), end());
   }
 
-  template <class C>
+  template<class C>
   inline const slice<T, C>
   operator[]() const
   {
     return slice<T, C>(cbegin(), cend());
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) const slice<T, C>
   operator[](size_type from, size_type to) const
   {
     return slice<T, C>(get(from), get(to));
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) slice<T, C>
   operator[](size_type from, size_type to)
   {
@@ -884,7 +884,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // assignment
 
-  template <typename F, size_type M>
+  template<typename F, size_type M>
   carray &
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
@@ -893,7 +893,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   carray &
   operator=(const F &o)
     requires micron::is_fundamental_v<F>
@@ -902,7 +902,7 @@ public:
     return *this;
   }
 
-  template <is_constexpr_container A>
+  template<is_constexpr_container A>
   carray &
   operator=(const A &o)
   {
@@ -913,7 +913,7 @@ public:
     return *this;
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, carray>)
   carray &
   operator=(const A &o)
@@ -942,7 +942,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // binary arithmetic
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray
   operator+(const carray<T, M> &o) const
@@ -952,7 +952,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray
   operator-(const carray<T, M> &o) const
@@ -962,7 +962,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray
   operator*(const carray<T, M> &o) const
@@ -972,7 +972,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray
   operator/(const carray<T, M> &o) const
@@ -989,7 +989,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) carray
   operator%(const carray<T, M> &o) const
@@ -1078,7 +1078,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // compound assignments
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray &
   operator+=(const carray<T, M> &o)
@@ -1087,7 +1087,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray &
   operator-=(const carray<T, M> &o)
@@ -1096,7 +1096,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray &
   operator*=(const carray<T, M> &o)
@@ -1105,7 +1105,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) carray &
   operator/=(const carray<T, M> &o)
@@ -1121,7 +1121,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) carray &
   operator%=(const carray<T, M> &o)
@@ -1198,7 +1198,7 @@ public:
     for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
   }
 
-  template <typename F>
+  template<typename F>
   carray &
   fill(const F &o)
     requires micron::is_fundamental_v<F>
@@ -1207,7 +1207,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   carray &
   fill(const F &o)
   {
@@ -1240,4 +1240,4 @@ public:
 #undef __carray_dispatch_array
 };
 
-};     // namespace micron
+};      // namespace micron

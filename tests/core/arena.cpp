@@ -64,7 +64,7 @@ main(void)
         for ( ;; ) {
         };
         return 0;
-      });     // throws because console isn't ts, fix it
+      });      // throws because console isn't ts, fix it
     }
     arena.join_all();
   }
@@ -79,7 +79,7 @@ main(void)
             mc::console(x);
             return 0;
           },
-          i);     // throws because console isn't ts, fix it
+          i);      // throws because console isn't ts, fix it
     }
     arena.join_all();
   }

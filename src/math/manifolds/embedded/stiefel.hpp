@@ -29,7 +29,7 @@ namespace manifolds
 namespace __stiefel_impl
 {
 
-template <ieee754_floating F, usize N, usize P>
+template<ieee754_floating F, usize N, usize P>
 [[nodiscard, gnu::flatten]] inline mat<F, P, P>
 xt_v(const mat<F, N, P> &X, const mat<F, N, P> &V) noexcept
 {
@@ -43,7 +43,7 @@ xt_v(const mat<F, N, P> &X, const mat<F, N, P> &V) noexcept
   return M;
 }
 
-template <ieee754_floating F, usize N, usize P>
+template<ieee754_floating F, usize N, usize P>
 [[nodiscard]] inline mat<F, N, P>
 mgs(const mat<F, N, P> &A) noexcept
 {
@@ -65,9 +65,9 @@ mgs(const mat<F, N, P> &A) noexcept
   return Q;
 }
 
-};     // namespace __stiefel_impl
+};      // namespace __stiefel_impl
 
-template <ieee754_floating F, usize N, usize P>
+template<ieee754_floating F, usize N, usize P>
   requires(N >= P && P >= 1)
 struct stiefel {
   using value_type = F;
@@ -169,8 +169,8 @@ struct stiefel {
     // tr(Uᵀ V) − ½ tr((Uᵀ X)(Xᵀ V))
     F t1 = F(0);
     for ( usize i = 0; i < N * P; ++i ) t1 = math::fma<F>(U.data[i], V.data[i], t1);
-    auto UtX = __stiefel_impl::xt_v<F, N, P>(U, X);     // U^T X : P×P
-    auto XtV = __stiefel_impl::xt_v<F, N, P>(X, V);     // X^T V : P×P
+    auto UtX = __stiefel_impl::xt_v<F, N, P>(U, X);      // U^T X : P×P
+    auto XtV = __stiefel_impl::xt_v<F, N, P>(X, V);      // X^T V : P×P
     F t2 = F(0);
     for ( usize i = 0; i < P; ++i )
       for ( usize j = 0; j < P; ++j ) t2 = math::fma<F>(UtX.data[i * P + j], XtV.data[j * P + i], t2);
@@ -207,7 +207,7 @@ struct stiefel {
   }
 };
 
-template <ieee754_floating F, usize N, usize P> struct traits<stiefel<F, N, P>> {
+template<ieee754_floating F, usize N, usize P> struct traits<stiefel<F, N, P>> {
   using point_type = mat<F, N, P>;
   using tangent_type = mat<F, N, P>;
   using scalar_type = F;
@@ -216,6 +216,6 @@ template <ieee754_floating F, usize N, usize P> struct traits<stiefel<F, N, P>> 
   static constexpr usize ambient_dim = N * P;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

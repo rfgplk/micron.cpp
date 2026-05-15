@@ -129,7 +129,7 @@ main()
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   test_case("bspline: build_info reports invalid_argument on bad sizes");
   {
-    f64 knots[5] = { 0, 0, 0, 1, 1 };     // wrong size for n_ctrl=4 deg=3 (need 8)
+    f64 knots[5] = { 0, 0, 0, 1, 1 };      // wrong size for n_ctrl=4 deg=3 (need 8)
     f64 ctrl[4] = { 0, 1, 2, 3 };
     build_info<f64> info{};
     auto s = make_bspline_from_ctrl<f64>(raw_slice<const f64>(knots, 5), raw_slice<const f64>(ctrl, 4), 3, &info);
@@ -219,7 +219,7 @@ main()
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   test_case("bspline interpolation: rejects non-monotonic xs");
   {
-    f64 xs[5] = { 0, 1, 0.5, 2, 3 };     // non-monotone
+    f64 xs[5] = { 0, 1, 0.5, 2, 3 };      // non-monotone
     f64 ys[5] = { 1, 2, 3, 4, 5 };
     build_info<f64> info{};
     auto s = make_bspline_interpolating<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5), 3, &info);

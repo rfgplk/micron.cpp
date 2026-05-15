@@ -140,7 +140,7 @@ cpu_set_performance_all()
   return posix::sysfs::cpu::set_performance_all(cpu_count());
 }
 
-template <bool D = false> class cpu_t : public scheduler_t
+template<bool D = false> class cpu_t: public scheduler_t
 {
   pid_t pid;
   posix::cpu_set_t procs;
@@ -151,7 +151,7 @@ public:
   {
     if constexpr ( D ) {
       for ( usize i = 0; i <= count; i++ ) procs.cpu_set(i);
-    }     // default to all threads
+    }      // default to all threads
   }
 
   bool
@@ -609,20 +609,20 @@ inline cpu_vendor
 __map_vendor(char v)
 {
   switch ( v ) {
-  case GenuineIntel :
+  case GenuineIntel:
     return cpu_vendor::intel;
-  case AuthenticAMD :
+  case AuthenticAMD:
     return cpu_vendor::amd;
-  case CentaurHauls :
+  case CentaurHauls:
     return cpu_vendor::centaur;
-  case CyrixInstead :
+  case CyrixInstead:
     return cpu_vendor::cyrix;
-  case TransmetaCPU :
-  case GenuineTMx86 :
+  case TransmetaCPU:
+  case GenuineTMx86:
     return cpu_vendor::transmeta;
-  case VIA_VIA_VIA_ :
+  case VIA_VIA_VIA_:
     return cpu_vendor::via;
-  default :
+  default:
     return cpu_vendor::unknown;
   }
 }
@@ -736,33 +736,33 @@ inline cpu_vendor
 __map_vendor(char v)
 {
   switch ( (unsigned char)v ) {
-  case IMPL_ARM :
+  case IMPL_ARM:
     return cpu_vendor::arm_ltd;
-  case IMPL_BROADCOM :
+  case IMPL_BROADCOM:
     return cpu_vendor::broadcom;
-  case IMPL_CAVIUM :
+  case IMPL_CAVIUM:
     return cpu_vendor::cavium;
-  case IMPL_FUJITSU :
+  case IMPL_FUJITSU:
     return cpu_vendor::fujitsu;
-  case IMPL_HISILICON :
+  case IMPL_HISILICON:
     return cpu_vendor::hisilicon;
-  case IMPL_NVIDIA :
+  case IMPL_NVIDIA:
     return cpu_vendor::nvidia;
-  case IMPL_QUALCOMM :
+  case IMPL_QUALCOMM:
     return cpu_vendor::qualcomm;
-  case IMPL_SAMSUNG :
+  case IMPL_SAMSUNG:
     return cpu_vendor::samsung;
-  case IMPL_APPLE :
+  case IMPL_APPLE:
     return cpu_vendor::apple;
-  case IMPL_MARVELL :
+  case IMPL_MARVELL:
     return cpu_vendor::marvell;
-  case IMPL_AMPERE :
+  case IMPL_AMPERE:
     return cpu_vendor::ampere;
-  case IMPL_MICROSOFT :
+  case IMPL_MICROSOFT:
     return cpu_vendor::microsoft;
-  case IMPL_PHYTIUM :
+  case IMPL_PHYTIUM:
     return cpu_vendor::phytium;
-  default :
+  default:
     return cpu_vendor::unknown;
   }
 }
@@ -789,7 +789,7 @@ __fill_caches(const processor_t &raw, core_info_t *cores, int n)
 
 #endif
 
-};     // namespace __impl
+};      // namespace __impl
 
 // NOTE: this class is huge (70KB roughly)
 // use with caution
@@ -1193,4 +1193,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

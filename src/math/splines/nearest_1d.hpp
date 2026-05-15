@@ -25,14 +25,14 @@ namespace math
 namespace splines
 {
 
-template <ieee754_floating F> struct nearest_1d {
+template<ieee754_floating F> struct nearest_1d {
   vector<F> xs;
   vector<F> ys;
   mutable usize last_hit{ 0 };
   extrap mode{ extrap::clamp_to_endpoints };
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline nearest_1d<F>
 make_nearest(raw_slice<const F> xs, raw_slice<const F> ys, build_info<F> *info = nullptr) noexcept
 {
@@ -60,7 +60,7 @@ make_nearest(raw_slice<const F> xs, raw_slice<const F> ys, build_info<F> *info =
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 evaluate(const nearest_1d<F> &s, F x) noexcept
 {
@@ -83,13 +83,13 @@ evaluate(const nearest_1d<F> &s, F x) noexcept
   return ((x + x) < (xs[i] + xs[i + 1])) ? ys[i] : ys[i + 1];
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 evaluate(const nearest_1d<F> &s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
 {
   for ( usize i = 0; i < n; ++i ) out[i] = evaluate<F>(s, xq[i]);
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

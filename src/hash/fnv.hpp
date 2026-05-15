@@ -9,7 +9,7 @@
 
 namespace micron
 {
-template <u32 seed>
+template<u32 seed>
 u32
 fnv_32(const byte *data, usize sz)
 {
@@ -31,4 +31,4 @@ fnv_32(const byte *data, u32 seed, usize sz)
   }
   return static_cast<u32>(hash);
 }
-}     // namespace micron
+}      // namespace micron

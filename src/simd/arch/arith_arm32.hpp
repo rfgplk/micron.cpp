@@ -15,13 +15,13 @@ namespace simd
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 
-template <typename T>
+template<typename T>
 concept is_neon_simd_class = requires {
   typename T::bit_width;
   typename T::lane_width;
 };
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 __attribute__((always_inline)) static inline typename T::bit_width
 __r(T &v) noexcept
 {
@@ -49,28 +49,28 @@ __r(T &v) noexcept
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bitwise
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avx_and(T &o, T &b)
 {
   return vandq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avx_andnot(T &o, T &b)
 {
   return vbicq_s32(__r(b), __r(o));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avx_or(T &o, T &b)
 {
   return vorrq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avx_xor(T &o, T &b)
 {
@@ -80,28 +80,28 @@ avx_xor(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // shifts
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftleft_16(T &o, int b)
 {
   return _ri16r(vshlq_s16(_ri16(__r(o)), vdupq_n_s16(static_cast<int16_t>(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftleft_32(T &o, int b)
 {
   return vshlq_s32(__r(o), vdupq_n_s32(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftleft_64(T &o, int b)
 {
   return _ri64r(vshlq_s64(_ri64(__r(o)), vdupq_n_s64(static_cast<int64_t>(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shift_left(T &o, int b)
 {
@@ -110,28 +110,28 @@ shift_left(T &o, int b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shiftleft_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftright_logical_16(T &o, int b)
 {
   return _ru16r(vshlq_u16(_ru16(__r(o)), vdupq_n_s16(static_cast<int16_t>(-b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftright_logical_32(T &o, int b)
 {
   return _ru32r(vshlq_u32(_ru32(__r(o)), vdupq_n_s32(-b)));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftright_logical_64(T &o, int b)
 {
   return _ru64r(vshlq_u64(_ru64(__r(o)), vdupq_n_s64(static_cast<int64_t>(-b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shift_right_logical(T &o, int b)
 {
@@ -140,21 +140,21 @@ shift_right_logical(T &o, int b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shiftright_logical_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftright_arithmetic_16(T &o, int b)
 {
   return _ri16r(vshlq_s16(_ri16(__r(o)), vdupq_n_s16(static_cast<int16_t>(-b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shiftright_arithmetic_32(T &o, int b)
 {
   return vshlq_s32(__r(o), vdupq_n_s32(-b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 shift_right_arithmetic(T &o, int b)
 {
@@ -165,35 +165,35 @@ shift_right_arithmetic(T &o, int b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // addition
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 add_8(T &o, T &b)
 {
   return _ri8r(vaddq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 add_16(T &o, T &b)
 {
   return _ri16r(vaddq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 add_32(T &o, T &b)
 {
   return vaddq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 add_64(T &o, T &b)
 {
   return _ri64r(vaddq_s64(_ri64(__r(o)), _ri64(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 add(T &o, T &b)
 {
@@ -203,21 +203,21 @@ add(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return add_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 adds_8(T &o, T &b)
 {
   return _ri8r(vqaddq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 adds_16(T &o, T &b)
 {
   return _ri16r(vqaddq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 adds(T &o, T &b)
 {
@@ -225,21 +225,21 @@ adds(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return adds_16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 adds_u8(T &o, T &b)
 {
   return _ru8r(vqaddq_u8(_ru8(__r(o)), _ru8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 adds_u16(T &o, T &b)
 {
   return _ru16r(vqaddq_u16(_ru16(__r(o)), _ru16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 adds_unsigned(T &o, T &b)
 {
@@ -247,35 +247,35 @@ adds_unsigned(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return adds_u16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sub_8(T &o, T &b)
 {
   return _ri8r(vsubq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sub_16(T &o, T &b)
 {
   return _ri16r(vsubq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sub_32(T &o, T &b)
 {
   return vsubq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sub_64(T &o, T &b)
 {
   return _ri64r(vsubq_s64(_ri64(__r(o)), _ri64(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sub(T &o, T &b)
 {
@@ -285,21 +285,21 @@ sub(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sub_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 subs_8(T &o, T &b)
 {
   return _ri8r(vqsubq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 subs_16(T &o, T &b)
 {
   return _ri16r(vqsubq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 subs(T &o, T &b)
 {
@@ -307,21 +307,21 @@ subs(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return subs_16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 subs_u8(T &o, T &b)
 {
   return _ru8r(vqsubq_u8(_ru8(__r(o)), _ru8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 subs_u16(T &o, T &b)
 {
   return _ru16r(vqsubq_u16(_ru16(__r(o)), _ru16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 subs_unsigned(T &o, T &b)
 {
@@ -329,7 +329,7 @@ subs_unsigned(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return subs_u16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hadd_16(T &o, T &b)
 {
@@ -337,7 +337,7 @@ hadd_16(T &o, T &b)
   return _ri16r(vaddq_s16(uzp.val[0], uzp.val[1]));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hadd_32(T &o, T &b)
 {
@@ -345,7 +345,7 @@ hadd_32(T &o, T &b)
   return vaddq_s32(uzp.val[0], uzp.val[1]);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hadd(T &o, T &b)
 {
@@ -353,7 +353,7 @@ hadd(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return hadd_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hadds_16(T &o, T &b)
 {
@@ -361,7 +361,7 @@ hadds_16(T &o, T &b)
   return _ri16r(vqaddq_s16(uzp.val[0], uzp.val[1]));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hsub_16(T &o, T &b)
 {
@@ -369,7 +369,7 @@ hsub_16(T &o, T &b)
   return _ri16r(vsubq_s16(uzp.val[0], uzp.val[1]));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hsub_32(T &o, T &b)
 {
@@ -377,7 +377,7 @@ hsub_32(T &o, T &b)
   return vsubq_s32(uzp.val[0], uzp.val[1]);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hsub(T &o, T &b)
 {
@@ -385,7 +385,7 @@ hsub(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return hsub_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 hsubs_16(T &o, T &b)
 {
@@ -396,28 +396,28 @@ hsubs_16(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // muls
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mullo_16(T &o, T &b)
 {
   return _ri16r(vmulq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mullo_32(T &o, T &b)
 {
   return vmulq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mullo_64(T &, T &)
 {
   static_assert(!micron::is_same_v<T, T>, "mullo_64: no hardware vmulq_s64 on NEON");
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mullo(T &o, T &b)
 {
@@ -426,7 +426,7 @@ mullo(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return mullo_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mulhi_16(T &o, T &b)
 {
@@ -436,14 +436,14 @@ mulhi_16(T &o, T &b)
   return _ri16r(vcombine_s16(lo, hi));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mulhi(T &o, T &b)
 {
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return mulhi_16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mulhi_u16(T &o, T &b)
 {
@@ -453,14 +453,14 @@ mulhi_u16(T &o, T &b)
   return _ru16r(vcombine_u16(lo, hi));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mulhi_unsigned(T &o, T &b)
 {
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return mulhi_u16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mul_32_64(T &o, T &b)
 {
@@ -469,7 +469,7 @@ mul_32_64(T &o, T &b)
   return _ri64r(vmull_s32(a_uzp.val[0], b_uzp.val[0]));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 mul_u32_64(T &o, T &b)
 {
@@ -478,7 +478,7 @@ mul_u32_64(T &o, T &b)
   return _ru64r(vmull_u32(a_uzp.val[0], b_uzp.val[0]));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 madd_16(T &o, T &b)
 {
@@ -490,14 +490,14 @@ madd_16(T &o, T &b)
   return vcombine_s32(lo_r, hi_r);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 madd(T &o, T &b)
 {
   if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return madd_16(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 maddubs_8(T &o, T &b)
 {
@@ -514,7 +514,7 @@ maddubs_8(T &o, T &b)
   return _ri16r(vcombine_s16(vqadd_s16(lo_uzp.val[0], lo_uzp.val[1]), vqadd_s16(hi_uzp.val[0], hi_uzp.val[1])));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 maddubs(T &o, T &b)
 {
@@ -524,21 +524,21 @@ maddubs(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // avgs
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avg_u8(T &o, T &b)
 {
   return _ru8r(vrhaddq_u8(_ru8(__r(o)), _ru8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avg_u16(T &o, T &b)
 {
   return _ru16r(vrhaddq_u16(_ru16(__r(o)), _ru16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 avg_unsigned(T &o, T &b)
 {
@@ -549,7 +549,7 @@ avg_unsigned(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // signs
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sign_8(T &o, T &b)
 {
@@ -559,7 +559,7 @@ sign_8(T &o, T &b)
   return _ri8r(vorrq_s8(vandq_s8(a, vreinterpretq_s8_u8(b_pos)), vandq_s8(vnegq_s8(a), vreinterpretq_s8_u8(b_neg))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sign_16(T &o, T &b)
 {
@@ -569,7 +569,7 @@ sign_16(T &o, T &b)
   return _ri16r(vorrq_s16(vandq_s16(a, vreinterpretq_s16_u16(b_pos)), vandq_s16(vnegq_s16(a), vreinterpretq_s16_u16(b_neg))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sign_32(T &o, T &b)
 {
@@ -579,7 +579,7 @@ sign_32(T &o, T &b)
   return vorrq_s32(vandq_s32(a, vreinterpretq_s32_u32(b_pos)), vandq_s32(vnegq_s32(a), vreinterpretq_s32_u32(b_neg)));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sign(T &o, T &b)
 {
@@ -588,28 +588,28 @@ sign(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sign_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_8(T &o, T &b)
 {
   return _ri8r(vminq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_16(T &o, T &b)
 {
   return _ri16r(vminq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_32(T &o, T &b)
 {
   return vminq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min(T &o, T &b)
 {
@@ -618,28 +618,28 @@ min(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return min_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_u8(T &o, T &b)
 {
   return _ru8r(vminq_u8(_ru8(__r(o)), _ru8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_u16(T &o, T &b)
 {
   return _ru16r(vminq_u16(_ru16(__r(o)), _ru16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_u32(T &o, T &b)
 {
   return _ru32r(vminq_u32(_ru32(__r(o)), _ru32(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 min_unsigned(T &o, T &b)
 {
@@ -648,28 +648,28 @@ min_unsigned(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return min_u32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_8(T &o, T &b)
 {
   return _ri8r(vmaxq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_16(T &o, T &b)
 {
   return _ri16r(vmaxq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_32(T &o, T &b)
 {
   return vmaxq_s32(__r(o), __r(b));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max(T &o, T &b)
 {
@@ -678,28 +678,28 @@ max(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return max_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_u8(T &o, T &b)
 {
   return _ru8r(vmaxq_u8(_ru8(__r(o)), _ru8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_u16(T &o, T &b)
 {
   return _ru16r(vmaxq_u16(_ru16(__r(o)), _ru16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_u32(T &o, T &b)
 {
   return _ru32r(vmaxq_u32(_ru32(__r(o)), _ru32(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 max_unsigned(T &o, T &b)
 {
@@ -708,28 +708,28 @@ max_unsigned(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return max_u32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 abs_8(T &o)
 {
   return _ri8r(vabsq_s8(_ri8(__r(o))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 abs_16(T &o)
 {
   return _ri16r(vabsq_s16(_ri16(__r(o))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 abs_32(T &o)
 {
   return vabsq_s32(__r(o));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 abs(T &o)
 {
@@ -738,7 +738,7 @@ abs(T &o)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return abs_32(o);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 sad_u8(T &o, T &b)
 {
@@ -749,28 +749,28 @@ sad_u8(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cmps
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpeq_8(T &o, T &b)
 {
   return _ru8r(vceqq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpeq_16(T &o, T &b)
 {
   return _ru16r(vceqq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpeq_32(T &o, T &b)
 {
   return _ru32r(vceqq_s32(__r(o), __r(b)));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpeq_64(T &o, T &b)
 {
@@ -778,7 +778,7 @@ cmpeq_64(T &o, T &b)
   return _ru32r(neon_v7_ceqq_s64(_ri64(__r(o)), _ri64(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpeq(T &o, T &b)
 {
@@ -788,28 +788,28 @@ cmpeq(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return cmpeq_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpgt_8(T &o, T &b)
 {
   return _ru8r(vcgtq_s8(_ri8(__r(o)), _ri8(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpgt_16(T &o, T &b)
 {
   return _ru16r(vcgtq_s16(_ri16(__r(o)), _ri16(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpgt_32(T &o, T &b)
 {
   return _ru32r(vcgtq_s32(__r(o), __r(b)));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpgt_64(T &o, T &b)
 {
@@ -817,7 +817,7 @@ cmpgt_64(T &o, T &b)
   return _ru32r(neon_v7_cgtq_s64(_ri64(__r(o)), _ri64(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 cmpgt(T &o, T &b)
 {
@@ -830,21 +830,21 @@ cmpgt(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // packs
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 packs_16(T &o, T &b)
 {
   return _ri8r(vcombine_s8(vqmovn_s16(_ri16(__r(o))), vqmovn_s16(_ri16(__r(b)))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 packs_32(T &o, T &b)
 {
   return _ri16r(vcombine_s16(vqmovn_s32(__r(o)), vqmovn_s32(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 packs(T &o, T &b)
 {
@@ -852,21 +852,21 @@ packs(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return packs_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 packus_16(T &o, T &b)
 {
   return _ru8r(vcombine_u8(vqmovun_s16(_ri16(__r(o))), vqmovun_s16(_ri16(__r(b)))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 packus_32(T &o, T &b)
 {
   return _ru16r(vcombine_u16(vqmovun_s32(__r(o)), vqmovun_s32(__r(b))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 packus(T &o, T &b)
 {
@@ -874,35 +874,35 @@ packus(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return packus_32(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpacklo_8(T &o, T &b)
 {
   return _ri8r(vzipq_s8(_ri8(__r(o)), _ri8(__r(b))).val[0]);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpacklo_16(T &o, T &b)
 {
   return _ri16r(vzipq_s16(_ri16(__r(o)), _ri16(__r(b))).val[0]);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpacklo_32(T &o, T &b)
 {
   return vzipq_s32(__r(o), __r(b)).val[0];
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpacklo_64(T &o, T &b)
 {
   return _ri64r(vcombine_s64(vget_low_s64(_ri64(__r(o))), vget_low_s64(_ri64(__r(b)))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpacklo(T &o, T &b)
 {
@@ -912,35 +912,35 @@ unpacklo(T &o, T &b)
   if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return unpacklo_64(o, b);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpackhi_8(T &o, T &b)
 {
   return _ri8r(vzipq_s8(_ri8(__r(o)), _ri8(__r(b))).val[1]);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpackhi_16(T &o, T &b)
 {
   return _ri16r(vzipq_s16(_ri16(__r(o)), _ri16(__r(b))).val[1]);
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpackhi_32(T &o, T &b)
 {
   return vzipq_s32(__r(o), __r(b)).val[1];
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpackhi_64(T &o, T &b)
 {
   return _ri64r(vcombine_s64(vget_high_s64(_ri64(__r(o))), vget_high_s64(_ri64(__r(b)))));
 }
 
-template <is_neon_simd_class T>
+template<is_neon_simd_class T>
 inline T
 unpackhi(T &o, T &b)
 {
@@ -967,7 +967,7 @@ unpackhi(T &o, T &b)
 #undef _ru32r
 #undef _ru64r
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron
 
 #pragma GCC diagnostic pop

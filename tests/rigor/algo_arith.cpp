@@ -72,7 +72,7 @@ main()
   test_case("pow - container overload (double base, double exp)");
   {
     micron::vector<double> v{ 2.0, 4.0, 8.0 };
-    micron::pow(v, 0.5);     // square root
+    micron::pow(v, 0.5);      // square root
     require_true(near(v[0], 1.41421356));
     require_true(near(v[1], 2.0));
     require_true(near(v[2], 2.82842712));
@@ -571,8 +571,8 @@ main()
   test_case("pow then divide recovers original (perfect square roots)");
   {
     auto v = dvec({ 1.0, 4.0, 9.0, 16.0, 25.0 });
-    micron::pow(v, 0.5);     // sqrt
-    micron::pow(v, 2.0);     // square again
+    micron::pow(v, 0.5);      // sqrt
+    micron::pow(v, 2.0);      // square again
     double expected[] = { 1.0, 4.0, 9.0, 16.0, 25.0 };
     for ( int i = 0; i < 5; ++i ) require_true(near(v[i], expected[i], 1e-5));
   }
@@ -581,10 +581,10 @@ main()
   test_case("chained scalar ops on array");
   {
     micron::array<int, 4> a{ 2, 4, 6, 8 };
-    micron::add(a, 2);          // { 4,  6,  8, 10 }
-    micron::multiply(a, 3);     // {12, 18, 24, 30 }
-    micron::subtract(a, 6);     // { 6, 12, 18, 24 }
-    micron::divide(a, 6);       // { 1,  2,  3,  4 }
+    micron::add(a, 2);           // { 4,  6,  8, 10 }
+    micron::multiply(a, 3);      // {12, 18, 24, 30 }
+    micron::subtract(a, 6);      // { 6, 12, 18, 24 }
+    micron::divide(a, 6);        // { 1,  2,  3,  4 }
     require(a[0], 1);
     require(a[1], 2);
     require(a[2], 3);
@@ -595,8 +595,8 @@ main()
   test_case("multiply(accumulator) after multiply(scalar) is consistent");
   {
     auto v = ivec({ 1, 2, 3, 4, 5 });
-    micron::multiply(v, 2);           // {2,4,6,8,10}
-    auto p = micron::multiply(v);     // 2*4*6*8*10 = 3840
+    micron::multiply(v, 2);            // {2,4,6,8,10}
+    auto p = micron::multiply(v);      // 2*4*6*8*10 = 3840
     require(p, 3840);
   }
   end_test_case();
@@ -604,10 +604,10 @@ main()
   test_case("stress: add + multiply + subtract on large vector");
   {
     micron::vector<int> v(500, 1);
-    micron::add(v, 9);           // all 10
-    micron::multiply(v, 5);      // all 50
-    micron::subtract(v, 25);     // all 25
-    micron::divide(v, 5);        // all 5
+    micron::add(v, 9);            // all 10
+    micron::multiply(v, 5);       // all 50
+    micron::subtract(v, 25);      // all 25
+    micron::divide(v, 5);         // all 5
     for ( auto it = v.begin(); it != v.end(); ++it ) {
       require(*it == 5);
     }
@@ -626,10 +626,10 @@ main()
       src[i] = 2;
     }
 
-    micron::add(N, dst.begin(), src.begin());          // all 3
-    micron::multiply(N, dst.begin(), src.begin());     // all 6
-    micron::subtract(N, dst.begin(), src.begin());     // all 4
-    micron::divide(N, dst.begin(), src.begin());       // all 2
+    micron::add(N, dst.begin(), src.begin());           // all 3
+    micron::multiply(N, dst.begin(), src.begin());      // all 6
+    micron::subtract(N, dst.begin(), src.begin());      // all 4
+    micron::divide(N, dst.begin(), src.begin());        // all 2
 
     for ( size_t i = 0; i < N; ++i ) require(dst[i], 2);
   }

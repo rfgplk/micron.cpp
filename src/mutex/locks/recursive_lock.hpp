@@ -44,7 +44,7 @@ class recursive_lock
   }
 
 public:
-  recursive_lock() noexcept : owner(__ownerless), depth(0) {}
+  recursive_lock() noexcept : owner(__ownerless), depth(0) { }
 
   recursive_lock(const recursive_lock &) = delete;
   recursive_lock(recursive_lock &&) = delete;
@@ -127,7 +127,7 @@ public:
     return depth.get(memory_order::relaxed);
   }
 
-  template <typename... T> friend void unlock(T &...);
+  template<typename... T> friend void unlock(T &...);
 };
 
-}     // namespace micron
+}      // namespace micron

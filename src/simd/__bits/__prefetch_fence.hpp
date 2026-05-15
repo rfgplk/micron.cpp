@@ -82,9 +82,9 @@ _mm_pause() noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #define _mm_prefetch(P, I) __builtin_ia32_prefetch((P), (((I) & 0xC) >> 2), ((I) & 0x3), (((I) & 0x10) >> 4))
 

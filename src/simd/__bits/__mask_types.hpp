@@ -27,15 +27,15 @@ static_assert(sizeof(__mmask16) == 2);
 static_assert(sizeof(__mmask32) == 4);
 static_assert(sizeof(__mmask64) == 8);
 
-template <typename M> inline constexpr unsigned mask_lanes_v = sizeof(M) * 8;
+template<typename M> inline constexpr unsigned mask_lanes_v = sizeof(M) * 8;
 
-template <typename M>
+template<typename M>
 concept k_mask_type = ::micron::is_same_v<M, __mmask8> or ::micron::is_same_v<M, __mmask16> or ::micron::is_same_v<M, __mmask32>
                       or ::micron::is_same_v<M, __mmask64>;
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_TYPES)
 using ::micron::simd::__bits::__mmask16;

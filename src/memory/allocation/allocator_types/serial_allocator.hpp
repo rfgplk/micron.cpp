@@ -9,7 +9,7 @@ namespace micron
 {
 
 // serial standard allocator, cannot be mempooled, default *tripling* policy
-template <is_policy P = serial_allocation_policy> class allocator_serial : private abc_allocator<byte>
+template<is_policy P = serial_allocation_policy> class allocator_serial: private abc_allocator<byte>
 {
 
 public:
@@ -30,7 +30,7 @@ public:
   create(usize n)
   {
     n = to_granularity<P::granularity>(n);
-    return allocate(n);     // create the block, the handler is responsible for calling destroy
+    return allocate(n);      // create the block, the handler is responsible for calling destroy
   }
 
   static chunk<byte>
@@ -70,4 +70,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

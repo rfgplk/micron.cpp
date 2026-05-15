@@ -13,7 +13,7 @@
 namespace micron
 {
 
-template <class T>
+template<class T>
 void *
 voidify(const T *ptr)
 {
@@ -24,7 +24,7 @@ voidify(const T *ptr)
     return (void *)nullptr;
 };
 
-template <typename T, typename P>
+template<typename T, typename P>
 T
 cast(P &&p)
 {
@@ -38,42 +38,42 @@ cast(P &&p)
   if constexpr ( micron::is_const_v<T>(p) ) return const_cast<T>(p);
 }
 
-template <typename T>
+template<typename T>
 usize
 max_cast(T &&t)
 {
   return static_cast<usize>(const_cast<micron::remove_const<T>::type>(t));
 }
 
-template <typename P>
+template<typename P>
 constexpr addr_t *
 real_addr(P &p) noexcept
 {
   return reinterpret_cast<addr_t *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename O, typename P>
+template<typename O, typename P>
 constexpr O *
 real_addr_as(P &p) noexcept
 {
   return reinterpret_cast<O *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename P>
+template<typename P>
 constexpr P *
 addressof(P &p) noexcept
 {
   return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename P>
+template<typename P>
 constexpr P *
 addr_of(P &p) noexcept
 {
   return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename P>
+template<typename P>
   requires(micron::is_pointer_v<P>)
 constexpr P *
 addr(P &p) noexcept
@@ -81,7 +81,7 @@ addr(P &p) noexcept
   return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename P>
+template<typename P>
   requires(!micron::is_pointer_v<P>)
 constexpr P *
 addr(P &p) noexcept
@@ -89,20 +89,20 @@ addr(P &p) noexcept
   return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename P>
+template<typename P>
 constexpr P *
 addr(P &&p) noexcept
 {
   return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
 not_null(T *p)
 {
   if ( p == nullptr ) {
-  }     // exc<except::memory_error>("not_null was nullptr");
+  }      // exc<except::memory_error>("not_null was nullptr");
   return p;
 }
-};     // namespace micron
+};      // namespace micron

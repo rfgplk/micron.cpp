@@ -24,7 +24,7 @@ namespace micron
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //  immutable_map an immutable ordered associative container implemented as a left-leaning rb tree with refcounted nodes
 
-template <typename K, typename V>
+template<typename K, typename V>
   requires micron::totally_ordered<K> && micron::is_movable_object<V>
 class immutable_map
 {
@@ -37,7 +37,7 @@ class immutable_map
   //    [..] value
 
   struct __node {
-    uintptr_t __packed_left;     // left pointer/red bit
+    uintptr_t __packed_left;      // left pointer/red bit
     __node *right;
     mutable u32 refs;
     K key;
@@ -74,7 +74,7 @@ class immutable_map
     }
   };
 
-  template <typename Kf, typename Vf>
+  template<typename Kf, typename Vf>
   static inline __node *
   __make_node(Kf &&k, Vf &&v, __node *l, __node *r, bool rd)
   {
@@ -96,7 +96,7 @@ class immutable_map
   }
 
   // construct V in-place from args
-  template <typename Kf, typename... Args>
+  template<typename Kf, typename... Args>
   static inline __node *
   __make_node_emplace(Kf &&k, __node *l, __node *r, bool rd, Args &&...args)
   {
@@ -135,9 +135,9 @@ class immutable_map
     return n;
   }
 
-  // tail-iterates right spine/stacks left children
-  static inline void
-  __release(__node *n)
+  // full slow path
+  static __attribute__((noinline)) void
+  __release_subtree(__node *n) noexcept
   {
     constexpr usize __stack_cap = 64;
     __node *stack[__stack_cap];
@@ -153,11 +153,26 @@ class immutable_map
         if ( depth < __stack_cap ) [[likely]]
           stack[depth++] = l;
         else
-          __release(l);     // overflow
+          __release_subtree(l);      // overflow
       }
       n = r;
     }
-    while ( depth > 0 ) __release(stack[--depth]);
+    while ( depth > 0 ) __release_subtree(stack[--depth]);
+  }
+
+  // fast path
+  static inline __attribute__((always_inline)) void
+  __release(__node *n) noexcept
+  {
+    if ( !n ) [[unlikely]]
+      return;
+    if ( --n->refs != 0 ) [[likely]]
+      return;
+    __node *l = n->left();
+    __node *r = n->right;
+    __dealloc_node(n);
+    if ( l ) __release_subtree(l);
+    if ( r ) __release_subtree(r);
   }
 
   static inline __node *
@@ -316,7 +331,7 @@ class immutable_map
     return h;
   }
 
-  template <typename Vf>
+  template<typename Vf>
   static __node *
   __insert_impl(const __node *h, const K &k, Vf &&v, bool &inserted)
   {
@@ -342,7 +357,7 @@ class immutable_map
     return __fixup(n);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   static __node *
   __emplace_impl(const __node *h, const K &k, bool &inserted, Args &&...args)
   {
@@ -487,7 +502,7 @@ class immutable_map
   __ensure_black_root(__node *root)
   {
     if ( root && root->red() ) [[unlikely]]
-      root->set_red(false);     // always unique
+      root->set_red(false);      // always unique
     return root;
   }
 
@@ -495,7 +510,7 @@ class immutable_map
   usize __length;
 
   // private constructor for internals
-  immutable_map(__node *root, usize len) : __root(root), __length(len) {}
+  immutable_map(__node *root, usize len) : __root(root), __length(len) { }
 
 public:
   using category_type = map_tag;
@@ -507,10 +522,10 @@ public:
 
   ~immutable_map() { __release(__root); }
 
-  immutable_map() : __root(nullptr), __length(0) {}
+  immutable_map() : __root(nullptr), __length(0) { }
 
   // O(1) copy
-  immutable_map(const immutable_map &o) : __root(__retain(o.__root)), __length(o.__length) {}
+  immutable_map(const immutable_map &o) : __root(__retain(o.__root)), __length(o.__length) { }
 
   immutable_map &
   operator=(const immutable_map &o)
@@ -571,7 +586,7 @@ public:
     return insert(k, micron::move(v));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   immutable_map
   emplace(const K &k, Args &&...args) const
   {
@@ -680,7 +695,7 @@ public:
     return !(*this == o);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   immutable_map
   update(const K &k, Fn &&fn) const
   {
@@ -690,7 +705,7 @@ public:
     return insert(k, fn(n->value));
   }
 
-  template <typename Fn>
+  template<typename Fn>
   immutable_map
   update_or(const K &k, const V &default_val, Fn &&fn) const
   {
@@ -717,7 +732,7 @@ public:
     }
 
   public:
-    const_iterator() : __depth(0) {}
+    const_iterator() : __depth(0) { }
 
     explicit const_iterator(const __node *root) : __depth(0) { __push_left(root); }
 
@@ -808,7 +823,7 @@ public:
   //  ONLY safe when no other version shares any node in this tree
   //  for shared trees, use for_each() or the iterator instead
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each_morris(Fn &&fn) const
   {
@@ -823,10 +838,10 @@ public:
         while ( pred->right && pred->right != cur ) pred = pred->right;
 
         if ( !pred->right ) {
-          pred->right = cur;     // thread
+          pred->right = cur;      // thread
           cur = cur->left();
         } else {
-          pred->right = nullptr;     // unthread
+          pred->right = nullptr;      // unthread
           fn(static_cast<const K &>(cur->key), static_cast<const V &>(cur->value));
           cur = cur->right;
         }
@@ -834,7 +849,7 @@ public:
     }
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
@@ -855,4 +870,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

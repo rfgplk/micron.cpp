@@ -66,7 +66,7 @@ main(void)
     {
       micron::__global_pointer<Counted> p;
       sb::require(Counted::instances == 1);
-      p.clear();     // global pointer does not free on destruction — clear manually
+      p.clear();      // global pointer does not free on destruction — clear manually
     }
     sb::require(Counted::instances == 0);
   }
@@ -140,8 +140,8 @@ main(void)
       micron::__global_pointer<Counted> p(7);
       sb::require(Counted::instances == 1);
       leaked = p.get();
-    }     // destructor runs here — must NOT free
-    sb::require(Counted::instances == 1);     // still alive
+    }      // destructor runs here — must NOT free
+    sb::require(Counted::instances == 1);      // still alive
     // Clean up manually to avoid a true leak in the test binary
     delete leaked;
     sb::require(Counted::instances == 0);
@@ -391,7 +391,7 @@ main(void)
     micron::__global_pointer<Counted> b(2);
     sb::require(Counted::instances == 2);
     b = micron::move(a);
-    sb::require(Counted::instances == 1);     // b's old object freed
+    sb::require(Counted::instances == 1);      // b's old object freed
     sb::require(b->id == 1);
     b.clear();
     sb::require(Counted::instances == 0);
@@ -407,7 +407,7 @@ main(void)
     sb::require(Counted::instances == 2);
     p = raw;
     sb::require(raw == nullptr);
-    sb::require(Counted::instances == 1);     // first object freed
+    sb::require(Counted::instances == 1);      // first object freed
     sb::require(p->id == 2);
     p.clear();
     sb::require(Counted::instances == 0);
@@ -424,7 +424,7 @@ main(void)
     int *raw = a.get();
     // compare a against a wrapper holding the same address via get()
     // (can't copy-construct, so compare via raw address in a second global ptr)
-    sb::require(a.get() == raw);     // trivially true, confirms get() stability
+    sb::require(a.get() == raw);      // trivially true, confirms get() stability
     a.clear();
   }
   sb::end_test_case();
@@ -476,7 +476,7 @@ main(void)
       sb::require(Counted::instances == 2);
       leaked = p.get();
     }
-    sb::require(Counted::instances == 2);     // still alive after scope
+    sb::require(Counted::instances == 2);      // still alive after scope
     delete[] leaked;
     sb::require(Counted::instances == 0);
   }
@@ -665,7 +665,7 @@ main(void)
     micron::__global_pointer<Counted[]> b(2);
     sb::require(Counted::instances == 3);
     b = micron::move(a);
-    sb::require(Counted::instances == 1);     // b's two old objects freed
+    sb::require(Counted::instances == 1);      // b's two old objects freed
     b.clear();
     sb::require(Counted::instances == 0);
   }
@@ -680,7 +680,7 @@ main(void)
     sb::require(Counted::instances == 3);
     p = raw;
     sb::require(raw == nullptr);
-    sb::require(Counted::instances == 2);     // original single element freed
+    sb::require(Counted::instances == 2);      // original single element freed
     p.clear();
     sb::require(Counted::instances == 0);
   }

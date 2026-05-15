@@ -117,7 +117,7 @@ main()
   // wrapping
   test_case("wrapping::add — modular u8");
   {
-    require(wrapping::add<u8>(200u, 100u), u8(44));     // 300 mod 256
+    require(wrapping::add<u8>(200u, 100u), u8(44));      // 300 mod 256
     require(wrapping::add<u32>(0xFFFFFFFFu, 1u), 0u);
   }
   end_test_case();

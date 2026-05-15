@@ -20,7 +20,7 @@ namespace fma
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, d128>)
 inline T
 fma(T &o, T &b, T &c)
@@ -28,7 +28,7 @@ fma(T &o, T &b, T &c)
   return _mm_fmadd_pd(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, d256>)
 inline T
 fma(T &o, T &b, T &c)
@@ -36,7 +36,7 @@ fma(T &o, T &b, T &c)
   return _mm256_fmadd_pd(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, f128>)
 inline T
 fma(T &o, T &b, T &c)
@@ -44,7 +44,7 @@ fma(T &o, T &b, T &c)
   return _mm_fmadd_ps(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, f256>)
 inline T
 fma(T &o, T &b, T &c)
@@ -52,7 +52,7 @@ fma(T &o, T &b, T &c)
   return _mm256_fmadd_ps(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, d128>)
 inline T
 fmas(T &o, T &b, T &c)
@@ -60,7 +60,7 @@ fmas(T &o, T &b, T &c)
   return _mm_fmaddsub_pd(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, d256>)
 inline T
 fmas(T &o, T &b, T &c)
@@ -68,7 +68,7 @@ fmas(T &o, T &b, T &c)
   return _mm256_fmaddsub_pd(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, f128>)
 inline T
 fmas(T &o, T &b, T &c)
@@ -76,7 +76,7 @@ fmas(T &o, T &b, T &c)
   return _mm_fmaddsub_ps(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, f256>)
 inline T
 fmas(T &o, T &b, T &c)
@@ -84,7 +84,7 @@ fmas(T &o, T &b, T &c)
   return _mm256_fmaddsub_ps(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, d128>)
 inline T
 fms(T &o, T &b, T &c)
@@ -92,7 +92,7 @@ fms(T &o, T &b, T &c)
   return _mm_fmsub_pd(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, d256>)
 inline T
 fms(T &o, T &b, T &c)
@@ -100,7 +100,7 @@ fms(T &o, T &b, T &c)
   return _mm256_fmsub_pd(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, f128>)
 inline T
 fms(T &o, T &b, T &c)
@@ -108,7 +108,7 @@ fms(T &o, T &b, T &c)
   return _mm_fmsub_ps(o, b, c);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
   requires(micron::is_same_v<typename T::bit_width, f256>)
 inline T
 fms(T &o, T &b, T &c)
@@ -116,8 +116,8 @@ fms(T &o, T &b, T &c)
   return _mm256_fmsub_ps(o, b, c);
 }
 
-};     // namespace fma
-};     // namespace simd
-};     // namespace micron
+};      // namespace fma
+};      // namespace simd
+};      // namespace micron
 
 #pragma GCC diagnostic pop

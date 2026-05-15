@@ -122,51 +122,51 @@ flog10(long double x) noexcept
 namespace log_impl
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log(F x) noexcept
 {
   return mkbits::log_ns::log<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log1p(F x) noexcept
 {
   return mkbits::log_ns::log1p<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp(F x) noexcept
 {
   return mkbits::exp_ns::exp<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 expm1(F x) noexcept
 {
   return mkbits::exp_ns::expm1<F>(x);
 }
 
-};     // namespace log_impl
+};      // namespace log_impl
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log_base(F x, F b) noexcept
 {
   return log_impl::log<F>(x) / log_impl::log<F>(b);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log2p1(F x) noexcept
 {
   return log_impl::log1p<F>(x) * constant_log2e<F>;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log1mexp(F x) noexcept
 {
@@ -176,14 +176,14 @@ log1mexp(F x) noexcept
   return log_impl::log1p<F>(-log_impl::exp<F>(x));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log_diff_exp(F a, F b) noexcept
 {
   return a + log1mexp<F>(b - a);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log_sum_exp(F a, F b) noexcept
 {
@@ -193,18 +193,18 @@ log_sum_exp(F a, F b) noexcept
   return m + log_impl::log1p<F>(log_impl::exp<F>((a < b ? a : b) - m));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 log_sum_exp_n(const F *__restrict__ v, usize N) noexcept
 {
-  if ( N == 0 ) return ieee::inf_v<F>(1);     // -inf for empty
+  if ( N == 0 ) return ieee::inf_v<F>(1);      // -inf for empty
   const F *const end = v + N;
   F mx = *v;
   for ( const F *p = v + 1; p != end; ++p ) {
     F vi = *p;
     if ( vi > mx ) mx = vi;
   }
-  if ( __builtin_isinf_sign(mx) < 0 ) return mx;     // all -inf
+  if ( __builtin_isinf_sign(mx) < 0 ) return mx;      // all -inf
 
   F acc0 = F(0), acc1 = F(0);
   const F *p0 = v, *p1 = v + N / 2;
@@ -214,14 +214,14 @@ log_sum_exp_n(const F *__restrict__ v, usize N) noexcept
   return mx + log_impl::log<F>(acc0 + acc1);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 log_add_exp_vec(const F *__restrict__ v, usize N) noexcept
 {
   return log_sum_exp_n<F>(v, N);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 logistic(F x) noexcept
 {
@@ -232,7 +232,7 @@ logistic(F x) noexcept
   return e / (F(1) + e);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log_logistic(F x) noexcept
 {
@@ -241,7 +241,7 @@ log_logistic(F x) noexcept
 }
 
 // log(1 + exp(x)) overflow guard
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 softplus(F x) noexcept
 {
@@ -251,21 +251,21 @@ softplus(F x) noexcept
   return log_impl::log1p<F>(log_impl::exp<F>(x));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 xlogx(F x) noexcept
 {
   return x == F(0) ? F(0) : x * log_impl::log<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 xlogy(F x, F y) noexcept
 {
   return x == F(0) ? F(0) : x * log_impl::log<F>(y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 softmax(F *__restrict__ v, usize N) noexcept
 {
@@ -282,7 +282,7 @@ softmax(F *__restrict__ v, usize N) noexcept
   for ( usize i = 0; i < N; ++i ) v[i] *= inv;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 softmax(const F *__restrict__ in, F *__restrict__ out, usize N) noexcept
 {
@@ -299,7 +299,7 @@ softmax(const F *__restrict__ in, F *__restrict__ out, usize N) noexcept
   for ( usize i = 0; i < N; ++i ) out[i] *= inv;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 log_softmax(F *__restrict__ v, usize N) noexcept
 {
@@ -308,7 +308,7 @@ log_softmax(F *__restrict__ v, usize N) noexcept
   for ( usize i = 0; i < N; ++i ) v[i] -= lse;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 log_softmax(const F *__restrict__ in, F *__restrict__ out, usize N) noexcept
 {
@@ -317,7 +317,7 @@ log_softmax(const F *__restrict__ in, F *__restrict__ out, usize N) noexcept
   for ( usize i = 0; i < N; ++i ) out[i] = in[i] - lse;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[gnu::flatten]] inline void
 softmax(C &c) noexcept
@@ -325,7 +325,7 @@ softmax(C &c) noexcept
   softmax<typename C::value_type>(c.begin(), c.size());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[gnu::flatten]] inline void
 softmax(const C &in, C &out) noexcept
@@ -333,7 +333,7 @@ softmax(const C &in, C &out) noexcept
   softmax<typename C::value_type>(in.cbegin(), out.begin(), in.size());
 }
 
-template <typename... Cs>
+template<typename... Cs>
   requires(sizeof...(Cs) >= 2) && (is_iterable_container<Cs> && ...) && (!micron::is_const_v<Cs> && ...)
           && (ieee754_floating<typename Cs::value_type> && ...)
 [[gnu::flatten]] inline void
@@ -342,7 +342,7 @@ softmax(Cs &...cs) noexcept
   ((softmax<typename Cs::value_type>(cs.begin(), cs.size())), ...);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[gnu::flatten]] inline void
 log_softmax(C &c) noexcept
@@ -350,7 +350,7 @@ log_softmax(C &c) noexcept
   log_softmax<typename C::value_type>(c.begin(), c.size());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[gnu::flatten]] inline void
 log_softmax(const C &in, C &out) noexcept
@@ -358,7 +358,7 @@ log_softmax(const C &in, C &out) noexcept
   log_softmax<typename C::value_type>(in.cbegin(), out.begin(), in.size());
 }
 
-template <typename... Cs>
+template<typename... Cs>
   requires(sizeof...(Cs) >= 2) && (is_iterable_container<Cs> && ...) && (!micron::is_const_v<Cs> && ...)
           && (ieee754_floating<typename Cs::value_type> && ...)
 [[gnu::flatten]] inline void
@@ -367,5 +367,5 @@ log_softmax(Cs &...cs) noexcept
   ((log_softmax<typename Cs::value_type>(cs.begin(), cs.size())), ...);
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

@@ -25,7 +25,7 @@ namespace geometry
 // TODO: skeleton, expand later
 
 // unit vector perpendicular to v
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
   requires(N >= 2 && N <= 16)
 [[nodiscard]] inline constexpr vec<F, N>
 unit_orthogonal(const vec<F, N> &v) noexcept
@@ -75,6 +75,6 @@ unit_orthogonal(const vec<F, N> &v) noexcept
   }
 }
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

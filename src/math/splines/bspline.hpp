@@ -29,14 +29,14 @@ namespace splines
 
 inline constexpr u32 bspline_max_degree = 16;
 
-template <ieee754_floating F> struct bspline {
+template<ieee754_floating F> struct bspline {
   u32 degree{ 0 };
-  vector<F> knots;     // size = n_ctrl + degree + 1
-  vector<F> ctrl;      // n_ctrl scalar control points
+  vector<F> knots;      // size = n_ctrl + degree + 1
+  vector<F> ctrl;       // n_ctrl scalar control points
   mutable usize last_hit{ 0 };
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bspline<F>
 make_bspline_from_ctrl(raw_slice<const F> knots, raw_slice<const F> ctrl, u32 degree, build_info<F> *info = nullptr) noexcept
 {
@@ -69,7 +69,7 @@ make_bspline_from_ctrl(raw_slice<const F> knots, raw_slice<const F> ctrl, u32 de
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline vector<F>
 make_uniform_clamped_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept
 {
@@ -91,7 +91,7 @@ make_uniform_clamped_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept
 namespace __impl_bspline
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline void
 bspline_basis(const F *__restrict__ u, usize k, u32 p, F x, F *__restrict__ B) noexcept
 {
@@ -113,7 +113,7 @@ bspline_basis(const F *__restrict__ u, usize k, u32 p, F x, F *__restrict__ B) n
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline usize
 bspline_span(const F *u, usize n_ctrl, u32 degree, F x, usize &last) noexcept
 {
@@ -144,10 +144,10 @@ bspline_span(const F *u, usize n_ctrl, u32 degree, F x, usize &last) noexcept
   return lo;
 }
 
-};     // namespace __impl_bspline
+};      // namespace __impl_bspline
 
 // De Boor's algorithm
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 evaluate(const bspline<F> &s, F x) noexcept
 {
@@ -176,7 +176,7 @@ evaluate(const bspline<F> &s, F x) noexcept
   return d[p];
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bspline<F>
 derivative_spline(const bspline<F> &s) noexcept
 {
@@ -200,7 +200,7 @@ derivative_spline(const bspline<F> &s) noexcept
   return out;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline vector<F>
 make_averaged_clamped_knots(const F *xs, usize n, u32 degree) noexcept
 {
@@ -219,7 +219,7 @@ make_averaged_clamped_knots(const F *xs, usize n, u32 degree) noexcept
   return u;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bspline<F>
 make_bspline_interpolating(raw_slice<const F> xs, raw_slice<const F> ys, u32 degree, build_info<F> *info = nullptr) noexcept
 {
@@ -287,6 +287,6 @@ make_bspline_interpolating(raw_slice<const F> xs, raw_slice<const F> ys, u32 deg
   return s;
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

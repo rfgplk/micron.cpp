@@ -17,13 +17,13 @@ namespace math
 namespace blas
 {
 
-template <typename T>
+template<typename T>
 concept blas_real = ieee754_floating<T>;
 
-template <typename T>
+template<typename T>
 concept blas_scalar = micron::is_arithmetic_v<T>;
 
-template <typename V>
+template<typename V>
 concept vec_view_like = requires(V v, V::value_type *p) {
   typename V::value_type;
   { v.data } -> micron::convertible_to<typename V::value_type *>;
@@ -31,7 +31,7 @@ concept vec_view_like = requires(V v, V::value_type *p) {
   { v.inc } -> micron::convertible_to<ssize_t>;
 };
 
-template <typename M>
+template<typename M>
 concept row_view_like = requires(M m) {
   typename M::value_type;
   typename M::row_major_tag;
@@ -41,7 +41,7 @@ concept row_view_like = requires(M m) {
   { m.ld } -> micron::convertible_to<usize>;
 };
 
-template <typename M>
+template<typename M>
 concept col_view_like = requires(M m) {
   typename M::value_type;
   typename M::col_major_tag;
@@ -51,9 +51,9 @@ concept col_view_like = requires(M m) {
   { m.ld } -> micron::convertible_to<usize>;
 };
 
-template <typename M>
+template<typename M>
 concept mat_view_like = row_view_like<M> or col_view_like<M>;
 
-};     // namespace blas
-};     // namespace math
-};     // namespace micron
+};      // namespace blas
+};      // namespace math
+};      // namespace micron

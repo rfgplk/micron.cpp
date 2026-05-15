@@ -202,9 +202,9 @@ _mulx_u64(unsigned long long a, unsigned long long b, unsigned long long *hi) no
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 #define __inject_i(name) using ::micron::simd::__bits::name

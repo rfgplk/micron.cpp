@@ -33,13 +33,13 @@ namespace linalg
 namespace decomp
 {
 
-template <ieee754_floating F, usize N> struct lu_result {
+template<ieee754_floating F, usize N> struct lu_result {
   mat<F, N, N> L;
   mat<F, N, N> U;
   bool singular;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline lu_result<F, N>
 lu(const mat<F, N, N> &A) noexcept
 {
@@ -71,12 +71,12 @@ lu(const mat<F, N, N> &A) noexcept
 }
 
 // Cholesky decomposition
-template <ieee754_floating F, usize N> struct chol_result {
+template<ieee754_floating F, usize N> struct chol_result {
   mat<F, N, N> L;
   bool spd;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline chol_result<F, N>
 chol(const mat<F, N, N> &A) noexcept
 {
@@ -100,12 +100,12 @@ chol(const mat<F, N, N> &A) noexcept
 }
 
 // QR decomposition (modified Gram-Schmidt)
-template <ieee754_floating F, usize R_, usize C_> struct qr_result {
+template<ieee754_floating F, usize R_, usize C_> struct qr_result {
   mat<F, R_, C_> Q;
   mat<F, C_, C_> R;
 };
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard]] inline qr_result<F, R_, C_>
 qr(const mat<F, R_, C_> &A) noexcept
 {
@@ -133,17 +133,17 @@ qr(const mat<F, R_, C_> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct eigen_result2 {
+template<ieee754_floating F> struct eigen_result2 {
   vec<F, 2> values;
   mat<F, 2, 2> vectors;
 };
 
-template <ieee754_floating F> struct eigen_result3 {
+template<ieee754_floating F> struct eigen_result3 {
   vec<F, 3> values;
   mat<F, 3, 3> vectors;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline eigen_result2<F>
 eigen_sym2(const mat<F, 2, 2> &A) noexcept
 {
@@ -180,7 +180,7 @@ eigen_sym2(const mat<F, 2, 2> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline eigen_result3<F>
 eigen_sym3(const mat<F, 3, 3> &A) noexcept
 {
@@ -246,13 +246,13 @@ eigen_sym3(const mat<F, 3, 3> &A) noexcept
   return res;
 }
 
-template <ieee754_floating F> struct svd2_result {
+template<ieee754_floating F> struct svd2_result {
   mat<F, 2, 2> U;
   vec<F, 2> S;
   mat<F, 2, 2> V;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline svd2_result<F>
 svd2(const mat<F, 2, 2> &A) noexcept
 {
@@ -268,8 +268,8 @@ svd2(const mat<F, 2, 2> &A) noexcept
   r.S.data[0] = math::fsqrt(e.values.data[0] < F(0) ? F(0) : e.values.data[0]);
   r.S.data[1] = math::fsqrt(e.values.data[1] < F(0) ? F(0) : e.values.data[1]);
 
-  vec<F, 2> v0{ r.V.data[0], r.V.data[2] };     // col 0 of V
-  vec<F, 2> v1{ r.V.data[1], r.V.data[3] };     // col 1 of V
+  vec<F, 2> v0{ r.V.data[0], r.V.data[2] };      // col 0 of V
+  vec<F, 2> v1{ r.V.data[1], r.V.data[3] };      // col 1 of V
   vec<F, 2> u0 = ops::gemv(A, v0);
   vec<F, 2> u1 = ops::gemv(A, v1);
   if ( r.S.data[0] > F(0) ) {
@@ -289,13 +289,13 @@ svd2(const mat<F, 2, 2> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct svd3_result {
+template<ieee754_floating F> struct svd3_result {
   mat<F, 3, 3> U;
   vec<F, 3> S;
   mat<F, 3, 3> V;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline svd3_result<F>
 svd3(const mat<F, 3, 3> &A) noexcept
 {
@@ -333,14 +333,14 @@ svd3(const mat<F, 3, 3> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N> struct lu_pivot_result {
+template<ieee754_floating F, usize N> struct lu_pivot_result {
   mat<F, N, N> LU;
   usize perm[N];
   int sign;
   bool singular;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline lu_pivot_result<F, N>
 lu_pivot(const mat<F, N, N> &A) noexcept
 {
@@ -364,7 +364,7 @@ lu_pivot(const mat<F, N, N> &A) noexcept
     for ( usize i = k; i < N; ++i ) {
       const F a = math::fabs(r.LU.data[i * N + k]);
       const F si = scale[i];
-      if ( si == F(0) ) continue;     // zero row: skip
+      if ( si == F(0) ) continue;      // zero row: skip
       if ( a * best_s > best_a * si ) {
         best_a = a;
         best_s = si;
@@ -404,14 +404,14 @@ lu_pivot(const mat<F, N, N> &A) noexcept
 }
 
 // dynamic-shape twin
-template <ieee754_floating F> struct lu_pivot_result_dyn {
+template<ieee754_floating F> struct lu_pivot_result_dyn {
   dynmat<F> LU;
   micron::vector<usize, micron::allocator_serial<>, false> perm;
   int sign;
   bool singular;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline lu_pivot_result_dyn<F>
 lu_pivot(const dynmat<F> &A) noexcept
 {
@@ -477,7 +477,7 @@ lu_pivot(const dynmat<F> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline void
 lu_solve(const lu_pivot_result<F, N> &lu, vec<F, N> &x_inout) noexcept
 {
@@ -496,7 +496,7 @@ lu_solve(const lu_pivot_result<F, N> &lu, vec<F, N> &x_inout) noexcept
   x_inout = b;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 lu_solve(const lu_pivot_result_dyn<F> &lu, dynvec<F> &x_inout) noexcept
 {
@@ -518,7 +518,7 @@ lu_solve(const lu_pivot_result_dyn<F> &lu, dynvec<F> &x_inout) noexcept
   x_inout = micron::move(b);
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline F
 det(const mat<F, N, N> &A) noexcept
 {
@@ -529,7 +529,7 @@ det(const mat<F, N, N> &A) noexcept
   return p;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 det(const dynmat<F> &A) noexcept
 {
@@ -542,12 +542,12 @@ det(const dynmat<F> &A) noexcept
   return p;
 }
 
-template <ieee754_floating F> struct log_det_result {
+template<ieee754_floating F> struct log_det_result {
   F log_abs;
   int sign;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline log_det_result<F>
 log_det(const mat<F, N, N> &A) noexcept
 {
@@ -566,7 +566,7 @@ log_det(const mat<F, N, N> &A) noexcept
   return { la, s };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline log_det_result<F>
 log_det(const dynmat<F> &A) noexcept
 {
@@ -587,12 +587,12 @@ log_det(const dynmat<F> &A) noexcept
   return { la, s };
 }
 
-template <ieee754_floating F, usize N> struct inv_result {
+template<ieee754_floating F, usize N> struct inv_result {
   mat<F, N, N> X;
   bool singular;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline inv_result<F, N>
 inv(const mat<F, N, N> &A) noexcept
 {
@@ -608,12 +608,12 @@ inv(const mat<F, N, N> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct inv_result_dyn {
+template<ieee754_floating F> struct inv_result_dyn {
   dynmat<F> X;
   bool singular;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline inv_result_dyn<F>
 inv(const dynmat<F> &A) noexcept
 {
@@ -630,12 +630,12 @@ inv(const dynmat<F> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize R_, usize C_> struct qr_householder_result {
+template<ieee754_floating F, usize R_, usize C_> struct qr_householder_result {
   mat<F, R_, R_> Q;
   mat<F, R_, C_> R;
 };
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard]] inline qr_householder_result<F, R_, C_>
 qr_householder(const mat<F, R_, C_> &A) noexcept
 {
@@ -654,12 +654,12 @@ qr_householder(const mat<F, R_, C_> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct qr_householder_result_dyn {
+template<ieee754_floating F> struct qr_householder_result_dyn {
   dynmat<F> Q;
   dynmat<F> R;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline qr_householder_result_dyn<F>
 qr_householder(const dynmat<F> &A) noexcept
 {
@@ -686,7 +686,7 @@ qr_householder(const dynmat<F> &A) noexcept
 //
 // P_r * A * P_c = L * U, with L unit lower / U upper packed into LU
 
-template <ieee754_floating F, usize N> struct lu_full_result {
+template<ieee754_floating F, usize N> struct lu_full_result {
   mat<F, N, N> LU;
   usize perm_row[N];
   usize perm_col[N];
@@ -695,7 +695,7 @@ template <ieee754_floating F, usize N> struct lu_full_result {
   usize rank;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline lu_full_result<F, N>
 lu_pivot_full(const mat<F, N, N> &A, F tol = F(0)) noexcept
 {
@@ -759,7 +759,7 @@ lu_pivot_full(const mat<F, N, N> &A, F tol = F(0)) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct lu_full_result_dyn {
+template<ieee754_floating F> struct lu_full_result_dyn {
   dynmat<F> LU;
   micron::vector<usize, micron::allocator_serial<>, false> perm_row;
   micron::vector<usize, micron::allocator_serial<>, false> perm_col;
@@ -768,7 +768,7 @@ template <ieee754_floating F> struct lu_full_result_dyn {
   usize rank;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline lu_full_result_dyn<F>
 lu_pivot_full(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -837,7 +837,7 @@ lu_pivot_full(const dynmat<F> &A, F tol = F(0)) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline vec<F, N>
 lu_full_solve(const lu_full_result<F, N> &lu, const vec<F, N> &b) noexcept
 {
@@ -861,7 +861,7 @@ lu_full_solve(const lu_full_result<F, N> &lu, const vec<F, N> &b) noexcept
   return x;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 lu_full_solve(const lu_full_result_dyn<F> &lu, const dynvec<F> &b) noexcept
 {
@@ -890,7 +890,7 @@ lu_full_solve(const lu_full_result_dyn<F> &lu, const dynvec<F> &b) noexcept
 //
 // A * P = Q * R, R upper trapezoidal, Q orthogonal stored compactly
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= 2)
 struct qr_colpiv_result {
   householder_sequence<F, R_, C_> Q;
@@ -900,7 +900,7 @@ struct qr_colpiv_result {
   usize rank;
 };
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= 2)
 [[nodiscard]] inline qr_colpiv_result<F, R_, C_>
 qr_householder_colpiv(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
@@ -972,7 +972,7 @@ qr_householder_colpiv(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
 }
 
 // dynamic-shape twin
-template <ieee754_floating F> struct qr_colpiv_result_dyn {
+template<ieee754_floating F> struct qr_colpiv_result_dyn {
   householder_sequence_dyn<F> Q;
   dynmat<F> R;
   micron::vector<usize, micron::allocator_serial<>, false> perm;
@@ -980,7 +980,7 @@ template <ieee754_floating F> struct qr_colpiv_result_dyn {
   usize rank;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline qr_colpiv_result_dyn<F>
 qr_householder_colpiv(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -1056,7 +1056,7 @@ qr_householder_colpiv(const dynmat<F> &A, F tol = F(0)) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard]] inline vec<F, C_>
 qr_colpiv_solve(const qr_colpiv_result<F, R_, C_> &qr, const vec<F, R_> &b) noexcept
 {
@@ -1084,7 +1084,7 @@ qr_colpiv_solve(const qr_colpiv_result<F, R_, C_> &qr, const vec<F, R_> &b) noex
   return x;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 qr_colpiv_solve(const qr_colpiv_result_dyn<F> &qr, const dynvec<F> &b) noexcept
 {
@@ -1108,19 +1108,19 @@ qr_colpiv_solve(const qr_colpiv_result_dyn<F> &qr, const dynvec<F> &b) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // full-pivoting Householder QR (rank-revealing, max stability)
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= 2)
 struct qr_fullpiv_result {
-  householder_sequence<F, R_, C_> Q;     // Householder part only (no row swaps)
+  householder_sequence<F, R_, C_> Q;      // Householder part only (no row swaps)
   mat<F, R_, C_> R;
-  usize row_transp[R_];     // sequence of row pivots (K used)
-  usize perm_row[R_];       // cumulative row permutation
+  usize row_transp[R_];      // sequence of row pivots (K used)
+  usize perm_row[R_];        // cumulative row permutation
   usize perm_col[C_];
   int sign;
   usize rank;
 };
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= 2)
 [[nodiscard]] inline qr_fullpiv_result<F, R_, C_>
 qr_householder_fullpiv(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
@@ -1190,17 +1190,17 @@ qr_householder_fullpiv(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct qr_fullpiv_result_dyn {
+template<ieee754_floating F> struct qr_fullpiv_result_dyn {
   householder_sequence_dyn<F> Q;
   dynmat<F> R;
-  micron::vector<usize, micron::allocator_serial<>, false> row_transp;     // length K
-  micron::vector<usize, micron::allocator_serial<>, false> perm_row;       // cumulative
+  micron::vector<usize, micron::allocator_serial<>, false> row_transp;      // length K
+  micron::vector<usize, micron::allocator_serial<>, false> perm_row;        // cumulative
   micron::vector<usize, micron::allocator_serial<>, false> perm_col;
   int sign;
   usize rank;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline qr_fullpiv_result_dyn<F>
 qr_householder_fullpiv(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -1275,7 +1275,7 @@ qr_householder_fullpiv(const dynmat<F> &A, F tol = F(0)) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard]] inline vec<F, C_>
 qr_fullpiv_solve(const qr_fullpiv_result<F, R_, C_> &qr, const vec<F, R_> &b) noexcept
 {
@@ -1311,7 +1311,7 @@ qr_fullpiv_solve(const qr_fullpiv_result<F, R_, C_> &qr, const vec<F, R_> &b) no
   return x;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 qr_fullpiv_solve(const qr_fullpiv_result_dyn<F> &qr, const dynvec<F> &b) noexcept
 {
@@ -1348,19 +1348,19 @@ qr_fullpiv_solve(const qr_fullpiv_result_dyn<F> &qr, const dynvec<F> &b) noexcep
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// orthogonal decomposition 
+// orthogonal decomposition
 //
 // A * P_c = Q * [T  0] * Z
 
-template <ieee754_floating F> struct cod_result_dyn {
+template<ieee754_floating F> struct cod_result_dyn {
   householder_sequence_dyn<F> Q;
-  dynmat<F> T_lower;     // rank x rank lower triangular (rest zero)
+  dynmat<F> T_lower;      // rank x rank lower triangular (rest zero)
   householder_sequence_dyn<F> Z;
   micron::vector<usize, micron::allocator_serial<>, false> perm_col;
   usize rank;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline cod_result_dyn<F>
 cod(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -1415,7 +1415,7 @@ cod(const dynmat<F> &A, F tol = F(0)) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 cod_solve(const cod_result_dyn<F> &c, const dynvec<F> &b) noexcept
 {
@@ -1451,7 +1451,7 @@ cod_solve(const cod_result_dyn<F> &c, const dynvec<F> &b) noexcept
   return x;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline F
 rcond(const mat<F, N, N> &A) noexcept
 {
@@ -1474,7 +1474,7 @@ rcond(const mat<F, N, N> &A) noexcept
   return F(1) / (nA * nInv);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 rcond(const dynmat<F> &A) noexcept
 {
@@ -1498,7 +1498,7 @@ rcond(const dynmat<F> &A) noexcept
   return F(1) / (nA * nInv);
 }
 
-};     // namespace decomp
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace decomp
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

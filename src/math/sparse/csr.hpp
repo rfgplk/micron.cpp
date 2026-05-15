@@ -25,7 +25,7 @@ namespace math
 namespace sparse
 {
 
-template <arith_scalar T, micron::integral I = u32> struct csr {
+template<arith_scalar T, micron::integral I = u32> struct csr {
   using value_type = T;
   using index_type = I;
   using vec_i = micron::vector<I, micron::allocator_serial<>, false>;
@@ -33,13 +33,13 @@ template <arith_scalar T, micron::integral I = u32> struct csr {
 
   usize rows{ 0 };
   usize cols{ 0 };
-  vec_i outer;      // size rows+1
-  vec_i inner;      // size nnz
-  vec_v values;     // size nnz
+  vec_i outer;       // size rows+1
+  vec_i inner;       // size nnz
+  vec_v values;      // size nnz
 
   csr() noexcept = default;
 
-  csr(usize r, usize c) : rows(r), cols(c), outer(r + 1, I(0)), inner(0), values(0) {}
+  csr(usize r, usize c) : rows(r), cols(c), outer(r + 1, I(0)), inner(0), values(0) { }
 
   csr(const csr &) = default;
   csr(csr &&) noexcept = default;
@@ -71,7 +71,7 @@ template <arith_scalar T, micron::integral I = u32> struct csr {
   }
 };
 
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 [[nodiscard]] inline csc<T, I>
 to_csc(const csr<T, I> &A) noexcept
 {
@@ -99,7 +99,7 @@ to_csc(const csr<T, I> &A) noexcept
   return out;
 }
 
-template <arith_scalar T, micron::integral I>
+template<arith_scalar T, micron::integral I>
 [[nodiscard]] inline csr<T, I>
 to_csr(const csc<T, I> &A) noexcept
 {
@@ -127,6 +127,6 @@ to_csr(const csc<T, I> &A) noexcept
   return out;
 }
 
-};     // namespace sparse
-};     // namespace math
-};     // namespace micron
+};      // namespace sparse
+};      // namespace math
+};      // namespace micron

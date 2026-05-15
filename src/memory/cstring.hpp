@@ -16,7 +16,7 @@
 namespace micron
 {
 
-template <integral T>
+template<integral T>
 inline constexpr usize
 strlen(const T *str) noexcept
 {
@@ -125,7 +125,7 @@ strlen128(const char *str) noexcept
   }
 }
 #endif
-template <integral T>
+template<integral T>
 inline constexpr usize
 strnlen(const T *str, usize maxlen) noexcept
 {
@@ -138,7 +138,7 @@ strnlen(const T *str, usize maxlen) noexcept
   return i;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr int
 strcmp(const F *src, const D *dest) noexcept
 {
@@ -157,7 +157,7 @@ strcmp(const F *src, const D *dest) noexcept
   return static_cast<int>(src[i]) - static_cast<int>(dest[i]);
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr int
 strncmp(const F *src, const D *dest, usize n) noexcept
 {
@@ -178,7 +178,7 @@ strncmp(const F *src, const D *dest, usize n) noexcept
   return static_cast<int>(src[i]) - static_cast<int>(dest[i]);
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr F *
 strcpy(F *__restrict dest, const D *__restrict src) noexcept
 {
@@ -194,7 +194,7 @@ strcpy(F *__restrict dest, const D *__restrict src) noexcept
   return dest;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr F *
 strncpy(F *__restrict dest, const D *__restrict src, usize n) noexcept
 {
@@ -214,7 +214,7 @@ strncpy(F *__restrict dest, const D *__restrict src, usize n) noexcept
   return dest;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr F *
 strcat(F *__restrict dest, const D *__restrict src) noexcept
 {
@@ -232,7 +232,7 @@ strcat(F *__restrict dest, const D *__restrict src) noexcept
   return dest;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr F *
 strncat(F *__restrict dest, const D *__restrict src, usize n) noexcept
 {
@@ -250,7 +250,7 @@ strncat(F *__restrict dest, const D *__restrict src, usize n) noexcept
   return dest;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr T *
 strchr(const T *s, int c) noexcept
 {
@@ -273,7 +273,7 @@ strchr(const T *s, int c) noexcept
   return nullptr;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr T *
 strrchr(const T *s, int c) noexcept
 {
@@ -297,7 +297,7 @@ strrchr(const T *s, int c) noexcept
   return const_cast<T *>(last);
 }
 
-template <integral T>
+template<integral T>
 inline constexpr T *
 strchrnul(const T *s, int c) noexcept
 {
@@ -316,7 +316,7 @@ strchrnul(const T *s, int c) noexcept
   return const_cast<T *>(s + i);
 }
 
-template <integral T, integral F>
+template<integral T, integral F>
   requires micron::is_convertible_v<F, T>
 inline constexpr const T *
 strstr(const T *haystack, const F *needle) noexcept
@@ -342,7 +342,7 @@ strstr(const T *haystack, const F *needle) noexcept
   return nullptr;
 }
 
-template <integral T, integral F>
+template<integral T, integral F>
   requires micron::is_convertible_v<F, T>
 inline constexpr const T *
 strnstr(const T *haystack, const F *needle, usize len) noexcept
@@ -367,7 +367,7 @@ strnstr(const T *haystack, const F *needle, usize len) noexcept
   return nullptr;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr T *
 strpbrk(const T *s, const T *accept) noexcept
 {
@@ -388,7 +388,7 @@ strpbrk(const T *s, const T *accept) noexcept
   return nullptr;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr usize
 strspn(const T *s, const T *accept) noexcept
 {
@@ -414,7 +414,7 @@ strspn(const T *s, const T *accept) noexcept
   return i;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr usize
 strcspn(const T *s, const T *reject) noexcept
 {
@@ -436,7 +436,7 @@ strcspn(const T *s, const T *reject) noexcept
   return i;
 }
 
-template <integral T>
+template<integral T>
 inline T *
 strdup(const T *s)
 {
@@ -452,7 +452,7 @@ strdup(const T *s)
   return copy;
 }
 
-template <integral T>
+template<integral T>
 inline T *
 strndup(const T *s, usize n)
 {
@@ -471,7 +471,7 @@ strndup(const T *s, usize n)
 
 enum class str_error : i32 { nullptr_arg, invalid_length, buffer_overflow, ok, overlap_detected };
 
-template <integral T>
+template<integral T>
 inline constexpr str_error
 sstrlen(const T *str, usize maxlen, usize *out_len) noexcept
 {
@@ -492,7 +492,7 @@ sstrlen(const T *str, usize maxlen, usize *out_len) noexcept
   return str_error::ok;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr str_error
 sstrcmp(const F *src, usize src_max, const D *dest, usize dest_max, int *result) noexcept
 {
@@ -517,7 +517,7 @@ sstrcmp(const F *src, usize src_max, const D *dest, usize dest_max, int *result)
   return str_error::ok;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr str_error
 sstrncmp(const F *src, usize src_max, const D *dest, usize dest_max, usize n, int *result) noexcept
 {
@@ -554,7 +554,7 @@ sstrncmp(const F *src, usize src_max, const D *dest, usize dest_max, usize n, in
   return str_error::ok;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr str_error
 sstrcpy(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max) noexcept
 {
@@ -585,7 +585,7 @@ sstrcpy(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_
   return str_error::ok;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr str_error
 sstrncpy(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max, usize n) noexcept
 {
@@ -619,7 +619,7 @@ sstrncpy(F *__restrict dest, usize dest_size, const D *__restrict src, usize src
   return str_error::ok;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr str_error
 sstrcat(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max) noexcept
 {
@@ -659,7 +659,7 @@ sstrcat(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_
   return str_error::ok;
 }
 
-template <integral F, integral D>
+template<integral F, integral D>
 inline constexpr str_error
 sstrncat(F *__restrict dest, usize dest_size, const D *__restrict src, usize src_max, usize n) noexcept
 {
@@ -702,7 +702,7 @@ sstrncat(F *__restrict dest, usize dest_size, const D *__restrict src, usize src
   return str_error::ok;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr str_error
 sstrchr(const T *s, usize maxlen, int c, T **result) noexcept
 {
@@ -733,7 +733,7 @@ sstrchr(const T *s, usize maxlen, int c, T **result) noexcept
   return str_error::ok;
 }
 
-template <integral T>
+template<integral T>
 inline constexpr str_error
 sstrrchr(const T *s, usize maxlen, int c, T **result) noexcept
 {
@@ -764,7 +764,7 @@ sstrrchr(const T *s, usize maxlen, int c, T **result) noexcept
   return str_error::ok;
 }
 
-template <integral T, integral F>
+template<integral T, integral F>
   requires micron::is_convertible_v<F, T>
 inline constexpr str_error
 sstrstr(const T *haystack, usize hay_max, const F *needle, usize needle_max, const T **result) noexcept
@@ -810,4 +810,4 @@ sstrstr(const T *haystack, usize hay_max, const F *needle, usize needle_max, con
   return str_error::ok;
 }
 
-}     // namespace micron
+}      // namespace micron

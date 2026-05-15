@@ -26,7 +26,7 @@ namespace linalg
 namespace spd
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline void
 chol_solve(const mat<F, N, N> &L, vec<F, N> &x_inout) noexcept
 {
@@ -42,7 +42,7 @@ chol_solve(const mat<F, N, N> &L, vec<F, N> &x_inout) noexcept
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 chol_solve(const dynmat<F> &L, dynvec<F> &x_inout) noexcept
 {
@@ -61,12 +61,12 @@ chol_solve(const dynmat<F> &L, dynvec<F> &x_inout) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct inv_sympd_result {
+template<ieee754_floating F, usize N> struct inv_sympd_result {
   mat<F, N, N> X;
   bool spd;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline inv_sympd_result<F, N>
 inv_sympd(const mat<F, N, N> &A) noexcept
 {
@@ -85,17 +85,17 @@ inv_sympd(const mat<F, N, N> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F> struct inv_sympd_result_dyn {
+template<ieee754_floating F> struct inv_sympd_result_dyn {
   dynmat<F> X;
   bool spd;
 };
 
-template <ieee754_floating F> struct chol_result_dyn {
+template<ieee754_floating F> struct chol_result_dyn {
   dynmat<F> L;
   bool spd;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline chol_result_dyn<F>
 chol(const dynmat<F> &A) noexcept
 {
@@ -123,7 +123,7 @@ chol(const dynmat<F> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline inv_sympd_result_dyn<F>
 inv_sympd(const dynmat<F> &A) noexcept
 {
@@ -143,7 +143,7 @@ inv_sympd(const dynmat<F> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline decomp::log_det_result<F>
 log_det_sympd(const mat<F, N, N> &A) noexcept
 {
@@ -154,7 +154,7 @@ log_det_sympd(const mat<F, N, N> &A) noexcept
   return { F(2) * s, 1 };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline decomp::log_det_result<F>
 log_det_sympd(const dynmat<F> &A) noexcept
 {
@@ -167,14 +167,14 @@ log_det_sympd(const dynmat<F> &A) noexcept
   return { F(2) * s, 1 };
 }
 
-template <ieee754_floating F> struct chol_pivot_result_dyn {
+template<ieee754_floating F> struct chol_pivot_result_dyn {
   dynmat<F> L;
   micron::vector<usize, micron::allocator_serial<>, false> perm;
   usize rank;
   F max_pivot;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline chol_pivot_result_dyn<F>
 chol_pivot(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -236,7 +236,7 @@ chol_pivot(const dynmat<F> &A, F tol = F(0)) noexcept
   return r;
 }
 
-};     // namespace spd
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace spd
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

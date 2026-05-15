@@ -13,7 +13,7 @@ namespace micron
 // A global pointer, equivalent to a unique ptr with a few select differences
 // a global pointer is meant to exist for the entire duration of the binary execution, within global scope. as such it
 // does not reclaim memory on destruction
-template <class Type> class __global_pointer : private __internal_pointer_alloc<Type>
+template<class Type> class __global_pointer: private __internal_pointer_alloc<Type>
 {
   Type *internal_pointer;
 
@@ -28,15 +28,15 @@ public:
 
   ~__global_pointer() { /*nothing*/ };
 
-  __global_pointer(void) noexcept : internal_pointer(__alloc::__impl_alloc()) {};
+  __global_pointer(void) noexcept : internal_pointer(__alloc::__impl_alloc()) { };
 
-  template <typename V>
+  template<typename V>
     requires micron::is_null_pointer_v<V>
   __global_pointer(V) noexcept : internal_pointer(nullptr){};
 
   __global_pointer(Type *&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  template <class... Args>
+  template<class... Args>
     requires(sizeof...(Args) > 0)
   __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
@@ -66,35 +66,35 @@ public:
     return *this;
   };
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
   {
     return internal_pointer == o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return internal_pointer > o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return internal_pointer < o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return internal_pointer <= o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
   {
@@ -171,7 +171,7 @@ public:
   };
 };
 
-template <class Type> class __global_pointer<Type[]> : private __internal_pointer_arralloc<Type>
+template<class Type> class __global_pointer<Type[]>: private __internal_pointer_arralloc<Type>
 {
   Type *internal_pointer;
 
@@ -187,7 +187,7 @@ public:
   ~__global_pointer() { /*nothing*/ };
   __global_pointer(void) = delete;
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 0)
   __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
@@ -319,4 +319,4 @@ public:
   };
 };
 
-};     // namespace micron
+};      // namespace micron

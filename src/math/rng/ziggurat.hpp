@@ -36,7 +36,7 @@ struct ziggurat_tables {
   f64 w[256];
 
   static constexpr f64 R = 3.6541528853610088;
-  static constexpr f64 V = 0.00492867323399;     // area per layer
+  static constexpr f64 V = 0.00492867323399;      // area per layer
 };
 
 [[nodiscard]] consteval ziggurat_tables
@@ -88,9 +88,9 @@ build_ziggurat() noexcept
 
 inline constinit const ziggurat_tables ziggurat = build_ziggurat();
 
-};     // namespace mkbits
+};      // namespace mkbits
 
-template <ieee754_floating F = f64, rng_concept Rng>
+template<ieee754_floating F = f64, rng_concept Rng>
 [[nodiscard]] inline F
 normal_ziggurat(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
 {
@@ -100,7 +100,7 @@ normal_ziggurat(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
 
   for ( ;; ) {
     u64 u = g.next();
-    i64 j = i64(u >> 11);     // 53-bit signed magnitude
+    i64 j = i64(u >> 11);      // 53-bit signed magnitude
     u64 sign_u = u & 1ULL;
     if ( sign_u ) j = -j;
     u64 i = (u >> 1) & 0xFFULL;
@@ -131,7 +131,7 @@ normal_ziggurat(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
   }
 }
 
-};     // namespace dist
-};     // namespace rng
-};     // namespace math
-};     // namespace micron
+};      // namespace dist
+};      // namespace rng
+};      // namespace math
+};      // namespace micron

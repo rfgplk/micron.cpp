@@ -154,7 +154,7 @@ main()
   test_case("null and orth: A · null(A) = 0,  orth(A) is column space");
   {
     dynmat<f64> A(4, 3);
-    f64 vals[12] = { 1, 2, 3, 4, 5, 9, 7, 8, 15, 1, 1, 2 };     // rank 2
+    f64 vals[12] = { 1, 2, 3, 4, 5, 9, 7, 8, 15, 1, 1, 2 };      // rank 2
     for ( usize i = 0; i < 12; ++i ) A.data()[i] = vals[i];
     auto N = linalg::pseudoinv::null(A);
     require_true(N.cols == 1);

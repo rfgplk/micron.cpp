@@ -19,13 +19,13 @@
 namespace micron
 {
 
-template <is_regular_object T, usize N = 64> class span
+template<is_regular_object T, usize N = 64> class span
 {
   T stack[N];
   usize length = 0;
 
 public:
-  template <is_regular_object U, usize M> friend class span;
+  template<is_regular_object U, usize M> friend class span;
 
   using category_type = slice_tag;
   using mutability_type = mutable_tag;
@@ -48,7 +48,7 @@ public:
     length = 0;
   }
 
-  span(void) : length(0) {}
+  span(void) : length(0) { }
 
   explicit span(const size_type cnt)
   {
@@ -96,7 +96,7 @@ public:
     length = static_cast<size_type>(lst.size());
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn>)
   span(const size_type cnt, Fn &&fn)
   {
@@ -107,7 +107,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   span(const size_type cnt, Fn &&fn)
   {
@@ -118,7 +118,7 @@ public:
     micron::transform(begin(), end(), fn);
   }
 
-  template <usize M> span(const span<T, M> &o)
+  template<usize M> span(const span<T, M> &o)
   {
     constexpr size_type copy_n = (N < M) ? N : M;
     __impl_container::copy(stack, o.stack, copy_n);
@@ -138,7 +138,7 @@ public:
     o.length = 0;
   }
 
-  template <usize M> span(span<T, M> &&o)
+  template<usize M> span(span<T, M> &&o)
   {
     constexpr size_type copy_n = (N >= M) ? M : N;
     micron::copy<copy_n>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
@@ -159,7 +159,7 @@ public:
     return *this;
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   T &
   operator[](const R n)
@@ -167,7 +167,7 @@ public:
     return stack[n];
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   const T &
   operator[](const R n) const
@@ -462,7 +462,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   span &
   emplace_back(Args &&...args)
   {
@@ -509,7 +509,7 @@ public:
     if ( n >= length ) [[unlikely]]
       exc<except::runtime_error>("micron::span erase() out of range");
     stack[n].~T();
-    micron::memmove(micron::addr(stack[n]), micron::addr(stack[n + 1]), (length - n - 1) * sizeof(T));
+    micron::memmove(micron::addr(stack[n]), micron::addr(stack[n + 1]), (length - n - 1));
     length--;
     return *this;
   }
@@ -544,7 +544,7 @@ public:
     return *this;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn>
   span &
   fill_with(Fn gen)
@@ -596,7 +596,7 @@ public:
     return last();
   }
 
-  template <size_type Chunk>
+  template<size_type Chunk>
   pointer
   first_chunk()
   {
@@ -605,7 +605,7 @@ public:
     return stack;
   }
 
-  template <size_type Chunk>
+  template<size_type Chunk>
   const_pointer
   first_chunk() const
   {
@@ -614,14 +614,14 @@ public:
     return stack;
   }
 
-  template <size_type Chunk>
+  template<size_type Chunk>
   pointer
   first_chunk_mut()
   {
     return first_chunk<Chunk>();
   }
 
-  template <size_type Chunk>
+  template<size_type Chunk>
   pointer
   last_chunk()
   {
@@ -630,7 +630,7 @@ public:
     return stack + length - Chunk;
   }
 
-  template <size_type Chunk>
+  template<size_type Chunk>
   const_pointer
   last_chunk() const
   {
@@ -639,14 +639,14 @@ public:
     return stack + length - Chunk;
   }
 
-  template <size_type Chunk>
+  template<size_type Chunk>
   pointer
   last_chunk_mut()
   {
     return last_chunk<Chunk>();
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   split(Fn pred, Cb callback) const
@@ -663,7 +663,7 @@ public:
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   split_mut(Fn pred, Cb callback)
@@ -671,7 +671,7 @@ public:
     return split(pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   split_inclusive(Fn pred, Cb callback) const
@@ -688,7 +688,7 @@ public:
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   split_inclusive_mut(Fn pred, Cb callback)
@@ -696,7 +696,7 @@ public:
     return split_inclusive(pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   splitn(size_type n, Fn pred, Cb callback) const
@@ -714,7 +714,7 @@ public:
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   splitn_mut(size_type n, Fn pred, Cb callback)
@@ -722,7 +722,7 @@ public:
     return splitn(n, pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   rsplit(Fn pred, Cb callback) const
@@ -739,7 +739,7 @@ public:
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   rsplit_mut(Fn pred, Cb callback)
@@ -747,7 +747,7 @@ public:
     return rsplit(pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   rsplitn(size_type n, Fn pred, Cb callback) const
@@ -765,7 +765,7 @@ public:
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_type
   rsplitn_mut(size_type n, Fn pred, Cb callback)
@@ -782,7 +782,7 @@ public:
     return { raw_slice<T>(), raw_slice<T>() };
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, const T &>
   dual_raw_slice<T>
   split_once(Fn pred) const
@@ -802,7 +802,7 @@ public:
     return { raw_slice<T>(), raw_slice<T>() };
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, const T &>
   dual_raw_slice<T>
   rsplit_once(Fn pred) const
@@ -829,7 +829,7 @@ public:
     if ( length == 0 ) [[unlikely]]
       return T{};
     T val = micron::move(stack[0]);
-    micron::memmove(micron::addr(stack[0]), micron::addr(stack[1]), (length - 1) * sizeof(T));
+    micron::memmove(micron::addr(stack[0]), micron::addr(stack[1]), (length - 1));
     length--;
     return val;
   }
@@ -840,7 +840,7 @@ public:
     if ( length == 0 ) [[unlikely]]
       return {};
     raw_slice<T> view{ stack, 1 };
-    micron::memmove(micron::addr(stack[0]), micron::addr(stack[1]), (length - 1) * sizeof(T));
+    micron::memmove(micron::addr(stack[0]), micron::addr(stack[1]), (length - 1));
     length--;
     return view;
   }
@@ -870,7 +870,7 @@ public:
     return false;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, const T &>
   bool
   contains(Fn pred) const
@@ -984,7 +984,7 @@ public:
   {
     if ( src_start + count > length || dst + count > length ) [[unlikely]]
       return *this;
-    micron::memmove(micron::addr(stack[dst]), micron::addr(stack[src_start]), count * sizeof(T));
+    micron::memmove(micron::addr(stack[dst]), micron::addr(stack[src_start]), count);
     return *this;
   }
 
@@ -1008,7 +1008,7 @@ public:
     return fill(val);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, size_type>
   span &
   write_with(Fn gen)
@@ -1017,7 +1017,7 @@ public:
     return *this;
   }
 
-  template <typename InputIt>
+  template<typename InputIt>
   span &
   write_iter(InputIt first_it, InputIt last_it)
   {
@@ -1117,28 +1117,28 @@ public:
     return { reinterpret_cast<byte *>(stack), length * sizeof(T) };
   }
 
-  template <typename U>
+  template<typename U>
   raw_slice<U>
   as_flattened()
   {
     return { reinterpret_cast<U *>(stack), length * sizeof(T) / sizeof(U) };
   }
 
-  template <typename U>
+  template<typename U>
   raw_slice<const U>
   as_flattened() const
   {
     return { reinterpret_cast<const U *>(stack), length * sizeof(T) / sizeof(U) };
   }
 
-  template <typename U>
+  template<typename U>
   raw_slice<U>
   as_flattened_mut()
   {
     return as_flattened<U>();
   }
 
-  template <typename U>
+  template<typename U>
   align_result<T, U>
   align_to() const
   {
@@ -1162,7 +1162,7 @@ public:
              raw_slice<T>(stack + length - suffix_elems, suffix_elems) };
   }
 
-  template <typename U>
+  template<typename U>
   align_result<T, U>
   align_to_mut()
   {
@@ -1274,4 +1274,4 @@ public:
   }
 };
 
-}     // namespace micron
+}      // namespace micron

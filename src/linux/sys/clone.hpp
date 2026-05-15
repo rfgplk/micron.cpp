@@ -110,7 +110,7 @@ fork_kernel(void)
   return micron::syscall(SYS_fork);
 }
 
-template <usize Sz, auto Fn, typename... Args>
+template<usize Sz, auto Fn, typename... Args>
 pid_t
 clone(addr_t *stack, int flags, Args &&...args)
 {
@@ -118,13 +118,13 @@ clone(addr_t *stack, int flags, Args &&...args)
   posix::clone_args clone_args{};
   clone_args.flags = static_cast<u64>(flags);
   if ( flags & clone_parent or (flags & clone_sighand and flags & clone_thread) )
-    clone_args.exit_signal = 0;     // NOTE: kernel constraint otherwise -22
+    clone_args.exit_signal = 0;      // NOTE: kernel constraint otherwise -22
   else
     clone_args.exit_signal = sig_chld;
 
   uintptr_t sptr = reinterpret_cast<uintptr_t>(stack);
-  sptr += Sz;         // top of allocated stack
-  sptr &= ~0xFUL;     // 16-byte alignment
+  sptr += Sz;          // top of allocated stack
+  sptr &= ~0xFUL;      // 16-byte alignment
   clone_args.stack = sptr;
   clone_args.stack_size = Sz;
   clone_args.parent_tid = 0;
@@ -160,7 +160,7 @@ __fork_clone(int exit_signal)
   // these should be exactly like this
   posix::clone_args clone_args{};
   clone_args.flags = 0;
-  clone_args.exit_signal = exit_signal;     // should be sig_chld
+  clone_args.exit_signal = exit_signal;      // should be sig_chld
   clone_args.stack = 0;
   clone_args.stack_size = 0;
   clone_args.parent_tid = 0;
@@ -191,7 +191,7 @@ clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nu
   args.flags = static_cast<u64>(flags);
   args.exit_signal = sig_chld;
   args.stack = reinterpret_cast<u64>(stack_top);
-  args.stack_size = 0;     // opt
+  args.stack_size = 0;      // opt
   args.parent_tid = reinterpret_cast<u64>(parent_tid);
   args.child_tid = reinterpret_cast<u64>(child_tid);
   args.tls = reinterpret_cast<u64>(tls);
@@ -249,5 +249,5 @@ clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stac
 
   return pid;     // Parent receives child's PID
 }*/
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

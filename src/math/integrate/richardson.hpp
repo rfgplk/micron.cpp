@@ -23,7 +23,7 @@ namespace integrate
 namespace richardson
 {
 
-template <ieee754_floating F, typename Fn>
+template<ieee754_floating F, typename Fn>
 [[nodiscard]] inline F
 extrapolate(Fn step, F h0, F ratio, usize order, usize max_levels, F tol, usize *n_levels_out = nullptr) noexcept
 {
@@ -59,7 +59,7 @@ extrapolate(Fn step, F h0, F ratio, usize order, usize max_levels, F tol, usize 
   return best;
 }
 
-};     // namespace richardson
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace richardson
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

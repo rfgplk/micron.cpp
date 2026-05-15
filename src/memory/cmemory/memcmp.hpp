@@ -43,7 +43,7 @@ __memcmp_bytes(const byte *__restrict a, const byte *__restrict b, const u64 byt
 // %%%%%%%%%%%%%%%%%%%%%%
 // memcmps
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) i64
 memcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
@@ -59,7 +59,7 @@ memcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexc
   }
 };
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 i64
 rmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
@@ -75,7 +75,7 @@ rmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   }
 };
 
-template <typename F>
+template<typename F>
 constexpr i64
 constexpr_memcmp(const F *src, const F *dest, const u64 cnt) noexcept
 {
@@ -84,7 +84,7 @@ constexpr_memcmp(const F *src, const F *dest, const u64 cnt) noexcept
   return 0;
 };
 
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) i64
 cmemcmp(const F *__restrict _src, const F *__restrict _dest) noexcept
@@ -108,7 +108,7 @@ cmemcmp(const F *__restrict _src, const F *__restrict _dest) noexcept
   }
 };
 
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 i64
 rcmemcmp(const F &_src, const F &_dest) noexcept
 {
@@ -134,7 +134,7 @@ rcmemcmp(const F &_src, const F &_dest) noexcept
 // SIMD MEMCMP VARIANTS, REQUIRES ALIGNMENT
 // MOVED TO /simd
 
-template <typename F>
+template<typename F>
 inline i64
 memcmp_8b(const F *src, const F *dest) noexcept
 {
@@ -148,7 +148,7 @@ memcmp_8b(const F *src, const F *dest) noexcept
   return 0;
 };
 
-template <typename F>
+template<typename F>
 inline i64
 memcmp_16b(const F *src, const F *dest) noexcept
 {
@@ -162,7 +162,7 @@ memcmp_16b(const F *src, const F *dest) noexcept
   return 0;
 };
 
-template <typename F>
+template<typename F>
 inline i64
 memcmp_32b(const F *src, const F *dest) noexcept
 {
@@ -176,7 +176,7 @@ memcmp_32b(const F *src, const F *dest) noexcept
   return 0;
 };
 
-template <typename F>
+template<typename F>
 inline i64
 memcmp_64b(const F *src, const F *dest) noexcept
 {
@@ -191,7 +191,7 @@ memcmp_64b(const F *src, const F *dest) noexcept
   return 0;
 };
 
-template <typename T, typename F, u64 alignment = alignof(T)>
+template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) i64
 smemcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
@@ -210,7 +210,7 @@ smemcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noex
   }
 };
 
-template <typename T, typename F, u64 alignment = alignof(T)>
+template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 i64
 rsmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
@@ -228,7 +228,7 @@ rsmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   }
 };
 
-template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
+template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) i64
 scmemcmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
@@ -255,7 +255,7 @@ scmemcmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
   }
 };
 
-template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
+template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
 i64
 rscmemcmp_safe(const F &_src, const F &_dest) noexcept
 {
@@ -307,28 +307,28 @@ rbcmp(const byte &src, const byte &dest, const u64 cnt) noexcept
   return rbytecmp(src, dest, cnt);
 };
 
-template <u64 N>
+template<u64 N>
 __attribute__((nonnull)) i64
 cbytecmp(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   return __memcmp_bytes(src, dest, N);
 };
 
-template <u64 N>
+template<u64 N>
 __attribute__((nonnull)) i64
 cbcmp(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   return cbytecmp<N>(src, dest);
 };
 
-template <u64 N>
+template<u64 N>
 i64
 rcbytecmp(const byte &src, const byte &dest) noexcept
 {
   return __memcmp_bytes(&src, &dest, N);
 };
 
-template <u64 N>
+template<u64 N>
 i64
 rcbcmp(const byte &src, const byte &dest) noexcept
 {
@@ -404,7 +404,7 @@ bcmp_64b(const byte *src, const byte *dest) noexcept
   return bytecmp_64b(src, dest);
 };
 
-template <u64 alignment = 1>
+template<u64 alignment = 1>
 __attribute__((nonnull)) i64
 sbytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
@@ -414,14 +414,14 @@ sbytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt)
   return __memcmp_bytes(src, dest, cnt);
 };
 
-template <u64 alignment = 1>
+template<u64 alignment = 1>
 __attribute__((nonnull)) i64
 sbcmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   return sbytecmp<alignment>(src, dest, cnt);
 };
 
-template <u64 alignment = 1>
+template<u64 alignment = 1>
 i64
 rsbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
@@ -430,14 +430,14 @@ rsbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
   return __memcmp_bytes(&src, &dest, cnt);
 };
 
-template <u64 alignment = 1>
+template<u64 alignment = 1>
 i64
 rsbcmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
   return rsbytecmp<alignment>(src, dest, cnt);
 };
 
-template <u64 N, u64 alignment = 1>
+template<u64 N, u64 alignment = 1>
 __attribute__((nonnull)) i64
 scbytecmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
@@ -447,14 +447,14 @@ scbytecmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
   return __memcmp_bytes(src, dest, N);
 };
 
-template <u64 N, u64 alignment = 1>
+template<u64 N, u64 alignment = 1>
 __attribute__((nonnull)) i64
 scbcmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   return scbytecmp_safe<N, alignment>(src, dest);
 };
 
-template <u64 N, u64 alignment = 1>
+template<u64 N, u64 alignment = 1>
 i64
 rscbytecmp_safe(const byte &src, const byte &dest) noexcept
 {
@@ -475,7 +475,7 @@ rscbytecmp_safe(const byte &src, const byte &dest) noexcept
   return 0;
 };
 
-template <u64 N, u64 alignment = 1>
+template<u64 N, u64 alignment = 1>
 i64
 rscbcmp_safe(const byte &src, const byte &dest) noexcept
 {
@@ -485,7 +485,7 @@ rscbcmp_safe(const byte &src, const byte &dest) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // typecmps
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) i64
 typecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
@@ -493,7 +493,7 @@ typecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noex
   return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), cnt * sizeof(T));
 };
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 i64
 rtypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
@@ -501,21 +501,21 @@ rtypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   return __memcmp_bytes(reinterpret_cast<const byte *>(&_src), reinterpret_cast<const byte *>(&_dest), cnt * sizeof(T));
 };
 
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 __attribute__((nonnull)) i64
 ctypecmp(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), M * sizeof(T));
 };
 
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 i64
 rctypecmp(const F &_src, const F &_dest) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(&_src), reinterpret_cast<const byte *>(&_dest), M * sizeof(T));
 };
 
-template <typename T, typename F, u64 alignment = alignof(T)>
+template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) i64
 stypecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
@@ -526,7 +526,7 @@ stypecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noe
   return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), cnt * sizeof(T));
 };
 
-template <typename T, typename F, u64 alignment = alignof(T)>
+template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 i64
 rstypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
@@ -536,7 +536,7 @@ rstypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   return __memcmp_bytes(reinterpret_cast<const byte *>(&_src), reinterpret_cast<const byte *>(&_dest), cnt * sizeof(T));
 };
 
-template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
+template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) i64
 sctypecmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
@@ -546,7 +546,7 @@ sctypecmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
   return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), M * sizeof(T));
 };
 
-template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
+template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
 i64
 rsctypecmp_safe(const F &_src, const F &_dest) noexcept
 {
@@ -570,14 +570,14 @@ rwordcmp(const word &src, const word &dest, const u64 cnt) noexcept
   return __memcmp_bytes(reinterpret_cast<const byte *>(&src), reinterpret_cast<const byte *>(&dest), cnt * sizeof(word));
 };
 
-template <u64 M>
+template<u64 M>
 __attribute__((nonnull)) i64
 cwordcmp(const word *__restrict src, const word *__restrict dest) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M * sizeof(word));
 };
 
-template <u64 M>
+template<u64 M>
 i64
 rcwordcmp(const word &src, const word &dest) noexcept
 {
@@ -618,7 +618,7 @@ wordcmp_32w(const word *src, const word *dest) noexcept
   return 0;
 };
 
-template <u64 alignment = alignof(word)>
+template<u64 alignment = alignof(word)>
 __attribute__((nonnull)) i64
 swordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
@@ -628,7 +628,7 @@ swordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt)
   return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), cnt * sizeof(word));
 };
 
-template <u64 alignment = alignof(word)>
+template<u64 alignment = alignof(word)>
 i64
 rswordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 {
@@ -638,7 +638,7 @@ rswordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 };
 
 // SAFE COMPILE-TIME CONSTANT WORDCMP - TEMPLATE COUNT ONLY
-template <u64 M, u64 alignment = alignof(word)>
+template<u64 M, u64 alignment = alignof(word)>
 __attribute__((nonnull)) i64
 scwordcmp_safe(const word *__restrict src, const word *__restrict dest) noexcept
 {
@@ -648,7 +648,7 @@ scwordcmp_safe(const word *__restrict src, const word *__restrict dest) noexcept
   return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M * sizeof(word));
 };
 
-};     // namespace micron
+};      // namespace micron
 
 #if defined(__micron_freestanding)
 // c-abi

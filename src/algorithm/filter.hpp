@@ -17,7 +17,7 @@
 
 namespace micron
 {
-template <class T, typename Fn>
+template<class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 T *
 filter(const T *first, const T *end, Fn fn, T *out)
@@ -27,7 +27,7 @@ filter(const T *first, const T *end, Fn fn, T *out)
   return out;
 }
 
-template <class T, typename Fn>
+template<class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 T *
 filter(const T *first, const T *end, Fn fn, T *out, usize limit)
@@ -40,7 +40,7 @@ filter(const T *first, const T *end, Fn fn, T *out, usize limit)
   return out;
 }
 
-template <class T, typename Fn>
+template<class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 T *
 filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
@@ -52,7 +52,7 @@ filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
   return out;
 }
 
-template <class T, typename Fn>
+template<class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 const T *
 prune(const T *first, const T *end, Fn fn, T *out, usize limit)
@@ -65,7 +65,7 @@ prune(const T *first, const T *end, Fn fn, T *out, usize limit)
   return first;
 }
 
-template <class T, typename Fn>
+template<class T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 const T *
 prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
@@ -77,7 +77,7 @@ prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
   return first;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 C
 filter(const C &c, Fn fn)
@@ -89,7 +89,7 @@ filter(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C, typename F>
+template<is_iterable_container C, typename F>
   requires micron::is_invocable_v<F, const typename C::value_type *>
 C &
 filter_inplace(C &c, F fn)
@@ -103,7 +103,7 @@ filter_inplace(C &c, F fn)
   return c;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 C
 filter(const C &c, Fn fn, usize limit)
@@ -115,7 +115,7 @@ filter(const C &c, Fn fn, usize limit)
   return out;
 }
 
-template <is_iterable_container C, is_iterable_container O, typename Fn>
+template<is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
 filter(const C &c_in, Fn fn, O &c_out)
@@ -123,7 +123,7 @@ filter(const C &c_in, Fn fn, O &c_out)
   return filter(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
 }
 
-template <is_iterable_container C, is_iterable_container O, typename Fn>
+template<is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
 filter(const C &c_in, Fn fn, O &c_out, usize limit)
@@ -131,7 +131,7 @@ filter(const C &c_in, Fn fn, O &c_out, usize limit)
   return filter(c_in.begin(), c_in.end(), fn, c_out.begin(), limit);
 }
 
-template <is_iterable_container C, is_iterable_container O, typename Fn>
+template<is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
 prune(const C &c_in, Fn fn, O &c_out, usize limit)
@@ -139,7 +139,7 @@ prune(const C &c_in, Fn fn, O &c_out, usize limit)
   return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), limit);
 }
 
-template <is_iterable_container C, is_iterable_container O, typename Fn>
+template<is_iterable_container C, is_iterable_container O, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
 prune(const C &c_in, Fn fn, O &c_out)
@@ -147,7 +147,7 @@ prune(const C &c_in, Fn fn, O &c_out)
   return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr T *
 filter(const T *first, const T *end, T *out) noexcept
 {
@@ -156,7 +156,7 @@ filter(const T *first, const T *end, T *out) noexcept
   return out;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr T *
 filter(const T *first, const T *end, T *out, usize limit) noexcept
 {
@@ -168,7 +168,7 @@ filter(const T *first, const T *end, T *out, usize limit) noexcept
   return out;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 C
 filter(const C &c)
 {
@@ -179,7 +179,7 @@ filter(const C &c)
   return out;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 C
 filter(const C &c, usize limit)
 {
@@ -189,4 +189,4 @@ filter(const C &c, usize limit)
   out.resize(last - out.begin());
   return out;
 }
-};     // namespace micron
+};      // namespace micron

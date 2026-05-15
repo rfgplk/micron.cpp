@@ -253,5 +253,5 @@ struct stat64_t {
 using stat_t = stat64_t;
 
 #endif
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

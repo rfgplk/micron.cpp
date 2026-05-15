@@ -64,7 +64,7 @@ main(void)
   sb::test_case("construction - minimum capacity enforced");
   {
     micron::robin_map<micron::hstring<char>, int> m(1);
-    sb::require(m.max_size() >= 16ULL);     // __min_cap = 16
+    sb::require(m.max_size() >= 16ULL);      // __min_cap = 16
   }
   sb::end_test_case();
 
@@ -818,7 +818,7 @@ main(void)
     // Force probe chains by filling a small table past halfway.
     micron::robin_map<micron::hstring<char>, int> m(32);
     std::vector<micron::hstring<char>> inserted;
-    for ( int i = 0; i < 14; ++i ) {     // ~43% load on 32-slot table
+    for ( int i = 0; i < 14; ++i ) {      // ~43% load on 32-slot table
       auto k = make_key(i);
       m.insert(k, i * 7);
       inserted.push_back(k);
@@ -856,7 +856,7 @@ main(void)
     micron::robin_map<micron::hstring<char>, int> m;
     m.insert("n1", 1);
     m.insert("n2", 2);
-    m.insert("n1", 99);     // update n1; n2 must be unaffected
+    m.insert("n1", 99);      // update n1; n2 must be unaffected
     sb::require(*m.find("n1") == 99);
     sb::require(*m.find("n2") == 2);
   }

@@ -13,7 +13,7 @@
 
 #include "../snowball/snowball.hpp"
 
-template <typename T, typename F, u64 N>
+template<typename T, typename F, u64 N>
 bool
 verify_buffer(T (&buf)[N], F expected)
 {
@@ -23,7 +23,7 @@ verify_buffer(T (&buf)[N], F expected)
   return true;
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
 bool
 verify_buffer(T *buf, size_t size, F expected)
 {
@@ -32,14 +32,14 @@ verify_buffer(T *buf, size_t size, F expected)
   return true;
 }
 
-template <typename T, u64 N>
+template<typename T, u64 N>
 bool
 is_zeroed(T (&buf)[N])
 {
   return verify_buffer(buf, static_cast<T>(0));
 }
 
-template <typename T, u64 N>
+template<typename T, u64 N>
 bool
 is_filled(T (&buf)[N])
 {
@@ -232,7 +232,7 @@ main(void)
   sb::test_case("Unrolled byteset - 16 bytes");
   {
     byte buf[16];
-    mc::bset_16b(buf, 0xA2);     // Test alias
+    mc::bset_16b(buf, 0xA2);      // Test alias
     sb::require(verify_buffer(buf, static_cast<byte>(0xA2)));
   }
   sb::end_test_case();
@@ -248,7 +248,7 @@ main(void)
   sb::test_case("Unrolled byteset - 64 bytes");
   {
     byte buf[64];
-    mc::bset_64b(buf, 0xA4);     // Test alias
+    mc::bset_64b(buf, 0xA4);      // Test alias
     sb::require(verify_buffer(buf, static_cast<byte>(0xA4)));
   }
   sb::end_test_case();
@@ -256,7 +256,7 @@ main(void)
   sb::test_case("Byte-level zero - bzero");
   {
     byte buf[32];
-    mc::memset(buf, 0xFF, 32);     // Fill first
+    mc::memset(buf, 0xFF, 32);      // Fill first
     mc::bzero(buf, 32);
     sb::require(is_zeroed(buf));
   }

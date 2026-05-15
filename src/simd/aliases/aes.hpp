@@ -53,7 +53,7 @@ inv_mix_columns(__m128i a) noexcept
   return _mm_aesimc_si128(a);
 }
 
-template <int RCON>
+template<int RCON>
 __inline_aes __m128i
 keygen_assist(__m128i a) noexcept
 {
@@ -67,7 +67,7 @@ keygen_assist(__m128i a) noexcept
 
 #define __inline_pcl [[gnu::always_inline, gnu::artificial, gnu::target("pclmul")]] static inline
 
-template <int IMM>
+template<int IMM>
 __inline_pcl __m128i
 clmul_64(__m128i a, __m128i b) noexcept
 {
@@ -79,6 +79,6 @@ clmul_64(__m128i a, __m128i b) noexcept
 #pragma GCC diagnostic pop
 #pragma GCC diagnostic pop
 
-};     // namespace aes
-};     // namespace simd
-};     // namespace micron
+};      // namespace aes
+};      // namespace simd
+};      // namespace micron

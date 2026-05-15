@@ -62,7 +62,7 @@ main(void)
 
     micron::hopscotch_map<micron::hstring<char>, int> b(micron::move(a));
     sb::require(b.size() == 2ULL);
-    sb::require(a.size() == 0ULL);     // moved-from is empty
+    sb::require(a.size() == 0ULL);      // moved-from is empty
     sb::require(*b.find("hello") == 42);
     sb::require(*b.find("world") == 99);
   }
@@ -109,7 +109,7 @@ main(void)
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
     m.insert("dup", 10);
-    m.insert("dup", 20);     // same key
+    m.insert("dup", 20);      // same key
     sb::require(m.size() == 1ULL);
   }
   sb::end_test_case();
@@ -120,7 +120,7 @@ main(void)
     m.insert("k", 100);
     int *p = m.insert("k", 999);
     sb::require(p != nullptr);
-    sb::require(*p == 100);     // original value preserved
+    sb::require(*p == 100);      // original value preserved
   }
   sb::end_test_case();
 
@@ -192,7 +192,7 @@ main(void)
   {
     micron::hopscotch_map<micron::hstring<char>, int> m;
     int &v = m["new_key"];
-    sb::require(v == 0);     // default-constructed int
+    sb::require(v == 0);      // default-constructed int
     sb::require(m.size() == 1ULL);
   }
   sb::end_test_case();
@@ -561,7 +561,7 @@ main(void)
       sb::require(p != nullptr);
       sb::require(*p == 42);
     }
-    sb::require(true);     // just survive if hash == 0
+    sb::require(true);      // just survive if hash == 0
   }
   sb::end_test_case();
 

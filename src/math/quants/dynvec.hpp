@@ -20,7 +20,7 @@ namespace micron
 namespace math
 {
 
-template <arith_scalar T> struct dynvec {
+template<arith_scalar T> struct dynvec {
   using value_type = T;
   using storage_type = micron::vector<T, micron::allocator_serial<>, false>;
 
@@ -28,16 +28,16 @@ template <arith_scalar T> struct dynvec {
 
   dynvec() noexcept = default;
 
-  explicit dynvec(usize n) : buf(n) {}
+  explicit dynvec(usize n) : buf(n) { }
 
-  dynvec(usize n, const T &fill) : buf(n, fill) {}
+  dynvec(usize n, const T &fill) : buf(n, fill) { }
 
   dynvec(const dynvec &) = default;
   dynvec(dynvec &&) noexcept = default;
   dynvec &operator=(const dynvec &) = default;
   dynvec &operator=(dynvec &&) noexcept = default;
 
-  template <usize N>
+  template<usize N>
   [[nodiscard]] static dynvec
   from(const vec<T, N> &v)
   {
@@ -107,19 +107,19 @@ template <arith_scalar T> struct dynvec {
   }
 };
 
-template <arith_scalar T>
+template<arith_scalar T>
 [[nodiscard, gnu::always_inline]] inline quants::vec_view<T>
 as_view(dynvec<T> &v) noexcept
 {
   return quants::vec_view<T>{ v.data(), v.size(), 1 };
 }
 
-template <arith_scalar T>
+template<arith_scalar T>
 [[nodiscard, gnu::always_inline]] inline quants::vec_view<const T>
 as_view(const dynvec<T> &v) noexcept
 {
   return quants::vec_view<const T>{ v.data(), v.size(), 1 };
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

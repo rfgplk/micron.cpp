@@ -33,7 +33,7 @@ class alloc_predictor
   // Keep sum and div maintained incrementally instead of recomputing each time
   micron::carray<usize, __max_cached> allocs;
   u64 running_sum;
-  u64 running_div;     // count of non-zero entries
+  u64 running_div;      // count of non-zero entries
   u32 index;
 
   static constexpr usize
@@ -56,7 +56,7 @@ class alloc_predictor
 public:
   ~alloc_predictor() = default;
 
-  alloc_predictor() noexcept : allocs{}, running_sum(0), running_div(0), index(0) {}
+  alloc_predictor() noexcept : allocs{}, running_sum(0), running_div(0), index(0) { }
 
   alloc_predictor(const alloc_predictor &) = default;
   alloc_predictor(alloc_predictor &&) = default;
@@ -95,4 +95,4 @@ public:
     return align_to_page(mean_alloc > n ? mean_alloc : n);
   }
 };
-};     // namespace abc
+};      // namespace abc

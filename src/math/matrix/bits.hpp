@@ -16,13 +16,13 @@
 namespace micron
 {
 
-template <typename B, usize C, usize R>
+template<typename B, usize C, usize R>
 inline constexpr usize int_matrix_align_v = (C * R * sizeof(B) <= 16)   ? 16
                                             : (C * R * sizeof(B) <= 32) ? 32
                                                                         : 64;
 
 // NOTE: row major
-template <typename B, usize C, usize R>
+template<typename B, usize C, usize R>
   requires(micron::is_arithmetic_v<B> && C >= 1 && R >= 1 && (C * R * sizeof(B) <= 4096))
 class alignas(int_matrix_align_v<B, C, R>) int_matrix_base_avx
 {
@@ -42,14 +42,14 @@ class alignas(int_matrix_align_v<B, C, R>) int_matrix_base_avx
 
 public:
   static constexpr usize __size = C * R;
-  B data[__size];     // public for conv.  Class alignas carries through.
+  B data[__size];      // public for conv.  Class alignas carries through.
   ~int_matrix_base_avx(void) = default;
 
   int_matrix_base_avx(void) : data{} { micron::czero<__size>(data); }
 
   int_matrix_base_avx(B n) : data{} { micron::ctypeset<__size, B>(data, n); }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) == __size)
   int_matrix_base_avx(Args... args) : data{ args... }
   {
@@ -287,6 +287,6 @@ public:
   }
 };
 
-template <typename B, usize C, usize R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
+template<typename B, usize C, usize R> using int_matrix_base = int_matrix_base_avx<B, C, R>;
 
-};     // namespace micron
+};      // namespace micron

@@ -27,7 +27,7 @@ namespace math
 namespace integrate
 {
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline F
 trapezoid(Fn f, F a, F b, usize n) noexcept
 {
@@ -55,7 +55,7 @@ trapezoid(Fn f, F a, F b, usize n) noexcept
 }
 
 // with step dx
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 trapezoid(const F *y, usize n, F dx) noexcept
 {
@@ -65,7 +65,7 @@ trapezoid(const F *y, usize n, F dx) noexcept
   return dx * s;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard]] inline typename C::value_type
 trapezoid(const C &y, typename C::value_type dx) noexcept
@@ -73,7 +73,7 @@ trapezoid(const C &y, typename C::value_type dx) noexcept
   return trapezoid<typename C::value_type>(y.cbegin(), y.size(), dx);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 trapezoid(const F *xs, const F *ys, usize n) noexcept
 {
@@ -86,6 +86,6 @@ trapezoid(const F *xs, const F *ys, usize n) noexcept
   return s;
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

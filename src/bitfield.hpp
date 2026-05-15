@@ -16,7 +16,7 @@
 namespace micron
 {
 // N is number of bits in field, R is the desired return type (bool by default)
-template <size_t N, typename R = bool>
+template<size_t N, typename R = bool>
   requires(N % 8 == 0) and micron::is_fundamental_v<R>
 class alignas(64) bitfield
 {
@@ -32,28 +32,28 @@ public:
   constexpr bitfield(const bool b = false)
   {
     if ( !b )
-      micron::czero<N / 8>(&bits[0]);     // do this explicitly
+      micron::czero<N / 8>(&bits[0]);      // do this explicitly
     else
-      micron::cfull<N / 8>(&bits[0]);     // do this explicitly
+      micron::cfull<N / 8>(&bits[0]);      // do this explicitly
   }
 
-  template <typename T> constexpr bitfield(const T *ch, const T zero = '0', const T one = '1')     // standard modified
+  template<typename T> constexpr bitfield(const T *ch, const T zero = '0', const T one = '1')      // standard modified
   {
     size_t sz = micron::strlen(ch);
     if ( sz > (N) ) exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
     for ( size_t i = 0; i < (sz / 8); i++ ) {
       if ( ch[i] == zero ) [[likely]] {
-      } else if ( ch[i] == one )     // zero by default so no need for that
+      } else if ( ch[i] == one )      // zero by default so no need for that
         bits[i] |= (1 << (i % 8));
     }
   }
 
-  template <is_string T> bitfield(const T &str, const T zero = '0', const T one = '1')     // standard modified
+  template<is_string T> bitfield(const T &str, const T zero = '0', const T one = '1')      // standard modified
   {
     if ( str.size() > (N) ) exc<except::library_error>("micron::bitfield bitfield initialization string is too long");
     for ( size_t i = 0; i < (str.size() / 8); i++ ) {
       if ( str[i] == zero ) [[likely]] {
-      } else if ( str[i] == one )     // zero by default so no need for that
+      } else if ( str[i] == one )      // zero by default so no need for that
         bits[i] |= (1 << (i % 8));
     }
   }
@@ -223,4 +223,4 @@ public:
     return *this;
   }
 };
-};     // namespace micron
+};      // namespace micron

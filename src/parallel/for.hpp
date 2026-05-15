@@ -25,7 +25,7 @@ namespace micron
 
 // heavy parallel functions - intended this way
 
-template <auto Fn, typename Tr, is_iterable_container T>
+template<auto Fn, typename Tr, is_iterable_container T>
 inline __attribute__((always_inline)) auto
 __parallel_for(typename T::iterator start, typename T::iterator end)
 {
@@ -34,7 +34,7 @@ __parallel_for(typename T::iterator start, typename T::iterator end)
   });
 }
 
-template <auto Fn, is_iterable_container T>
+template<auto Fn, is_iterable_container T>
   requires(micron::is_invocable_v<decltype(Fn), typename T::iterator> or micron::is_invocable_v<decltype(Fn), typename T::const_iterator>)
 void
 parallel_for(T &data)
@@ -60,7 +60,7 @@ parallel_for(T &data)
 
 // fork_for - lightweight parallel functions, uses concurrent arena
 
-template <auto Fn, typename Tr, is_iterable_container T>
+template<auto Fn, typename Tr, is_iterable_container T>
 inline __attribute__((always_inline)) auto
 __fork_for(typename T::iterator start, typename T::iterator end)
 {
@@ -71,7 +71,7 @@ __fork_for(typename T::iterator start, typename T::iterator end)
       start, end);
 }
 
-template <auto Fn, is_iterable_container T>
+template<auto Fn, is_iterable_container T>
   requires(micron::is_invocable_v<decltype(Fn), typename T::iterator> or micron::is_invocable_v<decltype(Fn), typename T::const_iterator>)
 void
 fork_for(T &data)
@@ -93,4 +93,4 @@ fork_for(T &data)
     threads.pop();
   }
 }
-};     // namespace micron
+};      // namespace micron

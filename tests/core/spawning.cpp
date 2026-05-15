@@ -34,7 +34,7 @@ fn_loop(void)
 {
   int i = 0;
   for ( ; i < 10000; ) {
-    i++;     // mc::console(i++);
+    i++;      // mc::console(i++);
   }
   while ( true ) {
   }

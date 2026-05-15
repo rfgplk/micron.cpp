@@ -17,7 +17,7 @@ namespace math
 namespace manifolds
 {
 
-template <typename M>
+template<typename M>
 concept manifold = requires {
   typename traits<M>::point_type;
   typename traits<M>::tangent_type;
@@ -27,7 +27,7 @@ concept manifold = requires {
   { traits<M>::ambient_dim } -> micron::convertible_to<usize>;
 };
 
-template <typename M>
+template<typename M>
 concept lie_group = manifold<M> && requires(const point_t<M> &g, const point_t<M> &h, const tangent_t<M> &X) {
   { M::identity() } -> micron::same_as<point_t<M>>;
   { M::compose(g, h) } -> micron::same_as<point_t<M>>;
@@ -36,11 +36,11 @@ concept lie_group = manifold<M> && requires(const point_t<M> &g, const point_t<M
   { M::log_map(g) } -> micron::same_as<tangent_t<M>>;
 };
 
-template <typename M>
+template<typename M>
 concept riemannian = manifold<M> && requires(const point_t<M> &p, const tangent_t<M> &u, const tangent_t<M> &v) {
   { M::inner(p, u, v) } -> micron::same_as<scalar_t<M>>;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

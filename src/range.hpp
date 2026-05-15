@@ -15,30 +15,30 @@ namespace micron
 // ranges
 // now (mostly) STL compliant
 
-template <typename F, typename T>
+template<typename F, typename T>
 concept range_size_t = micron::convertible_to<T, F>;
 
-template <typename T, bool = micron::is_floating_point_v<T>> struct _iter_difference {
+template<typename T, bool = micron::is_floating_point_v<T>> struct _iter_difference {
   using type = micron::make_signed_t<T>;
 };
 
-template <typename T> struct _iter_difference<T, true> {
+template<typename T> struct _iter_difference<T, true> {
   using type = T;
 };
 
-template <typename T> using iter_difference_t = typename _iter_difference<T>::type;
+template<typename T> using iter_difference_t = typename _iter_difference<T>::type;
 
-template <typename T, bool = micron::is_floating_point_v<T>> struct _iter_size {
+template<typename T, bool = micron::is_floating_point_v<T>> struct _iter_size {
   using type = micron::make_unsigned_t<T>;
 };
 
-template <typename T> struct _iter_size<T, true> {
+template<typename T> struct _iter_size<T, true> {
   using type = usize;
 };
 
-template <typename T> using iter_size_t = typename _iter_size<T>::type;
+template<typename T> using iter_size_t = typename _iter_size<T>::type;
 
-template <typename T> struct counting_iter {
+template<typename T> struct counting_iter {
   using value_type = T;
   using difference_type = micron::iter_difference_t<T>;
   using pointer = const T *;
@@ -46,9 +46,9 @@ template <typename T> struct counting_iter {
 
   T val__;
 
-  constexpr counting_iter() noexcept : val__{} {}
+  constexpr counting_iter() noexcept : val__{} { }
 
-  constexpr explicit counting_iter(T v) noexcept : val__(v) {}
+  constexpr explicit counting_iter(T v) noexcept : val__(v) { }
 
   constexpr T
   operator*() const noexcept
@@ -168,7 +168,7 @@ template <typename T> struct counting_iter {
 };
 
 // WARNING: a raw ++val__ stalls once the value exceeds the mantissa's integer range (2^24 for float, 2^53 for double)
-template <typename T>
+template<typename T>
   requires micron::is_floating_point_v<T>
 struct counting_iter<T> {
   using value_type = T;
@@ -179,11 +179,11 @@ struct counting_iter<T> {
   T val__;
   max_t cnt__;
 
-  constexpr counting_iter() noexcept : val__{}, cnt__{ 0 } {}
+  constexpr counting_iter() noexcept : val__{}, cnt__{ 0 } { }
 
-  constexpr explicit counting_iter(T v) noexcept : val__(v), cnt__{ 0 } {}
+  constexpr explicit counting_iter(T v) noexcept : val__(v), cnt__{ 0 } { }
 
-  constexpr counting_iter(T v, max_t c) noexcept : val__(v), cnt__(c) {}
+  constexpr counting_iter(T v, max_t c) noexcept : val__(v), cnt__(c) { }
 
   constexpr T
   operator*() const noexcept
@@ -310,21 +310,21 @@ struct counting_iter<T> {
   }
 };
 
-template <typename Iter, bool = micron::is_pointer_v<Iter>> struct _iter_traits {
+template<typename Iter, bool = micron::is_pointer_v<Iter>> struct _iter_traits {
   using value_type = typename Iter::value_type;
   using difference_type = typename Iter::difference_type;
   using pointer = typename Iter::pointer;
   using reference = typename Iter::reference;
 };
 
-template <typename Iter> struct _iter_traits<Iter, true> {
+template<typename Iter> struct _iter_traits<Iter, true> {
   using value_type = micron::remove_pointer_t<Iter>;
   using difference_type = ssize_t;
   using pointer = Iter;
   using reference = value_type &;
 };
 
-template <typename Iter> struct reverse_iter {
+template<typename Iter> struct reverse_iter {
   using _tr = _iter_traits<Iter>;
   using value_type = typename _tr::value_type;
   using difference_type = typename _tr::difference_type;
@@ -335,7 +335,7 @@ template <typename Iter> struct reverse_iter {
 
   constexpr reverse_iter() noexcept = default;
 
-  constexpr explicit reverse_iter(Iter it) noexcept : _base(it) {}
+  constexpr explicit reverse_iter(Iter it) noexcept : _base(it) { }
 
   constexpr Iter
   base() const noexcept
@@ -461,7 +461,7 @@ template <typename Iter> struct reverse_iter {
   }
 };
 
-template <typename T> struct const_counting_iter : counting_iter<T> {
+template<typename T> struct const_counting_iter: counting_iter<T> {
   using typename counting_iter<T>::value_type;
   using typename counting_iter<T>::difference_type;
   using pointer = const T *;
@@ -475,7 +475,7 @@ template <typename T> struct const_counting_iter : counting_iter<T> {
   const_counting_iter &operator=(const const_counting_iter &) = delete;
 };
 
-template <umax_t From, range_size_t<umax_t> auto To>
+template<umax_t From, range_size_t<umax_t> auto To>
   requires(From < To && micron::is_arithmetic_v<umax_t>)
 struct range {
 
@@ -494,7 +494,7 @@ struct range {
   range &operator=(const range &) = delete;
   range &operator=(range &&) = delete;
 
-  template <typename F>
+  template<typename F>
     requires micron::is_invocable_v<F>
   static void
   perform(F &f)
@@ -502,7 +502,7 @@ struct range {
     for ( umax_t i = From; i < To; i++ ) f();
   }
 
-  template <class C, typename... Fargs>
+  template<class C, typename... Fargs>
   static void
   perform(C &obj, void (C::*f)(Fargs...), Fargs &&...args)
   {
@@ -576,7 +576,7 @@ struct range {
   }
 };
 
-template <typename T, T From, range_size_t<T> auto To>
+template<typename T, T From, range_size_t<T> auto To>
   requires(From < To && micron::is_arithmetic_v<T>)
 struct count_range {
 
@@ -599,7 +599,7 @@ struct count_range {
   // specialization (integer-counter step) is reused here too — a raw
   // `for ( T i = From; i < To; i++ )` would spin forever for any
   // float-step beyond its mantissa's integer range.
-  template <typename F>
+  template<typename F>
     requires micron::is_invocable_v<F, T>
   static void
   perform(F &f)
@@ -607,21 +607,21 @@ struct count_range {
     for ( auto it = begin(); it != end(); ++it ) f(*it);
   }
 
-  template <class C, typename R, typename Arg = T>
+  template<class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(const Arg &))
   {
     for ( auto it = begin(); it != end(); ++it ) (obj.*f)(*it);
   }
 
-  template <class C, typename R, typename Arg = T>
+  template<class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg))
   {
     for ( auto it = begin(); it != end(); ++it ) (obj.*f)(*it);
   }
 
-  template <class C, typename R, typename Arg = T>
+  template<class C, typename R, typename Arg = T>
   static void
   perform(C &obj, R (C::*f)(Arg &&))
   {
@@ -702,7 +702,7 @@ struct count_range {
   }
 };
 
-template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
+template<typename T, range_size_t<size_t> auto Cnt> struct range_of {
 
   ~range_of() = default;
   range_of(void) = default;
@@ -711,7 +711,7 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
   range_of &operator=(const range_of &) = delete;
   range_of &operator=(range_of &&) = delete;
 
-  template <typename C, typename F>
+  template<typename C, typename F>
   static void
   perform(C &obj, F f)
   {
@@ -719,7 +719,7 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
     for ( typename T::iterator itr = obj.begin(); itr != end; ++itr ) f(*itr);
   }
 
-  template <typename C> struct view {
+  template<typename C> struct view {
     using iterator = typename C::iterator;
     using const_iterator = typename C::const_iterator;
     using reverse_iterator = micron::reverse_iter<iterator>;
@@ -732,7 +732,7 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
 
     C &c__;
 
-    explicit constexpr view(C &c) noexcept : c__(c) {}
+    explicit constexpr view(C &c) noexcept : c__(c) { }
 
     constexpr iterator
     begin() noexcept
@@ -837,14 +837,14 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
     }
   };
 
-  template <typename C>
+  template<typename C>
   static constexpr view<C>
   bind(C &c) noexcept
   {
     return view<C>{ c };
   }
 
-  template <typename C>
+  template<typename C>
   static constexpr view<const C>
   bind(const C &c) noexcept
   {
@@ -852,17 +852,17 @@ template <typename T, range_size_t<size_t> auto Cnt> struct range_of {
   }
 };
 
-template <i32 From, range_size_t<i32> auto To> using int_range = count_range<i32, From, To>;
-template <float From, range_size_t<float> auto To> using float_range = count_range<float, From, To>;
-template <u32 From, range_size_t<u32> auto To> using u32_range = count_range<u32, From, To>;
-template <u64 From, range_size_t<u64> auto To> using u64_range = count_range<u64, From, To>;
-template <i64 From, range_size_t<i64> auto To> using i64_range = count_range<i64, From, To>;
+template<i32 From, range_size_t<i32> auto To> using int_range = count_range<i32, From, To>;
+template<float From, range_size_t<float> auto To> using float_range = count_range<float, From, To>;
+template<u32 From, range_size_t<u32> auto To> using u32_range = count_range<u32, From, To>;
+template<u64 From, range_size_t<u64> auto To> using u64_range = count_range<u64, From, To>;
+template<i64 From, range_size_t<i64> auto To> using i64_range = count_range<i64, From, To>;
 
 namespace ranges
 {
 
 struct _begin_fn {
-  template <typename R>
+  template<typename R>
     requires requires(R &r) { r.begin(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.begin())) -> decltype(r.begin())
@@ -870,7 +870,7 @@ struct _begin_fn {
     return r.begin();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr T *
   operator()(T (&arr)[N]) const noexcept
   {
@@ -881,7 +881,7 @@ struct _begin_fn {
 inline constexpr _begin_fn begin{};
 
 struct _end_fn {
-  template <typename R>
+  template<typename R>
     requires requires(R &r) { r.end(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.end())) -> decltype(r.end())
@@ -889,7 +889,7 @@ struct _end_fn {
     return r.end();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr T *
   operator()(T (&arr)[N]) const noexcept
   {
@@ -900,7 +900,7 @@ struct _end_fn {
 inline constexpr _end_fn end{};
 
 struct _cbegin_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.cbegin(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.cbegin())) -> decltype(r.cbegin())
@@ -908,7 +908,7 @@ struct _cbegin_fn {
     return r.cbegin();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.cbegin(); }) && requires(const R &r) { r.begin(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.begin())) -> decltype(r.begin())
@@ -916,7 +916,7 @@ struct _cbegin_fn {
     return r.begin();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr const T *
   operator()(const T (&arr)[N]) const noexcept
   {
@@ -927,7 +927,7 @@ struct _cbegin_fn {
 inline constexpr _cbegin_fn cbegin{};
 
 struct _cend_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.cend(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.cend())) -> decltype(r.cend())
@@ -935,7 +935,7 @@ struct _cend_fn {
     return r.cend();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.cend(); }) && requires(const R &r) { r.end(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.end())) -> decltype(r.end())
@@ -943,7 +943,7 @@ struct _cend_fn {
     return r.end();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr const T *
   operator()(const T (&arr)[N]) const noexcept
   {
@@ -954,7 +954,7 @@ struct _cend_fn {
 inline constexpr _cend_fn cend{};
 
 struct _rbegin_fn {
-  template <typename R>
+  template<typename R>
     requires requires(R &r) { r.rbegin(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.rbegin())) -> decltype(r.rbegin())
@@ -962,7 +962,7 @@ struct _rbegin_fn {
     return r.rbegin();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(R &r) { r.rbegin(); }) && requires(R &r) { r.end(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.end()))
@@ -970,7 +970,7 @@ struct _rbegin_fn {
     return micron::reverse_iter<decltype(r.end())>{ r.end() };
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr micron::reverse_iter<T *>
   operator()(T (&arr)[N]) const noexcept
   {
@@ -981,7 +981,7 @@ struct _rbegin_fn {
 inline constexpr _rbegin_fn rbegin{};
 
 struct _rend_fn {
-  template <typename R>
+  template<typename R>
     requires requires(R &r) { r.rend(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.rend())) -> decltype(r.rend())
@@ -989,7 +989,7 @@ struct _rend_fn {
     return r.rend();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(R &r) { r.rend(); }) && requires(R &r) { r.begin(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.begin()))
@@ -997,7 +997,7 @@ struct _rend_fn {
     return micron::reverse_iter<decltype(r.begin())>{ r.begin() };
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr micron::reverse_iter<T *>
   operator()(T (&arr)[N]) const noexcept
   {
@@ -1008,7 +1008,7 @@ struct _rend_fn {
 inline constexpr _rend_fn rend{};
 
 struct _crbegin_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.crbegin(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.crbegin())) -> decltype(r.crbegin())
@@ -1016,7 +1016,7 @@ struct _crbegin_fn {
     return r.crbegin();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.crbegin(); }) && requires(const R &r) { r.cend(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.cend()))
@@ -1024,7 +1024,7 @@ struct _crbegin_fn {
     return micron::reverse_iter<decltype(r.cend())>{ r.cend() };
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr micron::reverse_iter<const T *>
   operator()(const T (&arr)[N]) const noexcept
   {
@@ -1035,7 +1035,7 @@ struct _crbegin_fn {
 inline constexpr _crbegin_fn crbegin{};
 
 struct _crend_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.crend(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.crend())) -> decltype(r.crend())
@@ -1043,7 +1043,7 @@ struct _crend_fn {
     return r.crend();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.crend(); }) && requires(const R &r) { r.cbegin(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.cbegin()))
@@ -1051,7 +1051,7 @@ struct _crend_fn {
     return micron::reverse_iter<decltype(r.cbegin())>{ r.cbegin() };
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr micron::reverse_iter<const T *>
   operator()(const T (&arr)[N]) const noexcept
   {
@@ -1062,7 +1062,7 @@ struct _crend_fn {
 inline constexpr _crend_fn crend{};
 
 struct _size_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.size(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.size())) -> decltype(r.size())
@@ -1070,7 +1070,7 @@ struct _size_fn {
     return r.size();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr usize
   operator()(const T (&)[N]) const noexcept
   {
@@ -1081,7 +1081,7 @@ struct _size_fn {
 inline constexpr _size_fn size{};
 
 struct _ssize_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.ssize(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.ssize())) -> decltype(r.ssize())
@@ -1089,7 +1089,7 @@ struct _ssize_fn {
     return r.ssize();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.ssize(); }) && requires(const R &r) { r.size(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.size()))
@@ -1099,7 +1099,7 @@ struct _ssize_fn {
     return static_cast<S>(r.size());
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr micron::make_signed_t<usize>
   operator()(const T (&)[N]) const noexcept
   {
@@ -1110,7 +1110,7 @@ struct _ssize_fn {
 inline constexpr _ssize_fn ssize{};
 
 struct _empty_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.empty(); }
   constexpr bool
   operator()(const R &r) const noexcept(noexcept(r.empty()))
@@ -1118,7 +1118,7 @@ struct _empty_fn {
     return r.empty();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.empty(); }) && requires(const R &r) { r.size(); }
   constexpr bool
   operator()(const R &r) const noexcept(noexcept(r.size()))
@@ -1126,7 +1126,7 @@ struct _empty_fn {
     return r.size() == 0;
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr bool
   operator()(const T (&)[N]) const noexcept
   {
@@ -1137,7 +1137,7 @@ struct _empty_fn {
 inline constexpr _empty_fn empty{};
 
 struct _data_fn {
-  template <typename R>
+  template<typename R>
     requires requires(R &r) { r.data(); }
   constexpr auto
   operator()(R &r) const noexcept(noexcept(r.data())) -> decltype(r.data())
@@ -1145,7 +1145,7 @@ struct _data_fn {
     return r.data();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr T *
   operator()(T (&arr)[N]) const noexcept
   {
@@ -1156,7 +1156,7 @@ struct _data_fn {
 inline constexpr _data_fn data{};
 
 struct _cdata_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.cdata(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.cdata())) -> decltype(r.cdata())
@@ -1164,7 +1164,7 @@ struct _cdata_fn {
     return r.cdata();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.cdata(); }) && requires(const R &r) { r.data(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.data())) -> decltype(r.data())
@@ -1172,7 +1172,7 @@ struct _cdata_fn {
     return r.data();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr const T *
   operator()(const T (&arr)[N]) const noexcept
   {
@@ -1183,7 +1183,7 @@ struct _cdata_fn {
 inline constexpr _cdata_fn cdata{};
 
 struct _reserve_hint_fn {
-  template <typename R>
+  template<typename R>
     requires requires(const R &r) { r.reserve_hint(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.reserve_hint())) -> decltype(r.reserve_hint())
@@ -1191,7 +1191,7 @@ struct _reserve_hint_fn {
     return r.reserve_hint();
   }
 
-  template <typename R>
+  template<typename R>
     requires(!requires(const R &r) { r.reserve_hint(); }) && requires(const R &r) { r.size(); }
   constexpr auto
   operator()(const R &r) const noexcept(noexcept(r.size())) -> decltype(r.size())
@@ -1199,7 +1199,7 @@ struct _reserve_hint_fn {
     return r.size();
   }
 
-  template <typename T, usize N>
+  template<typename T, usize N>
   constexpr usize
   operator()(const T (&)[N]) const noexcept
   {
@@ -1209,28 +1209,28 @@ struct _reserve_hint_fn {
 
 inline constexpr _reserve_hint_fn reserve_hint{};
 
-template <typename R> using iterator_t = decltype(micron::ranges::begin(micron::declval<R &>()));
+template<typename R> using iterator_t = decltype(micron::ranges::begin(micron::declval<R &>()));
 
-template <typename R> using sentinel_t = decltype(micron::ranges::end(micron::declval<R &>()));
+template<typename R> using sentinel_t = decltype(micron::ranges::end(micron::declval<R &>()));
 
-template <typename R> using const_iterator_t = decltype(micron::ranges::cbegin(micron::declval<const R &>()));
+template<typename R> using const_iterator_t = decltype(micron::ranges::cbegin(micron::declval<const R &>()));
 
-template <typename R> using const_sentinel_t = decltype(micron::ranges::cend(micron::declval<const R &>()));
+template<typename R> using const_sentinel_t = decltype(micron::ranges::cend(micron::declval<const R &>()));
 
-template <typename R>
+template<typename R>
 using range_difference_t = decltype(micron::ranges::begin(micron::declval<R &>()) - micron::ranges::begin(micron::declval<R &>()));
 
-template <typename R> using range_size_type = decltype(micron::ranges::size(micron::declval<const R &>()));
+template<typename R> using range_size_type = decltype(micron::ranges::size(micron::declval<const R &>()));
 
-template <typename R> using range_value_t = micron::remove_cvref_t<decltype(*micron::ranges::begin(micron::declval<R &>()))>;
+template<typename R> using range_value_t = micron::remove_cvref_t<decltype(*micron::ranges::begin(micron::declval<R &>()))>;
 
-template <typename R> using range_reference_t = decltype(*micron::ranges::begin(micron::declval<R &>()));
+template<typename R> using range_reference_t = decltype(*micron::ranges::begin(micron::declval<R &>()));
 
-template <typename R> using range_const_reference_t = decltype(*micron::ranges::cbegin(micron::declval<const R &>()));
+template<typename R> using range_const_reference_t = decltype(*micron::ranges::cbegin(micron::declval<const R &>()));
 
-template <typename R> using range_rvalue_reference_t = decltype(micron::move(*micron::ranges::begin(micron::declval<R &>())));
+template<typename R> using range_rvalue_reference_t = decltype(micron::move(*micron::ranges::begin(micron::declval<R &>())));
 
-template <typename R> using range_common_reference_t = micron::common_type_t<range_reference_t<R>, range_rvalue_reference_t<R>>;
+template<typename R> using range_common_reference_t = micron::common_type_t<range_reference_t<R>, range_rvalue_reference_t<R>>;
 
-};     // namespace ranges
-};     // namespace micron
+};      // namespace ranges
+};      // namespace micron

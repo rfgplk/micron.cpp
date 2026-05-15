@@ -33,7 +33,7 @@ ftw(path &&p)
   for ( auto &n : dirs ) {
     if ( n == "." or n == ".." ) continue;
     total_path = p.get();
-    total_path.adjust_size();     // TODO: fix up len's and remove this eventually
+    total_path.adjust_size();      // TODO: fix up len's and remove this eventually
     total_path.insert(total_path.end(), '/');
     total_path.insert(total_path.end(), n);
     // total_path += n;
@@ -106,5 +106,5 @@ ftw_files(path &&p)
   }
   return rslt;
 }
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

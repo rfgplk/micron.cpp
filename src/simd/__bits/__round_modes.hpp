@@ -194,9 +194,9 @@ __mm_mk_insertps_ndx_imm(int s, int d, int m) noexcept
   return (s << 6) | (d << 4) | m;
 }
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_TYPES)
 

@@ -19,7 +19,7 @@ namespace math
 namespace quants
 {
 
-template <typename T> struct vec_view {
+template<typename T> struct vec_view {
   using value_type = T;
   using pointer = T *;
   using const_pointer = const T *;
@@ -30,11 +30,11 @@ template <typename T> struct vec_view {
 
   constexpr vec_view() noexcept = default;
 
-  constexpr vec_view(T *p, usize len, ssize_t stride = 1) noexcept : data(p), n(len), inc(stride) {}
+  constexpr vec_view(T *p, usize len, ssize_t stride = 1) noexcept : data(p), n(len), inc(stride) { }
 
-  constexpr vec_view(const raw_slice<T> &s) noexcept : data(const_cast<T *>(s.ptr)), n(s.len), inc(1) {}
+  constexpr vec_view(const raw_slice<T> &s) noexcept : data(const_cast<T *>(s.ptr)), n(s.len), inc(1) { }
 
-  constexpr vec_view(raw_slice<T> &s) noexcept : data(s.ptr), n(s.len), inc(1) {}
+  constexpr vec_view(raw_slice<T> &s) noexcept : data(s.ptr), n(s.len), inc(1) { }
 
   [[nodiscard]] static constexpr vec_view
   from(T *p, usize len, ssize_t stride = 1) noexcept
@@ -48,7 +48,7 @@ template <typename T> struct vec_view {
     return vec_view{ const_cast<T *>(s.ptr), s.len, 1 };
   }
 
-  template <typename C>
+  template<typename C>
     requires(requires(C &c) {
       { c.data() } -> micron::convertible_to<T *>;
       { c.size() } -> micron::convertible_to<usize>;
@@ -59,7 +59,7 @@ template <typename T> struct vec_view {
     return vec_view{ c.data(), c.size(), 1 };
   }
 
-  template <typename C>
+  template<typename C>
     requires(requires(const C &c) {
       { c.data() } -> micron::convertible_to<const T *>;
       { c.size() } -> micron::convertible_to<usize>;
@@ -101,13 +101,13 @@ template <typename T> struct vec_view {
   }
 };
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr T *
 addr(const vec_view<T> &v, usize i) noexcept
 {
   return v.data + ssize_t(i) * v.inc;
 }
 
-};     // namespace quants
-};     // namespace math
-};     // namespace micron
+};      // namespace quants
+};      // namespace math
+};      // namespace micron

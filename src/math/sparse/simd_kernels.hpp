@@ -26,7 +26,7 @@ namespace __impl_sparse_simd
 {
 
 // scalar fallbacks
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline, gnu::flatten]] inline F
 scalar_dot(const F *__restrict__ a, const F *__restrict__ b, usize n) noexcept
 {
@@ -41,7 +41,7 @@ scalar_dot(const F *__restrict__ a, const F *__restrict__ b, usize n) noexcept
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline, gnu::flatten]] inline F
 scalar_norm_sq(const F *__restrict__ a, usize n) noexcept
 {
@@ -56,21 +56,21 @@ scalar_norm_sq(const F *__restrict__ a, usize n) noexcept
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline, gnu::flatten]] inline void
 scalar_axpy(F alpha, const F *__restrict__ x, F *__restrict__ y, usize n) noexcept
 {
   for ( usize i = 0; i < n; ++i ) y[i] = math::fma<F>(alpha, x[i], y[i]);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline, gnu::flatten]] inline void
 scalar_scal(F alpha, F *__restrict__ x, usize n) noexcept
 {
   for ( usize i = 0; i < n; ++i ) x[i] *= alpha;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline, gnu::flatten]] inline void
 scalar_axpy_scatter(F alpha, const F *__restrict__ vals, const u32 *__restrict__ idx, F *__restrict__ y, usize n) noexcept
 {
@@ -439,13 +439,13 @@ neon_scal_f64(f64 alpha_in, f64 *__restrict__ x_in, usize n) noexcept
 #endif
 #endif
 
-};     // namespace __impl_sparse_simd
+};      // namespace __impl_sparse_simd
 
-template <typename F> inline constexpr bool is_simd_f64_eligible = micron::is_same_v<F, f64> || micron::is_same_v<F, double>;
+template<typename F> inline constexpr bool is_simd_f64_eligible = micron::is_same_v<F, f64> || micron::is_same_v<F, double>;
 
-template <typename F> inline constexpr bool is_simd_f32_eligible = micron::is_same_v<F, f32> || micron::is_same_v<F, float>;
+template<typename F> inline constexpr bool is_simd_f32_eligible = micron::is_same_v<F, f32> || micron::is_same_v<F, float>;
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline F
 dot_values(const F *__restrict__ a, const F *__restrict__ b, usize n) noexcept
 {
@@ -473,7 +473,7 @@ dot_values(const F *__restrict__ a, const F *__restrict__ b, usize n) noexcept
 #endif
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline F
 norm_sq_values(const F *__restrict__ a, usize n) noexcept
 {
@@ -501,7 +501,7 @@ norm_sq_values(const F *__restrict__ a, usize n) noexcept
 #endif
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline void
 axpy_values(F alpha, const F *__restrict__ x, F *__restrict__ y, usize n) noexcept
 {
@@ -529,7 +529,7 @@ axpy_values(F alpha, const F *__restrict__ x, F *__restrict__ y, usize n) noexce
 #endif
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline void
 scal_values(F alpha, F *__restrict__ x, usize n) noexcept
 {
@@ -557,7 +557,7 @@ scal_values(F alpha, F *__restrict__ x, usize n) noexcept
 #endif
 }
 
-template <ieee754_floating F, micron::integral I>
+template<ieee754_floating F, micron::integral I>
 [[gnu::always_inline, gnu::flatten]] inline void
 spmv_col_scatter(F alpha, F x_j, const F *__restrict__ vals, const I *__restrict__ idx, F *__restrict__ y, usize nnz_col) noexcept
 {
@@ -565,6 +565,6 @@ spmv_col_scatter(F alpha, F x_j, const F *__restrict__ vals, const I *__restrict
   for ( usize k = 0; k < nnz_col; ++k ) y[idx[k]] = math::fma<F>(ax, vals[k], y[idx[k]]);
 }
 
-};     // namespace sparse
-};     // namespace math
-};     // namespace micron
+};      // namespace sparse
+};      // namespace math
+};      // namespace micron

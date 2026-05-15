@@ -25,7 +25,7 @@ namespace mkbits
 namespace rem
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 fmod(F x, F y) noexcept
 {
@@ -82,7 +82,7 @@ fmod(F x, F y) noexcept
   return manip::copysign<F>(r, x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 remainder(F x, F y) noexcept
 {
@@ -99,7 +99,7 @@ remainder(F x, F y) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 remquo(F x, F y, int *q) noexcept
 {
@@ -117,7 +117,7 @@ remquo(F x, F y, int *q) noexcept
   return r;
 }
 
-};     // namespace rem
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace rem
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

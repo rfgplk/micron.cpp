@@ -15,7 +15,7 @@
 namespace micron
 {
 // dispatch fn according to type, match exact types only
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr void
 __match_call_one_strict(T &&v, F &&f)
 {
@@ -32,7 +32,7 @@ __match_call_one_strict(T &&v, F &&f)
 
 // dispatch fn according to type, allow matching convertible types
 // ie allow int to bind char/long etc
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr void
 __match_call_one_permissible(T &&v, F &&f)
 {
@@ -48,14 +48,14 @@ __match_call_one_permissible(T &&v, F &&f)
 }
 
 // dispatch one argument to all functions
-template <typename T, typename... Fs>
+template<typename T, typename... Fs>
 constexpr void
 __dispatch_one_strict(T &&v, Fs &&...fs)
 {
   (__match_call_one_strict(micron::forward<T>(v), micron::forward<Fs>(fs)), ...);
 }
 
-template <typename T, typename... Fs>
+template<typename T, typename... Fs>
 constexpr void
 __dispatch_one_permissible(T &&v, Fs &&...fs)
 {
@@ -63,14 +63,14 @@ __dispatch_one_permissible(T &&v, Fs &&...fs)
 }
 
 // Dispatch each tuple element through the strict path.
-template <auto... Fs, typename TupleT, usize... Is>
+template<auto... Fs, typename TupleT, usize... Is>
 constexpr void
 __match_tuple_impl(TupleT &&t, index_sequence<Is...>)
 {
   (__dispatch_one_strict(get<Is>(micron::forward<TupleT>(t)), Fs...), ...);
 }
 
-template <auto... Fs, typename TupleT, usize... Is>
+template<auto... Fs, typename TupleT, usize... Is>
 constexpr void
 __lazy_match_tuple_impl(TupleT &&t, index_sequence<Is...>)
 {
@@ -80,7 +80,7 @@ __lazy_match_tuple_impl(TupleT &&t, index_sequence<Is...>)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // pairs
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 match(pair<T, F> &p)
 {
@@ -88,7 +88,7 @@ match(pair<T, F> &p)
   __dispatch_one_strict(p.b, Fs...);
 }
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 match(const pair<T, F> &p)
 {
@@ -96,7 +96,7 @@ match(const pair<T, F> &p)
   __dispatch_one_strict(p.b, Fs...);
 }
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 lazy_match(pair<T, F> &p)
 {
@@ -104,7 +104,7 @@ lazy_match(pair<T, F> &p)
   __dispatch_one_permissible(p.b, Fs...);
 }
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 lazy_match(const pair<T, F> &p)
 {
@@ -115,28 +115,28 @@ lazy_match(const pair<T, F> &p)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // tuples
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 match(tuple<Ts...> &t)
 {
   __match_tuple_impl<Fs...>(t, index_sequence_for<Ts...>{});
 }
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 match(const tuple<Ts...> &t)
 {
   __match_tuple_impl<Fs...>(t, index_sequence_for<Ts...>{});
 }
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 lazy_match(tuple<Ts...> &t)
 {
   __lazy_match_tuple_impl<Fs...>(t, index_sequence_for<Ts...>{});
 }
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 lazy_match(const tuple<Ts...> &t)
 {
@@ -146,14 +146,14 @@ lazy_match(const tuple<Ts...> &t)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // index_sequences
 
-template <auto... Fs, usize... Is>
+template<auto... Fs, usize... Is>
 constexpr void
 match(index_sequence<Is...>)
 {
   (__dispatch_one_strict(integral_constant<usize, Is>{}, Fs...), ...);
 }
 
-template <auto... Fs, usize... Is>
+template<auto... Fs, usize... Is>
 constexpr void
 lazy_match(index_sequence<Is...>)
 {
@@ -163,7 +163,7 @@ lazy_match(index_sequence<Is...>)
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // anys
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 match(any<Ts...> &a)
 {
@@ -179,7 +179,7 @@ match(any<Ts...> &a)
       ...);
 }
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 match(const any<Ts...> &a)
 {
@@ -195,7 +195,7 @@ match(const any<Ts...> &a)
       ...);
 }
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 lazy_match(any<Ts...> &a)
 {
@@ -211,7 +211,7 @@ lazy_match(any<Ts...> &a)
       ...);
 }
 
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 lazy_match(const any<Ts...> &a)
 {
@@ -230,7 +230,7 @@ lazy_match(const any<Ts...> &a)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // options (only target loaded type)
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 match(option<T, F> &o)
 {
@@ -241,7 +241,7 @@ match(option<T, F> &o)
     __dispatch_one_strict(o.template cast<F>(), Fs...);
 }
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 match(const option<T, F> &o)
 {
@@ -252,7 +252,7 @@ match(const option<T, F> &o)
     __dispatch_one_strict(o.template cast<F>(), Fs...);
 }
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 lazy_match(option<T, F> &o)
 {
@@ -263,7 +263,7 @@ lazy_match(option<T, F> &o)
     __dispatch_one_permissible(o.template cast<F>(), Fs...);
 }
 
-template <auto... Fs, typename T, typename F>
+template<auto... Fs, typename T, typename F>
 constexpr void
 lazy_match(const option<T, F> &o)
 {
@@ -275,7 +275,7 @@ lazy_match(const option<T, F> &o)
 }
 
 // strict
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 match(Ts &&...vs)
 {
@@ -283,11 +283,11 @@ match(Ts &&...vs)
 }
 
 // allow matching convertible types
-template <auto... Fs, typename... Ts>
+template<auto... Fs, typename... Ts>
 constexpr void
 lazy_match(Ts &&...vs)
 {
   (__dispatch_one_permissible(micron::forward<Ts>(vs), Fs...), ...);
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -55,6 +55,14 @@ __block_copy_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
   __asm__("vst1.8 {%q2}, [%1]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(t));
 }
 
+__inline_g void
+__block_move_16(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t;
+  __asm__("vld1.8 {%q0}, [%1]" : "=w"(t) : "r"(s), "m"(*reinterpret_cast<const u8(*)[16]>(s)));
+  __asm__("vst1.8 {%q2}, [%1]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(t));
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 16-byte broadcast + set (VDUP.8 / VST1.8)
 __inline_g uint8x16_t
@@ -66,7 +74,7 @@ __broadcast_byte_16(u8 b) noexcept
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// 16-byte word broadcast: u64 → 2x 64-bit lanes via vmov d, r, r + vmov q.d[1], q.d[0]
+// 16-byte word broadcast: u64 -> 2x 64-bit lanes via vmov d, r, r + vmov q.d[1], q.d[0]
 __inline_g uint8x16_t
 __broadcast_word_16(u64 w) noexcept
 {
@@ -104,7 +112,6 @@ __block_cmpeq_16(const u8 *a, const u8 *b) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 16-byte byte-search mask (VCEQ + VSHRN narrowed to 64-bit nibble mask)
-// Returns a 64-bit value with 4 bits per source byte.
 __inline_g u64
 __block_eq_mask_16(const u8 *p, u8 c) noexcept
 {
@@ -123,6 +130,6 @@ __block_eq_mask_16(const u8 *p, u8 c) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

@@ -13,16 +13,16 @@
 namespace micron
 {
 
-template <usize N> struct lambda_queue {
+template<usize N> struct lambda_queue {
   struct node_base_t {
     virtual void call() = 0;
     virtual ~node_base_t() = default;
   };
 
-  template <typename Fn> struct node_t : node_base_t {
+  template<typename Fn> struct node_t: node_base_t {
     Fn fn;
 
-    node_t(Fn &&f) : fn(micron::move(f)) {}
+    node_t(Fn &&f) : fn(micron::move(f)) { }
 
     void
     call() override
@@ -36,7 +36,7 @@ template <usize N> struct lambda_queue {
   micron::atomic_token<usize> head{ 0 };
   micron::atomic_token<usize> tail{ 0 };
 
-  template <typename Fn>
+  template<typename Fn>
   inline void
   push(Fn &&fn)
   {
@@ -106,4 +106,4 @@ template <usize N> struct lambda_queue {
   }
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -34,9 +34,9 @@ namespace abc
 {
 
 // calling it a sheet to avoid conf. with system pages
-template <u64 Sz> class sheet
+template<u64 Sz> class sheet
 {
-  constexpr static const u64 __size_class = Sz;     // what class of data to hold
+  constexpr static const u64 __size_class = Sz;      // what class of data to hold
   using stack_page_list = __buddy_list<micron::__chunk<byte>, __size_class, 64>;
   micron::__chunk<byte> __kernel_memory;
   stack_page_list __book;
@@ -62,7 +62,7 @@ public:
 
   sheet(void) = delete;
 
-  sheet(const micron::__chunk<byte> &mem) : __kernel_memory(mem), __book(mem), __guard_offset(0) {}
+  sheet(const micron::__chunk<byte> &mem) : __kernel_memory(mem), __book(mem), __guard_offset(0) { }
 
   // for guard pages
   sheet(const micron::__chunk<byte> &mem, usize offset)
@@ -266,7 +266,7 @@ public:
   }
 };
 
-template <u64 Sz>
+template<u64 Sz>
 sheet<Sz>
 make_sheet(usize req_size)
 {
@@ -276,7 +276,7 @@ make_sheet(usize req_size)
 // tslf cache sheets
 // implemented to alleviate pressures for small allocations
 
-template <u64 Sz> class tlsf_sheet
+template<u64 Sz> class tlsf_sheet
 {
   constexpr static const u64 __size_class = Sz;
   using stack_page_list = __tlsf_list<micron::__chunk<byte>, __size_class, 64>;
@@ -299,7 +299,7 @@ public:
 
   tlsf_sheet(void) = delete;
 
-  tlsf_sheet(const micron::__chunk<byte> &mem) : __kernel_memory(mem), __book(mem), __guard_offset(0) {}
+  tlsf_sheet(const micron::__chunk<byte> &mem) : __kernel_memory(mem), __book(mem), __guard_offset(0) { }
 
   tlsf_sheet(const micron::__chunk<byte> &mem, usize offset)
       : __kernel_memory(mem), __book(micron::__chunk<byte>{ mem.ptr, mem.len - offset }), __guard_offset(offset)
@@ -496,11 +496,11 @@ public:
   }
 };
 
-template <u64 Sz>
+template<u64 Sz>
 tlsf_sheet<Sz>
 make_tlsf_sheet(usize req_size)
 {
   return tlsf_sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(req_size));
 }
 
-};     // namespace abc
+};      // namespace abc

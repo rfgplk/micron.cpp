@@ -16,7 +16,7 @@ namespace micron
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // string to ints
 
-template <typename T = char>
+template<typename T = char>
 i64
 hex_string_to_int64(const micron::hstring<T> &buf)
 {
@@ -41,7 +41,7 @@ hex_string_to_int64(const micron::hstring<T> &buf)
   return neg ? -result : result;
 }
 
-template <typename T = char>
+template<typename T = char>
 u64
 hex_string_to_uint64(const micron::hstring<T> &buf)
 {
@@ -60,7 +60,7 @@ hex_string_to_uint64(const micron::hstring<T> &buf)
   return result;
 }
 
-template <typename T = char>
+template<typename T = char>
 u64
 oct_string_to_uint64(const micron::hstring<T> &buf)
 {
@@ -82,7 +82,7 @@ oct_string_to_uint64(const micron::hstring<T> &buf)
   return result;
 }
 
-template <typename T = char>
+template<typename T = char>
 u64
 bin_string_to_uint64(const micron::hstring<T> &buf)
 {
@@ -101,7 +101,7 @@ bin_string_to_uint64(const micron::hstring<T> &buf)
   return result;
 }
 
-template <typename T = char>
+template<typename T = char>
 i64
 string_to_int64(const micron::hstring<T> &buf)
 {
@@ -124,7 +124,7 @@ string_to_int64(const micron::hstring<T> &buf)
   return neg ? -result : result;
 }
 
-template <typename T = char>
+template<typename T = char>
 u64
 string_to_uint64(const micron::hstring<T> &buf)
 {
@@ -142,7 +142,7 @@ string_to_uint64(const micron::hstring<T> &buf)
   return result;
 }
 
-template <typename T = char>
+template<typename T = char>
 i64
 string_to_int_base(const micron::hstring<T> &buf, u32 base)
 {
@@ -171,7 +171,7 @@ string_to_int_base(const micron::hstring<T> &buf, u32 base)
   return neg ? -result : result;
 }
 
-template <typename T = char>
+template<typename T = char>
 u64
 string_to_uint_base(const micron::hstring<T> &buf, u32 base)
 {
@@ -198,7 +198,7 @@ string_to_uint_base(const micron::hstring<T> &buf, u32 base)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // try_* variants
 
-template <typename T = char>
+template<typename T = char>
 bool
 try_string_to_int64(const micron::hstring<T> &buf, i64 &out)
 {
@@ -240,7 +240,7 @@ try_string_to_int64(const micron::hstring<T> &buf, i64 &out)
   return true;
 }
 
-template <typename T = char>
+template<typename T = char>
 bool
 try_string_to_uint64(const micron::hstring<T> &buf, u64 &out)
 {
@@ -275,7 +275,7 @@ try_string_to_uint64(const micron::hstring<T> &buf, u64 &out)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // range variants
 
-template <typename T = char>
+template<typename T = char>
 i32
 string_to_int32(const micron::hstring<T> &buf)
 {
@@ -283,7 +283,7 @@ string_to_int32(const micron::hstring<T> &buf)
   return (v < -2147483648LL || v > 2147483647LL) ? 0 : static_cast<i32>(v);
 }
 
-template <typename T = char>
+template<typename T = char>
 u32
 string_to_uint32(const micron::hstring<T> &buf)
 {
@@ -291,7 +291,7 @@ string_to_uint32(const micron::hstring<T> &buf)
   return (v > 4294967295ULL) ? 0 : static_cast<u32>(v);
 }
 
-template <typename T = char>
+template<typename T = char>
 i16
 string_to_int16(const micron::hstring<T> &buf)
 {
@@ -299,7 +299,7 @@ string_to_int16(const micron::hstring<T> &buf)
   return (v < -32768LL || v > 32767LL) ? 0 : static_cast<i16>(v);
 }
 
-template <typename T = char>
+template<typename T = char>
 u16
 string_to_uint16(const micron::hstring<T> &buf)
 {
@@ -365,7 +365,7 @@ parse_hex(const char *&ptr, const char *end)
 // ints to string
 // (uses 10^8 method)
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 int_to_string(I n)
@@ -395,7 +395,7 @@ int_to_string(I n)
   return result;
 }
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 uint_to_string(I n)
@@ -412,7 +412,7 @@ uint_to_string(I n)
   return result;
 }
 
-template <typename I, typename T = char, usize N>
+template<typename I, typename T = char, usize N>
   requires(micron::is_integral_v<I> && N >= __impl::max_digits_v<I> + 1)
 inline micron::sstring<N, T>
 int_to_string_stack(I n)
@@ -444,7 +444,7 @@ int_to_string_stack(I n)
   return result;
 }
 
-template <typename I, typename T = char, usize N>
+template<typename I, typename T = char, usize N>
   requires(micron::is_integral_v<I> && N >= __impl::max_digits_v<micron::make_unsigned_t<I>> + 1)
 inline micron::sstring<N, T>
 uint_to_string_stack(I n)
@@ -466,7 +466,7 @@ uint_to_string_stack(I n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arb base
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 int_to_string_base(I n, u32 base, bool upper = false)
@@ -495,7 +495,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
   return result;
 }
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 uint_to_string_base(I n, u32 base, bool upper = false)
@@ -514,7 +514,7 @@ uint_to_string_base(I n, u32 base, bool upper = false)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // format/stl compatibility
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_hex(I n, bool upper = false)
@@ -522,7 +522,7 @@ to_hex(I n, bool upper = false)
   return uint_to_string_base<I, T>(n, 16, upper);
 }
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_oct(I n)
@@ -530,7 +530,7 @@ to_oct(I n)
   return uint_to_string_base<I, T>(n, 8, false);
 }
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_bin(I n)
@@ -538,7 +538,7 @@ to_bin(I n)
   return uint_to_string_base<I, T>(n, 2, false);
 }
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_hex_fixed(I n, usize digits, bool upper = false)
@@ -555,7 +555,7 @@ to_hex_fixed(I n, usize digits, bool upper = false)
   return buf;
 }
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 to_bin_fixed(I n, usize digits)
@@ -574,7 +574,7 @@ to_bin_fixed(I n, usize digits)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // padded width variants (zero)
 
-template <typename I, typename T = char>
+template<typename I, typename T = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<T>
 int_to_string_padded(I n, usize width)
@@ -597,4 +597,4 @@ int_to_string_padded(I n, usize width)
   result._buf_set_length(pos);
   return result;
 }
-};     // namespace micron
+};      // namespace micron

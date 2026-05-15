@@ -17,41 +17,41 @@ struct auxv_t {
 };
 
 // generic / sysv-abi
-constexpr static const unsigned long at_null = 0;          // end of vector
-constexpr static const unsigned long at_ignore = 1;        // entry should be ignored
-constexpr static const unsigned long at_execfd = 2;        // file descriptor of program
-constexpr static const unsigned long at_phdr = 3;          // base of program header table
-constexpr static const unsigned long at_phent = 4;         // size of one phdr entry
-constexpr static const unsigned long at_phnum = 5;         // count of phdr entries
-constexpr static const unsigned long at_pagesz = 6;        // page size in bytes
-constexpr static const unsigned long at_base = 7;          // base of dynamic linker (ld.so)
-constexpr static const unsigned long at_flags = 8;         // process flags (always 0 on linux)
-constexpr static const unsigned long at_entry = 9;         // program entry point (e_entry)
-constexpr static const unsigned long at_notelf = 10;       // program is a.out (legacy non-zero)
-constexpr static const unsigned long at_uid = 11;          // real user id
-constexpr static const unsigned long at_euid = 12;         // effective user id
-constexpr static const unsigned long at_gid = 13;          // real group id
-constexpr static const unsigned long at_egid = 14;         // effective group id
-constexpr static const unsigned long at_platform = 15;     // pointer to cpu-id string
-constexpr static const unsigned long at_hwcap = 16;        // architecture cpu feature mask
-constexpr static const unsigned long at_clktck = 17;       // ticks per second for times(2)
+constexpr static const unsigned long at_null = 0;           // end of vector
+constexpr static const unsigned long at_ignore = 1;         // entry should be ignored
+constexpr static const unsigned long at_execfd = 2;         // file descriptor of program
+constexpr static const unsigned long at_phdr = 3;           // base of program header table
+constexpr static const unsigned long at_phent = 4;          // size of one phdr entry
+constexpr static const unsigned long at_phnum = 5;          // count of phdr entries
+constexpr static const unsigned long at_pagesz = 6;         // page size in bytes
+constexpr static const unsigned long at_base = 7;           // base of dynamic linker (ld.so)
+constexpr static const unsigned long at_flags = 8;          // process flags (always 0 on linux)
+constexpr static const unsigned long at_entry = 9;          // program entry point (e_entry)
+constexpr static const unsigned long at_notelf = 10;        // program is a.out (legacy non-zero)
+constexpr static const unsigned long at_uid = 11;           // real user id
+constexpr static const unsigned long at_euid = 12;          // effective user id
+constexpr static const unsigned long at_gid = 13;           // real group id
+constexpr static const unsigned long at_egid = 14;          // effective group id
+constexpr static const unsigned long at_platform = 15;      // pointer to cpu-id string
+constexpr static const unsigned long at_hwcap = 16;         // architecture cpu feature mask
+constexpr static const unsigned long at_clktck = 17;        // ticks per second for times(2)
 
 // 18..22 reserved by linux
 
-constexpr static const unsigned long at_secure = 23;                // AT_SECURE: setuid-ish exec
-constexpr static const unsigned long at_base_platform = 24;         // pointer to real-cpu string
-constexpr static const unsigned long at_random = 25;                // pointer to 16 random bytes
-constexpr static const unsigned long at_hwcap2 = 26;                // extension of at_hwcap
-constexpr static const unsigned long at_rseq_feature_size = 27;     // rseq supported feature size
-constexpr static const unsigned long at_rseq_align = 28;            // rseq allocation alignment
-constexpr static const unsigned long at_hwcap3 = 29;                // extension #2 of at_hwcap
-constexpr static const unsigned long at_hwcap4 = 30;                // extension #3 of at_hwcap
+constexpr static const unsigned long at_secure = 23;                 // AT_SECURE: setuid-ish exec
+constexpr static const unsigned long at_base_platform = 24;          // pointer to real-cpu string
+constexpr static const unsigned long at_random = 25;                 // pointer to 16 random bytes
+constexpr static const unsigned long at_hwcap2 = 26;                 // extension of at_hwcap
+constexpr static const unsigned long at_rseq_feature_size = 27;      // rseq supported feature size
+constexpr static const unsigned long at_rseq_align = 28;             // rseq allocation alignment
+constexpr static const unsigned long at_hwcap3 = 29;                 // extension #2 of at_hwcap
+constexpr static const unsigned long at_hwcap4 = 30;                 // extension #3 of at_hwcap
 
-constexpr static const unsigned long at_execfn = 31;     // pointer to argv[0] full path
+constexpr static const unsigned long at_execfn = 31;      // pointer to argv[0] full path
 
 // arch-specific (x86 / x86-64)
-constexpr static const unsigned long at_sysinfo = 32;          // x86: vsyscall fast call entry
-constexpr static const unsigned long at_sysinfo_ehdr = 33;     // base of vDSO ELF image
+constexpr static const unsigned long at_sysinfo = 32;           // x86: vsyscall fast call entry
+constexpr static const unsigned long at_sysinfo_ehdr = 33;      // base of vDSO ELF image
 
 // cache geometry hints (powerpc / aarch64 publish these; x86 generally does not)
 constexpr static const unsigned long at_l1i_cachesize = 40;
@@ -63,7 +63,7 @@ constexpr static const unsigned long at_l2_cachegeometry = 45;
 constexpr static const unsigned long at_l3_cachesize = 46;
 constexpr static const unsigned long at_l3_cachegeometry = 47;
 
-constexpr static const unsigned long at_minsigstksz = 51;     // minimum stack size for signal delivery
+constexpr static const unsigned long at_minsigstksz = 51;      // minimum stack size for signal delivery
 
 #if defined(__micron_arch_amd64) || (__SIZEOF_POINTER__ == 8)
 struct phdr_t {
@@ -116,7 +116,7 @@ __auxv_lookup(const auxv_t *av, unsigned long type) noexcept
   return 0;
 }
 
-template <typename T = void>
+template<typename T = void>
 inline __attribute__((always_inline)) T *
 __auxv_lookup_ptr(const auxv_t *av, unsigned long type) noexcept
 {
@@ -133,10 +133,10 @@ __auxv_has(const auxv_t *av, unsigned long type) noexcept
 }
 
 struct tls_image {
-  const byte *image;     // base of the .tdata template (ph->p_vaddr)
-  u64 filesz;            // bytes of initialised tdata
-  u64 memsz;             // total tls block size (filesz + tbss)
-  u64 align;             // p_align from PT_TLS (0 if no PT_TLS)
+  const byte *image;      // base of the .tdata template (ph->p_vaddr)
+  u64 filesz;             // bytes of initialised tdata
+  u64 memsz;              // total tls block size (filesz + tbss)
+  u64 align;              // p_align from PT_TLS (0 if no PT_TLS)
 };
 
 inline __attribute__((always_inline)) tls_image
@@ -163,4 +163,4 @@ __auxv_find_tls(const auxv_t *av) noexcept
   return out;
 }
 
-};     // namespace micron
+};      // namespace micron

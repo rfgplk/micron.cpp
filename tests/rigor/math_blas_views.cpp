@@ -79,8 +79,8 @@ main()
 
   test_case("row_view + col_view: at(r,c) honours layout");
   {
-    f64 row_buf[6] = { 1, 2, 3, 4, 5, 6 };     // 2x3 row-major
-    f64 col_buf[6] = { 1, 4, 2, 5, 3, 6 };     // same matrix, col-major
+    f64 row_buf[6] = { 1, 2, 3, 4, 5, 6 };      // 2x3 row-major
+    f64 col_buf[6] = { 1, 4, 2, 5, 3, 6 };      // same matrix, col-major
 
     auto rv = matrix::row_view<f64>::from(row_buf, 2, 3);
     auto cv = matrix::col_view<f64>::from(col_buf, 2, 3);
@@ -92,9 +92,9 @@ main()
 
   test_case("transpose_view: zero-copy rebind");
   {
-    f64 buf[6] = { 1, 2, 3, 4, 5, 6 };     // 2x3 row-major
+    f64 buf[6] = { 1, 2, 3, 4, 5, 6 };      // 2x3 row-major
     auto rv = matrix::row_view<f64>::from(buf, 2, 3);
-    auto tv = matrix::transpose_view(rv);     // now 3x2 col-major over same data
+    auto tv = matrix::transpose_view(rv);      // now 3x2 col-major over same data
 
     require_true(tv.rows == 3);
     require_true(tv.cols == 2);
@@ -116,7 +116,7 @@ main()
     // 4x4 row-major
     f64 buf[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
     auto v = matrix::row_view<f64>::from(buf, 4, 4);
-    auto sub = v.submat(1, 1, 2, 2);     // [[6,7];[10,11]]
+    auto sub = v.submat(1, 1, 2, 2);      // [[6,7];[10,11]]
     require_true(sub.rows == 2);
     require_true(sub.cols == 2);
     require_true(sub.ld == 4);

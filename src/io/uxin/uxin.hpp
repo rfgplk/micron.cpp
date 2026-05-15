@@ -24,11 +24,11 @@ slice<input_t>
 open_nonblock(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard :
+  case type_t::keyboard:
     break;
-  case type_t::mouse :
+  case type_t::mouse:
     break;
-  default :
+  default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -47,11 +47,11 @@ input_t
 open_first_nonblock(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard :
+  case type_t::keyboard:
     break;
-  case type_t::mouse :
+  case type_t::mouse:
     break;
-  default :
+  default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -69,11 +69,11 @@ slice<input_t>
 open(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard :
+  case type_t::keyboard:
     break;
-  case type_t::mouse :
+  case type_t::mouse:
     break;
-  default :
+  default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -92,11 +92,11 @@ input_t
 open_first(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard :
+  case type_t::keyboard:
     break;
-  case type_t::mouse :
+  case type_t::mouse:
     break;
-  default :
+  default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = mc::uxin::get_devices();
@@ -110,24 +110,24 @@ open_first(type_t __type)
   exc<except::library_error>("uxin open(): couldn't open device");
 }
 
-template <auto Fn = nullptr, auto Fn_2 = nullptr, auto Fn_3 = nullptr>
+template<auto Fn = nullptr, auto Fn_2 = nullptr, auto Fn_3 = nullptr>
 input_packet_t
 prepare_listener(type_t __type)
 {
   switch ( __type ) {
-  case type_t::keyboard :
+  case type_t::keyboard:
     return mc::uxin::prepare_generic_keyboard_us(Fn, Fn_2, Fn_3);
     break;
-  case type_t::mouse :
+  case type_t::mouse:
     return mc::uxin::prepare_generic_mouse_sensor(Fn, Fn_2, Fn_3);
     break;
-  default :
+  default:
     exc<except::library_error>("uxin prepare_listener(): invalid specified type of device");
   }
   exc<except::library_error>("uxin prepare_listener(): invalid specified type of device");
 }
 
-template <typename... Args>
+template<typename... Args>
   requires(micron::same_as<input_packet_t, Args> && ...)
 void
 read(input_t &t, Args &&...__input_packet)
@@ -137,7 +137,7 @@ read(input_t &t, Args &&...__input_packet)
   mc::uxin::poll(t, micron::forward<Args>(__input_packet)...);
 }
 
-template <typename... Args>
+template<typename... Args>
   requires(micron::same_as<input_packet_t, Args> && ...)
 void
 read(slice<input_t> &inputs, Args &&...__input_packet)
@@ -150,7 +150,7 @@ read(slice<input_t> &inputs, Args &&...__input_packet)
 }
 
 // NOTE: if using a pack, be sure to open with a nonblocking method
-template <typename... Args>
+template<typename... Args>
   requires(micron::same_as<input_packet_t, Args> && ...)
 void
 read_rt(slice<input_t> &inputs, Args &&...__input_packet)
@@ -162,7 +162,7 @@ read_rt(slice<input_t> &inputs, Args &&...__input_packet)
   mc::uxin::poll_pack_rt(inputs, micron::forward<Args>(__input_packet)...);
 }
 
-template <typename... Args>
+template<typename... Args>
   requires(micron::same_as<input_packet_t, Args> && ...)
 void
 read_once(slice<input_t> &inputs, Args &&...__input_packet)
@@ -179,5 +179,5 @@ write()
 {
 }
 
-};     // namespace uxin
-};     // namespace micron
+};      // namespace uxin
+};      // namespace micron

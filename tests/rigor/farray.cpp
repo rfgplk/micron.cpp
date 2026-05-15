@@ -22,7 +22,7 @@ namespace
 {
 
 // verify every element equals val
-template <typename T, usize N>
+template<typename T, usize N>
 bool
 all_eq(const micron::farray<T, N> &a, T val)
 {
@@ -32,7 +32,7 @@ all_eq(const micron::farray<T, N> &a, T val)
 }
 
 // verify two arrays are element-wise equal
-template <typename T, usize N>
+template<typename T, usize N>
 bool
 arr_eq(const micron::farray<T, N> &a, const micron::farray<T, N> &b)
 {
@@ -42,7 +42,7 @@ arr_eq(const micron::farray<T, N> &a, const micron::farray<T, N> &b)
 }
 
 // make a sequential farray: [start, start+1, ..., start+N-1]
-template <typename T, usize N>
+template<typename T, usize N>
 micron::farray<T, N>
 make_seq(T start = T{})
 {
@@ -51,7 +51,7 @@ make_seq(T start = T{})
   return a;
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -143,7 +143,7 @@ main()
     require_true(arr_eq(a, b));
 
     b[0] = 9999;
-    require(a[0], 1);     // a unaffected
+    require(a[0], 1);      // a unaffected
     require(b[0], 9999);
   }
   end_test_case();
@@ -169,7 +169,7 @@ main()
     require_true(arr_eq(a, b));
 
     b[3] = -1;
-    require(a[3], 8);     // a[3] = 5+3
+    require(a[3], 8);      // a[3] = 5+3
   }
   end_test_case();
 
@@ -331,7 +331,7 @@ main()
     micron::farray<int, 8> a = make_seq<int, 8>(0);
     int sum = 0;
     for ( int v : a ) sum += v;
-    require(sum, 28);     // 0+1+...+7
+    require(sum, 28);      // 0+1+...+7
   }
   end_test_case();
 
@@ -425,7 +425,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("operator*= scalar multiplies every element");
   {
-    micron::farray<int, 8> a = make_seq<int, 8>(1);     // 1..8
+    micron::farray<int, 8> a = make_seq<int, 8>(1);      // 1..8
     a *= 3;
     for ( int i = 0; i < 8; ++i ) require(a[i], (i + 1) * 3);
   }
@@ -571,8 +571,8 @@ main()
     micron::farray<int, 8> b(4);
     auto c = a + b;
     require_true(all_eq(c, 7));
-    require_true(all_eq(a, 3));     // a unchanged
-    require_true(all_eq(b, 4));     // b unchanged
+    require_true(all_eq(a, 3));      // a unchanged
+    require_true(all_eq(b, 4));      // b unchanged
   }
   end_test_case();
 
@@ -618,7 +618,7 @@ main()
     micron::farray<int, 8> a(10);
     micron::farray<int, 8> b(3);
     auto c = a % b;
-    require_true(all_eq(c, 1));     // 10 % 3 == 1
+    require_true(all_eq(c, 1));      // 10 % 3 == 1
     require_true(all_eq(a, 10));
     require_true(all_eq(b, 3));
   }
@@ -627,8 +627,8 @@ main()
   // ---------------------------------------------------------------- //
   test_case("binary ops with sequential arrays");
   {
-    micron::farray<int, 8> a = make_seq<int, 8>(1);     // 1..8
-    micron::farray<int, 8> b = make_seq<int, 8>(1);     // 1..8
+    micron::farray<int, 8> a = make_seq<int, 8>(1);      // 1..8
+    micron::farray<int, 8> b = make_seq<int, 8>(1);      // 1..8
     auto sum = a + b;
     for ( int i = 0; i < 8; ++i ) require(sum[i], 2 * (i + 1));
 
@@ -658,7 +658,7 @@ main()
   // ================================================================ //
   test_case("sum() – sum of all elements (returns T)");
   {
-    micron::farray<int, 8> a = make_seq<int, 8>(1);     // 1..8
+    micron::farray<int, 8> a = make_seq<int, 8>(1);      // 1..8
     require(a.sum(), 36);
 
     micron::farray<int, 8> z;
@@ -678,7 +678,7 @@ main()
     micron::farray<int, 4> ones(1);
     require(ones.mul_reduce(), 1);
 
-    micron::farray<int, 4> z;     // zeroes
+    micron::farray<int, 4> z;      // zeroes
     require(z.mul_reduce(), 0);
   }
   end_test_case();
@@ -890,7 +890,7 @@ main()
     a.mul((usize)2);
     require_true(a.all(14u));
 
-    require(a.sum(), 112u);     // 8 * 14
+    require(a.sum(), 112u);      // 8 * 14
   }
   end_test_case();
 
@@ -959,11 +959,11 @@ main()
     micron::farray<int, 64> a = make_seq<int, 64>(1);
     micron::farray<int, 64> b = a;
 
-    a += b;     // a[i] += b[i] → a[i] = 2*(i+1)
+    a += b;      // a[i] += b[i] → a[i] = 2*(i+1)
     for ( int i = 0; i < 64; ++i ) require(a[i], 2 * (i + 1));
 
     // subtract back
-    a -= b;     // a[i] -= b[i] → a[i] = (i+1)
+    a -= b;      // a[i] -= b[i] → a[i] = (i+1)
     for ( int i = 0; i < 64; ++i ) require(a[i], i + 1);
   }
   end_test_case();
@@ -999,7 +999,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("invariant: mul_reduce() == product of all elements after fill(k)");
   {
-    micron::farray<int, 4> a(2);     // [2,2,2,2], product = 16
+    micron::farray<int, 4> a(2);      // [2,2,2,2], product = 16
     require(a.mul_reduce(), 16);
   }
   end_test_case();
@@ -1019,14 +1019,14 @@ main()
   // ---------------------------------------------------------------- //
   test_case("invariant: any(k) iff at least one element equals k");
   {
-    micron::farray<int, 16> a;     // all zeros
+    micron::farray<int, 16> a;      // all zeros
     require_true(a.any(0));
     require_false(a.any(1));
 
     a[8] = 42;
     require_true(a.any(42));
     require_false(a.any(41));
-    require_true(a.any(0));     // others still 0
+    require_true(a.any(0));      // others still 0
   }
   end_test_case();
 

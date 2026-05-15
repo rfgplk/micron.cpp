@@ -24,7 +24,7 @@ near(f64 a, f64 b, f64 eps = 1e-10)
   return (d < 0 ? -d : d) < eps;
 }
 
-template <usize D>
+template<usize D>
 static bool
 near_v(const vec<f64, D> &a, const vec<f64, D> &b, f64 eps = 1e-10)
 {

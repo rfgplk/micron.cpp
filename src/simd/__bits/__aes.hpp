@@ -43,9 +43,9 @@ _mm_aesimc_si128(__m128i a) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #define _mm_aesenc_si128(X, Y)                                                                                                             \
   ((::__m128i)__builtin_ia32_aesenc128((::micron::simd::__bits::__v2di)(::__m128i)(X), (::micron::simd::__bits::__v2di)(::__m128i)(Y)))

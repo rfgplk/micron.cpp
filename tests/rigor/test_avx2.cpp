@@ -14,7 +14,7 @@ using ::sb::print;
 using ::sb::require_true;
 using ::sb::test_case;
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline bool
 v_eq(T a, T b) noexcept
 {
@@ -143,7 +143,7 @@ test_minmax_abs()
 
   ma::storeu_i256((__m256i_u *)ib, ma2::abs_i32(b));
   for ( int i = 0; i < 8; ++i ) require_true(ib[i] == 3);
-  ma::storeu_i256((__m256i_u *)ib, ma2::sign_i32(a, b));     // sign(b)*a = -7
+  ma::storeu_i256((__m256i_u *)ib, ma2::sign_i32(a, b));      // sign(b)*a = -7
   for ( int i = 0; i < 8; ++i ) require_true(ib[i] == -7);
   end_test_case();
 }

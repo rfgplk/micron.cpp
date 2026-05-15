@@ -10,7 +10,7 @@
 namespace micron
 {
 
-template <uintmax_t N, uintmax_t D = 1> struct ratio {
+template<uintmax_t N, uintmax_t D = 1> struct ratio {
   static constexpr uintmax_t num = N;
   static constexpr uintmax_t denom = D;
 
@@ -43,4 +43,4 @@ typedef ratio<1, static_cast<uintmax_t>(1e18)> atto;
 // typedef ratio<1, static_cast<uintmax_t>(1e24)> yocto;
 // typedef ratio<1, static_cast<uintmax_t>(1e27)> ronto;
 // typedef ratio<1, static_cast<uintmax_t>(1e30)> quecto;
-};     // namespace micron
+};      // namespace micron

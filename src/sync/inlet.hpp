@@ -26,7 +26,7 @@ protected:
   base_inlet_t() = default;
 };
 
-template <typename T, class Mtx = micron::mutex> class inlet : public base_inlet_t
+template<typename T, class Mtx = micron::mutex> class inlet: public base_inlet_t
 {
   T value;
   mutable Mtx mtx;
@@ -37,7 +37,7 @@ public:
   {
     inlet *src;
 
-    explicit handle_t(inlet *s) noexcept : src(s) {}
+    explicit handle_t(inlet *s) noexcept : src(s) { }
     friend class inlet;
 
   public:
@@ -104,13 +104,13 @@ public:
 
   ~inlet() override = default;
 
-  inlet() noexcept(noexcept(T())) : value(), _tag("") {}
+  inlet() noexcept(noexcept(T())) : value(), _tag("") { }
 
-  explicit inlet(const char *tag_str) noexcept(noexcept(T())) : value(), _tag(tag_str) {}
+  explicit inlet(const char *tag_str) noexcept(noexcept(T())) : value(), _tag(tag_str) { }
 
-  explicit inlet(const T &init, const char *tag_str = "") : value(init), _tag(tag_str) {}
+  explicit inlet(const T &init, const char *tag_str = "") : value(init), _tag(tag_str) { }
 
-  explicit inlet(T &&init, const char *tag_str = "") : value(static_cast<T &&>(init)), _tag(tag_str) {}
+  explicit inlet(T &&init, const char *tag_str = "") : value(static_cast<T &&>(init)), _tag(tag_str) { }
 
   inlet(const inlet &) = delete;
   inlet(inlet &&) = delete;
@@ -154,7 +154,7 @@ public:
     return false;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   auto
   apply(Fn &&fn) -> decltype(fn(value))
   {
@@ -244,11 +244,11 @@ struct queuing_mutex_adapter {
   }
 };
 
-template <typename T> using queuing_inlet = inlet<T, queuing_mutex_adapter>;
-template <typename T> using recursive_inlet = inlet<T, micron::recursive_lock>;
+template<typename T> using queuing_inlet = inlet<T, queuing_mutex_adapter>;
+template<typename T> using recursive_inlet = inlet<T, micron::recursive_lock>;
 
-template <typename T> using mutex_inlet = inlet<T, micron::mutex>;
-template <typename T> using weak_inlet = inlet<T, micron::weak_mutex>;
-template <typename T> using spin_inlet = inlet<T, micron::spin_lock>;
+template<typename T> using mutex_inlet = inlet<T, micron::mutex>;
+template<typename T> using weak_inlet = inlet<T, micron::weak_mutex>;
+template<typename T> using spin_inlet = inlet<T, micron::spin_lock>;
 
-}     // namespace micron
+}      // namespace micron

@@ -17,7 +17,7 @@ using ::sb::print;
 using ::sb::require_true;
 using ::sb::test_case;
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline bool
 v_eq(T a, T b) noexcept
 {

@@ -14,7 +14,7 @@ namespace micron
 namespace sort
 {
 
-template <is_iterable_container T, typename Cmp>
+template<is_iterable_container T, typename Cmp>
 void
 __insertion(T &arr, typename T::size_type start, typename T::size_type end, Cmp comp)
 {
@@ -30,14 +30,14 @@ __insertion(T &arr, typename T::size_type start, typename T::size_type end, Cmp 
   }
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 __insertion(T &arr, typename T::size_type start, typename T::size_type end)
 {
   __insertion(arr, start, end, [](const auto &a, const auto &b) { return a < b; });
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T &
 insertion(T &arr)
 {
@@ -45,7 +45,7 @@ insertion(T &arr)
   return arr;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 T &
 insertion(T &arr, Cmp comp)
 {
@@ -53,7 +53,7 @@ insertion(T &arr, Cmp comp)
   return arr;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T &
 insertion(T &arr, typename T::size_type lim)
 {
@@ -61,7 +61,7 @@ insertion(T &arr, typename T::size_type lim)
   return arr;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 T &
 insertion(T &arr, typename T::size_type lim, Cmp comp)
 {
@@ -69,7 +69,7 @@ insertion(T &arr, typename T::size_type lim, Cmp comp)
   return arr;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 typename T::iterator
 insertion(typename T::iterator start, typename T::iterator end)
 {
@@ -78,7 +78,7 @@ insertion(typename T::iterator start, typename T::iterator end)
   return start;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 typename T::iterator
 insertion(typename T::iterator start, typename T::iterator end, Cmp comp)
 {
@@ -87,5 +87,5 @@ insertion(typename T::iterator start, typename T::iterator end, Cmp comp)
   return start;
 }
 
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

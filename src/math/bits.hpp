@@ -20,7 +20,7 @@ namespace bits
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // rotates
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 rol(T x, int r) noexcept
 {
@@ -30,7 +30,7 @@ rol(T x, int r) noexcept
   return static_cast<T>((x << s) | (x >> (w - s)));
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 ror(T x, int r) noexcept
 {
@@ -75,7 +75,7 @@ ror64(u64 x, int r) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // counts
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr int
 clz(T x) noexcept
@@ -83,7 +83,7 @@ clz(T x) noexcept
   return micron::countl_zero(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr int
 ctz(T x) noexcept
@@ -91,7 +91,7 @@ ctz(T x) noexcept
   return micron::countr_zero(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr int
 popcount(T x) noexcept
@@ -99,7 +99,7 @@ popcount(T x) noexcept
   return micron::popcount(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr int
 parity(T x) noexcept
@@ -123,7 +123,7 @@ abs32(i32 x) noexcept
   return (x ^ mask) - mask;
 }
 
-template <typename F>
+template<typename F>
   requires(micron::is_floating_point_v<F>)
 [[nodiscard, gnu::always_inline]] inline constexpr int
 sign_bit(F x) noexcept
@@ -134,7 +134,7 @@ sign_bit(F x) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bit casts
 
-template <typename To, typename From>
+template<typename To, typename From>
 [[nodiscard, gnu::always_inline]] inline constexpr To
 bit_cast(const From &from) noexcept
 {
@@ -165,7 +165,7 @@ byteswap64(u64 x) noexcept
   return __builtin_bswap64(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 byteswap(T x) noexcept
@@ -182,7 +182,7 @@ byteswap(T x) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // floors ceils
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T> && micron::is_unsigned_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 floor_pow2(T x) noexcept
@@ -191,7 +191,7 @@ floor_pow2(T x) noexcept
   return T(1) << (sizeof(T) * 8 - 1 - clz(x));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T> && micron::is_unsigned_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 ceil_pow2(T x) noexcept
@@ -200,6 +200,6 @@ ceil_pow2(T x) noexcept
   return T(1) << (sizeof(T) * 8 - clz(static_cast<T>(x - 1)));
 }
 
-};     // namespace bits
-};     // namespace math
-};     // namespace micron
+};      // namespace bits
+};      // namespace math
+};      // namespace micron

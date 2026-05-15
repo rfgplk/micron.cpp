@@ -583,7 +583,7 @@ main()
   {
     micron::vector<int> v(10, 0);
     micron::fill(v, 3);
-    micron::transform(v, [](int x) { return x * x; });     // 9 × 10 = 90
+    micron::transform(v, [](int x) { return x * x; });      // 9 × 10 = 90
     require(micron::sum(v), umax_t(90));
   }
   end_test_case();
@@ -594,9 +594,9 @@ main()
     int n = 0;
     micron::generate(a.begin(), a.end(), [&]() { return ++n; });
     // a = {1,2,3,4,5,6}
-    micron::array<int, 6> b(a);     // copy
+    micron::array<int, 6> b(a);      // copy
     micron::reverse(a);
-    micron::reverse(a);     // double reverse = identity
+    micron::reverse(a);      // double reverse = identity
     require_true(micron::equal(a.begin(), a.end(), b.begin()));
   }
   end_test_case();
@@ -608,7 +608,7 @@ main()
     auto *p = micron::find(v, 30);
     require_true(p != nullptr);
     require(*p, 30);
-    auto *q = micron::find(v, 3);     // old value gone
+    auto *q = micron::find(v, 3);      // old value gone
     require_true(q == nullptr);
   }
   end_test_case();
@@ -629,8 +629,8 @@ main()
   {
     micron::vector<int> v(1000, 0);
     int counter = 0;
-    micron::generate(v, [&]() { return counter++; });      // 0..999
-    micron::transform(v, [](int x) { return x % 2; });     // 0 or 1
+    micron::generate(v, [&]() { return counter++; });       // 0..999
+    micron::transform(v, [](int x) { return x % 2; });      // 0 or 1
     auto ones = micron::count_if(v, [](int x) { return x == 1; });
     auto zeros = micron::count_if(v, [](int x) { return x == 0; });
     require(ones, umax_t(500));

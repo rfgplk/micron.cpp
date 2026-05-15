@@ -21,7 +21,7 @@ __micron_errno_location(void)
 namespace micron
 {
 
-template <int Val>
+template<int Val>
 inline __attribute__((always_inline)) void
 set_errno(void)
 {
@@ -34,7 +34,7 @@ set_errno(i32 val)
   errno = val;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T> and micron::is_convertible_v<T, i32>)
 inline __attribute__((always_inline)) void
 set_errno(const T val)
@@ -57,13 +57,13 @@ constexpr static const i32 exec_error = 8;
 constexpr static const i32 bad_file_number = 9;
 constexpr static const i32 no_child_process = 10;
 constexpr static const i32 try_again = 11;
-constexpr static const i32 would_block = 11;     // alias try_again
+constexpr static const i32 would_block = 11;      // alias try_again
 constexpr static const i32 out_of_memory = 12;
 constexpr static const i32 permission_denied = 13;
 constexpr static const i32 bad_address = 14;
 constexpr static const i32 block_device_req = 15;
 constexpr static const i32 device_busy = 16;
-constexpr static const i32 busy = 16;     // alias
+constexpr static const i32 busy = 16;      // alias
 constexpr static const i32 file_exists = 17;
 constexpr static const i32 cross_device_link = 18;
 constexpr static const i32 no_device = 19;
@@ -319,275 +319,275 @@ inline auto
 get_errno(const int e)
 {
   switch ( e ) {
-  case permissions :
+  case permissions:
     return permissions_msg;
-  case no_entry :
+  case no_entry:
     return no_entry_msg;
-  case no_process :
+  case no_process:
     return no_process_msg;
-  case interrupted :
+  case interrupted:
     return interrupted_msg;
-  case io_error :
+  case io_error:
     return io_error_msg;
-  case no_such_device :
+  case no_such_device:
     return no_such_device_msg;
-  case arguments_too_big :
+  case arguments_too_big:
     return arguments_too_big_msg;
-  case exec_error :
+  case exec_error:
     return exec_error_msg;
-  case bad_file_number :
+  case bad_file_number:
     return bad_file_number_msg;
-  case no_child_process :
+  case no_child_process:
     return no_child_process_msg;
-  case try_again :     // also covers would_block
+  case try_again:      // also covers would_block
     return try_again_msg;
-  case out_of_memory :
+  case out_of_memory:
     return out_of_memory_msg;
-  case permission_denied :
+  case permission_denied:
     return permission_denied_msg;
-  case bad_address :
+  case bad_address:
     return bad_address_msg;
-  case block_device_req :
+  case block_device_req:
     return block_device_req_msg;
-  case device_busy :     // also covers busy
+  case device_busy:      // also covers busy
     return device_busy_msg;
-  case file_exists :
+  case file_exists:
     return file_exists_msg;
-  case cross_device_link :
+  case cross_device_link:
     return cross_device_link_msg;
-  case no_device :
+  case no_device:
     return no_device_msg;
-  case not_a_dir :
+  case not_a_dir:
     return not_a_dir_msg;
-  case is_a_dir :
+  case is_a_dir:
     return is_a_dir_msg;
-  case invalid_arg :
+  case invalid_arg:
     return invalid_arg_msg;
-  case file_table_ovflw :
+  case file_table_ovflw:
     return file_table_ovflw_msg;
-  case too_many_files :
+  case too_many_files:
     return too_many_files_msg;
-  case not_a_tty :
+  case not_a_tty:
     return not_a_tty_msg;
-  case text_busy :
+  case text_busy:
     return text_busy_msg;
-  case file_too_big :
+  case file_too_big:
     return file_too_big_msg;
-  case no_space :
+  case no_space:
     return no_space_msg;
-  case illegal_seek :
+  case illegal_seek:
     return illegal_seek_msg;
-  case read_only_fs :
+  case read_only_fs:
     return read_only_fs_msg;
-  case too_many_links :
+  case too_many_links:
     return too_many_links_msg;
-  case broken_pipe :
+  case broken_pipe:
     return broken_pipe_msg;
-  case out_of_domain :
+  case out_of_domain:
     return out_of_domain_msg;
-  case not_representable :
+  case not_representable:
     return not_representable_msg;
-  case deadlock :
+  case deadlock:
     return deadlock_msg;
-  case name_too_long :
+  case name_too_long:
     return name_too_long_msg;
-  case no_record_locks :
+  case no_record_locks:
     return no_record_locks_msg;
-  case bad_syscall :
+  case bad_syscall:
     return bad_syscall_msg;
-  case dir_not_empty :
+  case dir_not_empty:
     return dir_not_empty_msg;
-  case too_many_symlinks :
+  case too_many_symlinks:
     return too_many_symlinks_msg;
-  case no_message :
+  case no_message:
     return no_message_msg;
-  case identifier_removed :
+  case identifier_removed:
     return identifier_removed_msg;
-  case channel_out_of_range :
+  case channel_out_of_range:
     return channel_out_of_range_msg;
-  case level2_not_synced :
+  case level2_not_synced:
     return level2_not_synced_msg;
-  case level3_halted :
+  case level3_halted:
     return level3_halted_msg;
-  case level3_reset :
+  case level3_reset:
     return level3_reset_msg;
-  case link_num_out_of_range :
+  case link_num_out_of_range:
     return link_num_out_of_range_msg;
-  case proto_driver_not_attached :
+  case proto_driver_not_attached:
     return proto_driver_not_attached_msg;
-  case no_csi_structure :
+  case no_csi_structure:
     return no_csi_structure_msg;
-  case level2_halted :
+  case level2_halted:
     return level2_halted_msg;
-  case invalid_exchange :
+  case invalid_exchange:
     return invalid_exchange_msg;
-  case invalid_request_desc :
+  case invalid_request_desc:
     return invalid_request_desc_msg;
-  case exchange_full :
+  case exchange_full:
     return exchange_full_msg;
-  case no_anode :
+  case no_anode:
     return no_anode_msg;
-  case invalid_request_code :
+  case invalid_request_code:
     return invalid_request_code_msg;
-  case invalid_slot :
+  case invalid_slot:
     return invalid_slot_msg;
-  case bad_font_file :
+  case bad_font_file:
     return bad_font_file_msg;
-  case not_a_stream :
+  case not_a_stream:
     return not_a_stream_msg;
-  case no_data_available :
+  case no_data_available:
     return no_data_available_msg;
-  case timer_expired :
+  case timer_expired:
     return timer_expired_msg;
-  case no_stream_resources :
+  case no_stream_resources:
     return no_stream_resources_msg;
-  case not_on_network :
+  case not_on_network:
     return not_on_network_msg;
-  case package_not_installed :
+  case package_not_installed:
     return package_not_installed_msg;
-  case object_is_remote :
+  case object_is_remote:
     return object_is_remote_msg;
-  case link_severed :
+  case link_severed:
     return link_severed_msg;
-  case advertise_error :
+  case advertise_error:
     return advertise_error_msg;
-  case srmount_error :
+  case srmount_error:
     return srmount_error_msg;
-  case comm_error_on_send :
+  case comm_error_on_send:
     return comm_error_on_send_msg;
-  case proto_error :
+  case proto_error:
     return proto_error_msg;
-  case multihop_attempted :
+  case multihop_attempted:
     return multihop_attempted_msg;
-  case rfs_specific_error :
+  case rfs_specific_error:
     return rfs_specific_error_msg;
-  case not_a_data_message :
+  case not_a_data_message:
     return not_a_data_message_msg;
-  case overflow :
+  case overflow:
     return overflow_msg;
-  case name_not_unique :
+  case name_not_unique:
     return name_not_unique_msg;
-  case bad_fd :
+  case bad_fd:
     return bad_fd_msg;
-  case remote_addr_changed :
+  case remote_addr_changed:
     return remote_addr_changed_msg;
-  case shared_lib_inaccessible :
+  case shared_lib_inaccessible:
     return shared_lib_inaccessible_msg;
-  case shared_lib_corrupted :
+  case shared_lib_corrupted:
     return shared_lib_corrupted_msg;
-  case shared_lib_section_bad :
+  case shared_lib_section_bad:
     return shared_lib_section_bad_msg;
-  case too_many_shared_libs :
+  case too_many_shared_libs:
     return too_many_shared_libs_msg;
-  case cannot_exec_shared_lib :
+  case cannot_exec_shared_lib:
     return cannot_exec_shared_lib_msg;
-  case illegal_byte_sequence :
+  case illegal_byte_sequence:
     return illegal_byte_sequence_msg;
-  case restarted :
+  case restarted:
     return restarted_msg;
-  case streams_pipe_error :
+  case streams_pipe_error:
     return streams_pipe_error_msg;
-  case too_many_users :
+  case too_many_users:
     return too_many_users_msg;
-  case not_a_socket :
+  case not_a_socket:
     return not_a_socket_msg;
-  case dest_addr_required :
+  case dest_addr_required:
     return dest_addr_required_msg;
-  case message_too_long :
+  case message_too_long:
     return message_too_long_msg;
-  case wrong_protocol :
+  case wrong_protocol:
     return wrong_protocol_msg;
-  case proto_not_available :
+  case proto_not_available:
     return proto_not_available_msg;
-  case proto_not_supported :
+  case proto_not_supported:
     return proto_not_supported_msg;
-  case socket_not_supported :
+  case socket_not_supported:
     return socket_not_supported_msg;
-  case op_not_supported :
+  case op_not_supported:
     return op_not_supported_msg;
-  case proto_family_not_supported :
+  case proto_family_not_supported:
     return proto_family_not_supported_msg;
-  case addr_family_not_supported :
+  case addr_family_not_supported:
     return addr_family_not_supported_msg;
-  case addr_in_use :
+  case addr_in_use:
     return addr_in_use_msg;
-  case addr_not_available :
+  case addr_not_available:
     return addr_not_available_msg;
-  case network_down :
+  case network_down:
     return network_down_msg;
-  case network_unreachable :
+  case network_unreachable:
     return network_unreachable_msg;
-  case network_reset :
+  case network_reset:
     return network_reset_msg;
-  case connection_aborted :
+  case connection_aborted:
     return connection_aborted_msg;
-  case connection_reset :
+  case connection_reset:
     return connection_reset_msg;
-  case no_buffer_space :
+  case no_buffer_space:
     return no_buffer_space_msg;
-  case is_connected :
+  case is_connected:
     return is_connected_msg;
-  case not_connected :
+  case not_connected:
     return not_connected_msg;
-  case endpoint_shutdown :
+  case endpoint_shutdown:
     return endpoint_shutdown_msg;
-  case too_many_refs :
+  case too_many_refs:
     return too_many_refs_msg;
-  case timed_out :
+  case timed_out:
     return timed_out_msg;
-  case connection_refused :
+  case connection_refused:
     return connection_refused_msg;
-  case host_down :
+  case host_down:
     return host_down_msg;
-  case host_unreachable :
+  case host_unreachable:
     return host_unreachable_msg;
-  case already_in_progress :
+  case already_in_progress:
     return already_in_progress_msg;
-  case in_progress :
+  case in_progress:
     return in_progress_msg;
-  case stale_file_handle :
+  case stale_file_handle:
     return stale_file_handle_msg;
-  case needs_cleaning :
+  case needs_cleaning:
     return needs_cleaning_msg;
-  case not_xenix_named :
+  case not_xenix_named:
     return not_xenix_named_msg;
-  case no_xenix_semaphores :
+  case no_xenix_semaphores:
     return no_xenix_semaphores_msg;
-  case is_named_type :
+  case is_named_type:
     return is_named_type_msg;
-  case remote_io_error :
+  case remote_io_error:
     return remote_io_error_msg;
-  case quota_exceeded :
+  case quota_exceeded:
     return quota_exceeded_msg;
-  case no_medium :
+  case no_medium:
     return no_medium_msg;
-  case wrong_medium_type :
+  case wrong_medium_type:
     return wrong_medium_type_msg;
-  case operation_canceled :
+  case operation_canceled:
     return operation_canceled_msg;
-  case key_not_available :
+  case key_not_available:
     return key_not_available_msg;
-  case key_expired :
+  case key_expired:
     return key_expired_msg;
-  case key_revoked :
+  case key_revoked:
     return key_revoked_msg;
-  case key_rejected :
+  case key_rejected:
     return key_rejected_msg;
-  case owner_died :
+  case owner_died:
     return owner_died_msg;
-  case state_not_recoverable :
+  case state_not_recoverable:
     return state_not_recoverable_msg;
-  case rf_kill :
+  case rf_kill:
     return rf_kill_msg;
-  case hardware_memory_error :
+  case hardware_memory_error:
     return hardware_memory_error_msg;
 
-  default :
+  default:
     return no_msg;
   }
 }
 
-template <int e>
+template<int e>
 inline constexpr auto
 const_get_errno()
 {
@@ -601,13 +601,13 @@ const_get_errno()
   if constexpr ( e == exec_error ) return exec_error_msg;
   if constexpr ( e == bad_file_number ) return bad_file_number_msg;
   if constexpr ( e == no_child_process ) return no_child_process_msg;
-  if constexpr ( e == try_again )     // also covers would_block
+  if constexpr ( e == try_again )      // also covers would_block
     return try_again_msg;
   if constexpr ( e == out_of_memory ) return out_of_memory_msg;
   if constexpr ( e == permission_denied ) return permission_denied_msg;
   if constexpr ( e == bad_address ) return bad_address_msg;
   if constexpr ( e == block_device_req ) return block_device_req_msg;
-  if constexpr ( e == device_busy )     // also covers busy
+  if constexpr ( e == device_busy )      // also covers busy
     return device_busy_msg;
   if constexpr ( e == file_exists ) return file_exists_msg;
   if constexpr ( e == cross_device_link ) return cross_device_link_msg;
@@ -883,5 +883,5 @@ what_errno()
 #define EHWPOISON 133 /* Memory page has hardware error */
 
 #endif
-};     // namespace error
-};     // namespace micron
+};      // namespace error
+};      // namespace micron

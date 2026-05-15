@@ -80,6 +80,6 @@ end_concurrent_pools(void)
   __destroy_parallelarena();
 }
 
-};     // namespace micron
+};      // namespace micron
 
 #endif

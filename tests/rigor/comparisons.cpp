@@ -36,7 +36,7 @@ static constexpr byte LEFT_CANARY = static_cast<byte>(0xDE);
 static constexpr byte RIGHT_CANARY = static_cast<byte>(0xAD);
 static constexpr size_t GUARD = 8;
 
-template <typename T, size_t N> struct guarded {
+template<typename T, size_t N> struct guarded {
   using value_type = T;
   using size_type = size_t;
   using iterator = T *;
@@ -141,7 +141,7 @@ template <typename T, size_t N> struct guarded {
 };
 
 // Minimal is_iterable_container wrapper around guarded<>
-template <typename T, size_t N> struct gc {
+template<typename T, size_t N> struct gc {
   using value_type = T;
   using size_type = size_t;
   using iterator = T *;
@@ -238,7 +238,7 @@ template <typename T, size_t N> struct gc {
 // -------------------------------------------------------
 // Reference comparator — independent byte-by-byte scan
 // -------------------------------------------------------
-template <typename T>
+template<typename T>
 long int
 ref_bytecmp(const T *a, const T *b, size_t n_elems)
 {
@@ -342,9 +342,9 @@ main(void)
     guarded<byte, 16> a, b;
     a.fill(0xAA);
     b.fill(0xAA);
-    b.poison_right(0x00);     // right guard now 0x00 != 0xAA
+    b.poison_right(0x00);      // right guard now 0x00 != 0xAA
     long int r = mc::compare(a.begin(), b.begin(), 16);
-    sb::require(r == 0);     // must not have read the guard byte
+    sb::require(r == 0);      // must not have read the guard byte
     sb::require(a.guards_ok());
     // b's right guard was intentionally poisoned — only check left guard
     for ( size_t i = 0; i < GUARD; i++ ) sb::require(b.storage[i] == LEFT_CANARY);
@@ -520,7 +520,7 @@ main(void)
     guarded<byte, 8> a, b;
     a.fill(0xBB);
     b.fill(0xBB);
-    b.poison_right(0x00);     // 0x00 != 0xBB, pred would return false if read
+    b.poison_right(0x00);      // 0x00 != 0xBB, pred would return false if read
     bool r = mc::compare(a.begin(), b.begin(), 8, [](const byte &x, const byte &y) { return x == y; });
     sb::require(r == true);
     sb::require(a.guards_ok());
@@ -582,7 +582,7 @@ main(void)
     guarded<byte, 8> a, b;
     a.fill(0x55);
     b.fill(0x55);
-    b.poison_right(0xFF);     // 0xFF != 0x55
+    b.poison_right(0xFF);      // 0xFF != 0x55
     bool r = mc::compare(a.begin(), b.begin(), 8, [](const byte *x, const byte *y) { return *x == *y; });
     sb::require(r == true);
     sb::require(a.guards_ok());
@@ -1090,7 +1090,7 @@ main(void)
     guarded<int, 8> a, b;
     a.fill(5);
     b.fill(5);
-    b[6] = 999;     // outside window n=4
+    b[6] = 999;      // outside window n=4
     sb::require(mc::compare_n(a.begin(), b.begin(), 4, [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
@@ -1120,7 +1120,7 @@ main(void)
       ++calls;
       return x == y;
     });
-    sb::require(calls == 2);     // index 0 passes, index 1 fails
+    sb::require(calls == 2);      // index 0 passes, index 1 fails
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }

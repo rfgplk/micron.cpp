@@ -14,7 +14,7 @@ namespace micron
 // atomic_pointer
 // thread safe unique pointer
 // equivalent of unique_pointer but with atomic guarantees via atomic<>
-template <class Type> class atomic_pointer : private __internal_pointer_alloc<Type>
+template<class Type> class atomic_pointer: private __internal_pointer_alloc<Type>
 {
   atomic_token<Type *> internal_pointer;
 
@@ -29,9 +29,9 @@ public:
 
   ~atomic_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer.swap(nullptr)); }
 
-  atomic_pointer(void) noexcept : internal_pointer(nullptr) {}
+  atomic_pointer(void) noexcept : internal_pointer(nullptr) { }
 
-  template <typename V>
+  template<typename V>
     requires micron::is_null_pointer_v<V>
   atomic_pointer(V) noexcept : internal_pointer(nullptr)
   {
@@ -39,13 +39,13 @@ public:
 
   atomic_pointer(Type *&&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; }
 
-  template <class... Args>
+  template<class... Args>
     requires(sizeof...(Args) > 0)
   atomic_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
   {
   }
 
-  atomic_pointer(atomic_pointer &&o) noexcept : internal_pointer(o.internal_pointer.swap(nullptr)) {}
+  atomic_pointer(atomic_pointer &&o) noexcept : internal_pointer(o.internal_pointer.swap(nullptr)) { }
 
   atomic_pointer(const atomic_pointer &) = delete;
   atomic_pointer &operator=(const atomic_pointer &) = delete;
@@ -133,42 +133,42 @@ public:
     return internal_pointer.get(memory_order_acquire) != nullptr;
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
   {
     return internal_pointer.get(memory_order_acquire) == o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator!=(const O &o) const noexcept
   {
     return internal_pointer.get(memory_order_acquire) != o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return internal_pointer.get(memory_order_acquire) < o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return internal_pointer.get(memory_order_acquire) <= o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return internal_pointer.get(memory_order_acquire) > o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
   {
@@ -224,7 +224,7 @@ public:
   }
 };
 
-template <class Type> class atomic_pointer<Type[]> : private __internal_pointer_arralloc<Type>
+template<class Type> class atomic_pointer<Type[]>: private __internal_pointer_arralloc<Type>
 {
   atomic_token<Type *> internal_pointer;
 
@@ -239,9 +239,9 @@ public:
 
   ~atomic_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer.swap(nullptr)); }
 
-  atomic_pointer(void) noexcept : internal_pointer(nullptr) {}
+  atomic_pointer(void) noexcept : internal_pointer(nullptr) { }
 
-  template <typename V>
+  template<typename V>
     requires micron::is_null_pointer_v<V>
   atomic_pointer(V) noexcept : internal_pointer(nullptr)
   {
@@ -249,13 +249,13 @@ public:
 
   atomic_pointer(Type *&&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 0)
   atomic_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
   {
   }
 
-  atomic_pointer(atomic_pointer &&o) noexcept : internal_pointer(o.internal_pointer.swap(nullptr)) {}
+  atomic_pointer(atomic_pointer &&o) noexcept : internal_pointer(o.internal_pointer.swap(nullptr)) { }
 
   atomic_pointer(const atomic_pointer &) = delete;
   atomic_pointer &operator=(const atomic_pointer &) = delete;
@@ -408,18 +408,18 @@ public:
   }
 };
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 atomic_pointer<T>
 make_atomic(Args &&...args)
 {
   return atomic_pointer<T>(micron::forward<Args>(args)...);
 }
 
-template <typename T>
+template<typename T>
 inline void
 swap(atomic_pointer<T> &a, atomic_pointer<T> &b) noexcept
 {
   a.swap(b);
 }
 
-}     // namespace micron
+}      // namespace micron

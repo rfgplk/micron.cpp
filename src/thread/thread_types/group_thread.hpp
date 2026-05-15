@@ -32,7 +32,7 @@
 namespace micron
 {
 // group_thread, a regular group_thread
-template <usize Stack_Size = thread_stack_size> class group_thread
+template<usize Stack_Size = thread_stack_size> class group_thread
 {
   using thread_type = thread_tag;
 
@@ -42,7 +42,7 @@ template <usize Stack_Size = thread_stack_size> class group_thread
     micron::create_handler(__thread_sigchld, signal::child);
   }
 
-  template <typename F, typename... Args>
+  template<typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_preparethread(const pthread_attr_t &attrs, F f, Args &&...args)
@@ -104,20 +104,20 @@ public:
   group_thread &operator=(const group_thread &) = delete;
 
   group_thread(void)
-      : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+      : attributes(posix::getpid()), payload{} { }      // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
 
-  group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
+  group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
   // prepared functions
   // fstack set by preparethread
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args && ...>)
   group_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
   {
     __impl_preparethread(_attrs, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
   }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<const Fn, const Args &...>)
   group_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args) : attributes(posix::getpid(), _attrs), payload{}
   {
@@ -167,7 +167,7 @@ public:
   }
 
   auto
-  join(void) -> int     // group_thread
+  join(void) -> int      // group_thread
   {
     auto r = pthread::__join_thread(attributes.pid);
     __safe_release();
@@ -175,7 +175,7 @@ public:
   }
 
   auto
-  dismiss(void) -> int     // group_thread
+  dismiss(void) -> int      // group_thread
   {
     if ( try_join() == error::busy ) {
       auto r = pthread::__join_thread(attributes.pid);
@@ -272,7 +272,7 @@ public:
     until(false, &group_thread<Stack_Size>::alive, this);
   }
 
-  template <typename R>
+  template<typename R>
   auto
   result(void)
   {
@@ -299,4 +299,4 @@ public:
     return Stack_Size;
   }
 };
-};     // namespace micron
+};      // namespace micron

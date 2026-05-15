@@ -33,14 +33,14 @@ struct try_to_lock_t {
 
 inline constexpr try_to_lock_t try_to_lock{};
 
-template <typename... Locks>
+template<typename... Locks>
 bool
 try_lock(Locks... locks)
 {
   (locks.try_lock(), ...);
 }
 
-template <typename... Locks>
+template<typename... Locks>
 void
 lock(Locks &...locks)
 {
@@ -48,13 +48,13 @@ lock(Locks &...locks)
 }
 
 // use with care
-template <typename... Locks>
+template<typename... Locks>
 void
 unlock(Locks &...locks)
 {
   (locks.unlock(), ...);
 }
-};     // namespace micron
+};      // namespace micron
 
 #include "locks/auto_lock.hpp"
 #include "locks/guard_lock.hpp"

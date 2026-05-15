@@ -16,7 +16,7 @@ namespace math
 namespace sparse
 {
 
-template <arith_scalar T, micron::integral I = u32> struct sparse_vec {
+template<arith_scalar T, micron::integral I = u32> struct sparse_vec {
   using value_type = T;
   using index_type = I;
   using vec_i = micron::vector<I, micron::allocator_serial<>, false>;
@@ -28,7 +28,7 @@ template <arith_scalar T, micron::integral I = u32> struct sparse_vec {
 
   sparse_vec() noexcept = default;
 
-  explicit sparse_vec(usize len) : n(len), idx(0), values(0) {}
+  explicit sparse_vec(usize len) : n(len), idx(0), values(0) { }
 
   sparse_vec(const sparse_vec &) = default;
   sparse_vec(sparse_vec &&) noexcept = default;
@@ -42,6 +42,6 @@ template <arith_scalar T, micron::integral I = u32> struct sparse_vec {
   }
 };
 
-};     // namespace sparse
-};     // namespace math
-};     // namespace micron
+};      // namespace sparse
+};      // namespace math
+};      // namespace micron

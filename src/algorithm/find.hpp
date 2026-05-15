@@ -19,7 +19,7 @@
 namespace micron
 {
 
-template <typename T, typename C>
+template<typename T, typename C>
   requires(micron::same_as<T, C> or micron::comparable_with<T, C>)
 constexpr bool
 all_of(const T *first, const T *end, const C &comp) noexcept
@@ -29,7 +29,7 @@ all_of(const T *first, const T *end, const C &comp) noexcept
   return true;
 }
 
-template <class T, typename C>
+template<class T, typename C>
   requires(micron::same_as<typename T::value_type, C> or micron::comparable_with<typename T::value_type, C>)
 constexpr bool
 all_of(const T *first, const T *end, const C &comp) noexcept
@@ -39,7 +39,7 @@ all_of(const T *first, const T *end, const C &comp) noexcept
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr bool
 all_of(const T *first, const T *end, Fn fn) noexcept
@@ -49,7 +49,7 @@ all_of(const T *first, const T *end, Fn fn) noexcept
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr bool
 all_of(const T *first, const T *end, Fn fn) noexcept
@@ -59,7 +59,7 @@ all_of(const T *first, const T *end, Fn fn) noexcept
   return true;
 }
 
-template <typename T, typename C>
+template<typename T, typename C>
   requires(micron::same_as<T, C> or micron::comparable_with<T, C>)
 constexpr bool
 any_of(const T *first, const T *end, const C &comp) noexcept
@@ -69,7 +69,7 @@ any_of(const T *first, const T *end, const C &comp) noexcept
   return false;
 }
 
-template <class T, typename C>
+template<class T, typename C>
   requires(micron::same_as<typename T::value_type, C> or micron::comparable_with<typename T::value_type, C>)
 constexpr bool
 any_of(const T *first, const T *end, const C &comp) noexcept
@@ -79,7 +79,7 @@ any_of(const T *first, const T *end, const C &comp) noexcept
   return false;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr bool
 any_of(const T *first, const T *end, Fn fn) noexcept
@@ -89,7 +89,7 @@ any_of(const T *first, const T *end, Fn fn) noexcept
   return false;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr bool
 any_of(const T *first, const T *end, Fn fn) noexcept
@@ -99,7 +99,7 @@ any_of(const T *first, const T *end, Fn fn) noexcept
   return false;
 }
 
-template <typename T, typename C>
+template<typename T, typename C>
   requires(micron::same_as<T, C> or micron::comparable_with<T, C>)
 constexpr bool
 none_of(const T *first, const T *end, const C &comp) noexcept
@@ -109,7 +109,7 @@ none_of(const T *first, const T *end, const C &comp) noexcept
   return true;
 }
 
-template <class T, typename C>
+template<class T, typename C>
   requires(micron::same_as<typename T::value_type, C> or micron::comparable_with<typename T::value_type, C>)
 constexpr bool
 none_of(const T *first, const T *end, const C &comp) noexcept
@@ -119,7 +119,7 @@ none_of(const T *first, const T *end, const C &comp) noexcept
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr bool
 none_of(const T *first, const T *end, Fn fn) noexcept
@@ -129,7 +129,7 @@ none_of(const T *first, const T *end, Fn fn) noexcept
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr bool
 none_of(const T *first, const T *end, Fn fn) noexcept
@@ -139,7 +139,7 @@ none_of(const T *first, const T *end, Fn fn) noexcept
   return true;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 constexpr bool
 all_of(const C &c, Fn fn) noexcept
@@ -147,7 +147,7 @@ all_of(const C &c, Fn fn) noexcept
   return all_of(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 constexpr bool
 all_of(const C &c, Fn fn) noexcept
@@ -155,7 +155,7 @@ all_of(const C &c, Fn fn) noexcept
   return all_of(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 constexpr bool
 any_of(const C &c, Fn fn) noexcept
@@ -163,7 +163,7 @@ any_of(const C &c, Fn fn) noexcept
   return any_of(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 constexpr bool
 any_of(const C &c, Fn fn) noexcept
@@ -171,7 +171,7 @@ any_of(const C &c, Fn fn) noexcept
   return any_of(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 constexpr bool
 none_of(const C &c, Fn fn) noexcept
@@ -179,7 +179,7 @@ none_of(const C &c, Fn fn) noexcept
   return none_of(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 constexpr bool
 none_of(const C &c, Fn fn) noexcept
@@ -187,28 +187,28 @@ none_of(const C &c, Fn fn) noexcept
   return none_of(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr bool
 all_of(const C &c, const Cmp &cmp) noexcept
 {
   return all_of(c.begin(), c.end(), cmp);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr bool
 any_of(const C &c, const Cmp &cmp) noexcept
 {
   return any_of(c.begin(), c.end(), cmp);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr bool
 none_of(const C &c, const Cmp &cmp) noexcept
 {
   return none_of(c.begin(), c.end(), cmp);
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr bool
 all_of(const T *first, const T *end) noexcept
 {
@@ -217,7 +217,7 @@ all_of(const T *first, const T *end) noexcept
   return true;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr bool
 any_of(const T *first, const T *end) noexcept
 {
@@ -226,7 +226,7 @@ any_of(const T *first, const T *end) noexcept
   return false;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr bool
 none_of(const T *first, const T *end) noexcept
 {
@@ -235,28 +235,28 @@ none_of(const T *first, const T *end) noexcept
   return true;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 constexpr bool
 all_of(const C &c) noexcept
 {
   return all_of<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 constexpr bool
 any_of(const C &c) noexcept
 {
   return any_of<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 constexpr bool
 none_of(const C &c) noexcept
 {
   return none_of<Fn>(c.begin(), c.end());
 }
 
-template <typename T, class P>
+template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr T *
 find(T *first, T *end, const P &f) noexcept
@@ -266,7 +266,7 @@ find(T *first, T *end, const P &f) noexcept
   return nullptr;
 }
 
-template <typename T, class P>
+template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr const T *
 find(const T *first, const T *end, const P &f) noexcept
@@ -276,7 +276,7 @@ find(const T *first, const T *end, const P &f) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr const T *
 find_if(const T *first, const T *end, Fn fn) noexcept
@@ -286,7 +286,7 @@ find_if(const T *first, const T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr T *
 find_if(T *first, T *end, Fn fn) noexcept
@@ -296,7 +296,7 @@ find_if(T *first, T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr const T *
 find_if(const T *first, const T *end, Fn fn) noexcept
@@ -306,7 +306,7 @@ find_if(const T *first, const T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr T *
 find_if(T *first, T *end, Fn fn) noexcept
@@ -316,7 +316,7 @@ find_if(T *first, T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr const T *
 find_if_not(const T *first, const T *end, Fn fn) noexcept
@@ -326,7 +326,7 @@ find_if_not(const T *first, const T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr T *
 find_if_not(T *first, T *end, Fn fn) noexcept
@@ -336,7 +336,7 @@ find_if_not(T *first, T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr const T *
 find_if_not(const T *first, const T *end, Fn fn) noexcept
@@ -346,7 +346,7 @@ find_if_not(const T *first, const T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr T *
 find_if_not(T *first, T *end, Fn fn) noexcept
@@ -356,7 +356,7 @@ find_if_not(T *first, T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <is_iterable_container C, class P>
+template<is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::iterator
 find(C &c, const P &v) noexcept
@@ -364,7 +364,7 @@ find(C &c, const P &v) noexcept
   return find(c.begin(), c.end(), v);
 }
 
-template <is_iterable_container C, class P>
+template<is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::const_iterator
 find(const C &c, const P &v) noexcept
@@ -372,7 +372,7 @@ find(const C &c, const P &v) noexcept
   return find(c.begin(), c.end(), v);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 typename C::iterator
 find_if(C &c, Fn fn) noexcept
@@ -380,7 +380,7 @@ find_if(C &c, Fn fn) noexcept
   return find_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 typename C::const_iterator
 find_if(const C &c, Fn fn) noexcept
@@ -388,7 +388,7 @@ find_if(const C &c, Fn fn) noexcept
   return find_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::iterator
 find_if(C &c, Fn fn) noexcept
@@ -396,7 +396,7 @@ find_if(C &c, Fn fn) noexcept
   return find_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::const_iterator
 find_if(const C &c, Fn fn) noexcept
@@ -404,7 +404,7 @@ find_if(const C &c, Fn fn) noexcept
   return find_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 typename C::iterator
 find_if_not(C &c, Fn fn) noexcept
@@ -412,7 +412,7 @@ find_if_not(C &c, Fn fn) noexcept
   return find_if_not(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 typename C::const_iterator
 find_if_not(const C &c, Fn fn) noexcept
@@ -420,7 +420,7 @@ find_if_not(const C &c, Fn fn) noexcept
   return find_if_not(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::iterator
 find_if_not(C &c, Fn fn) noexcept
@@ -428,7 +428,7 @@ find_if_not(C &c, Fn fn) noexcept
   return find_if_not(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::const_iterator
 find_if_not(const C &c, Fn fn) noexcept
@@ -436,7 +436,7 @@ find_if_not(const C &c, Fn fn) noexcept
   return find_if_not(c.begin(), c.end(), fn);
 }
 
-template <typename T, class P>
+template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr T *
 find_last(T *first, T *end, const P &f) noexcept
@@ -447,7 +447,7 @@ find_last(T *first, T *end, const P &f) noexcept
   return found;
 }
 
-template <typename T, class P>
+template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr const T *
 find_last(const T *first, const T *end, const P &f) noexcept
@@ -458,7 +458,7 @@ find_last(const T *first, const T *end, const P &f) noexcept
   return found;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr const T *
 find_last_if(const T *first, const T *end, Fn fn) noexcept
@@ -469,7 +469,7 @@ find_last_if(const T *first, const T *end, Fn fn) noexcept
   return found;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr T *
 find_last_if(T *first, T *end, Fn fn) noexcept
@@ -480,7 +480,7 @@ find_last_if(T *first, T *end, Fn fn) noexcept
   return found;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr const T *
 find_last_if(const T *first, const T *end, Fn fn) noexcept
@@ -491,7 +491,7 @@ find_last_if(const T *first, const T *end, Fn fn) noexcept
   return found;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr T *
 find_last_if(T *first, T *end, Fn fn) noexcept
@@ -502,7 +502,7 @@ find_last_if(T *first, T *end, Fn fn) noexcept
   return found;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr const T *
 find_last_if_not(const T *first, const T *end, Fn fn) noexcept
@@ -513,7 +513,7 @@ find_last_if_not(const T *first, const T *end, Fn fn) noexcept
   return found;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr T *
 find_last_if_not(T *first, T *end, Fn fn) noexcept
@@ -524,7 +524,7 @@ find_last_if_not(T *first, T *end, Fn fn) noexcept
   return found;
 }
 
-template <is_iterable_container C, class P>
+template<is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::iterator
 find_last(C &c, const P &v) noexcept
@@ -532,7 +532,7 @@ find_last(C &c, const P &v) noexcept
   return find_last(c.begin(), c.end(), v);
 }
 
-template <is_iterable_container C, class P>
+template<is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 typename C::const_iterator
 find_last(const C &c, const P &v) noexcept
@@ -540,7 +540,7 @@ find_last(const C &c, const P &v) noexcept
   return find_last(c.begin(), c.end(), v);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::iterator
 find_last_if(C &c, Fn fn) noexcept
@@ -548,7 +548,7 @@ find_last_if(C &c, Fn fn) noexcept
   return find_last_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::const_iterator
 find_last_if(const C &c, Fn fn) noexcept
@@ -556,7 +556,7 @@ find_last_if(const C &c, Fn fn) noexcept
   return find_last_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::iterator
 find_last_if_not(C &c, Fn fn) noexcept
@@ -564,7 +564,7 @@ find_last_if_not(C &c, Fn fn) noexcept
   return find_last_if_not(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 typename C::const_iterator
 find_last_if_not(const C &c, Fn fn) noexcept
@@ -572,7 +572,7 @@ find_last_if_not(const C &c, Fn fn) noexcept
   return find_last_if_not(c.begin(), c.end(), fn);
 }
 
-template <typename T, class P>
+template<typename T, class P>
 const T *
 find_end(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
@@ -590,7 +590,7 @@ find_end(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
   return result;
 }
 
-template <typename T, class P, typename Fn>
+template<typename T, class P, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const P *>
 const T *
 find_end(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noexcept
@@ -609,14 +609,14 @@ find_end(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) no
   return result;
 }
 
-template <is_iterable_container C, is_iterable_container P>
+template<is_iterable_container C, is_iterable_container P>
 const typename C::value_type *
 find_end(const C &c, const P &p) noexcept
 {
   return find_end(c.begin(), c.end(), p.begin(), p.end());
 }
 
-template <is_iterable_container C, is_iterable_container P, typename Fn>
+template<is_iterable_container C, is_iterable_container P, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename P::value_type *>
 const typename C::value_type *
 find_end(const C &c, const P &p, Fn fn) noexcept
@@ -624,7 +624,7 @@ find_end(const C &c, const P &p, Fn fn) noexcept
   return find_end(c.begin(), c.end(), p.begin(), p.end(), fn);
 }
 
-template <typename T, class P>
+template<typename T, class P>
 const T *
 find_first_of(const T *first, const T *end, const P *sfirst, const P *send) noexcept
 {
@@ -634,7 +634,7 @@ find_first_of(const T *first, const T *end, const P *sfirst, const P *send) noex
   return nullptr;
 }
 
-template <typename T, class P, typename Fn>
+template<typename T, class P, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const P *>
 const T *
 find_first_of(const T *first, const T *end, const P *sfirst, const P *send, Fn fn) noexcept
@@ -645,7 +645,7 @@ find_first_of(const T *first, const T *end, const P *sfirst, const P *send, Fn f
   return nullptr;
 }
 
-template <is_iterable_container C, is_iterable_container S>
+template<is_iterable_container C, is_iterable_container S>
   requires micron::is_same_v<typename C::value_type, typename S::value_type>
 const typename C::value_type *
 find_first_of(const C &c, const S &s) noexcept
@@ -653,7 +653,7 @@ find_first_of(const C &c, const S &s) noexcept
   return find_first_of(c.begin(), c.end(), s.begin(), s.end());
 }
 
-template <is_iterable_container C, is_iterable_container S, typename Fn>
+template<is_iterable_container C, is_iterable_container S, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename S::value_type *>
 const typename C::value_type *
 find_first_of(const C &c, const S &s, Fn fn) noexcept
@@ -661,7 +661,7 @@ find_first_of(const C &c, const S &s, Fn fn) noexcept
   return find_first_of(c.begin(), c.end(), s.begin(), s.end(), fn);
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr const T *
 find_if(const T *first, const T *end) noexcept
 {
@@ -670,7 +670,7 @@ find_if(const T *first, const T *end) noexcept
   return nullptr;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr T *
 find_if(T *first, T *end) noexcept
 {
@@ -679,7 +679,7 @@ find_if(T *first, T *end) noexcept
   return nullptr;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr const T *
 find_if_not(const T *first, const T *end) noexcept
 {
@@ -688,7 +688,7 @@ find_if_not(const T *first, const T *end) noexcept
   return nullptr;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr T *
 find_if_not(T *first, T *end) noexcept
 {
@@ -697,7 +697,7 @@ find_if_not(T *first, T *end) noexcept
   return nullptr;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr const T *
 find_last_if(const T *first, const T *end) noexcept
 {
@@ -707,7 +707,7 @@ find_last_if(const T *first, const T *end) noexcept
   return found;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr T *
 find_last_if(T *first, T *end) noexcept
 {
@@ -717,7 +717,7 @@ find_last_if(T *first, T *end) noexcept
   return found;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr const T *
 find_last_if_not(const T *first, const T *end) noexcept
 {
@@ -727,7 +727,7 @@ find_last_if_not(const T *first, const T *end) noexcept
   return found;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr T *
 find_last_if_not(T *first, T *end) noexcept
 {
@@ -737,63 +737,63 @@ find_last_if_not(T *first, T *end) noexcept
   return found;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::const_iterator
 find_if(const C &c) noexcept
 {
   return find_if<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::iterator
 find_if(C &c) noexcept
 {
   return find_if<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::const_iterator
 find_if_not(const C &c) noexcept
 {
   return find_if_not<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::iterator
 find_if_not(C &c) noexcept
 {
   return find_if_not<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::const_iterator
 find_last_if(const C &c) noexcept
 {
   return find_last_if<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::iterator
 find_last_if(C &c) noexcept
 {
   return find_last_if<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::const_iterator
 find_last_if_not(const C &c) noexcept
 {
   return find_last_if_not<Fn>(c.begin(), c.end());
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 typename C::iterator
 find_last_if_not(C &c) noexcept
 {
   return find_last_if_not<Fn>(c.begin(), c.end());
 }
 
-template <typename T>
+template<typename T>
 constexpr const T *
 adjacent_find(const T *first, const T *end) noexcept
 {
@@ -803,7 +803,7 @@ adjacent_find(const T *first, const T *end) noexcept
   return nullptr;
 }
 
-template <typename T>
+template<typename T>
 constexpr T *
 adjacent_find(T *first, T *end) noexcept
 {
@@ -813,7 +813,7 @@ adjacent_find(T *first, T *end) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr const T *
 adjacent_find(const T *first, const T *end, Fn fn) noexcept
@@ -824,7 +824,7 @@ adjacent_find(const T *first, const T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr T *
 adjacent_find(T *first, T *end, Fn fn) noexcept
@@ -835,21 +835,21 @@ adjacent_find(T *first, T *end, Fn fn) noexcept
   return nullptr;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 typename C::const_iterator
 adjacent_find(const C &c) noexcept
 {
   return adjacent_find(c.begin(), c.end());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 typename C::iterator
 adjacent_find(C &c) noexcept
 {
   return adjacent_find(c.begin(), c.end());
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
 typename C::const_iterator
 adjacent_find(const C &c, Fn fn) noexcept
@@ -857,7 +857,7 @@ adjacent_find(const C &c, Fn fn) noexcept
   return adjacent_find(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
 typename C::iterator
 adjacent_find(C &c, Fn fn) noexcept
@@ -865,7 +865,7 @@ adjacent_find(C &c, Fn fn) noexcept
   return adjacent_find(c.begin(), c.end(), fn);
 }
 
-template <typename T, class P>
+template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr umax_t
 count(const T *first, const T *end, const P &v) noexcept
@@ -876,7 +876,7 @@ count(const T *first, const T *end, const P &v) noexcept
   return n;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T>
 constexpr umax_t
 count_if(const T *first, const T *end, Fn fn) noexcept
@@ -887,7 +887,7 @@ count_if(const T *first, const T *end, Fn fn) noexcept
   return n;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *>
 constexpr umax_t
 count_if(const T *first, const T *end, Fn fn) noexcept
@@ -898,7 +898,7 @@ count_if(const T *first, const T *end, Fn fn) noexcept
   return n;
 }
 
-template <is_iterable_container C, class P>
+template<is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 umax_t
 count(const C &c, const P &v) noexcept
@@ -906,7 +906,7 @@ count(const C &c, const P &v) noexcept
   return count(c.begin(), c.end(), v);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type>
 umax_t
 count_if(const C &c, Fn fn) noexcept
@@ -914,7 +914,7 @@ count_if(const C &c, Fn fn) noexcept
   return count_if(c.begin(), c.end(), fn);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 umax_t
 count_if(const C &c, Fn fn) noexcept
@@ -922,7 +922,7 @@ count_if(const C &c, Fn fn) noexcept
   return count_if(c.begin(), c.end(), fn);
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
 constexpr umax_t
 count_if(const T *first, const T *end) noexcept
 {
@@ -932,14 +932,14 @@ count_if(const T *first, const T *end) noexcept
   return n;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 constexpr umax_t
 count_if(const C &c) noexcept
 {
   return count_if<Fn>(c.begin(), c.end());
 }
 
-template <typename T>
+template<typename T>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2) noexcept
 {
@@ -947,7 +947,7 @@ mismatch(const T *first1, const T *end1, const T *first2) noexcept
   return { first1, first2 };
 }
 
-template <typename T>
+template<typename T>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, const T *end2) noexcept
 {
@@ -955,7 +955,7 @@ mismatch(const T *first1, const T *end1, const T *first2, const T *end2) noexcep
   return { first1, first2 };
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, Fn fn) noexcept
@@ -964,7 +964,7 @@ mismatch(const T *first1, const T *end1, const T *first2, Fn fn) noexcept
   return { first1, first2 };
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, const T *end2, Fn fn) noexcept
@@ -973,7 +973,7 @@ mismatch(const T *first1, const T *end1, const T *first2, const T *end2, Fn fn) 
   return { first1, first2 };
 }
 
-template <is_iterable_container C1, is_iterable_container C2>
+template<is_iterable_container C1, is_iterable_container C2>
   requires micron::is_same_v<typename C1::value_type, typename C2::value_type>
 micron::pair<const typename C1::value_type *, const typename C2::value_type *>
 mismatch(const C1 &a, const C2 &b) noexcept
@@ -981,7 +981,7 @@ mismatch(const C1 &a, const C2 &b) noexcept
   return mismatch(a.begin(), a.end(), b.begin(), b.end());
 }
 
-template <is_iterable_container C1, is_iterable_container C2, typename Fn>
+template<is_iterable_container C1, is_iterable_container C2, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C1::value_type *, const typename C2::value_type *>
 micron::pair<const typename C1::value_type *, const typename C2::value_type *>
 mismatch(const C1 &a, const C2 &b, Fn fn) noexcept
@@ -989,7 +989,7 @@ mismatch(const C1 &a, const C2 &b, Fn fn) noexcept
   return mismatch(a.begin(), a.end(), b.begin(), b.end(), fn);
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 equal(const T *first1, const T *end1, const T *first2) noexcept
 {
@@ -998,7 +998,7 @@ equal(const T *first1, const T *end1, const T *first2) noexcept
   return true;
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 equal(const T *first1, const T *end1, const T *first2, const T *end2) noexcept
 {
@@ -1006,7 +1006,7 @@ equal(const T *first1, const T *end1, const T *first2, const T *end2) noexcept
   return equal(first1, end1, first2);
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr bool
 equal(const T *first1, const T *end1, const T *first2, Fn fn) noexcept
@@ -1016,7 +1016,7 @@ equal(const T *first1, const T *end1, const T *first2, Fn fn) noexcept
   return true;
 }
 
-template <is_iterable_container C1, is_iterable_container C2>
+template<is_iterable_container C1, is_iterable_container C2>
   requires micron::is_same_v<typename C1::value_type, typename C2::value_type>
 bool
 equal(const C1 &a, const C2 &b) noexcept
@@ -1024,7 +1024,7 @@ equal(const C1 &a, const C2 &b) noexcept
   return equal(a.begin(), a.end(), b.begin(), b.end());
 }
 
-template <is_iterable_container C1, is_iterable_container C2, typename Fn>
+template<is_iterable_container C1, is_iterable_container C2, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C1::value_type *, const typename C2::value_type *>
 bool
 equal(const C1 &a, const C2 &b, Fn fn) noexcept
@@ -1033,7 +1033,7 @@ equal(const C1 &a, const C2 &b, Fn fn) noexcept
   return equal(a.begin(), a.end(), b.begin(), fn);
 }
 
-template <typename T, class P>
+template<typename T, class P>
 const T *
 search(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
@@ -1049,7 +1049,7 @@ search(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
   return nullptr;
 }
 
-template <typename T, class P, typename Fn>
+template<typename T, class P, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const P *>
 const T *
 search(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noexcept
@@ -1066,7 +1066,7 @@ search(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noex
   return nullptr;
 }
 
-template <typename T, class P>
+template<typename T, class P>
 const T *
 search_n(const T *first, const T *end, usize n, const P &value) noexcept
 {
@@ -1078,7 +1078,7 @@ search_n(const T *first, const T *end, usize n, const P &value) noexcept
   return nullptr;
 }
 
-template <typename T, class P, typename Fn>
+template<typename T, class P, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const P *>
 const T *
 search_n(const T *first, const T *end, usize n, const P &value, Fn fn) noexcept
@@ -1091,14 +1091,14 @@ search_n(const T *first, const T *end, usize n, const P &value, Fn fn) noexcept
   return nullptr;
 }
 
-template <is_iterable_container C, is_iterable_container P>
+template<is_iterable_container C, is_iterable_container P>
 const typename C::value_type *
 search(const C &c, const P &p) noexcept
 {
   return search(c.begin(), c.end(), p.begin(), p.end());
 }
 
-template <is_iterable_container C, is_iterable_container P, typename Fn>
+template<is_iterable_container C, is_iterable_container P, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename P::value_type *>
 const typename C::value_type *
 search(const C &c, const P &p, Fn fn) noexcept
@@ -1106,14 +1106,14 @@ search(const C &c, const P &p, Fn fn) noexcept
   return search(c.begin(), c.end(), p.begin(), p.end(), fn);
 }
 
-template <is_iterable_container C, class V>
+template<is_iterable_container C, class V>
 const typename C::value_type *
 search_n(const C &c, usize n, const V &v) noexcept
 {
   return search_n(c.begin(), c.end(), n, v);
 }
 
-template <is_iterable_container C, class V, typename Fn>
+template<is_iterable_container C, class V, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const V *>
 const typename C::value_type *
 search_n(const C &c, usize n, const V &v, Fn fn) noexcept
@@ -1121,7 +1121,7 @@ search_n(const C &c, usize n, const V &v, Fn fn) noexcept
   return search_n(c.begin(), c.end(), n, v, fn);
 }
 
-template <typename T, class P>
+template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr bool
 contains(const T *first, const T *end, const P &v) noexcept
@@ -1129,14 +1129,14 @@ contains(const T *first, const T *end, const P &v) noexcept
   return find(first, end, v) != nullptr;
 }
 
-template <typename T, class P>
+template<typename T, class P>
 constexpr bool
 contains_subrange(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
   return search(first, end, pfirst, pend) != nullptr;
 }
 
-template <is_iterable_container C, class P>
+template<is_iterable_container C, class P>
   requires micron::convertible_to<P, typename C::value_type>
 bool
 contains(const C &c, const P &v) noexcept
@@ -1144,7 +1144,7 @@ contains(const C &c, const P &v) noexcept
   return contains(c.begin(), c.end(), v);
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *>
 bool
 contains_if(const C &c, Fn fn) noexcept
@@ -1152,7 +1152,7 @@ contains_if(const C &c, Fn fn) noexcept
   return find_if(c.begin(), c.end(), fn) != nullptr;
 }
 
-template <is_iterable_container C, is_iterable_container P>
+template<is_iterable_container C, is_iterable_container P>
   requires micron::is_same_v<typename C::value_type, typename P::value_type>
 bool
 contains_subrange(const C &c, const P &p) noexcept
@@ -1160,7 +1160,7 @@ contains_subrange(const C &c, const P &p) noexcept
   return contains_subrange(c.begin(), c.end(), p.begin(), p.end());
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 starts_with(const T *first, const T *end, const T *pfirst, const T *pend) noexcept
 {
@@ -1170,7 +1170,7 @@ starts_with(const T *first, const T *end, const T *pfirst, const T *pend) noexce
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr bool
 starts_with(const T *first, const T *end, const T *pfirst, const T *pend, Fn fn) noexcept
@@ -1181,7 +1181,7 @@ starts_with(const T *first, const T *end, const T *pfirst, const T *pend, Fn fn)
   return true;
 }
 
-template <typename T>
+template<typename T>
 constexpr bool
 ends_with(const T *first, const T *end, const T *pfirst, const T *pend) noexcept
 {
@@ -1191,7 +1191,7 @@ ends_with(const T *first, const T *end, const T *pfirst, const T *pend) noexcept
   return equal(end - pn, end, pend - pn);
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires micron::is_invocable_v<Fn, const T *, const T *>
 constexpr bool
 ends_with(const T *first, const T *end, const T *pfirst, const T *pend, Fn fn) noexcept
@@ -1202,7 +1202,7 @@ ends_with(const T *first, const T *end, const T *pfirst, const T *pend, Fn fn) n
   return equal(end - pn, end, pend - pn, fn);
 }
 
-template <is_iterable_container C, is_iterable_container P>
+template<is_iterable_container C, is_iterable_container P>
   requires micron::is_same_v<typename C::value_type, typename P::value_type>
 bool
 starts_with(const C &c, const P &p) noexcept
@@ -1210,7 +1210,7 @@ starts_with(const C &c, const P &p) noexcept
   return starts_with(c.begin(), c.end(), p.begin(), p.end());
 }
 
-template <is_iterable_container C, is_iterable_container P, typename Fn>
+template<is_iterable_container C, is_iterable_container P, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename P::value_type *>
 bool
 starts_with(const C &c, const P &p, Fn fn) noexcept
@@ -1218,7 +1218,7 @@ starts_with(const C &c, const P &p, Fn fn) noexcept
   return starts_with(c.begin(), c.end(), p.begin(), p.end(), fn);
 }
 
-template <is_iterable_container C, is_iterable_container P>
+template<is_iterable_container C, is_iterable_container P>
   requires micron::is_same_v<typename C::value_type, typename P::value_type>
 bool
 ends_with(const C &c, const P &p) noexcept
@@ -1226,7 +1226,7 @@ ends_with(const C &c, const P &p) noexcept
   return ends_with(c.begin(), c.end(), p.begin(), p.end());
 }
 
-template <is_iterable_container C, is_iterable_container P, typename Fn>
+template<is_iterable_container C, is_iterable_container P, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename P::value_type *>
 bool
 ends_with(const C &c, const P &p, Fn fn) noexcept
@@ -1234,4 +1234,4 @@ ends_with(const C &c, const P &p, Fn fn) noexcept
   return ends_with(c.begin(), c.end(), p.begin(), p.end(), fn);
 }
 
-};     // namespace micron
+};      // namespace micron

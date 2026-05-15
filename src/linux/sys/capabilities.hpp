@@ -208,5 +208,5 @@ data_to_caps(const cap_data_t data[2], u64 &eff, u64 &prm, u64 &inh)
   inh = u64(data[0].inheritable) | (u64(data[1].inheritable) << 32);
 }
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

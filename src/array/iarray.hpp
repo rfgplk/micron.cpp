@@ -25,7 +25,7 @@ namespace micron
 {
 // general purpose immutable iarray class, stack allocated, threadsafe, immutable.
 // default to 64
-template <is_movable_object T, usize N = 64>
+template<is_movable_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))
 class iarray
 {
@@ -55,7 +55,7 @@ public:
   // accessing is UB!
   iarray(void) { __impl_container::zero<N, T>(micron::addr(stack[0])); }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   iarray(Fn &&fn)
   {
@@ -63,7 +63,7 @@ public:
     micron::generate(const_cast<iterator>(begin()), const_cast<iterator>(end()), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   iarray(Fn &&fn)
   {
@@ -81,7 +81,7 @@ public:
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, iarray>)
   iarray(A &&o)
   {
@@ -92,7 +92,7 @@ public:
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
 
-  template <class C> iarray(const slice<T, C> &o)
+  template<class C> iarray(const slice<T, C> &o)
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
@@ -187,14 +187,14 @@ public:
     return stack[i];
   }
 
-  template <class C>
+  template<class C>
   inline const slice<T, C>
   operator[]() const
   {
     return slice<T, C>(data(), data() + N);
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) const slice<T, C>
   operator[](size_type from, size_type to) const
   {
@@ -239,7 +239,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
     requires(micron::is_convertible_v<F, T>)
   iarray &
   operator=(F o)
@@ -248,7 +248,7 @@ public:
     return *this;
   }
 
-  template <typename F, size_type M>
+  template<typename F, size_type M>
   iarray &
   operator=(T (&o)[M])
     requires(M <= N)
@@ -270,7 +270,7 @@ public:
     return *this;
   }
 */
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, iarray> && !micron::is_arithmetic_v<A>)
   iarray &
   operator=(const A &o)
@@ -285,7 +285,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // binary arithmetic
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator+(const iarray<T, M> &o) const
@@ -298,7 +298,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator-(const iarray<T, M> &o) const
@@ -311,7 +311,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator*(const iarray<T, M> &o) const
@@ -324,7 +324,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator/(const iarray<T, M> &o) const
@@ -337,7 +337,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) iarray
   operator%(const iarray<T, M> &o) const
@@ -407,7 +407,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // compound assignment
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator+=(const iarray<T, M> &o) const
@@ -420,7 +420,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator-=(const iarray<T, M> &o) const
@@ -433,7 +433,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator*=(const iarray<T, M> &o) const
@@ -446,7 +446,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) iarray
   operator/=(const iarray<T, M> &o) const
@@ -459,7 +459,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) iarray
   operator%=(const iarray<T, M> &o) const
@@ -575,7 +575,7 @@ public:
     return iarray();
   }
 
-  template <typename F>
+  template<typename F>
   [[nodiscard]] iarray
   fill(const F &o) const
     requires micron::is_fundamental_v<F>
@@ -583,7 +583,7 @@ public:
     return iarray(o);
   }
 
-  template <typename F>
+  template<typename F>
   [[nodiscard]] iarray
   fill(const F &o) const
   {
@@ -612,4 +612,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

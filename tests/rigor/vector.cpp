@@ -73,7 +73,7 @@ reset_tracked()
   Tracked::dtor = 0;
 }
 
-}     // namespace
+}      // namespace
 
 int
 main()

@@ -13,9 +13,9 @@
 
 namespace micron
 {
-template <typename T, typename Alloc = allocator_serial<>>
+template<typename T, typename Alloc = allocator_serial<>>
   requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
-struct __immutable_memory_resource : public __core_memory_resource<T> {
+struct __immutable_memory_resource: public __core_memory_resource<T> {
   typename __core_memory_resource<T>::size_type length;
 
   ~__immutable_memory_resource()
@@ -28,7 +28,7 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
     }
   }
 
-  __immutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) {}
+  __immutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) { }
 
   __immutable_memory_resource(void)
       : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
@@ -36,7 +36,7 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
   }
 
   __immutable_memory_resource(usize n_elements)
-      : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) {};
+      : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) { };
   __immutable_memory_resource(const __immutable_memory_resource &) = delete;
 
   __immutable_memory_resource(__immutable_memory_resource &&o) : __core_memory_resource<T>(micron::move(o)), length(o.length)
@@ -107,4 +107,4 @@ struct __immutable_memory_resource : public __core_memory_resource<T> {
   }
 };
 
-};     // namespace micron
+};      // namespace micron

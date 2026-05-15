@@ -91,7 +91,7 @@ main(void)
   {
     int *raw = new int(99);
     micron::const_pointer<int> p(raw);
-    sb::require(raw == nullptr);     // caller's pointer was nulled
+    sb::require(raw == nullptr);      // caller's pointer was nulled
     sb::require(*p == 99);
   }
   sb::end_test_case();
@@ -359,7 +359,7 @@ main(void)
     micron::const_pointer<int[]> p(2);
     bool threw = false;
     try {
-      (void)p[2];     // index == size, out of bounds
+      (void)p[2];      // index == size, out of bounds
     } catch ( ... ) {
       threw = true;
     }
@@ -369,7 +369,7 @@ main(void)
 
   sb::test_case("array operator[] - access on null throws");
   {
-    micron::const_pointer<int[]> p;     // default: null
+    micron::const_pointer<int[]> p;      // default: null
     bool threw = false;
     try {
       (void)p[0];
@@ -454,7 +454,7 @@ main(void)
     sb::require(p[0] == 7);
     sb::require(p[1] == 8);
     sb::require(p[2] == 9);
-    sb::require(p[0] == 7);     // re-read
+    sb::require(p[0] == 7);      // re-read
     sb::require(p[2] == 9);
   }
   sb::end_test_case();

@@ -845,9 +845,9 @@ _mm256_stream_load_si256(const __m256i *p) noexcept
 
 #undef __inline_g
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #define _mm_i32gather_ps(BASE, INDEX, SCALE)                                                                                               \
   ((::__m128)__builtin_ia32_gathersiv4sf(                                                                                                  \

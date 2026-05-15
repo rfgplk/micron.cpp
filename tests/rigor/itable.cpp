@@ -56,7 +56,7 @@ contains_seq(const itab &t, int n)
   return true;
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int

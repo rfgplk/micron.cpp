@@ -13,7 +13,7 @@ namespace micron
 {
 namespace sort
 {
-template <typename T>
+template<typename T>
 void
 counting(T &arr)
 {
@@ -24,9 +24,9 @@ counting(T &arr)
   micron::memset(&bucket[0], 0x0, range);
   for ( auto n : arr ) bucket[n - min]++;
   for ( umax_t i = 1; i < range; i++ ) bucket[i] += bucket[i - 1];
-  T carr = arr;     // cnt arr copy
+  T carr = arr;      // cnt arr copy
   for ( typename T::value_type j = arr.size() - 1; j >= 0; --j ) carr[bucket[arr[j] - min] - 1] = arr[j];
   arr = carr;
 }
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

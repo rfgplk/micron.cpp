@@ -90,8 +90,8 @@ main()
   test_case("gemm row × col: mixed-layout still computes A·B");
   {
     // A is 2x2 row-major; B is 2x2 col-major (same numeric values arranged differently).
-    f64 A[4] = { 1, 2, 3, 4 };         // row-major: [[1,2];[3,4]]
-    f64 B_col[4] = { 5, 7, 6, 8 };     // col-major: col0=[5,7], col1=[6,8] → matrix [[5,6];[7,8]]
+    f64 A[4] = { 1, 2, 3, 4 };          // row-major: [[1,2];[3,4]]
+    f64 B_col[4] = { 5, 7, 6, 8 };      // col-major: col0=[5,7], col1=[6,8] → matrix [[5,6];[7,8]]
     f64 C[4] = { 0, 0, 0, 0 };
     auto Av = matrix::row_view<f64>::from(A, 2, 2);
     auto Bv = matrix::col_view<f64>::from(B_col, 2, 2);
@@ -162,7 +162,7 @@ main()
   {
     // A = [[2,1];[1,3]],  B = [[1,2];[3,4]]
     // A·B = [[2*1+1*3, 2*2+1*4];[1*1+3*3, 1*2+3*4]] = [[5,8];[10,14]]
-    f64 A[4] = { 2, 1, 0, 3 };     // upper-stored
+    f64 A[4] = { 2, 1, 0, 3 };      // upper-stored
     f64 B[4] = { 1, 2, 3, 4 };
     f64 C[4] = { 0, 0, 0, 0 };
     matrix::sym_row_view<f64, blas::uplo::upper> Av{ A, 2, 2, 2 };

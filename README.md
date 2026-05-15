@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-0.9.4.1-green)
+![Version](https://img.shields.io/badge/version-0.9.5.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -25,9 +25,9 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 
 > [!WARNING]
-> micron is still in active development, and as of v0.5 has reached relative stability. Regardless, the ABI may change at any point, and without notice.
+> micron is still in active development, and as of v0.9 has reached stability across our supported platforms. Regardless, the ABI may change at any point, and without notice.
 
-### Features
+#### Features
   - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind
   - completely self-contained, self-hosted, and freestanding; with *no dependencies on external code whatsoever*; not even the traditional C standard library
   - all functions are guaranteed to be side effect free, ensuring deterministic and predictable behavior across the codebase
@@ -97,21 +97,6 @@ Yes, *micron* relies on no external code other than what is included in this rep
 ##### Code Coverage & Validation
 
 Currently we are aiming for (near) 100% code coverage, of all functions and for (within reason) all inputs/domains. However, as of now the testing suites are still being written.
-
-
-##### Motivation
-
-<p align="justify"> 
-
-  The Standard Template Library (STL) has long been constrained by its imperative to preserve ABI stability across different versions, notably maintaining legacy support for the earliest version, all the while keeping backward compatibility with C. This rudimentary limitation intrinsically impedes the STL's capacity to evolve and assimilate modern development paradigms. The necessity of safeguarding compatibility with legacy systems imposes an architectural limit that resists transformative change, effectively tethering the STL to design philosophies that, while once pioneering, now appear antiquated. Consequently, this has permitted more novel programming languages such as Rust, Go, Swifrt or even Zig (mentioned), to develop a markedly more sophisticated and feature complete set of core libraries. These languages, unburdened by historical bloat, are free to explore novel abstractions and innovative ideas, allowing them to embrace paradigms such as memory safety by design, zero-cost abstractions, and concurrency models that are inherently safer and more efficient.</p>
-
-<p align="justify"> 
-  
-  Conversely, the *micron standard library*, unencumbered by such legacy constraints, has been reimagined ab initio with an unwavering commitment to rigorous performance and safety, thereby embodying a more powerful design ethos. Its development paradigm is liberated from the shackles of historical compatibility, allowing for an effective evolution that can readily integrate state-of-the-art techniques and designs. This freedom facilitates a design philosophy that prioritizes performance determinism and safety invariants, fostering a more robust and efficient ecosystem. By eschewing the historical baggage that impedes the STL, the *micron* library is able to transcend the limitations of its predecessor, positioning itself at the vanguard of modern software development. In doing so, it exemplifies a fundamental truth of technological software evolution: *that liberation from legacy obligations is often a prerequisite for genuine innovation*.</p>
-
-<p align="justify"> 
-
-  Since *micron* is specifically developed with Linux in mind, all library code is meticulously optimized for the nuances of the Linux kernel and its underlying system calls. This singular focus allows for an unparalleled level of integration and efficiency, leveraging Linux-specific features without the overhead of cross-platform abstractions. Consequently, the library achieves a degree of performance and system coherence that is unattainable in more generalized, platform-agnostic designs, solidifying its role as an indispensable tool for high-performance Linux development.</p>
 
 ###### Conformance with the STL
 

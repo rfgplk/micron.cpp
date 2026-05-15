@@ -50,7 +50,7 @@ namespace __impl_smoothing
 //  y_hat     smoothed values
 //  q_t_g     (Q^T y) projected back to n-vector
 
-template <ieee754_floating F> struct reinsch_workspace {
+template<ieee754_floating F> struct reinsch_workspace {
   vector<F> h;
   vector<F> r_diag, r_d1;
   vector<F> m_diag, m_d1, m_d2;
@@ -62,7 +62,7 @@ template <ieee754_floating F> struct reinsch_workspace {
   vector<F> q_t_g;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 reinsch_precompute(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *__restrict__ ys, const F *w, bool uniform_w,
                    usize n) noexcept
@@ -124,7 +124,7 @@ reinsch_precompute(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // reinsch_solve_one_lambda
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bool
 reinsch_solve_one_lambda(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *__restrict__ ys, const F *w, bool uniform_w, usize n,
                          F lambda, bool need_trace, F *out_rss, F *out_tr) noexcept
@@ -179,7 +179,7 @@ reinsch_solve_one_lambda(reinsch_workspace<F> &ws, const F *__restrict__ xs, con
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // gcv_score
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 gcv_score(F rss, F lambda, F tr_inv_m, usize n) noexcept
 {
@@ -188,7 +188,7 @@ gcv_score(F rss, F lambda, F tr_inv_m, usize n) noexcept
   return F(n) * rss / (denom_term * denom_term);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline cubic_spline_1d<F>
 build_smoothing_spline_from_y_hat(const F *xs, const F *y_hat, usize n, build_info<F> *info) noexcept
 {
@@ -197,7 +197,7 @@ build_smoothing_spline_from_y_hat(const F *xs, const F *y_hat, usize n, build_in
   return make_cubic<F>(xs_s, ys_s, bc_kind::natural, F(0), F(0), info);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 gcv_search(reinsch_workspace<F> &ws, const F *xs, const F *ys, const F *w, bool uniform_w, usize n, build_info<F> *info) noexcept
 {
@@ -233,14 +233,14 @@ gcv_search(reinsch_workspace<F> &ws, const F *xs, const F *ys, const F *w, bool 
       fd = eval_at(d);
     }
   }
-  if ( info ) info->n_iterations = iter + 2;     // +2 for the initial fc, fd
+  if ( info ) info->n_iterations = iter + 2;      // +2 for the initial fc, fd
   const F log_lambda_opt = F(0.5) * (a + b);
   return math::mk::exp_ns::exp10<F>(log_lambda_opt);
 }
 
-};     // namespace __impl_smoothing
+};      // namespace __impl_smoothing
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline cubic_spline_1d<F>
 make_smoothing(raw_slice<const F> xs, raw_slice<const F> ys, raw_slice<const F> w, F lambda, build_info<F> *info = nullptr) noexcept
 {
@@ -291,7 +291,7 @@ make_smoothing(raw_slice<const F> xs, raw_slice<const F> ys, raw_slice<const F> 
   return out;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline cubic_spline_1d<F>
 make_adaptive_knots(raw_slice<const F> xs, raw_slice<const F> ys, F max_abs_err, usize max_knots, build_info<F> *info = nullptr) noexcept
 {
@@ -404,6 +404,6 @@ make_adaptive_knots(raw_slice<const F> xs, raw_slice<const F> ys, F max_abs_err,
   }
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

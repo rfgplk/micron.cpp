@@ -25,7 +25,7 @@
 namespace micron
 {
 
-template <typename K, typename V, usize MH = 32> using dictionary_t = hopscotch_map<K, V, MH>;
+template<typename K, typename V, usize MH = 32> using dictionary_t = hopscotch_map<K, V, MH>;
 
 /*
 template <typename T>
@@ -36,7 +36,7 @@ to_string(const T *str)
 };
 */
 
-template <is_string T>
+template<is_string T>
 inline auto
 c_str(const T &str) -> const char *
 {
@@ -51,8 +51,8 @@ namespace format
 namespace __impl
 {
 
-constexpr usize __max_frac_digits_f32 = 9;      // f32 has ~7 sig digits
-constexpr usize __max_frac_digits_f64 = 18;     // f64 has ~15-17 sig digits
+constexpr usize __max_frac_digits_f32 = 9;       // f32 has ~7 sig digits
+constexpr usize __max_frac_digits_f64 = 18;      // f64 has ~15-17 sig digits
 
 inline constexpr f64 __pow10_tbl[19] = { 1.0,
                                          10.0,
@@ -166,11 +166,11 @@ inline usize
 fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char type, bool has_prec)
 {
   switch ( type ) {
-  case 'e' :
-  case 'E' :
+  case 'e':
+  case 'E':
     return micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, precision);
-  case 'g' :
-  case 'G' : {
+  case 'g':
+  case 'G': {
     char tmp[26];
     usize n = micron::__impl::__ryu::d2s_buffered(val, tmp);
     i32 exp10 = 0;
@@ -201,9 +201,9 @@ fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char typ
     if ( exp10 < -4 || exp10 >= static_cast<i32>(g_prec) ) return micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, g_prec - 1);
     return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, g_prec - 1 - exp10);
   }
-  case 'f' :
-  case 'F' :
-  default :
+  case 'f':
+  case 'F':
+  default:
     return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
   }
 }
@@ -213,12 +213,12 @@ fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char typ
 
 struct fmt_spec {
   char fill = ' ';
-  char align = '\0';     // '<' left, '>' right, '^' center
+  char align = '\0';      // '<' left, '>' right, '^' center
   u32 width = 0;
-  u32 prec = 6;     // default float precision
+  u32 prec = 6;      // default float precision
   bool has_prec = false;
-  char type = '\0';     // d, x, X, o, b, f, e, s, p
-  bool alt = false;     // '#' flag
+  char type = '\0';      // d, x, X, o, b, f, e, s, p
+  bool alt = false;      // '#' flag
 };
 
 inline fmt_spec
@@ -302,12 +302,12 @@ apply_padding(hstring<schar> &out, const char *content, usize content_len, const
   }
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // char classification: constexpr value overloads
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isupper(const T t)
@@ -318,7 +318,7 @@ isupper(const T t)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 islower(const T t)
@@ -329,7 +329,7 @@ islower(const T t)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline T
 to_upper(const T t)
@@ -340,7 +340,7 @@ to_upper(const T t)
   return t;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline T
 to_lower(const T t)
@@ -351,7 +351,7 @@ to_lower(const T t)
   return t;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isalnum(const T c)
@@ -362,7 +362,7 @@ isalnum(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isalpha(const T c)
@@ -373,7 +373,7 @@ isalpha(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 iscntrl(const T c)
@@ -384,7 +384,7 @@ iscntrl(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isdigit(const T c)
@@ -395,7 +395,7 @@ isdigit(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isgraph(const T c)
@@ -406,7 +406,7 @@ isgraph(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isprint(const T c)
@@ -417,7 +417,7 @@ isprint(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 ispunct(const T c)
@@ -428,7 +428,7 @@ ispunct(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isspace(const T c)
@@ -439,7 +439,7 @@ isspace(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isxdigit(const T c)
@@ -450,7 +450,7 @@ isxdigit(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isascii(const T c)
@@ -461,7 +461,7 @@ isascii(const T c)
   return false;
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_fundamental_v<T>
 constexpr inline bool
 isblank(const T c)
@@ -475,105 +475,105 @@ isblank(const T c)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // char classification: iterator overloads
 
-template <typename T>
+template<typename T>
 inline bool
 isupper(typename T::iterator t)
 {
   return isupper<typename T::value_type>(*t);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 islower(typename T::iterator t)
 {
   return islower<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline void
 to_upper(typename T::iterator t)
 {
   *t = to_upper<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline void
 to_lower(typename T::iterator t)
 {
   *t = to_lower<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isalnum(typename T::iterator t)
 {
   return isalnum<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isalpha(typename T::iterator t)
 {
   return isalpha<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 iscntrl(typename T::iterator t)
 {
   return iscntrl<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isdigit(typename T::iterator t)
 {
   return isdigit<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isgraph(typename T::iterator t)
 {
   return isgraph<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isprint(typename T::iterator t)
 {
   return isprint<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 ispunct(typename T::iterator t)
 {
   return ispunct<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isspace(typename T::iterator t)
 {
   return isspace<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isxdigit(typename T::iterator t)
 {
   return isxdigit<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isascii(typename T::iterator t)
 {
   return isascii<typename T::value_type>(*t);
 }
 
-template <typename T>
+template<typename T>
 inline bool
 isblank(typename T::iterator t)
 {
@@ -623,7 +623,7 @@ to_lower(const char *str, usize len)
   return result;
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 to_upper(const char (&str)[N])
 {
@@ -633,7 +633,7 @@ to_upper(const char (&str)[N])
   return result;
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 to_lower(const char (&str)[N])
 {
@@ -646,7 +646,7 @@ to_lower(const char (&str)[N])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // _all / _any string predicates
 
-template <is_string T>
+template<is_string T>
 bool
 isalnum_all(const T &str)
 {
@@ -657,7 +657,7 @@ isalnum_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isalpha_all(const T &str)
 {
@@ -668,7 +668,7 @@ isalpha_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 iscntrl_all(const T &str)
 {
@@ -679,7 +679,7 @@ iscntrl_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isdigit_all(const T &str)
 {
@@ -690,7 +690,7 @@ isdigit_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isgraph_all(const T &str)
 {
@@ -701,7 +701,7 @@ isgraph_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 islower_all(const T &str)
 {
@@ -712,7 +712,7 @@ islower_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isupper_all(const T &str)
 {
@@ -723,7 +723,7 @@ isupper_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isprint_all(const T &str)
 {
@@ -734,7 +734,7 @@ isprint_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 ispunct_all(const T &str)
 {
@@ -745,7 +745,7 @@ ispunct_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isspace_all(const T &str)
 {
@@ -756,7 +756,7 @@ isspace_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isxdigit_all(const T &str)
 {
@@ -767,7 +767,7 @@ isxdigit_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isascii_all(const T &str)
 {
@@ -778,7 +778,7 @@ isascii_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isblank_all(const T &str)
 {
@@ -789,7 +789,7 @@ isblank_all(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isalnum_any(const T &str)
 {
@@ -800,7 +800,7 @@ isalnum_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isalpha_any(const T &str)
 {
@@ -811,7 +811,7 @@ isalpha_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 iscntrl_any(const T &str)
 {
@@ -822,7 +822,7 @@ iscntrl_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isdigit_any(const T &str)
 {
@@ -833,7 +833,7 @@ isdigit_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isgraph_any(const T &str)
 {
@@ -844,7 +844,7 @@ isgraph_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 islower_any(const T &str)
 {
@@ -855,7 +855,7 @@ islower_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isupper_any(const T &str)
 {
@@ -866,7 +866,7 @@ isupper_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isprint_any(const T &str)
 {
@@ -877,7 +877,7 @@ isprint_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 ispunct_any(const T &str)
 {
@@ -888,7 +888,7 @@ ispunct_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isspace_any(const T &str)
 {
@@ -899,7 +899,7 @@ isspace_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isxdigit_any(const T &str)
 {
@@ -910,7 +910,7 @@ isxdigit_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isascii_any(const T &str)
 {
@@ -921,7 +921,7 @@ isascii_any(const T &str)
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isblank_any(const T &str)
 {
@@ -935,7 +935,7 @@ isblank_any(const T &str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // casefold / upper
 
-template <is_string T>
+template<is_string T>
 T &
 casefold(T &str)
 {
@@ -947,7 +947,7 @@ casefold(T &str)
   return str;
 }
 
-template <is_string T>
+template<is_string T>
 T
 casefold(const T &str)
 {
@@ -975,7 +975,7 @@ casefold(const char *str, usize len)
   return result;
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 casefold(const char (&str)[N])
 {
@@ -985,7 +985,7 @@ casefold(const char (&str)[N])
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T &
 upper(T &str)
 {
@@ -997,7 +997,7 @@ upper(T &str)
   return str;
 }
 
-template <is_string T>
+template<is_string T>
 T
 upper(const T &str)
 {
@@ -1025,7 +1025,7 @@ upper(const char *str, usize len)
   return result;
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 upper(const char (&str)[N])
 {
@@ -1038,7 +1038,7 @@ upper(const char (&str)[N])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // strip
 
-template <char Tk = ' ', is_string T>
+template<char Tk = ' ', is_string T>
 T &
 strip(T &data)
 {
@@ -1054,7 +1054,7 @@ strip(T &data)
   return data;
 }
 
-template <char Tk = ' ', is_string T>
+template<char Tk = ' ', is_string T>
 T
 strip(const T &data)
 {
@@ -1062,7 +1062,7 @@ strip(const T &data)
   return strip<Tk>(result);
 }
 
-template <char Tk = ' '>
+template<char Tk = ' '>
 char *
 strip(char *data, usize &len)
 {
@@ -1078,7 +1078,7 @@ strip(char *data, usize &len)
   return data;
 }
 
-template <char Tk = ' '>
+template<char Tk = ' '>
 hstring<schar>
 strip(const char *data, usize len)
 {
@@ -1087,7 +1087,7 @@ strip(const char *data, usize len)
   return strip<Tk>(result);
 }
 
-template <char Tk = ' ', usize N>
+template<char Tk = ' ', usize N>
 hstring<schar>
 strip(const char (&data)[N])
 {
@@ -1098,7 +1098,7 @@ strip(const char (&data)[N])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ends_with / starts_with
 
-template <is_string T>
+template<is_string T>
 bool
 ends_with(const T &data, const char *fnd)
 {
@@ -1107,7 +1107,7 @@ ends_with(const T &data, const char *fnd)
   return strcmp(data.end() - sz, &fnd[0]) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 ends_with(const T &data, const T &fnd)
 {
@@ -1124,7 +1124,7 @@ ends_with(const char *data, usize data_len, const char *fnd)
   return strcmp(data + data_len - fnd_len, fnd) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 ends_with(const char *data, usize data_len, const T &fnd)
 {
@@ -1133,7 +1133,7 @@ ends_with(const char *data, usize data_len, const T &fnd)
   return strcmp(data + data_len - fnd.size(), fnd.begin()) == 0;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline bool
 ends_with(const char (&data)[N], const char (&fnd)[M])
 {
@@ -1143,7 +1143,7 @@ ends_with(const char (&data)[N], const char (&fnd)[M])
   return strcmp(data + data_len - fnd_len, fnd) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 starts_with(const T &data, const char *fnd)
 {
@@ -1153,7 +1153,7 @@ starts_with(const T &data, const char *fnd)
   return strcmp(buf.begin(), &fnd[0]) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 starts_with(const T &data, const T &fnd)
 {
@@ -1171,7 +1171,7 @@ starts_with(const char *data, usize data_len, const char *fnd)
   return strncmp(data, fnd, fnd_len) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 starts_with(const char *data, usize data_len, const T &fnd)
 {
@@ -1180,7 +1180,7 @@ starts_with(const char *data, usize data_len, const T &fnd)
   return strncmp(data, fnd.begin(), fnd.size()) == 0;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline bool
 starts_with(const char (&data)[N], const char (&fnd)[M])
 {
@@ -1193,7 +1193,7 @@ starts_with(const char (&data)[N], const char (&fnd)[M])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // concat
 
-template <is_string T>
+template<is_string T>
 T
 concat(const char *lhs, const char *rhs)
 {
@@ -1212,7 +1212,7 @@ concat(const char *lhs, const char *rhs)
   return str;
 }
 
-template <usize N, typename T>
+template<usize N, typename T>
 sstring<N, T> &
 concat(sstring<N, T> &lhs, const char *rhs)
 {
@@ -1225,7 +1225,7 @@ concat(sstring<N, T> &lhs, const char *rhs)
   return lhs;
 }
 
-template <usize N, typename T>
+template<usize N, typename T>
 sstring<N, T> &
 concat(const char *lhs, sstring<N, T> &rhs)
 {
@@ -1238,7 +1238,7 @@ concat(const char *lhs, sstring<N, T> &rhs)
   return rhs;
 }
 
-template <is_string... T>
+template<is_string... T>
 hstring<schar>
 concat(const T &...strs)
 {
@@ -1256,7 +1256,7 @@ concat(const char *lhs, usize lhs_len, const char *rhs, usize rhs_len)
   return str;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline hstring<schar>
 concat(const char (&lhs)[N], const char (&rhs)[M])
 {
@@ -1266,7 +1266,7 @@ concat(const char (&lhs)[N], const char (&rhs)[M])
   return str;
 }
 
-template <is_string T>
+template<is_string T>
 T
 concat(const T &lhs, const T &rhs)
 {
@@ -1278,7 +1278,7 @@ concat(const T &lhs, const T &rhs)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // split
 
-template <is_string T>
+template<is_string T>
 T
 split(const T &data, usize at = 0)
 {
@@ -1287,7 +1287,7 @@ split(const T &data, usize at = 0)
   return data.substr(at, data.size() - at);
 }
 
-template <is_string T>
+template<is_string T>
 T
 split(const T &data, typename T::const_iterator itr)
 {
@@ -1296,7 +1296,7 @@ split(const T &data, typename T::const_iterator itr)
   return data.substr(pos, data.size() - pos);
 }
 
-template <is_string T, is_string O>
+template<is_string T, is_string O>
 O
 split(const T &data, typename T::const_iterator itr)
 {
@@ -1323,7 +1323,7 @@ split_delim(const char *data, usize len, char delim)
   return hstring<schar>(data, data + len);
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 split(const char (&data)[N], usize at = 0)
 {
@@ -1336,7 +1336,7 @@ split(const char (&data)[N], usize at = 0)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // boyer-moore search
 
-template <is_string T>
+template<is_string T>
 micron::fvector<int>
 build_bad_char(const T &pattern)
 {
@@ -1345,7 +1345,7 @@ build_bad_char(const T &pattern)
   return bad;
 }
 
-template <is_string T>
+template<is_string T>
 micron::fvector<int>
 build_good_suffix(const T &pattern)
 {
@@ -1372,7 +1372,7 @@ build_good_suffix(const T &pattern)
   return shift;
 }
 
-template <is_string T>
+template<is_string T>
 micron::fvector<int>
 boyer_moore_search(const T &text, const T &pattern)
 {
@@ -1397,7 +1397,7 @@ boyer_moore_search(const T &text, const T &pattern)
   return result;
 }
 
-template <usize Pt, usize N>
+template<usize Pt, usize N>
 constexpr micron::carray<usize, N>
 bm_find(const char (&text)[N], const char (&pattern)[Pt], usize &found_count)
 {
@@ -1440,7 +1440,7 @@ bm_find(const char (&text)[N], const char (&pattern)[Pt], usize &found_count)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // fast_find (horspool)
 
-template <is_string T>
+template<is_string T>
 auto
 fast_find(const T &data, const char *fnd) -> typename T::const_iterator
 {
@@ -1480,14 +1480,14 @@ fast_find(const char *data, usize n, const char *fnd)
   return nullptr;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline const char *
 fast_find(const char (&data)[N], const char (&fnd)[M])
 {
   return fast_find(static_cast<const char *>(data), N - 1, static_cast<const char *>(fnd));
 }
 
-template <is_string T>
+template<is_string T>
 auto
 fast_find(const T &data, const T &fnd) -> typename T::const_iterator
 {
@@ -1510,7 +1510,7 @@ fast_find(const T &data, const T &fnd) -> typename T::const_iterator
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // contains
 
-template <is_string T>
+template<is_string T>
 auto
 contains(const T &data, typename T::const_iterator from, const char fnd) -> bool
 {
@@ -1520,7 +1520,7 @@ contains(const T &data, typename T::const_iterator from, const char fnd) -> bool
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 contains(const T &data, typename T::const_iterator from, const char *fnd) -> bool
 {
@@ -1534,7 +1534,7 @@ contains(const T &data, typename T::const_iterator from, const char *fnd) -> boo
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 contains(const T &data, const char fnd) -> bool
 {
@@ -1544,7 +1544,7 @@ contains(const T &data, const char fnd) -> bool
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 contains(const T &data, const char *fnd) -> bool
 {
@@ -1558,7 +1558,7 @@ contains(const T &data, const char *fnd) -> bool
   return false;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 contains(const T &data, const T &fnd)
 {
@@ -1594,7 +1594,7 @@ contains(const char *data, usize len, const char *fnd)
   return false;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline bool
 contains(const char (&data)[N], const char (&fnd)[M])
 {
@@ -1604,7 +1604,7 @@ contains(const char (&data)[N], const char (&fnd)[M])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // find
 
-template <is_string T>
+template<is_string T>
 auto
 find(const T &data, const char fnd) -> typename T::const_iterator
 {
@@ -1614,7 +1614,7 @@ find(const T &data, const char fnd) -> typename T::const_iterator
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find(T &data, const char *fnd) -> typename T::iterator
 {
@@ -1628,7 +1628,7 @@ find(T &data, const char *fnd) -> typename T::iterator
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find(const T &data, const char *fnd) -> typename T::const_iterator
 {
@@ -1651,7 +1651,7 @@ find(const char *data, const char *end, const char fnd)
   return nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find(const T &data, typename T::const_iterator from, const char fnd) -> typename T::const_iterator
 {
@@ -1661,7 +1661,7 @@ find(const T &data, typename T::const_iterator from, const char fnd) -> typename
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
@@ -1676,7 +1676,7 @@ find(const T &data, typename T::iterator from, const T &fnd) -> typename T::iter
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find(const T &data, typename T::iterator from, const char *fnd) -> typename T::iterator
 {
@@ -1691,7 +1691,7 @@ find(const T &data, typename T::iterator from, const char *fnd) -> typename T::i
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find(const T &data, const T &fnd) -> typename T::iterator
 {
@@ -1727,14 +1727,14 @@ find(const char *data, usize len, const char *fnd)
   return nullptr;
 }
 
-template <usize N>
+template<usize N>
 inline const char *
 find(const char (&data)[N], const char fnd)
 {
   return find(static_cast<const char *>(data), N - 1, fnd);
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline const char *
 find(const char (&data)[N], const char (&fnd)[M])
 {
@@ -1744,7 +1744,7 @@ find(const char (&data)[N], const char (&fnd)[M])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // find_reverse
 
-template <is_string T>
+template<is_string T>
 auto
 find_reverse(const T &data, typename T::const_iterator from, const char fnd) -> typename T::const_iterator
 {
@@ -1756,7 +1756,7 @@ find_reverse(const T &data, typename T::const_iterator from, const char fnd) -> 
   return (typename T::const_iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> typename T::const_iterator
 {
@@ -1772,7 +1772,7 @@ find_reverse(const T &data, typename T::const_iterator from, const T &fnd) -> ty
   return (typename T::const_iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find_reverse(const T &data, typename T::const_iterator from, const char *fnd) -> typename T::const_iterator
 {
@@ -1788,7 +1788,7 @@ find_reverse(const T &data, typename T::const_iterator from, const char *fnd) ->
   return (typename T::const_iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename T::iterator
 {
@@ -1804,7 +1804,7 @@ find_reverse(const T &data, typename T::iterator from, const T &fnd) -> typename
   return (typename T::iterator) nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 auto
 find_reverse(const T &data, typename T::iterator from, const char *fnd) -> typename T::iterator
 {
@@ -1844,14 +1844,14 @@ find_reverse(const char *data, usize len, usize from, const char *fnd)
   return nullptr;
 }
 
-template <usize N>
+template<usize N>
 inline const char *
 find_reverse(const char (&data)[N], usize from, const char fnd)
 {
   return find_reverse(static_cast<const char *>(data), N - 1, from, fnd);
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline const char *
 find_reverse(const char (&data)[N], usize from, const char (&fnd)[M])
 {
@@ -1861,42 +1861,42 @@ find_reverse(const char (&data)[N], usize from, const char (&fnd)[M])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // is_in / is_not_in
 
-template <is_string T>
+template<is_string T>
 bool
 is_not_in(const char *fnd, const T &data)
 {
   return find(data, fnd) == nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_not_in(const T &data, const char *fnd)
 {
   return find(data, fnd) == nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_not_in(const T &data, const T &fnd)
 {
   return find(data, fnd) == nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_in(const char *fnd, const T &data)
 {
   return find(data, fnd) != nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_in(const T &data, const char *fnd)
 {
   return find(data, fnd) != nullptr;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_in(const T &data, const T &fnd)
 {
@@ -1927,14 +1927,14 @@ is_in(const char *data, usize len, const char fnd)
   return find(data, len, fnd) != nullptr;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline bool
 is_not_in(const char (&data)[N], const char (&fnd)[M])
 {
   return find(data, fnd) == nullptr;
 }
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline bool
 is_in(const char (&data)[N], const char (&fnd)[M])
 {
@@ -1944,7 +1944,7 @@ is_in(const char (&data)[N], const char (&fnd)[M])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // replace / replace_all
 
-template <is_string T>
+template<is_string T>
 T &
 replace(T &str, const char *lhs, const char *rhs)
 {
@@ -1962,7 +1962,7 @@ replace(T &str, const char *lhs, const char *rhs)
   return str;
 }
 
-template <is_string T>
+template<is_string T>
 T
 replace(const T &str, const char *lhs, const char *rhs)
 {
@@ -1996,7 +1996,7 @@ replace(char *str, usize &len, const char *lhs, const char *rhs)
   return str;
 }
 
-template <usize N, usize M, usize R>
+template<usize N, usize M, usize R>
 inline hstring<schar>
 replace(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
 {
@@ -2004,7 +2004,7 @@ replace(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
   return replace(result, static_cast<const char *>(lhs), static_cast<const char *>(rhs));
 }
 
-template <is_string T>
+template<is_string T>
 T &
 replace_all(T &str, const char *lhs, const char *rhs)
 {
@@ -2025,7 +2025,7 @@ replace_all(T &str, const char *lhs, const char *rhs)
   return str;
 }
 
-template <char N, is_string T>
+template<char N, is_string T>
 T &
 replace_all(T &str, const char *lhs)
 {
@@ -2044,7 +2044,7 @@ replace_all(T &str, const char *lhs)
   return str;
 }
 
-template <is_string T>
+template<is_string T>
 T
 replace_all(const T &str, const char *lhs, const char *rhs)
 {
@@ -2076,7 +2076,7 @@ replace_all(char *str, usize &len, const char *lhs, const char *rhs)
   return str;
 }
 
-template <usize N, usize M, usize R>
+template<usize N, usize M, usize R>
 inline hstring<schar>
 replace_all(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
 {
@@ -2087,7 +2087,7 @@ replace_all(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // string-to-numeric (to_float, to_double, to_integer, to_long)
 
-template <typename T>
+template<typename T>
 f32
 to_float(const T &o)
 {
@@ -2184,14 +2184,14 @@ to_float(const char *buf, usize len)
   return neg ? -result : result;
 }
 
-template <usize N>
+template<usize N>
 inline f32
 to_float(const char (&buf)[N])
 {
   return to_float(static_cast<const char *>(buf), N - 1);
 }
 
-template <typename T>
+template<typename T>
 f64
 to_double(const T &o)
 {
@@ -2285,14 +2285,14 @@ to_double(const char *buf, usize len)
   return neg ? -result : result;
 }
 
-template <usize N>
+template<usize N>
 inline f64
 to_double(const char (&buf)[N])
 {
   return to_double(static_cast<const char *>(buf), N - 1);
 }
 
-template <typename T>
+template<typename T>
 i32
 to_integer(const T &o)
 {
@@ -2344,7 +2344,7 @@ to_integer(const char *buf, usize len)
   return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
 }
 
-template <usize N>
+template<usize N>
 inline i32
 to_integer(const char (&buf)[N])
 {
@@ -2414,7 +2414,7 @@ to_hex_char(u8 nibble) noexcept
   return nibble < 10 ? '0' + nibble : 'a' + (nibble - 10);
 }
 
-template <typename R, is_string T>
+template<typename R, is_string T>
 R *
 to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base = 16)
 {
@@ -2441,7 +2441,7 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
   return reinterpret_cast<R *>(reinterpret_cast<u64 *>(result));
 }
 
-template <typename T>
+template<typename T>
 i64
 to_long(const T &o)
 {
@@ -2495,7 +2495,7 @@ to_long(const char *buf, usize len)
   return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
 }
 
-template <usize N>
+template<usize N>
 inline i64
 to_long(const char (&buf)[N])
 {
@@ -2505,7 +2505,7 @@ to_long(const char (&buf)[N])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // pad / truncate / precision
 
-template <is_string T>
+template<is_string T>
 T
 pad_left(const T &str, usize width, char fill = ' ')
 {
@@ -2516,7 +2516,7 @@ pad_left(const T &str, usize width, char fill = ' ')
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T
 pad_right(const T &str, usize width, char fill = ' ')
 {
@@ -2526,7 +2526,7 @@ pad_right(const T &str, usize width, char fill = ' ')
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T
 pad_center(const T &str, usize width, char fill = ' ')
 {
@@ -2561,7 +2561,7 @@ pad_center(const char *str, usize width, char fill = ' ')
   return pad_center(s, width, fill);
 }
 
-template <is_string T>
+template<is_string T>
 T
 truncate(const T &str, usize width)
 {
@@ -2569,7 +2569,7 @@ truncate(const T &str, usize width)
   return str.substr(0, width);
 }
 
-template <is_string T>
+template<is_string T>
 T
 limit(const T &str, usize width)
 {
@@ -2606,15 +2606,15 @@ precision(f32 value, u32 digits)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // join
 
-template <typename Container> hstring<schar> join(const Container &items, const char *delimiter);
-template <typename Container> hstring<schar> join(const Container &items, const char *delimiter, const char *prefix, const char *suffix);
-template <typename Container, is_string Delim> hstring<schar> join(const Container &items, const Delim &delimiter);
-template <is_string T> hstring<schar> join_strings(const micron::fvector<T> &items, const char *delimiter);
+template<typename Container> hstring<schar> join(const Container &items, const char *delimiter);
+template<typename Container> hstring<schar> join(const Container &items, const char *delimiter, const char *prefix, const char *suffix);
+template<typename Container, is_string Delim> hstring<schar> join(const Container &items, const Delim &delimiter);
+template<is_string T> hstring<schar> join_strings(const micron::fvector<T> &items, const char *delimiter);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // capitalize / title_case / swap_case
 
-template <is_string T>
+template<is_string T>
 T
 capitalize(const T &str)
 {
@@ -2644,7 +2644,7 @@ capitalize(const char *str, usize len)
   return capitalize(s);
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 capitalize(const char (&str)[N])
 {
@@ -2652,7 +2652,7 @@ capitalize(const char (&str)[N])
   return capitalize(s);
 }
 
-template <is_string T>
+template<is_string T>
 T
 title_case(const T &str)
 {
@@ -2687,7 +2687,7 @@ title_case(const char *str, usize len)
   return title_case(s);
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 title_case(const char (&str)[N])
 {
@@ -2695,7 +2695,7 @@ title_case(const char (&str)[N])
   return title_case(s);
 }
 
-template <is_string T>
+template<is_string T>
 T
 swap_case(const T &str)
 {
@@ -2725,7 +2725,7 @@ swap_case(const char *str, usize len)
   return swap_case(s);
 }
 
-template <usize N>
+template<usize N>
 inline hstring<schar>
 swap_case(const char (&str)[N])
 {
@@ -2736,7 +2736,7 @@ swap_case(const char (&str)[N])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // repeat
 
-template <is_string T>
+template<is_string T>
 T
 repeat(const T &str, usize count)
 {
@@ -2763,9 +2763,9 @@ repeat(char c, usize count)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // formatter traits
-template <typename T, typename Enable = void> struct formatter;
+template<typename T, typename Enable = void> struct formatter;
 
-template <> struct formatter<i32> {
+template<> struct formatter<i32> {
   static inline usize
   write(char *buf, usize buf_sz, i32 val, const __impl::fmt_spec &spec)
   {
@@ -2799,7 +2799,7 @@ template <> struct formatter<i32> {
   }
 };
 
-template <> struct formatter<i64> {
+template<> struct formatter<i64> {
   static inline usize
   write(char *buf, usize buf_sz, i64 val, const __impl::fmt_spec &spec)
   {
@@ -2833,7 +2833,7 @@ template <> struct formatter<i64> {
   }
 };
 
-template <> struct formatter<u32> {
+template<> struct formatter<u32> {
   static inline usize
   write(char *buf, usize buf_sz, u32 val, const __impl::fmt_spec &spec)
   {
@@ -2867,7 +2867,7 @@ template <> struct formatter<u32> {
   }
 };
 
-template <> struct formatter<u64> {
+template<> struct formatter<u64> {
   static inline usize
   write(char *buf, usize buf_sz, u64 val, const __impl::fmt_spec &spec)
   {
@@ -2901,7 +2901,7 @@ template <> struct formatter<u64> {
   }
 };
 
-template <> struct formatter<i16> {
+template<> struct formatter<i16> {
   static inline usize
   write(char *buf, usize buf_sz, i16 val, const __impl::fmt_spec &spec)
   {
@@ -2909,7 +2909,7 @@ template <> struct formatter<i16> {
   }
 };
 
-template <> struct formatter<u16> {
+template<> struct formatter<u16> {
   static inline usize
   write(char *buf, usize buf_sz, u16 val, const __impl::fmt_spec &spec)
   {
@@ -2917,7 +2917,7 @@ template <> struct formatter<u16> {
   }
 };
 
-template <> struct formatter<i8> {
+template<> struct formatter<i8> {
   static inline usize
   write(char *buf, usize buf_sz, i8 val, const __impl::fmt_spec &spec)
   {
@@ -2925,7 +2925,7 @@ template <> struct formatter<i8> {
   }
 };
 
-template <> struct formatter<u8> {
+template<> struct formatter<u8> {
   static inline usize
   write(char *buf, usize buf_sz, u8 val, const __impl::fmt_spec &spec)
   {
@@ -2933,7 +2933,7 @@ template <> struct formatter<u8> {
   }
 };
 
-template <> struct formatter<f32> {
+template<> struct formatter<f32> {
   static inline usize
   write(char *buf, usize buf_sz, f32 val, const __impl::fmt_spec &spec)
   {
@@ -2942,7 +2942,7 @@ template <> struct formatter<f32> {
   }
 };
 
-template <> struct formatter<f64> {
+template<> struct formatter<f64> {
   static inline usize
   write(char *buf, usize buf_sz, f64 val, const __impl::fmt_spec &spec)
   {
@@ -2951,7 +2951,7 @@ template <> struct formatter<f64> {
   }
 };
 
-template <> struct formatter<bool> {
+template<> struct formatter<bool> {
   static inline usize
   write(char *buf, usize buf_sz, bool val, const __impl::fmt_spec &)
   {
@@ -2959,7 +2959,7 @@ template <> struct formatter<bool> {
   }
 };
 
-template <> struct formatter<char> {
+template<> struct formatter<char> {
   static inline usize
   write(char *buf, usize buf_sz, char val, const __impl::fmt_spec &)
   {
@@ -2969,7 +2969,7 @@ template <> struct formatter<char> {
   }
 };
 
-template <> struct formatter<const char *> {
+template<> struct formatter<const char *> {
   static inline usize
   write(char *buf, usize buf_sz, const char *val, const __impl::fmt_spec &spec)
   {
@@ -2992,7 +2992,7 @@ template <> struct formatter<const char *> {
 };
 
 // was missing this
-template <usize N> struct formatter<char[N]> {
+template<usize N> struct formatter<char[N]> {
   static inline usize
   write(char *buf, usize buf_sz, const char (&val)[N], const __impl::fmt_spec &spec)
   {
@@ -3014,7 +3014,7 @@ template <usize N> struct formatter<char[N]> {
   }
 };
 
-template <> struct formatter<char *> {
+template<> struct formatter<char *> {
   static inline usize
   write(char *buf, usize buf_sz, char *val, const __impl::fmt_spec &spec)
   {
@@ -3022,7 +3022,7 @@ template <> struct formatter<char *> {
   }
 };
 
-template <typename T> struct formatter<T, micron::enable_if_t<micron::is_string_v<T>>> {
+template<typename T> struct formatter<T, micron::enable_if_t<micron::is_string_v<T>>> {
   static inline usize
   write(char *buf, usize buf_sz, const T &val, const __impl::fmt_spec &spec)
   {
@@ -3034,7 +3034,7 @@ template <typename T> struct formatter<T, micron::enable_if_t<micron::is_string_
   }
 };
 
-template <typename T> struct formatter<T *, micron::enable_if_t<!micron::is_same_v<T, char> && !micron::is_same_v<T, const char>>> {
+template<typename T> struct formatter<T *, micron::enable_if_t<!micron::is_same_v<T, char> && !micron::is_same_v<T, const char>>> {
   static inline usize
   write(char *buf, usize buf_sz, T *val, const __impl::fmt_spec &)
   {
@@ -3045,7 +3045,7 @@ template <typename T> struct formatter<T *, micron::enable_if_t<!micron::is_same
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // format_value
 
-template <typename T>
+template<typename T>
 inline hstring<schar>
 format_value(const T &val)
 {
@@ -3058,7 +3058,7 @@ format_value(const T &val)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // join (definitions, uses format_value)
 
-template <typename Container>
+template<typename Container>
 hstring<schar>
 join(const Container &items, const char *delimiter)
 {
@@ -3073,7 +3073,7 @@ join(const Container &items, const char *delimiter)
   return result;
 }
 
-template <typename Container>
+template<typename Container>
 hstring<schar>
 join(const Container &items, const char *delimiter, const char *prefix, const char *suffix)
 {
@@ -3084,7 +3084,7 @@ join(const Container &items, const char *delimiter, const char *prefix, const ch
   return result;
 }
 
-template <typename Container, is_string Delim>
+template<typename Container, is_string Delim>
 hstring<schar>
 join(const Container &items, const Delim &delimiter)
 {
@@ -3098,7 +3098,7 @@ join(const Container &items, const Delim &delimiter)
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 hstring<schar>
 join_strings(const micron::fvector<T> &items, const char *delimiter)
 {
@@ -3125,7 +3125,7 @@ format_one(hstring<schar> &, const char *, const char *, usize)
   // base case: no args left
 }
 
-template <typename T, typename... Rest>
+template<typename T, typename... Rest>
 inline void
 format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, usize arg_index, const T &val, const Rest &...rest)
 {
@@ -3139,9 +3139,9 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
   apply_padding(out, buf, n, spec);
 }
 
-}     // namespace __impl
+}      // namespace __impl
 
-template <typename... Args>
+template<typename... Args>
 inline hstring<schar>
 format(const char *fmt, const Args &...args)
 {
@@ -3206,7 +3206,7 @@ format(const char *fmt, const Args &...args)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // count(data, sub [, start [, end]])
 
-template <is_string T>
+template<is_string T>
 usize
 count(const T &data, const char *sub, usize start = 0, usize end_pos = ~static_cast<usize>(0))
 {
@@ -3225,7 +3225,7 @@ count(const T &data, const char *sub, usize start = 0, usize end_pos = ~static_c
   return n;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 count(const T &data, const T &sub, usize start = 0, usize end_pos = ~static_cast<usize>(0))
 {
@@ -3243,7 +3243,7 @@ count(const T &data, const T &sub, usize start = 0, usize end_pos = ~static_cast
   return n;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 count(const T &data, char ch, usize start = 0, usize end_pos = ~static_cast<usize>(0))
 {
@@ -3275,7 +3275,7 @@ count(const char *data, usize len, const char *sub)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // index / rindex (like find but throw on miss)
 
-template <is_string T>
+template<is_string T>
 usize
 index(const T &data, const char *fnd, usize start = 0)
 {
@@ -3290,7 +3290,7 @@ index(const T &data, const char *fnd, usize start = 0)
   return ~static_cast<usize>(0);
 }
 
-template <is_string T>
+template<is_string T>
 usize
 index(const T &data, const T &fnd, usize start = 0)
 {
@@ -3304,7 +3304,7 @@ index(const T &data, const T &fnd, usize start = 0)
   return ~static_cast<usize>(0);
 }
 
-template <is_string T>
+template<is_string T>
 usize
 rindex(const T &data, const char *fnd, usize start = ~static_cast<usize>(0))
 {
@@ -3320,7 +3320,7 @@ rindex(const T &data, const char *fnd, usize start = ~static_cast<usize>(0))
   return ~static_cast<usize>(0);
 }
 
-template <is_string T>
+template<is_string T>
 usize
 rindex(const T &data, const T &fnd, usize start = ~static_cast<usize>(0))
 {
@@ -3340,7 +3340,7 @@ rindex(const T &data, const T &fnd, usize start = ~static_cast<usize>(0))
 
 constexpr usize npos = ~static_cast<usize>(0);
 
-template <is_string T>
+template<is_string T>
 usize
 find_pos(const T &data, const char *fnd, usize start = 0)
 {
@@ -3354,7 +3354,7 @@ find_pos(const T &data, const char *fnd, usize start = 0)
   return npos;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 find_pos(const T &data, const T &fnd, usize start = 0)
 {
@@ -3367,7 +3367,7 @@ find_pos(const T &data, const T &fnd, usize start = 0)
   return npos;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 find_pos(const T &data, char ch, usize start = 0)
 {
@@ -3376,7 +3376,7 @@ find_pos(const T &data, char ch, usize start = 0)
   return npos;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 rfind_pos(const T &data, const char *fnd, usize start = ~static_cast<usize>(0))
 {
@@ -3391,7 +3391,7 @@ rfind_pos(const T &data, const char *fnd, usize start = ~static_cast<usize>(0))
   return npos;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 rfind_pos(const T &data, const T &fnd, usize start = ~static_cast<usize>(0))
 {
@@ -3405,7 +3405,7 @@ rfind_pos(const T &data, const T &fnd, usize start = ~static_cast<usize>(0))
   return npos;
 }
 
-template <is_string T>
+template<is_string T>
 usize
 rfind_pos(const T &data, char ch, usize start = ~static_cast<usize>(0))
 {
@@ -3419,7 +3419,7 @@ rfind_pos(const T &data, char ch, usize start = ~static_cast<usize>(0))
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // additional is* predicates
 
-template <is_string T>
+template<is_string T>
 bool
 isdecimal_all(const T &str)
 {
@@ -3427,7 +3427,7 @@ isdecimal_all(const T &str)
   return isdigit_all(str);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isnumeric_all(const T &str)
 {
@@ -3435,7 +3435,7 @@ isnumeric_all(const T &str)
   return isdigit_all(str);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 isidentifier(const T &str)
 {
@@ -3450,7 +3450,7 @@ isidentifier(const T &str)
   return true;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 istitle(const T &str)
 {
@@ -3480,7 +3480,7 @@ istitle(const T &str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // lstrip / rstrip
 
-template <char Tk = ' ', is_string T>
+template<char Tk = ' ', is_string T>
 T &
 lstrip(T &data)
 {
@@ -3494,7 +3494,7 @@ lstrip(T &data)
   return data;
 }
 
-template <char Tk = ' ', is_string T>
+template<char Tk = ' ', is_string T>
 T
 lstrip(const T &data)
 {
@@ -3502,7 +3502,7 @@ lstrip(const T &data)
   return lstrip<Tk>(result);
 }
 
-template <char Tk = ' ', is_string T>
+template<char Tk = ' ', is_string T>
 T &
 rstrip(T &data)
 {
@@ -3514,7 +3514,7 @@ rstrip(T &data)
   return data;
 }
 
-template <char Tk = ' ', is_string T>
+template<char Tk = ' ', is_string T>
 T
 rstrip(const T &data)
 {
@@ -3523,7 +3523,7 @@ rstrip(const T &data)
 }
 
 // multi-char strip: strip any char in chars set
-template <is_string T>
+template<is_string T>
 T
 lstrip_chars(const T &data, const char *chars)
 {
@@ -3550,7 +3550,7 @@ lstrip_chars(const T &data, const char *chars)
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T
 rstrip_chars(const T &data, const char *chars)
 {
@@ -3573,7 +3573,7 @@ rstrip_chars(const T &data, const char *chars)
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T
 strip_chars(const T &data, const char *chars)
 {
@@ -3583,14 +3583,14 @@ strip_chars(const T &data, const char *chars)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // lower (explicit alias for casefold)
 
-template <is_string T>
+template<is_string T>
 T
 lower(const T &str)
 {
   return casefold(str);
 }
 
-template <is_string T>
+template<is_string T>
 T &
 lower(T &str)
 {
@@ -3600,7 +3600,7 @@ lower(T &str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // zfill
 
-template <is_string T>
+template<is_string T>
 T
 zfill(const T &str, usize width)
 {
@@ -3618,10 +3618,7 @@ zfill(const T &str, usize width)
   return result;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// split → fvector
-
-template <is_string T>
+template<is_string T>
 micron::fvector<T>
 split_to(const T &data, const char *sep, i64 maxsplit = -1)
 {
@@ -3667,7 +3664,7 @@ split_to(const T &data, const char *sep, i64 maxsplit = -1)
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 micron::fvector<T>
 split_to(const T &data, char sep, i64 maxsplit = -1)
 {
@@ -3691,7 +3688,7 @@ split_to(const T &data, char sep, i64 maxsplit = -1)
 }
 
 // rsplit: split from right
-template <is_string T>
+template<is_string T>
 micron::fvector<T>
 rsplit_to(const T &data, char sep, i64 maxsplit = -1)
 {
@@ -3719,7 +3716,7 @@ rsplit_to(const T &data, char sep, i64 maxsplit = -1)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // splitlines
-template <is_string T>
+template<is_string T>
 micron::vector<T>
 splitlines(const T &data, bool keepends = false)
 {
@@ -3758,9 +3755,9 @@ splitlines(const T &data, bool keepends = false)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// partition → tuple<T, T, T>
+// partition: tuple<T, T, T>
 
-template <is_string T>
+template<is_string T>
 micron::tuple<T, T, T>
 partition(const T &data, const char *sep)
 {
@@ -3770,7 +3767,7 @@ partition(const T &data, const char *sep)
   return micron::tuple<T, T, T>(data.substr(0, pos), data.substr(pos, sep_len), data.substr(pos + sep_len, data.size() - pos - sep_len));
 }
 
-template <is_string T>
+template<is_string T>
 micron::tuple<T, T, T>
 partition(const T &data, const T &sep)
 {
@@ -3780,7 +3777,7 @@ partition(const T &data, const T &sep)
                                 data.substr(pos + sep.size(), data.size() - pos - sep.size()));
 }
 
-template <is_string T>
+template<is_string T>
 micron::tuple<T, T, T>
 rpartition(const T &data, const char *sep)
 {
@@ -3790,7 +3787,7 @@ rpartition(const T &data, const char *sep)
   return micron::tuple<T, T, T>(data.substr(0, pos), data.substr(pos, sep_len), data.substr(pos + sep_len, data.size() - pos - sep_len));
 }
 
-template <is_string T>
+template<is_string T>
 micron::tuple<T, T, T>
 rpartition(const T &data, const T &sep)
 {
@@ -3803,7 +3800,7 @@ rpartition(const T &data, const T &sep)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // translate / maketrans
 
-// translation table: maps char → char (or -1 for delete)
+// translation table
 struct trans_table {
   i16 mapping[256];
 
@@ -3837,7 +3834,7 @@ maketrans(const char *from, const char *to, const char *del)
   return t;
 }
 
-template <is_string T>
+template<is_string T>
 T
 translate(const T &str, const trans_table &table)
 {
@@ -3854,7 +3851,7 @@ translate(const T &str, const trans_table &table)
 // extensive replace API
 
 // replace first N occurrences (count == -1 means all)
-template <is_string T>
+template<is_string T>
 T
 replace_n(const T &str, const char *old_s, const char *new_s, i64 count = -1)
 {
@@ -3878,15 +3875,14 @@ replace_n(const T &str, const char *old_s, const char *new_s, i64 count = -1)
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T
 replace_n(const T &str, const T &old_s, const T &new_s, i64 count = -1)
 {
   return replace_n(str, old_s.begin(), new_s.begin(), count);
 }
 
-// replace single char → char
-template <is_string T>
+template<is_string T>
 T
 replace_char(const T &str, char old_c, char new_c)
 {
@@ -3896,8 +3892,7 @@ replace_char(const T &str, char old_c, char new_c)
   return result;
 }
 
-// replace single char → string
-template <is_string T>
+template<is_string T>
 T
 replace_char(const T &str, char old_c, const char *new_s)
 {
@@ -3913,7 +3908,7 @@ replace_char(const T &str, char old_c, const char *new_s)
 }
 
 // replace byte range
-template <is_string T>
+template<is_string T>
 T
 replace_range(const T &str, usize start, usize end_pos, const char *replacement)
 {
@@ -3926,7 +3921,7 @@ replace_range(const T &str, usize start, usize end_pos, const char *replacement)
   return result;
 }
 
-template <is_string T>
+template<is_string T>
 T
 replace_range(const T &str, usize start, usize end_pos, const T &replacement)
 {
@@ -3934,7 +3929,7 @@ replace_range(const T &str, usize start, usize end_pos, const T &replacement)
 }
 
 // erase all occurrences of a char
-template <is_string T>
+template<is_string T>
 T
 erase_char(const T &str, char ch)
 {
@@ -3945,7 +3940,7 @@ erase_char(const T &str, char ch)
 }
 
 // erase all occurrences of a substring
-template <is_string T>
+template<is_string T>
 T
 erase_all(const T &str, const char *sub)
 {
@@ -3958,7 +3953,7 @@ erase_all(const T &str, const char *sub)
 // already defined in format.hpp as free function;
 // add char-separator variant
 
-template <is_string T>
+template<is_string T>
 hstring<schar>
 join_char(char sep, const micron::fvector<T> &items)
 {
@@ -3976,21 +3971,21 @@ join_char(char sep, const micron::fvector<T> &items)
 // center / ljust / rjust (aliases for pad_center / pad_right / pad_left)
 // these are already defined via pad_* in format.hpp but add explicit aliases
 
-template <is_string T>
+template<is_string T>
 T
 center(const T &str, usize width, char fillchar = ' ')
 {
   return pad_center(str, width, fillchar);
 }
 
-template <is_string T>
+template<is_string T>
 T
 ljust(const T &str, usize width, char fillchar = ' ')
 {
   return pad_right(str, width, fillchar);
 }
 
-template <is_string T>
+template<is_string T>
 T
 rjust(const T &str, usize width, char fillchar = ' ')
 {
@@ -4000,7 +3995,7 @@ rjust(const T &str, usize width, char fillchar = ' ')
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // _stack alternatives for functions that return new strings
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 zfill_stack(const T &str, usize width)
 {
@@ -4021,7 +4016,7 @@ zfill_stack(const T &str, usize width)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 lower_stack(const T &str)
 {
@@ -4038,7 +4033,7 @@ lower_stack(const T &str)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 upper_stack(const T &str)
 {
@@ -4055,7 +4050,7 @@ upper_stack(const T &str)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 capitalize_stack(const T &str)
 {
@@ -4067,7 +4062,7 @@ capitalize_stack(const T &str)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 title_case_stack(const T &str)
 {
@@ -4095,7 +4090,7 @@ title_case_stack(const T &str)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 swap_case_stack(const T &str)
 {
@@ -4117,7 +4112,7 @@ swap_case_stack(const T &str)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 center_stack(const T &str, usize width, char fillchar = ' ')
 {
@@ -4143,7 +4138,7 @@ center_stack(const T &str, usize width, char fillchar = ' ')
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 ljust_stack(const T &str, usize width, char fillchar = ' ')
 {
@@ -4158,7 +4153,7 @@ ljust_stack(const T &str, usize width, char fillchar = ' ')
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 rjust_stack(const T &str, usize width, char fillchar = ' ')
 {
@@ -4174,7 +4169,7 @@ rjust_stack(const T &str, usize width, char fillchar = ' ')
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 translate_stack(const T &str, const trans_table &table)
 {
@@ -4190,7 +4185,7 @@ translate_stack(const T &str, const trans_table &table)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 replace_char_stack(const T &str, char old_c, char new_c)
 {
@@ -4204,7 +4199,7 @@ replace_char_stack(const T &str, char old_c, char new_c)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 erase_char_stack(const T &str, char ch)
 {
@@ -4218,7 +4213,7 @@ erase_char_stack(const T &str, char ch)
   return result;
 }
 
-template <usize Sz, typename C = schar, is_string T>
+template<usize Sz, typename C = schar, is_string T>
 micron::sstring<Sz, C>
 repeat_stack(const T &str, usize n)
 {
@@ -4232,7 +4227,7 @@ repeat_stack(const T &str, usize n)
   return result;
 }
 
-};     // namespace format
+};      // namespace format
 // shorthand alias
 namespace fmt = format;
-};     // namespace micron
+};      // namespace micron

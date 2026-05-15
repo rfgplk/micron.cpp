@@ -7,7 +7,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <cmath>     // reference values via std/builtin
+#include <cmath>      // reference values via std/builtin
 
 // NOTE: -Ofast -ffast-math BREAKS this partially, be careful!
 
@@ -44,7 +44,7 @@ feq64(double a, double b, double eps = EPS64)
 
 // integer exact equality shortcuts already handled by sb::require
 
-}     // namespace
+}      // namespace
 
 int
 main()
@@ -58,10 +58,10 @@ main()
   {
     require(micron::math::gcd(12, 8), 4);
     require(micron::math::gcd(100, 75), 25);
-    require(micron::math::gcd(17, 13), 1);     // coprime
+    require(micron::math::gcd(17, 13), 1);      // coprime
     require(micron::math::gcd(1024, 768), 256);
-    require(micron::math::gcd(999999937, 999999929), 1);           // large coprimes
-    require(micron::math::gcd(2 * 3 * 5 * 7, 3 * 5 * 11), 15);     // lcm-style check
+    require(micron::math::gcd(999999937, 999999929), 1);            // large coprimes
+    require(micron::math::gcd(2 * 3 * 5 * 7, 3 * 5 * 11), 15);      // lcm-style check
     require(micron::math::gcd(1, 1), 1);
     require(micron::math::gcd(1, 999), 1);
     require(micron::math::gcd(0, 7), 7);
@@ -514,11 +514,11 @@ main()
   // ================================================================ //
   test_case("fclamp<double> – values below, inside, and above range");
   {
-    require_true(feq64(micron::math::fclamp(0.5, 1.0, 2.0), 1.0));     // below
-    require_true(feq64(micron::math::fclamp(1.5, 1.0, 2.0), 1.5));     // inside
-    require_true(feq64(micron::math::fclamp(2.5, 1.0, 2.0), 2.0));     // above
-    require_true(feq64(micron::math::fclamp(1.0, 1.0, 2.0), 1.0));     // on lo
-    require_true(feq64(micron::math::fclamp(2.0, 1.0, 2.0), 2.0));     // on hi
+    require_true(feq64(micron::math::fclamp(0.5, 1.0, 2.0), 1.0));      // below
+    require_true(feq64(micron::math::fclamp(1.5, 1.0, 2.0), 1.5));      // inside
+    require_true(feq64(micron::math::fclamp(2.5, 1.0, 2.0), 2.0));      // above
+    require_true(feq64(micron::math::fclamp(1.0, 1.0, 2.0), 1.0));      // on lo
+    require_true(feq64(micron::math::fclamp(2.0, 1.0, 2.0), 2.0));      // on hi
     require_true(feq64(micron::math::fclamp(-100.0, -1.0, 1.0), -1.0));
     require_true(feq64(micron::math::fclamp(100.0, -1.0, 1.0), 1.0));
     require_true(feq64(micron::math::fclamp(0.0, -1.0, 1.0), 0.0));
@@ -587,14 +587,14 @@ main()
     require(micron::math::nearest_pow2(128), 128);
     require(micron::math::nearest_pow2(256), 256);
     // tie-break uses <=: equidistant values round DOWN to the lower power
-    require(micron::math::nearest_pow2(3), 2);         // 3-2=1 == 4-3=1  → lower (2)
-    require(micron::math::nearest_pow2(5), 4);         // 5-4=1  <  8-5=3 → lower (4)
-    require(micron::math::nearest_pow2(6), 4);         // 6-4=2 == 8-6=2  → lower (4)
-    require(micron::math::nearest_pow2(7), 8);         // 7-4=3  >  8-7=1 → upper (8)
-    require(micron::math::nearest_pow2(9), 8);         // 9-8=1  <  16-9=7 → lower (8)
-    require(micron::math::nearest_pow2(12), 8);        // 12-8=4 == 16-12=4 → lower (8)
-    require(micron::math::nearest_pow2(100), 128);     // 100-64=36 > 128-100=28 → upper (128)
-    require(micron::math::nearest_pow2(200), 256);     // 200-128=72 > 256-200=56 → upper (256)
+    require(micron::math::nearest_pow2(3), 2);          // 3-2=1 == 4-3=1  → lower (2)
+    require(micron::math::nearest_pow2(5), 4);          // 5-4=1  <  8-5=3 → lower (4)
+    require(micron::math::nearest_pow2(6), 4);          // 6-4=2 == 8-6=2  → lower (4)
+    require(micron::math::nearest_pow2(7), 8);          // 7-4=3  >  8-7=1 → upper (8)
+    require(micron::math::nearest_pow2(9), 8);          // 9-8=1  <  16-9=7 → lower (8)
+    require(micron::math::nearest_pow2(12), 8);         // 12-8=4 == 16-12=4 → lower (8)
+    require(micron::math::nearest_pow2(100), 128);      // 100-64=36 > 128-100=28 → upper (128)
+    require(micron::math::nearest_pow2(200), 256);      // 200-128=72 > 256-200=56 → upper (256)
     // edge: 0 and negatives → 1
     require(micron::math::nearest_pow2(0), 1);
     require(micron::math::nearest_pow2(-5), 1);
@@ -607,8 +607,8 @@ main()
     require(micron::math::nearest_pow2ll((long long)0), (long long)1);
     require(micron::math::nearest_pow2ll((long long)-1), (long long)1);
     require(micron::math::nearest_pow2ll((long long)1000000000LL), (long long)(1LL << 30));
-    require(micron::math::nearest_pow2ll((long long)1500000000LL), (long long)(1LL << 30));     // d_lo=426M < d_hi=647M -> lower (2^30)
-    require(micron::math::nearest_pow2ll((long long)1610612737LL), (long long)(1LL << 31));     // just past crossover -> upper (2^31)
+    require(micron::math::nearest_pow2ll((long long)1500000000LL), (long long)(1LL << 30));      // d_lo=426M < d_hi=647M -> lower (2^30)
+    require(micron::math::nearest_pow2ll((long long)1610612737LL), (long long)(1LL << 31));      // just past crossover -> upper (2^31)
   }
   end_test_case();
 
@@ -621,7 +621,7 @@ main()
     double ninf = -__builtin_inf();
     double nan = __builtin_nan("");
     double norm = 1.0;
-    double tiny_ = 5e-324;     // denormal (subnormal)
+    double tiny_ = 5e-324;      // denormal (subnormal)
 
     require_true(micron::math::isfinite(norm));
     require_false(micron::math::isfinite(inf));
@@ -640,7 +640,7 @@ main()
     require_true(micron::math::isnormal(norm));
     require_false(micron::math::isnormal(inf));
     require_false(micron::math::isnormal(nan));
-    require_false(micron::math::isnormal(tiny_));     // subnormal
+    require_false(micron::math::isnormal(tiny_));      // subnormal
     require_false(micron::math::isnormal(0.0));
   }
   end_test_case();
@@ -674,8 +674,8 @@ main()
     require_true(micron::math::signbit(-1.0));
     require_true(micron::math::signbit(-0.0));
     require_true(micron::math::signbit(-1e300));
-    require_true(micron::math::signbit(-__builtin_inf()));     // -inf
-    require_false(micron::math::signbit(__builtin_inf()));     // +inf
+    require_true(micron::math::signbit(-__builtin_inf()));      // -inf
+    require_false(micron::math::signbit(__builtin_inf()));      // +inf
 
     require_false(micron::math::signbit(1.0f));
     require_true(micron::math::signbit(-1.0f));
@@ -769,10 +769,10 @@ main()
     r = micron::math::remainder(0.5, 1.0);
     require_true(feq64(r, 0.5));
 
-    r = micron::math::remainder(7.0, 4.0);     // 7 - 2*4 = -1
+    r = micron::math::remainder(7.0, 4.0);      // 7 - 2*4 = -1
     require_true(feq64(r, -1.0));
 
-    r = micron::math::remainder(-7.0, 4.0);     // -7 + 2*4 = 1
+    r = micron::math::remainder(-7.0, 4.0);      // -7 + 2*4 = 1
     require_true(feq64(r, 1.0));
   }
   end_test_case();
@@ -786,8 +786,8 @@ main()
     require_true(feq64(micron::math::rint(0.4), 0.0));
     require_true(feq64(micron::math::rint(0.6), 1.0));
     require_true(feq64(micron::math::rint(-0.6), -1.0));
-    require_true(feq64(micron::math::rint(1.5), 2.0));     // ties to even
-    require_true(feq64(micron::math::rint(2.5), 2.0));     // ties to even
+    require_true(feq64(micron::math::rint(1.5), 2.0));      // ties to even
+    require_true(feq64(micron::math::rint(2.5), 2.0));      // ties to even
     require_true(feq64(micron::math::rint(3.5), 4.0));
   }
   end_test_case();
@@ -796,7 +796,7 @@ main()
   {
     require(micron::math::lrint(1.6), 2L);
     require(micron::math::lrint(-1.6), -2L);
-    require(micron::math::llrint(2.5), 2LL);     // ties to even
+    require(micron::math::llrint(2.5), 2LL);      // ties to even
     require(micron::math::llrint(3.5), 4LL);
   }
   end_test_case();
@@ -846,7 +846,7 @@ main()
     double a_ = 1.0 + std::ldexp(1.0, -27);
     double b_ = 1.0 - std::ldexp(1.0, -27);
     double fma_result = micron::math::ffma(a_, b_, -1.0);
-    double expected_fma = -(std::ldexp(1.0, -54));     // exact: -(2^-54)
+    double expected_fma = -(std::ldexp(1.0, -54));      // exact: -(2^-54)
     require_true(feq64(fma_result, expected_fma, std::ldexp(1.0, -60)));
   }
   end_test_case();

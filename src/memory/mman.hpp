@@ -81,14 +81,14 @@ memfd_secret(const char *name, unsigned int flags)
 int mlockall();
 int munlockall();
 
-template <typename T>
+template<typename T>
 auto
 mprotect(T *addr, usize __length, int prot)
 {
   return micron::syscall(SYS_mprotect, addr, __length, prot);
 }
 
-template <typename T>
+template<typename T>
 auto
 brk(T *addr)
 {
@@ -116,7 +116,7 @@ sbrk(intptr_t increment)
 
 // Helper functions
 
-template <typename T>
+template<typename T>
 inline bool
 mmap_failed(T *addr)
 {
@@ -127,7 +127,7 @@ class __default_map
 {
 };
 
-template <class C = __default_map, typename T>
+template<class C = __default_map, typename T>
 inline T *
 __as_map(usize sz)
 {
@@ -137,21 +137,21 @@ __as_map(usize sz)
   return nullptr;
 }
 
-template <class C = __default_map>
+template<class C = __default_map>
 inline addr_t *
 addrmap(usize sz)
 {
   return __as_map<C, addr_t>(sz);
 }
 
-template <class C = __default_map>
+template<class C = __default_map>
 inline byte *
 bytemap(usize sz)
 {
   return __as_map<C, byte>(sz);
 }
 
-template <typename T>
+template<typename T>
 inline auto
 try_unmap(T *addr, usize sz)
 {
@@ -159,4 +159,4 @@ try_unmap(T *addr, usize sz)
   return 1;
 }
 
-};     // namespace micron
+};      // namespace micron

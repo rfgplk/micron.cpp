@@ -76,4 +76,4 @@ __default_sleep_callback(void *)
   return 0;
 }
 
-};     // namespace micron
+};      // namespace micron

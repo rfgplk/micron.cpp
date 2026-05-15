@@ -64,7 +64,7 @@ vfms_f32(float32x2_t a, float32x2_t b, float32x2_t c) noexcept
   return r;
 }
 
-#else     // arm64
+#else      // arm64
 
 __inline_g float32x4_t
 vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
@@ -90,7 +90,7 @@ vfms_f32(float32x2_t a, float32x2_t b, float32x2_t c) noexcept
   return __builtin_aarch64_fmav2sf(-b, c, a);
 }
 
-#endif     // arm32 vs arm64
+#endif      // arm32 vs arm64
 
 #if defined(__micron_arch_arm64)
 __inline_g float64x2_t
@@ -176,6 +176,6 @@ vfms_f64(float64x1_t a, float64x1_t b, float64x1_t c) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

@@ -15,7 +15,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace ml = micron::math::linalg;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {
@@ -24,7 +24,7 @@ approx(F a, F b, F tol) noexcept
   return d <= tol;
 }
 
-template <typename F>
+template<typename F>
 static F
 frob_norm(const m::dynmat<F> &A) noexcept
 {
@@ -37,7 +37,7 @@ frob_norm(const m::dynmat<F> &A) noexcept
   return micron::math::fsqrt(s);
 }
 
-template <typename F>
+template<typename F>
 static m::dynmat<F>
 gemm_dyn(const m::dynmat<F> &A, const m::dynmat<F> &B) noexcept
 {
@@ -51,7 +51,7 @@ gemm_dyn(const m::dynmat<F> &A, const m::dynmat<F> &B) noexcept
   return C;
 }
 
-template <typename F>
+template<typename F>
 static m::dynmat<F>
 transpose_dyn(const m::dynmat<F> &A) noexcept
 {
@@ -61,7 +61,7 @@ transpose_dyn(const m::dynmat<F> &A) noexcept
   return T;
 }
 
-template <typename F>
+template<typename F>
 static bool
 reconstruct_close(const m::dynmat<F> &A, const m::dynmat<F> &U, const m::dynvec<F> &S, const m::dynmat<F> &V, F tol) noexcept
 {
@@ -84,7 +84,7 @@ reconstruct_close(const m::dynmat<F> &A, const m::dynmat<F> &U, const m::dynvec<
   return (nD <= tol * (nA + F(1)));
 }
 
-template <typename F>
+template<typename F>
 static bool
 orthogonal(const m::dynmat<F> &Q, F tol) noexcept
 {
@@ -150,7 +150,7 @@ main()
     using F = double;
     m::dynmat<F> A(6, 4);
     F vals[24] = {
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13,     // perturbed to avoid singular
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13,      // perturbed to avoid singular
       1, 0, 0, 1, 0, 1, 1, 0, 2, 3,  5,  7,
     };
     for ( usize i = 0; i < 24; ++i ) A.data()[i] = vals[i];

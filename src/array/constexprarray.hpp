@@ -20,8 +20,8 @@
 
 namespace micron
 {
-template <is_constexpr_valid T, usize N = 64>
-  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
+template<is_constexpr_valid T, usize N = 64>
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 struct constexpr_array {
   using category_type = array_tag;
   using mutability_type = mutable_tag;
@@ -150,7 +150,7 @@ struct constexpr_array {
     return stack;
   }
 
-  template <typename F>
+  template<typename F>
     requires micron::is_arithmetic_v<F>
   constexpr constexpr_array &
   fill(F val)
@@ -187,7 +187,7 @@ struct constexpr_array {
     return *this;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator+=(const constexpr_array<T, M> &o)
@@ -196,7 +196,7 @@ struct constexpr_array {
     return *this;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator-=(const constexpr_array<T, M> &o)
@@ -205,7 +205,7 @@ struct constexpr_array {
     return *this;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator*=(const constexpr_array<T, M> &o)
@@ -214,7 +214,7 @@ struct constexpr_array {
     return *this;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array &
   operator/=(const constexpr_array<T, M> &o)
@@ -262,7 +262,7 @@ struct constexpr_array {
     return *this;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator+(const constexpr_array<T, M> &o) const
@@ -272,7 +272,7 @@ struct constexpr_array {
     return res;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator-(const constexpr_array<T, M> &o) const
@@ -282,7 +282,7 @@ struct constexpr_array {
     return res;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator*(const constexpr_array<T, M> &o) const
@@ -292,7 +292,7 @@ struct constexpr_array {
     return res;
   }
 
-  template <usize M>
+  template<usize M>
     requires(M <= N)
   constexpr constexpr_array
   operator/(const constexpr_array<T, M> &o) const
@@ -321,6 +321,6 @@ struct constexpr_array {
   }
 };
 
-template <class T, usize N = 64> using constarray = constexpr_array<T, N>;
+template<class T, usize N = 64> using constarray = constexpr_array<T, N>;
 
-};     // namespace micron
+};      // namespace micron

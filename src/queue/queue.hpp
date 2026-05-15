@@ -18,8 +18,8 @@
 namespace micron
 {
 
-template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-class queue : public __mutable_memory_resource<T, Alloc>
+template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+class queue: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
   // index of the oldest live element
@@ -57,7 +57,7 @@ public:
     clear();
   }
 
-  queue(void) : __mem(N), head(0) {}
+  queue(void) : __mem(N), head(0) { }
 
   queue(const std::initializer_list<T> &lst) : __mem(lst.size()), head(0)
   {
@@ -252,4 +252,4 @@ public:
     return *this;
   }
 };
-};     // namespace micron
+};      // namespace micron

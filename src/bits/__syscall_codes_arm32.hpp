@@ -8,7 +8,7 @@
 using __nr_t = int;
 
 // set base to 0x900000 if OABI needed
-template <__nr_t __nr_Base = 0> struct arm32_syscalls {
+template<__nr_t __nr_Base = 0> struct arm32_syscalls {
   struct nr {
     static constexpr __nr_t syscall_base = __nr_Base;
 

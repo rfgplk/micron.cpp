@@ -21,7 +21,7 @@ namespace fp
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // curried scalar arithmetic
-template <typename Y>
+template<typename Y>
   requires micron::is_arithmetic_v<Y>
 auto
 add_c(const Y y) noexcept
@@ -36,7 +36,7 @@ add_c(const Y y) noexcept
   };
 }
 
-template <typename Y>
+template<typename Y>
   requires micron::is_arithmetic_v<Y>
 auto
 subtract_c(const Y y) noexcept
@@ -51,7 +51,7 @@ subtract_c(const Y y) noexcept
   };
 }
 
-template <typename Y>
+template<typename Y>
   requires micron::is_arithmetic_v<Y>
 auto
 multiply_c(const Y y) noexcept
@@ -66,7 +66,7 @@ multiply_c(const Y y) noexcept
   };
 }
 
-template <typename Y>
+template<typename Y>
   requires micron::is_arithmetic_v<Y>
 auto
 divide_c(const Y y) noexcept
@@ -81,7 +81,7 @@ divide_c(const Y y) noexcept
   };
 }
 
-template <typename Y>
+template<typename Y>
 auto
 pow_c(const Y y) noexcept
 {
@@ -93,7 +93,7 @@ pow_c(const Y y) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // safe_divide
-template <is_iterable_container C, typename Y>
+template<is_iterable_container C, typename Y>
   requires micron::is_arithmetic_v<Y>
 micron::option<C, division_by_zero_error>
 safe_divide(C cont, const Y y) noexcept
@@ -107,7 +107,7 @@ safe_divide(C cont, const Y y) noexcept
   return micron::option<C, division_by_zero_error>{ micron::move(cont) };
 }
 
-template <typename Y>
+template<typename Y>
   requires micron::is_arithmetic_v<Y>
 auto
 safe_divide_c(const Y y) noexcept
@@ -117,7 +117,7 @@ safe_divide_c(const Y y) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // option-lifted scalar arithmetic
-template <is_iterable_container C, typename E, typename Y>
+template<is_iterable_container C, typename E, typename Y>
   requires micron::is_arithmetic_v<Y>
 micron::option<C, E>
 add(micron::option<C, E> opt, const Y y) noexcept
@@ -132,7 +132,7 @@ add(micron::option<C, E> opt, const Y y) noexcept
   return micron::option<C, E>{ micron::move(cont) };
 }
 
-template <is_iterable_container C, typename E, typename Y>
+template<is_iterable_container C, typename E, typename Y>
   requires micron::is_arithmetic_v<Y>
 micron::option<C, E>
 subtract(micron::option<C, E> opt, const Y y) noexcept
@@ -147,7 +147,7 @@ subtract(micron::option<C, E> opt, const Y y) noexcept
   return micron::option<C, E>{ micron::move(cont) };
 }
 
-template <is_iterable_container C, typename E, typename Y>
+template<is_iterable_container C, typename E, typename Y>
   requires micron::is_arithmetic_v<Y>
 micron::option<C, E>
 multiply(micron::option<C, E> opt, const Y y) noexcept
@@ -162,7 +162,7 @@ multiply(micron::option<C, E> opt, const Y y) noexcept
   return micron::option<C, E>{ micron::move(cont) };
 }
 
-template <is_iterable_container C, typename E, typename Y>
+template<is_iterable_container C, typename E, typename Y>
   requires micron::is_arithmetic_v<Y>
 micron::option<C, division_by_zero_error>
 divide(micron::option<C, E> opt, const Y y) noexcept
@@ -178,7 +178,7 @@ divide(micron::option<C, E> opt, const Y y) noexcept
   return micron::option<C, division_by_zero_error>{ micron::move(cont) };
 }
 
-template <is_iterable_container C, typename E, typename Y>
+template<is_iterable_container C, typename E, typename Y>
 micron::option<C, E>
 pow(micron::option<C, E> opt, const Y y) noexcept
 {
@@ -190,7 +190,7 @@ pow(micron::option<C, E> opt, const Y y) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // element-wise zip arithmetic
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 add_zip(C a, const C &b) noexcept
 {
@@ -205,7 +205,7 @@ add_zip(C a, const C &b) noexcept
   return a;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 subtract_zip(C a, const C &b) noexcept
 {
@@ -220,7 +220,7 @@ subtract_zip(C a, const C &b) noexcept
   return a;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 multiply_zip(C a, const C &b) noexcept
 {
@@ -235,7 +235,7 @@ multiply_zip(C a, const C &b) noexcept
   return a;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<C, division_by_zero_error>
 divide_zip(C a, const C &b) noexcept
 {
@@ -251,7 +251,7 @@ divide_zip(C a, const C &b) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // inner_product
-template <is_iterable_container C, typename R = typename C::value_type>
+template<is_iterable_container C, typename R = typename C::value_type>
 R
 inner_product(const C &a, const C &b, R init = R{}) noexcept
 {
@@ -266,7 +266,7 @@ inner_product(const C &a, const C &b, R init = R{}) noexcept
   }
 }
 
-template <is_iterable_container C, typename R, typename AddFn, typename MulFn>
+template<is_iterable_container C, typename R, typename AddFn, typename MulFn>
   requires fn_fold<AddFn, R, R> && fn_binary_codomain<MulFn, typename C::value_type>
 R
 inner_product(const C &a, const C &b, R init, AddFn add_fn, MulFn mul_fn) noexcept
@@ -278,7 +278,7 @@ inner_product(const C &a, const C &b, R init, AddFn add_fn, MulFn mul_fn) noexce
   return init;
 }
 
-template <is_iterable_container C, typename R, typename AddFn, typename MulFn>
+template<is_iterable_container C, typename R, typename AddFn, typename MulFn>
   requires fn_fold<AddFn, R, R> && micron::is_invocable_v<MulFn, const typename C::value_type *, const typename C::value_type *>
            && (!fn_binary_codomain<MulFn, typename C::value_type>)
 R
@@ -291,7 +291,7 @@ inner_product(const C &a, const C &b, R init, AddFn add_fn, MulFn mul_fn) noexce
   return init;
 }
 
-template <is_iterable_container C, typename R>
+template<is_iterable_container C, typename R>
 R
 inner_product(const C &a, const C &b, R init, micron::function<R(R, R)> add_fn,
               micron::function<typename C::value_type(typename C::value_type, typename C::value_type)> mul_fn) noexcept
@@ -305,7 +305,7 @@ inner_product(const C &a, const C &b, R init, micron::function<R(R, R)> add_fn,
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // negate
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 negate(C cont) noexcept
 {
@@ -319,7 +319,7 @@ negate(C cont) noexcept
   return cont;
 }
 
-template <is_iterable_container C, typename E>
+template<is_iterable_container C, typename E>
 micron::option<C, E>
 negate(micron::option<C, E> opt) noexcept
 {
@@ -329,7 +329,7 @@ negate(micron::option<C, E> opt) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // abs
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires micron::is_signed_v<typename C::value_type>
 C
 abs(C cont) noexcept
@@ -340,7 +340,7 @@ abs(C cont) noexcept
   return cont;
 }
 
-template <is_iterable_container C, typename E>
+template<is_iterable_container C, typename E>
   requires micron::is_signed_v<typename C::value_type>
 micron::option<C, E>
 abs(micron::option<C, E> opt) noexcept
@@ -351,7 +351,7 @@ abs(micron::option<C, E> opt) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // safe_inner_product
-template <is_iterable_container C, typename R = typename C::value_type>
+template<is_iterable_container C, typename R = typename C::value_type>
 micron::option<R, bad_zip_error>
 safe_inner_product(const C &a, const C &b, R init = R{}) noexcept
 {
@@ -359,5 +359,5 @@ safe_inner_product(const C &a, const C &b, R init = R{}) noexcept
   return micron::option<R, bad_zip_error>{ fp::inner_product(a, b, init) };
 }
 
-};     // namespace fp
-};     // namespace micron
+};      // namespace fp
+};      // namespace micron

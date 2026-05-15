@@ -24,7 +24,7 @@ namespace micron
 namespace math
 {
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 constexpr T
 gcd(T a, T b)
@@ -57,7 +57,7 @@ gcd(T a, T b)
   }
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 constexpr T
 abs(T v)
@@ -69,7 +69,7 @@ abs(T v)
     return v;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 constexpr int
 digits(T x)
@@ -87,7 +87,7 @@ digits(T x)
   return count;
 }
 
-template <typename T>
+template<typename T>
 int
 __digits(T x)
 {
@@ -118,7 +118,7 @@ __digits(T x)
   return 0;
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(micron::is_integral_v<T> && micron::is_integral_v<F>)
 constexpr T
 power_loop(T x, F p)
@@ -130,7 +130,7 @@ power_loop(T x, F p)
   return r;
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(micron::is_integral_v<T> && micron::is_integral_v<F>)
 constexpr T
 power(T x, F p)
@@ -148,7 +148,7 @@ power(T x, F p)
   }
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 constexpr T
 pow(T base, i32 exp)
@@ -292,7 +292,7 @@ maxf128(flong x, flong y)
   return static_cast<flong>(mkbits::manip::fmax<f64>(f64(x), f64(y)));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_floating_point_v<T>)
 constexpr T
 fmax(T x, T y)
@@ -308,7 +308,7 @@ fmax(T x, T y)
   }
 }
 
-template <typename T>
+template<typename T>
   requires is_floating_point_v<T>
 constexpr T
 fmin(T a, T b)
@@ -384,7 +384,7 @@ remainderf128(flong x, f32 y)
   return static_cast<flong>(mkbits::rem::remainder<f64>(f64(x), f64(y)));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 constexpr T
 nearest_pow2(T x)
@@ -400,7 +400,7 @@ nearest_pow2(T x)
   return (v - lower <= upper - v) ? T(lower) : T(upper);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 constexpr T
 nearest_pow2ll(T x)
@@ -416,7 +416,7 @@ nearest_pow2ll(T x)
   return (v - lower <= upper - v) ? T(lower) : T(upper);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 T
 __nearest_pow2ll(T x)
@@ -427,7 +427,7 @@ __nearest_pow2ll(T x)
                        : (1u << ((8 * sizeof(x)) - __builtin_clzll(x))));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 T
 __nearest_pow2(T x)
@@ -443,7 +443,7 @@ __nearest_pow2(T x)
 //  note: TODO
 // }
 
-template <typename T>
+template<typename T>
   requires(micron::is_floating_point_v<T>)
 constexpr T
 round(T t)
@@ -454,7 +454,7 @@ round(T t)
     return T((i64)(t - T(0.5)));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_floating_point_v<T>)
 constexpr T
 ceil(T s)
@@ -464,7 +464,7 @@ ceil(T s)
   return T(i);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_floating_point_v<T>)
 constexpr T
 floor(T s)
@@ -474,7 +474,7 @@ floor(T s)
   return T(i);
 }
 
-template <typename R, typename T>
+template<typename R, typename T>
   requires(micron::is_convertible_v<R, T> and micron::is_floating_point_v<T>)
 constexpr R
 round(T t)
@@ -485,7 +485,7 @@ round(T t)
     return static_cast<R>(T((i64)(t - T(0.5))));
 }
 
-template <typename R, typename T>
+template<typename R, typename T>
   requires(micron::is_convertible_v<R, T> and micron::is_floating_point_v<T>)
 constexpr R
 ceil(T s)
@@ -495,7 +495,7 @@ ceil(T s)
   return static_cast<R>(T(i));
 }
 
-template <typename R, typename T>
+template<typename R, typename T>
   requires(micron::is_convertible_v<R, T> and micron::is_floating_point_v<T>)
 constexpr R
 floor(T s)
@@ -505,28 +505,28 @@ floor(T s)
   return static_cast<R>(T(i));
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 fround(T x) noexcept
 {
   return round(x);
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 fceil(T x) noexcept
 {
   return ceil(x);
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 ffloor(T x) noexcept
 {
   return floor(x);
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 ftrunc(T x) noexcept
 {
@@ -547,7 +547,7 @@ isfinite(f64 x)
   return __builtin_isfinite(x);
 }
 
-template <typename T>
+template<typename T>
 constexpr int
 isign(T x) noexcept
 {
@@ -773,7 +773,7 @@ fabs(f64 x)
 }
 #endif
 
-template <typename T>
+template<typename T>
 constexpr T
 fabsmax(T a, T b)
 {
@@ -852,7 +852,7 @@ ffmal(long double a, long double b, long double c) noexcept
   return __builtin_fmal(a, b, c);
 }
 
-template <typename T>
+template<typename T>
   requires is_floating_point_v<T>
 constexpr T
 ffract(T x)
@@ -860,7 +860,7 @@ ffract(T x)
   return x - static_cast<T>(static_cast<long long>(x));
 }
 
-template <typename T>
+template<typename T>
   requires is_floating_point_v<T>
 constexpr T
 fclamp(T x, T lo, T hi)
@@ -868,5 +868,5 @@ fclamp(T x, T lo, T hi)
   return (x < lo) ? lo : ((x > hi) ? hi : x);
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

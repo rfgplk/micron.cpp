@@ -12,7 +12,7 @@
 
 namespace micron
 {
-template <typename T> using fmap = micron::hopscotch_map<micron::hash64_t, T>;
-template <typename K, typename V> using map = micron::robin_map<K, V>;
-template <typename K, typename V, int Dg = 32> using bmap = micron::btree_map<K, V, Dg>;
-};     // namespace micron
+template<typename T> using fmap = micron::hopscotch_map<micron::hash64_t, T>;
+template<typename K, typename V> using map = micron::robin_map<K, V>;
+template<typename K, typename V> using bmap = micron::btree_map<K, V>;
+};      // namespace micron

@@ -83,7 +83,7 @@ struct StrBox {
   }
 };
 
-}     // anonymous namespace
+}      // anonymous namespace
 
 int
 main()
@@ -227,7 +227,7 @@ main()
     cv.push(99);
     require_true(cv.full());
     require(cv.size(), size_t(4));
-    require(cv.front(), 1);     // 0 was evicted
+    require(cv.front(), 1);      // 0 was evicted
     require(cv.back(), 99);
   }
   end_test_case();
@@ -264,7 +264,7 @@ main()
   test_case("pop_front on empty does not underflow size");
   {
     micron::circle_vector<int, 8> cv;
-    cv.pop_front();     // must not crash or wrap size
+    cv.pop_front();      // must not crash or wrap size
     require_true(cv.empty());
     require(cv.size(), size_t(0));
   }

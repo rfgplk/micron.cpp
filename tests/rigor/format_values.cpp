@@ -24,7 +24,7 @@ namespace fmt = micron::format;
 // Convenience aliases
 // ============================================================
 using hstr = micron::hstring<schar>;
-template <usize N> using sstr = micron::sstring<N, schar>;
+template<usize N> using sstr = micron::sstring<N, schar>;
 
 // ============================================================
 // Helper: build an hstring from a raw literal
@@ -46,7 +46,7 @@ eq(const hstr &lhs, const char *rhs)
   return true;
 }
 
-template <usize N>
+template<usize N>
 static bool
 eq(const sstr<N> &lhs, const char *rhs)
 {
@@ -80,7 +80,7 @@ main(int, char **)
     require_true(eq(micron::int_to_string<i32>(12345), "12345"));
     require_true(eq(micron::int_to_string<i32>(99999999), "99999999"));
     require_true(eq(micron::int_to_string<i32>(100000000), "100000000"));
-    require_true(eq(micron::int_to_string<i32>(2147483647), "2147483647"));     // INT32_MAX
+    require_true(eq(micron::int_to_string<i32>(2147483647), "2147483647"));      // INT32_MAX
   }
   end_test_case();
 
@@ -92,7 +92,7 @@ main(int, char **)
     require_true(eq(micron::int_to_string<i32>(-10), "-10"));
     require_true(eq(micron::int_to_string<i32>(-12345), "-12345"));
     require_true(eq(micron::int_to_string<i32>(-2147483647), "-2147483647"));
-    require_true(eq(micron::int_to_string<i32>(-2147483647 - 1), "-2147483648"));     // INT32_MIN
+    require_true(eq(micron::int_to_string<i32>(-2147483647 - 1), "-2147483648"));      // INT32_MIN
   }
   end_test_case();
 
@@ -206,7 +206,7 @@ main(int, char **)
   {
     require_true(eq(micron::int_to_string_padded<i32>(7, 4u), "0007"));
     require_true(eq(micron::int_to_string_padded<i32>(-7, 4u), "-007"));
-    require_true(eq(micron::int_to_string_padded<i32>(12345, 3u), "12345"));     // already wider
+    require_true(eq(micron::int_to_string_padded<i32>(12345, 3u), "12345"));      // already wider
     require_true(eq(micron::int_to_string_padded<i32>(0, 5u), "00000"));
   }
   end_test_case();
@@ -259,7 +259,7 @@ main(int, char **)
   {
     require_true(eq(f2s(3.14f), "3.14E0"));
     require_true(eq(f2s(-273.15f), "-2.7315E2"));
-    require_true(eq(f2s(12345.6789f), "1.2345679E4"));     // f32 precision tail
+    require_true(eq(f2s(12345.6789f), "1.2345679E4"));      // f32 precision tail
     require_true(eq(f2s(1e-10f), "1E-10"));
     require_true(eq(f2s(1e10f), "1E10"));
   }
@@ -313,9 +313,9 @@ main(int, char **)
   {
     require_true(eq(d2s(0.5), "0.5"));
     require_true(eq(d2s(0.25), "0.25"));
-    require_true(eq(d2s(0.1), "0.1"));     // shortest round-trip is "0.1"
+    require_true(eq(d2s(0.1), "0.1"));      // shortest round-trip is "0.1"
     require_true(eq(d2s(0.2), "0.2"));
-    require_true(eq(d2s(0.1 + 0.2), "0.30000000000000004"));     // canonical 0.1+0.2 quirk
+    require_true(eq(d2s(0.1 + 0.2), "0.30000000000000004"));      // canonical 0.1+0.2 quirk
     require_true(eq(d2s(3.14), "3.14"));
     require_true(eq(d2s(3.14159265358979), "3.14159265358979"));
     require_true(eq(d2s(-273.15), "-273.15"));
@@ -325,10 +325,10 @@ main(int, char **)
 
   test_case("d2s – scientific format threshold (sciExp < -3 or > 7)");
   {
-    require_true(eq(d2s(1e-3), "0.001"));         // sciExp = -3, fixed
-    require_true(eq(d2s(1e-4), "1e-4"));          // sciExp = -4, scientific
-    require_true(eq(d2s(1e7), "10000000.0"));     // sciExp = 7, fixed
-    require_true(eq(d2s(1e8), "1e+8"));           // sciExp = 8, scientific
+    require_true(eq(d2s(1e-3), "0.001"));          // sciExp = -3, fixed
+    require_true(eq(d2s(1e-4), "1e-4"));           // sciExp = -4, scientific
+    require_true(eq(d2s(1e7), "10000000.0"));      // sciExp = 7, fixed
+    require_true(eq(d2s(1e8), "1e+8"));            // sciExp = 8, scientific
   }
   end_test_case();
 
@@ -339,15 +339,15 @@ main(int, char **)
     require_true(eq(d2s(1e30), "1e+30"));
     require_true(eq(d2s(1e100), "1e+100"));
     require_true(eq(d2s(1e200), "1e+200"));
-    require_true(eq(d2s(1.7976931348623157e+308), "1.7976931348623157e+308"));     // DBL_MAX
+    require_true(eq(d2s(1.7976931348623157e+308), "1.7976931348623157e+308"));      // DBL_MAX
     require_true(eq(d2s(-1.5e+200), "-1.5e+200"));
   }
   end_test_case();
 
   test_case("d2s – subnormals & DBL_MIN");
   {
-    require_true(eq(d2s(4.9406564584124654e-324), "5e-324"));                      // smallest denormal
-    require_true(eq(d2s(2.2250738585072014e-308), "2.2250738585072014e-308"));     // DBL_MIN
+    require_true(eq(d2s(4.9406564584124654e-324), "5e-324"));                       // smallest denormal
+    require_true(eq(d2s(2.2250738585072014e-308), "2.2250738585072014e-308"));      // DBL_MIN
     require_true(eq(d2s(1e-300), "1e-300"));
     require_true(eq(d2s(-1e-200), "-1e-200"));
   }
@@ -404,10 +404,10 @@ main(int, char **)
     // exp10 in [-4, prec): fixed with `precision` digits after the dot;
     // otherwise scientific with prec-1 digits after the dot.
     // (note: scientific path truncates rather than round-half-even.)
-    require_true(eq(micron::to_general(0.0001, 6u), "0.000100"));            // exp10=-4 → fixed
-    require_true(eq(micron::to_general(123456.0, 6u), "123456.000000"));     // exp10=5 → fixed
-    require_true(eq(micron::to_general(1234567.0, 6u), "1.23456e+06"));      // exp10=6 → scientific
-    require_true(eq(micron::to_general(1e-5, 6u), "1.00000e-05"));           // exp10=-5 → scientific
+    require_true(eq(micron::to_general(0.0001, 6u), "0.000100"));             // exp10=-4 → fixed
+    require_true(eq(micron::to_general(123456.0, 6u), "123456.000000"));      // exp10=5 → fixed
+    require_true(eq(micron::to_general(1234567.0, 6u), "1.23456e+06"));       // exp10=6 → scientific
+    require_true(eq(micron::to_general(1e-5, 6u), "1.00000e-05"));            // exp10=-5 → scientific
   }
   end_test_case();
 
@@ -460,7 +460,7 @@ main(int, char **)
     f64 a = 0.5;
     f64 b = 3.14;
     f64 c = 0.1 + 0.2;
-    require_true(eq(fmt::format("{}", a), "0.500000"));     // default prec=6, default type='\0' -> d2f
+    require_true(eq(fmt::format("{}", a), "0.500000"));      // default prec=6, default type='\0' -> d2f
     require_true(eq(fmt::format("{}", b), "3.140000"));
     require_true(eq(fmt::format("{}", c), "0.300000"));
   }
@@ -521,7 +521,7 @@ main(int, char **)
   {
     require_true(eq(fmt::format("{:.3}", "abcdef"), "abc"));
     require_true(eq(fmt::format("{:.0}", "anything"), ""));
-    require_true(eq(fmt::format("{:.10}", "hi"), "hi"));     // precision > length
+    require_true(eq(fmt::format("{:.10}", "hi"), "hi"));      // precision > length
   }
   end_test_case();
 
@@ -544,7 +544,7 @@ main(int, char **)
     require_true(eq(fmt::pad_right("hi", 5u), "hi   "));
     require_true(eq(fmt::pad_right("hi", 5u, '*'), "hi***"));
     require_true(eq(fmt::pad_center("hi", 6u), "  hi  "));
-    require_true(eq(fmt::pad_center("hi", 5u, '-'), "-hi--"));     // odd: extra goes right
+    require_true(eq(fmt::pad_center("hi", 5u, '-'), "-hi--"));      // odd: extra goes right
     require_true(eq(fmt::pad_left("already-wide", 4u), "already-wide"));
   }
   end_test_case();
@@ -564,7 +564,7 @@ main(int, char **)
     f32 sum = 0.1f + 0.2f;
     require_true(eq(fmt::precision(pi, 2u), "3.14"));
     require_true(eq(fmt::precision(pi, 6u), "3.140000"));
-    require_true(eq(fmt::precision(sum, 6u), "0.300000"));     // f32 add rounds clean
+    require_true(eq(fmt::precision(sum, 6u), "0.300000"));      // f32 add rounds clean
   }
   end_test_case();
 

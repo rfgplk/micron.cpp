@@ -139,7 +139,7 @@ struct line {
   char buf[256];
   u32 pos;
 
-  constexpr line() noexcept : pos(0) {}
+  constexpr line() noexcept : pos(0) { }
 
   void
   s(const char *p) noexcept
@@ -233,7 +233,7 @@ print_cell(const cell &c)
   micron::io::println(ln.str());
 }
 
-template <typename Kernel>
+template<typename Kernel>
 [[gnu::noinline]] cell
 measure(const char *name, Kernel &&kernel) noexcept
 {
@@ -356,7 +356,7 @@ sweep_rotations()
   }));
 }
 
-template <mc::math::quaternions::euler_order Ord>
+template<mc::math::quaternions::euler_order Ord>
 void
 do_euler_pair(const char *name)
 {
@@ -367,7 +367,7 @@ do_euler_pair(const char *name)
   print_cell(c1);
 }
 
-template <mc::math::quaternions::euler_order Ord>
+template<mc::math::quaternions::euler_order Ord>
 void
 do_to_euler(const char *name)
 {
@@ -461,7 +461,7 @@ sweep_kinematics()
   }));
 }
 
-};     // namespace
+};      // namespace
 
 int
 main(void)

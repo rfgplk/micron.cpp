@@ -23,8 +23,8 @@
 
 namespace micron
 {
-template <is_movable_object t, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-class istack : public __immutable_memory_resource<t, Alloc>
+template<is_movable_object t, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+class istack: public __immutable_memory_resource<t, Alloc>
 {
   using __mem = __immutable_memory_resource<t, Alloc>;
 
@@ -78,7 +78,7 @@ public:
     // clear(); CANT BE HERE DON'T WILL INF REC LOOP
   }
 
-  istack() : __mem(N) {}
+  istack() : __mem(N) { }
 
   istack(const umax_t n) : __mem(n)
   {
@@ -102,18 +102,18 @@ public:
     }
   }
 
-  template <typename K = t>
+  template<typename K = t>
     requires(micron::is_convertible_v<K, t>)
   istack(const stack<K> &o) : __mem(o.size())
   {
     // TODO: optimize
-    for ( usize i = o.size(); i > 0; --i ) _push(o[i]);     // we want it to be inverse aka as it is in memory
+    for ( usize i = o.size(); i > 0; --i ) _push(o[i]);      // we want it to be inverse aka as it is in memory
     _push(o[0]);
   }
 
   istack(const istack &) = delete;
 
-  istack(istack &&o) : __mem(micron::move(o)) {}
+  istack(istack &&o) : __mem(micron::move(o)) { }
 
   istack(const istack *o) : __mem(o->capacity * sizeof(t))
   {
@@ -214,4 +214,4 @@ public:
     return micron::is_pod_v<t>;
   }
 };
-};     // namespace micron
+};      // namespace micron

@@ -11,7 +11,7 @@ namespace micron
 {
 
 // a constant pointer, cannot be reassigned nor written to
-template <class Type> class const_pointer : private __internal_pointer_alloc<Type>
+template<class Type> class const_pointer: private __internal_pointer_alloc<Type>
 {
   const Type *const internal_pointer;
 
@@ -26,14 +26,14 @@ public:
   ~const_pointer() { __alloc::__impl_constdealloc(internal_pointer); }
 
   // always allocates a default-constructed const_pointer is never null.
-  const_pointer() : internal_pointer(__alloc::__impl_alloc()) {}
+  const_pointer() : internal_pointer(__alloc::__impl_alloc()) { }
 
   // null construction is explicitly forbidden const_pointer always owns something.
-  template <is_nullptr V> const_pointer(V) = delete;
+  template<is_nullptr V> const_pointer(V) = delete;
 
   const_pointer(Type *&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; }
 
-  template <class... Args> const_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)) {}
+  template<class... Args> const_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)) { }
 
   const_pointer(const_pointer &&p) = delete;
   const_pointer(const const_pointer &p) = delete;
@@ -98,7 +98,7 @@ public:
   void clear() = delete;
 };
 
-template <class Type> class const_pointer<Type[]> : private __internal_pointer_arralloc<Type>
+template<class Type> class const_pointer<Type[]>: private __internal_pointer_arralloc<Type>
 {
   const Type *const internal_pointer;
   const usize array_size;
@@ -113,11 +113,11 @@ public:
 
   ~const_pointer() { __alloc::__impl_constdealloc(internal_pointer); }
 
-  const_pointer() : internal_pointer(nullptr), array_size(0) {}
+  const_pointer() : internal_pointer(nullptr), array_size(0) { }
 
-  explicit const_pointer(usize size) : internal_pointer(__alloc::__impl_alloc(size)), array_size(size) {}
+  explicit const_pointer(usize size) : internal_pointer(__alloc::__impl_alloc(size)), array_size(size) { }
 
-  template <is_nullptr V> const_pointer(V) = delete;
+  template<is_nullptr V> const_pointer(V) = delete;
 
   const_pointer(Type *&raw_ptr, usize size) : internal_pointer(raw_ptr), array_size(size) { raw_ptr = nullptr; }
 
@@ -199,4 +199,4 @@ public:
   void clear() = delete;
 };
 
-}     // namespace micron
+}      // namespace micron

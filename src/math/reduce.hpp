@@ -15,7 +15,7 @@ namespace micron
 namespace math
 {
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 sum(const T *first, const T *last) noexcept
 {
@@ -24,7 +24,7 @@ sum(const T *first, const T *last) noexcept
   return acc;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 prod(const T *first, const T *last) noexcept
 {
@@ -37,7 +37,7 @@ prod(const T *first, const T *last) noexcept
 #pragma GCC push_options
 #pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 kahan_sum(const F *first, const F *last) noexcept
 {
@@ -51,7 +51,7 @@ kahan_sum(const F *first, const F *last) noexcept
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 neumaier_sum(const F *first, const F *last) noexcept
 {
@@ -73,7 +73,7 @@ neumaier_sum(const F *first, const F *last) noexcept
 
 #pragma GCC pop_options
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 mean(const F *first, const F *last) noexcept
 {
@@ -82,7 +82,7 @@ mean(const F *first, const F *last) noexcept
   return kahan_sum<F>(first, last) / F(n);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::flatten]] inline constexpr f64
 mean(const T *first, const T *last) noexcept
@@ -94,14 +94,14 @@ mean(const T *first, const T *last) noexcept
   return f64(s) / f64(n);
 }
 
-template <ieee754_floating F> struct moments {
+template<ieee754_floating F> struct moments {
   F mean;
   F var;
   usize n;
 };
 
 // Welford's online algorithm
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr moments<F>
 welford(const F *first, const F *last) noexcept
 {
@@ -117,21 +117,21 @@ welford(const F *first, const F *last) noexcept
   return m;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 var(const F *first, const F *last) noexcept
 {
   return welford<F>(first, last).var;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 std_dev(const F *first, const F *last) noexcept
 {
   return mk::pow_ns::sqrt<F>(var<F>(first, last));
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 min(const T *first, const T *last) noexcept
 {
@@ -141,7 +141,7 @@ min(const T *first, const T *last) noexcept
   return m;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 max(const T *first, const T *last) noexcept
 {
@@ -151,7 +151,7 @@ max(const T *first, const T *last) noexcept
   return m;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 argmin(const T *first, const T *last) noexcept
 {
@@ -166,7 +166,7 @@ argmin(const T *first, const T *last) noexcept
   return idx;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 argmax(const T *first, const T *last) noexcept
 {
@@ -181,7 +181,7 @@ argmax(const T *first, const T *last) noexcept
   return idx;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 ptp(const T *first, const T *last) noexcept
 {
@@ -199,7 +199,7 @@ namespace __select
 {
 
 // modified quickselect O(n)
-template <typename T>
+template<typename T>
 inline constexpr void
 quickselect(T *lo, T *hi, T *k) noexcept
 {
@@ -242,9 +242,9 @@ quickselect(T *lo, T *hi, T *k) noexcept
   }
 }
 
-};     // namespace __select
+};      // namespace __select
 
-template <typename T>
+template<typename T>
 [[nodiscard]] inline T
 nth_element(T *first, T *last, usize k) noexcept
 {
@@ -253,7 +253,7 @@ nth_element(T *first, T *last, usize k) noexcept
   return first[k];
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard]] inline T
 median(T *first, T *last) noexcept
 {
@@ -266,7 +266,7 @@ median(T *first, T *last) noexcept
   return T((lo + hi) / T(2));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 quantile(F *first, F *last, F q) noexcept
 {
@@ -284,7 +284,7 @@ quantile(F *first, F *last, F q) noexcept
   return a + frac * (b - a);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 cumsum(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept
 {
@@ -295,7 +295,7 @@ cumsum(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ 
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 cumprod(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept
 {
@@ -309,21 +309,21 @@ cumprod(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // container overloads
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 sum(const C &c) noexcept
 {
   return sum(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 prod(const C &c) noexcept
 {
   return prod(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 kahan_sum(const C &c) noexcept
@@ -331,7 +331,7 @@ kahan_sum(const C &c) noexcept
   return kahan_sum<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 neumaier_sum(const C &c) noexcept
@@ -339,14 +339,14 @@ neumaier_sum(const C &c) noexcept
   return neumaier_sum<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr auto
 mean(const C &c) noexcept
 {
   return mean(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 var(const C &c) noexcept
@@ -354,7 +354,7 @@ var(const C &c) noexcept
   return var<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 std_dev(const C &c) noexcept
@@ -362,7 +362,7 @@ std_dev(const C &c) noexcept
   return std_dev<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr moments<typename C::value_type>
 welford(const C &c) noexcept
@@ -370,49 +370,49 @@ welford(const C &c) noexcept
   return welford<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 min(const C &c) noexcept
 {
   return min(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 max(const C &c) noexcept
 {
   return max(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 argmin(const C &c) noexcept
 {
   return argmin(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 argmax(const C &c) noexcept
 {
   return argmax(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 ptp(const C &c) noexcept
 {
   return ptp(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard]] inline typename C::value_type
 median(C &c) noexcept
 {
   return median(c.begin(), c.end());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard]] inline typename C::value_type
 quantile(C &c, typename C::value_type q) noexcept
@@ -420,19 +420,19 @@ quantile(C &c, typename C::value_type q) noexcept
   return quantile<typename C::value_type>(c.begin(), c.end(), q);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 cumsum(const C &in, C &out) noexcept
 {
   cumsum(in.cbegin(), in.cend(), out.begin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 cumprod(const C &in, C &out) noexcept
 {
   cumprod(in.cbegin(), in.cend(), out.begin());
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

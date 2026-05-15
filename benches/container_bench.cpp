@@ -43,7 +43,7 @@ struct point3 {
   f64 z;
 };
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline u64
 reduce_one(const T &v) noexcept
 {
@@ -53,7 +53,7 @@ reduce_one(const T &v) noexcept
     return (u64)v.x;
 }
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline T
 make_from(u64 i) noexcept
 {
@@ -121,7 +121,7 @@ struct line {
   char buf[256];
   u32 pos;
 
-  constexpr line() noexcept : pos(0) {}
+  constexpr line() noexcept : pos(0) { }
 
   void
   s(const char *p) noexcept
@@ -243,7 +243,7 @@ print_cell(const cell &c)
   micron::io::println(ln.str());
 }
 
-template <typename Setup, typename Kernel>
+template<typename Setup, typename Kernel>
 [[gnu::noinline]] cell
 measure(const char *name, u64 size, u64 elem_bytes, u64 ops_per_rep, u64 reps_per_meas, Setup &&setup, Kernel &&kernel) noexcept
 {
@@ -296,7 +296,7 @@ reps_for(u64 ops_per_rep) noexcept
   return r;
 }
 
-template <typename T>
+template<typename T>
 void
 sweep_vector_t(const char *tag)
 {
@@ -450,7 +450,7 @@ sweep_vector_t(const char *tag)
     }
 
     if ( N <= (1ULL << 12) ) {
-      auto setup = [] {};
+      auto setup = [] { };
       auto kernel = [&] {
         mc::vector<T> v;
         v.reserve(N);
@@ -461,7 +461,7 @@ sweep_vector_t(const char *tag)
   }
 }
 
-template <typename T>
+template<typename T>
 void
 sweep_fvector_t(const char *tag)
 {
@@ -513,7 +513,7 @@ sweep_fvector_t(const char *tag)
   }
 }
 
-template <typename T, usize Cap>
+template<typename T, usize Cap>
 void
 sweep_svector_at(const char *tag)
 {
@@ -525,7 +525,7 @@ sweep_svector_at(const char *tag)
 
   {
     mc::svector<T, Cap> v;
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       v.clear();
       for ( u64 i = 0; i < Cap; ++i ) v.push_back(T{});
@@ -561,7 +561,7 @@ sweep_svector_at(const char *tag)
   }
 }
 
-template <typename T, usize Cap>
+template<typename T, usize Cap>
 void
 sweep_array_at(const char *tag)
 {
@@ -576,7 +576,7 @@ sweep_array_at(const char *tag)
 
   {
     static volatile u64 sink = 0;
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       u64 s = 0;
       for ( usize i = 0; i < Cap; ++i ) s += reduce_one(g_a[i]);
@@ -587,7 +587,7 @@ sweep_array_at(const char *tag)
 
   {
     static volatile u64 sink = 0;
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       u64 s = 0;
       for ( auto &v : g_a ) s += reduce_one(v);
@@ -597,7 +597,7 @@ sweep_array_at(const char *tag)
   }
 
   {
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       g_b = g_a;
       clobber(&g_b);
@@ -606,7 +606,7 @@ sweep_array_at(const char *tag)
   }
 
   {
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       for ( usize i = 0; i < Cap; ++i ) g_a[i] = make_from<T>(i);
       clobber(&g_a);
@@ -615,7 +615,7 @@ sweep_array_at(const char *tag)
   }
 }
 
-template <typename T, usize Cap>
+template<typename T, usize Cap>
 void
 sweep_farray_at(const char *tag)
 {
@@ -630,7 +630,7 @@ sweep_farray_at(const char *tag)
 
   {
     static volatile u64 sink = 0;
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       u64 s = 0;
       for ( usize i = 0; i < Cap; ++i ) s += reduce_one(g_a[i]);
@@ -639,7 +639,7 @@ sweep_farray_at(const char *tag)
     print_cell(measure("iterate-sum        ", Cap, sizeof(T), Cap, reps_for(Cap), setup, kernel));
   }
   {
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       g_b = g_a;
       clobber(&g_b);
@@ -647,7 +647,7 @@ sweep_farray_at(const char *tag)
     print_cell(measure("copy-assign        ", Cap, sizeof(T), Cap, reps_for(Cap), setup, kernel));
   }
   {
-    auto setup = [] {};
+    auto setup = [] { };
     auto kernel = [&] {
       for ( usize i = 0; i < Cap; ++i ) g_a[i] = make_from<T>(i);
       clobber(&g_a);
@@ -656,7 +656,7 @@ sweep_farray_at(const char *tag)
   }
 }
 
-};     // namespace
+};      // namespace
 
 int
 main(void)

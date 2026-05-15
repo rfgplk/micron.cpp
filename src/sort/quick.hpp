@@ -15,7 +15,7 @@ namespace micron
 {
 namespace sort
 {
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 void
 __quick(typename T::iterator start, max_t low, max_t high, Cmp comp)
 {
@@ -40,7 +40,7 @@ __quick(typename T::iterator start, max_t low, max_t high, Cmp comp)
   }
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 __quick(typename T::iterator start, max_t low, max_t high)
 {
@@ -65,7 +65,7 @@ __quick(typename T::iterator start, max_t low, max_t high)
   }
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 __quick(T &arr, max_t low, max_t high)
 {
@@ -90,7 +90,7 @@ __quick(T &arr, max_t low, max_t high)
   }
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 void
 __quick(T &arr, max_t low, max_t high, Cmp comp)
 {
@@ -115,7 +115,7 @@ __quick(T &arr, max_t low, max_t high, Cmp comp)
   }
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 typename T::iterator
 quick(typename T::iterator start, typename T::iterator end)
 {
@@ -123,7 +123,7 @@ quick(typename T::iterator start, typename T::iterator end)
   return start;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 typename T::iterator
 quick(typename T::iterator start, typename T::iterator end, Cmp comp)
 {
@@ -131,7 +131,7 @@ quick(typename T::iterator start, typename T::iterator end, Cmp comp)
   return start;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T &
 quick(T &arr)
 {
@@ -139,7 +139,7 @@ quick(T &arr)
   return arr;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T &
 quick(T &arr, typename T::size_type lim)
 {
@@ -147,7 +147,7 @@ quick(T &arr, typename T::size_type lim)
   return arr;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 T &
 quick(T &arr, typename T::size_type lim, Cmp comp)
 {
@@ -155,7 +155,7 @@ quick(T &arr, typename T::size_type lim, Cmp comp)
   return arr;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 T &
 quick(T &arr, Cmp comp)
 {
@@ -163,5 +163,5 @@ quick(T &arr, Cmp comp)
   return arr;
 }
 
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

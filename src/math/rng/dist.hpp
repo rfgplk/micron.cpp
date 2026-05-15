@@ -33,7 +33,7 @@ namespace dist
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // uniform_real
-template <ieee754_floating F = f64, rng_concept Rng>
+template<ieee754_floating F = f64, rng_concept Rng>
 [[nodiscard, gnu::always_inline]] inline F
 uniform_real(Rng &g) noexcept
 {
@@ -43,11 +43,11 @@ uniform_real(Rng &g) noexcept
     return F((r >> 11) * (1.0 / 9007199254740992.0));
   } else {
     u64 r = g.next();
-    return F((r >> 40) * (1.0f / 16777216.0f));     // 24-bit f32 mantissa
+    return F((r >> 40) * (1.0f / 16777216.0f));      // 24-bit f32 mantissa
   }
 }
 
-template <ieee754_floating F, rng_concept Rng>
+template<ieee754_floating F, rng_concept Rng>
 [[nodiscard, gnu::always_inline]] inline F
 uniform_real(Rng &g, F lo, F hi) noexcept
 {
@@ -56,7 +56,7 @@ uniform_real(Rng &g, F lo, F hi) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // uniform_int via Lemire
-template <typename U, rng_concept Rng>
+template<typename U, rng_concept Rng>
   requires(micron::is_unsigned_v<U> && micron::is_integral_v<U>)
 [[nodiscard, gnu::always_inline]] inline U
 uniform_uint_below(Rng &g, U range) noexcept
@@ -91,7 +91,7 @@ uniform_uint_below(Rng &g, U range) noexcept
   }
 }
 
-template <typename T, rng_concept Rng>
+template<typename T, rng_concept Rng>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline T
 uniform_int(Rng &g, T lo, T hi) noexcept
@@ -104,7 +104,7 @@ uniform_int(Rng &g, T lo, T hi) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%
 // bernoulli
-template <rng_concept Rng>
+template<rng_concept Rng>
 [[nodiscard, gnu::always_inline]] inline bool
 bernoulli(Rng &g, f64 p = 0.5) noexcept
 {
@@ -116,7 +116,7 @@ bernoulli(Rng &g, f64 p = 0.5) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // normal via the Marsaglia polar alg
 
-template <ieee754_floating F = f64, rng_concept Rng>
+template<ieee754_floating F = f64, rng_concept Rng>
 [[nodiscard]] inline F
 normal(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
 {
@@ -133,7 +133,7 @@ normal(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%
 // exp_dist
-template <ieee754_floating F = f64, rng_concept Rng>
+template<ieee754_floating F = f64, rng_concept Rng>
 [[nodiscard, gnu::always_inline]] inline F
 exp_dist(Rng &g, F lambda = F(1)) noexcept
 {
@@ -146,7 +146,7 @@ exp_dist(Rng &g, F lambda = F(1)) noexcept
 
 // %%%%%%%%%%%%%%%
 // poisson
-template <typename I = i64, rng_concept Rng>
+template<typename I = i64, rng_concept Rng>
 [[nodiscard]] inline I
 poisson(Rng &g, f64 lambda) noexcept
 {
@@ -166,7 +166,7 @@ poisson(Rng &g, f64 lambda) noexcept
   return I(v + 0.5);
 }
 
-};     // namespace dist
-};     // namespace rng
-};     // namespace math
-};     // namespace micron
+};      // namespace dist
+};      // namespace rng
+};      // namespace math
+};      // namespace micron

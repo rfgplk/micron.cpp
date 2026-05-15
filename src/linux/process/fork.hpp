@@ -19,13 +19,13 @@ constexpr static const int __fork_flags_parent = posix::clone_parent;
 int
 __base_fork()
 {
-  int pid = micron::posix::__fork_clone(posix::sig_chld);     // should be posix::sig_chld
+  int pid = micron::posix::__fork_clone(posix::sig_chld);      // should be posix::sig_chld
   if ( pid == -1 ) exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 
 // fork and spin off child with dedicated memory stack, run function pointed to
-template <auto Fn = __default_callback, int Stack = default_stack_size, typename... Args>
+template<auto Fn = __default_callback, int Stack = default_stack_size, typename... Args>
 int
 __base_fork(Args &&...args)
 {
@@ -44,7 +44,7 @@ fork()
 }
 
 // implementation of ::fork() but automatically wait for child proc to end
-template <int Stack = default_stack_size>
+template<int Stack = default_stack_size>
 int
 wfork()
 {
@@ -59,14 +59,14 @@ wfork()
   return status;
 }
 
-template <auto Fn, typename... Args>
+template<auto Fn, typename... Args>
 int
 fork(Args &&...args)
 {
   return __base_fork<Fn>(micron::forward<Args>(args)...);
 }
 
-template <auto Fn, typename... Args>
+template<auto Fn, typename... Args>
 int
 wfork(Args &&...args)
 {
@@ -81,4 +81,4 @@ wfork(Args &&...args)
   return status;
 }
 
-};     // namespace micron
+};      // namespace micron

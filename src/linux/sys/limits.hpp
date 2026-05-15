@@ -169,7 +169,7 @@ struct limits_t {
   rlimit_t lim[rlimit_nlimits];
   ~limits_t() = default;
 
-  limits_t(const pid_t proc = 0)     // for us by default
+  limits_t(const pid_t proc = 0)      // for us by default
   {
     for ( rlim_t i = 0; i < rlimit_nlimits; i++ ) get_process_limits(proc, i, lim[i]);
   }
@@ -198,7 +198,7 @@ struct limits_t {
   }
 };
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron
 
 ;

@@ -62,7 +62,7 @@ near_d_relative(double a, double b, double rel = 1e-10, double abs_floor = 1e-12
 }
 
 // stride generator: ~uniform on a log scale so we hit small / mid / large x
-template <typename Fn>
+template<typename Fn>
 static void
 sweep_log_stride(double x_min, double x_max, unsigned samples, Fn &&fn)
 {
@@ -76,7 +76,7 @@ sweep_log_stride(double x_min, double x_max, unsigned samples, Fn &&fn)
   }
 }
 
-template <typename Fn>
+template<typename Fn>
 static void
 sweep_linear_stride(double x_min, double x_max, unsigned samples, Fn &&fn)
 {
@@ -99,7 +99,7 @@ store_d256(micron::simd::d256 v, double (&out)[4]) noexcept
 
 #endif
 
-};     // namespace
+};      // namespace
 
 int
 main()

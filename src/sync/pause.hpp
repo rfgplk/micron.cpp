@@ -25,7 +25,7 @@
 
 namespace micron
 {
-template <umax_t L>
+template<umax_t L>
 void
 cpu_pause()
 {
@@ -36,7 +36,7 @@ cpu_pause()
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 inline void
 pause(F f, Args... args)
 {
@@ -104,7 +104,7 @@ try_wait_thread(int tid)
 }
 
 // wait for signal, equivalent to sigsuspend
-template <typename... Args>
+template<typename... Args>
 inline int
 await(Args... args)
 {
@@ -212,4 +212,4 @@ sleep_nano(umax_t ns)
   }
 }
 
-};     // namespace micron
+};      // namespace micron

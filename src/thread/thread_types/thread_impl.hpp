@@ -37,10 +37,10 @@ enum thread_returns : i32 { return_success, return_force, return_fail };
 
 enum join_status { join_success, join_fail, join_allowed, join_busy };
 
-template <typename T> struct __async_payload {
+template<typename T> struct __async_payload {
   atomic_token<bool> alive;
   atomic_token<u64> ret_val;
-  posix::rusage_t usage;     // non atomic
+  posix::rusage_t usage;      // non atomic
 
   void
   clear(void)
@@ -62,10 +62,10 @@ struct __thread_payload {
   //(11.1) — the dynamic type of the object,
   //(11.2) — a type that is the signed or unsigned type corresponding to the dynamic type of the object, or
   //(11.3) — a char, unsigned char, or std::byte type.
-  atomic_ptr<byte *> ret_val;     // stop gap measure for returning arbitrary return types
+  atomic_ptr<byte *> ret_val;      // stop gap measure for returning arbitrary return types
   enum class tag : u8 { none = 0, literal, heap, __end } tag_val;
 
-  posix::rusage_t usage;     // non atomic
+  posix::rusage_t usage;      // non atomic
 
   void
   clear(void)
@@ -77,15 +77,15 @@ struct __thread_payload {
 };
 
 struct __worker_payload {
-  atomic_token<u32> has_work{ 0 };            // for futex compat.
-  atomic_token<bool> should_die{ false };     // rude :/
+  atomic_token<u32> has_work{ 0 };             // for futex compat.
+  atomic_token<bool> should_die{ false };      // rude :/
   micron::lambda_queue<256> queue;
-  posix::rusage_t usage;     // non atomic
+  posix::rusage_t usage;      // non atomic
 };
 
 // The kernel of the thread, encapsulating the req'd function
 // status flags if the thread is running or not
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args...>)
 i32
 __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
@@ -160,7 +160,7 @@ rerun_worker:
 // checking built in
 
 // lvalue-only
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn &, Args &...>)
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &fn, Args &...args)
@@ -175,7 +175,7 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
 }
 
 // rvalue-only
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args && ...>)
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &&fn, Args &&...args)
@@ -191,7 +191,7 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
 }
 
 // const-lvalue / by-value
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<const Fn &, const Args &...>)
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, const Fn &fn, const Args &...args)
@@ -208,7 +208,7 @@ __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *p
 
 // worker threads
 
-template <auto Fn = __worker_kernel, typename P, typename... Args>
+template<auto Fn = __worker_kernel, typename P, typename... Args>
 pthread_t
 __as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, P *payload)
 {
@@ -224,7 +224,7 @@ __as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, P *payload)
 // unprepared threads
 
 // lvalue-only
-template <int Stack_Size, typename Fn, typename... Args>
+template<int Stack_Size, typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn &, Args &...>)
 pthread_t
 __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &fn, Args &...args)
@@ -244,7 +244,7 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &fn, Args &..
 }
 
 // rvalue-only
-template <int Stack_Size, typename Fn, typename... Args>
+template<int Stack_Size, typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args && ...>)
 pthread_t
 __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&...args)
@@ -264,7 +264,7 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&
 }
 
 // const-lvalue / by-value
-template <int Stack_Size, typename Fn, typename... Args>
+template<int Stack_Size, typename Fn, typename... Args>
   requires(micron::is_invocable_v<const Fn &, const Args &...>)
 pthread_t
 __as_thread_attached(__thread_payload *payload, addr_t *fstack, const Fn &fn, const Args &...args)
@@ -294,7 +294,7 @@ struct thread_attr_t {
   thread_attr_t(pid_t a, const pthread_attr_t &attr) : parent(a), pid(0)
   {
     pthread::get_sched_policy(attr, sched_policy);
-    pthread::get_sched_param(attr, sched_priority);     // NOTE: hacky workaround
+    pthread::get_sched_param(attr, sched_priority);      // NOTE: hacky workaround
     sched_niceness = 0;
     pthread::get_detach_state(attr, detach_state);
     pthread::get_stack_thread(attr, stack_addr, stack_size);
@@ -318,4 +318,4 @@ struct thread_attr_t {
   addr_t *stack_addr;
 };
 
-};     // namespace micron
+};      // namespace micron

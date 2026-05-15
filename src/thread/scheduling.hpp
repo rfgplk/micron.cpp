@@ -32,7 +32,7 @@ enum class schedulers : u32 {
 schedulers
 get_scheduler(void)
 {
-  auto r = posix::get_scheduler(posix::getpid());     //::sched_getscheduler(posix::getpid());
+  auto r = posix::get_scheduler(posix::getpid());      //::sched_getscheduler(posix::getpid());
   if ( r == -1 ) exc<except::system_error>("micron::scheduling unable to get scheduler");
   return static_cast<schedulers>(r);
 }
@@ -43,7 +43,7 @@ class scheduler_t
   __set(const pid_t pid)
   {
     if ( is_scheduled() ) {
-      posix::sched_param prio = { .sched_priority = 0 };     // must be zero
+      posix::sched_param prio = { .sched_priority = 0 };      // must be zero
       if ( posix::set_scheduler(pid, (int)sched, prio) == -1 ) exc<except::system_error>("micron::scheduler_t set() failed");
     } else {
       posix::sched_param prio = { .sched_priority = 99 };
@@ -51,7 +51,7 @@ class scheduler_t
     }
   }
 
-  schedulers sched;     // for convenience
+  schedulers sched;      // for convenience
   sched_attr properties;
 
 public:
@@ -63,7 +63,7 @@ public:
     sched = static_cast<schedulers>(properties.sched_policy);
   }
 
-  scheduler_t(const scheduler_t &o) : sched(o.sched), properties(o.properties) {}
+  scheduler_t(const scheduler_t &o) : sched(o.sched), properties(o.properties) { }
 
   scheduler_t(scheduler_t &&o) : sched(o.sched), properties(micron::move(o.properties)) { o.sched = schedulers::none; }
 
@@ -181,4 +181,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -66,7 +66,7 @@ vaesimcq_u8(uint8x16_t d) noexcept
   __asm__("aesimc.8 %q0, %q1" : "=w"(r) : "w"(d));
   return r;
 }
-#else      // arm64
+#else       // arm64
 __inline_g uint8x16_t
 vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
 {
@@ -90,7 +90,7 @@ vaesimcq_u8(uint8x16_t d) noexcept
 {
   return (uint8x16_t)__builtin_aarch64_crypto_aesimcv16qi_uu(d);
 }
-#endif     // arm32 vs arm64
+#endif      // arm32 vs arm64
 #elif defined(__micron_compiler_clang)
 __inline_g uint8x16_t
 vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
@@ -121,8 +121,8 @@ vaesimcq_u8(uint8x16_t d) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
-#endif     // __ARM_FEATURE_AES
+#endif      // __ARM_FEATURE_AES

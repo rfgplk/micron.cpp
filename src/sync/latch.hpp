@@ -18,7 +18,7 @@ class latch
   atomic_token<int> counter;
 
 public:
-  explicit latch(int expected) : counter(expected) {}
+  explicit latch(int expected) : counter(expected) { }
 
   void
   count_down(int n = 1) noexcept
@@ -56,7 +56,7 @@ class barrier
   const int threshold;
 
 public:
-  explicit barrier(int num_threads) : count(num_threads), generation(0), threshold(num_threads) {}
+  explicit barrier(int num_threads) : count(num_threads), generation(0), threshold(num_threads) { }
 
   int
   arrive_and_wait() noexcept
@@ -93,4 +93,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

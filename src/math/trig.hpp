@@ -566,5 +566,5 @@ fatan2(long double y, long double x) noexcept
   return static_cast<long double>(mkbits::trig_ns::atan2<f64>(f64(y), f64(x)));
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

@@ -43,7 +43,7 @@ using micron::math::matrix::tri_row_view;
 namespace __impl_level3
 {
 
-template <typename V>
+template<typename V>
 [[nodiscard, gnu::always_inline]] inline constexpr ssize_t
 rs_of(const V &v) noexcept
 {
@@ -53,7 +53,7 @@ rs_of(const V &v) noexcept
     return 1;
 }
 
-template <typename V>
+template<typename V>
 [[nodiscard, gnu::always_inline]] inline constexpr ssize_t
 cs_of(const V &v) noexcept
 {
@@ -63,7 +63,7 @@ cs_of(const V &v) noexcept
     return ssize_t(v.ld);
 }
 
-template <typename Va, typename Vb>
+template<typename Va, typename Vb>
 [[nodiscard, gnu::always_inline]] inline bool
 view_overlaps(const Va &a, const Vb &b) noexcept
 {
@@ -81,9 +81,9 @@ view_overlaps(const Va &a, const Vb &b) noexcept
   return (a_lo < b_hi) && (b_lo < a_hi);
 }
 
-};     // namespace __impl_level3
+};      // namespace __impl_level3
 
-template <op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+template<op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC> and micron::same_as<typename VA::value_type, T>
            and micron::same_as<typename VB::value_type, T> and micron::same_as<typename VC::value_type, T>)
 [[gnu::flatten]] inline constexpr void
@@ -116,7 +116,7 @@ gemm(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
                        __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C), __impl_level3::cs_of(C));
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline constexpr void
 gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
          usize ldc) noexcept
@@ -125,7 +125,7 @@ gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usi
 }
 
 // aligned variant of gemm
-template <op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+template<op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC> and micron::same_as<typename VA::value_type, T>
            and micron::same_as<typename VB::value_type, T> and micron::same_as<typename VC::value_type, T>)
 [[gnu::flatten]] inline constexpr void
@@ -141,7 +141,7 @@ gemm_aligned(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
                                __impl_level3::cs_of(C));
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline constexpr void
 gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
                  usize ldc) noexcept
@@ -150,7 +150,7 @@ gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T
 }
 
 // gemm experimental microkernel overloads
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline void
 gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
                        usize ldc) noexcept
@@ -158,7 +158,7 @@ gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, c
   bits::gemm_kernel_aligned_exp_a<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline void
 gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
                        usize ldc) noexcept
@@ -166,7 +166,7 @@ gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, c
   bits::gemm_kernel_aligned_exp_b<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline void
 gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
                        usize ldc) noexcept
@@ -174,7 +174,7 @@ gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, c
   bits::gemm_kernel_aligned_exp_c<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline constexpr void
 gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
          usize ldc) noexcept
@@ -182,7 +182,7 @@ gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usi
   bits::gemm_kernel<T>(trA, trB, m, n, k, alpha, A, 1, ssize_t(lda), B, 1, ssize_t(ldb), beta, C, 1, ssize_t(ldc));
 }
 
-template <side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC>
+template<side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VB> and mat_view_like<VC>)
 [[gnu::flatten]] inline constexpr void
 symm(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
@@ -199,14 +199,14 @@ symm(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
   }
 }
 
-template <side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC>
+template<side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC>
 [[gnu::flatten]] inline constexpr void
 hemm(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
 {
   symm<S, T>(alpha, A, B, beta, C);
 }
 
-template <op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC>
+template<op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC>
   requires(mat_view_like<VA>)
 [[gnu::flatten]] inline constexpr void
 syrk(T alpha, const VA &A, T beta, VC C) noexcept
@@ -219,14 +219,14 @@ syrk(T alpha, const VA &A, T beta, VC C) noexcept
                        __impl_level3::rs_of(C), __impl_level3::cs_of(C));
 }
 
-template <op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC>
+template<op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC>
 [[gnu::flatten]] inline constexpr void
 herk(T alpha, const VA &A, T beta, VC C) noexcept
 {
   syrk<OpA, T>(alpha, A, beta, C);
 }
 
-template <op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+template<op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB>)
 [[gnu::flatten]] inline constexpr void
 syr2k(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
@@ -239,14 +239,14 @@ syr2k(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
                         __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C), __impl_level3::cs_of(C));
 }
 
-template <op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+template<op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC>
 [[gnu::flatten]] inline constexpr void
 her2k(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
 {
   syr2k<OpA, T>(alpha, A, B, beta, C);
 }
 
-template <side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB>
+template<side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB>
   requires(mat_view_like<VA> and mat_view_like<VB>)
 [[gnu::flatten]] inline constexpr void
 trmm(T alpha, const VA &A, VB B) noexcept
@@ -263,7 +263,7 @@ trmm(T alpha, const VA &A, VB B) noexcept
   }
 }
 
-template <side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB>
+template<side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB>
   requires(mat_view_like<VA> and mat_view_like<VB>)
 [[gnu::flatten]] inline constexpr void
 trsm(T alpha, const VA &A, VB B) noexcept
@@ -280,7 +280,7 @@ trsm(T alpha, const VA &A, VB B) noexcept
   }
 }
 
-};     // namespace level3
-};     // namespace blas
-};     // namespace math
-};     // namespace micron
+};      // namespace level3
+};      // namespace blas
+};      // namespace math
+};      // namespace micron

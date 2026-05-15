@@ -15,14 +15,14 @@
 //  Helpers
 // ============================================================
 
-template <u64 N>
+template<u64 N>
 void
 fill_seq(byte (&buf)[N])
 {
   for ( u64 i = 0; i < N; i++ ) buf[i] = static_cast<byte>(i);
 }
 
-template <u64 N>
+template<u64 N>
 void
 fill_value(byte (&buf)[N], byte v)
 {
@@ -73,7 +73,7 @@ main(void)
   {
     byte buf[32];
     fill_seq(buf);
-    byte *r = mc::memchr<byte>(&buf[0], static_cast<byte>(0x10), 17);     // 0x10 sits at index 16
+    byte *r = mc::memchr<byte>(&buf[0], static_cast<byte>(0x10), 17);      // 0x10 sits at index 16
     sb::require(r == buf + 16);
   }
   sb::end_test_case();
@@ -195,7 +195,7 @@ main(void)
     const byte *cbuf = buf;
     byte *r = mc::memchr<byte>(&cbuf[0], static_cast<byte>(0x05), 16);
     sb::require(r == buf + 5);
-    *r = static_cast<byte>(0xAA);     // proves r is writable
+    *r = static_cast<byte>(0xAA);      // proves r is writable
     sb::require(buf[5] == 0xAA);
   }
   sb::end_test_case();

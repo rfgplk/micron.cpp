@@ -90,10 +90,10 @@ get_devices()
 
       if ( !format::contains(buf, "EV") ) continue;
       i64 ev = hex_string_to_int64(__parse_device("EV", buf));
-      if ( ev & (1 << ev_key) )     // likely keyboard
+      if ( ev & (1 << ev_key) )      // likely keyboard
       {
         if ( format::contains(buf, "KEY") and !format::contains(buf, "REL") ) {
-          if ( __has_alnum_keys(__parse_device("KEY", buf)) )     // likely keyboard, bypass parse
+          if ( __has_alnum_keys(__parse_device("KEY", buf)) )      // likely keyboard, bypass parse
           {
             auto name = __parse_device("NAME", buf);
             auto phys = __parse_device("PHYS", buf);
@@ -103,7 +103,7 @@ get_devices()
         }
       }
       if ( !format::contains(buf, "REL") ) continue;
-      if ( (ev & (1 << ev_rel) and ev & (1 << ev_abs)) and ev & (1 << ev_syn) )     // likely mouse
+      if ( (ev & (1 << ev_rel) and ev & (1 << ev_abs)) and ev & (1 << ev_syn) )      // likely mouse
       {
         auto name = __parse_device("NAME", buf);
         auto phys = __parse_device("PHYS", buf);
@@ -145,5 +145,5 @@ unbind_device(device_t &dev)
   if ( dev.bound_fd.has_error() ) posix::close(dev.bound_fd.fd);
   dev.bound_fd = -1;
 }
-};     // namespace uxin
-};     // namespace micron
+};      // namespace uxin
+};      // namespace micron

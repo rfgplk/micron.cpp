@@ -17,7 +17,7 @@
 namespace micron
 {
 
-template <typename T, usize N, usize L = (usize)(N / (N / 4) * __builtin_log(2))> class bloom_filter
+template<typename T, usize N, usize L = (usize)(N / (N / 4) * __builtin_log(2))> class bloom_filter
 {
   bitfield<N> bits;
   usize length;
@@ -43,7 +43,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  bloom_filter(void) : bits(false), length(N) {}
+  bloom_filter(void) : bits(false), length(N) { }
 
   void
   insert(const T &key)
@@ -66,4 +66,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

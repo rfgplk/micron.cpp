@@ -27,7 +27,7 @@ namespace math
 namespace matrix
 {
 
-template <typename T> struct row_view {
+template<typename T> struct row_view {
   using row_major_tag = void;
   using value_type = T;
   using pointer = T *;
@@ -40,9 +40,9 @@ template <typename T> struct row_view {
 
   constexpr row_view() noexcept = default;
 
-  constexpr row_view(T *p, usize r, usize c) noexcept : data(p), rows(r), cols(c), ld(c) {}
+  constexpr row_view(T *p, usize r, usize c) noexcept : data(p), rows(r), cols(c), ld(c) { }
 
-  constexpr row_view(T *p, usize r, usize c, usize lda) noexcept : data(p), rows(r), cols(c), ld(lda) {}
+  constexpr row_view(T *p, usize r, usize c, usize lda) noexcept : data(p), rows(r), cols(c), ld(lda) { }
 
   [[nodiscard]] static constexpr row_view
   from(T *p, usize r, usize c) noexcept
@@ -62,7 +62,7 @@ template <typename T> struct row_view {
     return row_view{ const_cast<T *>(s.ptr), r, c, c };
   }
 
-  template <typename C>
+  template<typename C>
     requires(requires(C &c) {
       { c.data() } -> micron::convertible_to<T *>;
     })
@@ -72,14 +72,14 @@ template <typename T> struct row_view {
     return row_view{ c.data(), r, cols_, cols_ };
   }
 
-  template <usize R, usize Cn>
+  template<usize R, usize Cn>
   [[nodiscard]] static constexpr row_view
   from(mat<T, R, Cn> &m) noexcept
   {
     return row_view{ m.data, R, Cn, Cn };
   }
 
-  template <usize Cn, usize R>
+  template<usize Cn, usize R>
   [[nodiscard]] static constexpr row_view
   from(int_matrix_base<T, Cn, R> &m) noexcept
   {
@@ -105,7 +105,7 @@ template <typename T> struct row_view {
   }
 };
 
-template <typename T> struct col_view {
+template<typename T> struct col_view {
   using col_major_tag = void;
   using value_type = T;
   using pointer = T *;
@@ -118,9 +118,9 @@ template <typename T> struct col_view {
 
   constexpr col_view() noexcept = default;
 
-  constexpr col_view(T *p, usize r, usize c) noexcept : data(p), rows(r), cols(c), ld(r) {}
+  constexpr col_view(T *p, usize r, usize c) noexcept : data(p), rows(r), cols(c), ld(r) { }
 
-  constexpr col_view(T *p, usize r, usize c, usize lda) noexcept : data(p), rows(r), cols(c), ld(lda) {}
+  constexpr col_view(T *p, usize r, usize c, usize lda) noexcept : data(p), rows(r), cols(c), ld(lda) { }
 
   [[nodiscard]] static constexpr col_view
   from(T *p, usize r, usize c) noexcept
@@ -140,7 +140,7 @@ template <typename T> struct col_view {
     return col_view{ const_cast<T *>(s.ptr), r, c, r };
   }
 
-  template <typename C>
+  template<typename C>
     requires(requires(C &c) {
       { c.data() } -> micron::convertible_to<T *>;
     })
@@ -169,62 +169,62 @@ template <typename T> struct col_view {
   }
 };
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr col_view<T>
 transpose_view(const row_view<T> &v) noexcept
 {
   return col_view<T>{ v.data, v.cols, v.rows, v.ld };
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr row_view<T>
 transpose_view(const col_view<T> &v) noexcept
 {
   return row_view<T>{ v.data, v.cols, v.rows, v.ld };
 }
 
-template <typename T, typename Uplo> struct sym_row_view : row_view<T> {
+template<typename T, typename Uplo> struct sym_row_view: row_view<T> {
   using uplo_type = Uplo;
 
   constexpr sym_row_view() noexcept = default;
 
-  constexpr sym_row_view(const row_view<T> &v) noexcept : row_view<T>(v) {}
+  constexpr sym_row_view(const row_view<T> &v) noexcept : row_view<T>(v) { }
 
-  constexpr sym_row_view(T *p, usize r, usize c, usize lda) noexcept : row_view<T>(p, r, c, lda) {}
+  constexpr sym_row_view(T *p, usize r, usize c, usize lda) noexcept : row_view<T>(p, r, c, lda) { }
 };
 
-template <typename T, typename Uplo, typename Diag> struct tri_row_view : row_view<T> {
+template<typename T, typename Uplo, typename Diag> struct tri_row_view: row_view<T> {
   using uplo_type = Uplo;
   using diag_type = Diag;
 
   constexpr tri_row_view() noexcept = default;
 
-  constexpr tri_row_view(const row_view<T> &v) noexcept : row_view<T>(v) {}
+  constexpr tri_row_view(const row_view<T> &v) noexcept : row_view<T>(v) { }
 
-  constexpr tri_row_view(T *p, usize r, usize c, usize lda) noexcept : row_view<T>(p, r, c, lda) {}
+  constexpr tri_row_view(T *p, usize r, usize c, usize lda) noexcept : row_view<T>(p, r, c, lda) { }
 };
 
-template <typename T, typename Uplo> struct sym_col_view : col_view<T> {
+template<typename T, typename Uplo> struct sym_col_view: col_view<T> {
   using uplo_type = Uplo;
 
   constexpr sym_col_view() noexcept = default;
 
-  constexpr sym_col_view(const col_view<T> &v) noexcept : col_view<T>(v) {}
+  constexpr sym_col_view(const col_view<T> &v) noexcept : col_view<T>(v) { }
 
-  constexpr sym_col_view(T *p, usize r, usize c, usize lda) noexcept : col_view<T>(p, r, c, lda) {}
+  constexpr sym_col_view(T *p, usize r, usize c, usize lda) noexcept : col_view<T>(p, r, c, lda) { }
 };
 
-template <typename T, typename Uplo, typename Diag> struct tri_col_view : col_view<T> {
+template<typename T, typename Uplo, typename Diag> struct tri_col_view: col_view<T> {
   using uplo_type = Uplo;
   using diag_type = Diag;
 
   constexpr tri_col_view() noexcept = default;
 
-  constexpr tri_col_view(const col_view<T> &v) noexcept : col_view<T>(v) {}
+  constexpr tri_col_view(const col_view<T> &v) noexcept : col_view<T>(v) { }
 
-  constexpr tri_col_view(T *p, usize r, usize c, usize lda) noexcept : col_view<T>(p, r, c, lda) {}
+  constexpr tri_col_view(T *p, usize r, usize c, usize lda) noexcept : col_view<T>(p, r, c, lda) { }
 };
 
-};     // namespace matrix
-};     // namespace math
-};     // namespace micron
+};      // namespace matrix
+};      // namespace math
+};      // namespace micron

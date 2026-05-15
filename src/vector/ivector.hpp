@@ -28,8 +28,8 @@
 namespace micron
 {
 // immutable vector class, contiguous in memory, O(1) access, iterators never invalidated, always safe, immutable, always thread safe as
-template <is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
-class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
+template<is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
+class ivector: private Alloc, public __immutable_memory_resource<T, Alloc>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
 
@@ -81,7 +81,7 @@ class ivector : private Alloc, public __immutable_memory_resource<T, Alloc>
     return from >= to || from >= __mem::capacity || to > __mem::capacity;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -159,7 +159,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   ivector(usize n, Args &&...args) : __mem(n)
   {
@@ -180,7 +180,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   ivector(usize n, Fn &&fn) : __mem(n)
   {
@@ -189,7 +189,7 @@ public:
     micron::generate(__begin(), __end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   ivector(usize n, Fn &&fn) : __mem(n)
   {
@@ -241,9 +241,9 @@ public:
   // move
   ivector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template <typename C = T> ivector(ivector<C> &&o) : __mem(micron::move(o)) {}
+  template<typename C = T> ivector(ivector<C> &&o) : __mem(micron::move(o)) { }
 
-  ivector(ivector &&o) : __mem(micron::move(o)) {}
+  ivector(ivector &&o) : __mem(micron::move(o)) { }
 
   ivector &
   operator=(ivector &&o)
@@ -273,7 +273,7 @@ public:
     return empty();
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) const T &
   operator[](R n) const
@@ -430,7 +430,7 @@ public:
     return slice<byte>(reinterpret_cast<const byte *>(&__mem::memory[0]), reinterpret_cast<const byte *>(&__mem::memory[__mem::length]));
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline ivector<T, Alloc, Sf>
   append(const ivector<F, Alloc, Sf> &o) const
@@ -448,7 +448,7 @@ public:
     return append(o);
   }
 
-  template <typename C = T>
+  template<typename C = T>
   void
   swap(ivector<C, Alloc, Sf> &&o)
   {
@@ -497,7 +497,7 @@ public:
     return buf;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline ivector
   emplace_back(Args &&...v) const
   {
@@ -629,11 +629,11 @@ public:
   }
 };
 
-template <typename T>
+template<typename T>
 auto
 to_persist(const micron::vector<T> &vec)
 {
   return ivector<T>(vec);
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -12,7 +12,7 @@ namespace micron
 {
 // shared_pointer implementation for use in threading
 // threadsafe
-template <class Type> class thread_pointer
+template<class Type> class thread_pointer
 {
   shared_handler<Type> *control;
   mutable micron::mutex mtx;
@@ -35,9 +35,9 @@ public:
     }
   }
 
-  thread_pointer() : control(nullptr) {}
+  thread_pointer() : control(nullptr) { }
 
-  template <is_nullptr V> thread_pointer(V) : control(nullptr) {}
+  template<is_nullptr V> thread_pointer(V) : control(nullptr) { }
 
   explicit thread_pointer(Type *p)
   {
@@ -66,7 +66,7 @@ public:
     t.control = nullptr;
   }
 
-  template <class... Args> explicit thread_pointer(Args &&...args)
+  template<class... Args> explicit thread_pointer(Args &&...args)
   {
     micron::lock_guard lock(mtx);
     control = __alloc::__impl_alloc(__new<Type>(micron::forward<Args>(args)...), 1);
@@ -151,7 +151,7 @@ public:
     return (*this = micron::move(t));
   }
 
-  template <is_nullptr V>
+  template<is_nullptr V>
   thread_pointer &
   operator=(V) noexcept
   {
@@ -244,4 +244,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

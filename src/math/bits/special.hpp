@@ -39,7 +39,7 @@ namespace special_ns
 namespace __erf_data
 {
 // erf(x) ≈ x + x*P(z)/Q(z) z = x²
-inline constexpr f64 efx = 1.28379167095512586316e-01;     // 2/sqrt(pi) - 1
+inline constexpr f64 efx = 1.28379167095512586316e-01;      // 2/sqrt(pi) - 1
 inline constexpr f64 pp[5] = { 1.28379167095512558561e-01, -3.25042107247001499370e-01, -2.84817495755985104766e-02,
                                -5.77027029648944159157e-03, -2.37630166566501626084e-05 };
 inline constexpr f64 qq[5]
@@ -79,7 +79,7 @@ inline constexpr f64 sb[7] = { 1.0,
                                3.19985821950859553908e+03,
                                2.55305040643316442583e+03,
                                4.74528541206955367215e+02 };
-};     // namespace __erf_data
+};      // namespace __erf_data
 
 [[nodiscard, gnu::flatten]] inline constexpr f64
 erf_f64(f64 x) noexcept
@@ -88,7 +88,7 @@ erf_f64(f64 x) noexcept
   if ( ieee::is_nan(x) ) return x;
   if ( ieee::is_inf(x) ) return manip::copysign<f64>(1.0, x);
   f64 ax = manip::fabs(x);
-  if ( ax < 0x1.0p-28 ) return x + efx * x;     // tiny: erf(x) ≈ x*(1 + 2/sqrt(π))
+  if ( ax < 0x1.0p-28 ) return x + efx * x;      // tiny: erf(x) ≈ x*(1 + 2/sqrt(π))
   if ( ax < 0.84375 ) {
     f64 z = x * x;
     f64 r = pp[0] + z * (pp[1] + z * (pp[2] + z * (pp[3] + z * pp[4])));
@@ -126,7 +126,7 @@ erfc_f64(f64 x) noexcept
   if ( ieee::is_inf(x) ) return manip::signbit(x) ? 2.0 : 0.0;
   f64 ax = manip::fabs(x);
   if ( ax < 0.84375 ) {
-    if ( ax < 0x1.0p-56 ) return 1.0 - x;     // tiny
+    if ( ax < 0x1.0p-56 ) return 1.0 - x;      // tiny
     f64 z = x * x;
     f64 r = pp[0] + z * (pp[1] + z * (pp[2] + z * (pp[3] + z * pp[4])));
     f64 s = qq[0] + z * (qq[1] + z * (qq[2] + z * (qq[3] + z * qq[4])));
@@ -191,7 +191,7 @@ lgamma_f64(f64 x) noexcept
   if ( x < 0.5 ) {
     if ( x <= 0.0 ) {
       f64 fl = round_ns::floor<f64>(x);
-      if ( fl == x ) return ieee::inf_v<f64>(0);     // negative integer
+      if ( fl == x ) return ieee::inf_v<f64>(0);      // negative integer
     }
     f64 sin_pix = trig_ns::sin_f64(0x1.921fb54442d18p+1 * x);
     f64 abs_sinpix = manip::fabs(sin_pix);
@@ -292,7 +292,7 @@ hankel_PQ_j1(f64 x, f64 *P, f64 *Q) noexcept
   return ax;
 }
 
-};     // namespace __bessel
+};      // namespace __bessel
 
 [[nodiscard, gnu::flatten]] inline constexpr f64
 j0_f64(f64 x) noexcept
@@ -406,7 +406,7 @@ y1_f64(f64 x) noexcept
   return amp * (P * sb + Q * cb);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 j0(F x) noexcept
 {
@@ -416,7 +416,7 @@ j0(F x) noexcept
     return F(j0_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 j1(F x) noexcept
 {
@@ -426,7 +426,7 @@ j1(F x) noexcept
     return F(j1_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 y0(F x) noexcept
 {
@@ -436,7 +436,7 @@ y0(F x) noexcept
     return F(y0_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 y1(F x) noexcept
 {
@@ -470,7 +470,7 @@ lgamma_f32(f32 x) noexcept
   return f32(lgamma_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 erf(F x) noexcept
 {
@@ -480,7 +480,7 @@ erf(F x) noexcept
     return F(erf_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 erfc(F x) noexcept
 {
@@ -490,7 +490,7 @@ erfc(F x) noexcept
     return F(erfc_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tgamma(F x) noexcept
 {
@@ -500,7 +500,7 @@ tgamma(F x) noexcept
     return F(tgamma_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 lgamma(F x) noexcept
 {
@@ -510,9 +510,9 @@ lgamma(F x) noexcept
     return F(lgamma_f64(f64(x)));
 }
 
-};     // namespace special_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace special_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

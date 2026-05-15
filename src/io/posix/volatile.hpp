@@ -67,7 +67,7 @@ class volatile_t
     posix::off_t src_off = 0;
     posix::off_t dst_off = 0;
     usize remaining = hint_size ? hint_size : static_cast<usize>(-1);
-    usize chunk = (1u << 20);     // 1mb
+    usize chunk = (1u << 20);      // 1mb
 
     if ( hint_size > 0 ) {
       while ( remaining > 0 ) {
@@ -106,7 +106,7 @@ public:
 
   explicit volatile_t(const char *name, unsigned int flags = mfd_cloexec) : fname(name), __handle(-1), sd() { __create(name, flags); }
 
-  template <is_string T> explicit volatile_t(const T &name, unsigned int flags = mfd_cloexec) : volatile_t(name.c_str(), flags) {}
+  template<is_string T> explicit volatile_t(const T &name, unsigned int flags = mfd_cloexec) : volatile_t(name.c_str(), flags) { }
 
   explicit volatile_t(const char *name, usize initial_size, unsigned int flags) : fname(name), __handle(-1), sd()
   {
@@ -205,7 +205,7 @@ public:
     return fname;
   }
 
-  template <bool B = STAT_EXISTING>
+  template<bool B = STAT_EXISTING>
   inline void
   stat(void) const
   {
@@ -340,7 +340,7 @@ public:
     return size() == 0;
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   read(T *ptr, usize len) const
   {
@@ -348,7 +348,7 @@ public:
     return posix::read(__handle.fd, static_cast<void *>(ptr), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   write(const T *ptr, usize len)
   {
@@ -356,7 +356,7 @@ public:
     return posix::write(__handle.fd, static_cast<const void *>(ptr), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   read_all(T *ptr, usize len) const
   {
@@ -364,7 +364,7 @@ public:
     return posix::read_all(__handle, static_cast<void *>(ptr), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   write_all(const T *ptr, usize len)
   {
@@ -372,7 +372,7 @@ public:
     return posix::write_all(__handle, static_cast<const void *>(ptr), len);
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   read(T &buf) const
   {
@@ -380,7 +380,7 @@ public:
     return posix::read(__handle.fd, buf.data(), buf.max_size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   write(const T &buf)
   {
@@ -388,7 +388,7 @@ public:
     return posix::write(__handle.fd, buf.data(), buf.size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   read_all(T &buf) const
   {
@@ -396,7 +396,7 @@ public:
     return posix::read_all(__handle, buf.data(), buf.max_size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   write_all(const T &buf)
   {
@@ -404,7 +404,7 @@ public:
     return posix::write_all(__handle, buf.data(), buf.size());
   }
 
-  template <is_string T>
+  template<is_string T>
   max_t
   write_all(const T &str)
   {
@@ -412,7 +412,7 @@ public:
     return posix::write_all(__handle, str.data(), str.size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   volatile_t &
   operator>>(T &buf)
   {
@@ -421,7 +421,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   volatile_t &
   operator>>(T &str)
   {
@@ -430,7 +430,7 @@ public:
     return *this;
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   volatile_t &
   operator<<(const T &buf)
   {
@@ -438,7 +438,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   volatile_t &
   operator<<(const T &str)
   {
@@ -454,7 +454,7 @@ public:
     return *this;
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   pread(T &buf, usize len, posix::off_t offset) const
   {
@@ -462,7 +462,7 @@ public:
     return micron::pread(__handle.fd, buf.data(), len, offset);
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   pwrite(const T &buf, usize len, posix::off_t offset)
   {
@@ -470,14 +470,14 @@ public:
     return micron::pwrite(__handle.fd, buf.data(), len, offset);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   pread(T &buf, usize len, posix::off_t offset) const
   {
     return micron::pread(__handle.fd, micron::voidify(buf), len, offset);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   pwrite(const T &buf, usize len, posix::off_t offset)
   {
@@ -794,7 +794,7 @@ public:
     return set_status_flags(on ? (cur | posix::o_nonblock) : (cur & ~posix::o_nonblock));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   auto
   fcntl(i32 cmd, Args &&...args)
   {
@@ -983,5 +983,5 @@ make_volatile_from_fd(fd_t src)
   return volatile_t::from_fd(src);
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

@@ -51,7 +51,7 @@ near_d(double a, double b, double base = 1e-12, double slope = 1e-15) noexcept
 
 // stride generators
 
-template <typename Fn>
+template<typename Fn>
 static void
 sweep_log_stride(double x_min, double x_max, unsigned samples, Fn &&fn)
 {
@@ -64,7 +64,7 @@ sweep_log_stride(double x_min, double x_max, unsigned samples, Fn &&fn)
   }
 }
 
-template <typename Fn>
+template<typename Fn>
 static void
 sweep_linear_stride(double x_min, double x_max, unsigned samples, Fn &&fn)
 {
@@ -112,7 +112,7 @@ store_f128(micron::simd::f128 v, float (&out)[4]) noexcept
 
 #endif
 
-};     // namespace
+};      // namespace
 
 int
 main()

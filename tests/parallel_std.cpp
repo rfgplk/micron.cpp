@@ -1,5 +1,5 @@
 #include <cstddef>
-#include <execution>     // for std::execution::par
+#include <execution>      // for std::execution::par
 #include <stdexcept>
 #include <vector>
 

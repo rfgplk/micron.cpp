@@ -9,15 +9,15 @@ using u32 = __UINT32_TYPE__;
 using u16 = __UINT16_TYPE__;
 using u8 = __UINT8_TYPE__;
 
-template <typename T, typename Uxp> inline constexpr bool is_same_v = __is_same(T, Uxp);
+template<typename T, typename Uxp> inline constexpr bool is_same_v = __is_same(T, Uxp);
 
-template <typename T, typename U>
+template<typename T, typename U>
 concept __same_as = is_same_v<T, U>;
 
-template <typename T, typename U>
+template<typename T, typename U>
 concept same_as = __same_as<T, U> && __same_as<U, T>;
 
-template <typename T>
+template<typename T>
 concept __string_like = requires(T t) {
   { t.c_str() } -> same_as<const char *>;
   { t.data() } -> same_as<typename T::pointer>;
@@ -28,7 +28,7 @@ concept __string_like = requires(T t) {
   { t.cend() } -> same_as<typename T::const_iterator>;
 };
 
-template <typename T, typename I>
+template<typename T, typename I>
 concept __container_like = requires(T t, I i) {
   { t[i] } -> same_as<typename T::reference>;
   { t.data() } -> same_as<typename T::pointer>;
@@ -40,14 +40,14 @@ concept __container_like = requires(T t, I i) {
   { t.c_str() } -> same_as<const char *>;
 };
 
-template <typename T>
+template<typename T>
 inline constexpr T
 clamp(const T &val, const T &lo, const T &hi)
 {
   return val < lo ? lo : (val > hi ? hi : val);
 }
 
-template <typename T>
+template<typename T>
 inline constexpr T
 pow(T base, i32 exp)
 {
@@ -77,7 +77,7 @@ struct pixel {
 class writer
 {
 public:
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   write(S &output, i32 width, i32 height, const C<pixel> &pixels, bool binary = true)
   {
@@ -99,7 +99,7 @@ public:
   }
 
 private:
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   write_binary(S &output, i32 width, i32 height, const C<pixel> &pixels)
   {
@@ -169,7 +169,7 @@ private:
     }
   }
 
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   write_ascii(S &output, i32 width, i32 height, const C<pixel> &pixels)
   {
@@ -286,7 +286,7 @@ private:
 class reader
 {
 public:
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   read(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
@@ -305,7 +305,7 @@ public:
     }
   }
 
-  template <__string_like S>
+  template<__string_like S>
   static void
   extract_dimensions(const S &input, i32 &width, i32 &height)
   {
@@ -325,7 +325,7 @@ public:
   }
 
 private:
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   read_binary(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
@@ -364,7 +364,7 @@ private:
     }
   }
 
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   read_ascii(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
@@ -406,7 +406,7 @@ private:
     }
   }
 
-  template <__string_like S>
+  template<__string_like S>
   static void
   skip_whitespace_and_comments(const S &input, usize &pos)
   {
@@ -423,7 +423,7 @@ private:
     }
   }
 
-  template <__string_like S>
+  template<__string_like S>
   static void
   skip_single_whitespace(const S &input, usize &pos)
   {
@@ -432,7 +432,7 @@ private:
     }
   }
 
-  template <__string_like S>
+  template<__string_like S>
   static i32
   parse_number(const S &input, usize &pos)
   {
@@ -453,4 +453,4 @@ private:
   }
 };
 
-}     // namespace uppm
+}      // namespace uppm

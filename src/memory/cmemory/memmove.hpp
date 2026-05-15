@@ -39,7 +39,7 @@ __memmove_bytes(byte *d, const byte *s, const u64 bytes) noexcept
 #endif
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 bytemove(F *_dest, D *_src, const u64 cnt) noexcept
@@ -49,7 +49,7 @@ bytemove(F *_dest, D *_src, const u64 cnt) noexcept
   return _dest;
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F &
 rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
@@ -58,7 +58,7 @@ rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
   return _dest;
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F *
 constexpr_bytemove(F *_dest, D *_src, const u64 cnt) noexcept
@@ -75,7 +75,7 @@ constexpr_bytemove(F *_dest, D *_src, const u64 cnt) noexcept
   return _dest;
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F &
 constexpr_rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
@@ -92,7 +92,7 @@ constexpr_rbytemove(F &_dest, D &_src, const u64 cnt) noexcept
   return _dest;
 };
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 cbytemove(F *_dest, D *_src) noexcept
@@ -102,7 +102,7 @@ cbytemove(F *_dest, D *_src) noexcept
   return _dest;
 };
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F &
 crbytemove(F &_dest, D &_src) noexcept
@@ -111,7 +111,7 @@ crbytemove(F &_dest, D &_src) noexcept
   return _dest;
 };
 
-template <typename F, typename D, u64 alignment = 1>
+template<typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 sbytemove(F *_dest, D *_src, const u64 cnt) noexcept
@@ -124,7 +124,7 @@ sbytemove(F *_dest, D *_src, const u64 cnt) noexcept
   return _dest;
 };
 
-template <typename F, typename D, u64 alignment = 1>
+template<typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 bool
 rsbytemove(F &_dest, D &_src, const u64 cnt) noexcept
@@ -135,7 +135,7 @@ rsbytemove(F &_dest, D &_src, const u64 cnt) noexcept
   return true;
 };
 
-template <u64 M, typename F, typename D, u64 alignment = 1>
+template<u64 M, typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 scbytemove(F *_dest, D *_src) noexcept
@@ -148,7 +148,7 @@ scbytemove(F *_dest, D *_src) noexcept
   return _dest;
 };
 
-template <u64 M, typename F, typename D, u64 alignment = 1>
+template<u64 M, typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 bool
 rscrbytemove(F &_dest, D &_src) noexcept
@@ -159,7 +159,7 @@ rscrbytemove(F &_dest, D &_src) noexcept
   return true;
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
 F *
 memmove(F *dest, D *src, const u64 cnt) noexcept
 {
@@ -176,7 +176,7 @@ memmove(F *dest, D *src, const u64 cnt) noexcept
   }
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
 F &
 rmemmove(F &dest, D &src, const u64 cnt) noexcept
 {
@@ -195,7 +195,7 @@ rmemmove(F &dest, D &src, const u64 cnt) noexcept
   }
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F *
 constexpr_memmove(F *dest, D *src, const u64 cnt) noexcept
@@ -209,7 +209,7 @@ constexpr_memmove(F *dest, D *src, const u64 cnt) noexcept
   return dest;
 };
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F &
 constexpr_rmemmove(F &dest, D &src, const u64 cnt) noexcept
@@ -226,7 +226,7 @@ constexpr_rmemmove(F &dest, D &src, const u64 cnt) noexcept
   return dest;
 };
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
 F *
 cmemmove(F *dest, D *src) noexcept
 {
@@ -243,7 +243,7 @@ cmemmove(F *dest, D *src) noexcept
   }
 };
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
 F &
 crmemmove(F &dest, D &src) noexcept
 {
@@ -262,7 +262,7 @@ crmemmove(F &dest, D &src) noexcept
   }
 };
 
-template <typename F, typename D, u64 alignment = alignof(F)>
+template<typename F, typename D, u64 alignment = alignof(F)>
 F *
 smemmove(F *dest, D *src, const u64 cnt) noexcept
 {
@@ -283,7 +283,7 @@ smemmove(F *dest, D *src, const u64 cnt) noexcept
   return dest;
 };
 
-template <typename F, typename D, u64 alignment = alignof(F)>
+template<typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemmove(F &dest, D &src, const u64 cnt) noexcept
 {
@@ -305,7 +305,7 @@ rsmemmove(F &dest, D &src, const u64 cnt) noexcept
   return true;
 };
 
-template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
+template<u64 M, typename F, typename D, u64 alignment = alignof(F)>
 F *
 scmemmove(F *dest, D *src) noexcept
 {
@@ -326,7 +326,7 @@ scmemmove(F *dest, D *src) noexcept
   return dest;
 };
 
-template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
+template<u64 M, typename F, typename D, u64 alignment = alignof(F)>
 bool
 rscmemmove(F &dest, D &src) noexcept
 {
@@ -348,7 +348,7 @@ rscmemmove(F &dest, D &src) noexcept
   return true;
 };
 
-};     // namespace micron
+};      // namespace micron
 
 #if defined(__micron_freestanding)
 // c-abi

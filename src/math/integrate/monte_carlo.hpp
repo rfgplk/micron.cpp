@@ -26,7 +26,7 @@ namespace math
 namespace integrate
 {
 
-template <usize D, ieee754_floating F, typename Fn, rng::rng_concept Rng>
+template<usize D, ieee754_floating F, typename Fn, rng::rng_concept Rng>
 [[nodiscard]] inline F
 monte_carlo(Fn f, const F (&lo)[D], const F (&hi)[D], usize n_samples, Rng &g) noexcept
 {
@@ -52,7 +52,7 @@ inline constexpr u32 halton_primes[16] = {
   2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 halton(usize i, u32 base) noexcept
 {
@@ -66,9 +66,9 @@ halton(usize i, u32 base) noexcept
   return r;
 }
 
-};     // namespace __impl_monte_carlo
+};      // namespace __impl_monte_carlo
 
-template <usize D, ieee754_floating F, typename Fn>
+template<usize D, ieee754_floating F, typename Fn>
   requires(D <= 16)
 [[nodiscard]] inline F
 quasi_monte_carlo(Fn f, const F (&lo)[D], const F (&hi)[D], usize n_samples) noexcept
@@ -88,6 +88,6 @@ quasi_monte_carlo(Fn f, const F (&lo)[D], const F (&hi)[D], usize n_samples) noe
   return volume * sum / F(n_samples);
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

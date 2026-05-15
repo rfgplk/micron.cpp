@@ -9,7 +9,7 @@
 // Compile:
 //   c++ -std=c++23 -g -Wall -Wextra -o test_chrono test_chrono.cpp && ./test_chrono
 
-#include "../src/chrono.hpp"     // adjust path as needed
+#include "../src/chrono.hpp"      // adjust path as needed
 #include "../snowball/snowball.hpp"
 
 // small helper — busy-spin for ~N milliseconds without sleeping
@@ -496,7 +496,7 @@ test_time_point()
     micron::time_point<> tp{ 10.0 };
     auto r = tp + 3.0;
     sb::require(r.time_since_epoch(), 13.0);
-    sb::require(tp.time_since_epoch(), 10.0);     // original unchanged
+    sb::require(tp.time_since_epoch(), 10.0);      // original unchanged
   }
   sb::end_test_case();
 
@@ -526,7 +526,7 @@ test_time_point()
 
   sb::test_case("as<milliseconds>() round-trips stored ms value");
   {
-    micron::time_point<> tp{ 2000.0 };     // 2000 ms
+    micron::time_point<> tp{ 2000.0 };      // 2000 ms
     auto ms = tp.as<micron::unit::milliseconds>();
     sb::require(ms, 2000.0);
   }
@@ -534,7 +534,7 @@ test_time_point()
 
   sb::test_case("as<seconds>() converts ms to seconds");
   {
-    micron::time_point<> tp{ 3000.0 };     // 3000 ms = 3 s
+    micron::time_point<> tp{ 3000.0 };      // 3000 ms = 3 s
     auto s = tp.as<micron::unit::seconds>();
     sb::require(s, 3.0);
   }
@@ -542,7 +542,7 @@ test_time_point()
 
   sb::test_case("as<microseconds>() converts ms to microseconds");
   {
-    micron::time_point<> tp{ 1.0 };     // 1 ms = 1000 us
+    micron::time_point<> tp{ 1.0 };      // 1 ms = 1000 us
     auto us = tp.as<micron::unit::microseconds>();
     sb::require(us, 1'000.0);
   }
@@ -550,7 +550,7 @@ test_time_point()
 
   sb::test_case("as<nanoseconds>() converts ms to nanoseconds");
   {
-    micron::time_point<> tp{ 1.0 };     // 1 ms = 1000000 ns
+    micron::time_point<> tp{ 1.0 };      // 1 ms = 1000000 ns
     auto ns = tp.as<micron::unit::nanoseconds>();
     sb::require(ns, 1'000'000.0);
   }
@@ -558,7 +558,7 @@ test_time_point()
 
   sb::test_case("as<minutes>() converts ms to minutes");
   {
-    micron::time_point<> tp{ 60'000.0 };     // 60000 ms = 1 min
+    micron::time_point<> tp{ 60'000.0 };      // 60000 ms = 1 min
     auto m = tp.as<micron::unit::minutes>();
     sb::require(m, 1.0);
   }
@@ -566,7 +566,7 @@ test_time_point()
 
   sb::test_case("as<hours>() converts ms to hours");
   {
-    micron::time_point<> tp{ 3'600'000.0 };     // 3600000 ms = 1 hr
+    micron::time_point<> tp{ 3'600'000.0 };      // 3600000 ms = 1 hr
     auto h = tp.as<micron::unit::hours>();
     sb::require(h, 1.0);
   }
@@ -663,7 +663,7 @@ test_time_of_day()
 
   sb::test_case("to_duration() round-trips from-seconds construction");
   {
-    micron::fduration_t secs = 7384.0;     // 2h 3m 4s
+    micron::fduration_t secs = 7384.0;      // 2h 3m 4s
     micron::time_of_day t{ secs };
     sb::require(t.to_duration(), secs);
   }
@@ -908,7 +908,7 @@ test_auto_timer()
     {
       micron::auto_timer<> t{ &result };
       busy_wait_ms(3);
-    }     // destructor fires here
+    }      // destructor fires here
     sb::require_greater(result, 0.0);
   }
   sb::end_test_case();
@@ -1052,7 +1052,7 @@ test_stress()
   {
     // 1970-01-01 through ~2042 stepping one day
     time_t base = 0LL;
-    for ( int d = 0; d < 365 * 70; d += 31 ) {     // every 31 days
+    for ( int d = 0; d < 365 * 70; d += 31 ) {      // every 31 days
       time_t ts = base + static_cast<time_t>(d) * 86400LL;
       auto ymd = micron::year_month_day::from_unix(ts);
       sb::require_true(ymd.ok());

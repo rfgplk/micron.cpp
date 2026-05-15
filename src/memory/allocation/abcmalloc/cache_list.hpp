@@ -46,17 +46,17 @@ namespace abc
 //    offset 24: free-list link
 //    offset 32: meta
 
-template <typename T, i64 Min, i32 Mx = 64>
+template<typename T, i64 Min, i32 Mx = 64>
   requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T> and (bool)((Min & (Min - 1)) == 0))
 struct __tlsf_list {
 
-  static constexpr usize __block_align = __hdr_offset;        // 32
-  static constexpr usize __min_block = __block_align * 2;     // 64
+  static constexpr usize __block_align = __hdr_offset;         // 32
+  static constexpr usize __min_block = __block_align * 2;      // 64
   static constexpr i32 __sl_log2 = 4;
-  static constexpr i32 __sl_count = 1 << __sl_log2;                // 16
-  static constexpr i32 __fl_shift = 6;                             // log2(64)
-  static constexpr i32 __fl_count = 26;                            // indices 0..25
-  static constexpr i32 __list_count = __fl_count * __sl_count;     // 416
+  static constexpr i32 __sl_count = 1 << __sl_log2;                 // 16
+  static constexpr i32 __fl_shift = 6;                              // log2(64)
+  static constexpr i32 __fl_count = 26;                             // indices 0..25
+  static constexpr i32 __list_count = __fl_count * __sl_count;      // 416
 
   static_assert(__block_align >= 32, "header must fit in __hdr_offset");
   static_assert((1ULL << __fl_shift) == __min_block, "__fl_shift must equal log2(__min_block)");
@@ -73,15 +73,15 @@ struct __tlsf_list {
 
   static_assert(sizeof(tlsf_hdr) <= __hdr_offset, "tlsf_hdr must fit in __hdr_offset bytes");
 
-  byte *base;       // pool start (= start sentinel address)
-  usize total;      // data-region size between sentinels
-  i32 fl_count;     // runtime FL levels used
+  byte *base;        // pool start (= start sentinel address)
+  usize total;       // data-region size between sentinels
+  i32 fl_count;      // runtime FL levels used
   usize allocated_bytes;
   usize tombstoned_bytes;
-  u32 fl_bitmap;                               // first-level bitmap
-  u32 sl_bitmap[__fl_count];                   // second-level bitmaps
-  tlsf_hdr *heads[__list_count];               // free-list heads  [fi * __sl_count + si]
-  tlsf_hdr *temporal_active[__list_count];     // one active temporal block per class
+  u32 fl_bitmap;                                // first-level bitmap
+  u32 sl_bitmap[__fl_count];                    // second-level bitmaps
+  tlsf_hdr *heads[__list_count];                // free-list heads  [fi * __sl_count + si]
+  tlsf_hdr *temporal_active[__list_count];      // one active temporal block per class
 
   __attribute__((always_inline)) static inline usize
   align_up(usize v, usize a) noexcept
@@ -314,7 +314,7 @@ struct __tlsf_list {
     __impl_init_memory(mem.ptr, mem.len);
   }
 
-  __tlsf_list(const T &mem, u8 *) noexcept : __tlsf_list(mem) {}
+  __tlsf_list(const T &mem, u8 *) noexcept : __tlsf_list(mem) { }
 
   __tlsf_list(const __tlsf_list &) = delete;
 
@@ -592,4 +592,4 @@ struct __tlsf_list {
   }
 };
 
-};     // namespace abc
+};      // namespace abc

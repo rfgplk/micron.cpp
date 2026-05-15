@@ -11,8 +11,8 @@ struct fd_t {
   i32 fd;
 
   ~fd_t() = default;
-  constexpr fd_t(void) : fd{} {};
-  constexpr fd_t(i32 x) : fd(x) {};
+  constexpr fd_t(void) : fd{} { };
+  constexpr fd_t(i32 x) : fd(x) { };
   constexpr fd_t(const fd_t &) = default;
   constexpr fd_t(fd_t &&) = default;
   constexpr fd_t &operator=(const fd_t &) = default;
@@ -244,6 +244,6 @@ inline constexpr fd_t invalid_fd{ -1 };
 
 using dir_t = fd_t;
 
-};     // namespace posix
+};      // namespace posix
 
-};     // namespace micron
+};      // namespace micron

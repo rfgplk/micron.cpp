@@ -130,6 +130,6 @@ _mm256_cmpgt_epi32_mask(__m256i a, __m256i b) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

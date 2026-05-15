@@ -23,7 +23,7 @@ alarm()
 
 // a method to quickly crash a ring3 program
 // pick your poison
-template <int x = 0>
+template<int x = 0>
 __attribute__((noreturn)) void
 crash(void)
 {
@@ -87,7 +87,7 @@ mark()
   __asm__ __volatile__("" ::: "memory");
 }
 
-template <typename Fn>
+template<typename Fn>
   requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn, int>)
 inline void
 on_terminate(Fn &&fn)
@@ -98,7 +98,7 @@ on_terminate(Fn &&fn)
   create_handler(fn, signal::quit);
 }
 
-template <typename Fn1, typename Fn2>
+template<typename Fn1, typename Fn2>
   requires(micron::is_invocable_v<Fn1, int> && micron::is_invocable_v<Fn2, int>)
 inline void
 on_user_signals(Fn1 &&fn1, Fn2 &&fn2)
@@ -107,4 +107,4 @@ on_user_signals(Fn1 &&fn1, Fn2 &&fn2)
   create_handler(fn2, signal::usr2);
 }
 
-};     // namespace micron
+};      // namespace micron

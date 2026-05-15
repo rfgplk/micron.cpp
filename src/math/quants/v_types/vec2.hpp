@@ -23,16 +23,16 @@
 namespace micron
 {
 
-template <typename T = float>
+template<typename T = float>
   requires micron::is_floating_point_v<T>
 struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   T x, y;
 
   ~vector_2() = default;
 
-  constexpr vector_2() : x(T{}), y(T{}) {}
+  constexpr vector_2() : x(T{}), y(T{}) { }
 
-  constexpr vector_2(T a, T b) : x(a), y(b) {}
+  constexpr vector_2(T a, T b) : x(a), y(b) { }
 
   constexpr vector_2(const vector_2<T> &o) = default;
   constexpr vector_2(vector_2<T> &&o) = default;
@@ -832,4 +832,4 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   }
 };
 
-}     // namespace micron
+}      // namespace micron

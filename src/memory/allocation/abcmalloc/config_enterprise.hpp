@@ -60,7 +60,7 @@ constexpr static const usize __default_cache_size_factor = (1 << 16);
 constexpr static const usize __default_arena_page_buf = 2048;
 
 constexpr static const usize __default_magic_size = micron::numeric_limits<usize>::max();
-constexpr static const usize __default_minimum_page_mul = 16;     // 65kB minimum per sheet, larger buckets will exceed this
+constexpr static const usize __default_minimum_page_mul = 16;      // 65kB minimum per sheet, larger buckets will exceed this
 
 // 1% of system RAM. on 256 GB this is ~2.6 GB distributed across all five size classes by weight
 constexpr static const f32 __default_prealloc_factor = 0.01f;
@@ -69,12 +69,12 @@ constexpr static const f32 __default_prealloc_factor = 0.01f;
 constexpr static const usize __default_cache_step = 8192;
 
 constexpr static const bool __default_launder
-    = false;     // by default is off, laundering lets the allocators allocate same sized requests at the same address
+    = false;      // by default is off, laundering lets the allocators allocate same sized requests at the same address
 
 constexpr static const bool __default_lazy_construct = true;
-constexpr static const bool __default_single_instance = true;      // enable an allocator per thread (DEPRECATED for now)
-constexpr static const bool __default_global_instance = false;     // enable a single global allocator (DEPRECATED for now)
-constexpr static const bool __default_multithread_safe = true;     // essentially, enables locks across API calls
+constexpr static const bool __default_single_instance = true;       // enable an allocator per thread (DEPRECATED for now)
+constexpr static const bool __default_global_instance = false;      // enable a single global allocator (DEPRECATED for now)
+constexpr static const bool __default_multithread_safe = true;      // essentially, enables locks across API calls
 
 // preallocate precise/small/medium at startup with weight-based shares.
 constexpr static const bool __default_eager_hot_tiers = true;
@@ -82,6 +82,13 @@ constexpr static const bool __default_eager_hot_tiers = true;
 // 128 deallocations between sweeps. server workloads sustain high throughput over long periods; sweeping too often serialises dealloc paths
 // under contention
 constexpr static const u32 __default_tombstone_sweep_interval = 128;
+
+constexpr static const u32 __max_sheets_precise = 1024;
+constexpr static const u32 __max_sheets_small = 1024;
+constexpr static const u32 __max_sheets_medium = 1024;
+constexpr static const u32 __max_sheets_large = 128;
+constexpr static const u32 __max_sheets_huge = 64;
+constexpr static const u32 __max_sheets_arena_internal = 64;
 
 static_assert(__default_single_instance != __default_global_instance,
               "abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.");
@@ -93,8 +100,8 @@ constexpr static const byte __default_fail_result = 0;
 constexpr static const usize __default_max_retries = 3;
 
 // in pages (each page is 4096)
-constexpr static const bool __default_saturated_mode = true;     // enables a saturation buffer, which checks the rate at which new requests
-                                                                 // are coming in. adjusts allocation space accordingly
+constexpr static const bool __default_saturated_mode = true;      // enables a saturation buffer, which checks the rate at which new
+                                                                  // requests are coming in. adjusts allocation space accordingly
 
 constexpr static const usize __default_overcommit = 2;
 
@@ -145,7 +152,7 @@ constexpr static const bool __default_guard_arena_metadata = true;
 constexpr static const bool __default_unsafe_size_recovery = false;
 // when true, sz==0 scrub paths read size from addr - __hdr_offset (only for TLSF) when false sz==0 scrubs are skipped
 
-constexpr static const bool __default_check_alignment = false;     // verify that addresses passed to pop/freeze are naturally aligned
+constexpr static const bool __default_check_alignment = false;      // verify that addresses passed to pop/freeze are naturally aligned
 
 constexpr static const bool __default_poison_on_free = false;
 // fill freed regions with __default_poison_byte to detect use-after-free.
@@ -157,4 +164,4 @@ constexpr static const bool __default_redzone = false;
 
 constexpr static const byte __default_redzone_byte = 0xC1;
 constexpr static const usize __default_redzone_size = 8;
-};     // namespace abc
+};      // namespace abc

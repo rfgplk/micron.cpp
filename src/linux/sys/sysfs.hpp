@@ -145,9 +145,9 @@ __cache_path(u32 cpu_id, u32 index, const char *attr)
   return p;
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
-template <usize N = 128>
+template<usize N = 128>
 inline micron::sstring<N, char>
 read_str(const char *path)
 {
@@ -321,7 +321,7 @@ set_max_freq_hz(u32 cpu_id, u64 hz)
   return set_scaling_max_freq(cpu_id, hz / 1000);
 }
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 scaling_governor(u32 cpu_id)
 {
@@ -336,7 +336,7 @@ set_scaling_governor(u32 cpu_id, const char *gov)
   return write_str(&p[0], gov);
 }
 
-template <usize N = 256>
+template<usize N = 256>
 inline micron::sstring<N, char>
 scaling_available_governors(u32 cpu_id)
 {
@@ -344,7 +344,7 @@ scaling_available_governors(u32 cpu_id)
   return read_str<N>(&p[0]);
 }
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 scaling_driver(u32 cpu_id)
 {
@@ -352,7 +352,7 @@ scaling_driver(u32 cpu_id)
   return read_str<N>(&p[0]);
 }
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 energy_performance_preference(u32 cpu_id)
 {
@@ -441,7 +441,7 @@ core_id(u32 cpu_id)
   return static_cast<u32>(read_u64(&p[0]));
 }
 
-template <usize N = 64>
+template<usize N = 64>
 inline micron::sstring<N, char>
 thread_siblings_list(u32 cpu_id)
 {
@@ -449,7 +449,7 @@ thread_siblings_list(u32 cpu_id)
   return read_str<N>(&p[0]);
 }
 
-template <usize N = 64>
+template<usize N = 64>
 inline micron::sstring<N, char>
 core_siblings_list(u32 cpu_id)
 {
@@ -474,7 +474,7 @@ struct info_t {
   u64 size;
 };
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 type_str(u32 cpu_id, u32 index)
 {
@@ -578,9 +578,9 @@ l1d_line_size(u32 cpu_id = 0)
   return 64;
 }
 
-};     // namespace cache
+};      // namespace cache
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 cpuidle_governor(u32 cpu_id)
 {
@@ -622,7 +622,7 @@ temp_c(u32 zone = 0)
   return static_cast<i32>(temp(zone) / 1000);
 }
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 type(u32 zone = 0)
 {
@@ -630,7 +630,7 @@ type(u32 zone = 0)
   return read_str<N>(&p[0]);
 }
 
-};     // namespace thermal
+};      // namespace thermal
 
 namespace power
 {
@@ -660,7 +660,7 @@ max_energy_uj(u32 zone = 0)
   return read_u64(&p[0]);
 }
 
-template <usize N = 64>
+template<usize N = 64>
 inline micron::sstring<N, char>
 name(u32 zone = 0)
 {
@@ -668,9 +668,9 @@ name(u32 zone = 0)
   return read_str<N>(&p[0]);
 }
 
-};     // namespace power
+};      // namespace power
 
-template <usize N = 128>
+template<usize N = 128>
 inline micron::sstring<N, char>
 cpu_vulnerability(const char *vuln)
 {
@@ -686,14 +686,14 @@ aslr_level()
   return static_cast<u32>(read_u64("/proc/sys/kernel/randomize_va_space"));
 }
 
-template <usize N = 64>
+template<usize N = 64>
 inline micron::sstring<N, char>
 thp_enabled()
 {
   return read_str<N>("/sys/kernel/mm/transparent_hugepage/enabled");
 }
 
-template <usize N = 32>
+template<usize N = 32>
 inline micron::sstring<N, char>
 microcode_version(u32 cpu_id = 0)
 {
@@ -701,7 +701,7 @@ microcode_version(u32 cpu_id = 0)
   return read_str<N>(&p[0]);
 }
 
-template <usize N = 64>
+template<usize N = 64>
 inline micron::sstring<N, char>
 numa_node_cpulist(u32 node = 0)
 {
@@ -752,9 +752,9 @@ cpu_topo(u32 cpu_id)
   return t;
 }
 
-};     // namespace cpu
+};      // namespace cpu
 
-};     // namespace sysfs
+};      // namespace sysfs
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

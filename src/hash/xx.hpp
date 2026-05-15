@@ -41,7 +41,7 @@ struct xxhash64_state {
 
 typedef xxhash64_state xstate;
 
-template <u64 seed>
+template<u64 seed>
 inline xstate
 init_seed()
 {
@@ -113,7 +113,7 @@ xxhash_final(u64 xxhash, const byte *ptr, usize len)
     len -= 8;
   }
   if ( len >= 4 ) {
-    xxhash ^= (*reinterpret_cast<const u32 *>(ptr)) * xxprime64a;     // ??
+    xxhash ^= (*reinterpret_cast<const u32 *>(ptr)) * xxprime64a;      // ??
     ptr += 4;
     xxhash = rotl64(xxhash, 23) * xxprime64b + xxprime64c;
     len -= 4;
@@ -167,7 +167,7 @@ xxhash32(const byte *src, usize len)
   return xxhash_final_32(xxhash, src, len);
 }
 */
-template <u64 seed>
+template<u64 seed>
 inline u64
 xxhash64(const byte *src, usize len)
 {
@@ -231,6 +231,6 @@ xxhash64_rtseed(const byte *src, u64 seed, usize len)
   xxhash += len;
   return xxhash_final(xxhash, src, len);
 }
-};     // namespace hashes
+};      // namespace hashes
 
-};     // namespace micron
+};      // namespace micron

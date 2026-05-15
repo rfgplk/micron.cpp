@@ -1480,9 +1480,9 @@ _mm_cvtsd_ss(__m128 a, __m128d b) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 

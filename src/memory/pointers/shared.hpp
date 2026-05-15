@@ -10,7 +10,7 @@
 namespace micron
 {
 
-template <class Type> class shared_pointer : private __internal_pointer_alloc<shared_handler<Type>>
+template<class Type> class shared_pointer: private __internal_pointer_alloc<shared_handler<Type>>
 {
   shared_handler<Type> *control;
 
@@ -47,11 +47,11 @@ public:
 
   ~shared_pointer() { __release(); }
 
-  shared_pointer() noexcept : control(nullptr) {}
+  shared_pointer() noexcept : control(nullptr) { }
 
-  template <is_nullptr V> shared_pointer(V) noexcept : control(nullptr) {}
+  template<is_nullptr V> shared_pointer(V) noexcept : control(nullptr) { }
 
-  explicit shared_pointer(Type *p) : control(p ? __make_control(p) : nullptr) {}
+  explicit shared_pointer(Type *p) : control(p ? __make_control(p) : nullptr) { }
 
   shared_pointer(const shared_pointer &t) noexcept : control(t.control)
   {
@@ -65,7 +65,7 @@ public:
 
   shared_pointer(shared_pointer &&t) noexcept : control(t.control) { t.control = nullptr; }
 
-  template <class... Args> explicit shared_pointer(Args &&...args) : control(__make_control(__new<Type>(micron::forward<Args>(args)...))) {}
+  template<class... Args> explicit shared_pointer(Args &&...args) : control(__make_control(__new<Type>(micron::forward<Args>(args)...))) { }
 
   shared_pointer &
   operator=(shared_pointer &&o) noexcept
@@ -130,7 +130,7 @@ public:
     return (*this = micron::move(t));
   }
 
-  template <is_nullptr V>
+  template<is_nullptr V>
   shared_pointer &
   operator=(V) noexcept
   {
@@ -194,35 +194,35 @@ public:
     return get() == nullptr;
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
   {
     return get() == o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return get() > o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return get() < o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return get() <= o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
   {
@@ -248,4 +248,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

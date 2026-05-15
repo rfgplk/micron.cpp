@@ -84,8 +84,8 @@ main()
     A.at(1, 0) = 3;
     A.at(1, 1) = 4;
     require_true(near(frobenius_norm(A), 5.477225575051661, 1e-10));
-    require_true(near(norm_inf_mat(A), 7.0));     // max row-sum
-    require_true(near(norm_l1_mat(A), 6.0));      // max col-sum
+    require_true(near(norm_inf_mat(A), 7.0));      // max row-sum
+    require_true(near(norm_l1_mat(A), 6.0));       // max col-sum
   }
   end_test_case();
 

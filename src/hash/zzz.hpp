@@ -37,7 +37,7 @@ constexpr i64 iv64_3 = pack_iv64(24);
 alignas(32) static const u8 __zero_block[32] = { 0 };
 
 // hard seed
-template <i64 Seed>
+template<i64 Seed>
 void
 z(const u8 *__restrict data, usize sz, u64 *__restrict out)
 {
@@ -60,7 +60,7 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
     } else {
       u8 tmp[32];
       for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];     // fill with static zero
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];      // fill with static zero
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -108,7 +108,7 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
     } else {
       u8 tmp[32];
       for ( usize i = 0; i < remaining; ++i ) tmp[i] = ptr[i];
-      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];     // fill with static zero
+      for ( usize i = remaining; i < 32; ++i ) tmp[i] = __zero_block[i];      // fill with static zero
       block = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(tmp));
       ptr += remaining;
     }
@@ -135,7 +135,7 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 }
 
 // hard seed version
-template <i64 Seed>
+template<i64 Seed>
 void
 zz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 {
@@ -381,7 +381,7 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 }
 
 // hard seed template
-template <i64 Seed>
+template<i64 Seed>
 void
 zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 {
@@ -476,7 +476,7 @@ z64(const u8 *data, i64 seed, usize sz)
   return out[0] ^ out[1] ^ out[2] ^ out[3];
 }
 
-template <i64 Seed>
+template<i64 Seed>
 u64
 z64(const u8 *data, usize sz)
 {
@@ -493,7 +493,7 @@ zz64(const u8 *data, i64 seed, usize sz)
   return out[0] ^ out[1] ^ out[2] ^ out[3];
 }
 
-template <i64 Seed>
+template<i64 Seed>
 u64
 zz64(const u8 *data, usize sz)
 {
@@ -512,7 +512,7 @@ zzz64(const u8 *data, i64 seed, usize sz)
 }
 
 // 64-bit helper, zzz by default produces a 256-bit hash
-template <i64 Seed>
+template<i64 Seed>
 u64
 zzz64(const u8 *data, usize sz)
 {
@@ -531,7 +531,7 @@ zzz128(const u8 *data, i64 seed, usize sz)
 }
 
 // 128-bit helper, zzz by default produces a 256-bit hash
-template <i64 Seed>
+template<i64 Seed>
 micron::pair<u64, u64>
 zzz128(const u8 *data, usize sz)
 {
@@ -540,5 +540,5 @@ zzz128(const u8 *data, usize sz)
   return { out[0] ^ out[1], out[2] ^ out[3] };
 }
 
-};     // namespace hashes
-};     // namespace micron
+};      // namespace hashes
+};      // namespace micron

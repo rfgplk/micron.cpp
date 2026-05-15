@@ -141,45 +141,45 @@ fast_mod1e8(u64 x, u64 q)
   return static_cast<u32>(x - q * 100000000ull);
 }
 
-template <typename I> struct max_digits;
+template<typename I> struct max_digits;
 
-template <> struct max_digits<char> {
+template<> struct max_digits<char> {
   static constexpr usize value = 5;
 };
 
-template <> struct max_digits<i8> {
+template<> struct max_digits<i8> {
   static constexpr usize value = 5;
 };
 
-template <> struct max_digits<u8> {
+template<> struct max_digits<u8> {
   static constexpr usize value = 4;
 };
 
-template <> struct max_digits<i16> {
+template<> struct max_digits<i16> {
   static constexpr usize value = 7;
 };
 
-template <> struct max_digits<u16> {
+template<> struct max_digits<u16> {
   static constexpr usize value = 6;
 };
 
-template <> struct max_digits<i32> {
+template<> struct max_digits<i32> {
   static constexpr usize value = 12;
 };
 
-template <> struct max_digits<u32> {
+template<> struct max_digits<u32> {
   static constexpr usize value = 11;
 };
 
-template <> struct max_digits<i64> {
+template<> struct max_digits<i64> {
   static constexpr usize value = 21;
 };
 
-template <> struct max_digits<u64> {
+template<> struct max_digits<u64> {
   static constexpr usize value = 21;
 };
 
-template <typename I> constexpr static const usize max_digits_v = max_digits<I>::value;
+template<typename I> constexpr static const usize max_digits_v = max_digits<I>::value;
 
 inline __attribute__((always_inline)) u32
 clz64(u64 v)
@@ -434,7 +434,7 @@ pow5_factor(u64 v)
   // lots of magic here
   // 2^64 / 5 = 3689348814741910323
   constexpr u64 inv5 = 0xCCCCCCCCCCCCCCCDull;
-  constexpr u64 thresh5 = 0x3333333333333333ull;     // floor(2^64 / 5)
+  constexpr u64 thresh5 = 0x3333333333333333ull;      // floor(2^64 / 5)
   u32 count = 0;
   while ( true ) {
     u64 q = v * inv5;
@@ -875,7 +875,7 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
       if ( d < ryuLen )
         buf[pos++] = rstart[d];
       else
-        buf[pos++] = '0';     // trailing zeros in integer part
+        buf[pos++] = '0';      // trailing zeros in integer part
     }
 
     if ( precision > 0 && pos < buf_sz ) {
@@ -988,7 +988,7 @@ d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
   return pos;
 }
 
-};     // namespace __ryu
+};      // namespace __ryu
 
 inline constexpr int
 hex_digit_val(char c)
@@ -1012,7 +1012,7 @@ digit_val(char c, u32 base)
   return (v >= 0 && static_cast<u32>(v) < base) ? v : -1;
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 #pragma GCC diagnostic pop
-};     // namespace micron
+};      // namespace micron

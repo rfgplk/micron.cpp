@@ -115,7 +115,7 @@
 typedef void (*sig_t)(int);
 #define __MICRON_SELF_ASSIGNMENT_GUARD
 
-template <typename T>
+template<typename T>
   requires micron::is_integral_v<T>
 constexpr byte
 B(T t)
@@ -123,7 +123,7 @@ B(T t)
   return (t);
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_integral_v<T>
 constexpr byte
 KB(T t)
@@ -131,7 +131,7 @@ KB(T t)
   return (t << 10);
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_integral_v<T>
 constexpr byte
 MB(T t)
@@ -139,7 +139,7 @@ MB(T t)
   return (t << 20);
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_integral_v<T>
 constexpr byte
 GB(T t)

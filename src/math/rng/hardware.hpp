@@ -50,7 +50,7 @@ seed_from_hw() noexcept
   return xoshiro256ss{ a, b, c, d };
 }
 
-};     // namespace hardware
-};     // namespace rng
-};     // namespace math
-};     // namespace micron
+};      // namespace hardware
+};      // namespace rng
+};      // namespace math
+};      // namespace micron

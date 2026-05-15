@@ -24,7 +24,7 @@ namespace micron
 namespace __old
 {
 // string on the stack, inplace (sstring means stackstring)
-template <usize N, is_scalar_literal T = schar, bool Sf = true> struct sstring {
+template<usize N, is_scalar_literal T = schar, bool Sf = true> struct sstring {
   using category_type = string_tag;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
@@ -142,7 +142,7 @@ private:
     return (itr < &memory[0] or itr > &memory[length] or length + required >= N);
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -200,11 +200,11 @@ public:
     length = n;
   }
 
-  template <size_type M, typename F> constexpr sstring(const F (&str)[M])
+  template<size_type M, typename F> constexpr sstring(const F (&str)[M])
   {
     static_assert(N >= M, "micron::sstring sstring(cconst) too large.");
     micron::memcpy(&memory[0], &str[0], M);
-    length = M - 1;     // cut null
+    length = M - 1;      // cut null
   };
 
   // allow construction from - to iterator (be careful!)
@@ -227,7 +227,7 @@ public:
     length = __end - __start;
   };
 
-  template <size_type M, typename F, bool X = Sf> constexpr sstring(const sstring<M, F, X> &o)
+  template<size_type M, typename F, bool X = Sf> constexpr sstring(const sstring<M, F, X> &o)
   {
     micron::constexpr_zero(&memory[0], N);
     if ( o.empty() ) {
@@ -245,7 +245,7 @@ public:
       length = o.length;
   };
 
-  template <is_string S> constexpr sstring(const S &o)
+  template<is_string S> constexpr sstring(const S &o)
   {
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &o.memory[0], N);
@@ -267,7 +267,7 @@ public:
     o.length = 0;
   };
 
-  template <size_type M, typename F, bool X = Sf> constexpr sstring(sstring<M, F, X> &&o)
+  template<size_type M, typename F, bool X = Sf> constexpr sstring(sstring<M, F, X> &&o)
   {
     if constexpr ( N < M ) {
       micron::memcpy(&memory[0], &o.memory[0], N);
@@ -312,7 +312,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   sstring &
   operator=(const F &o)
   {
@@ -331,7 +331,7 @@ public:
     return *this;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   sstring &
   operator=(const sstring<M, F, X> &o)
   {
@@ -346,7 +346,7 @@ public:
     return *this;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   sstring &
   operator=(sstring<M, F, X> &&o)
   {
@@ -387,7 +387,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   sstring &
   operator=(const F (&str)[N])
   {
@@ -509,14 +509,14 @@ public:
   inline auto
   clone()
   {
-    return sstring<N, T>(*this);     // copy
+    return sstring<N, T>(*this);      // copy
   }
 
-  template <typename F>
+  template<typename F>
   inline F
   clone_to()
   {
-    return F(*this);     // copy
+    return F(*this);      // copy
   }
 
   inline void
@@ -554,7 +554,7 @@ public:
     return __rfind_substr(needle, micron::strlen(needle), pos);
   }
 
-  template <size_type M>
+  template<size_type M>
   inline size_type
   rfind(const T (&needle)[M], size_type pos = npos) const
   {
@@ -562,7 +562,7 @@ public:
     return __rfind_substr(&needle[0], needle_len, pos);
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline size_type
   rfind(const sstring<M, F, X> &str, size_type pos = npos) const
   {
@@ -579,7 +579,7 @@ public:
     return npos;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline size_type
   find_first_of(const T (&chars)[M], size_type pos = 0) const
   {
@@ -589,7 +589,7 @@ public:
     return npos;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline size_type
   find_first_of(const sstring<M, F, X> &chars, size_type pos = 0) const
   {
@@ -614,7 +614,7 @@ public:
     return npos;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline size_type
   find_last_of(const T (&chars)[M], size_type pos = npos) const
   {
@@ -629,7 +629,7 @@ public:
     return npos;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline size_type
   find_last_of(const sstring<M, F, X> &chars, size_type pos = npos) const
   {
@@ -661,7 +661,7 @@ public:
     return npos;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline size_type
   find_first_not_of(const T (&chars)[M], size_type pos = 0) const
   {
@@ -677,7 +677,7 @@ public:
     return npos;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline size_type
   find_first_not_of(const sstring<M, F, X> &chars, size_type pos = 0) const
   {
@@ -714,7 +714,7 @@ public:
     return npos;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline size_type
   find_last_not_of(const T (&chars)[M], size_type pos = npos) const
   {
@@ -734,7 +734,7 @@ public:
     return npos;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline size_type
   find_last_not_of(const sstring<M, F, X> &chars, size_type pos = npos) const
   {
@@ -771,7 +771,7 @@ public:
     return true;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline bool
   starts_with(const T (&prefix)[M]) const
   {
@@ -783,7 +783,7 @@ public:
     return true;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline bool
   starts_with(const sstring<M, F, X> &prefix) const
   {
@@ -812,7 +812,7 @@ public:
     return true;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline bool
   ends_with(const T (&suffix)[M]) const
   {
@@ -825,7 +825,7 @@ public:
     return true;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline bool
   ends_with(const sstring<M, F, X> &suffix) const
   {
@@ -850,7 +850,7 @@ public:
     return find_substr(needle, micron::strlen(needle)) != npos;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline bool
   contains(const T (&needle)[M]) const
   {
@@ -859,7 +859,7 @@ public:
     return find_substr(&needle[0], needle_len) != npos;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline bool
   contains(const sstring<M, F, X> &needle) const
   {
@@ -876,7 +876,7 @@ public:
     return __replace_impl(pos, cnt, with, micron::strlen(with));
   }
 
-  template <size_type M>
+  template<size_type M>
   inline sstring &
   replace(size_type pos, size_type cnt, const T (&with)[M])
   {
@@ -884,7 +884,7 @@ public:
     return __replace_impl(pos, cnt, &with[0], M - 1);
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline sstring &
   replace(size_type pos, size_type cnt, const sstring<M, F, X> &with)
   {
@@ -914,12 +914,12 @@ public:
     size_type pos = 0;
     while ( (pos = find_substr(needle, needle_len, pos)) != npos ) {
       __replace_impl(pos, needle_len, with, with_len);
-      pos += with_len;     // advance past replacement to avoid re-matching
+      pos += with_len;      // advance past replacement to avoid re-matching
     }
     return *this;
   }
 
-  template <size_type M, size_type K>
+  template<size_type M, size_type K>
   inline sstring &
   replace_all(const T (&needle)[M], const T (&with)[K])
   {
@@ -934,7 +934,7 @@ public:
     return *this;
   }
 
-  template <size_type M, size_type K, typename F, typename G, bool X = Sf, bool Y = Sf>
+  template<size_type M, size_type K, typename F, typename G, bool X = Sf, bool Y = Sf>
   inline sstring &
   replace_all(const sstring<M, F, X> &needle, const sstring<K, G, Y> &with)
   {
@@ -954,14 +954,14 @@ public:
     return __lexcmp(memory, length, other, micron::strlen(other));
   }
 
-  template <size_type M>
+  template<size_type M>
   inline int
   compare(const T (&other)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&other[0]), M - 1);
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline int
   compare(const sstring<M, F, X> &other) const
   {
@@ -978,7 +978,7 @@ public:
     return npos;
   }
 
-  template <typename F>
+  template<typename F>
   size_type
   find(F ch, size_type pos = 0) const
   {
@@ -995,12 +995,12 @@ public:
     __safety_check<&sstring::__null_check, except::library_error>("micron::sstring find() null needle", static_cast<const void *>(needle));
 
     size_type needle_len = micron::strlen(needle);
-    if ( needle_len == 0 ) return pos;     // vacuous match, mirrors std::string
+    if ( needle_len == 0 ) return pos;      // vacuous match, mirrors std::string
 
     return find_substr(reinterpret_cast<const T *>(needle), needle_len, pos);
   }
 
-  template <size_type M>
+  template<size_type M>
   size_type
   find(const T (&needle)[M], size_type pos = 0) const
   {
@@ -1010,11 +1010,11 @@ public:
     return find_substr(&needle[0], needle_len, pos);
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   size_type
   find(const sstring<M, F, X> &str, size_type pos = 0) const
   {
-    if ( str.empty() ) return pos;     // vacuous match
+    if ( str.empty() ) return pos;      // vacuous match
 
     return find_substr(reinterpret_cast<const T *>(str.memory), str.length, pos);
   }
@@ -1105,7 +1105,7 @@ public:
     return n;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline size_type
   count(const T (&needle)[M]) const
   {
@@ -1119,7 +1119,7 @@ public:
     return n;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline size_type
   count(const sstring<M, F, X> &needle) const
   {
@@ -1236,7 +1236,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   inline sstring &
   push_back(F ch)
   {
@@ -1244,7 +1244,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   inline sstring &
   pop_back(void)
   {
@@ -1252,7 +1252,7 @@ public:
     return *this;
   }
 
-  template <typename F = T, typename I = size_type>
+  template<typename F = T, typename I = size_type>
     requires(micron::is_arithmetic_v<I>)
   inline sstring &
   erase(I __ind, size_type cnt = 1)
@@ -1271,7 +1271,7 @@ public:
     return *this;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline sstring &
   erase(iterator itr, size_type cnt = 1)
   {
@@ -1288,7 +1288,7 @@ public:
     return *this;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline sstring &
   erase(const_iterator itr, size_type cnt = 1)
   {
@@ -1332,7 +1332,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline sstring &
   remove(const T (&needle)[M])
   {
@@ -1348,7 +1348,7 @@ public:
     return *this;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline sstring &
   remove(const sstring<M, F, X> &needle)
   {
@@ -1381,7 +1381,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
   inline sstring &
   remove_all(const T (&needle)[M])
   {
@@ -1397,7 +1397,7 @@ public:
     return *this;
   }
 
-  template <size_type M, typename F, bool X = Sf>
+  template<size_type M, typename F, bool X = Sf>
   inline sstring &
   remove_all(const sstring<M, F, X> &needle)
   {
@@ -1412,7 +1412,7 @@ public:
     return *this;
   }
 
-  template <typename I, typename F = T>
+  template<typename I, typename F = T>
     requires micron::same_as<micron::remove_cvref_t<F>, T> && micron::convertible_to<I, size_type> && micron::integral<I>
              && (!micron::is_pointer_v<I>)
   inline sstring &
@@ -1430,7 +1430,7 @@ public:
     return *this;
   }
 
-  template <typename I, typename F = T, size_type M>
+  template<typename I, typename F = T, size_type M>
     requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
   inline sstring &
   insert(I ind, const F (&str)[M], size_type cnt = 1)
@@ -1450,7 +1450,7 @@ public:
     return *this;
   }
 
-  template <typename F = T>
+  template<typename F = T>
     requires true
   inline sstring &
   insert(iterator itr, F ch, size_type cnt = 1)
@@ -1467,7 +1467,7 @@ public:
     return *this;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline sstring &
   insert(iterator itr, const F (&str)[M], size_type cnt = 1)
   {
@@ -1482,7 +1482,7 @@ public:
     return *this;
   }
 
-  template <typename F, size_type M, bool X = Sf>
+  template<typename F, size_type M, bool X = Sf>
   inline sstring &
   insert(iterator itr, const sstring<M, F, X> &o)
   {
@@ -1495,7 +1495,7 @@ public:
     return *this;
   }
 
-  template <typename F, size_type M, bool X = Sf>
+  template<typename F, size_type M, bool X = Sf>
   inline sstring &
   insert(iterator itr, sstring<M, F, X> &&o)
   {
@@ -1524,7 +1524,7 @@ public:
     return memory[n];
   };
 
-  template <typename Itr>
+  template<typename Itr>
     requires(micron::same_as<Itr, const_iterator>)
   inline size_type
   at(Itr n)
@@ -1534,7 +1534,7 @@ public:
     return n - &memory[0];
   };
 
-  template <typename Itr>
+  template<typename Itr>
     requires(micron::same_as<Itr, const_iterator>)
   inline size_type
   at(Itr n) const
@@ -1544,7 +1544,7 @@ public:
     return n - &memory[0];
   };
 
-  template <typename Itr>
+  template<typename Itr>
     requires(micron::same_as<Itr, iterator>)
   inline size_type
   at(Itr n)
@@ -1554,7 +1554,7 @@ public:
     return n - &memory[0];
   };
 
-  template <typename Itr>
+  template<typename Itr>
     requires(micron::same_as<Itr, iterator>)
   inline size_type
   at(Itr n) const
@@ -1588,7 +1588,7 @@ public:
     return *this;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline sstring &
   operator+=(const slice<F> &data)
   {
@@ -1611,7 +1611,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   inline sstring &
   append(const slice<F> &f, usize n)
   {
@@ -1622,7 +1622,7 @@ public:
     return *this;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline sstring &
   append_null(const F (&str)[M])
   {
@@ -1658,7 +1658,7 @@ public:
     return *this;
   };
 
-  template <size_type M>
+  template<size_type M>
   inline sstring &
   operator+=(const char (&data)[M])
   {
@@ -1671,7 +1671,7 @@ public:
     return *this;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline sstring &
   operator+=(const F *&data)
   {
@@ -1684,7 +1684,7 @@ public:
     return *this;
   };
 
-  template <size_type M = N, typename F = T, bool X = Sf>
+  template<size_type M = N, typename F = T, bool X = Sf>
   inline sstring<M, F>
   substr(usize pos = 0, usize cnt = npos) const
   {
@@ -1701,7 +1701,7 @@ public:
     return buf;
   };
 
-  template <size_type M = N, typename F = T, bool X = Sf>
+  template<size_type M = N, typename F = T, bool X = Sf>
   inline sstring<M, F>
   substr(const_iterator _start, const_iterator _end = nullptr) const
   {
@@ -1719,7 +1719,7 @@ public:
     return buf;
   };
 
-  template <typename I>
+  template<typename I>
     requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
   inline sstring &
   truncate(I n)
@@ -1769,14 +1769,14 @@ public:
     return c_str();
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator==(const S &str) const
   {
     return __lexcmp(memory, length, str.c_str(), str.size()) == 0;
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator!=(const S &str) const
   {
@@ -1831,84 +1831,84 @@ public:
     return __lexcmp(memory, length, data, micron::strlen(data)) >= 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator==(const F (&data)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) == 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator!=(const F (&data)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) != 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator<(const F (&data)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) < 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator>(const F (&data)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) > 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator<=(const F (&data)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) <= 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator>=(const F (&data)[M]) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(&data[0]), M - 1) >= 0;
   }
 
-  template <size_type M, typename F = T, bool X = Sf>
+  template<size_type M, typename F = T, bool X = Sf>
   inline bool
   operator==(const sstring<M, F, X> &data) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) == 0;
   }
 
-  template <size_type M, typename F = T, bool X = Sf>
+  template<size_type M, typename F = T, bool X = Sf>
   inline bool
   operator!=(const sstring<M, F, X> &data) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) != 0;
   }
 
-  template <size_type M, typename F = T, bool X = Sf>
+  template<size_type M, typename F = T, bool X = Sf>
   inline bool
   operator<(const sstring<M, F, X> &data) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) < 0;
   }
 
-  template <size_type M, typename F = T, bool X = Sf>
+  template<size_type M, typename F = T, bool X = Sf>
   inline bool
   operator>(const sstring<M, F, X> &data) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) > 0;
   }
 
-  template <size_type M, typename F = T, bool X = Sf>
+  template<size_type M, typename F = T, bool X = Sf>
   inline bool
   operator<=(const sstring<M, F, X> &data) const
   {
     return __lexcmp(memory, length, reinterpret_cast<const T *>(data.memory), data.length) <= 0;
   }
 
-  template <size_type M, typename F = T, bool X = Sf>
+  template<size_type M, typename F = T, bool X = Sf>
   inline bool
   operator>=(const sstring<M, F, X> &data) const
   {
@@ -1916,5 +1916,5 @@ public:
   }
 };
 
-};     // namespace __old
-};     // namespace micron
+};      // namespace __old
+};      // namespace micron

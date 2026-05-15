@@ -5,11 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-template <typename F> struct __defer_guard {
+template<typename F> struct __defer_guard {
   F f;
   bool active;
 
-  constexpr explicit __defer_guard(F &&fn) noexcept : f(static_cast<F &&>(fn)), active(true) {}
+  constexpr explicit __defer_guard(F &&fn) noexcept : f(static_cast<F &&>(fn)), active(true) { }
 
   constexpr __defer_guard(__defer_guard &&other) noexcept : f(static_cast<F &&>(other.f)), active(other.active) { other.active = false; }
 
@@ -23,7 +23,7 @@ template <typename F> struct __defer_guard {
   }
 };
 
-template <typename F>
+template<typename F>
 constexpr auto
 __make_defer(F &&f) noexcept
 {

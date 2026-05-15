@@ -10,7 +10,7 @@
 namespace micron
 {
 
-class void_pointer     //: private __internal_pointer_alloc<void>
+class void_pointer      //: private __internal_pointer_alloc<void>
 {
   void *internal_pointer;
 
@@ -73,4 +73,4 @@ public:
     };*/
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -55,10 +55,10 @@ main(void)
   }
   if constexpr ( true ) {
     mc::token t(demo_callback);
-    mc::console(t());     // true not set
-    mc::console(t());     // false set + callback
-    mc::console(t());     // true again
-    mc::console(t());     // false again
+    mc::console(t());      // true not set
+    mc::console(t());      // false set + callback
+    mc::console(t());      // true again
+    mc::console(t());      // false again
   }
   return 0;
 }

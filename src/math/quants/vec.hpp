@@ -16,10 +16,10 @@ namespace micron
 namespace math
 {
 
-template <typename T>
+template<typename T>
 concept arith_scalar = micron::is_arithmetic_v<T>;
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
   requires(N >= 2 && N <= 16)
 struct alignas(vec_align_v<__conditional_t<micron::is_floating_point_v<T>, T, double>, N>) vec {
   T data[N];
@@ -41,7 +41,7 @@ struct alignas(vec_align_v<__conditional_t<micron::is_floating_point_v<T>, T, do
     return data[i];
   }
 
-  template <usize... Is>
+  template<usize... Is>
   [[nodiscard, gnu::always_inline]] constexpr vec<T, sizeof...(Is)>
   swizzle() const noexcept
   {
@@ -85,7 +85,7 @@ struct alignas(vec_align_v<__conditional_t<micron::is_floating_point_v<T>, T, do
   }
 };
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 operator+(const vec<T, N> &a, const vec<T, N> &b) noexcept
 {
@@ -94,7 +94,7 @@ operator+(const vec<T, N> &a, const vec<T, N> &b) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 operator-(const vec<T, N> &a, const vec<T, N> &b) noexcept
 {
@@ -103,7 +103,7 @@ operator-(const vec<T, N> &a, const vec<T, N> &b) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 operator-(const vec<T, N> &a) noexcept
 {
@@ -112,7 +112,7 @@ operator-(const vec<T, N> &a) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 operator*(const vec<T, N> &a, T s) noexcept
 {
@@ -121,14 +121,14 @@ operator*(const vec<T, N> &a, T s) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 operator*(T s, const vec<T, N> &a) noexcept
 {
   return a * s;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 operator/(const vec<T, N> &a, T s) noexcept
 {
@@ -138,7 +138,7 @@ operator/(const vec<T, N> &a, T s) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 operator==(const vec<T, N> &a, const vec<T, N> &b) noexcept
 {
@@ -147,12 +147,12 @@ operator==(const vec<T, N> &a, const vec<T, N> &b) noexcept
   return true;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 operator!=(const vec<T, N> &a, const vec<T, N> &b) noexcept
 {
   return !(a == b);
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

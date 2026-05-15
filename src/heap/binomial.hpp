@@ -13,24 +13,24 @@
 namespace micron
 {
 
-template <typename T, typename C> struct __binomial_node {
+template<typename T, typename C> struct __binomial_node {
   T value;
   usize degree;
   __binomial_node *parent;
   __binomial_node *child;
   __binomial_node *sibling;
 
-  __binomial_node(const T &val) : value(val), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
+  __binomial_node(const T &val) : value(val), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) { }
 
-  __binomial_node(T &&val) : value(micron::move(val)), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
+  __binomial_node(T &&val) : value(micron::move(val)), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) { }
 
-  template <typename... Args>
+  template<typename... Args>
   __binomial_node(Args &&...args) : value(micron::forward<Args>(args)...), degree(0), parent(nullptr), child(nullptr), sibling(nullptr)
   {
   }
 };
 
-template <typename T, typename C = micron::less<T>> struct __binomial_heap {
+template<typename T, typename C = micron::less<T>> struct __binomial_heap {
   using node_type = __binomial_node<T, C>;
 
   node_type *root_list;
@@ -40,9 +40,9 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
 
   ~__binomial_heap() { clear(); }
 
-  __binomial_heap() : root_list(nullptr), min_node(nullptr), node_count(0), comp() {}
+  __binomial_heap() : root_list(nullptr), min_node(nullptr), node_count(0), comp() { }
 
-  __binomial_heap(const C &c) : root_list(nullptr), min_node(nullptr), node_count(0), comp(c) {}
+  __binomial_heap(const C &c) : root_list(nullptr), min_node(nullptr), node_count(0), comp(c) { }
 
   inline void
   link(node_type *y, node_type *z)
@@ -165,7 +165,7 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
     return new_node;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline node_type *
   emplace(Args &&...args)
   {
@@ -319,4 +319,4 @@ template <typename T, typename C = micron::less<T>> struct __binomial_heap {
   }
 };
 
-};     // namespace micron
+};      // namespace micron

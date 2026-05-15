@@ -70,4 +70,4 @@ public:
 
 using queue_lock = queuing_mutex;
 
-}     // namespace micron
+}      // namespace micron

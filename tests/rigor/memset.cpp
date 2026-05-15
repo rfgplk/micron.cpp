@@ -17,7 +17,7 @@
 
 static constexpr byte CANARY = 0xC3;
 
-template <typename T, u64 N>
+template<typename T, u64 N>
 bool
 verify_buffer(const T (&buf)[N], byte expected)
 {
@@ -27,7 +27,7 @@ verify_buffer(const T (&buf)[N], byte expected)
   return true;
 }
 
-template <typename T>
+template<typename T>
 bool
 verify_buffer(const T *buf, u64 byte_count, byte expected)
 {

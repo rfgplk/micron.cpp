@@ -24,8 +24,8 @@ namespace micron
 {
 
 // c++ version of python's bisect array, which maintains sorted order
-template <is_regular_object T, usize N>
-  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
+template<is_regular_object T, usize N>
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 class bisect_array
 {
   alignas(64) T stack[N];
@@ -80,7 +80,7 @@ public:
 
   bisect_array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(const A &o)
   {
@@ -88,7 +88,7 @@ public:
     __impl_container::copy<N>(micron::addr(o[0]), micron::addr(stack[0]));
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(A &&o)
   {
@@ -219,4 +219,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

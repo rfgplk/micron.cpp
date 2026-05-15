@@ -35,11 +35,11 @@ main()
     dynvec<f64> u(4);
     dynvec<f64> v(4);
     for ( usize i = 0; i < 4; ++i ) {
-      u[i] = f64(i + 1);         // 1,2,3,4
-      v[i] = f64(2 * i + 1);     // 1,3,5,7
+      u[i] = f64(i + 1);          // 1,2,3,4
+      v[i] = f64(2 * i + 1);      // 1,3,5,7
     }
     f64 d = blas::level1::dot(as_view(u), as_view(v));
-    require_true(near(d, 1 + 6 + 15 + 28));     // 50
+    require_true(near(d, 1 + 6 + 15 + 28));      // 50
   }
   end_test_case();
 
@@ -78,8 +78,8 @@ main()
     x[2] = 1;
     dynvec<f64> y(2, 0.0);
     blas::level2::gemv(f64(1.0), as_row_view(A), as_view(x), f64(0.0), as_view(y));
-    require_true(near(y[0], 6.0));      // 1+2+3
-    require_true(near(y[1], 15.0));     // 4+5+6
+    require_true(near(y[0], 6.0));       // 1+2+3
+    require_true(near(y[1], 15.0));      // 4+5+6
   }
   end_test_case();
 
@@ -148,7 +148,7 @@ main()
     H.at(1, 2) = 2;
     H.at(2, 1) = 3;
     H.at(2, 2) = 4;
-    auto S = submat_view(H, 1, 1, 2, 2);     // 2x2, ld=4
+    auto S = submat_view(H, 1, 1, 2, 2);      // 2x2, ld=4
     dynmat<f64> B = dynmat<f64>::identity(2);
     dynmat<f64> C(2, 2, 0.0);
     blas::level3::gemm(f64(1.0), S, as_row_view(B), f64(0.0), as_row_view(C));

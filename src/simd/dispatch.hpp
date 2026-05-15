@@ -87,9 +87,9 @@ __has_avx256(const __simd_flags &flags)
 start_fn(void, 100) __runtime_check(void) { static __simd_flags flags = __get_runtime_flags; }
 #endif
 
-#endif     // __micron_arch_x86_any
+#endif      // __micron_arch_x86_any
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron
 
 #pragma GCC diagnostic pop

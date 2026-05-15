@@ -41,7 +41,7 @@ namespace mkbits
 {
 
 #define __micron_math_builtin_fn(name)                                                                                                     \
-  template <ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F bi_##name(F x) noexcept                               \
+  template<ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F bi_##name(F x) noexcept                                \
   {                                                                                                                                        \
     if constexpr ( sizeof(F) == sizeof(float) )                                                                                            \
       return F(__builtin_##name##f(float(x)));                                                                                             \
@@ -52,7 +52,7 @@ namespace mkbits
   }
 
 #define __micron_math_builtin_fn2(name)                                                                                                    \
-  template <ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F bi_##name(F a, F b) noexcept                          \
+  template<ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F bi_##name(F a, F b) noexcept                           \
   {                                                                                                                                        \
     if constexpr ( sizeof(F) == sizeof(float) )                                                                                            \
       return F(__builtin_##name##f(float(a), float(b)));                                                                                   \
@@ -108,7 +108,7 @@ __micron_math_builtin_fn2(copysign);
 #undef __micron_math_builtin_fn
 #undef __micron_math_builtin_fn2
 
-};     // namespace mkbits
+};      // namespace mkbits
 
 namespace mk
 {
@@ -116,7 +116,7 @@ namespace mk
 // trigs
 namespace trig
 {
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 sin(F x, P = {}) noexcept
 {
@@ -129,7 +129,7 @@ sin(F x, P = {}) noexcept
     return mkbits::trig_ns::sin<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 cos(F x, P = {}) noexcept
 {
@@ -142,7 +142,7 @@ cos(F x, P = {}) noexcept
     return mkbits::trig_ns::cos<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 tan(F x, P = {}) noexcept
 {
@@ -152,7 +152,7 @@ tan(F x, P = {}) noexcept
   return mkbits::trig_ns::tan<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 sincos(F x, F &s, F &c) noexcept
 {
@@ -164,7 +164,7 @@ sincos(F x, F &s, F &c) noexcept
   mkbits::trig_ns::sincos<F>(x, s, c);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asin(F x, P = {}) noexcept
 {
@@ -174,7 +174,7 @@ asin(F x, P = {}) noexcept
   return mkbits::trig_ns::asin<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acos(F x, P = {}) noexcept
 {
@@ -184,7 +184,7 @@ acos(F x, P = {}) noexcept
   return mkbits::trig_ns::acos<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan(F x, P = {}) noexcept
 {
@@ -194,7 +194,7 @@ atan(F x, P = {}) noexcept
   return mkbits::trig_ns::atan<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan2(F y, F x, P = {}) noexcept
 {
@@ -204,13 +204,13 @@ atan2(F y, F x, P = {}) noexcept
   return mkbits::trig_ns::atan2<F>(y, x);
 }
 
-};     // namespace trig
+};      // namespace trig
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // CORDIC-based trig (shift+add)
 namespace cordic
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 sin(F x) noexcept
 {
@@ -220,7 +220,7 @@ sin(F x) noexcept
   return mkbits::cordic_ns::sin<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 cos(F x) noexcept
 {
@@ -230,7 +230,7 @@ cos(F x) noexcept
   return mkbits::cordic_ns::cos<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 tan(F x) noexcept
 {
@@ -240,7 +240,7 @@ tan(F x) noexcept
   return mkbits::cordic_ns::tan<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 sincos(F x, F &s, F &c) noexcept
 {
@@ -252,7 +252,7 @@ sincos(F x, F &s, F &c) noexcept
   mkbits::cordic_ns::sincos<F>(x, s, c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan(F x) noexcept
 {
@@ -262,7 +262,7 @@ atan(F x) noexcept
   return mkbits::cordic_ns::atan<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan2(F y, F x) noexcept
 {
@@ -272,7 +272,7 @@ atan2(F y, F x) noexcept
   return mkbits::cordic_ns::atan2<F>(y, x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asin(F x) noexcept
 {
@@ -282,7 +282,7 @@ asin(F x) noexcept
   return mkbits::cordic_ns::asin<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acos(F x) noexcept
 {
@@ -292,42 +292,42 @@ acos(F x) noexcept
   return mkbits::cordic_ns::acos<F>(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 sin(V x) noexcept
 {
   return mk::sin_cordic(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 cos(V x) noexcept
 {
   return mk::cos_cordic(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 tan(V x) noexcept
 {
   return mk::tan_cordic(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[gnu::always_inline]] inline void
 sincos(V x, V &s, V &c) noexcept
 {
   s = mk::sin_cordic(x);
   c = mk::cos_cordic(x);
 }
-};     // namespace cordic
+};      // namespace cordic
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trig hyps
 namespace hyp
 {
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sinh(F x, P = {}) noexcept
 {
@@ -337,7 +337,7 @@ sinh(F x, P = {}) noexcept
   return mkbits::hyp_ns::sinh<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cosh(F x, P = {}) noexcept
 {
@@ -347,7 +347,7 @@ cosh(F x, P = {}) noexcept
   return mkbits::hyp_ns::cosh<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tanh(F x, P = {}) noexcept
 {
@@ -357,7 +357,7 @@ tanh(F x, P = {}) noexcept
   return mkbits::hyp_ns::tanh<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asinh(F x, P = {}) noexcept
 {
@@ -367,7 +367,7 @@ asinh(F x, P = {}) noexcept
   return mkbits::hyp_ns::asinh<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acosh(F x, P = {}) noexcept
 {
@@ -377,7 +377,7 @@ acosh(F x, P = {}) noexcept
   return mkbits::hyp_ns::acosh<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atanh(F x, P = {}) noexcept
 {
@@ -387,13 +387,13 @@ atanh(F x, P = {}) noexcept
   return mkbits::hyp_ns::atanh<F>(x);
 }
 
-};     // namespace hyp
+};      // namespace hyp
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // exponents
 namespace exp_ns
 {
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp(F x, P = {}) noexcept
 {
@@ -406,7 +406,7 @@ exp(F x, P = {}) noexcept
     return mkbits::exp_ns::exp<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp2(F x, P = {}) noexcept
 {
@@ -416,7 +416,7 @@ exp2(F x, P = {}) noexcept
   return mkbits::exp_ns::exp2<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp10(F x, P = {}) noexcept
 {
@@ -426,7 +426,7 @@ exp10(F x, P = {}) noexcept
   return mkbits::exp_ns::exp10<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 expm1(F x, P = {}) noexcept
 {
@@ -436,13 +436,13 @@ expm1(F x, P = {}) noexcept
   return mkbits::exp_ns::expm1<F>(x);
 }
 
-};     // namespace exp_ns
+};      // namespace exp_ns
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // logs
 namespace log_ns
 {
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log(F x, P = {}) noexcept
 {
@@ -455,7 +455,7 @@ log(F x, P = {}) noexcept
     return mkbits::log_ns::log<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log2(F x, P = {}) noexcept
 {
@@ -465,7 +465,7 @@ log2(F x, P = {}) noexcept
   return mkbits::log_ns::log2<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log10(F x, P = {}) noexcept
 {
@@ -475,7 +475,7 @@ log10(F x, P = {}) noexcept
   return mkbits::log_ns::log10<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log1p(F x, P = {}) noexcept
 {
@@ -485,14 +485,14 @@ log1p(F x, P = {}) noexcept
   return mkbits::log_ns::log1p<F>(x);
 }
 
-};     // namespace log_ns
+};      // namespace log_ns
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // pows
 
 namespace pow_ns
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sqrt(F x) noexcept
 {
@@ -502,7 +502,7 @@ sqrt(F x) noexcept
   return mkbits::sqrt_ns::sqrt<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cbrt(F x) noexcept
 {
@@ -512,7 +512,7 @@ cbrt(F x) noexcept
   return mkbits::sqrt_ns::cbrt<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 pow(F x, F y) noexcept
 {
@@ -522,7 +522,7 @@ pow(F x, F y) noexcept
   return mkbits::pow_ns::pow<F>(x, y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 hypot(F x, F y) noexcept
 {
@@ -532,7 +532,7 @@ hypot(F x, F y) noexcept
   return mkbits::sqrt_ns::hypot<F>(x, y);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 rsqrt(F x, P p = {}) noexcept
 {
@@ -542,14 +542,14 @@ rsqrt(F x, P p = {}) noexcept
   return mkbits::sqrt_ns::rsqrt<F>(x, p);
 }
 
-};     // namespace pow_ns
+};      // namespace pow_ns
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // roundings
 
 namespace round_ns
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 floor(F x) noexcept
 {
@@ -559,7 +559,7 @@ floor(F x) noexcept
   return mkbits::round_ns::floor<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ceil(F x) noexcept
 {
@@ -569,7 +569,7 @@ ceil(F x) noexcept
   return mkbits::round_ns::ceil<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 trunc(F x) noexcept
 {
@@ -579,7 +579,7 @@ trunc(F x) noexcept
   return mkbits::round_ns::trunc<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 round(F x) noexcept
 {
@@ -589,7 +589,7 @@ round(F x) noexcept
   return mkbits::round_ns::round<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 rint(F x) noexcept
 {
@@ -599,7 +599,7 @@ rint(F x) noexcept
   return mkbits::round_ns::rint<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 nearbyint(F x) noexcept
 {
@@ -609,14 +609,14 @@ nearbyint(F x) noexcept
   return mkbits::round_ns::nearbyint<F>(x);
 }
 
-};     // namespace round_ns
+};      // namespace round_ns
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // mods and remainders
 
 namespace rem
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fmod(F x, F y) noexcept
 {
@@ -626,7 +626,7 @@ fmod(F x, F y) noexcept
   return mkbits::rem::fmod<F>(x, y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 remainder(F x, F y) noexcept
 {
@@ -636,7 +636,7 @@ remainder(F x, F y) noexcept
   return mkbits::rem::remainder<F>(x, y);
 }
 
-};     // namespace rem
+};      // namespace rem
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // misc
@@ -644,60 +644,60 @@ remainder(F x, F y) noexcept
 namespace manip
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fabs(F x) noexcept
 {
   return mkbits::manip::fabs<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 frexp(F x, int *e) noexcept
 {
   return mkbits::manip::frexp<F>(x, e);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ldexp(F x, int n) noexcept
 {
   return mkbits::manip::ldexp<F>(x, n);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 copysign(F a, F b) noexcept
 {
   return mkbits::manip::copysign<F>(a, b);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr int
 ilogb(F x) noexcept
 {
   return mkbits::manip::ilogb<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 logb(F x) noexcept
 {
   return mkbits::manip::logb<F>(x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 nextafter(F a, F b) noexcept
 {
   return mkbits::manip::nextafter<F>(a, b);
 }
 
-};     // namespace manip
+};      // namespace manip
 
 namespace special
 {
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 erf(F x, P = {}) noexcept
 {
@@ -707,7 +707,7 @@ erf(F x, P = {}) noexcept
   return mkbits::special_ns::erf<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 erfc(F x, P = {}) noexcept
 {
@@ -717,7 +717,7 @@ erfc(F x, P = {}) noexcept
   return mkbits::special_ns::erfc<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tgamma(F x, P = {}) noexcept
 {
@@ -727,7 +727,7 @@ tgamma(F x, P = {}) noexcept
   return mkbits::special_ns::tgamma<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 lgamma(F x, P = {}) noexcept
 {
@@ -737,7 +737,7 @@ lgamma(F x, P = {}) noexcept
   return mkbits::special_ns::lgamma<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 j0(F x, P = {}) noexcept
 {
@@ -747,7 +747,7 @@ j0(F x, P = {}) noexcept
   return mkbits::special_ns::j0<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 j1(F x, P = {}) noexcept
 {
@@ -757,7 +757,7 @@ j1(F x, P = {}) noexcept
   return mkbits::special_ns::j1<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 y0(F x, P = {}) noexcept
 {
@@ -767,7 +767,7 @@ y0(F x, P = {}) noexcept
   return mkbits::special_ns::y0<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 y1(F x, P = {}) noexcept
 {
@@ -777,49 +777,49 @@ y1(F x, P = {}) noexcept
   return mkbits::special_ns::y1<F>(x);
 }
 
-};     // namespace special
+};      // namespace special
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //  fmas
 
 namespace fused
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fma(F a, F b, F c) noexcept
 {
   return math::fma<F>(a, b, c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fms(F a, F b, F c) noexcept
 {
   return math::fma<F>(a, b, -c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fnma(F a, F b, F c) noexcept
 {
   return math::fma<F>(-a, b, c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 dot2(F a0, F a1, F b0, F b1) noexcept
 {
   return math::fma<F>(a0, b0, a1 * b1);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 dot3(F a0, F a1, F a2, F b0, F b1, F b2) noexcept
 {
   return math::fma<F>(a0, b0, math::fma<F>(a1, b1, a2 * b2));
 }
 
-};     // namespace fused
+};      // namespace fused
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // simd overloads
@@ -827,209 +827,209 @@ dot3(F a0, F a1, F a2, F b0, F b1, F b2) noexcept
 
 namespace trig
 {
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 sin(V x) noexcept
 {
   return mk::sin(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 cos(V x) noexcept
 {
   return mk::cos(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 tan(V x) noexcept
 {
   return mk::tan(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[gnu::always_inline]] inline void
 sincos(V x, V &s, V &c) noexcept
 {
   s = mk::sin(x);
   c = mk::cos(x);
 }
-};     // namespace trig
+};      // namespace trig
 
 namespace exp_ns
 {
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 exp(V x) noexcept
 {
   return mk::exp(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 exp2(V x) noexcept
 {
   return mk::exp2(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 expm1(V x) noexcept
 {
   return mk::expm1(x);
 }
-};     // namespace exp_ns
+};      // namespace exp_ns
 
 namespace log_ns
 {
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 log(V x) noexcept
 {
   return mk::log(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 log2(V x) noexcept
 {
   return mk::log2(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 log10(V x) noexcept
 {
   return mk::log10(x);
 }
-};     // namespace log_ns
+};      // namespace log_ns
 
 namespace pow_ns
 {
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 sqrt(V x) noexcept
 {
   return mk::sqrt(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 rsqrt(V x) noexcept
 {
   return mk::rsqrt(x);
 }
-};     // namespace pow_ns
+};      // namespace pow_ns
 
 namespace round_ns
 {
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 floor(V x) noexcept
 {
   return mk::floor(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 ceil(V x) noexcept
 {
   return mk::ceil(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 trunc(V x) noexcept
 {
   return mk::trunc(x);
 }
 
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 rint(V x) noexcept
 {
   return mk::rint(x);
 }
-};     // namespace round_ns
+};      // namespace round_ns
 
 namespace manip
 {
-template <mk::packed_real V>
+template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 fabs(V x) noexcept
 {
   return mk::fabs(x);
 }
-};     // namespace manip
+};      // namespace manip
 
-};     // namespace mk
+};      // namespace mk
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // identities
 
 namespace id
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cos_from_sin(F s, F sign = F(1)) noexcept
 {
   return sign * mkbits::sqrt_ns::sqrt<F>(F(1) - s * s);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sin_from_cos(F c, F sign = F(1)) noexcept
 {
   return sign * mkbits::sqrt_ns::sqrt<F>(F(1) - c * c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sin2x(F s, F c) noexcept
 {
   return F(2) * s * c;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cos2x(F s, F c) noexcept
 {
   return c * c - s * s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tan_half(F s, F c) noexcept
 {
   return s / (F(1) + c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sin_cos_product(F a, F b) noexcept
 {
   return F(0.5) * (mk::trig::sin(a + b) + mk::trig::sin(a - b));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cos_cos_product(F a, F b) noexcept
 {
   return F(0.5) * (mk::trig::cos(a - b) + mk::trig::cos(a + b));
 }
 
-};     // namespace id
+};      // namespace id
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // porcelain layer
 // WARNING: due to spaghetti, be extra careful when moving fns around to prevent catastrophic namespace collisions
 
 #define __micron_math_export_fn(NAME, NS)                                                                                                  \
-  template <ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME(F x) noexcept { return mk::NS::NAME<F>(x); }
+  template<ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME(F x) noexcept { return mk::NS::NAME<F>(x); }
 
 #define __micron_math_export_fn2(NAME, NS)                                                                                                 \
-  template <ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME(F a, F b) noexcept                               \
+  template<ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME(F a, F b) noexcept                                \
   {                                                                                                                                        \
     return mk::NS::NAME<F>(a, b);                                                                                                          \
   }
@@ -1043,7 +1043,7 @@ __micron_math_export_fn(acos, trig);
 __micron_math_export_fn(atan, trig);
 __micron_math_export_fn2(atan2, trig);
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline constexpr void
 sincos(F x, F &s, F &c) noexcept
 {
@@ -1051,7 +1051,7 @@ sincos(F x, F &s, F &c) noexcept
 }
 
 #define __micron_math_export_cordic(NAME)                                                                                                  \
-  template <ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME##_cordic(F x) noexcept                           \
+  template<ieee754_floating F> [[nodiscard, gnu::always_inline]] inline constexpr F NAME##_cordic(F x) noexcept                            \
   {                                                                                                                                        \
     return mk::cordic::NAME<F>(x);                                                                                                         \
   }
@@ -1063,14 +1063,14 @@ __micron_math_export_cordic(asin);
 __micron_math_export_cordic(acos);
 __micron_math_export_cordic(atan);
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan2_cordic(F y, F x) noexcept
 {
   return mk::cordic::atan2<F>(y, x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline constexpr void
 sincos_cordic(F x, F &s, F &c) noexcept
 {
@@ -1133,21 +1133,21 @@ __micron_math_export_fn2(copysign, manip);
 __micron_math_export_fn(logb, manip);
 __micron_math_export_fn2(nextafter, manip);
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 frexp(F x, int *e) noexcept
 {
   return mk::manip::frexp<F>(x, e);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ldexp(F x, int n) noexcept
 {
   return mk::manip::ldexp<F>(x, n);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr int
 ilogb(F x) noexcept
 {
@@ -1167,19 +1167,19 @@ __micron_math_export_fn(y1, special);
 #undef __micron_math_export_fn
 #undef __micron_math_export_fn2
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fms(F a, F b, F c) noexcept
 {
   return math::fma<F>(a, b, -c);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fnma(F a, F b, F c) noexcept
 {
   return math::fma<F>(-a, b, c);
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

@@ -25,22 +25,22 @@ constexpr static const u32 audit_arch_le = 0x40000000u;
 
 enum class arch : u32 {
   // LE 32-bit
-  x86 = audit_arch_le | 0x03u,     // EM_386=3
-  arm = audit_arch_le | 0x28u,     // EM_ARM=40
+  x86 = audit_arch_le | 0x03u,      // EM_386=3
+  arm = audit_arch_le | 0x28u,      // EM_ARM=40
   // BE 32-bit
-  m68k = 0x04u,        // EM_68K=4
-  mips_be = 0x08u,     // EM_MIPS=8, big-endian
-  ppc = 0x14u,         // EM_PPC=20
-  s390 = 0x16u,        // EM_S390=22
+  m68k = 0x04u,         // EM_68K=4
+  mips_be = 0x08u,      // EM_MIPS=8, big-endian
+  ppc = 0x14u,          // EM_PPC=20
+  s390 = 0x16u,         // EM_S390=22
   // LE 64-bit
-  x86_64 = audit_arch_64bit | audit_arch_le | 0x3Eu,           // EM_X86_64=62
-  x32 = audit_arch_le | 0x3Eu,                                 // x32 ABI (64-bit EM, 32-bit pointers)
-  aarch64 = audit_arch_64bit | audit_arch_le | 0xB7u,          // EM_AARCH64=183
-  loongarch64 = audit_arch_64bit | audit_arch_le | 0x102u,     // EM_LOONGARCH=258
+  x86_64 = audit_arch_64bit | audit_arch_le | 0x3Eu,            // EM_X86_64=62
+  x32 = audit_arch_le | 0x3Eu,                                  // x32 ABI (64-bit EM, 32-bit pointers)
+  aarch64 = audit_arch_64bit | audit_arch_le | 0xB7u,           // EM_AARCH64=183
+  loongarch64 = audit_arch_64bit | audit_arch_le | 0x102u,      // EM_LOONGARCH=258
   mipsel = audit_arch_le | 0x08u,
   mipsel64 = audit_arch_64bit | audit_arch_le | 0x08u,
-  ppc64le = audit_arch_64bit | audit_arch_le | 0x15u,     // EM_PPC64=21
-  riscv64 = audit_arch_64bit | audit_arch_le | 0xF3u,     // EM_RISCV=243
+  ppc64le = audit_arch_64bit | audit_arch_le | 0x15u,      // EM_PPC64=21
+  riscv64 = audit_arch_64bit | audit_arch_le | 0xF3u,      // EM_RISCV=243
   // BE 64-bit
   mips64_be = audit_arch_64bit | 0x08u,
   ppc64 = audit_arch_64bit | 0x15u,
@@ -114,20 +114,20 @@ act_trace(u16 msg) noexcept
 }
 
 enum class cmp : u32 {
-  ne = 1u,            // arg != datum_a
-  lt = 2u,            // arg <  datum_a  (unsigned)
-  le = 3u,            // arg <= datum_a  (unsigned)
-  eq = 4u,            // arg == datum_a
-  ge = 5u,            // arg >= datum_a  (unsigned)
-  gt = 6u,            // arg >  datum_a  (unsigned)
-  masked_eq = 7u,     // (arg & datum_b) == (datum_a & datum_b)
+  ne = 1u,             // arg != datum_a
+  lt = 2u,             // arg <  datum_a  (unsigned)
+  le = 3u,             // arg <= datum_a  (unsigned)
+  eq = 4u,             // arg == datum_a
+  ge = 5u,             // arg >= datum_a  (unsigned)
+  gt = 6u,             // arg >  datum_a  (unsigned)
+  masked_eq = 7u,      // (arg & datum_b) == (datum_a & datum_b)
 };
 
 struct arg_cmp_t {
-  u32 arg;     // argument index 0..5
+  u32 arg;      // argument index 0..5
   cmp op;
-  u64 datum_a;     // comparison value  (or target value for masked_eq)
-  u64 datum_b;     // mask (only used for masked_eq)
+  u64 datum_a;      // comparison value  (or target value for masked_eq)
+  u64 datum_b;      // mask (only used for masked_eq)
 };
 
 constexpr arg_cmp_t
@@ -258,28 +258,28 @@ pred_insns(cmp op) noexcept
 {
   // NOTE: valid for now, must be fixed if additional inst added later
   switch ( op ) {
-  case cmp::eq :
-  case cmp::ne :
+  case cmp::eq:
+  case cmp::ne:
     return 5u;
-  case cmp::gt :
-  case cmp::ge :
+  case cmp::gt:
+  case cmp::ge:
     return 6u;
-  case cmp::lt :
-  case cmp::le :
-  case cmp::masked_eq :
+  case cmp::lt:
+  case cmp::le:
+  case cmp::masked_eq:
     return 7u;
   }
   return 0u;
 }
 
-template <usize Max = 128>
-  requires(Max > 0 and Max <= bpf::max_instructions)     // guard against kernel limit
+template<usize Max = 128>
+  requires(Max > 0 and Max <= bpf::max_instructions)      // guard against kernel limit
 struct filter_builder {
 
   bpf::insn_t insns[Max]{};
   usize count = 0;
-  bool arch_ok = false;     // set by require_arch / require_native_arch
-  bool sealed = false;      // set by default_* methods
+  bool arch_ok = false;      // set by require_arch / require_native_arch
+  bool sealed = false;       // set by default_* methods
 
   constexpr usize
   remaining() const noexcept
@@ -311,7 +311,7 @@ private:
 
     switch ( ac.op ) {
 
-    case cmp::eq :
+    case cmp::eq:
       push(load_arg_lsw(ac.arg));
       push(jeq_k(val_lsw, 0, 3));
       push(load_arg_msw(ac.arg));
@@ -319,7 +319,7 @@ private:
       push(ret_k(action));
       break;
 
-    case cmp::ne :
+    case cmp::ne:
       push(load_arg_lsw(ac.arg));
       push(jeq_k(val_lsw, 0, 2));
       push(ret_k(action));
@@ -328,7 +328,7 @@ private:
       push(ret_k(action));
       break;
 
-    case cmp::lt :
+    case cmp::lt:
       push(load_arg_msw(ac.arg));
       push(jgt_k(val_msw, 5, 0));
       push(jeq_k(val_msw, 1, 0));
@@ -338,7 +338,7 @@ private:
       push(ret_k(action));
       break;
 
-    case cmp::le :
+    case cmp::le:
       push(load_arg_msw(ac.arg));
       push(jgt_k(val_msw, 5, 0));
       push(jeq_k(val_msw, 1, 0));
@@ -348,7 +348,7 @@ private:
       push(ret_k(action));
       break;
 
-    case cmp::gt :
+    case cmp::gt:
       push(load_arg_msw(ac.arg));
       push(jgt_k(val_msw, 3, 0));
       push(jeq_k(val_msw, 0, 3));
@@ -357,7 +357,7 @@ private:
       push(ret_k(action));
       break;
 
-    case cmp::ge :
+    case cmp::ge:
       push(load_arg_msw(ac.arg));
       push(jgt_k(val_msw, 3, 0));
       push(jeq_k(val_msw, 0, 3));
@@ -366,11 +366,11 @@ private:
       push(ret_k(action));
       break;
 
-    case cmp::masked_eq : {
+    case cmp::masked_eq: {
       const u32 mask_msw = msw(ac.datum_b);
       const u32 mask_lsw = lsw(ac.datum_b);
-      const u32 cmp_lsw = val_lsw & mask_lsw;     // (datum_a & datum_b) low half
-      const u32 cmp_msw = val_msw & mask_msw;     // (datum_a & datum_b) high half
+      const u32 cmp_lsw = val_lsw & mask_lsw;      // (datum_a & datum_b) low half
+      const u32 cmp_msw = val_msw & mask_msw;      // (datum_a & datum_b) high half
       push(load_arg_lsw(ac.arg));
       push(and_k(mask_lsw));
       push(jeq_k(cmp_lsw, 0, 4));
@@ -436,7 +436,7 @@ public:
     return deny(nr, posix::seccomp_ret_trap);
   }
 
-  template <i32... Nrs>
+  template<i32... Nrs>
     requires(sizeof...(Nrs) >= 1 and sizeof...(Nrs) <= 256)
   constexpr filter_builder &
   allow_batch() noexcept
@@ -596,7 +596,7 @@ public:
   }
 };
 
-template <usize N>
+template<usize N>
 inline int
 load(filter_builder<N> &fb, bool set_no_new_privs = true, u32 extra_flags = 0)
 {
@@ -605,14 +605,14 @@ load(filter_builder<N> &fb, bool set_no_new_privs = true, u32 extra_flags = 0)
   return posix::seccomp_load_filter(p, extra_flags);
 }
 
-template <usize N>
+template<usize N>
 inline int
 load_tsync(filter_builder<N> &fb, bool set_no_new_privs = true)
 {
   return load(fb, set_no_new_privs, posix::seccomp_filter_flag_tsync);
 }
 
-template <usize N>
+template<usize N>
 inline int
 load_notif(filter_builder<N> &fb, bool set_no_new_privs = true)
 {
@@ -698,5 +698,5 @@ minimal_base(arch a = native_arch) noexcept
   return f;
 }
 */
-};     // namespace seccomp
-};     // namespace micron
+};      // namespace seccomp
+};      // namespace micron

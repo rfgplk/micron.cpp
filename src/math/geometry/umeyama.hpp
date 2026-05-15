@@ -21,7 +21,7 @@ namespace math
 namespace geometry
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline transform<F, 3, transform_mode::affine>
 umeyama(const dynmat<F> &src, const dynmat<F> &dst, bool with_scaling = true) noexcept
 {
@@ -65,7 +65,7 @@ umeyama(const dynmat<F> &src, const dynmat<F> &dst, bool with_scaling = true) no
   // build sign matrix S to ensure det(R) = +1
   mat<F, 3, 3> Vt{};
   for ( usize i = 0; i < 3; ++i )
-    for ( usize j = 0; j < 3; ++j ) Vt.data[i * 3 + j] = sv.V.data[j * 3 + i];     // V^T
+    for ( usize j = 0; j < 3; ++j ) Vt.data[i * 3 + j] = sv.V.data[j * 3 + i];      // V^T
 
   // det(U) * det(V) sign
   F detU = linalg::ops::det3<F>(sv.U);
@@ -108,6 +108,6 @@ umeyama(const dynmat<F> &src, const dynmat<F> &dst, bool with_scaling = true) no
   return out;
 }
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

@@ -30,7 +30,7 @@ namespace micron
 namespace fsys
 {
 
-template <is_string T = micron::string> class file : public io::file
+template<is_string T = micron::string> class file: public io::file
 {
   T data;
   micron::sstr<io::max_name> fname;
@@ -108,7 +108,7 @@ template <is_string T = micron::string> class file : public io::file
 public:
   ~file() = default;
 
-  file() : io::file(), data(), fname(), seek(0), buffer_sz(0), bf(nullptr) {}
+  file() : io::file(), data(), fname(), seek(0), buffer_sz(0), bf(nullptr) { }
 
   file(const T &name, const io::modes mode)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append || mode == io::modes::appendread ? size() : 0),
@@ -122,7 +122,7 @@ public:
   {
   }
 
-  template <usize M>
+  template<usize M>
   file(const char (&name)[M], const io::modes mode)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append || mode == io::modes::appendread ? size() : 0),
         buffer_sz(0), bf(nullptr)
@@ -141,18 +141,18 @@ public:
   {
   }
 
-  template <usize M>
+  template<usize M>
   file(const char (&name)[M], const io::modes mode, const usize _bf)
       : io::file(name, mode), data(), fname(name), seek(mode == io::modes::append || mode == io::modes::appendread ? size() : 0),
         buffer_sz(_bf), bf(new micron::buffer(_bf))
   {
   }
 
-  file(const T &name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
+  file(const T &name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) { }
 
-  file(const char *name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) {}
+  file(const char *name) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr) { }
 
-  template <usize M> file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
+  template<usize M> file(const char (&name)[M]) : io::file(name, io::modes::read), data(), fname(name), seek(0), buffer_sz(0), bf(nullptr)
   {
   }
 
@@ -239,7 +239,7 @@ public:
     data._set_buf_length(0);
   }
 
-  file(const file &o) : io::file(o), data(o.data), fname(o.fname), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf) {}
+  file(const file &o) : io::file(o), data(o.data), fname(o.fname), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf) { }
 
   file(file &&o)
       : io::file(micron::move(o)), data(micron::move(o.data)), fname(micron::move(o.fname)), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf)
@@ -444,7 +444,7 @@ public:
     posix::pwrite(__handle.fd, data_ptr, len, dst_off);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   write(const Tp &str)
   {
@@ -749,7 +749,7 @@ public:
     return search(reinterpret_cast<const byte *>(pat), l, window_sz);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   io::bin_match_t
   search(const Tp &pat, usize window_sz = default_search_window) const
   {
@@ -768,7 +768,7 @@ public:
     return search(p, w);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   io::bin_match_t
   search_file(const Tp &p, usize w = default_search_window) const
   {
@@ -826,7 +826,7 @@ public:
     return find_all(reinterpret_cast<const byte *>(pat), l, window_sz);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   micron::vector<io::bin_match_t>
   find_all(const Tp &pat, usize window_sz = default_search_window) const
   {
@@ -912,7 +912,7 @@ public:
     return H;
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   void
   to_stream(io::stream<SZ, CK> &s) const
   {
@@ -920,7 +920,7 @@ public:
     s << __handle;
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   void
   from_stream(io::stream<SZ, CK> &s)
   {
@@ -932,7 +932,7 @@ public:
     s.rewind();
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   void
   flush_to_stream(io::stream<SZ, CK> &s) const
   {
@@ -940,7 +940,7 @@ public:
     s << data;
   }
 
-  template <io::encode_fn Fn, is_string Tp>
+  template<io::encode_fn Fn, is_string Tp>
   void
   write_encoded(Fn &&fn, const Tp &src)
   {
@@ -953,7 +953,7 @@ public:
     if ( n > 0 ) seek += static_cast<usize>(n);
   }
 
-  template <io::encode_fn Fn>
+  template<io::encode_fn Fn>
   void
   write_encoded(Fn &&fn, const byte *src, usize src_len)
   {
@@ -965,7 +965,7 @@ public:
     if ( n > 0 ) seek += static_cast<usize>(n);
   }
 
-  template <io::encode_fn Fn, is_string Tp>
+  template<io::encode_fn Fn, is_string Tp>
   void
   append_encoded(Fn &&fn, const Tp &src)
   {
@@ -1098,7 +1098,7 @@ public:
     (void)cur;
   }
 
-  template <is_string U>
+  template<is_string U>
   void
   append_file(const file<U> &other, usize chunk_sz = 65536u)
   {
@@ -1127,7 +1127,7 @@ public:
     posix::pwrite(__handle.fd, data_ptr, len, dst_off);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   append_raw(const Tp &str)
   {
@@ -1155,14 +1155,14 @@ public:
     posix::close(out.fd);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   copy_to(const Tp &dest_path, usize chunk_sz = 65536u) const
   {
     copy_to(dest_path.c_str(), chunk_sz);
   }
 
-  template <is_string U>
+  template<is_string U>
   i32
   compare_to(const file<U> &other, usize chunk_sz = 65536u) const
   {
@@ -1196,7 +1196,7 @@ public:
     return 0;
   }
 
-  template <io::intercept_fn Fn>
+  template<io::intercept_fn Fn>
   void
   load_intercepted(Fn &&fn, usize chunk_sz = 65536u)
   {
@@ -1267,7 +1267,7 @@ public:
     }
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   atomic_replace(const Tp &str)
   {
@@ -1281,5 +1281,5 @@ public:
   }
 };
 
-};     // namespace fsys
-};     // namespace micron
+};      // namespace fsys
+};      // namespace micron

@@ -161,5 +161,5 @@ ui_dev_dest(void)
 {
   return io_default_command(uinput_ioctl_magic, 2);
 }
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

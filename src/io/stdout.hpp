@@ -29,7 +29,7 @@ namespace io
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // concepts
 
-template <typename T>
+template<typename T>
 concept is_container = requires(T t) {
   { t.cbegin() } -> micron::same_as<typename T::const_iterator>;
   { t.cend() } -> micron::same_as<typename T::const_iterator>;
@@ -39,13 +39,13 @@ concept is_container = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 
-template <typename T>
+template<typename T>
 concept has_cstr = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 
 // is_map: detects hopscotch_map, robin_map, stack_swiss_map, dictionary_t
-template <typename T>
+template<typename T>
 concept is_map = requires {
   typename micron::remove_cvref_t<T>::category_type;
   requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
@@ -59,14 +59,14 @@ concept is_map = requires {
 };
 
 // is_tagged_map: has category_type = map_tag (hopscotch, robin)
-template <typename T>
+template<typename T>
 concept is_tagged_map = requires {
   typename micron::remove_cvref_t<T>::category_type;
   requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
 };
 
 // is_swiss_map: stack_swiss_map: iterator already skips empty/deleted,
-template <typename T>
+template<typename T>
 concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
   { t.capacity() } -> micron::convertible_to<usize>;
   { t.size() } -> micron::convertible_to<usize>;
@@ -76,13 +76,13 @@ concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
   { (*t.begin()).b };
 } && !is_tagged_map<T> && !has_cstr<T>;
 
-template <typename T>
+template<typename T>
 concept is_char_ptr
     = micron::is_same_v<T, char *> || micron::is_same_v<T, schar *> || micron::is_same_v<T, wide *> || micron::is_same_v<T, unicode8 *>
       || micron::is_same_v<T, unicode32 *> || micron::is_same_v<T, const char *> || micron::is_same_v<T, const schar *>
       || micron::is_same_v<T, const wide *> || micron::is_same_v<T, const unicode8 *> || micron::is_same_v<T, const unicode32 *>;
 
-template <typename T>
+template<typename T>
 concept is_char_elem
     = micron::is_same_v<T, char> || micron::is_same_v<T, schar> || micron::is_same_v<T, wide> || micron::is_same_v<T, unicode8>
       || micron::is_same_v<T, unicode32> || micron::is_same_v<T, const char> || micron::is_same_v<T, const schar>
@@ -94,7 +94,7 @@ concept is_char_elem
 namespace __impl
 {
 
-template <int outstream>
+template<int outstream>
 inline void
 emit(const char *s)
 {
@@ -104,7 +104,7 @@ emit(const char *s)
     io::fput(s, io::stderr);
 }
 
-template <int outstream>
+template<int outstream>
 inline void
 emit(const char *s, usize len)
 {
@@ -114,7 +114,7 @@ emit(const char *s, usize len)
     io::fput(s, len, io::stderr);
 }
 
-template <int outstream>
+template<int outstream>
 inline void
 emit(char c)
 {
@@ -124,7 +124,7 @@ emit(char c)
     io::fput(c, io::stderr);
 }
 
-template <int outstream>
+template<int outstream>
 inline void
 emit_nl()
 {
@@ -176,33 +176,33 @@ ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
   return micron::format::__impl::ptr_to_buf(buf, buf_sz, ptr);
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // forward declarations (needed for recursive container/map/pair printing)
 
-template <typename T, int outstream>
+template<typename T, int outstream>
   requires micron::is_arithmetic_v<T>
 void printk(const T &x);
 
-template <has_cstr T, int outstream>
+template<has_cstr T, int outstream>
   requires micron::is_class_v<T>
 void printk(const T &str);
 
-template <int outstream, typename T, usize M>
+template<int outstream, typename T, usize M>
   requires is_char_elem<T>
 inline void printk(T (&c)[M]);
 
-template <int outstream> inline void printk(char c);
+template<int outstream> inline void printk(char c);
 
-template <int outstream, typename T>
+template<int outstream, typename T>
   requires is_char_ptr<T>
 inline void printk(const T &c);
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: char array literal
 
-template <int outstream = stdout_fileno, typename T, usize M>
+template<int outstream = stdout_fileno, typename T, usize M>
   requires is_char_elem<T>
 inline void
 printk(T (&c)[M])
@@ -213,7 +213,7 @@ printk(T (&c)[M])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: char pointer
 
-template <int outstream = stdout_fileno, typename T>
+template<int outstream = stdout_fileno, typename T>
   requires is_char_ptr<T>
 inline void
 printk(const T &c)
@@ -224,7 +224,7 @@ printk(const T &c)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: single char
 
-template <int outstream = stdout_fileno>
+template<int outstream = stdout_fileno>
 inline void
 printk(char c)
 {
@@ -234,7 +234,7 @@ printk(char c)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sprintk: raw print with explicit length
 
-template <int outstream = stdout_fileno>
+template<int outstream = stdout_fileno>
 inline void
 sprintk(const char *c, usize len)
 {
@@ -244,7 +244,7 @@ sprintk(const char *c, usize len)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: class with .c_str() (strings)
 
-template <has_cstr T, int outstream = stdout_fileno>
+template<has_cstr T, int outstream = stdout_fileno>
   requires micron::is_class_v<T>
 void
 printk(const T &str)
@@ -255,7 +255,7 @@ printk(const T &str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: non-char pointer (prints address)
 
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
 void
 printk(const T &x)
@@ -282,7 +282,7 @@ printk(const T &x)
 //   float, double, long double
 //   f32, f64, flong, f128
 
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
 void
 printk(const T &x)
@@ -312,7 +312,7 @@ printk(const T &x)
 // printk: volatile arithmetic
 // strip volatile qualifier, read once, delegate
 
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
 void
 printk(const volatile T &x)
@@ -324,7 +324,7 @@ printk(const volatile T &x)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: volatile pointer
 
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
 void
 printk(const volatile T &x)
@@ -336,7 +336,7 @@ printk(const volatile T &x)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: single byte
 
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires(micron::is_same_v<T, byte> && sizeof(T) == 1)
 void
 printk(T &x)
@@ -348,7 +348,7 @@ printk(T &x)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: non-null-terminated byte buffer
 
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
 void
 printk(T ptr, usize len)
@@ -364,7 +364,7 @@ printk(T ptr, usize len)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: container (non-string, non-map iterable)
 
-template <is_container T, int outstream = stdout_fileno>
+template<is_container T, int outstream = stdout_fileno>
   requires(!is_tagged_map<T> && !is_swiss_map<T>)
 void
 printk(const T &ctr)
@@ -381,7 +381,7 @@ printk(const T &ctr)
   __impl::emit<outstream>(" }");
 }
 
-template <is_container T, int outstream = stdout_fileno>
+template<is_container T, int outstream = stdout_fileno>
   requires(!is_tagged_map<T> && !is_swiss_map<T>)
 void
 printk(T &&ctr)
@@ -393,7 +393,7 @@ printk(T &&ctr)
 // printk: tagged map (hopscotch_map, robin_map, dictionary_t)
 // iterates all slots, skips empty (key == 0), prints as { hash: value, ... }
 
-template <is_tagged_map T, int outstream = stdout_fileno>
+template<is_tagged_map T, int outstream = stdout_fileno>
 void
 printk(const T &m)
 {
@@ -414,7 +414,7 @@ printk(const T &m)
   __impl::emit<outstream>(" }");
 }
 
-template <is_tagged_map T, int outstream = stdout_fileno>
+template<is_tagged_map T, int outstream = stdout_fileno>
 void
 printk(T &&m)
 {
@@ -425,7 +425,7 @@ printk(T &&m)
 // printk: swiss map (stack_swiss_map)
 // iterator already skips empty/deleted; dereferences to pair with .a and .b
 
-template <is_swiss_map T, int outstream = stdout_fileno>
+template<is_swiss_map T, int outstream = stdout_fileno>
 void
 printk(const T &m)
 {
@@ -442,7 +442,7 @@ printk(const T &m)
   __impl::emit<outstream>(" }");
 }
 
-template <is_swiss_map T, int outstream = stdout_fileno>
+template<is_swiss_map T, int outstream = stdout_fileno>
 void
 printk(T &&m)
 {
@@ -452,7 +452,7 @@ printk(T &&m)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk: pair
 
-template <typename A, typename B, int outstream = stdout_fileno>
+template<typename A, typename B, int outstream = stdout_fileno>
 void
 printk(const pair<A, B> &p)
 {
@@ -463,7 +463,7 @@ printk(const pair<A, B> &p)
   __impl::emit<outstream>("]");
 }
 
-template <typename A, typename B, int outstream = stdout_fileno>
+template<typename A, typename B, int outstream = stdout_fileno>
 void
 printk(pair<A, B> &&p)
 {
@@ -474,7 +474,7 @@ printk(pair<A, B> &&p)
 // printkn: appends newline
 
 // char array
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
 void
 printkn(T &c)
 {
@@ -483,7 +483,7 @@ printkn(T &c)
 }
 
 // char pointer
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires is_char_ptr<T>
 void
 printkn(const T &c)
@@ -493,7 +493,7 @@ printkn(const T &c)
 }
 
 // raw sized print + newline
-template <int outstream = stdout_fileno>
+template<int outstream = stdout_fileno>
 void
 sprintkn(const char *c, usize len)
 {
@@ -502,7 +502,7 @@ sprintkn(const char *c, usize len)
 }
 
 // class with .c_str(): char
-template <has_cstr T, int outstream = stdout_fileno>
+template<has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T> && micron::is_same_v<typename T::value_type, char>)
 void
 printkn(const T &str)
@@ -512,7 +512,7 @@ printkn(const T &str)
 }
 
 // class with .c_str(): char8_t
-template <has_cstr T, int outstream = stdout_fileno>
+template<has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T> && micron::is_same_v<typename T::value_type, char8_t>)
 void
 printkn(const T &str)
@@ -522,7 +522,7 @@ printkn(const T &str)
 }
 
 // class with .c_str(): wchar_t
-template <has_cstr T, int outstream = stdout_fileno>
+template<has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T> && micron::is_same_v<typename T::value_type, wchar_t>)
 void
 printkn(const T &str)
@@ -535,7 +535,7 @@ printkn(const T &str)
 }
 
 // class with .c_str(): char32_t
-template <has_cstr T, int outstream = stdout_fileno>
+template<has_cstr T, int outstream = stdout_fileno>
   requires(micron::is_class_v<T> && micron::is_same_v<typename T::value_type, char32_t>)
 void
 printkn(const T &str)
@@ -548,7 +548,7 @@ printkn(const T &str)
 }
 
 // non-char pointer
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
 void
 printkn(const T &x)
@@ -558,7 +558,7 @@ printkn(const T &x)
 }
 
 // arithmetic
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
 void
 printkn(const T &x)
@@ -568,7 +568,7 @@ printkn(const T &x)
 }
 
 // volatile arithmetic
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires micron::is_arithmetic_v<T>
 void
 printkn(const volatile T &x)
@@ -579,7 +579,7 @@ printkn(const volatile T &x)
 }
 
 // volatile pointer
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
 void
 printkn(const volatile T &x)
@@ -590,7 +590,7 @@ printkn(const volatile T &x)
 }
 
 // single byte
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires(micron::is_same_v<T, byte> && sizeof(T) == 1)
 void
 printkn(T &x)
@@ -600,7 +600,7 @@ printkn(T &x)
 }
 
 // byte buffer
-template <typename T, int outstream = stdout_fileno>
+template<typename T, int outstream = stdout_fileno>
   requires micron::is_same_v<T, byte *>
 void
 printkn(T ptr, usize len)
@@ -610,7 +610,7 @@ printkn(T ptr, usize len)
 }
 
 // container (non-map)
-template <is_container T, int outstream = stdout_fileno>
+template<is_container T, int outstream = stdout_fileno>
   requires(!is_tagged_map<T> && !is_swiss_map<T>)
 void
 printkn(const T &ctr)
@@ -619,7 +619,7 @@ printkn(const T &ctr)
   __impl::emit_nl<outstream>();
 }
 
-template <is_container T, int outstream = stdout_fileno>
+template<is_container T, int outstream = stdout_fileno>
   requires(!is_tagged_map<T> && !is_swiss_map<T>)
 void
 printkn(T &&ctr)
@@ -629,7 +629,7 @@ printkn(T &&ctr)
 }
 
 // tagged map
-template <is_tagged_map T, int outstream = stdout_fileno>
+template<is_tagged_map T, int outstream = stdout_fileno>
 void
 printkn(const T &m)
 {
@@ -637,7 +637,7 @@ printkn(const T &m)
   __impl::emit_nl<outstream>();
 }
 
-template <is_tagged_map T, int outstream = stdout_fileno>
+template<is_tagged_map T, int outstream = stdout_fileno>
 void
 printkn(T &&m)
 {
@@ -646,7 +646,7 @@ printkn(T &&m)
 }
 
 // swiss map
-template <is_swiss_map T, int outstream = stdout_fileno>
+template<is_swiss_map T, int outstream = stdout_fileno>
 void
 printkn(const T &m)
 {
@@ -654,7 +654,7 @@ printkn(const T &m)
   __impl::emit_nl<outstream>();
 }
 
-template <is_swiss_map T, int outstream = stdout_fileno>
+template<is_swiss_map T, int outstream = stdout_fileno>
 void
 printkn(T &&m)
 {
@@ -663,7 +663,7 @@ printkn(T &&m)
 }
 
 // pair
-template <typename A, typename B, int outstream = stdout_fileno>
+template<typename A, typename B, int outstream = stdout_fileno>
 void
 printkn(const pair<A, B> &p)
 {
@@ -671,7 +671,7 @@ printkn(const pair<A, B> &p)
   __impl::emit_nl<outstream>();
 }
 
-template <typename A, typename B, int outstream = stdout_fileno>
+template<typename A, typename B, int outstream = stdout_fileno>
 void
 printkn(pair<A, B> &&p)
 {
@@ -682,7 +682,7 @@ printkn(pair<A, B> &&p)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // binary hex dump
 
-template <is_container T>
+template<is_container T>
 void
 bin(const T &data)
 {
@@ -703,7 +703,7 @@ bin(const T &data)
   }
 }
 
-template <has_cstr T>
+template<has_cstr T>
 void
 bin(const T &data)
 {
@@ -739,7 +739,7 @@ flush(void)
   io::fflush(stdout);
 }
 
-template <typename... T>
+template<typename... T>
 void
 print(T &&...str)
 {
@@ -747,7 +747,7 @@ print(T &&...str)
   flush();
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 print(const T &...str)
 {
@@ -755,21 +755,21 @@ print(const T &...str)
   flush();
 }
 
-template <typename... T>
+template<typename... T>
 void
 printn(T &&...str)
 {
   (printkn(str), ...);
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 printn(const T &...str)
 {
   (printkn(str), ...);
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 println(const T &...str)
 {
@@ -781,7 +781,7 @@ println(const T &...str)
   }
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 println(const T *...str)
 {
@@ -796,35 +796,35 @@ println(const T *...str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // error stream functions
 
-template <typename... T>
+template<typename... T>
 void
 error(T &...str)
 {
   (printk<decltype(str), stderr_fileno>(str), ...);
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 error(const T &...str)
 {
   (printk<decltype(str), stderr_fileno>(str), ...);
 }
 
-template <typename... T>
+template<typename... T>
 void
 errorn(T &...str)
 {
   (printkn<decltype(str), stderr_fileno>(str), ...);
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 errorn(const T &...str)
 {
   (printkn<decltype(str), stderr_fileno>(str), ...);
 }
 
-template <typename... T>
+template<typename... T>
 inline void
 errorln(const T &...str)
 {
@@ -836,7 +836,7 @@ errorln(const T &...str)
   }
 }
 
-template <typename... T>
+template<typename... T>
 void
 errorln(T &...str)
 {
@@ -844,5 +844,5 @@ errorln(T &...str)
   printk<stderr_fileno>("\n");
 }
 
-}     // namespace io
-};     // namespace micron
+}      // namespace io
+};      // namespace micron

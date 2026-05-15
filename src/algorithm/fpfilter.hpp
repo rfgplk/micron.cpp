@@ -21,7 +21,7 @@ namespace fp
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // filter_c
-template <typename Fn>
+template<typename Fn>
 auto
 filter_c(Fn &&fn)
 {
@@ -30,7 +30,7 @@ filter_c(Fn &&fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // reject
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 C
 reject(const C &c, Fn fn)
@@ -46,7 +46,7 @@ reject(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 C
 reject(const C &c, Fn fn)
@@ -62,7 +62,7 @@ reject(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type *> && (!fn_predicate<Fn, const typename C::value_type *>)
            && (!fn_predicate<Fn, typename C::value_type>)
 C
@@ -71,7 +71,7 @@ reject(const C &c, Fn fn)
   return micron::filter(c, [fn = micron::move(fn)](typename C::value_type *p) mutable { return !fn(p); });
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 reject(const C &c, micron::function<bool(typename C::value_type)> fn)
 {
@@ -86,7 +86,7 @@ reject(const C &c, micron::function<bool(typename C::value_type)> fn)
   return out;
 }
 
-template <typename Fn>
+template<typename Fn>
 auto
 reject_c(Fn &&fn)
 {
@@ -95,7 +95,7 @@ reject_c(Fn &&fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // option-lifted filter/reject
-template <is_iterable_container C, typename E, typename Fn>
+template<is_iterable_container C, typename E, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::option<C, E>
 filter(micron::option<C, E> opt, Fn fn)
@@ -104,7 +104,7 @@ filter(micron::option<C, E> opt, Fn fn)
   return micron::option<C, E>{ micron::filter(opt.template cast<C>(), micron::move(fn)) };
 }
 
-template <is_iterable_container C, typename E, typename Fn>
+template<is_iterable_container C, typename E, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::option<C, E>
 filter(micron::option<C, E> opt, Fn fn)
@@ -113,7 +113,7 @@ filter(micron::option<C, E> opt, Fn fn)
   return micron::option<C, E>{ micron::filter(opt.template cast<C>(), micron::move(fn)) };
 }
 
-template <is_iterable_container C, typename E, typename Fn>
+template<is_iterable_container C, typename E, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::option<C, E>
 reject(micron::option<C, E> opt, Fn fn)
@@ -122,7 +122,7 @@ reject(micron::option<C, E> opt, Fn fn)
   return micron::option<C, E>{ fp::reject(opt.template cast<C>(), micron::move(fn)) };
 }
 
-template <is_iterable_container C, typename E, typename Fn>
+template<is_iterable_container C, typename E, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::option<C, E>
 reject(micron::option<C, E> opt, Fn fn)
@@ -133,7 +133,7 @@ reject(micron::option<C, E> opt, Fn fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // partition: returns (elements matching fn, elements not matching fn)
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::tuple<C, C>
 partition(const C &c, Fn fn)
@@ -156,7 +156,7 @@ partition(const C &c, Fn fn)
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::tuple<C, C>
 partition(const C &c, Fn fn)
@@ -179,7 +179,7 @@ partition(const C &c, Fn fn)
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::tuple<C, C>
 partition(const C &c, micron::function<bool(typename C::value_type)> fn)
 {
@@ -201,7 +201,7 @@ partition(const C &c, micron::function<bool(typename C::value_type)> fn)
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
-template <typename Fn>
+template<typename Fn>
 auto
 partition_c(Fn &&fn)
 {
@@ -210,7 +210,7 @@ partition_c(Fn &&fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // take/drop
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 take(const C &c, usize n) noexcept
 {
@@ -223,7 +223,7 @@ take(const C &c, usize n) noexcept
   return out;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 drop(const C &c, usize n) noexcept
 {
@@ -254,7 +254,7 @@ drop_c(usize n) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // take_while / drop_while
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 C
 take_while(const C &c, Fn fn)
@@ -271,7 +271,7 @@ take_while(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 C
 take_while(const C &c, Fn fn)
@@ -288,7 +288,7 @@ take_while(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 take_while(const C &c, micron::function<bool(typename C::value_type)> fn)
 {
@@ -304,7 +304,7 @@ take_while(const C &c, micron::function<bool(typename C::value_type)> fn)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 C
 drop_while(const C &c, Fn fn)
@@ -321,7 +321,7 @@ drop_while(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 C
 drop_while(const C &c, Fn fn)
@@ -338,7 +338,7 @@ drop_while(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 drop_while(const C &c, micron::function<bool(typename C::value_type)> fn)
 {
@@ -354,14 +354,14 @@ drop_while(const C &c, micron::function<bool(typename C::value_type)> fn)
   return out;
 }
 
-template <typename Fn>
+template<typename Fn>
 auto
 take_while_c(Fn &&fn)
 {
   return [fn = micron::forward<Fn>(fn)](auto c) mutable { return fp::take_while(c, fn); };
 }
 
-template <typename Fn>
+template<typename Fn>
 auto
 drop_while_c(Fn &&fn)
 {
@@ -370,7 +370,7 @@ drop_while_c(Fn &&fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // span / sbreak
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::tuple<C, C>
 span(const C &c, Fn fn)
@@ -389,7 +389,7 @@ span(const C &c, Fn fn)
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::tuple<C, C>
 span(const C &c, Fn fn)
@@ -408,7 +408,7 @@ span(const C &c, Fn fn)
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::tuple<C, C>
 span(const C &c, micron::function<bool(typename C::value_type)> fn)
 {
@@ -426,7 +426,7 @@ span(const C &c, micron::function<bool(typename C::value_type)> fn)
   return micron::make_tuple(micron::move(yes), micron::move(no));
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::tuple<C, C>
 sbreak(const C &c, Fn fn)
@@ -434,7 +434,7 @@ sbreak(const C &c, Fn fn)
   return fp::span(c, [fn = micron::move(fn)](typename C::value_type v) mutable { return !fn(v); });
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::tuple<C, C>
 sbreak(const C &c, Fn fn)
@@ -444,7 +444,7 @@ sbreak(const C &c, Fn fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // unique  (remove consecutive duplicates)
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 unique(const C &c)
 {
@@ -461,7 +461,7 @@ unique(const C &c)
   return out;
 }
 
-template <is_iterable_container C, typename EqFn>
+template<is_iterable_container C, typename EqFn>
   requires fn_binary_predicate<EqFn, typename C::value_type>
 C
 unique(const C &c, EqFn eq)
@@ -479,7 +479,7 @@ unique(const C &c, EqFn eq)
   return out;
 }
 
-template <is_iterable_container C, typename EqFn>
+template<is_iterable_container C, typename EqFn>
   requires micron::invocable<EqFn, const typename C::value_type *, const typename C::value_type *>
            && micron::is_convertible_v<micron::invoke_result_t<EqFn, const typename C::value_type *, const typename C::value_type *>, bool>
            && (!fn_binary_predicate<EqFn, typename C::value_type>)
@@ -500,7 +500,7 @@ unique(const C &c, EqFn eq)
 }
 
 // micron::function overload
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 unique(const C &c, micron::function<bool(typename C::value_type, typename C::value_type)> eq)
 {
@@ -519,7 +519,7 @@ unique(const C &c, micron::function<bool(typename C::value_type, typename C::val
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // nub
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 nub(const C &c)
 {
@@ -542,7 +542,7 @@ nub(const C &c)
   return out;
 }
 
-template <is_iterable_container C, typename EqFn>
+template<is_iterable_container C, typename EqFn>
   requires fn_binary_predicate<EqFn, typename C::value_type>
 C
 nub_by(const C &c, EqFn eq)
@@ -571,7 +571,7 @@ nub_by(const C &c, EqFn eq)
   return out;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 nub_by(const C &c, micron::function<bool(typename C::value_type, typename C::value_type)> eq)
 {
@@ -601,7 +601,7 @@ nub_by(const C &c, micron::function<bool(typename C::value_type, typename C::val
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // count
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 usize
 count(const C &c, Fn fn) noexcept
@@ -614,7 +614,7 @@ count(const C &c, Fn fn) noexcept
   return n;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 usize
 count(const C &c, Fn fn) noexcept
@@ -627,5 +627,5 @@ count(const C &c, Fn fn) noexcept
   return n;
 }
 
-};     // namespace fp
-};     // namespace micron
+};      // namespace fp
+};      // namespace micron

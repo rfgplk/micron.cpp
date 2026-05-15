@@ -26,16 +26,16 @@
 namespace micron
 {
 
-template <typename T = float>
+template<typename T = float>
   requires micron::is_floating_point_v<T>
 struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   T x, y, z, w, a, b, c, d;
 
   ~vector_8() = default;
 
-  constexpr vector_8() : x(T{}), y(T{}), z(T{}), w(T{}), a(T{}), b(T{}), c(T{}), d(T{}) {}
+  constexpr vector_8() : x(T{}), y(T{}), z(T{}), w(T{}), a(T{}), b(T{}), c(T{}), d(T{}) { }
 
-  constexpr vector_8(T x_, T y_, T z_, T w_, T a_, T b_, T c_, T d_) : x(x_), y(y_), z(z_), w(w_), a(a_), b(b_), c(c_), d(d_) {}
+  constexpr vector_8(T x_, T y_, T z_, T w_, T a_, T b_, T c_, T d_) : x(x_), y(y_), z(z_), w(w_), a(a_), b(b_), c(c_), d(d_) { }
 
   constexpr vector_8(const vector_8<T> &o) = default;
   constexpr vector_8(vector_8<T> &&o) = default;
@@ -593,4 +593,4 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   }
 };
 
-}     // namespace micron
+}      // namespace micron

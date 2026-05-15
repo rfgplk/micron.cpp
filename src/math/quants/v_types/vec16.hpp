@@ -27,7 +27,7 @@
 namespace micron
 {
 
-template <typename T = float>
+template<typename T = float>
   requires micron::is_floating_point_v<T>
 struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
 
@@ -737,4 +737,4 @@ struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
   }
 };
 
-}     // namespace micron
+}      // namespace micron

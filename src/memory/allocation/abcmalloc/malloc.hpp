@@ -61,7 +61,7 @@ is_present(byte *ptr)
   return is_present(reinterpret_cast<addr_t *>(ptr));
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::same_as<T, byte>)
 bool
 is_present(T *ptr)
@@ -91,7 +91,7 @@ within(byte *ptr)
 }
 
 void
-relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely
+relinquish(byte *ptr)      // unmaps entire sheet at which ptr lives, resets arena entirely
 {
   __ABC_LOCK_AND_INIT();
   if ( !ptr ) [[unlikely]]
@@ -99,10 +99,10 @@ relinquish(byte *ptr)     // unmaps entire sheet at which ptr lives, resets aren
   __main_arena->reset_page(ptr);
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::same_as<T, byte>)
 void
-relinquish(T *__ptr)     // unmaps entire sheet at which ptr lives, resets arena entirely
+relinquish(T *__ptr)      // unmaps entire sheet at which ptr lives, resets arena entirely
 {
   byte *ptr = reinterpret_cast<byte *>(__ptr);
   relinquish(ptr);
@@ -152,7 +152,7 @@ unmark_at(byte *ptr, usize size)
 }
 
 micron::__chunk<byte>
-balloc(usize size)     // allocates memory, returns entire memory chunk
+balloc(usize size)      // allocates memory, returns entire memory chunk
 {
   if ( size == 0 ) [[unlikely]]
     return { nullptr, 0 };
@@ -177,7 +177,7 @@ fetch(usize size)
   return mem;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_trivial_v<T>)
 T *
 fetch(void)
@@ -204,7 +204,7 @@ retire(byte *ptr)
   }
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::same_as<T, byte>)
 void
 retire(T *__ptr)
@@ -214,13 +214,13 @@ retire(T *__ptr)
 }
 
 __attribute__((malloc, alloc_size(1))) auto
-alloc(usize size) -> byte *     // allocates memory, near iden. func. to malloc
+alloc(usize size) -> byte *      // allocates memory, near iden. func. to malloc
 {
   if ( size == 0 ) [[unlikely]]
     return nullptr;
 
   byte *ptr = balloc(size).ptr;
-  return ptr;     // balloc already converts sentinel to nullptr
+  return ptr;      // balloc already converts sentinel to nullptr
 }
 
 __attribute__((malloc, alloc_size(1))) byte *
@@ -271,7 +271,7 @@ dealloc(byte *ptr, usize len)
   }
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::same_as<T, byte>)
 void
 dealloc(T *__ptr)
@@ -280,7 +280,7 @@ dealloc(T *__ptr)
   dealloc(ptr);
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::same_as<T, byte>)
 void
 dealloc(T *__ptr, usize len)
@@ -301,7 +301,7 @@ freeze(byte *ptr)
   }
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::same_as<T, byte>)
 void
 freeze(T *__ptr)
@@ -342,7 +342,7 @@ launder(usize size)
   return mem.ptr;
 }
 
-template <typename T>
+template<typename T>
 usize
 query_size(T *ptr)
 {
@@ -366,7 +366,7 @@ musage(void)
   return __main_arena->total_usage();
 }
 
-template <u64 Sz>
+template<u64 Sz>
 usize
 musage(void)
 {
@@ -375,13 +375,13 @@ musage(void)
 }
 
 __attribute__((malloc, alloc_size(1))) void *
-malloc(usize size)     // alloc memory of size 'size', prefer using alloc
+malloc(usize size)      // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(abc::alloc(size));
 }
 
 void *
-calloc(usize num, usize size)     // alloc's zero'd out memory, prefer using salloc()
+calloc(usize num, usize size)      // alloc's zero'd out memory, prefer using salloc()
 {
   if ( num == 0 or size == 0 ) return nullptr;
 
@@ -396,7 +396,7 @@ calloc(usize num, usize size)     // alloc's zero'd out memory, prefer using sal
 }
 
 void *
-realloc(void *ptr, usize size)     // reallocates memory
+realloc(void *ptr, usize size)      // reallocates memory
 {
   if ( !ptr ) return reinterpret_cast<void *>(abc::alloc(size));
 
@@ -417,7 +417,7 @@ realloc(void *ptr, usize size)     // reallocates memory
 
   byte *new_block = abc::alloc(size);
   if ( !new_block ) [[unlikely]]
-    return nullptr;     // allocation failed, old block untouched
+    return nullptr;      // allocation failed, old block untouched
 
   usize copy_size = old_size < size ? old_size : size;
   micron::memcpy(new_block, reinterpret_cast<byte *>(ptr), copy_size);
@@ -428,7 +428,7 @@ realloc(void *ptr, usize size)     // reallocates memory
 }
 
 void
-free(void *ptr)     // frees memory, prefer abc::dealloc always
+free(void *ptr)      // frees memory, prefer abc::dealloc always
 {
   if ( !ptr ) [[unlikely]]
     return;
@@ -506,6 +506,6 @@ aligned_free(void *ptr)
   abc::dealloc(raw);
 }
 
-};     // namespace abc
+};      // namespace abc
 
 #include "malloc-c.hpp"

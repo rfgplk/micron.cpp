@@ -77,11 +77,11 @@ constexpr u32 mode_ixoth = 01;
 constexpr u32 mode_isuid = 04000;
 constexpr u32 mode_isgid = 02000;
 constexpr u32 mode_isvtx = 01000;
-constexpr u32 mode_file = 0644;     // rw-r--r--
-constexpr u32 mode_exec = 0755;     // rwxr-xr-x
-constexpr u32 mode_dir = 0755;      // rwxr-xr-x
+constexpr u32 mode_file = 0644;      // rw-r--r--
+constexpr u32 mode_exec = 0755;      // rwxr-xr-x
+constexpr u32 mode_dir = 0755;       // rwxr-xr-x
 
-template <typename T> struct iovec_t {
+template<typename T> struct iovec_t {
   T *iov_base;
   usize iov_len;
 };
@@ -165,5 +165,5 @@ struct __impl_dir {
     return type == dt_end;
   }
 };
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

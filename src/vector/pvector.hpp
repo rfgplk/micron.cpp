@@ -23,7 +23,7 @@ namespace micron
 //  difference between pvector and ivector, is that ivector is copies itself for persistence (good for small-ish array, horrible for large
 //  ones) this is implemented as a B-ary trie with pathcopying
 
-template <is_movable_object T, usize K = 5, usize H = 3, bool Sf = true>
+template<is_movable_object T, usize K = 5, usize H = 3, bool Sf = true>
   requires(K > 0 && K <= 6 && H > 0 && H <= 8)
 class pvector
 {
@@ -116,7 +116,7 @@ class pvector
     return __size + add > capacity;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -149,7 +149,7 @@ class pvector
     abc::dealloc(reinterpret_cast<byte *>(l));
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static inline void *
   __retain(void *p)
   {
@@ -162,7 +162,7 @@ class pvector
     return p;
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static void
   __release(void *p)
   {
@@ -182,7 +182,7 @@ class pvector
     }
   }
 
-  template <usize Lvl, typename Vf>
+  template<usize Lvl, typename Vf>
   static void *
   __set_impl(void *p, usize idx, Vf &&val)
   {
@@ -240,7 +240,7 @@ class pvector
     return __d;
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static inline const T &
   __get_impl(const void *p, usize idx)
   {
@@ -255,7 +255,7 @@ class pvector
     }
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static void *
   __build_from(const T *data, usize count, usize base)
   {
@@ -280,7 +280,7 @@ class pvector
     }
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static void *
   __build_filled(const T &val, usize count, usize base)
   {
@@ -305,7 +305,7 @@ class pvector
     }
   }
 
-  template <usize Lvl, typename Fn>
+  template<usize Lvl, typename Fn>
   static void *
   __update_impl(void *p, usize idx, Fn &&fn)
   {
@@ -357,7 +357,7 @@ class pvector
     }
   }
 
-  template <usize Lvl, typename Fn>
+  template<usize Lvl, typename Fn>
   static void
   __for_each_impl(const void *p, usize base, usize sz, Fn &&fn)
   {
@@ -418,7 +418,7 @@ class pvector
 
   static constexpr usize __root_level = H - 1;
 
-  explicit pvector(void *root, usize sz) : __root(root), __size(sz) {}
+  explicit pvector(void *root, usize sz) : __root(root), __size(sz) { }
 
 public:
   using category_type = vector_tag;
@@ -436,10 +436,10 @@ public:
 
   ~pvector(void) { __release<__root_level>(__root); }
 
-  pvector(void) : __root(nullptr), __size(0) {}
+  pvector(void) : __root(nullptr), __size(0) { }
 
   // O(1) copy
-  pvector(const pvector &o) : __root(__retain<__root_level>(o.__root)), __size(o.__size) {}
+  pvector(const pvector &o) : __root(__retain<__root_level>(o.__root)), __size(o.__size) { }
 
   pvector &
   operator=(const pvector &o)
@@ -505,9 +505,9 @@ public:
     __size = count;
   }
 
-  pvector(const T &first, usize count) : pvector(micron::addr(first), count) {}
+  pvector(const T &first, usize count) : pvector(micron::addr(first), count) { }
 
-  template <usize N> pvector(const T (&arr)[N]) : __root(nullptr), __size(0)
+  template<usize N> pvector(const T (&arr)[N]) : __root(nullptr), __size(0)
   {
     static_assert(N <= capacity, "micron::pvector array exceeds capacity");
     if constexpr ( N == 0 ) return;
@@ -515,7 +515,7 @@ public:
     __size = N;
   }
 
-  template <typename C>
+  template<typename C>
     requires(is_iterable_container<C> && !micron::is_same_v<micron::remove_cvref_t<C>, pvector>)
   pvector(const C &c) : __root(nullptr), __size(0)
   {
@@ -538,7 +538,7 @@ public:
     __size = n;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, usize>)
   explicit pvector(Fn &&fn, usize count) : __root(nullptr), __size(0)
   {
@@ -649,7 +649,7 @@ public:
     return pvector(nr, __size + 1);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   [[nodiscard]] pvector
   emplace_back(Args &&...args) const
   {
@@ -683,7 +683,7 @@ public:
     return pvector(nr, __size);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   [[nodiscard]] pvector
   update(usize idx, Fn &&fn) const
   {
@@ -1110,7 +1110,7 @@ public:
     return m;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   T
   reduce(Fn &&fn) const
   {
@@ -1120,7 +1120,7 @@ public:
     return acc;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   T
   reduce(const T &init, Fn &&fn) const
   {
@@ -1145,7 +1145,7 @@ public:
     return false;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   bool
   all_of(Fn &&pred) const
   {
@@ -1154,7 +1154,7 @@ public:
     return true;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   bool
   any_of(Fn &&pred) const
   {
@@ -1163,7 +1163,7 @@ public:
     return false;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   bool
   none_of(Fn &&pred) const
   {
@@ -1218,14 +1218,14 @@ public:
     return !(*this == o);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
     __for_each_impl<__root_level>(__root, 0, __size, static_cast<Fn &&>(fn));
   }
 
-  template <typename Fn>
+  template<typename Fn>
   [[nodiscard]] pvector
   map(Fn &&fn) const
   {
@@ -1239,7 +1239,7 @@ public:
     return pvector(root, __size);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   [[nodiscard]] pvector
   filter(Fn &&pred) const
   {
@@ -1263,9 +1263,9 @@ public:
     usize __idx;
 
   public:
-    const_iterator(void) : __owner(nullptr), __idx(0) {}
+    const_iterator(void) : __owner(nullptr), __idx(0) { }
 
-    const_iterator(const pvector *p, usize i) : __owner(p), __idx(i) {}
+    const_iterator(const pvector *p, usize i) : __owner(p), __idx(i) { }
 
     const T &
     operator*(void) const
@@ -1400,4 +1400,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -33,13 +33,13 @@ namespace micron
 {
 namespace io
 {
-template <typename T>
+template<typename T>
 concept has_set_size = requires(T t, usize n) {
   { t.set_size(n) };
 };
 
 // no seeking alignment, just read
-template <typename T>
+template<typename T>
 max_t
 read(i32 fd, T *buf, usize cnt)
 {
@@ -49,7 +49,7 @@ read(i32 fd, T *buf, usize cnt)
   return posix::read(fd, buf, cnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 read(fd_t fd, T *buf, usize cnt)
 {
@@ -60,7 +60,7 @@ read(fd_t fd, T *buf, usize cnt)
   return posix::read(fd.fd, buf, cnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 read(i32 fd, T &buf, usize cnt)
 {
@@ -68,7 +68,7 @@ read(i32 fd, T &buf, usize cnt)
   return posix::read(fd, buf, cnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 read(fd_t fd, T &buf, usize cnt)
 {
@@ -77,7 +77,7 @@ read(fd_t fd, T &buf, usize cnt)
   return posix::read(fd.fd, buf, cnt);
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 max_t
 read(i32 fd, const T (&buf)[N])
 {
@@ -85,7 +85,7 @@ read(i32 fd, const T (&buf)[N])
   return posix::read(fd, &buf, N);
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 max_t
 read(fd_t fd, const T (&buf)[N])
 {
@@ -93,7 +93,7 @@ read(fd_t fd, const T (&buf)[N])
   return posix::read(fd.fd, &buf, N);
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 max_t
 read(i32 fd, T &buf, const usize cnt)
@@ -109,7 +109,7 @@ read(i32 fd, T &buf, const usize cnt)
   return r;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 max_t
 read(fd_t fd, T &buf, const usize cnt)
@@ -126,7 +126,7 @@ read(fd_t fd, T &buf, const usize cnt)
   return r;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 max_t
 read(i32 fd, T &buf)
@@ -139,7 +139,7 @@ read(i32 fd, T &buf)
   return r;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 max_t
 read(fd_t fd, T &buf)
@@ -153,7 +153,7 @@ read(fd_t fd, T &buf)
   return r;
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 write(i32 fd, const T *buf, usize cnt)
 {
@@ -163,7 +163,7 @@ write(i32 fd, const T *buf, usize cnt)
   return posix::write(fd, buf, cnt);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 write(fd_t fd, const T *buf, usize cnt)
 {
@@ -173,7 +173,7 @@ write(fd_t fd, const T *buf, usize cnt)
   return posix::write(fd, buf, cnt);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 write(i32 fd, const T &buf, usize cnt)
 {
@@ -181,7 +181,7 @@ write(i32 fd, const T &buf, usize cnt)
   return posix::write(fd, buf, cnt);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 write(fd_t fd, const T &buf, usize cnt)
 {
@@ -189,7 +189,7 @@ write(fd_t fd, const T &buf, usize cnt)
   return posix::write(fd, buf, cnt);
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 max_t
 write(i32 fd, const T (&buf)[N])
 {
@@ -197,7 +197,7 @@ write(i32 fd, const T (&buf)[N])
   return posix::write(fd, &buf, N);
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 max_t
 write(fd_t fd, const T (&buf)[N])
 {
@@ -205,7 +205,7 @@ write(fd_t fd, const T (&buf)[N])
   return posix::write(fd, &buf, N);
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 max_t
 write(i32 fd, T &buf, const usize cnt)
@@ -214,7 +214,7 @@ write(i32 fd, T &buf, const usize cnt)
   return posix::write(fd, buf.data(), cnt);
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires(micron::is_fundamental_v<typename T::value_type>)
 max_t
 write(fd_t fd, T &buf, const usize cnt)
@@ -223,7 +223,7 @@ write(fd_t fd, T &buf, const usize cnt)
   return posix::write(fd, buf.data(), cnt);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 fwrited(T *ptr, usize num, const fd_t &handle)
 {
@@ -231,7 +231,7 @@ fwrited(T *ptr, usize num, const fd_t &handle)
   return posix::write(handle.fd, ptr, num);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 fwrited(T &ptr, usize num, const fd_t &handle)
 {
@@ -239,7 +239,7 @@ fwrited(T &ptr, usize num, const fd_t &handle)
   return posix::write(handle.fd, ptr, num);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 fwrite(T &ref, usize num, const fd_t &handle)
 {
@@ -273,7 +273,7 @@ fwrite(T &ref, usize num, const fd_t &handle)
   return posix::write(handle.fd, ref, num);
 }
 
-template <typename T = byte>
+template<typename T = byte>
 max_t
 fwrite(T *ptr, usize num, const fd_t &handle)
 {
@@ -353,16 +353,16 @@ unifput(const char32_t *__restrict s, const fd_t &handle)
   io::fwrite(s, micron::ustrlen(s), handle);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) auto
 fget(T *__restrict s, const usize n, const fd_t &handle)
 {
   return posix::read(s, n, handle.fd);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) auto
-fget_byte(T *__restrict s, const fd_t &handle)     // equivalent to getchar
+fget_byte(T *__restrict s, const fd_t &handle)      // equivalent to getchar
 {
   return posix::read(handle.fd, s, 1);
 }
@@ -374,6 +374,6 @@ put(const char *__restrict s, const fd_t &handle)
   for ( ; *s != 0x0; s++ ) io::fput(*s, handle.fd);
   //::fputc_unlocked(*s, fp);
 }
-};     // namespace io
+};      // namespace io
 
-};     // namespace micron
+};      // namespace micron

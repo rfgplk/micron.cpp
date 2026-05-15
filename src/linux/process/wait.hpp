@@ -83,7 +83,7 @@ struct status_t {
   int status;
   ~status_t() = default;
 
-  status_t(void) : pid(0), status(0) {}
+  status_t(void) : pid(0), status(0) { }
 
   status_t(const status_t &) = default;
   status_t(status_t &&) = default;
@@ -178,4 +178,4 @@ waitid(idtype_t idtype, posix::id_t id, posix::siginfo_t &info, int options)
   return micron::syscall(SYS_waitid, idtype, id, &info, options, nullptr);
 }
 
-};     // namespace micron
+};      // namespace micron

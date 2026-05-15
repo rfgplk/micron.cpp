@@ -65,7 +65,7 @@ cap_bit(cap c) noexcept
   return u64(1) << static_cast<u32>(c);
 }
 
-template <typename T>
+template<typename T>
 concept is_cap_set = requires(const T &t) {
   { t.effective } -> micron::convertible_to<u64>;
   { t.permitted } -> micron::convertible_to<u64>;
@@ -227,7 +227,7 @@ struct ucap_set_t {
     return s;
   }
 
-  template <typename... Cs>
+  template<typename... Cs>
     requires(is_same_v<Cs, cap> && ...)
   static constexpr ucap_set_t
   from(Cs... cs) noexcept
@@ -280,7 +280,7 @@ has_cap(cap c)
   return (eff & cap_bit(c)) != 0;
 }
 
-template <bool Effective = true, bool Permitted = false, bool Inheritable = false>
+template<bool Effective = true, bool Permitted = false, bool Inheritable = false>
 inline bool
 has_cap(cap c)
 {
@@ -346,7 +346,7 @@ no_new_privs()
   return posix::cap_no_new_privs();
 }
 
-template <is_cap_set Caps>
+template<is_cap_set Caps>
 inline int
 apply_caps_child(const Caps &cs) noexcept
 {
@@ -378,4 +378,4 @@ apply_caps_child(const Caps &cs) noexcept
   return 0;
 }
 
-};     // namespace micron
+};      // namespace micron

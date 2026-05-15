@@ -22,11 +22,11 @@ namespace micron
 namespace __impl
 {
 
-template <typename T>
+template<typename T>
 concept __syscall_arg
     = (micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_enum_v<T> || micron::is_null_pointer_v<T>) && sizeof(T) <= 8;
 
-template <__syscall_arg T>
+template<__syscall_arg T>
 inline __attribute__((always_inline)) long int
 __coerce(T __v) noexcept
 {
@@ -38,14 +38,14 @@ __coerce(T __v) noexcept
     return static_cast<long int>(__v);
 }
 
-template <__tt_size_t Slot>
+template<__tt_size_t Slot>
 consteval __tt_size_t
 __count_slots() noexcept
 {
   return Slot;
 }
 
-template <__tt_size_t Slot, typename A0, typename... Rest>
+template<__tt_size_t Slot, typename A0, typename... Rest>
 consteval __tt_size_t
 __count_slots() noexcept
 {
@@ -57,13 +57,13 @@ __count_slots() noexcept
   }
 }
 
-template <__tt_size_t Slot>
+template<__tt_size_t Slot>
 constexpr void
 __fill(long int *) noexcept
 {
 }
 
-template <__tt_size_t Slot, typename A0, typename... Rest>
+template<__tt_size_t Slot, typename A0, typename... Rest>
 constexpr void
 __fill(long int *__slots, A0 __a0, Rest... __rest) noexcept
 {
@@ -79,7 +79,7 @@ __fill(long int *__slots, A0 __a0, Rest... __rest) noexcept
   }
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 // WARNING:
 // on ARMv7-A Linux EABI, r7 is the syscall number register
@@ -206,23 +206,23 @@ __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int
 namespace __impl
 {
 
-template <__tt_size_t... Is>
+template<__tt_size_t... Is>
 inline __attribute__((always_inline)) long int
 __dispatch_impl(long int __n, const long int *__s, micron::index_sequence<Is...>) noexcept
 {
   return __do_syscall(__n, __s[Is]...);
 }
 
-template <__tt_size_t N>
+template<__tt_size_t N>
 inline __attribute__((always_inline)) long int
 __dispatch(long int __n, const long int *__s) noexcept
 {
   return __dispatch_impl(__n, __s, micron::make_index_sequence<N>{});
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
-template <__impl::__syscall_arg... Args>
+template<__impl::__syscall_arg... Args>
   requires(__impl::__count_slots<0, Args...>() <= 6)
 inline __attribute__((always_inline)) long int
 syscall(long int __n, Args... __args) noexcept
@@ -244,4 +244,4 @@ syscall_errno(long int __r) noexcept
   return static_cast<int>(-__r);
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -16,7 +16,7 @@
 namespace micron
 {
 
-template <class T, typename Acc>
+template<class T, typename Acc>
 Acc
 accumulate(const T *first, const T *end, Acc init) noexcept
 {
@@ -24,7 +24,7 @@ accumulate(const T *first, const T *end, Acc init) noexcept
   return init;
 }
 
-template <class T, typename Acc, typename Fn>
+template<class T, typename Acc, typename Fn>
   requires micron::is_invocable_v<Fn, Acc, const T &>
 Acc
 accumulate(const T *first, const T *end, Acc init, Fn fn) noexcept
@@ -33,7 +33,7 @@ accumulate(const T *first, const T *end, Acc init, Fn fn) noexcept
   return init;
 }
 
-template <class T, typename Acc>
+template<class T, typename Acc>
 Acc
 accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
 {
@@ -41,7 +41,7 @@ accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
   return init;
 }
 
-template <class T, typename Acc, typename Fn>
+template<class T, typename Acc, typename Fn>
   requires micron::is_invocable_v<Fn, Acc, const T &>
 Acc
 accumulate(const T *first, const T *end, Acc init, Fn fn, usize limit) noexcept
@@ -50,14 +50,14 @@ accumulate(const T *first, const T *end, Acc init, Fn fn, usize limit) noexcept
   return init;
 }
 
-template <is_iterable_container C, typename Acc = typename C::value_type>
+template<is_iterable_container C, typename Acc = typename C::value_type>
 Acc
 accumulate(const C &c, Acc init = Acc{}) noexcept
 {
   return accumulate(c.begin(), c.end(), micron::move(init));
 }
 
-template <is_iterable_container C, typename Acc, typename Fn>
+template<is_iterable_container C, typename Acc, typename Fn>
   requires micron::is_invocable_v<Fn, Acc, const typename C::value_type &>
 Acc
 accumulate(const C &c, Acc init, Fn fn) noexcept
@@ -65,14 +65,14 @@ accumulate(const C &c, Acc init, Fn fn) noexcept
   return accumulate(c.begin(), c.end(), micron::move(init), fn);
 }
 
-template <is_iterable_container C, typename Acc = typename C::value_type>
+template<is_iterable_container C, typename Acc = typename C::value_type>
 Acc
 accumulate(const C &c, Acc init, usize limit) noexcept
 {
   return accumulate(c.begin(), c.end(), micron::move(init), limit);
 }
 
-template <is_iterable_container C, typename Acc, typename Fn>
+template<is_iterable_container C, typename Acc, typename Fn>
   requires micron::is_invocable_v<Fn, Acc, const typename C::value_type &>
 Acc
 accumulate(const C &c, Acc init, Fn fn, usize limit) noexcept
@@ -80,7 +80,7 @@ accumulate(const C &c, Acc init, Fn fn, usize limit) noexcept
   return accumulate(c.begin(), c.end(), micron::move(init), fn, limit);
 }
 
-template <auto Fn, typename T, typename Acc>
+template<auto Fn, typename T, typename Acc>
 constexpr Acc
 accumulate(const T *first, const T *end, Acc init) noexcept
 {
@@ -88,7 +88,7 @@ accumulate(const T *first, const T *end, Acc init) noexcept
   return init;
 }
 
-template <auto Fn, typename T, typename Acc>
+template<auto Fn, typename T, typename Acc>
 constexpr Acc
 accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
 {
@@ -96,18 +96,18 @@ accumulate(const T *first, const T *end, Acc init, usize limit) noexcept
   return init;
 }
 
-template <auto Fn, is_iterable_container C, typename Acc = typename C::value_type>
+template<auto Fn, is_iterable_container C, typename Acc = typename C::value_type>
 constexpr Acc
 accumulate(const C &c, Acc init = Acc{}) noexcept
 {
   return accumulate<Fn>(c.begin(), c.end(), micron::move(init));
 }
 
-template <auto Fn, is_iterable_container C, typename Acc = typename C::value_type>
+template<auto Fn, is_iterable_container C, typename Acc = typename C::value_type>
 constexpr Acc
 accumulate(const C &c, Acc init, usize limit) noexcept
 {
   return accumulate<Fn>(c.begin(), c.end(), micron::move(init), limit);
 }
 
-};     // namespace micron
+};      // namespace micron

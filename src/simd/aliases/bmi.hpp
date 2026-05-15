@@ -171,6 +171,6 @@ popcount_u64(unsigned long long v) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace bmi
-};     // namespace simd
-};     // namespace micron
+};      // namespace bmi
+};      // namespace simd
+};      // namespace micron

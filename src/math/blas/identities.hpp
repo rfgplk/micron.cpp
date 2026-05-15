@@ -33,7 +33,7 @@ using micron::math::quants::vec_view;
 //   R = [ 1-2(y²+z²)   2(xy-wz)    2(xz+wy)  ]
 //       [ 2(xy+wz)    1-2(x²+z²)   2(yz-wx)  ]
 //       [ 2(xz-wy)    2(yz+wx)    1-2(x²+y²) ]
-template <ieee754_floating F, typename V>
+template<ieee754_floating F, typename V>
 [[gnu::flatten]] inline constexpr void
 from_quat(const quat<F> &q, V out) noexcept
 {
@@ -59,7 +59,7 @@ from_quat(const quat<F> &q, V out) noexcept
 }
 
 // fixed-size return form
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr mat<F, 3, 3>
 from_quat(const quat<F> &q) noexcept
 {
@@ -72,7 +72,7 @@ from_quat(const quat<F> &q) noexcept
 //   [v]_× = [  0  -z   y ]
 //           [  z   0  -x ]
 //           [ -y   x   0 ]
-template <ieee754_floating F, typename V>
+template<ieee754_floating F, typename V>
 [[gnu::flatten]] inline constexpr void
 skew(F vx, F vy, F vz, V out) noexcept
 {
@@ -93,14 +93,14 @@ skew(F vx, F vy, F vz, V out) noexcept
   wr(2, 2, F(0));
 }
 
-template <ieee754_floating F, typename V>
+template<ieee754_floating F, typename V>
 [[gnu::flatten]] inline constexpr void
 skew(const vec<F, 3> &v, V out) noexcept
 {
   skew<F>(v.data[0], v.data[1], v.data[2], out);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr mat<F, 3, 3>
 skew(const vec<F, 3> &v) noexcept
 {
@@ -110,7 +110,7 @@ skew(const vec<F, 3> &v) noexcept
   return m;
 }
 
-template <blas_scalar T, typename V>
+template<blas_scalar T, typename V>
   requires(mat_view_like<V>)
 [[gnu::flatten]] inline constexpr void
 outer(T alpha, const vec_view<T> &x, const vec_view<T> &y, V A) noexcept
@@ -122,7 +122,7 @@ outer(T alpha, const vec_view<T> &x, const vec_view<T> &y, V A) noexcept
   level2::ger<T>(alpha, x, y, A);
 }
 
-template <ieee754_floating F, typename V>
+template<ieee754_floating F, typename V>
   requires(mat_view_like<V>)
 [[gnu::flatten]] inline constexpr void
 givens(usize i, usize j, F c, F s, V out) noexcept
@@ -137,7 +137,7 @@ givens(usize i, usize j, F c, F s, V out) noexcept
   bits::mat_at(out.data, j, i, rs, cs) = -s;
 }
 
-template <blas_scalar T, typename V>
+template<blas_scalar T, typename V>
   requires(mat_view_like<V>)
 [[gnu::flatten]] inline constexpr void
 householder(const vec_view<T> &v, V H_out, T beta) noexcept
@@ -154,7 +154,7 @@ householder(const vec_view<T> &v, V H_out, T beta) noexcept
   }
 }
 
-template <blas_real T, typename V>
+template<blas_real T, typename V>
   requires(mat_view_like<V>)
 [[gnu::flatten]] inline constexpr void
 householder(const vec_view<T> &v, V H_out) noexcept
@@ -168,7 +168,7 @@ householder(const vec_view<T> &v, V H_out) noexcept
   householder<T>(v, H_out, beta);
 }
 
-template <ieee754_floating F, typename V>
+template<ieee754_floating F, typename V>
   requires(mat_view_like<V>)
 [[gnu::flatten]] inline constexpr void
 from_axis_angle(F kx, F ky, F kz, F theta, V out) noexcept
@@ -193,7 +193,7 @@ from_axis_angle(F kx, F ky, F kz, F theta, V out) noexcept
   wr(2, 2, c + kz * kz * omc);
 }
 
-template <ieee754_floating F, typename V>
+template<ieee754_floating F, typename V>
   requires(mat_view_like<V>)
 [[gnu::flatten]] inline constexpr void
 from_axis_angle(const vec<F, 3> &axis, F theta, V out) noexcept
@@ -201,7 +201,7 @@ from_axis_angle(const vec<F, 3> &axis, F theta, V out) noexcept
   from_axis_angle<F>(axis.data[0], axis.data[1], axis.data[2], theta, out);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr mat<F, 3, 3>
 from_axis_angle(const vec<F, 3> &axis, F theta) noexcept
 {
@@ -211,7 +211,7 @@ from_axis_angle(const vec<F, 3> &axis, F theta) noexcept
   return m;
 }
 
-};     // namespace identities
-};     // namespace blas
-};     // namespace math
-};     // namespace micron
+};      // namespace identities
+};      // namespace blas
+};      // namespace math
+};      // namespace micron

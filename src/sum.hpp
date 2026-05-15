@@ -20,56 +20,56 @@
 namespace micron
 {
 
-template <typename T> struct tag {
+template<typename T> struct tag {
   using type = T;
 };
 
 namespace __impl
 {
 
-template <usize N, usize... Rest> struct max_of_values {
+template<usize N, usize... Rest> struct max_of_values {
   static constexpr usize value = (N > max_of_values<Rest...>::value) ? N : max_of_values<Rest...>::value;
 };
 
-template <usize N> struct max_of_values<N> {
+template<usize N> struct max_of_values<N> {
   static constexpr usize value = N;
 };
 
-template <typename T, typename... Ts> struct type_in_pack : micron::bool_constant<(micron::same_as<T, Ts> || ...)> {
+template<typename T, typename... Ts> struct type_in_pack: micron::bool_constant<(micron::same_as<T, Ts> || ...)> {
 };
 
-template <typename T, typename... Ts> inline constexpr bool type_in_pack_v = type_in_pack<T, Ts...>::value;
+template<typename T, typename... Ts> inline constexpr bool type_in_pack_v = type_in_pack<T, Ts...>::value;
 
-template <typename T, typename... Ts> struct any_type_idx;
+template<typename T, typename... Ts> struct any_type_idx;
 
 // template <typename T, typename H, typename... Ts>
 // struct any_type_idx<T, H, Ts...> : micron::integral_constant<usize, micron::same_as<T, H> ? 0 : (1 + any_type_idx<T, Ts...>::value)> {
 // };
 
-template <typename T, typename... Ts> struct any_type_idx<T, T, Ts...> : integral_constant<usize, 0> {
+template<typename T, typename... Ts> struct any_type_idx<T, T, Ts...>: integral_constant<usize, 0> {
 };
 
 // match not found -> recurse
-template <typename T, typename H, typename... Ts>
-struct any_type_idx<T, H, Ts...> : integral_constant<usize, 1 + any_type_idx<T, Ts...>::value> {
+template<typename T, typename H, typename... Ts>
+struct any_type_idx<T, H, Ts...>: integral_constant<usize, 1 + any_type_idx<T, Ts...>::value> {
 };
 
 // empty pack -> error
-template <typename T> struct any_type_idx<T> {
+template<typename T> struct any_type_idx<T> {
   static_assert(!sizeof(T), "type not in any<Ts...>");
 };
 
-template <typename T, typename... Ts> inline constexpr usize any_type_idx_v = any_type_idx<T, Ts...>::value;
+template<typename T, typename... Ts> inline constexpr usize any_type_idx_v = any_type_idx<T, Ts...>::value;
 
-template <typename U> inline constexpr usize __safe_sizeof = sizeof(U);
-template <> inline constexpr usize __safe_sizeof<void> = 0;
-template <typename U> inline constexpr usize __safe_alignof = alignof(U);
-template <> inline constexpr usize __safe_alignof<void> = 1;
+template<typename U> inline constexpr usize __safe_sizeof = sizeof(U);
+template<> inline constexpr usize __safe_sizeof<void> = 0;
+template<typename U> inline constexpr usize __safe_alignof = alignof(U);
+template<> inline constexpr usize __safe_alignof<void> = 1;
 
-template <typename U> inline constexpr bool __slot_copyable = micron::is_copy_constructible_v<U>;
-template <> inline constexpr bool __slot_copyable<void> = true;
+template<typename U> inline constexpr bool __slot_copyable = micron::is_copy_constructible_v<U>;
+template<> inline constexpr bool __slot_copyable<void> = true;
 
-};     // namespace __impl
+};      // namespace __impl
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //  any<Ts...>
@@ -78,7 +78,7 @@ template <> inline constexpr bool __slot_copyable<void> = true;
 //
 //  storage is always stack-allocated; capacity = element-wise max of sizeof / alignof over all Ts
 
-template <typename... Ts>
+template<typename... Ts>
   requires(sizeof...(Ts) > 0)
 class any
 {
@@ -93,14 +93,14 @@ class any
   void (*__copy)(void *, const void *) = nullptr;
   void (*__move)(void *, void *) noexcept = nullptr;
 
-  template <typename T>
+  template<typename T>
   static void
   destroy_fn(void *p) noexcept
   {
     static_cast<T *>(p)->~T();
   }
 
-  template <typename T>
+  template<typename T>
   static void
   copy_fn(void *dst, const void *src)
   {
@@ -113,7 +113,7 @@ class any
     // assign &copy_fn<U> unconditionally for any U in the pack.
   }
 
-  template <typename T>
+  template<typename T>
   static void
   move_fn(void *dst, void *src) noexcept
   {
@@ -134,28 +134,28 @@ class any
   }
 
   // comptime index of U in Ts...
-  template <typename U> static constexpr usize idx_of = __impl::any_type_idx_v<U, Ts...>;
+  template<typename U> static constexpr usize idx_of = __impl::any_type_idx_v<U, Ts...>;
 
   static constexpr bool __copy_eligible = (micron::is_copy_constructible_v<Ts> && ...);
 
 public:
   ~any(void) { reset_impl(); }
 
-  template <typename T>
+  template<typename T>
     requires __impl::type_in_pack_v<micron::decay_t<T>, Ts...>
   explicit any(tag<T>)
   {
     emplace<micron::decay_t<T>>();
   }
 
-  template <typename T, typename A0, typename... Args>
+  template<typename T, typename A0, typename... Args>
     requires __impl::type_in_pack_v<micron::decay_t<T>, Ts...>
   any(tag<T>, A0 &&a0, Args &&...args)
   {
     emplace<micron::decay_t<T>>(micron::forward<A0>(a0), micron::forward<Args>(args)...);
   }
 
-  template <typename T>
+  template<typename T>
     requires(__impl::type_in_pack_v<micron::decay_t<T>, Ts...> && !micron::same_as<micron::decay_t<T>, any>)
   any(T &&v)
   {
@@ -191,7 +191,7 @@ public:
     }
   }
 
-  template <typename T, typename... Args>
+  template<typename T, typename... Args>
     requires(__impl::type_in_pack_v<micron::decay_t<T>, Ts...>)
   micron::decay_t<T> &
   emplace(Args &&...args)
@@ -224,7 +224,7 @@ public:
     return __idx;
   }
 
-  template <typename T>
+  template<typename T>
   bool
   is(void) const noexcept
   {
@@ -232,7 +232,7 @@ public:
   }
 
   // allow casting to anything explictly
-  template <typename T>
+  template<typename T>
   micron::decay_t<T> &
   cast(void)
   {
@@ -240,14 +240,14 @@ public:
   }
 
   // allow casting to anything explictly
-  template <typename T>
+  template<typename T>
   const micron::decay_t<T> &
   cast(void) const
   {
     return *reinterpret_cast<const micron::decay_t<T> *>(storage);
   }
 
-  template <typename T>
+  template<typename T>
     requires(__impl::type_in_pack_v<micron::decay_t<T>, Ts...> && !micron::same_as<micron::decay_t<T>, any>)
   any &
   operator=(T &&v)
@@ -256,7 +256,7 @@ public:
     return *this;
   }
 
-  template <typename T>
+  template<typename T>
     requires __impl::type_in_pack_v<micron::decay_t<T>, Ts...>
   any &
   operator=(tag<T>)
@@ -302,21 +302,21 @@ public:
     return *this;
   }
 
-  template <typename T>
+  template<typename T>
     requires(__impl::type_in_pack_v<T, Ts...>)
   operator T &() &
   {
     return cast<T>();
   }
 
-  template <typename T>
+  template<typename T>
     requires(__impl::type_in_pack_v<T, Ts...>)
   operator const T &() const &
   {
     return cast<T>();
   }
 
-  template <typename T>
+  template<typename T>
     requires(__impl::type_in_pack_v<T, Ts...>)
   operator T() &&
   {
@@ -351,7 +351,7 @@ public:
 //
 //  T and F must be distinct types!
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires(micron::distinct<T, F> && !micron::is_void_v<F>)
 class option
 {
@@ -368,14 +368,14 @@ class option
   void (*__copy)(void *, const void *) = nullptr;
   void (*__move)(void *, void *) noexcept = nullptr;
 
-  template <typename U>
+  template<typename U>
   static void
   destroy_fn(void *p) noexcept
   {
     static_cast<U *>(p)->~U();
   }
 
-  template <typename U>
+  template<typename U>
   static void
   copy_fn(void *dst, const void *src)
   {
@@ -384,7 +384,7 @@ class option
     }
   }
 
-  template <typename U>
+  template<typename U>
   static void
   move_fn(void *dst, void *src) noexcept
   {
@@ -404,7 +404,7 @@ class option
     }
   }
 
-  template <typename U>
+  template<typename U>
   static constexpr which
   which_of(void) noexcept
   {
@@ -426,24 +426,24 @@ public:
 
   explicit option(tag<F>) { emplace<F>(); }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(!micron::is_void_v<T>)
   option(tag<T>, Args &&...args)
   {
     emplace<T>(micron::forward<Args>(args)...);
   }
 
-  template <typename... Args> option(tag<F>, Args &&...args) { emplace<F>(micron::forward<Args>(args)...); }
+  template<typename... Args> option(tag<F>, Args &&...args) { emplace<F>(micron::forward<Args>(args)...); }
 
   // NOTE: use tag<> on ambiguous conversions
-  template <typename Tv>
+  template<typename Tv>
     requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
   option(const Tv &v)
   {
     emplace<T>(v);
   }
 
-  template <typename Tv>
+  template<typename Tv>
     requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
   option(Tv &&v)
   {
@@ -483,7 +483,7 @@ public:
     }
   }
 
-  template <typename U, typename... Args>
+  template<typename U, typename... Args>
     requires(micron::same_as<micron::decay_t<U>, T> or micron::same_as<micron::decay_t<U>, F>)
   decltype(auto)
   emplace(Args &&...args)
@@ -520,43 +520,43 @@ public:
   is_first() const noexcept
   {
     return __active == which::first;
-  }     // active == T
+  }      // active == T
 
   bool
   is_second() const noexcept
   {
     return __active == which::second;
-  }     // active == F
+  }      // active == F
 
   // allow any
-  template <typename U>
+  template<typename U>
   bool
   is() const noexcept
   {
     return __active == which_of<micron::decay_t<U>>();
   }
 
-  template <typename U>
+  template<typename U>
     requires(micron::same_as<micron::decay_t<U>, T> or micron::same_as<micron::decay_t<U>, F>)
   decltype(auto)
   cast()
   {
     using D = micron::decay_t<U>;
     if constexpr ( micron::is_void_v<D> ) {
-      return;     // void
+      return;      // void
     } else {
       return *reinterpret_cast<D *>(storage);
     }
   }
 
-  template <typename U>
+  template<typename U>
     requires(micron::same_as<micron::decay_t<U>, T> or micron::same_as<micron::decay_t<U>, F>)
   decltype(auto)
   cast() const
   {
     using D = micron::decay_t<U>;
     if constexpr ( micron::is_void_v<D> ) {
-      return;     // void
+      return;      // void
     } else {
       return *reinterpret_cast<const D *>(storage);
     }
@@ -576,7 +576,7 @@ public:
     return *this;
   }
 
-  template <typename Tv>
+  template<typename Tv>
     requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
   option &
   operator=(const Tv &v)
@@ -585,7 +585,7 @@ public:
     return *this;
   }
 
-  template <typename Tv>
+  template<typename Tv>
     requires(!micron::is_void_v<Tv> && micron::same_as<Tv, T>)
   option &
   operator=(Tv &&v)
@@ -645,25 +645,25 @@ public:
     return *this;
   }
 
-  template <typename U>
+  template<typename U>
     requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator U &() &
   {
     return cast<U>();
   }
 
-  template <typename U>
+  template<typename U>
     requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator const U &() const &
   {
     return cast<U>();
   }
 
-  template <typename U>
+  template<typename U>
     requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator U() &&
   {
     return micron::move(cast<U>());
   }
 };
-};     // namespace micron
+};      // namespace micron

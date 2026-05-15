@@ -27,7 +27,7 @@ namespace math
 namespace quaternions
 {
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 from_axis_angle(T ax, T ay, T az, T angle) noexcept
 {
@@ -48,21 +48,21 @@ from_axis_angle(T ax, T ay, T az, T angle) noexcept
   return quaternion<T>{ ax * k, ay * k, az * k, c };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 from_axis_angle(const micron::vector_3<T> &axis, T angle) noexcept
 {
   return from_axis_angle<T>(axis.x, axis.y, axis.z, angle);
 }
 
-template <ieee754_floating T> struct axis_angle_t {
+template<ieee754_floating T> struct axis_angle_t {
   micron::vector_3<T> axis;
   T angle;
 };
 
 // NOTE: uses atan2(|v|, w) instead of acos(w) for numerical stability (slower)
 // returns angle in [0, 2pi] with the recovered axis chosen so that from_axis_angle(axis, angle) reconstructs the input quaternion
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr axis_angle_t<T>
 to_axis_angle(const quaternion<T> &q) noexcept
 {
@@ -95,7 +95,7 @@ to_axis_angle(const quaternion<T> &q) noexcept
 }
 
 // NOTE: faster acos(w)-based decomposition
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr axis_angle_t<T>
 to_axis_angle_fast(const quaternion<T> &q) noexcept
 {
@@ -112,7 +112,7 @@ to_axis_angle_fast(const quaternion<T> &q) noexcept
 }
 
 // Shepperd's method
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 from_matrix(const mat<T, 3, 3> &R) noexcept
 {
@@ -162,7 +162,7 @@ from_matrix(const mat<T, 3, 3> &R) noexcept
   return quaternion<T>{ x * inv_n, y * inv_n, z * inv_n, w * inv_n };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, 3, 3>
 to_matrix(const quaternion<T> &q) noexcept
 {
@@ -175,7 +175,7 @@ to_matrix(const quaternion<T> &q) noexcept
 }
 
 // v' = (2w^2/|q|^2 - 1) v + (2 (u . v)/|q|^2) u + (2 w/|q|^2) (u x v)
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr micron::vector_3<T>
 rotate(const quaternion<T> &q, const micron::vector_3<T> &v) noexcept
 {
@@ -193,7 +193,7 @@ rotate(const quaternion<T> &q, const micron::vector_3<T> &v) noexcept
   return micron::vector_3<T>{ a * v.x + b * ux + c * cx, a * v.y + b * uy + c * cy, a * v.z + b * uz + c * cz };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 x_quat(T angle) noexcept
 {
@@ -202,7 +202,7 @@ x_quat(T angle) noexcept
   return quaternion<T>{ s, T(0), T(0), c };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 y_quat(T angle) noexcept
 {
@@ -211,7 +211,7 @@ y_quat(T angle) noexcept
   return quaternion<T>{ T(0), s, T(0), c };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 z_quat(T angle) noexcept
 {
@@ -220,6 +220,6 @@ z_quat(T angle) noexcept
   return quaternion<T>{ T(0), T(0), s, c };
 }
 
-};     // namespace quaternions
-};     // namespace math
-};     // namespace micron
+};      // namespace quaternions
+};      // namespace math
+};      // namespace micron

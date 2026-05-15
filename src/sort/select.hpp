@@ -12,7 +12,7 @@ namespace micron
 namespace sort
 {
 
-template <typename T>
+template<typename T>
 void
 selection(T &arr)
 {
@@ -25,6 +25,6 @@ selection(T &arr)
     if ( m != i ) swap(arr[i], arr[m]);
   }
 }
-};     // namespace sort
+};      // namespace sort
 
-};     // namespace micron
+};      // namespace micron

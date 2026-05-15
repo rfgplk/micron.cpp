@@ -14,6 +14,6 @@ namespace io
 {
 // propagate
 using posix::fd_t;
-};     // namespace io
+};      // namespace io
 
-};     // namespace micron
+};      // namespace micron

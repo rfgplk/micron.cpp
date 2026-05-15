@@ -8,7 +8,7 @@
 #include "__crt.hpp"
 #include "__tls.hpp"
 
-#include <micron/exit.hpp>     // micron::exit + __exit_internal::__push
+#include <micron/exit.hpp>      // micron::exit + __exit_internal::__push
 
 // call user declared main from out __micron_user_main
 // NOTE: we need to surpress Wodr because the compiler complains about multiple main definitions; we're okay though
@@ -110,7 +110,7 @@ __cxa_guard_abort(long long int *)
 // __dso_handle is referenced by every TU that schedules a global destructor via __cxa_atexit
 __attribute__((used, visibility("hidden"))) void *__dso_handle = &__dso_handle;
 
-}     // extern "C"
+}      // extern "C"
 
 #if defined(__micron_arch_arm32)
 
@@ -160,7 +160,7 @@ __udivmod32(unsigned int n, unsigned int d, unsigned int &q_out, unsigned int &r
   q_out = q;
   r_out = r;
 }
-}     // anonymous namespace
+}      // anonymous namespace
 
 extern "C" {
 
@@ -252,20 +252,20 @@ __aeabi_uldivmod() noexcept
 {
   __asm__ volatile(".syntax unified\n"
                    "push   {r4, r5, r6, r7, r8, lr}\n"
-                   "mov    r4, r0\n"        // r4 = num_lo
-                   "mov    r5, r1\n"        // r5 = num_hi
-                   "mov    r6, r2\n"        // r6 = den_lo
-                   "mov    r7, r3\n"        // r7 = den_hi
-                   "bl     __udivdi3\n"     // r0:r1 = quot (lo:hi)
-                   "mov    r8, r0\n"        // save quot_lo
+                   "mov    r4, r0\n"         // r4 = num_lo
+                   "mov    r5, r1\n"         // r5 = num_hi
+                   "mov    r6, r2\n"         // r6 = den_lo
+                   "mov    r7, r3\n"         // r7 = den_hi
+                   "bl     __udivdi3\n"      // r0:r1 = quot (lo:hi)
+                   "mov    r8, r0\n"         // save quot_lo
                    // truncated 64x64 -> 64 multiply: r2:r3 = quot * den (mod 2^64)
-                   "umull  r2, r3, r0, r6\n"     // r3:r2 = quot_lo * den_lo
-                   "mla    r3, r1, r6, r3\n"     // r3 += quot_hi * den_lo (low 32)
-                   "mla    r3, r0, r7, r3\n"     // r3 += quot_lo * den_hi (low 32)
+                   "umull  r2, r3, r0, r6\n"      // r3:r2 = quot_lo * den_lo
+                   "mla    r3, r1, r6, r3\n"      // r3 += quot_hi * den_lo (low 32)
+                   "mla    r3, r0, r7, r3\n"      // r3 += quot_lo * den_hi (low 32)
                    // r2:r3 = num - product
                    "subs   r2, r4, r2\n"
                    "sbc    r3, r5, r3\n"
-                   "mov    r0, r8\n"     // restore quot_lo
+                   "mov    r0, r8\n"      // restore quot_lo
                    // r1 still holds quot_hi (untouched by mla/umull on r0/r1 inputs)
                    "pop    {r4, r5, r6, r7, r8, pc}\n");
 }
@@ -295,11 +295,11 @@ __aeabi_idivmod() noexcept
 {
   __asm__ volatile(".syntax unified\n"
                    "push   {r4, r5, lr}\n"
-                   "mov    r4, r0\n"     // num
-                   "mov    r5, r1\n"     // den
+                   "mov    r4, r0\n"      // num
+                   "mov    r5, r1\n"      // den
                    "bl     __aeabi_idiv\n"
-                   "mul    r1, r0, r5\n"     // r1 = quot * den (truncated)
-                   "sub    r1, r4, r1\n"     // r1 = num - quot*den = remainder
+                   "mul    r1, r0, r5\n"      // r1 = quot * den (truncated)
+                   "sub    r1, r4, r1\n"      // r1 = num - quot*den = remainder
                    "pop    {r4, r5, pc}\n");
 }
 
@@ -358,9 +358,9 @@ __aeabi_l2f(long long x) noexcept
 __attribute__((used, pcs("aapcs"))) unsigned long long
 __aeabi_d2ulz(double x) noexcept
 {
-  if ( !(x >= 0.0) ) return 0;     // negatives and NaN saturate low
+  if ( !(x >= 0.0) ) return 0;      // negatives and NaN saturate low
   if ( x >= 18446744073709551616.0 ) return ~0ULL;
-  if ( x < 4294967296.0 ) return static_cast<unsigned int>(x);     // single VCVT.U32.F64
+  if ( x < 4294967296.0 ) return static_cast<unsigned int>(x);      // single VCVT.U32.F64
   unsigned int hi = static_cast<unsigned int>(x * (1.0 / 4294967296.0));
   double lo_d = x - static_cast<double>(hi) * 4294967296.0;
   if ( lo_d < 0.0 ) {
@@ -377,7 +377,7 @@ __aeabi_d2ulz(double x) noexcept
 __attribute__((used, pcs("aapcs"))) long long
 __aeabi_d2lz(double x) noexcept
 {
-  if ( x != x ) return 0;     // NaN
+  if ( x != x ) return 0;      // NaN
   if ( x >= 9223372036854775808.0 ) return 0x7FFFFFFFFFFFFFFFLL;
   if ( x < -9223372036854775808.0 ) return static_cast<long long>(0x8000000000000000ULL);
   if ( x >= 0.0 ) return static_cast<long long>(__aeabi_d2ulz(x));
@@ -387,7 +387,7 @@ __aeabi_d2lz(double x) noexcept
 __attribute__((used, pcs("aapcs"))) unsigned long long
 __aeabi_f2ulz(float x) noexcept
 {
-  return __aeabi_d2ulz(static_cast<double>(x));     // VCVT.F64.F32 then 64-bit path
+  return __aeabi_d2ulz(static_cast<double>(x));      // VCVT.F64.F32 then 64-bit path
 }
 
 __attribute__((used, pcs("aapcs"))) long long
@@ -396,6 +396,6 @@ __aeabi_f2lz(float x) noexcept
   return __aeabi_d2lz(static_cast<double>(x));
 }
 
-}     // extern "C"
+}      // extern "C"
 
-#endif     // __micron_arch_arm32
+#endif      // __micron_arch_arm32

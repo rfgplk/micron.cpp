@@ -22,11 +22,11 @@ namespace coeff
 namespace gl
 {
 
-template <ieee754_floating F, usize Order> struct gl_table {
+template<ieee754_floating F, usize Order> struct gl_table {
   static_assert(Order == 5 or Order == 8 or Order == 16 or Order == 32, "Gauss-Legendre table only available for orders 5, 8, 16, 32");
 };
 
-template <ieee754_floating F> struct gl_table<F, 5> {
+template<ieee754_floating F> struct gl_table<F, 5> {
   static constexpr F nodes[3] = {
     F(0.0L),
     F(0.5384693101056830910363144L),
@@ -41,7 +41,7 @@ template <ieee754_floating F> struct gl_table<F, 5> {
   static constexpr bool has_zero = true;
 };
 
-template <ieee754_floating F> struct gl_table<F, 8> {
+template<ieee754_floating F> struct gl_table<F, 8> {
   static constexpr F nodes[4] = {
     F(0.1834346424956498049394761L),
     F(0.5255324099163289858177390L),
@@ -58,7 +58,7 @@ template <ieee754_floating F> struct gl_table<F, 8> {
   static constexpr bool has_zero = false;
 };
 
-template <ieee754_floating F> struct gl_table<F, 16> {
+template<ieee754_floating F> struct gl_table<F, 16> {
   static constexpr F nodes[8] = {
     F(0.0950125098376374401853193L), F(0.2816035507792589132304605L), F(0.4580167776572273863424194L), F(0.6178762444026437484466718L),
     F(0.7554044083550030338951012L), F(0.8656312023878317438804679L), F(0.9445750230732325760779884L), F(0.9894009349916499325961542L),
@@ -71,7 +71,7 @@ template <ieee754_floating F> struct gl_table<F, 16> {
   static constexpr bool has_zero = false;
 };
 
-template <ieee754_floating F> struct gl_table<F, 32> {
+template<ieee754_floating F> struct gl_table<F, 32> {
   static constexpr F nodes[16] = {
     F(0.0483076656877383162348126L), F(0.1444719615827964934851864L), F(0.2392873622521370745446032L), F(0.3318686022821276497799168L),
     F(0.4213512761306353453641194L), F(0.5068999089322293900237475L), F(0.5877157572407623290407455L), F(0.6630442669302152009751152L),
@@ -88,8 +88,8 @@ template <ieee754_floating F> struct gl_table<F, 32> {
   static constexpr bool has_zero = false;
 };
 
-};     // namespace gl
-};     // namespace coeff
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace gl
+};      // namespace coeff
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

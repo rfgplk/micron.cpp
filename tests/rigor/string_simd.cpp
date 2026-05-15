@@ -13,8 +13,8 @@ using namespace snowball;
 
 using new_hstr = micron::hstring<char>;
 using old_hstr = micron::__old::hstring<char>;
-template <usize N> using new_sstr = micron::sstring<N, char>;
-template <usize N> using old_sstr = micron::__old::sstring<N, char>;
+template<usize N> using new_sstr = micron::sstring<N, char>;
+template<usize N> using old_sstr = micron::__old::sstring<N, char>;
 
 static char
 pat(usize i)

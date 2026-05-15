@@ -12,7 +12,7 @@ main()
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(1e3, 1e5);
-    for ( size_t n = 0; n < 1e4; ++n ) {     // 5-10gb
+    for ( size_t n = 0; n < 1e4; ++n ) {      // 5-10gb
       void *dont_optimize = abc::malloc(dist(gen));
       escaped = dont_optimize;
     }

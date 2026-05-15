@@ -26,8 +26,8 @@ namespace micron
 {
 
 // stack
-template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-class stack : public __mutable_memory_resource<T, Alloc>
+template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+class stack: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
   micron::mutex __mtx;
@@ -52,7 +52,7 @@ public:
     clear();
   }
 
-  stack() : __mem(N) {}
+  stack() : __mem(N) { }
 
   explicit stack(const umax_t n) : __mem(n)
   {
@@ -78,7 +78,7 @@ public:
     __mem::length = o.length;
   }
 
-  stack(stack &&o) : __mem(micron::move(o)) {}
+  stack(stack &&o) : __mem(micron::move(o)) { }
 
   stack &
   operator=(const stack &o)
@@ -184,14 +184,14 @@ public:
     push(micron::move(v));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   push_range(Args &&...args)
   {
     (push(micron::forward<Args>(args)), ...);
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args)
@@ -213,7 +213,7 @@ public:
     return val;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   pop_range(Args &...args)
   {
@@ -404,4 +404,4 @@ public:
   }
 };
 
-}     // namespace micron
+}      // namespace micron

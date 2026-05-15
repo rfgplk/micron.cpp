@@ -18,7 +18,7 @@ namespace simd
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // load/aligned loads
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 load(B *ptr)
 {
@@ -42,14 +42,14 @@ load(B *ptr)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 load(B &ref)
 {
   return load<B>(&ref);
 }
 
-template <is_simd_type B, typename T>
+template<is_simd_type B, typename T>
 inline B
 load(T *ptr)
 {
@@ -73,7 +73,7 @@ load(T *ptr)
   }
 }
 
-template <is_simd_type B, typename T>
+template<is_simd_type B, typename T>
 inline B
 load(T &ref)
 {
@@ -83,7 +83,7 @@ load(T &ref)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // loadu/unaligned loads
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 loadu(B *ptr)
 {
@@ -107,14 +107,14 @@ loadu(B *ptr)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 loadu(B &ref)
 {
   return loadu<B>(&ref);
 }
 
-template <is_simd_type B, typename T>
+template<is_simd_type B, typename T>
 inline B
 loadu(T *ptr)
 {
@@ -138,7 +138,7 @@ loadu(T *ptr)
   }
 }
 
-template <is_simd_type B, typename T>
+template<is_simd_type B, typename T>
 inline B
 loadu(const T *ptr)
 {
@@ -162,49 +162,49 @@ loadu(const T *ptr)
   }
 }
 
-template <is_simd_type B, typename T>
+template<is_simd_type B, typename T>
 inline B
 loadu(T &ref)
 {
   return loadu<B, T>(&ref);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadu_16(T *ptr)
 {
   return _mm_loadu_si16(ptr);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadu_16(T &ref)
 {
   return loadu_16(&ref);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadu_32(T *ptr)
 {
   return _mm_loadu_si32(ptr);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadu_32(T &ref)
 {
   return loadu_32(&ref);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadu_64(T *ptr)
 {
   return _mm_loadu_si64(ptr);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadu_64(T &ref)
 {
@@ -238,14 +238,14 @@ load_scalar(double &ref)
   return load_scalar(&ref);
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadl_64(T *ptr)
 {
   return _mm_loadl_epi64(reinterpret_cast<i128 *>(ptr));
 }
 
-template <typename T>
+template<typename T>
 inline i128
 loadl_64(T &ref)
 {
@@ -303,7 +303,7 @@ loadh_pi(f128 dst, __m64 &ref)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // streaming loads
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 stream_load(void *ptr)
 {
@@ -315,7 +315,7 @@ stream_load(void *ptr)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 stream_load(B *ptr)
 {
@@ -327,7 +327,7 @@ stream_load(B *ptr)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 stream_load(B &ref)
 {
@@ -397,7 +397,7 @@ broadcast_si128(i128 &ref)
   return broadcast_si128(&ref);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 broadcast_8(i128 src)
 {
@@ -409,7 +409,7 @@ broadcast_8(i128 src)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 broadcast_16(i128 src)
 {
@@ -421,7 +421,7 @@ broadcast_16(i128 src)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 broadcast_32(i128 src)
 {
@@ -433,7 +433,7 @@ broadcast_32(i128 src)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 broadcast_64(i128 src)
 {
@@ -448,7 +448,7 @@ broadcast_64(i128 src)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // maskes loads
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 maskload_32(int *ptr, B mask)
 {
@@ -460,14 +460,14 @@ maskload_32(int *ptr, B mask)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 maskload_32(int &ref, B mask)
 {
   return maskload_32(&ref, mask);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 maskload_64(long long *ptr, B mask)
 {
@@ -479,14 +479,14 @@ maskload_64(long long *ptr, B mask)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 maskload_64(long long &ref, B mask)
 {
   return maskload_64(&ref, mask);
 }
 
-template <is_simd_type B, is_simd_type M>
+template<is_simd_type B, is_simd_type M>
 inline B
 maskload_ps(float *ptr, M mask)
 {
@@ -498,14 +498,14 @@ maskload_ps(float *ptr, M mask)
   }
 }
 
-template <is_simd_type B, is_simd_type M>
+template<is_simd_type B, is_simd_type M>
 inline B
 maskload_ps(float &ref, M mask)
 {
   return maskload_ps<B>(&ref, mask);
 }
 
-template <is_simd_type B, is_simd_type M>
+template<is_simd_type B, is_simd_type M>
 inline B
 maskload_pd(double *ptr, M mask)
 {
@@ -517,7 +517,7 @@ maskload_pd(double *ptr, M mask)
   }
 }
 
-template <is_simd_type B, is_simd_type M>
+template<is_simd_type B, is_simd_type M>
 inline B
 maskload_pd(double &ref, M mask)
 {
@@ -527,7 +527,7 @@ maskload_pd(double &ref, M mask)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // gathers
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 gather_32_i32(int *base, B vindex)
 {
@@ -539,98 +539,98 @@ gather_32_i32(int *base, B vindex)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 gather_32_i32(int &ref, B vindex)
 {
   return gather_32_i32<B, scale>(&ref, vindex);
 }
 
-template <int scale>
+template<int scale>
 inline f128
 gather_ps_i32(float *base, i128 vindex)
 {
   return _mm_i32gather_ps(base, vindex, scale);
 }
 
-template <int scale>
+template<int scale>
 inline f128
 gather_ps_i32(float &ref, i128 vindex)
 {
   return gather_ps_i32<scale>(&ref, vindex);
 }
 
-template <int scale>
+template<int scale>
 inline f256
 gather_ps_i32(float *base, i256 vindex)
 {
   return _mm256_i32gather_ps(base, vindex, scale);
 }
 
-template <int scale>
+template<int scale>
 inline f256
 gather_ps_i32(float &ref, i256 vindex)
 {
   return gather_ps_i32<scale>(&ref, vindex);
 }
 
-template <int scale>
+template<int scale>
 inline i128
 gather_64_i32(long long *base, i128 vindex)
 {
   return _mm_i32gather_epi64(base, vindex, scale);
 }
 
-template <int scale>
+template<int scale>
 inline i128
 gather_64_i32(long long &ref, i128 vindex)
 {
   return gather_64_i32<scale>(&ref, vindex);
 }
 
-template <int scale>
+template<int scale>
 inline i256
 gather_64_i32(long long *base, i128 vindex)
 {
   return _mm256_i32gather_epi64(base, vindex, scale);
 }
 
-template <int scale>
+template<int scale>
 inline i256
 gather_64_i32(long long &ref, i256 vindex)
 {
   return gather_64_i32<scale>(&ref, vindex);
 }
 
-template <int scale>
+template<int scale>
 inline d128
 gather_pd_i32(double *base, i128 vindex)
 {
   return _mm_i32gather_pd(base, vindex, scale);
 }
 
-template <int scale>
+template<int scale>
 inline d128
 gather_pd_i32(double &ref, i128 vindex)
 {
   return gather_pd_i32<scale>(&ref, vindex);
 }
 
-template <int scale>
+template<int scale>
 inline d256
 gather_pd_i32(double *base, i128 vindex)
 {
   return _mm256_i32gather_pd(base, vindex, scale);
 }
 
-template <int scale>
+template<int scale>
 inline d256
 gather_pd_i32(double &ref, i128 vindex)
 {
   return gather_pd_i32<scale>(&ref, vindex);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline i128
 gather_32_i64(int *base, B vindex)
 {
@@ -642,14 +642,14 @@ gather_32_i64(int *base, B vindex)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline i128
 gather_32_i64(int &ref, B vindex)
 {
   return gather_32_i64<B, scale>(&ref, vindex);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline f128
 gather_ps_i64(float *base, B vindex)
 {
@@ -661,14 +661,14 @@ gather_ps_i64(float *base, B vindex)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline f128
 gather_ps_i64(float &ref, B vindex)
 {
   return gather_ps_i64<B, scale>(&ref, vindex);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 gather_64_i64(long long *base, B vindex)
 {
@@ -680,14 +680,14 @@ gather_64_i64(long long *base, B vindex)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 gather_64_i64(long long &ref, B vindex)
 {
   return gather_64_i64<B, scale>(&ref, vindex);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 gather_pd_i64(double *base, B vindex)
 {
@@ -699,7 +699,7 @@ gather_pd_i64(double *base, B vindex)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 gather_pd_i64(double &ref, B vindex)
 {
@@ -709,7 +709,7 @@ gather_pd_i64(double &ref, B vindex)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // masked gathers
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 maskgather_32_i32(B src, int *base, B vindex, B mask)
 {
@@ -721,98 +721,98 @@ maskgather_32_i32(B src, int *base, B vindex, B mask)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 maskgather_32_i32(B src, int &ref, B vindex, B mask)
 {
   return maskgather_32_i32<B, scale>(src, &ref, vindex, mask);
 }
 
-template <int scale>
+template<int scale>
 inline f128
 maskgather_ps_i32(f128 src, float *base, i128 vindex, f128 mask)
 {
   return _mm_mask_i32gather_ps(src, base, vindex, mask, scale);
 }
 
-template <int scale>
+template<int scale>
 inline f128
 maskgather_ps_i32(f128 src, float &ref, i128 vindex, f128 mask)
 {
   return maskgather_ps_i32<scale>(src, &ref, vindex, mask);
 }
 
-template <int scale>
+template<int scale>
 inline f256
 maskgather_ps_i32(f256 src, float *base, i256 vindex, f256 mask)
 {
   return _mm256_mask_i32gather_ps(src, base, vindex, mask, scale);
 }
 
-template <int scale>
+template<int scale>
 inline f256
 maskgather_ps_i32(f256 src, float &ref, i256 vindex, f256 mask)
 {
   return maskgather_ps_i32<scale>(src, &ref, vindex, mask);
 }
 
-template <int scale>
+template<int scale>
 inline i128
 maskgather_64_i32(i128 src, long long *base, i128 vindex, i128 mask)
 {
   return _mm_mask_i32gather_epi64(src, base, vindex, mask, scale);
 }
 
-template <int scale>
+template<int scale>
 inline i128
 maskgather_64_i32(i128 src, long long &ref, i128 vindex, i128 mask)
 {
   return maskgather_64_i32<scale>(src, &ref, vindex, mask);
 }
 
-template <int scale>
+template<int scale>
 inline i256
 maskgather_64_i32(i256 src, long long *base, i128 vindex, i256 mask)
 {
   return _mm256_mask_i32gather_epi64(src, base, vindex, mask, scale);
 }
 
-template <int scale>
+template<int scale>
 inline i256
 maskgather_64_i32(i256 src, long long &ref, i128 vindex, i256 mask)
 {
   return maskgather_64_i32<scale>(src, &ref, vindex, mask);
 }
 
-template <int scale>
+template<int scale>
 inline d128
 maskgather_pd_i32(d128 src, double *base, i128 vindex, d128 mask)
 {
   return _mm_mask_i32gather_pd(src, base, vindex, mask, scale);
 }
 
-template <int scale>
+template<int scale>
 inline d128
 maskgather_pd_i32(d128 src, double &ref, i128 vindex, d128 mask)
 {
   return maskgather_pd_i32<scale>(src, &ref, vindex, mask);
 }
 
-template <int scale>
+template<int scale>
 inline d256
 maskgather_pd_i32(d256 src, double *base, i128 vindex, d256 mask)
 {
   return _mm256_mask_i32gather_pd(src, base, vindex, mask, scale);
 }
 
-template <int scale>
+template<int scale>
 inline d256
 maskgather_pd_i32(d256 src, double &ref, i128 vindex, d256 mask)
 {
   return maskgather_pd_i32<scale>(src, &ref, vindex, mask);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline i128
 maskgather_32_i64(i128 src, int *base, B vindex, i128 mask)
 {
@@ -824,14 +824,14 @@ maskgather_32_i64(i128 src, int *base, B vindex, i128 mask)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline i128
 maskgather_32_i64(i128 src, int &ref, B vindex, i128 mask)
 {
   return maskgather_32_i64<B, scale>(src, &ref, vindex, mask);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline f128
 maskgather_ps_i64(f128 src, float *base, B vindex, f128 mask)
 {
@@ -843,14 +843,14 @@ maskgather_ps_i64(f128 src, float *base, B vindex, f128 mask)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline f128
 maskgather_ps_i64(f128 src, float &ref, B vindex, f128 mask)
 {
   return maskgather_ps_i64<B, scale>(src, &ref, vindex, mask);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 maskgather_64_i64(B src, long long *base, B vindex, B mask)
 {
@@ -862,14 +862,14 @@ maskgather_64_i64(B src, long long *base, B vindex, B mask)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 maskgather_64_i64(B src, long long &ref, B vindex, B mask)
 {
   return maskgather_64_i64<B, scale>(src, &ref, vindex, mask);
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 maskgather_pd_i64(B src, double *base, B vindex, B mask)
 {
@@ -881,7 +881,7 @@ maskgather_pd_i64(B src, double *base, B vindex, B mask)
   }
 }
 
-template <is_simd_type B, int scale>
+template<is_simd_type B, int scale>
 inline B
 maskgather_pd_i64(B src, double &ref, B vindex, B mask)
 {
@@ -890,5 +890,5 @@ maskgather_pd_i64(B src, double &ref, B vindex, B mask)
 
 #pragma GCC diagnostic pop
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

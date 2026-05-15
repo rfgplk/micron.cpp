@@ -25,15 +25,15 @@ struct uint128_t {
   u64 lo;
   u64 hi;
 
-  constexpr uint128_t() noexcept : lo(0), hi(0) {}
+  constexpr uint128_t() noexcept : lo(0), hi(0) { }
 
-  constexpr uint128_t(u64 v) noexcept : lo(v), hi(0) {}
+  constexpr uint128_t(u64 v) noexcept : lo(v), hi(0) { }
 
-  constexpr uint128_t(u64 h, u64 l) noexcept : lo(l), hi(h) {}
+  constexpr uint128_t(u64 h, u64 l) noexcept : lo(l), hi(h) { }
 
-  constexpr uint128_t(u32 v) noexcept : lo(static_cast<u64>(v)), hi(0) {}
+  constexpr uint128_t(u32 v) noexcept : lo(static_cast<u64>(v)), hi(0) { }
 
-  constexpr uint128_t(int v) noexcept : lo(static_cast<u64>(v)), hi(v < 0 ? ~static_cast<u64>(0) : 0) {}
+  constexpr uint128_t(int v) noexcept : lo(static_cast<u64>(v)), hi(v < 0 ? ~static_cast<u64>(0) : 0) { }
 
   explicit constexpr
   operator u64() const noexcept
@@ -413,17 +413,17 @@ struct uint128_t {
 struct int128_t {
   uint128_t v;
 
-  constexpr int128_t() noexcept : v() {}
+  constexpr int128_t() noexcept : v() { }
 
-  constexpr int128_t(uint128_t u) noexcept : v(u) {}
+  constexpr int128_t(uint128_t u) noexcept : v(u) { }
 
-  constexpr int128_t(i64 x) noexcept : v(x < 0 ? ~0ULL : 0ULL, static_cast<u64>(x)) {}
+  constexpr int128_t(i64 x) noexcept : v(x < 0 ? ~0ULL : 0ULL, static_cast<u64>(x)) { }
 
-  constexpr int128_t(u64 x) noexcept : v(x) {}
+  constexpr int128_t(u64 x) noexcept : v(x) { }
 
-  constexpr int128_t(i32 x) noexcept : int128_t(static_cast<i64>(x)) {}
+  constexpr int128_t(i32 x) noexcept : int128_t(static_cast<i64>(x)) { }
 
-  constexpr int128_t(u32 x) noexcept : v(static_cast<u64>(x)) {}
+  constexpr int128_t(u32 x) noexcept : v(static_cast<u64>(x)) { }
 
   constexpr bool
   __is_negative() const noexcept

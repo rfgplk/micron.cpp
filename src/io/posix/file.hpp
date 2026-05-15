@@ -177,43 +177,43 @@ struct linux_permissions {
   }
 
   static constexpr linux_permissions
-  file_default() noexcept     // 0644
+  file_default() noexcept      // 0644
   {
     return { ipermissions::rw(), ipermissions::ro(), ipermissions::ro() };
   }
 
   static constexpr linux_permissions
-  exec_default() noexcept     // 0755
+  exec_default() noexcept      // 0755
   {
     return { ipermissions::all(), ipermissions::rx(), ipermissions::rx() };
   }
 
   static constexpr linux_permissions
-  dir_default() noexcept     // 0755
+  dir_default() noexcept      // 0755
   {
     return exec_default();
   }
 
   static constexpr linux_permissions
-  private_file() noexcept     // 0600
+  private_file() noexcept      // 0600
   {
     return { ipermissions::rw(), ipermissions::none(), ipermissions::none() };
   }
 
   static constexpr linux_permissions
-  private_exec() noexcept     // 0700
+  private_exec() noexcept      // 0700
   {
     return { ipermissions::all(), ipermissions::none(), ipermissions::none() };
   }
 
   static constexpr linux_permissions
-  world_readable() noexcept     // 0644
+  world_readable() noexcept      // 0644
   {
     return file_default();
   }
 
   static constexpr linux_permissions
-  world_readable_exec() noexcept     // 0755
+  world_readable_exec() noexcept      // 0755
   {
     return exec_default();
   }
@@ -373,32 +373,32 @@ protected:
   __syscall_open(const char *str, const modes mode)
   {
     switch ( mode ) {
-    case modes::largeread :
+    case modes::largeread:
       return posix::open(str, posix::o_rdonly | posix::o_sync | posix::o_direct | posix::o_largefile);
-    case modes::large :
+    case modes::large:
       return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_sync | posix::o_direct | posix::o_largefile,
                          0644u);
-    case modes::quiet :
+    case modes::quiet:
       return posix::open(str, posix::o_rdonly | posix::o_noatime, 0644u);
-    case modes::create :
+    case modes::create:
       return posix::open(str, posix::o_rdonly | posix::o_create | posix::o_excl, 0644u);
-    case modes::read :
+    case modes::read:
       return posix::open(str, posix::o_rdonly);
-    case modes::readwrite :
+    case modes::readwrite:
       return posix::open(str, posix::o_rdwr | posix::o_sync);
-    case modes::write :
+    case modes::write:
       return posix::open(str, posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_sync, 0644u);
-    case modes::readwritecreate :
+    case modes::readwritecreate:
       return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_sync, 0644u);
-    case modes::append :
+    case modes::append:
       return posix::open(str, posix::o_wronly | posix::o_create | posix::o_append | posix::o_sync, 0644u);
-    case modes::appendread :
+    case modes::appendread:
       return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_append | posix::o_sync, 0644u);
     }
     return -1;
   }
 
-  template <typename T>
+  template<typename T>
   inline __attribute__((always_inline)) void
   __open_linux(const T &str, const modes mode)
   {
@@ -444,7 +444,7 @@ public:
 
   ~file() { close(); }
 
-  file(void) : fname(), __handle(-1), sd() {}
+  file(void) : fname(), __handle(-1), sd() { }
 
   file(const char *str) { __open_linux(str, modes::read); }
 
@@ -456,11 +456,11 @@ public:
 
   file(const micron::sstr<max_name> &str, const modes mode) { __open_linux(str, mode); }
 
-  template <is_string T> file(const T &str) { __open_linux(str, modes::read); }
+  template<is_string T> file(const T &str) { __open_linux(str, modes::read); }
 
-  template <is_string T> file(const T &str, const modes mode) { __open_linux(str, mode); }
+  template<is_string T> file(const T &str, const modes mode) { __open_linux(str, mode); }
 
-  file(const file &o) : fname(o.fname), __handle(o.__handle), sd(o.sd) {}
+  file(const file &o) : fname(o.fname), __handle(o.__handle), sd(o.sd) { }
 
   file(file &&o) noexcept : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
   {
@@ -509,7 +509,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   file &
   operator=(const T &name)
   {
@@ -550,7 +550,7 @@ public:
     return !__handle.has_error();
   }
 
-  template <bool B = STAT_EXISTING>
+  template<bool B = STAT_EXISTING>
   inline void
   stat(void) const
   {
@@ -621,7 +621,7 @@ public:
   {
     __alive();
     posix::fchmod(__handle, perms.full_mode());
-    micron::zero(&sd);     // invalidate cached stat
+    micron::zero(&sd);      // invalidate cached stat
   }
 
   inline const auto &
@@ -664,7 +664,7 @@ public:
   is_owned(void) const noexcept
   {
     return true;
-  }     // file always owns its fd
+  }      // file always owns its fd
 
   posix::ino_t
   inode(void)
@@ -984,7 +984,7 @@ public:
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // containers
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   read(T &buf) const
   {
@@ -992,7 +992,7 @@ public:
     return posix::read(__handle.fd, buf.data(), buf.max_size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   write(const T &buf)
   {
@@ -1000,7 +1000,7 @@ public:
     return posix::write(__handle.fd, buf.data(), buf.size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   read_all(T &buf) const
   {
@@ -1008,7 +1008,7 @@ public:
     return posix::read_all(__handle, buf.data(), buf.max_size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   write_all(const T &buf)
   {
@@ -1016,7 +1016,7 @@ public:
     return posix::write_all(__handle, buf.data(), buf.size());
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   file &
   operator>>(T &buf)
   {
@@ -1025,7 +1025,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   file &
   operator>>(T &str)
   {
@@ -1034,7 +1034,7 @@ public:
     return *this;
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   file &
   operator<<(const T &buf)
   {
@@ -1042,7 +1042,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   file &
   operator<<(const T &str)
   {
@@ -1058,7 +1058,7 @@ public:
     return *this;
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   pread(T &buf, usize len, posix::off_t offset) const
   {
@@ -1066,7 +1066,7 @@ public:
     return micron::pread(__handle.fd, buf.data(), len, offset);
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   pwrite(const T &buf, usize len, posix::off_t offset)
   {
@@ -1076,7 +1076,7 @@ public:
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // raw pointers
-  template <typename T>
+  template<typename T>
 
   [[deprecated("prefer using T& reference overloads")]] max_t
   read(T *buf, usize len) const
@@ -1085,7 +1085,7 @@ public:
     return posix::read(__handle.fd, buf, len);
   }
 
-  template <typename T>
+  template<typename T>
 
   [[deprecated("prefer using T& reference overloads")]] max_t
   write(const T *buf, usize len)
@@ -1094,7 +1094,7 @@ public:
     return posix::write(__handle.fd, buf, len);
   }
 
-  template <typename T>
+  template<typename T>
 
   [[deprecated("prefer using T& reference overloads")]] max_t
   read_all(T *buf, usize len) const
@@ -1103,7 +1103,7 @@ public:
     return posix::read_all(__handle, buf, len);
   }
 
-  template <typename T>
+  template<typename T>
 
   [[deprecated("prefer using T& reference overloads")]] max_t
   write_all(const T *buf, usize len)
@@ -1112,7 +1112,7 @@ public:
     return posix::write_all(__handle, buf, len);
   }
 
-  template <typename T>
+  template<typename T>
 
   [[deprecated("prefer using T& reference overloads")]] max_t
   pread(T *buf, usize len, posix::off_t offset) const
@@ -1121,7 +1121,7 @@ public:
     return micron::pread(__handle.fd, buf, len, offset);
   }
 
-  template <typename T>
+  template<typename T>
   [[deprecated("prefer using T& reference overloads")]] max_t
   pwrite(const T *buf, usize len, posix::off_t offset)
   {
@@ -1132,7 +1132,7 @@ public:
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // refs (preferred)
 
-  template <typename T>
+  template<typename T>
   max_t
   read(T &buf, usize len) const
   {
@@ -1140,7 +1140,7 @@ public:
     return posix::read(__handle.fd, micron::voidify(buf), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   write(const T &buf, usize len)
   {
@@ -1148,7 +1148,7 @@ public:
     return posix::write(__handle.fd, micron::voidify(buf), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   read_all(T &buf, usize len) const
   {
@@ -1156,7 +1156,7 @@ public:
     return posix::read_all(__handle, micron::voidify(buf), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   write_all(const T &buf, usize len)
   {
@@ -1164,7 +1164,7 @@ public:
     return posix::write_all(__handle, micron::voidify(buf), len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   pread(T &buf, usize len, posix::off_t offset) const
   {
@@ -1172,7 +1172,7 @@ public:
     return micron::pread(__handle.fd, micron::voidify(buf), len, offset);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   pwrite(const T &buf, usize len, posix::off_t offset)
   {
@@ -1285,7 +1285,7 @@ public:
     return r;
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   rename(const T &newpath)
   {
@@ -1309,7 +1309,7 @@ public:
     return micron::link(fname.c_str(), newpath);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   link(const T &newpath) const
   {
@@ -1325,7 +1325,7 @@ public:
     return micron::symlink(fname.c_str(), linkpath);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   symlink(const T &linkpath) const
   {
@@ -1379,7 +1379,7 @@ public:
   is_cloexec(void) const
   {
     i32 f = get_fd_flags();
-    return f >= 0 && (f & 1);     // FD_CLOEXEC == 1
+    return f >= 0 && (f & 1);      // FD_CLOEXEC == 1
   }
 
   i32
@@ -1413,7 +1413,7 @@ public:
     return set_status_flags(on ? (cur | posix::o_append) : (cur & ~posix::o_append));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   auto
   fcntl(i32 cmd, Args &&...args)
   {
@@ -1563,7 +1563,7 @@ public:
     return fname.size() && posix::is_same_file(fname.c_str(), path);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   is_same_as(const T &p) const
   {
@@ -1600,15 +1600,15 @@ public:
   }
 };
 
-struct virtual_file : public file {
+struct virtual_file: public file {
 
   virtual_file() = default;
 
-  explicit virtual_file(const char *path) : file(path, modes::read) {}
+  explicit virtual_file(const char *path) : file(path, modes::read) { }
 
-  template <is_string T> explicit virtual_file(const T &path) : virtual_file(path.c_str()) {}
+  template<is_string T> explicit virtual_file(const T &path) : virtual_file(path.c_str()) { }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   read_once(T &buf)
   {
@@ -1616,14 +1616,14 @@ struct virtual_file : public file {
     return read(buf);
   }
 
-  template <is_iterable_container T>
+  template<is_iterable_container T>
   max_t
   read_at_zero(T &buf, usize len) const
   {
     return read(buf, len, 0);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   read_once(T *buf, usize len)
   {
@@ -1631,7 +1631,7 @@ struct virtual_file : public file {
     return read(buf, len);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   read_at_zero(T *buf, usize len) const
   {
@@ -1645,13 +1645,13 @@ struct virtual_file : public file {
   }
 };
 
-struct regular_file : public file {
+struct regular_file: public file {
 
   regular_file() = default;
 
-  explicit regular_file(const char *path, const modes mode = modes::read) : file(path, mode) {}
+  explicit regular_file(const char *path, const modes mode = modes::read) : file(path, mode) { }
 
-  template <is_string T> explicit regular_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode) {}
+  template<is_string T> explicit regular_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode) { }
 
   static regular_file
   for_reading(const char *path)
@@ -1683,35 +1683,35 @@ struct regular_file : public file {
     return regular_file{ path, modes::create };
   }
 
-  template <is_string T>
+  template<is_string T>
   static regular_file
   for_reading(const T &p)
   {
     return for_reading(p.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   static regular_file
   for_writing(const T &p)
   {
     return for_writing(p.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   static regular_file
   for_appending(const T &p)
   {
     return for_appending(p.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   static regular_file
   for_rdwr(const T &p)
   {
     return for_rdwr(p.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   static regular_file
   create_new(const T &p)
   {
@@ -1772,7 +1772,7 @@ public:
 
   explicit symlink_file(const char *path) noexcept : _st{}, _st_dirty(true), _st_valid(false) { _set_path(path); }
 
-  template <is_string T> explicit symlink_file(const T &path) noexcept : symlink_file(path.c_str()) {}
+  template<is_string T> explicit symlink_file(const T &path) noexcept : symlink_file(path.c_str()) { }
 
   symlink_file(const symlink_file &) = delete;
   symlink_file &operator=(const symlink_file &) = delete;
@@ -1882,7 +1882,7 @@ public:
     return r;
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   create(const T &target)
   {
@@ -1926,7 +1926,7 @@ public:
     return symlink_file{ link_path };
   }
 
-  template <is_string T, is_string U>
+  template<is_string T, is_string U>
   static symlink_file
   create_link(const T &target, const U &link_path)
   {
@@ -1934,13 +1934,13 @@ public:
   }
 };
 
-struct directory_file : public file {
+struct directory_file: public file {
 
   directory_file() = default;
 
-  explicit directory_file(const char *path) : file(path, modes::read) {}
+  explicit directory_file(const char *path) : file(path, modes::read) { }
 
-  template <is_string T> explicit directory_file(const T &path) : directory_file(path.c_str()) {}
+  template<is_string T> explicit directory_file(const T &path) : directory_file(path.c_str()) { }
 
   posix::__impl_dir
   next(void)
@@ -1954,7 +1954,7 @@ struct directory_file : public file {
     seek_to(0);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn)
   {
@@ -1973,7 +1973,7 @@ struct directory_file : public file {
     return posix::open_at(__handle, name, flags, mode);
   }
 
-  template <is_string T>
+  template<is_string T>
   fd_t
   open_child(const T &name, i32 flags = posix::o_rdonly | posix::o_cloexec, u32 mode = 0)
   {
@@ -1986,7 +1986,7 @@ struct directory_file : public file {
     return posix::mkdir_at(__handle, name, p.to_mode());
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   make_child_dir(const T &name, const linux_permissions &p = perm_dir_default)
   {
@@ -2005,14 +2005,14 @@ struct directory_file : public file {
     return (micron::unlinkat(__handle.fd, name, posix::at_removedir));
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   remove_child(const T &s)
   {
     return remove_child(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   remove_child_dir(const T &s)
   {
@@ -2049,35 +2049,35 @@ struct directory_file : public file {
     return posix::exists_at(__handle, n);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_file(const T &s) const
   {
     return child_is_file(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_dir(const T &s) const
   {
     return child_is_dir(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_link(const T &s) const
   {
     return child_is_link(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_fifo(const T &s) const
   {
     return child_is_fifo(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_exists(const T &s) const
   {
@@ -2091,7 +2091,7 @@ struct directory_file : public file {
     return directory_file{ path };
   }
 
-  template <is_string T>
+  template<is_string T>
   static directory_file
   create(const T &path, const linux_permissions &p = perm_dir_default)
   {
@@ -2105,7 +2105,7 @@ struct directory_file : public file {
     return directory_file{ path };
   }
 
-  template <is_string T>
+  template<is_string T>
   static directory_file
   create_all(const T &path, const linux_permissions &p = perm_dir_default)
   {
@@ -2113,13 +2113,13 @@ struct directory_file : public file {
   }
 };
 
-struct fifo_file : public file {
+struct fifo_file: public file {
 
   fifo_file() = default;
 
-  explicit fifo_file(const char *path, const modes mode = modes::read) : file(path, mode) {}
+  explicit fifo_file(const char *path, const modes mode = modes::read) : file(path, mode) { }
 
-  template <is_string T> explicit fifo_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode) {}
+  template<is_string T> explicit fifo_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode) { }
 
   static fifo_file
   create(const char *path, const linux_permissions &p = perm_file_default)
@@ -2128,7 +2128,7 @@ struct fifo_file : public file {
     return fifo_file{ path, modes::readwrite };
   }
 
-  template <is_string T>
+  template<is_string T>
   static fifo_file
   create(const T &path, const linux_permissions &p = perm_file_default)
   {
@@ -2147,14 +2147,14 @@ struct fifo_file : public file {
     return fifo_file{ p, modes::write };
   }
 
-  template <is_string T>
+  template<is_string T>
   static fifo_file
   open_read(const T &s)
   {
     return open_read(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   static fifo_file
   open_write(const T &s)
   {
@@ -2162,13 +2162,13 @@ struct fifo_file : public file {
   }
 };
 
-struct device_file : public file {
+struct device_file: public file {
 
   device_file() = default;
 
-  explicit device_file(const char *path, const modes mode = modes::readwrite) : file(path, mode) {}
+  explicit device_file(const char *path, const modes mode = modes::readwrite) : file(path, mode) { }
 
-  template <is_string T> explicit device_file(const T &path, const modes mode = modes::readwrite) : file(path.c_str(), mode) {}
+  template<is_string T> explicit device_file(const T &path, const modes mode = modes::readwrite) : file(path.c_str(), mode) { }
 
   u32
   major_num(void)
@@ -2194,7 +2194,7 @@ struct device_file : public file {
     return is_char_device();
   }
 
-  template <typename Arg>
+  template<typename Arg>
   i32
   ioctl(u64 request, Arg &&arg)
   {
@@ -2215,7 +2215,7 @@ struct device_file : public file {
     return (micron::mknod(path, p.to_mode() | type, dev));
   }
 
-  template <is_string T>
+  template<is_string T>
   static i32
   create_node(const T &path, bool block, u32 major_n, u32 minor_n, const linux_permissions &p = linux_permissions::from_mode(0600))
   {
@@ -2247,7 +2247,7 @@ public:
 
   explicit socket_file(const char *path) noexcept { _set_path(path); }
 
-  template <is_string T> explicit socket_file(const T &path) noexcept : socket_file(path.c_str()) {}
+  template<is_string T> explicit socket_file(const T &path) noexcept : socket_file(path.c_str()) { }
 
   socket_file(const socket_file &) = delete;
   socket_file &operator=(const socket_file &) = delete;
@@ -2318,7 +2318,7 @@ open_file(const char *path, const modes mode = modes::read)
   return regular_file{ path, mode };
 }
 
-template <is_string T>
+template<is_string T>
 inline regular_file
 open_file(const T &path, const modes mode = modes::read)
 {
@@ -2331,7 +2331,7 @@ create_file(const char *path)
   return regular_file::create_new(path);
 }
 
-template <is_string T>
+template<is_string T>
 inline regular_file
 create_file(const T &path)
 {
@@ -2344,7 +2344,7 @@ open_dir_file(const char *path)
   return directory_file{ path };
 }
 
-template <is_string T>
+template<is_string T>
 inline directory_file
 open_dir_file(const T &path)
 {
@@ -2357,12 +2357,12 @@ open_symlink(const char *path)
   return symlink_file{ path };
 }
 
-template <is_string T>
+template<is_string T>
 inline symlink_file
 open_symlink(const T &path)
 {
   return symlink_file{ path.c_str() };
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

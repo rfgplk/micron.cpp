@@ -20,37 +20,37 @@
 namespace micron
 {
 
-template <is_string S> class string_view
+template<is_string S> class string_view
 {
   using T = typename S::const_pointer;
   T __start;
   T __end;
 
 public:
-  ~string_view() {}
+  ~string_view() { }
 
   constexpr string_view() = delete;
 
-  string_view(T s) : __start(s), __end(micron::strlen(s)) {}
+  string_view(T s) : __start(s), __end(micron::strlen(s)) { }
 
-  string_view(T s, T e) : __start(s), __end(e) {}
+  string_view(T s, T e) : __start(s), __end(e) { }
 
-  template <is_string F>
+  template<is_string F>
     requires(!micron::is_same_v<F, S>)
   string_view(typename F::iterator a, typename F::iterator b)
       : __start(reinterpret_cast<typename S::iterator>(a)), __end(reinterpret_cast<typename S::iterator>(b))
   {
   }
 
-  string_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) {}
+  string_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) { }
 
-  template <is_string F>
+  template<is_string F>
   string_view(const F &f)
       : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
   {
   }
 
-  template <is_string F>
+  template<is_string F>
   string_view(const F &f, const usize n)
       : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())),
         __end(reinterpret_cast<typename S::const_iterator>(f.cbegin() + n))
@@ -58,7 +58,7 @@ public:
     if ( (n + f.cbegin()) >= f.cend() ) exc<except::library_error>("micron::string_view set() out of memory range");
   }
 
-  string_view(const string_view &o) : __start(o.__start), __end(o.__end) {}
+  string_view(const string_view &o) : __start(o.__start), __end(o.__end) { }
 
   string_view(string_view &&) = delete;
 
@@ -183,37 +183,37 @@ public:
   }
 };
 
-template <is_string S> class cstring_view
+template<is_string S> class cstring_view
 {
   using T = typename S::const_pointer;
   T __start;
   T __end;
 
 public:
-  ~cstring_view() {}
+  ~cstring_view() { }
 
   constexpr cstring_view() = delete;
 
-  constexpr cstring_view(T s) : __start(s), __end(micron::strlen(s)) {}
+  constexpr cstring_view(T s) : __start(s), __end(micron::strlen(s)) { }
 
-  constexpr cstring_view(T s, T e) : __start(s), __end(e) {}
+  constexpr cstring_view(T s, T e) : __start(s), __end(e) { }
 
-  template <is_string F>
+  template<is_string F>
     requires(!micron::is_same_v<F, S>)
   constexpr cstring_view(typename F::iterator a, typename F::iterator b)
       : __start(reinterpret_cast<typename S::iterator>(a)), __end(reinterpret_cast<typename S::iterator>(b))
   {
   }
 
-  constexpr cstring_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) {}
+  constexpr cstring_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) { }
 
-  template <is_string F>
+  template<is_string F>
   constexpr cstring_view(const F &f)
       : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
   {
   }
 
-  template <is_string F>
+  template<is_string F>
   constexpr cstring_view(const F &f, const usize n)
       : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())),
         __end(reinterpret_cast<typename S::const_iterator>(f.cbegin() + n))
@@ -221,7 +221,7 @@ public:
     if ( (n + f.cbegin()) >= f.cend() ) exc<except::library_error>("micron::constexpr cstring_view set() out of memory range");
   }
 
-  constexpr cstring_view(const cstring_view &o) : __start(o.__start), __end(o.__end) {}
+  constexpr cstring_view(const cstring_view &o) : __start(o.__start), __end(o.__end) { }
 
   constexpr cstring_view(cstring_view &&) = delete;
 
@@ -342,4 +342,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -654,77 +654,77 @@ testnzc_i256(__m256i a, __m256i b) noexcept
   return _mm256_testnzc_si256(a, b);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 round_f32(__m256 a) noexcept
 {
   return _mm256_round_ps(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 round_f64(__m256d a) noexcept
 {
   return _mm256_round_pd(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 cmp_f32(__m256 a, __m256 b) noexcept
 {
   return _mm256_cmp_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 cmp_f64(__m256d a, __m256d b) noexcept
 {
   return _mm256_cmp_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 permute_f32(__m256 a) noexcept
 {
   return _mm256_permute_ps(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 permute_f64(__m256d a) noexcept
 {
   return _mm256_permute_pd(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 permute2f128_f32(__m256 a, __m256 b) noexcept
 {
   return _mm256_permute2f128_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 permute2f128_f64(__m256d a, __m256d b) noexcept
 {
   return _mm256_permute2f128_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256i
 permute2f128_i256(__m256i a, __m256i b) noexcept
 {
   return _mm256_permute2f128_si256(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 blend_f32(__m256 a, __m256 b) noexcept
 {
   return _mm256_blend_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 blend_f64(__m256d a, __m256d b) noexcept
 {
@@ -743,56 +743,56 @@ blendv_f64(__m256d a, __m256d b, __m256d mask) noexcept
   return _mm256_blendv_pd(a, b, mask);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 shuffle_f32(__m256 a, __m256 b) noexcept
 {
   return _mm256_shuffle_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 shuffle_f64(__m256d a, __m256d b) noexcept
 {
   return _mm256_shuffle_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m128
 extract_f128_f32(__m256 a) noexcept
 {
   return _mm256_extractf128_ps(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m128d
 extract_f128_f64(__m256d a) noexcept
 {
   return _mm256_extractf128_pd(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m128i
 extract_f128_i256(__m256i a) noexcept
 {
   return _mm256_extractf128_si256(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 insert_f128_f32(__m256 a, __m128 b) noexcept
 {
   return _mm256_insertf128_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256d
 insert_f128_f64(__m256d a, __m128d b) noexcept
 {
   return _mm256_insertf128_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256i
 insert_f128_i256(__m256i a, __m128i b) noexcept
 {
@@ -823,7 +823,7 @@ unpack_hi_f64(__m256d a, __m256d b) noexcept
   return _mm256_unpackhi_pd(a, b);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_avx __m256
 dp_f32(__m256 a, __m256 b) noexcept
 {
@@ -892,6 +892,6 @@ set_i8(char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7, c
 
 #pragma GCC diagnostic pop
 
-};     // namespace avx
-};     // namespace simd
-};     // namespace micron
+};      // namespace avx
+};      // namespace simd
+};      // namespace micron

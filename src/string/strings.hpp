@@ -21,14 +21,14 @@ using ustr8 = hstring<unicode8>;
 using wstr = hstring<wide>;
 using ustr32 = hstring<unicode32>;
 using string = hstring<char>;
-template <usize N> using bstr = sstring<N, byte>;
-template <usize N> using sstr = sstring<N, schar>;
-template <usize N> using wsstring = sstring<N, wide>;
-template <usize N> using utfsstring = sstring<N, unicode8>;
-template <usize N> using utf16sstring = sstring<N, unicode16>;
-template <usize N> using utf32sstring = sstring<N, unicode32>;
+template<usize N> using bstr = sstring<N, byte>;
+template<usize N> using sstr = sstring<N, schar>;
+template<usize N> using wsstring = sstring<N, wide>;
+template<usize N> using utfsstring = sstring<N, unicode8>;
+template<usize N> using utf16sstring = sstring<N, unicode16>;
+template<usize N> using utf32sstring = sstring<N, unicode32>;
 
-template <typename U, typename V>
+template<typename U, typename V>
 constexpr bool
 lexi_compare(U a, U b, V c, V d)
 {
@@ -48,7 +48,7 @@ operator+(string &&str, string &&data)
   return out;
 };
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline string
 operator+(sstr<N> &&data, sstr<M> &&str)
 {
@@ -76,7 +76,7 @@ operator+(string &str, string &data)
   return out;
 };
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline string
 operator+(sstr<N> &data, sstr<M> &str)
 {
@@ -122,7 +122,7 @@ operator+(const char *data, string &&str)
   return out;
 };
 
-template <usize M>
+template<usize M>
 inline string
 operator+(string &str, const char (&data)[M])
 {
@@ -142,7 +142,7 @@ operator+(string &&str, const char (&data)[M])
   return out;
 };
 */
-template <usize M>
+template<usize M>
 inline string
 operator+(const char (&data)[M], string &str)
 {
@@ -152,7 +152,7 @@ operator+(const char (&data)[M], string &str)
   return out;
 };
 
-template <usize M>
+template<usize M>
 inline string
 operator+(const char (&data)[M], string &&str)
 {
@@ -162,7 +162,7 @@ operator+(const char (&data)[M], string &&str)
   return out;
 };
 
-template <usize N>
+template<usize N>
 inline sstr<N>
 operator+(sstr<N> &str, const char *data)
 {
@@ -172,7 +172,7 @@ operator+(sstr<N> &str, const char *data)
   return out;
 };
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline sstr<N>
 operator+(const char *data, sstr<N> &str)
 {
@@ -182,7 +182,7 @@ operator+(const char *data, sstr<N> &str)
   return out;
 };
 
-template <usize N>
+template<usize N>
 inline sstr<N>
 operator+(sstr<N> &&str, const char *data)
 {
@@ -192,7 +192,7 @@ operator+(sstr<N> &&str, const char *data)
   return out;
 };
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline sstr<N>
 operator+(const char *data, sstr<N> &&str)
 {
@@ -202,7 +202,7 @@ operator+(const char *data, sstr<N> &&str)
   return out;
 };
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline sstr<N>
 operator+(sstr<N> &str, const char (&data)[M])
 {
@@ -212,7 +212,7 @@ operator+(sstr<N> &str, const char (&data)[M])
   return out;
 };
 
-template <usize N, usize M>
+template<usize N, usize M>
 inline sstr<N>
 operator+(const char (&data)[M], sstr<N> &str)
 {
@@ -231,7 +231,7 @@ operator+(sstr<N> &&str, const char (&data)[M])
   out += data;
   return out;
 };*/
-template <usize N, usize M>
+template<usize N, usize M>
 inline sstr<N>
 operator+(const char (&data)[M], sstr<N> &&str)
 {
@@ -249,7 +249,7 @@ operator<<(O &os, hstring<T> &o)
   return os;
 }*/
 
-template <typename O, typename T>
+template<typename O, typename T>
 O &
 operator<<(O &os, const hstring<T> &&o)
 {
@@ -257,7 +257,7 @@ operator<<(O &os, const hstring<T> &&o)
   return os;
 }
 
-template <typename O, typename T>
+template<typename O, typename T>
 O &
 operator<<(O &os, hstring<T> &&o)
 {
@@ -265,7 +265,7 @@ operator<<(O &os, hstring<T> &&o)
   return os;
 }
 
-template <typename O, usize N, typename T>
+template<typename O, usize N, typename T>
 O &
 operator<<(O &os, const sstring<N, T> &o)
 {
@@ -273,7 +273,7 @@ operator<<(O &os, const sstring<N, T> &o)
   return os;
 }
 
-template <typename O, usize N, typename T>
+template<typename O, usize N, typename T>
 O &
 operator<<(O &os, const sstring<N, T> &&o)
 {
@@ -281,7 +281,7 @@ operator<<(O &os, const sstring<N, T> &&o)
   return os;
 }
 
-template <typename O, usize N, typename T>
+template<typename O, usize N, typename T>
 O &
 operator<<(O &os, sstring<N, T> &o)
 {
@@ -289,7 +289,7 @@ operator<<(O &os, sstring<N, T> &o)
   return os;
 }
 
-template <typename O, usize N, typename T>
+template<typename O, usize N, typename T>
 O &
 operator<<(O &os, sstring<N, T> &&o)
 {
@@ -297,11 +297,11 @@ operator<<(O &os, sstring<N, T> &&o)
   return os;
 }
 
-template <usize N, is_string S>
+template<usize N, is_string S>
 bool
 operator==(const char (&data)[N], const S &str)
 {
   return str == data;
 }
 
-};     // namespace micron
+};      // namespace micron

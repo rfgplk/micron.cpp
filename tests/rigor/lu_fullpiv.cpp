@@ -13,7 +13,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace ml = micron::math::linalg;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {

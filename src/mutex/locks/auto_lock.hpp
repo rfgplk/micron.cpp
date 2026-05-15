@@ -15,13 +15,13 @@
 namespace micron
 {
 
-template <is_mutex M = mutex> class auto_guard
+template<is_mutex M = mutex> class auto_guard
 {
   M mtx;
   void (micron::mutex::*rptr)();
 
 public:
-  auto_guard() : mtx(), rptr(mtx()) {};
+  auto_guard() : mtx(), rptr(mtx()) { };
 
   ~auto_guard() { (mtx.*rptr)(); }
 
@@ -31,4 +31,4 @@ public:
   auto_guard &operator=(const auto_guard &) = delete;
 };
 
-};     // namespace micron
+};      // namespace micron

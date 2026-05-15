@@ -35,4 +35,4 @@ constexpr static const bool __use_exceptions = false;
 #else
 constexpr static const bool __use_exceptions = true;
 #endif
-};     // namespace micron::except
+};      // namespace micron::except

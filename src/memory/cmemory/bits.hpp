@@ -46,42 +46,42 @@ broadcast_byte(byte b) noexcept
 
 #define stackalloc(x, T) reinterpret_cast<T *>(__builtin_alloca(x));
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_aligned_to(const F *ptr, const u64 alignment) noexcept
 {
   return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_aligned_to_r(const F &ref, const u64 alignment) noexcept
 {
   return (reinterpret_cast<uintptr_t>(&ref) % alignment) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_aligned(const F *ptr) noexcept
 {
   return (reinterpret_cast<uintptr_t>(ptr) % alignof(F)) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_aligned(const F &ref) noexcept
 {
   return (reinterpret_cast<uintptr_t>(&ref) % alignof(F)) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_region_aligned_to(const F *ptr, const u64 size, const u64 alignment) noexcept
 {
   return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0 && (size % alignment) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_aligned_to_s(const F *ptr, const u64 alignment) noexcept
 {
@@ -89,7 +89,7 @@ __is_aligned_to_s(const F *ptr, const u64 alignment) noexcept
   return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_aligned_s(const F *ptr) noexcept
 {
@@ -97,7 +97,7 @@ __is_aligned_s(const F *ptr) noexcept
   return (reinterpret_cast<uintptr_t>(ptr) % alignof(F)) == 0;
 };
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_region_aligned_to_s(const F *ptr, const u64 size, const u64 alignment) noexcept
 {
@@ -107,7 +107,7 @@ __is_region_aligned_to_s(const F *ptr, const u64 size, const u64 alignment) noex
 
 // all of these functions slow you down a lot - be warned!
 
-template <typename F>
+template<typename F>
 bool
 __is_at_stack(const F *ptr, const u64 size) noexcept
 {
@@ -118,7 +118,7 @@ __is_at_stack(const F *ptr, const u64 size) noexcept
   return true;
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_at_stack(F &ref, const u64 size) noexcept
 {
@@ -128,7 +128,7 @@ __is_at_stack(F &ref, const u64 size) noexcept
   return true;
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_at_stack(const F &ref, const u64 size) noexcept
 {
@@ -141,45 +141,45 @@ __is_at_stack(const F &ref, const u64 size) noexcept
 // rely on within for now
 // TODO: implement bounds checking for non abcmalloc allocators
 
-template <typename F>
+template<typename F>
 bool
 __is_at_heap(const F *ptr) noexcept
 {
   return abc::within(reinterpret_cast<const addr_t *>(ptr));
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_at_heap(F &ref) noexcept
 {
   return abc::within(reinterpret_cast<addr_t *>(ref));
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_at_heap(const F &ref) noexcept
 {
   return abc::within(reinterpret_cast<addr_t *const>(ref));
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_valid_address(const F *ptr, const u64 size) noexcept
 {
   return (__is_at_stack(ptr, size) or __is_at_heap(ptr));
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_valid_address(F &ref, const u64 size) noexcept
 {
   return (__is_at_stack(ref, size) or __is_at_heap(ref));
 }
 
-template <typename F>
+template<typename F>
 bool
 __is_valid_address(const F &ref, const u64 size) noexcept
 {
   return (__is_at_stack(ref, size) or __is_at_heap(ref));
 }
-};     // namespace micron
+};      // namespace micron

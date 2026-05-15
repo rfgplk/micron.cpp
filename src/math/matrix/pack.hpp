@@ -56,20 +56,20 @@ inline constexpr usize mr_f64 = 4;
 inline constexpr usize nr_f64 = 4;
 #endif
 
-template <typename T> inline constexpr usize mr_v = 4;
-template <> inline constexpr usize mr_v<f32> = mr_f32;
-template <> inline constexpr usize mr_v<f64> = mr_f64;
+template<typename T> inline constexpr usize mr_v = 4;
+template<> inline constexpr usize mr_v<f32> = mr_f32;
+template<> inline constexpr usize mr_v<f64> = mr_f64;
 
-template <typename T> inline constexpr usize nr_v = 4;
-template <> inline constexpr usize nr_v<f32> = nr_f32;
-template <> inline constexpr usize nr_v<f64> = nr_f64;
+template<typename T> inline constexpr usize nr_v = 4;
+template<> inline constexpr usize nr_v<f32> = nr_f32;
+template<> inline constexpr usize nr_v<f64> = nr_f64;
 
 // MC chosen so MC*KC*sizeof(double) fits L2 (256 KiB Haswell)
 inline constexpr usize default_mc = 72;
 inline constexpr usize default_kc = 256;
 inline constexpr usize default_nc = 256;
 
-template <usize MR, typename T>
+template<usize MR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 pack_a_panel(const T *A, ssize_t rs_A, ssize_t cs_A, usize m, usize k, T *dst) noexcept
 {
@@ -120,8 +120,8 @@ pack_a_panel(const T *A, ssize_t rs_A, ssize_t cs_A, usize m, usize k, T *dst) n
               const __m256d r3 = simd::avx::loadu_f64(a3 + p);
               const __m256d r4 = simd::avx::loadu_f64(a4 + p);
               const __m256d r5 = simd::avx::loadu_f64(a5 + p);
-              const __m256d t01_lo = simd::avx::unpack_lo_f64(r0, r1);     // {r0[0], r1[0], r0[2], r1[2]}
-              const __m256d t01_hi = simd::avx::unpack_hi_f64(r0, r1);     // {r0[1], r1[1], r0[3], r1[3]}
+              const __m256d t01_lo = simd::avx::unpack_lo_f64(r0, r1);      // {r0[0], r1[0], r0[2], r1[2]}
+              const __m256d t01_hi = simd::avx::unpack_hi_f64(r0, r1);      // {r0[1], r1[1], r0[3], r1[3]}
               const __m256d t23_lo = simd::avx::unpack_lo_f64(r2, r3);
               const __m256d t23_hi = simd::avx::unpack_hi_f64(r2, r3);
               const __m256d t45_lo = simd::avx::unpack_lo_f64(r4, r5);
@@ -244,7 +244,7 @@ pack_a_panel(const T *A, ssize_t rs_A, ssize_t cs_A, usize m, usize k, T *dst) n
   }
 }
 
-template <usize NR, typename T>
+template<usize NR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 pack_b_panel(const T *B, ssize_t rs_B, ssize_t cs_B, usize k, usize n, T *dst) noexcept
 {
@@ -373,7 +373,7 @@ pack_b_panel(const T *B, ssize_t rs_B, ssize_t cs_B, usize k, usize n, T *dst) n
   }
 }
 
-template <usize MR, usize NR, typename T>
+template<usize MR, usize NR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 micro_kernel_scalar(const T *Ap, const T *Bp, usize k, T alpha, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
 {
@@ -402,7 +402,7 @@ micro_kernel_scalar(const T *Ap, const T *Bp, usize k, T alpha, T beta, T *C, ss
   }
 }
 
-template <usize MR, usize NR, typename T>
+template<usize MR, usize NR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 micro_kernel(const T *Ap, const T *Bp, usize k, T alpha, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
 {
@@ -618,10 +618,10 @@ micro_kernel_6x8_avx2_f64_asm(const double *Ap_in, const double *Bp_in, usize k,
       // rows 0,1; broadcast a0, a1; fma into c00,c01,c10,c11
       "vbroadcastsd  0(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd  8(%[ap]), %%ymm3 \n\t"
-      "vfmadd231pd %%ymm0, %%ymm2, %%ymm4 \n\t"     // c00 += b0 * a0
-      "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"     // c01 += b1 * a0
-      "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"     // c10 += b0 * a1
-      "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"     // c11 += b1 * a1
+      "vfmadd231pd %%ymm0, %%ymm2, %%ymm4 \n\t"      // c00 += b0 * a0
+      "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"      // c01 += b1 * a0
+      "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"      // c10 += b0 * a1
+      "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"      // c11 += b1 * a1
 
       "prefetcht0 512(%[bp]) \n\t"
 
@@ -649,10 +649,10 @@ micro_kernel_6x8_avx2_f64_asm(const double *Ap_in, const double *Bp_in, usize k,
       "jne 1b \n\t"
 
       "2: \n\t"
-      "vbroadcastsd %[alpha], %%ymm0 \n\t"     // ymm0 = alpha (broadcast)
-      "vxorpd %%xmm1, %%xmm1, %%xmm1 \n\t"     // xmm1 = 0.0
-      "vucomisd %[beta], %%xmm1 \n\t"          // compare beta with 0.0
-      "jne 3f \n\t"                            // if beta != 0, take beta path
+      "vbroadcastsd %[alpha], %%ymm0 \n\t"      // ymm0 = alpha (broadcast)
+      "vxorpd %%xmm1, %%xmm1, %%xmm1 \n\t"      // xmm1 = 0.0
+      "vucomisd %[beta], %%xmm1 \n\t"           // compare beta with 0.0
+      "jne 3f \n\t"                             // if beta != 0, take beta path
 
       "vmulpd %%ymm4,  %%ymm0, %%ymm2 \n\t"
       "vmovupd %%ymm2, (%[r0]) \n\t"
@@ -681,10 +681,10 @@ micro_kernel_6x8_avx2_f64_asm(const double *Ap_in, const double *Bp_in, usize k,
       "jmp 4f \n\t"
 
       "3: \n\t"
-      "vbroadcastsd %[beta], %%ymm1 \n\t"     // ymm1 = beta (broadcast)
+      "vbroadcastsd %[beta], %%ymm1 \n\t"      // ymm1 = beta (broadcast)
       // row 0
-      "vmulpd  (%[r0]), %%ymm1, %%ymm2 \n\t"        // ymm2 = beta*C[0,0..3]
-      "vfmadd231pd %%ymm4, %%ymm0, %%ymm2 \n\t"     // ymm2 += alpha*c00
+      "vmulpd  (%[r0]), %%ymm1, %%ymm2 \n\t"         // ymm2 = beta*C[0,0..3]
+      "vfmadd231pd %%ymm4, %%ymm0, %%ymm2 \n\t"      // ymm2 += alpha*c00
       "vmovupd %%ymm2, (%[r0]) \n\t"
       "vmulpd 32(%[r0]), %%ymm1, %%ymm2 \n\t"
       "vfmadd231pd %%ymm5, %%ymm0, %%ymm2 \n\t"
@@ -753,8 +753,8 @@ micro_kernel_6x8_avx2_f64_asm_unr4(const double *Ap_in, const double *Bp_in, usi
   double *r5 = C + 5 * rs_C;
   const double *ap = Ap_in;
   const double *bp = Bp_in;
-  usize k4 = k >> 2;              // number of 4-K-iter blocks
-  usize ktail = k & usize(3);     // 0..3 leftover K-iters
+  usize k4 = k >> 2;               // number of 4-K-iter blocks
+  usize ktail = k & usize(3);      // 0..3 leftover K-iters
 
   __asm__ volatile(
       // zero 12 accs
@@ -808,7 +808,7 @@ micro_kernel_6x8_avx2_f64_asm_unr4(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"
-      "prefetcht0 1024(%[bp]) \n\t"     // 4 outer-iters ahead for B (16 K-iters)
+      "prefetcht0 1024(%[bp]) \n\t"      // 4 outer-iters ahead for B (16 K-iters)
       "vbroadcastsd 64(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd 72(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm8 \n\t"
@@ -831,7 +831,7 @@ micro_kernel_6x8_avx2_f64_asm_unr4(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"
-      "prefetcht0 960(%[ap]) \n\t"     // ~5 outer-iters ahead for A (20 K-iters * 48 = 960)
+      "prefetcht0 960(%[ap]) \n\t"      // ~5 outer-iters ahead for A (20 K-iters * 48 = 960)
       "vbroadcastsd 112(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd 120(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm8 \n\t"
@@ -867,8 +867,8 @@ micro_kernel_6x8_avx2_f64_asm_unr4(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
 
-      "addq $192, %[ap] \n\t"     // 4 K-iters × 6 doubles × 8 bytes
-      "addq $256, %[bp] \n\t"     // 4 K-iters × 8 doubles × 8 bytes
+      "addq $192, %[ap] \n\t"      // 4 K-iters × 6 doubles × 8 bytes
+      "addq $256, %[bp] \n\t"      // 4 K-iters × 8 doubles × 8 bytes
       "decq %[k4] \n\t"
       "jne 1b \n\t"
 
@@ -1059,7 +1059,7 @@ micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in, 
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"
-      "prefetcht0 1024(%[bp]) \n\t"     // 4 outer-iters ahead for B
+      "prefetcht0 1024(%[bp]) \n\t"      // 4 outer-iters ahead for B
       "vbroadcastsd 64(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd 72(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm8 \n\t"
@@ -1083,7 +1083,7 @@ micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in, 
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"
-      "prefetcht0 960(%[ap]) \n\t"     // ~5 outer-iters ahead for A
+      "prefetcht0 960(%[ap]) \n\t"      // ~5 outer-iters ahead for A
       "vbroadcastsd 112(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd 120(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm8 \n\t"
@@ -1152,7 +1152,7 @@ micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in, 
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      "vmovupd 64(%[bp]), %%ymm0 \n\t"     // preload B for next tail iter
+      "vmovupd 64(%[bp]), %%ymm0 \n\t"      // preload B for next tail iter
       "vmovupd 96(%[bp]), %%ymm1 \n\t"
       "addq $48, %[ap] \n\t"
       "addq $64, %[bp] \n\t"
@@ -1472,8 +1472,8 @@ micro_kernel_6x8_avx2_f64_asm_relax(const double *Ap_in, const double *Bp_in, us
       "vmovupd 128(%[bp]), %%ymm0 \n\t"
       "vmovupd 160(%[bp]), %%ymm1 \n\t"
 
-      "addq $96, %[ap] \n\t"      // 2 K-iters × 6 doubles × 8 bytes
-      "addq $128, %[bp] \n\t"     // 2 K-iters × 8 doubles × 8 bytes
+      "addq $96, %[ap] \n\t"       // 2 K-iters × 6 doubles × 8 bytes
+      "addq $128, %[bp] \n\t"      // 2 K-iters × 8 doubles × 8 bytes
       "decq %[k2] \n\t"
       "jne 1b \n\t"
 
@@ -1656,7 +1656,7 @@ micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in,
                    "vfmadd231pd %%ymm0, %%ymm3, %%ymm7 \n\t"
                    "vfmadd231pd %%ymm1, %%ymm3, %%ymm8 \n\t"
                    "vfmadd231pd %%ymm2, %%ymm3, %%ymm9 \n\t"
-                   "prefetcht0 1536(%[bp]) \n\t"     // ~4 outer-iters ahead for B
+                   "prefetcht0 1536(%[bp]) \n\t"      // ~4 outer-iters ahead for B
                    "vbroadcastsd 48(%[ap]), %%ymm3 \n\t"
                    "vfmadd231pd %%ymm0, %%ymm3, %%ymm10 \n\t"
                    "vfmadd231pd %%ymm1, %%ymm3, %%ymm11 \n\t"
@@ -1674,7 +1674,7 @@ micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in,
                    "vfmadd231pd %%ymm0, %%ymm3, %%ymm4 \n\t"
                    "vfmadd231pd %%ymm1, %%ymm3, %%ymm5 \n\t"
                    "vfmadd231pd %%ymm2, %%ymm3, %%ymm6 \n\t"
-                   "prefetcht0 640(%[ap]) \n\t"     // ~5 outer-iters ahead for A (20 K-iters × 32 = 640)
+                   "prefetcht0 640(%[ap]) \n\t"      // ~5 outer-iters ahead for A (20 K-iters × 32 = 640)
                    "vbroadcastsd 72(%[ap]), %%ymm3 \n\t"
                    "vfmadd231pd %%ymm0, %%ymm3, %%ymm7 \n\t"
                    "vfmadd231pd %%ymm1, %%ymm3, %%ymm8 \n\t"
@@ -1713,8 +1713,8 @@ micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in,
                    "vmovupd 416(%[bp]), %%ymm1 \n\t"
                    "vmovupd 448(%[bp]), %%ymm2 \n\t"
 
-                   "addq $128, %[ap] \n\t"     // 4 K × 4 doubles × 8 bytes
-                   "addq $384, %[bp] \n\t"     // 4 K × 12 doubles × 8 bytes
+                   "addq $128, %[ap] \n\t"      // 4 K × 4 doubles × 8 bytes
+                   "addq $384, %[bp] \n\t"      // 4 K × 12 doubles × 8 bytes
                    "decq %[k4] \n\t"
                    "jne 1b \n\t"
 
@@ -1910,7 +1910,7 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"
-      "prefetcht0 896(%[bp]) \n\t"     // 1024 ahead of centered bp - 128 center offset
+      "prefetcht0 896(%[bp]) \n\t"      // 1024 ahead of centered bp - 128 center offset
       "vbroadcastsd -32(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd -24(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm8 \n\t"
@@ -1934,7 +1934,7 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm5 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm6 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm7 \n\t"
-      "prefetcht0 864(%[ap]) \n\t"     // 960 ahead of centered ap - 96 center offset
+      "prefetcht0 864(%[ap]) \n\t"      // 960 ahead of centered ap - 96 center offset
       "vbroadcastsd  16(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd  24(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm8 \n\t"
@@ -2187,12 +2187,12 @@ micro_kernel_8x8_avx2_f32(const float *Ap, const float *Bp, usize k, float alpha
   }
 }
 
-#endif     // AVX2 + FMA
+#endif      // AVX2 + FMA
 
 #if defined(__micron_arch_arm64) && defined(__micron_arm_neon)
 
 // NEON arm64 4x4 f64 packed microkernel
-template <>
+template<>
 [[gnu::flatten, gnu::always_inline]] inline void
 micro_kernel<4, 4, double>(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
                            ssize_t cs_C) noexcept
@@ -2257,12 +2257,12 @@ micro_kernel<4, 4, double>(const double *Ap, const double *Bp, usize k, double a
   }
 }
 
-#endif     // arm64 NEON
+#endif      // arm64 NEON
 
 #if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 
 // NEON 4 rows × 8 cols f32 packed microkernel (arm32 + arm64)
-template <>
+template<>
 [[gnu::flatten, gnu::always_inline]] inline void
 micro_kernel<4, 8, float>(const float *Ap, const float *Bp, usize k, float alpha, float beta, float *C, ssize_t rs_C, ssize_t cs_C) noexcept
 {
@@ -2339,9 +2339,9 @@ micro_kernel<4, 8, float>(const float *Ap, const float *Bp, usize k, float alpha
   }
 }
 
-#endif     // arm any NEON
+#endif      // arm any NEON
 
-template <usize MR, usize NR, typename T>
+template<usize MR, usize NR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 micro_kernel_partial(usize mr, usize nr, const T *Ap, const T *Bp, usize k, T alpha, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
 {
@@ -2382,28 +2382,28 @@ micro_kernel_partial(usize mr, usize nr, const T *Ap, const T *Bp, usize k, T al
   }
 }
 
-template <typename T> inline constexpr usize gemm_mr_v = mr_v<T>;
-template <typename T> inline constexpr usize gemm_nr_v = nr_v<T>;
+template<typename T> inline constexpr usize gemm_mr_v = mr_v<T>;
+template<typename T> inline constexpr usize gemm_nr_v = nr_v<T>;
 
 #if defined(__AVX2__) && defined(__FMA__)
-template <> inline constexpr usize gemm_mr_v<f64> = 6;
-template <> inline constexpr usize gemm_nr_v<f64> = 8;
-template <> inline constexpr usize gemm_mr_v<f32> = 8;
-template <> inline constexpr usize gemm_nr_v<f32> = 8;
+template<> inline constexpr usize gemm_mr_v<f64> = 6;
+template<> inline constexpr usize gemm_nr_v<f64> = 8;
+template<> inline constexpr usize gemm_mr_v<f32> = 8;
+template<> inline constexpr usize gemm_nr_v<f32> = 8;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-template <> inline constexpr usize gemm_mr_v<f64> = 4;
-template <> inline constexpr usize gemm_nr_v<f64> = 4;
-template <> inline constexpr usize gemm_mr_v<f32> = 4;
-template <> inline constexpr usize gemm_nr_v<f32> = 8;
+template<> inline constexpr usize gemm_mr_v<f64> = 4;
+template<> inline constexpr usize gemm_nr_v<f64> = 4;
+template<> inline constexpr usize gemm_mr_v<f32> = 4;
+template<> inline constexpr usize gemm_nr_v<f32> = 8;
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
-template <> inline constexpr usize gemm_mr_v<f32> = 4;
-template <> inline constexpr usize gemm_nr_v<f32> = 8;
+template<> inline constexpr usize gemm_mr_v<f32> = 4;
+template<> inline constexpr usize gemm_nr_v<f32> = 8;
 #endif
 
-inline constexpr usize __pack_a_max_doubles = default_mc * default_kc;     // 72*256 = 18 432 doubles = 144 KiB
-inline constexpr usize __pack_b_max_doubles = default_kc * default_nc;     // 256*1024 = 262 144 doubles = 2 MiB
+inline constexpr usize __pack_a_max_doubles = default_mc * default_kc;      // 72*256 = 18 432 doubles = 144 KiB
+inline constexpr usize __pack_b_max_doubles = default_kc * default_nc;      // 256*1024 = 262 144 doubles = 2 MiB
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline T *
 __tls_pack_a() noexcept
 {
@@ -2411,7 +2411,7 @@ __tls_pack_a() noexcept
   return reinterpret_cast<T *>(buf);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline T *
 __tls_pack_b() noexcept
 {
@@ -2419,7 +2419,7 @@ __tls_pack_b() noexcept
   return reinterpret_cast<T *>(buf);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_blocked_aligned(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs, ssize_t b_cs,
                      T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -2480,7 +2480,7 @@ gemm_blocked_aligned(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_r
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_blocked_aligned_exp_a(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs,
                            ssize_t b_cs, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -2535,7 +2535,7 @@ gemm_blocked_aligned_exp_a(usize m, usize n, usize k, T alpha, const T *A, ssize
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_blocked_aligned_exp_b(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs,
                            ssize_t b_cs, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -2545,7 +2545,7 @@ gemm_blocked_aligned_exp_b(usize m, usize n, usize k, T alpha, const T *A, ssize
     constexpr usize MR = 4;
     constexpr usize NR = 12;
     // Tighter NC because each B-pack row is now 12 doubles, not 8/256
-    constexpr usize local_nc = 252;     // multiple of 12, <= default_nc
+    constexpr usize local_nc = 252;      // multiple of 12, <= default_nc
     const usize Mc = (m < default_mc) ? m : default_mc;
     const usize Kc = (k < default_kc) ? k : default_kc;
     const usize Nc = (n < local_nc) ? n : local_nc;
@@ -2591,7 +2591,7 @@ gemm_blocked_aligned_exp_b(usize m, usize n, usize k, T alpha, const T *A, ssize
   gemm_blocked_aligned<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_blocked_aligned_exp_c(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs,
                            ssize_t b_cs, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -2646,7 +2646,7 @@ gemm_blocked_aligned_exp_c(usize m, usize n, usize k, T alpha, const T *A, ssize
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs, ssize_t b_cs, T beta,
              T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -2712,7 +2712,7 @@ gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize
 }
 
 // NOTE: pick the BLIS-style blocked path when the problem is large enough
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 gemm_should_block(usize m, usize n, usize k) noexcept
 {
@@ -2721,7 +2721,7 @@ gemm_should_block(usize m, usize n, usize k) noexcept
 }
 
 // NOTE: For NT/TT, B's effective contiguous stride is along the leading dim, which breaks the microkernels packed load assumption
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 gemm_should_block_for_layout(usize m, usize n, usize k, ssize_t b_cs_eff, ssize_t cs_C) noexcept
 {
@@ -2732,7 +2732,7 @@ gemm_should_block_for_layout(usize m, usize n, usize k, ssize_t b_cs_eff, ssize_
   return false;
 }
 
-};     // namespace pack
-};     // namespace matrix
-};     // namespace math
-};     // namespace micron
+};      // namespace pack
+};      // namespace matrix
+};      // namespace math
+};      // namespace micron

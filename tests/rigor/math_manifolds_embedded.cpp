@@ -24,7 +24,7 @@ near(f64 a, f64 b, f64 eps = 1e-10)
   return (d < 0 ? -d : d) < eps;
 }
 
-template <usize N>
+template<usize N>
 static bool
 near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-10)
 {
@@ -33,7 +33,7 @@ near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-10)
   return true;
 }
 
-template <usize R, usize C>
+template<usize R, usize C>
 static bool
 near_m(const mat<f64, R, C> &a, const mat<f64, R, C> &b, f64 eps = 1e-10)
 {
@@ -133,7 +133,7 @@ main()
   test_case("sphere<3>: exp produces a unit-norm point");
   {
     vec<f64, 3> p{ 1, 0, 0 };
-    vec<f64, 3> v{ 0, 0.5, 0 };     // tangent at p
+    vec<f64, 3> v{ 0, 0.5, 0 };      // tangent at p
     auto q = sphere<f64, 3>::exp_map(p, v);
     require_true(near(linalg::ops::norm(q), 1.0, 1e-12));
   }
@@ -143,7 +143,7 @@ main()
   {
     vec<f64, 3> p{ 1, 0, 0 };
     f64 const pi = constant_pi<f64>;
-    vec<f64, 3> v{ 0, pi / 2, 0 };     // length π/2 along y
+    vec<f64, 3> v{ 0, pi / 2, 0 };      // length π/2 along y
     auto q = sphere<f64, 3>::exp_map(p, v);
     require_true(near_v(q, vec<f64, 3>{ 0, 1, 0 }, 1e-12));
   }
@@ -213,7 +213,7 @@ main()
   test_case("sphere<3>: retract produces unit-norm");
   {
     vec<f64, 3> p{ 1, 0, 0 };
-    vec<f64, 3> v{ 0, 0.4, 0 };     // tangent
+    vec<f64, 3> v{ 0, 0.4, 0 };      // tangent
     auto q = sphere<f64, 3>::retract(p, v);
     require_true(near(linalg::ops::norm(q), 1.0, 1e-12));
   }
@@ -262,7 +262,7 @@ main()
   {
     f64 const pi = constant_pi<f64>;
     vec<f64, 3> p{ 0, 0, 0 };
-    vec<f64, 3> q{ 350.0 * pi / 180.0, 0, 0 };     // canonicalised → -10°
+    vec<f64, 3> q{ 350.0 * pi / 180.0, 0, 0 };      // canonicalised → -10°
     auto v = torus<f64, 3>::log_map(p, q);
     f64 expected = -10.0 * pi / 180.0;
     require_true(near(v.data[0], expected, 1e-12));
@@ -344,11 +344,11 @@ main()
     auto P = mat<f64, 3, 3>::zero();
     P.data[0] = 2.0;
     P.data[4] = 5.0;
-    P.data[8] = 0.5;     // diagonal SPD
+    P.data[8] = 0.5;      // diagonal SPD
     auto Q = mat<f64, 3, 3>::zero();
     Q.data[0] = 7.0;
     Q.data[4] = 1.5;
-    Q.data[8] = 3.0;     // diagonal SPD
+    Q.data[8] = 3.0;      // diagonal SPD
     f64 d_ai = spd<f64, 3>::distance<affine_invariant_metric>(P, Q);
     f64 d_le = spd<f64, 3>::distance<log_euclidean_metric>(P, Q);
     require_true(near(d_ai, d_le, 1e-8));
@@ -380,7 +380,7 @@ main()
     // Symmetric perturbation that drives one eigenvalue slightly negative
     auto A = mat<f64, 3, 3>::zero();
     A.data[0] = 1.0;
-    A.data[4] = -0.0001;     // negative eigenvalue
+    A.data[4] = -0.0001;      // negative eigenvalue
     A.data[8] = 1.0;
     auto P = spd<f64, 3>::project_to_manifold(A);
     // verify all diagonal entries (eigenvalues since diagonal) are positive
@@ -446,7 +446,7 @@ main()
   test_case("hyperbolic<2>: log/exp round-trip — small tangent");
   {
     vec<f64, 3> p{ 1, 0, 0 };
-    vec<f64, 3> v_amb{ 0, 0.3, -0.4 };     // already orthogonal to p in Minkowski
+    vec<f64, 3> v_amb{ 0, 0.3, -0.4 };      // already orthogonal to p in Minkowski
     auto v = hyperbolic<f64, 2>::project_to_tangent(p, v_amb);
     auto q = hyperbolic<f64, 2>::exp_map(p, v);
     auto v2 = hyperbolic<f64, 2>::log_map(p, q);
@@ -584,7 +584,7 @@ main()
   {
     mat<f64, 5, 2> X{};
     X.data[0] = 1;
-    X.data[3] = 1;     // X = [e1, e2]
+    X.data[3] = 1;      // X = [e1, e2]
     mat<f64, 5, 2> V{};
     for ( usize i = 0; i < 10; ++i ) V.data[i] = 0.01 * f64(i + 1);
     auto VT = grassmann<f64, 5, 2>::project_to_tangent(X, V);
@@ -611,7 +611,7 @@ main()
     X.data[3] = 1;
     mat<f64, 5, 2> V{};
     V.data[6] = 0.3;
-    V.data[8] = 0.2;     // tangent rows 3, 4 — automatically X^T V = 0
+    V.data[8] = 0.2;      // tangent rows 3, 4 — automatically X^T V = 0
     auto Y = grassmann<f64, 5, 2>::exp_map(X, V);
     auto YtY = linalg::ops::gemm(linalg::ops::transpose(Y), Y);
     require_true(near_m(YtY, mat<f64, 2, 2>::identity(), 1e-10));
@@ -636,7 +636,7 @@ main()
     X.data[3] = 1;
     mat<f64, 5, 2> Y{};
     Y.data[2] = 1;
-    Y.data[5] = 1;     // {e_2, e_3}, orthogonal to e_1
+    Y.data[5] = 1;      // {e_2, e_3}, orthogonal to e_1
     f64 const pi = constant_pi<f64>;
     auto a = grassmann<f64, 5, 2>::principal_angles(X, Y);
     for ( usize i = 0; i < 2; ++i ) {

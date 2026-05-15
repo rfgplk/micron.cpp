@@ -32,8 +32,8 @@ namespace micron
 {
 
 // concurrent vector class, always safe, mutable, thread safe via internal mutex
-template <is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
-class convector : public __mutable_memory_resource<T, Alloc>
+template<is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
+class convector: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
   micron::mutex __mtx;
@@ -92,7 +92,7 @@ class convector : public __mutable_memory_resource<T, Alloc>
     return from >= to || from >= __mem::capacity || to > __mem::capacity;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -154,7 +154,7 @@ class convector : public __mutable_memory_resource<T, Alloc>
     }
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   __unlocked_emplace_back(Args &&...v)
   {
@@ -188,7 +188,7 @@ public:
     __mem::length = 0;
   }
 
-  convector(void) : __mem() {}
+  convector(void) : __mem() { }
 
   convector(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
@@ -209,7 +209,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   convector(size_type n, Args &&...args) : __mem(n)
   {
@@ -238,9 +238,9 @@ public:
 
   convector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template <typename C = T> convector(convector<C> &&o) : __mem(micron::move(o)) {}
+  template<typename C = T> convector(convector<C> &&o) : __mem(micron::move(o)) { }
 
-  convector(convector &&o) : __mem(micron::move(o)) {}
+  convector(convector &&o) : __mem(micron::move(o)) { }
 
   convector &
   operator=(const convector &o)
@@ -268,7 +268,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   convector &
   operator+=(Args &&...args)
   {
@@ -359,7 +359,7 @@ public:
     return slice<T>(__mem::memory + from, __mem::memory + to);
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) const T &
   operator[](R n) const
@@ -370,7 +370,7 @@ public:
     return (__mem::memory)[n];
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) T &
   operator[](R n)
@@ -602,7 +602,7 @@ public:
     return convector<T>(*this);
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline convector &
   append(const convector<F> &o)
@@ -615,7 +615,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline convector &
   weld(convector<F> &&o)
@@ -629,7 +629,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   void
   swap(convector<C> &o) noexcept
   {
@@ -668,7 +668,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   emplace_back(Args &&...v)
   {
@@ -844,7 +844,7 @@ public:
       micron::sort::quick(*this);
   }
 
-  template <typename U = T>
+  template<typename U = T>
   iterator
   insert_sort(U &&val)
   {
@@ -961,7 +961,7 @@ public:
     goto remove_goto;
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::convertible_to<T, Args> && ...)
   inline void
   remove(const Args &...val)
@@ -1005,4 +1005,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

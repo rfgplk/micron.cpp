@@ -150,7 +150,7 @@ mode_bit(const char *p, u32 bit, stat_t &out)
   return __stat(p, out) && (out.st_mode & bit);
 }
 
-}     // namespace __impl
+}      // namespace __impl
 
 inline bool
 verify(const char *str)
@@ -158,7 +158,7 @@ verify(const char *str)
   return str != nullptr && str[0] != '\0';
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 verify(const T &str)
 {
@@ -171,7 +171,7 @@ is_absolute(const char *path)
   return path != nullptr && path[0] == '/';
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_absolute(const T &path)
 {
@@ -184,7 +184,7 @@ is_relative(const char *path)
   return path != nullptr && path[0] != '/' && path[0] != '\0';
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_relative(const T &path)
 {
@@ -210,14 +210,14 @@ exists(const char *path, stat_t &buf)
   return __impl::__stat(path, buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists(const T &path)
 {
   return exists(path.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists(const T &path, stat_t &buf)
 {
@@ -237,14 +237,14 @@ lexists(const char *path, stat_t &buf)
   return __impl::__lstat(path, buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 lexists(const T &path)
 {
   return lexists(path.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 lexists(const T &path, stat_t &buf)
 {
@@ -276,42 +276,42 @@ exists_at(i32 dirfd, const char *path, stat_t &buf)
   return exists_at(posix::fd_t{ dirfd }, path, buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists_at(posix::fd_t dirfd, const T &path)
 {
   return exists_at(dirfd, path.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists_at(posix::fd_t dirfd, const T &path, stat_t &buf)
 {
   return exists_at(dirfd, path.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists_at(i32 dirfd, const T &path)
 {
   return exists_at(posix::fd_t{ dirfd }, path.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 exists_at(i32 dirfd, const T &path, stat_t &buf)
 {
   return exists_at(posix::fd_t{ dirfd }, path.c_str(), buf);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(const stat_t &buf)
 {
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(const char *path, stat_t &buf)
 {
@@ -320,14 +320,14 @@ is_inode_type(const char *path, stat_t &buf)
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
-template <node_types Tp, is_string T>
+template<node_types Tp, is_string T>
 inline bool
 is_inode_type(const T &path, stat_t &buf)
 {
   return is_inode_type<Tp>(path.c_str(), buf);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(posix::fd_t fd, stat_t &buf)
 {
@@ -335,14 +335,14 @@ is_inode_type(posix::fd_t fd, stat_t &buf)
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(i32 fd, stat_t &buf)
 {
   return is_inode_type<Tp>(posix::fd_t{ fd }, buf);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(const char *path)
 {
@@ -350,14 +350,14 @@ is_inode_type(const char *path)
   return is_inode_type<Tp>(path, buf);
 }
 
-template <node_types Tp, is_string T>
+template<node_types Tp, is_string T>
 inline bool
 is_inode_type(const T &path)
 {
   return is_inode_type<Tp>(path.c_str());
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(posix::fd_t fd)
 {
@@ -365,21 +365,21 @@ is_inode_type(posix::fd_t fd)
   return is_inode_type<Tp>(fd, buf);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type(i32 fd)
 {
   return is_inode_type<Tp>(posix::fd_t{ fd });
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type_at(const stat_t &buf)
 {
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type_at(posix::fd_t dirfd, const char *path, stat_t &buf)
 {
@@ -388,28 +388,28 @@ is_inode_type_at(posix::fd_t dirfd, const char *path, stat_t &buf)
   return (buf.st_mode & __format_mask) == static_cast<i32>(Tp);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type_at(i32 dirfd, const char *path, stat_t &buf)
 {
   return is_inode_type_at<Tp>(posix::fd_t{ dirfd }, path, buf);
 }
 
-template <node_types Tp, is_string T>
+template<node_types Tp, is_string T>
 inline bool
 is_inode_type_at(posix::fd_t dirfd, const T &path, stat_t &buf)
 {
   return is_inode_type_at<Tp>(dirfd, path.c_str(), buf);
 }
 
-template <node_types Tp, is_string T>
+template<node_types Tp, is_string T>
 inline bool
 is_inode_type_at(i32 dirfd, const T &path, stat_t &buf)
 {
   return is_inode_type_at<Tp>(posix::fd_t{ dirfd }, path.c_str(), buf);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type_at(posix::fd_t dirfd, const char *path)
 {
@@ -417,21 +417,21 @@ is_inode_type_at(posix::fd_t dirfd, const char *path)
   return is_inode_type_at<Tp>(dirfd, path, buf);
 }
 
-template <node_types Tp>
+template<node_types Tp>
 inline bool
 is_inode_type_at(i32 dirfd, const char *path)
 {
   return is_inode_type_at<Tp>(posix::fd_t{ dirfd }, path);
 }
 
-template <node_types Tp, is_string T>
+template<node_types Tp, is_string T>
 inline bool
 is_inode_type_at(posix::fd_t dirfd, const T &path)
 {
   return is_inode_type_at<Tp>(dirfd, path.c_str());
 }
 
-template <node_types Tp, is_string T>
+template<node_types Tp, is_string T>
 inline bool
 is_inode_type_at(i32 dirfd, const T &path)
 {
@@ -451,7 +451,7 @@ get_type(const char *path, stat_t &buf)
   return static_cast<node_types>(buf.st_mode & __format_mask);
 }
 
-template <is_string T>
+template<is_string T>
 inline node_types
 get_type(const T &path, stat_t &buf)
 {
@@ -478,7 +478,7 @@ get_type(const char *path)
   return get_type(path, buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline node_types
 get_type(const T &path)
 {
@@ -519,14 +519,14 @@ get_type_at(i32 dirfd, const char *path, stat_t &buf)
   return get_type_at(posix::fd_t{ dirfd }, path, buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline node_types
 get_type_at(posix::fd_t dirfd, const T &path, stat_t &buf)
 {
   return get_type_at(dirfd, path.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline node_types
 get_type_at(i32 dirfd, const T &path, stat_t &buf)
 {
@@ -546,14 +546,14 @@ get_type_at(i32 dirfd, const char *path)
   return get_type_at(posix::fd_t{ dirfd }, path);
 }
 
-template <is_string T>
+template<is_string T>
 inline node_types
 get_type_at(posix::fd_t dirfd, const T &path)
 {
   return get_type_at(dirfd, path.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline node_types
 get_type_at(i32 dirfd, const T &path)
 {
@@ -598,14 +598,14 @@ is_virtual_file(const char *path)
   return is_virtual_file(path, b);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_virtual_file(const T &path, stat_t &buf)
 {
   return is_virtual_file(path.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_virtual_file(const T &path)
 {
@@ -617,7 +617,7 @@ is_virtual_file(const T &path)
   inline bool fn_name_(const stat_t &buf) { return is_inode_type<node_type_>(buf); }                                                       \
   /* (2a) path, prefill buf */                                                                                                             \
   inline bool fn_name_(const char *p, stat_t &buf) { return is_inode_type<node_type_>(p, buf); }                                           \
-  template <is_string T> bool fn_name_(const T &s, stat_t &buf) { return fn_name_(s.c_str(), buf); }                                       \
+  template<is_string T> bool fn_name_(const T &s, stat_t &buf) { return fn_name_(s.c_str(), buf); }                                        \
   /* (2b) fd, prefill buf */                                                                                                               \
   inline bool fn_name_(posix::fd_t fd, stat_t &buf) { return is_inode_type<node_type_>(fd, buf); }                                         \
   inline bool fn_name_(i32 fd, stat_t &buf) { return fn_name_(posix::fd_t{ fd }, buf); }                                                   \
@@ -626,7 +626,7 @@ is_virtual_file(const T &path)
   inline bool fn_name_(i32 fd) { return fn_name_(posix::fd_t{ fd }); }                                                                     \
   /* (3b) path, internal buf */                                                                                                            \
   inline bool fn_name_(const char *p) { return is_inode_type<node_type_>(p); }                                                             \
-  template <is_string T> bool fn_name_(const T &s) { return fn_name_(s.c_str()); }
+  template<is_string T> bool fn_name_(const T &s) { return fn_name_(s.c_str()); }
 
 #define MICRON_INODE_AT_PREDICATE(fn_name_, node_type_)                                                                                    \
   /* (1) read-only */                                                                                                                      \
@@ -634,13 +634,13 @@ is_virtual_file(const T &path)
   /* (2) dirfd + path, prefill buf */                                                                                                      \
   inline bool fn_name_(posix::fd_t d, const char *p, stat_t &buf) { return is_inode_type_at<node_type_>(d, p, buf); }                      \
   inline bool fn_name_(i32 d, const char *p, stat_t &buf) { return fn_name_(posix::fd_t{ d }, p, buf); }                                   \
-  template <is_string T> bool fn_name_(posix::fd_t d, const T &s, stat_t &buf) { return fn_name_(d, s.c_str(), buf); }                     \
-  template <is_string T> bool fn_name_(i32 d, const T &s, stat_t &buf) { return fn_name_(posix::fd_t{ d }, s.c_str(), buf); }              \
+  template<is_string T> bool fn_name_(posix::fd_t d, const T &s, stat_t &buf) { return fn_name_(d, s.c_str(), buf); }                      \
+  template<is_string T> bool fn_name_(i32 d, const T &s, stat_t &buf) { return fn_name_(posix::fd_t{ d }, s.c_str(), buf); }               \
   /* (3) dirfd + path, internal buf */                                                                                                     \
   inline bool fn_name_(posix::fd_t d, const char *p) { return is_inode_type_at<node_type_>(d, p); }                                        \
   inline bool fn_name_(i32 d, const char *p) { return fn_name_(posix::fd_t{ d }, p); }                                                     \
-  template <is_string T> bool fn_name_(posix::fd_t d, const T &s) { return fn_name_(d, s.c_str()); }                                       \
-  template <is_string T> bool fn_name_(i32 d, const T &s) { return fn_name_(posix::fd_t{ d }, s.c_str()); }
+  template<is_string T> bool fn_name_(posix::fd_t d, const T &s) { return fn_name_(d, s.c_str()); }                                        \
+  template<is_string T> bool fn_name_(i32 d, const T &s) { return fn_name_(posix::fd_t{ d }, s.c_str()); }
 
 MICRON_INODE_PREDICATE(is_file, node_types::regular_file)
 MICRON_INODE_PREDICATE(is_dir, node_types::directory)
@@ -745,14 +745,14 @@ is_regular_node(const char *p)
   return is_file(p);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_pipe(const T &s)
 {
   return is_fifo(s);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_regular_node(const T &s)
 {
@@ -807,14 +807,14 @@ is_regular_at(i32 d, const char *p)
   return is_file_at(posix::fd_t{ d }, p);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_pipe_at(posix::fd_t d, const T &s)
 {
   return is_fifo_at(d, s);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_regular_at(posix::fd_t d, const T &s)
 {
@@ -839,21 +839,21 @@ is_executable(const char *p)
   return micron::syscall(SYS_access, p, posix::x_ok) == 0;
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_readable(const T &s)
 {
   return is_readable(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_writable(const T &s)
 {
   return is_writable(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_executable(const T &s)
 {
@@ -896,21 +896,21 @@ is_executable_at(i32 d, const char *p)
   return is_executable_at(posix::fd_t{ d }, p);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_readable_at(posix::fd_t d, const T &s)
 {
   return is_readable_at(d, s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_writable_at(posix::fd_t d, const T &s)
 {
   return is_writable_at(d, s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 bool
 is_executable_at(posix::fd_t d, const T &s)
 {
@@ -1043,21 +1043,21 @@ has_sticky(i32 fd)
   return has_sticky(posix::fd_t{ fd });
 }
 
-template <is_string T>
+template<is_string T>
 bool
 has_setuid(const T &s)
 {
   return has_setuid(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 bool
 has_setgid(const T &s)
 {
   return has_setgid(s.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 bool
 has_sticky(const T &s)
 {
@@ -1072,7 +1072,7 @@ has_sticky(const T &s)
   inline bool fn_(const char *p) { return __impl::mode_bit(p, bit_); }                                                                     \
   inline bool fn_(posix::fd_t fd) { return __impl::mode_bit(fd, bit_); }                                                                   \
   inline bool fn_(i32 fd) { return fn_(posix::fd_t{ fd }); }                                                                               \
-  template <is_string T> bool fn_(const T &s) { return fn_(s.c_str()); }
+  template<is_string T> bool fn_(const T &s) { return fn_(s.c_str()); }
 
 MICRON_MODE_BIT_PREDICATE(mode_user_read, s_irusr)
 MICRON_MODE_BIT_PREDICATE(mode_user_write, s_iwusr)
@@ -1174,14 +1174,14 @@ is_in_group(i32 fd, posix::gid_t gid)
   return is_in_group(posix::fd_t{ fd }, gid);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_owned_by(const T &p, posix::uid_t uid)
 {
   return is_owned_by(p.c_str(), uid);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_in_group(const T &p, posix::gid_t gid)
 {
@@ -1232,14 +1232,14 @@ is_empty_file(const char *path)
   return is_empty_file(path, b);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_empty_file(const T &s, stat_t &buf)
 {
   return is_empty_file(s.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_empty_file(const T &s)
 {
@@ -1289,7 +1289,7 @@ is_empty_dir(const char *path)
   return r;
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_empty_dir(const T &s)
 {
@@ -1347,14 +1347,14 @@ is_empty_node(const char *path)
   return is_empty_node(path, b);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_empty_node(const T &s, stat_t &buf)
 {
   return is_empty_node(s.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_empty_node(const T &s)
 {
@@ -1385,7 +1385,7 @@ has_content(const char *p)
   return !is_empty_node(p);
 }
 
-template <is_string T>
+template<is_string T>
 bool
 has_content(const T &s)
 {
@@ -1422,7 +1422,7 @@ is_mountpoint(const char *path)
   return self.st_dev != parent.st_dev;
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_mountpoint(const T &s)
 {
@@ -1468,21 +1468,21 @@ is_same_file(const char *a, posix::fd_t b)
   return is_same_file(b, a);
 }
 
-template <is_string A, is_string B>
+template<is_string A, is_string B>
 inline bool
 is_same_file(const A &a, const B &b)
 {
   return is_same_file(a.c_str(), b.c_str());
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_same_file(const T &a, const char *b)
 {
   return is_same_file(a.c_str(), b);
 }
 
-template <is_string T>
+template<is_string T>
 inline bool
 is_same_file(const char *a, const T &b)
 {
@@ -1505,8 +1505,8 @@ is_same_file(const char *a, const T &b)
     stat_t b{};                                                                                                                            \
     return fn_(p, b);                                                                                                                      \
   }                                                                                                                                        \
-  template <is_string T> ret_t_ fn_(const T &s, stat_t &buf) { return fn_(s.c_str(), buf); }                                               \
-  template <is_string T> ret_t_ fn_(const T &s) { return fn_(s.c_str()); }
+  template<is_string T> ret_t_ fn_(const T &s, stat_t &buf) { return fn_(s.c_str(), buf); }                                                \
+  template<is_string T> ret_t_ fn_(const T &s) { return fn_(s.c_str()); }
 
 MICRON_STAT_QUERY(get_inode, posix::ino_t, st_ino, 0)
 MICRON_STAT_QUERY(get_mode, posix::mode_t, st_mode, 0)
@@ -1573,14 +1573,14 @@ get_size(const char *p)
   return get_size(p, b);
 }
 
-template <is_string T>
+template<is_string T>
 posix::off_t
 get_size(const T &s, stat_t &buf)
 {
   return get_size(s.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 posix::off_t
 get_size(const T &s)
 {
@@ -1629,19 +1629,19 @@ get_permissions(const char *p)
   return get_mode(p) & ~static_cast<posix::mode_t>(__format_mask);
 }
 
-template <is_string T>
+template<is_string T>
 posix::mode_t
 get_permissions(const T &s, stat_t &buf)
 {
   return get_permissions(s.c_str(), buf);
 }
 
-template <is_string T>
+template<is_string T>
 posix::mode_t
 get_permissions(const T &s)
 {
   return get_permissions(s.c_str());
 }
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

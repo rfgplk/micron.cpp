@@ -20,16 +20,16 @@ namespace linalg
 
 using micron::math::arith_scalar;
 
-template <typename T, usize N> using vec = micron::math::vec<T, N>;
+template<typename T, usize N> using vec = micron::math::vec<T, N>;
 
-template <typename T, usize R, usize C> using mat = micron::math::mat<T, R, C>;
+template<typename T, usize R, usize C> using mat = micron::math::mat<T, R, C>;
 
-template <typename F> using quat = micron::math::quat<F>;
+template<typename F> using quat = micron::math::quat<F>;
 
-template <typename T> using dynmat = micron::math::dynmat<T>;
+template<typename T> using dynmat = micron::math::dynmat<T>;
 
-template <typename T> using dynvec = micron::math::dynvec<T>;
+template<typename T> using dynvec = micron::math::dynvec<T>;
 
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

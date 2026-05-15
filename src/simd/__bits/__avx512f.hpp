@@ -1050,6 +1050,6 @@ _mm512_cvtepi64_pd(__m512i a) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

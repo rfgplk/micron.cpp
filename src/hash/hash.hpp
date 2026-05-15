@@ -32,14 +32,14 @@ enum class hash_types { bernstein32, murmur128, xxhash64, zzz128, zzz, zz, z };
 // default to homegrown zzz
 constexpr hash_types default_hash_128 = hash_types::zzz128;
 constexpr hash_types default_hash_64 = hash_types::zzz;
-constexpr u64 default_seed = 0x369bd65914cf0616;     // try to keep it in signed i32 range
+constexpr u64 default_seed = 0x369bd65914cf0616;      // try to keep it in signed i32 range
 constexpr u32 default_seed_32 = 0xf2062906;
 
 typedef u32 hash32_t;
 typedef u64 hash64_t;
 typedef micron::pair<u64, u64> hash128_t;
 
-template <u32 seed = default_seed_32, is_container_or_string T>
+template<u32 seed = default_seed_32, is_container_or_string T>
 hash128_t
 hash128(const T &data)
 {
@@ -47,7 +47,7 @@ hash128(const T &data)
     return hashes::murmur<seed>(reinterpret_cast<const char *>(data.cbegin()), data.size());
 }
 
-template <u32 seed = default_seed_32>
+template<u32 seed = default_seed_32>
 hash128_t
 hash128(const byte *data, usize len)
 {
@@ -55,7 +55,7 @@ hash128(const byte *data, usize len)
   if constexpr ( default_hash_128 == hash_types::zzz128 ) return hashes::zzz128<seed>(data, len);
 }
 
-template <u32 seed = default_seed_32>
+template<u32 seed = default_seed_32>
 hash128_t
 hash128(const char *data)
 {
@@ -63,7 +63,7 @@ hash128(const char *data)
   if constexpr ( default_hash_128 == hash_types::zzz128 ) return hashes::zzz128<seed>(data, micron::strlen(data));
 }
 
-template <u64 seed = default_seed, is_container_or_string T>
+template<u64 seed = default_seed, is_container_or_string T>
 hash64_t
 hash64(const T &data)
 {
@@ -75,7 +75,7 @@ hash64(const T &data)
   if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
 }
 
-template <u64 seed = default_seed>
+template<u64 seed = default_seed>
 hash64_t
 hash64(const char *data)
 {
@@ -87,7 +87,7 @@ hash64(const char *data)
   if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64<seed>(reinterpret_cast<const byte *>(data), micron::strlen(data));
 }
 
-template <u64 seed = default_seed>
+template<u64 seed = default_seed>
 hash64_t
 hash64(const byte *data, usize len)
 {
@@ -97,7 +97,7 @@ hash64(const byte *data, usize len)
   if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64<seed>(data, len);
 }
 
-template <typename T>
+template<typename T>
 hash64_t
 hash64(const T *data, usize len, u64 seed)
 {
@@ -116,7 +116,7 @@ hash64(const byte *data, usize len, u64 seed)
   if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64(data, seed, len);
 }
 
-template <typename R = hash64_t, u32 seed = default_seed_32>
+template<typename R = hash64_t, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const char *data)
 {
@@ -126,7 +126,7 @@ hash(const char *data)
     return hash128<seed>(data);
 }
 
-template <typename R = hash64_t, is_container_or_string T, u32 seed = default_seed_32>
+template<typename R = hash64_t, is_container_or_string T, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const T &data)
 {
@@ -136,7 +136,7 @@ hash(const T &data)
     return hash128<seed>(data);
 }
 
-template <typename R = hash64_t, u32 seed = default_seed_32>
+template<typename R = hash64_t, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const byte *data, usize len)
 {
@@ -146,7 +146,7 @@ hash(const byte *data, usize len)
     return hash128<seed>(data, len);
 }
 
-template <typename R = hash64_t, typename F, u32 seed = default_seed_32>
+template<typename R = hash64_t, typename F, u32 seed = default_seed_32>
   requires micron::is_arithmetic_v<F>
 inline __attribute__((always_inline)) auto
 hash(const F data)
@@ -157,4 +157,4 @@ hash(const F data)
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
 }
 
-};     // namespace micron
+};      // namespace micron

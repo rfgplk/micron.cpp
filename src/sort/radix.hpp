@@ -19,7 +19,7 @@ namespace micron
 {
 namespace sort
 {
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 __impl_count(T &arr, T &carr, i32 size, i32 rdx)
 {
@@ -31,10 +31,10 @@ __impl_count(T &arr, T &carr, i32 size, i32 rdx)
 
   for ( i32 k = size - 1; k >= 0; --k ) carr[bckt[(arr[k] / rdx) % 10]-- - 1] = arr[k];
   // arr = carr;
-  micron::memcpy(&arr[0], &carr[0], arr.size());     // avoiding copy assign deletion (yes it's bad)
+  micron::memcpy(&arr[0], &carr[0], arr.size());      // avoiding copy assign deletion (yes it's bad)
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 __impl_count(typename T::iterator start, typename T::iterator end, T &carr, i32 size, i32 rdx)
 {
@@ -46,10 +46,10 @@ __impl_count(typename T::iterator start, typename T::iterator end, T &carr, i32 
 
   for ( i32 k = size - 1; k >= 0; --k ) carr[bckt[(start[k] / rdx) % 10]-- - 1] = start[k];
   // arr = carr;
-  micron::memcpy(start, &carr[0], end - start);     // avoiding copy assign deletion (yes it's bad)
+  micron::memcpy(start, &carr[0], end - start);      // avoiding copy assign deletion (yes it's bad)
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 radix(T &arr)
 {
@@ -57,11 +57,11 @@ radix(T &arr)
   umax_t max = micron::max(arr.begin(), arr.end());
 
   i32 n = arr.size();
-  T carr(n);     // TODO: turn into slice eventually
+  T carr(n);      // TODO: turn into slice eventually
   for ( i32 rdx = 1; max / rdx > 0; rdx *= 10 ) __impl_count(arr, carr, n, rdx);
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 void
 radix(typename T::iterator start, typename T::iterator end)
 {
@@ -69,11 +69,11 @@ radix(typename T::iterator start, typename T::iterator end)
   umax_t max = micron::max(start, end);
 
   i32 n = end - start;
-  T carr(n);     // TODO: turn into slice eventually
+  T carr(n);      // TODO: turn into slice eventually
   for ( i32 rdx = 1; max / rdx > 0; rdx *= 10 ) __impl_count(start, end, carr, n, rdx);
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires micron::is_floating_point_v<typename T::value_type>
 void
 fradix(T &arr)
@@ -94,5 +94,5 @@ fradix(T &arr)
   }
 }
 
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

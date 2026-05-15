@@ -17,8 +17,8 @@
 #include "io/inode.hpp"
 #include "io/io_structs.hpp"
 
-#include "io/ext.hpp"     // for non syscall fns
-#include "io/sys.hpp"     // for syscalls
+#include "io/ext.hpp"      // for non syscall fns
+#include "io/sys.hpp"      // for syscalls
 
 namespace micron
 {
@@ -261,4 +261,4 @@ using posix::get_permissions;
 using posix::get_size;
 using posix::get_uid;
 
-};     // namespace micron
+};      // namespace micron

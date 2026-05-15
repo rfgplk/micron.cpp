@@ -11,7 +11,7 @@
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
-template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap : private Alloc, public immutable_memory<T>
+template<typename T, class Alloc = micron::allocator_serial<>> class quake_heap: private Alloc, public immutable_memory<T>
 {
   struct node {
     T value;
@@ -19,9 +19,9 @@ template <typename T, class Alloc = micron::allocator_serial<>> class quake_heap
     node *right;
     usize size;
 
-    node(const T &v) : value(v), left(nullptr), right(nullptr), size(1) {}
+    node(const T &v) : value(v), left(nullptr), right(nullptr), size(1) { }
 
-    node(T &&v) noexcept : value(micron::move(v)), left(nullptr), right(nullptr), size(1) {}
+    node(T &&v) noexcept : value(micron::move(v)), left(nullptr), right(nullptr), size(1) { }
   };
 
   node **roots;

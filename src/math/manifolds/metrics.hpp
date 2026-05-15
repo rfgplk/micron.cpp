@@ -27,10 +27,10 @@ struct log_euclidean_metric {
 struct bures_metric {
 };
 
-template <typename T>
+template<typename T>
 concept metric_tag = micron::is_same_v<T, euclidean_metric> || micron::is_same_v<T, affine_invariant_metric>
                      || micron::is_same_v<T, log_euclidean_metric> || micron::is_same_v<T, bures_metric>;
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

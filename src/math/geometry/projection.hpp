@@ -29,7 +29,7 @@ namespace math
 namespace geometry
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline transform<F, 3, transform_mode::projective>
 perspective_projection(F fov_y, F aspect, F near_z, F far_z) noexcept
 {
@@ -45,7 +45,7 @@ perspective_projection(F fov_y, F aspect, F near_z, F far_z) noexcept
   return out;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline transform<F, 3, transform_mode::projective>
 orthographic_projection(F left, F right, F bottom, F top, F near_z, F far_z) noexcept
 {
@@ -61,7 +61,7 @@ orthographic_projection(F left, F right, F bottom, F top, F near_z, F far_z) noe
   return out;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline transform<F, 3, transform_mode::projective>
 frustum(F left, F right, F bottom, F top, F near_z, F far_z) noexcept
 {
@@ -77,7 +77,7 @@ frustum(F left, F right, F bottom, F top, F near_z, F far_z) noexcept
   return out;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline transform<F, 3, transform_mode::isometry>
 look_at(const vec<F, 3> &eye, const vec<F, 3> &target, const vec<F, 3> &up) noexcept
 {
@@ -125,6 +125,6 @@ look_at(const vec<F, 3> &eye, const vec<F, 3> &target, const vec<F, 3> &up) noex
   return out;
 }
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

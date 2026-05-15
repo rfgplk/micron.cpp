@@ -14,11 +14,11 @@ namespace math
 namespace manifolds
 {
 
-template <typename M> using point_t = typename traits<M>::point_type;
-template <typename M> using tangent_t = typename traits<M>::tangent_type;
-template <typename M> using scalar_t = typename traits<M>::scalar_type;
-template <typename M> using category_t = typename traits<M>::category;
+template<typename M> using point_t = typename traits<M>::point_type;
+template<typename M> using tangent_t = typename traits<M>::tangent_type;
+template<typename M> using scalar_t = typename traits<M>::scalar_type;
+template<typename M> using category_t = typename traits<M>::category;
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

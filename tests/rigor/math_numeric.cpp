@@ -54,11 +54,11 @@ main()
     f64 y[5] = { 1, 2, 4, 7, 11 };
     f64 g[5] = { 0 };
     gradient<f64>(y, 5, g);
-    require_true(near(g[0], 1.0));     // forward
-    require_true(near(g[1], 1.5));     // central (4-1)/2
-    require_true(near(g[2], 2.5));     // (7-2)/2
-    require_true(near(g[3], 3.5));     // (11-4)/2
-    require_true(near(g[4], 4.0));     // backward
+    require_true(near(g[0], 1.0));      // forward
+    require_true(near(g[1], 1.5));      // central (4-1)/2
+    require_true(near(g[2], 2.5));      // (7-2)/2
+    require_true(near(g[3], 3.5));      // (11-4)/2
+    require_true(near(g[4], 4.0));      // backward
   }
   end_test_case();
 

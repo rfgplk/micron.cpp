@@ -18,7 +18,7 @@ namespace io
 namespace serialize
 {
 // serialize a byte array, of size n
-template <usize C = 65536, is_string T = micron::ustr8>
+template<usize C = 65536, is_string T = micron::ustr8>
 void
 serialize_bytes(fsys::file<T> &f, const byte *b, usize n)
 {
@@ -26,7 +26,7 @@ serialize_bytes(fsys::file<T> &f, const byte *b, usize n)
   usize p = 0;
   if ( f.buffer_size() < C ) pb = f.buffer_size();
   do {
-    if ( pb > n )     // more than leftover
+    if ( pb > n )      // more than leftover
       pb = n;
     f.load_buffer(b + p, pb);
     f.write_bytes(pb);
@@ -35,16 +35,16 @@ serialize_bytes(fsys::file<T> &f, const byte *b, usize n)
   } while ( n );
 }
 
-template <usize C = 65536, is_string T = micron::ustr8, typename R>
+template<usize C = 65536, is_string T = micron::ustr8, typename R>
 void
 serialize_bytes(fsys::file<T> &f, const R *_b, usize n)
 {
-  const byte *b = reinterpret_cast<const byte *>(_b);     // overloading like this so we don't have to check for return type of operator&
+  const byte *b = reinterpret_cast<const byte *>(_b);      // overloading like this so we don't have to check for return type of operator&
   usize pb = n < C ? n : C;
   usize p = 0;
   if ( f.buffer_size() < C ) pb = f.buffer_size();
   do {
-    if ( pb > n )     // more than leftover
+    if ( pb > n )      // more than leftover
       pb = n;
     f.load_buffer(b + p, pb);
     f.write_bytes(pb);
@@ -53,7 +53,7 @@ serialize_bytes(fsys::file<T> &f, const R *_b, usize n)
   } while ( n );
 }
 
-template <typename T, is_string R>
+template<typename T, is_string R>
   requires micron::is_class_v<T>
 void
 serialize(fsys::file<R> &f, const T &obj)
@@ -61,7 +61,7 @@ serialize(fsys::file<R> &f, const T &obj)
   serialize_bytes(f, &obj, sizeof(obj));
 }
 
-template <typename T, is_string R>
+template<typename T, is_string R>
   requires(!micron::is_null_pointer_v<T>)
 void
 serialize_page(fsys::file<R> &f, const T &obj)
@@ -70,7 +70,7 @@ serialize_page(fsys::file<R> &f, const T &obj)
   serialize_bytes(f, b, 4096);
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_object_v<T>
 void
 deserialize(const T &strct)
@@ -79,7 +79,7 @@ deserialize(const T &strct)
 
 void write();
 void read();
-};     // namespace serialize
+};      // namespace serialize
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

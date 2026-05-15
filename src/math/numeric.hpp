@@ -18,7 +18,7 @@ namespace math
 {
 
 // c[0] constant term, c[N-1] highest order
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 polyval(const F *coeffs, usize n, F x) noexcept
 {
@@ -28,14 +28,14 @@ polyval(const F *coeffs, usize n, F x) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 horner(const F *coeffs, usize n, F x) noexcept
 {
   return polyval<F>(coeffs, n, x);
 }
 
-template <is_iterable_container C, ieee754_floating F = typename C::value_type>
+template<is_iterable_container C, ieee754_floating F = typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr F
 polyval(const C &coeffs, F x) noexcept
 {
@@ -43,7 +43,7 @@ polyval(const C &coeffs, F x) noexcept
 }
 
 // out[i] = in[i+1] - in[i]
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 diff(const T *__restrict__ in, usize n, T *__restrict__ out) noexcept
 {
@@ -51,14 +51,14 @@ diff(const T *__restrict__ in, usize n, T *__restrict__ out) noexcept
   for ( usize i = 0; i + 1 < n; ++i ) out[i] = T(in[i + 1] - in[i]);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 diff(const C &in, C &out) noexcept
 {
   diff<typename C::value_type>(in.cbegin(), in.size(), out.begin());
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 gradient(const F *__restrict__ y, usize n, F *__restrict__ g) noexcept
 {
@@ -72,7 +72,7 @@ gradient(const F *__restrict__ y, usize n, F *__restrict__ g) noexcept
   g[n - 1] = y[n - 1] - y[n - 2];
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 gradient(const F *__restrict__ x, const F *__restrict__ y, usize n, F *__restrict__ g) noexcept
 {
@@ -86,7 +86,7 @@ gradient(const F *__restrict__ x, const F *__restrict__ y, usize n, F *__restric
   g[n - 1] = (y[n - 1] - y[n - 2]) / (x[n - 1] - x[n - 2]);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[gnu::flatten]] inline void
 gradient(const C &y, C &g) noexcept
@@ -94,7 +94,7 @@ gradient(const C &y, C &g) noexcept
   gradient<typename C::value_type>(y.cbegin(), y.size(), g.begin());
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 interp(F xq, const F *x, const F *y, usize n) noexcept
 {
@@ -113,7 +113,7 @@ interp(F xq, const F *x, const F *y, usize n) noexcept
   return math::fma<F>(t, y[lo + 1] - y[lo], y[lo]);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline typename C::value_type
 interp(typename C::value_type xq, const C &x, const C &y) noexcept
@@ -122,7 +122,7 @@ interp(typename C::value_type xq, const C &x, const C &y) noexcept
 }
 
 // non FFT based
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 convolve(const T *__restrict__ a, usize n, const T *__restrict__ b, usize k, T *__restrict__ out) noexcept
 {
@@ -135,7 +135,7 @@ convolve(const T *__restrict__ a, usize n, const T *__restrict__ b, usize k, T *
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 correlate(const T *__restrict__ a, usize n, const T *__restrict__ b, usize k, T *__restrict__ out) noexcept
 {
@@ -148,21 +148,21 @@ correlate(const T *__restrict__ a, usize n, const T *__restrict__ b, usize k, T 
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 convolve(const C &a, const C &b, C &out) noexcept
 {
   convolve<typename C::value_type>(a.cbegin(), a.size(), b.cbegin(), b.size(), out.begin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 correlate(const C &a, const C &b, C &out) noexcept
 {
   correlate<typename C::value_type>(a.cbegin(), a.size(), b.cbegin(), b.size(), out.begin());
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 lcm(T a, T b) noexcept
@@ -174,14 +174,14 @@ lcm(T a, T b) noexcept
   return T((av / g) * bv);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 struct divmod_result {
   T quot;
   T rem;
 };
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr divmod_result<T>
 divmod(T a, T b) noexcept
@@ -200,7 +200,7 @@ divmod(T a, T b) noexcept
 //%%%%%%%%%%%%%%%%%%%%%%%%%%
 // factorials
 
-template <typename T = u64>
+template<typename T = u64>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 factorial(int n) noexcept
@@ -210,7 +210,7 @@ factorial(int n) noexcept
   return r;
 }
 
-template <typename T = u64>
+template<typename T = u64>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 double_factorial(int n) noexcept
@@ -220,7 +220,7 @@ double_factorial(int n) noexcept
   return r;
 }
 
-template <typename T = u64>
+template<typename T = u64>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::flatten]] inline constexpr T
 comb(int n, int k) noexcept
@@ -235,7 +235,7 @@ comb(int n, int k) noexcept
   return r;
 }
 
-template <typename T = u64>
+template<typename T = u64>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::flatten]] inline constexpr T
 perm(int n, int k) noexcept
@@ -246,7 +246,7 @@ perm(int n, int k) noexcept
   return r;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[gnu::flatten]] inline void
 bincount(const T *__restrict__ x, usize n_x, u64 *__restrict__ counts, usize n_bins) noexcept
@@ -258,7 +258,7 @@ bincount(const T *__restrict__ x, usize n_x, u64 *__restrict__ counts, usize n_b
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 digitize(F x, const F *edges, usize n_edges) noexcept
 {
@@ -276,7 +276,7 @@ digitize(F x, const F *edges, usize n_edges) noexcept
   return lo + 1;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 histogram(const F *__restrict__ x, usize n_x, F lo, F hi, u64 *__restrict__ out_counts, usize n_bins) noexcept
 {
@@ -292,5 +292,5 @@ histogram(const F *__restrict__ x, usize n_x, F lo, F hi, u64 *__restrict__ out_
   }
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

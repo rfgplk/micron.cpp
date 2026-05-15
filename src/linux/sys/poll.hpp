@@ -37,7 +37,7 @@ constexpr u32 epollwrnorm = 0x00000100u;
 constexpr u32 epollwrband = 0x00000200u;
 constexpr u32 epollmsg = 0x00000400u;
 constexpr u32 epollrdhup = 0x00002000u;
-constexpr u32 epollexclusive = 0x10000000u;     // linux 4.5
+constexpr u32 epollexclusive = 0x10000000u;      // linux 4.5
 constexpr u32 epollwakeup = 0x20000000u;
 constexpr u32 epolloneshot = 0x40000000u;
 constexpr u32 epollet = 0x80000000u;
@@ -145,5 +145,5 @@ epoll_pwait2_block(int epfd, epoll_event *events, int maxevents)
 {
   return epoll_pwait2(epfd, events, maxevents, static_cast<const timespec_t *>(nullptr), static_cast<const sigset_t *>(nullptr));
 }
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

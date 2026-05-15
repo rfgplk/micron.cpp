@@ -14,7 +14,7 @@ namespace micron
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memchr
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
 memchr(const T &restrict src, byte c, u64 n) noexcept
@@ -39,7 +39,7 @@ memchr(const T &restrict src, byte c, u64 n) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
 memchr(const T *restrict src, byte c, u64 n) noexcept
@@ -67,7 +67,7 @@ memchr(const T *restrict src, byte c, u64 n) noexcept
 // %%%%%%%%%%%%%%%%%%%%
 // memrchr
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
 memrchr(const T *restrict src, byte c, u64 n) noexcept
@@ -95,7 +95,7 @@ memrchr(const T *restrict src, byte c, u64 n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memmem
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 T *
 memmem(const T *restrict hay, u64 hlen, const T *restrict nee, u64 nlen) noexcept
@@ -140,4 +140,4 @@ memmem(const T *restrict hay, u64 hlen, const T *restrict nee, u64 nlen) noexcep
   }
 }
 
-};     // namespace micron
+};      // namespace micron

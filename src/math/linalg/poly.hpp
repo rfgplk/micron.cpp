@@ -33,7 +33,7 @@ namespace poly
 {
 
 // Horner evaluation
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 polyval(const dynvec<F> &c, micron::__type_identity_t<F> x) noexcept
 {
@@ -46,7 +46,7 @@ polyval(const dynvec<F> &c, micron::__type_identity_t<F> x) noexcept
   return acc;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 polyval(const F *c, usize n, micron::__type_identity_t<F> x) noexcept
 {
@@ -59,7 +59,7 @@ polyval(const F *c, usize n, micron::__type_identity_t<F> x) noexcept
 }
 
 // derivative of c (high2low)
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 polyder(const dynvec<F> &c) noexcept
 {
@@ -74,7 +74,7 @@ polyder(const dynvec<F> &c) noexcept
 }
 
 // antiderivative with constatn k0
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 polyint(const dynvec<F> &c, micron::__type_identity_t<F> k0 = F(0)) noexcept
 {
@@ -89,7 +89,7 @@ polyint(const dynvec<F> &c, micron::__type_identity_t<F> k0 = F(0)) noexcept
 }
 
 // least squares polynomial fit
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynvec<F>
 polyfit(const dynvec<F> &x, const dynvec<F> &y, usize deg) noexcept
 {
@@ -128,7 +128,7 @@ polyfit(const dynvec<F> &x, const dynvec<F> &y, usize deg) noexcept
 }
 
 // roots of a polynomial via the Frobenius companion matrix
-template <ieee754_floating F> struct roots_result {
+template<ieee754_floating F> struct roots_result {
   dynvec<F> re;
   dynvec<F> im;
   bool converged;
@@ -137,7 +137,7 @@ template <ieee754_floating F> struct roots_result {
 namespace __impl_poly
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
 companion_fixed(const F *a) noexcept
 {
@@ -149,7 +149,7 @@ companion_fixed(const F *a) noexcept
   return C;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline bool
 fixed_companion_eigen(const F *a, F *re, F *im) noexcept
 {
@@ -172,41 +172,41 @@ fixed_companion_eigen(const F *a, F *re, F *im) noexcept
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 dispatch_fixed_companion_eigen(usize n, const F *a, F *re, F *im) noexcept
 {
   switch ( n ) {
-  case 1 :
+  case 1:
     return fixed_companion_eigen<F, 1>(a, re, im);
-  case 2 :
+  case 2:
     return fixed_companion_eigen<F, 2>(a, re, im);
-  case 3 :
+  case 3:
     return fixed_companion_eigen<F, 3>(a, re, im);
-  case 4 :
+  case 4:
     return fixed_companion_eigen<F, 4>(a, re, im);
-  case 5 :
+  case 5:
     return fixed_companion_eigen<F, 5>(a, re, im);
-  case 6 :
+  case 6:
     return fixed_companion_eigen<F, 6>(a, re, im);
-  case 7 :
+  case 7:
     return fixed_companion_eigen<F, 7>(a, re, im);
-  case 8 :
+  case 8:
     return fixed_companion_eigen<F, 8>(a, re, im);
-  case 9 :
+  case 9:
     return fixed_companion_eigen<F, 9>(a, re, im);
-  case 10 :
+  case 10:
     return fixed_companion_eigen<F, 10>(a, re, im);
-  case 11 :
+  case 11:
     return fixed_companion_eigen<F, 11>(a, re, im);
-  default :
+  default:
     return false;
   }
 }
 
-};     // namespace __impl_poly
+};      // namespace __impl_poly
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline roots_result<F>
 roots(const dynvec<F> &c) noexcept
 {
@@ -224,7 +224,7 @@ roots(const dynvec<F> &c) noexcept
   return r;
 }
 
-};     // namespace poly
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace poly
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

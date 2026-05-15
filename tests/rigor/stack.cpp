@@ -107,9 +107,9 @@ reset_tracked()
 struct NoCopy {
   int v;
 
-  NoCopy() : v(0) {}
+  NoCopy() : v(0) { }
 
-  explicit NoCopy(int x) : v(x) {}
+  explicit NoCopy(int x) : v(x) { }
 
   NoCopy(const NoCopy &) = delete;
   NoCopy &operator=(const NoCopy &) = delete;
@@ -143,7 +143,7 @@ struct NoCopy {
   }
 };
 
-}     // anonymous namespace
+}      // anonymous namespace
 
 // ===========================================================================
 //  micron::stack  (safe / bounds-checked)
@@ -369,7 +369,7 @@ main()
     require(b.size(), size_t(3));
     require(b.top(), 3);
     b.pop();
-    require(a.size(), size_t(3));     // a unchanged
+    require(a.size(), size_t(3));      // a unchanged
   }
   end_test_case();
 
@@ -401,7 +401,7 @@ main()
     s.reserve(256);
     require_greater(s.max_size(), size_t(0));
     size_t cap = s.max_size();
-    s.reserve(64);     // smaller — no-op
+    s.reserve(64);      // smaller — no-op
     require(s.max_size(), cap);
     s.reserve(cap + 100);
     require_greater(s.max_size(), cap);
@@ -668,8 +668,8 @@ main()
   {
     micron::fstack<int> s{ 10, 20, 30 };
     require(s.size(), size_t(3));
-    require(s[0], 30);     // top
-    require(s[2], 10);     // bottom
+    require(s[0], 30);      // top
+    require(s[2], 10);      // bottom
   }
   end_test_case();
 
@@ -682,7 +682,7 @@ main()
     s.push(10);
     s.push();
     require(s.size(), size_t(3));
-    require(s.top(), 0);     // push() default-initialises
+    require(s.top(), 0);      // push() default-initialises
     require(s[1], 10);
   }
   end_test_case();
@@ -752,7 +752,7 @@ main()
     require(b.size(), size_t(3));
     require(b.top(), 3);
     b.push(99);
-    require(a.size(), size_t(3));     // a unaffected
+    require(a.size(), size_t(3));      // a unaffected
   }
   end_test_case();
 

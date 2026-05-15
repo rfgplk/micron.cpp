@@ -24,16 +24,16 @@ namespace decomp
 {
 
 // fixed-size
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= 2)
 struct householder_sequence {
   static constexpr usize K = (R_ < C_) ? R_ : C_;
 
-  mat<F, R_, K> V;     // column k = reflector v_k (zero for rows < k)
-  F betas[K];          // K may be 1, don't use vec
+  mat<F, R_, K> V;      // column k = reflector v_k (zero for rows < k)
+  F betas[K];           // K may be 1, don't use vec
 
   // apply Q from the left
-  template <usize M_>
+  template<usize M_>
   inline void
   apply_left(mat<F, R_, M_> &A) const noexcept
   {
@@ -46,7 +46,7 @@ struct householder_sequence {
   }
 
   // apply Q^T from the left
-  template <usize M_>
+  template<usize M_>
   inline void
   apply_left_transposed(mat<F, R_, M_> &A) const noexcept
   {
@@ -59,7 +59,7 @@ struct householder_sequence {
   }
 
   // apply Q from the right
-  template <usize M_>
+  template<usize M_>
   inline void
   apply_right(mat<F, M_, R_> &A) const noexcept
   {
@@ -72,7 +72,7 @@ struct householder_sequence {
   }
 
   // apply Q^T from the right
-  template <usize M_>
+  template<usize M_>
   inline void
   apply_right_transposed(mat<F, M_, R_> &A) const noexcept
   {
@@ -94,11 +94,11 @@ struct householder_sequence {
 };
 
 // dynamic-shape compact sequence
-template <ieee754_floating F> struct householder_sequence_dyn {
-  dynmat<F> V;                                                    // R x K
-  micron::vector<F, micron::allocator_serial<>, false> betas;     // length K
-  usize R{ 0 };                                                   // rows of Q (Q is R x R)
-  usize K{ 0 };                                                   // number of reflectors
+template<ieee754_floating F> struct householder_sequence_dyn {
+  dynmat<F> V;                                                     // R x K
+  micron::vector<F, micron::allocator_serial<>, false> betas;      // length K
+  usize R{ 0 };                                                    // rows of Q (Q is R x R)
+  usize K{ 0 };                                                    // number of reflectors
 
   // apply Q from the left
   inline void
@@ -158,7 +158,7 @@ template <ieee754_floating F> struct householder_sequence_dyn {
   }
 };
 
-};     // namespace decomp
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace decomp
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

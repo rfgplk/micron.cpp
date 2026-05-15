@@ -102,7 +102,7 @@ asinh_f64(f64 x) noexcept
   if ( ax < 0x1.0p-28 ) return x;
   f64 r;
   if ( ax > 0x1.0p28 ) {
-    r = log_ns::log_f64(ax) + 0.6931471805599453;     // log(2*ax) ~ log(ax) + ln2
+    r = log_ns::log_f64(ax) + 0.6931471805599453;      // log(2*ax) ~ log(ax) + ln2
   } else if ( ax > 2.0 ) {
     r = log_ns::log_f64(2.0 * ax + 1.0 / (sqrt_ns::sqrt<f64>(x * x + 1.0) + ax));
   } else {
@@ -180,7 +180,7 @@ atanh_f32(f32 x) noexcept
   return f32(atanh_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sinh(F x) noexcept
 {
@@ -190,7 +190,7 @@ sinh(F x) noexcept
     return F(sinh_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cosh(F x) noexcept
 {
@@ -200,7 +200,7 @@ cosh(F x) noexcept
     return F(cosh_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tanh(F x) noexcept
 {
@@ -210,7 +210,7 @@ tanh(F x) noexcept
     return F(tanh_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asinh(F x) noexcept
 {
@@ -220,7 +220,7 @@ asinh(F x) noexcept
     return F(asinh_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acosh(F x) noexcept
 {
@@ -230,7 +230,7 @@ acosh(F x) noexcept
     return F(acosh_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atanh(F x) noexcept
 {
@@ -240,9 +240,9 @@ atanh(F x) noexcept
     return F(atanh_f64(f64(x)));
 }
 
-};     // namespace hyp_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace hyp_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

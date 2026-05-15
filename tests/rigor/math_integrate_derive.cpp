@@ -37,7 +37,7 @@ main()
 
   test_case("forward / backward: O(h) consistency");
   {
-    auto f = [](f64 x) noexcept -> f64 { return x * x * x; };     // f'(x) = 3x²
+    auto f = [](f64 x) noexcept -> f64 { return x * x * x; };      // f'(x) = 3x²
     f64 fwd = integrate::derive::forward<f64>(f, 2.0, 1e-6);
     f64 bwd = integrate::derive::backward<f64>(f, 2.0, 1e-6);
     require_true(near(fwd, 12.0, 1e-3));

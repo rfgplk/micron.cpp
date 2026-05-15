@@ -20,7 +20,7 @@ namespace micron
 struct atomic_flag {
   atomic_token<bool> tk;
 
-  constexpr atomic_flag() noexcept : tk(false) {}
+  constexpr atomic_flag() noexcept : tk(false) { }
 
   atomic_flag(const atomic_flag &) = delete;
   atomic_flag &operator=(const atomic_flag &) = delete;
@@ -49,4 +49,4 @@ struct atomic_flag {
     while ( tk.get(order) == old );
   }
 };
-};     // namespace micron
+};      // namespace micron

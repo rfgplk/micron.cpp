@@ -26,13 +26,13 @@ namespace linalg
 namespace decomp
 {
 
-template <ieee754_floating F, usize N> struct eigen_sym_result {
+template<ieee754_floating F, usize N> struct eigen_sym_result {
   vec<F, N> values;
   mat<F, N, N> vectors;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline eigen_sym_result<F, N>
 eigen_sym(const mat<F, N, N> &A) noexcept
 {
@@ -107,7 +107,7 @@ eigen_sym(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct schur_result {
+template<ieee754_floating F, usize N> struct schur_result {
   mat<F, N, N> T;
   mat<F, N, N> Z;
   bool converged;
@@ -116,7 +116,7 @@ template <ieee754_floating F, usize N> struct schur_result {
 namespace __impl_decomp_schur
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline void
 francis_step(mat<F, N, N> &H, mat<F, N, N> &Z, usize lo, usize hi, F shift_s, F shift_t) noexcept
 {
@@ -196,9 +196,9 @@ francis_step(mat<F, N, N> &H, mat<F, N, N> &Z, usize lo, usize hi, F shift_s, F 
   }
 }
 
-};     // namespace __impl_decomp_schur
+};      // namespace __impl_decomp_schur
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline schur_result<F, N>
 schur(const mat<F, N, N> &A) noexcept
 {
@@ -287,7 +287,7 @@ schur(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct eigen_result {
+template<ieee754_floating F, usize N> struct eigen_result {
   vec<F, N> values_re;
   vec<F, N> values_im;
   mat<F, N, N> Z;
@@ -295,7 +295,7 @@ template <ieee754_floating F, usize N> struct eigen_result {
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline eigen_result<F, N>
 eigen(const mat<F, N, N> &A) noexcept
 {
@@ -346,18 +346,18 @@ eigen(const mat<F, N, N> &A) noexcept
 namespace __impl_decomp_svd
 {
 
-template <usize A, usize B> inline constexpr usize min_v = (A < B) ? A : B;
+template<usize A, usize B> inline constexpr usize min_v = (A < B) ? A : B;
 
 };
 
-template <ieee754_floating F, usize R_, usize C_> struct svd_result {
+template<ieee754_floating F, usize R_, usize C_> struct svd_result {
   mat<F, R_, R_> U;
   vec<F, __impl_decomp_svd::min_v<R_, C_>> S;
   mat<F, C_, C_> V;
   bool converged;
 };
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= C_)
 [[nodiscard]] inline svd_result<F, R_, C_>
 svd(const mat<F, R_, C_> &A) noexcept
@@ -456,7 +456,7 @@ svd(const mat<F, R_, C_> &A) noexcept
 namespace __impl_decomp_qrtri
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline F
 pythag(F a, F b) noexcept
 {
@@ -470,14 +470,14 @@ pythag(F a, F b) noexcept
   return absb * math::fsqrt(F(1) + r * r);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline F
 sgn_copy(F a, F b) noexcept
 {
   return (b >= F(0)) ? math::fabs(a) : -math::fabs(a);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 tqli(F *d, F *e, F *Z, usize N, usize ld_Z, int max_iter = 30) noexcept
 {
@@ -537,9 +537,9 @@ tqli(F *d, F *e, F *Z, usize N, usize ld_Z, int max_iter = 30) noexcept
   return true;
 }
 
-};     // namespace __impl_decomp_qrtri
+};      // namespace __impl_decomp_qrtri
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline eigen_sym_result<F, N>
 eigen_sym_qr(const mat<F, N, N> &A) noexcept
 {
@@ -578,13 +578,13 @@ eigen_sym_qr(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F> struct eigen_sym_result_dyn {
+template<ieee754_floating F> struct eigen_sym_result_dyn {
   dynvec<F> values;
   dynmat<F> vectors;
   bool converged;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline eigen_sym_result_dyn<F>
 eigen_sym_qr(const dynmat<F> &A) noexcept
 {
@@ -688,7 +688,7 @@ eigen_sym_qr(const dynmat<F> &A) noexcept
   return r;
 }
 
-};     // namespace decomp
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace decomp
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

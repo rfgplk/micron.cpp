@@ -14,7 +14,7 @@ namespace micron
 namespace sort
 {
 
-template <typename T, typename Cmp>
+template<typename T, typename Cmp>
 static void
 __merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
 {
@@ -45,14 +45,14 @@ __merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
   delete[] R;
 }
 
-template <typename T>
+template<typename T>
 static void
 __merge(T *arr, max_t left, max_t mid, max_t right)
 {
   __merge(arr, left, mid, right, [](const T &a, const T &b) { return a < b; });
 }
 
-template <typename T, typename Cmp>
+template<typename T, typename Cmp>
 static void
 __merge_sort(T *arr, max_t left, max_t right, Cmp comp)
 {
@@ -65,14 +65,14 @@ __merge_sort(T *arr, max_t left, max_t right, Cmp comp)
   __merge(arr, left, mid, right, comp);
 }
 
-template <typename T>
+template<typename T>
 static void
 __merge_sort(T *arr, max_t left, max_t right)
 {
   __merge_sort(arr, left, right, [](const T &a, const T &b) { return a < b; });
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C &
 merge(C &arr)
 {
@@ -80,7 +80,7 @@ merge(C &arr)
   return arr;
 }
 
-template <is_iterable_container C, is_valid_comp<C> Cmp>
+template<is_iterable_container C, is_valid_comp<C> Cmp>
 C &
 merge(C &arr, Cmp comp)
 {
@@ -88,7 +88,7 @@ merge(C &arr, Cmp comp)
   return arr;
 }
 
-template <typename T, typename Cmp>
+template<typename T, typename Cmp>
 static void
 __merge_sort_bottom_up(T *arr, max_t n, Cmp comp)
 {
@@ -107,14 +107,14 @@ __merge_sort_bottom_up(T *arr, max_t n, Cmp comp)
   }
 }
 
-template <typename T>
+template<typename T>
 static void
 __merge_sort_bottom_up(T *arr, max_t n)
 {
   __merge_sort_bottom_up(arr, n, [](const T &a, const T &b) { return a < b; });
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C &
 merge_bottom_up(C &arr)
 {
@@ -122,7 +122,7 @@ merge_bottom_up(C &arr)
   return arr;
 }
 
-template <is_iterable_container C, is_valid_comp<C> Cmp>
+template<is_iterable_container C, is_valid_comp<C> Cmp>
 C &
 merge_bottom_up(C &arr, Cmp comp)
 {
@@ -130,7 +130,7 @@ merge_bottom_up(C &arr, Cmp comp)
   return arr;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T &
 merge_bottom_up(T &arr, typename T::size_type lim)
 {
@@ -138,7 +138,7 @@ merge_bottom_up(T &arr, typename T::size_type lim)
   return arr;
 }
 
-template <is_iterable_container T, is_valid_comp<T> Cmp>
+template<is_iterable_container T, is_valid_comp<T> Cmp>
 T &
 merge_bottom_up(T &arr, typename T::size_type lim, Cmp comp)
 {
@@ -146,5 +146,5 @@ merge_bottom_up(T &arr, typename T::size_type lim, Cmp comp)
   return arr;
 }
 
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

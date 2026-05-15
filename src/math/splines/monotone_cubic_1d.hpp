@@ -24,7 +24,7 @@ namespace math
 namespace splines
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline cubic_spline_1d<F>
 make_pchip(raw_slice<const F> xs, raw_slice<const F> ys, build_info<F> *info = nullptr) noexcept
 {
@@ -61,6 +61,6 @@ make_pchip(raw_slice<const F> xs, raw_slice<const F> ys, build_info<F> *info = n
   return s;
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

@@ -28,7 +28,7 @@ __neon_v7_all_eq(uint8x16_t ceq) noexcept
   return (vgetq_lane_u64(v64, 0) & vgetq_lane_u64(v64, 1)) == ~static_cast<u64>(0);
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
@@ -51,7 +51,7 @@ memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
   return dest;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
@@ -72,7 +72,7 @@ amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
   return dest;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
@@ -95,7 +95,7 @@ ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexce
   return dest;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 F &
 rmemcpy128(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
 {
@@ -110,7 +110,7 @@ rmemcpy128(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
   return dest;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 memmove128(T *dest, const T *src, const u64 count) noexcept
 {
@@ -130,18 +130,19 @@ memmove128(T *dest, const T *src, const u64 count) noexcept
       for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
     }
   } else {
+    // overlapping backward path: use __block_move_16 (no __restrict)
     const u64 n = bytes / 16;
     const u64 rem = bytes % 16;
     if ( rem ) {
       for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
-    for ( u64 i = n; i > 0; i-- ) __bits::__block_copy_16(d + (i - 1) * 16, s + (i - 1) * 16);
+    for ( u64 i = n; i > 0; i-- ) __bits::__block_move_16(d + (i - 1) * 16, s + (i - 1) * 16);
   }
 
   return dest;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 amemmove128(T *dest, const T *src, const u64 count) noexcept
 {
@@ -161,18 +162,19 @@ amemmove128(T *dest, const T *src, const u64 count) noexcept
       for ( u64 i = 0; i < rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
     }
   } else {
+    // overlapping backward path: use __block_move_16 (no __restrict)
     const u64 n = bytes / 16;
     const u64 rem = bytes % 16;
     if ( rem ) {
       for ( u64 i = rem; i > 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
     }
-    for ( u64 i = n; i > 0; i-- ) __bits::__block_copy_16_a(d + (i - 1) * 16, s + (i - 1) * 16);
+    for ( u64 i = n; i > 0; i-- ) __bits::__block_move_16(d + (i - 1) * 16, s + (i - 1) * 16);
   }
 
   return dest;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 memset128(T *__restrict src, const u8 in, const u64 count) noexcept
 {
@@ -191,7 +193,7 @@ memset128(T *__restrict src, const u8 in, const u64 count) noexcept
   return src;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 amemset128(T *__restrict src, const u8 in, const u64 count) noexcept
 {
@@ -210,7 +212,7 @@ amemset128(T *__restrict src, const u8 in, const u64 count) noexcept
   return src;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept
 {
@@ -232,7 +234,7 @@ ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept
   return src;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) i64
 memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
 {
@@ -262,7 +264,7 @@ memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) no
   return 0;
 }
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) i64
 amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
 {
@@ -313,7 +315,7 @@ wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memchr - byte search
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 memchr128(const T *src, u8 c, const u64 count) noexcept
 {
@@ -337,7 +339,7 @@ memchr128(const T *src, u8 c, const u64 count) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memrchr - reverse byte search
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 memrchr128(const T *src, u8 c, const u64 count) noexcept
 {
@@ -364,7 +366,7 @@ memrchr128(const T *src, u8 c, const u64 count) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // mempcpy - memcpy returning d + n
 
-template <typename T>
+template<typename T>
 __attribute__((nonnull)) T *
 mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
@@ -391,7 +393,7 @@ mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memmem - substring search
 
-template <typename T>
+template<typename T>
 T *
 memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
 {
@@ -443,5 +445,5 @@ memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
   return nullptr;
 }
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

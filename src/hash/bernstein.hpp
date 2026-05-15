@@ -14,9 +14,9 @@ bernstein_32(const byte *data, usize sz)
 {
   u32 hash = 5381;
   while ( --sz ) {
-    hash = (hash * 33) + static_cast<u32>(*(data + sz));     // moves backwords
+    hash = (hash * 33) + static_cast<u32>(*(data + sz));      // moves backwords
   }
   return hash;
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -71,7 +71,7 @@ int Tracker::destructions = 0;
 // ============================================================
 
 // Confirm a shared_pointer is the sole owner and the managed object is valid
-template <typename T>
+template<typename T>
 void
 assert_sole_owner(const mc::shared_pointer<T> &p)
 {
@@ -110,7 +110,7 @@ main(void)
     sb::require((*b)[0] == 99);
     sb::require((*c)[0] == 99);
     (*c)[0] = 42;
-    sb::require((*a)[0] == 42);     // mutation via c visible through a
+    sb::require((*a)[0] == 42);      // mutation via c visible through a
     sb::require((*b)[0] == 42);
   }
   sb::end_test_case();
@@ -147,10 +147,10 @@ main(void)
       {
         mc::shared_pointer<mc::vector<Tracker>> b(a);
         sb::require(a.refs() == 2);
-      }     // b destroyed — vector must still be alive
+      }      // b destroyed — vector must still be alive
       sb::require(a->size() == 2);
       sb::require(a.refs() == 1);
-    }     // a destroyed — vector and its Trackers freed
+    }      // a destroyed — vector and its Trackers freed
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -159,7 +159,7 @@ main(void)
   {
     mc::shared_pointer<mc::vector<int>> p(mc::vector<int>{});
     for ( int i = 0; i < 5; i++ ) p->push_back(i);
-    p->erase(static_cast<usize>(0));     // erase first element
+    p->erase(static_cast<usize>(0));      // erase first element
     sb::require(p->size() == 4);
     sb::require((*p)[0] == 1);
   }
@@ -211,7 +211,7 @@ main(void)
       // Temporaries from push_back have already been destroyed; snapshot
       // the destruction count now so we can measure the delta from the move.
       int before = Tracker::destructions;
-      b = std::move(a);     // b's old vector (2 live Trackers) freed
+      b = std::move(a);      // b's old vector (2 live Trackers) freed
       sb::require(Tracker::destructions - before == 2);
       sb::require(b->size() == 1);
       sb::require((*b)[0].value == 1);
@@ -246,7 +246,7 @@ main(void)
     a->push_back(111);
     mc::shared_pointer<mc::vector<int>> b(a);
     (*b)[0] = 222;
-    sb::require((*a)[0] == 222);     // same underlying object
+    sb::require((*a)[0] == 222);      // same underlying object
     sb::require(a.refs() == 2);
   }
   sb::end_test_case();
@@ -286,10 +286,10 @@ main(void)
       {
         mc::shared_pointer<mc::vector<Tracker>> q(p);
         sb::require(p.refs() == 2);
-      }     // q gone, vector still live
+      }      // q gone, vector still live
       sb::require(p.refs() == 1);
       sb::require(p->size() == 1);
-    }     // p gone, vector and Trackers freed
+    }      // p gone, vector and Trackers freed
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -312,7 +312,7 @@ main(void)
     mc::shared_pointer<mc::hstring<>> a("foo");
     mc::shared_pointer<mc::hstring<>> b(a);
     *a = "bar";
-    sb::require(*b == "bar");     // same managed string
+    sb::require(*b == "bar");      // same managed string
   }
   sb::end_test_case();
 
@@ -331,7 +331,7 @@ main(void)
     mc::shared_pointer<mc::hstring<>> b(a);
     a = nullptr;
     sb::require(!a);
-    sb::require(*b == "lifetime");     // still alive through b
+    sb::require(*b == "lifetime");      // still alive through b
     sb::require(b.refs() == 1);
   }
   sb::end_test_case();
@@ -351,7 +351,7 @@ main(void)
   {
     mc::shared_pointer<mc::hstring<>> a("abcdef");
     mc::shared_pointer<mc::hstring<>> b(a);
-    a->erase(static_cast<usize>(2), static_cast<usize>(2));     // remove 'cd'
+    a->erase(static_cast<usize>(2), static_cast<usize>(2));      // remove 'cd'
     // both a and b point to same string
     sb::require(*b == "abef");
   }
@@ -473,7 +473,7 @@ main(void)
       int *v = b->find(mc::hstring<>("k"));
       sb::require(v != nullptr && *v == 7);
       sb::require(b.refs() == 1);
-    }     // b gone — map freed; dangling stays null
+    }      // b gone — map freed; dangling stays null
     sb::require(dangling == nullptr);
   }
   sb::end_test_case();
@@ -511,9 +511,9 @@ main(void)
       {
         mc::shared_pointer<mc::pair<int, mc::vector<Tracker>>> b(a);
         sb::require(a.refs() == 2);
-      }     // b gone, pair still alive
+      }      // b gone, pair still alive
       sb::require(a->b.size() == 1);
-    }     // a gone, pair and its vector destroyed
+    }      // a gone, pair and its vector destroyed
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -606,10 +606,10 @@ main(void)
       {
         mc::shared_pointer<mc::static_any<sizeof(Tracker) + 64>> b(a);
         sb::require(a.refs() == 2);
-      }     // b gone, static_any alive
+      }      // b gone, static_any alive
       sb::require(a->has_value());
       sb::require(a->cast<Tracker>().value == 99);
-    }     // a gone, static_any (and Tracker inside) destroyed
+    }      // a gone, static_any (and Tracker inside) destroyed
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -630,11 +630,11 @@ main(void)
       vec = mc::vector<mc::shared_pointer<mc::hstring<>>>{};
       mc::shared_pointer<mc::hstring<>> s1("first");
       mc::shared_pointer<mc::hstring<>> s2("second");
-      inner_ref = s1;         // hold a reference outside the vector
-      vec->push_back(s1);     // vector now also holds a ref
+      inner_ref = s1;          // hold a reference outside the vector
+      vec->push_back(s1);      // vector now also holds a ref
       vec->push_back(s2);
-      sb::require(s1.refs() == 3);     // inner_ref + s1 + vec element
-    }     // vec destroyed; s1 loses its vec copy; s2 freed (no other owner)
+      sb::require(s1.refs() == 3);      // inner_ref + s1 + vec element
+    }      // vec destroyed; s1 loses its vec copy; s2 freed (no other owner)
     // inner_ref still holds s1 alive
     sb::require(inner_ref.refs() == 1);
     sb::require(*inner_ref == "first");
@@ -651,8 +651,8 @@ main(void)
       elem = x;
       outer->push_back(x);
       outer->push_back(mc::shared_pointer<int>(200));
-      sb::require(x.refs() == 3);     // x + elem + outer[0]
-    }     // outer destroyed; outer[0] loses its copy; outer[1] freed
+      sb::require(x.refs() == 3);      // x + elem + outer[0]
+    }      // outer destroyed; outer[0] loses its copy; outer[1] freed
     sb::require(elem.refs() == 1);
     sb::require(*elem == 100);
   }
@@ -684,7 +684,7 @@ main(void)
 
       sb::require(root.refs() == 1);
       sb::require(root->size() == 2);
-    }     // root released, vector and all Trackers freed
+    }      // root released, vector and all Trackers freed
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();

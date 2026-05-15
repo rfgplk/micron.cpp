@@ -12,7 +12,7 @@
 //   8. Iterators & for_each
 //   9. Stress tests
 
-#include "../../src/array/parray.hpp"     // adjust path as needed
+#include "../../src/array/parray.hpp"      // adjust path as needed
 #include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"
@@ -45,7 +45,7 @@ using pa_tiny = micron::parray<int, 1, 2>;
 // ------------------------------------------------------------------ //
 //  Lifetime-tracking helper                                           //
 // ------------------------------------------------------------------ //
-static int g_alive = 0;     // net ctor − dtor calls
+static int g_alive = 0;      // net ctor − dtor calls
 
 struct Tracked {
   int val;
@@ -124,7 +124,7 @@ struct Tracked {
   }
 };
 
-using pa_tracked = micron::parray<Tracked, 2, 2>;     // capacity 16
+using pa_tracked = micron::parray<Tracked, 2, 2>;      // capacity 16
 
 // ------------------------------------------------------------------ //
 //  Helpers                                                            //
@@ -155,7 +155,7 @@ verify_seq_small(const pa_small &m, int n)
   return true;
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -171,7 +171,7 @@ main()
     pa_small m;
     // parray always reports its full capacity as size
     require(m.size(), pa_small::length);
-    require_false(m.empty());     // empty() is always false for parray
+    require_false(m.empty());      // empty() is always false for parray
     require_true(m.identity() == nullptr);
 
     // all slots default-initialized to T{}
@@ -267,7 +267,7 @@ main()
     auto m2 = m.set(3, 999);
 
     require(m2.get(3), 999);
-    require(m.get(3), 30);     // original has 3*10
+    require(m.get(3), 30);      // original has 3*10
   }
   end_test_case();
 
@@ -287,8 +287,8 @@ main()
     auto m = make_seq_small(8);
     auto m2 = m.update(4, [](const int &v) { return v + 1; });
 
-    require(m2.get(4), 41);     // 4*10 + 1
-    require(m.get(4), 40);      // original
+    require(m2.get(4), 41);      // 4*10 + 1
+    require(m.get(4), 40);       // original
   }
   end_test_case();
 
@@ -481,7 +481,7 @@ main()
     auto v1 = v0.set(0, 10);
     auto v2 = v1.set(1, 20);
     auto v3 = v2.set(2, 30);
-    auto v4 = v3.set(0, 999);     // overwrite slot 0
+    auto v4 = v3.set(0, 999);      // overwrite slot 0
 
     require(v0.get(0), 0);
     require(v1.get(0), 10);
@@ -525,7 +525,7 @@ main()
 
     auto m3 = m2.set(7, 999);
     require_false(m.identity() == m3.identity());
-    require_true(m.identity() == m2.identity());     // m2 not mutated
+    require_true(m.identity() == m2.identity());      // m2 not mutated
   }
   end_test_case();
 
@@ -588,7 +588,7 @@ main()
   test_case("equality: null root vs explicit zero-fill");
   {
     pa_small a;
-    pa_small b(0);     // broadcast fill with 0
+    pa_small b(0);      // broadcast fill with 0
     require_true(a == b);
   }
   end_test_case();
@@ -675,7 +675,7 @@ main()
   // ================================================================ //
   test_case("sum reduction");
   {
-    pa_tiny a({ 1, 2, 3, 4 });     // capacity 4
+    pa_tiny a({ 1, 2, 3, 4 });      // capacity 4
     int s = a.sum();
     require(s, 10);
   }
@@ -704,7 +704,7 @@ main()
     pa_tiny a;
     auto b = a.set(2, 77);
     require_true(b.any(77));
-    require_true(b.any(0));     // other slots are 0
+    require_true(b.any(0));      // other slots are 0
     require_false(b.any(999));
   }
   end_test_case();
@@ -847,7 +847,7 @@ main()
       require(m3.get(0).val, 10);
       require(m3.get(1).val, 20);
       require(m3.get(2).val, 30);
-    }     // all versions destroyed here
+    }      // all versions destroyed here
     require(g_alive, before);
   }
   end_test_case();
@@ -861,7 +861,7 @@ main()
       auto m1 = m.set(0, Tracked(42));
       int after_set = g_alive;
 
-      auto m2 = m1;     // O(1) copy, just retains root
+      auto m2 = m1;      // O(1) copy, just retains root
       // no new Tracked objects should be constructed
       require(g_alive, after_set);
       require_true(m1.identity() == m2.identity());
@@ -918,7 +918,7 @@ main()
 
       require(branch_a.get(1).val, 20);
       require(branch_b.get(1).val, 30);
-      require(base1.get(1).val, 0);     // default
+      require(base1.get(1).val, 0);      // default
     }
     require(g_alive, before);
   }
@@ -1081,7 +1081,7 @@ main()
     m = m.set(0, -100);
     m = m.set(1, -999999);
     m = m.set(2, 0);
-    m = m.set(3, 2147483647);     // INT_MAX
+    m = m.set(3, 2147483647);      // INT_MAX
 
     require(m.get(0), -100);
     require(m.get(1), -999999);
@@ -1131,7 +1131,7 @@ main()
   test_case("stress: fork 50 branches from single base");
   {
     auto base = make_seq_small(8);
-    pa_small branches[16];     // limited to capacity
+    pa_small branches[16];      // limited to capacity
 
     for ( usize i = 0; i < 16 && i < pa_small::length; ++i ) branches[i] = base.set(i, 9999);
 
@@ -1271,7 +1271,7 @@ main()
   {
     auto m = make_seq_small(8);
     // set slot 3 to the same value it already has
-    auto m2 = m.set(3, 30);     // 3*10 = 30
+    auto m2 = m.set(3, 30);      // 3*10 = 30
     require_true(m == m2);
     // but identity should differ (path copy always creates new nodes)
     require_false(m.identity() == m2.identity());

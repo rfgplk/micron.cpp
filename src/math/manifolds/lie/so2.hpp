@@ -26,7 +26,7 @@ namespace manifolds
 namespace lie
 {
 
-template <ieee754_floating F> struct SO2 {
+template<ieee754_floating F> struct SO2 {
   F theta;
 
   [[nodiscard, gnu::always_inline]] static constexpr SO2
@@ -93,9 +93,9 @@ template <ieee754_floating F> struct SO2 {
   }
 };
 
-};     // namespace lie
+};      // namespace lie
 
-template <ieee754_floating F> struct traits<lie::SO2<F>> {
+template<ieee754_floating F> struct traits<lie::SO2<F>> {
   using point_type = lie::SO2<F>;
   using tangent_type = F;
   using scalar_type = F;
@@ -104,6 +104,6 @@ template <ieee754_floating F> struct traits<lie::SO2<F>> {
   static constexpr usize ambient_dim = 1;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

@@ -31,9 +31,9 @@ namespace quaternions
 // Public tag types
 enum class rotations : u8 {
   // Tait-Bryan body-axis labels (aerospace)
-  roll = 0,      // X-axis
-  pitch = 1,     // Y-axis
-  yaw = 2,       // Z-axis
+  roll = 0,       // X-axis
+  pitch = 1,      // Y-axis
+  yaw = 2,        // Z-axis
   // Proper-Euler symbol aliases (same physical axes)
   alpha = roll,
   beta = pitch,
@@ -41,8 +41,8 @@ enum class rotations : u8 {
 };
 
 enum class frame : u8 {
-  body = 0,      // intrinsic:  q' = q x dq
-  world = 1,     // extrinsic:  q' = dq x q
+  body = 0,       // intrinsic:  q' = q x dq
+  world = 1,      // extrinsic:  q' = dq x q
 };
 
 enum class euler_order : u8 {
@@ -68,7 +68,7 @@ enum class euler_order : u8 {
 namespace __impl_euler
 {
 
-template <rotations R>
+template<rotations R>
 inline constexpr u8 axis_of_v = ((R == rotations::roll) || (R == rotations::alpha))   ? u8(0)
                                 : ((R == rotations::pitch) || (R == rotations::beta)) ? u8(1)
                                                                                       : u8(2);
@@ -83,7 +83,7 @@ inline constexpr u8 axis_of_v = ((R == rotations::roll) || (R == rotations::alph
 //   w = aw*bw - ax*bx - ay*by - az*bz
 
 // body-frame
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 mul_x_body(const quaternion<T> &q, T s, T c) noexcept
 {
@@ -91,7 +91,7 @@ mul_x_body(const quaternion<T> &q, T s, T c) noexcept
 }
 
 // body-frame
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 mul_y_body(const quaternion<T> &q, T s, T c) noexcept
 {
@@ -99,7 +99,7 @@ mul_y_body(const quaternion<T> &q, T s, T c) noexcept
 }
 
 // body-frame
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 mul_z_body(const quaternion<T> &q, T s, T c) noexcept
 {
@@ -107,7 +107,7 @@ mul_z_body(const quaternion<T> &q, T s, T c) noexcept
 }
 
 // world-frame
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 mul_x_world(const quaternion<T> &q, T s, T c) noexcept
 {
@@ -115,7 +115,7 @@ mul_x_world(const quaternion<T> &q, T s, T c) noexcept
 }
 
 // world-frame
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 mul_y_world(const quaternion<T> &q, T s, T c) noexcept
 {
@@ -123,7 +123,7 @@ mul_y_world(const quaternion<T> &q, T s, T c) noexcept
 }
 
 // world-frame
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 mul_z_world(const quaternion<T> &q, T s, T c) noexcept
 {
@@ -131,7 +131,7 @@ mul_z_world(const quaternion<T> &q, T s, T c) noexcept
 }
 
 // fast unit normalization of an already-near-unit quaternion (used by rotate_safe)
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 unit_renorm(const quaternion<T> &q) noexcept
 {
@@ -140,12 +140,12 @@ unit_renorm(const quaternion<T> &q) noexcept
   return quaternion<T>{ q.x * inv, q.y * inv, q.z * inv, q.w * inv };
 }
 
-};     // namespace __impl_euler
+};      // namespace __impl_euler
 
 // %%%%%%%%%%$$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%
 // single-axis quaternion builders
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 quat_x(T angle) noexcept
 {
@@ -154,7 +154,7 @@ quat_x(T angle) noexcept
   return quaternion<T>{ s, T(0), T(0), c };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 quat_y(T angle) noexcept
 {
@@ -163,7 +163,7 @@ quat_y(T angle) noexcept
   return quaternion<T>{ T(0), s, T(0), c };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 quat_z(T angle) noexcept
 {
@@ -172,7 +172,7 @@ quat_z(T angle) noexcept
   return quaternion<T>{ T(0), T(0), s, c };
 }
 
-template <rotations Axis, ieee754_floating T>
+template<rotations Axis, ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 axis_quat(T angle) noexcept
 {
@@ -189,7 +189,7 @@ axis_quat(T angle) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // rotate()
 
-template <rotations Axis, frame F = frame::body, ieee754_floating T>
+template<rotations Axis, frame F = frame::body, ieee754_floating T>
 [[gnu::always_inline]] inline constexpr void
 rotate(quaternion<T> &q, T angle) noexcept
 {
@@ -212,7 +212,7 @@ rotate(quaternion<T> &q, T angle) noexcept
   }
 }
 
-template <rotations Axis, frame F = frame::body, ieee754_floating T>
+template<rotations Axis, frame F = frame::body, ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 rotated(const quaternion<T> &q, T angle) noexcept
 {
@@ -221,7 +221,7 @@ rotated(const quaternion<T> &q, T angle) noexcept
   return r;
 }
 
-template <rotations Axis, frame F = frame::body, ieee754_floating T>
+template<rotations Axis, frame F = frame::body, ieee754_floating T>
 [[gnu::always_inline]] inline constexpr void
 rotate_safe(quaternion<T> &q, T angle) noexcept
 {
@@ -229,7 +229,7 @@ rotate_safe(quaternion<T> &q, T angle) noexcept
   q = __impl_euler::unit_renorm<T>(q);
 }
 
-template <rotations Axis, frame F = frame::body, ieee754_floating T>
+template<rotations Axis, frame F = frame::body, ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 rotated_safe(const quaternion<T> &q, T angle) noexcept
 {
@@ -238,7 +238,7 @@ rotated_safe(const quaternion<T> &q, T angle) noexcept
   return r;
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 inline constexpr void
 rotate(quaternion<T> &q, rotations axis, T angle, frame f = frame::body) noexcept
 {
@@ -266,7 +266,7 @@ rotate(quaternion<T> &q, rotations axis, T angle, frame f = frame::body) noexcep
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // single-axis vector rotation
-template <rotations Axis, ieee754_floating T>
+template<rotations Axis, ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr micron::vector_3<T>
 rotate_axis(const micron::vector_3<T> &v, T angle) noexcept
 {
@@ -283,7 +283,7 @@ rotate_axis(const micron::vector_3<T> &v, T angle) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%#%%%%%%%%%%%%
 // euler to quaternion (all 12 sequences, closed form)
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 from_euler(T a, T b, T c) noexcept
 {
@@ -327,13 +327,13 @@ from_euler(T a, T b, T c) noexcept
   } else if constexpr ( Ord == euler_order::ZXZ ) {
     return quaternion<T>{ c1 * s2 * c3 + s1 * s2 * s3, s1 * s2 * c3 - c1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3,
                           c1 * c2 * c3 - s1 * c2 * s3 };
-  } else {     // ZYZ
+  } else {      // ZYZ
     return quaternion<T>{ c1 * s2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3,
                           c1 * c2 * c3 - s1 * c2 * s3 };
   }
 }
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 from_euler(const micron::vector_3<T> &abc) noexcept
 {
@@ -343,7 +343,7 @@ from_euler(const micron::vector_3<T> &abc) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // euler to rotation matrix 3x3 (all 12 sequences, closed form)
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr mat<T, 3, 3>
 from_euler_matrix(T a, T b, T c) noexcept
 {
@@ -464,7 +464,7 @@ from_euler_matrix(T a, T b, T c) noexcept
     d[6] = sb * sg;
     d[7] = sb * cg;
     d[8] = cb;
-  } else {     // ZYZ
+  } else {      // ZYZ
     d[0] = ca * cb * cg - sa * sg;
     d[1] = -ca * cb * sg - sa * cg;
     d[2] = ca * sb;
@@ -478,14 +478,14 @@ from_euler_matrix(T a, T b, T c) noexcept
   return R;
 }
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr mat<T, 3, 3>
 from_euler_matrix(const micron::vector_3<T> &abc) noexcept
 {
   return from_euler_matrix<Ord, T>(abc.x, abc.y, abc.z);
 }
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr mat<T, 4, 4>
 from_euler_matrix4(T a, T b, T c) noexcept
 {
@@ -512,7 +512,7 @@ from_euler_matrix4(T a, T b, T c) noexcept
   return M;
 }
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr mat<T, 4, 4>
 from_euler_matrix4(const micron::vector_3<T> &abc) noexcept
 {
@@ -525,7 +525,7 @@ from_euler_matrix4(const micron::vector_3<T> &abc) noexcept
 namespace __impl_euler
 {
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 clamp_unit(T x) noexcept
 {
@@ -534,16 +534,16 @@ clamp_unit(T x) noexcept
   return x;
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 gimbal_floor() noexcept
 {
   return T(1) - math::default_eps<T>();
 }
 
-};     // namespace __impl_euler
+};      // namespace __impl_euler
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr micron::vector_3<T>
 to_euler_matrix(const mat<T, 3, 3> &R) noexcept
 {
@@ -667,7 +667,7 @@ to_euler_matrix(const mat<T, 3, 3> &R) noexcept
       a = math::atan2<T>(R02, -R12);
       c = math::atan2<T>(R20, R21);
     }
-  } else {     // ZYZ
+  } else {      // ZYZ
     const T cb = __impl_euler::clamp_unit<T>(R22);
     b = math::acos<T>(cb);
     if ( math::fabs(cb) >= glim ) {
@@ -684,7 +684,7 @@ to_euler_matrix(const mat<T, 3, 3> &R) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // quaternion to euler (all 12 sequences)
 
-template <euler_order Ord, ieee754_floating T>
+template<euler_order Ord, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr micron::vector_3<T>
 to_euler(const quaternion<T> &q) noexcept
 {
@@ -719,41 +719,41 @@ to_euler(const quaternion<T> &q) noexcept
 // orientate3 / orientate4 / orientate
 // GLM style
 
-template <euler_order Ord = euler_order::YXZ, ieee754_floating T>
+template<euler_order Ord = euler_order::YXZ, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr mat<T, 3, 3>
 orientate3(const micron::vector_3<T> &angles) noexcept
 {
   return from_euler_matrix<Ord, T>(angles.x, angles.y, angles.z);
 }
 
-template <euler_order Ord = euler_order::YXZ, ieee754_floating T>
+template<euler_order Ord = euler_order::YXZ, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr mat<T, 4, 4>
 orientate4(const micron::vector_3<T> &angles) noexcept
 {
   return from_euler_matrix4<Ord, T>(angles.x, angles.y, angles.z);
 }
 
-template <euler_order Ord = euler_order::YXZ, ieee754_floating T>
+template<euler_order Ord = euler_order::YXZ, ieee754_floating T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 orientate(const micron::vector_3<T> &angles) noexcept
 {
   return from_euler<Ord, T>(angles.x, angles.y, angles.z);
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 from_euler_zyx(T yaw, T pitch, T roll) noexcept
 {
   return from_euler<euler_order::ZYX, T>(yaw, pitch, roll);
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr micron::vector_3<T>
 to_euler_zyx(const quaternion<T> &q) noexcept
 {
   return to_euler<euler_order::ZYX, T>(q);
 }
 
-};     // namespace quaternions
-};     // namespace math
-};     // namespace micron
+};      // namespace quaternions
+};      // namespace math
+};      // namespace micron

@@ -21,7 +21,7 @@ namespace fp
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // flatten  (C<C<T>> -> C<T>)
-template <is_iterable_container O>
+template<is_iterable_container O>
   requires is_iterable_container<typename O::value_type>
 typename O::value_type
 flatten(const O &outer)
@@ -44,7 +44,7 @@ flatten(const O &outer)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // flat_map/concat_map  (fmap then flatten)
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_domain<Fn, typename C::value_type> && is_iterable_container<micron::invoke_result_t<Fn, typename C::value_type>>
 C
 flat_map(const C &c, Fn fn)
@@ -61,7 +61,7 @@ flat_map(const C &c, Fn fn)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_domain<Fn, const typename C::value_type *>
            && is_iterable_container<micron::invoke_result_t<Fn, const typename C::value_type *>> && (!fn_domain<Fn, typename C::value_type>)
 C
@@ -80,7 +80,7 @@ flat_map(const C &c, Fn fn)
 }
 
 // micron::function overload
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 flat_map(const C &c, micron::function<C(typename C::value_type)> fn)
 {
@@ -96,7 +96,7 @@ flat_map(const C &c, micron::function<C(typename C::value_type)> fn)
   return out;
 }
 
-template <typename Fn>
+template<typename Fn>
 auto
 flat_map_c(Fn &&fn)
 {
@@ -105,7 +105,7 @@ flat_map_c(Fn &&fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // chunk  (split container into consecutive chunks of size n)
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<C, empty_container_error>
 chunk(const C &c, usize n)
 {
@@ -113,7 +113,7 @@ chunk(const C &c, usize n)
   return micron::option<C, empty_container_error>{ c };
 }
 
-template <is_iterable_container Inner, is_iterable_container C>
+template<is_iterable_container Inner, is_iterable_container C>
   requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
 C
 chunk_into(const C &c, usize n)
@@ -136,7 +136,7 @@ chunk_into(const C &c, usize n)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sliding  (sliding window of size n, step 1)
-template <is_iterable_container Inner, is_iterable_container C>
+template<is_iterable_container Inner, is_iterable_container C>
   requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
 C
 sliding(const C &c, usize n)
@@ -157,7 +157,7 @@ sliding(const C &c, usize n)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // intersperse  ([a, b, c] -> [a, sep, b, sep, c])
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 intersperse(const C &c, const typename C::value_type &sep)
 {
@@ -183,7 +183,7 @@ intersperse_c(auto sep)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // intercalate  (flatten(intersperse(outer, sep)))
-template <is_iterable_container O>
+template<is_iterable_container O>
   requires is_iterable_container<typename O::value_type>
 typename O::value_type
 intercalate(const typename O::value_type &sep, const O &outer)
@@ -211,7 +211,7 @@ intercalate(const typename O::value_type &sep, const O &outer)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // group_by  (split into maximal runs where adjacent elements match)
-template <is_iterable_container Inner, is_iterable_container C, typename EqFn>
+template<is_iterable_container Inner, is_iterable_container C, typename EqFn>
   requires fn_binary_predicate<EqFn, typename C::value_type> && micron::is_same_v<typename Inner::value_type, typename C::value_type>
 C
 group_by(const C &c, EqFn eq)
@@ -237,7 +237,7 @@ group_by(const C &c, EqFn eq)
   return out;
 }
 
-template <is_iterable_container Inner, is_iterable_container C, typename EqFn>
+template<is_iterable_container Inner, is_iterable_container C, typename EqFn>
   requires micron::invocable<EqFn, const typename C::value_type *, const typename C::value_type *>
            && micron::is_convertible_v<micron::invoke_result_t<EqFn, const typename C::value_type *, const typename C::value_type *>, bool>
            && (!fn_binary_predicate<EqFn, typename C::value_type>) && micron::is_same_v<typename Inner::value_type, typename C::value_type>
@@ -265,7 +265,7 @@ group_by(const C &c, EqFn eq)
   return out;
 }
 
-template <is_iterable_container Inner, is_iterable_container C>
+template<is_iterable_container Inner, is_iterable_container C>
   requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
 C
 group_by(const C &c, micron::function<bool(typename C::value_type, typename C::value_type)> eq)
@@ -291,7 +291,7 @@ group_by(const C &c, micron::function<bool(typename C::value_type, typename C::v
   return out;
 }
 
-template <is_iterable_container Inner, is_iterable_container C>
+template<is_iterable_container Inner, is_iterable_container C>
   requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
 C
 group(const C &c)
@@ -301,7 +301,7 @@ group(const C &c)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // transpose  (swap rows and columns of C<C<T>>)
-template <is_iterable_container O>
+template<is_iterable_container O>
   requires is_iterable_container<typename O::value_type>
 micron::option<O, bad_zip_error>
 transpose(const O &mat)
@@ -325,21 +325,21 @@ transpose(const O &mat)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // merge/concat
-template <is_iterable_container C>
+template<is_iterable_container C>
 auto
 merge_c(const C &b)
 {
   return [&b](C a) { return micron::merge(micron::move(a), b); };
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 auto
 concat_c(const C &b)
 {
   return [&b](C a) { return micron::concat(micron::move(a), b); };
 }
 
-template <is_iterable_container C, typename E>
+template<is_iterable_container C, typename E>
 micron::option<C, E>
 merge(micron::option<C, E> opt_a, const C &b)
 {
@@ -347,7 +347,7 @@ merge(micron::option<C, E> opt_a, const C &b)
   return micron::option<C, E>{ micron::merge(opt_a.template cast<C>(), b) };
 }
 
-template <is_iterable_container C, typename E>
+template<is_iterable_container C, typename E>
 micron::option<C, E>
 merge(micron::option<C, E> opt_a, micron::option<C, E> opt_b)
 {
@@ -356,7 +356,7 @@ merge(micron::option<C, E> opt_a, micron::option<C, E> opt_b)
   return micron::option<C, E>{ micron::merge(opt_a.template cast<C>(), opt_b.template cast<C>()) };
 }
 
-template <is_iterable_container C, typename E>
+template<is_iterable_container C, typename E>
 micron::option<C, E>
 concat(micron::option<C, E> opt_a, const C &b)
 {
@@ -366,7 +366,7 @@ concat(micron::option<C, E> opt_a, const C &b)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // safe element access
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<typename C::value_type, index_out_of_bounds_error>
 at(const C &c, usize i) noexcept
 {
@@ -376,7 +376,7 @@ at(const C &c, usize i) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // find_first / find_last
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::option<typename C::value_type, empty_container_error>
 find_first(const C &c, Fn fn) noexcept
@@ -388,7 +388,7 @@ find_first(const C &c, Fn fn) noexcept
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::option<typename C::value_type, empty_container_error>
 find_first(const C &c, Fn fn) noexcept
@@ -400,7 +400,7 @@ find_first(const C &c, Fn fn) noexcept
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 find_first(const C &c, micron::function<bool(typename C::value_type)> fn) noexcept
 {
@@ -411,7 +411,7 @@ find_first(const C &c, micron::function<bool(typename C::value_type)> fn) noexce
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::option<typename C::value_type, empty_container_error>
 find_last(const C &c, Fn fn) noexcept
@@ -426,7 +426,7 @@ find_last(const C &c, Fn fn) noexcept
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::option<typename C::value_type, empty_container_error>
 find_last(const C &c, Fn fn) noexcept
@@ -441,7 +441,7 @@ find_last(const C &c, Fn fn) noexcept
   return micron::option<typename C::value_type, empty_container_error>{ empty_container_error{} };
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 find_last(const C &c, micron::function<bool(typename C::value_type)> fn) noexcept
 {
@@ -457,7 +457,7 @@ find_last(const C &c, micron::function<bool(typename C::value_type)> fn) noexcep
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // find_index
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, typename C::value_type>
 micron::option<usize, empty_container_error>
 find_index(const C &c, Fn fn) noexcept
@@ -469,7 +469,7 @@ find_index(const C &c, Fn fn) noexcept
   return micron::option<usize, empty_container_error>{ empty_container_error{} };
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_predicate<Fn, const typename C::value_type *> && (!fn_predicate<Fn, typename C::value_type>)
 micron::option<usize, empty_container_error>
 find_index(const C &c, Fn fn) noexcept
@@ -483,7 +483,7 @@ find_index(const C &c, Fn fn) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // head/last/tail/init
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 head(const C &c) noexcept
 {
@@ -491,7 +491,7 @@ head(const C &c) noexcept
   return micron::option<typename C::value_type, empty_container_error>{ *c.begin() };
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<typename C::value_type, empty_container_error>
 last(const C &c) noexcept
 {
@@ -499,7 +499,7 @@ last(const C &c) noexcept
   return micron::option<typename C::value_type, empty_container_error>{ *(c.end() - 1) };
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<C, empty_container_error>
 tail(const C &c)
 {
@@ -513,7 +513,7 @@ tail(const C &c)
   return micron::option<C, empty_container_error>{ micron::move(out) };
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<C, empty_container_error>
 init(const C &c)
 {
@@ -528,7 +528,7 @@ init(const C &c)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // snoc: append single element
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<C, empty_container_error>
 snoc(const C &c, const typename C::value_type &v)
 {
@@ -543,7 +543,7 @@ snoc(const C &c, const typename C::value_type &v)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // uncons
-template <is_iterable_container C>
+template<is_iterable_container C>
 micron::option<micron::tuple<typename C::value_type, C>, empty_container_error>
 uncons(const C &c)
 {
@@ -556,7 +556,7 @@ uncons(const C &c)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // elem
-template <is_iterable_container C>
+template<is_iterable_container C>
 bool
 elem(const C &c, const typename C::value_type &v) noexcept
 {
@@ -569,7 +569,7 @@ elem(const C &c, const typename C::value_type &v) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // enumerate
-template <is_iterable_container Out, is_iterable_container C>
+template<is_iterable_container Out, is_iterable_container C>
 Out
 enumerate(const C &c)
 {
@@ -583,7 +583,7 @@ enumerate(const C &c)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // iterate: produce container of n applications
 // iterate(n, f, x) = [x, f(x), f(f(x)), ...]
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_codomain<Fn, typename C::value_type>
 C
 iterate(usize n, Fn fn, typename C::value_type seed)
@@ -598,7 +598,7 @@ iterate(usize n, Fn fn, typename C::value_type seed)
   return out;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires fn_arrow<Fn, const typename C::value_type *, typename C::value_type> && (!fn_codomain<Fn, typename C::value_type>)
 C
 iterate(usize n, Fn fn, typename C::value_type seed)
@@ -613,7 +613,7 @@ iterate(usize n, Fn fn, typename C::value_type seed)
   return out;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 C
 iterate(usize n, micron::function<typename C::value_type(typename C::value_type)> fn, typename C::value_type seed)
 {
@@ -630,7 +630,7 @@ iterate(usize n, micron::function<typename C::value_type(typename C::value_type)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // unfold: (B -> option<tuple<A,B>, E>) -> B -> C<A>
 // generate elements until the function returns error
-template <is_iterable_container C, typename Fn, typename B>
+template<is_iterable_container C, typename Fn, typename B>
   requires fn_domain<Fn, B> && micron::is_option<micron::invoke_result_t<Fn, B>>
 C
 unfold(Fn fn, B seed)
@@ -646,5 +646,5 @@ unfold(Fn fn, B seed)
   return out;
 }
 
-};     // namespace fp
-};     // namespace micron
+};      // namespace fp
+};      // namespace micron

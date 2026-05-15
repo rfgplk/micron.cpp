@@ -21,7 +21,7 @@
 namespace micron
 {
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires is_iterable_container<typename T::value_type>
 T
 melt(const T &obj)
@@ -39,7 +39,7 @@ melt(const T &obj)
   return out;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
   requires micron::is_arithmetic_v<typename T::value_type>
 T
 cut(const T &obj, const T &bins)
@@ -54,7 +54,7 @@ cut(const T &obj, const T &bins)
   return out;
 }
 
-template <typename I, typename J, typename O>
+template<typename I, typename J, typename O>
 constexpr O
 merge(I first1, I last1, J first2, J last2, O d_first)
 {
@@ -70,7 +70,7 @@ merge(I first1, I last1, J first2, J last2, O d_first)
   return d_first;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T
 merge(const T &obj1, const T &obj2)
 {
@@ -79,14 +79,14 @@ merge(const T &obj1, const T &obj2)
   return out;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 T
 concat(const T &obj1, const T &obj2)
 {
   return merge(obj1, obj2);
 }
 
-template <typename I>
+template<typename I>
 void
 reverse(I first, I last)
 {
@@ -98,7 +98,7 @@ reverse(I first, I last)
   }
 }
 
-template <typename I>
+template<typename I>
 I
 rotate(I first, I n_first, I last)
 {
@@ -131,7 +131,7 @@ rotate(I first, I n_first, I last)
   return new_first;
 }
 
-template <typename I>
+template<typename I>
 I
 cycle_rotate(I first, I n_first, I last)
 {
@@ -160,7 +160,7 @@ cycle_rotate(I first, I n_first, I last)
   return first + (last - n_first);
 }
 
-template <typename T, typename Cmp>
+template<typename T, typename Cmp>
 constexpr void
 __sift_down(T *first, umax_t start, umax_t end, Cmp comp)
 {
@@ -178,7 +178,7 @@ __sift_down(T *first, umax_t start, umax_t end, Cmp comp)
   }
 }
 
-template <typename T, typename Cmp>
+template<typename T, typename Cmp>
 constexpr void
 __sift_up(T *first, umax_t idx, Cmp comp) noexcept
 {
@@ -195,7 +195,7 @@ __sift_up(T *first, umax_t idx, Cmp comp) noexcept
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 make_heap(C &c) noexcept
 {
@@ -211,7 +211,7 @@ make_heap(C &c) noexcept
   }
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 make_heap(C &c, Cmp comp) noexcept
 {
@@ -224,7 +224,7 @@ make_heap(C &c, Cmp comp) noexcept
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 make_heap(C &c, typename C::umax_type lim) noexcept
 {
@@ -239,7 +239,7 @@ make_heap(C &c, typename C::umax_type lim) noexcept
   }
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 make_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
 {
@@ -251,7 +251,7 @@ make_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 push_heap(C &c) noexcept
 {
@@ -264,7 +264,7 @@ push_heap(C &c) noexcept
   __sift_up(c.begin(), n - 1, comp);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 push_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
 {
@@ -273,7 +273,7 @@ push_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
   __sift_up(c.begin(), lim - 1, comp);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 push_heap(C &c, typename C::umax_type lim) noexcept
 {
@@ -285,7 +285,7 @@ push_heap(C &c, typename C::umax_type lim) noexcept
   __sift_up(c.begin(), lim - 1, comp);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 push_heap(C &c, Cmp comp) noexcept
 {
@@ -295,7 +295,7 @@ push_heap(C &c, Cmp comp) noexcept
   __sift_up(c.begin(), n - 1, comp);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 pop_heap(C &c) noexcept
 {
@@ -314,7 +314,7 @@ pop_heap(C &c) noexcept
   __sift_down(first, 0, n - 1, comp);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 pop_heap(C &c, Cmp comp) noexcept
 {
@@ -330,7 +330,7 @@ pop_heap(C &c, Cmp comp) noexcept
   __sift_down(first, 0, n - 1, comp);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 pop_heap(C &c, typename C::umax_type lim) noexcept
 {
@@ -348,7 +348,7 @@ pop_heap(C &c, typename C::umax_type lim) noexcept
   __sift_down(first, 0, lim - 1, comp);
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 pop_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
 {
@@ -363,12 +363,12 @@ pop_heap(C &c, typename C::umax_type lim, Cmp comp) noexcept
   __sift_down(first, 0, lim - 1, comp);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 sort_heap(C &c) noexcept
 {
   using T = typename C::value_type;
-  auto comp = [](const T &a, const T &b) { return a > b; };     // max
+  auto comp = [](const T &a, const T &b) { return a > b; };      // max
   umax_t n = c.size();
   auto *first = c.begin();
 
@@ -382,12 +382,12 @@ sort_heap(C &c) noexcept
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 sort_heap_min(C &c) noexcept
 {
   using T = typename C::value_type;
-  auto comp = [](const T &a, const T &b) { return a < b; };     // min
+  auto comp = [](const T &a, const T &b) { return a < b; };      // min
   umax_t n = c.size();
   auto *first = c.begin();
 
@@ -401,7 +401,7 @@ sort_heap_min(C &c) noexcept
   }
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr void
 sort_heap(C &c, Cmp comp) noexcept
 {
@@ -418,7 +418,7 @@ sort_heap(C &c, Cmp comp) noexcept
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr bool
 is_heap(const C &c) noexcept
 {
@@ -436,7 +436,7 @@ is_heap(const C &c) noexcept
   return true;
 }
 
-template <is_iterable_container C, typename Cmp>
+template<is_iterable_container C, typename Cmp>
 constexpr bool
 is_heap(const C &c, Cmp comp) noexcept
 {
@@ -451,7 +451,7 @@ is_heap(const C &c, Cmp comp) noexcept
   return true;
 }
 
-}     // namespace micron
+}      // namespace micron
 
 // TODO: implement all of this, from pandas
 

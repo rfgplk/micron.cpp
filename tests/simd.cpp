@@ -65,7 +65,7 @@ main()
   e.to_zero();
   sb::require(e[0], 0);
   mc::simd::v256<mc::simd::i256, mc::simd::__v32> f(5);
-  for ( int i = 0; i < 10; ++i ) f *= 2;     // (5*(2^10)) == 5120
+  for ( int i = 0; i < 10; ++i ) f *= 2;      // (5*(2^10)) == 5120
   mc::console(f[5]);
   sb::require(f[5], 5120);
 

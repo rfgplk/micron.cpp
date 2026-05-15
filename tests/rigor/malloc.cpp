@@ -336,7 +336,7 @@ main(void)
   {
     // C standard: free(NULL) is defined to do nothing
     free(nullptr);
-    sb::require(true);     // if we reach here, no crash
+    sb::require(true);      // if we reach here, no crash
   }
   sb::end_test_case();
 
@@ -346,7 +346,7 @@ main(void)
     sb::require(p != nullptr);
     free(p);
     void *q = malloc(128);
-    sb::require(q != nullptr);     // must succeed; may or may not equal p
+    sb::require(q != nullptr);      // must succeed; may or may not equal p
     free(q);
   }
   sb::end_test_case();
@@ -449,7 +449,7 @@ main(void)
     if ( p ) free(p);
     void *q = calloc(64, 0);
     if ( q ) free(q);
-    sb::require(true);     // reaching here is success
+    sb::require(true);      // reaching here is success
   }
   sb::end_test_case();
 

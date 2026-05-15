@@ -24,7 +24,7 @@ namespace math
 namespace integrate
 {
 
-template <usize Order, ieee754_floating F, callable_real<F> Fn>
+template<usize Order, ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline F
 gauss_legendre(Fn f, F a, F b) noexcept
 {
@@ -49,7 +49,7 @@ gauss_legendre(Fn f, F a, F b) noexcept
   return half_w * s;
 }
 
-template <usize N, ieee754_floating F, callable_real<F> Fn>
+template<usize N, ieee754_floating F, callable_real<F> Fn>
   requires(N >= 2 and N <= 64)
 [[nodiscard]] inline F
 clenshaw_curtis(Fn f, F a, F b) noexcept
@@ -81,6 +81,6 @@ clenshaw_curtis(Fn f, F a, F b) noexcept
   return half_w * F(2) * acc;
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

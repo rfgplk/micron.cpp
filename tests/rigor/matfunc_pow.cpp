@@ -15,7 +15,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace ml = micron::math::linalg;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {
@@ -24,7 +24,7 @@ approx(F a, F b, F tol) noexcept
   return d <= tol;
 }
 
-template <typename F, usize N>
+template<typename F, usize N>
 static bool
 mat_close(const m::mat<F, N, N> &A, const m::mat<F, N, N> &B, F tol) noexcept
 {
@@ -33,7 +33,7 @@ mat_close(const m::mat<F, N, N> &A, const m::mat<F, N, N> &B, F tol) noexcept
   return true;
 }
 
-template <typename F, usize N>
+template<typename F, usize N>
 static m::mat<F, N, N>
 gemm(const m::mat<F, N, N> &A, const m::mat<F, N, N> &B) noexcept
 {

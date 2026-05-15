@@ -12,7 +12,7 @@
 #include "../types.hpp"
 #include "../vector/fvector.hpp"
 
-template <typename Key, typename Value>
+template<typename Key, typename Value>
   requires micron::is_copy_constructible_v<Key> && micron::is_move_constructible_v<Key> && micron::is_copy_constructible_v<Value>
            && micron::is_move_constructible_v<Value>
 class radix_node
@@ -25,9 +25,9 @@ class radix_node
 
     node() = delete;
 
-    node(const Key &k, const Value &v) : key_fragment(k), value(v), is_leaf(true) {}
+    node(const Key &k, const Value &v) : key_fragment(k), value(v), is_leaf(true) { }
 
-    node(Key &&k, Value &&v) noexcept : key_fragment(micron::move(k)), value(micron::move(v)), is_leaf(true) {}
+    node(Key &&k, Value &&v) noexcept : key_fragment(micron::move(k)), value(micron::move(v)), is_leaf(true) { }
 
     node(const node &o) = delete;
 
@@ -71,7 +71,7 @@ class radix_node
   }
 
 public:
-  radix_node() : root(nullptr) {}
+  radix_node() : root(nullptr) { }
 
   ~radix_node() { clear(); }
 

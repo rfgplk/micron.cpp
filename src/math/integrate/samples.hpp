@@ -24,14 +24,14 @@ namespace math
 namespace integrate
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 integrate_samples(const F *xs, const F *ys, usize n) noexcept
 {
   return trapezoid<F>(xs, ys, n);
 }
 
-template <is_iterable_container C, is_iterable_container D>
+template<is_iterable_container C, is_iterable_container D>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard]] inline typename C::value_type
 integrate_samples(const C &xs, const D &ys) noexcept
@@ -39,7 +39,7 @@ integrate_samples(const C &xs, const D &ys) noexcept
   return trapezoid<typename C::value_type>(xs.cbegin(), ys.cbegin(), xs.size());
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 cum_trapezoid(const F *xs, const F *ys, F *out, usize n) noexcept
 {
@@ -51,6 +51,6 @@ cum_trapezoid(const F *xs, const F *ys, F *out, usize n) noexcept
   }
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

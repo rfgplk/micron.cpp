@@ -100,7 +100,7 @@ main()
     f64 xs[n], ys[n];
     for ( usize i = 0; i < n; ++i ) {
       xs[i] = f64(i);
-      ys[i] = 1.0 + 2.0 * xs[i] + 0.5 * mk::trig::sin<f64>(3.0 * xs[i]);     // affine + ripple
+      ys[i] = 1.0 + 2.0 * xs[i] + 0.5 * mk::trig::sin<f64>(3.0 * xs[i]);      // affine + ripple
     }
     raw_slice<const f64> empty_w(static_cast<const f64 *>(nullptr), 0);
     build_info<f64> info{};
@@ -165,7 +165,7 @@ main()
     f64 xs[n], ys[n];
     for ( usize i = 0; i < n; ++i ) {
       xs[i] = -2.0 + 4.0 * f64(i) / f64(n - 1);
-      ys[i] = mk::trig::sin<f64>(2.0 * xs[i]);     // smooth
+      ys[i] = mk::trig::sin<f64>(2.0 * xs[i]);      // smooth
     }
     build_info<f64> info{};
     auto s = make_adaptive_knots<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n), 0.005, 30, &info);

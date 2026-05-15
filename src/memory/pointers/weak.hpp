@@ -9,7 +9,7 @@
 
 namespace micron
 {
-template <class Type> class weak_pointer : private __internal_pointer_alloc<Type>
+template<class Type> class weak_pointer: private __internal_pointer_alloc<Type>
 {
   Type *internal_pointer;
 
@@ -22,20 +22,20 @@ public:
   using __alloc = __internal_pointer_alloc<Type>;
 
   // nonowning destructor never frees
-  ~weak_pointer() {}
+  ~weak_pointer() { }
 
-  weak_pointer() : internal_pointer(nullptr) {}
+  weak_pointer() : internal_pointer(nullptr) { }
 
-  template <is_nullptr V> weak_pointer(V) : internal_pointer(nullptr) {}
+  template<is_nullptr V> weak_pointer(V) : internal_pointer(nullptr) { }
 
-  template <is_pointer_class C> weak_pointer(C &c) : internal_pointer(c.get()) {}
+  template<is_pointer_class C> weak_pointer(C &c) : internal_pointer(c.get()) { }
 
   weak_pointer(weak_pointer &&p) : internal_pointer(p.internal_pointer)
   {
     if ( &p != this ) p.internal_pointer = nullptr;
   }
 
-  weak_pointer(const weak_pointer &p) : internal_pointer(p.internal_pointer) {}
+  weak_pointer(const weak_pointer &p) : internal_pointer(p.internal_pointer) { }
 
   weak_pointer &
   operator=(weak_pointer &&t)
@@ -54,7 +54,7 @@ public:
     return *this;
   }
 
-  template <is_pointer_class C>
+  template<is_pointer_class C>
   weak_pointer &
   operator=(C &ptr)
   {
@@ -122,35 +122,35 @@ public:
     return internal_pointer != nullptr;
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
   {
     return internal_pointer == o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return internal_pointer > o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return internal_pointer < o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return internal_pointer <= o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
   {
@@ -177,11 +177,11 @@ public:
     return temp;
   }
 
-  template <typename P = unique_pointer<Type>>
+  template<typename P = unique_pointer<Type>>
   inline P
   assume_ownership() noexcept
   {
-    return P(micron::move(internal_pointer));     // nulls internal_pointer
+    return P(micron::move(internal_pointer));      // nulls internal_pointer
   }
 };
-};     // namespace micron
+};      // namespace micron

@@ -22,8 +22,8 @@ namespace micron
 {
 
 // stack equivalent, fast variant, no bounds checking or safety checks
-template <typename T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-class fstack : public __mutable_memory_resource<T, Alloc>
+template<typename T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+class fstack: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
 
@@ -47,7 +47,7 @@ public:
     clear();
   }
 
-  fstack() : __mem(N) {}
+  fstack() : __mem(N) { }
 
   explicit fstack(const umax_t n) : __mem(n)
   {
@@ -73,7 +73,7 @@ public:
     __mem::length = o.length;
   }
 
-  fstack(fstack &&o) : __mem(micron::move(o)) {}
+  fstack(fstack &&o) : __mem(micron::move(o)) { }
 
   fstack &
   operator=(const fstack &o)
@@ -159,14 +159,14 @@ public:
     push(micron::move(v));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   push_range(Args &&...args) noexcept
   {
     (push(micron::forward<Args>(args)), ...);
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args) noexcept
@@ -184,7 +184,7 @@ public:
     return val;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   pop_range(Args &...args) noexcept
   {
@@ -367,9 +367,9 @@ public:
   }
 };
 
-template <typename T, usize N, class Alloc>
+template<typename T, usize N, class Alloc>
   requires(!micron::is_regular_object<T> and micron::movable<T> and !micron::copyable<T>)
-class fstack<T, N, Alloc> : public __mutable_memory_resource_move_only<T, Alloc>
+class fstack<T, N, Alloc>: public __mutable_memory_resource_move_only<T, Alloc>
 {
   using __mem = __mutable_memory_resource_move_only<T, Alloc>;
 
@@ -393,7 +393,7 @@ public:
     clear();
   }
 
-  fstack() : __mem(N) {}
+  fstack() : __mem(N) { }
 
   explicit fstack(const umax_t n) : __mem(n)
   {
@@ -415,7 +415,7 @@ public:
 
   fstack(const fstack &o) = delete;
 
-  fstack(fstack &&o) : __mem(micron::move(o)) {}
+  fstack(fstack &&o) : __mem(micron::move(o)) { }
 
   fstack &operator=(const fstack &o) = delete;
 
@@ -486,14 +486,14 @@ public:
     push(micron::move(v));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   push_range(Args &&...args) noexcept
   {
     (push(micron::forward<Args>(args)), ...);
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args) noexcept
@@ -511,7 +511,7 @@ public:
     return val;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   pop_range(Args &...args) noexcept
   {
@@ -694,4 +694,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

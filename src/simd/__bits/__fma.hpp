@@ -306,9 +306,9 @@ _mm512_fmsubadd_pd(__m512d a, __m512d b, __m512d c) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 #define __inject_i(name) using ::micron::simd::__bits::name

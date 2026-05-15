@@ -15,7 +15,7 @@
 namespace micron
 {
 
-template <is_regular_object T, usize N = 64>
+template<is_regular_object T, usize N = 64>
   requires(N > 0 and N < (1 << 16))
 class cactus_stack
 {
@@ -129,7 +129,7 @@ class cactus_stack
     return __used++;
   }
 
-  template <typename U>
+  template<typename U>
   cactus_stack
   __push_impl(U &&v) const
   {
@@ -142,7 +142,7 @@ class cactus_stack
     return next;
   }
 
-  template <typename U, typename... Rest>
+  template<typename U, typename... Rest>
   static cactus_stack
   __push_all(cactus_stack s, U &&first, Rest &&...rest)
   {
@@ -183,7 +183,7 @@ public:
     for ( i32 i = 0; i < __used; ++i ) __destruct(i);
   }
 
-  cactus_stack() noexcept : __used(0), __head(__none), __depth(0) {}
+  cactus_stack() noexcept : __used(0), __head(__none), __depth(0) { }
 
   cactus_stack(const cactus_stack &o) : __used(0), __head(__none), __depth(0) { __copy_spine(o); }
 
@@ -243,7 +243,7 @@ public:
     return push(micron::move(v));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   cactus_stack
   push_range(Args &&...args) const
   {
@@ -278,7 +278,7 @@ public:
     return { *__val(__head), pop() };
   }
 
-  template <typename... Args>
+  template<typename... Args>
   cactus_stack
   pop_range(Args &...args) const
   {
@@ -371,7 +371,7 @@ public:
     const cactus_stack *owner;
     i32 cur;
 
-    __val_range_itr(const cactus_stack *o, i32 c) noexcept : owner(o), cur(c) {}
+    __val_range_itr(const cactus_stack *o, i32 c) noexcept : owner(o), cur(c) { }
 
     bool
     operator==(const __val_range_itr &o) const noexcept
@@ -433,7 +433,7 @@ public:
     const cactus_stack *owner;
     i32 cur;
 
-    __range_itr(const cactus_stack *o, i32 c) noexcept : owner(o), cur(c) {}
+    __range_itr(const cactus_stack *o, i32 c) noexcept : owner(o), cur(c) { }
 
     bool
     operator==(const __range_itr &o) const noexcept
@@ -557,7 +557,7 @@ public:
   }
 };
 
-template <is_regular_object T, usize N = 64>
+template<is_regular_object T, usize N = 64>
   requires(N > 0 and N < (1 << 16))
 class fixed_stack
 {
@@ -611,7 +611,7 @@ class fixed_stack
     src._depth = 0;
   }
 
-  template <typename U>
+  template<typename U>
   fixed_stack
   __push_impl(U &&v) const
   {
@@ -625,7 +625,7 @@ class fixed_stack
     return next;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   static fixed_stack
   __append_args(fixed_stack &&acc, usize base, Args &&...args) noexcept
   {
@@ -653,7 +653,7 @@ public:
     for ( usize i = 0; i < _depth; ++i ) __destruct(i);
   }
 
-  fixed_stack() noexcept : _depth(0) {}
+  fixed_stack() noexcept : _depth(0) { }
 
   fixed_stack(const fixed_stack &o) : _depth(0) { __bulk_copy(o, o._depth); }
 
@@ -709,7 +709,7 @@ public:
     return push(micron::move(v));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   fixed_stack
   push_range(Args &&...args) const
   {
@@ -748,7 +748,7 @@ public:
     return { *__at(_depth - 1), pop() };
   }
 
-  template <typename... Args>
+  template<typename... Args>
   fixed_stack
   pop_range(Args &...args) const
   {
@@ -849,7 +849,7 @@ public:
     const fixed_stack *owner;
     i32 cur;
 
-    __at_range_itr(const fixed_stack *o, i32 c) noexcept : owner(o), cur(c) {}
+    __at_range_itr(const fixed_stack *o, i32 c) noexcept : owner(o), cur(c) { }
 
     bool
     operator==(const __at_range_itr &o) const noexcept
@@ -912,7 +912,7 @@ public:
     const fixed_stack *owner;
     i32 cur;
 
-    __range_itr(const fixed_stack *o, i32 c) noexcept : owner(o), cur(c) {}
+    __range_itr(const fixed_stack *o, i32 c) noexcept : owner(o), cur(c) { }
 
     bool
     operator==(const __range_itr &o) const noexcept
@@ -1024,4 +1024,4 @@ public:
   }
 };
 
-}     // namespace micron
+}      // namespace micron

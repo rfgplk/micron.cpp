@@ -50,5 +50,5 @@ struct traverse_error {
   }
 };
 
-};     // namespace fp
-};     // namespace micron
+};      // namespace fp
+};      // namespace micron

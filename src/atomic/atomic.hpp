@@ -37,12 +37,12 @@ inline constexpr memory_order memory_order_release = memory_order::release;
 inline constexpr memory_order memory_order_acq_rel = memory_order::acq_rel;
 inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 
-template <is_atomic_type T> struct atomic_token {
+template<is_atomic_type T> struct atomic_token {
   T v;
   static_assert(size_of<T, 1> or size_of<T, 2> or size_of<T, 4> or size_of<T, 8>, "Size must be 1, 2, 4, or 8 bytes");
 
-  constexpr atomic_token(const T t = ATOMIC_OPEN) noexcept : v(t) {};
-  constexpr atomic_token(const atomic_token &o) noexcept : v(o.v) {};
+  constexpr atomic_token(const T t = ATOMIC_OPEN) noexcept : v(t) { };
+  constexpr atomic_token(const atomic_token &o) noexcept : v(o.v) { };
 
   constexpr atomic_token(atomic_token &&t) noexcept : v(micron::move(t.v)) { t.v = {}; };
 
@@ -235,28 +235,28 @@ template <is_atomic_type T> struct atomic_token {
     return get() >= o.get();
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator+(const X &x) const noexcept
   {
     return get() + x;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator-(const X &x) const noexcept
   {
     return get() - x;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator*(const X &x) const noexcept
   {
     return get() * x;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator/(const X &x) const noexcept
   {
@@ -265,9 +265,9 @@ template <is_atomic_type T> struct atomic_token {
 };
 
 // wraps around atomic_token so actually appears atomic
-template <class T> class atomic
+template<class T> class atomic
 {
-  T type;     // internal data, can be any
+  T type;      // internal data, can be any
   atomic_token<usize> tk;
 
   void
@@ -319,11 +319,11 @@ public:
     return tk.compare_exchange_weak(expected, desired, success, failure);
   }
 
-  atomic() : type(), tk() {};
-  template <typename F> atomic(std::initializer_list<F> list) : type(list), tk() {};
-  template <typename... Args> atomic(Args... args) : type(args...), tk() {};
-  atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) {};
-  atomic(const atomic<T> &o) : type(o.type), tk(o.tk) {};
+  atomic() : type(), tk() { };
+  template<typename F> atomic(std::initializer_list<F> list) : type(list), tk() { };
+  template<typename... Args> atomic(Args... args) : type(args...), tk() { };
+  atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) { };
+  atomic(const atomic<T> &o) : type(o.type), tk(o.tk) { };
 
   T
   operator=(const T &o)
@@ -335,7 +335,7 @@ public:
     return tmp;
   };
 
-  template <typename N>
+  template<typename N>
   T
   operator[](const N n)
   {
@@ -358,7 +358,7 @@ public:
   {
     lock_check();
     return &type;
-  }     // NOTE: must release
+  }      // NOTE: must release
 
   void
   release()
@@ -520,7 +520,7 @@ public:
   }
 
   // arithmetic high-level (only if supported)
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator+(const X &v)
   {
@@ -530,7 +530,7 @@ public:
     return r;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator-(const X &v)
   {
@@ -540,7 +540,7 @@ public:
     return r;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator*(const X &v)
   {
@@ -550,7 +550,7 @@ public:
     return r;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator/(const X &v)
   {
@@ -561,7 +561,7 @@ public:
   }
 };
 
-template <typename T>
+template<typename T>
   requires micron::is_pointer_v<T>
 class atomic_ptr
 {
@@ -573,9 +573,9 @@ class atomic_ptr
 public:
   using value_type = P;
 
-  constexpr atomic_ptr() noexcept : tk(nullptr) {}
+  constexpr atomic_ptr() noexcept : tk(nullptr) { }
 
-  constexpr explicit atomic_ptr(P p) noexcept : tk(p) {}
+  constexpr explicit atomic_ptr(P p) noexcept : tk(p) { }
 
   atomic_ptr(const atomic_ptr &) = delete;
   atomic_ptr &operator=(const atomic_ptr &) = delete;
@@ -810,7 +810,7 @@ public:
   }
 };
 
-template <is_atomic_type T> class atomic_ref
+template<is_atomic_type T> class atomic_ref
 {
   static_assert(micron::is_trivially_copyable_v<T>, "atomic_ref requires a trivially copyable type");
 
@@ -819,7 +819,7 @@ template <is_atomic_type T> class atomic_ref
 public:
   using value_type = T;
 
-  constexpr explicit atomic_ref(T &obj) noexcept : ptr(&obj) {}
+  constexpr explicit atomic_ref(T &obj) noexcept : ptr(&obj) { }
 
   atomic_ref(const atomic_ref &) = delete;
   atomic_ref &operator=(const atomic_ref &) = delete;
@@ -867,7 +867,7 @@ public:
     return --tmp;
   }
 
-  template <typename U = T>
+  template<typename U = T>
   micron::enable_if_t<micron::is_arithmetic_v<U>, U>
   fetch_add(U val, memory_order order = memory_order::seq_cst) noexcept
   {
@@ -880,7 +880,7 @@ public:
     return old;
   }
 
-  template <typename U = T>
+  template<typename U = T>
   micron::enable_if_t<micron::is_arithmetic_v<U>, U>
   fetch_sub(U val, memory_order order = memory_order::seq_cst) noexcept
   {
@@ -971,32 +971,32 @@ public:
     return load() >= o.load();
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator+(const X &v) const noexcept
   {
     return load() + v;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator-(const X &v) const noexcept
   {
     return load() - v;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator*(const X &v) const noexcept
   {
     return load() * v;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   micron::enable_if_t<micron::is_arithmetic_v<X>, X>
   operator/(const X &v) const noexcept
   {
     return load() / v;
   }
 };
-};     // namespace micron
+};      // namespace micron

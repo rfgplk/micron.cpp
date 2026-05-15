@@ -21,7 +21,7 @@ namespace micron
 {
 namespace fsys
 {
-template <is_string T>
+template<is_string T>
 auto
 open_file(const io::path_t &path, const io::modes mode)
 {
@@ -29,7 +29,7 @@ open_file(const io::path_t &path, const io::modes mode)
   return f;
 }
 
-template <is_string T>
+template<is_string T>
 void
 open_dir(const io::path_t &path, const io::modes mode)
 {
@@ -96,7 +96,7 @@ make(const io::path_t &name)
   open_file<micron::str8>(name, io::modes::create);
 }
 
-template <typename... Paths>
+template<typename... Paths>
 void
 copy_list(const io::path_t &from, const Paths &...to)
 {
@@ -109,5 +109,5 @@ file_type_at(const io::path_t &p)
 {
   return posix::get_type_at(p.c_str());
 }
-};     // namespace fsys
-};     // namespace micron
+};      // namespace fsys
+};      // namespace micron

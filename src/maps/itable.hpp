@@ -27,7 +27,7 @@ namespace micron
 //  persistent ordered associative container for integral types
 //  implemented via a binary radix/patricia trie with reference counted nodes
 
-template <typename K, typename V>
+template<typename K, typename V>
   requires micron::integral<K> && micron::integral<V>
 class immutable_table
 {
@@ -81,7 +81,7 @@ class immutable_table
   struct __branch {
     mutable u32 refs;
     u32 bit_pos;
-    uintptr_t child[2];     // tagged pointers
+    uintptr_t child[2];      // tagged pointers
   };
 
   static inline __attribute__((always_inline)) bool
@@ -163,9 +163,9 @@ class immutable_table
       ++__refs(p);
   }
 
-  // tail-iterates right child, stacks left child
-  static inline void
-  __release_tagged(uintptr_t p)
+  // full slow path
+  static __attribute__((noinline)) void
+  __release_subtree_tagged(uintptr_t p) noexcept
   {
     constexpr usize __stack_cap = 48;
     uintptr_t stack[__stack_cap];
@@ -193,11 +193,34 @@ class immutable_table
         if ( depth < __stack_cap ) [[likely]]
           stack[depth++] = c0;
         else
-          __release_tagged(c0);
+          __release_subtree_tagged(c0);
       }
       p = c1;
     }
-    while ( depth > 0 ) __release_tagged(stack[--depth]);
+    while ( depth > 0 ) __release_subtree_tagged(stack[--depth]);
+  }
+
+  // new fast path
+  static inline __attribute__((always_inline)) void
+  __release_tagged(uintptr_t p) noexcept
+  {
+    if ( !p ) [[unlikely]]
+      return;
+    u32 &r = __refs(p);
+    if ( r == __UINT32_MAX__ ) [[unlikely]]
+      return;      // saturated
+    if ( --r != 0 ) [[likely]]
+      return;
+    if ( __is_leaf(p) ) [[unlikely]] {
+      __dealloc_leaf(__to_leaf(p));
+      return;
+    }
+    __branch *b = __to_branch(p);
+    uintptr_t c0 = b->child[0];
+    uintptr_t c1 = b->child[1];
+    __dealloc_branch(b);
+    if ( c0 ) __release_subtree_tagged(c0);
+    if ( c1 ) __release_subtree_tagged(c1);
   }
 
   // descend to the leaf that the search key reaches
@@ -286,7 +309,7 @@ class immutable_table
   uintptr_t __root;
   usize __length;
 
-  immutable_table(uintptr_t root, usize len) : __root(root), __length(len) {}
+  immutable_table(uintptr_t root, usize len) : __root(root), __length(len) { }
 
 public:
   using category_type = map_tag;
@@ -298,7 +321,7 @@ public:
 
   ~immutable_table() { __release_tagged(__root); }
 
-  immutable_table() : __root(0), __length(0) {}
+  immutable_table() : __root(0), __length(0) { }
 
   // O(1) copy
   immutable_table(const immutable_table &o) : __root(o.__root), __length(o.__length) { __retain_tagged(__root); }
@@ -362,7 +385,7 @@ public:
     return insert(key, val);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   immutable_table
   emplace(K key, Args &&...args) const
   {
@@ -479,7 +502,7 @@ public:
     return !(*this == o);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   immutable_table
   update(K key, Fn &&fn) const
   {
@@ -489,7 +512,7 @@ public:
     return insert(key, fn(*v));
   }
 
-  template <typename Fn>
+  template<typename Fn>
   immutable_table
   update_or(K key, V default_val, Fn &&fn) const
   {
@@ -516,7 +539,7 @@ public:
     }
 
   public:
-    const_iterator() : __depth(0), __current(nullptr) {}
+    const_iterator() : __depth(0), __current(nullptr) { }
 
     explicit const_iterator(uintptr_t root) : __depth(0), __current(nullptr)
     {
@@ -606,7 +629,7 @@ public:
     return const_iterator();
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
@@ -631,4 +654,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

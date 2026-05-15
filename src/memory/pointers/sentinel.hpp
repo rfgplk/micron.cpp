@@ -25,9 +25,9 @@ public:
 
   ~sentinel_pointer() = default;
 
-  sentinel_pointer(const byte *P) noexcept : internal_pointer(P) {}
+  sentinel_pointer(const byte *P) noexcept : internal_pointer(P) { }
 
-  sentinel_pointer(uintptr_t F) noexcept     // fix 5
+  sentinel_pointer(uintptr_t F) noexcept      // fix 5
       : internal_pointer(reinterpret_cast<byte *>(F))
   {
   }
@@ -78,4 +78,4 @@ public:
   void clear() = delete;
 };
 
-};     // namespace micron
+};      // namespace micron

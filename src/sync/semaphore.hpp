@@ -23,14 +23,14 @@ class basic_semaphore
 public:
   ~basic_semaphore() = default;
 
-  basic_semaphore(void) : counter(0) {}
+  basic_semaphore(void) : counter(0) { }
 
-  basic_semaphore(i32 __init) : counter(__init) {}
+  basic_semaphore(i32 __init) : counter(__init) { }
 
   basic_semaphore(const basic_semaphore &) = delete;
   basic_semaphore &operator=(const basic_semaphore &) = delete;
 
-  basic_semaphore(basic_semaphore &&o) : counter(micron::move(o.counter)) {}
+  basic_semaphore(basic_semaphore &&o) : counter(micron::move(o.counter)) { }
 
   basic_semaphore &
   operator=(basic_semaphore &&o)
@@ -80,7 +80,7 @@ public:
   }
 };
 
-template <auto Fn> class semaphore
+template<auto Fn> class semaphore
 {
   basic_semaphore sem;
 
@@ -93,12 +93,12 @@ template <auto Fn> class semaphore
 public:
   ~semaphore() = default;
 
-  semaphore(void) : sem(1) {}
+  semaphore(void) : sem(1) { }
 
   semaphore(const semaphore &) = delete;
   semaphore &operator=(const semaphore &) = delete;
 
-  semaphore(semaphore &&o) : sem(micron::move(o.sem)) {}
+  semaphore(semaphore &&o) : sem(micron::move(o.sem)) { }
 
   semaphore &
   operator=(semaphore &&o)
@@ -107,7 +107,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   void
   run(Args &&...args)
   {
@@ -134,4 +134,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

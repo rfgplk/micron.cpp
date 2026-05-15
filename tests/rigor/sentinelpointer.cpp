@@ -192,7 +192,7 @@ main(void)
   {
     byte buf[4] = { 0x01, 0x02, 0x03, 0x04 };
     micron::sentinel_pointer s(buf);
-    (void)*s;     // read only — must not modify
+    (void)*s;      // read only — must not modify
     sb::require(buf[0] == byte(0x01));
     sb::require(buf[1] == byte(0x02));
   }

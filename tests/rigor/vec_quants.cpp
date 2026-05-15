@@ -70,7 +70,7 @@ DV(double a, double b, double c, double d, double e, double f, double g, double 
   return micron::dvec8(a, b, c, d, e, f, g, h);
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -398,13 +398,13 @@ main()
   {
     micron::vec8 a(1, 0, 0, 0, 0, 0, 0, 0);
     micron::vec8 b(1, 0, 0, 0, 0, 0, 0, 0);
-    require_true(feq(a.cos_angle(b), 1.0f, 1e-5f));     // 0°
+    require_true(feq(a.cos_angle(b), 1.0f, 1e-5f));      // 0°
 
     micron::vec8 c(-1, 0, 0, 0, 0, 0, 0, 0);
-    require_true(feq(a.cos_angle(c), -1.0f, 1e-5f));     // 180°
+    require_true(feq(a.cos_angle(c), -1.0f, 1e-5f));      // 180°
 
     micron::vec8 d(0, 1, 0, 0, 0, 0, 0, 0);
-    require_true(feq(a.cos_angle(d), 0.0f, 1e-5f));     // 90°
+    require_true(feq(a.cos_angle(d), 0.0f, 1e-5f));      // 90°
   }
   end_test_case();
 
@@ -430,7 +430,7 @@ main()
     micron::vec8 v(3, 0, 0, 0, 0, 0, 0, 0);
     micron::vec8 axis(1, 0, 0, 0, 0, 0, 0, 0);
     micron::vec8 proj = v.project_onto(axis);
-    require_true(veq(proj, v, 1e-5f));     // projects fully onto x axis
+    require_true(veq(proj, v, 1e-5f));      // projects fully onto x axis
 
     micron::vec8 w(3, 4, 0, 0, 0, 0, 0, 0);
     micron::vec8 px = w.project_onto(axis);
@@ -519,7 +519,7 @@ main()
   test_case("prod – product of all components");
   {
     micron::vec8 v(1, 2, 1, 2, 1, 2, 1, 2);
-    require_true(feq(v.prod(), 16.0f));     // 2^4
+    require_true(feq(v.prod(), 16.0f));      // 2^4
 
     micron::vec8 ones(1, 1, 1, 1, 1, 1, 1, 1);
     require_true(feq(ones.prod(), 1.0f));
@@ -662,7 +662,7 @@ main()
     micron::vec8 l = v.log10();
     for ( int i = 0; i < 8; ++i ) {
       float expected = (float)i;
-      float actual = (&l.x)[i];     // components laid out sequentially
+      float actual = (&l.x)[i];      // components laid out sequentially
       require_true(feq(actual, expected, 1e-4f));
     }
   }
@@ -812,7 +812,7 @@ main()
     micron::vec8 a(1, 2, 3, 4, 5, 6, 7, 8);
     micron::vec8 b(2, 2, 2, 2, 2, 2, 2, 2);
     micron::vec8 c(10, 10, 10, 10, 10, 10, 10, 10);
-    micron::vec8 r = a.fma(b, c);     // a*b + c
+    micron::vec8 r = a.fma(b, c);      // a*b + c
     require_true(feq(r.x, 12) && feq(r.y, 14) && feq(r.z, 16) && feq(r.w, 18));
     require_true(feq(r.a, 20) && feq(r.b, 22) && feq(r.c, 24) && feq(r.d, 26));
 
@@ -826,7 +826,7 @@ main()
   {
     micron::vec8 a(1, 2, 3, 4, 5, 6, 7, 8);
     micron::vec8 u(1, 1, 1, 1, 1, 1, 1, 1);
-    micron::vec8 r = a.fma(3.0f, u);     // a*3 + 1
+    micron::vec8 r = a.fma(3.0f, u);      // a*3 + 1
     require_true(feq(r.x, 4) && feq(r.y, 7) && feq(r.z, 10) && feq(r.w, 13));
     require_true(feq(r.a, 16) && feq(r.b, 19) && feq(r.c, 22) && feq(r.d, 25));
   }
@@ -864,8 +864,8 @@ main()
   test_case("even() / odd() – interleaved component selection");
   {
     micron::vec8 v(1, 2, 3, 4, 5, 6, 7, 8);
-    micron::vec4 ev = v.even();     // x,z,a,c = 1,3,5,7
-    micron::vec4 od = v.odd();      // y,w,b,d = 2,4,6,8
+    micron::vec4 ev = v.even();      // x,z,a,c = 1,3,5,7
+    micron::vec4 od = v.odd();       // y,w,b,d = 2,4,6,8
     require_true(feq(ev.x, 1) && feq(ev.y, 3) && feq(ev.z, 5) && feq(ev.w, 7));
     require_true(feq(od.x, 2) && feq(od.y, 4) && feq(od.z, 6) && feq(od.w, 8));
   }

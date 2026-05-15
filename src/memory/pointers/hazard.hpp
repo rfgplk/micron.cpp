@@ -51,7 +51,7 @@ class hazard_pointer
   static constexpr usize _end = numeric_limits<usize>::max();
   usize _id = _end;
 
-  template <typename T>
+  template<typename T>
   inline __attribute__((always_inline)) void
   __update_seqcst(T *_ptr)
   {
@@ -72,12 +72,12 @@ class hazard_pointer
 public:
   ~hazard_pointer() { __impl_delete(); }
 
-  hazard_pointer(void) noexcept : _id(__emplace_hazard()) {}
+  hazard_pointer(void) noexcept : _id(__emplace_hazard()) { }
 
   // all in one go
-  template <typename T> hazard_pointer(const atomic<T *> &src) : _id(__emplace_hazard()) { protect(src); }
+  template<typename T> hazard_pointer(const atomic<T *> &src) : _id(__emplace_hazard()) { protect(src); }
 
-  hazard_pointer(hazard_pointer &&o) noexcept : _id(exchange(o._id, _end)) {}
+  hazard_pointer(hazard_pointer &&o) noexcept : _id(exchange(o._id, _end)) { }
 
   hazard_pointer &
   operator=(hazard_pointer &&o) noexcept
@@ -95,7 +95,7 @@ public:
     return (_id == _end) or (__hazard_table[_id].ptr.__get(memory_order::acquire) == nullptr);
   }
 
-  template <class T>
+  template<class T>
   T *
   protect(const atomic<T *> &src) noexcept
   {
@@ -106,7 +106,7 @@ public:
     }
   }
 
-  template <class T>
+  template<class T>
   bool
   try_protect(T *&ptr, const atomic<T *> &src) noexcept
   {
@@ -120,7 +120,7 @@ public:
     return ok;
   }
 
-  template <class T>
+  template<class T>
   void
   reset_protection(const T *ptr) noexcept
   {
@@ -137,7 +137,7 @@ public:
   }
 };
 
-template <typename Type, typename... Args>
+template<typename Type, typename... Args>
 hazard_pointer
 make_hazard(Args &&...args)
 {
@@ -146,4 +146,4 @@ make_hazard(Args &&...args)
   return hazard_pointer(a_ptr);
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -22,7 +22,7 @@ namespace integrate
 namespace __impl_nquad
 {
 
-template <usize D, usize Fixed, ieee754_floating F, typename Fn>
+template<usize D, usize Fixed, ieee754_floating F, typename Fn>
 inline quad_result<F>
 nquad_impl(Fn &f, F (&x)[D], const F (&lo)[D], const F (&hi)[D], F atol, F rtol, usize max_depth, quad_result<F> &acc) noexcept
 {
@@ -46,9 +46,9 @@ nquad_impl(Fn &f, F (&x)[D], const F (&lo)[D], const F (&hi)[D], F atol, F rtol,
   }
 }
 
-};     // namespace __impl_nquad
+};      // namespace __impl_nquad
 
-template <usize D, ieee754_floating F, typename Fn>
+template<usize D, ieee754_floating F, typename Fn>
   requires(D >= 1)
 [[nodiscard]] inline quad_result<F>
 nquad(Fn f, const F (&lo)[D], const F (&hi)[D], F atol, F rtol, usize max_depth = 30) noexcept
@@ -74,6 +74,6 @@ nquad(Fn f, const F (&lo)[D], const F (&hi)[D], F atol, F rtol, usize max_depth 
   }
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

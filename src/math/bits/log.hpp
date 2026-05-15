@@ -224,7 +224,7 @@ log10_f32(f32 x) noexcept
   return hw::fmadd_ss(lx, inv_ln10_hi, lx * inv_ln10_lo);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log(F x) noexcept
 {
@@ -234,7 +234,7 @@ log(F x) noexcept
     return F(log_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log2(F x) noexcept
 {
@@ -244,7 +244,7 @@ log2(F x) noexcept
     return F(log2_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log10(F x) noexcept
 {
@@ -254,7 +254,7 @@ log10(F x) noexcept
     return F(log10_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log1p(F x) noexcept
 {
@@ -337,9 +337,9 @@ log_dd_f64_with_special(f64 x, bool *handled) noexcept
   return log_dd_kernel_f64(x);
 }
 
-};     // namespace log_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace log_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

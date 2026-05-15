@@ -28,7 +28,7 @@ near(f64 a, f64 b, f64 eps = 1e-9)
   return (d < 0 ? -d : d) < eps;
 }
 
-template <usize N>
+template<usize N>
 static bool
 near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-9)
 {
@@ -37,7 +37,7 @@ near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-9)
   return true;
 }
 
-template <usize R, usize C>
+template<usize R, usize C>
 static bool
 near_m(const mat<f64, R, C> &a, const mat<f64, R, C> &b, f64 eps = 1e-9)
 {
@@ -46,7 +46,7 @@ near_m(const mat<f64, R, C> &a, const mat<f64, R, C> &b, f64 eps = 1e-9)
   return true;
 }
 
-template <usize N>
+template<usize N>
 static bool
 is_identity_m(const mat<f64, N, N> &A, f64 eps = 1e-9)
 {
@@ -289,14 +289,14 @@ main()
       sum_re += e.values_re.data[i];
       require_true(near(e.values_im.data[i], 0.0, 1e-12));
     }
-    require_true(near(sum_re, 3.0));     // 1 - 2 + 3 - 4 + 5
+    require_true(near(sum_re, 3.0));      // 1 - 2 + 3 - 4 + 5
   }
   end_test_case();
 
   test_case("eigen<3> — rotation matrix has unit-modulus complex eigenvalues");
   {
     // 2D rotation in upper-left 2x2; eigenvalue 1 in lower right
-    f64 c = 0.6, s = 0.8;     // cos, sin (3-4-5)
+    f64 c = 0.6, s = 0.8;      // cos, sin (3-4-5)
     mat<f64, 3, 3> A{ c, -s, 0, s, c, 0, 0, 0, 1.0 };
     auto e = eigen<f64, 3>(A);
     require_true(e.converged);
@@ -388,8 +388,8 @@ main()
   {
     mat<f64, 3, 3> A = mat<f64, 3, 3>::zero();
     A.data[0] = 0.0;
-    A.data[4] = 0.6931471805599453;     // ln(2)
-    A.data[8] = 1.0986122886681098;     // ln(3)
+    A.data[4] = 0.6931471805599453;      // ln(2)
+    A.data[8] = 1.0986122886681098;      // ln(3)
     auto er = expm<f64, 3>(A);
     require_true(er.finite);
     require_true(near(er.X.data[0], 1.0, 1e-9));
@@ -419,7 +419,7 @@ main()
     for ( usize i = 0; i < 4; ++i ) A.data[i * 4 + i] = 5.0;
     auto er = expm<f64, 4>(A);
     require_true(er.finite);
-    f64 e5 = 148.4131591025766;     // exp(5)
+    f64 e5 = 148.4131591025766;      // exp(5)
     require_true(near(er.X.data[0], e5, 1e-7));
     require_true(near(er.X.data[5], e5, 1e-7));
     require_true(near(er.X.data[10], e5, 1e-7));

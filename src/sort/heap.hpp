@@ -14,7 +14,7 @@ namespace micron
 namespace sort
 {
 
-template <is_iterable_container C, typename Compare>
+template<is_iterable_container C, typename Compare>
 constexpr void
 __sift_down(C &c, usize start, usize n, Compare comp) noexcept
 {
@@ -41,7 +41,7 @@ __sift_down(C &c, usize start, usize n, Compare comp) noexcept
   }
 }
 
-template <is_iterable_container C, typename Compare>
+template<is_iterable_container C, typename Compare>
 constexpr void
 __make_heap(C &c, Compare comp) noexcept
 {
@@ -51,21 +51,21 @@ __make_heap(C &c, Compare comp) noexcept
   for ( usize i = n / 2; i-- > 0; ) __sift_down(c, i, n, comp);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 make_heap(C &c) noexcept
 {
   __make_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
 }
 
-template <is_iterable_container C, is_valid_comp<C> Cmp>
+template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr void
 make_heap(C &c, Cmp comp) noexcept
 {
   __make_heap(c, comp);
 }
 
-template <is_iterable_container C, typename Compare>
+template<is_iterable_container C, typename Compare>
 constexpr void
 __sort_heap(C &c, Compare comp) noexcept
 {
@@ -81,21 +81,21 @@ __sort_heap(C &c, Compare comp) noexcept
   }
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr void
 heap(C &c) noexcept
 {
   __sort_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
 }
 
-template <is_iterable_container C, is_valid_comp<C> Cmp>
+template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr void
 heap(C &c, Cmp comp) noexcept
 {
   __sort_heap(c, comp);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr C &
 as_heap(C &c) noexcept
 {
@@ -104,7 +104,7 @@ as_heap(C &c) noexcept
   return c;
 }
 
-template <is_iterable_container C, is_valid_comp<C> Cmp>
+template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr C &
 as_heap(C &c, Cmp comp) noexcept
 {
@@ -113,7 +113,7 @@ as_heap(C &c, Cmp comp) noexcept
   return c;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr C &
 as_heap(C &c, typename C::size_type lim) noexcept
 {
@@ -123,7 +123,7 @@ as_heap(C &c, typename C::size_type lim) noexcept
   return c;
 }
 
-template <is_iterable_container C, is_valid_comp<C> Cmp>
+template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr C &
 as_heap(C &c, typename C::size_type lim, Cmp comp) noexcept
 {
@@ -133,5 +133,5 @@ as_heap(C &c, typename C::size_type lim, Cmp comp) noexcept
   return c;
 }
 
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

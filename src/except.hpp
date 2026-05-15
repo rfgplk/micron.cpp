@@ -35,7 +35,7 @@ constexpr static const u32 memory_errno = 0x7f00 + 17;
 constexpr static const u32 thread_errno = 0x7f00 + 18;
 constexpr static const u32 filesystem_errno = 0x7f00 + 19;
 constexpr static const u32 network_errno = 0x7f00 + 20;
-constexpr static const u32 critical_errno = 0x7f00 + 0xff;     // for critical library errors -- use sparingly
+constexpr static const u32 critical_errno = 0x7f00 + 0xff;      // for critical library errors -- use sparingly
 
 // NOTE: will get truncd to lowest 8 bits, offset is for compat. with errno
 
@@ -54,13 +54,13 @@ public:
 
 // unclean but the only way to avoid senseless boilterplate ;c
 #define MICRON_EXCEPTION_TEMP(_str, _errcode)                                                                                              \
-  class _str : public __base_exception                                                                                                     \
+  class _str: public __base_exception                                                                                                      \
   {                                                                                                                                        \
     const char *__what;                                                                                                                    \
     static constexpr u32 __errcode = _errcode;                                                                                             \
                                                                                                                                            \
   public:                                                                                                                                  \
-    explicit _str(const char *w) : __what(w) {}                                                                                            \
+    explicit _str(const char *w) : __what(w) { }                                                                                           \
     const char *                                                                                                                           \
     what() const noexcept override                                                                                                         \
     {                                                                                                                                      \
@@ -96,7 +96,7 @@ MICRON_EXCEPTION_TEMP(critical_error, critical_errno)
 MICRON_EXCEPTION_TEMP(thread_error, thread_errno)
 MICRON_EXCEPTION_TEMP(filesystem_error, filesystem_errno)
 MICRON_EXCEPTION_TEMP(network_error, network_errno)
-};     // namespace except
+};      // namespace except
 
 using domain = except::domain_error;
 using invalid = except::invalid_argument;
@@ -119,4 +119,4 @@ using critical_err = except::critical_error;
 using thread_err = except::thread_error;
 using fs_error = except::filesystem_error;
 using net_error = except::network_error;
-};     // namespace micron
+};      // namespace micron

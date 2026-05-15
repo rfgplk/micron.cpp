@@ -1434,4 +1434,4 @@ enum class sysctl_abi : u32 {
   fake_utsname = __sysctl_abi_fake_utsname,
 };
 
-};     // namespace micron
+};      // namespace micron

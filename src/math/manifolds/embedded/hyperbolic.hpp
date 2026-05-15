@@ -26,7 +26,7 @@ namespace math
 namespace manifolds
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
   requires(N >= 1 && N <= 15)
 struct hyperbolic {
   using value_type = F;
@@ -151,7 +151,7 @@ struct hyperbolic {
   }
 };
 
-template <ieee754_floating F, usize N> struct traits<hyperbolic<F, N>> {
+template<ieee754_floating F, usize N> struct traits<hyperbolic<F, N>> {
   using point_type = vec<F, N + 1>;
   using tangent_type = vec<F, N + 1>;
   using scalar_type = F;
@@ -160,6 +160,6 @@ template <ieee754_floating F, usize N> struct traits<hyperbolic<F, N>> {
   static constexpr usize ambient_dim = N + 1;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

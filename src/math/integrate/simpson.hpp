@@ -27,7 +27,7 @@ namespace integrate
 {
 
 // n must be % 2 == 0
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline F
 simpson(Fn f, F a, F b, usize n) noexcept
 {
@@ -50,7 +50,7 @@ simpson(Fn f, F a, F b, usize n) noexcept
 }
 
 // n must be mul of 3
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline F
 simpson_38(Fn f, F a, F b, usize n) noexcept
 {
@@ -80,7 +80,7 @@ simpson_38(Fn f, F a, F b, usize n) noexcept
 }
 
 // n must be odd
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 simpson(const F *y, usize n, F dx) noexcept
 {
@@ -97,7 +97,7 @@ simpson(const F *y, usize n, F dx) noexcept
   return (dx / F(3)) * (y[0] + y[n - 1] + F(4) * s_odd + F(2) * s_even);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard]] inline typename C::value_type
 simpson(const C &y, typename C::value_type dx) noexcept
@@ -105,6 +105,6 @@ simpson(const C &y, typename C::value_type dx) noexcept
   return simpson<typename C::value_type>(y.cbegin(), y.size(), dx);
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

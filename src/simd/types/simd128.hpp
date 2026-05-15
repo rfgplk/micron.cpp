@@ -13,7 +13,7 @@ namespace simd
 {
 
 // bit width - lane width
-template <is_simd_128_type T, is_flag_type F> class v128
+template<is_simd_128_type T, is_flag_type F> class v128
 {
   using bit_width = T;
   using lane_width = F;
@@ -281,7 +281,7 @@ public:
     value = _mm_set_pd(b, a);
   }
 
-  v128(const v128 &o) : value(o.value) {}
+  v128(const v128 &o) : value(o.value) { }
 
   v128(v128 &&o) : value(o.value)
   {
@@ -373,7 +373,7 @@ public:
     }
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   constexpr auto
   operator[](const R a)
@@ -381,16 +381,16 @@ public:
     if constexpr ( micron::is_same_v<T, f128> ) {
       float _f = 0.0f;
       switch ( a ) {
-      case 0 :
+      case 0:
         _f = _mm_cvtss_f32(_mm_shuffle_ps(value, value, _MM_SHUFFLE(0, 0, 0, 0)));
         break;
-      case 1 :
+      case 1:
         _f = _mm_cvtss_f32(_mm_shuffle_ps(value, value, _MM_SHUFFLE(1, 1, 1, 1)));
         break;
-      case 2 :
+      case 2:
         _f = _mm_cvtss_f32(_mm_shuffle_ps(value, value, _MM_SHUFFLE(2, 2, 2, 2)));
         break;
-      case 3 :
+      case 3:
         _f = _mm_cvtss_f32(_mm_shuffle_ps(value, value, _MM_SHUFFLE(3, 3, 3, 3)));
         break;
       }
@@ -406,10 +406,10 @@ public:
       if constexpr ( __is_64_wide<F>() ) {
         i64 _d = 0;
         switch ( a ) {
-        case 0 :
+        case 0:
           _d = _mm_extract_epi64(value, 0);
           break;
-        case 1 :
+        case 1:
           _d = _mm_extract_epi64(value, 1);
           break;
         }
@@ -418,16 +418,16 @@ public:
       if constexpr ( __is_32_wide<F>() ) {
         i32 _d = 0;
         switch ( a ) {
-        case 0 :
+        case 0:
           _d = _mm_extract_epi32(value, 0);
           break;
-        case 1 :
+        case 1:
           _d = _mm_extract_epi32(value, 1);
           break;
-        case 2 :
+        case 2:
           _d = _mm_extract_epi32(value, 2);
           break;
-        case 3 :
+        case 3:
           _d = _mm_extract_epi32(value, 3);
           break;
         }
@@ -436,28 +436,28 @@ public:
       if constexpr ( __is_16_wide<F>() ) {
         i16 _d = 0;
         switch ( a ) {
-        case 0 :
+        case 0:
           _d = static_cast<i16>(_mm_extract_epi16(value, 0));
           break;
-        case 1 :
+        case 1:
           _d = static_cast<i16>(_mm_extract_epi16(value, 1));
           break;
-        case 2 :
+        case 2:
           _d = static_cast<i16>(_mm_extract_epi16(value, 2));
           break;
-        case 3 :
+        case 3:
           _d = static_cast<i16>(_mm_extract_epi16(value, 3));
           break;
-        case 4 :
+        case 4:
           _d = static_cast<i16>(_mm_extract_epi16(value, 4));
           break;
-        case 5 :
+        case 5:
           _d = static_cast<i16>(_mm_extract_epi16(value, 5));
           break;
-        case 6 :
+        case 6:
           _d = static_cast<i16>(_mm_extract_epi16(value, 6));
           break;
-        case 7 :
+        case 7:
           _d = static_cast<i16>(_mm_extract_epi16(value, 7));
           break;
         }
@@ -466,52 +466,52 @@ public:
       if constexpr ( __is_8_wide<F>() ) {
         i8 _d = 0;
         switch ( a ) {
-        case 0 :
+        case 0:
           _d = static_cast<i8>(_mm_extract_epi8(value, 0));
           break;
-        case 1 :
+        case 1:
           _d = static_cast<i8>(_mm_extract_epi8(value, 1));
           break;
-        case 2 :
+        case 2:
           _d = static_cast<i8>(_mm_extract_epi8(value, 2));
           break;
-        case 3 :
+        case 3:
           _d = static_cast<i8>(_mm_extract_epi8(value, 3));
           break;
-        case 4 :
+        case 4:
           _d = static_cast<i8>(_mm_extract_epi8(value, 4));
           break;
-        case 5 :
+        case 5:
           _d = static_cast<i8>(_mm_extract_epi8(value, 5));
           break;
-        case 6 :
+        case 6:
           _d = static_cast<i8>(_mm_extract_epi8(value, 6));
           break;
-        case 7 :
+        case 7:
           _d = static_cast<i8>(_mm_extract_epi8(value, 7));
           break;
-        case 8 :
+        case 8:
           _d = static_cast<i8>(_mm_extract_epi8(value, 8));
           break;
-        case 9 :
+        case 9:
           _d = static_cast<i8>(_mm_extract_epi8(value, 9));
           break;
-        case 10 :
+        case 10:
           _d = static_cast<i8>(_mm_extract_epi8(value, 10));
           break;
-        case 11 :
+        case 11:
           _d = static_cast<i8>(_mm_extract_epi8(value, 11));
           break;
-        case 12 :
+        case 12:
           _d = static_cast<i8>(_mm_extract_epi8(value, 12));
           break;
-        case 13 :
+        case 13:
           _d = static_cast<i8>(_mm_extract_epi8(value, 13));
           break;
-        case 14 :
+        case 14:
           _d = static_cast<i8>(_mm_extract_epi8(value, 14));
           break;
-        case 15 :
+        case 15:
           _d = static_cast<i8>(_mm_extract_epi8(value, 15));
           break;
         }
@@ -650,7 +650,7 @@ public:
     return *this;
   }
 
-  template <typename A>
+  template<typename A>
   constexpr inline v128 &
   operator+=(A __x)
     requires is_int_flag_type<A>
@@ -746,7 +746,7 @@ public:
     return *this;
   }
 
-  template <typename A>
+  template<typename A>
   constexpr inline v128 &
   operator-=(A x)
     requires is_int_flag_type<A>
@@ -901,16 +901,16 @@ public:
     return set(f);
   }
 
-  template <typename B>
+  template<typename B>
   inline v128 &
   load(B *mem)
   {
-    if ( !is_aligned<128>(mem) ) return *this;     // silent fail
+    if ( !is_aligned<128>(mem) ) return *this;      // silent fail
     value = load<T, B>(mem);
     return *this;
   }
 
-  template <typename B>
+  template<typename B>
   inline v128 &
   uload(B *mem)
   {
@@ -1116,7 +1116,7 @@ public:
     return *this;
   }
 
-  template <typename A>
+  template<typename A>
   constexpr inline v128 &
   operator*=(A __x)
     requires is_int_flag_type<A>
@@ -1222,5 +1222,5 @@ public:
   }
 };
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

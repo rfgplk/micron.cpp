@@ -83,7 +83,7 @@ reset_tracked()
   Tracked::dtor = 0;
 }
 
-};     // anonymous namespace
+};      // anonymous namespace
 
 // ─────────────────────────────────────────────────────────────────────────────
 int
@@ -97,8 +97,8 @@ main()
     micron::span<int> s;
     require_true(s.is_empty());
     require(s.size(), size_t(0));
-    require(s.max_size(), size_t(64));       // default N
-    require_true(s.as_ptr() != nullptr);     // stack storage always valid
+    require(s.max_size(), size_t(64));        // default N
+    require_true(s.as_ptr() != nullptr);      // stack storage always valid
   }
   end_test_case();
 
@@ -343,7 +343,7 @@ main()
   test_case("insert(index) shifts elements right");
   {
     micron::span<int, 16> s({ 1, 2, 4, 5 });
-    s.insert(size_t(2), 3);     // insert 3 at index 2
+    s.insert(size_t(2), 3);      // insert 3 at index 2
     require(s.size(), size_t(5));
     require(s[0], 1);
     require(s[1], 2);
@@ -357,7 +357,7 @@ main()
   test_case("insert(iterator) shifts elements right");
   {
     micron::span<int, 16> s({ 10, 30, 40 });
-    auto *itr = s.begin() + 1;     // points at 30
+    auto *itr = s.begin() + 1;      // points at 30
     s.insert(itr, 20);
     require(s.size(), size_t(4));
     require(s[0], 10);
@@ -371,7 +371,7 @@ main()
   test_case("erase(index) removes element and shifts left");
   {
     micron::span<int, 16> s({ 1, 2, 3, 4, 5 });
-    s.erase(size_t(2));     // erase 3
+    s.erase(size_t(2));      // erase 3
     require(s.size(), size_t(4));
     require(s[0], 1);
     require(s[1], 2);
@@ -746,8 +746,8 @@ main()
               ++pieces;
               total_elems += sub.size();
             });
-    require(pieces, size_t(4));          // 3 delimiters → 4 sub-slices
-    require(total_elems, size_t(4));     // 4 zeros across all sub-slices
+    require(pieces, size_t(4));           // 3 delimiters → 4 sub-slices
+    require(total_elems, size_t(4));      // 4 zeros across all sub-slices
   }
   end_test_case();
 
@@ -783,7 +783,7 @@ main()
     micron::span<int, 8> s({ 1, 2, 3, 2, 1 });
     size_t count = 0;
     s.rsplit([](const int &v) { return v == 2; }, [&](micron::raw_slice<int>) { ++count; });
-    require(count, size_t(3));     // two delimiters → three pieces
+    require(count, size_t(3));      // two delimiters → three pieces
   }
   end_test_case();
 
@@ -1122,7 +1122,7 @@ main()
   test_case("rotate_left() wraps correctly");
   {
     micron::span<int, 8> s({ 0, 1, 2, 3, 4 });
-    s.rotate_left(2);     // [2,3,4,0,1]
+    s.rotate_left(2);      // [2,3,4,0,1]
     require(s[0], 2);
     require(s[1], 3);
     require(s[3], 0);
@@ -1142,7 +1142,7 @@ main()
   test_case("rotate_right() wraps correctly");
   {
     micron::span<int, 8> s({ 0, 1, 2, 3, 4 });
-    s.rotate_right(2);     // [3,4,0,1,2]
+    s.rotate_right(2);      // [3,4,0,1,2]
     require(s[0], 3);
     require(s[1], 4);
     require(s[2], 0);
@@ -1228,7 +1228,7 @@ main()
   {
     micron::span<char, 8> s;
     s.push_back('A');
-    s.push_back(static_cast<char>(200));     // non-ASCII byte
+    s.push_back(static_cast<char>(200));      // non-ASCII byte
     require_false(s.is_ascii());
   }
   end_test_case();

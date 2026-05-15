@@ -24,7 +24,7 @@ namespace micron
 // container agnostic functions for arith. operations on contiguous data
 // T* sig. func. are blind iterators
 // T& sig. func. take in a container which requires .begin and .end funcs
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 sin(T &cont) noexcept
 {
@@ -32,7 +32,7 @@ sin(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 cos(T &cont) noexcept
 {
@@ -40,7 +40,7 @@ cos(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 tan(T &cont) noexcept
 {
@@ -48,7 +48,7 @@ tan(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 asin(T &cont) noexcept
 {
@@ -56,7 +56,7 @@ asin(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 acos(T &cont) noexcept
 {
@@ -64,7 +64,7 @@ acos(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 atan(T &cont) noexcept
 {
@@ -72,7 +72,7 @@ atan(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 sinh(T &cont) noexcept
 {
@@ -80,7 +80,7 @@ sinh(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 cosh(T &cont) noexcept
 {
@@ -88,7 +88,7 @@ cosh(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 tanh(T &cont) noexcept
 {
@@ -96,7 +96,7 @@ tanh(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 exp(T &cont) noexcept
 {
@@ -104,7 +104,7 @@ exp(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 log(T &cont) noexcept
 {
@@ -112,7 +112,7 @@ log(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 log10(T &cont) noexcept
 {
@@ -120,7 +120,7 @@ log10(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 sqrt(T &cont) noexcept
 {
@@ -128,7 +128,7 @@ sqrt(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 cbrt(T &cont) noexcept
 {
@@ -136,7 +136,7 @@ cbrt(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 absolute(T &cont) noexcept
 {
@@ -144,7 +144,7 @@ absolute(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 sign(T &cont) noexcept
 {
@@ -152,7 +152,7 @@ sign(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 clip(T &cont, const typename T::value_type lo, const typename T::value_type hi) noexcept
 {
@@ -160,7 +160,7 @@ clip(T &cont, const typename T::value_type lo, const typename T::value_type hi) 
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 degrees(T &cont) noexcept
 {
@@ -168,7 +168,7 @@ degrees(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 radians(T &cont) noexcept
 {
@@ -176,7 +176,7 @@ radians(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 asinh(T &cont) noexcept
 {
@@ -184,7 +184,7 @@ asinh(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 acosh(T &cont) noexcept
 {
@@ -192,7 +192,7 @@ acosh(T &cont) noexcept
   return cont;
 }
 
-template <is_iterable_container T>
+template<is_iterable_container T>
 constexpr T &
 atanh(T &cont) noexcept
 {
@@ -203,7 +203,7 @@ atanh(T &cont) noexcept
 // EXPERIMENTAL - DERIVATIVES, MIGHT REMOVE
 // TODO: EXPAND OR REMOVE
 
-template <typename F, typename T>
+template<typename F, typename T>
 constexpr T
 derivative(F f, T x, T h = T(1e-6)) noexcept
 {
@@ -211,7 +211,7 @@ derivative(F f, T x, T h = T(1e-6)) noexcept
 }
 
 // gradient of function f: R^n -> R
-template <typename F, typename V>
+template<typename F, typename V>
 V
 jacobian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-6)) noexcept
 {
@@ -234,7 +234,7 @@ jacobian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-6
 }
 
 // hessian of function f: R^n -> R
-template <typename F, typename V>
+template<typename F, typename V>
 auto
 hessian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-5)) noexcept
 {
@@ -266,4 +266,4 @@ hessian(F f, const V &x, typename V::value_type h = typename V::value_type(1e-5)
 
   return H;
 }
-}     // namespace micron
+}      // namespace micron

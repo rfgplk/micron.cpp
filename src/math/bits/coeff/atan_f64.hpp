@@ -28,8 +28,8 @@ inline constexpr f64 atan_lo[5] = {
   0.0, 0x1.dac670561bb4fp-2, 0x1.921fb54442d18p-1, 0x1.f730bd281f69bp-1, 0x1.921fb54442d18p+0,
 };
 
-};     // namespace atan_f64_data
-};     // namespace coeff
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace atan_f64_data
+};      // namespace coeff
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

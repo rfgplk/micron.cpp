@@ -17,14 +17,14 @@ namespace micron
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bits
 
-template <size_t N>
+template<size_t N>
 constexpr inline word __attribute__((always_inline))
 repeat_bytes(void)
 {
   return ((word)-1 / 0xFF) * N;
 }
 
-template <typename T = word>
+template<typename T = word>
 constexpr inline word __attribute__((always_inline))
 has_zero(T a)
 {
@@ -33,7 +33,7 @@ has_zero(T a)
   return (((a - b) & ~a & c) != 0);
 }
 
-template <typename T = word>
+template<typename T = word>
 constexpr inline word __attribute__((always_inline))
 byte_eq(T a, T b)
 {
@@ -46,35 +46,35 @@ get_byte(word a, u32 ind)
   return (a >> (ind * byte_width));
 }
 
-template <typename T>
+template<typename T>
 bool
 aligned_256(const T *ptr)
 {
   return !(reinterpret_cast<uintptr_t>(ptr) & 31);
 }
 
-template <typename T>
+template<typename T>
 bool
 aligned_64(const T *ptr)
 {
   return !(reinterpret_cast<uintptr_t>(ptr) & 7);
 }
 
-template <typename T>
+template<typename T>
 bool
 aligned_32(const T *ptr)
 {
   return !(reinterpret_cast<uintptr_t>(ptr) & 3);
 }
 
-template <typename T>
+template<typename T>
 bool
 aligned_16(const T *ptr)
 {
   return !(reinterpret_cast<uintptr_t>(ptr) & 1);
 }
 
-template <typename T>
+template<typename T>
 bool
 aligned(const T *ptr)
 {
@@ -91,7 +91,7 @@ static const unsigned char BitReverseTable256[256] = {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // rotrs
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotl32(const T x, const i8 r)
 {
@@ -101,7 +101,7 @@ rotl32(const T x, const i8 r)
     return (x << r) | (x >> (32 - r));
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotl64(const T x, const i8 r)
 {
@@ -111,7 +111,7 @@ rotl64(const T x, const i8 r)
     return (x << r) | (x >> (64 - r));
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotr32(const T x, const i8 r)
 {
@@ -121,7 +121,7 @@ rotr32(const T x, const i8 r)
     return (x >> r) | (x << (32 - r));
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotr64(const T x, const i8 r)
 {
@@ -131,35 +131,35 @@ rotr64(const T x, const i8 r)
     return (x >> r) | (x << (64 - r));
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotl16(const T x, const i8 r)
 {
   return static_cast<T>(((x << r) | (x >> (16 - r))) & 0xFFFF);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotr16(const T x, const i8 r)
 {
   return static_cast<T>(((x >> r) | (x << (16 - r))) & 0xFFFF);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotl8(const T x, const i8 r)
 {
   return static_cast<T>(((x << r) | (x >> (8 - r))) & 0xFF);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotr8(const T x, const i8 r)
 {
   return static_cast<T>(((x >> r) | (x << (8 - r))) & 0xFF);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotl(const T x, const i8 r)
 {
@@ -169,7 +169,7 @@ rotl(const T x, const i8 r)
   return static_cast<T>((x << s) | (x >> (w - s)));
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) T
 rotr(const T x, const i8 r)
 {
@@ -182,7 +182,7 @@ rotr(const T x, const i8 r)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // reversals
 
-template <typename T>
+template<typename T>
 constexpr T
 reverse_bits(T t)
 {
@@ -193,7 +193,7 @@ reverse_bits(T t)
   return c;
 }
 
-template <typename T>
+template<typename T>
   requires(sizeof(T) == 1)
 constexpr T
 reverse_bits_byte(T t)
@@ -201,7 +201,7 @@ reverse_bits_byte(T t)
   return (t * 0x0202020202ULL & 0x010884422010ULL) % 1023;
 }
 
-template <typename T>
+template<typename T>
 constexpr T
 reverse_bits_per_byte(T x) noexcept
 {
@@ -217,7 +217,7 @@ reverse_bits_per_byte(T x) noexcept
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bitwise
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 inline constexpr T
 flip(T t)
@@ -226,7 +226,7 @@ flip(T t)
   return t;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 inline constexpr T
 invert(T t)
@@ -234,7 +234,7 @@ invert(T t)
   return ~t;
 }
 
-template <typename T = word>
+template<typename T = word>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 mask_low(int n) noexcept
@@ -244,7 +244,7 @@ mask_low(int n) noexcept
   return (T(1) << n) - T(1);
 }
 
-template <typename T = word>
+template<typename T = word>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 mask_high(int n) noexcept
@@ -252,7 +252,7 @@ mask_high(int n) noexcept
   return ~mask_low<T>(static_cast<int>(sizeof(T) * 8) - n);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 bits_range(T x, int lo, int len) noexcept
@@ -260,7 +260,7 @@ bits_range(T x, int lo, int len) noexcept
   return (x >> lo) & mask_low<T>(len);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 deposit_range(T dst, T val, int lo, int len) noexcept
@@ -269,7 +269,7 @@ deposit_range(T dst, T val, int lo, int len) noexcept
   return (dst & ~m) | ((val << lo) & m);
 }
 
-template <int x, typename T>
+template<int x, typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 set_bit(T t)
@@ -277,7 +277,7 @@ set_bit(T t)
   return t | (T(1) << x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 set_bit(T t, int x)
@@ -285,7 +285,7 @@ set_bit(T t, int x)
   return t | (T(1) << x);
 }
 
-template <int x, typename T>
+template<int x, typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 bit(T t)
@@ -293,7 +293,7 @@ bit(T t)
   return (t & (T(1) << x)) != 0;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 bit(T t, int x)
@@ -301,7 +301,7 @@ bit(T t, int x)
   return (t & (T(1) << x)) != 0;
 }
 
-template <int x, typename T>
+template<int x, typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 clear_bit(T t)
@@ -309,7 +309,7 @@ clear_bit(T t)
   return t & ~(T(1) << x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 clear_bit(T t, int x)
@@ -317,7 +317,7 @@ clear_bit(T t, int x)
   return t & ~(T(1) << x);
 }
 
-template <int x, typename T>
+template<int x, typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 toggle_bit(T t)
@@ -325,7 +325,7 @@ toggle_bit(T t)
   return t ^ (T(1) << x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 toggle_bit(T t, int x)
@@ -333,7 +333,7 @@ toggle_bit(T t, int x)
   return t ^ (T(1) << x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 copy_bit(T dst, T src, int dst_pos, int src_pos) noexcept
@@ -342,7 +342,7 @@ copy_bit(T dst, T src, int dst_pos, int src_pos) noexcept
   return (dst & ~(T(1) << dst_pos)) | (b << dst_pos);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 assign_bit(T t, int x, bool cond) noexcept
@@ -350,7 +350,7 @@ assign_bit(T t, int x, bool cond) noexcept
   return cond ? set_bit(t, x) : clear_bit(t, x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 swap_bits(T x, int i, int j) noexcept
@@ -359,7 +359,7 @@ swap_bits(T x, int i, int j) noexcept
   return x ^ ((d << i) | (d << j));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 bitcount(T x) noexcept
@@ -375,15 +375,15 @@ bitcount(T x) noexcept
     return __builtin_popcountll(static_cast<unsigned long long>(x));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 popcount(T x) noexcept
 {
   return bitcount(x);
-}     // STL compat
+}      // STL compat
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 has_any_bit(T x)
@@ -391,7 +391,7 @@ has_any_bit(T x)
   return bitcount(x) != 0;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 has_single_bit(T x)
@@ -399,7 +399,7 @@ has_single_bit(T x)
   return bitcount(x) == 1;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 has_n_bits(T x, int n)
@@ -407,7 +407,7 @@ has_n_bits(T x, int n)
   return bitcount(x) == n;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 has_even_bits(T x)
@@ -415,7 +415,7 @@ has_even_bits(T x)
   return (bitcount(x) & 1) == 0;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 parity(T x) noexcept
@@ -431,7 +431,7 @@ parity(T x) noexcept
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // countls
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 countl_zero(T x) noexcept
@@ -443,11 +443,11 @@ countl_zero(T x) noexcept
     return __builtin_clzl(static_cast<unsigned long>(x));
   else if constexpr ( micron::is_same_v<T, long long> || micron::is_same_v<T, unsigned long long> )
     return __builtin_clzll(static_cast<unsigned long long>(x));
-  else     // narrow types: promote then adjust for padding
+  else      // narrow types: promote then adjust for padding
     return __builtin_clzll(static_cast<unsigned long long>(x)) - static_cast<int>((sizeof(unsigned long long) - sizeof(T)) * 8);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 countr_zero(T x) noexcept
@@ -463,7 +463,7 @@ countr_zero(T x) noexcept
     return __builtin_ctzll(static_cast<unsigned long long>(x));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 countr_one(T x) noexcept
@@ -471,7 +471,7 @@ countr_one(T x) noexcept
   return countr_zero(static_cast<T>(~x));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 countl_one(T x) noexcept
@@ -479,7 +479,7 @@ countl_one(T x) noexcept
   return countl_zero(static_cast<T>(~x));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 bit_width(T x) noexcept
@@ -488,7 +488,7 @@ bit_width(T x) noexcept
   return static_cast<int>(sizeof(T) * 8) - countl_zero(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 log2_floor(T x) noexcept
@@ -496,7 +496,7 @@ log2_floor(T x) noexcept
   return bit_width(x) - 1;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr int
 log2_ceil(T x) noexcept
@@ -505,7 +505,7 @@ log2_ceil(T x) noexcept
   return bit_width(static_cast<T>(x - 1));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 is_power_of_two(T x) noexcept
@@ -514,7 +514,7 @@ is_power_of_two(T x) noexcept
 }
 
 // Largest power of 2 <= x
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 bit_floor(T x) noexcept
@@ -523,7 +523,7 @@ bit_floor(T x) noexcept
   return T(1) << log2_floor(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 bit_ceil(T x) noexcept
@@ -532,7 +532,7 @@ bit_ceil(T x) noexcept
   return T(1) << log2_ceil(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 align_up(T x, T a) noexcept
@@ -540,7 +540,7 @@ align_up(T x, T a) noexcept
   return (x + a - 1) & ~(a - 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 align_down(T x, T a) noexcept
@@ -548,7 +548,7 @@ align_down(T x, T a) noexcept
   return x & ~(a - 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 lowest_set_bit(T x) noexcept
@@ -556,7 +556,7 @@ lowest_set_bit(T x) noexcept
   return x & static_cast<T>(-static_cast<typename micron::make_signed<T>::type>(x));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 clear_lowest_set_bit(T x) noexcept
@@ -564,7 +564,7 @@ clear_lowest_set_bit(T x) noexcept
   return x & (x - 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 smear_lowest_set_bit(T x) noexcept
@@ -572,7 +572,7 @@ smear_lowest_set_bit(T x) noexcept
   return x | (x - 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 highest_set_bit(T x) noexcept
@@ -581,7 +581,7 @@ highest_set_bit(T x) noexcept
   return T(1) << log2_floor(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 fill_from_highest(T x) noexcept
@@ -590,7 +590,7 @@ fill_from_highest(T x) noexcept
   return mask_low<T>(log2_floor(x) + 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 nth_set_bit(T x, int n) noexcept
@@ -617,7 +617,7 @@ bswap64(u64 x) noexcept
   return __builtin_bswap64(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 inline __attribute__((always_inline)) T
 bswap(T x) noexcept
@@ -632,7 +632,7 @@ bswap(T x) noexcept
     return static_cast<T>(__builtin_bswap64(static_cast<u64>(x)));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 inline T
 to_big_endian(T x) noexcept
@@ -640,7 +640,7 @@ to_big_endian(T x) noexcept
   return bswap(x);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 inline T
 to_little_endian(T x) noexcept
@@ -648,7 +648,7 @@ to_little_endian(T x) noexcept
   return x;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 inline T
 from_big_endian(T x) noexcept
@@ -656,7 +656,7 @@ from_big_endian(T x) noexcept
   return bswap(x);
 }
 
-template <typename T>
+template<typename T>
   requires(sizeof(T) == 1)
 constexpr T
 swap_nibbles(T x) noexcept
@@ -664,7 +664,7 @@ swap_nibbles(T x) noexcept
   return static_cast<T>(((x & 0x0F) << 4) | ((x & 0xF0) >> 4));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 low_nibble(T x) noexcept
@@ -672,7 +672,7 @@ low_nibble(T x) noexcept
   return x & T(0x0F);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 high_nibble(T x) noexcept
@@ -681,7 +681,7 @@ high_nibble(T x) noexcept
 }
 
 // Swap bytes i and j within a multi-byte word
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 swap_bytes(T x, int i, int j) noexcept
@@ -694,7 +694,7 @@ swap_bytes(T x, int i, int j) noexcept
   return result;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 merge_bits(T a, T b, T mask) noexcept
@@ -702,7 +702,7 @@ merge_bits(T a, T b, T mask) noexcept
   return a ^ ((a ^ b) & mask);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 select(bool cond, T a, T b) noexcept
@@ -710,7 +710,7 @@ select(bool cond, T a, T b) noexcept
   return b ^ (static_cast<T>(-static_cast<T>(cond)) & (a ^ b));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 sign_extend(T x, int b) noexcept
@@ -719,7 +719,7 @@ sign_extend(T x, int b) noexcept
   return (x ^ mask) - mask;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 average(T a, T b) noexcept
@@ -727,7 +727,7 @@ average(T a, T b) noexcept
   return (a & b) + ((a ^ b) >> 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 average_ceil(T a, T b) noexcept
@@ -735,7 +735,7 @@ average_ceil(T a, T b) noexcept
   return (a | b) - ((a ^ b) >> 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 abs_diff(T a, T b) noexcept
@@ -743,7 +743,7 @@ abs_diff(T a, T b) noexcept
   return (a > b) ? (a - b) : (b - a);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 saturate_bits(T x, int n) noexcept
@@ -751,7 +751,7 @@ saturate_bits(T x, int n) noexcept
   return x & mask_low<T>(n);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 saturating_add(T a, T b) noexcept
@@ -760,7 +760,7 @@ saturating_add(T a, T b) noexcept
   return (result < a) ? ~T(0) : result;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 saturating_sub(T a, T b) noexcept
@@ -768,7 +768,7 @@ saturating_sub(T a, T b) noexcept
   return (a > b) ? (a - b) : T(0);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 add_overflows(T a, T b) noexcept
@@ -776,7 +776,7 @@ add_overflows(T a, T b) noexcept
   return b > (~T(0) - a);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 sub_underflows(T a, T b) noexcept
@@ -784,7 +784,7 @@ sub_underflows(T a, T b) noexcept
   return b > a;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr bool
 mul_overflows(T a, T b) noexcept
@@ -828,7 +828,7 @@ deinterleave_bits(u32 z, u16 &x, u16 &y) noexcept
   y = compact_bits_16(z >> 1);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 pext(T x, T mask) noexcept
@@ -842,7 +842,7 @@ pext(T x, T mask) noexcept
   return result;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_arithmetic_v<T>)
 constexpr T
 pdep(T x, T mask) noexcept
@@ -856,4 +856,4 @@ pdep(T x, T mask) noexcept
   return result;
 }
 
-};     // namespace micron
+};      // namespace micron

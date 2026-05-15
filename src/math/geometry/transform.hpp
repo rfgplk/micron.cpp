@@ -32,10 +32,10 @@ enum class transform_mode {
   projective,
 };
 
-template <ieee754_floating F, usize Dim, transform_mode Mode = transform_mode::affine>
+template<ieee754_floating F, usize Dim, transform_mode Mode = transform_mode::affine>
   requires(Dim == 2 || Dim == 3)
 struct transform {
-  static constexpr usize H = Dim + 1;     // homogeneous size
+  static constexpr usize H = Dim + 1;      // homogeneous size
   mat<F, H, H> M;
 
   [[nodiscard]] static constexpr transform
@@ -191,7 +191,7 @@ struct transform {
     if constexpr ( Mode == transform_mode::isometry ) {
       out.M = mat<F, H, H>::zero();
       for ( usize i = 0; i < Dim; ++i )
-        for ( usize j = 0; j < Dim; ++j ) out.M.data[i * H + j] = M.data[j * H + i];     // R^T
+        for ( usize j = 0; j < Dim; ++j ) out.M.data[i * H + j] = M.data[j * H + i];      // R^T
       for ( usize i = 0; i < Dim; ++i ) {
         F s = F(0);
         for ( usize j = 0; j < Dim; ++j ) s -= out.M.data[i * H + j] * M.data[j * H + Dim];
@@ -226,7 +226,7 @@ struct transform {
   }
 };
 
-template <ieee754_floating F, usize Dim, transform_mode A, transform_mode B>
+template<ieee754_floating F, usize Dim, transform_mode A, transform_mode B>
 [[nodiscard]] inline constexpr transform<F, Dim,
                                          (A == transform_mode::projective || B == transform_mode::projective)
                                              ? transform_mode::projective
@@ -250,6 +250,6 @@ operator*(const transform<F, Dim, A> &a, const transform<F, Dim, B> &b) noexcept
   return r;
 }
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

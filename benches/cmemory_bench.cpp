@@ -69,7 +69,7 @@ struct line {
   char buf[256];
   u32 pos;
 
-  constexpr line() noexcept : pos(0) {}
+  constexpr line() noexcept : pos(0) { }
 
   void
   s(const char *p) noexcept
@@ -233,7 +233,7 @@ struct sample {
   u64 bm;
 };
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] sample
 measure_once(Fn &&fn, u64 reps) noexcept
 {
@@ -247,7 +247,7 @@ measure_once(Fn &&fn, u64 reps) noexcept
            static_cast<u64>(evs.get<bbench::branch_misses>().retrieve()) };
 }
 
-template <typename Fn>
+template<typename Fn>
 row
 bench_routine(const char *name, u64 size, u64 bytes_per_op, Fn &&fn) noexcept
 {
@@ -282,7 +282,7 @@ bench_routine(const char *name, u64 size, u64 bytes_per_op, Fn &&fn) noexcept
   };
 }
 
-};     // namespace
+};      // namespace
 
 static constexpr u64 SIZES[] = {
   16, 64, 256, 1ULL << 10, 4ULL << 10, 64ULL << 10, 1ULL << 20, 16ULL << 20,

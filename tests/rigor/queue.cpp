@@ -75,7 +75,7 @@ reset_tracked()
   Tracked::dtor = 0;
 }
 
-}     // anonymous namespace
+}      // anonymous namespace
 
 int
 main()
@@ -142,8 +142,8 @@ main()
 
     q.push(100);
     require(q.size(), size_t(2));
-    require(q.last(), 99);       // last() is back/oldest-pushed end
-    require(q.front(), 100);     // front() is the most-recently pushed element
+    require(q.last(), 99);        // last() is back/oldest-pushed end
+    require(q.front(), 100);      // front() is the most-recently pushed element
   }
   end_test_case();
 
@@ -174,7 +174,7 @@ main()
   test_case("pop on empty queue is a no-op");
   {
     micron::queue<int> q;
-    q.pop();     // must not crash
+    q.pop();      // must not crash
     require_true(q.empty());
   }
   end_test_case();
@@ -339,7 +339,7 @@ main()
       require(q.size(), size_t(64));
       for ( int i = 0; i < 32; ++i ) q.pop();
       require(q.size(), size_t(32));
-    }     // destructor runs here
+    }      // destructor runs here
     // every constructed object must have been destroyed exactly once
     require(Tracked::ctor, Tracked::dtor);
   }

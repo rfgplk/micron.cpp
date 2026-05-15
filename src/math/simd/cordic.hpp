@@ -89,7 +89,7 @@ sincos_kernel_d256(simd::d256 z, simd::d256 *c_out, simd::d256 *s_out) noexcept
   *s_out = y;
 }
 
-};     // namespace __cordic_simd
+};      // namespace __cordic_simd
 
 [[gnu::flatten]] inline simd::d256
 sin_cordic(simd::d256 x) noexcept
@@ -239,7 +239,7 @@ sincos_cordic(simd::f128 x, simd::f128 *sn, simd::f128 *cs) noexcept
   *cs = cos_cordic(x);
 }
 
-#endif     // AVX2 + FMA
+#endif      // AVX2 + FMA
 
 #if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 
@@ -282,7 +282,7 @@ sincos_kernel_f128(simd::f128 z, simd::f128 *c_out, simd::f128 *s_out) noexcept
   float32x4_t y = simd::neon::splat_f32(0.0f);
   const uint32x4_t sign_bit_mask = simd::neon::splat_u32(0x80000000u);
   for ( int i = 0; i < N_FP_F32; ++i ) {
-    const uint32x4_t sm = simd::neon::lt(z, simd::neon::splat_f32(0.0f));     // all-1 where z<0
+    const uint32x4_t sm = simd::neon::lt(z, simd::neon::splat_f32(0.0f));      // all-1 where z<0
     const uint32x4_t sb = simd::neon::and_(sm, sign_bit_mask);
     const float32x4_t vshift = simd::neon::splat_f32(SHIFT_POW_F32.v[i]);
     const float32x4_t ys = simd::neon::mul(y, vshift);
@@ -299,7 +299,7 @@ sincos_kernel_f128(simd::f128 z, simd::f128 *c_out, simd::f128 *s_out) noexcept
   *s_out = y;
 }
 
-};     // namespace __cordic_simd_neon
+};      // namespace __cordic_simd_neon
 
 [[gnu::flatten]] inline simd::f128
 sin_cordic(simd::f128 x) noexcept
@@ -410,7 +410,7 @@ sincos_kernel_d128(simd::d128 z, simd::d128 *c_out, simd::d128 *s_out) noexcept
   *s_out = y;
 }
 
-};     // namespace __cordic_simd_neon_d
+};      // namespace __cordic_simd_neon_d
 
 [[gnu::flatten]] inline simd::d128
 sin_cordic(simd::d128 x) noexcept
@@ -461,12 +461,12 @@ tan_cordic(simd::d128 x) noexcept
   return simd::neon::select(odd, cot, ratio);
 }
 
-#endif     // arm64 d128
+#endif      // arm64 d128
 
-#endif     // arm_any && neon
+#endif      // arm_any && neon
 
-};     // namespace mk
-};     // namespace math
-};     // namespace micron
+};      // namespace mk
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC diagnostic pop

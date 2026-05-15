@@ -28,7 +28,7 @@ rexecute(uprocess_t &t)
 }
 
 // run process at path location specified by T
-template <is_string T>
+template<is_string T>
 __attribute__((noreturn)) void
 rexecute(const T &t)
 {
@@ -43,7 +43,7 @@ rexecute(const T &t)
 }
 
 // fork and run process at path location specified by T
-template <is_string T, is_string... R>
+template<is_string T, is_string... R>
 __attribute__((noreturn)) void
 rexecute(const T &t, const R &...args)
 {
@@ -62,7 +62,7 @@ rexecute(const T &t, const R &...args)
 }
 
 // for passing a preprocessed string to be split up
-template <is_string T, is_string A>
+template<is_string T, is_string A>
 __attribute__((noreturn)) void
 rexecute(const T &t, A &__argv)
 {
@@ -101,7 +101,7 @@ rexecute(const char *t)
   __builtin_unreachable();
 }
 
-template <typename... R>
+template<typename... R>
 __attribute__((noreturn)) void
 rexecute(const char *t, R *...args)
 {
@@ -145,7 +145,7 @@ execute(uprocess_t &t)
 }
 
 // fork and run process at path location specified by T
-template <bool W = exec_continue, is_string T>
+template<bool W = exec_continue, is_string T>
 status_t
 execute(const T &t)
 {
@@ -164,7 +164,7 @@ execute(const T &t)
 }
 
 // fork and run process at path location specified by T
-template <bool W = exec_continue, is_string T, is_string... R>
+template<bool W = exec_continue, is_string T, is_string... R>
 status_t
 execute(const T &t, const R &...args)
 {
@@ -186,7 +186,7 @@ execute(const T &t, const R &...args)
 }
 
 // for passing a preprocessed string to be split up
-template <bool W = exec_continue, is_string T, is_string A>
+template<bool W = exec_continue, is_string T, is_string A>
 status_t
 execute(const T &t, A &__argv)
 {
@@ -216,7 +216,7 @@ execute(const T &t, A &__argv)
   return status;
 }
 
-template <bool W = exec_continue>
+template<bool W = exec_continue>
 status_t
 execute(const char *t)
 {
@@ -234,7 +234,7 @@ execute(const char *t)
   return status;
 }
 
-template <bool W = exec_continue, typename... R>
+template<bool W = exec_continue, typename... R>
 status_t
 execute(const char *t, R *...args)
 {
@@ -255,7 +255,7 @@ execute(const char *t, R *...args)
   return status;
 }
 
-template <bool W = exec_continue>
+template<bool W = exec_continue>
 status_t
 execute(const char *t, char **args)
 {
@@ -268,4 +268,4 @@ execute(const char *t, char **args)
   return status;
 }
 
-};     // namespace micron
+};      // namespace micron

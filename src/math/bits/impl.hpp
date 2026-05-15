@@ -14,7 +14,7 @@ namespace micron
 namespace math
 {
 
-template <ieee754_floating F, usize Dg> struct poly_coeffs {
+template<ieee754_floating F, usize Dg> struct poly_coeffs {
   static constexpr usize size = Dg + 1;
   static constexpr usize degree = Dg;
   using value_type = F;
@@ -45,18 +45,18 @@ template <ieee754_floating F, usize Dg> struct poly_coeffs {
   }
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline constexpr usize vec_align_v = (N * sizeof(F) <= 16)   ? 16
                                      : (N * sizeof(F) <= 32) ? 32
                                      : (N * sizeof(F) <= 64) ? 64
                                                              : 128;
 
-template <typename F, usize R, usize C>
+template<typename F, usize R, usize C>
 inline constexpr usize mat_align_v = (R * C * sizeof(F) <= 16)   ? 16
                                      : (R * C * sizeof(F) <= 32) ? 32
                                                                  : 64;
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fma(F a, F b, F c) noexcept
 {
@@ -69,7 +69,7 @@ fma(F a, F b, F c) noexcept
     return F(__builtin_fmal(static_cast<long double>(a), static_cast<long double>(b), static_cast<long double>(c)));
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 horner(const poly_coeffs<F, N> &c, F x) noexcept
 {
@@ -79,7 +79,7 @@ horner(const poly_coeffs<F, N> &c, F x) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 horner_p(const F *__restrict__ c, usize n, F x) noexcept
 {
@@ -90,7 +90,7 @@ horner_p(const F *__restrict__ c, usize n, F x) noexcept
 
 // 2-chain split Horner for even degree polynomials in s = x**2
 // p(s) = (c0 + c2*s + c4*s**2 + ...) + s*(c1 + c3*s + c5*s**2 + ..)
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 horner_split2(const F *__restrict__ even, usize ne, const F *__restrict__ odd, usize no, F s) noexcept
 {
@@ -127,5 +127,5 @@ rsqrt_nr2(f64 x) noexcept
   return r;
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

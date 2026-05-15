@@ -30,8 +30,8 @@ inline constexpr f64 Lg5 = 0x1.7466496cb03dep-3;
 inline constexpr f64 Lg6 = 0x1.39a09d078c69fp-3;
 inline constexpr f64 Lg7 = 0x1.2f112df3e5244p-3;
 
-};     // namespace log_f64_data
-};     // namespace coeff
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace log_f64_data
+};      // namespace coeff
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

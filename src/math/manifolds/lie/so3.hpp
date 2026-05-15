@@ -32,7 +32,7 @@ namespace manifolds
 namespace lie
 {
 
-template <ieee754_floating F> struct SO3 {
+template<ieee754_floating F> struct SO3 {
   quat<F> q;
 
   [[nodiscard, gnu::always_inline]] static constexpr SO3
@@ -44,7 +44,7 @@ template <ieee754_floating F> struct SO3 {
   [[nodiscard, gnu::flatten]] static constexpr SO3
   from_matrix(const mat<F, 3, 3> &R) noexcept
   {
-    auto qv4 = quaternions::from_matrix<F>(R);     // vector_4<F>
+    auto qv4 = quaternions::from_matrix<F>(R);      // vector_4<F>
     return SO3{ quat<F>{ qv4.x, qv4.y, qv4.z, qv4.w } };
   }
 
@@ -118,9 +118,9 @@ template <ieee754_floating F> struct SO3 {
   }
 };
 
-};     // namespace lie
+};      // namespace lie
 
-template <ieee754_floating F> struct traits<lie::SO3<F>> {
+template<ieee754_floating F> struct traits<lie::SO3<F>> {
   using point_type = lie::SO3<F>;
   using tangent_type = vec<F, 3>;
   using scalar_type = F;
@@ -129,6 +129,6 @@ template <ieee754_floating F> struct traits<lie::SO3<F>> {
   static constexpr usize ambient_dim = 9;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

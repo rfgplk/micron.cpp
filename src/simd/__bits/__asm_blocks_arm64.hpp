@@ -55,7 +55,23 @@ __block_copy_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
   __asm__("str %q1, %0" : "=Q"(*reinterpret_cast<uint8x16_t *>(d)) : "w"(t));
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+__inline_g void
+__block_move_16(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t;
+  __asm__("ldr %q0, %1" : "=w"(t) : "Q"(*reinterpret_cast<const uint8x16_t *>(s)));
+  __asm__("str %q1, %0" : "=Q"(*reinterpret_cast<uint8x16_t *>(d)) : "w"(t));
+}
+
+__inline_g void
+__block_move_pair_16(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t0, t1;
+  __asm__("ldp %q0, %q1, [%2]" : "=w"(t0), "=w"(t1) : "r"(s), "m"(*reinterpret_cast<const u8(*)[32]>(s)));
+  __asm__("stp %q2, %q3, [%1]" : "=m"(*reinterpret_cast<u8(*)[32]>(d)) : "r"(d), "w"(t0), "w"(t1));
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 32-byte pair copy (LDP Q,Q / STP Q,Q)
 __inline_g void
 __block_copy_pair_16(u8 *__restrict d, const u8 *__restrict s) noexcept
@@ -73,7 +89,7 @@ __block_copy_pair_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
   __asm__("stnp %q2, %q3, [%1]" : "=m"(*reinterpret_cast<u8(*)[32]>(d)) : "r"(d), "w"(t0), "w"(t1));
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 16-byte broadcast + set (DUP / STR Q)
 __inline_g uint8x16_t
 __broadcast_byte_16(u8 b) noexcept
@@ -83,8 +99,8 @@ __broadcast_byte_16(u8 b) noexcept
   return v;
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// 16-byte word broadcast (DUP .2D): u64 → 2x 64-bit lanes
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 16-byte word broadcast (DUP .2D)
 __inline_g uint8x16_t
 __broadcast_word_16(u64 w) noexcept
 {
@@ -147,6 +163,6 @@ __block_eq_mask_16(const u8 *p, u8 c) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

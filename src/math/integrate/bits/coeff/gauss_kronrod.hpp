@@ -22,7 +22,7 @@ namespace coeff
 namespace gk
 {
 
-template <ieee754_floating F> struct gk_15_7 {
+template<ieee754_floating F> struct gk_15_7 {
   static constexpr usize half = 8;
   static constexpr bool has_zero = true;
 
@@ -46,19 +46,19 @@ template <ieee754_floating F> struct gk_15_7 {
   // Gauss-7 weights: non-zero only at Kronrod indices that coincide
   // with a Gauss node (every other one starting at 0).
   static constexpr F wg[8] = {
-    F(0.417959183673469387755102040816327L),     // x = 0
+    F(0.417959183673469387755102040816327L),      // x = 0
     F(0.0L),
-    F(0.381830050505118944950369775488975L),     // x ≈ 0.40585
+    F(0.381830050505118944950369775488975L),      // x ≈ 0.40585
     F(0.0L),
-    F(0.279705391489276667901467771423780L),     // x ≈ 0.74153
+    F(0.279705391489276667901467771423780L),      // x ≈ 0.74153
     F(0.0L),
-    F(0.129484966168869693270611432679082L),     // x ≈ 0.94911
-    F(0.0L),                                     // Kronrod-only
+    F(0.129484966168869693270611432679082L),      // x ≈ 0.94911
+    F(0.0L),                                      // Kronrod-only
   };
 };
 
-};     // namespace gk
-};     // namespace coeff
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace gk
+};      // namespace coeff
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

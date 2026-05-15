@@ -87,7 +87,7 @@ __push(__atexit_fn_t func, void *arg) noexcept
   return 0;
 }
 
-};     // namespace __exit_internal
+};      // namespace __exit_internal
 
 inline int
 atexit(void (*fn)()) noexcept
@@ -133,4 +133,4 @@ exit(int s = exit_ok)
   __builtin_unreachable();
 }
 
-};     // namespace micron
+};      // namespace micron

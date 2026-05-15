@@ -27,7 +27,7 @@ using namespace micron::math;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // utilities
 
-template <typename T>
+template<typename T>
 static T
 fabs_(T x) noexcept
 {
@@ -36,7 +36,7 @@ fabs_(T x) noexcept
 
 // Naive ijk gemm reference — pure scalar, no SIMD, no blocking.
 // Computes C = α·op(A)·op(B) + β·C with op selected by trA / trB.
-template <typename T>
+template<typename T>
 static void
 ref_gemm(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
          usize ldc) noexcept
@@ -57,7 +57,7 @@ ref_gemm(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usi
 
 // Deterministic in [-0.5, 0.5) — distinct enough across (m, n, k, seed)
 // that any indexing bug in the blocked path manifests as a residual.
-template <typename T>
+template<typename T>
 static void
 fill_pattern(T *p, usize len, u64 seed) noexcept
 {
@@ -71,7 +71,7 @@ fill_pattern(T *p, usize len, u64 seed) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
 static T
 max_rel_residual(const T *X, const T *Y, usize n) noexcept
 {
@@ -89,7 +89,7 @@ max_rel_residual(const T *X, const T *Y, usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // per-case driver: build random A, B, C, run reference + blas, check.
 
-template <typename T>
+template<typename T>
 static void
 run_case(usize m, usize n, usize k, bool trA, bool trB, T alpha, T beta, u64 seed, T tol) noexcept
 {
@@ -100,7 +100,7 @@ run_case(usize m, usize n, usize k, bool trA, bool trB, T alpha, T beta, u64 see
 
   dynmat<T> A(a_rows, a_cols);
   dynmat<T> B(b_rows, b_cols);
-  dynmat<T> C0(m, n);     // initial C used by both paths
+  dynmat<T> C0(m, n);      // initial C used by both paths
   fill_pattern(A.data(), a_rows * a_cols, seed);
   fill_pattern(B.data(), b_rows * b_cols, seed ^ 0xDEADBEEFu);
   fill_pattern(C0.data(), m * n, seed ^ 0xCAFEBABEu);
@@ -159,7 +159,7 @@ main()
   test_case("64×64×64 (blocked path engages, dims a multiple of MR/NR)");
   {
     run_case<f64>(64, 64, 64, false, false, 1.0, 0.0, 0x200ull, 1e-10);
-    run_case<f64>(64, 64, 64, false, false, 0.0, 1.0, 0x201ull, 1e-10);     // alpha=0 → C·=β
+    run_case<f64>(64, 64, 64, false, false, 0.0, 1.0, 0x201ull, 1e-10);      // alpha=0 → C·=β
     run_case<f64>(64, 64, 64, false, false, 1.0, 1.0, 0x202ull, 1e-10);
     run_case<f64>(64, 64, 64, true, false, 1.0, 0.0, 0x203ull, 1e-10);
     run_case<f64>(64, 64, 64, false, true, 1.0, 0.0, 0x204ull, 1e-10);
@@ -203,7 +203,7 @@ main()
     fill_pattern(AC.data(), m * k, 0x600ull);
     fill_pattern(B.data(), k * n, 0x601ull);
     dynmat<f64> A_orig = AC;
-    dynmat<f64> C_ref = AC;     // same contents as A initially
+    dynmat<f64> C_ref = AC;      // same contents as A initially
 
     // reference: read from a separate copy of A, write to C_ref
     ref_gemm<f64>(false, false, m, n, k, 1.0, A_orig.data(), k, B.data(), n, 0.5, C_ref.data(), n);
@@ -211,7 +211,7 @@ main()
     // aliased: A and C share the same buffer
     auto Av = as_row_view(AC);
     auto Bv = as_row_view(B);
-    auto Cv = as_row_view(AC);     // same view storage as Av
+    auto Cv = as_row_view(AC);      // same view storage as Av
     blas::level3::gemm(f64(1.0), Av, Bv, f64(0.5), Cv);
 
     const f64 r = max_rel_residual<f64>(AC.data(), C_ref.data(), m * n);

@@ -29,14 +29,14 @@ namespace micron
 
 // general purpose concurrent array class, stack allocated, thread-safe, mutable.
 // default to 64
-template <is_regular_object T, usize N = 64>
-  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
+template<is_regular_object T, usize N = 64>
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 class conarray
 {
   mutable micron::mutex __mtx;
   alignas(64) T stack[N];
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_add(const U &v)
   {
@@ -53,7 +53,7 @@ class conarray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_sub(const U &v)
   {
@@ -70,7 +70,7 @@ class conarray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_mul(const U &v)
   {
@@ -87,7 +87,7 @@ class conarray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_div(const U &v)
   {
@@ -104,7 +104,7 @@ class conarray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_mod(const U &v)
   {
@@ -142,7 +142,7 @@ public:
 
   conarray() { __impl_container::construct<N, T>(micron::addr(stack[0]), T{}); }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   conarray(Fn &&fn)
   {
@@ -150,7 +150,7 @@ public:
     micron::generate(begin_unsafe(), end_unsafe(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   conarray(Fn &&fn)
   {
@@ -168,7 +168,7 @@ public:
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, conarray>)
   conarray(A &&o)
   {
@@ -179,7 +179,7 @@ public:
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
 
-  template <class C> conarray(const slice<T, C> &o)
+  template<class C> conarray(const slice<T, C> &o)
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
@@ -336,21 +336,21 @@ public:
     return stack[i];
   }
 
-  template <class C>
+  template<class C>
   inline slice<T, C>
   operator[]()
   {
     return slice<T, C>(begin_unsafe(), end_unsafe());
   }
 
-  template <class C>
+  template<class C>
   inline const slice<T, C>
   operator[]() const
   {
     return slice<T, C>(begin(), end());
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) const slice<T, C>
   operator[](size_type from, size_type to) const
   {
@@ -358,7 +358,7 @@ public:
     return slice<T, C>(get(from), get(to));
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) slice<T, C>
   operator[](size_type from, size_type to)
   {
@@ -381,7 +381,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
   // assignment
 
-  template <typename F, size_type M>
+  template<typename F, size_type M>
   conarray &
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
@@ -391,7 +391,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   conarray &
   operator=(const F &o)
     requires micron::is_fundamental_v<F>
@@ -401,7 +401,7 @@ public:
     return *this;
   }
 
-  template <is_constexpr_container A>
+  template<is_constexpr_container A>
   conarray &
   operator=(const A &o)
   {
@@ -413,7 +413,7 @@ public:
     return *this;
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, conarray>)
   conarray &
   operator=(const A &o)
@@ -451,7 +451,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // binary arithmetic
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray
   operator+(const conarray<T, M> &o) const
@@ -465,7 +465,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray
   operator-(const conarray<T, M> &o) const
@@ -479,7 +479,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray
   operator*(const conarray<T, M> &o) const
@@ -493,7 +493,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray
   operator/(const conarray<T, M> &o) const
@@ -507,7 +507,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) conarray
   operator%(const conarray<T, M> &o) const
@@ -603,7 +603,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // compound assignment
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray &
   operator+=(const conarray<T, M> &o)
@@ -616,7 +616,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray &
   operator-=(const conarray<T, M> &o)
@@ -629,7 +629,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray &
   operator*=(const conarray<T, M> &o)
@@ -642,7 +642,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) conarray &
   operator/=(const conarray<T, M> &o)
@@ -655,7 +655,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) conarray &
   operator%=(const conarray<T, M> &o)
@@ -671,7 +671,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // variadic compound assignment
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   conarray &
   operator+=(const Rs &...rs)
@@ -681,7 +681,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   conarray &
   operator-=(const Rs &...rs)
@@ -691,7 +691,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   conarray &
   operator*=(const Rs &...rs)
@@ -701,7 +701,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   conarray &
   operator/=(const Rs &...rs)
@@ -711,7 +711,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2 && micron::is_integral_v<T>)
   conarray &
   operator%=(const Rs &...rs)
@@ -789,7 +789,7 @@ public:
     for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
   }
 
-  template <typename F>
+  template<typename F>
   conarray &
   fill(const F &o)
     requires micron::is_fundamental_v<F>
@@ -799,7 +799,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   conarray &
   fill(const F &o)
   {
@@ -842,4 +842,4 @@ private:
     return micron::addr(stack[N]);
   }
 };
-};     // namespace micron
+};      // namespace micron

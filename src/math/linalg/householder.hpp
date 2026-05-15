@@ -27,13 +27,13 @@ namespace decomp
 {
 
 // H = I - beta * v * v**T
-template <ieee754_floating F, usize N> struct householder_t {
+template<ieee754_floating F, usize N> struct householder_t {
   vec<F, N> v;
   F beta;
   usize k0;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline householder_t<F, N>
 householder_reflector(const vec<F, N> &x, usize k0) noexcept
 {
@@ -73,7 +73,7 @@ householder_reflector(const vec<F, N> &x, usize k0) noexcept
   return h;
 }
 
-template <ieee754_floating F, usize R, usize C>
+template<ieee754_floating F, usize R, usize C>
 inline void
 apply_householder_left(mat<F, R, C> &A, const vec<F, R> &v, F beta, usize k0) noexcept
 {
@@ -95,7 +95,7 @@ apply_householder_left(mat<F, R, C> &A, const vec<F, R> &v, F beta, usize k0) no
   }
 }
 
-template <ieee754_floating F, usize R, usize C>
+template<ieee754_floating F, usize R, usize C>
 inline void
 apply_householder_right(mat<F, R, C> &A, const vec<F, C> &v, F beta, usize k0) noexcept
 {
@@ -114,12 +114,12 @@ apply_householder_right(mat<F, R, C> &A, const vec<F, C> &v, F beta, usize k0) n
   }
 }
 
-template <ieee754_floating F> struct givens_t {
+template<ieee754_floating F> struct givens_t {
   F c;
   F s;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline givens_t<F>
 givens_rotation(F a, F b) noexcept
 {
@@ -151,12 +151,12 @@ givens_rotation(F a, F b) noexcept
 }
 
 // A = Q * H * Q**T
-template <ieee754_floating F, usize N> struct hess_result {
+template<ieee754_floating F, usize N> struct hess_result {
   mat<F, N, N> H;
   mat<F, N, N> Q;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline hess_result<F, N>
 hessenberg(const mat<F, N, N> &A) noexcept
 {
@@ -177,13 +177,13 @@ hessenberg(const mat<F, N, N> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N> struct tridiag_result {
+template<ieee754_floating F, usize N> struct tridiag_result {
   vec<F, N> diag;
-  vec<F, N> subdiag;     // subdiag[0..N-2] valid; subdiag[N-1] unused
+  vec<F, N> subdiag;      // subdiag[0..N-2] valid; subdiag[N-1] unused
   mat<F, N, N> Q;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline tridiag_result<F, N>
 tridiagonalize_sym(const mat<F, N, N> &A) noexcept
 {
@@ -197,13 +197,13 @@ tridiagonalize_sym(const mat<F, N, N> &A) noexcept
 }
 
 // A = U * B * V**T
-template <ieee754_floating F, usize R_, usize C_> struct bidiag_result {
+template<ieee754_floating F, usize R_, usize C_> struct bidiag_result {
   mat<F, R_, C_> B;
   mat<F, R_, R_> U;
   mat<F, C_, C_> V;
 };
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard]] inline bidiag_result<F, R_, C_>
 bidiagonalize(const mat<F, R_, C_> &A) noexcept
 {
@@ -239,7 +239,7 @@ bidiagonalize(const mat<F, R_, C_> &A) noexcept
 namespace __impl_decomp
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 apply_householder_left_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept
 {
@@ -260,7 +260,7 @@ apply_householder_left_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, cons
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 apply_householder_right_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept
 {
@@ -279,7 +279,7 @@ apply_householder_right_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, con
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline F
 householder_reflector_dyn(const F *x, usize R, usize k0, F *v_out) noexcept
 {
@@ -308,9 +308,9 @@ householder_reflector_dyn(const F *x, usize R, usize k0, F *v_out) noexcept
   return (vv > F(0)) ? F(2) / vv : F(0);
 }
 
-};     // namespace __impl_decomp
+};      // namespace __impl_decomp
 
-};     // namespace decomp
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace decomp
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

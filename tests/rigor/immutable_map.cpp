@@ -56,7 +56,7 @@ contains_seq(const imap &m, int n)
   return true;
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -163,7 +163,7 @@ main()
   // ================================================================ //
   test_case("erase existing key – original preserved");
   {
-    auto m = make_seq(5);     // {0:0, 1:10, 2:20, 3:30, 4:40}
+    auto m = make_seq(5);      // {0:0, 1:10, 2:20, 3:30, 4:40}
     auto m2 = m.erase(2);
 
     require(m2.size(), usize(4));
@@ -258,18 +258,18 @@ main()
   {
     auto m = make_seq(10);
 
-    auto a = m.erase(0);     // first
+    auto a = m.erase(0);      // first
     require(a.size(), usize(9));
     require_true(a.find(0) == nullptr);
     require(*a.find(1), 10);
 
-    auto b = m.erase(5);     // middle
+    auto b = m.erase(5);      // middle
     require(b.size(), usize(9));
     require_true(b.find(5) == nullptr);
     require(*b.find(4), 40);
     require(*b.find(6), 60);
 
-    auto c = m.erase(9);     // last
+    auto c = m.erase(9);      // last
     require(c.size(), usize(9));
     require_true(c.find(9) == nullptr);
     require(*c.find(8), 80);

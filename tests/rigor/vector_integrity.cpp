@@ -23,8 +23,8 @@ namespace
 {
 
 struct Probe {
-  static inline int live = 0;      // currently alive instances
-  static inline int total = 0;     // total ever constructed
+  static inline int live = 0;       // currently alive instances
+  static inline int total = 0;      // total ever constructed
   static inline bool corrupt = false;
 
   static constexpr int MAGIC = 0xDEADBEEF;
@@ -51,7 +51,7 @@ struct Probe {
     ++total;
     ++live;
     check(o);
-    o.sentinel = 0;     // poison moved-from
+    o.sentinel = 0;      // poison moved-from
   }
 
   // Restore sentinel = MAGIC on assignment: erase() calls ~T() then immediately
@@ -78,8 +78,8 @@ struct Probe {
 
   ~Probe()
   {
-    if ( sentinel != MAGIC && sentinel != 0 ) corrupt = true;     // double-free or use-after-move corruption
-    sentinel = 0xCDCDCDCD;                                        // poison
+    if ( sentinel != MAGIC && sentinel != 0 ) corrupt = true;      // double-free or use-after-move corruption
+    sentinel = 0xCDCDCDCD;                                         // poison
     --live;
   }
 
@@ -176,7 +176,7 @@ struct MoveOnlyProbe {
   }
 };
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -294,7 +294,7 @@ main()
       micron::vector<Probe> v;
       for ( int i = 0; i < 32; ++i ) v.emplace_back(i);
 
-      v.erase(size_t(4), size_t(12));     // 8 elements erased
+      v.erase(size_t(4), size_t(12));      // 8 elements erased
       require(Probe::live, 24);
       require(v[4].id, 12);
       require_false(Probe::corrupt);
@@ -375,7 +375,7 @@ main()
       for ( int i = 0; i < 16; ++i ) a.emplace_back(i);
       for ( int i = 0; i < 8; ++i ) b.emplace_back(100 + i);
 
-      int before = Probe::live;     // 24
+      int before = Probe::live;      // 24
       b = a;
       // b's old 8 elements destroyed, 16 new copies made
       // net change: -8 +16 = +8
@@ -453,7 +453,7 @@ main()
       micron::vector<Probe> v;
       for ( int i = 0; i < 4; ++i ) v.emplace_back(i);
       v.resize(20, filler);
-      require(Probe::live, 21);     // 4 originals + 16 copies + filler
+      require(Probe::live, 21);      // 4 originals + 16 copies + filler
       for ( size_t i = 4; i < 20; ++i ) require(v[i].id, 77);
     }
     require(Probe::live, 0);
@@ -472,7 +472,7 @@ main()
 
       Probe p(999);
       v.insert(size_t(4), p);
-      require(Probe::live, 10);     // 8 + 1 original p + 1 copy inside vector
+      require(Probe::live, 10);      // 8 + 1 original p + 1 copy inside vector
       require(v[4].id, 999);
       require(v[5].id, 40);
     }
@@ -517,8 +517,8 @@ main()
 
       a.append(b);
       require(a.size(), size_t(32));
-      require(b.size(), size_t(16));     // b untouched
-      require(Probe::live, 48);          // 32 in a + 16 still in b
+      require(b.size(), size_t(16));      // b untouched
+      require(Probe::live, 48);           // 32 in a + 16 still in b
       for ( size_t i = 0; i < 32; ++i ) require(a[i].id, (int)i);
       require_false(Probe::corrupt);
     }
@@ -539,7 +539,7 @@ main()
       a.weld(micron::move(b));
       require(a.size(), size_t(16));
       for ( size_t i = 0; i < 16; ++i ) require(a[i].id, (int)i);
-      require(Probe::live, before);     // total count unchanged (no new constructions)
+      require(Probe::live, before);      // total count unchanged (no new constructions)
     }
     require(Probe::live, 0);
     require_false(Probe::corrupt);
@@ -636,8 +636,8 @@ main()
   test_case("bounds: erase range out-of-order throws");
   {
     micron::vector<int> v{ 1, 2, 3, 4, 5 };
-    require_throw([&]() { v.erase(size_t(3), size_t(2)); });     // from > to
-    require_throw([&]() { v.erase(size_t(3), size_t(6)); });     // to > length
+    require_throw([&]() { v.erase(size_t(3), size_t(2)); });      // from > to
+    require_throw([&]() { v.erase(size_t(3), size_t(6)); });      // to > length
     require(v.size(), size_t(5));
   }
   end_test_case();
@@ -671,8 +671,8 @@ main()
     // operator[] checks against capacity (per implementation note)
     // so indices 0..capacity-1 are valid reads per design
     // require_nothrow needs a raw function pointer; call directly instead
-    (void)v[0];     // must not throw
-    (void)v[7];     // must not throw
+    (void)v[0];      // must not throw
+    (void)v[7];      // must not throw
   }
   end_test_case();
 
@@ -685,7 +685,7 @@ main()
     {
       micron::vector<Probe> v;
       for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
-      v = v;     // must not crash or corrupt
+      v = v;      // must not crash or corrupt
       require(v.size(), size_t(16));
       require(Probe::live, 16);
       for ( int i = 0; i < 16; ++i ) require(v[i].id, i);
@@ -825,7 +825,7 @@ main()
       for ( int round = 0; round < 100; ++round ) {
         v.assign(50, filler);
         require(v.size(), size_t(50));
-        require(Probe::live, 51);     // 50 in vector + filler
+        require(Probe::live, 51);      // 50 in vector + filler
       }
     }
     require(Probe::live, 0);
@@ -882,7 +882,7 @@ main()
   test_case("edge: reserve(0) on empty does not crash");
   {
     micron::vector<int> v;
-    v.reserve(0);     // must not throw
+    v.reserve(0);      // must not throw
     require_true(v.empty());
   }
   end_test_case();
@@ -894,7 +894,7 @@ main()
     {
       micron::vector<Probe> v;
       for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
-      v.resize(4);     // resize to smaller – implementation skips per code
+      v.resize(4);      // resize to smaller – implementation skips per code
       require(v.size(), size_t(16));
       require(Probe::live, 16);
     }

@@ -14,7 +14,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace mg = micron::math::geometry;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {

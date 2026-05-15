@@ -90,9 +90,9 @@ _mm_lddqu_si128(const __m128i *p) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 #define __inject_i(name) using ::micron::simd::__bits::name

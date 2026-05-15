@@ -24,14 +24,14 @@
 
 static constexpr byte CANARY = 0xC3;
 
-template <u64 N>
+template<u64 N>
 void
 fill_seq(byte (&buf)[N])
 {
   for ( u64 i = 0; i < N; i++ ) buf[i] = static_cast<byte>(i & 0xFF);
 }
 
-template <u64 N>
+template<u64 N>
 void
 fill_value(byte (&buf)[N], byte v)
 {
@@ -55,7 +55,7 @@ all_equal_byte(const byte *p, u64 n, byte v)
 }
 
 // Guarded buffer with leading & trailing canary zones.
-template <u64 PAYLOAD, u64 ALIGN = 64> struct GBuf {
+template<u64 PAYLOAD, u64 ALIGN = 64> struct GBuf {
   alignas(ALIGN) byte data[64 + PAYLOAD + 64];
 
   GBuf() noexcept
@@ -280,7 +280,7 @@ main(void)
     for ( u64 sz : { (u64)1, (u64)16, (u64)32, (u64)256 } ) {
       i64 r = mc::memcmp128(a, b, sz);
       sb::require(r != 0);
-      sb::require(r < 0);     // 0x10 < 0x20
+      sb::require(r < 0);      // 0x10 < 0x20
     }
   }
   sb::end_test_case();
@@ -295,7 +295,7 @@ main(void)
       a[i] = 0xFF;
       b[i] = 0x00;
       i64 r = mc::memcmp128(a, b, 64);
-      sb::require(r > 0);     // 0xFF > 0x00
+      sb::require(r > 0);      // 0xFF > 0x00
     }
   }
   sb::end_test_case();
@@ -632,7 +632,7 @@ main(void)
     fill_value(hay, 0xAA);
     hay[20] = 'X';
     hay[21] = 'Y';
-    hay[22] = 'A';     // prefix XY but third byte wrong
+    hay[22] = 'A';      // prefix XY but third byte wrong
     byte nee[3] = { 'X', 'Y', 'Z' };
     sb::require(mc::memmem128(hay, (u64)64, nee, (u64)3) == nullptr);
   }

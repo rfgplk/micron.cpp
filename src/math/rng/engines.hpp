@@ -31,9 +31,9 @@ namespace rng
 struct splitmix64 {
   u64 s;
 
-  constexpr splitmix64() noexcept : s(0) {}
+  constexpr splitmix64() noexcept : s(0) { }
 
-  constexpr explicit splitmix64(u64 seed) noexcept : s(seed) {}
+  constexpr explicit splitmix64(u64 seed) noexcept : s(seed) { }
 
   [[nodiscard, gnu::always_inline]] constexpr u64
   next() noexcept
@@ -52,9 +52,9 @@ static_assert(sizeof(splitmix64) == 8, "splitmix64 state must be 8 bytes");
 struct xoshiro256ss {
   u64 s[4];
 
-  constexpr xoshiro256ss() noexcept : s{ 0, 0, 0, 0 } {}
+  constexpr xoshiro256ss() noexcept : s{ 0, 0, 0, 0 } { }
 
-  constexpr xoshiro256ss(u64 a, u64 b, u64 c, u64 d) noexcept : s{ a, b, c, d } {}
+  constexpr xoshiro256ss(u64 a, u64 b, u64 c, u64 d) noexcept : s{ a, b, c, d } { }
 
   // seed via splitmix64
   [[nodiscard]] static constexpr xoshiro256ss
@@ -130,9 +130,9 @@ static_assert(sizeof(xoshiro256ss) == 32, "xoshiro256ss state must be 32 bytes")
 struct xoshiro128ss {
   u32 s[4];
 
-  constexpr xoshiro128ss() noexcept : s{ 0, 0, 0, 0 } {}
+  constexpr xoshiro128ss() noexcept : s{ 0, 0, 0, 0 } { }
 
-  constexpr xoshiro128ss(u32 a, u32 b, u32 c, u32 d) noexcept : s{ a, b, c, d } {}
+  constexpr xoshiro128ss(u32 a, u32 b, u32 c, u32 d) noexcept : s{ a, b, c, d } { }
 
   [[nodiscard]] static constexpr xoshiro128ss
   from_seed(u64 seed) noexcept
@@ -172,11 +172,11 @@ static_assert(sizeof(xoshiro128ss) == 16, "xoshiro128ss state must be 16 bytes")
 // permuted congruential generator
 struct pcg64 {
   u128 state;
-  u128 inc;     // must be odd
+  u128 inc;      // must be odd
 
-  constexpr pcg64() noexcept : state(0), inc(1) {}
+  constexpr pcg64() noexcept : state(0), inc(1) { }
 
-  constexpr pcg64(u128 s, u128 i) noexcept : state(s), inc(i | u128(1)) {}
+  constexpr pcg64(u128 s, u128 i) noexcept : state(s), inc(i | u128(1)) { }
 
   [[nodiscard]] static constexpr pcg64
   make(u64 seed, u64 stream = 1) noexcept
@@ -231,7 +231,7 @@ struct mt19937 {
   u32 mt[N];
   u32 idx;
 
-  constexpr mt19937() noexcept : mt{}, idx(N + 1) {}
+  constexpr mt19937() noexcept : mt{}, idx(N + 1) { }
 
   constexpr explicit mt19937(u32 seed) noexcept : mt{}, idx(0) { seed_with(seed); }
 
@@ -300,9 +300,9 @@ struct mwc64 {
   u64 hi;
   u64 lo;
 
-  constexpr mwc64() noexcept : hi(0xCAFEBABEDEADBEEFULL), lo(0xFEEDFACEC0FFEE00ULL) {}
+  constexpr mwc64() noexcept : hi(0xCAFEBABEDEADBEEFULL), lo(0xFEEDFACEC0FFEE00ULL) { }
 
-  constexpr mwc64(u64 a, u64 b) noexcept : hi(a), lo(b) {}
+  constexpr mwc64(u64 a, u64 b) noexcept : hi(a), lo(b) { }
 
   [[nodiscard]] static constexpr mwc64
   from_seed(u64 seed) noexcept
@@ -333,9 +333,9 @@ struct lcg64 {
 
   u64 s;
 
-  constexpr lcg64() noexcept : s(0) {}
+  constexpr lcg64() noexcept : s(0) { }
 
-  constexpr explicit lcg64(u64 seed) noexcept : s(seed) {}
+  constexpr explicit lcg64(u64 seed) noexcept : s(seed) { }
 
   [[nodiscard]] static constexpr lcg64
   from_seed(u64 seed) noexcept
@@ -353,11 +353,11 @@ struct lcg64 {
 
 static_assert(sizeof(lcg64) == 8, "lcg64 state must be 8 bytes");
 
-template <typename T>
+template<typename T>
 concept rng_concept = requires(T t) {
   { t.next() } -> micron::convertible_to<u64>;
 };
 
-};     // namespace rng
-};     // namespace math
-};     // namespace micron
+};      // namespace rng
+};      // namespace math
+};      // namespace micron

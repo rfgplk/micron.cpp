@@ -31,7 +31,7 @@
 
 namespace abc
 {
-template <typename T, i64 Min, i32 Mx = 64>
+template<typename T, i64 Min, i32 Mx = 64>
   requires(micron::is_trivially_constructible_v<T> and micron::is_trivially_destructible_v<T> and (bool)((Min & (Min - 1)) == 0))
 struct __buddy_list {
 
@@ -79,13 +79,13 @@ struct __buddy_list {
   i64 max_order;
   usize allocated_bytes;
   usize tombstoned_bytes;
-  u64 free_mask;       // main bitmap for o(1): bit i set iff free_lists[i] != nullptr
-  u8 *block_tags;      // one tag per min-block
-  usize tag_count;     // == total >> __log2_min
+  u64 free_mask;        // main bitmap for o(1): bit i set iff free_lists[i] != nullptr
+  u8 *block_tags;       // one tag per min-block
+  usize tag_count;      // == total >> __log2_min
   bool tags_external;
-  usize order_sizes[Mx];     // order_sizes[i] = Min << i
+  usize order_sizes[Mx];      // order_sizes[i] = Min << i
   free_block *free_lists[Mx];
-  free_block *active[Mx];     // single active temporal block per order
+  free_block *active[Mx];      // single active temporal block per order
 
   free_block *tcache[Mx];
   i32 tcache_count[Mx];
@@ -394,7 +394,7 @@ struct __buddy_list {
     tag_set_free(base, max_order - 1);
   }
 
-  ~__buddy_list() noexcept {}
+  ~__buddy_list() noexcept { }
 
   __buddy_list(void) = delete;
 
@@ -730,4 +730,4 @@ struct __buddy_list {
     return block_size(ptr);
   }
 };
-};     // namespace abc
+};      // namespace abc

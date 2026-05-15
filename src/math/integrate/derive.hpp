@@ -32,7 +32,7 @@ namespace integrate
 namespace derive
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 h_central(F x = F(0)) noexcept
 {
@@ -46,7 +46,7 @@ h_central(F x = F(0)) noexcept
     return F(1e-6L) * scale;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 h_forward(F x = F(0)) noexcept
 {
@@ -60,21 +60,21 @@ h_forward(F x = F(0)) noexcept
     return F(1e-9L) * scale;
 }
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 forward(Fn f, F x, F h) noexcept
 {
   return (f(x + h) - f(x)) / h;
 }
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 backward(Fn f, F x, F h) noexcept
 {
   return (f(x) - f(x - h)) / h;
 }
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 central(Fn f, F x, F h) noexcept
 {
@@ -82,7 +82,7 @@ central(Fn f, F x, F h) noexcept
 }
 
 // f'(x) ≈ (-f(x+2h) + 8 f(x+h) - 8 f(x-h) + f(x-2h)) / (12 h)
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 central4(Fn f, F x, F h) noexcept
 {
@@ -94,7 +94,7 @@ central4(Fn f, F x, F h) noexcept
   return (-p2 + F(8) * p1 - F(8) * m1 + m2) / (F(12) * h);
 }
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline F
 adaptive(Fn f, F x, F h0 = F(0), F tol = F(0), usize max_levels = 12) noexcept
 {
@@ -104,7 +104,7 @@ adaptive(Fn f, F x, F h0 = F(0), F tol = F(0), usize max_levels = 12) noexcept
   return richardson::extrapolate<F>(step, h0, F(2), 2, max_levels, tol);
 }
 
-template <usize Order, ieee754_floating F, callable_real<F> Fn>
+template<usize Order, ieee754_floating F, callable_real<F> Fn>
   requires(Order >= 1 and Order <= 4)
 [[nodiscard]] inline F
 nth(Fn f, F x, F h) noexcept
@@ -118,14 +118,14 @@ nth(Fn f, F x, F h) noexcept
     // (-f(x-2h) + 2 f(x-h) - 2 f(x+h) + f(x+2h)) / (2 h**3)
     const F h2 = F(2) * h;
     return (-f(x - h2) + F(2) * f(x - h) - F(2) * f(x + h) + f(x + h2)) / (F(2) * h * h * h);
-  } else {     // Order == 4
+  } else {      // Order == 4
     // (f(x-2h) - 4 f(x-h) + 6 f(x) - 4 f(x+h) + f(x+2h)) / h**4
     const F h2 = F(2) * h;
     return (f(x - h2) - F(4) * f(x - h) + F(6) * f(x) - F(4) * f(x + h) + f(x + h2)) / (h * h * h * h);
   }
 }
 
-template <usize D, ieee754_floating F, callable_real_d<F, D> Fn>
+template<usize D, ieee754_floating F, callable_real_d<F, D> Fn>
   requires(D >= 2 and D <= 16)
 [[nodiscard]] inline vec<F, D>
 gradient(Fn f, const F (&x)[D], F h) noexcept
@@ -144,7 +144,7 @@ gradient(Fn f, const F (&x)[D], F h) noexcept
   return g;
 }
 
-template <usize D, usize R, ieee754_floating F, typename Fn>
+template<usize D, usize R, ieee754_floating F, typename Fn>
   requires(D >= 1 and D <= 16 and R >= 1 and R <= 16)
 [[nodiscard]] inline mat<F, R, D>
 jacobian(Fn f, const F (&x)[D], F h) noexcept
@@ -164,7 +164,7 @@ jacobian(Fn f, const F (&x)[D], F h) noexcept
 }
 
 // (f(x+he_i+he_j) - f(x+he_i-he_j) - f(x-he_i+he_j) + f(x-he_i-he_j)) / (4 h**2)
-template <usize D, ieee754_floating F, callable_real_d<F, D> Fn>
+template<usize D, ieee754_floating F, callable_real_d<F, D> Fn>
   requires(D >= 1 and D <= 16)
 [[nodiscard]] inline mat<F, D, D>
 hessian(Fn f, const F (&x)[D], F h) noexcept
@@ -207,7 +207,7 @@ hessian(Fn f, const F (&x)[D], F h) noexcept
   return H;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 diff(const F *y, F *dy, usize n, F dx) noexcept
 {
@@ -225,7 +225,7 @@ diff(const F *y, F *dy, usize n, F dx) noexcept
 }
 
 // non-uniform spacing form
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 diff(const F *xs, const F *ys, F *dy, usize n) noexcept
 {
@@ -245,7 +245,7 @@ diff(const F *xs, const F *ys, F *dy, usize n) noexcept
   dy[n - 1] = (ys[n - 1] - ys[n - 2]) / (xs[n - 1] - xs[n - 2]);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 diff2(const F *xs, const F *ys, F *d2y, usize n) noexcept
 {
@@ -271,7 +271,7 @@ diff2(const F *xs, const F *ys, F *d2y, usize n) noexcept
   }
 }
 
-};     // namespace derive
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace derive
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

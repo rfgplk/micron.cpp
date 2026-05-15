@@ -11,7 +11,7 @@
 namespace micron
 {
 
-template <int A, typename B>
+template<int A, typename B>
   requires(A == 32 or A == 64 or A == 128 or A == 256 or A == 512)
 constexpr bool
 is_aligned(B *ptr)
@@ -19,21 +19,21 @@ is_aligned(B *ptr)
   return reinterpret_cast<uintptr_t>(ptr) % (A / 8) == 0;
 }
 
-template <int H, typename B>
+template<int H, typename B>
 void
 prefetch(B *ptr)
 {
   _mm_prefetch(ptr, H);
 }
 
-template <typename T>
+template<typename T>
 inline void
 clflush(T *addr)
 {
   _mm_clflush(addr);
 }
 
-template <typename T>
+template<typename T>
 inline void
 clflush(T &addr)
 {
@@ -76,4 +76,4 @@ store_fence(void)
   sfence();
 }
 
-};     // namespace micron
+};      // namespace micron

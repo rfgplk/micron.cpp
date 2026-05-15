@@ -11,7 +11,7 @@
 namespace micron
 {
 
-template <typename... Args>
+template<typename... Args>
 inline i32
 prctl(i32 option, Args &&...args)
 {
@@ -184,7 +184,7 @@ constexpr i32 PR_GET_TAGGED_ADDR_CTRL = 56;
 constexpr i32 PR_TAGGED_ADDR_ENABLE = (1UL << 0);
 constexpr i32 PR_MTE_TCF_NONE = 0UL;
 constexpr i32 PR_MTE_TCF_SYNC = (1UL << 1);
-constexpr i32 PR_MTE_TCF_ASYNC = (1UL << 2);     // was: (1UL << 2) c;
+constexpr i32 PR_MTE_TCF_ASYNC = (1UL << 2);      // was: (1UL << 2) c;
 constexpr i32 PR_MTE_TCF_MASK = (PR_MTE_TCF_SYNC | PR_MTE_TCF_ASYNC);
 constexpr i32 PR_MTE_TAG_SHIFT = 3;
 constexpr i32 PR_MTE_TAG_MASK = (0xffffUL << PR_MTE_TAG_SHIFT);
@@ -280,4 +280,4 @@ constexpr unsigned long long FH_FLAG_IMMUTABLE = (1ULL << 0);
 constexpr i32 PR_FUTEX_HASH_GET_SLOTS = 2;
 constexpr i32 PR_FUTEX_HASH_GET_IMMUTABLE = 3;
 
-}     // namespace micron
+}      // namespace micron

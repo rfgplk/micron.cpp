@@ -144,7 +144,7 @@ constexpr static const u64 B9600 = 0000015;
 constexpr static const u64 B19200 = 0000016;
 constexpr static const u64 B38400 = 0000017;
 
-template <int Fd = 1>     // stdin
+template<int Fd = 1>      // stdin
 int
 terminal_setattr(const termios_t &buf)
 {
@@ -152,13 +152,13 @@ terminal_setattr(const termios_t &buf)
   return 0;
 }
 
-template <int Fd = 1>     // stdin
+template<int Fd = 1>      // stdin
 int
 terminal_getattr(termios_t &buf)
 {
   if ( micron::posix::ioctl(Fd, micron::posix::tcgets, &buf) < 0 ) return -1;
   return 0;
 }
-};     // namespace posix
+};      // namespace posix
 
-};     // namespace micron
+};      // namespace micron

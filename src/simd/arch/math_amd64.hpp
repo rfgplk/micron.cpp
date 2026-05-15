@@ -17,7 +17,7 @@ namespace simd
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // abs
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs_8(T &o)
 {
@@ -29,7 +29,7 @@ abs_8(T &o)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs_16(T &o)
 {
@@ -41,7 +41,7 @@ abs_16(T &o)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs_32(T &o)
 {
@@ -53,7 +53,7 @@ abs_32(T &o)
   }
   if constexpr ( micron::is_same_v<typename T::bit_width, i512> ) {
     return _mm512_abs_epi32(o);
-  }     // AVX-512F
+  }      // AVX-512F
 }
 
 inline i512
@@ -62,7 +62,7 @@ abs_64(i512 &o)
   return _mm512_abs_epi64(o);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs(T &o)
 {
@@ -80,38 +80,38 @@ abs(T &o)
   }
 }
 
-template <typename M>
+template<typename M>
 inline i512
 mask_abs_32(i512 src, M k, i512 &o)
 {
   return _mm512_mask_abs_epi32(src, k, o);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_abs_32(M k, i512 &o)
 {
   return _mm512_maskz_abs_epi32(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 mask_abs_64(i512 src, M k, i512 &o)
 {
   return _mm512_mask_abs_epi64(src, k, o);
-}     // AVX-512F
+}      // AVX-512F
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_abs_64(M k, i512 &o)
 {
   return _mm512_maskz_abs_epi64(k, o);
-}     // AVX-512F
+}      // AVX-512F
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sqrt
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 sqrt(B &o)
 {
@@ -123,7 +123,7 @@ sqrt(B &o)
   }
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_sqrt_ps(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_sqrt_pd(o);
   }
@@ -132,10 +132,10 @@ sqrt(B &o)
   }
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_sqrt_pd(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, h128> ) {
     return _mm_sqrt_ph(o);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
   if constexpr ( micron::is_same_v<B, h256> ) {
     return _mm256_sqrt_ph(o);
   }
@@ -156,7 +156,7 @@ sqrt_sd(d128 a, d128 b)
   return _mm_sqrt_sd(a, b);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 sqrt_round(B &o, int rounding)
 {
@@ -185,7 +185,7 @@ sqrt_round_sd(d128 src, d128 a, d128 b, int r)
   (void)src;
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_sqrt(B src, M k, B &o)
 {
@@ -218,7 +218,7 @@ mask_sqrt(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_sqrt(M k, B &o)
 {
@@ -251,7 +251,7 @@ maskz_sqrt(M k, B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_sqrt_round(B src, M k, B &o, int rounding)
 {
@@ -266,7 +266,7 @@ mask_sqrt_round(B src, M k, B &o, int rounding)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_sqrt_round(M k, B &o, int rounding)
 {
@@ -281,56 +281,56 @@ maskz_sqrt_round(M k, B &o, int rounding)
   }
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_sqrt_ss(f128 src, M k, f128 a, f128 b)
 {
   return _mm_mask_sqrt_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_sqrt_ss(M k, f128 a, f128 b)
 {
   return _mm_maskz_sqrt_ss(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_sqrt_sd(d128 src, M k, d128 a, d128 b)
 {
   return _mm_mask_sqrt_sd(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_sqrt_sd(M k, d128 a, d128 b)
 {
   return _mm_maskz_sqrt_sd(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_sqrt_round_ss(f128 src, M k, f128 a, f128 b, int r)
 {
   return _mm_mask_sqrt_round_ss(src, k, a, b, r);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_sqrt_round_ss(M k, f128 a, f128 b, int r)
 {
   return _mm_maskz_sqrt_round_ss(k, a, b, r);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_sqrt_round_sd(d128 src, M k, d128 a, d128 b, int r)
 {
   return _mm_mask_sqrt_round_sd(src, k, a, b, r);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_sqrt_round_sd(M k, d128 a, d128 b, int r)
 {
@@ -358,7 +358,7 @@ rsqrt_ss(f128 a)
   return _mm_rsqrt_ss(a);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 rsqrt_ph(B &o)
 {
@@ -373,7 +373,7 @@ rsqrt_ph(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_rsqrt_ph(B src, M k, B &o)
 {
@@ -388,7 +388,7 @@ mask_rsqrt_ph(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_rsqrt_ph(M k, B &o)
 {
@@ -409,21 +409,21 @@ rsqrt_sh(h128 a, h128 b)
   return _mm_rsqrt_sh(a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 mask_rsqrt_sh(h128 src, M k, h128 a, h128 b)
 {
   return _mm_mask_rsqrt_sh(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 maskz_rsqrt_sh(M k, h128 a, h128 b)
 {
   return _mm_maskz_rsqrt_sh(k, a, b);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 rsqrt14(B &o)
 {
@@ -435,7 +435,7 @@ rsqrt14(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_rsqrt14(B src, M k, B &o)
 {
@@ -447,7 +447,7 @@ mask_rsqrt14(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_rsqrt14(M k, B &o)
 {
@@ -471,28 +471,28 @@ rsqrt14_sd(d128 a, d128 b)
   return _mm_rsqrt14_sd(a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_rsqrt14_ss(f128 src, M k, f128 a, f128 b)
 {
   return _mm_mask_rsqrt14_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_rsqrt14_ss(M k, f128 a, f128 b)
 {
   return _mm_maskz_rsqrt14_ss(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_rsqrt14_sd(d128 src, M k, d128 a, d128 b)
 {
   return _mm_mask_rsqrt14_sd(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_rsqrt14_sd(M k, d128 a, d128 b)
 {
@@ -520,7 +520,7 @@ rcp_ss(f128 a)
   return _mm_rcp_ss(a);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 rcp_ph(B &o)
 {
@@ -535,7 +535,7 @@ rcp_ph(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_rcp_ph(B src, M k, B &o)
 {
@@ -550,7 +550,7 @@ mask_rcp_ph(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_rcp_ph(M k, B &o)
 {
@@ -571,21 +571,21 @@ rcp_sh(h128 a, h128 b)
   return _mm_rcp_sh(a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 mask_rcp_sh(h128 src, M k, h128 a, h128 b)
 {
   return _mm_mask_rcp_sh(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 maskz_rcp_sh(M k, h128 a, h128 b)
 {
   return _mm_maskz_rcp_sh(k, a, b);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 rcp14(B &o)
 {
@@ -597,7 +597,7 @@ rcp14(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_rcp14(B src, M k, B &o)
 {
@@ -609,7 +609,7 @@ mask_rcp14(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_rcp14(M k, B &o)
 {
@@ -633,35 +633,35 @@ rcp14_sd(d128 a, d128 b)
   return _mm_rcp14_sd(a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_rcp14_ss(f128 src, M k, f128 a, f128 b)
 {
   return _mm_mask_rcp14_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_rcp14_ss(M k, f128 a, f128 b)
 {
   return _mm_maskz_rcp14_ss(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_rcp14_sd(d128 src, M k, d128 a, d128 b)
 {
   return _mm_mask_rcp14_sd(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_rcp14_sd(M k, d128 a, d128 b)
 {
   return _mm_maskz_rcp14_sd(k, a, b);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 recip(B &o)
 {
@@ -676,7 +676,7 @@ recip(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_recip(B src, M k, B &o)
 {
@@ -694,7 +694,7 @@ mask_recip(B src, M k, B &o)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // min/maxes
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 min(B &o, B &b)
 {
@@ -706,7 +706,7 @@ min(B &o, B &b)
   }
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_min_ps(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_min_pd(o, b);
   }
@@ -715,10 +715,10 @@ min(B &o, B &b)
   }
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_min_pd(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, h128> ) {
     return _mm_min_ph(o, b);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
   if constexpr ( micron::is_same_v<B, h256> ) {
     return _mm256_min_ph(o, b);
   }
@@ -727,7 +727,7 @@ min(B &o, B &b)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 max(B &o, B &b)
 {
@@ -739,7 +739,7 @@ max(B &o, B &b)
   }
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_max_ps(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_max_pd(o, b);
   }
@@ -748,10 +748,10 @@ max(B &o, B &b)
   }
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_max_pd(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, h128> ) {
     return _mm_max_ph(o, b);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
   if constexpr ( micron::is_same_v<B, h256> ) {
     return _mm256_max_ph(o, b);
   }
@@ -776,7 +776,7 @@ inline h128
 min_sh(h128 a, h128 b)
 {
   return _mm_min_sh(a, b);
-}     // AVX-512FP16
+}      // AVX-512FP16
 
 inline f128
 max_ss(f128 a, f128 b)
@@ -794,93 +794,93 @@ inline h128
 max_sh(h128 a, h128 b)
 {
   return _mm_max_sh(a, b);
-}     // AVX-512FP16
+}      // AVX-512FP16
 
-template <typename M>
+template<typename M>
 inline f128
 mask_min_ss(f128 src, M k, f128 a, f128 b)
 {
   return _mm_mask_min_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_min_ss(M k, f128 a, f128 b)
 {
   return _mm_maskz_min_ss(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_min_sd(d128 src, M k, d128 a, d128 b)
 {
   return _mm_mask_min_sd(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_min_sd(M k, d128 a, d128 b)
 {
   return _mm_maskz_min_sd(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 mask_min_sh(h128 src, M k, h128 a, h128 b)
 {
   return _mm_mask_min_sh(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 maskz_min_sh(M k, h128 a, h128 b)
 {
   return _mm_maskz_min_sh(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_max_ss(f128 src, M k, f128 a, f128 b)
 {
   return _mm_mask_max_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_max_ss(M k, f128 a, f128 b)
 {
   return _mm_maskz_max_ss(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_max_sd(d128 src, M k, d128 a, d128 b)
 {
   return _mm_mask_max_sd(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_max_sd(M k, d128 a, d128 b)
 {
   return _mm_maskz_max_sd(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 mask_max_sh(h128 src, M k, h128 a, h128 b)
 {
   return _mm_mask_max_sh(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 maskz_max_sh(M k, h128 a, h128 b)
 {
   return _mm_maskz_max_sh(k, a, b);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 min_round(B &o, B &b, int sae)
 {
@@ -895,7 +895,7 @@ min_round(B &o, B &b, int sae)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 max_round(B &o, B &b, int sae)
 {
@@ -946,7 +946,7 @@ max_round_sh(h128 a, h128 b, int sae)
   return _mm_max_round_sh(a, b, sae);
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_min(B src, M k, B &o, B &b)
 {
@@ -967,7 +967,7 @@ mask_min(B src, M k, B &o, B &b)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_min(M k, B &o, B &b)
 {
@@ -988,7 +988,7 @@ maskz_min(M k, B &o, B &b)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_max(B src, M k, B &o, B &b)
 {
@@ -1009,7 +1009,7 @@ mask_max(B src, M k, B &o, B &b)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_max(M k, B &o, B &b)
 {
@@ -1030,7 +1030,7 @@ maskz_max(M k, B &o, B &b)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_min_round(B src, M k, B &o, B &b, int sae)
 {
@@ -1045,7 +1045,7 @@ mask_min_round(B src, M k, B &o, B &b, int sae)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_min_round(M k, B &o, B &b, int sae)
 {
@@ -1060,7 +1060,7 @@ maskz_min_round(M k, B &o, B &b, int sae)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_max_round(B src, M k, B &o, B &b, int sae)
 {
@@ -1075,7 +1075,7 @@ mask_max_round(B src, M k, B &o, B &b, int sae)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 maskz_max_round(M k, B &o, B &b, int sae)
 {
@@ -1090,91 +1090,91 @@ maskz_max_round(M k, B &o, B &b, int sae)
   }
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_min_round_ss(f128 src, M k, f128 a, f128 b, int sae)
 {
   return _mm_mask_min_round_ss(src, k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_min_round_ss(M k, f128 a, f128 b, int sae)
 {
   return _mm_maskz_min_round_ss(k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_min_round_sd(d128 src, M k, d128 a, d128 b, int sae)
 {
   return _mm_mask_min_round_sd(src, k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_min_round_sd(M k, d128 a, d128 b, int sae)
 {
   return _mm_maskz_min_round_sd(k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 mask_min_round_sh(h128 src, M k, h128 a, h128 b, int sae)
 {
   return _mm_mask_min_round_sh(src, k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 maskz_min_round_sh(M k, h128 a, h128 b, int sae)
 {
   return _mm_maskz_min_round_sh(k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_max_round_ss(f128 src, M k, f128 a, f128 b, int sae)
 {
   return _mm_mask_max_round_ss(src, k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_max_round_ss(M k, f128 a, f128 b, int sae)
 {
   return _mm_maskz_max_round_ss(k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 mask_max_round_sd(d128 src, M k, d128 a, d128 b, int sae)
 {
   return _mm_mask_max_round_sd(src, k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline d128
 maskz_max_round_sd(M k, d128 a, d128 b, int sae)
 {
   return _mm_maskz_max_round_sd(k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 mask_max_round_sh(h128 src, M k, h128 a, h128 b, int sae)
 {
   return _mm_mask_max_round_sh(src, k, a, b, sae);
 }
 
-template <typename M>
+template<typename M>
 inline h128
 maskz_max_round_sh(M k, h128 a, h128 b, int sae)
 {
   return _mm_maskz_max_round_sh(k, a, b, sae);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_i8(T &o, T &b)
 {
@@ -1186,7 +1186,7 @@ min_i8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_i16(T &o, T &b)
 {
@@ -1198,7 +1198,7 @@ min_i16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_i32(T &o, T &b)
 {
@@ -1210,44 +1210,44 @@ min_i32(T &o, T &b)
   }
   if constexpr ( micron::is_same_v<typename T::bit_width, i512> ) {
     return _mm512_min_epi32(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
 }
 
 inline i512
 min_i64(i512 &o, i512 &b)
 {
   return _mm512_min_epi64(o, b);
-}     // AVX-512F only
+}      // AVX-512F only
 
-template <typename M>
+template<typename M>
 inline i512
 mask_min_i32(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_min_epi32(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_min_i32(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_min_epi32(k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 mask_min_i64(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_min_epi64(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_min_i64(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_min_epi64(k, o, b);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_i8(T &o, T &b)
 {
@@ -1259,7 +1259,7 @@ max_i8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_i16(T &o, T &b)
 {
@@ -1271,7 +1271,7 @@ max_i16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_i32(T &o, T &b)
 {
@@ -1283,44 +1283,44 @@ max_i32(T &o, T &b)
   }
   if constexpr ( micron::is_same_v<typename T::bit_width, i512> ) {
     return _mm512_max_epi32(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
 }
 
 inline i512
 max_i64(i512 &o, i512 &b)
 {
   return _mm512_max_epi64(o, b);
-}     // AVX-512F only
+}      // AVX-512F only
 
-template <typename M>
+template<typename M>
 inline i512
 mask_max_i32(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_max_epi32(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_max_i32(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_max_epi32(k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 mask_max_i64(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_max_epi64(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_max_i64(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_max_epi64(k, o, b);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_u8(T &o, T &b)
 {
@@ -1332,7 +1332,7 @@ min_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_u16(T &o, T &b)
 {
@@ -1344,7 +1344,7 @@ min_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_u32(T &o, T &b)
 {
@@ -1356,44 +1356,44 @@ min_u32(T &o, T &b)
   }
   if constexpr ( micron::is_same_v<typename T::bit_width, i512> ) {
     return _mm512_min_epu32(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
 }
 
 inline i512
 min_u64(i512 &o, i512 &b)
 {
   return _mm512_min_epu64(o, b);
-}     // AVX-512F only
+}      // AVX-512F only
 
-template <typename M>
+template<typename M>
 inline i512
 mask_min_u32(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_min_epu32(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_min_u32(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_min_epu32(k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 mask_min_u64(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_min_epu64(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_min_u64(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_min_epu64(k, o, b);
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_u8(T &o, T &b)
 {
@@ -1405,7 +1405,7 @@ max_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_u16(T &o, T &b)
 {
@@ -1417,7 +1417,7 @@ max_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_u32(T &o, T &b)
 {
@@ -1429,37 +1429,37 @@ max_u32(T &o, T &b)
   }
   if constexpr ( micron::is_same_v<typename T::bit_width, i512> ) {
     return _mm512_max_epu32(o, b);
-  }     // AVX-512F
+  }      // AVX-512F
 }
 
 inline i512
 max_u64(i512 &o, i512 &b)
 {
   return _mm512_max_epu64(o, b);
-}     // AVX-512F only
+}      // AVX-512F only
 
-template <typename M>
+template<typename M>
 inline i512
 mask_max_u32(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_max_epu32(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_max_u32(M k, i512 &o, i512 &b)
 {
   return _mm512_maskz_max_epu32(k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 mask_max_u64(i512 src, M k, i512 &o, i512 &b)
 {
   return _mm512_mask_max_epu64(src, k, o, b);
 }
 
-template <typename M>
+template<typename M>
 inline i512
 maskz_max_u64(M k, i512 &o, i512 &b)
 {
@@ -1553,98 +1553,98 @@ reduce_max_u8(i256 &o)
   return _mm256_reduce_max_epu8(o);
 }
 
-template <typename M>
+template<typename M>
 inline float
 mask_reduce_max_ps(M k, f512 &o)
 {
   return _mm512_mask_reduce_max_ps(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline double
 mask_reduce_max_pd(M k, d512 &o)
 {
   return _mm512_mask_reduce_max_pd(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline int
 mask_reduce_max_i32(M k, i512 &o)
 {
   return _mm512_mask_reduce_max_epi32(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline long long
 mask_reduce_max_i64(M k, i512 &o)
 {
   return _mm512_mask_reduce_max_epi64(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned int
 mask_reduce_max_u32(M k, i512 &o)
 {
   return _mm512_mask_reduce_max_epu32(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned long long
 mask_reduce_max_u64(M k, i512 &o)
 {
   return _mm512_mask_reduce_max_epu64(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline short
 mask_reduce_max_i16(M k, i128 &o)
 {
   return _mm_mask_reduce_max_epi16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline short
 mask_reduce_max_i16(M k, i256 &o)
 {
   return _mm256_mask_reduce_max_epi16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline char
 mask_reduce_max_i8(M k, i128 &o)
 {
   return _mm_mask_reduce_max_epi8(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline char
 mask_reduce_max_i8(M k, i256 &o)
 {
   return _mm256_mask_reduce_max_epi8(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned short
 mask_reduce_max_u16(M k, i128 &o)
 {
   return _mm_mask_reduce_max_epu16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned short
 mask_reduce_max_u16(M k, i256 &o)
 {
   return _mm256_mask_reduce_max_epu16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned char
 mask_reduce_max_u8(M k, i128 &o)
 {
   return _mm_mask_reduce_max_epu8(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned char
 mask_reduce_max_u8(M k, i256 &o)
 {
@@ -1735,98 +1735,98 @@ reduce_min_u8(i256 &o)
   return _mm256_reduce_min_epu8(o);
 }
 
-template <typename M>
+template<typename M>
 inline float
 mask_reduce_min_ps(M k, f512 &o)
 {
   return _mm512_mask_reduce_min_ps(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline double
 mask_reduce_min_pd(M k, d512 &o)
 {
   return _mm512_mask_reduce_min_pd(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline int
 mask_reduce_min_i32(M k, i512 &o)
 {
   return _mm512_mask_reduce_min_epi32(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline long long
 mask_reduce_min_i64(M k, i512 &o)
 {
   return _mm512_mask_reduce_min_epi64(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned int
 mask_reduce_min_u32(M k, i512 &o)
 {
   return _mm512_mask_reduce_min_epu32(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned long long
 mask_reduce_min_u64(M k, i512 &o)
 {
   return _mm512_mask_reduce_min_epu64(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline short
 mask_reduce_min_i16(M k, i128 &o)
 {
   return _mm_mask_reduce_min_epi16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline short
 mask_reduce_min_i16(M k, i256 &o)
 {
   return _mm256_mask_reduce_min_epi16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline char
 mask_reduce_min_i8(M k, i128 &o)
 {
   return _mm_mask_reduce_min_epi8(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline char
 mask_reduce_min_i8(M k, i256 &o)
 {
   return _mm256_mask_reduce_min_epi8(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned short
 mask_reduce_min_u16(M k, i128 &o)
 {
   return _mm_mask_reduce_min_epu16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned short
 mask_reduce_min_u16(M k, i256 &o)
 {
   return _mm256_mask_reduce_min_epu16(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned char
 mask_reduce_min_u8(M k, i128 &o)
 {
   return _mm_mask_reduce_min_epu8(k, o);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned char
 mask_reduce_min_u8(M k, i256 &o)
 {
@@ -1836,7 +1836,7 @@ mask_reduce_min_u8(M k, i256 &o)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // rounds
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 ceil(B &o)
 {
@@ -1848,7 +1848,7 @@ ceil(B &o)
   }
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_ceil_ps(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_ceil_pd(o);
   }
@@ -1857,10 +1857,10 @@ ceil(B &o)
   }
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_ceil_pd(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, h512> ) {
     return _mm512_ceil_ph(o);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
 }
 
 inline f128
@@ -1875,7 +1875,7 @@ ceil_sd(d128 a, d128 b)
   return _mm_ceil_sd(a, b);
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_ceil(B src, M k, B &o)
 {
@@ -1890,7 +1890,7 @@ mask_ceil(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 floor(B &o)
 {
@@ -1902,7 +1902,7 @@ floor(B &o)
   }
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_floor_ps(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_floor_pd(o);
   }
@@ -1911,10 +1911,10 @@ floor(B &o)
   }
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_floor_pd(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, h512> ) {
     return _mm512_floor_ph(o);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
 }
 
 inline f128
@@ -1929,7 +1929,7 @@ floor_sd(d128 a, d128 b)
   return _mm_floor_sd(a, b);
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_floor(B src, M k, B &o)
 {
@@ -1944,7 +1944,7 @@ mask_floor(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 round(B &o, int rounding)
 {
@@ -1977,19 +1977,19 @@ round_sd(d128 a, d128 b, int r)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // truncs
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 trunc(B &o)
 {
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_trunc_ps(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_trunc_pd(o);
-  }     // AVX-512F
+  }      // AVX-512F
   if constexpr ( micron::is_same_v<B, h128> ) {
     return _mm_trunc_ph(o);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
   if constexpr ( micron::is_same_v<B, h256> ) {
     return _mm256_trunc_ph(o);
   }
@@ -1998,7 +1998,7 @@ trunc(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_trunc(B src, M k, B &o)
 {
@@ -2013,7 +2013,7 @@ mask_trunc(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 nearbyint(B &o)
 {
@@ -2028,7 +2028,7 @@ nearbyint(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_nearbyint(B src, M k, B &o)
 {
@@ -2043,7 +2043,7 @@ mask_nearbyint(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 rint(B &o)
 {
@@ -2058,7 +2058,7 @@ rint(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_rint(B src, M k, B &o)
 {
@@ -2078,7 +2078,7 @@ mask_rint(B src, M k, B &o)
 // needs libsvml
 // TODO: implement from 0
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 exp(B &o)
 {
@@ -2102,7 +2102,7 @@ exp(B &o)
   }
   if constexpr ( micron::is_same_v<B, h128> ) {
     return _mm_exp_ph(o);
-  }     // AVX-512FP16
+  }      // AVX-512FP16
   if constexpr ( micron::is_same_v<B, h256> ) {
     return _mm256_exp_ph(o);
   }
@@ -2111,7 +2111,7 @@ exp(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_exp(B src, M k, B &o)
 {
@@ -2126,7 +2126,7 @@ mask_exp(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 exp2(B &o)
 {
@@ -2159,7 +2159,7 @@ exp2(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_exp2(B src, M k, B &o)
 {
@@ -2174,7 +2174,7 @@ mask_exp2(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 exp10(B &o)
 {
@@ -2207,7 +2207,7 @@ exp10(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_exp10(B src, M k, B &o)
 {
@@ -2222,7 +2222,7 @@ mask_exp10(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 expm1(B &o)
 {
@@ -2255,7 +2255,7 @@ expm1(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_expm1(B src, M k, B &o)
 {
@@ -2270,7 +2270,7 @@ mask_expm1(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 log(B &o)
 {
@@ -2303,7 +2303,7 @@ log(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_log(B src, M k, B &o)
 {
@@ -2318,7 +2318,7 @@ mask_log(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 log2(B &o)
 {
@@ -2330,7 +2330,7 @@ log2(B &o)
   }
   if constexpr ( micron::is_same_v<B, f512> ) {
     return _mm512_log2_ps(o);
-  }     // vlog2ps — AVX-512F native
+  }      // vlog2ps — AVX-512F native
   if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_log2_pd(o);
   }
@@ -2351,7 +2351,7 @@ log2(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_log2(B src, M k, B &o)
 {
@@ -2366,7 +2366,7 @@ mask_log2(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 log10(B &o)
 {
@@ -2399,7 +2399,7 @@ log10(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_log10(B src, M k, B &o)
 {
@@ -2414,7 +2414,7 @@ mask_log10(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 log1p(B &o)
 {
@@ -2447,7 +2447,7 @@ log1p(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_log1p(B src, M k, B &o)
 {
@@ -2462,7 +2462,7 @@ mask_log1p(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 logb(B &o)
 {
@@ -2495,7 +2495,7 @@ logb(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_logb(B src, M k, B &o)
 {
@@ -2510,7 +2510,7 @@ mask_logb(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 pow(B &o, B &b)
 {
@@ -2543,7 +2543,7 @@ pow(B &o, B &b)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_pow(B src, M k, B &o, B &b)
 {
@@ -2555,7 +2555,7 @@ mask_pow(B src, M k, B &o, B &b)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 cbrt(B &o)
 {
@@ -2588,7 +2588,7 @@ cbrt(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_cbrt(B src, M k, B &o)
 {
@@ -2603,7 +2603,7 @@ mask_cbrt(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 invcbrt(B &o)
 {
@@ -2627,7 +2627,7 @@ invcbrt(B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 invsqrt(B &o)
 {
@@ -2660,7 +2660,7 @@ invsqrt(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_invsqrt(B src, M k, B &o)
 {
@@ -2675,7 +2675,7 @@ mask_invsqrt(B src, M k, B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 hypot(B &o, B &b)
 {
@@ -2696,7 +2696,7 @@ hypot(B &o, B &b)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_hypot(B src, M k, B &o, B &b)
 {
@@ -2744,7 +2744,7 @@ csqrt_ps(f256 a)
   return _mm256_csqrt_ps(a);
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 svml_sqrt(B &o)
 {
@@ -2768,7 +2768,7 @@ svml_sqrt(B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 svml_ceil(B &o)
 {
@@ -2792,7 +2792,7 @@ svml_ceil(B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 svml_floor(B &o)
 {
@@ -2816,7 +2816,7 @@ svml_floor(B &o)
   }
 }
 
-template <is_simd_type B>
+template<is_simd_type B>
 inline B
 svml_round(B &o)
 {
@@ -2834,7 +2834,7 @@ svml_round(B &o)
   }
   if constexpr ( micron::is_same_v<B, d512> ) {
     return _mm512_svml_round_pd(o);
-  }     // 512-bit pd only
+  }      // 512-bit pd only
   if constexpr ( micron::is_same_v<B, h128> ) {
     return _mm_svml_round_ph(o);
   }
@@ -2846,7 +2846,7 @@ svml_round(B &o)
   }
 }
 
-template <is_simd_type B, typename M>
+template<is_simd_type B, typename M>
 inline B
 mask_svml_round(B src, M k, B &o)
 {
@@ -2860,5 +2860,5 @@ mask_svml_round(B src, M k, B &o)
 
 #pragma GCC diagnostic pop
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

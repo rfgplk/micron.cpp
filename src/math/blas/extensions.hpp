@@ -29,7 +29,7 @@ using micron::math::matrix::col_view;
 using micron::math::matrix::row_view;
 using micron::math::quants::vec_view;
 
-template <op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB>
+template<op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB>
   requires(mat_view_like<VA> and mat_view_like<VB>)
 [[gnu::flatten]] inline constexpr void
 omatcopy(T alpha, const VA &A, VB B) noexcept
@@ -47,7 +47,7 @@ omatcopy(T alpha, const VA &A, VB B) noexcept
           = alpha * (tr ? bits::mat_at(A.data, j, i, rs_A, cs_A) : bits::mat_at(A.data, i, j, rs_A, cs_A));
 }
 
-template <op::op_tag Op = op::none, blas_scalar T, typename VA>
+template<op::op_tag Op = op::none, blas_scalar T, typename VA>
   requires(mat_view_like<VA>)
 [[gnu::flatten]] inline constexpr void
 imatcopy(T alpha, VA A) noexcept
@@ -71,7 +71,7 @@ imatcopy(T alpha, VA A) noexcept
   }
 }
 
-template <uplo::uplo_tag U, op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+template<uplo::uplo_tag U, op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC>)
 [[gnu::flatten]] inline constexpr void
 gemmt(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
@@ -79,7 +79,7 @@ gemmt(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
   constexpr bool trA = micron::same_as<OpA, op::trans> or micron::same_as<OpA, op::conj_trans>;
   constexpr bool trB = micron::same_as<OpB, op::trans> or micron::same_as<OpB, op::conj_trans>;
   constexpr bool upper = micron::same_as<U, uplo::upper>;
-  const usize n = trA ? A.cols : A.rows;     // C is n × n
+  const usize n = trA ? A.cols : A.rows;      // C is n × n
   const usize k = trA ? A.rows : A.cols;
   const ssize_t rs_A = level3::__impl_level3::rs_of(A);
   const ssize_t cs_A = level3::__impl_level3::cs_of(A);
@@ -103,21 +103,21 @@ gemmt(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
   }
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline void
 axpby_batched(usize batch_count, T alpha, const vec_view<T> *xs, T beta, vec_view<T> *ys) noexcept
 {
   for ( usize b = 0; b < batch_count; ++b ) level1::axpby<T>(alpha, xs[b], beta, ys[b]);
 }
 
-template <blas_scalar T>
+template<blas_scalar T>
 [[gnu::flatten]] inline void
 dot_batched(usize batch_count, const vec_view<T> *xs, const vec_view<T> *ys, T *out) noexcept
 {
   for ( usize b = 0; b < batch_count; ++b ) out[b] = level1::dot<T>(xs[b], ys[b]);
 }
 
-template <op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
+template<op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC>)
 [[gnu::flatten]] inline void
 gemm_batched(usize batch_count, T alpha, const VA *As, const VB *Bs, T beta, VC *Cs) noexcept
@@ -125,7 +125,7 @@ gemm_batched(usize batch_count, T alpha, const VA *As, const VB *Bs, T beta, VC 
   for ( usize b = 0; b < batch_count; ++b ) level3::gemm<OpA, OpB, T>(alpha, As[b], Bs[b], beta, Cs[b]);
 }
 
-template <blas_scalar T, typename VA>
+template<blas_scalar T, typename VA>
   requires(mat_view_like<VA>)
 [[gnu::flatten]] inline void
 ger_batched(usize batch_count, T alpha, const vec_view<T> *xs, const vec_view<T> *ys, VA *As) noexcept
@@ -133,7 +133,7 @@ ger_batched(usize batch_count, T alpha, const vec_view<T> *xs, const vec_view<T>
   for ( usize b = 0; b < batch_count; ++b ) level2::ger<T>(alpha, xs[b], ys[b], As[b]);
 }
 
-};     // namespace ext
-};     // namespace blas
-};     // namespace math
-};     // namespace micron
+};      // namespace ext
+};      // namespace blas
+};      // namespace math
+};      // namespace micron

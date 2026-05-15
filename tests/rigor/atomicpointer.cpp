@@ -139,7 +139,7 @@ main(void)
     micron::atomic_pointer<Counted> b(2);
     sb::require(Counted::instances == 2);
     b = micron::move(a);
-    sb::require(Counted::instances == 1);     // b's old object freed
+    sb::require(Counted::instances == 1);      // b's old object freed
     sb::require(b->id == 1);
   }
   sb::end_test_case();
@@ -164,7 +164,7 @@ main(void)
     sb::require(Counted::instances == 2);
     p = micron::move(raw);
     sb::require(raw == nullptr);
-    sb::require(Counted::instances == 1);     // first object freed
+    sb::require(Counted::instances == 1);      // first object freed
     sb::require(p->id == 2);
   }
   sb::end_test_case();
@@ -369,7 +369,7 @@ main(void)
     sb::require(old != nullptr);
     sb::require(old->id == 1);
     sb::require(p->id == 2);
-    sb::require(Counted::instances == 2);     // caller holds old
+    sb::require(Counted::instances == 2);      // caller holds old
     delete old;
     sb::require(Counted::instances == 1);
   }
@@ -412,7 +412,7 @@ main(void)
     int *desired = new int(8);
     bool ok = p.compare_exchange_strong(expected, micron::move(desired));
     sb::require(ok == true);
-    sb::require(desired == nullptr);     // ownership transferred
+    sb::require(desired == nullptr);      // ownership transferred
     sb::require(*p == 8);
   }
   sb::end_test_case();
@@ -420,12 +420,12 @@ main(void)
   sb::test_case("compare_exchange_strong - fails when pointer does not match, loads current");
   {
     micron::atomic_pointer<int> p(7);
-    int *wrong = nullptr;     // does not match p's pointer
+    int *wrong = nullptr;      // does not match p's pointer
     int *desired = new int(8);
     bool ok = p.compare_exchange_strong(wrong, micron::move(desired));
     sb::require(ok == false);
-    sb::require(wrong == p.get());     // updated to current
-    sb::require(*p == 7);              // unchanged
+    sb::require(wrong == p.get());      // updated to current
+    sb::require(*p == 7);               // unchanged
     delete desired;
   }
   sb::end_test_case();
@@ -495,7 +495,7 @@ main(void)
 
   sb::test_case("array - construction and element access");
   {
-    micron::atomic_pointer<int[]> p(4);     // allocates array of 4
+    micron::atomic_pointer<int[]> p(4);      // allocates array of 4
     p[0] = 10;
     p[1] = 20;
     p[2] = 30;

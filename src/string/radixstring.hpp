@@ -176,12 +176,12 @@ rtable_u64(char *buf, u64 val)
   return hlen + 16;
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string / uint_to_string
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 int_to_string(I n)
@@ -212,7 +212,7 @@ int_to_string(I n)
   return result;
 }
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 uint_to_string(I n)
@@ -229,7 +229,7 @@ uint_to_string(I n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_stack / uint_to_string_stack
 
-template <typename I, typename C = char, usize N>
+template<typename I, typename C = char, usize N>
   requires(micron::is_integral_v<I> && N >= micron::__impl::max_digits_v<I> + 1)
 inline micron::sstring<N, C>
 int_to_string_stack(I n)
@@ -262,7 +262,7 @@ int_to_string_stack(I n)
   return result;
 }
 
-template <typename I, typename C = char, usize N>
+template<typename I, typename C = char, usize N>
   requires(micron::is_integral_v<I> && N >= micron::__impl::max_digits_v<micron::make_unsigned_t<I>> + 1)
 inline micron::sstring<N, C>
 uint_to_string_stack(I n)
@@ -281,7 +281,7 @@ uint_to_string_stack(I n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_base / uint_to_string_base
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 int_to_string_base(I n, u32 base, bool upper = false)
@@ -313,7 +313,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
   return result;
 }
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 uint_to_string_base(I n, u32 base, bool upper = false)
@@ -334,7 +334,7 @@ uint_to_string_base(I n, u32 base, bool upper = false)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_hex / to_oct / to_bin
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_hex(I n, bool upper = false)
@@ -342,7 +342,7 @@ to_hex(I n, bool upper = false)
   return uint_to_string_base<I, C>(n, 16, upper);
 }
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_oct(I n)
@@ -350,7 +350,7 @@ to_oct(I n)
   return uint_to_string_base<I, C>(n, 8, false);
 }
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_bin(I n)
@@ -361,7 +361,7 @@ to_bin(I n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_hex_fixed / to_bin_fixed
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_hex_fixed(I n, usize digits, bool upper = false)
@@ -378,7 +378,7 @@ to_hex_fixed(I n, usize digits, bool upper = false)
   return buf;
 }
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_bin_fixed(I n, usize digits)
@@ -397,7 +397,7 @@ to_bin_fixed(I n, usize digits)
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_padded
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 int_to_string_padded(I n, usize width)
@@ -424,7 +424,7 @@ int_to_string_padded(I n, usize width)
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // bytes_to_string
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
 inline micron::hstring<C>
 bytes_to_string(I n)
 {
@@ -434,7 +434,7 @@ bytes_to_string(I n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_string
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_string(I x)
@@ -442,5 +442,5 @@ to_string(I x)
   return int_to_string<I, C>(x);
 }
 
-};     // namespace rtable
-};     // namespace micron
+};      // namespace rtable
+};      // namespace micron

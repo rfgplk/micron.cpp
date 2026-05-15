@@ -47,10 +47,8 @@ inline constexpr u64 __pow5[47]
         1734723475976807094u, 2168404344971008868u, 1355252715606880542u, 1694065894508600678u, 2117582368135750847u, 1323488980084844279u,
         1654361225106055349u, 2067951531382569187u, 1292469707114105741u, 1615587133892632177u, 2019483917365790221u };
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%
-// 32×64→96 bit multiply, portable split version
-// equivalent to ((u128)m * factor) >> shift, but uses only 32×32→64 ops
-
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%
+// 32×64 to 96 bit multiply, portable split version
 inline u32
 mul_shift_32(u32 m, u64 factor, i32 shift)
 {
@@ -332,14 +330,14 @@ f2s_buffered(f32 val, char *buf)
   return idx;
 }
 
-};     // namespace __f32
+};      // namespace __f32
 
-};     // namespace __ryu
-};     // namespace __impl
+};      // namespace __ryu
+};      // namespace __impl
 
 // NOTE: consider moving to base format.hpp
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 float_to_string(f32 val)
 {
@@ -348,7 +346,7 @@ float_to_string(f32 val)
   return micron::hstring<C>(buf, buf + n);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 double_to_string(f64 val)
 {
@@ -357,7 +355,7 @@ double_to_string(f64 val)
   return micron::hstring<C>(buf, buf + n);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 float_to_string(f32 val, u32 prec)
 {
@@ -366,7 +364,7 @@ float_to_string(f32 val, u32 prec)
   return micron::hstring<C>(buf, buf + n);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 double_to_string(f64 val, u32 prec)
 {
@@ -378,7 +376,7 @@ double_to_string(f64 val, u32 prec)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_fixed / to_scientific / to_general
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_fixed(f64 val, u32 precision = 6)
 {
@@ -387,7 +385,7 @@ to_fixed(f64 val, u32 precision = 6)
   return micron::hstring<C>(buf, buf + n);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_scientific(f64 val, u32 precision = 6)
 {
@@ -396,7 +394,7 @@ to_scientific(f64 val, u32 precision = 6)
   return micron::hstring<C>(buf, buf + n);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_general(f64 val, u32 precision = 6)
 {
@@ -421,4 +419,4 @@ to_general(f64 val, u32 precision = 6)
   return to_fixed<C>(val, precision);
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -24,7 +24,7 @@
 // ULP-based epsilon for fduration_t (_Float64 / double-precision).
 // Two values are "close enough" if they differ by at most `ulps` ULPs OR
 // by an absolute epsilon (for values near zero).
-static constexpr micron::fduration_t ABS_EPS = 1e-9;     // 1 nanosecond in seconds
+static constexpr micron::fduration_t ABS_EPS = 1e-9;      // 1 nanosecond in seconds
 
 static bool
 feq(micron::fduration_t a, micron::fduration_t b, micron::fduration_t eps = ABS_EPS)
@@ -423,7 +423,7 @@ test_read_precision()
     micron::timespec_t begin{};
     begin.tv_sec = 1000;
     begin.tv_nsec = 750'000'000L;
-    clk = begin;     // operator=(const micron::timespec_t&) sets time_begin
+    clk = begin;      // operator=(const micron::timespec_t&) sets time_begin
 
     micron::timespec_t end{};
     end.tv_sec = 1002;
@@ -614,7 +614,7 @@ test_elapsed_precision()
   sb::test_case("elapsed<ns>: large timestamps, small 1ns delta");
   {
     // begin and end share a large sec value; only 1ns separates them
-    time_t big = 1'700'000'000LL;     // ~2023 unix time
+    time_t big = 1'700'000'000LL;      // ~2023 unix time
     auto b = make_ts(big, 0L);
     auto e = make_ts(big, 1L);
     sb::require_cmp(micron::elapsed<U::nanoseconds>(b, e), micron::fduration_t{ 1.0 }, approx_eq);
@@ -653,7 +653,7 @@ test_time_point_precision()
   {
     micron::time_point<> tp{ 0.0 };
     for ( int i = 0; i < 1000; ++i ) tp += micron::fduration_t{ 0.001 };
-    sb::require_true(feq(tp.time_since_epoch(), micron::fduration_t{ 1.0 }, micron::fduration_t{ 1e-6 }));     // tighter: 1us tolerance
+    sb::require_true(feq(tp.time_since_epoch(), micron::fduration_t{ 1.0 }, micron::fduration_t{ 1e-6 }));      // tighter: 1us tolerance
   }
   sb::end_test_case();
 
@@ -694,7 +694,7 @@ test_time_point_precision()
 
   sb::test_case("large epoch value: +1ms then -1ms returns to original");
   {
-    micron::fduration_t big{ 1'700'000'000'000.0 };     // ~ms since epoch
+    micron::fduration_t big{ 1'700'000'000'000.0 };      // ~ms since epoch
     micron::time_point<> tp{ big };
     tp += micron::fduration_t{ 1.0 };
     tp -= micron::fduration_t{ 1.0 };
@@ -921,7 +921,7 @@ test_calendar_precision()
 
   sb::test_case("consecutive days: to_unix delta == 86400 for 365 steps");
   {
-    time_t base = 946684800LL;     // 2000-01-01
+    time_t base = 946684800LL;      // 2000-01-01
     for ( int i = 0; i < 365; ++i ) {
       time_t t0 = base + static_cast<time_t>(i) * 86400LL;
       time_t t1 = base + static_cast<time_t>(i + 1) * 86400LL;
@@ -1040,9 +1040,9 @@ test_conversion_precision()
   sb::test_case("scaling chain ns->us->ms->s: all agree at 1s input");
   {
     micron::fduration_t s_in = 1.0;
-    auto ns = micron::nanoseconds<micron::nano>(s_in);       // 1e9
-    auto us = micron::microseconds<micron::micro>(s_in);     // 1e6
-    auto ms = micron::milliseconds<micron::milli>(s_in);     // 1e3
+    auto ns = micron::nanoseconds<micron::nano>(s_in);        // 1e9
+    auto us = micron::microseconds<micron::micro>(s_in);      // 1e6
+    auto ms = micron::milliseconds<micron::milli>(s_in);      // 1e3
     // ns / 1e3 == us
     sb::require_cmp(ns / 1e3, us, approx_eq);
     // us / 1e3 == ms

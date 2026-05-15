@@ -9,7 +9,7 @@
 namespace micron
 {
 
-template <typename T>
+template<typename T>
 concept __string_like = requires(T t) {
   { t.c_str() } -> same_as<const char *>;
   { t.data() } -> same_as<typename T::pointer>;
@@ -49,7 +49,7 @@ struct dib_header_t {
 } __attribute__((packed));
 
 struct writer {
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   write(S &output, i32 width, i32 height, const C<pixel> &pixels)
   {
@@ -110,7 +110,7 @@ struct writer {
 };
 
 struct reader {
-  template <__string_like S, template <typename> class C>
+  template<__string_like S, template<typename> class C>
   static void
   read(const S &input, i32 &width, i32 &height, C<pixel> &pixels)
   {
@@ -149,7 +149,7 @@ struct reader {
     }
   }
 
-  template <__string_like S>
+  template<__string_like S>
   static header_t
   extract_header(const S &input)
   {
@@ -162,7 +162,7 @@ struct reader {
     return bmp_header;
   }
 
-  template <__string_like S>
+  template<__string_like S>
   static dib_header_t
   extract_dib_header(const S &input)
   {
@@ -175,4 +175,4 @@ struct reader {
     return dib_header;
   }
 };
-};     // namespace micron
+};      // namespace micron

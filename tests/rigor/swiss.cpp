@@ -69,7 +69,7 @@ main(void)
 
     micron::stack_swiss_map<micron::hstring<char>, int, 64> b(a);
     sb::require(b.size() == 2ULL);
-    sb::require(a.size() == 2ULL);     // original unchanged
+    sb::require(a.size() == 2ULL);      // original unchanged
     sb::require(*b.find("hello") == 1);
     sb::require(*b.find("world") == 2);
   }
@@ -94,7 +94,7 @@ main(void)
 
     micron::stack_swiss_map<micron::hstring<char>, int, 64> b(micron::move(a));
     sb::require(b.size() == 2ULL);
-    sb::require(a.size() == 0ULL);     // moved-from is empty
+    sb::require(a.size() == 0ULL);      // moved-from is empty
     sb::require(*b.find("alpha") == 10);
     sb::require(*b.find("beta") == 20);
   }
@@ -154,7 +154,7 @@ main(void)
     auto [ok, ptr] = m.insert("dup", 200);
     sb::require(ok == false);
     sb::require(ptr != nullptr);
-    sb::require(*ptr == 100);     // original value preserved
+    sb::require(*ptr == 100);      // original value preserved
     sb::require(m.size() == 1ULL);
   }
   sb::end_test_case();
@@ -540,8 +540,8 @@ main(void)
   {
     micron::stack_swiss_map<micron::hstring<char>, int, 16> m;
     for ( int i = 0; i < 8; ++i ) m.insert(make_key(i), i);
-    for ( int i = 0; i < 8; ++i ) m.erase(make_key(i));     // leaves tombstones
-    m.clear();                                              // should reset everything including tombstones
+    for ( int i = 0; i < 8; ++i ) m.erase(make_key(i));      // leaves tombstones
+    m.clear();                                               // should reset everything including tombstones
     sb::require(m.empty());
     for ( int i = 0; i < 8; ++i ) {
       auto [ok, ptr] = m.insert(make_key(i), i * 2);

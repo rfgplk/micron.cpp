@@ -39,7 +39,7 @@ int
 fn(int a, int b, int c, int d, int e)
 {
   mc::console("A should be: ", a, ", ", b, ", ", c, ", ", d, ", ", e);
-  mc::console("Global is: ", static_cast<int>(__global));     // should be different each time
+  mc::console("Global is: ", static_cast<int>(__global));      // should be different each time
   return 4;
 }
 

@@ -17,7 +17,7 @@ enum class future_status { ready, timeout, deferred };
 
 enum class launch { async = 1, deferred = 2 };
 
-template <typename T> class shared_state
+template<typename T> class shared_state
 {
   mutable mutex mtx;
   bool ready;
@@ -28,13 +28,13 @@ template <typename T> class shared_state
     char dummy;
     T value;
 
-    storage_t() : dummy(0) {}
+    storage_t() : dummy(0) { }
 
-    ~storage_t() {}
+    ~storage_t() { }
   } storage;
 
 public:
-  shared_state() : ready(false), retrieved(false), has_exception(false) {}
+  shared_state() : ready(false), retrieved(false), has_exception(false) { }
 
   ~shared_state()
   {
@@ -75,7 +75,7 @@ public:
 
   future_status wait_until();
 
-  template <typename... Args>
+  template<typename... Args>
   void
   set_value(Args &&...args)
   {
@@ -116,14 +116,14 @@ public:
   }
 };
 
-template <> class shared_state<void>
+template<> class shared_state<void>
 {
   mutable mutex mtx;
   bool ready;
   bool retrieved;
 
 public:
-  shared_state() : ready(false), retrieved(false) {}
+  shared_state() : ready(false), retrieved(false) { }
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
@@ -192,7 +192,7 @@ public:
   }
 };
 
-template <typename T> class shared_state<T &>
+template<typename T> class shared_state<T &>
 {
   mutable mutex mtx;
   bool ready;
@@ -200,7 +200,7 @@ template <typename T> class shared_state<T &>
   T *ptr;
 
 public:
-  shared_state() : ready(false), retrieved(false), ptr(nullptr) {}
+  shared_state() : ready(false), retrieved(false), ptr(nullptr) { }
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
@@ -273,19 +273,19 @@ public:
   }
 };
 
-template <typename T> class promise;
-template <typename T> class future;
+template<typename T> class promise;
+template<typename T> class future;
 
-template <typename T> class future
+template<typename T> class future
 {
   shared_state<T> *state;
 
-  template <typename U> friend class promise;
+  template<typename U> friend class promise;
 
-  explicit future(shared_state<T> *s) : state(s) {}
+  explicit future(shared_state<T> *s) : state(s) { }
 
 public:
-  future() noexcept : state(nullptr) {}
+  future() noexcept : state(nullptr) { }
 
   future(const future &) = delete;
   future &operator=(const future &) = delete;
@@ -348,16 +348,16 @@ public:
   future_status wait_until();
 };
 
-template <> class future<void>
+template<> class future<void>
 {
   shared_state<void> *state;
 
-  template <typename U> friend class promise;
+  template<typename U> friend class promise;
 
-  explicit future(shared_state<void> *s) : state(s) {}
+  explicit future(shared_state<void> *s) : state(s) { }
 
 public:
-  future() noexcept : state(nullptr) {}
+  future() noexcept : state(nullptr) { }
 
   future(const future &) = delete;
   future &operator=(const future &) = delete;
@@ -420,16 +420,16 @@ public:
   future_status wait_until();
 };
 
-template <typename T> class future<T &>
+template<typename T> class future<T &>
 {
   shared_state<T &> *state;
 
-  template <typename U> friend class promise;
+  template<typename U> friend class promise;
 
-  explicit future(shared_state<T &> *s) : state(s) {}
+  explicit future(shared_state<T &> *s) : state(s) { }
 
 public:
-  future() noexcept : state(nullptr) {}
+  future() noexcept : state(nullptr) { }
 
   future(const future &) = delete;
   future &operator=(const future &) = delete;
@@ -492,4 +492,4 @@ public:
   future_status wait_until();
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -10,7 +10,7 @@
 namespace micron
 {
 
-template <class Type> class free_pointer : private __internal_pointer_alloc<Type>
+template<class Type> class free_pointer: private __internal_pointer_alloc<Type>
 {
   Type *internal_pointer;
 
@@ -22,18 +22,18 @@ public:
 
   using __alloc = __internal_pointer_alloc<Type>;
 
-  ~free_pointer() {};
+  ~free_pointer() { };
 
-  free_pointer(void) : internal_pointer(nullptr) {}     //: internal_pointer(new Type()) {};
+  free_pointer(void) : internal_pointer(nullptr) { }      //: internal_pointer(new Type()) {};
 
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr) {};
-  free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
-  template <class... Args>
+  template<is_nullptr V> free_pointer(V) : internal_pointer(nullptr) { };
+  free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) { };
+  free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) { };
+  template<class... Args>
   free_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) {};     // internal_pointer(new Type(args...)){};
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) { };      // internal_pointer(new Type(args...)){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
@@ -105,7 +105,7 @@ public:
       exc<except::memory_error>("free_pointer operator*(): internal_pointer was null");
   };
 
-  template <typename Ft>
+  template<typename Ft>
   free_pointer &
   operator=(Ft *raw_ptr)
   {
@@ -140,7 +140,7 @@ public:
     __alloc::__impl_dealloc(internal_pointer);
   };
 
-  template <is_pointer_class P>
+  template<is_pointer_class P>
   inline P
   convert(void)
   {
@@ -154,7 +154,7 @@ public:
   }
 };
 
-template <class Type> class free_pointer<Type[]> : private __internal_pointer_arralloc<Type[]>
+template<class Type> class free_pointer<Type[]>: private __internal_pointer_arralloc<Type[]>
 {
   using pointer_type = weak_pointer_tag;
   using category_type = pointer_tag;
@@ -164,18 +164,19 @@ template <class Type> class free_pointer<Type[]> : private __internal_pointer_ar
   Type *internal_pointer;
 
 public:
-  ~free_pointer() {};
+  ~free_pointer() { };
 
-  free_pointer() : internal_pointer(nullptr) {}
+  free_pointer() : internal_pointer(nullptr) { }
 
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) {};
-  template <is_nullptr V> free_pointer(V) : internal_pointer(nullptr) {};
-  free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) {};
-  template <class... Args>
+  free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) { };
+  template<is_nullptr V> free_pointer(V) : internal_pointer(nullptr) { };
+  free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) { };
+  template<class... Args>
   free_pointer(Args &&...args)
-      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) {};     // internal_pointer(new Type[sizeof...(args)]{ args... }){};
+      : internal_pointer(__alloc::__impl_alloc(forward<Args>(args)...)) {
+        };      // internal_pointer(new Type[sizeof...(args)]{ args... }){};
 
   free_pointer(free_pointer &&p) : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
@@ -228,7 +229,7 @@ public:
     return *this;
   };
 
-  template <typename Ft>
+  template<typename Ft>
   free_pointer &
   operator=(Ft *raw_ptr)
   {
@@ -326,7 +327,7 @@ public:
     __alloc::__impl_dealloc(internal_pointer);
   };
 
-  template <is_pointer_class P>
+  template<is_pointer_class P>
   inline P
   convert(void)
   {
@@ -334,4 +335,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

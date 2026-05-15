@@ -31,8 +31,8 @@ struct __parallel_wrapper {
 
 // main class for handling all system functions
 // not thread safe
-template <io::modes _default_mode = io::modes::read,
-          usize N = 256>     // max size of open handles (entries & dirs), note that the max is usually 1024, but
+template<io::modes _default_mode = io::modes::read,
+         usize N = 256>      // max size of open handles (entries & dirs), note that the max is usually 1024, but
                              // defaulting to 256
 class parallel_system
 {
@@ -153,16 +153,16 @@ public:
   ~parallel_system()
   {
     for ( usize i = 0; i < N; i++ ) {
-      if ( i < sz ) (*entries[i]).sync();     // we'll automatically mandate syncing to underlying storage on dest call
+      if ( i < sz ) (*entries[i]).sync();      // we'll automatically mandate syncing to underlying storage on dest call
       entries[i].clear();
     }
   }
 
-  parallel_system() : entries{ nullptr }, sz(0) {}
+  parallel_system() : entries{ nullptr }, sz(0) { }
 
   parallel_system(const io::path_t &p, const io::modes c = _default_mode) : entries{ nullptr }, sz(0) { file(p, c); }
 
-  template <typename... T>
+  template<typename... T>
     requires((micron::same_as<T, io::path_t> && ...))
   parallel_system(const T &...t)
   {
@@ -171,7 +171,7 @@ public:
 
   parallel_system(const parallel_system &o) { micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]); }
 
-  parallel_system(parallel_system &&o) : entries(micron::move(o.entries)) {}
+  parallel_system(parallel_system &&o) : entries(micron::move(o.entries)) { }
 
   parallel_system &
   operator=(const parallel_system &o)
@@ -196,7 +196,7 @@ public:
     for ( usize i = 0; i < sz; i++ ) {
       micron::lock_guard(entries[i]->mtx);
       if ( __access(*entries[i]).name() == p ) return __access(*entries[i]);
-    }     // as with maps, if file doesn't exist open it
+    }      // as with maps, if file doesn't exist open it
     return append(p, c, nd);
   }
 
@@ -359,7 +359,7 @@ public:
     __unlock();
   }
 
-  template <typename... Paths>
+  template<typename... Paths>
   void
   copy_list(const io::path_t &from, const Paths &...to)
   {
@@ -408,14 +408,14 @@ public:
     return entries[id]->set_permissions(perms);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   auto
   set_permissions(const io::path_t &path, Args... args)
   {
     usize id = __locate(path);
 
     struct linux_permissions perms
-        = { { false, false, false }, { false, false, false }, { false, false, false } };     // explicitly init to zero
+        = { { false, false, false }, { false, false, false }, { false, false, false } };      // explicitly init to zero
     (__set_perm(perms, args), ...);
     return entries[id]->set_permissions(perms);
   }
@@ -556,5 +556,5 @@ public:
   }
 };
 
-};     // namespace fsys
-};     // namespace micron
+};      // namespace fsys
+};      // namespace micron

@@ -20,7 +20,7 @@
 
 namespace micron
 {
-template <typename T, usize N = micron::alloc_auto_sz>
+template<typename T, usize N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<T>
 class sstack
 {
@@ -124,7 +124,7 @@ public:
     return v;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   void
   emplace(Args &&...args)
   {
@@ -229,7 +229,7 @@ public:
   }
 };
 
-template <typename t, usize N = micron::alloc_auto_sz>
+template<typename t, usize N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<t>
 class fsstack
 {
@@ -251,7 +251,7 @@ public:
   typedef const t *const_iterator;
   ~fsstack() = default;
 
-  fsstack() : stack{}, length(0) {}
+  fsstack() : stack{}, length(0) { }
 
   fsstack(const umax_t n) : stack{}, length(0)
   {
@@ -276,7 +276,7 @@ public:
     length = o.length;
   }
 
-  template <typename C = t, usize M> fsstack(const fsstack<C, M> &o)
+  template<typename C = t, usize M> fsstack(const fsstack<C, M> &o)
   {
     if constexpr ( N < M ) {
       __impl_container::copy(&stack[0], &o.stack[0], M);
@@ -293,7 +293,7 @@ public:
     o.length = 0;
   }
 
-  template <typename C = t, usize M> fsstack(fsstack<C, M> &&o)
+  template<typename C = t, usize M> fsstack(fsstack<C, M> &&o)
   {
     if constexpr ( N >= M ) {
       micron::copy<N>(&o.stack[0], &stack[0]);
@@ -314,7 +314,7 @@ public:
     return *this;
   }
 
-  template <typename C = t, usize M>
+  template<typename C = t, usize M>
   fsstack &
   operator=(const fsstack<C, M> &o)
   {
@@ -371,7 +371,7 @@ public:
     return n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   inline void
   emplace(Args &&...args)
   {
@@ -464,4 +464,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

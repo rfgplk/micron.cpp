@@ -26,9 +26,9 @@ namespace math
 namespace splines
 {
 
-template <ieee754_floating F> struct cubic_spline_1d {
-  vector<F> xs;                      // n knots, strictly increasing
-  vector<poly_coeffs<F, 3>> seg;     // n-1 segments
+template<ieee754_floating F> struct cubic_spline_1d {
+  vector<F> xs;                       // n knots, strictly increasing
+  vector<poly_coeffs<F, 3>> seg;      // n-1 segments
   mutable usize last_hit{ 0 };
   bc_kind bc{ bc_kind::natural };
   extrap mode{ extrap::linear_continue };
@@ -37,7 +37,7 @@ template <ieee754_floating F> struct cubic_spline_1d {
 namespace __impl_cubic_1d
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bool
 solve_cubic_M(const F *xs, const F *ys, usize n, bc_kind bc, F left_slope, F right_slope, F *M_out) noexcept
 {
@@ -50,10 +50,10 @@ solve_cubic_M(const F *xs, const F *ys, usize n, bc_kind bc, F left_slope, F rig
     return true;
   }
 
-  vector<F> a(n - 1, F(0));     // sub-diagonal
-  vector<F> b(n, F(0));         // main diagonal
-  vector<F> c(n - 1, F(0));     // super-diagonal
-  vector<F> d(n, F(0));         // rhs / solution
+  vector<F> a(n - 1, F(0));      // sub-diagonal
+  vector<F> b(n, F(0));          // main diagonal
+  vector<F> c(n - 1, F(0));      // super-diagonal
+  vector<F> d(n, F(0));          // rhs / solution
   a.set_size(n - 1);
   b.set_size(n);
   c.set_size(n - 1);
@@ -106,10 +106,10 @@ solve_cubic_M(const F *xs, const F *ys, usize n, bc_kind bc, F left_slope, F rig
     }
 
     const usize m = n - 2;
-    vector<F> ai(m == 0 ? 1 : m, F(0));     // sub
-    vector<F> bi(m == 0 ? 1 : m, F(0));     // diag
-    vector<F> ci(m == 0 ? 1 : m, F(0));     // super
-    vector<F> di(m == 0 ? 1 : m, F(0));     // rhs / sol
+    vector<F> ai(m == 0 ? 1 : m, F(0));      // sub
+    vector<F> bi(m == 0 ? 1 : m, F(0));      // diag
+    vector<F> ci(m == 0 ? 1 : m, F(0));      // super
+    vector<F> di(m == 0 ? 1 : m, F(0));      // rhs / sol
     if ( m > 0 ) {
       ai.set_size(m);
       bi.set_size(m);
@@ -174,9 +174,9 @@ solve_cubic_M(const F *xs, const F *ys, usize n, bc_kind bc, F left_slope, F rig
   return true;
 }
 
-};     // namespace __impl_cubic_1d
+};      // namespace __impl_cubic_1d
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline cubic_spline_1d<F>
 make_cubic(raw_slice<const F> xs, raw_slice<const F> ys, bc_kind bc = bc_kind::natural, F left_slope = F(0), F right_slope = F(0),
            build_info<F> *info = nullptr) noexcept
@@ -216,7 +216,7 @@ make_cubic(raw_slice<const F> xs, raw_slice<const F> ys, bc_kind bc = bc_kind::n
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 evaluate(const cubic_spline_1d<F> &s, F x) noexcept
 {
@@ -251,7 +251,7 @@ evaluate(const cubic_spline_1d<F> &s, F x) noexcept
   return __impl_splines_bits::eval_cubic_local<F>(seg[i], x - xs[i]);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 evaluate(const cubic_spline_1d<F> &s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
 {
@@ -282,7 +282,7 @@ evaluate(const cubic_spline_1d<F> &s, const F *__restrict__ xq, F *__restrict__ 
   s.last_hit = idx;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 derivative(const cubic_spline_1d<F> &s, F x, u32 order = 1) noexcept
 {
@@ -312,7 +312,7 @@ derivative(const cubic_spline_1d<F> &s, F x, u32 order = 1) noexcept
   return F(0);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 integral(const cubic_spline_1d<F> &s, F a, F b) noexcept
 {
@@ -365,6 +365,6 @@ integral(const cubic_spline_1d<F> &s, F a, F b) noexcept
   return sign * sum;
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

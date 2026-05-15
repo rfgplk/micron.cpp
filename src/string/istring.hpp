@@ -23,8 +23,8 @@ namespace micron
 
 // immutable string on the heap, immutable
 // accepts only char simple types
-template <is_scalar_literal T = schar, class Alloc = micron::allocator_serial<>>
-class istring : private Alloc, public __immutable_memory_resource<T>
+template<is_scalar_literal T = schar, class Alloc = micron::allocator_small<>>
+class istring: private Alloc, public __immutable_memory_resource<T, Alloc>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
 
@@ -61,8 +61,8 @@ public:
   }
 
   // __mem memory;
-  constexpr istring() : __mem(Alloc::auto_size()) {};
-  constexpr istring(const usize n) : __mem(__alloc_size(n)) {};
+  constexpr istring() : __mem(Alloc::auto_size()) { };
+  constexpr istring(const usize n) : __mem(__alloc_size(n)) { };
 
   istring(usize cnt, T ch) : __mem(__alloc_size(cnt))
   {
@@ -73,14 +73,14 @@ public:
   constexpr istring(const char *&str) : __mem(__alloc_size(micron::strlen(str)))
   {
     usize end = micron::strlen(str);
-    micron::memcpy(&(__mem::memory)[0], &str[0], end);     // - 1);
-    __mem::length = end;                                   // - 1;
+    micron::memcpy(&(__mem::memory)[0], &str[0], end);      // - 1);
+    __mem::length = end;                                    // - 1;
   };
 
-  template <usize M, typename F> constexpr istring(const F (&str)[M]) : __mem(__alloc_size(M))
+  template<usize M, typename F> constexpr istring(const F (&str)[M]) : __mem(__alloc_size(M))
   {
-    micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));     // - 1);
-    __mem::length = M - 1;                                            // - 1;
+    micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));      // - 1);
+    __mem::length = M - 1;                                             // - 1;
   };
 
   constexpr istring(const istring &o) = delete;
@@ -95,7 +95,7 @@ public:
     o.capacity = 0;
   }
 
-  template <typename F> istring(istring<F> &&o)
+  template<typename F> istring(istring<F> &&o)
   {
     __mem::memory = o.memory;
     __mem::length = o.length;
@@ -123,7 +123,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   istring &
   operator=(istring<F> &&o)
   {
@@ -162,7 +162,7 @@ public:
     return reinterpret_cast<const byte *>(__mem::memory);
   }
 
-  template <typename C = T>
+  template<typename C = T>
   void
   swap(istring<C> &o)
   {
@@ -243,17 +243,17 @@ public:
   inline const auto
   clone() const
   {
-    return istring<T>(*this);     // copy
+    return istring<T>(*this);      // copy
   }
 
-  template <typename F>
+  template<typename F>
   inline const F
   clone() const
   {
-    return F(*this);     // copy
+    return F(*this);      // copy
   }
 
-  template <typename F>
+  template<typename F>
   usize
   find(F ch, usize pos = 0) const
   {
@@ -263,7 +263,7 @@ public:
     return npos;
   }
 
-  template <typename F>
+  template<typename F>
   usize
   find(const istring<F> &str, usize pos = 0)
   {
@@ -297,7 +297,7 @@ public:
   inline const_iterator
   cend() const
   {
-    return &(__mem::memory)[__mem::length];     // correct, should point at nptr
+    return &(__mem::memory)[__mem::length];      // correct, should point at nptr
   }
 
   inline void
@@ -318,104 +318,104 @@ public:
   append(const buffer &f, usize n)
   {
     istring t(__mem::length + n);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    micron::memcpy(&(t.memory)[t.length],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[t.length],      // null is here so, overwrite it
                    &f[0], n);
     t.length += (n);
     return t;
   }
 
-  template <typename F>
+  template<typename F>
   inline istring
   append(const slice<F> &f, usize n)
   {
     istring t(__mem::length + n);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    micron::memcpy(&(t.memory)[t.length],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[t.length],      // null is here so, overwrite it
                    &f[0], n);
     t.length += n;
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
   inline istring
   append(const F *f, usize n)
   {
     istring t(__mem::length + n);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    micron::memcpy(&(t.memory)[t.length],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[t.length],      // null is here so, overwrite it
                    f, n);
     t.length += n;
     return t;
   }
 
-  template <typename F = T, usize M>
+  template<typename F = T, usize M>
   inline istring
   append(const F (&str)[M])
   {
     istring t(__mem::length + M);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    micron::memcpy(&(t.memory)[t.length],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[t.length],      // null is here so, overwrite it
                    &str[0], M);
     t.length += (M);
     return t;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   append(const istring<F> &o)
   {
     istring t(__mem::length + o.size());
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    micron::memcpy(&(t.memory)[t.length],     // null trunc
+    micron::memcpy(&(t.memory)[t.length],      // null trunc
                    &(o.memory)[0], o.length);
     t.length += o.length;
     return t;
   }
 
-  template <usize M, typename F = T>
+  template<usize M, typename F = T>
   inline istring
   append(const sstring<M, F> &o)
   {
     istring t(__mem::length + M);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     usize end = micron::strlen(o.c_str());
     micron::memcpy(&(t.memory)[t.length], &(o.memory)[0],
-                   end);     // truncate null
+                   end);      // truncate null
     t.length += end;
     return t;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   push_back(F ch)
   {
     istring t(__mem::length + 1);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     (t.memory)[t.length++] = ch;
     return t;
   }
 
-  template <typename F = T, usize M>
+  template<typename F = T, usize M>
   inline istring
   push_back(const F (&str)[M])
   {
     istring t(__mem::length + M);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     micron::memcpy(&(t.memory)[t.length], &str[0], M);
@@ -423,36 +423,36 @@ public:
     return t;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   push_back(const istring<F> &o)
   {
     istring t(__mem::length + o.size());
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     micron::memcpy(&(t.memory)[t.length], &(o.memory)[0],
-                   o.length);     // truncate null
+                   o.length);      // truncate null
     t.length += o.length;
     return t;
   }
 
-  template <usize M, typename F = T>
+  template<usize M, typename F = T>
   inline istring
   push_back(const sstring<M, F> &o)
   {
     usize end = micron::strlen(o.c_str());
     istring t(__mem::length + end);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     micron::memcpy(&(t.memory)[t.length], &(o.memory)[0],
-                   end);     // truncate null
+                   end);      // truncate null
     t.length += end - 1;
     return t;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   insert(usize ind, F ch, usize cnt = 1)
   {
@@ -466,7 +466,7 @@ public:
     return t;
   }
 
-  template <typename F = T, usize M>
+  template<typename F = T, usize M>
   inline istring
   insert(usize ind, const char (&str)[M], usize cnt = 1)
   {
@@ -485,13 +485,13 @@ public:
     return t;
   }
 
-  template <typename F, usize M>
+  template<typename F, usize M>
   inline istring
   insert(usize ind, const sstring<M, F> &o)
   {
     usize end = micron::strlen(o.c_str());
     istring t(__mem::length + (end));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     micron::bytemove(&(t.memory)[ind + (end)], &(t.memory)[ind], t.length - ind);
@@ -532,7 +532,7 @@ public:
   operator+=(const buffer &data)
   {
     istring t(__mem::length + (data.size()));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
@@ -541,12 +541,12 @@ public:
     return t;
   };
 
-  template <usize M>
+  template<usize M>
   inline istring
   operator+=(const char (&data)[M])
   {
     istring t(__mem::length + M);
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
@@ -556,13 +556,13 @@ public:
     return t;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   operator+=(const F *&data)
   {
     usize end = micron::strlen(data);
     istring t(__mem::length + (end));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
@@ -571,12 +571,12 @@ public:
     return t;
   };
 
-  template <typename F, usize M>
+  template<typename F, usize M>
   inline istring
   operator+=(const sstring<M, F> &data)
   {
     istring t(__mem::length + (data.size()));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
@@ -585,12 +585,12 @@ public:
     return t;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   operator+=(const istring<F> &data)
   {
     istring t(__mem::length + (data.size()));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
@@ -599,12 +599,12 @@ public:
     return t;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring
   operator+=(const slice<F> &data)
   {
     istring t(__mem::length + (data.size()));
-    micron::memcpy(&(t.memory)[0],     // null is here so, overwrite it
+    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
@@ -613,7 +613,7 @@ public:
     return t;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline istring<F>
   substr(usize pos = 0, usize cnt = 0) const
   {
@@ -641,7 +641,7 @@ public:
     return true;
   };
 
-  template <typename F = T, usize M>
+  template<typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M]) const
   {
@@ -653,7 +653,7 @@ public:
     return true;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator==(const istring<F> &data) const
   {
@@ -677,7 +677,7 @@ public:
     return true;
   };
 
-  template <typename F = T, usize M>
+  template<typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M])
   {
@@ -689,7 +689,7 @@ public:
     return true;
   };
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator==(const istring<F> &data)
   {
@@ -702,11 +702,11 @@ public:
   };
 };
 
-template <is_string S>
+template<is_string S>
 auto
 to_persist(const S &str)
 {
   return istring<typename S::value_type>(str.c_str());
 }
 
-};     // namespace micron
+};      // namespace micron

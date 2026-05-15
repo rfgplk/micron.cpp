@@ -12,7 +12,7 @@ namespace micron
 {
 namespace posix
 {
-template <typename... Args>
+template<typename... Args>
 // TODO: reintroduce this, and resolve type conflicts  requires((micron::is_same_v<Args, unsigned long> && ...))
 int
 ioctl(i32 fd, Args... ops)
@@ -39,7 +39,7 @@ constexpr static const u64 __ioc_none = 0;
 constexpr static const u64 __ioc_write = 1;
 constexpr static const u64 __ioc_read = 2;
 
-template <typename T>
+template<typename T>
 consteval usize
 __sizeof_type()
 {
@@ -59,42 +59,42 @@ io_default_command(u64 type, u64 nr)
   return io_request(__ioc_none, type, nr, 0);
 }
 
-template <typename T>
+template<typename T>
 consteval u64
 io_read_command(u64 type, u64 nr)
 {
   return io_request(__ioc_read, type, nr, __sizeof_type<T>());
 }
 
-template <typename T>
+template<typename T>
 consteval u64
 io_write_command(u64 type, u64 nr)
 {
   return io_request(__ioc_write, type, nr, __sizeof_type<T>());
 }
 
-template <typename T>
+template<typename T>
 consteval u64
 io_readwrite_command(u64 type, u64 nr)
 {
   return io_request(__ioc_write | __ioc_read, type, nr, __sizeof_type<T>());
 }
 
-template <typename T>
+template<typename T>
 consteval u64
 io_read_bad_command(u64 type, u64 nr)
 {
   return io_request(__ioc_read, type, nr, __sizeof_type<T>());
 }
 
-template <typename T>
+template<typename T>
 consteval u64
 io_write_bad_command(u64 type, u64 nr)
 {
   return io_request(__ioc_write, type, nr, __sizeof_type<T>());
 }
 
-template <typename T>
+template<typename T>
 consteval u64
 io_readwrite_bad_command(u64 type, u64 nr)
 {
@@ -213,5 +213,5 @@ constexpr static const u64 tiocpkt_nostop = 16;
 constexpr static const u64 tiocpkt_dostop = 32;
 constexpr static const u64 tiocpkt_ioctl = 64;
 constexpr static const u64 tiocser_temt = 0x01;
-};     // namespace posix
-}     // namespace micron
+};      // namespace posix
+}      // namespace micron

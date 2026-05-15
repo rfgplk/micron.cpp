@@ -22,15 +22,15 @@ namespace io
 constexpr int __buffer_size = 32768;
 constexpr int __buffer_packet = 4096;
 
-template <typename Fn>
+template<typename Fn>
 concept intercept_fn = requires(Fn fn, byte *data, usize sz) { fn(data, sz); };
 
-template <typename Fn>
+template<typename Fn>
 concept encode_fn = requires(Fn fn, byte *dst, const byte *src, usize len) {
   { fn(dst, src, len) } -> same_as<usize>;
 };
 
-template <typename C>
+template<typename C>
 concept byte_container = requires(C c) {
   { c.begin() } -> convertible_to<const byte *>;
   { c.size() } -> convertible_to<usize>;
@@ -51,7 +51,7 @@ struct stream_result_t {
 struct __intercept_holder {
   void (*fn)(void *ctx, byte *data, usize sz) = nullptr;
   void (*destroy)(void *ctx) = nullptr;
-  alignas(16) byte ctx[64] = {};     // up to 64 bytes of closure
+  alignas(16) byte ctx[64] = {};      // up to 64 bytes of closure
 
   bool
   valid() const noexcept
@@ -75,7 +75,7 @@ struct __intercept_holder {
   }
 };
 
-template <int __sz = __buffer_size, int __chnk = __buffer_packet> class stream
+template<int __sz = __buffer_size, int __chnk = __buffer_packet> class stream
 {
   max_t __size;
   micron::pointer<micron::buffer> __buffer;
@@ -106,7 +106,7 @@ template <int __sz = __buffer_size, int __chnk = __buffer_packet> class stream
 public:
   ~stream() { __hook.reset(); }
 
-  stream() : __size(0), __buffer(__sz), __hook{} {}
+  stream() : __size(0), __buffer(__sz), __hook{} { }
 
   stream(const stream &) = delete;
   stream &operator=(const stream &) = delete;
@@ -132,7 +132,7 @@ public:
     return *this;
   }
 
-  template <intercept_fn Fn>
+  template<intercept_fn Fn>
   void
   set_intercept(Fn &&fn)
   {
@@ -161,7 +161,7 @@ public:
     if ( __size ) __intercept();
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   usize
   encode(Fn &&fn, const byte *src, usize src_len)
   {
@@ -173,7 +173,7 @@ public:
     return appended;
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   usize
   encode(Fn &&fn, const byte *src, usize src_len, micron::buffer &scratch)
   {
@@ -185,21 +185,21 @@ public:
     return appended;
   }
 
-  template <encode_fn Fn, is_string T>
+  template<encode_fn Fn, is_string T>
   usize
   encode(Fn &&fn, const T &in)
   {
     return encode(micron::move(fn), reinterpret_cast<const byte *>(in.c_str()), in.size());
   }
 
-  template <encode_fn Fn, is_container_or_string T>
+  template<encode_fn Fn, is_container_or_string T>
   usize
   encode(Fn &&fn, const T &in)
   {
     return encode(micron::move(fn), reinterpret_cast<const byte *>(in.begin()), in.size() * sizeof(typename T::value_type));
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   usize
   encode_into(Fn &&fn, byte *dst, usize dst_cap) const
   {
@@ -207,14 +207,14 @@ public:
     return fn(dst, __buffer->begin(), static_cast<usize>(__size));
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   usize
   encode_into(Fn &&fn, micron::buffer &dst) const
   {
     return encode_into(micron::move(fn), dst.begin(), dst.size());
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   void
   encode_inplace(Fn &&fn)
   {
@@ -227,7 +227,7 @@ public:
     __intercept();
   }
 
-  template <is_string T>
+  template<is_string T>
   stream &
   operator<<(const T &in)
   {
@@ -237,7 +237,7 @@ public:
     return *this;
   }
 
-  template <is_container_or_string T>
+  template<is_container_or_string T>
     requires(!is_string<T>)
   stream &
   operator<<(const T &in)
@@ -274,7 +274,7 @@ public:
     return *this;
   }
 
-  template <typename T>
+  template<typename T>
   stream &
   append(const T *ptr, usize count)
   {
@@ -283,7 +283,7 @@ public:
     return *this;
   }
 
-  template <typename T>
+  template<typename T>
   stream &
   append(const T &obj, usize count)
   {
@@ -321,7 +321,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   stream &
   operator>>(T &out)
   {
@@ -331,7 +331,7 @@ public:
     return *this;
   }
 
-  template <is_container_or_string T>
+  template<is_container_or_string T>
     requires(!is_string<T>)
   stream &
   operator>>(T &out)
@@ -343,7 +343,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   dump(T &out) const
   {
@@ -367,7 +367,7 @@ public:
     return copy;
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   dump_and_clear(T &out)
   {
@@ -550,7 +550,7 @@ public:
     return !(*this == buf);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   operator==(const T &str) const noexcept
   {
@@ -558,7 +558,7 @@ public:
     return operator==(reinterpret_cast<const byte *>(str.c_str()));
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   operator!=(const T &str) const noexcept
   {
@@ -599,7 +599,7 @@ public:
   }
 };
 
-template <int __sz = __buffer_size, int __chnk = __buffer_packet> class stream_view
+template<int __sz = __buffer_size, int __chnk = __buffer_packet> class stream_view
 {
   max_t __size;
   micron::wptr<micron::buffer> __buffer;
@@ -632,14 +632,14 @@ public:
 
   stream_view() = delete;
 
-  template <typename T> explicit stream_view(T &p) : __size(0), __buffer(p), __hook{} {}
+  template<typename T> explicit stream_view(T &p) : __size(0), __buffer(p), __hook{} { }
 
   stream_view(const stream_view &) = delete;
   stream_view(stream_view &&) = delete;
   stream_view &operator=(const stream_view &) = delete;
   stream_view &operator=(stream_view &&) = delete;
 
-  template <intercept_fn Fn>
+  template<intercept_fn Fn>
   void
   set_intercept(Fn &&fn)
   {
@@ -668,7 +668,7 @@ public:
     if ( __size ) __intercept();
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   usize
   encode_into(Fn &&fn, byte *dst, usize dst_cap) const
   {
@@ -676,14 +676,14 @@ public:
     return fn(dst, __buffer->begin(), static_cast<usize>(__size));
   }
 
-  template <encode_fn Fn>
+  template<encode_fn Fn>
   usize
   encode_into(Fn &&fn, micron::buffer &dst) const
   {
     return encode_into(micron::move(fn), dst.begin(), dst.size());
   }
 
-  template <is_string T>
+  template<is_string T>
   stream_view &
   operator<<(const T &in)
   {
@@ -693,7 +693,7 @@ public:
     return *this;
   }
 
-  template <is_container_or_string T>
+  template<is_container_or_string T>
     requires(!is_string<T>)
   stream_view &
   operator<<(const T &in)
@@ -740,7 +740,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   stream_view &
   operator>>(T &out)
   {
@@ -750,7 +750,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   dump(T &out) const
   {
@@ -888,7 +888,7 @@ public:
     return !(*this < o);
   }
 
-  template <int S, int C>
+  template<int S, int C>
   bool
   operator==(const stream<S, C> &o) const noexcept
   {
@@ -900,7 +900,7 @@ public:
     return true;
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   operator==(const T &str) const noexcept
   {
@@ -912,7 +912,7 @@ public:
     return true;
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   operator!=(const T &str) const noexcept
   {
@@ -940,7 +940,7 @@ public:
   }
 };
 
-template <int SZ_A, int CK_A, int SZ_B, int CK_B>
+template<int SZ_A, int CK_A, int SZ_B, int CK_B>
 inline void
 pipe(stream<SZ_A, CK_A> &src, stream<SZ_B, CK_B> &dst)
 {
@@ -949,7 +949,7 @@ pipe(stream<SZ_A, CK_A> &src, stream<SZ_B, CK_B> &dst)
   src.rewind();
 }
 
-template <int SZ_A, int CK_A, int SZ_B, int CK_B, encode_fn Fn>
+template<int SZ_A, int CK_A, int SZ_B, int CK_B, encode_fn Fn>
 inline void
 pipe_encode(stream<SZ_A, CK_A> &src, stream<SZ_B, CK_B> &dst, Fn &&fn)
 {
@@ -958,19 +958,19 @@ pipe_encode(stream<SZ_A, CK_A> &src, stream<SZ_B, CK_B> &dst, Fn &&fn)
   src.rewind();
 }
 
-template <int SZ, int CK>
+template<int SZ, int CK>
 inline bool
 operator==(const byte *buf, const stream<SZ, CK> &s) noexcept
 {
   return s == buf;
 }
 
-template <int SZ, int CK>
+template<int SZ, int CK>
 inline bool
 operator!=(const byte *buf, const stream<SZ, CK> &s) noexcept
 {
   return !(s == buf);
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

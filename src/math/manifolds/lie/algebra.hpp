@@ -34,7 +34,7 @@ namespace manifolds
 namespace lie
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, 3, 3>
 hat_so3(const vec<F, 3> &omega) noexcept
 {
@@ -48,14 +48,14 @@ hat_so3(const vec<F, 3> &omega) noexcept
   return M;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
 vee_so3(const mat<F, 3, 3> &M) noexcept
 {
   return vec<F, 3>{ M.data[7], M.data[2], M.data[3] };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr mat<F, 4, 4>
 hat_se3(const vec<F, 6> &xi) noexcept
 {
@@ -72,28 +72,28 @@ hat_se3(const vec<F, 6> &xi) noexcept
   return M;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, 6>
 vee_se3(const mat<F, 4, 4> &M) noexcept
 {
   return vec<F, 6>{ M.data[0 * 4 + 3], M.data[1 * 4 + 3], M.data[2 * 4 + 3], M.data[2 * 4 + 1], M.data[0 * 4 + 2], M.data[1 * 4 + 0] };
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, N, N>
 hat_son(const mat<F, N, N> &M) noexcept
 {
   return M;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, N, N>
 vee_son(const mat<F, N, N> &M) noexcept
 {
   return M;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::flatten]] inline constexpr mat<F, N, N>
 lie_bracket(const mat<F, N, N> &X, const mat<F, N, N> &Y) noexcept
 {
@@ -102,21 +102,21 @@ lie_bracket(const mat<F, N, N> &X, const mat<F, N, N> &Y) noexcept
   return XY - YX;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
 algebra_exp(const mat<F, N, N> &X) noexcept
 {
   return linalg::matfunc::expm<F, N>(X).X;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
 algebra_log(const mat<F, N, N> &G) noexcept
 {
   return linalg::matfunc::logm<F, N>(G).X;
 }
 
-};     // namespace lie
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace lie
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

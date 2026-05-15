@@ -23,7 +23,7 @@ namespace math
 namespace integrate
 {
 
-template <ieee754_floating F, typename Fn>
+template<ieee754_floating F, typename Fn>
 [[nodiscard]] inline quad_result<F>
 tplquad(Fn f, F ax, F bx, F ay, F by, F az, F bz, F atol, F rtol, usize max_depth = 30) noexcept
 {
@@ -45,6 +45,6 @@ tplquad(Fn f, F ax, F bx, F ay, F by, F az, F bz, F atol, F rtol, usize max_dept
   return total;
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

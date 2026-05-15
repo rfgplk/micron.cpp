@@ -26,11 +26,11 @@ namespace posix
 struct auto_fd {
   fd_t fd;
 
-  auto_fd() : fd(invalid_fd) {}
+  auto_fd() : fd(invalid_fd) { }
 
-  explicit auto_fd(fd_t f) : fd(f) {}
+  explicit auto_fd(fd_t f) : fd(f) { }
 
-  explicit auto_fd(i32 raw) : fd(raw) {}
+  explicit auto_fd(i32 raw) : fd(raw) { }
 
   auto_fd(const auto_fd &) = delete;
   auto_fd &operator=(const auto_fd &) = delete;
@@ -281,7 +281,7 @@ path_exists(const char *path)
   return posix::access(path, f_ok) == 0;
 }
 
-template <typename T>
+template<typename T>
 inline max_t
 write_all(fd_t fd, const T &buf, usize len)
 {
@@ -296,7 +296,7 @@ write_all(fd_t fd, const T &buf, usize len)
   return static_cast<max_t>(written);
 }
 
-template <typename T>
+template<typename T>
 inline max_t
 write_all(fd_t fd, const T *buf, usize len)
 {
@@ -311,7 +311,7 @@ write_all(fd_t fd, const T *buf, usize len)
   return static_cast<max_t>(written);
 }
 
-template <typename T>
+template<typename T>
 inline max_t
 read_all(fd_t fd, T *buf, usize len)
 {
@@ -320,7 +320,7 @@ read_all(fd_t fd, T *buf, usize len)
   while ( got < len ) {
     max_t r = posix::read(fd.fd, p + got, len - got);
     if ( r < 0 ) return r;
-    if ( r == 0 ) break;     // EOF
+    if ( r == 0 ) break;      // EOF
     got += static_cast<usize>(r);
   }
   return static_cast<max_t>(got);
@@ -400,11 +400,11 @@ copy_file(const char *src, const char *dst, u32 mode = mode_file)
 struct dir_handle {
   dir_t fd;
 
-  dir_handle() : fd(invalid_fd) {}
+  dir_handle() : fd(invalid_fd) { }
 
-  explicit dir_handle(const char *path) : fd(opendir(path)) {}
+  explicit dir_handle(const char *path) : fd(opendir(path)) { }
 
-  explicit dir_handle(dir_t d) : fd(d) {}
+  explicit dir_handle(dir_t d) : fd(d) { }
 
   dir_handle(const dir_handle &) = delete;
   dir_handle &operator=(const dir_handle &) = delete;
@@ -442,7 +442,7 @@ struct dir_handle {
   }
 };
 
-template <typename Fn>
+template<typename Fn>
 inline void
 for_each_entry(const char *path, Fn &&fn)
 {
@@ -459,6 +459,6 @@ for_each_entry(const char *path, Fn &&fn)
   }
 }
 
-};     // namespace posix
+};      // namespace posix
 
-};     // namespace micron
+};      // namespace micron

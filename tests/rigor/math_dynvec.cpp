@@ -87,13 +87,13 @@ main()
   test_case("copy / move semantics");
   {
     dynvec<f64> a(3, 1.5);
-    dynvec<f64> b = a;     // copy
+    dynvec<f64> b = a;      // copy
     require_true(b.size() == 3);
     require_true(near(b[1], 1.5));
-    a[0] = 99.0;     // mutate original; copy must be independent
+    a[0] = 99.0;      // mutate original; copy must be independent
     require_true(near(b[0], 1.5));
 
-    dynvec<f64> c = micron::move(b);     // move
+    dynvec<f64> c = micron::move(b);      // move
     require_true(c.size() == 3);
     require_true(near(c[2], 1.5));
   }
@@ -118,8 +118,8 @@ main()
     dynvec<f64> u(5);
     dynvec<f64> v(5);
     for ( usize i = 0; i < 5; ++i ) {
-      u[i] = f64(i + 1);         // 1..5
-      v[i] = f64(2 * i + 1);     // 1,3,5,7,9
+      u[i] = f64(i + 1);          // 1..5
+      v[i] = f64(2 * i + 1);      // 1,3,5,7,9
     }
     f64 d = blas::level1::dot(as_view(u), as_view(v));
     // 1*1 + 2*3 + 3*5 + 4*7 + 5*9 = 1+6+15+28+45 = 95

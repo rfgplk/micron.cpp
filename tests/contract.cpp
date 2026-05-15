@@ -20,7 +20,7 @@ enforcement_fn(void)
 {
   // error of something
   mc::console("Contract violation!");
-  return false;     // don't terminate
+  return false;      // don't terminate
 }
 
 int

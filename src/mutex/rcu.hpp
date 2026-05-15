@@ -16,16 +16,16 @@ struct rcu_reader_state {
   atomic_token<usize> epoch;
   atomic_token<bool> active;
 
-  rcu_reader_state() : epoch(0), active(false) {}
+  rcu_reader_state() : epoch(0), active(false) { }
 };
 
-template <typename T> struct rcu_tls_state {
+template<typename T> struct rcu_tls_state {
   static thread_local rcu_reader_state state;
 };
 
-template <typename T> thread_local rcu_reader_state rcu_tls_state<T>::state;
+template<typename T> thread_local rcu_reader_state rcu_tls_state<T>::state;
 
-template <typename T = void> class rcu_domain
+template<typename T = void> class rcu_domain
 {
   atomic_token<usize> global_epoch;
   atomic_token<usize> sync_epoch;
@@ -36,7 +36,7 @@ template <typename T = void> class rcu_domain
     usize retire_epoch;
     retire_entry *next;
 
-    retire_entry(void (*d)(void *), void *p, usize e) : deleter(d), ptr(p), retire_epoch(e), next(nullptr) {}
+    retire_entry(void (*d)(void *), void *p, usize e) : deleter(d), ptr(p), retire_epoch(e), next(nullptr) { }
   };
 
   atomic<retire_entry *> retire_head;
@@ -208,7 +208,7 @@ public:
     global_epoch.fetch_add(1, memory_order_acq_rel);
   }
 
-  template <typename U>
+  template<typename U>
   void
   retire_impl(U *ptr, void (*deleter)(void *))
   {
@@ -270,7 +270,7 @@ public:
 using rcu_default_domain = rcu_domain<void>;
 inline rcu_default_domain default_rcu_domain;
 
-template <typename T = void>
+template<typename T = void>
 void
 rcu_synchronize(rcu_domain<T> &domain)
 {
@@ -283,7 +283,7 @@ rcu_synchronize()
   rcu_synchronize(default_rcu_domain);
 }
 
-template <typename T = void>
+template<typename T = void>
 void
 rcu_barrier(rcu_domain<T> &domain)
 {
@@ -296,7 +296,7 @@ rcu_barrier()
   rcu_barrier(default_rcu_domain);
 }
 
-template <typename T, typename D, typename Domain = void>
+template<typename T, typename D, typename Domain = void>
 void
 rcu_retire(T *ptr, D deleter, rcu_domain<Domain> &domain)
 {
@@ -308,14 +308,14 @@ rcu_retire(T *ptr, D deleter, rcu_domain<Domain> &domain)
   domain.retire_impl(ptr, wrapper);
 }
 
-template <typename T, typename D>
+template<typename T, typename D>
 void
 rcu_retire(T *ptr, D deleter)
 {
   rcu_retire(ptr, deleter, default_rcu_domain);
 }
 
-template <typename T, typename Domain = void>
+template<typename T, typename Domain = void>
 void
 rcu_retire(T *ptr, rcu_domain<Domain> &domain)
 {
@@ -324,14 +324,14 @@ rcu_retire(T *ptr, rcu_domain<Domain> &domain)
   domain.retire_impl(ptr, deleter);
 }
 
-template <typename T>
+template<typename T>
 void
 rcu_retire(T *ptr)
 {
   rcu_retire(ptr, default_rcu_domain);
 }
 
-template <typename T> class rcu_obj_base
+template<typename T> class rcu_obj_base
 {
 protected:
   virtual ~rcu_obj_base() = default;
@@ -343,7 +343,7 @@ public:
     rcu_retire(static_cast<T *>(this));
   }
 
-  template <typename Domain>
+  template<typename Domain>
   void
   retire(rcu_domain<Domain> &domain)
   {
@@ -362,7 +362,7 @@ public:
   rcu_reader &operator=(const rcu_reader &) = delete;
 };
 
-template <typename T> class rcu_reader_domain
+template<typename T> class rcu_reader_domain
 {
   rcu_domain<T> &domain;
 
@@ -375,7 +375,7 @@ public:
   rcu_reader_domain &operator=(const rcu_reader_domain &) = delete;
 };
 
-template <typename T, typename Domain = void> class rcu_ptr
+template<typename T, typename Domain = void> class rcu_ptr
 {
   atomic<T *> ptr;
   rcu_domain<Domain> *domain;
@@ -448,14 +448,14 @@ public:
   rcu_ptr &operator=(const rcu_ptr &) = delete;
 };
 
-template <typename F, typename Domain = void>
+template<typename F, typename Domain = void>
 void
 rcu_call(F &&func, rcu_domain<Domain> &domain)
 {
   struct wrapper {
     F f;
 
-    wrapper(F &&fn) : f(micron::forward<F>(fn)) {}
+    wrapper(F &&fn) : f(micron::forward<F>(fn)) { }
   };
 
   auto *w = new wrapper(micron::forward<F>(func));
@@ -469,14 +469,14 @@ rcu_call(F &&func, rcu_domain<Domain> &domain)
   domain.retire_impl(w, deleter);
 }
 
-template <typename F>
+template<typename F>
 void
 rcu_call(F &&func)
 {
   rcu_call(micron::forward<F>(func), default_rcu_domain);
 }
 
-template <typename T, typename Domain = void> class rcu_batch
+template<typename T, typename Domain = void> class rcu_batch
 {
   rcu_domain<Domain> &domain;
   T **objects;
@@ -538,4 +538,4 @@ public:
   rcu_batch &operator=(const rcu_batch &) = delete;
 };
 
-};     // namespace micron
+};      // namespace micron

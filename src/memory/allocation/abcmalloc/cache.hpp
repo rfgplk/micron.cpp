@@ -63,4 +63,4 @@ struct cache {
     __heap_shrink(sz);
   }
 };
-};     // namespace abc
+};      // namespace abc

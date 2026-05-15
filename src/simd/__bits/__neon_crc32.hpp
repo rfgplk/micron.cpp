@@ -91,7 +91,7 @@ __crc32cd(::u32 a, ::u64 b) noexcept
   ::u32 r = __crc32cw(a, (::u32)b);
   return __crc32cw(r, (::u32)(b >> 32));
 }
-#else      // arm64
+#else       // arm64
 __inline_g ::u32
 __crc32b(::u32 a, ::u8 b) noexcept
 {
@@ -139,7 +139,7 @@ __crc32cd(::u32 a, ::u64 b) noexcept
 {
   return __builtin_aarch64_crc32cx(a, b);
 }
-#endif     // arm32 vs arm64
+#endif      // arm32 vs arm64
 #elif defined(__micron_compiler_clang)
 __inline_g ::u32
 __crc32b(::u32 a, ::u8 b) noexcept
@@ -194,8 +194,8 @@ __crc32cd(::u32 a, ::u64 b) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron
 
-#endif     // __ARM_FEATURE_CRC32
+#endif      // __ARM_FEATURE_CRC32

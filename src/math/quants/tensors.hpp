@@ -23,7 +23,7 @@
 namespace micron
 {
 
-template <typename B, u32 D, u32 H, u32 W>
+template<typename B, u32 D, u32 H, u32 W>
   requires(micron::is_arithmetic_v<B> && (D * H * W * sizeof(B) <= 4096) && (((D * H * W) % (64 / sizeof(B))) == 0))
 class __tensor_base_avx
 {
@@ -56,7 +56,7 @@ public:
 
   explicit __tensor_base_avx(B fill) { micron::ctypeset<__size, B>(__data, fill); }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) == __size)
   __tensor_base_avx(Args... args) : __data{ static_cast<B>(args)... }
   {
@@ -469,7 +469,7 @@ public:
     return *this * o;
   }
 
-  template <u32 D2, u32 H2, u32 W2>
+  template<u32 D2, u32 H2, u32 W2>
     requires(W == D2)
   __tensor_base_avx<B, D, H, W2>
   contract(const __tensor_base_avx<B, D2, H2, W2> &o) const
@@ -485,7 +485,7 @@ public:
     return result;
   }
 
-  template <u32 W2>
+  template<u32 W2>
     requires(W == H)
   __tensor_base_avx<B, D, H, W2>
   bmm(const __tensor_base_avx<B, D, W, W2> &o) const
@@ -894,13 +894,13 @@ public:
   }
 };
 
-template <u32 D, u32 H, u32 W> using tensor3f = __tensor_base_avx<f32, D, H, W>;
-template <u32 D, u32 H, u32 W> using tensor3d = __tensor_base_avx<f64, D, H, W>;
-template <u32 D, u32 H, u32 W> using tensor3ld = __tensor_base_avx<f128, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3f = __tensor_base_avx<f32, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3d = __tensor_base_avx<f64, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3ld = __tensor_base_avx<f128, D, H, W>;
 
-template <u32 D, u32 H, u32 W> using tensor3i = __tensor_base_avx<i32, D, H, W>;
-template <u32 D, u32 H, u32 W> using tensor3u = __tensor_base_avx<u32, D, H, W>;
-template <u32 D, u32 H, u32 W> using tensor3i8 = __tensor_base_avx<i8, D, H, W>;
-template <u32 D, u32 H, u32 W> using tensor3u8 = __tensor_base_avx<u8, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3i = __tensor_base_avx<i32, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3u = __tensor_base_avx<u32, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3i8 = __tensor_base_avx<i8, D, H, W>;
+template<u32 D, u32 H, u32 W> using tensor3u8 = __tensor_base_avx<u8, D, H, W>;
 
-}     // namespace micron
+}      // namespace micron

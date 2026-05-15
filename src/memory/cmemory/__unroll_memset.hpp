@@ -27,90 +27,90 @@ namespace __unroll
 {
 
 // assign val into each index position
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 assign(T *src, const T val, micron::index_sequence<I...>) noexcept
 {
   ((src[I] = val), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 vassign(volatile T *src, const T val, micron::index_sequence<I...>) noexcept
 {
   ((src[I] = val), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 set_all(T *src, micron::index_sequence<I...>) noexcept
 {
   ((src[I] = static_cast<T>(~static_cast<T>(0))), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 invert(T *src, micron::index_sequence<I...>) noexcept
 {
   ((src[I] = ~src[I]), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 and_mask(T *src, const u8 m, micron::index_sequence<I...>) noexcept
 {
   ((src[I] &= static_cast<T>(m)), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 or_mask(T *src, const u8 m, micron::index_sequence<I...>) noexcept
 {
   ((src[I] |= static_cast<T>(m)), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 xor_mask(T *src, const u8 m, micron::index_sequence<I...>) noexcept
 {
   ((src[I] ^= static_cast<T>(m)), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 increment(T *src, micron::index_sequence<I...>) noexcept
 {
   ((++src[I]), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 decrement(T *src, micron::index_sequence<I...>) noexcept
 {
   ((--src[I]), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 add(T *src, const u8 v, micron::index_sequence<I...>) noexcept
 {
   ((src[I] += static_cast<T>(v)), ...);
 }
 
-template <typename T, usize... I>
+template<typename T, usize... I>
 inline __attribute__((always_inline)) void
 sub(T *src, const u8 v, micron::index_sequence<I...>) noexcept
 {
   ((src[I] -= static_cast<T>(v)), ...);
 }
 
-};     // namespace __unroll
+};      // namespace __unroll
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memsets
 
 // BASIC MEMSET - RUNTIME COUNT
-template <typename F>
+template<typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 memset(F *s, const byte in, const u64 cnt) noexcept
@@ -129,7 +129,7 @@ memset(F *s, const byte in, const u64 cnt) noexcept
 }
 
 // MEMSET WITH REFERENCE RETURN
-template <typename F>
+template<typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &
 rmemset(F &s, const byte in, const u64 cnt) noexcept
@@ -148,7 +148,7 @@ rmemset(F &s, const byte in, const u64 cnt) noexcept
 }
 
 // CONSTEXPR MEMSET
-template <typename F>
+template<typename F>
 constexpr F *
 constexpr_memset(F *src, const byte in, const u64 cnt) noexcept
 {
@@ -165,7 +165,7 @@ constexpr_memset(F *src, const byte in, const u64 cnt) noexcept
 }
 
 // COMPILE-TIME CONSTANT MEMSET - TEMPLATE COUNT AND VALUE
-template <byte in, u64 cnt, typename F>
+template<byte in, u64 cnt, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 memset(F *s) noexcept
@@ -176,7 +176,7 @@ memset(F *s) noexcept
 }
 
 // COMPILE-TIME CONSTANT MEMSET - TEMPLATE COUNT ONLY
-template <u64 M, typename F>
+template<u64 M, typename F>
 __attribute__((nonnull)) F *
 cmemset(F *s, const byte in) noexcept
 {
@@ -186,7 +186,7 @@ cmemset(F *s, const byte in) noexcept
 }
 
 // COMPILE-TIME CONSTANT MEMSET WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
 F &
 rcmemset(F &s, const byte in) noexcept
 {
@@ -196,7 +196,7 @@ rcmemset(F &s, const byte in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT MEMSET
-template <u64 M, typename F>
+template<u64 M, typename F>
 __attribute__((nonnull)) F *
 scmemset(F *s, const byte in) noexcept
 {
@@ -207,7 +207,7 @@ scmemset(F *s, const byte in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT MEMSET WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
 F &
 rscmemset(F &s, const byte in) noexcept
 {
@@ -218,7 +218,7 @@ rscmemset(F &s, const byte in) noexcept
 }
 
 // MANUALLY UNROLLED MEMSET - fixed byte widths
-template <typename F>
+template<typename F>
 inline F *
 memset_8b(F *src, int in) noexcept
 {
@@ -227,7 +227,7 @@ memset_8b(F *src, int in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 memset_16b(F *src, int in) noexcept
 {
@@ -236,7 +236,7 @@ memset_16b(F *src, int in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 memset_32b(F *src, int in) noexcept
 {
@@ -245,7 +245,7 @@ memset_32b(F *src, int in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 memset_64b(F *src, int in) noexcept
 {
@@ -255,7 +255,7 @@ memset_64b(F *src, int in) noexcept
 }
 
 // SAFE MEMSET - RUNTIME COUNT
-template <typename F, u64 alignment = alignof(F)>
+template<typename F, u64 alignment = alignof(F)>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 smemset(F *s, const byte in, const u64 cnt) noexcept
@@ -277,7 +277,7 @@ smemset(F *s, const byte in, const u64 cnt) noexcept
 }
 
 // SAFE MEMSET WITH REFERENCE RETURN
-template <typename F, u64 alignment = alignof(F)>
+template<typename F, u64 alignment = alignof(F)>
   requires(!micron::is_null_pointer_v<F>)
 bool
 rsmemset(F &s, const byte in, const u64 cnt) noexcept
@@ -298,7 +298,7 @@ rsmemset(F &s, const byte in, const u64 cnt) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT MEMSET - TEMPLATE COUNT ONLY
-template <u64 M, typename F, u64 alignment = alignof(F)>
+template<u64 M, typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 scmemset_safe(F *s, const byte in) noexcept
 {
@@ -311,7 +311,7 @@ scmemset_safe(F *s, const byte in) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT MEMSET WITH REFERENCE RETURN
-template <u64 M, typename F, u64 alignment = alignof(F)>
+template<u64 M, typename F, u64 alignment = alignof(F)>
 bool
 rscmemset_safe(F &s, const byte in) noexcept
 {
@@ -326,7 +326,7 @@ rscmemset_safe(F &s, const byte in) noexcept
 // bytesets
 
 // BASIC BYTESET - RUNTIME COUNT
-template <typename F>
+template<typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 byteset(F *s, const byte in, const u64 cnt) noexcept
@@ -345,7 +345,7 @@ byteset(F *s, const byte in, const u64 cnt) noexcept
 }
 
 // BYTESET ALIAS
-template <typename F>
+template<typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 bset(F *s, const byte in, const u64 cnt) noexcept
@@ -354,7 +354,7 @@ bset(F *s, const byte in, const u64 cnt) noexcept
 }
 
 // BYTESET WITH REFERENCE RETURN
-template <typename F>
+template<typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &
 rbyteset(F &s, const byte in, const u64 cnt) noexcept
@@ -373,7 +373,7 @@ rbyteset(F &s, const byte in, const u64 cnt) noexcept
 }
 
 // BYTESET ALIAS WITH REFERENCE RETURN
-template <typename F>
+template<typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &
 rbset(F &s, const byte in, const u64 cnt) noexcept
@@ -382,7 +382,7 @@ rbset(F &s, const byte in, const u64 cnt) noexcept
 }
 
 // COMPILE-TIME CONSTANT BYTESET - TEMPLATE COUNT ONLY
-template <u64 N, typename F>
+template<u64 N, typename F>
 __attribute__((nonnull)) F *
 cbyteset(F *s, const byte in) noexcept
 {
@@ -392,7 +392,7 @@ cbyteset(F *s, const byte in) noexcept
 }
 
 // COMPILE-TIME CONSTANT BYTESET ALIAS
-template <u64 N, typename F>
+template<u64 N, typename F>
 __attribute__((nonnull)) F *
 cbset(F *s, const byte in) noexcept
 {
@@ -400,7 +400,7 @@ cbset(F *s, const byte in) noexcept
 }
 
 // COMPILE-TIME CONSTANT BYTESET WITH REFERENCE RETURN
-template <u64 N, typename F>
+template<u64 N, typename F>
 F &
 rcbyteset(F &s, const byte in) noexcept
 {
@@ -410,7 +410,7 @@ rcbyteset(F &s, const byte in) noexcept
 }
 
 // COMPILE-TIME CONSTANT BYTESET ALIAS WITH REFERENCE RETURN
-template <u64 N, typename F>
+template<u64 N, typename F>
 F &
 rcbset(F &s, const byte in) noexcept
 {
@@ -418,7 +418,7 @@ rcbset(F &s, const byte in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT BYTESET
-template <u64 N, typename F>
+template<u64 N, typename F>
 __attribute__((nonnull)) F *
 scbyteset(F *s, const byte in) noexcept
 {
@@ -429,7 +429,7 @@ scbyteset(F *s, const byte in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT BYTESET ALIAS
-template <u64 N, typename F>
+template<u64 N, typename F>
 __attribute__((nonnull)) F *
 scbset(F *s, const byte in) noexcept
 {
@@ -437,7 +437,7 @@ scbset(F *s, const byte in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT BYTESET WITH REFERENCE RETURN
-template <u64 N, typename F>
+template<u64 N, typename F>
 F &
 rscbyteset(F &s, const byte in) noexcept
 {
@@ -448,7 +448,7 @@ rscbyteset(F &s, const byte in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT BYTESET ALIAS WITH REFERENCE RETURN
-template <u64 N, typename F>
+template<u64 N, typename F>
 F &
 rscbset(F &s, const byte in) noexcept
 {
@@ -456,7 +456,7 @@ rscbset(F &s, const byte in) noexcept
 }
 
 // COMPILE-TIME CONSTANT BYTESET - TEMPLATE COUNT AND VALUE
-template <byte in, u64 cnt, typename F>
+template<byte in, u64 cnt, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 byteset(F *s) noexcept
@@ -467,7 +467,7 @@ byteset(F *s) noexcept
 }
 
 // COMPILE-TIME CONSTANT BYTESET ALIAS - TEMPLATE COUNT AND VALUE
-template <byte in, u64 cnt, typename F>
+template<byte in, u64 cnt, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 bset(F *s) noexcept
@@ -476,7 +476,7 @@ bset(F *s) noexcept
 }
 
 // MANUALLY UNROLLED BYTESET - fixed byte widths
-template <typename F>
+template<typename F>
 inline F *
 byteset_8b(F *src, byte in) noexcept
 {
@@ -485,14 +485,14 @@ byteset_8b(F *src, byte in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 bset_8b(F *src, byte in) noexcept
 {
   return byteset_8b(src, in);
 }
 
-template <typename F>
+template<typename F>
 inline F *
 byteset_16b(F *src, byte in) noexcept
 {
@@ -501,14 +501,14 @@ byteset_16b(F *src, byte in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 bset_16b(F *src, byte in) noexcept
 {
   return byteset_16b(src, in);
 }
 
-template <typename F>
+template<typename F>
 inline F *
 byteset_32b(F *src, byte in) noexcept
 {
@@ -517,14 +517,14 @@ byteset_32b(F *src, byte in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 bset_32b(F *src, byte in) noexcept
 {
   return byteset_32b(src, in);
 }
 
-template <typename F>
+template<typename F>
 inline F *
 byteset_64b(F *src, byte in) noexcept
 {
@@ -533,7 +533,7 @@ byteset_64b(F *src, byte in) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 bset_64b(F *src, byte in) noexcept
 {
@@ -541,7 +541,7 @@ bset_64b(F *src, byte in) noexcept
 }
 
 // SAFE BYTESET - RUNTIME COUNT
-template <typename F, u64 alignment = 1>
+template<typename F, u64 alignment = 1>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 sbyteset(F *s, const byte in, const u64 cnt) noexcept
@@ -563,7 +563,7 @@ sbyteset(F *s, const byte in, const u64 cnt) noexcept
 }
 
 // SAFE BYTESET ALIAS
-template <typename F, u64 alignment = 1>
+template<typename F, u64 alignment = 1>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 sbset(F *s, const byte in, const u64 cnt) noexcept
@@ -572,7 +572,7 @@ sbset(F *s, const byte in, const u64 cnt) noexcept
 }
 
 // SAFE BYTESET WITH REFERENCE RETURN
-template <typename F, u64 alignment = 1>
+template<typename F, u64 alignment = 1>
   requires(!micron::is_null_pointer_v<F>)
 bool
 rsbyteset(F &s, const byte in, const u64 cnt) noexcept
@@ -593,7 +593,7 @@ rsbyteset(F &s, const byte in, const u64 cnt) noexcept
 }
 
 // SAFE BYTESET ALIAS WITH REFERENCE RETURN
-template <typename F, u64 alignment = 1>
+template<typename F, u64 alignment = 1>
   requires(!micron::is_null_pointer_v<F>)
 bool
 rsbset(F &s, const byte in, const u64 cnt) noexcept
@@ -602,7 +602,7 @@ rsbset(F &s, const byte in, const u64 cnt) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT BYTESET
-template <u64 N, typename F, u64 alignment = 1>
+template<u64 N, typename F, u64 alignment = 1>
 __attribute__((nonnull)) F *
 scbyteset_safe(F *s, const byte in) noexcept
 {
@@ -615,7 +615,7 @@ scbyteset_safe(F *s, const byte in) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT BYTESET ALIAS
-template <u64 N, typename F, u64 alignment = 1>
+template<u64 N, typename F, u64 alignment = 1>
 __attribute__((nonnull)) F *
 scbset_safe(F *s, const byte in) noexcept
 {
@@ -623,7 +623,7 @@ scbset_safe(F *s, const byte in) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT BYTESET WITH REFERENCE RETURN
-template <u64 N, typename F, u64 alignment = 1>
+template<u64 N, typename F, u64 alignment = 1>
 bool
 rscbyteset_safe(F &s, const byte in) noexcept
 {
@@ -635,7 +635,7 @@ rscbyteset_safe(F &s, const byte in) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT BYTESET ALIAS WITH REFERENCE RETURN
-template <u64 N, typename F, u64 alignment = 1>
+template<u64 N, typename F, u64 alignment = 1>
 bool
 rscbset_safe(F &s, const byte in) noexcept
 {
@@ -646,7 +646,7 @@ rscbset_safe(F &s, const byte in) noexcept
 // bzeros
 
 // RUNTIME COUNT
-template <typename M = u64>
+template<typename M = u64>
 byte *
 bzero(byte *src, const M cnt) noexcept
 {
@@ -655,7 +655,7 @@ bzero(byte *src, const M cnt) noexcept
 }
 
 // COMPILE-TIME COUNT WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 cbzero(F &_src) noexcept
@@ -666,7 +666,7 @@ cbzero(F &_src) noexcept
 }
 
 // COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 cbzero(F *_src) noexcept
@@ -677,7 +677,7 @@ cbzero(F *_src) noexcept
 }
 
 // SECURE COMPILE-TIME COUNT WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 scbzero(F &_src) noexcept
@@ -689,7 +689,7 @@ scbzero(F &_src) noexcept
 }
 
 // SECURE COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 scbzero(F *_src) noexcept
@@ -704,7 +704,7 @@ scbzero(F *_src) noexcept
 // typesets
 
 // BASIC TYPESET - RUNTIME COUNT
-template <typename T, typename F>
+template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 typeset(F *s, const T in, const u64 cnt) noexcept
@@ -723,7 +723,7 @@ typeset(F *s, const T in, const u64 cnt) noexcept
 }
 
 // TYPESET WITH REFERENCE RETURN
-template <typename T, typename F>
+template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
 F &
 rtypeset(F &s, const T in, const u64 cnt) noexcept
@@ -742,7 +742,7 @@ rtypeset(F &s, const T in, const u64 cnt) noexcept
 }
 
 // COMPILE-TIME CONSTANT TYPESET - TEMPLATE COUNT ONLY
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 __attribute__((nonnull)) F *
 ctypeset(F *s, const T in) noexcept
 {
@@ -752,7 +752,7 @@ ctypeset(F *s, const T in) noexcept
 }
 
 // COMPILE-TIME CONSTANT TYPESET WITH REFERENCE RETURN
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 F &
 rctypeset(F &s, const T in) noexcept
 {
@@ -762,7 +762,7 @@ rctypeset(F &s, const T in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT TYPESET
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 __attribute__((nonnull)) F *
 sctypeset(F *s, const T in) noexcept
 {
@@ -773,7 +773,7 @@ sctypeset(F *s, const T in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT TYPESET WITH REFERENCE RETURN
-template <u64 M, typename T, typename F>
+template<u64 M, typename T, typename F>
 F &
 rsctypeset(F &s, const T in) noexcept
 {
@@ -784,7 +784,7 @@ rsctypeset(F &s, const T in) noexcept
 }
 
 // SAFE TYPESET - RUNTIME COUNT
-template <typename T, typename F, u64 alignment = alignof(T)>
+template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 __attribute__((nonnull)) F *
 stypeset(F *s, const T in, const u64 cnt) noexcept
@@ -806,7 +806,7 @@ stypeset(F *s, const T in, const u64 cnt) noexcept
 }
 
 // SAFE TYPESET WITH REFERENCE RETURN
-template <typename T, typename F, u64 alignment = alignof(T)>
+template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
 bool
 rstypeset(F &s, const T in, const u64 cnt) noexcept
@@ -827,7 +827,7 @@ rstypeset(F &s, const T in, const u64 cnt) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT TYPESET
-template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
+template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
 __attribute__((nonnull)) F *
 sctypeset_safe(F *s, const T in) noexcept
 {
@@ -840,7 +840,7 @@ sctypeset_safe(F *s, const T in) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT TYPESET WITH REFERENCE RETURN
-template <u64 M, typename T, typename F, u64 alignment = alignof(T)>
+template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
 bool
 rsctypeset_safe(F &s, const T in) noexcept
 {
@@ -888,7 +888,7 @@ rwordset(word &s, const word in, const u64 cnt) noexcept
 }
 
 // COMPILE-TIME CONSTANT WORDSET - TEMPLATE COUNT ONLY
-template <u64 M>
+template<u64 M>
 word *
 cwordset(word *src, const word in) noexcept
 {
@@ -897,7 +897,7 @@ cwordset(word *src, const word in) noexcept
 }
 
 // COMPILE-TIME CONSTANT WORDSET WITH REFERENCE RETURN
-template <u64 M>
+template<u64 M>
 word &
 rcwordset(word &s, const word in) noexcept
 {
@@ -907,7 +907,7 @@ rcwordset(word &s, const word in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT WORDSET
-template <u64 M>
+template<u64 M>
 word *
 scwordset(word *src, const word in) noexcept
 {
@@ -918,7 +918,7 @@ scwordset(word *src, const word in) noexcept
 }
 
 // SECURE COMPILE-TIME CONSTANT WORDSET WITH REFERENCE RETURN
-template <u64 M>
+template<u64 M>
 word &
 rscwordset(word &s, const word in) noexcept
 {
@@ -929,7 +929,7 @@ rscwordset(word &s, const word in) noexcept
 }
 
 // COMPILE-TIME CONSTANT WORDSET - TEMPLATE COUNT AND VALUE
-template <word in, u64 cnt>
+template<word in, u64 cnt>
 word *
 wordset(word *src) noexcept
 {
@@ -938,7 +938,7 @@ wordset(word *src) noexcept
 }
 
 // MANUALLY UNROLLED WORDSET - compile-time value, fixed widths
-template <word in>
+template<word in>
 inline word *
 wordset_4w(word *src) noexcept
 {
@@ -946,7 +946,7 @@ wordset_4w(word *src) noexcept
   return src;
 }
 
-template <word in>
+template<word in>
 inline word *
 wordset_8w(word *src) noexcept
 {
@@ -954,7 +954,7 @@ wordset_8w(word *src) noexcept
   return src;
 }
 
-template <word in>
+template<word in>
 inline word *
 wordset_16w(word *src) noexcept
 {
@@ -962,7 +962,7 @@ wordset_16w(word *src) noexcept
   return src;
 }
 
-template <word in>
+template<word in>
 inline word *
 wordset_32w(word *src) noexcept
 {
@@ -971,7 +971,7 @@ wordset_32w(word *src) noexcept
 }
 
 // SAFE WORDSET - RUNTIME COUNT
-template <u64 alignment = alignof(word)>
+template<u64 alignment = alignof(word)>
 word *
 swordset(word *src, const word in, const u64 cnt) noexcept
 {
@@ -991,7 +991,7 @@ swordset(word *src, const word in, const u64 cnt) noexcept
 }
 
 // SAFE WORDSET WITH REFERENCE RETURN
-template <u64 alignment = alignof(word)>
+template<u64 alignment = alignof(word)>
 bool
 rswordset(word &s, const word in, const u64 cnt) noexcept
 {
@@ -1011,7 +1011,7 @@ rswordset(word &s, const word in, const u64 cnt) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT WORDSET
-template <u64 M, u64 alignment = alignof(word)>
+template<u64 M, u64 alignment = alignof(word)>
 word *
 scwordset_safe(word *src, const word in) noexcept
 {
@@ -1026,7 +1026,7 @@ scwordset_safe(word *src, const word in) noexcept
 // bitwise
 
 // ZERO - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 zero(F *src, const M cnt) noexcept
 {
@@ -1034,7 +1034,7 @@ zero(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 constexpr F *
 constexpr_zero(F *src, const M cnt) noexcept
 {
@@ -1042,7 +1042,7 @@ constexpr_zero(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rzero(F &s, const M cnt) noexcept
 {
@@ -1051,7 +1051,7 @@ rzero(F &s, const M cnt) noexcept
 }
 
 // ZERO - COMPILE-TIME COUNT WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>
            or micron::is_trivially_constructible_v<F> && micron::is_trivially_destructible_v<F>)
 constexpr F &
@@ -1062,7 +1062,7 @@ czero(F &src) noexcept
 }
 
 // ZERO - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>
            or micron::is_trivially_constructible_v<F> && micron::is_trivially_destructible_v<F>)
 constexpr F *
@@ -1073,7 +1073,7 @@ czero(F *src) noexcept
 }
 
 // SECURE ZERO - COMPILE-TIME COUNT WITH REFERENCE RETURN (single-element overload)
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F &
 sczero(F &s) noexcept
@@ -1085,7 +1085,7 @@ sczero(F &s) noexcept
 }
 
 // SECURE ZERO - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>)
 constexpr F *
 sczero(F *s) noexcept
@@ -1097,7 +1097,7 @@ sczero(F *s) noexcept
 }
 
 // MANUALLY UNROLLED ZERO - fixed element widths
-template <typename F>
+template<typename F>
 inline F *
 zero_4(F *src) noexcept
 {
@@ -1105,7 +1105,7 @@ zero_4(F *src) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 zero_8(F *src) noexcept
 {
@@ -1113,7 +1113,7 @@ zero_8(F *src) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 zero_16(F *src) noexcept
 {
@@ -1121,7 +1121,7 @@ zero_16(F *src) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 zero_32(F *src) noexcept
 {
@@ -1130,7 +1130,7 @@ zero_32(F *src) noexcept
 }
 
 // FULL (0xFF) - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 constexpr F *
 full(F *src, const M cnt) noexcept
 {
@@ -1138,7 +1138,7 @@ full(F *src, const M cnt) noexcept
   return reinterpret_cast<F *>(src);
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 constexpr F &
 rfull(F &s, const M cnt) noexcept
 {
@@ -1147,7 +1147,7 @@ rfull(F &s, const M cnt) noexcept
 }
 
 // FULL - COMPILE-TIME COUNT WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcfull(F &s) noexcept
 {
@@ -1156,7 +1156,7 @@ rcfull(F &s) noexcept
 }
 
 // FULL - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cfull(F *src) noexcept
 {
@@ -1165,7 +1165,7 @@ cfull(F *src) noexcept
 }
 
 // SECURE FULL - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 scfull(F *s) noexcept
 {
@@ -1176,7 +1176,7 @@ scfull(F *s) noexcept
 }
 
 // SECURE FULL - COMPILE-TIME COUNT WITH REFERENCE RETURN
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rscfull(F &s) noexcept
 {
@@ -1187,7 +1187,7 @@ rscfull(F &s) noexcept
 }
 
 // MANUALLY UNROLLED FULL - fixed element widths
-template <typename F>
+template<typename F>
 inline F *
 full_4(F *src) noexcept
 {
@@ -1195,7 +1195,7 @@ full_4(F *src) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 full_8(F *src) noexcept
 {
@@ -1203,7 +1203,7 @@ full_8(F *src) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 full_16(F *src) noexcept
 {
@@ -1211,7 +1211,7 @@ full_16(F *src) noexcept
   return src;
 }
 
-template <typename F>
+template<typename F>
 inline F *
 full_32(F *src) noexcept
 {
@@ -1220,7 +1220,7 @@ full_32(F *src) noexcept
 }
 
 // SAFE ZERO - RUNTIME COUNT
-template <typename F, typename M = u64, u64 alignment = alignof(F)>
+template<typename F, typename M = u64, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 szero(F *src, const M cnt) noexcept
 {
@@ -1231,7 +1231,7 @@ szero(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64, u64 alignment = alignof(F)>
+template<typename F, typename M = u64, u64 alignment = alignof(F)>
 bool
 rszero(F &s, const M cnt) noexcept
 {
@@ -1243,7 +1243,7 @@ rszero(F &s, const M cnt) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT ZERO
-template <u64 M, typename F, u64 alignment = alignof(F)>
+template<u64 M, typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 sczero(F *src) noexcept
 {
@@ -1255,7 +1255,7 @@ sczero(F *src) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT ZERO WITH REFERENCE RETURN
-template <u64 M, typename F, u64 alignment = alignof(F)>
+template<u64 M, typename F, u64 alignment = alignof(F)>
 bool
 rsczero(F &s) noexcept
 {
@@ -1267,7 +1267,7 @@ rsczero(F &s) noexcept
 }
 
 // SAFE FULL - RUNTIME COUNT
-template <typename F, typename M = u64, u64 alignment = alignof(F)>
+template<typename F, typename M = u64, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 sfull(F *src, const M cnt) noexcept
 {
@@ -1278,7 +1278,7 @@ sfull(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64, u64 alignment = alignof(F)>
+template<typename F, typename M = u64, u64 alignment = alignof(F)>
 bool
 rsfull(F &s, const M cnt) noexcept
 {
@@ -1290,7 +1290,7 @@ rsfull(F &s, const M cnt) noexcept
 }
 
 // SAFE COMPILE-TIME CONSTANT FULL
-template <u64 M, typename F, u64 alignment = alignof(F)>
+template<u64 M, typename F, u64 alignment = alignof(F)>
 __attribute__((nonnull)) F *
 scfull_safe(F *src) noexcept
 {
@@ -1301,7 +1301,7 @@ scfull_safe(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F, u64 alignment = alignof(F)>
+template<u64 M, typename F, u64 alignment = alignof(F)>
 bool
 rscfull_safe(F &s) noexcept
 {
@@ -1313,7 +1313,7 @@ rscfull_safe(F &s) noexcept
 }
 
 // FILL WITH 0x01 - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 one(F *src, const M cnt) noexcept
 {
@@ -1321,7 +1321,7 @@ one(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rone(F &s, const M cnt) noexcept
 {
@@ -1331,7 +1331,7 @@ rone(F &s, const M cnt) noexcept
 }
 
 // FILL WITH 0x01 - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cone(F *src) noexcept
 {
@@ -1339,7 +1339,7 @@ cone(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcone(F &s) noexcept
 {
@@ -1349,7 +1349,7 @@ rcone(F &s) noexcept
 }
 
 // FILL WITH ARBITRARY PATTERN - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 pattern(F *src, const u8 p, const M cnt) noexcept
 {
@@ -1357,7 +1357,7 @@ pattern(F *src, const u8 p, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rpattern(F &s, const u8 p, const M cnt) noexcept
 {
@@ -1367,7 +1367,7 @@ rpattern(F &s, const u8 p, const M cnt) noexcept
 }
 
 // FILL WITH ARBITRARY PATTERN - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cpattern(F *src, const u8 p) noexcept
 {
@@ -1375,7 +1375,7 @@ cpattern(F *src, const u8 p) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcpattern(F &s, const u8 p) noexcept
 {
@@ -1385,7 +1385,7 @@ rcpattern(F &s, const u8 p) noexcept
 }
 
 // ALTERNATING 0xAA - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 alternating_aa(F *src, const M cnt) noexcept
 {
@@ -1393,7 +1393,7 @@ alternating_aa(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 ralternating_aa(F &s, const M cnt) noexcept
 {
@@ -1403,7 +1403,7 @@ ralternating_aa(F &s, const M cnt) noexcept
 }
 
 // ALTERNATING 0xAA - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 calternating_aa(F *src) noexcept
 {
@@ -1411,7 +1411,7 @@ calternating_aa(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcalternating_aa(F &s) noexcept
 {
@@ -1421,7 +1421,7 @@ rcalternating_aa(F &s) noexcept
 }
 
 // ALTERNATING 0x55 - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 alternating_55(F *src, const M cnt) noexcept
 {
@@ -1429,7 +1429,7 @@ alternating_55(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 ralternating_55(F &s, const M cnt) noexcept
 {
@@ -1439,7 +1439,7 @@ ralternating_55(F &s, const M cnt) noexcept
 }
 
 // ALTERNATING 0x55 - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 calternating_55(F *src) noexcept
 {
@@ -1447,7 +1447,7 @@ calternating_55(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcalternating_55(F &s) noexcept
 {
@@ -1457,7 +1457,7 @@ rcalternating_55(F &s) noexcept
 }
 
 // HIGH BIT 0x80 - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 high_bit(F *src, const M cnt) noexcept
 {
@@ -1465,7 +1465,7 @@ high_bit(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rhigh_bit(F &s, const M cnt) noexcept
 {
@@ -1475,7 +1475,7 @@ rhigh_bit(F &s, const M cnt) noexcept
 }
 
 // HIGH BIT 0x80 - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 chigh_bit(F *src) noexcept
 {
@@ -1483,7 +1483,7 @@ chigh_bit(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rchigh_bit(F &s) noexcept
 {
@@ -1493,7 +1493,7 @@ rchigh_bit(F &s) noexcept
 }
 
 // LOW BIT 0x01 - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 low_bit(F *src, const M cnt) noexcept
 {
@@ -1501,7 +1501,7 @@ low_bit(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rlow_bit(F &s, const M cnt) noexcept
 {
@@ -1511,7 +1511,7 @@ rlow_bit(F &s, const M cnt) noexcept
 }
 
 // LOW BIT 0x01 - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 clow_bit(F *src) noexcept
 {
@@ -1519,7 +1519,7 @@ clow_bit(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rclow_bit(F &s) noexcept
 {
@@ -1529,7 +1529,7 @@ rclow_bit(F &s) noexcept
 }
 
 // SET ALL BITS TO 1 - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 set(F *src, const M cnt) noexcept
 {
@@ -1537,7 +1537,7 @@ set(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rset(F &s, const M cnt) noexcept
 {
@@ -1546,7 +1546,7 @@ rset(F &s, const M cnt) noexcept
 }
 
 // SET ALL BITS TO 1 - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cset(F *src) noexcept
 {
@@ -1554,7 +1554,7 @@ cset(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcset(F &s) noexcept
 {
@@ -1563,7 +1563,7 @@ rcset(F &s) noexcept
 }
 
 // CLEAR ALL BITS TO 0 - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 clear(F *src, const M cnt) noexcept
 {
@@ -1571,7 +1571,7 @@ clear(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rclear(F &s, const M cnt) noexcept
 {
@@ -1580,7 +1580,7 @@ rclear(F &s, const M cnt) noexcept
 }
 
 // CLEAR ALL BITS TO 0 - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cclear(F *src) noexcept
 {
@@ -1588,7 +1588,7 @@ cclear(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcclear(F &s) noexcept
 {
@@ -1597,7 +1597,7 @@ rcclear(F &s) noexcept
 }
 
 // APPLY CONSTANT MASK - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 mask(F *src, const u8 m, const M cnt) noexcept
 {
@@ -1605,7 +1605,7 @@ mask(F *src, const u8 m, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rmask(F &s, const u8 m, const M cnt) noexcept
 {
@@ -1614,7 +1614,7 @@ rmask(F &s, const u8 m, const M cnt) noexcept
 }
 
 // APPLY CONSTANT MASK - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cmask(F *src, const u8 m) noexcept
 {
@@ -1622,7 +1622,7 @@ cmask(F *src, const u8 m) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcmask(F &s, const u8 m) noexcept
 {
@@ -1631,7 +1631,7 @@ rcmask(F &s, const u8 m) noexcept
 }
 
 // BITWISE INVERT - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 invert(F *src, const M cnt) noexcept
 {
@@ -1639,14 +1639,14 @@ invert(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 not_(F *src, const M cnt) noexcept
 {
   return invert(src, cnt);
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rinvert(F &s, const M cnt) noexcept
 {
@@ -1655,7 +1655,7 @@ rinvert(F &s, const M cnt) noexcept
 }
 
 // BITWISE INVERT - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cinvert(F *src) noexcept
 {
@@ -1663,7 +1663,7 @@ cinvert(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcinvert(F &s) noexcept
 {
@@ -1672,7 +1672,7 @@ rcinvert(F &s) noexcept
 }
 
 // BITWISE AND MASK - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 and_mask(F *src, const u8 m, const M cnt) noexcept
 {
@@ -1680,7 +1680,7 @@ and_mask(F *src, const u8 m, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rand_mask(F &s, const u8 m, const M cnt) noexcept
 {
@@ -1689,7 +1689,7 @@ rand_mask(F &s, const u8 m, const M cnt) noexcept
 }
 
 // BITWISE AND MASK - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cand_mask(F *src, const u8 m) noexcept
 {
@@ -1697,7 +1697,7 @@ cand_mask(F *src, const u8 m) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcand_mask(F &s, const u8 m) noexcept
 {
@@ -1706,7 +1706,7 @@ rcand_mask(F &s, const u8 m) noexcept
 }
 
 // BITWISE OR MASK - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 or_mask(F *src, const u8 m, const M cnt) noexcept
 {
@@ -1714,7 +1714,7 @@ or_mask(F *src, const u8 m, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 ror_mask(F &s, const u8 m, const M cnt) noexcept
 {
@@ -1723,7 +1723,7 @@ ror_mask(F &s, const u8 m, const M cnt) noexcept
 }
 
 // BITWISE OR MASK - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cor_mask(F *src, const u8 m) noexcept
 {
@@ -1731,7 +1731,7 @@ cor_mask(F *src, const u8 m) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcor_mask(F &s, const u8 m) noexcept
 {
@@ -1740,7 +1740,7 @@ rcor_mask(F &s, const u8 m) noexcept
 }
 
 // BITWISE XOR MASK - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 xor_mask(F *src, const u8 m, const M cnt) noexcept
 {
@@ -1748,7 +1748,7 @@ xor_mask(F *src, const u8 m, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rxor_mask(F &s, const u8 m, const M cnt) noexcept
 {
@@ -1757,7 +1757,7 @@ rxor_mask(F &s, const u8 m, const M cnt) noexcept
 }
 
 // BITWISE XOR MASK - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cxor_mask(F *src, const u8 m) noexcept
 {
@@ -1765,7 +1765,7 @@ cxor_mask(F *src, const u8 m) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcxor_mask(F &s, const u8 m) noexcept
 {
@@ -1774,7 +1774,7 @@ rcxor_mask(F &s, const u8 m) noexcept
 }
 
 // INCREMENT - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 increment(F *src, const M cnt) noexcept
 {
@@ -1782,7 +1782,7 @@ increment(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rincrement(F &s, const M cnt) noexcept
 {
@@ -1791,7 +1791,7 @@ rincrement(F &s, const M cnt) noexcept
 }
 
 // INCREMENT - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cincrement(F *src) noexcept
 {
@@ -1799,7 +1799,7 @@ cincrement(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcincrement(F &s) noexcept
 {
@@ -1808,7 +1808,7 @@ rcincrement(F &s) noexcept
 }
 
 // DECREMENT - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 decrement(F *src, const M cnt) noexcept
 {
@@ -1816,7 +1816,7 @@ decrement(F *src, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rdecrement(F &s, const M cnt) noexcept
 {
@@ -1825,7 +1825,7 @@ rdecrement(F &s, const M cnt) noexcept
 }
 
 // DECREMENT - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cdecrement(F *src) noexcept
 {
@@ -1833,7 +1833,7 @@ cdecrement(F *src) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcdecrement(F &s) noexcept
 {
@@ -1842,7 +1842,7 @@ rcdecrement(F &s) noexcept
 }
 
 // ADD CONSTANT - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 add(F *src, const u8 v, const M cnt) noexcept
 {
@@ -1850,7 +1850,7 @@ add(F *src, const u8 v, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 radd(F &s, const u8 v, const M cnt) noexcept
 {
@@ -1859,7 +1859,7 @@ radd(F &s, const u8 v, const M cnt) noexcept
 }
 
 // ADD CONSTANT - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 cadd(F *src, const u8 v) noexcept
 {
@@ -1867,7 +1867,7 @@ cadd(F *src, const u8 v) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcadd(F &s, const u8 v) noexcept
 {
@@ -1876,7 +1876,7 @@ rcadd(F &s, const u8 v) noexcept
 }
 
 // SUBTRACT CONSTANT - RUNTIME COUNT
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 __attribute__((nonnull)) F *
 sub(F *src, const u8 v, const M cnt) noexcept
 {
@@ -1884,7 +1884,7 @@ sub(F *src, const u8 v, const M cnt) noexcept
   return src;
 }
 
-template <typename F, typename M = u64>
+template<typename F, typename M = u64>
 F &
 rsub(F &s, const u8 v, const M cnt) noexcept
 {
@@ -1893,7 +1893,7 @@ rsub(F &s, const u8 v, const M cnt) noexcept
 }
 
 // SUBTRACT CONSTANT - COMPILE-TIME COUNT
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F *
 csub(F *src, const u8 v) noexcept
 {
@@ -1901,7 +1901,7 @@ csub(F *src, const u8 v) noexcept
   return src;
 }
 
-template <u64 M, typename F>
+template<u64 M, typename F>
 constexpr F &
 rcsub(F &s, const u8 v) noexcept
 {
@@ -1910,7 +1910,7 @@ rcsub(F &s, const u8 v) noexcept
 }
 
 // MEMORY OBFUSCATION (XOR WITH 0x15)
-template <typename F>
+template<typename F>
 __attribute__((nonnull)) F *
 memfrob(F *src, u64 n) noexcept
 {
@@ -1918,5 +1918,5 @@ memfrob(F *src, u64 n) noexcept
   while ( n-- > 0 ) *a++ ^= 0x15;
   return a;
 }
-};     // namespace experimental
-};     // namespace micron
+};      // namespace experimental
+};      // namespace micron

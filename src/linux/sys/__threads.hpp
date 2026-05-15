@@ -127,7 +127,7 @@ create_thread(thread_fn fn, void *arg)
   return tid;
 }
 
-template <typename Fn, typename... Args> struct __impl_thread {
+template<typename Fn, typename... Args> struct __impl_thread {
   Fn fn;
   void *args[sizeof...(Args)];
 
@@ -143,14 +143,14 @@ template <typename Fn, typename... Args> struct __impl_thread {
   }
 
 private:
-  template <usize... I>
+  template<usize... I>
   static void
   __invoke(__impl_thread *self, micron::index_sequence<I...>)
   {
     self->fn(*static_cast<Args *>(self->args[I])...);
   }
 
-  template <usize... I>
+  template<usize... I>
   static void
   __cleanup([[maybe_unused]] __impl_thread *self, micron::index_sequence<I...>)
   {
@@ -160,7 +160,7 @@ private:
 
 // i'm sorry for this
 
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
 inline pthread_t
 create_thread(const pthread_attr_t &attrs, Fn fn, Args &&...args)
 {
@@ -220,7 +220,7 @@ set_affinity(pthread_attr_t &attr, const posix::cpu_set_t &cpu)
   pthread_attr_setaffinity_np(&attr, sizeof(cpu), reinterpret_cast<const cpu_set_t *>(&cpu));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_fundamental_v<T>)
 inline void
 set_stack_thread(pthread_attr_t &attr, T *ptr, usize size)
@@ -335,7 +335,7 @@ cancel(void)
   pthread_testcancel();
 }
 
-};     // namespace pthread
+};      // namespace pthread
 
 auto
 get_stack(void) -> stack_t
@@ -349,4 +349,4 @@ get_stack(void) -> stack_t
   return { ptr, sz };
 };
 
-};     // namespace micron
+};      // namespace micron

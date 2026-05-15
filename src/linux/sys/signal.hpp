@@ -339,5 +339,5 @@ sigwait(const posix::sigset_t &set, int &sig)
   sig = info.si_signo;
   return 0;
 }
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

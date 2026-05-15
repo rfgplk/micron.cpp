@@ -28,7 +28,7 @@ namespace math
 namespace cr
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ulp_of(F x) noexcept
 {
@@ -95,7 +95,7 @@ round_dd_to_f32(dd64 y) noexcept
   return f32(odd);
 }
 
-template <typename Stage1, typename Stage2>
+template<typename Stage1, typename Stage2>
 [[nodiscard, gnu::flatten]] inline constexpr f64
 drive_f64(f64 x, Stage1 &&s1, Stage2 &&s2) noexcept
 {
@@ -110,7 +110,7 @@ drive_f64(f64 x, Stage1 &&s1, Stage2 &&s2) noexcept
   return round_dd_to_f64(r2.y);
 }
 
-template <typename Stage2>
+template<typename Stage2>
 [[nodiscard, gnu::flatten]] inline constexpr f32
 drive_f32(f32 x, Stage2 &&s2) noexcept
 {
@@ -118,7 +118,7 @@ drive_f32(f32 x, Stage2 &&s2) noexcept
   return round_dd_to_f32(r.y);
 }
 
-template <typename Stage1, typename Stage2>
+template<typename Stage1, typename Stage2>
 [[nodiscard, gnu::flatten]] inline constexpr f64
 drive_f64_2arg(f64 a, f64 b, Stage1 &&s1, Stage2 &&s2) noexcept
 {
@@ -133,7 +133,7 @@ drive_f64_2arg(f64 a, f64 b, Stage1 &&s1, Stage2 &&s2) noexcept
   return round_dd_to_f64(r2.y);
 }
 
-template <typename Stage2>
+template<typename Stage2>
 [[nodiscard, gnu::flatten]] inline constexpr f32
 drive_f32_2arg(f32 a, f32 b, Stage2 &&s2) noexcept
 {
@@ -154,7 +154,7 @@ abs_err_bound(dd64 y) noexcept
   return (ah > 1.0 ? ah : 1.0) * 0x1.0p-72;
 }
 
-};     // namespace ziv_impl
+};      // namespace ziv_impl
 
 // %%% log %%%
 
@@ -182,7 +182,7 @@ log_f32(f32 x) noexcept
   return round_dd_to_f32(y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log(F x) noexcept
 {
@@ -218,7 +218,7 @@ exp_f32(f32 x) noexcept
   return round_dd_to_f32(y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp(F x) noexcept
 {
@@ -254,7 +254,7 @@ sin_f32(f32 x) noexcept
   return round_dd_to_f32(y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sin(F x) noexcept
 {
@@ -288,7 +288,7 @@ cos_f32(f32 x) noexcept
   return round_dd_to_f32(y);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cos(F x) noexcept
 {
@@ -298,8 +298,8 @@ cos(F x) noexcept
     return F(cos_f64(f64(x)));
 }
 
-};     // namespace cr
-};     // namespace math
-};     // namespace micron
+};      // namespace cr
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

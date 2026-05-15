@@ -42,14 +42,14 @@ static constexpr i64 ERR = micron::numeric_limits<i64>::min();
 //  Helpers
 // ============================================================
 
-template <typename T, u64 N>
+template<typename T, u64 N>
 void
 fill(T (&buf)[N], T val)
 {
   for ( u64 i = 0; i < N; i++ ) buf[i] = val;
 }
 
-template <typename T>
+template<typename T>
 void
 fill(T *buf, u64 n, T val)
 {
@@ -57,7 +57,7 @@ fill(T *buf, u64 n, T val)
 }
 
 // Build two identical buffers, then corrupt exactly one position in src
-template <typename T, u64 N>
+template<typename T, u64 N>
 void
 make_differ_at(T (&src)[N], T (&dst)[N], T base, u64 pos, T corrupt)
 {
@@ -123,8 +123,8 @@ main(void)
     byte a[32], b[32];
     fill(a, static_cast<byte>(0xCC));
     fill(b, static_cast<byte>(0xCC));
-    a[31] = 0xFF;                                     // only byte 31 differs
-    sb::require(mc::memcmp<byte>(a, b, 31) == 0);     // count=31, byte 31 outside window
+    a[31] = 0xFF;                                      // only byte 31 differs
+    sb::require(mc::memcmp<byte>(a, b, 31) == 0);      // count=31, byte 31 outside window
   }
   sb::end_test_case();
 
@@ -132,7 +132,7 @@ main(void)
   {
     byte a[4] = { 0x42, 0xFF, 0xFF, 0xFF };
     byte b[4] = { 0x42, 0x00, 0x00, 0x00 };
-    sb::require(mc::memcmp<byte>(a, b, 1) == 0);     // only first byte compared
+    sb::require(mc::memcmp<byte>(a, b, 1) == 0);      // only first byte compared
   }
   sb::end_test_case();
 
@@ -576,7 +576,7 @@ main(void)
     fill(a, static_cast<byte>(0x77));
     fill(b, static_cast<byte>(0x77));
     a[31] = 0xFF;
-    sb::require(mc::bytecmp(a, b, 31) == 0);     // pos 31 outside window
+    sb::require(mc::bytecmp(a, b, 31) == 0);      // pos 31 outside window
   }
   sb::end_test_case();
 

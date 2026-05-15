@@ -24,13 +24,13 @@ namespace micron
 {
 // general purpose fundamental array class, only allows fundamental types
 // (int, char, etc) stack allocated, notthreadsafe, mutable. default to 64
-template <is_fundamental_object T, usize N = 64>
-  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))     // avoid weird stuff with N = 0
+template<is_fundamental_object T, usize N = 64>
+  requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 class farray
 {
   alignas(64) T stack[N];
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_add(const U &v)
   {
@@ -47,7 +47,7 @@ class farray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_sub(const U &v)
   {
@@ -64,7 +64,7 @@ class farray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_mul(const U &v)
   {
@@ -81,7 +81,7 @@ class farray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_div(const U &v)
   {
@@ -98,7 +98,7 @@ class farray
     }
   }
 
-  template <typename U>
+  template<typename U>
   inline __attribute__((always_inline)) void
   __apply_mod(const U &v)
   {
@@ -137,7 +137,7 @@ public:
 
   farray() { micron::czero_n<N>(&stack[0]); }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   farray(Fn &&fn)
   {
@@ -145,7 +145,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   farray(Fn &&fn)
   {
@@ -163,7 +163,7 @@ public:
     if ( lst.size() < N ) micron::byteset(micron::addr(stack[lst.size()]), 0x0, (N - lst.size()) * sizeof(T));
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, farray>)
   farray(const A &o)
   {
@@ -171,7 +171,7 @@ public:
     __impl_container::copy<N, T>(&stack[0], &o[0]);
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, farray> and micron::is_fundamental_v<typename A::value_type>)
   farray(A &&o)
   {
@@ -321,21 +321,21 @@ public:
     return stack[i];
   }
 
-  template <class C>
+  template<class C>
   inline slice<T, C>
   operator[]()
   {
     return slice<T, C>(begin(), end());
   }
 
-  template <class C>
+  template<class C>
   inline const slice<T, C>
   operator[]() const
   {
     return slice<T, C>(cbegin(), cend());
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) const slice<T, C>
   operator[](size_type from, size_type to) const
   {
@@ -343,7 +343,7 @@ public:
     return slice<T, C>(get(from), get(to));
   }
 
-  template <class C>
+  template<class C>
   inline __attribute__((always_inline)) slice<T, C>
   operator[](size_type from, size_type to)
   {
@@ -354,7 +354,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // assignment operators
 
-  template <typename F, size_type M>
+  template<typename F, size_type M>
   farray &
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
@@ -377,7 +377,7 @@ public:
     return *this;
   }
 
-  template <is_constexpr_container A>
+  template<is_constexpr_container A>
   farray &
   operator=(const A &o)
   {
@@ -388,7 +388,7 @@ public:
     return *this;
   }
 
-  template <is_container A>
+  template<is_container A>
     requires(!micron::is_same_v<A, farray>)
   farray &
   operator=(const A &o)
@@ -411,7 +411,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // binary arithmetic
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray
   operator+(const farray<T, M> &o) const
@@ -424,7 +424,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray
   operator-(const farray<T, M> &o) const
@@ -437,7 +437,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray
   operator*(const farray<T, M> &o) const
@@ -450,7 +450,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray
   operator/(const farray<T, M> &o) const
@@ -463,7 +463,7 @@ public:
     return arr;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) farray
   operator%(const farray<T, M> &o) const
@@ -551,7 +551,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // compound assignment
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray &
   operator+=(const farray<T, M> &o)
@@ -563,7 +563,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray &
   operator-=(const farray<T, M> &o)
@@ -575,7 +575,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray &
   operator*=(const farray<T, M> &o)
@@ -587,7 +587,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N)
   inline __attribute__((always_inline)) farray &
   operator/=(const farray<T, M> &o)
@@ -599,7 +599,7 @@ public:
     return *this;
   }
 
-  template <size_type M>
+  template<size_type M>
     requires(M <= N && micron::is_integral_v<T>)
   inline __attribute__((always_inline)) farray &
   operator%=(const farray<T, M> &o)
@@ -614,7 +614,7 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // variadic compound assignment
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   farray &
   operator+=(const Rs &...rs)
@@ -623,7 +623,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   farray &
   operator-=(const Rs &...rs)
@@ -632,7 +632,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   farray &
   operator*=(const Rs &...rs)
@@ -641,7 +641,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2)
   farray &
   operator/=(const Rs &...rs)
@@ -650,7 +650,7 @@ public:
     return *this;
   }
 
-  template <typename... Rs>
+  template<typename... Rs>
     requires(sizeof...(Rs) >= 2 && micron::is_integral_v<T>)
   farray &
   operator%=(const Rs &...rs)
@@ -774,7 +774,7 @@ public:
     for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
   }
 
-  template <typename F>
+  template<typename F>
   farray &
   fill(const F &o)
     requires micron::is_fundamental_v<F>
@@ -805,4 +805,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

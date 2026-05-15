@@ -109,9 +109,9 @@ main()
 
   test_case("math::ieee — pack");
   {
-    f64 v = math::ieee::pack<f64>(0, 0, 0);     // = 1.0
+    f64 v = math::ieee::pack<f64>(0, 0, 0);      // = 1.0
     require(v, 1.0);
-    f64 v2 = math::ieee::pack<f64>(1, 1, 0);     // = -2.0
+    f64 v2 = math::ieee::pack<f64>(1, 1, 0);      // = -2.0
     require(v2, -2.0);
   }
   end_test_case();

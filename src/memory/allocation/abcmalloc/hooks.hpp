@@ -38,16 +38,15 @@ __calculate_space_cache(usize sz)
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
-       * __system_pagesize;     // still align to pg
+       * __system_pagesize;      // still align to pg
   return sz;
 }
 
 inline usize
 __calculate_space_small(usize sz)
 {
-  // (old) x^2/log(x)
-  // x^2 * ln(x)
-  u64 t = static_cast<u64>((float)(sz * sz) * micron::math::logf128((float)sz));
+  // new equation: x * sqrt(x) * 400 smooth sublinear-in-class growth; 4 MiB at sz=513, ~128 MiB at sz=4095
+  u64 t = static_cast<u64>(static_cast<double>(sz) * __builtin_sqrt(static_cast<double>(sz)) * 400.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
@@ -58,9 +57,23 @@ __calculate_space_small(usize sz)
 inline usize
 __calculate_space_medium(usize sz)
 {
-  // x * ln(x) * ln(x)
+  // new equation: x * ln(x) * 150;  4 MiB at sz=4096, ~64 MiB at sz=32768; hot tier so heavy floor
   flong f_sz = static_cast<flong>(sz);
-  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * (micron::math::logf128(f_sz)));
+  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * 150.0);
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
+       * __system_pagesize;
+  return sz;
+}
+
+inline usize
+__calculate_space_large(usize sz)
+{
+  // 2 * x * ln(x)^2; the old medium equation scaled by a factor of 2
+  flong f_sz = static_cast<flong>(sz);
+  flong lg = micron::math::logf128(f_sz);
+  u64 t = static_cast<u64>(2.0 * f_sz * lg * lg);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
@@ -71,9 +84,10 @@ __calculate_space_medium(usize sz)
 inline usize
 __calculate_space_huge(usize sz)
 {
-  // x * ln(x) * ln(ln(ln(x))
-  flong f_sz = static_cast<flong>(sz);
-  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * micron::math::logf128(micron::math::logf128(micron::math::logf128(f_sz))));
+  // sqrt(x) * ln(x)^2 * 125; aggressive at the floor, tapers at the top
+  double f_sz = static_cast<double>(sz);
+  double lg = static_cast<double>(micron::math::logf128(static_cast<flong>(sz)));
+  u64 t = static_cast<u64>(__builtin_sqrt(f_sz) * lg * lg * 125.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
@@ -86,7 +100,7 @@ __calculate_space_bulk(usize sz)
 {
   // logarithmic taper
   long double factor = 1.0 + 0.1 * micron::math::logf128(static_cast<double>(sz) / (1024 * 1024 * 1024));
-  if ( factor < 1.0 ) factor = 1.0;     // never shrink
+  if ( factor < 1.0 ) factor = 1.0;      // never shrink
 
   usize t = static_cast<usize>(sz * factor);
 
@@ -114,17 +128,17 @@ __get_kernel_memory(u64 sz)
   return micron::sys_allocator<byte>::alloc(sz);
 }
 
-template <typename T>
+template<typename T>
 inline T
 __get_kernel_chunk(u64 sz)
 {
   return { micron::sys_allocator<byte>::alloc(sz), static_cast<usize>(sz) };
 }
 
-template <typename T>
+template<typename T>
 inline void
 __release_kernel_chunk(const T &mem)
 {
   micron::sys_allocator<byte>::dealloc(mem.ptr, mem.len);
 }
-};     // namespace abc
+};      // namespace abc

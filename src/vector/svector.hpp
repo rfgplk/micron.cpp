@@ -21,7 +21,7 @@ namespace micron
 {
 
 // svector: vector on the stack, fixed capacity N, mutable.
-template <is_regular_object T, usize N = 64, bool Sf = true> class svector
+template<is_regular_object T, usize N = 64, bool Sf = true> class svector
 {
   // NOTE: T[N] inside an anonymous union so non-trivial T is __NOT__ default constructed when the svector is created
   union {
@@ -85,7 +85,7 @@ template <is_regular_object T, usize N = 64, bool Sf = true> class svector
     return ind >= length || length + cnt > N;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -117,9 +117,9 @@ public:
     length = 0;
   }
 
-  svector(void) : length(0) {}
+  svector(void) : length(0) { }
 
-  template <typename First, typename... Rest>
+  template<typename First, typename... Rest>
     requires(micron::is_class_v<T> and !micron::is_integral_v<micron::remove_cvref_t<First>>)
   svector(First first, Rest... rest)
   {
@@ -135,7 +135,7 @@ public:
     length = cnt;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   svector(const size_type n, Fn &&fn)
   {
@@ -146,7 +146,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   svector(const size_type n, Fn &&fn)
   {
@@ -165,7 +165,7 @@ public:
     length = cnt;
   }
 
-  template <typename C = T>
+  template<typename C = T>
     requires(sizeof(C) == sizeof(T))
   svector(const vector<C> &o)
   {
@@ -180,7 +180,7 @@ public:
     length = o.length;
   }
 
-  template <typename C = T, size_type M = N> svector(const svector<C, M> &o)
+  template<typename C = T, size_type M = N> svector(const svector<C, M> &o)
   {
     __impl_container::copy(stack, o.stack, o.length);
     length = o.length < N ? o.length : N;
@@ -207,7 +207,7 @@ public:
     o.length = 0;
   }
 
-  template <typename C = T, size_type M> svector(svector<C, M> &&o)
+  template<typename C = T, size_type M> svector(svector<C, M> &&o)
   {
     const usize mv_n = (M < N) ? M : N;
     __impl_container::move<N>(stack, o.stack);
@@ -240,7 +240,7 @@ public:
     return *this;
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   T &
   operator[](const R n)
@@ -248,7 +248,7 @@ public:
     return stack[n];
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   const T &
   operator[](const R n) const
@@ -270,7 +270,7 @@ public:
     return stack[n];
   }
 
-  template <typename X = iterator>
+  template<typename X = iterator>
     requires(micron::is_pointer_v<X>)
   T &
   at(X itr)
@@ -280,7 +280,7 @@ public:
     return *itr;
   }
 
-  template <typename X = const_iterator>
+  template<typename X = const_iterator>
     requires(micron::is_pointer_v<X>)
   const T &
   at(X itr) const
@@ -505,7 +505,7 @@ public:
     return *this;
   }
 
-  template <typename X = iterator>
+  template<typename X = iterator>
     requires(micron::is_pointer_v<X>)
   svector &
   erase(X itr)
@@ -540,7 +540,7 @@ public:
     return *this;
   }
 
-  template <typename X = iterator>
+  template<typename X = iterator>
     requires(micron::is_pointer_v<X>)
   svector &
   erase(X first, X last)
@@ -562,7 +562,7 @@ public:
     return *this;
   }
 
-  template <typename C = T, size_type M>
+  template<typename C = T, size_type M>
     requires(sizeof(C) == sizeof(T))
   svector &
   append(const svector<C, M> &o)
@@ -573,7 +573,7 @@ public:
     return *this;
   }
 
-  template <typename C = T, size_type M>
+  template<typename C = T, size_type M>
     requires(sizeof(C) == sizeof(T))
   svector &
   operator+=(const svector<C, M> &o)
@@ -582,7 +582,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   svector &
   emplace_back(Args &&...args)
   {
@@ -607,7 +607,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   svector &
   push_back(const C &i)
   {
@@ -620,7 +620,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   svector &
   append(const C &i)
   {
@@ -648,7 +648,7 @@ public:
     return val;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   svector &
   insert(size_type ind, const C &i)
   {
@@ -663,7 +663,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   svector &
   insert(iterator itr, const C &i)
   {
@@ -710,7 +710,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   svector &
   emplace(size_type ind, Args &&...args)
   {
@@ -722,7 +722,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   svector &
   emplace(iterator itr, Args &&...args)
   {
@@ -757,7 +757,7 @@ public:
     return micron::addr(stack[n]);
   }
 
-  template <typename X = iterator>
+  template<typename X = iterator>
     requires(micron::is_pointer_v<X>)
   inline X
   get(X itr)
@@ -767,7 +767,7 @@ public:
     return itr;
   }
 
-  template <typename X = const_iterator>
+  template<typename X = const_iterator>
     requires(micron::is_pointer_v<X>)
   inline X
   get(X itr) const
@@ -776,7 +776,7 @@ public:
     return itr;
   }
 
-  template <typename X = const_iterator>
+  template<typename X = const_iterator>
     requires(micron::is_pointer_v<X>)
   inline X
   cget(X itr) const
@@ -861,4 +861,4 @@ public:
   }
 };
 
-}     // namespace micron
+}      // namespace micron

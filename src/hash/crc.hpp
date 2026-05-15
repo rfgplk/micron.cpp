@@ -158,7 +158,7 @@ constexpr auto crc64_rocksoft_refl_lut = []() {
   return t;
 }();
 
-}     // namespace crc
+}      // namespace crc
 
 constexpr u16
 crc16_t10dif(u16 init_crc, const u8 *buf, usize len) noexcept
@@ -168,14 +168,14 @@ crc16_t10dif(u16 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u16
 crc16_t10dif(u16 init_crc, const C &src) noexcept
 {
   return crc16_t10dif(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u16
 crc16_t10dif(u16 init_crc, const T &obj) noexcept
 {
@@ -190,14 +190,14 @@ crc32_ieee(u32 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u32
 crc32_ieee(u32 init_crc, const C &src) noexcept
 {
   return crc32_ieee(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u32
 crc32_ieee(u32 init_crc, const T &obj) noexcept
 {
@@ -212,14 +212,14 @@ crc32_gzip_refl(u32 init_crc, const u8 *buf, usize len) noexcept
   return crc ^ 0xFFFFFFFFu;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u32
 crc32_gzip_refl(u32 init_crc, const C &src) noexcept
 {
   return crc32_gzip_refl(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u32
 crc32_gzip_refl(u32 init_crc, const T &obj) noexcept
 {
@@ -234,14 +234,14 @@ crc32_iscsi(u32 init_crc, const u8 *buf, usize len) noexcept
   return crc ^ 0xFFFFFFFFu;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u32
 crc32_iscsi(u32 init_crc, const C &src) noexcept
 {
   return crc32_iscsi(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u32
 crc32_iscsi(u32 init_crc, const T &obj) noexcept
 {
@@ -256,14 +256,14 @@ crc64_ecma_norm(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_ecma_norm(u64 init_crc, const C &src) noexcept
 {
   return crc64_ecma_norm(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_ecma_norm(u64 init_crc, const T &obj) noexcept
 {
@@ -278,14 +278,14 @@ crc64_ecma_refl(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_ecma_refl(u64 init_crc, const C &src) noexcept
 {
   return crc64_ecma_refl(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_ecma_refl(u64 init_crc, const T &obj) noexcept
 {
@@ -300,14 +300,14 @@ crc64_iso_norm(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_iso_norm(u64 init_crc, const C &src) noexcept
 {
   return crc64_iso_norm(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_iso_norm(u64 init_crc, const T &obj) noexcept
 {
@@ -322,14 +322,14 @@ crc64_iso_refl(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_iso_refl(u64 init_crc, const C &src) noexcept
 {
   return crc64_iso_refl(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_iso_refl(u64 init_crc, const T &obj) noexcept
 {
@@ -344,14 +344,14 @@ crc64_jones_norm(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_jones_norm(u64 init_crc, const C &src) noexcept
 {
   return crc64_jones_norm(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_jones_norm(u64 init_crc, const T &obj) noexcept
 {
@@ -366,14 +366,14 @@ crc64_jones_refl(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_jones_refl(u64 init_crc, const C &src) noexcept
 {
   return crc64_jones_refl(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_jones_refl(u64 init_crc, const T &obj) noexcept
 {
@@ -388,14 +388,14 @@ crc64_rocksoft_norm(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_rocksoft_norm(u64 init_crc, const C &src) noexcept
 {
   return crc64_rocksoft_norm(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_rocksoft_norm(u64 init_crc, const T &obj) noexcept
 {
@@ -410,14 +410,14 @@ crc64_rocksoft_refl(u64 init_crc, const u8 *buf, usize len) noexcept
   return crc;
 }
 
-template <is_iterable C>
+template<is_iterable C>
 constexpr u64
 crc64_rocksoft_refl(u64 init_crc, const C &src) noexcept
 {
   return crc64_rocksoft_refl(init_crc, reinterpret_cast<const u8 *>(src.begin()), src.size() * sizeof(typename C::value_type));
 }
 
-template <addressable T>
+template<addressable T>
 constexpr u64
 crc64_rocksoft_refl(u64 init_crc, const T &obj) noexcept
 {
@@ -426,4 +426,4 @@ crc64_rocksoft_refl(u64 init_crc, const T &obj) noexcept
 
 using crc_t = u64;
 
-};     // namespace micron
+};      // namespace micron

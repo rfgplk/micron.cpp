@@ -16,7 +16,7 @@ static const usize npos = numeric_limits<usize>::max();
 };
 
 using const_schar = const char;
-using schar = char;     // TODO: think about removing this
+using schar = char;      // TODO: think about removing this
 using wide = wchar_t;
 using unicode8 = char8_t;
 using unicode16 = char16_t;

@@ -12,7 +12,7 @@ namespace micron
 {
 namespace sort
 {
-template <typename T>
+template<typename T>
 void
 bubble(T &arr)
 {
@@ -28,5 +28,5 @@ bubble(T &arr)
     n = k;
   }
 }
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

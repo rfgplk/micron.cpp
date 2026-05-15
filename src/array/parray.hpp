@@ -20,7 +20,7 @@ namespace micron
 //  parray persistent/immutable fixed-capacity array
 //  implemented as a Bary trie with structural sharing
 
-template <is_movable_object T, usize K = 5, usize H = 3>
+template<is_movable_object T, usize K = 5, usize H = 3>
   requires(K > 0 && K <= 6 && H > 0 && H <= 8)
 class parray
 {
@@ -81,7 +81,7 @@ class parray
     abc::dealloc(reinterpret_cast<byte *>(l));
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static inline void *
   __retain(void *p)
   {
@@ -94,7 +94,7 @@ class parray
     return p;
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static void
   __release(void *p)
   {
@@ -114,7 +114,7 @@ class parray
     }
   }
 
-  template <usize Lvl, typename Vf>
+  template<usize Lvl, typename Vf>
   static void *
   __set_impl(void *p, usize idx, Vf &&val)
   {
@@ -175,7 +175,7 @@ class parray
     return __d;
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static inline const T &
   __get_impl(const void *p, usize idx)
   {
@@ -190,7 +190,7 @@ class parray
     }
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static void *
   __build_from(const T *data, usize count, usize base)
   {
@@ -216,7 +216,7 @@ class parray
     }
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static void *
   __build_filled(const T &val)
   {
@@ -240,7 +240,7 @@ class parray
     }
   }
 
-  template <usize Lvl, typename Fn>
+  template<usize Lvl, typename Fn>
   static void *
   __update_impl(void *p, usize idx, Fn &&fn)
   {
@@ -293,7 +293,7 @@ class parray
     }
   }
 
-  template <usize Lvl, typename Fn>
+  template<usize Lvl, typename Fn>
   static void
   __for_each_impl(const void *p, usize base, Fn &&fn)
   {
@@ -309,7 +309,7 @@ class parray
     }
   }
 
-  template <usize Lvl>
+  template<usize Lvl>
   static bool
   __equal_impl(const void *a, const void *b)
   {
@@ -356,7 +356,7 @@ class parray
     }
   }
 
-  template <typename Fn>
+  template<typename Fn>
   parray
   __apply_scalar(const T &scalar, Fn &&fn) const
   {
@@ -364,7 +364,7 @@ class parray
     return parray(nr);
   }
 
-  template <usize Lvl, typename Fn>
+  template<usize Lvl, typename Fn>
   static void *
   __apply_scalar_impl(const void *p, const T &scalar, Fn &&fn)
   {
@@ -396,7 +396,7 @@ class parray
 
   static constexpr usize __root_level = H - 1;
 
-  explicit parray(void *root) : __root(root) {}
+  explicit parray(void *root) : __root(root) { }
 
 public:
   using category_type = array_tag;
@@ -414,10 +414,10 @@ public:
 
   ~parray() { __release<__root_level>(__root); }
 
-  parray() : __root(nullptr) {}
+  parray() : __root(nullptr) { }
 
   // O(1) copy
-  parray(const parray &o) : __root(__retain<__root_level>(o.__root)) {}
+  parray(const parray &o) : __root(__retain<__root_level>(o.__root)) { }
 
   parray &
   operator=(const parray &o)
@@ -444,7 +444,7 @@ public:
   }
 
   // broadcast fill
-  explicit parray(const T &val) : __root(__build_filled<__root_level>(val)) {}
+  explicit parray(const T &val) : __root(__build_filled<__root_level>(val)) { }
 
   // initializer list
   parray(const std::initializer_list<T> &&lst)
@@ -469,7 +469,7 @@ public:
   }
 
   // generator constructor
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, usize>)
   explicit parray(Fn &&fn, usize count)
   {
@@ -502,7 +502,7 @@ public:
     return parray(nr);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   [[nodiscard]] parray
   update(usize idx, Fn &&fn) const
   {
@@ -524,7 +524,7 @@ public:
     return parray(val);
   }
 
-  template <typename... Ps>
+  template<typename... Ps>
   [[nodiscard]] parray
   set_many(Ps &&...pairs) const
   {
@@ -574,7 +574,7 @@ public:
   bool
   empty() const noexcept
   {
-    return false;     // always has length elements, never empty
+    return false;      // always has length elements, never empty
   }
 
   // O(1), true iff structurally identical root
@@ -785,7 +785,7 @@ public:
   }
 
   // visits only valid leaves
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
@@ -798,9 +798,9 @@ public:
     usize __idx;
 
   public:
-    const_iterator() : __owner(nullptr), __idx(0) {}
+    const_iterator() : __owner(nullptr), __idx(0) { }
 
-    const_iterator(const parray *p, usize i) : __owner(p), __idx(i) {}
+    const_iterator(const parray *p, usize i) : __owner(p), __idx(i) { }
 
     const T &
     operator*() const
@@ -908,4 +908,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

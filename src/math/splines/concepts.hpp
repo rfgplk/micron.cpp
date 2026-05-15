@@ -18,11 +18,11 @@ namespace math
 namespace splines
 {
 
-template <typename Fn, typename F, usize D>
+template<typename Fn, typename F, usize D>
 concept callable_real_curve = requires(Fn fn, F t) {
   { fn(t) } -> micron::convertible_to<vec<F, D>>;
 };
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

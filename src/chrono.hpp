@@ -43,28 +43,28 @@ minutes(const fduration_t s)
   return s / static_cast<fduration_t>(__dur_sec_per_min);
 }
 
-template <typename S = base_ratio>
+template<typename S = base_ratio>
 inline constexpr fduration_t
 seconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
 
-template <typename S = milli>
+template<typename S = milli>
 inline constexpr fduration_t
 milliseconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
 
-template <typename S = micro>
+template<typename S = micro>
 inline constexpr fduration_t
 microseconds(const fduration_t s)
 {
   return (s * S::denom) / S::num;
 }
 
-template <typename S = nano>
+template<typename S = nano>
 inline constexpr fduration_t
 nanoseconds(const fduration_t s)
 {
@@ -83,7 +83,7 @@ enum class unit : i32 {
 
 namespace __impl
 {
-template <unit U>
+template<unit U>
 inline constexpr fduration_t
 delta_to_unit(time_t sec, long nsec) noexcept
 {
@@ -99,7 +99,7 @@ delta_to_unit(time_t sec, long nsec) noexcept
     return (static_cast<fduration_t>(sec) + static_cast<fduration_t>(nsec) * 1e-9) / static_cast<fduration_t>(__dur_sec_per_min);
   } else if constexpr ( U == unit::hours ) {
     return (static_cast<fduration_t>(sec) + static_cast<fduration_t>(nsec) * 1e-9) / static_cast<fduration_t>(__dur_sec_per_hr);
-  } else {     // unit::days
+  } else {      // unit::days
     return (static_cast<fduration_t>(sec) + static_cast<fduration_t>(nsec) * 1e-9) / static_cast<fduration_t>(__dur_sec_per_day);
   }
 }
@@ -112,24 +112,24 @@ normalise(time_t &sec, long &nsec) noexcept
     nsec += 1'000'000'000L;
   }
 }
-};     // namespace __impl
+};      // namespace __impl
 
 enum class system_clocks : clockid_t {
-  realtime = clock_realtime,                     //  0 – wall-clock time (POSIX epoch)
-  realtime_coarse = clock_realtime_coarse,       //  5 – faster, lower-resolution wall clock
-  realtime_alarm = clock_realtime_alarm,         //  8 – realtime, wakes suspended system
-  taitime = clock_tai,                           // 11 – International Atomic Time
-  monotonic = clock_monotonic,                   //  1 – monotonic, unaffected by NTP steps
-  monotonic_coarse = clock_monotonic_coarse,     //  6 – faster, lower-resolution monotonic
-  monotonic_raw = clock_monotonic_raw,           //  4 – monotonic, unaffected by frequency scaling
-  since_boot = clock_boottime,                   //  7 – monotonic + time spent suspended
-  since_boot_alarm = clock_boottime_alarm,       //  9 – since_boot, wakes suspended system
-  cputime = clock_process_cputime_id,            //  2 – per-process CPU time
-  cputime_this = clock_thread_cputime_id,        //  3 – per-thread  CPU time
+  realtime = clock_realtime,                      //  0 – wall-clock time (POSIX epoch)
+  realtime_coarse = clock_realtime_coarse,        //  5 – faster, lower-resolution wall clock
+  realtime_alarm = clock_realtime_alarm,          //  8 – realtime, wakes suspended system
+  taitime = clock_tai,                            // 11 – International Atomic Time
+  monotonic = clock_monotonic,                    //  1 – monotonic, unaffected by NTP steps
+  monotonic_coarse = clock_monotonic_coarse,      //  6 – faster, lower-resolution monotonic
+  monotonic_raw = clock_monotonic_raw,            //  4 – monotonic, unaffected by frequency scaling
+  since_boot = clock_boottime,                    //  7 – monotonic + time spent suspended
+  since_boot_alarm = clock_boottime_alarm,        //  9 – since_boot, wakes suspended system
+  cputime = clock_process_cputime_id,             //  2 – per-process CPU time
+  cputime_this = clock_thread_cputime_id,         //  3 – per-thread  CPU time
   __end
 };
 
-template <system_clocks C = system_clocks::realtime> struct system_clock {
+template<system_clocks C = system_clocks::realtime> struct system_clock {
   timespec_t time_begin;
   timespec_t time_end;
 
@@ -143,7 +143,7 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
 
-  system_clock(const system_clock &o) noexcept : time_begin(o.time_begin), time_end(o.time_end) {}
+  system_clock(const system_clock &o) noexcept : time_begin(o.time_begin), time_end(o.time_end) { }
 
   system_clock(system_clock &&o) noexcept : time_begin(o.time_begin), time_end(o.time_end)
   {
@@ -260,7 +260,7 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     return res;
   }
 
-  template <unit U = unit::seconds>
+  template<unit U = unit::seconds>
   inline __attribute__((always_inline)) fduration_t
   elapsed(void)
   {
@@ -268,7 +268,7 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     return read<U>();
   }
 
-  template <unit U = unit::seconds>
+  template<unit U = unit::seconds>
   auto
   read(const timespec_t &t) -> fduration_t
   {
@@ -278,7 +278,7 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
     return __impl::delta_to_unit<U>(sec, nsec);
   }
 
-  template <unit U = unit::seconds>
+  template<unit U = unit::seconds>
   auto
   read(void) -> fduration_t
   {
@@ -319,12 +319,12 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
   }
 };
 
-template <typename C = system_clock<>, typename D = fduration_t> struct time_point {
+template<typename C = system_clock<>, typename D = fduration_t> struct time_point {
   D d;
 
-  constexpr time_point() : d(0) {}
+  constexpr time_point() : d(0) { }
 
-  constexpr explicit time_point(const D &dur) : d(dur) {}
+  constexpr explicit time_point(const D &dur) : d(dur) { }
 
   constexpr D
   time_since_epoch() const
@@ -382,7 +382,7 @@ template <typename C = system_clock<>, typename D = fduration_t> struct time_poi
     return d >= o.d;
   }
 
-  template <unit U = unit::milliseconds>
+  template<unit U = unit::milliseconds>
   constexpr D
   as() const noexcept
   {
@@ -410,28 +410,28 @@ template <typename C = system_clock<>, typename D = fduration_t> struct time_poi
   }
 };
 
-template <typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
+template<typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
 constexpr time_point<C, D>
 operator+(const time_point<C, D> &tp, const S &s)
 {
   return time_point<C, D>(tp.time_since_epoch() + static_cast<D>(s));
 }
 
-template <typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
+template<typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
 constexpr time_point<C, D>
 operator+(const S &s, const time_point<C, D> &tp)
 {
   return time_point<C, D>(tp.time_since_epoch() + static_cast<D>(s));
 }
 
-template <typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
+template<typename C, typename D, typename S, enable_if_t<is_convertible_v<S, D>, int> = 0>
 constexpr time_point<C, D>
 operator-(const time_point<C, D> &tp, const S &s)
 {
   return time_point<C, D>(tp.time_since_epoch() - static_cast<D>(s));
 }
 
-template <typename C, typename D>
+template<typename C, typename D>
 constexpr D
 operator-(const time_point<C, D> &lhs, const time_point<C, D> &rhs)
 {
@@ -444,7 +444,7 @@ struct time_of_day {
   fduration_t seconds_val;
   fduration_t subseconds_val;
 
-  constexpr time_of_day() : hours_val(0), minutes_val(0), seconds_val(0), subseconds_val(0) {}
+  constexpr time_of_day() : hours_val(0), minutes_val(0), seconds_val(0), subseconds_val(0) { }
 
   constexpr explicit time_of_day(fduration_t dur_since_midnight)
   {
@@ -496,7 +496,7 @@ struct time_of_day {
 struct year {
   int y;
 
-  constexpr explicit year(int val) : y(val) {}
+  constexpr explicit year(int val) : y(val) { }
 
   constexpr
   operator int() const
@@ -514,7 +514,7 @@ struct year {
 struct month {
   unsigned m;
 
-  constexpr explicit month(unsigned val) : m(val) {}
+  constexpr explicit month(unsigned val) : m(val) { }
 
   constexpr
   operator unsigned() const
@@ -532,7 +532,7 @@ struct month {
 struct day {
   unsigned d;
 
-  constexpr explicit day(unsigned val) : d(val) {}
+  constexpr explicit day(unsigned val) : d(val) { }
 
   constexpr
   operator unsigned() const
@@ -552,7 +552,7 @@ struct year_month_day {
   micron::month mo;
   micron::day dy;
 
-  constexpr year_month_day(micron::year y, micron::month m, micron::day d) : yr(y), mo(m), dy(d) {}
+  constexpr year_month_day(micron::year y, micron::month m, micron::day d) : yr(y), mo(m), dy(d) { }
 
   static constexpr year_month_day
   from_unix(time_t unix_sec) noexcept
@@ -589,11 +589,11 @@ struct year_month_day {
   }
 };
 
-template <system_clocks C = system_clocks::realtime> struct auto_timer {
+template<system_clocks C = system_clocks::realtime> struct auto_timer {
   system_clock<C> clk;
   fduration_t *out;
 
-  explicit auto_timer(fduration_t *result = nullptr) : clk(), out(result) {}
+  explicit auto_timer(fduration_t *result = nullptr) : clk(), out(result) { }
 
   ~auto_timer()
   {
@@ -647,7 +647,7 @@ time_of_day_now(void)
   return time_of_day(secs_today);
 }
 
-template <unit U = unit::seconds>
+template<unit U = unit::seconds>
 inline fduration_t
 elapsed(const timespec_t &begin, const timespec_t &end) noexcept
 {
@@ -663,4 +663,4 @@ timediff(time_t t0, time_t t1) noexcept
   return static_cast<fduration_t>(t1) - static_cast<fduration_t>(t0);
 }
 
-}     // namespace micron
+}      // namespace micron

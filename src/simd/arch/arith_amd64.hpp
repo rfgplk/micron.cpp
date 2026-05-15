@@ -19,7 +19,7 @@ namespace simd
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bitwise
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avx_and(T &o, T &b)
 {
@@ -31,7 +31,7 @@ avx_and(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avx_andnot(T &o, T &b)
 {
@@ -43,7 +43,7 @@ avx_andnot(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avx_or(T &o, T &b)
 {
@@ -55,7 +55,7 @@ avx_or(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avx_xor(T &o, T &b)
 {
@@ -70,7 +70,7 @@ avx_xor(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // shifts
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftleft_16(T &o, int b)
 {
@@ -82,7 +82,7 @@ shiftleft_16(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftleft_32(T &o, int b)
 {
@@ -94,7 +94,7 @@ shiftleft_32(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftleft_64(T &o, int b)
 {
@@ -106,7 +106,7 @@ shiftleft_64(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shift_left(T &o, int b)
 {
@@ -121,7 +121,7 @@ shift_left(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftright_logical_16(T &o, int b)
 {
@@ -133,7 +133,7 @@ shiftright_logical_16(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftright_logical_32(T &o, int b)
 {
@@ -145,7 +145,7 @@ shiftright_logical_32(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftright_logical_64(T &o, int b)
 {
@@ -157,7 +157,7 @@ shiftright_logical_64(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shift_right_logical(T &o, int b)
 {
@@ -172,7 +172,7 @@ shift_right_logical(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftright_arithmetic_16(T &o, int b)
 {
@@ -184,7 +184,7 @@ shiftright_arithmetic_16(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shiftright_arithmetic_32(T &o, int b)
 {
@@ -196,7 +196,7 @@ shiftright_arithmetic_32(T &o, int b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 shift_right_arithmetic(T &o, int b)
 {
@@ -211,7 +211,7 @@ shift_right_arithmetic(T &o, int b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // addition
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 add_8(T &o, T &b)
 {
@@ -223,7 +223,7 @@ add_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 add_16(T &o, T &b)
 {
@@ -235,7 +235,7 @@ add_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 add_32(T &o, T &b)
 {
@@ -247,7 +247,7 @@ add_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 add_64(T &o, T &b)
 {
@@ -259,7 +259,7 @@ add_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 add(T &o, T &b)
 {
@@ -277,7 +277,7 @@ add(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 adds_8(T &o, T &b)
 {
@@ -289,7 +289,7 @@ adds_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 adds_16(T &o, T &b)
 {
@@ -301,7 +301,7 @@ adds_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 adds(T &o, T &b)
 {
@@ -313,7 +313,7 @@ adds(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 adds_u8(T &o, T &b)
 {
@@ -325,7 +325,7 @@ adds_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 adds_u16(T &o, T &b)
 {
@@ -337,7 +337,7 @@ adds_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 adds_unsigned(T &o, T &b)
 {
@@ -349,7 +349,7 @@ adds_unsigned(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sub_8(T &o, T &b)
 {
@@ -361,7 +361,7 @@ sub_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sub_16(T &o, T &b)
 {
@@ -373,7 +373,7 @@ sub_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sub_32(T &o, T &b)
 {
@@ -385,7 +385,7 @@ sub_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sub_64(T &o, T &b)
 {
@@ -397,7 +397,7 @@ sub_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sub(T &o, T &b)
 {
@@ -415,7 +415,7 @@ sub(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 subs_8(T &o, T &b)
 {
@@ -427,7 +427,7 @@ subs_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 subs_16(T &o, T &b)
 {
@@ -439,7 +439,7 @@ subs_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 subs(T &o, T &b)
 {
@@ -451,7 +451,7 @@ subs(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 subs_u8(T &o, T &b)
 {
@@ -463,7 +463,7 @@ subs_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 subs_u16(T &o, T &b)
 {
@@ -475,7 +475,7 @@ subs_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 subs_unsigned(T &o, T &b)
 {
@@ -487,7 +487,7 @@ subs_unsigned(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hadd_16(T &o, T &b)
 {
@@ -499,7 +499,7 @@ hadd_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hadd_32(T &o, T &b)
 {
@@ -511,7 +511,7 @@ hadd_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hadd(T &o, T &b)
 {
@@ -523,7 +523,7 @@ hadd(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hadds_16(T &o, T &b)
 {
@@ -538,7 +538,7 @@ hadds_16(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // subs
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hsub_16(T &o, T &b)
 {
@@ -550,7 +550,7 @@ hsub_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hsub_32(T &o, T &b)
 {
@@ -562,7 +562,7 @@ hsub_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hsub(T &o, T &b)
 {
@@ -574,7 +574,7 @@ hsub(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 hsubs_16(T &o, T &b)
 {
@@ -589,7 +589,7 @@ hsubs_16(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // muls
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mullo_16(T &o, T &b)
 {
@@ -601,7 +601,7 @@ mullo_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mullo_32(T &o, T &b)
 {
@@ -613,7 +613,7 @@ mullo_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mullo_64(T &o, T &b)
 {
@@ -625,7 +625,7 @@ mullo_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mullo(T &o, T &b)
 {
@@ -640,7 +640,7 @@ mullo(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mulhi_16(T &o, T &b)
 {
@@ -652,7 +652,7 @@ mulhi_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mulhi(T &o, T &b)
 {
@@ -661,7 +661,7 @@ mulhi(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mulhi_u16(T &o, T &b)
 {
@@ -673,7 +673,7 @@ mulhi_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mulhi_unsigned(T &o, T &b)
 {
@@ -682,7 +682,7 @@ mulhi_unsigned(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mul_32_64(T &o, T &b)
 {
@@ -694,7 +694,7 @@ mul_32_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 mul_u32_64(T &o, T &b)
 {
@@ -706,7 +706,7 @@ mul_u32_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 madd_16(T &o, T &b)
 {
@@ -718,7 +718,7 @@ madd_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 madd(T &o, T &b)
 {
@@ -727,7 +727,7 @@ madd(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 maddubs_8(T &o, T &b)
 {
@@ -739,7 +739,7 @@ maddubs_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 maddubs(T &o, T &b)
 {
@@ -751,7 +751,7 @@ maddubs(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // avgs
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avg_u8(T &o, T &b)
 {
@@ -763,7 +763,7 @@ avg_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avg_u16(T &o, T &b)
 {
@@ -775,7 +775,7 @@ avg_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 avg_unsigned(T &o, T &b)
 {
@@ -790,7 +790,7 @@ avg_unsigned(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // signs
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sign_8(T &o, T &b)
 {
@@ -802,7 +802,7 @@ sign_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sign_16(T &o, T &b)
 {
@@ -814,7 +814,7 @@ sign_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sign_32(T &o, T &b)
 {
@@ -826,7 +826,7 @@ sign_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sign(T &o, T &b)
 {
@@ -841,7 +841,7 @@ sign(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_8(T &o, T &b)
 {
@@ -853,7 +853,7 @@ min_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_16(T &o, T &b)
 {
@@ -865,7 +865,7 @@ min_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_32(T &o, T &b)
 {
@@ -877,7 +877,7 @@ min_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min(T &o, T &b)
 {
@@ -892,7 +892,7 @@ min(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_u8(T &o, T &b)
 {
@@ -904,7 +904,7 @@ min_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_u16(T &o, T &b)
 {
@@ -916,7 +916,7 @@ min_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_u32(T &o, T &b)
 {
@@ -928,7 +928,7 @@ min_u32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 min_unsigned(T &o, T &b)
 {
@@ -943,7 +943,7 @@ min_unsigned(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_8(T &o, T &b)
 {
@@ -955,7 +955,7 @@ max_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_16(T &o, T &b)
 {
@@ -967,7 +967,7 @@ max_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_32(T &o, T &b)
 {
@@ -979,7 +979,7 @@ max_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max(T &o, T &b)
 {
@@ -994,7 +994,7 @@ max(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_u8(T &o, T &b)
 {
@@ -1006,7 +1006,7 @@ max_u8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_u16(T &o, T &b)
 {
@@ -1018,7 +1018,7 @@ max_u16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_u32(T &o, T &b)
 {
@@ -1030,7 +1030,7 @@ max_u32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 max_unsigned(T &o, T &b)
 {
@@ -1045,7 +1045,7 @@ max_unsigned(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs_8(T &o)
 {
@@ -1057,7 +1057,7 @@ abs_8(T &o)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs_16(T &o)
 {
@@ -1069,7 +1069,7 @@ abs_16(T &o)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs_32(T &o)
 {
@@ -1081,7 +1081,7 @@ abs_32(T &o)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 abs(T &o)
 {
@@ -1096,7 +1096,7 @@ abs(T &o)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 sad_u8(T &o, T &b)
 {
@@ -1111,7 +1111,7 @@ sad_u8(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cmps
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpeq_8(T &o, T &b)
 {
@@ -1123,7 +1123,7 @@ cmpeq_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpeq_16(T &o, T &b)
 {
@@ -1135,7 +1135,7 @@ cmpeq_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpeq_32(T &o, T &b)
 {
@@ -1147,7 +1147,7 @@ cmpeq_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpeq_64(T &o, T &b)
 {
@@ -1159,7 +1159,7 @@ cmpeq_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpeq(T &o, T &b)
 {
@@ -1177,7 +1177,7 @@ cmpeq(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpgt_8(T &o, T &b)
 {
@@ -1189,7 +1189,7 @@ cmpgt_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpgt_16(T &o, T &b)
 {
@@ -1201,7 +1201,7 @@ cmpgt_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpgt_32(T &o, T &b)
 {
@@ -1213,7 +1213,7 @@ cmpgt_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpgt_64(T &o, T &b)
 {
@@ -1225,7 +1225,7 @@ cmpgt_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 cmpgt(T &o, T &b)
 {
@@ -1246,7 +1246,7 @@ cmpgt(T &o, T &b)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // packs
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 packs_16(T &o, T &b)
 {
@@ -1258,7 +1258,7 @@ packs_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 packs_32(T &o, T &b)
 {
@@ -1270,7 +1270,7 @@ packs_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 packs(T &o, T &b)
 {
@@ -1282,7 +1282,7 @@ packs(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 packus_16(T &o, T &b)
 {
@@ -1294,7 +1294,7 @@ packus_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 packus_32(T &o, T &b)
 {
@@ -1306,7 +1306,7 @@ packus_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 packus(T &o, T &b)
 {
@@ -1318,7 +1318,7 @@ packus(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpacklo_8(T &o, T &b)
 {
@@ -1330,7 +1330,7 @@ unpacklo_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpacklo_16(T &o, T &b)
 {
@@ -1342,7 +1342,7 @@ unpacklo_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpacklo_32(T &o, T &b)
 {
@@ -1354,7 +1354,7 @@ unpacklo_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpacklo_64(T &o, T &b)
 {
@@ -1366,7 +1366,7 @@ unpacklo_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpacklo(T &o, T &b)
 {
@@ -1384,7 +1384,7 @@ unpacklo(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpackhi_8(T &o, T &b)
 {
@@ -1396,7 +1396,7 @@ unpackhi_8(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpackhi_16(T &o, T &b)
 {
@@ -1408,7 +1408,7 @@ unpackhi_16(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpackhi_32(T &o, T &b)
 {
@@ -1420,7 +1420,7 @@ unpackhi_32(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpackhi_64(T &o, T &b)
 {
@@ -1432,7 +1432,7 @@ unpackhi_64(T &o, T &b)
   }
 }
 
-template <is_simd_class T>
+template<is_simd_class T>
 inline T
 unpackhi(T &o, T &b)
 {
@@ -1450,7 +1450,7 @@ unpackhi(T &o, T &b)
   }
 }
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron
 
 #pragma GCC diagnostic pop

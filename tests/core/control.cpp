@@ -21,7 +21,7 @@ validate_sigset(const micron::sigset_t *s)
 {
   // first word: only bits 0..(_NSIG-1)
   unsigned long mask = s->__val[0] & ~((1UL << (64 - 1)) - 1);
-  if ( mask ) return 0;     // invalid bits in first word
+  if ( mask ) return 0;      // invalid bits in first word
 
   // all remaining words must be zero
   for ( int i = 1; i < 16; i++ ) {
@@ -33,13 +33,13 @@ validate_sigset(const micron::sigset_t *s)
 int
 check_sigset(const micron::sigset_t *set)
 {
-  for ( int i = 0; i < 16; i++ ) {     // 16 × unsigned long = 128 bytes
+  for ( int i = 0; i < 16; i++ ) {      // 16 × unsigned long = 128 bytes
     unsigned long mask = set->__val[i];
     // for last word, only lower bits may be set
     if ( i == 15 ) mask &= ~((1UL << ((64 - 1) % 64 + 1)) - 1);
-    if ( mask != 0 ) return 0;     // invalid high bits set
+    if ( mask != 0 ) return 0;      // invalid high bits set
   }
-  return 1;     // valid
+  return 1;      // valid
 }
 
 int

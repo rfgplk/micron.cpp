@@ -109,7 +109,7 @@ inline constexpr u32 ipio2[66] = {
   0xE61B08u, 0x659985u, 0x5F14A0u, 0x68408Du, 0xFFD880u, 0x4D7327u, 0x310606u, 0x1556CAu, 0x73A8C9u, 0x60E27Bu, 0xC08C6Bu,
 };
 
-inline constexpr f64 pio2_w0 = 0x1.921fb54400000p+0;     // pi/2 to 33 bits
+inline constexpr f64 pio2_w0 = 0x1.921fb54400000p+0;      // pi/2 to 33 bits
 inline constexpr f64 pio2_w1 = 0x1.0b4611a626000p-34;
 inline constexpr f64 pio2_w2 = 0x1.9880000000000p-77;
 
@@ -130,7 +130,7 @@ payne_hanek(f64 x, f64 *r) noexcept
   for ( int k = 0; k < 6; ++k ) {
     const int idx = k0 + k;
     if ( idx < 0 || idx >= 66 ) continue;
-    const u128 prod = u128{ m } * u128{ u64(ipio2[idx]) };     // 77-bit
+    const u128 prod = u128{ m } * u128{ u64(ipio2[idx]) };      // 77-bit
     const int shift = anchor - 24 * k - 76;
     if ( shift >= 0 && shift < 128 ) {
       acc = acc + (prod << shift);
@@ -169,7 +169,7 @@ payne_hanek(f64 x, f64 *r) noexcept
   return q;
 }
 
-};     // namespace __paynehanek
+};      // namespace __paynehanek
 
 [[nodiscard, gnu::always_inline]] inline constexpr int
 reduce_pio2(f64 x, f64 *r) noexcept
@@ -209,7 +209,7 @@ reduce_pio2_dd(f64 x, dd64 *r) noexcept
   return q;
 }
 
-};     // namespace __rr
+};      // namespace __rr
 
 [[nodiscard, gnu::always_inline]] inline constexpr f64
 ksin_f64(f64 r) noexcept
@@ -279,17 +279,17 @@ sin_f64(f64 x) noexcept
   if ( ieee::is_inf(x) ) [[unlikely]]
     return ieee::qnan_v<f64>();
   if ( manip::fabs(x) < 0x1.0p-26 ) [[unlikely]]
-    return x;     // return x if small enough
+    return x;      // return x if small enough
   f64 r;
   int q = __rr::reduce_pio2(x, &r);
   switch ( q ) {
-  case 0 :
+  case 0:
     return ksin_f64(r);
-  case 1 :
+  case 1:
     return kcos_f64(r);
-  case 2 :
+  case 2:
     return -ksin_f64(r);
-  default :
+  default:
     return -kcos_f64(r);
   }
 }
@@ -306,13 +306,13 @@ cos_f64(f64 x) noexcept
   f64 r;
   int q = __rr::reduce_pio2(x, &r);
   switch ( q ) {
-  case 0 :
+  case 0:
     return kcos_f64(r);
-  case 1 :
+  case 1:
     return -ksin_f64(r);
-  case 2 :
+  case 2:
     return -kcos_f64(r);
-  default :
+  default:
     return ksin_f64(r);
   }
 }
@@ -335,19 +335,19 @@ sincos_f64(f64 x, f64 *s, f64 *c) noexcept
   f64 ks = ksin_f64(r);
   f64 kc = kcos_f64(r);
   switch ( q ) {
-  case 0 :
+  case 0:
     *s = ks;
     *c = kc;
     return;
-  case 1 :
+  case 1:
     *s = kc;
     *c = -ks;
     return;
-  case 2 :
+  case 2:
     *s = -ks;
     *c = -kc;
     return;
-  default :
+  default:
     *s = -kc;
     *c = ks;
     return;
@@ -375,7 +375,7 @@ atan_f64(f64 x) noexcept
   if ( ieee::is_nan(x) ) return x;
   f64 ax = manip::fabs(x);
   if ( ax >= 0x1.0p+61 ) return manip::copysign<f64>(0x1.921fb54442d18p+0, x);
-  if ( ax < 0x1.0p-29 ) return x;     // tiny
+  if ( ax < 0x1.0p-29 ) return x;      // tiny
 
   int idx;
   f64 t;
@@ -565,13 +565,13 @@ sin_f32(f32 x) noexcept
   const int q = __rr::reduce_pio2(f64(x), &rd);
   const f32 r = f32(rd);
   switch ( q ) {
-  case 0 :
+  case 0:
     return ksin_f32(r);
-  case 1 :
+  case 1:
     return kcos_f32(r);
-  case 2 :
+  case 2:
     return -ksin_f32(r);
-  default :
+  default:
     return -kcos_f32(r);
   }
 }
@@ -589,13 +589,13 @@ cos_f32(f32 x) noexcept
   const int q = __rr::reduce_pio2(f64(x), &rd);
   const f32 r = f32(rd);
   switch ( q ) {
-  case 0 :
+  case 0:
     return kcos_f32(r);
-  case 1 :
+  case 1:
     return -ksin_f32(r);
-  case 2 :
+  case 2:
     return -kcos_f32(r);
-  default :
+  default:
     return ksin_f32(r);
   }
 }
@@ -619,19 +619,19 @@ sincos_f32(f32 x, f32 *s, f32 *c) noexcept
   const f32 ks = ksin_f32(r);
   const f32 kc = kcos_f32(r);
   switch ( q ) {
-  case 0 :
+  case 0:
     *s = ks;
     *c = kc;
     return;
-  case 1 :
+  case 1:
     *s = kc;
     *c = -ks;
     return;
-  case 2 :
+  case 2:
     *s = -ks;
     *c = -kc;
     return;
-  default :
+  default:
     *s = -kc;
     *c = ks;
     return;
@@ -677,7 +677,7 @@ acos_f32(f32 x) noexcept
   return f32(acos_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sin(F x) noexcept
 {
@@ -687,7 +687,7 @@ sin(F x) noexcept
     return F(sin_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cos(F x) noexcept
 {
@@ -697,7 +697,7 @@ cos(F x) noexcept
     return F(cos_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tan(F x) noexcept
 {
@@ -707,7 +707,7 @@ tan(F x) noexcept
     return F(tan_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline constexpr void
 sincos(F x, F &s, F &c) noexcept
 {
@@ -724,7 +724,7 @@ sincos(F x, F &s, F &c) noexcept
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan(F x) noexcept
 {
@@ -734,7 +734,7 @@ atan(F x) noexcept
     return F(atan_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan2(F y, F x) noexcept
 {
@@ -744,7 +744,7 @@ atan2(F y, F x) noexcept
     return F(atan2_f64(f64(y), f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asin(F x) noexcept
 {
@@ -754,7 +754,7 @@ asin(F x) noexcept
     return F(asin_f64(f64(x)));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acos(F x) noexcept
 {
@@ -783,15 +783,15 @@ sin_dd_f64_with_special(f64 x, bool *handled) noexcept
   dd64 r;
   const int q = __rr::reduce_pio2_dd(x, &r);
   switch ( q ) {
-  case 0 :
+  case 0:
     return ksin_dd_f64(r);
-  case 1 :
+  case 1:
     return kcos_dd_f64(r);
-  case 2 : {
+  case 2: {
     dd64 v = ksin_dd_f64(r);
     return dd64{ -v.hi, -v.lo };
   }
-  default : {
+  default: {
     dd64 v = kcos_dd_f64(r);
     return dd64{ -v.hi, -v.lo };
   }
@@ -817,24 +817,24 @@ cos_dd_f64_with_special(f64 x, bool *handled) noexcept
   dd64 r;
   const int q = __rr::reduce_pio2_dd(x, &r);
   switch ( q ) {
-  case 0 :
+  case 0:
     return kcos_dd_f64(r);
-  case 1 : {
+  case 1: {
     dd64 v = ksin_dd_f64(r);
     return dd64{ -v.hi, -v.lo };
   }
-  case 2 : {
+  case 2: {
     dd64 v = kcos_dd_f64(r);
     return dd64{ -v.hi, -v.lo };
   }
-  default :
+  default:
     return ksin_dd_f64(r);
   }
 }
 
-};     // namespace trig_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace trig_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

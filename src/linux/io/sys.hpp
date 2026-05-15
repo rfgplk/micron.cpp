@@ -28,56 +28,56 @@ namespace posix
 {
 
 // these structs need to be here so we can use them for the syscall overloads
-template <typename P>
+template<typename P>
 max_t
 read(i32 fd, P *buf, usize cnt)
 {
   return micron::syscall(SYS_read, fd, micron::voidify(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 write(i32 fd, P *buf, usize cnt)
 {
   return micron::syscall(SYS_write, fd, micron::voidify(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 read(i32 fd, P &buf, usize cnt)
 {
   return micron::syscall(SYS_read, fd, micron::real_addr_as<byte>(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 write(i32 fd, P &buf, usize cnt)
 {
   return micron::syscall(SYS_write, fd, micron::real_addr_as<byte>(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 read(fd_t fd, P *buf, usize cnt)
 {
   return micron::syscall(SYS_read, fd.fd, micron::voidify(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 write(fd_t fd, P *buf, usize cnt)
 {
   return micron::syscall(SYS_write, fd.fd, micron::voidify(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 read(fd_t fd, P &buf, usize cnt)
 {
   return micron::syscall(SYS_read, fd.fd, micron::real_addr_as<byte>(buf), cnt);
 }
 
-template <typename P>
+template<typename P>
 max_t
 write(fd_t fd, P &buf, usize cnt)
 {
@@ -91,28 +91,28 @@ write(fd_t fd, P &buf, usize cnt)
 // promoting off_t to i64 keeps amd64 unchanged and on arm32 lets the syscall layers 64bit splitter route the value through the
 // even aligned register pair the kernel expects; otherwise the high half is whatever was left in the next register
 
-template <typename P>
+template<typename P>
 max_t
 pread(i32 fd, P *buf, usize cnt, off_t offset)
 {
   return micron::syscall(SYS_pread64, fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
-template <typename P>
+template<typename P>
 max_t
 pwrite(i32 fd, P *buf, usize cnt, off_t offset)
 {
   return micron::syscall(SYS_pwrite64, fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
-template <typename P>
+template<typename P>
 max_t
 pread(fd_t fd, P *buf, usize cnt, off_t offset)
 {
   return micron::syscall(SYS_pread64, fd.fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
-template <typename P>
+template<typename P>
 max_t
 pwrite(fd_t fd, P *buf, usize cnt, off_t offset)
 {
@@ -122,21 +122,21 @@ pwrite(fd_t fd, P *buf, usize cnt, off_t offset)
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // scatter/gathers
 
-template <typename T>
+template<typename T>
 max_t
 writev(i32 fd, const iovec_t<T> &iov, i32 iovcnt)
 {
   return micron::syscall(SYS_writev, fd, &iov, iovcnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 readv(i32 fd, iovec_t<T> &iov, i32 iovcnt)
 {
   return micron::syscall(SYS_readv, fd, &iov, iovcnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 preadv(i32 fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
@@ -148,7 +148,7 @@ preadv(i32 fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 #endif
 }
 
-template <typename T>
+template<typename T>
 max_t
 pwritev(i32 fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
@@ -160,21 +160,21 @@ pwritev(i32 fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 #endif
 }
 
-template <typename T>
+template<typename T>
 max_t
 writev(fd_t fd, const iovec_t<T> &iov, i32 iovcnt)
 {
   return micron::syscall(SYS_writev, fd.fd, &iov, iovcnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 readv(fd_t fd, iovec_t<T> &iov, i32 iovcnt)
 {
   return micron::syscall(SYS_readv, fd.fd, &iov, iovcnt);
 }
 
-template <typename T>
+template<typename T>
 max_t
 preadv(fd_t fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
@@ -186,7 +186,7 @@ preadv(fd_t fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 #endif
 }
 
-template <typename T>
+template<typename T>
 max_t
 pwritev(fd_t fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
@@ -960,5 +960,5 @@ fremovexattr(fd_t fd, const char *name)
   return static_cast<i32>(micron::syscall(SYS_fremovexattr, fd.fd, name));
 }
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

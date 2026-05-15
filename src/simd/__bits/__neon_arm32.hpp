@@ -44,41 +44,41 @@ namespace __bits
     __builtin_memcpy(p, &v, sizeof(v));                                                                                                    \
   }
 
-template <typename> struct __halfof32;
+template<typename> struct __halfof32;
 
-template <> struct __halfof32<int8x16_t> {
+template<> struct __halfof32<int8x16_t> {
   using type = int8x8_t;
 };
 
-template <> struct __halfof32<int16x8_t> {
+template<> struct __halfof32<int16x8_t> {
   using type = int16x4_t;
 };
 
-template <> struct __halfof32<int32x4_t> {
+template<> struct __halfof32<int32x4_t> {
   using type = int32x2_t;
 };
 
-template <> struct __halfof32<int64x2_t> {
+template<> struct __halfof32<int64x2_t> {
   using type = int64x1_t;
 };
 
-template <> struct __halfof32<uint8x16_t> {
+template<> struct __halfof32<uint8x16_t> {
   using type = uint8x8_t;
 };
 
-template <> struct __halfof32<uint16x8_t> {
+template<> struct __halfof32<uint16x8_t> {
   using type = uint16x4_t;
 };
 
-template <> struct __halfof32<uint32x4_t> {
+template<> struct __halfof32<uint32x4_t> {
   using type = uint32x2_t;
 };
 
-template <> struct __halfof32<uint64x2_t> {
+template<> struct __halfof32<uint64x2_t> {
   using type = uint64x1_t;
 };
 
-template <> struct __halfof32<float32x4_t> {
+template<> struct __halfof32<float32x4_t> {
   using type = float32x2_t;
 };
 
@@ -995,39 +995,39 @@ __inline_g uint8x16_t
 vextq_u8(uint8x16_t a, uint8x16_t b, const int n) noexcept
 {
   switch ( n & 15 ) {
-  case 0 :
+  case 0:
     return a;
-  case 1 :
+  case 1:
     return __builtin_shufflevector(a, b, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-  case 2 :
+  case 2:
     return __builtin_shufflevector(a, b, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
-  case 3 :
+  case 3:
     return __builtin_shufflevector(a, b, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
-  case 4 :
+  case 4:
     return __builtin_shufflevector(a, b, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-  case 5 :
+  case 5:
     return __builtin_shufflevector(a, b, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
-  case 6 :
+  case 6:
     return __builtin_shufflevector(a, b, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
-  case 7 :
+  case 7:
     return __builtin_shufflevector(a, b, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
-  case 8 :
+  case 8:
     return __builtin_shufflevector(a, b, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
-  case 9 :
+  case 9:
     return __builtin_shufflevector(a, b, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24);
-  case 10 :
+  case 10:
     return __builtin_shufflevector(a, b, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25);
-  case 11 :
+  case 11:
     return __builtin_shufflevector(a, b, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
-  case 12 :
+  case 12:
     return __builtin_shufflevector(a, b, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27);
-  case 13 :
+  case 13:
     return __builtin_shufflevector(a, b, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28);
-  case 14 :
+  case 14:
     return __builtin_shufflevector(a, b, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29);
-  case 15 :
+  case 15:
     return __builtin_shufflevector(a, b, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30);
-  default :
+  default:
     return a;
   }
 }
@@ -1042,23 +1042,23 @@ __inline_g uint16x8_t
 vextq_u16(uint16x8_t a, uint16x8_t b, const int n) noexcept
 {
   switch ( n & 7 ) {
-  case 0 :
+  case 0:
     return a;
-  case 1 :
+  case 1:
     return __builtin_shufflevector(a, b, 1, 2, 3, 4, 5, 6, 7, 8);
-  case 2 :
+  case 2:
     return __builtin_shufflevector(a, b, 2, 3, 4, 5, 6, 7, 8, 9);
-  case 3 :
+  case 3:
     return __builtin_shufflevector(a, b, 3, 4, 5, 6, 7, 8, 9, 10);
-  case 4 :
+  case 4:
     return __builtin_shufflevector(a, b, 4, 5, 6, 7, 8, 9, 10, 11);
-  case 5 :
+  case 5:
     return __builtin_shufflevector(a, b, 5, 6, 7, 8, 9, 10, 11, 12);
-  case 6 :
+  case 6:
     return __builtin_shufflevector(a, b, 6, 7, 8, 9, 10, 11, 12, 13);
-  case 7 :
+  case 7:
     return __builtin_shufflevector(a, b, 7, 8, 9, 10, 11, 12, 13, 14);
-  default :
+  default:
     return a;
   }
 }
@@ -1073,15 +1073,15 @@ __inline_g uint32x4_t
 vextq_u32(uint32x4_t a, uint32x4_t b, const int n) noexcept
 {
   switch ( n & 3 ) {
-  case 0 :
+  case 0:
     return a;
-  case 1 :
+  case 1:
     return __builtin_shufflevector(a, b, 1, 2, 3, 4);
-  case 2 :
+  case 2:
     return __builtin_shufflevector(a, b, 2, 3, 4, 5);
-  case 3 :
+  case 3:
     return __builtin_shufflevector(a, b, 3, 4, 5, 6);
-  default :
+  default:
     return a;
   }
 }
@@ -1096,15 +1096,15 @@ __inline_g float32x4_t
 vextq_f32(float32x4_t a, float32x4_t b, const int n) noexcept
 {
   switch ( n & 3 ) {
-  case 0 :
+  case 0:
     return a;
-  case 1 :
+  case 1:
     return __builtin_shufflevector(a, b, 1, 2, 3, 4);
-  case 2 :
+  case 2:
     return __builtin_shufflevector(a, b, 2, 3, 4, 5);
-  case 3 :
+  case 3:
     return __builtin_shufflevector(a, b, 3, 4, 5, 6);
-  default :
+  default:
     return a;
   }
 }
@@ -3385,23 +3385,23 @@ __inline_g uint8x8_t
 vext_u8(uint8x8_t a, uint8x8_t b, const int n) noexcept
 {
   switch ( n & 7 ) {
-  case 0 :
+  case 0:
     return a;
-  case 1 :
+  case 1:
     return __builtin_shufflevector(a, b, 1, 2, 3, 4, 5, 6, 7, 8);
-  case 2 :
+  case 2:
     return __builtin_shufflevector(a, b, 2, 3, 4, 5, 6, 7, 8, 9);
-  case 3 :
+  case 3:
     return __builtin_shufflevector(a, b, 3, 4, 5, 6, 7, 8, 9, 10);
-  case 4 :
+  case 4:
     return __builtin_shufflevector(a, b, 4, 5, 6, 7, 8, 9, 10, 11);
-  case 5 :
+  case 5:
     return __builtin_shufflevector(a, b, 5, 6, 7, 8, 9, 10, 11, 12);
-  case 6 :
+  case 6:
     return __builtin_shufflevector(a, b, 6, 7, 8, 9, 10, 11, 12, 13);
-  case 7 :
+  case 7:
     return __builtin_shufflevector(a, b, 7, 8, 9, 10, 11, 12, 13, 14);
-  default :
+  default:
     return a;
   }
 }
@@ -3416,15 +3416,15 @@ __inline_g uint16x4_t
 vext_u16(uint16x4_t a, uint16x4_t b, const int n) noexcept
 {
   switch ( n & 3 ) {
-  case 0 :
+  case 0:
     return a;
-  case 1 :
+  case 1:
     return __builtin_shufflevector(a, b, 1, 2, 3, 4);
-  case 2 :
+  case 2:
     return __builtin_shufflevector(a, b, 2, 3, 4, 5);
-  case 3 :
+  case 3:
     return __builtin_shufflevector(a, b, 3, 4, 5, 6);
-  default :
+  default:
     return a;
   }
 }
@@ -3608,6 +3608,6 @@ __mc_vset_lane_d(f32, f32, float32x2_t);
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

@@ -26,14 +26,14 @@ namespace micron
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // with_capacity
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 with_capacity(const usize n)
 {
   return micron::hstring<C>(n);
 };
 
-template <usize N, typename C = char>
+template<usize N, typename C = char>
 inline micron::hstring<C>
 with_capacity(void)
 {
@@ -43,7 +43,7 @@ with_capacity(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // invert
 
-template <is_string T>
+template<is_string T>
 inline void
 invert(T &str)
 {
@@ -60,7 +60,7 @@ invert(T &str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // constexpr comptimes
 
-template <typename I, usize N = 24>
+template<typename I, usize N = 24>
   requires(micron::is_integral_v<I> && N >= __impl::max_digits_v<I> + 1)
 constexpr micron::sstring<N, char>
 constexpr_int_to_string(I n)
@@ -98,7 +98,7 @@ constexpr_int_to_string(I n)
   return result;
 }
 
-template <typename I, usize N = 24>
+template<typename I, usize N = 24>
   requires(micron::is_integral_v<I> && N >= 19)
 constexpr micron::sstring<N, char>
 constexpr_hex(I n, bool upper = false)
@@ -124,7 +124,7 @@ constexpr_hex(I n, bool upper = false)
   return result;
 }
 
-template <typename I, usize N = 68>
+template<typename I, usize N = 68>
   requires(micron::is_integral_v<I> && N >= 67)
 constexpr micron::sstring<N, char>
 constexpr_bin(I n)
@@ -227,7 +227,7 @@ u32_check(const char32_t *str, usize n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_strings
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
   requires micron::is_integral_v<I>
 inline micron::hstring<C>
 to_string(I x)
@@ -235,7 +235,7 @@ to_string(I x)
   return int_to_string<I, C>(x);
 }
 
-template <typename C>
+template<typename C>
 inline micron::hstring<C>
 to_string(const C *str)
 {
@@ -250,28 +250,28 @@ to_string(const C (&str)[N])
   return micron::hstring<C>(str);
 }
 */
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_string_f32(f32 val)
 {
   return float_to_string<C>(val);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_string_f64(f64 val)
 {
   return double_to_string<C>(val);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_string(f32 val, u32 prec)
 {
   return float_to_string<C>(val, prec);
 }
 
-template <typename C = char>
+template<typename C = char>
 inline micron::hstring<C>
 to_string(f64 val, u32 prec)
 {
@@ -283,7 +283,7 @@ to_string(f64 val, u32 prec)
 // Sz controls the buffer size, C controls the character type
 // user can write: to_string_stack<i32, 32>(n) or to_string_stack<i32, 32, wchar_t>(n)
 
-template <typename I, usize Sz = 24, typename C = char>
+template<typename I, usize Sz = 24, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= __impl::max_digits_v<I> + 1)
 inline micron::sstring<Sz, C>
 to_string_stack(I x)
@@ -291,7 +291,7 @@ to_string_stack(I x)
   return int_to_string_stack<I, C, Sz>(x);
 }
 
-template <usize Sz, typename C>
+template<usize Sz, typename C>
 inline micron::sstring<Sz, C>
 to_string_stack(const C *str)
 {
@@ -306,7 +306,7 @@ to_string_stack(const C *str)
   return result;
 }
 
-template <usize Sz, usize N, typename C>
+template<usize Sz, usize N, typename C>
   requires(Sz >= N)
 inline micron::sstring<Sz, C>
 to_string_stack(const C (&str)[N])
@@ -320,7 +320,7 @@ to_string_stack(const C (&str)[N])
   return result;
 }
 
-template <usize Sz = 32, typename C = char>
+template<usize Sz = 32, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f32 val)
 {
@@ -336,7 +336,7 @@ to_string_stack(f32 val)
   return result;
 }
 
-template <usize Sz = 32, typename C = char>
+template<usize Sz = 32, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f64 val)
 {
@@ -352,7 +352,7 @@ to_string_stack(f64 val)
   return result;
 }
 
-template <usize Sz = 48, typename C = char>
+template<usize Sz = 48, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f32 val, u32 prec)
 {
@@ -368,7 +368,7 @@ to_string_stack(f32 val, u32 prec)
   return result;
 }
 
-template <usize Sz = 64, typename C = char>
+template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f64 val, u32 prec)
 {
@@ -388,7 +388,7 @@ to_string_stack(f64 val, u32 prec)
 // float_to_string_stack / double_to_string_stack
 // stack overloads for the floating_point.hpp heap functions
 
-template <usize Sz = 32, typename C = char>
+template<usize Sz = 32, typename C = char>
 inline micron::sstring<Sz, C>
 float_to_string_stack(f32 val)
 {
@@ -403,7 +403,7 @@ float_to_string_stack(f32 val)
   return result;
 }
 
-template <usize Sz = 32, typename C = char>
+template<usize Sz = 32, typename C = char>
 inline micron::sstring<Sz, C>
 double_to_string_stack(f64 val)
 {
@@ -418,7 +418,7 @@ double_to_string_stack(f64 val)
   return result;
 }
 
-template <usize Sz = 48, typename C = char>
+template<usize Sz = 48, typename C = char>
 inline micron::sstring<Sz, C>
 float_to_string_stack(f32 val, u32 prec)
 {
@@ -433,7 +433,7 @@ float_to_string_stack(f32 val, u32 prec)
   return result;
 }
 
-template <usize Sz = 64, typename C = char>
+template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 double_to_string_stack(f64 val, u32 prec)
 {
@@ -451,7 +451,7 @@ double_to_string_stack(f64 val, u32 prec)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_fixed_stack / to_scientific_stack / to_general_stack
 
-template <usize Sz = 64, typename C = char>
+template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 to_fixed_stack(f64 val, u32 precision = 6)
 {
@@ -466,7 +466,7 @@ to_fixed_stack(f64 val, u32 precision = 6)
   return result;
 }
 
-template <usize Sz = 80, typename C = char>
+template<usize Sz = 80, typename C = char>
 inline micron::sstring<Sz, C>
 to_scientific_stack(f64 val, u32 precision = 6)
 {
@@ -481,7 +481,7 @@ to_scientific_stack(f64 val, u32 precision = 6)
   return result;
 }
 
-template <usize Sz = 80, typename C = char>
+template<usize Sz = 80, typename C = char>
 inline micron::sstring<Sz, C>
 to_general_stack(f64 val, u32 precision = 6)
 {
@@ -505,7 +505,7 @@ to_general_stack(f64 val, u32 precision = 6)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_base_stack / uint_to_string_base_stack
 
-template <typename I, usize Sz = 72, typename C = char>
+template<typename I, usize Sz = 72, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 int_to_string_base_stack(I n, u32 base, bool upper = false)
@@ -538,7 +538,7 @@ int_to_string_base_stack(I n, u32 base, bool upper = false)
   return result;
 }
 
-template <typename I, usize Sz = 72, typename C = char>
+template<typename I, usize Sz = 72, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 uint_to_string_base_stack(I n, u32 base, bool upper = false)
@@ -560,7 +560,7 @@ uint_to_string_base_stack(I n, u32 base, bool upper = false)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_hex_stack / to_oct_stack / to_bin_stack
 
-template <typename I, usize Sz = 20, typename C = char>
+template<typename I, usize Sz = 20, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 to_hex_stack(I n, bool upper = false)
@@ -568,7 +568,7 @@ to_hex_stack(I n, bool upper = false)
   return uint_to_string_base_stack<I, Sz, C>(n, 16, upper);
 }
 
-template <typename I, usize Sz = 24, typename C = char>
+template<typename I, usize Sz = 24, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 to_oct_stack(I n)
@@ -576,7 +576,7 @@ to_oct_stack(I n)
   return uint_to_string_base_stack<I, Sz, C>(n, 8, false);
 }
 
-template <typename I, usize Sz = 68, typename C = char>
+template<typename I, usize Sz = 68, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 to_bin_stack(I n)
@@ -587,7 +587,7 @@ to_bin_stack(I n)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_hex_fixed_stack / to_bin_fixed_stack
 
-template <typename I, usize Sz, typename C = char>
+template<typename I, usize Sz, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 to_hex_fixed_stack(I n, usize digits, bool upper = false)
@@ -608,7 +608,7 @@ to_hex_fixed_stack(I n, usize digits, bool upper = false)
   return buf;
 }
 
-template <typename I, usize Sz, typename C = char>
+template<typename I, usize Sz, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= 2)
 inline micron::sstring<Sz, C>
 to_bin_fixed_stack(I n, usize digits)
@@ -631,7 +631,7 @@ to_bin_fixed_stack(I n, usize digits)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // int_to_string_padded_stack
 
-template <typename I, usize Sz, typename C = char>
+template<typename I, usize Sz, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= __impl::max_digits_v<I> + 1)
 inline micron::sstring<Sz, C>
 int_to_string_padded_stack(I n, usize width)
@@ -682,14 +682,14 @@ int_to_string_padded_stack(I n, usize width)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bytes_to_string / bytes_to_string_stack
 
-template <typename I, typename C = char>
+template<typename I, typename C = char>
 inline micron::hstring<C>
 bytes_to_string(I n)
 {
   return int_to_string<I, C>(n);
 }
 
-template <typename I, usize Sz = 24, typename C = char>
+template<typename I, usize Sz = 24, typename C = char>
   requires(micron::is_integral_v<I> && Sz >= __impl::max_digits_v<I> + 1)
 inline micron::sstring<Sz, C>
 bytes_to_string_stack(I n)
@@ -697,4 +697,4 @@ bytes_to_string_stack(I n)
   return int_to_string_stack<I, C, Sz>(n);
 }
 
-};     // namespace micron
+};      // namespace micron

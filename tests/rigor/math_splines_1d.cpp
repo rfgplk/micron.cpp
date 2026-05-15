@@ -40,7 +40,7 @@ main()
   test_case("linear_1d: exact recovery of linear data");
   {
     f64 xs[5] = { 0.0, 1.0, 2.0, 3.0, 4.0 };
-    f64 ys[5] = { 1.0, 3.0, 5.0, 7.0, 9.0 };     // y = 2x + 1
+    f64 ys[5] = { 1.0, 3.0, 5.0, 7.0, 9.0 };      // y = 2x + 1
     auto s = make_linear<f64>(raw_slice<const f64>(xs, 5), raw_slice<const f64>(ys, 5));
     require_true(near(evaluate<f64>(s, 0.5), 2.0, 1e-14));
     require_true(near(evaluate<f64>(s, 1.5), 4.0, 1e-14));
@@ -54,7 +54,7 @@ main()
   test_case("linear_1d: extrap policies (clamp / linear_continue / error)");
   {
     f64 xs[3] = { 0.0, 1.0, 2.0 };
-    f64 ys[3] = { 0.0, 2.0, 4.0 };     // y = 2x
+    f64 ys[3] = { 0.0, 2.0, 4.0 };      // y = 2x
     auto s = make_linear<f64>(raw_slice<const f64>(xs, 3), raw_slice<const f64>(ys, 3));
     s.mode = extrap::clamp_to_endpoints;
     require_true(near(evaluate<f64>(s, -10.0), 0.0, 1e-14));
@@ -73,7 +73,7 @@ main()
   {
     constexpr usize n = 6;
     f64 xs[n] = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 };
-    f64 ys[n] = { 0.0, 1.0, 4.0, 9.0, 16.0, 25.0 };     // y = x^2 sampled
+    f64 ys[n] = { 0.0, 1.0, 4.0, 9.0, 16.0, 25.0 };      // y = x^2 sampled
     auto s = make_linear<f64>(raw_slice<const f64>(xs, n), raw_slice<const f64>(ys, n));
 
     f64 sorted_q[6] = { 0.5, 1.5, 2.5, 3.5, 4.5, 4.99 };
@@ -215,7 +215,7 @@ main()
   {
     // Monotone increasing data with sharp slope changes.
     f64 xs[7] = { 0, 1, 2, 3, 4, 5, 6 };
-    f64 ys[7] = { 0, 1, 1.01, 1.02, 5, 5.01, 5.02 };     // mostly flat then steep
+    f64 ys[7] = { 0, 1, 1.01, 1.02, 5, 5.01, 5.02 };      // mostly flat then steep
     auto s = make_pchip<f64>(raw_slice<const f64>(xs, 7), raw_slice<const f64>(ys, 7));
     for ( usize i = 0; i < 7; ++i ) require_true(near(evaluate<f64>(s, xs[i]), ys[i], 1e-12));
     // Sample on a dense grid; require strict non-decrease.
@@ -223,7 +223,7 @@ main()
     for ( usize i = 1; i < 600; ++i ) {
       const f64 x = xs[0] + (xs[6] - xs[0]) * f64(i) / 599.0;
       const f64 v = evaluate<f64>(s, x);
-      require_true(v >= prev - 1e-13);     // tolerate fp noise
+      require_true(v >= prev - 1e-13);      // tolerate fp noise
       prev = v;
     }
   }

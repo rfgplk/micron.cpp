@@ -26,7 +26,7 @@ namespace fsys
 
 constexpr static const usize __max_fs = ~static_cast<usize>(0);
 
-template <io::modes __default_mode = io::modes::read, usize N = 256> class system
+template<io::modes __default_mode = io::modes::read, usize N = 256> class system
 {
   micron::unique_pointer<fsys::file<>> entries[N];
   usize sz;
@@ -117,11 +117,11 @@ public:
     }
   }
 
-  system() : entries{ nullptr }, sz(0) {}
+  system() : entries{ nullptr }, sz(0) { }
 
   system(const io::path_t &p, const io::modes c = __default_mode) : entries{ nullptr }, sz(0) { file(p, c); }
 
-  template <typename... T>
+  template<typename... T>
     requires((micron::same_as<T, io::path_t> && ...))
   system(const T &...t)
   {
@@ -130,7 +130,7 @@ public:
 
   system(const system &o) { micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]); }
 
-  system(system &&o) : entries(micron::move(o.entries)) {}
+  system(system &&o) : entries(micron::move(o.entries)) { }
 
   system &
   operator=(const system &o)
@@ -266,7 +266,7 @@ public:
     sync();
   }
 
-  template <typename... Paths>
+  template<typename... Paths>
   void
   copy_list(const io::path_t &from, const Paths &...to)
   {
@@ -313,7 +313,7 @@ public:
     return entries[id]->set_permissions(perms);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   auto
   set_permissions(const io::path_t &path, Args... args)
   {
@@ -607,7 +607,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   system &
   write_string(const io::path_t &p, const T &str)
   {
@@ -615,7 +615,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   system &
   write_string(const io::path_t &p, T &&str)
   {
@@ -623,7 +623,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   system &
   read_string(const io::path_t &p, T &str)
   {
@@ -859,7 +859,7 @@ public:
     return entries[__locate(p)]->search(pat, window_sz);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   io::bin_match_t
   search(const io::path_t &p, const Tp &pat, usize window_sz = fsys::file<>::default_search_window)
   {
@@ -878,7 +878,7 @@ public:
     return search(p, pat, w);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   io::bin_match_t
   search_file(const io::path_t &p, const Tp &pat, usize w = fsys::file<>::default_search_window)
   {
@@ -897,7 +897,7 @@ public:
     return entries[__locate(p)]->find_all(pat, window_sz);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   micron::vector<io::bin_match_t>
   find_all(const io::path_t &p, const Tp &pat, usize window_sz = fsys::file<>::default_search_window)
   {
@@ -916,42 +916,42 @@ public:
     return entries[__locate(p)]->entropy(window_sz);
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   void
   to_stream(const io::path_t &p, io::stream<SZ, CK> &s)
   {
     entries[__locate(p)]->to_stream(s);
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   void
   from_stream(const io::path_t &p, io::stream<SZ, CK> &s)
   {
     entries[__locate(p, io::modes::write)]->from_stream(s);
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   void
   flush_to_stream(const io::path_t &p, io::stream<SZ, CK> &s)
   {
     entries[__locate(p)]->flush_to_stream(s);
   }
 
-  template <io::encode_fn Fn, is_string Tp>
+  template<io::encode_fn Fn, is_string Tp>
   void
   write_encoded(const io::path_t &p, Fn &&fn, const Tp &src)
   {
     entries[__locate(p, io::modes::write)]->write_encoded(micron::forward<Fn>(fn), src);
   }
 
-  template <io::encode_fn Fn>
+  template<io::encode_fn Fn>
   void
   write_encoded(const io::path_t &p, Fn &&fn, const byte *src, usize src_len)
   {
     entries[__locate(p, io::modes::write)]->write_encoded(micron::forward<Fn>(fn), src, src_len);
   }
 
-  template <io::encode_fn Fn, is_string Tp>
+  template<io::encode_fn Fn, is_string Tp>
   void
   append_encoded(const io::path_t &p, Fn &&fn, const Tp &src)
   {
@@ -978,7 +978,7 @@ public:
     entries[__locate(p, io::modes::appendread)]->append_raw(data_ptr, len);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   append_raw(const io::path_t &p, const Tp &str)
   {
@@ -991,7 +991,7 @@ public:
     entries[__locate(src)]->copy_to(dest_path, chunk_sz);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   copy_to(const io::path_t &src, const Tp &dest_path, usize chunk_sz = 65536u)
   {
@@ -1012,7 +1012,7 @@ public:
     return posix::is_same_file(a.c_str(), b.c_str());
   }
 
-  template <io::intercept_fn Fn>
+  template<io::intercept_fn Fn>
   void
   load_intercepted(const io::path_t &p, Fn &&fn, usize chunk_sz = 65536u)
   {
@@ -1025,7 +1025,7 @@ public:
     entries[__locate(p, io::modes::write)]->atomic_replace(new_data, new_len);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   void
   atomic_replace(const io::path_t &p, const Tp &str)
   {
@@ -1099,7 +1099,7 @@ public:
     posix::unlink(p.c_str());
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   sync_if(Fn &&pred)
   {
@@ -1107,14 +1107,14 @@ public:
       if ( pred(*entries[i]) ) entries[i]->sync();
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn)
   {
     for ( usize i = 0; i < sz; i++ ) fn(*entries[i]);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
@@ -1122,5 +1122,5 @@ public:
   }
 };
 
-};     // namespace fsys
-};     // namespace micron
+};      // namespace fsys
+};      // namespace micron

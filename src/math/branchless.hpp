@@ -394,6 +394,6 @@ swap_bits64(u64 x, u64 mask, int shift) noexcept
   return x ^ t ^ (t << shift);
 }
 
-};     // namespace branchless
-};     // namespace math
-};     // namespace micron
+};      // namespace branchless
+};      // namespace math
+};      // namespace micron

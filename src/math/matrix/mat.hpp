@@ -18,9 +18,9 @@ namespace micron
 namespace math
 {
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
   requires(R >= 1 && C >= 1 && R * C * sizeof(T) <= 1024)
-struct mat : public micron::int_matrix_base_avx<T, C, R> {
+struct mat: public micron::int_matrix_base_avx<T, C, R> {
   using base_type = micron::int_matrix_base_avx<T, C, R>;
   using value_type = T;
   static constexpr usize rows = R;
@@ -73,7 +73,7 @@ struct mat : public micron::int_matrix_base_avx<T, C, R> {
   }
 };
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 operator==(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
 {
@@ -82,14 +82,14 @@ operator==(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
   return true;
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 operator!=(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
 {
   return !(a == b);
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
 operator+(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
 {
@@ -98,7 +98,7 @@ operator+(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
   return r;
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
 operator-(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
 {
@@ -107,7 +107,7 @@ operator-(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
   return r;
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
 operator*(const mat<T, R, C> &a, T s) noexcept
 {
@@ -116,12 +116,12 @@ operator*(const mat<T, R, C> &a, T s) noexcept
   return r;
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
 operator*(T s, const mat<T, R, C> &a) noexcept
 {
   return a * s;
 }
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

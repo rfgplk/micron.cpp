@@ -26,7 +26,7 @@ near(f64 a, f64 b, f64 eps = 1e-10)
   return (d < 0 ? -d : d) < eps;
 }
 
-template <usize N>
+template<usize N>
 static bool
 near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-10)
 {
@@ -35,7 +35,7 @@ near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-10)
   return true;
 }
 
-template <usize R, usize C>
+template<usize R, usize C>
 static bool
 near_m(const mat<f64, R, C> &a, const mat<f64, R, C> &b, f64 eps = 1e-10)
 {
@@ -169,7 +169,7 @@ main()
   // det / inv / solve
   test_case("det2 / inv2 / solve2");
   {
-    mat<f64, 2, 2> M{ 4.0, 7.0, 2.0, 6.0 };     // det = 24-14 = 10
+    mat<f64, 2, 2> M{ 4.0, 7.0, 2.0, 6.0 };      // det = 24-14 = 10
     require_true(near(det2(M), 10.0));
     auto Mi = inv2(M);
     auto P = gemm(M, Mi);
@@ -233,7 +233,7 @@ main()
   test_case("quat — slerp endpoints");
   {
     auto q0 = quat<f64>::identity();
-    quat<f64> q1{ 0.0, 0.0, 1.0, 0.0 };     // 180 deg about Z
+    quat<f64> q1{ 0.0, 0.0, 1.0, 0.0 };      // 180 deg about Z
     auto m0 = slerp(q0, q1, 0.0);
     auto m1 = slerp(q0, q1, 1.0);
     require_true(near(m0.data[3], 1.0, 1e-9));

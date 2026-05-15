@@ -16,7 +16,7 @@ namespace micron
 namespace math
 {
 // soleus artifact, consider porting over to vec_types
-template <ieee754_floating F> struct alignas(vec_align_v<F, 4>) quat {
+template<ieee754_floating F> struct alignas(vec_align_v<F, 4>) quat {
   F data[4];
 
   using value_type = F;
@@ -88,5 +88,5 @@ template <ieee754_floating F> struct alignas(vec_align_v<F, 4>) quat {
   }
 };
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

@@ -17,7 +17,7 @@
 namespace micron
 {
 
-template <typename T, int Dg> struct b_node {
+template<typename T, int Dg> struct b_node {
   micron::array<T, 2 * Dg - 1> keys;
   b_node *chld[2 * Dg]{};
   int nkeys = 0;
@@ -86,7 +86,7 @@ template <typename T, int Dg> struct b_node {
   insert_nonfull(const T &key)
   {
     int i = nkeys - 1;
-    if ( !chld[0] ) {     // leaf
+    if ( !chld[0] ) {      // leaf
       while ( i >= 0 && key < keys[i] ) {
         keys[i + 1] = keys[i];
         --i;
@@ -221,16 +221,16 @@ template <typename T, int Dg> struct b_node {
   }
 };
 
-template <typename T, int Dg> struct b_tree {
+template<typename T, int Dg> struct b_tree {
   micron::uptr<b_node<T, Dg>> root;
 
   ~b_tree() = default;
 
-  b_tree() : root(unique<b_node<T, Dg>>()) {}
+  b_tree() : root(unique<b_node<T, Dg>>()) { }
 
   b_tree(const b_tree &) = delete;
 
-  b_tree(b_tree &&o) : root(micron::move(o.root)) {}
+  b_tree(b_tree &&o) : root(micron::move(o.root)) { }
 
   b_tree &operator=(const b_tree &) = delete;
 
@@ -247,7 +247,7 @@ template <typename T, int Dg> struct b_tree {
   insert(const T &key)
   {
     if ( !root ) {
-      root = unique<b_node<T, Dg>>(key);     // new b_node<T, Dg>(key);
+      root = unique<b_node<T, Dg>>(key);      // new b_node<T, Dg>(key);
       return;
     }
     if ( root->nkeys == 2 * Dg - 1 ) {
@@ -364,7 +364,7 @@ template <typename T, int Dg> struct b_tree {
     int idx = -1;
     b_node<T, Dg> *n = root->search(key, &idx);
     if ( !n || idx < 0 ) return nullptr;
-    if ( n->chld[idx] ) {     // left subtree exists
+    if ( n->chld[idx] ) {      // left subtree exists
       b_node<T, Dg> *cur = n->chld[idx];
       while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
       return &cur->keys[cur->nkeys - 1];
@@ -414,4 +414,4 @@ template <typename T, int Dg> struct b_tree {
   }
 };
 
-};     // namespace micron
+};      // namespace micron

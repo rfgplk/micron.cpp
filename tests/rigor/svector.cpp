@@ -112,7 +112,7 @@ struct Probe {
   }
 };
 
-}     // anonymous namespace
+}      // anonymous namespace
 
 // ================================================================== //
 int
@@ -234,7 +234,7 @@ main()
     for ( size_t i = 0; i < 4; ++i ) require(b[i], a[i]);
 
     b[0] = 99;
-    require(a[0], 1);     // a unaffected
+    require(a[0], 1);      // a unaffected
   }
   end_test_case();
 
@@ -278,7 +278,7 @@ main()
       int live_before = Probe::live;
 
       micron::svector<Probe, 8> b(micron::move(a));
-      require(Probe::live, live_before);     // no new constructions
+      require(Probe::live, live_before);      // no new constructions
       require(b.size(), size_t(4));
       require(a.size(), size_t(0));
     }
@@ -362,7 +362,7 @@ main()
   test_case("at() throws on out-of-bounds");
   {
     micron::svector<int, 8> v{ 1, 2, 3 };
-    require_throw([&]() { (void)v.at(3); });     // length == 3, index 3 is OOB
+    require_throw([&]() { (void)v.at(3); });      // length == 3, index 3 is OOB
     require_throw([&]() { (void)v.at(99); });
   }
   end_test_case();
@@ -672,7 +672,7 @@ main()
 
       v.erase(size_t(2));
       require(Probe::live, 4);
-      require(v[2].id, 3);     // element 3 shifted left
+      require(v[2].id, 3);      // element 3 shifted left
       require_false(Probe::corrupt);
     }
     require(Probe::live, 0);
@@ -750,7 +750,7 @@ main()
     a.append(b);
     require(a.size(), size_t(4));
     for ( int i = 0; i < 4; ++i ) require(a[i], i + 1);
-    require(b.size(), size_t(2));     // b unmodified
+    require(b.size(), size_t(2));      // b unmodified
   }
   end_test_case();
 
@@ -802,8 +802,8 @@ main()
   test_case("operator[](from, to) throws on invalid range");
   {
     micron::svector<int, 8> v{ 1, 2, 3, 4 };
-    require_throw([&]() { (void)v[size_t(3), size_t(2)]; });     // from > to
-    require_throw([&]() { (void)v[size_t(0), size_t(9)]; });     // to > N
+    require_throw([&]() { (void)v[size_t(3), size_t(2)]; });      // from > to
+    require_throw([&]() { (void)v[size_t(0), size_t(9)]; });      // to > N
   }
   end_test_case();
 
@@ -940,7 +940,7 @@ main()
     v.insert(size_t(1), 2);
     v.insert(size_t(3), 4);
     require(v.size(), size_t(5));
-    for ( int i = 0; i < 5; ++i ) require(v[i], (i % 2 == 0) ? i + 1 : i + 1);     // 1,2,3,4,5
+    for ( int i = 0; i < 5; ++i ) require(v[i], (i % 2 == 0) ? i + 1 : i + 1);      // 1,2,3,4,5
 
     v.erase(size_t(2));
     require(v.size(), size_t(4));

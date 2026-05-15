@@ -37,9 +37,9 @@ fgrow(usize cap)
 {
   return cap == 0 ? 8 : cap * 2;
 }
-};     // namespace __impl
+};      // namespace __impl
 
-template <is_regular_object T, class Alloc = micron::allocator_serial<>> class fvector : public __mutable_memory_resource<T, Alloc>
+template<is_regular_object T, class Alloc = micron::allocator_serial<>> class fvector: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
 
@@ -78,7 +78,7 @@ public:
     }
   }
 
-  fvector(void) : __mem() {}
+  fvector(void) : __mem() { }
 
   fvector(const size_type n) : __mem(n)
   {
@@ -86,7 +86,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   fvector(const size_type n, Fn &&fn) : __mem(n)
   {
@@ -95,7 +95,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   fvector(const size_type n, Fn &&fn) : __mem(n)
   {
@@ -104,7 +104,7 @@ public:
     micron::transform(begin(), end(), fn);
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   fvector(size_type n, Args... args) : __mem(n)
   {
@@ -122,9 +122,9 @@ public:
 
   fvector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template <typename C = T> fvector(fvector<C> &&o) : __mem(micron::move(o)) {}
+  template<typename C = T> fvector(fvector<C> &&o) : __mem(micron::move(o)) { }
 
-  fvector(fvector &&o) : __mem(micron::move(o)) {}
+  fvector(fvector &&o) : __mem(micron::move(o)) { }
 
   fvector &operator=(const fvector &) = delete;
 
@@ -139,7 +139,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   fvector &
   operator+=(Args &&...args)
   {
@@ -237,7 +237,7 @@ public:
     return &(__mem::memory)[n];
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline fvector &
   append(const fvector<F> &o)
@@ -249,7 +249,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline fvector &
   weld(fvector<F> &&o)
@@ -262,7 +262,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   void
   swap(fvector<C> &o) noexcept
   {
@@ -352,7 +352,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   void
   emplace_back(Args &&...v)
   {
@@ -708,7 +708,7 @@ public:
     goto remove_goto;
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::convertible_to<T, Args> && ...)
   inline void
   remove(const Args &...val)
@@ -820,4 +820,4 @@ public:
   }
 };
 
-}     // namespace micron
+}      // namespace micron

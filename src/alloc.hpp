@@ -10,17 +10,17 @@
 
 namespace micron
 {
-template <typename T = void>
+template<typename T = void>
 T *
 alloc(size_t sz)
 {
   return reinterpret_cast<T *>(micron::__alloc(sz));
 }
 
-template <typename T = void>
+template<typename T = void>
 void
 free(T *ptr)
 {
   micron::__free(ptr);
 }
-};     // namespace micron
+};      // namespace micron

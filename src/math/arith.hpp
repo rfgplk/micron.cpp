@@ -25,7 +25,7 @@ namespace math
 namespace arith
 {
 
-template <typename T> struct checked_result {
+template<typename T> struct checked_result {
   T value;
   bool overflow;
 
@@ -39,14 +39,14 @@ template <typename T> struct checked_result {
 static_assert(sizeof(checked_result<u64>) <= 16, "checked_result<u64> must fit two registers");
 static_assert(sizeof(checked_result<i64>) <= 16, "checked_result<i64> must fit two registers");
 
-template <typename T>
+template<typename T>
 concept arith_integral = micron::is_integral_v<T> && !micron::is_same_v<T, bool>;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // checked
 namespace checked
 {
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr checked_result<T>
 add(T a, T b) noexcept
 {
@@ -55,7 +55,7 @@ add(T a, T b) noexcept
   return r;
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr checked_result<T>
 sub(T a, T b) noexcept
 {
@@ -64,7 +64,7 @@ sub(T a, T b) noexcept
   return r;
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr checked_result<T>
 mul(T a, T b) noexcept
 {
@@ -73,7 +73,7 @@ mul(T a, T b) noexcept
   return r;
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr checked_result<T>
 neg(T a) noexcept
 {
@@ -88,7 +88,7 @@ neg(T a) noexcept
   }
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr checked_result<T>
 div(T a, T b) noexcept
 {
@@ -105,7 +105,7 @@ div(T a, T b) noexcept
   return r;
 }
 
-};     // namespace checked
+};      // namespace checked
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // saturating
@@ -113,7 +113,7 @@ div(T a, T b) noexcept
 namespace saturating
 {
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 add(T a, T b) noexcept
 {
@@ -125,7 +125,7 @@ add(T a, T b) noexcept
     return numeric_limits<T>::max();
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 sub(T a, T b) noexcept
 {
@@ -137,7 +137,7 @@ sub(T a, T b) noexcept
     return T{ 0 };
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 mul(T a, T b) noexcept
 {
@@ -149,7 +149,7 @@ mul(T a, T b) noexcept
     return numeric_limits<T>::max();
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 neg(T a) noexcept
 {
@@ -158,14 +158,14 @@ neg(T a) noexcept
   return numeric_limits<T>::max();
 }
 
-};     // namespace saturating
+};      // namespace saturating
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // wrapping
 namespace wrapping
 {
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 add(T a, T b) noexcept
 {
@@ -173,7 +173,7 @@ add(T a, T b) noexcept
   return T(U(a) + U(b));
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 sub(T a, T b) noexcept
 {
@@ -181,7 +181,7 @@ sub(T a, T b) noexcept
   return T(U(a) - U(b));
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 mul(T a, T b) noexcept
 {
@@ -189,7 +189,7 @@ mul(T a, T b) noexcept
   return T(U(a) * U(b));
 }
 
-template <arith_integral T>
+template<arith_integral T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 neg(T a) noexcept
 {
@@ -197,56 +197,56 @@ neg(T a) noexcept
   return T(U(0) - U(a));
 }
 
-};     // namespace wrapping
+};      // namespace wrapping
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%
 // widening
 
-template <typename T> struct widen {
+template<typename T> struct widen {
   using type = T;
 };
 
-template <> struct widen<i8> {
+template<> struct widen<i8> {
   using type = i16;
 };
 
-template <> struct widen<u8> {
+template<> struct widen<u8> {
   using type = u16;
 };
 
-template <> struct widen<i16> {
+template<> struct widen<i16> {
   using type = i32;
 };
 
-template <> struct widen<u16> {
+template<> struct widen<u16> {
   using type = u32;
 };
 
-template <> struct widen<i32> {
+template<> struct widen<i32> {
   using type = i64;
 };
 
-template <> struct widen<u32> {
+template<> struct widen<u32> {
   using type = u64;
 };
 
 // we currently don't support extended types for non 64-bit platforms, struct __int128 is too tricky of a workaround
 #if defined(__micron_arch_width_64)
-template <> struct widen<i64> {
+template<> struct widen<i64> {
   using type = i128;
 };
 
-template <> struct widen<u64> {
+template<> struct widen<u64> {
   using type = u128;
 };
 #endif
 
-template <typename T> using widen_t = typename widen<T>::type;
+template<typename T> using widen_t = typename widen<T>::type;
 
 namespace widening
 {
 
-template <arith_integral T>
+template<arith_integral T>
   requires(!micron::is_same_v<widen_t<T>, T>)
 [[nodiscard, gnu::always_inline]] inline constexpr widen_t<T>
 add(T a, T b) noexcept
@@ -254,7 +254,7 @@ add(T a, T b) noexcept
   return widen_t<T>(a) + widen_t<T>(b);
 }
 
-template <arith_integral T>
+template<arith_integral T>
   requires(!micron::is_same_v<widen_t<T>, T>)
 [[nodiscard, gnu::always_inline]] inline constexpr widen_t<T>
 sub(T a, T b) noexcept
@@ -262,7 +262,7 @@ sub(T a, T b) noexcept
   return widen_t<T>(a) - widen_t<T>(b);
 }
 
-template <arith_integral T>
+template<arith_integral T>
   requires(!micron::is_same_v<widen_t<T>, T>)
 [[nodiscard, gnu::always_inline]] inline constexpr widen_t<T>
 mul(T a, T b) noexcept
@@ -270,14 +270,14 @@ mul(T a, T b) noexcept
   return widen_t<T>(a) * widen_t<T>(b);
 }
 
-};     // namespace widening
+};      // namespace widening
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // carrying
 namespace carrying
 {
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T> && micron::is_unsigned_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr micron::tuple<T, T>
 adc(T a, T b, T carry_in) noexcept
@@ -287,7 +287,7 @@ adc(T a, T b, T carry_in) noexcept
   return micron::make_tuple(s1.value, T(T(s0.overflow) | T(s1.overflow)));
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T> && micron::is_unsigned_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr micron::tuple<T, T>
 sbb(T a, T b, T borrow_in) noexcept
@@ -317,8 +317,8 @@ mul64(u64 a, u64 b) noexcept
 #endif
 }
 
-};     // namespace carrying
+};      // namespace carrying
 
-};     // namespace arith
-};     // namespace math
-};     // namespace micron
+};      // namespace arith
+};      // namespace math
+};      // namespace micron

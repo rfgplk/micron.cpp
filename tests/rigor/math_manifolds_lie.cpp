@@ -25,7 +25,7 @@ near(f64 a, f64 b, f64 eps = 1e-10)
   return (d < 0 ? -d : d) < eps;
 }
 
-template <usize N>
+template<usize N>
 static bool
 near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-10)
 {
@@ -34,7 +34,7 @@ near_v(const vec<f64, N> &a, const vec<f64, N> &b, f64 eps = 1e-10)
   return true;
 }
 
-template <usize R, usize C>
+template<usize R, usize C>
 static bool
 near_m(const mat<f64, R, C> &a, const mat<f64, R, C> &b, f64 eps = 1e-10)
 {
@@ -186,11 +186,11 @@ main()
   test_case("SO3: exp/log round-trip — small/medium/near-π omegas");
   {
     vec<f64, 3> tests[] = {
-      vec<f64, 3>{ 1e-8, 0, 0 },           // tiny → Taylor branch
-      vec<f64, 3>{ 0.01, 0.01, 0.01 },     // small
-      vec<f64, 3>{ 0.5, -0.3, 0.2 },       // medium
-      vec<f64, 3>{ 1.5, 0.0, 0.0 },        // larger
-      vec<f64, 3>{ 3.0, 0.0, 0.0 },        // near π
+      vec<f64, 3>{ 1e-8, 0, 0 },            // tiny → Taylor branch
+      vec<f64, 3>{ 0.01, 0.01, 0.01 },      // small
+      vec<f64, 3>{ 0.5, -0.3, 0.2 },        // medium
+      vec<f64, 3>{ 1.5, 0.0, 0.0 },         // larger
+      vec<f64, 3>{ 3.0, 0.0, 0.0 },         // near π
     };
     for ( auto &w : tests ) {
       auto g = SO3<f64>::exp_map(w);
@@ -331,10 +331,10 @@ main()
   test_case("SE2: exp/log round-trip");
   {
     vec<f64, 3> tests[] = {
-      vec<f64, 3>{ 0.5, -0.3, 0.0 },       // pure translation
-      vec<f64, 3>{ 0.0, 0.0, 0.7 },        // pure rotation
-      vec<f64, 3>{ 0.5, 0.5, 0.4 },        // mixed
-      vec<f64, 3>{ 1e-8, 1e-8, 1e-8 },     // tiny
+      vec<f64, 3>{ 0.5, -0.3, 0.0 },        // pure translation
+      vec<f64, 3>{ 0.0, 0.0, 0.7 },         // pure rotation
+      vec<f64, 3>{ 0.5, 0.5, 0.4 },         // mixed
+      vec<f64, 3>{ 1e-8, 1e-8, 1e-8 },      // tiny
     };
     for ( auto &xi : tests ) {
       auto g = SE2<f64>::exp_map(xi);
@@ -376,10 +376,10 @@ main()
   test_case("SE3: exp/log round-trip");
   {
     vec<f64, 6> tests[] = {
-      vec<f64, 6>{ 1.0, 2.0, 3.0, 0.0, 0.0, 0.0 },           // pure translation
-      vec<f64, 6>{ 0.0, 0.0, 0.0, 0.5, -0.2, 0.3 },          // pure rotation
-      vec<f64, 6>{ 0.4, -0.2, 0.7, 0.3, 0.1, -0.4 },         // mixed
-      vec<f64, 6>{ 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9 },     // tiny
+      vec<f64, 6>{ 1.0, 2.0, 3.0, 0.0, 0.0, 0.0 },            // pure translation
+      vec<f64, 6>{ 0.0, 0.0, 0.0, 0.5, -0.2, 0.3 },           // pure rotation
+      vec<f64, 6>{ 0.4, -0.2, 0.7, 0.3, 0.1, -0.4 },          // mixed
+      vec<f64, 6>{ 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9 },      // tiny
     };
     for ( auto &xi : tests ) {
       auto g = SE3<f64>::exp_map(xi);

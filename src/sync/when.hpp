@@ -21,7 +21,7 @@
 namespace micron
 {
 
-template <typename D, typename Fn, typename... Args>
+template<typename D, typename Fn, typename... Args>
 void
 when(D *result, Fn &&fn, Args &&...args)
 {
@@ -33,7 +33,7 @@ when(D *result, Fn &&fn, Args &&...args)
       result);
 }
 
-template <typename... D, typename Fn, typename... Args>
+template<typename... D, typename Fn, typename... Args>
 void
 when_any(Fn &&fn, Args &&...args, D *...result)
 {
@@ -44,4 +44,4 @@ when_any(Fn &&fn, Args &&...args, D *...result)
    ...);
 }
 
-};     // namespace micron
+};      // namespace micron

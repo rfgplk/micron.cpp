@@ -15,7 +15,7 @@
 namespace micron
 {
 
-template <class Alloc = micron::allocator_serial<>> class memory_block : public Alloc
+template<class Alloc = micron::allocator_serial<>> class memory_block: public Alloc
 {
   chunk<byte> memory;
 
@@ -39,11 +39,11 @@ public:
 
   memory_block() = delete;
 
-  explicit memory_block(size_t n) : memory(this->create(n)) {}
+  explicit memory_block(size_t n) : memory(this->create(n)) { }
 
   memory_block(const memory_block &o) : Alloc(), memory(this->create(o.size())) { micron::memcpy(memory.ptr, o.memory.ptr, o.size()); }
 
-  explicit memory_block(chunk<byte> &&m) : memory(micron::move(m)) {}
+  explicit memory_block(chunk<byte> &&m) : memory(micron::move(m)) { }
 
   memory_block(memory_block &&o) noexcept : Alloc(micron::move(o)), memory(micron::move(o.memory))
   {
@@ -215,4 +215,4 @@ public:
 };
 
 using buffer = memory_block<>;
-};     // namespace micron
+};      // namespace micron

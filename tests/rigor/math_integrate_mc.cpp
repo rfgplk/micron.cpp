@@ -34,7 +34,7 @@ main()
     f64 hi[2] = { 1, 1 };
     rng::xoshiro256ss g{ rng::xoshiro256ss::from_seed(42u) };
     f64 r = integrate::monte_carlo<2, f64>(f, lo, hi, 10000, g);
-    require_true(near(r, 1.0, 1e-12));     // constant integrand → exact
+    require_true(near(r, 1.0, 1e-12));      // constant integrand → exact
   }
   end_test_case();
 

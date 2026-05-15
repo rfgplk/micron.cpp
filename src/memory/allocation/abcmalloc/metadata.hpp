@@ -58,4 +58,4 @@ get_metadata_addr(addr_t *ptr)
   return reinterpret_cast<addr_t *>(reinterpret_cast<byte *>(ptr) - __hdr_offset);
 }
 
-};     // namespace abc
+};      // namespace abc

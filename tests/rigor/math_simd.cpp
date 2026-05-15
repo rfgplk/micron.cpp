@@ -31,7 +31,7 @@ near_f(f32 a, f32 b, f32 eps = 1e-5f)
   return (d < 0 ? -d : d) < eps + 1e-7f * (b < 0 ? -b : b);
 }
 
-template <typename F>
+template<typename F>
 static void
 store_d256(simd::d256 v, F (&out)[4])
 {
@@ -40,7 +40,7 @@ store_d256(simd::d256 v, F (&out)[4])
   for ( int i = 0; i < 4; ++i ) out[i] = F(tmp[i]);
 }
 
-template <typename F>
+template<typename F>
 static void
 store_f256(simd::f256 v, F (&out)[8])
 {

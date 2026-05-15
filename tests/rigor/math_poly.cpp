@@ -39,8 +39,8 @@ main()
     c[2] = 1;
     require_true(near(linalg::poly::polyval(c, f64(0.0)), 1.0));
     require_true(near(linalg::poly::polyval(c, f64(1.0)), 0.0));
-    require_true(near(linalg::poly::polyval(c, f64(2.0)), 3.0));      // 8 - 6 + 1
-    require_true(near(linalg::poly::polyval(c, f64(-1.0)), 6.0));     // 2 + 3 + 1
+    require_true(near(linalg::poly::polyval(c, f64(2.0)), 3.0));       // 8 - 6 + 1
+    require_true(near(linalg::poly::polyval(c, f64(-1.0)), 6.0));      // 2 + 3 + 1
   }
   end_test_case();
 

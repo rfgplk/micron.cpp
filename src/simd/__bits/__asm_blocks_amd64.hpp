@@ -56,6 +56,14 @@ __block_copy_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
   __asm__("movntdq %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(t));
 }
 
+__inline_g void
+__block_move_16(u8 *d, const u8 *s) noexcept
+{
+  __m128i t;
+  __asm__("movdqu %1, %0" : "=x"(t) : "m"(*reinterpret_cast<const __m128i *>(s)));
+  __asm__("movdqu %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(t));
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%
 // 16-byte broadcast (SSE2)
 
@@ -72,7 +80,7 @@ __broadcast_byte_16(u8 b) noexcept
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// 16-byte word broadcast (SSE2): u64 → 2x 64-bit lanes
+// 16-byte word broadcast (SSE2)
 __inline_g __m128i
 __broadcast_word_16(u64 w) noexcept
 {
@@ -175,6 +183,13 @@ __inline_g_T("avx2") void __block_copy_32_nt(u8 *__restrict d, const u8 *__restr
   __asm__("vmovntdq %1, %0" : "=m"(*reinterpret_cast<__m256i *>(d)) : "v"(t));
 }
 
+__inline_g_T("avx2") void __block_move_32(u8 *d, const u8 *s) noexcept
+{
+  __m256i t;
+  __asm__("vmovdqu %1, %0" : "=v"(t) : "m"(*reinterpret_cast<const __m256i *>(s)));
+  __asm__("vmovdqu %1, %0" : "=m"(*reinterpret_cast<__m256i *>(d)) : "v"(t));
+}
+
 __inline_g_T("avx2") __m256i __broadcast_byte_32(u8 b) noexcept
 {
   const u32 v32 = static_cast<u32>(b) * 0x01010101u;
@@ -186,7 +201,7 @@ __inline_g_T("avx2") __m256i __broadcast_byte_32(u8 b) noexcept
   return v;
 }
 
-// 32-byte word broadcast (AVX2): u64 → 4x 64-bit lanes
+// 32-byte word broadcast (AVX2)
 __inline_g_T("avx2") __m256i __broadcast_word_32(u64 w) noexcept
 {
   __m256i v;
@@ -253,13 +268,13 @@ __inline_g_T("avx2") u32 __block_eq_mask_32_a(const u8 *p, u8 c) noexcept
   return m;
 }
 
-#endif     // __micron_x86_avx2
+#endif      // __micron_x86_avx2
 
 #undef __inline_g
 #undef __inline_g_T
 
 #pragma GCC diagnostic pop
 
-};     // namespace __bits
-};     // namespace simd
-};     // namespace micron
+};      // namespace __bits
+};      // namespace simd
+};      // namespace micron

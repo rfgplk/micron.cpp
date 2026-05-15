@@ -35,7 +35,7 @@ namespace mkbits
 namespace sqrt_ns
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sqrt(F x) noexcept
 {
@@ -45,7 +45,7 @@ sqrt(F x) noexcept
   return hw::sqrt<F>(x);
 }
 
-template <ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 rsqrt(F x, P = {}) noexcept
 {
@@ -85,9 +85,9 @@ seed_f32(f32 x) noexcept
   return ieee::from_bits<f32>(sign | abs_b);
 }
 
-};     // namespace __cbrt_impl
+};      // namespace __cbrt_impl
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 cbrt(F x) noexcept
 {
@@ -105,7 +105,7 @@ cbrt(F x) noexcept
   return a;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 hypot(F a, F b) noexcept
 {
@@ -138,9 +138,9 @@ hypot(F a, F b) noexcept
   }
 }
 
-};     // namespace sqrt_ns
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace sqrt_ns
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC pop_options

@@ -22,7 +22,7 @@ namespace math
 namespace manifolds
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
   requires(N >= 2 && N <= 16)
 struct euclidean {
   using value_type = F;
@@ -127,7 +127,7 @@ struct euclidean {
   }
 };
 
-template <ieee754_floating F, usize N> struct traits<euclidean<F, N>> {
+template<ieee754_floating F, usize N> struct traits<euclidean<F, N>> {
   using point_type = vec<F, N>;
   using tangent_type = vec<F, N>;
   using scalar_type = F;
@@ -136,6 +136,6 @@ template <ieee754_floating F, usize N> struct traits<euclidean<F, N>> {
   static constexpr usize ambient_dim = N;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

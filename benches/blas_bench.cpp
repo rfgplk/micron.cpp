@@ -37,7 +37,7 @@ lcg_next(u64 &s) noexcept
   return s;
 }
 
-template <typename T>
+template<typename T>
 void
 fill_pattern(T *p, u64 n, u64 seed) noexcept
 {
@@ -85,7 +85,7 @@ struct line {
   char buf[256];
   u32 pos;
 
-  constexpr line() noexcept : pos(0) {}
+  constexpr line() noexcept : pos(0) { }
 
   void
   s(const char *p) noexcept
@@ -203,7 +203,7 @@ print_row(const row &r)
   micron::io::println(ln.str());
 }
 
-template <typename Kernel>
+template<typename Kernel>
 row
 measure(const char *name, u64 size_descr, u64 ops_per_rep, u64 reps, Kernel &&kernel) noexcept
 {
@@ -361,7 +361,7 @@ sweep_level2_f64()
 
 constexpr u64 L3_DIMS[] = { 32, 128, 512 };
 
-template <typename T> struct aligned_buf {
+template<typename T> struct aligned_buf {
   T *p;
   u64 n;
 
@@ -498,7 +498,7 @@ sweep_level3_f32()
   }
 }
 
-template <u64 N>
+template<u64 N>
 void
 sweep_linalg_static()
 {
@@ -535,7 +535,7 @@ sweep_linalg_static()
   (void)sink;
 }
 
-};     // namespace
+};      // namespace
 
 int
 main(void)

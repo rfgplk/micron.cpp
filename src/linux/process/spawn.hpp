@@ -15,17 +15,17 @@ namespace micron
 {
 constexpr static const bool exec_wait = true;
 constexpr static const bool exec_continue = false;
-template <typename T>
+template<typename T>
 concept is_limits_set = requires(const T &t) {
-  t.lim[0];     // posix::rlimit_t
+  t.lim[0];      // posix::rlimit_t
 };
 
-template <is_limits_set Lims>
+template<is_limits_set Lims>
 inline void
 child_apply_limits(const Lims &lims)
 {
   for ( rlim_t i = 0; i < posix::rlimit_nlimits; ++i ) {
-    posix::rlimit_t rl = lims.lim[i];     // local copy
+    posix::rlimit_t rl = lims.lim[i];      // local copy
     posix::setrlimit(static_cast<posix::limits>(i), rl);
   }
 }
@@ -70,7 +70,7 @@ __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const 
   return 0;
 }
 
-template <bool Lim = false, bool Cap = false, typename Lims = posix::limits_t, typename Caps = ucap_set_t>
+template<bool Lim = false, bool Cap = false, typename Lims = posix::limits_t, typename Caps = ucap_set_t>
 inline int
 __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp, [[maybe_unused]] const Lims *lims = nullptr,
              [[maybe_unused]] const Caps *caps = nullptr)
@@ -115,21 +115,21 @@ spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *e
   return __spawn(pid, path, argv, envp);
 }
 
-template <is_limits_set Lims>
+template<is_limits_set Lims>
 inline int
 spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp, const Lims &lims)
 {
   return __spawn_caps<true, false>(pid, path, argv, envp, &lims);
 }
 
-template <is_cap_set Caps>
+template<is_cap_set Caps>
 inline int
 spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &caps)
 {
   return __spawn_caps<false, true, posix::limits_t, Caps>(pid, path, argv, envp, nullptr, &caps);
 }
 
-template <is_cap_set Caps, is_limits_set Lims>
+template<is_cap_set Caps, is_limits_set Lims>
 inline int
 spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &caps, const Lims &lims)
 {
@@ -206,7 +206,7 @@ spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions_t
 {
   return __spawn(pid, path, &file_actions, &attrp, argv, envp);
 }
-};     // namespace unsafe
+};      // namespace unsafe
 
 // POSIX compliance, if we need it
-};     // namespace micron
+};      // namespace micron

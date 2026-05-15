@@ -120,6 +120,6 @@ inline constexpr bool has_fsqrt = true;
 inline constexpr bool has_fsqrt = false;
 #endif
 
-};     // namespace arch
-};     // namespace math
-};     // namespace micron
+};      // namespace arch
+};      // namespace math
+};      // namespace micron

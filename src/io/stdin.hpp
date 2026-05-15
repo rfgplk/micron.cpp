@@ -17,7 +17,7 @@ namespace micron
 namespace io
 {
 
-template <is_string S = micron::string, char C = '\n'>
+template<is_string S = micron::string, char C = '\n'>
 inline bool
 __read_from(S &buf, const fd_t &handle)
 {
@@ -26,7 +26,7 @@ __read_from(S &buf, const fd_t &handle)
   usize needle = 0;
   buf.push_back('0');
   io::fget_byte(buf.end() - 1, handle);
-  while ( buf[needle] != C )     // stop char to look for, if any
+  while ( buf[needle] != C )      // stop char to look for, if any
   {
     if constexpr ( requires { typename S::memory_type; } and micron::is_same_v<typename S::memory_type, stack_tag> ) {
       if ( needle >= buf.max_size() ) break;
@@ -43,10 +43,10 @@ void
 copy_to(const fd_t &handle)
 {
 }
-};     // namespace io
+};      // namespace io
 
 // functions intended for reading from the terminal and retrieving the data
-template <is_string S = micron::string, bool Echo = false>
+template<is_string S = micron::string, bool Echo = false>
 void
 terminal(S &bf)
 {
@@ -54,14 +54,14 @@ terminal(S &bf)
   if constexpr ( Echo ) io::println(bf);
 }
 
-template <is_string S = micron::string, char End = '\n'>
+template<is_string S = micron::string, char End = '\n'>
 void
 from_terminal(S &bf)
 {
   if ( !io::__read_from<S, End>(bf, micron::io::stdin) ) exc<except::io_error>("from_terminal(): failed to read from stream.");
 }
 
-template <is_string S = micron::string, char End = '\n'>
+template<is_string S = micron::string, char End = '\n'>
 S
 from_terminal(void)
 {
@@ -70,7 +70,7 @@ from_terminal(void)
   return bf;
 }
 
-template <is_string S = micron::string, bool Echo = false>
+template<is_string S = micron::string, bool Echo = false>
 S
 terminal(void)
 {
@@ -80,4 +80,4 @@ terminal(void)
   return bf;
 }
 
-};     // namespace micron
+};      // namespace micron

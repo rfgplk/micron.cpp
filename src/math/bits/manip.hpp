@@ -21,7 +21,7 @@ namespace mkbits
 namespace manip
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fabs(F x) noexcept
 {
@@ -29,7 +29,7 @@ fabs(F x) noexcept
   return ieee::from_bits<F>(ieee::to_bits(x) & ~T::sign_mask);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fneg(F x) noexcept
 {
@@ -37,7 +37,7 @@ fneg(F x) noexcept
   return ieee::from_bits<F>(ieee::to_bits(x) ^ T::sign_mask);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 copysign(F mag, F sgn) noexcept
 {
@@ -47,7 +47,7 @@ copysign(F mag, F sgn) noexcept
   return ieee::from_bits<F>(bm | bs);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 signbit(F x) noexcept
 {
@@ -55,7 +55,7 @@ signbit(F x) noexcept
   return (ieee::to_bits(x) & T::sign_mask) != 0;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fmax(F a, F b) noexcept
 {
@@ -65,7 +65,7 @@ fmax(F a, F b) noexcept
   return (a > b) ? a : b;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fmin(F a, F b) noexcept
 {
@@ -75,7 +75,7 @@ fmin(F a, F b) noexcept
   return (a < b) ? a : b;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fdim(F a, F b) noexcept
 {
@@ -83,7 +83,7 @@ fdim(F a, F b) noexcept
   return (a > b) ? F(a - b) : F(0);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 frexp(F x, int *e) noexcept
 {
@@ -117,7 +117,7 @@ frexp(F x, int *e) noexcept
   return ieee::from_bits<F>(new_bits);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ldexp(F x, int n) noexcept
 {
@@ -147,14 +147,14 @@ ldexp(F x, int n) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 scalbn(F x, int n) noexcept
 {
   return ldexp<F>(x, n);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr int
 ilogb(F x) noexcept
 {
@@ -177,7 +177,7 @@ ilogb(F x) noexcept
   return e - T::exp_bias;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 logb(F x) noexcept
 {
@@ -187,7 +187,7 @@ logb(F x) noexcept
   return F(ilogb<F>(x));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 nextafter(F a, F b) noexcept
 {
@@ -201,7 +201,7 @@ nextafter(F a, F b) noexcept
   return (b > a) == (a > 0) ? ieee::next_up<F>(a) : ieee::next_down<F>(a);
 }
 
-};     // namespace manip
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace manip
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

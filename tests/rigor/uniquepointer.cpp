@@ -50,7 +50,7 @@ struct NoCopy {
   int data;
   bool moved = false;
 
-  explicit NoCopy(int d) : data(d) {}
+  explicit NoCopy(int d) : data(d) { }
 
   NoCopy(const NoCopy &) = delete;
   NoCopy &operator=(const NoCopy &) = delete;
@@ -62,7 +62,7 @@ struct NoCopy {
 struct Point {
   int x, y;
 
-  Point(int x_, int y_) : x(x_), y(y_) {}
+  Point(int x_, int y_) : x(x_), y(y_) { }
 };
 
 // ============================================================
@@ -117,7 +117,7 @@ main(void)
   {
     int *raw = new int(99);
     mc::unique_pointer<int> p(std::move(raw));
-    sb::require(raw == nullptr);     // ownership transferred, raw nulled
+    sb::require(raw == nullptr);      // ownership transferred, raw nulled
     sb::require(p.active());
     sb::require(*p == 99);
   }
@@ -129,7 +129,7 @@ main(void)
     {
       mc::unique_pointer<Tracker> p(5);
       sb::require(Tracker::constructions == 1);
-    }     // p destroyed here
+    }      // p destroyed here
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -138,7 +138,7 @@ main(void)
   {
     Tracker::reset();
     {
-      mc::unique_pointer<Tracker> p;     // nullptr, nothing to free
+      mc::unique_pointer<Tracker> p;      // nullptr, nothing to free
     }
     sb::require(Tracker::destructions == 0);
   }
@@ -153,10 +153,10 @@ main(void)
     mc::unique_pointer<int> a(100);
     int *raw_before = a.get();
     mc::unique_pointer<int> b(std::move(a));
-    sb::require(!a.active());     // source is empty
+    sb::require(!a.active());      // source is empty
     sb::require(a.get() == nullptr);
     sb::require(b.active());
-    sb::require(b.get() == raw_before);     // same address
+    sb::require(b.get() == raw_before);      // same address
     sb::require(*b == 100);
   }
   sb::end_test_case();
@@ -180,11 +180,11 @@ main(void)
     {
       mc::unique_pointer<Tracker> a(1);
       mc::unique_pointer<Tracker> b(2);
-      b = std::move(a);                            // b's old object must be freed
-      sb::require(Tracker::destructions == 1);     // old b freed
+      b = std::move(a);                             // b's old object must be freed
+      sb::require(Tracker::destructions == 1);      // old b freed
       sb::require(b->value == 1);
       sb::require(!a.active());
-    }     // b freed on scope exit
+    }      // b freed on scope exit
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -233,7 +233,7 @@ main(void)
     sb::require(*raw == 33);
     sb::require(!p.active());
     sb::require(p.get() == nullptr);
-    delete raw;     // we now own it
+    delete raw;      // we now own it
   }
   sb::end_test_case();
 
@@ -258,7 +258,7 @@ main(void)
   sb::test_case("unique_pointer<T>: clear on null is a no-op");
   {
     mc::unique_pointer<int> p;
-    p.clear();     // must not crash
+    p.clear();      // must not crash
     sb::require(!p.active());
   }
   sb::end_test_case();
@@ -268,7 +268,7 @@ main(void)
     Tracker::reset();
     mc::unique_pointer<Tracker> p(7);
     p.clear();
-    p.clear();     // second clear on null — must not crash
+    p.clear();      // second clear on null — must not crash
     sb::require(Tracker::destructions == 1);
   }
   sb::end_test_case();
@@ -279,7 +279,7 @@ main(void)
     int *raw = p.get();
     sb::require(raw != nullptr);
     sb::require(*raw == 17);
-    sb::require(p.active());     // still owns it
+    sb::require(p.active());      // still owns it
   }
   sb::end_test_case();
 
@@ -404,7 +404,7 @@ main(void)
     {
       mc::unique_pointer<Tracker> p(10);
       mc::unique_pointer<Tracker> q(20);
-      p = std::move(q);     // p's old object freed, q emptied
+      p = std::move(q);      // p's old object freed, q emptied
     }
     sb::require(Tracker::balanced());
   }
@@ -416,7 +416,7 @@ main(void)
     {
       mc::unique_pointer<Tracker> p(5);
       p.clear();
-    }     // destructor called on empty pointer — balanced?
+    }      // destructor called on empty pointer — balanced?
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -457,7 +457,7 @@ main(void)
 
   sb::test_case("unique_pointer<T[]>: construction with count allocates array");
   {
-    mc::unique_pointer<int[]> p(8);     // allocate 8-element array
+    mc::unique_pointer<int[]> p(8);      // allocate 8-element array
     sb::require(p.active());
     sb::require(static_cast<bool>(p));
   }
@@ -498,7 +498,7 @@ main(void)
     for ( int i = 0; i < 4; i++ ) p[i] = i * 10;
     p[2] = 99;
     sb::require(p[2] == 99);
-    sb::require(p[1] == 10);     // neighbours untouched
+    sb::require(p[1] == 10);      // neighbours untouched
     sb::require(p[3] == 30);
   }
   sb::end_test_case();

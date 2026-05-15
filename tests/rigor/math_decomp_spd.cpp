@@ -28,7 +28,7 @@ near(f64 a, f64 b, f64 eps = 1e-10)
 }
 
 // Build SPD: A = MᵀM + 1e-3·I (well-conditioned).
-template <usize N>
+template<usize N>
 static mat<f64, N, N>
 build_spd(const f64 *M_data) noexcept
 {
@@ -102,7 +102,7 @@ main()
 
   test_case("inv_sympd reports spd=false on a non-SPD matrix");
   {
-    mat<f64, 2, 2> A{ { 1, 2, 2, 1 } };     // indefinite (eigvals 3, -1)
+    mat<f64, 2, 2> A{ { 1, 2, 2, 1 } };      // indefinite (eigvals 3, -1)
     auto inv = linalg::spd::inv_sympd(A);
     require_true(!inv.spd);
   }

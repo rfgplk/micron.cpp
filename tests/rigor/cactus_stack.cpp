@@ -114,7 +114,7 @@ reset_tracked()
   Tracked::ctor = Tracked::dtor = 0;
 }
 
-}     // anonymous namespace
+}      // anonymous namespace
 
 int
 main()
@@ -167,7 +167,7 @@ main()
     b = a;
     require(b.size(), size_t(2));
     require(b.val(), 6);
-    require(a.size(), size_t(2));     // a unchanged
+    require(a.size(), size_t(2));      // a unchanged
   }
   end_test_case();
 
@@ -212,7 +212,7 @@ main()
   {
     auto c = micron::cactus_stack<int>{}.push(10).push(20).push(30);
     auto p = c.pop();
-    require(c.val(), 30);     // c unchanged
+    require(c.val(), 30);      // c unchanged
     require(c.size(), size_t(3));
     require(p.val(), 20);
     require(p.size(), size_t(2));
@@ -292,7 +292,7 @@ main()
     micron::cactus_stack<int, 16> branches[8];
     for ( int i = 0; i < 8; ++i ) {
       branches[i] = root;
-      for ( int j = 0; j < 7; ++j )     // depth: 1(root) + 7 = 8 < 16
+      for ( int j = 0; j < 7; ++j )      // depth: 1(root) + 7 = 8 < 16
         branches[i] = branches[i].push(i * 10 + j);
     }
     for ( int i = 0; i < 8; ++i ) {
@@ -364,7 +364,7 @@ main()
     require(v, 3);
     require(p.val(), 2);
     require(p.size(), size_t(2));
-    require(c.val(), 3);     // c unchanged
+    require(c.val(), 3);      // c unchanged
   }
   end_test_case();
 
@@ -502,7 +502,7 @@ main()
   {
     auto c = micron::cactus_stack<int>{}.child(1).child(2).child(3);
     auto it = c.nodes().begin();
-    ++it;     // skip head (val=3)
+    ++it;      // skip head (val=3)
     auto snap = *it;
     auto expected = micron::cactus_stack<int>{}.child(1).child(2);
     require_true(snap == expected);
@@ -516,7 +516,7 @@ main()
     // renumbered.  Verify the fix.
     auto c = micron::cactus_stack<int>{}.push(10).push(20).push(30);
     auto it = c.nodes().begin();
-    ++it;     // move to node with val=20 (index varies depending on pool layout)
+    ++it;      // move to node with val=20 (index varies depending on pool layout)
     auto snap = *it;
     require(snap.val(), 20);
     require(snap.size(), size_t(2));
@@ -664,7 +664,7 @@ main()
     {
       micron::cactus_stack<Tracked, 8> c;
       for ( int i = 0; i < 6; ++i ) c = c.push(Tracked(i));
-      c = c.pop().pop().pop();     // orphans 3 slots
+      c = c.pop().pop().pop();      // orphans 3 slots
       for ( int i = 0; i < 3; ++i ) c = c.push(Tracked(100 + i));
     }
     require(Tracked::ctor, Tracked::dtor);
@@ -710,8 +710,8 @@ main()
       {
         auto b = a;
         require(b.size(), size_t(2));
-      }     // b destroyed — its copy of the spine is freed
-      require(a.size(), size_t(2));     // a still valid
+      }      // b destroyed — its copy of the spine is freed
+      require(a.size(), size_t(2));      // a still valid
     }
     require(Tracked::ctor, Tracked::dtor);
   }
@@ -738,7 +738,7 @@ main()
     reset_tracked();
     {
       auto c = micron::cactus_stack<Tracked>{}.push(Tracked(1)).push(Tracked(2)).push(Tracked(3));
-      auto p = c.pop();     // slot holding Tracked(3) is orphaned in p's pool
+      auto p = c.pop();      // slot holding Tracked(3) is orphaned in p's pool
       require(p.val().v, 2);
       // When p is destroyed, it destructs all [0, _used) including the orphan
     }
@@ -752,8 +752,8 @@ main()
     {
       using CS = micron::cactus_stack<Tracked, 4>;
       auto c = CS{}.push(Tracked(1)).push(Tracked(2)).push(Tracked(3)).push(Tracked(4));
-      c = c.pop();                 // c now has 3 live + 1 orphan, _used=4
-      c = c.push(Tracked(99));     // compact copy sees depth=3, allocs slot 3, total _used=4
+      c = c.pop();                  // c now has 3 live + 1 orphan, _used=4
+      c = c.push(Tracked(99));      // compact copy sees depth=3, allocs slot 3, total _used=4
       require(c.val().v, 99);
       require(c.size(), size_t(4));
     }
@@ -877,7 +877,7 @@ main()
   {
     auto c = micron::cactus_stack<int>{}.child(1).child(2).child(3);
     auto it = c.nodes().begin();
-    ++it;     // skip head (val=3)
+    ++it;      // skip head (val=3)
     auto snap = *it;
     auto expected = micron::cactus_stack<int>{}.child(1).child(2);
     require_true(snap == expected);

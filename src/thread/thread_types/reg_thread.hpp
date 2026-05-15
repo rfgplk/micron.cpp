@@ -32,7 +32,7 @@
 namespace micron
 {
 // thread, a regular thread
-template <usize Stack_Size = thread_stack_size> class thread
+template<usize Stack_Size = thread_stack_size> class thread
 {
   using thread_type = thread_tag;
 
@@ -42,7 +42,7 @@ template <usize Stack_Size = thread_stack_size> class thread
     micron::create_handler(__thread_sigchld, signal::child);
   }
 
-  template <typename F, typename... Args>
+  template<typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
@@ -116,25 +116,26 @@ public:
   thread(const thread &o) = delete;
   thread &operator=(const thread &) = delete;
 
-  thread(void) : attributes(posix::getpid()), payload{} {}     // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+  thread(void)
+      : attributes(posix::getpid()), payload{} { }      // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
 
-  thread(thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) {}
+  thread(thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn &, Args &...>)
   thread(Fn &fn, Args &...args) : attributes(posix::getpid()), payload{}
   {
     __impl_makethread(fn, args...);
   }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args && ...>)
   thread(Fn &&fn, Args &&...args) : attributes(posix::getpid()), payload{}
   {
     __impl_makethread(micron::forward<Fn>(fn), micron::forward<Args>(args)...);
   }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<const Fn, const Args &...>)
   thread(const Fn &fn, const Args &...args) : attributes(posix::getpid()), payload{}
   {
@@ -149,7 +150,7 @@ public:
     return *this;
   }
 
-  template <typename F, typename... Args>
+  template<typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   thread &
   operator[](F f, Args &&...args)
@@ -194,7 +195,7 @@ public:
   }
 
   auto
-  join(void) -> int     // thread
+  join(void) -> int      // thread
   {
     auto r = pthread::__join_thread(attributes.pid);
     __safe_release();
@@ -202,7 +203,7 @@ public:
   }
 
   auto
-  dismiss(void) -> int     // thread_thread
+  dismiss(void) -> int      // thread_thread
   {
     if ( try_join() == error::busy ) {
       auto r = pthread::__join_thread(attributes.pid);
@@ -299,7 +300,7 @@ public:
     until(false, &thread<Stack_Size>::alive, this);
   }
 
-  template <typename R>
+  template<typename R>
   auto
   result(void)
   {
@@ -320,4 +321,4 @@ public:
     return Stack_Size;
   }
 };
-};     // namespace micron
+};      // namespace micron

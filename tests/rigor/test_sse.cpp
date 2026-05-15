@@ -13,7 +13,7 @@ using ::sb::print;
 using ::sb::require_true;
 using ::sb::test_case;
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline bool
 v_eq(T a, T b) noexcept
 {
@@ -26,7 +26,7 @@ v_eq(T a, T b) noexcept
   return true;
 }
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline bool
 v_lane_eq(T v, unsigned idx, long long expect) noexcept
 {
@@ -55,8 +55,8 @@ test_set_splat()
 
   auto sp_i8 = ms::splat_i8(0x77);
   auto sp_i32 = ms::splat_i32(-1);
-  require_true(ms::movemask_i8(sp_i8) == 0);           // 0x77 = positive byte, movemask returns 0
-  require_true(ms::movemask_i8(sp_i32) == 0xFFFF);     // all -1 bytes -> all-ones movemask
+  require_true(ms::movemask_i8(sp_i8) == 0);            // 0x77 = positive byte, movemask returns 0
+  require_true(ms::movemask_i8(sp_i32) == 0xFFFF);      // all -1 bytes -> all-ones movemask
   require_true(v_eq(ms::splat_f32(3.14f), ms::set_f32(3.14f, 3.14f, 3.14f, 3.14f)));
   end_test_case();
 }
@@ -109,7 +109,7 @@ test_arith_int()
 
   auto sat_a = ms::splat_i8(120);
   auto sat_b = ms::splat_i8(50);
-  auto sat_r = ms::add_sat_i8(sat_a, sat_b);     // saturates to 127
+  auto sat_r = ms::add_sat_i8(sat_a, sat_b);      // saturates to 127
   alignas(16) signed char sb8[16];
   ms::storeu_i128((__m128i_u *)sb8, sat_r);
   require_true(sb8[0] == 127);
@@ -199,7 +199,7 @@ test_compare()
   auto fb = ms::splat_f32(2.5f);
   auto fcmp = ms::lt_f32(fa, fb);
   int mask = ms::movemask_f32(fcmp);
-  require_true(mask == 0b0011);     // first two lanes < 2.5
+  require_true(mask == 0b0011);      // first two lanes < 2.5
   end_test_case();
 }
 
@@ -241,7 +241,7 @@ test_pack_unpack()
   require_true(sb[0] == 0x20 && sb[1] == 0x200);
 
   auto sa = ms::set_i32(70000, -70000, 100, -100);
-  auto packed = ms::pack_sat_i32(sa, sa);     // saturates to int16 range
+  auto packed = ms::pack_sat_i32(sa, sa);      // saturates to int16 range
   alignas(16) short ps[8];
   ms::storeu_i128((__m128i_u *)ps, packed);
   require_true(ps[0] == -100 && ps[1] == 100 && ps[2] == -32768 && ps[3] == 32767);
@@ -343,8 +343,8 @@ test_testz()
   test_case("sse: testz / testc / testnzc");
   auto a = ms::splat_i32(0);
   auto b = ms::splat_i32(-1);
-  require_true(ms::testz_i128(a, b) == 1);     // a & b == 0
-  require_true(ms::testc_i128(b, a) == 1);     // (~b & a) == 0
+  require_true(ms::testz_i128(a, b) == 1);      // a & b == 0
+  require_true(ms::testc_i128(b, a) == 1);      // (~b & a) == 0
   end_test_case();
 }
 

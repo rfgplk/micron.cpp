@@ -20,7 +20,7 @@ namespace __impl_splines_bits
 {
 
 // monotonicity checks
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 strictly_increasing(const F *__restrict__ x, usize n) noexcept
 {
@@ -30,7 +30,7 @@ strictly_increasing(const F *__restrict__ x, usize n) noexcept
   return true;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline usize
 locate_segment(const F *__restrict__ xs, usize n, F x, usize &last) noexcept
 {
@@ -67,7 +67,7 @@ locate_segment(const F *__restrict__ xs, usize n, F x, usize &last) noexcept
   return lo;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 eval_cubic_local(const poly_coeffs<F, 3> &p, F t) noexcept
 {
@@ -77,7 +77,7 @@ eval_cubic_local(const poly_coeffs<F, 3> &p, F t) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 eval_cubic_deriv1_local(const poly_coeffs<F, 3> &p, F t) noexcept
 {
@@ -86,14 +86,14 @@ eval_cubic_deriv1_local(const poly_coeffs<F, 3> &p, F t) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 eval_cubic_deriv2_local(const poly_coeffs<F, 3> &p, F t) noexcept
 {
   return math::fma<F>(F(6) * p.data[3], t, F(2) * p.data[2]);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 eval_cubic_antideriv_local(const poly_coeffs<F, 3> &p, F t) noexcept
 {
@@ -104,7 +104,7 @@ eval_cubic_antideriv_local(const poly_coeffs<F, 3> &p, F t) noexcept
   return r * t;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 build_cubic_segments(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ M, poly_coeffs<F, 3> *__restrict__ seg,
                      usize n) noexcept
@@ -122,7 +122,7 @@ build_cubic_segments(const F *__restrict__ xs, const F *__restrict__ ys, const F
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 build_cubic_segments_from_slopes(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ m,
                                  poly_coeffs<F, 3> *__restrict__ seg, usize n) noexcept
@@ -140,7 +140,7 @@ build_cubic_segments_from_slopes(const F *__restrict__ xs, const F *__restrict__
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 pchip_slopes(const F *__restrict__ xs, const F *__restrict__ ys, F *__restrict__ m, usize n) noexcept
 {
@@ -196,7 +196,7 @@ pchip_slopes(const F *__restrict__ xs, const F *__restrict__ ys, F *__restrict__
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline bool
 is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexcept
 {
@@ -207,7 +207,7 @@ is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexc
   return true;
 }
 
-};     // namespace __impl_splines_bits
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace __impl_splines_bits
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

@@ -201,7 +201,7 @@ main(void)
 
   sb::test_case("u8_check - valid 2-byte sequence (é)");
   {
-    const char str[] = "\xC3\xA9";     // U+00E9 é
+    const char str[] = "\xC3\xA9";      // U+00E9 é
     const char *r = micron::u8_check(str, 2);
     sb::require(r != nullptr);
   }
@@ -209,7 +209,7 @@ main(void)
 
   sb::test_case("u8_check - valid 3-byte sequence (€)");
   {
-    const char str[] = "\xE2\x82\xAC";     // U+20AC €
+    const char str[] = "\xE2\x82\xAC";      // U+20AC €
     const char *r = micron::u8_check(str, 3);
     sb::require(r != nullptr);
   }
@@ -217,7 +217,7 @@ main(void)
 
   sb::test_case("u8_check - valid 4-byte sequence (𐍈)");
   {
-    const char str[] = "\xF0\x90\x8D\x88";     // U+10348
+    const char str[] = "\xF0\x90\x8D\x88";      // U+10348
     const char *r = micron::u8_check(str, 4);
     sb::require(r != nullptr);
   }
@@ -233,7 +233,7 @@ main(void)
 
   sb::test_case("u8_check - surrogate half (U+D800): returns nullptr");
   {
-    const char str[] = "\xED\xA0\x80";     // U+D800 — illegal in UTF-8
+    const char str[] = "\xED\xA0\x80";      // U+D800 — illegal in UTF-8
     const char *r = micron::u8_check(str, 3);
     sb::require(r == nullptr);
   }
@@ -241,7 +241,7 @@ main(void)
 
   sb::test_case("u8_check - overlong 2-byte encoding: returns nullptr");
   {
-    const char str[] = "\xC0\x80";     // overlong NUL
+    const char str[] = "\xC0\x80";      // overlong NUL
     const char *r = micron::u8_check(str, 2);
     sb::require(r == nullptr);
   }
@@ -266,7 +266,7 @@ main(void)
 
   sb::test_case("u16_check - valid surrogate pair");
   {
-    const char16_t str[] = { 0xD800, 0xDC00 };     // U+10000
+    const char16_t str[] = { 0xD800, 0xDC00 };      // U+10000
     const char16_t *r = micron::u16_check(str, 2);
     sb::require(r != nullptr);
   }
@@ -433,7 +433,7 @@ main(void)
 
   sb::test_case("to_string_stack - c-string truncates to Sz-1");
   {
-    auto s = micron::to_string_stack<4, char>("hello");     // only 3 chars fit + null
+    auto s = micron::to_string_stack<4, char>("hello");      // only 3 chars fit + null
     sb::require(s.size() <= 3ULL);
   }
   sb::end_test_case();

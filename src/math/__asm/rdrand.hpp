@@ -91,6 +91,6 @@ rdtsc64() noexcept
 #endif
 }
 
-};     // namespace __asm_op
-};     // namespace math
-};     // namespace micron
+};      // namespace __asm_op
+};      // namespace math
+};      // namespace micron

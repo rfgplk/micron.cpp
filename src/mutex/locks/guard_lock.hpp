@@ -15,21 +15,21 @@
 namespace micron
 {
 
-template <is_mutex M = mutex> class lock_guard
+template<is_mutex M = mutex> class lock_guard
 {
   M *mtx;
   void (M::*rptr)();
 
 public:
-  lock_guard(M &m, adopt_lock_t a) : mtx(&m), rptr(m.retrieve()) {};
-  lock_guard(M &m) : mtx(&m), rptr(m()) {};
-  lock_guard(M *m, adopt_lock_t a) : mtx(m), rptr(m->retrieve()) {};
-  lock_guard(M *m) : mtx(m), rptr(m()) {};
+  lock_guard(M &m, adopt_lock_t a) : mtx(&m), rptr(m.retrieve()) { };
+  lock_guard(M &m) : mtx(&m), rptr(m()) { };
+  lock_guard(M *m, adopt_lock_t a) : mtx(m), rptr(m->retrieve()) { };
+  lock_guard(M *m) : mtx(m), rptr(m()) { };
 
   ~lock_guard() { (mtx->*rptr)(); }
 };
 
-template <memory_order Aq = memory_order::acquire, memory_order Rl = memory_order::release> class free_guard
+template<memory_order Aq = memory_order::acquire, memory_order Rl = memory_order::release> class free_guard
 {
   atomic_flag *flag;
   bool owned;
@@ -53,17 +53,17 @@ public:
     owned = true;
   }
 
-  free_guard(atomic_flag &f, adopt_lock_t) : flag(&f), owned(true) {}
+  free_guard(atomic_flag &f, adopt_lock_t) : flag(&f), owned(true) { }
 
-  free_guard(atomic_flag &f, defer_lock_t) : flag(&f), owned(false) {}
+  free_guard(atomic_flag &f, defer_lock_t) : flag(&f), owned(false) { }
 
-  free_guard(atomic_flag &f, try_to_lock_t) : flag(&f), owned(try_acquire()) {}
+  free_guard(atomic_flag &f, try_to_lock_t) : flag(&f), owned(try_acquire()) { }
 
-  free_guard(atomic_flag *f, adopt_lock_t) : flag(f), owned(true) {}
+  free_guard(atomic_flag *f, adopt_lock_t) : flag(f), owned(true) { }
 
-  free_guard(atomic_flag *f, defer_lock_t) : flag(f), owned(false) {}
+  free_guard(atomic_flag *f, defer_lock_t) : flag(f), owned(false) { }
 
-  free_guard(atomic_flag *f, try_to_lock_t) : flag(f), owned(try_acquire()) {}
+  free_guard(atomic_flag *f, try_to_lock_t) : flag(f), owned(try_acquire()) { }
 
   free_guard(free_guard &&o) noexcept : flag(o.flag), owned(o.owned)
   {
@@ -150,4 +150,4 @@ public:
   free_guard &operator=(const free_guard &) = delete;
 };
 
-};     // namespace micron
+};      // namespace micron

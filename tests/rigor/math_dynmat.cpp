@@ -62,7 +62,7 @@ main()
     require_true(M.rows == 3);
     require_true(M.cols == 4);
     require_true(M.ld == 8);
-    require_true(M.size() == 24);     // rows * lda
+    require_true(M.size() == 24);      // rows * lda
     // at(r,c) walks ld; only the first 4 cols are logical
     M.at(0, 0) = 1.0;
     M.at(1, 0) = 2.0;
@@ -124,7 +124,7 @@ main()
     dynmat<f64> B = A;
     require_true(B.rows == 3 && B.cols == 3);
     require_true(near(B.at(1, 1), 1.0));
-    A.at(0, 0) = 42.0;     // copy must be independent
+    A.at(0, 0) = 42.0;      // copy must be independent
     require_true(near(B.at(0, 0), 1.0));
 
     dynmat<f64> C = micron::move(B);
@@ -157,7 +157,7 @@ main()
     auto S = submat_view(M, 2, 2, 2, 2);
     require_true(S.rows == 2);
     require_true(S.cols == 2);
-    require_true(S.ld == 4);     // parent ld preserved
+    require_true(S.ld == 4);      // parent ld preserved
     require_true(near(S.at(0, 0), M.at(2, 2)));
     require_true(near(S.at(0, 1), M.at(2, 3)));
     require_true(near(S.at(1, 0), M.at(3, 2)));

@@ -18,11 +18,11 @@ struct dd64 {
   f64 hi;
   f64 lo;
 
-  constexpr dd64() noexcept : hi(0.0), lo(0.0) {}
+  constexpr dd64() noexcept : hi(0.0), lo(0.0) { }
 
-  constexpr dd64(f64 h, f64 l) noexcept : hi(h), lo(l) {}
+  constexpr dd64(f64 h, f64 l) noexcept : hi(h), lo(l) { }
 
-  constexpr dd64(f64 h) noexcept : hi(h), lo(0.0) {}
+  constexpr dd64(f64 h) noexcept : hi(h), lo(0.0) { }
 
   [[nodiscard, gnu::always_inline]] constexpr f64
   to_double() const noexcept
@@ -127,6 +127,6 @@ div(dd64 a, dd64 b) noexcept
   return fast_two_sum(q1, q2);
 }
 
-};     // namespace dd
-};     // namespace math
-};     // namespace micron
+};      // namespace dd
+};      // namespace math
+};      // namespace micron

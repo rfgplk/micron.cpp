@@ -178,17 +178,17 @@ fast_log2(double x)
   return static_cast<double>(exp) + ln / 0.693147180559945;
 }
 
-}     // namespace __bin_impl
+}      // namespace __bin_impl
 
-template <is_string T = micron::string> class binary : public io::file
+template<is_string T = micron::string> class binary: public io::file
 {
 
   micron::sstr<io::max_name> __fname;
-  micron::shared<micron::buffer> __buf;     // internal window buffer (nullable)
-  usize __buf_sz;                           // capacity of *__buf
-  usize __buf_valid;                        // populated bytes in *__buf
-  posix::off_t __buf_off;                   // file offset of *__buf start
-  usize __seek;                             // logical read cursor (file-relative)
+  micron::shared<micron::buffer> __buf;      // internal window buffer (nullable)
+  usize __buf_sz;                            // capacity of *__buf
+  usize __buf_valid;                         // populated bytes in *__buf
+  posix::off_t __buf_off;                    // file offset of *__buf start
+  usize __seek;                              // logical read cursor (file-relative)
 
   void
   __require_buf(void) const
@@ -260,11 +260,11 @@ template <is_string T = micron::string> class binary : public io::file
   }
 
 public:
-  static constexpr usize __default_buf_size = 65536u;     // 64 K default window
+  static constexpr usize __default_buf_size = 65536u;      // 64 K default window
 
   ~binary() = default;
 
-  binary() : io::file(), __fname(), __buf(nullptr), __buf_sz(0), __buf_valid(0), __buf_off(0), __seek(0) {}
+  binary() : io::file(), __fname(), __buf(nullptr), __buf_sz(0), __buf_valid(0), __buf_off(0), __seek(0) { }
 
   binary(const char *name, io::modes mode = io::modes::read, usize buf_sz = __default_buf_size)
       : io::file(name, mode), __fname(name), __buf(new micron::buffer(buf_sz)), __buf_sz(buf_sz), __buf_valid(0), __buf_off(0),
@@ -272,9 +272,9 @@ public:
   {
   }
 
-  binary(const T &name, io::modes mode = io::modes::read, usize buf_sz = __default_buf_size) : binary(name.c_str(), mode, buf_sz) {}
+  binary(const T &name, io::modes mode = io::modes::read, usize buf_sz = __default_buf_size) : binary(name.c_str(), mode, buf_sz) { }
 
-  template <usize M>
+  template<usize M>
   binary(const char (&name)[M], io::modes mode = io::modes::read, usize buf_sz = __default_buf_size)
       : binary(static_cast<const char *>(name), mode, buf_sz)
   {
@@ -666,7 +666,7 @@ public:
     return search(reinterpret_cast<const byte *>(pat), l);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   bin_match_t
   search(const Tp &pat) const
   {
@@ -765,7 +765,7 @@ public:
     return search_file(reinterpret_cast<const byte *>(pat), l);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   bin_match_t
   search_file(const Tp &pat)
   {
@@ -830,7 +830,7 @@ public:
     return find_all(reinterpret_cast<const byte *>(pat), l);
   }
 
-  template <is_string Tp>
+  template<is_string Tp>
   micron::vector<bin_match_t>
   find_all(const Tp &pat)
   {
@@ -1087,5 +1087,5 @@ public:
     return !(*this == o);
   }
 };
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

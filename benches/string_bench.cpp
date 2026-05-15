@@ -50,7 +50,7 @@ struct line {
   char buf[256];
   u32 pos;
 
-  constexpr line() noexcept : pos(0) {}
+  constexpr line() noexcept : pos(0) { }
 
   void
   s(const char *p) noexcept
@@ -219,7 +219,7 @@ struct sample {
   u64 bm;
 };
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] sample
 measure_once(Fn &&fn, u64 reps) noexcept
 {
@@ -233,7 +233,7 @@ measure_once(Fn &&fn, u64 reps) noexcept
            static_cast<u64>(evs.get<bbench::branch_misses>().retrieve()) };
 }
 
-template <typename Fn>
+template<typename Fn>
 row
 bench_one(const char *op, const char *impl, u64 size, u64 bytes_per_op, Fn &&fn) noexcept
 {
@@ -285,7 +285,7 @@ init_corpus()
 
 constexpr u64 SIZES[] = { 16, 64, 256, 1024 };
 
-template <typename HS>
+template<typename HS>
 void
 sweep_hstring_construct_copy_eq(const char *impl_tag)
 {
@@ -329,7 +329,7 @@ sweep_hstring_construct_copy_eq(const char *impl_tag)
   }
 }
 
-template <typename HS>
+template<typename HS>
 void
 sweep_hstring_search(const char *impl_tag)
 {
@@ -380,7 +380,7 @@ sweep_hstring_search(const char *impl_tag)
   }
 }
 
-template <usize N, typename SS>
+template<usize N, typename SS>
 void
 sweep_sstring_case(const char *impl_tag, u64 sz)
 {
@@ -404,7 +404,7 @@ sweep_sstring_case(const char *impl_tag, u64 sz)
   print_row(bench_one("to_upper", impl_tag, sz, sz, fn_upper));
 }
 
-template <usize N, typename SS>
+template<usize N, typename SS>
 void
 sweep_sstring_prefix(const char *impl_tag)
 {
@@ -439,7 +439,7 @@ sweep_sstring_prefix(const char *impl_tag)
   }
 }
 
-template <usize N, typename SS>
+template<usize N, typename SS>
 void
 sweep_sstring_misc(const char *impl_tag)
 {
@@ -489,7 +489,7 @@ sweep_sstring_misc(const char *impl_tag)
   }
 }
 
-template <usize N, typename SS>
+template<usize N, typename SS>
 void
 sweep_sstring_reverse_sizes(const char *impl_tag)
 {
@@ -506,7 +506,7 @@ sweep_sstring_reverse_sizes(const char *impl_tag)
   }
 }
 
-};     // namespace
+};      // namespace
 
 int
 main(void)

@@ -28,7 +28,7 @@ namespace manifolds
 namespace lie
 {
 
-template <ieee754_floating F> struct SE2 {
+template<ieee754_floating F> struct SE2 {
   SO2<F> R;
   vec<F, 2> t;
 
@@ -57,7 +57,7 @@ template <ieee754_floating F> struct SE2 {
   exp_map(const vec<F, 3> &xi) noexcept
   {
     const F vx = xi.data[0], vy = xi.data[1], omega = xi.data[2];
-    F a, b;     // V = [[a, -b], [b, a]]
+    F a, b;      // V = [[a, -b], [b, a]]
     if ( math::fabs<F>(omega) < math::default_eps<F>() ) {
       // Taylor
       a = F(1) - omega * omega / F(6);
@@ -110,9 +110,9 @@ template <ieee754_floating F> struct SE2 {
   }
 };
 
-};     // namespace lie
+};      // namespace lie
 
-template <ieee754_floating F> struct traits<lie::SE2<F>> {
+template<ieee754_floating F> struct traits<lie::SE2<F>> {
   using point_type = lie::SE2<F>;
   using tangent_type = vec<F, 3>;
   using scalar_type = F;
@@ -121,6 +121,6 @@ template <ieee754_floating F> struct traits<lie::SE2<F>> {
   static constexpr usize ambient_dim = 9;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

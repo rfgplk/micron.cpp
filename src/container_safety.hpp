@@ -11,9 +11,9 @@ namespace micron
 {
 typedef unsigned char Safe;
 typedef double Unsafe;
-template <typename T>
+template<typename T>
 concept is_safe = micron::same_as<T, Safe>;
-template <typename T>
+template<typename T>
 concept is_unsafe = micron::same_as<T, Unsafe>;
 
 constexpr bool
@@ -21,4 +21,4 @@ safe(auto s)
 {
   return micron::is_same_v<decltype(s), Safe>;
 };
-};     // namespace micron
+};      // namespace micron

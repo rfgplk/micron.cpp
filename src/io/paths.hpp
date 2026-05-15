@@ -90,7 +90,7 @@ public:
     return posix::verify(s);
   }
 
-  template <is_string T>
+  template<is_string T>
   static bool
   is_valid_string(const T &s) noexcept
   {
@@ -248,70 +248,70 @@ public:
     return nd.path.child_exists(name);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   directory(const T &s) const
   {
     return directory(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   file(const T &s) const
   {
     return file(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   socket(const T &s) const
   {
     return socket(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   symlink(const T &s) const
   {
     return symlink(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   block_device(const T &s) const
   {
     return block_device(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   char_device(const T &s) const
   {
     return char_device(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   fifo(const T &s) const
   {
     return fifo(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   pipe(const T &s) const
   {
     return pipe(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   device(const T &s) const
   {
     return device(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   node_exists(const T &s) const
   {
@@ -354,21 +354,21 @@ public:
     return nd.path.child_is_executable(name);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   readable(const T &s) const
   {
     return readable(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   writable(const T &s) const
   {
     return writable(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   executable(const T &s) const
   {
@@ -387,7 +387,7 @@ public:
     return nd.path.child_permissions(name);
   }
 
-  template <is_string T>
+  template<is_string T>
   linux_permissions
   permissions(const T &name) const
   {
@@ -406,7 +406,7 @@ public:
     return nd.path.chmod_child(name, p);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   set_permissions(const T &name, const linux_permissions &p)
   {
@@ -521,7 +521,7 @@ public:
     return nd.path.chown_child(name, uid, gid);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   chown(const T &name, posix::uid_t uid, posix::gid_t gid)
   {
@@ -582,7 +582,7 @@ public:
     return nd.path.child_size(name);
   }
 
-  template <is_string T>
+  template<is_string T>
   posix::off_t
   child_size(const T &name) const
   {
@@ -672,7 +672,7 @@ public:
     return __join(nd.path.name(), path_t(rel));
   }
 
-  template <is_string T>
+  template<is_string T>
   path_t
   join(const T &rel) const
   {
@@ -722,7 +722,7 @@ public:
     return out;
   }
 
-  template <is_string T>
+  template<is_string T>
   path_t
   relative_to(const T &base) const
   {
@@ -861,7 +861,7 @@ public:
     return prune(micron::move(str));
   }
 
-  template <is_string T>
+  template<is_string T>
   path_t
   resolve(T &&str)
   {
@@ -887,7 +887,7 @@ public:
     nd.path = micron::move(child);
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   down(const T &name)
   {
@@ -903,7 +903,7 @@ public:
     nd.path = dir(clean);
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   set(const T &str)
   {
@@ -935,7 +935,7 @@ public:
     return posix::is_same_file(nd.path.name().c_str(), other);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   is_same_as(const T &other) const
   {
@@ -999,14 +999,14 @@ public:
     return nd.path.name() != s;
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   operator==(const T &s) const noexcept
   {
     return nd.path.name() == s;
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   operator!=(const T &s) const noexcept
   {
@@ -1019,25 +1019,25 @@ public:
     return join(rel);
   }
 
-  template <is_string T>
+  template<is_string T>
   path_t
   operator/(const T &rel) const
   {
     return join(rel);
   }
 
-  path() : nd({ dir(resolve("..")), dir(resolve(".")) }) {}
+  path() : nd({ dir(resolve("..")), dir(resolve(".")) }) { }
 
   path(const char *name)
       : nd{ .parent = dir(resolve(prune(micron::format::concat<path_t>(name, "/..")))), .path = dir(resolve(prune(name))) }
   {
   }
 
-  template <is_string T> explicit path(const T &name) : path(name.c_str()) {}
+  template<is_string T> explicit path(const T &name) : path(name.c_str()) { }
 
-  path(const path &o) : nd(o.nd) {}
+  path(const path &o) : nd(o.nd) { }
 
-  path(path &&o) noexcept : nd(micron::move(o.nd)) {}
+  path(path &&o) noexcept : nd(micron::move(o.nd)) { }
 
   path &
   operator=(const path &o)
@@ -1054,5 +1054,5 @@ public:
   }
 };
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

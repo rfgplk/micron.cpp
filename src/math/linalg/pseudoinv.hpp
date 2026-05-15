@@ -32,14 +32,14 @@ namespace linalg
 namespace pseudoinv
 {
 
-template <ieee754_floating F> struct svd_result_dyn {
-  dynmat<F> U;     // rows × rows (full)
-  dynvec<F> S;     // length min(rows, cols)
-  dynmat<F> V;     // cols × cols
+template<ieee754_floating F> struct svd_result_dyn {
+  dynmat<F> U;      // rows × rows (full)
+  dynvec<F> S;      // length min(rows, cols)
+  dynmat<F> V;      // cols × cols
   bool converged;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline svd_result_dyn<F>
 svd(const dynmat<F> &A) noexcept
 {
@@ -153,7 +153,7 @@ svd(const dynmat<F> &A) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= C_)
 [[nodiscard]] inline mat<F, C_, R_>
 pinv(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
@@ -181,7 +181,7 @@ pinv(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
   return P;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynmat<F>
 pinv(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -228,7 +228,7 @@ pinv(const dynmat<F> &A, F tol = F(0)) noexcept
   return P;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= C_)
 [[nodiscard]] inline usize
 rank(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
@@ -245,7 +245,7 @@ rank(const mat<F, R_, C_> &A, F tol = F(0)) noexcept
   return rk;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline usize
 rank(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -267,7 +267,7 @@ rank(const dynmat<F> &A, F tol = F(0)) noexcept
   return rk;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynmat<F>
 orth(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -303,7 +303,7 @@ orth(const dynmat<F> &A, F tol = F(0)) noexcept
   return O;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline dynmat<F>
 null(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -341,7 +341,7 @@ null(const dynmat<F> &A, F tol = F(0)) noexcept
   return N;
 }
 
-};     // namespace pseudoinv
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace pseudoinv
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

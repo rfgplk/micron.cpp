@@ -13,7 +13,7 @@ namespace micron
 {
 
 // default micron allocator, uses abcmalloc directly
-template <typename T> struct abc_allocator {
+template<typename T> struct abc_allocator {
   // difference between allocate and umanaged_* calls is that allocate pulls memory from the allocator, while unmanaged
   // pulls pages from the kernel directly, for when you need to manage memory yourself
   static auto
@@ -89,7 +89,7 @@ template <typename T> struct abc_allocator {
 #ifdef MICRON_ALLOW_GLIBC_MALLOC
 // TODO: legacy delete eventually
 // default allocator, use malloc/free
-template <typename T> class stl_allocator
+template<typename T> class stl_allocator
 {
   constexpr stl_allocator() = default;
   constexpr stl_allocator(const stl_allocator &) = default;
@@ -122,4 +122,4 @@ template <typename T> class stl_allocator
   }
 };
 #endif
-};     // namespace micron
+};      // namespace micron

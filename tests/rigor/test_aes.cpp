@@ -15,7 +15,7 @@ using ::sb::print;
 using ::sb::require_true;
 using ::sb::test_case;
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline bool
 v_eq(T a, T b) noexcept
 {
@@ -39,7 +39,7 @@ main()
   __m128i e1 = ma::enc_round(state, key);
   require_true(v_eq(e1, state) == false);
   __m128i e2 = ma::dec_round(e1, key);
-  require_true(v_eq(e2, state) == false);     // one enc + one dec is NOT identity
+  require_true(v_eq(e2, state) == false);      // one enc + one dec is NOT identity
   end_test_case();
 
   test_case("aes: zero state + zero key fixed point");

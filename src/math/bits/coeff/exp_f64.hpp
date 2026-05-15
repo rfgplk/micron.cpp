@@ -41,8 +41,8 @@ inline constexpr poly_coeffs<f64, 4> rem = { {
     0x1.6c16c16c16c17p-10,
 } };
 
-};     // namespace exp_f64_data
-};     // namespace coeff
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace exp_f64_data
+};      // namespace coeff
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

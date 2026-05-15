@@ -21,7 +21,7 @@ namespace geometry
 {
 
 // L(t) = origin + t * direction
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
   requires(Dim >= 2 && Dim <= 16)
 struct parametrized_line {
   vec<F, Dim> origin;
@@ -70,6 +70,6 @@ struct parametrized_line {
   }
 };
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

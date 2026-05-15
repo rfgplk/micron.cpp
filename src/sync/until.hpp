@@ -18,7 +18,7 @@
 namespace micron
 {
 
-template <typename T, typename F, typename... Args>
+template<typename T, typename F, typename... Args>
 void
 until(const T &cond, F f, Args &&...args)
 {
@@ -30,7 +30,7 @@ until(const T &cond, F f, Args &&...args)
   }
 }
 
-template <typename T>
+template<typename T>
 void
 until(const T &cond, const T &var)
 {
@@ -39,7 +39,7 @@ until(const T &cond, const T &var)
   }
 }
 
-template <typename T>
+template<typename T>
 void
 until(const T &cond, const micron::atomic<T> &var)
 {
@@ -48,7 +48,7 @@ until(const T &cond, const micron::atomic<T> &var)
   }
 }
 
-template <typename T, typename Compare>
+template<typename T, typename Compare>
 void
 until(const T &cond, const T &var, Compare comp)
 {
@@ -57,7 +57,7 @@ until(const T &cond, const T &var, Compare comp)
   }
 }
 
-template <typename P>
+template<typename P>
   requires micron::is_invocable_r_v<bool, P>
 void
 until(P pred)
@@ -67,7 +67,7 @@ until(P pred)
   }
 }
 
-template <typename P, typename... Args>
+template<typename P, typename... Args>
   requires micron::is_invocable_r_v<bool, P, Args...>
 void
 until_true(P pred, Args &&...args)
@@ -77,7 +77,7 @@ until_true(P pred, Args &&...args)
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 bool
 until_timeout(auto cond, fduration_t timeout, F f, Args &&...args)
 {
@@ -94,7 +94,7 @@ until_timeout(auto cond, fduration_t timeout, F f, Args &&...args)
   }
 }
 
-template <typename P>
+template<typename P>
 bool
 until_timeout(fduration_t timeout, P pred)
 {
@@ -107,7 +107,7 @@ until_timeout(fduration_t timeout, P pred)
   return true;
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 bool
 until_max_iter(auto cond, usize max_iters, F f, Args &&...args)
 {
@@ -121,7 +121,7 @@ until_max_iter(auto cond, usize max_iters, F f, Args &&...args)
   return false;
 }
 
-template <typename F>
+template<typename F>
 auto
 until_ready(F &fut)
 {
@@ -131,7 +131,7 @@ until_ready(F &fut)
   return fut.get();
 }
 
-template <typename F>
+template<typename F>
 bool
 until_ready_timeout(F &fut, fduration_t timeout)
 {
@@ -144,7 +144,7 @@ until_ready_timeout(F &fut, fduration_t timeout)
   return true;
 }
 
-template <typename T, typename F, typename Fn, typename... Args>
+template<typename T, typename F, typename Fn, typename... Args>
 void
 until_with_wait(const T &cond, Fn wait, F f, Args &&...args)
 {
@@ -157,7 +157,7 @@ until_with_wait(const T &cond, Fn wait, F f, Args &&...args)
   }
 }
 
-template <typename T, typename F, typename Cb, typename... Args>
+template<typename T, typename F, typename Cb, typename... Args>
 void
 until_with_callback(const T &cond, Cb cb, F f, Args &&...args)
 {
@@ -171,7 +171,7 @@ until_with_callback(const T &cond, Cb cb, F f, Args &&...args)
   }
 }
 
-template <typename F, typename... C>
+template<typename F, typename... C>
 void
 until_any(F f, C &&...conds)
 {
@@ -184,7 +184,7 @@ until_any(F f, C &&...conds)
   }
 }
 
-template <typename... Args>
+template<typename... Args>
 void
 until_any(Args &&...args, bool value)
 {
@@ -193,7 +193,7 @@ until_any(Args &&...args, bool value)
   }
 }
 
-template <typename... Args>
+template<typename... Args>
 void
 until_any_true(Args &&...args)
 {
@@ -202,7 +202,7 @@ until_any_true(Args &&...args)
   }
 }
 
-template <typename... Args>
+template<typename... Args>
 void
 until_all_true(Args &&...args)
 {
@@ -211,7 +211,7 @@ until_all_true(Args &&...args)
   }
 }
 
-template <typename... Args>
+template<typename... Args>
 void
 until_any_false(Args &&...args)
 {
@@ -220,7 +220,7 @@ until_any_false(Args &&...args)
   }
 }
 
-template <typename... Args>
+template<typename... Args>
 void
 until_all_false(Args &&...args)
 {
@@ -229,7 +229,7 @@ until_all_false(Args &&...args)
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 void
 until_backoff(auto cond, F f, Args &&...args)
 {
@@ -249,7 +249,7 @@ until_backoff(auto cond, F f, Args &&...args)
   }
 }
 
-template <typename T, typename F, typename... Args>
+template<typename T, typename F, typename... Args>
 void
 until_in_range(const T &min, const T &max, F f, Args &&...args)
 {
@@ -262,7 +262,7 @@ until_in_range(const T &min, const T &max, F f, Args &&...args)
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 void
 until_not(auto cond, F f, Args &&...args)
 {
@@ -275,7 +275,7 @@ until_not(auto cond, F f, Args &&...args)
   }
 }
 
-template <typename T, typename F, typename Fut, typename... Args>
+template<typename T, typename F, typename Fut, typename... Args>
 void
 until_or_future(const T &cond, Fut &fut, F f, Args &&...args)
 {
@@ -291,7 +291,7 @@ until_or_future(const T &cond, Fut &fut, F f, Args &&...args)
   }
 }
 
-template <typename T, typename Fut>
+template<typename T, typename Fut>
 void
 until_or_future(const T &cond, const T &var, Fut &fut)
 {
@@ -301,7 +301,7 @@ until_or_future(const T &cond, const T &var, Fut &fut)
   }
 }
 
-template <typename T, typename Fut>
+template<typename T, typename Fut>
 void
 until_or_future(const T &cond, const micron::atomic<T> &var, Fut &fut)
 {
@@ -311,7 +311,7 @@ until_or_future(const T &cond, const micron::atomic<T> &var, Fut &fut)
   }
 }
 
-template <typename P, typename Fut>
+template<typename P, typename Fut>
   requires micron::is_invocable_r_v<bool, P>
 void
 until_or_future(P pred, Fut &fut)
@@ -322,7 +322,7 @@ until_or_future(P pred, Fut &fut)
   }
 }
 
-template <typename P, typename Fut, typename... Args>
+template<typename P, typename Fut, typename... Args>
   requires micron::is_invocable_r_v<bool, P, Args...>
 void
 until_true_or_future(P pred, Fut &fut, Args &&...args)
@@ -333,7 +333,7 @@ until_true_or_future(P pred, Fut &fut, Args &&...args)
   }
 }
 
-template <typename F, typename Fut, typename... Args>
+template<typename F, typename Fut, typename... Args>
 bool
 until_timeout_or_future(auto cond, fduration_t timeout, Fut &fut, F f, Args &&...args)
 {
@@ -352,7 +352,7 @@ until_timeout_or_future(auto cond, fduration_t timeout, Fut &fut, F f, Args &&..
   }
 }
 
-template <typename P, typename Fut>
+template<typename P, typename Fut>
 bool
 until_timeout_or_future(fduration_t timeout, Fut &fut, P pred)
 {
@@ -368,7 +368,7 @@ until_timeout_or_future(fduration_t timeout, Fut &fut, P pred)
   return true;
 }
 
-template <typename T, typename F, typename Fut, typename Fn, typename... Args>
+template<typename T, typename F, typename Fut, typename Fn, typename... Args>
 void
 until_with_wait_or_future(const T &cond, Fut &fut, Fn wait, F f, Args &&...args)
 {
@@ -384,7 +384,7 @@ until_with_wait_or_future(const T &cond, Fut &fut, Fn wait, F f, Args &&...args)
   }
 }
 
-template <typename F, typename Fut, typename... Args>
+template<typename F, typename Fut, typename... Args>
 void
 until_backoff_or_future(auto cond, Fut &fut, F f, Args &&...args)
 {
@@ -406,7 +406,7 @@ until_backoff_or_future(auto cond, Fut &fut, F f, Args &&...args)
   }
 }
 
-template <typename T, typename F, typename... Args>
+template<typename T, typename F, typename... Args>
 void
 until_or_flag(const T &cond, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -422,7 +422,7 @@ until_or_flag(const T &cond, const micron::atomic<bool> &flag, F f, Args &&...ar
   }
 }
 
-template <typename T>
+template<typename T>
 void
 until_or_flag(const T &cond, const T &var, const micron::atomic<bool> &flag)
 {
@@ -432,7 +432,7 @@ until_or_flag(const T &cond, const T &var, const micron::atomic<bool> &flag)
   }
 }
 
-template <typename T>
+template<typename T>
 void
 until_or_flag(const T &cond, const micron::atomic<T> &var, const micron::atomic<bool> &flag)
 {
@@ -442,7 +442,7 @@ until_or_flag(const T &cond, const micron::atomic<T> &var, const micron::atomic<
   }
 }
 
-template <typename P>
+template<typename P>
   requires micron::is_invocable_r_v<bool, P>
 void
 until_or_flag(P pred, const micron::atomic<bool> &flag)
@@ -453,7 +453,7 @@ until_or_flag(P pred, const micron::atomic<bool> &flag)
   }
 }
 
-template <typename P, typename... Args>
+template<typename P, typename... Args>
   requires micron::is_invocable_r_v<bool, P, Args...>
 void
 until_true_or_flag(P pred, const micron::atomic<bool> &flag, Args &&...args)
@@ -464,7 +464,7 @@ until_true_or_flag(P pred, const micron::atomic<bool> &flag, Args &&...args)
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 bool
 until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -483,7 +483,7 @@ until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic<bool>
   }
 }
 
-template <typename P>
+template<typename P>
 bool
 until_timeout_or_flag(fduration_t timeout, const micron::atomic<bool> &flag, P pred)
 {
@@ -499,7 +499,7 @@ until_timeout_or_flag(fduration_t timeout, const micron::atomic<bool> &flag, P p
   return true;
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 bool
 until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -516,7 +516,7 @@ until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic<bool> &f
   return false;
 }
 
-template <typename T, typename F, typename Fn, typename... Args>
+template<typename T, typename F, typename Fn, typename... Args>
 void
 until_with_wait_or_flag(const T &cond, const micron::atomic<bool> &flag, Fn wait, F f, Args &&...args)
 {
@@ -532,7 +532,7 @@ until_with_wait_or_flag(const T &cond, const micron::atomic<bool> &flag, Fn wait
   }
 }
 
-template <typename T, typename F, typename Cb, typename... Args>
+template<typename T, typename F, typename Cb, typename... Args>
 void
 until_with_callback_or_flag(const T &cond, const micron::atomic<bool> &flag, Cb cb, F f, Args &&...args)
 {
@@ -549,7 +549,7 @@ until_with_callback_or_flag(const T &cond, const micron::atomic<bool> &flag, Cb 
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 void
 until_backoff_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -571,7 +571,7 @@ until_backoff_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&.
   }
 }
 
-template <typename T, typename F, typename... Args>
+template<typename T, typename F, typename... Args>
 void
 until_in_range_or_flag(const T &min, const T &max, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -587,7 +587,7 @@ until_in_range_or_flag(const T &min, const T &max, const micron::atomic<bool> &f
   }
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 void
 until_not_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -603,7 +603,7 @@ until_not_or_flag(auto cond, const micron::atomic<bool> &flag, F f, Args &&...ar
   }
 }
 
-template <typename F, typename... C>
+template<typename F, typename... C>
 void
 until_any_or_flag(const micron::atomic<bool> &flag, F f, C &&...conds)
 {
@@ -619,7 +619,7 @@ until_any_or_flag(const micron::atomic<bool> &flag, F f, C &&...conds)
   }
 }
 
-template <typename T, typename F, typename Fut, typename... Args>
+template<typename T, typename F, typename Fut, typename... Args>
 void
 until_or_future_or_flag(const T &cond, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -637,7 +637,7 @@ until_or_future_or_flag(const T &cond, Fut &fut, const micron::atomic<bool> &fla
   }
 }
 
-template <typename T, typename Fut>
+template<typename T, typename Fut>
 void
 until_or_future_or_flag(const T &cond, const micron::atomic<T> &var, Fut &fut, const micron::atomic<bool> &flag)
 {
@@ -650,7 +650,7 @@ until_or_future_or_flag(const T &cond, const micron::atomic<T> &var, Fut &fut, c
   }
 }
 
-template <typename P, typename Fut>
+template<typename P, typename Fut>
   requires micron::is_invocable_r_v<bool, P>
 void
 until_or_future_or_flag(P pred, Fut &fut, const micron::atomic<bool> &flag)
@@ -664,7 +664,7 @@ until_or_future_or_flag(P pred, Fut &fut, const micron::atomic<bool> &flag)
   }
 }
 
-template <typename F, typename Fut, typename... Args>
+template<typename F, typename Fut, typename... Args>
 bool
 until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -685,7 +685,7 @@ until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &fut, const 
   }
 }
 
-template <typename F, typename Fut, typename... Args>
+template<typename F, typename Fut, typename... Args>
 void
 until_backoff_or_future_or_flag(auto cond, Fut &fut, const micron::atomic<bool> &flag, F f, Args &&...args)
 {
@@ -709,7 +709,7 @@ until_backoff_or_future_or_flag(auto cond, Fut &fut, const micron::atomic<bool> 
   }
 }
 
-template <typename A>
+template<typename A>
 void
 until_flag_set(const A &flag)
 {
@@ -718,7 +718,7 @@ until_flag_set(const A &flag)
   }
 }
 
-template <typename A>
+template<typename A>
 void
 until_flag_clear(const A &flag)
 {
@@ -727,7 +727,7 @@ until_flag_clear(const A &flag)
   }
 }
 
-template <typename A>
+template<typename A>
 bool
 until_flag_set_timeout(const A &flag, fduration_t timeout)
 {
@@ -740,7 +740,7 @@ until_flag_set_timeout(const A &flag, fduration_t timeout)
   return true;
 }
 
-template <typename A>
+template<typename A>
 bool
 until_flag_clear_timeout(const A &flag, fduration_t timeout)
 {
@@ -753,7 +753,7 @@ until_flag_clear_timeout(const A &flag, fduration_t timeout)
   return true;
 }
 
-template <typename A, typename Fn>
+template<typename A, typename Fn>
 void
 until_flag_set_with_wait(const A &flag, Fn wait)
 {
@@ -762,7 +762,7 @@ until_flag_set_with_wait(const A &flag, Fn wait)
   }
 }
 
-template <typename A>
+template<typename A>
 void
 until_flag_set_backoff(const A &flag)
 {
@@ -778,7 +778,7 @@ until_flag_set_backoff(const A &flag)
   }
 }
 
-template <typename... F>
+template<typename... F>
 void
 until_any_flag_set(const F &...flags)
 {
@@ -787,7 +787,7 @@ until_any_flag_set(const F &...flags)
   }
 }
 
-template <typename... F>
+template<typename... F>
 void
 until_all_flags_set(const F &...flags)
 {
@@ -796,7 +796,7 @@ until_all_flags_set(const F &...flags)
   }
 }
 
-template <typename... F>
+template<typename... F>
 void
 until_any_flag_clear(const F &...flags)
 {
@@ -805,7 +805,7 @@ until_any_flag_clear(const F &...flags)
   }
 }
 
-template <typename... F>
+template<typename... F>
 void
 until_all_flags_clear(const F &...flags)
 {
@@ -814,4 +814,4 @@ until_all_flags_clear(const F &...flags)
   }
 }
 
-};     // namespace micron
+};      // namespace micron

@@ -26,46 +26,46 @@ namespace micron
 namespace io
 {
 // NOTE: implementing this in here instead of linux/sys
-inline constexpr u32 blkroset = 0x125dU;             // set read-only flag
-inline constexpr u32 blkroget = 0x125eU;             // get read-only flag
-inline constexpr u32 blkrrpart = 0x125fU;            // re-read partition table
-inline constexpr u32 blkgetsize = 0x1260U;           // device size in 512-B sectors
-inline constexpr u32 blkflsbuf = 0x1261U;            // flush buffer cache
-inline constexpr u32 blkraset = 0x1262U;             // set readahead
-inline constexpr u32 blkraget = 0x1263U;             // get readahead
-inline constexpr u32 blksszget = 0x1268U;            // logical block size
-inline constexpr u32 blkbszget = 0x80081270U;        // physical block size
-inline constexpr u32 blkbszset = 0x40081271U;        // set physical block size
-inline constexpr u32 blkgetsize64 = 0x80081272U;     // device size in bytes
-inline constexpr u32 blkdiscard = 0x1277U;           // discard sectors
-inline constexpr u32 blkiomin = 0x1278U;             // min I/O size
-inline constexpr u32 blkioopt = 0x1279U;             // optimal I/O size
-inline constexpr u32 blkalignoff = 0x127aU;          // alignment offset
-inline constexpr u32 blkpbszget = 0x127bU;           // physical block size
-inline constexpr u32 blkdiscardzero = 0x127cU;       // discard zeroes data
-inline constexpr u32 blksecdiscard = 0x127dU;        // secure discard
-inline constexpr u32 blkrotational = 0x127eU;        // rotational flag
-inline constexpr u32 blkzeroout = 0x127fU;           // zero out range
-inline constexpr u32 blksectget = 0x1267U;           // max sectors/req
+inline constexpr u32 blkroset = 0x125dU;              // set read-only flag
+inline constexpr u32 blkroget = 0x125eU;              // get read-only flag
+inline constexpr u32 blkrrpart = 0x125fU;             // re-read partition table
+inline constexpr u32 blkgetsize = 0x1260U;            // device size in 512-B sectors
+inline constexpr u32 blkflsbuf = 0x1261U;             // flush buffer cache
+inline constexpr u32 blkraset = 0x1262U;              // set readahead
+inline constexpr u32 blkraget = 0x1263U;              // get readahead
+inline constexpr u32 blksszget = 0x1268U;             // logical block size
+inline constexpr u32 blkbszget = 0x80081270U;         // physical block size
+inline constexpr u32 blkbszset = 0x40081271U;         // set physical block size
+inline constexpr u32 blkgetsize64 = 0x80081272U;      // device size in bytes
+inline constexpr u32 blkdiscard = 0x1277U;            // discard sectors
+inline constexpr u32 blkiomin = 0x1278U;              // min I/O size
+inline constexpr u32 blkioopt = 0x1279U;              // optimal I/O size
+inline constexpr u32 blkalignoff = 0x127aU;           // alignment offset
+inline constexpr u32 blkpbszget = 0x127bU;            // physical block size
+inline constexpr u32 blkdiscardzero = 0x127cU;        // discard zeroes data
+inline constexpr u32 blksecdiscard = 0x127dU;         // secure discard
+inline constexpr u32 blkrotational = 0x127eU;         // rotational flag
+inline constexpr u32 blkzeroout = 0x127fU;            // zero out range
+inline constexpr u32 blksectget = 0x1267U;            // max sectors/req
 
 struct block_info_t {
-  u64 size_bytes;              // BLKGETSIZE64
-  u64 size_sectors;            // BLKGETSIZE   (sectors)
-  u32 logical_block_size;      // BLKSSZGET    (smallest unit)
-  u32 physical_block_size;     // BLKPBSZGET   (physical smallest unit)
-  u32 min_io_size;             // BLKIOMIN
-  u32 optimal_io_size;         // BLKIOOPT
-  i32 alignment_offset;        // BLKALIGNOFF
-  u16 max_sectors;             // BLKSECTGET
-  u64 readahead_sectors;       // BLKRAGET
-  bool read_only;              // BLKROGET
-  bool rotational;             // BLKROTATIONAL (does it physically spin, ie hdd or solid state)
-  bool discard_zeroes;         // BLKDISCARDZEROES (ssd)
+  u64 size_bytes;               // BLKGETSIZE64
+  u64 size_sectors;             // BLKGETSIZE   (sectors)
+  u32 logical_block_size;       // BLKSSZGET    (smallest unit)
+  u32 physical_block_size;      // BLKPBSZGET   (physical smallest unit)
+  u32 min_io_size;              // BLKIOMIN
+  u32 optimal_io_size;          // BLKIOOPT
+  i32 alignment_offset;         // BLKALIGNOFF
+  u16 max_sectors;              // BLKSECTGET
+  u64 readahead_sectors;        // BLKRAGET
+  bool read_only;               // BLKROGET
+  bool rotational;              // BLKROTATIONAL (does it physically spin, ie hdd or solid state)
+  bool discard_zeroes;          // BLKDISCARDZEROES (ssd)
 };
 
-struct block : public file {
+struct block: public file {
 
-  static constexpr usize default_buf_size = 65536u;     // 64 KB
+  static constexpr usize default_buf_size = 65536u;      // 64 KB
 
   micron::buffer _buf;
   posix::off_t _buf_off;
@@ -88,7 +88,7 @@ struct block : public file {
     __open_block(path, m);
   }
 
-  template <is_string T>
+  template<is_string T>
   explicit block(const T &path, usize buf_sz = default_buf_size, modes m = modes::read) : block(path.c_str(), buf_sz, m)
   {
   }
@@ -142,7 +142,7 @@ struct block : public file {
     return *this;
   }
 
-  template <typename Arg>
+  template<typename Arg>
   i32
   ioctl_t(u32 req, Arg *arg) const
   {
@@ -347,7 +347,7 @@ struct block : public file {
     return static_cast<i32>(flush_buf());
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   readv_into(posix::iovec_t<T> &iov, i32 count) const
   {
@@ -355,7 +355,7 @@ struct block : public file {
     return posix::readv(__handle, iov, count);
   }
 
-  template <typename T>
+  template<typename T>
   max_t
   writev_from(const posix::iovec_t<T> &iov, i32 count)
   {
@@ -753,21 +753,21 @@ struct block : public file {
     return block{ path, buf_sz, modes::largeread };
   }
 
-  template <is_string T>
+  template<is_string T>
   static block
   open_ro(const T &p, usize b = default_buf_size)
   {
     return open_ro(p.c_str(), b);
   }
 
-  template <is_string T>
+  template<is_string T>
   static block
   open_rw(const T &p, usize b = default_buf_size)
   {
     return open_rw(p.c_str(), b);
   }
 
-  template <is_string T>
+  template<is_string T>
   static block
   open_direct(const T &p, usize b = default_buf_size)
   {
@@ -803,20 +803,20 @@ private:
 
     i32 flags = 0;
     switch ( mode ) {
-    case modes::read :
-    case modes::quiet :
+    case modes::read:
+    case modes::quiet:
       flags = posix::o_rdonly | posix::o_cloexec;
       break;
-    case modes::largeread :
+    case modes::largeread:
       flags = posix::o_rdonly | posix::o_direct | posix::o_largefile | posix::o_cloexec;
       break;
-    case modes::large :
+    case modes::large:
       flags = posix::o_rdwr | posix::o_direct | posix::o_largefile | posix::o_cloexec;
       break;
-    case modes::readwrite :
+    case modes::readwrite:
       flags = posix::o_rdwr | posix::o_sync | posix::o_cloexec;
       break;
-    default :
+    default:
       flags = posix::o_rdonly | posix::o_cloexec;
       break;
     }
@@ -847,26 +847,26 @@ open_block_direct(const char *path, usize buf_sz = block::default_buf_size)
   return block::open_direct(path, buf_sz);
 }
 
-template <is_string T>
+template<is_string T>
 inline block
 open_block_ro(const T &path, usize buf_sz = block::default_buf_size)
 {
   return block::open_ro(path.c_str(), buf_sz);
 }
 
-template <is_string T>
+template<is_string T>
 inline block
 open_block_rw(const T &path, usize buf_sz = block::default_buf_size)
 {
   return block::open_rw(path.c_str(), buf_sz);
 }
 
-template <is_string T>
+template<is_string T>
 inline block
 open_block_direct(const T &path, usize buf_sz = block::default_buf_size)
 {
   return block::open_direct(path.c_str(), buf_sz);
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

@@ -129,7 +129,7 @@ abs(i128 &o)
   return vabsq_s32(o);
 }
 
-template <typename M>
+template<typename M>
 inline i128
 mask_abs_32(i128 src, M k, i128 &o)
 {
@@ -137,14 +137,14 @@ mask_abs_32(i128 src, M k, i128 &o)
   return _ru32r(vbslq_u32(msk, _ru32(vabsq_s32(o)), _ru32(src)));
 }
 
-template <typename M>
+template<typename M>
 inline i128
 maskz_abs_32(M k, i128 &o)
 {
   return _ru32r(vandq_u32(__expand_mask_u32(static_cast<uint8_t>(k)), _ru32(vabsq_s32(o))));
 }
 
-template <typename M>
+template<typename M>
 inline i128
 mask_abs_64(i128 src, M k, i128 &o)
 {
@@ -152,7 +152,7 @@ mask_abs_64(i128 src, M k, i128 &o)
   return _ru64r(vbslq_u64(msk, vreinterpretq_u64_s64(__neon_v7_absq_s64(_ri64(o))), _ru64(src)));
 }
 
-template <typename M>
+template<typename M>
 inline i128
 maskz_abs_64(M k, i128 &o)
 {
@@ -183,7 +183,7 @@ sqrt_round_ss(f128 /*src*/, f128 a, f128 b, int /*r*/)
   return vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(b, 0)), a, 0);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_sqrt(f128 src, M k, f128 &o)
 {
@@ -191,21 +191,21 @@ mask_sqrt(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(__neon_v7_sqrtq_f32(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_sqrt(M k, f128 &o)
 {
   return _rf32u(vandq_u32(__expand_mask_u32(static_cast<uint8_t>(k)), _ru32f(__neon_v7_sqrtq_f32(o))));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_sqrt_ss(f128 src, M k, f128 a, f128 b)
 {
   return (k & 1) ? vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(b, 0)), a, 0) : src;
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_sqrt_ss(M k, f128 a, f128 b)
 {
@@ -252,14 +252,14 @@ rsqrt14_ss(f128 a, f128 b)
   return vsetq_lane_f32(1.f / math::sqrtf(vgetq_lane_f32(b, 0)), a, 0);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_rsqrt14_ss(f128 src, M k, f128 a, f128 b)
 {
   return (k & 1) ? rsqrt14_ss(a, b) : src;
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_rsqrt14_ss(M k, f128 a, f128 b)
 {
@@ -306,14 +306,14 @@ rcp14_ss(f128 a, f128 b)
   return vsetq_lane_f32(1.f / vgetq_lane_f32(b, 0), a, 0);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_rcp14_ss(f128 src, M k, f128 a, f128 b)
 {
   return (k & 1) ? rcp14_ss(a, b) : src;
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_rcp14_ss(M k, f128 a, f128 b)
 {
@@ -370,56 +370,56 @@ max_round_ss(f128 a, f128 b, int)
   return max_ss(a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_min_ss(f128 src, M k, f128 a, f128 b)
 {
   return (k & 1) ? min_ss(a, b) : src;
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_min_ss(M k, f128 a, f128 b)
 {
   return (k & 1) ? min_ss(a, b) : vdupq_n_f32(0.f);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_max_ss(f128 src, M k, f128 a, f128 b)
 {
   return (k & 1) ? max_ss(a, b) : src;
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_max_ss(M k, f128 a, f128 b)
 {
   return (k & 1) ? max_ss(a, b) : vdupq_n_f32(0.f);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_min_round_ss(f128 src, M k, f128 a, f128 b, int)
 {
   return mask_min_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_min_round_ss(M k, f128 a, f128 b, int)
 {
   return maskz_min_ss(k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_max_round_ss(f128 src, M k, f128 a, f128 b, int)
 {
   return mask_max_ss(src, k, a, b);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 maskz_max_round_ss(M k, f128 a, f128 b, int)
 {
@@ -700,7 +700,7 @@ reduce_min_u8(i128 &o)
   return (unsigned char)vget_lane_u8(m, 0);
 }
 
-template <typename M>
+template<typename M>
 inline float
 mask_reduce_max_ps(M k, f128 &o)
 {
@@ -711,7 +711,7 @@ mask_reduce_max_ps(M k, f128 &o)
   return reduce_max_ps(masked);
 }
 
-template <typename M>
+template<typename M>
 inline float
 mask_reduce_min_ps(M k, f128 &o)
 {
@@ -722,7 +722,7 @@ mask_reduce_min_ps(M k, f128 &o)
   return reduce_min_ps(masked);
 }
 
-template <typename M>
+template<typename M>
 inline int
 mask_reduce_max_i32(M k, i128 &o)
 {
@@ -730,7 +730,7 @@ mask_reduce_max_i32(M k, i128 &o)
   return reduce_max_i32(m);
 }
 
-template <typename M>
+template<typename M>
 inline int
 mask_reduce_min_i32(M k, i128 &o)
 {
@@ -738,7 +738,7 @@ mask_reduce_min_i32(M k, i128 &o)
   return reduce_min_i32(m);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned int
 mask_reduce_max_u32(M k, i128 &o)
 {
@@ -746,7 +746,7 @@ mask_reduce_max_u32(M k, i128 &o)
   return reduce_max_u32(m);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned int
 mask_reduce_min_u32(M k, i128 &o)
 {
@@ -754,7 +754,7 @@ mask_reduce_min_u32(M k, i128 &o)
   return reduce_min_u32(m);
 }
 
-template <typename M>
+template<typename M>
 inline short
 mask_reduce_max_i16(M k, i128 &o)
 {
@@ -762,7 +762,7 @@ mask_reduce_max_i16(M k, i128 &o)
   return reduce_max_i16(m);
 }
 
-template <typename M>
+template<typename M>
 inline short
 mask_reduce_min_i16(M k, i128 &o)
 {
@@ -770,7 +770,7 @@ mask_reduce_min_i16(M k, i128 &o)
   return reduce_min_i16(m);
 }
 
-template <typename M>
+template<typename M>
 inline char
 mask_reduce_max_i8(M k, i128 &o)
 {
@@ -778,7 +778,7 @@ mask_reduce_max_i8(M k, i128 &o)
   return reduce_max_i8(m);
 }
 
-template <typename M>
+template<typename M>
 inline char
 mask_reduce_min_i8(M k, i128 &o)
 {
@@ -786,7 +786,7 @@ mask_reduce_min_i8(M k, i128 &o)
   return reduce_min_i8(m);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned short
 mask_reduce_max_u16(M k, i128 &o)
 {
@@ -794,7 +794,7 @@ mask_reduce_max_u16(M k, i128 &o)
   return reduce_max_u16(m);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned short
 mask_reduce_min_u16(M k, i128 &o)
 {
@@ -802,7 +802,7 @@ mask_reduce_min_u16(M k, i128 &o)
   return reduce_min_u16(m);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned char
 mask_reduce_max_u8(M k, i128 &o)
 {
@@ -810,7 +810,7 @@ mask_reduce_max_u8(M k, i128 &o)
   return reduce_max_u8(m);
 }
 
-template <typename M>
+template<typename M>
 inline unsigned char
 mask_reduce_min_u8(M k, i128 &o)
 {
@@ -876,17 +876,17 @@ inline f128
 round(f128 &o, int rounding)
 {
   switch ( rounding & 0x7 ) {
-  case 0 :
+  case 0:
     return __v7_roundq(o, math::roundf);
-  case 1 :
+  case 1:
     return __v7_roundq(o, math::floorf);
-  case 2 :
+  case 2:
     return __v7_roundq(o, math::ceilf);
-  case 3 :
+  case 3:
     return __v7_roundq(o, math::truncf);
-  case 4 :
+  case 4:
     return __v7_roundq(o, math::nearbyintf);
-  default :
+  default:
     return __v7_roundq(o, math::roundf);
   }
 }
@@ -896,19 +896,19 @@ round_ss(f128 a, f128 b, int r)
 {
   float val;
   switch ( r & 0x7 ) {
-  case 0 :
+  case 0:
     val = math::roundf(vgetq_lane_f32(b, 0));
     break;
-  case 1 :
+  case 1:
     val = math::floorf(vgetq_lane_f32(b, 0));
     break;
-  case 2 :
+  case 2:
     val = math::ceilf(vgetq_lane_f32(b, 0));
     break;
-  case 3 :
+  case 3:
     val = math::truncf(vgetq_lane_f32(b, 0));
     break;
-  default :
+  default:
     val = math::roundf(vgetq_lane_f32(b, 0));
     break;
   }
@@ -999,7 +999,7 @@ hypot(f128 &o, f128 &b)
   return __scalar2_f32x4(o, b, math::hypotf);
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_exp(f128 src, M k, f128 &o)
 {
@@ -1007,7 +1007,7 @@ mask_exp(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(exp(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_exp2(f128 src, M k, f128 &o)
 {
@@ -1015,7 +1015,7 @@ mask_exp2(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(exp2(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_exp10(f128 src, M k, f128 &o)
 {
@@ -1023,7 +1023,7 @@ mask_exp10(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(exp10(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_expm1(f128 src, M k, f128 &o)
 {
@@ -1031,7 +1031,7 @@ mask_expm1(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(expm1(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_log(f128 src, M k, f128 &o)
 {
@@ -1039,7 +1039,7 @@ mask_log(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(log(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_log2(f128 src, M k, f128 &o)
 {
@@ -1047,7 +1047,7 @@ mask_log2(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(log2(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_log10(f128 src, M k, f128 &o)
 {
@@ -1055,7 +1055,7 @@ mask_log10(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(log10(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_log1p(f128 src, M k, f128 &o)
 {
@@ -1063,7 +1063,7 @@ mask_log1p(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(log1p(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_logb(f128 src, M k, f128 &o)
 {
@@ -1071,7 +1071,7 @@ mask_logb(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(logb(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_pow(f128 src, M k, f128 &o, f128 &b)
 {
@@ -1079,7 +1079,7 @@ mask_pow(f128 src, M k, f128 &o, f128 &b)
   return _rf32u(vbslq_u32(msk, _ru32f(pow(o, b)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_cbrt(f128 src, M k, f128 &o)
 {
@@ -1087,7 +1087,7 @@ mask_cbrt(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(cbrt(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_invsqrt(f128 src, M k, f128 &o)
 {
@@ -1095,7 +1095,7 @@ mask_invsqrt(f128 src, M k, f128 &o)
   return _rf32u(vbslq_u32(msk, _ru32f(invsqrt(o)), _ru32f(src)));
 }
 
-template <typename M>
+template<typename M>
 inline f128
 mask_hypot(f128 src, M k, f128 &o, f128 &b)
 {
@@ -1149,5 +1149,5 @@ svml_round(f128 &o)
 
 #pragma GCC diagnostic pop
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

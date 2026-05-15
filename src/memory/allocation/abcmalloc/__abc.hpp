@@ -33,11 +33,11 @@
 namespace abc
 {
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 struct __abc_allocator {
   static auto
-  calloc(usize n) -> micron::__chunk<byte>     // allocate 'smartly'
+  calloc(usize n) -> micron::__chunk<byte>      // allocate 'smartly'
   {
     auto mem = abc::fetch(n);
     if ( mem.ptr == (void *)-1 ) micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
@@ -45,7 +45,7 @@ struct __abc_allocator {
   };
 
   static T *
-  alloc(usize n)     // allocate 'smartly'
+  alloc(usize n)      // allocate 'smartly'
   {
     T *ptr = abc::alloc(n);
     if ( ptr == (void *)-1 ) micron::exc<micron::except::memory_error>("abc_allocator::alloc(): mmap() failed");
@@ -54,11 +54,11 @@ struct __abc_allocator {
 
   static void
   dealloc(T *mem, usize len)
-  {     // deallocate at location N
+  {      // deallocate at location N
     if ( mem == nullptr ) micron::exc<micron::except::memory_error>("abc_allocator::dealloc(): nullptr was provided");
     abc::dealloc(mem, len);
     mem = nullptr;
   }
 };
 
-};     // namespace abc
+};      // namespace abc

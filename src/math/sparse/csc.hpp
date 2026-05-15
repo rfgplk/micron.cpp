@@ -25,7 +25,7 @@ namespace math
 namespace sparse
 {
 
-template <arith_scalar T, micron::integral I = u32> struct csc {
+template<arith_scalar T, micron::integral I = u32> struct csc {
   using value_type = T;
   using index_type = I;
   using vec_i = micron::vector<I, micron::allocator_serial<>, false>;
@@ -33,13 +33,13 @@ template <arith_scalar T, micron::integral I = u32> struct csc {
 
   usize rows{ 0 };
   usize cols{ 0 };
-  vec_i outer;      // size cols+1
-  vec_i inner;      // size nnz
-  vec_v values;     // size nnz
+  vec_i outer;       // size cols+1
+  vec_i inner;       // size nnz
+  vec_v values;      // size nnz
 
   csc() noexcept = default;
 
-  csc(usize r, usize c) : rows(r), cols(c), outer(c + 1, I(0)), inner(0), values(0) {}
+  csc(usize r, usize c) : rows(r), cols(c), outer(c + 1, I(0)), inner(0), values(0) { }
 
   csc(const csc &) = default;
   csc(csc &&) noexcept = default;
@@ -95,6 +95,6 @@ template <arith_scalar T, micron::integral I = u32> struct csc {
   }
 };
 
-};     // namespace sparse
-};     // namespace math
-};     // namespace micron
+};      // namespace sparse
+};      // namespace math
+};      // namespace micron

@@ -69,10 +69,10 @@ main()
     b[0] = 4;
     b[1] = -5;
     activation::leaky_relu(0.5, a, b);
-    require_true(near(a[0], -1.0));     // -2 * 0.5
+    require_true(near(a[0], -1.0));      // -2 * 0.5
     require_true(near(a[1], 3.0));
     require_true(near(b[0], 4.0));
-    require_true(near(b[1], -2.5));     // -5 * 0.5
+    require_true(near(b[1], -2.5));      // -5 * 0.5
   }
   end_test_case();
 

@@ -18,7 +18,7 @@ namespace micron
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compare ptr
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
 compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
@@ -26,7 +26,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
   return bytecmp(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), n * sizeof(T));
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
 compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
@@ -36,7 +36,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noex
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
 compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
@@ -46,7 +46,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noex
   return true;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
 compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
@@ -64,7 +64,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compare ranges
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
 compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
@@ -73,7 +73,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
                  static_cast<usize>(end1 - first1) * sizeof(T));
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
 compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2, Fn fn) noexcept
@@ -83,7 +83,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
 compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2, Fn fn) noexcept
@@ -93,7 +93,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
   return true;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
 compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
@@ -111,7 +111,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compare containers
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr long int
 compare(const C &a, const C &b) noexcept
 {
@@ -122,7 +122,7 @@ compare(const C &a, const C &b) noexcept
   return static_cast<long int>(a.size()) - static_cast<long int>(b.size());
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type &, const typename C::value_type &>
 constexpr bool
 compare(const C &a, const C &b, Fn fn) noexcept
@@ -136,7 +136,7 @@ compare(const C &a, const C &b, Fn fn) noexcept
   return true;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
 constexpr bool
 compare(const C &a, const C &b, Fn fn) noexcept
@@ -150,7 +150,7 @@ compare(const C &a, const C &b, Fn fn) noexcept
   return true;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 constexpr bool
 compare(const C &a, const C &b) noexcept
 {
@@ -168,7 +168,7 @@ compare(const C &a, const C &b) noexcept
   return true;
 }
 
-template <is_iterable_container C, is_iterable_container D>
+template<is_iterable_container C, is_iterable_container D>
   requires micron::is_same_v<typename C::value_type, typename D::value_type>
 constexpr long int
 compare(const C &a, const D &b) noexcept
@@ -180,7 +180,7 @@ compare(const C &a, const D &b) noexcept
   return static_cast<long int>(a.size()) - static_cast<long int>(b.size());
 }
 
-template <is_iterable_container C, is_iterable_container D, typename Fn>
+template<is_iterable_container C, is_iterable_container D, typename Fn>
   requires micron::is_same_v<typename C::value_type, typename D::value_type>
            && micron::is_invocable_v<Fn, const typename C::value_type &, const typename C::value_type &>
 constexpr bool
@@ -195,7 +195,7 @@ compare(const C &a, const D &b, Fn fn) noexcept
   return true;
 }
 
-template <auto Fn, is_iterable_container C, is_iterable_container D>
+template<auto Fn, is_iterable_container C, is_iterable_container D>
   requires micron::is_same_v<typename C::value_type, typename D::value_type>
 constexpr bool
 compare(const C &a, const D &b) noexcept
@@ -217,7 +217,7 @@ compare(const C &a, const D &b) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compare_ns
 
-template <typename T>
+template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
 compare_n(const T *__restrict a, const T *__restrict b, const usize n) noexcept
@@ -225,7 +225,7 @@ compare_n(const T *__restrict a, const T *__restrict b, const usize n) noexcept
   return bytecmp(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), n * sizeof(T));
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
 compare_n(const T *__restrict a, const T *__restrict b, usize n, Fn fn) noexcept
@@ -235,7 +235,7 @@ compare_n(const T *__restrict a, const T *__restrict b, usize n, Fn fn) noexcept
   return true;
 }
 
-template <typename T, typename Fn>
+template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
 compare_n(const T *__restrict a, const T *__restrict b, usize n, Fn fn) noexcept
@@ -245,7 +245,7 @@ compare_n(const T *__restrict a, const T *__restrict b, usize n, Fn fn) noexcept
   return true;
 }
 
-template <auto Fn, typename T>
+template<auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
 compare_n(const T *__restrict a, const T *__restrict b, const usize n) noexcept
@@ -260,7 +260,7 @@ compare_n(const T *__restrict a, const T *__restrict b, const usize n) noexcept
   return true;
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 constexpr long int
 compare_n(const C &a, const C &b, const usize n) noexcept
 {
@@ -269,7 +269,7 @@ compare_n(const C &a, const C &b, const usize n) noexcept
                  clamped * sizeof(typename C::value_type));
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type &, const typename C::value_type &>
 constexpr bool
 compare_n(const C &a, const C &b, usize n, Fn fn) noexcept
@@ -283,7 +283,7 @@ compare_n(const C &a, const C &b, usize n, Fn fn) noexcept
   return true;
 }
 
-template <is_iterable_container C, typename Fn>
+template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
 constexpr bool
 compare_n(const C &a, const C &b, usize n, Fn fn) noexcept
@@ -297,7 +297,7 @@ compare_n(const C &a, const C &b, usize n, Fn fn) noexcept
   return true;
 }
 
-template <auto Fn, is_iterable_container C>
+template<auto Fn, is_iterable_container C>
 constexpr bool
 compare_n(const C &a, const C &b, const usize n) noexcept
 {
@@ -314,4 +314,4 @@ compare_n(const C &a, const C &b, const usize n) noexcept
   }
   return true;
 }
-};     // namespace micron
+};      // namespace micron

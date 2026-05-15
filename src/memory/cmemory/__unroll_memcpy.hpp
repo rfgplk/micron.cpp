@@ -22,14 +22,14 @@ namespace experimental
 namespace __unroll
 {
 
-template <typename F, typename D, usize... I>
+template<typename F, typename D, usize... I>
 inline __attribute__((always_inline)) void
 copy(F *__restrict dest, const D *__restrict src, micron::index_sequence<I...>) noexcept
 {
   ((dest[I] = static_cast<F>(src[I])), ...);
 }
 
-template <usize... I>
+template<usize... I>
 inline __attribute__((always_inline)) void
 bcopy(byte *__restrict dest, const byte *__restrict src, micron::index_sequence<I...>) noexcept
 {
@@ -37,9 +37,9 @@ bcopy(byte *__restrict dest, const byte *__restrict src, micron::index_sequence<
 }
 
 inline constexpr u64 unroll_limit = 1024;
-};     // namespace __unroll
+};      // namespace __unroll
 
-template <u64 N, typename T, typename F>
+template<u64 N, typename T, typename F>
 inline __attribute__((always_inline)) T *
 __memcpy_ur(T *__restrict dest, const F *__restrict src) noexcept
 {
@@ -49,146 +49,146 @@ __memcpy_ur(T *__restrict dest, const F *__restrict src) noexcept
   return dest;
 }
 
-template <typename T, typename F, typename S = u64>
+template<typename T, typename F, typename S = u64>
 T *
 __memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
 {
   switch ( n ) {
-  case 0 :
+  case 0:
     return d;
-  case 1 :
+  case 1:
     return __memcpy_ur<1>(d, s);
-  case 2 :
+  case 2:
     return __memcpy_ur<2>(d, s);
-  case 3 :
+  case 3:
     return __memcpy_ur<3>(d, s);
-  case 4 :
+  case 4:
     return __memcpy_ur<4>(d, s);
-  case 5 :
+  case 5:
     return __memcpy_ur<5>(d, s);
-  case 6 :
+  case 6:
     return __memcpy_ur<6>(d, s);
-  case 7 :
+  case 7:
     return __memcpy_ur<7>(d, s);
-  case 8 :
+  case 8:
     return __memcpy_ur<8>(d, s);
-  case 9 :
+  case 9:
     return __memcpy_ur<9>(d, s);
-  case 10 :
+  case 10:
     return __memcpy_ur<10>(d, s);
-  case 11 :
+  case 11:
     return __memcpy_ur<11>(d, s);
-  case 12 :
+  case 12:
     return __memcpy_ur<12>(d, s);
-  case 13 :
+  case 13:
     return __memcpy_ur<13>(d, s);
-  case 14 :
+  case 14:
     return __memcpy_ur<14>(d, s);
-  case 15 :
+  case 15:
     return __memcpy_ur<15>(d, s);
-  case 16 :
+  case 16:
     return __memcpy_ur<16>(d, s);
-  case 17 :
+  case 17:
     return __memcpy_ur<17>(d, s);
-  case 18 :
+  case 18:
     return __memcpy_ur<18>(d, s);
-  case 19 :
+  case 19:
     return __memcpy_ur<19>(d, s);
-  case 20 :
+  case 20:
     return __memcpy_ur<20>(d, s);
-  case 21 :
+  case 21:
     return __memcpy_ur<21>(d, s);
-  case 22 :
+  case 22:
     return __memcpy_ur<22>(d, s);
-  case 23 :
+  case 23:
     return __memcpy_ur<23>(d, s);
-  case 24 :
+  case 24:
     return __memcpy_ur<24>(d, s);
-  case 25 :
+  case 25:
     return __memcpy_ur<25>(d, s);
-  case 26 :
+  case 26:
     return __memcpy_ur<26>(d, s);
-  case 27 :
+  case 27:
     return __memcpy_ur<27>(d, s);
-  case 28 :
+  case 28:
     return __memcpy_ur<28>(d, s);
-  case 29 :
+  case 29:
     return __memcpy_ur<29>(d, s);
-  case 30 :
+  case 30:
     return __memcpy_ur<30>(d, s);
-  case 31 :
+  case 31:
     return __memcpy_ur<31>(d, s);
-  case 32 :
+  case 32:
     return __memcpy_ur<32>(d, s);
-  default :
+  default:
     return d;
   }
 }
 
-template <typename T, typename F, typename S = u64>
+template<typename T, typename F, typename S = u64>
 T *
 _rmemcpy_32(T &restrict _d, const F &restrict _s, const S n) noexcept
 {
   return __memcpy_32(&_d, &_s, n);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_8b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<8>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_16b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<16>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_32b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<32>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_64b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<64>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_128b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<128>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_256b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<256>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_512b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<512>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 inline F *
 memcpy_1024b(F *__restrict dest, const D *__restrict src) noexcept
 {
   return __memcpy_ur<1024>(dest, src);
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 constexpr F *
 memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
@@ -204,7 +204,7 @@ memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
   return dest;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
 F &
 rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
 {
@@ -222,7 +222,7 @@ rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
   return dest;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F *
 constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
@@ -239,7 +239,7 @@ constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcep
   return dest;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F &
 constexpr_rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
@@ -258,7 +258,7 @@ constexpr_rmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexce
   return dest;
 }
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
 F *
 cmemcpy(F *restrict dest, const D *restrict src) noexcept
 {
@@ -270,7 +270,7 @@ cmemcpy(F *restrict dest, const D *restrict src) noexcept
   return dest;
 }
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
 F &
 crmemcpy(F &restrict dest, const D &restrict src) noexcept
 {
@@ -284,7 +284,7 @@ crmemcpy(F &restrict dest, const D &restrict src) noexcept
   return dest;
 }
 
-template <typename F, typename D, u64 alignment = alignof(F)>
+template<typename F, typename D, u64 alignment = alignof(F)>
 F *
 smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
@@ -303,7 +303,7 @@ smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
   return dest;
 }
 
-template <typename F, typename D, u64 alignment = alignof(F)>
+template<typename F, typename D, u64 alignment = alignof(F)>
 bool
 rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
 {
@@ -323,7 +323,7 @@ rsmemcpy(F &restrict dest, const D &restrict src, const u64 cnt) noexcept
   return true;
 }
 
-template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
+template<u64 M, typename F, typename D, u64 alignment = alignof(F)>
 F *
 scmemcpy(F *restrict dest, const D *restrict src) noexcept
 {
@@ -338,7 +338,7 @@ scmemcpy(F *restrict dest, const D *restrict src) noexcept
   return dest;
 }
 
-template <u64 M, typename F, typename D, u64 alignment = alignof(F)>
+template<u64 M, typename F, typename D, u64 alignment = alignof(F)>
 bool
 rscmemcpy(F &restrict dest, const D &restrict src) noexcept
 {
@@ -354,7 +354,7 @@ rscmemcpy(F &restrict dest, const D &restrict src) noexcept
   return true;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
@@ -373,7 +373,7 @@ bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
   return _dest;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F &
 rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
@@ -392,7 +392,7 @@ rbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
   return _dest;
 }
 
-template <typename F, typename D>
+template<typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 constexpr F *
 constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
@@ -411,7 +411,7 @@ constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noex
   return _dest;
 }
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 cbytecpy(F *restrict _dest, const D *restrict _src) noexcept
@@ -426,7 +426,7 @@ cbytecpy(F *restrict _dest, const D *restrict _src) noexcept
   return _dest;
 }
 
-template <u64 M, typename F, typename D>
+template<u64 M, typename F, typename D>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F &
 crbytecpy(F &restrict _dest, const D &restrict _src) noexcept
@@ -441,7 +441,7 @@ crbytecpy(F &restrict _dest, const D &restrict _src) noexcept
   return _dest;
 }
 
-template <typename F, typename D, u64 alignment = 1>
+template<typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
@@ -463,7 +463,7 @@ sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
   return _dest;
 }
 
-template <typename F, typename D, u64 alignment = 1>
+template<typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 bool
 rsbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
@@ -484,7 +484,7 @@ rsbytecpy(F &restrict _dest, const D &restrict _src, const u64 cnt) noexcept
   return true;
 }
 
-template <u64 M, typename F, typename D, u64 alignment = 1>
+template<u64 M, typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 F *
 scbytecpy(F *restrict _dest, const D *restrict _src) noexcept
@@ -502,7 +502,7 @@ scbytecpy(F *restrict _dest, const D *restrict _src) noexcept
   return _dest;
 }
 
-template <u64 M, typename F, typename D, u64 alignment = 1>
+template<u64 M, typename F, typename D, u64 alignment = 1>
   requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<D>)
 bool
 rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
@@ -536,7 +536,7 @@ voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
   return _dest;
 }
 
-template <u64 alignment = 1>
+template<u64 alignment = 1>
 void *
 svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
@@ -556,5 +556,5 @@ svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcep
   __mem_barrier();
   return _dest;
 }
-};     // namespace experimental
-};     // namespace micron
+};      // namespace experimental
+};      // namespace micron

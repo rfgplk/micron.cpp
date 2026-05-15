@@ -114,6 +114,32 @@ setr_i32(int x, int y, int z, int w) noexcept
   return _mm_setr_epi32(x, y, z, w);
 }
 
+__inline_sse __m128i
+set_i8(char b15, char b14, char b13, char b12, char b11, char b10, char b9, char b8, char b7, char b6, char b5, char b4, char b3, char b2,
+       char b1, char b0) noexcept
+{
+  return _mm_set_epi8(b15, b14, b13, b12, b11, b10, b9, b8, b7, b6, b5, b4, b3, b2, b1, b0);
+}
+
+__inline_sse __m128i
+setr_i8(char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7, char b8, char b9, char b10, char b11, char b12, char b13,
+        char b14, char b15) noexcept
+{
+  return _mm_setr_epi8(b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15);
+}
+
+__inline_sse __m128i
+set_i16(short s7, short s6, short s5, short s4, short s3, short s2, short s1, short s0) noexcept
+{
+  return _mm_set_epi16(s7, s6, s5, s4, s3, s2, s1, s0);
+}
+
+__inline_sse __m128i
+setr_i16(short s0, short s1, short s2, short s3, short s4, short s5, short s6, short s7) noexcept
+{
+  return _mm_setr_epi16(s0, s1, s2, s3, s4, s5, s6, s7);
+}
+
 __inline_sse __m128
 set_scalar_f32(float v) noexcept
 {
@@ -1446,56 +1472,56 @@ testnzc_i128(__m128i a, __m128i b) noexcept
   return _mm_testnzc_si128(a, b);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128
 round_f32(__m128 a) noexcept
 {
   return _mm_round_ps(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128d
 round_f64(__m128d a) noexcept
 {
   return _mm_round_pd(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128
 shuffle_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_shuffle_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128d
 shuffle_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_shuffle_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128i
 shuffle_i32(__m128i a) noexcept
 {
   return _mm_shuffle_epi32(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128
 blend_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_blend_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128d
 blend_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_blend_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128i
 blend_i16(__m128i a, __m128i b) noexcept
 {
@@ -1520,28 +1546,28 @@ blendv_i8(__m128i a, __m128i b, __m128i mask) noexcept
   return _mm_blendv_epi8(a, b, mask);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128
 cmp_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_cmp_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128d
 cmp_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_cmp_pd(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128
 dp_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_dp_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128d
 dp_f64(__m128d a, __m128d b) noexcept
 {
@@ -1560,84 +1586,84 @@ move_lh_f32(__m128 a, __m128 b) noexcept
   return _mm_movelh_ps(a, b);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse int
 extract_f32(__m128 a) noexcept
 {
   return _mm_extract_ps(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse int
 extract_i8(__m128i a) noexcept
 {
   return _mm_extract_epi8(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse int
 extract_i16(__m128i a) noexcept
 {
   return _mm_extract_epi16(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse int
 extract_i32_imm(__m128i a) noexcept
 {
   return _mm_extract_epi32(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse long long
 extract_i64_imm(__m128i a) noexcept
 {
   return _mm_extract_epi64(a, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128
 insert_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_insert_ps(a, b, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128i
 insert_i8(__m128i a, int v) noexcept
 {
   return _mm_insert_epi8(a, v, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128i
 insert_i16(__m128i a, int v) noexcept
 {
   return _mm_insert_epi16(a, v, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128i
 insert_i32(__m128i a, int v) noexcept
 {
   return _mm_insert_epi32(a, v, IMM);
 }
 
-template <int IMM>
+template<int IMM>
 __inline_sse __m128i
 insert_i64(__m128i a, long long v) noexcept
 {
   return _mm_insert_epi64(a, v, IMM);
 }
 
-template <int SCALE>
+template<int SCALE>
 __inline_sse __m128
 gather_f32(const float *base, __m128i idx) noexcept
 {
   return _mm_i32gather_ps(base, idx, SCALE);
 }
 
-template <int SCALE>
+template<int SCALE>
 __inline_sse __m128d
 gather_f64(const double *base, __m128i idx) noexcept
 {
@@ -1678,6 +1704,6 @@ div_scalar_f64(__m128d a, __m128d b) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace sse
-};     // namespace simd
-};     // namespace micron
+};      // namespace sse
+};      // namespace simd
+};      // namespace micron

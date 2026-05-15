@@ -47,7 +47,7 @@ make_seq(usize n, int start = 0)
   return ivec(n, [&s]() { return s++; });
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -351,7 +351,7 @@ main()
     auto v = make_seq(8, 0);
     int sum = 0;
     for ( int val : v ) sum += val;
-    require(sum, 28);     // 0+1+...+7
+    require(sum, 28);      // 0+1+...+7
   }
   end_test_case();
 
@@ -669,7 +669,7 @@ main()
   test_case("erase range by indices");
   {
     ivec v{ 1, 2, 3, 4, 5 };
-    auto v2 = v.erase(usize(1), usize(3));     // erase [1, 3) → remove indices 1,2
+    auto v2 = v.erase(usize(1), usize(3));      // erase [1, 3) → remove indices 1,2
     require(v2.size(), usize(3));
     require(v2[0], 1);
     require(v2[1], 4);
@@ -683,7 +683,7 @@ main()
   test_case("erase range with iterators");
   {
     ivec v{ 10, 20, 30, 40, 50 };
-    auto v2 = v.erase(v.begin() + 1, v.begin() + 4);     // erase [1,4)
+    auto v2 = v.erase(v.begin() + 1, v.begin() + 4);      // erase [1,4)
     require(v2.size(), usize(2));
     require(v2[0], 10);
     require(v2[1], 50);
@@ -970,7 +970,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("stress: erase range at various positions");
   {
-    auto base = make_seq(10, 0);     // 0..9
+    auto base = make_seq(10, 0);      // 0..9
 
     // erase first 3: [0,3) → {3,4,5,6,7,8,9}
     auto v1 = base.erase(usize(0), usize(3));

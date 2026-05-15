@@ -14,16 +14,16 @@
 
 namespace micron
 {
-template <typename T> struct double_list_node {
+template<typename T> struct double_list_node {
   T data;
   double_list_node<T> *prev;
   double_list_node<T> *next;
 };
 
-template <typename T> class double_list
+template<typename T> class double_list
 {
   using double_list_node_t = double_list_node<T>;
-  double_list_node_t *root;     // root node -- is a pointer (simpler to impl)
+  double_list_node_t *root;      // root node -- is a pointer (simpler to impl)
 
   inline void
   __impl_heap(T &&t, double_list_node_t **ptr, double_list_node_t *pptr)
@@ -65,7 +65,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  double_list() : root(nullptr) {}
+  double_list() : root(nullptr) { }
 
   double_list(const size_t cnt) : root(nullptr)
   {
@@ -163,7 +163,7 @@ public:
   push_front(const T &v)
   {
     double_list_node_t *ptr;
-    __impl_heap(v, &ptr);     // allocate ptr
+    __impl_heap(v, &ptr);      // allocate ptr
     ptr->next = root;
     root = ptr;
   }
@@ -172,7 +172,7 @@ public:
   push_back(const T &v)
   {
     double_list_node_t *ptr;
-    __impl_heap(v, &ptr);     // allocate ptr
+    __impl_heap(v, &ptr);      // allocate ptr
     auto end_p = end();
     end_p->next = ptr;
   }
@@ -184,8 +184,8 @@ public:
     while ( ptr != nullptr ) {
       if ( ptr->data == srch ) break;
       ptr = ptr->next;
-    }     // ptr is found node
-    return &ptr->data;     // nullptr if no hit :/
+    }      // ptr is found node
+    return &ptr->data;      // nullptr if no hit :/
   }
 
   // advance by how many
@@ -218,12 +218,12 @@ public:
     if ( itr == nullptr ) exc<except::runtime_error>("micron::erase invalid iterator.");
     auto *ptr = root;
     while ( ptr != nullptr ) {
-      if ( ptr->next == itr )     // if parent found
+      if ( ptr->next == itr )      // if parent found
         break;
       ptr = ptr->next;
-    }     // ptr is now parent node
-    itr->data.~T();            // call dest
-    ptr->next = itr->next;     // relink
+    }      // ptr is now parent node
+    itr->data.~T();             // call dest
+    ptr->next = itr->next;      // relink
     delete itr;
   }
 
@@ -232,7 +232,7 @@ public:
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
-    __impl_heap(micron::move(v), &ptr);     // allocate ptr
+    __impl_heap(micron::move(v), &ptr);      // allocate ptr
     ptr->next = itr->next;
     itr->next = ptr;
   }
@@ -242,7 +242,7 @@ public:
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
-    __impl_heap(v, &ptr);     // allocate ptr
+    __impl_heap(v, &ptr);      // allocate ptr
     ptr->next = itr->next;
     itr->next = ptr;
   }
@@ -252,7 +252,7 @@ public:
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
-    __impl_heap(micron::forward(v), &ptr);     // allocate ptr
+    __impl_heap(micron::forward(v), &ptr);      // allocate ptr
     ptr->next = itr->next;
     itr->next = ptr;
   }
@@ -284,7 +284,7 @@ public:
   merge(double_list &&o)
   {
     if ( o == *this ) return;
-    auto *end_ptr = const_cast<pointer>(iend());     // dirty
+    auto *end_ptr = const_cast<pointer>(iend());      // dirty
     end_ptr->next = o.root;
     o.root = nullptr;
   }
@@ -326,4 +326,4 @@ public:
     return 0xFFFFFFFFFFFFFFF;
   }
 };
-};     // namespace micron
+};      // namespace micron

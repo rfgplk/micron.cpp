@@ -12,7 +12,7 @@
 
 namespace micron
 {
-template <lock_starts S, is_mutex M = mutex> class unique_lock
+template<lock_starts S, is_mutex M = mutex> class unique_lock
 {
   M *mtx;
   void (micron::mutex::*rptr)();
@@ -32,28 +32,28 @@ public:
 
   unique_lock(M *m)
     requires(S == lock_starts::locked)
-      : mtx(m), rptr((*m)()) {};
+      : mtx(m), rptr((*m)()) { };
   unique_lock(M *m)
     requires(S == lock_starts::adopt)
-      : mtx(m), rptr(m->retrieve()) {};
+      : mtx(m), rptr(m->retrieve()) { };
   unique_lock(M *m)
     requires(S == lock_starts::unlocked)
-      : mtx(m), rptr(nullptr) {};
+      : mtx(m), rptr(nullptr) { };
   unique_lock(M *m)
     requires(S == lock_starts::defer)
-      : mtx(m), rptr(nullptr) {};
+      : mtx(m), rptr(nullptr) { };
   unique_lock(M &m)
     requires(S == lock_starts::locked)
-      : mtx(&m), rptr(m()) {};
+      : mtx(&m), rptr(m()) { };
   unique_lock(M &m)
     requires(S == lock_starts::adopt)
-      : mtx(&m), rptr(m.retrieve()) {};
+      : mtx(&m), rptr(m.retrieve()) { };
   unique_lock(M &m)
     requires(S == lock_starts::unlocked)
-      : mtx(&m), rptr(nullptr) {};
+      : mtx(&m), rptr(nullptr) { };
   unique_lock(M &m)
     requires(S == lock_starts::defer)
-      : mtx(&m), rptr(nullptr) {};
+      : mtx(&m), rptr(nullptr) { };
   unique_lock(const unique_lock &) = delete;
 
   unique_lock(unique_lock &&o) : mtx(o.mtx), rptr(o.rptr)
@@ -78,7 +78,7 @@ public:
   lock()
   {
     __verify();
-    rptr = (*mtx).operator()();     // like this so it's explicit
+    rptr = (*mtx).operator()();      // like this so it's explicit
   }
 
   void
@@ -120,4 +120,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

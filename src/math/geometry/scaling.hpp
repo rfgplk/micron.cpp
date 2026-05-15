@@ -17,7 +17,7 @@ namespace math
 namespace geometry
 {
 
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
   requires(Dim >= 2 && Dim <= 16)
 struct scaling {
   vec<F, Dim> s;
@@ -48,7 +48,7 @@ struct scaling {
   }
 };
 
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
 [[nodiscard, gnu::always_inline]] inline constexpr scaling<F, Dim>
 operator*(const scaling<F, Dim> &a, const scaling<F, Dim> &b) noexcept
 {
@@ -57,6 +57,6 @@ operator*(const scaling<F, Dim> &a, const scaling<F, Dim> &b) noexcept
   return r;
 }
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

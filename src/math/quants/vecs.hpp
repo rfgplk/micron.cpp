@@ -58,4 +58,4 @@ using vec4dl = dlvec4;
 using vec8dl = dlvec8;
 using vec16dl = dlvec16;
 
-};     // namespace micron
+};      // namespace micron

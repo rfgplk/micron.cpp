@@ -17,16 +17,16 @@ namespace math
 namespace integrate
 {
 
-template <typename Fn, typename F>
+template<typename Fn, typename F>
 concept callable_real = requires(Fn fn, F x) {
   { fn(x) } -> micron::convertible_to<F>;
 };
 
-template <typename Fn, typename F, usize D>
+template<typename Fn, typename F, usize D>
 concept callable_real_d = requires(Fn fn, const F (&x)[D]) {
   { fn(x) } -> micron::convertible_to<F>;
 };
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

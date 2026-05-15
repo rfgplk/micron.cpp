@@ -81,7 +81,7 @@ reset_tracked()
 struct MoveOnly {
   int value;
 
-  explicit MoveOnly(int v) : value(v) {}
+  explicit MoveOnly(int v) : value(v) { }
 
   MoveOnly(const MoveOnly &) = delete;
 
@@ -112,7 +112,7 @@ struct BigPod {
   }
 };
 
-}     // anonymous namespace
+}      // anonymous namespace
 
 // ------------------------------------------------------------------ //
 //  main                                                               //
@@ -200,7 +200,7 @@ main()
     int out = 0;
     q.pop(out);
     require(out, 77);
-    require(src, 77);     // source must be untouched
+    require(src, 77);      // source must be untouched
   }
   end_test_case();
 
@@ -223,7 +223,7 @@ main()
     micron::spsc_queue<int, 8> q;
     int out = 0;
     require_false(q.pop(out));
-    require(out, 0);     // output must not be mutated
+    require(out, 0);      // output must not be mutated
   }
   end_test_case();
 
@@ -234,7 +234,7 @@ main()
     q.push(55);
     require_true(q.pop());
     require_true(q.empty());
-    require_false(q.pop());     // already empty
+    require_false(q.pop());      // already empty
   }
   end_test_case();
 
@@ -246,7 +246,7 @@ main()
     require(q.size(), size_t(1));
     int out = 99;
     q.pop(out);
-    require(out, 0);     // default int is 0
+    require(out, 0);      // default int is 0
   }
   end_test_case();
 
@@ -273,7 +273,7 @@ main()
     int peeked = 0;
     require_true(q.peek(peeked));
     require(peeked, 10);
-    require(q.size(), size_t(2));     // still two elements
+    require(q.size(), size_t(2));      // still two elements
 
     int out = 0;
     q.pop(out);
@@ -289,7 +289,7 @@ main()
     micron::spsc_queue<int, 8> q;
     int out = 99;
     require_false(q.peek(out));
-    require(out, 99);     // must not be touched
+    require(out, 99);      // must not be touched
   }
   end_test_case();
 
@@ -408,7 +408,7 @@ main()
       q.pop(tmp);
       q.pop(tmp);
       q.pop(tmp);
-    }     // destructor fires here
+    }      // destructor fires here
     require(Tracked::ctor, Tracked::dtor);
   }
   end_test_case();
@@ -607,13 +607,13 @@ main()
   // ---------------------------------------------------------------- //
   test_case("stress: producer/consumer thread correctness");
   {
-    constexpr int TOTAL = 1 << 16;     // 65536 items
+    constexpr int TOTAL = 1 << 16;      // 65536 items
     micron::spsc_queue<int, 1024> q;
     std::atomic<bool> done{ false };
 
     std::thread producer([&]() {
       for ( int i = 0; i < TOTAL; ++i ) {
-        while ( !q.push(i) );     // spin until slot available
+        while ( !q.push(i) );      // spin until slot available
       }
     });
 
@@ -638,7 +638,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("stress: batch producer/consumer thread correctness");
   {
-    constexpr int TOTAL = 1 << 14;     // 16384 items
+    constexpr int TOTAL = 1 << 14;      // 16384 items
     constexpr int BATCH = 32;
     micron::spsc_queue<int, 256> q;
 

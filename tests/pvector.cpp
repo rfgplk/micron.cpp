@@ -12,7 +12,7 @@ main()
     mc::pvector<int, 6, 8> pvec(10);
     mc::console(pvec.size());
     mc::console(pvec.max_size());
-    mc::console(pvec.set(1, 25));     // yields new vec
+    mc::console(pvec.set(1, 25));      // yields new vec
     mc::console(pvec);
   }
   {

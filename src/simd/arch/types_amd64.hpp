@@ -47,26 +47,26 @@ using h512 = __m512h;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
-template <typename T>
+template<typename T>
 concept is_simd_type = micron::same_as<T, b64> or micron::same_as<T, f128> or micron::same_as<T, d128> or micron::same_as<T, i128>
                        or micron::same_as<T, f256> or micron::same_as<T, d256> or micron::same_as<T, i256> or micron::same_as<T, f512>
                        or micron::same_as<T, d512> or micron::same_as<T, i512>;
-template <typename T>
+template<typename T>
 concept is_simd_128_type = micron::same_as<T, f128> or micron::same_as<T, d128> or micron::same_as<T, i128>;
-template <typename T>
+template<typename T>
 concept is_simd_256_type = micron::same_as<T, f256> or micron::same_as<T, d256> or micron::same_as<T, i256>;
-template <typename T>
+template<typename T>
 concept is_simd_512_type = micron::same_as<T, f512> or micron::same_as<T, d512> or micron::same_as<T, i512>;
-template <typename T>
+template<typename T>
 concept is_int_flag_type
     = micron::same_as<T, __uv8> or micron::same_as<T, __uv16> or micron::same_as<T, __uv32> or micron::same_as<T, __uv64>
       or micron::same_as<T, __v8> or micron::same_as<T, __v16> or micron::same_as<T, __v32> or micron::same_as<T, __v64>;
 
-template <typename T>
+template<typename T>
 concept is_flag_type = micron::same_as<T, __vd> or micron::same_as<T, __vf> or micron::same_as<T, __v8> or micron::same_as<T, __v16>
                        or micron::same_as<T, __v32> or micron::same_as<T, __v64>;
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_64_wide(void)
 {
@@ -74,7 +74,7 @@ __is_64_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_32_wide(void)
 {
@@ -82,7 +82,7 @@ __is_32_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_16_wide(void)
 {
@@ -90,7 +90,7 @@ __is_16_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_8_wide(void)
 {
@@ -99,5 +99,5 @@ __is_8_wide(void)
 }
 
 #pragma GCC diagnostic pop
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

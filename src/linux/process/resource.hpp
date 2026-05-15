@@ -21,24 +21,24 @@ using rlim_t = posix::rlim_t;
 
 struct proc_stat_t {
   pid_t pid;
-  char comm[256];     // executable name (without path)
-  char state;         // R=running, S=sleeping, D=disk-wait, Z=zombie, T=traced
+  char comm[256];      // executable name (without path)
+  char state;          // R=running, S=sleeping, D=disk-wait, Z=zombie, T=traced
   pid_t ppid;
   pid_t pgrp;
   int session;
   int tty_nr;
   pid_t tpgid;
   u32 flags;
-  u64 minflt, cminflt;     // minor faults (self, waited children)
-  u64 majflt, cmajflt;     // major faults (self, waited children)
-  u64 utime, stime;        // user/system time in clock ticks
-  i64 cutime, cstime;      // waited-children user/system ticks
+  u64 minflt, cminflt;      // minor faults (self, waited children)
+  u64 majflt, cmajflt;      // major faults (self, waited children)
+  u64 utime, stime;         // user/system time in clock ticks
+  i64 cutime, cstime;       // waited-children user/system ticks
   i64 priority, nice;
   i64 num_threads;
-  u64 starttime;     // clock ticks since boot
-  u64 vsize;         // virtual memory size in bytes
-  i64 rss;           // resident set size in pages
-  u64 rsslim;        // current soft limit on rss
+  u64 starttime;      // clock ticks since boot
+  u64 vsize;          // virtual memory size in bytes
+  i64 rss;            // resident set size in pages
+  u64 rsslim;         // current soft limit on rss
 };
 
 // Parsed fields from /proc/PID/status
@@ -46,19 +46,19 @@ struct proc_status_t {
   char name[256];
   char state;
   pid_t pid, ppid, tracerpid;
-  uid_t uid[4];     // [0]=real [1]=eff [2]=saved [3]=fs
+  uid_t uid[4];      // [0]=real [1]=eff [2]=saved [3]=fs
   gid_t gid[4];
-  i32 fd_size;              // number of file descriptor slots
-  u64 vm_peak, vm_size;     // kB
+  i32 fd_size;               // number of file descriptor slots
+  u64 vm_peak, vm_size;      // kB
   u64 vm_lck, vm_pin;
   u64 vm_hwm, vm_rss;
   u64 vm_data, vm_stk;
   u64 vm_exe, vm_lib;
   u64 vm_pte, vm_swap;
   i64 threads;
-  u64 sig_pnd, shd_pnd;     // pending signals (thread/process)
+  u64 sig_pnd, shd_pnd;      // pending signals (thread/process)
   u64 sig_blk, sig_ign, sig_cgt;
-  u64 cap_inh, cap_prm, cap_eff, cap_bnd, cap_amb;     // hex bitmasks
+  u64 cap_inh, cap_prm, cap_eff, cap_bnd, cap_amb;      // hex bitmasks
   u64 voluntary_ctxt, nonvoluntary_ctxt;
 };
 
@@ -72,7 +72,7 @@ struct proc_resource_t {
 
 namespace __impl
 {
-template <usize N = 80>
+template<usize N = 80>
 micron::sstring<N>
 proc_path(pid_t pid, const char *file)
 {
@@ -230,7 +230,7 @@ parse_status_line(proc_status_t &s, const char *ls, const char *le)
 #undef KIS
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 inline proc_stat_t
 read_proc_stat(pid_t pid = 0)
@@ -249,7 +249,7 @@ read_proc_stat(pid_t pid = 0)
   // comm is inside parentheses; find them from both ends to handle embedded ')'
   while ( p < end && *p != '(' ) ++p;
   const char *cn_s = ++p;
-  while ( p < end && *p != ')' ) ++p;     // last ')' found via reverse search is safer
+  while ( p < end && *p != ')' ) ++p;      // last ')' found via reverse search is safer
   // find the last ')' from end
   {
     const char *rp = end - 1;
@@ -285,7 +285,7 @@ read_proc_stat(pid_t pid = 0)
   s.priority = __impl::parse_i64(p, end);
   s.nice = __impl::parse_i64(p, end);
   s.num_threads = __impl::parse_i64(p, end);
-  __impl::parse_i64(p, end);     // itrealvalue — always 0, obsolete
+  __impl::parse_i64(p, end);      // itrealvalue — always 0, obsolete
   s.starttime = __impl::parse_u64(p, end);
   s.vsize = __impl::parse_u64(p, end);
   s.rss = __impl::parse_i64(p, end);
@@ -313,7 +313,7 @@ read_proc_status(pid_t pid = 0)
   return s;
 }
 
-template <posix::limits L>
+template<posix::limits L>
 inline posix::rlimit_t
 get_limit(pid_t pid = 0)
 {
@@ -322,14 +322,14 @@ get_limit(pid_t pid = 0)
   return rl;
 }
 
-template <posix::limits L>
+template<posix::limits L>
 inline int
 set_limit(pid_t pid, posix::rlimit_t rl)
 {
   return static_cast<int>(posix::set_process_limits(pid, static_cast<rlim_t>(L), rl));
 }
 
-template <posix::limits L>
+template<posix::limits L>
 inline int
 set_soft_limit(pid_t pid, rlim_t soft)
 {
@@ -339,7 +339,7 @@ set_soft_limit(pid_t pid, rlim_t soft)
   return static_cast<int>(posix::set_process_limits(pid, static_cast<rlim_t>(L), rl));
 }
 
-template <posix::limits L>
+template<posix::limits L>
 inline int
 set_hard_limit(pid_t pid, rlim_t hard)
 {
@@ -402,4 +402,4 @@ this_process_resources()
   return get_process_resources(0);
 }
 
-};     // namespace micron
+};      // namespace micron

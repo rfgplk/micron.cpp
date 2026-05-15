@@ -33,8 +33,8 @@ inline constexpr poly_coeffs<f32, 1> rem = { {
     0x1.555556p-3f,
 } };
 
-};     // namespace exp_f32_data
-};     // namespace coeff
-};     // namespace mkbits
-};     // namespace math
-};     // namespace micron
+};      // namespace exp_f32_data
+};      // namespace coeff
+};      // namespace mkbits
+};      // namespace math
+};      // namespace micron

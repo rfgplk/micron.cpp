@@ -49,7 +49,7 @@ int Tracker::destructions = 0;
 struct Point {
   int x, y;
 
-  Point(int x_, int y_) : x(x_), y(y_) {}
+  Point(int x_, int y_) : x(x_), y(y_) { }
 };
 
 // ============================================================
@@ -70,7 +70,7 @@ main(void)
     mc::weak_pointer<int> w;
     sb::require(!w);
     sb::require(static_cast<bool>(w) == false);
-    sb::require(w.get() == nullptr);     // get() returns nullptr, does not throw
+    sb::require(w.get() == nullptr);      // get() returns nullptr, does not throw
   }
   sb::end_test_case();
 
@@ -256,7 +256,7 @@ main(void)
     mc::unique_pointer<int> u(42);
     mc::weak_pointer<int> w(u);
     int *raw = w.get();
-    w = std::move(w);     // must not null w
+    w = std::move(w);      // must not null w
     sb::require(w.get() == raw);
     sb::require(*w == 42);
   }
@@ -433,12 +433,12 @@ main(void)
     {
       mc::unique_pointer<Tracker> u(123);
       mc::weak_pointer<Tracker> w(u);
-      u.release();     // owner relinquishes
+      u.release();      // owner relinquishes
       mc::unique_pointer<Tracker> promoted = w.assume_ownership();
       sb::require(!w);
       sb::require(promoted.active());
       sb::require(promoted->value == 123);
-    }     // exactly one destructor call here
+    }      // exactly one destructor call here
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -529,8 +529,8 @@ main(void)
       mc::shared_pointer<int> s(7);
       w = s;
       sb::require(static_cast<bool>(w));
-    }     // s destroyed — w becomes dangling but stays non-null
-    sb::require(static_cast<bool>(w));     // no back-channel nulling
+    }      // s destroyed — w becomes dangling but stays non-null
+    sb::require(static_cast<bool>(w));      // no back-channel nulling
   }
   sb::end_test_case();
 
@@ -542,7 +542,7 @@ main(void)
       w = u;
       sb::require(static_cast<bool>(w));
     }
-    sb::require(static_cast<bool>(w));     // dangling but non-null — expected
+    sb::require(static_cast<bool>(w));      // dangling but non-null — expected
   }
   sb::end_test_case();
 

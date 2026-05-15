@@ -53,8 +53,8 @@ namespace __batched_detail
 [[gnu::always_inline]] inline void
 transpose4x4_pd(__m256d v0, __m256d v1, __m256d v2, __m256d v3, __m256d &xs, __m256d &ys, __m256d &zs, __m256d &ws) noexcept
 {
-  const __m256d t01_lo = simd::avx::unpack_lo_f64(v0, v1);     // {v0[0], v1[0], v0[2], v1[2]}
-  const __m256d t01_hi = simd::avx::unpack_hi_f64(v0, v1);     // {v0[1], v1[1], v0[3], v1[3]}
+  const __m256d t01_lo = simd::avx::unpack_lo_f64(v0, v1);      // {v0[0], v1[0], v0[2], v1[2]}
+  const __m256d t01_hi = simd::avx::unpack_hi_f64(v0, v1);      // {v0[1], v1[1], v0[3], v1[3]}
   const __m256d t23_lo = simd::avx::unpack_lo_f64(v2, v3);
   const __m256d t23_hi = simd::avx::unpack_hi_f64(v2, v3);
   xs = simd::avx::permute2f128_f64<0x20>(t01_lo, t23_lo);
@@ -77,7 +77,7 @@ transpose4x4_pd_inv(__m256d xs, __m256d ys, __m256d zs, __m256d ws, __m256d &v0,
   v3 = simd::avx::permute2f128_f64<0x31>(t01_hi, t23_hi);
 }
 
-};     // namespace __batched_detail
+};      // namespace __batched_detail
 #endif
 
 #if defined(__micron_quat_batched_neon)
@@ -89,8 +89,8 @@ namespace __batched_detail
 transpose4x4_ps(float32x4_t v0, float32x4_t v1, float32x4_t v2, float32x4_t v3, float32x4_t &xs, float32x4_t &ys, float32x4_t &zs,
                 float32x4_t &ws) noexcept
 {
-  const float32x4_t t01_lo = simd::neon::zip_lo_f32(v0, v1);     // {v0[0], v1[0], v0[1], v1[1]}
-  const float32x4_t t01_hi = simd::neon::zip_hi_f32(v0, v1);     // {v0[2], v1[2], v0[3], v1[3]}
+  const float32x4_t t01_lo = simd::neon::zip_lo_f32(v0, v1);      // {v0[0], v1[0], v0[1], v1[1]}
+  const float32x4_t t01_hi = simd::neon::zip_hi_f32(v0, v1);      // {v0[2], v1[2], v0[3], v1[3]}
   const float32x4_t t23_lo = simd::neon::zip_lo_f32(v2, v3);
   const float32x4_t t23_hi = simd::neon::zip_hi_f32(v2, v3);
   xs = simd::neon::concat_lo_f32(t01_lo, t23_lo);
@@ -120,29 +120,29 @@ transpose4x4_ps_inv(float32x4_t xs, float32x4_t ys, float32x4_t zs, float32x4_t 
 transpose2x4_pd(float64x2_t lo0, float64x2_t hi0, float64x2_t lo1, float64x2_t hi1, float64x2_t &xs, float64x2_t &ys, float64x2_t &zs,
                 float64x2_t &ws) noexcept
 {
-  xs = simd::neon::zip_lo_f64(lo0, lo1);     // {q0.x, q1.x}
-  ys = simd::neon::zip_hi_f64(lo0, lo1);     // {q0.y, q1.y}
-  zs = simd::neon::zip_lo_f64(hi0, hi1);     // {q0.z, q1.z}
-  ws = simd::neon::zip_hi_f64(hi0, hi1);     // {q0.w, q1.w}
+  xs = simd::neon::zip_lo_f64(lo0, lo1);      // {q0.x, q1.x}
+  ys = simd::neon::zip_hi_f64(lo0, lo1);      // {q0.y, q1.y}
+  zs = simd::neon::zip_lo_f64(hi0, hi1);      // {q0.z, q1.z}
+  ws = simd::neon::zip_hi_f64(hi0, hi1);      // {q0.w, q1.w}
 }
 
 [[gnu::always_inline]] inline void
 transpose2x4_pd_inv(float64x2_t xs, float64x2_t ys, float64x2_t zs, float64x2_t ws, float64x2_t &lo0, float64x2_t &hi0, float64x2_t &lo1,
                     float64x2_t &hi1) noexcept
 {
-  lo0 = simd::neon::zip_lo_f64(xs, ys);     // {q0.x, q0.y}
-  lo1 = simd::neon::zip_hi_f64(xs, ys);     // {q1.x, q1.y}
-  hi0 = simd::neon::zip_lo_f64(zs, ws);     // {q0.z, q0.w}
-  hi1 = simd::neon::zip_hi_f64(zs, ws);     // {q1.z, q1.w}
+  lo0 = simd::neon::zip_lo_f64(xs, ys);      // {q0.x, q0.y}
+  lo1 = simd::neon::zip_hi_f64(xs, ys);      // {q1.x, q1.y}
+  hi0 = simd::neon::zip_lo_f64(zs, ws);      // {q0.z, q0.w}
+  hi1 = simd::neon::zip_hi_f64(zs, ws);      // {q1.z, q1.w}
 }
 #endif
 
-};     // namespace __batched_detail
+};      // namespace __batched_detail
 #endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // batched_multiply: out[i] = a[i] * b[i] (Hamilton product) for i in [0, n)
-template <ieee754_floating T>
+template<ieee754_floating T>
 inline void
 batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *out, usize n) noexcept
 {
@@ -307,7 +307,7 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // batched_normalize: out[i] = a[i] / |a[i]|
-template <ieee754_floating T>
+template<ieee754_floating T>
 inline void
 batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
 {
@@ -435,13 +435,13 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // batched_rotate: out[i] = q[i] * vec3(v[i]) * conj(q[i])
-template <ieee754_floating T>
+template<ieee754_floating T>
 inline void
 batched_rotate(const quaternion<T> *q, const micron::vector_3<T> *v, micron::vector_3<T> *out, usize n) noexcept
 {
   for ( usize i = 0; i < n; ++i ) out[i] = rotate<T>(q[i], v[i]);
 }
 
-};     // namespace quaternions
-};     // namespace math
-};     // namespace micron
+};      // namespace quaternions
+};      // namespace math
+};      // namespace micron

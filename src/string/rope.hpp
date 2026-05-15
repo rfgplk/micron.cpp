@@ -35,7 +35,7 @@ constexpr const char __rope_null_str[1] = "";
 constexpr const wide __rope_null_wstr[1] = L"";
 constexpr const unicode32 __rope_null_u32str[1] = U"";
 
-template <is_scalar_literal T = schar, bool Sf = true> class rope
+template<is_scalar_literal T = schar, bool Sf = true> class rope
 {
   // maximum size of each leaf
   static constexpr usize __max_leaf = 256;
@@ -283,7 +283,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   }
 
   // apply fn to to each leaf
-  template <typename Fn>
+  template<typename Fn>
   static bool
   __for_each_chunk(const __node *root, Fn &&fn)
   {
@@ -375,7 +375,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
     return ind > __length || cnt > __length - ind;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -389,7 +389,7 @@ template <is_scalar_literal T = schar, bool Sf = true> class rope
   mutable T *__flat;
 
   // private constructor for internal copying
-  rope(__node *root, usize len) : __root(root), __length(len), __flat(nullptr) {}
+  rope(__node *root, usize len) : __root(root), __length(len), __flat(nullptr) { }
 
   void
   __free_flat(void) const
@@ -436,7 +436,7 @@ public:
     size_type __depth;
     const __node *__leaf;
     size_type __pos;
-    size_type __index;     // global character index
+    size_type __index;      // global character index
 
     void
     __push_to_leftmost(const __node *n)
@@ -450,7 +450,7 @@ public:
     }
 
   public:
-    const_iterator() : __depth(0), __leaf(nullptr), __pos(0), __index(0) {}
+    const_iterator() : __depth(0), __leaf(nullptr), __pos(0), __index(0) { }
 
     explicit const_iterator(const __node *root, size_type start_index = 0) : __depth(0), __leaf(nullptr), __pos(0), __index(start_index)
     {
@@ -521,11 +521,11 @@ public:
     __release(__root);
   }
 
-  rope(void) : __root(nullptr), __length(0), __flat(nullptr) {}
+  rope(void) : __root(nullptr), __length(0), __flat(nullptr) { }
 
-  constexpr rope([[maybe_unused]] const size_type n) : __root(nullptr), __length(0), __flat(nullptr) {}
+  constexpr rope([[maybe_unused]] const size_type n) : __root(nullptr), __length(0), __flat(nullptr) { }
 
-  rope(size_type cnt, T ch) : __root(__build_fill(ch, cnt)), __length(cnt), __flat(nullptr) {}
+  rope(size_type cnt, T ch) : __root(__build_fill(ch, cnt)), __length(cnt), __flat(nullptr) { }
 
   rope(const char *str) : __flat(nullptr)
   {
@@ -534,15 +534,15 @@ public:
     __length = len;
   }
 
-  template <size_type M, typename F> rope(const F (&str)[M]) : __flat(nullptr)
+  template<size_type M, typename F> rope(const F (&str)[M]) : __flat(nullptr)
   {
-    size_type len = M - 1;     // exclude null terminator
+    size_type len = M - 1;      // exclude null terminator
     __root = __build_balanced(reinterpret_cast<const T *>(str), len);
     __length = len;
   }
 
   // O(1) copy
-  rope(const rope &o) : __root(__retain(o.__root)), __length(o.__length), __flat(nullptr) {}
+  rope(const rope &o) : __root(__retain(o.__root)), __length(o.__length), __flat(nullptr) { }
 
   rope(rope &&o) noexcept : __root(o.__root), __length(o.__length), __flat(o.__flat)
   {
@@ -551,18 +551,18 @@ public:
     o.__flat = nullptr;
   }
 
-  template <typename F>
+  template<typename F>
   rope(const rope<F> &o) : __root(__retain(reinterpret_cast<__node *>(o.__root))), __length(o.__length), __flat(nullptr)
   {
   }
 
-  template <is_string S> rope(const S &o) : __flat(nullptr)
+  template<is_string S> rope(const S &o) : __flat(nullptr)
   {
     __root = __build_balanced(reinterpret_cast<const T *>(o.c_str()), o.size());
     __length = o.size();
   }
 
-  template <is_container C>
+  template<is_container C>
     requires(sizeof(typename C::value_type) == sizeof(T))
   rope(const C &o) : __flat(nullptr)
   {
@@ -610,7 +610,7 @@ public:
     return *this;
   }
 
-  template <size_type M, typename F = T>
+  template<size_type M, typename F = T>
   rope &
   operator=(const F (&str)[M])
   {
@@ -722,7 +722,7 @@ public:
     return rope(*this);
   }
 
-  template <typename F>
+  template<typename F>
   inline F
   clone(void) const
   {
@@ -762,7 +762,7 @@ public:
     return __char_at(__root, n);
   }
 
-  template <typename F>
+  template<typename F>
   size_type
   find(F ch, size_type pos = 0) const
   {
@@ -799,7 +799,7 @@ public:
     return npos;
   }
 
-  template <typename F>
+  template<typename F>
   size_type
   find(const rope<F> &str, size_type pos = 0) const
   {
@@ -851,7 +851,7 @@ public:
     return rope();
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   push_back(F ch) const
   {
@@ -859,7 +859,7 @@ public:
     return rope(nr, __length + 1);
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   rope
   push_back(const F (&str)[M]) const
   {
@@ -869,7 +869,7 @@ public:
     return rope(__concat(__retain(__root), leaf), __length + len);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   push_back(const rope<F> &o) const
   {
@@ -894,7 +894,7 @@ public:
     return rope(__concat(__retain(__root), leaf), __length + n);
   }
 
-  template <typename F>
+  template<typename F>
   inline rope
   append(const slice<F> &f, size_type n) const
   {
@@ -903,17 +903,17 @@ public:
     return rope(__concat(__retain(__root), leaf), __length + n);
   }
 
-  template <typename F>
+  template<typename F>
   inline rope
   append(const F *f, size_type n) const
   {
     if ( n == 0 ) return *this;
-    size_type len = n - 1;     // match hstring convention (includes null)
+    size_type len = n - 1;      // match hstring convention (includes null)
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(f), len);
     return rope(__concat(__retain(__root), leaf), __length + len);
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline rope
   append(const F (&str)[M]) const
   {
@@ -923,7 +923,7 @@ public:
     return rope(__concat(__retain(__root), leaf), __length + len);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline rope
   append(const rope<F> &o) const
   {
@@ -931,7 +931,7 @@ public:
     return rope(__concat(__retain(__root), __retain(o.__root)), __length + o.__length);
   }
 
-  template <is_string S>
+  template<is_string S>
   inline rope
   append(const S &o) const
   {
@@ -940,7 +940,7 @@ public:
     return rope(__concat(__retain(__root), leaf), __length + o.size());
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   insert(size_type ind, F ch, size_type cnt = 1) const
   {
@@ -952,7 +952,7 @@ public:
     return rope(result, __length + cnt);
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   rope
   insert(size_type ind, const F (&str)[M], size_type cnt = 1) const
   {
@@ -974,7 +974,7 @@ public:
     return rope(result, __length + total);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   insert(size_type ind, const rope<F> &o) const
   {
@@ -984,7 +984,7 @@ public:
     return rope(result, __length + o.__length);
   }
 
-  template <is_string S>
+  template<is_string S>
   rope
   insert(size_type ind, const S &o) const
   {
@@ -995,35 +995,35 @@ public:
     return rope(result, __length + o.size());
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   insert(const_iterator itr, F ch, size_type cnt = 1) const
   {
     return insert(itr.index(), ch, cnt);
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   rope
   insert(const_iterator itr, const F (&str)[M], size_type cnt = 1) const
   {
     return insert(itr.index(), str, cnt);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   insert(const_iterator itr, const rope<F> &o) const
   {
     return insert(itr.index(), o);
   }
 
-  template <is_string S>
+  template<is_string S>
   rope
   insert(const_iterator itr, const S &o) const
   {
     return insert(itr.index(), o);
   }
 
-  template <typename F = T, typename I = size_type>
+  template<typename F = T, typename I = size_type>
     requires micron::is_arithmetic_v<I>
   rope
   erase(I __ind, size_type cnt = 1) const
@@ -1043,14 +1043,14 @@ public:
     return rope(result ? result : nullptr, __length - cnt);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   erase(const_iterator itr, size_type cnt = 1) const
   {
     return erase(itr.index(), cnt);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   substr(size_type pos = 0, size_type cnt = npos) const
   {
@@ -1068,7 +1068,7 @@ public:
     return rope(sub, cnt);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   substr(const_iterator _start, const_iterator _end) const
   {
@@ -1078,7 +1078,7 @@ public:
     return substr(pos, end_pos - pos);
   }
 
-  template <typename F = T, typename I = size_type>
+  template<typename F = T, typename I = size_type>
     requires micron::is_arithmetic_v<I>
   rope
   truncate(I n) const
@@ -1109,7 +1109,7 @@ public:
     return rope(__concat(__retain(__root), tail), n);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   remove(const char *needle) const
   {
@@ -1124,7 +1124,7 @@ public:
     return erase(pos, needle_len);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   remove(const rope<F> &needle) const
   {
@@ -1137,7 +1137,7 @@ public:
     return erase(pos, needle.__length);
   }
 
-  template <is_string S>
+  template<is_string S>
   rope
   remove(const S &needle) const
   {
@@ -1149,7 +1149,7 @@ public:
     return erase(pos, needle.size());
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   remove_all(const char *needle) const
   {
@@ -1164,7 +1164,7 @@ public:
     return cur;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope
   remove_all(const rope<F> &needle) const
   {
@@ -1178,7 +1178,7 @@ public:
     return cur;
   }
 
-  template <is_string S>
+  template<is_string S>
   rope
   remove_all(const S &needle) const
   {
@@ -1198,7 +1198,7 @@ public:
     return *this;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope &
   operator+=(const F *data)
   {
@@ -1208,7 +1208,7 @@ public:
     return *this;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   rope &
   operator+=(const F (&str)[M])
   {
@@ -1216,7 +1216,7 @@ public:
     return *this;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope &
   operator+=(const rope<F> &data)
   {
@@ -1224,7 +1224,7 @@ public:
     return *this;
   }
 
-  template <is_string S>
+  template<is_string S>
   rope &
   operator+=(const S &data)
   {
@@ -1239,7 +1239,7 @@ public:
     return *this;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   rope &
   operator+=(const slice<F> &data)
   {
@@ -1322,49 +1322,49 @@ public:
     return __cmp_raw(__root, __length, data, micron::strlen(data)) >= 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator==(const F (&data)[M]) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(&data[0]), M - 1) == 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator!=(const F (&data)[M]) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(&data[0]), M - 1) != 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator<(const F (&data)[M]) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(&data[0]), M - 1) < 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator>(const F (&data)[M]) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(&data[0]), M - 1) > 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator<=(const F (&data)[M]) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(&data[0]), M - 1) <= 0;
   }
 
-  template <typename F = T, size_type M>
+  template<typename F = T, size_type M>
   inline bool
   operator>=(const F (&data)[M]) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(&data[0]), M - 1) >= 0;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator==(const rope<F> &data) const
   {
@@ -1375,14 +1375,14 @@ public:
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(data.__flat), data.__length) == 0;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator!=(const rope<F> &data) const
   {
     return !(*this == data);
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator<(const rope<F> &data) const
   {
@@ -1390,7 +1390,7 @@ public:
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(data.__flat), data.__length) < 0;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator>(const rope<F> &data) const
   {
@@ -1398,7 +1398,7 @@ public:
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(data.__flat), data.__length) > 0;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator<=(const rope<F> &data) const
   {
@@ -1406,7 +1406,7 @@ public:
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(data.__flat), data.__length) <= 0;
   }
 
-  template <typename F = T>
+  template<typename F = T>
   inline bool
   operator>=(const rope<F> &data) const
   {
@@ -1415,49 +1415,49 @@ public:
   }
 
   // comparison with is_string types (hstring, sstring, etc.)
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator==(const S &str) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(str.c_str()), str.size()) == 0;
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator!=(const S &str) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(str.c_str()), str.size()) != 0;
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator<(const S &str) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(str.c_str()), str.size()) < 0;
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator>(const S &str) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(str.c_str()), str.size()) > 0;
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator<=(const S &str) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(str.c_str()), str.size()) <= 0;
   }
 
-  template <is_string S>
+  template<is_string S>
   inline bool
   operator>=(const S &str) const
   {
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(str.c_str()), str.size()) >= 0;
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
@@ -1467,7 +1467,7 @@ public:
     });
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each_chunk(Fn &&fn) const
   {
@@ -1477,7 +1477,7 @@ public:
     });
   }
 
-  template <is_scalar_literal F, bool> friend class rope;
+  template<is_scalar_literal F, bool> friend class rope;
 };
 
-};     // namespace micron
+};      // namespace micron

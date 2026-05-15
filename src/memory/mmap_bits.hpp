@@ -127,7 +127,7 @@ enum class mem_prots : i32 { read = 0x1, write = 0x2, exec = 0x4, none = 0x0, gr
 
 enum class map_types : i32 {
   shared = 0x01,
-  mmap_private = 0x02,     // boo ;c
+  mmap_private = 0x02,      // boo ;c
   shared_validate = 0x03,
   droppable = 0x08,
   type = 0x0f,
@@ -138,4 +138,4 @@ enum class map_types : i32 {
   __end
 };
 
-};     // namespace micron
+};      // namespace micron

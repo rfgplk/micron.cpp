@@ -14,9 +14,9 @@
 namespace micron
 {
 // universal mutable memory object, allows copying & moving.
-template <typename T, typename Alloc = allocator_serial<>>
+template<typename T, typename Alloc = allocator_serial<>>
   requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
-struct __mutable_memory_resource : public __core_memory_resource<T> {
+struct __mutable_memory_resource: public __core_memory_resource<T> {
   typename __core_memory_resource<T>::size_type length;
 
   ~__mutable_memory_resource()
@@ -29,7 +29,7 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
     }
   }
 
-  __mutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) {}
+  __mutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) { }
 
   __mutable_memory_resource(void)
       : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
@@ -37,9 +37,9 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
   }
 
   __mutable_memory_resource(usize n_elements)
-      : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) {};
+      : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) { };
 
-  __mutable_memory_resource(const __mutable_memory_resource &o) : __core_memory_resource<T>(o), length(o.length) {}
+  __mutable_memory_resource(const __mutable_memory_resource &o) : __core_memory_resource<T>(o), length(o.length) { }
 
   __mutable_memory_resource(__mutable_memory_resource &&o) : __core_memory_resource<T>(micron::move(o)), length(o.length) { o.length = 0; }
 
@@ -123,9 +123,9 @@ struct __mutable_memory_resource : public __core_memory_resource<T> {
 };
 
 // necessarily allow copyable types
-template <typename T, typename Alloc = allocator_serial<>>
-  requires(micron::is_move_constructible_v<T>)     // and (!micron::is_copy_constructible_v<T>))
-struct __mutable_memory_resource_move_only : public __core_memory_resource<T> {
+template<typename T, typename Alloc = allocator_serial<>>
+  requires(micron::is_move_constructible_v<T>)      // and (!micron::is_copy_constructible_v<T>))
+struct __mutable_memory_resource_move_only: public __core_memory_resource<T> {
   typename __core_memory_resource<T>::size_type length;
 
   ~__mutable_memory_resource_move_only()
@@ -143,7 +143,7 @@ struct __mutable_memory_resource_move_only : public __core_memory_resource<T> {
   {
   }
 
-  __mutable_memory_resource_move_only(nullptr_t) : __core_memory_resource<T>(), length(0) {}
+  __mutable_memory_resource_move_only(nullptr_t) : __core_memory_resource<T>(), length(0) { }
 
   explicit __mutable_memory_resource_move_only(usize n_elements)
       : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0)
@@ -225,4 +225,4 @@ struct __mutable_memory_resource_move_only : public __core_memory_resource<T> {
   }
 };
 
-};     // namespace micron
+};      // namespace micron

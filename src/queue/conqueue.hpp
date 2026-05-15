@@ -21,8 +21,8 @@
 namespace micron
 {
 
-template <is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-class conqueue : public __mutable_memory_resource<T, Alloc>
+template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+class conqueue: public __mutable_memory_resource<T, Alloc>
 {
   micron::mutex __mtx;
   using __mem = __mutable_memory_resource<T, Alloc>;
@@ -48,7 +48,7 @@ public:
     clear();
   }
 
-  conqueue() : __mem(N), needle(__mem::capacity - 1) {}
+  conqueue() : __mem(N), needle(__mem::capacity - 1) { }
 
   conqueue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
   {
@@ -278,4 +278,4 @@ public:
     return *this;
   }
 };
-};     // namespace micron
+};      // namespace micron

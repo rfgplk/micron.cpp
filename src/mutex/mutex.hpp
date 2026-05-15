@@ -69,7 +69,7 @@ public:
     return tk.get() == ATOMIC_LOCKED;
   }
 
-  template <typename... T> friend void unlock(T &...);
+  template<typename... T> friend void unlock(T &...);
 
   mutex(const mutex &) = delete;
   mutex(mutex &&) = delete;
@@ -136,7 +136,7 @@ public:
     return tk.get() == ATOMIC_LOCKED;
   }
 
-  template <typename... T> friend void unlock(T &...);
+  template<typename... T> friend void unlock(T &...);
 
   weak_mutex(const weak_mutex &) = delete;
   weak_mutex(weak_mutex &&) = delete;
@@ -144,11 +144,10 @@ public:
 };
 
 struct mcs_node {
-  atomic_token<mcs_node *> next;     // successor in the queue
-  atomic_token<bool> waiting;        // true  → still blocked
-                                     // false → lock handed off to us
+  atomic_token<mcs_node *> next;      // successor in the queue
+  atomic_token<bool> waiting;
 
-  mcs_node() noexcept : next(nullptr), waiting(false) {}
+  mcs_node() noexcept : next(nullptr), waiting(false) { }
 };
 
 class queuing_mutex
@@ -176,7 +175,7 @@ private:
   }
 
 public:
-  queuing_mutex() noexcept : tail(nullptr) {}
+  queuing_mutex() noexcept : tail(nullptr) { }
 
   queuing_mutex(const queuing_mutex &) = delete;
   queuing_mutex(queuing_mutex &&) = delete;
@@ -226,4 +225,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

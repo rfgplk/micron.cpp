@@ -377,8 +377,8 @@ rint(simd::f512 x) noexcept
 }
 #endif
 
-};     // namespace mk
-};     // namespace math
-};     // namespace micron
+};      // namespace mk
+};      // namespace math
+};      // namespace micron
 
 #pragma GCC diagnostic pop

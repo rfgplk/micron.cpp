@@ -127,10 +127,10 @@ test_insert_index()
 {
   micron::vector<int> v;
 
-  for ( int i = 0; i < 5; ++i ) v.push_back(i);     // [0 1 2 3 4]
+  for ( int i = 0; i < 5; ++i ) v.push_back(i);      // [0 1 2 3 4]
 
-  v.insert(v.begin() + 0, 99);     // [99 0 1 2 3 4]
-  v.insert(v.begin() + 3, 77);     // [99 0 1 77 2 3 4]
+  v.insert(v.begin() + 0, 99);      // [99 0 1 2 3 4]
+  v.insert(v.begin() + 3, 77);      // [99 0 1 77 2 3 4]
   v.insert(v.end() - 1, 55);
 
   assert(v[0] == 99);

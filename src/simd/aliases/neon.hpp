@@ -755,7 +755,7 @@ select(uint32x4_t mask, float32x4_t a, float32x4_t b) noexcept
   return vbslq_f32(mask, a, b);
 }
 
-#if defined(__micron_arch_arm64)
+// integer min/max for byte/half/word lanes (arm32 + arm64).
 __inline_neon int8x16_t
 min(int8x16_t a, int8x16_t b) noexcept
 {
@@ -790,12 +790,6 @@ __inline_neon uint32x4_t
 min(uint32x4_t a, uint32x4_t b) noexcept
 {
   return vminq_u32(a, b);
-}
-
-__inline_neon float64x2_t
-min(float64x2_t a, float64x2_t b) noexcept
-{
-  return vminq_f64(a, b);
 }
 
 __inline_neon int8x16_t
@@ -834,12 +828,6 @@ max(uint32x4_t a, uint32x4_t b) noexcept
   return vmaxq_u32(a, b);
 }
 
-__inline_neon float64x2_t
-max(float64x2_t a, float64x2_t b) noexcept
-{
-  return vmaxq_f64(a, b);
-}
-
 __inline_neon int8x16_t
 abs(int8x16_t a) noexcept
 {
@@ -856,42 +844,6 @@ __inline_neon int32x4_t
 abs(int32x4_t a) noexcept
 {
   return vabsq_s32(a);
-}
-
-__inline_neon int64x2_t
-abs(int64x2_t a) noexcept
-{
-  return vabsq_s64(a);
-}
-
-__inline_neon float64x2_t
-abs(float64x2_t a) noexcept
-{
-  return vabsq_f64(a);
-}
-
-__inline_neon float32x4_t
-fma(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
-{
-  return vfmaq_f32(a, b, c);
-}
-
-__inline_neon float64x2_t
-fma(float64x2_t a, float64x2_t b, float64x2_t c) noexcept
-{
-  return vfmaq_f64(a, b, c);
-}
-
-__inline_neon float32x4_t
-fms(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
-{
-  return vfmsq_f32(a, b, c);
-}
-
-__inline_neon float64x2_t
-fms(float64x2_t a, float64x2_t b, float64x2_t c) noexcept
-{
-  return vfmsq_f64(a, b, c);
 }
 
 __inline_neon uint8x16_t
@@ -916,6 +868,57 @@ __inline_neon int8x16_t
 select(uint8x16_t mask, int8x16_t a, int8x16_t b) noexcept
 {
   return vbslq_s8(mask, a, b);
+}
+
+#if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
+__inline_neon float32x4_t
+fma(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  return vfmaq_f32(a, b, c);
+}
+
+__inline_neon float32x4_t
+fms(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  return vfmsq_f32(a, b, c);
+}
+#endif
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+min(float64x2_t a, float64x2_t b) noexcept
+{
+  return vminq_f64(a, b);
+}
+
+__inline_neon float64x2_t
+max(float64x2_t a, float64x2_t b) noexcept
+{
+  return vmaxq_f64(a, b);
+}
+
+__inline_neon int64x2_t
+abs(int64x2_t a) noexcept
+{
+  return vabsq_s64(a);
+}
+
+__inline_neon float64x2_t
+abs(float64x2_t a) noexcept
+{
+  return vabsq_f64(a);
+}
+
+__inline_neon float64x2_t
+fma(float64x2_t a, float64x2_t b, float64x2_t c) noexcept
+{
+  return vfmaq_f64(a, b, c);
+}
+
+__inline_neon float64x2_t
+fms(float64x2_t a, float64x2_t b, float64x2_t c) noexcept
+{
+  return vfmsq_f64(a, b, c);
 }
 
 __inline_neon float64x2_t
@@ -1095,7 +1098,7 @@ rint(float64x2_t a) noexcept
 #endif
 #endif
 
-template <int LANE>
+template<int LANE>
 __inline_neon float
 get_lane_f32(float32x4_t a) noexcept
 {
@@ -1103,7 +1106,7 @@ get_lane_f32(float32x4_t a) noexcept
 }
 
 #if defined(__micron_arch_arm64)
-template <int LANE>
+template<int LANE>
 __inline_neon double
 get_lane_f64(float64x2_t a) noexcept
 {
@@ -1111,21 +1114,21 @@ get_lane_f64(float64x2_t a) noexcept
 }
 #endif
 
-template <int LANE>
+template<int LANE>
 __inline_neon int
 get_lane_i32(int32x4_t a) noexcept
 {
   return vgetq_lane_s32(a, LANE);
 }
 
-template <int LANE>
+template<int LANE>
 __inline_neon long long
 get_lane_i64(int64x2_t a) noexcept
 {
   return vgetq_lane_s64(a, LANE);
 }
 
-template <int LANE>
+template<int LANE>
 __inline_neon float32x4_t
 set_lane_f32(float v, float32x4_t a) noexcept
 {
@@ -1133,7 +1136,7 @@ set_lane_f32(float v, float32x4_t a) noexcept
 }
 
 #if defined(__micron_arch_arm64)
-template <int LANE>
+template<int LANE>
 __inline_neon float64x2_t
 set_lane_f64(double v, float64x2_t a) noexcept
 {
@@ -1247,28 +1250,28 @@ convert_f64_to_i64(float64x2_t a) noexcept
 }
 #endif
 
-template <int N>
+template<int N>
 __inline_neon int32x4_t
 shl_i32(int32x4_t a) noexcept
 {
   return vshlq_n_s32(a, N);
 }
 
-template <int N>
+template<int N>
 __inline_neon int64x2_t
 shl_i64(int64x2_t a) noexcept
 {
   return vshlq_n_s64(a, N);
 }
 
-template <int N>
+template<int N>
 __inline_neon int32x4_t
 shr_arith_i32(int32x4_t a) noexcept
 {
   return vshrq_n_s32(a, N);
 }
 
-template <int N>
+template<int N>
 __inline_neon int64x2_t
 shr_arith_i64(int64x2_t a) noexcept
 {
@@ -1554,7 +1557,45 @@ absdiff_acc(uint32x4_t acc, uint32x4_t a, uint32x4_t b) noexcept
   return vabaq_u32(acc, a, b);
 }
 
-#if defined(__micron_arch_arm64)
+template<int N>
+__inline_neon uint8x16_t
+shr_imm_u8(uint8x16_t a) noexcept
+{
+  return vshrq_n_u8(a, N);
+}
+
+__inline_neon uint8x16_t
+shl_var_u8(uint8x16_t a, int8x16_t cnt) noexcept
+{
+  return vshlq_u8(a, cnt);
+}
+
+__inline_neon uint8x8_t
+pairwise_add_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vpadd_u8(a, b);
+}
+
+template<int LANE>
+__inline_neon uint8_t
+get_lane_u8(uint8x8_t a) noexcept
+{
+  return vget_lane_u8(a, LANE);
+}
+
+__inline_neon uint16_t
+movemask_u8(uint8x16_t v) noexcept
+{
+  static const int8_t __shl_arr[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7 };
+  uint8x16_t bits = vshlq_u8(vshrq_n_u8(v, 7), vld1q_s8(__shl_arr));
+  uint8x8_t lo = vget_low_u8(bits);
+  uint8x8_t hi = vget_high_u8(bits);
+  uint8x8_t r = vpadd_u8(lo, hi);
+  r = vpadd_u8(r, r);
+  r = vpadd_u8(r, r);
+  return static_cast<uint16_t>(vget_lane_u8(r, 0)) | (static_cast<uint16_t>(vget_lane_u8(r, 1)) << 8);
+}
+
 __inline_neon int8x16_t
 qadd(int8x16_t a, int8x16_t b) noexcept
 {
@@ -1759,6 +1800,7 @@ rhadd(uint32x4_t a, uint32x4_t b) noexcept
   return vrhaddq_u32(a, b);
 }
 
+#if defined(__micron_arch_arm64)
 __inline_neon signed char
 reduce_add(int8x16_t v) noexcept
 {
@@ -1914,6 +1956,7 @@ reduce_min(float64x2_t v) noexcept
 {
   return vminvq_f64(v);
 }
+#endif
 
 __inline_neon int16x8_t
 mul_long(int8x8_t a, int8x8_t b) noexcept
@@ -2059,22 +2102,25 @@ narrow_sat(uint64x2_t v) noexcept
   return vqmovn_u64(v);
 }
 
+#if defined(__micron_arch_arm64) || defined(__micron_arm_directed_rounding)
 __inline_neon float32x4_t
 nearest_even(float32x4_t a) noexcept
 {
   return vrndnq_f32(a);
 }
 
-__inline_neon float64x2_t
-nearest_even(float64x2_t a) noexcept
-{
-  return vrndnq_f64(a);
-}
-
 __inline_neon float32x4_t
 nearest_away(float32x4_t a) noexcept
 {
   return vrndaq_f32(a);
+}
+#endif
+
+#if defined(__micron_arch_arm64)
+__inline_neon float64x2_t
+nearest_even(float64x2_t a) noexcept
+{
+  return vrndnq_f64(a);
 }
 
 __inline_neon float64x2_t
@@ -2088,6 +2134,6 @@ nearest_away(float64x2_t a) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace neon
-};     // namespace simd
-};     // namespace micron
+};      // namespace neon
+};      // namespace simd
+};      // namespace micron

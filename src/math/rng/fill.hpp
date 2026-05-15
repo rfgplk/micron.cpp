@@ -22,7 +22,7 @@ namespace rng
 namespace fill
 {
 
-template <ieee754_floating F, rng_concept Rng>
+template<ieee754_floating F, rng_concept Rng>
 [[gnu::flatten]] inline void
 fill_uniform(F *__restrict__ out, usize N, Rng &g) noexcept
 {
@@ -30,7 +30,7 @@ fill_uniform(F *__restrict__ out, usize N, Rng &g) noexcept
   while ( out != end ) *out++ = dist::uniform_real<F>(g);
 }
 
-template <ieee754_floating F, rng_concept Rng>
+template<ieee754_floating F, rng_concept Rng>
 [[gnu::flatten]] inline void
 fill_uniform(F *__restrict__ out, usize N, Rng &g, F lo, F hi) noexcept
 {
@@ -39,7 +39,7 @@ fill_uniform(F *__restrict__ out, usize N, Rng &g, F lo, F hi) noexcept
   while ( out != end ) *out++ = lo + r * dist::uniform_real<F>(g);
 }
 
-template <ieee754_floating F, rng_concept Rng>
+template<ieee754_floating F, rng_concept Rng>
 [[gnu::flatten]] inline void
 fill_normal(F *__restrict__ out, usize N, Rng &g, F mu = F(0), F sigma = F(1)) noexcept
 {
@@ -47,7 +47,7 @@ fill_normal(F *__restrict__ out, usize N, Rng &g, F mu = F(0), F sigma = F(1)) n
   while ( out != end ) *out++ = dist::normal_ziggurat<F>(g, mu, sigma);
 }
 
-template <rng_concept Rng>
+template<rng_concept Rng>
 [[gnu::flatten]] inline void
 fill_bytes(u8 *__restrict__ out, usize N, Rng &g) noexcept
 {
@@ -63,7 +63,7 @@ fill_bytes(u8 *__restrict__ out, usize N, Rng &g) noexcept
   }
 }
 
-template <typename T, rng_concept Rng>
+template<typename T, rng_concept Rng>
   requires(micron::is_integral_v<T>)
 [[gnu::flatten]] inline void
 fill_uniform_int(T *__restrict__ out, usize N, Rng &g, T lo, T hi) noexcept
@@ -72,7 +72,7 @@ fill_uniform_int(T *__restrict__ out, usize N, Rng &g, T lo, T hi) noexcept
   while ( out != end ) *out++ = dist::uniform_int<T>(g, lo, hi);
 }
 
-};     // namespace fill
-};     // namespace rng
-};     // namespace math
-};     // namespace micron
+};      // namespace fill
+};      // namespace rng
+};      // namespace math
+};      // namespace micron

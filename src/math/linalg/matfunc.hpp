@@ -34,7 +34,7 @@ namespace matfunc
 namespace __impl_matfunc
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline void
 nan_fill(mat<F, N, N> &X) noexcept
 {
@@ -42,7 +42,7 @@ nan_fill(mat<F, N, N> &X) noexcept
   for ( usize i = 0; i < N * N; ++i ) X.data[i] = nan;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 sqrt_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
 {
@@ -61,7 +61,7 @@ sqrt_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
   return true;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 log_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
 {
@@ -112,7 +112,7 @@ log_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
   return true;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline usize
 identify_blocks(const mat<F, N, N> &T, usize *out_starts, usize *out_sizes) noexcept
 {
@@ -128,7 +128,7 @@ identify_blocks(const mat<F, N, N> &T, usize *out_starts, usize *out_sizes) noex
   return n_blocks;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline bool
 solve_sylvester_block(mat<F, N, N> &U, usize start_i, usize bi, usize start_j, usize bj, const F *rhs, F eps) noexcept
 {
@@ -229,14 +229,14 @@ solve_sylvester_block(mat<F, N, N> &U, usize start_i, usize bi, usize start_j, u
   return false;
 }
 
-};     // namespace __impl_matfunc
+};      // namespace __impl_matfunc
 
-template <ieee754_floating F, usize N> struct expm_result {
+template<ieee754_floating F, usize N> struct expm_result {
   mat<F, N, N> X;
   bool finite;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline expm_result<F, N>
 expm(const mat<F, N, N> &A) noexcept
 {
@@ -326,13 +326,13 @@ expm(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct parlett_sqrt_result {
+template<ieee754_floating F, usize N> struct parlett_sqrt_result {
   mat<F, N, N> U;
   bool real_sqrt_exists;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline parlett_sqrt_result<F, N>
 parlett_sqrt(const mat<F, N, N> &T) noexcept
 {
@@ -422,13 +422,13 @@ parlett_sqrt(const mat<F, N, N> &T) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N> struct sqrtm_result {
+template<ieee754_floating F, usize N> struct sqrtm_result {
   mat<F, N, N> X;
   bool real_sqrt_exists;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline sqrtm_result<F, N>
 sqrtm(const mat<F, N, N> &A) noexcept
 {
@@ -461,13 +461,13 @@ sqrtm(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct parlett_log_result {
+template<ieee754_floating F, usize N> struct parlett_log_result {
   mat<F, N, N> L;
   bool real_log_exists;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline parlett_log_result<F, N>
 parlett_log(const mat<F, N, N> &T_in) noexcept
 {
@@ -528,7 +528,7 @@ parlett_log(const mat<F, N, N> &T_in) noexcept
   mat<F, N, N> X = T;
   for ( usize i = 0; i < N; ++i ) X.data[i * N + i] -= F(1);
 
-  mat<F, N, N> X_pow = X;     // X^1
+  mat<F, N, N> X_pow = X;      // X^1
   mat<F, N, N> L = mat<F, N, N>::zero();
   for ( usize i = 0; i < N * N; ++i ) L.data[i] = X.data[i];
   constexpr int n_terms = 20;
@@ -547,13 +547,13 @@ parlett_log(const mat<F, N, N> &T_in) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N> struct logm_result {
+template<ieee754_floating F, usize N> struct logm_result {
   mat<F, N, N> X;
   bool real_log_exists;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline logm_result<F, N>
 logm(const mat<F, N, N> &A) noexcept
 {
@@ -585,7 +585,7 @@ logm(const mat<F, N, N> &A) noexcept
   }
 }
 
-};     // namespace matfunc
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace matfunc
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

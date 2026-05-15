@@ -15,9 +15,9 @@
 #include "../src/control.hpp"
 #include "../src/io/console.hpp"
 
-#include <fstream>     // for std::ifstream
+#include <fstream>      // for std::ifstream
 
-#include <iostream>     // for std::cout
+#include <iostream>      // for std::cout
 #include <vector>
 
 int

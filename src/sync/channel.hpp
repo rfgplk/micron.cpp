@@ -13,7 +13,7 @@
 namespace micron
 {
 
-template <typename T> class channel
+template<typename T> class channel
 {
   // micron::spin_lock _spin;
   micron::mutex _lock;
@@ -27,20 +27,20 @@ template <typename T> class channel
     // see 6.7.7. — end note] Transfer out of a loop, out of a block, or back past an initialized variable with automatic
     // storage duration involves the destruction of objects with automatic storage duration that are in scope at the
     // point transferred from but not at the point transferred to.
-  rst: {     // doing it like this to prevent needing two separate locks
+  rst: {      // doing it like this to prevent needing two separate locks
     __cpu_pause();
     micron::lock_guard m(_lock);
     if ( obj.empty() ) {
       goto rst;
     }
-    return m;     // prevent _lock from being released;
+    return m;      // prevent _lock from being released;
   }
   }
 
 public:
-  channel(void) : obj{} {}
+  channel(void) : obj{} { }
 
-  template <typename... Args> channel(Args &&...args)     // : _spin{}
+  template<typename... Args> channel(Args &&...args)      // : _spin{}
   {
     (obj.emplace(args), ...);
   }
@@ -64,8 +64,8 @@ public:
   channel &
   operator<<(T &to)
   {
-    auto m = __wait();     // keeps lock throughout scope, NOTE: although lock_guards are immovable, ellision allows this
-                           // operation
+    auto m = __wait();      // keeps lock throughout scope, NOTE: although lock_guards are immovable, ellision allows this
+                            // operation
     to = obj();
     return *this;
   }
@@ -77,4 +77,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

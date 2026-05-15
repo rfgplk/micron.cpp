@@ -26,28 +26,28 @@ namespace dists
 namespace __impl
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 lgamma(F z) noexcept
 {
   return mk::special::lgamma<F>(z);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 tgamma(F z) noexcept
 {
   return mk::special::tgamma<F>(z);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 lbeta(F a, F b) noexcept
 {
   return lgamma<F>(a) + lgamma<F>(b) - lgamma<F>(a + b);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 __gammap(F a, F x) noexcept
 {
@@ -87,14 +87,14 @@ __gammap(F a, F x) noexcept
   return F(1) - h * mk::exp_ns::exp<F>(log_pre);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 __gammaq(F a, F x) noexcept
 {
   return F(1) - __gammap<F>(a, x);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline F
 __betainc(F a, F b, F x) noexcept
 {
@@ -137,7 +137,7 @@ __betainc(F a, F b, F x) noexcept
   return swap ? F(1) - r : r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 norm_ppf(F p) noexcept
 {
@@ -168,7 +168,7 @@ norm_ppf(F p) noexcept
   return x;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 norm_cdf(F x) noexcept
 {
@@ -176,9 +176,9 @@ norm_cdf(F x) noexcept
   return F(0.5) * mk::special::erfc<F>(-x * inv_sqrt2);
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
-template <ieee754_floating F = f64> class __gammadist
+template<ieee754_floating F = f64> class __gammadist
 {
   F __alpha;
   F __theta;
@@ -186,7 +186,7 @@ template <ieee754_floating F = f64> class __gammadist
 public:
   using value_type = F;
 
-  constexpr __gammadist(F shape, F scale = F(1)) noexcept : __alpha(shape), __theta(scale) {}
+  constexpr __gammadist(F shape, F scale = F(1)) noexcept : __alpha(shape), __theta(scale) { }
 
   [[nodiscard]] constexpr F
   shape() const noexcept
@@ -200,7 +200,7 @@ public:
     return __theta;
   }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -257,16 +257,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class __betadist
+template<ieee754_floating F = f64> class __betadist
 {
   F __alpha, __beta;
 
 public:
   using value_type = F;
 
-  constexpr __betadist(F alpha, F beta) noexcept : __alpha(alpha), __beta(beta) {}
+  constexpr __betadist(F alpha, F beta) noexcept : __alpha(alpha), __beta(beta) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -306,16 +306,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class chi2_dist
+template<ieee754_floating F = f64> class chi2_dist
 {
   F __kf;
 
 public:
   using value_type = F;
 
-  constexpr explicit chi2_dist(F k) noexcept : __kf(k) {}
+  constexpr explicit chi2_dist(F k) noexcept : __kf(k) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -352,16 +352,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class student_t_dist
+template<ieee754_floating F = f64> class student_t_dist
 {
   F __nu;
 
 public:
   using value_type = F;
 
-  constexpr explicit student_t_dist(F nu) noexcept : __nu(nu) {}
+  constexpr explicit student_t_dist(F nu) noexcept : __nu(nu) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -402,16 +402,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class f_dist
+template<ieee754_floating F = f64> class f_dist
 {
   F __d1, __d2;
 
 public:
   using value_type = F;
 
-  constexpr f_dist(F d1, F d2) noexcept : __d1(d1), __d2(d2) {}
+  constexpr f_dist(F d1, F d2) noexcept : __d1(d1), __d2(d2) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -458,16 +458,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class lognormal_dist
+template<ieee754_floating F = f64> class lognormal_dist
 {
   F __mu, __sigma;
 
 public:
   using value_type = F;
 
-  constexpr lognormal_dist(F mu = F(0), F sigma = F(1)) noexcept : __mu(mu), __sigma(sigma) {}
+  constexpr lognormal_dist(F mu = F(0), F sigma = F(1)) noexcept : __mu(mu), __sigma(sigma) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -511,16 +511,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class weibull_dist
+template<ieee754_floating F = f64> class weibull_dist
 {
   F __lambdaf, __kf;
 
 public:
   using value_type = F;
 
-  constexpr weibull_dist(F lambda, F k) noexcept : __lambdaf(lambda), __kf(k) {}
+  constexpr weibull_dist(F lambda, F k) noexcept : __lambdaf(lambda), __kf(k) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -570,16 +570,16 @@ public:
   }
 };
 
-template <ieee754_floating F = f64> class cauchy_dist
+template<ieee754_floating F = f64> class cauchy_dist
 {
   F __x0, __gamma;
 
 public:
   using value_type = F;
 
-  constexpr cauchy_dist(F x0 = F(0), F gamma = F(1)) noexcept : __x0(x0), __gamma(gamma) {}
+  constexpr cauchy_dist(F x0 = F(0), F gamma = F(1)) noexcept : __x0(x0), __gamma(gamma) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
@@ -622,16 +622,16 @@ public:
   }
 };
 
-template <typename I = i64, ieee754_floating F = f64> class geometric_dist
+template<typename I = i64, ieee754_floating F = f64> class geometric_dist
 {
   F __p;
 
 public:
   using value_type = I;
 
-  constexpr explicit geometric_dist(F p) noexcept : __p(p) {}
+  constexpr explicit geometric_dist(F p) noexcept : __p(p) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] I
   operator()(Rng &g) const noexcept
   {
@@ -671,7 +671,7 @@ public:
   }
 };
 
-template <typename I = i64, ieee754_floating F = f64> class binomial_dist
+template<typename I = i64, ieee754_floating F = f64> class binomial_dist
 {
   I __n;
   F __p;
@@ -679,9 +679,9 @@ template <typename I = i64, ieee754_floating F = f64> class binomial_dist
 public:
   using value_type = I;
 
-  constexpr binomial_dist(I n, F p) noexcept : __n(n), __p(p) {}
+  constexpr binomial_dist(I n, F p) noexcept : __n(n), __p(p) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] I
   operator()(Rng &g) const noexcept
   {
@@ -741,7 +741,7 @@ public:
   }
 };
 
-template <typename I = i64, ieee754_floating F = f64> class negative_binomial_dist
+template<typename I = i64, ieee754_floating F = f64> class negative_binomial_dist
 {
   F __r;
   F __p;
@@ -749,9 +749,9 @@ template <typename I = i64, ieee754_floating F = f64> class negative_binomial_di
 public:
   using value_type = I;
 
-  constexpr negative_binomial_dist(F r, F p) noexcept : __r(r), __p(p) {}
+  constexpr negative_binomial_dist(F r, F p) noexcept : __r(r), __p(p) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   [[nodiscard]] I
   operator()(Rng &g) const noexcept
   {
@@ -789,17 +789,17 @@ public:
   }
 };
 
-template <ieee754_floating F = f64, usize K = 0> class dirichlet_dist
+template<ieee754_floating F = f64, usize K = 0> class dirichlet_dist
 {
-  const F *__alpha;     // pointer to K-element parameter vector
+  const F *__alpha;      // pointer to K-element parameter vector
   usize __kf;
 
 public:
   using value_type = F;
 
-  constexpr dirichlet_dist(const F *alpha, usize k) noexcept : __alpha(alpha), __kf(k) {}
+  constexpr dirichlet_dist(const F *alpha, usize k) noexcept : __alpha(alpha), __kf(k) { }
 
-  template <rng_concept Rng>
+  template<rng_concept Rng>
   inline void
   operator()(Rng &g, F *out) const noexcept
   {
@@ -840,7 +840,7 @@ public:
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // auxilliary higher level fns (consider moving these out and expanding)
 
-template <typename T, rng_concept Rng>
+template<typename T, rng_concept Rng>
 inline void
 shuffle(T *first, T *last, Rng &g) noexcept
 {
@@ -853,14 +853,14 @@ shuffle(T *first, T *last, Rng &g) noexcept
   }
 }
 
-template <is_iterable_container C, rng_concept Rng>
+template<is_iterable_container C, rng_concept Rng>
 inline void
 shuffle(C &c, Rng &g) noexcept
 {
   shuffle<typename C::value_type>(c.begin(), c.end(), g);
 }
 
-template <rng_concept Rng, typename... Cs>
+template<rng_concept Rng, typename... Cs>
   requires(sizeof...(Cs) >= 2) && (is_iterable_container<Cs> && ...) && (!micron::is_const_v<Cs> && ...)
 inline void
 shuffle(Rng &g, Cs &...cs) noexcept
@@ -868,7 +868,7 @@ shuffle(Rng &g, Cs &...cs) noexcept
   ((shuffle<typename Cs::value_type>(cs.begin(), cs.end(), g)), ...);
 }
 
-template <typename I, rng_concept Rng>
+template<typename I, rng_concept Rng>
   requires(micron::is_integral_v<I>)
 inline void
 permutation(I *first, usize n, Rng &g) noexcept
@@ -877,7 +877,7 @@ permutation(I *first, usize n, Rng &g) noexcept
   shuffle<I>(first, first + n, g);
 }
 
-template <typename T, rng_concept Rng>
+template<typename T, rng_concept Rng>
 [[nodiscard]] inline T
 choice(const T *first, usize n, Rng &g) noexcept
 {
@@ -885,7 +885,7 @@ choice(const T *first, usize n, Rng &g) noexcept
   return first[idx];
 }
 
-template <typename T, ieee754_floating F, rng_concept Rng>
+template<typename T, ieee754_floating F, rng_concept Rng>
 [[nodiscard]] inline T
 choice(const T *items, const F *weights, usize n, Rng &g) noexcept
 {
@@ -899,17 +899,17 @@ choice(const T *items, const F *weights, usize n, Rng &g) noexcept
   return items[n - 1];
 }
 
-template <is_iterable_container C, rng_concept Rng>
+template<is_iterable_container C, rng_concept Rng>
 [[nodiscard]] inline typename C::value_type
 choice(const C &c, Rng &g) noexcept
 {
   return choice<typename C::value_type>(c.cbegin(), c.size(), g);
 }
 
-template <ieee754_floating F = f64> using gamma_dist = __gammadist<F>;
-template <ieee754_floating F = f64> using beta_dist = __betadist<F>;
+template<ieee754_floating F = f64> using gamma_dist = __gammadist<F>;
+template<ieee754_floating F = f64> using beta_dist = __betadist<F>;
 
-};     // namespace dists
-};     // namespace rng
-};     // namespace math
-};     // namespace micron
+};      // namespace dists
+};      // namespace rng
+};      // namespace math
+};      // namespace micron

@@ -21,12 +21,12 @@ namespace micron
 
 enum class memory_flags { read, write, exec, none };
 
-template <typename T> struct __core_memory_flags {
+template<typename T> struct __core_memory_flags {
   memory_flags flags;
 };
 
 // NOTE: restraints not necessary, managed by external resource, internal pointer
-template <typename T> struct __core_memory_resource {
+template<typename T> struct __core_memory_resource {
   using reference = T &;
   using const_reference = const T &;
   using pointer = T *;
@@ -34,7 +34,7 @@ template <typename T> struct __core_memory_resource {
   using value_type = T;
   using size_type = usize;
 
-  T *memory;     // capacity implied due to byte / sizeof(T)
+  T *memory;      // capacity implied due to byte / sizeof(T)
   usize capacity;
 
   ~__core_memory_resource()
@@ -43,9 +43,9 @@ template <typename T> struct __core_memory_resource {
     capacity = 0;
   };
 
-  __core_memory_resource(void) : memory(nullptr), capacity(0) {}
+  __core_memory_resource(void) : memory(nullptr), capacity(0) { }
 
-  __core_memory_resource(const __core_memory_resource &o) : memory(o.memory), capacity(o.capacity) {}
+  __core_memory_resource(const __core_memory_resource &o) : memory(o.memory), capacity(o.capacity) { }
 
   __core_memory_resource(__core_memory_resource &&o) noexcept : memory(o.memory), capacity(o.capacity)
   {
@@ -53,7 +53,7 @@ template <typename T> struct __core_memory_resource {
     o.capacity = 0;
   };
 
-  template <typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity) {};
+  template<typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity) { };
 
   explicit __core_memory_resource(chunk<byte> &&b)
   {
@@ -155,4 +155,4 @@ template <typename T> struct __core_memory_resource {
     return { reinterpret_cast<byte *>(memory), capacity * sizeof(T) };
   };
 };
-};     // namespace micron
+};      // namespace micron

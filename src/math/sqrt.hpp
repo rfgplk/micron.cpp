@@ -101,7 +101,7 @@ fsqrt(i64 x) noexcept
   return x < 0 ? 0 : static_cast<i64>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
 }
 
-template <typename T>
+template<typename T>
   requires micron::is_arithmetic_v<T>
 constexpr T
 sqrt(T x) noexcept
@@ -275,5 +275,5 @@ vrsqrt_approx(simd::f512 v) noexcept
 }
 #endif
 
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

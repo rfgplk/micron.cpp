@@ -27,18 +27,18 @@ namespace micron
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // distances
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires micron::is_pointer_v<T> && micron::is_pointer_v<F>
 inline usize
-distance(T a, F b)     // distance between two pointers, can be of different types
+distance(T a, F b)      // distance between two pointers, can be of different types
 {
   return (reinterpret_cast<word *>(b) - reinterpret_cast<word *>(a));
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
   requires micron::is_pointer_v<T> && micron::is_pointer_v<F>
 inline usize
-adistance(T a, F b)     // absolute distance between two pointers, can be of different types
+adistance(T a, F b)      // absolute distance between two pointers, can be of different types
 {
   return math::abs(reinterpret_cast<word *>(b) - reinterpret_cast<word *>(a));
 }
@@ -46,7 +46,7 @@ adistance(T a, F b)     // absolute distance between two pointers, can be of dif
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // destroys
 
-template <typename T>
+template<typename T>
 inline void
 destroy(T &mem)
   requires(!micron::is_array<T>::value)
@@ -58,7 +58,7 @@ destroy(T &mem)
   }
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 inline void
 destroy(T &mem)
   requires micron::is_array<T>::value
@@ -73,7 +73,7 @@ destroy(T &mem)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // overwrite
 
-template <typename T, typename F>
+template<typename T, typename F>
 void
 overwrite(T &src, F &dest)
 {
@@ -84,28 +84,28 @@ overwrite(T &src, F &dest)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // zeros
 
-template <usize N, typename T>
+template<usize N, typename T>
 void
 zero(T *src)
 {
   czero<N>(src);
 }
 
-template <typename T, usize M>
+template<typename T, usize M>
 void
 zero(char (*ptr)[M])
 {
   czero<M>(ptr);
 }
 
-template <typename T>
+template<typename T>
 void
 zero(T *src)
 {
   bset(src, 0x0, sizeof(T));
 }
 
-template <typename T>
+template<typename T>
 inline bool
 is_zero(const T *src)
 {
@@ -119,7 +119,7 @@ is_zero(const T *src)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy_n
 
-template <typename N, typename T, typename F>
+template<typename N, typename T, typename F>
 F *
 copy_n(const T *restrict src, F *restrict dst, const N cnt)
 {
@@ -145,7 +145,7 @@ copy_n(const T *restrict src, F *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy
 
-template <usize N, typename T, typename F>
+template<usize N, typename T, typename F>
 F *
 copy(const T *restrict src, F *restrict dst)
 {
@@ -175,7 +175,7 @@ copy(const T *restrict src, F *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy
 
-template <usize N, typename T, typename F>
+template<usize N, typename T, typename F>
 F &
 copy(const T &restrict src, F &restrict dst)
 {
@@ -204,7 +204,7 @@ copy(const T &restrict src, F &restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // copy
 
-template <usize N, typename T, typename F>
+template<usize N, typename T, typename F>
 F *
 copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 {
@@ -231,7 +231,7 @@ copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ccopys
 
-template <usize N, typename T, typename F>
+template<usize N, typename T, typename F>
 F *
 ccopy(const T *restrict src, F *restrict dst)
 {
@@ -265,7 +265,7 @@ ccopy(const T *restrict src, F *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // scopys
 
-template <typename T>
+template<typename T>
 void
 scopy(const T &restrict src, T &restrict dst)
 {
@@ -299,7 +299,7 @@ scopy(const T &restrict src, T &restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cmoves
 
-template <usize N, typename T, typename F>
+template<usize N, typename T, typename F>
 F *
 cmove(const T *restrict src, F *restrict dst)
 {
@@ -334,7 +334,7 @@ cmove(const T *restrict src, F *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cmoves
 
-template <typename T, typename F>
+template<typename T, typename F>
 void
 cmove(T &&src, const F &dst)
 {
@@ -344,7 +344,7 @@ cmove(T &&src, const F &dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // move_ns
 
-template <typename N, typename T, typename F>
+template<typename N, typename T, typename F>
 F *
 move_n(T *restrict src, F *restrict dst, const N cnt)
 {
@@ -371,7 +371,7 @@ move_n(T *restrict src, F *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // set_ns
 
-template <typename T, typename N>
+template<typename T, typename N>
 T *
 set_n(T *restrict dst, const byte val, const N cnt)
 {
@@ -397,7 +397,7 @@ set_n(T *restrict dst, const byte val, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cset_ns
 
-template <usize N, typename T>
+template<usize N, typename T>
 T *
 cset_n(T *restrict dst, const byte val)
 {
@@ -460,7 +460,7 @@ cfill_n(T *restrict dst, const T val)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // zero_ns
 
-template <typename T, typename N>
+template<typename T, typename N>
 T *
 zero_n(T *restrict dst, const N cnt)
 {
@@ -486,7 +486,7 @@ zero_n(T *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // czero_ns
 
-template <usize N, typename T>
+template<usize N, typename T>
 T *
 czero_n(T *restrict dst)
 {
@@ -513,7 +513,7 @@ czero_n(T *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compare_ns
 
-template <typename N, typename T>
+template<typename N, typename T>
 i64
 compare_n(const T *restrict src, const T *restrict dst, const N cnt)
 {
@@ -538,7 +538,7 @@ compare_n(const T *restrict src, const T *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ccompare_ns
 
-template <usize N, typename T>
+template<usize N, typename T>
 i64
 ccompare_n(const T *restrict src, const T *restrict dst)
 {
@@ -563,7 +563,7 @@ ccompare_n(const T *restrict src, const T *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // equal_ns
 
-template <typename N, typename T>
+template<typename N, typename T>
 bool
 equal_n(const T *restrict src, const T *restrict dst, const N cnt)
 {
@@ -573,7 +573,7 @@ equal_n(const T *restrict src, const T *restrict dst, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cequal_ns
 
-template <usize N, typename T>
+template<usize N, typename T>
 bool
 cequal_n(const T *restrict src, const T *restrict dst)
 {
@@ -583,7 +583,7 @@ cequal_n(const T *restrict src, const T *restrict dst)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // swap_ns
 
-template <typename N, typename T>
+template<typename N, typename T>
 void
 swap_n(T *restrict a, T *restrict b, const N cnt)
 {
@@ -610,7 +610,7 @@ swap_n(T *restrict a, T *restrict b, const N cnt)
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cswap_ns
 
-template <usize N, typename T>
+template<usize N, typename T>
 void
 cswap_n(T *restrict a, T *restrict b)
 {
@@ -621,4 +621,4 @@ cswap_n(T *restrict a, T *restrict b)
   cmemcpy<N>(reinterpret_cast<byte *>(b), tmp);
 }
 
-};     // namespace micron
+};      // namespace micron

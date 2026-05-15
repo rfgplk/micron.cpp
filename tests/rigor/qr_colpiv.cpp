@@ -15,7 +15,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace ml = micron::math::linalg;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {
@@ -24,7 +24,7 @@ approx(F a, F b, F tol) noexcept
   return d <= tol;
 }
 
-template <typename F, usize R, usize C>
+template<typename F, usize R, usize C>
 static bool
 mat_approx(const m::mat<F, R, C> &a, const m::mat<F, R, C> &b, F tol) noexcept
 {
@@ -33,7 +33,7 @@ mat_approx(const m::mat<F, R, C> &a, const m::mat<F, R, C> &b, F tol) noexcept
   return true;
 }
 
-template <typename F, usize R, usize C>
+template<typename F, usize R, usize C>
 static m::mat<F, R, C>
 permute_cols(const m::mat<F, R, C> &A, const usize *perm) noexcept
 {
@@ -44,7 +44,7 @@ permute_cols(const m::mat<F, R, C> &A, const usize *perm) noexcept
 }
 
 // dense GEMM for verification: C = A * B (no BLAS dep)
-template <typename F, usize M, usize K, usize N>
+template<typename F, usize M, usize K, usize N>
 static m::mat<F, M, N>
 gemm_naive(const m::mat<F, M, K> &A, const m::mat<F, K, N> &B) noexcept
 {

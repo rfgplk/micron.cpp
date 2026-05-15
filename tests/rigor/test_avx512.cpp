@@ -14,7 +14,7 @@ using ::sb::print;
 using ::sb::require_true;
 using ::sb::test_case;
 
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline bool
 v_eq(T a, T b) noexcept
 {
@@ -75,7 +75,7 @@ kernel_bitwise(const int *in)
   __m512i a = mz::loadu_i512(in);
   __m512i b = mz::splat_i32(int(0xFF00FF00u));
   __m512i x = mz::xor_i512(a, b);
-  __m512i a2 = mz::xor_i512(x, b);     // round-trip
+  __m512i a2 = mz::xor_i512(x, b);      // round-trip
   return v_eq(a, a2) ? 1 : 0;
 }
 

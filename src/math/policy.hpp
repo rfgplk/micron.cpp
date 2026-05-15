@@ -34,10 +34,10 @@ inline constexpr cr_tag cr{};
 inline constexpr faithful_tag faithful{};
 inline constexpr fast_tag fast{};
 
-template <typename T>
+template<typename T>
 concept policy_tag = micron::is_same_v<T, ieee_tag> or micron::is_same_v<T, cr_tag> or micron::is_same_v<T, faithful_tag>
                      or micron::is_same_v<T, fast_tag>;
 
-};     // namespace policy
-};     // namespace math
-};     // namespace micron
+};      // namespace policy
+};      // namespace math
+};      // namespace micron

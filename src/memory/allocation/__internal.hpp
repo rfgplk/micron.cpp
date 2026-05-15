@@ -20,7 +20,7 @@ __alloc(usize sz)
   return abc::alloc(sz);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __free(T *ptr)
 {
@@ -33,11 +33,11 @@ __alloc(usize sz)
   return ::malloc(sz);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __free(T *ptr)
 {
   ::free(ptr);
 }
 #endif
-};     // namespace micron
+};      // namespace micron

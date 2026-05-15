@@ -36,7 +36,7 @@ g(int a, int b, int c, int d)
 void
 n(int b)
 {
-  mc::console(b >> 1);     // 50
+  mc::console(b >> 1);      // 50
 }
 
 int

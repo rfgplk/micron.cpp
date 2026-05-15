@@ -22,7 +22,7 @@ namespace math
 namespace geometry
 {
 
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
   requires(Dim >= 2 && Dim <= 16)
 struct hyperplane {
   vec<F, Dim> normal;
@@ -77,6 +77,6 @@ struct hyperplane {
   }
 };
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

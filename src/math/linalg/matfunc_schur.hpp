@@ -32,7 +32,7 @@ namespace __impl_matfunc_schur
 //   val(x)             f(x) for real x
 //   deriv(x)           f'(x) (used when a 2x2 block has a repeated eigenvalue)
 //   complex(a,b,re,im) real and imaginary parts of f(a + i b)
-template <ieee754_floating F> struct mfn_exp_desc {
+template<ieee754_floating F> struct mfn_exp_desc {
   [[nodiscard, gnu::always_inline]] static inline F
   val(F x) noexcept
   {
@@ -54,7 +54,7 @@ template <ieee754_floating F> struct mfn_exp_desc {
   }
 };
 
-template <ieee754_floating F> struct mfn_sin_desc {
+template<ieee754_floating F> struct mfn_sin_desc {
   [[nodiscard, gnu::always_inline]] static inline F
   val(F x) noexcept
   {
@@ -76,7 +76,7 @@ template <ieee754_floating F> struct mfn_sin_desc {
   }
 };
 
-template <ieee754_floating F> struct mfn_cos_desc {
+template<ieee754_floating F> struct mfn_cos_desc {
   [[nodiscard, gnu::always_inline]] static inline F
   val(F x) noexcept
   {
@@ -98,7 +98,7 @@ template <ieee754_floating F> struct mfn_cos_desc {
   }
 };
 
-template <ieee754_floating F> struct mfn_sinh_desc {
+template<ieee754_floating F> struct mfn_sinh_desc {
   [[nodiscard, gnu::always_inline]] static inline F
   val(F x) noexcept
   {
@@ -120,7 +120,7 @@ template <ieee754_floating F> struct mfn_sinh_desc {
   }
 };
 
-template <ieee754_floating F> struct mfn_cosh_desc {
+template<ieee754_floating F> struct mfn_cosh_desc {
   [[nodiscard, gnu::always_inline]] static inline F
   val(F x) noexcept
   {
@@ -144,7 +144,7 @@ template <ieee754_floating F> struct mfn_cosh_desc {
 
 // given a 2x2 block B = [[a, b], [c, d]] from real Schur form, computes the 2x2 matrix function f(B) in the {I, B} basis
 // f(B) = coef_I * I + coef_M * B
-template <typename FnDesc, ieee754_floating F>
+template<typename FnDesc, ieee754_floating F>
 [[gnu::flatten]] inline void
 generic_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
 {
@@ -181,7 +181,7 @@ generic_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
   x11 = coef_M * d + coef_I;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 exp_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
 {
@@ -189,8 +189,8 @@ exp_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
   const F det = a * d - b * c;
   const F alpha = tr * F(0.5);
   const F disc = alpha * alpha - det;
-  F coef_M;     // alpha
-  F coef_I;     // beta
+  F coef_M;      // alpha
+  F coef_I;      // beta
   if ( disc > F(0) ) {
     const F sq = math::fsqrt(disc);
     const F l1 = alpha + sq;
@@ -218,7 +218,7 @@ exp_2x2_block(F &x00, F &x01, F &x10, F &x11, F a, F b, F c, F d) noexcept
   x11 = coef_M * d + coef_I;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline bool
 solve_sylvester_minus(F a00, F a01, F a10, F a11, usize bi, F b00, F b01, F b10, F b11, usize bj, const F *rhs, F *out, F eps) noexcept
 {
@@ -304,12 +304,12 @@ solve_sylvester_minus(F a00, F a01, F a10, F a11, usize bi, F b00, F b01, F b10,
   return false;
 }
 
-template <ieee754_floating F, usize N> struct parlett_exp_result {
+template<ieee754_floating F, usize N> struct parlett_exp_result {
   mat<F, N, N> F_T;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline parlett_exp_result<F, N>
 parlett_exp(const mat<F, N, N> &T) noexcept
 {
@@ -393,12 +393,12 @@ parlett_exp(const mat<F, N, N> &T) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N> struct parlett_func_result {
+template<ieee754_floating F, usize N> struct parlett_func_result {
   mat<F, N, N> F_T;
   bool converged;
 };
 
-template <typename FnDesc, ieee754_floating F, usize N>
+template<typename FnDesc, ieee754_floating F, usize N>
 [[nodiscard]] inline parlett_func_result<F, N>
 parlett_func(const mat<F, N, N> &T) noexcept
 {
@@ -482,14 +482,14 @@ parlett_func(const mat<F, N, N> &T) noexcept
   return r;
 }
 
-};     // namespace __impl_matfunc_schur
+};      // namespace __impl_matfunc_schur
 
-template <ieee754_floating F, usize N> struct expmat_result {
+template<ieee754_floating F, usize N> struct expmat_result {
   mat<F, N, N> X;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline expmat_result<F, N>
 expmat(const mat<F, N, N> &A) noexcept
 {
@@ -521,7 +521,7 @@ expmat(const mat<F, N, N> &A) noexcept
           const F *__restrict__ row_zf = ZF.data + i * N;
           for ( usize j = 0; j < N; ++j ) {
             F s = F(0);
-            const F *__restrict__ row_z_j = sr.Z.data + j * N;     // Zᵀ col j == Z row j
+            const F *__restrict__ row_z_j = sr.Z.data + j * N;      // Zᵀ col j == Z row j
             for ( usize k = 0; k < N; ++k ) s = math::fma<F>(row_zf[k], row_z_j[k], s);
             row_x[j] = s;
           }
@@ -537,13 +537,13 @@ expmat(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct sqrtmat_result {
+template<ieee754_floating F, usize N> struct sqrtmat_result {
   mat<F, N, N> X;
   bool real_sqrt_exists;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline sqrtmat_result<F, N>
 sqrtmat(const mat<F, N, N> &A) noexcept
 {
@@ -551,13 +551,13 @@ sqrtmat(const mat<F, N, N> &A) noexcept
   return { r.X, r.real_sqrt_exists, r.converged };
 }
 
-template <ieee754_floating F, usize N> struct logmat_result {
+template<ieee754_floating F, usize N> struct logmat_result {
   mat<F, N, N> X;
   bool real_log_exists;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline logmat_result<F, N>
 logmat(const mat<F, N, N> &A) noexcept
 {
@@ -569,7 +569,7 @@ logmat(const mat<F, N, N> &A) noexcept
 namespace __impl_matfunc_schur
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline mat<F, N, N>
 back_transform(const mat<F, N, N> &Z, const mat<F, N, N> &F_T) noexcept
 {
@@ -592,7 +592,7 @@ back_transform(const mat<F, N, N> &Z, const mat<F, N, N> &F_T) noexcept
     const F *__restrict__ row_zf = ZF.data + i * N;
     for ( usize j = 0; j < N; ++j ) {
       F s = F(0);
-      const F *__restrict__ row_z_j = Z.data + j * N;     // Zᵀ col j == Z row j
+      const F *__restrict__ row_z_j = Z.data + j * N;      // Zᵀ col j == Z row j
       for ( usize k = 0; k < N; ++k ) s = math::fma<F>(row_zf[k], row_z_j[k], s);
       row_x[j] = s;
     }
@@ -600,9 +600,9 @@ back_transform(const mat<F, N, N> &Z, const mat<F, N, N> &F_T) noexcept
   return X;
 }
 
-};     // namespace __impl_matfunc_schur
+};      // namespace __impl_matfunc_schur
 
-template <ieee754_floating F, usize N> struct sinmat_result {
+template<ieee754_floating F, usize N> struct sinmat_result {
   mat<F, N, N> X;
   bool converged;
 };
@@ -610,7 +610,7 @@ template <ieee754_floating F, usize N> struct sinmat_result {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trigs
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline sinmat_result<F, N>
 sinmat(const mat<F, N, N> &A) noexcept
 {
@@ -638,12 +638,12 @@ sinmat(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct cosmat_result {
+template<ieee754_floating F, usize N> struct cosmat_result {
   mat<F, N, N> X;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline cosmat_result<F, N>
 cosmat(const mat<F, N, N> &A) noexcept
 {
@@ -671,12 +671,12 @@ cosmat(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct sinhmat_result {
+template<ieee754_floating F, usize N> struct sinhmat_result {
   mat<F, N, N> X;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline sinhmat_result<F, N>
 sinhmat(const mat<F, N, N> &A) noexcept
 {
@@ -704,12 +704,12 @@ sinhmat(const mat<F, N, N> &A) noexcept
   }
 }
 
-template <ieee754_floating F, usize N> struct coshmat_result {
+template<ieee754_floating F, usize N> struct coshmat_result {
   mat<F, N, N> X;
   bool converged;
 };
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline coshmat_result<F, N>
 coshmat(const mat<F, N, N> &A) noexcept
 {
@@ -738,7 +738,7 @@ coshmat(const mat<F, N, N> &A) noexcept
 }
 
 // matrix power  A^p
-template <ieee754_floating F, usize N> struct powmat_result {
+template<ieee754_floating F, usize N> struct powmat_result {
   mat<F, N, N> X;
   bool converged;
 };
@@ -746,7 +746,7 @@ template <ieee754_floating F, usize N> struct powmat_result {
 namespace __impl_matfunc_schur
 {
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 inline mat<F, N, N>
 matmul(const mat<F, N, N> &A, const mat<F, N, N> &B) noexcept
 {
@@ -764,7 +764,7 @@ matmul(const mat<F, N, N> &A, const mat<F, N, N> &B) noexcept
   return C;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::always_inline]] inline bool
 is_integer_value(F p) noexcept
 {
@@ -772,9 +772,9 @@ is_integer_value(F p) noexcept
   return r == p;
 }
 
-};     // namespace __impl_matfunc_schur
+};      // namespace __impl_matfunc_schur
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline powmat_result<F, N>
 powmat(const mat<F, N, N> &A, F p) noexcept
 {
@@ -836,7 +836,7 @@ powmat(const mat<F, N, N> &A, F p) noexcept
   }
 }
 
-};     // namespace schur
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace schur
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

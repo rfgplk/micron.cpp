@@ -59,7 +59,7 @@ using micron::math::quants::vec_view;
 namespace __impl_level1
 {
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr T &
 ref(T *p, usize i, ssize_t inc) noexcept
 {
@@ -500,7 +500,7 @@ iamax_packed_f32(const float *__restrict__ x, usize n) noexcept
   return best_idx;
 }
 
-#endif     // AVX2 + FMA
+#endif      // AVX2 + FMA
 
 #if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 
@@ -548,7 +548,7 @@ scal_packed_f64_neon(double alpha, double *__restrict__ x, usize n) noexcept
   }
   for ( ; i < n; ++i ) x[i] = x[i] * alpha;
 }
-#endif     // arm64
+#endif      // arm64
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // NEON nrm2_fast
@@ -620,7 +620,7 @@ nrm2_fast_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
   for ( ; i < n; ++i ) r = math::fma<f64>(x[i], x[i], r);
   return r;
 }
-#endif     // arm64
+#endif      // arm64
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // NEON iamax
@@ -782,13 +782,13 @@ iamax_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
   }
   return best_idx;
 }
-#endif     // arm64
+#endif      // arm64
 
-#endif     // NEON
+#endif      // NEON
 
-};     // namespace __impl_level1
+};      // namespace __impl_level1
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 axpy(T alpha, const T *__restrict__ x, const T *__restrict__ x_end, T *__restrict__ y) noexcept
 {
@@ -826,7 +826,7 @@ axpy(T alpha, const T *__restrict__ x, const T *__restrict__ x_end, T *__restric
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 axpy(usize n, T alpha, const T *x, ssize_t incx, T *y, ssize_t incy) noexcept
 {
@@ -843,14 +843,14 @@ axpy(usize n, T alpha, const T *x, ssize_t incx, T *y, ssize_t incy) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 axpy(T alpha, const vec_view<T> &x, vec_view<T> y) noexcept
 {
   axpy<T>(x.n, alpha, x.data, x.inc, y.data, y.inc);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 axpby(T alpha, const T *__restrict__ x, const T *__restrict__ x_end, T beta, T *__restrict__ y) noexcept
 {
@@ -875,7 +875,7 @@ axpby(T alpha, const T *__restrict__ x, const T *__restrict__ x_end, T beta, T *
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 axpby(usize n, T alpha, const T *x, ssize_t incx, T beta, T *y, ssize_t incy) noexcept
 {
@@ -892,14 +892,14 @@ axpby(usize n, T alpha, const T *x, ssize_t incx, T beta, T *y, ssize_t incy) no
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 axpby(T alpha, const vec_view<T> &x, T beta, vec_view<T> y) noexcept
 {
   axpby<T>(x.n, alpha, x.data, x.inc, beta, y.data, y.inc);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 scal(T alpha, T *first, T *last) noexcept
 {
@@ -941,7 +941,7 @@ scal(T alpha, T *first, T *last) noexcept
   for ( usize i = 0; i < n; ++i ) first[i] = first[i] * alpha;
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 scal(usize n, T alpha, T *x, ssize_t incx) noexcept
 {
@@ -952,7 +952,7 @@ scal(usize n, T alpha, T *x, ssize_t incx) noexcept
   for ( usize i = 0; i < n; ++i ) __impl_level1::ref(x, i, incx) = __impl_level1::ref(x, i, incx) * alpha;
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 scal(T alpha, vec_view<T> x) noexcept
 {
@@ -962,7 +962,7 @@ scal(T alpha, vec_view<T> x) noexcept
 namespace __impl_level1
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr F
 asum_block(const F *p, usize n) noexcept
 {
@@ -979,7 +979,7 @@ asum_block(const F *p, usize n) noexcept
   return ((s0 + s1) + (s2 + s3)) + tail;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr F
 asum_pairwise(const F *p, usize n) noexcept
 {
@@ -988,9 +988,9 @@ asum_pairwise(const F *p, usize n) noexcept
   return asum_pairwise<F>(p, half) + asum_pairwise<F>(p + half, n - half);
 }
 
-};     // namespace __impl_level1
+};      // namespace __impl_level1
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 asum(const F *first, const F *last) noexcept
 {
@@ -1007,7 +1007,7 @@ asum(const F *first, const F *last) noexcept
   return __impl_level1::asum_pairwise<F>(first, n);
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::flatten]] inline constexpr T
 asum(const T *first, const T *last) noexcept
@@ -1020,7 +1020,7 @@ asum(const T *first, const T *last) noexcept
   return s;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 asum(usize n, const T *x, ssize_t incx) noexcept
 {
@@ -1044,14 +1044,14 @@ asum(usize n, const T *x, ssize_t incx) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 asum(const vec_view<T> &x) noexcept
 {
   return asum<T>(x.n, x.data, x.inc);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 nrm2(const F *first, const F *last) noexcept
 {
@@ -1073,7 +1073,7 @@ nrm2(const F *first, const F *last) noexcept
   return (scale == F(0)) ? F(0) : scale * mk::pow_ns::sqrt<F>(ssq);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 nrm2(usize n, const F *x, ssize_t incx) noexcept
 {
@@ -1093,7 +1093,7 @@ nrm2(usize n, const F *x, ssize_t incx) noexcept
   return mx * mk::pow_ns::sqrt<F>(s);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 nrm2(const vec_view<F> &x) noexcept
 {
@@ -1102,7 +1102,7 @@ nrm2(const vec_view<F> &x) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // nrm2_fast
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 nrm2_fast(const F *first, const F *last) noexcept
 {
@@ -1143,7 +1143,7 @@ nrm2_fast(const F *first, const F *last) noexcept
   return mk::pow_ns::sqrt<F>(((s0 + s1) + (s2 + s3)) + tail);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 nrm2_fast(usize n, const F *x, ssize_t incx) noexcept
 {
@@ -1169,7 +1169,7 @@ nrm2_fast(usize n, const F *x, ssize_t incx) noexcept
   return mk::pow_ns::sqrt<F>(((s0 + s1) + (s2 + s3)) + tail);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 nrm2_fast(const vec_view<F> &x) noexcept
 {
@@ -1179,7 +1179,7 @@ nrm2_fast(const vec_view<F> &x) noexcept
 namespace __impl_level1
 {
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 abs_v(T v) noexcept
 {
@@ -1190,9 +1190,9 @@ abs_v(T v) noexcept
     return (v < T(0)) ? T(-v) : v;
 }
 
-};     // namespace __impl_level1
+};      // namespace __impl_level1
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamax(const T *first, const T *last) noexcept
 {
@@ -1238,7 +1238,7 @@ iamax(const T *first, const T *last) noexcept
   return idx;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamin(const T *first, const T *last) noexcept
 {
@@ -1255,7 +1255,7 @@ iamin(const T *first, const T *last) noexcept
   return idx;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamax(usize n, const T *x, ssize_t incx) noexcept
 {
@@ -1272,7 +1272,7 @@ iamax(usize n, const T *x, ssize_t incx) noexcept
   return idx;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamin(usize n, const T *x, ssize_t incx) noexcept
 {
@@ -1289,21 +1289,21 @@ iamin(usize n, const T *x, ssize_t incx) noexcept
   return idx;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamax(const vec_view<T> &x) noexcept
 {
   return iamax<T>(x.n, x.data, x.inc);
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamin(const vec_view<T> &x) noexcept
 {
   return iamin<T>(x.n, x.data, x.inc);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 dot(const F *__restrict__ x, const F *__restrict__ x_end, const F *__restrict__ y) noexcept
 {
@@ -1331,7 +1331,7 @@ dot(const F *__restrict__ x, const F *__restrict__ x_end, const F *__restrict__ 
   return ((s0 + s1) + (s2 + s3)) + tail;
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::flatten]] inline constexpr T
 dot(const T *__restrict__ x, const T *__restrict__ x_end, const T *__restrict__ y) noexcept
@@ -1350,7 +1350,7 @@ dot(const T *__restrict__ x, const T *__restrict__ x_end, const T *__restrict__ 
   return ((s0 + s1) + (s2 + s3)) + tail;
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 dot(usize n, const T *x, ssize_t incx, const T *y, ssize_t incy) noexcept
 {
@@ -1366,14 +1366,14 @@ dot(usize n, const T *x, ssize_t incx, const T *y, ssize_t incy) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 dot(const vec_view<T> &x, const vec_view<T> &y) noexcept
 {
   return dot<T>(x.n, x.data, x.inc, y.data, y.inc);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 dot_kahan(const F *__restrict__ x, const F *__restrict__ x_end, const F *__restrict__ y) noexcept
 {
@@ -1411,7 +1411,7 @@ dot_kahan(const F *__restrict__ x, const F *__restrict__ x_end, const F *__restr
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 dot_kahan(usize n, const F *x, ssize_t incx, const F *y, ssize_t incy) noexcept
 {
@@ -1427,7 +1427,7 @@ dot_kahan(usize n, const F *x, ssize_t incx, const F *y, ssize_t incy) noexcept
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 dot_kahan(const vec_view<F> &x, const vec_view<F> &y) noexcept
 {
@@ -1446,7 +1446,7 @@ sdsdot(usize n, f32 b, const f32 *x, ssize_t incx, const f32 *y, ssize_t incy) n
   return f32(s);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 swap(T *x, T *x_end, T *y) noexcept
 {
@@ -1457,7 +1457,7 @@ swap(T *x, T *x_end, T *y) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 swap(usize n, T *x, ssize_t incx, T *y, ssize_t incy) noexcept
 {
@@ -1472,21 +1472,21 @@ swap(usize n, T *x, ssize_t incx, T *y, ssize_t incy) noexcept
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 swap(vec_view<T> x, vec_view<T> y) noexcept
 {
   swap<T>(x.n, x.data, x.inc, y.data, y.inc);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 copy(const T *__restrict__ x, const T *__restrict__ x_end, T *__restrict__ y) noexcept
 {
   for ( ; x != x_end; ++x, ++y ) *y = *x;
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 copy(usize n, const T *x, ssize_t incx, T *y, ssize_t incy) noexcept
 {
@@ -1497,14 +1497,14 @@ copy(usize n, const T *x, ssize_t incx, T *y, ssize_t incy) noexcept
   for ( usize i = 0; i < n; ++i ) __impl_level1::ref(y, i, incy) = __impl_level1::ref(x, i, incx);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 copy(const vec_view<T> &x, vec_view<T> y) noexcept
 {
   copy<T>(x.n, x.data, x.inc, y.data, y.inc);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 rotg(F &a, F &b, F &c, F &s) noexcept
 {
@@ -1539,7 +1539,7 @@ rotg(F &a, F &b, F &c, F &s) noexcept
   b = z;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 rot(usize n, F *x, ssize_t incx, F *y, ssize_t incy, F c, F s) noexcept
 {
@@ -1552,14 +1552,14 @@ rot(usize n, F *x, ssize_t incx, F *y, ssize_t incy, F c, F s) noexcept
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 rot(vec_view<F> x, vec_view<F> y, F c, F s) noexcept
 {
   rot<F>(x.n, x.data, x.inc, y.data, y.inc, c, s);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 rotmg(F &d1, F &d2, F &x1, F y1, F (&param)[5]) noexcept
 {
@@ -1680,7 +1680,7 @@ rotmg(F &d1, F &d2, F &x1, F y1, F (&param)[5]) noexcept
   param[0] = flag;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 rotm(usize n, F *x, ssize_t incx, F *y, ssize_t incy, const F (&param)[5]) noexcept
 {
@@ -1712,35 +1712,35 @@ rotm(usize n, F *x, ssize_t incx, F *y, ssize_t incy, const F (&param)[5]) noexc
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline constexpr void
 rotm(vec_view<F> x, vec_view<F> y, const F (&param)[5]) noexcept
 {
   rotm<F>(x.n, x.data, x.inc, y.data, y.inc, param);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 axpy(typename C::value_type alpha, const C &x, C &y) noexcept
 {
   axpy<typename C::value_type>(alpha, x.cbegin(), x.cend(), y.begin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 axpby(typename C::value_type alpha, const C &x, typename C::value_type beta, C &y) noexcept
 {
   axpby<typename C::value_type>(alpha, x.cbegin(), x.cend(), beta, y.begin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 scal(typename C::value_type alpha, C &x) noexcept
 {
   scal<typename C::value_type>(alpha, x.begin(), x.end());
 }
 
-template <typename C, typename... Cs>
+template<typename C, typename... Cs>
   requires(sizeof...(Cs) >= 1) && is_iterable_container<C> && (is_iterable_container<Cs> && ...) && (!micron::is_const_v<C>)
           && (!micron::is_const_v<Cs> && ...)
 [[gnu::flatten]] inline void
@@ -1750,14 +1750,14 @@ scal(typename C::value_type alpha, C &x, Cs &...xs) noexcept
   ((scal<typename Cs::value_type>(typename Cs::value_type(alpha), xs.begin(), xs.end())), ...);
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 asum(const C &c) noexcept
 {
   return asum<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 nrm2(const C &c) noexcept
@@ -1765,28 +1765,28 @@ nrm2(const C &c) noexcept
   return nrm2<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamax(const C &c) noexcept
 {
   return iamax<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 iamin(const C &c) noexcept
 {
   return iamin<typename C::value_type>(c.cbegin(), c.cend());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 dot(const C &x, const C &y) noexcept
 {
   return dot<typename C::value_type>(x.cbegin(), x.cend(), y.cbegin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
   requires ieee754_floating<typename C::value_type>
 [[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
 dot_kahan(const C &x, const C &y) noexcept
@@ -1794,21 +1794,21 @@ dot_kahan(const C &x, const C &y) noexcept
   return dot_kahan<typename C::value_type>(x.cbegin(), x.cend(), y.cbegin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 swap(C &x, C &y) noexcept
 {
   swap<typename C::value_type>(x.begin(), x.end(), y.begin());
 }
 
-template <is_iterable_container C>
+template<is_iterable_container C>
 [[gnu::flatten]] inline void
 copy(const C &x, C &y) noexcept
 {
   copy<typename C::value_type>(x.cbegin(), x.cend(), y.begin());
 }
 
-};     // namespace level1
-};     // namespace blas
-};     // namespace math
-};     // namespace micron
+};      // namespace level1
+};      // namespace blas
+};      // namespace math
+};      // namespace micron

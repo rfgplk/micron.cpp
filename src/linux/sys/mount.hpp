@@ -57,5 +57,5 @@ constexpr i32 clone_newnet = 0x40000000;
 constexpr i32 clone_newuser = 0x10000000;
 constexpr i32 clone_newcgroup = 0x02000000;
 */
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

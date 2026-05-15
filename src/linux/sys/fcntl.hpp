@@ -16,7 +16,7 @@ namespace micron
 namespace posix
 {
 
-template <typename... Args>
+template<typename... Args>
 auto
 fcntl(i32 fd, i32 cmd, Args &&...args) -> i32
 {
@@ -50,7 +50,7 @@ fadvise(fd_t fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 #endif
 }
 
-template <typename... Args>
+template<typename... Args>
 auto
 fcntl(fd_t fd, i32 cmd, Args &&...args)
 {
@@ -126,12 +126,12 @@ constexpr i32 f_setlkw64 = 14;
 constexpr i32 f_setown_ex = 15;
 constexpr i32 f_getown_ex = 16;
 
-inline constexpr i32 fadv_normal = 0;         // no specific advice
-inline constexpr i32 fadv_random = 1;         // expect random access
-inline constexpr i32 fadv_sequential = 2;     // expect sequential access
-inline constexpr i32 fadv_willneed = 3;       // prefetch
-inline constexpr i32 fadv_dontneed = 4;       // drop from page cache
-inline constexpr i32 fadv_noreuse = 5;        // access once
+inline constexpr i32 fadv_normal = 0;          // no specific advice
+inline constexpr i32 fadv_random = 1;          // expect random access
+inline constexpr i32 fadv_sequential = 2;      // expect sequential access
+inline constexpr i32 fadv_willneed = 3;        // prefetch
+inline constexpr i32 fadv_dontneed = 4;        // drop from page cache
+inline constexpr i32 fadv_noreuse = 5;         // access once
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

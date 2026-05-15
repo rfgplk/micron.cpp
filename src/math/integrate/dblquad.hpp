@@ -23,7 +23,7 @@ namespace math
 namespace integrate
 {
 
-template <ieee754_floating F, typename Fn>
+template<ieee754_floating F, typename Fn>
 [[nodiscard]] inline quad_result<F>
 dblquad(Fn f, F ax, F bx, F ay, F by, F atol, F rtol, usize max_depth = 30) noexcept
 {
@@ -45,7 +45,7 @@ dblquad(Fn f, F ax, F bx, F ay, F by, F atol, F rtol, usize max_depth = 30) noex
   return outer;
 }
 
-template <ieee754_floating F, typename Fn, typename YL, typename YU>
+template<ieee754_floating F, typename Fn, typename YL, typename YU>
 [[nodiscard]] inline quad_result<F>
 dblquad(Fn f, F ax, F bx, YL yl, YU yu, F atol, F rtol, usize max_depth = 30) noexcept
 {
@@ -69,6 +69,6 @@ dblquad(Fn f, F ax, F bx, YL yl, YU yu, F atol, F rtol, usize max_depth = 30) no
   return outer;
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

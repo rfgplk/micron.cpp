@@ -21,14 +21,14 @@
 static constexpr byte CANARY = 0xC3;
 
 // Fill a raw buffer with a repeating pattern value
-template <typename T, u64 N>
+template<typename T, u64 N>
 void
 fill_pattern(T (&buf)[N], T val)
 {
   for ( u64 i = 0; i < N; i++ ) buf[i] = val;
 }
 
-template <typename T>
+template<typename T>
 void
 fill_pattern(T *buf, u64 n, T val)
 {
@@ -36,7 +36,7 @@ fill_pattern(T *buf, u64 n, T val)
 }
 
 // Verify every element of a fixed-size array equals expected
-template <typename T, u64 N>
+template<typename T, u64 N>
 bool
 verify_buffer(T (&buf)[N], T expected)
 {
@@ -45,7 +45,7 @@ verify_buffer(T (&buf)[N], T expected)
   return true;
 }
 
-template <typename T>
+template<typename T>
 bool
 verify_buffer(T *buf, u64 n, T expected)
 {
@@ -55,7 +55,7 @@ verify_buffer(T *buf, u64 n, T expected)
 }
 
 // Verify a buffer matches a source array element-for-element
-template <typename D, typename S>
+template<typename D, typename S>
 bool
 buffers_equal(const D *dest, const S *src, u64 n)
 {
@@ -65,7 +65,7 @@ buffers_equal(const D *dest, const S *src, u64 n)
 }
 
 // Verify every byte of a typed buffer equals zero
-template <typename T, u64 N>
+template<typename T, u64 N>
 bool
 is_zeroed(T (&buf)[N])
 {
@@ -137,14 +137,14 @@ no_overrun(const GuardedBuffer &gb, u64 written_bytes)
 //  Incrementing-sequence source used for artifacting tests
 // ============================================================
 
-template <typename T, u64 N>
+template<typename T, u64 N>
 void
 make_seq(T (&buf)[N])
 {
   for ( u64 i = 0; i < N; i++ ) buf[i] = static_cast<T>(i & 0xFF);
 }
 
-template <typename T>
+template<typename T>
 void
 make_seq(T *buf, u64 n)
 {
@@ -199,7 +199,7 @@ main(void)
     byte src[64];
     byte dst[64] = {};
     fill_pattern(src, static_cast<byte>(0x5A));
-    mc::memcpy(dst, src, 64);     // 64 % 4 == 0
+    mc::memcpy(dst, src, 64);      // 64 % 4 == 0
     sb::require(verify_buffer(dst, static_cast<byte>(0x5A)));
   }
   sb::end_test_case();
@@ -249,9 +249,9 @@ main(void)
   {
     byte src[2] = { 0xFF, 0xFF };
     byte dst[2] = { 0x00, 0x00 };
-    mc::memcpy(dst, src, 1);     // copy exactly 1
+    mc::memcpy(dst, src, 1);      // copy exactly 1
     sb::require(dst[0] == 0xFF);
-    sb::require(dst[1] == 0x00);     // must be untouched
+    sb::require(dst[1] == 0x00);      // must be untouched
   }
   sb::end_test_case();
 
@@ -260,9 +260,9 @@ main(void)
     byte src[8];
     byte dst[8] = {};
     fill_pattern(src, static_cast<byte>(0x99));
-    mc::memcpy(dst, src, 7);     // 7, not 8
+    mc::memcpy(dst, src, 7);      // 7, not 8
     sb::require(verify_buffer(dst, 7, static_cast<byte>(0x99)));
-    sb::require(dst[7] == 0x00);     // 8th byte untouched
+    sb::require(dst[7] == 0x00);      // 8th byte untouched
   }
   sb::end_test_case();
 
@@ -283,7 +283,7 @@ main(void)
     byte dst[5] = { 0, 0, 0, 0, 0xCC };
     mc::memcpy(dst, src, 4);
     sb::require(dst[3] == 4);
-    sb::require(dst[4] == 0xCC);     // sentinel must survive
+    sb::require(dst[4] == 0xCC);      // sentinel must survive
   }
   sb::end_test_case();
 
@@ -291,9 +291,9 @@ main(void)
   {
     byte src[4] = { 1, 2, 3, 4 };
     byte storage[5] = { 0xDD, 0, 0, 0, 0 };
-    byte *dst = storage + 1;     // dst starts at storage[1]
+    byte *dst = storage + 1;      // dst starts at storage[1]
     mc::memcpy(dst, src, 4);
-    sb::require(storage[0] == 0xDD);     // byte before dst must survive
+    sb::require(storage[0] == 0xDD);      // byte before dst must survive
     sb::require(buffers_equal(dst, src, 4));
   }
   sb::end_test_case();
@@ -308,7 +308,7 @@ main(void)
     byte src[32];
     byte dst[32];
     make_seq(src);
-    fill_pattern(dst, static_cast<byte>(0xEE));     // pre-fill with noise
+    fill_pattern(dst, static_cast<byte>(0xEE));      // pre-fill with noise
     mc::memcpy(dst, src, 32);
     sb::require(buffers_equal(dst, src, 32));
   }
@@ -330,8 +330,8 @@ main(void)
     byte src[16];
     byte dst[16];
     make_seq(src);
-    fill_pattern(dst, static_cast<byte>(0xFF));     // tail noise
-    mc::memcpy(dst, src, 8);                        // copy only first 8
+    fill_pattern(dst, static_cast<byte>(0xFF));      // tail noise
+    mc::memcpy(dst, src, 8);                         // copy only first 8
     sb::require(buffers_equal(dst, src, 8));
     // tail must be original noise, not src values or zeros
     for ( u64 i = 8; i < 16; i++ ) sb::require(dst[i] == static_cast<byte>(0xFF));
@@ -344,7 +344,7 @@ main(void)
     u32 dst[16];
     make_seq(src);
     fill_pattern(dst, 0xDEADBEEFu);
-    mc::bytecpy(dst, src, 64);     // 64 bytes = 16 u32 regions
+    mc::bytecpy(dst, src, 64);      // 64 bytes = 16 u32 regions
     const byte *bdst = reinterpret_cast<const byte *>(dst);
     sb::require(buffers_equal(bdst, src, 64));
   }
@@ -594,7 +594,7 @@ main(void)
     u16 src[5];
     u16 dst[5] = {};
     fill_pattern(src, static_cast<u16>(0xABCD));
-    mc::bytecpy(dst, src, 10);     // 5 * sizeof(u16) = 10, 10 % 4 != 0
+    mc::bytecpy(dst, src, 10);      // 5 * sizeof(u16) = 10, 10 % 4 != 0
     sb::require(verify_buffer(dst, static_cast<u16>(0xABCD)));
   }
   sb::end_test_case();
@@ -779,7 +779,7 @@ main(void)
     byte dst[4] = { 0x00, 0x00, 0x00, 0x00 };
     byte *result = mc::__memcpy_32(dst, src, static_cast<u64>(0));
     sb::require(result == dst);
-    sb::require(dst[0] == 0x00);     // nothing written
+    sb::require(dst[0] == 0x00);      // nothing written
   }
   sb::end_test_case();
 
@@ -809,7 +809,7 @@ main(void)
       fill_pattern(dst, static_cast<byte>(0xEE));
       mc::__memcpy_32(dst, src, n);
       sb::require(buffers_equal(dst, src, n));
-      if ( n < 33 ) sb::require(dst[n] == static_cast<byte>(0xEE));     // sentinel byte
+      if ( n < 33 ) sb::require(dst[n] == static_cast<byte>(0xEE));      // sentinel byte
     }
   }
   sb::end_test_case();
@@ -935,9 +935,9 @@ main(void)
   sb::test_case("memcpy - cross cache line boundary");
   {
     constexpr u64 CACHE_LINE = 64;
-    alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];     // aligned buffer
-    byte *src = storage + 30;                             // intentionally misaligned start
-    byte *dst = storage + CACHE_LINE + 10;                // crosses cache line
+    alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];      // aligned buffer
+    byte *src = storage + 30;                              // intentionally misaligned start
+    byte *dst = storage + CACHE_LINE + 10;                 // crosses cache line
 
     make_seq(src, 50);
     fill_pattern(dst, 50, static_cast<byte>(0xFF));
@@ -959,8 +959,8 @@ main(void)
     constexpr u64 PAGE_SZ = 4096;
     alignas(PAGE_SZ) byte src_storage[PAGE_SZ * 2];
     alignas(PAGE_SZ) byte dst_storage[PAGE_SZ * 2];
-    byte *src = src_storage + PAGE_SZ - 32;     // straddles src page end
-    byte *dst = dst_storage + PAGE_SZ - 16;     // straddles dst page end
+    byte *src = src_storage + PAGE_SZ - 32;      // straddles src page end
+    byte *dst = dst_storage + PAGE_SZ - 16;      // straddles dst page end
 
     make_seq(src, 64);
     fill_pattern(dst, 64, static_cast<byte>(0xEE));
@@ -977,8 +977,8 @@ main(void)
   {
     alignas(64) byte src_storage[256];
     alignas(64) byte dst_storage[256];
-    byte *src = src_storage + 3;     // intentionally unaligned
-    byte *dst = dst_storage + 8;     // intentionally unaligned, different offset
+    byte *src = src_storage + 3;      // intentionally unaligned
+    byte *dst = dst_storage + 8;      // intentionally unaligned, different offset
 
     make_seq(src, 100);
     fill_pattern(dst, 100, static_cast<byte>(0xAA));
@@ -997,8 +997,8 @@ main(void)
     alignas(CACHE_LINE) byte src_storage[2 * CACHE_LINE];
     alignas(CACHE_LINE) byte dst_storage[2 * CACHE_LINE];
     for ( u64 len = 1; len <= 80; len += 7 ) {
-      byte *src = src_storage + 20;                  // crosses cache line
-      byte *dst = dst_storage + CACHE_LINE - 10;     // also crosses
+      byte *src = src_storage + 20;                   // crosses cache line
+      byte *dst = dst_storage + CACHE_LINE - 10;      // also crosses
       make_seq(src, len);
       fill_pattern(dst, len, static_cast<byte>(0xAA));
       mc::memcpy(dst, src, len);
@@ -1016,8 +1016,8 @@ main(void)
     alignas(PAGE_SZ) byte src_storage[PAGE_SZ * 2];
     alignas(PAGE_SZ) byte dst_storage[PAGE_SZ * 2];
     for ( u64 len : { 16, 64, 128, 512, 1024 } ) {
-      byte *src = src_storage + PAGE_SZ - len / 2;     // straddles page boundary
-      byte *dst = dst_storage + PAGE_SZ + 32;          // also crosses, but in dst storage
+      byte *src = src_storage + PAGE_SZ - len / 2;      // straddles page boundary
+      byte *dst = dst_storage + PAGE_SZ + 32;           // also crosses, but in dst storage
       make_seq(src, len);
       fill_pattern(dst, len, static_cast<byte>(0xEE));
       mc::memcpy(dst, src, len);
@@ -1035,7 +1035,7 @@ main(void)
     alignas(64) byte dst_storage[256];
     for ( u64 offset = 1; offset <= 7; offset++ ) {
       byte *src = src_storage + offset;
-      byte *dst = dst_storage + offset;     // same offset on both, still non-overlapping
+      byte *dst = dst_storage + offset;      // same offset on both, still non-overlapping
       make_seq(src, 100);
       fill_pattern(dst, 100, static_cast<byte>(0xFF));
       mc::memcpy(dst, src, 100);
@@ -1086,8 +1086,8 @@ main(void)
     make_seq(src, 50);
     fill_pattern(dst, 50, static_cast<u16>(0xFFFF));
     mc::memcpy(dst, src, 50);
-    sb::require(verify_buffer(dst, 50, static_cast<u16>(0)) == false);        // sanity
-    sb::require(verify_buffer(dst, 50, static_cast<u16>(0x00)) == false);     // sanity
+    sb::require(verify_buffer(dst, 50, static_cast<u16>(0)) == false);         // sanity
+    sb::require(verify_buffer(dst, 50, static_cast<u16>(0x00)) == false);      // sanity
   }
   sb::end_test_case();
 
@@ -1137,8 +1137,8 @@ main(void)
     alignas(64) byte dst_storage[256 + 64];
     for ( u64 sz : { (u64)1, (u64)15, (u64)16, (u64)17, (u64)31, (u64)32, (u64)33, (u64)63, (u64)64, (u64)65, (u64)127, (u64)128, (u64)129,
                      (u64)255, (u64)256 } ) {
-      for ( u64 so = 0; so < 64; so += 7 ) {              // src offset stride 7 → 0,7,14,...,63
-        for ( u64 doff = 0; doff < 64; doff += 11 ) {     // dst offset stride 11 → 0,11,22,...,55
+      for ( u64 so = 0; so < 64; so += 7 ) {               // src offset stride 7 → 0,7,14,...,63
+        for ( u64 doff = 0; doff < 64; doff += 11 ) {      // dst offset stride 11 → 0,11,22,...,55
           for ( u64 i = 0; i < sz; i++ ) src_storage[so + i] = static_cast<byte>((i * 31 + 17) & 0xFF);
           fill_pattern(dst_storage, 256 + 64, static_cast<byte>(0xAA));
           mc::memcpy(dst_storage + doff, src_storage + so, sz);

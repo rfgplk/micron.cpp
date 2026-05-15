@@ -33,7 +33,7 @@ namespace config
 constexpr static const bool __default_print_stack = true;
 constexpr static const bool __default_abort_on_require = true;
 constexpr static const bool __default_else_throw_on_require = false;
-};     // namespace config
+};      // namespace config
 
 // start out functions
 
@@ -54,14 +54,14 @@ __abort(void)
   micron::sys_exit(6);
 }
 
-template <typename... T>
+template<typename... T>
 inline __attribute__((always_inline)) void
 __print(const T &...args)
 {
   micron::io::print(args...);
 }
 
-template <typename... T>
+template<typename... T>
 inline __attribute__((always_inline)) void
 __print_error(const T &...args)
 {
@@ -144,49 +144,49 @@ should_print_stack(void)
 
 // helpers
 
-template <typename T> struct function_traits;
+template<typename T> struct function_traits;
 
 // free functions
-template <typename R, typename... Args> struct function_traits<R(Args...)> {
+template<typename R, typename... Args> struct function_traits<R(Args...)> {
   using return_type = R;
   static constexpr size_t arity = sizeof...(Args);
   using args_tuple = micron::tuple<Args...>;
 
-  template <size_t N> using arg_type = micron::tuple_element_t<N, args_tuple>;
+  template<size_t N> using arg_type = micron::tuple_element_t<N, args_tuple>;
 };
 
 // function pointers
-template <typename R, typename... Args> struct function_traits<R (*)(Args...)> : function_traits<R(Args...)> {
+template<typename R, typename... Args> struct function_traits<R (*)(Args...)>: function_traits<R(Args...)> {
 };
 
 // member functions
-template <typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...)> : function_traits<R(Args...)> {
+template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...)>: function_traits<R(Args...)> {
 };
 
-template <typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) const> : function_traits<R(Args...)> {
+template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) const>: function_traits<R(Args...)> {
 };
 
 // callable objects (functors/lambdas)
-template <typename F> struct function_traits : function_traits<decltype(&F::operator())> {
+template<typename F> struct function_traits: function_traits<decltype(&F::operator())> {
 };
 
-template <typename Tuple, typename F, size_t... I>
+template<typename Tuple, typename F, size_t... I>
 constexpr void
 for_each_type_impl(F &&f, micron::index_sequence<I...>)
 {
   (f.template operator()<micron::tuple_element_t<I, Tuple>>(), ...);
 }
 
-template <typename Tuple, typename F>
+template<typename Tuple, typename F>
 constexpr void
 for_each_type(F &&f)
 {
   for_each_type_impl<Tuple>(micron::forward<F>(f), micron::make_index_sequence<micron::tuple_size_v<Tuple>>{});
 }
 
-template <typename F, typename... T> constexpr bool all_invocable_t = (micron::is_invocable_v<F, T> && ...);
+template<typename F, typename... T> constexpr bool all_invocable_t = (micron::is_invocable_v<F, T> && ...);
 
-template <typename E, typename Fn, typename... Ts>
+template<typename E, typename Fn, typename... Ts>
 bool
 __check_eq(const E &e, Fn &&fn, Ts... args)
 {
@@ -194,7 +194,7 @@ __check_eq(const E &e, Fn &&fn, Ts... args)
 }
 
 // variadic check: returns true only if all pack members satisfy __check_eq
-template <typename E, typename Fn, typename... Ts>
+template<typename E, typename Fn, typename... Ts>
 constexpr bool
 __check(const E &expected, Fn &&fn, Ts &&...__args)
 {
@@ -204,7 +204,7 @@ __check(const E &expected, Fn &&fn, Ts &&...__args)
                            micron::forward<Ts>(__args)));
 }
 
-template <typename E, typename Fn, typename... Ts>
+template<typename E, typename Fn, typename... Ts>
 constexpr bool
 check_false(const E &expected, Fn &&fn, Ts &&...__args)
 {
@@ -213,7 +213,7 @@ check_false(const E &expected, Fn &&fn, Ts &&...__args)
                            micron::forward<Ts>(__args)));
 }
 
-template <typename E, typename Fn, typename... Ts>
+template<typename E, typename Fn, typename... Ts>
 constexpr void
 call_fn(const E &expected, Fn &&fn, Ts &&...__args)
 {
@@ -248,7 +248,7 @@ __check_clbck(void)
   if ( __global_on_check != nullptr ) __global_on_check();
 }
 
-template <typename T>
+template<typename T>
   requires(micron::is_object_v<T>)
 string_type
 test_case(const T &str)
@@ -276,7 +276,7 @@ early_end(void)
   __abort();
 }
 
-template <typename... T>
+template<typename... T>
 void
 print(const T &...p)
 {
@@ -293,7 +293,7 @@ print(const char *p)
   __print("\n\r");
 }
 
-template <typename T>
+template<typename T>
 [[noreturn]] void
 error(const T &p)
 {
@@ -315,7 +315,7 @@ error(const char *ptr)
 }
 
 // main unit testing functions
-template <typename... FArgs, typename... Args>
+template<typename... FArgs, typename... Args>
 void
 require_distinct(bool (*fn)(FArgs...), Args &&...args)
 {
@@ -327,7 +327,7 @@ require_distinct(bool (*fn)(FArgs...), Args &&...args)
   }
 };
 
-template <typename... Args>
+template<typename... Args>
 void
 require(bool v)
 {
@@ -339,7 +339,7 @@ require(bool v)
   }
 };
 
-template <typename... Args>
+template<typename... Args>
 void
 require(bool (*fn)(Args...), Args &&...args)
 {
@@ -352,7 +352,7 @@ require(bool (*fn)(Args...), Args &&...args)
 };
 
 // main unit testing functions
-template <typename... FArgs, typename... Args>
+template<typename... FArgs, typename... Args>
 void
 require_print(bool (*fn)(FArgs...), Args &&...args)
 {
@@ -366,7 +366,7 @@ require_print(bool (*fn)(FArgs...), Args &&...args)
   }
 };
 
-template <typename... Args>
+template<typename... Args>
 void
 require_print(bool (&fn)(Args...), Args &&...args)
 {
@@ -424,7 +424,7 @@ require_true(const bool expected_output)
   }
 };
 
-template <typename A, typename B>
+template<typename A, typename B>
 void
 require(const A &_a, const B &_b)
 {
@@ -436,7 +436,7 @@ require(const A &_a, const B &_b)
   }
 };
 
-template <typename A, typename B>
+template<typename A, typename B>
 void
 require_greater(const A &_a, const B &_b)
 {
@@ -448,7 +448,7 @@ require_greater(const A &_a, const B &_b)
   }
 };
 
-template <typename A, typename B>
+template<typename A, typename B>
 void
 require_smaller(const A &_a, const B &_b)
 {
@@ -460,7 +460,7 @@ require_smaller(const A &_a, const B &_b)
   }
 };
 
-template <typename A, typename B, typename Fn, typename... Args>
+template<typename A, typename B, typename Fn, typename... Args>
 void
 require_cmp(const A &_a, const B &_b, Fn &&f, Args &&...args)
 {
@@ -473,7 +473,7 @@ require_cmp(const A &_a, const B &_b, Fn &&f, Args &&...args)
 };
 
 // spec. for void functions
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 require(Fn &&fn, const Dt_Ex &expected_output)
@@ -486,7 +486,7 @@ require(Fn &&fn, const Dt_Ex &expected_output)
   }
 };
 
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires(((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && all_invocable_t<Fn, Dt_In...>))
 void
 require(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
@@ -499,7 +499,7 @@ require(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
   }
 }
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
 void
 require(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output, Fn_g &&getting_method)
 {
@@ -512,7 +512,7 @@ require(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_outpu
   }
 };
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
 void
 require(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output)
 {
@@ -525,7 +525,7 @@ require(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_outpu
 };
 
 // spec. for void functions
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 require_false(Fn &&fn, const Dt_Ex &expected_output)
@@ -538,7 +538,7 @@ require_false(Fn &&fn, const Dt_Ex &expected_output)
   }
 };
 
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires(((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && all_invocable_t<Fn, Dt_In...>))
 void
 require_false(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
@@ -551,7 +551,7 @@ require_false(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
   }
 }
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
 void
 require_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output, Fn_g &&getting_method)
 {
@@ -564,7 +564,7 @@ require_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected
   }
 };
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
 void
 require_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output)
 {
@@ -577,7 +577,7 @@ require_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected
 };
 
 // throw variants
-template <typename Fn>
+template<typename Fn>
 void
 require_throw(Fn &&fn)
 {
@@ -592,7 +592,7 @@ require_throw(Fn &&fn)
   }
 };
 
-template <typename Fn>
+template<typename Fn>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 require_throw(Fn &&fn)
@@ -608,7 +608,7 @@ require_throw(Fn &&fn)
   }
 };
 
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 require_throw(Fn &&fn, Args &&...args)
@@ -624,7 +624,7 @@ require_throw(Fn &&fn, Args &&...args)
   }
 };
 
-template <typename E, typename Fn, typename... Args>
+template<typename E, typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 require_throw(Fn &&fn, Args &&...args)
@@ -647,7 +647,7 @@ require_throw(Fn &&fn, Args &&...args)
   }
 }
 
-template <typename Fn>
+template<typename Fn>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 require_nothrow(Fn &&fn)
@@ -662,7 +662,7 @@ require_nothrow(Fn &&fn)
   }
 };
 
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 require_nothrow(Fn &&fn, Args &&...args)
@@ -692,7 +692,7 @@ check(const bool expected_output)
 };
 
 // spec. for void functions
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 check(Fn &&fn, const Dt_Ex &expected_output)
@@ -704,7 +704,7 @@ check(Fn &&fn, const Dt_Ex &expected_output)
   }
 };
 
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires(((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && all_invocable_t<Fn, Dt_In...>))
 void
 check(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
@@ -716,7 +716,7 @@ check(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
   }
 }
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
 void
 check(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output, Fn_g &&getting_method)
 {
@@ -728,7 +728,7 @@ check(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output,
   }
 };
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
 void
 check(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output)
 {
@@ -739,7 +739,7 @@ check(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output)
   }
 };
 
-template <typename Object, typename Fn, typename Dt_In>
+template<typename Object, typename Fn, typename Dt_In>
 void
 check_nothrow(Object &object, Fn &&fn, const Dt_In &input)
 {
@@ -752,7 +752,7 @@ check_nothrow(Object &object, Fn &&fn, const Dt_In &input)
   }
 };
 
-template <typename Object, typename Fn>
+template<typename Object, typename Fn>
 void
 check_nothrow(Object &object, Fn &&fn)
 {
@@ -766,7 +766,7 @@ check_nothrow(Object &object, Fn &&fn)
 };
 
 // spec. for void functions
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 check_false(Fn &&fn, const Dt_Ex &expected_output)
@@ -778,7 +778,7 @@ check_false(Fn &&fn, const Dt_Ex &expected_output)
   }
 };
 
-template <typename Fn, typename Dt_Ex, typename... Dt_In>
+template<typename Fn, typename Dt_Ex, typename... Dt_In>
   requires(((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && all_invocable_t<Fn, Dt_In...>))
 void
 check_false(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
@@ -790,7 +790,7 @@ check_false(Fn &&fn, const Dt_Ex &expected_output, const Dt_In &...inputs)
   }
 }
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex, typename Fn_g>
 void
 check_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output, Fn_g &&getting_method)
 {
@@ -802,7 +802,7 @@ check_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_o
   }
 };
 
-template <typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
+template<typename Object, typename Fn, typename Dt_In, typename Dt_Ex>
 void
 check_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_output)
 {
@@ -815,7 +815,7 @@ check_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_o
 
 // throw variants
 
-template <typename Fn>
+template<typename Fn>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 check_throw(Fn &&fn)
@@ -830,7 +830,7 @@ check_throw(Fn &&fn)
   }
 };
 
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 check_throw(Fn &&fn, Args &&...args)
@@ -845,7 +845,7 @@ check_throw(Fn &&fn, Args &&...args)
   }
 };
 
-template <typename E, typename Fn, typename... Args>
+template<typename E, typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 check_throw(Fn &&fn, Args &&...args)
@@ -866,7 +866,7 @@ check_throw(Fn &&fn, Args &&...args)
   }
 };
 
-template <typename Fn>
+template<typename Fn>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
 void
 check_nothrow(Fn &&fn)
@@ -881,7 +881,7 @@ check_nothrow(Fn &&fn)
   }
 };
 
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 check_nothrow(Fn &&fn, Args &&...args)
@@ -896,7 +896,7 @@ check_nothrow(Fn &&fn, Args &&...args)
   }
 };
 
-template <typename E, typename Fn, typename... Args>
+template<typename E, typename Fn, typename... Args>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn, Args...>)
 void
 check_nothrow(Fn &&fn, Args &&...args)
@@ -944,9 +944,9 @@ __cycle_counter() noexcept
   return 0;
 #endif
 }
-};     // namespace __impl
+};      // namespace __impl
 
-template <typename Fn>
+template<typename Fn>
 void
 fuzz(Fn &&fn, size_t cnt)
 {
@@ -966,6 +966,6 @@ fuzz(Fn &&fn, size_t cnt)
     }
   }
 }
-};     // namespace snowball
+};      // namespace snowball
 
 namespace sb = snowball;

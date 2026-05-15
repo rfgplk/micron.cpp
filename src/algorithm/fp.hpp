@@ -149,4 +149,4 @@ using fp::init;
 using fp::last;
 using fp::tail;
 
-};     // namespace micron
+};      // namespace micron

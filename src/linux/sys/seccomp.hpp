@@ -41,10 +41,10 @@ constexpr static const u32 seccomp_ret_action_full = 0xffff0000u;
 constexpr static const u32 seccomp_ret_data = 0x0000ffffu;
 
 struct seccomp_data_t {
-  i32 nr;     // syscall number
+  i32 nr;      // syscall number
   u32 arch;
-  u64 instruction_pointer;     // RIP at syscall entry
-  u64 args[6];                 // syscall arguments
+  u64 instruction_pointer;      // RIP at syscall entry
+  u64 args[6];                  // syscall arguments
 };
 
 constexpr static const u32 seccomp_data_nr_off = 0u;
@@ -160,5 +160,5 @@ seccomp_notify_id_valid(int fd, u64 id)
   return static_cast<int>(micron::posix::ioctl(fd, seccomp_ioctl_notif_id_valid, &id));
 }
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

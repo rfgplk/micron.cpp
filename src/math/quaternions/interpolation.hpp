@@ -22,16 +22,16 @@ namespace quaternions
 namespace __impl_quaternions_interpolation
 {
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 flip_to_short_arc(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
   return (a.dot(b) < T(0)) ? quaternion<T>{ -b.x, -b.y, -b.z, -b.w } : b;
 }
 
-};     // namespace __impl_quaternions_interpolation
+};      // namespace __impl_quaternions_interpolation
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 lerp(const quaternion<T> &q0, const quaternion<T> &q1, micron::__type_identity_t<T> t) noexcept
 {
@@ -40,14 +40,14 @@ lerp(const quaternion<T> &q0, const quaternion<T> &q1, micron::__type_identity_t
   return quaternion<T>{ q0.x * u + q1f.x * t, q0.y * u + q1f.y * t, q0.z * u + q1f.z * t, q0.w * u + q1f.w * t };
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 nlerp(const quaternion<T> &q0, const quaternion<T> &q1, micron::__type_identity_t<T> t) noexcept
 {
   return lerp<T>(q0, q1, t).normalized();
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr quaternion<T>
 slerp(const quaternion<T> &q0, const quaternion<T> &q1, micron::__type_identity_t<T> t) noexcept
 {
@@ -66,6 +66,6 @@ slerp(const quaternion<T> &q0, const quaternion<T> &q1, micron::__type_identity_
   return quaternion<T>{ q0.x * s0 + q1f.x * s1, q0.y * s0 + q1f.y * s1, q0.z * s0 + q1f.z * s1, q0.w * s0 + q1f.w * s1 };
 }
 
-};     // namespace quaternions
-};     // namespace math
-};     // namespace micron
+};      // namespace quaternions
+};      // namespace math
+};      // namespace micron

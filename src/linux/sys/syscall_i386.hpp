@@ -26,11 +26,11 @@ namespace micron
 namespace __impl
 {
 
-template <typename T>
+template<typename T>
 concept __syscall_arg = (micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_enum_v<T> || micron::is_null_pointer_v<T>)
                         && sizeof(T) <= sizeof(long int);
 
-template <__syscall_arg T>
+template<__syscall_arg T>
 inline __attribute__((always_inline)) long int
 __coerce(T __v) noexcept
 {
@@ -42,7 +42,7 @@ __coerce(T __v) noexcept
     return static_cast<long int>(__v);
 }
 
-};     // namespace __impl
+};      // namespace __impl
 
 inline __attribute__((always_inline)) long int
 __do_syscall(long int __n) noexcept
@@ -142,10 +142,10 @@ __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int
   register long int __r5 asm("edi") = __a5;
   asm volatile("pushl %%ebp\n\t"
                "pushl %%ebx\n\t"
-               "pushl  (%[s])\n\t"     // push a1
-               "pushl 4(%[s])\n\t"     // push a6
-               "popl  %%ebp\n\t"       // ebp = a6
-               "popl  %%ebx\n\t"       // ebx = a1
+               "pushl  (%[s])\n\t"      // push a1
+               "pushl 4(%[s])\n\t"      // push a6
+               "popl  %%ebp\n\t"        // ebp = a6
+               "popl  %%ebx\n\t"        // ebx = a1
                "int   $0x80\n\t"
                "popl  %%ebx\n\t"
                "popl  %%ebp"
@@ -155,7 +155,7 @@ __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int
   return __r;
 }
 
-template <__impl::__syscall_arg... Args>
+template<__impl::__syscall_arg... Args>
   requires(sizeof...(Args) <= 6)
 inline __attribute__((always_inline)) long int
 syscall(long int __n, Args... __args) noexcept
@@ -175,4 +175,4 @@ syscall_errno(long int __r) noexcept
   return static_cast<int>(-__r);
 }
 
-};     // namespace micron
+};      // namespace micron

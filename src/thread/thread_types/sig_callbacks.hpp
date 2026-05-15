@@ -77,4 +77,4 @@ __thread_handler()
     *///
 }
 
-};     // namespace micron
+};      // namespace micron

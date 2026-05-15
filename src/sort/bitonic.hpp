@@ -12,7 +12,7 @@ namespace micron
 {
 namespace sort
 {
-template <typename T>
+template<typename T>
 void
 bitonic(T &arr)
 {
@@ -28,5 +28,5 @@ bitonic(T &arr)
       }
     }
 }
-};     // namespace sort
-};     // namespace micron
+};      // namespace sort
+};      // namespace micron

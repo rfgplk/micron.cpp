@@ -18,7 +18,7 @@ namespace math
 namespace hw
 {
 
-template <typename F>
+template<typename F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fp_barrier(F x) noexcept
 {
@@ -75,7 +75,7 @@ sqrt_sd(f64 x) noexcept
 #endif
 }
 
-template <typename F>
+template<typename F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sqrt(F x) noexcept
 {
@@ -153,7 +153,7 @@ fmadd_sd(f64 a, f64 b, f64 c) noexcept
 #endif
 }
 
-template <typename F>
+template<typename F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fmadd(F a, F b, F c) noexcept
 {
@@ -169,7 +169,7 @@ fmadd(F a, F b, F c) noexcept
 //  2 = up      (toward +inf)
 //  3 = trunc   (toward zero)
 
-template <int Mode>
+template<int Mode>
 [[nodiscard, gnu::always_inline]] inline constexpr f32
 round_ss(f32 x) noexcept
 {
@@ -236,7 +236,7 @@ round_ss(f32 x) noexcept
 #endif
 }
 
-template <int Mode>
+template<int Mode>
 [[nodiscard, gnu::always_inline]] inline constexpr f64
 round_sd(f64 x) noexcept
 {
@@ -296,6 +296,6 @@ round_sd(f64 x) noexcept
 #endif
 }
 
-};     // namespace hw
-};     // namespace math
-};     // namespace micron
+};      // namespace hw
+};      // namespace math
+};      // namespace micron

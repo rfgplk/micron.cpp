@@ -29,7 +29,7 @@ namespace micron
 // throttle == throttle execution
 // park == park thread on a core or core mask
 
-template <typename Tr> using __thread_pointer = micron::unique_pointer<Tr>;
+template<typename Tr> using __thread_pointer = micron::unique_pointer<Tr>;
 
 // NOTE: solo as in these are free threads unattached to any arena
 namespace solo
@@ -39,11 +39,11 @@ namespace solo
 // otherwise)
 // NOTE: compiler_bug?! "auto in template"
 
-template <typename Tr = auto_thread<>, typename Func, typename... Args>
+template<typename Tr = auto_thread<>, typename Func, typename... Args>
   requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) == 0
            && ((micron::is_lvalue_reference_v<Args> && ...) or (micron::is_rvalue_reference_v<Args> && ...))
            && (!micron::is_same_v<micron::decay_t<Args>, Args>
-               && ...))     // && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
+               && ...))      // && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
 auto
 spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
 {
@@ -63,7 +63,7 @@ spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
   return micron::unique_pointer<Tr>(f, args...);
 }*/
 
-template <typename Tr = auto_thread<>, typename Func, typename... Args>
+template<typename Tr = auto_thread<>, typename Func, typename... Args>
   requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0 && ((micron::is_lvalue_reference_v<Args> && ...))
            && (!micron::is_same_v<micron::decay_t<Args>, Args> && ...))
 auto
@@ -72,7 +72,7 @@ spawn(Func f, const Args &...args) -> __thread_pointer<Tr>
   return __thread_pointer<Tr>(f, micron::forward<const Args &>(args)...);
 }
 
-template <typename Tr = auto_thread<>, typename Func, typename... Args>
+template<typename Tr = auto_thread<>, typename Func, typename... Args>
   requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
            && ((!micron::is_lvalue_reference_v<Args> && ...) and (!micron::is_rvalue_reference_v<Args> && ...))
            && (!micron::is_reference_v<Args> && ...) && (micron::is_same_v<micron::decay_t<Args>, Args> && ...)
@@ -85,14 +85,14 @@ spawn(Func f, Args... args) -> __thread_pointer<Tr>
 
 // joining functions
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) bool
 is_joinable(Tr &t)
 {
   return t.can_join();
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) bool
 is_joinable(__thread_pointer<Tr> &t)
 {
@@ -103,7 +103,7 @@ is_joinable(__thread_pointer<Tr> &t)
 // NOTE: using join() on threads which were abruptly terminated or otherwise killed/stopped will yield an error, this is by design. join()
 // is meant only for rejoining properly exited threads, otherwise, use dismiss
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 dismiss(Tr &t)
 {
@@ -112,7 +112,7 @@ dismiss(Tr &t)
   return r;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 dismiss(__thread_pointer<Tr> &t)
 {
@@ -123,14 +123,14 @@ dismiss(__thread_pointer<Tr> &t)
   return r;
 }
 
-template <typename... Args>
+template<typename... Args>
 inline void
 dismiss(Args &...t)
 {
   (dismiss(t), ...);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 join(Tr &t)
 {
@@ -139,7 +139,7 @@ join(Tr &t)
   return r;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 join(__thread_pointer<Tr> &t)
 {
@@ -150,14 +150,14 @@ join(__thread_pointer<Tr> &t)
   return r;
 }
 
-template <typename... Args>
+template<typename... Args>
 inline void
 join(Args &...t)
 {
   (join(t), ...);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 try_join(Tr &t)
 {
@@ -166,7 +166,7 @@ try_join(Tr &t)
   return r;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 try_join(__thread_pointer<Tr> &t)
 {
@@ -177,14 +177,14 @@ try_join(__thread_pointer<Tr> &t)
   return r;
 }
 
-template <typename... Args>
+template<typename... Args>
 inline void
 try_join(Args &...t)
 {
   (try_join(t), ...);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 wait_for(Tr &t)
 {
@@ -192,7 +192,7 @@ wait_for(Tr &t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline int
 wait_for(__thread_pointer<Tr> &t)
 {
@@ -201,21 +201,21 @@ wait_for(__thread_pointer<Tr> &t)
   return 0;
 }
 
-template <typename... Args>
+template<typename... Args>
 inline void
 wait_for(Args &...t)
 {
   (wait_for(t), ...);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 throttle(Tr &t)
 {
   return t.throttle();
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 throttle(__thread_pointer<Tr> &t)
 {
@@ -223,7 +223,7 @@ throttle(__thread_pointer<Tr> &t)
   return t->throttle();
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 throttle(Args &...t)
 {
@@ -231,14 +231,14 @@ throttle(Args &...t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 sleep(Tr &t)
 {
   return t.sleep();
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 sleep(__thread_pointer<Tr> &t)
 {
@@ -246,7 +246,7 @@ sleep(__thread_pointer<Tr> &t)
   return t->sleep();
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 sleep(Args &...t)
 {
@@ -254,14 +254,14 @@ sleep(Args &...t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 awaken(Tr &t)
 {
   return t.awaken();
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 awaken(__thread_pointer<Tr> &t)
 {
@@ -269,7 +269,7 @@ awaken(__thread_pointer<Tr> &t)
   return t->awaken();
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 awaken(Args &...t)
 {
@@ -277,14 +277,14 @@ awaken(Args &...t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) void
 yield(Tr &t)
 {
   t.yield();
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) void
 yield(__thread_pointer<Tr> &t)
 {
@@ -292,35 +292,35 @@ yield(__thread_pointer<Tr> &t)
   t->yield();
 }
 
-template <typename... Args>
+template<typename... Args>
 inline void
 yield(Args &...t)
 {
   (yield(t), ...);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) void
 park(posix::cpu_set_t &set, __thread_pointer<Tr> &t)
 {
   park_cpu(t->thread_id(), set);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) void
 park(posix::cpu_set_t &set, Tr &t)
 {
   park_cpu(t.thread_id(), set);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 interrupt(Tr &t)
 {
   return t.signal(signal::interrupt);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 interrupt(__thread_pointer<Tr> &t)
 {
@@ -328,7 +328,7 @@ interrupt(__thread_pointer<Tr> &t)
   return t->signal(signal::interrupt);
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 interrupt(Args &...t)
 {
@@ -336,7 +336,7 @@ interrupt(Args &...t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 force_stop(__thread_pointer<Tr> &t)
 {
@@ -344,14 +344,14 @@ force_stop(__thread_pointer<Tr> &t)
   return t->signal(signal::stop);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 force_stop(Tr &t)
 {
   return t.signal(signal::stop);
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 force_stop(Args &...t)
 {
@@ -359,7 +359,7 @@ force_stop(Args &...t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 terminate(__thread_pointer<Tr> &t)
 {
@@ -367,14 +367,14 @@ terminate(__thread_pointer<Tr> &t)
   return t->signal(signal::terminate);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 terminate(Tr &t)
 {
   return t.signal(signal::terminate);
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 terminate(Args &...t)
 {
@@ -382,14 +382,14 @@ terminate(Args &...t)
   return 0;
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 kill(Tr &t)
 {
   return t.signal(signal::kill9);
 }
 
-template <typename Tr = auto_thread<>>
+template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 kill(__thread_pointer<Tr> &t)
 {
@@ -397,7 +397,7 @@ kill(__thread_pointer<Tr> &t)
   return t->signal(signal::kill9);
 }
 
-template <typename... Args>
+template<typename... Args>
 inline int
 kill(Args &...t)
 {
@@ -405,5 +405,5 @@ kill(Args &...t)
   return 0;
 }
 
-};     // namespace solo
-};     // namespace micron
+};      // namespace solo
+};      // namespace micron

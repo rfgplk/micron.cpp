@@ -12,16 +12,16 @@
 namespace micron
 {
 
-template <typename T> constexpr auto view_ptr(T &) -> typename micron::add_pointer<T>::type;
+template<typename T> constexpr auto view_ptr(T &) -> typename micron::add_pointer<T>::type;
 
-template <typename T>
+template<typename T>
 constexpr auto
 view_type(T &) -> typename micron::remove_reference<T>::type
 {
   return typename micron::remove_reference<T>::type{};
 }
 
-template <typename T = byte *>
+template<typename T = byte *>
   requires micron::is_pointer_v<T>
 class view
 {
@@ -33,18 +33,18 @@ public:
   typedef T ptr;
   view() = delete;
 
-  view(T s) : start(s), _end(nullptr) {}
+  view(T s) : start(s), _end(nullptr) { }
 
-  view(T s, T e) : start(s), _end(e) {}
+  view(T s, T e) : start(s), _end(e) { }
 
-  template <typename F> view(F &f) : start(reinterpret_cast<T>(f.begin())), _end(reinterpret_cast<T>(f.end())) {}
+  template<typename F> view(F &f) : start(reinterpret_cast<T>(f.begin())), _end(reinterpret_cast<T>(f.end())) { }
 
   view(const view &) = delete;
   view(view &&) = delete;
   view &operator=(const view &) = delete;
   view &operator=(view &&) = delete;
 
-  ~view() {}
+  ~view() { }
 
   const T
   operator[](const size_t n) const
@@ -65,4 +65,4 @@ public:
     return _end;
   }
 };
-};     // namespace micron
+};      // namespace micron

@@ -24,9 +24,9 @@ class spin_lock
 public:
   ~spin_lock() = default;
 
-  spin_lock() : tk(ATOMIC_OPEN) {}
+  spin_lock() : tk(ATOMIC_OPEN) { }
 
-  explicit spin_lock(bool state) : tk(state) {}
+  explicit spin_lock(bool state) : tk(state) { }
 
   spin_lock(const spin_lock &) = delete;
   spin_lock(spin_lock &&) = delete;
@@ -80,4 +80,4 @@ public:
     return tk.get(memory_order::relaxed) == ATOMIC_LOCKED;
   }
 };
-};     // namespace micron
+};      // namespace micron

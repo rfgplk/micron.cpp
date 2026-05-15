@@ -82,7 +82,7 @@ reset_tracked()
   Tracked::dtor = 0;
 }
 
-};     // anonymous namespace
+};      // anonymous namespace
 
 // ─────────────────────────────────────────────────────────────────────────────
 int
@@ -94,7 +94,7 @@ main()
   test_case("default construction");
   {
     micron::slice<int> s;
-    require_false(s.is_empty());     // auto-sized block; length == capacity
+    require_false(s.is_empty());      // auto-sized block; length == capacity
     require_greater(s.size(), size_t(0));
     require_true(s.as_ptr() != nullptr);
   }
@@ -115,7 +115,7 @@ main()
   // ──────────────────────────────────────────────────────────────────────────
   test_case("function-transform construction");
   {
-    micron::slice<int> base(5, 2);     // [2,2,2,2,2]
+    micron::slice<int> base(5, 2);      // [2,2,2,2,2]
     micron::slice<int> doubled([](const int &x) { return x * 2; }, base);
     for ( size_t i = 0; i < 5; ++i ) require(doubled[i], 4);
   }
@@ -514,8 +514,8 @@ main()
               ++pieces;
               total_elems += sub.size();
             });
-    require(pieces, size_t(4));          // 3 delimiters → 4 sub-slices
-    require(total_elems, size_t(4));     // 4 zeros
+    require(pieces, size_t(4));           // 3 delimiters → 4 sub-slices
+    require(total_elems, size_t(4));      // 4 zeros
   }
   end_test_case();
 
@@ -548,7 +548,7 @@ main()
 
     size_t pieces = 0;
     s.splitn(2, [](const int &v) { return v == 1; }, [&](micron::raw_slice<int>) { ++pieces; });
-    require(pieces, size_t(2));     // exactly n=2 sub-slices regardless of matches
+    require(pieces, size_t(2));      // exactly n=2 sub-slices regardless of matches
   }
   end_test_case();
 
@@ -562,7 +562,7 @@ main()
     // delimit on 2 → right-to-left gives sub-slices: [1], [3], [1,2,3...] in r order
     size_t count = 0;
     s.rsplit([](const int &v) { return v == 2; }, [&](micron::raw_slice<int>) { ++count; });
-    require(count, size_t(3));     // two delimiters → three pieces
+    require(count, size_t(3));      // two delimiters → three pieces
   }
   end_test_case();
 
@@ -634,7 +634,7 @@ main()
   test_case("split_off_first() pops first element");
   {
     micron::slice<int> s(4, 0);
-    for ( int i = 0; i < 4; ++i ) s[i] = i + 1;     // [1,2,3,4]
+    for ( int i = 0; i < 4; ++i ) s[i] = i + 1;      // [1,2,3,4]
     int v = s.split_off_first();
     require(v, 1);
     require(s.size(), size_t(3));
@@ -647,7 +647,7 @@ main()
   test_case("split_off_last() pops last element");
   {
     micron::slice<int> s(4, 0);
-    for ( int i = 0; i < 4; ++i ) s[i] = i + 1;     // [1,2,3,4]
+    for ( int i = 0; i < 4; ++i ) s[i] = i + 1;      // [1,2,3,4]
     int v = s.split_off_last();
     require(v, 4);
     require(s.size(), size_t(3));
@@ -673,7 +673,7 @@ main()
   test_case("contains() by value");
   {
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i * 2;     // [0,2,4,6,8]
+    for ( int i = 0; i < 5; ++i ) s[i] = i * 2;      // [0,2,4,6,8]
     require_true(s.contains(4));
     require_false(s.contains(3));
     require_false(s.contains(99));
@@ -695,7 +695,7 @@ main()
   {
     int arr[] = { 1, 2, 3 };
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i + 1;     // [1,2,3,4,5]
+    for ( int i = 0; i < 5; ++i ) s[i] = i + 1;      // [1,2,3,4,5]
 
     micron::raw_slice<int> prefix(arr, 3);
     require_true(s.starts_with(prefix));
@@ -715,7 +715,7 @@ main()
   test_case("ends_with()");
   {
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i + 1;     // [1,2,3,4,5]
+    for ( int i = 0; i < 5; ++i ) s[i] = i + 1;      // [1,2,3,4,5]
 
     int suffix_arr[] = { 4, 5 };
     micron::raw_slice<int> suffix(suffix_arr, 2);
@@ -731,7 +731,7 @@ main()
   test_case("strip_prefix() returns remainder after prefix");
   {
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i;     // [0,1,2,3,4]
+    for ( int i = 0; i < 5; ++i ) s[i] = i;      // [0,1,2,3,4]
 
     int pre[] = { 0, 1 };
     micron::raw_slice<int> prefix(pre, 2);
@@ -751,7 +751,7 @@ main()
   test_case("strip_suffix() returns everything before suffix");
   {
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i;     // [0,1,2,3,4]
+    for ( int i = 0; i < 5; ++i ) s[i] = i;      // [0,1,2,3,4]
 
     int suf[] = { 3, 4 };
     micron::raw_slice<int> suffix(suf, 2);
@@ -859,8 +859,8 @@ main()
   test_case("rotate_left() wraps correctly");
   {
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i;     // [0,1,2,3,4]
-    s.rotate_left(2);                           // [2,3,4,0,1]
+    for ( int i = 0; i < 5; ++i ) s[i] = i;      // [0,1,2,3,4]
+    s.rotate_left(2);                            // [2,3,4,0,1]
     require(s[0], 2);
     require(s[1], 3);
     require(s[3], 0);
@@ -880,8 +880,8 @@ main()
   test_case("rotate_right() wraps correctly");
   {
     micron::slice<int> s(5, 0);
-    for ( int i = 0; i < 5; ++i ) s[i] = i;     // [0,1,2,3,4]
-    s.rotate_right(2);                          // [3,4,0,1,2]
+    for ( int i = 0; i < 5; ++i ) s[i] = i;      // [0,1,2,3,4]
+    s.rotate_right(2);                           // [3,4,0,1,2]
     require(s[0], 3);
     require(s[1], 4);
     require(s[2], 0);
@@ -904,7 +904,7 @@ main()
   test_case("concat() appends second slice to first");
   {
     micron::slice<int> a(3, 0);
-    for ( int i = 0; i < 3; ++i ) a[i] = i;     // [0,1,2]
+    for ( int i = 0; i < 3; ++i ) a[i] = i;      // [0,1,2]
     int extra[] = { 3, 4, 5 };
     micron::raw_slice<int> b(extra, 3);
 
@@ -925,7 +925,7 @@ main()
     micron::slice<int> j = a.join(b, 3);
     require(j[0], 1);
     require(j[1], 2);
-    require(j[2], 3);     // separator
+    require(j[2], 3);      // separator
     require(j[3], 4);
     require(j[4], 5);
   }
@@ -991,9 +991,9 @@ main()
     // slice of 4 bytes viewed as 2 uint16_t
     micron::slice<uint8_t> s(4, 0);
     s[0] = 0x01;
-    s[1] = 0x02;     // little-endian: 0x0201
+    s[1] = 0x02;      // little-endian: 0x0201
     s[2] = 0x03;
-    s[3] = 0x04;     // 0x0403
+    s[3] = 0x04;      // 0x0403
 
     auto flat = s.as_flattened<uint16_t>();
     require(flat.size(), size_t(2));
@@ -1024,13 +1024,13 @@ main()
   // ──────────────────────────────────────────────────────────────────────────
   test_case("large allocation / stress fill");
   {
-    constexpr size_t N = 1 << 16;     // 65536 elements
+    constexpr size_t N = 1 << 16;      // 65536 elements
     micron::slice<int> s(N, 0);
     require(s.size(), N);
     s.fill_with([]() { return 7; });
     for ( size_t i = 0; i < N; ++i ) require(s[i], 7);
     s.reverse();
-    for ( size_t i = 0; i < N; ++i ) require(s[i], 7);     // uniform — reverse is a no-op on uniform data
+    for ( size_t i = 0; i < N; ++i ) require(s[i], 7);      // uniform — reverse is a no-op on uniform data
   }
   end_test_case();
 
@@ -1071,7 +1071,7 @@ main()
     for ( size_t i = 0; i < N; ++i ) s[i] = static_cast<int>(i);
 
     s.reverse();
-    s.reverse();     // two reverses = identity
+    s.reverse();      // two reverses = identity
     for ( size_t i = 0; i < N; ++i ) require(s[i], static_cast<int>(i));
   }
   end_test_case();

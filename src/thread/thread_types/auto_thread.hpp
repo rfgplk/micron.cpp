@@ -37,7 +37,7 @@ namespace micron
 // WARNING: this thread automatically allocates it's stack on the parent process stack, the normal stack limit on linux
 // is 8MB, while auto_thread_stack_size is 262kB, meaning spawning ~32 threads WILL segfault
 // the advantage is that this is MUCH faster (no mmap)
-template <usize Stack_Size = auto_thread_stack_size> class auto_thread
+template<usize Stack_Size = auto_thread_stack_size> class auto_thread
 {
   using thread_type = thread_tag;
 
@@ -47,7 +47,7 @@ template <usize Stack_Size = auto_thread_stack_size> class auto_thread
     micron::create_handler(__thread_sigchld, signal::child);
   }
 
-  template <typename F, typename... Args>
+  template<typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
@@ -98,8 +98,8 @@ template <usize Stack_Size = auto_thread_stack_size> class auto_thread
 
   pid_t parent_pid;
   pthread_t pid;
-  alignas(16) byte fstack[Stack_Size];     // must be 16 byte aligned, stack will be stack allocated and survive for the
-                                           // duration of this class
+  alignas(16) byte fstack[Stack_Size];      // must be 16 byte aligned, stack will be stack allocated and survive for the
+                                            // duration of this class
   __thread_payload payload;
 
 public:
@@ -121,7 +121,7 @@ public:
     micron::czero<Stack_Size>(o.fstack);
   }
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn &, Args &...>)
   auto_thread(Fn &fn, Args &...args) : parent_pid(micron::posix::getpid()), pid(0), payload{}
   {
@@ -130,7 +130,7 @@ public:
   }
 
   // rvalue-only
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args && ...>)
   auto_thread(Fn &&fn, Args &&...args) : parent_pid(micron::posix::getpid()), pid(0), payload{}
   {
@@ -139,7 +139,7 @@ public:
   }
 
   // by-value / const-lvalue
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<const Fn &, const Args &...>)
   auto_thread(const Fn &fn, const Args &...args) : parent_pid(micron::posix::getpid()), pid(0), payload{}
   {
@@ -160,7 +160,7 @@ public:
     return *this;
   }
 
-  template <typename F, typename... Args>
+  template<typename F, typename... Args>
     requires(micron::is_invocable_v<F, Args...>)
   auto_thread &
   operator[](F f, Args &&...args)
@@ -205,7 +205,7 @@ public:
   }
 
   auto
-  dismiss(void) -> int     // auto_thread
+  dismiss(void) -> int      // auto_thread
   {
     if ( try_join() == error::busy ) {
       auto r = pthread::__join_thread(pid);
@@ -217,7 +217,7 @@ public:
   }
 
   auto
-  join(void) -> int     // auto_thread
+  join(void) -> int      // auto_thread
   {
     if ( try_join() == error::busy ) {
       auto r = pthread::__join_thread(pid);
@@ -322,7 +322,7 @@ public:
     until(false, &auto_thread<Stack_Size>::alive, this);
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_convertible_v<R, u64>)
   R
   result(void)
@@ -344,4 +344,4 @@ public:
     __join();
   }
 };
-};     // namespace micron
+};      // namespace micron

@@ -89,7 +89,7 @@ eq16(const micron::int16x16_t &a, const micron::int16x16_t &b)
   return true;
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -148,7 +148,7 @@ main()
     require_true(eq8(a, b));
 
     b[0, 0] = 999;
-    require(a[0, 0], 10);     // a must be unaffected
+    require(a[0, 0], 10);      // a must be unaffected
     require(b[0, 0], 999);
   }
   end_test_case();
@@ -160,7 +160,7 @@ main()
     micron::int8x8_t b(micron::move(a));
 
     require(b[0, 0], 5);
-    require(b[7, 7], 68);     // 5 + 63
+    require(b[7, 7], 68);      // 5 + 63
     require_true(all8(a, 0));
   }
   end_test_case();
@@ -174,7 +174,7 @@ main()
     require_true(eq8(a, b));
 
     b[3, 3] = -1;
-    require(a[3, 3], (i32)(3 * 8 + 3 + 1));     // 28
+    require(a[3, 3], (i32)(3 * 8 + 3 + 1));      // 28
   }
   end_test_case();
 
@@ -197,7 +197,7 @@ main()
     micron::int8x8_t m = make_seq8(0);
     m = (i32)0;
     require_true(all8(m, 0));
-    m = make_seq8(1);     // non-zero content
+    m = make_seq8(1);      // non-zero content
     m = (i32)(-1);
     require_true(all8(m, -1));
   }
@@ -297,7 +297,7 @@ main()
     micron::int8x8_t m(10);
     micron::int8x8_t r = m.add_scalar(5);
     require_true(all8(r, 15));
-    require_true(all8(m, 10));     // unchanged
+    require_true(all8(m, 10));      // unchanged
   }
   end_test_case();
 
@@ -343,7 +343,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("int8x8_t – scale / div_scalar are inverses (exact)");
   {
-    micron::int8x8_t m = make_seq8(1);     // values 1..64, all divisible by 1
+    micron::int8x8_t m = make_seq8(1);      // values 1..64, all divisible by 1
     micron::int8x8_t r = m.scale(7).div_scalar(7);
     require_true(eq8(r, m));
   }
@@ -355,7 +355,7 @@ main()
     micron::int8x8_t a(3), b(4);
     micron::int8x8_t c = a + b;
     require_true(all8(c, 7));
-    require_true(all8(a, 3));     // sources unchanged
+    require_true(all8(a, 3));      // sources unchanged
     require_true(all8(b, 4));
   }
   end_test_case();
@@ -405,7 +405,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("int8x8_t – element-wise ops with non-uniform matrix");
   {
-    micron::int8x8_t a = make_seq8(0);     // [r,c] = r*8+c
+    micron::int8x8_t a = make_seq8(0);      // [r,c] = r*8+c
     micron::int8x8_t b = make_seq8(0);
     micron::int8x8_t c = a + b;
     for ( u32 r = 0; r < 8; ++r )
@@ -500,7 +500,7 @@ main()
   test_case("int8x8_t – mul: scalar matrix (kI) * A == k*A");
   {
     micron::int8x8_t kI;
-    for ( u32 i = 0; i < 8; ++i ) kI[i, i] = 3;     // 3*Identity
+    for ( u32 i = 0; i < 8; ++i ) kI[i, i] = 3;      // 3*Identity
     micron::int8x8_t a = make_seq8(0);
     micron::int8x8_t r = kI.mul(a);
     micron::int8x8_t ka = a.scale(3);
@@ -643,7 +643,7 @@ main()
     require(b[8, 8], -1);
 
     b[0, 0] = 9999;
-    require(a[0, 0], 42);     // a unchanged
+    require(a[0, 0], 42);      // a unchanged
 
     micron::int16x16_t c(micron::move(a));
     require(c[8, 8], -1);
@@ -664,7 +664,7 @@ main()
     m /= (i32)7;
     require_true(all16(m, 3));
     m = (i32)0;
-    require_true(all16(m, 0));     // memset: only byte-uniform values (0, -1) are safe
+    require_true(all16(m, 0));      // memset: only byte-uniform values (0, -1) are safe
   }
   end_test_case();
 

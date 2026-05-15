@@ -32,7 +32,7 @@ namespace math
 namespace linalg
 {
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 trace(const mat<T, N, N> &A) noexcept
 {
@@ -41,7 +41,7 @@ trace(const mat<T, N, N> &A) noexcept
   return s;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline constexpr F
 det(const mat<F, N, N> &A) noexcept
 {
@@ -52,7 +52,7 @@ det(const mat<F, N, N> &A) noexcept
   return d;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline vec<F, N>
 solve(const mat<F, N, N> &A, const vec<F, N> &b) noexcept
 {
@@ -66,7 +66,7 @@ solve(const mat<F, N, N> &A, const vec<F, N> &b) noexcept
   for ( usize i = 0; i < N; ++i ) {
     F s = b.data[i];
     for ( usize k = 0; k < i; ++k ) s = s - r.L.data[i * N + k] * y.data[k];
-    y.data[i] = s;     // L has unit diagonal
+    y.data[i] = s;      // L has unit diagonal
   }
   // Ux = y
   for ( usize i = N; i-- > 0; ) {
@@ -77,7 +77,7 @@ solve(const mat<F, N, N> &A, const vec<F, N> &b) noexcept
   return x;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
 inv(const mat<F, N, N> &A) noexcept
 {
@@ -103,7 +103,7 @@ inv(const mat<F, N, N> &A) noexcept
   return X;
 }
 
-template <arith_scalar T, usize R1, usize C1, usize R2, usize C2>
+template<arith_scalar T, usize R1, usize C1, usize R2, usize C2>
 [[nodiscard]] inline constexpr mat<T, R1 * R2, C1 * C2>
 kron(const mat<T, R1, C1> &A, const mat<T, R2, C2> &B) noexcept
 {
@@ -123,7 +123,7 @@ kron(const mat<T, R1, C1> &A, const mat<T, R2, C2> &B) noexcept
 
 // norms
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard, gnu::flatten]] inline constexpr F
 frobenius_norm(const mat<F, R_, C_> &A) noexcept
 {
@@ -132,7 +132,7 @@ frobenius_norm(const mat<F, R_, C_> &A) noexcept
   return mk::pow_ns::sqrt<F>(s);
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard, gnu::flatten]] inline constexpr F
 norm_inf_mat(const mat<F, R_, C_> &A) noexcept
 {
@@ -146,7 +146,7 @@ norm_inf_mat(const mat<F, R_, C_> &A) noexcept
   return m;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard, gnu::flatten]] inline constexpr F
 norm_l1_mat(const mat<F, R_, C_> &A) noexcept
 {
@@ -159,7 +159,7 @@ norm_l1_mat(const mat<F, R_, C_> &A) noexcept
   return m;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
 [[nodiscard, gnu::flatten]] inline constexpr F
 norm_p_mat(const mat<F, R_, C_> &A, F p) noexcept
 {
@@ -170,7 +170,7 @@ norm_p_mat(const mat<F, R_, C_> &A, F p) noexcept
   return mk::pow_ns::pow<F>(s, F(1) / p);
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline F
 condition_number(const mat<F, N, N> &A) noexcept
 {
@@ -180,7 +180,7 @@ condition_number(const mat<F, N, N> &A) noexcept
   return na * frobenius_norm(Ai);
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= C_)
 [[nodiscard]] inline vec<F, C_>
 lstsq(const mat<F, R_, C_> &A, const vec<F, R_> &b) noexcept
@@ -201,7 +201,7 @@ lstsq(const mat<F, R_, C_> &A, const vec<F, R_> &b) noexcept
   return x;
 }
 
-template <ieee754_floating F, usize R_, usize C_>
+template<ieee754_floating F, usize R_, usize C_>
   requires(R_ >= C_)
 [[nodiscard]] inline mat<F, C_, R_>
 pinv(const mat<F, R_, C_> &A) noexcept
@@ -226,6 +226,6 @@ pinv(const mat<F, R_, C_> &A) noexcept
   return P;
 }
 
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

@@ -33,14 +33,14 @@ namespace bits
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ats()
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr T &
 mat_at(T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept
 {
   return data[ssize_t(i) * rs + ssize_t(j) * cs];
 }
 
-template <typename T>
+template<typename T>
 [[nodiscard, gnu::always_inline]] inline constexpr const T &
 mat_at(const T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept
 {
@@ -49,7 +49,7 @@ mat_at(const T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // fma_accs (c = c + a * b)
-template <typename T>
+template<typename T>
 [[gnu::always_inline]] inline constexpr T
 fma_acc(T a, T b, T c) noexcept
 {
@@ -207,8 +207,8 @@ gemv_n_panel_avx2_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_
 [[gnu::flatten]] inline void
 gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
 {
-  constexpr usize NB = 16;      // j-strip width (4 ymm of 4 doubles each)
-  constexpr usize MC = 128;     // m-block height; NB*MC doubles = 16 KiB pack, fits L1
+  constexpr usize NB = 16;       // j-strip width (4 ymm of 4 doubles each)
+  constexpr usize MC = 128;      // m-block height; NB*MC doubles = 16 KiB pack, fits L1
   alignas(32) double Ap[NB * MC];
 
   if ( beta == 0.0 ) {
@@ -272,8 +272,8 @@ gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t r
 [[gnu::flatten]] inline void
 gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_A, const float *x, float beta, float *y) noexcept
 {
-  constexpr usize NB = 32;      // 4 ymm of 8 floats each
-  constexpr usize MC = 128;     // pack 32 * 128 * 4 = 16 KiB
+  constexpr usize NB = 32;       // 4 ymm of 8 floats each
+  constexpr usize MC = 128;      // pack 32 * 128 * 4 = 16 KiB
   alignas(32) float Ap[NB * MC];
 
   if ( beta == 0.0f ) {
@@ -327,14 +327,14 @@ gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_
   }
 }
 
-#endif     // AVX2 + FMA
+#endif      // AVX2 + FMA
 
 #if defined(__micron_arch_arm64) && defined(__micron_arm_neon)
 
 [[gnu::flatten]] inline void
 gemv_t_panel_neon_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
 {
-  constexpr usize NB = 8;     // 4 q-regs of 2 doubles each
+  constexpr usize NB = 8;      // 4 q-regs of 2 doubles each
   constexpr usize MC = 256;
   alignas(16) double Ap[NB * MC];
 
@@ -386,14 +386,14 @@ gemv_t_panel_neon_f64(usize m, usize n, double alpha, const double *A, ssize_t r
   }
 }
 
-#endif     // arm64 NEON
+#endif      // arm64 NEON
 
 #if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 
 [[gnu::flatten]] inline void
 gemv_t_panel_neon_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_A, const float *x, float beta, float *y) noexcept
 {
-  constexpr usize NB = 16;     // 4 q-regs of 4 floats each
+  constexpr usize NB = 16;      // 4 q-regs of 4 floats each
   constexpr usize MC = 256;
   alignas(16) float Ap[NB * MC];
 
@@ -452,11 +452,11 @@ gemv_t_panel_neon_f32(usize m, usize n, float alpha, const float *A, ssize_t rs_
   }
 }
 
-#endif     // arm any NEON
+#endif      // arm any NEON
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%
 // gemv_kernels
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
             ssize_t incy) noexcept
@@ -553,7 +553,7 @@ gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ger_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 ger_kernel(usize m, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept
 {
@@ -568,7 +568,7 @@ ger_kernel(usize m, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssiz
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // symv_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
             ssize_t incy) noexcept
@@ -587,7 +587,7 @@ symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%
 // syr_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 syr_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, T *A, ssize_t rs_A, ssize_t cs_A) noexcept
 {
@@ -610,7 +610,7 @@ syr_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, T *A, ssize_t
 // %%%%%%%%%%%%%%%%%%%%%%%%%%
 // syr2_kernel
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 syr2_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept
 {
@@ -636,7 +636,7 @@ syr2_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, const T *y, 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trmv_kernel
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 trmv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept
 {
@@ -681,7 +681,7 @@ trmv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trsv_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept
 {
@@ -728,7 +728,7 @@ trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs
 gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssize_t a_rs, ssize_t a_cs, const double *B, ssize_t b_rs,
                   ssize_t b_cs, double beta, double *C, ssize_t rs_C) noexcept
 {
-  alignas(32) double Bp[8 * 1024];     // stack panel for one 8-col B strip
+  alignas(32) double Bp[8 * 1024];      // stack panel for one 8-col B strip
   const __m256d valpha = simd::avx::splat_f64(alpha);
   const bool beta_zero = (beta == 0.0);
   const bool beta_one = (beta == 1.0);
@@ -911,11 +911,11 @@ gemm_4x8_avx2_f64_aligned(usize m, usize n, usize k, double alpha, const double 
   }
 }
 
-#endif     // AVX2 + FMA
+#endif      // AVX2 + FMA
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%
 // gemm_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B,
             ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1010,7 +1010,7 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // gemm_kernel_aligned
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
                     ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1050,7 +1050,7 @@ gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, cons
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // gemm_kernel_aligned experiments — route directly to the experimental blocked
 // drivers; no small-kernel fast path so the new microkernels see all problem sizes.
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
                           ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1062,7 +1062,7 @@ gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha
   micron::math::matrix::pack::gemm_blocked_aligned_exp_a<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
                           ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1074,7 +1074,7 @@ gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha
   micron::math::matrix::pack::gemm_blocked_aligned_exp_b<T>(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline void
 gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
                           ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1088,7 +1088,7 @@ gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trsm_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 trsm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
                  ssize_t cs_B) noexcept
@@ -1136,7 +1136,7 @@ trsm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha,
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 trsm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
                   ssize_t rs_B, ssize_t cs_B) noexcept
@@ -1186,7 +1186,7 @@ trsm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // trmm_kernel
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 trmm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
                  ssize_t cs_B) noexcept
@@ -1232,7 +1232,7 @@ trmm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha,
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 trmm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
                   ssize_t rs_B, ssize_t cs_B) noexcept
@@ -1280,7 +1280,7 @@ trmm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // syrk_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T beta, T *C, ssize_t rs_C,
             ssize_t cs_C) noexcept
@@ -1303,7 +1303,7 @@ syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // syr2k_kernel
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
              T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1327,7 +1327,7 @@ syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
                  T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1346,7 +1346,7 @@ symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A
   }
 }
 
-template <typename T>
+template<typename T>
 [[gnu::flatten]] inline constexpr void
 symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
                   T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
@@ -1365,7 +1365,7 @@ symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_
   }
 }
 
-};     // namespace bits
-};     // namespace blas
-};     // namespace math
-};     // namespace micron
+};      // namespace bits
+};      // namespace blas
+};      // namespace math
+};      // namespace micron

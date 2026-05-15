@@ -25,7 +25,7 @@ near(f64 a, f64 b, f64 eps = 1e-7)
 }
 
 // Sample a distribution N times and return (mean, var).
-template <typename Dist, typename Rng>
+template<typename Dist, typename Rng>
 static void
 moments_of(Dist d, Rng &g, usize N, f64 &mean_out, f64 &var_out)
 {
@@ -47,7 +47,7 @@ main()
   // ---------------- engine smoke tests ----------------
   test_case("mt19937 / mwc64 / lcg64 — basic sanity");
   {
-    mt19937 m(5489u);     // Matsumoto & Nishimura's reference seed
+    mt19937 m(5489u);      // Matsumoto & Nishimura's reference seed
     // Reference: 10000th output of mt19937(5489) is 4123659995.
     u64 last = 0;
     for ( int i = 0; i < 10000; ++i ) last = m.next32();
@@ -56,7 +56,7 @@ main()
     mwc64 w = mwc64::from_seed(0x123456789ABCDEFULL);
     u64 a = w.next();
     u64 b = w.next();
-    require_true(a != b);     // distinct outputs
+    require_true(a != b);      // distinct outputs
 
     lcg64 l(0x1234ULL);
     u64 x = l.next();
@@ -71,7 +71,7 @@ main()
   // ---------------- gamma ----------------
   test_case("gamma_dist — moments + pdf/cdf");
   {
-    gamma_dist<f64> d(2.0, 3.0);     // α=2, θ=3 → mean=6, var=18
+    gamma_dist<f64> d(2.0, 3.0);      // α=2, θ=3 → mean=6, var=18
     require_true(near(d.mean(), 6.0));
     require_true(near(d.variance(), 18.0));
     f64 m, v;
@@ -91,7 +91,7 @@ main()
   // ---------------- beta ----------------
   test_case("beta_dist — moments + cdf monotone");
   {
-    beta_dist<f64> d(2.0, 5.0);     // mean = 2/7
+    beta_dist<f64> d(2.0, 5.0);      // mean = 2/7
     require_true(near(d.mean(), 2.0 / 7.0));
     f64 m, v;
     moments_of(d, g, 50000, m, v);
@@ -106,7 +106,7 @@ main()
   // ---------------- chi2 ----------------
   test_case("chi2_dist — moments");
   {
-    chi2_dist<f64> d(4.0);     // mean = 4, var = 8
+    chi2_dist<f64> d(4.0);      // mean = 4, var = 8
     require_true(near(d.mean(), 4.0));
     require_true(near(d.variance(), 8.0));
     f64 m, v;
@@ -221,13 +221,13 @@ main()
     shuffle<int>(v, v + 10, g);
     int sum = 0;
     for ( int i = 0; i < 10; ++i ) sum += v[i];
-    require_true(sum == 45);     // permutation invariant
+    require_true(sum == 45);      // permutation invariant
 
     int p[8];
     permutation<int>(p, 8, g);
     int psum = 0;
     for ( int i = 0; i < 8; ++i ) psum += p[i];
-    require_true(psum == 28);     // 0+1+...+7 = 28
+    require_true(psum == 28);      // 0+1+...+7 = 28
 
     int c = choice<int>(v, 10, g);
     require_true(c >= 0 && c <= 9);
@@ -236,7 +236,7 @@ main()
     int items[3] = { 100, 200, 300 };
     for ( int i = 0; i < 50; ++i ) {
       int pick = choice<int, f64>(items, w, 3, g);
-      require_true(pick == 200);     // weight is concentrated on index 1
+      require_true(pick == 200);      // weight is concentrated on index 1
     }
   }
   end_test_case();

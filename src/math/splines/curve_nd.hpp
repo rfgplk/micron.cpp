@@ -28,13 +28,13 @@ namespace math
 namespace splines
 {
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
   requires(D >= 2 && D <= 16)
 struct alignas(vec_align_v<F, D>) curve_seg {
   vec<F, D> a, b, c, d;
 };
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
   requires(D >= 2 && D <= 16)
 struct nearest_curve_nd {
   vector<F> ts;
@@ -43,7 +43,7 @@ struct nearest_curve_nd {
   extrap mode{ extrap::clamp_to_endpoints };
 };
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard]] inline nearest_curve_nd<F, D>
 make_nearest_curve(raw_slice<const F> ts, const vec<F, D> *points, usize n, build_info<F> *info = nullptr) noexcept
 {
@@ -70,7 +70,7 @@ make_nearest_curve(raw_slice<const F> ts, const vec<F, D> *points, usize n, buil
   return c;
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard, gnu::flatten]] inline vec<F, D>
 evaluate(const nearest_curve_nd<F, D> &c, F t) noexcept
 {
@@ -91,7 +91,7 @@ evaluate(const nearest_curve_nd<F, D> &c, F t) noexcept
   return ((t + t) < (ts[i] + ts[i + 1])) ? pts[i] : pts[i + 1];
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
   requires(D >= 2 && D <= 16)
 struct linear_curve_nd {
   vector<F> ts;
@@ -100,7 +100,7 @@ struct linear_curve_nd {
   extrap mode{ extrap::linear_continue };
 };
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard]] inline linear_curve_nd<F, D>
 make_linear_curve(raw_slice<const F> ts, const vec<F, D> *points, usize n, build_info<F> *info = nullptr) noexcept
 {
@@ -127,7 +127,7 @@ make_linear_curve(raw_slice<const F> ts, const vec<F, D> *points, usize n, build
   return c;
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard, gnu::flatten]] inline vec<F, D>
 evaluate(const linear_curve_nd<F, D> &c, F t) noexcept
 {
@@ -161,7 +161,7 @@ evaluate(const linear_curve_nd<F, D> &c, F t) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
   requires(D >= 2 && D <= 16)
 struct cubic_curve_nd {
   vector<F> ts;
@@ -174,7 +174,7 @@ struct cubic_curve_nd {
 namespace __impl_curve_nd
 {
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 inline bool
 build_cubic_curve_segments(const F *ts, const vec<F, D> *pts, usize n, bc_kind bc, const vec<F, D> &left_slope,
                            const vec<F, D> &right_slope, curve_seg<F, D> *seg_out) noexcept
@@ -210,9 +210,9 @@ build_cubic_curve_segments(const F *ts, const vec<F, D> *pts, usize n, bc_kind b
   return true;
 }
 
-};     // namespace __impl_curve_nd
+};      // namespace __impl_curve_nd
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard]] inline cubic_curve_nd<F, D>
 make_cubic_curve(raw_slice<const F> ts, const vec<F, D> *points, usize n, bc_kind bc = bc_kind::natural, vec<F, D> left_slope = vec<F, D>{},
                  vec<F, D> right_slope = vec<F, D>{}, build_info<F> *info = nullptr) noexcept
@@ -245,7 +245,7 @@ make_cubic_curve(raw_slice<const F> ts, const vec<F, D> *points, usize n, bc_kin
   return c;
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard, gnu::flatten]] inline vec<F, D>
 evaluate(const cubic_curve_nd<F, D> &c, F t) noexcept
 {
@@ -294,7 +294,7 @@ evaluate(const cubic_curve_nd<F, D> &c, F t) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
   requires(D >= 2 && D <= 16)
 struct regular_cubic_curve_nd {
   F t0{ 0 };
@@ -304,7 +304,7 @@ struct regular_cubic_curve_nd {
   extrap mode{ extrap::linear_continue };
 };
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard]] inline regular_cubic_curve_nd<F, D>
 make_regular_cubic_curve(F t0, F dt, const vec<F, D> *points, usize n, bc_kind bc = bc_kind::natural, vec<F, D> left_slope = vec<F, D>{},
                          vec<F, D> right_slope = vec<F, D>{}, build_info<F> *info = nullptr) noexcept
@@ -336,7 +336,7 @@ make_regular_cubic_curve(F t0, F dt, const vec<F, D> *points, usize n, bc_kind b
   return c;
 }
 
-template <ieee754_floating F, usize D>
+template<ieee754_floating F, usize D>
 [[nodiscard, gnu::flatten]] inline vec<F, D>
 evaluate(const regular_cubic_curve_nd<F, D> &c, F t) noexcept
 {
@@ -384,6 +384,6 @@ evaluate(const regular_cubic_curve_nd<F, D> &c, F t) noexcept
   return r;
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

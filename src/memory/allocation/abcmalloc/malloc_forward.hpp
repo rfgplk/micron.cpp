@@ -44,7 +44,7 @@ micron::__chunk<byte> balloc(usize size);
 
 micron::__chunk<byte> fetch(usize size);
 
-template <typename T>
+template<typename T>
   requires(micron::is_trivial_v<T>)
 T *fetch(void);
 
@@ -63,7 +63,7 @@ void which(void);
 
 void borrow();
 __attribute__((malloc, alloc_size(1))) byte *launder(usize size);
-template <typename T> usize query_size(T *ptr);
+template<typename T> usize query_size(T *ptr);
 
 __attribute__((malloc, alloc_size(1))) void *malloc(usize size);
 void *calloc(usize num, usize size);
@@ -72,7 +72,7 @@ void *realloc(void *ptr, usize size);
 void free(void *ptr);
 void *aligned_alloc(usize alignment, usize size);
 
-};     // namespace abc
+};      // namespace abc
 #ifdef ABCMALLOC_DISABLE
 
 extern "C" __attribute__((malloc, alloc_size(1))) void *malloc(usize size);

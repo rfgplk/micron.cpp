@@ -100,7 +100,7 @@ test_construction()
     micron::string b(a);
     sb::require_true(a == b);
     b[0] = 'X';
-    sb::require_false(a == b);     // mutation of b must not affect a
+    sb::require_false(a == b);      // mutation of b must not affect a
     sb::require(a[0], 's');
   }
   sb::end_test_case();
@@ -176,7 +176,7 @@ test_assignment()
     micron::string b;
     b = a;
     b[0] = 'X';
-    sb::require(a[0], 's');     // original must be unaffected
+    sb::require(a[0], 's');      // original must be unaffected
   }
   sb::end_test_case();
 
@@ -264,7 +264,7 @@ test_lifetime()
   {
     {
       micron::string s;
-    }     // destructor fires here
+    }      // destructor fires here
     sb::require_true(true);
   }
   sb::end_test_case();
@@ -294,7 +294,7 @@ test_lifetime()
       micron::string a("moved-from");
       {
         micron::string b(micron::move(a));
-      }     // b's destructor fires — should free the memory once
+      }      // b's destructor fires — should free the memory once
       // a's destructor fires — must not attempt to free again
     }
     sb::require_true(true);
@@ -349,7 +349,7 @@ test_lifetime()
     micron::string original("persistent");
     {
       micron::string copy(original);
-    }     // copy destroyed here
+    }      // copy destroyed here
     sb::require_true(original == "persistent");
     sb::require(original.size(), usize{ 10 });
   }
@@ -725,7 +725,7 @@ test_substr()
     micron::string s("original");
     auto t = s.substr(0u, 4u);
     t[0] = 'X';
-    sb::require(s[0], 'o');     // original untouched
+    sb::require(s[0], 'o');      // original untouched
   }
   sb::end_test_case();
 
@@ -749,7 +749,7 @@ test_substr()
     micron::string s("hello");
     auto t = s.substr(0u, 5u);
     s[0] = 'X';
-    sb::require(t[0], 'h');     // t must not see s's mutation
+    sb::require(t[0], 'h');      // t must not see s's mutation
   }
   sb::end_test_case();
 }
@@ -974,7 +974,7 @@ test_iterators()
 
   sb::test_case("iterators remain valid after push_back to existing capacity");
   {
-    micron::string s(64u);     // pre-allocate so push_back won't realloc
+    micron::string s(64u);      // pre-allocate so push_back won't realloc
     s = "abc";
     s.push_back('d');
     sb::require(s[3], 'd');
@@ -1331,7 +1331,7 @@ test_stress()
   {
     micron::string s("Z");
     for ( char c = 'A'; c < 'Z'; ++c ) s.insert((usize)0u, c);
-    sb::require(s[0], 'Y');     // last inserted is at front
+    sb::require(s[0], 'Y');      // last inserted is at front
     sb::require(s.back(), 'Z');
   }
   sb::end_test_case();
@@ -1363,7 +1363,7 @@ test_stress()
   sb::test_case("remove_all in tight loop: string shrinks monotonically");
   {
     micron::string s;
-    for ( int i = 0; i < 200; ++i ) s.push_back(i % 2 == 0 ? 'A' : 'B');     // "ABABAB..."
+    for ( int i = 0; i < 200; ++i ) s.push_back(i % 2 == 0 ? 'A' : 'B');      // "ABABAB..."
     usize before = s.size();
     s.remove_all("A");
     sb::require_smaller(s.size(), before);

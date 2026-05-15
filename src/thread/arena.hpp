@@ -31,24 +31,24 @@ namespace micron
 // this is solely meant as a memory saving measure, if you need more threads increase the limit or define one of the
 // macros below
 #if defined(ABSURD_THREAD_COUNT)
-constexpr static const u32 maximum_threads = (1 << 15);     // 32768
+constexpr static const u32 maximum_threads = (1 << 15);      // 32768
 #elseif defined(MICRON_HIGH_THREAD_COUNT)
-constexpr static const u32 maximum_threads = (1 << 12);     // 4096
+constexpr static const u32 maximum_threads = (1 << 12);      // 4096
 #elif !defined(MICRON_LOW_THREAD_COUNT)
-constexpr static const u32 maximum_threads = (1 << 10);     // 1024
+constexpr static const u32 maximum_threads = (1 << 10);      // 1024
 #else
-constexpr static const u32 maximum_threads = (1 << 8);     // 256
+constexpr static const u32 maximum_threads = (1 << 8);      // 256
 #endif
-constexpr static const u32 concurrent_threads = 32;     // reasoning, afaik the cpu with the highest number of threads on a single socket
-                                                        // has 256 threads. reduced for performance/mem usage reasons
+constexpr static const u32 concurrent_threads = 32;      // reasoning, afaik the cpu with the highest number of threads on a single socket
+                                                         // has 256 threads. reduced for performance/mem usage reasons
 
-template <typename Tr> struct thread_t {
-  cpu_t<true> cpu_mask;     // cpu mask for that specific thread
-  Tr thread;                // all other attributes are in thread
+template<typename Tr> struct thread_t {
+  cpu_t<true> cpu_mask;      // cpu mask for that specific thread
+  Tr thread;                 // all other attributes are in thread
 
-  thread_t(void) : cpu_mask{}, thread{} {}
+  thread_t(void) : cpu_mask{}, thread{} { }
 
-  template <typename... Args> thread_t(const cpu_t<true> &c, Args &&...args) : cpu_mask(c), thread(micron::forward<Args>(args)...) {}
+  template<typename... Args> thread_t(const cpu_t<true> &c, Args &&...args) : cpu_mask(c), thread(micron::forward<Args>(args)...) { }
 
   const Tr &
   operator()(void) const
@@ -94,8 +94,8 @@ class __empty_arena
 // __default_arena is the standard arena structure, containing regular threads, nothing special.
 // runs on a stack for performance reasons, it's possible to stall out or overload the arena by having the last added
 // thread busy while other threads wait for recollection, be warned, use parallel arenas if those workloads are likely
-template <umax_t Sz = thread_stack_size, typename Tr = group_thread<Sz>>
-  requires(!micron::is_same_v<Tr, auto_thread<>>)     // we don't want to use auto_threads in an arena
+template<umax_t Sz = thread_stack_size, typename Tr = group_thread<Sz>>
+  requires(!micron::is_same_v<Tr, auto_thread<>>)      // we don't want to use auto_threads in an arena
 class __default_arena
 {
   micron::fsstack<thread_t<Tr>, maximum_threads> threads;
@@ -127,7 +127,7 @@ public:
     // force_clean();
   }
 
-  __default_arena(void) : threads() {}
+  __default_arena(void) : threads() { }
 
   __default_arena(const __default_arena &) = delete;
   __default_arena(__default_arena &&) = delete;
@@ -136,7 +136,7 @@ public:
 
   // thread creation functions
   // Create a new thread automatically, without any config. Uses generally standard best practices config options
-  template <typename Func, typename... Args>
+  template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create(Func f, Args &&...args)
@@ -155,7 +155,7 @@ public:
   }
 
   // Create a new thread at a specific core/unit
-  template <typename Func, typename... Args>
+  template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create_at(usize n, Func f, Args &&...args)
@@ -179,7 +179,7 @@ public:
     return threads.top();
   }
 
-  template <typename Func, typename... Args>
+  template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create_realtime_at(usize n, Func f, Args &&...args)
@@ -204,7 +204,7 @@ public:
   }
 
   // Create a new thread at a specific core that is currently more free than the rest
-  template <typename Func, typename... Args>
+  template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create_burden(Func f, Args &&...args)
@@ -242,7 +242,7 @@ public:
     return threads.top();
   }
 
-  template <typename Func, typename... Args>
+  template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create_burden_realtime(Func f, Args &&...args)
@@ -327,7 +327,7 @@ public:
       if ( threads.top().thread.alive() ) {
       retry_join:
         if ( r = solo::try_join(threads.top().thread); r == error::busy ) {
-          cpu_pause<10000>();     // 10 us
+          cpu_pause<10000>();      // 10 us
           if ( --retries != 0 )
             goto retry_join;
           else
@@ -495,7 +495,7 @@ public:
     return mtx.lock();
   }
 
-  template <typename M>
+  template<typename M>
   void
   unlock(M m)
   {
@@ -503,7 +503,7 @@ public:
   }
 };
 
-template <umax_t Sz = concurrent_thread_stack_size, typename Tr = void_thread<Sz>>
+template<umax_t Sz = concurrent_thread_stack_size, typename Tr = void_thread<Sz>>
   requires(micron::is_same_v<Tr, void_thread<Sz>>)
 class __concurrent_arena
 {
@@ -549,7 +549,7 @@ public:
     for ( umax_t i = 0; i < counter; ++i ) __free_stack(i);
   }
 
-  __concurrent_arena(void) : counter{ 0 }, threads() {}
+  __concurrent_arena(void) : counter{ 0 }, threads() { }
 
   __concurrent_arena(const __concurrent_arena &) = delete;
   __concurrent_arena(__concurrent_arena &&) = delete;
@@ -558,7 +558,7 @@ public:
 
   // thread creation functions
   // Create a new thread automatically, without any config. Uses generally standard best practices config options
-  template <typename Func, typename... Args>
+  template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create(Func f, Args &&...args)
@@ -596,7 +596,7 @@ public:
   void clean(void) = delete;
   void force_clean(void) = delete;
 
-  template <typename Fn, typename... Args>
+  template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<Fn, Args...>)
   auto &
   add(Fn &&fn, Args &&...args)
@@ -740,7 +740,7 @@ public:
     return mtx.lock();
   }
 
-  template <typename M>
+  template<typename M>
   void
   unlock(M m)
   {
@@ -748,5 +748,5 @@ public:
   }
 };
 
-};     // namespace arena
-};     // namespace micron
+};      // namespace arena
+};      // namespace micron

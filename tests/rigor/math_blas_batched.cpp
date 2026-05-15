@@ -45,9 +45,9 @@ main()
       quants::vec_view<f64>::from(y2, 3),
     };
     blas::ext::axpby_batched<f64>(3, f64(2.0), xs, f64(0.5), ys);
-    require_true(near(y0[0], 7.0));      // 5 + 2
-    require_true(near(y1[0], 14.0));     // 10 + 4
-    require_true(near(y2[0], 21.0));     // 15 + 6
+    require_true(near(y0[0], 7.0));       // 5 + 2
+    require_true(near(y1[0], 14.0));      // 10 + 4
+    require_true(near(y2[0], 21.0));      // 15 + 6
   }
   end_test_case();
 
@@ -69,9 +69,9 @@ main()
     };
     f64 out[3] = { 0, 0, 0 };
     blas::ext::dot_batched<f64>(3, xs, ys, out);
-    require_true(near(out[0], 32.0));     // a·b = 4+10+18
-    require_true(near(out[1], 1.0));      // a·c = 1
-    require_true(near(out[2], 4.0));      // b·c = 4
+    require_true(near(out[0], 32.0));      // a·b = 4+10+18
+    require_true(near(out[1], 1.0));       // a·c = 1
+    require_true(near(out[2], 4.0));       // b·c = 4
   }
   end_test_case();
 
@@ -110,8 +110,8 @@ main()
 
   test_case("omatcopy: B ← α·Aᵀ");
   {
-    f64 A[6] = { 1, 2, 3, 4, 5, 6 };     // 2x3 row-major
-    f64 B[6] = { 0, 0, 0, 0, 0, 0 };     // 3x2 row-major
+    f64 A[6] = { 1, 2, 3, 4, 5, 6 };      // 2x3 row-major
+    f64 B[6] = { 0, 0, 0, 0, 0, 0 };      // 3x2 row-major
     auto Av = matrix::row_view<f64>::from(A, 2, 3);
     auto Bv = matrix::row_view<f64>::from(B, 3, 2);
     blas::ext::omatcopy<blas::op::trans>(f64(2.0), Av, Bv);
@@ -130,7 +130,7 @@ main()
     // A is 3x2, B is 2x3, C is 3x3
     f64 A[6] = { 1, 2, 3, 4, 5, 6 };
     f64 B[6] = { 1, 0, 0, 0, 1, 0 };
-    f64 C[9] = { 0, 0, 0, 7, 0, 0, 7, 7, 0 };     // pre-fill strict-lower with 7
+    f64 C[9] = { 0, 0, 0, 7, 0, 0, 7, 7, 0 };      // pre-fill strict-lower with 7
     auto Av = matrix::row_view<f64>::from(A, 3, 2);
     auto Bv = matrix::row_view<f64>::from(B, 2, 3);
     auto Cv = matrix::row_view<f64>::from(C, 3, 3);

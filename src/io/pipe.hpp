@@ -338,14 +338,14 @@ public:
     return n == 1;
   }
 
-  template <is_string T>
+  template<is_string T>
   pipe_result_t
   write(const T &t)
   {
     return write_bytes(reinterpret_cast<const byte *>(t.c_str()), t.size() * sizeof(typename T::value_type));
   }
 
-  template <is_string T>
+  template<is_string T>
   pipe_result_t
   read(T &t)
   {
@@ -353,7 +353,7 @@ public:
     return read_bytes(reinterpret_cast<byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
-  template <is_string T>
+  template<is_string T>
   usize
   read_all(T &t, usize chunk_sz = 4096u)
   {
@@ -368,7 +368,7 @@ public:
     return total;
   }
 
-  template <typename T>
+  template<typename T>
     requires(micron::is_object_v<T> && micron::is_convertible_v<T, typename T::value_type>)
   void
   operator()(T &t)
@@ -394,7 +394,7 @@ public:
     }
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   operator()(T &t)
   {
@@ -407,7 +407,7 @@ public:
     }
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   upipe &
   operator<<(io::stream<SZ, CK> &s)
   {
@@ -417,7 +417,7 @@ public:
     return *this;
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   upipe &
   operator>>(io::stream<SZ, CK> &s)
   {
@@ -430,7 +430,7 @@ public:
     return *this;
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   usize
   drain_to_stream(io::stream<SZ, CK> &s)
   {
@@ -727,7 +727,7 @@ public:
     return { true, static_cast<usize>(n), n == 0 };
   }
 
-  template <typename T>
+  template<typename T>
     requires(micron::is_object_v<T> && micron::is_convertible_v<T, typename T::value_type>)
   void
   write(T &t)
@@ -743,7 +743,7 @@ public:
     _write_all(_fd, t, sz);
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   write(const T &t)
   {
@@ -751,7 +751,7 @@ public:
     _write_all(_fd, reinterpret_cast<const byte *>(t.c_str()), t.size() * sizeof(typename T::value_type));
   }
 
-  template <typename T>
+  template<typename T>
     requires(micron::is_object_v<T> && micron::is_convertible_v<T, typename T::value_type>)
   void
   read(T &t)
@@ -767,7 +767,7 @@ public:
     __read_all_exact(_fd, t, sz);
   }
 
-  template <is_string T>
+  template<is_string T>
   void
   read(T &t)
   {
@@ -775,7 +775,7 @@ public:
     __read_all_exact(_fd, reinterpret_cast<byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
-  template <is_string T>
+  template<is_string T>
   usize
   read_all(T &t, usize chunk_sz = _chunk)
   {
@@ -806,7 +806,7 @@ public:
     return out;
   }
 
-  template <is_string T>
+  template<is_string T>
   npipe &
   operator<<(const T &t)
   {
@@ -814,7 +814,7 @@ public:
     return *this;
   }
 
-  template <is_string T>
+  template<is_string T>
   npipe &
   operator>>(T &t)
   {
@@ -822,7 +822,7 @@ public:
     return *this;
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   npipe &
   operator<<(io::stream<SZ, CK> &s)
   {
@@ -832,7 +832,7 @@ public:
     return *this;
   }
 
-  template <int SZ, int CK>
+  template<int SZ, int CK>
   npipe &
   operator>>(io::stream<SZ, CK> &s)
   {
@@ -870,7 +870,7 @@ struct pipe_pair_t {
   upipe p2c;
   upipe c2p;
 
-  pipe_pair_t() : p2c(upipe::utype::upipe_writer), c2p(upipe::utype::upipe_reader) {}
+  pipe_pair_t() : p2c(upipe::utype::upipe_writer), c2p(upipe::utype::upipe_reader) { }
 
   void
   parent_side()
@@ -911,5 +911,5 @@ open_npipe_read(const micron::string &name)
   return npipe(name, true, posix::o_rdonly);
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

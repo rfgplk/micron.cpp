@@ -20,5 +20,5 @@
 
 namespace micron
 {
-template <is_movable_object T, class C> struct slice;
+template<is_movable_object T, class C> struct slice;
 };

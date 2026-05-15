@@ -21,7 +21,7 @@ using sb::test_case;
 namespace
 {
 
-template <typename T, usize N>
+template<typename T, usize N>
 bool
 all_eq(const micron::carray<T, N> &a, T val)
 {
@@ -30,7 +30,7 @@ all_eq(const micron::carray<T, N> &a, T val)
   return true;
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 bool
 arr_eq(const micron::carray<T, N> &a, const micron::carray<T, N> &b)
 {
@@ -39,7 +39,7 @@ arr_eq(const micron::carray<T, N> &a, const micron::carray<T, N> &b)
   return true;
 }
 
-template <typename T, usize N>
+template<typename T, usize N>
 micron::carray<T, N>
 make_seq(T start = T{})
 {
@@ -48,7 +48,7 @@ make_seq(T start = T{})
   return a;
 }
 
-}     // namespace
+}      // namespace
 
 // ================================================================== //
 int
@@ -291,7 +291,7 @@ main()
     micron::carray<int, 8> a = make_seq<int, 8>(0);
     int sum = 0;
     for ( int v : a ) sum += v;
-    require(sum, 28);     // 0+1+...+7
+    require(sum, 28);      // 0+1+...+7
   }
   end_test_case();
 
@@ -373,7 +373,7 @@ main()
     require_true(arr_eq(a, b));
 
     b[3] = -1;
-    require(a[3], 8);     // a[3] = 5+3
+    require(a[3], 8);      // a[3] = 5+3
   }
   end_test_case();
 
@@ -411,7 +411,7 @@ main()
   // ---------------------------------------------------------------- //
   test_case("operator*= scalar multiplies every element");
   {
-    micron::carray<int, 8> a = make_seq<int, 8>(1);     // 1..8
+    micron::carray<int, 8> a = make_seq<int, 8>(1);      // 1..8
     a *= 3;
     for ( int i = 0; i < 8; ++i ) require(a[i], (i + 1) * 3);
   }
@@ -627,7 +627,7 @@ main()
     micron::carray<int, 4> a(10);
     micron::carray<int, 4> b(3);
     micron::carray<int, 4> c(2);
-    auto r = (a + b) * c;     // (10+3)*2 = 26
+    auto r = (a + b) * c;      // (10+3)*2 = 26
     require_true(all_eq(r, 26));
     require_true(all_eq(a, 10));
     require_true(all_eq(b, 3));
@@ -640,7 +640,7 @@ main()
   // ================================================================ //
   test_case("sum() returns correct sum (returns T)");
   {
-    micron::carray<int, 8> a = make_seq<int, 8>(1);     // 1..8
+    micron::carray<int, 8> a = make_seq<int, 8>(1);      // 1..8
     require(a.sum(), 36);
 
     micron::carray<int, 8> z;
@@ -677,7 +677,7 @@ main()
   test_case("sum() – sequential large array");
   {
     micron::carray<int, 1024> a = make_seq<int, 1024>(0);
-    require(a.sum(), 523776);     // 0+1+...+1023
+    require(a.sum(), 523776);      // 0+1+...+1023
   }
   end_test_case();
 

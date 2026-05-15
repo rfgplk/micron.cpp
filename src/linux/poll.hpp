@@ -20,7 +20,7 @@ using epoll_data = posix::epoll_data;
 using sigset_t = posix::sigset_t;
 using nfds_t = posix::nfds_t;
 
-template <i32 Events = posix::poll_in>
+template<i32 Events = posix::poll_in>
 inline pollfd
 make_poll(const io::fd_t &hnd)
 {
@@ -31,7 +31,7 @@ make_poll(const io::fd_t &hnd)
   return pfd;
 }
 
-template <i32 Events = posix::poll_in>
+template<i32 Events = posix::poll_in>
 inline pollfd
 make_poll(i32 raw_fd)
 {
@@ -72,14 +72,14 @@ make_poll_rw(i32 raw_fd)
   return make_poll(raw_fd, posix::poll_in | posix::poll_out);
 }
 
-template <usize N>
+template<usize N>
 inline void
 make_poll(const io::fd_t (&handles)[N], pollfd (&out)[N], i32 events = posix::poll_in)
 {
   for ( usize i = 0; i < N; ++i ) out[i] = make_poll(handles[i], events);
 }
 
-template <usize N>
+template<usize N>
 inline void
 make_poll(const i32 (&fds)[N], pollfd (&out)[N], i32 events = posix::poll_in)
 {
@@ -104,21 +104,21 @@ poll_nowait(pollfd &pfd)
   return posix::poll(pfd, 1, 0);
 }
 
-template <usize N>
+template<usize N>
 inline i32
 poll_for(pollfd (&pfds)[N], i32 timeout_ms)
 {
   return posix::poll(pfds[0], static_cast<nfds_t>(N), timeout_ms);
 }
 
-template <usize N>
+template<usize N>
 inline i32
 poll_for(pollfd (&pfds)[N])
 {
   return posix::poll(pfds[0], static_cast<nfds_t>(N), -1);
 }
 
-template <usize N>
+template<usize N>
 inline i32
 poll_nowait(pollfd (&pfds)[N])
 {
@@ -143,7 +143,7 @@ poll_for(pollfd &pfd, i32 timeout_ms, sigset_t &mask)
   return posix::ppoll(pfd, 1, timeout_ms, mask);
 }
 
-template <usize N>
+template<usize N>
 inline i32
 poll_for(pollfd (&pfds)[N], i32 timeout_ms, sigset_t &mask)
 {
@@ -192,7 +192,7 @@ poll_ok(const pollfd &pfd)
   return (pfd.revents & (posix::poll_error | posix::poll_hangup | posix::poll_invalid)) == 0 && pfd.revents != 0;
 }
 
-template <u32 Events = posix::epollin>
+template<u32 Events = posix::epollin>
 inline epoll_event
 make_epoll_event(const io::fd_t &hnd)
 {
@@ -202,7 +202,7 @@ make_epoll_event(const io::fd_t &hnd)
   return ev;
 }
 
-template <u32 Events = posix::epollin>
+template<u32 Events = posix::epollin>
 inline epoll_event
 make_epoll_event(i32 raw_fd)
 {
@@ -212,7 +212,7 @@ make_epoll_event(i32 raw_fd)
   return ev;
 }
 
-template <u32 Events = posix::epollin>
+template<u32 Events = posix::epollin>
 inline epoll_event
 make_epoll_event(void *ptr)
 {
@@ -222,7 +222,7 @@ make_epoll_event(void *ptr)
   return ev;
 }
 
-template <u32 Events = posix::epollin>
+template<u32 Events = posix::epollin>
 inline epoll_event
 make_epoll_event(u64 cookie)
 {
@@ -259,28 +259,28 @@ make_epoll_event(void *ptr, u32 events)
   return ev;
 }
 
-template <u32 BaseEvents = posix::epollin>
+template<u32 BaseEvents = posix::epollin>
 inline epoll_event
 make_epoll_et(i32 raw_fd)
 {
   return make_epoll_event<BaseEvents | posix::epollet>(raw_fd);
 }
 
-template <u32 BaseEvents = posix::epollin>
+template<u32 BaseEvents = posix::epollin>
 inline epoll_event
 make_epoll_et(const io::fd_t &hnd)
 {
   return make_epoll_event<BaseEvents | posix::epollet>(hnd);
 }
 
-template <u32 BaseEvents = posix::epollin>
+template<u32 BaseEvents = posix::epollin>
 inline epoll_event
 make_epoll_oneshot(i32 raw_fd)
 {
   return make_epoll_event<BaseEvents | posix::epolloneshot>(raw_fd);
 }
 
-template <u32 BaseEvents = posix::epollin>
+template<u32 BaseEvents = posix::epollin>
 inline epoll_event
 make_epoll_oneshot(const io::fd_t &hnd)
 {
@@ -294,7 +294,7 @@ public:
 
   ~epoll_handle() { close(); }
 
-  explicit epoll_handle(bool cloexec) : epfd_(posix::epoll_create1(cloexec ? posix::epoll_cloexec : 0)) {}
+  explicit epoll_handle(bool cloexec) : epfd_(posix::epoll_create1(cloexec ? posix::epoll_cloexec : 0)) { }
 
   static epoll_handle
   legacy(i32 size = 1)
@@ -359,7 +359,7 @@ public:
     return posix::epoll_ctl(epfd_, posix::epoll_ctl_add, hnd.fd, ev);
   }
 
-  template <u32 Events = posix::epollin>
+  template<u32 Events = posix::epollin>
   i32
   add(i32 fd) const
   {
@@ -367,7 +367,7 @@ public:
     return posix::epoll_ctl(epfd_, posix::epoll_ctl_add, fd, ev);
   }
 
-  template <u32 Events = posix::epollin>
+  template<u32 Events = posix::epollin>
   i32
   add(const io::fd_t &hnd) const
   {
@@ -375,7 +375,7 @@ public:
     return posix::epoll_ctl(epfd_, posix::epoll_ctl_add, hnd.fd, ev);
   }
 
-  template <u32 Events = posix::epollin>
+  template<u32 Events = posix::epollin>
   i32
   add(i32 fd, void *userptr) const
   {
@@ -395,7 +395,7 @@ public:
     return posix::epoll_ctl(epfd_, posix::epoll_ctl_mod, hnd.fd, ev);
   }
 
-  template <u32 Events>
+  template<u32 Events>
   i32
   modify(i32 fd) const
   {
@@ -415,7 +415,7 @@ public:
     return posix::epoll_ctl_delete(epfd_, hnd.fd);
   }
 
-  template <u32 Events = posix::epollin | posix::epolloneshot>
+  template<u32 Events = posix::epollin | posix::epolloneshot>
   i32
   rearm(i32 fd) const
   {
@@ -435,14 +435,14 @@ public:
     return posix::epoll_wait(epfd_, events, maxevents, 0);
   }
 
-  template <usize N>
+  template<usize N>
   i32
   wait(epoll_event (&events)[N], i32 timeout_ms = -1) const
   {
     return posix::epoll_wait(epfd_, events, static_cast<i32>(N), timeout_ms);
   }
 
-  template <usize N>
+  template<usize N>
   i32
   wait_nowait(epoll_event (&events)[N]) const
   {
@@ -461,7 +461,7 @@ public:
     return posix::epoll_pwait(epfd_, events, maxevents, timeout_ms, mask);
   }
 
-  template <usize N>
+  template<usize N>
   i32
   wait(epoll_event (&events)[N], i32 timeout_ms, const sigset_t &mask) const
   {
@@ -486,7 +486,7 @@ public:
     return posix::epoll_pwait2_block(epfd_, events, maxevents);
   }
 
-  template <usize N>
+  template<usize N>
   i32
   wait_ns(epoll_event (&events)[N], const timespec_t &timeout, const sigset_t &mask) const
   {
@@ -495,7 +495,7 @@ public:
 
 private:
   // private default ctor used by legacy()
-  epoll_handle() : epfd_(invalid_fd) {}
+  epoll_handle() : epfd_(invalid_fd) { }
 
   i32 epfd_;
 };
@@ -545,7 +545,7 @@ epoll_wait_for(i32 epfd, epoll_event *events, i32 maxevents, i32 timeout_ms = -1
   return posix::epoll_wait(epfd, events, maxevents, timeout_ms);
 }
 
-template <usize N>
+template<usize N>
 inline i32
 epoll_wait_for(i32 epfd, epoll_event (&events)[N], i32 timeout_ms = -1)
 {
@@ -599,4 +599,4 @@ epoll_ok(const epoll_event &ev)
 {
   return (ev.events & (posix::epollerr | posix::epollhup)) == 0 && ev.events != 0;
 }
-};     // namespace micron
+};      // namespace micron

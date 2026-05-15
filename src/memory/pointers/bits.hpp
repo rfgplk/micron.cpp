@@ -20,7 +20,7 @@ using count_t = usize;
 constexpr static const ptr_t nullvalue = 0x0;
 constexpr static const ptr_t occupied = 0x1;
 
-template <typename T>
+template<typename T>
 concept is_pointer_class = requires {
   typename T::pointer_type;
   typename T::category_type;
@@ -28,15 +28,15 @@ concept is_pointer_class = requires {
   { typename T::category_type{} } -> micron::same_as<micron::pointer_tag>;
 };
 
-template <class Type> struct __internal_pointer_alloc {
-  template <typename... Args>
+template<class Type> struct __internal_pointer_alloc {
+  template<typename... Args>
   static inline __attribute__((always_inline)) Type *
   __impl_alloc(Args &&...args)
   {
     return __new<Type>(micron::forward<Args &&>(args)...);
   }
 
-  template <typename Arr>
+  template<typename Arr>
   static inline __attribute__((always_inline)) void
   __impl_dealloc_arr(Arr *pointer)
   {
@@ -62,7 +62,7 @@ template <class Type> struct __internal_pointer_alloc {
   }
 };
 
-template <class Type> struct __internal_pointer_arralloc {
+template<class Type> struct __internal_pointer_arralloc {
   static inline __attribute__((always_inline)) auto
   __impl_alloc(usize n)
   {
@@ -70,7 +70,7 @@ template <class Type> struct __internal_pointer_arralloc {
     // return new Type(micron::forward<Args>(args)...);
   }
 
-  template <typename A>
+  template<typename A>
   static inline __attribute__((always_inline)) void
   __impl_dealloc(A *pointer)
   {
@@ -88,17 +88,17 @@ template <class Type> struct __internal_pointer_arralloc {
   }
 };
 
-template <typename T> struct shared_handler {
+template<typename T> struct shared_handler {
   T *pnt;
   count_t refs;
   // count_t weaks
 };
 
-template <typename T> using thread_safe_handler = atomic<shared_handler<T>>;
+template<typename T> using thread_safe_handler = atomic<shared_handler<T>>;
 
-template <typename T>
+template<typename T>
 concept is_nullptr = micron::is_null_pointer_v<T>;
-template <typename T>
+template<typename T>
 concept is_valid_pointer = micron::is_pointer_v<T> and !micron::is_null_pointer_v<T>;
 
-};     // namespace micron
+};      // namespace micron

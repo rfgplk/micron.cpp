@@ -40,7 +40,7 @@ using ino_t = __ino_t;
 using ino64_t = __ino64_t;
 
 using daddr_t = __s32_type;
-};     // namespace posix
+};      // namespace posix
 
 // REEXPORT GLOBALLY
 using posix::blkcnt_t;
@@ -61,7 +61,7 @@ using posix::rlim_t;
 using posix::time_t;
 using posix::uid_t;
 
-};     // namespace micron
+};      // namespace micron
 
 // WARNING: __special/pthread is extern "C" and uses bare pid_t at file scope
 #include "../../bits/__arch.hpp"

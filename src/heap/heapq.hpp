@@ -18,7 +18,7 @@
 namespace micron
 {
 
-template <typename T> class heapq
+template<typename T> class heapq
 {
   micron::mutex __mtx;
   micron::fvector<T> heap;
@@ -61,9 +61,9 @@ template <typename T> class heapq
 public:
   heapq() = default;
 
-  heapq(const heapq &o) : heap(o) {}
+  heapq(const heapq &o) : heap(o) { }
 
-  heapq(heapq &&o) : heap(micron::move(o)) {}
+  heapq(heapq &&o) : heap(micron::move(o)) { }
 
   heapq &
   operator=(const heapq &o)
@@ -137,4 +137,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

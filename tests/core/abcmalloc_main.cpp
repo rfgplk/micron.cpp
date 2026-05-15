@@ -37,7 +37,7 @@ main()
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(1, 1000000);
     for ( size_t n = 0; n < (2 << 8); ++n ) {
-      abc::malloc(dist(gen));     // oom checking
+      abc::malloc(dist(gen));      // oom checking
     }
     mc::infolog("Success");
   }

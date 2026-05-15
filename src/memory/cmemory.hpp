@@ -9,8 +9,8 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
-#include "../simd/intrin.hpp"     // arch-dispatched
-#include "../simd/memory.hpp"     // arch-dispatched
+#include "../simd/intrin.hpp"      // arch-dispatched
+#include "../simd/memory.hpp"      // arch-dispatched
 
 // TO ALL READERS
 // this set of functions is ever so slightly different from the standard string.h
@@ -115,4 +115,4 @@ using simd::wordset256;
 
 #endif
 
-};     // namespace micron
+};      // namespace micron

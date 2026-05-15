@@ -20,7 +20,7 @@ namespace micron
 {
 
 // new thread
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args...>)
 auto &
 go(Fn fn, Args &&...args)
@@ -31,7 +31,7 @@ go(Fn fn, Args &&...args)
 }
 
 // new thread at core
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args...>)
 auto &
 go(u32 at, Fn fn, Args &&...args)
@@ -44,7 +44,7 @@ go(u32 at, Fn fn, Args &&...args)
 // start a realtime thread
 // specifically start a thread with a sched_fifo scheduling policy
 // NOTE: process must have the cap_sys_nice or cap_sys_admin capability OR rlimit_rtprio must not be zero
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args...>)
 auto &
 realtime(Fn fn, Args &&...args)
@@ -55,7 +55,7 @@ realtime(Fn fn, Args &&...args)
 }
 
 // at core, see above
-template <typename Fn, typename... Args>
+template<typename Fn, typename... Args>
   requires(micron::is_invocable_v<Fn, Args...>)
 auto &
 realtime(u32 at, u32 prio, Fn fn, Args &&...args)
@@ -65,7 +65,7 @@ realtime(u32 at, u32 prio, Fn fn, Args &&...args)
   return __global_threadpool->create_realtime_at(at, prio, fn, micron::forward<Args &&>(args)...);
 }
 
-template <typename Tr>
+template<typename Tr>
 void
 sleep(thread_t<Tr> &t)
 {
@@ -74,7 +74,7 @@ sleep(thread_t<Tr> &t)
   return __global_threadpool->sleep(t);
 }
 
-template <typename Tr>
+template<typename Tr>
 void
 awaken(thread_t<Tr> &t)
 {
@@ -83,7 +83,7 @@ awaken(thread_t<Tr> &t)
   return __global_threadpool->awaken(t);
 }
 
-template <typename Tr>
+template<typename Tr>
 void
 snooze(thread_t<Tr> &t)
 {
@@ -92,7 +92,7 @@ snooze(thread_t<Tr> &t)
   return __global_threadpool->throttle(t);
 }
 
-template <typename Tr>
+template<typename Tr>
 void
 cancel(thread_t<Tr> &t)
 {
@@ -101,7 +101,7 @@ cancel(thread_t<Tr> &t)
   return __global_threadpool->cancel(t);
 }
 
-template <typename Tr>
+template<typename Tr>
 void
 await(thread_t<Tr> &t)
 {
@@ -132,7 +132,7 @@ lock()
 
 // new proc
 // fork and run process at path location specified by T
-template <is_string T, is_string... R>
+template<is_string T, is_string... R>
 void
 run(const T &t, const R &...args)
 {
@@ -142,4 +142,4 @@ run(const T &t, const R &...args)
 // new thread
 void spawn();
 
-};     // namespace micron
+};      // namespace micron

@@ -16,13 +16,13 @@ class broken_promise
 {
 };
 
-template <typename T> class promise
+template<typename T> class promise
 {
   shared_state<T> *state;
   bool future_retrieved;
 
 public:
-  promise() : state(new shared_state<T>()), future_retrieved(false) {}
+  promise() : state(new shared_state<T>()), future_retrieved(false) { }
 
   promise(const promise &) = delete;
   promise &operator=(const promise &) = delete;
@@ -99,13 +99,13 @@ public:
   }
 };
 
-template <> class promise<void>
+template<> class promise<void>
 {
   shared_state<void> *state;
   bool future_retrieved;
 
 public:
-  promise() : state(new shared_state<void>()), future_retrieved(false) {}
+  promise() : state(new shared_state<void>()), future_retrieved(false) { }
 
   promise(const promise &) = delete;
   promise &operator=(const promise &) = delete;
@@ -167,13 +167,13 @@ public:
   }
 };
 
-template <typename T> class promise<T &>
+template<typename T> class promise<T &>
 {
   shared_state<T &> *state;
   bool future_retrieved;
 
 public:
-  promise() : state(new shared_state<T &>()), future_retrieved(false) {}
+  promise() : state(new shared_state<T &>()), future_retrieved(false) { }
 
   promise(const promise &) = delete;
   promise &operator=(const promise &) = delete;
@@ -234,4 +234,4 @@ public:
     set_value(value);
   }
 };
-};     // namespace micron
+};      // namespace micron

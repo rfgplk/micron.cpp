@@ -9,7 +9,7 @@ namespace micron
 {
 
 // mmap allocator, bypasses malloc
-template <is_policy P = serial_allocation_policy> class map_allocator : private sys_allocator<byte>
+template<is_policy P = serial_allocation_policy> class map_allocator: private sys_allocator<byte>
 {
 public:
   ~map_allocator() = default;
@@ -69,4 +69,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

@@ -120,5 +120,5 @@ stat(const char *path, stat64_t &buf) -> i32
   return static_cast<i32>(micron::syscall(SYS_stat64, path, &buf));
 }
 #endif
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

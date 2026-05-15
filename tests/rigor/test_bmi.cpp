@@ -27,14 +27,14 @@ main()
   end_test_case();
 
   test_case("bmi: blsr / blsi / blsmsk");
-  require_true(mb::reset_lowest_set_u32(0xCAFEull) == 0xCAFCu);     // 0xCAFE = ...1110, clear bit1 -> ...1100
+  require_true(mb::reset_lowest_set_u32(0xCAFEull) == 0xCAFCu);      // 0xCAFE = ...1110, clear bit1 -> ...1100
   require_true(mb::isolate_lowest_set_u32(0xCAFEu) == 0x0002u);
-  require_true(mb::mask_below_lowest_set_u32(0xCAFEu) == 0x0003u);     // 0..0_11
+  require_true(mb::mask_below_lowest_set_u32(0xCAFEu) == 0x0003u);      // 0..0_11
   end_test_case();
 
   test_case("bmi: andn");
   require_true(mb::andn_u32(0xF0u, 0xFFu) == 0x0Fu);
-  require_true(mb::andn_u64(0xFFul, 0xF0ul) == 0u);     // ~0xFF=0xFFF...0, & 0xF0 = 0
+  require_true(mb::andn_u64(0xFFul, 0xF0ul) == 0u);      // ~0xFF=0xFFF...0, & 0xF0 = 0
   end_test_case();
 
 #if defined(__BMI2__)

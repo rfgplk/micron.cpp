@@ -26,23 +26,23 @@ struct bad_function_call {
     return "micron::function: call on empty wrapper";
   }
 };
-};     // namespace except
+};      // namespace except
 
 inline constexpr usize __function_smallobj_size = 48;
 inline constexpr usize __function_smallobj_align = alignof(void *);
 
-template <typename R, typename... Args> struct __fn_vtable {
+template<typename R, typename... Args> struct __fn_vtable {
   R (*call)(const void *self, Args... args);
   void (*destroy)(void *self) noexcept;
-  void (*copy)(void *dst, const void *src);           // nullptr if move-only
-  void (*move_to)(void *dst, void *src) noexcept;     // always present
+  void (*copy)(void *dst, const void *src);            // nullptr if move-only
+  void (*move_to)(void *dst, void *src) noexcept;      // always present
   // metadata
-  const void *type_tag;     // unique per G, used by target<G>()
+  const void *type_tag;      // unique per G, used by target<G>()
   bool is_noexcept;
   bool on_heap;
 };
 
-template <typename G>
+template<typename G>
 inline const void *
 __fn_type_tag() noexcept
 {
@@ -51,7 +51,7 @@ __fn_type_tag() noexcept
 }
 
 // custom vtable for concrete callable type G
-template <typename G, typename R, typename... Args>
+template<typename G, typename R, typename... Args>
 const __fn_vtable<R, Args...> *
 __make_vtable() noexcept
 {
@@ -74,13 +74,13 @@ __make_vtable() noexcept
   return &vt;
 }
 
-template <typename> class function;
+template<typename> class function;
 
-template <typename R, typename... Args> class function<R(Args...)>
+template<typename R, typename... Args> class function<R(Args...)>
 {
   alignas(__function_smallobj_align) unsigned char __buf[__function_smallobj_size];
-  void *__heap = nullptr;                            // non-null iff on heap
-  const __fn_vtable<R, Args...> *__vt = nullptr;     // null iff empty
+  void *__heap = nullptr;                             // non-null iff on heap
+  const __fn_vtable<R, Args...> *__vt = nullptr;      // null iff empty
 
   void *
   __self() noexcept
@@ -113,7 +113,7 @@ template <typename R, typename... Args> class function<R(Args...)>
     }
   }
 
-  template <typename G, typename... CArgs>
+  template<typename G, typename... CArgs>
   void
   __emplace(CArgs &&...cargs)
   {
@@ -137,9 +137,9 @@ public:
 
   function() noexcept = default;
 
-  function(nullptr_t) noexcept {}
+  function(nullptr_t) noexcept { }
 
-  template <typename G>
+  template<typename G>
     requires(!micron::same_as<micron::decay_t<G>, function> && micron::invocable<micron::decay_t<G>, Args...>
              && micron::is_convertible_v<micron::invoke_result_t<micron::decay_t<G>, Args...>, R>)
   function(G &&g)
@@ -150,9 +150,9 @@ public:
   function(const function &o)
   {
     if ( !o.__empty() ) {
-      if ( !o.__vt->copy ) exc<except::bad_function_call>();     // stored type is move-only
+      if ( !o.__vt->copy ) exc<except::bad_function_call>();      // stored type is move-only
       if ( o.__heap ) {
-        __heap = ::operator new(__function_smallobj_size * 4);     // conservative
+        __heap = ::operator new(__function_smallobj_size * 4);      // conservative
         o.__vt->copy(__heap, o.__heap);
       } else {
         o.__vt->copy(__buf, o.__buf);
@@ -213,7 +213,7 @@ public:
     return *this;
   }
 
-  template <typename G>
+  template<typename G>
     requires(!micron::same_as<micron::decay_t<G>, function> && micron::invocable<micron::decay_t<G>, Args...>
              && micron::is_convertible_v<micron::invoke_result_t<micron::decay_t<G>, Args...>, R>)
   function &
@@ -258,7 +258,7 @@ public:
     o = micron::move(tmp);
   }
 
-  template <typename G>
+  template<typename G>
   G *
   target() noexcept
   {
@@ -266,7 +266,7 @@ public:
     return static_cast<G *>(__self());
   }
 
-  template <typename G>
+  template<typename G>
   const G *
   target() const noexcept
   {
@@ -281,35 +281,35 @@ public:
   }
 };
 
-template <typename R, typename... Args>
+template<typename R, typename... Args>
 void
 swap(function<R(Args...)> &a, function<R(Args...)> &b) noexcept
 {
   a.swap(b);
 }
 
-template <typename R, typename... Args>
+template<typename R, typename... Args>
 bool
 operator==(const function<R(Args...)> &f, nullptr_t) noexcept
 {
   return !f;
 }
 
-template <typename R, typename... Args>
+template<typename R, typename... Args>
 bool
 operator==(nullptr_t, const function<R(Args...)> &f) noexcept
 {
   return !f;
 }
 
-template <typename R, typename... Args>
+template<typename R, typename... Args>
 bool
 operator!=(const function<R(Args...)> &f, nullptr_t) noexcept
 {
   return !!f;
 }
 
-template <typename R, typename... Args>
+template<typename R, typename... Args>
 bool
 operator!=(nullptr_t, const function<R(Args...)> &f) noexcept
 {
@@ -321,30 +321,30 @@ operator!=(nullptr_t, const function<R(Args...)> &f) noexcept
 // f(21);
 
 // Non-const member function.
-template <typename R, typename C, typename... Args>
+template<typename R, typename C, typename... Args>
 auto
 bind_method(R (C::*mfp)(Args...), C *obj)
 {
   return [mfp, obj](Args... args) -> R { return (obj->*mfp)(micron::forward<Args>(args)...); };
 }
 
-template <typename R, typename C, typename... Args>
+template<typename R, typename C, typename... Args>
 auto
 bind_method(R (C::*mfp)(Args...) const, const C *obj)
 {
   return [mfp, obj](Args... args) -> R { return (obj->*mfp)(micron::forward<Args>(args)...); };
 }
 
-template <typename F, typename... Args>
+template<typename F, typename... Args>
 concept is_callable = micron::invocable<F, Args...>;
 
-template <typename F, typename R, typename... Args>
+template<typename F, typename R, typename... Args>
 concept is_typed_function = micron::invocable<F, Args...> && micron::is_convertible_v<micron::invoke_result_t<F, Args...>, R>;
 
-template <typename F>
+template<typename F>
 concept is_nullary = micron::invocable<F>;
 
-template <typename F, typename A, typename B>
+template<typename F, typename A, typename B>
 concept is_arrow = is_typed_function<F, B, A>;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -356,7 +356,7 @@ concept is_arrow = is_typed_function<F, B, A>;
 // ap    : F ('a -> 'b) -> F 'a -> F 'b        (<*>)
 
 // fmap id : ('a -> 'b) -> 'a -> 'b
-template <typename F, typename A>
+template<typename F, typename A>
   requires micron::invocable<F, A>
 auto
 fmap(F &&f, A &&a) -> micron::invoke_result_t<F, A>
@@ -365,7 +365,7 @@ fmap(F &&f, A &&a) -> micron::invoke_result_t<F, A>
 }
 
 // bind id : 'a -> ('a -> 'b) -> 'b
-template <typename A, typename F>
+template<typename A, typename F>
   requires micron::invocable<F, A>
 auto
 bind(A &&a, F &&f) -> micron::invoke_result_t<F, A>
@@ -378,7 +378,7 @@ bind(A &&a, F &&f) -> micron::invoke_result_t<F, A>
 
 // fmap for option<T, E>
 // returns option<U, E> where U = invoke_result_t<Fn, T>
-template <typename Fn, typename T, typename E>
+template<typename Fn, typename T, typename E>
   requires micron::invocable<Fn, T>
 auto
 fmap(Fn &&fn, const micron::option<T, E> &opt) -> micron::option<micron::invoke_result_t<Fn, T>, E>
@@ -390,7 +390,7 @@ fmap(Fn &&fn, const micron::option<T, E> &opt) -> micron::option<micron::invoke_
     return micron::option<U, E>{ opt.template cast<E>() };
 }
 
-template <typename Fn, typename T, typename E>
+template<typename Fn, typename T, typename E>
   requires micron::invocable<Fn, T>
 auto
 fmap(Fn &&fn, micron::option<T, E> &&opt) -> micron::option<micron::invoke_result_t<Fn, T>, E>
@@ -402,7 +402,7 @@ fmap(Fn &&fn, micron::option<T, E> &&opt) -> micron::option<micron::invoke_resul
     return micron::option<U, E>{ micron::move(opt.template cast<E>()) };
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, T> && micron::is_option<micron::invoke_result_t<Fn, T>>
 auto
 bind(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
@@ -415,7 +415,7 @@ bind(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
   }
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, T> && micron::is_option<micron::invoke_result_t<Fn, T>>
 auto
 bind(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
@@ -428,14 +428,14 @@ bind(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
   }
 }
 
-template <typename E, typename T>
+template<typename E, typename T>
 micron::option<micron::decay_t<T>, E>
 pure(T &&v)
 {
   return micron::option<micron::decay_t<T>, E>{ micron::forward<T>(v) };
 }
 
-template <typename Fn, typename T, typename E>
+template<typename Fn, typename T, typename E>
   requires micron::invocable<Fn, T>
 auto
 ap(const micron::option<Fn, E> &of, const micron::option<T, E> &ov) -> micron::option<micron::invoke_result_t<Fn, T>, E>
@@ -451,7 +451,7 @@ ap(const micron::option<Fn, E> &of, const micron::option<T, E> &ov) -> micron::o
 
 // map2 : ('a -> 'b -> 'c) -> 'a option -> 'b option -> 'c option
 // both branches must be first (ok) for fn to be applied; first error wins
-template <typename Fn, typename T, typename U, typename E>
+template<typename Fn, typename T, typename U, typename E>
   requires micron::invocable<Fn, T, U>
 auto
 map2(Fn &&fn, const micron::option<T, E> &oa, const micron::option<U, E> &ob) -> micron::option<micron::invoke_result_t<Fn, T, U>, E>
@@ -465,7 +465,7 @@ map2(Fn &&fn, const micron::option<T, E> &oa, const micron::option<U, E> &ob) ->
     return micron::option<V, E>{ ob.template cast<E>() };
 }
 
-template <typename Fn, typename T, typename U, typename E>
+template<typename Fn, typename T, typename U, typename E>
   requires micron::invocable<Fn, T, U>
 auto
 map2(Fn &&fn, micron::option<T, E> &&oa, micron::option<U, E> &&ob) -> micron::option<micron::invoke_result_t<Fn, T, U>, E>
@@ -481,7 +481,7 @@ map2(Fn &&fn, micron::option<T, E> &&oa, micron::option<U, E> &&ob) -> micron::o
 
 // join/flatten : option<option<T,E>,E> -> option<T,E>
 // collapses one layer of nesting; equivalent to bind(x, id)
-template <typename T, typename E>
+template<typename T, typename E>
 micron::option<T, E>
 join(const micron::option<micron::option<T, E>, E> &outer)
 {
@@ -491,7 +491,7 @@ join(const micron::option<micron::option<T, E>, E> &outer)
     return micron::option<T, E>{ outer.template cast<E>() };
 }
 
-template <typename T, typename E>
+template<typename T, typename E>
 micron::option<T, E>
 join(micron::option<micron::option<T, E>, E> &&outer)
 {
@@ -503,7 +503,7 @@ join(micron::option<micron::option<T, E>, E> &&outer)
 
 // value: 'a option -> default:'a -> 'a
 // extract the first branch or return the supplied default
-template <typename T, typename E>
+template<typename T, typename E>
 T
 value(const micron::option<T, E> &opt, T &&def)
 {
@@ -511,7 +511,7 @@ value(const micron::option<T, E> &opt, T &&def)
   return micron::forward<T>(def);
 }
 
-template <typename T, typename E>
+template<typename T, typename E>
 T
 value(micron::option<T, E> &&opt, T &&def)
 {
@@ -521,7 +521,7 @@ value(micron::option<T, E> &&opt, T &&def)
 
 // and_then: option<T,E> -> (T -> option<U,E>) -> option<U,E>
 // alias for bind when the continuation is named more idiomatically
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, T> && micron::is_option<micron::invoke_result_t<Fn, T>>
 auto
 and_then(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
@@ -534,7 +534,7 @@ and_then(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn
   }
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, T> && micron::is_option<micron::invoke_result_t<Fn, T>>
 auto
 and_then(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
@@ -549,7 +549,7 @@ and_then(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, T>
 
 // or_else: option<T,E> -> (E -> option<T,F>) -> option<T,F>
 // recover from the error branch; success passes through unchanged
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, E> && micron::is_option<micron::invoke_result_t<Fn, E>>
 auto
 or_else(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn, E>
@@ -561,7 +561,7 @@ or_else(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn,
     return Ret{ opt.template cast<T>() };
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, E> && micron::is_option<micron::invoke_result_t<Fn, E>>
 auto
 or_else(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, E>
@@ -575,7 +575,7 @@ or_else(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, E>
 
 // map_error: option<T,E> -> (E -> F) -> option<T,F>
 // transform only the error branch, leaving the success branch unchanged
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, E>
 auto
 map_error(const micron::option<T, E> &opt, Fn &&fn) -> micron::option<T, micron::invoke_result_t<Fn, E>>
@@ -587,7 +587,7 @@ map_error(const micron::option<T, E> &opt, Fn &&fn) -> micron::option<T, micron:
     return micron::option<T, F2>{ micron::forward<Fn>(fn)(opt.template cast<E>()) };
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, E>
 auto
 map_error(micron::option<T, E> &&opt, Fn &&fn) -> micron::option<T, micron::invoke_result_t<Fn, E>>
@@ -601,7 +601,7 @@ map_error(micron::option<T, E> &&opt, Fn &&fn) -> micron::option<T, micron::invo
 
 // bind_error: option<T,E> -> (E -> option<T,F>) -> option<T,F>
 // monadic bind over the error branch; lets you chain fallback strategies
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, E> && micron::is_option<micron::invoke_result_t<Fn, E>>
 auto
 bind_error(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<Fn, E>
@@ -613,7 +613,7 @@ bind_error(const micron::option<T, E> &opt, Fn &&fn) -> micron::invoke_result_t<
     return Ret{ opt.template cast<T>() };
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::invocable<Fn, E> && micron::is_option<micron::invoke_result_t<Fn, E>>
 auto
 bind_error(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, E>
@@ -627,7 +627,7 @@ bind_error(micron::option<T, E> &&opt, Fn &&fn) -> micron::invoke_result_t<Fn, E
 
 // option<T,E> -> (T -> U) -> (E -> F) -> option<U,F>
 // maps both branches simultaneously
-template <typename T, typename E, typename FnT, typename FnE>
+template<typename T, typename E, typename FnT, typename FnE>
   requires fn_domain<FnT, T> && fn_domain<FnE, E>
 auto
 bimap(const micron::option<T, E> &opt, FnT &&ft, FnE &&fe)
@@ -641,7 +641,7 @@ bimap(const micron::option<T, E> &opt, FnT &&ft, FnE &&fe)
     return micron::option<U, F>{ micron::forward<FnE>(fe)(opt.template cast<E>()) };
 }
 
-template <typename T, typename E, typename FnT, typename FnE>
+template<typename T, typename E, typename FnT, typename FnE>
   requires fn_domain<FnT, T> && fn_domain<FnE, E>
 auto
 bimap(micron::option<T, E> &&opt, FnT &&ft, FnE &&fe) -> micron::option<micron::invoke_result_t<FnT, T>, micron::invoke_result_t<FnE, E>>
@@ -655,7 +655,7 @@ bimap(micron::option<T, E> &&opt, FnT &&ft, FnE &&fe) -> micron::option<micron::
 }
 
 // micron::function overload
-template <typename T, typename E, typename U, typename F>
+template<typename T, typename E, typename U, typename F>
 micron::option<U, F>
 bimap(const micron::option<T, E> &opt, micron::function<U(T)> ft, micron::function<F(E)> fe)
 {
@@ -667,7 +667,7 @@ bimap(const micron::option<T, E> &opt, micron::function<U(T)> ft, micron::functi
 
 // fold/match: option<T,E> -> (T -> R) -> (E -> R) -> R
 // eliminates the option by applying the appropriate function
-template <typename T, typename E, typename FnT, typename FnE>
+template<typename T, typename E, typename FnT, typename FnE>
   requires fn_domain<FnT, T> && fn_domain<FnE, E> && micron::is_same_v<micron::invoke_result_t<FnT, T>, micron::invoke_result_t<FnE, E>>
 auto
 fold(const micron::option<T, E> &opt, FnT &&ft, FnE &&fe) -> micron::invoke_result_t<FnT, T>
@@ -678,7 +678,7 @@ fold(const micron::option<T, E> &opt, FnT &&ft, FnE &&fe) -> micron::invoke_resu
     return micron::forward<FnE>(fe)(opt.template cast<E>());
 }
 
-template <typename T, typename E, typename FnT, typename FnE>
+template<typename T, typename E, typename FnT, typename FnE>
   requires fn_domain<FnT, T> && fn_domain<FnE, E> && micron::is_same_v<micron::invoke_result_t<FnT, T>, micron::invoke_result_t<FnE, E>>
 auto
 fold(micron::option<T, E> &&opt, FnT &&ft, FnE &&fe) -> micron::invoke_result_t<FnT, T>
@@ -690,7 +690,7 @@ fold(micron::option<T, E> &&opt, FnT &&ft, FnE &&fe) -> micron::invoke_result_t<
 }
 
 // micron::function overload
-template <typename T, typename E, typename R>
+template<typename T, typename E, typename R>
 R
 fold(const micron::option<T, E> &opt, micron::function<R(T)> ft, micron::function<R(E)> fe)
 {
@@ -702,7 +702,7 @@ fold(const micron::option<T, E> &opt, micron::function<R(T)> ft, micron::functio
 
 // option<T,E> -> (T -> void) -> option<T,E>
 // executes side-effect on first branch without modifying the option
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires fn_domain<Fn, T>
 const micron::option<T, E> &
 tap(const micron::option<T, E> &opt, Fn &&fn)
@@ -711,7 +711,7 @@ tap(const micron::option<T, E> &opt, Fn &&fn)
   return opt;
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires fn_domain<Fn, const T *> && (!fn_domain<Fn, T>)
 const micron::option<T, E> &
 tap(const micron::option<T, E> &opt, Fn &&fn)
@@ -721,7 +721,7 @@ tap(const micron::option<T, E> &opt, Fn &&fn)
 }
 
 // tap_error: side-effect on error branch
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires fn_domain<Fn, E>
 const micron::option<T, E> &
 tap_error(const micron::option<T, E> &opt, Fn &&fn)
@@ -731,7 +731,7 @@ tap_error(const micron::option<T, E> &opt, Fn &&fn)
 }
 
 // (option<T,E>, option<U,E>) -> option<tuple<T,U>, E>
-template <typename T, typename U, typename E>
+template<typename T, typename U, typename E>
 micron::option<micron::tuple<T, U>, E>
 sequence_pair(const micron::option<T, E> &oa, const micron::option<U, E> &ob)
 {
@@ -740,7 +740,7 @@ sequence_pair(const micron::option<T, E> &oa, const micron::option<U, E> &ob)
   return micron::option<micron::tuple<T, U>, E>{ micron::make_tuple(oa.template cast<T>(), ob.template cast<U>()) };
 }
 
-template <typename T, typename U, typename E>
+template<typename T, typename U, typename E>
 micron::option<micron::tuple<T, U>, E>
 sequence_pair(micron::option<T, E> &&oa, micron::option<U, E> &&ob)
 {
@@ -751,7 +751,7 @@ sequence_pair(micron::option<T, E> &&oa, micron::option<U, E> &&ob)
 }
 
 // map3: ('a -> 'b -> 'c -> 'd) -> opt 'a -> opt 'b -> opt 'c -> opt 'd
-template <typename Fn, typename T, typename U, typename V, typename E>
+template<typename Fn, typename T, typename U, typename V, typename E>
   requires micron::is_invocable_v<Fn, T, U, V>
 auto
 map3(Fn &&fn, const micron::option<T, E> &oa, const micron::option<U, E> &ob, const micron::option<V, E> &oc)
@@ -765,7 +765,7 @@ map3(Fn &&fn, const micron::option<T, E> &oa, const micron::option<U, E> &ob, co
 }
 
 // bool -> T -> option<T,E>
-template <typename T, typename E>
+template<typename T, typename E>
 micron::option<T, E>
 when_first(bool cond, T &&v)
 {
@@ -775,7 +775,7 @@ when_first(bool cond, T &&v)
 
 // bool -> T -> option<T,E>
 // constructs first branch if condition is false
-template <typename T, typename E>
+template<typename T, typename E>
 micron::option<T, E>
 unless_first(bool cond, T &&v)
 {
@@ -783,7 +783,7 @@ unless_first(bool cond, T &&v)
   return micron::option<T, E>{ E{} };
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires micron::is_invocable_v<Fn> && micron::is_same_v<micron::invoke_result_t<Fn>, T>
 micron::option<T, E>
 try_call(Fn &&fn) noexcept
@@ -792,7 +792,7 @@ try_call(Fn &&fn) noexcept
 }
 
 // bool -> option<unit_t, E>  (where unit_t = micron::tuple<>)
-template <typename E>
+template<typename E>
 micron::option<micron::tuple<>, E>
 from_bool(bool cond)
 {
@@ -802,7 +802,7 @@ from_bool(bool cond)
 
 // option<T,E> -> (T -> bool) -> option<T,E>
 // keeps the first branch only if the predicate holds; otherwise converts to error
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires fn_predicate<Fn, T>
 micron::option<T, E>
 ensure(const micron::option<T, E> &opt, Fn &&fn, E err = E{})
@@ -812,7 +812,7 @@ ensure(const micron::option<T, E> &opt, Fn &&fn, E err = E{})
   return micron::option<T, E>{ micron::move(err) };
 }
 
-template <typename T, typename E, typename Fn>
+template<typename T, typename E, typename Fn>
   requires fn_predicate<Fn, T>
 micron::option<T, E>
 ensure(micron::option<T, E> &&opt, Fn &&fn, E err = E{})
@@ -822,7 +822,7 @@ ensure(micron::option<T, E> &&opt, Fn &&fn, E err = E{})
   return micron::option<T, E>{ micron::move(err) };
 }
 
-template <typename T, typename E>
+template<typename T, typename E>
 micron::option<T, E>
 ensure(const micron::option<T, E> &opt, micron::function<bool(T)> fn, E err = E{})
 {
@@ -840,7 +840,7 @@ ensure(const micron::option<T, E> &opt, micron::function<bool(T)> fn, E err = E{
 
 // fmap: (B -> C) -> function<B(A)> -> function<C(A)>
 // (f o g)(x) = f(g(x))
-template <typename F, typename R, typename A>
+template<typename F, typename R, typename A>
   requires micron::invocable<F, R>
 auto
 fmap(F &&f, micron::function<R(A)> g) -> micron::function<micron::invoke_result_t<F, R>(A)>
@@ -853,7 +853,7 @@ fmap(F &&f, micron::function<R(A)> g) -> micron::function<micron::invoke_result_
 
 // bind: function<B(A)> -> (B -> function<C(A)>) -> function<C(A)>
 // (m >>= f) x = f (m x) x
-template <typename R, typename A, typename F>
+template<typename R, typename A, typename F>
   requires micron::invocable<F, R> && micron::invocable<micron::invoke_result_t<F, R>, A>
 auto
 bind(micron::function<R(A)> g, F &&f) -> micron::function<micron::invoke_result_t<micron::invoke_result_t<F, R>, A>(A)>
@@ -865,7 +865,7 @@ bind(micron::function<R(A)> g, F &&f) -> micron::function<micron::invoke_result_
 }
 
 // pure: B -> function<B(A)>    (const fn, ignores its argument)
-template <typename A, typename B>
+template<typename A, typename B>
 micron::function<micron::decay_t<B>(A)>
 pure(B &&v)
 {
@@ -874,7 +874,7 @@ pure(B &&v)
 
 // ap: function<(B->C)(A)> -> function<B(A)> -> function<C(A)>
 // S-combinator: (f <*> g) x = f x (g x)
-template <typename R, typename A, typename B>
+template<typename R, typename A, typename B>
   requires micron::invocable<R, B>
 auto
 ap(micron::function<R(A)> ff, micron::function<B(A)> fg) -> micron::function<micron::invoke_result_t<R, B>(A)>
@@ -889,7 +889,7 @@ ap(micron::function<R(A)> ff, micron::function<B(A)> fg) -> micron::function<mic
 //
 //  x |> f |> g |> h in place of h(g(f(x)))
 
-template <typename A, typename F>
+template<typename A, typename F>
   requires micron::invocable<F, A>
 auto
 operator|(A &&a, F &&f) -> micron::invoke_result_t<F, A>
@@ -901,9 +901,9 @@ operator|(A &&a, F &&f) -> micron::invoke_result_t<F, A>
 //  (f >> g)(x)  =  g(f(x))
 
 // right-to-left composition: (f << g)(x) = f(g(x))
-template <typename F, typename G>
-  requires micron::invocable<G>     // at least nullary; real args checked below
-           || true                  // always enable, constraint on call site
+template<typename F, typename G>
+  requires micron::invocable<G>      // at least nullary; real args checked below
+           || true                   // always enable, constraint on call site
 auto
 compose_rtl(F &&f, G &&g)
 {
@@ -913,9 +913,9 @@ compose_rtl(F &&f, G &&g)
   };
 }
 
-template <typename F, typename G>
-  requires micron::invocable<G>     // at least nullary; real args checked below
-           || true                  // always enable, constraint on call site
+template<typename F, typename G>
+  requires micron::invocable<G>      // at least nullary; real args checked below
+           || true                   // always enable, constraint on call site
 auto
 operator<<(F &&f, G &&g)
 {
@@ -923,7 +923,7 @@ operator<<(F &&f, G &&g)
 }
 
 // left-to-right composition: (f >> g)(x) = g(f(x))
-template <typename F, typename G>
+template<typename F, typename G>
 auto
 compose_ltr(F &&f, G &&g)
 {
@@ -933,7 +933,7 @@ compose_ltr(F &&f, G &&g)
   };
 }
 
-template <typename F, typename G>
+template<typename F, typename G>
 auto
 operator>>(F &&f, G &&g)
 {
@@ -943,11 +943,11 @@ operator>>(F &&f, G &&g)
 namespace __impl
 {
 // recursive wrapper that captures already-bound arguments
-template <typename F, typename... Bnd> struct __curried {
+template<typename F, typename... Bnd> struct __curried {
   F __fn;
   micron::tuple<Bnd...> __bound;
 
-  template <typename Arg>
+  template<typename Arg>
   auto
   operator()(Arg &&arg) &&
   {
@@ -962,7 +962,7 @@ template <typename F, typename... Bnd> struct __curried {
     }
   }
 
-  template <typename Arg>
+  template<typename Arg>
   auto
   operator()(Arg &&arg) const &
   {
@@ -978,7 +978,7 @@ template <typename F, typename... Bnd> struct __curried {
 };
 
 // stores a zero-argument callable and evaluates it at most once
-template <typename F>
+template<typename F>
   requires micron::invocable<F>
 struct __thunk {
   using value_type = micron::invoke_result_t<F>;
@@ -987,11 +987,11 @@ struct __thunk {
   mutable bool __evaluated = false;
   alignas(alignof(value_type)) mutable unsigned char __storage[sizeof(value_type)];
 
-  explicit __thunk(F &&f) : __fn(micron::forward<F>(f)) {}
+  explicit __thunk(F &&f) : __fn(micron::forward<F>(f)) { }
 
-  __thunk(const __thunk &o) : __fn(o.__fn), __evaluated(false) {}
+  __thunk(const __thunk &o) : __fn(o.__fn), __evaluated(false) { }
 
-  __thunk(__thunk &&o) noexcept : __fn(micron::move(o.__fn)), __evaluated(false) {}
+  __thunk(__thunk &&o) noexcept : __fn(micron::move(o.__fn)), __evaluated(false) { }
 
   ~__thunk()
   {
@@ -1014,9 +1014,9 @@ struct __thunk {
     return force();
   }
 };
-};     // namespace __impl
+};      // namespace __impl
 
-template <typename F>
+template<typename F>
 auto
 curry(F &&f)
 {
@@ -1025,7 +1025,7 @@ curry(F &&f)
 
 // partial : binds one or more leading arguments to an n-ary function
 // partial(f, a, b)(c, d)  ==  f(a, b, c, d)
-template <typename F, typename... BArgs>
+template<typename F, typename... BArgs>
 auto
 partial(F &&f, BArgs &&...bound)
 {
@@ -1042,7 +1042,7 @@ partial(F &&f, BArgs &&...bound)
 // lazy : (() -> 'a) -> 'a Lazy.t
 // wraps a zero-argument callable; the body is executed only on the first call to force() / operator()(), and the result is cached
 // thereafter
-template <typename F>
+template<typename F>
   requires micron::invocable<F>
 auto
 lazy(F &&f)
@@ -1052,7 +1052,7 @@ lazy(F &&f)
 
 // force: 'a Lazy.t -> 'a
 // mirrors OCaml `Lazy.force`
-template <typename F>
+template<typename F>
   requires micron::invocable<F>
 const typename __impl::__thunk<F>::value_type &
 force(const __impl::__thunk<F> &t)
@@ -1063,7 +1063,7 @@ force(const __impl::__thunk<F> &t)
 //  flip swaps the first two arguments of a binary function
 //  ocaml `Fun.flip : ('a -> 'b -> 'c) -> 'b -> 'a -> 'c`
 
-template <typename F>
+template<typename F>
 auto
 flip(F &&f)
 {
@@ -1074,7 +1074,7 @@ flip(F &&f)
 
 //  ocaml `Fun.const : 'a -> 'b -> 'a`
 
-template <typename A>
+template<typename A>
 auto
 const_fn(A &&a)
 {
@@ -1083,4 +1083,4 @@ const_fn(A &&a)
 
 inline constexpr auto identity = [](auto &&x) -> decltype(auto) { return micron::forward<decltype(x)>(x); };
 
-};     // namespace micron
+};      // namespace micron

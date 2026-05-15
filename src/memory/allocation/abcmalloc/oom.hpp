@@ -44,4 +44,4 @@ check_oom(void) -> bool
   return false;
 }
 
-};     // namespace abc
+};      // namespace abc

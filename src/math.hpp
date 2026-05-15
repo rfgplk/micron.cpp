@@ -115,4 +115,4 @@ using math::y1;
 using math::fms;
 using math::fnma;
 
-};     // namespace micron
+};      // namespace micron

@@ -10,7 +10,7 @@
 
 namespace micron
 {
-template <class Type> class empty_pointer
+template<class Type> class empty_pointer
 {
   Type *internal_pointer;
 
@@ -20,7 +20,7 @@ public:
     if ( internal_pointer != nullptr ) exc<except::memory_error>("empty_pointer ~(): pointer is not empty");
   }
 
-  empty_pointer(void) : internal_pointer(occupied) {}
+  empty_pointer(void) : internal_pointer(occupied) { }
 
   empty_pointer(const empty_pointer &) = delete;
 
@@ -52,4 +52,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

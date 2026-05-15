@@ -13,7 +13,7 @@ namespace simd
 {
 
 // bit width - lane width
-template <is_simd_512_type T, is_flag_type F> class v512
+template<is_simd_512_type T, is_flag_type F> class v512
 {
   T value;
 
@@ -271,7 +271,7 @@ public:
 
   // end of ints
 
-  v512(const v512 &o) : value(o.value) {}
+  v512(const v512 &o) : value(o.value) { }
 
   v512(v512 &&o) : value(o.value)
   {
@@ -518,7 +518,7 @@ public:
     return *this;
   }
 
-  template <typename A>
+  template<typename A>
   constexpr inline v512 &
   operator+=(A x)
     requires is_int_flag_type<A>
@@ -567,7 +567,7 @@ public:
     return *this;
   }
 
-  template <typename A>
+  template<typename A>
   constexpr inline v512 &
   operator-=(A x)
     requires is_int_flag_type<A>
@@ -751,7 +751,7 @@ public:
   set(float const *f)
   {
     f128 t = _mm_load_ss(f);
-    value = _mm512_broadcastss_ps(t);     // why :c
+    value = _mm512_broadcastss_ps(t);      // why :c
     return *this;
   }
 
@@ -761,16 +761,16 @@ public:
     return set(f);
   }
 
-  template <typename B>
+  template<typename B>
   inline v512 &
   load(B *mem)
   {
-    if ( !is_aligned<256>(mem) ) return *this;     // silent fail
+    if ( !is_aligned<256>(mem) ) return *this;      // silent fail
     value = load<T>(mem);
     return *this;
   }
 
-  template <typename B>
+  template<typename B>
   inline v512 &
   uload(B *mem)
   {
@@ -1007,7 +1007,7 @@ public:
     return *this;
   }
 
-  template <typename A>
+  template<typename A>
   constexpr inline v512 &
   operator*=(A x)
     requires is_int_flag_type<A>
@@ -1109,5 +1109,5 @@ public:
   }
 };
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

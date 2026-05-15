@@ -36,10 +36,10 @@ grow(usize cap)
 {
   return cap == 0 ? 8 : cap * 2;
 }
-};     // namespace __impl
+};      // namespace __impl
 
 // regular vector class, always safe, mutable, not thread safe, can be copied
-template <typename T, class Alloc = micron::allocator_serial<>, bool Sf = true> class vector : public __mutable_memory_resource<T, Alloc>
+template<typename T, class Alloc = micron::allocator_serial<>, bool Sf = true> class vector: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
 
@@ -98,7 +98,7 @@ template <typename T, class Alloc = micron::allocator_serial<>, bool Sf = true> 
     return from >= to || from >= __mem::capacity || to > __mem::capacity;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -142,7 +142,7 @@ public:
     }
   }
 
-  vector(void) : __mem() {}
+  vector(void) : __mem() { }
 
   vector(const size_type n) : __mem(n)
   {
@@ -150,7 +150,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
@@ -159,7 +159,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
@@ -168,7 +168,7 @@ public:
     micron::transform(begin(), end(), fn);
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   vector(size_type n, Args &&...args) : __mem(n)
   {
@@ -190,9 +190,9 @@ public:
 
   vector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template <typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) {}
+  template<typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) { }
 
-  vector(vector &&o) : __mem(micron::move(o)) {}
+  vector(vector &&o) : __mem(micron::move(o)) { }
 
   vector &
   operator=(const vector &o)
@@ -216,7 +216,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   vector &
   operator+=(Args &&...args)
   {
@@ -298,7 +298,7 @@ public:
     return slice<T>(__mem::memory + from, __mem::memory + to);
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) const T &
   operator[](R n) const
@@ -308,7 +308,7 @@ public:
     return (__mem::memory)[n];
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) T &
   operator[](R n)
@@ -347,7 +347,7 @@ public:
     return &(__mem::memory)[n];
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline vector &
   append(const vector<F> &o)
@@ -359,7 +359,7 @@ public:
     return *this;
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline vector &
   weld(vector<F> &&o)
@@ -372,7 +372,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   void
   swap(vector<C> &o) noexcept
   {
@@ -465,7 +465,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   void
   emplace_back(Args &&...v)
   {
@@ -697,7 +697,7 @@ public:
       micron::sort::quick(*this);
   }
 
-  template <typename U = T>
+  template<typename U = T>
   iterator
   insert_sort(U &&val)
   {
@@ -871,7 +871,7 @@ public:
     goto remove_goto;
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::convertible_to<T, Args> && ...)
   inline void
   remove(const Args &...val)
@@ -969,9 +969,9 @@ public:
   }
 };
 
-template <typename T, class Alloc, bool Sf>
+template<typename T, class Alloc, bool Sf>
   requires(!micron::is_regular_object<T> and micron::movable<T> and !micron::copyable<T>)
-class vector<T, Alloc, Sf> : public __mutable_memory_resource_move_only<T, Alloc>
+class vector<T, Alloc, Sf>: public __mutable_memory_resource_move_only<T, Alloc>
 {
   using __mem = __mutable_memory_resource_move_only<T, Alloc>;
 
@@ -1023,7 +1023,7 @@ class vector<T, Alloc, Sf> : public __mutable_memory_resource_move_only<T, Alloc
     return from >= to || from >= __mem::capacity || to > __mem::capacity;
   }
 
-  template <auto Fn, typename E, typename... Args>
+  template<auto Fn, typename E, typename... Args>
   inline __attribute__((always_inline)) void
   __safety_check(const char *msg, Args &&...args) const
   {
@@ -1066,7 +1066,7 @@ public:
     }
   }
 
-  vector(void) : __mem() {}
+  vector(void) : __mem() { }
 
   vector(const size_type n) : __mem(n)
   {
@@ -1074,7 +1074,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
@@ -1083,7 +1083,7 @@ public:
     micron::generate(begin(), end(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
@@ -1092,7 +1092,7 @@ public:
     micron::transform(begin(), end(), fn);
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   vector(size_type n, Args &&...args) : __mem(n)
   {
@@ -1110,9 +1110,9 @@ public:
 
   vector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template <typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) {}
+  template<typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) { }
 
-  vector(vector &&o) : __mem(micron::move(o)) {}
+  vector(vector &&o) : __mem(micron::move(o)) { }
 
   vector &operator=(const vector &o) = delete;
 
@@ -1128,7 +1128,7 @@ public:
     return *this;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   vector &
   operator+=(Args &&...args)
   {
@@ -1199,7 +1199,7 @@ public:
   inline __attribute__((always_inline)) const slice<T> operator[](size_type, size_type) const = delete;
   inline __attribute__((always_inline)) slice<T> operator[](size_type, size_type) = delete;
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) const T &
   operator[](R n) const
@@ -1209,7 +1209,7 @@ public:
     return (__mem::memory)[n];
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   inline __attribute__((always_inline)) T &
   operator[](R n)
@@ -1241,11 +1241,11 @@ public:
     return &(__mem::memory)[n];
   }
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline vector &append(const vector<F> &o) = delete;
 
-  template <typename F>
+  template<typename F>
     requires(sizeof(T) == sizeof(F))
   inline vector &
   weld(vector<F> &&o)
@@ -1256,7 +1256,7 @@ public:
     return *this;
   }
 
-  template <typename C = T>
+  template<typename C = T>
   void
   swap(vector<C> &o) noexcept
   {
@@ -1341,7 +1341,7 @@ public:
     __mem::length = n;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   void
   emplace_back(Args &&...v)
   {
@@ -1505,7 +1505,7 @@ public:
       micron::sort::quick(*this);
   }
 
-  template <typename U = T>
+  template<typename U = T>
   iterator
   insert_sort(U &&val)
   {
@@ -1617,7 +1617,7 @@ public:
     goto remove_goto;
   }
 
-  template <typename... Args>
+  template<typename... Args>
     requires(micron::convertible_to<T, Args> && ...)
   inline void
   remove(const Args &...val)
@@ -1709,4 +1709,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

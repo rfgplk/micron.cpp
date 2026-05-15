@@ -29,7 +29,7 @@ get_event(const device_t &dev)
   return event_buf;
 }
 
-template <umax_t S = 250, auto Fn = get_event, typename... Args>
+template<umax_t S = 250, auto Fn = get_event, typename... Args>
   requires((micron::same_as<Args, input_packet_t> && ...))
 poll_flag
 poll(const device_t &dev, Args &&...raw_in)
@@ -66,7 +66,7 @@ poll(const device_t &dev, Args &&...raw_in)
   return 0;
 }
 
-template <umax_t S = 250, auto Fn = get_event, typename... Args>
+template<umax_t S = 250, auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, Args> && ...))
 poll_flag
 poll(input_t &inp, Args &&...raw_in)
@@ -110,7 +110,7 @@ __make_poll(const input_t &arg)
 }
 
 // when pack polling set a really low poll time, otherwise lag will occur
-template <umax_t S = 1, auto Fn = get_event, typename... Args>
+template<umax_t S = 1, auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, Args> && ...))
 poll_flag
 poll_pack(slice<input_t> &inp, Args &&...raw_in)
@@ -152,7 +152,7 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
   return 0;
 }
 
-template <auto Fn = get_event, typename... Args>
+template<auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, Args> && ...))
 poll_flag
 poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
@@ -185,7 +185,7 @@ poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
   return 0;
 }
 
-template <auto Fn = get_event, typename... Args>
+template<auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, Args> && ...))
 poll_flag
 poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
@@ -216,5 +216,5 @@ poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
   return 0;
 }
 
-};     // namespace uxin
-};     // namespace micron
+};      // namespace uxin
+};      // namespace micron

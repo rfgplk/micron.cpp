@@ -35,10 +35,10 @@ static_assert(alignof(vector_16<f64>) == 128);
 
 // sizeof — only vector_2<f32>, vector_3<f32>, vector_3<f64> are
 // padded by the alignas requirement.  All others stay tight.
-static_assert(sizeof(vector_2<f32>) == 16);     // ABI: 8 → 16
-static_assert(sizeof(vector_2<f64>) == 16);     // unchanged
-static_assert(sizeof(vector_3<f32>) == 16);     // ABI: 12 → 16
-static_assert(sizeof(vector_3<f64>) == 32);     // ABI: 24 → 32
+static_assert(sizeof(vector_2<f32>) == 16);      // ABI: 8 → 16
+static_assert(sizeof(vector_2<f64>) == 16);      // unchanged
+static_assert(sizeof(vector_3<f32>) == 16);      // ABI: 12 → 16
+static_assert(sizeof(vector_3<f64>) == 32);      // ABI: 24 → 32
 static_assert(sizeof(vector_4<f32>) == 16);
 static_assert(sizeof(vector_4<f64>) == 32);
 static_assert(sizeof(vector_8<f32>) == 32);
@@ -67,7 +67,7 @@ static_assert(alignof(vec<f64, 2>) == 16);
 static_assert(alignof(vec<f64, 3>) == 32);
 static_assert(alignof(vec<f64, 4>) == 32);
 static_assert(alignof(vec<f64, 8>) == 64);
-static_assert(alignof(vec<i32, 4>) == 32);     // promoted to double-size
+static_assert(alignof(vec<i32, 4>) == 32);      // promoted to double-size
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // math::mat<T, R, C> — alignment via mat_align_v, capped at 64.
@@ -100,7 +100,7 @@ main()
   print("=== ALIGNMENT TESTS ===");
   test_case("static_asserts above all hold");
   {
-    require_true(true);     // compile-time evidence; nothing to verify at runtime
+    require_true(true);      // compile-time evidence; nothing to verify at runtime
   }
   end_test_case();
   print("=== alignment ok ===");

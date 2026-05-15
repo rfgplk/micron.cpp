@@ -104,17 +104,17 @@ using kernel_size_t = kernel_ulong_t;
 using kernel_ssize_t = kernel_long_t;
 using kernel_ptrdiff_t = kernel_long_t;
 
-using kernel_off_t = __off_t;                // kernel_long_t
-using kernel_loff_t = __off64_t;             // long long
-using kernel_old_time_t = __time_t;          // kernel_long_t
-using kernel_time_t = __time_t;              // kernel_long_t
-using kernel_time64_t = __suseconds64_t;     // long long
-using kernel_clock_t = __clock_t;            // kernel_long_t
-using kernel_timer_t = int;                  // int
-using kernel_clockid_t = int;                // int
-using kernel_caddr_t = char *;               // char*
-using kernel_uid16_t = __uid_t_type;         // unsigned short
-using kernel_gid16_t = __gid_t_type;         // unsigned short
+using kernel_off_t = __off_t;                 // kernel_long_t
+using kernel_loff_t = __off64_t;              // long long
+using kernel_old_time_t = __time_t;           // kernel_long_t
+using kernel_time_t = __time_t;               // kernel_long_t
+using kernel_time64_t = __suseconds64_t;      // long long
+using kernel_clock_t = __clock_t;             // kernel_long_t
+using kernel_timer_t = int;                   // int
+using kernel_clockid_t = int;                 // int
+using kernel_caddr_t = char *;                // char*
+using kernel_uid16_t = __uid_t_type;          // unsigned short
+using kernel_gid16_t = __gid_t_type;          // unsigned short
 
 // using complex = _Complex;
 // using imaginary = _Imaginary;
@@ -185,7 +185,7 @@ union max_align_t {
   long double ld;
   void *p;
 };
-};     // namespace micron
+};      // namespace micron
 
 #include "bits/__ctasserts.hpp"
 

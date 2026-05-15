@@ -15,8 +15,8 @@
 #include "../src/errno.hpp"
 #include "../src/io/console.hpp"
 
-#include <fstream>      // for std::ifstream
-#include <iostream>     // for std::cout
+#include <fstream>       // for std::ifstream
+#include <iostream>      // for std::cout
 
 /*
 int main() {
@@ -40,7 +40,7 @@ main(void)
   mc::string str;
   mc::string assertfile;
   mc::string binfile;
-  mc::fsys::system<mc::io::rwc> sys;     //("build.ninja");
+  mc::fsys::system<mc::io::rwc> sys;      //("build.ninja");
   // for(size_t i = 0; i < 100000; i++)
   {
     // sys["TODO", mc::io::rw]; or this

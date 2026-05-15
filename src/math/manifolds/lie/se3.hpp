@@ -32,7 +32,7 @@ namespace lie
 namespace __se3_impl
 {
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr vec<F, 3>
 left_jacobian_apply(const vec<F, 3> &omega, const vec<F, 3> &v) noexcept
 {
@@ -55,7 +55,7 @@ left_jacobian_apply(const vec<F, 3> &omega, const vec<F, 3> &v) noexcept
                     v.data[2] + a * wxv.data[2] + b * wxwxv.data[2] };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr vec<F, 3>
 left_jacobian_inv_apply(const vec<F, 3> &omega, const vec<F, 3> &t) noexcept
 {
@@ -77,9 +77,9 @@ left_jacobian_inv_apply(const vec<F, 3> &omega, const vec<F, 3> &t) noexcept
                     t.data[2] - F(0.5) * wxt.data[2] + coeff * wxwxt.data[2] };
 }
 
-};     // namespace __se3_impl
+};      // namespace __se3_impl
 
-template <ieee754_floating F> struct SE3 {
+template<ieee754_floating F> struct SE3 {
   SO3<F> R;
   vec<F, 3> t;
 
@@ -162,9 +162,9 @@ template <ieee754_floating F> struct SE3 {
   }
 };
 
-};     // namespace lie
+};      // namespace lie
 
-template <ieee754_floating F> struct traits<lie::SE3<F>> {
+template<ieee754_floating F> struct traits<lie::SE3<F>> {
   using point_type = lie::SE3<F>;
   using tangent_type = vec<F, 6>;
   using scalar_type = F;
@@ -173,6 +173,6 @@ template <ieee754_floating F> struct traits<lie::SE3<F>> {
   static constexpr usize ambient_dim = 16;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

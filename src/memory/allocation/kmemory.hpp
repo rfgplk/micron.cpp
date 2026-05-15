@@ -14,12 +14,12 @@
 namespace micron
 {
 
-constexpr usize page_size = 4096;                      // generally is this on linux
-constexpr usize large_page_size = 2 * 1024 * 1024;     // likewise
+constexpr usize page_size = 4096;                       // generally is this on linux
+constexpr usize large_page_size = 2 * 1024 * 1024;      // likewise
 constexpr usize alloc_auto_sz = page_size;
 constexpr usize alloc_auto_large_sz = large_page_size;
 
-template <typename T = byte> struct alignas(16) __chunk {     // total memory allocated
+template<typename T = byte> struct alignas(16) __chunk {      // total memory allocated
   T *ptr;
   usize len;
 
@@ -51,9 +51,9 @@ template <typename T = byte> struct alignas(16) __chunk {     // total memory al
   }
 };
 
-template <typename T> using chunk = micron::__chunk<T>;
+template<typename T> using chunk = micron::__chunk<T>;
 
-template <typename T>
+template<typename T>
 chunk<byte>
 to_chunk(T *ptr, usize len)
 {
@@ -77,4 +77,4 @@ map_large(addr_t *ptr, const usize n)
 {
   return (micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous | map_hugetlb, -1, 0));
 };
-};     // namespace micron
+};      // namespace micron

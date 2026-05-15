@@ -79,14 +79,14 @@ namespace quaternions
 
 // smallest |q|^2 whose reciprocal is still representable as a normal floating-point value
 // anything at or below this threshold is treated as a degenerate quaternion
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 __safe_min_n2() noexcept
 {
   return ieee::from_bits<T>(typename ieee::traits<T>::uint_type(ieee::traits<T>::implicit_one));
 }
 
-template <ieee754_floating T> struct alignas(micron::math::vec_align_v<T, 4>) quaternion {
+template<ieee754_floating T> struct alignas(micron::math::vec_align_v<T, 4>) quaternion {
   using value_type = T;
 
   T x;
@@ -94,9 +94,9 @@ template <ieee754_floating T> struct alignas(micron::math::vec_align_v<T, 4>) qu
   T z;
   T w;
 
-  constexpr quaternion() noexcept : x(T(0)), y(T(0)), z(T(0)), w(T(0)) {}
+  constexpr quaternion() noexcept : x(T(0)), y(T(0)), z(T(0)), w(T(0)) { }
 
-  constexpr quaternion(T xx, T yy, T zz, T ww) noexcept : x(xx), y(yy), z(zz), w(ww) {}
+  constexpr quaternion(T xx, T yy, T zz, T ww) noexcept : x(xx), y(yy), z(zz), w(ww) { }
 
   // identity rotation (w = 1, vec = 0)
   [[nodiscard, gnu::always_inline]] static constexpr quaternion
@@ -176,14 +176,14 @@ template <ieee754_floating T> struct alignas(micron::math::vec_align_v<T, 4>) qu
   }
 };
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 identity() noexcept
 {
   return quaternion<T>::identity();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 __multiply_scalar(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
@@ -193,28 +193,28 @@ __multiply_scalar(const quaternion<T> &a, const quaternion<T> &b) noexcept
                         aw * bw - ax * bx - ay * by - az * bz };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 multiply(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
   if !consteval {
 #if defined(__AVX2__) && defined(__FMA__)
     if constexpr ( sizeof(T) == 8 ) {
-      const __m256d av = simd::avx::loadu_f64(reinterpret_cast<const double *>(&a.x));     // {ax, ay, az, aw}
-      const __m256d bv = simd::avx::loadu_f64(reinterpret_cast<const double *>(&b.x));     // {bx, by, bz, bw}
+      const __m256d av = simd::avx::loadu_f64(reinterpret_cast<const double *>(&a.x));      // {ax, ay, az, aw}
+      const __m256d bv = simd::avx::loadu_f64(reinterpret_cast<const double *>(&b.x));      // {bx, by, bz, bw}
 
-      const __m256d aw_v = simd::avx2::permute4x64_f64<0xFF>(av);     // broadcast aw   (binary 11_11_11_11)
-      const __m256d ax_v = simd::avx2::permute4x64_f64<0x00>(av);     // broadcast ax   (00_00_00_00)
-      const __m256d ay_v = simd::avx2::permute4x64_f64<0x55>(av);     // broadcast ay   (01_01_01_01)
-      const __m256d az_v = simd::avx2::permute4x64_f64<0xAA>(av);     // broadcast az   (10_10_10_10)
+      const __m256d aw_v = simd::avx2::permute4x64_f64<0xFF>(av);      // broadcast aw   (binary 11_11_11_11)
+      const __m256d ax_v = simd::avx2::permute4x64_f64<0x00>(av);      // broadcast ax   (00_00_00_00)
+      const __m256d ay_v = simd::avx2::permute4x64_f64<0x55>(av);      // broadcast ay   (01_01_01_01)
+      const __m256d az_v = simd::avx2::permute4x64_f64<0xAA>(av);      // broadcast az   (10_10_10_10)
 
-      const __m256d b_wzyx = simd::avx2::permute4x64_f64<0x1B>(bv);     // {bw, bz, by, bx}  (00_01_10_11)
-      const __m256d b_zwxy = simd::avx2::permute4x64_f64<0x4E>(bv);     // {bz, bw, bx, by}  (01_00_11_10)
-      const __m256d b_yxwz = simd::avx2::permute4x64_f64<0xB1>(bv);     // {by, bx, bw, bz}  (10_11_00_01)
+      const __m256d b_wzyx = simd::avx2::permute4x64_f64<0x1B>(bv);      // {bw, bz, by, bx}  (00_01_10_11)
+      const __m256d b_zwxy = simd::avx2::permute4x64_f64<0x4E>(bv);      // {bz, bw, bx, by}  (01_00_11_10)
+      const __m256d b_yxwz = simd::avx2::permute4x64_f64<0xB1>(bv);      // {by, bx, bw, bz}  (10_11_00_01)
 
-      const __m256d sign_x = simd::avx::setr_f64(0.0, -0.0, 0.0, -0.0);     // (+,-,+,-)
-      const __m256d sign_y = simd::avx::setr_f64(0.0, 0.0, -0.0, -0.0);     // (+,+,-,-)
-      const __m256d sign_z = simd::avx::setr_f64(-0.0, 0.0, 0.0, -0.0);     // (-,+,+,-)
+      const __m256d sign_x = simd::avx::setr_f64(0.0, -0.0, 0.0, -0.0);      // (+,-,+,-)
+      const __m256d sign_y = simd::avx::setr_f64(0.0, 0.0, -0.0, -0.0);      // (+,+,-,-)
+      const __m256d sign_z = simd::avx::setr_f64(-0.0, 0.0, 0.0, -0.0);      // (-,+,+,-)
 
       __m256d r = simd::avx::mul_f64(aw_v, bv);
       r = simd::fma::fma_f64(ax_v, simd::avx::xor_f64(b_wzyx, sign_x), r);
@@ -225,11 +225,11 @@ multiply(const quaternion<T> &a, const quaternion<T> &b) noexcept
       simd::avx::storeu_f64(reinterpret_cast<double *>(&out.x), r);
       return out;
     } else if constexpr ( sizeof(T) == 4 ) {
-      const __m128 av = simd::sse::loadu_f32(reinterpret_cast<const float *>(&a.x));     // {ax, ay, az, aw}
+      const __m128 av = simd::sse::loadu_f32(reinterpret_cast<const float *>(&a.x));      // {ax, ay, az, aw}
       const __m128 bv = simd::sse::loadu_f32(reinterpret_cast<const float *>(&b.x));
 
-      const __m128 aw_v = simd::sse::shuffle_f32<0xFF>(av, av);     // broadcast aw
-      const __m128 ax_v = simd::sse::shuffle_f32<0x00>(av, av);     // broadcast ax
+      const __m128 aw_v = simd::sse::shuffle_f32<0xFF>(av, av);      // broadcast aw
+      const __m128 ax_v = simd::sse::shuffle_f32<0x00>(av, av);      // broadcast ax
       const __m128 ay_v = simd::sse::shuffle_f32<0x55>(av, av);
       const __m128 az_v = simd::sse::shuffle_f32<0xAA>(av, av);
 
@@ -255,21 +255,21 @@ multiply(const quaternion<T> &a, const quaternion<T> &b) noexcept
   return __multiply_scalar<T>(a, b);
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 compose(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
   return multiply<T>(a, b);
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 conjugate(const quaternion<T> &q) noexcept
 {
   return quaternion<T>{ -q.x, -q.y, -q.z, q.w };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 inverse(const quaternion<T> &q) noexcept
 {
@@ -280,48 +280,48 @@ inverse(const quaternion<T> &q) noexcept
   return quaternion<T>{ -q.x * inv, -q.y * inv, -q.z * inv, q.w * inv };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 inverse_unit(const quaternion<T> &q) noexcept
 {
   return conjugate<T>(q);
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 dot(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
   return a.dot(b);
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 norm(const quaternion<T> &q) noexcept
 {
   return q.magnitude();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 norm_sq(const quaternion<T> &q) noexcept
 {
   return q.squared_norm();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr quaternion<T>
 normalize(const quaternion<T> &q) noexcept
 {
   return q.normalized();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 is_unit(const quaternion<T> &q, T tol = math::default_eps<T>()) noexcept
 {
   return q.is_normalized(tol);
 }
 
-};     // namespace quaternions
-};     // namespace math
-};     // namespace micron
+};      // namespace quaternions
+};      // namespace math
+};      // namespace micron

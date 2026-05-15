@@ -16,7 +16,7 @@ namespace micron
 {
 
 // swap to seq_cst if needed
-template <memory_order O = memory_order::acq_rel, is_atomic_type T>
+template<memory_order O = memory_order::acq_rel, is_atomic_type T>
 inline void
 expect(const atomic_token<T> &tok, const T val)
 {
@@ -25,7 +25,7 @@ expect(const atomic_token<T> &tok, const T val)
   }
 }
 
-template <memory_order O = memory_order::acq_rel, is_atomic_type T>
+template<memory_order O = memory_order::acq_rel, is_atomic_type T>
 inline void
 expect(const atomic_token<T> &tok, const atomic_token<T> &o_tok)
 {
@@ -35,7 +35,7 @@ expect(const atomic_token<T> &tok, const atomic_token<T> &o_tok)
 }
 
 // keep these helpers
-template <typename T, typename F, typename R, typename... Args>
+template<typename T, typename F, typename R, typename... Args>
 inline bool
 expect(const T &t, const F &f, R r, Args &&...args)
 {
@@ -46,11 +46,11 @@ expect(const T &t, const F &f, R r, Args &&...args)
   return false;
 }
 
-template <typename T, typename F, typename... Args>
+template<typename T, typename F, typename... Args>
 inline bool
 expect(const T &t, const F &f)
 {
   return (f == t);
 }
 
-};     // namespace micron
+};      // namespace micron

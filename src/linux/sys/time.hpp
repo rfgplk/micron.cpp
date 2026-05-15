@@ -290,4 +290,4 @@ timerfd_read(i32 fd)
   return count;
 }
 
-};     // namespace micron
+};      // namespace micron

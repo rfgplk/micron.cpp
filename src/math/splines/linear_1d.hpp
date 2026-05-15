@@ -22,14 +22,14 @@ namespace math
 namespace splines
 {
 
-template <ieee754_floating F> struct linear_1d {
+template<ieee754_floating F> struct linear_1d {
   vector<F> xs;
   vector<F> ys;
   mutable usize last_hit{ 0 };
   extrap mode{ extrap::linear_continue };
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline linear_1d<F>
 make_linear(raw_slice<const F> xs, raw_slice<const F> ys, build_info<F> *info = nullptr) noexcept
 {
@@ -57,7 +57,7 @@ make_linear(raw_slice<const F> xs, raw_slice<const F> ys, build_info<F> *info = 
   return s;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 evaluate(const linear_1d<F> &s, F x) noexcept
 {
@@ -86,7 +86,7 @@ evaluate(const linear_1d<F> &s, F x) noexcept
   return math::fma<F>(t, ys[i + 1] - ys[i], ys[i]);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 inline void
 evaluate(const linear_1d<F> &s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
 {
@@ -137,6 +137,6 @@ evaluate(const linear_1d<F> &s, const F *__restrict__ xq, F *__restrict__ out, u
   s.last_hit = idx;
 }
 
-};     // namespace splines
-};     // namespace math
-};     // namespace micron
+};      // namespace splines
+};      // namespace math
+};      // namespace micron

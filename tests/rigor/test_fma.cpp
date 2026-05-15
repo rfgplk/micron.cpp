@@ -66,8 +66,8 @@ main()
   __m128d dc = _mm_setr_pd(1.0, 1.0);
   alignas(16) double dr[2];
   _mm_storeu_pd(dr, mf::fma_f64(da, db, dc));
-  require_true(dr[0] == 9.0);      // 2*4+1
-  require_true(dr[1] == 16.0);     // 3*5+1
+  require_true(dr[0] == 9.0);       // 2*4+1
+  require_true(dr[1] == 16.0);      // 3*5+1
   end_test_case();
 
   print("[TEST FMA OK]");

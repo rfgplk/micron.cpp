@@ -42,7 +42,7 @@ __write(const char *str, usize len)
   micron::syscall(SYS_write, 2, micron::voidify(str), len);
 }
 
-template <typename T>
+template<typename T>
 inline void
 __print_unsigned(T n)
 {
@@ -65,7 +65,7 @@ __print_unsigned(T n)
   __write(buf, i);
 }
 
-template <typename T>
+template<typename T>
 inline void
 __print_signed(T n)
 {
@@ -94,7 +94,7 @@ __print_ptr(const void *p)
   __write(buf, 2 + sizeof(uintptr_t) * 2);
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __debug_print(const char *str [[maybe_unused]], const T n [[maybe_unused]])
 {
@@ -106,7 +106,7 @@ __debug_print(const char *str [[maybe_unused]], const T n [[maybe_unused]])
   }
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __debug_print_addr(const char *str [[maybe_unused]], T &t [[maybe_unused]])
 {
@@ -119,7 +119,7 @@ __debug_print_addr(const char *str [[maybe_unused]], T &t [[maybe_unused]])
   }
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __debug_print_addr(const char *str [[maybe_unused]], T *t [[maybe_unused]])
 {
@@ -132,4 +132,4 @@ __debug_print_addr(const char *str [[maybe_unused]], T *t [[maybe_unused]])
   }
 }
 
-};     // namespace abc
+};      // namespace abc

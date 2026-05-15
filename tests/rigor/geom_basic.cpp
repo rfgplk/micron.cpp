@@ -14,7 +14,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace mg = micron::math::geometry;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {
@@ -23,7 +23,7 @@ approx(F a, F b, F tol) noexcept
   return d <= tol;
 }
 
-template <typename F, usize Dim>
+template<typename F, usize Dim>
 static bool
 vec_close(const m::vec<F, Dim> &a, const m::vec<F, Dim> &b, F tol) noexcept
 {
@@ -104,7 +104,7 @@ main()
 
     // 8 corners of a unit cube
     mg::aligned_box<F, 3> unit{ { 0.0, 0.0, 0.0 }, { 1.0, 1.0, 1.0 } };
-    auto c5 = unit.corner(5);     // bits 101 -> (max, min, max)
+    auto c5 = unit.corner(5);      // bits 101 -> (max, min, max)
     require_true(approx(c5.data[0], 1.0, 1e-15));
     require_true(approx(c5.data[1], 0.0, 1e-15));
     require_true(approx(c5.data[2], 1.0, 1e-15));
@@ -136,7 +136,7 @@ main()
     using F = double;
     mg::parametrized_line<F, 3> line{ { 0.0, 0.0, 0.0 }, { 1.0, 0.0, 0.0 } };
     F d = line.distance(m::vec<F, 3>{ 5.0, 3.0, 4.0 });
-    require_true(approx(d, 5.0, 1e-14));     // sqrt(3² + 4²) = 5
+    require_true(approx(d, 5.0, 1e-14));      // sqrt(3² + 4²) = 5
 
     // intersect line (going along +x) with plane y = 0 + ...? not interesting. use plane x = 7.
     auto h = mg::hyperplane<F, 3>::through(m::vec<F, 3>{ 7.0, 0.0, 0.0 }, m::vec<F, 3>{ 1.0, 0.0, 0.0 });

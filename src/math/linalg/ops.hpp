@@ -23,7 +23,7 @@ namespace linalg
 namespace ops
 {
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr T
 dot(const vec<T, N> &a, const vec<T, N> &b) noexcept
 {
@@ -58,7 +58,7 @@ dot(const vec<T, N> &a, const vec<T, N> &b) noexcept
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
 cross(const vec<F, 3> &a, const vec<F, 3> &b) noexcept
 {
@@ -68,7 +68,7 @@ cross(const vec<F, 3> &a, const vec<F, 3> &b) noexcept
            math::fma<F>(pa[0], pb[1], -pa[1] * pb[0]) };
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
 outer(const vec<T, R> &a, const vec<T, C> &b) noexcept
 {
@@ -80,21 +80,21 @@ outer(const vec<T, R> &a, const vec<T, C> &b) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%
 // norms
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline F
 norm(const vec<F, N> &v) noexcept
 {
   return math::fsqrt(dot(v, v));
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 norm_sq(const vec<T, N> &v) noexcept
 {
   return dot(v, v);
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 norm_l1(const vec<F, N> &v) noexcept
 {
@@ -103,7 +103,7 @@ norm_l1(const vec<F, N> &v) noexcept
   return s;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 norm_inf(const vec<F, N> &v) noexcept
 {
@@ -115,7 +115,7 @@ norm_inf(const vec<F, N> &v) noexcept
   return m;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline vec<F, N>
 normalize(const vec<F, N> &v) noexcept
 {
@@ -125,7 +125,7 @@ normalize(const vec<F, N> &v) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // hadamard / abs / clamp
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 hadamard(const vec<T, N> &a, const vec<T, N> &b) noexcept
 {
@@ -134,7 +134,7 @@ hadamard(const vec<T, N> &a, const vec<T, N> &b) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, N>
 abs_v(const vec<F, N> &a) noexcept
 {
@@ -143,7 +143,7 @@ abs_v(const vec<F, N> &a) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 clamp_v(const vec<T, N> &a, T lo, T hi) noexcept
 {
@@ -152,7 +152,7 @@ clamp_v(const vec<T, N> &a, T lo, T hi) noexcept
   return r;
 }
 
-template <arith_scalar T, usize N>
+template<arith_scalar T, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
 clamp_v(const vec<T, N> &a, const vec<T, N> &lo, const vec<T, N> &hi) noexcept
 {
@@ -166,7 +166,7 @@ clamp_v(const vec<T, N> &a, const vec<T, N> &lo, const vec<T, N> &hi) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // interpolations
-template <ieee754_floating F, usize N, typename U>
+template<ieee754_floating F, usize N, typename U>
   requires(micron::is_convertible_v<U, F>)
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, N>
 lerp(const vec<F, N> &a, const vec<F, N> &b, U t) noexcept
@@ -177,14 +177,14 @@ lerp(const vec<F, N> &a, const vec<F, N> &b, U t) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 lerp_s(F a, F b, F t) noexcept
 {
   return math::fma<F>(t, b - a, a);
 }
 
-template <ieee754_floating F, typename U>
+template<ieee754_floating F, typename U>
   requires(micron::is_convertible_v<U, F>)
 [[nodiscard, gnu::always_inline]] inline quat<F>
 nlerp(const quat<F> &a, const quat<F> &b, U t) noexcept
@@ -199,7 +199,7 @@ nlerp(const quat<F> &a, const quat<F> &b, U t) noexcept
   return q;
 }
 
-template <ieee754_floating F, typename U>
+template<ieee754_floating F, typename U>
   requires(micron::is_convertible_v<U, F>)
 [[nodiscard]] inline quat<F>
 slerp(const quat<F> &a, const quat<F> &b, U t) noexcept
@@ -231,7 +231,7 @@ slerp(const quat<F> &a, const quat<F> &b, U t) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // reg ops
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, N>
 reflect(const vec<F, N> &i, const vec<F, N> &n) noexcept
 {
@@ -241,7 +241,7 @@ reflect(const vec<F, N> &i, const vec<F, N> &n) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline vec<F, N>
 refract(const vec<F, N> &i, const vec<F, N> &n, F eta) noexcept
 {
@@ -257,7 +257,7 @@ refract(const vec<F, N> &i, const vec<F, N> &n, F eta) noexcept
   return r;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline vec<F, N>
 project(const vec<F, N> &u, const vec<F, N> &v) noexcept
 {
@@ -269,7 +269,7 @@ project(const vec<F, N> &u, const vec<F, N> &v) noexcept
   return r;
 }
 
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr vec<T, R>
 gemv(const mat<T, R, C> &m, const vec<T, C> &v) noexcept
 {
@@ -290,7 +290,7 @@ gemv(const mat<T, R, C> &m, const vec<T, C> &v) noexcept
   return r;
 }
 
-template <arith_scalar T, usize M, usize K, usize N>
+template<arith_scalar T, usize M, usize K, usize N>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr mat<T, M, N>
 gemm(const mat<T, M, K> &A, const mat<T, K, N> &B) noexcept
 {
@@ -315,7 +315,7 @@ gemm(const mat<T, M, K> &A, const mat<T, K, N> &B) noexcept
 }
 
 // transpose
-template <arith_scalar T, usize R, usize C>
+template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<T, C, R>
 transpose(const mat<T, R, C> &m) noexcept
 {
@@ -325,14 +325,14 @@ transpose(const mat<T, R, C> &m) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 det2(const mat<F, 2, 2> &m) noexcept
 {
   return math::fma<F>(m.data[0], m.data[3], -m.data[1] * m.data[2]);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 det3(const mat<F, 3, 3> &m) noexcept
 {
@@ -344,7 +344,7 @@ det3(const mat<F, 3, 3> &m) noexcept
   return math::fma<F>(a[0], m0, math::fma<F>(-a[1], m1, a[2] * m2));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 det4(const mat<F, 4, 4> &m) noexcept
 {
@@ -364,7 +364,7 @@ det4(const mat<F, 4, 4> &m) noexcept
   return t0 - t1 + t2 - t3;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 2, 2>
 inv2(const mat<F, 2, 2> &m) noexcept
 {
@@ -378,7 +378,7 @@ inv2(const mat<F, 2, 2> &m) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 3, 3>
 inv3(const mat<F, 3, 3> &m) noexcept
 {
@@ -407,7 +407,7 @@ inv3(const mat<F, 3, 3> &m) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 4, 4>
 inv4_adj(const mat<F, 4, 4> &m) noexcept
 {
@@ -451,7 +451,7 @@ inv4_adj(const mat<F, 4, 4> &m) noexcept
 // Schur-complement inverse
 namespace inv4_impl
 {
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
 mul2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
 {
@@ -461,30 +461,30 @@ mul2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
   };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
 add2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
 {
   return mat<F, 2, 2>{ { a.data[0] + b.data[0], a.data[1] + b.data[1], a.data[2] + b.data[2], a.data[3] + b.data[3] } };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
 sub2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
 {
   return mat<F, 2, 2>{ { a.data[0] - b.data[0], a.data[1] - b.data[1], a.data[2] - b.data[2], a.data[3] - b.data[3] } };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
 neg2(const mat<F, 2, 2> &a) noexcept
 {
   return mat<F, 2, 2>{ { -a.data[0], -a.data[1], -a.data[2], -a.data[3] } };
 }
 
-};     // namespace inv4_impl
+};      // namespace inv4_impl
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 4, 4>
 inv4_blocked(const mat<F, 4, 4> &m) noexcept
 {
@@ -538,35 +538,35 @@ inv4_blocked(const mat<F, 4, 4> &m) noexcept
   return r;
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 4, 4>
 inv4(const mat<F, 4, 4> &m) noexcept
 {
   return inv4_adj<F>(m);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline vec<F, 2>
 solve2(const mat<F, 2, 2> &A, const vec<F, 2> &b) noexcept
 {
   return gemv(inv2(A), b);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline vec<F, 3>
 solve3(const mat<F, 3, 3> &A, const vec<F, 3> &b) noexcept
 {
   return gemv(inv3(A), b);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline vec<F, 4>
 solve4(const mat<F, 4, 4> &A, const vec<F, 4> &b) noexcept
 {
   return gemv(inv4(A), b);
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr quat<F>
 mul(const quat<F> &a, const quat<F> &b) noexcept
 {
@@ -579,14 +579,14 @@ mul(const quat<F> &a, const quat<F> &b) noexcept
            math::fma<F>(aw, bw, -math::fma<F>(ax, bx, math::fma<F>(ay, by, az * bz))) };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr quat<F>
 conjugate(const quat<F> &q) noexcept
 {
   return { -q.data[0], -q.data[1], -q.data[2], q.data[3] };
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
 norm(const quat<F> &q) noexcept
 {
@@ -594,7 +594,7 @@ norm(const quat<F> &q) noexcept
       math::fma<F>(q.data[0], q.data[0], math::fma<F>(q.data[1], q.data[1], math::fma<F>(q.data[2], q.data[2], q.data[3] * q.data[3]))));
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline quat<F>
 normalize(const quat<F> &q) noexcept
 {
@@ -605,7 +605,7 @@ normalize(const quat<F> &q) noexcept
 }
 
 // rotate vector by quaternion
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
 rotate(const quat<F> &q, const vec<F, 3> &v) noexcept
 {
@@ -617,7 +617,7 @@ rotate(const quat<F> &q, const vec<F, 3> &v) noexcept
            v.data[2] + F(2) * (q.data[3] * t.data[2] + u.data[2]) };
 }
 
-};     // namespace ops
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace ops
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

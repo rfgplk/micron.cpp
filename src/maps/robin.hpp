@@ -6,7 +6,9 @@
 #pragma once
 
 #include "../bits/__arch.hpp"
+#include "../simd/aliases.hpp"
 #include "../simd/intrin.hpp"
+#include "../simd/types.hpp"
 
 #include "../hash/hash.hpp"
 #include "../memory/actions.hpp"
@@ -30,18 +32,18 @@ namespace __impl
 __attribute__((always_inline)) static inline usize
 ctrl_scan_avx2(const u8 *__restrict__ p, usize plen) noexcept
 {
-  __m256i cv = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(p));
+  __m256i cv = simd::avx::loadu_i256(reinterpret_cast<const __m256i_u *>(p));
   u8 bv = plen <= 255u ? static_cast<u8>(plen) : 255u;
   // static to prevent reconstruction on each loop
-  static const __m256i incr = _mm256_set_epi8(31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8,
-                                              7, 6, 5, 4, 3, 2, 1, 0);
-  static const __m256i flip = _mm256_set1_epi8(static_cast<char>(0x80u));
-  __m256i base = _mm256_set1_epi8(static_cast<char>(bv));
-  __m256i thres = _mm256_adds_epu8(base, incr);
-  __m256i cv_s = _mm256_xor_si256(cv, flip);
-  __m256i th_s = _mm256_xor_si256(thres, flip);
-  __m256i gt = _mm256_cmpgt_epi8(cv_s, th_s);
-  uint32_t mask = static_cast<uint32_t>(_mm256_movemask_epi8(gt));
+  static const __m256i incr = simd::avx::set_i8(31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9,
+                                                8, 7, 6, 5, 4, 3, 2, 1, 0);
+  static const __m256i flip = simd::avx::splat_i8(static_cast<char>(0x80u));
+  __m256i base = simd::avx::splat_i8(static_cast<char>(bv));
+  __m256i thres = simd::avx2::add_sat_u8(base, incr);
+  __m256i cv_s = simd::avx2::xor_i256(cv, flip);
+  __m256i th_s = simd::avx2::xor_i256(thres, flip);
+  __m256i gt = simd::avx2::gt_i8(cv_s, th_s);
+  uint32_t mask = static_cast<uint32_t>(simd::avx2::movemask_i8(gt));
   if ( mask == 0xFFFF'FFFFu ) return 32;
   return static_cast<usize>(__builtin_ctz(~mask));
 }
@@ -50,44 +52,33 @@ ctrl_scan_avx2(const u8 *__restrict__ p, usize plen) noexcept
 __attribute__((always_inline)) static inline usize
 ctrl_scan_sse2(const u8 *__restrict__ p, usize plen) noexcept
 {
-  __m128i cv = _mm_loadu_si128(reinterpret_cast<const __m128i *>(p));
+  __m128i cv = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p));
   u8 bv = plen <= 255u ? static_cast<u8>(plen) : 255u;
   // static to prevent reconstruction on each loop
-  static const __m128i incr = _mm_set_epi8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
-  static const __m128i flip = _mm_set1_epi8(static_cast<char>(0x80u));
-  __m128i base = _mm_set1_epi8(static_cast<char>(bv));
-  __m128i thres = _mm_adds_epu8(base, incr);
-  __m128i cv_s = _mm_xor_si128(cv, flip);
-  __m128i th_s = _mm_xor_si128(thres, flip);
-  __m128i gt = _mm_cmpgt_epi8(cv_s, th_s);
-  uint32_t mask = static_cast<uint32_t>(static_cast<uint16_t>(_mm_movemask_epi8(gt)));
+  static const __m128i incr = simd::sse::set_i8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
+  static const __m128i flip = simd::sse::splat_i8(static_cast<char>(0x80u));
+  __m128i base = simd::sse::splat_i8(static_cast<char>(bv));
+  __m128i thres = simd::sse::add_sat_u8(base, incr);
+  __m128i cv_s = simd::sse::xor_i128(cv, flip);
+  __m128i th_s = simd::sse::xor_i128(thres, flip);
+  __m128i gt = simd::sse::gt_i8(cv_s, th_s);
+  uint32_t mask = static_cast<uint32_t>(static_cast<uint16_t>(simd::sse::movemask_i8(gt)));
   if ( mask == 0xFFFFu ) return 16;
   return static_cast<usize>(__builtin_ctz(~mask));
 }
 
 #elif defined(__micron_arm_neon)
-// vshr/vshl movemask emulation
-// avoids loading a separate bit_pos array; uses one immediate + one variable shift three vpadd_u8 passes
-// collapse 16 byte lanes into two mask bytes (low/high)
+// NEON unsigned compare is direct so no signed-flip trick needed
 __attribute__((always_inline)) static inline usize
 ctrl_scan_neon(const u8 *__restrict__ p, usize plen) noexcept
 {
-  uint8x16_t cv = vld1q_u8(p);
+  uint8x16_t cv = simd::neon::load_u8(p);
   u8 bv = plen <= 255u ? static_cast<u8>(plen) : 255u;
-  uint8x16_t base = vdupq_n_u8(bv);
+  uint8x16_t base = simd::neon::splat_u8(bv);
   static const u8 incr_arr[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-  static const int8_t shl_arr[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7 };
-  uint8x16_t thres = vqaddq_u8(base, vld1q_u8(incr_arr));
-  uint8x16_t gt = vcgtq_u8(cv, thres);
-  // extract MSB of each 0xFF/0x00 byte then shift into unique bit position
-  uint8x16_t bits = vshlq_u8(vshrq_n_u8(gt, 7), vld1q_s8(shl_arr));
-  // combine low/high halves with vorrq_u8 before padd reduction
-  uint8x8_t lo = vget_low_u8(bits);
-  uint8x8_t hi = vget_high_u8(bits);
-  uint8x8_t r = vpadd_u8(lo, hi);
-  r = vpadd_u8(r, r);
-  r = vpadd_u8(r, r);
-  uint16_t mask = static_cast<uint16_t>(vget_lane_u8(r, 0)) | (static_cast<uint16_t>(vget_lane_u8(r, 1)) << 8u);
+  uint8x16_t thres = simd::neon::qadd(base, simd::neon::load_u8(incr_arr));
+  uint8x16_t gt = simd::neon::gt(cv, thres);
+  uint16_t mask = simd::neon::movemask_u8(gt);
   if ( mask == 0xFFFFu ) return 16;
   return static_cast<usize>(__builtin_ctz(~static_cast<uint32_t>(mask)));
 }
@@ -128,25 +119,59 @@ static constexpr usize __node_alignment = 32;
 static constexpr usize __node_alignment = 16;
 #endif
 
-};     // namespace __impl
+#if defined(__micron_x86_avx2)
+__attribute__((always_inline)) static inline u32
+ctrl_occ_mask_avx2(const u8 *__restrict__ p) noexcept
+{
+  __m256i cv = simd::avx::loadu_i256(reinterpret_cast<const __m256i_u *>(p));
+  __m256i zero = simd::avx::splat_i8(0);
+  __m256i eq = simd::avx2::eq_i8(cv, zero);
+  u32 zero_mask = static_cast<u32>(simd::avx2::movemask_i8(eq));
+  return ~zero_mask;
+}
+#endif
+
+#if defined(__micron_arch_x86_any)
+__attribute__((always_inline)) static inline u32
+ctrl_occ_mask_sse2(const u8 *__restrict__ p) noexcept
+{
+  __m128i cv = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p));
+  __m128i zero = simd::sse::splat_i8(0);
+  __m128i eq = simd::sse::eq_i8(cv, zero);
+  u32 zero_mask = static_cast<u32>(static_cast<u16>(simd::sse::movemask_i8(eq)));
+  return (~zero_mask) & 0xFFFFu;
+}
+#elif defined(__micron_arm_neon)
+__attribute__((always_inline)) static inline u32
+ctrl_occ_mask_neon(const u8 *__restrict__ p) noexcept
+{
+  uint8x16_t cv = simd::neon::load_u8(p);
+  uint8x16_t zero = simd::neon::splat_u8(0);
+  uint8x16_t eq = simd::neon::eq(cv, zero);
+  u32 zero_mask = static_cast<u32>(simd::neon::movemask_u8(eq));
+  return (~zero_mask) & 0xFFFFu;
+}
+#endif
+
+};      // namespace __impl
 
 // NOTE: hash collisions will yield same map entry - this is by design
 // stores only (key, value)
 // metadata lives in ctrl
-template <typename K, typename V> struct alignas(__impl::__node_alignment) robin_map_node {
-  hash64_t hash;     // pre-computed hash: fast integer filter
-  K key;             // original key: definitive equality after hash match
+template<typename K, typename V> struct alignas(__impl::__node_alignment) robin_map_node {
+  hash64_t hash;      // pre-computed hash: fast integer filter
+  K key;              // original key: definitive equality after hash match
   V value;
 
   ~robin_map_node() = default;
 
   robin_map_node() = default;
 
-  robin_map_node(hash64_t h, K &&k, V &&v) : hash(h), key(micron::move(k)), value(micron::move(v)) {}
+  robin_map_node(hash64_t h, K &&k, V &&v) : hash(h), key(micron::move(k)), value(micron::move(v)) { }
 
-  robin_map_node(hash64_t h, const K &k, V &&v) : hash(h), key(k), value(micron::move(v)) {}
+  robin_map_node(hash64_t h, const K &k, V &&v) : hash(h), key(k), value(micron::move(v)) { }
 
-  template <typename... Args>
+  template<typename... Args>
   robin_map_node(hash64_t h, K &&k, Args &&...args) : hash(h), key(micron::move(k)), value(micron::forward<Args>(args)...)
   {
   }
@@ -163,9 +188,9 @@ template <typename K, typename V> struct alignas(__impl::__node_alignment) robin
 // fixed capacity, can't resize, not threadsafe
 // capacity is always rounded to the nearest pow2
 // load factor capped at 7/8 to keep probe distances short
-template <typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
+template<typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
   requires micron::is_move_constructible_v<V>
-class robin_map : public __immutable_memory_resource<Nd, Alloc>
+class robin_map: public __immutable_memory_resource<Nd, Alloc>
 {
   using __mem = __immutable_memory_resource<Nd, Alloc>;
 
@@ -292,7 +317,7 @@ class robin_map : public __immutable_memory_resource<Nd, Alloc>
       // prefetch 2 ctrl bytes ahead ctrl is 1 byte so +2 = next iter + 1
       __builtin_prefetch(&ctrl_[(j + 2u) & mask_], 0, 1);
 
-      usize new_dist = stored_dist(j) - 1;     // capture before any ctrl write
+      usize new_dist = stored_dist(j) - 1;      // capture before any ctrl write
 
       if constexpr ( micron::is_trivially_copyable_v<Nd> ) {
         micron::memcpy(node_ptr(i), node_ptr(j), sizeof(Nd));
@@ -491,7 +516,7 @@ public:
     return *this;
   }
 
-  void reserve() = delete;     // fixed capacity cannot grow
+  void reserve() = delete;      // fixed capacity cannot grow
 
   usize
   size() const noexcept
@@ -503,7 +528,7 @@ public:
   max_size() const noexcept
   {
     return n_slots_;
-  }     // element count, not bytes
+  }      // element count, not bytes
 
   bool
   empty() const noexcept
@@ -621,7 +646,7 @@ public:
     return insert(k, micron::move(copy));
   }
 
-  template <typename... Args>
+  template<typename... Args>
   V *
   emplace(const K &k, Args &&...args)
   {
@@ -721,7 +746,97 @@ public:
   {
     return ctrl_ && i < n_slots_ && occupied(i);
   }
+
+  __attribute__((always_inline)) bool
+  slot_occupied_unsafe(usize i) const noexcept
+  {
+    return ctrl_[i] != 0;
+  }
+
+  // SIMD-scanning walk over occupied slots
+  template<typename Fn>
+  __attribute__((always_inline)) void
+  for_each(Fn &&fn)
+  {
+    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return;
+    usize i = 0;
+#if defined(__micron_x86_avx2)
+    if ( n_slots_ >= 32 ) {
+      for ( ; i + 32 <= n_slots_; i += 32 ) {
+        u32 m = __impl::ctrl_occ_mask_avx2(&ctrl_[i]);
+        while ( m ) {
+          u32 b = static_cast<u32>(__builtin_ctz(m));
+          fn(node_at(i + b));
+          m &= m - 1u;
+        }
+      }
+    }
+#endif
+#if defined(__micron_arch_x86_any)
+    for ( ; i + 16 <= n_slots_; i += 16 ) {
+      u32 m = __impl::ctrl_occ_mask_sse2(&ctrl_[i]);
+      while ( m ) {
+        u32 b = static_cast<u32>(__builtin_ctz(m));
+        fn(node_at(i + b));
+        m &= m - 1u;
+      }
+    }
+#elif defined(__micron_arm_neon)
+    for ( ; i + 16 <= n_slots_; i += 16 ) {
+      u32 m = __impl::ctrl_occ_mask_neon(&ctrl_[i]);
+      while ( m ) {
+        u32 b = static_cast<u32>(__builtin_ctz(m));
+        fn(node_at(i + b));
+        m &= m - 1u;
+      }
+    }
+#endif
+    // scalar tail
+    for ( ; i < n_slots_; ++i )
+      if ( ctrl_[i] != 0 ) fn(node_at(i));
+  }
+
+  template<typename Fn>
+  __attribute__((always_inline)) void
+  for_each(Fn &&fn) const
+  {
+    if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return;
+    usize i = 0;
+#if defined(__micron_x86_avx2)
+    if ( n_slots_ >= 32 ) {
+      for ( ; i + 32 <= n_slots_; i += 32 ) {
+        u32 m = __impl::ctrl_occ_mask_avx2(&ctrl_[i]);
+        while ( m ) {
+          u32 b = static_cast<u32>(__builtin_ctz(m));
+          fn(node_at(i + b));
+          m &= m - 1u;
+        }
+      }
+    }
+#endif
+#if defined(__micron_arch_x86_any)
+    for ( ; i + 16 <= n_slots_; i += 16 ) {
+      u32 m = __impl::ctrl_occ_mask_sse2(&ctrl_[i]);
+      while ( m ) {
+        u32 b = static_cast<u32>(__builtin_ctz(m));
+        fn(node_at(i + b));
+        m &= m - 1u;
+      }
+    }
+#elif defined(__micron_arm_neon)
+    for ( ; i + 16 <= n_slots_; i += 16 ) {
+      u32 m = __impl::ctrl_occ_mask_neon(&ctrl_[i]);
+      while ( m ) {
+        u32 b = static_cast<u32>(__builtin_ctz(m));
+        fn(node_at(i + b));
+        m &= m - 1u;
+      }
+    }
+#endif
+    for ( ; i < n_slots_; ++i )
+      if ( ctrl_[i] != 0 ) fn(node_at(i));
+  }
 };
 
-template <typename K, typename V> using robin = robin_map<K, V>;
-};     // namespace micron
+template<typename K, typename V> using robin = robin_map<K, V>;
+};      // namespace micron

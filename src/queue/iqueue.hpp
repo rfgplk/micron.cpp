@@ -24,7 +24,7 @@ namespace micron
 // immutable_queue is a persistent fifo container implemented as a Hood-Melville real-time queue
 // ref Hood & Melville, "Real-Time Queue Operations in Pure LISP" (1981)
 
-template <typename T>
+template<typename T>
   requires micron::is_movable_object<T>
 class immutable_queue
 {
@@ -40,7 +40,7 @@ class immutable_queue
     T value;
   };
 
-  template <typename Tf>
+  template<typename Tf>
   static inline __node *
   __make_node(Tf &&v, __node *nxt)
   {
@@ -94,11 +94,11 @@ class immutable_queue
   // NOTE : all non-null pointers are owned references
   struct __rot {
     __phase phase;
-    usize ok;       // count of valid front elements
-    __node *f;      // remaining (reversing phase)
-    __node *fp;     // reversed (reversing/appending phase)
-    __node *r;      // rear remaining (reversing phase)
-    __node *rp;     // result (all phases)
+    usize ok;        // count of valid front elements
+    __node *f;       // remaining (reversing phase)
+    __node *fp;      // reversed (reversing/appending phase)
+    __node *r;       // rear remaining (reversing phase)
+    __node *rp;      // result (all phases)
   };
 
   static inline __rot
@@ -136,7 +136,7 @@ class immutable_queue
   __exec(const __rot &s)
   {
     switch ( s.phase ) {
-    case __reversing :
+    case __reversing:
       if ( s.f ) [[likely]] {
         return { __reversing,         s.ok + 1,
                  __retain(s.f->next), __make_node(s.f->value, __retain(s.fp)),
@@ -146,14 +146,14 @@ class immutable_queue
         return { __appending, s.ok, nullptr, __retain(s.fp), nullptr, __make_node(s.r->value, __retain(s.rp)) };
       }
 
-    case __appending :
+    case __appending:
       if ( s.ok == 0 ) [[unlikely]] {
         return { __done, 0, nullptr, nullptr, nullptr, __retain(s.rp) };
       } else {
         return { __appending, s.ok - 1, nullptr, __retain(s.fp->next), nullptr, __make_node(s.fp->value, __retain(s.rp)) };
       }
 
-    default : {
+    default: {
       __rot copy = s;
       __retain_rot(copy);
       return copy;
@@ -171,10 +171,10 @@ class immutable_queue
   __invalidate(const __rot &s)
   {
     switch ( s.phase ) {
-    case __reversing : {
+    case __reversing: {
       return { __reversing, s.ok - 1, __retain(s.f), __retain(s.fp), __retain(s.r), __retain(s.rp) };
     }
-    case __appending : {
+    case __appending: {
       if ( s.ok == 0 ) [[unlikely]] {
         //  drop top element of rp
         return { __done, 0, nullptr, nullptr, nullptr, __retain(s.rp->next) };
@@ -182,7 +182,7 @@ class immutable_queue
         return { __appending, s.ok - 1, nullptr, __retain(s.fp), nullptr, __retain(s.rp) };
       }
     }
-    default : {
+    default: {
       __rot copy = s;
       __retain_rot(copy);
       return copy;
@@ -203,7 +203,7 @@ class immutable_queue
       //  rotation complete: rp is the new front list
       //  transfer ownership of rp out of s2
       __node *new_f = s2.rp;
-      __release(f);     // old front replaced
+      __release(f);      // old front replaced
       return immutable_queue(new_f, fl, r, rl, __idle_rot());
     }
 
@@ -223,7 +223,7 @@ class immutable_queue
       //  Reversing(0, f, nil, r, nil)
       __rot new_state = { __reversing, 0, __retain(f), nullptr, __retain(r), nullptr };
       __release_rot(state);
-      __release(r);     // rear now only referenced by rotation state
+      __release(r);      // rear now only referenced by rotation state
       return __exec_twice(f, fl + rl, nullptr, 0, new_state);
     }
   }
@@ -235,7 +235,8 @@ class immutable_queue
   __rot __state;
 
   // private constructor for internal copies
-  immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &s) : __front(f), __f_len(fl), __rear(r), __r_len(rl), __state(s) {}
+  immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &s)
+      : __front(f), __f_len(fl), __rear(r), __r_len(rl), __state(s) { }
 
 public:
   using category_type = buffer_tag;
@@ -255,7 +256,7 @@ public:
     __release_rot(__state);
   }
 
-  immutable_queue(void) : __front(nullptr), __f_len(0), __rear(nullptr), __r_len(0), __state(__idle_rot()) {}
+  immutable_queue(void) : __front(nullptr), __f_len(0), __rear(nullptr), __r_len(0), __state(__idle_rot()) { }
 
   //  O(1) copy
   immutable_queue(const immutable_queue &o)
@@ -333,7 +334,7 @@ public:
     return __check(__retain(__front), __f_len, nr, __r_len + 1, s);
   }
 
-  template <typename... Args>
+  template<typename... Args>
   immutable_queue
   emplace(Args &&...args) const
   {
@@ -449,7 +450,7 @@ public:
     return !(*this == o);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   immutable_queue
   update_front(Fn &&fn) const
   {
@@ -458,7 +459,7 @@ public:
     return pop().push(fn(__front->value));
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn) const
   {
@@ -497,9 +498,9 @@ public:
   class const_iterator
   {
     static constexpr usize __max_depth = 128;
-    const __node *__cur;                    // current node in front phase
-    const __node *__stack[__max_depth];     // rear nodes collected in reverse
-    usize __rear_top;                       // next index to read (counts down)
+    const __node *__cur;                     // current node in front phase
+    const __node *__stack[__max_depth];      // rear nodes collected in reverse
+    usize __rear_top;                        // next index to read (counts down)
 
     void
     __load_rear(const __node *rear)
@@ -510,11 +511,11 @@ public:
         __stack[depth++] = n;
         n = n->next;
       }
-      __rear_top = depth;     // will decrement to access in FIFO order
+      __rear_top = depth;      // will decrement to access in FIFO order
     }
 
   public:
-    const_iterator() : __cur(nullptr), __rear_top(0) {}
+    const_iterator() : __cur(nullptr), __rear_top(0) { }
 
     explicit const_iterator(const __node *front, const __node *rear) : __cur(front), __rear_top(0) { __load_rear(rear); }
 
@@ -522,7 +523,7 @@ public:
     operator==(const const_iterator &o) const
     {
       if ( __cur != o.__cur ) return false;
-      if ( __cur ) return true;     // both in front phase, same node
+      if ( __cur ) return true;      // both in front phase, same node
       return __rear_top == o.__rear_top;
     }
 
@@ -602,6 +603,6 @@ public:
 };
 
 // alias N to nothing, for drop in replacement
-template <typename T, auto N = 0> using iqueue = immutable_queue<T>;
+template<typename T, auto N = 0> using iqueue = immutable_queue<T>;
 
-};     // namespace micron
+};      // namespace micron

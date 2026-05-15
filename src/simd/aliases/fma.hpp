@@ -267,6 +267,6 @@ fnms_f64_v512(__m512d a, __m512d b, __m512d c) noexcept
 
 #pragma GCC diagnostic pop
 
-};     // namespace fma
-};     // namespace simd
-};     // namespace micron
+};      // namespace fma
+};      // namespace simd
+};      // namespace micron

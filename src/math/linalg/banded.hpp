@@ -35,7 +35,7 @@ namespace linalg
 //   b : main diagonal,  length n
 //   c : super-diagonal, length n-1   (c[i] = A[i, i+1])
 //   d : right-hand side,length n
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 tridiag_solve(F *__restrict__ a, F *__restrict__ b, F *__restrict__ c, F *__restrict__ d, usize n) noexcept
 {
@@ -62,7 +62,7 @@ tridiag_solve(F *__restrict__ a, F *__restrict__ b, F *__restrict__ c, F *__rest
 //   d2  : offset-2 super-diagonal,  length n-2  (d2[i] = A[i, i+2])
 //   d1  : offset-1 super-diagonal,  length n-1  (d1[i] = A[i, i+1])
 //   diag: main diagonal,            length n
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] [[gnu::flatten]] inline bool
 pent_spd_factor(F *__restrict__ d2, F *__restrict__ d1, F *__restrict__ diag, usize n) noexcept
 {
@@ -96,7 +96,7 @@ pent_spd_factor(F *__restrict__ d2, F *__restrict__ d1, F *__restrict__ diag, us
 //   l1  : L offset-1 (length n-1)
 //   D   : diagonal of D (length n)
 //   rhs : right-hand side (length n)
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 pent_spd_solve_factored(const F *__restrict__ l2, const F *__restrict__ l1, const F *__restrict__ D, F *__restrict__ rhs, usize n) noexcept
 {
@@ -120,7 +120,7 @@ pent_spd_solve_factored(const F *__restrict__ l2, const F *__restrict__ l1, cons
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] [[gnu::flatten]] inline bool
 pent_spd_solve(F *__restrict__ d2, F *__restrict__ d1, F *__restrict__ diag, F *__restrict__ rhs, usize n) noexcept
 {
@@ -130,7 +130,7 @@ pent_spd_solve(F *__restrict__ d2, F *__restrict__ d1, F *__restrict__ diag, F *
 }
 
 // selective inverse of A given its LDL^T factor
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[gnu::flatten]] inline void
 pent_spd_takahashi(const F *__restrict__ l2, const F *__restrict__ l1, const F *__restrict__ D, usize n, F *__restrict__ z_diag,
                    F *__restrict__ z_d1, F *__restrict__ z_d2) noexcept
@@ -155,11 +155,11 @@ pent_spd_takahashi(const F *__restrict__ l2, const F *__restrict__ l1, const F *
   }
 }
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bool
 gband_lu_solve(F *__restrict__ AB, usize kl, usize ku, usize n, F *__restrict__ rhs) noexcept
 {
-  const usize nb = kl + ku + 1;     // number of bands
+  const usize nb = kl + ku + 1;      // number of bands
   auto at = [&](usize band, usize col) -> F & { return AB[band * n + col]; };
   auto at_const = [&](usize band, usize col) -> const F & { return AB[band * n + col]; };
 
@@ -210,12 +210,12 @@ gband_lu_solve(F *__restrict__ AB, usize kl, usize ku, usize n, F *__restrict__ 
   return true;
 }
 
-template <ieee754_floating F> struct bandwidth_t {
+template<ieee754_floating F> struct bandwidth_t {
   usize kl;
   usize ku;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline bandwidth_t<F>
 bandwidth(const dynmat<F> &A, F tol = F(0)) noexcept
 {
@@ -239,7 +239,7 @@ bandwidth(const dynmat<F> &A, F tol = F(0)) noexcept
   return b;
 }
 
-template <ieee754_floating F, usize R, usize C>
+template<ieee754_floating F, usize R, usize C>
 [[nodiscard]] inline bandwidth_t<F>
 bandwidth(const mat<F, R, C> &A, F tol = F(0)) noexcept
 {
@@ -261,13 +261,13 @@ bandwidth(const mat<F, R, C> &A, F tol = F(0)) noexcept
   return b;
 }
 
-template <ieee754_floating F> struct chol_banded_result_dyn {
+template<ieee754_floating F> struct chol_banded_result_dyn {
   dynmat<F> L;
   usize kl;
   bool spd;
 };
 
-template <ieee754_floating F>
+template<ieee754_floating F>
 [[nodiscard]] inline chol_banded_result_dyn<F>
 chol_banded(const dynmat<F> &A, usize kl) noexcept
 {
@@ -279,7 +279,7 @@ chol_banded(const dynmat<F> &A, usize kl) noexcept
     const usize j_lo = (i > kl) ? (i - kl) : 0;
     for ( usize j = j_lo; j <= i; ++j ) {
       F s = A.at(i, j);
-      const usize k_lo = (j > kl) ? (j - kl) : 0;     // L(i, k) and L(j, k) both nonzero only for k >= max(i-kl, j-kl)
+      const usize k_lo = (j > kl) ? (j - kl) : 0;      // L(i, k) and L(j, k) both nonzero only for k >= max(i-kl, j-kl)
       const usize k_lo_eff = (k_lo > j_lo) ? k_lo : j_lo;
       for ( usize k = k_lo_eff; k < j; ++k ) s = math::fma<F>(-L[i * ld + k], L[j * ld + k], s);
       if ( i == j ) {
@@ -296,6 +296,6 @@ chol_banded(const dynmat<F> &A, usize kl) noexcept
   return r;
 }
 
-};     // namespace linalg
-};     // namespace math
-};     // namespace micron
+};      // namespace linalg
+};      // namespace math
+};      // namespace micron

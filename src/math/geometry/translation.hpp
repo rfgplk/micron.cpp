@@ -17,7 +17,7 @@ namespace math
 namespace geometry
 {
 
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
   requires(Dim >= 2 && Dim <= 16)
 struct translation {
   vec<F, Dim> t;
@@ -39,7 +39,7 @@ struct translation {
   }
 };
 
-template <ieee754_floating F, usize Dim>
+template<ieee754_floating F, usize Dim>
 [[nodiscard, gnu::always_inline]] inline constexpr translation<F, Dim>
 operator*(const translation<F, Dim> &a, const translation<F, Dim> &b) noexcept
 {
@@ -48,6 +48,6 @@ operator*(const translation<F, Dim> &a, const translation<F, Dim> &b) noexcept
   return r;
 }
 
-};     // namespace geometry
-};     // namespace math
-};     // namespace micron
+};      // namespace geometry
+};      // namespace math
+};      // namespace micron

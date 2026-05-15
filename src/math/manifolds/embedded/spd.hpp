@@ -31,7 +31,7 @@ namespace manifolds
 namespace __spd_impl
 {
 
-template <ieee754_floating F, usize N, typename Apply>
+template<ieee754_floating F, usize N, typename Apply>
 [[nodiscard]] inline mat<F, N, N>
 sym_func(const mat<F, N, N> &P, Apply apply) noexcept
 {
@@ -49,7 +49,7 @@ sym_func(const mat<F, N, N> &P, Apply apply) noexcept
   return M;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
 symmetrize(const mat<F, N, N> &A) noexcept
 {
@@ -59,7 +59,7 @@ symmetrize(const mat<F, N, N> &A) noexcept
   return S;
 }
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
 [[nodiscard, gnu::flatten]] inline F
 frobenius_norm(const mat<F, N, N> &A) noexcept
 {
@@ -68,9 +68,9 @@ frobenius_norm(const mat<F, N, N> &A) noexcept
   return math::fsqrt(s);
 }
 
-};     // namespace __spd_impl
+};      // namespace __spd_impl
 
-template <ieee754_floating F, usize N>
+template<ieee754_floating F, usize N>
   requires(N >= 1)
 struct spd {
   using value_type = F;
@@ -110,7 +110,7 @@ struct spd {
     return __spd_impl::symmetrize<F, N>(V);
   }
 
-  template <metric_tag Metric = affine_invariant_metric>
+  template<metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static mat<F, N, N>
   exp_map(const mat<F, N, N> &P, const mat<F, N, N> &V) noexcept
   {
@@ -130,7 +130,7 @@ struct spd {
     }
   }
 
-  template <metric_tag Metric = affine_invariant_metric>
+  template<metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static mat<F, N, N>
   log_map(const mat<F, N, N> &P, const mat<F, N, N> &Q) noexcept
   {
@@ -149,7 +149,7 @@ struct spd {
     }
   }
 
-  template <metric_tag Metric = affine_invariant_metric>
+  template<metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   distance(const mat<F, N, N> &P, const mat<F, N, N> &Q) noexcept
   {
@@ -184,7 +184,7 @@ struct spd {
     return log_map<affine_invariant_metric>(P, Q);
   }
 
-  template <metric_tag Metric = affine_invariant_metric>
+  template<metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   inner(const mat<F, N, N> &P, const mat<F, N, N> &U, const mat<F, N, N> &V) noexcept
   {
@@ -203,7 +203,7 @@ struct spd {
     }
   }
 
-  template <metric_tag Metric = affine_invariant_metric>
+  template<metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   norm(const mat<F, N, N> &P, const mat<F, N, N> &V) noexcept
   {
@@ -227,7 +227,7 @@ struct spd {
   }
 };
 
-template <ieee754_floating F, usize N> struct traits<spd<F, N>> {
+template<ieee754_floating F, usize N> struct traits<spd<F, N>> {
   using point_type = mat<F, N, N>;
   using tangent_type = mat<F, N, N>;
   using scalar_type = F;
@@ -236,6 +236,6 @@ template <ieee754_floating F, usize N> struct traits<spd<F, N>> {
   static constexpr usize ambient_dim = N * N;
 };
 
-};     // namespace manifolds
-};     // namespace math
-};     // namespace micron
+};      // namespace manifolds
+};      // namespace math
+};      // namespace micron

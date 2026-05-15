@@ -93,7 +93,7 @@ struct resources {
   resources &
   operator()(void)
   {
-    __impl_rs();     // update
+    __impl_rs();      // update
     return *this;
   }
 
@@ -119,4 +119,4 @@ private:
     mem_unit = info.mem_unit;
   }
 };
-};     // namespace micron
+};      // namespace micron

@@ -16,8 +16,8 @@ namespace micron
 {
 
 #if defined(__micron_arch_amd64)
-constexpr static const int __arch_set_fs = 0x1002;     // ARCH_SET_FS
-constexpr static const int __arch_get_fs = 0x1003;     // ARCH_GET_FS
+constexpr static const int __arch_set_fs = 0x1002;      // ARCH_SET_FS
+constexpr static const int __arch_get_fs = 0x1003;      // ARCH_GET_FS
 #endif
 
 #if defined(__micron_arch_arm32)
@@ -25,19 +25,19 @@ constexpr static const int __arch_get_fs = 0x1003;     // ARCH_GET_FS
 constexpr static const usize __arm_tcbhead_sz = 8;
 #endif
 
-constexpr static const int __tls_prot_rw = 0x1 | 0x2;         // PROT_READ | PROT_WRITE
-constexpr static const int __tls_map_flags = 0x02 | 0x20;     // MAP_PRIVATE | MAP_ANONYMOUS
-constexpr static const long __tls_mmap_fd = -1;               // unused with anonymous mappings
+constexpr static const int __tls_prot_rw = 0x1 | 0x2;          // PROT_READ | PROT_WRITE
+constexpr static const int __tls_map_flags = 0x02 | 0x20;      // MAP_PRIVATE | MAP_ANONYMOUS
+constexpr static const long __tls_mmap_fd = -1;                // unused with anonymous mappings
 
 constexpr static const usize __micron_tls_default_pagesz = 4096;
-constexpr static const usize __micron_tls_min_align = 16;     // sysv-x86_64 baseline TLS alignment
-constexpr static const usize __micron_tcb_sz = 64;            // self-ptr + slack for future DTV
+constexpr static const usize __micron_tls_min_align = 16;      // sysv-x86_64 baseline TLS alignment
+constexpr static const usize __micron_tcb_sz = 64;             // self-ptr + slack for future DTV
 
 struct __tls_frame {
-  byte *base = nullptr;     // mmap base (page-aligned)
-  usize size = 0;           // total bytes mmaped (page-rounded)
-  byte *tp = nullptr;       // thread pointer (TCB start)
-  u64 image_size = 0;       // p_memsz rounded up to p_align (block size)
+  byte *base = nullptr;      // mmap base (page-aligned)
+  usize size = 0;            // total bytes mmaped (page-rounded)
+  byte *tp = nullptr;        // thread pointer (TCB start)
+  u64 image_size = 0;        // p_memsz rounded up to p_align (block size)
 };
 
 inline __tls_frame __micron_main_tls{};
@@ -84,8 +84,8 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
     micron::sys_exit(127);
   }
 
-  byte *tp = base + image_block_size;     // TP / %fs target
-  byte *image_dst = base;                 // image starts at the aligned block base
+  byte *tp = base + image_block_size;      // TP / %fs target
+  byte *image_dst = base;                  // image starts at the aligned block base
 
   if ( img.filesz > 0 && img.image != nullptr ) {
     for ( u64 i = 0; i < img.filesz; ++i ) image_dst[i] = img.image[i];
@@ -116,8 +116,8 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   byte *base = __tls_mmap(alloc_size);
   if ( base == nullptr ) micron::sys_exit(127);
 
-  byte *tp = base;                               // TPIDRURO target
-  byte *image_dst = base + __arm_tcbhead_sz;     // image lives at TP + 8
+  byte *tp = base;                                // TPIDRURO target
+  byte *image_dst = base + __arm_tcbhead_sz;      // image lives at TP + 8
 
   if ( img.filesz > 0 && img.image != nullptr ) {
     for ( u64 i = 0; i < img.filesz; ++i ) image_dst[i] = img.image[i];
@@ -147,4 +147,4 @@ __tls_destroy() noexcept
 #endif
 }
 
-};     // namespace micron
+};      // namespace micron

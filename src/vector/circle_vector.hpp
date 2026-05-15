@@ -16,7 +16,7 @@ namespace micron
 
 // renamed from circle_buffer/circular, aliases kept that point to this file
 // no longer heap allocated
-template <is_regular_object T, usize N>
+template<is_regular_object T, usize N>
   requires((N & (N - 1)) == 0)
 class circle_vector
 {
@@ -40,7 +40,7 @@ class circle_vector
     micron::bytecpy<T>(dest, src, cnt * sizeof(T));
   }
 
-  template <typename U>
+  template<typename U>
   inline void
   __impl_copy(U *dest, const U *src, usize cnt)
   {
@@ -65,12 +65,12 @@ public:
   typedef usize size_type;
   typedef ptrdiff_t difference_type;
 
-  template <bool Cnst> class circular_iterator;
+  template<bool Cnst> class circular_iterator;
 
   typedef circular_iterator<false> iterator;
   typedef circular_iterator<true> const_iterator;
 
-  template <bool Cnst> class circular_iterator
+  template<bool Cnst> class circular_iterator
   {
     friend class circle_vector;
     using buffer_ptr = typename micron::conditional<Cnst, const circle_vector *, circle_vector *>::type;
@@ -80,7 +80,7 @@ public:
     buffer_ptr __buf;
     usize __index;
 
-    circular_iterator(buffer_ptr buf, usize index) noexcept : __buf(buf), __index(index) {}
+    circular_iterator(buffer_ptr buf, usize index) noexcept : __buf(buf), __index(index) { }
 
   public:
     using value_type = T;
@@ -88,9 +88,9 @@ public:
     using pointer = value_ptr;
     using reference = value_ref;
 
-    circular_iterator() noexcept : __buf(nullptr), __index(0) {}
+    circular_iterator() noexcept : __buf(nullptr), __index(0) { }
 
-    template <bool WasConst = Cnst>
+    template<bool WasConst = Cnst>
       requires(Cnst && !WasConst)
     circular_iterator(const circular_iterator<false> &other) noexcept : __buf(other.__buf), __index(other.__index)
     {
@@ -222,14 +222,14 @@ public:
       return __index >= other.__index;
     }
 
-    template <bool OtherConst>
+    template<bool OtherConst>
     bool
     operator==(const circular_iterator<OtherConst> &other) const noexcept
     {
       return __buf == other.__buf && __index == other.__index;
     }
 
-    template <bool OtherConst>
+    template<bool OtherConst>
     bool
     operator!=(const circular_iterator<OtherConst> &other) const noexcept
     {
@@ -314,7 +314,7 @@ public:
     if ( __size < N ) {
       ++__size;
     } else {
-      __tail = (__tail + 1) & __mask;     // overwrite oldest if full
+      __tail = (__tail + 1) & __mask;      // overwrite oldest if full
     }
   }
 
@@ -336,7 +336,7 @@ public:
     }
   }
 
-  template <typename... Args>
+  template<typename... Args>
   void
   emplace_back(Args &&...args) noexcept
   {
@@ -493,4 +493,4 @@ public:
   }
 };
 
-}     // namespace micron
+}      // namespace micron

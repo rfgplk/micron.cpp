@@ -29,9 +29,9 @@ namespace io
 struct pred_name {
   micron::sstr<posix::name_max + 1> _name;
 
-  explicit pred_name(const char *n) : _name(n) {}
+  explicit pred_name(const char *n) : _name(n) { }
 
-  template <is_string T> explicit pred_name(const T &n) : _name(n.c_str()) {}
+  template<is_string T> explicit pred_name(const T &n) : _name(n.c_str()) { }
 
   bool
   operator()(const posix::__impl_dir &e) const noexcept
@@ -43,9 +43,9 @@ struct pred_name {
 struct pred_ext {
   micron::sstr<64> _ext;
 
-  explicit pred_ext(const char *e) : _ext(e[0] == '.' ? e + 1 : e) {}
+  explicit pred_ext(const char *e) : _ext(e[0] == '.' ? e + 1 : e) { }
 
-  template <is_string T> explicit pred_ext(const T &e) : _ext(e.size() && e[0] == '.' ? e.c_str() + 1 : e.c_str()) {}
+  template<is_string T> explicit pred_ext(const T &e) : _ext(e.size() && e[0] == '.' ? e.c_str() + 1 : e.c_str()) { }
 
   bool
   operator()(const posix::__impl_dir &e) const noexcept
@@ -66,9 +66,9 @@ struct pred_ext {
 struct pred_name_contains {
   micron::sstr<posix::name_max + 1> _sub;
 
-  explicit pred_name_contains(const char *s) : _sub(s) {}
+  explicit pred_name_contains(const char *s) : _sub(s) { }
 
-  template <is_string T> explicit pred_name_contains(const T &s) : _sub(s.c_str()) {}
+  template<is_string T> explicit pred_name_contains(const T &s) : _sub(s.c_str()) { }
 
   bool
   operator()(const posix::__impl_dir &e) const noexcept
@@ -96,7 +96,7 @@ struct pred_name_contains {
 struct pred_size_eq {
   posix::off_t _v;
 
-  explicit pred_size_eq(posix::off_t v) : _v(v) {}
+  explicit pred_size_eq(posix::off_t v) : _v(v) { }
 
   bool
   operator()(posix::off_t s) const noexcept
@@ -108,7 +108,7 @@ struct pred_size_eq {
 struct pred_size_gt {
   posix::off_t _v;
 
-  explicit pred_size_gt(posix::off_t v) : _v(v) {}
+  explicit pred_size_gt(posix::off_t v) : _v(v) { }
 
   bool
   operator()(posix::off_t s) const noexcept
@@ -120,7 +120,7 @@ struct pred_size_gt {
 struct pred_size_lt {
   posix::off_t _v;
 
-  explicit pred_size_lt(posix::off_t v) : _v(v) {}
+  explicit pred_size_lt(posix::off_t v) : _v(v) { }
 
   bool
   operator()(posix::off_t s) const noexcept
@@ -132,7 +132,7 @@ struct pred_size_lt {
 struct pred_size_between {
   posix::off_t _lo, _hi;
 
-  pred_size_between(posix::off_t lo, posix::off_t hi) : _lo(lo), _hi(hi) {}
+  pred_size_between(posix::off_t lo, posix::off_t hi) : _lo(lo), _hi(hi) { }
 
   bool
   operator()(posix::off_t s) const noexcept
@@ -281,38 +281,38 @@ by_type_blk(void)
   return {};
 }
 
-template <is_string T>
+template<is_string T>
 inline pred_name
 by_name(const T &n)
 {
   return pred_name{ n };
 }
 
-template <is_string T>
+template<is_string T>
 inline pred_ext
 by_ext(const T &e)
 {
   return pred_ext{ e };
 }
 
-template <is_string T>
+template<is_string T>
 inline pred_name_contains
 by_name_contains(const T &s)
 {
   return pred_name_contains{ s };
 }
 
-template <typename P>
+template<typename P>
 concept entry_predicate = requires(P p, const posix::__impl_dir &e) {
   { p(e) } -> same_as<bool>;
 };
 
-template <typename P>
+template<typename P>
 concept size_predicate = requires(P p, posix::off_t sz) {
   { p(sz) } -> same_as<bool>;
 };
 
-struct dir : public file {
+struct dir: public file {
 
   micron::vector<posix::__impl_dir> _entries;
 
@@ -320,7 +320,7 @@ struct dir : public file {
 
   ~dir() = default;
 
-  dir() : file(), _entries() {}
+  dir() : file(), _entries() { }
 
   dir(const char *str) { __open_dir(str); }
 
@@ -328,9 +328,9 @@ struct dir : public file {
 
   dir(const micron::string &str) { __open_dir(str.c_str()); }
 
-  template <is_string T> dir(const T &str) { __open_dir(str.c_str()); }
+  template<is_string T> dir(const T &str) { __open_dir(str.c_str()); }
 
-  dir(const dir &o) : file(o), _entries(o._entries), _ctx{} {}
+  dir(const dir &o) : file(o), _entries(o._entries), _ctx{} { }
 
   dir(dir &&o) noexcept : file(micron::move(o)), _entries(micron::move(o._entries)), _ctx(o._ctx) { micron::zero(&o._ctx); }
 
@@ -416,14 +416,14 @@ struct dir : public file {
     micron::zero(&_ctx);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each(Fn &&fn)
   {
     if ( fname.size() ) posix::for_each_entry(fname.c_str(), fn);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each_entry(Fn &&fn)
   {
@@ -431,7 +431,7 @@ struct dir : public file {
     for ( auto &e : _entries ) fn(e);
   }
 
-  template <typename Fn>
+  template<typename Fn>
   void
   for_each_while(Fn &&fn)
   {
@@ -468,7 +468,7 @@ struct dir : public file {
     _read_entries();
   }
 
-  template <entry_predicate Pred>
+  template<entry_predicate Pred>
   micron::vector<posix::__impl_dir>
   match(Pred &&pred)
   {
@@ -479,7 +479,7 @@ struct dir : public file {
     return out;
   }
 
-  template <size_predicate Pred>
+  template<size_predicate Pred>
   micron::vector<posix::__impl_dir>
   match_stat(Pred &&pred)
   {
@@ -513,14 +513,14 @@ struct dir : public file {
     return match_stat(by_size(sz));
   }
 
-  template <is_string T>
+  template<is_string T>
   micron::vector<posix::__impl_dir>
   match_name(const T &s)
   {
     return match_name(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   micron::vector<posix::__impl_dir>
   match_ext(const T &s)
   {
@@ -543,7 +543,7 @@ struct dir : public file {
     return false;
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   contains(const T &name)
   {
@@ -617,7 +617,7 @@ struct dir : public file {
     return dir{ child };
   }
 
-  template <is_string T>
+  template<is_string T>
   dir
   down(const T &name) const
   {
@@ -751,77 +751,77 @@ struct dir : public file {
     return posix::is_executable_at(__handle, n);
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_file(const T &s) const
   {
     return child_is_file(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_dir(const T &s) const
   {
     return child_is_dir(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_link(const T &s) const
   {
     return child_is_link(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_fifo(const T &s) const
   {
     return child_is_fifo(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_socket(const T &s) const
   {
     return child_is_socket(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_block_device(const T &s) const
   {
     return child_is_block_device(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_char_device(const T &s) const
   {
     return child_is_char_device(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_exists(const T &s) const
   {
     return child_exists(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_readable(const T &s) const
   {
     return child_is_readable(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_writable(const T &s) const
   {
     return child_is_writable(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   bool
   child_is_executable(const T &s) const
   {
@@ -849,14 +849,14 @@ struct dir : public file {
     return p;
   }
 
-  template <is_string T>
+  template<is_string T>
   posix::off_t
   child_size(const T &s) const
   {
     return child_size(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   linux_permissions
   child_permissions(const T &s) const
   {
@@ -870,7 +870,7 @@ struct dir : public file {
     return posix::open_at(__handle, name, flags, mode);
   }
 
-  template <is_string T>
+  template<is_string T>
   posix::fd_t
   open_child(const T &name, i32 flags = posix::o_rdonly | posix::o_cloexec, u32 mode = 0)
   {
@@ -953,63 +953,63 @@ struct dir : public file {
     return r;
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   make_child_dir(const T &n, const linux_permissions &p = perm_dir_default)
   {
     return make_child_dir(n.c_str(), p);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   remove_child(const T &s)
   {
     return remove_child(s.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   remove_child_dir(const T &s)
   {
     return remove_child_dir(s.c_str());
   }
 
-  template <is_string T, is_string U>
+  template<is_string T, is_string U>
   i32
   rename_child(const T &o, const U &n)
   {
     return rename_child(o.c_str(), n.c_str());
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   chmod_child(const T &n, const linux_permissions &p)
   {
     return chmod_child(n.c_str(), p);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   chmod_child(const T &n, posix::mode_t m)
   {
     return chmod_child(n.c_str(), m);
   }
 
-  template <is_string T>
+  template<is_string T>
   i32
   chown_child(const T &n, posix::uid_t u, posix::gid_t g, bool f = true)
   {
     return chown_child(n.c_str(), u, g, f);
   }
 
-  template <is_string T, is_string U>
+  template<is_string T, is_string U>
   i32
   symlink_child(const T &t, const U &l)
   {
     return symlink_child(t.c_str(), l.c_str());
   }
 
-  template <is_string T, is_string U>
+  template<is_string T, is_string U>
   i32
   link_child(const T &o, const U &n)
   {
@@ -1030,7 +1030,7 @@ struct dir : public file {
     return dir{ path };
   }
 
-  template <is_string T>
+  template<is_string T>
   static dir
   create(const T &path, const linux_permissions &p = perm_dir_default)
   {
@@ -1044,7 +1044,7 @@ struct dir : public file {
     return dir{ path };
   }
 
-  template <is_string T>
+  template<is_string T>
   static dir
   create_all(const T &path, const linux_permissions &p = perm_dir_default)
   {
@@ -1092,7 +1092,7 @@ open_dir(const char *path)
   return dir{ path };
 }
 
-template <is_string T>
+template<is_string T>
 inline dir
 open_dir(const T &path)
 {
@@ -1105,7 +1105,7 @@ create_dir(const char *path, const linux_permissions &p = perm_dir_default)
   return dir::create(path, p);
 }
 
-template <is_string T>
+template<is_string T>
 inline dir
 create_dir(const T &path, const linux_permissions &p = perm_dir_default)
 {
@@ -1118,12 +1118,12 @@ create_dirs(const char *path, const linux_permissions &p = perm_dir_default)
   return dir::create_all(path, p);
 }
 
-template <is_string T>
+template<is_string T>
 inline dir
 create_dirs(const T &path, const linux_permissions &p = perm_dir_default)
 {
   return dir::create_all(path.c_str(), p);
 }
 
-};     // namespace io
-};     // namespace micron
+};      // namespace io
+};      // namespace micron

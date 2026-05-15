@@ -108,13 +108,13 @@ __do_alloc(usize size, usize align)
 __do_free(void *ptr, usize align)
 {
   if ( align <= 32 ) {
-    micron::__free(ptr);     // alignment fits in the abc header offset, raw alloc was used
+    micron::__free(ptr);      // alignment fits in the abc header offset, raw alloc was used
   } else {
     abc::aligned_free(ptr);
   }
 }
-};     // namespace __aligned_new
-};     // namespace micron
+};      // namespace __aligned_new
+};      // namespace micron
 
 [[nodiscard]] void *
 operator new(usize size, std::align_val_t al)
@@ -164,21 +164,21 @@ operator delete[](void *ptr, usize size, std::align_val_t al) noexcept
 
 namespace micron
 {
-template <typename Type, typename... Args>
+template<typename Type, typename... Args>
 inline __attribute__((always_inline)) Type *
 __new(Args &&...args)
 {
   return new Type(micron::forward<Args &&>(args)...);
 }
 
-template <typename Type>
+template<typename Type>
 inline __attribute__((always_inline)) auto
 __new_arr(usize n)
 {
   return new Type[n];
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __delete(T *ptr)
 {
@@ -186,14 +186,14 @@ __delete(T *ptr)
   ptr = nullptr;
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __const_delete(const T *const ptr)
 {
   delete ptr;
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __const_delete_arr(const T *ptr)
 {
@@ -201,11 +201,11 @@ __const_delete_arr(const T *ptr)
   ptr = nullptr;
 }
 
-template <typename T>
+template<typename T>
 inline __attribute__((always_inline)) void
 __delete_arr(T *ptr)
 {
   delete[] ptr;
   ptr = nullptr;
 }
-};     // namespace micron
+};      // namespace micron

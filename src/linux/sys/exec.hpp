@@ -33,9 +33,9 @@ fexecve(int fd, char *const argv[], char *const envp[])
     set_errno<error::invalid_arg>();
     return -1;
   }
-  micron::syscall(SYS_execveat, 5, fd, "", &argv[0], &envp[0], 0x1000);     // AT_EMPTY_PATH
+  micron::syscall(SYS_execveat, 5, fd, "", &argv[0], &envp[0], 0x1000);      // AT_EMPTY_PATH
   return 0;
 }
 
-};     // namespace posix
-};     // namespace micron
+};      // namespace posix
+};      // namespace micron

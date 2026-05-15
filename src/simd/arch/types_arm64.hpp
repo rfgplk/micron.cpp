@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "../concepts.hpp"
+#include "../../concepts.hpp"
 
-#include "../type_traits.hpp"
-#include "../types.hpp"
-#include "intrin.hpp"
+#include "../../type_traits.hpp"
+#include "../../types.hpp"
+#include "../intrin.hpp"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // aarch64 types
@@ -42,26 +42,26 @@ using f256 = float32x4x2_t;
 using d256 = float64x2x2_t;
 using i256 = int32x4x2_t;
 
-template <typename T>
+template<typename T>
 concept is_simd_type = micron::same_as<T, b64> || micron::same_as<T, f128> || micron::same_as<T, d128> || micron::same_as<T, i128>
                        || micron::same_as<T, f256> || micron::same_as<T, d256> || micron::same_as<T, i256>;
 
-template <typename T>
+template<typename T>
 concept is_simd_128_type = micron::same_as<T, f128> || micron::same_as<T, d128> || micron::same_as<T, i128>;
 
-template <typename T>
+template<typename T>
 concept is_simd_256_type = micron::same_as<T, f256> || micron::same_as<T, d256> || micron::same_as<T, i256>;
 
-template <typename T>
+template<typename T>
 concept is_int_flag_type
     = micron::same_as<T, __uv8> || micron::same_as<T, __uv16> || micron::same_as<T, __uv32> || micron::same_as<T, __uv64>
       || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32> || micron::same_as<T, __v64>;
 
-template <typename T>
+template<typename T>
 concept is_flag_type = micron::same_as<T, __vd> || micron::same_as<T, __vf> || micron::same_as<T, __v8> || micron::same_as<T, __v16>
                        || micron::same_as<T, __v32> || micron::same_as<T, __v64>;
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_64_wide(void)
 {
@@ -69,7 +69,7 @@ __is_64_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_32_wide(void)
 {
@@ -77,7 +77,7 @@ __is_32_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_16_wide(void)
 {
@@ -85,7 +85,7 @@ __is_16_wide(void)
   return false;
 }
 
-template <typename F>
+template<typename F>
 constexpr bool
 __is_8_wide(void)
 {
@@ -147,5 +147,5 @@ neon_all_ones_si256(void) noexcept
   return r;
 }
 
-};     // namespace simd
-};     // namespace micron
+};      // namespace simd
+};      // namespace micron

@@ -42,7 +42,7 @@ __write(const char *str_err)
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
 }
 
-template <typename T>
+template<typename T>
 inline void
 __write_unsigned(T n)
 {
@@ -65,7 +65,7 @@ __write_unsigned(T n)
   __write(buf, i);
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 raise(Args &&...args)
 {
@@ -78,7 +78,7 @@ raise(Args &&...args)
   abort(ex.which());
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 raise(u32 eno, Args &&...args)
 {
@@ -91,7 +91,7 @@ raise(u32 eno, Args &&...args)
   abort(ex.which());
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 raise_silent(Args &&...args)
 {
@@ -99,9 +99,9 @@ raise_silent(Args &&...args)
   abort(ex.which());
 }
 
-};     // namespace except
+};      // namespace except
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 exc_silent(Args &&...args)
 {
@@ -112,7 +112,7 @@ exc_silent(Args &&...args)
   }
 }
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 exc(Args &&...args)
 {
@@ -124,7 +124,7 @@ exc(Args &&...args)
 }
 
 // exc with explicit errno
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 __attribute__((always_inline, noreturn)) inline void
 exc_e(i32 eno, Args &&...args)
 {
@@ -135,4 +135,4 @@ exc_e(i32 eno, Args &&...args)
   }
 }
 
-};     // namespace micron
+};      // namespace micron

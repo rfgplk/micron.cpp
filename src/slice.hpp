@@ -22,7 +22,7 @@
 namespace micron
 {
 
-template <typename T> struct raw_slice {
+template<typename T> struct raw_slice {
   T *ptr = nullptr;
   size_t len = 0;
 
@@ -36,7 +36,7 @@ template <typename T> struct raw_slice {
   constexpr raw_slice() = default;
 
   // constexpr raw_slice(T *p, size_t l) : ptr(p), len(l) {}
-  constexpr raw_slice(const T *p, size_t l) : ptr(const_cast<T *>(p)), len(l) {}
+  constexpr raw_slice(const T *p, size_t l) : ptr(const_cast<T *>(p)), len(l) { }
 
   constexpr T *
   begin()
@@ -117,7 +117,7 @@ template <typename T> struct raw_slice {
   }
 };
 
-template <typename T> struct dual_raw_slice {
+template<typename T> struct dual_raw_slice {
   raw_slice<T> first;
   raw_slice<T> second;
 
@@ -128,7 +128,7 @@ template <typename T> struct dual_raw_slice {
   }
 };
 
-template <typename T> struct split_first_result {
+template<typename T> struct split_first_result {
   T *elem;
   raw_slice<T> rest;
 
@@ -139,7 +139,7 @@ template <typename T> struct split_first_result {
   }
 };
 
-template <typename T> struct split_last_result {
+template<typename T> struct split_last_result {
   raw_slice<T> init;
   T *elem;
 
@@ -150,7 +150,7 @@ template <typename T> struct split_last_result {
   }
 };
 
-template <typename T, size_t N> struct split_chunk_result {
+template<typename T, size_t N> struct split_chunk_result {
   T *chunk;
   raw_slice<T> rest;
 
@@ -161,13 +161,13 @@ template <typename T, size_t N> struct split_chunk_result {
   }
 };
 
-template <typename T, typename U> struct align_result {
+template<typename T, typename U> struct align_result {
   raw_slice<T> prefix;
   raw_slice<U> middle;
   raw_slice<T> suffix;
 };
 
-template <typename T> struct disjoint_pair {
+template<typename T> struct disjoint_pair {
   T *a = nullptr;
   T *b = nullptr;
 
@@ -178,12 +178,12 @@ template <typename T> struct disjoint_pair {
   }
 };
 
-template <typename T> struct ptr_range {
+template<typename T> struct ptr_range {
   T *begin = nullptr;
   T *end = nullptr;
 };
 
-template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct slice : public __immutable_memory_resource<T, Alloc> {
+template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct slice: public __immutable_memory_resource<T, Alloc> {
   using __mem = __immutable_memory_resource<T, Alloc>;
   using category_type = slice_tag;
   using mutability_type = immutable_tag;
@@ -202,7 +202,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   ~slice()
   {
     if ( __mem::memory == nullptr ) return;
-    if ( __mem::length == 0 ) return;     // viewing memory, do not free
+    if ( __mem::length == 0 ) return;      // viewing memory, do not free
     __mem::free();
   }
 
@@ -233,7 +233,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = r;
   }
 
-  template <typename Fn, typename R>
+  template<typename Fn, typename R>
     requires(micron::is_invocable_v<Fn, const T &> or micron::is_invocable_v<Fn, T &> or micron::is_invocable_v<Fn, T &&>)
   slice(Fn &&fn, const R &r) : __mem(r.size())
   {
@@ -243,7 +243,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
 
   slice(const slice &) = delete;
 
-  slice(slice &&o) : __mem(micron::move(o)) {}
+  slice(slice &&o) : __mem(micron::move(o)) { }
 
   slice &operator=(const slice &) = delete;
 
@@ -293,7 +293,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return reinterpret_cast<byte *>(__mem::memory);
   }
 
-  template <typename R>
+  template<typename R>
     requires(micron::is_integral_v<R>)
   T &
   operator[](const R n)
@@ -591,7 +591,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     size_t end;
   };
 
-  template <size_t N>
+  template<size_t N>
   pointer
   first_chunk()
   {
@@ -600,7 +600,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return __mem::memory;
   }
 
-  template <size_t N>
+  template<size_t N>
   const_pointer
   first_chunk() const
   {
@@ -609,14 +609,14 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return __mem::memory;
   }
 
-  template <size_t N>
+  template<size_t N>
   pointer
   first_chunk_mut()
   {
     return first_chunk<N>();
   }
 
-  template <size_t N>
+  template<size_t N>
   pointer
   last_chunk()
   {
@@ -625,7 +625,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return __mem::memory + __mem::length - N;
   }
 
-  template <size_t N>
+  template<size_t N>
   const_pointer
   last_chunk() const
   {
@@ -634,14 +634,14 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return __mem::memory + __mem::length - N;
   }
 
-  template <size_t N>
+  template<size_t N>
   pointer
   last_chunk_mut()
   {
     return last_chunk<N>();
   }
 
-  template <size_t N>
+  template<size_t N>
   split_chunk_result<T, N>
   split_first_chunk() const
   {
@@ -650,14 +650,14 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return { __mem::memory, raw_slice<T>(__mem::memory + N, __mem::length - N) };
   }
 
-  template <size_t N>
+  template<size_t N>
   split_chunk_result<T, N>
   split_first_chunk_mut()
   {
     return split_first_chunk<N>();
   }
 
-  template <size_t N>
+  template<size_t N>
   split_chunk_result<T, N>
   split_last_chunk() const
   {
@@ -666,7 +666,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return { __mem::memory + __mem::length - N, raw_slice<T>(__mem::memory, __mem::length - N) };
   }
 
-  template <size_t N>
+  template<size_t N>
   split_chunk_result<T, N>
   split_last_chunk_mut()
   {
@@ -741,7 +741,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return split_last();
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   split(Fn pred, Cb callback) const
@@ -758,7 +758,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   split_mut(Fn pred, Cb callback)
@@ -766,7 +766,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return split(pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   split_inclusive(Fn pred, Cb callback) const
@@ -783,7 +783,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   split_inclusive_mut(Fn pred, Cb callback)
@@ -791,7 +791,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return split_inclusive(pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   splitn(size_t n, Fn pred, Cb callback) const
@@ -809,7 +809,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   splitn_mut(size_t n, Fn pred, Cb callback)
@@ -817,7 +817,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return splitn(n, pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   rsplit(Fn pred, Cb callback) const
@@ -834,7 +834,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   rsplit_mut(Fn pred, Cb callback)
@@ -842,7 +842,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return rsplit(pred, callback);
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   rsplitn(size_t n, Fn pred, Cb callback) const
@@ -860,7 +860,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return count + 1;
   }
 
-  template <typename Fn, typename Cb>
+  template<typename Fn, typename Cb>
     requires micron::is_invocable_v<Fn, const T &>
   size_t
   rsplitn_mut(size_t n, Fn pred, Cb callback)
@@ -878,7 +878,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return { raw_slice<T>(), raw_slice<T>() };
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, const T &>
   dual_raw_slice<T>
   split_once(Fn pred) const
@@ -899,7 +899,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return { raw_slice<T>(), raw_slice<T>() };
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, const T &>
   dual_raw_slice<T>
   rsplit_once(Fn pred) const
@@ -977,7 +977,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return false;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, const T &>
   bool
   contains(Fn pred) const
@@ -1071,7 +1071,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return *this;
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn>
   slice &
   fill_with(Fn gen)
@@ -1099,7 +1099,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
   {
     if ( src_start + count > __mem::length || dst + count > __mem::length ) [[unlikely]]
       return *this;
-    micron::memmove(micron::addr(__mem::memory[dst]), micron::addr(__mem::memory[src_start]), count * sizeof(T));
+    micron::memmove(micron::addr(__mem::memory[dst]), micron::addr(__mem::memory[src_start]), count);
     return *this;
   }
 
@@ -1238,7 +1238,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return fill(value);
   }
 
-  template <typename Fn>
+  template<typename Fn>
     requires micron::is_invocable_v<Fn, size_t>
   slice &
   write_with(Fn gen)
@@ -1247,7 +1247,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return *this;
   }
 
-  template <typename InputIt>
+  template<typename InputIt>
   slice &
   write_iter(InputIt first, InputIt last)
   {
@@ -1268,28 +1268,28 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return { reinterpret_cast<byte *>(__mem::memory), __mem::length * sizeof(T) };
   }
 
-  template <typename U>
+  template<typename U>
   raw_slice<U>
   as_flattened()
   {
     return { reinterpret_cast<U *>(__mem::memory), __mem::length * sizeof(T) / sizeof(U) };
   }
 
-  template <typename U>
+  template<typename U>
   raw_slice<const U>
   as_flattened() const
   {
     return { reinterpret_cast<const U *>(__mem::memory), __mem::length * sizeof(T) / sizeof(U) };
   }
 
-  template <typename U>
+  template<typename U>
   raw_slice<U>
   as_flattened_mut()
   {
     return as_flattened<U>();
   }
 
-  template <typename U>
+  template<typename U>
   align_result<T, U>
   align_to() const
   {
@@ -1315,7 +1315,7 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
              raw_slice<T>(__mem::memory + __mem::length - suffix_elems, suffix_elems) };
   }
 
-  template <typename U>
+  template<typename U>
   align_result<T, U>
   align_to_mut()
   {
@@ -1408,4 +1408,4 @@ template <is_movable_object T, class Alloc = micron::allocator_serial<>> struct 
     return { leading.ptr, j };
   }
 };
-};     // namespace micron
+};      // namespace micron

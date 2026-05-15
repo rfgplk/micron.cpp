@@ -6,10 +6,10 @@
 #pragma once
 
 #include "../__special/initializer_list"
-#include "bits.hpp"     // arched
+#include "bits.hpp"      // arched
 #include "dispatch.hpp"
-#include "load.hpp"      // arched
-#include "types.hpp"     // arched
+#include "load.hpp"       // arched
+#include "types.hpp"      // arched
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
@@ -84,7 +84,7 @@ using packet8d = v512<d512, __vd>;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // concept: only members that actually exist on this arch
 
-template <typename T>
+template<typename T>
 concept is_simd_class
     = micron::same_as<T, v8> or micron::same_as<T, v16> or micron::same_as<T, v32> or micron::same_as<T, v64> or micron::same_as<T, vfloat>
 #if !defined(__micron_arch_arm32)
@@ -96,7 +96,7 @@ concept is_simd_class
 #endif
     ;
 
-};     // namespace simd
+};      // namespace simd
 
 #pragma GCC diagnostic pop
 
@@ -151,4 +151,4 @@ using packet16f = simd::packet16f;
 using packet8d = simd::packet8d;
 #endif
 
-};     // namespace micron
+};      // namespace micron

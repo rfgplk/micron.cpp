@@ -38,8 +38,8 @@ enum class signal : i32 {
   cont = posix::sig_cont,
   stop = posix::sig_stop,
   tstp = posix::sig_tstp,
-  ttin = posix::sig_ttin,     // forgot what this one is xc won't loop it up
-  ttou = posix::sig_ttou,     // likewise
+  ttin = posix::sig_ttin,      // forgot what this one is xc won't loop it up
+  ttou = posix::sig_ttou,      // likewise
   urgent_2 = posix::sig_urg,
   polling = posix::sig_poll,
   xcpu = posix::sig_xcpu,
@@ -55,61 +55,61 @@ inline constexpr const char *
 signal_name(signal sig) noexcept
 {
   switch ( sig ) {
-  case signal::hangup :
+  case signal::hangup:
     return "SIGHUP";
-  case signal::interrupt :
+  case signal::interrupt:
     return "SIGINT";
-  case signal::quit :
+  case signal::quit:
     return "SIGQUIT";
-  case signal::illegal :
+  case signal::illegal:
     return "SIGILL";
-  case signal::trap :
+  case signal::trap:
     return "SIGTRAP";
-  case signal::abort :
+  case signal::abort:
     return "SIGABRT";
-  case signal::floating_error :
+  case signal::floating_error:
     return "SIGFPE";
-  case signal::kill9 :
+  case signal::kill9:
     return "SIGKILL";
-  case signal::user_signal_1 :
+  case signal::user_signal_1:
     return "SIGUSR1";
-  case signal::segfault :
+  case signal::segfault:
     return "SIGSEGV";
-  case signal::user_signal_2 :
+  case signal::user_signal_2:
     return "SIGUSR2";
-  case signal::pipe :
+  case signal::pipe:
     return "SIGPIPE";
-  case signal::alarm :
+  case signal::alarm:
     return "SIGALRM";
-  case signal::terminate :
+  case signal::terminate:
     return "SIGTERM";
-  case signal::urgent :
+  case signal::urgent:
     return "SIGURG";
-  case signal::child :
+  case signal::child:
     return "SIGCHLD";
-  case signal::cont :
+  case signal::cont:
     return "SIGCONT";
-  case signal::stop :
+  case signal::stop:
     return "SIGSTOP";
-  case signal::tstp :
+  case signal::tstp:
     return "SIGTSTP";
-  case signal::ttin :
+  case signal::ttin:
     return "SIGTTIN";
-  case signal::ttou :
+  case signal::ttou:
     return "SIGTTOU";
-  case signal::xcpu :
+  case signal::xcpu:
     return "SIGXCPU";
-  case signal::file_limit :
+  case signal::file_limit:
     return "SIGXFSZ";
-  case signal::virt_alarm :
+  case signal::virt_alarm:
     return "SIGVTALRM";
-  case signal::profile_expire :
+  case signal::profile_expire:
     return "SIGPROF";
-  case signal::window_resize :
+  case signal::window_resize:
     return "SIGWINCH";
-  case signal::polling :
+  case signal::polling:
     return "SIGPOLL";
-  default :
+  default:
     return "SIGUNKNOWN";
   }
 }
@@ -125,16 +125,16 @@ inline constexpr bool
 signal_dumps_core(signal sig) noexcept
 {
   switch ( sig ) {
-  case signal::quit :
-  case signal::illegal :
-  case signal::trap :
-  case signal::abort :
-  case signal::floating_error :
-  case signal::segfault :
-  case signal::xcpu :
-  case signal::file_limit :
+  case signal::quit:
+  case signal::illegal:
+  case signal::trap:
+  case signal::abort:
+  case signal::floating_error:
+  case signal::segfault:
+  case signal::xcpu:
+  case signal::file_limit:
     return true;
-  default :
+  default:
     return false;
   }
 }
@@ -164,7 +164,7 @@ send_thread(posix::pid_t tgid, posix::pid_t tid, signal sig)
   return static_cast<int>(micron::syscall(SYS_tgkill, tgid, tid, static_cast<int>(sig)));
 }
 
-template <typename Fn>
+template<typename Fn>
   requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn, int>)
 auto
 create_handler(Fn &&fn, signal sig)
@@ -177,7 +177,7 @@ create_handler(Fn &&fn, signal sig)
   return sa;
 }
 
-template <typename Fn>
+template<typename Fn>
   requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn, int>)
 auto
 add_action(posix::sigaction_t &sa, Fn &&fn, signal sig)
@@ -187,7 +187,7 @@ add_action(posix::sigaction_t &sa, Fn &&fn, signal sig)
   return sa;
 }
 
-template <typename Fn>
+template<typename Fn>
   requires(micron::is_invocable_v<Fn, int, posix::siginfo_t *, void *>)
 auto
 create_info_handler(Fn &&fn, signal sig, int extra_flags = 0)
@@ -204,7 +204,7 @@ inline int
 ignore(signal sig)
 {
   posix::sigaction_t sa = {};
-  sa.sigaction_handler.sa_handler = reinterpret_cast<posix::sighandler_t>(1);     // SIG_IGN == (void*)1
+  sa.sigaction_handler.sa_handler = reinterpret_cast<posix::sighandler_t>(1);      // SIG_IGN == (void*)1
   micron::posix::sigemptyset(sa.sa_mask);
   sa.sa_flags = 0;
   return micron::posix::sigaction(static_cast<int>(sig), sa, nullptr);
@@ -214,7 +214,7 @@ inline int
 restore_default(signal sig)
 {
   posix::sigaction_t sa = {};
-  sa.sigaction_handler.sa_handler = reinterpret_cast<posix::sighandler_t>(0);     // SIG_DFL == (void*)0
+  sa.sigaction_handler.sa_handler = reinterpret_cast<posix::sighandler_t>(0);      // SIG_DFL == (void*)0
   micron::posix::sigemptyset(sa.sa_mask);
   sa.sa_flags = 0;
   return micron::posix::sigaction(static_cast<int>(sig), sa, nullptr);
@@ -247,7 +247,7 @@ struct signal_mask_guard {
 
   explicit signal_mask_guard(const posix::sigset_t &mask) { block(mask); }
 
-  template <typename... Sigs>
+  template<typename... Sigs>
     requires(... && micron::is_same_v<Sigs, signal>)
   explicit signal_mask_guard(Sigs... sigs)
   {
@@ -350,7 +350,7 @@ sig_wait_for(signal sig)
   return micron::posix::sigwait(m, raw);
 }
 
-template <typename... Sigs>
+template<typename... Sigs>
   requires(... && micron::is_same_v<Sigs, signal>)
 inline posix::sigset_t
 make_sigset(Sigs... sigs)
@@ -361,7 +361,7 @@ make_sigset(Sigs... sigs)
   return m;
 }
 
-template <typename... Sigs>
+template<typename... Sigs>
   requires(... && micron::is_same_v<Sigs, signal>)
 inline posix::sigset_t
 make_sigset_except(Sigs... sigs)
@@ -390,7 +390,7 @@ struct critical_section {
 };
 
 // mark procmask on constructor if true
-template <bool M = false> class signal_t
+template<bool M = false> class signal_t
 {
   alignas(16) posix::sigset_t __signal;
   // BUG: since multiple signals have the same index, the acts array is technically too large and will have conflicting
@@ -409,7 +409,7 @@ public:
 
   signal_t(void) : __acts(), __sig(0) { posix::sigemptyset(__signal); }
 
-  template <typename... Sigs> signal_t(const Sigs... sig) : __acts{}
+  template<typename... Sigs> signal_t(const Sigs... sig) : __acts{}
   {
     posix::sigemptyset(__signal);
     (posix::sigaddset(__signal, (i32)sig), ...);
@@ -458,4 +458,4 @@ public:
     return posix::sigwait(__signal, __sig);
   }
 };
-};     // namespace micron
+};      // namespace micron

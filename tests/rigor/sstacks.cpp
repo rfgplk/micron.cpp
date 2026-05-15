@@ -28,7 +28,7 @@ using umax_t = std::size_t;
 struct Trivial {
   int v;
 
-  constexpr Trivial(int x = 0) : v(x) {}
+  constexpr Trivial(int x = 0) : v(x) { }
 
   constexpr bool
   operator==(const Trivial &o) const
@@ -71,7 +71,7 @@ struct NonTrivial {
 
 // ---------------- tests ----------------
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_default_ctor()
 {
@@ -83,7 +83,7 @@ test_default_ctor()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_size_ctor()
 {
@@ -94,7 +94,7 @@ test_size_ctor()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_init_list()
 {
@@ -108,7 +108,7 @@ test_init_list()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_copy_ctor()
 {
@@ -121,7 +121,7 @@ test_copy_ctor()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_move_ctor()
 {
@@ -133,7 +133,7 @@ test_move_ctor()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_copy_assign()
 {
@@ -146,7 +146,7 @@ test_copy_assign()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_move_assign()
 {
@@ -159,7 +159,7 @@ test_move_assign()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_push_pop()
 {
@@ -175,7 +175,7 @@ test_push_pop()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_emplace()
 {
@@ -187,7 +187,7 @@ test_emplace()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_operator_call()
 {
@@ -199,7 +199,7 @@ test_operator_call()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 test_clear()
 {
@@ -211,7 +211,7 @@ test_clear()
   end_test_case();
 }
 
-template <size_t N>
+template<size_t N>
 void
 test_nontrivial_lifetime()
 {
@@ -229,7 +229,7 @@ test_nontrivial_lifetime()
   end_test_case();
 }
 
-template <typename T, size_t N>
+template<typename T, size_t N>
 void
 stress_lifo()
 {

@@ -23,4 +23,4 @@ get_stack_size(void) -> usize
 {
   return get_stack().size;
 }
-};     // namespace micron
+};      // namespace micron

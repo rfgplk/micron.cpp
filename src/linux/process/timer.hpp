@@ -13,38 +13,38 @@
 namespace micron
 {
 
-template <system_clocks C = system_clocks::monotonic> class timerfd_t
+template<system_clocks C = system_clocks::monotonic> class timerfd_t
 {
   static constexpr timespec_t
   __to_timespec(fduration_t value, unit u) noexcept
   {
     timespec_t ts;
     switch ( u ) {
-    case unit::nanoseconds :
+    case unit::nanoseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000'000'000LL);
       ts.tv_nsec = static_cast<long>(value) % 1'000'000'000L;
       break;
-    case unit::microseconds :
+    case unit::microseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000'000LL);
       ts.tv_nsec = static_cast<long>(static_cast<long>(value) % 1'000'000LL) * 1'000L;
       break;
-    case unit::milliseconds :
+    case unit::milliseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000LL);
       ts.tv_nsec = static_cast<long>(static_cast<long>(value) % 1'000LL) * 1'000'000L;
       break;
-    case unit::seconds :
+    case unit::seconds:
       ts.tv_sec = static_cast<time_t>(value);
       ts.tv_nsec = 0;
       break;
-    case unit::minutes :
+    case unit::minutes:
       ts.tv_sec = static_cast<time_t>(value * __dur_sec_per_min);
       ts.tv_nsec = 0;
       break;
-    case unit::hours :
+    case unit::hours:
       ts.tv_sec = static_cast<time_t>(value * __dur_sec_per_hr);
       ts.tv_nsec = 0;
       break;
-    case unit::days :
+    case unit::days:
       ts.tv_sec = static_cast<time_t>(value * __dur_sec_per_day);
       ts.tv_nsec = 0;
       break;
@@ -172,7 +172,7 @@ public:
     return spec;
   }
 
-  template <unit U = unit::milliseconds>
+  template<unit U = unit::milliseconds>
   inline fduration_t
   remaining() const
   {
@@ -199,4 +199,4 @@ using realtime_timerfd_t = timerfd_t<system_clocks::realtime>;
 using monotonic_timerfd_t = timerfd_t<system_clocks::monotonic>;
 using boottime_timerfd_t = timerfd_t<system_clocks::since_boot>;
 
-};     // namespace micron
+};      // namespace micron

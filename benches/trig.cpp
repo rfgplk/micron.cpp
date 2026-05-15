@@ -126,7 +126,7 @@ struct line {
   char buf[256];
   u32 pos;
 
-  constexpr line() noexcept : pos(0) {}
+  constexpr line() noexcept : pos(0) { }
 
   void
   s(const char *p) noexcept
@@ -212,7 +212,7 @@ print_cell(const cell &c)
   micron::io::println(ln.str());
 }
 
-template <typename Kernel>
+template<typename Kernel>
 [[gnu::noinline]] cell
 measure(const char *name, u64 ops_per_call, Kernel &&kernel) noexcept
 {
@@ -266,31 +266,31 @@ fill_range(range_kind k, u64 seed_off = 0)
   const u64 s1 = 0xDEADBEEFCAFEBABEULL ^ seed_off;
   const u64 s2 = 0x0123456789ABCDEFULL ^ seed_off;
   switch ( k ) {
-  case range_kind::small :
+  case range_kind::small:
     fill_uniform_f64(g_in_f64, N, -3.14159265358979, 3.14159265358979, s1);
     fill_uniform_f32(g_in_f32, N, -3.14159265358979f, 3.14159265358979f, s2);
     fill_uniform_f64(g_in_f64_b, N, -3.14159265358979, 3.14159265358979, s1 + 1);
     fill_uniform_f32(g_in_f32_b, N, -3.14159265358979f, 3.14159265358979f, s2 + 1);
     break;
-  case range_kind::medium :
+  case range_kind::medium:
     fill_uniform_f64(g_in_f64, N, -1000.0, 1000.0, s1);
     fill_uniform_f32(g_in_f32, N, -1000.0f, 1000.0f, s2);
     fill_uniform_f64(g_in_f64_b, N, -1000.0, 1000.0, s1 + 1);
     fill_uniform_f32(g_in_f32_b, N, -1000.0f, 1000.0f, s2 + 1);
     break;
-  case range_kind::large :
+  case range_kind::large:
     fill_uniform_f64(g_in_f64, N, -8589934592.0, 8589934592.0, s1);
     fill_uniform_f32(g_in_f32, N, -1048576.0f, 1048576.0f, s2);
     fill_uniform_f64(g_in_f64_b, N, -8589934592.0, 8589934592.0, s1 + 1);
     fill_uniform_f32(g_in_f32_b, N, -1048576.0f, 1048576.0f, s2 + 1);
     break;
-  case range_kind::unit :
+  case range_kind::unit:
     fill_uniform_f64(g_in_f64, N, -1.0, 1.0, s1);
     fill_uniform_f32(g_in_f32, N, -1.0f, 1.0f, s2);
     fill_uniform_f64(g_in_f64_b, N, -1.0, 1.0, s1 + 1);
     fill_uniform_f32(g_in_f32_b, N, -1.0f, 1.0f, s2 + 1);
     break;
-  case range_kind::signed_pos :
+  case range_kind::signed_pos:
     fill_uniform_f64(g_in_f64, N, -8589934592.0, 8589934592.0, s1);
     fill_uniform_f32(g_in_f32, N, -1048576.0f, 1048576.0f, s2);
     fill_uniform_f64(g_in_f64_b, N, -8589934592.0, 8589934592.0, s1 + 1);
@@ -303,21 +303,21 @@ const char *
 range_label(range_kind k) noexcept
 {
   switch ( k ) {
-  case range_kind::small :
+  case range_kind::small:
     return "small [-pi, pi]";
-  case range_kind::medium :
+  case range_kind::medium:
     return "medium [-1e3, 1e3]";
-  case range_kind::large :
+  case range_kind::large:
     return "large [-2^33, 2^33]";
-  case range_kind::unit :
+  case range_kind::unit:
     return "unit [-1, 1]";
-  case range_kind::signed_pos :
+  case range_kind::signed_pos:
     return "signed [-2^33, 2^33]";
   }
   return "?";
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_scalar_f64(Fn f) noexcept
 {
@@ -325,7 +325,7 @@ k_scalar_f64(Fn f) noexcept
   clobber(g_out_f64);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_scalar_f32(Fn f) noexcept
 {
@@ -333,7 +333,7 @@ k_scalar_f32(Fn f) noexcept
   clobber(g_out_f32);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_scalar_f64_2(Fn f) noexcept
 {
@@ -341,7 +341,7 @@ k_scalar_f64_2(Fn f) noexcept
   clobber(g_out_f64);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_scalar_f32_2(Fn f) noexcept
 {
@@ -349,7 +349,7 @@ k_scalar_f32_2(Fn f) noexcept
   clobber(g_out_f32);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_scalar_f64_sc(Fn f) noexcept
 {
@@ -358,7 +358,7 @@ k_scalar_f64_sc(Fn f) noexcept
   clobber(g_out_f64_b);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_scalar_f32_sc(Fn f) noexcept
 {
@@ -415,7 +415,7 @@ st_f128(f32 *p, mc::simd::f128 v) noexcept
   mc::simd::sse::store_f32(reinterpret_cast<float *>(p), v);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_d256(Fn f) noexcept
 {
@@ -427,7 +427,7 @@ k_d256(Fn f) noexcept
   clobber(g_out_f64);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_d256_sc(Fn f) noexcept
 {
@@ -442,7 +442,7 @@ k_d256_sc(Fn f) noexcept
   clobber(g_out_f64_b);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_d128(Fn f) noexcept
 {
@@ -454,7 +454,7 @@ k_d128(Fn f) noexcept
   clobber(g_out_f64);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_f256(Fn f) noexcept
 {
@@ -466,7 +466,7 @@ k_f256(Fn f) noexcept
   clobber(g_out_f32);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_f256_sc(Fn f) noexcept
 {
@@ -481,7 +481,7 @@ k_f256_sc(Fn f) noexcept
   clobber(g_out_f32_b);
 }
 
-template <typename Fn>
+template<typename Fn>
 [[gnu::noinline]] void
 k_f128(Fn f) noexcept
 {
@@ -625,7 +625,7 @@ sweep_atan2(range_kind rk)
       measure("mk::cordic  f32 scalar ", 1, [] { k_scalar_f32_2([](f32 y, f32 x) { return mc::math::mk::cordic::atan2<f32>(y, x); }); }));
 }
 
-};     // namespace
+};      // namespace
 
 int
 main(void)

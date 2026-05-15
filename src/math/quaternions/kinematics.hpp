@@ -37,21 +37,21 @@ namespace quaternions
 namespace __impl_kinematics
 {
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 small_half_phi_sq() noexcept
 {
   return T(1e-4);
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 log_pade_cw_floor() noexcept
 {
   return T(0.5);
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr micron::vector_3<T>
 nan_vec() noexcept
 {
@@ -59,12 +59,12 @@ nan_vec() noexcept
   return micron::vector_3<T>{ n, n, n };
 }
 
-};     // namespace __impl_kinematics
+};      // namespace __impl_kinematics
 
 // q_dot = (1/2) * q (X) (omega, 0)
 // NOTE: omega is the angular velocity in the BODY frame
 // For a world-frame angular velocity omega_w, use (1/2) * (omega_w, 0) (X) q
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 derivative(const quaternion<T> &q, const micron::vector_3<T> &omega) noexcept
 {
@@ -73,7 +73,7 @@ derivative(const quaternion<T> &q, const micron::vector_3<T> &omega) noexcept
   return quaternion<T>{ p.x * T(0.5), p.y * T(0.5), p.z * T(0.5), p.w * T(0.5) };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 integrate(const quaternion<T> &q, const micron::vector_3<T> &omega, T dt) noexcept
 {
@@ -102,7 +102,7 @@ integrate(const quaternion<T> &q, const micron::vector_3<T> &omega, T dt) noexce
   return multiply<T>(q, dq).normalized();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 integrate_small_angle(const quaternion<T> &q, const micron::vector_3<T> &omega, T dt) noexcept
 {
@@ -115,7 +115,7 @@ integrate_small_angle(const quaternion<T> &q, const micron::vector_3<T> &omega, 
   return multiply<T>(q, dq).normalized();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 integrate_pade(const quaternion<T> &q, const micron::vector_3<T> &omega, T dt) noexcept
 {
@@ -134,7 +134,7 @@ integrate_pade(const quaternion<T> &q, const micron::vector_3<T> &omega, T dt) n
   return multiply<T>(q, dq).normalized();
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr micron::vector_3<T>
 angular_velocity(const quaternion<T> &q0, const quaternion<T> &q1, T dt) noexcept
 {
@@ -147,7 +147,7 @@ angular_velocity(const quaternion<T> &q0, const quaternion<T> &q1, T dt) noexcep
   return micron::vector_3<T>{ aa.axis.x * s, aa.axis.y * s, aa.axis.z * s };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr micron::vector_3<T>
 log_map_pade(const quaternion<T> &q) noexcept
 {
@@ -165,7 +165,7 @@ log_map_pade(const quaternion<T> &q) noexcept
   return micron::vector_3<T>{ cx * scale, cy * scale, cz * scale };
 }
 
-template <ieee754_floating T>
+template<ieee754_floating T>
 [[nodiscard]] inline constexpr micron::vector_3<T>
 angular_velocity_pade(const quaternion<T> &q0, const quaternion<T> &q1, T dt) noexcept
 {
@@ -177,6 +177,6 @@ angular_velocity_pade(const quaternion<T> &q0, const quaternion<T> &q1, T dt) no
   return micron::vector_3<T>{ v.x * inv_dt, v.y * inv_dt, v.z * inv_dt };
 }
 
-};     // namespace quaternions
-};     // namespace math
-};     // namespace micron
+};      // namespace quaternions
+};      // namespace math
+};      // namespace micron

@@ -153,7 +153,7 @@ f64_to_char(f64 n, char *frm)
     *buf++ = *--iptr;
   }
 
-  *buf++ = '.';     // decimal
+  *buf++ = '.';      // decimal
 
   char fstr[24];
   char *fptr = fstr;
@@ -191,7 +191,7 @@ f32_to_char(f32 n, char *frm)
     *buf++ = *--iptr;
   }
 
-  *buf++ = '.';     // decimal
+  *buf++ = '.';      // decimal
 
   char fstr[8];
   char *fptr = fstr;
@@ -229,7 +229,7 @@ flong_to_char(flong n, char *frm)
     *buf++ = *--iptr;
   }
 
-  *buf++ = '.';     // decimal
+  *buf++ = '.';      // decimal
 
   char fstr[60];
   char *fptr = fstr;
@@ -267,7 +267,7 @@ f128_to_char(f128 n, char *frm)
     *buf++ = *--iptr;
   }
 
-  *buf++ = '.';     // decimal
+  *buf++ = '.';      // decimal
 
   char fstr[40];
   char *fptr = fstr;
@@ -281,7 +281,7 @@ f128_to_char(f128 n, char *frm)
   return frm;
 }
 
-template <typename T>
+template<typename T>
 const char *
 ptr_to_char(T *ptr, char *frm)
 {
@@ -297,6 +297,6 @@ ptr_to_char(T *ptr, char *frm)
   *buf = '\0';
   return frm;
 };
-};     // namespace format
-};     // namespace io
-};     // namespace micron
+};      // namespace format
+};      // namespace io
+};      // namespace micron

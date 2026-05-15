@@ -32,7 +32,7 @@ main(int, char **)
     require(s.size(), 5u);
     require(s[0], 'h');
     require(s[4], 'o');
-    require(s[5], '\0');     // null term present
+    require(s[5], '\0');      // null term present
   }
   end_test_case();
 
@@ -105,7 +105,7 @@ main(int, char **)
     micron::sstring<64> s2(micron::move(s1));
     require(s2.size(), 6u);
     require(s2[0], 'm');
-    require(s1.size(), 0u);     // source cleared
+    require(s1.size(), 0u);      // source cleared
   }
   end_test_case();
 
@@ -198,7 +198,7 @@ main(int, char **)
   {
     micron::sstring<64> s("abc");
     require_throw([&] { s.at(10); });
-    require_throw([&] { s.at(3); });     // length == 3, index 3 is past end
+    require_throw([&] { s.at(3); });      // length == 3, index 3 is past end
   }
   end_test_case();
 
@@ -316,8 +316,8 @@ main(int, char **)
 
   test_case("push_back at capacity is silently ignored");
   {
-    micron::sstring<4> s("abc");     // size 3, capacity 4 — one slot left for null
-    s.push_back('d');                // length becomes 4, but length+1 < N fails so ignored
+    micron::sstring<4> s("abc");      // size 3, capacity 4 — one slot left for null
+    s.push_back('d');                 // length becomes 4, but length+1 < N fails so ignored
     // result depends on (length + 1) < N check; length=3, N=4: 3+1=4 is NOT < 4, so ignored
     require(s.size(), 3u);
   }
@@ -408,8 +408,8 @@ main(int, char **)
   test_case("operator+= overflow throws");
   {
     require_throw([&] {
-      micron::sstring<8> s("hello");     // size 5
-      s += "world!";                     // would need 11
+      micron::sstring<8> s("hello");      // size 5
+      s += "world!";                      // would need 11
     });
   }
   end_test_case();
@@ -510,7 +510,7 @@ main(int, char **)
     micron::sstring<64> mid("bb");
     s.insert(s.begin() + 1, micron::move(mid));
     require(s == micron::sstring<64>("abbc"), true);
-    require(mid.size(), 0u);     // source cleared
+    require(mid.size(), 0u);      // source cleared
   }
   end_test_case();
 
@@ -518,7 +518,7 @@ main(int, char **)
   {
     require_throw([&] {
       micron::sstring<64> s("abc");
-      s.insert(10u, 'x');     // ind >= length
+      s.insert(10u, 'x');      // ind >= length
     });
   }
   end_test_case();
@@ -581,7 +581,7 @@ main(int, char **)
   {
     require_throw([&] {
       micron::sstring<64> s("abc");
-      s.erase(2u, 5u);     // only 1 char after index 2
+      s.erase(2u, 5u);      // only 1 char after index 2
     });
   }
   end_test_case();
@@ -610,7 +610,7 @@ main(int, char **)
   test_case("substr(pos, cnt=npos) to end");
   {
     micron::sstring<64> s("hello world");
-    auto sub = s.substr(6u);     // cnt defaults to npos -> to end
+    auto sub = s.substr(6u);      // cnt defaults to npos -> to end
     require(sub == micron::sstring<64>("world"), true);
   }
   end_test_case();
@@ -707,7 +707,7 @@ main(int, char **)
   test_case("find(char, pos) skips before pos");
   {
     micron::sstring<64> s("hello");
-    require(s.find('l', 3u), 3u);     // second 'l' at index 3
+    require(s.find('l', 3u), 3u);      // second 'l' at index 3
   }
   end_test_case();
 
@@ -721,7 +721,7 @@ main(int, char **)
     s.truncate(5u);
     require(s.size(), 5u);
     require(s == micron::sstring<64>("hello"), true);
-    require(s[5], '\0');     // tail zeroed
+    require(s[5], '\0');      // tail zeroed
   }
   end_test_case();
 
@@ -921,7 +921,7 @@ main(int, char **)
     auto c = s.clone();
     require(c == s, true);
     c[0] = 'Z';
-    require(s[0], 'o');     // original unchanged
+    require(s[0], 'o');      // original unchanged
   }
   end_test_case();
 
@@ -948,7 +948,7 @@ main(int, char **)
   test_case("addr() returns pointer to sstring object itself");
   {
     micron::sstring<64> s("abc");
-    require(s.addr() == reinterpret_cast<micron::sstring<64> *>(&s), true);     // will be same addr
+    require(s.addr() == reinterpret_cast<micron::sstring<64> *>(&s), true);      // will be same addr
     // addr() returns `this` (the sstring*), operator& returns &memory[0]
     require((void *)s.addr(), (void *)&s);
   }

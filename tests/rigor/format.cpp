@@ -17,7 +17,7 @@ namespace fmt = micron::format;
 // Convenience aliases
 // ============================================================
 using hstr = micron::hstring<schar>;
-template <usize N> using sstr = micron::sstring<N, schar>;
+template<usize N> using sstr = micron::sstring<N, schar>;
 
 // ============================================================
 // Helper: build an hstring from a raw literal
@@ -72,8 +72,8 @@ main(int, char **)
   test_case("isdigit – all digit chars and edges");
   {
     for ( char c = '0'; c <= '9'; ++c ) require_true(fmt::isdigit(c));
-    require_false(fmt::isdigit('/'));     // 0x2F, one below '0'
-    require_false(fmt::isdigit(':'));     // 0x3A, one above '9'
+    require_false(fmt::isdigit('/'));      // 0x2F, one below '0'
+    require_false(fmt::isdigit(':'));      // 0x3A, one above '9'
     require_false(fmt::isdigit('a'));
     require_false(fmt::isdigit(' '));
   }
@@ -177,9 +177,9 @@ main(int, char **)
   {
     require_true(fmt::isgraph('!'));
     require_true(fmt::isgraph('~'));
-    require_false(fmt::isgraph(' '));     // space not in isgraph
+    require_false(fmt::isgraph(' '));      // space not in isgraph
     require_false(fmt::isgraph('\n'));
-    require_true(fmt::isprint(' '));     // space IS printable
+    require_true(fmt::isprint(' '));      // space IS printable
     require_true(fmt::isprint('~'));
     require_false(fmt::isprint('\n'));
     require_false(fmt::isprint('\x7F'));
@@ -208,8 +208,8 @@ main(int, char **)
   {
     require(fmt::to_upper('0'), '0');
     require(fmt::to_upper('!'), '!');
-    require(fmt::to_upper('A'), 'A');     // already upper
-    require(fmt::to_lower('a'), 'a');     // already lower
+    require(fmt::to_upper('A'), 'A');      // already upper
+    require(fmt::to_lower('a'), 'a');      // already lower
     require(fmt::to_lower('0'), '0');
   }
   end_test_case();
@@ -232,7 +232,7 @@ main(int, char **)
     const hstr s("ABCXYZ");
     hstr r = fmt::casefold(s);
     require(r, h("abcxyz"));
-    require(s, h("ABCXYZ"));     // original unchanged
+    require(s, h("ABCXYZ"));      // original unchanged
   }
   end_test_case();
 
@@ -418,7 +418,7 @@ main(int, char **)
   test_case("isxdigit_all – valid and invalid hex strings");
   {
     hstr valid("0123456789abcdefABCDEF");
-    hstr invalid("0x1A");     // '0x' has 'x' which is not xdigit
+    hstr invalid("0x1A");      // '0x' has 'x' which is not xdigit
     require_true(fmt::isxdigit_all(valid));
     require_false(fmt::isxdigit_all(invalid));
   }
@@ -503,7 +503,7 @@ main(int, char **)
     const hstr s("  world  ");
     hstr r = fmt::strip(s);
     require(r, h("world"));
-    require(s, h("  world  "));     // original unchanged
+    require(s, h("  world  "));      // original unchanged
   }
   end_test_case();
 
@@ -698,7 +698,7 @@ main(int, char **)
   test_case("contains – from-iterator variants");
   {
     hstr s("abcabc");
-    auto from = s.begin() + 3;     // second half
+    auto from = s.begin() + 3;      // second half
     require_true(fmt::contains(s, from, 'a'));
     require_false(fmt::contains(s, from, 'x'));
     require_true(fmt::contains(s, from, "abc"));
@@ -996,7 +996,7 @@ main(int, char **)
     const hstr s("hello world");
     hstr r = fmt::replace(s, "world", "earth");
     require(r, h("hello earth"));
-    require(s, h("hello world"));     // original unchanged
+    require(s, h("hello world"));      // original unchanged
   }
   end_test_case();
 
@@ -1105,7 +1105,7 @@ main(int, char **)
     hstr b("right");
     hstr r = fmt::concat(a, b);
     require(r, h("left right"));
-    require(a, h("left "));     // originals unchanged
+    require(a, h("left "));      // originals unchanged
     require(b, h("right"));
   }
   end_test_case();
@@ -1355,7 +1355,7 @@ main(int, char **)
 
   test_case("to_double – const char* + length");
   {
-    f64 v = fmt::to_double("9.9999", 3u);     // "9.9"
+    f64 v = fmt::to_double("9.9999", 3u);      // "9.9"
     require(v > 9.8, true);
     require(v < 10.0, true);
   }

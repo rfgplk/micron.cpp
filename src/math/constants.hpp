@@ -11,103 +11,103 @@ namespace micron
 {
 namespace math
 {
-template <typename T>
+template<typename T>
 inline constexpr T constant_e = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.718281828459045235360287471352662498L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_log2e = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.442695040888963407359924681001892137L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_log10e = micron::enable_if_t<micron::is_floating_point_v<T>, T>(0.434294481903251827651128918916605082L);
 
-template <typename T>
+template<typename T>
 inline constexpr T constant_pi = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.141592653589793238462643383279502884L);
 
-template <typename T>
+template<typename T>
 inline constexpr T constant_pi_inv = micron::enable_if_t<micron::is_floating_point_v<T>, T>(0.318309886183790671537767526745028724L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrtpi_inv = micron::enable_if_t<micron::is_floating_point_v<T>, T>(0.564189583547756286948079451560772586L);
 
-template <typename T>
+template<typename T>
 inline constexpr T constant_ln2 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(0.693147180559945309417232121458176568L);
 
-template <typename T>
+template<typename T>
 inline constexpr T constant_ln10 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.302585092994045684017991454684364208L);
 
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt2 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.414213562373095048801688724209698079L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt3 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.732050807568877293527446341505872367L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt3_inv = micron::enable_if_t<micron::is_floating_point_v<T>, T>(0.577350269189625764509148780501957456L);
-template <typename T> inline constexpr T constant_sqrt4 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.0L);
-template <typename T>
+template<typename T> inline constexpr T constant_sqrt4 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.0L);
+template<typename T>
 inline constexpr T constant_sqrt5 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.236067977499789696409173668731276235L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt6 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.449489742783178098197284074705891392L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt7 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.645751311064590590501615753639260426L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt8 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(2.828427124746190097603377448419396157L);
-template <typename T> inline constexpr T constant_sqrt9 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.00L);
-template <typename T>
+template<typename T> inline constexpr T constant_sqrt9 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.00L);
+template<typename T>
 inline constexpr T constant_sqrt10 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.162277660168379331998893544432718534L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt11 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.316624790355399849114932736670686684L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt12 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.464101615137754587054892683011744734L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt13 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.605551275463989293119221267470495946L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt14 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.741657386773941385583748732316549302L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt15 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(3.872983346207416885179265399782399611L);
-template <typename T> inline constexpr T constant_sqrt16 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(4.00L);
-template <typename T>
+template<typename T> inline constexpr T constant_sqrt16 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(4.00L);
+template<typename T>
 inline constexpr T constant_sqrt17 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(4.123105625617660549821409855974077025L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt18 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(4.242640687119285146405066172629094236L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt19 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(4.358898943540673552236981983859615659L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_sqrt20 = micron::enable_if_t<micron::is_floating_point_v<T>, T>(4.472135954999579392818347337462552471L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_egamma = micron::enable_if_t<micron::is_floating_point_v<T>, T>(0.577215664901532860606512090082402431L);
-template <typename T>
+template<typename T>
 inline constexpr T constant_phi = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.618033988749894848204586834365638118L);
-template <typename T> constexpr T pi_t() noexcept;
+template<typename T> constexpr T pi_t() noexcept;
 
-template <>
+template<>
 constexpr float
 pi_t<float>() noexcept
 {
   return 3.14159265358979323846f;
 }
 
-template <>
+template<>
 constexpr double
 pi_t<double>() noexcept
 {
   return 3.14159265358979323846;
 }
 
-template <>
+template<>
 constexpr long double
 pi_t<long double>() noexcept
 {
   return 3.14159265358979323846L;
 }
 
-template <typename T> constexpr T default_eps() noexcept;
+template<typename T> constexpr T default_eps() noexcept;
 
 // gate for clang
 #if defined(__micron_compiler_gcc) && defined(__micron_arch_amd64) && __cplusplus >= 202300L
-template <>
+template<>
 constexpr _Float32
 default_eps<_Float32>() noexcept
 {
   return 1e-6f;
 }
 
-template <>
+template<>
 constexpr _Float64
 default_eps<_Float64>() noexcept
 {
@@ -115,21 +115,21 @@ default_eps<_Float64>() noexcept
 }
 #endif
 
-template <>
+template<>
 constexpr float
 default_eps<float>() noexcept
 {
   return 1e-6f;
 }
 
-template <>
+template<>
 constexpr double
 default_eps<double>() noexcept
 {
   return 1e-12;
 }
 
-template <>
+template<>
 constexpr long double
 default_eps<long double>() noexcept
 {
@@ -197,5 +197,5 @@ inline constexpr double sqrt20 = constant_sqrt20<double>;
 inline constexpr double inv_sqrt3 = constant_sqrt3_inv<double>;
 inline constexpr double egamma = constant_egamma<double>;
 inline constexpr double phi = constant_phi<double>;
-};     // namespace math
-};     // namespace micron
+};      // namespace math
+};      // namespace micron

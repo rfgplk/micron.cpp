@@ -23,14 +23,14 @@
 
 namespace micron
 {
-template <is_pointer_class T>
+template<is_pointer_class T>
 bool
 is_alive_ptr(const T &ptr)
 {
   return ptr.get() != nullptr;
 }
 
-template <typename T>
+template<typename T>
 bool
 is_valid_ptr(T &&)
 {
@@ -39,4 +39,4 @@ is_valid_ptr(T &&)
   }
   return false;
 }
-};     // namespace micron
+};      // namespace micron

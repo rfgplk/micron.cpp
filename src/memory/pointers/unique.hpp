@@ -14,7 +14,7 @@ namespace micron
 // unique_ptr is meant to always create a new instance of the object on creation and this is intentional
 // it's impossible to create a unique_pointer by passing a raw pointer into it without moving it
 // prevents two instances of the same pointer existing simult.
-template <class Type> class unique_pointer : private __internal_pointer_alloc<Type>
+template<class Type> class unique_pointer: private __internal_pointer_alloc<Type>
 {
   Type *internal_pointer;
 
@@ -29,13 +29,13 @@ public:
 
   ~unique_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer); };
 
-  unique_pointer(void) noexcept : internal_pointer(nullptr) {};
-  template <typename V>
+  unique_pointer(void) noexcept : internal_pointer(nullptr) { };
+  template<typename V>
     requires micron::is_null_pointer_v<V>
   unique_pointer(V) noexcept : internal_pointer(nullptr){};
 
   unique_pointer(Type *&&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
-  template <class... Args>
+  template<class... Args>
     requires(sizeof...(Args) > 0)
   unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
 
@@ -71,35 +71,35 @@ public:
     return *this;
   };
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator==(const O &o) const noexcept
   {
     return internal_pointer == o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>(const O &o) const noexcept
   {
     return internal_pointer > o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<(const O &o) const noexcept
   {
     return internal_pointer < o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator<=(const O &o) const noexcept
   {
     return internal_pointer <= o.get();
   }
 
-  template <is_pointer_class O>
+  template<is_pointer_class O>
   bool
   operator>=(const O &o) const noexcept
   {
@@ -197,7 +197,7 @@ public:
   };
 };
 
-template <class Type> class unique_pointer<Type[]> : private __internal_pointer_arralloc<Type>
+template<class Type> class unique_pointer<Type[]>: private __internal_pointer_arralloc<Type>
 {
   Type *internal_pointer;
 
@@ -212,12 +212,12 @@ public:
 
   ~unique_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer); };
 
-  unique_pointer(void) noexcept : internal_pointer(nullptr) {};
-  template <typename V>
+  unique_pointer(void) noexcept : internal_pointer(nullptr) { };
+  template<typename V>
     requires micron::is_null_pointer_v<V>
   unique_pointer(V) noexcept : internal_pointer(nullptr){};
 
-  template <typename... Args>
+  template<typename... Args>
     requires(sizeof...(Args) > 0)
   unique_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...))
   {
@@ -372,11 +372,11 @@ public:
   }
 };
 
-template <typename T>
+template<typename T>
 inline void
 swap(unique_pointer<T> &a, unique_pointer<T> &b) noexcept
 {
   a.swap(b);
 }
 
-};     // namespace micron
+};      // namespace micron

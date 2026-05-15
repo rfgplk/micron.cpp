@@ -28,7 +28,7 @@ make_uinput(void)
   return handle;
 }
 
-template <typename... Args>
+template<typename... Args>
   requires((micron::is_same_v<Args, byte> && ...))
 void
 set_events(const io::fd_t &handle, Args... args)
@@ -39,7 +39,7 @@ set_events(const io::fd_t &handle, Args... args)
   }
 }
 
-template <typename... Args>
+template<typename... Args>
   requires((micron::is_same_v<Args, byte> && ...))
 void
 set_keys(const io::fd_t &handle, Args... args)
@@ -72,5 +72,5 @@ start_device(const io::fd_t &handle, const char *name, u16 vendor, u16 product, 
   }
 }
 
-};     // namespace uxin
-};     // namespace micron
+};      // namespace uxin
+};      // namespace micron

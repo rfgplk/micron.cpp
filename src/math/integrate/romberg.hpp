@@ -22,7 +22,7 @@ namespace math
 namespace integrate
 {
 
-template <ieee754_floating F, callable_real<F> Fn>
+template<ieee754_floating F, callable_real<F> Fn>
 [[nodiscard]] inline F
 romberg(Fn f, F a, F b, F tol, usize max_levels = 12) noexcept
 {
@@ -59,6 +59,6 @@ romberg(Fn f, F a, F b, F tol, usize max_levels = 12) noexcept
   return best;
 }
 
-};     // namespace integrate
-};     // namespace math
-};     // namespace micron
+};      // namespace integrate
+};      // namespace math
+};      // namespace micron

@@ -11,20 +11,20 @@ namespace micron
 {
 // tokens are used similar to stop_tokens from the STL (in place of mutex)
 // used to signal whether an action should be taken, if it should, execute the callback
-template <typename R, typename... Args> using token_function = R (*)(Args...);
+template<typename R, typename... Args> using token_function = R (*)(Args...);
 
-template <typename R = void, typename T = micron::mutex *, typename A = void (micron::mutex::*)()> class token
+template<typename R = void, typename T = micron::mutex *, typename A = void (micron::mutex::*)()> class token
 {
   token_function<R, T, A> fptr;
   micron::mutex mtx;
   void (micron::mutex::*rmtx)();
 
 public:
-  ~token() {}
+  ~token() { }
 
-  token() : fptr(nullptr), mtx(), rmtx(nullptr) {}
+  token() : fptr(nullptr), mtx(), rmtx(nullptr) { }
 
-  token(token_function<R, T, A> f) : fptr(f), mtx(), rmtx(nullptr) {}
+  token(token_function<R, T, A> f) : fptr(f), mtx(), rmtx(nullptr) { }
 
   token(const token &) = delete;
   token(token &&) = delete;
@@ -43,4 +43,4 @@ public:
     return true;
   }
 };
-};     // namespace micron
+};      // namespace micron

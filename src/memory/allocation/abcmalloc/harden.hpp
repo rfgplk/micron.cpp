@@ -308,4 +308,4 @@ static_assert(!(__default_zero_on_alloc and __default_sanitize),
               "abcmalloc: __default_zero_on_alloc and __default_sanitize are mutually exclusive; "
               "zero fills with 0x00, sanitize fills with __default_sanitize_with_on_alloc; pick one");
 
-};     // namespace abc
+};      // namespace abc

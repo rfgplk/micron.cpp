@@ -14,7 +14,7 @@ namespace bits
 {
 constexpr int byte = 8;
 constexpr int _char = 8;
-};     // namespace bits
+};      // namespace bits
 
 #if __wordsize == 64
 #define __micron_long_bits 64
@@ -47,7 +47,7 @@ constexpr i32 i32bit = 2147483647;
 constexpr i64 i64bit = 9223372036854775807;
 constexpr f32 f32bit = 3.402823466e+38f;
 constexpr f64 f64bit = 1.79769313486231e+308;
-};     // namespace maximum
+};      // namespace maximum
 
 namespace minimum
 {
@@ -57,14 +57,14 @@ constexpr i32 i32bit = -2147483647 - 1;
 constexpr i64 i64bit = -9223372036854775807 - 1;
 constexpr f32 f32bit = -maximum::f32bit;
 constexpr f64 f64bit = -maximum::f64bit;
-};     // namespace minimum
+};      // namespace minimum
 
 constexpr f32 pi = 3.14159265359f;
 constexpr f32 half_pi = 1.5707963267f;
 constexpr f64 pi64 = 3.14159265359f;
 constexpr f64 half_pi64 = 1.5707963267f;
 
-template <class T> class numeric_limits
+template<class T> class numeric_limits
 {
 public:
   static constexpr bool is_specialized = false;
@@ -150,7 +150,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<bool>
+template<> class numeric_limits<bool>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -236,7 +236,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<char>
+template<> class numeric_limits<char>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -322,7 +322,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<signed char>
+template<> class numeric_limits<signed char>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -408,7 +408,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<unsigned char>
+template<> class numeric_limits<unsigned char>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -494,7 +494,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<char8_t>
+template<> class numeric_limits<char8_t>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -580,7 +580,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<char16_t>
+template<> class numeric_limits<char16_t>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -666,7 +666,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<char32_t>
+template<> class numeric_limits<char32_t>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -752,7 +752,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<wchar_t>
+template<> class numeric_limits<wchar_t>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -838,7 +838,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<short>
+template<> class numeric_limits<short>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -924,7 +924,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<unsigned short>
+template<> class numeric_limits<unsigned short>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1010,7 +1010,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<int>
+template<> class numeric_limits<int>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1096,7 +1096,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<unsigned int>
+template<> class numeric_limits<unsigned int>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1182,7 +1182,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<long>
+template<> class numeric_limits<long>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1268,7 +1268,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<unsigned long>
+template<> class numeric_limits<unsigned long>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1354,7 +1354,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<long long>
+template<> class numeric_limits<long long>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1440,7 +1440,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<unsigned long long>
+template<> class numeric_limits<unsigned long long>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1526,7 +1526,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<float>
+template<> class numeric_limits<float>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1612,7 +1612,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<double>
+template<> class numeric_limits<double>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1698,7 +1698,7 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <> class numeric_limits<long double>
+template<> class numeric_limits<long double>
 {
 public:
   static constexpr bool is_specialized = true;
@@ -1785,16 +1785,16 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
-template <class T> class numeric_limits<const T> : public numeric_limits<T>
+template<class T> class numeric_limits<const T>: public numeric_limits<T>
 {
 };
 
-template <class T> class numeric_limits<volatile T> : public numeric_limits<T>
+template<class T> class numeric_limits<volatile T>: public numeric_limits<T>
 {
 };
 
-template <class T> class numeric_limits<const volatile T> : public numeric_limits<T>
+template<class T> class numeric_limits<const volatile T>: public numeric_limits<T>
 {
 };
 
-};     // namespace micron
+};      // namespace micron

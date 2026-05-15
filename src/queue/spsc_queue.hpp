@@ -25,8 +25,8 @@ namespace micron
 
 inline constexpr u64 __cache_line = cache_line_size();
 
-template <is_movable_object T, usize N, class Alloc = micron::allocator_serial<>>
-class spsc_queue : public __mutable_memory_resource_move_only<T, Alloc>
+template<is_movable_object T, usize N, class Alloc = micron::allocator_serial<>>
+class spsc_queue: public __mutable_memory_resource_move_only<T, Alloc>
 {
   constexpr static usize
   __next_pow2(usize n)
@@ -72,7 +72,7 @@ public:
 
   ~spsc_queue() { clear(); }
 
-  spsc_queue() : __mem(__spsc_capacity), head(0), tail(0), cached_head(0), cached_tail(0) {}
+  spsc_queue() : __mem(__spsc_capacity), head(0), tail(0), cached_head(0), cached_tail(0) { }
 
   spsc_queue(const std::initializer_list<T> &lst) : spsc_queue()
   {
@@ -210,7 +210,7 @@ public:
     return true;
   }
 
-  template <typename... Args>
+  template<typename... Args>
   __attribute__((always_inline)) inline bool
   emplace(Args &&...args)
   {
@@ -379,4 +379,4 @@ public:
   }
 };
 
-};     // namespace micron
+};      // namespace micron

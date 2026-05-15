@@ -14,7 +14,7 @@ using sb::test_case;
 namespace m = micron::math;
 namespace mg = micron::math::geometry;
 
-template <typename F>
+template<typename F>
 static bool
 approx(F a, F b, F tol) noexcept
 {
@@ -23,7 +23,7 @@ approx(F a, F b, F tol) noexcept
   return d <= tol;
 }
 
-template <typename F, usize Dim>
+template<typename F, usize Dim>
 static bool
 vec_close(const m::vec<F, Dim> &a, const m::vec<F, Dim> &b, F tol) noexcept
 {
