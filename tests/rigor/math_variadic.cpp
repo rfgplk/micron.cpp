@@ -151,5 +151,5 @@ main()
   end_test_case();
 
   print("=== variadic ok ===");
-  return 0;
+  return 1;
 }

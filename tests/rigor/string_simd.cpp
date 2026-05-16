@@ -305,5 +305,5 @@ main(int, char **)
   end_test_case();
 
   sb::print("=== ALL STRING SIMD TESTS PASSED ===");
-  return 0;
+  return 1;
 }

@@ -900,4 +900,33 @@ min(const T *first, const T *end) noexcept
   return min_v;
 }
 
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, typename M::mapped_type &>
+constexpr M &
+for_each(M &m, Fn fn) noexcept
+{
+  __impl::visit_kv(m, fn);
+  return m;
+}
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+constexpr const M &
+for_each(const M &m, Fn fn) noexcept
+{
+  __impl::visit_kv(m, fn);
+  return m;
+}
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+           && micron::convertible_to<micron::invoke_result_t<Fn, const typename M::key_type &, const typename M::mapped_type &>,
+                                     typename M::mapped_type>
+constexpr M &
+transform(M &m, Fn fn) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &k, auto &v) { v = fn(k, v); });
+  return m;
+}
+
 };      // namespace micron

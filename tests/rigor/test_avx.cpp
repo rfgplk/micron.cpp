@@ -162,5 +162,5 @@ main()
   test_broadcast();
   test_test_family();
   print("[TEST AVX OK]");
-  return 0;
+  return 1;
 }

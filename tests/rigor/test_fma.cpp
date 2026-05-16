@@ -71,5 +71,5 @@ main()
   end_test_case();
 
   print("[TEST FMA OK]");
-  return 0;
+  return 1;
 }

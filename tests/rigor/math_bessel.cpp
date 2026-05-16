@@ -84,5 +84,5 @@ main()
   end_test_case();
 
   print("=== bessel ok ===");
-  return 0;
+  return 1;
 }

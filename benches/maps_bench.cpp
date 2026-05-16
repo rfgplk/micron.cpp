@@ -50,13 +50,18 @@
 #include "../src/io/stdout.hpp"
 #include "../src/linux/sys/sched.hpp"
 #include "../src/maps/b_map.hpp"
+#include "../src/maps/conmap.hpp"
+#include "../src/maps/heap_swiss.hpp"
 #include "../src/maps/hopscotch.hpp"
 #include "../src/maps/immutable.hpp"
 #include "../src/maps/itable.hpp"
+#include "../src/maps/pmap.hpp"
+#include "../src/maps/rb_map.hpp"
 #include "../src/maps/robin.hpp"
 #include "../src/maps/swiss.hpp"
 #include "../src/std.hpp"
 #include "../src/string/string.hpp"
+#include "../src/trees/art.hpp"
 
 namespace
 {
@@ -1002,6 +1007,293 @@ struct itable_trait_u64 {
   }
 };
 
+struct heap_swiss_trait_u64 {
+  using map_t = micron::heap_swiss_map<u64, u64>;
+  static constexpr bool has_subscript = true;
+  static constexpr bool has_emplace = true;
+  static constexpr bool has_copy = true;
+
+  static map_t
+  make_empty(u64 cap)
+  {
+    return map_t{ cap * 2 };
+  }
+
+  static void
+  insert(map_t &m, u64 k, u64 v)
+  {
+    m.insert(k, u64{ v });
+  }
+
+  static u64 *
+  find(map_t &m, u64 k)
+  {
+    return m.find(k);
+  }
+
+  static bool
+  contains(const map_t &m, u64 k)
+  {
+    return m.contains(k);
+  }
+
+  static u64
+  subscript(map_t &m, u64 k)
+  {
+    return m[k];
+  }
+
+  static void
+  emplace(map_t &m, u64 k, u64 v)
+  {
+    m.emplace(k, u64{ v });
+  }
+
+  static void
+  erase(map_t &m, u64 k)
+  {
+    m.erase(k);
+  }
+
+  static void
+  clear(map_t &m)
+  {
+    m.clear();
+  }
+
+  static u64
+  iterate_sum(map_t &m)
+  {
+    u64 acc = 0;
+    m.for_each([&](const u64 &, const u64 &v) { acc += v; });
+    return acc;
+  }
+};
+
+struct conmap_trait_u64 {
+  using map_t = micron::conmap<u64, u64>;
+  static constexpr bool has_subscript = false;
+  static constexpr bool has_emplace = true;
+  static constexpr bool has_copy = false;
+
+  static map_t
+  make_empty(u64 cap)
+  {
+    return map_t{ cap * 4 };
+  }
+
+  static void
+  insert(map_t &m, u64 k, u64 v)
+  {
+    m.insert(k, u64{ v });
+  }
+
+  static u64 *
+  find(map_t &m, u64 k)
+  {
+    static thread_local u64 cache;
+    return m.find(k, cache) ? &cache : nullptr;
+  }
+
+  static bool
+  contains(const map_t &m, u64 k)
+  {
+    return m.contains(k);
+  }
+
+  static void
+  emplace(map_t &m, u64 k, u64 v)
+  {
+    m.emplace(k, u64{ v });
+  }
+
+  static void
+  erase(map_t &m, u64 k)
+  {
+    m.erase(k);
+  }
+
+  static void
+  clear(map_t &m)
+  {
+    m.clear();
+  }
+
+  static u64
+  iterate_sum(map_t &m)
+  {
+    u64 acc = 0;
+    m.for_each([&](const u64 &, const u64 &v) { acc += v; });
+    return acc;
+  }
+};
+
+struct rb_map_trait_u64 {
+  using map_t = micron::rb_map<u64, u64>;
+  static constexpr bool has_subscript = true;
+  static constexpr bool has_emplace = true;
+  static constexpr bool has_copy = false;
+
+  static map_t
+  make_empty(u64 cap)
+  {
+    (void)cap;
+    return map_t{};
+  }
+
+  static void
+  insert(map_t &m, u64 k, u64 v)
+  {
+    m.insert(k, u64{ v });
+  }
+
+  static u64 *
+  find(map_t &m, u64 k)
+  {
+    return m.find(k);
+  }
+
+  static bool
+  contains(const map_t &m, u64 k)
+  {
+    return m.contains(k);
+  }
+
+  static u64
+  subscript(map_t &m, u64 k)
+  {
+    return m[k];
+  }
+
+  static void
+  emplace(map_t &m, u64 k, u64 v)
+  {
+    m.emplace(k, u64{ v });
+  }
+
+  static void
+  erase(map_t &m, u64 k)
+  {
+    m.erase(k);
+  }
+
+  static void
+  clear(map_t &m)
+  {
+    m.clear();
+  }
+
+  static u64
+  iterate_sum(map_t &m)
+  {
+    u64 acc = 0;
+    m.for_each([&](const u64 &, const u64 &v) { acc += v; });
+    return acc;
+  }
+};
+
+struct art_trait_u64 {
+  using map_t = micron::art<u64, u64>;
+  static constexpr bool has_subscript = false;
+  static constexpr bool has_emplace = true;
+  static constexpr bool has_copy = false;
+
+  static map_t
+  make_empty(u64)
+  {
+    return map_t{};
+  }
+
+  static void
+  insert(map_t &m, u64 k, u64 v)
+  {
+    m.insert_or_assign(k, u64{ v });
+  }
+
+  static u64 *
+  find(map_t &m, u64 k)
+  {
+    return m.find(k);
+  }
+
+  static bool
+  contains(const map_t &m, u64 k)
+  {
+    return m.contains(k);
+  }
+
+  static void
+  emplace(map_t &m, u64 k, u64 v)
+  {
+    m.emplace(k, u64{ v });
+  }
+
+  static void
+  erase(map_t &m, u64 k)
+  {
+    m.erase(k);
+  }
+
+  static void
+  clear(map_t &m)
+  {
+    m.clear();
+  }
+
+  static u64
+  iterate_sum(map_t &m)
+  {
+    u64 acc = 0;
+    m.for_each([&](const u64 &, const u64 &v) { acc += v; });
+    return acc;
+  }
+};
+
+struct pmap_trait_u64 {
+  using map_t = micron::pmap<u64, u64>;
+  static constexpr bool has_iter = true;
+  static constexpr bool has_update = false;
+
+  static map_t
+  insert(const map_t &m, u64 k, u64 v)
+  {
+    return m.insert(k, u64{ v });
+  }
+
+  static const u64 *
+  find(const map_t &m, u64 k)
+  {
+    return m.find(k);
+  }
+
+  static bool
+  contains(const map_t &m, u64 k)
+  {
+    return m.contains(k);
+  }
+
+  static u64
+  subscript(const map_t &m, u64 k)
+  {
+    const u64 *p = m.find(k);
+    return p ? *p : 0;
+  }
+
+  static map_t
+  erase(const map_t &m, u64 k)
+  {
+    return m.erase(k);
+  }
+
+  static u64
+  iterate_sum(const map_t &m)
+  {
+    u64 acc = 0;
+    m.for_each([&](const u64 &, const u64 &v) { acc += v; });
+    return acc;
+  }
+};
+
 [[gnu::always_inline]] inline void
 key_str(char *buf, u64 i) noexcept
 {
@@ -1323,6 +1615,18 @@ main(void)
   print_header("robin_map<u64,u64>");
   for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename robin_trait_u64::map_t, robin_trait_u64>("robin", N);
 
+  print_header("heap_swiss_map<u64,u64>");
+  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename heap_swiss_trait_u64::map_t, heap_swiss_trait_u64>("heap-swiss", N);
+
+  print_header("conmap<u64,u64>");
+  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename conmap_trait_u64::map_t, conmap_trait_u64>("conmap", N);
+
+  print_header("rb_map<u64,u64>");
+  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename rb_map_trait_u64::map_t, rb_map_trait_u64>("rb_map", N);
+
+  print_header("art<u64,u64>");
+  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename art_trait_u64::map_t, art_trait_u64>("art", N);
+
   print_header("btree_map<u64,u64>");
   for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename btree_trait_u64::map_t, btree_trait_u64>("btree", N);
 
@@ -1338,6 +1642,9 @@ main(void)
 
   print_header("immutable_table<u64,u64>");
   for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename itable_trait_u64::map_t, itable_trait_u64>("itable", N);
+
+  print_header("pmap<u64,u64>");
+  for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename pmap_trait_u64::map_t, pmap_trait_u64>("pmap", N);
 
   constexpr u64 HSTR_SIZES[] = { 64, 256 };
   print_header("robin_map<hstring,i32>");

@@ -413,5 +413,5 @@ main()
   end_test_case();
 
   print("=== MATH::CR TESTS DONE ===");
-  return 0;
+  return 1;
 }

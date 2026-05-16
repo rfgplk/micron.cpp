@@ -124,19 +124,24 @@ payne_hanek(f64 x, f64 *r) noexcept
   const u64 m = (b & TR::mant_mask) | TR::implicit_one;
   const int e = int((b & TR::exp_mask) >> TR::mant_bits) - TR::exp_bias;
 
-  const int k0 = (e + 24) / 24;
+  // NOTE: acc bit J represents weight 2^(J-120) of x*2/pi; bits 120-121 hold q (mod 4); bits 0..119 hold the fractional part
+  const int idx_start = (e >= 83) ? ((e - 83 + 23) / 24) : 0;
+  const int shift_max = e + 44 - 24 * idx_start;
+
   u128 acc = u128{ 0 };
-  constexpr int anchor = 119;
-  for ( int k = 0; k < 6; ++k ) {
-    const int idx = k0 + k;
-    if ( idx < 0 || idx >= 66 ) continue;
-    const u128 prod = u128{ m } * u128{ u64(ipio2[idx]) };      // 77-bit
-    const int shift = anchor - 24 * k - 76;
+  for ( int k = 0; k < 9; ++k ) {
+    const int idx = idx_start + k;
+    if ( idx >= 66 ) break;
+    const u128 prod = u128{ m } * u128{ u64(ipio2[idx]) };      // up to 77-bit
+    const int shift = shift_max - 24 * k;
     if ( shift >= 0 && shift < 128 ) {
       acc = acc + (prod << shift);
-    } else if ( shift > -128 && shift < 0 ) {
+    } else if ( shift < 0 && shift > -77 ) {
       acc = acc + (prod >> (-shift));
+    } else if ( shift <= -77 ) {
+      break;      // entire prod below precision floor; further chunks also below
     }
+    // shift >= 128 cannot happen: shift_max <= 127 by construction of idx_start
   }
 
   // bits 120 through 127 of acc hold the integer part

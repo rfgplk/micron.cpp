@@ -183,5 +183,5 @@ main()
   end_test_case();
 
   print("=== CURVE_ND TESTS PASSED ===");
-  return 0;
+  return 1;
 }

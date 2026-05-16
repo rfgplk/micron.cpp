@@ -254,5 +254,5 @@ main()
   end_test_case();
 
   print("=== MATH::KERN TESTS PASSED ===");
-  return 0;
+  return 1;
 }

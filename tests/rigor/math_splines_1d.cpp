@@ -272,5 +272,5 @@ main()
   end_test_case();
 
   print("=== SPLINES 1-D TESTS PASSED ===");
-  return 0;
+  return 1;
 }

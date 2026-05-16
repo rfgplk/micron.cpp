@@ -218,5 +218,5 @@ main()
   end_test_case();
 
   print("=== blas L3 ok ===");
-  return 0;
+  return 1;
 }

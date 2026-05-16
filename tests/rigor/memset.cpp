@@ -329,5 +329,5 @@ main(void)
   sb::end_test_case();
 
   sb::print("=== ALL TESTS PASSED ===");
-  return 0;
+  return 1;
 }

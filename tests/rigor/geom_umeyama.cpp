@@ -94,5 +94,5 @@ main()
   end_test_case();
 
   sb::print("=== GEOM_UMEYAMA PASSED ===");
-  return 0;
+  return 1;
 }

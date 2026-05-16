@@ -140,5 +140,5 @@ main()
   end_test_case();
 
   print("=== numeric ok ===");
-  return 0;
+  return 1;
 }

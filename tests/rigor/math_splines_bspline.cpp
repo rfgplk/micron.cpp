@@ -240,5 +240,5 @@ main()
   end_test_case();
 
   print("=== BSPLINE TESTS PASSED ===");
-  return 0;
+  return 1;
 }

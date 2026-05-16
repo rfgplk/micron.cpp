@@ -150,5 +150,5 @@ main()
 #endif
 
   print("=== cordic ok ===");
-  return 0;
+  return 1;
 }

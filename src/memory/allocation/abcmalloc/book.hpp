@@ -201,6 +201,13 @@ public:
     return !__book.is_tombstoned(_p);
   }
 
+  // header-read fast path used by the per-class free cache
+  usize
+  block_size_of(byte *ptr) const
+  {
+    return __book.block_size(ptr);
+  }
+
   usize
   available() const
   {

@@ -617,7 +617,7 @@ public:
   find(const K &k) const
   {
     const __node *n = __find_impl(__root, k);
-    return n ? &n->value : nullptr;
+    return n ? micron::addressof(n->value) : nullptr;
   }
 
   bool

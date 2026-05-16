@@ -117,5 +117,5 @@ main()
   end_test_case();
 
   print("=== reduce ok ===");
-  return 0;
+  return 1;
 }

@@ -20,19 +20,12 @@ class rb_node
 public:
   enum class kind_t { empty, leaf, inner };
 
-private:
   T data;
   RBColor color;
   rb_node *parent;
   rb_node *left;
   rb_node *right;
   kind_t kind;
-
-  template<typename, typename> friend class rb_tree;
-
-public:
-  static constexpr auto bits = B;
-  static constexpr auto bits_leaf = BL;
 
   rb_node() = delete;
 
@@ -400,6 +393,57 @@ private:
     destroy_node(x);
   }
 
+  void
+  __erase_node(node *z) noexcept
+  {
+    node *y = z;
+    RBColor y_original_color = y->color;
+    node *x = nullptr;
+    node *x_parent = nullptr;
+
+    if ( !z->left ) {
+      x = z->right;
+      x_parent = z->parent;
+      transplant(z, z->right);
+    } else if ( !z->right ) {
+      x = z->left;
+      x_parent = z->parent;
+      transplant(z, z->left);
+    } else {
+      y = minimum(z->right);
+      y_original_color = y->color;
+      x = y->right;
+      if ( y->parent == z ) {
+        if ( x ) x->parent = y;
+        x_parent = y;
+      } else {
+        transplant(y, y->right);
+        y->right = z->right;
+        if ( y->right ) y->right->parent = y;
+        x_parent = y->parent;
+      }
+      transplant(z, y);
+      y->left = z->left;
+      if ( y->left ) y->left->parent = y;
+      y->color = z->color;
+    }
+
+    destroy_node(z);
+    --size_;
+
+    if ( y_original_color == RBColor::BLACK ) erase_fixup(x, x_parent);
+  }
+
+  template<class NodeP, class Fn>
+  static void
+  __for_each_inorder(NodeP x, Fn &fn)
+  {
+    if ( !x ) return;
+    __for_each_inorder(x->left, fn);
+    fn(x->data);
+    __for_each_inorder(x->right, fn);
+  }
+
 public:
   rb_tree() : root_(nullptr), size_(0) { }
 
@@ -585,44 +629,31 @@ public:
   {
     node *z = find_node(key);
     if ( !z ) return false;
-
-    node *y = z;
-    RBColor y_original_color = y->color;
-    node *x = nullptr;
-    node *x_parent = nullptr;
-
-    if ( !z->left ) {
-      x = z->right;
-      x_parent = z->parent;
-      transplant(z, z->right);
-    } else if ( !z->right ) {
-      x = z->left;
-      x_parent = z->parent;
-      transplant(z, z->left);
-    } else {
-      y = minimum(z->right);
-      y_original_color = y->color;
-      x = y->right;
-      if ( y->parent == z ) {
-        if ( x ) x->parent = y;
-        x_parent = y;
-      } else {
-        transplant(y, y->right);
-        y->right = z->right;
-        if ( y->right ) y->right->parent = y;
-        x_parent = y->parent;
-      }
-      transplant(z, y);
-      y->left = z->left;
-      if ( y->left ) y->left->parent = y;
-      y->color = z->color;
-    }
-
-    destroy_node(z);
-    --size_;
-
-    if ( y_original_color == RBColor::BLACK ) erase_fixup(x, x_parent);
+    __erase_node(z);
     return true;
+  }
+
+  T
+  extract_min()
+  {
+    node *z = minimum(root_);
+    T data = micron::move(z->data);
+    __erase_node(z);
+    return data;
+  }
+
+  template<class Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    __for_each_inorder(root_, fn);
+  }
+
+  template<class Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    __for_each_inorder(root_, fn);
   }
 
   void

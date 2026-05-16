@@ -39,6 +39,7 @@
 #include "hooks.hpp"
 #include "oom.hpp"
 #include "stats.hpp"
+#include "tcache.hpp"
 
 #include "printing.hpp"
 
@@ -141,10 +142,11 @@ class __arena: private cache
     node<T> *nxt;
   };
 
-  template<typename sheet_type, u32 MaxSheets = 64> struct alignas(64) __tier {
+  template<typename sheet_type, u32 MaxSheets = 64, u32 CacheSlots = 0> struct alignas(64) __tier {
     static constexpr u32 __max_sheets = MaxSheets;
     static constexpr u32 __no_hit = __max_sheets;
     static constexpr u32 __detail_words = (MaxSheets + 63) / 64;
+    static constexpr u32 __cache_slots = CacheSlots;
 
     static_assert(MaxSheets > 0, "__tier MaxSheets must be > 0");
 
@@ -162,6 +164,10 @@ class __arena: private cache
     u64 __space_mask[__detail_words];      // bit pos set iff __idx[pos] has space
     u32 __last_hit;
     u32 __dealloc_count;
+
+    // linear-scan LIFO per class tcache
+    // newest-first probe: round-trip patterns find the just-pushed entry on iter 1 and the [[likely]] hint keeps branch-miss rate at ~0%
+    __tier_tcache<CacheSlots> __cache;
 
     // multi-word bitmap helpers
     inline __attribute__((always_inline)) bool
@@ -383,14 +389,14 @@ class __arena: private cache
   sheet<__class_arena_internal> _arena_memory;
 
   // tlsf-backed tiers (precise + small)
-  __tier<tlsf_sheet<__class_precise>, __max_sheets_precise> _precise;
-  __tier<tlsf_sheet<__class_small>, __max_sheets_small> _small;
+  __tier<tlsf_sheet<__class_precise>, __max_sheets_precise, __cache_slots_precise> _precise;
+  __tier<tlsf_sheet<__class_small>, __max_sheets_small, __cache_slots_small> _small;
 
   // buddy-backed tiers
   __tier<sheet<__class_arena_internal>, __max_sheets_arena_internal> _arena_tier;      // internal metadata
-  __tier<sheet<__class_medium>, __max_sheets_medium> _medium;
-  __tier<sheet<__class_large>, __max_sheets_large> _large;
-  __tier<sheet<__class_huge>, __max_sheets_huge> _huge;
+  __tier<sheet<__class_medium>, __max_sheets_medium, __cache_slots_medium> _medium;
+  __tier<sheet<__class_large>, __max_sheets_large, __cache_slots_large> _large;
+  __tier<sheet<__class_huge>, __max_sheets_huge, __cache_slots_huge> _huge;
 
   void
   __reload_arena_buf(void)
@@ -500,9 +506,9 @@ class __arena: private cache
     __debug_print("__expand_arena_tier(): new arena node allocated, size: ", sz);
   }
 
-  template<u64 Sz, u32 MS>
+  template<u64 Sz, u32 MS, u32 CS>
   void
-  __init_tlsf(__tier<tlsf_sheet<Sz>, MS> &tier, usize n)
+  __init_tlsf(__tier<tlsf_sheet<Sz>, MS, CS> &tier, usize n)
   {
     if ( n == __default_magic_size ) n = __calculate_space_small(Sz);
     n = __page_round(n);
@@ -525,9 +531,9 @@ class __arena: private cache
     __debug_print("__init_tlsf(): initialised successfully for class: ", Sz);
   }
 
-  template<u64 Sz, u32 MS>
+  template<u64 Sz, u32 MS, u32 CS>
   inline __attribute__((always_inline)) bool
-  __expand_tlsf(__tier<tlsf_sheet<Sz>, MS> &tier, usize sz)
+  __expand_tlsf(__tier<tlsf_sheet<Sz>, MS, CS> &tier, usize sz)
   {
     __debug_print("__expand_tlsf(): class size: ", Sz);
     __debug_print("__expand_tlsf(): requested backing region: ", sz);
@@ -567,9 +573,9 @@ class __arena: private cache
     return true;
   }
 
-  template<u64 Sz, u32 MS>
+  template<u64 Sz, u32 MS, u32 CS>
   void
-  __init_buddy(__tier<sheet<Sz>, MS> &tier, usize n = __default_magic_size)
+  __init_buddy(__tier<sheet<Sz>, MS, CS> &tier, usize n = __default_magic_size)
   {
     if ( n == __default_magic_size ) {
       // pick the tier's own curve when the caller can't supply a sysinfo-derived share
@@ -601,9 +607,9 @@ class __arena: private cache
     __debug_print("__init_buddy(): initialised successfully for class: ", Sz);
   }
 
-  template<u64 Sz, u32 MS>
+  template<u64 Sz, u32 MS, u32 CS>
   inline __attribute__((always_inline)) bool
-  __expand_buddy(__tier<sheet<Sz>, MS> &tier, usize sz)
+  __expand_buddy(__tier<sheet<Sz>, MS, CS> &tier, usize sz)
   {
     __debug_print("__expand_buddy(): class size: ", Sz);
     __debug_print("__expand_buddy(): requested expansion size: ", sz);
@@ -827,26 +833,46 @@ class __arena: private cache
     memory.len = user_sz;
   }
 
+  template<typename TierT>
+  inline __attribute__((always_inline)) micron::__chunk<byte>
+  __cache_pop_or_insert(TierT &tier, const usize sz)
+  {
+    // if caching is disabled behavior is identical to without it, comped out
+    if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder ) {
+      i32 hit;
+      if constexpr ( __default_redzone ) {
+        hit = tier.__cache.probe(static_cast<u32>(sz));
+      } else {
+        hit = tier.__cache.probe_ge(static_cast<u32>(sz));
+      }
+      if ( hit >= 0 ) [[likely]] {
+        __tcache_chunk c = tier.__cache.pop_at(static_cast<u32>(hit));
+        return { c.ptr, static_cast<usize>(c.size) };
+      }
+    }
+    return __bucket_insert(tier, sz);
+  }
+
   hot_fn(micron::__chunk<byte>) __vmap_alloc(const usize sz)
   {
     if ( sz <= __class_small ) {
       __debug_print("__vmap_alloc(): tier=precise, sz: ", sz);
-      return __bucket_insert(_precise, sz);
+      return __cache_pop_or_insert(_precise, sz);
     }
     if ( sz < __class_medium ) {
       __debug_print("__vmap_alloc(): tier=small, sz: ", sz);
-      return __bucket_insert(_small, sz);
+      return __cache_pop_or_insert(_small, sz);
     }
     if ( sz <= __class_large ) {
       __debug_print("__vmap_alloc(): tier=medium, sz: ", sz);
-      return __bucket_insert(_medium, sz);
+      return __cache_pop_or_insert(_medium, sz);
     }
     if ( sz <= __class_huge ) {
       __debug_print("__vmap_alloc(): tier=large, sz: ", sz);
-      return __bucket_insert(_large, sz);
+      return __cache_pop_or_insert(_large, sz);
     }
     __debug_print("__vmap_alloc(): tier=huge, sz: ", sz);
-    return __bucket_insert(_huge, sz);
+    return __cache_pop_or_insert(_huge, sz);
   }
 
   micron::__chunk<byte>
@@ -884,9 +910,9 @@ class __arena: private cache
     return false;
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   void
-  __sweep_tier_tombstones(__tier<sheet_type, MS> &tier)
+  __sweep_tier_tombstones(__tier<sheet_type, MS, CS> &tier)
   {
     __debug_print("__sweep_tier_tombstones(): sweeping tier, sheet count: ", tier.__count);
     tier.__dealloc_count = 0;
@@ -909,9 +935,9 @@ class __arena: private cache
     }
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   inline __attribute__((always_inline)) void
-  __try_reclaim_empty(__tier<sheet_type, MS> &tier, i32 range_idx, node<sheet_type> *nd)
+  __try_reclaim_empty(__tier<sheet_type, MS, CS> &tier, i32 range_idx, node<sheet_type> *nd)
   {
     if ( nd->nd->used() == 0 and nd != &tier.head ) {
       __debug_print("__try_reclaim_empty(): sheet fully drained, unlinking and resetting", 0);
@@ -922,9 +948,9 @@ class __arena: private cache
     }
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   inline __attribute__((always_inline)) void
-  __tombstone_accounting(__tier<sheet_type, MS> &tier, i32 range_idx, node<sheet_type> *nd)
+  __tombstone_accounting(__tier<sheet_type, MS, CS> &tier, i32 range_idx, node<sheet_type> *nd)
   {
     if constexpr ( __default_tombstone_sweep_interval == 0 ) {
       auto &sh = *nd->nd;
@@ -942,10 +968,9 @@ class __arena: private cache
     } else {
       // immediate reclaim: if this specific sheet is fully drained (used == 0)
       // AND tombstoned bytes occupy >= 50% of the sheet's total capacity,
-      // reclaim now rather than waiting for the batch sweep. prevents sheet
-      // accumulation under monotonically-growing size patterns while preserving
-      // mostly-pristine sheets that still have reusable free space.
-      // uses the same condition as the batch sweep and the interval==0 path.
+      // reclaim now rather than waiting for the batch sweep
+      // prevents sheet accumulation under monotonically-growing size patterns while preserving
+      // mostly-pristine sheets that still have reusable free space
       if ( nd != &tier.head and nd->nd->used() == 0 ) {
         usize ts = nd->nd->tombstoned();
         usize ft = nd->nd->ftotal();
@@ -964,9 +989,9 @@ class __arena: private cache
     }
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   bool
-  __tier_remove(__tier<sheet_type, MS> &tier, i32 range_idx, const micron::__chunk<byte> &memory)
+  __tier_remove(__tier<sheet_type, MS, CS> &tier, i32 range_idx, const micron::__chunk<byte> &memory)
   {
     auto *nd = tier.__idx[range_idx].nd;
     auto &sh = *nd->nd;
@@ -993,13 +1018,22 @@ class __arena: private cache
     }
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   bool
-  __tier_remove_at(__tier<sheet_type, MS> &tier, i32 range_idx, byte *addr)
+  __tier_remove_at(__tier<sheet_type, MS, CS> &tier, i32 range_idx, byte *addr)
   {
     auto *nd = tier.__idx[range_idx].nd;
     auto &sh = *nd->nd;
     __debug_print_addr("__tier_remove_at(): found in sheet at addr: ", addr);
+
+    // sizeless cache-push
+    if constexpr ( __default_per_class_free_cache && CS > 0 && !__default_launder && !__default_redzone ) {
+      const usize bsz = sh.block_size_of(addr);
+      if ( bsz > __hdr_offset ) {
+        if ( tier.__cache.push(addr, static_cast<u32>(bsz - __hdr_offset)) ) [[likely]]
+          return true;
+      }
+    }
 
     if constexpr ( !__default_tombstone ) {
       if ( sh.try_unmark_no_size(addr) ) {
@@ -1022,9 +1056,9 @@ class __arena: private cache
     }
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   bool
-  __tier_tombstone_at(__tier<sheet_type, MS> &tier, i32 range_idx, byte *addr)
+  __tier_tombstone_at(__tier<sheet_type, MS, CS> &tier, i32 range_idx, byte *addr)
   {
     auto *nd = tier.__idx[range_idx].nd;
     auto &sh = *nd->nd;
@@ -1037,9 +1071,9 @@ class __arena: private cache
     return true;
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   bool
-  __tier_tombstone(__tier<sheet_type, MS> &tier, i32 range_idx, const micron::__chunk<byte> &memory)
+  __tier_tombstone(__tier<sheet_type, MS, CS> &tier, i32 range_idx, const micron::__chunk<byte> &memory)
   {
     auto *nd = tier.__idx[range_idx].nd;
     auto &sh = *nd->nd;
@@ -1050,6 +1084,17 @@ class __arena: private cache
     __debug_print("__tier_tombstone(): tombstone set", 0);
     __tombstone_accounting(tier, range_idx, nd);
     return true;
+  }
+
+  template<typename TierT>
+  inline __attribute__((always_inline)) bool
+  __cache_push_or_remove(TierT &tier, i32 range_idx, const micron::__chunk<byte> &chunk)
+  {
+    if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder ) {
+      if ( tier.__cache.push(chunk.ptr, static_cast<u32>(chunk.len)) ) [[likely]]
+        return true;
+    }
+    return __tier_remove(tier, range_idx, chunk);
   }
 
   bool
@@ -1063,7 +1108,7 @@ class __arena: private cache
           return fail_state();
         }
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
-        return __tier_remove(_precise, idx, adj);
+        return __cache_push_or_remove(_precise, idx, adj);
       }
       if ( (idx = _small.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
         if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
@@ -1071,15 +1116,15 @@ class __arena: private cache
           return fail_state();
         }
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
-        return __tier_remove(_small, idx, adj);
+        return __cache_push_or_remove(_small, idx, adj);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_remove(_medium, idx, m);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_remove(_large, idx, m);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_remove(_huge, idx, m);
+      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_medium, idx, m);
+      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_large, idx, m);
+      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_huge, idx, m);
       __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
       return false;
     }
-    bool ok = __dispatch_addr(reinterpret_cast<addr_t *>(m.ptr), [&](auto &tier, i32 idx) { return __tier_remove(tier, idx, m); });
+    bool ok = __dispatch_addr(reinterpret_cast<addr_t *>(m.ptr), [&](auto &tier, i32 idx) { return __cache_push_or_remove(tier, idx, m); });
     if ( !ok ) [[unlikely]]
       __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
     return ok;
@@ -1184,6 +1229,8 @@ class __arena: private cache
   {
     return __dispatch_addr(reinterpret_cast<addr_t *>(memory.ptr), [&](auto &tier, i32 idx) {
       __debug_print_addr("__vmap_freeze(): freezing sheet containing addr: ", memory.ptr);
+      // drop any cached blocks belonging to this sheet
+      tier.__cache.invalidate_range(reinterpret_cast<const byte *>(tier.__idx[idx].lo), reinterpret_cast<const byte *>(tier.__idx[idx].hi));
       bool ok = tier.__idx[idx].nd->nd->freeze();
       __debug_print("__vmap_freeze(): freeze result: ", (usize)ok);
       return ok;
@@ -1195,15 +1242,16 @@ class __arena: private cache
   {
     return __dispatch_addr(reinterpret_cast<addr_t *>(addr), [&](auto &tier, i32 idx) {
       __debug_print_addr("__vmap_freeze_at(): freezing sheet containing: ", addr);
+      tier.__cache.invalidate_range(reinterpret_cast<const byte *>(tier.__idx[idx].lo), reinterpret_cast<const byte *>(tier.__idx[idx].hi));
       bool ok = tier.__idx[idx].nd->nd->freeze();
       __debug_print("__vmap_freeze_at(): freeze result: ", (usize)ok);
       return ok;
     });
   }
 
-  template<typename sheet_type, u32 MS>
+  template<typename sheet_type, u32 MS, u32 CS>
   void
-  __release_tier(__tier<sheet_type, MS> &tier)
+  __release_tier(__tier<sheet_type, MS, CS> &tier)
   {
     auto *nd = &tier.head;
     while ( nd != nullptr ) {
@@ -1366,16 +1414,25 @@ public:
           __debug_print("push(): predictor suggested: ", predicted);
           expanded = __buf_expand_exact(alloc_sz, predicted);
         } else if ( alloc_sz < __class_gb ) {
-          // huge tier; new aggressive-low / tapered-high curve
-          usize __next_sz = __calculate_space_huge(alloc_sz) * __default_overcommit;
+          // huge tier; new growth fn, more aggressive low allocs with tapered high allocs
+          // now multivariate, grows more rapidly the more sheets are in use
+          usize __base = __calculate_space_huge(alloc_sz) * __default_overcommit;
+          usize __mult = (alloc_sz >= __class_1mb) ? 1ULL : (1ULL + static_cast<usize>(_huge.__count));
+          usize __next_sz = __base * __mult;
+          // WARNING: off-by-one safeguard; our buddy requires that the chunk to strictly exceed 2 * alloc_sz
+          // due to __hdr_offsets
+          usize __min_huge = (alloc_sz << 1) + __class_huge;
+          if ( __next_sz < __min_huge ) __next_sz = __min_huge;
           __predict += __next_sz;
           usize predicted = __predict.predict_size(__next_sz);
           __debug_print("push(): huge path, next_sz: ", __next_sz);
           __debug_print("push(): predictor suggested: ", predicted);
           expanded = __buf_expand_exact(alloc_sz, predicted);
         } else {
-          // bulk
+          // bulk; same off-by-one safeguard
           usize bulk = __calculate_space_bulk(alloc_sz);
+          usize __min_bulk = (alloc_sz << 1) + __class_huge;
+          if ( bulk < __min_bulk ) bulk = __min_bulk;
           __debug_print("push(): bulk (>=gb) path, bulk_sz: ", bulk);
           expanded = __buf_expand_exact(alloc_sz, bulk);
         }
@@ -1434,11 +1491,17 @@ public:
         __debug_print("launder(): large path, expanding: ", next);
         expanded = __buf_expand_exact(alloc_sz, next);
       } else if ( alloc_sz < __class_gb ) {
-        usize next = __calculate_space_huge(alloc_sz) * __default_overcommit;
+        usize __base = __calculate_space_huge(alloc_sz) * __default_overcommit;
+        usize __mult = (alloc_sz >= __class_1mb) ? 1ULL : (1ULL + static_cast<usize>(_huge.__count));
+        usize next = __base * __mult;
+        usize __min_huge = (alloc_sz << 1) + __class_huge;
+        if ( next < __min_huge ) next = __min_huge;
         __debug_print("launder(): huge path, expanding: ", next);
         expanded = __buf_expand_exact(alloc_sz, next);
       } else {
         usize bulk = __calculate_space_bulk(alloc_sz);
+        usize __min_bulk = (alloc_sz << 1) + __class_huge;
+        if ( bulk < __min_bulk ) bulk = __min_bulk;
         __debug_print("launder(): bulk path, expanding: ", bulk);
         expanded = __buf_expand_exact(alloc_sz, bulk);
       }
@@ -1698,7 +1761,12 @@ public:
     addr_t *addr = reinterpret_cast<addr_t *>(ptr);
     auto do_reset = [&](auto &tier) {
       i32 idx = tier.find_range(addr);
-      if ( idx >= 0 ) tier.__idx[idx].nd->nd->reset();
+      if ( idx >= 0 ) {
+        // drop any cached blocks belonging to this sheet first
+        tier.__cache.invalidate_range(reinterpret_cast<const byte *>(tier.__idx[idx].lo),
+                                      reinterpret_cast<const byte *>(tier.__idx[idx].hi));
+        tier.__idx[idx].nd->nd->reset();
+      }
     };
     do_reset(_precise);
     do_reset(_small);

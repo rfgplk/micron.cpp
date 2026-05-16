@@ -717,5 +717,5 @@ main(int, char **)
 
   // ===========================================================
   sb::print("=== ALL VALUE-CONVERSION TESTS PASSED ===");
-  return 0;
+  return 1;
 }

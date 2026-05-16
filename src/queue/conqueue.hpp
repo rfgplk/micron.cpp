@@ -11,6 +11,7 @@
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../bits/__container.hpp"
+#include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
@@ -27,6 +28,15 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
   micron::mutex __mtx;
   using __mem = __mutable_memory_resource<T, Alloc>;
   usize needle;
+
+  inline void
+  __reserve_unsafe(const usize n)
+  {
+    __mem::expand(n);
+    micron::memmove(micron::addressof(__mem::memory[(__mem::capacity - 1) - __mem::length]),
+                    micron::addressof(__mem::memory[needle - __mem::length]), __mem::length);
+    needle = __mem::capacity - 1;
+  }
 
 public:
   using category_type = buffer_tag;
@@ -92,7 +102,7 @@ public:
   operator=(const conqueue &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::capacity <= o.length ) resize(o.length + 1);
+    if ( __mem::capacity <= o.length ) __reserve_unsafe(o.length + 1);
     __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     needle = o.needle;
@@ -112,14 +122,11 @@ public:
     needle = __mem::capacity - 1;
   }
 
-  // grow container
   inline void
   reserve(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    __mem::expand(n);
-    micron::memmove(&__mem::memory[(__mem::capacity - 1) - __mem::length], &__mem::memory[needle - __mem::length], __mem::length);
-    needle = __mem::capacity - 1;
+    __reserve_unsafe(n);
   }
 
   inline void
@@ -185,21 +192,21 @@ public:
   begin()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return &__mem::memory[needle - __mem::length + 1];
+    return micron::addressof(__mem::memory[needle - __mem::length + 1]);
   }
 
   inline const T *
   begin() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return &__mem::memory[needle - __mem::length + 1];
+    return micron::addressof(__mem::memory[needle - __mem::length + 1]);
   }
 
   inline const T *
   cbegin() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return &__mem::memory[needle - __mem::length + 1];
+    return micron::addressof(__mem::memory[needle - __mem::length + 1]);
   }
 
   // one past
@@ -207,28 +214,29 @@ public:
   end()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return &__mem::memory[needle + 1];
+    return micron::addressof(__mem::memory[needle + 1]);
   }
 
   inline const T *
   end() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return &__mem::memory[needle + 1];
+    return micron::addressof(__mem::memory[needle + 1]);
   }
 
   inline const T *
   cend() const
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return &__mem::memory[needle + 1];
+    return micron::addressof(__mem::memory[needle + 1]);
   }
 
   inline conqueue &
   push(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
+      __reserve_unsafe(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{};
     } else {
@@ -241,7 +249,8 @@ public:
   push(T &&val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
+      __reserve_unsafe(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{ micron::move(val) };
     } else {
@@ -254,7 +263,8 @@ public:
   push(const T &val)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 ) reserve(__mem::capacity + 1);
+    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
+      __reserve_unsafe(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       new (micron::addr(__mem::memory[needle - __mem::length++])) T{ val };
     } else {

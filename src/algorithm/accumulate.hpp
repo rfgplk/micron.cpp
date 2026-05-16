@@ -7,6 +7,7 @@
 
 #include "../concepts.hpp"
 
+#include "../bits/__visit_kv.hpp"
 #include "../math/generic.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/memory.hpp"
@@ -108,6 +109,23 @@ constexpr Acc
 accumulate(const C &c, Acc init, usize limit) noexcept
 {
   return accumulate<Fn>(c.begin(), c.end(), micron::move(init), limit);
+}
+
+template<is_map_class M, typename Acc = typename M::mapped_type>
+Acc
+accumulate(const M &m, Acc init = Acc{}) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, const auto &v) { init = micron::move(init) + v; });
+  return init;
+}
+
+template<is_map_class M, typename Acc, typename Fn>
+  requires micron::is_invocable_v<Fn, Acc, const typename M::key_type &, const typename M::mapped_type &>
+Acc
+accumulate(const M &m, Acc init, Fn fn) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &k, const auto &v) { init = fn(micron::move(init), k, v); });
+  return init;
 }
 
 };      // namespace micron

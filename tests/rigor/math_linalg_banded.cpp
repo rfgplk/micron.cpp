@@ -355,5 +355,5 @@ main()
   end_test_case();
 
   print("=== BANDED SOLVER TESTS PASSED ===");
-  return 0;
+  return 1;
 }

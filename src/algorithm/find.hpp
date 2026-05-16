@@ -10,10 +10,12 @@
 #include "../concepts.hpp"
 #include "../math/generic.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/addr.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../bits/__visit_kv.hpp"
 #include "../tuple.hpp"
 
 namespace micron
@@ -1232,6 +1234,99 @@ bool
 ends_with(const C &c, const P &p, Fn fn) noexcept
 {
   return ends_with(c.begin(), c.end(), p.begin(), p.end(), fn);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// map overloads
+//
+// TODO: add more
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+bool
+all_of(const M &m, Fn fn) noexcept
+{
+  bool r = true;
+  __impl::visit_kv(m, [&](const auto &k, const auto &v) {
+    if ( !fn(k, v) ) r = false;
+  });
+  return r;
+}
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+bool
+any_of(const M &m, Fn fn) noexcept
+{
+  bool r = false;
+  __impl::visit_kv(m, [&](const auto &k, const auto &v) {
+    if ( fn(k, v) ) r = true;
+  });
+  return r;
+}
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+bool
+none_of(const M &m, Fn fn) noexcept
+{
+  return !any_of(m, fn);
+}
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+umax_t
+count_if(const M &m, Fn fn) noexcept
+{
+  umax_t n = 0;
+  __impl::visit_kv(m, [&](const auto &k, const auto &v) {
+    if ( fn(k, v) ) ++n;
+  });
+  return n;
+}
+
+template<is_map_class M, typename P>
+  requires micron::convertible_to<P, typename M::mapped_type>
+umax_t
+count(const M &m, const P &v) noexcept
+{
+  umax_t n = 0;
+  __impl::visit_kv(m, [&](const auto &, const auto &mv) {
+    if ( mv == static_cast<typename M::mapped_type>(v) ) ++n;
+  });
+  return n;
+}
+
+template<is_map_class M, typename P>
+  requires micron::convertible_to<P, typename M::mapped_type>
+const typename M::mapped_type *
+find(const M &m, const P &v) noexcept
+{
+  const typename M::mapped_type *p = nullptr;
+  __impl::visit_kv(m, [&](const auto &, const auto &mv) {
+    if ( !p && mv == static_cast<typename M::mapped_type>(v) ) p = micron::addressof(mv);
+  });
+  return p;
+}
+
+template<is_map_class M, typename P>
+  requires micron::convertible_to<P, typename M::mapped_type>
+bool
+contains(const M &m, const P &v) noexcept
+{
+  return find(m, v) != nullptr;
+}
+
+template<is_map_class M, typename Fn>
+  requires micron::is_invocable_v<Fn, const typename M::key_type &, const typename M::mapped_type &>
+const typename M::mapped_type *
+find_if(const M &m, Fn fn) noexcept
+{
+  const typename M::mapped_type *p = nullptr;
+  __impl::visit_kv(m, [&](const auto &k, const auto &v) {
+    if ( !p && fn(k, v) ) p = micron::addressof(v);
+  });
+  return p;
 }
 
 };      // namespace micron

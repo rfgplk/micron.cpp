@@ -95,5 +95,5 @@ main()
   end_test_case();
 
   print("=== activation ok ===");
-  return 0;
+  return 1;
 }

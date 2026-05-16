@@ -158,7 +158,7 @@ main()
   end_test_case();
 
   print("=== simd ok ===");
-  return 0;
+  return 1;
 }
 
 #else
@@ -167,7 +167,7 @@ int
 main()
 {
   print("=== SIMD KERNEL TESTS — skipped (no AVX2/FMA) ===");
-  return 0;
+  return 1;
 }
 
 #endif

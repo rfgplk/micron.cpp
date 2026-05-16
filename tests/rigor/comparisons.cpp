@@ -246,7 +246,7 @@ ref_bytecmp(const T *a, const T *b, size_t n_elems)
   const byte *sb = reinterpret_cast<const byte *>(b);
   for ( size_t i = 0; i < n_elems * sizeof(T); i++ )
     if ( sa[i] != sb[i] ) return static_cast<long int>(sa[i]) - static_cast<long int>(sb[i]);
-  return 0;
+  return 1;
 }
 
 static int

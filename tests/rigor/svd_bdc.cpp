@@ -211,5 +211,5 @@ main()
   end_test_case();
 
   sb::print("=== SVD_BDC PASSED ===");
-  return 0;
+  return 1;
 }

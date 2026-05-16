@@ -65,6 +65,9 @@ constexpr static const bool __default_multithread_safe = true;      // essential
 constexpr static const bool __default_eager_hot_tiers
     = true;      // eagerly preallocate precise/small/medium with weight-based shares even if __default_lazy_construct is true
 
+// per-class free cache, caches recent allocations in a free list for rapid allocs
+constexpr static const bool __default_per_class_free_cache = true;
+
 // 0 == per-dealloc tombstone ratio check (pre 1.1 behav.)
 // >0 == batch only sweep a tier's sheets every N deallocations
 constexpr static const u32 __default_tombstone_sweep_interval = 64;
@@ -77,14 +80,26 @@ constexpr static const u32 __max_sheets_precise = 512;
 constexpr static const u32 __max_sheets_small = 512;
 constexpr static const u32 __max_sheets_medium = 512;
 constexpr static const u32 __max_sheets_large = 64;
-constexpr static const u32 __max_sheets_huge = 64;
+constexpr static const u32 __max_sheets_huge = 128;      // doubled to absorb sustained huge-band pressure
 constexpr static const u32 __max_sheets_arena_internal = 64;
+
+// per-tier free-cache slot counts (LIFO depth per tier)
+// 0 disables the cache for that tier
+// worst-case memory pinning = sum(slots * max_block_size) ~176 KiB at the defaults below
+constexpr static const u32 __cache_slots_precise = 32;      // 1-256 B blocks
+constexpr static const u32 __cache_slots_small = 16;        // 257-512 B
+constexpr static const u32 __cache_slots_medium = 8;        // 513 B - 4 KiB
+constexpr static const u32 __cache_slots_large = 4;         // 4 K - 32 KiB
+constexpr static const u32 __cache_slots_huge = 0;          // disabled (rare, large)
 
 static_assert(__default_single_instance != __default_global_instance,
               "abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.");
 
 constexpr static const byte __default_fail_result = 0;      // 0: abort 1: message 2: silent fail
 constexpr static const usize __default_max_retries = 2;
+
+// is a define so we can intercept at the compilation stage
+#define __MICRON_ABCMALLOC_CRITICAL_EXIT 11
 // in pages (each page is 4096)
 constexpr static const bool __default_saturated_mode = true;      // enables a saturation buffer, which checks the rate at which new
                                                                   // requests are coming in. adjusts allocation space accordingly

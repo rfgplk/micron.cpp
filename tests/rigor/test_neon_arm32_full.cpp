@@ -217,7 +217,7 @@ main()
 #endif
 
   print("[TEST NEON ARM32 FULL SWEEP OK]");
-  return 0;
+  return 1;
 }
 
 #else
@@ -229,7 +229,7 @@ main()
 {
   ::sb::print("=== TEST NEON ARM32 FULL SWEEP ===");
   ::sb::print("[skipped: not an armv7-a + NEON build]");
-  return 0;
+  return 1;
 }
 
 #endif

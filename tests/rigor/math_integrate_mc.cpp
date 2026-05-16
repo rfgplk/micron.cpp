@@ -74,5 +74,5 @@ main()
   end_test_case();
 
   print("=== integrate monte_carlo ok ===");
-  return 0;
+  return 1;
 }

@@ -75,6 +75,18 @@ __typeset_dispatch(byte *restrict d, const T in, const u64 cnt) noexcept
 {
   if constexpr ( sizeof(T) == 1 ) {
     return __memset_bytes(d, static_cast<byte>(*reinterpret_cast<const unsigned char *>(&in)), cnt);
+  } else if constexpr ( sizeof(T) == 2 ) {
+    u16 v;
+    __builtin_memcpy(&v, &in, 2);
+    u64 w = static_cast<u64>(v);
+    w |= w << 16;
+    w |= w << 32;
+    return __memset_words(d, w, cnt * sizeof(T));
+  } else if constexpr ( sizeof(T) == 4 ) {
+    u32 v;
+    __builtin_memcpy(&v, &in, 4);
+    const u64 w = (static_cast<u64>(v) << 32) | static_cast<u64>(v);
+    return __memset_words(d, w, cnt * sizeof(T));
   } else if constexpr ( sizeof(T) == 8 ) {
     u64 w;
     __builtin_memcpy(&w, &in, 8);

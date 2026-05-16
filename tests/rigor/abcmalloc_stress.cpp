@@ -1182,5 +1182,5 @@ main(int, char **)
     sb::print("=== ALL ABCMALLOC STRESS TESTS PASSED ===");
   else
     sb::print("=== HARD TESTS PASSED; (FAILS)-marked tests reported above ===");
-  return 0;
+  return 1;
 }

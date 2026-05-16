@@ -80,6 +80,9 @@ constexpr static const bool __default_multithread_safe = true;      // essential
 
 constexpr static const bool __default_eager_hot_tiers = true;
 
+// per-class free cache disabled on embedded targets
+constexpr static const bool __default_per_class_free_cache = false;
+
 constexpr static const u32 __default_tombstone_sweep_interval = 32;
 
 // keep all tiers narrow, old behavior for amd64, default here
@@ -89,6 +92,13 @@ constexpr static const u32 __max_sheets_medium = 64;
 constexpr static const u32 __max_sheets_large = 64;
 constexpr static const u32 __max_sheets_huge = 64;
 constexpr static const u32 __max_sheets_arena_internal = 64;
+
+// zero on embedded so the struct collapses to its _count field
+constexpr static const u32 __cache_slots_precise = 0;
+constexpr static const u32 __cache_slots_small = 0;
+constexpr static const u32 __cache_slots_medium = 0;
+constexpr static const u32 __cache_slots_large = 0;
+constexpr static const u32 __cache_slots_huge = 0;
 
 static_assert(__default_single_instance != __default_global_instance,
               "abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.");
@@ -101,6 +111,8 @@ constexpr static const byte __default_fail_result = 0;
 // too
 constexpr static const usize __default_max_retries = 1;
 
+// is a define so we can intercept at the compilation stage
+#define __MICRON_ABCMALLOC_CRITICAL_EXIT 11
 // in pages (each page is 4096)
 constexpr static const bool __default_saturated_mode = true;      // enables a saturation buffer, which checks the rate at which new
                                                                   // requests are coming in. adjusts allocation space accordingly

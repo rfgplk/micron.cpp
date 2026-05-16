@@ -32,6 +32,22 @@ class stack: public __mutable_memory_resource<T, Alloc>
   using __mem = __mutable_memory_resource<T, Alloc>;
   micron::mutex __mtx;
 
+  inline void
+  __reserve_unsafe(const usize n)
+  {
+    if ( n < __mem::capacity ) return;
+    __mem::expand(n);
+  }
+
+  inline T
+  __pop_unsafe()
+  {
+    T val = micron::move(__mem::memory[__mem::length - 1]);
+    if constexpr ( micron::is_class_v<T> ) __mem::memory[__mem::length - 1].~T();
+    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&__mem::memory[__mem::length-- - 1]));
+    return val;
+  }
+
 public:
   using category_type = buffer_tag;
   using mutability_type = mutable_tag;
@@ -84,7 +100,7 @@ public:
   operator=(const stack &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( o.length >= __mem::capacity ) reserve(o.length);
+    if ( o.length >= __mem::capacity ) __reserve_unsafe(o.length);
     __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
@@ -146,16 +162,14 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::length == 0 ) [[unlikely]]
       exc<except::library_error>("micron::stack operator()() called on empty stack");
-    T n = micron::move(__mem::memory[__mem::length - 1]);
-    pop();
-    return n;
+    return __pop_unsafe();
   }
 
   inline void
   push()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T{};
   }
 
@@ -163,7 +177,7 @@ public:
   push(const T &v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_constructible_v<T> )
       new (micron::addr(__mem::memory[__mem::length++])) T(v);
     else
@@ -174,7 +188,7 @@ public:
   push(T &&v)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
   }
 
@@ -197,7 +211,7 @@ public:
   emplace(Args &&...args)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(args)...);
   }
 
@@ -207,10 +221,7 @@ public:
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::length == 0 ) [[unlikely]]
       exc<except::library_error>("micron::stack pop() called on empty stack");
-    T val = micron::move(__mem::memory[__mem::length - 1]);
-    if constexpr ( micron::is_class_v<T> ) __mem::memory[__mem::length - 1].~T();
-    czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&__mem::memory[__mem::length-- - 1]));
-    return val;
+    return __pop_unsafe();
   }
 
   template<typename... Args>
@@ -222,15 +233,14 @@ public:
                   "micron::stack pop_range(): all output types must match value_type");
     if ( sizeof...(Args) > __mem::length ) [[unlikely]]
       exc<except::library_error>("micron::stack pop_range(): not enough elements");
-    ((args = pop()), ...);
+    ((args = __pop_unsafe()), ...);
   }
 
   inline void
   reserve(const usize n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n < __mem::capacity ) return;
-    __mem::expand(n);
+    __reserve_unsafe(n);
   }
 
   inline void

@@ -11,6 +11,7 @@
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../bits/__container.hpp"
+#include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
@@ -30,7 +31,7 @@ class queue: public __mutable_memory_resource<T, Alloc>
   {
     if ( head + __mem::length < __mem::capacity ) return;
     if ( head > 0 ) {
-      micron::memmove(&__mem::memory[0], &__mem::memory[head], __mem::length);
+      micron::memmove(micron::addressof(__mem::memory[0]), micron::addressof(__mem::memory[head]), __mem::length);
       head = 0;
       if ( __mem::length < __mem::capacity ) return;
     }
@@ -164,38 +165,38 @@ public:
   inline T *
   begin()
   {
-    return &__mem::memory[head];
+    return micron::addressof(__mem::memory[head]);
   }
 
   inline const T *
   begin() const
   {
-    return &__mem::memory[head];
+    return micron::addressof(__mem::memory[head]);
   }
 
   inline const T *
   cbegin() const
   {
-    return &__mem::memory[head];
+    return micron::addressof(__mem::memory[head]);
   }
 
   // one past
   inline T *
   end()
   {
-    return &__mem::memory[head + __mem::length];
+    return micron::addressof(__mem::memory[head + __mem::length]);
   }
 
   inline const T *
   end() const
   {
-    return &__mem::memory[head + __mem::length];
+    return micron::addressof(__mem::memory[head + __mem::length]);
   }
 
   inline const T *
   cend() const
   {
-    return &__mem::memory[head + __mem::length];
+    return micron::addressof(__mem::memory[head + __mem::length]);
   }
 
   inline queue &

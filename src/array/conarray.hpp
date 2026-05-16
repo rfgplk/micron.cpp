@@ -456,12 +456,13 @@ public:
   inline __attribute__((always_inline)) conarray
   operator+(const conarray<T, M> &o) const
   {
+    conarray arr;
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    conarray arr(*this);
     T *__restrict dst = arr.stack;
+    const T *__restrict me = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] + src[i];
     return arr;
   }
 
@@ -470,12 +471,13 @@ public:
   inline __attribute__((always_inline)) conarray
   operator-(const conarray<T, M> &o) const
   {
+    conarray arr;
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    conarray arr(*this);
     T *__restrict dst = arr.stack;
+    const T *__restrict me = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] - src[i];
     return arr;
   }
 
@@ -484,12 +486,13 @@ public:
   inline __attribute__((always_inline)) conarray
   operator*(const conarray<T, M> &o) const
   {
+    conarray arr;
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    conarray arr(*this);
     T *__restrict dst = arr.stack;
+    const T *__restrict me = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] * src[i];
     return arr;
   }
 
@@ -498,12 +501,13 @@ public:
   inline __attribute__((always_inline)) conarray
   operator/(const conarray<T, M> &o) const
   {
+    conarray arr;
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    conarray arr(*this);
     T *__restrict dst = arr.stack;
+    const T *__restrict me = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] / src[i];
     return arr;
   }
 
@@ -512,12 +516,13 @@ public:
   inline __attribute__((always_inline)) conarray
   operator%(const conarray<T, M> &o) const
   {
+    conarray arr;
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    conarray arr(*this);
     T *__restrict dst = arr.stack;
+    const T *__restrict me = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
+    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] % src[i];
     return arr;
   }
 

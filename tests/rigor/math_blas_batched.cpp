@@ -152,5 +152,5 @@ main()
   end_test_case();
 
   print("=== blas batched/ext ok ===");
-  return 0;
+  return 1;
 }

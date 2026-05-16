@@ -116,5 +116,5 @@ main()
   end_test_case();
 
   print("=== linalg-generic ok ===");
-  return 0;
+  return 1;
 }

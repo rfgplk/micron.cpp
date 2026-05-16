@@ -92,7 +92,7 @@ main()
 #endif
 
   print("[TEST NEON OK]");
-  return 0;
+  return 1;
 }
 
 #else
@@ -107,7 +107,7 @@ main()
 {
   ::sb::print("=== TEST NEON ===");
   ::sb::print("[TEST NEON skipped on x86 host - cross-compile to arm64/armv7 to exercise]");
-  return 0;
+  return 1;
 }
 
 #endif

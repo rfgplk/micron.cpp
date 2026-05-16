@@ -143,5 +143,5 @@ main()
   end_test_case();
 
   print("=== integrate quad/nquad/gauss/romberg ok ===");
-  return 0;
+  return 1;
 }

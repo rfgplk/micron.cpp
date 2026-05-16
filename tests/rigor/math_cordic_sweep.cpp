@@ -397,5 +397,5 @@ main()
 #endif
 
   print("=== cordic sweep ok ===");
-  return 0;
+  return 1;
 }

@@ -420,7 +420,7 @@ public:
     if ( !__root ) [[unlikely]]
       return nullptr;
     const __leaf *l = __find_leaf(__root, __to_ord(key));
-    return l->key == key ? &l->value : nullptr;
+    return l->key == key ? micron::addressof(l->value) : nullptr;
   }
 
   bool

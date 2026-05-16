@@ -928,13 +928,7 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
   const bool beta_zero = (beta == T(0));
   const bool beta_one = (beta == T(1));
 
-  // Fast path for small dgemm: inline 4x8 kernel with no panel packing. The
-  // kernel reads A via splat_f64(a*p[p*a_cs]). When a_cs==1 (NN/NT for
-  // row-major), K-stepping is contig and the kernel is the win up to ~256^3
-  // flops. When a_cs!=1 (trA cases — TN/TT for row-major), K-steps stride
-  // through different cache lines; the blocked path's panel-packed A reads
-  // pay off above ~64^3 flops, so we cap inline 4x8 at that smaller threshold
-  // for the strided case.
+  // inline 4x8 kernel with no panel packing
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
@@ -1023,8 +1017,6 @@ gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, cons
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
-      // Same a_cs-dependent threshold as gemm_kernel: inline 4x8 wins up to
-      // ~256^3 when K is contig (a_cs==1), only up to ~64^3 for trA cases.
       const u64 nflops = u64(m) * u64(n) * u64(k);
       const bool size_ok = (a_cs == 1) ? (nflops < (256ull * 256ull * 256ull)) : (nflops < (64ull * 64ull * 64ull));
       if ( size_ok && cs_C == 1 && (m % 4u) == 0 && (n % 8u) == 0 && k > 0 && k <= 1024 ) {
@@ -1043,13 +1035,12 @@ gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, cons
     }
   }
 
-  // Fall back to the unaligned dispatch — handles edge cases / tiny sizes.
+  // Fall back to the unaligned dispatch
   gemm_kernel<T>(trA, trB, m, n, k, alpha, A, rs_A, cs_A, B, rs_B, cs_B, beta, C, rs_C, cs_C);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// gemm_kernel_aligned experiments — route directly to the experimental blocked
-// drivers; no small-kernel fast path so the new microkernels see all problem sizes.
+// gemm_kernel_aligned experiments
 template<typename T>
 [[gnu::flatten]] inline void
 gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,

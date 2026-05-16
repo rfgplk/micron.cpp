@@ -178,5 +178,5 @@ main()
   test_minmax_abs();
   test_pack_unpack_movemask();
   print("[TEST AVX2 OK]");
-  return 0;
+  return 1;
 }

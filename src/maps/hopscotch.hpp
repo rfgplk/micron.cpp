@@ -290,6 +290,8 @@ public:
   using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
+  using key_type = K;
+  using mapped_type = V;
   typedef usize size_type;
   typedef Nd value_type;
   typedef Nd &reference;
@@ -402,7 +404,7 @@ public:
     for ( usize i = 0; i <= MH; ++i ) {
       usize probe = (home + i) & __bmask;
       if ( entries[probe].key == hsh ) {
-        return &entries[probe].value;
+        return micron::addressof(entries[probe].value);
       }
     }
 
@@ -411,7 +413,7 @@ public:
       if ( !entries[probe].key ) {
         entries[probe] = Nd{ hsh, value };
         ++length;
-        return &entries[probe].value;
+        return micron::addressof(entries[probe].value);
       }
     }
 
@@ -425,7 +427,7 @@ public:
         if ( find_closer_slot(home, check, result_slot) ) {
           entries[result_slot] = Nd{ hsh, value };
           ++length;
-          return &entries[result_slot].value;
+          return micron::addressof(entries[result_slot].value);
         }
         break;
       }
@@ -518,7 +520,7 @@ public:
     for ( usize i = 0; i <= MH; ++i ) {
       usize probe = (home + i) & __bmask;
       if ( entries[probe].key == hsh ) {
-        return &entries[probe].value;
+        return micron::addressof(entries[probe].value);
       }
     }
 
@@ -707,6 +709,26 @@ public:
   cend() const
   {
     return entries.data() + entries.size();
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const hash64_t &, V &>
+  void
+  for_each(Fn &&fn)
+  {
+    usize sz = __bmask + 1u;
+    for ( usize i = 0; i < sz; ++i )
+      if ( entries[i].key != 0 ) fn(entries[i].key, entries[i].value);
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const hash64_t &, const V &>
+  void
+  for_each(Fn &&fn) const
+  {
+    usize sz = __bmask + 1u;
+    for ( usize i = 0; i < sz; ++i )
+      if ( entries[i].key != 0 ) fn(entries[i].key, entries[i].value);
   }
 };
 

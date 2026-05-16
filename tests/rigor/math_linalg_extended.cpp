@@ -510,5 +510,5 @@ main()
   end_test_case();
 
   print("=== MATH::LINALG EXTENDED TESTS PASSED ===");
-  return 0;
+  return 1;
 }

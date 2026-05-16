@@ -173,7 +173,7 @@ class stack_swiss_map
           __control_bytes[probe] = h2;
           __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
           ++__size;
-          return { true, addr(__entries[probe].value) };
+          return { true, micron::addressof(__entries[probe].value) };
         }
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
@@ -182,7 +182,7 @@ class stack_swiss_map
             __control_bytes[probe] = h2;
             __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
             ++__size;
-            return { true, addr(__entries[probe].value) };
+            return { true, micron::addressof(__entries[probe].value) };
           }
         }
       }
@@ -219,7 +219,7 @@ class stack_swiss_map
           // NOTE: treat the hash as the key itself, obviously will only be valid for u64 keys
           __entries[probe] = __swiss_entry{ key, micron::forward<VV>(value) };
           ++__size;
-          return { true, addr(__entries[probe].value) };
+          return { true, micron::addressof(__entries[probe].value) };
         }
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
@@ -228,7 +228,7 @@ class stack_swiss_map
             __control_bytes[probe] = h2;
             __entries[probe] = __swiss_entry{ key, micron::forward<VV>(value) };
             ++__size;
-            return { true, addr(__entries[probe].value) };
+            return { true, micron::addressof(__entries[probe].value) };
           }
         }
       }
@@ -238,6 +238,13 @@ class stack_swiss_map
   }
 
 public:
+  using category_type = map_tag;
+  using mutability_type = mutable_tag;
+  using memory_type = stack_tag;
+  using key_type = K;
+  using mapped_type = V;
+  using size_type = usize;
+
   struct __swiss_entry {
     K key;
     V value;
@@ -442,7 +449,7 @@ public:
           usize probe = group_start + m.lowest();
           if ( __entries[probe].key == key ) {
             __entries[probe].value = micron::forward<VV>(value);
-            return { false, addr(__entries[probe].value) };
+            return { false, micron::addressof(__entries[probe].value) };
           }
           m.clear_lowest();
         }
@@ -452,7 +459,7 @@ public:
           usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
             __entries[probe].value = micron::forward<VV>(value);
-            return { false, addr(__entries[probe].value) };
+            return { false, micron::addressof(__entries[probe].value) };
           }
           if ( __control_bytes[probe] == __empty ) goto insert;
         }
@@ -473,7 +480,7 @@ public:
           __control_bytes[probe] = h2;
           __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
           ++__size;
-          return { true, addr(__entries[probe].value) };
+          return { true, micron::addressof(__entries[probe].value) };
         }
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
@@ -482,7 +489,7 @@ public:
             __control_bytes[probe] = h2;
             __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
             ++__size;
-            return { true, addr(__entries[probe].value) };
+            return { true, micron::addressof(__entries[probe].value) };
           }
         }
       }
@@ -518,7 +525,7 @@ public:
           __entries[probe].key = key;
           new (micron::addr(__entries[probe].value)) V(micron::forward<Args>(args)...);
           ++__size;
-          return { true, &__entries[probe].value };
+          return { true, micron::addressof(__entries[probe].value) };
         }
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
@@ -528,7 +535,7 @@ public:
             __entries[probe].key = key;
             new (micron::addr(__entries[probe].value)) V(micron::forward<Args>(args)...);
             ++__size;
-            return { true, &__entries[probe].value };
+            return { true, micron::addressof(__entries[probe].value) };
           }
         }
       }
@@ -586,7 +593,7 @@ public:
         while ( m.any() ) {
           usize probe = group_start + m.lowest();
           if ( __entries[probe].key == key ) {
-            return addr(__entries[probe].value);
+            return micron::addressof(__entries[probe].value);
           }
           m.clear_lowest();
         }
@@ -594,7 +601,7 @@ public:
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
-            return addr(__entries[probe].value);
+            return micron::addressof(__entries[probe].value);
           }
         }
       }
@@ -625,7 +632,7 @@ public:
         while ( m.any() ) {
           usize probe = group_start + m.lowest();
           if ( __entries[probe].key == key ) {
-            return addr(__entries[probe].value);
+            return micron::addressof(__entries[probe].value);
           }
           m.clear_lowest();
         }
@@ -633,7 +640,7 @@ public:
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
-            return addr(__entries[probe].value);
+            return micron::addressof(__entries[probe].value);
           }
         }
       }
@@ -724,7 +731,7 @@ public:
     pointer
     operator->()
     {
-      return { &map_->__entries[index_].key, &map_->__entries[index_].value };
+      return { micron::addressof(map_->__entries[index_].key), micron::addressof(map_->__entries[index_].value) };
     }
 
     iterator &
@@ -787,7 +794,7 @@ public:
     pointer
     operator->() const
     {
-      return { &map_->__entries[index_].key, &map_->__entries[index_].value };
+      return { micron::addressof(map_->__entries[index_].key), micron::addressof(map_->__entries[index_].value) };
     }
 
     const_iterator &
@@ -853,6 +860,24 @@ public:
   cend() const
   {
     return const_iterator(this, N);
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const K &, V &>
+  __attribute__((always_inline)) void
+  for_each(Fn &&fn)
+  {
+    for ( usize i = 0; i < N; ++i )
+      if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) fn(__entries[i].key, __entries[i].value);
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const K &, const V &>
+  __attribute__((always_inline)) void
+  for_each(Fn &&fn) const
+  {
+    for ( usize i = 0; i < N; ++i )
+      if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) fn(__entries[i].key, __entries[i].value);
   }
 };
 

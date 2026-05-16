@@ -150,5 +150,5 @@ main()
   print("[TEST AVX-512 OK - link-only on this host]");
 #endif
 
-  return 0;
+  return 1;
 }

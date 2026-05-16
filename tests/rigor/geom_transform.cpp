@@ -159,5 +159,5 @@ main()
   end_test_case();
 
   sb::print("=== GEOM_TRANSFORM PASSED ===");
-  return 0;
+  return 1;
 }

@@ -103,5 +103,5 @@ main()
   end_test_case();
 
   print("=== integrate trapezoid/simpson/samples ok ===");
-  return 0;
+  return 1;
 }

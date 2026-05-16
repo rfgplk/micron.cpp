@@ -224,5 +224,5 @@ main()
   end_test_case();
 
   sb::print("=== MATFUNC_TRIG PASSED ===");
-  return 0;
+  return 1;
 }

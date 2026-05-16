@@ -387,6 +387,12 @@ concept is_tagged_map = requires {
 };
 
 template<typename T>
+concept is_map_class = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;
+};
+
+template<typename T>
 concept is_map = requires {
   typename micron::remove_cvref_t<T>::category_type;
   requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, map_tag>;

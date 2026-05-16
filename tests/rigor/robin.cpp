@@ -1024,16 +1024,14 @@ main(void)
 
   // ── raw iteration ─────────────────────────────────────────────────────────
 
-  sb::test_case("iteration - begin <= end on non-empty map");
+  sb::test_case("iteration - begin != end on non-empty map");
   {
     micron::robin_map<micron::hstring<char>, int> m;
     m.insert("iter_a", 1);
     m.insert("iter_b", 2);
-    auto b = m.begin();
-    auto e = m.end();
-    sb::require(b != nullptr);
-    sb::require(e != nullptr);
-    sb::require(e >= b);
+    sb::require(m.begin() != m.end());
+    micron::robin_map<micron::hstring<char>, int> e;
+    sb::require(e.begin() == e.end());
   }
   sb::end_test_case();
 
@@ -1059,9 +1057,9 @@ main(void)
       expected.insert(i * 3);
     }
     std::set<int> found;
-    for ( usize i = 0; i < m.max_size(); ++i )
-      if ( m.slot_occupied(i) ) found.insert(m.begin()[i].value);
+    for ( auto &n : m ) found.insert(n.value);
     sb::require(found == expected);
+    sb::require(found.size() == (usize)N);
   }
   sb::end_test_case();
 
@@ -1090,6 +1088,97 @@ main(void)
     a.swap(b);
     sb::require(a.size() == 3ULL);
     sb::require(b.size() == 5ULL);
+  }
+  sb::end_test_case();
+
+  // ── saturation guard ─────────────────────────────────────────────────────
+
+  sb::test_case("saturation - throws when stored distance would exceed 253");
+  {
+    using K = uint64_t;
+    micron::robin_map<K, K> m(512);
+    usize mask = m.max_size() - 1;
+
+    // Build a set of keys that all hash to the same ideal slot.
+    // 254+ collisions force the 254th-or-later insert past __max_stored_dist.
+    std::vector<K> colliding;
+    colliding.reserve(260);
+    for ( K candidate = 1; candidate < 5'000'000ull && colliding.size() < 260; ++candidate ) {
+      if ( (micron::hash<micron::hash64_t>(candidate) & mask) == 0u ) colliding.push_back(candidate);
+    }
+    sb::require(colliding.size() >= 254u);
+
+    bool threw = false;
+    usize inserted = 0;
+    try {
+      for ( auto k : colliding ) {
+        m.insert(k, k);
+        ++inserted;
+      }
+    } catch ( ... ) {
+      threw = true;
+    }
+    sb::require(threw == true);
+    // first 254 occupy distances 0..253; the 255th (index 254) is rejected
+    sb::require(inserted == 254u);
+    sb::require(m.size() == 254u);
+
+    // every successfully inserted key must still be findable (no ctrl corruption)
+    for ( usize i = 0; i < inserted; ++i ) {
+      auto *v = m.find(colliding[i]);
+      sb::require(v != nullptr);
+      sb::require(*v == colliding[i]);
+    }
+
+    // and no ctrl byte may equal 255 (saturation sentinel is unused)
+    const auto *c = m.ctrl();
+    for ( usize i = 0; i < m.max_size(); ++i ) sb::require(c[i] != 255u);
+  }
+  sb::end_test_case();
+
+  // ── iterator dense traversal ─────────────────────────────────────────────
+
+  sb::test_case("iteration - range-for visits exactly size() elements after sparse erase");
+  {
+    micron::robin_map<micron::hstring<char>, int> m(64);
+    const int N = 30;
+    for ( int i = 0; i < N; ++i ) m.insert(make_key(i), i);
+    sb::require(m.size() == (usize)N);
+
+    int erased = 0;
+    for ( int i = 0; i < N; i += 3 )
+      if ( m.erase(make_key(i)) ) ++erased;
+    sb::require(erased > 0);
+    sb::require(m.size() == (usize)(N - erased));
+
+    usize count = 0;
+    for ( auto &n : m ) {
+      usize slot = static_cast<usize>(&n - m.raw_begin());
+      sb::require(m.slot_occupied(slot));
+      ++count;
+    }
+    sb::require(count == m.size());
+  }
+  sb::end_test_case();
+
+  sb::test_case("iteration - const range-for skips empty slots");
+  {
+    micron::robin_map<micron::hstring<char>, int> m(64);
+    for ( int i = 0; i < 10; ++i ) m.insert(make_key(i), i * 7);
+    m.erase(make_key(3));
+    m.erase(make_key(7));
+
+    const auto &cm = m;
+    usize count = 0;
+    int sum = 0;
+    for ( const auto &n : cm ) {
+      ++count;
+      sum += n.value;
+    }
+    sb::require(count == m.size());
+    sb::require(count == 8u);
+    // expected sum = sum(i*7 for i in 0..9) - 3*7 - 7*7 = 315 - 21 - 49 = 245
+    sb::require(sum == 245);
   }
   sb::end_test_case();
 

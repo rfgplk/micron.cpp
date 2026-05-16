@@ -191,5 +191,5 @@ main()
   end_test_case();
 
   sb::print("=== MATFUNC_POW PASSED ===");
-  return 0;
+  return 1;
 }

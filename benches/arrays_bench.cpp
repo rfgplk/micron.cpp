@@ -55,7 +55,9 @@
 #include "../src/array/constexprarray.hpp"
 #include "../src/array/farray.hpp"
 #include "../src/array/iarray.hpp"
+#include "../src/array/mdarray.hpp"
 #include "../src/array/parray.hpp"
+#include "../src/array/soa.hpp"
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
 #include "../src/linux/sys/sched.hpp"
@@ -238,6 +240,18 @@ struct cell {
   f64 bmiss_rate;
 };
 
+struct anomaly {
+  const char *name;
+  u64 size;
+  f64 cyc_per_op;
+  f64 ipc;
+  f64 bmiss_rate;
+  const char *reason;
+};
+
+static anomaly g_anomalies[512];
+static u32 g_anomaly_count = 0;
+
 [[gnu::cold]] void
 print_cell(const cell &c)
 {
@@ -252,6 +266,18 @@ print_cell(const cell &c)
   ln.f2_at(ipc, 62);
   ln.f2_at(bm, 72);
   micron::io::println(ln.str());
+
+  const char *reason = nullptr;
+  if ( c.bmiss_rate > 0.05 )
+    reason = "bmiss%>5 (predictor stress)";
+  else if ( c.ipc > 0 && c.ipc < 0.7 )
+    reason = "IPC<0.7 (memory-bound)";
+  else if ( c.cyc_per_op > 1000.0 && !(c.name[0] == 'c' && c.name[1] == 'o' && c.name[2] == 'p') )
+    reason = "cyc/op>1000 outside copy ops";
+
+  if ( reason && g_anomaly_count < 512 ) {
+    g_anomalies[g_anomaly_count++] = anomaly{ c.name, c.size, c.cyc_per_op, c.ipc, c.bmiss_rate, reason };
+  }
 }
 
 f64
@@ -956,6 +982,139 @@ main(void)
   sweep_parray<i32, 5, 2>("parray<i32, 5, 2>");
   sweep_parray<f64, 5, 2>("parray<f64, 5, 2>");
 
+  for ( u64 N : { 64ULL, 1024ULL, 4096ULL } ) {
+    {
+      micron::soa<f32, f32, u32> s(N);
+      auto setup = [&] { s.clear(); };
+      auto kernel = [&] {
+        for ( u64 i = 0; i < N; ++i ) s.emplace_back(static_cast<f32>(i), static_cast<f32>(i) * 2.0f, static_cast<u32>(i));
+        s.clear();
+      };
+      print_cell(measure("soa emplace_back", N, sizeof(f32) + sizeof(f32) + sizeof(u32), N, reps_for(N), setup, kernel));
+    }
+    {
+      micron::soa<f32, f32, u32> s(N);
+      for ( u64 i = 0; i < N; ++i ) s.emplace_back(static_cast<f32>(i), 0.0f, 0);
+      auto setup = [] { };
+      auto kernel = [&] {
+        f32 acc = 0;
+        auto *c0 = s.column<0>();
+        for ( u64 i = 0; i < N; ++i ) acc += c0[i];
+        sink_u64 += static_cast<u64>(acc);
+      };
+      print_cell(measure("soa col-sum", N, sizeof(f32), N, reps_for(N), setup, kernel));
+    }
+    {
+      micron::soa<f32, f32, u32> s(N);
+      auto setup = [&] {
+        s.clear();
+        for ( u64 i = 0; i < N; ++i ) s.emplace_back(static_cast<f32>(i), 0.0f, 0);
+      };
+      auto kernel = [&] {
+        while ( !s.empty() ) s.pop_back();
+        clobber(&s);
+      };
+      print_cell(measure("soa pop_back", N, sizeof(f32) + sizeof(f32) + sizeof(u32), N, reps_for(N), setup, kernel));
+    }
+  }
+
+  for ( u64 N : { 256ULL, 1024ULL, 4096ULL } ) {
+    micron::mdarray<f32, 1> a(static_cast<usize>(N));
+    micron::mdarray<f32, 1> b(static_cast<usize>(N));
+    a.fill(1.0f);
+    b.fill(2.0f);
+    {
+      auto setup = [&] { a.fill(1.0f); };
+      auto kernel = [&] {
+        a.fill(3.0f);
+        clobber(&a);
+      };
+      print_cell(measure("mdarray-1d fill", N, sizeof(f32), N, reps_for(N), setup, kernel));
+    }
+    {
+      auto setup = [&] { a.fill(1.0f); };
+      auto kernel = [&] {
+        a += b;
+        clobber(&a);
+      };
+      print_cell(measure("mdarray-1d add", N, sizeof(f32), N, reps_for(N), setup, kernel));
+    }
+    {
+      auto setup = [&] { a.fill(1.0f); };
+      auto kernel = [&] {
+        a *= 3.0f;
+        clobber(&a);
+      };
+      print_cell(measure("mdarray-1d mul-scalar", N, sizeof(f32), N, reps_for(N), setup, kernel));
+    }
+    {
+      auto setup = [] { };
+      auto kernel = [&] { sink_u64 += static_cast<u64>(a.sum()); };
+      print_cell(measure("mdarray-1d sum", N, sizeof(f32), N, reps_for(N), setup, kernel));
+    }
+    {
+      auto setup = [] { };
+      auto kernel = [&] {
+        micron::mdarray<f32, 1> tmp(a);
+        clobber(&tmp);
+      };
+      print_cell(measure("mdarray-1d copy-ctor", N, sizeof(f32), 1, reps_for(N), setup, kernel));
+    }
+  }
+
+  for ( u64 side : { 32ULL, 64ULL, 128ULL } ) {
+    const u64 total = side * side;
+    micron::mdarray<f32, 2> a(static_cast<usize>(side), static_cast<usize>(side));
+    micron::mdarray<f32, 2> b(static_cast<usize>(side), static_cast<usize>(side));
+    a.fill(1.0f);
+    b.fill(0.5f);
+    {
+      auto setup = [&] { a.fill(1.0f); };
+      auto kernel = [&] {
+        a += b;
+        clobber(&a);
+      };
+      print_cell(measure("mdarray-2d add", total, sizeof(f32), total, reps_for(total), setup, kernel));
+    }
+    {
+      auto setup = [] { };
+      auto kernel = [&] { sink_u64 += static_cast<u64>(a.sum()); };
+      print_cell(measure("mdarray-2d sum", total, sizeof(f32), total, reps_for(total), setup, kernel));
+    }
+  }
+
+  micron::io::println("");
+  micron::io::println("[anomalies] (rows flagged during run)");
+  if ( g_anomaly_count == 0 ) {
+    micron::io::println("  (none)");
+  } else {
+    line head;
+    head.s("  ");
+    head.s_at("op", 26);
+    head.s_at("N", 36);
+    head.s_at("cyc/op", 48);
+    head.s_at("IPC", 58);
+    head.s_at("bmiss%", 68);
+    head.s("  ");
+    head.s("reason");
+    micron::io::println(head.str());
+    for ( u32 i = 0; i < g_anomaly_count; ++i ) {
+      const auto &a = g_anomalies[i];
+      const fmt2 cpo = to_fmt2(a.cyc_per_op);
+      const fmt2 ipc = to_fmt2(a.ipc);
+      const fmt2 bm = to_fmt2(a.bmiss_rate * 100.0);
+      line ln;
+      ln.s("  ");
+      ln.s_lj_at(a.name, 26);
+      ln.u_at(a.size, 36);
+      ln.f2_at(cpo, 48);
+      ln.f2_at(ipc, 58);
+      ln.f2_at(bm, 68);
+      ln.s("  ");
+      ln.s(a.reason);
+      micron::io::println(ln.str());
+    }
+  }
   micron::io::println("");
   micron::io::println("=== done ===");
   micron::io::println("(anti-DCE sink: ", sink_u64, ")");

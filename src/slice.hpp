@@ -211,7 +211,8 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
   // support const ptrs as well -- be careful!!
   slice(const T *a, const T *b) : __mem(static_cast<size_t>(b - a))
   {
-    micron::memcpy(micron::addr(__mem::memory[0]), const_cast<T *>(a), b - a);
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(a),
+                    static_cast<u64>(b - a) * sizeof(T));
     __mem::length = b - a;
   }
 
@@ -221,7 +222,8 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
 
   slice(T *a, T *b) : __mem(static_cast<size_t>(b - a))
   {
-    micron::memcpy(micron::addr(__mem::memory[0]), a, b - a);
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(a),
+                    static_cast<u64>(b - a) * sizeof(T));
     __mem::length = b - a;
   }
 
@@ -1084,7 +1086,7 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
   copy_from_slice(const raw_slice<T> &src)
   {
     const size_t n = src.len < __mem::length ? src.len : __mem::length;
-    micron::memcpy(micron::addr(__mem::memory[0]), src.ptr, n * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(src.ptr), n * sizeof(T));
     return *this;
   }
 
@@ -1188,7 +1190,8 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
     if ( n == 0 ) return slice(size_t(0));
     slice out(__mem::length * n);
     for ( size_t rep = 0; rep < n; rep++ )
-      micron::memcpy(micron::addr(out.__mem::memory[rep * __mem::length]), __mem::memory, __mem::length * sizeof(T));
+      micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[rep * __mem::length])),
+                      reinterpret_cast<const byte *>(__mem::memory), __mem::length * sizeof(T));
     return out;
   }
 
@@ -1196,8 +1199,10 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
   concat(const raw_slice<T> &other) const
   {
     slice out(__mem::length + other.len);
-    micron::memcpy(micron::addr(out.__mem::memory[0]), __mem::memory, __mem::length * sizeof(T));
-    micron::memcpy(micron::addr(out.__mem::memory[__mem::length]), other.ptr, other.len * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[0])), reinterpret_cast<const byte *>(__mem::memory),
+                    __mem::length * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[__mem::length])), reinterpret_cast<const byte *>(other.ptr),
+                    other.len * sizeof(T));
     return out;
   }
 
@@ -1206,9 +1211,11 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
   {
     size_t total = __mem::length + 1 + other.len;
     slice out(total);
-    micron::memcpy(micron::addr(out.__mem::memory[0]), __mem::memory, __mem::length * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[0])), reinterpret_cast<const byte *>(__mem::memory),
+                    __mem::length * sizeof(T));
     out.__mem::memory[__mem::length] = sep;
-    micron::memcpy(micron::addr(out.__mem::memory[__mem::length + 1]), other.ptr, other.len * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[__mem::length + 1])), reinterpret_cast<const byte *>(other.ptr),
+                    other.len * sizeof(T));
     return out;
   }
 

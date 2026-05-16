@@ -10,10 +10,12 @@
 // WARNING: IN DEV UNSAFE
 
 #include "../bits/__arch.hpp"
+#include "../bits/__container.hpp"
 #include "../concepts.hpp"
 #include "../except.hpp"
 #include "../hash/hash.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../memory/cmemory.hpp"
 #include "../simd/aliases.hpp"
@@ -29,8 +31,8 @@ namespace __btree_impl
 {
 
 using node_idx = u32;
-inline constexpr node_idx kEmpty = 0xFFFFFFFFu;
-inline constexpr u8 kFreeSentinel = 0xFFu;      // nkeys=0xFF marks a free slot
+inline constexpr node_idx __k_empty = 0xFFFFFFFFu;
+inline constexpr u8 __k_fsentinel = 0xFFu;      // nkeys=0xFF marks a free slot
 
 // per-K,V fanout/buffer heuristics
 template<usize KvBytes>
@@ -127,8 +129,109 @@ hash_scan_eq(const hash64_t *p, usize n, hash64_t h) noexcept
   return mask;
 }
 
+__attribute__((always_inline)) static inline usize
+hash_scan_gt(const hash64_t *p, usize n, hash64_t h) noexcept
+{
+  usize i = 0;
+  while ( i < n && p[i] <= h ) ++i;
+  return i;
+}
+
+__attribute__((always_inline)) static inline usize
+hash_bsearch_gt(const hash64_t *p, usize n, hash64_t h) noexcept
+{
+  usize lo = 0;
+  usize hi = n;
+  while ( lo < hi ) {
+    const usize mid = lo + ((hi - lo) >> 1);
+    if ( p[mid] <= h )
+      lo = mid + 1;
+    else
+      hi = mid;
+  }
+  return lo;
+}
+
+template<usize N>
+__attribute__((always_inline)) static inline usize
+hash_route_gt(const hash64_t *p, usize n, hash64_t h) noexcept
+{
+  if constexpr ( N <= 8 )
+    return hash_scan_gt(p, n, h);
+  else
+    return hash_bsearch_gt(p, n, h);
+}
+
+// NOTE: these are needed because it's impossible to adapt bits/__container for maps directly
+//
+// TODO: eventually move these out to bits/__maps or such
+
+template<typename T>
+inline constexpr bool is_byte_relocatable_v = micron::is_trivially_copyable_v<T> && micron::is_trivially_destructible_v<T>;
+
+template<typename T>
 __attribute__((always_inline)) static inline void
-bmemmove(void *dst, const void *src, usize nbytes) noexcept
+typed_shift_right(T *base, usize first, usize last) noexcept
+{
+  if ( first >= last ) return;
+  if constexpr ( is_byte_relocatable_v<T> ) {
+    const usize cnt = last - first;
+    using __alias_byte = unsigned char __attribute__((may_alias));
+    __alias_byte *d = reinterpret_cast<__alias_byte *>(base + first + 1);
+    const __alias_byte *s = reinterpret_cast<const __alias_byte *>(base + first);
+    const usize nbytes = cnt * sizeof(T);
+    for ( usize i = nbytes; i > 0; --i ) d[i - 1] = s[i - 1];
+  } else {
+    for ( usize i = last; i > first; --i ) {
+      new (micron::addr(base[i])) T(micron::move(base[i - 1]));
+      base[i - 1].~T();
+    }
+  }
+}
+
+template<typename T>
+__attribute__((always_inline)) static inline void
+typed_erase_at(T *base, usize first, usize last) noexcept
+{
+  if ( first >= last ) return;
+  if constexpr ( is_byte_relocatable_v<T> ) {
+    const usize cnt = (first + 1 < last) ? (last - first - 1) : 0;
+    if ( cnt ) {
+      using __alias_byte = unsigned char __attribute__((may_alias));
+      __alias_byte *d = reinterpret_cast<__alias_byte *>(base + first);
+      const __alias_byte *s = reinterpret_cast<const __alias_byte *>(base + first + 1);
+      const usize nbytes = cnt * sizeof(T);
+      for ( usize i = 0; i < nbytes; ++i ) d[i] = s[i];
+    }
+  } else {
+    base[first].~T();
+    for ( usize i = first + 1; i < last; ++i ) {
+      new (micron::addr(base[i - 1])) T(micron::move(base[i]));
+      base[i].~T();
+    }
+  }
+}
+
+template<typename T>
+__attribute__((always_inline)) static inline void
+typed_relocate_n(T *dest, T *src, usize cnt)
+{
+  if constexpr ( is_byte_relocatable_v<T> ) {
+    using __alias_byte = unsigned char __attribute__((may_alias));
+    __alias_byte *d = reinterpret_cast<__alias_byte *>(dest);
+    const __alias_byte *s = reinterpret_cast<const __alias_byte *>(src);
+    const usize nbytes = cnt * sizeof(T);
+    for ( usize i = 0; i < nbytes; ++i ) d[i] = s[i];
+  } else {
+    for ( usize i = 0; i < cnt; ++i ) {
+      new (micron::addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+    }
+  }
+}
+
+__attribute__((always_inline)) static inline void
+trivial_memmove(void *dst, const void *src, usize nbytes) noexcept
 {
   using __alias_byte = unsigned char __attribute__((may_alias));
   __alias_byte *d = static_cast<__alias_byte *>(dst);
@@ -141,26 +244,16 @@ bmemmove(void *dst, const void *src, usize nbytes) noexcept
   }
 }
 
-__attribute__((always_inline)) static inline usize
-hash_scan_gt(const hash64_t *p, usize n, hash64_t h) noexcept
-{
-  usize i = 0;
-  while ( i < n && p[i] <= h ) ++i;
-  return i;
-}
-
 };      // namespace __btree_impl
 
-template<typename K, is_movable_object V, class Alloc = allocator_serial<>, usize FanoutOverride = 0>
-  requires micron::is_default_constructible_v<K> and micron::is_default_constructible_v<V>
-class btree_map
+template<typename K, is_movable_object V, class Alloc = allocator_serial<>, usize FanoutOverride = 0> class btree_map
 {
 public:
   using node_idx = __btree_impl::node_idx;
 
 private:
-  static constexpr node_idx kEmpty = __btree_impl::kEmpty;
-  static constexpr u8 kFreeSentinel = __btree_impl::kFreeSentinel;
+  static constexpr node_idx __k_empty = __btree_impl::__k_empty;
+  static constexpr u8 __k_fsentinel = __btree_impl::__k_fsentinel;
 
   static constexpr usize __kv_bytes = sizeof(K) + sizeof(V);
   static constexpr usize __auto_leaf_fanout = __btree_impl::pick_leaf_fanout<__kv_bytes>();
@@ -206,6 +299,10 @@ private:
     }
   };
 
+  static_assert(micron::is_trivially_destructible_v<pending_op>,
+                "pending_op must be trivially destructible: drain_internal_buffer relies on raw storage "
+                "with manually-managed K/V lifetimes inside a local array");
+
   struct alignas(__node_align) internal_node {
     u8 nkeys;
     u8 leaf_flag;
@@ -217,14 +314,14 @@ private:
 
     internal_node() : nkeys(0), leaf_flag(0), buf_used(0)
     {
-      for ( usize i = 0; i < __int_fanout; ++i ) children[i] = kEmpty;
+      for ( usize i = 0; i < __int_fanout; ++i ) children[i] = __k_empty;
     }
 
     ~internal_node()
     {
       for ( u8 i = 0; i < buf_used; ++i ) {
         buffer[i].key_ptr()->~K();
-        buffer[i].value_ptr()->~V();
+        if ( buffer[i].tag != OP_ERASE ) buffer[i].value_ptr()->~V();
       }
     }
   };
@@ -235,12 +332,12 @@ private:
     u8 _hdr[2];
     node_idx next_leaf;
     node_idx prev_leaf;
-    u8 _hdr2[4];
+    node_idx overflow_next;
     hash64_t hashes[__leaf_fanout];
     alignas(K) raw_byte keys_raw[sizeof(K) * __leaf_fanout];
     alignas(V) raw_byte values_raw[sizeof(V) * __leaf_fanout];
 
-    leaf_node() : nkeys(0), leaf_flag(1), next_leaf(kEmpty), prev_leaf(kEmpty)
+    leaf_node() : nkeys(0), leaf_flag(1), next_leaf(__k_empty), prev_leaf(__k_empty), overflow_next(__k_empty)
     {
       for ( usize i = 0; i < __leaf_fanout; ++i ) hashes[i] = 0;
     }
@@ -305,8 +402,9 @@ private:
   usize n_buckets_;
   usize mask_;
   usize total_size_;
-  node_idx free_head_;
+  node_idx __fhead;
   node_idx leaf_list_head_;
+  bool __rehashing;      // re-entrance guard
 
   static constexpr usize __min_buckets = 16;
   static constexpr usize __load_num = 7;
@@ -388,10 +486,10 @@ private:
   node_idx
   alloc_slot()
   {
-    if ( free_head_ != kEmpty ) {
-      node_idx i = free_head_;
+    if ( __fhead != __k_empty ) {
+      node_idx i = __fhead;
       free_slot_hdr *h = reinterpret_cast<free_slot_hdr *>(slot_raw(i));
-      free_head_ = h->next_free;
+      __fhead = h->next_free;
       return i;
     }
     if ( __slab.length >= __slab.capacity ) grow_slab();
@@ -423,12 +521,12 @@ private:
       inode(i).~internal_node();
     }
     free_slot_hdr *h = reinterpret_cast<free_slot_hdr *>(slot_raw(i));
-    h->sentinel = kFreeSentinel;
+    h->sentinel = __k_fsentinel;
     h->_pad[0] = 0;
     h->_pad[1] = 0;
     h->_pad[2] = 0;
-    h->next_free = free_head_;
-    free_head_ = i;
+    h->next_free = __fhead;
+    __fhead = i;
   }
 
   void
@@ -436,7 +534,7 @@ private:
   {
     buckets_ = new bucket_head[n];
     for ( usize i = 0; i < n; ++i ) {
-      buckets_[i].root = kEmpty;
+      buckets_[i].root = __k_empty;
       buckets_[i].size = 0;
     }
   }
@@ -452,9 +550,9 @@ private:
   leaf_list_push_front(node_idx li) noexcept
   {
     leaf_node &L = lnode(li);
-    L.prev_leaf = kEmpty;
+    L.prev_leaf = __k_empty;
     L.next_leaf = leaf_list_head_;
-    if ( leaf_list_head_ != kEmpty ) lnode(leaf_list_head_).prev_leaf = li;
+    if ( leaf_list_head_ != __k_empty ) lnode(leaf_list_head_).prev_leaf = li;
     leaf_list_head_ = li;
   }
 
@@ -462,13 +560,13 @@ private:
   leaf_list_unlink(node_idx li) noexcept
   {
     leaf_node &L = lnode(li);
-    if ( L.prev_leaf != kEmpty )
+    if ( L.prev_leaf != __k_empty )
       lnode(L.prev_leaf).next_leaf = L.next_leaf;
     else
       leaf_list_head_ = L.next_leaf;
-    if ( L.next_leaf != kEmpty ) lnode(L.next_leaf).prev_leaf = L.prev_leaf;
-    L.next_leaf = kEmpty;
-    L.prev_leaf = kEmpty;
+    if ( L.next_leaf != __k_empty ) lnode(L.next_leaf).prev_leaf = L.prev_leaf;
+    L.next_leaf = __k_empty;
+    L.prev_leaf = __k_empty;
   }
 
   void
@@ -478,8 +576,34 @@ private:
     leaf_node &N = lnode(new_leaf);
     N.prev_leaf = after_leaf;
     N.next_leaf = A.next_leaf;
-    if ( A.next_leaf != kEmpty ) lnode(A.next_leaf).prev_leaf = new_leaf;
+    if ( A.next_leaf != __k_empty ) lnode(A.next_leaf).prev_leaf = new_leaf;
     A.next_leaf = new_leaf;
+  }
+
+  __attribute__((always_inline)) bool
+  leaf_is_single_class(const leaf_node &L) const noexcept
+  {
+    return L.nkeys > 0 && L.hashes[0] == L.hashes[L.nkeys - 1];
+  }
+
+  __attribute__((always_inline)) node_idx
+  leaf_chain_tail(node_idx primary) const noexcept
+  {
+    node_idx cur = primary;
+    while ( lnode(cur).overflow_next != __k_empty ) cur = lnode(cur).overflow_next;
+    return cur;
+  }
+
+  void
+  free_leaf_and_chain(node_idx primary) noexcept
+  {
+    node_idx cur = primary;
+    while ( cur != __k_empty ) {
+      const node_idx next_ov = lnode(cur).overflow_next;
+      leaf_list_unlink(cur);
+      free_slot(cur);
+      cur = next_ov;
+    }
   }
 
   usize
@@ -523,7 +647,7 @@ private:
   {
     if ( !buckets_ || n_buckets_ == 0 ) return nullptr;
     bucket_head &b = buckets_[h & mask_];
-    if ( b.root == kEmpty ) return nullptr;
+    if ( b.root == __k_empty ) return nullptr;
     node_idx cur = b.root;
     while ( !slot_is_leaf(cur) ) {
       internal_node &N = inode(cur);
@@ -532,14 +656,17 @@ private:
       int r = buffer_probe(N, h, k, &bp);
       if ( r == 1 ) return bp;
       if ( r == 2 ) return nullptr;
-      usize ci = __btree_impl::hash_scan_gt(N.pivots, N.nkeys, h);
+      usize ci = __btree_impl::hash_route_gt<__int_fanout>(N.pivots, N.nkeys, h);
       cur = N.children[ci];
-      if ( cur == kEmpty ) return nullptr;
+      if ( cur == __k_empty ) return nullptr;
     }
-    leaf_node &L = lnode(cur);
-    usize p = leaf_find_slot(L, h, k);
-    if ( p == __leaf_fanout ) return nullptr;
-    return addr(L.values()[p]);
+    while ( cur != __k_empty ) {
+      leaf_node &L = lnode(cur);
+      const usize p = leaf_find_slot(L, h, k);
+      if ( p != __leaf_fanout ) return micron::addr(L.values()[p]);
+      cur = L.overflow_next;
+    }
+    return nullptr;
   }
 
   const V *
@@ -556,22 +683,23 @@ private:
     if ( p != __leaf_fanout ) {
       L.values()[p] = micron::move(v);
       *replaced = true;
-      return addr(L.values()[p]);
+      return micron::addr(L.values()[p]);
     }
-    usize ip = leaf_insert_pos(L, h);
+    const usize ip = leaf_insert_pos(L, h);
+    const usize n_before = static_cast<usize>(L.nkeys);
 
-    if ( ip < L.nkeys ) {
-      const usize count = L.nkeys - ip;
-      __btree_impl::bmemmove(&L.hashes[ip + 1], &L.hashes[ip], count * sizeof(hash64_t));
-      __btree_impl::bmemmove(L.keys() + (ip + 1), L.keys() + ip, count * sizeof(K));
-      __btree_impl::bmemmove(L.values() + (ip + 1), L.values() + ip, count * sizeof(V));
+    if ( ip < n_before ) {
+      const usize count = n_before - ip;
+      __btree_impl::trivial_memmove(micron::addr(L.hashes[ip + 1]), micron::addr(L.hashes[ip]), count * sizeof(hash64_t));
+      __btree_impl::typed_shift_right(L.keys(), ip, n_before);
+      __btree_impl::typed_shift_right(L.values(), ip, n_before);
     }
     L.hashes[ip] = h;
     new (L.keys() + ip) K(k);
     new (L.values() + ip) V(micron::move(v));
     ++L.nkeys;
     *replaced = false;
-    return addr(L.values()[ip]);
+    return micron::addr(L.values()[ip]);
   }
 
   V *
@@ -582,142 +710,361 @@ private:
   }
 
   micron::pair<node_idx, hash64_t>
-  split_leaf(node_idx li)
+  split_leaf_mixed(node_idx li)
   {
+    usize mid;
+    {
+      const leaf_node &Lpre = lnode(li);
+      const usize n = static_cast<usize>(Lpre.nkeys);
+      mid = __leaf_fanout / 2;
+      while ( mid < n && Lpre.hashes[mid - 1] == Lpre.hashes[mid] ) ++mid;
+      if ( mid >= n ) {
+        mid = __leaf_fanout / 2;
+        while ( mid > 0 && Lpre.hashes[mid - 1] == Lpre.hashes[mid] ) --mid;
+      }
+    }
     node_idx ri = alloc_leaf();
-    leaf_node &L = lnode(li);
+    leaf_node &L = lnode(li);      // re-fetch after potential slab grow
     leaf_node &R = lnode(ri);
-    constexpr usize mid = __leaf_fanout / 2;
     R.nkeys = static_cast<u8>(L.nkeys - mid);
-
-    __btree_impl::bmemmove(&R.hashes[0], &L.hashes[mid], R.nkeys * sizeof(hash64_t));
-    __btree_impl::bmemmove(R.keys(), L.keys() + mid, R.nkeys * sizeof(K));
-    __btree_impl::bmemmove(R.values(), L.values() + mid, R.nkeys * sizeof(V));
+    __btree_impl::trivial_memmove(micron::addr(R.hashes[0]), micron::addr(L.hashes[mid]), R.nkeys * sizeof(hash64_t));
+    __btree_impl::typed_relocate_n(R.keys(), L.keys() + mid, R.nkeys);
+    __btree_impl::typed_relocate_n(R.values(), L.values() + mid, R.nkeys);
     L.nkeys = static_cast<u8>(mid);
     leaf_list_insert_after(li, ri);
     return { ri, R.hashes[0] };
   }
 
   micron::pair<node_idx, hash64_t>
-  split_internal(node_idx ii)
+  asymmetric_split_leaf(node_idx ni, hash64_t h, const K &k, V &&v, V **out_value, bool *out_inserted)
   {
+    const hash64_t leaf_hash = lnode(ni).hashes[0];
+    node_idx ri = alloc_leaf();
 
-    drain_internal_buffer(ii);
-    node_idx ri = alloc_internal();
-    internal_node &L = inode(ii);
-    internal_node &R = inode(ri);
-    constexpr usize mid = __int_fanout / 2;
-    hash64_t promoted = L.pivots[mid - 1];
+    if ( h > leaf_hash ) {
+      leaf_node &R = lnode(ri);
+      R.hashes[0] = h;
+      new (R.keys()) K(k);
+      new (R.values()) V(micron::move(v));
+      R.nkeys = 1;
+      const node_idx tail = leaf_chain_tail(ni);
+      leaf_list_insert_after(tail, ri);
+      *out_value = micron::addr(R.values()[0]);
+      *out_inserted = true;
+      return { ri, h };
+    }
+    leaf_node &L = lnode(ni);
+    leaf_node &R = lnode(ri);
+    const u8 n = L.nkeys;
+    __btree_impl::trivial_memmove(R.hashes, L.hashes, static_cast<usize>(n) * sizeof(hash64_t));
+    __btree_impl::typed_relocate_n(R.keys(), L.keys(), static_cast<usize>(n));
+    __btree_impl::typed_relocate_n(R.values(), L.values(), static_cast<usize>(n));
+    R.nkeys = n;
+    R.overflow_next = L.overflow_next;
+    L.overflow_next = __k_empty;
+    L.nkeys = 0;
+    L.hashes[0] = h;
+    new (L.keys()) K(k);
+    new (L.values()) V(micron::move(v));
+    L.nkeys = 1;
+    leaf_list_insert_after(ni, ri);
+    *out_value = micron::addr(L.values()[0]);
+    *out_inserted = true;
+    return { ri, leaf_hash };
+  }
 
-    R.nkeys = static_cast<u8>(L.nkeys - mid);
-    for ( usize j = 0; j < R.nkeys; ++j ) R.pivots[j] = L.pivots[mid + j];
-    for ( usize j = 0; j <= R.nkeys; ++j ) R.children[j] = L.children[mid + j];
-    L.nkeys = static_cast<u8>(mid - 1);
-    return { ri, promoted };
+  V *
+  chain_insert_same_hash(node_idx primary, hash64_t h, const K &k, V &&v, bool *replaced)
+  {
+    node_idx cur = primary;
+    node_idx tail = primary;
+    node_idx with_space = (lnode(primary).nkeys < __leaf_fanout) ? primary : __k_empty;
+    while ( cur != __k_empty ) {
+      leaf_node &C = lnode(cur);
+      const usize p = leaf_find_slot(C, h, k);
+      if ( p != __leaf_fanout ) {
+        C.values()[p] = micron::move(v);
+        *replaced = true;
+        return micron::addr(C.values()[p]);
+      }
+      if ( with_space == __k_empty && C.nkeys < __leaf_fanout ) with_space = cur;
+      tail = cur;
+      cur = C.overflow_next;
+    }
+    if ( with_space != __k_empty ) {
+      return leaf_insert_no_split(with_space, h, k, micron::move(v), replaced);
+    }
+    node_idx new_li = alloc_leaf();
+    leaf_node &Lnew = lnode(new_li);
+    Lnew.hashes[0] = h;
+    new (Lnew.keys()) K(k);
+    new (Lnew.values()) V(micron::move(v));
+    Lnew.nkeys = 1;
+    lnode(tail).overflow_next = new_li;
+    leaf_list_insert_after(tail, new_li);
+    *replaced = false;
+    return micron::addr(Lnew.values()[0]);
+  }
+
+  static inline void
+  buffer_construct_key(pending_op &op, const K &k)
+  {
+    new (op.key_ptr()) K(k);
+  }
+
+  static inline void
+  buffer_destroy_key(pending_op &op) noexcept
+  {
+    op.key_ptr()->~K();
+  }
+
+  static inline void
+  buffer_construct_value(pending_op &op, V &&v)
+  {
+    new (op.value_ptr()) V(micron::move(v));
+  }
+
+  static inline void
+  buffer_destroy_value(pending_op &op) noexcept
+  {
+    op.value_ptr()->~V();
+  }
+
+  static inline void
+  buffer_relocate(pending_op &dst, pending_op &src)
+  {
+    dst.hash = src.hash;
+    if constexpr ( micron::is_trivially_copyable_v<K> ) {
+      using __alias_byte = unsigned char __attribute__((may_alias));
+      __alias_byte *d = reinterpret_cast<__alias_byte *>(dst.key_raw);
+      const __alias_byte *s = reinterpret_cast<const __alias_byte *>(src.key_raw);
+      for ( usize i = 0; i < sizeof(K); ++i ) d[i] = s[i];
+    } else {
+      new (dst.key_ptr()) K(micron::move(*src.key_ptr()));
+      src.key_ptr()->~K();
+    }
+    if ( src.tag != OP_ERASE ) {
+      if constexpr ( micron::is_trivially_copyable_v<V> ) {
+        using __alias_byte = unsigned char __attribute__((may_alias));
+        __alias_byte *d = reinterpret_cast<__alias_byte *>(dst.value_raw);
+        const __alias_byte *s = reinterpret_cast<const __alias_byte *>(src.value_raw);
+        for ( usize i = 0; i < sizeof(V); ++i ) d[i] = s[i];
+      } else {
+        new (dst.value_ptr()) V(micron::move(*src.value_ptr()));
+        src.value_ptr()->~V();
+      }
+    }
+    dst.tag = src.tag;
   }
 
   void
-  internal_insert_pivot(internal_node &N, usize ip, hash64_t h, node_idx right_child)
+  internal_insert_pivot(internal_node &N, usize ip, hash64_t new_pivot, node_idx right_child) noexcept
   {
     for ( usize j = N.nkeys; j > ip; --j ) N.pivots[j] = N.pivots[j - 1];
     for ( usize j = static_cast<usize>(N.nkeys) + 1; j > ip + 1; --j ) N.children[j] = N.children[j - 1];
-    N.pivots[ip] = h;
+    N.pivots[ip] = new_pivot;
     N.children[ip + 1] = right_child;
     ++N.nkeys;
   }
 
+  void
+  internal_insert_pivot_or_split(node_idx ii, usize ip, hash64_t new_pivot, node_idx right_child, hash64_t *out_split_pivot,
+                                 node_idx *out_split_right)
+  {
+    *out_split_right = __k_empty;
+    {
+      internal_node &N = inode(ii);
+      if ( N.nkeys < __int_fanout - 1 ) {
+        internal_insert_pivot(N, ip, new_pivot, right_child);
+        return;
+      }
+    }
+    hash64_t exp_pivots[__int_fanout];
+    node_idx exp_children[__int_fanout + 1];
+    usize nb;
+    {
+      const internal_node &N = inode(ii);
+      nb = static_cast<usize>(N.nkeys);
+      for ( usize j = 0; j < nb; ++j ) exp_pivots[j] = N.pivots[j];
+      for ( usize j = 0; j <= nb; ++j ) exp_children[j] = N.children[j];
+    }
+    for ( usize j = nb; j > ip; --j ) exp_pivots[j] = exp_pivots[j - 1];
+    for ( usize j = nb + 1; j > ip + 1; --j ) exp_children[j] = exp_children[j - 1];
+    exp_pivots[ip] = new_pivot;
+    exp_children[ip + 1] = right_child;
+    const usize total = nb + 1;
+
+    node_idx ri = alloc_internal();
+    const usize lmid = total / 2;
+    const hash64_t promoted = exp_pivots[lmid];
+    {
+      internal_node &L = inode(ii);
+      L.nkeys = static_cast<u8>(lmid);
+      for ( usize j = 0; j < lmid; ++j ) L.pivots[j] = exp_pivots[j];
+      for ( usize j = 0; j <= lmid; ++j ) L.children[j] = exp_children[j];
+    }
+    {
+      internal_node &R = inode(ri);
+      R.nkeys = static_cast<u8>(total - lmid - 1);
+      for ( usize j = 0; j < R.nkeys; ++j ) R.pivots[j] = exp_pivots[lmid + 1 + j];
+      for ( usize j = 0; j <= R.nkeys; ++j ) R.children[j] = exp_children[lmid + 1 + j];
+    }
+    *out_split_pivot = promoted;
+    *out_split_right = ri;
+  }
+
   V *
-  descend_apply(node_idx ni, hash64_t h, const K &k, V &&v, op_tag tag, bool *out_inserted, hash64_t *out_split_pivot,
+  descend_apply(node_idx ni, hash64_t h, const K &k, V *v_for_insert, op_tag tag, bool *out_inserted, hash64_t *out_split_pivot,
                 node_idx *out_split_right)
   {
-    *out_split_right = kEmpty;
+    *out_split_right = __k_empty;
     if ( slot_is_leaf(ni) ) {
-      leaf_node &L = lnode(ni);
       if ( tag == OP_ERASE ) {
-        usize p = leaf_find_slot(L, h, k);
-        if ( p == __leaf_fanout ) {
-          *out_inserted = false;
-          return nullptr;
+        node_idx cur = ni;
+        while ( cur != __k_empty ) {
+          leaf_node &C = lnode(cur);
+          const usize p = leaf_find_slot(C, h, k);
+          if ( p != __leaf_fanout ) {
+            const usize n_before = static_cast<usize>(C.nkeys);
+            if ( p + 1 < n_before ) {
+              const usize tail = n_before - p - 1;
+              __btree_impl::trivial_memmove(micron::addr(C.hashes[p]), micron::addr(C.hashes[p + 1]), tail * sizeof(hash64_t));
+            }
+            __btree_impl::typed_erase_at(C.keys(), p, n_before);
+            __btree_impl::typed_erase_at(C.values(), p, n_before);
+            --C.nkeys;
+            *out_inserted = true;
+            return nullptr;
+          }
+          cur = C.overflow_next;
         }
-
-        L.keys()[p].~K();
-        L.values()[p].~V();
-        if ( p + 1 < L.nkeys ) {
-          const usize tail = L.nkeys - p - 1;
-          __btree_impl::bmemmove(&L.hashes[p], &L.hashes[p + 1], tail * sizeof(hash64_t));
-          __btree_impl::bmemmove(L.keys() + p, L.keys() + (p + 1), tail * sizeof(K));
-          __btree_impl::bmemmove(L.values() + p, L.values() + (p + 1), tail * sizeof(V));
-        }
-        --L.nkeys;
-        *out_inserted = true;
+        *out_inserted = false;
         return nullptr;
       }
 
+      {
+        node_idx cur = ni;
+        while ( cur != __k_empty ) {
+          leaf_node &C = lnode(cur);
+          const usize p = leaf_find_slot(C, h, k);
+          if ( p != __leaf_fanout ) {
+            C.values()[p] = micron::move(*v_for_insert);
+            *out_inserted = false;
+            return micron::addr(C.values()[p]);
+          }
+          cur = C.overflow_next;
+        }
+      }
+
       bool replaced = false;
+      leaf_node &L = lnode(ni);
       if ( L.nkeys < __leaf_fanout ) {
-        V *vp = leaf_insert_no_split(ni, h, k, micron::move(v), &replaced);
+        V *vp = leaf_insert_no_split(ni, h, k, micron::move(*v_for_insert), &replaced);
         *out_inserted = !replaced;
         return vp;
       }
-
-      usize ep = leaf_find_slot(L, h, k);
-      if ( ep != __leaf_fanout ) {
-        L.values()[ep] = micron::move(v);
-        *out_inserted = false;
-        return addr(L.values()[ep]);
+      if ( leaf_is_single_class(L) ) {
+        const hash64_t leaf_hash = L.hashes[0];
+        if ( h == leaf_hash ) {
+          V *vp = chain_insert_same_hash(ni, h, k, micron::move(*v_for_insert), &replaced);
+          *out_inserted = !replaced;
+          return vp;
+        }
+        V *vp = nullptr;
+        auto sp = asymmetric_split_leaf(ni, h, k, micron::move(*v_for_insert), &vp, out_inserted);
+        *out_split_right = sp.a;
+        *out_split_pivot = sp.b;
+        return vp;
       }
 
-      auto sp = split_leaf(ni);
-      node_idx right = sp.a;
-      hash64_t med = sp.b;
-      node_idx target = (h < med) ? ni : right;
-      V *vp = leaf_insert_no_split(target, h, k, micron::move(v), &replaced);
+      auto sp = split_leaf_mixed(ni);
+      const node_idx right = sp.a;
+      const hash64_t med = sp.b;
+      const node_idx target = (h < med) ? ni : right;
+      V *vp = leaf_insert_no_split(target, h, k, micron::move(*v_for_insert), &replaced);
       *out_inserted = !replaced;
       *out_split_pivot = med;
       *out_split_right = right;
       return vp;
     }
 
-    internal_node &N = inode(ni);
-
-    for ( u8 i = 0; i < N.buf_used; ++i ) {
-      if ( N.buffer[i].hash == h && *N.buffer[i].key_ptr() == k ) {
-        *N.buffer[i].value_ptr() = micron::move(v);
-        N.buffer[i].tag = tag;
+    {
+      internal_node &N = inode(ni);
+      for ( u8 i = 0; i < N.buf_used; ++i ) {
+        if ( N.buffer[i].hash == h && *N.buffer[i].key_ptr() == k ) {
+          const op_tag old_tag = static_cast<op_tag>(N.buffer[i].tag);
+          if ( tag == OP_INSERT ) {
+            if ( old_tag == OP_INSERT ) {
+              *N.buffer[i].value_ptr() = micron::move(*v_for_insert);
+            } else {
+              new (N.buffer[i].value_ptr()) V(micron::move(*v_for_insert));
+            }
+            N.buffer[i].tag = OP_INSERT;
+            *out_inserted = (old_tag == OP_ERASE);
+            return N.buffer[i].value_ptr();
+          } else {
+            if ( old_tag == OP_INSERT ) {
+              N.buffer[i].value_ptr()->~V();
+            }
+            N.buffer[i].tag = OP_ERASE;
+            *out_inserted = (old_tag == OP_INSERT);
+            return nullptr;
+          }
+        }
+      }
+      if ( N.buf_used < __buf_size ) {
+        pending_op &op = N.buffer[N.buf_used];
+        op.hash = h;
+        new (op.key_ptr()) K(k);
+        if ( tag == OP_INSERT ) new (op.value_ptr()) V(micron::move(*v_for_insert));
+        op.tag = tag;
+        ++N.buf_used;
         *out_inserted = true;
-        return N.buffer[i].value_ptr();
+        return (tag == OP_INSERT) ? op.value_ptr() : nullptr;
       }
     }
-    if ( N.buf_used < __buf_size ) {
-      pending_op &op = N.buffer[N.buf_used];
-      op.hash = h;
-      new (op.key_ptr()) K(k);
-      new (op.value_ptr()) V(micron::move(v));
-      op.tag = tag;
-      ++N.buf_used;
-      *out_inserted = true;
-      return (tag == OP_ERASE) ? nullptr : op.value_ptr();
+
+    hash64_t drain_pivot = 0;
+    node_idx drain_right = __k_empty;
+    drain_internal_buffer(ni, &drain_pivot, &drain_right);
+
+    if ( drain_right != __k_empty ) {
+      *out_split_pivot = drain_pivot;
+      *out_split_right = drain_right;
+      const node_idx target = (h >= drain_pivot) ? drain_right : ni;
+      usize ci;
+      node_idx child;
+      {
+        const internal_node &T = inode(target);
+        ci = __btree_impl::hash_route_gt<__int_fanout>(T.pivots, T.nkeys, h);
+        child = T.children[ci];
+      }
+      bool dummy_inserted = false;
+      hash64_t csp = 0;
+      node_idx csr = __k_empty;
+      V *vp = descend_apply(child, h, k, v_for_insert, tag, &dummy_inserted, &csp, &csr);
+      *out_inserted = dummy_inserted;
+      if ( csr != __k_empty ) {
+        internal_node &T2 = inode(target);
+        internal_insert_pivot(T2, ci, csp, csr);
+      }
+      return vp;
     }
 
-    drain_internal_buffer(ni);
-
-    internal_node &N2 = inode(ni);
-    usize ci = __btree_impl::hash_scan_gt(N2.pivots, N2.nkeys, h);
-    hash64_t child_split_pivot = 0;
-    node_idx child_split_right = kEmpty;
-    V *vp = descend_apply(N2.children[ci], h, k, micron::move(v), tag, out_inserted, &child_split_pivot, &child_split_right);
-    if ( child_split_right != kEmpty ) {
-      internal_node &N3 = inode(ni);
-      if ( N3.nkeys < __int_fanout - 1 ) {
-        internal_insert_pivot(N3, ci, child_split_pivot, child_split_right);
-      } else {
-
-        internal_insert_pivot(N3, ci, child_split_pivot, child_split_right);
-
-        auto sp = split_internal(ni);
-        *out_split_pivot = sp.b;
-        *out_split_right = sp.a;
-      }
+    usize ci;
+    node_idx child;
+    {
+      const internal_node &N2 = inode(ni);
+      ci = __btree_impl::hash_route_gt<__int_fanout>(N2.pivots, N2.nkeys, h);
+      child = N2.children[ci];
+    }
+    bool dummy_inserted = false;
+    hash64_t csp = 0;
+    node_idx csr = __k_empty;
+    V *vp = descend_apply(child, h, k, v_for_insert, tag, &dummy_inserted, &csp, &csr);
+    *out_inserted = dummy_inserted;
+    if ( csr != __k_empty ) {
+      internal_insert_pivot_or_split(ni, ci, csp, csr, out_split_pivot, out_split_right);
     }
     return vp;
   }
@@ -725,60 +1072,123 @@ private:
   V *
   descend_apply_drained(node_idx ni, pending_op &op, bool *out_inserted, hash64_t *out_split_pivot, node_idx *out_split_right)
   {
-    return descend_apply(ni, op.hash, *op.key_ptr(), micron::move(*op.value_ptr()), op.tag, out_inserted, out_split_pivot, out_split_right);
+    if ( op.tag == OP_INSERT ) {
+      return descend_apply(ni, op.hash, *op.key_ptr(), op.value_ptr(), OP_INSERT, out_inserted, out_split_pivot, out_split_right);
+    }
+    return descend_apply(ni, op.hash, *op.key_ptr(), nullptr, OP_ERASE, out_inserted, out_split_pivot, out_split_right);
   }
 
   void
-  drain_internal_buffer(node_idx ii)
+  drain_internal_buffer(node_idx ii, hash64_t *out_split_pivot, node_idx *out_split_right)
   {
-
+    *out_split_right = __k_empty;
     u8 cnt;
     {
       internal_node &N0 = inode(ii);
       cnt = N0.buf_used;
       if ( cnt == 0 ) return;
     }
+
     pending_op local[__buf_size];
     {
       internal_node &N0 = inode(ii);
-
-      __btree_impl::bmemmove(local, N0.buffer, cnt * sizeof(pending_op));
+      for ( u8 i = 0; i < cnt; ++i ) buffer_relocate(local[i], N0.buffer[i]);
       N0.buf_used = 0;
     }
+
+    constexpr usize exp_cap = static_cast<usize>(__int_fanout - 1) + __buf_size;
+    hash64_t exp_pivots[exp_cap];
+    node_idx exp_children[exp_cap + 1];
+    usize exp_n;
+    {
+      const internal_node &N0 = inode(ii);
+      exp_n = static_cast<usize>(N0.nkeys);
+      for ( usize j = 0; j < exp_n; ++j ) exp_pivots[j] = N0.pivots[j];
+      for ( usize j = 0; j <= exp_n; ++j ) exp_children[j] = N0.children[j];
+    }
+
     for ( u8 i = 0; i < cnt; ++i ) {
+      const hash64_t op_hash = local[i].hash;
+      const usize ci = __btree_impl::hash_route_gt<__int_fanout>(exp_pivots, exp_n, op_hash);
+      const node_idx child = exp_children[ci];
       bool dummy_inserted = false;
-      hash64_t split_pivot = 0;
-      node_idx split_right = kEmpty;
-      hash64_t op_hash;
-      {
-        internal_node &N = inode(ii);
-        op_hash = local[i].hash;
-        usize ci = __btree_impl::hash_scan_gt(N.pivots, N.nkeys, op_hash);
-        node_idx child = N.children[ci];
-        descend_apply_drained(child, local[i], &dummy_inserted, &split_pivot, &split_right);
-      }
-      if ( split_right != kEmpty ) {
-        internal_node &N2 = inode(ii);
-        usize ci = __btree_impl::hash_scan_gt(N2.pivots, N2.nkeys, op_hash);
-        if ( N2.nkeys < __int_fanout - 1 ) internal_insert_pivot(N2, ci, split_pivot, split_right);
+      hash64_t csp = 0;
+      node_idx csr = __k_empty;
+      descend_apply_drained(child, local[i], &dummy_inserted, &csp, &csr);
+      if ( csr != __k_empty ) {
+        for ( usize j = exp_n; j > ci; --j ) exp_pivots[j] = exp_pivots[j - 1];
+        for ( usize j = exp_n + 1; j > ci + 1; --j ) exp_children[j] = exp_children[j - 1];
+        exp_pivots[ci] = csp;
+        exp_children[ci + 1] = csr;
+        ++exp_n;
       }
     }
 
     for ( u8 i = 0; i < cnt; ++i ) {
-      local[i].key_ptr()->~K();
-      local[i].value_ptr()->~V();
+      buffer_destroy_key(local[i]);
+      if ( local[i].tag != OP_ERASE ) buffer_destroy_value(local[i]);
     }
+
+    if ( exp_n <= static_cast<usize>(__int_fanout - 1) ) {
+      internal_node &N = inode(ii);
+      N.nkeys = static_cast<u8>(exp_n);
+      for ( usize j = 0; j < exp_n; ++j ) N.pivots[j] = exp_pivots[j];
+      for ( usize j = 0; j <= exp_n; ++j ) N.children[j] = exp_children[j];
+      return;
+    }
+    node_idx ri = alloc_internal();
+    const usize lmid = exp_n / 2;
+    const hash64_t promoted = exp_pivots[lmid];
+    {
+      internal_node &L = inode(ii);
+      L.nkeys = static_cast<u8>(lmid);
+      for ( usize j = 0; j < lmid; ++j ) L.pivots[j] = exp_pivots[j];
+      for ( usize j = 0; j <= lmid; ++j ) L.children[j] = exp_children[j];
+    }
+    {
+      internal_node &R = inode(ri);
+      R.nkeys = static_cast<u8>(exp_n - lmid - 1);
+      for ( usize j = 0; j < R.nkeys; ++j ) R.pivots[j] = exp_pivots[lmid + 1 + j];
+      for ( usize j = 0; j <= R.nkeys; ++j ) R.children[j] = exp_children[lmid + 1 + j];
+    }
+    *out_split_pivot = promoted;
+    *out_split_right = ri;
+  }
+
+  micron::pair<node_idx, hash64_t>
+  split_internal(node_idx ii)
+  {
+    hash64_t drain_pivot = 0;
+    node_idx drain_right = __k_empty;
+    drain_internal_buffer(ii, &drain_pivot, &drain_right);
+    if ( drain_right != __k_empty ) return { drain_right, drain_pivot };
+
+    internal_node &N = inode(ii);
+    if ( N.nkeys < 2 ) return { __k_empty, 0 };
+    node_idx ri = alloc_internal();
+    internal_node &L = inode(ii);
+    internal_node &R = inode(ri);
+    const usize n = static_cast<usize>(L.nkeys);
+    const usize mid = n / 2;
+    const hash64_t promoted = L.pivots[mid];
+    L.nkeys = static_cast<u8>(mid);
+    R.nkeys = static_cast<u8>(n - mid - 1);
+    for ( usize j = 0; j < R.nkeys; ++j ) R.pivots[j] = L.pivots[mid + 1 + j];
+    for ( usize j = 0; j <= R.nkeys; ++j ) R.children[j] = L.children[mid + 1 + j];
+    return { ri, promoted };
   }
 
   void
   ensure_root_capacity(bucket_head &b, hash64_t h)
   {
-    if ( b.root == kEmpty ) return;
+    (void)h;
+    if ( b.root == __k_empty ) return;
     if ( slot_is_leaf(b.root) ) {
       leaf_node &L = lnode(b.root);
       if ( L.nkeys < __leaf_fanout ) return;
+      if ( leaf_is_single_class(L) ) return;
 
-      auto sp = split_leaf(b.root);
+      auto sp = split_leaf_mixed(b.root);
       node_idx new_root = alloc_internal();
       internal_node &NR = inode(new_root);
       NR.pivots[0] = sp.b;
@@ -786,13 +1196,13 @@ private:
       NR.children[1] = sp.a;
       NR.nkeys = 1;
       b.root = new_root;
-      (void)h;
       return;
     }
     internal_node &R = inode(b.root);
     if ( R.nkeys < __int_fanout - 1 ) return;
 
     auto sp = split_internal(b.root);
+    if ( sp.a == __k_empty ) return;
     node_idx new_root = alloc_internal();
     internal_node &NR = inode(new_root);
     NR.pivots[0] = sp.b;
@@ -800,21 +1210,15 @@ private:
     NR.children[1] = sp.a;
     NR.nkeys = 1;
     b.root = new_root;
-    (void)h;
   }
 
   V *
-  insert_impl(hash64_t h, const K &k, V &&v, op_tag tag, bool *out_inserted)
+  insert_impl(hash64_t h, const K &k, V &&v, bool *out_inserted)
   {
     maybe_rehash();
     bucket_head &b = buckets_[h & mask_];
-    if ( b.root == kEmpty ) {
-      if ( tag == OP_ERASE ) {
-        *out_inserted = false;
-        return nullptr;
-      }
+    if ( b.root == __k_empty ) {
       node_idx li = alloc_leaf();
-
       bucket_head &b2 = buckets_[h & mask_];
       leaf_node &L = lnode(li);
       L.hashes[0] = h;
@@ -826,16 +1230,15 @@ private:
       ++total_size_;
       leaf_list_push_front(li);
       *out_inserted = true;
-      return addr(L.values()[0]);
+      return micron::addr(L.values()[0]);
     }
     ensure_root_capacity(b, h);
     bucket_head &b3 = buckets_[h & mask_];
     hash64_t split_pivot = 0;
-    node_idx split_right = kEmpty;
+    node_idx split_right = __k_empty;
     bool did_op = false;
-    V *vp = descend_apply(b3.root, h, k, micron::move(v), tag, &did_op, &split_pivot, &split_right);
-    if ( split_right != kEmpty ) {
-
+    V *vp = descend_apply(b3.root, h, k, micron::addr(v), OP_INSERT, &did_op, &split_pivot, &split_right);
+    if ( split_right != __k_empty ) {
       bucket_head &b4 = buckets_[h & mask_];
       node_idx new_root = alloc_internal();
       internal_node &NR = inode(new_root);
@@ -847,22 +1250,47 @@ private:
     }
     bucket_head &b5 = buckets_[h & mask_];
     if ( did_op ) {
-      if ( tag == OP_INSERT ) {
-
-        ++b5.size;
-        ++total_size_;
-      } else if ( tag == OP_ERASE ) {
-        if ( b5.size > 0 ) --b5.size;
-        if ( total_size_ > 0 ) --total_size_;
-      }
+      ++b5.size;
+      ++total_size_;
     }
     *out_inserted = did_op;
     return vp;
   }
 
+  bool
+  erase_impl(hash64_t h, const K &k)
+  {
+    if ( !buckets_ || n_buckets_ == 0 ) return false;
+    bucket_head &b = buckets_[h & mask_];
+    if ( b.root == __k_empty ) return false;
+    ensure_root_capacity(b, h);
+    bucket_head &b3 = buckets_[h & mask_];
+    hash64_t split_pivot = 0;
+    node_idx split_right = __k_empty;
+    bool did_op = false;
+    descend_apply(b3.root, h, k, nullptr, OP_ERASE, &did_op, &split_pivot, &split_right);
+    if ( split_right != __k_empty ) {
+      bucket_head &b4 = buckets_[h & mask_];
+      node_idx new_root = alloc_internal();
+      internal_node &NR = inode(new_root);
+      NR.pivots[0] = split_pivot;
+      NR.children[0] = b4.root;
+      NR.children[1] = split_right;
+      NR.nkeys = 1;
+      b4.root = new_root;
+    }
+    if ( did_op ) {
+      bucket_head &b5 = buckets_[h & mask_];
+      if ( b5.size > 0 ) --b5.size;
+      if ( total_size_ > 0 ) --total_size_;
+    }
+    return did_op;
+  }
+
   void
   maybe_rehash()
   {
+    if ( __rehashing ) return;
     if ( total_size_ * __load_denom < n_buckets_ * __leaf_fanout * __load_num ) return;
     rehash(n_buckets_ * 2);
   }
@@ -870,38 +1298,37 @@ private:
   void
   rehash(usize new_n_buckets)
   {
-
+    __rehashing = true;
     bucket_head *new_buckets = new bucket_head[new_n_buckets];
     for ( usize i = 0; i < new_n_buckets; ++i ) {
-      new_buckets[i].root = kEmpty;
+      new_buckets[i].root = __k_empty;
       new_buckets[i].size = 0;
     }
 
     for ( usize bi = 0; bi < n_buckets_; ++bi ) {
-      if ( buckets_[bi].root != kEmpty ) drain_recursive(buckets_[bi].root);
+      if ( buckets_[bi].root != __k_empty ) drain_recursive(buckets_[bi].root);
     }
     for ( usize bi = 0; bi < n_buckets_; ++bi ) {
-      if ( buckets_[bi].root != kEmpty ) free_internals_recursive(buckets_[bi].root);
-      buckets_[bi].root = kEmpty;
+      if ( buckets_[bi].root != __k_empty ) free_internals_recursive(buckets_[bi].root);
+      buckets_[bi].root = __k_empty;
     }
 
     node_idx old_head = leaf_list_head_;
-    leaf_list_head_ = kEmpty;
+    leaf_list_head_ = __k_empty;
 
     delete[] buckets_;
     buckets_ = new_buckets;
     n_buckets_ = new_n_buckets;
     mask_ = new_n_buckets - 1;
-    usize old_total = total_size_;
     total_size_ = 0;
 
     node_idx cur = old_head;
-    while ( cur != kEmpty ) {
+    while ( cur != __k_empty ) {
       hash64_t hashes_copy[__leaf_fanout];
       alignas(K) raw_byte keys_raw_copy[sizeof(K) * __leaf_fanout];
       alignas(V) raw_byte values_raw_copy[sizeof(V) * __leaf_fanout];
-      K *keys_copy = reinterpret_cast<K *>(keys_raw_copy);
-      V *values_copy = reinterpret_cast<V *>(values_raw_copy);
+      K *keys_copy = reinterpret_cast<K *>(static_cast<void *>(&keys_raw_copy[0]));
+      V *values_copy = reinterpret_cast<V *>(static_cast<void *>(&values_raw_copy[0]));
       u8 n;
       node_idx next;
       {
@@ -909,17 +1336,17 @@ private:
         next = L.next_leaf;
         n = L.nkeys;
 
-        __btree_impl::bmemmove(hashes_copy, L.hashes, n * sizeof(hash64_t));
-        __btree_impl::bmemmove(keys_copy, L.keys(), n * sizeof(K));
-        __btree_impl::bmemmove(values_copy, L.values(), n * sizeof(V));
-        L.next_leaf = kEmpty;
-        L.prev_leaf = kEmpty;
+        for ( u8 j = 0; j < n; ++j ) hashes_copy[j] = L.hashes[j];
+        __btree_impl::typed_relocate_n(keys_copy, L.keys(), n);
+        __btree_impl::typed_relocate_n(values_copy, L.values(), n);
+        L.next_leaf = __k_empty;
+        L.prev_leaf = __k_empty;
         L.nkeys = 0;
       }
       free_slot(cur);
       for ( u8 j = 0; j < n; ++j ) {
         bool dummy = false;
-        insert_impl(hashes_copy[j], keys_copy[j], micron::move(values_copy[j]), OP_INSERT, &dummy);
+        insert_impl(hashes_copy[j], keys_copy[j], micron::move(values_copy[j]), &dummy);
       }
 
       for ( u8 j = 0; j < n; ++j ) {
@@ -928,18 +1355,26 @@ private:
       }
       cur = next;
     }
-    (void)old_total;
+    __rehashing = false;
   }
 
   void
   drain_recursive(node_idx ni)
   {
     if ( slot_is_leaf(ni) ) return;
-    drain_internal_buffer(ni);
-    internal_node &N = inode(ni);
-    u8 nc = static_cast<u8>(N.nkeys + 1);
-    for ( u8 i = 0; i < nc; ++i )
-      if ( N.children[i] != kEmpty ) drain_recursive(N.children[i]);
+    hash64_t dp = 0;
+    node_idx dr = __k_empty;
+    drain_internal_buffer(ni, &dp, &dr);
+    {
+      internal_node &N = inode(ni);
+      u8 nc = static_cast<u8>(N.nkeys + 1);
+      for ( u8 i = 0; i < nc; ++i )
+        if ( N.children[i] != __k_empty ) drain_recursive(N.children[i]);
+    }
+    if ( dr != __k_empty ) {
+      drain_recursive(dr);
+      free_internals_recursive(dr);
+    }
   }
 
   void
@@ -951,17 +1386,16 @@ private:
     node_idx kids[__int_fanout];
     for ( u8 i = 0; i < nc; ++i ) kids[i] = N.children[i];
     for ( u8 i = 0; i < nc; ++i )
-      if ( kids[i] != kEmpty ) free_internals_recursive(kids[i]);
+      if ( kids[i] != __k_empty ) free_internals_recursive(kids[i]);
     free_slot(ni);
   }
 
   void
   free_tree(node_idx ni) noexcept
   {
-    if ( ni == kEmpty ) return;
+    if ( ni == __k_empty ) return;
     if ( slot_is_leaf(ni) ) {
-      leaf_list_unlink(ni);
-      free_slot(ni);
+      free_leaf_and_chain(ni);
       return;
     }
     internal_node &N = inode(ni);
@@ -969,7 +1403,7 @@ private:
     node_idx kids[__int_fanout];
     for ( u8 i = 0; i < nc; ++i ) kids[i] = N.children[i];
     for ( u8 i = 0; i < nc; ++i )
-      if ( kids[i] != kEmpty ) free_tree(kids[i]);
+      if ( kids[i] != __k_empty ) free_tree(kids[i]);
     free_slot(ni);
   }
 
@@ -1012,7 +1446,7 @@ public:
     operator++()
     {
       ++slot_;
-      while ( leaf_ != kEmpty && slot_ >= m_->lnode(leaf_).nkeys ) {
+      while ( leaf_ != __k_empty && slot_ >= m_->lnode(leaf_).nkeys ) {
         leaf_ = m_->lnode(leaf_).next_leaf;
         slot_ = 0;
       }
@@ -1052,7 +1486,7 @@ public:
     operator++()
     {
       ++slot_;
-      while ( leaf_ != kEmpty && slot_ >= m_->lnode(leaf_).nkeys ) {
+      while ( leaf_ != __k_empty && slot_ >= m_->lnode(leaf_).nkeys ) {
         leaf_ = m_->lnode(leaf_).next_leaf;
         slot_ = 0;
       }
@@ -1081,7 +1515,8 @@ public:
   }
 
   btree_map()
-      : __slab(default_n_slots()), buckets_(nullptr), n_buckets_(0), mask_(0), total_size_(0), free_head_(kEmpty), leaf_list_head_(kEmpty)
+      : __slab(default_n_slots()), buckets_(nullptr), n_buckets_(0), mask_(0), total_size_(0), __fhead(__k_empty),
+        leaf_list_head_(__k_empty), __rehashing(false)
   {
     n_buckets_ = default_n_buckets();
     mask_ = n_buckets_ - 1;
@@ -1089,7 +1524,8 @@ public:
   }
 
   explicit btree_map(usize n)
-      : __slab(default_n_slots()), buckets_(nullptr), n_buckets_(0), mask_(0), total_size_(0), free_head_(kEmpty), leaf_list_head_(kEmpty)
+      : __slab(default_n_slots()), buckets_(nullptr), n_buckets_(0), mask_(0), total_size_(0), __fhead(__k_empty),
+        leaf_list_head_(__k_empty), __rehashing(false)
   {
     n_buckets_ = round_pow2(n);
     mask_ = n_buckets_ - 1;
@@ -1100,14 +1536,15 @@ public:
 
   btree_map(btree_map &&o) noexcept
       : __slab(micron::move(o.__slab)), buckets_(o.buckets_), n_buckets_(o.n_buckets_), mask_(o.mask_), total_size_(o.total_size_),
-        free_head_(o.free_head_), leaf_list_head_(o.leaf_list_head_)
+        __fhead(o.__fhead), leaf_list_head_(o.leaf_list_head_), __rehashing(o.__rehashing)
   {
     o.buckets_ = nullptr;
     o.n_buckets_ = 0;
     o.mask_ = 0;
     o.total_size_ = 0;
-    o.free_head_ = kEmpty;
-    o.leaf_list_head_ = kEmpty;
+    o.__fhead = __k_empty;
+    o.leaf_list_head_ = __k_empty;
+    o.__rehashing = false;
   }
 
   btree_map &operator=(const btree_map &) = delete;
@@ -1125,14 +1562,16 @@ public:
     n_buckets_ = o.n_buckets_;
     mask_ = o.mask_;
     total_size_ = o.total_size_;
-    free_head_ = o.free_head_;
+    __fhead = o.__fhead;
     leaf_list_head_ = o.leaf_list_head_;
+    __rehashing = o.__rehashing;
     o.buckets_ = nullptr;
     o.n_buckets_ = 0;
     o.mask_ = 0;
     o.total_size_ = 0;
-    o.free_head_ = kEmpty;
-    o.leaf_list_head_ = kEmpty;
+    o.__fhead = __k_empty;
+    o.leaf_list_head_ = __k_empty;
+    o.__rehashing = false;
     return *this;
   }
 
@@ -1189,14 +1628,16 @@ public:
   {
     if ( !buckets_ ) return;
     for ( usize i = 0; i < n_buckets_; ++i ) {
-      if ( buckets_[i].root != kEmpty ) {
+      if ( buckets_[i].root != __k_empty ) {
         free_tree(buckets_[i].root);
-        buckets_[i].root = kEmpty;
+        buckets_[i].root = __k_empty;
         buckets_[i].size = 0;
       }
     }
-    leaf_list_head_ = kEmpty;
+    leaf_list_head_ = __k_empty;
     total_size_ = 0;
+    __slab.length = 0;
+    __fhead = __k_empty;
   }
 
   void
@@ -1228,14 +1669,19 @@ public:
       o.total_size_ = t;
     }
     {
-      node_idx t = free_head_;
-      free_head_ = o.free_head_;
-      o.free_head_ = t;
+      node_idx t = __fhead;
+      __fhead = o.__fhead;
+      o.__fhead = t;
     }
     {
       node_idx t = leaf_list_head_;
       leaf_list_head_ = o.leaf_list_head_;
       o.leaf_list_head_ = t;
+    }
+    {
+      bool t = __rehashing;
+      __rehashing = o.__rehashing;
+      o.__rehashing = t;
     }
   }
 
@@ -1244,7 +1690,7 @@ public:
   {
     hash64_t h = hash<hash64_t>(key);
     bool inserted = false;
-    return insert_impl(h, key, micron::move(value), OP_INSERT, &inserted);
+    return insert_impl(h, key, micron::move(value), &inserted);
   }
 
   V *
@@ -1253,7 +1699,7 @@ public:
     K kc = micron::move(key);
     hash64_t h = hash<hash64_t>(kc);
     bool inserted = false;
-    return insert_impl(h, kc, micron::move(value), OP_INSERT, &inserted);
+    return insert_impl(h, kc, micron::move(value), &inserted);
   }
 
   V *
@@ -1267,7 +1713,7 @@ public:
   insert_hash(hash64_t h, const K &key, V &&value)
   {
     bool inserted = false;
-    return insert_impl(h, key, micron::move(value), OP_INSERT, &inserted);
+    return insert_impl(h, key, micron::move(value), &inserted);
   }
 
   template<typename... Args>
@@ -1280,20 +1726,13 @@ public:
   bool
   erase(const K &key)
   {
-    hash64_t h = hash<hash64_t>(key);
-    bool did = false;
-    V tmp{};
-    insert_impl(h, key, micron::move(tmp), OP_ERASE, &did);
-    return did;
+    return erase_impl(hash<hash64_t>(key), key);
   }
 
   bool
   erase_hash(hash64_t h, const K &key)
   {
-    bool did = false;
-    V tmp{};
-    insert_impl(h, key, micron::move(tmp), OP_ERASE, &did);
-    return did;
+    return erase_impl(h, key);
   }
 
   V *
@@ -1340,6 +1779,7 @@ public:
 
   V &
   operator[](const K &key)
+    requires micron::is_default_constructible_v<V>
   {
     V *v = find(key);
     if ( v ) return *v;
@@ -1365,93 +1805,18 @@ public:
   }
 
   V *
-  min()
+  hash_min()
   {
-    node_idx l = leaf_list_head_;
-    while ( l != kEmpty && lnode(l).nkeys == 0 ) l = lnode(l).next_leaf;
-    if ( l == kEmpty ) return nullptr;
-    return addr(lnode(l).values()[0]);
-  }
-
-  const V *
-  min() const
-  {
-    return const_cast<btree_map *>(this)->min();
-  }
-
-  V *
-  max()
-  {
-    node_idx l = leaf_list_head_;
-    if ( l == kEmpty ) return nullptr;
-    node_idx best = kEmpty;
-    while ( l != kEmpty ) {
-      if ( lnode(l).nkeys > 0 ) best = l;
-      l = lnode(l).next_leaf;
-    }
-    if ( best == kEmpty ) return nullptr;
-    leaf_node &L = lnode(best);
-    return addr(L.values()[L.nkeys - 1]);
-  }
-
-  const V *
-  max() const
-  {
-    return const_cast<btree_map *>(this)->max();
-  }
-
-  V *
-  lower_bound(const K &key)
-  {
-    hash64_t h = hash<hash64_t>(key);
-    node_idx l = leaf_list_head_;
-    while ( l != kEmpty ) {
-      leaf_node &L = lnode(l);
-      for ( u8 i = 0; i < L.nkeys; ++i ) {
-        if ( L.hashes[i] >= h ) return addr(L.values()[i]);
-      }
-      l = L.next_leaf;
-    }
-    return nullptr;
-  }
-
-  const V *
-  lower_bound(const K &key) const
-  {
-    return const_cast<btree_map *>(this)->lower_bound(key);
-  }
-
-  V *
-  upper_bound(const K &key)
-  {
-    hash64_t h = hash<hash64_t>(key);
-    node_idx l = leaf_list_head_;
-    while ( l != kEmpty ) {
-      leaf_node &L = lnode(l);
-      for ( u8 i = 0; i < L.nkeys; ++i ) {
-        if ( L.hashes[i] > h ) return addr(L.values()[i]);
-      }
-      l = L.next_leaf;
-    }
-    return nullptr;
-  }
-
-  const V *
-  upper_bound(const K &key) const
-  {
-    return const_cast<btree_map *>(this)->upper_bound(key);
-  }
-
-  V *
-  predecessor(const K &key)
-  {
-    hash64_t h = hash<hash64_t>(key);
-    node_idx l = leaf_list_head_;
     V *best = nullptr;
-    while ( l != kEmpty ) {
+    hash64_t best_h = 0;
+    node_idx l = leaf_list_head_;
+    while ( l != __k_empty ) {
       leaf_node &L = lnode(l);
       for ( u8 i = 0; i < L.nkeys; ++i ) {
-        if ( L.hashes[i] < h ) best = addr(L.values()[i]);
+        if ( best == nullptr || L.hashes[i] < best_h ) {
+          best = micron::addr(L.values()[i]);
+          best_h = L.hashes[i];
+        }
       }
       l = L.next_leaf;
     }
@@ -1459,21 +1824,124 @@ public:
   }
 
   const V *
-  predecessor(const K &key) const
+  hash_min() const
   {
-    return const_cast<btree_map *>(this)->predecessor(key);
+    return const_cast<btree_map *>(this)->hash_min();
   }
 
   V *
-  successor(const K &key)
+  hash_max()
   {
-    return upper_bound(key);
+    V *best = nullptr;
+    hash64_t best_h = 0;
+    node_idx l = leaf_list_head_;
+    while ( l != __k_empty ) {
+      leaf_node &L = lnode(l);
+      for ( u8 i = 0; i < L.nkeys; ++i ) {
+        if ( best == nullptr || L.hashes[i] > best_h ) {
+          best = micron::addr(L.values()[i]);
+          best_h = L.hashes[i];
+        }
+      }
+      l = L.next_leaf;
+    }
+    return best;
   }
 
   const V *
-  successor(const K &key) const
+  hash_max() const
   {
-    return upper_bound(key);
+    return const_cast<btree_map *>(this)->hash_max();
+  }
+
+  V *
+  hash_lower_bound(const K &key)
+  {
+    const hash64_t h = hash<hash64_t>(key);
+    V *best = nullptr;
+    hash64_t best_h = 0;
+    node_idx l = leaf_list_head_;
+    while ( l != __k_empty ) {
+      leaf_node &L = lnode(l);
+      for ( u8 i = 0; i < L.nkeys; ++i ) {
+        if ( L.hashes[i] >= h && (best == nullptr || L.hashes[i] < best_h) ) {
+          best = micron::addr(L.values()[i]);
+          best_h = L.hashes[i];
+        }
+      }
+      l = L.next_leaf;
+    }
+    return best;
+  }
+
+  const V *
+  hash_lower_bound(const K &key) const
+  {
+    return const_cast<btree_map *>(this)->hash_lower_bound(key);
+  }
+
+  V *
+  hash_upper_bound(const K &key)
+  {
+    const hash64_t h = hash<hash64_t>(key);
+    V *best = nullptr;
+    hash64_t best_h = 0;
+    node_idx l = leaf_list_head_;
+    while ( l != __k_empty ) {
+      leaf_node &L = lnode(l);
+      for ( u8 i = 0; i < L.nkeys; ++i ) {
+        if ( L.hashes[i] > h && (best == nullptr || L.hashes[i] < best_h) ) {
+          best = micron::addr(L.values()[i]);
+          best_h = L.hashes[i];
+        }
+      }
+      l = L.next_leaf;
+    }
+    return best;
+  }
+
+  const V *
+  hash_upper_bound(const K &key) const
+  {
+    return const_cast<btree_map *>(this)->hash_upper_bound(key);
+  }
+
+  V *
+  hash_predecessor(const K &key)
+  {
+    const hash64_t h = hash<hash64_t>(key);
+    V *best = nullptr;
+    hash64_t best_h = 0;
+    node_idx l = leaf_list_head_;
+    while ( l != __k_empty ) {
+      leaf_node &L = lnode(l);
+      for ( u8 i = 0; i < L.nkeys; ++i ) {
+        if ( L.hashes[i] < h && (best == nullptr || L.hashes[i] > best_h) ) {
+          best = micron::addr(L.values()[i]);
+          best_h = L.hashes[i];
+        }
+      }
+      l = L.next_leaf;
+    }
+    return best;
+  }
+
+  const V *
+  hash_predecessor(const K &key) const
+  {
+    return const_cast<btree_map *>(this)->hash_predecessor(key);
+  }
+
+  V *
+  hash_successor(const K &key)
+  {
+    return hash_upper_bound(key);
+  }
+
+  const V *
+  hash_successor(const K &key) const
+  {
+    return hash_upper_bound(key);
   }
 
   void
@@ -1481,7 +1949,7 @@ public:
   {
     if ( !buckets_ ) return;
     for ( usize bi = 0; bi < n_buckets_; ++bi ) {
-      if ( buckets_[bi].root != kEmpty ) drain_recursive(buckets_[bi].root);
+      if ( buckets_[bi].root != __k_empty ) drain_recursive(buckets_[bi].root);
     }
   }
 
@@ -1490,14 +1958,14 @@ public:
   {
     flush_all();
     node_idx l = leaf_list_head_;
-    while ( l != kEmpty && lnode(l).nkeys == 0 ) l = lnode(l).next_leaf;
+    while ( l != __k_empty && lnode(l).nkeys == 0 ) l = lnode(l).next_leaf;
     return iterator(this, l, 0);
   }
 
   iterator
   end() noexcept
   {
-    return iterator(this, kEmpty, 0);
+    return iterator(this, __k_empty, 0);
   }
 
   const_iterator
@@ -1505,14 +1973,14 @@ public:
   {
     const_cast<btree_map *>(this)->flush_all();
     node_idx l = leaf_list_head_;
-    while ( l != kEmpty && lnode(l).nkeys == 0 ) l = lnode(l).next_leaf;
+    while ( l != __k_empty && lnode(l).nkeys == 0 ) l = lnode(l).next_leaf;
     return const_iterator(this, l, 0);
   }
 
   const_iterator
   end() const noexcept
   {
-    return const_iterator(this, kEmpty, 0);
+    return const_iterator(this, __k_empty, 0);
   }
 
   const_iterator
@@ -1527,18 +1995,40 @@ public:
     return end();
   }
 
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const K &, V &>
+  void
+  for_each(Fn &&fn)
+  {
+    for ( auto it = begin(); it != end(); ++it ) {
+      auto kv = *it;
+      fn(kv.key, const_cast<V &>(kv.value));
+    }
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const K &, const V &>
+  void
+  for_each(Fn &&fn) const
+  {
+    for ( auto it = begin(); it != end(); ++it ) {
+      auto kv = *it;
+      fn(kv.key, kv.value);
+    }
+  }
+
   int
   height() const noexcept
   {
     int hmax = 0;
     for ( usize i = 0; i < n_buckets_; ++i ) {
-      if ( buckets_[i].root == kEmpty ) continue;
+      if ( buckets_[i].root == __k_empty ) continue;
       int h = 1;
       node_idx c = buckets_[i].root;
       while ( !slot_is_leaf(c) ) {
         ++h;
         c = inode(c).children[0];
-        if ( c == kEmpty ) break;
+        if ( c == __k_empty ) break;
       }
       if ( h > hmax ) hmax = h;
     }

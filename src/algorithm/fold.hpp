@@ -9,6 +9,8 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../bits/__visit_kv.hpp"
+#include "../memory/actions.hpp"
 #include "../tuple.hpp"
 
 namespace micron
@@ -227,6 +229,15 @@ O
 fold_build(const I &c, O init, Fn fn)
 {
   return fold_left<I, O, U, Fn>(c, init, fn);
+}
+
+template<is_map_class M, class A, typename Fn>
+  requires micron::is_invocable_v<Fn, A, const typename M::key_type &, const typename M::mapped_type &>
+A
+fold_left(const M &m, A init, Fn fn)
+{
+  __impl::visit_kv(m, [&](const auto &k, const auto &v) { init = fn(micron::move(init), k, v); });
+  return init;
 }
 
 };      // namespace micron

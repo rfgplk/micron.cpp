@@ -71,7 +71,7 @@ public:
     const size_type n = static_cast<size_type>(b - a);
     if ( n > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): range exceeds stack capacity N");
-    micron::memcpy(micron::addr(stack[0]), a, n * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(stack[0])), reinterpret_cast<const byte *>(a), n * sizeof(T));
     length = n;
   }
 
@@ -79,7 +79,7 @@ public:
   {
     if ( s.len > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): raw_slice exceeds stack capacity N");
-    micron::memcpy(micron::addr(stack[0]), s.ptr, s.len * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(stack[0])), reinterpret_cast<const byte *>(s.ptr), s.len * sizeof(T));
     length = s.len;
   }
 
@@ -969,7 +969,7 @@ public:
   copy_from_slice(const raw_slice<T> &src)
   {
     const size_type n = (src.len < length) ? src.len : length;
-    micron::memcpy(micron::addr(stack[0]), src.ptr, n * sizeof(T));
+    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(stack[0])), reinterpret_cast<const byte *>(src.ptr), n * sizeof(T));
     return *this;
   }
 

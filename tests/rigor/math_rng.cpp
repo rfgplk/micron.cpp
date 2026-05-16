@@ -232,5 +232,5 @@ main()
   end_test_case();
 
   print("=== MATH::RNG TESTS PASSED ===");
-  return 0;
+  return 1;
 }

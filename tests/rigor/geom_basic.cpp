@@ -161,5 +161,5 @@ main()
   end_test_case();
 
   sb::print("=== GEOMETRY BASIC PASSED ===");
-  return 0;
+  return 1;
 }

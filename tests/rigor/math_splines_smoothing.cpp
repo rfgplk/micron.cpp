@@ -201,5 +201,5 @@ main()
   end_test_case();
 
   print("=== SMOOTHING / ADAPTIVE-KNOTS TESTS PASSED ===");
-  return 0;
+  return 1;
 }

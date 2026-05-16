@@ -205,9 +205,10 @@ public:
     __mem::length = M - 1;
   };
 
-  constexpr hstring(const hstring &o) : __mem(__alloc_size(o.capacity))
+  constexpr hstring(const hstring &o) : __mem(__alloc_size(o.length + 1))
   {
-    // WARNING: important
+    // WARNING: copy by length not capacity; the old system meant under abcmalloc we would baloon exponentially
+    // this also means that you can no longer use strings as shadow buffers
     micron::memcpy(__mem::memory, o.memory, o.length);
     __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
@@ -217,7 +218,7 @@ public:
 
   constexpr hstring(hstring &&o) : __mem(micron::move(o)) { }
 
-  template<typename F> constexpr hstring(const hstring<F> &o) : __mem(__alloc_size(o.capacity))
+  template<typename F> constexpr hstring(const hstring<F> &o) : __mem(__alloc_size(o.length + 1))
   {
     micron::memcpy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;

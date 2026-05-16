@@ -365,5 +365,5 @@ main()
   test_convert();
   test_testz();
   print("[TEST SSE OK]");
-  return 0;
+  return 1;
 }

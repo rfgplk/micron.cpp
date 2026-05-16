@@ -12,6 +12,7 @@
 
 #include "../hash/hash.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/addr.hpp"
 
 #include "../allocator.hpp"
 #include "../memory/allocation/resources.hpp"
@@ -203,6 +204,8 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   static constexpr float __max_load = static_cast<float>(__load_num) / static_cast<float>(__load_denom);
   static constexpr usize __max_probe = 512;
   static constexpr usize __min_cap = 16;
+  // insert_hash throws if a probe distance would exceed this
+  static constexpr usize __max_stored_dist = 253;
 
   static usize
   round_pow2(usize n) noexcept
@@ -242,32 +245,33 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   __attribute__((always_inline)) Nd *
   node_ptr(usize i) noexcept
   {
-    return addr(__mem::memory[i]);
+    return micron::addressof(__mem::memory[i]);
   }
 
   __attribute__((always_inline)) const Nd *
   node_ptr(usize i) const noexcept
   {
-    return addr(__mem::memory[i]);
+    return micron::addressof(__mem::memory[i]);
   }
 
   __attribute__((always_inline)) V *
   value_ptr(usize i) noexcept
   {
-    return addr(__mem::memory[i].value);
+    return micron::addressof(__mem::memory[i].value);
   }
 
   __attribute__((always_inline)) const V *
   value_ptr(usize i) const noexcept
   {
-    return addr(__mem::memory[i].value);
+    return micron::addressof(__mem::memory[i].value);
   }
 
   __attribute__((always_inline)) static u8
   encode_dist(usize d) noexcept
   {
     usize v = d + 1;
-    return static_cast<u8>(v > 255u ? 255u : v);
+    // guard preemptively
+    return static_cast<u8>(v > 254u ? 254u : v);
   }
 
   __attribute__((always_inline)) bool
@@ -320,7 +324,8 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
       usize new_dist = stored_dist(j) - 1;      // capture before any ctrl write
 
       if constexpr ( micron::is_trivially_copyable_v<Nd> ) {
-        micron::memcpy(node_ptr(i), node_ptr(j), sizeof(Nd));
+        // bytecpy takes byte count; micron::memcpy takes element count (cnt * sizeof) and would over-copy.
+        micron::bytecpy(reinterpret_cast<byte *>(node_ptr(i)), reinterpret_cast<const byte *>(node_ptr(j)), sizeof(Nd));
       } else {
         new (node_ptr(i)) Nd(micron::move(node_at(j)));
         node_at(j).~Nd();
@@ -337,8 +342,12 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
     usize index = static_cast<usize>(kh) & mask_;
     usize plen = 0;
     usize total_steps = 0;
+    usize result_index = static_cast<usize>(-1);      // -1 not yet placed
 
     for ( ;; ) {
+      if ( __builtin_expect(plen > __max_stored_dist, 0) )
+        exc<except::library_error>("robin_map: stored distance saturated (>253); table needs larger capacity or better hash");
+
       __builtin_prefetch(&ctrl_[(index + 4u) & mask_], 1, 1);
       __builtin_prefetch(node_ptr((index + 2u) & mask_), 1, 0);
 
@@ -346,7 +355,7 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
         new (node_ptr(index)) Nd(kh, micron::move(orig_key), micron::move(value));
         ctrl_[index] = encode_dist(plen);
         ++__mem::length;
-        return value_ptr(index);
+        return value_ptr(result_index == static_cast<usize>(-1) ? index : result_index);
       }
 
       if ( node_at(index).hash == kh && node_at(index).key == orig_key ) {
@@ -364,6 +373,7 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
       if ( steal ) micron::swap(value, node_at(index).value);
       ctrl_[index] = steal ? encode_dist(plen) : ctrl_[index];
       plen = steal ? sd : plen;
+      if ( steal && result_index == static_cast<usize>(-1) ) result_index = index;
 
       if ( __builtin_expect(++total_steps > __max_probe, 0) )
         exc<except::library_error>("robin_map: probe limit exceeded (table is full or hash is pathological)");
@@ -383,8 +393,8 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
 
 #if defined(__micron_x86_avx2) || defined(__micron_x86_sse2) || defined(__micron_arm_neon)
     constexpr usize W = __impl::__ctrl_window;
-    // plen <= 254 guard: when plen >= 255 every probe stops immediately
-    while ( __builtin_expect(plen <= 254u && index + W <= n_slots_, 1) ) {
+    // plen <= __max_stored_dist guard: above that bound no element exists (insert throws)
+    while ( __builtin_expect(plen <= __max_stored_dist && index + W <= n_slots_, 1) ) {
       __builtin_prefetch(&ctrl_[index + 16u], 0, 1);
       __builtin_prefetch(node_ptr(index + 4u), 0, 0);
 
@@ -426,7 +436,7 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
 
 #if defined(__micron_x86_avx2) || defined(__micron_x86_sse2) || defined(__micron_arm_neon)
     constexpr usize W = __impl::__ctrl_window;
-    while ( __builtin_expect(plen <= 254u && index + W <= n_slots_, 1) ) {
+    while ( __builtin_expect(plen <= __max_stored_dist && index + W <= n_slots_, 1) ) {
       __builtin_prefetch(&ctrl_[index + 16u], 0, 1);
       __builtin_prefetch(node_ptr(index + 4u), 0, 0);
 
@@ -461,6 +471,8 @@ public:
   using category_type = map_tag;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
+  using key_type = K;
+  using mapped_type = V;
   typedef usize size_type;
   typedef Nd value_type;
   typedef Nd &reference;
@@ -469,8 +481,114 @@ public:
   typedef const Nd &const_ref;
   typedef Nd *pointer;
   typedef const Nd *const_pointer;
-  typedef Nd *iterator;
-  typedef const Nd *const_iterator;
+
+  class iterator
+  {
+    Nd *base_;
+    const u8 *ctrl_;
+    usize i_;
+    usize n_;
+
+    __attribute__((always_inline)) void
+    skip_empty() noexcept
+    {
+      while ( i_ < n_ && ctrl_[i_] == 0u ) ++i_;
+    }
+
+  public:
+    __attribute__((always_inline))
+    iterator(Nd *base, const u8 *ctrl, usize i, usize n) noexcept
+        : base_(base), ctrl_(ctrl), i_(i), n_(n)
+    {
+      skip_empty();
+    }
+
+    __attribute__((always_inline)) Nd &
+    operator*() const noexcept
+    {
+      return base_[i_];
+    }
+
+    __attribute__((always_inline)) Nd *
+    operator->() const noexcept
+    {
+      return base_ + i_;
+    }
+
+    __attribute__((always_inline)) iterator &
+    operator++() noexcept
+    {
+      ++i_;
+      skip_empty();
+      return *this;
+    }
+
+    __attribute__((always_inline)) bool
+    operator==(const iterator &o) const noexcept
+    {
+      return i_ == o.i_;
+    }
+
+    __attribute__((always_inline)) bool
+    operator!=(const iterator &o) const noexcept
+    {
+      return i_ != o.i_;
+    }
+  };
+
+  class const_iterator
+  {
+    const Nd *base_;
+    const u8 *ctrl_;
+    usize i_;
+    usize n_;
+
+    __attribute__((always_inline)) void
+    skip_empty() noexcept
+    {
+      while ( i_ < n_ && ctrl_[i_] == 0u ) ++i_;
+    }
+
+  public:
+    __attribute__((always_inline))
+    const_iterator(const Nd *base, const u8 *ctrl, usize i, usize n) noexcept
+        : base_(base), ctrl_(ctrl), i_(i), n_(n)
+    {
+      skip_empty();
+    }
+
+    __attribute__((always_inline)) const Nd &
+    operator*() const noexcept
+    {
+      return base_[i_];
+    }
+
+    __attribute__((always_inline)) const Nd *
+    operator->() const noexcept
+    {
+      return base_ + i_;
+    }
+
+    __attribute__((always_inline)) const_iterator &
+    operator++() noexcept
+    {
+      ++i_;
+      skip_empty();
+      return *this;
+    }
+
+    __attribute__((always_inline)) bool
+    operator==(const const_iterator &o) const noexcept
+    {
+      return i_ == o.i_;
+    }
+
+    __attribute__((always_inline)) bool
+    operator!=(const const_iterator &o) const noexcept
+    {
+      return i_ != o.i_;
+    }
+  };
 
   // dest always first
   ~robin_map()
@@ -700,37 +818,61 @@ public:
   }
 
   iterator
-  begin()
+  begin() noexcept
   {
-    return node_ptr(0);
+    return iterator(__mem::memory, ctrl_, 0u, n_slots_);
   }
 
   const_iterator
-  begin() const
+  begin() const noexcept
   {
-    return node_ptr(0);
+    return const_iterator(__mem::memory, ctrl_, 0u, n_slots_);
   }
 
   const_iterator
-  cbegin() const
+  cbegin() const noexcept
   {
-    return node_ptr(0);
+    return const_iterator(__mem::memory, ctrl_, 0u, n_slots_);
   }
 
   iterator
-  end()
+  end() noexcept
+  {
+    return iterator(__mem::memory, ctrl_, n_slots_, n_slots_);
+  }
+
+  const_iterator
+  end() const noexcept
+  {
+    return const_iterator(__mem::memory, ctrl_, n_slots_, n_slots_);
+  }
+
+  const_iterator
+  cend() const noexcept
+  {
+    return const_iterator(__mem::memory, ctrl_, n_slots_, n_slots_);
+  }
+
+  Nd *
+  raw_begin() noexcept
+  {
+    return node_ptr(0);
+  }
+
+  const Nd *
+  raw_begin() const noexcept
+  {
+    return node_ptr(0);
+  }
+
+  Nd *
+  raw_end() noexcept
   {
     return node_ptr(n_slots_);
   }
 
-  const_iterator
-  end() const
-  {
-    return node_ptr(n_slots_);
-  }
-
-  const_iterator
-  cend() const
+  const Nd *
+  raw_end() const noexcept
   {
     return node_ptr(n_slots_);
   }
@@ -835,6 +977,22 @@ public:
 #endif
     for ( ; i < n_slots_; ++i )
       if ( ctrl_[i] != 0 ) fn(node_at(i));
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const K &, V &>
+  __attribute__((always_inline)) void
+  for_each(Fn &&fn)
+  {
+    for_each([&](Nd &n) { fn(n.key, n.value); });
+  }
+
+  template<typename Fn>
+    requires micron::is_invocable_v<Fn, const K &, const V &>
+  __attribute__((always_inline)) void
+  for_each(Fn &&fn) const
+  {
+    for_each([&](const Nd &n) { fn(n.key, n.value); });
   }
 };
 

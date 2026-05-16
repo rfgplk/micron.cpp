@@ -177,5 +177,5 @@ main()
   end_test_case();
 
   print("=== integrate derive ok ===");
-  return 0;
+  return 1;
 }

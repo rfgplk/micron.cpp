@@ -145,5 +145,5 @@ main()
   end_test_case();
 
   print("=== blas identities ok ===");
-  return 0;
+  return 1;
 }

@@ -573,5 +573,5 @@ main()
 #endif
 
   print("=== poly trig sweep ok ===");
-  return 0;
+  return 1;
 }

@@ -269,10 +269,6 @@ struct counting_iter<T> {
     return it + n;
   }
 
-  // Iterators that share the same base (the common case: begin()/end() of one
-  // range) compare integer counters directly — exact, immune to float rounding
-  // at the To boundary. Iterators with different bases fall back to comparing
-  // computed values, which is best-effort but still terminates.
   constexpr bool
   operator==(const counting_iter &o) const noexcept
   {
@@ -595,10 +591,6 @@ struct count_range {
   count_range &operator=(const count_range &) = delete;
   count_range &operator=(count_range &&) = delete;
 
-  // Drive iteration through counting_iter so the floating-point
-  // specialization (integer-counter step) is reused here too — a raw
-  // `for ( T i = From; i < To; i++ )` would spin forever for any
-  // float-step beyond its mantissa's integer range.
   template<typename F>
     requires micron::is_invocable_v<F, T>
   static void

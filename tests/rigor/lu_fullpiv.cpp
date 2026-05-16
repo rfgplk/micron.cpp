@@ -126,5 +126,5 @@ main()
   end_test_case();
 
   sb::print("=== LU_FULLPIV PASSED ===");
-  return 0;
+  return 1;
 }

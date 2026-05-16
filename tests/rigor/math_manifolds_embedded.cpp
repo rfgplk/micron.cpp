@@ -661,5 +661,5 @@ main()
   }
   end_test_case();
 
-  return 0;
+  return 1;
 }

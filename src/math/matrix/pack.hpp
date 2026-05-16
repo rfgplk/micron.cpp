@@ -1864,17 +1864,14 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vxorpd %%ymm14, %%ymm14, %%ymm14 \n\t"
       "vxorpd %%ymm15, %%ymm15, %%ymm15 \n\t"
 
-      // Only enter the centered path if we have at least one unr-4 iter.
-      // For the no-loop case, ap/bp must stay un-centered so the tail uses
-      // normal positive disps.
+      // Only enter the centered path if we have at least one unr-4 iter
       "testq %[k4], %[k4] \n\t"
       "jz 7f \n\t"
 
-      // Pre-bump pointers to center: now disp8 fits every K-step's operands.
+      // Pre-bump pointers to center
       "addq $96, %[ap] \n\t"
       "addq $128, %[bp] \n\t"
 
-      // Initial B preload for K=0 (centered: bp-128, bp-96 — both disp8).
       "vmovupd -128(%[bp]), %%ymm0 \n\t"
       "vmovupd  -96(%[bp]), %%ymm1 \n\t"
 
@@ -1899,7 +1896,7 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=0 end: SP preload K=1's B (disp -64, -32 — disp8)
+      // K=0 end: SP preload K=1's B
       "vmovupd -64(%[bp]), %%ymm0 \n\t"
       "vmovupd -32(%[bp]), %%ymm1 \n\t"
 
@@ -1923,7 +1920,7 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=1 end: SP preload K=2's B (disp 0, +32 — disp8)
+      // K=1 end: SP preload K=2's B
       "vmovupd   0(%[bp]), %%ymm0 \n\t"
       "vmovupd  32(%[bp]), %%ymm1 \n\t"
 
@@ -1947,7 +1944,7 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=2 end: SP preload K=3's B (disp +64, +96 — disp8)
+      // K=2 end: SP preload K=3's B
       "vmovupd  64(%[bp]), %%ymm0 \n\t"
       "vmovupd  96(%[bp]), %%ymm1 \n\t"
 
@@ -1970,7 +1967,7 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=3 end: cross-iter SP B-preload (disp +128, +160 — falls back to disp32)
+      // K=3 end: cross-iter SP B-preload
       "vmovupd 128(%[bp]), %%ymm0 \n\t"
       "vmovupd 160(%[bp]), %%ymm1 \n\t"
 
@@ -1979,12 +1976,12 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "decq %[k4] \n\t"
       "jne 1b \n\t"
 
-      // Un-center for tail / fallthrough
+      // un-center for tail / fallthrough
       "subq $96, %[ap] \n\t"
       "subq $128, %[bp] \n\t"
 
       "7: \n\t"
-      // tail (same as the un-aligned _unr4_sp tail; un-centered pointers)
+      // tail
       "testq %[ktail], %[ktail] \n\t"
       "jz 2f \n\t"
       ".p2align 4 \n\t"

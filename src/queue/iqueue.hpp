@@ -369,7 +369,7 @@ public:
   const T *
   peek(void) const
   {
-    return __front ? &__front->value : nullptr;
+    return __front ? micron::addressof(__front->value) : nullptr;
   }
 
   //  O(1) when rear is non-empty
@@ -549,8 +549,8 @@ public:
     const T *
     operator->(void) const
     {
-      if ( __cur ) return &__cur->value;
-      return &__stack[__rear_top - 1]->value;
+      if ( __cur ) return micron::addressof(__cur->value);
+      return micron::addressof(__stack[__rear_top - 1]->value);
     }
 
     const_iterator &
