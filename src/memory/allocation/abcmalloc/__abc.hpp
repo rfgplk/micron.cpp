@@ -42,7 +42,6 @@ struct __abc_allocator {
     auto mem = abc::fetch(n);
     if ( mem.ptr == nullptr || mem.ptr == (void *)-1 )
       micron::exc<micron::except::critical_error>("abc_allocator::calloc(): arena failed to satisfy request");
-    micron::zero(mem.ptr, mem.len);
     return mem;
   };
 

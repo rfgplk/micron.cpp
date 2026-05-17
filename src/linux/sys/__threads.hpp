@@ -147,7 +147,7 @@ private:
   static void
   __invoke(__impl_thread *self, micron::index_sequence<I...>)
   {
-    self->fn(*static_cast<Args *>(self->args[I])...);
+    self->fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
   }
 
   template<usize... I>

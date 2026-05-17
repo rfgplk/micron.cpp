@@ -313,14 +313,14 @@ public:
   get(const size_type n) const
   {
     if ( n >= N ) exc<except::library_error>("micron::conarray get() out of range");
-    return micron::addr(stack + n);
+    return stack + n;
   }
 
   inline const_iterator
   cget(const size_type n) const
   {
     if ( n >= N ) exc<except::library_error>("micron::conarray cget() out of range");
-    return micron::addr(stack + n);
+    return stack + n;
   }
 
   // NOTE: operator[] is NOT behind a lock

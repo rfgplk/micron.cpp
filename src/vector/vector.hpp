@@ -197,7 +197,9 @@ public:
   vector &
   operator=(const vector &o)
   {
-    // NOTE: not guarding against self assignment ON PURPOSE
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(const_cast<vector &>(o)) ) return *this;
+    }
     resize(o.length);
     __impl_container::copy_assign(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
@@ -207,7 +209,9 @@ public:
   vector &
   operator=(vector &&o)
   {
-    // NOTE: not guarding against self assignment ON PURPOSE
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(o) ) return *this;
+    }
     if ( __mem::memory ) {
       clear();
       __mem::free();
@@ -418,7 +422,7 @@ public:
   inline void
   try_reserve(const size_type n)
   {
-    if ( n < __mem::capacity ) exc<except::memory_error>("micron vector failed to reserve memory");
+    if ( n <= __mem::capacity ) return;
     if ( __mem::is_zero() ) {
       __mem::realloc(n);
       return;
@@ -587,7 +591,7 @@ public:
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
     if ( n >= __mem::length ) exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
-    T *ite = &(__mem::memory)[__mem::length - 1];
+    T *ite = &(__mem::memory)[__mem::length];
     micron::memmove(its + cnt, its, ite - its);
     for ( size_type i = 0; i < cnt; ++i ) new (its + i) T(val);
     __mem::length += cnt;
@@ -604,7 +608,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
     if ( n >= __mem::length ) exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     T *its = &(__mem::memory)[n];
-    T *ite = &(__mem::memory)[__mem::length - 1];
+    T *ite = &(__mem::memory)[__mem::length];
     micron::memmove(its + 1, its, ite - its);
     new (its) T(val);
     __mem::length++;
@@ -1119,7 +1123,9 @@ public:
   vector &
   operator=(vector &&o)
   {
-    if ( this == &o ) return *this;
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(o) ) return *this;
+    }
     if ( __mem::memory ) {
       clear();
       __mem::free();
@@ -1302,7 +1308,7 @@ public:
   inline void
   try_reserve(const size_type n)
   {
-    if ( n < __mem::capacity ) exc<except::memory_error>("micron vector failed to reserve memory");
+    if ( n <= __mem::capacity ) return;
     if ( __mem::is_zero() ) {
       __mem::realloc(n);
       return;

@@ -85,7 +85,8 @@ public:
   bisect_array(const A &o)
   {
     if ( o.size() < N ) exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
-    __impl_container::copy<N>(micron::addr(o[0]), micron::addr(stack[0]));
+    __impl_container::copy<N>(micron::addr(stack[0]), micron::addr(o[0]));
+    length = o.size() < N ? o.size() : N;
   }
 
   template<is_container A>
@@ -93,12 +94,22 @@ public:
   bisect_array(A &&o)
   {
     if ( o.size() < N ) exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
-    __impl_container::move<N>(micron::addr(o[0]), micron::addr(stack[0]));
+    __impl_container::move<N>(micron::addr(stack[0]), micron::addr(o[0]));
+    length = o.size() < N ? o.size() : N;
   }
 
-  bisect_array(const bisect_array &o) { __impl_container::copy<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
+  bisect_array(const bisect_array &o)
+  {
+    __impl_container::copy<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    length = o.length;
+  }
 
-  bisect_array(bisect_array &&o) { __impl_container::move<N>(micron::addr(o.stack[0]), micron::addr(stack[0])); }
+  bisect_array(bisect_array &&o)
+  {
+    __impl_container::move<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    length = o.length;
+    o.length = 0;
+  }
 
   usize
   size() const noexcept
@@ -145,22 +156,22 @@ public:
   inline iterator
   get(const size_type n)
   {
-    if ( n >= N ) exc<except::library_error>("micron::array get() out of range");
-    return micron::addr(stack + n);
+    if ( n >= N ) exc<except::library_error>("micron::bisect_array get() out of range");
+    return stack + n;
   }
 
   inline const_iterator
   get(const size_type n) const
   {
-    if ( n >= N ) exc<except::library_error>("micron::array get() out of range");
-    return micron::addr(stack + n);
+    if ( n >= N ) exc<except::library_error>("micron::bisect_array get() out of range");
+    return stack + n;
   }
 
   inline const_iterator
   cget(const size_type n) const
   {
-    if ( n >= N ) exc<except::library_error>("micron::array get() out of range");
-    return micron::addr(stack + n);
+    if ( n >= N ) exc<except::library_error>("micron::bisect_array cget() out of range");
+    return stack + n;
   }
 
   auto *

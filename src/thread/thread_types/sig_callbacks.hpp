@@ -16,37 +16,40 @@
 namespace micron
 {
 
-void
+// WARNING: without inline we hit ODR at link time
+inline void
 __thread_sigchld(int)
 {
 }
 
-void
+inline void
 __thread_sigthrottle(int)
 {
   // configure
   micron::ssleep(1);
 }
 
-void
+inline void
 __thread_cancel(int)
 {
   pthread::cancel();
 }
 
-void
+inline void
 __thread_yield(int)
 {
   micron::yield();
 }
 
-__attribute__((noreturn)) void
+// WARNING: this no longer fires destructors, pthread exit wasn't fully async signal safe
+inline __attribute__((noreturn)) void
 __thread_stop(int)
 {
-  pthread::__exit_thread();
+  micron::syscall(SYS_exit, 0);
+  __builtin_unreachable();
 }
 
-void
+inline void
 __thread_handler()
 {
   auto sa = micron::create_handler(__thread_sigthrottle, signal::user_signal_1);

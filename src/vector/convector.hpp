@@ -36,7 +36,7 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>, bool Sf 
 class convector: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
-  micron::mutex __mtx;
+  mutable micron::mutex __mtx;
 
   inline __attribute__((always_inline)) bool
   __empty_check(void) const
@@ -245,6 +245,9 @@ public:
   convector &
   operator=(const convector &o)
   {
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(const_cast<convector &>(o)) ) return *this;
+    }
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::memory ) {
       __unlocked_clear();
@@ -259,6 +262,9 @@ public:
   convector &
   operator=(convector &&o)
   {
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(o) ) return *this;
+    }
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( __mem::memory ) {
       __unlocked_clear();
@@ -459,7 +465,7 @@ public:
   try_reserve(const size_type n)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( n < __mem::capacity ) exc<except::memory_error>("micron convector failed to reserve memory");
+    if ( n <= __mem::capacity ) return;
     __unlocked_reserve(n);
   }
 

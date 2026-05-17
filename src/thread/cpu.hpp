@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// technically not needed anymore
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -88,7 +90,7 @@ enable_all_cores(pid_t pid = 0)
 {
   posix::cpu_set_t set;
   auto count = cpu_count();
-  for ( usize i = 0; i <= count; i++ ) set.cpu_set(i);
+  for ( usize i = 0; i < count; i++ ) set.cpu_set(i);
   posix::sched_setaffinity(pid, sizeof(set), set);
 }
 
@@ -150,7 +152,7 @@ public:
   cpu_t(void) : scheduler_t(posix::getpid()), pid(posix::getpid()), procs(), count(cpu_count())
   {
     if constexpr ( D ) {
-      for ( usize i = 0; i <= count; i++ ) procs.cpu_set(i);
+      for ( usize i = 0; i < count; i++ ) procs.cpu_set(i);
     }      // default to all threads
   }
 
@@ -223,7 +225,7 @@ public:
   void
   set_all()
   {
-    for ( usize i = 0; i <= count; i++ ) procs.cpu_set(i);
+    for ( usize i = 0; i < count; i++ ) procs.cpu_set(i);
   }
 
   usize
@@ -805,8 +807,8 @@ class proc_t
   cpu_vendor vendor_;
   unsigned count_;
   int arch_level_;
-  bool probed_;
-  bool probed_full_;
+  atomic_token<u8> probed_;
+  atomic_token<u8> probed_full_;
 
 public:
   ~proc_t()
@@ -817,41 +819,15 @@ public:
     }
   }
 
-  proc_t() : data_(nullptr), vendor_(cpu_vendor::unknown), count_(cpu_count()), arch_level_(0), probed_(false), probed_full_(false)
+  proc_t() : data_(nullptr), vendor_(cpu_vendor::unknown), count_(cpu_count()), arch_level_(0), probed_(0), probed_full_(0)
   {
     micron::memset(&features_, 0, sizeof(cpu_features_t));
   }
 
   proc_t(const proc_t &) = delete;
   proc_t &operator=(const proc_t &) = delete;
-
-  proc_t(proc_t &&o) noexcept
-      : data_(o.data_), features_(o.features_), vendor_(o.vendor_), count_(o.count_), arch_level_(o.arch_level_), probed_(o.probed_),
-        probed_full_(o.probed_full_)
-  {
-    o.data_ = nullptr;
-    o.probed_ = false;
-    o.probed_full_ = false;
-  }
-
-  proc_t &
-  operator=(proc_t &&o) noexcept
-  {
-    if ( this != &o ) {
-      if ( data_ ) micron::syscall(SYS_munmap, data_, sizeof(__data));
-      data_ = o.data_;
-      features_ = o.features_;
-      vendor_ = o.vendor_;
-      count_ = o.count_;
-      arch_level_ = o.arch_level_;
-      probed_ = o.probed_;
-      probed_full_ = o.probed_full_;
-      o.data_ = nullptr;
-      o.probed_ = false;
-      o.probed_full_ = false;
-    }
-    return *this;
-  }
+  proc_t(proc_t &&) = delete;
+  proc_t &operator=(proc_t &&) = delete;
 
   static proc_t &
   instance()
@@ -875,9 +851,17 @@ public:
   void
   probe()
   {
-    if ( probed_ ) return;
+    if ( probed_.get(memory_order_acquire) == 2 ) return;
+    u8 expected = 0;
+    if ( !probed_.compare_exchange_strong(expected, 1, memory_order_acq_rel, memory_order_acquire) ) {
+      while ( probed_.get(memory_order_acquire) != 2 ) __cpu_pause();
+      return;
+    }
 
-    if ( !__impl::__have_cpuid() ) return;
+    if ( !__impl::__have_cpuid() ) {
+      probed_.store(2, memory_order_release);
+      return;
+    }
 
     __ensure_data();
     info(&data_->raw);
@@ -886,14 +870,19 @@ public:
     vendor_ = __impl::__map_vendor(data_->raw.vendor);
     __impl::__fill_features(data_->raw, features_);
 
-    probed_ = true;
+    probed_.store(2, memory_order_release);
   }
 
   void
   probe_full()
   {
-    if ( !probed_ ) probe();
-    if ( probed_full_ || !data_ ) return;
+    if ( probed_.get(memory_order_acquire) != 2 ) probe();
+    if ( probed_full_.get(memory_order_acquire) == 2 || !data_ ) return;
+    u8 expected = 0;
+    if ( !probed_full_.compare_exchange_strong(expected, 1, memory_order_acq_rel, memory_order_acquire) ) {
+      while ( probed_full_.get(memory_order_acquire) != 2 ) __cpu_pause();
+      return;
+    }
 
     spec(&data_->raw);
 
@@ -901,19 +890,19 @@ public:
     if ( n > 256 ) n = 256;
     __impl::__fill_caches(data_->raw, data_->cores, n);
 
-    probed_full_ = true;
+    probed_full_.store(2, memory_order_release);
   }
 
   bool
   is_probed() const
   {
-    return probed_;
+    return probed_.get(memory_order_acquire) == 2;
   }
 
   bool
   is_probed_full() const
   {
-    return probed_full_;
+    return probed_full_.get(memory_order_acquire) == 2;
   }
 
   unsigned
@@ -1113,7 +1102,7 @@ public:
   const cache_info_t *
   l1d(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ ) return nullptr;
+    if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
       if ( data_->cores[core_id].caches[i].level == 1 && data_->cores[core_id].caches[i].type == DATA_CACHE )
         return &data_->cores[core_id].caches[i];
@@ -1123,7 +1112,7 @@ public:
   const cache_info_t *
   l1i(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ ) return nullptr;
+    if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
       if ( data_->cores[core_id].caches[i].level == 1 && data_->cores[core_id].caches[i].type == INSTRUCTION_CACHE )
         return &data_->cores[core_id].caches[i];
@@ -1133,7 +1122,7 @@ public:
   const cache_info_t *
   l2(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ ) return nullptr;
+    if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
       if ( data_->cores[core_id].caches[i].level == 2 ) return &data_->cores[core_id].caches[i];
     return nullptr;
@@ -1142,7 +1131,7 @@ public:
   const cache_info_t *
   l3(unsigned core_id = 0) const
   {
-    if ( !probed_full_ || !data_ ) return nullptr;
+    if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;
     for ( int i = 0; i < 5; i++ )
       if ( data_->cores[core_id].caches[i].level == 3 ) return &data_->cores[core_id].caches[i];
     return nullptr;

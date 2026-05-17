@@ -39,7 +39,8 @@ fgrow(usize cap)
 }
 };      // namespace __impl
 
-template<is_regular_object T, class Alloc = micron::allocator_serial<>> class fvector: public __mutable_memory_resource<T, Alloc>
+template<is_regular_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
+class fvector: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
 
@@ -131,6 +132,9 @@ public:
   fvector &
   operator=(fvector &&o)
   {
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(o) ) return *this;
+    }
     if ( __mem::memory ) {
       clear();
       __mem::free();
@@ -466,7 +470,7 @@ public:
     }
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     T *its = addr((__mem::memory)[n]);
-    T *ite = addr((__mem::memory)[__mem::length - 1]);
+    T *ite = addr((__mem::memory)[__mem::length]);
     micron::memmove(its + cnt, its, ite - its);
     for ( size_type i = 0; i < cnt; ++i ) new (its + i) T(val);
     __mem::length += cnt;
@@ -482,7 +486,7 @@ public:
     }
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     T *its = addr((__mem::memory)[n]);
-    T *ite = addr((__mem::memory)[__mem::length - 1]);
+    T *ite = addr((__mem::memory)[__mem::length]);
     micron::memmove(its + 1, its, ite - its);
     new (its) T(val);
     __mem::length++;

@@ -50,19 +50,18 @@ template<usize Stack_Size = thread_stack_size> class async_thread
       micron::exc<except::thread_error>("micron thread::__impl_preparethread(): a stack isn't allocated");
     }
     thread_handler();
-    attributes.pid = __as_unprepared_worker_thread_attached<__async_kernel>(attrs, &payload);
+    attributes.pid = __as_unprepared_worker_thread_attached<__worker_kernel>(attrs, &payload);
   }
 
   template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<Fn, Args...>)
+    requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
   inline __attribute__((always_inline)) void
   __impl_runthread(Fn &&fn, Args &&...args)
   {
     if ( attributes.stack_addr == nullptr ) {
       micron::exc<except::thread_error>("micron thread::__impl_runthread(): a stack isn't allocated");
     }
-    // creates the function to be inserted into the queue
-    auto __fn = [f = micron::forward<Fn &&>(fn), ... a = micron::forward<Args &&>(args)] { f(a...); };
+    auto __fn = [f = micron::forward<Fn>(fn), ... a = micron::forward<Args>(args)] { f(a...); };
     payload.queue.push(micron::move(__fn));
     micron::release_futex(payload.has_work.ptr(), 1);
   }
@@ -84,32 +83,30 @@ template<usize Stack_Size = thread_stack_size> class async_thread
 public:
   __worker_payload payload;
 
-  ~async_thread() { __release(); }
+  ~async_thread()
+  {
+    if ( attributes.pid != 0 ) {
+      stop();
+      pthread::__join_thread(attributes.pid);
+    }
+    __release();
+  }
 
   async_thread(const async_thread &o) = delete;
   async_thread &operator=(const async_thread &) = delete;
 
-  async_thread(void)
-      : attributes(posix::getpid()), payload{} { }      // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+  async_thread(void) : attributes(posix::getpid()), payload{} { }
 
   async_thread(async_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
   async_thread(const pthread_attr_t &_attrs) : attributes(posix::getpid(), _attrs), payload{} { __impl_preparethread(_attrs); }
 
   template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<Fn, Args && ...>)
+    requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
   async_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
   {
     __impl_preparethread(_attrs);
     __impl_runthread(micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-  }
-
-  template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<const Fn, const Args &...>)
-  async_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args) : attributes(posix::getpid(), _attrs), payload{}
-  {
-    __impl_preparethread(_attrs);
-    __impl_runthread(fn, args...);
   }
 
   async_thread &
@@ -122,19 +119,29 @@ public:
 
   auto swap(async_thread &o) = delete;
 
-  // yes, copying it out
   inline posix::rusage_t
   stats(void) const
   {
-    return payload.usage;
+    posix::rusage_t copy{};
+    for ( ;; ) {
+      u32 s1 = payload.usage_seq.get(memory_order_acquire);
+      if ( s1 & 1u ) {
+        __cpu_pause();
+        continue;
+      }
+      copy = payload.usage;
+      u32 s2 = payload.usage_seq.get(memory_order_acquire);
+      if ( s1 == s2 ) break;
+    }
+    return copy;
   }
 
   template<typename F, typename... Args>
-    requires(micron::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<micron::decay_t<F>, micron::decay_t<Args> &...>)
   async_thread &
   operator[](F &&f, Args &&...args)
   {
-    __impl_runthread(micron::forward<F &&>(f), micron::forward<Args &&>(args)...);
+    __impl_runthread(micron::forward<F>(f), micron::forward<Args>(args)...);
     return *this;
   }
 

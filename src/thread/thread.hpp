@@ -35,52 +35,13 @@ template<typename Tr> using __thread_pointer = micron::unique_pointer<Tr>;
 namespace solo
 {
 
-// NOTE: it's _absolutely_ important you leave the template constraints in place to have proper binding (will cause chaos
-// otherwise)
-// NOTE: compiler_bug?! "auto in template"
-
+// now only one spawn
 template<typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) == 0
-           && ((micron::is_lvalue_reference_v<Args> && ...) or (micron::is_rvalue_reference_v<Args> && ...))
-           && (!micron::is_same_v<micron::decay_t<Args>, Args>
-               && ...))      // && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
+  requires(micron::is_invocable_v<micron::decay_t<Func>, micron::decay_t<Args> &...>)
 auto
 spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
 {
-  return __thread_pointer<Tr>(f, micron::forward<Args &&>(args)...);
-}
-
-/*
-template <typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
-           && ((micron::is_lvalue_reference_v<Args> && ...) or (micron::is_rvalue_reference_v<Args> && ...))
-           && (!micron::is_same_v<micron::decay_t<Args>, Args>
-               && ...))     // && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
-// requires(micron::is_invocable_v<Func, Args...>)
-auto
-spawn(Func f, Args &&...args) -> __thread_pointer<Tr>
-{
-  return micron::unique_pointer<Tr>(f, args...);
-}*/
-
-template<typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0 && ((micron::is_lvalue_reference_v<Args> && ...))
-           && (!micron::is_same_v<micron::decay_t<Args>, Args> && ...))
-auto
-spawn(Func f, const Args &...args) -> __thread_pointer<Tr>
-{
-  return __thread_pointer<Tr>(f, micron::forward<const Args &>(args)...);
-}
-
-template<typename Tr = auto_thread<>, typename Func, typename... Args>
-  requires(micron::is_invocable_v<Func, Args...> && sizeof...(Args) > 0
-           && ((!micron::is_lvalue_reference_v<Args> && ...) and (!micron::is_rvalue_reference_v<Args> && ...))
-           && (!micron::is_reference_v<Args> && ...) && (micron::is_same_v<micron::decay_t<Args>, Args> && ...)
-           && (micron::is_same_v<micron::remove_reference_t<Args>, Args> && ...))
-auto
-spawn(Func f, Args... args) -> __thread_pointer<Tr>
-{
-  return __thread_pointer<Tr>(f, args...);
+  return __thread_pointer<Tr>(f, micron::forward<Args>(args)...);
 }
 
 // joining functions

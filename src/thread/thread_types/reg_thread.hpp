@@ -43,7 +43,7 @@ template<usize Stack_Size = thread_stack_size> class thread
   }
 
   template<typename F, typename... Args>
-    requires(micron::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<micron::decay_t<F>, micron::decay_t<Args> &...>)
   inline __attribute__((always_inline)) void
   __impl_makethread(F f, Args &&...args)
   {
@@ -55,32 +55,25 @@ template<usize Stack_Size = thread_stack_size> class thread
       micron::exc<except::thread_error>("micron thread::__impl_makethread(): failed to allocate stack");
 
     thread_handler();
-    attributes.pid = __as_thread_attached<Stack_Size, F, Args...>(&payload, attributes.stack_addr, f, micron::forward<Args &&>(args)...);
-    // no longer needed
-    // while ( pthread::thread_kill(parent_pid, pid, 0) != 0 )
-    //  __cpu_pause();
-    // massively important, wait for the thread to actually be
-    // created by the scheduler, otherwise race conditions will occur
-
-    // specifically, if we don't have for the actual process to be created we can get into a race condition where the
-    // thread doesn't exist yet (it takes a few cycles for the scheduler to actually insert the thread into the process
-    // table)
+    payload.alive.store(true, memory_order_seq_cst);
+    attributes.pid = __as_thread_attached<Stack_Size>(&payload, attributes.stack_addr, f, micron::forward<Args>(args)...);
   }
 
   void
-  __release(void)
+  __release(void) noexcept
   {
-    int r = 0;
-    if ( r = micron::try_unmap(attributes.stack_addr, Stack_Size); r < 0 ) {
-      micron::exc<except::memory_error>("micron thread::__release(): failed to unmap thread stack");
+    if ( attributes.stack_addr != nullptr ) {
+      micron::try_unmap(attributes.stack_addr, Stack_Size);
     }
     attributes.clear();
-    payload.alive.store(false);
-    byte *ptr = payload.ret_val.get();
-    if ( ptr ) {
-      delete ptr;
-      ptr = nullptr;
+    payload.alive.store(false, memory_order_seq_cst);
+    if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::heap ) {
+      byte *ptr = payload.ret_val.exchange(nullptr, memory_order_acq_rel);
+      auto del = payload.deleter;
+      payload.deleter = nullptr;
+      if ( ptr && del ) del(ptr);
     }
+    payload.tag_val.store((u8)__thread_payload::tag::none, memory_order_release);
   }
 
   void
@@ -89,18 +82,7 @@ template<usize Stack_Size = thread_stack_size> class thread
     if ( alive() ) {
       micron::exc<except::thread_error>("micron thread::__safe_release(): tried to release a running thread");
     }
-    if ( micron::try_unmap(attributes.stack_addr, Stack_Size) < 0 ) {
-      micron::exc<except::memory_error>("micron thread::__safe_release(): failed to unmap thread stack");
-    }
-    attributes.clear();
-
-    if ( payload.tag_val == __thread_payload::tag::heap ) {
-      byte *ptr = payload.ret_val.get();
-      if ( ptr ) {
-        delete ptr;
-        ptr = nullptr;
-      }
-    }
+    __release();
   }
 
   // pid_t parent_pid;
@@ -111,7 +93,11 @@ template<usize Stack_Size = thread_stack_size> class thread
 public:
   __thread_payload payload;
 
-  ~thread() { __release(); }
+  ~thread()
+  {
+    if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+    __release();
+  }
 
   thread(const thread &o) = delete;
   thread &operator=(const thread &) = delete;
@@ -122,24 +108,10 @@ public:
   thread(thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
   template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<Fn &, Args &...>)
-  thread(Fn &fn, Args &...args) : attributes(posix::getpid()), payload{}
-  {
-    __impl_makethread(fn, args...);
-  }
-
-  template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<Fn, Args && ...>)
+    requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
   thread(Fn &&fn, Args &&...args) : attributes(posix::getpid()), payload{}
   {
     __impl_makethread(micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-  }
-
-  template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<const Fn, const Args &...>)
-  thread(const Fn &fn, const Args &...args) : attributes(posix::getpid()), payload{}
-  {
-    __impl_makethread(fn, args...);
   }
 
   thread &
@@ -151,18 +123,17 @@ public:
   }
 
   template<typename F, typename... Args>
-    requires(micron::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<micron::decay_t<F>, micron::decay_t<Args> &...>)
   thread &
   operator[](F f, Args &&...args)
   {
     join();
-    __impl_makethread(f, args...);
+    __impl_makethread(f, micron::forward<Args>(args)...);
     return *this;
   }
 
   auto swap(thread &o) = delete;
 
-  // yes, copying it out
   inline posix::rusage_t
   stats(void) const
   {
@@ -203,20 +174,21 @@ public:
   }
 
   auto
-  dismiss(void) -> int      // thread_thread
+  dismiss(void) -> int      // thread
   {
-    if ( try_join() == error::busy ) {
-      auto r = pthread::__join_thread(attributes.pid);
+    int r = try_join();
+    if ( r == error::busy ) {
+      auto rr = pthread::__join_thread(attributes.pid);
       __release();
-      return r;
+      return rr;
     }
-    __release();
-    return 1;
+    return r;
   }
 
   auto
   try_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       __release();
@@ -301,11 +273,15 @@ public:
   }
 
   template<typename R>
-  auto
+    requires(micron::is_trivially_copyable_v<R> && sizeof(R) <= sizeof(byte *))
+  R
   result(void)
   {
     wait_for();
-    R val = static_cast<R>(payload.ret_val.get());
+    byte *p = payload.ret_val.get(memory_order_acquire);
+    u64 raw = reinterpret_cast<u64>(p);
+    R val;
+    __builtin_memcpy(&val, &raw, sizeof(R));
     return val;
   }
 

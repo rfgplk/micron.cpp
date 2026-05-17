@@ -15,7 +15,6 @@ namespace micron
 template<lock_starts S, is_mutex M = mutex> class unique_lock
 {
   M *mtx;
-  // NOTE: used to hardcore to micron::mutex
   void (M::*rptr)();
 
   void
@@ -92,7 +91,7 @@ public:
   }
 
   void
-  unlocks()
+  unlock()
   {
     __verify();
     if ( rptr ) (mtx->*rptr)();

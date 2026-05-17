@@ -588,7 +588,8 @@ _mm_max_sd(__m128d a, __m128d b) noexcept
 __inline_g __m128d
 _mm_sqrt_sd(__m128d a, __m128d b) noexcept
 {
-  return (__m128d)__builtin_ia32_sqrtsd((__v2df)b);
+  __m128d c = (__m128d)__builtin_ia32_sqrtsd((__v2df)b);
+  return __extension__(__m128d){ ((__v2df)c)[0], ((__v2df)a)[1] };
 }
 
 __inline_g __m128d
@@ -726,7 +727,8 @@ _mm_set1_epi64x(long long v) noexcept
 __inline_g __m128i
 _mm_set1_epi64(__m64 v) noexcept
 {
-  long long x = ((long long *)&v)[0];
+  // don't pun
+  long long x = ((__v1di)v)[0];
   return __extension__(__m128i)(__v2di){ x, x };
 }
 

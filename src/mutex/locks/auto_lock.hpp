@@ -18,7 +18,7 @@ namespace micron
 template<is_mutex M = mutex> class auto_guard
 {
   M mtx;
-  void (micron::mutex::*rptr)();
+  void (M::*rptr)();
 
 public:
   auto_guard() : mtx(), rptr(mtx()) { };

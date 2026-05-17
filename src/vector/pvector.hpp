@@ -444,11 +444,12 @@ public:
   pvector &
   operator=(const pvector &o)
   {
-    if ( this != &o ) [[likely]] {
-      __release<__root_level>(__root);
-      __root = __retain<__root_level>(o.__root);
-      __size = o.__size;
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(const_cast<pvector &>(o)) ) return *this;
     }
+    __release<__root_level>(__root);
+    __root = __retain<__root_level>(o.__root);
+    __size = o.__size;
     return *this;
   }
 
@@ -462,13 +463,14 @@ public:
   pvector &
   operator=(pvector &&o) noexcept
   {
-    if ( this != &o ) [[likely]] {
-      __release<__root_level>(__root);
-      __root = o.__root;
-      __size = o.__size;
-      o.__root = nullptr;
-      o.__size = 0;
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(o) ) return *this;
     }
+    __release<__root_level>(__root);
+    __root = o.__root;
+    __size = o.__size;
+    o.__root = nullptr;
+    o.__size = 0;
     return *this;
   }
 

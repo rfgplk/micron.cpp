@@ -217,49 +217,51 @@ fms_addsub_f64(__m256d a, __m256d b, __m256d c) noexcept
 
 #undef __inline_fma
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512
+#define __inline_fma_v512 [[gnu::always_inline, gnu::artificial, gnu::target("avx512f")]] static inline
+
+__inline_fma_v512 __m512
 fma_f32_v512(__m512 a, __m512 b, __m512 c) noexcept
 {
   return _mm512_fmadd_ps(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512
+__inline_fma_v512 __m512
 fms_f32_v512(__m512 a, __m512 b, __m512 c) noexcept
 {
   return _mm512_fmsub_ps(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512
+__inline_fma_v512 __m512
 fnma_f32_v512(__m512 a, __m512 b, __m512 c) noexcept
 {
   return _mm512_fnmadd_ps(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512
+__inline_fma_v512 __m512
 fnms_f32_v512(__m512 a, __m512 b, __m512 c) noexcept
 {
   return _mm512_fnmsub_ps(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512d
+__inline_fma_v512 __m512d
 fma_f64_v512(__m512d a, __m512d b, __m512d c) noexcept
 {
   return _mm512_fmadd_pd(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512d
+__inline_fma_v512 __m512d
 fms_f64_v512(__m512d a, __m512d b, __m512d c) noexcept
 {
   return _mm512_fmsub_pd(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512d
+__inline_fma_v512 __m512d
 fnma_f64_v512(__m512d a, __m512d b, __m512d c) noexcept
 {
   return _mm512_fnmadd_pd(a, b, c);
 }
 
-[[gnu::always_inline, gnu::artificial]] static inline __m512d
+__inline_fma_v512 __m512d
 fnms_f64_v512(__m512d a, __m512d b, __m512d c) noexcept
 {
   return _mm512_fnmsub_pd(a, b, c);

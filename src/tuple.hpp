@@ -316,7 +316,7 @@ template<typename T, typename F> struct pair {
   }
 
   template<typename K = T>
-    requires(micron::is_convertible_v<T, K>)
+    requires(micron::is_convertible_v<K, T>)
   pair &
   operator=(const K &x)
   {
@@ -325,7 +325,7 @@ template<typename T, typename F> struct pair {
   }
 
   template<typename L = F>
-    requires(micron::is_convertible_v<F, L>)
+    requires(micron::is_convertible_v<L, F>)
   pair &
   operator=(const L &y)
   {
@@ -341,7 +341,7 @@ template<typename T, typename F> struct pair {
   }
 
   template<typename L = F>
-    requires(!micron::same_as<T, F>)
+    requires(!micron::same_as<T, F> && micron::is_convertible_v<micron::remove_cvref_t<L>, F>)
   pair &
   operator=(L &&y)
   {

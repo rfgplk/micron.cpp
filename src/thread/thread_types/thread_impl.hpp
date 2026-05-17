@@ -63,7 +63,9 @@ struct __thread_payload {
   //(11.2) — a type that is the signed or unsigned type corresponding to the dynamic type of the object, or
   //(11.3) — a char, unsigned char, or std::byte type.
   atomic_ptr<byte *> ret_val;      // stop gap measure for returning arbitrary return types
-  enum class tag : u8 { none = 0, literal, heap, __end } tag_val;
+  enum class tag : u8 { none = 0, literal, heap, __end };
+  atomic_token<u8> tag_val{ (u8)tag::none };
+  void (*deleter)(byte *) = nullptr;
 
   posix::rusage_t usage;      // non atomic
 
@@ -71,7 +73,9 @@ struct __thread_payload {
   clear(void)
   {
     alive.store(false);
-    ret_val.store(nullptr, memory_order_acq_rel);
+    ret_val.store(nullptr, memory_order_release);
+    tag_val.store((u8)tag::none, memory_order_release);
+    deleter = nullptr;
     usage = posix::rusage_t{};
   }
 };
@@ -80,18 +84,21 @@ struct __worker_payload {
   atomic_token<u32> has_work{ 0 };             // for futex compat.
   atomic_token<bool> should_die{ false };      // rude :/
   micron::lambda_queue<256> queue;
+  atomic_token<u32> usage_seq{ 0 };
   posix::rusage_t usage;      // non atomic
 };
 
 // The kernel of the thread, encapsulating the req'd function
 // status flags if the thread is running or not
+// NOTE: args is always instantiated with decayed (value) types by __as_*_thread_attached
+// taking args by value gives the kernel local storage; invoking fn(args...) passes lvalues
 template<typename Fn, typename... Args>
-  requires(micron::is_invocable_v<Fn, Args...>)
+  requires(micron::is_invocable_v<Fn, Args &...>)
 i32
-__thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
+__thread_kernel(__thread_payload *payload, Fn fn, Args... args)
 {
   // prologue
-  using ret_t = micron::invoke_result_t<Fn, Args...>;
+  using ret_t = micron::invoke_result_t<Fn, Args &...>;
   __thread_handler();
   pthread::set_cancel_state(pthread::cancel_state::enable);
   pthread::set_cancel_type(pthread::cancel_type::deferred);
@@ -100,26 +107,33 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args &&...args)
   // work
 
   if constexpr ( micron::is_void_v<ret_t> ) {
-    fn(micron::forward<Args>(args)...);
+    fn(args...);
     // function has _no_ return value, signal that it returned successfully (1)
     // NOTE: this may cause erronous behavior if 1 happens to be a valid pointer on your platform. be careful!
+    payload->deleter = nullptr;
+    payload->tag_val.store((u8)__thread_payload::tag::none, memory_order_release);
     payload->ret_val.store(reinterpret_cast<byte *>(1), memory_order_release);
-    payload->tag_val = __thread_payload::tag::none;
   } else if constexpr ( micron::is_class_v<ret_t> and !micron::is_trivially_constructible_v<ret_t> and !micron::is_literal_type_v<ret_t> ) {
     // NOTE: IMPORTANT
     // make sure this is freed either by the calling thread, or whatever handles returns
-    ret_t *ret = new ret_t(fn(micron::forward<Args>(args)...));
+    ret_t *ret = new ret_t(fn(args...));
+    payload->deleter = +[](byte *p) { delete reinterpret_cast<ret_t *>(p); };
+    payload->tag_val.store((u8)__thread_payload::tag::heap, memory_order_release);
     payload->ret_val.store(reinterpret_cast<byte *>(ret), memory_order_release);
-    payload->tag_val = __thread_payload::tag::heap;
   } else if constexpr ( sizeof(ret_t) > 8 ) {
     // bigger than 8 bytes, use new
-    ret_t *ret = new ret_t(fn(micron::forward<Args>(args)...));
+    ret_t *ret = new ret_t(fn(args...));
+    payload->deleter = +[](byte *p) { delete reinterpret_cast<ret_t *>(p); };
+    payload->tag_val.store((u8)__thread_payload::tag::heap, memory_order_release);
     payload->ret_val.store(reinterpret_cast<byte *>(ret), memory_order_release);
-    payload->tag_val = __thread_payload::tag::heap;
   } else {
-    // type is literal, can be stored
-    payload->ret_val.store(reinterpret_cast<byte *>(fn(micron::forward<Args>(args)...)), memory_order_release);
-    payload->tag_val = __thread_payload::tag::literal;
+    // type is literal, can be stored.
+    ret_t __ret_val_storage = fn(args...);
+    u64 __ret_raw = 0;
+    __builtin_memcpy(&__ret_raw, &__ret_val_storage, sizeof(ret_t));
+    payload->deleter = nullptr;
+    payload->tag_val.store((u8)__thread_payload::tag::literal, memory_order_release);
+    payload->ret_val.store(reinterpret_cast<byte *>(__ret_raw), memory_order_release);
   }
   // end work
 
@@ -144,61 +158,38 @@ rerun_worker:
   while ( payload->has_work.get(memory_order_acquire) == 0 ) {
     wait_futex(payload->has_work.ptr(), 0);
   }
-  // doesn't need to be atomic
-  if ( *payload->should_die.ptr() ) return return_force;
+  // must be an acq, matches release
+  if ( payload->should_die.get(memory_order_acquire) ) return return_force;
   payload->queue.execute();
 
-  if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) )
-    payload->has_work.store(0, memory_order_release);
+  // WARNING: hard setting has_work races with concurrent producers and can deadlock, CAS instead
+  if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) ) {
+    u32 expected = 1;
+    if ( payload->has_work.compare_exchange_strong(expected, 0, memory_order_acq_rel, memory_order_acquire) ) {
+      if ( payload->queue.head.get(memory_order_acquire) != payload->queue.tail.get(memory_order_acquire) ) {
+        payload->has_work.store(1, memory_order_release);
+      }
+    }
+  }
   // epilogue
+  payload->usage_seq.add_fetch(1, memory_order_acq_rel);
   posix::getrusage(posix::rusage_thread, payload->usage);
+  payload->usage_seq.add_fetch(1, memory_order_acq_rel);
   goto rerun_worker;
   return return_success;
 }
 
 // preprepared threads, make absolutely sure attrs are configured correctly/are valid before passing to this, no error
 // checking built in
-
-// lvalue-only
 template<typename Fn, typename... Args>
-  requires(micron::is_invocable_v<Fn &, Args &...>)
-pthread_t
-__as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &fn, Args &...args)
-{
-  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): invalid arguments");
-
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<Fn &, Args &...>, payload, fn, args...);
-
-  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
-
-  return pid;
-}
-
-// rvalue-only
-template<typename Fn, typename... Args>
-  requires(micron::is_invocable_v<Fn, Args && ...>)
+  requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
 pthread_t
 __as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &&fn, Args &&...args)
 {
   if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
 
-  pthread_t pid
-      = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): thread failed to spawn");
-  return pid;
-}
-
-// const-lvalue / by-value
-template<typename Fn, typename... Args>
-  requires(micron::is_invocable_v<const Fn &, const Args &...>)
-pthread_t
-__as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, const Fn &fn, const Args &...args)
-{
-  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
-
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<const Fn &, const Args &...>, payload, fn, args...);
+  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<micron::decay_t<Fn>, micron::decay_t<Args>...>, payload,
+                                         micron::forward<Fn>(fn), micron::forward<Args>(args)...);
 
   if ( pid == pthread::thread_failed )
     micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): thread failed to spawn");
@@ -222,30 +213,8 @@ __as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, P *payload)
 }
 
 // unprepared threads
-
-// lvalue-only
 template<int Stack_Size, typename Fn, typename... Args>
-  requires(micron::is_invocable_v<Fn &, Args &...>)
-pthread_t
-__as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &fn, Args &...args)
-{
-  if ( payload == nullptr || fstack == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): invalid arguments");
-
-  auto attrs = pthread::prepare_thread(pthread::thread_create_state::joinable, posix::sched_other, 0);
-
-  pthread::set_stack_thread(attrs, fstack, Stack_Size);
-
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<Fn &, Args &...>, payload, fn, args...);
-
-  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
-
-  return pid;
-}
-
-// rvalue-only
-template<int Stack_Size, typename Fn, typename... Args>
-  requires(micron::is_invocable_v<Fn, Args && ...>)
+  requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
 pthread_t
 __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&...args)
 {
@@ -256,27 +225,8 @@ __as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&
 
   pthread::set_stack_thread(attrs, fstack, Stack_Size);
 
-  pthread_t pid
-      = pthread::create_thread(attrs, __thread_kernel<Fn, Args...>, payload, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-
-  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
-  return pid;
-}
-
-// const-lvalue / by-value
-template<int Stack_Size, typename Fn, typename... Args>
-  requires(micron::is_invocable_v<const Fn &, const Args &...>)
-pthread_t
-__as_thread_attached(__thread_payload *payload, addr_t *fstack, const Fn &fn, const Args &...args)
-{
-  if ( payload == nullptr || fstack == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): invalid arguments");
-
-  auto attrs = pthread::prepare_thread(pthread::thread_create_state::joinable, posix::sched_other, 0);
-
-  pthread::set_stack_thread(attrs, fstack, Stack_Size);
-
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<const Fn &, const Args &...>, payload, fn, args...);
+  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<micron::decay_t<Fn>, micron::decay_t<Args>...>, payload,
+                                         micron::forward<Fn>(fn), micron::forward<Args>(args)...);
 
   if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
 

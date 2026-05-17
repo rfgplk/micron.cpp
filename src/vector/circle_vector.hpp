@@ -16,7 +16,7 @@ namespace micron
 
 // renamed from circle_buffer/circular, aliases kept that point to this file
 // no longer heap allocated
-template<is_regular_object T, usize N>
+template<is_regular_object T, usize N, bool Sf = true>
   requires((N & (N - 1)) == 0)
 class circle_vector
 {
@@ -254,25 +254,27 @@ public:
   circle_vector &
   operator=(const circle_vector &other) noexcept
   {
-    if ( this != &other ) {
-      __head = other.__head;
-      __tail = other.__tail;
-      __size = other.__size;
-      __impl_copy(__buffer.data(), other.__buffer.data(), N);
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(const_cast<circle_vector &>(other)) ) return *this;
     }
+    __head = other.__head;
+    __tail = other.__tail;
+    __size = other.__size;
+    __impl_copy(__buffer.data(), other.__buffer.data(), N);
     return *this;
   }
 
   circle_vector &
   operator=(circle_vector &&other) noexcept
   {
-    if ( this != &other ) {
-      __head = other.__head;
-      __tail = other.__tail;
-      __size = other.__size;
-      __impl_copy(__buffer.data(), other.__buffer.data(), N);
-      other.clear();
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(other) ) return *this;
     }
+    __head = other.__head;
+    __tail = other.__tail;
+    __size = other.__size;
+    __impl_copy(__buffer.data(), other.__buffer.data(), N);
+    other.clear();
     return *this;
   }
 

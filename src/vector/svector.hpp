@@ -218,8 +218,9 @@ public:
   svector &
   operator=(const svector &o)
   {
-    // needed
-    if ( this == micron::addressof(const_cast<svector &>(o)) ) return *this;
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(const_cast<svector &>(o)) ) return *this;
+    }
     __impl_container::destroy(micron::real_addr_as<T>(stack[0]), length);
     length = 0;
     __impl_container::copy(stack, o.stack, o.length);
@@ -230,8 +231,9 @@ public:
   svector &
   operator=(svector &&o)
   {
-    // needed
-    if ( this == micron::addressof(o) ) return *this;
+    if constexpr ( Sf == true ) {
+      if ( this == micron::addressof(o) ) return *this;
+    }
     __impl_container::destroy(micron::real_addr_as<T>(stack[0]), length);
     length = 0;
     __impl_container::move(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(o.stack[0]), o.length);

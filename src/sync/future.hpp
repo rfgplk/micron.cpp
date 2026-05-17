@@ -17,12 +17,29 @@ enum class future_status { ready, timeout, deferred };
 
 enum class launch { async = 1, deferred = 2 };
 
+class broken_promise
+{
+  const char *__msg;
+
+public:
+  broken_promise() noexcept : __msg("broken promise") { }
+
+  explicit broken_promise(const char *m) noexcept : __msg(m ? m : "broken promise") { }
+
+  const char *
+  what() const noexcept
+  {
+    return __msg;
+  }
+};
+
 template<typename T> class shared_state
 {
   mutable mutex mtx;
   bool ready;
   bool retrieved;
   bool has_exception;
+  const char *exc_msg;
 
   union storage_t {
     char dummy;
@@ -34,7 +51,7 @@ template<typename T> class shared_state
   } storage;
 
 public:
-  shared_state() : ready(false), retrieved(false), has_exception(false) { }
+  shared_state() : ready(false), retrieved(false), has_exception(false), exc_msg(nullptr) { }
 
   ~shared_state()
   {
@@ -88,6 +105,16 @@ public:
     has_exception = false;
   }
 
+  void
+  set_exception(const char *msg) noexcept
+  {
+    lock_guard<mutex> lck(mtx);
+    if ( ready ) return;
+    exc_msg = msg ? msg : "broken promise";
+    has_exception = true;
+    ready = true;
+  }
+
   T
   get()
   {
@@ -98,6 +125,8 @@ public:
       exc<except::future_error>("");
     }
     retrieved = true;
+
+    if ( has_exception ) throw micron::broken_promise{ exc_msg };
 
     return micron::move(storage.value);
   }
@@ -121,9 +150,11 @@ template<> class shared_state<void>
   mutable mutex mtx;
   bool ready;
   bool retrieved;
+  bool has_exception;
+  const char *exc_msg;
 
 public:
-  shared_state() : ready(false), retrieved(false) { }
+  shared_state() : ready(false), retrieved(false), has_exception(false), exc_msg(nullptr) { }
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
@@ -167,6 +198,16 @@ public:
   }
 
   void
+  set_exception(const char *msg) noexcept
+  {
+    lock_guard<mutex> lck(mtx);
+    if ( ready ) return;
+    exc_msg = msg ? msg : "broken promise";
+    has_exception = true;
+    ready = true;
+  }
+
+  void
   get()
   {
     wait();
@@ -176,6 +217,7 @@ public:
       exc<except::future_error>("");
     }
     retrieved = true;
+    if ( has_exception ) throw micron::broken_promise{ exc_msg };
   }
 
   bool
@@ -197,10 +239,12 @@ template<typename T> class shared_state<T &>
   mutable mutex mtx;
   bool ready;
   bool retrieved;
+  bool has_exception;
+  const char *exc_msg;
   T *ptr;
 
 public:
-  shared_state() : ready(false), retrieved(false), ptr(nullptr) { }
+  shared_state() : ready(false), retrieved(false), has_exception(false), exc_msg(nullptr), ptr(nullptr) { }
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
@@ -245,6 +289,16 @@ public:
     ready = true;
   }
 
+  void
+  set_exception(const char *msg) noexcept
+  {
+    lock_guard<mutex> lck(mtx);
+    if ( ready ) return;
+    exc_msg = msg ? msg : "broken promise";
+    has_exception = true;
+    ready = true;
+  }
+
   T &
   get()
   {
@@ -255,6 +309,7 @@ public:
       exc<except::future_error>("");
     }
     retrieved = true;
+    if ( has_exception ) throw micron::broken_promise{ exc_msg };
 
     return *ptr;
   }

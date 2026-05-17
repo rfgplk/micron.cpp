@@ -6,7 +6,9 @@
 #pragma once
 
 #include "algorithm/memory.hpp"
+#include "bits/__container.hpp"
 #include "memory/addr.hpp"
+#include "memory/new.hpp"
 #include "tags.hpp"
 #include "types.hpp"
 #include "view.hpp"
@@ -21,7 +23,12 @@ namespace micron
 
 template<is_regular_object T, usize N = 64> class span
 {
-  T stack[N];
+  // NOTE: same reasoning as svector
+  // T[N] inside an anonymous union so it's not default-constructed when a span is created
+  union {
+    alignas(T) T stack[N];
+  };
+
   usize length = 0;
 
 public:
@@ -71,7 +78,7 @@ public:
     const size_type n = static_cast<size_type>(b - a);
     if ( n > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): range exceeds stack capacity N");
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(stack[0])), reinterpret_cast<const byte *>(a), n * sizeof(T));
+    __impl_container::copy(micron::addr(stack[0]), a, n);
     length = n;
   }
 
@@ -79,7 +86,7 @@ public:
   {
     if ( s.len > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): raw_slice exceeds stack capacity N");
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(stack[0])), reinterpret_cast<const byte *>(s.ptr), s.len * sizeof(T));
+    __impl_container::copy(micron::addr(stack[0]), s.ptr, s.len);
     length = s.len;
   }
 
@@ -88,10 +95,9 @@ public:
     if ( lst.size() > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): initializer_list exceeds stack capacity N");
     size_type i = 0;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      for ( const T &val : lst ) stack[i++] = val;
-    } else {
-      for ( auto &&val : lst ) stack[i++] = micron::move(val);
+    for ( const T &val : lst ) {
+      new (micron::addr(stack[i])) T(val);
+      ++i;
     }
     length = static_cast<size_type>(lst.size());
   }
@@ -120,41 +126,52 @@ public:
 
   template<usize M> span(const span<T, M> &o)
   {
-    constexpr size_type copy_n = (N < M) ? N : M;
+    const size_type copy_n = (o.length < N) ? o.length : N;
     __impl_container::copy(stack, o.stack, copy_n);
-    length = (o.length < N) ? o.length : N;
+    length = copy_n;
   }
 
   span(const span &o)
   {
-    __impl_container::copy(stack, o.stack, N);
+    __impl_container::copy(stack, o.stack, o.length);
     length = o.length;
   }
 
   span(span &&o)
   {
-    __impl_container::move<N, T>(micron::real_addr_as<int>(stack[0]), micron::real_addr_as<T>(o.stack[0]));
+    for ( size_type i = 0; i < o.length; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
     length = o.length;
+    __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
   }
 
   template<usize M> span(span<T, M> &&o)
   {
-    constexpr size_type copy_n = (N >= M) ? M : N;
-    micron::copy<copy_n>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
-    micron::zero<copy_n>(micron::real_addr_as<T>(o.stack[0]));
-    length = (o.length < N) ? o.length : N;
+    const size_type copy_n = (o.length < N) ? o.length : N;
+    for ( size_type i = 0; i < copy_n; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
+    length = copy_n;
+    __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
   }
 
-  span &operator=(const span &) = default;
+  span &
+  operator=(const span &o)
+  {
+    if ( this == micron::addressof(o) ) return *this;
+    __impl_container::destroy(micron::addr(stack[0]), length);
+    __impl_container::copy(stack, o.stack, o.length);
+    length = o.length;
+    return *this;
+  }
 
   span &
   operator=(span &&o)
   {
-    micron::copy<N>(micron::real_addr_as<T>(o.stack[0]), micron::real_addr_as<T>(stack[0]));
-    micron::zero<N>(micron::real_addr_as<T>(o.stack[0]));
+    if ( this == micron::addressof(o) ) return *this;
+    __impl_container::destroy(micron::addr(stack[0]), length);
+    for ( size_type i = 0; i < o.length; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
     length = o.length;
+    __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
     return *this;
   }
@@ -449,7 +466,8 @@ public:
   {
     if ( length + 1 > N ) [[unlikely]]
       exc<except::runtime_error>("micron::span push_back() exceeds stack capacity N");
-    stack[length++] = val;
+    new (micron::addr(stack[length])) T(val);
+    ++length;
     return *this;
   }
 
@@ -458,7 +476,8 @@ public:
   {
     if ( length + 1 > N ) [[unlikely]]
       exc<except::runtime_error>("micron::span move_back() exceeds stack capacity N");
-    stack[length++] = micron::move(val);
+    new (micron::addr(stack[length])) T(micron::move(val));
+    ++length;
     return *this;
   }
 
@@ -468,7 +487,8 @@ public:
   {
     if ( length + 1 > N ) [[unlikely]]
       exc<except::runtime_error>("micron::span emplace_back() exceeds stack capacity N");
-    stack[length++] = T(micron::forward<Args>(args)...);
+    new (micron::addr(stack[length])) T(micron::forward<Args>(args)...);
+    ++length;
     return *this;
   }
 
@@ -486,21 +506,23 @@ public:
   {
     if ( length + 1 > N ) [[unlikely]]
       exc<except::runtime_error>("micron::span insert() exceeds stack capacity N");
-    micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
-    stack[ind] = val;
-    length++;
+    if ( ind > length ) [[unlikely]]
+      exc<except::runtime_error>("micron::span insert() index out of range");
+    if ( ind < length ) {
+      new (micron::addr(stack[length])) T(micron::move(stack[length - 1]));
+      for ( size_type i = length - 1; i > ind; --i ) stack[i] = micron::move(stack[i - 1]);
+      stack[ind] = val;
+    } else {
+      new (micron::addr(stack[length])) T(val);
+    }
+    ++length;
     return *this;
   }
 
   span &
   insert(iterator itr, const T &val)
   {
-    if ( length + 1 > N ) [[unlikely]]
-      exc<except::runtime_error>("micron::span insert() exceeds stack capacity N");
-    micron::bytemove(itr + 1, itr, (end() - itr) * sizeof(T));
-    *itr = val;
-    length++;
-    return *this;
+    return insert(static_cast<size_type>(itr - micron::addr(stack[0])), val);
   }
 
   span &
@@ -508,9 +530,9 @@ public:
   {
     if ( n >= length ) [[unlikely]]
       exc<except::runtime_error>("micron::span erase() out of range");
-    stack[n].~T();
-    micron::memmove(micron::addr(stack[n]), micron::addr(stack[n + 1]), (length - n - 1));
-    length--;
+    for ( size_type i = n; i + 1 < length; ++i ) stack[i] = micron::move(stack[i + 1]);
+    stack[length - 1].~T();
+    --length;
     return *this;
   }
 
@@ -556,7 +578,8 @@ public:
   void
   reset()
   {
-    micron::zero(stack, N);
+    __impl_container::destroy(micron::addr(stack[0]), length);
+    for ( size_type i = 0; i < N; ++i ) new (micron::addr(stack[i])) T();
     length = N;
   }
 
@@ -829,8 +852,9 @@ public:
     if ( length == 0 ) [[unlikely]]
       return T{};
     T val = micron::move(stack[0]);
-    micron::memmove(micron::addr(stack[0]), micron::addr(stack[1]), (length - 1));
-    length--;
+    for ( size_type i = 0; i + 1 < length; ++i ) stack[i] = micron::move(stack[i + 1]);
+    stack[length - 1].~T();
+    --length;
     return val;
   }
 
@@ -839,10 +863,12 @@ public:
   {
     if ( length == 0 ) [[unlikely]]
       return {};
-    raw_slice<T> view{ stack, 1 };
-    micron::memmove(micron::addr(stack[0]), micron::addr(stack[1]), (length - 1));
-    length--;
-    return view;
+    T popped = micron::move(stack[0]);
+    for ( size_type i = 0; i + 1 < length; ++i ) stack[i] = micron::move(stack[i + 1]);
+    stack[length - 1].~T();
+    --length;
+    new (micron::addr(stack[length])) T(micron::move(popped));
+    return raw_slice<T>{ micron::addr(stack[length]), 1 };
   }
 
   T
@@ -969,7 +995,8 @@ public:
   copy_from_slice(const raw_slice<T> &src)
   {
     const size_type n = (src.len < length) ? src.len : length;
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(stack[0])), reinterpret_cast<const byte *>(src.ptr), n * sizeof(T));
+    // Overwrites existing live slots; use assignment (slots are alive).
+    for ( size_type i = 0; i < n; ++i ) stack[i] = src.ptr[i];
     return *this;
   }
 

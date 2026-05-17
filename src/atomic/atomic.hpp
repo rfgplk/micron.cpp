@@ -593,7 +593,7 @@ public:
   }
 
   P
-  exchange(P p, memory_order order = memory_order::seq_cst) noexcept
+  exchange(P p, [[maybe_unused]] memory_order order = memory_order::seq_cst) noexcept
   {
     return tk.swap(p);
   }

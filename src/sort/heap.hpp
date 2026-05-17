@@ -85,13 +85,16 @@ template<is_iterable_container C>
 constexpr void
 heap(C &c) noexcept
 {
-  __sort_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+  auto comp = [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; };
+  __make_heap(c, comp);
+  __sort_heap(c, comp);
 }
 
 template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr void
 heap(C &c, Cmp comp) noexcept
 {
+  __make_heap(c, comp);
   __sort_heap(c, comp);
 }
 

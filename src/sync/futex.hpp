@@ -62,8 +62,10 @@ release_futex(T *ptr, decay_t<T> to_store, u32 cnt = 1)
   __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, cnt, nullptr, nullptr, 0);
 }
 
-template<typename T = u32, T __D = 1>
-  requires(micron::is_integral_v<T>)
+// __D is the unlocked value
+// __L is the locked value
+template<typename T = u32, T __D = 0, T __L = 1>
+  requires(micron::is_integral_v<T> && __D != __L)
 struct futex {
   T __value;
   ~futex() = default;
@@ -76,18 +78,22 @@ struct futex {
   void
   wait()
   {
-    T e = __D;
-    while ( !atom::cmp_exchange_weak(&__value, &e, 1) ) {
-      e = 0;
-      __futex(&__value, futex_wait | futex_private_flag, __D, nullptr, nullptr, 0);
+    for ( ;; ) {
+      T expected = __D;
+      if ( atom::cmp_exchange_weak(&__value, &expected, __L) ) return;
+      auto ret
+          = __futex(reinterpret_cast<u32 *>(&__value), futex_wait | futex_private_flag, static_cast<u32>(expected), nullptr, nullptr, 0);
+      if ( ret < 0 && ret != -11 && ret != -4 ) {
+        micron::exc<except::thread_error>("futex wait failed");
+      }
     }
   }
 
   void
   release()
   {
-    atom::store(&__value, 0, atomic_seq_cst);
-    __futex(&__value, futex_wake | futex_private_flag, 1, nullptr, nullptr, 0);
+    atom::store(&__value, __D, atomic_seq_cst);
+    __futex(reinterpret_cast<u32 *>(&__value), futex_wake | futex_private_flag, 1, nullptr, nullptr, 0);
   }
 };
 

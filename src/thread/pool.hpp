@@ -20,8 +20,8 @@ namespace micron
 using standard_arena = arena::__default_arena<micron::thread_stack_size, micron::group_thread<>>;
 using concurrent_arena = arena::__concurrent_arena<>;
 
-static standard_arena *__global_threadpool = nullptr;
-static concurrent_arena *__global_parallelpool = nullptr;
+inline standard_arena *__global_threadpool = nullptr;
+inline concurrent_arena *__global_parallelpool = nullptr;
 
 __attribute__((constructor)) void
 __make_threadarena(void)
@@ -33,10 +33,8 @@ __make_threadarena(void)
 __attribute__((destructor)) void
 __destroy_threadarena(void)
 {
-  if ( __global_threadpool != nullptr ) {
-    (*__global_threadpool).~standard_arena();
-    __global_threadpool = nullptr;
-  }
+  // don't explicitly invoke the dtor
+  __global_threadpool = nullptr;
 };
 
 #if defined(__micron_enable_concurrency_at_startup_var)
@@ -60,10 +58,7 @@ inline __attribute__((always_inline)) void
 #endif
 __destroy_parallelarena(void)
 {
-  if ( __global_parallelpool != nullptr ) {
-    (*__global_parallelpool).~concurrent_arena();
-    __global_parallelpool = nullptr;
-  }
+  __global_parallelpool = nullptr;
 };
 
 void

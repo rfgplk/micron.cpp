@@ -78,10 +78,24 @@ template<typename T>
 inline void
 deep_move(T *__restrict dest, T *__restrict src, usize cnt)
 {
-  for ( usize i = 0; i < cnt; ++i ) {
-    new (addr(dest[i])) T(micron::move(src[i]));
-    src[i].~T();
-    // WARNING: P1144
+  if constexpr ( noexcept(T(micron::move(micron::declval<T &>()))) ) {
+    for ( usize i = 0; i < cnt; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+      // WARNING: P1144
+    }
+  } else {
+    // WARNING: if move ctor throws at i,/ already-constructed dest[0..i-1] are destroyed; rethrow exception
+    usize i = 0;
+    try {
+      for ( ; i < cnt; ++i ) {
+        new (addr(dest[i])) T(micron::move(src[i]));
+        src[i].~T();
+      }
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
   }
 };
 
@@ -132,10 +146,23 @@ template<usize N, typename T>
 inline void
 deep_move(T *__restrict dest, T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i ) {
-    new (addr(dest[i])) T(micron::move(src[i]));
-    src[i].~T();
-    // WARNING: P1144
+  if constexpr ( noexcept(T(micron::move(micron::declval<T &>()))) ) {
+    for ( usize i = 0; i < N; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+      // WARNING: P1144
+    }
+  } else {
+    usize i = 0;
+    try {
+      for ( ; i < N; ++i ) {
+        new (addr(dest[i])) T(micron::move(src[i]));
+        src[i].~T();
+      }
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
   }
 };
 

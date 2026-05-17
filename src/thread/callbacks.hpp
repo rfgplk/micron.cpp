@@ -17,29 +17,28 @@ namespace micron
 // function prototype and actually have it (re)bind to a templated function. technically, the program would be illformed
 // ie: func ptr of T(Args...) calling function R(LArgs...) for any typenames is almost impossible to do accurately
 // especially since clone() kills/flattens proper resolution
-mutex __global_callback_mtx;
-array<void (*)(void), 64> __global_callback_ptrs;
-usize __global_callback_size = 0;
+// NOTE: must be inline so we don't accidentally produce duplicate sym link errors
+inline mutex __global_callback_mtx;
+inline array<void (*)(void), 64> __global_callback_ptrs;
+inline usize __global_callback_size = 0;
 
-void
+inline void
 add_callback(void (*f)(void))
 {
   lock_guard l(__global_callback_mtx);
   __global_callback_ptrs[__global_callback_size++] = f;
-  l.~lock_guard();
 }
 
-int
+inline int
 __default_callback(void *)
 {
   lock_guard l(__global_callback_mtx);
   if ( !__global_callback_size ) return -1;
   __global_callback_ptrs.at(--__global_callback_size)();
-  l.~lock_guard();
   return 0;
 }
 
-int
+inline int
 __default_daemon_callback(void *)
 {
   if ( posix::setsid() < 0 ) exc<except::runtime_error>("micron process daemon failed to create new session");
@@ -52,12 +51,13 @@ __default_daemon_callback(void *)
   posix::open("/dev/null", O_RDWR);
   micron::dup(0);
   micron::dup(0);
+  lock_guard l(__global_callback_mtx);
   if ( !__global_callback_size ) return -1;
-  __global_callback_ptrs.at(__global_callback_size--)();
+  __global_callback_ptrs.at(--__global_callback_size)();
   return 0;
 }
 
-int
+inline int
 __default_stop_callback(void *)
 {
   // NOTE: must be _exit
@@ -65,14 +65,13 @@ __default_stop_callback(void *)
   return 1;
 }
 
-int
+inline int
 __default_sleep_callback(void *)
 {
   pause();
   lock_guard l(__global_callback_mtx);
   if ( !__global_callback_size ) return -1;
-  __global_callback_ptrs.at(__global_callback_size--)();
-  l.~lock_guard();
+  __global_callback_ptrs.at(--__global_callback_size)();
   return 0;
 }
 

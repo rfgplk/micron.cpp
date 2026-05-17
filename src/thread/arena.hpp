@@ -356,20 +356,21 @@ public:
   {
     // don't pop
     micron::lock_guard l(mtx);
-    int r = 0;
-
     for ( u64 i = 0; i < threads.size(); ++i ) {
-      if ( threads[i].thread.native_handle() == pid ) {
-      retry_join:
-        if ( r = solo::try_join(threads.top().thread); r == error::busy ) {
+      if ( threads[i].thread.native_handle() != pid ) continue;
+      int r = 0;
+      do {
+        r = solo::try_join(threads[i].thread);
+        if ( r == error::busy ) {
           __cpu_pause();
-          if ( --retries != 0 ) goto retry_join;
+          if ( retries == 0 ) return r;
+          --retries;
+          continue;
         }
-      } else if ( r == error::invalid_arg ) {
-        return r;
-      } else if ( r == 0 or r == error::no_process ) {
-        return 0;
-      }
+        if ( r == error::invalid_arg ) return r;
+        if ( r == 0 or r == error::no_process ) return 0;
+      } while ( r == error::busy );
+      return r;
     }
     return 0;
   }
@@ -508,6 +509,7 @@ template<umax_t Sz = concurrent_thread_stack_size, typename Tr = void_thread<Sz>
 class __concurrent_arena
 {
   umax_t counter;
+  umax_t add_counter;
   micron::iarray<thread_t<Tr>, concurrent_threads> threads;
   mutable micron::mutex mtx;
 
@@ -542,14 +544,18 @@ public:
 
   ~__concurrent_arena()
   {
-    // forcing stops
     stop_all();
     join_all();
-    // NOTE: we must manually free the stacks
-    for ( umax_t i = 0; i < counter; ++i ) __free_stack(i);
+    umax_t n = 0;
+    {
+      // NOTE: important so we don't race/lock accidentally
+      micron::lock_guard l(mtx);
+      n = counter;
+    }
+    for ( umax_t i = 0; i < n; ++i ) __free_stack(i);
   }
 
-  __concurrent_arena(void) : counter{ 0 }, threads() { }
+  __concurrent_arena(void) : counter{ 0 }, add_counter{ 0 }, threads() { }
 
   __concurrent_arena(const __concurrent_arena &) = delete;
   __concurrent_arena(__concurrent_arena &&) = delete;
@@ -557,30 +563,30 @@ public:
   __concurrent_arena &operator=(__concurrent_arena &&) = delete;
 
   // thread creation functions
-  // Create a new thread automatically, without any config. Uses generally standard best practices config options
   template<typename Func, typename... Args>
     requires(micron::is_invocable_v<Func, Args...>)
   auto &
   create(Func f, Args &&...args)
   {
-    if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
     micron::lock_guard l(mtx);
+    if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrent_arena::create(): too many created threads");
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
+    threads.mut(counter).~thread_t<Tr>();
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs), f, micron::forward<Args>(args)... };
     sstring<16> thread_name = "c/" + int_to_string_stack<u32, char, 12>(counter);
     thread_name[15] = 0x0;
-    pthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
+    pthread::set_name(threads.mut(counter).thread.native_handle(), thread_name.c_str());
     return threads.mut(counter++);
   }
 
   auto &
   create(void)
   {
-    if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrect_arena::create(): too many created threads");
     micron::lock_guard l(mtx);
+    if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrent_arena::create(): too many created threads");
     addr_t *stack_ptr = __create_stack();
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
     threads.mut(counter).~thread_t<Tr>();
@@ -602,11 +608,10 @@ public:
   add(Fn &&fn, Args &&...args)
   {
     micron::lock_guard l(mtx);
-    static umax_t __ct = 0;
-    if ( !counter ) micron::exc<except::thread_error>("micron concurrect_arena::add(): empty arena");
-    threads.mut(__ct).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
-    umax_t __ot = __ct;
-    if ( ++__ct >= counter ) __ct = 0;
+    if ( !counter ) micron::exc<except::thread_error>("micron concurrent_arena::add(): empty arena");
+    threads.mut(add_counter).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
+    umax_t __ot = add_counter;
+    if ( ++add_counter >= counter ) add_counter = 0;
     return threads[__ot];
   }
 

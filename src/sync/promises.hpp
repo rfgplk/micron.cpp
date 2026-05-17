@@ -12,10 +12,7 @@
 
 namespace micron
 {
-class broken_promise
-{
-};
-
+// broken_promise is now defined in future.hpp
 template<typename T> class promise
 {
   shared_state<T> *state;
@@ -37,8 +34,8 @@ public:
   operator=(promise &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state && !state->is_ready() ) {
-        // broken promise
+      if ( state && !state->is_ready() && future_retrieved ) {
+        state->set_exception("broken promise");
       }
       state = other.state;
       future_retrieved = other.future_retrieved;
@@ -50,9 +47,10 @@ public:
 
   ~promise()
   {
-    if ( state && !state->is_ready() ) {
-      // broken promise
+    if ( state && !state->is_ready() && future_retrieved ) {
+      state->set_exception("broken promise");
     }
+    if ( state && !future_retrieved ) delete state;
   }
 
   future<T>
@@ -84,6 +82,15 @@ public:
       exc<except::future_error>("");
     }
     state->set_value(micron::move(value));
+  }
+
+  void
+  set_exception(const char *msg = "user exception")
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_exception(msg);
   }
 
   void
@@ -120,8 +127,8 @@ public:
   operator=(promise &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state && !state->is_ready() ) {
-        // broken promise
+      if ( state && !state->is_ready() && future_retrieved ) {
+        state->set_exception("broken promise");
       }
       state = other.state;
       future_retrieved = other.future_retrieved;
@@ -133,9 +140,10 @@ public:
 
   ~promise()
   {
-    if ( state && !state->is_ready() ) {
-      // broken promise
+    if ( state && !state->is_ready() && future_retrieved ) {
+      state->set_exception("broken promise");
     }
+    if ( state && !future_retrieved ) delete state;
   }
 
   future<void>
@@ -158,6 +166,15 @@ public:
       exc<except::future_error>("");
     }
     state->set_value();
+  }
+
+  void
+  set_exception(const char *msg = "user exception")
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_exception(msg);
   }
 
   void
@@ -188,8 +205,8 @@ public:
   operator=(promise &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state && !state->is_ready() ) {
-        // broken promise
+      if ( state && !state->is_ready() && future_retrieved ) {
+        state->set_exception("broken promise");
       }
       state = other.state;
       future_retrieved = other.future_retrieved;
@@ -201,9 +218,10 @@ public:
 
   ~promise()
   {
-    if ( state && !state->is_ready() ) {
-      // broken promise
+    if ( state && !state->is_ready() && future_retrieved ) {
+      state->set_exception("broken promise");
     }
+    if ( state && !future_retrieved ) delete state;
   }
 
   future<T &>
@@ -226,6 +244,15 @@ public:
       exc<except::future_error>("");
     }
     state->set_value(value);
+  }
+
+  void
+  set_exception(const char *msg = "user exception")
+  {
+    if ( !state ) {
+      exc<except::future_error>("");
+    }
+    state->set_exception(msg);
   }
 
   void

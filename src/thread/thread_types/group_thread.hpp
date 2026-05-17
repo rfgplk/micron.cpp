@@ -43,7 +43,7 @@ template<usize Stack_Size = thread_stack_size> class group_thread
   }
 
   template<typename F, typename... Args>
-    requires(micron::is_invocable_v<F, Args...>)
+    requires(micron::is_invocable_v<micron::decay_t<F>, micron::decay_t<Args> &...>)
   inline __attribute__((always_inline)) void
   __impl_preparethread(const pthread_attr_t &attrs, F f, Args &&...args)
   {
@@ -51,23 +51,25 @@ template<usize Stack_Size = thread_stack_size> class group_thread
       micron::exc<except::thread_error>("micron thread::__impl_preparethread(): a stack isn't allocated");
     }
     thread_handler();
-    attributes.pid = __as_unprepared_thread_attached<F, Args...>(attrs, &payload, f, micron::forward<Args &&>(args)...);
+    payload.alive.store(true, memory_order_seq_cst);
+    attributes.pid = __as_unprepared_thread_attached(attrs, &payload, f, micron::forward<Args>(args)...);
   }
 
   void
-  __release(void)
+  __release(void) noexcept
   {
-    int r = 0;
-    if ( r = micron::try_unmap(attributes.stack_addr, Stack_Size); r < 0 ) {
-      micron::exc<except::memory_error>("micron thread::__release(): failed to unmap thread stack");
+    if ( attributes.stack_addr != nullptr ) {
+      micron::try_unmap(attributes.stack_addr, Stack_Size);
     }
     attributes.clear();
-    payload.alive.store(false);
-    byte *ptr = payload.ret_val.get();
-    if ( ptr ) {
-      delete ptr;
-      ptr = nullptr;
+    payload.alive.store(false, memory_order_seq_cst);
+    if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::heap ) {
+      byte *ptr = payload.ret_val.exchange(nullptr, memory_order_acq_rel);
+      auto del = payload.deleter;
+      payload.deleter = nullptr;
+      if ( ptr && del ) del(ptr);
     }
+    payload.tag_val.store((u8)__thread_payload::tag::none, memory_order_release);
   }
 
   void
@@ -76,52 +78,33 @@ template<usize Stack_Size = thread_stack_size> class group_thread
     if ( alive() ) {
       micron::exc<except::thread_error>("micron thread::__safe_release(): tried to release a running thread");
     }
-    if ( micron::try_unmap(attributes.stack_addr, Stack_Size) < 0 ) {
-      micron::exc<except::memory_error>("micron thread::__safe_release(): failed to unmap thread stack");
-    }
-    attributes.clear();
-
-    if ( payload.tag_val == __thread_payload::tag::heap ) {
-      byte *ptr = payload.ret_val.get();
-      if ( ptr ) {
-        delete ptr;
-        ptr = nullptr;
-      }
-    }
+    __release();
   }
 
-  // pid_t parent_pid;
-  // pthread_t pid;
-  // addr_t *fstack;
   thread_attr_t attributes;
 
 public:
   __thread_payload payload;
 
-  ~group_thread() { __release(); }
+  ~group_thread()
+  {
+    if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+    __release();
+  }
 
   group_thread(const group_thread &o) = delete;
   group_thread &operator=(const group_thread &) = delete;
 
-  group_thread(void)
-      : attributes(posix::getpid()), payload{} { }      // parent_pid(micron::posix::getpid()), pid(0), fstack(nullptr), payload{} {}
+  group_thread(void) : attributes(posix::getpid()), payload{} { }
 
   group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
   // prepared functions
-  // fstack set by preparethread
   template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<Fn, Args && ...>)
+    requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
   group_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
   {
     __impl_preparethread(_attrs, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-  }
-
-  template<typename Fn, typename... Args>
-    requires(micron::is_invocable_v<const Fn, const Args &...>)
-  group_thread(const pthread_attr_t &_attrs, const Fn &fn, const Args &...args) : attributes(posix::getpid(), _attrs), payload{}
-  {
-    __impl_preparethread(_attrs, fn, args...);
   }
 
   group_thread &
@@ -134,7 +117,6 @@ public:
 
   auto swap(group_thread &o) = delete;
 
-  // yes, copying it out
   inline posix::rusage_t
   stats(void) const
   {
@@ -177,18 +159,19 @@ public:
   auto
   dismiss(void) -> int      // group_thread
   {
-    if ( try_join() == error::busy ) {
-      auto r = pthread::__join_thread(attributes.pid);
+    int r = try_join();
+    if ( r == error::busy ) {
+      auto rr = pthread::__join_thread(attributes.pid);
       __release();
-      return r;
+      return rr;
     }
-    __release();
-    return 1;
+    return r;
   }
 
   auto
   try_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;      // already joined
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       __release();
@@ -273,11 +256,15 @@ public:
   }
 
   template<typename R>
-  auto
+    requires(micron::is_trivially_copyable_v<R> && sizeof(R) <= sizeof(byte *))
+  R
   result(void)
   {
     wait_for();
-    R val = static_cast<R>(payload.ret_val.get());
+    byte *p = payload.ret_val.get(memory_order_acquire);
+    u64 raw = reinterpret_cast<u64>(p);
+    R val;
+    __builtin_memcpy(&val, &raw, sizeof(R));
     return val;
   }
 
