@@ -85,8 +85,9 @@ get_devices()
     if ( loc != nullptr ) {
       // /sys/class/input/[eventX]/device/uevent
       micron::ustr8 pt = "/sys/class/input/" + n + "/device/uevent";
-      micron::ustr8 buf;
-      sys[pt] >> buf;
+      micron::hstring<char> raw;
+      sys[pt] >> raw;
+      micron::ustr8 buf(raw);
 
       if ( !format::contains(buf, "EV") ) continue;
       i64 ev = hex_string_to_int64(__parse_device("EV", buf));
@@ -142,7 +143,8 @@ bind_device(device_t &dev)
 void
 unbind_device(device_t &dev)
 {
-  if ( dev.bound_fd.has_error() ) posix::close(dev.bound_fd.fd);
+  // iff the fd is actually open
+  if ( dev.bound_fd.open() ) posix::close(dev.bound_fd.fd);
   dev.bound_fd = -1;
 }
 };      // namespace uxin

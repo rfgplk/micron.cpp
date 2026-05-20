@@ -87,6 +87,7 @@ deep_move(T *__restrict dest, T *__restrict src, usize cnt)
   } else {
     // WARNING: if move ctor throws at i,/ already-constructed dest[0..i-1] are destroyed; rethrow exception
     usize i = 0;
+#ifndef __micron_freestanding
     try {
       for ( ; i < cnt; ++i ) {
         new (addr(dest[i])) T(micron::move(src[i]));
@@ -96,6 +97,12 @@ deep_move(T *__restrict dest, T *__restrict src, usize cnt)
       for ( usize j = 0; j < i; ++j ) dest[j].~T();
       throw;
     }
+#else
+    for ( ; i < cnt; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+    }
+#endif
   }
 };
 
@@ -154,6 +161,7 @@ deep_move(T *__restrict dest, T *__restrict src)
     }
   } else {
     usize i = 0;
+#ifndef __micron_freestanding
     try {
       for ( ; i < N; ++i ) {
         new (addr(dest[i])) T(micron::move(src[i]));
@@ -163,6 +171,12 @@ deep_move(T *__restrict dest, T *__restrict src)
       for ( usize j = 0; j < i; ++j ) dest[j].~T();
       throw;
     }
+#else
+    for ( ; i < N; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+    }
+#endif
   }
 };
 

@@ -123,6 +123,11 @@ fmadd_ss(f32 a, f32 b, f32 c) noexcept
   f32 r = c;
   __asm__("vfma.f32 %0, %1, %2" : "+t"(r) : "t"(a), "t"(b));
   return r;
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+  // cortex a8 (armv7/neon) has no hardware FMA, do vmla.f32
+  f32 r = c;
+  __asm__("vmla.f32 %0, %1, %2" : "+t"(r) : "t"(a), "t"(b));
+  return r;
 #else
   return f32(__builtin_fmaf(a, b, c));
 #endif
@@ -147,6 +152,10 @@ fmadd_sd(f64 a, f64 b, f64 c) noexcept
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_fma)
   f64 r = c;
   __asm__("vfma.f64 %P0, %P1, %P2" : "+w"(r) : "w"(a), "w"(b));
+  return r;
+#elif defined(__micron_arch_arm32)
+  f64 r = c;
+  __asm__("vmla.f64 %P0, %P1, %P2" : "+w"(r) : "w"(a), "w"(b));
   return r;
 #else
   return f64(__builtin_fma(a, b, c));

@@ -211,7 +211,7 @@ main(void)
       // Temporaries from push_back have already been destroyed; snapshot
       // the destruction count now so we can measure the delta from the move.
       int before = Tracker::destructions;
-      b = std::move(a);      // b's old vector (2 live Trackers) freed
+      b = micron::move(a);      // b's old vector (2 live Trackers) freed
       sb::require(Tracker::destructions - before == 2);
       sb::require(b->size() == 1);
       sb::require((*b)[0].value == 1);

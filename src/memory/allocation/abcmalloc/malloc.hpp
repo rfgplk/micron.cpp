@@ -30,17 +30,6 @@
 namespace abc
 {
 
-// NOTE: when __guard_abcmalloc leaves scope, it'll automatically release the underlying mutex
-
-#define __ABC_LOCK_AND_INIT()                                                                                                              \
-  [[maybe_unused]] auto __abc_scoped_lock = [&]() {                                                                                        \
-    if constexpr ( micron::is_same_v<decltype(__guard_abcmalloc()), __abcmalloc_locktype> )                                                \
-      return micron::move(__guard_abcmalloc());                                                                                            \
-    else                                                                                                                                   \
-      return 0;                                                                                                                            \
-  }();                                                                                                                                     \
-  __start_abcmalloc_init()
-
 static inline bool
 __is_sentinel(const byte *ptr) noexcept
 {
@@ -51,8 +40,8 @@ __is_sentinel(const byte *ptr) noexcept
 bool
 is_present(addr_t *ptr)
 {
-  __ABC_LOCK_AND_INIT();
-  return __main_arena->present(ptr);
+  // routes via __query_arena so queries across thread arenas resolve correctly
+  return __query_arena(ptr)->present(ptr);
 }
 
 bool
@@ -73,15 +62,13 @@ is_present(T *ptr)
 bool
 within(const addr_t *ptr)
 {
-  __ABC_LOCK_AND_INIT();
-  return __main_arena->has_provenance(const_cast<addr_t *>(ptr));
+  return __query_arena(ptr)->has_provenance(const_cast<addr_t *>(ptr));
 }
 
 bool
 within(addr_t *ptr)
 {
-  __ABC_LOCK_AND_INIT();
-  return __main_arena->has_provenance(ptr);
+  return __query_arena(ptr)->has_provenance(ptr);
 }
 
 bool
@@ -93,10 +80,9 @@ within(byte *ptr)
 void
 relinquish(byte *ptr)      // unmaps entire sheet at which ptr lives, resets arena entirely
 {
-  __ABC_LOCK_AND_INIT();
   if ( !ptr ) [[unlikely]]
     return;
-  __main_arena->reset_page(ptr);
+  __query_arena(ptr)->reset_page(ptr);
 }
 
 template<typename T>
@@ -117,11 +103,9 @@ mark_at(byte *ptr, usize size)
   if ( !ptr or size == 0 ) [[unlikely]]
     return nullptr;
 
-  __ABC_LOCK_AND_INIT();
-
   // verify the region isn't already tracked
-  if ( __main_arena->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("mark_at(): region already tracked by allocator");
+  if ( __current_arena()->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_mark>("mark_at(): region already tracked by allocator");
     return nullptr;
   }
 
@@ -136,15 +120,13 @@ unmark_at(byte *ptr, usize size)
   if ( !ptr or size == 0 ) [[unlikely]]
     return nullptr;
 
-  __ABC_LOCK_AND_INIT();
-
-  if ( !__main_arena->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("unmark_at(): region not tracked by allocator, cannot unmark");
+  if ( !__current_arena()->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_unmark_untracked>("unmark_at(): region not tracked by allocator, cannot unmark");
     return nullptr;
   }
 
-  if ( !__main_arena->pop(ptr, size) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("unmark_at(): failed to unmark region");
+  if ( !__current_arena()->pop(ptr, size) ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_unmark_failed>("unmark_at(): failed to unmark region");
     return nullptr;
   }
 
@@ -157,8 +139,7 @@ balloc(usize size)      // allocates memory, returns entire memory chunk
   if ( size == 0 ) [[unlikely]]
     return { nullptr, 0 };
 
-  __ABC_LOCK_AND_INIT();
-  micron::__chunk<byte> mem = __main_arena->push(size);
+  micron::__chunk<byte> mem = __current_arena()->push(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]]
     return { nullptr, 0 };
   return mem;
@@ -170,8 +151,7 @@ fetch(usize size)
   if ( size == 0 ) [[unlikely]]
     return { nullptr, 0 };
 
-  __ABC_LOCK_AND_INIT();
-  micron::__chunk<byte> mem = __main_arena->push(size);
+  micron::__chunk<byte> mem = __current_arena()->push(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]]
     return { nullptr, 0 };
   return mem;
@@ -182,10 +162,9 @@ template<typename T>
 T *
 fetch(void)
 {
-  __ABC_LOCK_AND_INIT();
-  auto mem = __main_arena->push(sizeof(T));
+  auto mem = __current_arena()->push(sizeof(T));
   if ( __is_sentinel(mem.ptr) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("fetch<T>(): allocation failed, out of memory");
+    micron::exc<micron::except::memory_error_abc_fetch_oom>("fetch<T>(): allocation failed, out of memory");
     return nullptr;
   }
   return reinterpret_cast<T *>(mem.ptr);
@@ -198,9 +177,9 @@ retire(byte *ptr)
   if ( !ptr ) [[unlikely]]
     return;
 
-  __ABC_LOCK_AND_INIT();
-  if ( !__main_arena->ts_pop(ptr) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("retire(): tombstone free failed, pointer may not have been allocated by this arena");
+  if ( !__query_arena(ptr)->ts_pop(ptr) ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_retire>(
+        "retire(): tombstone free failed, pointer may not have been allocated by this arena");
   }
 }
 
@@ -229,10 +208,9 @@ salloc(usize size)
   if ( size == 0 ) [[unlikely]]
     return nullptr;
 
-  __ABC_LOCK_AND_INIT();
-  micron::__chunk<byte> mem = __main_arena->push(size);
+  micron::__chunk<byte> mem = __current_arena()->push(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("salloc(): hardened allocation failed, out of memory");
+    micron::exc<micron::except::memory_error_abc_salloc_oom>("salloc(): hardened allocation failed, out of memory");
     return nullptr;
   }
 
@@ -247,11 +225,16 @@ dealloc(byte *ptr)
   if ( !ptr ) [[unlikely]]
     return;
 
-  __ABC_LOCK_AND_INIT();
   // WARNING:: due to poor interop with missing the STL and micron, there are edge cases where global objects constructed by glibc might
   // be invoked through *this* dealloc, instead of the libc free() one
-  if ( !__main_arena->pop(ptr) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("dealloc(): free failed, pointer not recognised by allocator or double-free detected");
+  if ( !__route_dealloc(ptr, 0) ) [[unlikely]] {
+    // REGARDING FOREIGN POINTERS
+    // there are certain cases (aka bad code) where we genuinely get hit by a rouge pointer not owned by us;
+    // there are two possible ways to handle it, a) pass it off to the real allocator which owns it (impossible) b) throw an error
+    // since in testing this only occured during atexit destructor calls, we will simple fall out silently and ignore dead pointers
+    (void)ptr;
+    // this effectively means that dealloc() NO LONGER has free() like semantics, since you can pass any pointer you want and it won't
+    // crash/alert you, be careful!
   }
 }
 
@@ -261,13 +244,14 @@ dealloc(byte *ptr, usize len)
   if ( !ptr ) [[unlikely]]
     return;
   if ( len == 0 ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("dealloc(): zero-length free is invalid");
+    micron::exc<micron::except::memory_error_abc_dealloc_zero>("dealloc(): zero-length free is invalid");
     return;
   }
 
-  __ABC_LOCK_AND_INIT();
-  if ( !__main_arena->pop({ ptr, len }) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("dealloc(): free failed with explicit size, pointer not recognised or size mismatch");
+  // dealloc(ptr len) is always explicit us, no fall throughs; treat it as a hard error, we went wrong somewhere
+  if ( !__route_dealloc(ptr, len) ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_dealloc_size>(
+        "dealloc(): free failed with explicit size, pointer not recognised or size mismatch");
   }
 }
 
@@ -295,9 +279,8 @@ freeze(byte *ptr)
   if ( !ptr ) [[unlikely]]
     return;
 
-  __ABC_LOCK_AND_INIT();
-  if ( !__main_arena->freeze(ptr) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("freeze(): failed to make region read-only, pointer not recognised by allocator");
+  if ( !__query_arena(ptr)->freeze(ptr) ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_freeze>("freeze(): failed to make region read-only, pointer not recognised by allocator");
   }
 }
 
@@ -313,18 +296,27 @@ freeze(T *__ptr)
 void
 which(void)
 {
-  __ABC_LOCK_AND_INIT();
   // walk every tier's index and report live (non-tombstoned) sheets
   // NOTE: this only reports sheet-level information (base addr + allocated bytes).
   // per-block enumeration would require walking each sheet's internal book for now, report total usage per tier class
-
-  __debug_print("which(): precise tier allocated: ", __main_arena->total_usage_of_class<__class_precise>());
-  __debug_print("which(): small tier allocated: ", __main_arena->total_usage_of_class<__class_small>());
-  __debug_print("which(): medium tier allocated: ", __main_arena->total_usage_of_class<__class_medium>());
-  __debug_print("which(): large tier allocated: ", __main_arena->total_usage_of_class<__class_large>());
-  __debug_print("which(): huge tier allocated: ", __main_arena->total_usage_of_class<__class_huge>());
-  __debug_print("which(): total: ", __main_arena->total_usage());
-  __debug_print("which(): arena metadata remaining: ", __main_arena->__available_buffer());
+  usize tot_precise = 0, tot_small = 0, tot_medium = 0, tot_large = 0, tot_huge = 0;
+  usize tot_all = 0, tot_meta_avail = 0;
+  __for_each_live_arena([&](__arena &a) {
+    tot_precise += a.total_usage_of_class<__class_precise>();
+    tot_small += a.total_usage_of_class<__class_small>();
+    tot_medium += a.total_usage_of_class<__class_medium>();
+    tot_large += a.total_usage_of_class<__class_large>();
+    tot_huge += a.total_usage_of_class<__class_huge>();
+    tot_all += a.total_usage();
+    tot_meta_avail += a.__available_buffer();
+  });
+  __debug_print("which(): precise tier allocated: ", tot_precise);
+  __debug_print("which(): small tier allocated: ", tot_small);
+  __debug_print("which(): medium tier allocated: ", tot_medium);
+  __debug_print("which(): large tier allocated: ", tot_large);
+  __debug_print("which(): huge tier allocated: ", tot_huge);
+  __debug_print("which(): total: ", tot_all);
+  __debug_print("which(): arena metadata remaining: ", tot_meta_avail);
 }
 
 __attribute__((malloc, alloc_size(1))) byte *
@@ -333,10 +325,9 @@ launder(usize size)
   if ( size == 0 ) [[unlikely]]
     return nullptr;
 
-  __ABC_LOCK_AND_INIT();
-  micron::__chunk<byte> mem = __main_arena->launder(size);
+  micron::__chunk<byte> mem = __current_arena()->launder(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("launder(): temporal allocation failed, out of memory");
+    micron::exc<micron::except::memory_error_abc_launder>("launder(): temporal allocation failed, out of memory");
     return nullptr;
   }
   return mem.ptr;
@@ -349,8 +340,7 @@ query_size(T *ptr)
   if ( !ptr ) [[unlikely]]
     return 0;
 
-  __ABC_LOCK_AND_INIT();
-  return __main_arena->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+  return __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
 }
 
 // leave these as void*
@@ -362,16 +352,18 @@ query_size(T *ptr)
 usize
 musage(void)
 {
-  __ABC_LOCK_AND_INIT();
-  return __main_arena->total_usage();
+  usize total = 0;
+  __for_each_live_arena([&](__arena &a) { total += a.total_usage(); });
+  return total;
 }
 
 template<u64 Sz>
 usize
 musage(void)
 {
-  __ABC_LOCK_AND_INIT();
-  return __main_arena->total_usage_of_class<Sz>();
+  usize total = 0;
+  __for_each_live_arena([&](__arena &a) { total += a.template total_usage_of_class<Sz>(); });
+  return total;
 }
 
 __attribute__((malloc, alloc_size(1))) void *
@@ -405,26 +397,12 @@ realloc(void *ptr, usize size)      // reallocates memory
     return nullptr;
   }
 
-  // NOTE: this always gets the full size of the allocated memory, not what was requested
-  usize old_size = abc::query_size(reinterpret_cast<addr_t *>(ptr));
-  if ( old_size == 0 ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>("realloc(): cannot determine size of existing allocation, pointer not recognised");
+  byte *result = __current_arena()->resize(reinterpret_cast<byte *>(ptr), size);
+  if ( !result ) [[unlikely]] {
+    micron::exc<micron::except::memory_error_abc_realloc_unknown>("realloc(): resize failed (pointer not recognised or allocation OOM)");
     return nullptr;
   }
-
-  // if the existing block is already large enough and not wastefully oversized, reuse it
-  if ( old_size >= size and size > (old_size >> 1) ) return ptr;
-
-  byte *new_block = abc::alloc(size);
-  if ( !new_block ) [[unlikely]]
-    return nullptr;      // allocation failed, old block untouched
-
-  usize copy_size = old_size < size ? old_size : size;
-  micron::memcpy(new_block, reinterpret_cast<byte *>(ptr), copy_size);
-
-  abc::dealloc(reinterpret_cast<byte *>(ptr));
-
-  return new_block;
+  return reinterpret_cast<void *>(result);
 }
 
 void
@@ -498,7 +476,7 @@ aligned_free(void *ptr)
   uintptr_t raw_addr = reinterpret_cast<uintptr_t>(raw);
   uintptr_t aligned_addr = reinterpret_cast<uintptr_t>(ptr);
   if ( raw_addr >= aligned_addr or (aligned_addr - raw_addr) > __system_pagesize ) [[unlikely]] {
-    micron::exc<micron::except::memory_error>(
+    micron::exc<micron::except::memory_error_abc_aligned_free_bad>(
         "aligned_free(): stashed raw pointer is invalid, this pointer was not allocated by aligned_alloc");
     return;
   }

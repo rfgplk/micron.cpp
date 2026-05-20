@@ -37,7 +37,7 @@ help(void)
   mc::console("    debug      shorthand for `build` with the debug recipe (-g, -w, -O0)");
   mc::console("    run        build a single source then exec the resulting binary,");
   mc::console("               replacing the duck process (one source only)");
-  mc::console("    emulate    build a single source then exec the resulting binary via qemu-arm-static,");
+  mc::console("    emulate    build a single source then exec the resulting binary via qemu-arm-static (32-bit),");
   mc::console("               replacing the duck process (one source only)");
   mc::console("    test       build sources, run each, print exit codes (CI mode)");
   mc::console("    doctor     build with diagnostic flags (-ftime-report,");
@@ -148,6 +148,10 @@ help(void)
   mc::console("    -i <dir>          include search path        (default: ./src)");
   mc::console("    -l <dir>          library search path        (default: ./libs/)");
   mc::console("    --lib <name>      link library by name       (-l<name>)");
+  mc::console("    -gl               link the libs micron::gfx::gl needs");
+  mc::console("                      (libX11, libGL, libwayland-client, libwayland-egl, libEGL)");
+  mc::console("    -vk               link the libs micron::gfx::vk needs");
+  mc::console("                      (libX11, libwayland-client, libvulkan)");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

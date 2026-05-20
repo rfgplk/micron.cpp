@@ -64,7 +64,10 @@ constexpr byte key_q = 16;
 constexpr byte key_w = 17;
 constexpr byte key_e = 18;
 constexpr byte key_r = 19;
-constexpr byte key_t = 20;
+// Renamed from `key_t` to `key_T` to avoid collision with POSIX `key_t`
+// (SysV IPC type) re-exported into the micron namespace from
+// linux/sys/types.hpp. Capital-T matches the evdev KEY_T macro name.
+constexpr byte key_T = 20;
 constexpr byte key_y = 21;
 constexpr byte key_u = 22;
 constexpr byte key_i = 23;

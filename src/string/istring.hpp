@@ -163,16 +163,19 @@ public:
   }
 
   template<typename C = T>
+    requires(micron::same_as<C, T>)
   void
   swap(istring<C> &o)
   {
-    auto tmp = immutable_memory<C>(__mem::memory, __mem::length, __mem::capacity);
+    T *tmp_mem = __mem::memory;
+    usize tmp_len = __mem::length;
+    usize tmp_cap = __mem::capacity;
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
-    o.memory = tmp.memory;
-    o.length = tmp.length;
-    o.capacity = tmp.capacity;
+    o.memory = tmp_mem;
+    o.length = tmp_len;
+    o.capacity = tmp_cap;
   }
 
   bool
@@ -209,8 +212,8 @@ public:
   inline sstring<256, T>
   stack(void) const
   {
-    if ( __mem::size >= 255 ) exc<except::library_error>("micron::istring stack() out of memory.");
-    return sstr<512, T>(c_str());
+    if ( __mem::length >= 255 ) exc<except::library_error>("micron::istring stack() out of memory.");
+    return sstring<256, T>(c_str());
   };
 
   inline const char *
@@ -257,17 +260,26 @@ public:
   usize
   find(F ch, usize pos = 0) const
   {
-    for ( ; pos < __mem::length; pos++ ) {
-      if ( (__mem::memory)[pos] == ch ) return pos;
-    }
-    return npos;
+    if ( pos >= __mem::length ) return npos;
+    const usize len = __mem::length - pos;
+#if defined(__micron_x86_avx2)
+    const usize r = micron::simd::find_first_set_256(__mem::memory + pos, len, static_cast<char>(ch));
+#else
+    const usize r = micron::simd::find_first_set_128(__mem::memory + pos, len, static_cast<char>(ch));
+#endif
+    return r == len ? npos : pos + r;
   }
 
   template<typename F>
   usize
-  find(const istring<F> &str, usize pos = 0)
+  find(const istring<F> &str, usize pos = 0) const
   {
-    return npos;
+    if ( str.empty() ) return pos;
+    if ( pos >= __mem::length ) return npos;
+    if ( str.size() > __mem::length - pos ) return npos;
+    auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(__mem::memory + pos), __mem::length - pos,
+                                   reinterpret_cast<const byte *>(str.cdata()), str.size());
+    return r == nullptr ? npos : static_cast<usize>(reinterpret_cast<const T *>(r) - __mem::memory);
   }
 
   inline const_iterator
@@ -619,8 +631,9 @@ public:
   {
     if ( pos > __mem::length or (cnt + pos) > __mem::capacity ) exc<except::library_error>("error micron::string substr invalid range.");
     istring<F> buf(__mem::capacity);
-    micron::memcpy(&buf[0], &__mem::memory[pos], cnt);
-    buf[cnt] = '\0';
+    micron::memcpy(buf.data(), &__mem::memory[pos], cnt);
+    buf.data()[cnt] = '\0';
+    buf.length = cnt;
     return buf;
   };
 
@@ -632,73 +645,59 @@ public:
   inline bool
   operator==(const char *data) const
   {
-    usize M = strlen(data);
-    if ( M == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] ) return false;
-    } else
-      return false;
-    return true;
+    const usize M = strlen(data);
+    if ( M != __mem::length ) return false;
+    if ( M == 0 ) return true;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data), M) == 0;
   };
 
   template<typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M]) const
   {
-    if ( M == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] ) return false;
-    } else
-      return false;
-    return true;
+    constexpr usize len = M - 1;
+    if ( len != __mem::length ) return false;
+    if constexpr ( len == 0 ) return true;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(&data[0]), len) == 0;
   };
 
   template<typename F = T>
   inline bool
   operator==(const istring<F> &data) const
   {
-    if ( data.length == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data.memory[i] != __mem::memory[i] ) return false;
-    } else
-      return false;
-    return true;
+    if ( data.length != __mem::length ) return false;
+    if ( __mem::length == 0 ) return true;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data.memory), __mem::length)
+           == 0;
   };
 
   inline bool
   operator==(const char *data)
   {
-    usize M = strlen(data);
-    if ( M == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] ) return false;
-    } else
-      return false;
-    return true;
+    const usize M = strlen(data);
+    if ( M != __mem::length ) return false;
+    if ( M == 0 ) return true;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data), M) == 0;
   };
 
   template<typename F = T, usize M>
   inline bool
   operator==(const F (&data)[M])
   {
-    if ( M == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data[i] != __mem::memory[i] ) return false;
-    } else
-      return false;
-    return true;
+    constexpr usize len = M - 1;
+    if ( len != __mem::length ) return false;
+    if constexpr ( len == 0 ) return true;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(&data[0]), len) == 0;
   };
 
   template<typename F = T>
   inline bool
   operator==(const istring<F> &data)
   {
-    if ( data.length == __mem::length ) {
-      for ( usize i = 0; i < __mem::length; i++ )
-        if ( data.memory[i] != __mem::memory[i] ) return false;
-    } else
-      return false;
-    return true;
+    if ( data.length != __mem::length ) return false;
+    if ( __mem::length == 0 ) return true;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data.memory), __mem::length)
+           == 0;
   };
 };
 

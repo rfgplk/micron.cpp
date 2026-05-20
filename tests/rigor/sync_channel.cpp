@@ -4,6 +4,13 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+// Exercises Fix #1: src/sync/channel.hpp `__wait()` returned a lock_guard
+// by value via implicit copy; the inner-scope dtor released the lock
+// before the caller's consume executed, racing against concurrent pushes.
+// The fix inlines the wait-and-pop so the guard's lifetime brackets the
+// `to = obj()` call. Pre-fix MPMC stress lost / duplicated items;
+// post-fix every produced value is consumed exactly once.
+
 #include "../../src/sync/channel.hpp"
 
 #include "../../src/atomic/atomic.hpp"
@@ -121,7 +128,7 @@ main(void)
   }
   end_test_case();
 
-  test_case("2 producers + 2 consumers MPMC: every item consumed exactly once");
+  test_case("2 producers + 2 consumers MPMC: every item consumed exactly once (FIX #1)");
   {
     channel<int> c;
     constexpr int PER_PROD = 250;
@@ -143,7 +150,7 @@ main(void)
     }
 
     require(seen.get() == TOTAL);
-    require_true(!c);
+    require_true(!c);      // channel must be drained
   }
   end_test_case();
 

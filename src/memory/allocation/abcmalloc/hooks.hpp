@@ -25,10 +25,19 @@
 #include "../../../types.hpp"
 #include "__sys.hpp"
 #include "config.hpp"
+#include "va_reserve.hpp"
 
 namespace abc
 {
-// note u64 and usize are the same type
+// NOTE: u64 and usize are the same on amd64 but NOT on 32-bit targets (armv7 has u64 defined but usize is __UINTPTR__ (32b))
+static inline usize
+__saturate_pages_to_bytes(u64 pages) noexcept
+{
+  const u64 ps = static_cast<u64>(__system_pagesize);
+  const u64 max_usize = static_cast<u64>(micron::numeric_limits<usize>::max());
+  if ( pages > max_usize / ps ) return static_cast<usize>(max_usize & ~(ps - 1));
+  return static_cast<usize>(pages * ps);
+}
 
 inline usize
 __calculate_space_cache(usize sz)
@@ -37,9 +46,10 @@ __calculate_space_cache(usize sz)
   u64 t = static_cast<u64>((float)(sz * sz) * micron::math::logf128((double)sz * __builtin_sqrt((double)sz)));
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
-       * __system_pagesize;      // still align to pg
-  return sz;
+  u64 pages = static_cast<u64>(t_2);
+  if ( pages < __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
 }
 
 inline usize
@@ -49,9 +59,10 @@ __calculate_space_small(usize sz)
   u64 t = static_cast<u64>(static_cast<double>(sz) * __builtin_sqrt(static_cast<double>(sz)) * 400.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
-       * __system_pagesize;
-  return sz;
+  u64 pages = static_cast<u64>(t_2);
+  if ( pages < __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
 }
 
 inline usize
@@ -62,9 +73,10 @@ __calculate_space_medium(usize sz)
   u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * 150.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
-       * __system_pagesize;
-  return sz;
+  u64 pages = static_cast<u64>(t_2);
+  if ( pages < __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
 }
 
 inline usize
@@ -76,9 +88,10 @@ __calculate_space_large(usize sz)
   u64 t = static_cast<u64>(2.0 * f_sz * lg * lg);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
-       * __system_pagesize;
-  return sz;
+  u64 pages = static_cast<u64>(t_2);
+  if ( pages < __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
 }
 
 inline usize
@@ -90,9 +103,10 @@ __calculate_space_huge(usize sz)
   u64 t = static_cast<u64>(__builtin_sqrt(f_sz) * lg * lg * 125.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
-  sz = micron::math::nearest_pow2ll(((usize)t_2) < __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2)
-       * __system_pagesize;
-  return sz;
+  u64 pages = static_cast<u64>(t_2);
+  if ( pages < __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
 }
 
 inline usize
@@ -132,6 +146,10 @@ template<typename T>
 inline T
 __get_kernel_chunk(u64 sz)
 {
+  if ( auto *p = __va_carve(static_cast<usize>(sz)); p ) [[likely]] {
+    const usize rounded = (static_cast<usize>(sz) + __sheet_align_mask) & ~__sheet_align_mask;
+    return { reinterpret_cast<byte *>(p), rounded };
+  }
   return { micron::sys_allocator<byte>::alloc(sz), static_cast<usize>(sz) };
 }
 
@@ -139,6 +157,10 @@ template<typename T>
 inline void
 __release_kernel_chunk(const T &mem)
 {
+  if ( __va_contains(mem.ptr) ) {
+    __va_release(reinterpret_cast<addr_t *>(mem.ptr), mem.len);
+    return;
+  }
   micron::sys_allocator<byte>::dealloc(mem.ptr, mem.len);
 }
 };      // namespace abc

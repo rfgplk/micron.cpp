@@ -106,7 +106,7 @@ struct config_t {
   bool doctor = false;
   bool static_binary = false;
   bool freestanding = false;
-  bool check_compileability = true;     // check include paths for updates - default true
+  bool check_compileability = true;      // check include paths for updates - default true
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
@@ -199,10 +199,10 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
   }
 
   switch ( conf.compiler ) {
-  case __compilers::nasm :
+  case __compilers::nasm:
     conf.compiler_path = __assembler_nasm;
     break;
-  case __compilers::gnucc :
+  case __compilers::gnucc:
     if ( conf.arch == __arch::x86 ) {
       if ( conf.language == __languages::c ) {
         conf.compiler_path = __compiler_gcc;
@@ -218,7 +218,7 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
         conf.compiler_path = __compiler_gpp_arm_cross;
     }
     break;
-  case __compilers::clang :
+  case __compilers::clang:
     if ( conf.language == __languages::c ) {
       conf.compiler_path = __compiler_clang;
       conf.standard = gcc::__standard_c11;
@@ -321,6 +321,18 @@ parse_config(config_t &conf, int argc, char **argv)
     } else if ( mc::strcmp(argv[i], "-Oz") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_z;
       user_provided_opt = true;
+    } else if ( mc::strcmp(argv[i], "-gl") == 0 ) {
+      // link with shared libs that micron::gfx::gl host_dso looks up
+      // using literal names so it works cross platform
+      conf.bonus_libs.push_back(string_type{ ":libX11.so.6" });
+      conf.bonus_libs.push_back(string_type{ ":libGL.so.1" });
+      conf.bonus_libs.push_back(string_type{ ":libwayland-client.so.0" });
+      conf.bonus_libs.push_back(string_type{ ":libwayland-egl.so.1" });
+      conf.bonus_libs.push_back(string_type{ ":libEGL.so.1" });
+    } else if ( mc::strcmp(argv[i], "-vk") == 0 ) {
+      conf.bonus_libs.push_back(string_type{ ":libX11.so.6" });
+      conf.bonus_libs.push_back(string_type{ ":libwayland-client.so.0" });
+      conf.bonus_libs.push_back(string_type{ ":libvulkan.so.1" });
     } else {
       if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
@@ -399,5 +411,5 @@ parse_argv_build_single(int argc, char **argv)
   parse_config(conf, argc, argv);
   return conf;
 }
-};     // namespace gnu
-};     // namespace recipes
+};      // namespace gnu
+};      // namespace recipes

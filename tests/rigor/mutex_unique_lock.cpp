@@ -4,6 +4,11 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+// Exercises fix #4 (unique_lock::unlocks → unlock rename). Test bodies call
+// `u.unlock()`; pre-fix this file did not compile.
+// Also exercises the fix already in unique_lock.hpp where rptr is templated
+// on M, by instantiating unique_lock<lock_starts::locked, spin_lock>.
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/locks.hpp"
@@ -48,6 +53,8 @@ main(void)
 {
   using namespace micron;
   sb::print("=== UNIQUE_LOCK TESTS ===");
+
+  // ── construction with each lock_starts mode ─────────────────────────────
 
   test_case("unique_lock<locked, mutex> locks on ctor");
   {
@@ -97,13 +104,16 @@ main(void)
   }
   end_test_case();
 
-  test_case("unlock() releases lock and clears rptr");
+  // ── unlock() rename (Fix #4) ────────────────────────────────────────────
+
+  test_case("unlock() releases lock and clears rptr (FIX #4)");
   {
     mutex m;
     unique_lock<lock_starts::locked, mutex> u(m);
     require_true(m.is_locked());
     u.unlock();
     require_false(m.is_locked());
+    // dtor must not double-unlock
   }
   end_test_case();
 
@@ -123,7 +133,7 @@ main(void)
     require_true(m.is_locked());
     auto *p = u.release();
     require(p == &m);
-    require_true(m.is_locked());
+    require_true(m.is_locked());      // release does not unlock
     m.unlock();
     require_false(m.is_locked());
   }
@@ -137,11 +147,11 @@ main(void)
     require_true(m1.is_locked());
     require_true(m2.is_locked());
     u1.swap(u2);
-
+    // ownership of the resets swaps; both mutexes remain held
     require_true(m1.is_locked());
     require_true(m2.is_locked());
-    u1.unlock();
-    u2.unlock();
+    u1.unlock();      // releases m2 (post-swap u1's mtx is m2)
+    u2.unlock();      // releases m1
     require_false(m1.is_locked());
     require_false(m2.is_locked());
   }
@@ -154,8 +164,12 @@ main(void)
     require_true(m.is_locked());
     unique_lock<lock_starts::locked, mutex> dst(static_cast<unique_lock<lock_starts::locked, mutex> &&>(src));
     require_true(m.is_locked());
+    // src dtor runs first, should be a no-op (rptr nulled)
+    // dst dtor runs second, unlocks
   }
   end_test_case();
+
+  // ── unique_lock with spin_lock (verifies templated rptr) ───────────────
 
   test_case("unique_lock<locked, spin_lock> rptr is typed for spin_lock");
   {
@@ -167,6 +181,8 @@ main(void)
     require_false(sl.is_locked());
   }
   end_test_case();
+
+  // ── stress ──────────────────────────────────────────────────────────────
 
   test_case("unique_lock 4-thread mutual exclusion");
   {

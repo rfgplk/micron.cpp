@@ -73,6 +73,13 @@ public:
     }                                                                                                                                      \
   };
 
+#define MICRON_EXCEPTION_VARIANT_OF(_str, _base)                                                                                           \
+  class _str: public _base                                                                                                                 \
+  {                                                                                                                                        \
+  public:                                                                                                                                  \
+    explicit _str(const char *w) : _base(w) { }                                                                                            \
+  };
+
 MICRON_EXCEPTION_TEMP(domain_error, domain_errno)
 MICRON_EXCEPTION_TEMP(invalid_argument, invalid_errno)
 MICRON_EXCEPTION_TEMP(length_error, length_errno)
@@ -92,6 +99,25 @@ MICRON_EXCEPTION_TEMP(standard_error, standard_errno)
 MICRON_EXCEPTION_TEMP(library_error, library_errno)
 MICRON_EXCEPTION_TEMP(hardware_error, hardware_errno)
 MICRON_EXCEPTION_TEMP(memory_error, memory_errno)
+// abcmalloc custom errors, helps to quickly identify where the fault is
+MICRON_EXCEPTION_VARIANT_OF(memory_error_new_scalar, memory_error)              // operator new(size)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_new_array, memory_error)               // operator new[](size)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_new_scalar_aligned, memory_error)      // operator new(size, align)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_new_array_aligned, memory_error)       // operator new[](size, align)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_mark, memory_error)                // abc mark_at, region already tracked
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_unmark_untracked, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_unmark_failed, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_fetch_oom, memory_error)      // fetch out of memory
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_retire, memory_error)         // retire tombstone failed
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_salloc_oom, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_dealloc_unknown, memory_error)      // free pointer not recognized
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_dealloc_zero, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_dealloc_size, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_freeze, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_launder, memory_error)
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_realloc_unknown, memory_error)       // realloc pointer not in arena
+MICRON_EXCEPTION_VARIANT_OF(memory_error_abc_aligned_free_bad, memory_error)      // aligned_free given non-aligned-alloc pointer
+MICRON_EXCEPTION_VARIANT_OF(memory_error_core_unaligned, memory_error)
 MICRON_EXCEPTION_TEMP(critical_error, critical_errno)
 MICRON_EXCEPTION_TEMP(thread_error, thread_errno)
 MICRON_EXCEPTION_TEMP(filesystem_error, filesystem_errno)

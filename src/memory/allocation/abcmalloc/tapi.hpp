@@ -22,89 +22,121 @@
 
 #include "arena.hpp"
 
+#include "../../../atomic/atomic.hpp"
+#include "../../../atomic/flag.hpp"
 #include "../../../bits/__pause.hpp"
-
 #include "../../../mutex/locks.hpp"
 
-// main thread-specific api functions go here
-// all external code (non-test) calling abcmalloc code should go through here
-
+// new threading API
+// if __default_multithread_safe is off, all multithreading guards are elided at comptime, zero overhead
 namespace abc
 {
-enum abc_state : u32 { __abc_unloaded = 0, __abc_loading, __abc_ready };
 
-static micron::atomic_token<u32> __global_abc_state{ __abc_unloaded };
-static micron::atomic_flag __global_abc_mtx{};
-// micron::mutex __global_mutex;
-static bool __abcmalloc_init = false;
-static __arena *__main_arena = nullptr;
+constexpr static const u32 __max_arenas = 64;      //  ~3 MiB BSS upper bound
 
-using __abcmalloc_locktype = micron::free_guard<>;
+alignas(__arena) inline byte __arena_pool_storage[__max_arenas * sizeof(__arena)]{};
 
-constexpr inline __attribute__((always_inline)) auto
-__guard_abcmalloc(void)
+inline __arena *__arena_pool[__max_arenas]{};
+
+inline micron::atomic_token<u32> __arena_pool_next{ 0 };
+
+inline micron::atomic_flag __arena_pool_init_lock{};
+
+inline thread_local __arena *__tls_arena = nullptr;
+
+// cold init; called only when __tls_arena is nullptr (first hit)
+[[gnu::cold, gnu::noinline]] inline __arena *
+__claim_arena_slow(void) noexcept
 {
-  if constexpr ( __default_multithread_safe == true ) {
-    __abcmalloc_locktype __guard(__global_abc_mtx, micron::adopt_lock);
-    return __guard;
-  } else if constexpr ( __default_multithread_safe == false ) {
-    return 0;
-  }
-}
+  const u32 idx = __arena_pool_next.fetch_add(1, micron::memory_order_acq_rel);
 
-static inline __arena *
-__start_abcmalloc_init(void)
-{
-  // micron::free_guard<> guard(__global_abc_mtx, micron::adopt_lock);
-  [[maybe_unused]] auto __lock = micron::move(__guard_abcmalloc());
-  u32 state = __global_abc_state.get(micron::memory_order_acquire);
-  if ( state == __abc_ready ) [[likely]]
-    return __main_arena;
-  if ( state == __abc_unloaded ) {
-    u32 exp = 0;
-    if ( __global_abc_state.compare_exchange_strong(exp, __abc_loading, micron::memory_order::acq_rel) ) {
-      static __arena local_arena;
-      __main_arena = &local_arena;
-      __abcmalloc_init = true;
-      __global_abc_state.store(__abc_ready, micron::memory_order_release);
-      return __main_arena;
+  if ( idx >= __max_arenas ) [[unlikely]] {
+    micron::free_guard<> g{ &__arena_pool_init_lock };
+    if ( !__arena_pool[0] ) {
+      __arena_pool[0] = new (&__arena_pool_storage[0]) __arena();
     }
+    __tls_arena = __arena_pool[0];
+    return __tls_arena;
   }
-  while ( __global_abc_state.get(micron::memory_order_acquire) != __abc_ready ) __cpu_pause();
-  return __main_arena;
+
+  if ( idx == 0 ) [[unlikely]] {
+    micron::free_guard<> g{ &__arena_pool_init_lock };
+    if ( !__arena_pool[0] ) {
+      __arena_pool[0] = new (&__arena_pool_storage[0]) __arena();
+    }
+    __tls_arena = __arena_pool[0];
+    return __tls_arena;
+  }
+
+  __arena *a = new (&__arena_pool_storage[idx * sizeof(__arena)]) __arena();
+  __arena_pool[idx] = a;
+  __tls_arena = a;
+  return a;
 }
 
+// hot path init; taken when arena already live
+[[gnu::always_inline]] static inline __arena *
+__current_arena(void) noexcept
+{
+  __arena *a = __tls_arena;
+  if ( a ) [[likely]] {
+    a->__maybe_drain();
+    return a;
+  }
+  return __claim_arena_slow();
+}
+
+[[gnu::always_inline]] static inline bool
+__route_dealloc(byte *p, usize sz) noexcept
+{
+  __arena *me = __current_arena();
+  if constexpr ( !__default_multithread_safe ) {
+    // single-thread
+    return sz ? me->pop(micron::__chunk<byte>{ p, sz }) : me->pop(p);
+  }
+  __arena *owner = __owner_of(p);
+  if ( !owner || owner == me ) [[likely]] {
+    return sz ? me->pop(micron::__chunk<byte>{ p, sz }) : me->pop(p);
+  }
+  while ( !owner->__remote_push(p, sz) ) [[unlikely]] {
+    for ( int i = 0; i < 64; ++i ) __cpu_pause();
+  }
+  return true;
+}
+
+[[gnu::always_inline]] static inline __arena *
+__query_arena(const void *p) noexcept
+{
+  if constexpr ( !__default_multithread_safe ) {
+    (void)p;
+    return __current_arena();
+  } else {
+    __arena *owner = __owner_of(p);
+    return owner ? owner : __current_arena();
+  }
+}
+
+template<typename Fn>
+[[gnu::always_inline]] static inline void
+__for_each_live_arena(Fn &&fn) noexcept
+{
+  if constexpr ( !__default_multithread_safe ) {
+    if ( auto *a = __tls_arena; a ) fn(*a);
+    return;
+  }
+  const u32 n = __arena_pool_next.get(micron::memory_order_acquire);
+  const u32 lim = n > __max_arenas ? __max_arenas : n;
+  for ( u32 i = 0; i < lim; ++i ) {
+    if ( auto *a = __arena_pool[i]; a ) fn(*a);
+  }
+}
+
+// NOTE: __boot_abcmalloc was the old entry point, keeping it around in case old start files are still used
+// new threading api is fully lazy (created on first alloc)
 extern "C" void
-__boot_abcmalloc(void)
+__boot_abcmalloc(void) noexcept
 {
-  static __arena local_arena;
-  __main_arena = &local_arena;
-  __abcmalloc_init = true;
-  __global_abc_state.store(__abc_ready, micron::memory_order_release);
+  // don't inline otherwise the linkers doesn't see
 }
 
-/*
-// initialize abcmalloc, once per thread
-inline __attribute__((always_inline)) void
-__init_abcmalloc(void)
-{
-  if constexpr ( __default_single_instance ) {
-    if ( !__abcmalloc_init ) [[unlikely]] {
-      thread_local static __arena local_arena;
-      __main_arena = &local_arena;
-      __abcmalloc_init = true;
-    }
-  }
-}
-
-constexpr inline __attribute__((always_inline)) auto
-__guard_abcmalloc(void)
-{
-  if constexpr ( __default_multithread_safe == true ) {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__global_mutex);
-    return __lock;
-  } else if constexpr ( __default_multithread_safe == false ) {
-    return 0;
-  }
-}*/
 };      // namespace abc

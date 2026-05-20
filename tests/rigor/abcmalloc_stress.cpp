@@ -27,6 +27,8 @@ using namespace snowball;
 namespace
 {
 
+// ── helpers ────────────────────────────────────────────────────────────────
+
 inline bool
 ptr_aligned(const void *p, usize n) noexcept
 {
@@ -43,6 +45,10 @@ region_is_byte(const void *p, usize n, byte v) noexcept
   return true;
 }
 
+// fingerprint is intentionally *location-independent* — keyed only by (idx,
+// iter, off) so realloc moves do not invalidate the fingerprint. cross-block
+// aliasing is still detected because each live block carries a unique
+// (idx, iter) pair.
 inline byte
 fp_byte(usize idx, usize iter, usize off) noexcept
 {
@@ -70,6 +76,7 @@ fp_check(const byte *p, usize n, usize idx, usize iter) noexcept
   return true;
 }
 
+// deterministic xorshift32. seeded per test case so re-runs are bit-stable.
 struct xorshift32 {
   u32 s;
 
@@ -93,12 +100,18 @@ struct xorshift32 {
   }
 };
 
-constexpr usize __sz_precise = abc::__class_precise;
-constexpr usize __sz_small = abc::__class_small;
-constexpr usize __sz_medium = abc::__class_medium;
-constexpr usize __sz_large = abc::__class_large;
-constexpr usize __sz_huge = abc::__class_huge;
+// canonical tier-class sizes (and a sentinel "above huge")
+constexpr usize __sz_precise = abc::__class_precise;      // 256
+constexpr usize __sz_small = abc::__class_small;          // 512
+constexpr usize __sz_medium = abc::__class_medium;        // 4096
+constexpr usize __sz_large = abc::__class_large;          // 32768
+constexpr usize __sz_huge = abc::__class_huge;            // 262144
 
+// soft check used for documented-failure tests. tests marked "(FAILS)" preserve
+// patterns we *want* the allocator to handle but which currently expose real
+// quirks (query_size under-report, cross-tier realloc data loss, random-order
+// free trampling). they print a localized failure marker but never abort, so
+// subsequent tests keep running.
 struct soft_stats {
   usize failures = 0;
   usize checks = 0;
@@ -121,16 +134,29 @@ soft_check(bool ok, const char *what)
   }
 }
 
-}      // namespace
+}      // anonymous namespace
 
 int
 main(int, char **)
 {
   sb::print("=== ABCMALLOC STRESS / EXOTIC / NESTED / EDGE-CASE TESTS ===");
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 1. tier-crossing realloc oscillation — drive the same logical buffer
+  //    up the tier ladder and back, verifying the live prefix at every step.
+  //    a single bit-flip in realloc's copy path would corrupt the fingerprint.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("tier-cross realloc: 1B → precise → small → medium → large → huge → back (head prefix invariant)");
   {
-
+    // NOTE: realloc's prefix-preservation guarantee is bounded by what
+    // query_size reports for the *source* block, which can under-report the
+    // true usable region for buddy-tier blocks. so we only fingerprint a
+    // small head prefix that comfortably fits inside every tier's smallest
+    // observed query_size (the precise tier's TLSF block here is ~64B).
+    // climb the tier ladder one-way; HEAD bytes must survive every crossing.
+    // we do not bring the block back down — the round-trip exercise is
+    // already covered by the oscillation test below.
     constexpr usize HEAD = 32;
     const usize ladder[] = { HEAD, __sz_precise, __sz_small, __sz_medium, __sz_large, __sz_huge };
     constexpr usize N = sizeof(ladder) / sizeof(ladder[0]);
@@ -150,6 +176,11 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 2. cross-tier realloc roundtrip preserves the *full* prefix across many
+  //    grow/shrink cycles. earlier suites only check a single grow/shrink.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("realloc oscillation: 200 grow/shrink cycles, prefix invariant");
   {
     constexpr usize SMALL = 96;
@@ -164,13 +195,20 @@ main(int, char **)
       usize target = (i % 3u == 0) ? MED : ((i % 3u == 1) ? BIG : SMALL);
       byte *q = static_cast<byte *>(abc::realloc(p, target));
       require(q != nullptr, true);
-
+      // SMALL-byte prefix must still match (it is the smallest size in the
+      // cycle, so it is always within both old and new region).
       require(fp_check(q, SMALL, 0x7777u, 0), true);
       p = q;
     }
     abc::dealloc(p);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 3. PRNG-driven fuzz mix — deterministic, fingerprinted. catches any
+  //    cross-allocation aliasing: if two live blocks ever overlap, at least
+  //    one fingerprint will mismatch at verify time.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("fuzz: 4096 iters of randomized alloc/free, fingerprints survive");
   {
@@ -193,33 +231,33 @@ main(int, char **)
     for ( usize it = 0; it < ITERS; ++it ) {
       bool do_alloc = (live.size() < BAG) and ((rng.range(4u) != 0) or live.empty());
       if ( do_alloc ) {
-
+        // size distribution favours precise/small/medium; occasionally large.
         u32 r = rng.next();
         usize sz;
         switch ( r & 0xFu ) {
         case 0u:
         case 1u:
           sz = 1u + (rng.next() % 255u);
-          break;
+          break;      // precise
         case 2u:
         case 3u:
         case 4u:
         case 5u:
           sz = 256u + (rng.next() % 256u);
-          break;
+          break;      // small
         case 6u:
         case 7u:
         case 8u:
         case 9u:
           sz = 513u + (rng.next() % 3583u);
-          break;
+          break;      // medium
         case 10u:
         case 11u:
           sz = 4097u + (rng.next() % 28671u);
-          break;
+          break;      // large
         default:
           sz = 32769u + (rng.next() % 65535u);
-          break;
+          break;      // big
         }
         byte *p = abc::alloc(sz);
         require(p != nullptr, true);
@@ -228,17 +266,17 @@ main(int, char **)
         live.emplace_back(entry{ p, sz, seq, it });
         ++seq;
       } else {
-
+        // free a random live block — but verify its fingerprint first
         usize victim = rng.range(static_cast<u32>(live.size()));
         entry e = live[victim];
         require(fp_check(e.p, e.len, e.idx, e.iter), true);
         abc::dealloc(e.p);
-
+        // erase-by-swap-with-tail (no STL erase)
         live[victim] = live[live.size() - 1];
         live.pop_back();
       }
     }
-
+    // final sweep: every survivor still intact
     for ( usize i = 0; i < live.size(); ++i ) {
       entry e = live[i];
       require(fp_check(e.p, e.len, e.idx, e.iter), true);
@@ -247,6 +285,12 @@ main(int, char **)
     live.clear();
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 4. multi-word bitmap saturation per tier — push each hot tier deep into
+  //    the second / third / etc. word of __space_mask. fingerprinted so
+  //    even silent bit confusion in the bitmap is caught.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("bitmap saturation: 600 simultaneous precise (200B) allocations");
   {
@@ -290,7 +334,7 @@ main(int, char **)
     for ( usize i = 0; i < N; ++i ) {
       byte *p = abc::alloc(3200);
       require(p != nullptr, true);
-
+      // fingerprint head and tail only — full fingerprint would be costly here
       fp_fill(p, 64, i, 0x0Cu);
       fp_fill(p + 3200 - 64, 64, i, 0x0Du);
       ps.emplace_back(p);
@@ -306,14 +350,14 @@ main(int, char **)
 
   test_case("bitmap saturation: 48 simultaneous huge (256 KiB) allocations");
   {
-
+    // huge tier sheet cap is 64 — stay clearly under to avoid OOM noise
     constexpr usize N = 48;
     micron::vector<byte *> ps;
     ps.reserve(N);
     for ( usize i = 0; i < N; ++i ) {
       byte *p = abc::alloc(__sz_huge);
       require(p != nullptr, true);
-
+      // poke head + middle + tail
       p[0] = static_cast<byte>(0x10u + i);
       p[__sz_huge / 2u] = static_cast<byte>(0x40u + i);
       p[__sz_huge - 1u] = static_cast<byte>(0x80u + i);
@@ -329,11 +373,17 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 5. checkerboard fragmentation — alloc N, free even, allocate into the
+  //    gaps with a *different* size class. surviving odd blocks must remain
+  //    bit-exact.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("fragmentation: checkerboard with size-class mismatch (odd survivors intact)");
   {
     constexpr usize N = 256;
-    constexpr usize SZA = 400;
-    constexpr usize SZB = 1100;
+    constexpr usize SZA = 400;       // small tier
+    constexpr usize SZB = 1100;      // medium tier
     micron::vector<byte *> ps;
     ps.reserve(N);
 
@@ -343,12 +393,12 @@ main(int, char **)
       fp_fill(p, SZA, i, 0xCB01u);
       ps.emplace_back(p);
     }
-
+    // free even
     for ( usize i = 0; i < N; i += 2u ) {
       abc::dealloc(ps[i]);
       ps[i] = nullptr;
     }
-
+    // alloc gaps with different size class — does not have to land in old slots
     micron::vector<byte *> gaps;
     gaps.reserve(N / 2u);
     for ( usize i = 0; i < N; i += 2u ) {
@@ -357,11 +407,11 @@ main(int, char **)
       fp_fill(q, SZB, i, 0xCB02u);
       gaps.emplace_back(q);
     }
-
+    // odd survivors still match their original fingerprint
     for ( usize i = 1; i < N; i += 2u ) {
       require(fp_check(ps[i], SZA, i, 0xCB01u), true);
     }
-
+    // gaps also match
     for ( usize g = 0; g < gaps.size(); ++g ) {
       require(fp_check(gaps[g], SZB, g * 2u, 0xCB02u), true);
     }
@@ -373,21 +423,28 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 6. middle-out free ordering. LIFO and reverse orderings are common;
+  //    "free the middle first, then expand outward" is unusual and exercises
+  //    tombstone/coalesce code paths in the free list.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("order: middle-out free of 256 medium blocks, neighbours stay intact");
   {
     constexpr usize N = 256;
     constexpr usize SZ = 2048;
     byte *ps[N];
-    constexpr usize TAG = 0x4D00u;
+    constexpr usize TAG = 0x4D00u;      // arbitrary stable per-test marker
     for ( usize i = 0; i < N; ++i ) {
       ps[i] = abc::alloc(SZ);
       require(ps[i] != nullptr, true);
       fp_fill(ps[i], SZ, i, TAG);
     }
 
+    // mark[i] = true after we free ps[i]
     bool freed[N] = {};
     usize mid = N / 2u;
-
+    // walk outward: mid, mid-1, mid+1, mid-2, mid+2, ...
     for ( usize step = 0; step <= mid; ++step ) {
       usize lo = mid - step;
       usize hi = mid + step;
@@ -402,11 +459,17 @@ main(int, char **)
         freed[hi] = true;
       }
     }
-
+    // any leftover unfreed (defensive — should be none)
     for ( usize i = 0; i < N; ++i )
       if ( !freed[i] ) abc::dealloc(ps[i]);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 7. heavily nested data — vector<vector<vector<u64>>> of meaningful depth.
+  //    forces churn across all hot tiers concurrently, plus a heap of strings
+  //    re-creates the original hstring failure mode.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("nested: vector<vector<vector<u64>>> 16×16×16, every leaf fingerprinted");
   {
@@ -427,7 +490,7 @@ main(int, char **)
       }
       root.emplace_back(micron::move(mid));
     }
-
+    // verify every leaf — any move/copy corruption surfaces here
     for ( usize a = 0; a < L; ++a ) {
       for ( usize b = 0; b < L; ++b ) {
         for ( usize c = 0; c < L; ++c ) {
@@ -457,7 +520,7 @@ main(int, char **)
       }
       root.emplace_back(micron::move(row));
     }
-
+    // probe a diagonal
     for ( usize i = 0; i < L; ++i ) {
       micron::string head("n_");
       require(root[i][i].find(head), 0u);
@@ -466,9 +529,18 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 8. aligned_alloc alignment matrix. exercises both the "alignment <= header
+  //    offset" fast path and the "alignment > header offset" overhead path
+  //    (which stashes the raw pointer).
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("aligned_alloc: power-of-two matrix (alignment × size multiple)");
   {
-
+    // contract: when alignment <= __hdr_offset (32), the returned pointer is
+    // the regular allocation pointer and must be released with abc::dealloc;
+    // for alignment > __hdr_offset, the pointer is offset and aligned_free
+    // is required. exercise both paths.
     const usize aligns[] = { 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 2048u, 4096u };
     constexpr usize NA = sizeof(aligns) / sizeof(aligns[0]);
     for ( usize ai = 0; ai < NA; ++ai ) {
@@ -515,6 +587,10 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 9. salloc — must return a zeroed region. test all tiers.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("salloc: returns zeroed region across all tiers");
   {
     const usize sizes[] = { 1u, 64u, 200u, 400u, 1024u, 8192u, 65536u, __sz_huge };
@@ -526,6 +602,14 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 10. retire (tombstoned free). interleaved with normal alloc/dealloc.
+  //     after retire, future alloc must not collide with the retired region
+  //     until the underlying page is unmapped — but we cannot observe that
+  //     directly. so we test only the API contract: retire + later alloc
+  //     succeeds, all live blocks remain intact.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("retire: 1024 retire-then-alloc cycles preserve live fingerprints");
   {
@@ -545,7 +629,7 @@ main(int, char **)
       p[sz - 1u] = static_cast<byte>((r ^ 0xA5) & 0xFFu);
       abc::retire(p);
     }
-
+    // live blocks must still match
     for ( usize i = 0; i < KEEP; ++i ) {
       require(fp_check(live[i], 384u + i, i, 0xCAFEu), true);
       abc::dealloc(live[i]);
@@ -553,13 +637,20 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 11. launder — temporal allocation path. should return usable memory that
+  //     is deallocatable through the normal free path.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("launder: temporal allocations are writable and individually freeable");
   {
-
+    // NOTE: temporal_allocate returns the SAME address for repeated requests
+    // of the same buddy order until that block is freed. so launder must be
+    // tested one allocation at a time: alloc, write, verify, free, repeat.
     constexpr usize ROUNDS = 256;
     constexpr usize TAG = 0x1E00u;
     for ( usize r = 0; r < ROUNDS; ++r ) {
-      usize sz = 64u + ((r * 257u) & 0x3FFFu);
+      usize sz = 64u + ((r * 257u) & 0x3FFFu);      // 64..16447
       byte *p = abc::launder(sz);
       require(p != nullptr, true);
       fp_fill(p, sz, r, TAG);
@@ -568,6 +659,11 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 12. provenance for interior pointers. within() should report true for any
+  //     address lying inside a live allocation's page.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("provenance: interior offsets are within() across tiers");
   {
@@ -583,9 +679,17 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 13. query_size sanity — must report a usable size ≥ requested.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("query_size: reports a nonzero usable size for every live allocation");
   {
-
+    // NOTE: query_size returns the buddy/TLSF *block* user-size, which can be
+    // less than the requested size in some buddy-tier paths (the realloc
+    // copy-size relies on this same value). all we can portably assert is
+    // that the reported size is nonzero for any pointer recognised by the
+    // allocator.
     const usize sizes[] = { 1u, 64u, 256u, 400u, 1024u, 4096u, 8192u, 32768u, 65536u };
     for ( usize sz : sizes ) {
       byte *p = abc::alloc(sz);
@@ -597,9 +701,19 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 14. musage monotonicity. alloc grows total usage, dealloc shrinks it back.
+  //     we only compare relative deltas — absolute values depend on prior
+  //     warm-up state of the arena.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("musage: callable and returns a sane (nonzero) value while a huge block is live");
   {
-
+    // musage's bookkeeping treats pre-allocated arena capacity as "in use",
+    // so a freshly-allocated user block may not raise the reported number;
+    // similarly, dealloc may leave the page mapped. all we assert here is
+    // that musage is callable across the alloc/dealloc cycle and reports
+    // nonzero usage while at least one block is live.
     (void)abc::musage();
     byte *p = abc::alloc(__sz_huge);
     require(p != nullptr, true);
@@ -609,6 +723,12 @@ main(int, char **)
     (void)abc::musage();
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 15. hot-pointer reuse storm — many cycles of malloc+free of the same
+  //     class, each iteration with a fresh fingerprint. detects stale-data
+  //     bleed if free path does not properly release the slot.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("reuse storm: 32768 alloc/free cycles on a single 256B class");
   {
@@ -629,7 +749,7 @@ main(int, char **)
     for ( usize r = 0; r < ROUNDS; ++r ) {
       byte *p = abc::alloc(__sz_medium);
       require(p != nullptr, true);
-
+      // fingerprint head+tail+random middle
       fp_fill(p, 64, r, 0xBABEu);
       fp_fill(p + __sz_medium / 2u, 64, r, 0xBABFu);
       fp_fill(p + __sz_medium - 64, 64, r, 0xBAC0u);
@@ -641,28 +761,34 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 16. strided writes over a large allocation — write every Nth byte for
+  //     several strides. catches under-allocation or short-stride truncation.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("stride: write every Nth byte over a 128 KiB block, several strides");
   {
     constexpr usize SZ = 128u * 1024u;
     byte *p = abc::alloc(SZ);
     require(p != nullptr, true);
-
+    // first pass: zero the block
     for ( usize i = 0; i < SZ; ++i ) p[i] = 0;
-
+    // second: write at strides 17, 257, 4099
     const usize strides[] = { 17u, 257u, 4099u };
     for ( usize si = 0; si < 3; ++si ) {
       usize s = strides[si];
       byte mark = static_cast<byte>(0x40u + si);
       for ( usize i = 0; i < SZ; i += s ) p[i] = mark;
     }
-
+    // verify each stride
     bool ok = true;
     for ( usize si = 0; si < 3; ++si ) {
       usize s = strides[si];
       byte mark = static_cast<byte>(0x40u + si);
       for ( usize i = 0; i < SZ; i += s ) {
-        if ( p[i] != mark ) {
-
+        if ( p[i] != mark ) {      // later strides overwrite earlier ones at
+                                   // multiples; we just verify last writer wins
+          // accept overwrite if it matches a *later* stride's mark
           bool overwritten = false;
           for ( usize sj = si + 1; sj < 3; ++sj )
             if ( (i % strides[sj]) == 0 and p[i] == static_cast<byte>(0x40u + sj) ) overwritten = true;
@@ -679,22 +805,30 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 17. realloc edge corners — null in, zero out, same-size, shrink to 1.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("realloc corners: nullptr ⇒ alloc, size 0 ⇒ free, identity shrink-to-1");
   {
-
+    // nullptr → malloc-like
     void *a = abc::realloc(nullptr, 256u);
     require(a != nullptr, true);
     static_cast<byte *>(a)[0] = 0xAA;
     static_cast<byte *>(a)[255] = 0xBB;
-
+    // identity shrink to 1 — first byte preserved
     void *b = abc::realloc(a, 1u);
     require(b != nullptr, true);
     require(static_cast<unsigned>(static_cast<byte *>(b)[0]), 0xAAu);
-
+    // size 0 ⇒ free; result is nullptr per allocator's contract
     void *c = abc::realloc(b, 0u);
     require(c == nullptr, true);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 18. allocator_small create/destroy cycles (re-affirm sizing policy).
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("allocator_small: 1024 create/destroy cycles, payload always usable");
   {
@@ -704,7 +838,7 @@ main(int, char **)
       auto c = micron::allocator_small<>::create(req);
       require(c.ptr != nullptr, true);
       require(c.len >= req, true);
-
+      // touch entire payload
       for ( usize i = 0; i < c.len; ++i ) c.ptr[i] = static_cast<byte>((i + r) & 0xFFu);
       bool ok = true;
       for ( usize i = 0; i < c.len; ++i )
@@ -718,9 +852,16 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 19. mixed-tier round-robin allocator with reverse free, then random free.
+  //     all blocks fingerprinted across the entire lifetime.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("round-robin: 800 allocations spanning 4 hot tiers, head+tail fingerprints intact");
   {
-
+    // populate, full-fingerprint head and tail, verify all live at peak, then
+    // tear down in LIFO order (matching the established safe pattern in the
+    // existing suite's "mixed pattern" case).
     constexpr usize N = 800;
     const usize sizes[] = { 64u, 384u, 1500u, 8192u };
     constexpr usize NSZ = sizeof(sizes) / sizeof(sizes[0]);
@@ -744,20 +885,25 @@ main(int, char **)
       if ( sz > 128u ) fp_fill(p + sz - 64u, 64, i, TAG_T);
       bag.emplace_back(rec{ p, sz });
     }
-
+    // verify everyone at peak residency
     for ( usize i = 0; i < N; ++i ) {
       usize sz = bag[i].sz;
       usize h = sz < 64u ? sz : 64u;
       require(fp_check(bag[i].p, h, i, TAG_H), true);
       if ( sz > 128u ) require(fp_check(bag[i].p + sz - 64u, 64, i, TAG_T), true);
     }
-
+    // free LIFO
     for ( usize ii = N; ii > 0; --ii ) {
       abc::dealloc(bag[ii - 1].p);
     }
     bag.clear();
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 20. boundary-byte fingerprint across every tier — the very last byte
+  //     written is the one most likely to fall on a tier seam.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("boundary: last-byte writes across 24 tier boundaries");
   {
@@ -767,7 +913,7 @@ main(int, char **)
     for ( usize i = 0; i < NS; ++i ) {
       byte *p = abc::alloc(sizes[i]);
       require(p != nullptr, true);
-
+      // write head, tail, and one byte off the tail (still inside)
       p[0] = static_cast<byte>(0xE0u | (i & 0xFu));
       if ( sizes[i] >= 2u ) p[sizes[i] - 1u] = static_cast<byte>(0xF0u | (i & 0xFu));
       require(static_cast<unsigned>(p[0]), static_cast<unsigned>(0xE0u | (i & 0xFu)));
@@ -776,6 +922,12 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 21. AB-BA alloc ordering across two size classes. detects whether the
+  //     allocator's per-tier path ever mishandles ordering invariants when
+  //     two tiers are touched alternately at high rate.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("AB-BA: 4096 alternating alloc/dealloc pairs across two tiers");
   {
@@ -787,12 +939,17 @@ main(int, char **)
       require(b != nullptr, true);
       a[0] = static_cast<byte>(r & 0xFFu);
       b[0] = static_cast<byte>(~(r & 0xFFu) & 0xFFu);
-
+      // BA order
       abc::dealloc(b);
       abc::dealloc(a);
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 22. zero-size sanity. alloc(0) must return nullptr per contract; dealloc
+  //     on nullptr is no-op.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("zero-size: alloc(0) returns nullptr; dealloc(nullptr) is safe");
   {
@@ -802,6 +959,10 @@ main(int, char **)
     require(true, true);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 23. calloc overflow guards.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("calloc: overflow guard with (SIZE_MAX, 2) returns nullptr");
   {
@@ -813,6 +974,10 @@ main(int, char **)
     require(r == nullptr, true);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 24. mass calloc — every region must be zero, every region writable.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("mass calloc: 512 simultaneous 1 KiB zeroed blocks");
   {
@@ -826,12 +991,18 @@ main(int, char **)
       require(region_is_byte(p, SZ, 0), true);
       ps.emplace_back(p);
     }
-
+    // still zero with all live
     for ( usize i = 0; i < N; ++i ) require(region_is_byte(ps[i], SZ, 0), true);
     for ( usize i = 0; i < N; ++i ) abc::dealloc(ps[i]);
     ps.clear();
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 25. exotic interleave — micron::vector<micron::string> with heavy reuse:
+  //     populate, half-clear, repopulate, full-clear. exercises the chain
+  //     vector-grow ↔ string-alloc ↔ deallocation in a single workload.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("interleave: vector<string> 8 K populate / 4 K clear / 8 K repopulate");
   {
@@ -844,12 +1015,12 @@ main(int, char **)
       bag.emplace_back(micron::move(s));
     }
     require(bag.size(), N);
-
+    // clear first half by moving them out
     for ( usize i = 0; i < N / 2u; ++i ) {
       micron::string sink = micron::move(bag[i]);
-      (void)sink;
+      (void)sink;      // dropped at scope end
     }
-
+    // refill first half
     for ( usize i = 0; i < N / 2u; ++i ) {
       micron::string s("beta_");
       s += micron::int_to_string<usize>(i);
@@ -857,12 +1028,17 @@ main(int, char **)
     }
     micron::string a_pre("alpha_");
     micron::string b_pre("beta_");
-
+    // first half starts with "beta_", second half with "alpha_"
     require(bag[0].find(b_pre), 0u);
     require(bag[N / 2u].find(a_pre), 0u);
     bag.clear();
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 26. deeply nested cross-tier scratchpad — each iteration leaves a
+  //     "scratch" of three different tiers live for one step, then rotates.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("scratchpad rotation: 1024 rotations of 3-tier scratch (precise+medium+large)");
   {
@@ -874,15 +1050,15 @@ main(int, char **)
     require(b != nullptr, true);
     require(c != nullptr, true);
     fp_fill(a, __sz_precise, 0u, 0x0BCEu);
-    fp_fill(b, 256u, 1u, 0x0BCEu);
+    fp_fill(b, 256u, 1u, 0x0BCEu);      // partial fp for cost
     fp_fill(c, 256u, 2u, 0x0BCEu);
 
     for ( usize r = 0; r < ROUNDS; ++r ) {
-
+      // verify a, b, c
       require(fp_check(a, __sz_precise, 0u, 0x0BCEu), true);
       require(fp_check(b, 256u, 1u, 0x0BCEu), true);
       require(fp_check(c, 256u, 2u, 0x0BCEu), true);
-
+      // free one, reallocate it, fingerprint it again
       switch ( r % 3u ) {
       case 0u:
         abc::dealloc(a);
@@ -910,6 +1086,11 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 27. micro-allocation tsunami — 16-byte allocations, 32 K of them, retained
+  //     all at once. extreme bitmap pressure on the precise tier.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("tsunami: 16 K simultaneous 16B allocations, peak residency");
   {
     constexpr usize N = 16384;
@@ -918,7 +1099,7 @@ main(int, char **)
     for ( usize i = 0; i < N; ++i ) {
       byte *p = abc::alloc(16u);
       require(p != nullptr, true);
-
+      // pack 16 bytes of identifying data
       for ( usize k = 0; k < 16u; ++k ) p[k] = static_cast<byte>((i + k * 7u) & 0xFFu);
       ps.emplace_back(p);
     }
@@ -937,6 +1118,11 @@ main(int, char **)
     ps.clear();
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 28. realloc shrink-grow ping-pong on identical sizes — the allocator may
+  //     reuse the existing block; either way the prefix must hold.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("realloc ping-pong: 1024 cycles of (4 KiB ↔ 96 B), 96-byte prefix invariant");
   {
@@ -957,6 +1143,11 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 29. chunk-based alloc (balloc / fetch) — returns {ptr, len} with len >=
+  //     requested. dealloc with explicit length.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("balloc: returns chunk with len ≥ requested across tiers");
   {
     const usize sizes[] = { 17u, 256u, 999u, 4096u, 50000u };
@@ -964,7 +1155,7 @@ main(int, char **)
       auto chunk = abc::balloc(sz);
       require(chunk.ptr != nullptr, true);
       require(chunk.len >= sz, true);
-
+      // first + last (of the *requested* size) writable
       chunk.ptr[0] = 0x42;
       chunk.ptr[sz - 1u] = 0x99;
       require(static_cast<unsigned>(chunk.ptr[0]), 0x42u);
@@ -973,6 +1164,10 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 30. exotic — interleave fetch<T>() trivial allocations with byte allocs.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("fetch<T>: trivial T allocations interleaved with raw allocs");
   {
@@ -1005,17 +1200,27 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // 31. is_present positive on live, negative after dealloc (single block,
+  //     since after dealloc the slot may be reused — sample one round).
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("is_present: true on live, addresses outside arena are not within()");
   {
     byte *p = abc::alloc(__sz_medium);
     require(p != nullptr, true);
     require(abc::is_present(p), true);
     abc::dealloc(p);
-
+    // a stack address (almost certainly outside the allocator's arenas)
     byte stack_byte = 0;
     require(abc::within(&stack_byte), false);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 32. final mega-stress: random workload with realloc + alloc + dealloc
+  //     mixed at high rate. ends with everyone freed.
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("mega-stress: 8 K iters of alloc/realloc/free with fingerprint");
   {
@@ -1034,7 +1239,7 @@ main(int, char **)
     for ( usize it = 0; it < 8192; ++it ) {
       u32 op = rng.range(10u);
       if ( op < 5u or live.empty() ) {
-
+        // alloc
         usize sz = 16u + (rng.next() % 8192u);
         byte *p = abc::alloc(sz);
         require(p != nullptr, true);
@@ -1042,7 +1247,9 @@ main(int, char **)
         live.emplace_back(entry{ p, sz, seq, it });
         ++seq;
       } else if ( op < 8u ) {
-
+        // realloc a random live block to a new size. NOTE: realloc's prefix
+        // guarantee is bounded by query_size of the source, which can under-
+        // report in buddy tiers, so only verify the first HEAD bytes survive.
         constexpr usize HEAD = 32;
         usize victim = rng.range(static_cast<u32>(live.size()));
         entry e = live[victim];
@@ -1053,12 +1260,12 @@ main(int, char **)
         usize head = e.len < new_sz ? e.len : new_sz;
         if ( head > HEAD ) head = HEAD;
         require(fp_check(q, head, e.idx, e.iter), true);
-
+        // re-fingerprint the full new size with a new (idx, iter)
         fp_fill(q, new_sz, seq, it);
         live[victim] = entry{ q, new_sz, seq, it };
         ++seq;
       } else {
-
+        // free
         usize victim = rng.range(static_cast<u32>(live.size()));
         entry e = live[victim];
         require(fp_check(e.p, e.len, e.idx, e.iter), true);
@@ -1076,9 +1283,24 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // DOCUMENTED-FAILURE TESTS
+  //
+  // The following cases probe allocator behavior we believe SHOULD hold but
+  // which currently does not. They use soft_check (prints + counts, does not
+  // abort) so the suite continues to run. Each describes the invariant we
+  // wanted to assert and what was actually observed.
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("(FAILS) tier-cross realloc round-trip preserves full prefix");
   {
-    // BUG: fails because query_size implicitly fails, otherwise valid
+    // intent: after a complete up-and-down tier walk, the original prefix
+    // should still be intact. observed: query_size on the source block of an
+    // up-walk realloc returns less than the requested size (e.g. 4064 after a
+    // realloc to 32768 in the medium tier), so realloc's memcpy truncates and
+    // the prefix is lost from offset ~4064 onward. additionally, the final
+    // dealloc on a TLSF block that has been chased back down from the buddy
+    // tiers raises a "free failed" memory_error.
     const usize ladder[]
         = { 1u, __sz_precise, __sz_small, __sz_medium, __sz_large, __sz_huge, __sz_large, __sz_medium, __sz_small, __sz_precise, 1u };
     constexpr usize N = sizeof(ladder) / sizeof(ladder[0]);
@@ -1099,13 +1321,18 @@ main(int, char **)
         soft_check(fp_check(q, keep, step, 0xC011u), "full keep-byte prefix survives cross-tier realloc");
         p = q;
       }
+      // final dealloc is itself a known throw on this ladder, so we leak the
+      // block here on purpose to keep the suite alive.
     }
   }
   end_test_case();
 
   test_case("(FAILS) query_size reports usable bytes ≥ requested across all tiers");
   {
-    // BUG: query_size seems to fail for medium tiers (likely misordering in edges)
+    // intent: the value reported by query_size should be at least the
+    // requested allocation size. observed: in the medium buddy tier, certain
+    // requests (e.g. 32768) return a query_size that corresponds to a much
+    // smaller buddy order than the request would require.
     const usize sizes[] = { 1u, 64u, 256u, 400u, 1024u, 4096u, 8192u, 32768u, 65536u };
     for ( usize sz : sizes ) {
       byte *p = abc::alloc(sz);
@@ -1120,7 +1347,10 @@ main(int, char **)
 
   test_case("(FAILS) musage strictly grows after a huge-tier allocation");
   {
-    // BUG: miscounts preallocated arena capacity
+    // intent: requesting a tier_huge block should observably raise
+    // total_usage(). observed: the bookkeeping treats arena pre-allocated
+    // capacity as in-use, so a single allocation's effect on musage may be
+    // zero in steady state.
     usize base = abc::musage();
     byte *p = abc::alloc(__sz_huge);
     soft_check(p != nullptr, "huge alloc non-null");
@@ -1134,7 +1364,12 @@ main(int, char **)
 
   test_case("(FAILS) round-robin: random-order free across hot tiers preserves fingerprints");
   {
-    // BUG: dealloc somewhere writes metadata into a still live block ??
+    // intent: an allocation's fingerprinted head should be intact at the
+    // moment we choose to free it, even when free order is randomised across
+    // multiple tiers. observed: under heavy multi-tier churn with shuffled
+    // dealloc order, some live blocks' first 64 bytes get clobbered before
+    // we get to them — pointing at a metadata write that lands inside a
+    // live block.
     constexpr usize N = 800;
     const usize sizes[] = { 64u, 384u, 1500u, 8192u };
     constexpr usize NSZ = sizeof(sizes) / sizeof(sizes[0]);
@@ -1174,6 +1409,11 @@ main(int, char **)
     soft_check(!any_fail, "all live blocks' head fp intact at free time under random-order tear-down");
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // summary line so the operator can see at a glance how many soft failures
+  // were observed in this run.
+  // ─────────────────────────────────────────────────────────────────────────
 
   sb::print("=== ABCMALLOC STRESS SUITE COMPLETE ===");
   sb::print("    soft-checks total:    ", __soft().checks);

@@ -190,6 +190,7 @@ none_of(const C &c, Fn fn) noexcept
 }
 
 template<is_iterable_container C, typename Cmp>
+  requires(!micron::is_invocable_v<Cmp, const typename C::value_type> && !micron::is_invocable_v<Cmp, const typename C::value_type *>)
 constexpr bool
 all_of(const C &c, const Cmp &cmp) noexcept
 {
@@ -197,6 +198,7 @@ all_of(const C &c, const Cmp &cmp) noexcept
 }
 
 template<is_iterable_container C, typename Cmp>
+  requires(!micron::is_invocable_v<Cmp, const typename C::value_type> && !micron::is_invocable_v<Cmp, const typename C::value_type *>)
 constexpr bool
 any_of(const C &c, const Cmp &cmp) noexcept
 {
@@ -204,6 +206,7 @@ any_of(const C &c, const Cmp &cmp) noexcept
 }
 
 template<is_iterable_container C, typename Cmp>
+  requires(!micron::is_invocable_v<Cmp, const typename C::value_type> && !micron::is_invocable_v<Cmp, const typename C::value_type *>)
 constexpr bool
 none_of(const C &c, const Cmp &cmp) noexcept
 {

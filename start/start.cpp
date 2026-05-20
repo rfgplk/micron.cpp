@@ -15,7 +15,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wodr"
 extern "C" int __micron_user_main(int argc, char **argv, char **envp) __asm__("main");
-extern "C" void __boot_abcmalloc(void);
+// extern "C" void __boot_abcmalloc(void);
 extern "C" void __boot_io_buffers(void);
 #pragma GCC diagnostic pop
 
@@ -30,8 +30,8 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   // stub for now, just so we have thread_local working, we don't support multithreading in freestanding mode YET
   micron::__tls_init(auxv);
 
-  // abcmalloc doesnt' depend on runtime initialized code so it fires first
-  __boot_abcmalloc();
+  // OBSOLETE abcmalloc doesnt' depend on runtime initialized code so it fires first
+  //__boot_abcmalloc();
   // manually start __attribute__((constructor)), functions here don't go through .init_array
   for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
   for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();

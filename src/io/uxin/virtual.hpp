@@ -44,12 +44,14 @@ template<typename... Args>
 void
 set_keys(const io::fd_t &handle, Args... args)
 {
+  int r = 0;
   if ( r = (micron::posix::ioctl(handle.fd, micron::ui_set_keybit(), args), ...); r != 0 ) set_errno(-r);
 }
 
 void
 start_device(const io::fd_t &handle, const uinput_setup_t &usetup)
 {
+  int r = 0;
   if ( r = micron::posix::ioctl(handle.fd, ui_dev_setup(), &usetup); r != 0 ) {
     set_errno(-r);
   }
@@ -61,6 +63,7 @@ start_device(const io::fd_t &handle, const uinput_setup_t &usetup)
 void
 start_device(const io::fd_t &handle, const char *name, u16 vendor, u16 product, u16 version)
 {
+  int r = 0;
   uinput_setup_t usetup{ .id = { .bustype = bus_usb, .vendor = vendor, .product = product, .version = version },
                          .name = name,
                          .ff_effects_max = 0 };

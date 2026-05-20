@@ -76,7 +76,12 @@ constexpr static const bool __default_launder
 constexpr static const bool __default_lazy_construct = true;
 constexpr static const bool __default_single_instance = true;       // enable an allocator per thread (DEPRECATED for now)
 constexpr static const bool __default_global_instance = false;      // enable a single global allocator (DEPRECATED for now)
+// freestanding builds have no threading runtime
+#if defined(__micron_freestanding)
+constexpr static const bool __default_multithread_safe = false;
+#else
 constexpr static const bool __default_multithread_safe = true;      // essentially, enables locks across API calls
+#endif
 
 constexpr static const bool __default_eager_hot_tiers = true;
 
@@ -128,6 +133,8 @@ constexpr static const bool __default_borrow_auto = true;
 
 constexpr static const float __default_oom_limit_warn = 0.15f;
 constexpr static const float __default_oom_limit_error = 0.08f;
+// tighter budget on constrained systems so we notice OOM faster
+constexpr static const u32 __default_oom_check_interval = 256;
 
 // enforce provenance forces the allocator to verify if a req. pointer has been allocated within that session. if it
 // hasn't fail out according to __default_fail_result
@@ -135,8 +142,14 @@ constexpr static const bool __default_enforce_provenance = false;
 // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation
 // UNLESS the page on which it resides has been unmapped
 
-// tombstoning off. on a constrained system we want freed blocks returned to the free lists immediately so they can be reused
-constexpr static const bool __default_tombstone = false;
+// tombstoning off
+constexpr static const bool __tombstone_precise = false;
+constexpr static const bool __tombstone_small = false;
+constexpr static const bool __tombstone_medium = false;
+constexpr static const bool __tombstone_large = false;
+constexpr static const bool __tombstone_huge = false;
+constexpr static const bool __default_tombstone
+    = __tombstone_precise || __tombstone_small || __tombstone_medium || __tombstone_large || __tombstone_huge;
 
 constexpr static const bool __default_insert_guard_pages = true;
 constexpr static const int __default_guard_page_perms = micron::prot_none;

@@ -301,7 +301,7 @@ scopy(const T &restrict src, T &restrict dst)
 
 template<usize N, typename T, typename F>
 F *
-cmove(const T *restrict src, F *restrict dst)
+cmove(T *restrict src, F *restrict dst)
 {
   if ( src == nullptr or dst == nullptr ) exc<except::library_error>("micron::cmove invalid pointers.");
   if constexpr ( micron::is_class<T>::value ) {

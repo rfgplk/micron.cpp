@@ -96,10 +96,10 @@ filter_inplace(C &c, F fn)
 {
   auto *first = c.begin();
   auto *last = c.end();
-  C *out = first;
+  auto *out = first;
   for ( ; first != last; ++first )
     if ( fn(first) ) *out++ = *first;
-  c.resize(out - c.begin());
+  c.resize(static_cast<typename C::size_type>(out - c.begin()));
   return c;
 }
 

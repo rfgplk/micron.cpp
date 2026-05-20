@@ -32,6 +32,7 @@ constexpr static const i32 map_fixed = 0x10; /* i32erpret addr exactly.  */
 constexpr static const i32 map_file = 0;
 constexpr static const i32 map_anonymous = 0x20; /* don't use a file.  */
 constexpr static const i32 map_anon = map_anonymous;
+constexpr static const i32 map_noreserve = 0x4000;
 
 /* 0x0100 - 0x4000 flags are defined in asm-generic/mman.h */
 constexpr static const i32 map_populate = 0x008000;        /* populate (prefault) pagetables */

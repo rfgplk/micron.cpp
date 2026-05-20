@@ -5,6 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// Companion to snowball.hpp. Adds:
+//   - property_test(name, fn, count): randomized invocation driver
+//   - expect_no_throw / expect_throw: lambda-friendly throw checks
+//   - repeat_until_throw: exception-injection loop
+// snowball::fuzz at snowball.hpp:949 is single-arg only; property_test
+// supports multi-arg functions via fold over function_traits.
+
 #include "snowball.hpp"
 
 namespace snowball
@@ -31,16 +38,19 @@ __gen_one(u64 &state) noexcept
   if constexpr ( micron::is_integral_v<T> ) {
     return static_cast<T>(r);
   } else if constexpr ( micron::is_floating_point_v<T> ) {
-
+    // map to [-1, 1)
     return static_cast<T>(static_cast<i64>(r)) / static_cast<T>(static_cast<i64>(1) << 62);
   } else {
-
+    // fallback default-construct
     return T{};
   }
 }
 
 };      // namespace __impl
 
+// Run a callable `fn` `count` times with random arguments (per-arg
+// xorshift64). Each iteration that escapes via exception is reported and the
+// driver stops.
 template<typename Fn>
 void
 property_test(const char *name, Fn &&fn, size_t count)
@@ -71,6 +81,8 @@ property_test(const char *name, Fn &&fn, size_t count)
   end_test_case();
 };
 
+// Lambda-friendly variants (snowball::require_nothrow requires a function
+// pointer or function reference, not a lambda).
 template<typename Fn>
 void
 expect_no_throw(Fn &&fn)
@@ -120,6 +132,7 @@ expect_throw_type(Fn &&fn)
   }
 };
 
+// Wrap a tracking allocator scope: run fn, then assert allocator balance.
 template<typename Allocator, typename Fn>
 void
 expect_leak_free(Fn &&fn)

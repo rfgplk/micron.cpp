@@ -53,9 +53,8 @@ __memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
   const byte *src = reinterpret_cast<const byte *>(s);
 
   if ( n >= 17 ) {
-    // [17, 32]: two unaligned 16-byte SIMD blocks
-    simd::__bits::__block_copy_16(dest, src);
-    simd::__bits::__block_copy_16(dest + n - 16, src + n - 16);
+    // NOTE: the SIMD implementation was being elided in some contexts
+    for ( S i = 0; i < n; ++i ) dest[i] = src[i];
   } else if ( n >= 9 ) {
     // [9, 16]: two unaligned 8-byte GPR loads
     __mc32::__copy_8(dest, src);

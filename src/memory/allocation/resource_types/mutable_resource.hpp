@@ -108,7 +108,7 @@ struct __mutable_memory_resource: public __core_memory_resource<T> {
     if ( len == 0 ) [[unlikely]]
       return;
     if ( __core_memory_resource<T>::alive() ) Alloc::destroy(__core_memory_resource<T>::operator*());
-    __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
+    __core_memory_resource<T>::accept(Alloc::create(len * sizeof(T)));
   }
 
   // expands memory, usize is number of elements
@@ -118,7 +118,7 @@ struct __mutable_memory_resource: public __core_memory_resource<T> {
     if ( len == 0 ) [[unlikely]]
       return;
     // NOTE: grow destroys memory
-    __core_memory_resource<T>::accept(Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
+    __core_memory_resource<T>::accept(Alloc::grow(__core_memory_resource<T>::operator*(), len * sizeof(T)));
   }
 };
 

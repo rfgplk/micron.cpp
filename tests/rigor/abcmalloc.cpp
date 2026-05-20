@@ -56,12 +56,16 @@ verify_pattern(const byte *p, usize n, byte seed) noexcept
   return true;
 }
 
-}      // namespace
+}      // anonymous namespace
 
 int
 main(int, char **)
 {
   sb::print("=== ABCMALLOC TESTS ===");
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // tier routing — request size determines which tier serves the allocation
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("precise tier: 1B request returns valid non-null pointer");
   {
@@ -119,11 +123,15 @@ main(int, char **)
   {
     byte *p = abc::alloc(abc::__class_huge);
     require(p != nullptr, true);
-    fill_pattern(p, 4096, 0xC1);
+    fill_pattern(p, 4096, 0xC1);      // touch first page
     require(verify_pattern(p, 4096, 0xC1), true);
     abc::dealloc(p);
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // provenance — `within()` must report true for live allocations
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("provenance: within() positive on live allocation across all tiers");
   {
@@ -136,6 +144,10 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // boundary writes — usable region matches requested size, no slop
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("boundary: first & last byte writable in each tier");
   {
@@ -151,6 +163,11 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // multi-word bitmap stress — drive each hot tier past 64 simultaneous
+  // allocations so the expanded __space_mask is actually exercised
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("multi-word bitmap: 200 simultaneous 4 KiB allocations stay live");
   {
@@ -183,11 +200,15 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // churn — many alloc/free cycles must not leak sheets nor corrupt the index
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("churn: 4096 cycles of alloc/free at varied sizes");
   {
     constexpr usize N = 4096;
     for ( usize i = 0; i < N; ++i ) {
-      usize sz = 32u + ((i * 113u) & 0x1FFFu);
+      usize sz = 32u + ((i * 113u) & 0x1FFFu);      // 32..8223
       byte *p = abc::alloc(sz);
       require(p != nullptr, true);
       p[0] = 0xEE;
@@ -199,7 +220,14 @@ main(int, char **)
   }
   end_test_case();
 
-  test_case("calloc: returned region is zeroed");
+  // ─────────────────────────────────────────────────────────────────────────
+  // calloc — zero-initialised memory
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /*
+   * calloc means chunk alloc not calloc (ie posix), the testing harness hallucinated
+   * or technically i poorly named the fn, i don't want to rename it because i'd need to sed too many places (and the form itself is
+  ambiguous) test_case("calloc: returned region is zeroed");
   {
     const usize sizes[] = { 64u, 1024u, 8192u };
     for ( usize sz : sizes ) {
@@ -210,6 +238,10 @@ main(int, char **)
     }
   }
   end_test_case();
+ */
+  // ─────────────────────────────────────────────────────────────────────────
+  // realloc — content preserved, may move
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("realloc: shrink preserves prefix");
   {
@@ -238,6 +270,10 @@ main(int, char **)
     abc::dealloc(reinterpret_cast<byte *>(q));
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // allocator_small — sub-page granularity for strings & similar
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("allocator_small: granularity matches policy (512)");
   {
@@ -272,6 +308,11 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // hstring churn — many short keys must NOT saturate the medium tier
+  // (was the original failure mode with allocator_serial)
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("hstring churn: 8192 short strings, fully alive at peak");
   {
     constexpr usize N = 8192;
@@ -305,6 +346,10 @@ main(int, char **)
   }
   end_test_case();
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // alignment — every chunk respects 16-byte alignment (SIMD-safe)
+  // ─────────────────────────────────────────────────────────────────────────
+
   test_case("alignment: every allocation is at least 16-byte aligned");
   {
     const usize sizes[] = { 1u, 7u, 33u, 65u, 129u, 257u, 513u, 1025u, 4097u };
@@ -316,6 +361,10 @@ main(int, char **)
     }
   }
   end_test_case();
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // mixed pattern — interleaved allocations across all tiers, reverse free
+  // ─────────────────────────────────────────────────────────────────────────
 
   test_case("mixed pattern: 1024 interleaved allocations across all 5 tiers");
   {

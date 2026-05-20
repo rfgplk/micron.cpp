@@ -27,7 +27,7 @@
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
 #include "../src/linux/sys/sched.hpp"
-#include "../src/math/__asm/rdrand.hpp"
+#include "../src/math/__asm/rdrand.hpp"      // rdtsc64
 #include "../src/math/rng.hpp"
 #include "../src/memory/allocation/abcmalloc/__abc.hpp"
 #include "../src/memory/allocation/abcmalloc/config.hpp"
@@ -39,6 +39,9 @@ extern "C" void free(void *ptr);
 
 namespace
 {
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Event groups — same split as the abcmalloc detailed counterpart.
 
 using timing_events = bbench::event_group<bbench::hardware_cycles, bbench::hardware_instructions, bbench::branches, bbench::branch_misses,
                                           bbench::page_faults>;
@@ -62,6 +65,9 @@ alignas(64) static u32 g_sizes[MAX_COUNT];
 alignas(64) static void *g_ptrs[MAX_COUNT];
 alignas(64) static u64 g_lat[MAX_COUNT];
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Anti-DCE + rdtsc.
+
 [[gnu::always_inline]] inline void
 clobber_p(const void *p) noexcept
 {
@@ -84,6 +90,9 @@ tsc() noexcept
   asm volatile("" ::: "memory");
   return v;
 }
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Output formatting.
 
 struct fmt2 {
   u64 whole;
@@ -234,6 +243,9 @@ print_cell(const cell_stats &c)
   micron::io::println(ln.str());
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Shellsort + percentile pick.
+
 template<typename T>
 inline void
 __shellsort(T *a, u64 n) noexcept
@@ -317,6 +329,7 @@ bench_count(u64 count) noexcept
 
   phase_pair pp{};
 
+  // ---- pass 1A: timing for alloc phase ----
   {
     timing_events tev{ bbench::quiet{} };
     tev.open();
@@ -336,6 +349,7 @@ bench_count(u64 count) noexcept
     __fill_stats(pp.alloc, count, count, "alloc (hold)", br, bm, pgf);
   }
 
+  // ---- pass 1B: timing for bulk free phase ----
   {
     timing_events tev{ bbench::quiet{} };
     tev.open();
@@ -354,6 +368,7 @@ bench_count(u64 count) noexcept
     __fill_stats(pp.free_, count, count, "bulk-free", br, bm, pgf);
   }
 
+  // ---- pass 2A: cache events for alloc phase (untimed) ----
   {
     cache_events cev{ bbench::quiet{} };
     cev.open();
@@ -367,6 +382,7 @@ bench_count(u64 count) noexcept
     pp.alloc.dtlb_miss = static_cast<u64>(cev.get<bbench::dtlb_miss>().retrieve());
   }
 
+  // ---- pass 2B: cache events for bulk free phase (untimed) ----
   {
     cache_events cev{ bbench::quiet{} };
     cev.open();
@@ -421,6 +437,8 @@ sweep_serial_bulk()
 }
 
 };      // namespace
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int
 main(void)
