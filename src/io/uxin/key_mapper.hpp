@@ -77,7 +77,8 @@ __ev_code_to_integral(const u16 c)
   case key_r:
     return 'r';
     break;
-  case key_t:
+    // key_t is a type, avoid spaghetti include conflicts
+  case key_T:
     return 't';
     break;
   case key_y:

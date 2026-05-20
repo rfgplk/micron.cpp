@@ -31,6 +31,14 @@ inline auto
 check_oom(void) -> bool
 {
   if constexpr ( __default_oom_enable ) {
+#if defined(__micron_freestanding)
+    static u32 __oom_budget = 0;
+#else
+    static thread_local u32 __oom_budget = 0;
+#endif
+    if ( ++__oom_budget < __default_oom_check_interval ) [[likely]]
+      return false;
+    __oom_budget = 0;
     micron::resources rs;
     usize total_ram = rs.total_memory;
     usize free_ram = rs.free_memory;

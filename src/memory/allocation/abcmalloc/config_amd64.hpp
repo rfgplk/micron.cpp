@@ -61,7 +61,12 @@ constexpr static const bool __default_launder
 constexpr static const bool __default_lazy_construct = true;        // should buckets be initialized lazily or all at startup
 constexpr static const bool __default_single_instance = true;       // enable an allocator per thread (DEPRECATED for now)
 constexpr static const bool __default_global_instance = false;      // enable a single global allocator (DEPRECATED for now)
+// freestanding builds have no threading runtime
+#if defined(__micron_freestanding)
+constexpr static const bool __default_multithread_safe = false;
+#else
 constexpr static const bool __default_multithread_safe = true;      // essentially, enables locks across API calls
+#endif
 constexpr static const bool __default_eager_hot_tiers
     = true;      // eagerly preallocate precise/small/medium with weight-based shares even if __default_lazy_construct is true
 
@@ -107,17 +112,26 @@ constexpr static const usize __default_overcommit
     = 1;      // overcommit multiplier, multiplies all page req. by this value. MUST BE GREATER THAN ONE AND INTEGRAL.
 
 constexpr static const bool __default_init_large_pages = false;
-constexpr static const bool __default_oom_enable = true;      // NOTE: costs performance
+constexpr static const bool __default_oom_enable = false;      // NOTE: costs performance
 constexpr static const bool __default_borrow_auto = true;
 constexpr static const float __default_oom_limit_warn = 0.1f;
 constexpr static const float __default_oom_limit_error = 0.2f;
+constexpr static const u32 __default_oom_check_interval = 1024;
 
 // enforce provenance forces the allocator to verify if a req. pointer has been allocated within that session. if it
 // hasn't fail out according to __default_fail_result
 constexpr static const bool __default_enforce_provenance = false;
 // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation
 // UNLESS the page on which it resides has been unmapped
-constexpr static const bool __default_tombstone = true;
+//
+// per-tier tombstone policy; empirically pulled from benching, best results on hot reuse
+constexpr static const bool __tombstone_precise = false;
+constexpr static const bool __tombstone_small = false;
+constexpr static const bool __tombstone_medium = false;
+constexpr static const bool __tombstone_large = true;
+constexpr static const bool __tombstone_huge = true;
+constexpr static const bool __default_tombstone
+    = __tombstone_precise || __tombstone_small || __tombstone_medium || __tombstone_large || __tombstone_huge;
 constexpr static const bool __default_insert_guard_pages = true;
 constexpr static const int __default_guard_page_perms = micron::prot_none;
 

@@ -9,6 +9,7 @@
 #include "../concepts.hpp"
 #include "../math/constants.hpp"
 #include "../math/generic.hpp"
+#include "../math/log.hpp"
 #include "../math/sqrt.hpp"
 #include "../math/trig.hpp"
 #include "../memory/actions.hpp"
@@ -116,7 +117,10 @@ template<is_iterable_container T>
 constexpr T &
 log10(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::log10(static_cast<double>(*it));
+  // micron::math has log10f32/log10f64 but no unqualified log10. Use the
+  // identity log10(x) = log(x) / log(10) via the generic log overload.
+  constexpr double ln10 = 2.30258509299404568402;
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::log(static_cast<double>(*it)) / ln10;
   return cont;
 }
 
@@ -140,7 +144,10 @@ template<is_iterable_container T>
 constexpr T &
 absolute(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::abs(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    auto v = *it;
+    *it = v < typename T::value_type{} ? -v : v;
+  }
   return cont;
 }
 
@@ -180,7 +187,10 @@ template<is_iterable_container T>
 constexpr T &
 asinh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::asinh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    double x = static_cast<double>(*it);
+    *it = math::log(x + math::sqrt(x * x + 1.0));
+  }
   return cont;
 }
 
@@ -188,7 +198,10 @@ template<is_iterable_container T>
 constexpr T &
 acosh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::acosh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    double x = static_cast<double>(*it);
+    *it = math::log(x + math::sqrt(x * x - 1.0));
+  }
   return cont;
 }
 
@@ -196,7 +209,10 @@ template<is_iterable_container T>
 constexpr T &
 atanh(T &cont) noexcept
 {
-  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::atanh(static_cast<double>(*it));
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    double x = static_cast<double>(*it);
+    *it = 0.5 * math::log((1.0 + x) / (1.0 - x));
+  }
   return cont;
 }
 

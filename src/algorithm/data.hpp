@@ -102,33 +102,28 @@ template<typename I>
 I
 rotate(I first, I n_first, I last)
 {
-  if ( first == n_first || n_first == last ) return last;
+  if ( first == n_first ) return last;
+  if ( n_first == last ) return first;
 
-  I read = n_first;
-  I write = first;
-
-  while ( write != n_first ) {
-    auto tmp = *write;
-    *write = *read;
-    *read = tmp;
-
-    ++write;
-    ++read;
-    if ( read == last ) read = n_first;
-  }
-
-  I new_first = write;
-
-  while ( read != last ) {
-    auto tmp = *write;
-    *write = *read;
-    *read = tmp;
-
-    ++write;
-    ++read;
-  }
-
-  return new_first;
+  auto rev = [](I a, I b) {
+    while ( a < b ) {
+      --b;
+      if ( !(a < b) ) {
+        auto tmp = *a;
+        *a = *b;
+        *b = tmp;
+        break;
+      }
+      auto tmp = *a;
+      *a = *b;
+      *b = tmp;
+      ++a;
+    }
+  };
+  rev(first, n_first);
+  rev(n_first, last);
+  rev(first, last);
+  return first + (last - n_first);
 }
 
 template<typename I>
@@ -367,8 +362,11 @@ template<is_iterable_container C>
 constexpr void
 sort_heap(C &c) noexcept
 {
+  // Default sort_heap consumes a MAX-heap (built by make_heap default) and
+  // produces ASCENDING output. __sift_down with comp = (a < b) maintains
+  // the max-heap invariant on the shrinking prefix.
   using T = typename C::value_type;
-  auto comp = [](const T &a, const T &b) { return a > b; };      // max
+  auto comp = [](const T &a, const T &b) { return a < b; };
   umax_t n = c.size();
   auto *first = c.begin();
 
@@ -387,7 +385,7 @@ constexpr void
 sort_heap_min(C &c) noexcept
 {
   using T = typename C::value_type;
-  auto comp = [](const T &a, const T &b) { return a < b; };      // min
+  auto comp = [](const T &a, const T &b) { return a > b; };
   umax_t n = c.size();
   auto *first = c.begin();
 

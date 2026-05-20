@@ -8,7 +8,8 @@
 // Reference implementations and generators for property/oracle tests. The
 // references are obviously-correct (linear, no SIMD, no allocator games) so
 // they can serve as the "ground truth" against which micron's containers are
-// diffed. 
+// diffed. STL is forbidden per CLAUDE.md so these are hand-rolled on top of
+// abc_allocator.
 //
 // For tests that stay below kCap, use the fixed-capacity variants — they
 // avoid reallocation entirely and so are simpler to reason about than the

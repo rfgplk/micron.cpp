@@ -59,7 +59,7 @@ template<typename T> struct __core_memory_resource {
   {
     auto addr = reinterpret_cast<uintptr_t>(b.ptr);
     if ( addr % alignof(T) != 0 ) {
-      exc<except::memory_error>("__core_memory_resource, address isn't aligned");
+      exc<except::memory_error_core_unaligned>("__core_memory_resource, address isn't aligned");
     }
     memory = reinterpret_cast<T *>(b.ptr);
     capacity = b.len / sizeof(T);
@@ -96,7 +96,7 @@ template<typename T> struct __core_memory_resource {
   accept(const chunk<byte> &o)
   {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
-    if ( addr % alignof(T) != 0 ) exc<except::memory_error>("__core_memory_resource, address isn't aligned");
+    if ( addr % alignof(T) != 0 ) exc<except::memory_error_core_unaligned>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
@@ -106,7 +106,7 @@ template<typename T> struct __core_memory_resource {
   accept(chunk<byte> &&o)
   {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
-    if ( addr % alignof(T) != 0 ) exc<except::memory_error>("__core_memory_resource, address isn't aligned");
+    if ( addr % alignof(T) != 0 ) exc<except::memory_error_core_unaligned>("__core_memory_resource, address isn't aligned");
 
     memory = reinterpret_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);

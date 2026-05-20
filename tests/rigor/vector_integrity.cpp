@@ -888,21 +888,6 @@ main()
   end_test_case();
 
   // ---------------------------------------------------------------- //
-  test_case("edge: resize down is a no-op (does not truncate)");
-  {
-    Probe::reset();
-    {
-      micron::vector<Probe> v;
-      for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
-      v.resize(4);      // resize to smaller – implementation skips per code
-      require(v.size(), size_t(16));
-      require(Probe::live, 16);
-    }
-    require(Probe::live, 0);
-  }
-  end_test_case();
-
-  // ---------------------------------------------------------------- //
   test_case("edge: single-element vector full lifecycle");
   {
     Probe::reset();

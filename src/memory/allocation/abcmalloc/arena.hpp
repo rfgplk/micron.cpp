@@ -37,6 +37,7 @@
 #include "config.hpp"
 #include "harden.hpp"
 #include "hooks.hpp"
+#include "mpsc_free.hpp"
 #include "oom.hpp"
 #include "stats.hpp"
 #include "tcache.hpp"
@@ -103,6 +104,22 @@ __prealloc_share(u64 total)
   }
 }
 
+template<u64 Sz>
+consteval bool
+tomb_for(void) noexcept
+{
+  if constexpr ( Sz <= __class_precise )
+    return __tombstone_precise;
+  else if constexpr ( Sz <= __class_small )
+    return __tombstone_small;
+  else if constexpr ( Sz <= __class_medium )
+    return __tombstone_medium;
+  else if constexpr ( Sz <= __class_large )
+    return __tombstone_large;
+  else
+    return __tombstone_huge;
+}
+
 static inline __attribute__((always_inline)) usize
 __page_round(usize sz)
 {
@@ -142,11 +159,13 @@ class __arena: private cache
     node<T> *nxt;
   };
 
-  template<typename sheet_type, u32 MaxSheets = 64, u32 CacheSlots = 0> struct alignas(64) __tier {
+  template<typename sheet_type, u32 MaxSheets = 64, u32 CacheSlots = 0, typename Cache = __tier_tcache<CacheSlots>>
+  struct alignas(64) __tier {
+    using sheet_t = sheet_type;
     static constexpr u32 __max_sheets = MaxSheets;
     static constexpr u32 __no_hit = __max_sheets;
     static constexpr u32 __detail_words = (MaxSheets + 63) / 64;
-    static constexpr u32 __cache_slots = CacheSlots;
+    static constexpr u32 __cache_slots = Cache::__cache_slots;
 
     static_assert(MaxSheets > 0, "__tier MaxSheets must be > 0");
 
@@ -159,15 +178,15 @@ class __arena: private cache
     node<sheet_type> head;
     node<sheet_type> *tail;
 
+    // alloc-hot block
     __range __idx[__max_sheets];
     u32 __count;
     u64 __space_mask[__detail_words];      // bit pos set iff __idx[pos] has space
     u32 __last_hit;
-    u32 __dealloc_count;
 
-    // linear-scan LIFO per class tcache
-    // newest-first probe: round-trip patterns find the just-pushed entry on iter 1 and the [[likely]] hint keeps branch-miss rate at ~0%
-    __tier_tcache<CacheSlots> __cache;
+    alignas(64) u32 __dealloc_count;
+
+    Cache __cache;
 
     // multi-word bitmap helpers
     inline __attribute__((always_inline)) bool
@@ -388,7 +407,7 @@ class __arena: private cache
   alloc_predictor __predict;
   sheet<__class_arena_internal> _arena_memory;
 
-  // tlsf-backed tiers (precise + small)
+  // tlsf-backed tiers; they use the linear-scan LIFO __tier_tcache
   __tier<tlsf_sheet<__class_precise>, __max_sheets_precise, __cache_slots_precise> _precise;
   __tier<tlsf_sheet<__class_small>, __max_sheets_small, __cache_slots_small> _small;
 
@@ -397,6 +416,11 @@ class __arena: private cache
   __tier<sheet<__class_medium>, __max_sheets_medium, __cache_slots_medium> _medium;
   __tier<sheet<__class_large>, __max_sheets_large, __cache_slots_large> _large;
   __tier<sheet<__class_huge>, __max_sheets_huge, __cache_slots_huge> _huge;
+
+  // 64 slots * 64 B  = ~4 KiB per arena
+  __mpsc_free_queue<64> __remote_free;
+
+  micron::atomic_flag __struct_mtx{};
 
   void
   __reload_arena_buf(void)
@@ -450,9 +474,9 @@ class __arena: private cache
     if constexpr ( __default_guard_arena_metadata ) {
       __debug_print("__init_arena_tier(): inserting guard page for arena tier", 0);
       auto chnk = __get_guarded_kernel_chunk(n);
-      _arena_tier.head.nd = new (buf.ptr) sheet<__class_arena_internal>(chnk, __system_pagesize);
+      _arena_tier.head.nd = new (buf.ptr) sheet<__class_arena_internal>(this, chnk, __system_pagesize);
     } else {
-      _arena_tier.head.nd = new (buf.ptr) sheet<__class_arena_internal>(__get_kernel_chunk<micron::__chunk<byte>>(n));
+      _arena_tier.head.nd = new (buf.ptr) sheet<__class_arena_internal>(this, __get_kernel_chunk<micron::__chunk<byte>>(n));
     }
     _arena_tier.head.prev = nullptr;
     _arena_tier.head.nxt = nullptr;
@@ -468,6 +492,7 @@ class __arena: private cache
   void
   __expand_arena_tier(usize sz)
   {
+    auto __g = __struct_guard();
     __debug_print("__expand_arena_tier(): requested expansion size: ", sz);
     using Nd = node<sheet<__class_arena_internal>>;
     using Sh = sheet<__class_arena_internal>;
@@ -484,14 +509,14 @@ class __arena: private cache
     if constexpr ( __default_guard_arena_metadata ) {
       __debug_print("__expand_arena_tier(): inserting guard page for arena tier expansion", 0);
       auto chnk = __get_guarded_kernel_chunk(sz);
-      nd->nd = new (p) Sh(chnk, __system_pagesize);
+      nd->nd = new (p) Sh(this, chnk, __system_pagesize);
     } else {
       auto chnk = __get_kernel_chunk<micron::__chunk<byte>>(sz);
       if ( !__kernel_chunk_valid(chnk) ) [[unlikely]] {
         __debug_print("__expand_arena_tier()!!!: mmap failed for arena tier expansion, req: ", sz);
         abort_state();
       }
-      nd->nd = new (p) Sh(chnk);
+      nd->nd = new (p) Sh(this, chnk);
     }
     if ( nd->nd->empty() ) [[unlikely]] {
       __debug_print("__expand_arena_tier()!!!: sheet construction failed, kernel chunk invalid", 0);
@@ -506,9 +531,9 @@ class __arena: private cache
     __debug_print("__expand_arena_tier(): new arena node allocated, size: ", sz);
   }
 
-  template<u64 Sz, u32 MS, u32 CS>
+  template<u64 Sz, typename TierT>
   void
-  __init_tlsf(__tier<tlsf_sheet<Sz>, MS, CS> &tier, usize n)
+  __init_tlsf(TierT &tier, usize n)
   {
     if ( n == __default_magic_size ) n = __calculate_space_small(Sz);
     n = __page_round(n);
@@ -519,7 +544,7 @@ class __arena: private cache
       __debug_print("__init_tlsf()!!!: no arena metadata for tlsf header, class: ", Sz);
       abort_state();
     }
-    tier.head.nd = new (buf.ptr) tlsf_sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(n));
+    tier.head.nd = new (buf.ptr) tlsf_sheet<Sz>(this, __get_kernel_chunk<micron::__chunk<byte>>(n));
     tier.head.prev = nullptr;
     tier.head.nxt = nullptr;
     tier.tail = &tier.head;
@@ -531,10 +556,11 @@ class __arena: private cache
     __debug_print("__init_tlsf(): initialised successfully for class: ", Sz);
   }
 
-  template<u64 Sz, u32 MS, u32 CS>
+  template<u64 Sz, typename TierT>
   inline __attribute__((always_inline)) bool
-  __expand_tlsf(__tier<tlsf_sheet<Sz>, MS, CS> &tier, usize sz)
+  __expand_tlsf(TierT &tier, usize sz)
   {
+    auto __g = __struct_guard();
     __debug_print("__expand_tlsf(): class size: ", Sz);
     __debug_print("__expand_tlsf(): requested backing region: ", sz);
     using Nd = node<tlsf_sheet<Sz>>;
@@ -552,7 +578,7 @@ class __arena: private cache
     }
     auto *nd = new (p) Nd();
     p += sizeof(Nd);
-    nd->nd = new (p) Sh(chnk);
+    nd->nd = new (p) Sh(this, chnk);
     if ( nd->nd->empty() ) [[unlikely]] {
       __debug_print("__expand_tlsf(): sheet construction failed, class: ", Sz);
       nd->nd->release();
@@ -573,9 +599,9 @@ class __arena: private cache
     return true;
   }
 
-  template<u64 Sz, u32 MS, u32 CS>
+  template<u64 Sz, typename TierT>
   void
-  __init_buddy(__tier<sheet<Sz>, MS, CS> &tier, usize n = __default_magic_size)
+  __init_buddy(TierT &tier, usize n = __default_magic_size)
   {
     if ( n == __default_magic_size ) {
       // pick the tier's own curve when the caller can't supply a sysinfo-derived share
@@ -595,7 +621,7 @@ class __arena: private cache
       __debug_print("__init_buddy()!!!: no arena metadata for buddy header, class: ", Sz);
       abort_state();
     }
-    tier.head.nd = new (buf.ptr) sheet<Sz>(__get_kernel_chunk<micron::__chunk<byte>>(n));
+    tier.head.nd = new (buf.ptr) sheet<Sz>(this, __get_kernel_chunk<micron::__chunk<byte>>(n));
     tier.head.prev = nullptr;
     tier.head.nxt = nullptr;
     tier.tail = &tier.head;
@@ -607,10 +633,11 @@ class __arena: private cache
     __debug_print("__init_buddy(): initialised successfully for class: ", Sz);
   }
 
-  template<u64 Sz, u32 MS, u32 CS>
+  template<u64 Sz, typename TierT>
   inline __attribute__((always_inline)) bool
-  __expand_buddy(__tier<sheet<Sz>, MS, CS> &tier, usize sz)
+  __expand_buddy(TierT &tier, usize sz)
   {
+    auto __g = __struct_guard();
     __debug_print("__expand_buddy(): class size: ", Sz);
     __debug_print("__expand_buddy(): requested expansion size: ", sz);
     using Nd = node<sheet<Sz>>;
@@ -641,9 +668,9 @@ class __arena: private cache
     auto *nd = new (p) Nd();
     p += sizeof(Nd);
     if constexpr ( __default_insert_guard_pages ) {
-      nd->nd = new (p) Sh(chnk, __system_pagesize);
+      nd->nd = new (p) Sh(this, chnk, __system_pagesize);
     } else {
-      nd->nd = new (p) Sh(chnk);
+      nd->nd = new (p) Sh(this, chnk);
     }
     if ( nd->nd->empty() ) [[unlikely]] {
       __debug_print("__expand_buddy(): sheet construction failed (empty), class: ", Sz);
@@ -910,10 +937,12 @@ class __arena: private cache
     return false;
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
+  template<typename TierT>
   void
-  __sweep_tier_tombstones(__tier<sheet_type, MS, CS> &tier)
+  __sweep_tier_tombstones(TierT &tier)
   {
+    using sheet_t = typename TierT::sheet_t;
+    auto __g = __struct_guard();
     __debug_print("__sweep_tier_tombstones(): sweeping tier, sheet count: ", tier.__count);
     tier.__dealloc_count = 0;
     for ( i32 i = static_cast<i32>(tier.__count) - 1; i >= 0; --i ) {
@@ -930,27 +959,29 @@ class __arena: private cache
         sh.reset();
         tier.unlink_node(nd);
         tier.unregister(static_cast<u32>(i));
-        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_type>) + sizeof(sheet_type));
+        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
       }
     }
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
+  template<typename TierT>
   inline __attribute__((always_inline)) void
-  __try_reclaim_empty(__tier<sheet_type, MS, CS> &tier, i32 range_idx, node<sheet_type> *nd)
+  __try_reclaim_empty(TierT &tier, i32 range_idx, node<typename TierT::sheet_t> *nd)
   {
+    using sheet_t = typename TierT::sheet_t;
     if ( nd->nd->used() == 0 and nd != &tier.head ) {
+      auto __g = __struct_guard();
       __debug_print("__try_reclaim_empty(): sheet fully drained, unlinking and resetting", 0);
       nd->nd->reset();
       tier.unlink_node(nd);
       tier.unregister(range_idx);
-      __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_type>) + sizeof(sheet_type));
+      __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
     }
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
+  template<typename TierT>
   inline __attribute__((always_inline)) void
-  __tombstone_accounting(__tier<sheet_type, MS, CS> &tier, i32 range_idx, node<sheet_type> *nd)
+  __tombstone_accounting(TierT &tier, i32 range_idx, node<typename TierT::sheet_t> *nd)
   {
     if constexpr ( __default_tombstone_sweep_interval == 0 ) {
       auto &sh = *nd->nd;
@@ -963,7 +994,7 @@ class __arena: private cache
         sh.reset();
         tier.unlink_node(nd);
         tier.unregister(range_idx);
-        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_type>) + sizeof(sheet_type));
+        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
       }
     } else {
       // immediate reclaim: if this specific sheet is fully drained (used == 0)
@@ -981,7 +1012,7 @@ class __arena: private cache
           nd->nd->reset();
           tier.unlink_node(nd);
           tier.unregister(range_idx);
-          __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_type>) + sizeof(sheet_type));
+          __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
           return;
         }
       }
@@ -989,101 +1020,96 @@ class __arena: private cache
     }
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
-  bool
-  __tier_remove(__tier<sheet_type, MS, CS> &tier, i32 range_idx, const micron::__chunk<byte> &memory)
+  // unified __tier_remove
+  template<bool HasSize, bool ForceTombstone, typename TierT>
+  inline bool
+  __tier_remove_impl(TierT &tier, i32 range_idx, byte *addr, const micron::__chunk<byte> &memory)
   {
     auto *nd = tier.__idx[range_idx].nd;
     auto &sh = *nd->nd;
-    __debug_print_addr("__tier_remove(): found in sheet at addr: ", memory.ptr);
+    __debug_print_addr("__tier_remove_impl(): found in sheet at addr: ", addr);
 
-    if constexpr ( !__default_tombstone ) {
-      if ( sh.try_unmark(memory) ) {
-        tier.mark_available(range_idx);
-        __debug_print("__tier_remove(): unmark succeeded, sheet used: ", sh.used());
-        __try_reclaim_empty(tier, range_idx, nd);
-        return true;
-      }
-      __debug_print_addr("__tier_remove(): try_unmark failed (possible double free): ", memory.ptr);
-      return handle_double_free(memory.ptr);
+    if constexpr ( ForceTombstone ) {
+      if constexpr ( HasSize )
+        sh.try_tombstone(memory);
+      else
+        sh.try_tombstone_no_size(addr);
+      tier.mark_available(range_idx);
+      __debug_print("__tier_remove_impl(): force tombstone set", 0);
+      __tombstone_accounting(tier, range_idx, nd);
+      return true;
     } else {
-      if ( sh.try_tombstone(memory) ) {
-        tier.mark_available(range_idx);
-        __debug_print("__tier_remove(): tombstone set", 0);
-        __tombstone_accounting(tier, range_idx, nd);
-        return true;
-      }
-      __debug_print_addr("__tier_remove(): try_tombstone failed (possible double free): ", memory.ptr);
-      return handle_double_free(memory.ptr);
-    }
-  }
-
-  template<typename sheet_type, u32 MS, u32 CS>
-  bool
-  __tier_remove_at(__tier<sheet_type, MS, CS> &tier, i32 range_idx, byte *addr)
-  {
-    auto *nd = tier.__idx[range_idx].nd;
-    auto &sh = *nd->nd;
-    __debug_print_addr("__tier_remove_at(): found in sheet at addr: ", addr);
-
-    // sizeless cache-push
-    if constexpr ( __default_per_class_free_cache && CS > 0 && !__default_launder && !__default_redzone ) {
-      const usize bsz = sh.block_size_of(addr);
-      if ( bsz > __hdr_offset ) {
-        if ( tier.__cache.push(addr, static_cast<u32>(bsz - __hdr_offset)) ) [[likely]]
+      // hot tiers default to unmark+reclaim
+      // cold tiers default to tombstoning
+      using sheet_t = typename TierT::sheet_t;
+      constexpr bool tomb = tomb_for<sheet_t::__size_class>();
+      bool ok;
+      if constexpr ( !tomb ) {
+        if constexpr ( HasSize )
+          ok = sh.try_unmark(memory);
+        else
+          ok = sh.try_unmark_no_size(addr);
+        if ( ok ) {
+          tier.mark_available(range_idx);
+          __debug_print("__tier_remove_impl(): unmark succeeded, sheet used: ", sh.used());
+          __try_reclaim_empty(tier, range_idx, nd);
           return true;
+        }
+      } else {
+        if constexpr ( HasSize )
+          ok = sh.try_tombstone(memory);
+        else
+          ok = sh.try_tombstone_no_size(addr);
+        if ( ok ) {
+          tier.mark_available(range_idx);
+          __debug_print("__tier_remove_impl(): tombstone set", 0);
+          __tombstone_accounting(tier, range_idx, nd);
+          return true;
+        }
       }
-    }
-
-    if constexpr ( !__default_tombstone ) {
-      if ( sh.try_unmark_no_size(addr) ) {
-        tier.mark_available(range_idx);
-        __debug_print("__tier_remove_at(): unmark succeeded, sheet used: ", sh.used());
-        __try_reclaim_empty(tier, range_idx, nd);
-        return true;
-      }
-      __debug_print_addr("__tier_remove_at(): try_unmark_no_size failed (possible double free): ", addr);
-      return handle_double_free(addr);
-    } else {
-      if ( sh.try_tombstone_no_size(addr) ) {
-        tier.mark_available(range_idx);
-        __debug_print("__tier_remove_at(): tombstone set", 0);
-        __tombstone_accounting(tier, range_idx, nd);
-        return true;
-      }
-      __debug_print_addr("__tier_remove_at(): try_tombstone_no_size failed (possible double free): ", addr);
+      __debug_print_addr("__tier_remove_impl(): try failed (possible double free): ", addr);
       return handle_double_free(addr);
     }
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
-  bool
-  __tier_tombstone_at(__tier<sheet_type, MS, CS> &tier, i32 range_idx, byte *addr)
+  template<typename TierT>
+  inline bool
+  __tier_remove(TierT &tier, i32 range_idx, const micron::__chunk<byte> &memory)
   {
-    auto *nd = tier.__idx[range_idx].nd;
-    auto &sh = *nd->nd;
-    __debug_print_addr("__tier_tombstone_at(): found in sheet at addr: ", addr);
-
-    sh.try_tombstone_no_size(addr);
-    tier.mark_available(range_idx);
-    __debug_print("__tier_tombstone_at(): tombstone set", 0);
-    __tombstone_accounting(tier, range_idx, nd);
-    return true;
+    return __tier_remove_impl<true, false>(tier, range_idx, memory.ptr, memory);
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
-  bool
-  __tier_tombstone(__tier<sheet_type, MS, CS> &tier, i32 range_idx, const micron::__chunk<byte> &memory)
+  template<typename TierT>
+  inline bool
+  __tier_remove_at(TierT &tier, i32 range_idx, byte *addr)
   {
-    auto *nd = tier.__idx[range_idx].nd;
-    auto &sh = *nd->nd;
-    __debug_print_addr("__tier_tombstone(): found in sheet at addr: ", memory.ptr);
+    // sizeless cache-push fast path
+    if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder && !__default_redzone ) {
+      auto *nd = tier.__idx[range_idx].nd;
+      auto &sh = *nd->nd;
+      if ( !sh.is_temporal_block(addr) ) {
+        const usize bsz = sh.block_size_of(addr);
+        if ( bsz > __hdr_offset ) {
+          if ( tier.__cache.push(addr, static_cast<u32>(bsz - __hdr_offset)) ) [[likely]]
+            return true;
+        }
+      }
+    }
+    return __tier_remove_impl<false, false>(tier, range_idx, addr, {});
+  }
 
-    sh.try_tombstone(memory);
-    tier.mark_available(range_idx);
-    __debug_print("__tier_tombstone(): tombstone set", 0);
-    __tombstone_accounting(tier, range_idx, nd);
-    return true;
+  template<typename TierT>
+  inline bool
+  __tier_tombstone(TierT &tier, i32 range_idx, const micron::__chunk<byte> &memory)
+  {
+    return __tier_remove_impl<true, true>(tier, range_idx, memory.ptr, memory);
+  }
+
+  template<typename TierT>
+  inline bool
+  __tier_tombstone_at(TierT &tier, i32 range_idx, byte *addr)
+  {
+    return __tier_remove_impl<false, true>(tier, range_idx, addr, {});
   }
 
   template<typename TierT>
@@ -1124,10 +1150,16 @@ class __arena: private cache
       __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
       return false;
     }
-    bool ok = __dispatch_addr(reinterpret_cast<addr_t *>(m.ptr), [&](auto &tier, i32 idx) { return __cache_push_or_remove(tier, idx, m); });
-    if ( !ok ) [[unlikely]]
-      __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
-    return ok;
+    addr_t *p = reinterpret_cast<addr_t *>(m.ptr);
+    i32 idx;
+    if ( (idx = _precise.find_range(p)) >= 0 ) [[likely]]
+      return __cache_push_or_remove(_precise, idx, m);
+    if ( (idx = _small.find_range(p)) >= 0 ) return __cache_push_or_remove(_small, idx, m);
+    if ( (idx = _medium.find_range(p)) >= 0 ) return __cache_push_or_remove(_medium, idx, m);
+    if ( (idx = _large.find_range(p)) >= 0 ) return __cache_push_or_remove(_large, idx, m);
+    if ( (idx = _huge.find_range(p)) >= 0 ) return __cache_push_or_remove(_huge, idx, m);
+    __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
+    return false;
   }
 
   bool
@@ -1155,10 +1187,16 @@ class __arena: private cache
       __debug_print_addr("__vmap_remove_at(): WARNING address not found in any tier: ", addr);
       return false;
     }
-    bool ok = __dispatch_addr(reinterpret_cast<addr_t *>(addr), [&](auto &tier, i32 idx) { return __tier_remove_at(tier, idx, addr); });
-    if ( !ok ) [[unlikely]]
-      __debug_print_addr("__vmap_remove_at(): WARNING address not found in any tier: ", addr);
-    return ok;
+    addr_t *p = reinterpret_cast<addr_t *>(addr);
+    i32 idx;
+    if ( (idx = _precise.find_range(p)) >= 0 ) [[likely]]
+      return __tier_remove_at(_precise, idx, addr);
+    if ( (idx = _small.find_range(p)) >= 0 ) return __tier_remove_at(_small, idx, addr);
+    if ( (idx = _medium.find_range(p)) >= 0 ) return __tier_remove_at(_medium, idx, addr);
+    if ( (idx = _large.find_range(p)) >= 0 ) return __tier_remove_at(_large, idx, addr);
+    if ( (idx = _huge.find_range(p)) >= 0 ) return __tier_remove_at(_huge, idx, addr);
+    __debug_print_addr("__vmap_remove_at(): WARNING address not found in any tier: ", addr);
+    return false;
   }
 
   bool
@@ -1208,7 +1246,6 @@ class __arena: private cache
   bool
   __vmap_locate_at(addr_t *addr) const
   {
-    if constexpr ( !__default_tombstone ) return false;
     if constexpr ( __default_redzone ) {
       i32 idx;
       // NOTE: for TLSF adjust pointer before calling find
@@ -1227,6 +1264,7 @@ class __arena: private cache
   bool
   __vmap_freeze(const micron::__chunk<byte> &memory)
   {
+    auto __g = __struct_guard();
     return __dispatch_addr(reinterpret_cast<addr_t *>(memory.ptr), [&](auto &tier, i32 idx) {
       __debug_print_addr("__vmap_freeze(): freezing sheet containing addr: ", memory.ptr);
       // drop any cached blocks belonging to this sheet
@@ -1240,6 +1278,7 @@ class __arena: private cache
   bool
   __vmap_freeze_at(byte *addr)
   {
+    auto __g = __struct_guard();
     return __dispatch_addr(reinterpret_cast<addr_t *>(addr), [&](auto &tier, i32 idx) {
       __debug_print_addr("__vmap_freeze_at(): freezing sheet containing: ", addr);
       tier.__cache.invalidate_range(reinterpret_cast<const byte *>(tier.__idx[idx].lo), reinterpret_cast<const byte *>(tier.__idx[idx].hi));
@@ -1249,9 +1288,9 @@ class __arena: private cache
     });
   }
 
-  template<typename sheet_type, u32 MS, u32 CS>
+  template<typename TierT>
   void
-  __release_tier(__tier<sheet_type, MS, CS> &tier)
+  __release_tier(TierT &tier)
   {
     auto *nd = &tier.head;
     while ( nd != nullptr ) {
@@ -1261,6 +1300,77 @@ class __arena: private cache
   }
 
 public:
+  // MPSC multithreading code
+  // the if constexprs will allow the compiler to instantly eliminate this for st workloads
+  [[gnu::always_inline]] inline bool
+  __remote_push(byte *p, usize sz) noexcept
+  {
+    if constexpr ( !__default_multithread_safe ) {
+      (void)p;
+      (void)sz;
+      return true;
+    } else {
+      return __remote_free.push(p, sz);
+    }
+  }
+
+  [[gnu::noinline]] u32
+  __remote_drain(void) noexcept
+  {
+    if constexpr ( !__default_multithread_safe ) {
+      return 0;
+    } else {
+      return __remote_free.drain([this](byte *p, usize sz) {
+        if ( sz ) {
+          (void)this->__vmap_remove({ p, sz });
+        } else {
+          (void)this->__vmap_remove_at(p);
+        }
+      });
+    }
+  }
+
+  [[gnu::always_inline]] inline void
+  __maybe_drain(void) noexcept
+  {
+    if constexpr ( !__default_multithread_safe ) return;
+    if ( __remote_free.maybe_nonempty() ) [[unlikely]]
+      (void)__remote_drain();
+  }
+
+  class __struct_guard_t
+  {
+    micron::atomic_flag *_flag;
+
+  public:
+    [[gnu::always_inline]] explicit __struct_guard_t(micron::atomic_flag *f) noexcept : _flag(f)
+    {
+      if constexpr ( __default_multithread_safe ) {
+        while ( _flag->test_and_set(micron::memory_order::acquire) ) __cpu_pause();
+      } else {
+        (void)f;
+      }
+    }
+
+    [[gnu::always_inline]] ~__struct_guard_t() noexcept
+    {
+      if constexpr ( __default_multithread_safe ) {
+        _flag->clear(micron::memory_order::release);
+      }
+    }
+
+    __struct_guard_t(const __struct_guard_t &) = delete;
+    __struct_guard_t(__struct_guard_t &&) = delete;
+    __struct_guard_t &operator=(const __struct_guard_t &) = delete;
+    __struct_guard_t &operator=(__struct_guard_t &&) = delete;
+  };
+
+  [[gnu::always_inline]] inline __struct_guard_t
+  __struct_guard(void) noexcept
+  {
+    return __struct_guard_t{ &__struct_mtx };
+  }
+
   ~__arena(void)
   {
     // WARNING: this destructor is meant to trigger iff you seek to recycle the entire memory arena, .ie you're looking
@@ -1285,7 +1395,8 @@ public:
   }
 
   __arena(void)
-      : _arena_memory(__default_guard_arena_metadata
+      : _arena_memory(this,
+                      __default_guard_arena_metadata
                           ? __get_guarded_kernel_chunk(__default_arena_page_buf * __system_pagesize)
                           : __get_kernel_chunk<micron::__chunk<byte>>(__default_arena_page_buf * __system_pagesize),
                       __default_guard_arena_metadata ? __system_pagesize : static_cast<usize>(0))
@@ -1360,7 +1471,10 @@ public:
 
     micron::__chunk<byte> memory;
 
-    for ( u64 i = 0; i < __default_max_retries; ++i ) {
+    // __default_max_retries + 1 not __default_max_retries
+    // if __default_max_retries is == 0 or 1 this meant that this loop either never fired or did not reattempt to populate memory after the
+    // first sheet expansion
+    for ( u64 i = 0; i <= __default_max_retries; ++i ) {
       if ( memory = __vmap_alloc(alloc_sz); !memory.zero() ) [[likely]] {
         if ( rz_active ) __rz_apply(memory, sz);
         __debug_print("push(): allocated bytes: ", memory.len);
@@ -1369,6 +1483,7 @@ public:
         collect_stats<stat_type::total_memory_throughput>(memory.len);
         return memory;
       }
+      if ( i == __default_max_retries ) break;
 
       __debug_print("push(): alloc failed, retry: ", i);
       __debug_print("push(): expanding for alloc_sz: ", alloc_sz);
@@ -1467,7 +1582,8 @@ public:
     bool rz_active = (alloc_sz != sz);
 
     micron::__chunk<byte> memory;
-    for ( u64 i = 0; i < __default_max_retries; ++i ) {
+
+    for ( u64 i = 0; i <= __default_max_retries; ++i ) {
       if ( memory = __vmap_launder(alloc_sz); !memory.zero() ) {
         if ( rz_active ) __rz_apply(memory, sz);
         __debug_print("launder(): allocated bytes: ", memory.len);
@@ -1476,6 +1592,8 @@ public:
         collect_stats<stat_type::total_memory_throughput>(memory.len);
         return memory;
       }
+      if ( i == __default_max_retries ) break;
+
       __debug_print("launder(): launder failed, retry: ", i);
       bool expanded = false;
       if ( alloc_sz < __class_medium ) {
@@ -1756,6 +1874,7 @@ public:
   void
   reset_page(byte *ptr)
   {
+    auto __g = __struct_guard();
     __debug_print_addr("reset_page(): resetting sheet containing: ", ptr);
     // binary search each tier for the sheet whose range covers the address
     addr_t *addr = reinterpret_cast<addr_t *>(ptr);
@@ -1779,6 +1898,31 @@ public:
   __available_buffer(void) const
   {
     return _arena_memory.available();
+  }
+
+  byte *
+  resize(byte *ptr, usize new_sz)
+  {
+    const usize old_size = __size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+    if ( old_size == 0 ) [[unlikely]]
+      return nullptr;
+    // in-place reuse
+    if ( old_size >= new_sz and new_sz > (old_size >> 1) ) return ptr;
+
+    micron::__chunk<byte> fresh = push(new_sz);
+    if ( __is_sentinel_chunk(fresh) ) [[unlikely]]
+      return nullptr;
+
+    const usize copy_size = (old_size < new_sz) ? old_size : new_sz;
+    micron::memcpy(fresh.ptr, ptr, copy_size);
+    (void)pop(ptr);
+    return fresh.ptr;
+  }
+
+  static inline bool
+  __is_sentinel_chunk(const micron::__chunk<byte> &c) noexcept
+  {
+    return c.ptr == (byte *)-1 or c.ptr == nullptr;
   }
 
   usize

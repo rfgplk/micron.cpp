@@ -20,6 +20,10 @@
 #include "../../src/except.hpp"
 #include "../../src/exit.hpp"
 
+#if defined(__micron_arch_arm32)
+#include "../../src/linux/sys/time.hpp"
+#endif
+
 namespace snowball
 {
 using string_type = micron::string;
@@ -937,9 +941,10 @@ __cycle_counter() noexcept
   asm volatile("mrs %0, cntvct_el0" : "=r"(v));
   return v;
 #elif defined(__micron_arch_arm32)
-  u32 lo, hi;
-  asm volatile("mrrc p15, 1, %0, %1, c14" : "=r"(lo), "=r"(hi));
-  return (u64(hi) << 32) | u64(lo);
+  // CNTVCT is PL0-gated on arm32 (CNTKCTL.PL0VCTEN), use clock_gettime instead
+  micron::timespec_t ts{};
+  micron::clock_gettime(micron::clock_monotonic, ts);
+  return (static_cast<u64>(ts.tv_sec) * 1000000000ULL) + static_cast<u64>(ts.tv_nsec);
 #else
   return 0;
 #endif

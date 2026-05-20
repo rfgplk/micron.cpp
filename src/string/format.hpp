@@ -2951,6 +2951,24 @@ template<> struct formatter<f64> {
   }
 };
 
+#if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L && defined(__micron_arch_amd64)
+template<> struct formatter<double> {
+  static inline usize
+  write(char *buf, usize buf_sz, double val, const __impl::fmt_spec &spec)
+  {
+    return formatter<f64>::write(buf, buf_sz, static_cast<f64>(val), spec);
+  }
+};
+
+template<> struct formatter<float> {
+  static inline usize
+  write(char *buf, usize buf_sz, float val, const __impl::fmt_spec &spec)
+  {
+    return formatter<f32>::write(buf, buf_sz, static_cast<f32>(val), spec);
+  }
+};
+#endif
+
 template<> struct formatter<bool> {
   static inline usize
   write(char *buf, usize buf_sz, bool val, const __impl::fmt_spec &)

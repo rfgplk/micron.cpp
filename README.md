@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-0.9.7.0-green)
+![Version](https://img.shields.io/badge/version-1.0.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -125,6 +125,11 @@ All headers live under `src/` and may be included directly. Each top-level modul
 - **`sort/`** -- sorting algorithms (quick, merge, heap, radix, bitonic, comb, counting, insertion, bubble, stable, selection)
 - **`algorithm/`** -- generic container algorithms (`find`, `filter`, `fold`, `accumulate`, arithmetic, data, unroll) plus a functional-programming variant suite (`fp*`)
 - **`simd/`** -- SIMD primitives, intrinsics, dispatch and per-architecture backends (`amd64`, `arm32`, `arm64`) for 128/256/512-bit registers and NEON
+
+###### Graphics and GPU
+- **`gfx/`** -- fundamental graphics layer
+- **`gfx/gl`** -- openGL graphics stack
+- **`gfx/vk`** -- Vulkan graphics stack
 
 ###### Memory
 - **`memory/`** -- allocation, addressing, lifetime, and pointer machinery; the home of micron's memory stack

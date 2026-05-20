@@ -4,6 +4,14 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+// Exercises Fix #2: src/sync/latch.hpp barrier read `gen` then `--count`
+// non-atomically, leaving a race where a full generation could complete
+// between the two reads, causing the arriver to miss the wait and corrupt
+// the next generation's count. The fix packs (gen, count) into one 64-bit
+// atomic advanced via CAS. The multi-generation stress test below would
+// hang or miscount under the broken implementation; post-fix it completes
+// cleanly with counter == threads * generations.
+
 #include "../../src/sync/latch.hpp"
 
 #include "../../src/atomic/atomic.hpp"
@@ -77,7 +85,7 @@ main(void)
   }
   end_test_case();
 
-  test_case("4-thread x 50-generation multi-cycle correctness");
+  test_case("4-thread x 50-generation multi-cycle correctness (FIX #2)");
   {
     barrier b(4);
     atomic_token<int> ctr(0);
@@ -94,7 +102,7 @@ main(void)
   }
   end_test_case();
 
-  test_case("8-thread x 200-generation tight loop — sole stress test");
+  test_case("8-thread x 200-generation tight loop — sole stress test for the bug fix");
   {
     barrier b(8);
     atomic_token<int> ctr(0);
@@ -124,7 +132,7 @@ main(void)
     b.arrive_and_drop();
     require(b.expected() == 1);
     b.arrive_and_drop();
-
+    // last drop should bump generation and reset count
     require(b.expected() == 3);
   }
   end_test_case();

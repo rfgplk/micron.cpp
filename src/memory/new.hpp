@@ -43,7 +43,7 @@ operator new(usize size)
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
   }
-  micron::exc<micron::except::memory_error>("micron::operator new(): micron::__alloc failed");
+  micron::exc<micron::except::memory_error_new_scalar>("micron::operator new(): micron::__alloc failed");
 }
 
 [[nodiscard]] void *
@@ -54,7 +54,7 @@ operator new[](usize size)
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
   }
-  micron::exc<micron::except::memory_error>("micron::operator new[](): micron::__alloc failed");
+  micron::exc<micron::except::memory_error_new_array>("micron::operator new[](): micron::__alloc failed");
 }
 
 void
@@ -121,7 +121,7 @@ operator new(usize size, std::align_val_t al)
 {
   ALLOC_MESSAGE("new(", size, ", align=", static_cast<usize>(al), ")");
   if ( void *ptr = micron::__aligned_new::__do_alloc(size, static_cast<usize>(al)) ) return ptr;
-  micron::exc<micron::except::memory_error>("micron::operator new(align): aligned_alloc failed");
+  micron::exc<micron::except::memory_error_new_scalar_aligned>("micron::operator new(align): aligned_alloc failed");
 }
 
 [[nodiscard]] void *
@@ -129,7 +129,7 @@ operator new[](usize size, std::align_val_t al)
 {
   ALLOC_MESSAGE("new[](", size, ", align=", static_cast<usize>(al), ")");
   if ( void *ptr = micron::__aligned_new::__do_alloc(size, static_cast<usize>(al)) ) return ptr;
-  micron::exc<micron::except::memory_error>("micron::operator new[](align): aligned_alloc failed");
+  micron::exc<micron::except::memory_error_new_array_aligned>("micron::operator new[](align): aligned_alloc failed");
 }
 
 void

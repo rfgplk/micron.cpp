@@ -3,6 +3,8 @@
 #include "simd.hpp"
 #include "types.hpp"
 
+#include "bitwise.hpp"
+
 namespace micron
 {
 namespace simd
@@ -28,6 +30,18 @@ sse_strlen(const char *str)
     }
     p += 16;
   }
+}
+
+template<typename T>
+[[gnu::always_inline]] static inline usize
+__simd_find_byte(const T *p, usize len, T ch) noexcept
+{
+  if ( len == 0 ) return len;
+#if defined(__micron_x86_avx2)
+  return micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
+#else
+  return micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
+#endif
 }
 
 };      // namespace simd

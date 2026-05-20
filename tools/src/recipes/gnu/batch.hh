@@ -115,14 +115,14 @@ batch_cmp(const config_t &conf)
     }
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
+  // no more useless cast + floats
   const string_type flags_warn_extra = make_flags(
-      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wuseless_cast, gcc::w_flags::flags::Wlogical_op,
+      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
       gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
       gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
       gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla, gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond,
       gcc::w_flags::flags::Wduplicated_branches, gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline,
-      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wfloat_equal,
-      gcc::w_flags::flags::Wfloat_conversion, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
+      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
       gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines, gcc::w_flags::flags::Warray_bounds,
       gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self, gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister,
       gcc::w_flags::flags::Wsequence_point);
@@ -212,14 +212,14 @@ batch_cmp_armv7(const config_t &conf)
     }
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
+  // no more useless cast + floats
   const string_type flags_warn_extra = make_flags(
-      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wuseless_cast, gcc::w_flags::flags::Wlogical_op,
+      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
       gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
       gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
       gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla, gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond,
       gcc::w_flags::flags::Wduplicated_branches, gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline,
-      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wfloat_equal,
-      gcc::w_flags::flags::Wfloat_conversion, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
+      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
       gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines, gcc::w_flags::flags::Warray_bounds,
       gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self, gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister,
       gcc::w_flags::flags::Wsequence_point);

@@ -192,10 +192,12 @@ public:
     __mem::length = cnt;
   }
 
-  constexpr hstring(const char *str) : __mem(__alloc_size(micron::strlen(str)))
+  // IMPORTANT, RECONSTRUCT NULL POST FACTO, EDGE CASES CAUSED CORRUPTION (ZERO SIZE, NONULL ET AL)
+  constexpr hstring(const char *str) : __mem(__alloc_size(micron::strlen(str) + 1))
   {
     usize end = micron::strlen(str);
     micron::memcpy(&(__mem::memory)[0], &str[0], end);
+    __mem::memory[end] = T{ 0 };
     __mem::length = end;
   };
 
@@ -735,7 +737,7 @@ public:
       reserve(__mem::capacity + cnt);
       itr = __mem::memory + dif;
     }
-    __safety_check<static_cast<bool (hstring::*)(char *)>(&hstring::__iterator_check), except::library_error>(
+    __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
         "micron::hstring insert() iterator out of range", itr);
 
     micron::bytemove(itr + cnt, itr, __mem::length - (itr - __mem::memory));

@@ -67,6 +67,9 @@ struct __buddy_list {
   static constexpr u8 __tag_none = 0xFF;
 
   static constexpr i32 __cache_cap = 4;
+  // ring of temporal-active addresses per order
+  static constexpr i32 __active_ring = 2;
+  static constexpr i32 __cold_cap = 0;      // disabled when tombstoning is off interop is messy
 
   // __log2_tbl[v] = ceil(log2(v))
   static constexpr u8 __log2_tbl[66] = {
@@ -85,10 +88,13 @@ struct __buddy_list {
   bool tags_external;
   usize order_sizes[Mx];      // order_sizes[i] = Min << i
   free_block *free_lists[Mx];
-  free_block *active[Mx];      // single active temporal block per order
+  free_block *active[Mx][__active_ring];      // N active temporal blocks per order (rotated)
+  u8 active_rotor[Mx];                        // next slot to insert/return for order o
 
   free_block *tcache[Mx];
   i32 tcache_count[Mx];
+  free_block *cold_cache[Mx];
+  i32 cold_count[Mx];
 
   __attribute__((always_inline)) static inline int
   ceil_log2_u64(u64 v) noexcept
@@ -275,6 +281,45 @@ struct __buddy_list {
     for ( i64 i = 0; i < max_order; ++i ) tcache_flush(i);
   }
 
+  __attribute__((always_inline)) inline free_block *
+  cold_pop(i64 o) noexcept
+  {
+    if ( cold_count[o] <= 0 ) return nullptr;
+    free_block *blk = cold_cache[o];
+    cold_cache[o] = blk->next;
+    --cold_count[o];
+    return blk;
+  }
+
+  __attribute__((always_inline)) inline bool
+  cold_push(free_block *blk, i64 o) noexcept
+  {
+    if ( cold_count[o] >= __cold_cap ) return false;
+    blk->next = cold_cache[o];
+    cold_cache[o] = blk;
+    ++cold_count[o];
+    return true;
+  }
+
+  void
+  cold_drain_merge(i64 o) noexcept
+  {
+    while ( cold_cache[o] ) {
+      free_block *blk = cold_cache[o];
+      cold_cache[o] = blk->next;
+      --cold_count[o];
+
+      byte *addr = (byte *)blk;
+      __merge_and_free(addr, o);
+    }
+  }
+
+  void
+  cold_flush_all() noexcept
+  {
+    for ( i64 i = 0; i < max_order; ++i ) cold_drain_merge(i);
+  }
+
   void
   __merge_and_free(byte *addr, i64 o) noexcept
   {
@@ -304,9 +349,12 @@ struct __buddy_list {
     for ( i64 i = 0; i < Mx; ++i ) {
       order_sizes[i] = (usize)Min << i;
       free_lists[i] = nullptr;
-      active[i] = nullptr;
+      for ( i32 r = 0; r < __active_ring; ++r ) active[i][r] = nullptr;
+      active_rotor[i] = 0;
       tcache[i] = nullptr;
       tcache_count[i] = 0;
+      cold_cache[i] = nullptr;
+      cold_count[i] = 0;
     }
   }
 
@@ -434,14 +482,22 @@ struct __buddy_list {
 
     for ( i64 i = 0; i < Mx; ++i ) {
       free_lists[i] = o.free_lists[i];
-      active[i] = o.active[i];
       order_sizes[i] = o.order_sizes[i];
       tcache[i] = o.tcache[i];
       tcache_count[i] = o.tcache_count[i];
+      cold_cache[i] = o.cold_cache[i];
+      cold_count[i] = o.cold_count[i];
       o.free_lists[i] = nullptr;
-      o.active[i] = nullptr;
       o.tcache[i] = nullptr;
       o.tcache_count[i] = 0;
+      o.cold_cache[i] = nullptr;
+      o.cold_count[i] = 0;
+      for ( i32 r = 0; r < __active_ring; ++r ) {
+        active[i][r] = o.active[i][r];
+        o.active[i][r] = nullptr;
+      }
+      active_rotor[i] = o.active_rotor[i];
+      o.active_rotor[i] = 0;
     }
   }
 
@@ -452,6 +508,7 @@ struct __buddy_list {
   {
 
     tcache_flush_all();
+    cold_flush_all();
 
     base = o.base;
     total = o.total;
@@ -475,14 +532,22 @@ struct __buddy_list {
 
     for ( i64 i = 0; i < Mx; ++i ) {
       free_lists[i] = o.free_lists[i];
-      active[i] = o.active[i];
       order_sizes[i] = o.order_sizes[i];
       tcache[i] = o.tcache[i];
       tcache_count[i] = o.tcache_count[i];
+      cold_cache[i] = o.cold_cache[i];
+      cold_count[i] = o.cold_count[i];
       o.free_lists[i] = nullptr;
-      o.active[i] = nullptr;
       o.tcache[i] = nullptr;
       o.tcache_count[i] = 0;
+      o.cold_cache[i] = nullptr;
+      o.cold_count[i] = 0;
+      for ( i32 r = 0; r < __active_ring; ++r ) {
+        active[i][r] = o.active[i][r];
+        o.active[i][r] = nullptr;
+      }
+      active_rotor[i] = o.active_rotor[i];
+      o.active_rotor[i] = 0;
     }
     return *this;
   }
@@ -497,8 +562,21 @@ struct __buddy_list {
     i64 o = order_for_size(needed);
     if ( o >= max_order ) return { nullptr, 0 };
 
+    if ( free_block *cold = cold_pop(o) ) {
+      block_header *hdr = hdr_of((byte *)cold, o);
+      hdr->order = static_cast<i32>(o);
+      hdr->flags = __block_alloc;      // NOT temporal — non-temporal alloc
+      tag_set_alloc((byte *)cold, o);
+      allocated_bytes += order_sizes[o];
+      return { (byte *)cold, order_sizes[o] - __hdr_offset };
+    }
+
     i64 i = find_free_order(o);
-    if ( i >= max_order ) return { nullptr, 0 };
+    if ( i >= max_order ) {
+      cold_flush_all();
+      i = find_free_order(o);
+      if ( i >= max_order ) return { nullptr, 0 };
+    }
 
     free_block *blk = free_lists[i];
     free_lists[i] = blk->next;
@@ -533,8 +611,19 @@ struct __buddy_list {
 
     usize target_size = order_sizes[o];
 
-    if ( active[o] != nullptr ) {
-      return { reinterpret_cast<byte *>(active[o]), target_size - __hdr_offset };
+    const u8 r0 = active_rotor[o];
+    if ( active[o][r0] != nullptr ) {
+      free_block *blk = active[o][r0];
+      active_rotor[o] = static_cast<u8>((r0 + 1) % __active_ring);
+      return { reinterpret_cast<byte *>(blk), target_size - __hdr_offset };
+    }
+    for ( i32 j = 1; j < __active_ring; ++j ) {
+      const u8 jj = static_cast<u8>((r0 + j) % __active_ring);
+      if ( active[o][jj] != nullptr ) {
+        free_block *blk = active[o][jj];
+        active_rotor[o] = static_cast<u8>((jj + 1) % __active_ring);
+        return { reinterpret_cast<byte *>(blk), target_size - __hdr_offset };
+      }
     }
 
     free_block *cached = tcache_pop(o);
@@ -544,7 +633,8 @@ struct __buddy_list {
       hdr->flags = __block_alloc | __block_temporal;
       tag_set_alloc((byte *)cached, o);
       allocated_bytes += target_size;
-      active[o] = cached;
+      active[o][r0] = cached;
+      active_rotor[o] = static_cast<u8>((r0 + 1) % __active_ring);
       return { (byte *)cached, target_size - __hdr_offset };
     }
 
@@ -567,7 +657,8 @@ struct __buddy_list {
     tag_set_alloc((byte *)blk, o);
     allocated_bytes += target_size;
 
-    active[o] = blk;
+    active[o][r0] = blk;
+    active_rotor[o] = static_cast<u8>((r0 + 1) % __active_ring);
 
     return { (byte *)blk, target_size - __hdr_offset };
   }
@@ -624,6 +715,13 @@ struct __buddy_list {
     return (hdr->flags & __block_tombstone) != 0;
   }
 
+  bool
+  is_temporal(byte *ptr) noexcept
+  {
+    block_header *hdr = hdr_of_tagged(ptr);
+    return (hdr->flags & __block_temporal) != 0;
+  }
+
   ret_flag
   deallocate(byte *ptr) noexcept
   {
@@ -632,6 +730,7 @@ struct __buddy_list {
     const i64 original_o = static_cast<i64>(hdr->order);
     if ( original_o < 0 || original_o >= max_order ) return { __flag_invalid };
     if ( !base || !addr ) return __flag_failure;
+    if ( hdr->flags == __block_free ) return { __flag_invalid };
 
     allocated_bytes -= order_sizes[original_o];
     if ( hdr->flags & __block_tombstone ) tombstoned_bytes -= order_sizes[original_o];
@@ -639,9 +738,19 @@ struct __buddy_list {
     bool was_temporal = (hdr->flags & __block_temporal) != 0;
     hdr->flags = __block_free;
 
-    if ( active[original_o] == (free_block *)addr ) active[original_o] = nullptr;
+    for ( i32 r = 0; r < __active_ring; ++r ) {
+      if ( active[original_o][r] == (free_block *)addr ) {
+        active[original_o][r] = nullptr;
+        break;
+      }
+    }
 
     if ( was_temporal && tcache_push((free_block *)addr, original_o) ) {
+      block_tags[tag_index(addr)] = __tag_none;
+      return { __flag_ok };
+    }
+
+    if ( !was_temporal && cold_push((free_block *)addr, original_o) ) {
       block_tags[tag_index(addr)] = __tag_none;
       return { __flag_ok };
     }

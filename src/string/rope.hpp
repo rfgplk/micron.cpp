@@ -18,6 +18,8 @@
 #include "../types.hpp"
 
 #include "../algorithm/memory.hpp"
+#include "../simd/bitwise.hpp"
+#include "../simd/intrin.hpp"
 #include "../slice.hpp"
 
 #include "unitypes.hpp"
@@ -313,22 +315,17 @@ template<is_scalar_literal T = schar, bool Sf = true> class rope
   static inline int
   __cmp_raw(const __node *root, usize alen, const T *b, usize blen) noexcept
   {
-    usize common = alen < blen ? alen : blen;
+    const usize common = alen < blen ? alen : blen;
     usize pos = 0;
     int result = 0;
 
     __for_each_chunk(root, [&](const T *data, usize len) -> bool {
       usize check = len;
       if ( pos + check > common ) check = common - pos;
-      for ( usize i = 0; i < check; i++ ) {
-        auto ca = static_cast<unsigned char>(data[i]);
-        auto cb = static_cast<unsigned char>(b[pos + i]);
-        if ( ca < cb ) {
-          result = -1;
-          return false;
-        }
-        if ( ca > cb ) {
-          result = 1;
+      if ( check ) {
+        const i64 d = micron::memcmp<byte>(reinterpret_cast<const byte *>(data), reinterpret_cast<const byte *>(b + pos), check);
+        if ( d != 0 ) {
+          result = d < 0 ? -1 : 1;
           return false;
         }
       }
@@ -771,10 +768,16 @@ public:
     size_type result = npos;
 
     __for_each_chunk(__root, [&](const T *data, size_type len) -> bool {
-      size_type start = (pos > idx) ? pos - idx : 0;
-      for ( size_type i = start; i < len; i++ ) {
-        if ( data[i] == static_cast<T>(ch) ) {
-          result = idx + i;
+      const size_type start = (pos > idx) ? pos - idx : 0;
+      if ( start < len ) {
+        const size_type scan_len = len - start;
+#if defined(__micron_x86_avx2)
+        const size_type r = micron::simd::find_first_set_256(data + start, scan_len, static_cast<char>(ch));
+#else
+        const size_type r = micron::simd::find_first_set_128(data + start, scan_len, static_cast<char>(ch));
+#endif
+        if ( r < scan_len ) {
+          result = idx + start + r;
           return false;
         }
       }
@@ -789,14 +792,11 @@ public:
   find_substr(const T *needle, size_type needle_len, size_type pos = 0) const
   {
     if ( needle_len == 0 || needle_len > __length ) return npos;
+    if ( pos > __length - needle_len ) return npos;
     __ensure_flat();
-    size_type limit = __length - needle_len;
-    for ( size_type i = pos; i <= limit; ++i ) {
-      size_type j = 0;
-      while ( j < needle_len && __flat[i + j] == needle[j] ) ++j;
-      if ( j == needle_len ) return i;
-    }
-    return npos;
+    auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(__flat + pos), __length - pos, reinterpret_cast<const byte *>(needle),
+                                   needle_len);
+    return r == nullptr ? npos : static_cast<size_type>(reinterpret_cast<const T *>(r) - __flat);
   }
 
   template<typename F>
@@ -1266,12 +1266,9 @@ public:
     if ( __root == o.__root ) [[unlikely]]
       return true;
     if ( __length != o.__length ) return false;
-    auto a = begin(), ae = end();
-    auto b = o.begin();
-    for ( ; a != ae; ++a, ++b ) {
-      if ( *a != *b ) return false;
-    }
-    return true;
+    if ( __length == 0 ) return true;
+    o.__ensure_flat();
+    return __cmp_raw(__root, __length, o.__flat, o.__length) == 0;
   }
 
   bool

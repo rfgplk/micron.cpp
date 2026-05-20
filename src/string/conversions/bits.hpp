@@ -707,13 +707,13 @@ d2s_buffered(f64 value, char *buf)
 
   if ( ieeeExponent == 0x7FF ) {
     if ( ieeeMantissa ) {
-      buf[0] = 'n';
+      buf[0] = 'N';
       buf[1] = 'a';
-      buf[2] = 'n';
+      buf[2] = 'N';
       return 3;
     }
     if ( sign ) buf[pos++] = '-';
-    buf[pos] = 'i';
+    buf[pos] = 'I';
     buf[pos + 1] = 'n';
     buf[pos + 2] = 'f';
     return pos + 3;
@@ -825,15 +825,14 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
     return pos;
   }
 
-  // inf nan case
   if ( ieeeExponent == 0x7FF ) {
     if ( ieeeMantissa ) {
-      buf[0] = 'n';
+      buf[0] = 'N';
       buf[1] = 'a';
-      buf[2] = 'n';
+      buf[2] = 'N';
       return 3;
     }
-    buf[pos] = 'i';
+    buf[pos] = 'I';
     buf[pos + 1] = 'n';
     buf[pos + 2] = 'f';
     return pos + 3;
@@ -933,12 +932,12 @@ d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 
   if ( ieeeExponent == 0x7FF ) {
     if ( ieeeMantissa ) {
-      buf[0] = 'n';
+      buf[0] = 'N';
       buf[1] = 'a';
-      buf[2] = 'n';
+      buf[2] = 'N';
       return 3;
     }
-    buf[pos] = 'i';
+    buf[pos] = 'I';
     buf[pos + 1] = 'n';
     buf[pos + 2] = 'f';
     return pos + 3;

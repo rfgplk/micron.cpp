@@ -452,7 +452,14 @@ public:
   void
   resize(size_type n)
   {
-    if ( !(n > __mem::length) ) return;
+    if ( n == __mem::length ) return;
+    if ( n < __mem::length ) {
+      if constexpr ( !micron::is_trivially_destructible_v<T> ) {
+        for ( size_type i = n; i < __mem::length; ++i ) __mem::memory[i].~T();
+      }
+      __mem::length = n;
+      return;
+    }
     if ( n >= __mem::capacity ) reserve(n);
     T *f_ptr = __mem::memory;
     for ( size_type i = __mem::length; i < n; i++ ) new (micron::addr(f_ptr[i])) T{};
@@ -462,7 +469,14 @@ public:
   void
   resize(size_type n, const T &v)
   {
-    if ( !(n > __mem::length) ) return;
+    if ( n == __mem::length ) return;
+    if ( n < __mem::length ) {
+      if constexpr ( !micron::is_trivially_destructible_v<T> ) {
+        for ( size_type i = n; i < __mem::length; ++i ) __mem::memory[i].~T();
+      }
+      __mem::length = n;
+      return;
+    }
     if ( n >= __mem::capacity ) reserve(n);
     T *f_ptr = __mem::memory;
     for ( size_type i = __mem::length; i < n; i++ ) new (micron::addr(f_ptr[i])) T(v);
@@ -689,6 +703,30 @@ public:
     micron::memmove(it + 1, it, ite - it);
     new (it) T(val);
     __mem::length++;
+    return it;
+  }
+
+  template<typename InputIt>
+  inline iterator
+  insert(iterator it, InputIt first, InputIt last)
+  {
+    const size_type cnt = static_cast<size_type>(last - first);
+    if ( cnt == 0 ) return it;
+    if ( !__mem::length ) {
+      for ( InputIt p = first; p != last; ++p ) push_back(*p);
+      return begin();
+    }
+    if ( __mem::length + cnt > __mem::capacity ) {
+      size_type dif = it - __mem::memory;
+      reserve(__impl::grow(__mem::capacity + cnt));
+      it = __mem::memory + dif;
+    }
+    if ( it > end() or it < begin() ) exc<except::library_error>("micron::vector insert(): iterator out of range.");
+    T *ite = end();
+    micron::memmove(it + cnt, it, ite - it);
+    size_type i = 0;
+    for ( InputIt p = first; p != last; ++p, ++i ) new (it + i) T(*p);
+    __mem::length += cnt;
     return it;
   }
 

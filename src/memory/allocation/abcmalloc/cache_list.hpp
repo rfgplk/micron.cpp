@@ -57,6 +57,7 @@ struct __tlsf_list {
   static constexpr i32 __fl_shift = 6;                              // log2(64)
   static constexpr i32 __fl_count = 26;                             // indices 0..25
   static constexpr i32 __list_count = __fl_count * __sl_count;      // 416
+  static constexpr i32 __temporal_ring = 2;
 
   static_assert(__block_align >= 32, "header must fit in __hdr_offset");
   static_assert((1ULL << __fl_shift) == __min_block, "__fl_shift must equal log2(__min_block)");
@@ -78,10 +79,11 @@ struct __tlsf_list {
   i32 fl_count;      // runtime FL levels used
   usize allocated_bytes;
   usize tombstoned_bytes;
-  u32 fl_bitmap;                                // first-level bitmap
-  u32 sl_bitmap[__fl_count];                    // second-level bitmaps
-  tlsf_hdr *heads[__list_count];                // free-list heads  [fi * __sl_count + si]
-  tlsf_hdr *temporal_active[__list_count];      // one active temporal block per class
+  u32 fl_bitmap;                                                 // first-level bitmap
+  u32 sl_bitmap[__fl_count];                                     // second-level bitmaps
+  tlsf_hdr *heads[__list_count];                                 // free-list heads  [fi * __sl_count + si]
+  tlsf_hdr *temporal_active[__list_count][__temporal_ring];      // N active temporal blocks per class (rotated)
+  u8 temporal_rotor[__list_count];                               // next slot to insert/return for class i
 
   __attribute__((always_inline)) static inline usize
   align_up(usize v, usize a) noexcept
@@ -241,7 +243,8 @@ struct __tlsf_list {
     for ( i32 i = 0; i < __fl_count; ++i ) sl_bitmap[i] = 0;
     for ( i32 i = 0; i < __list_count; ++i ) {
       heads[i] = nullptr;
-      temporal_active[i] = nullptr;
+      for ( i32 r = 0; r < __temporal_ring; ++r ) temporal_active[i][r] = nullptr;
+      temporal_rotor[i] = 0;
     }
   }
 
@@ -335,9 +338,13 @@ struct __tlsf_list {
     }
     for ( i32 i = 0; i < __list_count; ++i ) {
       heads[i] = o.heads[i];
-      temporal_active[i] = o.temporal_active[i];
       o.heads[i] = nullptr;
-      o.temporal_active[i] = nullptr;
+      for ( i32 r = 0; r < __temporal_ring; ++r ) {
+        temporal_active[i][r] = o.temporal_active[i][r];
+        o.temporal_active[i][r] = nullptr;
+      }
+      temporal_rotor[i] = o.temporal_rotor[i];
+      o.temporal_rotor[i] = 0;
     }
   }
 
@@ -366,9 +373,13 @@ struct __tlsf_list {
     }
     for ( i32 i = 0; i < __list_count; ++i ) {
       heads[i] = o.heads[i];
-      temporal_active[i] = o.temporal_active[i];
       o.heads[i] = nullptr;
-      o.temporal_active[i] = nullptr;
+      for ( i32 r = 0; r < __temporal_ring; ++r ) {
+        temporal_active[i][r] = o.temporal_active[i][r];
+        o.temporal_active[i][r] = nullptr;
+      }
+      temporal_rotor[i] = o.temporal_rotor[i];
+      o.temporal_rotor[i] = 0;
     }
     return *this;
   }
@@ -412,9 +423,19 @@ struct __tlsf_list {
     mapping_search(needed, fi, si);
     if ( fi >= 0 && fi < fl_count ) {
       i32 i = idx(fi, si);
-      if ( temporal_active[i] ) {
-        tlsf_hdr *blk = temporal_active[i];
+      const u8 r = temporal_rotor[i];
+      if ( temporal_active[i][r] ) {
+        tlsf_hdr *blk = temporal_active[i][r];
+        temporal_rotor[i] = static_cast<u8>((r + 1) % __temporal_ring);
         return { reinterpret_cast<byte *>(blk) + __hdr_offset, (usize)blk->bsize - __hdr_offset };
+      }
+      for ( i32 j = 1; j < __temporal_ring; ++j ) {
+        const u8 jj = static_cast<u8>((r + j) % __temporal_ring);
+        if ( temporal_active[i][jj] ) {
+          tlsf_hdr *blk = temporal_active[i][jj];
+          temporal_rotor[i] = static_cast<u8>((jj + 1) % __temporal_ring);
+          return { reinterpret_cast<byte *>(blk) + __hdr_offset, (usize)blk->bsize - __hdr_offset };
+        }
       }
     }
 
@@ -425,7 +446,12 @@ struct __tlsf_list {
     block->flags = __block_alloc | __block_temporal;
     allocated_bytes += (usize)block->bsize;
 
-    if ( fi >= 0 && fi < fl_count ) temporal_active[idx(fi, si)] = block;
+    if ( fi >= 0 && fi < fl_count ) {
+      i32 i = idx(fi, si);
+      const u8 r = temporal_rotor[i];
+      temporal_active[i][r] = block;
+      temporal_rotor[i] = static_cast<u8>((r + 1) % __temporal_ring);
+    }
 
     return { reinterpret_cast<byte *>(block) + __hdr_offset, (usize)block->bsize - __hdr_offset };
   }
@@ -480,6 +506,13 @@ struct __tlsf_list {
     return (hdr->flags & __block_tombstone) != 0;
   }
 
+  bool
+  is_temporal(byte *ptr) noexcept
+  {
+    tlsf_hdr *hdr = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
+    return (hdr->flags & __block_temporal) != 0;
+  }
+
   ret_flag
   deallocate(byte *ptr) noexcept
   {
@@ -494,12 +527,15 @@ struct __tlsf_list {
     if ( block->flags & __block_tombstone ) tombstoned_bytes -= bsz;
 
     if ( block->flags & __block_temporal ) {
-      i32 fi, si;
-      mapping_insert(bsz, fi, si);
-      if ( fi >= 0 && fi < fl_count ) {
-        i32 i = idx(fi, si);
-        if ( temporal_active[i] == block ) temporal_active[i] = nullptr;
+      for ( i32 c = 0; c < __list_count; ++c ) {
+        for ( i32 r = 0; r < __temporal_ring; ++r ) {
+          if ( temporal_active[c][r] == block ) {
+            temporal_active[c][r] = nullptr;
+            goto __temporal_clear_done;
+          }
+        }
       }
+    __temporal_clear_done:;
     }
 
     coalesce_and_free(block);
