@@ -15,11 +15,6 @@ namespace micron
 namespace elf
 {
 
-// execute() — invoke a function symbol resolved from a loaded .so. Multi-
-// overload, template form, matching the structure of `execute`/`rexecute` in
-// src/linux/process/exec.hpp. Throws library_error if the symbol is missing.
-
-// (1) Primitive form: already-opened handle + cstr name.
 template<class R = void, class... Args>
 inline R
 execute(const handle_t &h, const char *name, Args... args)
@@ -35,7 +30,6 @@ execute(const handle_t &h, const char *name, Args... args)
   }
 }
 
-// (2) Handle + is_string symbol name.
 template<class R = void, is_string S, class... Args>
 inline R
 execute(const handle_t &h, const S &name, Args... args)
@@ -43,8 +37,6 @@ execute(const handle_t &h, const S &name, Args... args)
   return execute<R>(h, name.c_str(), static_cast<Args>(args)...);
 }
 
-// (3) One-shot from absolute path. Opens, invokes, then drops the handle at
-//     scope exit (the .so stays mmap'd only for the duration of the call).
 template<class R = void, class... Args>
 inline R
 execute(const char *path, const char *name, Args... args)
@@ -53,7 +45,6 @@ execute(const char *path, const char *name, Args... args)
   return execute<R>(h, name, static_cast<Args>(args)...);
 }
 
-// (4) One-shot with is_string path + is_string symbol name.
 template<class R = void, is_string T, is_string S, class... Args>
 inline R
 execute(const T &path, const S &name, Args... args)

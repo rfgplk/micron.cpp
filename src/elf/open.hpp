@@ -13,14 +13,12 @@ namespace micron
 namespace elf
 {
 
-// Open a .so by absolute filesystem path. Throws library_error on failure.
 inline handle_t
 open(const char *path)
 {
   return handle_t::open_path(path);
 }
 
-// is_string overload — accepts micron::string and other micron string-like types.
 template<is_string T>
 inline handle_t
 open(const T &path)
@@ -28,8 +26,6 @@ open(const T &path)
   return handle_t::open_path(path.c_str());
 }
 
-// Open by soname. Searches DT_RUNPATH (when provided) and the loader's default
-// search paths. Use when you don't know the absolute path on disk.
 inline handle_t
 open_soname(const char *soname, const char *runpath = nullptr)
 {
