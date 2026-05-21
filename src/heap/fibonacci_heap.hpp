@@ -7,11 +7,14 @@
 
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
-#include "../memory/allocation/chunks.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
-template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_heap: private Alloc, public immutable_memory<T>
+namespace micron
+{
+
+template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_heap: private Alloc
 {
   struct node {
     T value;
@@ -54,13 +57,21 @@ template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_h
   consolidate() noexcept
   {
     if ( !min_root ) return;
-    usize max_degree = 64;
+    constexpr usize max_degree = 64;
     node *A[max_degree] = { nullptr };
 
-    node *start = min_root;
+    usize nroots = 0;
+    {
+      node *r = min_root;
+      do {
+        ++nroots;
+        r = r->right;
+      } while ( r != min_root );
+    }
     node *w = min_root;
-    do {
+    for ( usize k = 0; k < nroots; ++k ) {
       node *x = w;
+      node *next = w->right;
       usize d = x->degree;
       while ( A[d] ) {
         node *y = A[d];
@@ -70,8 +81,8 @@ template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_h
         d++;
       }
       A[d] = x;
-      w = w->right;
-    } while ( w != start );
+      w = next;
+    }
 
     min_root = nullptr;
     for ( usize i = 0; i < max_degree; i++ ) {
@@ -261,3 +272,4 @@ private:
     delete n;
   }
 };
+};      // namespace micron

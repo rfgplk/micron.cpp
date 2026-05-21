@@ -350,7 +350,7 @@ public:
     micron::memcpy(&(t.memory)[t.length],      // null is here so, overwrite it
                    &f[0], n);
     t.length += n;
-    return *this;
+    return t;
   }
 
   template<typename F>
@@ -562,8 +562,7 @@ public:
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
 
-    usize ln = __mem::length == 0 ? 0 : __mem::length - 1;
-    micron::memcpy(&(t.memory)[ln], &(data)[0], M);
+    micron::memcpy(&(t.memory)[t.length], &(data)[0], M);      // append at end; do not back up over the last char
     t.length += M - 1;
     return t;
   };

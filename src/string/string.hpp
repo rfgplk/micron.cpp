@@ -632,10 +632,9 @@ public:
   inline hstring &
   append(const sstring<M, F> &o)
   {
-    usize end = micron::strlen(o.c_str());
-    if ( (__mem::length + end) >= __mem::capacity ) reserve(__mem::capacity + end);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], end);
-    __mem::length += end;
+    if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);      // full length
+    __mem::length += o.length;
     return *this;
   }
 
@@ -679,10 +678,9 @@ public:
   inline hstring &
   push_back(const sstring<M, F> &o)
   {
-    usize end = micron::strlen(o.c_str());
-    if ( (__mem::length + end) >= __mem::capacity ) reserve(__mem::capacity + end);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], end);
-    __mem::length += end;
+    if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);      // full length
+    __mem::length += o.length;
     return *this;
   }
 
@@ -906,9 +904,8 @@ public:
   {
     if ( (data.length + __mem::length) >= __mem::capacity ) [[unlikely]]
       reserve(__mem::capacity + data.length + 1);
-    usize end = micron::strlen(data.c_str());
-    micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], end);
-    __mem::length += end;
+    micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], data.length);      // full length
+    __mem::length += data.length;
     return *this;
   };
 

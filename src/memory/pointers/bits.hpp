@@ -28,6 +28,29 @@ concept is_pointer_class = requires {
   { typename T::category_type{} } -> micron::same_as<micron::pointer_tag>;
 };
 
+// make asan ignore our global object "leaks", they aren't leaks in the traditional sense since they exist for the entire runtime of the
+// binary
+#if defined(__micron_sanitize_asan)
+extern "C" void __lsan_disable(void);
+extern "C" void __lsan_enable(void);
+#endif
+struct __lsan_pause {
+  inline __attribute__((always_inline))
+  __lsan_pause(void) noexcept
+  {
+#if defined(__micron_sanitize_asan)
+    __lsan_disable();
+#endif
+  }
+
+  inline __attribute__((always_inline)) ~__lsan_pause(void) noexcept
+  {
+#if defined(__micron_sanitize_asan)
+    __lsan_enable();
+#endif
+  }
+};
+
 template<class Type> struct __internal_pointer_alloc {
   template<typename... Args>
   static inline __attribute__((always_inline)) Type *

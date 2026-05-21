@@ -26,7 +26,7 @@
 #include "../../../types.hpp"
 #include "tapi.hpp"
 
-#ifndef ABCMALLOC_DISABLE
+#if !defined(ABCMALLOC_DISABLE) && !defined(__micron_sanitizer_owns_heap)
 
 // NOTE: these should be noexcept so we avoid conflicting declarations
 

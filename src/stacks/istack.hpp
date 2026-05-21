@@ -123,6 +123,15 @@ public:
 
   istack &operator=(const istack &) = delete;
 
+  istack &
+  operator=(istack &&o)
+  {
+    if ( this == &o ) return *this;
+    if ( !__mem::is_zero() ) __mem::free();
+    __mem::operator=(micron::move(o));
+    return *this;
+  }
+
   inline const t &
   operator[](const umax_t n) const
   {

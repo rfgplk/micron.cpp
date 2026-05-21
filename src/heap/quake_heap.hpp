@@ -7,11 +7,14 @@
 
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
-#include "../memory/allocation/chunks.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
-template<typename T, class Alloc = micron::allocator_serial<>> class quake_heap: private Alloc, public immutable_memory<T>
+namespace micron
+{
+
+template<typename T, class Alloc = micron::allocator_serial<>> class quake_heap: private Alloc
 {
   struct node {
     T value;
@@ -84,7 +87,7 @@ public:
 
   quake_heap(usize max_levels = 32) : levels(max_levels)
   {
-    roots = static_cast<node **>(this->create(levels * sizeof(node *)));
+    roots = reinterpret_cast<node **>(this->create(levels * sizeof(node *)).ptr);
     for ( usize i = 0; i < levels; i++ ) roots[i] = nullptr;
   }
 
@@ -139,26 +142,26 @@ public:
   reference
   max()
   {
-    usize max__n = SIZE_MAX;
+    usize max__n = (~usize(0));
     for ( usize i = 0; i < levels; i++ ) {
       if ( roots[i] ) {
-        if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value ) max__n = i;
+        if ( max__n == (~usize(0)) || roots[i]->value > roots[max__n]->value ) max__n = i;
       }
     }
-    if ( max__n == SIZE_MAX ) exc<except::library_error>("quake_heap::max() empty");
+    if ( max__n == (~usize(0)) ) exc<except::library_error>("quake_heap::max() empty");
     return roots[max__n]->value;
   }
 
   T
   pop()
   {
-    usize max__n = SIZE_MAX;
+    usize max__n = (~usize(0));
     for ( usize i = 0; i < levels; i++ ) {
       if ( roots[i] ) {
-        if ( max__n == SIZE_MAX || roots[i]->value > roots[max__n]->value ) max__n = i;
+        if ( max__n == (~usize(0)) || roots[i]->value > roots[max__n]->value ) max__n = i;
       }
     }
-    if ( max__n == SIZE_MAX ) exc<except::library_error>("quake_heap::pop() empty");
+    if ( max__n == (~usize(0)) ) exc<except::library_error>("quake_heap::pop() empty");
     T v;
     roots[max__n] = pop_node(roots[max__n], v);
     return v;
@@ -190,3 +193,4 @@ public:
     }
   }
 };
+};      // namespace micron

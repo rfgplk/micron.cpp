@@ -9,6 +9,7 @@
 #include "format.hpp"
 
 // include all string types
+#include "istring.hpp"
 #include "rope.hpp"
 #include "sstring.hpp"
 #include "string.hpp"
@@ -303,5 +304,32 @@ operator==(const char (&data)[N], const S &str)
 {
   return str == data;
 }
+
+template<typename F, typename G>
+inline hstring<F> &
+operator+=(hstring<F> &lhs, const istring<G> &rhs)
+{
+  if ( rhs.size() ) lhs.append(reinterpret_cast<const F *>(rhs.c_str()), rhs.size());
+  return lhs;
+}
+
+template<typename F, typename G>
+inline hstring<F> &
+operator+=(hstring<F> &lhs, const rope<G> &rhs)
+{
+  if ( rhs.size() ) lhs.append(reinterpret_cast<const F *>(rhs.c_str()), rhs.size());
+  return lhs;
+}
+
+// catch all
+template<usize N, usize M>
+inline string
+operator+(const sstr<N> &data, const sstr<M> &str)
+{
+  string out;
+  out += data;
+  out += str;
+  return out;
+};
 
 };      // namespace micron

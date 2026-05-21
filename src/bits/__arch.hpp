@@ -465,6 +465,11 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_sanitized 1
 #endif
 
+// heap-owning sanitizers (asan et al.) ship their own malloc/free and must own the process heap
+#if defined(__micron_sanitize_asan) || defined(__micron_sanitize_tsan) || defined(__micron_sanitize_msan)
+#define __micron_sanitizer_owns_heap 1
+#endif
+
 // %%%%%%%%%%%%%%%%%%%%%%%
 // again, linux only but good to have all just in case
 

@@ -25,7 +25,7 @@ namespace micron
 template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class conqueue: public __mutable_memory_resource<T, Alloc>
 {
-  micron::mutex __mtx;
+  mutable micron::mutex __mtx;
   using __mem = __mutable_memory_resource<T, Alloc>;
   usize needle;
 
@@ -69,7 +69,7 @@ public:
       }
       __mem::length = lst.size();
     } else {
-      usize i = __mem::capacity;
+      usize i = __mem::capacity - 1;
       for ( T value : lst ) {
         __mem::memory[i--] = value;
       }
@@ -109,13 +109,30 @@ public:
     return *this;
   }
 
+  conqueue &
+  operator=(conqueue &&o)
+  {
+    if ( this == &o ) return *this;
+    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( __mem::memory ) {
+      if constexpr ( micron::is_class_v<T> ) {
+        for ( usize i = needle - __mem::length + 1; i <= needle; i++ ) (__mem::memory)[i].~T();
+      }
+      __mem::free();
+    }
+    __mem::operator=(micron::move(o));
+    needle = o.needle;
+    o.needle = 0;
+    return *this;
+  }
+
   inline void
   clear()
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( !__mem::length ) return;
     if constexpr ( micron::is_class_v<T> ) {
-      for ( usize i = 0; i < __mem::length; i++ ) (__mem::memory)[i].~T();
+      for ( usize i = needle - __mem::length + 1; i <= needle; i++ ) (__mem::memory)[i].~T();
     }
     micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
     __mem::length = 0;

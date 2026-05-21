@@ -75,10 +75,10 @@ void *aligned_alloc(usize alignment, usize size);
 };      // namespace abc
 #ifdef ABCMALLOC_DISABLE
 
-extern "C" __attribute__((malloc, alloc_size(1))) void *malloc(usize size);
-extern "C" void *calloc(usize num, usize size);
-extern "C" void *realloc(void *ptr, usize size);
+extern "C" __attribute__((malloc, alloc_size(1))) void *malloc(usize size) noexcept;
+extern "C" void *calloc(usize num, usize size) noexcept;
+extern "C" void *realloc(void *ptr, usize size) noexcept;
 
-extern "C" void free(void *ptr);
-extern "C" void *aligned_alloc(usize alignment, usize size);
+extern "C" void free(void *ptr) noexcept;
+extern "C" void *aligned_alloc(usize alignment, usize size) noexcept;
 #endif

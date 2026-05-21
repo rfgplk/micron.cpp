@@ -8,7 +8,7 @@
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../memory/actions.hpp"
-#include "../memory/allocation/chunks.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 

@@ -324,7 +324,6 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
       usize new_dist = stored_dist(j) - 1;      // capture before any ctrl write
 
       if constexpr ( micron::is_trivially_copyable_v<Nd> ) {
-        // bytecpy takes byte count; micron::memcpy takes element count (cnt * sizeof) and would over-copy.
         micron::bytecpy(reinterpret_cast<byte *>(node_ptr(i)), reinterpret_cast<const byte *>(node_ptr(j)), sizeof(Nd));
       } else {
         new (node_ptr(i)) Nd(micron::move(node_at(j)));
@@ -617,7 +616,10 @@ public:
   operator=(robin_map &&o) noexcept
   {
     if ( this == &o ) return *this;
-    if ( __mem::memory ) clear();
+    if ( __mem::memory ) {
+      clear();
+      __mem::free();
+    }
     free_ctrl();
     __mem::memory = o.memory;
     __mem::length = o.length;

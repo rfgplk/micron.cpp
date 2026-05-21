@@ -28,7 +28,7 @@ public:
 
   ~__global_pointer() { /*nothing*/ };
 
-  __global_pointer(void) noexcept : internal_pointer(__alloc::__impl_alloc()) { };
+  __global_pointer(void) noexcept : internal_pointer((__lsan_pause{}, __alloc::__impl_alloc())) { };
 
   template<typename V>
     requires micron::is_null_pointer_v<V>
@@ -38,7 +38,7 @@ public:
 
   template<class... Args>
     requires(sizeof...(Args) > 0)
-  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
+  __global_pointer(Args &&...args) : internal_pointer((__lsan_pause{}, __alloc::__impl_alloc(micron::forward<Args>(args)...))){};
 
   __global_pointer(__global_pointer &&p) noexcept : internal_pointer(p.internal_pointer) { p.internal_pointer = nullptr; };
 
@@ -189,7 +189,7 @@ public:
 
   template<typename... Args>
     requires(sizeof...(Args) > 0)
-  __global_pointer(Args &&...args) : internal_pointer(__alloc::__impl_alloc(micron::forward<Args>(args)...)){};
+  __global_pointer(Args &&...args) : internal_pointer((__lsan_pause{}, __alloc::__impl_alloc(micron::forward<Args>(args)...))){};
 
   __global_pointer(Type *&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 

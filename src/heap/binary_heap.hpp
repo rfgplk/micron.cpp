@@ -7,14 +7,14 @@
 
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
-#include "../memory/allocation/chunks.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../type_traits.hpp"
 
 namespace micron
 {
 
-template<typename T, class Alloc = micron::allocator_serial<>> class binary_heap: public __immutable_memory_resource<T>
+template<typename T, class Alloc = micron::allocator_serial<>> class binary_heap: public __immutable_memory_resource<T, Alloc>
 {
   using __mem = __immutable_memory_resource<T, Alloc>;
 
@@ -70,27 +70,29 @@ public:
 
   binary_heap(void) : __mem((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T))) { }
 
-  template<T... Args> binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T))) { (insert(args), ...); }
+  template<typename... Args>
+    requires(sizeof...(Args) >= 2)
+  binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T)))
+  {
+    (insert(T(micron::forward<Args>(args))), ...);
+  }
 
   binary_heap(const usize n) : __mem(n * sizeof(T)) { }
 
   binary_heap(const binary_heap &o) = delete;
 
-  binary_heap(binary_heap &&o)
-  {
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = 0;
-    o.length = 0;
-    o.capacity = 0;
-  }
+  binary_heap(binary_heap &&o) : __mem(micron::move(o)) { }
 
   binary_heap &operator=(const binary_heap &o) = delete;
 
   binary_heap &
   operator=(binary_heap &&o)
   {
+    if ( this == &o ) return *this;
+    if ( __mem::memory ) {
+      clear();
+      __mem::free();
+    }
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -103,12 +105,23 @@ public:
   binary_heap &
   insert(T &&v)
   {
-    if ( __mem::length == __mem::capacity ) return;
+    if ( __mem::length == __mem::capacity ) return *this;
     if constexpr ( micron::is_class_v<T> )
-      __mem::memory[__mem::length] = micron::move(v);
+      new (micron::addr(__mem::memory[__mem::length])) T(micron::move(v));
     else
       __mem::memory[__mem::length] = v;
     make_heap(__mem::length++);
+    return *this;
+  }
+
+  void
+  clear()
+  {
+    if ( __mem::memory == nullptr ) return;
+    if constexpr ( micron::is_class_v<T> ) {
+      for ( usize i = 0; i < __mem::length; i++ ) __mem::memory[i].~T();
+    }
+    __mem::length = 0;
   }
 
   T
@@ -119,6 +132,7 @@ public:
       T v = micron::move(__mem::memory[0]);
       __mem::memory[0] = micron::move(__mem::memory[__mem::length - 1]);
       __mem::length--;
+      __mem::memory[__mem::length].~T();      // destroy the vacated (moved-from) slot
       reduce_heap(0);
       return v;
     } else {
@@ -145,7 +159,7 @@ public:
   T
   max() const
   {
-    if ( __mem::memory == nullptr ) exc<except::library_error>("micron::binary_heap::max() is empty.");
+    if ( __mem::length == 0 ) exc<except::library_error>("micron::binary_heap::max() is empty.");
     return __mem::memory[0];
   }
 };

@@ -95,6 +95,22 @@ public:
 
   queue &operator=(const queue &o) = delete;
 
+  queue &
+  operator=(queue &&o)
+  {
+    if ( this == &o ) return *this;
+    // release destination first: clear() runs element dtors (as ~queue does) and
+    // __mem::free() releases the old buffer; the base move-assign does not free.
+    if ( __mem::memory ) {
+      clear();
+      __mem::free();
+    }
+    __mem::operator=(micron::move(o));
+    head = o.head;
+    o.head = 0;
+    return *this;
+  }
+
   inline void
   clear()
   {

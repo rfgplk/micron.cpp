@@ -477,8 +477,10 @@ public:
   template<is_string S> constexpr sstring(const S &o)
   {
     micron::constexpr_zero(&memory[0], N);
-    micron::memcpy(&memory[0], &o.memory[0], N);
-    length = o.length;
+    const size_type srclen = static_cast<size_type>(o.size());
+    const size_type n = (srclen < N) ? srclen : N;      // WARNING: ever over-read source nor over-run dest
+    if ( n ) micron::memcpy(&memory[0], o.data(), n);
+    length = n;
   };
 
   constexpr sstring(const sstring &o)
@@ -500,11 +502,10 @@ public:
   {
     if constexpr ( N < M ) {
       micron::memcpy(&memory[0], &o.memory[0], N);
-      micron::constexpr_zero(&o.memory[0], N);
+      micron::constexpr_zero(&o.memory[0], M);      // WARNING: clear the whole source (M wide)
     } else if constexpr ( N >= M ) {
       micron::memcpy(&memory[0], &o.memory[0], M);
-      micron::memcpy(&memory[0], &o.memory[0], M);
-      micron::constexpr_zero(&o.memory[0], N);
+      micron::constexpr_zero(&o.memory[0], M);      // source buffer is only M wide
     }
     if ( o.length > N )
       length = N;
@@ -555,7 +556,7 @@ public:
       length = o.size();
     } else {
       micron::memcpy(&memory[0], &o.cdata()[0], N);
-      length = o.size();
+      length = N;
     }
     return *this;
   }

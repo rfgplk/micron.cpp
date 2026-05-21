@@ -7,7 +7,7 @@
 
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
-#include "../memory/allocation/chunks.hpp"
+#include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../slice.hpp"
 
