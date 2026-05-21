@@ -11,14 +11,19 @@
 
 #include "__vk_protos.hpp"
 
-namespace micron { namespace gfx { namespace vk {
+namespace micron
+{
+namespace gfx
+{
+namespace vk
+{
 
 // master entry metadata tbl
 
 struct vk_entry_t {
   const char *name;
   u16 index;
-  u8 dispatch_kind;     // 0=global, 1=instance, 2=device
+  u8 dispatch_kind;      // 0=global, 1=instance, 2=device
 };
 
 inline constexpr vk_entry_t vk_table[] = {
@@ -284,10 +289,15 @@ sym_index_of(const char *name) noexcept
   for ( u16 i = 0; i < vk_table_size; ++i ) {
     const char *a = vk_table[i].name;
     const char *b = name;
-    while ( *a && *a == *b ) { ++a; ++b; }
+    while ( *a && *a == *b ) {
+      ++a;
+      ++b;
+    }
     if ( *a == 0 && *b == 0 ) return i;
   }
   return u16(-1);
 }
 
-}; }; };      // namespace micron::gfx::vk
+};      // namespace vk
+};      // namespace gfx
+};      // namespace micron

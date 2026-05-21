@@ -75,7 +75,12 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   }
   proc_path[i] = '\0';
 
+#if defined(__micron_arch_arm64)
+  // asm-generic ABI (arm64) has no legacy readlink syscall; route via readlinkat
+  max_t len = (micron::syscall(SYS_readlinkat, posix::at_fdcwd, proc_path, result_buf, posix::path_max - 1));
+#else
   max_t len = (micron::syscall(SYS_readlink, proc_path, result_buf, posix::path_max - 1));
+#endif
 
   close(fd);
   if ( len < 0 ) {

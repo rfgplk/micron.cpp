@@ -18,7 +18,12 @@
 
 // main Vulkan fns
 
-namespace micron { namespace gfx { namespace vk {
+namespace micron
+{
+namespace gfx
+{
+namespace vk
+{
 
 inline PFN_vkCreateInstance vkCreateInstance = nullptr;
 inline PFN_vkDestroyInstance vkDestroyInstance = nullptr;
@@ -531,12 +536,17 @@ inline void **const __vk_fnptr_slots[] = {
 static_assert(sizeof(__vk_fnptr_slots) / sizeof(__vk_fnptr_slots[0]) == vk_table_size,
               "vulkan.hpp __vk_fnptr_slots must parallel __vk_table.hpp vk_table by index");
 
-}; }; };      // namespace micron::gfx::vk
+};      // namespace vk
+};      // namespace gfx
+};      // namespace micron
 
+#include "__bits/__vk_deleters.hpp"
 #include "__bits/__vk_flag_traits.hpp"
 #include "__bits/__vk_structure_types.hpp"
-#include "__bits/__vk_deleters.hpp"
 
-namespace micron { namespace vk = ::micron::gfx::vk; }
+namespace micron
+{
+namespace vk = ::micron::gfx::vk;
+}
 
 #define MICRON_VK_SYM(name) (::micron::gfx::vk::sym_index_of(#name))

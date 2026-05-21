@@ -12,321 +12,592 @@
 #include "../flags.hpp"
 #include "__vk_types.hpp"
 
-namespace micron { namespace gfx { namespace vk {
+namespace micron
+{
+namespace gfx
+{
+namespace vk
+{
 
-template <> struct flag_traits<VkAccessFlagBits> {
+template<> struct flag_traits<VkAccessFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkAccessFlags all_flags{ static_cast<u32>(static_cast<u32>(VkAccessFlagBits::INDIRECT_COMMAND_READ_BIT) | static_cast<u32>(VkAccessFlagBits::INDEX_READ_BIT) | static_cast<u32>(VkAccessFlagBits::VERTEX_ATTRIBUTE_READ_BIT) | static_cast<u32>(VkAccessFlagBits::UNIFORM_READ_BIT) | static_cast<u32>(VkAccessFlagBits::INPUT_ATTACHMENT_READ_BIT) | static_cast<u32>(VkAccessFlagBits::SHADER_READ_BIT) | static_cast<u32>(VkAccessFlagBits::SHADER_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::COLOR_ATTACHMENT_READ_BIT) | static_cast<u32>(VkAccessFlagBits::COLOR_ATTACHMENT_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::DEPTH_STENCIL_ATTACHMENT_READ_BIT) | static_cast<u32>(VkAccessFlagBits::DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::TRANSFER_READ_BIT) | static_cast<u32>(VkAccessFlagBits::TRANSFER_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::HOST_READ_BIT) | static_cast<u32>(VkAccessFlagBits::HOST_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::MEMORY_READ_BIT) | static_cast<u32>(VkAccessFlagBits::MEMORY_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::NONE)) };
+  static constexpr VkAccessFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkAccessFlagBits::INDIRECT_COMMAND_READ_BIT) | static_cast<u32>(VkAccessFlagBits::INDEX_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::VERTEX_ATTRIBUTE_READ_BIT) | static_cast<u32>(VkAccessFlagBits::UNIFORM_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::INPUT_ATTACHMENT_READ_BIT) | static_cast<u32>(VkAccessFlagBits::SHADER_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::SHADER_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::COLOR_ATTACHMENT_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::COLOR_ATTACHMENT_WRITE_BIT)
+      | static_cast<u32>(VkAccessFlagBits::DEPTH_STENCIL_ATTACHMENT_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::TRANSFER_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::TRANSFER_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::HOST_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::HOST_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::MEMORY_READ_BIT)
+      | static_cast<u32>(VkAccessFlagBits::MEMORY_WRITE_BIT) | static_cast<u32>(VkAccessFlagBits::NONE)) };
 };
 
-template <> struct flag_traits<VkAccessFlagBits2> {
+template<> struct flag_traits<VkAccessFlagBits2> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkAccessFlags2 all_flags{ static_cast<u64>(static_cast<u64>(VkAccessFlagBits2::NONE) | static_cast<u64>(VkAccessFlagBits2::INDIRECT_COMMAND_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::INDEX_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::VERTEX_ATTRIBUTE_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::UNIFORM_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::INPUT_ATTACHMENT_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::COLOR_ATTACHMENT_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::COLOR_ATTACHMENT_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::DEPTH_STENCIL_ATTACHMENT_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::TRANSFER_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::TRANSFER_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::HOST_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::HOST_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::MEMORY_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::MEMORY_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_SAMPLED_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_STORAGE_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_STORAGE_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::TRANSFORM_FEEDBACK_WRITE_BIT_EXT) | static_cast<u64>(VkAccessFlagBits2::TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT) | static_cast<u64>(VkAccessFlagBits2::TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT) | static_cast<u64>(VkAccessFlagBits2::CONDITIONAL_RENDERING_READ_BIT_EXT) | static_cast<u64>(VkAccessFlagBits2::COMMAND_PREPROCESS_READ_BIT_NV) | static_cast<u64>(VkAccessFlagBits2::COMMAND_PREPROCESS_WRITE_BIT_NV) | static_cast<u64>(VkAccessFlagBits2::FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR) | static_cast<u64>(VkAccessFlagBits2::ACCELERATION_STRUCTURE_READ_BIT_KHR) | static_cast<u64>(VkAccessFlagBits2::ACCELERATION_STRUCTURE_WRITE_BIT_KHR) | static_cast<u64>(VkAccessFlagBits2::FRAGMENT_DENSITY_MAP_READ_BIT_EXT) | static_cast<u64>(VkAccessFlagBits2::COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT)) };
+  static constexpr VkAccessFlags2 all_flags{ static_cast<u64>(
+      static_cast<u64>(VkAccessFlagBits2::NONE) | static_cast<u64>(VkAccessFlagBits2::INDIRECT_COMMAND_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::INDEX_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::VERTEX_ATTRIBUTE_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::UNIFORM_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::INPUT_ATTACHMENT_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::SHADER_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_WRITE_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::COLOR_ATTACHMENT_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::COLOR_ATTACHMENT_WRITE_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::DEPTH_STENCIL_ATTACHMENT_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::TRANSFER_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::TRANSFER_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::HOST_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::HOST_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::MEMORY_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::MEMORY_WRITE_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_SAMPLED_READ_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::SHADER_STORAGE_READ_BIT) | static_cast<u64>(VkAccessFlagBits2::SHADER_STORAGE_WRITE_BIT)
+      | static_cast<u64>(VkAccessFlagBits2::TRANSFORM_FEEDBACK_WRITE_BIT_EXT)
+      | static_cast<u64>(VkAccessFlagBits2::TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT)
+      | static_cast<u64>(VkAccessFlagBits2::TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT)
+      | static_cast<u64>(VkAccessFlagBits2::CONDITIONAL_RENDERING_READ_BIT_EXT)
+      | static_cast<u64>(VkAccessFlagBits2::COMMAND_PREPROCESS_READ_BIT_NV)
+      | static_cast<u64>(VkAccessFlagBits2::COMMAND_PREPROCESS_WRITE_BIT_NV)
+      | static_cast<u64>(VkAccessFlagBits2::FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR)
+      | static_cast<u64>(VkAccessFlagBits2::ACCELERATION_STRUCTURE_READ_BIT_KHR)
+      | static_cast<u64>(VkAccessFlagBits2::ACCELERATION_STRUCTURE_WRITE_BIT_KHR)
+      | static_cast<u64>(VkAccessFlagBits2::FRAGMENT_DENSITY_MAP_READ_BIT_EXT)
+      | static_cast<u64>(VkAccessFlagBits2::COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT)) };
 };
 
-template <> struct flag_traits<VkAttachmentDescriptionFlagBits> {
+template<> struct flag_traits<VkAttachmentDescriptionFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkAttachmentDescriptionFlags all_flags{ static_cast<u32>(static_cast<u32>(VkAttachmentDescriptionFlagBits::MAY_ALIAS_BIT)) };
+  static constexpr VkAttachmentDescriptionFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkAttachmentDescriptionFlagBits::MAY_ALIAS_BIT)) };
 };
 
-template <> struct flag_traits<VkBufferCreateFlagBits> {
+template<> struct flag_traits<VkBufferCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkBufferCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkBufferCreateFlagBits::SPARSE_BINDING_BIT) | static_cast<u32>(VkBufferCreateFlagBits::SPARSE_RESIDENCY_BIT) | static_cast<u32>(VkBufferCreateFlagBits::SPARSE_ALIASED_BIT) | static_cast<u32>(VkBufferCreateFlagBits::PROTECTED_BIT) | static_cast<u32>(VkBufferCreateFlagBits::DEVICE_ADDRESS_CAPTURE_REPLAY_BIT)) };
+  static constexpr VkBufferCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkBufferCreateFlagBits::SPARSE_BINDING_BIT) | static_cast<u32>(VkBufferCreateFlagBits::SPARSE_RESIDENCY_BIT)
+      | static_cast<u32>(VkBufferCreateFlagBits::SPARSE_ALIASED_BIT) | static_cast<u32>(VkBufferCreateFlagBits::PROTECTED_BIT)
+      | static_cast<u32>(VkBufferCreateFlagBits::DEVICE_ADDRESS_CAPTURE_REPLAY_BIT)) };
 };
 
-template <> struct flag_traits<VkBufferUsageFlagBits> {
+template<> struct flag_traits<VkBufferUsageFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkBufferUsageFlags all_flags{ static_cast<u32>(static_cast<u32>(VkBufferUsageFlagBits::TRANSFER_SRC_BIT) | static_cast<u32>(VkBufferUsageFlagBits::TRANSFER_DST_BIT) | static_cast<u32>(VkBufferUsageFlagBits::UNIFORM_TEXEL_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::STORAGE_TEXEL_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::UNIFORM_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::STORAGE_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::INDEX_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::VERTEX_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::INDIRECT_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::SHADER_DEVICE_ADDRESS_BIT)) };
+  static constexpr VkBufferUsageFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkBufferUsageFlagBits::TRANSFER_SRC_BIT) | static_cast<u32>(VkBufferUsageFlagBits::TRANSFER_DST_BIT)
+      | static_cast<u32>(VkBufferUsageFlagBits::UNIFORM_TEXEL_BUFFER_BIT)
+      | static_cast<u32>(VkBufferUsageFlagBits::STORAGE_TEXEL_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::UNIFORM_BUFFER_BIT)
+      | static_cast<u32>(VkBufferUsageFlagBits::STORAGE_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::INDEX_BUFFER_BIT)
+      | static_cast<u32>(VkBufferUsageFlagBits::VERTEX_BUFFER_BIT) | static_cast<u32>(VkBufferUsageFlagBits::INDIRECT_BUFFER_BIT)
+      | static_cast<u32>(VkBufferUsageFlagBits::SHADER_DEVICE_ADDRESS_BIT)) };
 };
 
-template <> struct flag_traits<VkColorComponentFlagBits> {
+template<> struct flag_traits<VkColorComponentFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkColorComponentFlags all_flags{ static_cast<u32>(static_cast<u32>(VkColorComponentFlagBits::R_BIT) | static_cast<u32>(VkColorComponentFlagBits::G_BIT) | static_cast<u32>(VkColorComponentFlagBits::B_BIT) | static_cast<u32>(VkColorComponentFlagBits::A_BIT)) };
+  static constexpr VkColorComponentFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkColorComponentFlagBits::R_BIT) | static_cast<u32>(VkColorComponentFlagBits::G_BIT)
+      | static_cast<u32>(VkColorComponentFlagBits::B_BIT) | static_cast<u32>(VkColorComponentFlagBits::A_BIT)) };
 };
 
-template <> struct flag_traits<VkCommandBufferResetFlagBits> {
+template<> struct flag_traits<VkCommandBufferResetFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkCommandBufferResetFlags all_flags{ static_cast<u32>(static_cast<u32>(VkCommandBufferResetFlagBits::RELEASE_RESOURCES_BIT)) };
+  static constexpr VkCommandBufferResetFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkCommandBufferResetFlagBits::RELEASE_RESOURCES_BIT)) };
 };
 
-template <> struct flag_traits<VkCommandBufferUsageFlagBits> {
+template<> struct flag_traits<VkCommandBufferUsageFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkCommandBufferUsageFlags all_flags{ static_cast<u32>(static_cast<u32>(VkCommandBufferUsageFlagBits::ONE_TIME_SUBMIT_BIT) | static_cast<u32>(VkCommandBufferUsageFlagBits::RENDER_PASS_CONTINUE_BIT) | static_cast<u32>(VkCommandBufferUsageFlagBits::SIMULTANEOUS_USE_BIT)) };
+  static constexpr VkCommandBufferUsageFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkCommandBufferUsageFlagBits::ONE_TIME_SUBMIT_BIT)
+      | static_cast<u32>(VkCommandBufferUsageFlagBits::RENDER_PASS_CONTINUE_BIT)
+      | static_cast<u32>(VkCommandBufferUsageFlagBits::SIMULTANEOUS_USE_BIT)) };
 };
 
-template <> struct flag_traits<VkCommandPoolCreateFlagBits> {
+template<> struct flag_traits<VkCommandPoolCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkCommandPoolCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkCommandPoolCreateFlagBits::TRANSIENT_BIT) | static_cast<u32>(VkCommandPoolCreateFlagBits::RESET_COMMAND_BUFFER_BIT) | static_cast<u32>(VkCommandPoolCreateFlagBits::PROTECTED_BIT)) };
+  static constexpr VkCommandPoolCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkCommandPoolCreateFlagBits::TRANSIENT_BIT) | static_cast<u32>(VkCommandPoolCreateFlagBits::RESET_COMMAND_BUFFER_BIT)
+      | static_cast<u32>(VkCommandPoolCreateFlagBits::PROTECTED_BIT)) };
 };
 
-template <> struct flag_traits<VkCommandPoolResetFlagBits> {
+template<> struct flag_traits<VkCommandPoolResetFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkCommandPoolResetFlags all_flags{ static_cast<u32>(static_cast<u32>(VkCommandPoolResetFlagBits::RELEASE_RESOURCES_BIT)) };
+  static constexpr VkCommandPoolResetFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkCommandPoolResetFlagBits::RELEASE_RESOURCES_BIT)) };
 };
 
-template <> struct flag_traits<VkCompositeAlphaFlagBitsKHR> {
+template<> struct flag_traits<VkCompositeAlphaFlagBitsKHR> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkCompositeAlphaFlagsKHR all_flags{ static_cast<u32>(static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_OPAQUE_BIT_KHR) | static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) | static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) | static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_INHERIT_BIT_KHR)) };
+  static constexpr VkCompositeAlphaFlagsKHR all_flags{ static_cast<u32>(
+      static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+      | static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR)
+      | static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR)
+      | static_cast<u32>(VkCompositeAlphaFlagBitsKHR::COMPOSITE_ALPHA_INHERIT_BIT_KHR)) };
 };
 
-template <> struct flag_traits<VkCullModeFlagBits> {
+template<> struct flag_traits<VkCullModeFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkCullModeFlags all_flags{ static_cast<u32>(static_cast<u32>(VkCullModeFlagBits::NONE) | static_cast<u32>(VkCullModeFlagBits::FRONT_BIT) | static_cast<u32>(VkCullModeFlagBits::BACK_BIT) | static_cast<u32>(VkCullModeFlagBits::FRONT_AND_BACK)) };
+  static constexpr VkCullModeFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkCullModeFlagBits::NONE) | static_cast<u32>(VkCullModeFlagBits::FRONT_BIT)
+      | static_cast<u32>(VkCullModeFlagBits::BACK_BIT) | static_cast<u32>(VkCullModeFlagBits::FRONT_AND_BACK)) };
 };
 
-template <> struct flag_traits<VkDebugUtilsMessageSeverityFlagBitsEXT> {
+template<> struct flag_traits<VkDebugUtilsMessageSeverityFlagBitsEXT> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDebugUtilsMessageSeverityFlagsEXT all_flags{ static_cast<u32>(static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) | static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) | static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) | static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)) };
+  static constexpr VkDebugUtilsMessageSeverityFlagsEXT all_flags{ static_cast<u32>(
+      static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
+      | static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+      | static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+      | static_cast<u32>(VkDebugUtilsMessageSeverityFlagBitsEXT::DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)) };
 };
 
-template <> struct flag_traits<VkDebugUtilsMessageTypeFlagBitsEXT> {
+template<> struct flag_traits<VkDebugUtilsMessageTypeFlagBitsEXT> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDebugUtilsMessageTypeFlagsEXT all_flags{ static_cast<u32>(static_cast<u32>(VkDebugUtilsMessageTypeFlagBitsEXT::DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) | static_cast<u32>(VkDebugUtilsMessageTypeFlagBitsEXT::DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) | static_cast<u32>(VkDebugUtilsMessageTypeFlagBitsEXT::DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT)) };
+  static constexpr VkDebugUtilsMessageTypeFlagsEXT all_flags{ static_cast<u32>(
+      static_cast<u32>(VkDebugUtilsMessageTypeFlagBitsEXT::DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT)
+      | static_cast<u32>(VkDebugUtilsMessageTypeFlagBitsEXT::DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT)
+      | static_cast<u32>(VkDebugUtilsMessageTypeFlagBitsEXT::DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT)) };
 };
 
-template <> struct flag_traits<VkDependencyFlagBits> {
+template<> struct flag_traits<VkDependencyFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDependencyFlags all_flags{ static_cast<u32>(static_cast<u32>(VkDependencyFlagBits::BY_REGION_BIT) | static_cast<u32>(VkDependencyFlagBits::DEVICE_GROUP_BIT) | static_cast<u32>(VkDependencyFlagBits::VIEW_LOCAL_BIT)) };
+  static constexpr VkDependencyFlags all_flags{ static_cast<u32>(static_cast<u32>(VkDependencyFlagBits::BY_REGION_BIT)
+                                                                 | static_cast<u32>(VkDependencyFlagBits::DEVICE_GROUP_BIT)
+                                                                 | static_cast<u32>(VkDependencyFlagBits::VIEW_LOCAL_BIT)) };
 };
 
-template <> struct flag_traits<VkDescriptorBindingFlagBits> {
+template<> struct flag_traits<VkDescriptorBindingFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDescriptorBindingFlags all_flags{ static_cast<u32>(static_cast<u32>(VkDescriptorBindingFlagBits::UPDATE_AFTER_BIND_BIT) | static_cast<u32>(VkDescriptorBindingFlagBits::UPDATE_UNUSED_WHILE_PENDING_BIT) | static_cast<u32>(VkDescriptorBindingFlagBits::PARTIALLY_BOUND_BIT) | static_cast<u32>(VkDescriptorBindingFlagBits::VARIABLE_DESCRIPTOR_COUNT_BIT)) };
+  static constexpr VkDescriptorBindingFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkDescriptorBindingFlagBits::UPDATE_AFTER_BIND_BIT)
+      | static_cast<u32>(VkDescriptorBindingFlagBits::UPDATE_UNUSED_WHILE_PENDING_BIT)
+      | static_cast<u32>(VkDescriptorBindingFlagBits::PARTIALLY_BOUND_BIT)
+      | static_cast<u32>(VkDescriptorBindingFlagBits::VARIABLE_DESCRIPTOR_COUNT_BIT)) };
 };
 
-template <> struct flag_traits<VkDescriptorPoolCreateFlagBits> {
+template<> struct flag_traits<VkDescriptorPoolCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDescriptorPoolCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkDescriptorPoolCreateFlagBits::FREE_DESCRIPTOR_SET_BIT) | static_cast<u32>(VkDescriptorPoolCreateFlagBits::UPDATE_AFTER_BIND_BIT)) };
+  static constexpr VkDescriptorPoolCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkDescriptorPoolCreateFlagBits::FREE_DESCRIPTOR_SET_BIT)
+      | static_cast<u32>(VkDescriptorPoolCreateFlagBits::UPDATE_AFTER_BIND_BIT)) };
 };
 
-template <> struct flag_traits<VkDescriptorSetLayoutCreateFlagBits> {
+template<> struct flag_traits<VkDescriptorSetLayoutCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDescriptorSetLayoutCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkDescriptorSetLayoutCreateFlagBits::UPDATE_AFTER_BIND_POOL_BIT)) };
+  static constexpr VkDescriptorSetLayoutCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkDescriptorSetLayoutCreateFlagBits::UPDATE_AFTER_BIND_POOL_BIT)) };
 };
 
-template <> struct flag_traits<VkDeviceGroupPresentModeFlagBitsKHR> {
+template<> struct flag_traits<VkDeviceGroupPresentModeFlagBitsKHR> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkDeviceGroupPresentModeFlagsKHR all_flags{ static_cast<u32>(static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR) | static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR) | static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR) | static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR)) };
+  static constexpr VkDeviceGroupPresentModeFlagsKHR all_flags{ static_cast<u32>(
+      static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR)
+      | static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR)
+      | static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR)
+      | static_cast<u32>(VkDeviceGroupPresentModeFlagBitsKHR::DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR)) };
 };
 
-template <> struct flag_traits<VkDeviceQueueCreateFlagBits> {
+template<> struct flag_traits<VkDeviceQueueCreateFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkDeviceQueueCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkDeviceQueueCreateFlagBits::PROTECTED_BIT)) };
 };
 
-template <> struct flag_traits<VkEventCreateFlagBits> {
+template<> struct flag_traits<VkEventCreateFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkEventCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkEventCreateFlagBits::DEVICE_ONLY_BIT)) };
 };
 
-template <> struct flag_traits<VkExternalFenceFeatureFlagBits> {
+template<> struct flag_traits<VkExternalFenceFeatureFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkExternalFenceFeatureFlags all_flags{ static_cast<u32>(static_cast<u32>(VkExternalFenceFeatureFlagBits::EXPORTABLE_BIT) | static_cast<u32>(VkExternalFenceFeatureFlagBits::IMPORTABLE_BIT)) };
+  static constexpr VkExternalFenceFeatureFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkExternalFenceFeatureFlagBits::EXPORTABLE_BIT)
+      | static_cast<u32>(VkExternalFenceFeatureFlagBits::IMPORTABLE_BIT)) };
 };
 
-template <> struct flag_traits<VkExternalFenceHandleTypeFlagBits> {
+template<> struct flag_traits<VkExternalFenceHandleTypeFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkExternalFenceHandleTypeFlags all_flags{ static_cast<u32>(static_cast<u32>(VkExternalFenceHandleTypeFlagBits::OPAQUE_FD_BIT) | static_cast<u32>(VkExternalFenceHandleTypeFlagBits::OPAQUE_WIN32_BIT) | static_cast<u32>(VkExternalFenceHandleTypeFlagBits::OPAQUE_WIN32_KMT_BIT) | static_cast<u32>(VkExternalFenceHandleTypeFlagBits::SYNC_FD_BIT)) };
+  static constexpr VkExternalFenceHandleTypeFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkExternalFenceHandleTypeFlagBits::OPAQUE_FD_BIT)
+      | static_cast<u32>(VkExternalFenceHandleTypeFlagBits::OPAQUE_WIN32_BIT)
+      | static_cast<u32>(VkExternalFenceHandleTypeFlagBits::OPAQUE_WIN32_KMT_BIT)
+      | static_cast<u32>(VkExternalFenceHandleTypeFlagBits::SYNC_FD_BIT)) };
 };
 
-template <> struct flag_traits<VkExternalMemoryFeatureFlagBits> {
+template<> struct flag_traits<VkExternalMemoryFeatureFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkExternalMemoryFeatureFlags all_flags{ static_cast<u32>(static_cast<u32>(VkExternalMemoryFeatureFlagBits::DEDICATED_ONLY_BIT) | static_cast<u32>(VkExternalMemoryFeatureFlagBits::EXPORTABLE_BIT) | static_cast<u32>(VkExternalMemoryFeatureFlagBits::IMPORTABLE_BIT)) };
+  static constexpr VkExternalMemoryFeatureFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkExternalMemoryFeatureFlagBits::DEDICATED_ONLY_BIT)
+      | static_cast<u32>(VkExternalMemoryFeatureFlagBits::EXPORTABLE_BIT)
+      | static_cast<u32>(VkExternalMemoryFeatureFlagBits::IMPORTABLE_BIT)) };
 };
 
-template <> struct flag_traits<VkExternalMemoryHandleTypeFlagBits> {
+template<> struct flag_traits<VkExternalMemoryHandleTypeFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkExternalMemoryHandleTypeFlags all_flags{ static_cast<u32>(static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::OPAQUE_FD_BIT) | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::OPAQUE_WIN32_BIT) | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::OPAQUE_WIN32_KMT_BIT) | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D11_TEXTURE_BIT) | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D11_TEXTURE_KMT_BIT) | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D12_HEAP_BIT) | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D12_RESOURCE_BIT)) };
+  static constexpr VkExternalMemoryHandleTypeFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::OPAQUE_FD_BIT)
+      | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::OPAQUE_WIN32_BIT)
+      | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::OPAQUE_WIN32_KMT_BIT)
+      | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D11_TEXTURE_BIT)
+      | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D11_TEXTURE_KMT_BIT)
+      | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D12_HEAP_BIT)
+      | static_cast<u32>(VkExternalMemoryHandleTypeFlagBits::D3D12_RESOURCE_BIT)) };
 };
 
-template <> struct flag_traits<VkExternalSemaphoreFeatureFlagBits> {
+template<> struct flag_traits<VkExternalSemaphoreFeatureFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkExternalSemaphoreFeatureFlags all_flags{ static_cast<u32>(static_cast<u32>(VkExternalSemaphoreFeatureFlagBits::EXPORTABLE_BIT) | static_cast<u32>(VkExternalSemaphoreFeatureFlagBits::IMPORTABLE_BIT)) };
+  static constexpr VkExternalSemaphoreFeatureFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkExternalSemaphoreFeatureFlagBits::EXPORTABLE_BIT)
+      | static_cast<u32>(VkExternalSemaphoreFeatureFlagBits::IMPORTABLE_BIT)) };
 };
 
-template <> struct flag_traits<VkExternalSemaphoreHandleTypeFlagBits> {
+template<> struct flag_traits<VkExternalSemaphoreHandleTypeFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkExternalSemaphoreHandleTypeFlags all_flags{ static_cast<u32>(static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::OPAQUE_FD_BIT) | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::OPAQUE_WIN32_BIT) | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::OPAQUE_WIN32_KMT_BIT) | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::D3D12_FENCE_BIT) | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::SYNC_FD_BIT)) };
+  static constexpr VkExternalSemaphoreHandleTypeFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::OPAQUE_FD_BIT)
+      | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::OPAQUE_WIN32_BIT)
+      | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::OPAQUE_WIN32_KMT_BIT)
+      | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::D3D12_FENCE_BIT)
+      | static_cast<u32>(VkExternalSemaphoreHandleTypeFlagBits::SYNC_FD_BIT)) };
 };
 
-template <> struct flag_traits<VkFenceCreateFlagBits> {
+template<> struct flag_traits<VkFenceCreateFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkFenceCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkFenceCreateFlagBits::SIGNALED_BIT)) };
 };
 
-template <> struct flag_traits<VkFenceImportFlagBits> {
+template<> struct flag_traits<VkFenceImportFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkFenceImportFlags all_flags{ static_cast<u32>(static_cast<u32>(VkFenceImportFlagBits::TEMPORARY_BIT)) };
 };
 
-template <> struct flag_traits<VkFormatFeatureFlagBits> {
+template<> struct flag_traits<VkFormatFeatureFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkFormatFeatureFlags all_flags{ static_cast<u32>(static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_IMAGE_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_IMAGE_ATOMIC_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::UNIFORM_TEXEL_BUFFER_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_TEXEL_BUFFER_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_TEXEL_BUFFER_ATOMIC_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::VERTEX_BUFFER_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::COLOR_ATTACHMENT_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::COLOR_ATTACHMENT_BLEND_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::DEPTH_STENCIL_ATTACHMENT_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::BLIT_SRC_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::BLIT_DST_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_FILTER_LINEAR_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::TRANSFER_SRC_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::TRANSFER_DST_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::MIDPOINT_CHROMA_SAMPLES_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::DISJOINT_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::COSITED_CHROMA_SAMPLES_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_FILTER_MINMAX_BIT)) };
+  static constexpr VkFormatFeatureFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_IMAGE_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_IMAGE_ATOMIC_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::UNIFORM_TEXEL_BUFFER_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_TEXEL_BUFFER_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::STORAGE_TEXEL_BUFFER_ATOMIC_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::VERTEX_BUFFER_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::COLOR_ATTACHMENT_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::COLOR_ATTACHMENT_BLEND_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::DEPTH_STENCIL_ATTACHMENT_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::BLIT_SRC_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::BLIT_DST_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_FILTER_LINEAR_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::TRANSFER_SRC_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::TRANSFER_DST_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::MIDPOINT_CHROMA_SAMPLES_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::DISJOINT_BIT) | static_cast<u32>(VkFormatFeatureFlagBits::COSITED_CHROMA_SAMPLES_BIT)
+      | static_cast<u32>(VkFormatFeatureFlagBits::SAMPLED_IMAGE_FILTER_MINMAX_BIT)) };
 };
 
-template <> struct flag_traits<VkFormatFeatureFlagBits2> {
+template<> struct flag_traits<VkFormatFeatureFlagBits2> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkFormatFeatureFlags2 all_flags{ static_cast<u64>(static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_IMAGE_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_IMAGE_ATOMIC_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::UNIFORM_TEXEL_BUFFER_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_TEXEL_BUFFER_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_TEXEL_BUFFER_ATOMIC_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::VERTEX_BUFFER_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::COLOR_ATTACHMENT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::COLOR_ATTACHMENT_BLEND_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::DEPTH_STENCIL_ATTACHMENT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::BLIT_SRC_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::BLIT_DST_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_FILTER_LINEAR_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_FILTER_CUBIC_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::TRANSFER_SRC_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::TRANSFER_DST_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_FILTER_MINMAX_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::MIDPOINT_CHROMA_SAMPLES_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::DISJOINT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::COSITED_CHROMA_SAMPLES_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_READ_WITHOUT_FORMAT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_WRITE_WITHOUT_FORMAT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_DEPTH_COMPARISON_BIT)) };
+  static constexpr VkFormatFeatureFlags2 all_flags{ static_cast<u64>(
+      static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_IMAGE_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_IMAGE_ATOMIC_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::UNIFORM_TEXEL_BUFFER_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_TEXEL_BUFFER_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_TEXEL_BUFFER_ATOMIC_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::VERTEX_BUFFER_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::COLOR_ATTACHMENT_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::COLOR_ATTACHMENT_BLEND_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::DEPTH_STENCIL_ATTACHMENT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::BLIT_SRC_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::BLIT_DST_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_FILTER_LINEAR_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_FILTER_CUBIC_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::TRANSFER_SRC_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::TRANSFER_DST_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_FILTER_MINMAX_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::MIDPOINT_CHROMA_SAMPLES_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::DISJOINT_BIT) | static_cast<u64>(VkFormatFeatureFlagBits2::COSITED_CHROMA_SAMPLES_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_READ_WITHOUT_FORMAT_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::STORAGE_WRITE_WITHOUT_FORMAT_BIT)
+      | static_cast<u64>(VkFormatFeatureFlagBits2::SAMPLED_IMAGE_DEPTH_COMPARISON_BIT)) };
 };
 
-template <> struct flag_traits<VkFramebufferCreateFlagBits> {
+template<> struct flag_traits<VkFramebufferCreateFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkFramebufferCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkFramebufferCreateFlagBits::IMAGELESS_BIT)) };
 };
 
-template <> struct flag_traits<VkImageAspectFlagBits> {
+template<> struct flag_traits<VkImageAspectFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkImageAspectFlags all_flags{ static_cast<u32>(static_cast<u32>(VkImageAspectFlagBits::COLOR_BIT) | static_cast<u32>(VkImageAspectFlagBits::DEPTH_BIT) | static_cast<u32>(VkImageAspectFlagBits::STENCIL_BIT) | static_cast<u32>(VkImageAspectFlagBits::METADATA_BIT) | static_cast<u32>(VkImageAspectFlagBits::PLANE_0_BIT) | static_cast<u32>(VkImageAspectFlagBits::PLANE_1_BIT) | static_cast<u32>(VkImageAspectFlagBits::PLANE_2_BIT) | static_cast<u32>(VkImageAspectFlagBits::NONE)) };
+  static constexpr VkImageAspectFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkImageAspectFlagBits::COLOR_BIT) | static_cast<u32>(VkImageAspectFlagBits::DEPTH_BIT)
+      | static_cast<u32>(VkImageAspectFlagBits::STENCIL_BIT) | static_cast<u32>(VkImageAspectFlagBits::METADATA_BIT)
+      | static_cast<u32>(VkImageAspectFlagBits::PLANE_0_BIT) | static_cast<u32>(VkImageAspectFlagBits::PLANE_1_BIT)
+      | static_cast<u32>(VkImageAspectFlagBits::PLANE_2_BIT) | static_cast<u32>(VkImageAspectFlagBits::NONE)) };
 };
 
-template <> struct flag_traits<VkImageCreateFlagBits> {
+template<> struct flag_traits<VkImageCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkImageCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkImageCreateFlagBits::SPARSE_BINDING_BIT) | static_cast<u32>(VkImageCreateFlagBits::SPARSE_RESIDENCY_BIT) | static_cast<u32>(VkImageCreateFlagBits::SPARSE_ALIASED_BIT) | static_cast<u32>(VkImageCreateFlagBits::MUTABLE_FORMAT_BIT) | static_cast<u32>(VkImageCreateFlagBits::CUBE_COMPATIBLE_BIT) | static_cast<u32>(VkImageCreateFlagBits::ALIAS_BIT) | static_cast<u32>(VkImageCreateFlagBits::SPLIT_INSTANCE_BIND_REGIONS_BIT) | static_cast<u32>(VkImageCreateFlagBits::_2D_ARRAY_COMPATIBLE_BIT) | static_cast<u32>(VkImageCreateFlagBits::BLOCK_TEXEL_VIEW_COMPATIBLE_BIT) | static_cast<u32>(VkImageCreateFlagBits::EXTENDED_USAGE_BIT) | static_cast<u32>(VkImageCreateFlagBits::PROTECTED_BIT) | static_cast<u32>(VkImageCreateFlagBits::DISJOINT_BIT)) };
+  static constexpr VkImageCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkImageCreateFlagBits::SPARSE_BINDING_BIT) | static_cast<u32>(VkImageCreateFlagBits::SPARSE_RESIDENCY_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::SPARSE_ALIASED_BIT) | static_cast<u32>(VkImageCreateFlagBits::MUTABLE_FORMAT_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::CUBE_COMPATIBLE_BIT) | static_cast<u32>(VkImageCreateFlagBits::ALIAS_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::SPLIT_INSTANCE_BIND_REGIONS_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::_2D_ARRAY_COMPATIBLE_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::BLOCK_TEXEL_VIEW_COMPATIBLE_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::EXTENDED_USAGE_BIT) | static_cast<u32>(VkImageCreateFlagBits::PROTECTED_BIT)
+      | static_cast<u32>(VkImageCreateFlagBits::DISJOINT_BIT)) };
 };
 
-template <> struct flag_traits<VkImageUsageFlagBits> {
+template<> struct flag_traits<VkImageUsageFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkImageUsageFlags all_flags{ static_cast<u32>(static_cast<u32>(VkImageUsageFlagBits::TRANSFER_SRC_BIT) | static_cast<u32>(VkImageUsageFlagBits::TRANSFER_DST_BIT) | static_cast<u32>(VkImageUsageFlagBits::SAMPLED_BIT) | static_cast<u32>(VkImageUsageFlagBits::STORAGE_BIT) | static_cast<u32>(VkImageUsageFlagBits::COLOR_ATTACHMENT_BIT) | static_cast<u32>(VkImageUsageFlagBits::DEPTH_STENCIL_ATTACHMENT_BIT) | static_cast<u32>(VkImageUsageFlagBits::TRANSIENT_ATTACHMENT_BIT) | static_cast<u32>(VkImageUsageFlagBits::INPUT_ATTACHMENT_BIT)) };
+  static constexpr VkImageUsageFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkImageUsageFlagBits::TRANSFER_SRC_BIT) | static_cast<u32>(VkImageUsageFlagBits::TRANSFER_DST_BIT)
+      | static_cast<u32>(VkImageUsageFlagBits::SAMPLED_BIT) | static_cast<u32>(VkImageUsageFlagBits::STORAGE_BIT)
+      | static_cast<u32>(VkImageUsageFlagBits::COLOR_ATTACHMENT_BIT) | static_cast<u32>(VkImageUsageFlagBits::DEPTH_STENCIL_ATTACHMENT_BIT)
+      | static_cast<u32>(VkImageUsageFlagBits::TRANSIENT_ATTACHMENT_BIT) | static_cast<u32>(VkImageUsageFlagBits::INPUT_ATTACHMENT_BIT)) };
 };
 
-template <> struct flag_traits<VkMemoryAllocateFlagBits> {
+template<> struct flag_traits<VkMemoryAllocateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkMemoryAllocateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkMemoryAllocateFlagBits::DEVICE_MASK_BIT) | static_cast<u32>(VkMemoryAllocateFlagBits::DEVICE_ADDRESS_BIT) | static_cast<u32>(VkMemoryAllocateFlagBits::DEVICE_ADDRESS_CAPTURE_REPLAY_BIT)) };
+  static constexpr VkMemoryAllocateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkMemoryAllocateFlagBits::DEVICE_MASK_BIT) | static_cast<u32>(VkMemoryAllocateFlagBits::DEVICE_ADDRESS_BIT)
+      | static_cast<u32>(VkMemoryAllocateFlagBits::DEVICE_ADDRESS_CAPTURE_REPLAY_BIT)) };
 };
 
-template <> struct flag_traits<VkMemoryHeapFlagBits> {
+template<> struct flag_traits<VkMemoryHeapFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkMemoryHeapFlags all_flags{ static_cast<u32>(static_cast<u32>(VkMemoryHeapFlagBits::DEVICE_LOCAL_BIT) | static_cast<u32>(VkMemoryHeapFlagBits::MULTI_INSTANCE_BIT)) };
+  static constexpr VkMemoryHeapFlags all_flags{ static_cast<u32>(static_cast<u32>(VkMemoryHeapFlagBits::DEVICE_LOCAL_BIT)
+                                                                 | static_cast<u32>(VkMemoryHeapFlagBits::MULTI_INSTANCE_BIT)) };
 };
 
-template <> struct flag_traits<VkMemoryPropertyFlagBits> {
+template<> struct flag_traits<VkMemoryPropertyFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkMemoryPropertyFlags all_flags{ static_cast<u32>(static_cast<u32>(VkMemoryPropertyFlagBits::DEVICE_LOCAL_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::HOST_VISIBLE_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::HOST_COHERENT_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::HOST_CACHED_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::LAZILY_ALLOCATED_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::PROTECTED_BIT)) };
+  static constexpr VkMemoryPropertyFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkMemoryPropertyFlagBits::DEVICE_LOCAL_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::HOST_VISIBLE_BIT)
+      | static_cast<u32>(VkMemoryPropertyFlagBits::HOST_COHERENT_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::HOST_CACHED_BIT)
+      | static_cast<u32>(VkMemoryPropertyFlagBits::LAZILY_ALLOCATED_BIT) | static_cast<u32>(VkMemoryPropertyFlagBits::PROTECTED_BIT)) };
 };
 
-template <> struct flag_traits<VkPeerMemoryFeatureFlagBits> {
+template<> struct flag_traits<VkPeerMemoryFeatureFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPeerMemoryFeatureFlags all_flags{ static_cast<u32>(static_cast<u32>(VkPeerMemoryFeatureFlagBits::COPY_SRC_BIT) | static_cast<u32>(VkPeerMemoryFeatureFlagBits::COPY_DST_BIT) | static_cast<u32>(VkPeerMemoryFeatureFlagBits::GENERIC_SRC_BIT) | static_cast<u32>(VkPeerMemoryFeatureFlagBits::GENERIC_DST_BIT)) };
+  static constexpr VkPeerMemoryFeatureFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkPeerMemoryFeatureFlagBits::COPY_SRC_BIT) | static_cast<u32>(VkPeerMemoryFeatureFlagBits::COPY_DST_BIT)
+      | static_cast<u32>(VkPeerMemoryFeatureFlagBits::GENERIC_SRC_BIT) | static_cast<u32>(VkPeerMemoryFeatureFlagBits::GENERIC_DST_BIT)) };
 };
 
-template <> struct flag_traits<VkPipelineCacheCreateFlagBits> {
+template<> struct flag_traits<VkPipelineCacheCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPipelineCacheCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkPipelineCacheCreateFlagBits::EXTERNALLY_SYNCHRONIZED_BIT)) };
+  static constexpr VkPipelineCacheCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkPipelineCacheCreateFlagBits::EXTERNALLY_SYNCHRONIZED_BIT)) };
 };
 
-template <> struct flag_traits<VkPipelineCreateFlagBits> {
+template<> struct flag_traits<VkPipelineCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPipelineCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkPipelineCreateFlagBits::DISABLE_OPTIMIZATION_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::ALLOW_DERIVATIVES_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::DERIVATIVE_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::VIEW_INDEX_FROM_DEVICE_INDEX_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::DISPATCH_BASE_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::EARLY_RETURN_ON_FAILURE_BIT)) };
+  static constexpr VkPipelineCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkPipelineCreateFlagBits::DISABLE_OPTIMIZATION_BIT)
+      | static_cast<u32>(VkPipelineCreateFlagBits::ALLOW_DERIVATIVES_BIT) | static_cast<u32>(VkPipelineCreateFlagBits::DERIVATIVE_BIT)
+      | static_cast<u32>(VkPipelineCreateFlagBits::VIEW_INDEX_FROM_DEVICE_INDEX_BIT)
+      | static_cast<u32>(VkPipelineCreateFlagBits::DISPATCH_BASE_BIT)
+      | static_cast<u32>(VkPipelineCreateFlagBits::FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT)
+      | static_cast<u32>(VkPipelineCreateFlagBits::EARLY_RETURN_ON_FAILURE_BIT)) };
 };
 
-template <> struct flag_traits<VkPipelineCreationFeedbackFlagBits> {
+template<> struct flag_traits<VkPipelineCreationFeedbackFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPipelineCreationFeedbackFlags all_flags{ static_cast<u32>(static_cast<u32>(VkPipelineCreationFeedbackFlagBits::VALID_BIT) | static_cast<u32>(VkPipelineCreationFeedbackFlagBits::APPLICATION_PIPELINE_CACHE_HIT_BIT) | static_cast<u32>(VkPipelineCreationFeedbackFlagBits::BASE_PIPELINE_ACCELERATION_BIT)) };
+  static constexpr VkPipelineCreationFeedbackFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkPipelineCreationFeedbackFlagBits::VALID_BIT)
+      | static_cast<u32>(VkPipelineCreationFeedbackFlagBits::APPLICATION_PIPELINE_CACHE_HIT_BIT)
+      | static_cast<u32>(VkPipelineCreationFeedbackFlagBits::BASE_PIPELINE_ACCELERATION_BIT)) };
 };
 
-template <> struct flag_traits<VkPipelineShaderStageCreateFlagBits> {
+template<> struct flag_traits<VkPipelineShaderStageCreateFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPipelineShaderStageCreateFlags all_flags{ static_cast<u32>(static_cast<u32>(VkPipelineShaderStageCreateFlagBits::ALLOW_VARYING_SUBGROUP_SIZE_BIT) | static_cast<u32>(VkPipelineShaderStageCreateFlagBits::REQUIRE_FULL_SUBGROUPS_BIT)) };
+  static constexpr VkPipelineShaderStageCreateFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkPipelineShaderStageCreateFlagBits::ALLOW_VARYING_SUBGROUP_SIZE_BIT)
+      | static_cast<u32>(VkPipelineShaderStageCreateFlagBits::REQUIRE_FULL_SUBGROUPS_BIT)) };
 };
 
-template <> struct flag_traits<VkPipelineStageFlagBits> {
+template<> struct flag_traits<VkPipelineStageFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPipelineStageFlags all_flags{ static_cast<u32>(static_cast<u32>(VkPipelineStageFlagBits::TOP_OF_PIPE_BIT) | static_cast<u32>(VkPipelineStageFlagBits::DRAW_INDIRECT_BIT) | static_cast<u32>(VkPipelineStageFlagBits::VERTEX_INPUT_BIT) | static_cast<u32>(VkPipelineStageFlagBits::VERTEX_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::TESSELLATION_CONTROL_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::TESSELLATION_EVALUATION_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::GEOMETRY_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::FRAGMENT_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::EARLY_FRAGMENT_TESTS_BIT) | static_cast<u32>(VkPipelineStageFlagBits::LATE_FRAGMENT_TESTS_BIT) | static_cast<u32>(VkPipelineStageFlagBits::COLOR_ATTACHMENT_OUTPUT_BIT) | static_cast<u32>(VkPipelineStageFlagBits::COMPUTE_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::TRANSFER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::BOTTOM_OF_PIPE_BIT) | static_cast<u32>(VkPipelineStageFlagBits::HOST_BIT) | static_cast<u32>(VkPipelineStageFlagBits::ALL_GRAPHICS_BIT) | static_cast<u32>(VkPipelineStageFlagBits::ALL_COMMANDS_BIT) | static_cast<u32>(VkPipelineStageFlagBits::NONE)) };
+  static constexpr VkPipelineStageFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkPipelineStageFlagBits::TOP_OF_PIPE_BIT) | static_cast<u32>(VkPipelineStageFlagBits::DRAW_INDIRECT_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::VERTEX_INPUT_BIT) | static_cast<u32>(VkPipelineStageFlagBits::VERTEX_SHADER_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::TESSELLATION_CONTROL_SHADER_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::TESSELLATION_EVALUATION_SHADER_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::GEOMETRY_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::FRAGMENT_SHADER_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::EARLY_FRAGMENT_TESTS_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::LATE_FRAGMENT_TESTS_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::COLOR_ATTACHMENT_OUTPUT_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::COMPUTE_SHADER_BIT) | static_cast<u32>(VkPipelineStageFlagBits::TRANSFER_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::BOTTOM_OF_PIPE_BIT) | static_cast<u32>(VkPipelineStageFlagBits::HOST_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::ALL_GRAPHICS_BIT) | static_cast<u32>(VkPipelineStageFlagBits::ALL_COMMANDS_BIT)
+      | static_cast<u32>(VkPipelineStageFlagBits::NONE)) };
 };
 
-template <> struct flag_traits<VkPipelineStageFlagBits2> {
+template<> struct flag_traits<VkPipelineStageFlagBits2> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkPipelineStageFlags2 all_flags{ static_cast<u64>(static_cast<u64>(VkPipelineStageFlagBits2::NONE) | static_cast<u64>(VkPipelineStageFlagBits2::TOP_OF_PIPE_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::DRAW_INDIRECT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::VERTEX_INPUT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::VERTEX_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::TESSELLATION_CONTROL_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::TESSELLATION_EVALUATION_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::GEOMETRY_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::FRAGMENT_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::EARLY_FRAGMENT_TESTS_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::LATE_FRAGMENT_TESTS_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::COLOR_ATTACHMENT_OUTPUT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::COMPUTE_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::ALL_TRANSFER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::BOTTOM_OF_PIPE_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::HOST_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::ALL_GRAPHICS_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::ALL_COMMANDS_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::COPY_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::RESOLVE_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::BLIT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::CLEAR_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::INDEX_INPUT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::VERTEX_ATTRIBUTE_INPUT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::PRE_RASTERIZATION_SHADERS_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::TRANSFORM_FEEDBACK_BIT_EXT) | static_cast<u64>(VkPipelineStageFlagBits2::CONDITIONAL_RENDERING_BIT_EXT) | static_cast<u64>(VkPipelineStageFlagBits2::COMMAND_PREPROCESS_BIT_NV) | static_cast<u64>(VkPipelineStageFlagBits2::FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR) | static_cast<u64>(VkPipelineStageFlagBits2::ACCELERATION_STRUCTURE_BUILD_BIT_KHR) | static_cast<u64>(VkPipelineStageFlagBits2::RAY_TRACING_SHADER_BIT_KHR) | static_cast<u64>(VkPipelineStageFlagBits2::FRAGMENT_DENSITY_PROCESS_BIT_EXT) | static_cast<u64>(VkPipelineStageFlagBits2::TASK_SHADER_BIT_EXT) | static_cast<u64>(VkPipelineStageFlagBits2::MESH_SHADER_BIT_EXT)) };
+  static constexpr VkPipelineStageFlags2 all_flags{ static_cast<u64>(
+      static_cast<u64>(VkPipelineStageFlagBits2::NONE) | static_cast<u64>(VkPipelineStageFlagBits2::TOP_OF_PIPE_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::DRAW_INDIRECT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::VERTEX_INPUT_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::VERTEX_SHADER_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::TESSELLATION_CONTROL_SHADER_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::TESSELLATION_EVALUATION_SHADER_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::GEOMETRY_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::FRAGMENT_SHADER_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::EARLY_FRAGMENT_TESTS_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::LATE_FRAGMENT_TESTS_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::COLOR_ATTACHMENT_OUTPUT_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::COMPUTE_SHADER_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::ALL_TRANSFER_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::BOTTOM_OF_PIPE_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::HOST_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::ALL_GRAPHICS_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::ALL_COMMANDS_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::COPY_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::RESOLVE_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::BLIT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::CLEAR_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::INDEX_INPUT_BIT) | static_cast<u64>(VkPipelineStageFlagBits2::VERTEX_ATTRIBUTE_INPUT_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::PRE_RASTERIZATION_SHADERS_BIT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::TRANSFORM_FEEDBACK_BIT_EXT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::CONDITIONAL_RENDERING_BIT_EXT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::COMMAND_PREPROCESS_BIT_NV)
+      | static_cast<u64>(VkPipelineStageFlagBits2::FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR)
+      | static_cast<u64>(VkPipelineStageFlagBits2::ACCELERATION_STRUCTURE_BUILD_BIT_KHR)
+      | static_cast<u64>(VkPipelineStageFlagBits2::RAY_TRACING_SHADER_BIT_KHR)
+      | static_cast<u64>(VkPipelineStageFlagBits2::FRAGMENT_DENSITY_PROCESS_BIT_EXT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::TASK_SHADER_BIT_EXT)
+      | static_cast<u64>(VkPipelineStageFlagBits2::MESH_SHADER_BIT_EXT)) };
 };
 
-template <> struct flag_traits<VkQueryControlFlagBits> {
+template<> struct flag_traits<VkQueryControlFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkQueryControlFlags all_flags{ static_cast<u32>(static_cast<u32>(VkQueryControlFlagBits::PRECISE_BIT)) };
 };
 
-template <> struct flag_traits<VkQueryPipelineStatisticFlagBits> {
+template<> struct flag_traits<VkQueryPipelineStatisticFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkQueryPipelineStatisticFlags all_flags{ static_cast<u32>(static_cast<u32>(VkQueryPipelineStatisticFlagBits::INPUT_ASSEMBLY_VERTICES_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::INPUT_ASSEMBLY_PRIMITIVES_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::VERTEX_SHADER_INVOCATIONS_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::GEOMETRY_SHADER_INVOCATIONS_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::GEOMETRY_SHADER_PRIMITIVES_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::CLIPPING_INVOCATIONS_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::CLIPPING_PRIMITIVES_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::FRAGMENT_SHADER_INVOCATIONS_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::TESSELLATION_CONTROL_SHADER_PATCHES_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT) | static_cast<u32>(VkQueryPipelineStatisticFlagBits::COMPUTE_SHADER_INVOCATIONS_BIT)) };
+  static constexpr VkQueryPipelineStatisticFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkQueryPipelineStatisticFlagBits::INPUT_ASSEMBLY_VERTICES_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::INPUT_ASSEMBLY_PRIMITIVES_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::VERTEX_SHADER_INVOCATIONS_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::GEOMETRY_SHADER_INVOCATIONS_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::GEOMETRY_SHADER_PRIMITIVES_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::CLIPPING_INVOCATIONS_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::CLIPPING_PRIMITIVES_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::FRAGMENT_SHADER_INVOCATIONS_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::TESSELLATION_CONTROL_SHADER_PATCHES_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT)
+      | static_cast<u32>(VkQueryPipelineStatisticFlagBits::COMPUTE_SHADER_INVOCATIONS_BIT)) };
 };
 
-template <> struct flag_traits<VkQueryResultFlagBits> {
+template<> struct flag_traits<VkQueryResultFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkQueryResultFlags all_flags{ static_cast<u32>(static_cast<u32>(VkQueryResultFlagBits::_64_BIT) | static_cast<u32>(VkQueryResultFlagBits::WAIT_BIT) | static_cast<u32>(VkQueryResultFlagBits::WITH_AVAILABILITY_BIT) | static_cast<u32>(VkQueryResultFlagBits::PARTIAL_BIT)) };
+  static constexpr VkQueryResultFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkQueryResultFlagBits::_64_BIT) | static_cast<u32>(VkQueryResultFlagBits::WAIT_BIT)
+      | static_cast<u32>(VkQueryResultFlagBits::WITH_AVAILABILITY_BIT) | static_cast<u32>(VkQueryResultFlagBits::PARTIAL_BIT)) };
 };
 
-template <> struct flag_traits<VkQueueFlagBits> {
+template<> struct flag_traits<VkQueueFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkQueueFlags all_flags{ static_cast<u32>(static_cast<u32>(VkQueueFlagBits::GRAPHICS_BIT) | static_cast<u32>(VkQueueFlagBits::COMPUTE_BIT) | static_cast<u32>(VkQueueFlagBits::TRANSFER_BIT) | static_cast<u32>(VkQueueFlagBits::SPARSE_BINDING_BIT) | static_cast<u32>(VkQueueFlagBits::PROTECTED_BIT)) };
+  static constexpr VkQueueFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkQueueFlagBits::GRAPHICS_BIT) | static_cast<u32>(VkQueueFlagBits::COMPUTE_BIT)
+      | static_cast<u32>(VkQueueFlagBits::TRANSFER_BIT) | static_cast<u32>(VkQueueFlagBits::SPARSE_BINDING_BIT)
+      | static_cast<u32>(VkQueueFlagBits::PROTECTED_BIT)) };
 };
 
-template <> struct flag_traits<VkRenderingFlagBits> {
+template<> struct flag_traits<VkRenderingFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkRenderingFlags all_flags{ static_cast<u32>(static_cast<u32>(VkRenderingFlagBits::CONTENTS_SECONDARY_COMMAND_BUFFERS_BIT) | static_cast<u32>(VkRenderingFlagBits::SUSPENDING_BIT) | static_cast<u32>(VkRenderingFlagBits::RESUMING_BIT)) };
+  static constexpr VkRenderingFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkRenderingFlagBits::CONTENTS_SECONDARY_COMMAND_BUFFERS_BIT) | static_cast<u32>(VkRenderingFlagBits::SUSPENDING_BIT)
+      | static_cast<u32>(VkRenderingFlagBits::RESUMING_BIT)) };
 };
 
-template <> struct flag_traits<VkResolveModeFlagBits> {
+template<> struct flag_traits<VkResolveModeFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkResolveModeFlags all_flags{ static_cast<u32>(static_cast<u32>(VkResolveModeFlagBits::NONE) | static_cast<u32>(VkResolveModeFlagBits::SAMPLE_ZERO_BIT) | static_cast<u32>(VkResolveModeFlagBits::AVERAGE_BIT) | static_cast<u32>(VkResolveModeFlagBits::MIN_BIT) | static_cast<u32>(VkResolveModeFlagBits::MAX_BIT)) };
+  static constexpr VkResolveModeFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkResolveModeFlagBits::NONE) | static_cast<u32>(VkResolveModeFlagBits::SAMPLE_ZERO_BIT)
+      | static_cast<u32>(VkResolveModeFlagBits::AVERAGE_BIT) | static_cast<u32>(VkResolveModeFlagBits::MIN_BIT)
+      | static_cast<u32>(VkResolveModeFlagBits::MAX_BIT)) };
 };
 
-template <> struct flag_traits<VkSampleCountFlagBits> {
+template<> struct flag_traits<VkSampleCountFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkSampleCountFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSampleCountFlagBits::_1_BIT) | static_cast<u32>(VkSampleCountFlagBits::_2_BIT) | static_cast<u32>(VkSampleCountFlagBits::_4_BIT) | static_cast<u32>(VkSampleCountFlagBits::_8_BIT) | static_cast<u32>(VkSampleCountFlagBits::_16_BIT) | static_cast<u32>(VkSampleCountFlagBits::_32_BIT) | static_cast<u32>(VkSampleCountFlagBits::_64_BIT)) };
+  static constexpr VkSampleCountFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkSampleCountFlagBits::_1_BIT) | static_cast<u32>(VkSampleCountFlagBits::_2_BIT)
+      | static_cast<u32>(VkSampleCountFlagBits::_4_BIT) | static_cast<u32>(VkSampleCountFlagBits::_8_BIT)
+      | static_cast<u32>(VkSampleCountFlagBits::_16_BIT) | static_cast<u32>(VkSampleCountFlagBits::_32_BIT)
+      | static_cast<u32>(VkSampleCountFlagBits::_64_BIT)) };
 };
 
-template <> struct flag_traits<VkSemaphoreImportFlagBits> {
+template<> struct flag_traits<VkSemaphoreImportFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkSemaphoreImportFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSemaphoreImportFlagBits::TEMPORARY_BIT)) };
 };
 
-template <> struct flag_traits<VkSemaphoreWaitFlagBits> {
+template<> struct flag_traits<VkSemaphoreWaitFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkSemaphoreWaitFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSemaphoreWaitFlagBits::ANY_BIT)) };
 };
 
-template <> struct flag_traits<VkShaderStageFlagBits> {
+template<> struct flag_traits<VkShaderStageFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkShaderStageFlags all_flags{ static_cast<u32>(static_cast<u32>(VkShaderStageFlagBits::VERTEX_BIT) | static_cast<u32>(VkShaderStageFlagBits::TESSELLATION_CONTROL_BIT) | static_cast<u32>(VkShaderStageFlagBits::TESSELLATION_EVALUATION_BIT) | static_cast<u32>(VkShaderStageFlagBits::GEOMETRY_BIT) | static_cast<u32>(VkShaderStageFlagBits::FRAGMENT_BIT) | static_cast<u32>(VkShaderStageFlagBits::COMPUTE_BIT) | static_cast<u32>(VkShaderStageFlagBits::ALL_GRAPHICS) | static_cast<u32>(VkShaderStageFlagBits::ALL)) };
+  static constexpr VkShaderStageFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkShaderStageFlagBits::VERTEX_BIT) | static_cast<u32>(VkShaderStageFlagBits::TESSELLATION_CONTROL_BIT)
+      | static_cast<u32>(VkShaderStageFlagBits::TESSELLATION_EVALUATION_BIT) | static_cast<u32>(VkShaderStageFlagBits::GEOMETRY_BIT)
+      | static_cast<u32>(VkShaderStageFlagBits::FRAGMENT_BIT) | static_cast<u32>(VkShaderStageFlagBits::COMPUTE_BIT)
+      | static_cast<u32>(VkShaderStageFlagBits::ALL_GRAPHICS) | static_cast<u32>(VkShaderStageFlagBits::ALL)) };
 };
 
-template <> struct flag_traits<VkSparseImageFormatFlagBits> {
+template<> struct flag_traits<VkSparseImageFormatFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkSparseImageFormatFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSparseImageFormatFlagBits::SINGLE_MIPTAIL_BIT) | static_cast<u32>(VkSparseImageFormatFlagBits::ALIGNED_MIP_SIZE_BIT) | static_cast<u32>(VkSparseImageFormatFlagBits::NONSTANDARD_BLOCK_SIZE_BIT)) };
+  static constexpr VkSparseImageFormatFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkSparseImageFormatFlagBits::SINGLE_MIPTAIL_BIT)
+      | static_cast<u32>(VkSparseImageFormatFlagBits::ALIGNED_MIP_SIZE_BIT)
+      | static_cast<u32>(VkSparseImageFormatFlagBits::NONSTANDARD_BLOCK_SIZE_BIT)) };
 };
 
-template <> struct flag_traits<VkSparseMemoryBindFlagBits> {
+template<> struct flag_traits<VkSparseMemoryBindFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkSparseMemoryBindFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSparseMemoryBindFlagBits::METADATA_BIT)) };
 };
 
-template <> struct flag_traits<VkStencilFaceFlagBits> {
+template<> struct flag_traits<VkStencilFaceFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkStencilFaceFlags all_flags{ static_cast<u32>(static_cast<u32>(VkStencilFaceFlagBits::FRONT_BIT) | static_cast<u32>(VkStencilFaceFlagBits::BACK_BIT) | static_cast<u32>(VkStencilFaceFlagBits::FRONT_AND_BACK)) };
+  static constexpr VkStencilFaceFlags all_flags{ static_cast<u32>(static_cast<u32>(VkStencilFaceFlagBits::FRONT_BIT)
+                                                                  | static_cast<u32>(VkStencilFaceFlagBits::BACK_BIT)
+                                                                  | static_cast<u32>(VkStencilFaceFlagBits::FRONT_AND_BACK)) };
 };
 
-template <> struct flag_traits<VkSubgroupFeatureFlagBits> {
+template<> struct flag_traits<VkSubgroupFeatureFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkSubgroupFeatureFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSubgroupFeatureFlagBits::BASIC_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::VOTE_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::ARITHMETIC_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::BALLOT_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::SHUFFLE_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::SHUFFLE_RELATIVE_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::CLUSTERED_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::QUAD_BIT)) };
+  static constexpr VkSubgroupFeatureFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkSubgroupFeatureFlagBits::BASIC_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::VOTE_BIT)
+      | static_cast<u32>(VkSubgroupFeatureFlagBits::ARITHMETIC_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::BALLOT_BIT)
+      | static_cast<u32>(VkSubgroupFeatureFlagBits::SHUFFLE_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::SHUFFLE_RELATIVE_BIT)
+      | static_cast<u32>(VkSubgroupFeatureFlagBits::CLUSTERED_BIT) | static_cast<u32>(VkSubgroupFeatureFlagBits::QUAD_BIT)) };
 };
 
-template <> struct flag_traits<VkSubmitFlagBits> {
+template<> struct flag_traits<VkSubmitFlagBits> {
   static constexpr bool is_bitmask = true;
   static constexpr VkSubmitFlags all_flags{ static_cast<u32>(static_cast<u32>(VkSubmitFlagBits::PROTECTED_BIT)) };
 };
 
-template <> struct flag_traits<VkSurfaceTransformFlagBitsKHR> {
+template<> struct flag_traits<VkSurfaceTransformFlagBitsKHR> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkSurfaceTransformFlagsKHR all_flags{ static_cast<u32>(static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_IDENTITY_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_ROTATE_180_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR) | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_INHERIT_BIT_KHR)) };
+  static constexpr VkSurfaceTransformFlagsKHR all_flags{ static_cast<u32>(
+      static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_ROTATE_90_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_ROTATE_180_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_ROTATE_270_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR)
+      | static_cast<u32>(VkSurfaceTransformFlagBitsKHR::SURFACE_TRANSFORM_INHERIT_BIT_KHR)) };
 };
 
-template <> struct flag_traits<VkSwapchainCreateFlagBitsKHR> {
+template<> struct flag_traits<VkSwapchainCreateFlagBitsKHR> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkSwapchainCreateFlagsKHR all_flags{ static_cast<u32>(static_cast<u32>(VkSwapchainCreateFlagBitsKHR::SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR) | static_cast<u32>(VkSwapchainCreateFlagBitsKHR::SWAPCHAIN_CREATE_PROTECTED_BIT_KHR)) };
+  static constexpr VkSwapchainCreateFlagsKHR all_flags{ static_cast<u32>(
+      static_cast<u32>(VkSwapchainCreateFlagBitsKHR::SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR)
+      | static_cast<u32>(VkSwapchainCreateFlagBitsKHR::SWAPCHAIN_CREATE_PROTECTED_BIT_KHR)) };
 };
 
-template <> struct flag_traits<VkToolPurposeFlagBits> {
+template<> struct flag_traits<VkToolPurposeFlagBits> {
   static constexpr bool is_bitmask = true;
-  static constexpr VkToolPurposeFlags all_flags{ static_cast<u32>(static_cast<u32>(VkToolPurposeFlagBits::VALIDATION_BIT) | static_cast<u32>(VkToolPurposeFlagBits::PROFILING_BIT) | static_cast<u32>(VkToolPurposeFlagBits::TRACING_BIT) | static_cast<u32>(VkToolPurposeFlagBits::ADDITIONAL_FEATURES_BIT) | static_cast<u32>(VkToolPurposeFlagBits::MODIFYING_FEATURES_BIT)) };
+  static constexpr VkToolPurposeFlags all_flags{ static_cast<u32>(
+      static_cast<u32>(VkToolPurposeFlagBits::VALIDATION_BIT) | static_cast<u32>(VkToolPurposeFlagBits::PROFILING_BIT)
+      | static_cast<u32>(VkToolPurposeFlagBits::TRACING_BIT) | static_cast<u32>(VkToolPurposeFlagBits::ADDITIONAL_FEATURES_BIT)
+      | static_cast<u32>(VkToolPurposeFlagBits::MODIFYING_FEATURES_BIT)) };
 };
 
-} } }      // namespace micron::gfx::vk
+}      // namespace vk
+}      // namespace gfx
+}      // namespace micron

@@ -97,8 +97,8 @@ getrlimit(limits lm, rlimit_t &rl)
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return micron::syscall(SYS_getrlimit, static_cast<i32>(lm), &rl);
-#elif defined(__micron_arch_arm32)
-  // NOTE: 32-bit limited not equiv
+#elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+  // NOTE: 32-bit (arm32 / i386): getrlimit is the legacy variant, use ugetrlimit
   return micron::syscall(SYS_ugetrlimit, static_cast<i32>(lm), &rl);
 #endif
 }
@@ -114,8 +114,8 @@ get_limits(limits lm, rlimit_t &rl)
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return micron::syscall(SYS_getrlimit, static_cast<i32>(lm), &rl);
-#elif defined(__micron_arch_arm32)
-  // NOTE: 32-bit limited not equiv
+#elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+  // NOTE: 32-bit (arm32 / i386): getrlimit is the legacy variant, use ugetrlimit
   return micron::syscall(SYS_ugetrlimit, static_cast<i32>(lm), &rl);
 #endif
 }

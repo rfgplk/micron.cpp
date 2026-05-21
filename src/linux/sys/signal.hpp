@@ -41,6 +41,14 @@ restore_rt(void)
                "svc #0\n\t"
                "brk #0\n\t");
 }
+#elif defined(__micron_arch_x86)
+naked_fn
+restore_rt(void)
+{
+  asm volatile("mov $173, %eax\n\t"      // SYS_rt_sigreturn (i386)
+               "int $0x80\n\t"
+               "ud2\n\t");
+}
 #endif
 namespace micron
 {

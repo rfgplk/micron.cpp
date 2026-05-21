@@ -188,7 +188,7 @@ closedir(fd_t &ds)
 inline __impl_dir
 readdir(const fd_t &_f)
 {
-  static char __readdir_buf[8192];
+  alignas(__linux_kernel_dirent64) static char __readdir_buf[8192];
   static usize __readdir_bufpos = 0;
   static usize __readdir_nread = 0;
   static i32 __readdir_last_fd = -1;
@@ -200,9 +200,13 @@ readdir(const fd_t &_f)
   }
 
   if ( __readdir_bufpos >= __readdir_nread ) {
-    __readdir_nread = static_cast<usize>(posix::getdents64(_f.fd, &__readdir_buf, sizeof(__readdir_buf)));
+    max_t __nr = posix::getdents64(_f.fd, &__readdir_buf, sizeof(__readdir_buf));
     __readdir_bufpos = 0;
-    if ( __readdir_nread <= 0 ) return __impl_dir{ "", dt_end, 0 };
+    if ( __nr <= 0 ) {
+      __readdir_nread = 0;
+      return __impl_dir{ "", dt_end, 0 };
+    }
+    __readdir_nread = static_cast<usize>(__nr);
   }
 
   __linux_kernel_dirent64 *p = reinterpret_cast<__linux_kernel_dirent64 *>(__readdir_buf + __readdir_bufpos);
@@ -211,7 +215,7 @@ readdir(const fd_t &_f)
 }
 
 struct readdir_ctx {
-  char buf[8192];
+  alignas(__linux_kernel_dirent64) char buf[8192];
   usize bufpos = 0;
   usize nread = 0;
 };
@@ -220,9 +224,13 @@ inline __impl_dir
 readdir_r(const fd_t &_f, readdir_ctx &ctx)
 {
   if ( ctx.bufpos >= ctx.nread ) {
-    ctx.nread = static_cast<usize>(posix::getdents64(_f.fd, ctx.buf, sizeof(ctx.buf)));
+    max_t __nr = posix::getdents64(_f.fd, ctx.buf, sizeof(ctx.buf));
     ctx.bufpos = 0;
-    if ( ctx.nread <= 0 ) return { "", dt_end, 0 };
+    if ( __nr <= 0 ) {
+      ctx.nread = 0;
+      return { "", dt_end, 0 };
+    }
+    ctx.nread = static_cast<usize>(__nr);
   }
 
   __linux_kernel_dirent64 *p = reinterpret_cast<__linux_kernel_dirent64 *>(ctx.buf + ctx.bufpos);

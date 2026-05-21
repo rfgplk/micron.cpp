@@ -653,7 +653,12 @@ symlinkat(const char *target, fd_t newdirfd, const char *linkpath)
 max_t
 readlink(const char *path, char *buf, usize bufsiz)
 {
+#if defined(__micron_arch_arm64)
+  // asm-generic ABI (arm64) has no legacy readlink syscall; route via readlinkat
+  return micron::syscall(SYS_readlinkat, at_fdcwd, path, buf, bufsiz);
+#else
   return micron::syscall(SYS_readlink, path, buf, bufsiz);
+#endif
 }
 
 max_t

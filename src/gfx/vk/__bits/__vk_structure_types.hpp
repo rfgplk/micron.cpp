@@ -12,701 +12,937 @@
 #include "../structure_type.hpp"
 #include "__vk_types.hpp"
 
-namespace micron { namespace gfx { namespace vk {
+namespace micron
+{
+namespace gfx
+{
+namespace vk
+{
 
-
-template <> struct structure_type_of<VkApplicationInfo> {
+template<> struct structure_type_of<VkApplicationInfo> {
   static constexpr VkStructureType value = VkStructureType::APPLICATION_INFO;
 };
-template <> struct structure_type_of<VkDeviceQueueCreateInfo> {
+
+template<> struct structure_type_of<VkDeviceQueueCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_QUEUE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkDeviceCreateInfo> {
+
+template<> struct structure_type_of<VkDeviceCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkInstanceCreateInfo> {
+
+template<> struct structure_type_of<VkInstanceCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::INSTANCE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkMemoryAllocateInfo> {
+
+template<> struct structure_type_of<VkMemoryAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkMappedMemoryRange> {
+
+template<> struct structure_type_of<VkMappedMemoryRange> {
   static constexpr VkStructureType value = VkStructureType::MAPPED_MEMORY_RANGE;
 };
-template <> struct structure_type_of<VkWriteDescriptorSet> {
+
+template<> struct structure_type_of<VkWriteDescriptorSet> {
   static constexpr VkStructureType value = VkStructureType::WRITE_DESCRIPTOR_SET;
 };
-template <> struct structure_type_of<VkCopyDescriptorSet> {
+
+template<> struct structure_type_of<VkCopyDescriptorSet> {
   static constexpr VkStructureType value = VkStructureType::COPY_DESCRIPTOR_SET;
 };
-template <> struct structure_type_of<VkBufferCreateInfo> {
+
+template<> struct structure_type_of<VkBufferCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_CREATE_INFO;
 };
-template <> struct structure_type_of<VkBufferViewCreateInfo> {
+
+template<> struct structure_type_of<VkBufferViewCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_VIEW_CREATE_INFO;
 };
-template <> struct structure_type_of<VkMemoryBarrier> {
+
+template<> struct structure_type_of<VkMemoryBarrier> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_BARRIER;
 };
-template <> struct structure_type_of<VkBufferMemoryBarrier> {
+
+template<> struct structure_type_of<VkBufferMemoryBarrier> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_MEMORY_BARRIER;
 };
-template <> struct structure_type_of<VkImageMemoryBarrier> {
+
+template<> struct structure_type_of<VkImageMemoryBarrier> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_MEMORY_BARRIER;
 };
-template <> struct structure_type_of<VkImageCreateInfo> {
+
+template<> struct structure_type_of<VkImageCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkImageViewCreateInfo> {
+
+template<> struct structure_type_of<VkImageViewCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_VIEW_CREATE_INFO;
 };
-template <> struct structure_type_of<VkBindSparseInfo> {
+
+template<> struct structure_type_of<VkBindSparseInfo> {
   static constexpr VkStructureType value = VkStructureType::BIND_SPARSE_INFO;
 };
-template <> struct structure_type_of<VkShaderModuleCreateInfo> {
+
+template<> struct structure_type_of<VkShaderModuleCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::SHADER_MODULE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkDescriptorSetLayoutCreateInfo> {
+
+template<> struct structure_type_of<VkDescriptorSetLayoutCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 };
-template <> struct structure_type_of<VkDescriptorPoolCreateInfo> {
+
+template<> struct structure_type_of<VkDescriptorPoolCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_POOL_CREATE_INFO;
 };
-template <> struct structure_type_of<VkDescriptorSetAllocateInfo> {
+
+template<> struct structure_type_of<VkDescriptorSetAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_SET_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineShaderStageCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineShaderStageCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_SHADER_STAGE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkComputePipelineCreateInfo> {
+
+template<> struct structure_type_of<VkComputePipelineCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::COMPUTE_PIPELINE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineVertexInputStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineVertexInputStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineInputAssemblyStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineInputAssemblyStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineTessellationStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineTessellationStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineViewportStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineViewportStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineRasterizationStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineRasterizationStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineMultisampleStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineMultisampleStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineColorBlendStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineColorBlendStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineDynamicStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineDynamicStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineDepthStencilStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineDepthStencilStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkGraphicsPipelineCreateInfo> {
+
+template<> struct structure_type_of<VkGraphicsPipelineCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::GRAPHICS_PIPELINE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineCacheCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineCacheCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_CACHE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineLayoutCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineLayoutCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_LAYOUT_CREATE_INFO;
 };
-template <> struct structure_type_of<VkSamplerCreateInfo> {
+
+template<> struct structure_type_of<VkSamplerCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::SAMPLER_CREATE_INFO;
 };
-template <> struct structure_type_of<VkCommandPoolCreateInfo> {
+
+template<> struct structure_type_of<VkCommandPoolCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::COMMAND_POOL_CREATE_INFO;
 };
-template <> struct structure_type_of<VkCommandBufferAllocateInfo> {
+
+template<> struct structure_type_of<VkCommandBufferAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::COMMAND_BUFFER_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkCommandBufferInheritanceInfo> {
+
+template<> struct structure_type_of<VkCommandBufferInheritanceInfo> {
   static constexpr VkStructureType value = VkStructureType::COMMAND_BUFFER_INHERITANCE_INFO;
 };
-template <> struct structure_type_of<VkCommandBufferBeginInfo> {
+
+template<> struct structure_type_of<VkCommandBufferBeginInfo> {
   static constexpr VkStructureType value = VkStructureType::COMMAND_BUFFER_BEGIN_INFO;
 };
-template <> struct structure_type_of<VkRenderPassBeginInfo> {
+
+template<> struct structure_type_of<VkRenderPassBeginInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDER_PASS_BEGIN_INFO;
 };
-template <> struct structure_type_of<VkRenderPassCreateInfo> {
+
+template<> struct structure_type_of<VkRenderPassCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDER_PASS_CREATE_INFO;
 };
-template <> struct structure_type_of<VkEventCreateInfo> {
+
+template<> struct structure_type_of<VkEventCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::EVENT_CREATE_INFO;
 };
-template <> struct structure_type_of<VkFenceCreateInfo> {
+
+template<> struct structure_type_of<VkFenceCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::FENCE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkSemaphoreCreateInfo> {
+
+template<> struct structure_type_of<VkSemaphoreCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::SEMAPHORE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkQueryPoolCreateInfo> {
+
+template<> struct structure_type_of<VkQueryPoolCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::QUERY_POOL_CREATE_INFO;
 };
-template <> struct structure_type_of<VkFramebufferCreateInfo> {
+
+template<> struct structure_type_of<VkFramebufferCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::FRAMEBUFFER_CREATE_INFO;
 };
-template <> struct structure_type_of<VkSubmitInfo> {
+
+template<> struct structure_type_of<VkSubmitInfo> {
   static constexpr VkStructureType value = VkStructureType::SUBMIT_INFO;
 };
-template <> struct structure_type_of<VkWaylandSurfaceCreateInfoKHR> {
+
+template<> struct structure_type_of<VkWaylandSurfaceCreateInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::WAYLAND_SURFACE_CREATE_INFO_KHR;
 };
-template <> struct structure_type_of<VkXlibSurfaceCreateInfoKHR> {
+
+template<> struct structure_type_of<VkXlibSurfaceCreateInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::XLIB_SURFACE_CREATE_INFO_KHR;
 };
-template <> struct structure_type_of<VkSwapchainCreateInfoKHR> {
+
+template<> struct structure_type_of<VkSwapchainCreateInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::SWAPCHAIN_CREATE_INFO_KHR;
 };
-template <> struct structure_type_of<VkPresentInfoKHR> {
+
+template<> struct structure_type_of<VkPresentInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::PRESENT_INFO_KHR;
 };
-template <> struct structure_type_of<VkDevicePrivateDataCreateInfo> {
+
+template<> struct structure_type_of<VkDevicePrivateDataCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_PRIVATE_DATA_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPrivateDataSlotCreateInfo> {
+
+template<> struct structure_type_of<VkPrivateDataSlotCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PRIVATE_DATA_SLOT_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDevicePrivateDataFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDevicePrivateDataFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceFeatures2> {
+
+template<> struct structure_type_of<VkPhysicalDeviceFeatures2> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_FEATURES_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceProperties2> {
+
+template<> struct structure_type_of<VkPhysicalDeviceProperties2> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_PROPERTIES_2;
 };
-template <> struct structure_type_of<VkFormatProperties2> {
+
+template<> struct structure_type_of<VkFormatProperties2> {
   static constexpr VkStructureType value = VkStructureType::FORMAT_PROPERTIES_2;
 };
-template <> struct structure_type_of<VkImageFormatProperties2> {
+
+template<> struct structure_type_of<VkImageFormatProperties2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_FORMAT_PROPERTIES_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceImageFormatInfo2> {
+
+template<> struct structure_type_of<VkPhysicalDeviceImageFormatInfo2> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
 };
-template <> struct structure_type_of<VkQueueFamilyProperties2> {
+
+template<> struct structure_type_of<VkQueueFamilyProperties2> {
   static constexpr VkStructureType value = VkStructureType::QUEUE_FAMILY_PROPERTIES_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceMemoryProperties2> {
+
+template<> struct structure_type_of<VkPhysicalDeviceMemoryProperties2> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
 };
-template <> struct structure_type_of<VkSparseImageFormatProperties2> {
+
+template<> struct structure_type_of<VkSparseImageFormatProperties2> {
   static constexpr VkStructureType value = VkStructureType::SPARSE_IMAGE_FORMAT_PROPERTIES_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSparseImageFormatInfo2> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSparseImageFormatInfo2> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceDriverProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceDriverProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_DRIVER_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVariablePointersFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVariablePointersFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceExternalImageFormatInfo> {
+
+template<> struct structure_type_of<VkPhysicalDeviceExternalImageFormatInfo> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
 };
-template <> struct structure_type_of<VkExternalImageFormatProperties> {
+
+template<> struct structure_type_of<VkExternalImageFormatProperties> {
   static constexpr VkStructureType value = VkStructureType::EXTERNAL_IMAGE_FORMAT_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceExternalBufferInfo> {
+
+template<> struct structure_type_of<VkPhysicalDeviceExternalBufferInfo> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
 };
-template <> struct structure_type_of<VkExternalBufferProperties> {
+
+template<> struct structure_type_of<VkExternalBufferProperties> {
   static constexpr VkStructureType value = VkStructureType::EXTERNAL_BUFFER_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceIDProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceIDProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_ID_PROPERTIES;
 };
-template <> struct structure_type_of<VkExternalMemoryImageCreateInfo> {
+
+template<> struct structure_type_of<VkExternalMemoryImageCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkExternalMemoryBufferCreateInfo> {
+
+template<> struct structure_type_of<VkExternalMemoryBufferCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
 };
-template <> struct structure_type_of<VkExportMemoryAllocateInfo> {
+
+template<> struct structure_type_of<VkExportMemoryAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::EXPORT_MEMORY_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceExternalSemaphoreInfo> {
+
+template<> struct structure_type_of<VkPhysicalDeviceExternalSemaphoreInfo> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
 };
-template <> struct structure_type_of<VkExternalSemaphoreProperties> {
+
+template<> struct structure_type_of<VkExternalSemaphoreProperties> {
   static constexpr VkStructureType value = VkStructureType::EXTERNAL_SEMAPHORE_PROPERTIES;
 };
-template <> struct structure_type_of<VkExportSemaphoreCreateInfo> {
+
+template<> struct structure_type_of<VkExportSemaphoreCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::EXPORT_SEMAPHORE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceExternalFenceInfo> {
+
+template<> struct structure_type_of<VkPhysicalDeviceExternalFenceInfo> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
 };
-template <> struct structure_type_of<VkExternalFenceProperties> {
+
+template<> struct structure_type_of<VkExternalFenceProperties> {
   static constexpr VkStructureType value = VkStructureType::EXTERNAL_FENCE_PROPERTIES;
 };
-template <> struct structure_type_of<VkExportFenceCreateInfo> {
+
+template<> struct structure_type_of<VkExportFenceCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::EXPORT_FENCE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceMultiviewFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceMultiviewFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceMultiviewProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceMultiviewProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
 };
-template <> struct structure_type_of<VkRenderPassMultiviewCreateInfo> {
+
+template<> struct structure_type_of<VkRenderPassMultiviewCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDER_PASS_MULTIVIEW_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceGroupProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceGroupProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_GROUP_PROPERTIES;
 };
-template <> struct structure_type_of<VkMemoryAllocateFlagsInfo> {
+
+template<> struct structure_type_of<VkMemoryAllocateFlagsInfo> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_ALLOCATE_FLAGS_INFO;
 };
-template <> struct structure_type_of<VkBindBufferMemoryInfo> {
+
+template<> struct structure_type_of<VkBindBufferMemoryInfo> {
   static constexpr VkStructureType value = VkStructureType::BIND_BUFFER_MEMORY_INFO;
 };
-template <> struct structure_type_of<VkBindBufferMemoryDeviceGroupInfo> {
+
+template<> struct structure_type_of<VkBindBufferMemoryDeviceGroupInfo> {
   static constexpr VkStructureType value = VkStructureType::BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
 };
-template <> struct structure_type_of<VkBindImageMemoryInfo> {
+
+template<> struct structure_type_of<VkBindImageMemoryInfo> {
   static constexpr VkStructureType value = VkStructureType::BIND_IMAGE_MEMORY_INFO;
 };
-template <> struct structure_type_of<VkBindImageMemoryDeviceGroupInfo> {
+
+template<> struct structure_type_of<VkBindImageMemoryDeviceGroupInfo> {
   static constexpr VkStructureType value = VkStructureType::BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
 };
-template <> struct structure_type_of<VkDeviceGroupRenderPassBeginInfo> {
+
+template<> struct structure_type_of<VkDeviceGroupRenderPassBeginInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
 };
-template <> struct structure_type_of<VkDeviceGroupCommandBufferBeginInfo> {
+
+template<> struct structure_type_of<VkDeviceGroupCommandBufferBeginInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
 };
-template <> struct structure_type_of<VkDeviceGroupSubmitInfo> {
+
+template<> struct structure_type_of<VkDeviceGroupSubmitInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_SUBMIT_INFO;
 };
-template <> struct structure_type_of<VkDeviceGroupBindSparseInfo> {
+
+template<> struct structure_type_of<VkDeviceGroupBindSparseInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_BIND_SPARSE_INFO;
 };
-template <> struct structure_type_of<VkDeviceGroupPresentCapabilitiesKHR> {
+
+template<> struct structure_type_of<VkDeviceGroupPresentCapabilitiesKHR> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
 };
-template <> struct structure_type_of<VkImageSwapchainCreateInfoKHR> {
+
+template<> struct structure_type_of<VkImageSwapchainCreateInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
 };
-template <> struct structure_type_of<VkBindImageMemorySwapchainInfoKHR> {
+
+template<> struct structure_type_of<VkBindImageMemorySwapchainInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
 };
-template <> struct structure_type_of<VkAcquireNextImageInfoKHR> {
+
+template<> struct structure_type_of<VkAcquireNextImageInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::ACQUIRE_NEXT_IMAGE_INFO_KHR;
 };
-template <> struct structure_type_of<VkDeviceGroupPresentInfoKHR> {
+
+template<> struct structure_type_of<VkDeviceGroupPresentInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_PRESENT_INFO_KHR;
 };
-template <> struct structure_type_of<VkDeviceGroupDeviceCreateInfo> {
+
+template<> struct structure_type_of<VkDeviceGroupDeviceCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_DEVICE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkDeviceGroupSwapchainCreateInfoKHR> {
+
+template<> struct structure_type_of<VkDeviceGroupSwapchainCreateInfoKHR> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
 };
-template <> struct structure_type_of<VkDescriptorUpdateTemplateCreateInfo> {
+
+template<> struct structure_type_of<VkDescriptorUpdateTemplateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkRenderPassInputAttachmentAspectCreateInfo> {
+
+template<> struct structure_type_of<VkRenderPassInputAttachmentAspectCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDevice16BitStorageFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDevice16BitStorageFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSubgroupProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSubgroupProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
 };
-template <> struct structure_type_of<VkBufferMemoryRequirementsInfo2> {
+
+template<> struct structure_type_of<VkBufferMemoryRequirementsInfo2> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_MEMORY_REQUIREMENTS_INFO_2;
 };
-template <> struct structure_type_of<VkDeviceBufferMemoryRequirements> {
+
+template<> struct structure_type_of<VkDeviceBufferMemoryRequirements> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_BUFFER_MEMORY_REQUIREMENTS;
 };
-template <> struct structure_type_of<VkImageMemoryRequirementsInfo2> {
+
+template<> struct structure_type_of<VkImageMemoryRequirementsInfo2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_MEMORY_REQUIREMENTS_INFO_2;
 };
-template <> struct structure_type_of<VkImageSparseMemoryRequirementsInfo2> {
+
+template<> struct structure_type_of<VkImageSparseMemoryRequirementsInfo2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
 };
-template <> struct structure_type_of<VkDeviceImageMemoryRequirements> {
+
+template<> struct structure_type_of<VkDeviceImageMemoryRequirements> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_IMAGE_MEMORY_REQUIREMENTS;
 };
-template <> struct structure_type_of<VkMemoryRequirements2> {
+
+template<> struct structure_type_of<VkMemoryRequirements2> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_REQUIREMENTS_2;
 };
-template <> struct structure_type_of<VkSparseImageMemoryRequirements2> {
+
+template<> struct structure_type_of<VkSparseImageMemoryRequirements2> {
   static constexpr VkStructureType value = VkStructureType::SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
 };
-template <> struct structure_type_of<VkPhysicalDevicePointClippingProperties> {
+
+template<> struct structure_type_of<VkPhysicalDevicePointClippingProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
 };
-template <> struct structure_type_of<VkMemoryDedicatedRequirements> {
+
+template<> struct structure_type_of<VkMemoryDedicatedRequirements> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_DEDICATED_REQUIREMENTS;
 };
-template <> struct structure_type_of<VkMemoryDedicatedAllocateInfo> {
+
+template<> struct structure_type_of<VkMemoryDedicatedAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_DEDICATED_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkImageViewUsageCreateInfo> {
+
+template<> struct structure_type_of<VkImageViewUsageCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_VIEW_USAGE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPipelineTessellationDomainOriginStateCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineTessellationDomainOriginStateCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkSamplerYcbcrConversionInfo> {
+
+template<> struct structure_type_of<VkSamplerYcbcrConversionInfo> {
   static constexpr VkStructureType value = VkStructureType::SAMPLER_YCBCR_CONVERSION_INFO;
 };
-template <> struct structure_type_of<VkSamplerYcbcrConversionCreateInfo> {
+
+template<> struct structure_type_of<VkSamplerYcbcrConversionCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
 };
-template <> struct structure_type_of<VkBindImagePlaneMemoryInfo> {
+
+template<> struct structure_type_of<VkBindImagePlaneMemoryInfo> {
   static constexpr VkStructureType value = VkStructureType::BIND_IMAGE_PLANE_MEMORY_INFO;
 };
-template <> struct structure_type_of<VkImagePlaneMemoryRequirementsInfo> {
+
+template<> struct structure_type_of<VkImagePlaneMemoryRequirementsInfo> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSamplerYcbcrConversionFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSamplerYcbcrConversionFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
 };
-template <> struct structure_type_of<VkSamplerYcbcrConversionImageFormatProperties> {
+
+template<> struct structure_type_of<VkSamplerYcbcrConversionImageFormatProperties> {
   static constexpr VkStructureType value = VkStructureType::SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
 };
-template <> struct structure_type_of<VkProtectedSubmitInfo> {
+
+template<> struct structure_type_of<VkProtectedSubmitInfo> {
   static constexpr VkStructureType value = VkStructureType::PROTECTED_SUBMIT_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceProtectedMemoryFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceProtectedMemoryFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceProtectedMemoryProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceProtectedMemoryProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
 };
-template <> struct structure_type_of<VkDeviceQueueInfo2> {
+
+template<> struct structure_type_of<VkDeviceQueueInfo2> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_QUEUE_INFO_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSamplerFilterMinmaxProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSamplerFilterMinmaxProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
 };
-template <> struct structure_type_of<VkSamplerReductionModeCreateInfo> {
+
+template<> struct structure_type_of<VkSamplerReductionModeCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::SAMPLER_REDUCTION_MODE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceInlineUniformBlockFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceInlineUniformBlockFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceInlineUniformBlockProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceInlineUniformBlockProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES;
 };
-template <> struct structure_type_of<VkWriteDescriptorSetInlineUniformBlock> {
+
+template<> struct structure_type_of<VkWriteDescriptorSetInlineUniformBlock> {
   static constexpr VkStructureType value = VkStructureType::WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK;
 };
-template <> struct structure_type_of<VkDescriptorPoolInlineUniformBlockCreateInfo> {
+
+template<> struct structure_type_of<VkDescriptorPoolInlineUniformBlockCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_POOL_INLINE_UNIFORM_BLOCK_CREATE_INFO;
 };
-template <> struct structure_type_of<VkImageFormatListCreateInfo> {
+
+template<> struct structure_type_of<VkImageFormatListCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_FORMAT_LIST_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceMaintenance3Properties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceMaintenance3Properties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceMaintenance4Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceMaintenance4Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceMaintenance4Properties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceMaintenance4Properties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES;
 };
-template <> struct structure_type_of<VkDescriptorSetLayoutSupport> {
+
+template<> struct structure_type_of<VkDescriptorSetLayoutSupport> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_SET_LAYOUT_SUPPORT;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderDrawParametersFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderDrawParametersFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderFloat16Int8Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderFloat16Int8Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceFloatControlsProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceFloatControlsProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceHostQueryResetFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceHostQueryResetFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
 };
-template <> struct structure_type_of<VkDebugUtilsObjectNameInfoEXT> {
+
+template<> struct structure_type_of<VkDebugUtilsObjectNameInfoEXT> {
   static constexpr VkStructureType value = VkStructureType::DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
 };
-template <> struct structure_type_of<VkDebugUtilsObjectTagInfoEXT> {
+
+template<> struct structure_type_of<VkDebugUtilsObjectTagInfoEXT> {
   static constexpr VkStructureType value = VkStructureType::DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
 };
-template <> struct structure_type_of<VkDebugUtilsLabelEXT> {
+
+template<> struct structure_type_of<VkDebugUtilsLabelEXT> {
   static constexpr VkStructureType value = VkStructureType::DEBUG_UTILS_LABEL_EXT;
 };
-template <> struct structure_type_of<VkDebugUtilsMessengerCreateInfoEXT> {
+
+template<> struct structure_type_of<VkDebugUtilsMessengerCreateInfoEXT> {
   static constexpr VkStructureType value = VkStructureType::DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 };
-template <> struct structure_type_of<VkDebugUtilsMessengerCallbackDataEXT> {
+
+template<> struct structure_type_of<VkDebugUtilsMessengerCallbackDataEXT> {
   static constexpr VkStructureType value = VkStructureType::DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
 };
-template <> struct structure_type_of<VkPhysicalDeviceDescriptorIndexingFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceDescriptorIndexingFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceDescriptorIndexingProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceDescriptorIndexingProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
 };
-template <> struct structure_type_of<VkDescriptorSetLayoutBindingFlagsCreateInfo> {
+
+template<> struct structure_type_of<VkDescriptorSetLayoutBindingFlagsCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
 };
-template <> struct structure_type_of<VkDescriptorSetVariableDescriptorCountAllocateInfo> {
+
+template<> struct structure_type_of<VkDescriptorSetVariableDescriptorCountAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkDescriptorSetVariableDescriptorCountLayoutSupport> {
+
+template<> struct structure_type_of<VkDescriptorSetVariableDescriptorCountLayoutSupport> {
   static constexpr VkStructureType value = VkStructureType::DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
 };
-template <> struct structure_type_of<VkAttachmentDescription2> {
+
+template<> struct structure_type_of<VkAttachmentDescription2> {
   static constexpr VkStructureType value = VkStructureType::ATTACHMENT_DESCRIPTION_2;
 };
-template <> struct structure_type_of<VkAttachmentReference2> {
+
+template<> struct structure_type_of<VkAttachmentReference2> {
   static constexpr VkStructureType value = VkStructureType::ATTACHMENT_REFERENCE_2;
 };
-template <> struct structure_type_of<VkSubpassDescription2> {
+
+template<> struct structure_type_of<VkSubpassDescription2> {
   static constexpr VkStructureType value = VkStructureType::SUBPASS_DESCRIPTION_2;
 };
-template <> struct structure_type_of<VkSubpassDependency2> {
+
+template<> struct structure_type_of<VkSubpassDependency2> {
   static constexpr VkStructureType value = VkStructureType::SUBPASS_DEPENDENCY_2;
 };
-template <> struct structure_type_of<VkRenderPassCreateInfo2> {
+
+template<> struct structure_type_of<VkRenderPassCreateInfo2> {
   static constexpr VkStructureType value = VkStructureType::RENDER_PASS_CREATE_INFO_2;
 };
-template <> struct structure_type_of<VkSubpassBeginInfo> {
+
+template<> struct structure_type_of<VkSubpassBeginInfo> {
   static constexpr VkStructureType value = VkStructureType::SUBPASS_BEGIN_INFO;
 };
-template <> struct structure_type_of<VkSubpassEndInfo> {
+
+template<> struct structure_type_of<VkSubpassEndInfo> {
   static constexpr VkStructureType value = VkStructureType::SUBPASS_END_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceTimelineSemaphoreFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceTimelineSemaphoreFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceTimelineSemaphoreProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceTimelineSemaphoreProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
 };
-template <> struct structure_type_of<VkSemaphoreTypeCreateInfo> {
+
+template<> struct structure_type_of<VkSemaphoreTypeCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::SEMAPHORE_TYPE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkTimelineSemaphoreSubmitInfo> {
+
+template<> struct structure_type_of<VkTimelineSemaphoreSubmitInfo> {
   static constexpr VkStructureType value = VkStructureType::TIMELINE_SEMAPHORE_SUBMIT_INFO;
 };
-template <> struct structure_type_of<VkSemaphoreWaitInfo> {
+
+template<> struct structure_type_of<VkSemaphoreWaitInfo> {
   static constexpr VkStructureType value = VkStructureType::SEMAPHORE_WAIT_INFO;
 };
-template <> struct structure_type_of<VkSemaphoreSignalInfo> {
+
+template<> struct structure_type_of<VkSemaphoreSignalInfo> {
   static constexpr VkStructureType value = VkStructureType::SEMAPHORE_SIGNAL_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDevice8BitStorageFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDevice8BitStorageFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkanMemoryModelFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkanMemoryModelFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderAtomicInt64Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderAtomicInt64Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceDepthStencilResolveProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceDepthStencilResolveProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
 };
-template <> struct structure_type_of<VkSubpassDescriptionDepthStencilResolve> {
+
+template<> struct structure_type_of<VkSubpassDescriptionDepthStencilResolve> {
   static constexpr VkStructureType value = VkStructureType::SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
 };
-template <> struct structure_type_of<VkImageStencilUsageCreateInfo> {
+
+template<> struct structure_type_of<VkImageStencilUsageCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_STENCIL_USAGE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceScalarBlockLayoutFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceScalarBlockLayoutFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceUniformBufferStandardLayoutFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceUniformBufferStandardLayoutFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceBufferDeviceAddressFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceBufferDeviceAddressFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
 };
-template <> struct structure_type_of<VkBufferDeviceAddressInfo> {
+
+template<> struct structure_type_of<VkBufferDeviceAddressInfo> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_DEVICE_ADDRESS_INFO;
 };
-template <> struct structure_type_of<VkBufferOpaqueCaptureAddressCreateInfo> {
+
+template<> struct structure_type_of<VkBufferOpaqueCaptureAddressCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceImagelessFramebufferFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceImagelessFramebufferFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
 };
-template <> struct structure_type_of<VkFramebufferAttachmentsCreateInfo> {
+
+template<> struct structure_type_of<VkFramebufferAttachmentsCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
 };
-template <> struct structure_type_of<VkFramebufferAttachmentImageInfo> {
+
+template<> struct structure_type_of<VkFramebufferAttachmentImageInfo> {
   static constexpr VkStructureType value = VkStructureType::FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
 };
-template <> struct structure_type_of<VkRenderPassAttachmentBeginInfo> {
+
+template<> struct structure_type_of<VkRenderPassAttachmentBeginInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDER_PASS_ATTACHMENT_BEGIN_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceTextureCompressionASTCHDRFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceTextureCompressionASTCHDRFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES;
 };
-template <> struct structure_type_of<VkPipelineCreationFeedbackCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineCreationFeedbackCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
 };
-template <> struct structure_type_of<VkAttachmentReferenceStencilLayout> {
+
+template<> struct structure_type_of<VkAttachmentReferenceStencilLayout> {
   static constexpr VkStructureType value = VkStructureType::ATTACHMENT_REFERENCE_STENCIL_LAYOUT;
 };
-template <> struct structure_type_of<VkAttachmentDescriptionStencilLayout> {
+
+template<> struct structure_type_of<VkAttachmentDescriptionStencilLayout> {
   static constexpr VkStructureType value = VkStructureType::ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceTexelBufferAlignmentProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceTexelBufferAlignmentProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSubgroupSizeControlFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSubgroupSizeControlFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSubgroupSizeControlProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSubgroupSizeControlProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES;
 };
-template <> struct structure_type_of<VkPipelineShaderStageRequiredSubgroupSizeCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineShaderStageRequiredSubgroupSizeCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO;
 };
-template <> struct structure_type_of<VkMemoryOpaqueCaptureAddressAllocateInfo> {
+
+template<> struct structure_type_of<VkMemoryOpaqueCaptureAddressAllocateInfo> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
 };
-template <> struct structure_type_of<VkDeviceMemoryOpaqueCaptureAddressInfo> {
+
+template<> struct structure_type_of<VkDeviceMemoryOpaqueCaptureAddressInfo> {
   static constexpr VkStructureType value = VkStructureType::DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDevicePipelineCreationCacheControlFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDevicePipelineCreationCacheControlFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkan11Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkan11Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkan11Properties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkan11Properties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkan12Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkan12Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkan12Properties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkan12Properties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkan13Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkan13Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceVulkan13Properties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceVulkan13Properties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceToolProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceToolProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_TOOL_PROPERTIES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceImageRobustnessFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceImageRobustnessFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES;
 };
-template <> struct structure_type_of<VkBufferCopy2> {
+
+template<> struct structure_type_of<VkBufferCopy2> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_COPY_2;
 };
-template <> struct structure_type_of<VkImageCopy2> {
+
+template<> struct structure_type_of<VkImageCopy2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_COPY_2;
 };
-template <> struct structure_type_of<VkImageBlit2> {
+
+template<> struct structure_type_of<VkImageBlit2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_BLIT_2;
 };
-template <> struct structure_type_of<VkBufferImageCopy2> {
+
+template<> struct structure_type_of<VkBufferImageCopy2> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_IMAGE_COPY_2;
 };
-template <> struct structure_type_of<VkImageResolve2> {
+
+template<> struct structure_type_of<VkImageResolve2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_RESOLVE_2;
 };
-template <> struct structure_type_of<VkCopyBufferInfo2> {
+
+template<> struct structure_type_of<VkCopyBufferInfo2> {
   static constexpr VkStructureType value = VkStructureType::COPY_BUFFER_INFO_2;
 };
-template <> struct structure_type_of<VkCopyImageInfo2> {
+
+template<> struct structure_type_of<VkCopyImageInfo2> {
   static constexpr VkStructureType value = VkStructureType::COPY_IMAGE_INFO_2;
 };
-template <> struct structure_type_of<VkBlitImageInfo2> {
+
+template<> struct structure_type_of<VkBlitImageInfo2> {
   static constexpr VkStructureType value = VkStructureType::BLIT_IMAGE_INFO_2;
 };
-template <> struct structure_type_of<VkCopyBufferToImageInfo2> {
+
+template<> struct structure_type_of<VkCopyBufferToImageInfo2> {
   static constexpr VkStructureType value = VkStructureType::COPY_BUFFER_TO_IMAGE_INFO_2;
 };
-template <> struct structure_type_of<VkCopyImageToBufferInfo2> {
+
+template<> struct structure_type_of<VkCopyImageToBufferInfo2> {
   static constexpr VkStructureType value = VkStructureType::COPY_IMAGE_TO_BUFFER_INFO_2;
 };
-template <> struct structure_type_of<VkResolveImageInfo2> {
+
+template<> struct structure_type_of<VkResolveImageInfo2> {
   static constexpr VkStructureType value = VkStructureType::RESOLVE_IMAGE_INFO_2;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderTerminateInvocationFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderTerminateInvocationFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES;
 };
-template <> struct structure_type_of<VkMemoryBarrier2> {
+
+template<> struct structure_type_of<VkMemoryBarrier2> {
   static constexpr VkStructureType value = VkStructureType::MEMORY_BARRIER_2;
 };
-template <> struct structure_type_of<VkImageMemoryBarrier2> {
+
+template<> struct structure_type_of<VkImageMemoryBarrier2> {
   static constexpr VkStructureType value = VkStructureType::IMAGE_MEMORY_BARRIER_2;
 };
-template <> struct structure_type_of<VkBufferMemoryBarrier2> {
+
+template<> struct structure_type_of<VkBufferMemoryBarrier2> {
   static constexpr VkStructureType value = VkStructureType::BUFFER_MEMORY_BARRIER_2;
 };
-template <> struct structure_type_of<VkDependencyInfo> {
+
+template<> struct structure_type_of<VkDependencyInfo> {
   static constexpr VkStructureType value = VkStructureType::DEPENDENCY_INFO;
 };
-template <> struct structure_type_of<VkSemaphoreSubmitInfo> {
+
+template<> struct structure_type_of<VkSemaphoreSubmitInfo> {
   static constexpr VkStructureType value = VkStructureType::SEMAPHORE_SUBMIT_INFO;
 };
-template <> struct structure_type_of<VkCommandBufferSubmitInfo> {
+
+template<> struct structure_type_of<VkCommandBufferSubmitInfo> {
   static constexpr VkStructureType value = VkStructureType::COMMAND_BUFFER_SUBMIT_INFO;
 };
-template <> struct structure_type_of<VkSubmitInfo2> {
+
+template<> struct structure_type_of<VkSubmitInfo2> {
   static constexpr VkStructureType value = VkStructureType::SUBMIT_INFO_2;
 };
-template <> struct structure_type_of<VkQueueFamilyCheckpointProperties2NV> {
+
+template<> struct structure_type_of<VkQueueFamilyCheckpointProperties2NV> {
   static constexpr VkStructureType value = VkStructureType::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV;
 };
-template <> struct structure_type_of<VkCheckpointData2NV> {
+
+template<> struct structure_type_of<VkCheckpointData2NV> {
   static constexpr VkStructureType value = VkStructureType::CHECKPOINT_DATA_2_NV;
 };
-template <> struct structure_type_of<VkPhysicalDeviceSynchronization2Features> {
+
+template<> struct structure_type_of<VkPhysicalDeviceSynchronization2Features> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderIntegerDotProductFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderIntegerDotProductFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES;
 };
-template <> struct structure_type_of<VkPhysicalDeviceShaderIntegerDotProductProperties> {
+
+template<> struct structure_type_of<VkPhysicalDeviceShaderIntegerDotProductProperties> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES;
 };
-template <> struct structure_type_of<VkFormatProperties3> {
+
+template<> struct structure_type_of<VkFormatProperties3> {
   static constexpr VkStructureType value = VkStructureType::FORMAT_PROPERTIES_3;
 };
-template <> struct structure_type_of<VkPipelineRenderingCreateInfo> {
+
+template<> struct structure_type_of<VkPipelineRenderingCreateInfo> {
   static constexpr VkStructureType value = VkStructureType::PIPELINE_RENDERING_CREATE_INFO;
 };
-template <> struct structure_type_of<VkRenderingInfo> {
+
+template<> struct structure_type_of<VkRenderingInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDERING_INFO;
 };
-template <> struct structure_type_of<VkRenderingAttachmentInfo> {
+
+template<> struct structure_type_of<VkRenderingAttachmentInfo> {
   static constexpr VkStructureType value = VkStructureType::RENDERING_ATTACHMENT_INFO;
 };
-template <> struct structure_type_of<VkPhysicalDeviceDynamicRenderingFeatures> {
+
+template<> struct structure_type_of<VkPhysicalDeviceDynamicRenderingFeatures> {
   static constexpr VkStructureType value = VkStructureType::PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
 };
-template <> struct structure_type_of<VkCommandBufferInheritanceRenderingInfo> {
+
+template<> struct structure_type_of<VkCommandBufferInheritanceRenderingInfo> {
   static constexpr VkStructureType value = VkStructureType::COMMAND_BUFFER_INHERITANCE_RENDERING_INFO;
 };
 
-} } }      // namespace micron::gfx::vk
+}      // namespace vk
+}      // namespace gfx
+}      // namespace micron

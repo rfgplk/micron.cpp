@@ -85,7 +85,23 @@ constexpr i32 execute_ok = 1;
 constexpr i32 file_ok = 0;
 constexpr i32 access_ok = 0;
 
-constexpr i32 o_largefile = 00;
+// WARNING: O_DIRECTORY / O_NOFOLLOW / O_DIRECT / O_LARGEFILE are encoded with DIFFERENT bit values depending on the kernel ABI
+#if defined(__micron_arch_arm32)
+constexpr i32 o_direct = 0200000;         // 0x10000
+constexpr i32 o_directory = 040000;       // 0x4000
+constexpr i32 o_nofollow = 0100000;       // 0x8000
+constexpr i32 o_largefile = 0400000;      // 0x20000 (ILP32: must be requested)
+#else
+// asm-generic encoding: amd64, i386, arm64 (and riscv, ...)
+constexpr i32 o_direct = 040000;          // 0x4000
+constexpr i32 o_directory = 0200000;      // 0x10000
+constexpr i32 o_nofollow = 0400000;       // 0x20000
+#if defined(__micron_arch_width_64)
+constexpr i32 o_largefile = 00;      // LP64: large files are the default
+#else
+constexpr i32 o_largefile = 0100000;      // 0x8000 (i386 / asm-generic ILP32)
+#endif
+#endif
 constexpr i32 o_accmode = 03;
 constexpr i32 o_rdonly = 00;
 constexpr i32 o_wronly = 01;
@@ -100,10 +116,7 @@ constexpr i32 o_ndelay = o_nonblock;
 constexpr i32 o_sync = 04010000;
 constexpr i32 o_fsync = o_sync;
 constexpr i32 o_async = 020000;
-constexpr i32 o_directory = 0200000;
-constexpr i32 o_nofollow = 0400000;
-constexpr i32 o_cloexec = 02000000;
-constexpr i32 o_direct = 040000;
+constexpr i32 o_cloexec = 02000000;      // same on x86 and asm-generic
 constexpr i32 o_noatime = 01000000;
 constexpr i32 o_path = 010000000;
 constexpr i32 o_dsync = 010000;

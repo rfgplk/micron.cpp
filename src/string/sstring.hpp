@@ -2028,6 +2028,19 @@ public:
     return *this;
   };
 
+  template<size_type M2, typename F2 = T, bool X2 = Sf>
+  inline sstring &
+  operator+=(const sstring<M2, F2, X2> &data)
+  {
+    if ( data.empty() ) return *this;
+
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.length);
+
+    micron::memcpy(&memory[length], &data.memory[0], data.length);
+    length += data.length;
+    return *this;
+  };
+
   template<typename F = T>
   inline sstring &
   operator+=(const slice<F> &data)
