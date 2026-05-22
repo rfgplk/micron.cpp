@@ -1954,28 +1954,24 @@ public:
       }
     }
 
-    // buddy classes: order stored at metadata addr
-    // NOTE: buddy header lives at the TAIL of the block (block_start + order_size - __hdr_offset)
-    // so the user-visible size is order_size - __hdr_offset, same adjustment as TLSF
+    // buddy classes: the AUTHORITATIVE order lives in the buddy's block_tags
+    // (one tag per min-block, rewritten on every (de)allocation, split and merge)
     if ( (idx = _medium.find_range(addr)) >= 0 ) {
-      i64 order_class = static_cast<i64>(*get_metadata_addr(addr));
-      usize recovered = (__class_medium << order_class) - __hdr_offset;
-      __debug_print("__size_of_alloc(): medium buddy order: ", order_class);
-      __debug_print("__size_of_alloc(): recovered user size: ", recovered);
+      const usize bs = _medium.__idx[idx].nd->nd->block_size_of(reinterpret_cast<byte *>(addr));
+      const usize recovered = (bs > __hdr_offset) ? bs - __hdr_offset : 0;
+      __debug_print("__size_of_alloc(): medium buddy user size: ", recovered);
       return recovered;
     }
     if ( (idx = _large.find_range(addr)) >= 0 ) {
-      i64 order_class = static_cast<i64>(*get_metadata_addr(addr));
-      usize recovered = (__class_large << order_class) - __hdr_offset;
-      __debug_print("__size_of_alloc(): large buddy order: ", order_class);
-      __debug_print("__size_of_alloc(): recovered user size: ", recovered);
+      const usize bs = _large.__idx[idx].nd->nd->block_size_of(reinterpret_cast<byte *>(addr));
+      const usize recovered = (bs > __hdr_offset) ? bs - __hdr_offset : 0;
+      __debug_print("__size_of_alloc(): large buddy user size: ", recovered);
       return recovered;
     }
     if ( (idx = _huge.find_range(addr)) >= 0 ) {
-      i64 order_class = static_cast<i64>(*get_metadata_addr(addr));
-      usize recovered = (__class_huge << order_class) - __hdr_offset;
-      __debug_print("__size_of_alloc(): huge buddy order: ", order_class);
-      __debug_print("__size_of_alloc(): recovered user size: ", recovered);
+      const usize bs = _huge.__idx[idx].nd->nd->block_size_of(reinterpret_cast<byte *>(addr));
+      const usize recovered = (bs > __hdr_offset) ? bs - __hdr_offset : 0;
+      __debug_print("__size_of_alloc(): huge buddy user size: ", recovered);
       return recovered;
     }
 

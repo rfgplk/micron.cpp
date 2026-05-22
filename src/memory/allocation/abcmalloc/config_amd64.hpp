@@ -84,7 +84,7 @@ constexpr static const u32 __default_tombstone_sweep_interval = 64;
 constexpr static const u32 __max_sheets_precise = 512;
 constexpr static const u32 __max_sheets_small = 512;
 constexpr static const u32 __max_sheets_medium = 512;
-constexpr static const u32 __max_sheets_large = 64;
+constexpr static const u32 __max_sheets_large = 128;
 constexpr static const u32 __max_sheets_huge = 128;      // doubled to absorb sustained huge-band pressure
 constexpr static const u32 __max_sheets_arena_internal = 64;
 
