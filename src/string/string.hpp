@@ -128,6 +128,7 @@ class hstring: private Alloc, public __mutable_memory_resource<T, Alloc>
   inline __attribute__((always_inline)) int
   __lexcmp(const T *a, usize alen, const T *b, usize blen) const noexcept
   {
+    if constexpr ( sizeof(T) != 1 ) return micron::simd::lexcmp_elem<T>(a, alen, b, blen);      // byte memcmp mis-orders wide elems
     const usize common = alen < blen ? alen : blen;
     if ( common ) {
       const i64 d = micron::memcmp<byte>(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), common);
@@ -142,12 +143,17 @@ class hstring: private Alloc, public __mutable_memory_resource<T, Alloc>
   __simd_find_byte(const T *p, usize len, T ch) noexcept
   {
     if ( len == 0 ) return npos;
+    if constexpr ( sizeof(T) == 1 ) {
 #if defined(__micron_x86_avx2)
-    const usize i = micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
+      const usize i = micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
 #else
-    const usize i = micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
+      const usize i = micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
 #endif
-    return i == len ? npos : i;
+      return i == len ? npos : i;
+    } else {
+      const usize i = micron::simd::find_first_elem<T>(p, len, ch);
+      return i == len ? npos : i;
+    }
   }
 
   template<auto Fn, typename E, typename... Args>
@@ -159,6 +165,31 @@ class hstring: private Alloc, public __mutable_memory_resource<T, Alloc>
         exc<E>(msg);
       }
     }
+  }
+
+  struct __bspan {
+    const byte *p;
+    usize n;
+  };
+
+  template<has_cstr S>
+  static inline __bspan
+  __as_key(const S &s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s.c_str()), s.size() * sizeof(typename S::value_type) };
+  }
+
+  static inline __bspan
+  __as_key(const char *s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s), micron::strlen(s) };
+  }
+
+  template<usize M>
+  static inline __bspan
+  __as_key(const T (&s)[M]) noexcept
+  {
+    return { reinterpret_cast<const byte *>(&s[0]), (M - 1) * sizeof(T) };
   }
 
 public:
@@ -183,8 +214,9 @@ public:
   }
 
   // contiguous_memory<T> memory;
-  constexpr hstring() : __mem(Alloc::auto_size()) { };
-  constexpr hstring(const usize n) : __mem(__alloc_size(n)) { };
+  constexpr hstring() : __mem(Alloc::auto_size()) { __mem::memory[0] = T{ 0 }; };      // empty c_str()
+
+  constexpr hstring(const usize n) : __mem(__alloc_size(n)) { __mem::memory[0] = T{ 0 }; };
 
   hstring(usize cnt, T ch) : __mem(__alloc_size(cnt))
   {
@@ -250,26 +282,30 @@ public:
 
   // allow construction from - to iterator (be careful!)
   constexpr hstring(iterator __start, iterator __end)
-      : __mem((__start < __end ? ((max_t)Alloc::auto_size() < static_cast<usize>(__end - __start) ? static_cast<usize>(__end - __start)
-                                                                                                  : Alloc::auto_size())
-                               : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
-  {
-    micron::memcpy(__mem::memory, __start, __end - __start);
-    __mem::length = __end - __start;
-  }
-
-  constexpr hstring(const_iterator __start, const_iterator __end)
       : __mem((__start < __end
-                   ? (Alloc::auto_size() < static_cast<usize>(__end - __start) ? static_cast<usize>(__end - __start) : Alloc::auto_size())
+                   ? ((max_t)Alloc::auto_size() < static_cast<usize>(__end - __start) + 1 ? static_cast<usize>(__end - __start) + 1
+                                                                                          : Alloc::auto_size())
                    : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
   {
     micron::memcpy(__mem::memory, __start, __end - __start);
     __mem::length = __end - __start;
+    __mem::memory[__mem::length] = T{ 0 };
+  }
+
+  constexpr hstring(const_iterator __start, const_iterator __end)
+      : __mem((__start < __end ? (Alloc::auto_size() < static_cast<usize>(__end - __start) + 1 ? static_cast<usize>(__end - __start) + 1
+                                                                                               : Alloc::auto_size())
+                               : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
+  {
+    micron::memcpy(__mem::memory, __start, __end - __start);
+    __mem::length = __end - __start;
+    __mem::memory[__mem::length] = T{ 0 };
   }
 
   hstring &
   operator=(const hstring &o)
   {
+    if ( this == micron::addressof(o) ) return *this;
     if ( __mem::capacity < o.capacity ) reserve(o.capacity + 1);
     micron::zero(__mem::memory, __mem::capacity);
     micron::memcpy(__mem::memory, o.memory, o.length);
@@ -280,6 +316,7 @@ public:
   hstring &
   operator=(hstring &&o)
   {
+    if ( this == micron::addressof(o) ) return *this;
     if ( __mem::memory ) {
       __mem::free();
     }
@@ -633,7 +670,7 @@ public:
   append(const sstring<M, F> &o)
   {
     if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);      // full length
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -649,8 +686,10 @@ public:
   inline hstring &
   push_back(F ch)
   {
-    if ( (__mem::length) >= __mem::capacity ) reserve(__mem::capacity + 1);
+
+    if ( __mem::length + 1 >= __mem::capacity ) reserve(__mem::length + 2);
     (__mem::memory)[__mem::length++] = ch;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -679,7 +718,7 @@ public:
   push_back(const sstring<M, F> &o)
   {
     if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);      // full length
+    micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -689,9 +728,9 @@ public:
   insert(usize ind, F ch, usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
-    if ( __mem::length + cnt >= __mem::capacity ) reserve(__mem::capacity + 1);
-    micron::bytemove(&__mem::memory[ind + cnt], &__mem::memory[ind], __mem::length - ind);
-    micron::memset(&__mem::memory[ind], ch, cnt);
+    if ( __mem::length + cnt + 1 >= __mem::capacity ) reserve(__mem::length + cnt + 1);
+    micron::memmove(&__mem::memory[ind + cnt], &__mem::memory[ind], __mem::length - ind);
+    micron::typeset<T>(&__mem::memory[ind], ch, cnt);
     __mem::length += cnt;
     return *this;
   }
@@ -704,7 +743,7 @@ public:
     if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity ) reserve(__mem::capacity + 1);
     usize str_len = M - 1;
 
-    micron::bytemove(&__mem::memory[ind + cnt * str_len], &__mem::memory[ind], __mem::length - ind);
+    micron::memmove(&__mem::memory[ind + cnt * str_len], &__mem::memory[ind], __mem::length - ind);
     for ( usize i = 0; i < cnt; ++i ) micron::memcpy(&__mem::memory[ind + i * str_len], str, str_len);
     __mem::length += (cnt * str_len);
     return *this;
@@ -718,7 +757,7 @@ public:
     if ( __mem::length + end >= __mem::capacity ) {
       reserve(__mem::capacity + o.length);
     }
-    micron::bytemove(&(__mem::memory)[ind + (end)], &(__mem::memory)[ind], __mem::length - ind);
+    micron::memmove(&(__mem::memory)[ind + (end)], &(__mem::memory)[ind], __mem::length - ind);
     micron::memcpy(&(__mem::memory)[ind], &o.memory[0], end);
     __mem::length += end;
     return *this;
@@ -738,8 +777,8 @@ public:
     __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
         "micron::hstring insert() iterator out of range", itr);
 
-    micron::bytemove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
-    micron::memset(itr, ch, cnt);
+    micron::memmove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
+    micron::typeset<T>(itr, ch, cnt);
     __mem::length += cnt;
     return *this;
   }
@@ -758,7 +797,7 @@ public:
     max_t str_len = M - 1;
 
     usize tail_len = __mem::length - (itr - __mem::memory);
-    micron::bytemove(itr + cnt * str_len, itr, tail_len);
+    micron::memmove(itr + cnt * str_len, itr, tail_len);
     for ( usize i = 0; i < cnt; ++i ) micron::memcpy(itr + i * str_len, str, str_len);
     __mem::length += (cnt * str_len);
     return *this;
@@ -773,7 +812,7 @@ public:
       reserve(__mem::capacity + o.length);
       itr = __mem::memory + dif;
     }
-    micron::bytemove(itr + o.length, itr, __mem::length - (itr - &(__mem::memory)[0]));
+    micron::memmove(itr + o.length, itr, __mem::length - (itr - &(__mem::memory)[0]));
     micron::memcpy(itr, &(o.memory)[0], o.length);
     __mem::length += o.length;
     return *this;
@@ -789,7 +828,7 @@ public:
       reserve(__mem::capacity + o.length);
       itr = __mem::memory + dif;
     }
-    micron::bytemove(itr + (end - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
+    micron::memmove(itr + (end - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
     micron::memcpy(itr, &o.memory[0], end - 1);
     __mem::length += end - 1;
     return *this;
@@ -804,7 +843,7 @@ public:
       reserve(__mem::capacity + o.length);
       itr = __mem::memory + dif;
     }
-    micron::bytemove(itr + (o.length - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
+    micron::memmove(itr + (o.length - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
     micron::memcpy(itr, &o.memory[0], o.length - 1);
     __mem::length += o.length - 1;
     micron::zero(o.memory, o.length);
@@ -904,7 +943,7 @@ public:
   {
     if ( (data.length + __mem::length) >= __mem::capacity ) [[unlikely]]
       reserve(__mem::capacity + data.length + 1);
-    micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], data.length);      // full length
+    micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], data.length);
     __mem::length += data.length;
     return *this;
   };
@@ -936,6 +975,130 @@ public:
     if ( (data.size() + __mem::length) >= __mem::capacity ) reserve(__mem::capacity + data.size() + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &data[0], data.size() - 1);
     __mem::length += data.size() - 1;
+    return *this;
+  };
+
+  template<typename R>
+  inline hstring
+  operator-(const R &rhs) const
+  {
+    hstring out(*this);
+    out.remove_all(rhs);
+    return out;
+  };
+
+  template<typename R>
+  inline hstring &
+  operator-=(const R &rhs)
+  {
+    return remove_all(rhs);
+  };
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline hstring
+  operator*(I n) const
+  {
+    hstring out;
+    if ( n >= 1 ) {
+      out.reserve(__mem::length * static_cast<usize>(n) + 1);
+      for ( I k = 0; k < n; ++k ) out.append(__mem::memory, __mem::length);
+    }
+    return out;
+  };
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline hstring &
+  operator*=(I n)
+  {
+    if ( n < 1 ) {
+      clear();
+      return *this;
+    }
+    if ( n == 1 ) return *this;
+    hstring snap(*this);
+    reserve(__mem::length * static_cast<usize>(n) + 1);
+    for ( I k = 1; k < n; ++k ) append(snap.memory, snap.length);
+    return *this;
+  };
+
+  template<typename R>
+  inline hstring
+  operator/(R &&rhs) const
+  {
+    hstring out(*this);
+    out += static_cast<R &&>(rhs);
+    return out;
+  };
+
+  template<typename R>
+  inline hstring &
+  operator/=(R &&rhs)
+  {
+    return (*this) += static_cast<R &&>(rhs);
+  };
+
+  template<typename R>
+  inline hstring
+  operator^(const R &rhs) const
+  {
+    hstring out(*this);
+    const __bspan k = __as_key(rhs);
+    micron::simd::xor_bytes_cycle(reinterpret_cast<byte *>(out.memory), reinterpret_cast<const byte *>(__mem::memory),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    return out;
+  };
+
+  template<typename R>
+  inline hstring &
+  operator^=(const R &rhs)
+  {
+    const __bspan k = __as_key(rhs);
+    micron::simd::xor_bytes_cycle(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<const byte *>(__mem::memory),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    return *this;
+  };
+
+  template<typename R>
+  inline hstring
+  operator&(const R &rhs) const
+  {
+    hstring out(*this);
+    const __bspan k = __as_key(rhs);
+    micron::simd::and_bytes_cycle(reinterpret_cast<byte *>(out.memory), reinterpret_cast<const byte *>(__mem::memory),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    return out;
+  };
+
+  template<typename R>
+  inline hstring &
+  operator&=(const R &rhs)
+  {
+    const __bspan k = __as_key(rhs);
+    micron::simd::and_bytes_cycle(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<const byte *>(__mem::memory),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    return *this;
+  };
+
+  template<typename R>
+  inline hstring
+  operator|(const R &rhs) const
+  {
+    hstring out(*this);
+    const __bspan k = __as_key(rhs);
+    micron::simd::or_bytes_cycle(reinterpret_cast<byte *>(out.memory), reinterpret_cast<const byte *>(__mem::memory),
+                                 __mem::length * sizeof(T), k.p, k.n);
+    return out;
+  };
+
+  template<typename R>
+  inline hstring &
+  operator|=(const R &rhs)
+  {
+    const __bspan k = __as_key(rhs);
+    micron::simd::or_bytes_cycle(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<const byte *>(__mem::memory),
+                                 __mem::length * sizeof(T), k.p, k.n);
     return *this;
   };
 
@@ -1061,13 +1224,17 @@ public:
   void
   resize(usize n, const T ch)
   {
-    if ( !(n > __mem::length) ) {
+    if ( n == __mem::length ) return;
+    if ( n < __mem::length ) {
+
+      micron::typeset<T>(&__mem::memory[n], 0x0, __mem::length - n);
+      __mem::length = n;
       return;
     }
-    if ( n >= __mem::capacity ) {
-      reserve(n);
-    }
-    micron::memset(&__mem::memory[__mem::length], ch, n);
+    if ( n + 1 >= __mem::capacity ) reserve(n + 1);
+
+    micron::typeset<T>(&__mem::memory[__mem::length], ch, n - __mem::length);
+    __mem::memory[n] = T{ 0 };
     __mem::length = n;
   }
 
@@ -1083,7 +1250,7 @@ public:
 
     if ( !cnt ) return *this;
 
-    micron::bytemove(&__mem::memory[ind], &__mem::memory[ind + (1 + (cnt - 1))], __mem::length - (ind + 1 + (cnt - 1)));
+    micron::memmove(&__mem::memory[ind], &__mem::memory[ind + (1 + (cnt - 1))], __mem::length - (ind + 1 + (cnt - 1)));
     micron::typeset<T>(&__mem::memory[__mem::length - (cnt)], 0x0, cnt);
     __mem::length -= cnt;
     return *this;
@@ -1099,7 +1266,7 @@ public:
 
     if ( !cnt ) return *this;
 
-    micron::bytemove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));
+    micron::memmove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&__mem::memory[__mem::length - cnt], 0x0, cnt);
     __mem::length -= cnt;
     return *this;
@@ -1114,7 +1281,7 @@ public:
 
     if ( !cnt ) return *this;
 
-    micron::bytemove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));
+    micron::memmove(itr, itr + (1 + (cnt - 1)), __mem::length - ((itr - &__mem::memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&__mem::memory[__mem::length - cnt], 0x0, cnt);
     __mem::length -= cnt;
     return *this;
@@ -1125,6 +1292,10 @@ public:
   {
     if ( needle_len == 0 || needle_len > __mem::length ) return npos;
     if ( pos > __mem::length - needle_len ) return npos;
+    if constexpr ( sizeof(T) != 1 ) {
+      const usize r = micron::simd::find_substr_elem<T>(__mem::memory + pos, __mem::length - pos, needle, needle_len);
+      return r == (__mem::length - pos) ? npos : pos + r;
+    }
     auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(__mem::memory + pos), __mem::length - pos,
                                    reinterpret_cast<const byte *>(needle), needle_len);
     return r == nullptr ? npos : static_cast<usize>(reinterpret_cast<const T *>(r) - __mem::memory);
@@ -1143,7 +1314,7 @@ public:
     usize pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
     if ( pos == npos ) return *this;
 
-    micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
+    micron::memmove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
     micron::typeset<T>(&__mem::memory[__mem::length - needle_len], 0x0, needle_len);
     __mem::length -= needle_len;
     return *this;
@@ -1158,7 +1329,7 @@ public:
     usize pos = find_substr(needle.data(), needle.size());
     if ( pos == npos ) return *this;
 
-    micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+    micron::memmove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
     micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
     __mem::length -= needle.size();
     return *this;
@@ -1173,7 +1344,7 @@ public:
     usize pos = find_substr(needle.data(), needle.size());
     if ( pos == npos ) return *this;
 
-    micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+    micron::memmove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
     micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
     __mem::length -= needle.size();
     return *this;
@@ -1191,7 +1362,7 @@ public:
 
     usize pos = 0;
     while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
-      micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
+      micron::memmove(&__mem::memory[pos], &__mem::memory[pos + needle_len], __mem::length - (pos + needle_len));
       micron::typeset<T>(&__mem::memory[__mem::length - needle_len], 0x0, needle_len);
       __mem::length -= needle_len;
     }
@@ -1206,7 +1377,7 @@ public:
 
     usize pos = 0;
     while ( (pos = find_substr(needle.data(), needle.size(), pos)) != npos ) {
-      micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+      micron::memmove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
       micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
       __mem::length -= needle.size();
     }
@@ -1221,7 +1392,7 @@ public:
 
     usize pos = 0;
     while ( (pos = find_substr(needle.data(), needle.size(), pos)) != npos ) {
-      micron::bytemove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
+      micron::memmove(&__mem::memory[pos], &__mem::memory[pos + needle.size()], __mem::length - (pos + needle.size()));
       micron::typeset<T>(&__mem::memory[__mem::length - needle.size()], 0x0, needle.size());
       __mem::length -= needle.size();
     }

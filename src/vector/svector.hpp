@@ -644,8 +644,7 @@ public:
   {
     __safety_check<&svector::__empty_check, except::runtime_error>("micron::svector pop_front() called on empty vector");
     T val = micron::move(stack[0]);
-    stack[0].~T();
-    micron::memmove(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(stack[1]), length - 1u);
+    __impl_container::close_gap(micron::addr(stack[0]), length, 0u, 1u);
     --length;
     return val;
   }
@@ -656,7 +655,7 @@ public:
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector insert() out of range.");
     if ( ind > length ) exc<except::runtime_error>("micron::svector insert() index past end.");
-    micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
+    __impl_container::open_gap(micron::addr(stack[0]), length, ind, 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
       new (micron::addr(stack[ind])) T(i);
     else
@@ -672,8 +671,7 @@ public:
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector insert() out of range.");
     __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector insert() iterator out of range.",
                                                                       static_cast<const T *>(itr));
-    const usize tail_bytes = static_cast<usize>(end() - itr) * sizeof(T);
-    micron::bytemove(itr + 1, itr, tail_bytes);
+    __impl_container::open_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
       new (itr) T(i);
     else
@@ -687,7 +685,7 @@ public:
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector move_insert() out of range.");
     if ( ind > length ) exc<except::runtime_error>("micron::svector move_insert() index past end.");
-    micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
+    __impl_container::open_gap(micron::addr(stack[0]), length, ind, 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
       new (micron::addr(stack[ind])) T(micron::move(i));
     else
@@ -702,8 +700,7 @@ public:
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector move_insert() out of range.");
     __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector move_insert() iterator out of range.",
                                                                       static_cast<const T *>(itr));
-    const usize tail_bytes = static_cast<usize>(end() - itr) * sizeof(T);
-    micron::bytemove(itr + 1, itr, tail_bytes);
+    __impl_container::open_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
       new (itr) T(micron::move(i));
     else
@@ -718,7 +715,7 @@ public:
   {
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector emplace() out of range.");
     if ( ind > length ) exc<except::runtime_error>("micron::svector emplace() index past end.");
-    micron::bytemove(&stack[ind + 1], &stack[ind], (length - ind) * sizeof(T));
+    __impl_container::open_gap(micron::addr(stack[0]), length, ind, 1);
     new (micron::addr(stack[ind])) T(micron::forward<Args>(args)...);
     ++length;
     return *this;
@@ -731,8 +728,7 @@ public:
     __safety_check<&svector::__push_check, except::runtime_error>("micron::svector emplace() out of range.");
     __safety_check<&svector::__iterator_check, except::runtime_error>("micron::svector emplace() iterator out of range.",
                                                                       static_cast<const T *>(itr));
-    const usize tail_bytes = static_cast<usize>(end() - itr) * sizeof(T);
-    micron::bytemove(itr + 1, itr, tail_bytes);
+    __impl_container::open_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1);
     new (itr) T(micron::forward<Args>(args)...);
     ++length;
     return *this;

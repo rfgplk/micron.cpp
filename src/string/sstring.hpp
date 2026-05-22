@@ -18,6 +18,7 @@
 
 #include "../simd/bitwise.hpp"
 #include "../simd/intrin.hpp"
+#include "../simd/strings.hpp"
 
 #include "unitypes.hpp"
 
@@ -63,7 +64,7 @@ private:
       if ( length - cnt + with_len >= N ) exc<except::library_error>("micron::sstring replace() result exceeds capacity");
     }
     size_type tail = length - (pos + cnt);
-    micron::bytemove(&memory[pos + with_len], &memory[pos + cnt], tail);
+    micron::memmove(&memory[pos + with_len], &memory[pos + cnt], tail);
     if ( with_len < cnt ) micron::typeset<T>(&memory[pos + with_len + tail], 0x0, cnt - with_len);
     if ( with_len > 0 ) micron::memcpy(&memory[pos], with, with_len);
     length = length - cnt + with_len;
@@ -157,6 +158,7 @@ private:
   inline __attribute__((always_inline)) int
   __lexcmp(const T *a, size_type alen, const T *b, size_type blen) const noexcept
   {
+    if constexpr ( sizeof(T) != 1 ) return micron::simd::lexcmp_elem<T>(a, alen, b, blen);      // byte memcmp mis-orders wide elems
     const size_type common = alen < blen ? alen : blen;
     if ( common ) {
       const i64 d = micron::memcmp<byte>(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), common);
@@ -167,28 +169,63 @@ private:
     return 0;
   }
 
+  struct __bspan {
+    const byte *p;
+    usize n;
+  };
+
+  template<has_cstr S>
+  static inline __bspan
+  __as_key(const S &s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s.c_str()), s.size() * sizeof(typename S::value_type) };
+  }
+
+  static inline __bspan
+  __as_key(const char *s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s), micron::strlen(s) };
+  }
+
+  template<size_type M>
+  static inline __bspan
+  __as_key(const T (&s)[M]) noexcept
+  {
+    return { reinterpret_cast<const byte *>(&s[0]), (M - 1) * sizeof(T) };
+  }
+
   [[gnu::always_inline]] static inline size_type
   __simd_find_byte(const T *p, size_type len, T ch) noexcept
   {
     if ( len == 0 ) return npos;
+    if constexpr ( sizeof(T) == 1 ) {
 #if defined(__micron_x86_avx2)
-    const size_type i = micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
+      const size_type i = micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
 #else
-    const size_type i = micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
+      const size_type i = micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
 #endif
-    return i == len ? npos : i;
+      return i == len ? npos : i;
+    } else {
+      const size_type i = micron::simd::find_first_elem<T>(p, len, ch);
+      return i == len ? npos : i;
+    }
   }
 
   [[gnu::always_inline]] static inline size_type
   __simd_rfind_byte(const T *p, size_type len, T ch) noexcept
   {
     if ( len == 0 ) return npos;
+    if constexpr ( sizeof(T) == 1 ) {
 #if defined(__micron_x86_avx2)
-    auto *r = micron::simd::memrchr256(reinterpret_cast<const byte *>(p), static_cast<u8>(ch), len);
+      auto *r = micron::simd::memrchr256(reinterpret_cast<const byte *>(p), static_cast<u8>(ch), len);
 #else
-    auto *r = micron::simd::memrchr128(reinterpret_cast<const byte *>(p), static_cast<u8>(ch), len);
+      auto *r = micron::simd::memrchr128(reinterpret_cast<const byte *>(p), static_cast<u8>(ch), len);
 #endif
-    return r == nullptr ? npos : static_cast<size_type>(reinterpret_cast<const T *>(r) - p);
+      return r == nullptr ? npos : static_cast<size_type>(reinterpret_cast<const T *>(r) - p);
+    } else {
+      const size_type i = micron::simd::find_last_elem<T>(p, len, ch);
+      return i == len ? npos : i;
+    }
   }
 
   template<size_type K>
@@ -196,6 +233,10 @@ private:
   __simd_find_first_of_small(const T *p, size_type len, const T *chars, size_type pos) noexcept
   {
     static_assert(K >= 1 && K <= 8);
+    if constexpr ( sizeof(T) != 1 ) {
+      const size_type r = micron::simd::find_first_of_elem<T>(p, len, chars, K, pos);
+      return r == len ? npos : r;
+    }
     size_type i = pos;
 #if defined(__micron_x86_avx2)
     __m256i cv[K];
@@ -241,6 +282,10 @@ private:
   __simd_rfind_first_of_small(const T *p, size_type end, const T *chars) noexcept
   {
     static_assert(K >= 1 && K <= 8);
+    if constexpr ( sizeof(T) != 1 ) {
+      const size_type r = micron::simd::find_last_of_elem<T>(p, end, chars, K);
+      return r == end ? npos : r;
+    }
     size_type i = end;
 #if defined(__micron_x86_avx2)
     __m256i cv[K];
@@ -298,6 +343,16 @@ private:
   __simd_count_substr(const T *hay, size_type hlen, const T *needle, size_type nlen) noexcept
   {
     if ( nlen == 0 || nlen > hlen ) return 0;
+    if constexpr ( sizeof(T) != 1 ) {
+      size_type cnt = 0, p = 0;
+      while ( p + nlen <= hlen ) {
+        const size_type f = micron::simd::find_substr_elem<T>(hay + p, hlen - p, needle, nlen);
+        if ( f == hlen - p ) break;
+        ++cnt;
+        p += f + nlen;      // non-overlapping
+      }
+      return cnt;
+    }
     if ( nlen == 1 ) {
 #if defined(__micron_x86_avx2)
       return micron::simd::count_set_256(hay, hlen, static_cast<char>(needle[0]));
@@ -478,7 +533,7 @@ public:
   {
     micron::constexpr_zero(&memory[0], N);
     const size_type srclen = static_cast<size_type>(o.size());
-    const size_type n = (srclen < N) ? srclen : N;      // WARNING: ever over-read source nor over-run dest
+    const size_type n = (srclen < N) ? srclen : N;      // clamp to capacity: never over-read source nor over-run dest
     if ( n ) micron::memcpy(&memory[0], o.data(), n);
     length = n;
   };
@@ -502,10 +557,10 @@ public:
   {
     if constexpr ( N < M ) {
       micron::memcpy(&memory[0], &o.memory[0], N);
-      micron::constexpr_zero(&o.memory[0], M);      // WARNING: clear the whole source (M wide)
+      micron::constexpr_zero(&o.memory[0], M);      // clear the whole moved-from source (M wide), not just N
     } else if constexpr ( N >= M ) {
       micron::memcpy(&memory[0], &o.memory[0], M);
-      micron::constexpr_zero(&o.memory[0], M);      // source buffer is only M wide
+      micron::constexpr_zero(&o.memory[0], M);      // source buffer is only M wide; zeroing N (> M) overran it
     }
     if ( o.length > N )
       length = N;
@@ -517,6 +572,7 @@ public:
   sstring &
   operator=(sstring &&o)
   {
+    if ( this == o.addr() ) return *this;      // self-move: clear() would zero the source (operator& is overloaded; use addr())
     if ( o.empty() ) {
       length = 0;
       return *this;
@@ -532,6 +588,7 @@ public:
   sstring &
   operator=(const sstring &o)
   {
+    if ( this == o.addr() ) return *this;      // self-assign: clear() would zero the source (operator& is overloaded; use addr())
     if ( o.empty() ) {
       length = 0;
       return *this;
@@ -556,7 +613,7 @@ public:
       length = o.size();
     } else {
       micron::memcpy(&memory[0], &o.cdata()[0], N);
-      length = N;
+      length = N;      // only N copied; clamp stored length to capacity (was o.size() > N -> corrupt)
     }
     return *this;
   }
@@ -749,7 +806,7 @@ public:
     return F(*this);      // copy
   }
 
-  inline void
+  inline constexpr void
   _buf_set_length(const size_type s)
   {
     length = s;
@@ -997,6 +1054,11 @@ public:
   {
     if ( pos >= length ) return npos;
     if ( chars.length == 0 ) return pos;
+    if constexpr ( sizeof(T) != 1 ) {
+      const size_type r
+          = micron::simd::find_first_not_of_elem<T>(memory, length, reinterpret_cast<const T *>(chars.memory), chars.length, pos);
+      return r == length ? npos : r;
+    }
     byte bm[32];
     __build_charset_bitmap(bm, reinterpret_cast<const T *>(chars.memory), chars.length);
     for ( size_type i = pos; i < length; ++i )
@@ -1042,6 +1104,10 @@ public:
     if ( length == 0 ) return npos;
     size_type end = (pos == npos || pos >= length) ? length : pos + 1;
     if ( chars.length == 0 ) return end - 1;
+    if constexpr ( sizeof(T) != 1 ) {
+      const size_type r = micron::simd::find_last_not_of_elem<T>(memory, end, reinterpret_cast<const T *>(chars.memory), chars.length);
+      return r == end ? npos : r;
+    }
     byte bm[32];
     __build_charset_bitmap(bm, reinterpret_cast<const T *>(chars.memory), chars.length);
     for ( size_type i = end; i-- > 0; )
@@ -1062,7 +1128,7 @@ public:
     size_type plen = micron::strlen(prefix);
     if ( plen > length ) return false;
     if ( plen == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory), reinterpret_cast<const byte *>(prefix), plen) == 0;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory), reinterpret_cast<const byte *>(prefix), plen * sizeof(T)) == 0;
   }
 
   template<size_type M>
@@ -1072,7 +1138,7 @@ public:
     constexpr size_type plen = M - 1;
     if constexpr ( plen == 0 ) return true;
     if ( plen > length ) return false;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory), reinterpret_cast<const byte *>(&prefix[0]), plen) == 0;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory), reinterpret_cast<const byte *>(&prefix[0]), plen * sizeof(T)) == 0;
   }
 
   template<size_type M, typename F, bool X = Sf>
@@ -1081,7 +1147,9 @@ public:
   {
     if ( prefix.empty() ) return true;
     if ( prefix.length > length ) return false;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory), reinterpret_cast<const byte *>(prefix.memory), prefix.length) == 0;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory), reinterpret_cast<const byte *>(prefix.memory),
+                                prefix.length * sizeof(T))
+           == 0;
   }
 
   inline bool
@@ -1097,7 +1165,8 @@ public:
     size_type slen = micron::strlen(suffix);
     if ( slen > length ) return false;
     if ( slen == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory + (length - slen)), reinterpret_cast<const byte *>(suffix), slen)
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory + (length - slen)), reinterpret_cast<const byte *>(suffix),
+                                slen * sizeof(T))
            == 0;
   }
 
@@ -1108,7 +1177,8 @@ public:
     constexpr size_type slen = M - 1;
     if constexpr ( slen == 0 ) return true;
     if ( slen > length ) return false;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory + (length - slen)), reinterpret_cast<const byte *>(&suffix[0]), slen)
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory + (length - slen)), reinterpret_cast<const byte *>(&suffix[0]),
+                                slen * sizeof(T))
            == 0;
   }
 
@@ -1119,7 +1189,7 @@ public:
     if ( suffix.empty() ) return true;
     if ( suffix.length > length ) return false;
     return micron::memcmp<byte>(reinterpret_cast<const byte *>(memory + (length - suffix.length)),
-                                reinterpret_cast<const byte *>(suffix.memory), suffix.length)
+                                reinterpret_cast<const byte *>(suffix.memory), suffix.length * sizeof(T))
            == 0;
   }
 
@@ -1304,6 +1374,10 @@ public:
   inline sstring &
   to_lower()
   {
+    if constexpr ( sizeof(T) != 1 ) {
+      micron::simd::to_lower_elem<T>(&memory[0], length);
+      return *this;
+    }
     size_type i = 0;
 #if defined(__micron_x86_avx2)
     const __m256i vA = _mm256_set1_epi8('A');
@@ -1352,6 +1426,10 @@ public:
   inline sstring &
   to_upper()
   {
+    if constexpr ( sizeof(T) != 1 ) {
+      micron::simd::to_upper_elem<T>(&memory[0], length);
+      return *this;
+    }
     size_type i = 0;
 #if defined(__micron_x86_avx2)
     const __m256i va = _mm256_set1_epi8('a');
@@ -1401,6 +1479,19 @@ public:
   inline sstring &
   trim_left()
   {
+    if constexpr ( sizeof(T) != 1 ) {
+      size_type i = 0;
+      while ( i < length
+              && (memory[i] == static_cast<T>(' ') || memory[i] == static_cast<T>('\t') || memory[i] == static_cast<T>('\n')
+                  || memory[i] == static_cast<T>('\r')) )
+        ++i;
+      if ( i > 0 ) {
+        micron::memmove(&memory[0], &memory[i], length - i);
+        micron::typeset<T>(&memory[length - i], 0x0, i);
+        length -= i;
+      }
+      return *this;
+    }
     static const T ws[4] = { static_cast<T>(' '), static_cast<T>('\t'), static_cast<T>('\n'), static_cast<T>('\r') };
     size_type i = 0;
 #if defined(__micron_x86_avx2)
@@ -1442,7 +1533,7 @@ public:
 #endif
     if ( i > length ) i = length;
     if ( i > 0 ) {
-      micron::bytemove(&memory[0], &memory[i], length - i);
+      micron::memmove(&memory[0], &memory[i], length - i);
       micron::typeset<T>(&memory[length - i], 0x0, i);
       length -= i;
     }
@@ -1452,6 +1543,18 @@ public:
   inline sstring &
   trim_right()
   {
+    if constexpr ( sizeof(T) != 1 ) {
+      size_type i = length;
+      while ( i > 0
+              && (memory[i - 1] == static_cast<T>(' ') || memory[i - 1] == static_cast<T>('\t') || memory[i - 1] == static_cast<T>('\n')
+                  || memory[i - 1] == static_cast<T>('\r')) )
+        --i;
+      if ( i < length ) {
+        micron::typeset<T>(&memory[i], 0x0, length - i);
+        length = i;
+      }
+      return *this;
+    }
     static const T ws[4] = { static_cast<T>(' '), static_cast<T>('\t'), static_cast<T>('\n'), static_cast<T>('\r') };
     size_type i = length;
 #if defined(__micron_x86_avx2)
@@ -1510,6 +1613,10 @@ public:
   reverse()
   {
     if ( length <= 1 ) return *this;
+    if constexpr ( sizeof(T) != 1 ) {
+      micron::simd::reverse_elem<T>(&memory[0], length);
+      return *this;
+    }
     size_type lo = 0, hi = length;
 #if defined(__micron_x86_ssse3) || defined(__micron_x86_avx2)
     const __m128i rev = _mm_setr_epi8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
@@ -1545,6 +1652,7 @@ public:
   count(T ch) const
   {
     if ( length == 0 ) return 0;
+    if constexpr ( sizeof(T) != 1 ) return micron::simd::count_elem<T>(memory, length, ch);
 #if defined(__micron_x86_avx2)
     return micron::simd::count_set_256(memory, length, static_cast<char>(ch));
 #else
@@ -1709,7 +1817,7 @@ public:
     __safety_check<&sstring::__erase_ind_check, except::library_error>("micron::sstring erase() out of range", ind, cnt);
     __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
 
-    micron::bytemove(&memory[ind], &memory[ind + (1 + (cnt - 1))], length - (ind + 1 + (cnt - 1)));
+    micron::memmove(&memory[ind], &memory[ind + (1 + (cnt - 1))], length - (ind + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - (cnt)], 0x0, cnt);
     length -= cnt;
     return *this;
@@ -1726,7 +1834,7 @@ public:
                                                                         cnt);
     __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
 
-    micron::bytemove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
+    micron::memmove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - cnt], 0x0, cnt);
     length -= cnt;
     return *this;
@@ -1739,7 +1847,7 @@ public:
     __safety_check<&sstring::__erase_iter_check, except::library_error>("micron::sstring erase() out of range", itr, cnt);
     __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
 
-    micron::bytemove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
+    micron::memmove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - cnt], 0x0, cnt);
     length -= cnt;
     return *this;
@@ -1750,6 +1858,10 @@ public:
   {
     if ( needle_len == 0 || needle_len > length ) return npos;
     if ( pos > length - needle_len ) return npos;
+    if constexpr ( sizeof(T) != 1 ) {
+      const size_type r = micron::simd::find_substr_elem<T>(memory + pos, length - pos, needle, needle_len);
+      return r == (length - pos) ? npos : pos + r;
+    }
     auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(memory + pos), length - pos, reinterpret_cast<const byte *>(needle),
                                    needle_len);
     return r == nullptr ? npos : static_cast<size_type>(reinterpret_cast<const T *>(r) - memory);
@@ -1767,7 +1879,7 @@ public:
     size_type pos = find_substr(reinterpret_cast<const T *>(needle), needle_len);
     if ( pos == npos ) return *this;
 
-    micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+    micron::memmove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
     micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
     length -= needle_len;
     return *this;
@@ -1783,7 +1895,7 @@ public:
     size_type pos = find_substr(&needle[0], needle_len);
     if ( pos == npos ) return *this;
 
-    micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+    micron::memmove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
     micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
     length -= needle_len;
     return *this;
@@ -1798,7 +1910,7 @@ public:
     size_type pos = find_substr(needle.memory, needle.length);
     if ( pos == npos ) return *this;
 
-    micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
+    micron::memmove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
     micron::typeset<T>(&memory[length - needle.length], 0x0, needle.length);
     length -= needle.length;
     return *this;
@@ -1815,7 +1927,7 @@ public:
 
     size_type pos = 0;
     while ( (pos = find_substr(reinterpret_cast<const T *>(needle), needle_len, pos)) != npos ) {
-      micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+      micron::memmove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
       micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
       length -= needle_len;
     }
@@ -1831,7 +1943,7 @@ public:
 
     size_type pos = 0;
     while ( (pos = find_substr(&needle[0], needle_len, pos)) != npos ) {
-      micron::bytemove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
+      micron::memmove(&memory[pos], &memory[pos + needle_len], length - (pos + needle_len));
       micron::typeset<T>(&memory[length - needle_len], 0x0, needle_len);
       length -= needle_len;
     }
@@ -1846,7 +1958,7 @@ public:
 
     size_type pos = 0;
     while ( (pos = find_substr(needle.memory, needle.length, pos)) != npos ) {
-      micron::bytemove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
+      micron::memmove(&memory[pos], &memory[pos + needle.length], length - (pos + needle.length));
       micron::typeset<T>(&memory[length - needle.length], 0x0, needle.length);
       length -= needle.length;
     }
@@ -1865,7 +1977,7 @@ public:
     __safety_check<&sstring::__insert_ind_check, except::library_error>("micron::sstring insert() out of range",
                                                                         static_cast<size_type>(ind), cnt);
 
-    micron::bytemove(&memory[ind + cnt], &memory[ind], length - ind);
+    micron::memmove(&memory[ind + cnt], &memory[ind], length - ind);
     micron::typeset<T>(&memory[ind], ch, cnt);
     length += cnt;
     return *this;
@@ -1884,7 +1996,7 @@ public:
     __safety_check<&sstring::__insert_ind_check, except::library_error>("micron::sstring insert() out of range",
                                                                         static_cast<size_type>(ind), cnt * str_len);
 
-    micron::bytemove(&memory[ind + cnt * str_len], &memory[ind], length - ind);
+    micron::memmove(&memory[ind + cnt * str_len], &memory[ind], length - ind);
     for ( size_type i = 0; i < cnt; ++i ) micron::memcpy(&memory[ind + i * str_len], str, str_len);
 
     length += (cnt * str_len);
@@ -1902,7 +2014,7 @@ public:
     __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
                                                                          static_cast<const T *>(itr), cnt);
 
-    micron::bytemove(itr + cnt, itr, length - static_cast<size_type>(itr - &memory[0]));
+    micron::memmove(itr + cnt, itr, length - static_cast<size_type>(itr - &memory[0]));
     micron::typeset<T>(itr, ch, cnt);
     length += cnt;
     return *this;
@@ -1917,7 +2029,7 @@ public:
     __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
                                                                          static_cast<const T *>(itr), cnt * str_len);
 
-    micron::bytemove(itr + cnt * str_len, itr, (memory + length) - itr);
+    micron::memmove(itr + cnt * str_len, itr, (memory + length) - itr);
     for ( size_type i = 0; i < cnt; ++i ) micron::memcpy(itr + i * str_len, str, str_len);
     length += (cnt * str_len);
     return *this;
@@ -1930,7 +2042,7 @@ public:
     __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
                                                                          static_cast<const T *>(itr), o.length);
 
-    micron::bytemove(itr + (o.length), itr, length - static_cast<size_type>(itr - &memory[0]));
+    micron::memmove(itr + (o.length), itr, length - static_cast<size_type>(itr - &memory[0]));
     micron::memcpy(itr, &o.memory[0], o.length);
     length += o.length;
     return *this;
@@ -1943,7 +2055,7 @@ public:
     __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
                                                                          static_cast<const T *>(itr), o.length);
 
-    micron::bytemove(itr + (o.length), itr, length - static_cast<size_type>(itr - &memory[0]));
+    micron::memmove(itr + (o.length), itr, length - static_cast<size_type>(itr - &memory[0]));
     micron::memcpy(itr, &o.memory[0], o.length);
     length += o.length;
     micron::constexpr_zero(o.memory, o.length);
@@ -2005,13 +2117,13 @@ public:
     return n - &memory[0];
   };
 
-  inline T &
+  inline constexpr T &
   operator[](const size_type n)
   {
     return memory[n];
   };
 
-  inline const T &
+  inline constexpr const T &
   operator[](const size_type n) const
   {
     return memory[n];
@@ -2135,6 +2247,138 @@ public:
 
     micron::memcpy(&memory[length], &data[0], sz);
     length += sz - 1;
+    return *this;
+  };
+
+  template<typename R>
+  inline sstring
+  operator-(const R &rhs) const
+  {
+    sstring out(*this);
+    out.remove_all(rhs);
+    return out;
+  };
+
+  template<typename R>
+  inline sstring &
+  operator-=(const R &rhs)
+  {
+    return remove_all(rhs);
+  };
+
+  template<size_type K>
+  inline sstring<N * K, T, Sf>
+  times() const
+  {
+    static_assert(K >= 1, "micron::sstring::times<K>() requires K >= 1");
+    static_assert(K == 1 || N <= (~static_cast<size_type>(0)) / K, "micron::sstring::times<K>() capacity overflow");
+    sstring<N * K, T, Sf> out;
+    for ( size_type k = 0; k < K; ++k ) micron::memcpy(&out.memory[k * length], &memory[0], length);
+    out._buf_set_length(length * K);
+    return out;
+  };
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline sstring
+  operator*(I n) const
+  {
+    sstring out;
+    for ( I k = 0; k < n; ++k ) out.append(*this);
+    return out;
+  };
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline sstring &
+  operator*=(I n)
+  {
+    if ( n < 1 ) {
+      clear();
+      return *this;
+    }
+    if ( n == 1 ) return *this;
+    sstring snap(*this);
+    for ( I k = 1; k < n; ++k ) append(snap);
+    return *this;
+  };
+
+  template<typename R>
+  inline sstring
+  operator/(R &&rhs) const
+  {
+    sstring out(*this);
+    out += static_cast<R &&>(rhs);
+    return out;
+  };
+
+  template<typename R>
+  inline sstring &
+  operator/=(R &&rhs)
+  {
+    return (*this) += static_cast<R &&>(rhs);
+  };
+
+  template<typename R>
+  inline sstring
+  operator^(const R &rhs) const
+  {
+    sstring out(*this);
+    const __bspan k = __as_key(rhs);
+    micron::simd::xor_bytes_cycle(reinterpret_cast<byte *>(&out.memory[0]), reinterpret_cast<const byte *>(&memory[0]), length * sizeof(T),
+                                  k.p, k.n);
+    return out;
+  };
+
+  template<typename R>
+  inline sstring &
+  operator^=(const R &rhs)
+  {
+    const __bspan k = __as_key(rhs);
+    micron::simd::xor_bytes_cycle(reinterpret_cast<byte *>(&memory[0]), reinterpret_cast<const byte *>(&memory[0]), length * sizeof(T), k.p,
+                                  k.n);
+    return *this;
+  };
+
+  template<typename R>
+  inline sstring
+  operator&(const R &rhs) const
+  {
+    sstring out(*this);
+    const __bspan k = __as_key(rhs);
+    micron::simd::and_bytes_cycle(reinterpret_cast<byte *>(&out.memory[0]), reinterpret_cast<const byte *>(&memory[0]), length * sizeof(T),
+                                  k.p, k.n);
+    return out;
+  };
+
+  template<typename R>
+  inline sstring &
+  operator&=(const R &rhs)
+  {
+    const __bspan k = __as_key(rhs);
+    micron::simd::and_bytes_cycle(reinterpret_cast<byte *>(&memory[0]), reinterpret_cast<const byte *>(&memory[0]), length * sizeof(T), k.p,
+                                  k.n);
+    return *this;
+  };
+
+  template<typename R>
+  inline sstring
+  operator|(const R &rhs) const
+  {
+    sstring out(*this);
+    const __bspan k = __as_key(rhs);
+    micron::simd::or_bytes_cycle(reinterpret_cast<byte *>(&out.memory[0]), reinterpret_cast<const byte *>(&memory[0]), length * sizeof(T),
+                                 k.p, k.n);
+    return out;
+  };
+
+  template<typename R>
+  inline sstring &
+  operator|=(const R &rhs)
+  {
+    const __bspan k = __as_key(rhs);
+    micron::simd::or_bytes_cycle(reinterpret_cast<byte *>(&memory[0]), reinterpret_cast<const byte *>(&memory[0]), length * sizeof(T), k.p,
+                                 k.n);
     return *this;
   };
 

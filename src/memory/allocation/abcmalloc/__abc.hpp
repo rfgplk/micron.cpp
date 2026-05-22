@@ -31,7 +31,7 @@
 #include "malloc.hpp"
 
 #if defined(__micron_sanitizer_owns_heap)
-// in a sanitizer build
+// sanitizer build
 extern "C" __attribute__((malloc, alloc_size(1))) void *malloc(usize size) noexcept;
 extern "C" void free(void *ptr) noexcept;
 #endif

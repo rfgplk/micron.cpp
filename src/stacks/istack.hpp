@@ -127,6 +127,7 @@ public:
   operator=(istack &&o)
   {
     if ( this == &o ) return *this;
+
     if ( !__mem::is_zero() ) __mem::free();
     __mem::operator=(micron::move(o));
     return *this;

@@ -31,7 +31,10 @@ template<is_regular_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 class array
 {
-  alignas(64) T stack[N];
+  // must be in an anonymous union so the compiler doesn't implicitly handle it, see svector
+  union {
+    alignas(64) T stack[N];
+  } __attribute__((__may_alias__));
 
   template<typename U>
   inline __attribute__((always_inline)) void
@@ -162,7 +165,7 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::array array(init_list): init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) stack[i++] = micron::move(value);
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 

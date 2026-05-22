@@ -75,6 +75,15 @@ template<u32 Slots> struct alignas(64) __tier_tcache {
     return true;
   }
 
+  // true iff p is already parked in this cache
+  [[nodiscard, gnu::always_inline]] inline bool
+  contains(const byte *p) const noexcept
+  {
+    for ( u32 i = 0; i < _count; ++i )
+      if ( _ptr[i] == p ) return true;
+    return false;
+  }
+
   [[gnu::always_inline]] inline __tcache_chunk
   pop_at(u32 idx) noexcept
   {
@@ -198,6 +207,16 @@ struct alignas(64) __slab_tcache {
     return out;
   }
 
+  // true iff p is parked in any size-class bucket
+  [[nodiscard, gnu::always_inline]] inline bool
+  contains(const byte *p) const noexcept
+  {
+    for ( u32 c = 0; c < __num_classes; ++c )
+      for ( u32 i = 0; i < _counts[c]; ++i )
+        if ( _buckets[c][i] == p ) return true;
+    return false;
+  }
+
   [[gnu::always_inline]] inline void
   invalidate_range(const byte *lo, const byte *hi) noexcept
   {
@@ -256,6 +275,12 @@ template<> struct alignas(4) __tier_tcache<0> {
   pop_at(u32) noexcept
   {
     return { nullptr, 0 };
+  }
+
+  [[nodiscard, gnu::always_inline]] inline bool
+  contains(const byte *) const noexcept
+  {
+    return false;
   }
 
   [[gnu::always_inline]] inline void

@@ -29,7 +29,10 @@ template<is_movable_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))
 class iarray
 {
-  alignas(alignof(T)) T stack[N];
+  // must be in an anonymous union
+  union {
+    alignas(alignof(T)) T stack[N];
+  } __attribute__((__may_alias__));
 
 public:
   using category_type = array_tag;
@@ -77,7 +80,7 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::iarray iarray(init_list): init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) stack[i++] = micron::move(value);
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 

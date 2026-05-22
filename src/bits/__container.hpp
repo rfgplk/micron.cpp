@@ -41,14 +41,42 @@ inline void
 deep_copy(T *__restrict dest, T *__restrict src, usize cnt)
 {
   // guard against copying into uninit memory
-  for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+  if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
+    for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
 };
 
 template<typename T>
 inline void
 deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)
 {
-  for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+  if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
+    for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
 };
 
 template<typename T>
@@ -117,14 +145,42 @@ template<usize N, typename T>
 inline void
 deep_copy(T *__restrict dest, T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+  if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
+    for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
 };
 
 template<usize N, typename T>
 inline void
 deep_copy(T *__restrict dest, const T *__restrict src)
 {
-  for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+  if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
+    for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < N; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
 };
 
 template<usize N, typename T>
@@ -335,6 +391,41 @@ move(T *__restrict dest, T *__restrict src)
   } else {
     shallow_move<N, T>(dest, src);
   }
+}
+
+template<typename T>
+inline void
+open_gap(T *base, usize len, usize p, usize cnt)
+{
+  if ( cnt == 0 ) return;
+  if constexpr ( micron::is_trivially_copyable_v<micron::remove_cv_t<T>> ) {
+    micron::memmove(base + p + cnt, base + p, len - p);
+  } else {
+    const usize n = len - p;
+    for ( usize i = n; i-- > 0; ) {
+      if ( p + cnt + i >= len )
+        new (addr(base[p + cnt + i])) T(micron::move(base[p + i]));
+      else
+        base[p + cnt + i] = micron::move(base[p + i]);
+    }
+    const usize raw = (cnt < n) ? cnt : n;
+    for ( usize i = 0; i < raw; ++i ) base[p + i].~T();
+  }
+}
+
+template<typename T>
+inline void
+close_gap(T *base, usize len, usize p, usize cnt)
+{
+  if ( cnt == 0 ) return;
+  if constexpr ( micron::is_trivially_copyable_v<micron::remove_cv_t<T>> ) {
+    micron::memmove(base + p, base + p + cnt, len - p - cnt);
+  } else {
+    const usize tail = len - p - cnt;
+    for ( usize i = 0; i < tail; ++i ) base[p + i] = micron::move(base[p + cnt + i]);
+    for ( usize i = len - cnt; i < len; ++i ) base[i].~T();
+  }
+  micron::byteset(reinterpret_cast<byte *>(base + (len - cnt)), 0x0, cnt * sizeof(T));
 }
 
 template<usize N, typename T>

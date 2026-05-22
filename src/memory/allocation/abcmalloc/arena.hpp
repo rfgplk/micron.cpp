@@ -1087,6 +1087,9 @@ class __arena: private cache
     if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder && !__default_redzone ) {
       auto *nd = tier.__idx[range_idx].nd;
       auto &sh = *nd->nd;
+      // double / bogus free guard
+      if ( !sh.is_block_allocated(addr) || tier.__cache.contains(addr) ) [[unlikely]]
+        return handle_double_free(addr);
       if ( !sh.is_temporal_block(addr) ) {
         const usize bsz = sh.block_size_of(addr);
         if ( bsz > __hdr_offset ) {
@@ -1117,6 +1120,10 @@ class __arena: private cache
   __cache_push_or_remove(TierT &tier, i32 range_idx, const micron::__chunk<byte> &chunk)
   {
     if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder ) {
+      // double / bogus free guard
+      auto &sh = *tier.__idx[range_idx].nd->nd;
+      if ( !sh.is_block_allocated(chunk.ptr) || tier.__cache.contains(chunk.ptr) ) [[unlikely]]
+        return handle_double_free(chunk.ptr);
       if ( tier.__cache.push(chunk.ptr, static_cast<u32>(chunk.len)) ) [[likely]]
         return true;
     }

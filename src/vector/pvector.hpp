@@ -507,8 +507,6 @@ public:
     __size = count;
   }
 
-  pvector(const T &first, usize count) : pvector(micron::addr(first), count) { }
-
   template<usize N> pvector(const T (&arr)[N]) : __root(nullptr), __size(0)
   {
     static_assert(N <= capacity, "micron::pvector array exceeds capacity");

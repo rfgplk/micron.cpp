@@ -321,7 +321,6 @@ operator+=(hstring<F> &lhs, const rope<G> &rhs)
   return lhs;
 }
 
-// catch all
 template<usize N, usize M>
 inline string
 operator+(const sstr<N> &data, const sstr<M> &str)

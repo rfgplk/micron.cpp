@@ -28,7 +28,11 @@ template<is_regular_object T, usize N>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 class bisect_array
 {
-  alignas(64) T stack[N];
+  // must be in an anonymous union
+  union {
+    alignas(64) T stack[N];
+  } __attribute__((__may_alias__));
+
   usize length = 0;
 
   usize
@@ -78,7 +82,7 @@ public:
 
   ~bisect_array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
 
-  bisect_array() { __impl_container::destroy<N>(micron::addr(stack[0])); }
+  bisect_array() { __impl_container::construct<N, T>(micron::addr(stack[0]), T{}); }
 
   template<is_container A>
     requires(!micron::is_same_v<A, bisect_array>)

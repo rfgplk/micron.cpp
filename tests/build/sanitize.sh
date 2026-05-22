@@ -2,9 +2,11 @@
 #
 # Build a curated set of test files with AddressSanitizer enabled.
 # CLAUDE.md mandates -flto for the optimized build (constructor-attribute
-# linker dependency); ASan does not compose well with LTO + -Ofast, so this
-# profile drops both. The trade-off: catches more bugs, but doesn't exercise
-# the optimized SIMD codegen path. Run the standard `duck build` profile in
+# linker dependency): without it the global stdout-stream initializer is culled
+# and the very first print throws except::memory_error at startup. ASan does not
+# compose with LTO + -Ofast, but LTO + -O1 is fine, so this profile keeps -flto
+# and only drops -Ofast. The trade-off: catches more bugs, but doesn't exercise
+# the fully optimized SIMD codegen path. Run the standard `duck build` profile in
 # addition for full coverage.
 #
 # Usage:  bash tests/build/sanitize.sh [TEST_NAME ...]
@@ -31,12 +33,14 @@ COMMON_FLAGS=(
   -std=c++26
   -O1
   -g
+  -flto
   -fno-omit-frame-pointer
   -fsanitize=address
   -fno-sanitize-recover=all
   -mavx2 -mbmi -march=native
   -Wall -Wextra -Wpedantic
   -Wno-variadic-macros -Wno-inline
+  -DRIGOR_ITERS=1500
   -I./src
   -L./libs/
   -lpthread
@@ -61,6 +65,18 @@ DEFAULT_TESTS=(
   tests/rigor/hash_table_property.cpp
   tests/rigor/concept_satisfaction.cpp
   tests/rigor/support_smoke.cpp
+  tests/rigor/rigor_sstring.cpp
+  tests/rigor/rigor_string.cpp
+  tests/rigor/rigor_istring.cpp
+  tests/rigor/rigor_rope.cpp
+  tests/rigor/rigor_unistring.cpp
+  tests/rigor/rigor_vector.cpp
+  tests/rigor/rigor_svector.cpp
+  tests/rigor/rigor_fvector.cpp
+  tests/rigor/rigor_ivector.cpp
+  tests/rigor/rigor_pvector.cpp
+  tests/rigor/rigor_convector.cpp
+  tests/rigor/rigor_circle_vector.cpp
 )
 
 if [[ $# -eq 0 ]]; then

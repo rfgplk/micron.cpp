@@ -34,7 +34,11 @@ template<is_regular_object T, usize N = 64>
 class conarray
 {
   mutable micron::mutex __mtx;
-  alignas(64) T stack[N];
+
+  // must be in an anonymous union
+  union {
+    alignas(64) T stack[N];
+  } __attribute__((__may_alias__));
 
   template<typename U>
   inline __attribute__((always_inline)) void
@@ -164,7 +168,7 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::conarray conarray(init_list): init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) stack[i++] = micron::move(value);
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 

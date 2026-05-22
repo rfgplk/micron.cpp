@@ -36,7 +36,10 @@ template<is_regular_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))
 class carray
 {
-  alignas(64) T stack[N];
+  // must be in an anonymous union
+  union {
+    alignas(64) T stack[N];
+  } __attribute__((__may_alias__));
 
 #if defined(__micron_x86_avx2)
   static constexpr bool __have_avx2 = true;
@@ -684,7 +687,7 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::carray init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) stack[i++] = micron::move(value);
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
     if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
   }
 
@@ -794,9 +797,8 @@ public:
   void
   clear()
   {
-    // NOTE: destroy zeroes by default, carray cant hold objects always valid
     __impl_container::destroy<N, T>(micron::addr(stack[0]));
-    //__impl_container::construct<N, T>(micron::addr(stack[0]), T{});
+    __impl_container::construct<N, T>(micron::addr(stack[0]), T{});
   }
 
   inline T &

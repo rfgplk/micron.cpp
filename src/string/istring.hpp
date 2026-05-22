@@ -39,6 +39,66 @@ class istring: private Alloc, public __immutable_memory_resource<T, Alloc>
     return n == 0 ? Alloc::auto_size() : n;
   }
 
+  struct __bspan {
+    const byte *p;
+    usize n;
+  };
+
+  template<has_cstr S>
+  static inline __bspan
+  __as_key(const S &s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s.c_str()), s.size() * sizeof(typename S::value_type) };
+  }
+
+  static inline __bspan
+  __as_key(const char *s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s), micron::strlen(s) };
+  }
+
+  template<usize M>
+  static inline __bspan
+  __as_key(const T (&s)[M]) noexcept
+  {
+    return { reinterpret_cast<const byte *>(&s[0]), (M - 1) * sizeof(T) };
+  }
+
+  struct __needle {
+    const T *p;
+    usize n;
+  };
+
+  template<has_cstr S>
+  static inline __needle
+  __as_needle(const S &s) noexcept
+  {
+    return { reinterpret_cast<const T *>(s.c_str()), s.size() };
+  }
+
+  static inline __needle
+  __as_needle(const char *s) noexcept
+  {
+    return { reinterpret_cast<const T *>(s), micron::strlen(s) };
+  }
+
+  template<usize M>
+  static inline __needle
+  __as_needle(const T (&s)[M]) noexcept
+  {
+    return { &s[0], M - 1 };
+  }
+
+  inline istring
+  __dup() const
+  {
+    istring t(__mem::length + 1);
+    if ( __mem::length ) micron::memcpy(&t.memory[0], &__mem::memory[0], __mem::length);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  }
+
 public:
   using category_type = string_tag;
   using mutability_type = immutable_tag;
@@ -85,18 +145,11 @@ public:
 
   constexpr istring(const istring &o) = delete;
 
-  constexpr istring(istring &&o)
-  {
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
-  }
+  constexpr istring(istring &&o) : __mem(micron::move(o)) { }
 
   template<typename F> istring(istring<F> &&o)
   {
+    if ( __mem::memory ) __mem::free();
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -262,11 +315,16 @@ public:
   {
     if ( pos >= __mem::length ) return npos;
     const usize len = __mem::length - pos;
+    usize r;
+    if constexpr ( sizeof(T) == 1 ) {
 #if defined(__micron_x86_avx2)
-    const usize r = micron::simd::find_first_set_256(__mem::memory + pos, len, static_cast<char>(ch));
+      r = micron::simd::find_first_set_256(__mem::memory + pos, len, static_cast<char>(ch));
 #else
-    const usize r = micron::simd::find_first_set_128(__mem::memory + pos, len, static_cast<char>(ch));
+      r = micron::simd::find_first_set_128(__mem::memory + pos, len, static_cast<char>(ch));
 #endif
+    } else {
+      r = micron::simd::find_first_elem<T>(__mem::memory + pos, len, static_cast<T>(ch));
+    }
     return r == len ? npos : pos + r;
   }
 
@@ -277,6 +335,11 @@ public:
     if ( str.empty() ) return pos;
     if ( pos >= __mem::length ) return npos;
     if ( str.size() > __mem::length - pos ) return npos;
+    if constexpr ( sizeof(T) != 1 ) {
+      const usize rr = micron::simd::find_substr_elem<T>(__mem::memory + pos, __mem::length - pos, reinterpret_cast<const T *>(str.cdata()),
+                                                         str.size());
+      return rr == (__mem::length - pos) ? npos : pos + rr;
+    }
     auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(__mem::memory + pos), __mem::length - pos,
                                    reinterpret_cast<const byte *>(str.cdata()), str.size());
     return r == nullptr ? npos : static_cast<usize>(reinterpret_cast<const T *>(r) - __mem::memory);
@@ -357,13 +420,14 @@ public:
   inline istring
   append(const F *f, usize n)
   {
-    istring t(__mem::length + n);
-    micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
+    istring t(__mem::length + n + 1);      // +1 for the NUL terminator
+    micron::memcpy(&(t.memory)[0],         // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
     micron::memcpy(&(t.memory)[t.length],      // null is here so, overwrite it
                    f, n);
     t.length += n;
+    t.memory[t.length] = T{ 0 };
     return t;
   }
 
@@ -506,7 +570,7 @@ public:
     micron::memcpy(&(t.memory)[0],      // null is here so, overwrite it
                    &__mem::memory[0], __mem::length);
     t.length += __mem::length;
-    micron::bytemove(&(t.memory)[ind + (end)], &(t.memory)[ind], t.length - ind);
+    micron::memmove(&(t.memory)[ind + (end)], &(t.memory)[ind], t.length - ind);
     micron::memcpy(&(t.memory)[ind], &o.memory[0], end);
 
     t.length += end;
@@ -624,12 +688,150 @@ public:
     return t;
   };
 
+  template<typename R>
+  inline istring
+  operator-(const R &rhs) const
+  {
+    const __needle nd = __as_needle(rhs);
+    if ( nd.n == 0 || nd.n > __mem::length ) return __dup();
+    istring t(__mem::length + 1);
+    usize w = 0, r = 0;
+    while ( r < __mem::length ) {
+      if ( r + nd.n <= __mem::length
+           && micron::memcmp<byte>(reinterpret_cast<const byte *>(&__mem::memory[r]), reinterpret_cast<const byte *>(nd.p),
+                                   nd.n * sizeof(T))
+                  == 0 )
+        r += nd.n;
+      else
+        t.memory[w++] = __mem::memory[r++];
+    }
+    t.memory[w] = T{ 0 };
+    t.length = w;
+    return t;
+  };
+
+  template<typename R>
+  inline istring
+  operator-=(const R &rhs) const
+  {
+    return (*this) - rhs;
+  };
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline istring
+  operator*(I n) const
+  {
+    if ( n < 1 ) {
+      istring t(1);
+      t.memory[0] = T{ 0 };
+      t.length = 0;
+      return t;
+    }
+    const usize cnt = static_cast<usize>(n);
+    const usize total = __mem::length * cnt;
+    istring t(total + 1);
+    for ( usize k = 0; k < cnt; ++k ) micron::memcpy(&t.memory[k * __mem::length], &__mem::memory[0], __mem::length);
+    t.memory[total] = T{ 0 };
+    t.length = total;
+    return t;
+  };
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  inline istring
+  operator*=(I n) const
+  {
+    return (*this) * n;
+  };
+
+  template<typename R>
+  inline istring
+  operator/(const R &rhs) const
+  {
+    const __needle nd = __as_needle(rhs);
+    const usize total = __mem::length + nd.n;
+    istring t(total + 1);
+    if ( __mem::length ) micron::memcpy(&t.memory[0], &__mem::memory[0], __mem::length);
+    if ( nd.n ) micron::memcpy(&t.memory[__mem::length], nd.p, nd.n);
+    t.memory[total] = T{ 0 };
+    t.length = total;
+    return t;
+  };
+
+  template<typename R>
+  inline istring
+  operator/=(const R &rhs) const
+  {
+    return (*this) / rhs;
+  };
+
+  template<typename R>
+  inline istring
+  operator^(const R &rhs) const
+  {
+    const __bspan k = __as_key(rhs);
+    istring t(__mem::length + 1);
+    micron::simd::xor_bytes_cycle(reinterpret_cast<byte *>(&t.memory[0]), reinterpret_cast<const byte *>(&__mem::memory[0]),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  };
+
+  template<typename R>
+  inline istring
+  operator^=(const R &rhs) const
+  {
+    return (*this) ^ rhs;
+  };
+
+  template<typename R>
+  inline istring
+  operator&(const R &rhs) const
+  {
+    const __bspan k = __as_key(rhs);
+    istring t(__mem::length + 1);
+    micron::simd::and_bytes_cycle(reinterpret_cast<byte *>(&t.memory[0]), reinterpret_cast<const byte *>(&__mem::memory[0]),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  };
+
+  template<typename R>
+  inline istring
+  operator&=(const R &rhs) const
+  {
+    return (*this) & rhs;
+  };
+
+  template<typename R>
+  inline istring
+  operator|(const R &rhs) const
+  {
+    const __bspan k = __as_key(rhs);
+    istring t(__mem::length + 1);
+    micron::simd::or_bytes_cycle(reinterpret_cast<byte *>(&t.memory[0]), reinterpret_cast<const byte *>(&__mem::memory[0]),
+                                 __mem::length * sizeof(T), k.p, k.n);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  };
+
+  template<typename R>
+  inline istring
+  operator|=(const R &rhs) const
+  {
+    return (*this) | rhs;
+  };
+
   template<typename F = T>
-  inline istring<F>
+  inline istring<F, Alloc>
   substr(usize pos = 0, usize cnt = 0) const
   {
     if ( pos > __mem::length or (cnt + pos) > __mem::capacity ) exc<except::library_error>("error micron::string substr invalid range.");
-    istring<F> buf(__mem::capacity);
+    istring<F, Alloc> buf(__mem::capacity);
     micron::memcpy(buf.data(), &__mem::memory[pos], cnt);
     buf.data()[cnt] = '\0';
     buf.length = cnt;
@@ -666,36 +868,8 @@ public:
   {
     if ( data.length != __mem::length ) return false;
     if ( __mem::length == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data.memory), __mem::length)
-           == 0;
-  };
-
-  inline bool
-  operator==(const char *data)
-  {
-    const usize M = strlen(data);
-    if ( M != __mem::length ) return false;
-    if ( M == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data), M) == 0;
-  };
-
-  template<typename F = T, usize M>
-  inline bool
-  operator==(const F (&data)[M])
-  {
-    constexpr usize len = M - 1;
-    if ( len != __mem::length ) return false;
-    if constexpr ( len == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(&data[0]), len) == 0;
-  };
-
-  template<typename F = T>
-  inline bool
-  operator==(const istring<F> &data)
-  {
-    if ( data.length != __mem::length ) return false;
-    if ( __mem::length == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data.memory), __mem::length)
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(data.memory),
+                                __mem::length * sizeof(T))
            == 0;
   };
 };

@@ -20,6 +20,7 @@
 #include "../algorithm/memory.hpp"
 #include "../simd/bitwise.hpp"
 #include "../simd/intrin.hpp"
+#include "../simd/strings.hpp"
 #include "../slice.hpp"
 
 #include "unitypes.hpp"
@@ -39,6 +40,22 @@ constexpr const unicode32 __rope_null_u32str[1] = U"";
 
 template<is_scalar_literal T = schar, bool Sf = true> class rope
 {
+public:
+  static constexpr usize npos = ~usize(0);
+
+  using category_type = string_tag;
+  using mutability_type = immutable_tag;
+  using memory_type = heap_tag;
+  typedef T value_type;
+  typedef usize size_type;
+  typedef const T &reference;
+  typedef const T &ref;
+  typedef const T &const_reference;
+  typedef const T &const_ref;
+  typedef const T *pointer;
+  typedef const T *const_pointer;
+
+private:
   // maximum size of each leaf
   static constexpr usize __max_leaf = 256;
 
@@ -323,7 +340,12 @@ template<is_scalar_literal T = schar, bool Sf = true> class rope
       usize check = len;
       if ( pos + check > common ) check = common - pos;
       if ( check ) {
-        const i64 d = micron::memcmp<byte>(reinterpret_cast<const byte *>(data), reinterpret_cast<const byte *>(b + pos), check);
+        i64 d;
+        if constexpr ( sizeof(T) == 1 ) {
+          d = micron::memcmp<byte>(reinterpret_cast<const byte *>(data), reinterpret_cast<const byte *>(b + pos), check);
+        } else {
+          d = micron::simd::lexcmp_elem<T>(data, check, b + pos, check);
+        }
         if ( d != 0 ) {
           result = d < 0 ? -1 : 1;
           return false;
@@ -337,6 +359,44 @@ template<is_scalar_literal T = schar, bool Sf = true> class rope
     if ( alen < blen ) return -1;
     if ( alen > blen ) return 1;
     return 0;
+  }
+
+  struct __bspan {
+    const byte *p;
+    usize n;
+  };
+
+  template<has_cstr S>
+  static inline __bspan
+  __as_key(const S &s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s.c_str()), s.size() * sizeof(typename S::value_type) };
+  }
+
+  static inline __bspan
+  __as_key(const char *s) noexcept
+  {
+    return { reinterpret_cast<const byte *>(s), micron::strlen(s) };
+  }
+
+  template<size_type M>
+  static inline __bspan
+  __as_key(const T (&s)[M]) noexcept
+  {
+    return { reinterpret_cast<const byte *>(&s[0]), (M - 1) * sizeof(T) };
+  }
+
+  template<micron::simd::__byte_op Op>
+  rope
+  __bitop(const __bspan &k) const
+  {
+    if ( __length == 0 ) return rope();
+    __ensure_flat();
+    T *tmp = reinterpret_cast<T *>(abc::alloc(__length * sizeof(T)));
+    micron::simd::__bytes_cycle<Op>(reinterpret_cast<byte *>(tmp), reinterpret_cast<const byte *>(__flat), __length * sizeof(T), k.p, k.n);
+    rope out(__build_balanced(tmp, __length), __length);
+    abc::dealloc(reinterpret_cast<byte *>(tmp));
+    return out;
   }
 
   //%%%%%%%%%%%%%%%%%%%%%%%%
@@ -412,20 +472,6 @@ template<is_scalar_literal T = schar, bool Sf = true> class rope
   }
 
 public:
-  static constexpr usize npos = ~usize(0);
-
-  using category_type = string_tag;
-  using mutability_type = immutable_tag;
-  using memory_type = heap_tag;
-  typedef T value_type;
-  typedef usize size_type;
-  typedef const T &reference;
-  typedef const T &ref;
-  typedef const T &const_reference;
-  typedef const T &const_ref;
-  typedef const T *pointer;
-  typedef const T *const_pointer;
-
   class const_iterator
   {
     static constexpr size_type __max_depth = 64;
@@ -703,7 +749,7 @@ public:
   into_chars(void) const
   {
     __ensure_flat();
-    return slice<const T>(&__flat[0], &__flat[__length]);
+    return slice<T>(&__flat[0], &__flat[__length]);      // was slice<const T>: violates slice's is_movable_object<T>
   }
 
   inline slice<byte>
@@ -771,11 +817,16 @@ public:
       const size_type start = (pos > idx) ? pos - idx : 0;
       if ( start < len ) {
         const size_type scan_len = len - start;
+        size_type r;
+        if constexpr ( sizeof(T) == 1 ) {
 #if defined(__micron_x86_avx2)
-        const size_type r = micron::simd::find_first_set_256(data + start, scan_len, static_cast<char>(ch));
+          r = micron::simd::find_first_set_256(data + start, scan_len, static_cast<char>(ch));
 #else
-        const size_type r = micron::simd::find_first_set_128(data + start, scan_len, static_cast<char>(ch));
+          r = micron::simd::find_first_set_128(data + start, scan_len, static_cast<char>(ch));
 #endif
+        } else {
+          r = micron::simd::find_first_elem<T>(data + start, scan_len, static_cast<T>(ch));
+        }
         if ( r < scan_len ) {
           result = idx + start + r;
           return false;
@@ -794,6 +845,10 @@ public:
     if ( needle_len == 0 || needle_len > __length ) return npos;
     if ( pos > __length - needle_len ) return npos;
     __ensure_flat();
+    if constexpr ( sizeof(T) != 1 ) {
+      const size_type rr = micron::simd::find_substr_elem<T>(__flat + pos, __length - pos, needle, needle_len);
+      return rr == (__length - pos) ? npos : pos + rr;
+    }
     auto *r = micron::memmem<byte>(reinterpret_cast<const byte *>(__flat + pos), __length - pos, reinterpret_cast<const byte *>(needle),
                                    needle_len);
     return r == nullptr ? npos : static_cast<size_type>(reinterpret_cast<const T *>(r) - __flat);
@@ -1200,7 +1255,7 @@ public:
 
   template<typename F = T>
   rope &
-  operator+=(const F *data)
+  operator+=(const F *&data)
   {
     size_type len = micron::strlen(data);
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(data), len);
@@ -1245,6 +1300,101 @@ public:
   {
     __node *leaf = __build_balanced(reinterpret_cast<const T *>(&data[0]), data.size());
     *this = rope(__concat(__retain(__root), leaf), __length + data.size());
+    return *this;
+  }
+
+  template<typename R>
+  rope
+  operator-(const R &rhs) const
+  {
+    return remove_all(rhs);
+  }
+
+  template<typename R>
+  rope &
+  operator-=(const R &rhs)
+  {
+    *this = remove_all(rhs);
+    return *this;
+  }
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  rope
+  operator*(I n) const
+  {
+    rope out;
+    for ( I k = 0; k < n; ++k ) out = out.append(*this);
+    return out;
+  }
+
+  template<typename I>
+    requires micron::integral<I> && (!micron::is_pointer_v<I>)
+  rope &
+  operator*=(I n)
+  {
+    *this = (*this) * n;
+    return *this;
+  }
+
+  template<typename R>
+  rope
+  operator/(R &&rhs) const
+  {
+    rope out(*this);
+    out += static_cast<R &&>(rhs);
+    return out;
+  }
+
+  template<typename R>
+  rope &
+  operator/=(R &&rhs)
+  {
+    return (*this) += static_cast<R &&>(rhs);
+  }
+
+  template<typename R>
+  rope
+  operator^(const R &rhs) const
+  {
+    return __bitop<micron::simd::__byte_op::__xor>(__as_key(rhs));
+  }
+
+  template<typename R>
+  rope &
+  operator^=(const R &rhs)
+  {
+    *this = __bitop<micron::simd::__byte_op::__xor>(__as_key(rhs));
+    return *this;
+  }
+
+  template<typename R>
+  rope
+  operator&(const R &rhs) const
+  {
+    return __bitop<micron::simd::__byte_op::__and>(__as_key(rhs));
+  }
+
+  template<typename R>
+  rope &
+  operator&=(const R &rhs)
+  {
+    *this = __bitop<micron::simd::__byte_op::__and>(__as_key(rhs));
+    return *this;
+  }
+
+  template<typename R>
+  rope
+  operator|(const R &rhs) const
+  {
+    return __bitop<micron::simd::__byte_op::__or>(__as_key(rhs));
+  }
+
+  template<typename R>
+  rope &
+  operator|=(const R &rhs)
+  {
+    *this = __bitop<micron::simd::__byte_op::__or>(__as_key(rhs));
     return *this;
   }
 
@@ -1411,7 +1561,6 @@ public:
     return __cmp_raw(__root, __length, reinterpret_cast<const T *>(data.__flat), data.__length) >= 0;
   }
 
-  // comparison with is_string types (hstring, sstring, etc.)
   template<is_string S>
   inline bool
   operator==(const S &str) const

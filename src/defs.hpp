@@ -11,8 +11,7 @@
 #define MICRON_ABCMALLOC_STD 1
 #endif
 
-// if a heap-owning sanitizer is present (asan/-fsanitize=address) our abcmalloc C malloc override must not shadow the sanitizer's own
-// allocator
+// under a heap-owning sanitizer the abcmalloc C malloc override must not shadow the sanitizer's own allocator
 #if defined(__micron_sanitizer_owns_heap) && !defined(ABCMALLOC_DISABLE)
 #define ABCMALLOC_DISABLE 1
 #endif
