@@ -91,7 +91,16 @@ Yes, *micron* relies on no external code other than what is included in this rep
 
 ###### Architecture Support
 
-*micron* is primarily developed for the x86_64 arch. As of v0.5, it hosts experimental ARM32/ARM64 support.
+*micron* is built and tuned first for **x86_64 (amd64)**. Support for other CPU architectures is tiered as follows:
+
+| Tier | Architectures | Status |
+|------|---------------|--------|
+| 🟢 **Full** | `amd64` / `x86_64`, `arm32` / `armv7-a` | Fully supported and tested. |
+| 🟡 **Effective** | `arm64` / `aarch64`, `i386` / `x86` | Library and SIMD compile and run; syscall code-tables not yet wired (raw syscall wrappers exist). `arm64` has a dedicated NEON/SVE backend + ELF reloc; `i386` reuses the x86 SIMD backend. |
+| 🔵 **Future** | `RISC-V`, `POWER` (`ppc64`) | Planned in the future. No backend present today. |
+
+> [!IMPORTANT]
+> *micron* targets **Linux specifically**. It is built directly on Linux syscalls, ABI, and kernel conventions throughout; it is **NOT** a portable POSIX library. Some code may happen to build and run on other POSIX systems (the BSDs, macOS, etc.), but this is neither guaranteed nor supported. Linux is the only supported operating system. We will release a dedicated macOS version eventually.
 
 
 ##### Code Coverage & Validation
@@ -103,7 +112,7 @@ Currently we are aiming for (near) 100% code coverage, of all functions and for 
 *micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Template Library. Although *most* of these functions do generallyhave the same interfaces and functionality, there are minute core differences (in certain cases, significant ones) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
 
 > [!IMPORTANT]
-> Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux and x86_64 (with limited ARM support - still experimental), as such other operating systems, kernels, or CPU architectures are entirely unsupported.
+> Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux; see the Architecture Support tier list above for per-architecture CPU status. Other operating systems and kernels are unsupported.
 
  
 ##### Libraries
