@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// amd64 (x86_64) Linux syscall numbers
+
 using __nr_t = long;
 
 template<__nr_t __nr_Base = 0> struct amd64_syscalls {

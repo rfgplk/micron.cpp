@@ -85,10 +85,15 @@ __inline_g __m128i
 __broadcast_word_16(u64 w) noexcept
 {
   __m128i v;
+#if defined(__micron_arch_width_64)
   __asm__("movq %1, %0\n\t"
           "punpcklqdq %0, %0"
           : "=x"(v)
           : "r"(w));
+#else
+  // no 64-bit GPR for movq r64, xmm; build the duplicated-qword vector directly
+  v = __extension__(__m128i)(__v2di){ (long long)w, (long long)w };
+#endif
   return v;
 }
 
@@ -205,10 +210,15 @@ __inline_g_T("avx2") __m256i __broadcast_byte_32(u8 b) noexcept
 __inline_g_T("avx2") __m256i __broadcast_word_32(u64 w) noexcept
 {
   __m256i v;
+#if defined(__micron_arch_width_64)
   __asm__("vmovq %1, %x0\n\t"
           "vpbroadcastq %x0, %0"
           : "=v"(v)
           : "r"(w));
+#else
+  // no 64-bit GPR for vmovq r64, xmm; build the broadcasted vector directly
+  v = __extension__(__m256i)(__v4di){ (long long)w, (long long)w, (long long)w, (long long)w };
+#endif
   return v;
 }
 

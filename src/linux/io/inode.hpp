@@ -73,8 +73,8 @@ __fstatat(posix::fd_t dirfd, const char *path, stat_t &out, i32 flags = 0)
 {
   return posix::fstatat(dirfd, path, out, flags) == 0;
 }
-#elif defined(__micron_arch_arm32)
-// explicit stat64 variant
+#elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+// explicit stat64 variant (32-bit LFS: stat_t is an alias of stat64_t)
 inline bool
 __fstatat(posix::fd_t dirfd, const char *path, stat64_t &out, i32 flags = 0)
 {
@@ -824,19 +824,31 @@ is_regular_at(posix::fd_t d, const T &s)
 inline bool
 is_readable(const char *p)
 {
+#if defined(__micron_syscall_generic)
+  return micron::syscall(SYS_faccessat2, posix::at_fdcwd, p, posix::r_ok, 0) == 0;
+#else
   return micron::syscall(SYS_access, p, posix::r_ok) == 0;
+#endif
 }
 
 inline bool
 is_writable(const char *p)
 {
+#if defined(__micron_syscall_generic)
+  return micron::syscall(SYS_faccessat2, posix::at_fdcwd, p, posix::w_ok, 0) == 0;
+#else
   return micron::syscall(SYS_access, p, posix::w_ok) == 0;
+#endif
 }
 
 inline bool
 is_executable(const char *p)
 {
+#if defined(__micron_syscall_generic)
+  return micron::syscall(SYS_faccessat2, posix::at_fdcwd, p, posix::x_ok, 0) == 0;
+#else
   return micron::syscall(SYS_access, p, posix::x_ok) == 0;
+#endif
 }
 
 template<is_string T>

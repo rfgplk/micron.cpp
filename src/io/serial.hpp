@@ -66,8 +66,8 @@ template<typename T, is_string R>
 void
 serialize_page(fsys::file<R> &f, const T &obj)
 {
-  byte *b = reinterpret_cast<byte *>(reinterpret_cast<uintptr_t>(&obj) & ~(4096 - 1));
-  serialize_bytes(f, b, 4096);
+  byte *b = reinterpret_cast<byte *>(reinterpret_cast<uintptr_t>(&obj) & ~(static_cast<uintptr_t>(__micron_page_size_default) - 1));
+  serialize_bytes(f, b, __micron_page_size_default);
 }
 
 template<typename T>

@@ -166,10 +166,13 @@ clock(void)
 time_t
 time(void)
 {
-#if !defined(__micron_arch_arm32)
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
   return micron::syscall(SYS_time, nullptr);
 #else
-  return micron::syscall(SYS_clock_gettime, nullptr);
+  // NOTE: arm32 EABI and arm64 have no SYS_time
+  timespec_t __ts{};
+  if ( clock_gettime(clock_realtime, __ts) != 0 ) return static_cast<time_t>(-1);
+  return static_cast<time_t>(__ts.tv_sec);
 #endif
 }
 
@@ -264,10 +267,10 @@ getitimer(i32 which, itimerval_t &cur)
 u32
 alarm([[maybe_unused]] u32 seconds)
 {
-#if !defined(__micron_arch_arm32)
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
   return static_cast<i32>(micron::syscall(SYS_alarm, seconds));
 #else
-  // SYS_alarm doesn't exist on arm32 EABI -- callers must use SYS_setitimer.
+  // NOTE: SYS_alarm exists only on the x86 tables
   return 0;
 #endif
 }

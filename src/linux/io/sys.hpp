@@ -140,7 +140,7 @@ template<typename T>
 max_t
 preadv(i32 fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_width_32)
   u64 __off = static_cast<u64>(static_cast<i64>(offset));
   return micron::syscall(SYS_preadv, fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
 #else
@@ -152,7 +152,7 @@ template<typename T>
 max_t
 pwritev(i32 fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_width_32)
   u64 __off = static_cast<u64>(static_cast<i64>(offset));
   return micron::syscall(SYS_pwritev, fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
 #else
@@ -178,7 +178,7 @@ template<typename T>
 max_t
 preadv(fd_t fd, const iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_width_32)
   u64 __off = static_cast<u64>(static_cast<i64>(offset));
   return micron::syscall(SYS_preadv, fd.fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
 #else
@@ -190,7 +190,7 @@ template<typename T>
 max_t
 pwritev(fd_t fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 {
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_width_32)
   u64 __off = static_cast<u64>(static_cast<i64>(offset));
   return micron::syscall(SYS_pwritev, fd.fd, &iov, iovcnt, static_cast<u32>(__off), static_cast<u32>(__off >> 32));
 #else
@@ -204,7 +204,11 @@ pwritev(fd_t fd, iovec_t<T> &iov, i32 iovcnt, off_t offset)
 i32
 pipe(i32 *fd)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_pipe2, fd, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_pipe, fd));
+#endif
 }
 
 i32
@@ -222,7 +226,7 @@ inline pipe_pair
 make_pipe(i32 flags = 0)
 {
   i32 fds[2];
-  i32 r = (flags == 0) ? static_cast<i32>(micron::syscall(SYS_pipe, fds)) : static_cast<i32>(micron::syscall(SYS_pipe2, fds, flags));
+  i32 r = static_cast<i32>(micron::syscall(SYS_pipe2, fds, flags));
   if ( r < 0 ) return { fd_t{ r }, fd_t{ r } };
   return { fd_t{ fds[0] }, fd_t{ fds[1] } };
 }
@@ -239,7 +243,16 @@ dup(i32 old)
 i32
 dup2(i32 old, i32 newfd)
 {
+#if defined(__micron_syscall_generic)
+  // WARNING: arm64 has no dup2; dup3 EINVALs when old==newfd, whereas dup2 returns newfd if old is a valid fd
+  if ( old == newfd ) {
+    long __r = micron::syscall(SYS_fcntl, old, f_getfd, 0);
+    return static_cast<i32>(__r < 0 ? __r : static_cast<long>(newfd));
+  }
+  return static_cast<i32>(micron::syscall(SYS_dup3, old, newfd, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_dup2, old, newfd));
+#endif
 }
 
 i32
@@ -257,7 +270,15 @@ dup(fd_t old)
 fd_t
 dup2(fd_t old, fd_t newfd)
 {
+#if defined(__micron_syscall_generic)
+  if ( old.fd == newfd.fd ) {
+    long __r = micron::syscall(SYS_fcntl, old.fd, f_getfd, 0);
+    return fd_t{ static_cast<i32>(__r < 0 ? __r : static_cast<long>(newfd.fd)) };
+  }
+  return fd_t{ static_cast<i32>(micron::syscall(SYS_dup3, old.fd, newfd.fd, 0)) };
+#else
   return fd_t{ static_cast<i32>(micron::syscall(SYS_dup2, old.fd, newfd.fd)) };
+#endif
 }
 
 fd_t
@@ -301,25 +322,37 @@ shutdown(fd_t fd, i32 how)
 auto
 open(const char *name, i32 flags, u32 mode)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_openat, at_fdcwd, name, flags, mode));
+#else
   return static_cast<i32>(micron::syscall(SYS_open, name, flags, mode));
+#endif
 }
 
 auto
 open(const char *name, i32 flags)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_openat, at_fdcwd, name, flags, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_open, name, flags, 0));
+#endif
 }
 
 fd_t
 open_fd(const char *name, i32 flags, u32 mode = 0)
 {
+#if defined(__micron_syscall_generic)
+  return fd_t{ static_cast<i32>(micron::syscall(SYS_openat, at_fdcwd, name, flags, mode)) };
+#else
   return fd_t{ static_cast<i32>(micron::syscall(SYS_open, name, flags, mode)) };
+#endif
 }
 
 auto
-openat(i32 dirfd, const char *pth, i32 flags, u32 mode [[maybe_unused]])
+openat(i32 dirfd, const char *pth, i32 flags, u32 mode)
 {
-  return static_cast<i32>(micron::syscall(SYS_openat, dirfd, pth, flags));
+  return static_cast<i32>(micron::syscall(SYS_openat, dirfd, pth, flags, mode));
 }
 
 fd_t
@@ -331,13 +364,21 @@ openat(fd_t dirfd, const char *pth, i32 flags, u32 mode = 0)
 auto
 creat(const char *pth, u32 mode)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_openat, at_fdcwd, pth, o_create | o_wronly | o_trunc, mode));
+#else
   return static_cast<i32>(micron::syscall(SYS_creat, pth, mode));
+#endif
 }
 
 fd_t
 creat_fd(const char *pth, u32 mode)
 {
+#if defined(__micron_syscall_generic)
+  return fd_t{ static_cast<i32>(micron::syscall(SYS_openat, at_fdcwd, pth, o_create | o_wronly | o_trunc, mode)) };
+#else
   return fd_t{ static_cast<i32>(micron::syscall(SYS_creat, pth, mode)) };
+#endif
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -442,13 +483,21 @@ fchdir(fd_t fd)
 i32
 rmdir(const char *name)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_unlinkat, at_fdcwd, name, at_removedir));
+#else
   return static_cast<i32>(micron::syscall(SYS_rmdir, name));
+#endif
 }
 
 auto
 mkdir(const char *name, u32 mode)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_mkdirat, at_fdcwd, name, mode));
+#else
   return static_cast<i32>(micron::syscall(SYS_mkdir, name, mode));
+#endif
 }
 
 auto
@@ -475,7 +524,11 @@ chroot(const char *path)
 i32
 chmod(const char *name, u32 mode)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_fchmodat, at_fdcwd, name, mode, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_chmod, name, mode));
+#endif
 }
 
 i32
@@ -505,7 +558,11 @@ fchmodat(fd_t dirfd, const char *name, u32 mode, i32 flags)
 auto
 chown(const char *name, uid_t owner, gid_t group) -> i32
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_fchownat, at_fdcwd, name, owner, group, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_chown, name, owner, group));
+#endif
 }
 
 auto
@@ -523,7 +580,11 @@ fchown(fd_t fd, uid_t owner, gid_t group) -> i32
 auto
 lchown(const char *name, uid_t owner, gid_t group) -> i32
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_fchownat, at_fdcwd, name, owner, group, at_symlink_nofollow));
+#else
   return static_cast<i32>(micron::syscall(SYS_lchown, name, owner, group));
+#endif
 }
 
 auto
@@ -583,19 +644,32 @@ fallocate(fd_t fd, i32 mode, posix::off_t offset, posix::off_t len)
 i32
 rename(const char *__restrict oldpath, const char *__restrict newpath)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_renameat2, at_fdcwd, oldpath, at_fdcwd, newpath, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_rename, oldpath, newpath));
+#endif
 }
 
 i32
 renameat(i32 oldfd, const char *__restrict oldpath, i32 newfd, const char *__restrict newpath)
 {
+#if defined(__micron_syscall_generic)
+  // asm-generic (arm64) has no renameat; renameat2 with flags=0 is the modern form
+  return static_cast<i32>(micron::syscall(SYS_renameat2, oldfd, oldpath, newfd, newpath, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_renameat, oldfd, oldpath, newfd, newpath));
+#endif
 }
 
 i32
 renameat(fd_t oldfd, const char *__restrict oldpath, fd_t newfd, const char *__restrict newpath)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_renameat2, oldfd.fd, oldpath, newfd.fd, newpath, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_renameat, oldfd.fd, oldpath, newfd.fd, newpath));
+#endif
 }
 
 i32
@@ -616,7 +690,11 @@ renameat2(fd_t oldfd, const char *__restrict oldpath, fd_t newfd, const char *__
 auto
 link(const char *oldpath, const char *newpath)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_linkat, at_fdcwd, oldpath, at_fdcwd, newpath, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_link, oldpath, newpath));
+#endif
 }
 
 auto
@@ -634,7 +712,11 @@ linkat(fd_t olddirfd, const char *oldpath, fd_t newdirfd, const char *newpath, i
 auto
 symlink(const char *target, const char *linkpath)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_symlinkat, target, at_fdcwd, linkpath));
+#else
   return static_cast<i32>(micron::syscall(SYS_symlink, target, linkpath));
+#endif
 }
 
 auto
@@ -653,7 +735,7 @@ symlinkat(const char *target, fd_t newdirfd, const char *linkpath)
 max_t
 readlink(const char *path, char *buf, usize bufsiz)
 {
-#if defined(__micron_arch_arm64)
+#if defined(__micron_syscall_generic)
   // asm-generic ABI (arm64) has no legacy readlink syscall; route via readlinkat
   return micron::syscall(SYS_readlinkat, at_fdcwd, path, buf, bufsiz);
 #else
@@ -679,7 +761,11 @@ readlinkat(fd_t dirfd, const char *path, char *buf, usize bufsiz)
 i32
 unlink(const char *path)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_unlinkat, at_fdcwd, path, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_unlink, path));
+#endif
 }
 
 i32
@@ -697,7 +783,11 @@ unlinkat(fd_t dirfd, const char *path, i32 flags)
 i32
 access(const char *path, i32 mode)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_faccessat2, at_fdcwd, path, mode, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_access, path, mode));
+#endif
 }
 
 i32
@@ -715,11 +805,13 @@ faccessat(fd_t dirfd, const char *name, i32 mode, i32 flags)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ents
 
+#if !defined(__micron_syscall_generic)
 max_t
 getdents(i32 dirfd, __linux_kernel_dirent &dirp, u32 count)
 {
   return (micron::syscall(SYS_getdents, dirfd, &dirp, count));
 }
+#endif
 
 max_t
 getdents64(i32 dirfd, __linux_kernel_dirent64 &dirp, u32 count)
@@ -745,13 +837,21 @@ getdents64(fd_t dirfd, void *dirp, u32 count)
 i32
 mkfifo(const char *path, posix::mode_t mode)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_mknodat, at_fdcwd, path, mode | S_IFIFO, 0));
+#else
   return static_cast<i32>(micron::syscall(SYS_mknod, path, mode | S_IFIFO, 0));
+#endif
 }
 
 i32
 mknod(const char *path, posix::mode_t mode, posix::dev_t dev)
 {
+#if defined(__micron_syscall_generic)
+  return static_cast<i32>(micron::syscall(SYS_mknodat, at_fdcwd, path, mode, dev));
+#else
   return static_cast<i32>(micron::syscall(SYS_mknod, path, mode, dev));
+#endif
 }
 
 i32
@@ -830,7 +930,11 @@ signalfd(fd_t fd, const void *__mask, usize sizemask, i32 flags)
 fd_t
 inotify_init(void)
 {
+#if defined(__micron_syscall_generic)
+  return fd_t{ static_cast<i32>(micron::syscall(SYS_inotify_init1, 0)) };
+#else
   return fd_t{ static_cast<i32>(micron::syscall(SYS_inotify_init)) };
+#endif
 }
 
 fd_t

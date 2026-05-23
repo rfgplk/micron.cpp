@@ -72,7 +72,12 @@ enum class posix_process_flags {
 auto
 clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)
 {
+#if defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+  // WARNING: arm32 (and i386) are CLONE_BACKWARDS; tls and child_tid are swapped vs arm64/x86_64
+  return micron::syscall(SYS_clone, flags, stack, parent_tid, tls, child_tid);
+#else
   return micron::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls);
+#endif
 }
 
 // NOTE: Linux 5.3+(5.7) req
@@ -107,7 +112,12 @@ clone3_kernel(clone_args &args)
 auto
 fork_kernel(void)
 {
+#if defined(__micron_syscall_generic)
+  // arm64 has no fork
+  return micron::syscall(SYS_clone, static_cast<unsigned long>(sig_chld), 0, 0, 0, 0);
+#else
   return micron::syscall(SYS_fork);
+#endif
 }
 
 template<usize Sz, auto Fn, typename... Args>

@@ -7,8 +7,6 @@
 
 #include "../../type_traits.hpp"
 
-// NOTE: currently unused/untested (no aarch64 support so far, just a placeholder)
-
 // aarch64 (ARMv8-A) Linux syscall ABI
 // syscall num: x8
 // arg 1: x0

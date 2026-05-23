@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// arm32 (ARMv7-a) Linux syscall numbers
 using __nr_t = int;
 
 // set base to 0x900000 if OABI needed

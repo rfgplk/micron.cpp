@@ -302,14 +302,14 @@ public:
   dup_write_to(int newfd)
   {
     if ( !__w_open ) return -1;
-    return static_cast<i32>(micron::syscall(SYS_dup2, fd[__w], newfd));
+    return posix::dup2(fd[__w], newfd);
   }
 
   i32
   dup_read_to(int newfd)
   {
     if ( !__r_open ) return -1;
-    return static_cast<i32>(micron::syscall(SYS_dup2, fd[__r], newfd));
+    return posix::dup2(fd[__r], newfd);
   }
 
   pipe_result_t
@@ -545,7 +545,7 @@ public:
       posix::close(_fd);
       _open = false;
     }
-    if ( _owns_file ) micron::syscall(SYS_unlink, pipe_name.c_str());
+    if ( _owns_file ) posix::unlink(pipe_name.c_str());
   }
 
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str), _fd(-1), _open(false), _owns_file(true)
@@ -581,7 +581,7 @@ public:
   {
     if ( this == &o ) return *this;
     if ( _open ) posix::close(_fd);
-    if ( _owns_file ) micron::syscall(SYS_unlink, pipe_name.c_str());
+    if ( _owns_file ) posix::unlink(pipe_name.c_str());
     pipe_name = micron::move(o.pipe_name);
     _fd = o._fd;
     _open = o._open;
@@ -624,7 +624,7 @@ public:
   unlink()
   {
     if ( !pipe_name.empty() ) {
-      micron::syscall(SYS_unlink, pipe_name.c_str());
+      posix::unlink(pipe_name.c_str());
       _owns_file = false;
     }
   }
@@ -688,7 +688,7 @@ public:
   chmod(posix::mode_t mode)
   {
     if ( pipe_name.empty() ) return -1;
-    return static_cast<i32>(micron::syscall(SYS_chmod, pipe_name.c_str(), mode));
+    return posix::chmod(pipe_name.c_str(), mode);
   }
 
   bool

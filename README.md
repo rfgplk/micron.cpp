@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.1.2.0-green)
+![Version](https://img.shields.io/badge/version-1.2.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -96,7 +96,7 @@ Yes, *micron* relies on no external code other than what is included in this rep
 | Tier | Architectures | Status |
 |------|---------------|--------|
 | 🟢 **Full** | `amd64` / `x86_64`, `arm32` / `armv7-a` | Fully supported and tested. |
-| 🟡 **Effective** | `arm64` / `aarch64`, `i386` / `x86` | Library and SIMD compile and run; syscall code-tables not yet wired (raw syscall wrappers exist). `arm64` has a dedicated NEON/SVE backend + ELF reloc; `i386` reuses the x86 SIMD backend. |
+| 🟡 **Effective** | `arm64` / `aarch64`, `i386` / `x86` | Compiles properly, untested. (you may run into bugs!) |
 | 🔵 **Future** | `RISC-V`, `POWER` (`ppc64`) | Planned in the future. No backend present today. |
 
 > [!IMPORTANT]

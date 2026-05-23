@@ -13,7 +13,7 @@
 
 #include "../recipes/gnu/batch.hh"
 
-template <typename T = void>
+template<typename T = void>
 __attribute__((noreturn)) void
 build_and_emulate(const recipes::gnu::config_t &conf)
   requires(recipes::__using_gnu)
@@ -50,7 +50,13 @@ build_and_emulate(const recipes::gnu::config_t &conf)
   }
   mc::set_color(mc::color::reset);
   mc::console("Emulating: ", conf.target_out);
-  // NOTE: currently arm only, we'll extend it later to more archs
-  mc::uprocess_t emu_p("/usr/bin/qemu-arm-static", "-L", "/usr/gcc-linaro/arm-none-linux-gnueabihf/libc", conf.target_out.c_str());
-  mc::rexecute(emu_p);
+  // pick the qemu user-mode binary + libc sysroot for the configured cross target
+  if ( conf.arch == recipes::gnu::__arch::arm64 ) {
+    mc::uprocess_t emu_p("/usr/bin/qemu-aarch64-static", "-L", "/usr/gcc-linaro-aarch64/aarch64-none-linux-gnu/libc",
+                         conf.target_out.c_str());
+    mc::rexecute(emu_p);
+  } else {
+    mc::uprocess_t emu_p("/usr/bin/qemu-arm-static", "-L", "/usr/gcc-linaro/arm-none-linux-gnueabihf/libc", conf.target_out.c_str());
+    mc::rexecute(emu_p);
+  }
 }

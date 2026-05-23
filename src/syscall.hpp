@@ -19,5 +19,13 @@
 #include "linux/sys/syscall_arm32.hpp"
 
 #include "bits/__syscall_codes_arm32.hpp"
+#elif defined(__micron_arch_x86)
+#include "linux/sys/syscall_i386.hpp"
+
+#include "bits/__syscall_codes_i386.hpp"
+#elif defined(__micron_arch_arm64)
+#include "linux/sys/syscall_arm64.hpp"
+
+#include "bits/__syscall_codes_arm64.hpp"
 #endif
 #pragma GCC diagnostic pop

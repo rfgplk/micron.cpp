@@ -55,7 +55,7 @@ constexpr byte dt_blk = 6;
 constexpr byte dt_reg = 8;
 constexpr byte dt_lnk = 10;
 constexpr byte dt_sock = 12;
-constexpr byte dt_why = 14;
+constexpr byte dt_wht = 14;
 constexpr byte dt_end = 127;
 
 constexpr i32 shutdown_reads = 0;

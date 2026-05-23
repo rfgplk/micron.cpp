@@ -37,7 +37,7 @@ inline constexpr word r_aarch64_irelative = 1032;
 
 struct reloc_ctx_t;
 
-inline bool apply_reloc(const reloc_ctx_t &ctx, const rela_t &r) noexcept;
+inline reloc_result apply_reloc(const reloc_ctx_t &ctx, const rela_t &r) noexcept;
 
 };      // namespace elf
 };      // namespace micron

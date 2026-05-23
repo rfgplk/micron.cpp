@@ -42,7 +42,7 @@ load_i32(const signed int *p) noexcept
 }
 
 __inline_neon int64x2_t
-load_i64(const signed long long *p) noexcept
+load_i64(const i64 *p) noexcept
 {
   return vld1q_s64(p);
 }
@@ -66,7 +66,7 @@ load_u32(const unsigned int *p) noexcept
 }
 
 __inline_neon uint64x2_t
-load_u64(const unsigned long long *p) noexcept
+load_u64(const u64 *p) noexcept
 {
   return vld1q_u64(p);
 }
@@ -103,7 +103,7 @@ store_i32(signed int *p, int32x4_t v) noexcept
 }
 
 __inline_neon void
-store_i64(signed long long *p, int64x2_t v) noexcept
+store_i64(i64 *p, int64x2_t v) noexcept
 {
   vst1q_s64(p, v);
 }
@@ -127,7 +127,7 @@ store_u32(unsigned int *p, uint32x4_t v) noexcept
 }
 
 __inline_neon void
-store_u64(unsigned long long *p, uint64x2_t v) noexcept
+store_u64(u64 *p, uint64x2_t v) noexcept
 {
   vst1q_u64(p, v);
 }
@@ -164,7 +164,7 @@ load_i32_h(const signed int *p) noexcept
 }
 
 __inline_neon int64x1_t
-load_i64_h(const signed long long *p) noexcept
+load_i64_h(const i64 *p) noexcept
 {
   return vld1_s64(p);
 }
@@ -188,7 +188,7 @@ load_u32_h(const unsigned int *p) noexcept
 }
 
 __inline_neon uint64x1_t
-load_u64_h(const unsigned long long *p) noexcept
+load_u64_h(const u64 *p) noexcept
 {
   return vld1_u64(p);
 }
@@ -933,14 +933,6 @@ abs(float32x4_t a) noexcept
 {
   return vabsq_f32(a);
 }
-
-#if defined(__micron_arch_arm64)
-__inline_neon float64x2_t
-abs(float64x2_t a) noexcept
-{
-  return vabsq_f64(a);
-}
-#endif
 
 __inline_neon float32x4_t
 neg(float32x4_t a) noexcept

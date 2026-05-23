@@ -28,7 +28,8 @@
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
 #define __ABC_AMD64
 // technically not always true, but for our use cases it effectively is
-#elif __micron_arch_arm32
+// extending to x86 as well, the EMBED profile near perfectly matches classical x86 environments
+#elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
 #define __ABC_EMBED
 #endif
 

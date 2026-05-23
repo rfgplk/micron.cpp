@@ -57,12 +57,24 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_arch_arm_any 1
 #endif
 
+// arches whose kernel ABI is the asm-generic unified syscall table (arm64; riscv64 in the future)
+#if defined(__micron_arch_arm64)
+#define __micron_syscall_generic 1
+#endif
+
 #if defined(__micron_arch_width_64)
 #define __micron_ptr_size 8
 #define __micron_ptr_bits 64
 #elif defined(__micron_arch_width_32)
 #define __micron_ptr_size 4
 #define __micron_ptr_bits 32
+#endif
+
+// default kernel base page size; arm64 kernels run 4KB, 16KB, or 64KB base pages
+#if defined(__micron_arch_arm64)
+#define __micron_page_size_default 65536
+#else
+#define __micron_page_size_default 4096
 #endif
 
 #if defined(__micron_arch_x86_any)

@@ -104,9 +104,9 @@
 #error "The micron standard library wasn't made for Windows."
 #endif
 
-#if defined(__micron_arch_amd64) || defined(__micron_arch_arm32)
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
 #else
-#error "This version of the Micron standard library is designed for amd64, with limited support for ARM platforms."
+#error "This version of the Micron standard library is designed for amd64 and ARM."
 #endif
 #if !defined(__GNUC__) && !defined(__clang__)
 #error "Only gcc or clang are currently supported compilers. Remove this if you're willing to take risks."

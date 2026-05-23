@@ -844,7 +844,12 @@ _mm_stream_si32(int *p, int v) noexcept
 __inline_g void
 _mm_stream_si64(long long *p, long long v) noexcept
 {
+#if defined(__micron_arch_width_64)
   __builtin_ia32_movnti64(p, v);
+#else
+  // i386 has no 64-bit non-temporal store; fall back to a plain store
+  *p = v;
+#endif
 }
 
 __inline_g __m128
@@ -1426,7 +1431,12 @@ _mm_cvtss_si32(__m128 a) noexcept
 __inline_g long long
 _mm_cvtss_si64(__m128 a) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_cvtss2si64((__v4sf)a);
+#else
+  // i386: no 64-bit GPR convert; llrintf keeps round-to-nearest (MXCSR default)
+  return static_cast<long long>(__builtin_llrintf(((__v4sf)a)[0]));
+#endif
 }
 
 __inline_g __m128
@@ -1438,7 +1448,13 @@ _mm_cvtsi32_ss(__m128 a, int v) noexcept
 __inline_g __m128
 _mm_cvtsi64_ss(__m128 a, long long v) noexcept
 {
+#if defined(__micron_arch_width_64)
   return (__m128)__builtin_ia32_cvtsi642ss((__v4sf)a, v);
+#else
+  __v4sf r = (__v4sf)a;
+  r[0] = static_cast<float>(v);
+  return (__m128)r;
+#endif
 }
 
 __inline_g int
@@ -1450,7 +1466,11 @@ _mm_cvtsd_si32(__m128d a) noexcept
 __inline_g long long
 _mm_cvtsd_si64(__m128d a) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_cvtsd2si64((__v2df)a);
+#else
+  return static_cast<long long>(__builtin_llrint(((__v2df)a)[0]));
+#endif
 }
 
 __inline_g __m128d
@@ -1462,7 +1482,13 @@ _mm_cvtsi32_sd(__m128d a, int v) noexcept
 __inline_g __m128d
 _mm_cvtsi64_sd(__m128d a, long long v) noexcept
 {
+#if defined(__micron_arch_width_64)
   return (__m128d)__builtin_ia32_cvtsi642sd((__v2df)a, v);
+#else
+  __v2df r = (__v2df)a;
+  r[0] = static_cast<double>(v);
+  return (__m128d)r;
+#endif
 }
 
 __inline_g __m128d

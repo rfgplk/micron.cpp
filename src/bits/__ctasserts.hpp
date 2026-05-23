@@ -55,9 +55,9 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arches
 #if defined(__micron_arch_arm_any)
-#elif defined(__micron_arch_amd64)
+#elif defined(__micron_arch_x86_any)
 #else
-#error "This version of the Micron standard library is designed for amd64 or ARM (armv7-a / aarch64)."
+#error "This version of the Micron standard library is designed for x86 (amd64 / i386) or ARM (armv7-a / aarch64)."
 #endif
 
 struct __ct_type_checker {

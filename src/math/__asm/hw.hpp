@@ -118,7 +118,7 @@ fmadd_ss(f32 a, f32 b, f32 c) noexcept
   __asm__("vfmadd231ss %2, %1, %0" : "+x"(r) : "x"(a), "x"(b));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vfmas_lane_f32(c, a, simd::neon::splat_h_f32(b), 0);
+  return __builtin_fmaf(a, b, c);      // emits scalar fmadd on arm64; matches the consteval path
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_fma) && defined(__micron_arm_neon)
   f32 r = c;
   __asm__("vfma.f32 %0, %1, %2" : "+t"(r) : "t"(a), "t"(b));
@@ -148,7 +148,7 @@ fmadd_sd(f64 a, f64 b, f64 c) noexcept
   __asm__("vfmadd231sd %2, %1, %0" : "+x"(r) : "x"(a), "x"(b));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
-  return vfmad_lane_f64(c, a, simd::neon::splat_h_f64(b), 0);
+  return __builtin_fma(a, b, c);      // emits scalar fmadd on arm64; matches the consteval path
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_fma)
   f64 r = c;
   __asm__("vfma.f64 %P0, %P1, %P2" : "+w"(r) : "w"(a), "w"(b));
@@ -281,8 +281,6 @@ round_sd(f64 x) noexcept
   else
     return simd::neon::get_lane_f64<0>(simd::neon::trunc(simd::neon::splat_f64(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_directed_rounding)
-  // Scalar VFP VRINT* on f64 D-register.  No NEON-quad-f64 on AArch32, so
-  // the per-element NEON form doesn't apply.
   f64 r;
   if constexpr ( Mode == 0 )
     __asm__("vrintn.f64 %P0, %P1" : "=w"(r) : "w"(x));

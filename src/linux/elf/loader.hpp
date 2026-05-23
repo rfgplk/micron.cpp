@@ -251,10 +251,10 @@ __reloc_is_relative(const rela_t &r) noexcept
 #endif
 }
 
-inline void
+inline bool
 __apply_rela_table(module_t &m, const rela_t *tbl, usize count_bytes, reloc_mode_t mode)
 {
-  if ( !tbl || count_bytes == 0 ) return;
+  if ( !tbl || count_bytes == 0 ) return true;
   const usize n = count_bytes / sizeof(rela_t);
   reloc_ctx_t ctx;
   ctx.load_base = m.load_base;
@@ -265,8 +265,9 @@ __apply_rela_table(module_t &m, const rela_t *tbl, usize count_bytes, reloc_mode
   ctx.tls_offset = 0;
   for ( usize i = 0; i < n; ++i ) {
     if ( mode == reloc_mode_t::relative_only && !__reloc_is_relative(tbl[i]) ) continue;
-    (void)apply_reloc(ctx, tbl[i]);
+    if ( apply_reloc(ctx, tbl[i]) == reloc_result::unsupported ) return false;
   }
+  return true;
 }
 
 inline void
@@ -422,8 +423,11 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   m.next = __loaded_modules;
   __loaded_modules = &m;
 
-  __apply_rela_table(m, m.dyn.rela, m.dyn.relasz, opts.reloc);
-  __apply_rela_table(m, m.dyn.jmprel, m.dyn.pltrelsz, opts.reloc);
+  if ( !__apply_rela_table(m, m.dyn.rela, m.dyn.relasz, opts.reloc) || !__apply_rela_table(m, m.dyn.jmprel, m.dyn.pltrelsz, opts.reloc) ) {
+    __loaded_modules = m.next;      // unlink the partially-relocated module before unwinding
+    micron::munmap(reinterpret_cast<addr_t *>(base), span);
+    throw except::library_error("elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS");
+  }
 
   __apply_relro(m.load_base, phdrs, eh.phnum);
   if ( opts.run_init ) __run_initializers(m);

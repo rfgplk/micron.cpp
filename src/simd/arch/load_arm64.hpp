@@ -19,9 +19,6 @@ __neon_scale_ptr(const void *base, i64 index) noexcept
   return reinterpret_cast<const u8 *>(base) + index * scale;
 }
 
-template<typename T>
-concept is_simd_type = micron::same_as<T, f128> || micron::same_as<T, d128> || micron::same_as<T, i128>;
-
 template<is_simd_type B>
 inline B
 load(B *ptr)

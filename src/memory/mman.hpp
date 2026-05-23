@@ -19,10 +19,11 @@ namespace micron
 inline __attribute__((always_inline)) addr_t *
 mmap(addr_t *__restrict addr, usize len, int prot, int flags, int fd, posix::off_t offset)
 {
-#if !defined(__micron_arch_arm32)
-  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
+#if defined(__micron_arch_width_32)
+  // NOTE: 32-bit ABIs take the file offset in 4096-byte page units via mmap2 (__always__ 4096, independent of PAGE_SIZE)
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap2, addr, len, prot, flags, fd, static_cast<unsigned long>(offset) >> 12));
 #else
-  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap2, addr, len, prot, flags, fd, offset));
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mmap, addr, len, prot, flags, fd, offset));
 #endif
 }
 

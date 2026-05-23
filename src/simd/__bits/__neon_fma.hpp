@@ -102,7 +102,7 @@ vfmaq_f64(float64x2_t a, float64x2_t b, float64x2_t c) noexcept
 __inline_g float64x1_t
 vfma_f64(float64x1_t a, float64x1_t b, float64x1_t c) noexcept
 {
-  return __builtin_aarch64_fmadf(b[0], c[0], a[0]);
+  return (float64x1_t){ __builtin_fma(b[0], c[0], a[0]) };
 }
 
 __inline_g float64x2_t
@@ -114,7 +114,7 @@ vfmsq_f64(float64x2_t a, float64x2_t b, float64x2_t c) noexcept
 __inline_g float64x1_t
 vfms_f64(float64x1_t a, float64x1_t b, float64x1_t c) noexcept
 {
-  return __builtin_aarch64_fmadf(-b[0], c[0], a[0]);
+  return (float64x1_t){ __builtin_fma(-b[0], c[0], a[0]) };
 }
 #endif
 

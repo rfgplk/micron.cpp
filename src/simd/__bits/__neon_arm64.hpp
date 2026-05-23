@@ -47,11 +47,11 @@ namespace __bits
 __neon_ldst(int8x16_t, s8, signed char);
 __neon_ldst(int16x8_t, s16, signed short);
 __neon_ldst(int32x4_t, s32, signed int);
-__neon_ldst(int64x2_t, s64, signed long long);
+__neon_ldst(int64x2_t, s64, signed long);
 __neon_ldst(uint8x16_t, u8, unsigned char);
 __neon_ldst(uint16x8_t, u16, unsigned short);
 __neon_ldst(uint32x4_t, u32, unsigned int);
-__neon_ldst(uint64x2_t, u64, unsigned long long);
+__neon_ldst(uint64x2_t, u64, unsigned long);
 __neon_ldst(float32x4_t, f32, float);
 __neon_ldst(float64x2_t, f64, double);
 __neon_ldst(poly8x16_t, p8, poly8_t);
@@ -61,11 +61,11 @@ __neon_ldst(poly64x2_t, p64, poly64_t);
 __neon_ldst_64(int8x8_t, s8, signed char);
 __neon_ldst_64(int16x4_t, s16, signed short);
 __neon_ldst_64(int32x2_t, s32, signed int);
-__neon_ldst_64(int64x1_t, s64, signed long long);
+__neon_ldst_64(int64x1_t, s64, signed long);
 __neon_ldst_64(uint8x8_t, u8, unsigned char);
 __neon_ldst_64(uint16x4_t, u16, unsigned short);
 __neon_ldst_64(uint32x2_t, u32, unsigned int);
-__neon_ldst_64(uint64x1_t, u64, unsigned long long);
+__neon_ldst_64(uint64x1_t, u64, unsigned long);
 __neon_ldst_64(float32x2_t, f32, float);
 __neon_ldst_64(float64x1_t, f64, double);
 
@@ -867,31 +867,31 @@ vminq_s32(int32x4_t a, int32x4_t b) noexcept
 __inline_g uint8x16_t
 vminq_u8(uint8x16_t a, uint8x16_t b) noexcept
 {
-  return (uint8x16_t)__builtin_aarch64_uminv16qi_uuu(a, b);
+  return (uint8x16_t)__builtin_aarch64_uminv16qi((__Int8x16_t)a, (__Int8x16_t)b);
 }
 
 __inline_g uint16x8_t
 vminq_u16(uint16x8_t a, uint16x8_t b) noexcept
 {
-  return (uint16x8_t)__builtin_aarch64_uminv8hi_uuu(a, b);
+  return (uint16x8_t)__builtin_aarch64_uminv8hi((__Int16x8_t)a, (__Int16x8_t)b);
 }
 
 __inline_g uint32x4_t
 vminq_u32(uint32x4_t a, uint32x4_t b) noexcept
 {
-  return (uint32x4_t)__builtin_aarch64_uminv4si_uuu(a, b);
+  return (uint32x4_t)__builtin_aarch64_uminv4si((__Int32x4_t)a, (__Int32x4_t)b);
 }
 
 __inline_g float32x4_t
 vminq_f32(float32x4_t a, float32x4_t b) noexcept
 {
-  return __builtin_aarch64_smin_nanv4sf(a, b);
+  return __builtin_aarch64_fminv4sf(a, b);
 }
 
 __inline_g float64x2_t
 vminq_f64(float64x2_t a, float64x2_t b) noexcept
 {
-  return __builtin_aarch64_smin_nanv2df(a, b);
+  return __builtin_aarch64_fminv2df(a, b);
 }
 
 __inline_g int8x16_t
@@ -915,31 +915,31 @@ vmaxq_s32(int32x4_t a, int32x4_t b) noexcept
 __inline_g uint8x16_t
 vmaxq_u8(uint8x16_t a, uint8x16_t b) noexcept
 {
-  return (uint8x16_t)__builtin_aarch64_umaxv16qi_uuu(a, b);
+  return (uint8x16_t)__builtin_aarch64_umaxv16qi((__Int8x16_t)a, (__Int8x16_t)b);
 }
 
 __inline_g uint16x8_t
 vmaxq_u16(uint16x8_t a, uint16x8_t b) noexcept
 {
-  return (uint16x8_t)__builtin_aarch64_umaxv8hi_uuu(a, b);
+  return (uint16x8_t)__builtin_aarch64_umaxv8hi((__Int16x8_t)a, (__Int16x8_t)b);
 }
 
 __inline_g uint32x4_t
 vmaxq_u32(uint32x4_t a, uint32x4_t b) noexcept
 {
-  return (uint32x4_t)__builtin_aarch64_umaxv4si_uuu(a, b);
+  return (uint32x4_t)__builtin_aarch64_umaxv4si((__Int32x4_t)a, (__Int32x4_t)b);
 }
 
 __inline_g float32x4_t
 vmaxq_f32(float32x4_t a, float32x4_t b) noexcept
 {
-  return __builtin_aarch64_smax_nanv4sf(a, b);
+  return __builtin_aarch64_fmaxv4sf(a, b);
 }
 
 __inline_g float64x2_t
 vmaxq_f64(float64x2_t a, float64x2_t b) noexcept
 {
-  return __builtin_aarch64_smax_nanv2df(a, b);
+  return __builtin_aarch64_fmaxv2df(a, b);
 }
 
 __inline_g int8x16_t
@@ -3553,6 +3553,63 @@ __mc_vcombine_8(bf16, bfloat16x4_t, bfloat16x8_t);
 #undef __mc_vcombine_8
 #undef __mc_vcombine_4
 #undef __mc_vcombine_2
+
+__inline_g uint64x1_t
+vcreate_u64(u64 v) noexcept
+{
+  uint64x1_t r = { v };
+  return r;
+}
+
+__inline_g float32x4_t
+vld1q_dup_f32(const float *p) noexcept
+{
+  const float v = *p;
+  float32x4_t r = { v, v, v, v };
+  return r;
+}
+
+__inline_g float32x4_t
+vcvtq_f32_s32(int32x4_t v) noexcept
+{
+  return __builtin_convertvector(v, float32x4_t);
+}
+
+__inline_g int32x4_t
+vcvtq_s32_f32(float32x4_t v) noexcept
+{
+  return __builtin_convertvector(v, int32x4_t);
+}
+
+__inline_g float64x2_t
+vcvtq_f64_s64(int64x2_t v) noexcept
+{
+  return __builtin_convertvector(v, float64x2_t);
+}
+
+__inline_g int64x2_t
+vcvtq_s64_f64(float64x2_t v) noexcept
+{
+  return __builtin_convertvector(v, int64x2_t);
+}
+
+__inline_g uint32x4_t
+vcltq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return (uint32x4_t)(a < b);
+}
+
+__inline_g uint64x2_t
+vcltq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return (uint64x2_t)(a < b);
+}
+
+__inline_g float32x4_t
+vmlaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  return a + b * c;
+}
 
 #pragma GCC diagnostic pop
 

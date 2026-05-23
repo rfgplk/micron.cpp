@@ -202,12 +202,20 @@ struct siginfo_t {
   } _sifields;
 };
 
+#if defined(__micron_syscall_generic)
+struct __syscall_sigaction_t {
+  sighandler_t k_sa_handler;
+  unsigned long sa_flags;
+  posix::sigset_t sa_mask;
+};
+#else
 struct __syscall_sigaction_t {
   sighandler_t k_sa_handler;
   unsigned long sa_flags;
   void (*sa_restorer)(void);
   posix::sigset_t sa_mask;
 };
+#endif
 
 struct sigaction_t {
   union {
@@ -303,7 +311,7 @@ sigdelset(posix::sigset_t &a, int sig)
 
 // Size handed to rt_sig* syscalls. MUST equal sizeof(kernel sigset_t) == 8 on
 // Linux; passing sizeof(posix::sigset_t) (== 128) yields a silent -EINVAL.
-constexpr u64 __sig_syscall_size = __kernel_sigset_bytes;
+constexpr usize __sig_syscall_size = __kernel_sigset_bytes;      // size_t-typed: 1 syscall slot on arm32 (a u64 would be 2)
 
 // start of syscalls
 inline int
@@ -321,8 +329,11 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   __system_action.k_sa_handler = action.sigaction_handler.sa_handler;
   micron::voidcpy(&__system_action.sa_mask, &action.sa_mask, sizeof(posix::sigset_t));
   __system_action.sa_flags = (u32)action.sa_flags;
+#if !defined(__micron_syscall_generic)
+  // NOTE: x86/arm32 install a userspace SA_RESTORER trampoline; arm64 has no sa_restorer field
   __system_action.sa_flags |= 0x04000000;
   __system_action.sa_restorer = &restore_rt;
+#endif
   // restorer
   int result
       = static_cast<int>(micron::syscall(SYS_rt_sigaction, sig, &__system_action, old ? &__system_oldaction : nullptr, __sig_syscall_size));
@@ -330,7 +341,11 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
     old->sigaction_handler.sa_handler = __system_oldaction.k_sa_handler;
     micron::voidcpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(posix::sigset_t));
     old->sa_flags = static_cast<int>(__system_oldaction.sa_flags);
+#if !defined(__micron_syscall_generic)
     old->sa_restorer = __system_action.sa_restorer;
+#else
+    old->sa_restorer = nullptr;
+#endif
   }
   return result;
 }

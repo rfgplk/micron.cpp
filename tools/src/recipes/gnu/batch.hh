@@ -268,6 +268,96 @@ batch_cmp_armv7(const config_t &conf)
 };
 
 string_type
+batch_cmp_aarch64(const config_t &conf)
+{
+  const string_type main_flags = (conf.mode == __opt_modes::optimized
+                                      ? make_flags(conf.opt_mode, gcc::arm_flags::flags::march_armv8_a, gcc::opt_flags::flags::modulo_sched,
+                                                   gcc::opt_flags::flags::modulo_sched_allow_regmoves, gcc::opt_flags::flags::gcse_sm,
+                                                   gcc::opt_flags::flags::gcse_las)
+                                      : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
+                                                   gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
+                                                   gcc::debug_flags::flags::gstatement_frontiers, gcc::arm_flags::flags::march_armv8_a));
+  const string_type comp_type = (conf.compile_type == __comp_type::object)         ? "-c"
+                                : (conf.compile_type == __comp_type::assembly)     ? "-S"
+                                : (conf.compile_type == __comp_type::preprocessed) ? "-E"
+                                                                                   : "";
+  const string_type bin_type = (conf.static_binary) ? make_flags(gcc::linker_flags::flags::static_link) : "";
+  const string_type freestanding = (conf.freestanding)
+                                       ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
+                                                    gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector,
+                                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti)
+                                       : "";
+  const string_type freestanding_post
+      = (conf.freestanding) ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
+  const string_type startup_objs = (conf.freestanding) ? "/usr/src/mc_start/start_arm64.s /usr/src/mc_start/start.cpp" : "";
+  string_type compile_libs = conf.freestanding ? "" : "-lpthread";
+  if ( !conf.bonus_libs.empty() )
+    for ( auto &n : conf.bonus_libs ) {
+      compile_libs += " -l";
+      compile_libs += n;
+    }
+  string_type compile_objs = "";
+  if ( !conf.bonus_objs.empty() )
+    for ( auto &n : conf.bonus_objs ) {
+      compile_objs += n;
+      compile_objs += " ";
+    }
+  const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
+
+  const string_type flags_warn_extra = make_flags(
+      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
+      gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
+      gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
+      gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla, gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond,
+      gcc::w_flags::flags::Wduplicated_branches, gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline,
+      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
+      gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines, gcc::w_flags::flags::Warray_bounds,
+      gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self, gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister,
+      gcc::w_flags::flags::Wsequence_point);
+
+  const string_type flags_errors_extra = "-Werror=missing-field-initializers -Werror=return-type";
+
+  const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
+
+  const string_type flags_extensions
+      = (conf.freestanding)
+            ? (__is_cpp_standard(conf.standard) ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals, gcc::opt_flags::flags::lto_eight)
+                                                : make_flags(gcc::opt_flags::flags::lto_eight))
+            : (__is_cpp_standard(conf.standard)
+                   ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
+                                gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals,
+                                gcc::opt_flags::flags::lto_eight)
+                   : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
+                                gcc::profiling_flags::flags::strict_overflow, gcc::opt_flags::flags::lto_eight));
+
+  const string_type flags_extensions_supple
+      = conf.doctor ? (__is_cpp_standard(conf.standard)
+                           ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2 -ftime-report -ftime-report-details -fmem-report "
+                             "-fopt-info -fopt-info-missed"
+                           : "-ftime-report -ftime-report-details -fmem-report -fopt-info -fopt-info-missed")
+                    : (__is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "");
+
+  const string_type libs_location = "-L" + conf.lib_path;
+  const string_type includes_location = "-I" + conf.include_path;
+  const string_type libs_static
+      = conf.static_binary ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp) : "";
+
+  string_type command_pre
+      = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, flags_warn_base,
+                                     flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions, freestanding_post,
+                                     flags_warn_ignore, flags_extensions_supple)
+                      : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, flags_warn_base,
+                                     flags_warn_ignore, flags_extensions, freestanding_post, flags_warn_ignore, flags_extensions_supple);
+
+  string_type command_post = make_command(compile_libs, includes_location, libs_location);
+
+  if ( conf.freestanding )
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static);
+  else
+    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static);
+};
+
+string_type
 batch_asm(const config_t &conf)
 {
   const string_type main_flags = "-f elf64";
@@ -289,6 +379,8 @@ batch(const config_t &conf)
       return batch_cmp(conf);
     else if ( conf.arch == __arch::arm )
       return batch_cmp_armv7(conf);
+    else if ( conf.arch == __arch::arm64 )
+      return batch_cmp_aarch64(conf);
   }
   __builtin_trap();
 }

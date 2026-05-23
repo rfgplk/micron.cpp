@@ -123,10 +123,10 @@ __apply_spawnattr(const spawnattr_t &attr)
     if ( micron::syscall(SYS_setpgid, 0, attr.pgrp) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setsigmask )
-    if ( micron::syscall(SYS_rt_sigprocmask, sig_setmask, &attr.ss, nullptr, sizeof(sigset_t)) < 0 ) return -errno;
+    if ( micron::syscall(SYS_rt_sigprocmask, sig_setmask, &attr.ss, nullptr, __sig_syscall_size) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setsigdef )
-    if ( micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, sizeof(sigset_t)) < 0 ) return -errno;
+    if ( micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, __sig_syscall_size) < 0 ) return -errno;
 
   if ( attr.__flags & posix_spawn_setscheduler )
     if ( micron::syscall(SYS_sched_setscheduler, 0, attr.policy, &attr.__sp) < 0 ) return -errno;

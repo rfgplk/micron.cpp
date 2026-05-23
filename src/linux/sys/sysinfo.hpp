@@ -50,7 +50,7 @@ constexpr const static int __bits_size = posix::cpu_bits_size(65535);
 constexpr int
 getpagesize(void)
 {
-  return 4096;
+  return __micron_page_size_default;      // arch base page (conservative 64K on arm64)
 }
 
 long int

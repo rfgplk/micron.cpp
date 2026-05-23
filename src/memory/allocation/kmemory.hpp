@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits/__arch.hpp"
+
 #include "../../memory/mman.hpp"
 
 #include "../../numerics.hpp"
@@ -14,8 +16,8 @@
 namespace micron
 {
 
-constexpr usize page_size = 4096;                       // generally is this on linux
-constexpr usize large_page_size = 2 * 1024 * 1024;      // likewise
+constexpr usize page_size = __micron_page_size_default;      // 64K arm64, 4K else
+constexpr usize large_page_size = 2 * 1024 * 1024;           // likewise
 constexpr usize alloc_auto_sz = page_size;
 constexpr usize alloc_auto_large_sz = large_page_size;
 

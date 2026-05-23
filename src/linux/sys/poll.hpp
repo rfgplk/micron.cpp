@@ -69,13 +69,26 @@ struct __attribute__((packed)) epoll_event {
 inline int
 poll(pollfd &pfd, nfds_t nfds, int timeout)
 {
+#if defined(__micron_syscall_generic)
+  // arm64 has no poll
+  if ( timeout < 0 ) return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, nullptr, nullptr, __sig_syscall_size));
+  timespec_t __ts{};
+  __ts.tv_sec = timeout / 1000;
+  __ts.tv_nsec = static_cast<decltype(__ts.tv_nsec)>(timeout % 1000) * 1000000;
+  return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, &__ts, nullptr, __sig_syscall_size));
+#else
   return static_cast<int>(micron::syscall(SYS_poll, &pfd, nfds, timeout));
+#endif
 }
 
 inline int
 ppoll(pollfd &pfd, nfds_t nfds, int timeout, sigset_t &ss)
 {
-  return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, timeout, &ss));
+  if ( timeout < 0 ) return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, nullptr, &ss, __sig_syscall_size));
+  timespec_t __ts{};
+  __ts.tv_sec = timeout / 1000;
+  __ts.tv_nsec = static_cast<decltype(__ts.tv_nsec)>(timeout % 1000) * 1000000;
+  return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, &__ts, &ss, __sig_syscall_size));
 }
 
 int poll_chk(pollfd &pfd, nfds_t nfds, int timeout);
@@ -83,7 +96,13 @@ int poll_chk(pollfd &pfd, nfds_t nfds, int timeout);
 inline int
 epoll_create(int size = 1)
 {
+#if defined(__micron_syscall_generic)
+  // arm64 has no epoll_create
+  (void)size;
+  return static_cast<int>(micron::syscall(SYS_epoll_create1, 0));
+#else
   return static_cast<int>(micron::syscall(SYS_epoll_create, size));
+#endif
 }
 
 inline int
@@ -107,7 +126,12 @@ epoll_ctl_delete(int epfd, int fd)
 inline int
 epoll_wait(int epfd, epoll_event *events, int maxevents, int timeout)
 {
+#if defined(__micron_syscall_generic)
+  // arm64 has no epoll_wait
+  return static_cast<int>(micron::syscall(SYS_epoll_pwait, epfd, events, maxevents, timeout, nullptr, __sig_syscall_size));
+#else
   return static_cast<int>(micron::syscall(SYS_epoll_wait, epfd, events, maxevents, timeout));
+#endif
 }
 
 inline int
@@ -119,7 +143,7 @@ epoll_wait_nonblock(int epfd, epoll_event *events, int maxevents)
 inline int
 epoll_pwait(int epfd, epoll_event *events, int maxevents, int timeout, const sigset_t *sigmask)
 {
-  return static_cast<int>(micron::syscall(SYS_epoll_pwait, epfd, events, maxevents, timeout, sigmask, sizeof(sigset_t)));
+  return static_cast<int>(micron::syscall(SYS_epoll_pwait, epfd, events, maxevents, timeout, sigmask, __sig_syscall_size));
 }
 
 inline int
@@ -131,7 +155,7 @@ epoll_pwait(int epfd, epoll_event *events, int maxevents, int timeout, const sig
 inline int
 epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec_t *timeout, const sigset_t *sigmask)
 {
-  return static_cast<int>(micron::syscall(SYS_epoll_pwait2, epfd, events, maxevents, timeout, sigmask, sizeof(sigset_t)));
+  return static_cast<int>(micron::syscall(SYS_epoll_pwait2, epfd, events, maxevents, timeout, sigmask, __sig_syscall_size));
 }
 
 inline int

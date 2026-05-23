@@ -42,12 +42,12 @@ using bfloat16_t = __bf16;
 typedef signed char int8x8_t __attribute__((__vector_size__(8), __may_alias__));
 typedef signed short int16x4_t __attribute__((__vector_size__(8), __may_alias__));
 typedef signed int int32x2_t __attribute__((__vector_size__(8), __may_alias__));
-typedef signed long long int64x1_t __attribute__((__vector_size__(8), __may_alias__));
+typedef signed long int64x1_t __attribute__((__vector_size__(8), __may_alias__));      // 'long' matches GCC's __Int64x1_t
 
 typedef unsigned char uint8x8_t __attribute__((__vector_size__(8), __may_alias__));
 typedef unsigned short uint16x4_t __attribute__((__vector_size__(8), __may_alias__));
 typedef unsigned int uint32x2_t __attribute__((__vector_size__(8), __may_alias__));
-typedef unsigned long long uint64x1_t __attribute__((__vector_size__(8), __may_alias__));
+typedef unsigned long uint64x1_t __attribute__((__vector_size__(8), __may_alias__));      // 'unsigned long' matches GCC's __Uint64x1_t
 
 typedef poly8_t poly8x8_t __attribute__((__vector_size__(8), __may_alias__));
 typedef poly16_t poly16x4_t __attribute__((__vector_size__(8), __may_alias__));
@@ -67,12 +67,12 @@ typedef bfloat16_t bfloat16x4_t __attribute__((__vector_size__(8), __may_alias__
 typedef signed char int8x16_t __attribute__((__vector_size__(16), __may_alias__));
 typedef signed short int16x8_t __attribute__((__vector_size__(16), __may_alias__));
 typedef signed int int32x4_t __attribute__((__vector_size__(16), __may_alias__));
-typedef signed long long int64x2_t __attribute__((__vector_size__(16), __may_alias__));
+typedef signed long int64x2_t __attribute__((__vector_size__(16), __may_alias__));      // 'long' matches GCC's __Int64x2_t builtin carrier
 
 typedef unsigned char uint8x16_t __attribute__((__vector_size__(16), __may_alias__));
 typedef unsigned short uint16x8_t __attribute__((__vector_size__(16), __may_alias__));
 typedef unsigned int uint32x4_t __attribute__((__vector_size__(16), __may_alias__));
-typedef unsigned long long uint64x2_t __attribute__((__vector_size__(16), __may_alias__));
+typedef unsigned long uint64x2_t __attribute__((__vector_size__(16), __may_alias__));      // 'unsigned long' matches GCC's __Uint64x2_t
 
 typedef poly8_t poly8x16_t __attribute__((__vector_size__(16), __may_alias__));
 typedef poly16_t poly16x8_t __attribute__((__vector_size__(16), __may_alias__));

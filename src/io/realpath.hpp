@@ -22,7 +22,12 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
     return nullptr;
   }
 
+#if defined(__micron_syscall_generic)
+  // arm64 has no legacy open syscall
+  int fd = static_cast<int>(micron::syscall(SYS_openat, posix::at_fdcwd, path, posix::o_rdonly | posix::o_path));
+#else
   int fd = static_cast<int>(micron::syscall(SYS_open, path, posix::o_rdonly | posix::o_path));
+#endif
   if ( fd < 0 ) {
     return nullptr;
   }
@@ -30,14 +35,13 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   char *result_buf = resolved_path;
   bool allocated = false;
 
-#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   if ( !resolved_path ) {
-    result_buf = (reinterpret_cast<char *>(
-        micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0)));
-#elif defined(__micron_arch_arm32)
-  if ( !resolved_path ) {
-    result_buf = (reinterpret_cast<char *>(
-        micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0)));
+#if defined(__micron_arch_width_32)
+    result_buf = reinterpret_cast<char *>(
+        micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+#else
+    result_buf = reinterpret_cast<char *>(
+        micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0));
 #endif
     allocated = true;
   }
@@ -75,7 +79,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   }
   proc_path[i] = '\0';
 
-#if defined(__micron_arch_arm64)
+#if defined(__micron_syscall_generic)
   // asm-generic ABI (arm64) has no legacy readlink syscall; route via readlinkat
   max_t len = (micron::syscall(SYS_readlinkat, posix::at_fdcwd, proc_path, result_buf, posix::path_max - 1));
 #else

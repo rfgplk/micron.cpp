@@ -35,8 +35,13 @@ constexpr static const usize __sheet_align_log2 = 21;
 constexpr static const usize __sheet_align = 1ULL << __sheet_align_log2;
 constexpr static const usize __sheet_align_mask = __sheet_align - 1;
 
+#if defined(__micron_arch_width_64)
 // 256 GiB
 constexpr static const usize __va_reservation_size = 256ULL << 30;
+#else
+// 256 MiB
+constexpr static const usize __va_reservation_size = 256U << 20;
+#endif
 
 constexpr static const i32 __map_noreserve_flag = 0x4000;
 

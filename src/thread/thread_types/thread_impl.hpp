@@ -139,7 +139,8 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
   // end work
 
   // epilogue
-  // NOTE: run any registered per-thread cleanup (abcmalloc releasing this thread's arena slot) on the exiting thread while its TLS is still valid
+  // NOTE: run any registered per-thread cleanup (abcmalloc releasing this thread's arena slot) on the exiting thread while its TLS is still
+  // valid
   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
   posix::getrusage(posix::rusage_thread, payload->usage);
   payload->alive.store(false, memory_order_seq_cst);

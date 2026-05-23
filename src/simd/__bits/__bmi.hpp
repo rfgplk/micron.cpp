@@ -131,7 +131,14 @@ _bextr_u32(unsigned int v, unsigned int start, unsigned int len) noexcept
 __inline_g unsigned long long
 _bextr_u64(unsigned long long v, unsigned int start, unsigned int len) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_bextr_u64(v, ((start & 0xff) | ((len & 0xff) << 8)));
+#else
+  unsigned s = start & 0xff, l = len & 0xff;
+  if ( s >= 64 ) return 0ull;
+  unsigned long long r = v >> s;
+  return (l >= 64) ? r : (r & ((1ull << l) - 1ull));
+#endif
 }
 
 __inline_g unsigned int
@@ -143,7 +150,14 @@ __bextr_u32(unsigned int v, unsigned int control) noexcept
 __inline_g unsigned long long
 __bextr_u64(unsigned long long v, unsigned long long c) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_bextr_u64(v, (unsigned)c);
+#else
+  unsigned s = (unsigned)c & 0xff, l = ((unsigned)c >> 8) & 0xff;
+  if ( s >= 64 ) return 0ull;
+  unsigned long long r = v >> s;
+  return (l >= 64) ? r : (r & ((1ull << l) - 1ull));
+#endif
 }
 
 __inline_g unsigned int
@@ -155,7 +169,11 @@ _bzhi_u32(unsigned int v, unsigned int n) noexcept
 __inline_g unsigned long long
 _bzhi_u64(unsigned long long v, unsigned int n) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_bzhi_di(v, n);
+#else
+  return (n >= 64) ? v : (v & ((1ull << n) - 1ull));
+#endif
 }
 
 __inline_g unsigned int
@@ -167,7 +185,19 @@ _pext_u32(unsigned int v, unsigned int mask) noexcept
 __inline_g unsigned long long
 _pext_u64(unsigned long long v, unsigned long long mask) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_pext_di(v, mask);
+#else
+  unsigned long long r = 0;
+  int k = 0;
+  while ( mask ) {
+    unsigned long long lo = mask & (~mask + 1ull);      // lowest set bit
+    if ( v & lo ) r |= (1ull << k);
+    ++k;
+    mask &= mask - 1ull;
+  }
+  return r;
+#endif
 }
 
 __inline_g unsigned int
@@ -179,7 +209,19 @@ _pdep_u32(unsigned int v, unsigned int mask) noexcept
 __inline_g unsigned long long
 _pdep_u64(unsigned long long v, unsigned long long mask) noexcept
 {
+#if defined(__micron_arch_width_64)
   return __builtin_ia32_pdep_di(v, mask);
+#else
+  unsigned long long r = 0;
+  int k = 0;
+  while ( mask ) {
+    unsigned long long lo = mask & (~mask + 1ull);      // lowest set bit
+    if ( v & (1ull << k) ) r |= lo;
+    ++k;
+    mask &= mask - 1ull;
+  }
+  return r;
+#endif
 }
 
 __inline_g unsigned int
@@ -193,9 +235,19 @@ _mulx_u32(unsigned int a, unsigned int b, unsigned int *hi) noexcept
 __inline_g unsigned long long
 _mulx_u64(unsigned long long a, unsigned long long b, unsigned long long *hi) noexcept
 {
+#if defined(__micron_arch_width_64)
   unsigned __int128 p = (unsigned __int128)a * b;
   *hi = (unsigned long long)(p >> 64);
   return (unsigned long long)p;
+#else
+  // 32x32 -> 64 schoolbook (no __int128 on i386)
+  unsigned long long al = (unsigned int)a, ah = a >> 32;
+  unsigned long long bl = (unsigned int)b, bh = b >> 32;
+  unsigned long long ll = al * bl, lh = al * bh, hl = ah * bl, hh = ah * bh;
+  unsigned long long cross = (ll >> 32) + (lh & 0xFFFFFFFFull) + (hl & 0xFFFFFFFFull);
+  *hi = hh + (lh >> 32) + (hl >> 32) + (cross >> 32);
+  return (ll & 0xFFFFFFFFull) | (cross << 32);
+#endif
 }
 
 #undef __inline_g

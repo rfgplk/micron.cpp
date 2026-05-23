@@ -27,8 +27,8 @@ namespace __impl
 {
 
 template<typename T>
-concept __syscall_arg = (micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_enum_v<T> || micron::is_null_pointer_v<T>)
-                        && sizeof(T) <= sizeof(long int);
+concept __syscall_arg
+    = (micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_enum_v<T> || micron::is_null_pointer_v<T>) && sizeof(T) <= 8;
 
 template<__syscall_arg T>
 inline __attribute__((always_inline)) long int
@@ -40,6 +40,45 @@ __coerce(T __v) noexcept
     return static_cast<long int>(reinterpret_cast<__UINTPTR_TYPE__>(__v));
   else
     return static_cast<long int>(__v);
+}
+
+template<__tt_size_t Slot>
+consteval __tt_size_t
+__count_slots() noexcept
+{
+  return Slot;
+}
+
+template<__tt_size_t Slot, typename A0, typename... Rest>
+consteval __tt_size_t
+__count_slots() noexcept
+{
+  if constexpr ( sizeof(A0) <= sizeof(long int) ) {
+    return __count_slots<Slot + 1, Rest...>();
+  } else {
+    return __count_slots<Slot + 2, Rest...>();
+  }
+}
+
+template<__tt_size_t Slot>
+constexpr void
+__fill(long int *) noexcept
+{
+}
+
+template<__tt_size_t Slot, typename A0, typename... Rest>
+constexpr void
+__fill(long int *__slots, A0 __a0, Rest... __rest) noexcept
+{
+  if constexpr ( sizeof(A0) <= sizeof(long int) ) {
+    __slots[Slot] = __coerce(__a0);
+    __fill<Slot + 1>(__slots, __rest...);
+  } else {
+    unsigned long long __v = static_cast<unsigned long long>(__a0);
+    __slots[Slot] = static_cast<long int>(__v & 0xFFFFFFFFull);
+    __slots[Slot + 1] = static_cast<long int>(__v >> 32);
+    __fill<Slot + 2>(__slots, __rest...);
+  }
 }
 
 };      // namespace __impl
@@ -155,12 +194,33 @@ __do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int
   return __r;
 }
 
+namespace __impl
+{
+
+template<__tt_size_t... Is>
+inline __attribute__((always_inline)) long int
+__dispatch_impl(long int __n, const long int *__s, micron::index_sequence<Is...>) noexcept
+{
+  return __do_syscall(__n, __s[Is]...);
+}
+
+template<__tt_size_t N>
+inline __attribute__((always_inline)) long int
+__dispatch(long int __n, const long int *__s) noexcept
+{
+  return __dispatch_impl(__n, __s, micron::make_index_sequence<N>{});
+}
+
+};      // namespace __impl
+
 template<__impl::__syscall_arg... Args>
-  requires(sizeof...(Args) <= 6)
+  requires(__impl::__count_slots<0, Args...>() <= 6)
 inline __attribute__((always_inline)) long int
 syscall(long int __n, Args... __args) noexcept
 {
-  return __do_syscall(__n, __impl::__coerce(__args)...);
+  long int __slots[6] = { 0, 0, 0, 0, 0, 0 };
+  __impl::__fill<0>(__slots, __args...);
+  return __impl::__dispatch<__impl::__count_slots<0, Args...>()>(__n, __slots);
 }
 
 inline __attribute__((always_inline)) bool

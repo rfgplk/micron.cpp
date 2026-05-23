@@ -471,11 +471,9 @@ aligned_free(void *ptr)
     return;
   }
 
-  // verify the raw pointer is at least vaguely sane: it must be before
-  // the aligned pointer and within one page of it (alignment cannot exceed the system page size in any case)
   uintptr_t raw_addr = reinterpret_cast<uintptr_t>(raw);
   uintptr_t aligned_addr = reinterpret_cast<uintptr_t>(ptr);
-  if ( raw_addr >= aligned_addr or (aligned_addr - raw_addr) > __system_pagesize ) [[unlikely]] {
+  if ( raw_addr >= aligned_addr ) [[unlikely]] {
     micron::exc<micron::except::memory_error_abc_aligned_free_bad>(
         "aligned_free(): stashed raw pointer is invalid, this pointer was not allocated by aligned_alloc");
     return;

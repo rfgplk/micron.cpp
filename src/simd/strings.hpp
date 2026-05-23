@@ -13,6 +13,7 @@ namespace simd
 inline usize
 sse_strlen(const char *str)
 {
+#if defined(__micron_x86_sse2)
   const char *p = str;
   i128 zero = _mm_setzero_si128();
 
@@ -30,6 +31,11 @@ sse_strlen(const char *str)
     }
     p += 16;
   }
+#else
+  const char *p = str;
+  while ( *p ) ++p;
+  return static_cast<usize>(p - str);
+#endif
 }
 
 template<typename T>

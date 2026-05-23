@@ -125,7 +125,9 @@ using posix::unlink;
 using posix::unlinkat;
 
 // ents / getdents
-using posix::getdents;
+#if !defined(__micron_syscall_generic)
+using posix::getdents;      // amd64 doesn't support legacy getdents
+#endif
 using posix::getdents64;
 
 // mks

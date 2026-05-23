@@ -79,6 +79,7 @@ rdtsc64() noexcept
   asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
   return (u64(hi) << 32) | u64(lo);
 #elif defined(__micron_arch_arm64)
+  // NOTE: CNTVCT_EL0 is a fixed-frequency virtual counter (rate = CNTFRQ_EL0), NOT a per-cycle count
   u64 v;
   asm volatile("mrs %0, cntvct_el0" : "=r"(v));
   return v;

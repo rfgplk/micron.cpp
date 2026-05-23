@@ -41,7 +41,7 @@ class wayland_source
       void *p = self->__lib->wl_proxy_marshal_flags(reinterpret_cast<gl::wl_proxy *>(registry), 0 /*wl_registry.bind*/,
                                                     &__wl_seat_interface, use_ver, 0, name, "wl_seat", use_ver, nullptr);
       self->__seat = reinterpret_cast<gl::wl_seat *>(p);
-      self->__seatversion_ = use_ver;
+      self->__seat_version = use_ver;
 
       static wl_seat_listener_t listener{ &__on_seat_capabilities, &__on_seat_name };
       self->__lib->wl_proxy_add_listener(reinterpret_cast<gl::wl_proxy *>(self->__seat), reinterpret_cast<void (**)(void)>(&listener),

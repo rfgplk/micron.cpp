@@ -68,7 +68,7 @@ __has_fma(const __simd_flags &flags)
 inline bool
 __has_sse(const __simd_flags &flags)
 {
-  return flags.sse3 and flags.sse2 and flags.sse4_2 and flags.sse4_2;
+  return flags.sse and flags.sse2 and flags.sse3 and flags.ssse3 and flags.sse4_1 and flags.sse4_2;
 }
 
 inline bool
@@ -84,7 +84,7 @@ __has_avx256(const __simd_flags &flags)
 }
 
 #ifdef SIMD_RUNTIME_CHECKING
-start_fn(void, 100) __runtime_check(void) { static __simd_flags flags = __get_runtime_flags; }
+start_fn(void, 100) __runtime_check(void) { [[maybe_unused]] static __simd_flags flags = __get_runtime_features(); }
 #endif
 
 #endif      // __micron_arch_x86_any

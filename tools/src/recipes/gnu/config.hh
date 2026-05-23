@@ -21,7 +21,7 @@ __is_cpp_standard(const string_type &__std)
   return true;
 }
 
-enum __arch : u32 { x86 = 0, arm };
+enum __arch : u32 { x86 = 0, arm, arm64 };
 
 enum __compilers : u32 { gnucc = 0, clang, nasm };
 
@@ -40,6 +40,8 @@ constexpr const string_type __assembler_nasm = "/usr/bin/nasm";
 // Fedora cross compiler paths (linaro sourced, not standard!)
 constexpr const string_type __compiler_gcc_arm_cross = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-gcc";
 constexpr const string_type __compiler_gpp_arm_cross = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-c++";
+constexpr const string_type __compiler_gcc_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-gcc";
+constexpr const string_type __compiler_gpp_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-g++";
 
 struct std_entry {
   const string_type *full;
@@ -216,6 +218,12 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
         conf.standard = gcc::__standard_c11;
       } else if ( conf.language == __languages::cpp )
         conf.compiler_path = __compiler_gpp_arm_cross;
+    } else if ( conf.arch == __arch::arm64 ) {
+      if ( conf.language == __languages::c ) {
+        conf.compiler_path = __compiler_gcc_aarch64_cross;
+        conf.standard = gcc::__standard_c11;
+      } else if ( conf.language == __languages::cpp )
+        conf.compiler_path = __compiler_gpp_aarch64_cross;
     }
     break;
   case __compilers::clang:
@@ -255,6 +263,8 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.arch = __arch::x86;
     } else if ( mc::strcmp(argv[i], "--arm") == 0 ) {
       conf.arch = __arch::arm;
+    } else if ( mc::strcmp(argv[i], "--arm64") == 0 or mc::strcmp(argv[i], "--aarch64") == 0 ) {
+      conf.arch = __arch::arm64;
     } else if ( mc::strcmp(argv[i], "-i") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the -i flag must be followed by a path");
       conf.include_path = argv[i];

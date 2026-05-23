@@ -27,6 +27,8 @@ __mem_barrier() noexcept
 {
 #if defined(__micron_arch_arm32)
   __asm__ __volatile__("dmb ish" ::: "memory");
+#elif defined(__micron_arch_arm64)
+  __asm__ __volatile__("" ::: "memory");
 #elif defined(__micron_arch_amd64) || defined(__micron_arch_x86)
   __asm__ __volatile__("" ::: "memory");
 #endif

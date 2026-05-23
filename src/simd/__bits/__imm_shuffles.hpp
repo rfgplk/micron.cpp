@@ -136,7 +136,17 @@
 #define _mm_extract_epi8(A, N) ((int)(unsigned char)__builtin_ia32_vec_ext_v16qi((::micron::simd::__bits::__v16qi)(::__m128i)(A), (int)(N)))
 #define _mm_extract_epi16(A, N) ((int)(unsigned short)__builtin_ia32_vec_ext_v8hi((::micron::simd::__bits::__v8hi)(::__m128i)(A), (int)(N)))
 #define _mm_extract_epi32(A, N) ((int)__builtin_ia32_vec_ext_v4si((::micron::simd::__bits::__v4si)(::__m128i)(A), (int)(N)))
+#if defined(__micron_arch_width_64)
 #define _mm_extract_epi64(A, N) ((long long)__builtin_ia32_vec_ext_v2di((::micron::simd::__bits::__v2di)(::__m128i)(A), (int)(N)))
+#else
+// i386: no 64-bit vector-lane extract; combine two 32-bit lanes (2N low, 2N+1 high)
+#define _mm_extract_epi64(A, N)                                                                                                            \
+  ((long long)((unsigned long long)(unsigned int)__builtin_ia32_vec_ext_v4si((::micron::simd::__bits::__v4si)(::__m128i)(A),               \
+                                                                             (int)(2 * (N)))                                               \
+               | ((unsigned long long)(unsigned int)__builtin_ia32_vec_ext_v4si((::micron::simd::__bits::__v4si)(::__m128i)(A),            \
+                                                                                (int)(2 * (N) + 1))                                        \
+                  << 32)))
+#endif
 #define _mm_extract_ps(A, N) __builtin_ia32_vec_ext_v4sf((::micron::simd::__bits::__v4sf)(::__m128)(A), (int)(N))
 
 #define _mm_insert_epi8(A, B, N)                                                                                                           \
@@ -145,8 +155,16 @@
   ((::__m128i)__builtin_ia32_vec_set_v8hi((::micron::simd::__bits::__v8hi)(::__m128i)(A), (int)(B), (int)(N)))
 #define _mm_insert_epi32(A, B, N)                                                                                                          \
   ((::__m128i)__builtin_ia32_vec_set_v4si((::micron::simd::__bits::__v4si)(::__m128i)(A), (int)(B), (int)(N)))
+#if defined(__micron_arch_width_64)
 #define _mm_insert_epi64(A, B, N)                                                                                                          \
   ((::__m128i)__builtin_ia32_vec_set_v2di((::micron::simd::__bits::__v2di)(::__m128i)(A), (long long)(B), (int)(N)))
+#else
+// i386: no 64-bit vector-lane set; set two 32-bit lanes (low then high half)
+#define _mm_insert_epi64(A, B, N)                                                                                                          \
+  ((::__m128i)__builtin_ia32_vec_set_v4si((::micron::simd::__bits::__v4si)__builtin_ia32_vec_set_v4si(                                     \
+                                              (::micron::simd::__bits::__v4si)(::__m128i)(A), (int)(long long)(B), (int)(2 * (N))),        \
+                                          (int)((unsigned long long)(long long)(B) >> 32), (int)(2 * (N) + 1)))
+#endif
 
 #define _mm_insert_ps(D, S, N)                                                                                                             \
   ((::__m128)__builtin_ia32_insertps128((::micron::simd::__bits::__v4sf)(::__m128)(D), (::micron::simd::__bits::__v4sf)(::__m128)(S),      \

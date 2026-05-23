@@ -45,7 +45,7 @@ setgid(posix::gid_t gid)
 posix::pid_t
 getsid(void)
 {
-  return static_cast<posix::pid_t>(micron::syscall(SYS_getsid));
+  return static_cast<posix::pid_t>(micron::syscall(SYS_getsid, 0));
 }
 
 pid_t

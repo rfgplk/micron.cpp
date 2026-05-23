@@ -17,9 +17,9 @@
 #include "xx.hpp"
 
 // NOTE: zzz using intrinsics directly, so we need a direct port
-#if defined(__micron_arch_amd64)
+#if defined(__micron_arch_x86_any)
 #include "zzz.hpp"
-#elif defined(__micron_arch_arm32)
+#elif defined(__micron_arch_arm_any)
 #include "zzz_arm.hpp"
 #endif
 
