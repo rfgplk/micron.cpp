@@ -54,13 +54,13 @@ or https:
 
 Below are the specific steps you need to take to properly set up micron for your desired target.
 
-###### amd64 / x86_64
+###### amd64 / x86_64 / i386 (x86)
 
 The simplest, most straightforward installation; just copy all the files in `src/` and `external/` to either your desired location; or to the system header include directories `/usr/include/` or `/usr/local/include/`. Either use `cp -r`, `rsync`, or you can run `scripts/install_local.py` and `scripts/install_externals.py`, which will automatically copy all files to `/usr/include/micron` and `/usr/include/external` (NOTE: directories will be created if they don't exist).
 
-###### armv7-a (ARM32)
+###### AArch64 / armv7-a (ARM32)
 
-The same exact steps as above. If you are cross compiling on amd64 for arm32, you should manually copy the source files to the include path of your cross compiler, which usually differs from system wide include paths. `scripts/install_local_linaro.py` will do that for you (if using the linaro toolchain on fedora), but exact paths may differ based on your configuration, so double check. Hint: `echo | /usr/gcc-linaro/bin/arm-none-linux-gnueabihf-c++ -E -Wp,-v -` will tell you which include directories the compiler uses. 
+The same exact steps as above. If you are cross compiling on amd64 for arm32 or aarch64, you should manually copy the source files to the include path of your cross compiler, which usually differs from system wide include paths. `scripts/install_local_linaro.py` will do that for you (if using the linaro toolchain on fedora), but exact paths may differ based on your configuration, so double check. Hint: `echo | /usr/gcc-linaro/bin/arm-none-linux-gnueabihf-c++ -E -Wp,-v -` will tell you which include directories the compiler uses. 
 
 ###### Freestanding builds
  
