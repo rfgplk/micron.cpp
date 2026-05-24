@@ -1081,6 +1081,23 @@ const_fn(A &&a)
   return [a = micron::forward<A>(a)](auto &&...) mutable -> A & { return a; };
 }
 
+constexpr bool
+is_constant_evaluated(void) noexcept
+{
+  if consteval {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+template<class T>
+consteval bool
+is_within_lifetime(const T *ptr) noexcept
+{
+  return __builtin_is_within_lifetime(ptr);
+}
+
 inline constexpr auto identity = [](auto &&x) -> decltype(auto) { return micron::forward<decltype(x)>(x); };
 
 };      // namespace micron
