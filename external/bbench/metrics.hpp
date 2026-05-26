@@ -6,20 +6,10 @@
 
 #pragma once
 
-#include "../../src/memory/cmemory.hpp"
-#include "../../src/types.hpp"
+#include <micron/memory/cmemory.hpp>
+#include <micron/types.hpp>
 
 #include "funcs.hpp"
-
-// pseudo perf stat -M metrics for benchmark_t
-// -> ipc
-// -> branch_miss_rate
-// -> cache_miss_rate
-// -> frontend_stall_rate
-// -> backend_stall_rate
-// -> ghz
-// -> inst_per_ns
-// -> dtlb_miss_rate, itlb_miss_rate, l1d_miss_rate, llc_miss_rate
 
 namespace bbench::metric
 {
@@ -52,7 +42,7 @@ branch_miss_rate(const benchmark_t &b)
 inline double
 cache_miss_rate(const benchmark_t &b)
 {
-  return __safe_div(b.cache_misses, b.l1_cache);     // cache-misses / L1-loads-as-proxy
+  return __safe_div(b.cache_misses, b.l1_cache);
 }
 
 inline double
@@ -100,7 +90,6 @@ itlb_miss_rate(const benchmark_t &b)
 inline double
 ghz(const benchmark_t &b)
 {
-  // time is in us
   return __safe_div(b.cycles, static_cast<long long>(b.time * 1000.0));
 }
 
@@ -134,4 +123,4 @@ lookup_metric(const char *name)
   return nullptr;
 }
 
-};     // namespace bbench::metric
+};      // namespace bbench::metric

@@ -32,6 +32,43 @@ namespace manifolds
 namespace lie
 {
 
+namespace __so3_impl
+{
+
+// branchless polynomial
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+sinc_half_over_theta(F theta_sq) noexcept
+{
+  F r = F(1) / F(185794560);
+  r = r * theta_sq - F(1) / F(645120);
+  r = r * theta_sq + F(1) / F(3840);
+  r = r * theta_sq - F(1) / F(48);
+  r = r * theta_sq + F(0.5);
+  return r;
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+cos_half(F theta_sq) noexcept
+{
+  F r = F(1) / F(10321920);
+  r = r * theta_sq - F(1) / F(46080);
+  r = r * theta_sq + F(1) / F(384);
+  r = r * theta_sq - F(1) / F(8);
+  r = r * theta_sq + F(1);
+  return r;
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+small_angle_threshold_sq() noexcept
+{
+  return F(1) / F(100);      // = 0.01
+}
+
+};      // namespace __so3_impl
+
 template<ieee754_floating F> struct SO3 {
   quat<F> q;
 
@@ -44,7 +81,7 @@ template<ieee754_floating F> struct SO3 {
   [[nodiscard, gnu::flatten]] static constexpr SO3
   from_matrix(const mat<F, 3, 3> &R) noexcept
   {
-    auto qv4 = quaternions::from_matrix<F>(R);      // vector_4<F>
+    auto qv4 = quaternions::from_matrix<F>(R);
     return SO3{ quat<F>{ qv4.x, qv4.y, qv4.z, qv4.w } };
   }
 
@@ -71,31 +108,47 @@ template<ieee754_floating F> struct SO3 {
   {
     const F wx = omega.data[0], wy = omega.data[1], wz = omega.data[2];
     const F theta_sq = wx * wx + wy * wy + wz * wz;
-    if ( theta_sq < math::default_eps<F>() ) {
-      const F half_co = F(0.5) - theta_sq * F(1) / F(48);
-      const F w = F(1) - theta_sq * F(0.125);
-      return SO3{ quat<F>{ wx * half_co, wy * half_co, wz * half_co, w } };
+    F scalar;
+    F c_half;
+    if ( theta_sq < __so3_impl::small_angle_threshold_sq<F>() ) {
+      scalar = __so3_impl::sinc_half_over_theta<F>(theta_sq);
+      c_half = __so3_impl::cos_half<F>(theta_sq);
+    } else {
+      const F theta = math::fsqrt(theta_sq);
+      const F half = theta * F(0.5);
+      F s_half;
+      math::sincos<F>(half, s_half, c_half);
+      scalar = s_half / theta;
     }
-    const F theta = math::fsqrt(theta_sq);
-    const F half = theta * F(0.5);
-    const F s = math::sin<F>(half);
-    const F c = math::cos<F>(half);
-    const F k = s / theta;
-    return SO3{ quat<F>{ wx * k, wy * k, wz * k, c } };
+    return SO3{ quat<F>{ wx * scalar, wy * scalar, wz * scalar, c_half } };
   }
 
   [[nodiscard, gnu::flatten]] static constexpr vec<F, 3>
   log_map(const SO3 &g) noexcept
   {
-    const F qx = g.q.data[0], qy = g.q.data[1], qz = g.q.data[2], qw = g.q.data[3];
-    const F xyz_sq = qx * qx + qy * qy + qz * qz;
-    if ( xyz_sq < math::default_eps<F>() ) {
-      const F two_inv_w = F(2) / qw;
-      return vec<F, 3>{ qx * two_inv_w, qy * two_inv_w, qz * two_inv_w };
+    F qx = g.q.data[0], qy = g.q.data[1], qz = g.q.data[2], qw = g.q.data[3];
+    if ( qw < F(0) ) {
+      qx = -qx;
+      qy = -qy;
+      qz = -qz;
+      qw = -qw;
     }
-    const F xyz_norm = math::fsqrt(xyz_sq);
-    const F angle = F(2) * math::atan2<F>(xyz_norm, qw);
-    const F k = angle / xyz_norm;
+    const F xyz_sq = qx * qx + qy * qy + qz * qz;
+    F k;
+    if ( xyz_sq < __so3_impl::small_angle_threshold_sq<F>() ) {
+      const F y2 = xyz_sq / (qw * qw);
+      F p = F(-1) / F(11);
+      p = p * y2 + F(1) / F(9);
+      p = p * y2 - F(1) / F(7);
+      p = p * y2 + F(1) / F(5);
+      p = p * y2 - F(1) / F(3);
+      p = p * y2 + F(1);
+      k = F(2) * p / qw;
+    } else {
+      const F xyz_norm = math::fsqrt(xyz_sq);
+      const F angle = F(2) * math::atan2<F>(xyz_norm, qw);
+      k = angle / xyz_norm;
+    }
     return vec<F, 3>{ qx * k, qy * k, qz * k };
   }
 

@@ -5,9 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #pragma once
-#include "algorithm/algorithm.hpp"
-#include "except.hpp"
-#include "types.hpp"
+#include "../algorithm/algorithm.hpp"
+#include "../except.hpp"
+#include "../types.hpp"
 
 #include "../array/carray.hpp"
 

@@ -6,26 +6,25 @@
 
 #pragma once
 
-#include "../../src/bits/__exceptions.hpp"
-#include "../../src/concepts.hpp"
-#include "../../src/except.hpp"
-#include "../../src/linux/io.hpp"
-#include "../../src/linux/sys/exec.hpp"
-#include "../../src/linux/sys/fcntl.hpp"
-#include "../../src/memory/actions.hpp"
-#include "../../src/proc.hpp"
-#include "../../src/types.hpp"
-#include "../../src/vector.hpp"
+#include <micron/bits/__exceptions.hpp>
+#include <micron/concepts.hpp>
+#include <micron/except.hpp>
+#include <micron/linux/io.hpp>
+#include <micron/linux/sys/exec.hpp>
+#include <micron/linux/sys/fcntl.hpp>
+#include <micron/memory/actions.hpp>
+#include <micron/proc.hpp>
+#include <micron/types.hpp>
+#include <micron/vector.hpp>
 
 namespace bbench
 {
 
-template <typename T> using __impl_vector = micron::vector<T>;
+template<typename T> using __impl_vector = micron::vector<T>;
 
 using micron::is_string;
 
-// fork and run process at path location specified by T
-template <bool W = false, is_string T, is_string... R>
+template<bool W = false, is_string T, is_string... R>
 int
 process(const T &t, const R &...args)
 {
@@ -34,7 +33,7 @@ process(const T &t, const R &...args)
   __impl_vector<char *> argv;
   argv.push_back(const_cast<char *>(t.c_str()));
   argv.push_back(nullptr);
-  // insert each arg before the trailing nullptr (index == size - 1)
+
   (argv.insert(argv.size() - 1, const_cast<char *>(args.c_str())), ...);
 
   if ( micron::spawn(pid, t.c_str(), &argv[0], environ) ) {
@@ -44,7 +43,7 @@ process(const T &t, const R &...args)
   return pid;
 }
 
-template <bool W = false, typename... R>
+template<bool W = false, typename... R>
 int
 process(const char *t, const R *...args)
 {
@@ -62,7 +61,7 @@ process(const char *t, const R *...args)
   return pid;
 }
 
-template <typename F>
+template<typename F>
 inline int
 process_attach(const char *path, F &&attach_fn)
 {
@@ -78,6 +77,7 @@ process_attach(const char *path, F &&attach_fn)
   }
 
   if ( pid == 0 ) {
+
     micron::close(sync_pipe[1]);
     char c = 0;
     micron::posix::read(sync_pipe[0], &c, 1);
@@ -85,6 +85,7 @@ process_attach(const char *path, F &&attach_fn)
 
     char *argv[2] = { const_cast<char *>(path), nullptr };
     micron::posix::execve(path, argv, environ);
+
     micron::posix::exit(127);
   }
 
@@ -96,4 +97,4 @@ process_attach(const char *path, F &&attach_fn)
   return static_cast<int>(pid);
 }
 
-};     // namespace bbench
+};      // namespace bbench

@@ -8,18 +8,18 @@
 
 #include <linux/perf_event.h>
 
-#include "../../src/bits/__exceptions.hpp"
-#include "../../src/chrono.hpp"
-#include "../../src/concepts.hpp"
-#include "../../src/errno.hpp"
-#include "../../src/except.hpp"
-#include "../../src/linux/io.hpp"
-#include "../../src/linux/sys/ioctl.hpp"
-#include "../../src/memory/actions.hpp"
-#include "../../src/memory/cmemory.hpp"
-#include "../../src/syscall.hpp"
-#include "../../src/type_traits.hpp"
-#include "../../src/types.hpp"
+#include <micron/bits/__exceptions.hpp>
+#include <micron/chrono.hpp>
+#include <micron/concepts.hpp>
+#include <micron/errno.hpp>
+#include <micron/except.hpp>
+#include <micron/linux/io.hpp>
+#include <micron/linux/sys/ioctl.hpp>
+#include <micron/memory/actions.hpp>
+#include <micron/memory/cmemory.hpp>
+#include <micron/syscall.hpp>
+#include <micron/type_traits.hpp>
+#include <micron/types.hpp>
 
 static inline long
 __pe_call(long r)
@@ -43,7 +43,6 @@ perf_event_this(struct perf_event_attr &event)
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, 0, -1, -1, 0));
 };
 
-// attach to leader group
 static long
 perf_event_attach(int fd, struct perf_event_attr &event)
 {
@@ -119,7 +118,7 @@ enum class cache : u64 {
 
   none
 };
-};     // namespace options
+};      // namespace options
 
 struct time_userland {
 };
@@ -133,7 +132,7 @@ struct time_vmland {
 struct time_everyland {
 };
 
-template <class T, kernel_clock_types R> struct kernel_clock {
+template<class T, kernel_clock_types R> struct kernel_clock {
   int e_fd;
   int last_errno = 0;
   struct perf_event_attr event;
@@ -177,11 +176,12 @@ template <class T, kernel_clock_types R> struct kernel_clock {
     return last_errno;
   }
 
-  template <class P>
+  template<class P>
     requires(micron::same_as<P, options::hardware> or micron::same_as<P, options::software> or micron::same_as<P, options::cache>)
   kernel_clock(P e_type) : e_fd(-1)
   {
     micron::memset(&event, 0, sizeof(event));
+
     event.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING;
     if constexpr ( micron::same_as<T, time_everyland> ) {
       event.size = sizeof(event);
@@ -375,7 +375,7 @@ template <class T, kernel_clock_types R> struct kernel_clock {
     return e_fd;
   }
 
-  template <typename X = T>
+  template<typename X = T>
   inline __attribute__((always_inline)) void
   start(void)
   {
@@ -383,7 +383,7 @@ template <class T, kernel_clock_types R> struct kernel_clock {
     micron::posix::ioctl(e_fd, PERF_EVENT_IOC_ENABLE, 0);
   }
 
-  template <typename X = T>
+  template<typename X = T>
   inline __attribute__((always_inline)) void
   start_as_leader(void)
   {
@@ -391,14 +391,14 @@ template <class T, kernel_clock_types R> struct kernel_clock {
     micron::posix::ioctl(e_fd, PERF_EVENT_IOC_ENABLE, PERF_IOC_FLAG_GROUP);
   }
 
-  template <typename X = T>
+  template<typename X = T>
   inline __attribute__((always_inline)) void
   stop(void)
   {
     micron::posix::ioctl(e_fd, PERF_EVENT_IOC_DISABLE, 0);
   }
 
-  template <typename X = T>
+  template<typename X = T>
   inline __attribute__((always_inline)) void
   stop_as_leader(void)
   {
@@ -432,6 +432,7 @@ template <class T, kernel_clock_types R> struct kernel_clock {
     auto t = __read_triplet();
     if ( t.time_running == 0 ) return 0;
     if ( t.time_running == t.time_enabled ) return static_cast<long long>(t.value);
+
     const double scale = static_cast<double>(t.time_enabled) / static_cast<double>(t.time_running);
     return static_cast<long long>(static_cast<double>(t.value) * scale);
   }
@@ -450,8 +451,7 @@ enum class system_clocks : clockid_t {
   cputime_this = micron::clock_thread_cputime_id
 };
 
-// clock meant to get general time
-template <system_clocks C = system_clocks::realtime> struct system_clock {
+template<system_clocks C = system_clocks::realtime> struct system_clock {
   micron::timespec_t time_begin;
   micron::timespec_t time_end;
 
@@ -583,4 +583,4 @@ template <system_clocks C = system_clocks::realtime> struct system_clock {
   }
 };
 
-};     // namespace bbench
+};      // namespace bbench

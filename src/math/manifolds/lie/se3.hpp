@@ -5,8 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// 3D rigid-body group; SO3 rotation + translation
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 3D rigid-body group; SO(3) rotation + translation
 
 #include "../../../concepts.hpp"
 #include "../../../types.hpp"
@@ -32,27 +32,102 @@ namespace lie
 namespace __se3_impl
 {
 
+// Taylor coefficients of (1 - cos theta)/theta**2 as a polynomial in theta**2
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_a_poly(F t2) noexcept
+{
+  F r = F(1) / F(3628800);
+  r = r * t2 - F(1) / F(40320);
+  r = r * t2 + F(1) / F(720);
+  r = r * t2 - F(1) / F(24);
+  r = r * t2 + F(0.5);
+  return r;
+}
+
+// Taylor coefficients of (theta - sin theta)/theta**3 as a polynomial in theta**2
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_b_poly(F t2) noexcept
+{
+  F r = F(1) / F(39916800);
+  r = r * t2 - F(1) / F(362880);
+  r = r * t2 + F(1) / F(5040);
+  r = r * t2 - F(1) / F(120);
+  r = r * t2 + F(1) / F(6);
+  return r;
+}
+
+// Taylor of 1/theta**2
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_inv_poly(F t2) noexcept
+{
+  F r = F(1) / F(1209600);
+  r = r * t2 + F(1) / F(30240);
+  r = r * t2 + F(1) / F(720);
+  r = r * t2 + F(1) / F(12);
+  return r;
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
+cross3(const vec<F, 3> &a, const vec<F, 3> &b) noexcept
+{
+  return vec<F, 3>{ a.data[1] * b.data[2] - a.data[2] * b.data[1], a.data[2] * b.data[0] - a.data[0] * b.data[2],
+                    a.data[0] * b.data[1] - a.data[1] * b.data[0] };
+}
+
+// Branchless left-Jacobian, must faster
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
+left_jacobian_apply_with_ab(const vec<F, 3> &omega, const vec<F, 3> &v, F a, F b) noexcept
+{
+  const vec<F, 3> wxv = cross3<F>(omega, v);
+  const vec<F, 3> wxwxv = cross3<F>(omega, wxv);
+  return vec<F, 3>{ v.data[0] + a * wxv.data[0] + b * wxwxv.data[0], v.data[1] + a * wxv.data[1] + b * wxwxv.data[1],
+                    v.data[2] + a * wxv.data[2] + b * wxwxv.data[2] };
+}
+
+// Left-Jacobian-inverse application
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
+left_jacobian_inv_apply_with_c(const vec<F, 3> &omega, const vec<F, 3> &t, F c) noexcept
+{
+  const vec<F, 3> wxt = cross3<F>(omega, t);
+  const vec<F, 3> wxwxt = cross3<F>(omega, wxt);
+  return vec<F, 3>{ t.data[0] - F(0.5) * wxt.data[0] + c * wxwxt.data[0], t.data[1] - F(0.5) * wxt.data[1] + c * wxwxt.data[1],
+                    t.data[2] - F(0.5) * wxt.data[2] + c * wxwxt.data[2] };
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+small_angle_threshold_sq() noexcept
+{
+  return F(1) / F(100);
+}
+
 template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr vec<F, 3>
 left_jacobian_apply(const vec<F, 3> &omega, const vec<F, 3> &v) noexcept
 {
   const F wx = omega.data[0], wy = omega.data[1], wz = omega.data[2];
   const F theta_sq = wx * wx + wy * wy + wz * wz;
-  const vec<F, 3> wxv{ wy * v.data[2] - wz * v.data[1], wz * v.data[0] - wx * v.data[2], wx * v.data[1] - wy * v.data[0] };
-  const vec<F, 3> wxwxv{ wy * wxv.data[2] - wz * wxv.data[1], wz * wxv.data[0] - wx * wxv.data[2], wx * wxv.data[1] - wy * wxv.data[0] };
   F a, b;
-  if ( theta_sq < math::default_eps<F>() ) {
-    a = F(0.5) - theta_sq / F(24);
-    b = F(1) / F(6) - theta_sq / F(120);
+  if ( theta_sq < small_angle_threshold_sq<F>() ) {
+    a = lj_a_poly<F>(theta_sq);
+    b = lj_b_poly<F>(theta_sq);
   } else {
     const F theta = math::fsqrt(theta_sq);
-    const F s = math::sin<F>(theta);
-    const F c = math::cos<F>(theta);
-    a = (F(1) - c) / theta_sq;
-    b = (theta - s) / (theta_sq * theta);
+    const F half = theta * F(0.5);
+    F s_half, c_half;
+    math::sincos<F>(half, s_half, c_half);
+    const F sin_theta = F(2) * s_half * c_half;
+    const F cos_theta = c_half * c_half - s_half * s_half;
+    a = (F(1) - cos_theta) / theta_sq;
+    b = (theta - sin_theta) / (theta * theta_sq);
   }
-  return vec<F, 3>{ v.data[0] + a * wxv.data[0] + b * wxwxv.data[0], v.data[1] + a * wxv.data[1] + b * wxwxv.data[1],
-                    v.data[2] + a * wxv.data[2] + b * wxwxv.data[2] };
+  return left_jacobian_apply_with_ab<F>(omega, v, a, b);
 }
 
 template<ieee754_floating F>
@@ -61,20 +136,17 @@ left_jacobian_inv_apply(const vec<F, 3> &omega, const vec<F, 3> &t) noexcept
 {
   const F wx = omega.data[0], wy = omega.data[1], wz = omega.data[2];
   const F theta_sq = wx * wx + wy * wy + wz * wz;
-  const vec<F, 3> wxt{ wy * t.data[2] - wz * t.data[1], wz * t.data[0] - wx * t.data[2], wx * t.data[1] - wy * t.data[0] };
-  const vec<F, 3> wxwxt{ wy * wxt.data[2] - wz * wxt.data[1], wz * wxt.data[0] - wx * wxt.data[2], wx * wxt.data[1] - wy * wxt.data[0] };
   F coeff;
-  if ( theta_sq < math::default_eps<F>() ) {
-    coeff = F(1) / F(12) + theta_sq / F(720);
+  if ( theta_sq < small_angle_threshold_sq<F>() ) {
+    coeff = lj_inv_poly<F>(theta_sq);
   } else {
     const F theta = math::fsqrt(theta_sq);
     const F half = theta * F(0.5);
-    const F s_half = math::sin<F>(half);
-    const F c_half = math::cos<F>(half);
+    F s_half, c_half;
+    math::sincos<F>(half, s_half, c_half);
     coeff = (F(1) / theta_sq) - c_half / (F(2) * theta * s_half);
   }
-  return vec<F, 3>{ t.data[0] - F(0.5) * wxt.data[0] + coeff * wxwxt.data[0], t.data[1] - F(0.5) * wxt.data[1] + coeff * wxwxt.data[1],
-                    t.data[2] - F(0.5) * wxt.data[2] + coeff * wxwxt.data[2] };
+  return left_jacobian_inv_apply_with_c<F>(omega, t, coeff);
 }
 
 };      // namespace __se3_impl
@@ -107,16 +179,87 @@ template<ieee754_floating F> struct SE3 {
   exp_map(const vec<F, 6> &xi) noexcept
   {
     const vec<F, 3> v{ xi.data[0], xi.data[1], xi.data[2] };
-    const vec<F, 3> w{ xi.data[3], xi.data[4], xi.data[5] };
-    return SE3{ SO3<F>::exp_map(w), __se3_impl::left_jacobian_apply<F>(w, v) };
+    const F wx = xi.data[3], wy = xi.data[4], wz = xi.data[5];
+    const vec<F, 3> w{ wx, wy, wz };
+    const F theta_sq = wx * wx + wy * wy + wz * wz;
+
+    // optimized
+    F scalar;
+    F c_half;
+    F a, b;
+
+    if ( theta_sq < __se3_impl::small_angle_threshold_sq<F>() ) {
+      scalar = __so3_impl::sinc_half_over_theta<F>(theta_sq);
+      c_half = __so3_impl::cos_half<F>(theta_sq);
+      a = __se3_impl::lj_a_poly<F>(theta_sq);
+      b = __se3_impl::lj_b_poly<F>(theta_sq);
+    } else {
+      const F theta = math::fsqrt(theta_sq);
+      const F half = theta * F(0.5);
+      F s_half;
+      math::sincos<F>(half, s_half, c_half);
+      scalar = s_half / theta;
+      const F sin_theta = F(2) * s_half * c_half;
+      const F cos_theta = c_half * c_half - s_half * s_half;
+      a = (F(1) - cos_theta) / theta_sq;
+      b = (theta - sin_theta) / (theta * theta_sq);
+    }
+
+    const quat<F> q{ wx * scalar, wy * scalar, wz * scalar, c_half };
+    const vec<F, 3> t_out = __se3_impl::left_jacobian_apply_with_ab<F>(w, v, a, b);
+    return SE3{ SO3<F>{ q }, t_out };
   }
 
   [[nodiscard, gnu::flatten]] static constexpr vec<F, 6>
   log_map(const SE3 &g) noexcept
   {
-    const auto w = SO3<F>::log_map(g.R);
-    const auto v = __se3_impl::left_jacobian_inv_apply<F>(w, g.t);
-    return vec<F, 6>{ v.data[0], v.data[1], v.data[2], w.data[0], w.data[1], w.data[2] };
+    F qx = g.R.q.data[0], qy = g.R.q.data[1], qz = g.R.q.data[2], qw = g.R.q.data[3];
+    if ( qw < F(0) ) {
+      qx = -qx;
+      qy = -qy;
+      qz = -qz;
+      qw = -qw;
+    }
+    const F xyz_sq = qx * qx + qy * qy + qz * qz;
+
+    F wx, wy, wz;
+    F theta_sq;
+    if ( xyz_sq < __so3_impl::small_angle_threshold_sq<F>() ) {
+      const F inv_qw = F(1) / qw;
+      const F y2 = xyz_sq * (inv_qw * inv_qw);
+      F p = F(-1) / F(11);
+      p = p * y2 + F(1) / F(9);
+      p = p * y2 - F(1) / F(7);
+      p = p * y2 + F(1) / F(5);
+      p = p * y2 - F(1) / F(3);
+      p = p * y2 + F(1);
+      const F k = F(2) * p * inv_qw;
+      wx = qx * k;
+      wy = qy * k;
+      wz = qz * k;
+      theta_sq = wx * wx + wy * wy + wz * wz;
+    } else {
+      const F xyz_norm = math::fsqrt(xyz_sq);
+      const F angle = F(2) * math::atan2<F>(xyz_norm, qw);
+      const F k = angle / xyz_norm;
+      wx = qx * k;
+      wy = qy * k;
+      wz = qz * k;
+      theta_sq = angle * angle;
+    }
+    const vec<F, 3> w{ wx, wy, wz };
+
+    F coeff;
+    if ( theta_sq < __se3_impl::small_angle_threshold_sq<F>() ) {
+      coeff = __se3_impl::lj_inv_poly<F>(theta_sq);
+    } else {
+      const F xyz_norm = math::fsqrt(xyz_sq);
+      const F theta = math::fsqrt(theta_sq);
+      coeff = (F(1) / theta_sq) - qw / (F(2) * theta * xyz_norm);
+    }
+    const vec<F, 3> v_out = __se3_impl::left_jacobian_inv_apply_with_c<F>(w, g.t, coeff);
+
+    return vec<F, 6>{ v_out.data[0], v_out.data[1], v_out.data[2], wx, wy, wz };
   }
 
   [[nodiscard, gnu::flatten]] static constexpr mat<F, 4, 4>

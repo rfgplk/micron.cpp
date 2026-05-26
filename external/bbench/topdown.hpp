@@ -8,35 +8,29 @@
 
 #include <linux/perf_event.h>
 
-#include "../../src/linux/io.hpp"
-#include "../../src/linux/sys/ioctl.hpp"
-#include "../../src/memory/cmemory.hpp"
-#include "../../src/types.hpp"
+#include <micron/linux/io.hpp>
+#include <micron/linux/sys/ioctl.hpp>
+#include <micron/memory/cmemory.hpp>
+#include <micron/types.hpp>
 
 #include "options.hpp"
 #include "perf.hpp"
 #include "process.hpp"
 
-// Icelake+ topdown arch analysis
-//
-//  -> retiring
-//  -> bad_spec
-//  -> fe_bound
-//  -> be_bound
 namespace bbench::topdown
 {
 
-inline constexpr u64 TD_SLOTS = 0x0400u;     // CPU slots (denominator)
+inline constexpr u64 TD_SLOTS = 0x0400u;
 inline constexpr u64 TD_RETIRING = 0x8000u;
 inline constexpr u64 TD_BAD_SPEC = 0x8100u;
 inline constexpr u64 TD_FE_BOUND = 0x8200u;
 inline constexpr u64 TD_BE_BOUND = 0x8300u;
 
 struct topdown_t {
-  double frontend = 0.0;     // [0, 1]
-  double backend = 0.0;      // [0, 1]
-  double bad_spec = 0.0;     // [0, 1]
-  double retiring = 0.0;     // [0, 1]
+  double frontend = 0.0;
+  double backend = 0.0;
+  double bad_spec = 0.0;
+  double retiring = 0.0;
   bool supported = false;
 };
 
@@ -115,7 +109,7 @@ struct __td_event {
 inline bool
 supported(void)
 {
-  static int cached = -1;     // -1 unknown, 0 no, 1 yes
+  static int cached = -1;
   if ( cached != -1 ) return cached == 1;
   __td_event probe;
   probe.configure(TD_SLOTS);
@@ -176,4 +170,4 @@ measure_bin(const char *path, const benchmark_opts &opts)
   return out;
 }
 
-};     // namespace bbench::topdown
+};      // namespace bbench::topdown

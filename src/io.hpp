@@ -11,6 +11,5 @@
 
 #include "io/io.hpp"
 
-namespace micron
-{
-};
+#include "io/stdin.hpp"
+#include "io/stdio.hpp"

@@ -6,18 +6,17 @@
 
 #pragma once
 
-#include "../../src/string/string.hpp"
+#include <micron/string/string.hpp>
 
 #include "clock.hpp"
 #include "perf.hpp"
 
 namespace bbench
 {
-// moved here for convenience
-// main container for storing all benchmark data from benchmark()
+
 struct benchmark_t {
   micron::string name;
-  double time;     // heh
+  double time;
   long long cycles;
   long long instructions;
   long long cache_misses;
@@ -34,7 +33,6 @@ struct benchmark_t {
   long long access;
   long long bpu;
 
-  // additional events (added for perf-stat parity)
   long long page_faults;
   long long minor_faults;
   long long major_faults;
@@ -53,7 +51,6 @@ struct benchmark_t {
   long long l1d_prefetch;
   long long l1d_prefetch_miss;
 
-  // multiplex bookkeeping (per-event time_enabled / time_running)
   unsigned long long time_enabled_ns;
   unsigned long long time_running_ns;
 };
@@ -88,7 +85,7 @@ cycles_per_instruction(const benchmark_t &b)
   return static_cast<double>((double)b.cycles / (double)b.instructions);
 }
 
-template <typename T>
+template<typename T>
 void
 perf_init_leader(T &&)
 {
@@ -96,4 +93,4 @@ perf_init_leader(T &&)
   a.start_as_leader();
 }
 
-};     // namespace bbench
+};      // namespace bbench

@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../../src/array.hpp"
-#include "../../src/bits/__exceptions.hpp"
-#include "../../src/concepts.hpp"
-#include "../../src/except.hpp"
-#include "../../src/memory/cmemory.hpp"
-#include "../../src/string/sstring.hpp"
-#include "../../src/sum.hpp"
-#include "../../src/type_traits.hpp"
-#include "../../src/types.hpp"
-#include "../../src/vector.hpp"
+#include <micron/array.hpp>
+#include <micron/bits/__exceptions.hpp>
+#include <micron/concepts.hpp>
+#include <micron/except.hpp>
+#include <micron/memory/cmemory.hpp>
+#include <micron/string/sstring.hpp>
+#include <micron/sum.hpp>
+#include <micron/type_traits.hpp>
+#include <micron/types.hpp>
+#include <micron/vector.hpp>
 
 #ifdef CARGS_EXC
-#include "../../src/control.hpp"
+#include <micron/control.hpp>
 #endif
 
 namespace cargs
@@ -24,43 +24,43 @@ enum class Accepts : int { czero, cvoid, cpath, cparam, coperand, ckey, cbool, c
 
 namespace
 {
-template <usize N> struct packet {
+template<usize N> struct packet {
   micron::sstring<N> key;
   micron::sstring<N> data;
   Accepts type = Accepts::czero;
 };
 
-template <typename T> struct get_arity : get_arity<decltype(&T::operator())> {
+template<typename T> struct get_arity: get_arity<decltype(&T::operator())> {
 };
 
-template <typename R, typename... Args> struct get_arity<R (*)(Args...)> : micron::integral_constant<unsigned, sizeof...(Args)> {
+template<typename R, typename... Args> struct get_arity<R (*)(Args...)>: micron::integral_constant<unsigned, sizeof...(Args)> {
 };
 
-template <typename R, typename C, typename... Args>
-struct get_arity<R (C::*)(Args...)> : micron::integral_constant<unsigned, sizeof...(Args)> {
+template<typename R, typename C, typename... Args>
+struct get_arity<R (C::*)(Args...)>: micron::integral_constant<unsigned, sizeof...(Args)> {
 };
 
-template <typename R, typename C, typename... Args>
-struct get_arity<R (C::*)(Args...) const> : micron::integral_constant<unsigned, sizeof...(Args)> {
+template<typename R, typename C, typename... Args>
+struct get_arity<R (C::*)(Args...) const>: micron::integral_constant<unsigned, sizeof...(Args)> {
 };
-};     // namespace
+};      // namespace
 
-template <typename Fn> struct param_packet {
-  constexpr param_packet() : param(nullptr), abbr(nullptr), description(nullptr), acc(Accepts::czero), ptr(nullptr) {}
+template<typename Fn> struct param_packet {
+  constexpr param_packet() : param(nullptr), abbr(nullptr), description(nullptr), acc(Accepts::czero), ptr(nullptr) { }
 
-  template <usize N, usize M, usize L>
+  template<usize N, usize M, usize L>
   constexpr param_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const Accepts a = Accepts::czero)
       : param(s), abbr(s2), description(s3), acc(a), ptr(nullptr)
   {
   }
 
-  template <usize N, usize M, usize L>
+  template<usize N, usize M, usize L>
   constexpr param_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const Accepts a, Fn _ptr)
       : param(s), abbr(s2), description(s3), acc(a), ptr(_ptr)
   {
   }
 
-  constexpr param_packet(const param_packet &o) : param(o.param), abbr(o.abbr), description(o.description), acc(o.acc), ptr(o.ptr) {}
+  constexpr param_packet(const param_packet &o) : param(o.param), abbr(o.abbr), description(o.description), acc(o.acc), ptr(o.ptr) { }
 
   constexpr Accepts
   accepts() const
@@ -79,7 +79,7 @@ template <typename Fn> struct param_packet {
     return *this;
   }
 
-  template <usize N>
+  template<usize N>
   param_packet &
   operator()(const packet<N> &p)
   {
@@ -93,7 +93,6 @@ template <typename Fn> struct param_packet {
     return *this;
   }
 
-  // private:
   const char *param;
   const char *abbr;
   const char *description;
@@ -101,32 +100,32 @@ template <typename Fn> struct param_packet {
   Fn ptr;
 };
 
-template <typename Fn = nullptr_t, usize N, usize M, usize L>
+template<typename Fn = nullptr_t, usize N, usize M, usize L>
 inline constexpr param_packet<Fn>
 make_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L])
 {
   return param_packet<Fn>(s, s2, s3);
 }
 
-template <typename Fn = nullptr_t, usize N, usize M, usize L>
+template<typename Fn = nullptr_t, usize N, usize M, usize L>
 inline constexpr param_packet<Fn>
 make_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const Accepts s4)
 {
   return param_packet<Fn>(s, s2, s3, s4);
 }
 
-template <typename Fn = nullptr_t, usize N, usize M, usize L>
+template<typename Fn = nullptr_t, usize N, usize M, usize L>
 inline constexpr param_packet<Fn>
 make_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const Accepts s4, Fn ptr = nullptr)
 {
   return param_packet<Fn>(s, s2, s3, s4, ptr);
 }
 
-template <usize P_COUNT = 0, typename C = nullptr_t, gfcallback F = nullptr, char16_t FLAG = '-', i64 MAX_LENGTH = 32, i64 MAX_BUFFER = 127>
+template<usize P_COUNT = 0, typename C = nullptr_t, gfcallback F = nullptr, char16_t FLAG = '-', i64 MAX_LENGTH = 32, i64 MAX_BUFFER = 127>
 class parser
 {
   static constexpr gfcallback global_callback = F;
-  // micron::array requires N > 0; pad to 1 when no parameters were registered
+
   static constexpr usize __param_storage = (P_COUNT == 0) ? 1 : P_COUNT;
   micron::array<packet<MAX_BUFFER>, MAX_LENGTH> args;
   micron::array<param_packet<C>, __param_storage> parameters;
@@ -199,17 +198,17 @@ class parser
   to_number(micron::any<long, long long, double, bool> &out, const char *str, const Accepts type) const
   {
     switch ( type ) {
-    case Accepts::cint :
+    case Accepts::cint:
       out = static_cast<long>(__to_i64(str));
       break;
-    case Accepts::clong :
+    case Accepts::clong:
       out = static_cast<long long>(__to_i64(str));
       break;
-    case Accepts::cfloat :
-    case Accepts::cdouble :
+    case Accepts::cfloat:
+    case Accepts::cdouble:
       out = static_cast<double>(__to_f64(str));
       break;
-    default :
+    default:
       out = false;
       break;
     }
@@ -220,23 +219,23 @@ class parser
   {
     micron::any<long, long long, double, bool> ret;
     switch ( type ) {
-    case Accepts::cint :
+    case Accepts::cint:
       ret = static_cast<long>(__to_i64(str));
       return ret;
-    case Accepts::clong :
+    case Accepts::clong:
       ret = static_cast<long long>(__to_i64(str));
       return ret;
-    case Accepts::cfloat :
-    case Accepts::cdouble :
+    case Accepts::cfloat:
+    case Accepts::cdouble:
       ret = static_cast<double>(__to_f64(str));
       return ret;
-    default :
+    default:
       ret = false;
       return ret;
     }
   }
 
-  template <usize M>
+  template<usize M>
   static inline void
   __append_cstr(micron::sstring<M> &dst, const char *src)
   {
@@ -309,8 +308,7 @@ class parser
     do {
       if ( args[c].type == Accepts::czero ) break;
       for ( auto &n : parameters ) {
-        // sstring::operator==(const char*) asserts non-null; the P_COUNT=0
-        // padding sentinel has nullptr fields, so guard explicitly.
+
         if ( (n.param && args[c].key == n.param) || (n.abbr && args[c].key == n.abbr) ) n(args[c]);
       }
       if constexpr ( global_callback ) global_callback(c, args[c].key.data(), args[c].data.data());
@@ -426,13 +424,13 @@ class parser
 public:
   parser() = delete;
 
-  template <class... Y> constexpr parser(Y &&...ls) : parameters{ ls... } {}
+  template<class... Y> constexpr parser(Y &&...ls) : parameters{ ls... } { }
 
   explicit parser(int argc, char **_args) { general_parse_np(argc, _args); }
 
-  parser(const parser &o) : args(o.args) {}
+  parser(const parser &o) : args(o.args) { }
 
-  parser(parser &&o) : args(micron::move(o.args)) {}
+  parser(parser &&o) : args(micron::move(o.args)) { }
 
   parser &
   operator=(const parser &o)
@@ -461,7 +459,7 @@ public:
     return args;
   }
 
-  template <typename Y = micron::sstring<MAX_BUFFER>>
+  template<typename Y = micron::sstring<MAX_BUFFER>>
   micron::vector<Y>
   list()
   {
@@ -471,7 +469,7 @@ public:
     return tmp;
   }
 
-  template <typename Y = micron::sstring<MAX_BUFFER>>
+  template<typename Y = micron::sstring<MAX_BUFFER>>
   micron::vector<Y>
   data()
   {
@@ -481,7 +479,7 @@ public:
     return tmp;
   }
 
-  template <typename Y = micron::sstring<MAX_BUFFER>>
+  template<typename Y = micron::sstring<MAX_BUFFER>>
   micron::vector<Y>
   params()
   {
@@ -491,7 +489,7 @@ public:
     return tmp;
   }
 
-  template <typename Y = micron::sstring<MAX_BUFFER>>
+  template<typename Y = micron::sstring<MAX_BUFFER>>
   micron::vector<Y>
   operands()
   {
@@ -517,7 +515,6 @@ public:
     return micron::sstring<MAX_BUFFER>();
   }
 
-  // Does the argument exist?
   inline bool
   operator[](const char *const str)
   {
@@ -535,4 +532,4 @@ public:
     return false;
   }
 };
-};     // namespace cargs
+};      // namespace cargs

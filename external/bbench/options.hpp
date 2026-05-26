@@ -6,23 +6,23 @@
 
 #pragma once
 
-#include "../../src/types.hpp"
+#include <micron/types.hpp>
 
 namespace bbench
 {
 
 struct benchmark_opts {
-  u32 detail = 1;                      // -d / -dd / -ddd (1 default, 2, 3)
-  u32 delay_ms = 0;                    // -D msec
-  u32 timeout_ms = 0;                  // --timeout msec
-  bool inherit = true;                 // perf-stat default for spawned commands
-  bool scale = true;                   // multiplex-correct; off = print raw values
-  bool pinned = false;                 // pin counters; off = let kernel multiplex
-  bool excl_kernel = true;             // --all-user implied; --all-kernel flips
-  bool excl_user = false;              // --all-kernel sets this true and excl_kernel false
-  const char *event_csv = nullptr;     // -e cycles,instructions,…
-  const char *pre = nullptr;           // --pre CMD
-  const char *post = nullptr;          // --post CMD
+  u32 detail = 1;
+  u32 delay_ms = 0;
+  u32 timeout_ms = 0;
+  bool inherit = true;
+  bool scale = true;
+  bool pinned = false;
+  bool excl_kernel = true;
+  bool excl_user = false;
+  const char *event_csv = nullptr;
+  const char *pre = nullptr;
+  const char *post = nullptr;
 };
 
-};     // namespace bbench
+};      // namespace bbench

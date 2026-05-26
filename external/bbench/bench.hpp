@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "../../src/concepts.hpp"
-#include "../../src/memory/actions.hpp"
-#include "../../src/proc.hpp"
-#include "../../src/string/string.hpp"
-#include "../../src/type_traits.hpp"
-#include "../../src/types.hpp"
-#include "../../src/vector.hpp"
+#include <micron/concepts.hpp>
+#include <micron/memory/actions.hpp>
+#include <micron/proc.hpp>
+#include <micron/string/string.hpp>
+#include <micron/type_traits.hpp>
+#include <micron/types.hpp>
+#include <micron/vector.hpp>
 
 #include "clock.hpp"
 #include "events.hpp"
@@ -22,37 +22,33 @@
 namespace bbench
 {
 
-// d1: cycles, instructions, branch + branch-miss, cache, software, L1d/L1i/LLC, BPU, node
 using event_group_d1 = event_group<hardware_cycles, hardware_instructions, cache_misses, branches, branch_misses, total_cycles, cpu_time,
                                    context_switches, proc_migrations, level1d, level1t, llcache, cache_node, bpu>;
 
-// d2: d1 + dTLB/iTLB access + miss + page-faults + stalled-cycles + bus-cycles + L1d_miss + LLC_miss
 using event_group_d2 = event_group<hardware_cycles, hardware_instructions, cache_misses, branches, branch_misses, total_cycles, cpu_time,
                                    context_switches, proc_migrations, level1d, level1t, llcache, cache_node, bpu, page_faults, bus_cycles_e,
                                    stalled_front, stalled_back, dtlb_access, dtlb_miss, itlb_access, itlb_miss, level1d_miss, llcache_miss>;
 
-// d3: d2 + L1d prefetch + L1i miss + minor/major/alignment/emulation faults
 using event_group_d3
     = event_group<hardware_cycles, hardware_instructions, cache_misses, branches, branch_misses, total_cycles, cpu_time, context_switches,
                   proc_migrations, level1d, level1t, llcache, cache_node, bpu, page_faults, bus_cycles_e, stalled_front, stalled_back,
                   dtlb_access, dtlb_miss, itlb_access, itlb_miss, level1d_miss, llcache_miss, level1t_miss, l1d_prefetch, l1d_prefetch_miss,
                   minor_faults, major_faults, alignment_faults, emulation_faults>;
 
-// alias for the old bbench code
 using full_event_group = event_group_d1;
 
 namespace __impl
 {
 
-template <typename G, typename E> struct group_has : micron::false_type {
+template<typename G, typename E> struct group_has: micron::false_type {
 };
 
-template <typename E, typename... Cs> struct group_has<event_group<Cs...>, E> : micron::bool_constant<(micron::is_same_v<E, Cs> || ...)> {
+template<typename E, typename... Cs> struct group_has<event_group<Cs...>, E>: micron::bool_constant<(micron::is_same_v<E, Cs> || ...)> {
 };
 
-template <typename G, typename E> inline constexpr bool group_has_v = group_has<G, E>::value;
+template<typename G, typename E> inline constexpr bool group_has_v = group_has<G, E>::value;
 
-template <time_resolution R, class G>
+template<time_resolution R, class G>
 inline benchmark_t
 collect(const micron::string &name, time_clock &cl, G &gr)
 {
@@ -98,9 +94,9 @@ collect(const micron::string &name, time_clock &cl, G &gr)
 
   return b;
 }
-};     // namespace __impl
+};      // namespace __impl
 
-template <time_resolution R = time_resolution::us, class G = event_group_d1, typename F, typename... Args>
+template<time_resolution R = time_resolution::us, class G = event_group_d1, typename F, typename... Args>
 inline benchmark_t
 benchmark(F func, Args &&...args)
 {
@@ -115,7 +111,7 @@ benchmark(F func, Args &&...args)
   return __impl::collect<R>(micron::string{}, cl, gr);
 }
 
-template <time_resolution R = time_resolution::us, class G = event_group_d1, typename F, typename... Args>
+template<time_resolution R = time_resolution::us, class G = event_group_d1, typename F, typename... Args>
 inline benchmark_t
 benchmark(const micron::string &_name, F func, Args &&...args)
 {
@@ -130,15 +126,14 @@ benchmark(const micron::string &_name, F func, Args &&...args)
   return __impl::collect<R>(_name, cl, gr);
 }
 
-// retained for source-compat
-template <time_resolution R = time_resolution::us, class G = event_group_d1, typename F, typename... Args>
+template<time_resolution R = time_resolution::us, class G = event_group_d1, typename F, typename... Args>
 inline benchmark_t
 benchmark_batch(F func, Args &&...args)
 {
   return benchmark<R, G>(micron::forward<F>(func), micron::forward<Args>(args)...);
 }
 
-template <class G = event_group_d1, typename... A>
+template<class G = event_group_d1, typename... A>
 inline benchmark_t
 benchmark_bin(const char *s, A... args)
 {
@@ -154,7 +149,7 @@ benchmark_bin(const char *s, A... args)
   return __impl::collect<time_resolution::us>(micron::string{ s }, cl, gr);
 }
 
-template <class G = event_group_d1, micron::is_string T, micron::is_string... A>
+template<class G = event_group_d1, micron::is_string T, micron::is_string... A>
 inline benchmark_t
 benchmark_bin(const T &s, A... args)
 {
@@ -202,9 +197,10 @@ __wait_with_timeout(int pid, u32 timeout_ms)
   int status = 0;
   for ( ;; ) {
     int r = micron::waitpid(pid, &status, micron::wnohang);
-    if ( r == pid ) return;     // exited
+    if ( r == pid ) return;
     if ( __now_ms() >= deadline ) {
       micron::posix::kill(pid, static_cast<int>(micron::signal::terminate));
+
       u64 hard = __now_ms() + 50;
       while ( __now_ms() < hard ) {
         if ( micron::waitpid(pid, &status, micron::wnohang) == pid ) return;
@@ -218,7 +214,7 @@ __wait_with_timeout(int pid, u32 timeout_ms)
   }
 }
 
-template <class G>
+template<class G>
 inline benchmark_t
 __bench_bin_with_opts(const char *s, const benchmark_opts &opts)
 {
@@ -232,33 +228,32 @@ __bench_bin_with_opts(const char *s, const benchmark_opts &opts)
   int pid = process_attach(s, [&](int child_pid) { gr.reopen(child_pid); });
   if ( opts.delay_ms > 0 ) __sleep_ms(opts.delay_ms);
   cl.begin();
+
   __wait_with_timeout(pid, opts.timeout_ms);
   cl.end();
   gr.end();
   if ( opts.post ) process<true>(opts.post);
   return __impl::collect<time_resolution::us>(micron::string{ s }, cl, gr);
 }
-};     // namespace __impl
+};      // namespace __impl
 
 inline benchmark_t
 benchmark_bin(const char *s, const benchmark_opts &opts)
 {
   switch ( opts.detail ) {
-  case 2 :
+  case 2:
     return __impl::__bench_bin_with_opts<event_group_d2>(s, opts);
-  case 3 :
+  case 3:
     return __impl::__bench_bin_with_opts<event_group_d3>(s, opts);
-  default :
+  default:
     return __impl::__bench_bin_with_opts<event_group_d1>(s, opts);
   }
 }
 
-// dynamic (-e)
 struct dynamic_result_t {
   micron::string name;
   double time;
 
-  // (event-pretty-name, scaled-value, errno-from-open)
   struct entry {
     const char *name;
     long long value;
@@ -295,7 +290,7 @@ benchmark_bin_dynamic(const char *s, const micron::vector<event_def> &defs, cons
   return out;
 }
 
-template <class C = hardware_cycles, typename F, typename... Args>
+template<class C = hardware_cycles, typename F, typename... Args>
 inline long long
 cpu_bench(F func, Args &&...args)
 {
@@ -306,7 +301,7 @@ cpu_bench(F func, Args &&...args)
   return cl.retrieve();
 }
 
-template <class C = hardware_cycles, micron::is_string T, micron::is_string... A>
+template<class C = hardware_cycles, micron::is_string T, micron::is_string... A>
 inline long long
 cpu_bench_bin(const T &s, A... a)
 {
@@ -319,7 +314,7 @@ cpu_bench_bin(const T &s, A... a)
   return cl.retrieve();
 }
 
-template <class C = hardware_cycles, typename... A>
+template<class C = hardware_cycles, typename... A>
 inline long long
 cpu_bench_bin(const char *s, A... a)
 {
@@ -332,7 +327,7 @@ cpu_bench_bin(const char *s, A... a)
   return cl.retrieve();
 }
 
-template <time_resolution R = time_resolution::milliseconds, typename F, typename... Args>
+template<time_resolution R = time_resolution::milliseconds, typename F, typename... Args>
 inline double
 bench(F func, Args &&...args)
 {
@@ -343,7 +338,7 @@ bench(F func, Args &&...args)
   return cl.template elapsed<R>();
 }
 
-template <time_resolution R = time_resolution::milliseconds, micron::is_string T, micron::is_string... A>
+template<time_resolution R = time_resolution::milliseconds, micron::is_string T, micron::is_string... A>
 inline double
 bench_bin(const T &s, A... a)
 {
@@ -354,7 +349,7 @@ bench_bin(const T &s, A... a)
   return cl.template elapsed<R>();
 }
 
-template <time_resolution R = time_resolution::milliseconds, typename... A>
+template<time_resolution R = time_resolution::milliseconds, typename... A>
 inline double
 bench_bin(const char *s, A... a)
 {
@@ -365,7 +360,7 @@ bench_bin(const char *s, A... a)
   return cl.template elapsed<R>();
 }
 
-template <time_resolution R = time_resolution::milliseconds, typename... F>
+template<time_resolution R = time_resolution::milliseconds, typename... F>
 inline micron::vector<double>
 bench(F... funcs)
 {
@@ -382,8 +377,7 @@ bench(F... funcs)
   return results;
 }
 
-// time N functions per func
-template <usize N, time_resolution R = time_resolution::milliseconds, typename F, typename... Args>
+template<usize N, time_resolution R = time_resolution::milliseconds, typename F, typename... Args>
 inline micron::vector<double>
 bench_repeat(F func, Args... args)
 {
@@ -400,4 +394,4 @@ bench_repeat(F func, Args... args)
   return results;
 }
 
-};     // namespace bbench
+};      // namespace bbench

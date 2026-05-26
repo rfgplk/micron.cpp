@@ -6,15 +6,15 @@
 
 #pragma once
 
-#include "../../src/io/stdout.hpp"
-#include "../../src/linux/io.hpp"
-#include "../../src/linux/sys/fcntl.hpp"
-#include "../../src/memory/cmemory.hpp"
-#include "../../src/string/conversions/floating_point.hpp"
-#include "../../src/string/conversions/integral.hpp"
-#include "../../src/string/string.hpp"
-#include "../../src/types.hpp"
-#include "../../src/vector.hpp"
+#include <micron/io/stdout.hpp>
+#include <micron/linux/io.hpp>
+#include <micron/linux/sys/fcntl.hpp>
+#include <micron/memory/cmemory.hpp>
+#include <micron/string/conversions/floating_point.hpp>
+#include <micron/string/conversions/integral.hpp>
+#include <micron/string/string.hpp>
+#include <micron/types.hpp>
+#include <micron/vector.hpp>
 
 #include "events.hpp"
 #include "funcs.hpp"
@@ -24,11 +24,11 @@ namespace bbench::format
 
 struct sink {
   int fd = 1;
-  bool owned = false;     // close in destructor
+  bool owned = false;
 
   sink() = default;
 
-  explicit sink(int fd_, bool own = false) : fd(fd_), owned(own) {}
+  explicit sink(int fd_, bool own = false) : fd(fd_), owned(own) { }
 
   sink(const sink &) = delete;
 
@@ -165,7 +165,6 @@ emit_human_one(const sink &out, const benchmark_t &b, u32 detail, bool color, u3
   }
 }
 
-// CSV header row matching emit_csv_one()
 inline void
 emit_csv_header(const sink &out, u32 detail, char sep)
 {
@@ -322,7 +321,7 @@ struct stats_t {
   double mean, stddev, mn, mx;
 };
 
-template <typename V, typename F>
+template<typename V, typename F>
 inline stats_t
 compute_stats(const V &runs, F field_accessor)
 {
@@ -345,7 +344,9 @@ compute_stats(const V &runs, F field_accessor)
       double d = v - s.mean;
       sq += d * d;
     }
+
     s.stddev = sq / static_cast<double>(runs.size() - 1);
+
     double x = s.stddev > 0 ? s.stddev : 0;
     if ( x > 0 ) {
       double r = x;
@@ -384,4 +385,4 @@ emit_table(const sink &out, const micron::vector<benchmark_t> &runs)
   out.newline();
 }
 
-};     // namespace bbench::format
+};      // namespace bbench::format
