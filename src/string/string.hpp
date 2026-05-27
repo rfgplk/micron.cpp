@@ -423,6 +423,8 @@ public:
   set_size(size_type n)
   {
     __mem::length = n;
+    // WARNING: must set last char to null, otherwise c_str() breaks
+    if ( __mem::memory && n < __mem::capacity ) __mem::memory[n] = T{ 0 };
   }
 
   void

@@ -22,7 +22,7 @@ prepare_generic_mouse_sensor_abs(void (*fn_cb)(const micron::timeval_t &, u16, i
                                  void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                                  void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
-  input_packet_t __input = { ev_rel, sizeof(button_t) * 9, fn_cb, fn_acb, fn_rcb };
+  input_packet_t __input{ ev_rel, slice<button_t>(static_cast<size_t>(9)), fn_cb, fn_acb, fn_rcb };
 
   __input.button_mask[0] = abs_x;
   __input.button_mask[1] = abs_y;
@@ -40,7 +40,7 @@ prepare_generic_mouse_sensor_abs(void (*fn_cb)(const micron::timeval_t &, u16, i
 auto
 prepare_generic_mouse_sensor_abs(void) -> input_packet_t
 {
-  input_packet_t __input = { ev_rel, sizeof(button_t) * 9, nullptr, nullptr, nullptr };
+  input_packet_t __input{ ev_rel, slice<button_t>(static_cast<size_t>(9)), nullptr, nullptr, nullptr };
 
   __input.button_mask[0] = abs_x;
   __input.button_mask[1] = abs_y;
@@ -60,7 +60,7 @@ prepare_generic_mouse_sensor(void (*fn_cb)(const micron::timeval_t &, u16, i32),
                              void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                              void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
-  input_packet_t __input = { ev_rel, sizeof(button_t) * 9, fn_cb, fn_acb, fn_rcb };
+  input_packet_t __input{ ev_rel, slice<button_t>(static_cast<size_t>(9)), fn_cb, fn_acb, fn_rcb };
 
   __input.button_mask[0] = rel_x;
   __input.button_mask[1] = rel_y;
@@ -78,7 +78,7 @@ prepare_generic_mouse_sensor(void (*fn_cb)(const micron::timeval_t &, u16, i32),
 auto
 prepare_generic_mouse_sensor(void) -> input_packet_t
 {
-  input_packet_t __input = { ev_rel, sizeof(button_t) * 9, nullptr, nullptr, nullptr };
+  input_packet_t __input{ ev_rel, slice<button_t>(static_cast<size_t>(9)), nullptr, nullptr, nullptr };
 
   __input.button_mask[0] = rel_x;
   __input.button_mask[1] = rel_y;
@@ -96,7 +96,7 @@ auto
 prepare_generic_mouse(void (*fn_cb)(const micron::timeval_t &, u16, i32), void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                       void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
-  input_packet_t __input = { ev_key, sizeof(button_t) * 8, fn_cb, fn_acb, fn_rcb };
+  input_packet_t __input{ ev_key, slice<button_t>(static_cast<size_t>(8)), fn_cb, fn_acb, fn_rcb };
 
   __input.button_mask[0] = btn_left;
   __input.button_mask[1] = btn_right;
@@ -115,9 +115,10 @@ prepare_generic_keyboard_us(void) -> input_packet_t
 {
   const byte __first = key_esc;
   const byte __end = key_kpdot;
-  input_packet_t __input = { ev_key, sizeof(button_t) * (__end - __first), nullptr, nullptr, nullptr };
+  const size_t __count = static_cast<size_t>(__end - __first);
+  input_packet_t __input{ ev_key, slice<button_t>(__count), nullptr, nullptr, nullptr };
 
-  for ( byte i = 0; i < (__end - __first); ++i ) __input.button_mask[i] = __first + i;
+  for ( size_t i = 0; i < __count; ++i ) __input.button_mask[i] = static_cast<button_t>(__first + i);
 
   return __input;
 };
@@ -129,9 +130,10 @@ prepare_generic_keyboard_us(void (*fn_cb)(const micron::timeval_t &, u16, i32),
 {
   const byte __first = key_esc;
   const byte __end = key_kpdot;
-  input_packet_t __input = { ev_key, sizeof(button_t) * (__end - __first), fn_cb, fn_acb, fn_rcb };
+  const size_t __count = static_cast<size_t>(__end - __first);
+  input_packet_t __input{ ev_key, slice<button_t>(__count), fn_cb, fn_acb, fn_rcb };
 
-  for ( byte i = 0; i < (__end - __first); ++i ) __input.button_mask[i] = __first + i;
+  for ( size_t i = 0; i < __count; ++i ) __input.button_mask[i] = static_cast<button_t>(__first + i);
   return __input;
 };
 

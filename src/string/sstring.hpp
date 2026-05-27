@@ -725,6 +725,8 @@ public:
   set_size(size_type n)
   {
     length = n;
+    // WARNING: must set last char to null, otherwise c_str() breaks
+    if ( n < N ) memory[n] = T{ 0 };
   }
 
   constexpr size_type

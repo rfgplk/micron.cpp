@@ -30,7 +30,7 @@ get_event(const device_t &dev)
 }
 
 template<umax_t S = 250, auto Fn = get_event, typename... Args>
-  requires((micron::same_as<Args, input_packet_t> && ...))
+  requires((micron::same_as<micron::remove_cvref_t<Args>, input_packet_t> && ...))
 poll_flag
 poll(const device_t &dev, Args &&...raw_in)
 {
@@ -58,7 +58,7 @@ poll(const device_t &dev, Args &&...raw_in)
       return -1;
     } else if ( !res )
       continue;
-    if ( pfd.revents & poll_in ) {
+    if ( pfd.revents & posix::poll_in ) {
       input_event ev = Fn(dev);
       (for_every(ev, raw_in), ...);
     }
@@ -67,7 +67,7 @@ poll(const device_t &dev, Args &&...raw_in)
 }
 
 template<umax_t S = 250, auto Fn = get_event, typename... Args>
-  requires((micron::same_as<input_packet_t, Args> && ...))
+  requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
 poll(input_t &inp, Args &&...raw_in)
 {
@@ -95,7 +95,7 @@ poll(input_t &inp, Args &&...raw_in)
       return -1;
     } else if ( !res )
       continue;
-    if ( pfd.revents & poll_in ) {
+    if ( pfd.revents & posix::poll_in ) {
       input_event ev = Fn(inp.device);
       (for_every(ev, raw_in), ...);
     }
@@ -111,7 +111,7 @@ __make_poll(const input_t &arg)
 
 // when pack polling set a really low poll time, otherwise lag will occur
 template<umax_t S = 1, auto Fn = get_event, typename... Args>
-  requires((micron::same_as<input_packet_t, Args> && ...))
+  requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
 poll_pack(slice<input_t> &inp, Args &&...raw_in)
 {
@@ -143,7 +143,7 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
         return -1;
       } else if ( !res )
         continue;
-      if ( pfd.revents & poll_in ) {
+      if ( pfd.revents & posix::poll_in ) {
         input_event ev = Fn(inp_i.device);
         (for_every(inp_i, ev, raw_in), ...);
       }
@@ -153,7 +153,7 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
 }
 
 template<auto Fn = get_event, typename... Args>
-  requires((micron::same_as<input_packet_t, Args> && ...))
+  requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
 poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
 {
@@ -186,7 +186,7 @@ poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
 }
 
 template<auto Fn = get_event, typename... Args>
-  requires((micron::same_as<input_packet_t, Args> && ...))
+  requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
 poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
 {

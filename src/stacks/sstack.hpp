@@ -6,17 +6,17 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "bits/__container.hpp"
+#include "../bits/__container.hpp"
 
-#include "algorithm/memory.hpp"
-#include "allocator.hpp"
-#include "memory/allocation/resources.hpp"
-#include "pointer.hpp"
-#include "tags.hpp"
-#include "type_traits.hpp"
-#include "types.hpp"
+#include "../algorithm/memory.hpp"
+#include "../allocator.hpp"
+#include "../memory/allocation/resources.hpp"
+#include "../pointer.hpp"
+#include "../tags.hpp"
+#include "../type_traits.hpp"
+#include "../types.hpp"
 
-#include "__special/initializer_list"
+#include "../__special/initializer_list"
 
 namespace micron
 {

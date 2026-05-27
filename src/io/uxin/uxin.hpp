@@ -31,11 +31,11 @@ open_nonblock(type_t __type)
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
-  auto dev = mc::uxin::get_devices();
+  auto dev = ::micron::uxin::get_devices();
   fvector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
-      mc::uxin::nonblock_bind_device(n);
+      ::micron::uxin::nonblock_bind_device(n);
       res.push_back({ n, {} });
     }
   }
@@ -54,11 +54,11 @@ open_first_nonblock(type_t __type)
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
-  auto dev = mc::uxin::get_devices();
+  auto dev = ::micron::uxin::get_devices();
   fvector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
-      mc::uxin::nonblock_bind_device(n);
+      ::micron::uxin::nonblock_bind_device(n);
       return { n, {} };
     }
   }
@@ -76,11 +76,11 @@ open(type_t __type)
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
-  auto dev = mc::uxin::get_devices();
+  auto dev = ::micron::uxin::get_devices();
   fvector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
-      mc::uxin::bind_device(n);
+      ::micron::uxin::bind_device(n);
       res.push_back({ n, {} });
     }
   }
@@ -99,11 +99,11 @@ open_first(type_t __type)
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
-  auto dev = mc::uxin::get_devices();
+  auto dev = ::micron::uxin::get_devices();
   fvector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
-      mc::uxin::bind_device(n);
+      ::micron::uxin::bind_device(n);
       return { n, {} };
     }
   }
@@ -116,10 +116,10 @@ prepare_listener(type_t __type)
 {
   switch ( __type ) {
   case type_t::keyboard:
-    return mc::uxin::prepare_generic_keyboard_us(Fn, Fn_2, Fn_3);
+    return ::micron::uxin::prepare_generic_keyboard_us(Fn, Fn_2, Fn_3);
     break;
   case type_t::mouse:
-    return mc::uxin::prepare_generic_mouse_sensor(Fn, Fn_2, Fn_3);
+    return ::micron::uxin::prepare_generic_mouse_sensor(Fn, Fn_2, Fn_3);
     break;
   default:
     exc<except::library_error>("uxin prepare_listener(): invalid specified type of device");
@@ -128,17 +128,17 @@ prepare_listener(type_t __type)
 }
 
 template<typename... Args>
-  requires(micron::same_as<input_packet_t, Args> && ...)
+  requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
 read(input_t &t, Args &&...__input_packet)
 {
   if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
   if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
-  mc::uxin::poll(t, micron::forward<Args>(__input_packet)...);
+  ::micron::uxin::poll(t, micron::forward<Args>(__input_packet)...);
 }
 
 template<typename... Args>
-  requires(micron::same_as<input_packet_t, Args> && ...)
+  requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
 read(slice<input_t> &inputs, Args &&...__input_packet)
 {
@@ -146,12 +146,12 @@ read(slice<input_t> &inputs, Args &&...__input_packet)
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
     if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   }
-  mc::uxin::poll_pack(inputs, micron::forward<Args>(__input_packet)...);
+  ::micron::uxin::poll_pack(inputs, micron::forward<Args>(__input_packet)...);
 }
 
 // NOTE: if using a pack, be sure to open with a nonblocking method
 template<typename... Args>
-  requires(micron::same_as<input_packet_t, Args> && ...)
+  requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
 read_rt(slice<input_t> &inputs, Args &&...__input_packet)
 {
@@ -159,11 +159,11 @@ read_rt(slice<input_t> &inputs, Args &&...__input_packet)
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
     if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   }
-  mc::uxin::poll_pack_rt(inputs, micron::forward<Args>(__input_packet)...);
+  ::micron::uxin::poll_pack_rt(inputs, micron::forward<Args>(__input_packet)...);
 }
 
 template<typename... Args>
-  requires(micron::same_as<input_packet_t, Args> && ...)
+  requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
 read_once(slice<input_t> &inputs, Args &&...__input_packet)
 {
@@ -171,7 +171,7 @@ read_once(slice<input_t> &inputs, Args &&...__input_packet)
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
     if ( !is_bound(t.device) ) exc<except::library_error>("uxin read(): device isn't bound");
   }
-  mc::uxin::poll_pack_once(inputs, micron::forward<Args>(__input_packet)...);
+  ::micron::uxin::poll_pack_once(inputs, micron::forward<Args>(__input_packet)...);
 }
 
 void
