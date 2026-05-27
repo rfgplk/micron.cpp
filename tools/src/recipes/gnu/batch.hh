@@ -25,7 +25,7 @@ namespace recipes
 {
 namespace gnu
 {
-template <typename... Ts>
+template<typename... Ts>
 string_type
 make_command(Ts &&...ts)
 {
@@ -50,7 +50,7 @@ make_command(Ts &&...ts)
   return r;
 }
 
-template <typename... Fs>
+template<typename... Fs>
 string_type
 make_flags(Fs &&...fs)
 {
@@ -60,7 +60,7 @@ make_flags(Fs &&...fs)
   return r;
 }
 
-template <typename F>
+template<typename F>
 string_type
 make_flags(const mc::constarray<F> flags)
 {
@@ -117,12 +117,12 @@ batch_cmp(const config_t &conf)
 
   // no more useless cast + floats
   const string_type flags_warn_extra = make_flags(
-      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
-      gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
-      gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
-      gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla, gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond,
-      gcc::w_flags::flags::Wduplicated_branches, gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline,
-      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
+      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op, gcc::w_flags::flags::Wnull_dereference,
+      gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual, gcc::w_flags::flags::Woverlength_strings,
+      gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla,
+      gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond, gcc::w_flags::flags::Wduplicated_branches,
+      gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline, gcc::w_flags::flags::Wcast_function_type,
+      gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
       gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines, gcc::w_flags::flags::Warray_bounds,
       gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self, gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister,
       gcc::w_flags::flags::Wsequence_point);
@@ -148,18 +148,30 @@ batch_cmp(const config_t &conf)
                            : "-ftime-report -ftime-report-details -fmem-report -fopt-info -fopt-info-missed")
                     : (__is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "");
 
-  const string_type libs_location = "-L" + conf.lib_path;
-  const string_type includes_location = "-I" + conf.include_path;
+  string_type libs_location;
+  for ( const auto &p : conf.lib_path ) {
+    libs_location += "-L";
+    libs_location += p;
+    libs_location += ' ';
+  }
+  if ( !libs_location.empty() ) libs_location.pop_back();
+  string_type includes_location;
+  for ( const auto &p : conf.include_path ) {
+    includes_location += "-I";
+    includes_location += p;
+    includes_location += ' ';
+  }
+  if ( !includes_location.empty() ) includes_location.pop_back();
   const string_type libs_static
       = conf.static_binary ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp) : "";
 
   string_type command_pre
-      = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, arch_width,
-                                     flags_warn_base, flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions,
-                                     freestanding_post, flags_warn_ignore, flags_extensions_supple)
-                      : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, arch_width,
-                                     flags_warn_base, flags_warn_ignore, flags_extensions, freestanding_post, flags_warn_ignore,
-                                     flags_extensions_supple);
+      = conf.warnings
+            ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, arch_width, flags_warn_base,
+                           flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions, freestanding_post, flags_warn_ignore,
+                           flags_extensions_supple)
+            : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, bin_type, freestanding, arch_width, flags_warn_base,
+                           flags_warn_ignore, flags_extensions, freestanding_post, flags_warn_ignore, flags_extensions_supple);
 
   string_type command_post = make_command(compile_libs, includes_location, libs_location);
 
@@ -214,12 +226,12 @@ batch_cmp_armv7(const config_t &conf)
 
   // no more useless cast + floats
   const string_type flags_warn_extra = make_flags(
-      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
-      gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
-      gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
-      gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla, gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond,
-      gcc::w_flags::flags::Wduplicated_branches, gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline,
-      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
+      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op, gcc::w_flags::flags::Wnull_dereference,
+      gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual, gcc::w_flags::flags::Woverlength_strings,
+      gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla,
+      gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond, gcc::w_flags::flags::Wduplicated_branches,
+      gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline, gcc::w_flags::flags::Wcast_function_type,
+      gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
       gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines, gcc::w_flags::flags::Warray_bounds,
       gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self, gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister,
       gcc::w_flags::flags::Wsequence_point);
@@ -247,8 +259,20 @@ batch_cmp_armv7(const config_t &conf)
                            : "-ftime-report -ftime-report-details -fmem-report -fopt-info -fopt-info-missed")
                     : (__is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "");
 
-  const string_type libs_location = "-L" + conf.lib_path;
-  const string_type includes_location = "-I" + conf.include_path;
+  string_type libs_location;
+  for ( const auto &p : conf.lib_path ) {
+    libs_location += "-L";
+    libs_location += p;
+    libs_location += ' ';
+  }
+  if ( !libs_location.empty() ) libs_location.pop_back();
+  string_type includes_location;
+  for ( const auto &p : conf.include_path ) {
+    includes_location += "-I";
+    includes_location += p;
+    includes_location += ' ';
+  }
+  if ( !includes_location.empty() ) includes_location.pop_back();
   const string_type libs_static
       = conf.static_binary ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp) : "";
 
@@ -305,12 +329,12 @@ batch_cmp_aarch64(const config_t &conf)
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
   const string_type flags_warn_extra = make_flags(
-      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
-      gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
-      gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
-      gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla, gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond,
-      gcc::w_flags::flags::Wduplicated_branches, gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline,
-      gcc::w_flags::flags::Wcast_function_type, gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
+      gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op, gcc::w_flags::flags::Wnull_dereference,
+      gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual, gcc::w_flags::flags::Woverlength_strings,
+      gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wvarargs, gcc::w_flags::flags::Wvla,
+      gcc::w_flags::flags::Wwrite_strings, gcc::w_flags::flags::Wduplicated_cond, gcc::w_flags::flags::Wduplicated_branches,
+      gcc::w_flags::flags::Wdouble_promotion, gcc::w_flags::flags::Winline, gcc::w_flags::flags::Wcast_function_type,
+      gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
       gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines, gcc::w_flags::flags::Warray_bounds,
       gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self, gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister,
       gcc::w_flags::flags::Wsequence_point);
@@ -337,8 +361,20 @@ batch_cmp_aarch64(const config_t &conf)
                            : "-ftime-report -ftime-report-details -fmem-report -fopt-info -fopt-info-missed")
                     : (__is_cpp_standard(conf.standard) ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2" : "");
 
-  const string_type libs_location = "-L" + conf.lib_path;
-  const string_type includes_location = "-I" + conf.include_path;
+  string_type libs_location;
+  for ( const auto &p : conf.lib_path ) {
+    libs_location += "-L";
+    libs_location += p;
+    libs_location += ' ';
+  }
+  if ( !libs_location.empty() ) libs_location.pop_back();
+  string_type includes_location;
+  for ( const auto &p : conf.include_path ) {
+    includes_location += "-I";
+    includes_location += p;
+    includes_location += ' ';
+  }
+  if ( !includes_location.empty() ) includes_location.pop_back();
   const string_type libs_static
       = conf.static_binary ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp) : "";
 
@@ -361,7 +397,13 @@ string_type
 batch_asm(const config_t &conf)
 {
   const string_type main_flags = "-f elf64";
-  const string_type includes_location = "-I" + conf.include_path;
+  string_type includes_location;
+  for ( const auto &p : conf.include_path ) {
+    includes_location += "-I";
+    includes_location += p;
+    includes_location += ' ';
+  }
+  if ( !includes_location.empty() ) includes_location.pop_back();
   string_type command_pre = make_command(conf.compiler_path, main_flags);
 
   string_type command_post = make_command(includes_location);
@@ -384,5 +426,5 @@ batch(const config_t &conf)
   }
   __builtin_trap();
 }
-};     // namespace gnu
-};     // namespace recipes
+};      // namespace gnu
+};      // namespace recipes

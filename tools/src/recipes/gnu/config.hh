@@ -40,6 +40,7 @@ constexpr const string_type __assembler_nasm = "/usr/bin/nasm";
 // Fedora cross compiler paths (linaro sourced, not standard!)
 constexpr const string_type __compiler_gcc_arm_cross = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-gcc";
 constexpr const string_type __compiler_gpp_arm_cross = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-c++";
+// aarch64 (arm64) linaro cross compilers
 constexpr const string_type __compiler_gcc_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-gcc";
 constexpr const string_type __compiler_gpp_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-g++";
 
@@ -100,8 +101,8 @@ struct config_t {
   string_type target_out;
   string_type bin_dir;
   string_type standard;
-  string_type include_path;
-  string_type lib_path;
+  mc::vector<string_type> include_path;
+  mc::vector<string_type> lib_path;
   mc::vector<string_type> bonus_objs;
   mc::vector<string_type> bonus_libs;
   bool warnings = false;
@@ -245,6 +246,8 @@ parse_config(config_t &conf, int argc, char **argv)
   bool user_provided_out = false;
   bool user_provided_type = false;
   bool user_provided_opt = false;
+  bool user_provided_include = false;
+  bool user_provided_lib = false;
 
   for ( int i = 1; i < argc; ++i ) {
     if ( mc::strcmp(argv[i], "-d") == 0 or mc::strcmp(argv[i], "-g") == 0 ) {
@@ -267,10 +270,20 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.arch = __arch::arm64;
     } else if ( mc::strcmp(argv[i], "-i") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the -i flag must be followed by a path");
-      conf.include_path = argv[i];
+      // first user -i replaces the default ./src; subsequent -i flags accumulate
+      if ( !user_provided_include ) {
+        conf.include_path.clear();
+        user_provided_include = true;
+      }
+      conf.include_path.push_back(argv[i]);
     } else if ( mc::strcmp(argv[i], "-l") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the -l flag must be followed by a path");
-      conf.lib_path = argv[i];
+      // first user -l replaces the default ./libs/; subsequent -l flags accumulate
+      if ( !user_provided_lib ) {
+        conf.lib_path.clear();
+        user_provided_lib = true;
+      }
+      conf.lib_path.push_back(argv[i]);
     } else if ( mc::strcmp(argv[i], "--lib") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the --lib flag must be followed by a library name (-l)name");
       conf.bonus_libs.push_back(argv[i]);
@@ -385,8 +398,8 @@ parse_argv_build(int argc, char **argv)
   for ( auto &target : sources ) {
     config_t conf{};
     conf.target = target;
-    conf.include_path = "./src";
-    conf.lib_path = "./libs/";
+    conf.include_path.push_back("./src");
+    conf.lib_path.push_back("./libs/");
     if ( __dir_mode ) {
       string_type sstr = argv[0];
       if ( *(sstr.end() - 1) != '/' ) sstr.push_back('/');
@@ -415,8 +428,8 @@ parse_argv_build_single(int argc, char **argv)
   conf.standard = gcc::__standard_cxx26;
   conf.compile_type = __comp_type::linked;
   conf.bin_dir = "bin/";
-  conf.include_path = "./src";
-  conf.lib_path = "./libs/";
+  conf.include_path.push_back("./src");
+  conf.lib_path.push_back("./libs/");
 
   parse_config(conf, argc, argv);
   return conf;

@@ -146,7 +146,11 @@ help(void)
   mc::console("FLAGS:  includes / libs");
   mc::set_color(mc::color::reset);
   mc::console("    -i <dir>          include search path        (default: ./src)");
+  mc::console("                      may be passed multiple times; the first -i replaces");
+  mc::console("                      the default, subsequent -i's accumulate");
   mc::console("    -l <dir>          library search path        (default: ./libs/)");
+  mc::console("                      may be passed multiple times; the first -l replaces");
+  mc::console("                      the default, subsequent -l's accumulate");
   mc::console("    --lib <name>      link library by name       (-l<name>)");
   mc::console("    -gl               link the libs micron::gfx::gl needs");
   mc::console("                      (libX11, libGL, libwayland-client, libwayland-egl, libEGL)");
