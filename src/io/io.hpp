@@ -132,6 +132,23 @@ max_t
 read(i32 fd, T &buf)
 {
   if ( fd < 0 ) return -error::bad_fd;
+  if constexpr ( has_set_size<T> && requires(T t, usize n) { t.reserve(n); } ) {
+    const max_t sz = posix::lseek(fd, 0, posix::seek_end);
+    if ( sz > 0 ) {
+      posix::lseek(fd, 0, posix::seek_set);
+      const usize need = static_cast<usize>(sz);
+      if ( buf.max_size() <= need ) buf.reserve(need + 1);
+      usize got = 0;
+      while ( got < need ) {
+        const max_t r = posix::read(fd, buf.data() + got, need - got);
+        if ( r < 0 ) return r;
+        if ( r == 0 ) break;
+        got += static_cast<usize>(r);
+      }
+      buf.set_size(got);
+      return static_cast<max_t>(got);
+    }
+  }
   max_t r = posix::read(fd, buf.data(), buf.max_size());
   if constexpr ( has_set_size<T> ) {
     buf.set_size(r);
@@ -146,6 +163,23 @@ read(fd_t fd, T &buf)
 {
   if ( fd.invalid() ) [[unlikely]]
     return -error::bad_fd;
+  if constexpr ( has_set_size<T> && requires(T t, usize n) { t.reserve(n); } ) {
+    const max_t sz = posix::lseek(fd.fd, 0, posix::seek_end);
+    if ( sz > 0 ) {
+      posix::lseek(fd.fd, 0, posix::seek_set);
+      const usize need = static_cast<usize>(sz);
+      if ( buf.max_size() <= need ) buf.reserve(need + 1);
+      usize got = 0;
+      while ( got < need ) {
+        const max_t r = posix::read(fd.fd, buf.data() + got, need - got);
+        if ( r < 0 ) return r;
+        if ( r == 0 ) break;
+        got += static_cast<usize>(r);
+      }
+      buf.set_size(got);
+      return static_cast<max_t>(got);
+    }
+  }
   max_t r = posix::read(fd.fd, buf.data(), buf.max_size());
   if constexpr ( has_set_size<T> ) {
     buf.set_size(r);

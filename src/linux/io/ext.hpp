@@ -446,7 +446,7 @@ struct dir_handle {
   void
   rewind()
   {
-    micron::syscall(SYS_lseek, fd.fd, 0, seek_set);
+    posix::lseek(fd.fd, 0, seek_set);
   }
 };
 
