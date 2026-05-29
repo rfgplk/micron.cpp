@@ -29,8 +29,9 @@ constexpr int __global_buffer_chunk = 1024;
 fd_t stdin = posix::invalid_fd;
 fd_t stdout = posix::invalid_fd;
 fd_t stderr = posix::invalid_fd;
-micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
-micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stderr(nullptr);
+// these must be constinit to prevent clobbering with the default ctor
+constinit micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
+constinit micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stderr(nullptr);
 
 i32
 __verify_open(void)

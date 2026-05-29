@@ -24,11 +24,11 @@ public:
 
   ~free_pointer() { };
 
-  free_pointer(void) : internal_pointer(nullptr) { }      //: internal_pointer(new Type()) {};
+  constexpr free_pointer(void) : internal_pointer(nullptr) { }      //: internal_pointer(new Type()) {};
 
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
-  template<is_nullptr V> free_pointer(V) : internal_pointer(nullptr) { };
+  template<is_nullptr V> constexpr free_pointer(V) : internal_pointer(nullptr) { };
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) { };
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) { };
   template<class... Args>
@@ -166,12 +166,12 @@ template<class Type> class free_pointer<Type[]>: private __internal_pointer_arra
 public:
   ~free_pointer() { };
 
-  free_pointer() : internal_pointer(nullptr) { }
+  constexpr free_pointer() : internal_pointer(nullptr) { }
 
   free_pointer(Type *&&raw_ptr) : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 
   free_pointer(Type *raw_ptr) : internal_pointer(raw_ptr) { };
-  template<is_nullptr V> free_pointer(V) : internal_pointer(nullptr) { };
+  template<is_nullptr V> constexpr free_pointer(V) : internal_pointer(nullptr) { };
   free_pointer(void *raw_ptr) : internal_pointer(reinterpret_cast<Type *>(raw_ptr)) { };
   template<class... Args>
   free_pointer(Args &&...args)

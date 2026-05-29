@@ -12,10 +12,6 @@
 
 #include "../snowball/snowball.hpp"
 
-// ============================================================
-//  Test instrumentation
-// ============================================================
-
 struct Tracker {
   static int constructions;
   static int destructions;
@@ -50,18 +46,10 @@ struct Point {
   Point(int x_, int y_) : x(x_), y(y_) { }
 };
 
-// ============================================================
-//  main
-// ============================================================
-
 int
 main(void)
 {
   sb::print("=== SHARED_POINTER TESTS ===");
-
-  // ============================================================
-  //  Section 1: Construction
-  // ============================================================
 
   sb::test_case("shared_pointer<T>: default construction yields null, refcount 0");
   {
@@ -137,24 +125,20 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 2: Copy semantics and reference counting
-  // ============================================================
-
   sb::test_case("shared_pointer<T>: copy construction increments refcount");
   {
     mc::shared_pointer<int> a(10);
     mc::shared_pointer<int> b(a);
     sb::require(a.refs() == 2);
     sb::require(b.refs() == 2);
-    sb::require(a.get() == b.get());      // same managed object
+    sb::require(a.get() == b.get());
   }
   sb::end_test_case();
 
   sb::test_case("shared_pointer<T>: copy construction from non-const ref increments refcount");
   {
     mc::shared_pointer<int> a(20);
-    mc::shared_pointer<int> b(a);      // non-const copy ctor
+    mc::shared_pointer<int> b(a);
     sb::require(a.refs() == 2);
     sb::require(b.refs() == 2);
   }
@@ -179,9 +163,9 @@ main(void)
     {
       mc::shared_pointer<Tracker> b(a);
       sb::require(a.refs() == 2);
-    }      // b destroyed here
+    }
     sb::require(a.refs() == 1);
-    sb::require(Tracker::destructions == 0);      // object still alive
+    sb::require(Tracker::destructions == 0);
   }
   sb::end_test_case();
 
@@ -214,7 +198,7 @@ main(void)
     {
       mc::shared_pointer<Tracker> a(1);
       mc::shared_pointer<Tracker> b(2);
-      b = a;      // b's old object should be freed (refcount was 1)
+      b = a;
       sb::require(Tracker::destructions == 1);
       sb::require(a.refs() == 2);
       sb::require(b->value == 1);
@@ -227,11 +211,11 @@ main(void)
   {
     Tracker::reset();
     mc::shared_pointer<Tracker> a(10);
-    mc::shared_pointer<Tracker> b(a);      // refs = 2
+    mc::shared_pointer<Tracker> b(a);
     mc::shared_pointer<Tracker> c(20);
-    c = a;                                        // c drops its old object (refs was 1, freed),
-                                                  // then joins a's group (refs = 3)
-    sb::require(Tracker::destructions == 1);      // only c's original object freed
+    c = a;
+
+    sb::require(Tracker::destructions == 1);
     sb::require(a.refs() == 3);
   }
   sb::end_test_case();
@@ -249,24 +233,20 @@ main(void)
   {
     mc::shared_pointer<int> a;
     mc::shared_pointer<int> b(5);
-    b = a;      // b drops its object; a is null; b becomes null
+    b = a;
     sb::require(!b);
     sb::require(b.refs() == 0);
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 3: Move semantics
-  // ============================================================
-
   sb::test_case("shared_pointer<T>: move construction transfers control block");
   {
     mc::shared_pointer<int> a(100);
     int *raw = a.get();
-    mc::shared_pointer<int> b(std::move(a));
-    sb::require(a.refs() == 0);      // a has no control block
+    mc::shared_pointer<int> b(micron::move(a));
+    sb::require(a.refs() == 0);
     sb::require(!a);
-    sb::require(b.refs() == 1);      // b is sole owner
+    sb::require(b.refs() == 1);
     sb::require(b.get() == raw);
     sb::require(*b == 100);
   }
@@ -275,9 +255,9 @@ main(void)
   sb::test_case("shared_pointer<T>: move construction does not alter refcount");
   {
     mc::shared_pointer<int> a(200);
-    mc::shared_pointer<int> shared(a);      // refs = 2
-    mc::shared_pointer<int> b(std::move(a));
-    sb::require(b.refs() == 2);      // moved, not incremented
+    mc::shared_pointer<int> shared(a);
+    mc::shared_pointer<int> b(micron::move(a));
+    sb::require(b.refs() == 2);
     sb::require(!a);
   }
   sb::end_test_case();
@@ -286,7 +266,7 @@ main(void)
   {
     mc::shared_pointer<int> a(300);
     mc::shared_pointer<int> b;
-    b = std::move(a);
+    b = micron::move(a);
     sb::require(!a);
     sb::require(b.refs() == 1);
     sb::require(*b == 300);
@@ -299,7 +279,7 @@ main(void)
     {
       mc::shared_pointer<Tracker> a(1);
       mc::shared_pointer<Tracker> b(2);
-      b = std::move(a);      // b drops its sole-owned object (freed), takes a's
+      b = micron::move(a);
       sb::require(Tracker::destructions == 1);
       sb::require(!a);
       sb::require(b->value == 1);
@@ -312,10 +292,10 @@ main(void)
   {
     Tracker::reset();
     mc::shared_pointer<Tracker> a(10);
-    mc::shared_pointer<Tracker> extra(a);      // refs(a's obj) = 2
+    mc::shared_pointer<Tracker> extra(a);
     mc::shared_pointer<Tracker> b(20);
-    b = std::move(a);                             // b drops its sole-owned object (freed), takes a's control (refs stays 2)
-    sb::require(Tracker::destructions == 1);      // only b's original freed
+    b = micron::move(a);
+    sb::require(Tracker::destructions == 1);
     sb::require(b.refs() == 2);
     sb::require(extra.refs() == 2);
   }
@@ -324,8 +304,8 @@ main(void)
   sb::test_case("shared_pointer<T>: self-move-assignment is safe");
   {
     mc::shared_pointer<int> p(55);
-    p = std::move(p);
-    // implementation guards with `if (this != &o)`
+    p = micron::move(p);
+
     sb::require(p.refs() == 1);
     sb::require(*p == 55);
   }
@@ -335,7 +315,7 @@ main(void)
   {
     int *raw = new int(66);
     mc::shared_pointer<int> p;
-    p = std::move(raw);
+    p = micron::move(raw);
     sb::require(raw == nullptr);
     sb::require(*p == 66);
     sb::require(p.refs() == 1);
@@ -352,10 +332,6 @@ main(void)
     sb::require(p.refs() == 1);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 4: Value assignment (operator=(T&&) / operator=(const T&))
-  // ============================================================
 
   sb::test_case("shared_pointer<T>: assign by const-ref value replaces managed object");
   {
@@ -381,7 +357,7 @@ main(void)
     Tracker::reset();
     mc::shared_pointer<Tracker> p(1);
     Tracker t(2);
-    p = t;      // old object freed, new one allocated
+    p = t;
     sb::require(Tracker::destructions == 1);
     sb::require(p->value == 2);
   }
@@ -391,10 +367,10 @@ main(void)
   {
     Tracker::reset();
     mc::shared_pointer<Tracker> a(1);
-    mc::shared_pointer<Tracker> b(a);      // refs = 2
+    mc::shared_pointer<Tracker> b(a);
     Tracker t(99);
-    a = t;                                        // a detaches from shared object (refs drops to 1), allocates new
-    sb::require(Tracker::destructions == 0);      // shared object still alive via b
+    a = t;
+    sb::require(Tracker::destructions == 0);
     sb::require(a.refs() == 1);
     sb::require(b.refs() == 1);
     sb::require(a->value == 99);
@@ -412,10 +388,6 @@ main(void)
     sb::require(Tracker::destructions == 1);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 5: Dereference and member access
-  // ============================================================
 
   sb::test_case("shared_pointer<T>: operator* returns mutable reference");
   {
@@ -451,7 +423,7 @@ main(void)
   sb::test_case("shared_pointer<T>: operator-> on null returns nullptr (no throw)");
   {
     mc::shared_pointer<int> p;
-    // operator-> returns nullptr rather than throwing; verify it is null
+
     sb::require(p.operator->() == nullptr);
   }
   sb::end_test_case();
@@ -484,10 +456,6 @@ main(void)
     sb::require(p.get() == nullptr);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 6: Boolean operators
-  // ============================================================
 
   sb::test_case("shared_pointer<T>: operator bool — active yields true");
   {
@@ -531,10 +499,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 7: Refcount precision
-  // ============================================================
-
   sb::test_case("shared_pointer<T>: refcount reaches 0 exactly after last copy destroyed");
   {
     mc::shared_pointer<int> a(1);
@@ -553,9 +517,9 @@ main(void)
   sb::test_case("shared_pointer<T>: move does not increment refcount");
   {
     mc::shared_pointer<int> a(1);
-    mc::shared_pointer<int> b(a);      // refs = 2
-    mc::shared_pointer<int> c(std::move(b));
-    sb::require(a.refs() == 2);      // move transferred control, count unchanged
+    mc::shared_pointer<int> b(a);
+    mc::shared_pointer<int> c(micron::move(b));
+    sb::require(a.refs() == 2);
     sb::require(!b);
   }
   sb::end_test_case();
@@ -563,9 +527,9 @@ main(void)
   sb::test_case("shared_pointer<T>: copy then move maintains correct count");
   {
     mc::shared_pointer<int> a(1);
-    mc::shared_pointer<int> b(a);                 // refs = 2
-    mc::shared_pointer<int> c(a);                 // refs = 3
-    mc::shared_pointer<int> d(std::move(c));      // refs stays 3, c emptied
+    mc::shared_pointer<int> b(a);
+    mc::shared_pointer<int> c(a);
+    mc::shared_pointer<int> d(micron::move(c));
     sb::require(a.refs() == 3);
     sb::require(!c);
   }
@@ -574,9 +538,9 @@ main(void)
   sb::test_case("shared_pointer<T>: copy assignment from null decrements refcount");
   {
     mc::shared_pointer<int> a(1);
-    mc::shared_pointer<int> b(a);      // refs = 2
+    mc::shared_pointer<int> b(a);
     mc::shared_pointer<int> empty;
-    b = empty;      // b detaches (refs drops to 1), b becomes null
+    b = empty;
     sb::require(a.refs() == 1);
     sb::require(!b);
   }
@@ -599,10 +563,6 @@ main(void)
     sb::require(*c == 42);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 8: Leak detection via Tracker
-  // ============================================================
 
   sb::test_case("shared_pointer<T>: no leak on single-owner scope exit");
   {
@@ -645,8 +605,8 @@ main(void)
     Tracker::reset();
     {
       mc::shared_pointer<Tracker> a(1);
-      mc::shared_pointer<Tracker> b(std::move(a));
-      mc::shared_pointer<Tracker> c(std::move(b));
+      mc::shared_pointer<Tracker> b(micron::move(a));
+      mc::shared_pointer<Tracker> c(micron::move(b));
     }
     sb::require(Tracker::balanced());
   }
@@ -658,7 +618,7 @@ main(void)
     {
       mc::shared_pointer<Tracker> a(1);
       mc::shared_pointer<Tracker> b(2);
-      b = a;      // b's old (sole-owned) object freed; b joins a
+      b = a;
     }
     sb::require(Tracker::balanced());
   }
@@ -698,10 +658,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 9: Stress
-  // ============================================================
-
   sb::test_case("Stress: 1000 construction/destruction cycles");
   {
     Tracker::reset();
@@ -718,11 +674,10 @@ main(void)
     {
       mc::shared_pointer<Tracker> root(0);
       for ( int i = 0; i < 1000; i++ ) {
-        // copy is scoped to this iteration and destroyed before the next,
-        // so refs is always exactly 2 (root + copy), never accumulates
+
         mc::shared_pointer<Tracker> copy(root);
         sb::require(copy.refs() == static_cast<usize>(2));
-      }      // all copies destroyed each iteration
+      }
       sb::require(root.refs() == 1);
     }
     sb::require(Tracker::balanced());
@@ -736,10 +691,9 @@ main(void)
       mc::shared_pointer<Tracker> anchor(99);
       for ( int i = 0; i < 500; i++ ) {
         mc::shared_pointer<Tracker> tmp(i);
-        tmp = anchor;      // tmp drops sole-owned object, joins anchor
+        tmp = anchor;
       }
-      // Each loop iteration: 1 Tracker constructed (tmp), 1 freed (tmp's old),
-      // anchor's object persists throughout.
+
       sb::require(anchor.refs() == 1);
     }
     sb::require(Tracker::balanced());

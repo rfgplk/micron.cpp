@@ -24,9 +24,9 @@ public:
   // nonowning destructor never frees
   ~weak_pointer() { }
 
-  weak_pointer() : internal_pointer(nullptr) { }
+  constexpr weak_pointer() : internal_pointer(nullptr) { }
 
-  template<is_nullptr V> weak_pointer(V) : internal_pointer(nullptr) { }
+  template<is_nullptr V> constexpr weak_pointer(V) : internal_pointer(nullptr) { }
 
   template<is_pointer_class C> weak_pointer(C &c) : internal_pointer(c.get()) { }
 

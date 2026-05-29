@@ -14,10 +14,6 @@
 
 #include "../snowball/snowball.hpp"
 
-// ============================================================
-//  Instrumentation
-// ============================================================
-
 struct Tracker {
   static int constructions;
   static int destructions;
@@ -52,25 +48,17 @@ struct Point {
   Point(int x_, int y_) : x(x_), y(y_) { }
 };
 
-// ============================================================
-//  main
-// ============================================================
-
 int
 main(void)
 {
   sb::print("=== WEAK_POINTER TESTS ===");
-
-  // ============================================================
-  //  Section 1: Construction
-  // ============================================================
 
   sb::test_case("weak_pointer<T>: default construction yields null");
   {
     mc::weak_pointer<int> w;
     sb::require(!w);
     sb::require(static_cast<bool>(w) == false);
-    sb::require(w.get() == nullptr);      // get() returns nullptr, does not throw
+    sb::require(w.get() == nullptr);
   }
   sb::end_test_case();
 
@@ -123,14 +111,10 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 2: get() returns nullptr — not throws (Bug 2 fix)
-  // ============================================================
-
   sb::test_case("weak_pointer<T>: get() on null returns nullptr, does not throw");
   {
     mc::weak_pointer<int> w;
-    // call directly — if it throws the test fails via exception propagation
+
     int *p = w.get();
     sb::require(p == nullptr);
   }
@@ -161,10 +145,6 @@ main(void)
     sb::require(reached == false);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 3: Copy semantics
-  // ============================================================
 
   sb::test_case("weak_pointer<T>: copy construction shares raw address");
   {
@@ -223,16 +203,12 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 4: Move semantics + self-move guard (Bug 3 fix)
-  // ============================================================
-
   sb::test_case("weak_pointer<T>: move construction transfers pointer, nulls source");
   {
     mc::unique_pointer<int> u(55);
     mc::weak_pointer<int> a(u);
     int *raw = a.get();
-    mc::weak_pointer<int> b(std::move(a));
+    mc::weak_pointer<int> b(micron::move(a));
     sb::require(a.get() == nullptr);
     sb::require(!a);
     sb::require(b.get() == raw);
@@ -245,7 +221,7 @@ main(void)
     mc::unique_pointer<int> u(66);
     mc::weak_pointer<int> a(u);
     mc::weak_pointer<int> b;
-    b = std::move(a);
+    b = micron::move(a);
     sb::require(a.get() == nullptr);
     sb::require(*b == 66);
   }
@@ -256,7 +232,7 @@ main(void)
     mc::unique_pointer<int> u(42);
     mc::weak_pointer<int> w(u);
     int *raw = w.get();
-    w = std::move(w);      // must not null w
+    w = micron::move(w);
     sb::require(w.get() == raw);
     sb::require(*w == 42);
   }
@@ -268,15 +244,11 @@ main(void)
     mc::unique_pointer<Tracker> u(4);
     {
       mc::weak_pointer<Tracker> a(u);
-      mc::weak_pointer<Tracker> b(std::move(a));
+      mc::weak_pointer<Tracker> b(micron::move(a));
     }
     sb::require(Tracker::destructions == 0);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 5: Assignment from owning pointer
-  // ============================================================
 
   sb::test_case("weak_pointer<T>: assignment from unique_pointer rebinds");
   {
@@ -302,10 +274,6 @@ main(void)
     sb::require(s2.refs() == 1);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 6: Dereference and member access
-  // ============================================================
 
   sb::test_case("weak_pointer<T>: operator* returns mutable reference");
   {
@@ -348,10 +316,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 7: active()
-  // ============================================================
-
   sb::test_case("weak_pointer<T>: active() false when null");
   {
     mc::weak_pointer<int> w;
@@ -375,10 +339,6 @@ main(void)
     sb::require(w.active() == false);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 8: release() and operator()
-  // ============================================================
 
   sb::test_case("weak_pointer<T>: release() returns raw address and nulls self");
   {
@@ -420,25 +380,18 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 9: assume_ownership() (Bug 1 fix — was convert())
-  //
-  //  Precondition: original owner must have released first.
-  //  Only then does a single owner exist after the call.
-  // ============================================================
-
   sb::test_case("weak_pointer<T>: assume_ownership() after owner releases — single owner, no double-free");
   {
     Tracker::reset();
     {
       mc::unique_pointer<Tracker> u(123);
       mc::weak_pointer<Tracker> w(u);
-      u.release();      // owner relinquishes
+      u.release();
       mc::unique_pointer<Tracker> promoted = w.assume_ownership();
       sb::require(!w);
       sb::require(promoted.active());
       sb::require(promoted->value == 123);
-    }      // exactly one destructor call here
+    }
     sb::require(Tracker::balanced());
   }
   sb::end_test_case();
@@ -454,10 +407,6 @@ main(void)
     sb::require(*p == 99);
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 10: Boolean operators and comparisons
-  // ============================================================
 
   sb::test_case("weak_pointer<T>: operator bool — bound yields true");
   {
@@ -506,13 +455,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ============================================================
-  //  Section 11: Lifetime and dangling semantics
-  //  weak_pointer has no back-channel to owners.
-  //  These tests verify the contract without dereferencing
-  //  after owner death.
-  // ============================================================
-
   sb::test_case("weak_pointer<T>: address matches owner before destruction");
   {
     mc::unique_pointer<int> u(42);
@@ -529,8 +471,8 @@ main(void)
       mc::shared_pointer<int> s(7);
       w = s;
       sb::require(static_cast<bool>(w));
-    }      // s destroyed — w becomes dangling but stays non-null
-    sb::require(static_cast<bool>(w));      // no back-channel nulling
+    }
+    sb::require(static_cast<bool>(w));
   }
   sb::end_test_case();
 
@@ -542,13 +484,9 @@ main(void)
       w = u;
       sb::require(static_cast<bool>(w));
     }
-    sb::require(static_cast<bool>(w));      // dangling but non-null — expected
+    sb::require(static_cast<bool>(w));
   }
   sb::end_test_case();
-
-  // ============================================================
-  //  Section 12: Stress
-  // ============================================================
 
   sb::test_case("Stress: 1000 borrows from unique_pointer, no owner destruction");
   {
@@ -582,8 +520,8 @@ main(void)
     mc::unique_pointer<Tracker> u(42);
     mc::weak_pointer<Tracker> w(u);
     for ( int i = 0; i < 100; i++ ) {
-      mc::weak_pointer<Tracker> next(std::move(w));
-      w = std::move(next);
+      mc::weak_pointer<Tracker> next(micron::move(w));
+      w = micron::move(next);
     }
     sb::require(w.get() == u.get());
     sb::require(w->value == 42);

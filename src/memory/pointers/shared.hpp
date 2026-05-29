@@ -47,9 +47,9 @@ public:
 
   ~shared_pointer() { __release(); }
 
-  shared_pointer() noexcept : control(nullptr) { }
+  constexpr shared_pointer() noexcept : control(nullptr) { }
 
-  template<is_nullptr V> shared_pointer(V) noexcept : control(nullptr) { }
+  template<is_nullptr V> constexpr shared_pointer(V) noexcept : control(nullptr) { }
 
   explicit shared_pointer(Type *p) : control(p ? __make_control(p) : nullptr) { }
 

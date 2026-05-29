@@ -32,7 +32,7 @@ public:
 
   template<typename V>
     requires micron::is_null_pointer_v<V>
-  __global_pointer(V) noexcept : internal_pointer(nullptr){};
+  constexpr __global_pointer(V) noexcept : internal_pointer(nullptr){};
 
   __global_pointer(Type *&raw_ptr) noexcept : internal_pointer(raw_ptr) { raw_ptr = nullptr; };
 

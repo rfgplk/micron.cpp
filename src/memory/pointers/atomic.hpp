@@ -29,11 +29,11 @@ public:
 
   ~atomic_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer.swap(nullptr)); }
 
-  atomic_pointer(void) noexcept : internal_pointer(nullptr) { }
+  constexpr atomic_pointer(void) noexcept : internal_pointer(nullptr) { }
 
   template<typename V>
     requires micron::is_null_pointer_v<V>
-  atomic_pointer(V) noexcept : internal_pointer(nullptr)
+  constexpr atomic_pointer(V) noexcept : internal_pointer(nullptr)
   {
   }
 
@@ -239,11 +239,11 @@ public:
 
   ~atomic_pointer() noexcept { __alloc::__impl_dealloc(internal_pointer.swap(nullptr)); }
 
-  atomic_pointer(void) noexcept : internal_pointer(nullptr) { }
+  constexpr atomic_pointer(void) noexcept : internal_pointer(nullptr) { }
 
   template<typename V>
     requires micron::is_null_pointer_v<V>
-  atomic_pointer(V) noexcept : internal_pointer(nullptr)
+  constexpr atomic_pointer(V) noexcept : internal_pointer(nullptr)
   {
   }
 

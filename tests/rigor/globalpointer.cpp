@@ -14,8 +14,6 @@
 
 #include <climits>
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
 struct Point {
   int x, y;
 
@@ -43,14 +41,29 @@ struct Counted {
 
 int Counted::instances = 0;
 
-// ─── main ────────────────────────────────────────────────────────────────────
+constinit micron::__global_pointer<int> __siof_buf(nullptr);
+
+__attribute__((constructor)) static void
+__siof_set_buffer(void)
+{
+  int *raw = new int(0xABCD);
+  __siof_buf = raw;
+}
 
 int
 main(void)
 {
   sb::print("=== GLOBAL POINTER TESTS ===");
 
-  // ── construction (scalar) ─────────────────────────────────────────────────
+  sb::test_case("regression - constinit global survives ((constructor)) (SIOF, no -flto)");
+  {
+
+    sb::require(static_cast<bool>(__siof_buf));
+    sb::require(__siof_buf.get() != nullptr);
+    sb::require(*__siof_buf == 0xABCD);
+    __siof_buf.clear();
+  }
+  sb::end_test_case();
 
   sb::test_case("construction - default: allocates, non-null");
   {
@@ -66,7 +79,7 @@ main(void)
     {
       micron::__global_pointer<Counted> p;
       sb::require(Counted::instances == 1);
-      p.clear();      // global pointer does not free on destruction — clear manually
+      p.clear();
     }
     sb::require(Counted::instances == 0);
   }
@@ -130,8 +143,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── key design property: destructor does NOT free ─────────────────────────
-
   sb::test_case("design - destructor does not free: Counted survives scope exit");
   {
     Counted::instances = 0;
@@ -140,15 +151,13 @@ main(void)
       micron::__global_pointer<Counted> p(7);
       sb::require(Counted::instances == 1);
       leaked = p.get();
-    }      // destructor runs here — must NOT free
-    sb::require(Counted::instances == 1);      // still alive
-    // Clean up manually to avoid a true leak in the test binary
+    }
+    sb::require(Counted::instances == 1);
+
     delete leaked;
     sb::require(Counted::instances == 0);
   }
   sb::end_test_case();
-
-  // ── operator bool / operator! (scalar) ───────────────────────────────────
 
   sb::test_case("operator bool - true when active");
   {
@@ -179,8 +188,6 @@ main(void)
     p.clear();
   }
   sb::end_test_case();
-
-  // ── operator* / operator-> (scalar) ──────────────────────────────────────
 
   sb::test_case("operator* - reads correct value");
   {
@@ -262,8 +269,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── value types (scalar) ──────────────────────────────────────────────────
-
   sb::test_case("value type - double: precision preserved");
   {
     micron::__global_pointer<double> p(3.14159265358979);
@@ -304,8 +309,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── get / release (scalar) ────────────────────────────────────────────────
-
   sb::test_case("get - returns non-null address when active");
   {
     micron::__global_pointer<int> p(5);
@@ -341,8 +344,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── clear (scalar) ────────────────────────────────────────────────────────
-
   sb::test_case("clear - frees object and nulls pointer");
   {
     Counted::instances = 0;
@@ -371,8 +372,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── assignment (scalar) ───────────────────────────────────────────────────
-
   sb::test_case("move assignment - transfers ownership, source null");
   {
     micron::__global_pointer<int> a(55);
@@ -391,7 +390,7 @@ main(void)
     micron::__global_pointer<Counted> b(2);
     sb::require(Counted::instances == 2);
     b = micron::move(a);
-    sb::require(Counted::instances == 1);      // b's old object freed
+    sb::require(Counted::instances == 1);
     sb::require(b->id == 1);
     b.clear();
     sb::require(Counted::instances == 0);
@@ -407,29 +406,24 @@ main(void)
     sb::require(Counted::instances == 2);
     p = raw;
     sb::require(raw == nullptr);
-    sb::require(Counted::instances == 1);      // first object freed
+    sb::require(Counted::instances == 1);
     sb::require(p->id == 2);
     p.clear();
     sb::require(Counted::instances == 0);
   }
   sb::end_test_case();
 
-  // ── comparisons (scalar) ──────────────────────────────────────────────────
-
   sb::test_case("operator== - same pointer-class object: true");
   {
     micron::__global_pointer<int> a(10);
     micron::__global_pointer<int> b(nullptr);
-    // make b point at same address by raw transfer
+
     int *raw = a.get();
-    // compare a against a wrapper holding the same address via get()
-    // (can't copy-construct, so compare via raw address in a second global ptr)
-    sb::require(a.get() == raw);      // trivially true, confirms get() stability
+
+    sb::require(a.get() == raw);
     a.clear();
   }
   sb::end_test_case();
-
-  // ── array spec construction ───────────────────────────────────────────────
 
   sb::test_case("array - construction with size arg: non-null, active");
   {
@@ -476,13 +470,11 @@ main(void)
       sb::require(Counted::instances == 2);
       leaked = p.get();
     }
-    sb::require(Counted::instances == 2);      // still alive after scope
+    sb::require(Counted::instances == 2);
     delete[] leaked;
     sb::require(Counted::instances == 0);
   }
   sb::end_test_case();
-
-  // ── array operator[] ──────────────────────────────────────────────────────
 
   sb::test_case("array operator[] - non-const read all elements");
   {
@@ -522,8 +514,6 @@ main(void)
     sb::require(threw);
   }
   sb::end_test_case();
-
-  // ── array operator* / operator-> ─────────────────────────────────────────
 
   sb::test_case("array operator* - returns reference to first element");
   {
@@ -591,8 +581,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── array operator bool / operator! ──────────────────────────────────────
-
   sb::test_case("array operator bool - true when active");
   {
     micron::__global_pointer<int[]> p(2);
@@ -616,8 +604,6 @@ main(void)
     sb::require(!p == true);
   }
   sb::end_test_case();
-
-  // ── array get / release / clear ───────────────────────────────────────────
 
   sb::test_case("array get - returns non-null address");
   {
@@ -656,8 +642,6 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── array move assignment ─────────────────────────────────────────────────
-
   sb::test_case("array move assignment - transfers, source null, old freed (Counted)");
   {
     Counted::instances = 0;
@@ -665,7 +649,7 @@ main(void)
     micron::__global_pointer<Counted[]> b(2);
     sb::require(Counted::instances == 3);
     b = micron::move(a);
-    sb::require(Counted::instances == 1);      // b's two old objects freed
+    sb::require(Counted::instances == 1);
     b.clear();
     sb::require(Counted::instances == 0);
   }
@@ -680,7 +664,7 @@ main(void)
     sb::require(Counted::instances == 3);
     p = raw;
     sb::require(raw == nullptr);
-    sb::require(Counted::instances == 2);      // original single element freed
+    sb::require(Counted::instances == 2);
     p.clear();
     sb::require(Counted::instances == 0);
   }
