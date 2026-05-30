@@ -233,14 +233,14 @@ public:
   operator bool() const noexcept
   {
     micron::lock_guard lock(mtx);
-    return control ? control->refs : 0;
+    return control ? control->refs.get(memory_order_relaxed) : 0;
   }
 
   usize
   refs() const noexcept
   {
     micron::lock_guard lock(mtx);
-    return control ? control->refs : 0;
+    return control ? control->refs.get(memory_order_relaxed) : 0;
   }
 };
 

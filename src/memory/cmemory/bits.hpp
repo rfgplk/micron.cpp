@@ -114,9 +114,11 @@ bool
 __is_at_stack(const F *ptr, const u64 size) noexcept
 {
   if ( ptr == nullptr ) return false;
-  const addr_t *addr = reinterpret_cast<const addr_t *>(ptr);
+  const uintptr_t a = reinterpret_cast<uintptr_t>(ptr);
   stack_t st = get_stack();
-  if ( (addr < st.start) or (addr + size >= st.start + st.size) ) return false;
+  const uintptr_t lo = reinterpret_cast<uintptr_t>(st.start);
+  const uintptr_t hi = lo + st.size;
+  if ( a < lo or a > hi or size > static_cast<uintptr_t>(hi - a) ) return false;
   return true;
 }
 
@@ -124,9 +126,11 @@ template<typename F>
 bool
 __is_at_stack(F &ref, const u64 size) noexcept
 {
-  addr_t *addr = reinterpret_cast<addr_t *>(ref);
+  const uintptr_t a = reinterpret_cast<uintptr_t>(&ref);
   stack_t st = get_stack();
-  if ( (addr < st.start) or ((addr + size) >= (st.start + st.size)) ) return false;
+  const uintptr_t lo = reinterpret_cast<uintptr_t>(st.start);
+  const uintptr_t hi = lo + st.size;
+  if ( a < lo or a > hi or size > static_cast<uintptr_t>(hi - a) ) return false;
   return true;
 }
 
@@ -134,9 +138,11 @@ template<typename F>
 bool
 __is_at_stack(const F &ref, const u64 size) noexcept
 {
-  addr_t *const addr = reinterpret_cast<addr_t *const>(ref);
+  const uintptr_t a = reinterpret_cast<uintptr_t>(&ref);
   stack_t st = get_stack();
-  if ( (addr < st.start) or (addr + size >= st.start + st.size) ) return false;
+  const uintptr_t lo = reinterpret_cast<uintptr_t>(st.start);
+  const uintptr_t hi = lo + st.size;
+  if ( a < lo or a > hi or size > static_cast<uintptr_t>(hi - a) ) return false;
   return true;
 }
 

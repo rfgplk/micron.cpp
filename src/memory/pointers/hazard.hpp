@@ -34,7 +34,7 @@ __emplace_hazard(void)
   return numeric_limits<usize>::max();
 };
 
-inline __attribute__((always_inline)) usize
+inline __attribute__((always_inline)) void
 __pop_hazard(usize _id) noexcept
 {
   __hazard_table[_id].ptr.__store(0, memory_order::relaxed);
@@ -46,7 +46,6 @@ class hazard_pointer
   using pointer_type = threaded_pointer_tag;
   using category_type = pointer_tag;
   using mutability_type = mutable_tag;
-  using value_type = void;
   using value_type = void;
   static constexpr usize _end = numeric_limits<usize>::max();
   usize _id = _end;
@@ -102,7 +101,7 @@ public:
     for ( ;; ) {
       T *ptr = src.__get(memory_order::acquire);
       __update_seqcst(ptr);
-      if ( ptr == src.load(memory_order::acquire) ) return ptr;
+      if ( ptr == src.__get(memory_order::acquire) ) return ptr;
     }
   }
 
@@ -125,8 +124,8 @@ public:
   reset_protection(const T *ptr) noexcept
   {
     if ( _id == _end ) return;
-    T *expected = const_cast<T *>(ptr);
-    __hazard_table[_id].ptr.compare_exchange_strong(expected, (bool)nullptr, memory_order::acq_rel, memory_order::acquire);
+    void *expected = static_cast<void *>(const_cast<T *>(ptr));
+    __hazard_table[_id].ptr.compare_exchange_strong(expected, static_cast<void *>(nullptr), memory_order::acq_rel, memory_order::acquire);
   }
 
   void

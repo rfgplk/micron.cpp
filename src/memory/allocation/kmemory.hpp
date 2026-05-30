@@ -43,7 +43,7 @@ template<typename T = byte> struct alignas(16) __chunk {      // total memory al
   bool
   failed_allocation(void) const noexcept
   {
-    return ((ptr == micron::numeric_limits<byte *>::max() - 1) and len == 0xFF);
+    return ((ptr == micron::numeric_limits<byte *>::max()) and len == 0xFF);
   }
 
   bool

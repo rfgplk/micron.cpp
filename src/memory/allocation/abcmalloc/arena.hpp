@@ -130,7 +130,7 @@ static inline micron::__chunk<byte>
 __get_guarded_kernel_chunk(usize sz)
 {
   auto chnk = __get_kernel_chunk<micron::__chunk<byte>>(sz + __system_pagesize);
-  if ( chnk.zero() or chnk.ptr == (byte *)-1 ) [[unlikely]] {
+  if ( chnk.zero() or micron::mmap_failed(chnk.ptr) ) [[unlikely]] {
     __debug_print("__get_guarded_kernel_chunk()!!!: mmap failed for size: ", sz + __system_pagesize);
     micron::abort();
   }
@@ -146,7 +146,7 @@ __get_guarded_kernel_chunk(usize sz)
 static inline bool
 __kernel_chunk_valid(const micron::__chunk<byte> &chnk)
 {
-  return chnk.ptr != nullptr and chnk.ptr != (byte *)-1 and chnk.len != 0;
+  return chnk.ptr != nullptr and not micron::mmap_failed(chnk.ptr) and chnk.len != 0;
 }
 
 class __arena: private cache
@@ -1083,12 +1083,15 @@ class __arena: private cache
   inline bool
   __tier_remove_at(TierT &tier, i32 range_idx, byte *addr)
   {
+    [[maybe_unused]] auto &sh = *tier.__idx[range_idx].nd->nd;
+    // NOTE: block-validity guard on EVERY tier
+    if constexpr ( !__default_redzone ) {
+      if ( !sh.is_block_allocated(addr) ) [[unlikely]] return handle_double_free(addr);
+    }
     // sizeless cache-push fast path
     if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder && !__default_redzone ) {
-      auto *nd = tier.__idx[range_idx].nd;
-      auto &sh = *nd->nd;
-      // double / bogus free guard
-      if ( !sh.is_block_allocated(addr) || tier.__cache.contains(addr) ) [[unlikely]]
+      // already-cached double-free guard (block-validity handled above)
+      if ( tier.__cache.contains(addr) ) [[unlikely]]
         return handle_double_free(addr);
       if ( !sh.is_temporal_block(addr) ) {
         const usize bsz = sh.block_size_of(addr);
@@ -1248,6 +1251,26 @@ class __arena: private cache
   __vmap_within(addr_t *addr) const
   {
     return __dispatch_addr(addr, [](const auto &, i32) { return true; });
+  }
+
+  bool
+  __vmap_valid_block(addr_t *addr) const
+  {
+    // proper validity check
+    if constexpr ( __default_redzone ) {
+      i32 idx;
+      if ( (idx = _precise.find_range(addr)) >= 0 )
+        return _precise.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr) - __default_redzone_size);
+      if ( (idx = _small.find_range(addr)) >= 0 )
+        return _small.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr) - __default_redzone_size);
+      if ( (idx = _medium.find_range(addr)) >= 0 ) return _medium.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr));
+      if ( (idx = _large.find_range(addr)) >= 0 ) return _large.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr));
+      if ( (idx = _huge.find_range(addr)) >= 0 ) return _huge.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr));
+      return false;
+    }
+    return __dispatch_addr(addr, [&](const auto &tier, i32 idx) {
+      return tier.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr));
+    });
   }
 
   bool
@@ -1649,7 +1672,7 @@ public:
     if ( !check_alignment(mem.ptr) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem.ptr)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem.ptr)) ) {
         __debug_print_addr("pop()!!!: provenance check failed for: ", mem.ptr);
         return fail_state();
       }
@@ -1674,7 +1697,7 @@ public:
     if ( !check_alignment(mem) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
         __debug_print_addr("pop()!!!: provenance check failed for: ", mem);
         return fail_state();
       }
@@ -1701,6 +1724,23 @@ public:
   }
 
   bool
+  is_valid_block(addr_t *mem) const
+  {
+    return mem ? __vmap_valid_block(mem) : false;
+  }
+
+  bool
+  __is_cached(byte *ptr)
+  {
+    bool cached = false;
+    (void)__dispatch_addr(reinterpret_cast<addr_t *>(ptr), [&](auto &tier, i32) {
+      cached = tier.__cache.contains(ptr);
+      return true;
+    });
+    return cached;
+  }
+
+  bool
   pop(byte *mem, usize len)
   {
     if ( !mem ) return false;
@@ -1709,7 +1749,7 @@ public:
     if ( !check_alignment(mem) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
         __debug_print_addr("pop(len)!!!: provenance check failed for: ", mem);
         return fail_state();
       }
@@ -1732,7 +1772,7 @@ public:
     if ( !check_alignment(mem.ptr) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem.ptr)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem.ptr)) ) {
         __debug_print_addr("ts_pop()!!!: provenance check failed for: ", mem.ptr);
         return fail_state();
       }
@@ -1756,7 +1796,7 @@ public:
     if ( !check_alignment(mem) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
         __debug_print_addr("ts_pop() addr!!!: provenance check failed for: ", mem);
         return fail_state();
       }
@@ -1779,7 +1819,7 @@ public:
     if ( !check_alignment(mem) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
         __debug_print_addr("ts_pop(len)!!!: provenance check failed for: ", mem);
         return fail_state();
       }
@@ -1802,7 +1842,7 @@ public:
     if ( !check_alignment(mem.ptr) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem.ptr)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem.ptr)) ) {
         __debug_print_addr("freeze()!!!: provenance check failed for: ", mem.ptr);
         return fail_state();
       }
@@ -1820,7 +1860,7 @@ public:
     if ( !check_alignment(mem) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
         __debug_print_addr("freeze() addr!!!: provenance check failed for: ", mem);
         return fail_state();
       }
@@ -1838,7 +1878,7 @@ public:
     if ( !check_alignment(mem) ) [[unlikely]]
       return fail_state();
     if constexpr ( __default_enforce_provenance ) {
-      if ( !has_provenance(reinterpret_cast<addr_t *>(mem)) ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
         __debug_print_addr("freeze(len)!!!: provenance check failed for: ", mem);
         return fail_state();
       }
@@ -1910,6 +1950,7 @@ public:
   byte *
   resize(byte *ptr, usize new_sz)
   {
+    if ( __is_cached(ptr) ) [[unlikely]] return nullptr;
     const usize old_size = __size_of_alloc(reinterpret_cast<addr_t *>(ptr));
     if ( old_size == 0 ) [[unlikely]]
       return nullptr;
@@ -1940,17 +1981,24 @@ public:
     // tlsf classes: block header at ptr - __hdr_offset, first u32 is bsize
     // with redzones: user ptr is shifted by __default_redzone_size from the
     // TLSF return pointer, so the header is at ptr - rz_size - __hdr_offset
-    if ( (idx = _precise.find_range(addr)) >= 0 or (idx = _small.find_range(addr)) >= 0 ) {
+    {
+      byte *tlsf_user = reinterpret_cast<byte *>(addr);
+      usize tlsf_overhead = __hdr_offset;
       if constexpr ( __default_redzone ) {
-        u32 bsz = *reinterpret_cast<u32 *>(reinterpret_cast<byte *>(addr) - static_cast<usize>(__default_redzone_size) - __hdr_offset);
-        usize recovered = (usize)bsz - __hdr_offset - 2 * __default_redzone_size;
-        __debug_print("__size_of_alloc(): tlsf block size (rz-adjusted): ", recovered);
+        tlsf_user -= static_cast<usize>(__default_redzone_size);
+        tlsf_overhead = __hdr_offset + 2 * static_cast<usize>(__default_redzone_size);
+      }
+      if ( (idx = _precise.find_range(addr)) >= 0 ) {
+        const usize bs = _precise.__idx[idx].nd->nd->block_size_of(tlsf_user);
+        const usize recovered = (bs > tlsf_overhead) ? bs - tlsf_overhead : 0;
+        __debug_print("__size_of_alloc(): precise tlsf user size: ", recovered);
         return recovered;
-      } else {
-        u32 bsz = *reinterpret_cast<u32 *>(reinterpret_cast<byte *>(addr) - __hdr_offset);
-        __debug_print("__size_of_alloc(): tlsf raw bsize: ", (usize)bsz);
-        __debug_print("__size_of_alloc(): tlsf user size: ", (usize)(bsz - __hdr_offset));
-        return (usize)(bsz - __hdr_offset);
+      }
+      if ( (idx = _small.find_range(addr)) >= 0 ) {
+        const usize bs = _small.__idx[idx].nd->nd->block_size_of(tlsf_user);
+        const usize recovered = (bs > tlsf_overhead) ? bs - tlsf_overhead : 0;
+        __debug_print("__size_of_alloc(): small tlsf user size: ", recovered);
+        return recovered;
       }
     }
 

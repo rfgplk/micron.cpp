@@ -12,8 +12,6 @@ namespace micron
 {
 
 // atomic_pointer
-// thread safe unique pointer
-// equivalent of unique_pointer but with atomic guarantees via atomic<>
 template<class Type> class atomic_pointer: private __internal_pointer_alloc<Type>
 {
   atomic_token<Type *> internal_pointer;
@@ -208,11 +206,10 @@ public:
   compare_exchange_strong(Type *&expected, Type *&&desired, memory_order success = memory_order_seq_cst,
                           memory_order failure = memory_order_seq_cst) noexcept
   {
-    if ( internal_pointer.compare_and_swap(expected, desired) ) {
+    if ( internal_pointer.compare_exchange_strong(expected, desired, success, failure) ) {
       desired = nullptr;
       return true;
     }
-    expected = internal_pointer.get(failure);
     return false;
   }
 

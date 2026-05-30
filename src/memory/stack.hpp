@@ -12,13 +12,13 @@ auto get_stack(void) -> stack_t;
 
 // in __threads.hpp
 
-auto
+inline auto
 get_stack_start(void) -> addr_t *
 {
   return get_stack().start;
 }
 
-auto
+inline auto
 get_stack_size(void) -> usize
 {
   return get_stack().size;

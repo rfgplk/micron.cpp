@@ -9,7 +9,7 @@ namespace micron
 {
 
 // included
-constexpr static const addr_t *map_failed = numeric_limits<addr_t *>::max();
+inline const addr_t *map_failed = reinterpret_cast<addr_t *>(~static_cast<uintptr_t>(0));
 constexpr static const i32 prot_read = 0x1;             /* page can be read.  */
 constexpr static const i32 prot_write = 0x2;            /* page can be written.  */
 constexpr static const i32 prot_exec = 0x4;             /* page can be executed.  */

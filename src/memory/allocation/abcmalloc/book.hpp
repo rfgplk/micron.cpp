@@ -154,7 +154,7 @@ public:
     if ( empty() ) micron::abort();
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
 
-    if ( _p.zero() or _p.invalid() ) return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
+    if ( _p.zero() or _p.invalid() ) return { micron::numeric_limits<byte *>::max(), 0xFF };
     return _p;
   }
 
@@ -410,7 +410,7 @@ public:
   {
     if ( empty() ) micron::abort();
     micron::__chunk<byte> _p = __book.allocate(mem_sz);
-    if ( _p.zero() or _p.invalid() ) return { (micron::numeric_limits<byte *>::max() - 1), 0xFF };
+    if ( _p.zero() or _p.invalid() ) return { micron::numeric_limits<byte *>::max(), 0xFF };
     return _p;
   }
 

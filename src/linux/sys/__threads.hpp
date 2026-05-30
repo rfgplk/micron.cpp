@@ -337,7 +337,7 @@ cancel(void)
 
 };      // namespace pthread
 
-auto
+inline auto
 get_stack(void) -> stack_t
 {
   pthread_attr_t attr;

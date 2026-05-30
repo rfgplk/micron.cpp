@@ -145,13 +145,13 @@ template<is_atomic_type T> struct atomic_token {
   T
   operator++() noexcept
   {
-    return atom::add_fetch(&v, 1, atomic_seq_cst);
+    return atom::add_fetch(&v, static_cast<T>(1), atomic_seq_cst);
   };
 
   T
   operator--() noexcept
   {
-    return atom::sub_fetch(&v, 1, atomic_seq_cst);
+    return atom::sub_fetch(&v, static_cast<T>(1), atomic_seq_cst);
   };
 
   T
@@ -827,70 +827,52 @@ public:
   T
   load(memory_order order = memory_order::seq_cst) const noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    return tmp.get(order);
+    return atom::load(ptr, (int)order);
   }
 
   void
   store(T val, memory_order order = memory_order::seq_cst) noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    tmp.store(val, order);
+    atom::store(ptr, val, (int)order);
   }
 
   T
   exchange(T val, memory_order order = memory_order::seq_cst) noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    return tmp.swap(val);
+    return atom::exchange(ptr, val, (int)order);
   }
 
   bool
   compare_exchange_strong(T &expected, T desired, memory_order success = memory_order::seq_cst,
                           memory_order failure = memory_order::seq_cst) noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    return tmp.compare_exchange_strong(expected, desired, success, failure);
+    return atom::compare_exchange(ptr, &expected, desired, false, (int)success, (int)failure);
   }
 
   T
   operator++() noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    return ++tmp;
+    return atom::add_fetch(ptr, static_cast<T>(1), atomic_seq_cst);
   }
 
   T
   operator--() noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    return --tmp;
+    return atom::sub_fetch(ptr, static_cast<T>(1), atomic_seq_cst);
   }
 
   template<typename U = T>
   micron::enable_if_t<micron::is_arithmetic_v<U>, U>
   fetch_add(U val, memory_order order = memory_order::seq_cst) noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    T old = tmp.get(order);
-    T new_ = old + val;
-    while ( !tmp.compare_and_swap(old, new_) ) {
-      new_ = old + val;
-    }
-    return old;
+    return atom::fetch_add(ptr, static_cast<T>(val), (int)order);
   }
 
   template<typename U = T>
   micron::enable_if_t<micron::is_arithmetic_v<U>, U>
   fetch_sub(U val, memory_order order = memory_order::seq_cst) noexcept
   {
-    atomic_token<T> tmp(*ptr);
-    T old = tmp.get(order);
-    T new_ = old - val;
-    while ( !tmp.compare_and_swap(old, new_) ) {
-      new_ = old - val;
-    }
-    return old;
+    return atom::fetch_sub(ptr, static_cast<T>(val), (int)order);
   }
 
   explicit

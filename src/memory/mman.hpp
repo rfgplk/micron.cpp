@@ -15,7 +15,7 @@
 namespace micron
 {
 
-// NOTE: mmap returns -1 on failure, will roll over
+// NOTE: the raw mmap syscall returns -ERRNO on failure
 inline __attribute__((always_inline)) addr_t *
 mmap(addr_t *__restrict addr, usize len, int prot, int flags, int fd, posix::off_t offset)
 {
@@ -154,7 +154,9 @@ template<typename T>
 inline bool
 mmap_failed(T *addr)
 {
-  return (reinterpret_cast<addr_t *>(addr) == map_failed);
+  // the kernel signals mmap failure by returning -errno in [-4095, -1]
+  // this way we catch the whole range
+  return (reinterpret_cast<uintptr_t>(addr) >= static_cast<uintptr_t>(-4095));
 }
 
 class __default_map

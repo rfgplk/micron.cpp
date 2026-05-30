@@ -53,8 +53,7 @@ __memset_words(byte *restrict d, const u64 w, const u64 bytes) noexcept
   if ( w == broadcast_byte(b0) ) return __memset_bytes(d, b0, bytes);
   if ( bytes < __simd_dispatch_threshold ) {
     const u64 wn = bytes / sizeof(u64);
-    u64 *wp = reinterpret_cast<u64 *>(d);
-    for ( u64 i = 0; i < wn; i++ ) wp[i] = w;
+    for ( u64 i = 0; i < wn; i++ ) __builtin_memcpy(d + i * sizeof(u64), &w, sizeof(u64));
     const u64 rem = bytes % sizeof(u64);
     if ( rem ) {
       const byte *wb = reinterpret_cast<const byte *>(&w);
@@ -2169,7 +2168,7 @@ memfrob(F *src, u64 n) noexcept
 {
   F *a = src;
   while ( n-- > 0 ) *a++ ^= 0x15;
-  return a;
+  return src;
 }
 };      // namespace micron
 

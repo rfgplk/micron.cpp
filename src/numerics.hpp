@@ -150,6 +150,42 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
+template<class T> class numeric_limits<T *>
+{
+public:
+  static constexpr bool is_specialized = true;
+
+  static constexpr T *
+  min() noexcept
+  {
+    return nullptr;
+  }
+
+  static T *
+  max() noexcept
+  {
+    return reinterpret_cast<T *>(~static_cast<uintptr_t>(0));
+  }
+
+  static constexpr T *
+  lowest() noexcept
+  {
+    return nullptr;
+  }
+
+  static constexpr int digits = static_cast<int>(sizeof(T *) * 8);
+  static constexpr int digits10 = 0;
+  static constexpr int max_digits10 = 0;
+  static constexpr bool is_signed = false;
+  static constexpr bool is_integer = false;
+  static constexpr bool is_exact = true;
+  static constexpr int radix = 2;
+  static constexpr bool is_bounded = true;
+  static constexpr bool is_modulo = true;
+  static constexpr bool traps = false;
+  static constexpr bool tinyness_before = false;
+};
+
 template<> class numeric_limits<bool>
 {
 public:

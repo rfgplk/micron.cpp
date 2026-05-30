@@ -244,7 +244,7 @@ public:
   usize
   refs() const noexcept
   {
-    return control ? control->refs : 0;
+    return control ? control->refs.get(memory_order_relaxed) : 0;
   }
 };
 

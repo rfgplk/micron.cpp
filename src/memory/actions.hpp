@@ -178,7 +178,7 @@ cmp_less(T t, F f)
   if constexpr ( micron::is_signed_v<T> == micron::is_signed_v<F> )
     return t < f;
   else if constexpr ( micron::is_signed_v<T> )
-    return t < 0 && micron::make_unsigned_t<T>(t) < f;
+    return t < 0 || micron::make_unsigned_t<T>(t) < f;
   else if constexpr ( micron::is_class_v<T> && micron::is_class_v<F> )
     return t < f;
   else

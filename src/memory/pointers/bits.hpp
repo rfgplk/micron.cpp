@@ -113,8 +113,7 @@ template<class Type> struct __internal_pointer_arralloc {
 
 template<typename T> struct shared_handler {
   T *pnt;
-  count_t refs;
-  // count_t weaks
+  atomic_token<count_t> refs;
 };
 
 template<typename T> using thread_safe_handler = atomic<shared_handler<T>>;

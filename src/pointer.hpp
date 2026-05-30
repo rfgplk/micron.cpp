@@ -19,7 +19,7 @@ using count_t = size_t;
 // atom_ptr_arr<T>: atomic owning pointer to a heap-allocated array of T
 // uptr<T>        : alias for ptr<T>
 // sptr<T>        : shared ownership across multiple owners; use when lifetime is non-deterministic
-// fptr<T>        : non-owning borrow of a raw pointer; use when lifetime is guaranteed by the caller
+// fptr<T>        : manual-lifetime pointer handle, buts its destructor NEVER frees
 // wptr<T>        : non-owning observer of a shared_pointer that does not extend lifetime; use to break cycles
 // cptr<T>        : immutable owning pointer; value cannot be changed after construction
 // cptr_arr<T>    : immutable owning pointer to a heap-allocated array of T
