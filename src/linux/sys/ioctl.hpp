@@ -125,11 +125,11 @@ io_get_size(u64 nr)
   return (((nr) >> __ioc_sizeshift) & __ioc_sizemask);
 }
 
-#define ioc_in (__ioc_write << __ioc_dirshift)
-#define ioc_out (__ioc_read << __ioc_dirshift)
-#define ioc_inout ((__ioc_write | __ioc_read) << __ioc_dirshift)
-#define iocsize_mask (__ioc_sizemask << __ioc_sizeshift)
-#define iocsize_shift (__ioc_sizeshift)
+constexpr static const u64 ioc_in = (__ioc_write << __ioc_dirshift);
+constexpr static const u64 ioc_out = (__ioc_read << __ioc_dirshift);
+constexpr static const u64 ioc_inout = ((__ioc_write | __ioc_read) << __ioc_dirshift);
+constexpr static const u64 iocsize_mask = (__ioc_sizemask << __ioc_sizeshift);
+constexpr static const u64 iocsize_shift = (__ioc_sizeshift);
 
 // BEGIN CONSTANTS
 

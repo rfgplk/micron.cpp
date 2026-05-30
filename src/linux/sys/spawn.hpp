@@ -96,7 +96,7 @@ __apply_file_actions(const spawn_file_actions_t &fa)
     switch ( a.type ) {
     case SPAWN_ACTION_OPEN: {
       auto fd = micron::openat(at_fdcwd, a.path, a.oflag, a.mode);
-      if ( fd < 0 ) return -errno;
+      if ( fd < 0 ) return static_cast<int>(fd);
       if ( fd != a.fd ) {
         micron::dup3(fd, a.fd, 0);
         micron::close(fd);
@@ -119,24 +119,31 @@ int
 __apply_spawnattr(const spawnattr_t &attr)
 {
   // TODO: push as separate file
-  if ( attr.__flags & posix_spawn_setpgroup )
-    if ( micron::syscall(SYS_setpgid, 0, attr.pgrp) < 0 ) return -errno;
+  if ( attr.__flags & posix_spawn_setpgroup ) {
+    long r = micron::syscall(SYS_setpgid, 0, attr.pgrp);
+    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  }
+  if ( attr.__flags & posix_spawn_setsigmask ) {
+    long r = micron::syscall(SYS_rt_sigprocmask, sig_setmask, &attr.ss, nullptr, __sig_syscall_size);
+    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  }
+  if ( attr.__flags & posix_spawn_setsigdef ) {
+    long r = micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, __sig_syscall_size);
+    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  }
+  if ( attr.__flags & posix_spawn_setscheduler ) {
+    long r = micron::syscall(SYS_sched_setscheduler, 0, attr.policy, &attr.__sp);
+    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  }
+  if ( attr.__flags & posix_spawn_setschedparam ) {
+    long r = micron::syscall(SYS_sched_setparam, 0, &attr.__sp);
+    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  }
 
-  if ( attr.__flags & posix_spawn_setsigmask )
-    if ( micron::syscall(SYS_rt_sigprocmask, sig_setmask, &attr.ss, nullptr, __sig_syscall_size) < 0 ) return -errno;
-
-  if ( attr.__flags & posix_spawn_setsigdef )
-    if ( micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, __sig_syscall_size) < 0 ) return -errno;
-
-  if ( attr.__flags & posix_spawn_setscheduler )
-    if ( micron::syscall(SYS_sched_setscheduler, 0, attr.policy, &attr.__sp) < 0 ) return -errno;
-
-  if ( attr.__flags & posix_spawn_setschedparam )
-    if ( micron::syscall(SYS_sched_setparam, 0, &attr.__sp) < 0 ) return -errno;
-
-  // if ( attr.cgroup >= 0 )
-  //   if ( micron::syscall(SYS_setns, attr.cgroup, CLONE_NEWCGROUP) < 0 )
-  //     return -errno;
+  // if ( attr.cgroup >= 0 ) {
+  //   long r = micron::syscall(SYS_setns, attr.cgroup, CLONE_NEWCGROUP);
+  //   if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  // }
 
   return 0;
 }
@@ -144,21 +151,20 @@ __apply_spawnattr(const spawnattr_t &attr)
 __attribute__((noreturn)) int
 spawn_process(spawn_ctx *ctx)
 {
-
+  long err = 0;
   if ( ctx->fa ) {
-    int r = __apply_file_actions(*ctx->fa);
-    if ( r < 0 ) goto fail;
+    err = __apply_file_actions(*ctx->fa);
+    if ( err < 0 ) goto fail;
   }
-
   if ( ctx->attr ) {
-    int r = __apply_spawnattr(*ctx->attr);
-    if ( r < 0 ) goto fail;
+    err = __apply_spawnattr(*ctx->attr);
+    if ( err < 0 ) goto fail;
   }
-  posix::execve(ctx->path, ctx->argv, ctx->envp);
+  err = posix::execve(ctx->path, ctx->argv, ctx->envp);      // only returns on failure (raw -errno)
 
 fail:
-  int err = errno;
-  micron::write(ctx->errfd, &err, sizeof(err));
+  int e = micron::syscall_errno(err);      // positive errno for the parent
+  if ( ctx->errfd > 0 ) micron::write(ctx->errfd, &e, sizeof(e));
   micron::posix::exit(127);
   __builtin_unreachable();
 }
@@ -166,21 +172,20 @@ fail:
 __attribute__((noreturn)) int
 spawn_process(spawn_ctx &ctx)
 {
-
+  long err = 0;
   if ( ctx.fa ) {
-    int r = __apply_file_actions(*ctx.fa);
-    if ( r < 0 ) goto fail;
+    err = __apply_file_actions(*ctx.fa);
+    if ( err < 0 ) goto fail;
   }
-
   if ( ctx.attr ) {
-    int r = __apply_spawnattr(*ctx.attr);
-    if ( r < 0 ) goto fail;
+    err = __apply_spawnattr(*ctx.attr);
+    if ( err < 0 ) goto fail;
   }
-  posix::execve(ctx.path, ctx.argv, ctx.envp);
+  err = posix::execve(ctx.path, ctx.argv, ctx.envp);      // only returns on failure (raw -errno)
 
 fail:
-  int err = errno;
-  micron::write(ctx.errfd, &err, sizeof(err));
+  int e = micron::syscall_errno(err);      // positive errno for the parent
+  if ( ctx.errfd > 0 ) micron::write(ctx.errfd, &e, sizeof(e));
   micron::posix::exit(127);
   __builtin_unreachable();
 }

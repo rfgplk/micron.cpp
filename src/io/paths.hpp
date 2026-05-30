@@ -69,9 +69,6 @@ public:
     auto itr_slashes = micron::format::find(str, "//");
     if ( itr_slashes ) micron::format::replace_all(str, "//", "/");
 
-    auto itr_dots = micron::format::find(str, "...");
-    if ( itr_dots ) micron::format::replace_all(str, "...", "..");
-
     while ( str.size() > 1 && str[str.size() - 1] == '/' ) str.erase(str.last());
 
     return str;
@@ -844,7 +841,8 @@ public:
     }
 
     micron::sstring<posix::path_max> abs("/");
-    for ( auto e = paths.end(); e >= paths.begin(); --e ) {
+    for ( auto e = paths.end(); e != paths.begin(); ) {   
+      --e;
       abs += *e;
       abs += "/";
     }

@@ -26,27 +26,27 @@ namespace micron
 namespace io
 {
 // NOTE: implementing this in here instead of linux/sys
-inline constexpr u32 blkroset = 0x125dU;              // set read-only flag
-inline constexpr u32 blkroget = 0x125eU;              // get read-only flag
-inline constexpr u32 blkrrpart = 0x125fU;             // re-read partition table
-inline constexpr u32 blkgetsize = 0x1260U;            // device size in 512-B sectors
-inline constexpr u32 blkflsbuf = 0x1261U;             // flush buffer cache
-inline constexpr u32 blkraset = 0x1262U;              // set readahead
-inline constexpr u32 blkraget = 0x1263U;              // get readahead
-inline constexpr u32 blksszget = 0x1268U;             // logical block size
-inline constexpr u32 blkbszget = 0x80081270U;         // physical block size
-inline constexpr u32 blkbszset = 0x40081271U;         // set physical block size
-inline constexpr u32 blkgetsize64 = 0x80081272U;      // device size in bytes
-inline constexpr u32 blkdiscard = 0x1277U;            // discard sectors
-inline constexpr u32 blkiomin = 0x1278U;              // min I/O size
-inline constexpr u32 blkioopt = 0x1279U;              // optimal I/O size
-inline constexpr u32 blkalignoff = 0x127aU;           // alignment offset
-inline constexpr u32 blkpbszget = 0x127bU;            // physical block size
-inline constexpr u32 blkdiscardzero = 0x127cU;        // discard zeroes data
-inline constexpr u32 blksecdiscard = 0x127dU;         // secure discard
-inline constexpr u32 blkrotational = 0x127eU;         // rotational flag
-inline constexpr u32 blkzeroout = 0x127fU;            // zero out range
-inline constexpr u32 blksectget = 0x1267U;            // max sectors/req
+inline constexpr u32 blkroset = 0x125dU;                                                              // set read-only flag
+inline constexpr u32 blkroget = 0x125eU;                                                              // get read-only flag
+inline constexpr u32 blkrrpart = 0x125fU;                                                             // re-read partition table
+inline constexpr u32 blkgetsize = 0x1260U;                                                            // device size in 512-B sectors
+inline constexpr u32 blkflsbuf = 0x1261U;                                                             // flush buffer cache
+inline constexpr u32 blkraset = 0x1262U;                                                              // set readahead
+inline constexpr u32 blkraget = 0x1263U;                                                              // get readahead
+inline constexpr u32 blksszget = 0x1268U;                                                             // logical block size
+inline constexpr u32 blkbszget = static_cast<u32>(posix::io_read_command<usize>(0x12U, 0x70U));       // BLKBSZGET (size_t)
+inline constexpr u32 blkbszset = static_cast<u32>(posix::io_write_command<usize>(0x12U, 0x71U));      // BLKBSZSET (size_t)
+inline constexpr u32 blkgetsize64 = static_cast<u32>(posix::io_read_command<u64>(0x12U, 0x72U));      // BLKGETSIZE64 (u64, 8 everywhere)
+inline constexpr u32 blkdiscard = 0x1277U;                                                            // discard sectors
+inline constexpr u32 blkiomin = 0x1278U;                                                              // min I/O size
+inline constexpr u32 blkioopt = 0x1279U;                                                              // optimal I/O size
+inline constexpr u32 blkalignoff = 0x127aU;                                                           // alignment offset
+inline constexpr u32 blkpbszget = 0x127bU;                                                            // physical block size
+inline constexpr u32 blkdiscardzero = 0x127cU;                                                        // discard zeroes data
+inline constexpr u32 blksecdiscard = 0x127dU;                                                         // secure discard
+inline constexpr u32 blkrotational = 0x127eU;                                                         // rotational flag
+inline constexpr u32 blkzeroout = 0x127fU;                                                            // zero out range
+inline constexpr u32 blksectget = 0x1267U;                                                            // max sectors/req
 
 struct block_info_t {
   u64 size_bytes;               // BLKGETSIZE64
@@ -308,10 +308,12 @@ struct block: public file {
   }
 
   max_t
-  read_all_into(void *dst) const
+  read_all_into(void *dst, usize cap) const
   {
     alive_c();
-    return posix::read_all(__handle, dst, static_cast<usize>(device_size()));
+    const u64 dev = device_size();
+    if ( dev > static_cast<u64>(cap) ) return -1;
+    return posix::read_all(__handle, dst, static_cast<usize>(dev));
   }
 
   max_t
@@ -368,14 +370,14 @@ struct block: public file {
   {
     alive_c();
     u64 sz64 = 0;
-    u64 szsec = 0;
+    unsigned long szsec = 0;
     i32 lbsz = 512;
     u32 pbsz = 512;
     u32 iomin = 0;
     u32 ioopt = 0;
     i32 alignoff = 0;
     u16 maxsect = 0;
-    u64 ra = 0;
+    unsigned long ra = 0;
     i32 ro = 0;
     u16 rotflag = 0;
     u32 dzflag = 0;
@@ -538,10 +540,10 @@ struct block: public file {
   }
 
   max_t
-  do_readahead(posix::off_t offset, usize count) const
+  do_readahead(posix::off64_t offset, usize count) const
   {
     alive_c();
-    return micron::syscall(SYS_readahead, __handle.fd, static_cast<posix::off_t>(offset), count);
+    return micron::syscall(SYS_readahead, __handle.fd, static_cast<i64>(offset), count);
   }
 
   max_t

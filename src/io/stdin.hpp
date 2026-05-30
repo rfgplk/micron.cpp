@@ -22,17 +22,19 @@ inline bool
 __read_from(S &buf, const fd_t &handle)
 {
   if ( handle.has_error() or !handle.open() ) return false;
-  // micron::slice<char> buf(4096);
+  constexpr usize __heap_cap = 16u * 1024u * 1024u;
   usize needle = 0;
-  buf.push_back('0');
-  io::fget_byte(buf.end() - 1, handle);
-  while ( buf[needle] != C )      // stop char to look for, if any
-  {
+  for ( ;; ) {
     if constexpr ( requires { typename S::memory_type; } and micron::is_same_v<typename S::memory_type, stack_tag> ) {
       if ( needle >= buf.max_size() ) break;
+    } else {
+      if ( needle >= __heap_cap ) break;
     }
-    buf.push_back('0');
-    io::fget_byte(buf.end() - 1, handle);
+    char ch = 0;
+    max_t r = io::fget_byte(&ch, handle);
+    if ( r <= 0 ) break;
+    buf.push_back(ch);
+    if ( ch == C ) break;
     needle++;
   }
   return true;

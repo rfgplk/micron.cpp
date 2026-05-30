@@ -104,7 +104,7 @@ read(i32 fd, T &buf, const usize cnt)
     return -error::invalid_arg;
   max_t r = posix::read(fd, buf.data(), cnt);
   if constexpr ( has_set_size<T> ) {
-    buf.set_size(r);
+    if ( r >= 0 ) buf.set_size(r);
   }
   return r;
 }
@@ -121,7 +121,7 @@ read(fd_t fd, T &buf, const usize cnt)
     return -error::invalid_arg;
   max_t r = posix::read(fd.fd, buf.data(), cnt);
   if constexpr ( has_set_size<T> ) {
-    buf.set_size(r);
+    if ( r >= 0 ) buf.set_size(r);      // guard: posix::read returns -errno on failure; set_size(negative) -> ~2^64 size (OOB)
   }
   return r;
 }
@@ -151,7 +151,7 @@ read(i32 fd, T &buf)
   }
   max_t r = posix::read(fd, buf.data(), buf.max_size());
   if constexpr ( has_set_size<T> ) {
-    buf.set_size(r);
+    if ( r >= 0 ) buf.set_size(r);
   }
   return r;
 }
@@ -182,7 +182,7 @@ read(fd_t fd, T &buf)
   }
   max_t r = posix::read(fd.fd, buf.data(), buf.max_size());
   if constexpr ( has_set_size<T> ) {
-    buf.set_size(r);
+    if ( r >= 0 ) buf.set_size(r);
   }
   return r;
 }
@@ -391,7 +391,7 @@ template<typename T>
 inline __attribute__((always_inline)) auto
 fget(T *__restrict s, const usize n, const fd_t &handle)
 {
-  return posix::read(s, n, handle.fd);
+  return posix::read(handle.fd, s, n);      // was (s, n, handle.fd): pointer passed as fd, count as buffer
 }
 
 template<typename T>

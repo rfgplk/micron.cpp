@@ -393,9 +393,7 @@ struct critical_section {
 template<bool M = false> class signal_t
 {
   alignas(16) posix::sigset_t __signal;
-  // BUG: since multiple signals have the same index, the acts array is technically too large and will have conflicting
-  // signals
-  micron::array<posix::sigaction_t, 32> __acts;
+  micron::array<posix::sigaction_t, 65> __acts;
   mutable int __sig;
 
 public:
@@ -435,7 +433,7 @@ public:
   int
   on_signal(const micron::signal s, void (*fhandler)(int))
   {
-    if ( (u64)s > __acts.size() ) return -1;
+    if ( (u64)s == 0 || (u64)s >= __acts.size() ) return -1;
     __acts[(i32)s].sigaction_handler.sa_handler = fhandler;
     return posix::sigaction((i32)s, __acts[(i32)s], nullptr);
   }

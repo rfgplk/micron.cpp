@@ -29,7 +29,7 @@ namespace micron
 namespace elf
 {
 
-inline constexpr usize page_size = 4096;
+inline constexpr usize page_size = __micron_page_size_default;
 inline constexpr u8 expected_machine
 #if defined(__micron_arch_amd64)
     = static_cast<u8>(em_x86_64);
@@ -166,6 +166,12 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const dyn_t *dyn) noexcept
     case dt_relacount:
       out.rela_count = d->un.val;
       break;
+    case dt_relr:
+      out.relr = reinterpret_cast<const xword *>(base + d->un.ptr);
+      break;
+    case dt_relrsz:
+      out.relrsz = d->un.val;
+      break;
     case dt_jmprel:
       out.jmprel = reinterpret_cast<const rela_t *>(base + d->un.ptr);
       break;
@@ -268,6 +274,27 @@ __apply_rela_table(module_t &m, const rela_t *tbl, usize count_bytes, reloc_mode
     if ( apply_reloc(ctx, tbl[i]) == reloc_result::unsupported ) return false;
   }
   return true;
+}
+
+inline void
+__apply_relr(module_t &m) noexcept
+{
+  if ( !m.dyn.relr || m.dyn.relrsz == 0 ) return;
+  const uintptr_t l_addr = reinterpret_cast<uintptr_t>(m.load_base);
+  const usize n = m.dyn.relrsz / sizeof(xword);
+  uintptr_t *where = nullptr;
+  for ( usize k = 0; k < n; ++k ) {
+    xword entry = m.dyn.relr[k];
+    if ( (entry & 1) == 0 ) {
+      where = reinterpret_cast<uintptr_t *>(l_addr + entry);
+      *where += l_addr;
+      ++where;
+    } else {
+      for ( int i = 0; (entry >>= 1) != 0; ++i )
+        if ( (entry & 1) != 0 ) where[i] += l_addr;
+      where += (8 * sizeof(xword)) - 1;      // 63 words covered per bitmap entry
+    }
+  }
 }
 
 inline void
@@ -380,20 +407,40 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
 
     const i32 prot = __prot_from_phdr(phdrs[i].flags);
 
+    // ELF requires vaddr ≡ offset (mod p_align), and p_align >= page_size for loadable segments,
+    // so the sub-page bias of vaddr and offset must match. Reject a mis-aligned ELF up front
+    // rather than silently mapping file data at the wrong address.
+    if ( ((phdrs[i].vaddr - phdrs[i].offset) & (page_size - 1)) != 0 ) {
+      micron::munmap(reinterpret_cast<addr_t *>(base), span);
+      posix::close(fd);
+      throw except::library_error("elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)");
+    }
+
     if ( phdrs[i].filesz ) {
-      u8 *got = reinterpret_cast<u8 *>(micron::mmap(reinterpret_cast<addr_t *>(target), __page_ceil(phdrs[i].filesz + segoff),
-                                                    prot_read | prot_write, map_private | map_fixed, fd, fstart));
+      const usize file_end = __page_ceil(phdrs[i].filesz + segoff);
+      const usize mem_end = __page_ceil(phdrs[i].memsz + segoff);
+      u8 *got = reinterpret_cast<u8 *>(
+          micron::mmap(reinterpret_cast<addr_t *>(target), file_end, prot_read | prot_write, map_private | map_fixed, fd, fstart));
       if ( mmap_failed(got) ) {
         micron::munmap(reinterpret_cast<addr_t *>(base), span);
         posix::close(fd);
         throw except::library_error("elf: segment mmap failed");
+      }
+      if ( mem_end > file_end ) {
+        u8 *bgot = reinterpret_cast<u8 *>(micron::mmap(reinterpret_cast<addr_t *>(target + file_end), mem_end - file_end,
+                                                       prot_read | prot_write, map_private | map_anonymous | map_fixed, -1, 0));
+        if ( mmap_failed(bgot) ) {
+          micron::munmap(reinterpret_cast<addr_t *>(base), span);
+          posix::close(fd);
+          throw except::library_error("elf: bss tail mmap failed");
+        }
       }
       const usize bss_start = segoff + phdrs[i].filesz;
       const usize bss_end = segoff + phdrs[i].memsz;
       if ( bss_end > bss_start ) {
         micron::memset(target + bss_start, byte{ 0 }, bss_end - bss_start);
       }
-      micron::mprotect(reinterpret_cast<addr_t *>(target), __page_ceil(phdrs[i].memsz + segoff), prot);
+      micron::mprotect(reinterpret_cast<addr_t *>(target), mem_end, prot);
     } else {
       u8 *got = reinterpret_cast<u8 *>(
           micron::mmap(reinterpret_cast<addr_t *>(target), vend - vstart, prot, map_private | map_anonymous | map_fixed, -1, 0));
@@ -428,6 +475,8 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     micron::munmap(reinterpret_cast<addr_t *>(base), span);
     throw except::library_error("elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS");
   }
+
+  __apply_relr(m);
 
   __apply_relro(m.load_base, phdrs, eh.phnum);
   if ( opts.run_init ) __run_initializers(m);

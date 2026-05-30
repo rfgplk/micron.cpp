@@ -135,7 +135,7 @@ set_priority(int which, pid_t pid, int prio) -> i32
 auto
 raise(i32 sig) -> i32
 {
-  return static_cast<i32>(micron::syscall(SYS_kill, getpid(), sig));
+  return static_cast<i32>(micron::syscall(SYS_tgkill, getpid(), gettid(), sig));
 }
 
 auto
@@ -151,9 +151,90 @@ kill(posix::pid_t pid, int sig) -> i32
 }
 
 auto
+pause(void) -> i32
+{
+#if defined(__micron_syscall_generic)
+  // arm64 has no SYS_pause
+  return static_cast<i32>(micron::syscall(SYS_ppoll, nullptr, 0, nullptr, nullptr, 8));
+#else
+  return static_cast<i32>(micron::syscall(SYS_pause));
+#endif
+}
+
+auto
 exit(int r) -> i32
 {
+  // only terminate CALLING thread, not all threads
   return static_cast<i32>(micron::syscall(SYS_exit, r));
+}
+
+struct utsname_t {
+  char sysname[65];
+  char nodename[65];
+  char release[65];
+  char version[65];
+  char machine[65];
+  char domainname[65];
+};
+
+auto
+uname(utsname_t &buf) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_uname, &buf));
+}
+
+constexpr unsigned int grnd_nonblock = 0x0001;
+constexpr unsigned int grnd_random = 0x0002;
+constexpr unsigned int grnd_insecure = 0x0004;
+
+auto
+getrandom(void *buf, usize len, unsigned int flags) -> max_t
+{
+  return micron::syscall(SYS_getrandom, buf, len, flags);
+}
+
+auto
+membarrier(int cmd, unsigned int flags, int cpu_id) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_membarrier, cmd, flags, cpu_id));
+}
+
+auto
+personality(unsigned long persona) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_personality, persona));
+}
+
+auto
+setns(int fd, int nstype) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_setns, fd, nstype));
+}
+
+constexpr unsigned int linux_reboot_magic1 = 0xfee1deadU;
+constexpr unsigned int linux_reboot_magic2 = 0x28121969U;
+constexpr unsigned int linux_reboot_cmd_restart = 0x01234567U;
+constexpr unsigned int linux_reboot_cmd_halt = 0xcdef0123U;
+constexpr unsigned int linux_reboot_cmd_power_off = 0x4321fedcU;
+constexpr unsigned int linux_reboot_cmd_cad_on = 0x89abcdefU;
+constexpr unsigned int linux_reboot_cmd_cad_off = 0x00000000U;
+
+auto
+reboot(unsigned int cmd) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_reboot, linux_reboot_magic1, linux_reboot_magic2, cmd, nullptr));
+}
+
+auto
+pidfd_open(posix::pid_t pid, unsigned int flags) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_pidfd_open, pid, flags));
+}
+
+auto
+pidfd_send_signal(int pidfd, int sig, void *info, unsigned int flags) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_pidfd_send_signal, pidfd, sig, info, flags));
 }
 };      // namespace posix
 

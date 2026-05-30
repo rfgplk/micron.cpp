@@ -92,6 +92,12 @@ struct rlimit_t {
   rlim_t rlim_max;
 };
 
+// prlimit64 ALWAYS uses 64-bit fields regardless of arch
+struct rlimit64_t {
+  u64 rlim_cur;
+  u64 rlim_max;
+};
+
 auto
 getrlimit(limits lm, rlimit_t &rl)
 {
@@ -127,46 +133,46 @@ set_limits(limits lm, rlimit_t &rl)
 }
 
 auto
-get_process_limits(pid_t pid, rlim_t lm, rlimit_t &out)
+get_process_limits(pid_t pid, rlim_t lm, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), nullptr, &out);
 }
 
 auto
-set_process_limits(pid_t pid, rlim_t lm, rlimit_t &in)
+set_process_limits(pid_t pid, rlim_t lm, rlimit64_t &in)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, nullptr);
 }
 
 // with the out
 auto
-set_process_limits(pid_t pid, rlim_t lm, rlimit_t &in, rlimit_t &out)
+set_process_limits(pid_t pid, rlim_t lm, rlimit64_t &in, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, &out);
 }
 
 auto
-prlimit_out(pid_t pid, rlim_t lm, rlimit_t &out)
+prlimit_out(pid_t pid, rlim_t lm, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), nullptr, &out);
 }
 
 auto
-prlimit_in(pid_t pid, rlim_t lm, rlimit_t &in)
+prlimit_in(pid_t pid, rlim_t lm, rlimit64_t &in)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, nullptr);
 }
 
 // with the out
 auto
-prlimit(pid_t pid, rlim_t lm, rlimit_t &in, rlimit_t &out)
+prlimit(pid_t pid, rlim_t lm, rlimit64_t &in, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, &out);
 }
 
 // helper class
 struct limits_t {
-  rlimit_t lim[rlimit_nlimits];
+  rlimit64_t lim[rlimit_nlimits];      // prlimit64-backed, so 64-bit fields on every arch
   ~limits_t() = default;
 
   limits_t(const pid_t proc = 0)      // for us by default
@@ -174,26 +180,26 @@ struct limits_t {
     for ( rlim_t i = 0; i < rlimit_nlimits; i++ ) get_process_limits(proc, i, lim[i]);
   }
 
-  limits_t(const limits_t &o) { micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16); }
+  limits_t(const limits_t &o) { micron::voidcpy(lim, o.lim, sizeof(rlimit64_t) * rlimit_nlimits); }
 
   limits_t(limits_t &&o)
   {
-    micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16);
-    micron::memset(o.lim, 0x0, sizeof(rlimit_t) * 16);
+    micron::voidcpy(lim, o.lim, sizeof(rlimit64_t) * rlimit_nlimits);
+    micron::memset(o.lim, 0x0, sizeof(rlimit64_t) * rlimit_nlimits);
   }
 
   limits_t &
   operator=(const limits_t &o)
   {
-    micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16);
+    micron::voidcpy(lim, o.lim, sizeof(rlimit64_t) * rlimit_nlimits);
     return *this;
   }
 
   limits_t &
   operator=(limits_t &&o)
   {
-    micron::voidcpy(lim, o.lim, sizeof(rlimit_t) * 16);
-    micron::memset(o.lim, 0x0, sizeof(rlimit_t) * 16);
+    micron::voidcpy(lim, o.lim, sizeof(rlimit64_t) * rlimit_nlimits);
+    micron::memset(o.lim, 0x0, sizeof(rlimit64_t) * rlimit_nlimits);
     return *this;
   }
 };

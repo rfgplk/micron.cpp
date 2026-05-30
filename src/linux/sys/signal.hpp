@@ -112,8 +112,6 @@ constexpr static const int sa_nomask = sa_nodefer;
 constexpr static const int sa_oneshot = sa_resethand;
 constexpr static const int sa_stack = sa_onstack;
 
-#define ALIGN_UP(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
-
 constexpr static const u64 __kernel_sigset_bytes = 64 / 8;
 
 constexpr static const int __sigwords = static_cast<int>(__kernel_sigset_bytes / sizeof(unsigned long int));
@@ -354,13 +352,53 @@ int
 sigwait(const posix::sigset_t &set, int &sig)
 {
   siginfo_t info = {};
-  int ret = 0;
+  long ret = 0;
   do {
-    ret = static_cast<int>(micron::syscall(SYS_rt_sigtimedwait, &set, &info, nullptr, __sig_syscall_size));
-  } while ( ret < 0 && errno == EINTR );
-  if ( ret < 0 ) return errno;
+    ret = micron::syscall(SYS_rt_sigtimedwait, &set, &info, nullptr, __sig_syscall_size);
+  } while ( micron::syscall_failed(ret) && micron::syscall_errno(ret) == EINTR );
+  if ( micron::syscall_failed(ret) ) return micron::syscall_errno(ret);      // POSIX sigwait: positive errno
   sig = info.si_signo;
   return 0;
+}
+
+struct stack_t {
+  void *ss_sp;
+  int ss_flags;
+  usize ss_size;
+};
+
+constexpr int ss_onstack = 1;
+constexpr int ss_disable = 2;
+constexpr int ss_autodisarm = (1 << 31);
+
+inline int
+sigaltstack(const stack_t *ss, stack_t *old_ss)
+{
+  return static_cast<int>(micron::syscall(SYS_sigaltstack, ss, old_ss));
+}
+
+inline int
+sigpending(posix::sigset_t &set)
+{
+  return static_cast<int>(micron::syscall(SYS_rt_sigpending, &set, __sig_syscall_size));
+}
+
+inline int
+sigsuspend(const posix::sigset_t &mask)
+{
+  return static_cast<int>(micron::syscall(SYS_rt_sigsuspend, &mask, __sig_syscall_size));
+}
+
+inline int
+sigqueue(posix::pid_t pid, int sig, const sigval_t &value)
+{
+  siginfo_t info{};
+  info.si_signo = sig;
+  info.si_code = -1;      // SI_QUEUE
+  info._sifields._rt.si_pid = static_cast<posix::pid_t>(micron::syscall(SYS_getpid));
+  info._sifields._rt.si_uid = static_cast<posix::uid_t>(micron::syscall(SYS_getuid));
+  info._sifields._rt.si_sigval = value;
+  return static_cast<int>(micron::syscall(SYS_rt_sigqueueinfo, pid, sig, &info));
 }
 };      // namespace posix
 };      // namespace micron

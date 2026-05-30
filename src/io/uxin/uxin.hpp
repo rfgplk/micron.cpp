@@ -20,7 +20,7 @@ namespace uxin
 {
 
 // high level "open a device and init" func.
-slice<input_t>
+fvector<input_t>
 open_nonblock(type_t __type)
 {
   switch ( __type ) {
@@ -40,7 +40,7 @@ open_nonblock(type_t __type)
     }
   }
   if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
-  return res[];
+  return res;
 }
 
 input_t
@@ -65,7 +65,7 @@ open_first_nonblock(type_t __type)
   exc<except::library_error>("uxin open(): couldn't open device");
 }
 
-slice<input_t>
+fvector<input_t>
 open(type_t __type)
 {
   switch ( __type ) {
@@ -85,7 +85,7 @@ open(type_t __type)
     }
   }
   if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
-  return res[];
+  return res;    
 }
 
 input_t
@@ -140,7 +140,7 @@ read(input_t &t, Args &&...__input_packet)
 template<typename... Args>
   requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
-read(slice<input_t> &inputs, Args &&...__input_packet)
+read(fvector<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
@@ -153,7 +153,7 @@ read(slice<input_t> &inputs, Args &&...__input_packet)
 template<typename... Args>
   requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
-read_rt(slice<input_t> &inputs, Args &&...__input_packet)
+read_rt(fvector<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
@@ -165,7 +165,7 @@ read_rt(slice<input_t> &inputs, Args &&...__input_packet)
 template<typename... Args>
   requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
-read_once(slice<input_t> &inputs, Args &&...__input_packet)
+read_once(fvector<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");

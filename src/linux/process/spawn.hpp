@@ -25,8 +25,8 @@ inline void
 child_apply_limits(const Lims &lims)
 {
   for ( rlim_t i = 0; i < posix::rlimit_nlimits; ++i ) {
-    posix::rlimit_t rl = lims.lim[i];      // local copy
-    posix::setrlimit(static_cast<posix::limits>(i), rl);
+    posix::rlimit64_t rl = lims.lim[i];       // local copy (64-bit fields)
+    posix::set_process_limits(0, i, rl);      // prlimit64 on self (64-bit correct on every arch)
   }
 }
 
@@ -48,7 +48,8 @@ int
 __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 ) return errno;
+  int pr = micron::pipe2(pipefd, posix::o_cloexec);
+  if ( pr < 0 ) return micron::syscall_errno(pr);      // positive errno (matches child-reported errno)
   micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, pipefd[1] };
   pid = micron::fork();
   if ( pid == 0 ) {
@@ -76,7 +77,8 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
              [[maybe_unused]] const Caps *caps = nullptr)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 ) return errno;
+  int pr = micron::pipe2(pipefd, posix::o_cloexec);
+  if ( pr < 0 ) return micron::syscall_errno(pr);
 
   pid = micron::fork();
   if ( pid == 0 ) {
@@ -148,12 +150,13 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
         const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)
 {
   int pipefd[2];
-  if ( micron::pipe2(pipefd, posix::o_cloexec) < 0 ) return errno;
+  int pr = micron::pipe2(pipefd, posix::o_cloexec);
+  if ( pr < 0 ) return micron::syscall_errno(pr);
 
   constexpr usize stack_size = 1 << 20;
   void *stack
       = reinterpret_cast<void *>(micron::mmap(nullptr, stack_size + 4096, prot_read | prot_write, map_private | map_anonymous, -1, 0));
-  if ( mmap_failed(stack) ) return errno;
+  if ( mmap_failed(stack) ) return micron::syscall_errno(reinterpret_cast<long>(stack));
 
   micron::mprotect(stack, 4096, prot_none);
   constexpr u32 red_zone = 128;

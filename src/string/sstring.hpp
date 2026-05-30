@@ -656,6 +656,7 @@ public:
     if ( ptr == nullptr ) return *this;
     clear();
     size_type n = strlen(ptr);
+    if ( n >= N ) exc<except::library_error>("sstring::operator=(char*): too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &ptr[0], n);
     length = n;
@@ -668,6 +669,7 @@ public:
     if ( ptr == nullptr ) return *this;
     clear();
     size_type n = strlen(ptr);
+    if ( n >= N ) exc<except::library_error>("sstring::operator=(const char*): too large.");
     micron::constexpr_zero(&memory[0], N);
     micron::memcpy(&memory[0], &ptr[0], n);
     length = n;
@@ -1844,8 +1846,9 @@ public:
 
   template<typename F = T>
   inline sstring &
-  erase(const_iterator itr, size_type cnt = 1)
+  erase(const_iterator __itr, size_type cnt = 1)
   {
+    iterator itr = const_cast<iterator>(__itr);
     __safety_check<&sstring::__erase_iter_check, except::library_error>("micron::sstring erase() out of range", itr, cnt);
     __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
 

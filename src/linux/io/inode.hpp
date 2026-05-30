@@ -1264,15 +1264,26 @@ is_empty_dir(posix::fd_t fd)
   posix::fd_t tmp{ static_cast<i32>(micron::syscall(SYS_dup, fd.fd)) };
   if ( !tmp ) return false;
   micron::syscall(SYS_lseek, tmp.fd, 0, posix::seek_set);
-  char buf[512];
+  alignas(posix::__linux_kernel_dirent64) char buf[512];      // 8-aligned: d_ino is u64 (ARM unaligned fault)
   bool empty = true;
   for ( ;; ) {
     max_t n = micron::syscall(SYS_getdents64, tmp.fd, buf, sizeof(buf));
-    if ( n <= 0 ) break;
+    if ( n == 0 ) break;
+    if ( n < 0 ) {
+      if ( n == -error::interrupted ) continue;
+      empty = false;
+      goto done;
+    }
+    const usize nread = static_cast<usize>(n);
     usize pos = 0;
-    while ( pos < static_cast<usize>(n) ) {
-      auto *d = reinterpret_cast<posix::__linux_kernel_dirent64 *>(buf + pos);
-      pos += d->d_reclen;
+    while ( pos < nread ) {
+      const posix::__linux_kernel_dirent64 *d = nullptr;
+      const u16 reclen = posix::__dirent64_validate(buf, pos, nread, d);
+      if ( reclen == 0 ) {
+        empty = false;
+        goto done;
+      }
+      pos += reclen;
       if ( !is_dot_entry(d->d_name) ) {
         empty = false;
         goto done;
@@ -1520,7 +1531,7 @@ is_same_file(const char *a, const T &b)
   template<is_string T> ret_t_ fn_(const T &s, stat_t &buf) { return fn_(s.c_str(), buf); }                                                \
   template<is_string T> ret_t_ fn_(const T &s) { return fn_(s.c_str()); }
 
-MICRON_STAT_QUERY(get_inode, posix::ino_t, st_ino, 0)
+MICRON_STAT_QUERY(get_inode, posix::ino64_t, st_ino, 0)      // 64-bit: was ino_t (truncated on arm32/i386)
 MICRON_STAT_QUERY(get_mode, posix::mode_t, st_mode, 0)
 MICRON_STAT_QUERY(get_link_count, posix::nlink_t, st_nlink, 0)
 MICRON_STAT_QUERY(get_uid, posix::uid_t, st_uid, static_cast<posix::uid_t>(-1))
@@ -1528,57 +1539,57 @@ MICRON_STAT_QUERY(get_gid, posix::gid_t, st_gid, static_cast<posix::gid_t>(-1))
 MICRON_STAT_QUERY(get_device, posix::dev_t, st_dev, static_cast<posix::dev_t>(-1))
 MICRON_STAT_QUERY(get_rdev, posix::dev_t, st_rdev, static_cast<posix::dev_t>(-1))
 MICRON_STAT_QUERY(get_blksize, posix::blksize_t, st_blksize, static_cast<posix::blksize_t>(-1))
-MICRON_STAT_QUERY(get_blocks, posix::blkcnt_t, st_blocks, static_cast<posix::blkcnt_t>(-1))
-MICRON_STAT_QUERY(get_atime, posix::time_t, st_atime, static_cast<posix::time_t>(-1))
-MICRON_STAT_QUERY(get_mtime, posix::time_t, st_mtime, static_cast<posix::time_t>(-1))
-MICRON_STAT_QUERY(get_ctime, posix::time_t, st_ctime, static_cast<posix::time_t>(-1))
+MICRON_STAT_QUERY(get_blocks, i64, st_blocks, static_cast<i64>(-1))              // 64-bit: was blkcnt_t (32-bit on ILP32)
+MICRON_STAT_QUERY(get_atime, time64_t, st_atime, static_cast<time64_t>(-1))      // time64: was time_t (Y2038 trunc on ILP32)
+MICRON_STAT_QUERY(get_mtime, time64_t, st_mtime, static_cast<time64_t>(-1))
+MICRON_STAT_QUERY(get_ctime, time64_t, st_ctime, static_cast<time64_t>(-1))
 
 #undef MICRON_STAT_QUERY
 
-inline posix::off_t
+inline posix::off64_t
 file_size(posix::fd_t fd)
 {
   stat_t buf{};
   return __impl::__fstat(fd, buf) ? buf.st_size : -1;
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(const stat_t &b)
 {
   return b.st_size;
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(posix::fd_t fd, stat_t &buf)
 {
   return __impl::__fstat(fd, buf) ? buf.st_size : -1;
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(i32 fd, stat_t &buf)
 {
   return get_size(posix::fd_t{ fd }, buf);
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(posix::fd_t fd)
 {
   return posix::file_size(fd);
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(i32 fd)
 {
   return get_size(posix::fd_t{ fd });
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(const char *p, stat_t &buf)
 {
   return __impl::__stat(p, buf) ? buf.st_size : -1;
 }
 
-inline posix::off_t
+inline posix::off64_t
 get_size(const char *p)
 {
   stat_t b{};
@@ -1586,14 +1597,14 @@ get_size(const char *p)
 }
 
 template<is_string T>
-posix::off_t
+posix::off64_t
 get_size(const T &s, stat_t &buf)
 {
   return get_size(s.c_str(), buf);
 }
 
 template<is_string T>
-posix::off_t
+posix::off64_t
 get_size(const T &s)
 {
   return get_size(s.c_str());

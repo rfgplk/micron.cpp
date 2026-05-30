@@ -14,97 +14,87 @@ namespace micron
 {
 namespace io
 {
-// walk the file tree entirely, from the given path
-// directories before files
-// NOTE: from cwd
-auto
+namespace __ftw
+{
+enum class collect { dirs, all, files };
+
+struct node_id {
+  posix::dev_t dev;
+  posix::ino64_t ino;
+};
+
+constexpr u32 ftw_max_depth = 100;
+
+inline void
+walk(path &&p, micron::fvector<path_t> &out, node_id *chain, u32 depth, collect what)
+{
+  if ( depth >= ftw_max_depth ) return;
+
+  // entries collected at this level
+  micron::fvector<path_t> coll = (what == collect::files) ? p.files() : (what == collect::all ? p.all() : p.dirs());
+  for ( auto &n : coll ) {
+    if ( n == "." || n == ".." ) continue;
+    out.push_back(p.join(n.c_str()));
+  }
+
+  // recurse into sub-directories only
+  micron::fvector<path_t> subdirs = p.dirs();
+  for ( auto &n : subdirs ) {
+    if ( n == "." || n == ".." ) continue;
+    path_t child = p.join(n.c_str());
+    if ( posix::is_symlink(child.c_str()) ) continue;      // WARNING: do NOT follow symlinks
+
+    posix::stat_t st{};
+    if ( !posix::__impl::__stat(child.c_str(), st) ) continue;
+    node_id id{ st.st_dev, static_cast<posix::ino64_t>(st.st_ino) };
+    bool seen = false;
+    for ( u32 i = 0; i < depth; ++i )
+      if ( chain[i].dev == id.dev && chain[i].ino == id.ino ) {
+        seen = true;
+        break;
+      }
+    if ( seen ) continue;      // directory cycle -> skip
+
+    chain[depth] = id;
+    try {
+      walk(path(child.c_str()), out, chain, depth + 1, what);
+    } catch ( except::filesystem_error & ) {
+    }
+  }
+}
+
+inline micron::fvector<path_t>
+run(path &&p, collect what)
+{
+  micron::fvector<path_t> out;
+  node_id chain[ftw_max_depth];
+  u32 start = 0;
+  posix::stat_t st{};
+  if ( posix::__impl::__stat(p.get().c_str(), st) ) {
+    chain[0] = node_id{ st.st_dev, static_cast<posix::ino64_t>(st.st_ino) };
+    start = 1;
+  }
+  walk(micron::move(p), out, chain, start, what);
+  return out;
+}
+}      // namespace __ftw
+
+inline auto
 ftw(path &&p)
 {
-  micron::fvector<path_t> rslt;
-  // look how much prettier this is compared to nftw
-  micron::fvector<path_t> dirs = p.dirs();
-  if ( dirs.empty() or dirs.size() == 2 ) return rslt;
-  // rslt.append(dirs);
-  //  micron::string cur_path(4096);
-  //  if ( posix::getcwd(cur_path.data(), 4096) == NULL )
-  //    return;
-  //  cur_path.adjust_size();
-  path_t total_path;
-  for ( auto &n : dirs ) {
-    if ( n == "." or n == ".." ) continue;
-    total_path = p.get();
-    total_path.adjust_size();      // TODO: fix up len's and remove this eventually
-    total_path.insert(total_path.end(), '/');
-    total_path.insert(total_path.end(), n);
-    // total_path += n;
-    rslt.push_back(total_path);
-    // console(total_path);
-    try {
-      rslt.append(ftw(path(total_path.c_str())));
-    } catch ( except::filesystem_error &e ) {
-    }
-  }
-  return rslt;
+  return __ftw::run(micron::move(p), __ftw::collect::dirs);
 }
 
-auto
+inline auto
 ftw_all(path &&p)
 {
-  micron::fvector<path_t> rslt;
-  // look how much prettier this is compared to nftw
-  micron::fvector<path_t> all = p.all();
-  if ( all.empty() or all.size() == 2 ) return rslt;
-  // rslt.append(dirs);
-  //  micron::string cur_path(4096);
-  //  if ( posix::getcwd(cur_path.data(), 4096) == NULL )
-  //    return;
-  //  cur_path.adjust_size();
-  path_t total_path;
-  for ( auto &n : all ) {
-    if ( n == "." or n == ".." ) continue;
-    total_path = p.get();
-    total_path.adjust_size();
-    total_path.insert(total_path.end(), '/');
-    total_path.insert(total_path.end(), n);
-    // total_path += n;
-    rslt.push_back(total_path);
-    // console(total_path);
-    try {
-      rslt.append(ftw_all(path(total_path.c_str())));
-    } catch ( except::filesystem_error &e ) {
-    }
-  }
-  return rslt;
+  return __ftw::run(micron::move(p), __ftw::collect::all);
 }
 
-auto
+inline auto
 ftw_files(path &&p)
 {
-  micron::fvector<path_t> rslt;
-  // look how much prettier this is compared to nftw
-  micron::fvector<path_t> all = p.files();
-  if ( all.empty() or all.size() == 2 ) return rslt;
-  // rslt.append(dirs);
-  //  micron::string cur_path(4096);
-  //  if ( posix::getcwd(cur_path.data(), 4096) == NULL )
-  //    return;
-  //  cur_path.adjust_size();
-  path_t total_path;
-  for ( auto &n : all ) {
-    if ( n == "." or n == ".." ) continue;
-    total_path = p.get();
-    total_path.adjust_size();
-    total_path.insert(total_path.end(), '/');
-    total_path.insert(total_path.end(), n);
-    // total_path += n;
-    rslt.push_back(total_path);
-    // console(total_path);
-    try {
-      rslt.append(ftw_all(path(total_path.c_str())));
-    } catch ( except::filesystem_error &e ) {
-    }
-  }
-  return rslt;
+  return __ftw::run(micron::move(p), __ftw::collect::files);
 }
 };      // namespace io
 };      // namespace micron

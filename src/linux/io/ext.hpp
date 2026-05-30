@@ -40,6 +40,7 @@ struct auto_fd {
   auto_fd &
   operator=(auto_fd &&o) noexcept
   {
+    if ( this == &o ) return *this;
     if ( fd.open() ) posix::close(fd.fd);
     fd = o.fd;
     o.fd.reset();
@@ -209,9 +210,14 @@ readdir(const fd_t &_f)
     __readdir_nread = static_cast<usize>(__nr);
   }
 
-  __linux_kernel_dirent64 *p = reinterpret_cast<__linux_kernel_dirent64 *>(__readdir_buf + __readdir_bufpos);
-  __readdir_bufpos += p->d_reclen;
-  return { p->d_name, p->d_type, static_cast<ino_t>(p->d_ino) };
+  const __linux_kernel_dirent64 *p = nullptr;
+  const u16 reclen = __dirent64_validate(__readdir_buf, __readdir_bufpos, __readdir_nread, p);
+  if ( reclen == 0 ) {      // malformed/hostile record: stop iterating
+    __readdir_bufpos = __readdir_nread;
+    return __impl_dir{ "", dt_end, 0 };
+  }
+  __readdir_bufpos += reclen;
+  return { p->d_name, p->d_type, p->d_ino };
 }
 
 struct readdir_ctx {
@@ -233,9 +239,14 @@ readdir_r(const fd_t &_f, readdir_ctx &ctx)
     ctx.nread = static_cast<usize>(__nr);
   }
 
-  __linux_kernel_dirent64 *p = reinterpret_cast<__linux_kernel_dirent64 *>(ctx.buf + ctx.bufpos);
-  ctx.bufpos += p->d_reclen;
-  return { p->d_name, p->d_type, static_cast<ino_t>(p->d_ino) };
+  const __linux_kernel_dirent64 *p = nullptr;
+  const u16 reclen = __dirent64_validate(ctx.buf, ctx.bufpos, ctx.nread, p);
+  if ( reclen == 0 ) {      // malformed/hostile record: stop iterating
+    ctx.bufpos = ctx.nread;
+    return { "", dt_end, 0 };
+  }
+  ctx.bufpos += reclen;
+  return { p->d_name, p->d_type, p->d_ino };
 }
 
 inline i32
@@ -334,26 +345,26 @@ read_all(fd_t fd, T *buf, usize len)
   return static_cast<max_t>(got);
 }
 
-inline posix::off_t
-seek_to(fd_t fd, posix::off_t offset)
+inline posix::off64_t
+seek_to(fd_t fd, posix::off64_t offset)
 {
   return (posix::lseek(fd.fd, offset, seek_set));
 }
 
-inline posix::off_t
-seek_by(fd_t fd, posix::off_t delta)
+inline posix::off64_t
+seek_by(fd_t fd, posix::off64_t delta)
 {
   return (posix::lseek(fd.fd, delta, seek_cur));
 }
 
-inline posix::off_t
+inline posix::off64_t
 tell(fd_t fd)
 {
   return (posix::lseek(fd.fd, 0, seek_cur));
 }
 
 inline i32
-truncate(fd_t fd, posix::off_t length)
+truncate(fd_t fd, posix::off64_t length)
 {
   return (posix::ftruncate(fd.fd, length));
 }
@@ -394,9 +405,11 @@ copy_file(const char *src, const char *dst, u32 mode = mode_file)
     return out.fd;
   }
 
-  posix::off_t sz = file_size(in);
+  posix::off64_t sz = file_size(in);
   i32 r = 0;
-  if ( sz > 0 ) {
+  if ( sz < 0 ) {
+    r = static_cast<i32>(sz);
+  } else if ( sz > 0 ) {
     max_t sent = copy_fd(out, in, static_cast<usize>(sz));
     r = (sent < 0) ? static_cast<i32>(sent) : 0;
   }

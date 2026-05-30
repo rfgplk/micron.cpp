@@ -26,27 +26,28 @@ fcntl(i32 fd, i32 cmd, Args &&...args) -> i32
 auto
 fadvise(i32 fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 {
-  // apparently doesn't exist
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return static_cast<i32>(micron::syscall(SYS_fadvise64, fd, offset, len, advice));
 #elif defined(__micron_arch_arm32)
-  return static_cast<i32>(micron::syscall(SYS_arm_fadvise64_64, fd, static_cast<u32>(static_cast<u64>(offset) >> 32),
-                                          static_cast<u32>(offset & 0xffffffffu), static_cast<u32>(static_cast<u64>(len) >> 32),
-                                          static_cast<u32>(len & 0xffffffffu), advice));
+  return static_cast<i32>(micron::syscall(SYS_arm_fadvise64_64, fd, advice, static_cast<i64>(offset), static_cast<i64>(len)));
+#elif defined(__micron_arch_x86)
+  return static_cast<i32>(micron::syscall(SYS_fadvise64_64, fd, static_cast<i64>(offset), static_cast<i64>(len), advice));
+#else
+#error "fadvise: unsupported architecture"
 #endif
 }
 
 auto
 fadvise(fd_t fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 {
-
-  // apparently doesn't exist
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
   return static_cast<i32>(micron::syscall(SYS_fadvise64, fd.fd, offset, len, advice));
 #elif defined(__micron_arch_arm32)
-  return static_cast<i32>(micron::syscall(SYS_arm_fadvise64_64, fd.fd, static_cast<u32>(static_cast<u64>(offset) >> 32),
-                                          static_cast<u32>(offset & 0xffffffffu), static_cast<u32>(static_cast<u64>(len) >> 32),
-                                          static_cast<u32>(len & 0xffffffffu), advice));
+  return static_cast<i32>(micron::syscall(SYS_arm_fadvise64_64, fd.fd, advice, static_cast<i64>(offset), static_cast<i64>(len)));
+#elif defined(__micron_arch_x86)
+  return static_cast<i32>(micron::syscall(SYS_fadvise64_64, fd.fd, static_cast<i64>(offset), static_cast<i64>(len), advice));
+#else
+#error "fadvise: unsupported architecture"
 #endif
 }
 
@@ -87,15 +88,17 @@ constexpr i32 access_ok = 0;
 
 // WARNING: O_DIRECTORY / O_NOFOLLOW / O_DIRECT / O_LARGEFILE are encoded with DIFFERENT bit values depending on the kernel ABI
 #if defined(__micron_arch_arm32)
-constexpr i32 o_direct = 0200000;         // 0x10000
-constexpr i32 o_directory = 040000;       // 0x4000
-constexpr i32 o_nofollow = 0100000;       // 0x8000
-constexpr i32 o_largefile = 0400000;      // 0x20000 (ILP32: must be requested)
+constexpr i32 o_direct = 0200000;                         // 0x10000
+constexpr i32 o_directory = 040000;                       // 0x4000
+constexpr i32 o_tmpfile = (020000000 | o_directory);      // __O_TMPFILE | O_DIRECTORY
+constexpr i32 o_nofollow = 0100000;                       // 0x8000
+constexpr i32 o_largefile = 0400000;                      // 0x20000 (ILP32: must be requested)
 #else
 // asm-generic encoding: amd64, i386, arm64 (and riscv, ...)
-constexpr i32 o_direct = 040000;          // 0x4000
-constexpr i32 o_directory = 0200000;      // 0x10000
-constexpr i32 o_nofollow = 0400000;       // 0x20000
+constexpr i32 o_direct = 040000;                          // 0x4000
+constexpr i32 o_directory = 0200000;                      // 0x10000
+constexpr i32 o_tmpfile = (020000000 | o_directory);      // __O_TMPFILE | O_DIRECTORY
+constexpr i32 o_nofollow = 0400000;                       // 0x20000
 #if defined(__micron_arch_width_64)
 constexpr i32 o_largefile = 00;      // LP64: large files are the default
 #else
@@ -138,6 +141,16 @@ constexpr i32 f_setlk64 = 13;
 constexpr i32 f_setlkw64 = 14;
 constexpr i32 f_setown_ex = 15;
 constexpr i32 f_getown_ex = 16;
+
+constexpr i32 f_setpipe_sz = 1031;      // F_SETPIPE_SZ (F_LINUX_SPECIFIC_BASE + 7)
+constexpr i32 f_getpipe_sz = 1032;      // F_GETPIPE_SZ (F_LINUX_SPECIFIC_BASE + 8)
+
+constexpr i32 fd_cloexec = 1;      // FD_CLOEXEC
+
+constexpr u32 splice_f_move = 1;          // SPLICE_F_MOVE
+constexpr u32 splice_f_nonblock = 2;      // SPLICE_F_NONBLOCK
+constexpr u32 splice_f_more = 4;          // SPLICE_F_MORE
+constexpr u32 splice_f_gift = 8;          // SPLICE_F_GIFT
 
 inline constexpr i32 fadv_normal = 0;          // no specific advice
 inline constexpr i32 fadv_random = 1;          // expect random access

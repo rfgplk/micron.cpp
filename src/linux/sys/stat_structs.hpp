@@ -123,13 +123,13 @@ struct stat_t {
   bool
   operator!=(const stat_t &o) const
   {
-    return micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+    return micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
   }
 
   bool
   operator==(const stat_t &o) const
   {
-    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const addr_t *>(&st_blksize) - (&st_dev));
+    return !micron::memcmp<byte>(this, &o, reinterpret_cast<const u8 *>(&st_blksize) - reinterpret_cast<const u8 *>(&st_dev));
   }
 };
 
@@ -253,5 +253,57 @@ struct stat64_t {
 using stat_t = stat64_t;
 
 #endif
+
+// Linux 4.11+
+struct statx_timestamp_t {
+  i64 tv_sec;
+  u32 tv_nsec;
+  i32 __reserved;
+};
+
+struct statx_t {
+  u32 stx_mask;            // bitmask of STATX_* indicating which fields are valid
+  u32 stx_blksize;         // preferred I/O block size
+  u64 stx_attributes;      // STATX_ATTR_* flags
+  u32 stx_nlink;
+  u32 stx_uid;
+  u32 stx_gid;
+  u16 stx_mode;      // file type + permission bits
+  u16 __spare0[1];
+  u64 stx_ino;
+  u64 stx_size;
+  u64 stx_blocks;      // 512-byte blocks allocated
+  u64 stx_attributes_mask;
+  statx_timestamp_t stx_atime;
+  statx_timestamp_t stx_btime;      // birth/creation time
+  statx_timestamp_t stx_ctime;
+  statx_timestamp_t stx_mtime;
+  u32 stx_rdev_major;
+  u32 stx_rdev_minor;
+  u32 stx_dev_major;
+  u32 stx_dev_minor;
+  u64 stx_mnt_id;
+  u32 stx_dio_mem_align;
+  u32 stx_dio_offset_align;
+  u64 __spare3[12];
+};
+
+// STATX_* request mask (statx 4th arg)
+constexpr u32 statx_type = 0x00000001U;
+constexpr u32 statx_mode = 0x00000002U;
+constexpr u32 statx_nlink = 0x00000004U;
+constexpr u32 statx_uid = 0x00000008U;
+constexpr u32 statx_gid = 0x00000010U;
+constexpr u32 statx_atime = 0x00000020U;
+constexpr u32 statx_mtime = 0x00000040U;
+constexpr u32 statx_ctime = 0x00000080U;
+constexpr u32 statx_ino = 0x00000100U;
+constexpr u32 statx_size = 0x00000200U;
+constexpr u32 statx_blocks = 0x00000400U;
+constexpr u32 statx_basic_stats = 0x000007ffU;
+constexpr u32 statx_btime = 0x00000800U;
+constexpr u32 statx_mnt_id = 0x00001000U;
+constexpr u32 statx_all = 0x00000fffU;
+
 };      // namespace posix
 };      // namespace micron

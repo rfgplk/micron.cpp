@@ -62,7 +62,7 @@ mlock(const addr_t *addr, usize len)
 int
 munlock(const addr_t *addr, usize len)
 {
-  return (int)micron::syscall(SYS_mlock, addr, len);
+  return (int)micron::syscall(SYS_munlock, addr, len);
 }
 
 int
@@ -79,8 +79,41 @@ memfd_secret(const char *name, unsigned int flags)
 }
 #endif
 
-int mlockall();
-int munlockall();
+// mlockall flags (mcl_current / mcl_future / mcl_onfault) live in mmap_bits.hpp
+int
+mlockall(int flags)
+{
+  return static_cast<int>(micron::syscall(SYS_mlockall, flags));
+}
+
+int
+munlockall(void)
+{
+  return static_cast<int>(micron::syscall(SYS_munlockall));
+}
+
+// mremap flags
+constexpr int mremap_maymove = 1;
+constexpr int mremap_fixed = 2;
+constexpr int mremap_dontunmap = 4;
+
+addr_t *
+mremap(addr_t *old_addr, usize old_size, usize new_size, int flags)
+{
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mremap, old_addr, old_size, new_size, flags, 0));
+}
+
+addr_t *
+mremap(addr_t *old_addr, usize old_size, usize new_size, int flags, addr_t *new_addr)
+{
+  return reinterpret_cast<addr_t *>(micron::syscall(SYS_mremap, old_addr, old_size, new_size, flags, new_addr));
+}
+
+int
+mincore(addr_t *addr, usize length, unsigned char *vec)
+{
+  return static_cast<int>(micron::syscall(SYS_mincore, addr, length, vec));
+}
 
 template<typename T>
 auto
@@ -111,7 +144,7 @@ sbrk(intptr_t increment)
   if ( increment == 0 ) [[likely]]
     return __program_break;
 
-  brk(__program_break + increment);
+  brk(reinterpret_cast<addr_t *>(reinterpret_cast<char *>(__program_break) + increment));
   return __program_break;
 }
 

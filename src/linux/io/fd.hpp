@@ -47,7 +47,7 @@ struct fd_t {
   constexpr inline auto
   has_error() const -> u32
   {
-    if ( fd < 0 ) return fd * -1;
+    if ( fd < 0 ) return static_cast<u32>(-static_cast<i64>(fd));     
     return 0;
   }
 

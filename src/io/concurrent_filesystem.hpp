@@ -15,8 +15,8 @@
 #include "paths.hpp"
 #include "posix/file.hpp"
 
-#include "entry.hpp"
 #include "file.hpp"
+#include "filesystem.hpp"      // shares __max_fs sentinel
 
 #include "../mutex/locks.hpp"
 
@@ -24,70 +24,56 @@ namespace micron
 {
 namespace fsys
 {
-struct __parallel_wrapper {
-  fsys::file<> _fentry;
-  micron::mutex mtx;
-};
-
-// main class for handling all system functions
-// not thread safe
-template<io::modes _default_mode = io::modes::read,
-         usize N = 256>      // max size of open handles (entries & dirs), note that the max is usually 1024, but
-                             // defaulting to 256
-class parallel_system
+template<io::modes _default_mode = io::modes::read, usize N = 256> class parallel_system
 {
-  micron::mutex __mtx;
-  micron::weak_pointer<__parallel_wrapper> entries[N];
-
-  inline __attribute__((always_inline)) auto &
-  __access(__parallel_wrapper &pw)
-  {
-    return pw._fentry;
-  }
-
+  mutable micron::mutex __mtx;
+  micron::unique_pointer<fsys::file<>> entries[N];
   usize sz;
 
-  auto
-  __find_fd(const io::path_t &p) -> int
+  inline __attribute__((always_inline)) void
+  __limit()
   {
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p ) {
-        return __access(*entries[i]).get_fd();
-      }
-    }
+    if ( sz == N ) exc<except::filesystem_error>("micron::fsys too many file handles open");
+  }
+
+  int
+  __find_fd(const io::path_t &p)
+  {
+    for ( usize i = 0; i < sz; i++ )
+      if ( entries[i]->name() == p ) return entries[i]->get_fd();
     return -1;
   }
 
-  auto
-  __find_id(const io::path_t &p) -> usize
+  usize
+  __find_id(const io::path_t &p)
   {
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p ) return i;
-    }
+    for ( usize i = 0; i < sz; i++ )
+      if ( entries[i]->name() == p ) return i;
     return __max_fs;
   }
 
-  auto &
-  __find(const io::path_t &p)
+  fsys::file<> &
+  __append(const io::path_t &p, const io::modes mode)
   {
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p ) return __access(*entries[i]);
-    }
-    exc<except::filesystem_error>("micron fsys wasn't able to find file");
+    __limit();
+    entries[sz] = new fsys::file<>(p.c_str(), mode);
+    return *entries[sz++];
   }
 
-  inline __attribute__((always_inline)) usize
-  __locate(const io::path_t &p)
+  fsys::file<> &
+  __get_or_open(const io::path_t &p, const io::modes mode)
   {
-    auto _id = __find_id(p);
-    if ( _id == __max_fs ) {
-      this->operator[](p);
-      _id = sz - 1;
-    }
-    return _id;
+    usize id = __find_id(p);
+    if ( id != __max_fs ) return *entries[id];
+    return __append(p, mode);
+  }
+
+  int
+  __fd_or_open(const io::path_t &p)
+  {
+    int f = __find_fd(p);
+    if ( f == -1 ) f = __get_or_open(p, _default_mode).get_fd();
+    return f;
   }
 
   inline __attribute__((always_inline)) void
@@ -99,14 +85,12 @@ class parallel_system
       perms.owner.write = true;
     else if ( x == io::permission_types::owner_execute )
       perms.owner.execute = true;
-
     else if ( x == io::permission_types::group_read )
       perms.group.read = true;
     else if ( x == io::permission_types::group_write )
       perms.group.write = true;
     else if ( x == io::permission_types::group_execute )
       perms.group.execute = true;
-
     else if ( x == io::permission_types::others_read )
       perms.others.read = true;
     else if ( x == io::permission_types::others_write )
@@ -115,129 +99,89 @@ class parallel_system
       perms.others.execute = true;
   }
 
-  inline __attribute__((always_inline)) void
-  __limit()
-  {
-    if ( sz == N ) exc<except::filesystem_error>("micron::fsys too many file handles open");
-  }
-
-  void
-  __lock_all(void)
-  {
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::lock(entries[i]->mtx);
-    }
-  }
-
-  void
-  __unlock_all(void)
-  {
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::unlock(entries[i]->mtx);
-    }
-  }
-
-  void
-  __lock(void)
-  {
-    micron::lock(__mtx);
-  }
-
-  void
-  __unlock(void)
-  {
-    micron::unlock(__mtx);
-  }
-
 public:
   ~parallel_system()
   {
-    for ( usize i = 0; i < N; i++ ) {
-      if ( i < sz ) (*entries[i]).sync();      // we'll automatically mandate syncing to underlying storage on dest call
-      entries[i].clear();
-    }
+    for ( usize i = 0; i < sz; i++ )
+      if ( entries[i] ) entries[i]->sync();
   }
 
-  parallel_system() : entries{ nullptr }, sz(0) { }
+  parallel_system() : sz(0) { }
 
-  parallel_system(const io::path_t &p, const io::modes c = _default_mode) : entries{ nullptr }, sz(0) { file(p, c); }
+  parallel_system(const io::path_t &p, const io::modes c = _default_mode) : sz(0) { file(p, c); }
 
   template<typename... T>
     requires((micron::same_as<T, io::path_t> && ...))
-  parallel_system(const T &...t)
+  parallel_system(const T &...t) : sz(0)
   {
     (file(t, _default_mode), ...);
   }
 
-  parallel_system(const parallel_system &o) { micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]); }
+  parallel_system(const parallel_system &) = delete;
+  parallel_system &operator=(const parallel_system &) = delete;
 
-  parallel_system(parallel_system &&o) : entries(micron::move(o.entries)) { }
-
-  parallel_system &
-  operator=(const parallel_system &o)
+  parallel_system(parallel_system &&o) noexcept : sz(o.sz)
   {
-    micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]);
-    return *this;
+    for ( usize i = 0; i < N; i++ ) entries[i] = micron::move(o.entries[i]);
+    o.sz = 0;
   }
 
   parallel_system &
-  operator=(parallel_system &&o)
+  operator=(parallel_system &&o) noexcept
   {
-    micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]);
-    micron::czero<sizeof(entries) * 256>(&o.entries[0]);
+    if ( this == &o ) return *this;
+    for ( usize i = 0; i < sz; i++ )
+      if ( entries[i] ) entries[i]->sync();
+    for ( usize i = 0; i < N; i++ ) entries[i] = micron::move(o.entries[i]);
+    sz = o.sz;
+    o.sz = 0;
     return *this;
   }
 
-  // search for file
   auto &
-  operator[](const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
+  operator[](const io::path_t &p, const io::modes c = _default_mode, const posix::node_types nd = posix::node_types::regular_file)
   {
-    __limit();
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::lock_guard(entries[i]->mtx);
-      if ( __access(*entries[i]).name() == p ) return __access(*entries[i]);
-    }      // as with maps, if file doesn't exist open it
-    return append(p, c, nd);
+    micron::lock_guard g(__mtx);
+    if ( nd != posix::node_types::regular_file ) exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
+    return __get_or_open(p, c);
   }
 
   inline auto &
-  append(const io::path_t &p, const io::modes c = _default_mode, const io::node_types nd = io::node_types::regular_file)
+  append(const io::path_t &p, const io::modes c = _default_mode, const posix::node_types nd = posix::node_types::regular_file)
   {
-    __limit();
-    if ( nd == io::node_types::regular_file ) return file(p, c);
-    exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
+    micron::lock_guard g(__mtx);
+    if ( nd != posix::node_types::regular_file ) exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
+    return __append(p, c);
   }
 
   inline void
   remove(const io::path_t &p)
   {
-    __lock();
-    usize i = 0;
-    for ( ; i < sz; i++ ) {
+    micron::lock_guard g(__mtx);
+    for ( usize i = 0; i < sz; i++ ) {
       if ( entries[i]->name() == p ) {
         entries[i]->sync();
-        entries[i].clear();
-        break;
+        for ( usize j = i + 1; j < sz; j++ ) entries[j - 1] = micron::move(entries[j]);
+        --sz;
+        entries[sz].reset();
+        return;
       }
     }
-    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
-    __unlock();
   }
 
   inline void
   remove(fsys::file<> &fref)
   {
-    __lock();
-    usize i = 0;
-    for ( ; i < sz; i++ ) {
+    micron::lock_guard g(__mtx);
+    for ( usize i = 0; i < sz; i++ ) {
       if ( *entries[i] == fref ) {
-        __access(*entries[i]).sync();
-        entries[i].clear();
-        break;
+        entries[i]->sync();
+        for ( usize j = i + 1; j < sz; j++ ) entries[j - 1] = micron::move(entries[j]);
+        --sz;
+        entries[sz].reset();
+        return;
       }
     }
-    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
-    __unlock();
   }
 
   void to_persist() = delete;
@@ -245,118 +189,48 @@ public:
   auto
   list(void) const
   {
+    micron::lock_guard g(__mtx);
     micron::vector<micron::sstr<io::max_name>> names;
-    for ( usize i = 0; i < sz; i++ ) {
-      micron::lock_guard(entries[i]->mtx);
-      names.push_back(__access(*entries[i]).name());
-    }
+    for ( usize i = 0; i < sz; i++ ) names.push_back(entries[i]->name());
     return names;
   }
 
   auto &
   file(const io::path_t &p, const io::modes mode = _default_mode)
   {
-    __lock();
-    __limit();
-    if ( !entries[sz] ) {
-      entries[sz] = new fsys::file(p.c_str(), mode);
-      usize _sz = sz++;
-      __unlock();
-      return *entries[_sz];
-    } else {
-      entries[++sz] = new fsys::file(p.c_str(), mode);
-      usize _sz = sz - 1;
-      __unlock();
-      return *entries[_sz];
-    }
+    micron::lock_guard g(__mtx);
+    return __append(p, mode);
   }
 
-  /*
-  template <is_string T>
-  auto &
-  file(const T &name, const io::modes mode = _default_mode)
-  {
-    if ( !entries[sz] ) {
-      entries[sz] = new fsys::file(name, mode);
-      return *entries[sz++];
-    } else {
-      entries[++sz] = new fsys::file(name, mode);
-      return *entries[sz - 1];
-    }
-  }
-
-  auto &
-  file(const char *name, const io::modes mode = _default_mode)
-  {
-    if ( !entries[sz] ) {
-      entries[sz] = new fsys::file(name, mode);
-      return *entries[sz++];
-    } else {
-      entries[++sz] = new fsys::file(name, mode);
-      return *entries[sz - 1];
-    }
-  }*/
   void
   rename(const io::path_t &from, const io::path_t &to)
   {
-    __lock();
-    auto f_id = __find_id(from);
-    if ( f_id == __max_fs ) {
-      this->operator[](from);
-      f_id = sz - 1;
-    }
-
-    auto t_id = __find_id(to);
-    if ( t_id == __max_fs ) {
-      this->operator[](to);
-      t_id = sz - 1;
-    }
-
+    micron::lock_guard g(__mtx);
+    __get_or_open(from, _default_mode);
+    __get_or_open(to, _default_mode);
     posix::rename(from.c_str(), to.c_str());
-    __unlock();
   }
 
   // provide both
   void
   move(const io::path_t &from, const io::path_t &to)
   {
-    __lock();
-    auto f_id = __find_id(from);
-    if ( f_id == __max_fs ) {
-      this->operator[](from);
-      f_id = sz - 1;
-    }
-
-    auto t_id = __find_id(to);
-    if ( t_id == __max_fs ) {
-      this->operator[](to);
-      t_id = sz - 1;
-    }
-
+    micron::lock_guard g(__mtx);
+    __get_or_open(from, _default_mode);
+    __get_or_open(to, _default_mode);
     posix::rename(from.c_str(), to.c_str());
-    __unlock();
   }
 
   void
   copy(const io::path_t &from, const io::path_t &to)
   {
-    __lock();
-    auto f_id = __find_id(from);
-    if ( f_id == __max_fs ) {
-      this->operator[](from);
-      f_id = sz - 1;
-    }
-
-    auto t_id = __find_id(to);
-    if ( t_id == __max_fs ) {
-      this->operator[](to);
-      t_id = sz - 1;
-    }
-    micron::ustr8 buf;
-    entries[f_id]->operator>>(buf);
-    entries[t_id]->operator=(buf);
-    sync();
-    __unlock();
+    micron::lock_guard g(__mtx);
+    fsys::file<> &f = __get_or_open(from, _default_mode);
+    fsys::file<> &t = __get_or_open(to, io::modes::readwritecreate);
+    micron::string buf;      // fsys::file<> is char-based (T = micron::string)
+    f.operator>>(buf);
+    t.operator=(buf);
+    t.sync();
   }
 
   template<typename... Paths>
@@ -366,16 +240,16 @@ public:
     (copy(from, to), ...);
   }
 
-  // we don't need this, but for compatibility with the STL we're adding it
+  // compatibility helpers
   bool
   is_opened(const io::path_t &path) const
   {
+    micron::lock_guard g(__mtx);
     for ( usize i = 0; i < sz; i++ )
       if ( entries[i]->name() == path ) return true;
     return false;
   }
 
-  // we don't need this, but for compatibility with the STL we're adding it
   bool
   equivalent(const io::path_t &path, const io::path_t &cmp) const
   {
@@ -395,164 +269,142 @@ public:
   }
 
   auto
-  permissions(const io::path_t &path) const
+  permissions(const io::path_t &path)
   {
-    usize id = __locate(path);
-    return entries[id]->permissions();
+    micron::lock_guard g(__mtx);
+    return __get_or_open(path, _default_mode).permissions();
   }
 
   auto
   set_permissions(const io::path_t &path, const io::linux_permissions &perms)
   {
-    usize id = __locate(path);
-    return entries[id]->set_permissions(perms);
+    micron::lock_guard g(__mtx);
+    return __get_or_open(path, _default_mode).set_permissions(perms);
   }
 
   template<typename... Args>
   auto
   set_permissions(const io::path_t &path, Args... args)
   {
-    usize id = __locate(path);
-
-    struct linux_permissions perms
+    micron::lock_guard g(__mtx);
+    io::linux_permissions perms
         = { { false, false, false }, { false, false, false }, { false, false, false } };      // explicitly init to zero
-    (__set_perm(perms, args), ...);
-    return entries[id]->set_permissions(perms);
+    (__set_perms(perms, args), ...);                                                          // was __set_perm (undeclared)
+    return __get_or_open(path, _default_mode).set_permissions(perms);
   }
 
-  // FILE TYPE FUNCS
   auto
   file_type_at(const io::path_t &p) const
   {
-    return io::get_type_at(p.c_str());
+    return posix::get_type_at(p.c_str());
   }
 
   auto
-  file_type(const io::path_t &p) const
+  file_type(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return io::node_types::not_found;
-    return io::get_type(f);
-  }
-
-  // is_ stl compat
-  bool
-  is_virtual_file(const io::path_t &p) const
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_virtual_file(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    if ( f == -1 ) return posix::node_types::not_found;
+    return posix::get_type(f);
   }
 
   bool
-  is_regular_file(const io::path_t &p) const
+  is_virtual_file(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_file(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_virtual_file(f);
   }
 
   bool
-  is_block_device(const io::path_t &p) const
+  is_regular_file(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_block_device(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_file(f);
   }
 
   bool
-  is_directory(const io::path_t &p) const
+  is_block_device(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_dir(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_block_device(f);
   }
 
   bool
-  is_socket(const io::path_t &p) const
+  is_directory(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_socket(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_dir(f);
   }
 
   bool
-  is_symlink(const io::path_t &p) const
+  is_socket(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_symlink(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_socket(f);
   }
 
   bool
-  is_fifo(const io::path_t &p) const
+  is_symlink(const io::path_t &p)
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return io::is_fifo(f);
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_symlink(f);
   }
 
-  // is_ stl compat
+  bool
+  is_fifo(const io::path_t &p)
+  {
+    micron::lock_guard g(__mtx);
+    int f = __fd_or_open(p);
+    return f != -1 && posix::is_fifo(f);
+  }
+
+  // queries on the most-recently-opened handle
   bool
   is_regular_file(void) const
   {
-    if ( !!entries[sz - 1] ) {
-      return io::is_file((*entries[sz - 1]).get_fd());
-    }
-    return false;
+    micron::lock_guard g(__mtx);
+    return sz != 0 && !!entries[sz - 1] && posix::is_file(entries[sz - 1]->get_fd());
   }
 
   bool
   is_block_device(void) const
   {
-    if ( !!entries[sz - 1] ) {
-      return io::is_block_device((*entries[sz - 1]).get_fd());
-    }
-    return false;
+    micron::lock_guard g(__mtx);
+    return sz != 0 && !!entries[sz - 1] && posix::is_block_device(entries[sz - 1]->get_fd());
   }
 
   bool
   is_directory(void) const
   {
-    if ( !!entries[sz - 1] ) {
-      return io::is_dir((*entries[sz - 1]).get_fd());
-    }
-    return false;
+    micron::lock_guard g(__mtx);
+    return sz != 0 && !!entries[sz - 1] && posix::is_dir(entries[sz - 1]->get_fd());
   }
 
   bool
   is_socket(void) const
   {
-    if ( !!entries[sz - 1] ) {
-      return io::is_socket((*entries[sz - 1]).get_fd());
-    }
-    return false;
+    micron::lock_guard g(__mtx);
+    return sz != 0 && !!entries[sz - 1] && posix::is_socket(entries[sz - 1]->get_fd());
   }
 
   bool
   is_symlink(void) const
   {
-    if ( !!entries[sz - 1] ) {
-      return io::is_symlink((*entries[sz - 1]).get_fd());
-    }
-    return false;
+    micron::lock_guard g(__mtx);
+    return sz != 0 && !!entries[sz - 1] && posix::is_symlink(entries[sz - 1]->get_fd());
   }
 
   bool
   is_fifo(void) const
   {
-    if ( !!entries[sz - 1] ) {
-      return io::is_fifo((*entries[sz - 1]).get_fd());
-    }
-    return false;
+    micron::lock_guard g(__mtx);
+    return sz != 0 && !!entries[sz - 1] && posix::is_fifo(entries[sz - 1]->get_fd());
   }
 };
 

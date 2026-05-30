@@ -8,6 +8,8 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "file.hpp"     
+
 namespace micron
 {
 namespace io

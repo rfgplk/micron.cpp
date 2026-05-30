@@ -29,6 +29,7 @@ constexpr int __global_buffer_chunk = 1024;
 fd_t stdin = posix::invalid_fd;
 fd_t stdout = posix::invalid_fd;
 fd_t stderr = posix::invalid_fd;
+
 // these must be constinit to prevent clobbering with the default ctor
 constinit micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
 constinit micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stderr(nullptr);
@@ -86,6 +87,14 @@ __init_io_buffer(void)
   if ( !__global_buffer_stderr ) {
     __global_buffer_stderr = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
   }
+}
+
+// drain the buffered stdout/stderr streams at process exit manually
+void __attribute__((destructor))
+__flush_io_buffer(void)
+{
+  if ( __global_buffer_stdout && stdout.open() && !stdout.has_error() ) __global_buffer_stdout->flush_to(stdout);
+  if ( __global_buffer_stderr && stderr.open() && !stderr.has_error() ) __global_buffer_stderr->flush_to(stderr);
 }
 
 extern "C" void

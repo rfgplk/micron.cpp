@@ -50,7 +50,7 @@ sched_setscheduler(pid_t pid, int policy, sched_param &params)
 int
 sched_getscheduler(pid_t pid)
 {
-  return static_cast<int>(micron::syscall(SYS_sched_setscheduler, pid));
+  return static_cast<int>(micron::syscall(SYS_sched_getscheduler, pid));
 }
 
 int

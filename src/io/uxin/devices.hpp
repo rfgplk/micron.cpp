@@ -25,8 +25,11 @@ auto
 __parse_device(const char *s, const micron::ustr8 &buf)
 {
   auto tk = micron::format::find(buf, s);
+  if ( !tk ) return micron::ustr8{};  
   auto del = micron::format::find(buf, tk, '=');
+  if ( !del ) return micron::ustr8{};
   auto del_eol = micron::format::find(buf, del, '\n');
+  if ( !del_eol ) del_eol = buf.end(); 
   return buf.substr(del + 1, del_eol);
 }
 

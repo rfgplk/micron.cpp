@@ -37,12 +37,12 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
 
   if ( !resolved_path ) {
 #if defined(__micron_arch_width_32)
-    result_buf = reinterpret_cast<char *>(
-        micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+    max_t __m = micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
 #else
-    result_buf = reinterpret_cast<char *>(
-        micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+    max_t __m = micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
 #endif
+    if ( micron::syscall_failed(__m) ) return nullptr;
+    result_buf = reinterpret_cast<char *>(__m);
     allocated = true;
   }
 

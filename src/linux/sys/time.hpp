@@ -72,14 +72,35 @@ struct timespec_t {
 };
 #elif __wordsize == 32
 struct timeval_t {
-  i32 tv_sec;  /* Seconds */
+  i32 tv_sec;  /* Seconds (legacy 32-bit timeval; getrusage/setitimer use durations, not absolute time) */
   i32 tv_usec; /* Microseconds */
 };
 
 struct timespec_t {
-  i32 tv_sec;  /* Seconds */
-  i32 tv_nsec; /* Nanoseconds */
+  time64_t tv_sec;
+  i64 tv_nsec;
 };
+#endif
+
+// guard against Y2038
+#if defined(__micron_arch_width_32)
+constexpr long __sys_clock_gettime = SYS_clock_gettime64;
+constexpr long __sys_clock_settime = SYS_clock_settime64;
+constexpr long __sys_clock_getres = SYS_clock_getres_time64;
+constexpr long __sys_clock_nanosleep = SYS_clock_nanosleep_time64;
+constexpr long __sys_timerfd_settime = SYS_timerfd_settime64;
+constexpr long __sys_timerfd_gettime = SYS_timerfd_gettime64;
+constexpr long __sys_timer_settime = SYS_timer_settime64;
+constexpr long __sys_timer_gettime = SYS_timer_gettime64;
+#else
+constexpr long __sys_clock_gettime = SYS_clock_gettime;
+constexpr long __sys_clock_settime = SYS_clock_settime;
+constexpr long __sys_clock_getres = SYS_clock_getres;
+constexpr long __sys_clock_nanosleep = SYS_clock_nanosleep;
+constexpr long __sys_timerfd_settime = SYS_timerfd_settime;
+constexpr long __sys_timerfd_gettime = SYS_timerfd_gettime;
+constexpr long __sys_timer_settime = SYS_timer_settime;
+constexpr long __sys_timer_gettime = SYS_timer_gettime;
 #endif
 
 struct itimerspec_t {
@@ -110,49 +131,57 @@ struct sigevent_t {
 auto
 nanosleep(const timespec_t &req, timespec_t &rem)
 {
+#if defined(__micron_arch_width_32)
+  return micron::syscall(SYS_clock_nanosleep_time64, clock_monotonic, 0, &req, &rem);
+#else
   return micron::syscall(SYS_nanosleep, &req, &rem);
+#endif
 }
 
 auto
 nanosleep(const timespec_t &req)
 {
+#if defined(__micron_arch_width_32)
+  return micron::syscall(SYS_clock_nanosleep_time64, clock_monotonic, 0, &req, nullptr);
+#else
   return micron::syscall(SYS_nanosleep, &req, nullptr);
+#endif
 }
 
 ssize_t
 clock_gettime(clockid_t clc, timespec_t &tm)
 {
-  return micron::syscall(SYS_clock_gettime, clc, &tm);
+  return micron::syscall(__sys_clock_gettime, clc, &tm);
 }
 
 ssize_t
 clock_getres(clockid_t clc, timespec_t *res)
 {
-  return micron::syscall(SYS_clock_getres, clc, res);
+  return micron::syscall(__sys_clock_getres, clc, res);
 }
 
 ssize_t
 clock_getres(clockid_t clc, timespec_t &res)
 {
-  return micron::syscall(SYS_clock_getres, clc, &res);
+  return micron::syscall(__sys_clock_getres, clc, &res);
 }
 
 ssize_t
 clock_settime(clockid_t clc, const timespec_t &tm)
 {
-  return micron::syscall(SYS_clock_settime, clc, &tm);
+  return micron::syscall(__sys_clock_settime, clc, &tm);
 }
 
 ssize_t
 clock_nanosleep(clockid_t clock, i32 flags, timespec_t &tm, timespec_t *rmn)
 {
-  return micron::syscall(SYS_clock_nanosleep, clock, flags, &tm, rmn);
+  return micron::syscall(__sys_clock_nanosleep, clock, flags, &tm, rmn);
 }
 
 ssize_t
 clock_nanosleep(clockid_t clock, i32 flags, const timespec_t &tm)
 {
-  return micron::syscall(SYS_clock_nanosleep, clock, flags, &tm, nullptr);
+  return micron::syscall(__sys_clock_nanosleep, clock, flags, &tm, nullptr);
 }
 
 clock_t
@@ -163,16 +192,15 @@ clock(void)
   return (tm.tv_sec * clocks_per_sec + tm.tv_nsec / (1000000000 / clocks_per_sec));
 }
 
-time_t
+time64_t
 time(void)
 {
-#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
-  return micron::syscall(SYS_time, nullptr);
+#if defined(__micron_arch_amd64)
+  return micron::syscall(SYS_time, nullptr);      // amd64 SYS_time returns a 64-bit time_t
 #else
-  // NOTE: arm32 EABI and arm64 have no SYS_time
   timespec_t __ts{};
-  if ( clock_gettime(clock_realtime, __ts) != 0 ) return static_cast<time_t>(-1);
-  return static_cast<time_t>(__ts.tv_sec);
+  if ( clock_gettime(clock_realtime, __ts) != 0 ) return static_cast<time64_t>(-1);
+  return static_cast<time64_t>(__ts.tv_sec);
 #endif
 }
 
@@ -187,19 +215,19 @@ timerfd_create(clockid_t clockid, i32 flags)
 i32
 timerfd_settime(i32 fd, i32 flags, const itimerspec_t &new_val, itimerspec_t *old_val)
 {
-  return static_cast<i32>(micron::syscall(SYS_timerfd_settime, fd, flags, &new_val, old_val));
+  return static_cast<i32>(micron::syscall(__sys_timerfd_settime, fd, flags, &new_val, old_val));
 }
 
 i32
 timerfd_settime(i32 fd, i32 flags, const itimerspec_t &new_val)
 {
-  return static_cast<i32>(micron::syscall(SYS_timerfd_settime, fd, flags, &new_val, nullptr));
+  return static_cast<i32>(micron::syscall(__sys_timerfd_settime, fd, flags, &new_val, nullptr));
 }
 
 i32
 timerfd_gettime(i32 fd, itimerspec_t &cur)
 {
-  return static_cast<i32>(micron::syscall(SYS_timerfd_gettime, fd, &cur));
+  return static_cast<i32>(micron::syscall(__sys_timerfd_gettime, fd, &cur));
 }
 
 i32
@@ -223,19 +251,19 @@ timer_delete(timer_t timerid)
 i32
 timer_settime(timer_t timerid, i32 flags, const itimerspec_t &new_val, itimerspec_t *old_val)
 {
-  return static_cast<i32>(micron::syscall(SYS_timer_settime, timerid, flags, &new_val, old_val));
+  return static_cast<i32>(micron::syscall(__sys_timer_settime, timerid, flags, &new_val, old_val));
 }
 
 i32
 timer_settime(timer_t timerid, i32 flags, const itimerspec_t &new_val)
 {
-  return static_cast<i32>(micron::syscall(SYS_timer_settime, timerid, flags, &new_val, nullptr));
+  return static_cast<i32>(micron::syscall(__sys_timer_settime, timerid, flags, &new_val, nullptr));
 }
 
 i32
 timer_gettime(timer_t timerid, itimerspec_t &cur)
 {
-  return static_cast<i32>(micron::syscall(SYS_timer_gettime, timerid, &cur));
+  return static_cast<i32>(micron::syscall(__sys_timer_gettime, timerid, &cur));
 }
 
 i32
@@ -280,7 +308,7 @@ clock_getcpuclockid(posix::pid_t pid, clockid_t &clc)
 {
   clc = static_cast<clockid_t>(~(static_cast<u32>(pid) << 3));
   timespec_t probe;
-  long r = micron::syscall(SYS_clock_gettime, clc, &probe);
+  long r = micron::syscall(__sys_clock_gettime, clc, &probe);
   if ( r != 0 ) return static_cast<i32>(-r); /* return positive errno */
   return 0;
 }
@@ -291,6 +319,26 @@ timerfd_read(i32 fd)
   u64 count = 0;
   micron::syscall(SYS_read, fd, &count, sizeof(count));
   return count;
+}
+
+// legacy wall-clock
+auto
+gettimeofday(timeval_t &tv) -> i32
+{
+  return static_cast<i32>(micron::syscall(SYS_gettimeofday, &tv, nullptr));
+}
+
+struct tms_t {
+  clock_t tms_utime;  /* user CPU time */
+  clock_t tms_stime;  /* system CPU time */
+  clock_t tms_cutime; /* user CPU time of waited-for children */
+  clock_t tms_cstime; /* system CPU time of waited-for children */
+};
+
+clock_t
+times(tms_t &buf)
+{
+  return static_cast<clock_t>(micron::syscall(SYS_times, &buf));
 }
 
 };      // namespace micron

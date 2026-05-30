@@ -103,6 +103,23 @@ struct __linux_kernel_dirent64 {
   char d_name[256];
 };
 
+inline u16
+__dirent64_validate(const void *buf, usize pos, usize nread, const __linux_kernel_dirent64 *&out) noexcept
+{
+  constexpr usize hdr = __builtin_offsetof(__linux_kernel_dirent64, d_name);
+  if ( pos >= nread || pos + hdr > nread ) return 0;
+  out = reinterpret_cast<const __linux_kernel_dirent64 *>(static_cast<const char *>(buf) + pos);
+  const u16 reclen = out->d_reclen;
+  if ( reclen <= hdr ) return 0;
+  if ( (reclen % alignof(__linux_kernel_dirent64)) != 0 ) return 0;
+  if ( pos + reclen > nread ) return 0;
+  const usize navail = reclen - hdr;
+  const usize scan = navail < (name_max + 1) ? navail : (name_max + 1);
+  for ( usize i = 0; i < scan; ++i )
+    if ( out->d_name[i] == '\0' ) return reclen;
+  return 0;
+}
+
 // legacy glibc-style dirent
 struct __dirent {
   kernel_ino_t d_ino;
@@ -115,7 +132,7 @@ struct __dirent {
 struct __impl_dir {
   micron::sstring<name_max + 1> d_name;
   u8 type;
-  ino_t i_no;
+  ino64_t i_no;      // full 64-bit inode
 
   bool
   is_reg() const

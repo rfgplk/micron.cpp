@@ -93,28 +93,28 @@ write(fd_t fd, P &buf, usize cnt)
 
 template<typename P>
 max_t
-pread(i32 fd, P *buf, usize cnt, off_t offset)
+pread(i32 fd, P *buf, usize cnt, off64_t offset)
 {
   return micron::syscall(SYS_pread64, fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 template<typename P>
 max_t
-pwrite(i32 fd, P *buf, usize cnt, off_t offset)
+pwrite(i32 fd, P *buf, usize cnt, off64_t offset)
 {
   return micron::syscall(SYS_pwrite64, fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 template<typename P>
 max_t
-pread(fd_t fd, P *buf, usize cnt, off_t offset)
+pread(fd_t fd, P *buf, usize cnt, off64_t offset)
 {
   return micron::syscall(SYS_pread64, fd.fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
 
 template<typename P>
 max_t
-pwrite(fd_t fd, P *buf, usize cnt, off_t offset)
+pwrite(fd_t fd, P *buf, usize cnt, off64_t offset)
 {
   return micron::syscall(SYS_pwrite64, fd.fd, micron::voidify(buf), cnt, static_cast<i64>(offset));
 }
@@ -435,22 +435,32 @@ fdatasync(fd_t fd)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // truncs
 
+// off64_t parameters: identical to off_t on 64-bit, but on 32-bit they carry a full
+// 64-bit length via the *64 syscalls (the legacy SYS_truncate/SYS_ftruncate are 32-bit only).
 auto
-truncate(const char *path, posix::off_t length)
+truncate(const char *path, posix::off64_t length)
 {
+#if defined(__micron_arch_width_32)
+  return static_cast<i32>(micron::syscall(SYS_truncate64, path, length));      // splitter marshals the 64-bit length
+#else
   return static_cast<i32>(micron::syscall(SYS_truncate, path, length));
+#endif
 }
 
 auto
-ftruncate(i32 fd, posix::off_t length)
+ftruncate(i32 fd, posix::off64_t length)
 {
+#if defined(__micron_arch_width_32)
+  return static_cast<i32>(micron::syscall(SYS_ftruncate64, fd, length));
+#else
   return static_cast<i32>(micron::syscall(SYS_ftruncate, fd, length));
+#endif
 }
 
 auto
-ftruncate(fd_t fd, posix::off_t length)
+ftruncate(fd_t fd, posix::off64_t length)
 {
-  return static_cast<i32>(micron::syscall(SYS_ftruncate, fd.fd, length));
+  return ftruncate(fd.fd, length);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -613,29 +623,93 @@ flock(fd_t fd, i32 op) -> i32
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // seeks
-// off_t == long int
-posix::off_t
-lseek(i32 fd, posix::off_t offset, i32 whence)
+posix::off64_t
+lseek(i32 fd, posix::off64_t offset, i32 whence)
 {
-  return (micron::syscall(SYS_lseek, fd, offset, whence));
+#if defined(__micron_arch_width_32)
+  posix::off64_t result = 0;
+  long r = micron::syscall(SYS__llseek, fd, static_cast<u32>(static_cast<u64>(offset) >> 32),
+                           static_cast<u32>(static_cast<u64>(offset) & 0xffffffffu), &result, whence);
+  if ( micron::syscall_failed(r) ) return static_cast<posix::off64_t>(r);      // raw -errno
+  return result;
+#else
+  return micron::syscall(SYS_lseek, fd, offset, whence);
+#endif
 }
 
-posix::off_t
-lseek(fd_t fd, posix::off_t offset, i32 whence)
+posix::off64_t
+lseek(fd_t fd, posix::off64_t offset, i32 whence)
 {
-  return (micron::syscall(SYS_lseek, fd.fd, offset, whence));
+  return lseek(fd.fd, offset, whence);
 }
 
 i32
-fallocate(i32 fd, i32 mode, posix::off_t offset, posix::off_t len)
+fallocate(i32 fd, i32 mode, posix::off64_t offset, posix::off64_t len)
 {
   return static_cast<i32>(micron::syscall(SYS_fallocate, fd, mode, offset, len));
 }
 
 i32
-fallocate(fd_t fd, i32 mode, posix::off_t offset, posix::off_t len)
+fallocate(fd_t fd, i32 mode, posix::off64_t offset, posix::off64_t len)
 {
-  return static_cast<i32>(micron::syscall(SYS_fallocate, fd.fd, mode, offset, len));
+  return fallocate(fd.fd, mode, offset, len);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// eventfd / close_range / openat2 / utimensat
+
+constexpr i32 efd_semaphore = 1;
+constexpr i32 efd_cloexec = 0x80000;
+constexpr i32 efd_nonblock = 0x800;
+
+i32
+eventfd(unsigned int initval, i32 flags)
+{
+  return static_cast<i32>(micron::syscall(SYS_eventfd2, initval, flags));
+}
+
+constexpr unsigned int close_range_unshare = (1U << 1);
+constexpr unsigned int close_range_cloexec = (1U << 2);
+
+i32
+close_range(unsigned int first, unsigned int last, unsigned int flags)
+{
+  return static_cast<i32>(micron::syscall(SYS_close_range, first, last, flags));
+}
+
+struct open_how {
+  u64 flags;
+  u64 mode;
+  u64 resolve;
+};
+
+constexpr u64 resolve_no_xdev = 0x01;
+constexpr u64 resolve_no_magiclinks = 0x02;
+constexpr u64 resolve_no_symlinks = 0x04;
+constexpr u64 resolve_beneath = 0x08;
+constexpr u64 resolve_in_root = 0x10;
+constexpr u64 resolve_cached = 0x20;
+
+i32
+openat2(i32 dirfd, const char *path, open_how &how)
+{
+  return static_cast<i32>(micron::syscall(SYS_openat2, dirfd, path, &how, sizeof(how)));
+}
+
+i32
+utimensat(i32 dirfd, const char *path, const timespec_t *times, i32 flags)
+{
+#if defined(__micron_arch_width_32)
+  return static_cast<i32>(micron::syscall(SYS_utimensat_time64, dirfd, path, times, flags));
+#else
+  return static_cast<i32>(micron::syscall(SYS_utimensat, dirfd, path, times, flags));
+#endif
+}
+
+i32
+futimens(i32 fd, const timespec_t *times)
+{
+  return utimensat(fd, nullptr, times, 0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -870,25 +944,33 @@ mknodat(fd_t dirfd, const char *path, posix::mode_t mode, posix::dev_t dev)
 // sendfile + splices
 
 max_t
-sendfile(i32 out_fd, i32 in_fd, posix::off_t *offset, usize count)
+sendfile(i32 out_fd, i32 in_fd, posix::off64_t *offset, usize count)
 {
+#if defined(__micron_arch_width_32)
+  return micron::syscall(SYS_sendfile64, out_fd, in_fd, offset, count);      // loff_t* (64-bit) on ILP32
+#else
   return micron::syscall(SYS_sendfile, out_fd, in_fd, offset, count);
+#endif
 }
 
 max_t
-sendfile(fd_t out_fd, fd_t in_fd, posix::off_t *offset, usize count)
+sendfile(fd_t out_fd, fd_t in_fd, posix::off64_t *offset, usize count)
 {
+#if defined(__micron_arch_width_32)
+  return micron::syscall(SYS_sendfile64, out_fd.fd, in_fd.fd, offset, count);
+#else
   return micron::syscall(SYS_sendfile, out_fd.fd, in_fd.fd, offset, count);
+#endif
 }
 
 max_t
-splice(i32 fd_in, posix::off_t *off_in, i32 fd_out, posix::off_t *off_out, usize len, u32 flags)
+splice(i32 fd_in, posix::off64_t *off_in, i32 fd_out, posix::off64_t *off_out, usize len, u32 flags)
 {
   return micron::syscall(SYS_splice, fd_in, off_in, fd_out, off_out, len, flags);
 }
 
 max_t
-splice(fd_t fd_in, posix::off_t *off_in, fd_t fd_out, posix::off_t *off_out, usize len, u32 flags)
+splice(fd_t fd_in, posix::off64_t *off_in, fd_t fd_out, posix::off64_t *off_out, usize len, u32 flags)
 {
   return micron::syscall(SYS_splice, fd_in.fd, off_in, fd_out.fd, off_out, len, flags);
 }
@@ -906,13 +988,13 @@ tee(fd_t fd_in, fd_t fd_out, usize len, u32 flags)
 }
 
 max_t
-copy_file_range(i32 fd_in, posix::off_t *off_in, i32 fd_out, posix::off_t *off_out, usize len, u32 flags)
+copy_file_range(i32 fd_in, posix::off64_t *off_in, i32 fd_out, posix::off64_t *off_out, usize len, u32 flags)
 {
   return micron::syscall(SYS_copy_file_range, fd_in, off_in, fd_out, off_out, len, flags);
 }
 
 max_t
-copy_file_range(fd_t fd_in, posix::off_t *off_in, fd_t fd_out, posix::off_t *off_out, usize len, u32 flags)
+copy_file_range(fd_t fd_in, posix::off64_t *off_in, fd_t fd_out, posix::off64_t *off_out, usize len, u32 flags)
 {
   return micron::syscall(SYS_copy_file_range, fd_in.fd, off_in, fd_out.fd, off_out, len, flags);
 }

@@ -252,15 +252,17 @@ public:
   operator<<(const fd_t &in)
   {
     __check_fd(in, "io::stream operator<<: fd_t is closed or has an error");
-    usize seek = static_cast<usize>(posix::lseek(in.fd, 0, posix::seek_cur));
     do {
+      if ( static_cast<usize>(__size) >= static_cast<usize>(__sz) ) break;      // buffer full
       usize avail = static_cast<usize>(__sz) - static_cast<usize>(__size);
       usize chunk = static_cast<usize>(__chnk) < avail ? static_cast<usize>(__chnk) : avail;
       max_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), chunk);
-      if ( bytes_read <= 0 ) break;
-      seek += static_cast<usize>(bytes_read);
+      if ( bytes_read < 0 ) {
+        if ( bytes_read == -error::interrupted ) continue;
+        break;
+      }
+      if ( bytes_read == 0 ) break;      // EOF
       __size += bytes_read;
-      posix::lseek(in.fd, static_cast<posix::off_t>(seek), posix::seek_set);
     } while ( static_cast<usize>(__size) < static_cast<usize>(__sz) );
     __intercept();
     return *this;
@@ -312,10 +314,12 @@ public:
     do {
       usize chunk = static_cast<usize>(__chnk) < static_cast<usize>(__size) ? static_cast<usize>(__chnk) : static_cast<usize>(__size);
       max_t sz = posix::write(out.fd, __buffer->at_pointer(buf_i), chunk);
-      if ( sz == -1 ) [[unlikely]]
+      if ( sz < 0 ) [[unlikely]] {
+        if ( sz == -error::interrupted ) continue;
         exc<except::io_error>("io::stream operator>>: write failed.");
+      }
       if ( sz == 0 ) break;
-      buf_i += chunk;
+      buf_i += static_cast<usize>(sz);
       __size -= sz;
     } while ( __size > 0 );
     return *this;
@@ -392,9 +396,12 @@ public:
     do {
       usize chunk = static_cast<usize>(__chnk) < static_cast<usize>(remaining) ? static_cast<usize>(__chnk) : static_cast<usize>(remaining);
       max_t sz = posix::write(out.fd, __buffer->at_pointer(buf_i), chunk);
-      if ( sz == -1 ) return { false, buf_i };
+      if ( sz < 0 ) {
+        if ( sz == -error::interrupted ) continue;
+        return { false, buf_i };
+      }
       if ( sz == 0 ) break;
-      buf_i += chunk;
+      buf_i += static_cast<usize>(sz);
       remaining -= sz;
     } while ( remaining > 0 );
     return { true, buf_i };
@@ -708,15 +715,17 @@ public:
   operator<<(const fd_t &in)
   {
     __check_fd(in, "io::stream_view operator<<: fd_t is closed or has an error");
-    usize seek = static_cast<usize>(posix::lseek(in.fd, 0, posix::seek_cur));
     do {
+      if ( static_cast<usize>(__size) >= static_cast<usize>(__sz) ) break;      // buffer full
       usize avail = static_cast<usize>(__sz) - static_cast<usize>(__size);
       usize chunk = static_cast<usize>(__chnk) < avail ? static_cast<usize>(__chnk) : avail;
       max_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), chunk);
-      if ( bytes_read <= 0 ) break;
-      seek += static_cast<usize>(bytes_read);
+      if ( bytes_read < 0 ) {
+        if ( bytes_read == -error::interrupted ) continue;
+        break;
+      }
+      if ( bytes_read == 0 ) break;      // EOF
       __size += bytes_read;
-      posix::lseek(in.fd, static_cast<posix::off_t>(seek), posix::seek_set);
     } while ( static_cast<usize>(__size) < static_cast<usize>(__sz) );
     __intercept();
     return *this;
@@ -732,9 +741,12 @@ public:
     do {
       usize chunk = static_cast<usize>(__chnk) < static_cast<usize>(remaining) ? static_cast<usize>(__chnk) : static_cast<usize>(remaining);
       max_t sz = posix::write(out.fd, __buffer->at_pointer(buf_i), chunk);
-      if ( sz == -1 ) exc<except::io_error>("io::stream_view operator>>: write failed.");
+      if ( sz < 0 ) {
+        if ( sz == -error::interrupted ) continue;
+        exc<except::io_error>("io::stream_view operator>>: write failed.");
+      }
       if ( sz == 0 ) break;
-      buf_i += chunk;
+      buf_i += static_cast<usize>(sz);
       remaining -= sz;
     } while ( remaining > 0 );
     return *this;

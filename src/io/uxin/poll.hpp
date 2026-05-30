@@ -58,6 +58,7 @@ poll(const device_t &dev, Args &&...raw_in)
       return -1;
     } else if ( !res )
       continue;
+    if ( micron::poll_hungup(pfd) || micron::poll_errored(pfd) || micron::poll_invalid(pfd) ) return -1;
     if ( pfd.revents & posix::poll_in ) {
       input_event ev = Fn(dev);
       (for_every(ev, raw_in), ...);
@@ -95,6 +96,7 @@ poll(input_t &inp, Args &&...raw_in)
       return -1;
     } else if ( !res )
       continue;
+    if ( micron::poll_hungup(pfd) || micron::poll_errored(pfd) || micron::poll_invalid(pfd) ) return -1;
     if ( pfd.revents & posix::poll_in ) {
       input_event ev = Fn(inp.device);
       (for_every(ev, raw_in), ...);
@@ -113,7 +115,7 @@ __make_poll(const input_t &arg)
 template<umax_t S = 1, auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
-poll_pack(slice<input_t> &inp, Args &&...raw_in)
+poll_pack(fvector<input_t> &inp, Args &&...raw_in)
 {
   for ( const auto &_inp : inp )
     if ( _inp.device.bound_fd.has_error() ) return -1;
@@ -133,7 +135,8 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
       }
     }
   };
-  slice<posix::pollfd> pfd_pack(__make_poll, inp);
+  micron::fvector<posix::pollfd> pfd_pack;
+  for ( usize k = 0; k < inp.size(); ++k ) pfd_pack.push_back(__make_poll(inp[k]));
   for ( ;; ) {
     for ( usize j = 0; j < inp.size(); ++j ) {
       auto &pfd = pfd_pack[j];
@@ -143,6 +146,7 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
         return -1;
       } else if ( !res )
         continue;
+      if ( micron::poll_hungup(pfd) || micron::poll_errored(pfd) || micron::poll_invalid(pfd) ) return -1;
       if ( pfd.revents & posix::poll_in ) {
         input_event ev = Fn(inp_i.device);
         (for_every(inp_i, ev, raw_in), ...);
@@ -155,7 +159,7 @@ poll_pack(slice<input_t> &inp, Args &&...raw_in)
 template<auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
-poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
+poll_pack_rt(fvector<input_t> &inp, Args &&...raw_in)
 {
   for ( const auto &_inp : inp )
     if ( _inp.device.bound_fd.has_error() ) return -1;
@@ -188,7 +192,7 @@ poll_pack_rt(slice<input_t> &inp, Args &&...raw_in)
 template<auto Fn = get_event, typename... Args>
   requires((micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...))
 poll_flag
-poll_pack_once(slice<input_t> &inp, Args &&...raw_in)
+poll_pack_once(fvector<input_t> &inp, Args &&...raw_in)
 {
   for ( const auto &_inp : inp )
     if ( _inp.device.bound_fd.has_error() ) return -1;

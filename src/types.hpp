@@ -78,7 +78,8 @@ using timer_t = __timer_t;
 using suseconds_t = __suseconds_t;
 
 using time_t = __time_t;
-using time64_t = time_t;
+// time64_t is ALWAYS 64-bit
+using time64_t = __INT64_TYPE__;
 using slong_t = __syscall_slong_type;
 using ulong_t = __syscall_ulong_type;
 using quad_t = int64_t;

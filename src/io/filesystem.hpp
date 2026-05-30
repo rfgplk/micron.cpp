@@ -111,10 +111,8 @@ template<io::modes __default_mode = io::modes::read, usize N = 256> class system
 public:
   ~system()
   {
-    for ( usize i = 0; i < N; i++ ) {
-      if ( i < sz ) (*entries[i]).sync();
-      entries[i].clear();
-    }
+    for ( usize i = 0; i < sz; i++ )
+      if ( entries[i] ) entries[i]->sync();
   }
 
   system() : entries{ nullptr }, sz(0) { }
@@ -128,22 +126,24 @@ public:
     (file(t, __default_mode), ...);
   }
 
-  system(const system &o) { micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]); }
+  system(const system &) = delete;
+  system &operator=(const system &) = delete;
 
-  system(system &&o) : entries(micron::move(o.entries)) { }
-
-  system &
-  operator=(const system &o)
+  system(system &&o) noexcept : sz(o.sz)
   {
-    micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]);
-    return *this;
+    for ( usize i = 0; i < N; i++ ) entries[i] = micron::move(o.entries[i]);
+    o.sz = 0;
   }
 
   system &
-  operator=(system &&o)
+  operator=(system &&o) noexcept
   {
-    micron::cmemcpy<sizeof(entries) * 256>(&entries[0], &o.entries[0]);
-    micron::czero<sizeof(entries) * 256>(&o.entries[0]);
+    if ( this == &o ) return *this;
+    for ( usize i = 0; i < sz; i++ )
+      if ( entries[i] ) entries[i]->sync();
+    for ( usize i = 0; i < N; i++ ) entries[i] = micron::move(o.entries[i]);
+    sz = o.sz;
+    o.sz = 0;
     return *this;
   }
 
@@ -167,29 +167,29 @@ public:
   inline void
   remove(const io::path_t &p)
   {
-    usize i = 0;
-    for ( ; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       if ( entries[i]->name() == p ) {
         entries[i]->sync();
-        entries[i].clear();
-        break;
+        for ( usize j = i + 1; j < sz; j++ ) entries[j - 1] = micron::move(entries[j]);
+        --sz;
+        entries[sz].reset();
+        return;
       }
     }
-    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
   }
 
   inline void
   remove(fsys::file<> &fref)
   {
-    usize i = 0;
-    for ( ; i < sz; i++ ) {
+    for ( usize i = 0; i < sz; i++ ) {
       if ( *entries[i] == fref ) {
         entries[i]->sync();
-        entries[i].clear();
-        break;
+        for ( usize j = i + 1; j < sz; j++ ) entries[j - 1] = micron::move(entries[j]);
+        --sz;
+        entries[sz].reset();
+        return;
       }
     }
-    for ( ++i; i < sz; i++ ) entries[i - 1] = micron::move(entries[i]);
   }
 
   void to_persist() = delete;
@@ -206,13 +206,8 @@ public:
   file(const io::path_t &p, const io::modes mode = __default_mode)
   {
     __limit();
-    if ( !entries[sz] ) {
-      entries[sz] = new fsys::file<>(p.c_str(), mode);
-      return *entries[sz++];
-    } else {
-      entries[++sz] = new fsys::file<>(p.c_str(), mode);
-      return *entries[sz - 1];
-    }
+    entries[sz] = new fsys::file<>(p.c_str(), mode);
+    return *entries[sz++];
   }
 
   void
@@ -404,42 +399,42 @@ public:
   bool
   is_regular_file(void) const
   {
-    if ( !!entries[sz - 1] ) return posix::is_file((*entries[sz - 1]).get_fd());
+    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_file((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_block_device(void) const
   {
-    if ( !!entries[sz - 1] ) return posix::is_block_device((*entries[sz - 1]).get_fd());
+    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_block_device((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_directory(void) const
   {
-    if ( !!entries[sz - 1] ) return posix::is_dir((*entries[sz - 1]).get_fd());
+    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_dir((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_socket(void) const
   {
-    if ( !!entries[sz - 1] ) return posix::is_socket((*entries[sz - 1]).get_fd());
+    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_socket((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_symlink(void) const
   {
-    if ( !!entries[sz - 1] ) return posix::is_symlink((*entries[sz - 1]).get_fd());
+    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_symlink((*entries[sz - 1]).get_fd());
     return false;
   }
 
   bool
   is_fifo(void) const
   {
-    if ( !!entries[sz - 1] ) return posix::is_fifo((*entries[sz - 1]).get_fd());
+    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_fifo((*entries[sz - 1]).get_fd());
     return false;
   }
 

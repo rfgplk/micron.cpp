@@ -29,7 +29,7 @@ namespace micron
 {
 namespace io
 {
-constexpr static const usize max_name = (posix::name_max + 1) * 2;
+constexpr static const usize max_name = posix::path_max;
 
 enum stat_existing { STAT_OVERRIDE, STAT_EXISTING };
 
@@ -460,7 +460,10 @@ public:
 
   template<is_string T> file(const T &str, const modes mode) { __open_linux(str, mode); }
 
-  file(const file &o) : fname(o.fname), __handle(o.__handle), sd(o.sd) { }
+  file(const file &o) : fname(o.fname), __handle(posix::invalid_fd), sd(o.sd)
+  {
+    if ( o.__handle.fd >= 0 ) __handle.fd = static_cast<i32>(posix::dup(o.__handle.fd));
+  }
 
   file(file &&o) noexcept : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
   {
@@ -482,8 +485,11 @@ public:
   file &
   operator=(const file &o)
   {
+    if ( this == &o ) return *this;
+    close();      // release our current fd first (was leaked); then dup the source's
     fname = o.fname;
-    __handle = o.__handle;
+    __handle = posix::invalid_fd;
+    if ( o.__handle.fd >= 0 ) __handle.fd = static_cast<i32>(posix::dup(o.__handle.fd));
     sd = o.sd;
     return *this;
   }
@@ -666,7 +672,7 @@ public:
     return true;
   }      // file always owns its fd
 
-  posix::ino_t
+  posix::ino64_t
   inode(void)
   {
     __alive();
@@ -714,7 +720,7 @@ public:
     return sd.st_gid;
   }
 
-  posix::time_t
+  time64_t
   atime(void)
   {
     __alive();
@@ -722,7 +728,7 @@ public:
     return sd.st_atime;
   }
 
-  posix::time_t
+  time64_t
   mtime(void)
   {
     __alive();
@@ -730,7 +736,7 @@ public:
     return sd.st_mtime;
   }
 
-  posix::time_t
+  time64_t
   ctime(void)
   {
     __alive();
@@ -1060,7 +1066,7 @@ public:
 
   template<is_iterable_container T>
   max_t
-  pread(T &buf, usize len, posix::off_t offset) const
+  pread(T &buf, usize len, posix::off64_t offset) const
   {
     __alive();
     return micron::pread(__handle.fd, buf.data(), len, offset);
@@ -1068,7 +1074,7 @@ public:
 
   template<is_iterable_container T>
   max_t
-  pwrite(const T &buf, usize len, posix::off_t offset)
+  pwrite(const T &buf, usize len, posix::off64_t offset)
   {
     __alive();
     return micron::pwrite(__handle.fd, buf.data(), len, offset);
@@ -1115,7 +1121,7 @@ public:
   template<typename T>
 
   [[deprecated("prefer using T& reference overloads")]] max_t
-  pread(T *buf, usize len, posix::off_t offset) const
+  pread(T *buf, usize len, posix::off64_t offset) const
   {
     __alive();
     return micron::pread(__handle.fd, buf, len, offset);
@@ -1123,7 +1129,7 @@ public:
 
   template<typename T>
   [[deprecated("prefer using T& reference overloads")]] max_t
-  pwrite(const T *buf, usize len, posix::off_t offset)
+  pwrite(const T *buf, usize len, posix::off64_t offset)
   {
     __alive();
     return micron::pwrite(__handle.fd, buf, len, offset);
@@ -1166,7 +1172,7 @@ public:
 
   template<typename T>
   max_t
-  pread(T &buf, usize len, posix::off_t offset) const
+  pread(T &buf, usize len, posix::off64_t offset) const
   {
     __alive();
     return micron::pread(__handle.fd, micron::voidify(buf), len, offset);
@@ -1174,34 +1180,34 @@ public:
 
   template<typename T>
   max_t
-  pwrite(const T &buf, usize len, posix::off_t offset)
+  pwrite(const T &buf, usize len, posix::off64_t offset)
   {
     __alive();
     return micron::pwrite(__handle.fd, micron::voidify(buf), len, offset);
   }
 
-  posix::off_t
-  seek_to(posix::off_t offset)
+  posix::off64_t
+  seek_to(posix::off64_t offset)
   {
     __alive();
     return posix::seek_to(__handle, offset);
   }
 
-  posix::off_t
-  seek_by(posix::off_t delta)
+  posix::off64_t
+  seek_by(posix::off64_t delta)
   {
     __alive();
     return posix::seek_by(__handle, delta);
   }
 
-  posix::off_t
-  seek_end(posix::off_t off = 0)
+  posix::off64_t
+  seek_end(posix::off64_t off = 0)
   {
     __alive();
-    return posix::seek_to(__handle, posix::seek_end - off);
+    return posix::lseek(__handle, -off, posix::seek_end);      // SEEK_END-relative; was seek_to(2 - off) -> absolute byte 2-off
   }
 
-  posix::off_t
+  posix::off64_t
   tell(void) const
   {
     __alive();
@@ -1216,7 +1222,7 @@ public:
   }
 
   i32
-  truncate(posix::off_t length)
+  truncate(posix::off64_t length)
   {
     __alive();
     i32 r = posix::truncate(__handle, length);
@@ -1479,7 +1485,7 @@ public:
   }
 
   i32
-  allocate(posix::off_t offset, posix::off_t len, i32 mode_flags = 0)
+  allocate(posix::off64_t offset, posix::off64_t len, i32 mode_flags = 0)
   {
     __alive();
     i32 r = (micron::fallocate(__handle.fd, mode_flags, offset, len));
@@ -1488,19 +1494,19 @@ public:
   }
 
   i32
-  preallocate(posix::off_t len)
+  preallocate(posix::off64_t len)
   {
     return allocate(0, len, 0);
   }
 
   i32
-  punch_hole(posix::off_t off, posix::off_t len)
+  punch_hole(posix::off64_t off, posix::off64_t len)
   {
     return allocate(off, len, 0x03);
   }
 
   i32
-  zero_range(posix::off_t off, posix::off_t len)
+  zero_range(posix::off64_t off, posix::off64_t len)
   {
     return allocate(off, len, 0x10);
   }
@@ -1542,11 +1548,11 @@ public:
   }
 
   max_t
-  copy_range_to(file &dst, usize count, posix::off_t src_off = -1, posix::off_t dst_off = -1) const
+  copy_range_to(file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {
     __alive();
-    posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
-    posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
+    posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
+    posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     return micron::copy_file_range(__handle.fd, sp, dst.__handle.fd, dp, count, 0u);
   }
 
@@ -1807,7 +1813,7 @@ public:
     return posix::lexists(__path);
   }
 
-  posix::ino_t
+  posix::ino64_t
   inode(void) const
   {
     _load_stat();
@@ -1835,28 +1841,28 @@ public:
     return _st.st_gid;
   }
 
-  posix::time_t
+  time64_t
   atime(void) const
   {
     _load_stat();
     return _st.st_atime;
   }
 
-  posix::time_t
+  time64_t
   mtime(void) const
   {
     _load_stat();
     return _st.st_mtime;
   }
 
-  posix::time_t
+  time64_t
   ctime(void) const
   {
     _load_stat();
     return _st.st_ctime;
   }
 
-  posix::off_t
+  posix::off64_t
   target_size(void) const
   {
     _load_stat();

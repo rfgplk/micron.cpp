@@ -30,7 +30,7 @@ namespace micron
 namespace posix
 {
 
-enum class clone_flags : u32 {
+enum class clone_flags : u64 {      // u64: clone_io is 0x80000000 and clone3 admits 64-bit flags
   clear_tid = clone_child_cleartid,
   set_tid = clone_child_settid,
   detached_obsolete = clone_detached,
@@ -155,11 +155,6 @@ clone(addr_t *stack, int flags, Args &&...args)
       __builtin_unreachable();
     }
   }
-  // errored out
-  if ( pid < 0 ) {
-    errno = -pid;
-    pid = -1;
-  }
   return pid;
 }
 
@@ -177,13 +172,12 @@ __fork_clone(int exit_signal)
   clone_args.child_tid = 0;
   clone_args.tls = 0;
 
-  pid_t pid = static_cast<pid_t>(posix::clone3_kernel(clone_args));
-
-  if ( pid < 0 ) {
-    errno = pid;
-    pid = -1;
+  long raw = posix::clone3_kernel(clone_args);
+  if ( micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS ) {
+    // clone3 unavailable (pre-5.3 kernel, or under qemu-user) -> legacy fork/clone fallback
+    raw = posix::fork_kernel();
   }
-  return pid;
+  return static_cast<pid_t>(raw);
 }
 
 // c-style, legacy
@@ -206,10 +200,12 @@ clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nu
   args.child_tid = reinterpret_cast<u64>(child_tid);
   args.tls = reinterpret_cast<u64>(tls);
 
-  pid_t pid = static_cast<pid_t>(posix::clone3_kernel(args));
-  if ( pid == -1 && errno == ENOSYS ) {
-    pid = static_cast<pid_t>(posix::clone_kernel(flags, stack_top, parent_tid, child_tid, reinterpret_cast<unsigned long>(tls)));
+  long raw = posix::clone3_kernel(args);
+  if ( micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS ) {
+    // clone3 unavailable (pre-5.3 kernel)
+    raw = posix::clone_kernel(flags, stack_top, parent_tid, child_tid, reinterpret_cast<unsigned long>(tls));
   }
+  pid_t pid = static_cast<pid_t>(raw);
 
   if ( pid == 0 ) {
     if ( fn != nullptr ) {

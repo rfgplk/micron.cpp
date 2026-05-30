@@ -15,27 +15,25 @@ namespace io
 {
 namespace format
 {
+// frm must hold at least 2*len + 1 bytes.
 const char *
 bytes_to_hex(byte *ptr, usize len, char *frm)
 {
   const char *hex = "0123456789ABCDEF";
-  // char *buf = frm;
+  char *buf = frm;
   for ( usize i = 0; i < len; i++ ) {
-    *frm = hex[*ptr >> 4];
-    *frm = hex[*ptr & 0x0F];
-    // ++buf;
+    *buf++ = hex[*ptr >> 4];
+    *buf++ = hex[*ptr & 0x0F];
     ++ptr;
   }
+  *buf = '\0';
   return frm;
 }
 
 const char *
 bool_to_char(bool n, char *frm)
 {
-  if ( n )
-    frm = const_cast<char *>("true");
-  else
-    frm = const_cast<char *>("false");
+  micron::memcpy(frm, n ? "true" : "false", n ? 5u : 6u);
   return frm;
 }
 
@@ -43,12 +41,9 @@ const char *
 int64_to_char(i64 n, char *frm)
 {
   char *buf = frm;
-  i64 ipart = static_cast<i64>(n);
   bool is_neg = n < 0;
-  if ( is_neg ) {
-    *buf++ = '-';
-    ipart = -ipart;
-  }
+  if ( is_neg ) *buf++ = '-';
+  u64 ipart = is_neg ? (static_cast<u64>(0) - static_cast<u64>(n)) : static_cast<u64>(n);
 
   char istr[31];
   char *iptr = istr;
@@ -108,12 +103,9 @@ const char *
 int_to_char(i32 n, char *frm)
 {
   char *buf = frm;
-  i32 ipart = static_cast<i64>(n);
   bool is_neg = n < 0;
-  if ( is_neg ) {
-    *buf++ = '-';
-    ipart = -ipart;
-  }
+  if ( is_neg ) *buf++ = '-';
+  u32 ipart = is_neg ? (static_cast<u32>(0) - static_cast<u32>(n)) : static_cast<u32>(n);
 
   char istr[31];
   char *iptr = istr;

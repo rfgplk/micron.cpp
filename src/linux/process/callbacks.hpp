@@ -31,7 +31,6 @@ add_callback(void (*f)(void))
 {
   lock_guard l(__global_callback_mtx);
   __global_callback_ptrs[__global_callback_size++] = f;
-  l.~lock_guard();
 }
 
 int
@@ -40,7 +39,6 @@ __default_callback(void)
   lock_guard l(__global_callback_mtx);
   if ( !__global_callback_size ) return -1;
   __global_callback_ptrs.at(--__global_callback_size)();
-  l.~lock_guard();
   return 0;
 }
 
@@ -72,11 +70,10 @@ __default_stop_callback(void)
 int
 __default_sleep_callback(void)
 {
-  pause();
+  posix::pause();      // block until a signal (was a CPU-spin via micron::pause)
   lock_guard l(__global_callback_mtx);
   if ( !__global_callback_size ) return -1;
   __global_callback_ptrs.at(__global_callback_size--)();
-  l.~lock_guard();
   return 0;
 }
 

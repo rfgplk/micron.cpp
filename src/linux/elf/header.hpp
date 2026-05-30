@@ -106,6 +106,9 @@ struct dyn_info_t {
   xword relaent = 0;
   xword rela_count = 0;      // DT_RELACOUNT
 
+  const xword *relr = nullptr;      // DT_RELR (packed relative relocations)
+  xword relrsz = 0;                 // DT_RELRSZ
+
   const rela_t *jmprel = nullptr;      // PLT relocations (always RELA on amd64/arm64)
   xword pltrelsz = 0;
   sxword pltrel = 0;      // DT_RELA or DT_REL

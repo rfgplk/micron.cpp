@@ -19,8 +19,8 @@ constexpr static const int __fork_flags_parent = posix::clone_parent;
 int
 __base_fork()
 {
-  int pid = micron::posix::__fork_clone(posix::sig_chld);      // should be posix::sig_chld
-  if ( pid == -1 ) exc<except::system_error>("micron process failed to fork()");
+  int pid = micron::posix::__fork_clone(posix::sig_chld);
+  if ( pid < 0 ) exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 
@@ -32,7 +32,7 @@ __base_fork(Args &&...args)
   addr_t *fstack = micron::addrmap(Stack);
   if ( micron::mmap_failed(fstack) ) exc<except::system_error>("micron process micron::mmap failed to allocate stack");
   int pid = micron::posix::clone<Stack, Fn>(fstack, __fork_flags_std, micron::forward<Args>(args)...);
-  if ( pid == -1 ) exc<except::system_error>("micron process failed to fork()");
+  if ( pid < 0 ) exc<except::system_error>("micron process failed to fork()");
   return pid;
 }
 

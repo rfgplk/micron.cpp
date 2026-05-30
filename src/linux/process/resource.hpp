@@ -314,17 +314,17 @@ read_proc_status(pid_t pid = 0)
 }
 
 template<posix::limits L>
-inline posix::rlimit_t
+inline posix::rlimit64_t
 get_limit(pid_t pid = 0)
 {
-  posix::rlimit_t rl{};
+  posix::rlimit64_t rl{};
   posix::get_process_limits(pid, static_cast<rlim_t>(L), rl);
   return rl;
 }
 
 template<posix::limits L>
 inline int
-set_limit(pid_t pid, posix::rlimit_t rl)
+set_limit(pid_t pid, posix::rlimit64_t rl)
 {
   return static_cast<int>(posix::set_process_limits(pid, static_cast<rlim_t>(L), rl));
 }
@@ -333,7 +333,7 @@ template<posix::limits L>
 inline int
 set_soft_limit(pid_t pid, rlim_t soft)
 {
-  posix::rlimit_t rl{};
+  posix::rlimit64_t rl{};
   posix::get_process_limits(pid, static_cast<rlim_t>(L), rl);
   rl.rlim_cur = soft;
   return static_cast<int>(posix::set_process_limits(pid, static_cast<rlim_t>(L), rl));
@@ -343,7 +343,7 @@ template<posix::limits L>
 inline int
 set_hard_limit(pid_t pid, rlim_t hard)
 {
-  posix::rlimit_t rl{};
+  posix::rlimit64_t rl{};
   posix::get_process_limits(pid, static_cast<rlim_t>(L), rl);
   rl.rlim_max = hard;
   return static_cast<int>(posix::set_process_limits(pid, static_cast<rlim_t>(L), rl));

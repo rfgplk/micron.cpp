@@ -62,10 +62,10 @@ class volatile_t
       if ( posix::fstat(fd_t{ src_fd }, tmp) != posix::invalid_fd ) hint_size = static_cast<usize>(tmp.st_size);
     }
 
-    if ( hint_size > 0 ) posix::ftruncate(__handle, static_cast<posix::off_t>(hint_size));
+    if ( hint_size > 0 ) posix::ftruncate(__handle, static_cast<posix::off64_t>(hint_size));
 
-    posix::off_t src_off = 0;
-    posix::off_t dst_off = 0;
+    posix::off64_t src_off = 0;
+    posix::off64_t dst_off = 0;
     usize remaining = hint_size ? hint_size : static_cast<usize>(-1);
     usize chunk = (1u << 20);      // 1mb
 
@@ -77,17 +77,18 @@ class volatile_t
         remaining -= static_cast<usize>(n);
       }
     } else {
-      i32 pfd[2];
-      posix::pipe(pfd);
-      for ( ;; ) {
-        max_t spliced = micron::splice(src_fd, nullptr, pfd[1], nullptr, chunk, 0u);
-        if ( spliced <= 0 ) {
-          posix::close(pfd[0]);
-          posix::close(pfd[1]);
-          break;
+      i32 pfd[2] = { -1, -1 };
+      if ( posix::pipe(pfd) >= 0 ) {
+        for ( ;; ) {
+          max_t spliced = micron::splice(src_fd, nullptr, pfd[1], nullptr, chunk, 0u);
+          if ( spliced <= 0 ) {
+            posix::close(pfd[0]);
+            posix::close(pfd[1]);
+            break;
+          }
+          max_t moved = micron::splice(pfd[0], nullptr, __handle.fd, nullptr, static_cast<usize>(spliced), 0u);
+          (void)moved;
         }
-        max_t moved = micron::splice(pfd[0], nullptr, __handle.fd, nullptr, static_cast<usize>(spliced), 0u);
-        (void)moved;
       }
     }
 
@@ -111,7 +112,7 @@ public:
   explicit volatile_t(const char *name, usize initial_size, unsigned int flags) : fname(name), __handle(-1), sd()
   {
     __create(name, flags);
-    posix::ftruncate(__handle, static_cast<posix::off_t>(initial_size));
+    posix::ftruncate(__handle, static_cast<posix::off64_t>(initial_size));
   }
 
   volatile_t(const volatile_t &o) : fname(o.fname), __handle(-1), sd()
@@ -456,7 +457,7 @@ public:
 
   template<is_iterable_container T>
   max_t
-  pread(T &buf, usize len, posix::off_t offset) const
+  pread(T &buf, usize len, posix::off64_t offset) const
   {
     if ( __handle.invalid() ) return -1;
     return micron::pread(__handle.fd, buf.data(), len, offset);
@@ -464,7 +465,7 @@ public:
 
   template<is_iterable_container T>
   max_t
-  pwrite(const T &buf, usize len, posix::off_t offset)
+  pwrite(const T &buf, usize len, posix::off64_t offset)
   {
     if ( __handle.invalid() ) return -1;
     return micron::pwrite(__handle.fd, buf.data(), len, offset);
@@ -472,37 +473,37 @@ public:
 
   template<typename T>
   max_t
-  pread(T &buf, usize len, posix::off_t offset) const
+  pread(T &buf, usize len, posix::off64_t offset) const
   {
     return micron::pread(__handle.fd, micron::voidify(buf), len, offset);
   }
 
   template<typename T>
   max_t
-  pwrite(const T &buf, usize len, posix::off_t offset)
+  pwrite(const T &buf, usize len, posix::off64_t offset)
   {
     return micron::pwrite(__handle.fd, micron::voidify(buf), len, offset);
   }
 
-  posix::off_t
-  seek_to(posix::off_t offset)
+  posix::off64_t
+  seek_to(posix::off64_t offset)
   {
     return posix::seek_to(__handle, offset);
   }
 
-  posix::off_t
-  seek_by(posix::off_t delta)
+  posix::off64_t
+  seek_by(posix::off64_t delta)
   {
     return posix::seek_by(__handle, delta);
   }
 
-  posix::off_t
-  seek_end(posix::off_t off = 0)
+  posix::off64_t
+  seek_end(posix::off64_t off = 0)
   {
     return posix::lseek(__handle, posix::seek_end - off, posix::seek_end);
   }
 
-  posix::off_t
+  posix::off64_t
   tell(void) const
   {
     return posix::tell(__handle);
@@ -515,7 +516,7 @@ public:
   }
 
   i32
-  truncate(posix::off_t length)
+  truncate(posix::off64_t length)
   {
     i32 r = posix::ftruncate(__handle, length);
     if ( r == 0 ) micron::zero(&sd);
@@ -523,7 +524,7 @@ public:
   }
 
   i32
-  resize(posix::off_t new_size)
+  resize(posix::off64_t new_size)
   {
     return truncate(new_size);
   }
@@ -537,7 +538,7 @@ public:
   }
 
   i32
-  reserve(posix::off_t size)
+  reserve(posix::off64_t size)
   {
     if ( this->size() < size ) return truncate(size);
     return 0;
@@ -588,21 +589,21 @@ public:
   }
 
   max_t
-  sendfile_to(i32 dst_fd, usize count, posix::off_t *offset = nullptr) const
+  sendfile_to(i32 dst_fd, usize count, posix::off64_t *offset = nullptr) const
   {
     __alive();
     return posix::sendfile(dst_fd, __handle.fd, offset, count);
   }
 
   max_t
-  sendfile_to(fd_t dst, usize count, posix::off_t *offset = nullptr) const
+  sendfile_to(fd_t dst, usize count, posix::off64_t *offset = nullptr) const
   {
     __alive();
     return posix::sendfile(dst.fd, __handle.fd, offset, count);
   }
 
   max_t
-  sendfile_to(const file &dst, usize count, posix::off_t *offset = nullptr) const
+  sendfile_to(const file &dst, usize count, posix::off64_t *offset = nullptr) const
   {
     return sendfile_to(dst.raw_fd(), count, offset);
   }
@@ -611,7 +612,7 @@ public:
   sendfile_all_to(i32 dst_fd) const
   {
     __alive();
-    posix::off_t off = 0;
+    posix::off64_t off = 0;
     return posix::sendfile(dst_fd, __handle.fd, &off, static_cast<usize>(size()));
   }
 
@@ -628,93 +629,93 @@ public:
   }
 
   max_t
-  sendfile_from(i32 src_fd, usize count, posix::off_t *offset = nullptr)
+  sendfile_from(i32 src_fd, usize count, posix::off64_t *offset = nullptr)
   {
     __alive();
     return posix::sendfile(__handle.fd, src_fd, offset, count);
   }
 
   max_t
-  sendfile_from(fd_t src, usize count, posix::off_t *offset = nullptr)
+  sendfile_from(fd_t src, usize count, posix::off64_t *offset = nullptr)
   {
     return sendfile_from(src.fd, count, offset);
   }
 
   max_t
-  sendfile_from(const file &src, usize count, posix::off_t *offset = nullptr)
+  sendfile_from(const file &src, usize count, posix::off64_t *offset = nullptr)
   {
     return sendfile_from(src.raw_fd(), count, offset);
   }
 
   max_t
-  splice_to(i32 dst_fd, usize count, posix::off_t *src_off = nullptr, posix::off_t *dst_off = nullptr, u32 flags = 0) const
+  splice_to(i32 dst_fd, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0) const
   {
     __alive();
     return micron::splice(__handle.fd, src_off, dst_fd, dst_off, count, flags);
   }
 
   max_t
-  splice_to(fd_t dst, usize count, posix::off_t *src_off = nullptr, posix::off_t *dst_off = nullptr, u32 flags = 0) const
+  splice_to(fd_t dst, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0) const
   {
     return splice_to(dst.fd, count, src_off, dst_off, flags);
   }
 
   max_t
-  splice_to(const file &dst, usize count, posix::off_t *src_off = nullptr, posix::off_t *dst_off = nullptr, u32 flags = 0) const
+  splice_to(const file &dst, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0) const
   {
     return splice_to(dst.raw_fd(), count, src_off, dst_off, flags);
   }
 
   max_t
-  splice_from(i32 src_fd, usize count, posix::off_t *src_off = nullptr, posix::off_t *dst_off = nullptr, u32 flags = 0)
+  splice_from(i32 src_fd, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0)
   {
     __alive();
     return micron::splice(src_fd, src_off, __handle.fd, dst_off, count, flags);
   }
 
   max_t
-  splice_from(fd_t src, usize count, posix::off_t *src_off = nullptr, posix::off_t *dst_off = nullptr, u32 flags = 0)
+  splice_from(fd_t src, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0)
   {
     return splice_from(src.fd, count, src_off, dst_off, flags);
   }
 
   max_t
-  splice_from(const file &src, usize count, posix::off_t *src_off = nullptr, posix::off_t *dst_off = nullptr, u32 flags = 0)
+  splice_from(const file &src, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0)
   {
     return splice_from(src.raw_fd(), count, src_off, dst_off, flags);
   }
 
   max_t
-  copy_to(file &dst, usize count, posix::off_t src_off = -1, posix::off_t dst_off = -1) const
+  copy_to(file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {
-    posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
-    posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
+    posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
+    posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     return micron::copy_file_range(__handle.fd, sp, dst.raw_fd(), dp, count, 0u);
   }
 
   max_t
-  copy_to(volatile_t &dst, usize count, posix::off_t src_off = -1, posix::off_t dst_off = -1) const
+  copy_to(volatile_t &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {
-    posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
-    posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
+    posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
+    posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     return micron::copy_file_range(__handle.fd, sp, dst.__handle.fd, dp, count, 0u);
   }
 
   max_t
-  copy_from(const file &src, usize count, posix::off_t src_off = -1, posix::off_t dst_off = -1)
+  copy_from(const file &src, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1)
   {
-    posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
-    posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
+    posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
+    posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     max_t r = micron::copy_file_range(src.raw_fd(), sp, __handle.fd, dp, count, 0u);
     if ( r > 0 ) micron::zero(&sd);
     return r;
   }
 
   max_t
-  copy_from(const volatile_t &src, usize count, posix::off_t src_off = -1, posix::off_t dst_off = -1)
+  copy_from(const volatile_t &src, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1)
   {
-    posix::off_t *sp = (src_off < 0) ? nullptr : &src_off;
-    posix::off_t *dp = (dst_off < 0) ? nullptr : &dst_off;
+    posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
+    posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     max_t r = micron::copy_file_range(src.__handle.fd, sp, __handle.fd, dp, count, 0u);
     if ( r > 0 ) micron::zero(&sd);
     return r;
@@ -870,7 +871,7 @@ public:
   }
 
   i32
-  advise(posix::off_t offset, posix::off_t len, i32 advice)
+  advise(posix::off64_t offset, posix::off64_t len, i32 advice)
   {
     return posix::fadvise(__handle, offset, len, advice);
   }
@@ -888,13 +889,13 @@ public:
   }
 
   i32
-  advise_willneed(posix::off_t offset, posix::off_t len)
+  advise_willneed(posix::off64_t offset, posix::off64_t len)
   {
     return advise(offset, len, posix::fadv_willneed);
   }
 
   i32
-  advise_dontneed(posix::off_t offset, posix::off_t len)
+  advise_dontneed(posix::off64_t offset, posix::off64_t len)
   {
     return advise(offset, len, posix::fadv_dontneed);
   }
@@ -930,7 +931,7 @@ public:
   }
 
   static volatile_t
-  with_size(posix::off_t sz, const char *name = "micron_volatile")
+  with_size(posix::off64_t sz, const char *name = "micron_volatile")
   {
     volatile_t v{ name, static_cast<usize>(sz), mfd_cloexec };
     return v;
@@ -960,7 +961,7 @@ make_volatile(const char *name = "micron_volatile")
 }
 
 inline volatile_t
-make_volatile_sized(posix::off_t sz, const char *name = "micron_volatile")
+make_volatile_sized(posix::off64_t sz, const char *name = "micron_volatile")
 {
   return volatile_t::with_size(sz, name);
 }

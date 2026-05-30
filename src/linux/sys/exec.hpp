@@ -16,8 +16,7 @@ namespace posix
 int
 execve(const char *path, char *const *argv, char *const *envp)
 {
-  micron::syscall(SYS_execve, path, argv, envp);
-  return 0;
+  return static_cast<int>(micron::syscall(SYS_execve, path, argv, envp));
 }
 
 int
@@ -29,12 +28,8 @@ execveat(int dirfd, const char *path, char *const argv[], char *const envp[], in
 int
 fexecve(int fd, char *const argv[], char *const envp[])
 {
-  if ( fd < 0 || argv == nullptr || envp == nullptr ) {
-    set_errno<error::invalid_arg>();
-    return -1;
-  }
-  micron::syscall(SYS_execveat, 5, fd, "", &argv[0], &envp[0], 0x1000);      // AT_EMPTY_PATH
-  return 0;
+  if ( fd < 0 || argv == nullptr || envp == nullptr ) return -error::invalid_arg;
+  return static_cast<int>(micron::syscall(SYS_execveat, fd, "", &argv[0], &envp[0], 0x1000));      // AT_EMPTY_PATH
 }
 
 };      // namespace posix

@@ -45,18 +45,18 @@ template<is_string T = micron::string> class file: public io::file
   }
 
   max_t
-  __pread(void *dst, usize len, posix::off_t off) const
+  __pread(void *dst, usize len, posix::off64_t off) const
   {
     return posix::pread(__handle.fd, dst, len, off);
   }
 
   max_t
-  __pread_exact(void *dst, usize len, posix::off_t off) const
+  __pread_exact(void *dst, usize len, posix::off64_t off) const
   {
     usize got = 0;
     byte *p = static_cast<byte *>(dst);
     while ( got < len ) {
-      max_t r = posix::pread(__handle.fd, p + got, len - got, off + static_cast<posix::off_t>(got));
+      max_t r = posix::pread(__handle.fd, p + got, len - got, off + static_cast<posix::off64_t>(got));
       if ( r <= 0 ) return r == 0 ? static_cast<max_t>(got) : r;
       got += static_cast<usize>(r);
     }
@@ -236,7 +236,7 @@ public:
   clear(void)
   {
     data.clear();
-    data._set_buf_length(0);
+    data._buf_set_length(0);      // was _set_buf_length (undefined -> clear()/flush() failed to compile when instantiated)
   }
 
   file(const file &o) : io::file(o), data(o.data), fname(o.fname), seek(o.seek), buffer_sz(o.buffer_sz), bf(o.bf) { }
@@ -357,14 +357,18 @@ public:
 
     data.reserve(sz + 1);
     do {
+      const usize want = (buffer_sz > sz) ? sz : buffer_sz;
       posix::lseek(__handle.fd, seek, posix::seek_set);
-      max_t bytes_read = io::read(__handle.fd, *bf, ((buffer_sz > sz) ? sz : buffer_sz));
-      if ( bytes_read == 0 ) break;
-      if ( bytes_read == -1 ) [[unlikely]]
+      max_t bytes_read = io::read(__handle.fd, *bf, want);
+      if ( bytes_read < 0 ) [[unlikely]] {
+        if ( -bytes_read == error::interrupted ) continue;
         exc<except::io_error>("micron::fsys::file error reading file");
-      seek += static_cast<usize>(bytes_read);
-      data.append(*bf, ((buffer_sz > sz) ? sz : buffer_sz));
-      sz -= ((buffer_sz > sz) ? sz : buffer_sz);
+      }
+      if ( bytes_read == 0 ) break;
+      const usize got = static_cast<usize>(bytes_read);
+      seek += got;
+      data.append(*bf, got);
+      sz -= got;
     } while ( sz );
   }
 
@@ -416,9 +420,10 @@ public:
     max_t read_bytes = 0;
     do {
       read_bytes = io::read(__handle.fd, data[s], 1);
-      s += read_bytes;
+      if ( read_bytes <= 0 ) break;
+      s += static_cast<usize>(read_bytes);
       if ( s == data.max_size() ) data.reserve(data.max_size() * 3);
-    } while ( read_bytes );
+    } while ( true );
     if ( s ) data._buf_set_length(s);
   }
 
@@ -429,7 +434,7 @@ public:
     if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open");
     posix::lseek(__handle.fd, seek, posix::seek_set);
     max_t sz = io::write(__handle.fd, &data, data.size());
-    if ( sz == -1 ) exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
+    if ( sz < 0 ) exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
     if ( sz < (max_t)data.size() ) exc<except::filesystem_error>("micron::fsys::file wasn't able to write to fd");
     seek += sz;
     posix::lseek(__handle.fd, seek, posix::seek_set);
@@ -440,7 +445,7 @@ public:
   write(const byte *data_ptr, usize at, usize len)
   {
     __need_fd("fsys::file::write_raw");
-    posix::off_t dst_off = at;
+    posix::off64_t dst_off = at;
     posix::pwrite(__handle.fd, data_ptr, len, dst_off);
   }
 
@@ -474,14 +479,19 @@ public:
     if ( !bf )
       exc<except::filesystem_error>("micron::fsys::file trying to use file buffering despite the file being opened in unbuffered mode");
     if ( __handle.closed() ) exc<except::filesystem_error>("micron::fsys::file fd isn't open'");
+    const usize want = (buffer_sz > sz) ? sz : buffer_sz;      // cannot write more than the buffer holds
     posix::lseek(__handle.fd, seek, posix::seek_set);
-    max_t bytes_written = io::write(__handle.fd, &(*bf), ((buffer_sz > sz) ? sz : buffer_sz));
-    if ( bytes_written == -1 ) [[unlikely]]
-      exc<except::io_error>("micron::fsys::file error writing to file");
-    seek += static_cast<usize>(bytes_written);
-    sz -= ((buffer_sz > sz) ? sz : buffer_sz);
-    do {
-    } while ( sz );
+    usize done = 0;
+    while ( done < want ) {
+      max_t bytes_written = posix::write(__handle.fd, reinterpret_cast<const byte *>(&(*bf)) + done, want - done);
+      if ( bytes_written < 0 ) [[unlikely]] {
+        if ( -bytes_written == error::interrupted ) continue;
+        exc<except::io_error>("micron::fsys::file error writing to file");
+      }
+      if ( bytes_written == 0 ) break;
+      done += static_cast<usize>(bytes_written);
+    }
+    seek += done;
   }
 
   void
@@ -561,7 +571,7 @@ public:
   }
 
   byte
-  read_u8(posix::off_t off) const
+  read_u8(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u8");
     byte v;
@@ -570,13 +580,13 @@ public:
   }
 
   i8
-  read_i8(posix::off_t off) const
+  read_i8(posix::off64_t off) const
   {
     return static_cast<i8>(read_u8(off));
   }
 
   u16
-  read_u16le(posix::off_t off) const
+  read_u16le(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u16le");
     byte p[2];
@@ -585,7 +595,7 @@ public:
   }
 
   u16
-  read_u16be(posix::off_t off) const
+  read_u16be(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u16be");
     byte p[2];
@@ -594,19 +604,19 @@ public:
   }
 
   i16
-  read_i16le(posix::off_t off) const
+  read_i16le(posix::off64_t off) const
   {
     return static_cast<i16>(read_u16le(off));
   }
 
   i16
-  read_i16be(posix::off_t off) const
+  read_i16be(posix::off64_t off) const
   {
     return static_cast<i16>(read_u16be(off));
   }
 
   u32
-  read_u32le(posix::off_t off) const
+  read_u32le(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u32le");
     byte p[4];
@@ -615,7 +625,7 @@ public:
   }
 
   u32
-  read_u32be(posix::off_t off) const
+  read_u32be(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u32be");
     byte p[4];
@@ -624,19 +634,19 @@ public:
   }
 
   i32
-  read_i32le(posix::off_t off) const
+  read_i32le(posix::off64_t off) const
   {
     return static_cast<i32>(read_u32le(off));
   }
 
   i32
-  read_i32be(posix::off_t off) const
+  read_i32be(posix::off64_t off) const
   {
     return static_cast<i32>(read_u32be(off));
   }
 
   u64
-  read_u64le(posix::off_t off) const
+  read_u64le(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u64le");
     byte p[8];
@@ -647,7 +657,7 @@ public:
   }
 
   u64
-  read_u64be(posix::off_t off) const
+  read_u64be(posix::off64_t off) const
   {
     __need_fd("fsys::file::read_u64be");
     byte p[8];
@@ -657,19 +667,19 @@ public:
   }
 
   i64
-  read_i64le(posix::off_t off) const
+  read_i64le(posix::off64_t off) const
   {
     return static_cast<i64>(read_u64le(off));
   }
 
   i64
-  read_i64be(posix::off_t off) const
+  read_i64be(posix::off64_t off) const
   {
     return static_cast<i64>(read_u64be(off));
   }
 
   micron::buffer
-  slice(posix::off_t off, usize len) const
+  slice(posix::off64_t off, usize len) const
   {
     __need_fd("fsys::file::slice");
     micron::buffer out(len);
@@ -679,7 +689,7 @@ public:
   }
 
   void
-  slice_into(micron::buffer &dst, posix::off_t off, usize len) const
+  slice_into(micron::buffer &dst, posix::off64_t off, usize len) const
   {
     __need_fd("fsys::file::slice_into");
     if ( dst.size() < len ) dst.resize(len);
@@ -688,7 +698,7 @@ public:
   }
 
   void
-  hex_at(char *dst, posix::off_t off, usize len) const
+  hex_at(char *dst, posix::off64_t off, usize len) const
   {
     static constexpr char hex[] = "0123456789abcdef";
     __need_fd("fsys::file::hex_at");
@@ -718,7 +728,7 @@ public:
     usize work_cap = window_sz + overlap;
     micron::buffer work(work_cap);
 
-    posix::off_t off = 0;
+    posix::off64_t off = 0;
     usize file_sz = static_cast<usize>(size());
     usize work_fill = 0;
 
@@ -736,7 +746,7 @@ public:
         if ( pos >= overlap ) file_pos = static_cast<usize>(off) + (pos - overlap);
         return { true, file_pos, plen };
       }
-      off += static_cast<posix::off_t>(n);
+      off += static_cast<posix::off64_t>(n);
     }
     return io::no_match;
   }
@@ -790,7 +800,7 @@ public:
     usize work_cap = window_sz + overlap;
     micron::buffer work(work_cap);
 
-    posix::off_t off = 0;
+    posix::off64_t off = 0;
     usize file_sz = static_cast<usize>(size());
     usize work_fill = 0;
 
@@ -813,7 +823,7 @@ public:
         out.push_back({ true, abs, plen });
         scan += pos + plen;
       }
-      off += static_cast<posix::off_t>(n);
+      off += static_cast<posix::off64_t>(n);
     }
     return out;
   }
@@ -843,7 +853,7 @@ public:
     usize cur_zero = 0, cur_nz = 0;
 
     micron::buffer win(window_sz);
-    posix::off_t off = 0;
+    posix::off64_t off = 0;
     usize file_sz = static_cast<usize>(size());
 
     while ( static_cast<usize>(off) < file_sz ) {
@@ -889,7 +899,7 @@ public:
     usize freq[256] = {};
     usize total = 0;
     micron::buffer win(window_sz);
-    posix::off_t off = 0;
+    posix::off64_t off = 0;
     usize file_sz = static_cast<usize>(size());
 
     while ( static_cast<usize>(off) < file_sz ) {
@@ -926,7 +936,7 @@ public:
   {
     __need_fd("fsys::file::from_stream");
     if ( s.empty() ) return;
-    posix::lseek(__handle.fd, static_cast<posix::off_t>(seek), posix::seek_set);
+    posix::lseek(__handle.fd, static_cast<posix::off64_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, s.data(), static_cast<usize>(s.size()));
     if ( n > 0 ) seek += static_cast<usize>(n);
     s.rewind();
@@ -948,7 +958,7 @@ public:
     usize src_len = src.size() * sizeof(typename Tp::value_type);
     micron::buffer out(src_len * 4 + 64);
     usize out_len = fn(out.begin(), reinterpret_cast<const byte *>(src.c_str()), src_len);
-    posix::lseek(__handle.fd, static_cast<posix::off_t>(seek), posix::seek_set);
+    posix::lseek(__handle.fd, static_cast<posix::off64_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, out.begin(), out_len);
     if ( n > 0 ) seek += static_cast<usize>(n);
   }
@@ -960,7 +970,7 @@ public:
     __need_fd("fsys::file::write_encoded");
     micron::buffer out(src_len * 4 + 64);
     usize out_len = fn(out.begin(), src, src_len);
-    posix::lseek(__handle.fd, static_cast<posix::off_t>(seek), posix::seek_set);
+    posix::lseek(__handle.fd, static_cast<posix::off64_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, out.begin(), out_len);
     if ( n > 0 ) seek += static_cast<usize>(n);
   }
@@ -973,7 +983,7 @@ public:
     usize src_len = src.size() * sizeof(typename Tp::value_type);
     micron::buffer out(src_len * 4 + 64);
     usize out_len = fn(out.begin(), reinterpret_cast<const byte *>(src.c_str()), src_len);
-    posix::off_t eof = size();
+    posix::off64_t eof = size();
     io::write(__handle.fd, out.begin(), out_len);
     (void)eof;
   }
@@ -1051,7 +1061,7 @@ public:
     return gid();
   }
 
-  posix::ino_t
+  posix::ino64_t
   inode_number()
   {
     return inode();
@@ -1063,19 +1073,19 @@ public:
     return link_count();
   }
 
-  posix::time_t
+  time64_t
   modified_time()
   {
     return mtime();
   }
 
-  posix::time_t
+  time64_t
   accessed_time()
   {
     return atime();
   }
 
-  posix::time_t
+  time64_t
   changed_time()
   {
     return ctime();
@@ -1091,7 +1101,7 @@ public:
   truncate(usize new_size)
   {
     __need_fd("fsys::file::truncate");
-    if ( posix::ftruncate(__handle.fd, static_cast<posix::off_t>(new_size)) != 0 )
+    if ( posix::ftruncate(__handle.fd, static_cast<posix::off64_t>(new_size)) != 0 )
       exc<except::filesystem_error>("fsys::file::truncate failed.");
     usize cur = static_cast<usize>(size());
     if ( seek > new_size ) seek = new_size;
@@ -1105,9 +1115,9 @@ public:
     __need_fd("fsys::file::append_file");
     if ( other.__handle.closed() ) exc<except::filesystem_error>("fsys::file::append_file: source file is closed.");
 
-    posix::off_t src_off = 0;
+    posix::off64_t src_off = 0;
     usize src_sz = static_cast<usize>(other.size());
-    posix::off_t dst_off = size();
+    posix::off64_t dst_off = size();
 
     micron::buffer win(chunk_sz);
     while ( static_cast<usize>(src_off) < src_sz ) {
@@ -1123,7 +1133,7 @@ public:
   append_raw(const byte *data_ptr, usize len)
   {
     __need_fd("fsys::file::append_raw");
-    posix::off_t dst_off = size();
+    posix::off64_t dst_off = size();
     posix::pwrite(__handle.fd, data_ptr, len, dst_off);
   }
 
@@ -1143,7 +1153,7 @@ public:
     if ( !out ) exc<except::filesystem_error>("fsys::file::copy_to: failed to open destination.");
 
     usize src_sz = static_cast<usize>(size());
-    posix::off_t src_off = 0;
+    posix::off64_t src_off = 0;
     micron::buffer win(chunk_sz);
 
     while ( static_cast<usize>(src_off) < src_sz ) {
@@ -1178,8 +1188,8 @@ public:
       usize take = chunk_sz < (a_sz - scan) ? chunk_sz : (a_sz - scan);
       take = take < (b_sz - scan) ? take : (b_sz - scan);
 
-      max_t na = posix::pread(__handle.fd, wa.begin(), take, static_cast<posix::off_t>(scan));
-      max_t nb = posix::pread(other.__handle.fd, wb.begin(), take, static_cast<posix::off_t>(scan));
+      max_t na = posix::pread(__handle.fd, wa.begin(), take, static_cast<posix::off64_t>(scan));
+      max_t nb = posix::pread(other.__handle.fd, wb.begin(), take, static_cast<posix::off64_t>(scan));
       if ( na <= 0 || nb <= 0 ) break;
 
       usize cmp_n = static_cast<usize>(na) < static_cast<usize>(nb) ? static_cast<usize>(na) : static_cast<usize>(nb);
@@ -1206,7 +1216,7 @@ public:
     data.reserve(file_sz + 1);
 
     micron::buffer win(chunk_sz);
-    posix::off_t off = 0;
+    posix::off64_t off = 0;
 
     while ( static_cast<usize>(off) < file_sz ) {
       max_t n = posix::pread(__handle.fd, win.begin(), chunk_sz, off);

@@ -125,7 +125,7 @@ normal(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
     F v = uniform_real<F>(g) * F(2) - F(1);
     F s = u * u + v * v;
     if ( s < F(1) && s != F(0) ) {
-      F m = math::fsqrt(F(F(-2) * mkbits::log_ns::log<F>(s) / s));
+      F m = math::fsqrt(F(F(-2) * math::flog(s) / s));
       return mu + sigma * (u * m);
     }
   }
@@ -141,7 +141,7 @@ exp_dist(Rng &g, F lambda = F(1)) noexcept
   do {
     u = uniform_real<F>(g);
   } while ( u <= F(0) );
-  return -mkbits::log_ns::log<F>(u) / lambda;
+  return -math::flog(u) / lambda;
 }
 
 // %%%%%%%%%%%%%%%
@@ -151,7 +151,7 @@ template<typename I = i64, rng_concept Rng>
 poisson(Rng &g, f64 lambda) noexcept
 {
   if ( lambda < 30.0 ) {
-    f64 L = mkbits::exp_ns::exp<f64>(-lambda);
+    f64 L = math::fexp(-lambda);
     I k = 0;
     f64 p = 1.0;
     do {

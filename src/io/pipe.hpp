@@ -16,10 +16,18 @@
 #include "posix/iosys.hpp"
 #include "stream.hpp"
 
+#include "../linux/process/signals.hpp"
+
 namespace micron
 {
 namespace io
 {
+
+void __attribute__((constructor))
+__micron_io_ignore_sigpipe(void)
+{
+  micron::ignore(micron::signal::pipe);
+}
 
 enum class pipe_end_t : i32 { reader = 0, writer = 1 };
 
@@ -129,11 +137,7 @@ public:
     if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) == -1 ) exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
   }
 
-  upipe(const upipe &o) : __r_open(o.__r_open), __w_open(o.__w_open), tp(o.tp)
-  {
-    fd[__r] = o.fd[__r];
-    fd[__w] = o.fd[__w];
-  }
+  upipe(const upipe &) = delete;
 
   upipe(upipe &&o) noexcept : __r_open(o.__r_open), __w_open(o.__w_open), tp(o.tp)
   {
@@ -145,16 +149,7 @@ public:
     o.fd[__w] = -1;
   }
 
-  upipe &
-  operator=(const upipe &o)
-  {
-    fd[__r] = o.fd[__r];
-    fd[__w] = o.fd[__w];
-    __r_open = o.__r_open;
-    __w_open = o.__w_open;
-    tp = o.tp;
-    return *this;
-  }
+  upipe &operator=(const upipe &) = delete;
 
   upipe &
   operator=(upipe &&o) noexcept
@@ -374,10 +369,26 @@ public:
   operator()(T &t)
   {
     if ( tp == utype::upipe_reader ) {
-      while ( posix::read(fd[__r], &t[0], 1024 > t.size() ? t.size() : 1024) > 0 ) {
+      usize cap = t.size(), done = 0;
+      while ( done < cap ) {
+        max_t r = posix::read(fd[__r], reinterpret_cast<byte *>(&t[0]) + done, cap - done);
+        if ( r < 0 ) {
+          if ( r == -error::interrupted ) continue;
+          break;
+        }
+        if ( r == 0 ) break;
+        done += static_cast<usize>(r);
       }
     } else if ( tp == utype::upipe_writer ) {
-      while ( posix::write(fd[__w], &t[0], t.size()) > 0 ) {
+      usize cap = t.size(), done = 0;
+      while ( done < cap ) {
+        max_t w = posix::write(fd[__w], reinterpret_cast<const byte *>(&t[0]) + done, cap - done);
+        if ( w < 0 ) {
+          if ( w == -error::interrupted ) continue;
+          break;
+        }
+        if ( w == 0 ) break;
+        done += static_cast<usize>(w);
       }
     }
   }
@@ -386,10 +397,26 @@ public:
   operator()(byte *t, usize sz)
   {
     if ( tp == utype::upipe_reader ) {
-      while ( posix::read(fd[__r], t, sz) > 0 ) {
+      usize done = 0;
+      while ( done < sz ) {
+        max_t r = posix::read(fd[__r], t + done, sz - done);
+        if ( r < 0 ) {
+          if ( r == -error::interrupted ) continue;
+          break;
+        }
+        if ( r == 0 ) break;
+        done += static_cast<usize>(r);
       }
     } else if ( tp == utype::upipe_writer ) {
-      while ( posix::write(fd[__w], t, sz) > 0 ) {
+      usize done = 0;
+      while ( done < sz ) {
+        max_t w = posix::write(fd[__w], t + done, sz - done);
+        if ( w < 0 ) {
+          if ( w == -error::interrupted ) continue;
+          break;
+        }
+        if ( w == 0 ) break;
+        done += static_cast<usize>(w);
       }
     }
   }
@@ -399,10 +426,26 @@ public:
   operator()(T &t)
   {
     if ( tp == utype::upipe_reader ) {
-      while ( posix::read(fd[__r], &t[0], 1024 > t.size() ? t.size() : 1024) > 0 ) {
+      usize cap = t.size(), done = 0;
+      while ( done < cap ) {
+        max_t r = posix::read(fd[__r], reinterpret_cast<byte *>(&t[0]) + done, cap - done);
+        if ( r < 0 ) {
+          if ( r == -error::interrupted ) continue;
+          break;
+        }
+        if ( r == 0 ) break;
+        done += static_cast<usize>(r);
       }
     } else if ( tp == utype::upipe_writer ) {
-      while ( posix::write(fd[__w], &t[0], t.size()) > 0 ) {
+      usize cap = t.size(), done = 0;
+      while ( done < cap ) {
+        max_t w = posix::write(fd[__w], reinterpret_cast<const byte *>(&t[0]) + done, cap - done);
+        if ( w < 0 ) {
+          if ( w == -error::interrupted ) continue;
+          break;
+        }
+        if ( w == 0 ) break;
+        done += static_cast<usize>(w);
       }
     }
   }
@@ -481,10 +524,10 @@ public:
   }
 
   max_t
-  sendfile_from(int in_fd, usize count, posix::off_t *offset = nullptr)
+  sendfile_from(int in_fd, usize count, posix::off64_t *offset = nullptr)
   {
     if ( !__w_open ) return -1;
-    return micron::syscall(SYS_sendfile, fd[__w], in_fd, offset, count);
+    return posix::sendfile(fd[__w], in_fd, offset, count);      // off64_t* + sendfile64 on ILP32
   }
 
   micron::buffer
@@ -493,6 +536,7 @@ public:
     micron::buffer out(hint);
     max_t n = posix::read(fd[__r], out.begin(), hint);
     if ( n < 0 ) n = 0;
+    if ( static_cast<usize>(n) < out.size() ) micron::memset(out.begin() + n, static_cast<byte>(0), out.size() - static_cast<usize>(n));
     return out;
   }
 
@@ -565,7 +609,7 @@ public:
     _open = true;
   }
 
-  npipe(const npipe &o) = default;
+  npipe(const npipe &o) = delete;      // owns fd + FIFO path -> move-only (copy double-closed / double-unlinked)
 
   npipe(npipe &&o) noexcept : pipe_name(micron::move(o.pipe_name)), _fd(o._fd), _open(o._open), _owns_file(o._owns_file)
   {
@@ -574,7 +618,7 @@ public:
     o._owns_file = false;
   }
 
-  npipe &operator=(const npipe &) = default;
+  npipe &operator=(const npipe &) = delete;
 
   npipe &
   operator=(npipe &&o) noexcept
@@ -736,13 +780,6 @@ public:
     _write_all(_fd, reinterpret_cast<const byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
   }
 
-  void
-  write(const byte *t, usize sz)
-  {
-    if ( !valid() ) return;
-    _write_all(_fd, t, sz);
-  }
-
   template<is_string T>
   void
   write(const T &t)
@@ -758,13 +795,6 @@ public:
   {
     if ( !valid() || t.size() == 0 ) return;
     __read_all_exact(_fd, reinterpret_cast<byte *>(&t[0]), t.size() * sizeof(typename T::value_type));
-  }
-
-  void
-  read(byte *t, usize sz)
-  {
-    if ( !valid() ) return;
-    __read_all_exact(_fd, t, sz);
   }
 
   template<is_string T>
@@ -885,8 +915,8 @@ struct pipe_pair_t {
     p2c.close_write();
     c2p.close_read();
     if ( redirect_stdio ) {
-      p2c.dup_read_to(STDIN_FILENO);
-      c2p.dup_write_to(STDOUT_FILENO);
+      p2c.dup_read_to(0);       // STDIN_FILENO (was undefined)
+      c2p.dup_write_to(1);      // STDOUT_FILENO (was undefined)
       p2c.close_read();
       c2p.close_write();
     }
