@@ -29,6 +29,10 @@ namespace abc
 constexpr static const bool __is_constrained = false;
 constexpr static const usize __system_pagesize = micron::page_size;
 
+// once an allocation occurs its address is NEVER freed back to the OS nor regranted to a different allocation (even on explicit free()) and
+// the sheet it lives on is NEVER unmapped
+constexpr static const bool __default_persistent_mode = false;
+
 // shifts defined like this so we can easily pull them up in code
 constexpr static const usize __class_arena_internal = 1024;
 constexpr static const usize __class_precise_shift = 8;
@@ -84,7 +88,7 @@ constexpr static const bool __default_multithread_safe = true;      // essential
 // preallocate precise/small/medium at startup with weight-based shares.
 constexpr static const bool __default_eager_hot_tiers = true;
 
-constexpr static const bool __default_per_class_free_cache = true;
+constexpr static const bool __default_per_class_free_cache = __default_persistent_mode ? false : true;
 
 // 128 deallocations between sweeps. server workloads sustain high throughput over long periods; sweeping too often serialises dealloc paths
 // under contention
@@ -151,6 +155,13 @@ constexpr static const int __default_guard_page_perms = micron::prot_none;
 // NOTE: all of these cost a lot of performance
 
 constexpr static const bool __default_self_cleanup = false;
+
+static_assert(!(__default_persistent_mode && __default_launder),
+              "abcmalloc: persistent mode is incompatible with __default_launder (it reuses addresses).");
+static_assert(!(__default_persistent_mode && __default_self_cleanup),
+              "abcmalloc: persistent mode requires __default_self_cleanup off (arena dtor must not unmap).");
+static_assert(!(__default_persistent_mode && __default_per_class_free_cache),
+              "abcmalloc: persistent mode requires __default_per_class_free_cache off (it regrants freed blocks).");
 
 constexpr static const bool __default_debug_notices = false;
 constexpr static const bool __default_zero_on_alloc = false;

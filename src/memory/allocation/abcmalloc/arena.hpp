@@ -108,7 +108,9 @@ template<u64 Sz>
 consteval bool
 tomb_for(void) noexcept
 {
-  if constexpr ( Sz <= __class_precise )
+  if constexpr ( __default_persistent_mode )
+    return true;      // persistent mode tombstones every class
+  else if constexpr ( Sz <= __class_precise )
     return __tombstone_precise;
   else if constexpr ( Sz <= __class_small )
     return __tombstone_small;
@@ -955,11 +957,13 @@ class __arena: private cache
       __debug_print("__sweep_tier_tombstones(): sheet tombstoned: ", ts);
       __debug_print("__sweep_tier_tombstones(): sheet ftotal: ", ft);
       if ( ts > (ft >> 1) ) {
-        __debug_print("__sweep_tier_tombstones(): reclaiming sheet at idx: ", (usize)i);
-        sh.reset();
-        tier.unlink_node(nd);
-        tier.unregister(static_cast<u32>(i));
-        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
+        if constexpr ( !__default_persistent_mode ) {
+          __debug_print("__sweep_tier_tombstones(): reclaiming sheet at idx: ", (usize)i);
+          sh.reset();
+          tier.unlink_node(nd);
+          tier.unregister(static_cast<u32>(i));
+          __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
+        }
       }
     }
   }
@@ -970,12 +974,14 @@ class __arena: private cache
   {
     using sheet_t = typename TierT::sheet_t;
     if ( nd->nd->used() == 0 and nd != &tier.head ) {
-      auto __g = __struct_guard();
-      __debug_print("__try_reclaim_empty(): sheet fully drained, unlinking and resetting", 0);
-      nd->nd->reset();
-      tier.unlink_node(nd);
-      tier.unregister(range_idx);
-      __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
+      if constexpr ( !__default_persistent_mode ) {
+        auto __g = __struct_guard();
+        __debug_print("__try_reclaim_empty(): sheet fully drained, unlinking and resetting", 0);
+        nd->nd->reset();
+        tier.unlink_node(nd);
+        tier.unregister(range_idx);
+        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
+      }
     }
   }
 
@@ -990,11 +996,13 @@ class __arena: private cache
       __debug_print("__tombstone_accounting(): tombstoned: ", ts);
       __debug_print("__tombstone_accounting(): ftotal: ", ft);
       if ( (ts > (ft >> 1)) and sh.used() == 0 and nd != &tier.head ) {
-        __debug_print("__tombstone_accounting(): threshold crossed, compacting sheet", 0);
-        sh.reset();
-        tier.unlink_node(nd);
-        tier.unregister(range_idx);
-        __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
+        if constexpr ( !__default_persistent_mode ) {
+          __debug_print("__tombstone_accounting(): threshold crossed, compacting sheet", 0);
+          sh.reset();
+          tier.unlink_node(nd);
+          tier.unregister(range_idx);
+          __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
+        }
       }
     } else {
       // immediate reclaim: if this specific sheet is fully drained (used == 0)
@@ -1002,18 +1010,20 @@ class __arena: private cache
       // reclaim now rather than waiting for the batch sweep
       // prevents sheet accumulation under monotonically-growing size patterns while preserving
       // mostly-pristine sheets that still have reusable free space
-      if ( nd != &tier.head and nd->nd->used() == 0 ) {
-        usize ts = nd->nd->tombstoned();
-        usize ft = nd->nd->ftotal();
-        if ( ts > (ft >> 1) ) {
-          __debug_print("__tombstone_accounting(): drained + ratio met, immediate reclaim", 0);
-          __debug_print("__tombstone_accounting(): tombstoned: ", ts);
-          __debug_print("__tombstone_accounting(): ftotal: ", ft);
-          nd->nd->reset();
-          tier.unlink_node(nd);
-          tier.unregister(range_idx);
-          __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
-          return;
+      if constexpr ( !__default_persistent_mode ) {
+        if ( nd != &tier.head and nd->nd->used() == 0 ) {
+          usize ts = nd->nd->tombstoned();
+          usize ft = nd->nd->ftotal();
+          if ( ts > (ft >> 1) ) {
+            __debug_print("__tombstone_accounting(): drained + ratio met, immediate reclaim", 0);
+            __debug_print("__tombstone_accounting(): tombstoned: ", ts);
+            __debug_print("__tombstone_accounting(): ftotal: ", ft);
+            nd->nd->reset();
+            tier.unlink_node(nd);
+            tier.unregister(range_idx);
+            __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
+            return;
+          }
         }
       }
       if ( tier.bump_dealloc() ) __sweep_tier_tombstones(tier);
@@ -1086,7 +1096,8 @@ class __arena: private cache
     [[maybe_unused]] auto &sh = *tier.__idx[range_idx].nd->nd;
     // NOTE: block-validity guard on EVERY tier
     if constexpr ( !__default_redzone ) {
-      if ( !sh.is_block_allocated(addr) ) [[unlikely]] return handle_double_free(addr);
+      if ( !sh.is_block_allocated(addr) ) [[unlikely]]
+        return handle_double_free(addr);
     }
     // sizeless cache-push fast path
     if constexpr ( __default_per_class_free_cache && TierT::__cache_slots > 0 && !__default_launder && !__default_redzone ) {
@@ -1212,7 +1223,41 @@ class __arena: private cache
   bool
   __vmap_tombstone(const micron::__chunk<byte> &m)
   {
-    return __vmap_remove(m);
+    // NOTE: always tombstones regardless of __default_tombstone
+    if constexpr ( __default_redzone ) {
+      i32 idx;
+      if ( (idx = _precise.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
+        if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
+          __debug_print_addr("__vmap_tombstone(): redzone corruption detected at: ", m.ptr);
+          return fail_state();
+        }
+        micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
+        return __tier_tombstone(_precise, idx, adj);
+      }
+      if ( (idx = _small.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
+        if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
+          __debug_print_addr("__vmap_tombstone(): redzone corruption detected at: ", m.ptr);
+          return fail_state();
+        }
+        micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
+        return __tier_tombstone(_small, idx, adj);
+      }
+      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_medium, idx, m);
+      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_large, idx, m);
+      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_huge, idx, m);
+      __debug_print_addr("__vmap_tombstone(): WARNING address not found in any tier: ", m.ptr);
+      return false;
+    }
+    addr_t *p = reinterpret_cast<addr_t *>(m.ptr);
+    i32 idx;
+    if ( (idx = _precise.find_range(p)) >= 0 ) [[likely]]
+      return __tier_tombstone(_precise, idx, m);
+    if ( (idx = _small.find_range(p)) >= 0 ) return __tier_tombstone(_small, idx, m);
+    if ( (idx = _medium.find_range(p)) >= 0 ) return __tier_tombstone(_medium, idx, m);
+    if ( (idx = _large.find_range(p)) >= 0 ) return __tier_tombstone(_large, idx, m);
+    if ( (idx = _huge.find_range(p)) >= 0 ) return __tier_tombstone(_huge, idx, m);
+    __debug_print_addr("__vmap_tombstone(): WARNING address not found in any tier: ", m.ptr);
+    return false;
   }
 
   bool
@@ -1268,9 +1313,8 @@ class __arena: private cache
       if ( (idx = _huge.find_range(addr)) >= 0 ) return _huge.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr));
       return false;
     }
-    return __dispatch_addr(addr, [&](const auto &tier, i32 idx) {
-      return tier.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr));
-    });
+    return __dispatch_addr(
+        addr, [&](const auto &tier, i32 idx) { return tier.__idx[idx].nd->nd->is_block_allocated(reinterpret_cast<byte *>(addr)); });
   }
 
   bool
@@ -1921,6 +1965,12 @@ public:
   void
   reset_page(byte *ptr)
   {
+    if constexpr ( __default_persistent_mode ) {
+      // explicit whole-sheet release violates the persistent guarantee
+      __debug_print_addr("reset_page(): explicit sheet release forbidden in persistent mode: ", ptr);
+      fail_state();
+      return;
+    }
     auto __g = __struct_guard();
     __debug_print_addr("reset_page(): resetting sheet containing: ", ptr);
     // binary search each tier for the sheet whose range covers the address
@@ -1950,7 +2000,8 @@ public:
   byte *
   resize(byte *ptr, usize new_sz)
   {
-    if ( __is_cached(ptr) ) [[unlikely]] return nullptr;
+    if ( __is_cached(ptr) ) [[unlikely]]
+      return nullptr;
     const usize old_size = __size_of_alloc(reinterpret_cast<addr_t *>(ptr));
     if ( old_size == 0 ) [[unlikely]]
       return nullptr;

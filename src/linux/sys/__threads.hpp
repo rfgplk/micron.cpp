@@ -337,6 +337,7 @@ cancel(void)
 
 };      // namespace pthread
 
+#if !defined(__micron_freestanding)
 inline auto
 get_stack(void) -> stack_t
 {
@@ -348,5 +349,6 @@ get_stack(void) -> stack_t
   pthread_attr_destroy(&attr);
   return { ptr, sz };
 };
+#endif
 
 };      // namespace micron

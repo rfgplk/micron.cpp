@@ -11,6 +11,10 @@
 
 #include "../stack_constants.hpp"
 
+#if defined(__micron_freestanding)
+#include "../stack.hpp"
+#endif
+
 #include "../../memory/allocation/abcmalloc/malloc_forward.hpp"
 
 namespace micron
@@ -18,9 +22,11 @@ namespace micron
 // byte threshold below which mem* dispatch uses the scalar fast path
 constexpr u64 __simd_dispatch_threshold = 32;
 
+#if !defined(__micron_freestanding)
 auto get_stack(void) -> stack_t;
 auto get_stack_start(void) -> addr_t *;
 auto get_stack_size(void) -> usize;
+#endif
 
 inline void
 __mem_barrier() noexcept

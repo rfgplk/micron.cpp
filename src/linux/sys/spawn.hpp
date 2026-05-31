@@ -119,6 +119,10 @@ int
 __apply_spawnattr(const spawnattr_t &attr)
 {
   // TODO: push as separate file
+  if ( attr.__flags & posix_spawn_setsid ) {
+    long r = micron::syscall(SYS_setsid);      // new session + process group leader; do this before setpgid
+    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+  }
   if ( attr.__flags & posix_spawn_setpgroup ) {
     long r = micron::syscall(SYS_setpgid, 0, attr.pgrp);
     if ( micron::syscall_failed(r) ) return static_cast<int>(r);

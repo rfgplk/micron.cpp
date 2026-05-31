@@ -29,6 +29,10 @@ namespace abc
 constexpr static const bool __is_constrained = false;      // for if running on a mem constrained system
 constexpr static const usize __system_pagesize = micron::page_size;
 
+// once an allocation occurs its address is NEVER freed back to the OS nor regranted to a different allocation (even on explicit free()) and
+// the sheet it lives on is NEVER unmapped
+constexpr static const bool __default_persistent_mode = false;
+
 // shifts defined like this so we can easily pull them up in code
 constexpr static const usize __class_arena_internal = 1024;
 constexpr static const usize __class_precise_shift = 8;
@@ -71,7 +75,8 @@ constexpr static const bool __default_eager_hot_tiers
     = true;      // eagerly preallocate precise/small/medium with weight-based shares even if __default_lazy_construct is true
 
 // per-class free cache, caches recent allocations in a free list for rapid allocs
-constexpr static const bool __default_per_class_free_cache = true;
+// (persistent mode forces this off: a cached block is a regrant of freed memory)
+constexpr static const bool __default_per_class_free_cache = __default_persistent_mode ? false : true;
 
 // 0 == per-dealloc tombstone ratio check (pre 1.1 behav.)
 // >0 == batch only sweep a tier's sheets every N deallocations
@@ -137,6 +142,13 @@ constexpr static const int __default_guard_page_perms = micron::prot_none;
 
 // NOTE: all of these cost a lot of performance
 constexpr static const bool __default_self_cleanup = false;
+
+static_assert(!(__default_persistent_mode && __default_launder),
+              "abcmalloc: persistent mode is incompatible with __default_launder (it reuses addresses).");
+static_assert(!(__default_persistent_mode && __default_self_cleanup),
+              "abcmalloc: persistent mode requires __default_self_cleanup off (arena dtor must not unmap).");
+static_assert(!(__default_persistent_mode && __default_per_class_free_cache),
+              "abcmalloc: persistent mode requires __default_per_class_free_cache off (it regrants freed blocks).");
 constexpr static const bool __default_debug_notices = false;
 constexpr static const bool __default_zero_on_alloc = false;
 constexpr static const bool __default_zero_on_free = false;

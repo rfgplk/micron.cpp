@@ -3611,6 +3611,20 @@ vmlaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
   return a + b * c;
 }
 
+__inline_g uint8x16_t
+vqtbl1q_u8(uint8x16_t table, uint8x16_t idx) noexcept
+{
+  return (uint8x16_t)__builtin_aarch64_qtbl1v16qi((int8x16_t)table, (int8x16_t)idx);
+}
+
+__inline_g uint8x16_t
+vqtbx1q_u8(uint8x16_t fallback, uint8x16_t table, uint8x16_t idx) noexcept
+{
+  uint8x16_t tbl = vqtbl1q_u8(table, idx);
+  uint8x16_t inrange = vqtbl1q_u8(vdupq_n_u8(0xff), idx);
+  return vbslq_u8(inrange, tbl, fallback);
+}
+
 #pragma GCC diagnostic pop
 
 };      // namespace __bits

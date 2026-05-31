@@ -85,7 +85,7 @@ open(type_t __type)
     }
   }
   if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
-  return res;    
+  return res;
 }
 
 input_t

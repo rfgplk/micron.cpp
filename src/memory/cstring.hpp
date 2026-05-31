@@ -507,7 +507,8 @@ sstrcmp(const F *src, usize src_max, const D *dest, usize dest_max, int *result)
   usize i = 0;
   while ( i < src_max && i < dest_max && src[i] != static_cast<F>('\0') && dest[i] != static_cast<D>('\0') ) {
     if ( src[i] != static_cast<F>(dest[i]) ) {
-      *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i])) - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
+      *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i]))
+                - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
       return str_error::ok;
     }
     ++i;
@@ -517,7 +518,8 @@ sstrcmp(const F *src, usize src_max, const D *dest, usize dest_max, int *result)
     return str_error::buffer_overflow;
   }
 
-  *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i])) - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
+  *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i]))
+            - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
   return str_error::ok;
 }
 
@@ -539,7 +541,8 @@ sstrncmp(const F *src, usize src_max, const D *dest, usize dest_max, usize n, in
   usize i = 0;
   while ( i < max_cmp && src[i] != static_cast<F>('\0') && dest[i] != static_cast<D>('\0') ) {
     if ( src[i] != static_cast<F>(dest[i]) ) {
-      *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i])) - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
+      *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i]))
+                - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
       return str_error::ok;
     }
     ++i;
@@ -554,7 +557,8 @@ sstrncmp(const F *src, usize src_max, const D *dest, usize dest_max, usize n, in
     return str_error::buffer_overflow;
   }
 
-  *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i])) - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
+  *result = static_cast<int>(static_cast<micron::make_unsigned_t<F>>(src[i]))
+            - static_cast<int>(static_cast<micron::make_unsigned_t<D>>(dest[i]));
   return str_error::ok;
 }
 

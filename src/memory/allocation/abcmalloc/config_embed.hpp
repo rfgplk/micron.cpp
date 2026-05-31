@@ -29,6 +29,10 @@ namespace abc
 constexpr static const bool __is_constrained = true;
 constexpr static const usize __system_pagesize = micron::page_size;      // 4096 on ARMv7
 
+// once an allocation occurs its address is NEVER freed back to the OS nor regranted to a different allocation (even on explicit free()) and
+// the sheet it lives on is NEVER unmapped
+constexpr static const bool __default_persistent_mode = false;
+
 // shifts defined like this so we can easily pull them up in code
 constexpr static const usize __class_arena_internal = 1024;
 constexpr static const usize __class_precise_shift = 8;
@@ -157,7 +161,15 @@ constexpr static const int __default_guard_page_perms = micron::prot_none;
 // NOTE: all of these cost a lot of performance
 
 // self-cleanup on. embedded systems may run the allocator in a subsystem that gets torn down and reconstructed
-constexpr static const bool __default_self_cleanup = true;
+// (persistent mode pins all memory, so it must override self-cleanup off)
+constexpr static const bool __default_self_cleanup = __default_persistent_mode ? false : true;
+
+static_assert(!(__default_persistent_mode && __default_launder),
+              "abcmalloc: persistent mode is incompatible with __default_launder (it reuses addresses).");
+static_assert(!(__default_persistent_mode && __default_self_cleanup),
+              "abcmalloc: persistent mode requires __default_self_cleanup off (arena dtor must not unmap).");
+static_assert(!(__default_persistent_mode && __default_per_class_free_cache),
+              "abcmalloc: persistent mode requires __default_per_class_free_cache off (it regrants freed blocks).");
 
 constexpr static const bool __default_debug_notices = false;
 constexpr static const bool __default_zero_on_alloc = false;

@@ -1220,6 +1220,67 @@ public:
       _mm_store_si128(reinterpret_cast<i128 *>(arr), value);
     }
   }
+
+  inline v128
+  shuffle(const v128 &control) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) _r.value = _mm_shuffle_epi8(value, control.value);
+    return _r;
+  }
+
+  inline v128
+  andnot(const v128 &o) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) _r.value = _mm_andnot_si128(value, o.value);
+    if constexpr ( micron::is_same_v<T, f128> ) _r.value = _mm_andnot_ps(value, o.value);
+    if constexpr ( micron::is_same_v<T, d128> ) _r.value = _mm_andnot_pd(value, o.value);
+    return _r;
+  }
+
+  inline int
+  movemask(void) const
+  {
+    if constexpr ( micron::is_same_v<T, i128> ) return _mm_movemask_epi8(value);
+    if constexpr ( micron::is_same_v<T, f128> ) return _mm_movemask_ps(value);
+    if constexpr ( micron::is_same_v<T, d128> ) return _mm_movemask_pd(value);
+    return 0;
+  }
+
+  inline unsigned char
+  byte0(void) const
+  {
+    if constexpr ( micron::is_same_v<T, i128> ) return (unsigned char)_mm_cvtsi128_si32(value);
+    return 0;
+  }
+
+  template<int IMM>
+  inline v128
+  byte_shift_left(void) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) _r.value = _mm_slli_si128(value, IMM);
+    return _r;
+  }
+
+  template<int IMM>
+  inline v128
+  byte_shift_right(void) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) _r.value = _mm_srli_si128(value, IMM);
+    return _r;
+  }
+
+  template<int IMM>
+  inline v128
+  alignr(const v128 &o) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) _r.value = _mm_alignr_epi8(value, o.value, IMM);
+    return _r;
+  }
 };
 
 };      // namespace simd

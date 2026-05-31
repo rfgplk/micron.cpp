@@ -6,6 +6,7 @@
 
 #include "__auxv.hpp"
 #include "__crt.hpp"
+#include "__stack.hpp"
 #include "__tls.hpp"
 
 #include <micron/exit.hpp>      // micron::exit + __exit_internal::__push
@@ -31,7 +32,11 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   micron::__tls_init(auxv);
 
   // OBSOLETE abcmalloc doesnt' depend on runtime initialized code so it fires first
-  //__boot_abcmalloc();
+  // __boot_abcmalloc();
+
+  // get the primary stack region
+  micron::__stack_init(auxv);
+
   // manually start __attribute__((constructor)), functions here don't go through .init_array
   for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
   for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
@@ -90,6 +95,16 @@ __cxa_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
   return micron::__exit_internal::__push(dtor, arg);
 }
 
+// WARNING: thread_local objects with a non-trivial dtor emit a call to __cxa_thread_atexit (Itanium C++ ABI)
+// micron currently doesn't support multithreading in freestanding mode
+// so a thread_local's lifetime IS the process lifetime
+int
+__cxa_thread_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
+{
+  if ( dtor == nullptr ) return -1;
+  return micron::__exit_internal::__push(dtor, arg);
+}
+
 int
 __cxa_guard_acquire(long long int *g)
 {
@@ -127,8 +142,6 @@ __udivmod64(unsigned long long n, unsigned long long d, unsigned long long &q_ou
   if ( d == 0 ) __builtin_trap();
   unsigned long long q = 0;
   unsigned long long r = 0;
-  // 64-iteration shift-subtract; constant shifts only, GCC lowers to native
-  // adds/adcs and subs/sbcs sequences without any AEABI dispatch.
   for ( int i = 0; i < 64; ++i ) {
     r = (r << 1) | (n >> 63);
     n <<= 1;
@@ -325,8 +338,6 @@ __ctzdi2(unsigned long long x) noexcept
   if ( hi ) return 32 + __builtin_ctz(hi);
   return 64;
 }
-
-// same aapcs attribute for these
 
 __attribute__((used, pcs("aapcs"))) double
 __aeabi_ul2d(unsigned long long x) noexcept

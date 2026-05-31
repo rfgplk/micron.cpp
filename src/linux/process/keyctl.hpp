@@ -52,7 +52,7 @@ operator|(key_perm a, key_perm b) noexcept
 
 class key
 {
-  posix::key_serial_t __id;     
+  posix::key_serial_t __id;
 
 public:
   constexpr key() noexcept : __id(0) { }

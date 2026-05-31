@@ -1237,6 +1237,93 @@ public:
   {
     get(arr);
   }
+
+  inline v128
+  shuffle(const v128 &control) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) {
+      uint8x16_t v = vreinterpretq_u8_s32(value);
+      uint8x16_t c = vandq_u8(vreinterpretq_u8_s32(control.value), vdupq_n_u8(0x8f));
+      _r.value = vreinterpretq_s32_u8(vqtbl1q_u8(v, c));
+    }
+    return _r;
+  }
+
+  inline v128
+  andnot(const v128 &o) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> )
+      _r.value = vreinterpretq_s32_u8(vbicq_u8(vreinterpretq_u8_s32(o.value), vreinterpretq_u8_s32(value)));
+    return _r;
+  }
+
+  inline int
+  movemask(void) const
+  {
+    if constexpr ( micron::is_same_v<T, i128> ) {
+      static const uint8x16_t kbit = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+      uint8x16_t sat = vcltq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(0));
+      uint8x16_t b = vandq_u8(sat, kbit);
+      uint8x8_t lo = vget_low_u8(b), hi = vget_high_u8(b);
+      lo = vpadd_u8(lo, hi);
+      lo = vpadd_u8(lo, lo);
+      lo = vpadd_u8(lo, lo);
+      return (int)vget_lane_u16(vreinterpret_u16_u8(lo), 0);
+    }
+    return 0;
+  }
+
+  inline unsigned char
+  byte0(void) const
+  {
+    if constexpr ( micron::is_same_v<T, i128> ) return vgetq_lane_u8(vreinterpretq_u8_s32(value), 0);
+    return 0;
+  }
+
+  template<int IMM>
+  inline v128
+  byte_shift_left(void) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) {
+      if constexpr ( IMM <= 0 )
+        _r.value = value;
+      else if constexpr ( IMM < 16 )
+        _r.value = vreinterpretq_s32_u8(vextq_u8(vdupq_n_u8(0), vreinterpretq_u8_s32(value), 16 - IMM));
+      // IMM >= 16: leave zero-initialised
+    }
+    return _r;
+  }
+
+  template<int IMM>
+  inline v128
+  byte_shift_right(void) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) {
+      if constexpr ( IMM <= 0 )
+        _r.value = value;
+      else if constexpr ( IMM < 16 )
+        _r.value = vreinterpretq_s32_u8(vextq_u8(vreinterpretq_u8_s32(value), vdupq_n_u8(0), IMM));
+    }
+    return _r;
+  }
+
+  template<int IMM>
+  inline v128
+  alignr(const v128 &o) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v<T, i128> ) {
+      if constexpr ( IMM >= 16 )
+        _r.value = value;
+      else
+        _r.value = vreinterpretq_s32_u8(vextq_u8(vreinterpretq_u8_s32(o.value), vreinterpretq_u8_s32(value), IMM));
+    }
+    return _r;
+  }
 };
 
 };      // namespace simd

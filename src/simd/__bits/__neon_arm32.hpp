@@ -3604,6 +3604,17 @@ __mc_vset_lane_d(f32, f32, float32x2_t);
 
 #undef __mc_vset_lane_d
 
+__inline_g uint8x16_t
+vqtbl1q_u8(uint8x16_t table, uint8x16_t idx) noexcept
+{
+  uint8x8_t tlo = vget_low_u8(table);
+  uint8x8_t thi = vget_high_u8(table);
+  uint8x16_t idx8 = vsubq_u8(idx, vdupq_n_u8(8));
+  uint8x8_t rlo = vtbx1_u8(vtbl1_u8(tlo, vget_low_u8(idx)), thi, vget_low_u8(idx8));
+  uint8x8_t rhi = vtbx1_u8(vtbl1_u8(tlo, vget_high_u8(idx)), thi, vget_high_u8(idx8));
+  return vcombine_u8(rlo, rhi);
+}
+
 #undef __inline_g
 
 #pragma GCC diagnostic pop

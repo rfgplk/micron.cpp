@@ -841,7 +841,7 @@ public:
     }
 
     micron::sstring<posix::path_max> abs("/");
-    for ( auto e = paths.end(); e != paths.begin(); ) {   
+    for ( auto e = paths.end(); e != paths.begin(); ) {
       --e;
       abs += *e;
       abs += "/";

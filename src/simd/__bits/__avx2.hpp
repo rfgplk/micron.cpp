@@ -682,6 +682,15 @@ _mm256_unpacklo_pd(__m256d a, __m256d b) noexcept
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// shuffle (byte table lookup / pshufb)
+
+__inline_g __m256i
+_mm256_shuffle_epi8(__m256i a, __m256i b) noexcept
+{
+  return (__m256i)__builtin_ia32_pshufb256((__v32qi)a, (__v32qi)b);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // movemasks & bits
 
 __inline_g int
@@ -1028,6 +1037,7 @@ __inject_i(_mm256_unpacklo_ps);
 __inject_i(_mm256_unpackhi_pd);
 __inject_i(_mm256_unpacklo_pd);
 __inject_i(_mm256_movemask_epi8);
+__inject_i(_mm256_shuffle_epi8);
 __inject_i(_mm256_cvtepi8_epi16);
 __inject_i(_mm256_cvtepi8_epi32);
 __inject_i(_mm256_cvtepi8_epi64);

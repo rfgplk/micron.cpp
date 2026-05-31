@@ -74,7 +74,8 @@ __spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const 
 template<bool Lim = false, bool Cap = false, typename Lims = posix::limits_t, typename Caps = ucap_set_t>
 inline int
 __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp, [[maybe_unused]] const Lims *lims = nullptr,
-             [[maybe_unused]] const Caps *caps = nullptr)
+             [[maybe_unused]] const Caps *caps = nullptr, const posix::spawn_file_actions_t *fa = nullptr,
+             const posix::spawnattr_t *attr = nullptr, const char *cwd = nullptr)
 {
   int pipefd[2];
   int pr = micron::pipe2(pipefd, posix::o_cloexec);
@@ -84,6 +85,16 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
   if ( pid == 0 ) {
     micron::close(pipefd[0]);
 
+    if ( cwd ) {
+      long cr = micron::posix::chdir(cwd);
+      if ( micron::syscall_failed(cr) ) {
+        int e = micron::syscall_errno(cr);
+        micron::write(pipefd[1], &e, sizeof(e));
+        micron::posix::exit(127);
+        __builtin_unreachable();
+      }
+    }
+
     if constexpr ( Lim ) {
       if ( lims ) child_apply_limits(*lims);
     }
@@ -92,7 +103,7 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
       if ( caps ) apply_caps_child(*caps);
     }
 
-    posix::spawn_ctx ctx{ path, argv, envp, nullptr, nullptr, pipefd[1] };
+    posix::spawn_ctx ctx{ path, argv, envp, fa, attr, pipefd[1] };
     micron::posix::spawn_process(ctx);
     micron::posix::exit(6);
     __builtin_unreachable();
@@ -136,6 +147,13 @@ inline int
 spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &caps, const Lims &lims)
 {
   return __spawn_caps<true, true, Lims, Caps>(pid, path, argv, envp, &lims, &caps);
+}
+
+inline int
+spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp, const posix::spawn_file_actions_t *fa,
+      const posix::spawnattr_t *attr, const char *cwd = nullptr, const posix::limits_t *lims = nullptr, const ucap_set_t *caps = nullptr)
+{
+  return __spawn_caps<true, true, posix::limits_t, ucap_set_t>(pid, path, argv, envp, lims, caps, fa, attr, cwd);
 }
 
 // WARNING: the following code is currently very unstable/unsafe. stack frames get completely messed up and we have to

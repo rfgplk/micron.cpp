@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../types.hpp"
+
 namespace micron
 {
 constexpr int default_stack_size = 10 * 1024 * 1024;         // 10MB default on Linux

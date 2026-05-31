@@ -2122,6 +2122,42 @@ nearest_away(float64x2_t a) noexcept
 }
 #endif
 
+__inline_neon uint8x16_t
+tbl1_u8(uint8x16_t table, uint8x16_t idx) noexcept
+{
+  return vqtbl1q_u8(table, idx);
+}
+
+__inline_neon uint8x16_t
+and_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vandq_u8(a, b);
+}
+
+__inline_neon uint8x16_t
+orr_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vorrq_u8(a, b);
+}
+
+__inline_neon uint8x16_t
+eor_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return veorq_u8(a, b);
+}
+
+__inline_neon uint8x16_t
+ceq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vceqq_u8(a, b);
+}
+
+__inline_neon uint8x16_t
+dup_u8(unsigned char c) noexcept
+{
+  return vdupq_n_u8(c);
+}
+
 #undef __inline_neon
 
 #pragma GCC diagnostic pop

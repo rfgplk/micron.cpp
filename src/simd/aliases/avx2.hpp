@@ -882,6 +882,36 @@ extract_i32(__m256i a) noexcept
   return _mm256_extract_epi32(a, IMM);
 }
 
+__inline_avx __m256i
+shuffle_v_i8_256(__m256i a, __m256i mask) noexcept
+{
+  return _mm256_shuffle_epi8(a, mask);
+}
+
+__inline_avx __m256i
+cmpeq_i8(__m256i a, __m256i b) noexcept
+{
+  return _mm256_cmpeq_epi8(a, b);
+}
+
+__inline_avx __m256i
+set1_i8(char c) noexcept
+{
+  return _mm256_set1_epi8(c);
+}
+
+__inline_avx __m256i
+zero_i256() noexcept
+{
+  return _mm256_setzero_si256();
+}
+
+__inline_avx __m256i
+loadu_i256(const __m256i *p) noexcept
+{
+  return _mm256_loadu_si256(p);
+}
+
 #undef __inline_avx
 
 #pragma GCC diagnostic pop

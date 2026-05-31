@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "linux/process/child.hpp"
 #include "linux/process/exec.hpp"
 #include "linux/process/process.hpp"
 #include "linux/process/spawn.hpp"

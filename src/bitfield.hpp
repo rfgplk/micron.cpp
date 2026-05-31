@@ -155,21 +155,21 @@ public:
   constexpr bitfield &
   operator&=(const bitfield &o)
   {
-    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] &= o[i];
+    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] &= o.bits[i];
     return *this;
   }
 
   constexpr bitfield &
   operator|=(const bitfield &o)
   {
-    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] |= o[i];
+    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] |= o.bits[i];
     return *this;
   }
 
   constexpr bitfield &
   operator^=(const bitfield &o)
   {
-    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] ^= o[i];
+    for ( size_t i = 0; i < (N / 8); i++ ) bits[i] ^= o.bits[i];
     return *this;
   }
 

@@ -1579,6 +1579,42 @@ public:
       _mm256_store_si256(reinterpret_cast<i256 *>(arr), value);
     }
   }
+
+  inline v256
+  shuffle(const v256 &control) const
+  {
+    v256 _r;
+    if constexpr ( micron::is_same_v<T, i256> ) _r.value = _mm256_shuffle_epi8(value, control.value);
+    return _r;
+  }
+
+  inline v256
+  andnot(const v256 &o) const
+  {
+    v256 _r;
+    if constexpr ( micron::is_same_v<T, i256> ) _r.value = _mm256_andnot_si256(value, o.value);
+    if constexpr ( micron::is_same_v<T, f256> ) _r.value = _mm256_andnot_ps(value, o.value);
+    if constexpr ( micron::is_same_v<T, d256> ) _r.value = _mm256_andnot_pd(value, o.value);
+    return _r;
+  }
+
+  inline int
+  movemask(void) const
+  {
+    if constexpr ( micron::is_same_v<T, i256> ) return _mm256_movemask_epi8(value);
+    if constexpr ( micron::is_same_v<T, f256> ) return _mm256_movemask_ps(value);
+    if constexpr ( micron::is_same_v<T, d256> ) return _mm256_movemask_pd(value);
+    return 0;
+  }
+
+  template<int IMM>
+  inline v256
+  alignr(const v256 &o) const
+  {
+    v256 _r;
+    if constexpr ( micron::is_same_v<T, i256> ) _r.value = _mm256_alignr_epi8(value, o.value, IMM);
+    return _r;
+  }
 };
 
 };      // namespace simd
