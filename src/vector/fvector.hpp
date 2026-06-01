@@ -123,7 +123,7 @@ public:
 
   fvector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template<typename C = T> fvector(fvector<C> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf> fvector(fvector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
 
   fvector(fvector &&o) : __mem(micron::move(o)) { }
 
@@ -241,10 +241,10 @@ public:
     return &(__mem::memory)[n];
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline fvector &
-  append(const fvector<F> &o)
+  append(const fvector<F, Alloc, Sf2> &o)
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
@@ -253,10 +253,10 @@ public:
     return *this;
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline fvector &
-  weld(fvector<F> &&o)
+  weld(fvector<F, Alloc, Sf2> &&o)
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
@@ -266,9 +266,9 @@ public:
     return *this;
   }
 
-  template<typename C = T>
+  template<typename C = T, bool Sf2 = Sf>
   void
-  swap(fvector<C> &o) noexcept
+  swap(fvector<C, Alloc, Sf2> &o) noexcept
   {
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
@@ -327,10 +327,10 @@ public:
     return slice<byte>(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<byte *>(__mem::memory + __mem::length));
   }
 
-  inline fvector<T>
+  inline fvector<T, Alloc, Sf>
   clone(void)
   {
-    return fvector<T>(micron::move(*this));
+    return fvector<T, Alloc, Sf>(micron::move(*this));
   }
 
   void

@@ -234,7 +234,7 @@ public:
   }
 
   // from mutable vector
-  ivector(const vector<T> &o) : __mem(o.size())
+  template<class VA = micron::allocator_serial<>, bool VSf = true> ivector(const vector<T, VA, VSf> &o) : __mem(o.size())
   {
     __impl_container::copy(__mem::memory, o.data(), o.size());
     __mem::length = o.size();
@@ -243,7 +243,7 @@ public:
   // move
   ivector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template<typename C = T> ivector(ivector<C> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf> ivector(ivector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
 
   ivector(ivector &&o) : __mem(micron::move(o)) { }
 
@@ -437,10 +437,10 @@ public:
                        reinterpret_cast<const byte *>(micron::addr(__mem::memory[__mem::length])));
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline ivector<T, Alloc, Sf>
-  append(const ivector<F, Alloc, Sf> &o) const
+  append(const ivector<F, Alloc, Sf2> &o) const
   {
     ivector<T, Alloc, Sf> buf(__cap_tag{}, __mem::length + o.length);
     __impl_container::copy(micron::addr(buf.memory[0]), __mem::memory, __mem::length);
@@ -455,13 +455,13 @@ public:
     return append(o);
   }
 
-  template<typename C = T>
+  template<typename C = T, bool Sf2 = Sf>
   void
-  swap(ivector<C, Alloc, Sf> &&o)
+  swap(ivector<C, Alloc, Sf2> &&o)
   {
-    micron::swap(__mem::memory, o.memory);
-    micron::swap(__mem::length, o.length);
-    micron::swap(__mem::capacity, o.capacity);
+    micron::swap(__mem::memory, o.__mem::memory);
+    micron::swap(__mem::length, o.__mem::length);
+    micron::swap(__mem::capacity, o.__mem::capacity);
   }
 
   inline ivector
@@ -637,11 +637,11 @@ public:
   }
 };
 
-template<typename T>
+template<typename T, class Alloc = micron::allocator_serial<>, bool Sf = true>
 auto
-to_persist(const micron::vector<T> &vec)
+to_persist(const micron::vector<T, Alloc, Sf> &vec)
 {
-  return ivector<T>(vec);
+  return ivector<T, Alloc, Sf>(vec);
 }
 
 };      // namespace micron

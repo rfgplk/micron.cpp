@@ -238,7 +238,7 @@ public:
 
   convector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template<typename C = T> convector(convector<C> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf> convector(convector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
 
   convector(convector &&o) : __mem(micron::move(o)) { }
 
@@ -601,17 +601,17 @@ public:
     return slice<byte>(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<byte *>(__mem::memory + __mem::length));
   }
 
-  inline convector<T>
+  inline convector<T, Alloc, Sf>
   clone(void)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    return convector<T>(*this);
+    return convector<T, Alloc, Sf>(*this);
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline convector &
-  append(const convector<F> &o)
+  append(const convector<F, Alloc, Sf2> &o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( o.empty() ) return *this;
@@ -621,10 +621,10 @@ public:
     return *this;
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline convector &
-  weld(convector<F> &&o)
+  weld(convector<F, Alloc, Sf2> &&o)
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     if ( o.empty() ) return *this;
@@ -635,9 +635,9 @@ public:
     return *this;
   }
 
-  template<typename C = T>
+  template<typename C = T, bool Sf2 = Sf>
   void
-  swap(convector<C> &o) noexcept
+  swap(convector<C, Alloc, Sf2> &o) noexcept
   {
     micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     micron::swap(__mem::memory, o.memory);

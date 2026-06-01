@@ -30,6 +30,9 @@ template<is_regular_object T, usize N = 64, bool Sf = true> class svector
 
   usize length = 0;
 
+  // all svector instantiations are mutual friends so converting ctors may access stack/length across diff Ns and Sfs
+  template<is_regular_object U, usize M, bool S> friend class svector;
+
   inline bool
   __empty_check(void) const
   {
@@ -165,9 +168,9 @@ public:
     length = cnt;
   }
 
-  template<typename C = T>
+  template<typename C = T, class VA = micron::allocator_serial<>, bool VSf = true>
     requires(sizeof(C) == sizeof(T))
-  svector(const vector<C> &o)
+  svector(const vector<C, VA, VSf> &o)
   {
     const usize copy_n = (o.length >= N) ? N : o.length;
     __impl_container::copy(stack, o.memory, copy_n);
@@ -180,7 +183,7 @@ public:
     length = o.length;
   }
 
-  template<typename C = T, size_type M = N> svector(const svector<C, M> &o)
+  template<typename C = T, size_type M = N, bool Sf2 = Sf> svector(const svector<C, M, Sf2> &o)
   {
     __impl_container::copy(stack, o.stack, o.length);
     length = o.length < N ? o.length : N;
@@ -207,10 +210,10 @@ public:
     o.length = 0;
   }
 
-  template<typename C = T, size_type M> svector(svector<C, M> &&o)
+  template<typename C = T, size_type M, bool Sf2 = Sf> svector(svector<C, M, Sf2> &&o)
   {
-    const usize mv_n = (M < N) ? M : N;
-    __impl_container::move<N>(stack, o.stack);
+    const usize mv_n = (o.length < N) ? o.length : N;
+    __impl_container::move(micron::real_addr_as<T>(stack[0]), micron::real_addr_as<T>(o.stack[0]), mv_n);
     length = mv_n;
     o.length = 0;
   }
@@ -564,10 +567,10 @@ public:
     return *this;
   }
 
-  template<typename C = T, size_type M>
+  template<typename C = T, size_type M, bool Sf2 = Sf>
     requires(sizeof(C) == sizeof(T))
   svector &
-  append(const svector<C, M> &o)
+  append(const svector<C, M, Sf2> &o)
   {
     if ( length + o.size() > N ) exc<except::runtime_error>("micron::svector append() out of range.");
     for ( size_type i = length, j = 0; j < o.size(); i++, j++ ) stack[i] = o[j];
@@ -575,10 +578,10 @@ public:
     return *this;
   }
 
-  template<typename C = T, size_type M>
+  template<typename C = T, size_type M, bool Sf2 = Sf>
     requires(sizeof(C) == sizeof(T))
   svector &
-  operator+=(const svector<C, M> &o)
+  operator+=(const svector<C, M, Sf2> &o)
   {
     append(o);
     return *this;

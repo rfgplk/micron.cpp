@@ -190,7 +190,7 @@ public:
 
   vector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template<typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf> vector(vector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
 
   vector(vector &&o) : __mem(micron::move(o)) { }
 
@@ -351,10 +351,10 @@ public:
     return micron::addr((__mem::memory)[n]);
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline vector &
-  append(const vector<F> &o)
+  append(const vector<F, Alloc, Sf2> &o)
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
@@ -363,10 +363,10 @@ public:
     return *this;
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline vector &
-  weld(vector<F> &&o)
+  weld(vector<F, Alloc, Sf2> &&o)
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
@@ -376,9 +376,9 @@ public:
     return *this;
   }
 
-  template<typename C = T>
+  template<typename C = T, bool Sf2 = Sf>
   void
-  swap(vector<C> &o) noexcept
+  swap(vector<C, Alloc, Sf2> &o) noexcept
   {
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
@@ -438,10 +438,10 @@ public:
     return slice<byte>(reinterpret_cast<byte *>(__mem::memory), reinterpret_cast<byte *>(__mem::memory + __mem::length));
   }
 
-  inline vector<T>
+  inline vector<T, Alloc, Sf>
   clone(void)
   {
-    return vector<T>(*this);
+    return vector<T, Alloc, Sf>(*this);
   }
 
   void
@@ -1100,7 +1100,7 @@ public:
 
   vector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
 
-  template<typename C = T> vector(vector<C> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf> vector(vector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
 
   vector(vector &&o) : __mem(micron::move(o)) { }
 
@@ -1233,14 +1233,14 @@ public:
     return micron::addr((__mem::memory)[n]);
   }
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
-  inline vector &append(const vector<F> &o) = delete;
+  inline vector &append(const vector<F, Alloc, Sf2> &o) = delete;
 
-  template<typename F>
+  template<typename F, bool Sf2 = Sf>
     requires(sizeof(T) == sizeof(F))
   inline vector &
-  weld(vector<F> &&o)
+  weld(vector<F, Alloc, Sf2> &&o)
   {
 
     if ( o.empty() ) return *this;
@@ -1251,9 +1251,9 @@ public:
     return *this;
   }
 
-  template<typename C = T>
+  template<typename C = T, bool Sf2 = Sf>
   void
-  swap(vector<C> &o) noexcept
+  swap(vector<C, Alloc, Sf2> &o) noexcept
   {
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
