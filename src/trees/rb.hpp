@@ -5,8 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../except.hpp"
 #include "../memory/new.hpp"
+#include "../tags.hpp"
 #include "../types.hpp"
+#include "../vector/fvector.hpp"
+#include "__tree_walk.hpp"
 
 namespace micron
 {
@@ -176,6 +180,8 @@ class rb_tree
 {
 public:
   using node = rb_node<T>;
+  using category_type = tree_tag;
+  using value_type = T;
 
 private:
   node *root_;
@@ -385,12 +391,20 @@ private:
   }
 
   static void
-  clear_recursive(node *x)
+  destroy_subtree(node *x)
   {
-    if ( !x ) return;
-    clear_recursive(x->left);
-    clear_recursive(x->right);
-    destroy_node(x);
+    while ( x ) {
+      if ( x->left ) {
+        node *l = x->left;
+        x->left = l->right;
+        l->right = x;
+        x = l;
+      } else {
+        node *r = x->right;
+        destroy_node(x);
+        x = r;
+      }
+    }
   }
 
   void
@@ -444,8 +458,80 @@ private:
     __for_each_inorder(x->right, fn);
   }
 
+  template<class Acc, class NodeFn>
+  static Acc
+  __cata_rec(const node *x, const Acc &empty, NodeFn &node)
+  {
+    if ( !x ) return empty;
+    Acc l = __cata_rec(x->left, empty, node);
+    Acc r = __cata_rec(x->right, empty, node);
+    return node(micron::move(l), x->data, micron::move(r));
+  }
+
+  template<traversal_order O, class Fn>
+  static walk_ctl
+  __traverse_rec(const node *x, Fn &fn)
+  {
+    if ( !x ) return walk_ctl::continue_;
+    if constexpr ( O == traversal_order::preorder ) {
+      walk_ctl c = micron::__impl::invoke_walk(fn, x->data);
+      if ( c == walk_ctl::stop ) return walk_ctl::stop;
+      if ( c == walk_ctl::skip_children ) return walk_ctl::continue_;
+      if ( __traverse_rec<O>(x->left, fn) == walk_ctl::stop ) return walk_ctl::stop;
+      return __traverse_rec<O>(x->right, fn);
+    } else if constexpr ( O == traversal_order::postorder ) {
+      if ( __traverse_rec<O>(x->left, fn) == walk_ctl::stop ) return walk_ctl::stop;
+      if ( __traverse_rec<O>(x->right, fn) == walk_ctl::stop ) return walk_ctl::stop;
+      return micron::__impl::invoke_walk(fn, x->data) == walk_ctl::stop ? walk_ctl::stop : walk_ctl::continue_;
+    } else {      // inorder
+      if ( __traverse_rec<O>(x->left, fn) == walk_ctl::stop ) return walk_ctl::stop;
+      if ( micron::__impl::invoke_walk(fn, x->data) == walk_ctl::stop ) return walk_ctl::stop;
+      return __traverse_rec<O>(x->right, fn);
+    }
+  }
+
+  template<class Fn>
+  static walk_ctl
+  __traverse_level(const node *root, Fn &fn)
+  {
+    if ( !root ) return walk_ctl::continue_;
+    micron::fvector<const node *> q;
+    q.push_back(root);
+    for ( usize head = 0; head < q.size(); ++head ) {
+      const node *x = q[head];
+      walk_ctl c = micron::__impl::invoke_walk(fn, x->data);
+      if ( c == walk_ctl::stop ) return walk_ctl::stop;
+      if ( c != walk_ctl::skip_children ) {
+        if ( x->left ) q.push_back(x->left);
+        if ( x->right ) q.push_back(x->right);
+      }
+    }
+    return walk_ctl::continue_;
+  }
+
 public:
   rb_tree() : root_(nullptr), size_(0) { }
+
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, usize>)
+  rb_tree(usize n, Fn gen) : root_(nullptr), size_(0)
+  {
+    for ( usize i = 0; i < n; ++i ) insert_or_assign(gen(i));
+  }
+
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn> && !micron::is_invocable_v<Fn, usize>)
+  rb_tree(usize n, Fn gen) : root_(nullptr), size_(0)
+  {
+    for ( usize i = 0; i < n; ++i ) insert_or_assign(gen());
+  }
+
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, rb_tree &>)
+  explicit rb_tree(Fn build) : root_(nullptr), size_(0)
+  {
+    build(*this);
+  }
 
   rb_tree(const rb_tree &o) : root_(clone_subtree(o.root_, nullptr)), size_(o.size_) { }
 
@@ -459,7 +545,7 @@ public:
   operator=(const rb_tree &o)
   {
     if ( this != &o ) {
-      clear_recursive(root_);
+      destroy_subtree(root_);
       root_ = clone_subtree(o.root_, nullptr);
       size_ = o.size_;
     }
@@ -470,7 +556,7 @@ public:
   operator=(rb_tree &&o) noexcept
   {
     if ( this != &o ) {
-      clear_recursive(root_);
+      destroy_subtree(root_);
       root_ = o.root_;
       size_ = o.size_;
       o.root_ = nullptr;
@@ -479,7 +565,34 @@ public:
     return *this;
   }
 
-  ~rb_tree() { clear_recursive(root_); }
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, usize>)
+  void
+  assign(usize n, Fn gen)
+  {
+    clear();
+    for ( usize i = 0; i < n; ++i ) insert_or_assign(gen(i));
+  }
+
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn> && !micron::is_invocable_v<Fn, usize>)
+  void
+  assign(usize n, Fn gen)
+  {
+    clear();
+    for ( usize i = 0; i < n; ++i ) insert_or_assign(gen());
+  }
+
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, rb_tree &>)
+  void
+  assign(Fn build)
+  {
+    clear();
+    build(*this);
+  }
+
+  ~rb_tree() { destroy_subtree(root_); }
 
   bool
   empty() const noexcept
@@ -587,27 +700,33 @@ public:
     return insert_or_assign(micron::move(v));
   }
 
+  template<class Fn>
+  T &
+  update(const T &key, Fn fn)
+  {
+    const T *cur = find(key);
+    return insert_or_assign(fn(cur));
+  }
+
   template<class... Args>
   T &
   emplace(Args &&...args)
   {
-    // avoid constructing T unless key is absent: we must know ordering; require a temporary key.
-    // construct once into node when absent by forwarding args.
+    T key(micron::forward<Args>(args)...);
     node *y = nullptr;
     node *x = root_;
-    node *z = make_node(micron::forward<Args>(args)...);
     while ( x ) {
       y = x;
-      if ( Less::lt(z->data, x->data) )
+      if ( Less::lt(key, x->data) )
         x = x->left;
-      else if ( Less::lt(x->data, z->data) )
+      else if ( Less::lt(x->data, key) )
         x = x->right;
       else {
-        x->data = micron::move(z->data);
-        destroy_node(z);
+        x->data = micron::move(key);
         return x->data;
       }
     }
+    node *z = make_node(micron::move(key));
     z->parent = y;
     z->left = nullptr;
     z->right = nullptr;
@@ -637,6 +756,8 @@ public:
   extract_min()
   {
     node *z = minimum(root_);
+    if ( !z ) [[unlikely]]
+      exc<except::library_error>("rb_tree::extract_min(): empty tree");
     T data = micron::move(z->data);
     __erase_node(z);
     return data;
@@ -656,10 +777,37 @@ public:
     __for_each_inorder(root_, fn);
   }
 
+  template<class Fn>
+  auto
+  map(Fn fn) const
+  {
+    using U = micron::remove_cvref_t<micron::invoke_result_t<Fn, const T &>>;
+    rb_tree<U> out;
+    for_each([&](const T &e) { out.insert(fn(e)); });
+    return out;
+  }
+
+  template<class Acc, class NodeFn>
+  Acc
+  cata(const Acc &empty, NodeFn node) const
+  {
+    return __cata_rec(root_, empty, node);
+  }
+
+  template<traversal_order O = traversal_order::inorder, class Fn>
+  walk_ctl
+  traverse(Fn fn) const
+  {
+    if constexpr ( O == traversal_order::level )
+      return __traverse_level(root_, fn);
+    else
+      return __traverse_rec<O>(root_, fn);
+  }
+
   void
   clear()
   {
-    clear_recursive(root_);
+    destroy_subtree(root_);
     root_ = nullptr;
     size_ = 0;
   }

@@ -33,7 +33,34 @@ template<is_regular_object T, usize N = 64>
   requires(N > 0 and ((N * sizeof(T)) < (1 << 22)))      // avoid weird stuff with N = 0
 class conarray
 {
-  mutable micron::mutex __mtx;
+  mutable micron::fast_mutex __mtx;
+
+  using __defer = micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex>;
+
+  struct __hold {
+    micron::fast_mutex &m;
+
+    [[gnu::always_inline]] explicit __hold(micron::fast_mutex &mm) noexcept : m(mm) { m.lock(); }
+
+    [[gnu::always_inline]] ~__hold() noexcept { m.unlock(); }
+
+    __hold(const __hold &) = delete;
+    __hold &operator=(const __hold &) = delete;
+  };
+
+  static inline void
+  __lock_ordered(micron::fast_mutex &a, __defer &la, micron::fast_mutex &b, __defer &lb)
+  {
+    if ( micron::addr(a) == micron::addr(b) ) {
+      la.lock();
+    } else if ( static_cast<const void *>(micron::addr(a)) < static_cast<const void *>(micron::addr(b)) ) {
+      la.lock();
+      lb.lock();
+    } else {
+      lb.lock();
+      la.lock();
+    }
+  }
 
   // must be in an anonymous union
   union {
@@ -192,13 +219,13 @@ public:
 
   conarray(const conarray &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
+    __hold __lock(o.__mtx);
     __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
   }
 
   conarray(conarray &&o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
+    __hold __lock(o.__mtx);
     __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
   }
 
@@ -282,14 +309,13 @@ public:
   void
   release()
   {
-    void (micron::mutex::*rptr)() = __mtx.retrieve();
-    (__mtx.*rptr)();
+    __mtx.unlock();
   }
 
   void
   clear()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     __impl_container::destroy<N, T>(micron::addr(stack[0]));
     __impl_container::construct<N, T>(micron::addr(stack[0]), T{});
   }
@@ -301,7 +327,7 @@ public:
   at(const size_type i) const
   {
     if ( i >= N ) exc<except::runtime_error>("micron::conarray at() out of range.");
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return stack[i];
   }
 
@@ -309,7 +335,7 @@ public:
   at(const size_type i, const T &val)
   {
     if ( i >= N ) exc<except::runtime_error>("micron::conarray at() out of range.");
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     stack[i] = val;
   }
 
@@ -390,7 +416,7 @@ public:
   operator=(T (&o)[M])
     requires micron::is_array_v<F> && (M <= N)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     __impl_container::copy_assign<M, T>(micron::addr(stack[0]), micron::addr(o[0]));
     return *this;
   }
@@ -400,7 +426,7 @@ public:
   operator=(const F &o)
     requires micron::is_fundamental_v<F>
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     micron::ctypeset<N>(micron::addr(stack[0]), o);
     return *this;
   }
@@ -409,7 +435,7 @@ public:
   conarray &
   operator=(const A &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if constexpr ( N <= A::length )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
     else
@@ -422,7 +448,7 @@ public:
   conarray &
   operator=(const A &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( N <= o.size() )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
     else
@@ -435,8 +461,8 @@ public:
   {
     if ( this == &o ) [[unlikely]]
       return *this;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    micron::unique_lock<micron::lock_starts::locked> __olock(o.__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -446,8 +472,8 @@ public:
   {
     if ( this == &o ) [[unlikely]]
       return *this;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    micron::unique_lock<micron::lock_starts::locked> __olock(o.__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     __impl_container::move_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -461,7 +487,7 @@ public:
   operator+(const conarray<T, M> &o) const
   {
     conarray arr;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -476,7 +502,7 @@ public:
   operator-(const conarray<T, M> &o) const
   {
     conarray arr;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -491,7 +517,7 @@ public:
   operator*(const conarray<T, M> &o) const
   {
     conarray arr;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -506,7 +532,7 @@ public:
   operator/(const conarray<T, M> &o) const
   {
     conarray arr;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -521,7 +547,7 @@ public:
   operator%(const conarray<T, M> &o) const
   {
     conarray arr;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -536,7 +562,7 @@ public:
   T
   sum(void) const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     const T *__restrict src = stack;
     T sm = T{};
 #pragma GCC ivdep
@@ -547,7 +573,7 @@ public:
   T
   mul_reduce(void) const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     const T *__restrict src = stack;
     T m = src[0];
 #pragma GCC ivdep
@@ -561,7 +587,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator+=(const T &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] += o;
@@ -571,7 +597,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator-=(const T &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
@@ -581,7 +607,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator*=(const T &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
@@ -591,7 +617,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator/=(const T &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
@@ -602,7 +628,7 @@ public:
   operator%=(const T &o)
     requires micron::is_integral_v<T>
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
@@ -617,7 +643,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator+=(const conarray<T, M> &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
@@ -630,7 +656,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator-=(const conarray<T, M> &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
@@ -643,7 +669,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator*=(const conarray<T, M> &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
@@ -656,7 +682,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator/=(const conarray<T, M> &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
@@ -669,7 +695,7 @@ public:
   inline __attribute__((always_inline)) conarray &
   operator%=(const conarray<T, M> &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
 #pragma GCC ivdep
@@ -685,7 +711,7 @@ public:
   conarray &
   operator+=(const Rs &...rs)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     (__apply_add(rs), ...);
     return *this;
   }
@@ -695,7 +721,7 @@ public:
   conarray &
   operator-=(const Rs &...rs)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     (__apply_sub(rs), ...);
     return *this;
   }
@@ -705,7 +731,7 @@ public:
   conarray &
   operator*=(const Rs &...rs)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     (__apply_mul(rs), ...);
     return *this;
   }
@@ -715,7 +741,7 @@ public:
   conarray &
   operator/=(const Rs &...rs)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     (__apply_div(rs), ...);
     return *this;
   }
@@ -725,7 +751,7 @@ public:
   conarray &
   operator%=(const Rs &...rs)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     (__apply_mod(rs), ...);
     return *this;
   }
@@ -736,7 +762,7 @@ public:
   void
   mul(const size_type n)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
@@ -745,7 +771,7 @@ public:
   void
   div(const size_type n)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
@@ -754,7 +780,7 @@ public:
   void
   sub(const size_type n)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
@@ -763,7 +789,7 @@ public:
   void
   add(const size_type n)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
 #pragma GCC ivdep
     for ( size_type i = 0; i < N; i++ ) dst[i] += n;
@@ -775,7 +801,7 @@ public:
   bool
   all(const T &o) const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     for ( size_type i = 0; i < N; i++ )
       if ( stack[i] != o ) return false;
     return true;
@@ -784,7 +810,7 @@ public:
   bool
   any(const T &o) const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     for ( size_type i = 0; i < N; i++ )
       if ( stack[i] == o ) return true;
     return false;
@@ -793,7 +819,7 @@ public:
   void
   sqrt(void)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     T *__restrict dst = stack;
     for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
   }
@@ -803,7 +829,7 @@ public:
   fill(const F &o)
     requires micron::is_fundamental_v<F>
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     micron::ctypeset<N>(micron::addr(stack[0]), o);
     return *this;
   }
@@ -812,7 +838,7 @@ public:
   conarray &
   fill(const F &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     __impl_container::set<N, T>(micron::addr(stack[0]), o);
     return *this;
   }

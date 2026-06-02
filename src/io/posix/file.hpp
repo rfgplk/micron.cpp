@@ -362,7 +362,7 @@ protected:
       exc<except::io_error>("micron::file, fd isn't open.");
       return false;
     } else if ( __handle.has_error() ) [[unlikely]] {
-      errno = __handle.fd;
+      errno = -__handle.fd;
       exc<except::io_error>("micron::file, fd has an error.");
       return false;
     }

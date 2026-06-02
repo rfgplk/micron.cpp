@@ -20,8 +20,9 @@ namespace micron
 constexpr bool ATOMIC_OPEN = 0;
 constexpr bool ATOMIC_LOCKED = 1;
 
+// NOTE: relaxed used to be aliased to atomic_seq_cst as a workaround for arm32, fixed now, expect diff behavior if relying on old semantics
 enum class memory_order : i32 {
-  relaxed = atomic_seq_cst,
+  relaxed = atomic_relaxed,
   consume = atomic_consume,
   acquire = atomic_acquire,
   release = atomic_release,
@@ -29,6 +30,9 @@ enum class memory_order : i32 {
   seq_cst = atomic_seq_cst,
   __end
 };
+
+static_assert(static_cast<i32>(memory_order::relaxed) != static_cast<i32>(memory_order::seq_cst),
+              "memory_order::relaxed must not be aliased to seq_cst (ABC-7); re-derive atomic orders before changing");
 
 inline constexpr memory_order memory_order_relaxed = memory_order::relaxed;
 inline constexpr memory_order memory_order_consume = memory_order::consume;
@@ -38,8 +42,10 @@ inline constexpr memory_order memory_order_acq_rel = memory_order::acq_rel;
 inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 
 template<is_atomic_type T> struct atomic_token {
-  T v;
+  // NOTE: enforce natural alignment
+  alignas(sizeof(T) > alignof(T) ? sizeof(T) : alignof(T)) T v;
   static_assert(size_of<T, 1> or size_of<T, 2> or size_of<T, 4> or size_of<T, 8>, "Size must be 1, 2, 4, or 8 bytes");
+  static_assert(__atomic_always_lock_free(sizeof(T), (T *)0), "atomic_token<T>: T is not always-lock-free on this target");
 
   constexpr atomic_token(const T t = ATOMIC_OPEN) noexcept : v(t) { };
   constexpr atomic_token(const atomic_token &o) noexcept : v(o.v) { };

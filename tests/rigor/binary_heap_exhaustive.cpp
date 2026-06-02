@@ -1,4 +1,7 @@
-
+// binary_heap_exhaustive.cpp
+// Rigorous snowball test suite for micron::binary_heap<T> (a max-heap).
+// Exercises insert/get/max ordering, capacity, move ctor/assign, clear, stress,
+// edge cases, and non-trivial element lifetime balance.
 
 #include "../../src/heap/binary_heap.hpp"
 #include "../../src/std.hpp"
@@ -213,6 +216,56 @@ main()
       micron::binary_heap<counted> src(128);
       for ( int i = 0; i < 5; i++ ) src.insert(counted(100 + i));
       dst = micron::move(src);
+    }
+    require(counted::live, 0L);
+  }
+  end_test_case();
+
+  test_case("capacity: request is NOT sizeof(T)x over-allocated");
+  {
+
+    struct wide {
+      int k;
+      char pad[60];
+
+      bool
+      operator<(const wide &o) const
+      {
+        return k < o.k;
+      }
+
+      bool
+      operator>(const wide &o) const
+      {
+        return k > o.k;
+      }
+    };
+
+    micron::binary_heap<wide> h(64);
+    require_true(h.max_size() >= usize(64));
+    require_true(h.max_size() < usize(64) * sizeof(wide));
+  }
+  end_test_case();
+
+  test_case("insert is capped exactly at max_size (no write past capacity)");
+  {
+    micron::binary_heap<int> h(4);
+    const usize cap = h.max_size();
+    for ( usize i = 0; i < cap + 64; i++ ) h.insert((int)i);
+    require(h.size(), cap);
+    require_true(h.size() <= h.max_size());
+  }
+  end_test_case();
+
+  test_case("get() on a single-element heap (self-move path) is lifetime-balanced");
+  {
+    counted::live = 0;
+    {
+      micron::binary_heap<counted> h(8);
+      h.insert(counted(42));
+      counted got = h.get();
+      require(got.v, 42);
+      require(h.size(), size_t(0));
     }
     require(counted::live, 0L);
   }

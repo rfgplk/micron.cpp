@@ -10,6 +10,7 @@
 // intrinsics mapped to fn's
 namespace micron
 {
+constexpr static const i32 atomic_relaxed = __ATOMIC_RELAXED;
 constexpr static const i32 atomic_seq_cst = __ATOMIC_SEQ_CST;
 constexpr static const i32 atomic_consume = __ATOMIC_CONSUME;
 constexpr static const i32 atomic_acquire = __ATOMIC_ACQUIRE;

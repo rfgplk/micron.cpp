@@ -484,6 +484,23 @@ struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
   }
 
   constexpr vector_16<T>
+  step(T edge) const
+  {
+    return { math::step(edge, x), math::step(edge, y), math::step(edge, z), math::step(edge, w), math::step(edge, a), math::step(edge, b),
+             math::step(edge, c), math::step(edge, d), math::step(edge, e), math::step(edge, f), math::step(edge, g), math::step(edge, h),
+             math::step(edge, i), math::step(edge, j), math::step(edge, k), math::step(edge, l) };
+  }
+
+  constexpr vector_16<T>
+  smoothstep(T e0, T e1) const
+  {
+    return { math::smoothstep(e0, e1, x), math::smoothstep(e0, e1, y), math::smoothstep(e0, e1, z), math::smoothstep(e0, e1, w),
+             math::smoothstep(e0, e1, a), math::smoothstep(e0, e1, b), math::smoothstep(e0, e1, c), math::smoothstep(e0, e1, d),
+             math::smoothstep(e0, e1, e), math::smoothstep(e0, e1, f), math::smoothstep(e0, e1, g), math::smoothstep(e0, e1, h),
+             math::smoothstep(e0, e1, i), math::smoothstep(e0, e1, j), math::smoothstep(e0, e1, k), math::smoothstep(e0, e1, l) };
+  }
+
+  constexpr vector_16<T>
   clamp(T lo, T hi) const
   {
     return { math::fclamp(x, lo, hi), math::fclamp(y, lo, hi), math::fclamp(z, lo, hi), math::fclamp(w, lo, hi),

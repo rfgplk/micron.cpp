@@ -12,10 +12,9 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <atomic>
+#include "../support/mt.hpp"      // mtest::parallel + micron atomic_token (NOT <thread>/<atomic>)
 #include <climits>
 #include <cstdio>
-#include <thread>
 #include <vector>
 
 static micron::hstring<char>
@@ -30,6 +29,8 @@ int
 main(void)
 {
   sb::print("=== CONMAP TESTS ===");
+
+  // ── single-threaded basics ───────────────────────────────────────────────
 
   sb::test_case("construction - default cap, empty");
   {
@@ -53,7 +54,7 @@ main(void)
     micron::conmap<int, int> m;
     sb::require(m.insert(1, 10));
     sb::require(m.size() == 1ULL);
-    sb::require(!m.insert(1, 99));
+    sb::require(!m.insert(1, 99));      // duplicate
     sb::require(m.size() == 1ULL);
   }
   sb::end_test_case();
@@ -167,6 +168,8 @@ main(void)
   }
   sb::end_test_case();
 
+  // ── string keys ──────────────────────────────────────────────────────────
+
   sb::test_case("string keys - insert/find/erase");
   {
     micron::conmap<micron::hstring<char>, int> m(1024);
@@ -182,18 +185,16 @@ main(void)
   }
   sb::end_test_case();
 
+  // ── concurrent ───────────────────────────────────────────────────────────
+
   sb::test_case("concurrent inserts - 8 threads, distinct keys");
   {
     micron::conmap<int, int> m(65536);
     constexpr int T = 8;
     constexpr int P = 1000;
-    std::vector<std::thread> tg;
-    for ( int t = 0; t < T; ++t ) {
-      tg.emplace_back([t, &m]() {
-        for ( int i = 0; i < P; ++i ) m.insert(t * P + i, i);
-      });
-    }
-    for ( auto &th : tg ) th.join();
+    mtest::parallel(T, [&m](int t) {
+      for ( int i = 0; i < P; ++i ) m.insert(t * P + i, i);
+    });
     sb::require(m.size() == static_cast<unsigned long>(T * P));
     for ( int t = 0; t < T; ++t ) {
       for ( int i = 0; i < P; ++i ) {
@@ -208,24 +209,18 @@ main(void)
   sb::test_case("concurrent insert+find - mixed workload");
   {
     micron::conmap<int, int> m(65536);
-    std::atomic<int> reader_hits{ 0 };
-    std::vector<std::thread> tg;
-
-    for ( int t = 0; t < 2; ++t ) {
-      tg.emplace_back([t, &m]() {
+    micron::atomic_token<int> reader_hits{ 0 };
+    // 2 writers (t=0,1) + 4 readers (t=2..5) in one pool
+    mtest::parallel(6, [&m, &reader_hits](int t) {
+      if ( t < 2 ) {
         for ( int i = 0; i < 2000; ++i ) m.insert_or_assign(t * 2000 + i, i);
-      });
-    }
-
-    for ( int t = 0; t < 4; ++t ) {
-      tg.emplace_back([&m, &reader_hits]() {
+      } else {
         for ( int i = 0; i < 1000; ++i ) {
           int v = 0;
-          if ( m.find(i, v) ) reader_hits.fetch_add(1);
+          if ( m.find(i, v) ) reader_hits.fetch_add(1, micron::memory_order_relaxed);
         }
-      });
-    }
-    for ( auto &th : tg ) th.join();
+      }
+    });
     sb::require(m.size() == 4000ULL);
   }
   sb::end_test_case();
@@ -236,20 +231,18 @@ main(void)
     for ( int i = 0; i < 64; ++i ) m.insert(i, 0);
     constexpr int T = 4;
     constexpr int P = 500;
-    std::vector<std::thread> tg;
-    for ( int t = 0; t < T; ++t ) {
-      tg.emplace_back([&m]() {
-        for ( int i = 0; i < P; ++i ) {
-          m.update(i % 64, [](int &v) { ++v; });
-        }
-      });
-    }
-    for ( auto &th : tg ) th.join();
+    mtest::parallel(T, [&m](int) {
+      for ( int i = 0; i < P; ++i ) {
+        m.update(i % 64, [](int &v) { ++v; });
+      }
+    });
     int total = 0;
     m.for_each([&](const int &, const int &v) { total += v; });
     sb::require(total == T * P);
   }
   sb::end_test_case();
+
+  // ── move semantics ──────────────────────────────────────────────────────
 
   sb::test_case("move constructor - transfers");
   {

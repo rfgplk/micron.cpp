@@ -7,8 +7,7 @@
 
 #include "algorithm/algorithm.hpp"
 #include "algorithm/memory.hpp"
-#include "heap/cpp.hpp"
-#include "memory/actions.hpp"
+#include "except.hpp"
 #include "tags.hpp"
 #include "types.hpp"
 
@@ -23,31 +22,44 @@ template<typename T> struct double_list_node {
 template<typename T> class double_list
 {
   using double_list_node_t = double_list_node<T>;
-  double_list_node_t *root;      // root node -- is a pointer (simpler to impl)
+  double_list_node_t *root;      // first node, or nullptr when empty
 
   inline void
-  __impl_heap(T &&t, double_list_node_t **ptr, double_list_node_t *pptr)
+  __impl_heap(T &&t, double_list_node_t **ptr)
   {
-    *ptr = new double_list_node_t(micron::move(t), pptr, nullptr);
+    *ptr = new double_list_node_t(micron::move(t), nullptr, nullptr);
   }
 
   inline void
-  __impl_heap(const T &t, double_list_node_t **ptr, double_list_node_t *pptr)
+  __impl_heap(const T &t, double_list_node_t **ptr)
   {
-    *ptr = new double_list_node_t(t, pptr, nullptr);
+    *ptr = new double_list_node_t(t, nullptr, nullptr);
   }
 
+  // tear the whole chain down, destroying each node exactly once
   inline void
-  deep_copy(double_list_node_t *dst, const double_list_node_t *src)
+  __destroy()
   {
-    if ( src == nullptr or dst == nullptr ) {
-      return;
+    double_list_node_t *ptr = root;
+    while ( ptr != nullptr ) {
+      double_list_node_t *nx = ptr->next;
+      delete ptr;      // ~double_list_node destroys data once
+      ptr = nx;
     }
-    const double_list_node_t *ptr = src;
-    while ( ptr != nullptr or dst != nullptr ) {
-      dst->data = ptr->data;
-      ptr = ptr->next;
-      dst = dst->next;
+    root = nullptr;
+  }
+
+  // deep-copy src's chain into a freshly empty (root == nullptr) list
+  inline void
+  __clone_from(const double_list_node_t *src)
+  {
+    double_list_node_t **tail = &root;
+    double_list_node_t *prev = nullptr;
+    for ( const double_list_node_t *p = src; p != nullptr; p = p->next ) {
+      __impl_heap(p->data, tail);      // *tail = new node(p->data, nullptr, nullptr)
+      (*tail)->prev = prev;
+      prev = *tail;
+      tail = &(*tail)->next;
     }
   }
 
@@ -69,93 +81,91 @@ public:
 
   double_list(const size_t cnt) : root(nullptr)
   {
-    __impl_heap(micron::move(T()), &root);
-    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list() heap allocation failure");
+    if ( cnt == 0 ) return;
+    __impl_heap(T(), &root);
     double_list_node_t *ptr = root;
-    double_list_node_t *ptr_prev = nullptr;
-    for ( size_t i = 0; i < cnt; i++ ) {
-      __impl_heap(micron::move(T()), &ptr->next, ptr_prev);
-      ptr_prev = ptr;
+    for ( size_t i = 1; i < cnt; i++ ) {
+      __impl_heap(T(), &ptr->next);
+      ptr->next->prev = ptr;
       ptr = ptr->next;
     }
   }
 
-  double_list(const size_t cnt, const T &t)
+  double_list(const size_t cnt, const T &t) : root(nullptr)
   {
+    if ( cnt == 0 ) return;
     __impl_heap(t, &root);
-    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list() heap allocation failure");
     double_list_node_t *ptr = root;
-    double_list_node_t *ptr_prev = nullptr;
-    for ( size_t i = 0; i < cnt; i++ ) {
-      __impl_heap(t, &ptr->next, ptr_prev);
-      ptr_prev = ptr;
+    for ( size_t i = 1; i < cnt; i++ ) {
+      __impl_heap(t, &ptr->next);
+      ptr->next->prev = ptr;
       ptr = ptr->next;
     }
   }
 
-  double_list(const double_list &o) { deep_copy(root, o.root); }
+  double_list(const double_list &o) : root(nullptr) { __clone_from(o.root); }
 
   double_list(double_list &&o) : root(o.root) { o.root = nullptr; }
 
   double_list &
   operator=(const double_list &o)
   {
-    deep_copy(&root, &o.root);
+    if ( this == &o ) return *this;
+    __destroy();
+    __clone_from(o.root);
     return *this;
   }
 
   double_list &
   operator=(double_list &&o)
   {
+    if ( this == &o ) return *this;
+    __destroy();
     root = o.root;
-    o.root.data = T();
-    o.root.next = nullptr;
+    o.root = nullptr;
     return *this;
   }
 
-  ~double_list()
-  {
-    if ( root == nullptr ) return;
-    size_t cnt = size();
-    if ( cnt == 0 ) return;
-    size_t i = 0;
-    double_list_node_t *ptr = root;
-    double_list_node_t **ptrs = new double_list_node_t *[cnt + 1];
+  ~double_list() { __destroy(); }
 
-    while ( ptr != nullptr ) {
-      ptrs[i++] = ptr;
-      ptr->data.~T();
-      ptr = ptr->next;
-    };
-    for ( size_t j = 0; j < i; j++ ) delete ptrs[j];
-    delete[] ptrs;
+  void
+  clear()
+  {
+    __destroy();
   }
 
+  // last node (nullptr when empty)
   const_pointer
   iend() const
   {
+    if ( root == nullptr ) return nullptr;
     double_list_node_t *ptr = root;
     while ( ptr->next != nullptr ) ptr = ptr->next;
     return ptr;
   }
 
+  // first node (nullptr when empty)
   const_pointer
   ibegin() const
   {
     return root;
   }
 
+  // address of last element's data (nullptr when empty)
   const_iterator
   end() const
   {
+    if ( root == nullptr ) return nullptr;
     double_list_node_t *ptr = root;
     while ( ptr->next != nullptr ) ptr = ptr->next;
     return &ptr->data;
   }
 
+  // address of first element's data (nullptr when empty)
   const_iterator
   begin() const
   {
+    if ( root == nullptr ) return nullptr;
     return &root->data;
   }
 
@@ -163,8 +173,19 @@ public:
   push_front(const T &v)
   {
     double_list_node_t *ptr;
-    __impl_heap(v, &ptr);      // allocate ptr
+    __impl_heap(v, &ptr);
     ptr->next = root;
+    if ( root != nullptr ) root->prev = ptr;
+    root = ptr;
+  }
+
+  void
+  push_front(T &&v)
+  {
+    double_list_node_t *ptr;
+    __impl_heap(micron::move(v), &ptr);
+    ptr->next = root;
+    if ( root != nullptr ) root->prev = ptr;
     root = ptr;
   }
 
@@ -172,23 +193,42 @@ public:
   push_back(const T &v)
   {
     double_list_node_t *ptr;
-    __impl_heap(v, &ptr);      // allocate ptr
-    auto end_p = end();
+    __impl_heap(v, &ptr);
+    if ( root == nullptr ) {
+      root = ptr;
+      return;
+    }
+    double_list_node_t *end_p = root;
+    while ( end_p->next != nullptr ) end_p = end_p->next;
     end_p->next = ptr;
+    ptr->prev = end_p;
   }
 
-  const_iterator
-  find(const T &srch)
+  void
+  push_back(T &&v)
   {
-    auto *ptr = root;
-    while ( ptr != nullptr ) {
-      if ( ptr->data == srch ) break;
-      ptr = ptr->next;
-    }      // ptr is found node
-    return &ptr->data;      // nullptr if no hit :/
+    double_list_node_t *ptr;
+    __impl_heap(micron::move(v), &ptr);
+    if ( root == nullptr ) {
+      root = ptr;
+      return;
+    }
+    double_list_node_t *end_p = root;
+    while ( end_p->next != nullptr ) end_p = end_p->next;
+    end_p->next = ptr;
+    ptr->prev = end_p;
   }
 
-  // advance by how many
+  // address of the matching element's data, or nullptr if absent
+  const_iterator
+  find(const T &srch) const
+  {
+    for ( const double_list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next )
+      if ( ptr->data == srch ) return &ptr->data;
+    return nullptr;
+  }
+
+  // advance a node pointer forward by (n + 1); clamps at the last node
   const_pointer
   next(const_pointer itr, const size_t n = 0)
   {
@@ -200,11 +240,11 @@ public:
     return itr;
   }
 
-  // retret by how many
+  // step a node pointer backward by (n + 1); clamps at the first node
   const_pointer
   prev(const_pointer itr, const size_t n = 0)
   {
-    if ( itr == nullptr ) exc<except::runtime_error>("micron::next invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::prev invalid iterator.");
     for ( size_t i = 0; i < (n + 1); i++ ) {
       if ( itr->prev == nullptr ) break;
       itr = itr->prev;
@@ -212,19 +252,32 @@ public:
     return itr;
   }
 
+  // remove the node itr points to, fixing up both neighbours
   void
   erase(const_pointer itr)
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::erase invalid iterator.");
-    auto *ptr = root;
-    while ( ptr != nullptr ) {
-      if ( ptr->next == itr )      // if parent found
-        break;
-      ptr = ptr->next;
-    }      // ptr is now parent node
-    itr->data.~T();             // call dest
-    ptr->next = itr->next;      // relink
-    delete itr;
+    auto *p = const_cast<pointer>(itr);
+    if ( p->prev != nullptr )
+      p->prev->next = p->next;
+    else
+      root = p->next;      // p was the head
+    if ( p->next != nullptr ) p->next->prev = p->prev;
+    delete p;      // ~double_list_node destroys data once
+  }
+
+  // insert a new node after itr
+  void
+  insert(const_pointer itr, const T &v)
+  {
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
+    double_list_node_t *ptr;
+    __impl_heap(v, &ptr);
+    auto *p = const_cast<pointer>(itr);
+    ptr->next = p->next;
+    ptr->prev = p;
+    if ( p->next != nullptr ) p->next->prev = ptr;
+    p->next = ptr;
   }
 
   void
@@ -232,29 +285,25 @@ public:
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     double_list_node_t *ptr;
-    __impl_heap(micron::move(v), &ptr);      // allocate ptr
-    ptr->next = itr->next;
-    itr->next = ptr;
-  }
-
-  void
-  insert(const_pointer itr, const T &v)
-  {
-    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
-    double_list_node_t *ptr;
-    __impl_heap(v, &ptr);      // allocate ptr
-    ptr->next = itr->next;
-    itr->next = ptr;
+    __impl_heap(micron::move(v), &ptr);
+    auto *p = const_cast<pointer>(itr);
+    ptr->next = p->next;
+    ptr->prev = p;
+    if ( p->next != nullptr ) p->next->prev = ptr;
+    p->next = ptr;
   }
 
   void
   emplace(const_pointer itr, T &&v)
   {
-    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::emplace invalid iterator.");
     double_list_node_t *ptr;
-    __impl_heap(micron::forward(v), &ptr);      // allocate ptr
-    ptr->next = itr->next;
-    itr->next = ptr;
+    __impl_heap(micron::move(v), &ptr);
+    auto *p = const_cast<pointer>(itr);
+    ptr->next = p->next;
+    ptr->prev = p;
+    if ( p->next != nullptr ) p->next->prev = ptr;
+    p->next = ptr;
   }
 
   T
@@ -267,56 +316,86 @@ public:
   T
   back() const
   {
-    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list front() is empty");
-    return end()->data;
+    if ( root == nullptr ) exc<except::runtime_error>("micron::double_list back() is empty");
+    return *end();
   }
 
   void
   merge(double_list &o)
   {
-    if ( &o == this ) return;
+    if ( &o == this or o.root == nullptr ) return;
+    if ( root == nullptr ) {
+      root = o.root;
+      o.root = nullptr;
+      return;
+    }
     auto *end_ptr = const_cast<pointer>(iend());
     end_ptr->next = o.root;
+    o.root->prev = end_ptr;
     o.root = nullptr;
   }
 
   void
   merge(double_list &&o)
   {
-    if ( o == *this ) return;
-    auto *end_ptr = const_cast<pointer>(iend());      // dirty
+    if ( &o == this or o.root == nullptr ) return;
+    if ( root == nullptr ) {
+      root = o.root;
+      o.root = nullptr;
+      return;
+    }
+    auto *end_ptr = const_cast<pointer>(iend());
     end_ptr->next = o.root;
+    o.root->prev = end_ptr;
     o.root = nullptr;
   }
 
+  // splice o's entire chain in right after pos
   void
   splice(const_pointer pos, double_list &o)
   {
-    if ( o == *this ) return;
-    auto *ptr = o.iend();
-    ptr->next = pos->next;
-    pos->next = nullptr;
+    if ( &o == this or o.root == nullptr ) return;
+    if ( pos == nullptr ) exc<except::runtime_error>("micron::splice invalid position.");
+    auto *p = const_cast<pointer>(pos);
+    auto *ohead = o.root;
+    auto *otail = const_cast<pointer>(o.iend());
+    otail->next = p->next;
+    if ( p->next != nullptr ) p->next->prev = otail;
+    p->next = ohead;
+    ohead->prev = p;
+    o.root = nullptr;
+  }
+
+  bool
+  operator==(const double_list &o) const
+  {
+    const double_list_node_t *a = root;
+    const double_list_node_t *b = o.root;
+    while ( a != nullptr and b != nullptr ) {
+      if ( !(a->data == b->data) ) return false;
+      a = a->next;
+      b = b->next;
+    }
+    return a == nullptr and b == nullptr;
+  }
+
+  bool
+  operator!=(const double_list &o) const
+  {
+    return !(*this == o);
   }
 
   bool
   empty() const
   {
-    if ( root == nullptr )
-      return true;
-    else
-      return false;
+    return root == nullptr;
   }
 
   size_t
   size() const
   {
-    if ( root == nullptr ) return 0;
     size_t cnt = 0;
-    auto *ptr = root->next;
-    while ( ptr != nullptr ) {
-      cnt++;
-      ptr = ptr->next;
-    }
+    for ( const double_list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next ) cnt++;
     return cnt;
   }
 

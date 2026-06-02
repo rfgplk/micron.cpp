@@ -38,8 +38,6 @@ concept fn_codomain = micron::is_same_v<micron::invoke_result_t<Fn, D>, D>;
 template<typename Fn, typename D>
 concept fn_return = micron::is_same_v<micron::invoke_result_t<Fn, D>, D>;
 
-// ---- paste these into concepts.hpp after the existing fn_codomain / fn_return ----
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // function-type concepts for FP dispatch
 
@@ -414,6 +412,34 @@ concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
   { (*t.begin()).a };
   { (*t.begin()).b };
 } && !is_tagged_map<T> && !has_cstr<T>;
+
+template<typename T>
+concept is_tree = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, tree_tag>;
+};
+
+template<typename T>
+concept is_tree_map = is_tree<T> && requires {
+  typename micron::remove_cvref_t<T>::key_type;
+  typename micron::remove_cvref_t<T>::mapped_type;
+};
+
+template<typename T>
+concept is_ordered_tree = is_tree_map<T> && requires(micron::remove_cvref_t<T> t, typename micron::remove_cvref_t<T>::key_type k) {
+  { t.begin() };
+  { t.end() };
+  { t.lower_bound(k) };
+};
+
+template<typename T>
+concept is_set_tree = is_tree<T> && requires { typename micron::remove_cvref_t<T>::value_type; } && !is_tree_map<T>;
+
+template<typename T>
+concept is_spatial_tree = is_tree<T> && requires {
+  typename micron::remove_cvref_t<T>::point_type;
+  typename micron::remove_cvref_t<T>::box_type;
+} && !is_tree_map<T>;
 
 template<typename F, typename Arg>
 concept strict_invocable

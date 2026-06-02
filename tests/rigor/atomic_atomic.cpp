@@ -20,7 +20,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <thread>
+#include "../support/mt.hpp"      // mtest::parallel (micron auto_thread; NOT <thread>)
 #include <vector>
 
 using sb::check;
@@ -224,14 +224,10 @@ main(void)
   test_case("atomic_token 4-thread fetch_add stress");
   {
     atomic_token<u64> counter(0);
-    std::vector<std::thread> th;
     constexpr int kT = 4, kIters = 10000;
-    for ( int i = 0; i < kT; ++i ) {
-      th.emplace_back([&counter]() {
-        for ( int j = 0; j < kIters; ++j ) counter.fetch_add(1, memory_order::seq_cst);
-      });
-    }
-    for ( auto &t : th ) t.join();
+    mtest::parallel(kT, [&counter](int) {
+      for ( int j = 0; j < kIters; ++j ) counter.fetch_add(1, memory_order::seq_cst);
+    });
     require(counter.get() == (u64)(kT * kIters));
   }
   end_test_case();
@@ -285,14 +281,10 @@ main(void)
   test_case("atomic<int> 4-thread operator++ stress");
   {
     atomic<int> a(0);
-    std::vector<std::thread> th;
     constexpr int kT = 4, kIters = 5000;
-    for ( int i = 0; i < kT; ++i ) {
-      th.emplace_back([&a]() {
-        for ( int j = 0; j < kIters; ++j ) ++a;
-      });
-    }
-    for ( auto &t : th ) t.join();
+    mtest::parallel(kT, [&a](int) {
+      for ( int j = 0; j < kIters; ++j ) ++a;
+    });
     require(a == kT * kIters);
   }
   end_test_case();
@@ -308,21 +300,17 @@ main(void)
       q->d = 0;
       p.release();
     }
-    std::vector<std::thread> th;
     constexpr int kT = 4, kIters = 1000;
-    for ( int i = 0; i < kT; ++i ) {
-      th.emplace_back([&p]() {
-        for ( int j = 0; j < kIters; ++j ) {
-          auto *q = p.get();
-          ++q->a;
-          ++q->b;
-          ++q->c;
-          ++q->d;
-          p.release();
-        }
-      });
-    }
-    for ( auto &t : th ) t.join();
+    mtest::parallel(kT, [&p](int) {
+      for ( int j = 0; j < kIters; ++j ) {
+        auto *q = p.get();
+        ++q->a;
+        ++q->b;
+        ++q->c;
+        ++q->d;
+        p.release();
+      }
+    });
     auto *q = p.get();
     require(q->a == (i64)(kT * kIters));
     require(q->b == (i64)(kT * kIters));

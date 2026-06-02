@@ -1,4 +1,7 @@
-
+// fibonacci_heap_exhaustive.cpp
+// Rigorous snowball test suite for micron::fibonacci_heap<T> (a max-heap).
+// Exercises insert/pop/max ordering, empty/size, move ctor/assign, clear, stress
+// (which drives consolidate()), edge cases, and non-trivial element lifetime balance.
 
 #include "../../src/heap/fibonacci_heap.hpp"
 #include "../../src/std.hpp"
@@ -209,6 +212,54 @@ main()
       dst = micron::move(src);
     }
     require(counted::live, 0L);
+  }
+  end_test_case();
+
+  test_case("max() reflects the new maximum after pop()");
+  {
+    micron::fibonacci_heap<int> h;
+    h.insert(3);
+    h.insert(9);
+    h.insert(5);
+    require(h.max(), 9);
+    require(h.pop(), 9);
+    require(h.max(), 5);
+    require(h.pop(), 5);
+    require(h.pop(), 3);
+    require_true(h.empty());
+  }
+  end_test_case();
+
+  test_case("interleaved insert/pop preserves max-ordering");
+  {
+    micron::fibonacci_heap<int> h;
+    h.insert(10);
+    h.insert(30);
+    h.insert(20);
+    require(h.pop(), 30);
+    h.insert(25);
+    h.insert(5);
+    require(h.pop(), 25);
+    require(h.pop(), 20);
+    require(h.pop(), 10);
+    require(h.pop(), 5);
+    require_true(h.empty());
+  }
+  end_test_case();
+
+  test_case("stress: 5000 elements drive consolidate(), drain descending");
+  {
+    micron::fibonacci_heap<int> h;
+    for ( int i = 0; i < 5000; i++ ) h.insert((i * 7919) % 104729);
+    require(h.size(), size_t(5000));
+    int prev = 1000000, cnt = 0;
+    while ( !h.empty() ) {
+      int cur = h.pop();
+      require_true(cur <= prev);
+      prev = cur;
+      ++cnt;
+    }
+    require(cnt, 5000);
   }
   end_test_case();
 

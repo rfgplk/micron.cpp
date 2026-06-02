@@ -20,11 +20,16 @@
 
 namespace micron
 {
+// stack allocated fixed-capacity LIFO
 template<typename T, usize N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<T>
 class sstack
 {
-  T stack[N]{};
+  // anonymous union; no implicit lifetime
+  union {
+    T stack[N];
+  };
+
   usize length = 0;
 
 public:
@@ -41,49 +46,46 @@ public:
 
   ~sstack() { clear(); }
 
-  constexpr sstack() = default;
+  sstack() noexcept : length(0) { }
 
-  sstack(usize n) : length(n)
+  sstack(usize n) : length(0)
   {
     if ( n > N ) exc<except::library_error>("sstack size exceeds capacity");
     for ( usize i = 0; i < n; ++i ) push();
   }
 
-  sstack(const std::initializer_list<T> &lst) : length(lst.size())
+  sstack(const std::initializer_list<T> &lst) : length(0)
   {
     if ( lst.size() > N ) exc<except::library_error>("initializer_list size exceeds capacity");
-    usize i = 0;
     for ( const T &v : lst ) push(v);
   }
 
-  sstack(const sstack &o) : length(o.length)
+  sstack(const sstack &o) : length(0)
   {
-    usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i ) push(o.stack[i]);
+    for ( usize i = 0; i < o.length; ++i ) push(o.stack[i]);
   }
 
-  sstack(sstack &&o) noexcept : length(o.length)
+  sstack(sstack &&o) noexcept : length(0)
   {
-    usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i ) push(micron::move(o.stack[i]));
+    for ( usize i = 0; i < o.length; ++i ) push(micron::move(o.stack[i]));
     o.clear();
   }
 
   sstack &
   operator=(const sstack &o)
   {
+    if ( this == micron::addr(o) ) return *this;
     clear();
-    usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i ) push(o.stack[i]);
+    for ( usize i = 0; i < o.length; ++i ) push(o.stack[i]);
     return *this;
   }
 
   sstack &
   operator=(sstack &&o) noexcept
   {
+    if ( this == micron::addr(o) ) return *this;
     clear();
-    usize n = micron::min(N, o.length);
-    for ( usize i = 0; i < n; ++i ) push(micron::move(o.stack[i]));
+    for ( usize i = 0; i < o.length; ++i ) push(micron::move(o.stack[i]));
     o.clear();
     return *this;
   }
@@ -119,7 +121,7 @@ public:
   T
   operator()()
   {
-    T v = top();
+    T v = micron::move(top());
     pop();
     return v;
   }
@@ -129,38 +131,46 @@ public:
   emplace(Args &&...args)
   {
     if ( length >= N ) exc<except::library_error>("sstack overflow on emplace");
-    new (micron::addr(stack[length++])) T(micron::forward<Args &&>(args)...);
+    new (micron::addr(stack[length])) T(micron::forward<Args>(args)...);
+    ++length;
   }
 
   void
   push()
   {
     if ( length >= N ) exc<except::library_error>("sstack overflow on push");
-    new (micron::addr(stack[length++])) T();
+    new (micron::addr(stack[length])) T();
+    ++length;
   }
 
   void
   push(const T &v)
   {
     if ( length >= N ) exc<except::library_error>("sstack overflow on push");
-    new (micron::addr(stack[length++])) T(v);
+    new (micron::addr(stack[length])) T(v);
+    ++length;
+  }
+
+  void
+  push(T &&v)
+  {
+    if ( length >= N ) exc<except::library_error>("sstack overflow on push");
+    new (micron::addr(stack[length])) T(micron::move(v));
+    ++length;
   }
 
   void
   move(T &&v)
   {
-    if ( length >= N ) exc<except::library_error>("sstack overflow on push");
-    new (micron::addr(stack[length++])) T(micron::move(v));
+    push(micron::move(v));
   }
 
   inline void
   pop()
   {
-    if constexpr ( micron::is_class<T>::value )
-      stack[--length].~T();
-    else {
-      stack[--length] = {};
-    }
+    if ( empty() ) exc<except::library_error>("sstack pop() called on empty stack");
+    --length;
+    if constexpr ( micron::is_class<T>::value ) stack[length].~T();
   }
 
   void
@@ -175,15 +185,24 @@ public:
   void
   swap(sstack &o) noexcept
   {
-    usize min_len = micron::min(length, o.length);
-    for ( usize i = 0; i < min_len; ++i ) micron::swap(stack[i], o.stack[i]);
-    if ( length > o.length ) {
-      for ( usize i = min_len; i < length; ++i ) o.push(micron::move(stack[i]));
-      length = o.length;
-    } else if ( o.length > length ) {
-      for ( usize i = min_len; i < o.length; ++i ) push(micron::move(o.stack[i]));
-      o.length = length;
+    usize common = micron::min(length, o.length);
+    for ( usize i = 0; i < common; ++i ) {
+      T tmp(micron::move(stack[i]));
+      stack[i] = micron::move(o.stack[i]);
+      o.stack[i] = micron::move(tmp);
     }
+    if ( length > o.length ) {
+      for ( usize i = common; i < length; ++i ) {
+        new (micron::addr(o.stack[i])) T(micron::move(stack[i]));
+        if constexpr ( micron::is_class<T>::value ) stack[i].~T();
+      }
+    } else if ( o.length > length ) {
+      for ( usize i = common; i < o.length; ++i ) {
+        new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
+        if constexpr ( micron::is_class<T>::value ) o.stack[i].~T();
+      }
+    }
+    micron::swap(length, o.length);
   }
 
   bool
@@ -233,8 +252,11 @@ template<typename t, usize N = micron::alloc_auto_sz>
   requires micron::is_move_constructible_v<t>
 class fsstack
 {
-  alignas(t) t stack[N];
-  usize length;
+  union {
+    t stack[N];
+  };
+
+  usize length = 0;
 
 public:
   using category_type = buffer_tag;
@@ -249,124 +271,82 @@ public:
   typedef const t *const_pointer;
   typedef t *iterator;
   typedef const t *const_iterator;
-  ~fsstack() = default;
 
-  fsstack() : stack{}, length(0) { }
+  ~fsstack() { clear(); }
 
-  fsstack(const umax_t n) : stack{}, length(0)
+  fsstack() noexcept : length(0) { }
+
+  fsstack(const umax_t n) : length(0)
   {
+    if ( n > N ) exc<except::library_error>("micron::fsstack() count exceeds capacity");
     for ( umax_t i = 0; i < n; i++ ) push();
   }
 
-  fsstack(const std::initializer_list<t> &lst) : length(lst.size())
+  fsstack(const std::initializer_list<t> &lst) : length(0)
   {
     if ( lst.size() > N ) exc<except::library_error>("micron::fsstack() initializer_list out of bounds");
-    if constexpr ( micron::is_class_v<t> ) {
-      usize i = 0;
-      for ( auto &&value : lst ) new (micron::addr(stack[i++])) t(value);
-    } else {
-      usize i = 0;
-      for ( t value : lst ) stack[i++] = value;
-    }
+    for ( const t &v : lst ) push(v);
   }
 
-  fsstack(const fsstack &o)
+  fsstack(const fsstack &o) : length(0)
   {
-    __impl_container::copy(&stack[0], &o.stack[0], N);
-    length = o.length;
+    for ( usize i = 0; i < o.length; ++i ) push(o.stack[i]);
   }
 
-  template<typename C = t, usize M> fsstack(const fsstack<C, M> &o)
+  fsstack(fsstack &&o) noexcept : length(0)
   {
-    if constexpr ( N < M ) {
-      __impl_container::copy(&stack[0], &o.stack[0], M);
-    } else if constexpr ( M >= N ) {
-      __impl_container::copy(&stack[0], &o.stack[0], N);
-    }
-    length = o.length;
+    for ( usize i = 0; i < o.length; ++i ) push(micron::move(o.stack[i]));
+    o.clear();
   }
-
-  fsstack(fsstack &&o) : stack{}
-  {
-    __impl_container::move(&stack[0], &o.stack[0], N);
-    length = o.length;
-    o.length = 0;
-  }
-
-  template<typename C = t, usize M> fsstack(fsstack<C, M> &&o)
-  {
-    if constexpr ( N >= M ) {
-      micron::copy<N>(&o.stack[0], &stack[0]);
-      length = o.length;
-      o.length = 0;
-    } else {
-      micron::copy<M>(&o.stack[0], &stack[0]);
-      length = o.length;
-      o.length = 0;
-    }
-  };
 
   fsstack &
   operator=(const fsstack &o)
   {
-    __impl_container::copy_assign(&stack[0], &o.stack[0], N);
-    length = o.length;
-    return *this;
-  }
-
-  template<typename C = t, usize M>
-  fsstack &
-  operator=(const fsstack<C, M> &o)
-  {
-    if constexpr ( N >= M ) {
-      __impl_container::copy_assign(stack, o.stack, N);
-    } else {
-      __impl_container::copy_assign(stack, o.stack, M);
-    }
-    length = o.length;
+    if ( this == micron::addr(o) ) return *this;
+    clear();
+    for ( usize i = 0; i < o.length; ++i ) push(o.stack[i]);
     return *this;
   }
 
   fsstack &
-  operator=(fsstack &&o)
+  operator=(fsstack &&o) noexcept
   {
-    __impl_container::move_assign(&stack[0], &o.stack[0], N);
-    length = o.length;
-    o.length = 0;
+    if ( this == micron::addr(o) ) return *this;
+    clear();
+    for ( usize i = 0; i < o.length; ++i ) push(micron::move(o.stack[i]));
+    o.clear();
     return *this;
-  };
+  }
 
   inline t &
-  operator[](const umax_t n)
+  operator[](const umax_t n) noexcept
   {
-    umax_t c = length - n - 1;
-    return stack[c];
+    return stack[length - n - 1];
   }
 
   inline const t &
-  operator[](const umax_t n) const
+  operator[](const umax_t n) const noexcept
   {
-    umax_t c = length - n - 1;
-    return stack[c];
+    return stack[length - n - 1];
   }
 
-  t &
-  top(void)
-  {
-    return stack[length - 1];
-  }
-
-  const t &
-  top(void) const
+  inline t &
+  top(void) noexcept
   {
     return stack[length - 1];
   }
 
-  // calling stack() is equivalent to top() and pop()
+  inline const t &
+  top(void) const noexcept
+  {
+    return stack[length - 1];
+  }
+
+  // calling operator() is equivalent to top() then pop()
   inline t
   operator()(void)
   {
-    auto n = stack[length - 1];
+    t n = micron::move(stack[length - 1]);
     pop();
     return n;
   }
@@ -375,49 +355,53 @@ public:
   inline void
   emplace(Args &&...args)
   {
-    new (micron::addr(stack[length++])) t(micron::forward<Args &&>(args)...);
+    new (micron::addr(stack[length])) t(micron::forward<Args>(args)...);
+    ++length;
   }
 
   inline void
   push(void)
   {
-    new (micron::addr(stack[length++])) t();
+    new (micron::addr(stack[length])) t();
+    ++length;
   }
 
   inline void
   push(const t &v)
   {
-    new (micron::addr(stack[length++])) t(v);
+    new (micron::addr(stack[length])) t(v);
+    ++length;
+  }
+
+  inline void
+  push(t &&v)
+  {
+    new (micron::addr(stack[length])) t(micron::move(v));
+    ++length;
   }
 
   inline void
   move(t &&v)
   {
-    new (micron::addr(stack[length++])) t(micron::move(v));
+    push(micron::move(v));
   }
 
   inline void
   pop()
   {
-    if constexpr ( micron::is_class<t>::value )
-      stack[--length].~t();
-    else {
-      stack[--length] = {};
-    }
+    --length;
+    if constexpr ( micron::is_class<t>::value ) stack[length].~t();
   }
 
   inline void
   clear()
   {
-    if ( !length ) return;
     if constexpr ( micron::is_class<t>::value ) {
-      for ( usize i = 0; i < length; i++ ) (stack)[i].~t();
+      for ( usize i = 0; i < length; ++i ) stack[i].~t();
     }
-    micron::zero((byte *)micron::voidify(&(stack)[0]), N * (sizeof(t) / sizeof(byte)));
     length = 0;
   }
 
-  // grow container
   inline void reserve(const usize) = delete;
   inline void swap(fsstack &o) = delete;
 

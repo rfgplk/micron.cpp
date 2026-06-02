@@ -8,6 +8,7 @@
 #include "../algorithm/memory.hpp"
 #include "../bits/__container.hpp"
 #include "../concepts.hpp"
+#include "../pointer.hpp"
 #include "../tags.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
@@ -74,16 +75,31 @@ class cactus_stack
   }
 
   void
-  __copy_spine(const cactus_stack &src) noexcept
+  __copy_spine(const cactus_stack &src)
   {
-
-    i32 spine[N];
     size_type cnt = 0;
-    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) spine[cnt++] = c;
+    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) ++cnt;
 
-    for ( size_type i = 0; i < cnt; ++i )
-      _construct(static_cast<i32>(i), *src.__val(spine[cnt - 1 - i]), (i == 0) ? __none : static_cast<i32>(i - 1));
-
+    size_type pos = cnt;
+#ifndef __micron_freestanding
+    try {
+      for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) {
+        --pos;
+        _construct(static_cast<i32>(pos), *src.__val(c), (pos == 0) ? __none : static_cast<i32>(pos - 1));
+      }
+    } catch ( ... ) {
+      for ( size_type j = pos + 1; j < cnt; ++j ) __destruct(static_cast<i32>(j));
+      __used = 0;
+      __head = __none;
+      __depth = 0;
+      throw;
+    }
+#else
+    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) {
+      --pos;
+      _construct(static_cast<i32>(pos), *src.__val(c), (pos == 0) ? __none : static_cast<i32>(pos - 1));
+    }
+#endif
     __used = static_cast<i32>(cnt);
     __head = (cnt > 0) ? static_cast<i32>(cnt - 1) : __none;
     __depth = cnt;
@@ -92,30 +108,21 @@ class cactus_stack
   void
   __move_spine(cactus_stack &src) noexcept
   {
-    i32 spine[N];
     size_type cnt = 0;
-    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) spine[cnt++] = c;
+    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) ++cnt;
 
-    for ( size_type i = 0; i < cnt; ++i ) {
-      i32 s = spine[cnt - 1 - i];
-      _construct(static_cast<i32>(i), micron::move(*src.__val(s)), (i == 0) ? __none : static_cast<i32>(i - 1));
-      src.__destruct(s);
+    size_type pos = cnt;
+    for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) {
+      --pos;
+      _construct(static_cast<i32>(pos), micron::move(*src.__val(c)), (pos == 0) ? __none : static_cast<i32>(pos - 1));
     }
 
     __used = static_cast<i32>(cnt);
     __head = (cnt > 0) ? static_cast<i32>(cnt - 1) : __none;
     __depth = cnt;
 
-    for ( i32 i = 0; i < src.__used; ++i ) {
-      bool on_spine = false;
-      for ( size_type k = 0; k < cnt; ++k )
-        if ( spine[k] == i ) {
-          on_spine = true;
-          break;
-        }
-      if ( !on_spine ) src.__destruct(i);
-    }
-
+    // every allocated src node in [0,__used) is either a (now moved-from) spine node or a live orphan
+    for ( i32 i = 0; i < src.__used; ++i ) src.__destruct(i);
     src.__used = 0;
     src.__head = __none;
     src.__depth = 0;
@@ -255,9 +262,10 @@ public:
   {
     cactus_stack next;
     next.__copy_spine(*this);
-    next.__head = next.__slot(next.__head)->parent;
-    next.__depth = (__depth > 0) ? __depth - 1 : 0;
-
+    if ( next.__head != __none ) {
+      next.__head = next.__slot(next.__head)->parent;
+      next.__depth = (next.__depth > 0) ? next.__depth - 1 : 0;
+    }
     return next;
   }
 
@@ -275,28 +283,32 @@ public:
   PopResult
   try_pop() const
   {
-    return { *__val(__head), pop() };
+    return { val(), pop() };      // val() throws on empty (no __val(-1) OOB)
   }
 
   template<typename... Args>
   cactus_stack
   pop_range(Args &...args) const
   {
+    if ( sizeof...(Args) > __depth ) [[unlikely]]
+      exc<except::library_error>("micron::cactus_stack pop_range(): not enough elements");
     cactus_stack cur;
     cur.__copy_spine(*this);
     cur.__depth = __depth;
-    ((args = *cur.__val(cur.__head), cur = cur.pop()), ...);
+    ((args = cur.val(), cur = cur.pop()), ...);
     return cur;
   }
 
   const T &
-  val() const noexcept
+  val() const
   {
+    if ( __head == __none ) [[unlikely]]
+      exc<except::library_error>("micron::cactus_stack val()/top() called on empty stack");
     return *__val(__head);
   }
 
   const T &
-  top() const noexcept
+  top() const
   {
     return val();
   }
@@ -465,14 +477,16 @@ public:
     cactus_stack
     operator*() const noexcept
     {
-
-      i32 spine[N];
+      // snapshot the sub-spine rooted at cur
       size_type cnt = 0;
-      for ( i32 c = cur; c != __none; c = owner->__slot(c)->parent ) spine[cnt++] = c;
+      for ( i32 c = cur; c != __none; c = owner->__slot(c)->parent ) ++cnt;
 
       cactus_stack snap;
-      for ( size_type i = 0; i < cnt; ++i )
-        snap._construct(static_cast<i32>(i), *owner->__val(spine[cnt - 1 - i]), (i == 0) ? __none : static_cast<i32>(i - 1));
+      size_type pos = cnt;
+      for ( i32 c = cur; c != __none; c = owner->__slot(c)->parent ) {
+        --pos;
+        snap._construct(static_cast<i32>(pos), *owner->__val(c), (pos == 0) ? __none : static_cast<i32>(pos - 1));
+      }
       snap.__used = static_cast<i32>(cnt);
       snap.__head = (cnt > 0) ? static_cast<i32>(cnt - 1) : __none;
       snap.__depth = cnt;
@@ -524,18 +538,24 @@ public:
   bool
   operator<(const cactus_stack &o) const noexcept
   {
-    i32 as_[N], bs_[N];
-    size_type ac = 0, bc = 0;
-    for ( i32 c = __head; c != __none; c = __slot(c)->parent ) as_[ac++] = c;
-    for ( i32 c = o.__head; c != __none; c = o.__slot(c)->parent ) bs_[bc++] = c;
-    size_type n = (ac < bc) ? ac : bc;
-    for ( size_type i = 0; i < n; ++i ) {
-      const T &av = *__val(as_[ac - 1 - i]);
-      const T &bv = *o.__val(bs_[bc - 1 - i]);
-      if ( av < bv ) return true;
-      if ( bv < av ) return false;
+    const size_type da = __depth, db = o.__depth;
+    const size_type common = (da < db) ? da : db;
+    i32 a = __head, b = o.__head;
+    for ( size_type i = common; i < da; ++i ) a = __slot(a)->parent;        // drop a's extra top
+    for ( size_type i = common; i < db; ++i ) b = o.__slot(b)->parent;      // drop b's extra top
+    int decided = 0;      // -1 less / +1 greater, overwritten each differing level (deepest wins)
+    while ( a != __none && b != __none ) {
+      const T &av = *__val(a);
+      const T &bv = *o.__val(b);
+      if ( av < bv )
+        decided = -1;
+      else if ( bv < av )
+        decided = 1;
+      a = __slot(a)->parent;
+      b = o.__slot(b)->parent;
     }
-    return ac < bc;
+    if ( decided != 0 ) return decided < 0;
+    return da < db;      // equal common region => shorter is less
   }
 
   bool
@@ -745,7 +765,7 @@ public:
   PopResult
   try_pop() const
   {
-    return { *__at(_depth - 1), pop() };
+    return { val(), pop() };      // val() throws on empty (no __at(-1) OOB)
   }
 
   template<typename... Args>
@@ -755,26 +775,30 @@ public:
     static_assert((micron::is_same_v<micron::remove_cv_t<micron::remove_reference_t<Args>>, T> && ...),
                   "fixed_stack::pop_range: all output types must match value_type");
     constexpr usize K = sizeof...(Args);
+    if ( K > _depth ) [[unlikely]]
+      exc<except::library_error>("micron::fixed_stack pop_range(): not enough elements");
 
     {
       usize idx = _depth;
       ((args = *__at(--idx)), ...);
     }
 
-    usize remain = _depth >= K ? _depth - K : 0;
+    usize remain = _depth - K;
     fixed_stack next;
     next.__bulk_copy(*this, remain);
     return next;
   }
 
   const T &
-  val() const noexcept
+  val() const
   {
+    if ( _depth == 0 ) [[unlikely]]
+      exc<except::library_error>("micron::fixed_stack val()/top() called on empty stack");
     return *__at(_depth - 1);
   }
 
   const T &
-  top() const noexcept
+  top() const
   {
     return val();
   }

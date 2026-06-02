@@ -11,9 +11,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <atomic>
-#include <thread>
-#include <vector>
+#include "../support/mt.hpp"
 
 int
 main(void)
@@ -82,52 +80,46 @@ main(void)
   }
   sb::end_test_case();
 
-  // ── concurrent ────────────────────────────────────────────────────────────
-
   sb::test_case("MPMC - 4 producers x 4 consumers, 40k items");
   {
     micron::crossbeam<int, 1024> q;
     constexpr int P = 4;
-    constexpr int C = 4;
     constexpr int PER = 10000;
-    std::atomic<int> total_consumed{ 0 };
-    std::atomic<long long> sum_consumed{ 0 };
-    std::atomic<bool> stop{ false };
-    std::vector<std::thread> pt;
-    for ( int p = 0; p < P; ++p ) {
-      pt.emplace_back([&, p]() {
-        for ( int i = 0; i < PER; ) {
-          if ( q.push(p * PER + i) ) ++i;
-        }
-      });
-    }
-    std::vector<std::thread> ct;
-    for ( int c = 0; c < C; ++c ) {
-      ct.emplace_back([&]() {
-        while ( !stop.load(std::memory_order_acquire) ) {
-          int v;
-          if ( q.pop(v) ) {
-            sum_consumed.fetch_add(v, std::memory_order_relaxed);
-            int n = total_consumed.fetch_add(1, std::memory_order_relaxed) + 1;
-            if ( n >= P * PER ) {
-              stop.store(true, std::memory_order_release);
-              break;
-            }
+    micron::atomic_token<int> total_consumed{ 0 };
+    micron::atomic_token<long long> sum_consumed{ 0 };
+    micron::atomic_token<bool> stop{ false };
+
+    auto produce = [&](int p) {
+      for ( int i = 0; i < PER; ) {
+        if ( q.push(p * PER + i) ) ++i;
+      }
+    };
+    auto consume = [&]() {
+      while ( !stop.get(micron::memory_order_acquire) ) {
+        int v;
+        if ( q.pop(v) ) {
+          sum_consumed.fetch_add(v, micron::memory_order_relaxed);
+          int n = total_consumed.fetch_add(1, micron::memory_order_relaxed) + 1;
+          if ( n >= P * PER ) {
+            stop.store(true, micron::memory_order_release);
+            break;
           }
         }
-      });
-    }
-    for ( auto &t : pt ) t.join();
-    // wait for all consumed
-    while ( total_consumed.load() < P * PER );
-    stop.store(true);
-    for ( auto &t : ct ) t.join();
+      }
+    };
+
+    mtest::parallel(2 * P, [&](int t) {
+      if ( t < P )
+        produce(t);
+      else
+        consume();
+    });
     long long expected = 0;
     for ( int p = 0; p < P; ++p ) {
       for ( int i = 0; i < PER; ++i ) expected += p * PER + i;
     }
-    sb::require(total_consumed.load() == P * PER);
-    sb::require(sum_consumed.load() == expected);
+    sb::require(total_consumed.get() == P * PER);
+    sb::require(sum_consumed.get() == expected);
   }
   sb::end_test_case();
 

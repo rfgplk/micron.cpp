@@ -868,5 +868,59 @@ fclamp(T x, T lo, T hi)
   return (x < lo) ? lo : ((x > hi) ? hi : x);
 }
 
+// GLSL-style step
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+step(T edge, T x) noexcept
+{
+  return x < edge ? T(0) : T(1);
+}
+
+// GLSL-style smoothstep
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+smoothstep(T e0, T e1, T x) noexcept
+{
+  const T t = fclamp((x - e0) / (e1 - e0), T(0), T(1));
+  return t * t * (T(3) - T(2) * t);
+}
+
+// Perlin's smootherstep
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+smootherstep(T e0, T e1, T x) noexcept
+{
+  const T t = fclamp((x - e0) / (e1 - e0), T(0), T(1));
+  return t * t * t * (t * (t * T(6) - T(15)) + T(10));
+}
+
+// angle-unit conversions
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+radians(T deg) noexcept
+{
+  return deg * T(0.0174532925199432957692369076848861271344L);      // pi / 180
+}
+
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+degrees(T rad) noexcept
+{
+  return rad * T(57.2957795130823208767981548141051703324L);      // 180 / pi
+}
+
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+turns(T t) noexcept
+{
+  return t * T(6.28318530717958647692528676655900576839L);      // 2 * pi
+}
+
 };      // namespace math
 };      // namespace micron

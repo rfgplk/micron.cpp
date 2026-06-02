@@ -7,9 +7,9 @@
 #include "../../src/io/console.hpp"
 #include "../snowball/snowball.hpp"
 
-#include <atomic>
-#include <thread>
-#include <vector>
+#include "../../src/thread/thread.hpp"      // micron::auto_thread (NOT <thread>, per the pthread shim)
+
+#include <vector>      // oracle only (STL allowed as a reference)
 
 using sb::check;
 using sb::end_test_case;
@@ -609,26 +609,24 @@ main()
   {
     constexpr int TOTAL = 1 << 16;      // 65536 items
     micron::spsc_queue<int, 1024> q;
-    std::atomic<bool> done{ false };
 
-    std::thread producer([&]() {
-      for ( int i = 0; i < TOTAL; ++i ) {
-        while ( !q.push(i) );      // spin until slot available
-      }
-    });
-
-    std::vector<int> received;
+    std::vector<int> received;      // oracle
     received.reserve(TOTAL);
 
-    std::thread consumer([&]() {
-      int out;
-      while ( (int)received.size() < TOTAL ) {
-        if ( q.pop(out) ) received.push_back(out);
-      }
-    });
+    {
+      micron::auto_thread<> producer([&]() {
+        for ( int i = 0; i < TOTAL; ++i ) {
+          while ( !q.push(i) );      // spin until slot available
+        }
+      });
 
-    producer.join();
-    consumer.join();
+      micron::auto_thread<> consumer([&]() {
+        int out;
+        while ( (int)received.size() < TOTAL ) {
+          if ( q.pop(out) ) received.push_back(out);
+        }
+      });
+    }      // auto_thread joins on scope exit
 
     require(received.size(), size_t(TOTAL));
     for ( int i = 0; i < TOTAL; ++i ) require(received[i], i);
@@ -642,31 +640,30 @@ main()
     constexpr int BATCH = 32;
     micron::spsc_queue<int, 256> q;
 
-    std::thread producer([&]() {
-      int src[BATCH];
-      int sent = 0;
-      while ( sent < TOTAL ) {
-        int chunk = (TOTAL - sent < BATCH) ? (TOTAL - sent) : BATCH;
-        for ( int i = 0; i < chunk; ++i ) src[i] = sent + i;
-        size_t pushed = 0;
-        while ( (int)pushed < chunk ) pushed += q.push_batch(src + pushed, chunk - pushed);
-        sent += chunk;
-      }
-    });
-
-    std::vector<int> received;
+    std::vector<int> received;      // oracle
     received.reserve(TOTAL);
 
-    std::thread consumer([&]() {
-      int dst[BATCH];
-      while ( (int)received.size() < TOTAL ) {
-        size_t got = q.pop_batch(dst, BATCH);
-        for ( size_t i = 0; i < got; ++i ) received.push_back(dst[i]);
-      }
-    });
+    {
+      micron::auto_thread<> producer([&]() {
+        int src[BATCH];
+        int sent = 0;
+        while ( sent < TOTAL ) {
+          int chunk = (TOTAL - sent < BATCH) ? (TOTAL - sent) : BATCH;
+          for ( int i = 0; i < chunk; ++i ) src[i] = sent + i;
+          size_t pushed = 0;
+          while ( (int)pushed < chunk ) pushed += q.push_batch(src + pushed, chunk - pushed);
+          sent += chunk;
+        }
+      });
 
-    producer.join();
-    consumer.join();
+      micron::auto_thread<> consumer([&]() {
+        int dst[BATCH];
+        while ( (int)received.size() < TOTAL ) {
+          size_t got = q.pop_batch(dst, BATCH);
+          for ( size_t i = 0; i < got; ++i ) received.push_back(dst[i]);
+        }
+      });
+    }      // join
 
     require(received.size(), size_t(TOTAL));
     for ( int i = 0; i < TOTAL; ++i ) require(received[i], i);

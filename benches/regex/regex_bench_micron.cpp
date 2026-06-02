@@ -45,12 +45,12 @@ mc_valid(void *h)
   return static_cast<micron::regex *>(h)->valid() ? 1 : 0;
 }
 
-// 2 = Sheng SIMD DFA, 1 = table DFA, 0 = Pike VM (has_match path)
+// Strategy has_match_n() actually runs on a non-anchored subject:
+//   3 = Sheng SIMD DFA, 2 = table DFA, 1 = SIMD prefilter + Pike, 0 = plain Pike VM
 int
 mc_path(void *h)
 {
-  micron::regex *r = static_cast<micron::regex *>(h);
-  return r->uses_sheng() ? 2 : (r->uses_dfa() ? 1 : 0);
+  return static_cast<micron::regex *>(h)->has_match_path();
 }
 
 int

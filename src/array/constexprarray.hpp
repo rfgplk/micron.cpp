@@ -69,7 +69,11 @@ struct constexpr_array {
   constexpr constexpr_array(const std::initializer_list<T> &lst)
   {
     usize i = 0;
-    for ( auto &v : lst ) stack[i++] = v;
+    for ( auto &v : lst ) {
+      if ( i >= N ) break;
+      stack[i++] = v;
+    }
+    for ( ; i < N; ++i ) stack[i] = T{};
   }
 
   constexpr constexpr_array(const constexpr_array &o)

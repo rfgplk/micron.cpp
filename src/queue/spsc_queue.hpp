@@ -37,7 +37,7 @@ class spsc_queue: public __mutable_memory_resource_move_only<T, Alloc>
     n |= n >> 4;
     n |= n >> 8;
     n |= n >> 16;
-    n |= n >> 32;
+    if constexpr ( sizeof(usize) > 4 ) n |= n >> 32;
     return n + 1;
   }
 

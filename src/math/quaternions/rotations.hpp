@@ -220,6 +220,52 @@ z_quat(T angle) noexcept
   return quaternion<T>{ T(0), T(0), s, c };
 }
 
+template<ieee754_floating T>
+[[nodiscard]] inline constexpr micron::vector_3<T>
+__orthonormal_axis(const micron::vector_3<T> &a) noexcept
+{
+  const T ax = math::fabs(a.x), ay = math::fabs(a.y), az = math::fabs(a.z);
+  const micron::vector_3<T> basis = (ax <= ay && ax <= az) ? micron::vector_3<T>{ T(1), T(0), T(0) }
+                                    : (ay <= az)           ? micron::vector_3<T>{ T(0), T(1), T(0) }
+                                                           : micron::vector_3<T>{ T(0), T(0), T(1) };
+  const micron::vector_3<T> axis{ a.y * basis.z - a.z * basis.y, a.z * basis.x - a.x * basis.z, a.x * basis.y - a.y * basis.x };
+  const T inv = math::frsqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+  return micron::vector_3<T>{ axis.x * inv, axis.y * inv, axis.z * inv };
+}
+
+// shortest-arc rotation taking the unit vector a onto the unit vector b
+template<ieee754_floating T>
+[[nodiscard]] inline constexpr quaternion<T>
+from_unit_vectors(const micron::vector_3<T> &a, const micron::vector_3<T> &b) noexcept
+{
+  const T d = a.x * b.x + a.y * b.y + a.z * b.z;
+  const T cx = a.y * b.z - a.z * b.y;
+  const T cy = a.z * b.x - a.x * b.z;
+  const T cz = a.x * b.y - a.y * b.x;
+  const T w = T(1) + d;
+  if ( w > math::default_eps<T>() ) return quaternion<T>{ cx, cy, cz, w }.normalized();
+  const micron::vector_3<T> axis = __orthonormal_axis<T>(a);
+  return quaternion<T>{ axis.x, axis.y, axis.z, T(0) };
+}
+
+template<ieee754_floating T>
+[[nodiscard]] inline constexpr quaternion<T>
+from_two_vectors(const micron::vector_3<T> &a, const micron::vector_3<T> &b) noexcept
+{
+  const T na2 = a.x * a.x + a.y * a.y + a.z * a.z;
+  const T nb2 = b.x * b.x + b.y * b.y + b.z * b.z;
+  const T s = math::fsqrt(na2 * nb2);      // |a| * |b|
+  if ( s <= math::default_eps<T>() ) return identity<T>();
+  const T d = a.x * b.x + a.y * b.y + a.z * b.z;
+  const T cx = a.y * b.z - a.z * b.y;
+  const T cy = a.z * b.x - a.x * b.z;
+  const T cz = a.x * b.y - a.y * b.x;
+  const T w = s + d;
+  if ( w > math::default_eps<T>() * s ) return quaternion<T>{ cx, cy, cz, w }.normalized();
+  const micron::vector_3<T> axis = __orthonormal_axis<T>(a);
+  return quaternion<T>{ axis.x, axis.y, axis.z, T(0) };
+}
+
 };      // namespace quaternions
 };      // namespace math
 };      // namespace micron

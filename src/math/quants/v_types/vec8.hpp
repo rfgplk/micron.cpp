@@ -329,6 +329,20 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   }
 
   constexpr vector_8<T>
+  step(T edge) const
+  {
+    return { math::step(edge, x), math::step(edge, y), math::step(edge, z), math::step(edge, w),
+             math::step(edge, a), math::step(edge, b), math::step(edge, c), math::step(edge, d) };
+  }
+
+  constexpr vector_8<T>
+  smoothstep(T e0, T e1) const
+  {
+    return { math::smoothstep(e0, e1, x), math::smoothstep(e0, e1, y), math::smoothstep(e0, e1, z), math::smoothstep(e0, e1, w),
+             math::smoothstep(e0, e1, a), math::smoothstep(e0, e1, b), math::smoothstep(e0, e1, c), math::smoothstep(e0, e1, d) };
+  }
+
+  constexpr vector_8<T>
   clamp(T lo, T hi) const
   {
     return { math::fclamp(x, lo, hi), math::fclamp(y, lo, hi), math::fclamp(z, lo, hi), math::fclamp(w, lo, hi),

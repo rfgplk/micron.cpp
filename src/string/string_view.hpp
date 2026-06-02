@@ -31,7 +31,7 @@ public:
 
   constexpr string_view() = delete;
 
-  string_view(T s) : __start(s), __end(micron::strlen(s)) { }
+  string_view(T s) : __start(s), __end(s + micron::strlen(s)) { }
 
   string_view(T s, T e) : __start(s), __end(e) { }
 

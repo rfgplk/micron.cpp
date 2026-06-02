@@ -6,9 +6,11 @@
 #pragma once
 
 #include "../alloc.hpp"
+#include "../memory/cmemory/memchr.hpp"
 #include "../simd/simd.hpp"
 #include "../types.hpp"
 
+#include "classscan.hpp"
 #include "program.hpp"
 
 namespace micron
@@ -29,6 +31,11 @@ struct dfa {
   bool has_sheng = false;
   u8 masks[256][16];      // valid iff has_sheng
   u8 start_byte = 0;
+  // in a state that self-loops on all but a few "escape" bytes
+  bool has_accel = false;
+  u8 *accel_type = nullptr;                // nstates: 0 none | 1 single byte (memchr) | 2 small set (truffle)
+  u8 *accel_byte = nullptr;                // nstates: the lone escape byte (type 1)
+  truffle_masks *accel_set = nullptr;      // nstates: escape-set masks (type 2)
 };
 
 inline void
@@ -183,6 +190,34 @@ build_dfa(prog_view pv, char *seen) noexcept
     for ( i32 c = 0; c < 256; ++c ) d->table[(usize)s * 256 + (usize)c] = tbl[(usize)s * 256 + (usize)c];
   }
 
+  d->has_accel = false;
+  d->accel_type = micron::alloc<u8>((usize)nstates);
+  d->accel_byte = micron::alloc<u8>((usize)nstates);
+  d->accel_set = micron::alloc<truffle_masks>((usize)nstates * sizeof(truffle_masks));
+  for ( i32 s = 0; s < nstates; ++s ) {
+    d->accel_type[s] = 0;
+    d->accel_byte[s] = 0;
+    if ( d->accept[s] ) continue;      // accepting states return before any self-loop scan
+    const u8 *row = d->table + (usize)s * 256;
+    i32 nesc = 0, first = -1;
+    charreach esc;
+    for ( i32 c = 0; c < 256; ++c )
+      if ( row[c] != (u8)s ) {
+        ++nesc;
+        if ( first < 0 ) first = c;
+        esc.set((u8)c);
+      }
+    if ( nesc == 1 ) {      // one escape byte -> memchr
+      d->accel_type[s] = 1;
+      d->accel_byte[s] = (u8)first;
+      d->has_accel = true;
+    } else if ( nesc >= 2 && nesc <= 32 ) {      // few escape bytes -> truffle set-scan
+      d->accel_type[s] = 2;
+      d->accel_set[s] = truffle_build(esc);
+      d->has_accel = true;
+    }
+  }
+
   d->has_sheng = (nstates <= 16);
   if ( d->has_sheng ) {
     auto sbyte = [&](i32 s) -> u8 { return (u8)(s | (d->accept[s] ? kShengAccept : 0) | (d->eol_accept[s] ? kShengEol : 0)); };
@@ -208,6 +243,9 @@ dfa_free(dfa *d) noexcept
   if ( d->table ) micron::free(d->table);
   if ( d->accept ) micron::free(d->accept);
   if ( d->eol_accept ) micron::free(d->eol_accept);
+  if ( d->accel_type ) micron::free(d->accel_type);
+  if ( d->accel_byte ) micron::free(d->accel_byte);
+  if ( d->accel_set ) micron::free(d->accel_set);
   micron::free(d);
 }
 
@@ -264,8 +302,33 @@ dfa_table_has_match(const dfa *d, const char *in, usize n) noexcept
 }
 
 inline bool
+dfa_accel_has_match(const dfa *d, const char *in, usize n) noexcept
+{
+  i32 s = d->start;
+  if ( d->accept[s] ) return true;
+  usize i = 0;
+  while ( i < n ) {
+    u8 at = d->accel_type[s];
+    if ( at == 1 ) {
+      const char *fp = micron::memchr(in + i, d->accel_byte[s], n - i);
+      if ( !fp ) break;      // escape byte absent -> state self-loops to the end
+      i = (usize)(fp - in);
+    } else if ( at == 2 ) {
+      usize idx = truffle_find_first(in + i, n - i, d->accel_set[s]);
+      if ( idx >= n - i ) break;
+      i += idx;
+    }
+    s = d->table[(usize)s * 256 + (u8)in[i]];
+    if ( d->accept[s] ) return true;
+    ++i;
+  }
+  return d->eol_accept[s] != 0;
+}
+
+inline bool
 dfa_has_match(const dfa *d, const char *in, usize n) noexcept
 {
+  if ( d->has_accel ) return dfa_accel_has_match(d, in, n);
   return d->has_sheng ? dfa_sheng_has_match(d, in, n) : dfa_table_has_match(d, in, n);
 }
 

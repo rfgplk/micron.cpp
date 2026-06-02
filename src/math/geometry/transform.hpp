@@ -149,39 +149,25 @@ struct transform {
   [[nodiscard]] constexpr vec<F, Dim>
   apply(const vec<F, Dim> &p) const noexcept
   {
+    // homogeneous transform via the linalg kernel
+    vec<F, H> hp{};
+    for ( usize j = 0; j < Dim; ++j ) hp.data[j] = p.data[j];
+    hp.data[Dim] = F(1);
+    const vec<F, H> o = linalg::ops::gemv(M, hp);
+    vec<F, Dim> r{};
     if constexpr ( Mode == transform_mode::projective ) {
-      F w = F(0);
-      for ( usize j = 0; j < Dim; ++j ) w += M.data[Dim * H + j] * p.data[j];
-      w += M.data[Dim * H + Dim];
-      vec<F, Dim> r{};
-      const F inv_w = (w != F(0)) ? F(1) / w : F(1);
-      for ( usize i = 0; i < Dim; ++i ) {
-        F s = M.data[i * H + Dim];
-        for ( usize j = 0; j < Dim; ++j ) s += M.data[i * H + j] * p.data[j];
-        r.data[i] = s * inv_w;
-      }
-      return r;
+      const F inv_w = (o.data[Dim] != F(0)) ? F(1) / o.data[Dim] : F(1);
+      for ( usize i = 0; i < Dim; ++i ) r.data[i] = o.data[i] * inv_w;
     } else {
-      vec<F, Dim> r{};
-      for ( usize i = 0; i < Dim; ++i ) {
-        F s = M.data[i * H + Dim];
-        for ( usize j = 0; j < Dim; ++j ) s += M.data[i * H + j] * p.data[j];
-        r.data[i] = s;
-      }
-      return r;
+      for ( usize i = 0; i < Dim; ++i ) r.data[i] = o.data[i];
     }
+    return r;
   }
 
   [[nodiscard]] constexpr vec<F, H>
   apply_homogeneous(const vec<F, H> &p) const noexcept
   {
-    vec<F, H> r{};
-    for ( usize i = 0; i < H; ++i ) {
-      F s = F(0);
-      for ( usize j = 0; j < H; ++j ) s += M.data[i * H + j] * p.data[j];
-      r.data[i] = s;
-    }
-    return r;
+    return linalg::ops::gemv(M, p);
   }
 
   [[nodiscard]] constexpr transform
@@ -239,14 +225,7 @@ operator*(const transform<F, Dim, A> &a, const transform<F, Dim, B> &b) noexcept
             ? transform_mode::projective
             : (A == transform_mode::affine || B == transform_mode::affine ? transform_mode::affine : transform_mode::isometry);
   transform<F, Dim, RM> r{};
-  constexpr usize H = Dim + 1;
-  for ( usize i = 0; i < H; ++i ) {
-    for ( usize j = 0; j < H; ++j ) {
-      F s = F(0);
-      for ( usize k = 0; k < H; ++k ) s += a.M.data[i * H + k] * b.M.data[k * H + j];
-      r.M.data[i * H + j] = s;
-    }
-  }
+  r.M = linalg::ops::gemm(a.M, b.M);
   return r;
 }
 

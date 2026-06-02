@@ -13,6 +13,22 @@
 namespace micron
 {
 
+template<typename T> struct __binomial_less {
+  constexpr bool
+  operator()(const T &a, const T &b) const
+  {
+    return micron::less<T>(a, b);
+  }
+};
+
+template<typename T, typename... Args> struct __bn_is_self_arg {
+  static constexpr bool value = false;
+};
+
+template<typename T, typename U> struct __bn_is_self_arg<T, U> {
+  static constexpr bool value = is_same_v<__remove_cvref_t<U>, T>;
+};
+
 template<typename T, typename C> struct __binomial_node {
   T value;
   usize degree;
@@ -24,25 +40,91 @@ template<typename T, typename C> struct __binomial_node {
 
   __binomial_node(T &&val) : value(micron::move(val)), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) { }
 
-  template<typename... Args>
+  template<typename... Args, typename = __enable_if_t<!__bn_is_self_arg<T, Args...>::value>>
   __binomial_node(Args &&...args) : value(micron::forward<Args>(args)...), degree(0), parent(nullptr), child(nullptr), sibling(nullptr)
   {
   }
 };
 
-template<typename T, typename C = micron::less<T>> struct __binomial_heap {
+template<typename T, typename C = micron::__binomial_less<T>> struct __binomial_heap {
   using node_type = __binomial_node<T, C>;
 
   node_type *root_list;
   node_type *min_node;
   usize node_count;
   C comp;
+  node_type *__pool;
 
-  ~__binomial_heap() { clear(); }
+  ~__binomial_heap()
+  {
+    clear();
+    __drain_pool();
+  }
 
-  __binomial_heap() : root_list(nullptr), min_node(nullptr), node_count(0), comp() { }
+  __binomial_heap() : root_list(nullptr), min_node(nullptr), node_count(0), comp(), __pool(nullptr) { }
 
-  __binomial_heap(const C &c) : root_list(nullptr), min_node(nullptr), node_count(0), comp(c) { }
+  __binomial_heap(const C &c) : root_list(nullptr), min_node(nullptr), node_count(0), comp(c), __pool(nullptr) { }
+
+  __binomial_heap(const __binomial_heap &) = delete;
+  __binomial_heap &operator=(const __binomial_heap &) = delete;
+
+  __binomial_heap(__binomial_heap &&o) noexcept
+      : root_list(o.root_list), min_node(o.min_node), node_count(o.node_count), comp(micron::move(o.comp)), __pool(o.__pool)
+  {
+    o.root_list = nullptr;
+    o.min_node = nullptr;
+    o.node_count = 0;
+    o.__pool = nullptr;
+  }
+
+  __binomial_heap &
+  operator=(__binomial_heap &&o) noexcept
+  {
+    if ( this != &o ) {
+      clear();
+      __drain_pool();      // release our own recycled storage before adopting o's
+      root_list = o.root_list;
+      min_node = o.min_node;
+      node_count = o.node_count;
+      comp = micron::move(o.comp);
+      __pool = o.__pool;
+      o.root_list = nullptr;
+      o.min_node = nullptr;
+      o.node_count = 0;
+      o.__pool = nullptr;
+    }
+    return *this;
+  }
+
+  template<typename... A>
+  [[gnu::always_inline]] inline node_type *
+  __acquire(A &&...a)
+  {
+    if ( __pool ) {
+      node_type *slot = __pool;
+      __pool = *reinterpret_cast<node_type **>(slot);
+      return new (static_cast<void *>(slot)) node_type(micron::forward<A>(a)...);
+    }
+    return new node_type(micron::forward<A>(a)...);
+  }
+
+  [[gnu::always_inline]] inline void
+  __recycle(node_type *n) noexcept
+  {
+    n->~node_type();
+    *reinterpret_cast<node_type **>(n) = __pool;
+    __pool = n;
+  }
+
+  inline void
+  __drain_pool() noexcept
+  {
+    while ( __pool ) {
+      node_type *nxt = *reinterpret_cast<node_type **>(__pool);
+      ::operator delete(static_cast<void *>(__pool));
+      __pool = nxt;
+    }
+  }
 
   inline void
   link(node_type *y, node_type *z)
@@ -142,7 +224,7 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline node_type *
   insert(const T &value)
   {
-    node_type *new_node = new node_type(value);
+    node_type *new_node = __acquire(value);
     __binomial_heap temp(comp);
     temp.root_list = new_node;
     temp.min_node = new_node;
@@ -155,7 +237,7 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline node_type *
   insert(T &&value)
   {
-    node_type *new_node = new node_type(micron::move(value));
+    node_type *new_node = __acquire(micron::move(value));
     __binomial_heap temp(comp);
     temp.root_list = new_node;
     temp.min_node = new_node;
@@ -169,7 +251,7 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline node_type *
   emplace(Args &&...args)
   {
-    node_type *new_node = new node_type(micron::forward<Args>(args)...);
+    node_type *new_node = __acquire(micron::forward<Args>(args)...);
     __binomial_heap temp(comp);
     temp.root_list = new_node;
     temp.min_node = new_node;
@@ -182,13 +264,14 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
   inline const T &
   find_min() const
   {
+    if ( !min_node ) exc<except::library_error>("micron::__binomial_heap::find_min() is empty");
     return min_node->value;
   }
 
   inline T
   extract_min()
   {
-    if ( !min_node ) return T{};
+    if ( !min_node ) exc<except::library_error>("micron::__binomial_heap::extract_min() is empty");
 
     T min_value = micron::move(min_node->value);
 
@@ -220,10 +303,12 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
     child_heap.root_list = reversed;
     child_heap.node_count = 0;
 
-    delete min_node;
+    __recycle(min_node);
     node_count--;
 
     union_heap(child_heap);
+
+    if ( !reversed ) update_min();
 
     return min_value;
   }
@@ -244,12 +329,14 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
       parent = curr->parent;
     }
 
-    if ( !min_node || comp(node->value, min_node->value) ) min_node = node;
+    if ( !min_node || comp(curr->value, min_node->value) ) min_node = curr;
   }
 
   inline void
   delete_node(node_type *node)
   {
+    if ( !node ) return;
+
     node_type *curr = node;
     node_type *parent = curr->parent;
 
@@ -259,6 +346,7 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
       parent = curr->parent;
     }
 
+    min_node = curr;
     extract_min();
   }
 
@@ -303,7 +391,7 @@ template<typename T, typename C = micron::less<T>> struct __binomial_heap {
 
     clear_recursive(node->child);
     clear_recursive(node->sibling);
-    delete node;
+    __recycle(node);
   }
 
   inline bool

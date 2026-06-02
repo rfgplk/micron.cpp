@@ -22,11 +22,27 @@
 namespace micron
 {
 
-// stack
+// stack, heap allocated, LIFO
 template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class stack: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
+
+  inline void
+  __ensure_one()
+  {
+    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity ? __mem::capacity * 2 : (N ? N : 1));
+  }
+
+  static inline umax_t
+  __checked_count(const umax_t n)
+  {
+    if constexpr ( sizeof(T) > 1 ) {
+      if ( n > (static_cast<umax_t>(-1) / sizeof(T)) ) [[unlikely]]
+        exc<except::library_error>("micron::stack size overflow");
+    }
+    return n;
+  }
 
 public:
   using category_type = buffer_tag;
@@ -50,7 +66,7 @@ public:
 
   stack() : __mem(N) { }
 
-  explicit stack(const umax_t n) : __mem(n)
+  explicit stack(const umax_t n) : __mem(__checked_count(n))
   {
     for ( umax_t i = 0; i < n; i++ ) push();
   }
@@ -59,7 +75,7 @@ public:
   {
     if constexpr ( micron::is_class_v<T> ) {
       usize i = 0;
-      for ( const T &value : lst ) new (micron::addr(__mem::memory[i++])) T(micron::move(const_cast<T &>(value)));
+      for ( const T &value : lst ) new (micron::addr(__mem::memory[i++])) T(value);
       __mem::length = lst.size();
     } else {
       usize i = 0;
@@ -79,8 +95,10 @@ public:
   stack &
   operator=(const stack &o)
   {
-    if ( o.length >= __mem::capacity ) reserve(o.length);
-    __impl_container::copy_assign(__mem::memory, o.memory, o.length);
+    if ( this == micron::addr(o) ) return *this;
+    clear();
+    if ( o.length > __mem::capacity ) reserve(o.length);
+    __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
     return *this;
   }
@@ -88,6 +106,8 @@ public:
   stack &
   operator=(stack &&o)
   {
+    if ( this == micron::addr(o) ) return *this;
+    clear();      // destroy our live elements before releasing the buffer (free() would leak them)
     if ( __mem::memory ) __mem::free();
     __mem::memory = o.memory;
     __mem::length = o.length;
@@ -145,14 +165,14 @@ public:
   inline void
   push()
   {
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    __ensure_one();
     new (micron::addr(__mem::memory[__mem::length++])) T{};
   }
 
   inline void
   push(const T &v)
   {
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    __ensure_one();
     if constexpr ( micron::is_class_v<T> || !micron::is_trivially_constructible_v<T> )
       new (micron::addr(__mem::memory[__mem::length++])) T(v);
     else
@@ -162,7 +182,7 @@ public:
   inline void
   push(T &&v)
   {
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    __ensure_one();
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
   }
 
@@ -180,11 +200,10 @@ public:
   }
 
   template<typename... Args>
-    requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args)
   {
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity * 2);
+    __ensure_one();
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(args)...);
   }
 

@@ -25,9 +25,20 @@ namespace micron
 template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
 class conqueue: public __mutable_memory_resource<T, Alloc>
 {
-  mutable micron::mutex __mtx;
+  mutable micron::fast_mutex __mtx;
   using __mem = __mutable_memory_resource<T, Alloc>;
   usize needle;
+
+  struct __hold {
+    micron::fast_mutex &m;
+
+    [[gnu::always_inline]] explicit __hold(micron::fast_mutex &mm) noexcept : m(mm) { m.lock(); }
+
+    [[gnu::always_inline]] ~__hold() noexcept { m.unlock(); }
+
+    __hold(const __hold &) = delete;
+    __hold &operator=(const __hold &) = delete;
+  };
 
   inline void
   __reserve_unsafe(const usize n)
@@ -101,7 +112,7 @@ public:
   conqueue &
   operator=(const conqueue &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( __mem::capacity <= o.length ) __reserve_unsafe(o.length + 1);
     __impl_container::copy(__mem::memory, o.memory, o.length);
     __mem::length = o.length;
@@ -113,7 +124,7 @@ public:
   operator=(conqueue &&o)
   {
     if ( this == &o ) return *this;
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( __mem::memory ) {
       if constexpr ( micron::is_class_v<T> ) {
         for ( usize i = needle - __mem::length + 1; i <= needle; i++ ) (__mem::memory)[i].~T();
@@ -129,7 +140,7 @@ public:
   inline void
   clear()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( !__mem::length ) return;
     if constexpr ( micron::is_class_v<T> ) {
       for ( usize i = needle - __mem::length + 1; i <= needle; i++ ) (__mem::memory)[i].~T();
@@ -142,14 +153,14 @@ public:
   inline void
   reserve(const usize n)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     __reserve_unsafe(n);
   }
 
   inline void
   swap(conqueue &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);
@@ -159,70 +170,70 @@ public:
   inline bool
   empty() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::length == 0;
   }
 
   inline usize
   size() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::length;
   }
 
   inline usize
   max_size() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::capacity;
   }
 
   inline T &
   last()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::memory[needle];
   }
 
   inline const T &
   last() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::memory[needle];
   }
 
   inline T &
   front()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::memory[needle - __mem::length + 1];
   }
 
   inline const T &
   front() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return __mem::memory[needle - __mem::length + 1];
   }
 
   inline T *
   begin()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return micron::addressof(__mem::memory[needle - __mem::length + 1]);
   }
 
   inline const T *
   begin() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return micron::addressof(__mem::memory[needle - __mem::length + 1]);
   }
 
   inline const T *
   cbegin() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return micron::addressof(__mem::memory[needle - __mem::length + 1]);
   }
 
@@ -230,28 +241,28 @@ public:
   inline T *
   end()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return micron::addressof(__mem::memory[needle + 1]);
   }
 
   inline const T *
   end() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return micron::addressof(__mem::memory[needle + 1]);
   }
 
   inline const T *
   cend() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return micron::addressof(__mem::memory[needle + 1]);
   }
 
   inline conqueue &
   push(void)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
       __reserve_unsafe(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
@@ -265,7 +276,7 @@ public:
   inline conqueue &
   push(T &&val)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
       __reserve_unsafe(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
@@ -279,7 +290,7 @@ public:
   inline conqueue &
   push(const T &val)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
       __reserve_unsafe(__mem::capacity + 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
@@ -293,7 +304,7 @@ public:
   inline conqueue &
   pop(void)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( __mem::length == 0 or needle == 0 ) return *this;
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
       (__mem::memory)[needle].~T();

@@ -1014,6 +1014,25 @@ struct __thunk {
     return force();
   }
 };
+
+// open-recursion carrier for the fixpoint combinator
+template<typename F> struct __fix {
+  F __fn;
+
+  template<typename... Args>
+  constexpr decltype(auto)
+  operator()(Args &&...args) const
+  {
+    return __fn(*this, micron::forward<Args>(args)...);
+  }
+
+  template<typename... Args>
+  constexpr decltype(auto)
+  operator()(Args &&...args)
+  {
+    return __fn(*this, micron::forward<Args>(args)...);
+  }
+};
 };      // namespace __impl
 
 template<typename F>
@@ -1021,6 +1040,14 @@ auto
 curry(F &&f)
 {
   return __impl::__curried<micron::decay_t<F>>{ micron::forward<F>(f), {} };
+}
+
+// Y-combinator with open recursion
+template<typename F>
+constexpr auto
+fix(F &&f)
+{
+  return __impl::__fix<micron::decay_t<F>>{ micron::forward<F>(f) };
 }
 
 // partial : binds one or more leading arguments to an n-ary function

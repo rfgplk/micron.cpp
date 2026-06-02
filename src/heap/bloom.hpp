@@ -13,19 +13,37 @@
 
 #include "../bitfield.hpp"
 #include "../hash/hash.hpp"
+#include "../type_traits.hpp"
 
 namespace micron
 {
 
-template<typename T, usize N, usize L = (usize)(N / (N / 4) * __builtin_log(2))> class bloom_filter
+consteval usize
+__bloom_optimal_k(const usize m, const usize n, const usize cap = 64)
 {
+  const double k = (static_cast<double>(m) / static_cast<double>(n)) * 0.6931471805599453;
+  // round-half-up; k is always >= 0 here so no negative branch is needed
+  usize r = static_cast<usize>(k + 0.5);
+  if ( r < 1 ) r = 1;
+  if ( r > cap ) r = cap;
+  return r;
+}
+
+template<typename T, usize N, usize ExpectedN = N / 8, usize L = __bloom_optimal_k(N, ExpectedN)>
+  requires micron::is_trivially_copyable_v<T>
+class bloom_filter
+{
+  static_assert(N > 0, "micron::bloom_filter: N (bit count) must be > 0");
+  static_assert(N % 8 == 0, "micron::bloom_filter: N must be a multiple of 8 (bitfield<N> requirement)");
+  static_assert(ExpectedN > 0, "micron::bloom_filter: ExpectedN (expected element count) must be > 0");
+  static_assert(L >= 1, "micron::bloom_filter: L (hash rounds) must be >= 1");
+
   bitfield<N> bits;
-  usize length;
 
   hash64_t
-  hash_round(const T &key, const usize rnd)
+  hash_round(const T &key, const usize rnd) const
   {
-    return hash64(&key, sizeof(T), fib_32(rnd)) % length;
+    return hash64(&key, sizeof(T), fib_32(static_cast<u32>(rnd))) % N;
   }
 
 public:
@@ -43,7 +61,7 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
-  bloom_filter(void) : bits(false), length(N) { }
+  bloom_filter(void) : bits(false) { }
 
   void
   insert(const T &key)
@@ -58,7 +76,7 @@ public:
   }
 
   bool
-  contains(const T &key)
+  contains(const T &key) const
   {
     bool f = true;
     for ( usize i = 0; i < L; i++ ) f = f && bits[hash_round(key, i)];

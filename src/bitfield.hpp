@@ -111,14 +111,14 @@ public:
   constexpr R
   at(const size_t n)
   {
-    if ( n >= N / 8 ) exc<except::out_of_range_error>("micron::bitfield at() out of range");
+    if ( n >= N ) exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
 
   constexpr const R
   at(const size_t n) const
   {
-    if ( n >= N / 8 ) exc<except::out_of_range_error>("micron::bitfield at() out of range");
+    if ( n >= N ) exc<except::out_of_range_error>("micron::bitfield at() out of range");
     return (bits[n / 8] & (1 << n % 8));
   }
 
@@ -193,7 +193,7 @@ public:
   constexpr bitfield &
   flip(const size_t n)
   {
-    bits[n] ^= 0xFF;
+    bits[n / 8] ^= (1 << n % 8);
     return *this;
   }
 

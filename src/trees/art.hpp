@@ -18,8 +18,7 @@
 namespace micron
 {
 
-// NOTE: IN DEV
-// adaptive radix tree map;
+// adaptive radix tree map
 template<typename K, typename V>
   requires micron::is_copy_constructible_v<K> and micron::is_copy_constructible_v<V> and micron::is_move_constructible_v<V>
 class art
@@ -28,7 +27,7 @@ class art
 
   struct __node_base {
     __node_kind kind;
-    u8 num_children;
+    u16 num_children;
 
     __node_base(__node_kind k) : kind(k), num_children(0) { }
   };
@@ -93,9 +92,13 @@ class art
   __node_base *__root = nullptr;
   usize __size = 0;
 
+  static constexpr usize __hash_bytes = sizeof(hash64_t);
+
   static u8
   __byte_at(hash64_t h, usize depth) noexcept
   {
+    if ( depth >= __hash_bytes ) [[unlikely]]
+      return 0u;
     return static_cast<u8>((h >> (8u * depth)) & 0xFFu);
   }
 
@@ -169,7 +172,7 @@ class art
       auto *p = static_cast<__n4 *>(n);
       auto *q = new __n16();
       q->num_children = p->num_children;
-      for ( u8 i = 0; i < p->num_children; ++i ) {
+      for ( u8 i = 0; i < 4u; ++i ) {
         q->keys[i] = p->keys[i];
         q->children[i] = p->children[i];
       }
@@ -180,7 +183,7 @@ class art
       auto *p = static_cast<__n16 *>(n);
       auto *q = new __n48();
       q->num_children = p->num_children;
-      for ( u8 i = 0; i < p->num_children; ++i ) {
+      for ( u8 i = 0; i < 16u; ++i ) {
         q->idx[p->keys[i]] = i + 1;
         q->children[i] = p->children[i];
       }
@@ -290,7 +293,18 @@ class art
       auto *p = static_cast<__n48 *>(n);
       u8 ix = p->idx[b];
       if ( ix == 0 ) return n;
-      p->children[ix - 1] = nullptr;
+      u16 slot = static_cast<u16>(ix - 1);
+      u16 last = static_cast<u16>(p->num_children - 1);
+      if ( slot != last ) {
+        p->children[slot] = p->children[last];
+        for ( int bb = 0; bb < 256; ++bb ) {
+          if ( p->idx[bb] == last + 1 ) {
+            p->idx[bb] = static_cast<u8>(slot + 1);
+            break;
+          }
+        }
+      }
+      p->children[last] = nullptr;
       p->idx[b] = 0;
       --p->num_children;
       return n;
@@ -379,6 +393,14 @@ class art
         }
       }
 
+      if ( depth >= __hash_bytes ) [[unlikely]] {
+        __leaf *cur = lf;
+        while ( cur->next ) cur = cur->next;
+        cur->next = new __leaf(h, k, micron::move(v));
+        inserted = true;
+        return n;
+      }
+
       u8 b_old = __byte_at(lf->hash, depth);
       u8 b_new = __byte_at(h, depth);
       auto *inner = new __n4();
@@ -412,82 +434,24 @@ class art
   __node_base *
   __split_descend(__leaf *lf, hash64_t h, const K &k, V v, usize depth)
   {
+    if ( depth >= __hash_bytes ) [[unlikely]] {
+      __leaf *cur = lf;
+      while ( cur->next ) cur = cur->next;
+      cur->next = new __leaf(h, k, micron::move(v));
+      return lf;
+    }
     u8 b_old = __byte_at(lf->hash, depth);
     u8 b_new = __byte_at(h, depth);
-    if ( b_old != b_new || depth >= 8u ) {
-      auto *inner = new __n4();
-      __node_base *new_root = inner;
+    if ( b_old != b_new ) {
+      __node_base *new_root = new __n4();
       __node_base *new_leaf = new __leaf(h, k, micron::move(v));
-      if ( b_old != b_new ) {
-        new_root = __add_child(new_root, b_old, lf);
-        new_root = __add_child(new_root, b_new, new_leaf);
-      } else {
-
-        __leaf *cur = lf;
-        while ( cur->next ) cur = cur->next;
-        cur->next = static_cast<__leaf *>(new_leaf);
-        delete inner;
-        return lf;
-      }
+      new_root = __add_child(new_root, b_old, lf);
+      new_root = __add_child(new_root, b_new, new_leaf);
       return new_root;
     }
     auto *inner = new __n4();
     __node_base *deeper = __split_descend(lf, h, k, micron::move(v), depth + 1);
     return __add_child(inner, b_old, deeper);
-  }
-
-  __node_base *
-  __insert_collide(__leaf *old, hash64_t h, const K &k, V v, usize depth, bool &inserted)
-  {
-
-    auto *first = new __n4();
-    __node_base *head = first;
-    __n4 *cur = first;
-    usize d = depth;
-    while ( d < 8u ) {
-      u8 b_old = __byte_at(old->hash, d);
-      u8 b_new = __byte_at(h, d);
-      if ( b_old != b_new ) {
-        cur = static_cast<__n4 *>(__add_child(cur, b_old, old));
-        cur = static_cast<__n4 *>(__add_child(cur, b_new, new __leaf(h, k, micron::move(v))));
-        inserted = true;
-        return head;
-      }
-
-      auto *next = new __n4();
-      cur = static_cast<__n4 *>(__add_child(cur, b_old, next));
-      cur = next;
-      ++d;
-    }
-
-    __node_base *grown = __add_child(cur, 0u, old);
-    grown = __add_child(grown, 1u, new __leaf(h, k, micron::move(v)));
-
-    if ( grown != cur ) {
-
-      if ( head == cur ) {
-        head = grown;
-      } else {
-
-        __node_base *p = head;
-        while ( p && p->kind != __node_kind::leaf ) {
-
-          auto *pn = static_cast<__n4 *>(p);
-          for ( u8 i = 0; i < pn->num_children; ++i ) {
-            if ( pn->children[i] == cur ) {
-              pn->children[i] = grown;
-              p = nullptr;
-              break;
-            }
-          }
-          if ( !p ) break;
-          if ( static_cast<__n4 *>(p)->num_children == 0 ) break;
-          p = static_cast<__n4 *>(p)->children[0];
-        }
-      }
-    }
-    inserted = true;
-    return head;
   }
 
   bool
@@ -533,55 +497,6 @@ class art
       *slot = child;
     }
     return true;
-  }
-
-  __leaf *
-  __scan_for_match(__node_base *n, hash64_t h, const K &k)
-  {
-    if ( !n ) return nullptr;
-    if ( n->kind == __node_kind::leaf ) {
-      auto *lf = static_cast<__leaf *>(n);
-      if ( lf->hash == h && lf->key == k ) return lf;
-      return nullptr;
-    }
-    switch ( n->kind ) {
-    case __node_kind::n4: {
-      auto *p = static_cast<__n4 *>(n);
-      for ( u8 i = 0; i < p->num_children; ++i ) {
-        __leaf *r = __scan_for_match(p->children[i], h, k);
-        if ( r ) return r;
-      }
-      return nullptr;
-    }
-    case __node_kind::n16: {
-      auto *p = static_cast<__n16 *>(n);
-      for ( u8 i = 0; i < p->num_children; ++i ) {
-        __leaf *r = __scan_for_match(p->children[i], h, k);
-        if ( r ) return r;
-      }
-      return nullptr;
-    }
-    case __node_kind::n48: {
-      auto *p = static_cast<__n48 *>(n);
-      for ( u8 i = 0; i < 48; ++i )
-        if ( p->children[i] ) {
-          __leaf *r = __scan_for_match(p->children[i], h, k);
-          if ( r ) return r;
-        }
-      return nullptr;
-    }
-    case __node_kind::n256: {
-      auto *p = static_cast<__n256 *>(n);
-      for ( int i = 0; i < 256; ++i )
-        if ( p->children[i] ) {
-          __leaf *r = __scan_for_match(p->children[i], h, k);
-          if ( r ) return r;
-        }
-      return nullptr;
-    }
-    default:
-      return nullptr;
-    }
   }
 
   __leaf *
@@ -650,6 +565,13 @@ public:
 
   art() = default;
 
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, art &>)
+  explicit art(Fn build) : art()
+  {
+    build(*this);
+  }
+
   art(const art &) = delete;
   art &operator=(const art &) = delete;
 
@@ -708,6 +630,29 @@ public:
     __root = __insert(__root, h, k, micron::move(v), 0, ins);
     if ( ins ) ++__size;
     return ins;
+  }
+
+  template<class Fn>
+  V &
+  update(const K &k, Fn fn)
+  {
+    V *cur = find(k);
+    V nv = fn(static_cast<const V *>(cur));
+    insert_or_assign(k, micron::move(nv));
+    return *find(k);
+  }
+
+  template<class MakeV, class Modify>
+  V &
+  insert_or_modify(const K &k, MakeV make, Modify modify)
+  {
+    V *cur = find(k);
+    if ( cur ) {
+      modify(*cur);
+      return *cur;
+    }
+    insert(k, make());
+    return *find(k);
   }
 
   template<typename... Args>
@@ -777,6 +722,30 @@ public:
   for_each(Fn &&fn)
   {
     __walk(__root, micron::forward<Fn>(fn));
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    const_cast<art *>(this)->__walk(__root, [&](const K &k, V &v) { fn(k, static_cast<const V &>(v)); });
+  }
+
+  template<class Fn>
+  auto
+  map(Fn fn) const
+  {
+    if constexpr ( micron::is_invocable_v<Fn, const K &, const V &> ) {
+      using V2 = micron::remove_cvref_t<micron::invoke_result_t<Fn, const K &, const V &>>;
+      art<K, V2> out;
+      for_each([&](const K &k, const V &v) { out.insert(k, fn(k, v)); });
+      return out;
+    } else {
+      using V2 = micron::remove_cvref_t<micron::invoke_result_t<Fn, const V &>>;
+      art<K, V2> out;
+      for_each([&](const K &k, const V &v) { out.insert(k, fn(v)); });
+      return out;
+    }
   }
 };
 

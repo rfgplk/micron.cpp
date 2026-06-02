@@ -11,8 +11,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <thread>
-#include <vector>
+#include "../support/mt.hpp"      // mtest::parallel (micron auto_thread; NOT <thread>)
 
 using sb::check;
 using sb::end_test_case;
@@ -109,17 +108,13 @@ main(void)
     mutex m;
     int counter = 0;
     constexpr int kT = 4, kIters = 10000;
-    std::vector<std::thread> th;
-    for ( int i = 0; i < kT; ++i ) {
-      th.emplace_back([&]() {
-        for ( int j = 0; j < kIters; ++j ) {
-          auto rptr = m.lock();
-          ++counter;
-          (m.*rptr)();
-        }
-      });
-    }
-    for ( auto &t : th ) t.join();
+    mtest::parallel(kT, [&](int) {
+      for ( int j = 0; j < kIters; ++j ) {
+        auto rptr = m.lock();
+        ++counter;
+        (m.*rptr)();
+      }
+    });
     require(counter == kT * kIters);
   }
   end_test_case();
@@ -151,17 +146,13 @@ main(void)
     weak_mutex m;
     int counter = 0;
     constexpr int kT = 4, kIters = 10000;
-    std::vector<std::thread> th;
-    for ( int i = 0; i < kT; ++i ) {
-      th.emplace_back([&]() {
-        for ( int j = 0; j < kIters; ++j ) {
-          auto rptr = m.lock();
-          ++counter;
-          (m.*rptr)();
-        }
-      });
-    }
-    for ( auto &t : th ) t.join();
+    mtest::parallel(kT, [&](int) {
+      for ( int j = 0; j < kIters; ++j ) {
+        auto rptr = m.lock();
+        ++counter;
+        (m.*rptr)();
+      }
+    });
     require(counter == kT * kIters);
   }
   end_test_case();

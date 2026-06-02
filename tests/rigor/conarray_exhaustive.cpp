@@ -7,6 +7,8 @@
 
 #include "../snowball/snowball.hpp"
 
+#include "../../src/thread/thread.hpp"      // micron::auto_thread (NO <thread>, per pthread shim)
+
 using sb::end_test_case;
 using sb::print;
 using sb::require;
@@ -205,6 +207,55 @@ main()
     p[0] = 99;
     v.release();
     require(v[0], 99);
+  }
+  end_test_case();
+
+  // ============================================================ //
+  //  CONCURRENCY (fast_mutex coarse lock)                         //
+  // ============================================================ //
+  test_case("concurrent: locked operator+= has no lost updates");
+  {
+    micron::conarray<int, 64> v(0);
+    constexpr int PER = 4000;
+    {
+      micron::auto_thread<> t1([&] {
+        for ( int i = 0; i < PER; ++i ) v += 1;
+      });
+      micron::auto_thread<> t2([&] {
+        for ( int i = 0; i < PER; ++i ) v += 1;
+      });
+      micron::auto_thread<> t3([&] {
+        for ( int i = 0; i < PER; ++i ) v += 1;
+      });
+      micron::auto_thread<> t4([&] {
+        for ( int i = 0; i < PER; ++i ) v += 1;
+      });
+    }      // join
+    bool all = true;
+    for ( usize i = 0; i < 64; ++i )
+      if ( v.at(i) != 4 * PER ) all = false;
+    require_true(all);      // each locked read-modify-write serialized; no lost increments
+  }
+  end_test_case();
+
+  test_case("concurrent: disjoint-index at(i,val) writes don't corrupt neighbors");
+  {
+    micron::conarray<int, 64> v(0);
+    constexpr int ITERS = 6000;
+    auto worker = [&](usize base) {
+      for ( int k = 0; k < ITERS; ++k )
+        for ( usize i = base; i < base + 16; ++i ) v.at(i, static_cast<int>(i) * 1000 + k);
+    };
+    {
+      micron::auto_thread<> t1([&] { worker(0); });
+      micron::auto_thread<> t2([&] { worker(16); });
+      micron::auto_thread<> t3([&] { worker(32); });
+      micron::auto_thread<> t4([&] { worker(48); });
+    }      // join
+    bool ok = true;
+    for ( usize i = 0; i < 64; ++i )
+      if ( v.at(i) != static_cast<int>(i) * 1000 + (ITERS - 1) ) ok = false;
+    require_true(ok);      // each slot holds its sole owner's last write
   }
   end_test_case();
 

@@ -18,10 +18,11 @@ template<typename T> struct list_node {
   list_node<T> *next;
 };
 
+// singly-linked list; traversal is node-pointer based
 template<typename T> class list
 {
   using list_node_t = list_node<T>;
-  list_node_t *root;      // root node -- is a pointer (simpler to impl)
+  list_node_t *root;      // first node, or nullptr when empty
 
   inline void
   __impl_heap(T &&t, list_node_t **ptr)
@@ -36,16 +37,24 @@ template<typename T> class list
   }
 
   inline void
-  deep_copy(list_node_t *dst, const list_node_t *src)
+  __destroy()
   {
-    if ( src == nullptr or dst == nullptr ) {
-      return;
+    list_node_t *ptr = root;
+    while ( ptr != nullptr ) {
+      list_node_t *nx = ptr->next;
+      delete ptr;
+      ptr = nx;
     }
-    const list_node_t *ptr = src;
-    while ( ptr != nullptr or dst != nullptr ) {
-      dst->data = ptr->data;
-      ptr = ptr->next;
-      dst = dst->next;
+    root = nullptr;
+  }
+
+  inline void
+  __clone_from(const list_node_t *src)
+  {
+    list_node_t **tail = &root;
+    for ( const list_node_t *p = src; p != nullptr; p = p->next ) {
+      __impl_heap(p->data, tail);      // *tail = new node(p->data, nullptr)
+      tail = &(*tail)->next;
     }
   }
 
@@ -63,71 +72,65 @@ public:
   typedef T *iterator;
   typedef const T *const_iterator;
 
+  ~list() { __destroy(); }
+
   list() : root(nullptr) { }
 
   list(const size_t cnt) : root(nullptr)
   {
-    __impl_heap(micron::move(T()), &root);
-    if ( root == nullptr ) exc<except::runtime_error>("micron::list() heap allocation failure");
+    if ( cnt == 0 ) return;
+    __impl_heap(T(), &root);
     list_node_t *ptr = root;
-    for ( size_t i = 0; i < cnt; i++ ) {
-      __impl_heap(micron::move(T()), &ptr->next);
+    for ( size_t i = 1; i < cnt; i++ ) {
+      __impl_heap(T(), &ptr->next);
       ptr = ptr->next;
     }
   }
 
-  list(const size_t cnt, const T &t)
+  list(const size_t cnt, const T &t) : root(nullptr)
   {
+    if ( cnt == 0 ) return;
     __impl_heap(t, &root);
-    if ( root == nullptr ) exc<except::runtime_error>("micron::list() heap allocation failure");
     list_node_t *ptr = root;
-    for ( size_t i = 0; i < cnt; i++ ) {
+    for ( size_t i = 1; i < cnt; i++ ) {
       __impl_heap(t, &ptr->next);
       ptr = ptr->next;
     }
   }
 
-  list(const list &o) { deep_copy(root, o.root); }
+  list(const list &o) : root(nullptr) { __clone_from(o.root); }
 
   list(list &&o) : root(o.root) { o.root = nullptr; }
 
   list &
   operator=(const list &o)
   {
-    deep_copy(&root, &o.root);
+    if ( this == &o ) return *this;
+    __destroy();
+    __clone_from(o.root);
     return *this;
   }
 
   list &
   operator=(list &&o)
   {
+    if ( this == &o ) return *this;
+    __destroy();
     root = o.root;
-    o.root.data = T();
-    o.root.next = nullptr;
+    o.root = nullptr;
     return *this;
   }
 
-  ~list()
+  void
+  clear()
   {
-    if ( root == nullptr ) return;
-    size_t cnt = size();
-    if ( cnt == 0 ) return;
-    size_t i = 0;
-    list_node_t *ptr = root;
-    list_node_t **ptrs = new list_node_t *[cnt + 1];
-
-    while ( ptr != nullptr ) {
-      ptrs[i++] = ptr;
-      ptr->data.~T();
-      ptr = ptr->next;
-    };
-    for ( size_t j = 0; j < i; j++ ) delete ptrs[j];
-    delete[] ptrs;
+    __destroy();
   }
 
   const_pointer
   iend() const
   {
+    if ( root == nullptr ) return nullptr;
     list_node_t *ptr = root;
     while ( ptr->next != nullptr ) ptr = ptr->next;
     return ptr;
@@ -142,6 +145,7 @@ public:
   const_iterator
   end() const
   {
+    if ( root == nullptr ) return nullptr;
     list_node_t *ptr = root;
     while ( ptr->next != nullptr ) ptr = ptr->next;
     return &ptr->data;
@@ -150,6 +154,7 @@ public:
   const_iterator
   begin() const
   {
+    if ( root == nullptr ) return nullptr;
     return &root->data;
   }
 
@@ -157,7 +162,16 @@ public:
   push_front(const T &v)
   {
     list_node_t *ptr;
-    __impl_heap(v, &ptr);      // allocate ptr
+    __impl_heap(v, &ptr);
+    ptr->next = root;
+    root = ptr;
+  }
+
+  void
+  push_front(T &&v)
+  {
+    list_node_t *ptr;
+    __impl_heap(micron::move(v), &ptr);
     ptr->next = root;
     root = ptr;
   }
@@ -166,23 +180,38 @@ public:
   push_back(const T &v)
   {
     list_node_t *ptr;
-    __impl_heap(v, &ptr);      // allocate ptr
-    auto end_p = end();
+    __impl_heap(v, &ptr);
+    if ( root == nullptr ) {
+      root = ptr;
+      return;
+    }
+    list_node_t *end_p = root;
+    while ( end_p->next != nullptr ) end_p = end_p->next;
+    end_p->next = ptr;
+  }
+
+  void
+  push_back(T &&v)
+  {
+    list_node_t *ptr;
+    __impl_heap(micron::move(v), &ptr);
+    if ( root == nullptr ) {
+      root = ptr;
+      return;
+    }
+    list_node_t *end_p = root;
+    while ( end_p->next != nullptr ) end_p = end_p->next;
     end_p->next = ptr;
   }
 
   const_iterator
-  find(const T &srch)
+  find(const T &srch) const
   {
-    auto *ptr = root;
-    while ( ptr != nullptr ) {
-      if ( ptr->data == srch ) break;
-      ptr = ptr->next;
-    }      // ptr is found node
-    return &ptr->data;      // nullptr if no hit :/
+    for ( const list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next )
+      if ( ptr->data == srch ) return &ptr->data;
+    return nullptr;
   }
 
-  // advance by how many
   const_pointer
   next(const_pointer itr, const size_t n = 0)
   {
@@ -198,25 +227,16 @@ public:
   erase(const_pointer itr)
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::erase invalid iterator.");
-    auto *ptr = root;
-    while ( ptr != nullptr ) {
-      if ( ptr->next == itr )      // if parent found
-        break;
-      ptr = ptr->next;
-    }      // ptr is now parent node
-    itr->data.~T();             // call dest
-    ptr->next = itr->next;      // relink
-    delete itr;
-  }
-
-  void
-  insert(const_pointer itr, T &&v)
-  {
-    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
-    list_node_t *ptr;
-    __impl_heap(micron::move(v), &ptr);      // allocate ptr
+    if ( itr == root ) {
+      root = root->next;
+      delete const_cast<pointer>(itr);
+      return;
+    }
+    list_node_t *ptr = root;
+    while ( ptr != nullptr and ptr->next != itr ) ptr = ptr->next;
+    if ( ptr == nullptr ) return;
     ptr->next = itr->next;
-    itr->next = ptr;
+    delete const_cast<pointer>(itr);
   }
 
   void
@@ -224,19 +244,29 @@ public:
   {
     if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
     list_node_t *ptr;
-    __impl_heap(v, &ptr);      // allocate ptr
+    __impl_heap(v, &ptr);
     ptr->next = itr->next;
-    itr->next = ptr;
+    const_cast<pointer>(itr)->next = ptr;
+  }
+
+  void
+  insert(const_pointer itr, T &&v)
+  {
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
+    list_node_t *ptr;
+    __impl_heap(micron::move(v), &ptr);
+    ptr->next = itr->next;
+    const_cast<pointer>(itr)->next = ptr;
   }
 
   void
   emplace(const_pointer itr, T &&v)
   {
-    if ( itr == nullptr ) exc<except::runtime_error>("micron::insert invalid iterator.");
+    if ( itr == nullptr ) exc<except::runtime_error>("micron::emplace invalid iterator.");
     list_node_t *ptr;
-    __impl_heap(micron::forward(v), &ptr);      // allocate ptr
+    __impl_heap(micron::move(v), &ptr);
     ptr->next = itr->next;
-    itr->next = ptr;
+    const_cast<pointer>(itr)->next = ptr;
   }
 
   T
@@ -249,14 +279,19 @@ public:
   T
   back() const
   {
-    if ( root == nullptr ) exc<except::runtime_error>("micron::list front() is empty");
-    return end()->data;
+    if ( root == nullptr ) exc<except::runtime_error>("micron::list back() is empty");
+    return *end();
   }
 
   void
   merge(list &o)
   {
     if ( &o == this ) return;
+    if ( root == nullptr ) {
+      root = o.root;
+      o.root = nullptr;
+      return;
+    }
     auto *end_ptr = const_cast<pointer>(iend());
     end_ptr->next = o.root;
     o.root = nullptr;
@@ -265,8 +300,13 @@ public:
   void
   merge(list &&o)
   {
-    if ( o == *this ) return;
-    auto *end_ptr = const_cast<pointer>(iend());      // dirty
+    if ( &o == this ) return;
+    if ( root == nullptr ) {
+      root = o.root;
+      o.root = nullptr;
+      return;
+    }
+    auto *end_ptr = const_cast<pointer>(iend());
     end_ptr->next = o.root;
     o.root = nullptr;
   }
@@ -274,31 +314,45 @@ public:
   void
   splice(const_pointer pos, list &o)
   {
-    if ( o == *this ) return;
-    auto *ptr = o.iend();
-    ptr->next = pos->next;
-    pos->next = nullptr;
+    if ( &o == this or o.root == nullptr ) return;
+    if ( pos == nullptr ) exc<except::runtime_error>("micron::splice invalid position.");
+    auto *p = const_cast<pointer>(pos);
+    auto *otail = const_cast<pointer>(o.iend());
+    otail->next = p->next;
+    p->next = o.root;
+    o.root = nullptr;
+  }
+
+  bool
+  operator==(const list &o) const
+  {
+    const list_node_t *a = root;
+    const list_node_t *b = o.root;
+    while ( a != nullptr and b != nullptr ) {
+      if ( !(a->data == b->data) ) return false;
+      a = a->next;
+      b = b->next;
+    }
+    return a == nullptr and b == nullptr;
+  }
+
+  bool
+  operator!=(const list &o) const
+  {
+    return !(*this == o);
   }
 
   bool
   empty() const
   {
-    if ( root == nullptr )
-      return true;
-    else
-      return false;
+    return root == nullptr;
   }
 
   size_t
   size() const
   {
-    if ( root == nullptr ) return 0;
     size_t cnt = 0;
-    auto *ptr = root->next;
-    while ( ptr != nullptr ) {
-      cnt++;
-      ptr = ptr->next;
-    }
+    for ( const list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next ) cnt++;
     return cnt;
   }
 

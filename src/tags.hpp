@@ -37,6 +37,9 @@ struct vector_tag {
 struct list_tag {
 };
 
+struct double_list_tag {
+};
+
 struct buffer_tag {
 };
 

@@ -397,6 +397,17 @@ public:
     return __dfa ? __dfa->nstates : 0;
   }
 
+  int
+  has_match_path() const noexcept
+  {
+    if ( __dfa && __prefer_dfa ) return __dfa->has_sheng ? 3 : 2;
+    if ( !__nullable ) {
+      usize fc = __first.count();
+      if ( fc >= 1 && fc < 256 ) return 1;
+    }
+    return 0;
+  }
+
   template<class S>
   rmatch
   match(const S &input) const noexcept

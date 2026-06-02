@@ -34,6 +34,21 @@ template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_h
   usize total_nodes;
 
   void
+  delete_subtree(node *n) noexcept
+  {
+    if ( !n ) return;
+    if ( n->child ) {
+      node *c = n->child;
+      do {
+        node *next = c->right;
+        delete_subtree(c);
+        c = next;
+      } while ( c != n->child );
+    }
+    delete n;
+  }
+
+  void
   link(node *y, node *x) noexcept
   {
     y->left->right = y->right;
@@ -73,13 +88,14 @@ template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_h
       node *x = w;
       node *next = w->right;
       usize d = x->degree;
-      while ( A[d] ) {
+      while ( d < max_degree && A[d] ) {
         node *y = A[d];
         if ( x->value < y->value ) micron::swap(x, y);
         link(y, x);
         A[d] = nullptr;
         d++;
       }
+      if ( d >= max_degree ) d = max_degree - 1;
       A[d] = x;
       w = next;
     }
@@ -254,22 +270,6 @@ public:
     } while ( start != min_root );
     min_root = nullptr;
     total_nodes = 0;
-  }
-
-private:
-  void
-  delete_subtree(node *n) noexcept
-  {
-    if ( !n ) return;
-    if ( n->child ) {
-      node *c = n->child;
-      do {
-        node *next = c->right;
-        delete_subtree(c);
-        c = next;
-      } while ( c != n->child );
-    }
-    delete n;
   }
 };
 };      // namespace micron

@@ -20,8 +20,19 @@ namespace micron
 
 template<typename T> class heapq
 {
-  micron::mutex __mtx;
+  mutable micron::fast_mutex __mtx;
   micron::fvector<T> heap;
+
+  struct __hold {
+    micron::fast_mutex &m;
+
+    [[gnu::always_inline]] explicit __hold(micron::fast_mutex &mm) noexcept : m(mm) { m.lock(); }
+
+    [[gnu::always_inline]] ~__hold() noexcept { m.unlock(); }
+
+    __hold(const __hold &) = delete;
+    __hold &operator=(const __hold &) = delete;
+  };
 
   void
   sift_up(usize idx)
@@ -61,35 +72,56 @@ template<typename T> class heapq
 public:
   heapq() = default;
 
-  heapq(const heapq &o) : heap(o) { }
+  heapq(const heapq &o)
+  {
+    __hold __lock(o.__mtx);
+    heap.reserve(o.heap.size());
+    for ( usize i = 0; i < o.heap.size(); ++i ) heap.push_back(o.heap[i]);
+  }
 
-  heapq(heapq &&o) : heap(micron::move(o)) { }
+  heapq(heapq &&o) : heap(micron::move(o.heap)) { }
 
   heapq &
   operator=(const heapq &o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
-    heap = o;
+    if ( this == &o ) return *this;
+    // lock both mutexes in a fixed (address) order to avoid deadlock
+    const bool __self_first = micron::addressof(__mtx) < micron::addressof(o.__mtx);
+    micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex> __l0(__self_first ? __mtx : o.__mtx);
+    micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex> __l1(__self_first ? o.__mtx : __mtx);
+    __l0.lock();
+    __l1.lock();
+    heap.clear();
+    heap.reserve(o.heap.size());
+    for ( usize i = 0; i < o.heap.size(); ++i ) heap.push_back(o.heap[i]);
     return *this;
   }
 
   heapq &
   operator=(heapq &&o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(o.__mtx);
+    if ( this == &o ) return *this;
+    // lock both mutexes in a fixed (address) order to avoid deadlock
+    const bool __self_first = micron::addressof(__mtx) < micron::addressof(o.__mtx);
+    micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex> __l0(__self_first ? __mtx : o.__mtx);
+    micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex> __l1(__self_first ? o.__mtx : __mtx);
+    __l0.lock();
+    __l1.lock();
     heap = micron::move(o.heap);
     return *this;
   }
 
-  explicit heapq(const micron::fvector<T> &v) : heap(v)
+  explicit heapq(const micron::fvector<T> &v)
   {
-    for ( int i = static_cast<int>(heap.size() / 2) - 1; i >= 0; --i ) sift_down(i);
+    heap.reserve(v.size());
+    for ( usize i = 0; i < v.size(); ++i ) heap.push_back(v[i]);
+    for ( usize i = heap.size() / 2; i-- > 0; ) sift_down(i);
   }
 
   void
   push(const T &val)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     heap.push_back(val);
     sift_up(heap.size() - 1);
   }
@@ -97,8 +129,8 @@ public:
   T
   pop()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( heap.empty() ) exc<except::library_error>("micron::heapq::top() is empty");
+    __hold __lock(__mtx);
+    if ( heap.empty() ) exc<except::library_error>("micron::heapq::pop() is empty");
 
     T min_val = heap[0];
     heap[0] = heap.back();
@@ -107,10 +139,11 @@ public:
     return min_val;
   }
 
+  // WARNING: the returned reference is NOT protected after this call
   const T &
   top() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     if ( heap.empty() ) exc<except::library_error>("micron::heapq::top() is empty");
     return heap[0];
   }
@@ -118,21 +151,22 @@ public:
   bool
   empty() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return heap.empty();
   }
 
   usize
   size() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return heap.size();
   }
 
+  // WARNING: the returned reference is NOT protected after this call
   const micron::fvector<T> &
   data() const
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold __lock(__mtx);
     return heap;
   }
 };

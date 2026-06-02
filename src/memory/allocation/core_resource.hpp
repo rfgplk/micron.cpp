@@ -116,13 +116,13 @@ template<typename T> struct __core_memory_resource {
   inline pointer
   cast()
   {
-    return reinterpret_cast<pointer *>(memory);
+    return reinterpret_cast<pointer>(memory);
   }
 
   inline const_pointer
   cast() const
   {
-    return reinterpret_cast<const_pointer *>(memory);
+    return reinterpret_cast<const_pointer>(memory);
   }
 
   inline reference

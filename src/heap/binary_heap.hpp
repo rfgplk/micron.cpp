@@ -21,29 +21,27 @@ template<typename T, class Alloc = micron::allocator_serial<>> class binary_heap
   inline void
   make_heap(usize j)
   {
-    auto k = (j - 1) / 2;
-    if ( j > 0 and __mem::memory[k] < __mem::memory[j] ) {
+    while ( j > 0 ) {
+      const usize k = (j - 1) / 2;
+      if ( !(__mem::memory[k] < __mem::memory[j]) ) break;
       micron::swap(__mem::memory[k], __mem::memory[j]);
-      make_heap(k);
+      j = k;
     }
   }
 
   inline void
   reduce_heap(usize j)
   {
-    int left = 2 * j + 1;
-    int right = 2 * j + 2;
-    int max = j;
+    for ( ;; ) {
+      const usize left = 2 * j + 1;
+      const usize right = 2 * j + 2;
+      usize max = j;
 
-    if ( left < __mem::length && __mem::memory[left] > __mem::memory[max] ) {
-      max = left;
-    }
-    if ( right < __mem::length && __mem::memory[right] > __mem::memory[max] ) {
-      max = right;
-    }
-    if ( max != j ) {
+      if ( left < __mem::length && __mem::memory[left] > __mem::memory[max] ) max = left;
+      if ( right < __mem::length && __mem::memory[right] > __mem::memory[max] ) max = right;
+      if ( max == j ) break;
       micron::swap(__mem::memory[j], __mem::memory[max]);
-      reduce_heap(max);
+      j = max;
     }
   }
 
@@ -68,16 +66,16 @@ public:
     clear();
   }
 
-  binary_heap(void) : __mem((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T))) { }
+  binary_heap(void) : __mem() { }
 
   template<typename... Args>
     requires(sizeof...(Args) >= 2)
-  binary_heap(Args &&...args) : __mem((sizeof...(args) * sizeof(T)))
+  binary_heap(Args &&...args) : __mem(sizeof...(args))
   {
     (insert(T(micron::forward<Args>(args))), ...);
   }
 
-  binary_heap(const usize n) : __mem(n * sizeof(T)) { }
+  binary_heap(const usize n) : __mem(n) { }
 
   binary_heap(const binary_heap &o) = delete;
 
@@ -129,16 +127,17 @@ public:
   {
     if ( !__mem::length ) exc<except::library_error>("micron::binary_heap::get() is empty");
     if constexpr ( micron::is_class_v<T> ) {
-      T v = micron::move(__mem::memory[0]);
-      __mem::memory[0] = micron::move(__mem::memory[__mem::length - 1]);
+      T v = micron::move(__mem::memory[0]);      // root extracted (slot 0 now moved-from)
       __mem::length--;
+      // NOTE: only refill the root from the last slot if elements remain
+      if ( __mem::length ) __mem::memory[0] = micron::move(__mem::memory[__mem::length]);
       __mem::memory[__mem::length].~T();      // destroy the vacated (moved-from) slot
       reduce_heap(0);
       return v;
     } else {
       T v = __mem::memory[0];
-      __mem::memory[0] = (__mem::memory[__mem::length - 1]);
       __mem::length--;
+      if ( __mem::length ) __mem::memory[0] = __mem::memory[__mem::length];
       reduce_heap(0);
       return v;
     }

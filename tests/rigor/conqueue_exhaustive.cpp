@@ -1,4 +1,7 @@
-
+// conqueue_exhaustive.cpp
+// Rigorous snowball test suite for micron::conqueue<T>
+// Covers construction, push/pop/clear, accessors, move ctor/assign, copy, and
+// object-lifetime balance (the move-assign + clear() element handling fixed 2026-05-21).
 
 #include "../../src/queue/conqueue.hpp"
 #include "../../src/std.hpp"
@@ -6,6 +9,10 @@
 #include "../../src/io/console.hpp"
 
 #include "../snowball/snowball.hpp"
+
+#include "../../src/thread/thread.hpp"      // micron::auto_thread (NO <thread>, per pthread shim)
+
+#include <vector>      // oracle only (STL allowed as reference)
 
 using sb::end_test_case;
 using sb::require;
@@ -15,7 +22,7 @@ using sb::test_case;
 
 namespace
 {
-
+// lifetime-tracked element: live counts constructed-but-not-destroyed instances.
 struct counted {
   static inline long live = 0;
   int v;
@@ -83,8 +90,8 @@ main()
     q.push(11);
     q.push(22);
     q.push(33);
-    require(q.last(), 11);
-    require(q.front(), 33);
+    require(q.last(), 11);       // oldest == next to pop
+    require(q.front(), 33);      // newest
     q.pop();
     require(q.last(), 22);
     q.pop();
@@ -96,9 +103,9 @@ main()
   {
     micron::conqueue<int> q;
     int x = 7;
-    q.push(x);
-    q.push(99);
-    q.push();
+    q.push(x);       // const T&
+    q.push(99);      // T&&
+    q.push();        // default
     require(q.size(), size_t(3));
   }
   end_test_case();
@@ -120,7 +127,7 @@ main()
     q.clear();
     require(q.size(), size_t(0));
     require_true(q.empty());
-    q.push(5);
+    q.push(5);      // usable after clear
     require(q.size(), size_t(1));
   }
   end_test_case();
@@ -191,7 +198,7 @@ main()
       for ( int i = 0; i < 30; i++ ) q.push(counted(i));
       q.pop();
       q.pop();
-    }
+    }      // ~conqueue must destroy the remaining live elements
     require(counted::live, 0L);
   }
   end_test_case();
@@ -204,9 +211,84 @@ main()
       for ( int i = 0; i < 20; i++ ) dst.push(counted(i));
       micron::conqueue<counted> src;
       for ( int i = 0; i < 5; i++ ) src.push(counted(100 + i));
-      dst = micron::move(src);
+      dst = micron::move(src);      // dst's 20 old elements must be destroyed
     }
     require(counted::live, 0L);
+  }
+  end_test_case();
+
+  // ============================================================ //
+  //  CONCURRENCY (fast_mutex coarse lock)                         //
+  // ============================================================ //
+  // NOTE: conqueue::pop() is a deliberate no-op at the empty / needle==0 edge, so a
+  // drain-everything loop is NOT a reliable element count. These gates instead assert
+  // the lock-counted length and verify contents by iteration (begin/end), which is
+  // what actually exercises the fast_mutex without depending on needle edge semantics.
+  test_case("concurrent: disjoint pushes -- no lost / torn updates (verified by iteration)");
+  {
+    micron::conqueue<int> q;
+    {
+      micron::auto_thread<> t1([&] {
+        for ( int i = 0; i < 1000; ++i ) q.push(i);
+      });
+      micron::auto_thread<> t2([&] {
+        for ( int i = 1000; i < 2000; ++i ) q.push(i);
+      });
+      micron::auto_thread<> t3([&] {
+        for ( int i = 2000; i < 3000; ++i ) q.push(i);
+      });
+    }      // join
+    require(q.size(), size_t(3000));      // every push took the lock & bumped length
+    std::vector<int> seen(3000, 0);
+    for ( const int *it = q.begin(); it != q.end(); ++it ) {      // snapshot, no pop
+      const int v = *it;
+      require_true(v >= 0 && v < 3000);
+      seen[static_cast<size_t>(v)]++;
+    }
+    bool all_once = true;
+    for ( int i = 0; i < 3000; ++i )
+      if ( seen[static_cast<size_t>(i)] != 1 ) all_once = false;
+    require_true(all_once);      // every distinct push present exactly once (no torn slot)
+  }
+  end_test_case();
+
+  test_case("concurrent: push/pop stress stays consistent and usable");
+  {
+    micron::conqueue<int> q;
+    for ( int i = 0; i < 2000; ++i ) q.push(i);      // seed
+    {
+      micron::auto_thread<> prod([&] {
+        for ( int i = 0; i < 2000; ++i ) q.push(i);
+      });
+      micron::auto_thread<> cons([&] {
+        for ( int i = 0; i < 1500; ++i ) q.pop();
+      });
+    }
+    const size_t s = q.size();
+    // 4000 pushed total; effective pops in [..,1500] (pop no-ops at the edge) -> [2500,4000].
+    require_true(s >= size_t(2500) && s <= size_t(4000));
+    q.push(123456);      // still usable after concurrent churn
+    require(q.size(), s + 1);
+  }
+  end_test_case();
+
+  test_case("concurrent: owning elements balance (ASan/UBSan double-free/leak gate)");
+  {
+    counted::live = 0;
+    {
+      micron::conqueue<counted> q;
+      {
+        micron::auto_thread<> t1([&] {
+          for ( int i = 0; i < 800; ++i ) q.push(counted(i));
+        });
+        micron::auto_thread<> t2([&] {
+          for ( int i = 0; i < 800; ++i ) q.push(counted(i));
+        });
+      }      // join
+      require(q.size(), size_t(1600));
+      // ~conqueue (clear()) destroys all remaining live elements regardless of needle.
+    }
+    require(counted::live, 0L);      // no element leaked or double-destroyed
   }
   end_test_case();
 

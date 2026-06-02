@@ -25,18 +25,74 @@
 namespace micron
 {
 
-// stack
+// coarse-grained, mutex-synchronized LIFO stack
 template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
-class stack: public __mutable_memory_resource<T, Alloc>
+class constack: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
-  micron::mutex __mtx;
+  mutable micron::fast_mutex __mtx;
+
+  using __defer = micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex>;
+
+  struct __hold {
+    micron::fast_mutex &m;
+
+    [[gnu::always_inline]] explicit __hold(micron::fast_mutex &mm) noexcept : m(mm) { m.lock(); }
+
+    [[gnu::always_inline]] ~__hold() noexcept { m.unlock(); }
+
+    __hold(const __hold &) = delete;
+    __hold &operator=(const __hold &) = delete;
+  };
+
+  // NOTE: lock two deferred guards in a deadlock-free order
+  static inline void
+  __lock_ordered(micron::fast_mutex &a, __defer &la, micron::fast_mutex &b, __defer &lb)
+  {
+    if ( micron::addr(a) == micron::addr(b) ) {
+      la.lock();
+    } else if ( static_cast<const void *>(micron::addr(a)) < static_cast<const void *>(micron::addr(b)) ) {
+      la.lock();
+      lb.lock();
+    } else {
+      lb.lock();
+      la.lock();
+    }
+  }
 
   inline void
   __reserve_unsafe(const usize n)
   {
     if ( n < __mem::capacity ) return;
     __mem::expand(n);
+  }
+
+  inline void
+  __ensure_one_unsafe()
+  {
+    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity ? __mem::capacity * 2 : (N ? N : 1));
+  }
+
+  inline void
+  __clear_unsafe()
+  {
+    if ( !__mem::length ) return;
+    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __mem::length = 0;
+  }
+
+  inline void
+  __push_unsafe(const T &v)
+  {
+    __ensure_one_unsafe();
+    new (micron::addr(__mem::memory[__mem::length++])) T(v);
+  }
+
+  inline void
+  __push_unsafe(T &&v)
+  {
+    __ensure_one_unsafe();
+    new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
   }
 
   inline T
@@ -46,6 +102,16 @@ class stack: public __mutable_memory_resource<T, Alloc>
     if constexpr ( micron::is_class_v<T> ) __mem::memory[__mem::length - 1].~T();
     czero<sizeof(T) / sizeof(byte)>((byte *)micron::voidify(&__mem::memory[__mem::length-- - 1]));
     return val;
+  }
+
+  static inline umax_t
+  __checked_count(const umax_t n)
+  {
+    if constexpr ( sizeof(T) > 1 ) {
+      if ( n > (static_cast<umax_t>(-1) / sizeof(T)) ) [[unlikely]]
+        exc<except::library_error>("micron::constack size overflow");
+    }
+    return n;
   }
 
 public:
@@ -59,27 +125,25 @@ public:
   typedef const T &const_ref;
   typedef T *pointer;
   typedef const T *const_pointer;
-  typedef T *iterator;
-  typedef const T *const_iterator;
 
-  ~stack()
+  ~constack()
   {
     if ( __mem::is_zero() ) return;
-    clear();
+    __clear_unsafe();      // no lock: an object being destroyed must not be shared
   }
 
-  stack() : __mem(N) { }
+  constack() : __mem(N) { }
 
-  explicit stack(const umax_t n) : __mem(n)
+  explicit constack(const umax_t n) : __mem(__checked_count(n))
   {
     for ( umax_t i = 0; i < n; i++ ) push();
   }
 
-  stack(const std::initializer_list<T> &lst) : __mem(lst.size())
+  constack(const std::initializer_list<T> &lst) : __mem(lst.size())
   {
     if constexpr ( micron::is_class_v<T> ) {
       usize i = 0;
-      for ( const T &value : lst ) new (micron::addr(__mem::memory[i++])) T(micron::move(const_cast<T &>(value)));
+      for ( const T &value : lst ) new (micron::addr(__mem::memory[i++])) T(value);
       __mem::length = lst.size();
     } else {
       usize i = 0;
@@ -88,28 +152,47 @@ public:
     }
   }
 
-  stack(const stack &o) : __mem(o.length)
+  constack(const constack &o) : __mem(nullptr)
   {
-    __impl_container::copy(__mem::memory, o.memory, o.length);
-    __mem::length = o.length;
+    __hold lo(o.__mtx);
+    if ( o.length ) {
+      __reserve_unsafe(o.length);
+      __impl_container::copy(__mem::memory, o.memory, o.length);
+      __mem::length = o.length;
+    }
   }
 
-  stack(stack &&o) : __mem(micron::move(o)) { }
-
-  stack &
-  operator=(const stack &o)
+  constack(constack &&o) : __mem(nullptr)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( o.length >= __mem::capacity ) __reserve_unsafe(o.length);
-    __impl_container::copy(__mem::memory, o.memory, o.length);
+    __hold lo(o.__mtx);
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    o.memory = nullptr;
+    o.length = 0;
+    o.capacity = 0;
+  }
+
+  constack &
+  operator=(const constack &o)
+  {
+    if ( this == micron::addr(o) ) return *this;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+    __clear_unsafe();      // destroy our current elements; slots become raw storage
+    if ( o.length > __mem::capacity ) __reserve_unsafe(o.length);
+    __impl_container::copy(__mem::memory, o.memory, o.length);      // placement-construct
     __mem::length = o.length;
     return *this;
   }
 
-  stack &
-  operator=(stack &&o)
+  constack &
+  operator=(constack &&o)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( this == micron::addr(o) ) return *this;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+    __clear_unsafe();      // destroy our live elements before releasing the buffer (free() would leak them)
     if ( __mem::memory ) __mem::free();
     __mem::memory = o.memory;
     __mem::length = o.length;
@@ -120,76 +203,53 @@ public:
     return *this;
   }
 
-  inline T &
-  operator[](const umax_t n)
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    umax_t c = __mem::length - n - 1;
-    if ( c >= __mem::length ) [[unlikely]]
-      exc<except::library_error>("micron::stack operator[] out of range");
-    return __mem::memory[c];
-  }
-
-  inline const T &
+  T
   operator[](const umax_t n) const
   {
-    umax_t c = __mem::length - n - 1;
-    if ( c >= __mem::length ) [[unlikely]]
-      exc<except::library_error>("micron::stack operator[] out of range");
-    return __mem::memory[c];
+    __hold lk(__mtx);
+    if ( n >= __mem::length ) [[unlikely]]
+      exc<except::library_error>("micron::constack operator[] out of range");
+    return __mem::memory[__mem::length - n - 1];
   }
 
-  T &
-  top()
-  {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length == 0 ) [[unlikely]]
-      exc<except::library_error>("micron::stack top() called on empty stack");
-    return __mem::memory[__mem::length - 1];
-  }
-
-  const T &
+  T
   top() const
   {
+    __hold lk(__mtx);
     if ( __mem::length == 0 ) [[unlikely]]
-      exc<except::library_error>("micron::stack top() called on empty stack");
+      exc<except::library_error>("micron::constack top() called on empty stack");
     return __mem::memory[__mem::length - 1];
   }
 
   inline T
   operator()()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold lk(__mtx);
     if ( __mem::length == 0 ) [[unlikely]]
-      exc<except::library_error>("micron::stack operator()() called on empty stack");
+      exc<except::library_error>("micron::constack operator()() called on empty stack");
     return __pop_unsafe();
   }
 
   inline void
   push()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
+    __hold lk(__mtx);
+    __ensure_one_unsafe();
     new (micron::addr(__mem::memory[__mem::length++])) T{};
   }
 
   inline void
   push(const T &v)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
-    if constexpr ( micron::is_class_v<T> || !micron::is_trivially_constructible_v<T> )
-      new (micron::addr(__mem::memory[__mem::length++])) T(v);
-    else
-      __mem::memory[__mem::length++] = v;
+    __hold lk(__mtx);
+    __push_unsafe(v);
   }
 
   inline void
   push(T &&v)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
-    new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(v));
+    __hold lk(__mtx);
+    __push_unsafe(micron::move(v));
   }
 
   inline void
@@ -202,25 +262,25 @@ public:
   inline void
   push_range(Args &&...args)
   {
-    (push(micron::forward<Args>(args)), ...);
+    __hold lk(__mtx);
+    (__push_unsafe(micron::forward<Args>(args)), ...);
   }
 
   template<typename... Args>
-    requires(micron::is_lvalue_reference_v<Args> && ...)
   inline void
   emplace(Args &&...args)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity * 2);
+    __hold lk(__mtx);
+    __ensure_one_unsafe();
     new (micron::addr(__mem::memory[__mem::length++])) T(micron::forward<Args>(args)...);
   }
 
   inline T
   pop()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold lk(__mtx);
     if ( __mem::length == 0 ) [[unlikely]]
-      exc<except::library_error>("micron::stack pop() called on empty stack");
+      exc<except::library_error>("micron::constack pop() called on empty stack");
     return __pop_unsafe();
   }
 
@@ -228,34 +288,34 @@ public:
   inline void
   pop_range(Args &...args)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
     static_assert((micron::is_same_v<micron::remove_cvref_t<Args>, T> && ...),
-                  "micron::stack pop_range(): all output types must match value_type");
+                  "micron::constack pop_range(): all output types must match value_type");
+    __hold lk(__mtx);
     if ( sizeof...(Args) > __mem::length ) [[unlikely]]
-      exc<except::library_error>("micron::stack pop_range(): not enough elements");
+      exc<except::library_error>("micron::constack pop_range(): not enough elements");
     ((args = __pop_unsafe()), ...);
   }
 
   inline void
   reserve(const usize n)
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    __hold lk(__mtx);
     __reserve_unsafe(n);
   }
 
   inline void
   clear()
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
-    if ( !__mem::length ) return;
-    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
-    __mem::length = 0;
+    __hold lk(__mtx);
+    __clear_unsafe();
   }
 
   inline void
-  swap(stack &o) noexcept
+  swap(constack &o) noexcept
   {
-    micron::unique_lock<micron::lock_starts::locked> __lock(__mtx);
+    if ( this == micron::addr(o) ) return;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);
@@ -264,55 +324,22 @@ public:
   [[nodiscard]] inline bool
   empty() const noexcept
   {
+    __hold lk(__mtx);
     return __mem::length == 0;
   }
 
   [[nodiscard]] inline usize
   size() const noexcept
   {
+    __hold lk(__mtx);
     return __mem::length;
   }
 
   [[nodiscard]] inline usize
   max_size() const noexcept
   {
+    __hold lk(__mtx);
     return __mem::capacity;
-  }
-
-  inline pointer
-  data() noexcept
-  {
-    return __mem::memory;
-  }
-
-  inline const_pointer
-  data() const noexcept
-  {
-    return __mem::memory;
-  }
-
-  byte *
-  operator&() noexcept
-  {
-    return reinterpret_cast<byte *>(__mem::memory);
-  }
-
-  const byte *
-  operator&() const noexcept
-  {
-    return reinterpret_cast<const byte *>(__mem::memory);
-  }
-
-  auto *
-  addr() noexcept
-  {
-    return this;
-  }
-
-  const auto *
-  addr() const noexcept
-  {
-    return this;
   }
 
   static constexpr bool
@@ -333,45 +360,12 @@ public:
     return micron::is_trivial_v<T>;
   }
 
-  inline iterator
-  begin() noexcept
-  {
-    return __mem::memory;
-  }
-
-  inline const_iterator
-  begin() const noexcept
-  {
-    return __mem::memory;
-  }
-
-  inline const_iterator
-  cbegin() const noexcept
-  {
-    return __mem::memory;
-  }
-
-  inline iterator
-  end() noexcept
-  {
-    return __mem::memory + __mem::length;
-  }
-
-  inline const_iterator
-  end() const noexcept
-  {
-    return __mem::memory + __mem::length;
-  }
-
-  inline const_iterator
-  cend() const noexcept
-  {
-    return __mem::memory + __mem::length;
-  }
-
   bool
-  operator==(const stack &o) const noexcept
+  operator==(const constack &o) const noexcept
   {
+    if ( this == micron::addr(o) ) return true;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     if ( __mem::length != o.length ) return false;
     for ( usize i = 0; i < __mem::length; ++i )
       if ( __mem::memory[i] != o.memory[i] ) return false;
@@ -379,14 +373,17 @@ public:
   }
 
   bool
-  operator!=(const stack &o) const noexcept
+  operator!=(const constack &o) const noexcept
   {
     return !(*this == o);
   }
 
   bool
-  operator<(const stack &o) const noexcept
+  operator<(const constack &o) const noexcept
   {
+    if ( this == micron::addr(o) ) return false;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     usize n = __mem::length < o.length ? __mem::length : o.length;
     for ( usize i = 0; i < n; ++i ) {
       if ( __mem::memory[i] < o.memory[i] ) return true;
@@ -396,19 +393,19 @@ public:
   }
 
   bool
-  operator>(const stack &o) const noexcept
+  operator>(const constack &o) const noexcept
   {
     return o < *this;
   }
 
   bool
-  operator<=(const stack &o) const noexcept
+  operator<=(const constack &o) const noexcept
   {
     return !(o < *this);
   }
 
   bool
-  operator>=(const stack &o) const noexcept
+  operator>=(const constack &o) const noexcept
   {
     return !(*this < o);
   }

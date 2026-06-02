@@ -18,9 +18,8 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <atomic>
-#include <thread>
-#include <vector>
+#include "../../src/linux/sys/time.hpp"      // micron::nanosleep
+#include "../support/mt.hpp"                 // mtest::parallel (micron auto_thread; NOT <thread>/<atomic>)
 
 using sb::check;
 using sb::end_test_case;
@@ -86,19 +85,15 @@ main(void)
   {
     atomic_flag lock;
     int counter = 0;
-    std::vector<std::thread> th;
     constexpr int kT = 2, kIters = 50000;
-    for ( int i = 0; i < kT; ++i ) {
-      th.emplace_back([&]() {
-        for ( int j = 0; j < kIters; ++j ) {
-          while ( lock.test_and_set() ) {
-          }
-          ++counter;
-          lock.clear();
+    mtest::parallel(kT, [&](int) {
+      for ( int j = 0; j < kIters; ++j ) {
+        while ( lock.test_and_set() ) {
         }
-      });
-    }
-    for ( auto &t : th ) t.join();
+        ++counter;
+        lock.clear();
+      }
+    });
     require(counter == kT * kIters);
   }
   end_test_case();
@@ -107,17 +102,18 @@ main(void)
   {
     atomic_flag f;
     f.test_and_set();
-    std::atomic<bool> waiter_done{ false };
-    std::thread waiter([&]() {
+    atomic_token<bool> waiter_done{ false };
+    auto waiter = micron::solo::spawn([&]() {
       f.wait(true);
       waiter_done.store(true);
     });
     // give waiter time to enter the spin
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    require_false(waiter_done.load());
+    timespec_t nap{ 0, 20 * 1000 * 1000 };      // 20 ms
+    micron::nanosleep(nap);
+    require_false(waiter_done.get());
     f.clear();
-    waiter.join();
-    require_true(waiter_done.load());
+    micron::solo::join(waiter);
+    require_true(waiter_done.get());
   }
   end_test_case();
 
@@ -126,37 +122,38 @@ main(void)
     constexpr int kT = 4;
     constexpr int kEpochs = 100;
     atomic_flag gate;
-    std::atomic<int> winner_count{ 0 };
-    std::atomic<int> ready_count{ 0 };
-    std::atomic<int> epoch{ -1 };
+    atomic_token<int> winner_count{ 0 };
+    atomic_token<int> ready_count{ 0 };
+    atomic_token<int> epoch{ -1 };
 
-    std::vector<std::thread> th;
-    th.reserve(kT);
+    // main thread drives epochs while workers race, so spawn explicit handles and join
+    // after the driver loop (a scope-join RAII guard cannot interleave with the driver).
+    micron::__thread_pointer<micron::auto_thread<>> th[kT];
     for ( int t = 0; t < kT; ++t ) {
-      th.emplace_back([&]() {
+      th[t] = micron::solo::spawn([&]() {
         int last_seen = -1;
         for ( int e = 0; e < kEpochs; ++e ) {
           // wait for the driver to advance the epoch
-          while ( epoch.load(std::memory_order_acquire) == last_seen ) {
+          while ( epoch.get(memory_order_acquire) == last_seen ) {
           }
-          last_seen = epoch.load(std::memory_order_acquire);
-          ready_count.fetch_add(1, std::memory_order_acq_rel);
+          last_seen = epoch.get(memory_order_acquire);
+          ready_count.fetch_add(1, memory_order_acq_rel);
           // race
-          if ( !gate.test_and_set() ) winner_count.fetch_add(1, std::memory_order_relaxed);
+          if ( !gate.test_and_set() ) winner_count.fetch_add(1, memory_order_relaxed);
         }
       });
     }
 
     for ( int e = 0; e < kEpochs; ++e ) {
       gate.clear();
-      ready_count.store(0, std::memory_order_release);
-      epoch.store(e, std::memory_order_release);
-      while ( ready_count.load(std::memory_order_acquire) < kT ) {
+      ready_count.store(0, memory_order_release);
+      epoch.store(e, memory_order_release);
+      while ( ready_count.get(memory_order_acquire) < kT ) {
       }
     }
-    for ( auto &t : th ) t.join();
+    for ( int t = 0; t < kT; ++t ) micron::solo::join(th[t]);
 
-    require(winner_count.load() == kEpochs);
+    require(winner_count.get() == kEpochs);
   }
   end_test_case();
 

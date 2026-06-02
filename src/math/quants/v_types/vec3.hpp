@@ -355,6 +355,18 @@ struct alignas(micron::math::vec_align_v<T, 3>) vector_3 {
   }
 
   constexpr vector_3<T>
+  step(T edge) const
+  {
+    return { math::step(edge, x), math::step(edge, y), math::step(edge, z) };
+  }
+
+  constexpr vector_3<T>
+  smoothstep(T e0, T e1) const
+  {
+    return { math::smoothstep(e0, e1, x), math::smoothstep(e0, e1, y), math::smoothstep(e0, e1, z) };
+  }
+
+  constexpr vector_3<T>
   sqrt() const
   {
     return { math::fsqrt(x), math::fsqrt(y), math::fsqrt(z) };

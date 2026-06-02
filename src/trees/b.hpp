@@ -5,412 +5,802 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../array.hpp"
-#include "../memory/new.hpp"
-#include "../pointer.hpp"
+#include "../concepts.hpp"
+#include "../except.hpp"
+#include "../memory/actions.hpp"
+#include "../memory/addr.hpp"
 #include "../tags.hpp"
+#include "../type_traits.hpp"
 #include "../types.hpp"
-#include "../vector/fvector.hpp"
-
-// TODO: redo
+#include "__tree_store.hpp"
+#include "__tree_walk.hpp"
 
 namespace micron
 {
 
-template<typename T, int Dg> struct b_node {
-  micron::array<T, 2 * Dg - 1> keys;
-  b_node *chld[2 * Dg]{};
-  int nkeys = 0;
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// micron::b_tree
+// ordered, arena-backed B+-tree map, values live only in leaves; internal nodes hold separator keys + child
+// leaves are doubly linked; insert/erase is top-down
 
-  inline b_node() = default;
-
-  inline explicit b_node(const T &key)
+// default ordering policy
+template<typename T> struct b_default_less {
+  static bool
+  lt(const T &a, const T &b)
   {
-    keys[0] = key;
-    nkeys = 1;
-  }
-
-  inline int
-  find_key(const T &key) const
-  {
-    int i = 0;
-    while ( i < nkeys && keys[i] < key ) ++i;
-    return i;
-  }
-
-  inline void
-  traverse(void (*visit)(const T &)) const
-  {
-    for ( int i = 0; i < nkeys; ++i ) {
-      if ( chld[i] ) chld[i]->traverse(visit);
-      visit(keys[i]);
-    }
-    if ( chld[nkeys] ) chld[nkeys]->traverse(visit);
-  }
-
-  inline b_node *
-  search(const T &key, int *out_index = nullptr)
-  {
-    int i = find_key(key);
-    if ( i < nkeys && keys[i] == key ) {
-      if ( out_index ) *out_index = i;
-      return this;
-    }
-    return chld[i] ? chld[i]->search(key, out_index) : nullptr;
-  }
-
-  inline void
-  split_child(int _k)
-  {
-    b_node *y = chld[_k];
-    b_node *z = new b_node();
-    z->nkeys = Dg - 1;
-
-    for ( int j = 0; j < Dg - 1; ++j ) z->keys[j] = micron::move(y->keys[j + Dg]);
-    for ( int j = 0; j < Dg; ++j ) {
-      z->chld[j] = y->chld[j + Dg];
-      y->chld[j + Dg] = nullptr;
-    }
-
-    y->nkeys = Dg - 1;
-
-    for ( int j = nkeys; j >= _k + 1; --j ) chld[j + 1] = chld[j];
-    chld[_k + 1] = z;
-
-    for ( int j = nkeys - 1; j >= _k; --j ) keys[j + 1] = micron::move(keys[j]);
-    keys[_k] = micron::move(y->keys[Dg - 1]);
-    ++nkeys;
-  }
-
-  inline void
-  insert_nonfull(const T &key)
-  {
-    int i = nkeys - 1;
-    if ( !chld[0] ) {      // leaf
-      while ( i >= 0 && key < keys[i] ) {
-        keys[i + 1] = keys[i];
-        --i;
-      }
-      keys[i + 1] = key;
-      ++nkeys;
-    } else {
-      while ( i >= 0 && key < keys[i] ) --i;
-      ++i;
-      if ( chld[i]->nkeys == 2 * Dg - 1 ) {
-        split_child(i);
-        if ( key > keys[i] ) ++i;
-      }
-      chld[i]->insert_nonfull(key);
-    }
-  }
-
-  inline T
-  get_pred(int _k)
-  {
-    b_node *cur = chld[_k];
-    while ( cur->chld[0] ) cur = cur->chld[cur->nkeys];
-    return cur->keys[cur->nkeys - 1];
-  }
-
-  inline T
-  get_succ(int _k)
-  {
-    b_node *cur = chld[_k + 1];
-    while ( cur->chld[0] ) cur = cur->chld[0];
-    return cur->keys[0];
-  }
-
-  inline void
-  fill(int _k)
-  {
-    if ( _k != 0 && chld[_k - 1]->nkeys >= Dg )
-      borrow_from_prev(_k);
-    else if ( _k != nkeys && chld[_k + 1]->nkeys >= Dg )
-      borrow_from_next(_k);
-    else if ( _k != nkeys )
-      merge(_k);
-    else
-      merge(_k - 1);
-  }
-
-  inline void
-  borrow_from_prev(int _k)
-  {
-    b_node *child = chld[_k];
-    b_node *sibling = chld[_k - 1];
-
-    for ( int i = child->nkeys - 1; i >= 0; --i ) child->keys[i + 1] = micron::move(child->keys[i]);
-    if ( child->chld[0] ) {
-      for ( int i = child->nkeys; i >= 0; --i ) child->chld[i + 1] = child->chld[i];
-      child->chld[0] = sibling->chld[sibling->nkeys];
-    }
-
-    child->keys[0] = micron::move(keys[_k - 1]);
-    keys[_k - 1] = micron::move(sibling->keys[sibling->nkeys - 1]);
-    --sibling->nkeys;
-    ++child->nkeys;
-  }
-
-  inline void
-  borrow_from_next(int _k)
-  {
-    b_node *child = chld[_k];
-    b_node *sibling = chld[_k + 1];
-
-    child->keys[child->nkeys] = micron::move(keys[_k]);
-    if ( child->chld[0] ) child->chld[child->nkeys + 1] = sibling->chld[0];
-
-    keys[_k] = micron::move(sibling->keys[0]);
-
-    for ( int i = 1; i < sibling->nkeys; ++i ) sibling->keys[i - 1] = micron::move(sibling->keys[i]);
-    if ( sibling->chld[0] ) {
-      for ( int i = 1; i <= sibling->nkeys; ++i ) sibling->chld[i - 1] = sibling->chld[i];
-    }
-
-    --sibling->nkeys;
-    ++child->nkeys;
-  }
-
-  inline void
-  merge(int _k)
-  {
-    b_node *child = chld[_k];
-    b_node *sibling = chld[_k + 1];
-
-    child->keys[Dg - 1] = micron::move(keys[_k]);
-    for ( int i = 0; i < sibling->nkeys; ++i ) child->keys[i + Dg] = micron::move(sibling->keys[i]);
-    for ( int i = 0; i <= sibling->nkeys; ++i ) child->chld[i + Dg] = sibling->chld[i];
-
-    for ( int i = _k + 1; i < nkeys; ++i ) keys[i - 1] = micron::move(keys[i]);
-    for ( int i = _k + 2; i <= nkeys; ++i ) chld[i - 1] = chld[i];
-
-    child->nkeys += sibling->nkeys + 1;
-    --nkeys;
-    delete sibling;
-  }
-
-  inline void
-  remove(const T &key)
-  {
-    int _k = find_key(key);
-
-    if ( _k < nkeys && keys[_k] == key ) {
-      if ( !chld[0] ) {
-        for ( int i = _k + 1; i < nkeys; ++i ) keys[i - 1] = micron::move(keys[i]);
-        --nkeys;
-      } else {
-        if ( chld[_k]->nkeys >= Dg ) {
-          keys[_k] = micron::move(get_pred(_k));
-          chld[_k]->remove(keys[_k]);
-        } else if ( chld[_k + 1]->nkeys >= Dg ) {
-          keys[_k] = micron::move(get_succ(_k));
-          chld[_k + 1]->remove(keys[_k]);
-        } else {
-          merge(_k);
-          chld[_k]->remove(key);
-        }
-      }
-    } else if ( chld[0] ) {
-      bool flag = (_k == nkeys);
-      if ( chld[_k]->nkeys < Dg ) fill(_k);
-      if ( flag && _k > nkeys )
-        chld[_k - 1]->remove(key);
-      else
-        chld[_k]->remove(key);
-    }
+    return a < b;
   }
 };
 
-template<typename T, int Dg> struct b_tree {
-  micron::uptr<b_node<T, Dg>> root;
+template<typename K, typename V, typename Compare = b_default_less<K>, usize DegreeOverride = 0>
+  requires micron::is_copy_constructible_v<K> && micron::is_move_constructible_v<V>
+class b_tree
+{
+  using node_idx = __tree_store::node_idx;
+  static constexpr node_idx nil = __tree_store::nil;
 
-  ~b_tree() = default;
+  static constexpr usize __kv = sizeof(K) + sizeof(V);
+  static constexpr usize __auto_t = (__kv <= 16) ? 16u : ((__kv <= 64) ? 8u : 4u);
+  static constexpr usize T = (DegreeOverride > 0) ? DegreeOverride : __auto_t;
+  static_assert(T >= 2, "b_tree minimum degree must be >= 2");
 
-  b_tree() : root(unique<b_node<T, Dg>>()) { }
+  static constexpr u16 MAXK = static_cast<u16>(2 * T - 1);      // max keys / leaf entries
+  static constexpr u16 MAXC = static_cast<u16>(2 * T);          // max children
+  static constexpr u16 MINK = static_cast<u16>(T - 1);          // min keys (non-root)
+
+  struct internal_node {
+    u8 leaf;      // 0
+    u8 _pad;
+    u16 nkeys;
+    node_idx kids[MAXC];
+    alignas(K) byte keys_raw[sizeof(K) * MAXK];
+
+    internal_node() noexcept : leaf(0), _pad(0), nkeys(0) { }
+
+    ~internal_node()
+    {
+      K *k = keys();
+      for ( u16 i = 0; i < nkeys; ++i ) k[i].~K();
+    }
+
+    K *
+    keys() noexcept
+    {
+      return static_cast<K *>(static_cast<void *>(keys_raw));
+    }
+
+    const K *
+    keys() const noexcept
+    {
+      return static_cast<const K *>(static_cast<const void *>(keys_raw));
+    }
+  };
+
+  struct leaf_node {
+    u8 leaf;      // 1
+    u8 _pad;
+    u16 count;
+    node_idx next;
+    node_idx prev;
+    alignas(K) byte keys_raw[sizeof(K) * MAXK];
+    alignas(V) byte vals_raw[sizeof(V) * MAXK];
+
+    leaf_node() noexcept : leaf(1), _pad(0), count(0), next(nil), prev(nil) { }
+
+    ~leaf_node()
+    {
+      K *k = keys();
+      V *v = vals();
+      for ( u16 i = 0; i < count; ++i ) {
+        k[i].~K();
+        v[i].~V();
+      }
+    }
+
+    K *
+    keys() noexcept
+    {
+      return static_cast<K *>(static_cast<void *>(keys_raw));
+    }
+
+    const K *
+    keys() const noexcept
+    {
+      return static_cast<const K *>(static_cast<const void *>(keys_raw));
+    }
+
+    V *
+    vals() noexcept
+    {
+      return static_cast<V *>(static_cast<void *>(vals_raw));
+    }
+
+    const V *
+    vals() const noexcept
+    {
+      return static_cast<const V *>(static_cast<const void *>(vals_raw));
+    }
+  };
+
+  static constexpr usize __slot_bytes = (sizeof(internal_node) > sizeof(leaf_node)) ? sizeof(internal_node) : sizeof(leaf_node);
+
+  __tree_store::node_arena<__slot_bytes, 64> __arena;
+  node_idx __root;
+  usize __size;
+
+  [[gnu::always_inline]] leaf_node &
+  lnode(node_idx i) noexcept
+  {
+    return *reinterpret_cast<leaf_node *>(__arena.raw(i));
+  }
+
+  [[gnu::always_inline]] internal_node &
+  inode(node_idx i) noexcept
+  {
+    return *reinterpret_cast<internal_node *>(__arena.raw(i));
+  }
+
+  [[gnu::always_inline]] bool
+  is_leaf(node_idx i) noexcept
+  {
+    return __arena.raw(i)[0] != 0;
+  }
+
+  [[gnu::always_inline]] u16
+  entries(node_idx i) noexcept
+  {
+    return is_leaf(i) ? lnode(i).count : inode(i).nkeys;
+  }
+
+  static bool
+  eq(const K &a, const K &b)
+  {
+    return !Compare::lt(a, b) && !Compare::lt(b, a);
+  }
+
+  node_idx
+  alloc_leaf()
+  {
+    node_idx i = __arena.allocate();
+    new (__arena.raw(i)) leaf_node();
+    return i;
+  }
+
+  node_idx
+  alloc_internal()
+  {
+    node_idx i = __arena.allocate();
+    new (__arena.raw(i)) internal_node();
+    return i;
+  }
+
+  void
+  destroy_node(node_idx i) noexcept
+  {
+    if ( is_leaf(i) )
+      lnode(i).~leaf_node();
+    else
+      inode(i).~internal_node();
+    __arena.deallocate(i);
+  }
+
+  void
+  free_subtree(node_idx i) noexcept
+  {
+    if ( i == nil ) return;
+    if ( !is_leaf(i) ) {
+      internal_node &I = inode(i);
+      u16 nk = I.nkeys;
+      node_idx kids[MAXC];
+      for ( u16 c = 0; c <= nk; ++c ) kids[c] = I.kids[c];
+      for ( u16 c = 0; c <= nk; ++c ) free_subtree(kids[c]);
+    }
+    destroy_node(i);
+  }
+
+  [[gnu::always_inline]] u16
+  child_index(internal_node &I, const K &key) noexcept
+  {
+    u16 ci = 0;
+    while ( ci < I.nkeys && !Compare::lt(key, I.keys()[ci]) ) ++ci;
+    return ci;
+  }
+
+  [[gnu::always_inline]] u16
+  leaf_lb(leaf_node &L, const K &key) noexcept
+  {
+    u16 p = 0;
+    while ( p < L.count && Compare::lt(L.keys()[p], key) ) ++p;
+    return p;
+  }
+
+  void
+  split_child(node_idx parent, u16 ci)
+  {
+    node_idx cidx = inode(parent).kids[ci];
+    const bool child_leaf = is_leaf(cidx);
+    node_idx ridx = child_leaf ? alloc_leaf() : alloc_internal();      // may move the slab
+
+    if ( child_leaf ) {
+      leaf_node &C = lnode(cidx);
+      leaf_node &R = lnode(ridx);
+      const u16 right_n = static_cast<u16>(MAXK - T);
+      __tree_store::relocate_n(R.keys(), C.keys() + T, right_n);
+      __tree_store::relocate_n(R.vals(), C.vals() + T, right_n);
+      C.count = static_cast<u16>(T);
+      R.count = right_n;
+      // splice R after C in the leaf list
+      R.next = C.next;
+      R.prev = cidx;
+      if ( C.next != nil ) lnode(C.next).prev = ridx;
+      C.next = ridx;
+      internal_node &P = inode(parent);
+      __tree_store::shift_right(P.keys(), ci, P.nkeys);
+      __tree_store::shift_right(P.kids, static_cast<u16>(ci + 1), static_cast<u16>(P.nkeys + 1));
+      new (micron::addr(P.keys()[ci])) K(lnode(ridx).keys()[0]);
+      P.kids[ci + 1] = ridx;
+      ++P.nkeys;
+    } else {
+      internal_node &C = inode(cidx);
+      internal_node &R = inode(ridx);
+      const u16 right_k = static_cast<u16>(MAXK - T);      // = T-1
+      K median(micron::move(C.keys()[T - 1]));
+      C.keys()[T - 1].~K();
+      __tree_store::relocate_n(R.keys(), C.keys() + T, right_k);
+      for ( u16 i = 0; i <= right_k; ++i ) R.kids[i] = C.kids[T + i];
+      R.nkeys = right_k;
+      C.nkeys = static_cast<u16>(T - 1);
+      internal_node &P = inode(parent);
+      __tree_store::shift_right(P.keys(), ci, P.nkeys);
+      __tree_store::shift_right(P.kids, static_cast<u16>(ci + 1), static_cast<u16>(P.nkeys + 1));
+      new (micron::addr(P.keys()[ci])) K(micron::move(median));
+      P.kids[ci + 1] = ridx;
+      ++P.nkeys;
+    }
+  }
+
+  template<class VV>
+  V *
+  put(const K &key, VV &&val, bool overwrite, bool &inserted)
+  {
+    inserted = false;
+    if ( __root == nil ) __root = alloc_leaf();
+    if ( entries(__root) == MAXK ) {
+      node_idx nr = alloc_internal();
+      inode(nr).kids[0] = __root;
+      __root = nr;
+      split_child(__root, 0);
+    }
+    node_idx cur = __root;
+    while ( !is_leaf(cur) ) {
+      u16 ci = child_index(inode(cur), key);
+      if ( entries(inode(cur).kids[ci]) == MAXK ) {
+        split_child(cur, ci);
+        ci = child_index(inode(cur), key);
+      }
+      cur = inode(cur).kids[ci];
+    }
+    leaf_node &L = lnode(cur);
+    u16 pos = leaf_lb(L, key);
+    if ( pos < L.count && eq(L.keys()[pos], key) ) {
+      if ( overwrite ) {
+        L.vals()[pos].~V();
+        new (micron::addr(L.vals()[pos])) V(micron::forward<VV>(val));
+      }
+      return micron::addr(L.vals()[pos]);
+    }
+    __tree_store::shift_right(L.keys(), pos, L.count);
+    __tree_store::shift_right(L.vals(), pos, L.count);
+    new (micron::addr(L.keys()[pos])) K(key);
+    new (micron::addr(L.vals()[pos])) V(micron::forward<VV>(val));
+    ++L.count;
+    ++__size;
+    inserted = true;
+    return micron::addr(L.vals()[pos]);
+  }
+
+  bool
+  erase_descend(node_idx cur, const K &key)
+  {
+    while ( !is_leaf(cur) ) {
+      u16 ci = child_index(inode(cur), key);
+      if ( entries(inode(cur).kids[ci]) == MINK ) {
+        fill_child(cur, ci);
+        ci = child_index(inode(cur), key);
+      }
+      cur = inode(cur).kids[ci];
+    }
+    leaf_node &L = lnode(cur);
+    u16 pos = leaf_lb(L, key);
+    if ( pos < L.count && eq(L.keys()[pos], key) ) {
+      __tree_store::erase_at(L.keys(), pos, L.count);
+      __tree_store::erase_at(L.vals(), pos, L.count);
+      --L.count;
+      return true;
+    }
+    return false;
+  }
+
+  void
+  fill_child(node_idx parent, u16 ci)
+  {
+    internal_node &P = inode(parent);
+    if ( ci > 0 && entries(P.kids[ci - 1]) > MINK )
+      borrow_prev(parent, ci);
+    else if ( ci < P.nkeys && entries(P.kids[ci + 1]) > MINK )
+      borrow_next(parent, ci);
+    else if ( ci < P.nkeys )
+      merge(parent, ci);
+    else
+      merge(parent, static_cast<u16>(ci - 1));
+  }
+
+  void
+  borrow_prev(node_idx parent, u16 ci)
+  {
+    internal_node &P = inode(parent);
+    node_idx lft = P.kids[ci - 1];
+    node_idx cur = P.kids[ci];
+    if ( is_leaf(cur) ) {
+      leaf_node &Lf = lnode(lft);
+      leaf_node &C = lnode(cur);
+      __tree_store::shift_right(C.keys(), 0, C.count);
+      __tree_store::shift_right(C.vals(), 0, C.count);
+      new (micron::addr(C.keys()[0])) K(micron::move(Lf.keys()[Lf.count - 1]));
+      new (micron::addr(C.vals()[0])) V(micron::move(Lf.vals()[Lf.count - 1]));
+      Lf.keys()[Lf.count - 1].~K();
+      Lf.vals()[Lf.count - 1].~V();
+      --Lf.count;
+      ++C.count;
+      P.keys()[ci - 1].~K();
+      new (micron::addr(P.keys()[ci - 1])) K(C.keys()[0]);
+    } else {
+      internal_node &Lf = inode(lft);
+      internal_node &C = inode(cur);
+      __tree_store::shift_right(C.keys(), 0, C.nkeys);
+      __tree_store::shift_right(C.kids, 0, static_cast<u16>(C.nkeys + 1));
+      new (micron::addr(C.keys()[0])) K(micron::move(P.keys()[ci - 1]));      // separator down
+      C.kids[0] = Lf.kids[Lf.nkeys];
+      ++C.nkeys;
+      P.keys()[ci - 1].~K();
+      new (micron::addr(P.keys()[ci - 1])) K(micron::move(Lf.keys()[Lf.nkeys - 1]));      // left's last key up
+      Lf.keys()[Lf.nkeys - 1].~K();
+      --Lf.nkeys;
+    }
+  }
+
+  void
+  borrow_next(node_idx parent, u16 ci)
+  {
+    internal_node &P = inode(parent);
+    node_idx cur = P.kids[ci];
+    node_idx rgt = P.kids[ci + 1];
+    if ( is_leaf(cur) ) {
+      leaf_node &C = lnode(cur);
+      leaf_node &Rf = lnode(rgt);
+      new (micron::addr(C.keys()[C.count])) K(micron::move(Rf.keys()[0]));
+      new (micron::addr(C.vals()[C.count])) V(micron::move(Rf.vals()[0]));
+      ++C.count;
+      __tree_store::erase_at(Rf.keys(), 0, Rf.count);
+      __tree_store::erase_at(Rf.vals(), 0, Rf.count);
+      --Rf.count;
+      P.keys()[ci].~K();
+      new (micron::addr(P.keys()[ci])) K(Rf.keys()[0]);
+    } else {
+      internal_node &C = inode(cur);
+      internal_node &Rf = inode(rgt);
+      new (micron::addr(C.keys()[C.nkeys])) K(micron::move(P.keys()[ci]));      // separator down
+      C.kids[C.nkeys + 1] = Rf.kids[0];
+      ++C.nkeys;
+      P.keys()[ci].~K();
+      new (micron::addr(P.keys()[ci])) K(micron::move(Rf.keys()[0]));      // right's first key up
+      __tree_store::erase_at(Rf.keys(), 0, Rf.nkeys);
+      for ( u16 i = 0; i < Rf.nkeys; ++i ) Rf.kids[i] = Rf.kids[i + 1];
+      --Rf.nkeys;
+    }
+  }
+
+  void
+  merge(node_idx parent, u16 m)
+  {
+    internal_node &P = inode(parent);
+    node_idx lft = P.kids[m];
+    node_idx rgt = P.kids[m + 1];
+    if ( is_leaf(lft) ) {
+      leaf_node &L = lnode(lft);
+      leaf_node &R = lnode(rgt);
+      __tree_store::relocate_n(L.keys() + L.count, R.keys(), R.count);
+      __tree_store::relocate_n(L.vals() + L.count, R.vals(), R.count);
+      L.count = static_cast<u16>(L.count + R.count);
+      R.count = 0;
+      L.next = R.next;
+      if ( R.next != nil ) lnode(R.next).prev = lft;
+    } else {
+      internal_node &L = inode(lft);
+      internal_node &R = inode(rgt);
+      const u16 ln = L.nkeys;
+      new (micron::addr(L.keys()[ln])) K(micron::move(P.keys()[m]));      // separator down
+      __tree_store::relocate_n(L.keys() + ln + 1, R.keys(), R.nkeys);
+      for ( u16 i = 0; i <= R.nkeys; ++i ) L.kids[ln + 1 + i] = R.kids[i];
+      L.nkeys = static_cast<u16>(ln + 1 + R.nkeys);
+      R.nkeys = 0;
+    }
+    destroy_node(rgt);
+    // drop separator m and child pointer (m+1) from the parent
+    __tree_store::erase_at(P.keys(), m, P.nkeys);
+    for ( u16 i = static_cast<u16>(m + 1); i < P.nkeys; ++i ) P.kids[i] = P.kids[i + 1];
+    --P.nkeys;
+  }
+
+  node_idx
+  leftmost_leaf(node_idx i) noexcept
+  {
+    if ( i == nil ) return nil;
+    while ( !is_leaf(i) ) i = inode(i).kids[0];
+    return i;
+  }
+
+public:
+  using category_type = tree_tag;
+  using mutability_type = mutable_tag;
+  using memory_type = heap_tag;
+  using size_type = usize;
+  using key_type = K;
+  using mapped_type = V;
+
+  ~b_tree()
+  {
+    if ( __root != nil ) free_subtree(__root);
+  }
+
+  b_tree() : __arena(), __root(nil), __size(0) { }
+
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, b_tree &>)
+  explicit b_tree(Fn build) : b_tree()
+  {
+    build(*this);
+  }
 
   b_tree(const b_tree &) = delete;
-
-  b_tree(b_tree &&o) : root(micron::move(o.root)) { }
-
   b_tree &operator=(const b_tree &) = delete;
 
+  b_tree(b_tree &&o) noexcept : __arena(micron::move(o.__arena)), __root(o.__root), __size(o.__size)
+  {
+    o.__root = nil;
+    o.__size = 0;
+  }
+
   b_tree &
-  operator=(b_tree &&o)
+  operator=(b_tree &&o) noexcept
   {
     if ( this != &o ) {
-      root = micron::move(o.root);
+      if ( __root != nil ) free_subtree(__root);
+      __arena = micron::move(o.__arena);
+      __root = o.__root;
+      __size = o.__size;
+      o.__root = nil;
+      o.__size = 0;
     }
     return *this;
   }
 
-  inline void
-  insert(const T &key)
+  usize
+  size() const noexcept
   {
-    if ( !root ) {
-      root = unique<b_node<T, Dg>>(key);      // new b_node<T, Dg>(key);
-      return;
-    }
-    if ( root->nkeys == 2 * Dg - 1 ) {
-      auto s = unique<b_node<T, Dg>>();
-      ;
-      s->chld[0] = root.release();
-      s->split_child(0);
-      root = micron::move(s);
-    }
-    root->insert_nonfull(key);
+    return __size;
   }
 
-  inline bool
-  search(const T &key)
+  bool
+  empty() const noexcept
   {
-    return root.get() && root->search(key);
+    return __size == 0;
   }
 
-  inline void
-  remove(const T &key)
+  void
+  clear()
   {
-    if ( !root ) return;
-    root->remove(key);
-    if ( root->nkeys == 0 ) {
-      b_node<T, Dg> *tmp = root.release();
-      root = root->chld[0];
-      tmp->chld[0] = nullptr;
-      delete tmp;
-    }
+    if ( __root != nil ) free_subtree(__root);
+    __root = nil;
+    __size = 0;
+    __arena.reset();
   }
 
-  inline void
-  traverse(void (*visit)(const T &)) const
+  V *
+  find(const K &key) noexcept
   {
-    if ( root.get() ) root->traverse(visit);
-  }
-
-  inline T *
-  get(const T &key)
-  {
-    if ( !root ) return nullptr;
-    int idx = -1;
-    b_node<T, Dg> *n = root->search(key, &idx);
-    return (n && idx >= 0) ? &n->keys[idx] : nullptr;
-  }
-
-  inline micron::array<b_node<T, Dg> *, 2>
-  get_near_children(const T &key)
-  {
-    if ( !root ) return { nullptr, nullptr };
-    int idx = -1;
-    b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 ) return { nullptr, nullptr };
-    return { n->chld[idx], n->chld[idx + 1] };
-  }
-
-  inline int
-  size() const
-  {
-    int count = 0;
-    if ( root ) {
-      root->traverse([&](const T &) { ++count; });
-    }
-    return count;
-  }
-
-  inline T *
-  min() const
-  {
-    if ( !root ) return nullptr;
-    b_node<T, Dg> *cur = root.get();
-    while ( cur->chld[0] ) cur = cur->chld[0];
-    return &cur->keys[0];
-  }
-
-  inline T *
-  max() const
-  {
-    if ( !root ) return nullptr;
-    b_node<T, Dg> *cur = root.get();
-    while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
-    return &cur->keys[cur->nkeys - 1];
-  }
-
-  inline T *
-  lower_bound(const T &key)
-  {
-    b_node<T, Dg> *cur = root.get();
-    while ( cur ) {
-      int i = 0;
-      while ( i < cur->nkeys && cur->keys[i] < key ) ++i;
-      if ( i < cur->nkeys && cur->keys[i] >= key ) return &cur->keys[i];
-      cur = cur->chld[i];
+    node_idx cur = __root;
+    while ( cur != nil ) {
+      if ( is_leaf(cur) ) {
+        leaf_node &L = lnode(cur);
+        u16 pos = leaf_lb(L, key);
+        if ( pos < L.count && eq(L.keys()[pos], key) ) return micron::addr(L.vals()[pos]);
+        return nullptr;
+      }
+      cur = inode(cur).kids[child_index(inode(cur), key)];
     }
     return nullptr;
   }
 
-  inline T *
-  upper_bound(const T &key)
+  const V *
+  find(const K &key) const noexcept
   {
-    b_node<T, Dg> *cur = root.get();
-    while ( cur ) {
-      int i = 0;
-      while ( i < cur->nkeys && cur->keys[i] <= key ) ++i;
-      if ( i < cur->nkeys ) return &cur->keys[i];
-      cur = cur->chld[i];
-    }
-    return nullptr;
+    return const_cast<b_tree *>(this)->find(key);
   }
 
-  inline T *
-  predecessor(const T &key)
+  bool
+  contains(const K &key) const noexcept
   {
-    int idx = -1;
-    b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 ) return nullptr;
-    if ( n->chld[idx] ) {      // left subtree exists
-      b_node<T, Dg> *cur = n->chld[idx];
-      while ( cur->chld[cur->nkeys] ) cur = cur->chld[cur->nkeys];
-      return &cur->keys[cur->nkeys - 1];
-    }
-    return (idx > 0) ? &n->keys[idx - 1] : nullptr;
+    return const_cast<b_tree *>(this)->find(key) != nullptr;
   }
 
-  inline T *
-  successor(const T &key)
+  usize
+  count(const K &key) const noexcept
   {
-    int idx = -1;
-    b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 ) return nullptr;
-    if ( n->chld[idx + 1] ) {
-      b_node<T, Dg> *cur = n->chld[idx + 1];
-      while ( cur->chld[0] ) cur = cur->chld[0];
-      return &cur->keys[0];
-    }
-    return (idx < n->nkeys - 1) ? &n->keys[idx + 1] : nullptr;
+    return contains(key) ? 1u : 0u;
   }
 
-  inline int
-  height() const
+  V &
+  at(const K &key)
   {
-    int h = 0;
-    b_node<T, Dg> *cur = root.get();
-    while ( cur ) {
-      ++h;
-      cur = cur->chld[0];
-    }
-    return h;
+    V *v = find(key);
+    if ( !v ) [[unlikely]]
+      exc<except::library_error>("b_tree::at(): key not found");
+    return *v;
   }
 
-  inline micron::fvector<b_node<T, Dg> *>
-  get_children(const T &key)
+  const V &
+  at(const K &key) const
   {
-    micron::fvector<b_node<T, Dg> *> result;
-    if ( !root ) return result;
-    int idx = -1;
-    b_node<T, Dg> *n = root->search(key, &idx);
-    if ( !n || idx < 0 ) return result;
+    const V *v = find(key);
+    if ( !v ) [[unlikely]]
+      exc<except::library_error>("b_tree::at(): key not found");
+    return *v;
+  }
 
-    for ( int i = 0; i <= n->nkeys; ++i ) {
-      if ( n->chld[i] ) result.emplace_back(n->chld[i]);
+  bool
+  insert(const K &key, V val)
+  {
+    bool ins;
+    put(key, micron::move(val), false, ins);
+    return ins;
+  }
+
+  bool
+  insert_or_assign(const K &key, V val)
+  {
+    bool ins;
+    put(key, micron::move(val), true, ins);
+    return ins;
+  }
+
+  template<typename... Args>
+  bool
+  emplace(const K &key, Args &&...args)
+  {
+    bool ins;
+    put(key, V(micron::forward<Args>(args)...), false, ins);
+    return ins;
+  }
+
+  V &
+  operator[](const K &key)
+  {
+    bool ins;
+    return *put(key, V(), false, ins);
+  }
+
+  template<class Fn>
+  V &
+  update(const K &key, Fn fn)
+  {
+    V *cur = find(key);
+    V nv = fn(static_cast<const V *>(cur));
+    V &slot = operator[](key);
+    slot = micron::move(nv);
+    return slot;
+  }
+
+  template<class MakeV, class Modify>
+  V &
+  insert_or_modify(const K &key, MakeV make, Modify modify)
+  {
+    V *cur = find(key);
+    if ( cur ) {
+      modify(*cur);
+      return *cur;
     }
-    return result;
+    V &slot = operator[](key);
+    slot = make();
+    return slot;
+  }
+
+  bool
+  erase(const K &key)
+  {
+    if ( __root == nil ) return false;
+    bool removed = erase_descend(__root, key);
+    if ( removed ) --__size;
+    if ( __root != nil ) {
+      if ( !is_leaf(__root) && inode(__root).nkeys == 0 ) {
+        node_idx old = __root;
+        __root = inode(__root).kids[0];
+        destroy_node(old);
+      } else if ( is_leaf(__root) && lnode(__root).count == 0 ) {
+        destroy_node(__root);
+        __root = nil;
+      }
+    }
+    return removed;
+  }
+
+  void
+  swap(b_tree &o) noexcept
+  {
+    micron::swap(__arena, o.__arena);
+    micron::swap(__root, o.__root);
+    micron::swap(__size, o.__size);
+  }
+
+  struct kv_ref {
+    const K &key;
+    V &value;
+  };
+
+  class iterator
+  {
+    b_tree *t;
+    node_idx leaf;
+    u16 pos;
+
+  public:
+    iterator(b_tree *tp, node_idx l, u16 p) noexcept : t(tp), leaf(l), pos(p) { }
+
+    kv_ref
+    operator*() const noexcept
+    {
+      leaf_node &L = t->lnode(leaf);
+      return kv_ref{ L.keys()[pos], L.vals()[pos] };
+    }
+
+    iterator &
+    operator++() noexcept
+    {
+      leaf_node &L = t->lnode(leaf);
+      ++pos;
+      if ( pos >= L.count ) {
+        leaf = L.next;
+        pos = 0;
+      }
+      return *this;
+    }
+
+    bool
+    operator==(const iterator &o) const noexcept
+    {
+      return leaf == o.leaf && pos == o.pos;
+    }
+
+    bool
+    operator!=(const iterator &o) const noexcept
+    {
+      return !(*this == o);
+    }
+  };
+
+  iterator
+  begin() noexcept
+  {
+    return iterator(this, leftmost_leaf(__root), 0);
+  }
+
+  iterator
+  end() noexcept
+  {
+    return iterator(this, nil, 0);
+  }
+
+  iterator
+  lower_bound(const K &key) noexcept
+  {
+    node_idx cur = __root;
+    while ( cur != nil && !is_leaf(cur) ) cur = inode(cur).kids[child_index(inode(cur), key)];
+    if ( cur == nil ) return end();
+    leaf_node &L = lnode(cur);
+    u16 pos = leaf_lb(L, key);
+    if ( pos >= L.count ) {
+      node_idx nx = L.next;
+      return nx == nil ? end() : iterator(this, nx, 0);
+    }
+    return iterator(this, cur, pos);
+  }
+
+  iterator
+  upper_bound(const K &key) noexcept
+  {
+    iterator it = lower_bound(key);
+    if ( it != end() ) {
+      kv_ref kv = *it;
+      if ( eq(kv.key, key) ) ++it;
+    }
+    return it;
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    node_idx l = leftmost_leaf(__root);
+    while ( l != nil ) {
+      leaf_node &L = lnode(l);
+      for ( u16 i = 0; i < L.count; ++i ) fn(static_cast<const K &>(L.keys()[i]), L.vals()[i]);
+      l = L.next;
+    }
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    const_cast<b_tree *>(this)->for_each([&](const K &k, V &v) { fn(k, static_cast<const V &>(v)); });
+  }
+
+  template<class Fn>
+  auto
+  map(Fn fn) const
+  {
+    if constexpr ( micron::is_invocable_v<Fn, const K &, const V &> ) {
+      using V2 = micron::remove_cvref_t<micron::invoke_result_t<Fn, const K &, const V &>>;
+      b_tree<K, V2, Compare, DegreeOverride> out;
+      for_each([&](const K &k, const V &v) { out.insert(k, fn(k, v)); });
+      return out;
+    } else {
+      using V2 = micron::remove_cvref_t<micron::invoke_result_t<Fn, const V &>>;
+      b_tree<K, V2, Compare, DegreeOverride> out;
+      for_each([&](const K &k, const V &v) { out.insert(k, fn(v)); });
+      return out;
+    }
+  }
+
+  template<class LeafFn, class InnerFn>
+  auto
+  cata(LeafFn leaf, InnerFn inner) const
+  {
+    using Acc = micron::remove_cvref_t<micron::invoke_result_t<LeafFn, const K *, const V *, u16>>;
+    if ( __root == nil ) return Acc{};
+    return const_cast<b_tree *>(this)->template __cata_rec<Acc>(__root, leaf, inner);
+  }
+
+  template<class Acc, class LeafFn, class InnerFn>
+  Acc
+  __cata_rec(node_idx n, LeafFn &leaf, InnerFn &inner)
+  {
+    if ( is_leaf(n) ) {
+      leaf_node &L = lnode(n);
+      return leaf(L.keys(), L.vals(), L.count);
+    }
+    internal_node &I = inode(n);
+    const u16 nk = I.nkeys;
+    const u16 nkids = static_cast<u16>(nk + 1);
+    Acc kids[MAXC];
+    for ( u16 i = 0; i < nkids; ++i ) kids[i] = __cata_rec<Acc>(I.kids[i], leaf, inner);
+    return inner(I.keys(), nk, kids, nkids);
+  }
+
+  template<class Fn>
+  walk_ctl
+  traverse(Fn fn) const
+  {
+    b_tree *self = const_cast<b_tree *>(this);
+    node_idx l = self->leftmost_leaf(self->__root);
+    while ( l != nil ) {
+      leaf_node &L = self->lnode(l);
+      for ( u16 i = 0; i < L.count; ++i )
+        if ( micron::__impl::invoke_walk(fn, static_cast<const K &>(L.keys()[i]), static_cast<const V &>(L.vals()[i])) == walk_ctl::stop )
+          return walk_ctl::stop;
+      l = L.next;
+    }
+    return walk_ctl::continue_;
   }
 };
 

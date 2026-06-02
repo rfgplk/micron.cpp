@@ -11,9 +11,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <atomic>
-#include <thread>
-#include <vector>
+#include "../src/thread/thread.hpp"      // micron::auto_thread (NOT <thread>/<atomic>, per the pthread shim)
 
 int
 main(void)
@@ -115,27 +113,25 @@ main(void)
   {
     micron::disruptor<int, 1024> q;
     constexpr int N = 100000;
-    std::atomic<bool> done{ false };
-    std::thread producer([&]() {
-      for ( int i = 0; i < N; ) {
-        if ( q.publish(i) ) {
-          ++i;
+    {
+      micron::auto_thread<> producer([&]() {
+        for ( int i = 0; i < N; ) {
+          if ( q.publish(i) ) {
+            ++i;
+          }
         }
-      }
-      done.store(true);
-    });
-    std::thread consumer([&]() {
-      int expected = 0;
-      while ( expected < N ) {
-        int v = 0;
-        if ( q.consume(v) ) {
-          sb::require(v == expected);
-          ++expected;
+      });
+      micron::auto_thread<> consumer([&]() {
+        int expected = 0;
+        while ( expected < N ) {
+          int v = 0;
+          if ( q.consume(v) ) {
+            sb::require(v == expected);
+            ++expected;
+          }
         }
-      }
-    });
-    producer.join();
-    consumer.join();
+      });
+    }      // auto_thread joins on scope exit
     sb::require(q.empty());
   }
   sb::end_test_case();

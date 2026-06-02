@@ -9,7 +9,7 @@
 
 #include "../snowball/snowball.hpp"
 
-#include <thread>
+#include "../support/mt.hpp"      // mtest::parallel (micron auto_thread; NOT <thread>)
 #include <vector>
 
 using sb::check;
@@ -299,16 +299,11 @@ main(void)
   test_case("concurrent fetch_add: 8 threads * 10000 increments sum exactly");
   {
     u32 counter = 0;
-    std::vector<std::thread> threads;
-    threads.reserve(kStressThreads);
-    for ( int t = 0; t < kStressThreads; ++t ) {
-      threads.emplace_back([&counter]() {
-        for ( int i = 0; i < kStressIters; ++i ) {
-          atom::fetch_add(&counter, (u32)1, atomic_seq_cst);
-        }
-      });
-    }
-    for ( auto &th : threads ) th.join();
+    mtest::parallel(kStressThreads, [&counter](int) {
+      for ( int i = 0; i < kStressIters; ++i ) {
+        atom::fetch_add(&counter, (u32)1, atomic_seq_cst);
+      }
+    });
     require(counter == (u32)(kStressThreads * kStressIters));
   }
   end_test_case();
@@ -316,18 +311,13 @@ main(void)
   test_case("concurrent cmp_exchange_weak lock-free counter converges");
   {
     u32 counter = 0;
-    std::vector<std::thread> threads;
-    threads.reserve(kStressThreads);
-    for ( int t = 0; t < kStressThreads; ++t ) {
-      threads.emplace_back([&counter]() {
-        for ( int i = 0; i < kStressIters; ++i ) {
-          u32 expected = atom::load(&counter, atomic_seq_cst);
-          while ( !atom::cmp_exchange_weak(&counter, &expected, expected + 1) ) {
-          }
+    mtest::parallel(kStressThreads, [&counter](int) {
+      for ( int i = 0; i < kStressIters; ++i ) {
+        u32 expected = atom::load(&counter, atomic_seq_cst);
+        while ( !atom::cmp_exchange_weak(&counter, &expected, expected + 1) ) {
         }
-      });
-    }
-    for ( auto &th : threads ) th.join();
+      }
+    });
     require(counter == (u32)(kStressThreads * kStressIters));
   }
   end_test_case();
@@ -336,18 +326,14 @@ main(void)
   {
     // each thread XORs its own bit into a shared word, twice — final = 0
     u32 word = 0;
-    std::vector<std::thread> threads;
     constexpr int kT = 4;
     constexpr int kIters = 5000;
-    for ( int t = 0; t < kT; ++t ) {
+    mtest::parallel(kT, [&word](int t) {
       u32 bit = (u32)1u << t;
-      threads.emplace_back([&word, bit]() {
-        for ( int i = 0; i < kIters; ++i ) {
-          atom::fetch_xor(&word, bit, atomic_seq_cst);
-        }
-      });
-    }
-    for ( auto &th : threads ) th.join();
+      for ( int i = 0; i < kIters; ++i ) {
+        atom::fetch_xor(&word, bit, atomic_seq_cst);
+      }
+    });
     // each thread toggled its bit kIters times (even) -> all bits zero
     require(word == (u32)0u);
   }
@@ -356,17 +342,13 @@ main(void)
   test_case("u64 fetch_add atomicity - no tearing under contention");
   {
     u64 counter = 0;
-    std::vector<std::thread> threads;
     constexpr int kT = 8;
     constexpr int kIters = 5000;
-    for ( int t = 0; t < kT; ++t ) {
-      threads.emplace_back([&counter]() {
-        for ( int i = 0; i < kIters; ++i ) {
-          atom::fetch_add(&counter, (u64)1, atomic_seq_cst);
-        }
-      });
-    }
-    for ( auto &th : threads ) th.join();
+    mtest::parallel(kT, [&counter](int) {
+      for ( int i = 0; i < kIters; ++i ) {
+        atom::fetch_add(&counter, (u64)1, atomic_seq_cst);
+      }
+    });
     require(counter == (u64)(kT * kIters));
   }
   end_test_case();

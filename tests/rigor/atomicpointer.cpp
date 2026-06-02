@@ -12,8 +12,10 @@
 
 #include "../snowball/snowball.hpp"
 
+#include "../support/mt.hpp"      // mtest::parallel (micron auto_thread; NOT <thread>)
 #include <climits>
-#include <thread>
+
+#include <vector>      // oracle only (released[] snapshot)
 #include <vector>
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -578,16 +580,10 @@ main(void)
     sb::require(Counted::instances == 1);
 
     constexpr int NTHREADS = 8;
-    std::vector<std::thread> threads;
-    threads.reserve(NTHREADS);
-
-    for ( int i = 0; i < NTHREADS; ++i ) {
-      threads.emplace_back([&p, i]() {
-        Counted *raw = new Counted(i + 1);
-        p.reset(raw);
-      });
-    }
-    for ( auto &t : threads ) t.join();
+    mtest::parallel(NTHREADS, [&p](int i) {
+      Counted *raw = new Counted(i + 1);
+      p.reset(raw);
+    });
 
     // Exactly one Counted should survive (the last winner of the resets)
     sb::require(p.active());
@@ -600,15 +596,13 @@ main(void)
     Counted::instances = 0;
     micron::atomic_pointer<Counted> p(99);
 
-    std::thread t1([&p]() {
-      Counted *raw = p.release();
-      if ( raw ) delete raw;
-    });
-
-    std::thread t2([&p]() { p.reset(new Counted(1)); });
-
-    t1.join();
-    t2.join();
+    {
+      micron::auto_thread<> t1([&p]() {
+        Counted *raw = p.release();
+        if ( raw ) delete raw;
+      });
+      micron::auto_thread<> t2([&p]() { p.reset(new Counted(1)); });
+    }      // auto_thread joins on scope exit
 
     // Either t2's object survived or p is null — either is correct.
     // What must NOT happen: a crash or Counted::instances < 0.
@@ -626,16 +620,10 @@ main(void)
     constexpr int NTHREADS = 6;
     std::vector<Counted *> released(NTHREADS, nullptr);
 
-    std::vector<std::thread> threads;
-    threads.reserve(NTHREADS);
-
-    for ( int i = 0; i < NTHREADS; ++i ) {
-      threads.emplace_back([&p, &released, i]() {
-        Counted *raw = new Counted(i + 1);
-        released[i] = p.exchange(micron::move(raw));
-      });
-    }
-    for ( auto &t : threads ) t.join();
+    mtest::parallel(NTHREADS, [&p, &released](int i) {
+      Counted *raw = new Counted(i + 1);
+      released[i] = p.exchange(micron::move(raw));
+    });
 
     // Free all the pointers threads got back from exchange
     for ( auto *r : released )

@@ -14,6 +14,13 @@
 #include "../sqrt.hpp"
 #include "types.hpp"
 
+#if defined(__AVX2__) && defined(__FMA__)
+#include "../../simd/aliases.hpp"
+#include "../../simd/arch/types_amd64.hpp"
+#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)
+#include "../../simd/aliases.hpp"
+#endif
+
 namespace micron
 {
 namespace math
@@ -273,6 +280,49 @@ template<arith_scalar T, usize R, usize C>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr vec<T, R>
 gemv(const mat<T, R, C> &m, const vec<T, C> &v) noexcept
 {
+  if !consteval {
+#if defined(__AVX2__) && defined(__FMA__)
+    // row-major mat4*vec4 (f32)
+    if constexpr ( micron::same_as<T, f32> && R == 4 && C == 4 ) {
+      vec<T, 4> out{};
+      const float *mp = reinterpret_cast<const float *>(m.data);
+      const __m128 vv = simd::sse::loadu_f32(reinterpret_cast<const float *>(v.data));
+      const __m128 p0 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 0), vv);
+      const __m128 p1 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 4), vv);
+      const __m128 p2 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 8), vv);
+      const __m128 p3 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 12), vv);
+      const __m128 s01 = simd::sse::hadd_f32(p0, p1);
+      const __m128 s23 = simd::sse::hadd_f32(p2, p3);
+      const __m128 rr = simd::sse::hadd_f32(s01, s23);
+      simd::sse::storeu_f32(reinterpret_cast<float *>(out.data), rr);
+      return out;
+    }
+#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)
+    if constexpr ( micron::same_as<T, f32> && R == 4 && C == 4 ) {
+      vec<T, 4> out{};
+      const float *mp = reinterpret_cast<const float *>(m.data);
+      const float *vp = reinterpret_cast<const float *>(v.data);
+      const float32x4_t m0 = simd::neon::load_f32(mp + 0);
+      const float32x4_t m1 = simd::neon::load_f32(mp + 4);
+      const float32x4_t m2 = simd::neon::load_f32(mp + 8);
+      const float32x4_t m3 = simd::neon::load_f32(mp + 12);
+      const float32x4_t e0 = simd::neon::zip_lo_f32(m0, m1);
+      const float32x4_t e1 = simd::neon::zip_hi_f32(m0, m1);
+      const float32x4_t e2 = simd::neon::zip_lo_f32(m2, m3);
+      const float32x4_t e3 = simd::neon::zip_hi_f32(m2, m3);
+      const float32x4_t c0 = simd::neon::concat_lo_f32(e0, e2);
+      const float32x4_t c1 = simd::neon::concat_hi_f32(e0, e2);
+      const float32x4_t c2 = simd::neon::concat_lo_f32(e1, e3);
+      const float32x4_t c3 = simd::neon::concat_hi_f32(e1, e3);
+      float32x4_t r = simd::neon::mul(simd::neon::splat_f32(vp[0]), c0);
+      r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(vp[1]), c1));
+      r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(vp[2]), c2));
+      r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(vp[3]), c3));
+      simd::neon::store_f32(reinterpret_cast<float *>(out.data), r);
+      return out;
+    }
+#endif
+  }
   const T *__restrict__ a = m.data;
   const T *__restrict__ vp = v.data;
   vec<T, R> r{};
@@ -294,6 +344,48 @@ template<arith_scalar T, usize M, usize K, usize N>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr mat<T, M, N>
 gemm(const mat<T, M, K> &A, const mat<T, K, N> &B) noexcept
 {
+  if !consteval {
+#if defined(__AVX2__) && defined(__FMA__)
+    if constexpr ( micron::same_as<T, f32> && M == 4 && K == 4 && N == 4 ) {
+      mat<T, 4, 4> Cm = mat<T, 4, 4>::zero();
+      const float *ap = reinterpret_cast<const float *>(A.data);
+      const float *bp = reinterpret_cast<const float *>(B.data);
+      float *cp = reinterpret_cast<float *>(Cm.data);
+      const __m128 b0 = simd::sse::loadu_f32(bp + 0);
+      const __m128 b1 = simd::sse::loadu_f32(bp + 4);
+      const __m128 b2 = simd::sse::loadu_f32(bp + 8);
+      const __m128 b3 = simd::sse::loadu_f32(bp + 12);
+      for ( int i = 0; i < 4; ++i ) {
+        const __m128 ar = simd::sse::loadu_f32(ap + i * 4);
+        __m128 r = simd::sse::mul_f32(simd::sse::shuffle_f32<0x00>(ar, ar), b0);
+        r = simd::fma::fma_f32(simd::sse::shuffle_f32<0x55>(ar, ar), b1, r);
+        r = simd::fma::fma_f32(simd::sse::shuffle_f32<0xAA>(ar, ar), b2, r);
+        r = simd::fma::fma_f32(simd::sse::shuffle_f32<0xFF>(ar, ar), b3, r);
+        simd::sse::storeu_f32(cp + i * 4, r);
+      }
+      return Cm;
+    }
+#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)
+    if constexpr ( micron::same_as<T, f32> && M == 4 && K == 4 && N == 4 ) {
+      mat<T, 4, 4> Cm = mat<T, 4, 4>::zero();
+      const float *ap = reinterpret_cast<const float *>(A.data);
+      const float *bp = reinterpret_cast<const float *>(B.data);
+      float *cp = reinterpret_cast<float *>(Cm.data);
+      const float32x4_t b0 = simd::neon::load_f32(bp + 0);
+      const float32x4_t b1 = simd::neon::load_f32(bp + 4);
+      const float32x4_t b2 = simd::neon::load_f32(bp + 8);
+      const float32x4_t b3 = simd::neon::load_f32(bp + 12);
+      for ( int i = 0; i < 4; ++i ) {
+        float32x4_t r = simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 0]), b0);
+        r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 1]), b1));
+        r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 2]), b2));
+        r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 3]), b3));
+        simd::neon::store_f32(cp + i * 4, r);
+      }
+      return Cm;
+    }
+#endif
+  }
   const T *__restrict__ a = A.data;
   const T *__restrict__ b = B.data;
   mat<T, M, N> C = mat<T, M, N>::zero();

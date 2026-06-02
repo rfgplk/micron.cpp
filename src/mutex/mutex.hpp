@@ -9,6 +9,9 @@
 
 namespace micron
 {
+// NOTE: a seq_cst test-and-set spin lock; hard correct,
+// on x86 the unlock store compiles to a full barrier (xchg / mov+mfence)
+// use only for _STRICT_ global ordering across unrelated atomics
 class mutex
 {
   atomic_token<bool> tk;
@@ -141,6 +144,75 @@ public:
   weak_mutex(const weak_mutex &) = delete;
   weak_mutex(weak_mutex &&) = delete;
   weak_mutex &operator=(const weak_mutex &) = delete;
+};
+
+// uncontended test-and-test-and-set spin lock (acq/rel)
+class fast_mutex
+{
+  atomic_token<bool> tk;
+
+  void
+  reset()
+  {
+    tk.store(ATOMIC_OPEN, memory_order::release);
+  }
+
+public:
+  ~fast_mutex() = default;
+  fast_mutex() = default;
+
+  auto
+  operator()()
+  {
+    while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order::acquire, memory_order::relaxed) ) {
+      do {
+        __cpu_pause();
+      } while ( tk.get(memory_order::relaxed) == ATOMIC_LOCKED );
+    }
+    return &fast_mutex::reset;
+  }
+
+  bool
+  operator!()
+  {
+    return (tk.get(memory_order::relaxed) != ATOMIC_LOCKED);
+  }
+
+  auto
+  lock()
+  {
+    return operator()();
+  }
+
+  bool
+  try_lock() noexcept
+  {
+    return tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order::acquire, memory_order::relaxed);
+  }
+
+  void
+  unlock() noexcept
+  {
+    tk.store(ATOMIC_OPEN, memory_order::release);
+  }
+
+  auto
+  retrieve()
+  {
+    return &fast_mutex::reset;
+  }
+
+  bool
+  is_locked() const noexcept
+  {
+    return tk.get(memory_order::relaxed) == ATOMIC_LOCKED;
+  }
+
+  template<typename... T> friend void unlock(T &...);
+
+  fast_mutex(const fast_mutex &) = delete;
+  fast_mutex(fast_mutex &&) = delete;
+  fast_mutex &operator=(const fast_mutex &) = delete;
 };
 
 struct mcs_node {
