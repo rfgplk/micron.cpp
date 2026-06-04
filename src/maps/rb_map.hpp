@@ -501,8 +501,9 @@ public:
     hash64_t h = hash<hash64_t>(k);
     __bin_t &b = __bins[__bin_of(h)];
     if ( b.tree ) {
-      __tree_entry probe{ h, K(k), V{} };
-      __tree_entry *e = b.tree->find(probe);
+      // heterogeneous lookup by (hash,key)
+      __tree_entry *e = b.tree->find_by([h, &k](const __tree_entry &d) { return h != d.hash ? h < d.hash : k < d.key; },
+                                        [h, &k](const __tree_entry &d) { return d.hash != h ? d.hash < h : d.key < k; });
       return e ? micron::addressof(e->value) : nullptr;
     }
     for ( i32 i = b.list_head; i != -1; i = __next[i] ) {
@@ -557,8 +558,8 @@ public:
     {
       __bin_t &b = __bins[__bin_of(h)];
       if ( b.tree ) {
-        __tree_entry probe{ h, K(k), V{} };
-        __tree_entry *e = b.tree->find(probe);
+        __tree_entry *e = b.tree->find_by([h, &k](const __tree_entry &d) { return h != d.hash ? h < d.hash : k < d.key; },
+                                          [h, &k](const __tree_entry &d) { return d.hash != h ? d.hash < h : d.key < k; });
         if ( e ) {
           e->value = micron::forward<VV>(v);
           return { false, micron::addressof(e->value) };
@@ -642,8 +643,8 @@ public:
     usize bi = __bin_of(h);
     __bin_t &b = __bins[bi];
     if ( b.tree ) {
-      __tree_entry probe{ h, K(k), V{} };
-      bool ok = b.tree->erase(probe);
+      bool ok = b.tree->erase_by([h, &k](const __tree_entry &d) { return h != d.hash ? h < d.hash : k < d.key; },
+                                 [h, &k](const __tree_entry &d) { return d.hash != h ? d.hash < h : d.key < k; });
       if ( ok ) {
         --__total;
         if ( b.tree->size() < __untreeify_threshold ) __untreeify(bi);

@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../errno.hpp"      // error::interrupted
 #include "../../string/sstring.hpp"
 #include "../../string/unistring.hpp"
 #include "../../syscall.hpp"
@@ -54,19 +55,25 @@ __read_node(const char *path, char *buf, usize cap)
   buf[0] = '\0';
   i32 fd = __open_rd(path);
   if ( fd < 0 ) return 0;
-  max_t n = posix::read(fd, buf, cap - 1);
+  usize off = 0;
+  for ( ;; ) {
+    if ( off >= cap - 1 ) break;
+    max_t n = posix::read(fd, buf + off, cap - 1 - off);
+    if ( n < 0 ) {
+      if ( n == -error::interrupted ) continue;
+      break;
+    }
+    if ( n == 0 ) break;      // EOF
+    off += static_cast<usize>(n);
+  }
   __close(fd);
-  if ( n <= 0 ) {
-    buf[0] = '\0';
-    return 0;
-  }
-  buf[n] = '\0';
+  buf[off] = '\0';
   // strip trailing newline
-  if ( n > 0 && buf[n - 1] == '\n' ) {
-    buf[n - 1] = '\0';
-    --n;
+  if ( off > 0 && buf[off - 1] == '\n' ) {
+    buf[off - 1] = '\0';
+    --off;
   }
-  return static_cast<usize>(n);
+  return off;
 }
 
 inline bool
@@ -74,9 +81,19 @@ __write_node(const char *path, const char *data, usize len)
 {
   i32 fd = __open_wr(path);
   if ( fd < 0 ) return false;
-  posix::write(fd, const_cast<char *>(data), len);
+  usize off = 0;
+  while ( off < len ) {
+    max_t n = posix::write(fd, const_cast<char *>(data) + off, len - off);
+    if ( n < 0 ) {
+      if ( n == -error::interrupted ) continue;
+      __close(fd);
+      return false;      // real write error (the old code reported success regardless)
+    }
+    if ( n == 0 ) break;
+    off += static_cast<usize>(n);
+  }
   __close(fd);
-  return true;
+  return off == len;
 }
 
 inline u64
@@ -93,18 +110,25 @@ inline u32
 __parse_range_count(const char *buf)
 {
   const char *p = buf;
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  const char *dash = p;
-  while ( *dash && *dash != '-' ) ++dash;
-  if ( *dash == '-' ) {
-    ++dash;
-    u32 hi = 0;
-    while ( *dash >= '0' && *dash <= '9' ) hi = hi * 10 + static_cast<u32>(*dash++ - '0');
-    return hi + 1;
+  u32 total = 0;
+  while ( *p ) {
+    while ( *p == ' ' || *p == '\t' || *p == '\n' ) ++p;
+    if ( *p < '0' || *p > '9' ) break;
+    u32 lo = 0;
+    while ( *p >= '0' && *p <= '9' ) lo = lo * 10 + static_cast<u32>(*p++ - '0');
+    u32 hi = lo;
+    if ( *p == '-' ) {
+      ++p;
+      hi = 0;
+      while ( *p >= '0' && *p <= '9' ) hi = hi * 10 + static_cast<u32>(*p++ - '0');
+    }
+    if ( hi >= lo ) total += hi - lo + 1;
+    if ( *p == ',' )
+      ++p;
+    else
+      break;
   }
-  u32 val = 0;
-  while ( *p >= '0' && *p <= '9' ) val = val * 10 + static_cast<u32>(*p++ - '0');
-  return val + 1;
+  return total;
 }
 
 inline u64

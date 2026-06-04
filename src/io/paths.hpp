@@ -20,29 +20,22 @@ namespace io
 
 using path_t = micron::sstr<posix::path_max>;
 
-struct pnode_t {
-  dir parent;
-  dir path;
-};
-
+// io::path is a lexical, string-backed path handle; holds NO file descriptors and never touches the filesystem on construction
+// can represent any path (file, dir, missing) cheaply
 class path
 {
-  pnode_t nd;
+  path_t __p;      // normalised path string (// collapsed, no trailing slash except root)
 
   static path_t
   __parent_of(const path_t &p)
   {
     const char *s = p.c_str();
     usize n = p.size();
-
     while ( n > 1 && s[n - 1] == '/' ) --n;
-
     usize sep = n;
     while ( sep > 0 && s[sep - 1] != '/' ) --sep;
-
     if ( sep == 0 ) return path_t(".");
     if ( sep == 1 ) return path_t("/");
-
     path_t out;
     for ( usize i = 0; i < sep - 1; ++i ) out += s[i];
     return out;
@@ -54,23 +47,61 @@ class path
     if ( rel.size() == 0 ) return base;
     if ( rel[0] == '/' ) return rel;
     if ( base.size() == 0 ) return rel;
-
     path_t out(base);
     if ( out[out.size() - 1] != '/' ) out += '/';
     out += rel;
     return prune(micron::move(out));
   }
 
+  path_t
+  __child(const char *name) const
+  {
+    return __join(__p, path_t(name));
+  }
+
+  bool
+  __stat(stat_t &out) const
+  {
+    return posix::__impl::__stat(__p.c_str(), out);
+  }
+
+  bool
+  __mode_bit(u32 bit) const
+  {
+    stat_t st{};
+    return __stat(st) && (st.st_mode & bit);
+  }
+
+  static linux_permissions
+  __perms_of(const char *p)
+  {
+    stat_t st{};
+    if ( !posix::__impl::__stat(p, st) ) return linux_permissions::none();
+    linux_permissions perms = linux_permissions::from_mode(st.st_mode);
+    perms.setuid = (st.st_mode & posix::s_isuid) != 0;
+    perms.setgid = (st.st_mode & posix::s_isgid) != 0;
+    perms.sticky = (st.st_mode & posix::s_isvtx) != 0;
+    return perms;
+  }
+
+  template<typename Pred>
+  micron::fvector<path_t>
+  __list(Pred pred) const
+  {
+    micron::fvector<path_t> out;
+    if ( !posix::is_dir(__p.c_str()) ) return out;      // never construct dir on a non-dir (no throw)
+    dir d(__p);                                         // fd opens here, closes when d leaves scope
+    for ( const auto &n : d.get_children() )
+      if ( pred(n) ) out.emplace_back(n.d_name);
+    return out;
+  }
+
 public:
   static path_t
   prune(path_t &&str)
   {
-
-    auto itr_slashes = micron::format::find(str, "//");
-    if ( itr_slashes ) micron::format::replace_all(str, "//", "/");
-
+    if ( micron::format::find(str, "//") ) micron::format::replace_all(str, "//", "/");
     while ( str.size() > 1 && str[str.size() - 1] == '/' ) str.erase(str.last());
-
     return str;
   }
 
@@ -94,83 +125,264 @@ public:
     return posix::verify(s);
   }
 
+  path()
+  {
+    char buf[posix::path_max];
+    if ( micron::realpath(".", buf) != nullptr )
+      __p = buf;      // absolute cwd, matching the historical default
+    else
+      __p = path_t(".");
+  }
+
+  path(const char *name) : __p(prune(path_t(name ? name : "."))) { }
+
+  template<is_string T> explicit path(const T &name) : __p(prune(path_t(name.c_str()))) { }
+
+  path(const path &) = default;
+  path(path &&) noexcept = default;
+  path &operator=(const path &) = default;
+  path &operator=(path &&) noexcept = default;
+
+  const path_t &
+  get() const noexcept
+  {
+    return __p;
+  }
+
+  path_t
+  get_parent() const
+  {
+    return __parent_of(__p);
+  }
+
+  path_t
+  basename() const
+  {
+    const char *s = __p.c_str();
+    usize l = __p.size();
+    while ( l > 1 && s[l - 1] == '/' ) --l;
+    usize sep = l;
+    while ( sep > 0 && s[sep - 1] != '/' ) --sep;
+    path_t out;
+    for ( usize i = sep; i < l; ++i ) out += s[i];
+    return out;
+  }
+
+  path_t
+  extension() const
+  {
+    path_t base = basename();
+    const char *s = base.c_str();
+    usize l = base.size();
+    if ( l == 0 || s[0] == '.' ) return path_t();
+    usize dot = l;
+    while ( dot > 0 && s[dot - 1] != '.' ) --dot;
+    if ( dot == 0 ) return path_t();
+    path_t out;
+    for ( usize i = dot - 1; i < l; ++i ) out += s[i];
+    return out;
+  }
+
+  path_t
+  stem() const
+  {
+    path_t base = basename();
+    path_t ext = extension();
+    if ( ext.size() == 0 ) return base;
+    path_t out;
+    usize keep = base.size() - ext.size();
+    for ( usize i = 0; i < keep; ++i ) out += base[i];
+    return out;
+  }
+
+  path_t
+  dirname() const
+  {
+    return __parent_of(__p);
+  }
+
+  micron::vector<micron::sstr<posix::name_max + 1>>
+  components() const
+  {
+    micron::vector<micron::sstr<posix::name_max + 1>> out;
+    if ( __p.size() == 0 ) return out;
+    const char *p = __p.c_str();
+    usize n = __p.size();
+    usize start = 0;
+    for ( usize i = 0; i <= n; ++i ) {
+      if ( p[i] == '/' || p[i] == '\0' ) {
+        if ( i > start ) {
+          micron::sstr<posix::name_max + 1> comp;
+          for ( usize j = start; j < i; ++j ) comp += p[j];
+          out.push_back(comp);
+        }
+        start = i + 1;
+      }
+    }
+    return out;
+  }
+
+  usize
+  depth() const noexcept
+  {
+    if ( __p.size() == 0 ) return 0;
+    const char *p = __p.c_str();
+    usize n = __p.size();
+    usize d = 0;
+    bool in_comp = false;
+    for ( usize i = 0; i < n; ++i ) {
+      if ( p[i] == '/' ) {
+        in_comp = false;
+      } else if ( !in_comp ) {
+        in_comp = true;
+        ++d;
+      }
+    }
+    return d;
+  }
+
+  path_t
+  join(const char *rel) const
+  {
+    return __join(__p, path_t(rel));
+  }
+
+  template<is_string T>
+  path_t
+  join(const T &rel) const
+  {
+    return join(rel.c_str());
+  }
+
+  path_t
+  canonical() const
+  {
+    path_t out;
+    if ( micron::realpath(__p.c_str(), &out[0]) == nullptr ) return path_t();
+    out.adjust_size();
+    return out;
+  }
+
+  path_t
+  relative_to(const char *base) const
+  {
+    const char *p = __p.c_str();
+    usize pl = __p.size();
+    usize bl = 0;
+    while ( base[bl] ) ++bl;
+    usize common = 0;
+    usize i = 0;
+    while ( i < pl && i < bl && p[i] == base[i] ) {
+      if ( p[i] == '/' ) common = i + 1;
+      ++i;
+    }
+    if ( i == bl && (p[i] == '/' || p[i] == '\0') ) common = i + (p[i] == '/');
+    usize up = 0;
+    for ( usize j = common; j < bl; ++j )
+      if ( base[j] == '/' ) ++up;
+    if ( common < bl ) ++up;
+    path_t out;
+    for ( usize j = 0; j < up; ++j ) {
+      if ( out.size() ) out += '/';
+      out += "..";
+    }
+    if ( common < pl ) {
+      if ( out.size() ) out += '/';
+      for ( usize j = common; j < pl; ++j ) out += p[j];
+    }
+    if ( out.size() == 0 ) out += '.';
+    return out;
+  }
+
+  template<is_string T>
+  path_t
+  relative_to(const T &base) const
+  {
+    return relative_to(base.c_str());
+  }
+
+  path_t
+  resolve(const char *cstr) const
+  {
+    return prune(path_t(cstr));
+  }
+
   bool
   exists() const
   {
-    return posix::exists(nd.path.name().c_str());
+    return posix::exists(__p.c_str());
   }
 
   bool
   lexists() const
   {
-    return posix::lexists(nd.path.name().c_str());
+    return posix::lexists(__p.c_str());
   }
 
   bool
   is_absolute() const noexcept
   {
-    return posix::is_absolute(nd.path.name());
+    return __p.size() > 0 && __p[0] == '/';
   }
 
   bool
   is_relative() const noexcept
   {
-    return posix::is_relative(nd.path.name());
+    return !is_absolute();
   }
 
   bool
   is_mountpoint() const
   {
-    return posix::is_mountpoint(nd.path.name().c_str());
+    return posix::is_mountpoint(__p.c_str());
   }
 
   bool
   is_root() const noexcept
   {
-    const auto &n = nd.path.name();
-    return n.size() == 1 && n[0] == '/';
+    return __p.size() == 1 && __p[0] == '/';
   }
 
   bool
   is_file() const
   {
-    return posix::is_file(nd.path.name().c_str());
+    return posix::is_file(__p.c_str());
   }
 
   bool
   is_dir() const
   {
-    return posix::is_dir(nd.path.name().c_str());
+    return posix::is_dir(__p.c_str());
   }
 
   bool
   is_socket() const
   {
-    return posix::is_socket(nd.path.name().c_str());
+    return posix::is_socket(__p.c_str());
   }
 
   bool
   is_symlink() const
   {
-    return posix::is_symlink(nd.path.name().c_str());
+    return posix::is_symlink(__p.c_str());
   }
 
   bool
   is_block_device() const
   {
-    return posix::is_block_device(nd.path.name().c_str());
+    return posix::is_block_device(__p.c_str());
   }
 
   bool
   is_char_device() const
   {
-    return posix::is_char_device(nd.path.name().c_str());
+    return posix::is_char_device(__p.c_str());
   }
 
   bool
   is_fifo() const
   {
-    return posix::is_fifo(nd.path.name().c_str());
+    return posix::is_fifo(__p.c_str());
   }
 
   bool
@@ -188,43 +400,43 @@ public:
   bool
   directory(const char *name) const
   {
-    return nd.path.child_is_dir(name);
+    return posix::is_dir(__child(name).c_str());
   }
 
   bool
   file(const char *name) const
   {
-    return nd.path.child_is_file(name);
+    return posix::is_file(__child(name).c_str());
   }
 
   bool
   socket(const char *name) const
   {
-    return nd.path.child_is_socket(name);
+    return posix::is_socket(__child(name).c_str());
   }
 
   bool
   symlink(const char *name) const
   {
-    return nd.path.child_is_link(name);
+    return posix::is_symlink(__child(name).c_str());
   }
 
   bool
   block_device(const char *name) const
   {
-    return nd.path.child_is_block_device(name);
+    return posix::is_block_device(__child(name).c_str());
   }
 
   bool
   char_device(const char *name) const
   {
-    return nd.path.child_is_char_device(name);
+    return posix::is_char_device(__child(name).c_str());
   }
 
   bool
   fifo(const char *name) const
   {
-    return nd.path.child_is_fifo(name);
+    return posix::is_fifo(__child(name).c_str());
   }
 
   bool
@@ -242,7 +454,7 @@ public:
   bool
   node_exists(const char *name) const
   {
-    return nd.path.child_exists(name);
+    return posix::exists(__child(name).c_str());
   }
 
   template<is_string T>
@@ -318,37 +530,37 @@ public:
   bool
   readable() const
   {
-    return posix::is_readable(nd.path.name().c_str());
+    return posix::is_readable(__p.c_str());
   }
 
   bool
   writable() const
   {
-    return posix::is_writable(nd.path.name().c_str());
+    return posix::is_writable(__p.c_str());
   }
 
   bool
   executable() const
   {
-    return posix::is_executable(nd.path.name().c_str());
+    return posix::is_executable(__p.c_str());
   }
 
   bool
   readable(const char *name) const
   {
-    return nd.path.child_is_readable(name);
+    return posix::is_readable(__child(name).c_str());
   }
 
   bool
   writable(const char *name) const
   {
-    return nd.path.child_is_writable(name);
+    return posix::is_writable(__child(name).c_str());
   }
 
   bool
   executable(const char *name) const
   {
-    return nd.path.child_is_executable(name);
+    return posix::is_executable(__child(name).c_str());
   }
 
   template<is_string T>
@@ -373,15 +585,15 @@ public:
   }
 
   linux_permissions
-  permissions()
+  permissions() const
   {
-    return nd.path.permissions();
+    return __perms_of(__p.c_str());
   }
 
   linux_permissions
   permissions(const char *name) const
   {
-    return nd.path.child_permissions(name);
+    return __perms_of(__child(name).c_str());
   }
 
   template<is_string T>
@@ -391,16 +603,16 @@ public:
     return permissions(name.c_str());
   }
 
-  void
+  i32
   set_permissions(const linux_permissions &p)
   {
-    nd.path.set_permissions(p);
+    return posix::chmod(__p.c_str(), p.full_mode());
   }
 
   i32
   set_permissions(const char *name, const linux_permissions &p)
   {
-    return nd.path.chmod_child(name, p);
+    return posix::chmod(__child(name).c_str(), p.full_mode());
   }
 
   template<is_string T>
@@ -411,172 +623,181 @@ public:
   }
 
   bool
-  owner_read()
+  owner_read() const
   {
-    return nd.path.mode_user_read();
+    return __mode_bit(posix::s_irusr);
   }
 
   bool
-  owner_write()
+  owner_write() const
   {
-    return nd.path.mode_user_write();
+    return __mode_bit(posix::s_iwusr);
   }
 
   bool
-  owner_exec()
+  owner_exec() const
   {
-    return nd.path.mode_user_exec();
+    return __mode_bit(posix::s_ixusr);
   }
 
   bool
-  group_read()
+  group_read() const
   {
-    return nd.path.mode_group_read();
+    return __mode_bit(posix::s_irgrp);
   }
 
   bool
-  group_write()
+  group_write() const
   {
-    return nd.path.mode_group_write();
+    return __mode_bit(posix::s_iwgrp);
   }
 
   bool
-  group_exec()
+  group_exec() const
   {
-    return nd.path.mode_group_exec();
+    return __mode_bit(posix::s_ixgrp);
   }
 
   bool
-  other_read()
+  other_read() const
   {
-    return nd.path.mode_other_read();
+    return __mode_bit(posix::s_iroth);
   }
 
   bool
-  other_write()
+  other_write() const
   {
-    return nd.path.mode_other_write();
+    return __mode_bit(posix::s_iwoth);
   }
 
   bool
-  other_exec()
+  other_exec() const
   {
-    return nd.path.mode_other_exec();
+    return __mode_bit(posix::s_ixoth);
   }
 
   bool
-  has_setuid()
+  has_setuid() const
   {
-    return nd.path.has_setuid();
+    return __mode_bit(posix::s_isuid);
   }
 
   bool
-  has_setgid()
+  has_setgid() const
   {
-    return nd.path.has_setgid();
+    return __mode_bit(posix::s_isgid);
   }
 
   bool
-  has_sticky()
+  has_sticky() const
   {
-    return nd.path.has_sticky();
+    return __mode_bit(posix::s_isvtx);
   }
 
   posix::uid_t
-  uid()
+  uid() const
   {
-    return nd.path.uid();
+    return posix::get_uid(__p.c_str());
   }
 
   posix::gid_t
-  gid()
+  gid() const
   {
-    return nd.path.gid();
+    return posix::get_gid(__p.c_str());
   }
 
   bool
-  owned_by(posix::uid_t uid)
+  owned_by(posix::uid_t u) const
   {
-    return nd.path.is_owned_by(uid);
+    return posix::is_owned_by(__p.c_str(), u);
   }
 
   bool
-  in_group(posix::gid_t gid)
+  in_group(posix::gid_t g) const
   {
-    return nd.path.is_in_group(gid);
+    return posix::is_in_group(__p.c_str(), g);
   }
 
   i32
-  chown(posix::uid_t uid, posix::gid_t gid)
+  chown(posix::uid_t u, posix::gid_t g)
   {
-    return nd.path.set_owner(uid, gid);
+    return micron::fchownat(posix::at_fdcwd, __p.c_str(), u, g, 0);
   }
 
   i32
-  chown(const char *name, posix::uid_t uid, posix::gid_t gid)
+  chown(const char *name, posix::uid_t u, posix::gid_t g)
   {
-    return nd.path.chown_child(name, uid, gid);
+    return micron::fchownat(posix::at_fdcwd, __child(name).c_str(), u, g, 0);
   }
 
   template<is_string T>
   i32
-  chown(const T &name, posix::uid_t uid, posix::gid_t gid)
+  chown(const T &name, posix::uid_t u, posix::gid_t g)
   {
-    return chown(name.c_str(), uid, gid);
+    return chown(name.c_str(), u, g);
   }
 
   posix::off_t
-  size()
+  size() const
   {
-    return nd.path.size();
+    stat_t st{};
+    return __stat(st) ? st.st_size : -1;
   }
 
   posix::ino_t
-  inode()
+  inode() const
   {
-    return nd.path.inode();
+    stat_t st{};
+    return __stat(st) ? st.st_ino : 0;
   }
 
   posix::dev_t
-  device_id()
+  device_id() const
   {
-    return nd.path.device();
+    stat_t st{};
+    return __stat(st) ? st.st_dev : 0;
   }
 
   posix::nlink_t
-  link_count()
+  link_count() const
   {
-    return nd.path.link_count();
+    stat_t st{};
+    return __stat(st) ? st.st_nlink : 0;
   }
 
-  posix::time_t
-  atime()
+  time64_t
+  atime() const
   {
-    return nd.path.atime();
+    stat_t st{};
+    return __stat(st) ? st.st_atime : 0;
   }
 
-  posix::time_t
-  mtime()
+  time64_t
+  mtime() const
   {
-    return nd.path.mtime();
+    stat_t st{};
+    return __stat(st) ? st.st_mtime : 0;
   }
 
-  posix::time_t
-  ctime()
+  time64_t
+  ctime() const
   {
-    return nd.path.ctime();
+    stat_t st{};
+    return __stat(st) ? st.st_ctime : 0;
   }
 
   posix::mode_t
-  mode()
+  mode() const
   {
-    return nd.path.mode();
+    stat_t st{};
+    return __stat(st) ? st.st_mode : 0;
   }
 
   posix::off_t
   child_size(const char *name) const
   {
-    return nd.path.child_size(name);
+    stat_t st{};
+    return posix::__impl::__stat(__child(name).c_str(), st) ? st.st_size : -1;
   }
 
   template<is_string T>
@@ -586,303 +807,66 @@ public:
     return child_size(name.c_str());
   }
 
-  const auto &
-  get() const
+  auto
+  files() const
   {
-    return nd.path.name();
-  }
-
-  const auto &
-  get_parent() const
-  {
-    return nd.parent.name();
-  }
-
-  path_t
-  basename() const
-  {
-    const auto &n = nd.path.name();
-    const char *s = n.c_str();
-    usize l = n.size();
-
-    while ( l > 1 && s[l - 1] == '/' ) --l;
-
-    usize sep = l;
-    while ( sep > 0 && s[sep - 1] != '/' ) --sep;
-
-    path_t out;
-    for ( usize i = sep; i < l; ++i ) out += s[i];
-    return out;
-  }
-
-  path_t
-  extension() const
-  {
-    path_t base = basename();
-    const char *s = base.c_str();
-    usize l = base.size();
-    if ( l == 0 || s[0] == '.' ) return path_t();
-
-    usize dot = l;
-    while ( dot > 0 && s[dot - 1] != '.' ) --dot;
-    if ( dot == 0 ) return path_t();
-
-    path_t out;
-    for ( usize i = dot - 1; i < l; ++i ) out += s[i];
-    return out;
-  }
-
-  path_t
-  stem() const
-  {
-    path_t base = basename();
-    path_t ext = extension();
-    if ( ext.size() == 0 ) return base;
-
-    path_t out;
-    usize keep = base.size() - ext.size();
-    for ( usize i = 0; i < keep; ++i ) out += base[i];
-    return out;
-  }
-
-  path_t
-  dirname() const
-  {
-    return __parent_of(nd.path.name());
+    return __list([this](const posix::__impl_dir &e) { return file(e.d_name.c_str()); });
   }
 
   auto
-  components() const
+  dirs() const
   {
-    return nd.path.path_components();
-  }
-
-  usize
-  depth() const noexcept
-  {
-    return nd.path.depth();
-  }
-
-  path_t
-  join(const char *rel) const
-  {
-    return __join(nd.path.name(), path_t(rel));
-  }
-
-  template<is_string T>
-  path_t
-  join(const T &rel) const
-  {
-    return join(rel.c_str());
-  }
-
-  path_t
-  canonical() const
-  {
-    path_t out;
-    if ( micron::realpath(nd.path.name().c_str(), &out[0]) == nullptr ) return path_t();
-    out.adjust_size();
-    return out;
-  }
-
-  path_t
-  relative_to(const char *base) const
-  {
-    const char *p = nd.path.name().c_str();
-    usize pl = nd.path.name().size();
-    usize bl = 0;
-    while ( base[bl] ) ++bl;
-
-    usize common = 0;
-    usize i = 0;
-    while ( i < pl && i < bl && p[i] == base[i] ) {
-      if ( p[i] == '/' ) common = i + 1;
-      ++i;
-    }
-    if ( i == bl && (p[i] == '/' || p[i] == '\0') ) common = i + (p[i] == '/');
-
-    usize up = 0;
-    for ( usize j = common; j < bl; ++j )
-      if ( base[j] == '/' ) ++up;
-    if ( common < bl ) ++up;
-
-    path_t out;
-    for ( usize j = 0; j < up; ++j ) {
-      if ( out.size() ) out += '/';
-      out += "..";
-    }
-    if ( common < pl ) {
-      if ( out.size() ) out += '/';
-      for ( usize j = common; j < pl; ++j ) out += p[j];
-    }
-    if ( out.size() == 0 ) out += '.';
-    return out;
-  }
-
-  template<is_string T>
-  path_t
-  relative_to(const T &base) const
-  {
-    return relative_to(base.c_str());
+    return __list([this](const posix::__impl_dir &e) { return directory(e.d_name.c_str()); });
   }
 
   auto
-  files()
+  all() const
   {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( file(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
+    return __list([](const posix::__impl_dir &) { return true; });
   }
 
   auto
-  dirs()
+  sockets() const
   {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( directory(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
+    return __list([this](const posix::__impl_dir &e) { return socket(e.d_name.c_str()); });
   }
 
   auto
-  all()
+  symlinks() const
   {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p ) paths.emplace_back(n.d_name);
-    return paths;
+    return __list([this](const posix::__impl_dir &e) { return symlink(e.d_name.c_str()); });
   }
 
   auto
-  sockets()
+  block_devices() const
   {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( socket(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
+    return __list([this](const posix::__impl_dir &e) { return block_device(e.d_name.c_str()); });
   }
 
   auto
-  symlinks()
+  char_devices() const
   {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( symlink(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
+    return __list([this](const posix::__impl_dir &e) { return char_device(e.d_name.c_str()); });
   }
 
   auto
-  block_devices()
+  fifos() const
   {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( block_device(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
-  }
-
-  auto
-  char_devices()
-  {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( char_device(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
-  }
-
-  auto
-  fifos()
-  {
-    micron::fvector<path_t> paths;
-    auto &p = nd.path.get_children();
-    for ( auto &n : p )
-      if ( fifo(n.d_name.c_str()) ) paths.emplace_back(n.d_name);
-    return paths;
-  }
-
-  micron::vector<path_t>
-  absolute(const path_t &n)
-  {
-    micron::vector<path_t> paths;
-
-    path_t abs;
-    if ( !micron::realpath(n.c_str(), &abs[0]) ) return paths;
-
-    abs.adjust_size();
-
-    paths.emplace_back(abs);
-
-    dir d(abs);
-    while ( d.name() != "/" ) {
-      dir parent = d.up();
-      paths.emplace_back(parent.name());
-      d = micron::move(parent);
-    }
-
-    return paths;
-  }
-
-  micron::sstring<posix::path_max>
-  absolute(const pnode_t &n)
-  {
-    micron::vector<path_t> paths;
-    paths.emplace_back(n.path.name());
-
-    dir d(n.path.name());
-    while ( d.name() != "/" ) {
-      dir parent = d.up();
-      paths.emplace_back(parent.name());
-      d = micron::move(parent);
-    }
-
-    micron::sstring<posix::path_max> abs("/");
-    for ( auto e = paths.end(); e != paths.begin(); ) {
-      --e;
-      abs += *e;
-      abs += "/";
-    }
-    return prune(path_t(abs.c_str()));
-  }
-
-  path_t
-  resolve(const char *cstr)
-  {
-    if ( micron::strlen(cstr) >= max_name ) exc<except::library_error>("io::path::resolve out of range.");
-    path_t str(cstr);
-    if ( str == "." ) return absolute(str).at(0);
-    if ( str == ".." || micron::format::ends_with(str, "..") ) return absolute(str).at(1);
-    return prune(micron::move(str));
-  }
-
-  template<is_string T>
-  path_t
-  resolve(T &&str)
-  {
-    if ( str == "/" ) return path_t(str.c_str());
-    if ( str == "." ) return absolute(path_t(str.c_str())).at(0);
-    if ( str == ".." || micron::format::ends_with(str, "..") ) return absolute(path_t(str.c_str())).at(1);
-    return prune(path_t(str.c_str()));
+    return __list([this](const posix::__impl_dir &e) { return fifo(e.d_name.c_str()); });
   }
 
   void
   up()
   {
-    nd.path = micron::move(nd.parent);
-    nd.parent = dir(__parent_of(nd.path.name()));
+    __p = __parent_of(__p);
   }
 
   void
   down(const char *name)
   {
-    if ( !directory(name) ) exc<except::io_error>("io::path::down(), child is not a directory.");
-    dir child = nd.path.down(name);
-    nd.parent = micron::move(nd.path);
-    nd.path = micron::move(child);
+    path_t child = __child(name);
+    if ( !posix::is_dir(child.c_str()) ) exc<except::io_error>("io::path::down(), child is not a directory.");
+    __p = micron::move(child);
   }
 
   template<is_string T>
@@ -893,12 +877,15 @@ public:
   }
 
   void
+  to_root()
+  {
+    __p = path_t("/");
+  }
+
+  void
   set(const char *str)
   {
-    path_t clean = resolve(str);
-    path_t par_str = __parent_of(clean);
-    nd.parent = dir(par_str);
-    nd.path = dir(clean);
+    __p = prune(path_t(str ? str : "."));
   }
 
   template<is_string T>
@@ -908,29 +895,24 @@ public:
     set(str.c_str());
   }
 
-  void
-  to_root()
-  {
-    nd.parent = dir("/");
-    nd.path = dir("/");
-  }
-
   i32
   chdir() const
   {
-    return nd.path.chdir();
+    if ( !posix::is_dir(__p.c_str()) ) return -1;
+    dir d(__p);      // scoped fd; fchdir then close
+    return d.chdir();
   }
 
   bool
   is_same_as(const path &other) const
   {
-    return posix::is_same_file(nd.path.name().c_str(), other.nd.path.name().c_str());
+    return posix::is_same_file(__p.c_str(), other.__p.c_str());
   }
 
   bool
   is_same_as(const char *other) const
   {
-    return posix::is_same_file(nd.path.name().c_str(), other);
+    return posix::is_same_file(__p.c_str(), other);
   }
 
   template<is_string T>
@@ -943,7 +925,7 @@ public:
   bool
   operator==(const path &o) const noexcept
   {
-    return nd.path.name() == o.nd.path.name();
+    return __p == o.__p;
   }
 
   bool
@@ -955,10 +937,10 @@ public:
   bool
   operator<(const path &o) const noexcept
   {
-    const char *a = nd.path.name().c_str();
-    const char *b = o.nd.path.name().c_str();
-    usize al = nd.path.name().size();
-    usize bl = o.nd.path.name().size();
+    const char *a = __p.c_str();
+    const char *b = o.__p.c_str();
+    usize al = __p.size();
+    usize bl = o.__p.size();
     usize n = al < bl ? al : bl;
     for ( usize i = 0; i < n; ++i ) {
       if ( (unsigned char)a[i] < (unsigned char)b[i] ) return true;
@@ -988,27 +970,27 @@ public:
   bool
   operator==(const char *s) const noexcept
   {
-    return nd.path.name() == s;
+    return __p == s;
   }
 
   bool
   operator!=(const char *s) const noexcept
   {
-    return nd.path.name() != s;
+    return __p != s;
   }
 
   template<is_string T>
   bool
   operator==(const T &s) const noexcept
   {
-    return nd.path.name() == s;
+    return __p == s;
   }
 
   template<is_string T>
   bool
   operator!=(const T &s) const noexcept
   {
-    return nd.path.name() != s;
+    return __p != s;
   }
 
   path_t
@@ -1021,34 +1003,7 @@ public:
   path_t
   operator/(const T &rel) const
   {
-    return join(rel);
-  }
-
-  path() : nd({ dir(resolve("..")), dir(resolve(".")) }) { }
-
-  path(const char *name)
-      : nd{ .parent = dir(resolve(prune(micron::format::concat<path_t>(name, "/..")))), .path = dir(resolve(prune(name))) }
-  {
-  }
-
-  template<is_string T> explicit path(const T &name) : path(name.c_str()) { }
-
-  path(const path &o) : nd(o.nd) { }
-
-  path(path &&o) noexcept : nd(micron::move(o.nd)) { }
-
-  path &
-  operator=(const path &o)
-  {
-    nd = o.nd;
-    return *this;
-  }
-
-  path &
-  operator=(path &&o) noexcept
-  {
-    nd = micron::move(o.nd);
-    return *this;
+    return join(rel.c_str());
   }
 };
 

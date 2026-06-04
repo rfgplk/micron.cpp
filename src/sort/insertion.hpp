@@ -5,6 +5,14 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// insertion sort
+//   time:  O(n) best (nearly-sorted)  /  O(n^2) average + worst
+//   space: O(1) in-place
+//   stable: yes
+//
+//   excellent on small or nearly-sorted runs; the base case for introsort
+
 #include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
 #include "../types.hpp"
@@ -57,7 +65,7 @@ template<is_iterable_container T>
 T &
 insertion(T &arr, typename T::size_type lim)
 {
-  __insertion(arr, 0, lim);
+  __insertion(arr, 0, lim < arr.size() ? lim : arr.size());
   return arr;
 }
 
@@ -65,26 +73,39 @@ template<is_iterable_container T, is_valid_comp<T> Cmp>
 T &
 insertion(T &arr, typename T::size_type lim, Cmp comp)
 {
-  __insertion(arr, 0, lim, comp);
+  __insertion(arr, 0, lim < arr.size() ? lim : arr.size(), comp);
   return arr;
+}
+
+template<is_iterable_container T, typename Cmp>
+typename T::iterator
+__insertion_it(typename T::iterator start, typename T::iterator end, Cmp comp)
+{
+  const max_t cnt = static_cast<max_t>(end - start);
+  for ( max_t i = 1; i < cnt; ++i ) {
+    auto key = start[i];
+    max_t j = i;
+    while ( j > 0 && comp(key, start[j - 1]) ) {
+      start[j] = start[j - 1];
+      --j;
+    }
+    start[j] = key;
+  }
+  return start;
 }
 
 template<is_iterable_container T>
 typename T::iterator
 insertion(typename T::iterator start, typename T::iterator end)
 {
-  T &arr = *reinterpret_cast<T *>(nullptr);
-  __insertion(arr, 0, end - start);
-  return start;
+  return __insertion_it<T>(start, end, [](const auto &a, const auto &b) { return a < b; });
 }
 
 template<is_iterable_container T, is_valid_comp<T> Cmp>
 typename T::iterator
 insertion(typename T::iterator start, typename T::iterator end, Cmp comp)
 {
-  T &arr = *reinterpret_cast<T *>(nullptr);
-  __insertion(arr, 0, end - start, comp);
-  return start;
+  return __insertion_it<T>(start, end, comp);
 }
 
 };      // namespace sort

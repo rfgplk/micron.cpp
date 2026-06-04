@@ -377,6 +377,23 @@ private:
     return nullptr;
   }
 
+  // heterogeneous lookup
+  template<typename LessKD, typename LessDK>
+  node *
+  find_node_by(LessKD less_key_data, LessDK less_data_key) const noexcept
+  {
+    node *cur = root_;
+    while ( cur ) {
+      if ( less_key_data(cur->data) )
+        cur = cur->left;
+      else if ( less_data_key(cur->data) )
+        cur = cur->right;
+      else
+        return cur;
+    }
+    return nullptr;
+  }
+
   static node *
   clone_subtree(node *src, node *parent)
   {
@@ -620,6 +637,23 @@ public:
     return n ? &n->data : nullptr;
   }
 
+  // heterogeneous find
+  template<typename LessKD, typename LessDK>
+  T *
+  find_by(LessKD less_key_data, LessDK less_data_key) noexcept
+  {
+    node *n = find_node_by(less_key_data, less_data_key);
+    return n ? &n->data : nullptr;
+  }
+
+  template<typename LessKD, typename LessDK>
+  const T *
+  find_by(LessKD less_key_data, LessDK less_data_key) const noexcept
+  {
+    node *n = find_node_by(less_key_data, less_data_key);
+    return n ? &n->data : nullptr;
+  }
+
   bool
   contains(const T &key) const noexcept
   {
@@ -747,6 +781,17 @@ public:
   erase(const T &key)
   {
     node *z = find_node(key);
+    if ( !z ) return false;
+    __erase_node(z);
+    return true;
+  }
+
+  // heterogeneous erase
+  template<typename LessKD, typename LessDK>
+  bool
+  erase_by(LessKD less_key_data, LessDK less_data_key)
+  {
+    node *z = find_node_by(less_key_data, less_data_key);
     if ( !z ) return false;
     __erase_node(z);
     return true;

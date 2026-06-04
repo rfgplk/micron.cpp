@@ -165,8 +165,21 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::array array(init_list): init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
-    if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
+#ifndef __micron_freestanding
+    try {
+      for ( auto &&value : lst ) {
+        new (micron::addr(stack[i])) T(value);
+        ++i;      // advance only after successful construction (i = count actually built)
+      }
+      for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+    } catch ( ... ) {
+      for ( size_type j = 0; j < i; ++j ) stack[j].~T();      // unwind already-built prefix
+      throw;
+    }
+#else
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(value);
+    for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+#endif
   }
 
   template<is_container A>
@@ -175,7 +188,7 @@ public:
   {
     if ( o.size() < N ) exc<except::runtime_error>("micron::array array(&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
-      __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
+      __impl_container::move_init<N, T>(micron::addr(stack[0]), o.begin());
     else
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
@@ -189,7 +202,7 @@ public:
 
   array(const array &o) { __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
-  array(array &&o) { __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
+  array(array &&o) { __impl_container::move_init<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // iterators
@@ -283,14 +296,14 @@ public:
   T &
   at(const size_type i)
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::array at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::array at() out of range.");
     return stack[i];
   }
 
   const T &
   at(const size_type i) const
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::array at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::array at() out of range.");
     return stack[i];
   }
 
@@ -327,6 +340,30 @@ public:
     return stack[i];
   }
 
+  inline T &
+  front() noexcept
+  {
+    return stack[0];
+  }
+
+  inline const T &
+  front() const noexcept
+  {
+    return stack[0];
+  }
+
+  inline T &
+  back() noexcept
+  {
+    return stack[N - 1];
+  }
+
+  inline const T &
+  back() const noexcept
+  {
+    return stack[N - 1];
+  }
+
   template<class C>
   inline slice<T, C>
   operator[]()
@@ -360,10 +397,10 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // assignment operators
 
-  template<typename F, size_type M>
+  template<size_type M>
   array &
   operator=(T (&o)[M])
-    requires micron::is_array_v<F> && (M <= N)
+    requires(M <= N)
   {
     __impl_container::copy_assign<M, T>(micron::addr(stack[0]), micron::addr(o[0]));
     return *this;
@@ -404,6 +441,7 @@ public:
   array &
   operator=(const array &o)
   {
+    if ( this == micron::addr(o) ) return *this;      // operator& is overloaded (returns byte*)
     __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -411,6 +449,7 @@ public:
   array &
   operator=(array &&o)
   {
+    if ( this == micron::addr(o) ) return *this;      // operator& is overloaded (returns byte*)
     __impl_container::move_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -717,41 +756,33 @@ public:
   T
   mul(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r *= stack[i];
+    return r;
   }
 
   T
   div(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r /= stack[i];
+    return r;
   }
 
   T
   sub(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r -= stack[i];
+    return r;
   }
 
   T
   add(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r += stack[i];
+    return r;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -777,7 +808,12 @@ public:
   sqrt(void)
   {
     T *__restrict dst = stack;
-    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) {
+      if constexpr ( micron::is_floating_point_v<T> )
+        dst[i] = static_cast<T>(math::sqrt(dst[i]));      // no narrowing through float
+      else
+        dst[i] = static_cast<T>(math::sqrt(static_cast<double>(dst[i])));
+    }
   }
 
   template<typename F>

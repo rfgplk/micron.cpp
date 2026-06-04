@@ -61,7 +61,13 @@ union epoll_data {
   u64 u64v;
 };
 
+// WARNING: the kernel struct epoll_event is __attribute__((packed)) __ONLY__ on amd64
+// on arm64/arm32 it is NOT packed
+#if defined(__micron_arch_amd64)
 struct __attribute__((packed)) epoll_event {
+#else
+struct epoll_event {
+#endif
   u32 events;
   epoll_data data;
 };
@@ -84,11 +90,16 @@ poll(pollfd &pfd, nfds_t nfds, int timeout)
 inline int
 ppoll(pollfd &pfd, nfds_t nfds, int timeout, sigset_t &ss)
 {
-  if ( timeout < 0 ) return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, nullptr, &ss, __sig_syscall_size));
+#if defined(__micron_arch_width_32)
+  constexpr auto __nr_ppoll = SYS_ppoll_time64;
+#else
+  constexpr auto __nr_ppoll = SYS_ppoll;
+#endif
+  if ( timeout < 0 ) return static_cast<int>(micron::syscall(__nr_ppoll, &pfd, nfds, nullptr, &ss, __sig_syscall_size));
   timespec_t __ts{};
   __ts.tv_sec = timeout / 1000;
   __ts.tv_nsec = static_cast<decltype(__ts.tv_nsec)>(timeout % 1000) * 1000000;
-  return static_cast<int>(micron::syscall(SYS_ppoll, &pfd, nfds, &__ts, &ss, __sig_syscall_size));
+  return static_cast<int>(micron::syscall(__nr_ppoll, &pfd, nfds, &__ts, &ss, __sig_syscall_size));
 }
 
 int poll_chk(pollfd &pfd, nfds_t nfds, int timeout);

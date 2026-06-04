@@ -155,10 +155,12 @@ class pvector
   {
     if ( !p ) [[unlikely]]
       return nullptr;
+    // atomic retain: pvector advertises immutable/shareable semantics, so refcounts must be
+    // thread-safe (a non-atomic ++/-- races → premature free / leak across threads).
     if constexpr ( Lvl == 0 )
-      ++__as_leaf(p)->refs;
+      __atomic_fetch_add(&__as_leaf(p)->refs, 1u, __ATOMIC_RELAXED);
     else
-      ++__as_node(p)->refs;
+      __atomic_fetch_add(&__as_node(p)->refs, 1u, __ATOMIC_RELAXED);
     return p;
   }
 
@@ -169,13 +171,14 @@ class pvector
     if ( !p ) [[unlikely]]
       return;
 
+    // acq_rel so the thread that drops the last ref sees all prior writes before freeing
     if constexpr ( Lvl == 0 ) {
       __leaf *l = __as_leaf(p);
-      if ( --l->refs == 0 ) [[unlikely]]
+      if ( __atomic_fetch_sub(&l->refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]]
         __dealloc_leaf(l);
     } else {
       __node *n = __as_node(p);
-      if ( --n->refs == 0 ) [[unlikely]] {
+      if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]] {
         for ( usize i = 0; i < B; ++i ) __release<Lvl - 1>(n->children[i]);
         abc::dealloc(reinterpret_cast<byte *>(n));
       }
@@ -190,45 +193,62 @@ class pvector
       const usize slot = idx & __mask;
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
-
-      if ( p ) {
-        const __leaf *old = __as_leaf(p);
-        if constexpr ( micron::is_trivially_copyable_v<T> )
-          micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
-        else
-          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T(old->values[i]);
-      } else {
-        for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
-      }
-
-      if constexpr ( micron::is_trivially_copyable_v<T> )
+      usize built = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        if ( p ) {
+          const __leaf *old = __as_leaf(p);
+          if constexpr ( micron::is_trivially_copyable_v<T> ) {
+            micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
+            built = B;
+          } else {
+            for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T(old->values[built]);
+          }
+        } else {
+          for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T();
+        }
         fresh->values[slot] = static_cast<Vf &&>(val);
-      else {
-        fresh->values[slot].~T();
-        new (micron::addr(fresh->values[slot])) T(static_cast<Vf &&>(val));
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        if constexpr ( !micron::is_trivially_copyable_v<T> )
+          for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
+        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        throw;
       }
+#endif
       return static_cast<void *>(fresh);
 
     } else {
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
-
-      if ( p ) {
-        const __node *old = __as_node(p);
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __set_impl<Lvl - 1>(old->children[i], idx, static_cast<Vf &&>(val));
-          else
-            fresh->children[i] = __retain<Lvl - 1>(old->children[i]);
+      usize done = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        if ( p ) {
+          const __node *old = __as_node(p);
+          for ( ; done < B; ++done ) {
+            if ( done == slot )
+              fresh->children[done] = __set_impl<Lvl - 1>(old->children[done], idx, static_cast<Vf &&>(val));
+            else
+              fresh->children[done] = __retain<Lvl - 1>(old->children[done]);
+          }
+        } else {
+          for ( ; done < B; ++done ) {
+            if ( done == slot )
+              fresh->children[done] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
+            else
+              fresh->children[done] = nullptr;
+          }
         }
-      } else {
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
-          else
-            fresh->children[i] = nullptr;
-        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(fresh->children[j]);
+        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        throw;
       }
+#endif
       return static_cast<void *>(fresh);
     }
   }
@@ -265,17 +285,39 @@ class pvector
     if constexpr ( Lvl == 0 ) {
       __leaf *l = __alloc_leaf();
       l->refs = 1;
-      for ( usize i = 0; i < B; ++i ) {
-        if ( base + i < count )
-          new (micron::addr(l->values[i])) T(data[base + i]);
-        else
-          new (micron::addr(l->values[i])) T();
+      usize built = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( ; built < B; ++built ) {
+          if ( base + built < count )
+            new (micron::addr(l->values[built])) T(data[base + built]);
+          else
+            new (micron::addr(l->values[built])) T();
+        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < built; ++j ) l->values[j].~T();
+        abc::dealloc(reinterpret_cast<byte *>(l));
+        throw;
       }
+#endif
       return static_cast<void *>(l);
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
-      for ( usize i = 0; i < B; ++i ) n->children[i] = __build_from<Lvl - 1>(data, count, base + i * child_span);
+      usize done = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( ; done < B; ++done ) n->children[done] = __build_from<Lvl - 1>(data, count, base + done * child_span);
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(n->children[j]);
+        abc::dealloc(reinterpret_cast<byte *>(n));
+        throw;
+      }
+#endif
       return static_cast<void *>(n);
     }
   }
@@ -290,17 +332,39 @@ class pvector
     if constexpr ( Lvl == 0 ) {
       __leaf *l = __alloc_leaf();
       l->refs = 1;
-      for ( usize i = 0; i < B; ++i ) {
-        if ( base + i < count )
-          new (micron::addr(l->values[i])) T(val);
-        else
-          new (micron::addr(l->values[i])) T();
+      usize built = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( ; built < B; ++built ) {
+          if ( base + built < count )
+            new (micron::addr(l->values[built])) T(val);
+          else
+            new (micron::addr(l->values[built])) T();
+        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < built; ++j ) l->values[j].~T();
+        abc::dealloc(reinterpret_cast<byte *>(l));
+        throw;
       }
+#endif
       return static_cast<void *>(l);
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
-      for ( usize i = 0; i < B; ++i ) n->children[i] = __build_filled<Lvl - 1>(val, count, base + i * child_span);
+      usize done = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( ; done < B; ++done ) n->children[done] = __build_filled<Lvl - 1>(val, count, base + done * child_span);
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(n->children[j]);
+        abc::dealloc(reinterpret_cast<byte *>(n));
+        throw;
+      }
+#endif
       return static_cast<void *>(n);
     }
   }
@@ -313,46 +377,63 @@ class pvector
       const usize slot = idx & __mask;
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
-
-      if ( p ) {
-        const __leaf *old = __as_leaf(p);
-        if constexpr ( micron::is_trivially_copyable_v<T> )
-          micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
-        else
-          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T(old->values[i]);
-      } else {
-        for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
+      usize built = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        if ( p ) {
+          const __leaf *old = __as_leaf(p);
+          if constexpr ( micron::is_trivially_copyable_v<T> ) {
+            micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
+            built = B;
+          } else {
+            for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T(old->values[built]);
+          }
+        } else {
+          for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T();
+        }
+        // assign result into the (live) slot — exception-safe
+        fresh->values[slot] = fn(static_cast<const T &>(fresh->values[slot]));
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        if constexpr ( !micron::is_trivially_copyable_v<T> )
+          for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
+        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        throw;
       }
-
-      T result = fn(static_cast<const T &>(fresh->values[slot]));
-      if constexpr ( micron::is_trivially_copyable_v<T> )
-        fresh->values[slot] = micron::move(result);
-      else {
-        fresh->values[slot].~T();
-        new (micron::addr(fresh->values[slot])) T(micron::move(result));
-      }
+#endif
       return static_cast<void *>(fresh);
 
     } else {
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
-
-      if ( p ) {
-        const __node *old = __as_node(p);
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __update_impl<Lvl - 1>(old->children[i], idx, static_cast<Fn &&>(fn));
-          else
-            fresh->children[i] = __retain<Lvl - 1>(old->children[i]);
+      usize done = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        if ( p ) {
+          const __node *old = __as_node(p);
+          for ( ; done < B; ++done ) {
+            if ( done == slot )
+              fresh->children[done] = __update_impl<Lvl - 1>(old->children[done], idx, static_cast<Fn &&>(fn));
+            else
+              fresh->children[done] = __retain<Lvl - 1>(old->children[done]);
+          }
+        } else {
+          for ( ; done < B; ++done ) {
+            if ( done == slot )
+              fresh->children[done] = __update_impl<Lvl - 1>(nullptr, idx, static_cast<Fn &&>(fn));
+            else
+              fresh->children[done] = nullptr;
+          }
         }
-      } else {
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __update_impl<Lvl - 1>(nullptr, idx, static_cast<Fn &&>(fn));
-          else
-            fresh->children[i] = nullptr;
-        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(fresh->children[j]);
+        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        throw;
       }
+#endif
       return static_cast<void *>(fresh);
     }
   }
@@ -476,7 +557,7 @@ public:
 
   explicit pvector(size_type n) : __root(nullptr), __size(0)
   {
-    if ( n > capacity ) exc<except::runtime_error>("micron::pvector size exceeds capacity");
+    if ( n > capacity ) exc<except::library_error>("micron::pvector size exceeds capacity");
     if ( n == 0 ) return;
     __root = __build_filled<__root_level>(T{}, n, 0);
     __size = n;
@@ -484,7 +565,7 @@ public:
 
   pvector(size_type n, const T &val) : __root(nullptr), __size(0)
   {
-    if ( n > capacity ) exc<except::runtime_error>("micron::pvector size exceeds capacity");
+    if ( n > capacity ) exc<except::library_error>("micron::pvector size exceeds capacity");
     if ( n == 0 ) return;
     __root = __build_filled<__root_level>(val, n, 0);
     __size = n;
@@ -493,7 +574,7 @@ public:
   // initializer list
   pvector(const std::initializer_list<T> &&lst) : __root(nullptr), __size(0)
   {
-    if ( lst.size() > capacity ) exc<except::runtime_error>("micron::pvector init_list exceeds capacity");
+    if ( lst.size() > capacity ) exc<except::library_error>("micron::pvector init_list exceeds capacity");
     if ( lst.size() == 0 ) return;
     __root = __build_from<__root_level>(lst.begin(), lst.size(), 0);
     __size = lst.size();
@@ -501,7 +582,7 @@ public:
 
   pvector(const T *data, usize count) : __root(nullptr), __size(0)
   {
-    if ( count > capacity ) exc<except::runtime_error>("micron::pvector data exceeds capacity");
+    if ( count > capacity ) exc<except::library_error>("micron::pvector data exceeds capacity");
     if ( count == 0 || !data ) return;
     __root = __build_from<__root_level>(data, count, 0);
     __size = count;
@@ -520,7 +601,7 @@ public:
   pvector(const C &c) : __root(nullptr), __size(0)
   {
     const usize n = static_cast<usize>(c.size());
-    if ( n > capacity ) exc<except::runtime_error>("micron::pvector container exceeds capacity");
+    if ( n > capacity ) exc<except::library_error>("micron::pvector container exceeds capacity");
     if ( n == 0 ) return;
     if constexpr ( micron::is_same_v<typename C::value_type, T> && requires { c.data(); } ) {
       __root = __build_from<__root_level>(c.data(), n, 0);
@@ -542,7 +623,7 @@ public:
     requires(micron::is_invocable_v<Fn, usize>)
   explicit pvector(Fn &&fn, usize count) : __root(nullptr), __size(0)
   {
-    if ( count > capacity ) exc<except::runtime_error>("micron::pvector generator count exceeds capacity");
+    if ( count > capacity ) exc<except::library_error>("micron::pvector generator count exceeds capacity");
     void *root = nullptr;
     for ( usize i = 0; i < count; ++i ) {
       void *next = __set_impl<__root_level>(root, i, fn(i));
@@ -556,7 +637,7 @@ public:
   const T &
   at(usize idx) const
   {
-    __safety_check<&pvector::__bounds_check, except::runtime_error>("micron::pvector at() out of bounds", idx);
+    __safety_check<&pvector::__bounds_check, except::library_error>("micron::pvector at() out of bounds", idx);
     return __get_impl<__root_level>(__root, idx);
   }
 
@@ -570,7 +651,7 @@ public:
   [[nodiscard]] pvector
   operator[](usize from, usize to) const
   {
-    __safety_check<&pvector::__range_check, except::runtime_error>("micron::pvector operator[] invalid range", from, to);
+    __safety_check<&pvector::__range_check, except::library_error>("micron::pvector operator[] invalid range", from, to);
     const usize cnt = to - from;
     if ( cnt == 0 ) return pvector();
     void *root = nullptr;
@@ -592,14 +673,14 @@ public:
   const T &
   front(void) const
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector front() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector front() on empty vector");
     return __get_impl<__root_level>(__root, 0);
   }
 
   const T &
   back(void) const
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector back() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector back() on empty vector");
     return __get_impl<__root_level>(__root, __size - 1);
   }
 
@@ -636,7 +717,7 @@ public:
   [[nodiscard]] pvector
   push_back(const T &val) const
   {
-    __safety_check<&pvector::__full_check, except::runtime_error>("micron::pvector push_back() capacity exceeded");
+    __safety_check<&pvector::__full_check, except::library_error>("micron::pvector push_back() capacity exceeded");
     void *nr = __set_impl<__root_level>(__root, __size, val);
     return pvector(nr, __size + 1);
   }
@@ -644,7 +725,7 @@ public:
   [[nodiscard]] pvector
   push_back(T &&val) const
   {
-    __safety_check<&pvector::__full_check, except::runtime_error>("micron::pvector push_back() capacity exceeded");
+    __safety_check<&pvector::__full_check, except::library_error>("micron::pvector push_back() capacity exceeded");
     void *nr = __set_impl<__root_level>(__root, __size, micron::move(val));
     return pvector(nr, __size + 1);
   }
@@ -653,7 +734,7 @@ public:
   [[nodiscard]] pvector
   emplace_back(Args &&...args) const
   {
-    __safety_check<&pvector::__full_check, except::runtime_error>("micron::pvector emplace_back() capacity exceeded");
+    __safety_check<&pvector::__full_check, except::library_error>("micron::pvector emplace_back() capacity exceeded");
     T val(micron::forward<Args>(args)...);
     void *nr = __set_impl<__root_level>(__root, __size, micron::move(val));
     return pvector(nr, __size + 1);
@@ -662,7 +743,7 @@ public:
   [[nodiscard]] pvector
   pop_back(void) const
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector pop_back() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector pop_back() on empty vector");
     void *nr = __set_impl<__root_level>(__root, __size - 1, T{});
     return pvector(nr, __size - 1);
   }
@@ -670,7 +751,7 @@ public:
   [[nodiscard]] pvector
   set(usize idx, const T &val) const
   {
-    __safety_check<&pvector::__bounds_check, except::runtime_error>("micron::pvector set() out of bounds", idx);
+    __safety_check<&pvector::__bounds_check, except::library_error>("micron::pvector set() out of bounds", idx);
     void *nr = __set_impl<__root_level>(__root, idx, val);
     return pvector(nr, __size);
   }
@@ -678,7 +759,7 @@ public:
   [[nodiscard]] pvector
   set(usize idx, T &&val) const
   {
-    __safety_check<&pvector::__bounds_check, except::runtime_error>("micron::pvector set() out of bounds", idx);
+    __safety_check<&pvector::__bounds_check, except::library_error>("micron::pvector set() out of bounds", idx);
     void *nr = __set_impl<__root_level>(__root, idx, micron::move(val));
     return pvector(nr, __size);
   }
@@ -687,7 +768,7 @@ public:
   [[nodiscard]] pvector
   update(usize idx, Fn &&fn) const
   {
-    __safety_check<&pvector::__bounds_check, except::runtime_error>("micron::pvector update() out of bounds", idx);
+    __safety_check<&pvector::__bounds_check, except::library_error>("micron::pvector update() out of bounds", idx);
     void *nr = __update_impl<__root_level>(__root, idx, static_cast<Fn &&>(fn));
     return pvector(nr, __size);
   }
@@ -695,8 +776,8 @@ public:
   [[nodiscard]] pvector
   insert(usize pos, const T &val) const
   {
-    __safety_check<&pvector::__full_check, except::runtime_error>("micron::pvector insert() capacity exceeded");
-    __safety_check<&pvector::__insert_pos_check, except::runtime_error>("micron::pvector insert() position out of bounds", pos);
+    __safety_check<&pvector::__full_check, except::library_error>("micron::pvector insert() capacity exceeded");
+    __safety_check<&pvector::__insert_pos_check, except::library_error>("micron::pvector insert() position out of bounds", pos);
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = __size; i > pos; --i ) {
@@ -713,8 +794,8 @@ public:
   [[nodiscard]] pvector
   insert(usize pos, T &&val) const
   {
-    __safety_check<&pvector::__full_check, except::runtime_error>("micron::pvector insert() capacity exceeded");
-    __safety_check<&pvector::__insert_pos_check, except::runtime_error>("micron::pvector insert() position out of bounds", pos);
+    __safety_check<&pvector::__full_check, except::library_error>("micron::pvector insert() capacity exceeded");
+    __safety_check<&pvector::__insert_pos_check, except::library_error>("micron::pvector insert() position out of bounds", pos);
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = __size; i > pos; --i ) {
@@ -731,8 +812,8 @@ public:
   [[nodiscard]] pvector
   insert(usize pos, const T &val, usize cnt) const
   {
-    __safety_check<&pvector::__overflow_check, except::runtime_error>("micron::pvector insert() capacity exceeded", cnt);
-    __safety_check<&pvector::__insert_pos_check, except::runtime_error>("micron::pvector insert() position out of bounds", pos);
+    __safety_check<&pvector::__overflow_check, except::library_error>("micron::pvector insert() capacity exceeded", cnt);
+    __safety_check<&pvector::__insert_pos_check, except::library_error>("micron::pvector insert() position out of bounds", pos);
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = __size + cnt - 1; i >= pos + cnt; --i ) {
@@ -752,7 +833,7 @@ public:
   [[nodiscard]] pvector
   erase(usize pos) const
   {
-    __safety_check<&pvector::__bounds_check, except::runtime_error>("micron::pvector erase() out of bounds", pos);
+    __safety_check<&pvector::__bounds_check, except::library_error>("micron::pvector erase() out of bounds", pos);
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = pos; i < __size - 1; ++i ) {
@@ -769,7 +850,7 @@ public:
   [[nodiscard]] pvector
   erase(usize from, usize to) const
   {
-    __safety_check<&pvector::__range_check, except::runtime_error>("micron::pvector erase() invalid range", from, to);
+    __safety_check<&pvector::__range_check, except::library_error>("micron::pvector erase() invalid range", from, to);
 
     const usize cnt = to - from;
     void *root = __retain<__root_level>(__root);
@@ -797,7 +878,7 @@ public:
   resize(usize n) const
   {
     if ( n > capacity ) [[unlikely]]
-      exc<except::runtime_error>("micron::pvector resize() exceeds capacity");
+      exc<except::library_error>("micron::pvector resize() exceeds capacity");
     if ( n == __size ) return pvector(*this);
 
     void *root = __retain<__root_level>(__root);
@@ -821,7 +902,7 @@ public:
   resize(usize n, const T &val) const
   {
     if ( n > capacity ) [[unlikely]]
-      exc<except::runtime_error>("micron::pvector resize() exceeds capacity");
+      exc<except::library_error>("micron::pvector resize() exceeds capacity");
     if ( n == __size ) return pvector(*this);
 
     void *root = __retain<__root_level>(__root);
@@ -862,7 +943,7 @@ public:
   [[nodiscard]] pvector
   append(const pvector &o) const
   {
-    __safety_check<&pvector::__overflow_check, except::runtime_error>("micron::pvector append() exceeds capacity", o.__size);
+    __safety_check<&pvector::__overflow_check, except::library_error>("micron::pvector append() exceeds capacity", o.__size);
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = 0; i < o.__size; ++i ) {
@@ -877,7 +958,7 @@ public:
   [[nodiscard]] pvector
   append(const T *data, usize count) const
   {
-    __safety_check<&pvector::__overflow_check, except::runtime_error>("micron::pvector append() exceeds capacity", count);
+    __safety_check<&pvector::__overflow_check, except::library_error>("micron::pvector append() exceeds capacity", count);
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = 0; i < count; ++i ) {
@@ -1086,7 +1167,7 @@ public:
       { a < b } -> micron::convertible_to<bool>;
     }
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector min() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector min() on empty vector");
     T m = get(0);
     for ( usize i = 1; i < __size; ++i ) {
       const T &v = get(i);
@@ -1101,7 +1182,7 @@ public:
       { a < b } -> micron::convertible_to<bool>;
     }
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector max() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector max() on empty vector");
     T m = get(0);
     for ( usize i = 1; i < __size; ++i ) {
       const T &v = get(i);
@@ -1114,7 +1195,7 @@ public:
   T
   reduce(Fn &&fn) const
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector reduce() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector reduce() on empty vector");
     T acc = get(0);
     for ( usize i = 1; i < __size; ++i ) acc = fn(acc, get(i));
     return acc;
@@ -1276,7 +1357,7 @@ public:
     const T *
     operator->(void) const
     {
-      return &__owner->get(__idx);
+      return micron::addressof(__owner->get(__idx));
     }
 
     const_iterator &
@@ -1357,7 +1438,7 @@ public:
   const_iterator
   last(void) const
   {
-    __safety_check<&pvector::__empty_check, except::runtime_error>("micron::pvector last() on empty vector");
+    __safety_check<&pvector::__empty_check, except::library_error>("micron::pvector last() on empty vector");
     return const_iterator(this, __size - 1);
   }
 

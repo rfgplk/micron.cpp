@@ -28,7 +28,7 @@ __neon_movemask_u8(__bits::uint8x16_t v) noexcept
   return vget_lane_u16(vreinterpret_u16_u8(lo), 0);
 }
 
-usize
+inline usize
 find_first_set_128(const void *_ptr, usize len, const char b)
 {
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
@@ -45,7 +45,7 @@ find_first_set_128(const void *_ptr, usize len, const char b)
   return len;
 }
 
-usize
+inline usize
 count_set_128(const void *_ptr, usize len, const char b)
 {
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
@@ -62,7 +62,7 @@ count_set_128(const void *_ptr, usize len, const char b)
   return cnt;
 }
 
-bool
+inline bool
 any_set_128(const void *_ptr, usize len, const char b)
 {
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
@@ -78,7 +78,7 @@ any_set_128(const void *_ptr, usize len, const char b)
   return false;
 }
 
-bool
+inline bool
 all_set_128(const void *_ptr, usize len, const char b)
 {
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
@@ -94,7 +94,7 @@ all_set_128(const void *_ptr, usize len, const char b)
   return true;
 }
 
-bool
+inline bool
 none_set_128(const void *_ptr, usize len, const char b)
 {
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);

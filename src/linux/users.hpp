@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../errno.hpp"
 #include "../linux/sys/fcntl.hpp"
 #include "../linux/sys/system.hpp"
 
@@ -34,6 +35,7 @@ struct group_t {
   char gr_name[64];
   char gr_passwd[32];
   gid_t gr_gid;
+  char gr_members[256];
 };
 
 namespace __impl
@@ -47,12 +49,16 @@ __field_copy(char *dst, usize cap, const char *s, const char *e)
   dst[n] = '\0';
 }
 
-inline long
+inline i64
 __parse_long(const char *s, const char *e)
 {
-  long v = 0;
-  for ( ; s < e && *s >= '0' && *s <= '9'; ++s ) v = v * 10 + (*s - '0');
-  return v;
+  if ( s >= e || *s < '0' || *s > '9' ) return -1;
+  u64 v = 0;
+  for ( ; s < e && *s >= '0' && *s <= '9'; ++s ) {
+    v = v * 10 + static_cast<u64>(*s - '0');
+    if ( v > 0xFFFFFFFFULL ) return -1;      // beyond the 32-bit uid/gid range
+  }
+  return static_cast<i64>(v);
 }
 
 template<int MaxF>
@@ -82,7 +88,11 @@ __slurp(const char *path, char *buf, usize cap)
   long total = 0;
   while ( static_cast<usize>(total) < cap - 1 ) {
     long r = micron::syscall(SYS_read, fd, buf + total, cap - 1 - static_cast<usize>(total));
-    if ( r <= 0 ) break;
+    if ( r < 0 ) {
+      if ( r == -static_cast<long>(error::interrupted) ) continue;      // retry EINTR (was treated as EOF)
+      break;
+    }
+    if ( r == 0 ) break;      // EOF
     total += r;
   }
   micron::syscall(SYS_close, fd);
@@ -105,7 +115,7 @@ __key_matches_name(const char *fs, const char *fe, const char *name_key)
 inline bool
 __lookup_passwd(bool by_uid, uid_t uid_key, const char *name_key, passwd_t &out)
 {
-  char buf[16384];
+  char buf[65536];      // /etc/passwd|group can exceed 16 KiB on large systems
   long len = __impl::__slurp("/etc/passwd", buf, sizeof(buf));
   if ( len <= 0 ) return false;
   const char *p = buf;
@@ -149,7 +159,7 @@ getpwnam(const char *name, passwd_t &out)
 inline bool
 __lookup_group(bool by_gid, gid_t gid_key, const char *name_key, group_t &out)
 {
-  char buf[16384];
+  char buf[65536];      // /etc/passwd|group can exceed 16 KiB on large systems
   long len = __impl::__slurp("/etc/group", buf, sizeof(buf));
   if ( len <= 0 ) return false;
   const char *p = buf;
@@ -159,13 +169,18 @@ __lookup_group(bool by_gid, gid_t gid_key, const char *name_key, group_t &out)
     while ( le < end && *le != '\n' ) ++le;
     const char *fs[4];
     const char *fe[4];
-    if ( __impl::__split_fields<4>(p, le, fs, fe) >= 3 ) {
+    int __nf = __impl::__split_fields<4>(p, le, fs, fe);
+    if ( __nf >= 3 ) {
       bool hit = by_gid ? (static_cast<gid_t>(__impl::__parse_long(fs[2], fe[2])) == gid_key)
                         : __impl::__key_matches_name(fs[0], fe[0], name_key);
       if ( hit ) {
         __impl::__field_copy(out.gr_name, sizeof(out.gr_name), fs[0], fe[0]);
         __impl::__field_copy(out.gr_passwd, sizeof(out.gr_passwd), fs[1], fe[1]);
         out.gr_gid = static_cast<gid_t>(__impl::__parse_long(fs[2], fe[2]));
+        if ( __nf >= 4 )
+          __impl::__field_copy(out.gr_members, sizeof(out.gr_members), fs[3], fe[3]);
+        else
+          out.gr_members[0] = '\0';
         return true;
       }
     }

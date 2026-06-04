@@ -40,12 +40,15 @@ template<typename F, typename... Args>
 inline void
 pause(F f, Args... args)
 {
+  micron::posix::sigset_t old;
   micron::posix::sigset_t signal;
   micron::posix::sigemptyset(signal);
   micron::posix::sigaddset(signal, posix::sig_cont);
+  micron::posix::sigprocmask(posix::sig_block, signal, &old);
   int sig = 0;
   auto s = micron::posix::sigwait(signal, sig);
-  f(sig, args...);
+  micron::posix::sigprocmask(posix::sig_setmask, old, nullptr);
+  if ( s == 0 ) f(sig, args...);      // sigwait returns 0 on success; skip f() on a bogus/error signal
   return;
 }
 
@@ -147,7 +150,8 @@ sleep_duration(const fduration_t s)
 {
   timespec_t r, rmn;
 
-  const auto total_ms = s;
+  // clamp negatives to 0; a negative duration would otherwise yield a negative tv_nsec and EINVAL-spin.
+  const auto total_ms = s < static_cast<micron::fduration_t>(0) ? static_cast<micron::fduration_t>(0) : s;
 
   r.tv_sec = static_cast<time64_t>(total_ms / 1000.0);
 

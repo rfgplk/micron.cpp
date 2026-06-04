@@ -10,6 +10,7 @@
 
 #include "../memory/actions.hpp"
 #include "../memory/cmemory.hpp"
+#include "../memory/placement_new.hpp"  
 
 namespace micron
 {
@@ -236,6 +237,28 @@ deep_move(T *__restrict dest, T *__restrict src)
   }
 };
 
+// move-CONSTRUCT into raw storage WITHOUT ending the source's lifetime; NEEDED
+template<usize N, typename T>
+inline void
+deep_move_init(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( noexcept(T(micron::move(micron::declval<T &>()))) ) {
+    for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
+  } else {
+    usize i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
+#endif
+  }
+};
+
 template<usize N, typename T>
 inline void
 deep_move_assign(T *__restrict dest, T *__restrict src)
@@ -393,6 +416,18 @@ move(T *__restrict dest, T *__restrict src)
   }
 }
 
+// non-destroying move-construct; NEEDED
+template<usize N, typename T>
+inline void
+move_init(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v<micron::remove_cv_t<T>> ) {
+    deep_move_init<N, T>(dest, src);
+  } else {
+    shallow_move<N, T>(dest, src);
+  }
+}
+
 template<typename T>
 inline void
 open_gap(T *base, usize len, usize p, usize cnt)
@@ -540,15 +575,30 @@ void
 construct(T *__restrict src, const T &val)
 {
   if constexpr ( !micron::is_trivially_constructible_v<T, const T &> ) {
-    if constexpr ( N % 4 == 0 ) {
-      for ( usize i = 0; i < N; i += 4 ) {
-        new (addr(src[i])) T(val);
-        new (addr(src[i + 1])) T(val);
-        new (addr(src[i + 2])) T(val);
-        new (addr(src[i + 3])) T(val);
+    if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
+      if constexpr ( N % 4 == 0 ) {
+        for ( usize i = 0; i < N; i += 4 ) {
+          new (addr(src[i])) T(val);
+          new (addr(src[i + 1])) T(val);
+          new (addr(src[i + 2])) T(val);
+          new (addr(src[i + 3])) T(val);
+        }
+      } else {
+        for ( usize i = 0; i < N; ++i ) new (addr(src[i])) T(val);
       }
     } else {
-      for ( usize i = 0; i < N; ++i ) new (addr(src[i])) T(val);
+      // throwing element ctor: unwind the already-built prefix on throw
+      usize i = 0;
+#ifndef __micron_freestanding
+      try {
+        for ( ; i < N; ++i ) new (addr(src[i])) T(val);
+      } catch ( ... ) {
+        for ( usize j = 0; j < i; ++j ) src[j].~T();
+        throw;
+      }
+#else
+      for ( ; i < N; ++i ) new (addr(src[i])) T(val);
+#endif
     }
   } else {
     micron::ctypeset<N>(src, val);
@@ -560,7 +610,22 @@ void
 construct(T *__restrict src, const T &val, usize cnt)
 {
   if constexpr ( !micron::is_trivially_constructible_v<T, const T &> ) {
-    for ( usize i = 0; i < cnt; ++i ) new (addr(src[i])) T(val);
+    if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
+      for ( usize i = 0; i < cnt; ++i ) new (addr(src[i])) T(val);
+    } else {
+      // throwing element ctor: unwind the already-built prefix on throw
+      usize i = 0;
+#ifndef __micron_freestanding
+      try {
+        for ( ; i < cnt; ++i ) new (addr(src[i])) T(val);
+      } catch ( ... ) {
+        for ( usize j = 0; j < i; ++j ) src[j].~T();
+        throw;
+      }
+#else
+      for ( ; i < cnt; ++i ) new (addr(src[i])) T(val);
+#endif
+    }
   } else {
     micron::typeset(src, val, cnt);
   }

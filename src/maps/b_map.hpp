@@ -6,8 +6,6 @@
 #pragma once
 
 // btree_map: heap-allocated, resizable, fractal-tree-flavoured hashed-routing B-tree
-//
-// WARNING: IN DEV UNSAFE
 
 #include "../bits/__arch.hpp"
 #include "../bits/__container.hpp"
@@ -246,6 +244,12 @@ trivial_memmove(void *dst, const void *src, usize nbytes) noexcept
 
 };      // namespace __btree_impl
 
+// ON REFERENCE / ITERATOR INVALIDATION:
+//  all nodes live in ONE contiguous node pool that is reallocated (moved) when it grows
+//  this is a DELIBERATE performance tradeoff; a cache-friendly flat slab with no per-node allocation;
+//  chosen over std::unordered_map-style reference stability
+//  as a result ANY insert/emplace that grows the pool invalidates EVERY previously returned V*/V&/kv_ref AND every iterator at once
+//  (references are __NOT__ stable across a grow/rehash, unlike std::unordered_map)
 template<typename K, is_movable_object V, class Alloc = allocator_serial<>, usize FanoutOverride = 0> class btree_map
 {
 public:
@@ -260,6 +264,7 @@ private:
   static constexpr usize __auto_int_fanout = __btree_impl::pick_internal_fanout<__kv_bytes>();
   static constexpr usize __leaf_fanout = (FanoutOverride > 0) ? FanoutOverride : __auto_leaf_fanout;
   static constexpr usize __int_fanout = (FanoutOverride > 0) ? FanoutOverride : __auto_int_fanout;
+  static_assert(FanoutOverride == 0 || FanoutOverride >= 3, "btree_map: FanoutOverride must be 0 (auto) or >= 3");
   static constexpr usize __buf_size = __btree_impl::pick_buf_size<__int_fanout>();
   static constexpr usize __node_align = __btree_impl::__node_alignment;
 
@@ -1107,22 +1112,41 @@ private:
       for ( usize j = 0; j <= exp_n; ++j ) exp_children[j] = N0.children[j];
     }
 
-    for ( u8 i = 0; i < cnt; ++i ) {
-      const hash64_t op_hash = local[i].hash;
-      const usize ci = __btree_impl::hash_route_gt<__int_fanout>(exp_pivots, exp_n, op_hash);
-      const node_idx child = exp_children[ci];
-      bool dummy_inserted = false;
-      hash64_t csp = 0;
-      node_idx csr = __k_empty;
-      descend_apply_drained(child, local[i], &dummy_inserted, &csp, &csr);
-      if ( csr != __k_empty ) {
-        for ( usize j = exp_n; j > ci; --j ) exp_pivots[j] = exp_pivots[j - 1];
-        for ( usize j = exp_n + 1; j > ci + 1; --j ) exp_children[j] = exp_children[j - 1];
-        exp_pivots[ci] = csp;
-        exp_children[ci + 1] = csr;
-        ++exp_n;
+#ifndef __micron_freestanding
+    try {
+#endif
+      for ( u8 i = 0; i < cnt; ++i ) {
+        const hash64_t op_hash = local[i].hash;
+        const usize ci = __btree_impl::hash_route_gt<__int_fanout>(exp_pivots, exp_n, op_hash);
+        const node_idx child = exp_children[ci];
+        bool dummy_inserted = false;
+        hash64_t csp = 0;
+        node_idx csr = __k_empty;
+        descend_apply_drained(child, local[i], &dummy_inserted, &csp, &csr);
+        if ( local[i].tag == OP_INSERT ) {
+          if ( !dummy_inserted && total_size_ > 0 ) --total_size_;
+        } else {
+          if ( !dummy_inserted ) ++total_size_;
+        }
+        if ( csr != __k_empty ) {
+          for ( usize j = exp_n; j > ci; --j ) exp_pivots[j] = exp_pivots[j - 1];
+          for ( usize j = exp_n + 1; j > ci + 1; --j ) exp_children[j] = exp_children[j - 1];
+          exp_pivots[ci] = csp;
+          exp_children[ci + 1] = csr;
+          ++exp_n;
+        }
       }
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      // a throwing K/V move or an allocator failure mid-drain must not leak the
+      // relocated ops still living in local[] (the normal destroy below is skipped)
+      for ( u8 i = 0; i < cnt; ++i ) {
+        buffer_destroy_key(local[i]);
+        if ( local[i].tag != OP_ERASE ) buffer_destroy_value(local[i]);
+      }
+      throw;
     }
+#endif
 
     for ( u8 i = 0; i < cnt; ++i ) {
       buffer_destroy_key(local[i]);
@@ -1557,6 +1581,7 @@ public:
       clear();
       free_buckets();
     }
+    __slab.free();
     __slab = micron::move(o.__slab);
     buckets_ = o.buckets_;
     n_buckets_ = o.n_buckets_;

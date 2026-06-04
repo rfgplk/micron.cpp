@@ -4,12 +4,6 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-// token<R,T,A> is first-call-wins: first operator() locks the embedded mutex
-// and returns true; subsequent calls return false (and dispatch the
-// callback if provided). NOTE: the embedded mutex is never released between
-// calls, so multi-thread concurrent first-calls deadlock — only single-
-// thread tests are safe here.
-
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/mutex.hpp"

@@ -39,7 +39,7 @@ inline unsigned
 cpu_count(void)
 {
 #if defined(__micron_arch_x86_any)
-  return (unsigned)maximum_leaf() + 1;
+  return posix::sysfs::cpu::online_count();
 #elif defined(__micron_arch_arm_any)
   return posix::sysfs::cpu::present_count();
 #endif
@@ -90,7 +90,7 @@ enable_all_cores(pid_t pid = 0)
 {
   posix::cpu_set_t set;
   auto count = cpu_count();
-  for ( usize i = 0; i < count; i++ ) set.cpu_set(i);
+  for ( usize i = 0; i < count && i < 1024; i++ ) set.cpu_set(i);      // cpu_set_t mask is 1024 bits; never index past it
   posix::sched_setaffinity(pid, sizeof(set), set);
 }
 
@@ -152,7 +152,7 @@ public:
   cpu_t(void) : scheduler_t(posix::getpid()), pid(posix::getpid()), procs(), count(cpu_count())
   {
     if constexpr ( D ) {
-      for ( usize i = 0; i < count; i++ ) procs.cpu_set(i);
+      for ( usize i = 0; i < count && i < 1024; i++ ) procs.cpu_set(i);      // clamp to the 1024-bit cpu_set_t mask
     }      // default to all threads
   }
 
@@ -864,6 +864,10 @@ public:
     }
 
     __ensure_data();
+    if ( !data_ ) {
+      probed_.store(2, memory_order_release);
+      return;
+    }
     info(&data_->raw);
 
     arch_level_ = __impl::__max_leaf();
@@ -905,6 +909,18 @@ public:
     return probed_full_.get(memory_order_acquire) == 2;
   }
 
+  void
+  __ensure_probed() const
+  {
+    const_cast<proc_t *>(this)->probe();
+  }
+
+  void
+  __ensure_probed_full() const
+  {
+    const_cast<proc_t *>(this)->probe_full();
+  }
+
   unsigned
   core_count() const
   {
@@ -914,133 +930,139 @@ public:
   cpu_vendor
   vendor() const
   {
+    __ensure_probed();
     return vendor_;
   }
 
   int
   arch_level() const
   {
+    __ensure_probed();
     return arch_level_;
   }
 
   const cpu_features_t &
   features() const
   {
+    __ensure_probed();
     return features_;
   }
 
   const core_info_t &
   core(unsigned n) const
   {
+    __ensure_probed_full();
+    static const core_info_t __empty{};
+    if ( !data_ || n >= 256 ) return __empty;      // data_ null after an mmap failure, or n past the 256-entry array
     return data_->cores[n];
   }
 
   bool
   has_avx() const
   {
-    return features_.avx;
+    return features().avx;
   }
 
   bool
   has_avx2() const
   {
-    return features_.avx2;
+    return features().avx2;
   }
 
   bool
   has_avx512() const
   {
-    return features_.avx512f;
+    return features().avx512f;
   }
 
   bool
   has_sse42() const
   {
-    return features_.sse4_2;
+    return features().sse4_2;
   }
 
   bool
   has_neon() const
   {
-    return features_.asimd;
+    return features().asimd;
   }
 
   bool
   has_sve() const
   {
-    return features_.sve;
+    return features().sve;
   }
 
   bool
   has_sve2() const
   {
-    return features_.sve2;
+    return features().sve2;
   }
 
   bool
   has_sme() const
   {
-    return features_.sme;
+    return features().sme;
   }
 
   bool
   has_aes() const
   {
-    return features_.aes;
+    return features().aes;
   }
 
   bool
   has_sha() const
   {
-    return features_.sha2;
+    return features().sha2;
   }
 
   bool
   has_crc32() const
   {
-    return features_.crc32;
+    return features().crc32;
   }
 
   bool
   has_bf16() const
   {
-    return features_.bf16;
+    return features().bf16;
   }
 
   bool
   has_fma() const
   {
-    return features_.fma;
+    return features().fma;
   }
 
   bool
   has_bmi2() const
   {
-    return features_.bmi2;
+    return features().bmi2;
   }
 
   bool
   has_popcnt() const
   {
-    return features_.popcnt;
+    return features().popcnt;
   }
 
   bool
   has_atomics() const
   {
-    return features_.atomics;
+    return features().atomics;
   }
 
   bool
   has_dotprod() const
   {
-    return features_.dotprod;
+    return features().dotprod;
   }
 
   bool
   has(const char cpu_features_t::*field) const
   {
-    return features_.*field != 0;
+    return features().*field != 0;
   }
 
 #if defined(__micron_arch_x86_any)
@@ -1177,7 +1199,8 @@ public:
   processor_t *
   raw()
   {
-    __ensure_data();
+    probe();
+    if ( !data_ ) return nullptr;
     return &data_->raw;
   }
 };

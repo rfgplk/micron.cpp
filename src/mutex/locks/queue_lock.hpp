@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../mutex.hpp"
+
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
@@ -34,6 +36,7 @@ public:
   void
   acquire(queuing_mutex &m)
   {
+    if ( held ) return;
     mtx = &m;
     m(node);
     held = true;
@@ -42,6 +45,7 @@ public:
   bool
   try_acquire(queuing_mutex &m)
   {
+    if ( held ) return false;      // already holding
     mtx = &m;
     held = m.try_lock(node);
     return held;

@@ -17,6 +17,7 @@
 #include "../../src/thread/thread_types/auto_thread.hpp"
 
 #include "../snowball/snowball.hpp"
+#include "../support/mt.hpp"
 
 using sb::end_test_case;
 using sb::require;
@@ -27,30 +28,11 @@ using sb::test_case;
 namespace
 {
 
-struct ApplyArgs {
-  micron::mutex_inlet<int> *in;
-  int iters;
-};
-
-void
-apply_inc_worker(ApplyArgs *p)
+template<typename Opt>
+auto &
+handle_t_of(Opt &opt)
 {
-  for ( int i = 0; i < p->iters; ++i ) {
-    p->in->apply([](int &v) { ++v; });
-  }
-}
-
-struct SpinApplyArgs {
-  micron::spin_inlet<int> *in;
-  int iters;
-};
-
-void
-spin_inc_worker(SpinApplyArgs *p)
-{
-  for ( int i = 0; i < p->iters; ++i ) {
-    p->in->apply([](int &v) { ++v; });
-  }
+  return opt.template cast<typename Opt::first_type>();
 }
 
 }      // namespace
@@ -155,9 +137,48 @@ main(void)
       require_true(i.locked());
       auto h2 = micron::move(h1);
       require_true(i.locked());
-      // h1 dtor here: src == nullptr, no unlock
     }
-    // h2 dtor unlocks
+
+    require_false(i.locked());
+  }
+  end_test_case();
+
+  test_case("try_access() on uncontended inlet engages + grants access");
+  {
+    inlet<int> i(5);
+    require_false(i.locked());
+    {
+      auto opt = i.try_access();
+      require_true(opt.is_first());
+      require_false(opt.is_second());
+      require_true(i.locked());
+      handle_t_of(opt).set(77);
+      require(handle_t_of(opt).get() == 77);
+    }
+
+    require_false(i.locked());
+    require(i.load() == 77);
+  }
+  end_test_case();
+
+  test_case("try_access() returns empty when already locked (no strand)");
+  {
+    inlet<int> i(0);
+    {
+      auto held = i.access();
+      require_true(i.locked());
+      auto opt = i.try_access();
+      require_false(opt.is_first());
+      require_true(opt.is_second());
+      require_true(i.locked());
+    }
+
+    require_false(i.locked());
+
+    {
+      auto opt2 = i.try_access();
+      require_true(opt2.is_first());
+    }
     require_false(i.locked());
   }
   end_test_case();
@@ -166,13 +187,9 @@ main(void)
   {
     mutex_inlet<int> in(0);
     constexpr int kIters = 5000;
-    ApplyArgs a{ &in, kIters };
-    {
-      auto_thread<> t1(apply_inc_worker, &a);
-      auto_thread<> t2(apply_inc_worker, &a);
-      auto_thread<> t3(apply_inc_worker, &a);
-      auto_thread<> t4(apply_inc_worker, &a);
-    }
+    mtest::parallel(4, [&in](int) {
+      for ( int n = 0; n < kIters; ++n ) in.apply([](int &v) { ++v; });
+    });
     require(in.load() == 4 * kIters);
   }
   end_test_case();
@@ -181,13 +198,28 @@ main(void)
   {
     spin_inlet<int> in(0);
     constexpr int kIters = 5000;
-    SpinApplyArgs a{ &in, kIters };
-    {
-      auto_thread<> t1(spin_inc_worker, &a);
-      auto_thread<> t2(spin_inc_worker, &a);
-      auto_thread<> t3(spin_inc_worker, &a);
-      auto_thread<> t4(spin_inc_worker, &a);
-    }
+    mtest::parallel(4, [&in](int) {
+      for ( int n = 0; n < kIters; ++n ) in.apply([](int &v) { ++v; });
+    });
+    require(in.load() == 4 * kIters);
+  }
+  end_test_case();
+
+  test_case("try_access() 4-thread contended -- engaged handles total correctly");
+  {
+    mutex_inlet<int> in(0);
+    constexpr int kIters = 5000;
+    mtest::parallel(4, [&in](int) {
+      for ( int n = 0; n < kIters; ++n ) {
+        for ( ;; ) {
+          auto opt = in.try_access();
+          if ( opt.is_first() ) {
+            ++handle_t_of(opt).get();
+            break;
+          }
+        }
+      }
+    });
     require(in.load() == 4 * kIters);
   }
   end_test_case();

@@ -47,12 +47,32 @@ class soa
     return static_cast<const __col_t<I> *>(p);
   }
 
+  template<typename T>
+  static void *
+  __raw_new(usize cap)
+  {
+    if constexpr ( alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__ )
+      return ::operator new(sizeof(T) * cap, static_cast<std::align_val_t>(alignof(T)));
+    else
+      return ::operator new(sizeof(T) * cap);
+  }
+
+  template<typename T>
+  static void
+  __raw_delete(void *p) noexcept
+  {
+    if ( !p ) return;
+    if constexpr ( alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__ )
+      ::operator delete(p, static_cast<std::align_val_t>(alignof(T)));
+    else
+      ::operator delete(p);
+  }
+
   template<usize I>
   void
   __alloc_column(usize cap)
   {
-    using T = __col_t<I>;
-    __cols[I] = ::operator new(sizeof(T) * cap);
+    __cols[I] = __raw_new<__col_t<I>>(cap);
   }
 
   template<usize I>
@@ -65,7 +85,7 @@ class soa
         T *p = __as<I>(__cols[I]);
         for ( usize i = 0; i < __size; ++i ) p[i].~T();
       }
-      ::operator delete(__cols[I]);
+      __raw_delete<T>(__cols[I]);
       __cols[I] = nullptr;
     }
   }
@@ -80,6 +100,8 @@ class soa
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
       micron::bytecpy(reinterpret_cast<byte *>(d), reinterpret_cast<const byte *>(s), n * sizeof(T));
     } else {
+      static_assert(micron::is_nothrow_move_constructible_v<T>,
+                    "soa: growable non-trivially-copyable column types must be nothrow-move-constructible");
       for ( usize i = 0; i < n; ++i ) {
         new (d + i) T(micron::move(s[i]));
         s[i].~T();
@@ -108,32 +130,82 @@ class soa
     (__move_column<Is>(src_cols[Is], dst_cols[Is], n), ...);
   }
 
+  // roll back a partial allocation
+  template<usize... Is>
+  static void
+  __free_raw_indexed(void **cols, usize upto, micron::index_sequence<Is...>) noexcept
+  {
+    (((void)(Is < upto ? (__raw_delete<__col_t<Is>>(cols[Is]), cols[Is] = nullptr, void()) : void())), ...);
+  }
+
+  // free OLD column buffers after a successful relocate
+  template<usize... Is>
+  void
+  __free_old_raw(void **cols, micron::index_sequence<Is...>) noexcept
+  {
+    (((void)(cols[Is] ? (__raw_delete<__col_t<Is>>(cols[Is]), void()) : void())), ...);
+  }
+
+  template<usize... Is>
+  void
+  __grow_to_impl(usize new_cap, void **new_cols, micron::index_sequence<Is...> seq)
+  {
+    usize done = 0;
+#ifndef __micron_freestanding
+    try {
+      (((new_cols[Is] = __raw_new<__col_t<Is>>(new_cap)), ++done), ...);
+    } catch ( ... ) {
+      __free_raw_indexed(new_cols, done, seq);      // free the columns already allocated, then rethrow
+      throw;
+    }
+#else
+    (((new_cols[Is] = __raw_new<__col_t<Is>>(new_cap)), ++done), ...);
+#endif
+  }
+
   void
   __grow_to(usize new_cap)
   {
     if ( new_cap <= __capacity ) return;
+    auto seq = micron::make_index_sequence<__ncols>{};
     void *new_cols[__ncols] = { nullptr };
-    __grow_to_impl(new_cap, new_cols, micron::make_index_sequence<__ncols>{});
-    __move_all(__cols, new_cols, __size, micron::make_index_sequence<__ncols>{});
-    for ( usize i = 0; i < __ncols; ++i ) {
-      if ( __cols[i] ) ::operator delete(__cols[i]);
-      __cols[i] = new_cols[i];
-    }
+    __grow_to_impl(new_cap, new_cols, seq);
+    __move_all(__cols, new_cols, __size, seq);
+    __free_old_raw(__cols, seq);
+    for ( usize i = 0; i < __ncols; ++i ) __cols[i] = new_cols[i];
     __capacity = new_cap;
   }
 
-  template<usize... Is>
+  template<usize I>
   void
-  __grow_to_impl(usize new_cap, void **new_cols, micron::index_sequence<Is...>)
+  __destroy_one_at(usize idx) noexcept
   {
-    (((new_cols[Is] = ::operator new(sizeof(__col_t<Is>) * new_cap))), ...);
+    using T = __col_t<I>;
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) __as<I>(__cols[I])[idx].~T();
   }
 
   template<usize... Is>
   void
-  __emplace_at(usize idx, micron::index_sequence<Is...>, Ts &&...vs)
+  __destroy_row_indexed(usize idx, usize upto, micron::index_sequence<Is...>) noexcept
   {
-    (new (__as<Is>(__cols[Is]) + idx) __col_t<Is>(micron::forward<Ts>(vs)), ...);
+    (((void)(Is < upto ? (__destroy_one_at<Is>(idx), void()) : void())), ...);
+  }
+
+  template<usize... Is>
+  void
+  __emplace_at(usize idx, micron::index_sequence<Is...> seq, Ts &&...vs)
+  {
+    usize done = 0;
+#ifndef __micron_freestanding
+    try {
+      (((void)(new (__as<Is>(__cols[Is]) + idx) __col_t<Is>(micron::forward<Ts>(vs))), ++done), ...);
+    } catch ( ... ) {
+      __destroy_row_indexed(idx, done, seq);      // unwind the already-built columns of this row
+      throw;
+    }
+#else
+    (((void)(new (__as<Is>(__cols[Is]) + idx) __col_t<Is>(micron::forward<Ts>(vs))), ++done), ...);
+#endif
   }
 
   template<usize I>
@@ -282,6 +354,34 @@ public:
     if ( idx >= __size ) [[unlikely]]
       exc<except::library_error>("soa::at: out of range");
     return __as<I>(__cols[I])[idx];
+  }
+
+  template<usize I>
+  __col_t<I> &
+  front() noexcept
+  {
+    return __as<I>(__cols[I])[0];
+  }
+
+  template<usize I>
+  const __col_t<I> &
+  front() const noexcept
+  {
+    return __as<I>(__cols[I])[0];
+  }
+
+  template<usize I>
+  __col_t<I> &
+  back() noexcept
+  {
+    return __as<I>(__cols[I])[__size - 1];
+  }
+
+  template<usize I>
+  const __col_t<I> &
+  back() const noexcept
+  {
+    return __as<I>(__cols[I])[__size - 1];
   }
 
   void

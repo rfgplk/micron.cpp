@@ -120,6 +120,12 @@ fork_kernel(void)
 #endif
 }
 
+// WARNING: this separate-stack callable form is unsound in pure C and is no longer used
+// (micron::fork routes through the COW __fork_clone path below); after clone3 switches the
+// child SP to stack, the compiled C frame here still addresses the parent SP, so reading
+// args in the child is undefined
+//
+// TODO: a correct new-stack entry needs an arch asm trampoline
 template<usize Sz, auto Fn, typename... Args>
 pid_t
 clone(addr_t *stack, int flags, Args &&...args)
@@ -132,10 +138,7 @@ clone(addr_t *stack, int flags, Args &&...args)
   else
     clone_args.exit_signal = sig_chld;
 
-  uintptr_t sptr = reinterpret_cast<uintptr_t>(stack);
-  sptr += Sz;          // top of allocated stack
-  sptr &= ~0xFUL;      // 16-byte alignment
-  clone_args.stack = sptr;
+  clone_args.stack = reinterpret_cast<uintptr_t>(stack);      // mmap base is page-aligned
   clone_args.stack_size = Sz;
   clone_args.parent_tid = 0;
   clone_args.child_tid = 0;
@@ -147,11 +150,11 @@ clone(addr_t *stack, int flags, Args &&...args)
     using ret_t = decltype(Fn(args...));
     if constexpr ( micron::is_same_v<ret_t, int> ) {
       int ret = Fn(micron::forward<Args>(args)...);
-      micron::syscall(SYS_exit, ret);
+      micron::syscall(SYS_exit_group, ret);
       __builtin_unreachable();
     } else {
       Fn(micron::forward<Args>(args)...);
-      micron::syscall(SYS_exit, 0);
+      micron::syscall(SYS_exit_group, 0);
       __builtin_unreachable();
     }
   }

@@ -5,10 +5,10 @@
 // from an adversarial standpoint: each group pairs edge cases with a
 // >=10k-iteration randomized property loop that diffs svector against the
 // ref_vec oracle (tests/support/vector_rigor.hpp), plus overflow / out-of-range
-// cases that must throw. Note svector's exception + miss conventions differ
-// from the heap vector: at()/erase/insert/fill range errors throw
-// runtime_error, a too-large ctor throws library_error, operator[] is
-// unchecked, and find() returns end() (not nullptr) on a miss.
+// cases that must throw. svector's exception + miss conventions now match the
+// rest of the vector family: at()/erase/insert/fill range errors and a
+// too-large ctor throw library_error, operator[] is unchecked, and find()
+// returns nullptr (not end()) on a miss.
 //
 // Element-type coverage: run_props<E>() at a representative N is instantiated
 // for u8/u16/u32/u64, the 24-byte big, and a non-trivial Tracked. Capacity /
@@ -137,8 +137,8 @@ run_props(void)
       ck(mtest::elem<E>::key(s.back()) == r.buf[n - 1], "back", it);
       const E *d = s.data();
       ck(mtest::elem<E>::key(d[idx]) == r.buf[idx], "data", it);
-      // at() OOB throws runtime_error (operator[] is unchecked)
-      expect_throw_type<micron::except::runtime_error>([&] { (void)s.at(n); });
+      // at() OOB throws library_error (operator[] is unchecked)
+      expect_throw_type<micron::except::library_error>([&] { (void)s.at(n); });
     }
   }
   end_test_case();
@@ -376,18 +376,18 @@ run_props(void)
         }
       ck(ok && idx == n, "begin/end", it);
       ck(s.cbegin() == s.begin() && s.cend() == s.end(), "cbegin/cend", it);
-      // find returns end() on miss; find_index returns npos==N
+      // find returns nullptr on miss; find_index returns npos==N
       u64 fk = mtest::gen_raw(rng, band::small);
       usize oi = r.find(mtest::elem<E>::key(mtest::elem<E>::make(fk)));
       auto p = s.find(mtest::elem<E>::make(fk));
       usize fidx = s.find_index(mtest::elem<E>::make(fk));
       bool contains = s.contains(mtest::elem<E>::make(fk));
       if ( oi == mtest::VREF_NPOS ) {
-        ck(p == s.end(), "find-miss", it);
+        ck(p == nullptr, "find-miss", it);
         ck(fidx == S::npos, "find_index-miss", it);
         ck(!contains, "contains-miss", it);
       } else {
-        ck(p != s.end() && static_cast<usize>(p - s.begin()) == oi, "find-hit", it);
+        ck(p != nullptr && static_cast<usize>(p - s.begin()) == oi, "find-hit", it);
         ck(fidx == oi, "find_index-hit", it);
         ck(contains, "contains-hit", it);
       }
@@ -488,7 +488,7 @@ run_caps(void)
 {
   using S = micron::svector<E, N>;
 
-  test_case("sv full/overflow throws runtime_error");
+  test_case("sv full/overflow throws library_error");
   {
     S s;
     for ( usize i = 0; i < N; ++i ) s.push_back(mtest::elem<E>::make(i % 8u));
@@ -496,12 +496,12 @@ run_caps(void)
     require(s.full(), true);
     require(s.full_or_overflowed(), true);
     require(s.overflowed(), false);
-    // every grow op on a full svector throws runtime_error
-    expect_throw_type<micron::except::runtime_error>([&] { s.push_back(mtest::elem<E>::make(1)); });
-    expect_throw_type<micron::except::runtime_error>([&] { mtest::elem<E>::emplace(s, 1); });
-    expect_throw_type<micron::except::runtime_error>([&] { (void)s.insert(static_cast<usize>(1), mtest::elem<E>::make(1)); });
-    // at() OOB throws runtime_error
-    expect_throw_type<micron::except::runtime_error>([&] { (void)s.at(N); });
+    // every grow op on a full svector throws library_error
+    expect_throw_type<micron::except::library_error>([&] { s.push_back(mtest::elem<E>::make(1)); });
+    expect_throw_type<micron::except::library_error>([&] { mtest::elem<E>::emplace(s, 1); });
+    expect_throw_type<micron::except::library_error>([&] { (void)s.insert(static_cast<usize>(1), mtest::elem<E>::make(1)); });
+    // at() OOB throws library_error
+    expect_throw_type<micron::except::library_error>([&] { (void)s.at(N); });
   }
   end_test_case();
 
@@ -515,9 +515,9 @@ run_caps(void)
   {
     S s;
     for ( usize i = 0; i < N / 2; ++i ) s.push_back(mtest::elem<E>::make(i % 8u));
-    expect_throw_type<micron::except::runtime_error>([&] { (void)s.erase(s.size()); });
-    expect_throw_type<micron::except::runtime_error>([&] { (void)s.erase(2u, 1u); });      // from>=to
-    expect_throw_type<micron::except::runtime_error>([&] { (void)s.erase(0u, N); });       // to>length
+    expect_throw_type<micron::except::library_error>([&] { (void)s.erase(s.size()); });
+    expect_throw_type<micron::except::library_error>([&] { (void)s.erase(2u, 1u); });      // from>=to
+    expect_throw_type<micron::except::library_error>([&] { (void)s.erase(0u, N); });       // to>length
     expect_throw_type<micron::except::library_error>([&] { (void)s.operator[](0u, N + 1); });
   }
   end_test_case();

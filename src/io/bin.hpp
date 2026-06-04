@@ -200,7 +200,7 @@ template<is_string T = micron::string> class binary: public io::file
   __require_window(usize off, usize len) const
   {
     __require_buf();
-    if ( __buf_valid == 0 || off + len > __buf_valid )
+    if ( __buf_valid == 0 || off > __buf_valid || len > __buf_valid - off )      // overflow-safe
       exc<except::io_error>("micron::binary, access outside current window, call fill() first.");
   }
 
@@ -210,7 +210,8 @@ template<is_string T = micron::string> class binary: public io::file
     if ( pat_len == 0 ) return { true, 0, 0 };
     if ( pat_len > hay_len ) return no_match;
 
-    usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
+    micron::buffer __kmp_tbl(pat_len * sizeof(usize));      // heap, not alloca
+    usize *table = reinterpret_cast<usize *>(__kmp_tbl.begin());
     __bin_impl::kmp_table(pat, pat_len, table);
 
     usize pos = __bin_impl::kmp_search(hay, hay_len, pat, pat_len, table);
@@ -648,7 +649,8 @@ public:
     if ( __buf_valid == 0 || pat_len == 0 ) return no_match;
     if ( pat_len > __buf_valid ) return no_match;
 
-    usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
+    micron::buffer __kmp_tbl(pat_len * sizeof(usize));      // heap, not alloca
+    usize *table = reinterpret_cast<usize *>(__kmp_tbl.begin());
     __bin_impl::kmp_table(pat, pat_len, table);
 
     const byte *hay = __buf->begin();
@@ -723,7 +725,8 @@ public:
     __require_buf();
     if ( pat_len == 0 ) return { true, 0, 0 };
 
-    usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
+    micron::buffer __kmp_tbl(pat_len * sizeof(usize));      // heap, not alloca
+    usize *table = reinterpret_cast<usize *>(__kmp_tbl.begin());
     __bin_impl::kmp_table(pat, pat_len, table);
 
     usize overlap = pat_len > 1 ? pat_len - 1 : 0;
@@ -743,11 +746,12 @@ public:
 
       work_fill = overlap + static_cast<usize>(n);
 
-      usize pos = __bin_impl::kmp_search(work.begin(), work_fill, pat, pat_len, table);
-      if ( pos < work_fill ) {
-
-        usize file_pos = static_cast<usize>(file_off) + pos;
-        if ( pos >= overlap ) file_pos = static_cast<usize>(file_off) + (pos - overlap);
+      const usize from = (file_off == 0) ? overlap : 0;      // first window: skip the unwritten [0, overlap) carry
+      usize pos = __bin_impl::kmp_search(work.begin() + from, work_fill - from, pat, pat_len, table);
+      if ( pos < work_fill - from ) {
+        const usize w = from + pos;
+        usize file_pos = static_cast<usize>(file_off) + w;
+        if ( w >= overlap ) file_pos = static_cast<usize>(file_off) + (w - overlap);
         return { true, file_pos, pat_len };
       }
 
@@ -786,7 +790,8 @@ public:
     micron::vector<bin_match_t> out;
     if ( pat_len == 0 ) return out;
 
-    usize *table = reinterpret_cast<usize *>(__builtin_alloca(pat_len * sizeof(usize)));
+    micron::buffer __kmp_tbl(pat_len * sizeof(usize));      // heap, not alloca
+    usize *table = reinterpret_cast<usize *>(__kmp_tbl.begin());
     __bin_impl::kmp_table(pat, pat_len, table);
 
     usize overlap = pat_len > 1 ? pat_len - 1 : 0;
@@ -805,7 +810,7 @@ public:
 
       work_fill = overlap + static_cast<usize>(n);
 
-      usize scan = 0;
+      usize scan = (file_off == 0) ? overlap : 0;      // first window: skip the unwritten [0, overlap) carry
       while ( scan < work_fill ) {
         usize pos = __bin_impl::kmp_search(work.begin() + scan, work_fill - scan, pat, pat_len, table);
         if ( pos == work_fill - scan ) break;

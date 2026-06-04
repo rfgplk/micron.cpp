@@ -156,6 +156,15 @@ cap_get_no_new_privs()
   return micron::prctl(PR_GET_NO_NEW_PRIVS);
 }
 
+constexpr static const u32 secbit_noroot = 1;
+constexpr static const u32 secbit_noroot_locked = 2;
+constexpr static const u32 secbit_no_setuid_fixup = 4;
+constexpr static const u32 secbit_no_setuid_fixup_locked = 8;
+constexpr static const u32 secbit_keep_caps = 16;
+constexpr static const u32 secbit_keep_caps_locked = 32;
+constexpr static const u32 secbit_no_cap_ambient_raise = 64;
+constexpr static const u32 secbit_no_cap_ambient_raise_locked = 128;
+
 // securebits
 inline i32
 cap_get_securebits()

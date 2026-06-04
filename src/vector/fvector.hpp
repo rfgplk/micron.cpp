@@ -70,7 +70,22 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
-      for ( const T &value : lst ) new (addr(__mem::memory[i++])) T(value);
+#ifndef __micron_freestanding
+      try {
+        for ( const T &value : lst ) {
+          new (addr(__mem::memory[i])) T(value);
+          ++i;
+        }
+      } catch ( ... ) {
+        for ( size_type j = 0; j < i; ++j ) __mem::memory[j].~T();
+        throw;
+      }
+#else
+      for ( const T &value : lst ) {
+        new (addr(__mem::memory[i])) T(value);
+        ++i;
+      }
+#endif
       __mem::length = lst.size();
     } else {
       size_type i = 0;
@@ -88,7 +103,8 @@ public:
   }
 
   template<typename Fn>
-    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+    requires((micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+             and not(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>))
   fvector(const size_type n, Fn &&fn) : __mem(n)
   {
     __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
@@ -109,7 +125,17 @@ public:
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   fvector(size_type n, Args... args) : __mem(n)
   {
-    for ( size_type i = 0; i < n; i++ ) new (addr(__mem::memory[i])) T(args...);
+    size_type i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < n; i++ ) new (addr(__mem::memory[i])) T(args...);
+    } catch ( ... ) {
+      for ( size_type j = 0; j < i; ++j ) __mem::memory[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < n; i++ ) new (addr(__mem::memory[i])) T(args...);
+#endif
     __mem::length = n;
   }
 
@@ -121,9 +147,13 @@ public:
 
   fvector(const fvector &) = delete;
 
-  fvector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
+  fvector(chunk<byte> &&m) : __mem(micron::move(m)) { }
 
-  template<typename C = T, bool Sf2 = Sf> fvector(fvector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf>
+    requires(micron::is_same_v<C, T>)
+  fvector(fvector<C, Alloc, Sf2> &&o) : __mem(micron::move(o))
+  {
+  }
 
   fvector(fvector &&o) : __mem(micron::move(o)) { }
 
@@ -184,7 +214,7 @@ public:
   const byte *
   operator&(void) const
   {
-    return reinterpret_cast<byte *>(__mem::memory);
+    return reinterpret_cast<const byte *>(__mem::memory);
   }
 
   inline slice<T>
@@ -238,7 +268,7 @@ public:
   T *
   itr(size_type n)
   {
-    return &(__mem::memory)[n];
+    return micron::addr(__mem::memory[n]);
   }
 
   template<typename F, bool Sf2 = Sf>
@@ -247,7 +277,7 @@ public:
   append(const fvector<F, Alloc, Sf2> &o)
   {
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
+    if ( !__mem::has_space(o.length) ) reserve(__mem::length + o.length);
     __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
@@ -259,8 +289,8 @@ public:
   weld(fvector<F, Alloc, Sf2> &&o)
   {
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
-    __impl_container::move(&(__mem::memory)[__mem::length], &o.memory[0], o.length);
+    if ( !__mem::has_space(o.length) ) reserve(__mem::length + o.length);
+    __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     o.length = 0;
     return *this;
@@ -328,9 +358,12 @@ public:
   }
 
   inline fvector<T, Alloc, Sf>
-  clone(void)
+  clone(void) const
   {
-    return fvector<T, Alloc, Sf>(micron::move(*this));
+    fvector<T, Alloc, Sf> out;
+    out.reserve(__mem::length);
+    for ( size_type i = 0; i < __mem::length; ++i ) out.push_back(__mem::memory[i]);
+    return out;
   }
 
   void
@@ -398,19 +431,19 @@ public:
   inline iterator
   get(const size_type n)
   {
-    return &(__mem::memory[n]);
+    return micron::addr(__mem::memory[n]);
   }
 
   inline const_iterator
   get(const size_type n) const
   {
-    return &(__mem::memory[n]);
+    return micron::addr(__mem::memory[n]);
   }
 
   inline const_iterator
   cget(const size_type n) const
   {
-    return &(__mem::memory[n]);
+    return micron::addr(__mem::memory[n]);
   }
 
   inline iterator
@@ -586,20 +619,19 @@ public:
     for ( ; pos < __mem::length; ++pos )
       if ( __mem::memory[pos] >= val ) break;
 
-    T *it = __mem::memory + pos;
-    T *ite = end();
-    micron::memmove(it + 1, it, (ite - it));
-    new (it) T(micron::move(val));
+    // lifetime-correct shift via open_gap (move-constructs the tail); placement-new the new element.
+    __impl_container::open_gap(__mem::memory, __mem::length, pos, 1);
+    new (micron::addr(__mem::memory[pos])) T(micron::move(val));
     __mem::length++;
-    return it;
+    return micron::addr(__mem::memory[pos]);
   }
 
   inline fvector &
   assign(const size_type cnt, const T &val)
   {
-    if ( cnt >= __mem::capacity ) reserve(__impl::fgrow(__mem::capacity > cnt ? __mem::capacity : cnt));
+    if ( cnt > __mem::capacity ) reserve(cnt);
     clear();
-    for ( size_type i = 0; i < cnt; i++ ) new (addr(__mem::memory[i])) T(val);
+    __impl_container::construct(micron::addr(__mem::memory[0]), val, cnt);      // rollback-safe fill
     __mem::length = cnt;
     return *this;
   }

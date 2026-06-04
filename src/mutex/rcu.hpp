@@ -8,6 +8,9 @@
 
 // a c++26 style rcu prototype
 // not sure how long i'll keep this around
+// WARNING: DO NOT USE, NON FUNCTIONAL + BROKEN
+
+#if 0      // NOTE: compile out, don't use
 
 namespace micron
 {
@@ -539,3 +542,5 @@ public:
 };
 
 };      // namespace micron
+
+#endif

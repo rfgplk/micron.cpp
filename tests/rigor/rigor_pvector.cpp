@@ -8,7 +8,7 @@
 // functional layer (arith/reductions/predicates, gated to capable types), and
 // — since pvector allocates through abc directly (no Alloc param) — relies on
 // ASan + a refcount churn for memory correctness. Out-of-range ops throw
-// except::runtime_error (operator[] is unchecked).
+// except::library_error (operator[] is unchecked).
 //
 // Build: `duck build tests/rigor/rigor_pvector.cpp`; run `bin/rigor_pvector`.
 
@@ -302,8 +302,8 @@ run_props(void)
       ck(mtest::elem<E>::key(p.front()) == r.buf[0], "front", it);
       ck(mtest::elem<E>::key(p.back()) == r.buf[n - 1], "back", it);
       ck(p.size() == n, "size", it);
-      // at() OOB throws runtime_error
-      expect_throw_type<micron::except::runtime_error>([&] { (void)p.at(n); });
+      // at() OOB throws library_error
+      expect_throw_type<micron::except::library_error>([&] { (void)p.at(n); });
       // iterate
       usize j = 0;
       bool ok = true;
@@ -612,13 +612,13 @@ run_adversarial(void)
 {
   using PV = micron::pvector<u32>;
 
-  test_case("pv OOB ops throw runtime_error");
+  test_case("pv OOB ops throw library_error");
   {
     PV v(5u, 9u);
-    expect_throw_type<micron::except::runtime_error>([&] { (void)v.at(5); });
-    expect_throw_type<micron::except::runtime_error>([&] { (void)v.set(5u, 1u); });
-    expect_throw_type<micron::except::runtime_error>([&] { (void)v.erase(5u); });
-    expect_throw_type<micron::except::runtime_error>([&] { (void)v.insert(6u, 1u); });      // pos>size
+    expect_throw_type<micron::except::library_error>([&] { (void)v.at(5); });
+    expect_throw_type<micron::except::library_error>([&] { (void)v.set(5u, 1u); });
+    expect_throw_type<micron::except::library_error>([&] { (void)v.erase(5u); });
+    expect_throw_type<micron::except::library_error>([&] { (void)v.insert(6u, 1u); });      // pos>size
   }
   end_test_case();
 

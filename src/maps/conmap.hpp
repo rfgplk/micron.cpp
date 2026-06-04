@@ -27,8 +27,12 @@ namespace micron
 //
 // striped robin_map; capacity is fixed, no resizing
 // each stripe owns its own robin_map and a spin_lock
-// routing is the high 8 bits of the 64-bit hash, the low bits go
-// into the per-stripe robin probe so there is no correlation
+// routing runs a splitmix64 finalizer over the whole hash and masks
+// to the stripe count, decorrelating the stripe index from the per-stripe robin
+// probe (which uses the low bits of the same hash)
+//
+// THREAD SAFETY: per-operation thread-safe (each public op locks at most ONE
+// stripe via RAII, so a throw cannot leak the lock)
 
 // non-resizable: rehash semantics across stripes would defeat the lock-free dynamics
 template<typename K, typename V, usize Stripes = 64, class Alloc = micron::allocator_serial<>>
@@ -41,7 +45,7 @@ class conmap
   using __map_t = robin_map<K, V, Alloc>;
 
   struct __stripe {
-    spin_lock lock;
+    mutable spin_lock lock;
     __map_t map;
     // pad to a multiple of cache line to keep stripes on separate lines
     char __pad[((sizeof(spin_lock) + sizeof(__map_t)) % __cache_line == 0)
@@ -93,6 +97,8 @@ public:
     }
   }
 
+  // NOT safe to move/move-assign/swap concurrently with any other access to
+  // either map
   conmap(conmap &&o) noexcept : __stripes_buf(o.__stripes_buf), __per_stripe_cap(o.__per_stripe_cap)
   {
     o.__stripes_buf = nullptr;
@@ -120,11 +126,15 @@ public:
     return Stripes;
   }
 
+  // approximate under concurrent mutation
   usize
   size() const noexcept
   {
     usize total = 0;
-    for ( usize i = 0; i < Stripes; ++i ) total += __stripes_buf[i].map.size();
+    for ( usize i = 0; i < Stripes; ++i ) {
+      lock_guard<spin_lock> __g(__stripes_buf[i].lock);
+      total += __stripes_buf[i].map.size();
+    }
     return total;
   }
 
@@ -146,9 +156,8 @@ public:
   clear() noexcept
   {
     for ( usize i = 0; i < Stripes; ++i ) {
-      auto reset = __stripes_buf[i].lock.lock();
+      lock_guard<spin_lock> __g(__stripes_buf[i].lock);
       __stripes_buf[i].map.clear();
-      (__stripes_buf[i].lock.*reset)();
     }
   }
 
@@ -157,13 +166,12 @@ public:
   {
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
+    lock_guard<spin_lock> __g(s.lock);      // RAII: a throw from robin (stripe full) still unlocks
     bool existed = (s.map.find_hash(kh, k) != nullptr);
     if ( !existed ) {
       V cv = v;
       s.map.insert(k, micron::move(cv));
     }
-    (s.lock.*reset)();
     return !existed;
   }
 
@@ -172,13 +180,23 @@ public:
   {
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
+    lock_guard<spin_lock> __g(s.lock);
     bool existed = (s.map.find_hash(kh, k) != nullptr);
     if ( !existed ) {
       K kc = micron::move(k);
       s.map.insert(micron::move(kc), micron::move(v));
     }
-    (s.lock.*reset)();
+    return !existed;
+  }
+
+  bool
+  insert(const K &k, V &&v)
+  {
+    hash64_t kh = hash<hash64_t>(k);
+    __stripe &s = __stripes_buf[__sid(kh)];
+    lock_guard<spin_lock> __g(s.lock);
+    bool existed = (s.map.find_hash(kh, k) != nullptr);
+    if ( !existed ) s.map.insert(k, micron::move(v));
     return !existed;
   }
 
@@ -227,7 +245,7 @@ public:
   {
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
+    lock_guard<spin_lock> __g(s.lock);
     V *ex = s.map.find_hash(kh, k);
     bool newly = (ex == nullptr);
     if ( newly ) {
@@ -236,7 +254,6 @@ public:
     } else {
       *ex = v;
     }
-    (s.lock.*reset)();
     return newly;
   }
 
@@ -244,12 +261,11 @@ public:
   find(const K &k, V &out) const
   {
     hash64_t kh = hash<hash64_t>(k);
-    __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
-    const V *p = s.map.find_hash(kh, k);
+    const __stripe &s = __stripes_buf[__sid(kh)];
+    lock_guard<spin_lock> __g(s.lock);        // s.lock is mutable
+    const V *p = s.map.find_hash(kh, k);      // const overload: a const conmap does not mutate
     bool ok = (p != nullptr);
     if ( ok ) out = *p;
-    (s.lock.*reset)();
     return ok;
   }
 
@@ -257,11 +273,9 @@ public:
   contains(const K &k) const
   {
     hash64_t kh = hash<hash64_t>(k);
-    __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
-    bool found = (s.map.find_hash(kh, k) != nullptr);
-    (s.lock.*reset)();
-    return found;
+    const __stripe &s = __stripes_buf[__sid(kh)];
+    lock_guard<spin_lock> __g(s.lock);
+    return s.map.find_hash(kh, k) != nullptr;
   }
 
   usize
@@ -275,10 +289,8 @@ public:
   {
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
-    bool removed = s.map.erase_hash(kh, k);
-    (s.lock.*reset)();
-    return removed;
+    lock_guard<spin_lock> __g(s.lock);
+    return s.map.erase_hash(kh, k);
   }
 
   template<typename Fn>
@@ -287,11 +299,10 @@ public:
   {
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
+    lock_guard<spin_lock> __g(s.lock);
     V *p = s.map.find_hash(kh, k);
     bool ok = (p != nullptr);
     if ( ok ) fn(*p);
-    (s.lock.*reset)();
     return ok;
   }
 
@@ -301,7 +312,7 @@ public:
   {
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    auto reset = s.lock.lock();
+    lock_guard<spin_lock> __g(s.lock);
     V *p = s.map.find_hash(kh, k);
     bool inserted = false;
     if ( p ) {
@@ -310,7 +321,6 @@ public:
       s.map.insert(k, micron::move(fallback));
       inserted = true;
     }
-    (s.lock.*reset)();
     return inserted;
   }
 
@@ -319,9 +329,8 @@ public:
   for_each(Fn &&fn)
   {
     for ( usize i = 0; i < Stripes; ++i ) {
-      auto reset = __stripes_buf[i].lock.lock();
+      lock_guard<spin_lock> __g(__stripes_buf[i].lock);
       __stripes_buf[i].map.for_each([&](auto &node) { fn(node.key, node.value); });
-      (__stripes_buf[i].lock.*reset)();
     }
   }
 
@@ -330,9 +339,9 @@ public:
   for_each(Fn &&fn) const
   {
     for ( usize i = 0; i < Stripes; ++i ) {
-      auto reset = __stripes_buf[i].lock.lock();
-      __stripes_buf[i].map.for_each([&](const auto &node) { fn(node.key, node.value); });
-      (__stripes_buf[i].lock.*reset)();
+      const __stripe &st = __stripes_buf[i];
+      lock_guard<spin_lock> __g(st.lock);
+      st.map.for_each([&](const auto &node) { fn(node.key, node.value); });
     }
   }
 };

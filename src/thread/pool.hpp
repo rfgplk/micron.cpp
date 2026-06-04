@@ -30,11 +30,9 @@ __make_threadarena(void)
   __global_threadpool = &local_pool;
 };
 
-__attribute__((destructor)) void
-__destroy_threadarena(void)
-{
-  // don't explicitly invoke the dtor
-  __global_threadpool = nullptr;
+__attribute__((destructor)) void __destroy_threadarena(void) {
+  // WARNING: do NOT null the pointer here; a still-running worker may dereference __global_threadpool during process
+  // teardown; nulling it concurrently is a use-after-free / null-deref race
 };
 
 #if defined(__micron_enable_concurrency_at_startup_var)
@@ -45,9 +43,13 @@ inline __attribute__((always_inline)) void
 __make_parallelarena(void)
 {
   static concurrent_arena local_pool;
+  static bool __inited = false;
   __global_parallelpool = &local_pool;
+  if ( __inited ) return;      // create() the workers exactly once, even if start_concurrent_pools() is called again
+  __inited = true;
   // init here
   umax_t c = cpu_count();
+  if ( c > concurrent_threads ) c = concurrent_threads;      // never create more workers than the fixed arena has slots
   for ( umax_t i = 0; i < c; ++i ) local_pool.create();
 };
 
@@ -56,9 +58,8 @@ __attribute__((destructor)) void
 #else
 inline __attribute__((always_inline)) void
 #endif
-__destroy_parallelarena(void)
-{
-  __global_parallelpool = nullptr;
+__destroy_parallelarena(void) {
+  // see __destroy_threadarena: do not null while workers may still read it (race)
 };
 
 void

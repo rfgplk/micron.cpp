@@ -9,11 +9,14 @@
 #include "../../memory/cmemory.hpp"
 #include "../../memory/mman.hpp"
 #include "../../memory/mmap_bits.hpp"
+#include "../../mutex/locks.hpp"
+#include "../../mutex/mutex.hpp"
 #include "../../string/sstring.hpp"
 #include "../../syscall.hpp"
 #include "../io/sys.hpp"
 #include "../sys/fcntl.hpp"
 #include "../sys/stat.hpp"
+#include "../sys/sysinfo.hpp"
 
 #include "bits.hpp"
 #include "consts.hpp"
@@ -29,7 +32,14 @@ namespace micron
 namespace elf
 {
 
-inline constexpr usize page_size = __micron_page_size_default;
+inline constexpr usize page_size = __micron_page_size_default;      // compile-time fallback
+
+inline usize
+__runtime_page_size() noexcept
+{
+  return micron::getpagesizelive();
+}
+
 inline constexpr u8 expected_machine
 #if defined(__micron_arch_amd64)
     = static_cast<u8>(em_x86_64);
@@ -39,16 +49,18 @@ inline constexpr u8 expected_machine
     = 0;
 #endif
 
-constexpr inline usize
+inline usize
 __page_floor(usize v) noexcept
 {
-  return v & ~(page_size - 1);
+  const usize ps = __runtime_page_size();
+  return v & ~(ps - 1);
 }
 
-constexpr inline usize
+inline usize
 __page_ceil(usize v) noexcept
 {
-  return (v + page_size - 1) & ~(page_size - 1);
+  const usize ps = __runtime_page_size();
+  return (v + ps - 1) & ~(ps - 1);
 }
 
 constexpr inline i32
@@ -119,6 +131,7 @@ struct module_t {
 };
 
 inline module_t *__loaded_modules = nullptr;
+inline micron::mutex __loaded_modules_mtx;
 
 inline void *
 __resolve_across_loaded(void *user, const char *name) noexcept
@@ -376,6 +389,10 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     if ( phdrs[i].type == pt_load ) {
       if ( phdrs[i].vaddr < vaddr_min ) vaddr_min = phdrs[i].vaddr;
       const usize end = phdrs[i].vaddr + phdrs[i].memsz;
+      if ( end < phdrs[i].vaddr ) {      // vaddr + memsz overflow on a crafted/corrupt phdr
+        posix::close(fd);
+        throw except::library_error("elf: PT_LOAD vaddr+memsz overflow");
+      }
       if ( end > vaddr_max ) vaddr_max = end;
     } else if ( phdrs[i].type == pt_dynamic ) {
       dyn_ph = &phdrs[i];
@@ -410,7 +427,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     // ELF requires vaddr ≡ offset (mod p_align), and p_align >= page_size for loadable segments,
     // so the sub-page bias of vaddr and offset must match. Reject a mis-aligned ELF up front
     // rather than silently mapping file data at the wrong address.
-    if ( ((phdrs[i].vaddr - phdrs[i].offset) & (page_size - 1)) != 0 ) {
+    if ( ((phdrs[i].vaddr - phdrs[i].offset) & (__runtime_page_size() - 1)) != 0 ) {
       micron::munmap(reinterpret_cast<addr_t *>(base), span);
       posix::close(fd);
       throw except::library_error("elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)");
@@ -467,6 +484,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     m.tls_modid = tls_register(m.load_base + tls_ph->vaddr, tls_ph->filesz, tls_ph->memsz, tls_ph->align);
   }
 
+  micron::lock_guard __ll(__loaded_modules_mtx);      // held through reloc + unlink (line below) until return
   m.next = __loaded_modules;
   __loaded_modules = &m;
 

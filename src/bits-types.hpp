@@ -31,7 +31,14 @@ constexpr static const int __sizeof_pthread_attr_t = 32;
 constexpr static const int __sizeof_pthread_rwlock_t = 44;
 constexpr static const int __sizeof_pthread_barrier_t = 20;
 #endif
+#elif defined(__micron_arch_arm64)
+// glibc aarch64 sizes
+constexpr static const int __sizeof_pthread_mutex_t = 48;
+constexpr static const int __sizeof_pthread_attr_t = 64;
+constexpr static const int __sizeof_pthread_rwlock_t = 56;
+constexpr static const int __sizeof_pthread_barrier_t = 32;
 #else
+// i386 / arm32 (ILP32)
 constexpr static const int __sizeof_pthread_mutex_t = 24;
 constexpr static const int __sizeof_pthread_attr_t = 36;
 constexpr static const int __sizeof_pthread_rwlock_t = 32;
@@ -78,7 +85,7 @@ using __syscall_ulong_type = __ulongword_type;
 using __dev_t_type = __uquad_type;
 using __uid_t_type = __u32_type;
 using __gid_t_type = __u32_type;
-using __ino_t_type = __syscall_ulong_type;
+using __ino_t_type = __uquad_type;
 using __ino64_t_type = __uquad_type;
 using __mode_t_type = __u32_type;
 
@@ -86,34 +93,34 @@ using __mode_t_type = __u32_type;
 using __nlink_t_type = __syscall_ulong_type;
 using __fsword_t_type = __syscall_slong_type;
 #else
-using __nlink_t_type = __uword_type;
+using __nlink_t_type = __u32_type;
 using __fsword_t_type = __sword_type;
 #endif
 
-using __off_t_type = __syscall_slong_type;
+using __off_t_type = __squad_type;
 using __off64_t_type = __squad_type;
 using __pid_t_type = __s32_type;
-using __rlim_t_type = __syscall_ulong_type;
+using __rlim_t_type = __uquad_type;
 using __rlim64_t_type = __uquad_type;
-using __blkcnt_t_type = __syscall_slong_type;
+using __blkcnt_t_type = __squad_type;
 using __blkcnt64_t_type = __squad_type;
-using __fsblkcnt_t_type = __syscall_ulong_type;
+using __fsblkcnt_t_type = __uquad_type;
 using __fsblkcnt64_t_type = __uquad_type;
-using __fsfilcnt_t_type = __syscall_ulong_type;
+using __fsfilcnt_t_type = __uquad_type;
 using __fsfilcnt64_t_type = __uquad_type;
 using __id_t_type = __u32_type;
-using __clock_t_type = __syscall_slong_type;
+using __clock_t_type = __syscall_slong_type;      // stays word-size even under time64 (glibc __SLONGWORD_TYPE)
 using __clockid_t_type = __s32_type;
-using __time_t_type = __syscall_slong_type;
+using __time_t_type = __squad_type;      // time64
 using __timer_t_type = void *;
 using __useconds_t_type = __u32_type;
-using __suseconds_t_type = __syscall_slong_type;
+using __suseconds_t_type = __squad_type;
 using __suseconds64_t_type = __squad_type;
 using __daddr_t_type = __s32_type;
 using __key_t_type = __s32_type;
-using __blksize_t_type = __syscall_slong_type;
+using __blksize_t_type = __syscall_slong_type;      // page-size scale; word-size is fine
 using __ssize_t_type = __sword_type;
-using __cpu_mask_type = __syscall_ulong_type;
+using __cpu_mask_type = __syscall_ulong_type;      // cpu_set word == unsigned long (word-size)
 
 using __dev_t = __dev_t_type;     /* Type of device numbers.  */
 using __uid_t = __uid_t_type;     /* Type of user identifications.  */

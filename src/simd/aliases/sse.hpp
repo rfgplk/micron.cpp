@@ -1590,7 +1590,8 @@ template<int IMM>
 __inline_sse int
 extract_f32(__m128 a) noexcept
 {
-  return _mm_extract_ps(a, IMM);
+  // _mm_extract_ps yields a float lane; return its raw bits (not an arithmetic truncation)
+  return _mm_extract_epi32(_mm_castps_si128(a), IMM);
 }
 
 template<int IMM>

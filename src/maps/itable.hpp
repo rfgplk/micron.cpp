@@ -125,6 +125,8 @@ class immutable_table
   __make_leaf(K k, V v)
   {
     auto *l = reinterpret_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
+    if ( !l ) [[unlikely]]      // abc::alloc returns nullptr on OOM (it does NOT throw)
+      exc<except::critical_error>("immutable_table: leaf allocation failed (out of memory)");
     l->refs = 1;
     l->key = k;
     l->value = v;
@@ -136,6 +138,11 @@ class immutable_table
   __make_branch(u32 bp, uintptr_t c0, uintptr_t c1)
   {
     auto *b = reinterpret_cast<__branch *>(abc::alloc(sizeof(__branch)));
+    if ( !b ) [[unlikely]] {      // OOM: release the child refs we were handed, then throw
+      __release_tagged(c0);
+      __release_tagged(c1);
+      exc<except::critical_error>("immutable_table: branch allocation failed (out of memory)");
+    }
     b->refs = 1;
     b->bit_pos = bp;
     b->child[0] = c0;
@@ -155,12 +162,20 @@ class immutable_table
     abc::dealloc(reinterpret_cast<byte *>(b));
   }
 
-  // NOTE: saturating
+  // NOTE: saturating + ATOMIC
   static inline __attribute__((always_inline)) void
   __retain_tagged(uintptr_t p)
   {
-    if ( p && __refs(p) < __UINT32_MAX__ ) [[likely]]
-      ++__refs(p);
+    if ( !p ) [[unlikely]]
+      return;
+    u32 *r = &__refs(p);
+    u32 cur = __atomic_load_n(r, __ATOMIC_RELAXED);
+    while ( cur < __UINT32_MAX__ ) {
+      if ( __atomic_compare_exchange_n(r, &cur, cur + 1u, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED) ) [[likely]]
+        return;
+      // cur was reloaded with the live value on failure; retry
+    }
+    // saturated -> immortal, leave as-is
   }
 
   // full slow path
@@ -172,10 +187,10 @@ class immutable_table
     usize depth = 0;
 
     while ( p ) [[likely]] {
-      u32 &r = __refs(p);
-      if ( r == __UINT32_MAX__ ) [[unlikely]]
-        break;
-      if ( --r != 0 ) [[likely]]
+      u32 *rp = &__refs(p);
+      if ( __atomic_load_n(rp, __ATOMIC_RELAXED) == __UINT32_MAX__ ) [[unlikely]]
+        break;      // saturated/immortal
+      if ( __atomic_fetch_sub(rp, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
         break;
 
       if ( __is_leaf(p) ) [[unlikely]] {
@@ -206,10 +221,10 @@ class immutable_table
   {
     if ( !p ) [[unlikely]]
       return;
-    u32 &r = __refs(p);
-    if ( r == __UINT32_MAX__ ) [[unlikely]]
-      return;      // saturated
-    if ( --r != 0 ) [[likely]]
+    u32 *rp = &__refs(p);
+    if ( __atomic_load_n(rp, __ATOMIC_RELAXED) == __UINT32_MAX__ ) [[unlikely]]
+      return;      // saturated/immortal
+    if ( __atomic_fetch_sub(rp, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
       return;
     if ( __is_leaf(p) ) [[unlikely]] {
       __dealloc_leaf(__to_leaf(p));
@@ -527,6 +542,7 @@ public:
     const __branch *__stack[__max_depth];
     usize __depth;
     const __leaf *__current;
+    uintptr_t __pin;
 
     void
     __descend_left(uintptr_t node)
@@ -539,12 +555,59 @@ public:
     }
 
   public:
-    const_iterator() : __depth(0), __current(nullptr) { }
+    const_iterator() : __depth(0), __current(nullptr), __pin(0) { }
 
-    explicit const_iterator(uintptr_t root) : __depth(0), __current(nullptr)
+    explicit const_iterator(uintptr_t root) : __depth(0), __current(nullptr), __pin(root)
     {
+      __retain_tagged(root);
       if ( root ) __descend_left(root);
     }
+
+    const_iterator(const const_iterator &o) : __depth(o.__depth), __current(o.__current), __pin(o.__pin)
+    {
+      for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+      __retain_tagged(__pin);
+    }
+
+    const_iterator(const_iterator &&o) noexcept : __depth(o.__depth), __current(o.__current), __pin(o.__pin)
+    {
+      for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+      o.__pin = 0;
+      o.__depth = 0;
+      o.__current = nullptr;
+    }
+
+    const_iterator &
+    operator=(const const_iterator &o)
+    {
+      if ( this != &o ) {
+        __release_tagged(__pin);
+        __depth = o.__depth;
+        __current = o.__current;
+        __pin = o.__pin;
+        for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+        __retain_tagged(__pin);
+      }
+      return *this;
+    }
+
+    const_iterator &
+    operator=(const_iterator &&o) noexcept
+    {
+      if ( this != &o ) {
+        __release_tagged(__pin);
+        __depth = o.__depth;
+        __current = o.__current;
+        __pin = o.__pin;
+        for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+        o.__pin = 0;
+        o.__depth = 0;
+        o.__current = nullptr;
+      }
+      return *this;
+    }
+
+    ~const_iterator() { __release_tagged(__pin); }
 
     bool
     operator==(const const_iterator &o) const

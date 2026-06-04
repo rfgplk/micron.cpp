@@ -30,6 +30,9 @@ public:
   operator()()
   {
     while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) {
+      do {
+        __cpu_pause();
+      } while ( tk.get(memory_order::relaxed) == ATOMIC_LOCKED );      // TTAS: relaxed-read spin, CAS only when observed OPEN
     };
     return &mutex::reset;
   }
@@ -44,6 +47,9 @@ public:
   lock()
   {
     while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) {
+      do {
+        __cpu_pause();
+      } while ( tk.get(memory_order::relaxed) == ATOMIC_LOCKED );      // TTAS: relaxed-read spin, CAS only when observed OPEN
     };
     return &mutex::reset;
   }
@@ -97,6 +103,9 @@ public:
   operator()()
   {
     while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order_acq_rel, memory_order_acquire) ) {
+      do {
+        __cpu_pause();
+      } while ( tk.get(memory_order::relaxed) == ATOMIC_LOCKED );      // TTAS: relaxed-read spin, CAS only when observed OPEN
     };
     return &weak_mutex::reset;
   }
@@ -111,6 +120,9 @@ public:
   lock()
   {
     while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order_acq_rel, memory_order_acquire) ) {
+      do {
+        __cpu_pause();
+      } while ( tk.get(memory_order::relaxed) == ATOMIC_LOCKED );      // TTAS: relaxed-read spin, CAS only when observed OPEN
     };
     return &weak_mutex::reset;
   }

@@ -238,10 +238,17 @@ concept is_valid_comp = requires(Cmp c, typename C::value_type a, typename C::va
   { c(a, b) } -> micron::convertible_to<bool>;
 };
 
+template<typename F, typename C>
+concept is_integral_key_fn
+    = requires(F &f, const typename C::value_type &v) { requires micron::is_integral_v<micron::remove_cvref_t<decltype(f(v))>>; };
+
+template<typename F, typename C>
+concept is_floating_key_fn
+    = requires(F &f, const typename C::value_type &v) { requires micron::is_floating_point_v<micron::remove_cvref_t<decltype(f(v))>>; };
+
 template<typename T>
-concept is_atomic_type
-    = micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_floating_point_v<T>
-      || (micron::is_trivially_copyable_v<T> && !micron::is_integral_v<T> && !micron::is_pointer_v<T> && !micron::is_floating_point_v<T>);
+concept is_atomic_type = micron::is_integral_v<T> || micron::is_pointer_v<T> || micron::is_enum_v<T>;
+// NOTE: restricted to integral / pointer / enum
 
 template<typename T>
 concept is_general_pointer_class = requires(T t) {
@@ -440,6 +447,15 @@ concept is_spatial_tree = is_tree<T> && requires {
   typename micron::remove_cvref_t<T>::point_type;
   typename micron::remove_cvref_t<T>::box_type;
 } && !is_tree_map<T>;
+
+template<typename T>
+concept is_extractable_heap = requires {
+  typename micron::remove_cvref_t<T>::category_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::category_type, theap_tag>;
+} && requires(micron::remove_cvref_t<T> &h) {
+  { h.size() } -> micron::convertible_to<usize>;
+} && (requires(micron::remove_cvref_t<T> &h) { h.extract_min(); } || requires(micron::remove_cvref_t<T> &h) { h.get(); }
+      || requires(micron::remove_cvref_t<T> &h) { h.pop(); });
 
 template<typename F, typename Arg>
 concept strict_invocable

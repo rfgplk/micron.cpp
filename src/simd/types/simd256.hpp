@@ -46,6 +46,9 @@ template<is_simd_256_type T, is_flag_type F> class v256
   }
 
 public:
+  using bit_width = T;
+  using lane_width = F;
+
   ~v256() = default;
 
   v256(void) { __impl_zero_init(); }
@@ -53,7 +56,10 @@ public:
   inline v256 &
   operator=(std::initializer_list<double> lst)
   {
-    if ( lst.size() != 4 ) return *this;
+    if ( lst.size() != 4 ) {
+      __impl_zero_init();
+      return *this;
+    }
     double a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
@@ -70,7 +76,10 @@ public:
   inline v256 &
   operator=(std::initializer_list<float> lst)
   {
-    if ( lst.size() != 8 ) return *this;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return *this;
+    }
 
     float __arr[8];
 
@@ -83,7 +92,10 @@ public:
   inline v256 &
   operator=(std::initializer_list<i64> lst)
   {
-    if ( lst.size() != 4 ) return *this;
+    if ( lst.size() != 4 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i64 a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
@@ -100,7 +112,10 @@ public:
   inline v256 &
   operator=(std::initializer_list<i32> lst)
   {
-    if ( lst.size() != 8 ) return *this;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i32 __arr[8];
 
     int __i = 0;
@@ -112,7 +127,10 @@ public:
   inline v256 &
   operator=(std::initializer_list<i16> lst)
   {
-    if ( lst.size() != 16 ) return *this;
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i16 __arr[16];
 
     int __i = 0;
@@ -125,7 +143,10 @@ public:
   inline v256 &
   operator=(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 32 ) return *this;
+    if ( lst.size() != 32 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i8 __arr[32];
 
     int __i = 0;
@@ -175,8 +196,12 @@ public:
   }
 
   v256(std::initializer_list<double> lst)
+    requires micron::is_same_v<T, d256>
   {
-    if ( lst.size() != 4 ) return;
+    if ( lst.size() != 4 ) {
+      __impl_zero_init();
+      return;
+    }
     double a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
@@ -190,28 +215,26 @@ public:
   }
 
   v256(std::initializer_list<float> lst)
+    requires micron::is_same_v<T, f256>
   {
-    if ( lst.size() != 8 ) return;
-    float a, b, c, d, e, f, g, h;
-    int _f = 0;
-    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
-      if ( _f == 0 ) a = *itr;
-      if ( _f == 1 ) b = *itr;
-      if ( _f == 2 ) c = *itr;
-      if ( _f == 3 ) d = *itr;
-      if ( _f == 4 ) e = *itr;
-      if ( _f == 5 ) f = *itr;
-      if ( _f == 6 ) g = *itr;
-      if ( _f == 7 ) h = *itr;
-      _f++;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return;
     }
-    value = _mm256_set_ps(h, g, f, e, d, c, b, a);
+    float __arr[8];
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = _mm256_set_ps(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
   }
 
   // start of ints
   v256(std::initializer_list<i64> lst)
+    requires(micron::is_same_v<T, i256> and __is_64_wide<F>())
   {
-    if ( lst.size() != 4 ) return;
+    if ( lst.size() != 4 ) {
+      __impl_zero_init();
+      return;
+    }
     i64 a, b, c, d;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
@@ -225,8 +248,12 @@ public:
   }
 
   v256(std::initializer_list<i32> lst)
+    requires(micron::is_same_v<T, i256> and __is_32_wide<F>())
   {
-    if ( lst.size() != 8 ) return;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return;
+    }
     i32 __arr[8];
 
     int __i = 0;
@@ -235,8 +262,12 @@ public:
   }
 
   v256(std::initializer_list<i16> lst)
+    requires(micron::is_same_v<T, i256> and __is_16_wide<F>())
   {
-    if ( lst.size() != 16 ) return;
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return;
+    }
     i16 __arr[16];
 
     int __i = 0;
@@ -246,8 +277,12 @@ public:
   }
 
   v256(std::initializer_list<i8> lst)
+    requires(micron::is_same_v<T, i256> and __is_8_wide<F>())
   {
-    if ( lst.size() != 32 ) return;
+    if ( lst.size() != 32 ) {
+      __impl_zero_init();
+      return;
+    }
     i8 __arr[32];
 
     int __i = 0;
@@ -265,15 +300,15 @@ public:
        i8 _e30, i8 _e31)
     requires micron::is_same_v<T, i256>
   {
-    value = _mm256_set_epi8(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15, _e16, _e17, _e18, _e19,
-                            _e20, _e21, _e22, _e23, _e24, _e25, _e26, _e27, _e28, _e29, _e30, _e31);
+    value = _mm256_set_epi8(_e31, _e30, _e29, _e28, _e27, _e26, _e25, _e24, _e23, _e22, _e21, _e20, _e19, _e18, _e17, _e16, _e15, _e14,
+                            _e13, _e12, _e11, _e10, _e9, _e8, _e7, _e6, _e5, _e4, _e3, _e2, _e1, _e0);
   }
 
   v256(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7, i16 _e8, i16 _e9, i16 _e10, i16 _e11, i16 _e12, i16 _e13,
        i16 _e14, i16 _e15)
     requires micron::is_same_v<T, i256>
   {
-    value = _mm256_set_epi16(_e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15);
+    value = _mm256_set_epi16(_e15, _e14, _e13, _e12, _e11, _e10, _e9, _e8, _e7, _e6, _e5, _e4, _e3, _e2, _e1, _e0);
   }
 
   v256(i32 a, i32 b, i32 c, i32 d, i32 e, i32 f, i32 g, i32 h)
@@ -326,6 +361,15 @@ public:
   operator=(v256 &&o)
   {
     value = o.value;
+    if constexpr ( micron::same_as<T, f256> ) {
+      o.value = _mm256_setzero_ps();
+    }
+    if constexpr ( micron::same_as<T, d256> ) {
+      o.value = _mm256_setzero_pd();
+    }
+    if constexpr ( micron::same_as<T, i256> ) {
+      o.value = _mm256_setzero_si256();
+    }
     return *this;
   }
 
@@ -380,10 +424,10 @@ public:
 
   // for loops
   constexpr usize
-  size(void)
+  size(void) const
   {
     if constexpr ( micron::is_same_v<T, f256> ) {
-      return 1;
+      return 8;
     } else if constexpr ( micron::is_same_v<T, d256> ) {
       return 4;
     } else if constexpr ( micron::is_same_v<T, i256> ) {
@@ -405,7 +449,7 @@ public:
   template<typename R>
     requires(micron::is_integral_v<R>)
   constexpr auto
-  operator[](const R a)
+  operator[](const R a) const
   {
     if constexpr ( micron::is_same_v<T, f256> ) {
       float _f = 0.0f;
@@ -1190,7 +1234,8 @@ public:
   load(B *mem)
   {
     if ( !is_aligned<256>(mem) ) return *this;      // silent fail
-    value = load<T>(mem);
+
+    value = micron::simd::load<T, B>(mem);
     return *this;
   }
 
@@ -1248,73 +1293,73 @@ public:
     return *this;
   }
 
-  inline T
+  inline v256
   operator|(const v256 &o) const
   {
-    T _r;
+    v256 _r;
     if constexpr ( micron::is_same_v<T, i256> ) {
-      _r = _mm256_or_si256(value, o.value);
+      _r.value = _mm256_or_si256(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, f256> ) {
-      _r = _mm256_or_ps(value, o.value);
+      _r.value = _mm256_or_ps(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, d256> ) {
-      _r = _mm256_or_pd(value, o.value);
+      _r.value = _mm256_or_pd(value, o.value);
     }
     return _r;
   }
 
-  inline T
+  inline v256
   operator&(const v256 &o) const
   {
-    T _r;
+    v256 _r;
     if constexpr ( micron::is_same_v<T, i256> ) {
-      _r = _mm256_and_si256(value, o.value);
+      _r.value = _mm256_and_si256(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, f256> ) {
-      _r = _mm256_and_ps(value, o.value);
+      _r.value = _mm256_and_ps(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, d256> ) {
-      _r = _mm256_and_pd(value, o.value);
+      _r.value = _mm256_and_pd(value, o.value);
     }
     return _r;
   }
 
-  inline T
+  inline v256
   operator^(const v256 &o) const
   {
-    T _r;
+    v256 _r;
     if constexpr ( micron::is_same_v<T, i256> ) {
-      _r = _mm256_xor_si256(value, o.value);
+      _r.value = _mm256_xor_si256(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, f256> ) {
-      _r = _mm256_xor_ps(value, o.value);
+      _r.value = _mm256_xor_ps(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, d256> ) {
-      _r = _mm256_xor_pd(value, o.value);
+      _r.value = _mm256_xor_pd(value, o.value);
     }
     return _r;
   }
 
-  inline T
+  inline v256
   operator<<(int i) const
   {
-    T _r = value;
+    v256 _r(*this);
     if constexpr ( micron::is_same_v<T, i256> ) {
       if constexpr ( __is_8_wide<F>() ) {
 
         i256 _s = _mm256_slli_epi16(value, i);
         i256 _m = _mm256_set1_epi8(static_cast<i8>(0xFF << i));
-        _r = _mm256_and_si256(_s, _m);
+        _r.value = _mm256_and_si256(_s, _m);
       }
       if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm256_slli_epi16(value, i);
+        _r.value = _mm256_slli_epi16(value, i);
       }
       if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm256_slli_epi32(value, i);
+        _r.value = _mm256_slli_epi32(value, i);
       }
       if constexpr ( __is_64_wide<F>() ) {
-        _r = _mm256_slli_epi64(value, i);
+        _r.value = _mm256_slli_epi64(value, i);
       }
     }
     return _r;
@@ -1342,25 +1387,66 @@ public:
     return *this;
   }
 
-  inline T
+  static inline i256
+  __srli_epi8(i256 v, int i)
+  {
+    return _mm256_and_si256(_mm256_srli_epi16(v, i), _mm256_set1_epi8(static_cast<i8>(0xFF >> i)));
+  }
+
+  static inline i256
+  __srai_epi8(i256 v, int i)
+  {
+
+    i256 _odd = _mm256_and_si256(_mm256_srai_epi16(v, i), _mm256_set1_epi16(static_cast<i16>(0xFF00)));
+
+    i256 _even = _mm256_and_si256(_mm256_srai_epi16(_mm256_slli_epi16(v, 8), i + 8), _mm256_set1_epi16(0x00FF));
+    return _mm256_or_si256(_odd, _even);
+  }
+
+  static inline i256
+  __srai_epi64(i256 v, int i)
+  {
+    i256 _logical = _mm256_srli_epi64(v, i);
+
+    i256 _sign = _mm256_sub_epi64(_mm256_setzero_si256(), _mm256_srli_epi64(v, 63));
+
+    i256 _fill = _mm256_slli_epi64(_sign, 64 - i);
+    return _mm256_or_si256(_logical, _fill);
+  }
+
+  inline v256
   operator>>(int i) const
   {
-    T _r = value;
+    v256 _r(*this);
     if constexpr ( micron::is_same_v<T, i256> ) {
       if constexpr ( __is_8_wide<F>() ) {
-        i256 _s = _mm256_srai_epi16(value, i);
-        i256 _m = _mm256_set1_epi16(0x00FF);
-        _r = _mm256_and_si256(_s, _m);
+        if constexpr ( micron::is_same_v<F, __uv8> ) {
+          _r.value = __srli_epi8(value, i);
+        } else {
+          _r.value = __srai_epi8(value, i);
+        }
       }
       if constexpr ( __is_16_wide<F>() ) {
-        _r = _mm256_srai_epi16(value, i);
+        if constexpr ( micron::is_same_v<F, __uv16> ) {
+          _r.value = _mm256_srli_epi16(value, i);
+        } else {
+          _r.value = _mm256_srai_epi16(value, i);
+        }
       }
       if constexpr ( __is_32_wide<F>() ) {
-        _r = _mm256_srai_epi32(value, i);
+        if constexpr ( micron::is_same_v<F, __uv32> ) {
+          _r.value = _mm256_srli_epi32(value, i);
+        } else {
+          _r.value = _mm256_srai_epi32(value, i);
+        }
       }
       if constexpr ( __is_64_wide<F>() ) {
-        // _mm256_srai_epi64 needs AVX-512
-        _r = _mm256_srli_epi64(value, i);
+
+        if constexpr ( micron::is_same_v<F, __uv64> ) {
+          _r.value = _mm256_srli_epi64(value, i);
+        } else {
+          _r.value = __srai_epi64(value, i);
+        }
       }
     }
     return _r;
@@ -1371,25 +1457,36 @@ public:
   {
     if constexpr ( micron::is_same_v<T, i256> ) {
       if constexpr ( __is_8_wide<F>() ) {
-        i256 _s = _mm256_srai_epi16(value, i);
-        i256 _m = _mm256_set1_epi16(0x00FF);
-        value = _mm256_and_si256(_s, _m);
+        if constexpr ( micron::is_same_v<F, __uv8> ) {
+          value = __srli_epi8(value, i);
+        } else {
+          value = __srai_epi8(value, i);
+        }
       }
       if constexpr ( __is_16_wide<F>() ) {
-        value = _mm256_srai_epi16(value, i);
+        if constexpr ( micron::is_same_v<F, __uv16> ) {
+          value = _mm256_srli_epi16(value, i);
+        } else {
+          value = _mm256_srai_epi16(value, i);
+        }
       }
       if constexpr ( __is_32_wide<F>() ) {
-        value = _mm256_srai_epi32(value, i);
+        if constexpr ( micron::is_same_v<F, __uv32> ) {
+          value = _mm256_srli_epi32(value, i);
+        } else {
+          value = _mm256_srai_epi32(value, i);
+        }
       }
       if constexpr ( __is_64_wide<F>() ) {
-        value = _mm256_srli_epi64(value, i);
+        if constexpr ( micron::is_same_v<F, __uv64> ) {
+          value = _mm256_srli_epi64(value, i);
+        } else {
+          value = __srai_epi64(value, i);
+        }
       }
     }
     return *this;
   }
-
-  // BOOLEANS end
-  // divs and muls
 
   constexpr inline v256 &
   operator/=(double x)
@@ -1411,24 +1508,24 @@ public:
     return *this;
   }
 
-  constexpr inline T
+  constexpr inline v256
   operator/(double x) const
   {
-    T _d = value;
+    v256 _d(*this);
     if constexpr ( micron::is_same_v<T, d256> ) {
       d256 _r = _mm256_set1_pd(x);
-      _d = _mm256_div_pd(value, _r);
+      _d.value = _mm256_div_pd(value, _r);
     }
     return _d;
   }
 
-  constexpr inline T
+  constexpr inline v256
   operator/(float x) const
   {
-    T _d = value;
+    v256 _d(*this);
     if constexpr ( micron::is_same_v<T, f256> ) {
       f256 _r = _mm256_set1_ps(x);
-      _d = _mm256_div_ps(value, _r);
+      _d.value = _mm256_div_ps(value, _r);
     }
     return _d;
   }
@@ -1549,8 +1646,6 @@ public:
     }
     return _d;
   }
-
-  // end divs and muls
 
   inline void
   get(F *arr) const

@@ -97,6 +97,7 @@ public:
 
   group_thread(void) : attributes(posix::getpid()), payload{} { }
 
+  // moving an already-spawned thread is UB (kernel holds &payload)
   group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
   // prepared functions
@@ -110,7 +111,11 @@ public:
   group_thread &
   operator=(group_thread &&o)
   {
-    attributes = micron::move(o.attributes);
+    if ( this == &o ) return *this;
+    // release *this's current thread+stack BEFORE adopting o; otherwise the running thread is orphaned
+    if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+    __release();
+    attributes = micron::move(o.attributes);      // thread_attr_t move nulls o.pid / o.stack_addr
     payload = micron::move(o.payload);
     return *this;
   }
@@ -140,6 +145,7 @@ public:
   auto
   can_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       return 1;
@@ -151,6 +157,7 @@ public:
   auto
   join(void) -> int      // group_thread
   {
+    if ( attributes.pid == 0 ) return 0;      // nothing to join (default/moved-from/already-joined)
     auto r = pthread::__join_thread(attributes.pid);
     __safe_release();
     return r;
@@ -261,10 +268,12 @@ public:
   result(void)
   {
     wait_for();
-    byte *p = payload.ret_val.get(memory_order_acquire);
-    u64 raw = reinterpret_cast<u64>(p);
-    R val;
-    __builtin_memcpy(&val, &raw, sizeof(R));
+    R val{};
+    if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::literal ) {
+      byte *p = payload.ret_val.get(memory_order_acquire);
+      u64 raw = reinterpret_cast<u64>(p);
+      __builtin_memcpy(&val, &raw, sizeof(R));
+    }
     return val;
   }
 

@@ -7,6 +7,7 @@
 #include "../types.hpp"
 
 #include "../memory/actions.hpp"
+#include "../memory/cmemory.hpp"
 #include "../tuple.hpp"
 
 #include "hopscotch.hpp"
@@ -47,14 +48,19 @@ struct __mask {
   }
 };
 
-template<typename K, typename V, usize N, usize NH = 16>
+// NH = probe-window cap (number of slots scanned from a key's home)
+template<typename K, typename V, usize N, usize NH = N>
   requires(N >= 16 and (N % 16) == 0 and NH <= N)
 class stack_swiss_map
 {
   static constexpr u8
   __h2(hash64_t h)
   {
-    return static_cast<u8>((h >> 57) | __sentinel);
+    // 7-bit tag for the control byte
+    u8 v = static_cast<u8>((h >> 40) & 0x7Fu);
+    u8 c = static_cast<u8>(v | __sentinel);
+    // NEVER alias the reserved control bytes __deleted (0xFE) / __empty (0xFF)
+    return c >= __deleted ? static_cast<u8>(c - 2u) : c;
   }
 
   static constexpr u8
@@ -354,33 +360,10 @@ public:
   void
   clear() noexcept
   {
-    usize i = 0;
-#if defined(__micron_x86_avx2)
-    const __m256i splat32 = simd::avx::splat_i8(static_cast<char>(__empty));
-    constexpr usize W = 32;
-    for ( ; i + W <= N; i += W ) {
-      simd::avx::storeu_i256(reinterpret_cast<__m256i_u *>(&__control_bytes[i]), splat32);
-    }
-#endif
-#if defined(__micron_arch_x86_any)
-    const __m128i splat16 = simd::sse::splat_i8(static_cast<char>(__empty));
-    constexpr usize W16 = 16;
-    for ( ; i + W16 <= N; i += W16 ) {
-      simd::sse::store_i128(reinterpret_cast<__m128i *>(&__control_bytes[i]), splat16);
-    }
-#elif defined(__micron_arm_neon)
-    const uint8x16_t splat16 = simd::neon::splat_u8(__empty);
-    constexpr usize W16 = 16;
-    for ( ; i + W16 <= N; i += W16 ) {
-      simd::neon::store_u8(&__control_bytes[i], splat16);
-    }
-#endif
-    constexpr u64 splat64 = 0xFFFFFFFFFFFFFFFFULL;
-    for ( ; i + 8 <= N; i += 8 ) {
-      *reinterpret_cast<u64 *>(&__control_bytes[i]) = splat64;
-    }
-    // scalar tail
-    for ( ; i < N; ++i ) __control_bytes[i] = __empty;
+    // __control_bytes is a plain u8[N]; the optimized byte-wise memset avoids
+    // the strict-aliasing UB of writing through a u64* (illegal under -Ofast)
+    // and is internally SIMD-accelerated
+    micron::memset(&__control_bytes[0], __empty, N);
     __size = 0;
   }
 
@@ -564,6 +547,7 @@ public:
           }
           m.clear_lowest();
         }
+        if ( __match_empty(group_start).any() ) return false;      // first empty -> key absent (see find)
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
@@ -572,6 +556,7 @@ public:
             --__size;
             return true;
           }
+          if ( __control_bytes[probe] == __empty ) return false;
         }
       }
     }
@@ -597,12 +582,16 @@ public:
           }
           m.clear_lowest();
         }
+        // a key is always placed at/ before the first never-used EMPTY slot in its
+        // probe sequence, so an empty group means the key is absent -> stop here
+        if ( __match_empty(group_start).any() ) return nullptr;
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
             return micron::addressof(__entries[probe].value);
           }
+          if ( __control_bytes[probe] == __empty ) return nullptr;
         }
       }
     }
@@ -636,12 +625,16 @@ public:
           }
           m.clear_lowest();
         }
+        // a key is always placed at/ before the first never-used EMPTY slot in its
+        // probe sequence, so an empty group means the key is absent -> stop here
+        if ( __match_empty(group_start).any() ) return nullptr;
       } else {
         for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
           usize probe = (start + i + j) % N;
           if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
             return micron::addressof(__entries[probe].value);
           }
+          if ( __control_bytes[probe] == __empty ) return nullptr;
         }
       }
     }

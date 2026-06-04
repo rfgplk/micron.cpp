@@ -79,18 +79,18 @@ read(fd_t fd, T &buf, usize cnt)
 
 template<typename T, usize N>
 max_t
-read(i32 fd, const T (&buf)[N])
+read(i32 fd, T (&buf)[N])
 {
   if ( fd < 0 ) return -error::bad_fd;
-  return posix::read(fd, &buf, N);
+  return posix::read(fd, buf, N * sizeof(T));
 }
 
 template<typename T, usize N>
 max_t
-read(fd_t fd, const T (&buf)[N])
+read(fd_t fd, T (&buf)[N])
 {
   if ( fd.invalid() ) return -error::bad_fd;
-  return posix::read(fd.fd, &buf, N);
+  return posix::read(fd.fd, buf, N * sizeof(T));
 }
 
 template<is_iterable_container T>
@@ -228,7 +228,7 @@ max_t
 write(i32 fd, const T (&buf)[N])
 {
   if ( fd < 0 ) return -error::bad_fd;
-  return posix::write(fd, &buf, N);
+  return posix::write(fd, buf, N * sizeof(T));
 }
 
 template<typename T, usize N>
@@ -236,7 +236,7 @@ max_t
 write(fd_t fd, const T (&buf)[N])
 {
   if ( fd.invalid() ) return -error::bad_fd;
-  return posix::write(fd, &buf, N);
+  return posix::write(fd, buf, N * sizeof(T));
 }
 
 template<is_iterable_container T>

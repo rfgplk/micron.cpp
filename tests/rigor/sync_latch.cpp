@@ -111,12 +111,36 @@ main(void)
   }
   end_test_case();
 
-  test_case("over-count: latch goes negative; try_wait returns false (informational)");
+  test_case("over-count count_down(n): counter clamps at 0, never underflows");
   {
     latch l(1);
     l.count_down(3);
-    // counter is signed; behavior is now -2 (documented; not a contract).
-    check(l.expected() == -2);
+    require(l.expected() == 0);
+    require_true(l.try_wait());
+    l.wait();
+    require_true(true);
+  }
+  end_test_case();
+
+  test_case("over-count single count_down() past zero stays at 0");
+  {
+    latch l(2);
+    l.count_down();
+    l.count_down();
+    l.count_down();
+    l.count_down();
+    require(l.expected() == 0);
+    require_true(l.try_wait());
+  }
+  end_test_case();
+
+  test_case("count_down(0) and count_down(negative) are no-ops");
+  {
+    latch l(5);
+    l.count_down(0);
+    require(l.expected() == 5);
+    l.count_down(-3);
+    require(l.expected() == 5);
   }
   end_test_case();
 

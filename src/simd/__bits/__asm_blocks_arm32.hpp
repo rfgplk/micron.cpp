@@ -43,8 +43,8 @@ __inline_g void
 __block_copy_16_a(u8 *__restrict d, const u8 *__restrict s) noexcept
 {
   uint8x16_t t;
-  __asm__("vld1.8 {%q0}, [%1 :128]" : "=w"(t) : "r"(s), "m"(*reinterpret_cast<const u8(*)[16]>(s)));
-  __asm__("vst1.8 {%q2}, [%1 :128]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(t));
+  __asm__("vld1.8 {%q0}, [%1]" : "=w"(t) : "r"(s), "m"(*reinterpret_cast<const u8(*)[16]>(s)));
+  __asm__("vst1.8 {%q2}, [%1]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(t));
 }
 
 __inline_g void
@@ -95,7 +95,7 @@ __block_set_16(u8 *__restrict d, uint8x16_t v) noexcept
 __inline_g void
 __block_set_16_a(u8 *__restrict d, uint8x16_t v) noexcept
 {
-  __asm__("vst1.8 {%q2}, [%1 :128]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(v));
+  __asm__("vst1.8 {%q2}, [%1]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(v));
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

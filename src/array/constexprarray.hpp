@@ -39,7 +39,7 @@ struct constexpr_array {
   static constexpr size_type length = N;
   static constexpr size_type static_size = length;
 
-  alignas(64) T stack[N];
+  alignas(64) T stack[N]{};
 
   constexpr constexpr_array() = default;
 
@@ -103,25 +103,25 @@ struct constexpr_array {
   constexpr const_iterator
   begin(void) const noexcept
   {
-    return micron::real_addr_as<T>(stack[0]);
+    return stack;
   }
 
   constexpr const_iterator
   end(void) const noexcept
   {
-    return micron::real_addr_as<T>(stack[N]);
+    return stack + N;
   }
 
   constexpr iterator
   begin(void) noexcept
   {
-    return micron::real_addr_as<T>(stack[0]);
+    return stack;
   }
 
   constexpr iterator
   end(void) noexcept
   {
-    return micron::real_addr_as<T>(stack[N]);
+    return stack + N;
   }
 
   constexpr T &
@@ -136,8 +136,64 @@ struct constexpr_array {
     return stack[i];
   }
 
+  constexpr T &
+  at(usize i)
+  {
+    if ( i >= N ) exc<except::library_error>("micron::constexpr_array at() out of range.");
+    return stack[i];
+  }
+
+  constexpr const T &
+  at(usize i) const
+  {
+    if ( i >= N ) exc<except::library_error>("micron::constexpr_array at() out of range.");
+    return stack[i];
+  }
+
+  constexpr T &
+  front() noexcept
+  {
+    return stack[0];
+  }
+
+  constexpr const T &
+  front() const noexcept
+  {
+    return stack[0];
+  }
+
+  constexpr T &
+  back() noexcept
+  {
+    return stack[N - 1];
+  }
+
+  constexpr const T &
+  back() const noexcept
+  {
+    return stack[N - 1];
+  }
+
+  constexpr const_iterator
+  cbegin() const noexcept
+  {
+    return stack;
+  }
+
+  constexpr const_iterator
+  cend() const noexcept
+  {
+    return stack + N;
+  }
+
   constexpr usize
   size() const
+  {
+    return N;
+  }
+
+  constexpr usize
+  max_size() const
   {
     return N;
   }

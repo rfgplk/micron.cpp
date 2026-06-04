@@ -90,9 +90,7 @@ struct __linux_kernel_dirent {
   kernel_ino_t d_ino;
   kernel_off_t d_off;
   u16 d_reclen;
-  char d_name[256];
-  i8 pad;
-  i8 d_type;
+  char d_name[256];      // flexible; the d_type byte lives at offset d_reclen-1
 };
 
 struct __linux_kernel_dirent64 {

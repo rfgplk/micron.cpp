@@ -308,7 +308,10 @@ write_all(fd_t fd, const T &buf, usize len)
   const byte *p = real_addr_as<const byte>(buf);
   while ( written < len ) {
     max_t r = posix::write(fd.fd, p + written, len - written);
-    if ( r < 0 ) return r;
+    if ( r < 0 ) {
+      if ( r == -error::interrupted ) continue;      // retry on EINTR rather than truncating
+      return r;
+    }
     if ( r == 0 ) break;
     written += static_cast<usize>(r);
   }
@@ -323,7 +326,10 @@ write_all(fd_t fd, const T *buf, usize len)
   const byte *p = static_cast<const byte *>(buf);
   while ( written < len ) {
     max_t r = posix::write(fd.fd, p + written, len - written);
-    if ( r < 0 ) return r;
+    if ( r < 0 ) {
+      if ( r == -error::interrupted ) continue;      // retry on EINTR rather than truncating
+      return r;
+    }
     if ( r == 0 ) break;
     written += static_cast<usize>(r);
   }
@@ -338,7 +344,10 @@ read_all(fd_t fd, T *buf, usize len)
   byte *p = static_cast<byte *>(buf);
   while ( got < len ) {
     max_t r = posix::read(fd.fd, p + got, len - got);
-    if ( r < 0 ) return r;
+    if ( r < 0 ) {
+      if ( r == -error::interrupted ) continue;      // retry on EINTR rather than truncating
+      return r;
+    }
     if ( r == 0 ) break;      // EOF
     got += static_cast<usize>(r);
   }
@@ -390,7 +399,17 @@ flush_data(fd_t fd)
 inline max_t
 copy_fd(fd_t out_fd, fd_t in_fd, usize count)
 {
-  return posix::sendfile(out_fd.fd, in_fd.fd, nullptr, count);
+  usize done = 0;
+  while ( done < count ) {
+    max_t r = posix::sendfile(out_fd.fd, in_fd.fd, nullptr, count - done);
+    if ( r < 0 ) {
+      if ( r == -error::interrupted ) continue;      // retry on EINTR
+      return r;
+    }
+    if ( r == 0 ) break;      // source exhausted
+    done += static_cast<usize>(r);
+  }
+  return static_cast<max_t>(done);
 }
 
 inline i32

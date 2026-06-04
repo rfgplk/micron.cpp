@@ -277,14 +277,14 @@ public:
   inline T &
   at(const size_type i)
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::farray at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::farray at() out of range.");
     return stack[i];
   }
 
   inline const T &
   at(const size_type i) const
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::farray at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::farray at() out of range.");
     return stack[i];
   }
 
@@ -321,6 +321,30 @@ public:
     return stack[i];
   }
 
+  inline T &
+  front() noexcept
+  {
+    return stack[0];
+  }
+
+  inline const T &
+  front() const noexcept
+  {
+    return stack[0];
+  }
+
+  inline T &
+  back() noexcept
+  {
+    return stack[N - 1];
+  }
+
+  inline const T &
+  back() const noexcept
+  {
+    return stack[N - 1];
+  }
+
   template<class C>
   inline slice<T, C>
   operator[]()
@@ -354,10 +378,10 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // assignment operators
 
-  template<typename F, size_type M>
+  template<size_type M>
   farray &
   operator=(T (&o)[M])
-    requires micron::is_array_v<F> && (M <= N)
+    requires(M <= N)
   {
     micron::copy<M, T>(&o[0], &stack[0]);
     return *this;
@@ -711,41 +735,33 @@ public:
   T
   mul(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r *= stack[i];
+    return r;
   }
 
   T
   div(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r /= stack[i];
+    return r;
   }
 
   T
   sub(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r -= stack[i];
+    return r;
   }
 
   T
   add(void)
   {
-    T mul_ = stack[0];
-    T *__restrict src = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) mul_ *= src[i];
-    return mul_;
+    T r = stack[0];
+    for ( size_type i = 1; i < N; i++ ) r += stack[i];
+    return r;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -771,7 +787,12 @@ public:
   sqrt(void)
   {
     T *__restrict dst = stack;
-    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) {
+      if constexpr ( micron::is_floating_point_v<T> )
+        dst[i] = static_cast<T>(math::sqrt(dst[i]));      // no narrowing through float
+      else
+        dst[i] = static_cast<T>(math::sqrt(static_cast<double>(dst[i])));
+    }
   }
 
   template<typename F>

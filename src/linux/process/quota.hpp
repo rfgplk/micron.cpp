@@ -56,7 +56,7 @@ get_quota(const char *device, quota_type t, u32 id, posix::dqblk_t &out) noexcep
 }
 
 inline i32
-get_next_quota(const char *device, quota_type t, u32 id, posix::dqblk_t &out) noexcept
+get_next_quota(const char *device, quota_type t, u32 id, posix::nextdqblk_t &out) noexcept
 {
   return posix::quotactl(posix::qcmd(posix::q_getnextquota, static_cast<int>(t)), device, static_cast<int>(id), &out);
 }

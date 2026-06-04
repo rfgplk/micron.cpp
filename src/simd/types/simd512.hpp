@@ -35,10 +35,10 @@ template<is_simd_512_type T, is_flag_type F> class v512
   __impl_one_init(void)
   {
     if constexpr ( micron::same_as<T, f512> ) {
-      value = _mm512_castsi512_pd(_mm512_set1_epi32(-1));
+      value = _mm512_castsi512_ps(_mm512_set1_epi32(-1));
     }
     if constexpr ( micron::same_as<T, d512> ) {
-      value = _mm512_castsi512_ps(_mm512_set1_epi64(-1));
+      value = _mm512_castsi512_pd(_mm512_set1_epi64(-1));
     }
     if constexpr ( micron::same_as<T, i512> ) {
       value = _mm512_set1_epi32(-1);
@@ -46,6 +46,9 @@ template<is_simd_512_type T, is_flag_type F> class v512
   }
 
 public:
+  using bit_width = T;
+  using lane_width = F;
+
   ~v512() = default;
 
   v512(void) { __impl_zero_init(); }
@@ -53,7 +56,10 @@ public:
   inline v512 &
   operator=(std::initializer_list<double> lst)
   {
-    if ( lst.size() != 4 ) return *this;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return *this;
+    }
     double a, b, c, d, e, f, g, h;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
@@ -61,10 +67,10 @@ public:
       if ( _f == 1 ) b = *itr;
       if ( _f == 2 ) c = *itr;
       if ( _f == 3 ) d = *itr;
-      if ( _f == 3 ) e = *itr;
-      if ( _f == 3 ) f = *itr;
-      if ( _f == 3 ) g = *itr;
-      if ( _f == 3 ) h = *itr;
+      if ( _f == 4 ) e = *itr;
+      if ( _f == 5 ) f = *itr;
+      if ( _f == 6 ) g = *itr;
+      if ( _f == 7 ) h = *itr;
       _f++;
     }
     value = _mm512_set_pd(h, g, f, e, d, c, b, a);
@@ -74,7 +80,10 @@ public:
   inline v512 &
   operator=(std::initializer_list<float> lst)
   {
-    if ( lst.size() != 16 ) return *this;
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return *this;
+    }
 
     float __arr[16];
 
@@ -89,7 +98,10 @@ public:
   inline v512 &
   operator=(std::initializer_list<i64> lst)
   {
-    if ( lst.size() != 8 ) return *this;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return *this;
+    }
 
     i64 __arr[16];
 
@@ -103,7 +115,10 @@ public:
   inline v512 &
   operator=(std::initializer_list<i32> lst)
   {
-    if ( lst.size() != 16 ) return *this;
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i32 __arr[16];
 
     int __i = 0;
@@ -116,7 +131,10 @@ public:
   inline v512 &
   operator=(std::initializer_list<i16> lst)
   {
-    if ( lst.size() != 32 ) return *this;
+    if ( lst.size() != 32 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i16 __arr[32];
 
     int __i = 0;
@@ -131,7 +149,10 @@ public:
   inline v512 &
   operator=(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 64 ) return *this;
+    if ( lst.size() != 64 ) {
+      __impl_zero_init();
+      return *this;
+    }
     i8 __arr[64];
 
     int __i = 0;
@@ -186,7 +207,10 @@ public:
 
   v512(std::initializer_list<double> lst)
   {
-    if ( lst.size() != 8 ) return;
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return;
+    }
     double a, b, c, d, e, f, g, h;
     int _f = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
@@ -205,7 +229,10 @@ public:
 
   v512(std::initializer_list<float> lst)
   {
-    if ( lst.size() != 16 ) return;
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return;
+    }
     float __arr[16];
 
     int __i = 0;
@@ -218,8 +245,11 @@ public:
   // start of ints
   v512(std::initializer_list<i64> lst)
   {
-    if ( lst.size() != 8 ) return;
-    float __arr[8];
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return;
+    }
+    i64 __arr[8];
 
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
@@ -229,8 +259,11 @@ public:
 
   v512(std::initializer_list<i32> lst)
   {
-    if ( lst.size() != 16 ) return;
-    float __arr[16];
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return;
+    }
+    i32 __arr[16];
 
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
@@ -241,8 +274,11 @@ public:
 
   v512(std::initializer_list<i16> lst)
   {
-    if ( lst.size() != 32 ) return;
-    float __arr[32];
+    if ( lst.size() != 32 ) {
+      __impl_zero_init();
+      return;
+    }
+    i16 __arr[32];
 
     int __i = 0;
     for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
@@ -255,7 +291,10 @@ public:
 
   v512(std::initializer_list<i8> lst)
   {
-    if ( lst.size() != 64 ) return;
+    if ( lst.size() != 64 ) {
+      __impl_zero_init();
+      return;
+    }
     i8 __arr[64];
 
     int __i = 0;
@@ -351,148 +390,86 @@ public:
 
   constexpr v512 &operator[](const int a) = delete;
 
-  constexpr int
+  constexpr i64
   operator==(const v512 &o) const
   {
-    {
-      if constexpr ( micron::is_same_v<T, f512> ) {
-        T _r = _mm512_cmpeq_ps(value, o.value);
-        return _mm512_movemask_ps(_r);
-      } else if constexpr ( micron::is_same_v<T, d512> ) {
-        T _r = _mm512_cmpeq_pd(value, o.value);
-        return _mm512_movemask_pd(_r);
-      } else if constexpr ( micron::is_same_v<T, i512> ) {
-        T _r;
-        if constexpr ( micron::is_same_v<F, __v8> ) {
-          _r = _mm512_cmpeq_epi8(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v16> ) {
-          _r = _mm512_cmpeq_epi16(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v32> ) {
-          _r = _mm512_cmpeq_epi32(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v64> ) {
-          _r = _mm512_cmpeq_epi64(value, o.value);
-        }
-        return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
-      }
+    if constexpr ( micron::is_same_v<T, f512> ) {
+      return static_cast<i64>(_mm512_cmp_ps_mask(value, o.value, _CMP_EQ_OQ));
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
+      return static_cast<i64>(_mm512_cmp_pd_mask(value, o.value, _CMP_EQ_OQ));
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) return static_cast<i64>(_mm512_cmpeq_epi8_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v16> ) return static_cast<i64>(_mm512_cmpeq_epi16_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v32> ) return static_cast<i64>(_mm512_cmpeq_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v64> ) return static_cast<i64>(_mm512_cmpeq_epi64_mask(value, o.value));
     }
     return 0x0;
   }
 
-  constexpr int
+  constexpr i64
   operator>=(const v512 &o) const
   {
-    {
-      if constexpr ( micron::is_same_v<T, f512> ) {
-        T _r = _mm512_cmpge_ps(value, o.value);
-        return _mm512_movemask_ps(_r);
-      } else if constexpr ( micron::is_same_v<T, d512> ) {
-        T _r = _mm512_cmpge_pd(value, o.value);
-        return _mm512_movemask_pd(_r);
-      } else if constexpr ( micron::is_same_v<T, i512> ) {
-        T _r;
-        if constexpr ( micron::is_same_v<F, __v8> ) {
-          _r = _mm512_cmpge_epi8(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v16> ) {
-          _r = _mm512_cmpge_epi16(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v32> ) {
-          _r = _mm512_cmpge_epi32(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v64> ) {
-          _r = _mm512_cmpge_epi64(value, o.value);
-        }
-        return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
-      }
+    if constexpr ( micron::is_same_v<T, f512> ) {
+      return static_cast<i64>(_mm512_cmp_ps_mask(value, o.value, _CMP_GE_OS));
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
+      return static_cast<i64>(_mm512_cmp_pd_mask(value, o.value, _CMP_GE_OS));
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+
+      if constexpr ( micron::is_same_v<F, __v8> ) return static_cast<i64>(static_cast<__mmask64>(~_mm512_cmplt_epi8_mask(value, o.value)));
+      if constexpr ( micron::is_same_v<F, __v16> )
+        return static_cast<i64>(static_cast<__mmask32>(~_mm512_cmplt_epi16_mask(value, o.value)));
+      if constexpr ( micron::is_same_v<F, __v32> ) return static_cast<i64>(_mm512_cmpge_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v64> ) return static_cast<i64>(static_cast<__mmask8>(~_mm512_cmplt_epi64_mask(value, o.value)));
     }
     return 0x0;
   }
 
-  constexpr int
+  constexpr i64
   operator>(const v512 &o) const
   {
-    {
-      if constexpr ( micron::is_same_v<T, f512> ) {
-        T _r = _mm512_cmpgt_ps(value, o.value);
-        return _mm512_movemask_ps(_r);
-      } else if constexpr ( micron::is_same_v<T, d512> ) {
-        T _r = _mm512_cmpgt_pd(value, o.value);
-        return _mm512_movemask_pd(_r);
-      } else if constexpr ( micron::is_same_v<T, i512> ) {
-        T _r;
-        if constexpr ( micron::is_same_v<F, __v8> ) {
-          _r = _mm512_cmpgt_epi8(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v16> ) {
-          _r = _mm512_cmpgt_epi16(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v32> ) {
-          _r = _mm512_cmpgt_epi32(value, o.value);
-        }
-        if constexpr ( micron::is_same_v<F, __v64> ) {
-          _r = _mm512_cmpgt_epi64(value, o.value);
-        }
-        return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
-      }
+    if constexpr ( micron::is_same_v<T, f512> ) {
+      return static_cast<i64>(_mm512_cmp_ps_mask(value, o.value, _CMP_GT_OS));
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
+      return static_cast<i64>(_mm512_cmp_pd_mask(value, o.value, _CMP_GT_OS));
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      if constexpr ( micron::is_same_v<F, __v8> ) return static_cast<i64>(_mm512_cmpgt_epi8_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v16> ) return static_cast<i64>(_mm512_cmpgt_epi16_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v32> ) return static_cast<i64>(_mm512_cmpgt_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v64> ) return static_cast<i64>(_mm512_cmpgt_epi64_mask(value, o.value));
     }
     return 0x0;
   }
 
-  constexpr int
+  constexpr i64
   operator<(const v512 &o) const
   {
     if constexpr ( micron::is_same_v<T, f512> ) {
-      T _r = _mm512_cmplt_ps(value, o.value);
-      return _mm512_movemask_ps(_r);
+      return static_cast<i64>(_mm512_cmp_ps_mask(value, o.value, _CMP_LT_OS));
     } else if constexpr ( micron::is_same_v<T, d512> ) {
-      T _r = _mm512_cmplt_pd(value, o.value);
-      return _mm512_movemask_pd(_r);
+      return static_cast<i64>(_mm512_cmp_pd_mask(value, o.value, _CMP_LT_OS));
     } else if constexpr ( micron::is_same_v<T, i512> ) {
-      T _r;
-      if constexpr ( micron::is_same_v<F, __v8> ) {
-        _r = _mm512_cmplt_epi8(value, o.value);
-      }
-      if constexpr ( micron::is_same_v<F, __v16> ) {
-        _r = _mm512_cmplt_epi16(value, o.value);
-      }
-      if constexpr ( micron::is_same_v<F, __v32> ) {
-        _r = _mm512_cmplt_epi32(value, o.value);
-      }
-      if constexpr ( micron::is_same_v<F, __v64> ) {
-        _r = _mm512_cmplt_epi64(value, o.value);
-      }
-      return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
+      if constexpr ( micron::is_same_v<F, __v8> ) return static_cast<i64>(_mm512_cmplt_epi8_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v16> ) return static_cast<i64>(_mm512_cmplt_epi16_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v32> ) return static_cast<i64>(_mm512_cmplt_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v64> ) return static_cast<i64>(_mm512_cmplt_epi64_mask(value, o.value));
     }
     return 0x0;
   }
 
-  constexpr int
+  constexpr i64
   operator<=(const v512 &o) const
   {
     if constexpr ( micron::is_same_v<T, f512> ) {
-      T _r = _mm512_cmple_ps(value, o.value);
-      return _mm512_movemask_ps(_r);
+      return static_cast<i64>(_mm512_cmp_ps_mask(value, o.value, _CMP_LE_OS));
     } else if constexpr ( micron::is_same_v<T, d512> ) {
-      T _r = _mm512_cmple_pd(value, o.value);
-      return _mm512_movemask_pd(_r);
+      return static_cast<i64>(_mm512_cmp_pd_mask(value, o.value, _CMP_LE_OS));
     } else if constexpr ( micron::is_same_v<T, i512> ) {
-      T _r;
-      if constexpr ( micron::is_same_v<F, __v8> ) {
-        _r = _mm512_cmple_epi8(value, o.value);
-      }
-      if constexpr ( micron::is_same_v<F, __v16> ) {
-        _r = _mm512_cmple_epi16(value, o.value);
-      }
-      if constexpr ( micron::is_same_v<F, __v32> ) {
-        _r = _mm512_cmple_epi32(value, o.value);
-      }
-      if constexpr ( micron::is_same_v<F, __v64> ) {
-        _r = _mm512_cmple_epi64(value, o.value);
-      }
-      return _mm512_movemask_ps(_mm512_castsi512_ps(_r));
+
+      if constexpr ( micron::is_same_v<F, __v8> ) return static_cast<i64>(static_cast<__mmask64>(~_mm512_cmpgt_epi8_mask(value, o.value)));
+      if constexpr ( micron::is_same_v<F, __v16> )
+        return static_cast<i64>(static_cast<__mmask32>(~_mm512_cmpgt_epi16_mask(value, o.value)));
+      if constexpr ( micron::is_same_v<F, __v32> ) return static_cast<i64>(_mm512_cmple_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v<F, __v64> ) return static_cast<i64>(static_cast<__mmask8>(~_mm512_cmpgt_epi64_mask(value, o.value)));
     }
     return 0x0;
   }
@@ -550,7 +527,7 @@ public:
   constexpr inline v512 &
   operator-=(double x)
   {
-    if constexpr ( micron::is_same_v<T, f512> ) {
+    if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
       value = _mm512_sub_pd(value, _r);
     }
@@ -618,51 +595,51 @@ public:
     return *this;
   }
 
-  constexpr inline v512 &
+  constexpr inline v512
   operator+(const v512 &o) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, f512> ) {
-      _r = _mm512_add_ps(value, o.value);
+      _r.value = _mm512_add_ps(value, o.value);
     } else if constexpr ( micron::is_same_v<T, d512> ) {
-      _r = _mm512_add_pd(value, o.value);
+      _r.value = _mm512_add_pd(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        _r = _mm512_add_epi8(value, o.value);
+        _r.value = _mm512_add_epi8(value, o.value);
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
-        _r = _mm512_add_epi16(value, o.value);
+        _r.value = _mm512_add_epi16(value, o.value);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
-        _r = _mm512_add_epi32(value, o.value);
+        _r.value = _mm512_add_epi32(value, o.value);
       }
       if constexpr ( micron::is_same_v<F, __v64> ) {
-        _r = _mm512_add_epi64(value, o.value);
+        _r.value = _mm512_add_epi64(value, o.value);
       }
     }
     return _r;
   }
 
-  constexpr inline v512 &
+  constexpr inline v512
   operator-(const v512 &o) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, f512> ) {
-      _r = _mm512_sub_ps(value, o.value);
+      _r.value = _mm512_sub_ps(value, o.value);
     } else if constexpr ( micron::is_same_v<T, d512> ) {
-      _r = _mm512_sub_pd(value, o.value);
+      _r.value = _mm512_sub_pd(value, o.value);
     } else if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        _r = _mm512_sub_epi8(value, o.value);
+        _r.value = _mm512_sub_epi8(value, o.value);
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
-        _r = _mm512_sub_epi16(value, o.value);
+        _r.value = _mm512_sub_epi16(value, o.value);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
-        _r = _mm512_sub_epi32(value, o.value);
+        _r.value = _mm512_sub_epi32(value, o.value);
       }
       if constexpr ( micron::is_same_v<F, __v64> ) {
-        _r = _mm512_sub_epi64(value, o.value);
+        _r.value = _mm512_sub_epi64(value, o.value);
       }
     }
     return _r;
@@ -671,25 +648,29 @@ public:
   constexpr bool
   all_zeroes() const
   {
+    i512 _v;
     if constexpr ( micron::is_same_v<T, f512> ) {
-      return (_mm512_movemask_ps(value) == 0x0);
+      _v = _mm512_castps_si512(value);
     } else if constexpr ( micron::is_same_v<T, d512> ) {
-      return (_mm512_movemask_pd(value) == 0x0);
-    } else if constexpr ( micron::is_same_v<T, i512> ) {
-      return (_mm512_test_all_zeros(value, value) != 0);
+      _v = _mm512_castpd_si512(value);
+    } else {
+      _v = value;
     }
+    return _mm512_cmpeq_epi32_mask(_v, _mm512_setzero_si512()) == static_cast<__mmask16>(0xFFFF);
   }
 
   constexpr bool
   all_ones() const
   {
+    i512 _v;
     if constexpr ( micron::is_same_v<T, f512> ) {
-      return (_mm512_movemask_ps(value) == 0b1111);
+      _v = _mm512_castps_si512(value);
     } else if constexpr ( micron::is_same_v<T, d512> ) {
-      return (_mm512_movemask_pd(value) == 0b11);
-    } else if constexpr ( micron::is_same_v<T, i512> ) {
-      return (_mm512_test_all_ones(value) != 0);
+      _v = _mm512_castpd_si512(value);
+    } else {
+      _v = value;
     }
+    return _mm512_cmpeq_epi32_mask(_v, _mm512_set1_epi32(-1)) == static_cast<__mmask16>(0xFFFF);
   }
 
   constexpr void
@@ -765,8 +746,14 @@ public:
   inline v512 &
   load(B *mem)
   {
-    if ( !is_aligned<256>(mem) ) return *this;      // silent fail
-    value = load<T>(mem);
+    if ( !is_aligned<512>(mem) ) return *this;
+    if constexpr ( micron::is_same_v<T, f512> ) {
+      value = _mm512_load_ps(reinterpret_cast<const void *>(mem));
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
+      value = _mm512_load_pd(reinterpret_cast<const void *>(mem));
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      value = _mm512_load_si512(reinterpret_cast<const void *>(mem));
+    }
     return *this;
   }
 
@@ -774,7 +761,13 @@ public:
   inline v512 &
   uload(B *mem)
   {
-    value = loadu<T, F>(reinterpret_cast<F *>(mem));
+    if constexpr ( micron::is_same_v<T, f512> ) {
+      value = _mm512_loadu_ps(reinterpret_cast<const void *>(mem));
+    } else if constexpr ( micron::is_same_v<T, d512> ) {
+      value = _mm512_loadu_pd(reinterpret_cast<const void *>(mem));
+    } else if constexpr ( micron::is_same_v<T, i512> ) {
+      value = _mm512_loadu_si512(reinterpret_cast<const void *>(mem));
+    }
     return *this;
   }
 
@@ -824,67 +817,70 @@ public:
     return *this;
   }
 
-  inline T
+  inline v512
   operator|(const v512 &o) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, i512> ) {
-      _r = _mm512_or_si512(value, o.value);
+      _r.value = _mm512_or_si512(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, f512> ) {
-      _r = _mm512_or_ps(value, o.value);
+      _r.value = _mm512_or_ps(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, d512> ) {
-      _r = _mm512_or_pd(value, o.value);
+      _r.value = _mm512_or_pd(value, o.value);
     }
     return _r;
   }
 
-  inline T
+  inline v512
   operator&(const v512 &o) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, i512> ) {
-      _r = _mm512_and_si512(value, o.value);
+      _r.value = _mm512_and_si512(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, f512> ) {
-      _r = _mm512_and_ps(value, o.value);
+      _r.value = _mm512_and_ps(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, d512> ) {
-      _r = _mm512_and_pd(value, o.value);
+      _r.value = _mm512_and_pd(value, o.value);
     }
     return _r;
   }
 
-  inline T
+  inline v512
   operator^(const v512 &o) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, i512> ) {
-      _r = _mm512_xor_si512(value, o.value);
+      _r.value = _mm512_xor_si512(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, f512> ) {
-      _r = _mm512_xor_ps(value, o.value);
+      _r.value = _mm512_xor_ps(value, o.value);
     }
     if constexpr ( micron::is_same_v<T, d512> ) {
-      _r = _mm512_xor_pd(value, o.value);
+      _r.value = _mm512_xor_pd(value, o.value);
     }
     return _r;
   }
 
-  inline T
+  inline v512
   operator<<(int i) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        _r = _mm512_srai_epi8(value, i);
+        static_assert(!micron::is_same_v<F, __v8>, "AVX-512 has no epi8 shift");
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
-        _r = _mm512_srai_epi16(value, i);
+        _r.value = _mm512_slli_epi16(value, i);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
-        _r = _mm512_srai_epi32(value, i);
+        _r.value = _mm512_slli_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v<F, __v64> ) {
+        _r.value = _mm512_slli_epi64(value, i);
       }
     }
     return _r;
@@ -895,31 +891,37 @@ public:
   {
     if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        value = _mm512_srai_epi8(value, i);
+        static_assert(!micron::is_same_v<F, __v8>, "AVX-512 has no epi8 shift");
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
-        value = _mm512_srai_epi16(value, i);
+        value = _mm512_slli_epi16(value, i);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
-        value = _mm512_srai_epi32(value, i);
+        value = _mm512_slli_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v<F, __v64> ) {
+        value = _mm512_slli_epi64(value, i);
       }
     }
     return *this;
   }
 
-  inline T
+  inline v512
   operator>>(int i) const
   {
-    T _r;
+    v512 _r;
     if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        _r = _mm512_slai_epi8(value, i);
+        static_assert(!micron::is_same_v<F, __v8>, "AVX-512 has no epi8 shift");
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
-        _r = _mm512_slai_epi16(value, i);
+        _r.value = _mm512_srai_epi16(value, i);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
-        _r = _mm512_slai_epi32(value, i);
+        _r.value = _mm512_srai_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v<F, __v64> ) {
+        _r.value = _mm512_srai_epi64(value, i);
       }
     }
     return _r;
@@ -930,13 +932,16 @@ public:
   {
     if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        value = _mm512_slai_epi8(value, i);
+        static_assert(!micron::is_same_v<F, __v8>, "AVX-512 has no epi8 shift");
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
-        value = _mm512_slai_epi16(value, i);
+        value = _mm512_srai_epi16(value, i);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
-        value = _mm512_slai_epi32(value, i);
+        value = _mm512_srai_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v<F, __v64> ) {
+        value = _mm512_srai_epi64(value, i);
       }
     }
     return *this;
@@ -965,24 +970,24 @@ public:
     return *this;
   }
 
-  constexpr inline T
+  constexpr inline v512
   operator/(double x) const
   {
-    T _d;
+    v512 _d;
     if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
-      _d = _mm512_div_pd(value, _r);
+      _d.value = _mm512_div_pd(value, _r);
     }
     return _d;
   }
 
-  constexpr inline T
+  constexpr inline v512
   operator/(float x) const
   {
-    T _d;
+    v512 _d;
     if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
-      _d = _mm512_div_ps(value, _r);
+      _d.value = _mm512_div_ps(value, _r);
     }
     return _d;
   }
@@ -1014,8 +1019,7 @@ public:
   {
     if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<A, __v8> ) {
-        i512 _r = _mm512_set1_epi8(x);
-        value = _mm512_mullo_epi8(value, _r);
+        static_assert(!micron::is_same_v<A, __v8>, "AVX-512 has no epi8 multiply");
       }
       if constexpr ( micron::is_same_v<A, __v16> ) {
         i512 _r = _mm512_set1_epi16(x);
@@ -1026,51 +1030,56 @@ public:
         value = _mm512_mullo_epi32(value, _r);
       }
       if constexpr ( micron::is_same_v<A, __v64> ) {
+        // AVX-512DQ
+        i512 _r = _mm512_set1_epi64(x);
+        value = _mm512_mullo_epi64(value, _r);
       }
     }
     return *this;
   }
 
-  constexpr inline T
+  constexpr inline v512
   operator*(double x) const
   {
-    T _d;
+    v512 _d;
     if constexpr ( micron::is_same_v<T, d512> ) {
       d512 _r = _mm512_set1_pd(x);
-      _d = _mm512_mul_pd(value, _r);
+      _d.value = _mm512_mul_pd(value, _r);
     }
     return _d;
   }
 
-  constexpr inline T
+  constexpr inline v512
   operator*(float x) const
   {
-    T _d;
+    v512 _d;
     if constexpr ( micron::is_same_v<T, f512> ) {
       f512 _r = _mm512_set1_ps(x);
-      _d = _mm512_mul_ps(value, _r);
+      _d.value = _mm512_mul_ps(value, _r);
     }
     return _d;
   }
 
-  constexpr inline T
+  constexpr inline v512
   operator*(F x)
   {
-    T _d;
+    v512 _d;
     if constexpr ( micron::is_same_v<T, i512> ) {
       if constexpr ( micron::is_same_v<F, __v8> ) {
-        i512 _r = _mm512_set1_epi8(x);
-        _d = _mm512_mullo_epi8(value, _r);
+        static_assert(!micron::is_same_v<F, __v8>, "AVX-512 has no epi8 multiply");
       }
       if constexpr ( micron::is_same_v<F, __v16> ) {
         i512 _r = _mm512_set1_epi16(x);
-        _d = _mm512_mullo_epi16(value, _r);
+        _d.value = _mm512_mullo_epi16(value, _r);
       }
       if constexpr ( micron::is_same_v<F, __v32> ) {
         i512 _r = _mm512_set1_epi32(x);
-        _d = _mm512_mullo_epi32(value, _r);
+        _d.value = _mm512_mullo_epi32(value, _r);
       }
       if constexpr ( micron::is_same_v<F, __v64> ) {
+        // AVX-512DQ
+        i512 _r = _mm512_set1_epi64(x);
+        _d.value = _mm512_mullo_epi64(value, _r);
       }
     }
     return _d;

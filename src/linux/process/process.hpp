@@ -33,7 +33,7 @@
 
 #include "../../io/filesystem.hpp"
 
-#include "callbacks.hpp"
+#include "../../thread/callbacks.hpp"
 
 extern char **environ;
 
@@ -132,7 +132,7 @@ load_stack_heap_pid(pid_t pid)
   return rt;
 }
 
-micron::ptr_arr<char *>
+inline micron::ptr_arr<char *>
 vector_to_argv(const micron::svector<micron::string> &vec)
 {
   auto argv = micron::unique_arr<char *>(vec.size() + 1);      // for nullptr
@@ -173,7 +173,7 @@ struct uprocess_t {
       }
     }
     // argv[0] is always path, not absolute but works without reparsing
-    path = argv[0];
+    if ( !argv.empty() ) path = argv[0];
     str.clear();
     k = 0;
     t = 0;
@@ -264,7 +264,7 @@ create_processes(S... names)
   return p;
 }
 
-void
+inline void
 run_processes(process_list_t &n)
 {
   for ( auto &t : n ) {
@@ -285,25 +285,34 @@ template<int Stack = default_stack_size, typename F, typename... Args>
 int
 daemon(F f, Args &&...args)
 {
-  int pid = micron::fork();      // much nicer to do this
-  if ( pid > 0 )                 // parent
-    micron::posix::exit(0);
+  int pid = micron::fork();
+  if ( pid < 0 ) exc<except::runtime_error>("micron process daemon: first fork failed");
+  if ( pid > 0 ) micron::posix::exit(0);      // parent exits
+
   if ( posix::setsid() < 0 ) exc<except::runtime_error>("micron process daemon failed to create new session");
+
+  // double-fork: the second child is NOT a session leader, so it can never reacquire a tty
+  int pid2 = micron::fork();
+  if ( pid2 < 0 ) exc<except::runtime_error>("micron process daemon: second fork failed");
+  if ( pid2 > 0 ) micron::posix::exit(0);
+
   // don't change dir
   micron::umask(0);
   micron::close(stdin_fileno);
   micron::close(stdout_fileno);
   micron::close(stderr_fileno);
 
-  micron::open("/dev/null", posix::o_rdwr);
-  micron::dup(0);
-  micron::dup(0);
-  f(args...);
+  int nfd = micron::open("/dev/null", posix::o_rdwr);      // lowest free fd == 0 (just closed)
+  if ( nfd == 0 ) {
+    micron::dup(0);      // -> 1
+    micron::dup(0);      // -> 2
+  }
+  f(micron::forward<Args>(args)...);      // forward, don't decay to lvalues
   return 0;
 }
 
 // ex this_task
-uprocess_t
+inline uprocess_t
 this_process(void)
 {
   return uprocess_t();
@@ -402,14 +411,11 @@ wait_and_collect(pid_t pid)
   child_result_t r{};
   r.pid = pid;
 
-  int wstatus = 0;
-  // peek with WNOHANG first so /proc/PID/ is still readable
-  micron::wait4(pid, &wstatus, wnohang, &r.usage);
-
+  // read /proc/PID resources while the child is still a (possibly zombie) process, THEN reap
   r.resources = get_process_resources(pid);
 
-  // reap
-  micron::wait4(pid, &wstatus, 0, &r.usage);
+  int wstatus = 0;
+  micron::wait4(pid, &wstatus, 0, &r.usage);      // blocking reap (EINTR-retried inside wait4)
 
   if ( wifexited(wstatus) ) {
     r.exited_normally = true;
@@ -451,7 +457,7 @@ run_processes_limited(process_list_t &n, const Lims &lims)
   }
 }
 
-micron::fvector<child_result_t>
+inline micron::fvector<child_result_t>
 wait_and_collect(micron::fvector<uprocess_t> &procs)
 {
   micron::fvector<child_result_t> results;
@@ -466,7 +472,7 @@ inline int
 spawn(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -481,7 +487,7 @@ inline int
 spawn(uprocess_t &t, const Caps &caps)
 {
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -496,7 +502,7 @@ inline int
 spawn(uprocess_t &t, const Lims &lims)
 {
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -511,7 +517,7 @@ inline int
 spawn(uprocess_t &t, const Caps &caps, const Lims &lims)
 {
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -638,7 +644,7 @@ rexecute(uprocess_t &t, const Caps &caps)
 {
   apply_caps_child(caps);
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
@@ -651,7 +657,7 @@ rexecute(uprocess_t &t, const Lims &lims)
 {
   child_apply_limits(lims);
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);
@@ -665,7 +671,7 @@ rexecute(uprocess_t &t, const Caps &caps, const Lims &lims)
   child_apply_limits(lims);      // limits first
   apply_caps_child(caps);
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv already carries argv[0]; only seed if empty (was duplicated)
   for ( usize i = 0; i < t.argv.size(); ++i ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   posix::execve(t.path.c_str(), &argv[0], environ);

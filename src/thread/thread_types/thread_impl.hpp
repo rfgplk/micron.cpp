@@ -74,8 +74,8 @@ struct __thread_payload {
   clear(void)
   {
     alive.store(false);
-    ret_val.store(nullptr, memory_order_release);
     tag_val.store((u8)tag::none, memory_order_release);
+    ret_val.store(nullptr, memory_order_release);
     deleter = nullptr;
     usage = posix::rusage_t{};
   }
@@ -104,6 +104,8 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
   pthread::set_cancel_state(pthread::cancel_state::enable);
   pthread::set_cancel_type(pthread::cancel_type::deferred);
   payload->alive.store(true, memory_order_seq_cst);
+  // publish this thread's alive flag so the SIGTERM handler can clear it on a forced stop (else joiners hang)
+  micron::__micron_thread_alive_word = static_cast<void *>(&payload->alive);
 
   // work
 
@@ -121,8 +123,9 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
     payload->deleter = +[](byte *p) { delete reinterpret_cast<ret_t *>(p); };
     payload->tag_val.store((u8)__thread_payload::tag::heap, memory_order_release);
     payload->ret_val.store(reinterpret_cast<byte *>(ret), memory_order_release);
-  } else if constexpr ( sizeof(ret_t) > 8 ) {
-    // bigger than 8 bytes, use new
+  } else if constexpr ( sizeof(ret_t) > sizeof(byte *) ) {
+    // bigger than a pointer (8B on 64-bit, 4B on 32-bit): cannot be packed into ret_val, use new
+    // NOTE: the bound is sizeof(byte*), NOT a hard-coded 8
     ret_t *ret = new ret_t(fn(args...));
     payload->deleter = +[](byte *p) { delete reinterpret_cast<ret_t *>(p); };
     payload->tag_val.store((u8)__thread_payload::tag::heap, memory_order_release);
@@ -158,28 +161,24 @@ __worker_kernel(__worker_payload *payload)
   __thread_handler();
   pthread::set_cancel_state(pthread::cancel_state::enable);
   pthread::set_cancel_type(pthread::cancel_type::deferred);
-rerun_worker:
-  while ( payload->has_work.get(memory_order_acquire) == 0 ) {
-    wait_futex(payload->has_work.ptr(), 0);
-  }
-  // must be an acq, matches release
-  if ( payload->should_die.get(memory_order_acquire) ) return return_force;
-  payload->queue.execute();
-
-  // WARNING: hard setting has_work races with concurrent producers and can deadlock, CAS instead
-  if ( payload->queue.head.get(memory_order_acquire) == payload->queue.tail.get(memory_order_acquire) ) {
-    u32 expected = 1;
-    if ( payload->has_work.compare_exchange_strong(expected, 0, memory_order_acq_rel, memory_order_acquire) ) {
-      if ( payload->queue.head.get(memory_order_acquire) != payload->queue.tail.get(memory_order_acquire) ) {
-        payload->has_work.store(1, memory_order_release);
-      }
+  for ( ;; ) {
+    while ( payload->queue.empty() ) {
+      if ( payload->should_die.get(memory_order_acquire) ) return return_force;
+      payload->has_work.store(0, memory_order_release);
+      if ( !payload->queue.empty() ) break;      // a producer raced the clear; don't sleep
+      if ( payload->should_die.get(memory_order_acquire) ) return return_force;
+      wait_futex(payload->has_work.ptr(), 0);
     }
+    if ( payload->should_die.get(memory_order_acquire) ) return return_force;
+    while ( !payload->queue.empty() ) {
+      payload->queue.execute();
+      if ( payload->should_die.get(memory_order_acquire) ) return return_force;
+    }
+    // epilogue (seqlock-protected usage snapshot)
+    payload->usage_seq.add_fetch(1, memory_order_acq_rel);
+    posix::getrusage(posix::rusage_thread, payload->usage);
+    payload->usage_seq.add_fetch(1, memory_order_acq_rel);
   }
-  // epilogue
-  payload->usage_seq.add_fetch(1, memory_order_acq_rel);
-  posix::getrusage(posix::rusage_thread, payload->usage);
-  payload->usage_seq.add_fetch(1, memory_order_acq_rel);
-  goto rerun_worker;
   return return_success;
 }
 
@@ -260,6 +259,33 @@ struct thread_attr_t {
     pid = 0;
     stack_size = 0;
     stack_addr = nullptr;
+  }
+
+  thread_attr_t(thread_attr_t &&o) noexcept
+      : parent(o.parent), pid(o.pid), sched_policy(o.sched_policy), sched_priority(o.sched_priority), sched_niceness(o.sched_niceness),
+        detach_state(o.detach_state), stack_size(o.stack_size), stack_addr(o.stack_addr)
+  {
+    o.pid = 0;
+    o.stack_size = 0;
+    o.stack_addr = nullptr;
+  }
+
+  thread_attr_t &
+  operator=(thread_attr_t &&o) noexcept
+  {
+    if ( this == &o ) return *this;
+    parent = o.parent;
+    pid = o.pid;
+    sched_policy = o.sched_policy;
+    sched_priority = o.sched_priority;
+    sched_niceness = o.sched_niceness;
+    detach_state = o.detach_state;
+    stack_size = o.stack_size;
+    stack_addr = o.stack_addr;
+    o.pid = 0;
+    o.stack_size = 0;
+    o.stack_addr = nullptr;
+    return *this;
   }
 
   pid_t parent;

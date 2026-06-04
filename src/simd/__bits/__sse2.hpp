@@ -1416,6 +1416,34 @@ _mm_cvtsi64_si128(long long v) noexcept
   return __extension__(__m128i)(__v2di){ v, 0 };
 }
 
+// alignment-safe partial loads: zero-extend the low 2/4/8 bytes of an
+// arbitrarily-aligned pointer into a zeroed register (the high lanes are 0).
+// __builtin_memcpy gives the unaligned access without UB; the scalar is then
+// placed via the cvt* helpers so we never type-pun the vector storage.
+__inline_g __m128i
+_mm_loadu_si16(const void *p) noexcept
+{
+  unsigned short x;
+  __builtin_memcpy(&x, p, sizeof(x));
+  return _mm_cvtsi32_si128(static_cast<int>(x));      // low 16 bits set, rest zero
+}
+
+__inline_g __m128i
+_mm_loadu_si32(const void *p) noexcept
+{
+  int x;
+  __builtin_memcpy(&x, p, sizeof(x));
+  return _mm_cvtsi32_si128(x);
+}
+
+__inline_g __m128i
+_mm_loadu_si64(const void *p) noexcept
+{
+  long long x;
+  __builtin_memcpy(&x, p, sizeof(x));
+  return _mm_cvtsi64_si128(x);
+}
+
 __inline_g __m128i
 _mm_cvtsi64x_si128(long long v) noexcept
 {
@@ -1643,6 +1671,9 @@ __inject_i(_mm_setr_epi32);
 __inject_i(_mm_load_si128);
 __inject_i(_mm_loadu_si128);
 __inject_i(_mm_loadl_epi64);
+__inject_i(_mm_loadu_si16);
+__inject_i(_mm_loadu_si32);
+__inject_i(_mm_loadu_si64);
 __inject_i(_mm_store_si128);
 __inject_i(_mm_storeu_si128);
 __inject_i(_mm_storel_epi64);

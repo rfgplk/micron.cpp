@@ -15,20 +15,23 @@
 namespace micron
 {
 
-// swap to seq_cst if needed
-template<memory_order O = memory_order::acq_rel, is_atomic_type T>
+template<memory_order O = memory_order::acquire, is_atomic_type T>
 inline void
 expect(const atomic_token<T> &tok, const T val)
 {
+  static_assert(O != memory_order::release && O != memory_order::acq_rel,
+                "expect(): order is used for a pure load; release/acq_rel are invalid load orders");
   while ( tok.get(O) != val ) {
     cpu_pause<1000>();
   }
 }
 
-template<memory_order O = memory_order::acq_rel, is_atomic_type T>
+template<memory_order O = memory_order::acquire, is_atomic_type T>
 inline void
 expect(const atomic_token<T> &tok, const atomic_token<T> &o_tok)
 {
+  static_assert(O != memory_order::release && O != memory_order::acq_rel,
+                "expect(): order is used for a pure load; release/acq_rel are invalid load orders");
   while ( tok.get(O) != o_tok.get(O) ) {
     cpu_pause<1000>();
   }

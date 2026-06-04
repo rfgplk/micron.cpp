@@ -77,7 +77,7 @@ struct block: public file {
 
   ~block(void)
   {
-    if ( _buf_dirty ) flush_buf();
+    if ( _buf_dirty && !__handle.closed() ) flush_buf();      // never throw from the dtor (flush_buf->__alive throws on closed fd)
   }
 
   block() = delete;

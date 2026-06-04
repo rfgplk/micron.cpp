@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../errno.hpp"      // error::interrupted
 #include "../../except.hpp"
 #include "../../math/ratios.hpp"
 #include "../../memory/cmemory.hpp"
@@ -22,15 +23,15 @@ template<system_clocks C = system_clocks::monotonic> class timerfd_t
     switch ( u ) {
     case unit::nanoseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000'000'000LL);
-      ts.tv_nsec = static_cast<long>(value) % 1'000'000'000L;
+      ts.tv_nsec = static_cast<long>(static_cast<i64>(value) % 1'000'000'000LL);
       break;
     case unit::microseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000'000LL);
-      ts.tv_nsec = static_cast<long>(static_cast<long>(value) % 1'000'000LL) * 1'000L;
+      ts.tv_nsec = static_cast<long>(static_cast<i64>(value) % 1'000'000LL) * 1'000L;
       break;
     case unit::milliseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000LL);
-      ts.tv_nsec = static_cast<long>(static_cast<long>(value) % 1'000LL) * 1'000'000L;
+      ts.tv_nsec = static_cast<long>(static_cast<i64>(value) % 1'000LL) * 1'000'000L;
       break;
     case unit::seconds:
       ts.tv_sec = static_cast<time_t>(value);
@@ -150,7 +151,10 @@ public:
   wait() const
   {
     unsigned long long count = 0;
-    long r = micron::syscall(SYS_read, fd, &count, sizeof(count));
+    long r;
+    do {
+      r = micron::syscall(SYS_read, fd, &count, sizeof(count));
+    } while ( r == -static_cast<long>(error::interrupted) );      // retry EINTR rather than throwing
     if ( r < 0 ) exc<except::runtime_error>("micron::timerfd_t::wait read failed");
     return count;
   }

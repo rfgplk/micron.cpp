@@ -67,6 +67,8 @@ public:
   unique_lock &
   operator=(unique_lock &&o)
   {
+    if ( this == &o ) return *this;         // self-move must not discard our own lock
+    if ( rptr && mtx ) (mtx->*rptr)();      // release the lock we currently hold before taking over o's
     mtx = o.mtx;
     rptr = o.rptr;
     o.mtx = nullptr;
@@ -78,16 +80,20 @@ public:
   lock()
   {
     __verify();
+    if ( rptr ) return;              // already owns; re-locking a non-recursive mutex would self-deadlock and leak the handle
     rptr = (*mtx).operator()();      // like this so it's explicit
   }
 
-  void
+  bool
   try_lock()
   {
     __verify();
-    if ( !rptr ) {
-      if ( (*mtx).operator!() ) rptr = (*mtx).operator()();
+    if ( rptr ) return false;      // already owns
+    if ( (*mtx).try_lock() ) {
+      rptr = (*mtx).retrieve();
+      return true;
     }
+    return false;
   }
 
   void

@@ -690,7 +690,7 @@ bin(const T &data)
   usize cnt = 0;
   usize remaining = data.size();
   while ( remaining > 0 ) {
-    usize chunk = remaining > 2048 ? 2048 : remaining;
+    usize chunk = remaining > 2047 ? 2047 : remaining;      // 2*chunk+1 must stay within buf[4096]
     const auto *src = reinterpret_cast<const u8 *>(&data[cnt]);
     for ( usize i = 0; i < chunk; ++i ) {
       buf[i * 2] = micron::__impl::__hex_lower[src[i] >> 4];
@@ -711,7 +711,7 @@ bin(const T &data)
   usize cnt = 0;
   usize remaining = data.size();
   while ( remaining > 0 ) {
-    usize chunk = remaining > 2048 ? 2048 : remaining;
+    usize chunk = remaining > 2047 ? 2047 : remaining;      // 2*chunk+1 must stay within buf[4096]
     const auto *src = reinterpret_cast<const u8 *>(&data[cnt]);
     for ( usize i = 0; i < chunk; ++i ) {
       buf[i * 2] = micron::__impl::__hex_lower[src[i] >> 4];
@@ -796,52 +796,42 @@ println(const T *...str)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // error stream functions
 
-template<typename... T>
-void
-error(T &...str)
+// we have to do it like this because the printk overloads use inconsistent template-parameter order (my spaghetti - will be fixed!)
+template<int outstream, typename T>
+inline void
+__emit_e(const T &x)
 {
-  (printk<decltype(str), stderr_fileno>(str), ...);
+  using U = micron::remove_cvref_t<T>;
+  if constexpr ( micron::is_array_v<U> )
+    printk<outstream>(x);      // char[N] -> char-array overload (outstream-first)
+  else if constexpr ( is_char_ptr<U> )
+    printk<outstream>(x);      // char pointer (outstream-first)
+  else if constexpr ( micron::is_same_v<U, char> )
+    printk<outstream>(x);      // single char glyph (outstream-first)
+  else
+    printk<U, outstream>(x);      // arithmetic / string / pointer / container / map (type-first)
 }
 
 template<typename... T>
 inline void
-error(const T &...str)
+error(T &&...str)
 {
-  (printk<decltype(str), stderr_fileno>(str), ...);
-}
-
-template<typename... T>
-void
-errorn(T &...str)
-{
-  (printkn<decltype(str), stderr_fileno>(str), ...);
+  (__emit_e<stderr_fileno>(str), ...);
 }
 
 template<typename... T>
 inline void
-errorn(const T &...str)
+errorn(T &&...str)
 {
-  (printkn<decltype(str), stderr_fileno>(str), ...);
+  ((__emit_e<stderr_fileno>(str), __impl::emit_nl<stderr_fileno>()), ...);
 }
 
 template<typename... T>
 inline void
-errorln(const T &...str)
+errorln(T &&...str)
 {
-  if constexpr ( sizeof...(T) > 1 ) {
-    (printk<decltype(str), stderr_fileno>(str), ...);
-    printk<stderr_fileno>("\n");
-  } else {
-    (printkn<decltype(str), stderr_fileno>(str), ...);
-  }
-}
-
-template<typename... T>
-void
-errorln(T &...str)
-{
-  (printk<decltype(str), stderr_fileno>(str), ...);
-  printk<stderr_fileno>("\n");
+  (__emit_e<stderr_fileno>(str), ...);
+  __impl::emit_nl<stderr_fileno>();
 }
 
 }      // namespace io

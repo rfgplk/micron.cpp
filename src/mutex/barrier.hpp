@@ -5,16 +5,18 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#define full_barrier() __asm("" ::: "memory");
+// NOTE: these are COMPILER reorder barriers only
+// (no hardware fence is emitted on a weak memory model such as ARM)
 
-#define read_barrier() __asm("" ::: "memory");
+#define full_barrier() __asm("" ::: "memory")
 
-#define write_barrier() __asm("" ::: "memory");
+#define read_barrier() __asm("" ::: "memory")
+
+#define write_barrier() __asm("" ::: "memory")
 
 #define forced_read_barrier(x)                                                                                                             \
   ({                                                                                                                                       \
-    \ __typeof(x) __x;                                                                                                                     \
-    \ __asm("" : "=r"(__x) : "0"(x));                                                                                                      \
-    \ __x;                                                                                                                                 \
-    \                                                                                                                                      \
-  });
+    __typeof__(x) __x = (x);                                                                                                               \
+    __asm("" : "+r"(__x));                                                                                                                 \
+    __x;                                                                                                                                   \
+  })

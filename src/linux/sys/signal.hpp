@@ -17,7 +17,7 @@
 // although the below code is 100% valid and will work in all instances, it will fail for debugging.
 
 #if defined(__micron_arch_amd64)
-naked_fn
+[[maybe_unused]] static naked_fn
 restore_rt(void)
 {
   // i was dumb :/
@@ -26,7 +26,7 @@ restore_rt(void)
                "ud2\n\t");
 }
 #elif defined(__micron_arch_arm32)
-naked_fn
+[[maybe_unused]] static naked_fn
 restore_rt(void)
 {
   asm volatile("mov r7, #173\n\t"
@@ -34,7 +34,7 @@ restore_rt(void)
                "udf #0\n\t");
 }
 #elif defined(__micron_arch_arm64)
-naked_fn
+[[maybe_unused]] static naked_fn
 restore_rt(void)
 {
   asm volatile("mov x8, #139\n\t"
@@ -42,7 +42,7 @@ restore_rt(void)
                "brk #0\n\t");
 }
 #elif defined(__micron_arch_x86)
-naked_fn
+[[maybe_unused]] static naked_fn
 restore_rt(void)
 {
   asm volatile("mov $173, %eax\n\t"      // SYS_rt_sigreturn (i386)
@@ -79,7 +79,9 @@ constexpr static const int sig_usr2 = 12;
 constexpr static const int sig_pipe = 13;
 constexpr static const int sig_alrm = 14;
 constexpr static const int sig_term = 15;
-constexpr static const int sig_urg = 16;
+constexpr static const int sig_bus = 7;          // SIGBUS (was missing)
+constexpr static const int sig_stkflt = 16;      // 16 is SIGSTKFLT, NOT SIGURG
+constexpr static const int sig_urg = 23;         // SIGURG is 23 (was wrongly 16)
 constexpr static const int sig_chld = 17;
 constexpr static const int sig_cont = 18;
 constexpr static const int sig_stop = 19;
@@ -90,27 +92,30 @@ constexpr static const int sig_xcpu = 24;
 constexpr static const int sig_xfsz = 25;
 constexpr static const int sig_vtalrm = 26;
 constexpr static const int sig_prof = 27;
+constexpr static const int sig_pwr = 30;      // SIGPWR (was missing)
+constexpr static const int sig_sys = 31;      // SIGSYS (was missing)
 constexpr static const int sig_winch = 28;
 constexpr static const int sig_poll = 29;
 constexpr static const int sig_io = 29;
 
-constexpr static const int sig_block = 0;             /* Block signals.  */
-constexpr static const int sig_unblock = 1;           /* Unblock signals.  */
-constexpr static const int sig_setmask = 2;           /* Set the set of blocked signals.  */
-constexpr static const int sa_nocldstop = 1;          /* Don't send SIGCHLD when children stop.  */
-constexpr static const int sa_nocldwait = 2;          /* Don't create zombie on child death.  */
-constexpr static const int sa_siginfo = 4;            /* Invoke signal-catching function with
+constexpr static const int sig_block = 0;   /* Block signals.  */
+constexpr static const int sig_unblock = 1; /* Unblock signals.  */
+constexpr static const int sig_setmask = 2; /* Set the set of blocked signals.  */
+// sa_flags are an unsigned bitmask; sa_resethand (bit 31) does not fit a signed int.
+constexpr static const u32 sa_nocldstop = 1;          /* Don't send SIGCHLD when children stop.  */
+constexpr static const u32 sa_nocldwait = 2;          /* Don't create zombie on child death.  */
+constexpr static const u32 sa_siginfo = 4;            /* Invoke signal-catching function with
                             three arguments instead of one.  */
-constexpr static const int sa_onstack = 0x08000000;   /* Use signal stack by using `sa_restorer'. */
-constexpr static const int sa_restart = 0x10000000;   /* Restart syscall on signal return.  */
-constexpr static const int sa_nodefer = 0x40000000;   /* Don't automatically block the signal when
+constexpr static const u32 sa_onstack = 0x08000000;   /* Use signal stack by using `sa_restorer'. */
+constexpr static const u32 sa_restart = 0x10000000;   /* Restart syscall on signal return.  */
+constexpr static const u32 sa_nodefer = 0x40000000;   /* Don't automatically block the signal when
                                      its handler is being executed.  */
-constexpr static const int sa_resethand = 0x80000000; /* Reset to SIG_DFL on entry to handler.  */
-constexpr static const int sa_interrupt = 0x20000000; /* Historical no-op.  */
+constexpr static const u32 sa_resethand = 0x80000000; /* Reset to SIG_DFL on entry to handler.  */
+constexpr static const u32 sa_interrupt = 0x20000000; /* Historical no-op.  */
 
-constexpr static const int sa_nomask = sa_nodefer;
-constexpr static const int sa_oneshot = sa_resethand;
-constexpr static const int sa_stack = sa_onstack;
+constexpr static const u32 sa_nomask = sa_nodefer;
+constexpr static const u32 sa_oneshot = sa_resethand;
+constexpr static const u32 sa_stack = sa_onstack;
 
 constexpr static const u64 __kernel_sigset_bytes = 64 / 8;
 
@@ -134,10 +139,16 @@ struct siginfo_t {
   int si_errno; /* If non-zero, an errno value associated with
                    this signal, as defined in <errno.h>.  */
   int si_code;  /* Signal code.  */
-  int __pad0;   /* Explicit padding.  */
+#if defined(__micron_arch_width_64)
+  int __pad0; /* explicit padding to 8-align _sifields on LP64; the kernel has no __pad0 on ILP32 */
+#endif
 
   union {
+#if defined(__micron_arch_width_64)
     int _pad[((128 / sizeof(int)) - 4)];
+#else
+    int _pad[((128 / sizeof(int)) - 3)];
+#endif
 
     /* kill().  */
     struct {
@@ -223,7 +234,7 @@ struct sigaction_t {
 
   posix::sigset_t sa_mask;
 
-  int sa_flags;
+  u32 sa_flags;
 
   void (*sa_restorer)(void);
 };
@@ -327,9 +338,11 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   __system_action.k_sa_handler = action.sigaction_handler.sa_handler;
   micron::voidcpy(&__system_action.sa_mask, &action.sa_mask, sizeof(posix::sigset_t));
   __system_action.sa_flags = (u32)action.sa_flags;
-#if !defined(__micron_syscall_generic)
-  // NOTE: x86/arm32 install a userspace SA_RESTORER trampoline; arm64 has no sa_restorer field
-  __system_action.sa_flags |= 0x04000000;
+#if !defined(__micron_syscall_generic) && !defined(__micron_arch_arm32)
+  // WARNING: amd64/i386 have no kernel-provided default restorer, so a userspace SA_RESTORER
+  // trampoline is mandatory; arm32 (and arm64) GET a kernel restorer via the sigpage/vDSO;
+  // installing a user Thumb restorer there is BROKEN
+  __system_action.sa_flags |= 0x04000000;      // SA_RESTORER
   __system_action.sa_restorer = &restore_rt;
 #endif
   // restorer
@@ -338,7 +351,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   if ( old && result >= 0 ) {
     old->sigaction_handler.sa_handler = __system_oldaction.k_sa_handler;
     micron::voidcpy(&old->sa_mask, &__system_oldaction.sa_mask, sizeof(posix::sigset_t));
-    old->sa_flags = static_cast<int>(__system_oldaction.sa_flags);
+    old->sa_flags = static_cast<u32>(__system_oldaction.sa_flags);
 #if !defined(__micron_syscall_generic)
     old->sa_restorer = __system_action.sa_restorer;
 #else
@@ -348,7 +361,7 @@ sigaction(int sig, const sigaction_t &action, sigaction_t *old)
   return result;
 }
 
-int
+inline int
 sigwait(const posix::sigset_t &set, int &sig)
 {
   siginfo_t info = {};
@@ -369,7 +382,7 @@ struct stack_t {
 
 constexpr int ss_onstack = 1;
 constexpr int ss_disable = 2;
-constexpr int ss_autodisarm = (1 << 31);
+constexpr int ss_autodisarm = static_cast<int>(1u << 31);      // SS_AUTODISARM; build the bit unsigned, then convert
 
 inline int
 sigaltstack(const stack_t *ss, stack_t *old_ss)

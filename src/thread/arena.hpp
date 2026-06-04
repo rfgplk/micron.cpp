@@ -32,7 +32,7 @@ namespace micron
 // macros below
 #if defined(ABSURD_THREAD_COUNT)
 constexpr static const u32 maximum_threads = (1 << 15);      // 32768
-#elseif defined(MICRON_HIGH_THREAD_COUNT)
+#elif defined(MICRON_HIGH_THREAD_COUNT)
 constexpr static const u32 maximum_threads = (1 << 12);      // 4096
 #elif !defined(MICRON_LOW_THREAD_COUNT)
 constexpr static const u32 maximum_threads = (1 << 10);      // 1024
@@ -511,6 +511,9 @@ class __concurrent_arena
   umax_t counter;
   umax_t add_counter;
   micron::iarray<thread_t<Tr>, concurrent_threads> threads;
+  addr_t *__stacks[concurrent_threads]{};      // arena owns the worker stacks. void_thread::__release() nulls
+                                               // its own copy of stack_addr, so the arena must remember them
+                                               // here to actually munmap at teardown (else every stack leaks).
   mutable micron::mutex mtx;
 
   addr_t *
@@ -525,9 +528,11 @@ class __concurrent_arena
   void
   __free_stack(umax_t idx)
   {
-    int r = 0;
-    if ( r = micron::try_unmap(threads.mut(idx).thread.stack(), Sz); r < 0 ) {
-      micron::exc<except::memory_error>("micron concurrect_arena::__free_stack(): failed to unmap thread stack");
+    if ( __stacks[idx] == nullptr ) return;
+    int r = micron::try_unmap(__stacks[idx], Sz);
+    __stacks[idx] = nullptr;
+    if ( r < 0 ) {
+      micron::exc<except::memory_error>("micron concurrent_arena::__free_stack(): failed to unmap thread stack");
     }
   }
 
@@ -571,8 +576,8 @@ public:
     micron::lock_guard l(mtx);
     if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrent_arena::create(): too many created threads");
     addr_t *stack_ptr = __create_stack();
+    __stacks[counter] = stack_ptr;      // remember the stack so the arena can unmap it at teardown
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
-    threads.mut(counter).~thread_t<Tr>();
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs), f, micron::forward<Args>(args)... };
@@ -588,8 +593,8 @@ public:
     micron::lock_guard l(mtx);
     if ( counter >= concurrent_threads ) micron::exc<except::thread_error>("micron concurrent_arena::create(): too many created threads");
     addr_t *stack_ptr = __create_stack();
+    __stacks[counter] = stack_ptr;      // remember the stack so the arena can unmap it at teardown
     pthread_attr_t attrs = pthread::prepare_thread_with_stack(pthread::thread_create_state::joinable, posix::sched_other, stack_ptr, Sz);
-    threads.mut(counter).~thread_t<Tr>();
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
     new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };

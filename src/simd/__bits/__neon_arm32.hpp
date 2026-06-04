@@ -629,9 +629,11 @@ __mc_vreint_q(int32x4_t, s32, float32x4_t, f32);
 
 __mc_vreint_q(int16x8_t, s16, int32x4_t, s32);
 __mc_vreint_q(int16x8_t, s16, uint64x2_t, u64);
+__mc_vreint_q(int16x8_t, s16, uint16x8_t, u16);
 
 __mc_vreint_q(int8x16_t, s8, int32x4_t, s32);
 __mc_vreint_q(int8x16_t, s8, uint64x2_t, u64);
+__mc_vreint_q(int8x16_t, s8, uint8x16_t, u8);
 
 __mc_vreint_q(float32x4_t, f32, int32x4_t, s32);
 __mc_vreint_q(float32x4_t, f32, uint32x4_t, u32);
@@ -896,10 +898,14 @@ vshrq_n_s64(int64x2_t v, const int n) noexcept
   return r;
 }
 
+// see the vshlq_* note below: real USHL semantics (negative count => logical
+// right shift), not the UB-on-negative GCC vector `<<`.
 __inline_g uint64x2_t
 vshlq_u64(uint64x2_t v, int64x2_t cnt) noexcept
 {
-  return v << (uint64x2_t)cnt;
+  uint64x2_t r;
+  __asm__("vshl.u64 %q0, %q1, %q2" : "=w"(r) : "w"(v), "w"(cnt));
+  return r;
 }
 
 __inline_g float32x4_t
@@ -1946,47 +1952,40 @@ __mc_vshrq_n(u16, uint16x8_t);
 
 #undef __mc_vshrq_n
 
-__inline_g int8x16_t
-vshlq_s8(int8x16_t v, int8x16_t cnt) noexcept
-{
-  return v << cnt;
-}
+// vshlq_* must lower to the hardware VSHL (NOT the GCC vector `<<`): a negative
+// per-lane count is a RIGHT shift (arithmetic for .s* / logical for .u*) and
+// |count| >= lane width yields 0. The `<<` operator makes negative counts UB
+// (garbage), but every right-shift caller passes vdupq_n(-count) and relies on
+// the real VSHL semantics. Inline asm guarantees the true op. The count operand
+// keeps its caller-facing type (signed for the unsigned-data variants).
+#define __mc_vshlq_signed(SUF, ASM, T)                                                                                                     \
+  __inline_g T vshlq_##SUF(T v, T cnt) noexcept                                                                                            \
+  {                                                                                                                                        \
+    T r;                                                                                                                                   \
+    __asm__("vshl." ASM " %q0, %q1, %q2" : "=w"(r) : "w"(v), "w"(cnt));                                                                    \
+    return r;                                                                                                                              \
+  }
 
-__inline_g int16x8_t
-vshlq_s16(int16x8_t v, int16x8_t cnt) noexcept
-{
-  return v << cnt;
-}
+__mc_vshlq_signed(s8, "s8", int8x16_t);
+__mc_vshlq_signed(s16, "s16", int16x8_t);
+__mc_vshlq_signed(s32, "s32", int32x4_t);
+__mc_vshlq_signed(s64, "s64", int64x2_t);
 
-__inline_g int32x4_t
-vshlq_s32(int32x4_t v, int32x4_t cnt) noexcept
-{
-  return v << cnt;
-}
+#undef __mc_vshlq_signed
 
-__inline_g int64x2_t
-vshlq_s64(int64x2_t v, int64x2_t cnt) noexcept
-{
-  return v << cnt;
-}
+#define __mc_vshlq_unsigned(SUF, ASM, T, CT)                                                                                               \
+  __inline_g T vshlq_##SUF(T v, CT cnt) noexcept                                                                                           \
+  {                                                                                                                                        \
+    T r;                                                                                                                                   \
+    __asm__("vshl." ASM " %q0, %q1, %q2" : "=w"(r) : "w"(v), "w"(cnt));                                                                    \
+    return r;                                                                                                                              \
+  }
 
-__inline_g uint8x16_t
-vshlq_u8(uint8x16_t v, int8x16_t cnt) noexcept
-{
-  return v << (uint8x16_t)cnt;
-}
+__mc_vshlq_unsigned(u8, "u8", uint8x16_t, int8x16_t);
+__mc_vshlq_unsigned(u16, "u16", uint16x8_t, int16x8_t);
+__mc_vshlq_unsigned(u32, "u32", uint32x4_t, int32x4_t);
 
-__inline_g uint16x8_t
-vshlq_u16(uint16x8_t v, int16x8_t cnt) noexcept
-{
-  return v << (uint16x8_t)cnt;
-}
-
-__inline_g uint32x4_t
-vshlq_u32(uint32x4_t v, int32x4_t cnt) noexcept
-{
-  return v << (uint32x4_t)cnt;
-}
+#undef __mc_vshlq_unsigned
 
 #define __mc_vshq_asm(NAME, ASM, SUF, T_OUT, T_IN)                                                                                         \
   __inline_g T_OUT NAME##_##SUF(T_IN a, T_IN b) noexcept                                                                                   \
@@ -2670,6 +2669,36 @@ __inline_g float32x4x2_t
 vuzpq_f32(float32x4_t a, float32x4_t b) noexcept
 {
   float32x4x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 2, 4, 6);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 3, 5, 7);
+  return r;
+}
+
+// D-register (64-bit) unzips: val[0] gathers the even lanes of a then b, val[1]
+// the odd lanes — the standard VUZP.<n> deinterleave the half-width arith paths
+// (mul_32_64 / mul_u32_64 / maddubs_8) rely on.
+__inline_g int32x2x2_t
+vuzp_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  int32x2x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 2);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 3);
+  return r;
+}
+
+__inline_g uint32x2x2_t
+vuzp_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  uint32x2x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 2);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 3);
+  return r;
+}
+
+__inline_g int16x4x2_t
+vuzp_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  int16x4x2_t r;
   r.val[0] = __builtin_shufflevector(a, b, 0, 2, 4, 6);
   r.val[1] = __builtin_shufflevector(a, b, 1, 3, 5, 7);
   return r;

@@ -79,15 +79,36 @@ class immutable_map
   __make_node(Kf &&k, Vf &&v, __node *l, __node *r, bool rd)
   {
     auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-    if constexpr ( micron::is_trivially_copyable_v<K> )
-      n->key = static_cast<Kf &&>(k);
-    else
-      new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
-
-    if constexpr ( micron::is_trivially_copyable_v<V> )
-      n->value = static_cast<Vf &&>(v);
-    else
-      new (micron::addr(n->value)) V(static_cast<Vf &&>(v));
+    if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
+      __release(l);
+      __release(r);
+      exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
+    }
+#ifndef __micron_freestanding
+    [[maybe_unused]] bool key_built = false;
+    try {
+#endif
+      if constexpr ( micron::is_trivially_copyable_v<K> )
+        n->key = static_cast<Kf &&>(k);
+      else
+        new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
+#ifndef __micron_freestanding
+      key_built = true;
+#endif
+      if constexpr ( micron::is_trivially_copyable_v<V> )
+        n->value = static_cast<Vf &&>(v);
+      else
+        new (micron::addr(n->value)) V(static_cast<Vf &&>(v));
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      if constexpr ( !micron::is_trivially_destructible_v<K> )
+        if ( key_built ) n->key.~K();
+      abc::dealloc(reinterpret_cast<byte *>(n));
+      __release(l);
+      __release(r);
+      throw;
+    }
+#endif
 
     n->set_left_and_red(l, rd);
     n->right = r;
@@ -96,17 +117,41 @@ class immutable_map
   }
 
   // construct V in-place from args
+  // construct V in-place from args; same consume-and-release-on-failure contract
+  // for l/r as __make_node.
   template<typename Kf, typename... Args>
   static inline __node *
   __make_node_emplace(Kf &&k, __node *l, __node *r, bool rd, Args &&...args)
   {
     auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-    if constexpr ( micron::is_trivially_copyable_v<K> )
-      n->key = static_cast<Kf &&>(k);
-    else
-      new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
+    if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
+      __release(l);
+      __release(r);
+      exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
+    }
+#ifndef __micron_freestanding
+    [[maybe_unused]] bool key_built = false;
+    try {
+#endif
+      if constexpr ( micron::is_trivially_copyable_v<K> )
+        n->key = static_cast<Kf &&>(k);
+      else
+        new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
+#ifndef __micron_freestanding
+      key_built = true;
+#endif
+      new (micron::addr(n->value)) V(micron::forward<Args>(args)...);
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      if constexpr ( !micron::is_trivially_destructible_v<K> )
+        if ( key_built ) n->key.~K();
+      abc::dealloc(reinterpret_cast<byte *>(n));
+      __release(l);
+      __release(r);
+      throw;
+    }
+#endif
 
-    new (micron::addr(n->value)) V(micron::forward<Args>(args)...);
     n->set_left_and_red(l, rd);
     n->right = r;
     n->refs = 1;
@@ -131,7 +176,7 @@ class immutable_map
   __retain(__node *n)
   {
     if ( n ) [[likely]]
-      ++n->refs;
+      __atomic_fetch_add(&n->refs, 1u, __ATOMIC_RELAXED);
     return n;
   }
 
@@ -144,7 +189,8 @@ class immutable_map
     usize depth = 0;
 
     while ( n ) [[likely]] {
-      if ( --n->refs != 0 ) [[likely]]
+      // acq_rel: the thread that drives refs 1->0 synchronizes-with all prior releases.
+      if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
         break;
       __node *l = n->left();
       __node *r = n->right;
@@ -166,7 +212,7 @@ class immutable_map
   {
     if ( !n ) [[unlikely]]
       return;
-    if ( --n->refs != 0 ) [[likely]]
+    if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
       return;
     __node *l = n->left();
     __node *r = n->right;
@@ -188,9 +234,11 @@ class immutable_map
   static inline __node *
   __acquire_mutable(const __node *h)
   {
-    if ( h->refs == 1 ) [[likely]] {
+    // refs==1 means this version is the sole owner -> unreachable by any other
+    // thread, so an in-place mutation is safe
+    if ( __atomic_load_n(&h->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
       __node *n = const_cast<__node *>(h);
-      ++n->refs;
+      __atomic_fetch_add(&n->refs, 1u, __ATOMIC_RELAXED);
       return n;
     }
     return __copy_node(h);
@@ -216,7 +264,7 @@ class immutable_map
   {
     __node *x = h->right;
 
-    if ( x->refs == 1 ) [[likely]] {
+    if ( __atomic_load_n(&x->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
       // both exclusive relink
       bool h_color = h->red();
       h->right = x->left();
@@ -245,7 +293,7 @@ class immutable_map
   {
     __node *x = h->left();
 
-    if ( x->refs == 1 ) [[likely]] {
+    if ( __atomic_load_n(&x->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
       bool h_color = h->red();
       h->set_left(x->right);
       h->set_red(true);
@@ -274,7 +322,7 @@ class immutable_map
     h->set_red(!h->red());
 
     if ( __node *l = h->left() ) [[likely]] {
-      if ( l->refs == 1 ) [[likely]] {
+      if ( __atomic_load_n(&l->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
         l->set_red(!l->red());
       } else {
         __node *nl = __make_node(l->key, l->value, __retain(l->left()), __retain(l->right), !l->red());
@@ -284,7 +332,7 @@ class immutable_map
     }
 
     if ( __node *r = h->right ) [[likely]] {
-      if ( r->refs == 1 ) [[likely]] {
+      if ( __atomic_load_n(&r->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
         r->set_red(!r->red());
       } else {
         __node *nr = __make_node(r->key, r->value, __retain(r->left()), __retain(r->right), !r->red());
@@ -343,14 +391,21 @@ class immutable_map
     // cache first comparison
     const bool less = k < h->key;
 
+    // build the recursive child into a local BEFORE retaining the sibling
     __node *n;
     if ( less ) [[likely]] {
-      n = __clone_with(h, __insert_impl(h->left(), k, v, inserted), __retain(h->right), h->red());
+      __node *nl = __insert_impl(h->left(), k, v, inserted);
+      __node *nr = __retain(h->right);
+      n = __clone_with(h, nl, nr, h->red());
     } else if ( h->key < k ) {
-      n = __clone_with(h, __retain(h->left()), __insert_impl(h->right, k, v, inserted), h->red());
+      __node *nr = __insert_impl(h->right, k, v, inserted);
+      __node *nl = __retain(h->left());
+      n = __clone_with(h, nl, nr, h->red());
     } else {
       // update value
-      n = __make_node(h->key, micron::forward<Vf>(v), __retain(h->left()), __retain(h->right), h->red());
+      __node *nl = __retain(h->left());
+      __node *nr = __retain(h->right);
+      n = __make_node(h->key, micron::forward<Vf>(v), nl, nr, h->red());
       inserted = false;
     }
 
@@ -368,14 +423,21 @@ class immutable_map
 
     const bool less = k < h->key;
 
+    // build-before-retain
     __node *n;
     if ( less ) [[likely]] {
-      n = __clone_with(h, __emplace_impl(h->left(), k, inserted, micron::forward<Args>(args)...), __retain(h->right), h->red());
+      __node *nl = __emplace_impl(h->left(), k, inserted, micron::forward<Args>(args)...);
+      __node *nr = __retain(h->right);
+      n = __clone_with(h, nl, nr, h->red());
     } else if ( h->key < k ) {
-      n = __clone_with(h, __retain(h->left()), __emplace_impl(h->right, k, inserted, micron::forward<Args>(args)...), h->red());
+      __node *nr = __emplace_impl(h->right, k, inserted, micron::forward<Args>(args)...);
+      __node *nl = __retain(h->left());
+      n = __clone_with(h, nl, nr, h->red());
     } else {
       // reconstruct value in place
-      n = __make_node_emplace(h->key, __retain(h->left()), __retain(h->right), h->red(), micron::forward<Args>(args)...);
+      __node *nl = __retain(h->left());
+      __node *nr = __retain(h->right);
+      n = __make_node_emplace(h->key, nl, nr, h->red(), micron::forward<Args>(args)...);
       inserted = false;
     }
 
@@ -455,19 +517,20 @@ class immutable_map
       if ( equal ) [[unlikely]] {
         const __node *m = __find_min(n->right);
 
-        if constexpr ( !micron::is_trivially_destructible_v<K> ) n->key.~K();
-        if constexpr ( !micron::is_trivially_destructible_v<V> ) n->value.~V();
-
-        if constexpr ( micron::is_trivially_copyable_v<K> )
+        if constexpr ( micron::is_trivially_copyable_v<K> && micron::is_trivially_copyable_v<V> ) {
           micron::bytecpy(reinterpret_cast<byte *>(micron::addr(n->key)), reinterpret_cast<const byte *>(micron::addr(m->key)), sizeof(K));
-        else
-          new (micron::addr(n->key)) K(m->key);
-
-        if constexpr ( micron::is_trivially_copyable_v<V> )
           micron::bytecpy(reinterpret_cast<byte *>(micron::addr(n->value)), reinterpret_cast<const byte *>(micron::addr(m->value)),
                           sizeof(V));
-        else
-          new (micron::addr(n->value)) V(m->value);
+        } else {
+          // build the successor's key/value into temporaries FIRST: a throwing
+          // copy ctor then leaves n fully intact
+          K tmpk(m->key);
+          V tmpv(m->value);
+          if constexpr ( !micron::is_trivially_destructible_v<K> ) n->key.~K();
+          if constexpr ( !micron::is_trivially_destructible_v<V> ) n->value.~V();
+          new (micron::addr(n->key)) K(micron::move(tmpk));
+          new (micron::addr(n->value)) V(micron::move(tmpv));
+        }
 
         __node *old_right = n->right;
         n->right = __erase_min_impl(old_right);
@@ -721,6 +784,7 @@ public:
     static constexpr usize __max_depth = 64;
     const __node *__stack[__max_depth];
     usize __depth;
+    const __node *__pin;
 
     inline void
     __push_left(const __node *n)
@@ -732,9 +796,55 @@ public:
     }
 
   public:
-    const_iterator() : __depth(0) { }
+    const_iterator() : __depth(0), __pin(nullptr) { }
 
-    explicit const_iterator(const __node *root) : __depth(0) { __push_left(root); }
+    explicit const_iterator(const __node *root) : __depth(0), __pin(root)
+    {
+      __retain(const_cast<__node *>(root));
+      __push_left(root);
+    }
+
+    const_iterator(const const_iterator &o) : __depth(o.__depth), __pin(o.__pin)
+    {
+      for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+      __retain(const_cast<__node *>(__pin));
+    }
+
+    const_iterator(const_iterator &&o) noexcept : __depth(o.__depth), __pin(o.__pin)
+    {
+      for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+      o.__pin = nullptr;
+      o.__depth = 0;
+    }
+
+    const_iterator &
+    operator=(const const_iterator &o)
+    {
+      if ( this != &o ) {
+        __release(const_cast<__node *>(__pin));
+        __depth = o.__depth;
+        __pin = o.__pin;
+        for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+        __retain(const_cast<__node *>(__pin));
+      }
+      return *this;
+    }
+
+    const_iterator &
+    operator=(const_iterator &&o) noexcept
+    {
+      if ( this != &o ) {
+        __release(const_cast<__node *>(__pin));
+        __depth = o.__depth;
+        __pin = o.__pin;
+        for ( usize i = 0; i < __depth; ++i ) __stack[i] = o.__stack[i];
+        o.__pin = nullptr;
+        o.__depth = 0;
+      }
+      return *this;
+    }
+
+    ~const_iterator() { __release(const_cast<__node *>(__pin)); }
 
     bool
     operator==(const const_iterator &o) const

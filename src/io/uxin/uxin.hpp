@@ -20,7 +20,7 @@ namespace uxin
 {
 
 // high level "open a device and init" func.
-fvector<input_t>
+vector<input_t>
 open_nonblock(type_t __type)
 {
   switch ( __type ) {
@@ -32,11 +32,11 @@ open_nonblock(type_t __type)
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = ::micron::uxin::get_devices();
-  fvector<input_t> res;
+  vector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
       ::micron::uxin::nonblock_bind_device(n);
-      res.push_back({ n, {} });
+      res.push_back({ micron::move(n), {} });      // device_t is move-only (owns its fd)
     }
   }
   if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
@@ -55,17 +55,18 @@ open_first_nonblock(type_t __type)
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = ::micron::uxin::get_devices();
-  fvector<input_t> res;
+  vector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
       ::micron::uxin::nonblock_bind_device(n);
-      return { n, {} };
+      return { micron::move(n), {} };
     }
   }
   exc<except::library_error>("uxin open(): couldn't open device");
+  __builtin_unreachable();
 }
 
-fvector<input_t>
+vector<input_t>
 open(type_t __type)
 {
   switch ( __type ) {
@@ -77,11 +78,11 @@ open(type_t __type)
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = ::micron::uxin::get_devices();
-  fvector<input_t> res;
+  vector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
       ::micron::uxin::bind_device(n);
-      res.push_back({ n, {} });
+      res.push_back({ micron::move(n), {} });      // device_t is move-only (owns its fd)
     }
   }
   if ( res.empty() ) exc<except::library_error>("uxin open(): couldn't open device");
@@ -100,14 +101,15 @@ open_first(type_t __type)
     exc<except::library_error>("uxin open(): invalid specified type of device");
   }
   auto dev = ::micron::uxin::get_devices();
-  fvector<input_t> res;
+  vector<input_t> res;
   for ( auto &n : dev ) {
     if ( n.type == __type ) {
       ::micron::uxin::bind_device(n);
-      return { n, {} };
+      return { micron::move(n), {} };
     }
   }
   exc<except::library_error>("uxin open(): couldn't open device");
+  __builtin_unreachable();
 }
 
 template<auto Fn = nullptr, auto Fn_2 = nullptr, auto Fn_3 = nullptr>
@@ -140,7 +142,7 @@ read(input_t &t, Args &&...__input_packet)
 template<typename... Args>
   requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
-read(fvector<input_t> &inputs, Args &&...__input_packet)
+read(vector<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
@@ -153,7 +155,7 @@ read(fvector<input_t> &inputs, Args &&...__input_packet)
 template<typename... Args>
   requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
-read_rt(fvector<input_t> &inputs, Args &&...__input_packet)
+read_rt(vector<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");
@@ -165,7 +167,7 @@ read_rt(fvector<input_t> &inputs, Args &&...__input_packet)
 template<typename... Args>
   requires(micron::same_as<input_packet_t, micron::remove_cvref_t<Args>> && ...)
 void
-read_once(fvector<input_t> &inputs, Args &&...__input_packet)
+read_once(vector<input_t> &inputs, Args &&...__input_packet)
 {
   for ( const auto &t : inputs ) {
     if ( !is_loaded(t.device) ) exc<except::library_error>("uxin read(): device isn't loaded");

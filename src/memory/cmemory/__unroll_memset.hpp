@@ -706,7 +706,7 @@ scbzero(F *_src) noexcept
 // BASIC TYPESET - RUNTIME COUNT
 template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) F *
+__attribute__((nonnull(1))) F *
 typeset(F *s, const T in, const u64 cnt) noexcept
 {
   T *src = reinterpret_cast<T *>(s);
@@ -743,7 +743,7 @@ rtypeset(F &s, const T in, const u64 cnt) noexcept
 
 // COMPILE-TIME CONSTANT TYPESET - TEMPLATE COUNT ONLY
 template<u64 M, typename T, typename F>
-__attribute__((nonnull)) F *
+__attribute__((nonnull(1))) F *
 ctypeset(F *s, const T in) noexcept
 {
   T *src = reinterpret_cast<T *>(s);
@@ -763,7 +763,7 @@ rctypeset(F &s, const T in) noexcept
 
 // SECURE COMPILE-TIME CONSTANT TYPESET
 template<u64 M, typename T, typename F>
-__attribute__((nonnull)) F *
+__attribute__((nonnull(1))) F *
 sctypeset(F *s, const T in) noexcept
 {
   volatile T *src = reinterpret_cast<volatile T *>(s);
@@ -786,7 +786,7 @@ rsctypeset(F &s, const T in) noexcept
 // SAFE TYPESET - RUNTIME COUNT
 template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) F *
+__attribute__((nonnull(1))) F *
 stypeset(F *s, const T in, const u64 cnt) noexcept
 {
   if ( s == nullptr ) return nullptr;

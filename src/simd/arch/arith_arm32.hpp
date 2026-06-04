@@ -158,8 +158,13 @@ template<is_neon_simd_class T>
 inline T
 shift_right_arithmetic(T &o, int b)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shiftright_arithmetic_16(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shiftright_arithmetic_32(o, b);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return shiftright_arithmetic_16(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return shiftright_arithmetic_32(o, b);
+  else
+    static_assert(!sizeof(typename T::lane_width),
+                  "shift_right_arithmetic: unsupported lane width (16/32 only; no 64-bit arith-right on AArch32 NEON)");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -554,8 +559,8 @@ inline T
 sign_8(T &o, T &b)
 {
   int8x16_t a = _ri8(__r(o)), bv = _ri8(__r(b));
-  uint8x16_t b_pos = vreinterpretq_u8_s8(vcgtq_s8(bv, vdupq_n_s8(0)));
-  uint8x16_t b_neg = vreinterpretq_u8_s8(vcltq_s8(bv, vdupq_n_s8(0)));
+  uint8x16_t b_pos = vcgtq_s8(bv, vdupq_n_s8(0));
+  uint8x16_t b_neg = vcltq_s8(bv, vdupq_n_s8(0));
   return _ri8r(vorrq_s8(vandq_s8(a, vreinterpretq_s8_u8(b_pos)), vandq_s8(vnegq_s8(a), vreinterpretq_s8_u8(b_neg))));
 }
 
@@ -564,8 +569,8 @@ inline T
 sign_16(T &o, T &b)
 {
   int16x8_t a = _ri16(__r(o)), bv = _ri16(__r(b));
-  uint16x8_t b_pos = vreinterpretq_u16_s16(vcgtq_s16(bv, vdupq_n_s16(0)));
-  uint16x8_t b_neg = vreinterpretq_u16_s16(vcltq_s16(bv, vdupq_n_s16(0)));
+  uint16x8_t b_pos = vcgtq_s16(bv, vdupq_n_s16(0));
+  uint16x8_t b_neg = vcltq_s16(bv, vdupq_n_s16(0));
   return _ri16r(vorrq_s16(vandq_s16(a, vreinterpretq_s16_u16(b_pos)), vandq_s16(vnegq_s16(a), vreinterpretq_s16_u16(b_neg))));
 }
 
@@ -574,8 +579,8 @@ inline T
 sign_32(T &o, T &b)
 {
   int32x4_t a = __r(o), bv = __r(b);
-  uint32x4_t b_pos = vreinterpretq_u32_s32(vcgtq_s32(bv, vdupq_n_s32(0)));
-  uint32x4_t b_neg = vreinterpretq_u32_s32(vcltq_s32(bv, vdupq_n_s32(0)));
+  uint32x4_t b_pos = vcgtq_s32(bv, vdupq_n_s32(0));
+  uint32x4_t b_neg = vcltq_s32(bv, vdupq_n_s32(0));
   return vorrq_s32(vandq_s32(a, vreinterpretq_s32_u32(b_pos)), vandq_s32(vnegq_s32(a), vreinterpretq_s32_u32(b_neg)));
 }
 
@@ -613,9 +618,16 @@ template<is_neon_simd_class T>
 inline T
 min(T &o, T &b)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> ) return min_8(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return min_16(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return min_32(o, b);
+  // AArch32 NEON has no 64-bit-lane vminq; reject __v64 instead of running off
+  // the end of this non-void function (indeterminate-value UB).
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> )
+    return min_8(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return min_16(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return min_32(o, b);
+  else
+    static_assert(!sizeof(typename T::lane_width), "min: unsupported lane width (8/16/32 only; no 64-bit min on AArch32 NEON)");
 }
 
 template<is_neon_simd_class T>
@@ -643,9 +655,14 @@ template<is_neon_simd_class T>
 inline T
 min_unsigned(T &o, T &b)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> ) return min_u8(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return min_u16(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return min_u32(o, b);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> )
+    return min_u8(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return min_u16(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return min_u32(o, b);
+  else
+    static_assert(!sizeof(typename T::lane_width), "min_unsigned: unsupported lane width (8/16/32 only; no 64-bit min on AArch32 NEON)");
 }
 
 template<is_neon_simd_class T>
@@ -673,9 +690,14 @@ template<is_neon_simd_class T>
 inline T
 max(T &o, T &b)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> ) return max_8(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return max_16(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return max_32(o, b);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> )
+    return max_8(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return max_16(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return max_32(o, b);
+  else
+    static_assert(!sizeof(typename T::lane_width), "max: unsupported lane width (8/16/32 only; no 64-bit max on AArch32 NEON)");
 }
 
 template<is_neon_simd_class T>
@@ -703,9 +725,14 @@ template<is_neon_simd_class T>
 inline T
 max_unsigned(T &o, T &b)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> ) return max_u8(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return max_u16(o, b);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return max_u32(o, b);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> )
+    return max_u8(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return max_u16(o, b);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return max_u32(o, b);
+  else
+    static_assert(!sizeof(typename T::lane_width), "max_unsigned: unsupported lane width (8/16/32 only; no 64-bit max on AArch32 NEON)");
 }
 
 template<is_neon_simd_class T>
@@ -733,9 +760,14 @@ template<is_neon_simd_class T>
 inline T
 abs(T &o)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> ) return abs_8(o);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return abs_16(o);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return abs_32(o);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v8> )
+    return abs_8(o);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return abs_16(o);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return abs_32(o);
+  else
+    static_assert(!sizeof(typename T::lane_width), "abs: unsupported lane width (8/16/32 only; no 64-bit abs on AArch32 NEON)");
 }
 
 template<is_neon_simd_class T>

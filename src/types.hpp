@@ -105,10 +105,11 @@ using kernel_size_t = kernel_ulong_t;
 using kernel_ssize_t = kernel_long_t;
 using kernel_ptrdiff_t = kernel_long_t;
 
-using kernel_off_t = __off_t;                 // kernel_long_t
-using kernel_loff_t = __off64_t;              // long long
-using kernel_old_time_t = __time_t;           // kernel_long_t
-using kernel_time_t = __time_t;               // kernel_long_t
+// __kernel_off_t / __kernel_time_t are WORD-SIZE in the kernel UAPI
+using kernel_off_t = kernel_long_t;
+using kernel_loff_t = __off64_t;      // long long
+using kernel_old_time_t = kernel_long_t;
+using kernel_time_t = kernel_long_t;
 using kernel_time64_t = __suseconds64_t;      // long long
 using kernel_clock_t = __clock_t;             // kernel_long_t
 using kernel_timer_t = int;                   // int

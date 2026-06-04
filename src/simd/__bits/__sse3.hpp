@@ -24,7 +24,7 @@ namespace __bits
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 
-#define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
+#define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("sse3")]] static inline
 
 __inline_g __m128
 _mm_addsub_ps(__m128 a, __m128 b) noexcept

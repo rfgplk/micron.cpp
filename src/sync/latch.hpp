@@ -23,8 +23,12 @@ public:
   void
   count_down(int n = 1) noexcept
   {
-    for ( int i = 0; i < n; ++i ) {
-      --counter;
+    if ( n <= 0 ) return;
+    int cur = counter.get(memory_order::relaxed);
+    for ( ;; ) {
+      if ( cur <= 0 ) return;
+      int step = (cur < n) ? cur : n;
+      if ( counter.compare_exchange_weak(cur, cur - step, memory_order::seq_cst, memory_order::relaxed) ) return;
     }
   }
 
@@ -39,7 +43,7 @@ public:
   bool
   try_wait() const noexcept
   {
-    return counter.get(memory_order::seq_cst) == 0;
+    return counter.get(memory_order::seq_cst) <= 0;
   }
 
   int

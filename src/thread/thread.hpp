@@ -173,7 +173,7 @@ template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 throttle(Tr &t)
 {
-  return t.throttle();
+  return t.sleep_second();      // throttle == the USR1 pseudo-sleep; no thread type defines throttle()
 }
 
 template<typename Tr = auto_thread<>>
@@ -181,15 +181,16 @@ inline __attribute__((always_inline)) int
 throttle(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) ) return -1;
-  return t->throttle();
+  return t->sleep_second();      // throttle == the USR1 pseudo-sleep; no thread type defines throttle()
 }
 
 template<typename... Args>
 inline int
 throttle(Args &...t)
 {
-  if ( int r = (throttle(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : throttle(t)), ...);
+  return r;
 }
 
 template<typename Tr = auto_thread<>>
@@ -211,8 +212,9 @@ template<typename... Args>
 inline int
 sleep(Args &...t)
 {
-  if ( int r = (sleep(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : sleep(t)), ...);
+  return r;
 }
 
 template<typename Tr = auto_thread<>>
@@ -234,8 +236,9 @@ template<typename... Args>
 inline int
 awaken(Args &...t)
 {
-  if ( int r = (awaken(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : awaken(t)), ...);
+  return r;
 }
 
 template<typename Tr = auto_thread<>>
@@ -264,6 +267,7 @@ template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) void
 park(posix::cpu_set_t &set, __thread_pointer<Tr> &t)
 {
+  if ( !micron::is_alive_ptr(t) ) return;
   park_cpu(t->thread_id(), set);
 }
 
@@ -293,8 +297,9 @@ template<typename... Args>
 inline int
 interrupt(Args &...t)
 {
-  if ( int r = (interrupt(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : interrupt(t)), ...);
+  return r;
 }
 
 template<typename Tr = auto_thread<>>
@@ -302,22 +307,24 @@ inline __attribute__((always_inline)) int
 force_stop(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) ) return -1;
-  return t->signal(signal::stop);
+  return t->signal(signal::terminate);
 }
 
 template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 force_stop(Tr &t)
 {
-  return t.signal(signal::stop);
+  // per-thread stop (SIGTERM via __thread_stop), not the process-wide SIGSTOP
+  return t.signal(signal::terminate);
 }
 
 template<typename... Args>
 inline int
 force_stop(Args &...t)
 {
-  if ( int r = (force_stop(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : force_stop(t)), ...);
+  return r;
 }
 
 template<typename Tr = auto_thread<>>
@@ -339,15 +346,16 @@ template<typename... Args>
 inline int
 terminate(Args &...t)
 {
-  if ( int r = (terminate(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : terminate(t)), ...);
+  return r;
 }
 
 template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 kill(Tr &t)
 {
-  return t.signal(signal::kill9);
+  return t.cancel();
 }
 
 template<typename Tr = auto_thread<>>
@@ -355,15 +363,16 @@ inline __attribute__((always_inline)) auto
 kill(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) ) return -1;
-  return t->signal(signal::kill9);
+  return t->cancel();
 }
 
 template<typename... Args>
 inline int
 kill(Args &...t)
 {
-  if ( int r = (kill(t), ...) != 0 ) return r;
-  return 0;
+  int r = 0;
+  ((r = r ? r : kill(t)), ...);
+  return r;
 }
 
 };      // namespace solo

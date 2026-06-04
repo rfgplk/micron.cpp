@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../errno.hpp"
 #include "../../syscall.hpp"
 #include "../sys/resource.hpp"
 
@@ -150,7 +151,11 @@ typedef enum {
 inline __attribute__((always_inline)) posix::pid_t
 wait4(posix::pid_t pid, int *stat, int options, posix::rusage_t *usage)
 {
-  return (posix::pid_t)micron::syscall(SYS_wait4, pid, stat, options, usage);
+  long r;
+  do {
+    r = micron::syscall(SYS_wait4, pid, stat, options, usage);
+  } while ( r == -static_cast<long>(error::interrupted) );      // retry spurious EINTR (was a silent failure)
+  return (posix::pid_t)r;
 }
 
 posix::pid_t
@@ -174,8 +179,12 @@ waitpid(status_t &status)
 auto
 waitid(idtype_t idtype, posix::id_t id, posix::siginfo_t &info, int options)
 {
-  // note: last one is rusage*
-  return micron::syscall(SYS_waitid, idtype, id, &info, options, nullptr);
+  info = posix::siginfo_t{};
+  long r;
+  do {
+    r = micron::syscall(SYS_waitid, idtype, id, &info, options, nullptr);
+  } while ( r == -static_cast<long>(error::interrupted) );      // retry spurious EINTR
+  return r;
 }
 
 };      // namespace micron

@@ -41,6 +41,19 @@ inline constexpr memory_order memory_order_release = memory_order::release;
 inline constexpr memory_order memory_order_acq_rel = memory_order::acq_rel;
 inline constexpr memory_order memory_order_seq_cst = memory_order::seq_cst;
 
+constexpr memory_order
+__cas_failure_clamp(memory_order failure) noexcept
+{
+  return failure == memory_order::release ? memory_order::relaxed : failure == memory_order::acq_rel ? memory_order::acquire : failure;
+}
+
+// derive the failure order from the success order
+constexpr memory_order
+__cas_failure_from_success(memory_order success) noexcept
+{
+  return success == memory_order::acq_rel ? memory_order::acquire : success == memory_order::release ? memory_order::relaxed : success;
+}
+
 template<is_atomic_type T> struct atomic_token {
   // NOTE: enforce natural alignment
   alignas(sizeof(T) > alignof(T) ? sizeof(T) : alignof(T)) T v;
@@ -91,25 +104,25 @@ template<is_atomic_type T> struct atomic_token {
                    const memory_order failure = memory_order_seq_cst) noexcept
   {
     T tmp = old;
-    return atom::compare_exchange(&v, &tmp, new_, true, (i32)success, (i32)failure);
+    return atom::compare_exchange(&v, &tmp, new_, true, (i32)success, (i32)__cas_failure_clamp(failure));
   };
 
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
-    return atom::compare_exchange(&v, &expected, desired, false, (int)order, (int)memory_order::relaxed);
+    return atom::compare_exchange(&v, &expected, desired, false, (int)order, (int)__cas_failure_from_success(order));
   }
 
   bool
   compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
-    return atom::compare_exchange(&v, &expected, desired, false, (int)success, (int)failure);
+    return atom::compare_exchange(&v, &expected, desired, false, (int)success, (int)__cas_failure_clamp(failure));
   }
 
   bool
   compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
-    return atom::compare_exchange(&v, &expected, desired, true, (int)success, (int)failure);
+    return atom::compare_exchange(&v, &expected, desired, true, (int)success, (int)__cas_failure_clamp(failure));
   }
 
   void
@@ -137,9 +150,9 @@ template<is_atomic_type T> struct atomic_token {
   }
 
   T
-  swap(const T new_) noexcept
+  swap(const T new_, memory_order order = memory_order::seq_cst) noexcept
   {
-    return atom::exchange(&v, new_, atomic_seq_cst);
+    return atom::exchange(&v, new_, (int)order);
   };
 
   T
@@ -298,38 +311,38 @@ public:
   void
   __store(const T new_, memory_order mr = memory_order::seq_cst) noexcept
   {
-    return tk.store(new_, mr);
+    atom::store(&type, new_, (int)mr);
   };
 
   T
-  __get(memory_order mrd = memory_order::seq_cst) const
+  __get(memory_order mrd = memory_order::seq_cst) const noexcept
   {
-    return tk.get(mrd);
+    return atom::load(&type, (int)mrd);
   }
 
   bool
   compare_exchange_strong(T &expected, T desired, memory_order order) noexcept
   {
-    return tk.compare_exchange_strong(expected, desired, order);
+    return atom::compare_exchange(&type, &expected, desired, false, (int)order, (int)__cas_failure_from_success(order));
   }
 
   bool
   compare_exchange_strong(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
-    return tk.compare_exchange_strong(expected, desired, success, failure);
+    return atom::compare_exchange(&type, &expected, desired, false, (int)success, (int)__cas_failure_clamp(failure));
   }
 
   bool
   compare_exchange_weak(T &expected, T desired, memory_order success, memory_order failure) noexcept
   {
-    return tk.compare_exchange_weak(expected, desired, success, failure);
+    return atom::compare_exchange(&type, &expected, desired, true, (int)success, (int)__cas_failure_clamp(failure));
   }
 
-  atomic() : type(), tk() { };
+  constexpr atomic() : type(), tk() { };
   template<typename F> atomic(std::initializer_list<F> list) : type(list), tk() { };
-  template<typename... Args> atomic(Args... args) : type(args...), tk() { };
-  atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) { };
-  atomic(const atomic<T> &o) : type(o.type), tk(o.tk) { };
+  template<typename... Args> constexpr atomic(Args... args) : type(args...), tk() { };
+  constexpr atomic(atomic<T> &&o) : type(micron::move(o.type)), tk(micron::move(o.tk)) { };
+  constexpr atomic(const atomic<T> &o) : type(o.type), tk(o.tk) { };
 
   T
   operator=(const T &o)
@@ -351,11 +364,36 @@ public:
     return tmp;
   };
 
-  T *
+  class __locked_view
+  {
+    atomic *__o;
+
+  public:
+    explicit __locked_view(atomic *o) noexcept : __o(o) { }
+
+    ~__locked_view() { __o->unlock(); }
+
+    __locked_view(const __locked_view &) = delete;
+    __locked_view &operator=(const __locked_view &) = delete;
+
+    T *
+    operator->() const noexcept
+    {
+      return &__o->type;
+    }
+
+    T &
+    operator*() const noexcept
+    {
+      return __o->type;
+    }
+  };
+
+  __locked_view
   operator->()
   {
     lock_check();
-    return &type;
+    return __locked_view{ this };
   }
 
   // manual functions
@@ -378,8 +416,9 @@ public:
   {
     lock_check();
     ++type;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -387,8 +426,9 @@ public:
   {
     lock_check();
     --type;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -396,8 +436,9 @@ public:
   {
     lock_check();
     type *= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -405,8 +446,9 @@ public:
   {
     lock_check();
     type /= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -414,8 +456,9 @@ public:
   {
     lock_check();
     type -= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -423,8 +466,9 @@ public:
   {
     lock_check();
     type += a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -432,8 +476,9 @@ public:
   {
     lock_check();
     type %= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -441,8 +486,9 @@ public:
   {
     lock_check();
     type &= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -450,8 +496,9 @@ public:
   {
     lock_check();
     type |= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   T
@@ -459,8 +506,9 @@ public:
   {
     lock_check();
     type ^= a;
+    T __r = type;      // copy under lock
     unlock();
-    return type;
+    return __r;
   }
 
   // implicit bool
@@ -586,6 +634,8 @@ public:
   atomic_ptr(const atomic_ptr &) = delete;
   atomic_ptr &operator=(const atomic_ptr &) = delete;
 
+  atomic_ptr(atomic_ptr &&other) noexcept : tk(other.exchange(nullptr, memory_order_acq_rel)) { }
+
   P
   load(memory_order order = memory_order::seq_cst) const noexcept
   {
@@ -599,9 +649,9 @@ public:
   }
 
   P
-  exchange(P p, [[maybe_unused]] memory_order order = memory_order::seq_cst) noexcept
+  exchange(P p, memory_order order = memory_order::seq_cst) noexcept
   {
-    return tk.swap(p);
+    return tk.swap(p, order);
   }
 
   bool
@@ -639,13 +689,6 @@ public:
   operator->() const noexcept
   {
     return load();
-  }
-
-  atomic_ptr &
-  operator=(micron::remove_pointer_t<P> p) noexcept
-  {
-    store(reinterpret_cast<P>(p));
-    return *this;
   }
 
   atomic_ptr &
@@ -852,7 +895,7 @@ public:
   compare_exchange_strong(T &expected, T desired, memory_order success = memory_order::seq_cst,
                           memory_order failure = memory_order::seq_cst) noexcept
   {
-    return atom::compare_exchange(ptr, &expected, desired, false, (int)success, (int)failure);
+    return atom::compare_exchange(ptr, &expected, desired, false, (int)success, (int)__cas_failure_clamp(failure));
   }
 
   T

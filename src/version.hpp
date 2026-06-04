@@ -11,10 +11,11 @@
 #endif
 
 // reference this for exact ABI compatibility rather than the VERSIONs below
-constexpr static const int MICRON_ABI_VER = 13;
+constexpr static const int MICRON_ABI = 6;
+// setting this to 6 for coherence
 
 constexpr static const int MICRON_VERSION_MAJOR = 0x1000;
-constexpr static const int MICRON_VERSION_MINOR = 0x0500;
+constexpr static const int MICRON_VERSION_MINOR = 0x0600;
 constexpr static const int MICRON_VERSION_PATCH = 0x0000;
 constexpr static const int MICRON_VERSION_HOTFIX = 0x0000;
 

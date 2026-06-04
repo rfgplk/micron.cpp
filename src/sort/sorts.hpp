@@ -15,4 +15,8 @@
 #include "quick.hpp"
 #include "radix.hpp"
 #include "select.hpp"
+#include "shell.hpp"
+#include "sort.hpp"
 #include "stable.hpp"
+
+#include "extract.hpp"

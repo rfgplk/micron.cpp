@@ -26,7 +26,15 @@ public:
   lock_guard(M *m, adopt_lock_t a) : mtx(m), rptr(m->retrieve()) { };
   lock_guard(M *m) : mtx(m), rptr(m()) { };
 
-  ~lock_guard() { (mtx->*rptr)(); }
+  lock_guard(const lock_guard &) = delete;      // a copy would double-unlock the same mutex
+  lock_guard &operator=(const lock_guard &) = delete;
+
+  // move is implicitly suppressed by the user-declared dtor (immovable scope guard, like std::lock_guard)
+
+  ~lock_guard() noexcept
+  {
+    if ( mtx && rptr ) (mtx->*rptr)();
+  }
 };
 
 template<memory_order Aq = memory_order::acquire, memory_order Rl = memory_order::release> class free_guard

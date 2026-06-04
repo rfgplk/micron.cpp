@@ -14,6 +14,8 @@
 #include "../../src/thread/thread.hpp"
 #include "../../src/thread/thread_types/auto_thread.hpp"
 
+#include "../support/mt.hpp"
+
 #include "../snowball/snowball.hpp"
 
 using sb::end_test_case;
@@ -50,10 +52,10 @@ struct TryArgs {
 void
 try_attacker(TryArgs *p)
 {
-  // wait until parent has locked
+
   while ( !p->rl->is_locked() ) micron::yield();
   if ( !p->rl->try_lock() ) p->seen_fail->store(true, micron::memory_order::release);
-  // signal parent
+
   p->release_now->store(true, micron::memory_order::release);
 }
 
@@ -149,12 +151,7 @@ main(void)
     int counter = 0;
     constexpr int kIters = 5000;
     RLArgs a{ &rl, &counter, kIters };
-    {
-      auto_thread<> t1(rl_worker, &a);
-      auto_thread<> t2(rl_worker, &a);
-      auto_thread<> t3(rl_worker, &a);
-      auto_thread<> t4(rl_worker, &a);
-    }
+    mtest::parallel(4, [&](int) { rl_worker(&a); });
     require(counter == 4 * kIters);
   }
   end_test_case();

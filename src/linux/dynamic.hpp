@@ -35,6 +35,8 @@ public:
     return valid();
   }
 
+  // WARNING: the returned pointer (and any sym_as<Fn>) is valid only while THIS module is alive
+  // do __NOT__ retain symbol pointers past the dso
   void *
   sym(const char *name) const noexcept
   {
@@ -64,6 +66,7 @@ public:
   }
 };
 
+// NOTE: each dso is an independent owning mapping; there is NO dlopen-style refcount/dedup
 class dso
 {
   elf::handle_t __handle;

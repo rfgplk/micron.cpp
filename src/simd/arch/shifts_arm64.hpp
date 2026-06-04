@@ -244,9 +244,14 @@ template<is_neon_simd_class T>
 inline T
 sll(T &o, i128 count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return sll_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sll_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sll_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return sll_16(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return sll_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return sll_64(o, count);
+  else
+    static_assert(!sizeof(T), "sll: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -274,9 +279,14 @@ template<is_neon_simd_class T>
 inline T
 slli(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return slli_16(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return slli_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return slli_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return slli_16(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return slli_32(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return slli_64(o, imm8);
+  else
+    static_assert(!sizeof(T), "slli: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -304,9 +314,14 @@ template<is_neon_simd_class T>
 inline T
 sllv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return sllv_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sllv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sllv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return sllv_16(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return sllv_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return sllv_64(o, count);
+  else
+    static_assert(!sizeof(T), "sllv: unsupported lane width (16/32/64 only)");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,9 +353,14 @@ template<is_neon_simd_class T>
 inline T
 srl(T &o, i128 count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srl_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srl_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srl_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return srl_16(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return srl_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return srl_64(o, count);
+  else
+    static_assert(!sizeof(T), "srl: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -368,9 +388,14 @@ template<is_neon_simd_class T>
 inline T
 srli(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srli_16(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srli_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srli_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return srli_16(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return srli_32(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return srli_64(o, imm8);
+  else
+    static_assert(!sizeof(T), "srli: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -398,9 +423,14 @@ template<is_neon_simd_class T>
 inline T
 srlv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srlv_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srlv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srlv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return srlv_16(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return srlv_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return srlv_64(o, count);
+  else
+    static_assert(!sizeof(T), "srlv: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -429,9 +459,14 @@ template<is_neon_simd_class T>
 inline T
 sra(T &o, i128 count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return sra_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return sra_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return sra_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return sra_16(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return sra_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return sra_64(o, count);
+  else
+    static_assert(!sizeof(T), "sra: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -459,9 +494,14 @@ template<is_neon_simd_class T>
 inline T
 srai(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srai_16(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srai_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srai_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return srai_16(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return srai_32(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return srai_64(o, imm8);
+  else
+    static_assert(!sizeof(T), "srai: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -489,9 +529,14 @@ template<is_neon_simd_class T>
 inline T
 srav(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return srav_16(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return srav_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return srav_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return srav_16(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return srav_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return srav_64(o, count);
+  else
+    static_assert(!sizeof(T), "srav: unsupported lane width (16/32/64 only)");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -518,8 +563,12 @@ template<is_neon_simd_class T>
 inline T
 rol(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return rol_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return rol_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return rol_32(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return rol_64(o, imm8);
+  else
+    static_assert(!sizeof(T), "rol: unsupported lane width (32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -546,8 +595,12 @@ template<is_neon_simd_class T>
 inline T
 rolv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return rolv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return rolv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return rolv_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return rolv_64(o, count);
+  else
+    static_assert(!sizeof(T), "rolv: unsupported lane width (32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -571,8 +624,12 @@ template<is_neon_simd_class T>
 inline T
 ror(T &o, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return ror_32(o, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return ror_64(o, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return ror_32(o, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return ror_64(o, imm8);
+  else
+    static_assert(!sizeof(T), "ror: unsupported lane width (32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -599,8 +656,12 @@ template<is_neon_simd_class T>
 inline T
 rorv(T &o, T &count)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return rorv_32(o, count);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return rorv_64(o, count);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return rorv_32(o, count);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return rorv_64(o, count);
+  else
+    static_assert(!sizeof(T), "rorv: unsupported lane width (32/64 only)");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -639,9 +700,14 @@ template<is_neon_simd_class T>
 inline T
 shldi(T &a, T &b, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shldi_16(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shldi_32(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shldi_64(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return shldi_16(a, b, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return shldi_32(a, b, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return shldi_64(a, b, imm8);
+  else
+    static_assert(!sizeof(T), "shldi: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -681,9 +747,14 @@ template<is_neon_simd_class T>
 inline T
 shldv(T &a, T &b, T &c)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shldv_16(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shldv_32(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shldv_64(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return shldv_16(a, b, c);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return shldv_32(a, b, c);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return shldv_64(a, b, c);
+  else
+    static_assert(!sizeof(T), "shldv: unsupported lane width (16/32/64 only)");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -722,9 +793,14 @@ template<is_neon_simd_class T>
 inline T
 shrdi(T &a, T &b, int imm8)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shrdi_16(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shrdi_32(a, b, imm8);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shrdi_64(a, b, imm8);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return shrdi_16(a, b, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return shrdi_32(a, b, imm8);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return shrdi_64(a, b, imm8);
+  else
+    static_assert(!sizeof(T), "shrdi: unsupported lane width (16/32/64 only)");
 }
 
 template<is_neon_simd_class T>
@@ -764,9 +840,14 @@ template<is_neon_simd_class T>
 inline T
 shrdv(T &a, T &b, T &c)
 {
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> ) return shrdv_16(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v32> ) return shrdv_32(a, b, c);
-  if constexpr ( micron::is_same_v<typename T::lane_width, __v64> ) return shrdv_64(a, b, c);
+  if constexpr ( micron::is_same_v<typename T::lane_width, __v16> )
+    return shrdv_16(a, b, c);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v32> )
+    return shrdv_32(a, b, c);
+  else if constexpr ( micron::is_same_v<typename T::lane_width, __v64> )
+    return shrdv_64(a, b, c);
+  else
+    static_assert(!sizeof(T), "shrdv: unsupported lane width (16/32/64 only)");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

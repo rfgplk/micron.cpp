@@ -15,21 +15,21 @@ namespace micron
 
 namespace posix
 {
-constexpr rlim_t nr_open = 1024;
+constexpr usize nr_open = 1024;
 
-constexpr rlim_t ngroups_max = 65536;    /* supplemental group ids are available */
-constexpr rlim_t arg_max = 131072;       /* # bytes of args + environ for exec() */
-constexpr rlim_t link_max = 127;         /* # links a file may have */
-constexpr rlim_t max_canon = 255;        /* size of the canonical input queue */
-constexpr rlim_t max_input = 255;        /* size of the type-ahead buffer */
-constexpr rlim_t name_max = 255;         /* # chars in a file name */
-constexpr rlim_t path_max = 4096;        /* # chars in a path name including nul */
-constexpr rlim_t pipe_buf = 4096;        /* # bytes in atomic write to a pipe */
-constexpr rlim_t xattr_name_max = 255;   /* # chars in an extended attribute name */
-constexpr rlim_t xattr_size_max = 65536; /* size of an extended attribute value (64k) */
-constexpr rlim_t xattr_list_max = 65536; /* size of extended attribute namelist (64k) */
+constexpr usize ngroups_max = 65536;    /* supplemental group ids are available */
+constexpr usize arg_max = 131072;       /* # bytes of args + environ for exec() */
+constexpr usize link_max = 127;         /* # links a file may have */
+constexpr usize max_canon = 255;        /* size of the canonical input queue */
+constexpr usize max_input = 255;        /* size of the type-ahead buffer */
+constexpr usize name_max = 255;         /* # chars in a file name */
+constexpr usize path_max = 4096;        /* # chars in a path name including nul */
+constexpr usize pipe_buf = 4096;        /* # bytes in atomic write to a pipe */
+constexpr usize xattr_name_max = 255;   /* # chars in an extended attribute name */
+constexpr usize xattr_size_max = 65536; /* size of an extended attribute value (64k) */
+constexpr usize xattr_list_max = 65536; /* size of extended attribute namelist (64k) */
 
-constexpr rlim_t rtsig_max = 32;
+constexpr usize rtsig_max = 32;
 
 constexpr static const int prio_min = -20;
 constexpr static const int prio_max = 20;
@@ -79,11 +79,8 @@ constexpr static const rlim_t rlimit_rttime = 15;
 
 constexpr static const rlim_t rlimit_nlimits = 16;
 
-// rlim_t is unsigned long, which is 32-bit on armhf and 64-bit on amd64.
-// the canonical "infinity" value is all-bits-set; build it from rlim_t so
-// the constant matches the type's actual width without overflow warnings.
 constexpr static const rlim_t rlim_infinity = ~static_cast<rlim_t>(0);
-constexpr static const rlim_t rlim64_infinity = ~static_cast<rlim_t>(0);
+constexpr static const u64 rlim64_infinity = ~static_cast<u64>(0);
 constexpr static const unsigned long long rlim_saved_max = ~static_cast<unsigned long long>(0);
 constexpr static const unsigned long long rlim_saved_cur = ~static_cast<unsigned long long>(0);
 
@@ -172,7 +169,7 @@ prlimit(pid_t pid, rlim_t lm, rlimit64_t &in, rlimit64_t &out)
 
 // helper class
 struct limits_t {
-  rlimit64_t lim[rlimit_nlimits];      // prlimit64-backed, so 64-bit fields on every arch
+  rlimit64_t lim[rlimit_nlimits] = {};      // zero-init: a failed get_process_limits leaves the entry 0, not garbage
   ~limits_t() = default;
 
   limits_t(const pid_t proc = 0)      // for us by default

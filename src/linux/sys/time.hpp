@@ -306,7 +306,7 @@ alarm([[maybe_unused]] u32 seconds)
 i32
 clock_getcpuclockid(posix::pid_t pid, clockid_t &clc)
 {
-  clc = static_cast<clockid_t>(~(static_cast<u32>(pid) << 3));
+  clc = static_cast<clockid_t>(((~static_cast<u32>(pid)) << 3) | 2u);
   timespec_t probe;
   long r = micron::syscall(__sys_clock_gettime, clc, &probe);
   if ( r != 0 ) return static_cast<i32>(-r); /* return positive errno */

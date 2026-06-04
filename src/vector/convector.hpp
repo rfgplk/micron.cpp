@@ -10,6 +10,8 @@
 
 #include "../bits/__container.hpp"
 
+#include "vector.hpp"
+
 #include "../algorithm/algorithm.hpp"
 #include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
@@ -38,6 +40,9 @@ class convector: public __mutable_memory_resource<T, Alloc>
   using __mem = __mutable_memory_resource<T, Alloc>;
   mutable micron::fast_mutex __mtx;
 
+  // all convector instantiations are mutual friends so two-object ops may lock the other object's mutex even across differing element types / Sf flags
+  template<is_movable_object C2, class A2, bool S2> friend class convector;
+
   struct __hold {
     micron::fast_mutex &m;
 
@@ -47,6 +52,39 @@ class convector: public __mutable_memory_resource<T, Alloc>
 
     __hold(const __hold &) = delete;
     __hold &operator=(const __hold &) = delete;
+  };
+
+  struct __hold2 {
+    micron::fast_mutex *a;
+    micron::fast_mutex *b;      // nullptr when both args alias the same mutex
+
+    [[gnu::always_inline]] __hold2(micron::fast_mutex &m1, micron::fast_mutex &m2) noexcept
+    {
+      if ( micron::addressof(m1) == micron::addressof(m2) ) {
+        a = micron::addressof(m1);
+        b = nullptr;
+        a->lock();
+      } else if ( reinterpret_cast<usize>(micron::addressof(m1)) < reinterpret_cast<usize>(micron::addressof(m2)) ) {
+        a = micron::addressof(m1);
+        b = micron::addressof(m2);
+        a->lock();
+        b->lock();
+      } else {
+        a = micron::addressof(m2);
+        b = micron::addressof(m1);
+        a->lock();
+        b->lock();
+      }
+    }
+
+    [[gnu::always_inline]] ~__hold2() noexcept
+    {
+      if ( b ) b->unlock();
+      a->unlock();
+    }
+
+    __hold2(const __hold2 &) = delete;
+    __hold2 &operator=(const __hold2 &) = delete;
   };
 
   inline __attribute__((always_inline)) bool
@@ -205,7 +243,22 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       size_type i = 0;
-      for ( const T &value : lst ) new (micron::addr(__mem::memory[i++])) T(value);
+#ifndef __micron_freestanding
+      try {
+        for ( const T &value : lst ) {
+          new (micron::addr(__mem::memory[i])) T(value);
+          ++i;
+        }
+      } catch ( ... ) {
+        for ( size_type j = 0; j < i; ++j ) __mem::memory[j].~T();
+        throw;
+      }
+#else
+      for ( const T &value : lst ) {
+        new (micron::addr(__mem::memory[i])) T(value);
+        ++i;
+      }
+#endif
       __mem::length = lst.size();
     } else {
       size_type i = 0;
@@ -224,7 +277,17 @@ public:
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   convector(size_type n, Args &&...args) : __mem(n)
   {
-    for ( size_type i = 0; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+    size_type i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+    } catch ( ... ) {
+      for ( size_type j = 0; j < i; ++j ) __mem::memory[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+#endif
     __mem::length = n;
   }
 
@@ -247,9 +310,13 @@ public:
     __mem::length = o.length;
   }
 
-  convector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
+  convector(chunk<byte> &&m) : __mem(micron::move(m)) { }
 
-  template<typename C = T, bool Sf2 = Sf> convector(convector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf>
+    requires(micron::is_same_v<C, T>)
+  convector(convector<C, Alloc, Sf2> &&o) : __mem(micron::move(o))
+  {
+  }
 
   convector(convector &&o) : __mem(micron::move(o)) { }
 
@@ -378,13 +445,13 @@ public:
 
   template<typename R>
     requires(micron::is_integral_v<R>)
-  inline __attribute__((always_inline)) const T &
+  inline __attribute__((always_inline)) T
   operator[](R n) const
   {
     __hold __lock(__mtx);
     __safety_check<&convector::__capacity_check, except::library_error>("micron::convector operator[] out of allocated memory range.",
                                                                         static_cast<size_type>(n));
-    return (__mem::memory)[n];
+    return (__mem::memory)[n];      // value snapshot — a reference would dangle once the lock releases
   }
 
   template<typename R>
@@ -406,12 +473,12 @@ public:
     return (__mem::memory)[n];
   }
 
-  inline __attribute__((always_inline)) const T &
+  inline __attribute__((always_inline)) T
   at(size_type n) const
   {
     __hold __lock(__mtx);
     __safety_check<&convector::__index_check, except::library_error>("micron::convector at() out of bounds", n);
-    return (__mem::memory)[n];
+    return (__mem::memory)[n];      // value snapshot
   }
 
   size_type
@@ -455,7 +522,7 @@ public:
   set_size(const size_type n)
   {
     __hold __lock(__mtx);
-    __mem::length = n;
+    __mem::length = (n <= __mem::capacity) ? n : __mem::capacity;      // never let length exceed capacity (OOB)
   }
 
   bool
@@ -480,7 +547,8 @@ public:
     __unlocked_reserve(n);
   }
 
-  // NOTE: no lock
+  // NOTE: begin/end/cbegin/cend/data/itr/get/cget/last and the non-const element accessors are
+  // NOT internally synchronized for the lifetime of the returned iterator/pointer/reference
   inline iterator
   begin(void)
   {
@@ -515,6 +583,22 @@ public:
   cend(void) const
   {
     return __mem::memory + __mem::length;
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    __hold __lock(__mtx);
+    for ( size_type i = 0; i < __mem::length; ++i ) fn(__mem::memory[i]);
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    __hold __lock(__mtx);
+    for ( size_type i = 0; i < __mem::length; ++i ) fn(__mem::memory[i]);
   }
 
   inline iterator
@@ -572,20 +656,20 @@ public:
     return nullptr;
   }
 
-  inline const T &
+  inline T
   front(void) const
   {
     __hold __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector front() called on empty vector");
-    return (__mem::memory)[0];
+    return (__mem::memory)[0];      // value snapshot
   }
 
-  inline const T &
+  inline T
   back(void) const
   {
     __hold __lock(__mtx);
     __safety_check<&convector::__empty_check, except::library_error>("micron::convector back() called on empty vector");
-    return (__mem::memory)[__mem::length - 1];
+    return (__mem::memory)[__mem::length - 1];      // value snapshot
   }
 
   inline T &
@@ -624,11 +708,12 @@ public:
   inline convector &
   append(const convector<F, Alloc, Sf2> &o)
   {
-    __hold __lock(__mtx);
-    if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) __unlocked_reserve(__mem::capacity + o.max_size());
-    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
-    __mem::length += o.length;
+    __hold2 __lock(__mtx, o.__mtx);
+    const size_type on = o.length;
+    if ( on == 0 ) return *this;
+    if ( !__mem::has_space(on) ) __unlocked_reserve(__mem::length + on);
+    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), on);
+    __mem::length += on;
     return *this;
   }
 
@@ -637,11 +722,13 @@ public:
   inline convector &
   weld(convector<F, Alloc, Sf2> &&o)
   {
-    __hold __lock(__mtx);
-    if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) __unlocked_reserve(__mem::capacity + o.max_size());
-    __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
-    __mem::length += o.length;
+    if ( static_cast<const void *>(this) == static_cast<const void *>(micron::addressof(o)) ) return *this;
+    __hold2 __lock(__mtx, o.__mtx);
+    const size_type on = o.length;
+    if ( on == 0 ) return *this;
+    if ( !__mem::has_space(on) ) __unlocked_reserve(__mem::length + on);
+    __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), on);
+    __mem::length += on;
     o.length = 0;
     return *this;
   }
@@ -650,7 +737,8 @@ public:
   void
   swap(convector<C, Alloc, Sf2> &o) noexcept
   {
-    __hold __lock(__mtx);
+    if ( static_cast<const void *>(this) == static_cast<const void *>(micron::addressof(o)) ) return;
+    __hold2 __lock(__mtx, o.__mtx);      // lock BOTH (ordered) — a one-sided lock races the other object
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);

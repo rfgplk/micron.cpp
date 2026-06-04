@@ -34,8 +34,11 @@ public:
   operator=(promise &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state && !state->is_ready() && future_retrieved ) {
-        state->set_exception("broken promise");
+      if ( state ) {
+        if ( !state->is_ready() && future_retrieved ) {
+          state->set_exception("broken promise");
+        }
+        if ( state->__release() ) delete state;
       }
       state = other.state;
       future_retrieved = other.future_retrieved;
@@ -47,10 +50,12 @@ public:
 
   ~promise()
   {
-    if ( state && !state->is_ready() && future_retrieved ) {
-      state->set_exception("broken promise");
+    if ( state ) {
+      if ( !state->is_ready() && future_retrieved ) {
+        state->set_exception("broken promise");
+      }
+      if ( state->__release() ) delete state;
     }
-    if ( state && !future_retrieved ) delete state;
   }
 
   future<T>
@@ -63,6 +68,7 @@ public:
       exc<except::future_error>("");
     }
     future_retrieved = true;
+    state->__acquire();      // the future gets its own strong ref to the shared state
     return future<T>(state);
   }
 
@@ -127,8 +133,11 @@ public:
   operator=(promise &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state && !state->is_ready() && future_retrieved ) {
-        state->set_exception("broken promise");
+      if ( state ) {
+        if ( !state->is_ready() && future_retrieved ) {
+          state->set_exception("broken promise");
+        }
+        if ( state->__release() ) delete state;
       }
       state = other.state;
       future_retrieved = other.future_retrieved;
@@ -140,10 +149,12 @@ public:
 
   ~promise()
   {
-    if ( state && !state->is_ready() && future_retrieved ) {
-      state->set_exception("broken promise");
+    if ( state ) {
+      if ( !state->is_ready() && future_retrieved ) {
+        state->set_exception("broken promise");
+      }
+      if ( state->__release() ) delete state;
     }
-    if ( state && !future_retrieved ) delete state;
   }
 
   future<void>
@@ -156,6 +167,7 @@ public:
       exc<except::future_error>("");
     }
     future_retrieved = true;
+    state->__acquire();
     return future<void>(state);
   }
 
@@ -205,8 +217,11 @@ public:
   operator=(promise &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state && !state->is_ready() && future_retrieved ) {
-        state->set_exception("broken promise");
+      if ( state ) {
+        if ( !state->is_ready() && future_retrieved ) {
+          state->set_exception("broken promise");
+        }
+        if ( state->__release() ) delete state;
       }
       state = other.state;
       future_retrieved = other.future_retrieved;
@@ -218,10 +233,12 @@ public:
 
   ~promise()
   {
-    if ( state && !state->is_ready() && future_retrieved ) {
-      state->set_exception("broken promise");
+    if ( state ) {
+      if ( !state->is_ready() && future_retrieved ) {
+        state->set_exception("broken promise");
+      }
+      if ( state->__release() ) delete state;
     }
-    if ( state && !future_retrieved ) delete state;
   }
 
   future<T &>
@@ -234,6 +251,7 @@ public:
       exc<except::future_error>("");
     }
     future_retrieved = true;
+    state->__acquire();
     return future<T &>(state);
   }
 

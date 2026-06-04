@@ -140,19 +140,19 @@ signal_dumps_core(signal sig) noexcept
 }
 
 // by default, raise() like behavior
-auto
+inline auto
 send(signal sig, posix::pid_t who = posix::getpid())
 {
   return posix::kill(who, static_cast<int>(sig));
 }
 
-auto
+inline auto
 send_group(signal sig, posix::pid_t pgid)
 {
   return posix::kill(-pgid, static_cast<int>(sig));
 }
 
-auto
+inline auto
 send_all(signal sig)
 {
   return posix::kill(-1, static_cast<int>(sig));
@@ -395,14 +395,14 @@ template<bool M = false> class signal_t
   alignas(16) posix::sigset_t __signal;
   micron::array<posix::sigaction_t, 65> __acts;
   mutable int __sig;
+  mutable posix::sigset_t __saved_mask{};      // the process mask before this object blocked anything
+  mutable bool __mask_saved = false;
 
 public:
   ~signal_t()
   {
-    // revert all changes to default
-    posix::sigset_t default_signal;
-    posix::sigemptyset(default_signal);
-    posix::sigprocmask(posix::sig_setmask, default_signal, nullptr);
+    // restore ONLY the mask this object actually changed
+    if ( __mask_saved ) posix::sigprocmask(posix::sig_setmask, __saved_mask, nullptr);
   }
 
   signal_t(void) : __acts(), __sig(0) { posix::sigemptyset(__signal); }
@@ -412,7 +412,8 @@ public:
     posix::sigemptyset(__signal);
     (posix::sigaddset(__signal, (i32)sig), ...);
     if constexpr ( M ) {
-      posix::sigprocmask(posix::sig_block, __signal, nullptr);
+      posix::sigprocmask(posix::sig_block, __signal, &__saved_mask);      // save old mask for the dtor to restore
+      __mask_saved = true;
     }
     __sig = 0;
   }
@@ -426,6 +427,10 @@ public:
   int
   mask(void) const
   {
+    if ( !__mask_saved ) {      // remember the pre-block mask the first time so the dtor can restore it
+      __mask_saved = true;
+      return posix::sigprocmask(posix::sig_block, __signal, &__saved_mask);
+    }
     return posix::sigprocmask(posix::sig_block, __signal, nullptr);
   }
 

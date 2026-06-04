@@ -4,7 +4,7 @@
 
 ### the micron core library 🦅 <img src="https://img.shields.io/badge/indev-green">
 
-#### a core (re)design of the C++ Standard Template Library (and libc)
+#### a core library implementation (& redesign) of libc and the C++ Standard Library
 
 **micron** is a comprehensive core library; a collection of algorithms, containers, iterators, functions, and OS interfaces; a header-only core system library written in c++23 targeting the Linux syscall API.
 Unlike library collections such as Boost et al., *micron* does not intend to merely *augment* the STL, but entirely replace it.
@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.5.0.0-green)
+![Version](https://img.shields.io/badge/version-1.6.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -109,7 +109,7 @@ Currently we are aiming for (near) 100% code coverage, of all functions and for 
 
 ###### Conformance with the STL
 
-*micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Template Library. Although *most* of these functions do generallyhave the same interfaces and functionality, there are minute core differences (in certain cases, significant ones) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
+*micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Library. Although *most* of these functions do generallyhave the same interfaces and functionality, there are minute core differences (in certain cases, significant ones) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
 
 > [!IMPORTANT]
 > Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux; see the Architecture Support tier list above for per-architecture CPU status. Other operating systems and kernels are unsupported.

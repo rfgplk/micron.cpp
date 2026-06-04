@@ -19,19 +19,20 @@ namespace posix
 inline posix::dev_t
 makedev(u32 major, u32 minor)
 {
-  return ((posix::dev_t)(major & 0xfff) << 8) | (posix::dev_t)(minor & 0xff) | ((posix::dev_t)(minor & 0xfff00) << 12);
+  return (static_cast<posix::dev_t>(minor & 0xffu)) | (static_cast<posix::dev_t>(major & 0xfffu) << 8)
+         | (static_cast<posix::dev_t>(minor & ~0xffu) << 12) | (static_cast<posix::dev_t>(major & ~0xfffu) << 32);
 }
 
 inline u32
 major(posix::dev_t dev)
 {
-  return (u32)((dev >> 8) & 0xfff);
+  return static_cast<u32>(((dev >> 8) & 0xfffu) | ((dev >> 32) & ~static_cast<posix::dev_t>(0xfffu)));
 }
 
 inline u32
 minor(posix::dev_t dev)
 {
-  return (u32)((dev & 0xff) | ((dev >> 12) & 0xfff00));
+  return static_cast<u32>((dev & 0xffu) | ((dev >> 12) & ~static_cast<posix::dev_t>(0xffu)));
 }
 
 enum class node_types : i32 {

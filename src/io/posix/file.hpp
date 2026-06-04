@@ -349,6 +349,11 @@ struct openmode {
 class file
 {
 protected:
+  // accepted inode types for __open_linux's post-open fstat guard (bitmask); subclasses opening
+  // non-regular nodes (dir/fifo/blk/...) pass their own mask via the protected tagged ctor.
+  static constexpr u32 __nt_reg = 1u, __nt_chr = 2u, __nt_dir = 4u, __nt_fifo = 8u, __nt_blk = 16u, __nt_sock = 32u, __nt_lnk = 64u;
+  static constexpr u32 __nt_default = __nt_reg | __nt_chr;
+
   const stat_t &
   __sd(void) const noexcept
   {
@@ -400,7 +405,7 @@ protected:
 
   template<typename T>
   inline __attribute__((always_inline)) void
-  __open_linux(const T &str, const modes mode)
+  __open_linux(const T &str, const modes mode, u32 __accept = __nt_default)
   {
     if ( !posix::verify(str) ) exc<except::io_error>("error in creating micron::file, malformed string.");
 
@@ -425,16 +430,27 @@ protected:
         __handle.fd = posix::invalid_fd.fd;
         exc<except::io_error>("micron::file fstat failed after open");
       }
-      if ( !posix::__impl::stat_is_reg(__st) && !posix::__impl::stat_is_chr(__st) ) {
+      const u32 __got = posix::__impl::stat_is_reg(__st)    ? __nt_reg
+                        : posix::__impl::stat_is_chr(__st)  ? __nt_chr
+                        : posix::__impl::stat_is_dir(__st)  ? __nt_dir
+                        : posix::__impl::stat_is_fifo(__st) ? __nt_fifo
+                        : posix::__impl::stat_is_blk(__st)  ? __nt_blk
+                        : posix::__impl::stat_is_sock(__st) ? __nt_sock
+                        : posix::__impl::stat_is_lnk(__st)  ? __nt_lnk
+                                                            : 0u;
+      if ( !(__got & __accept) ) {
         posix::close(__handle.fd);
         __handle.fd = posix::invalid_fd.fd;
-        exc<except::io_error>("micron::file file isn't a file (check type)");
+        exc<except::io_error>("micron::file file isn't an accepted type (check type)");
       }
     }
 
     fname = str;
     micron::zero(&sd);
   }
+
+  // subclasses opening non-regular nodes call this with their accepted-type mask
+  template<typename T> file(const T &str, const modes mode, u32 __accept) { __open_linux(str, mode, __accept); }
 
 public:
   micron::sstr<max_name> fname;
@@ -474,6 +490,8 @@ public:
   file &
   operator=(file &&o) noexcept
   {
+    if ( this == &o ) return *this;
+    close();      // release our current fd first (else leaked); then steal o's
     fname = micron::move(o.fname);
     __handle = o.__handle;
     sd = o.sd;
@@ -563,10 +581,10 @@ public:
     if constexpr ( B == STAT_EXISTING ) {
       if ( !micron::is_zero(&sd) ) return;
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::file, fstat failed.");
+      if ( posix::fstat(__handle, sd) != 0 ) exc<except::io_error>("micron::file, fstat failed.");      // fstat returns -errno, not -1
     } else if constexpr ( B == STAT_OVERRIDE ) {
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::file, fstat failed.");
+      if ( posix::fstat(__handle, sd) != 0 ) exc<except::io_error>("micron::file, fstat failed.");      // fstat returns -errno, not -1
     }
   }
 
@@ -1944,7 +1962,7 @@ struct directory_file: public file {
 
   directory_file() = default;
 
-  explicit directory_file(const char *path) : file(path, modes::read) { }
+  explicit directory_file(const char *path) : file(path, modes::read, __nt_dir) { }
 
   template<is_string T> explicit directory_file(const T &path) : directory_file(path.c_str()) { }
 
@@ -2123,9 +2141,9 @@ struct fifo_file: public file {
 
   fifo_file() = default;
 
-  explicit fifo_file(const char *path, const modes mode = modes::read) : file(path, mode) { }
+  explicit fifo_file(const char *path, const modes mode = modes::read) : file(path, mode, __nt_fifo) { }
 
-  template<is_string T> explicit fifo_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode) { }
+  template<is_string T> explicit fifo_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode, __nt_fifo) { }
 
   static fifo_file
   create(const char *path, const linux_permissions &p = perm_file_default)
@@ -2172,9 +2190,12 @@ struct device_file: public file {
 
   device_file() = default;
 
-  explicit device_file(const char *path, const modes mode = modes::readwrite) : file(path, mode) { }
+  explicit device_file(const char *path, const modes mode = modes::readwrite) : file(path, mode, __nt_blk | __nt_chr) { }
 
-  template<is_string T> explicit device_file(const T &path, const modes mode = modes::readwrite) : file(path.c_str(), mode) { }
+  template<is_string T>
+  explicit device_file(const T &path, const modes mode = modes::readwrite) : file(path.c_str(), mode, __nt_blk | __nt_chr)
+  {
+  }
 
   u32
   major_num(void)

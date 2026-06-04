@@ -26,7 +26,7 @@ namespace __bits
 #pragma GCC diagnostic ignored "-Wpsabi"
 #pragma GCC diagnostic ignored "-Wpedantic"
 
-#define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
+#define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arith

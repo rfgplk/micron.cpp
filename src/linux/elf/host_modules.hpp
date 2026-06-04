@@ -32,6 +32,7 @@ constexpr inline usize host_max_modules = 256;
 
 struct host_module_t {
   u8 *base = nullptr;      // load base (lowest mapped address for this path)
+  u64 bias = 0;            // symbol-value addend: base - first_load_vaddr
   const char *soname = nullptr;
   dyn_info_t dyn{};
   micron::sstring<384> path;      // file path as printed in /proc/self/maps
@@ -107,6 +108,7 @@ __build_host_dyn(host_module_t &m)
 
   const ehdr_t *eh = reinterpret_cast<const ehdr_t *>(m.base);
   if ( eh->ident[ei_class] != elfclass64 ) return;
+  if ( eh->phnum == 0 || eh->phnum > 256 ) return;      // sanity bound on the phdr table
 
   const phdr_t *phdrs = reinterpret_cast<const phdr_t *>(m.base + eh->phoff);
   const phdr_t *dyn_ph = nullptr;
@@ -119,6 +121,7 @@ __build_host_dyn(host_module_t &m)
   }
   if ( !dyn_ph || first_load_vaddr == ~u64(0) ) return;
   const u64 bias = reinterpret_cast<u64>(m.base) - first_load_vaddr;
+  m.bias = bias;      // store for host_resolve_sym (ET_EXEC / nonzero-vaddr modules need it)
 
   const dyn_t *dyn = reinterpret_cast<const dyn_t *>(bias + dyn_ph->vaddr);
 
@@ -161,7 +164,6 @@ inline void
 init_host_modules()
 {
   if ( __host_initialized ) return;
-  __host_initialized = true;
 
   // avoiding new/malloc
   u8 *buf = reinterpret_cast<u8 *>(micron::mmap(nullptr, host_scratch_size, prot_read | prot_write, map_private | map_anonymous, -1, 0));
@@ -221,6 +223,7 @@ init_host_modules()
   for ( usize k = 0; k < __host_module_count; ++k ) {
     __build_host_dyn(__host_modules[k]);
   }
+  __host_initialized = true;      // publish only after the table is fully built (was set too early -> empty-table race)
 }
 
 inline const host_module_t *
@@ -246,7 +249,7 @@ host_resolve_sym(const char *name)
     if ( !m.valid ) continue;
     const sym_t *s = lookup_sym(m.dyn, name);
     if ( s && s->shndx != shn_undef ) {
-      return reinterpret_cast<void *>(m.base + s->value);
+      return reinterpret_cast<void *>(m.bias + s->value);
     }
   }
   return nullptr;

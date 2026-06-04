@@ -58,18 +58,21 @@ template<usize N> struct __cpu_set_t {
   constexpr void
   cpu_set(usize cpu)
   {
+    if ( cpu / __ncpubits >= __bits.size() ) return;      // bound: __bits[] is unchecked
     __bits[cpu / __ncpubits] |= 1UL << (cpu % __ncpubits);
   }
 
   constexpr void
   cpu_clr(usize cpu)
   {
+    if ( cpu / __ncpubits >= __bits.size() ) return;
     __bits[cpu / __ncpubits] &= ~(1UL << (cpu % __ncpubits));
   }
 
   constexpr bool
   cpu_isset(usize cpu) const
   {
+    if ( cpu / __ncpubits >= __bits.size() ) return false;
     return (__bits[cpu / __ncpubits] & (1UL << (cpu % __ncpubits))) != 0;
   }
 
@@ -129,18 +132,21 @@ template<usize N> struct __cpu_set_s_t {
   constexpr void
   cpu_set_s(usize cpu)
   {
+    if ( cpu / __ncpubits >= __bits.size() ) return;      // bound: __bits[] is unchecked
     __bits[cpu / __ncpubits] |= 1UL << (cpu % __ncpubits);
   }
 
   constexpr void
   cpu_clr_s(usize cpu)
   {
+    if ( cpu / __ncpubits >= __bits.size() ) return;
     __bits[cpu / __ncpubits] &= ~(1UL << (cpu % __ncpubits));
   }
 
   constexpr bool
   cpu_isset_s(usize cpu) const
   {
+    if ( cpu / __ncpubits >= __bits.size() ) return false;
     return (__bits[cpu / __ncpubits] & (1UL << (cpu % __ncpubits))) != 0;
   }
 

@@ -42,7 +42,10 @@ class mdarray
   void
   __alloc(usize total)
   {
-    __data = static_cast<T *>(::operator new(sizeof(T) * total));
+    if constexpr ( alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__ )
+      __data = static_cast<T *>(::operator new(sizeof(T) * total, static_cast<std::align_val_t>(alignof(T))));
+    else
+      __data = static_cast<T *>(::operator new(sizeof(T) * total));
     __total = total;
     if constexpr ( !micron::is_trivially_constructible_v<T> ) {
       for ( usize i = 0; i < total; ++i ) new (__data + i) T();
@@ -58,7 +61,10 @@ class mdarray
     if constexpr ( !micron::is_trivially_destructible_v<T> ) {
       for ( usize i = 0; i < __total; ++i ) __data[i].~T();
     }
-    ::operator delete(__data);
+    if constexpr ( alignof(T) > __STDCPP_DEFAULT_NEW_ALIGNMENT__ )
+      ::operator delete(__data, static_cast<std::align_val_t>(alignof(T)));
+    else
+      ::operator delete(__data);
     __data = nullptr;
     __total = 0;
   }
@@ -220,12 +226,17 @@ public:
   {
     usize tmp[__R] = { static_cast<usize>(dims)... };
     usize total = 1;
+    constexpr usize __umax = static_cast<usize>(-1);
     for ( usize i = 0; i < __R; ++i ) {
       __shape[i] = tmp[i];
+      if ( tmp[i] == 0 ) [[unlikely]]
+        exc<except::library_error>("mdarray: zero-sized dimension");
+      if ( total > __umax / tmp[i] ) [[unlikely]]      // overflow-checked product
+        exc<except::library_error>("mdarray: shape product overflow");
       total *= tmp[i];
     }
-    if ( total == 0 ) [[unlikely]]
-      exc<except::library_error>("mdarray: zero-sized dimension");
+    if ( total > __umax / sizeof(T) ) [[unlikely]]      // sizeof(T)*total must not wrap
+      exc<except::library_error>("mdarray: allocation size overflow");
     __compute_strides();
     __alloc(total);
   }
@@ -237,7 +248,7 @@ public:
     for ( usize i = 0; i < __R; ++i ) __strides[i] = o.__strides[i];
     __alloc(o.__total);
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
-      micron::memcpy(reinterpret_cast<byte *>(__data), reinterpret_cast<byte *>(o.__data), o.__total * sizeof(T));
+      micron::memcpy(reinterpret_cast<byte *>(__data), reinterpret_cast<const byte *>(o.__data), o.__total * sizeof(T));
     } else {
       for ( usize i = 0; i < o.__total; ++i ) __data[i] = o.__data[i];
     }
@@ -265,7 +276,7 @@ public:
     for ( usize i = 0; i < __R; ++i ) __strides[i] = o.__strides[i];
     __alloc(o.__total);
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
-      micron::memcpy(reinterpret_cast<byte *>(__data), reinterpret_cast<byte *>(o.__data), o.__total * sizeof(T));
+      micron::memcpy(reinterpret_cast<byte *>(__data), reinterpret_cast<const byte *>(o.__data), o.__total * sizeof(T));
     } else {
       for ( usize i = 0; i < o.__total; ++i ) __data[i] = o.__data[i];
     }
@@ -379,6 +390,8 @@ public:
   mdarray &
   operator+=(const mdarray &o)
   {
+    if ( __total != o.__total ) [[unlikely]]      // mismatched/empty operand would read OOB
+      exc<except::library_error>("mdarray::operator+=: shape mismatch");
     if constexpr ( micron::is_arithmetic_v<T> ) {
       __add_simd(o.__data);
     } else {
@@ -390,6 +403,8 @@ public:
   mdarray &
   operator-=(const mdarray &o)
   {
+    if ( __total != o.__total ) [[unlikely]]
+      exc<except::library_error>("mdarray::operator-=: shape mismatch");
     if constexpr ( micron::is_arithmetic_v<T> ) {
       __sub_simd(o.__data);
     } else {
@@ -449,6 +464,60 @@ public:
     if ( flat_idx >= __total ) [[unlikely]]
       exc<except::library_error>("mdarray::at: out of range");
     return __data[flat_idx];
+  }
+
+  template<typename... Idx>
+    requires(sizeof...(Idx) == __R and __R >= 2)
+  T &
+  at(Idx... ix)
+  {
+    usize ind[__R] = { static_cast<usize>(ix)... };
+    usize off = 0;
+    for ( usize i = 0; i < __R; ++i ) {
+      if ( ind[i] >= __shape[i] ) [[unlikely]]
+        exc<except::library_error>("mdarray::at: index out of range");
+      off += ind[i] * __strides[i];
+    }
+    return __data[off];
+  }
+
+  template<typename... Idx>
+    requires(sizeof...(Idx) == __R and __R >= 2)
+  const T &
+  at(Idx... ix) const
+  {
+    usize ind[__R] = { static_cast<usize>(ix)... };
+    usize off = 0;
+    for ( usize i = 0; i < __R; ++i ) {
+      if ( ind[i] >= __shape[i] ) [[unlikely]]
+        exc<except::library_error>("mdarray::at: index out of range");
+      off += ind[i] * __strides[i];
+    }
+    return __data[off];
+  }
+
+  T &
+  front() noexcept
+  {
+    return __data[0];
+  }
+
+  const T &
+  front() const noexcept
+  {
+    return __data[0];
+  }
+
+  T &
+  back() noexcept
+  {
+    return __data[__total - 1];
+  }
+
+  const T &
+  back() const noexcept
+  {
+    return __data[__total - 1];
   }
 
   void

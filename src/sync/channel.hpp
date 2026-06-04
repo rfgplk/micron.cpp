@@ -24,14 +24,15 @@ public:
 
   template<typename... Args> channel(Args &&...args)      // : _spin{}
   {
-    (obj.emplace(args), ...);
+    micron::lock_guard m(_lock);
+    (obj.emplace(micron::forward<Args>(args)), ...);
   }
 
   channel &
   operator>>(T &&o)
   {
     micron::lock_guard m(_lock);
-    obj.emplace(o);
+    obj.emplace(micron::move(o));      // o is a named rvalue-ref (an lvalue); move it explicitly, else it copies
     return *this;
   }
 
@@ -61,6 +62,7 @@ public:
   inline bool
   operator!(void)
   {
+    micron::lock_guard m(_lock);      // obj is mutated under _lock by other threads; read it under the lock too
     return obj.empty();
   }
 };

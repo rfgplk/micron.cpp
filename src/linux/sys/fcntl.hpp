@@ -76,7 +76,7 @@ constexpr i32 at_statx_sync_type = 0x6000;
 constexpr i32 at_statx_sync_as_stat = 0x0000;
 constexpr i32 at_statx_force_sync = 0x2000;
 constexpr i32 at_statx_dont_sync = 0x4000;
-constexpr i32 at_recursive = 0x9000;
+constexpr i32 at_recursive = 0x8000;
 constexpr i32 at_eaccess = 0x200;
 
 constexpr i32 read_ok = 4;
@@ -129,9 +129,15 @@ constexpr i32 f_getfd = 1;
 constexpr i32 f_setfd = 2;
 constexpr i32 f_getfl = 3;
 constexpr i32 f_setfl = 4;
+#if defined(__micron_arch_width_32)
+constexpr i32 f_getlk = 12;       // F_GETLK64
+constexpr i32 f_setlk = 13;       // F_SETLK64
+constexpr i32 f_setlkw = 14;      // F_SETLKW64
+#else
 constexpr i32 f_getlk = 5;
 constexpr i32 f_setlk = 6;
 constexpr i32 f_setlkw = 7;
+#endif
 constexpr i32 f_setown = 8;
 constexpr i32 f_getown = 9;
 constexpr i32 f_setsig = 10;

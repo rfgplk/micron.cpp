@@ -58,7 +58,7 @@ walk(path &&p, micron::fvector<path_t> &out, node_id *chain, u32 depth, collect 
     chain[depth] = id;
     try {
       walk(path(child.c_str()), out, chain, depth + 1, what);
-    } catch ( except::filesystem_error & ) {
+    } catch ( except::__base_exception & ) {
     }
   }
 }

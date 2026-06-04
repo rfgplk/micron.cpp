@@ -172,6 +172,7 @@ fetch_nand(T *ptr, T val, i32 memorder)
 }
 
 template<typename T>
+  requires(sizeof(T) == 1)      // __atomic_test_and_set only touches one byte; reject wider T (broken mutual exclusion)
 constexpr __attribute__((always_inline)) inline bool
 test_and_set(T *ptr, i32 memorder)
 {
@@ -179,6 +180,7 @@ test_and_set(T *ptr, i32 memorder)
 }
 
 template<typename T>
+  requires(sizeof(T) == 1)      // __atomic_clear only zeroes one byte; reject wider T (would leave high bytes set)
 constexpr __attribute__((always_inline)) inline void
 clear(T *ptr, i32 memorder)
 {

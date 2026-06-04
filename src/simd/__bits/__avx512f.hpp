@@ -1018,17 +1018,22 @@ _mm512_rcp14_pd(__m512d a) noexcept
   return (__m512d)__builtin_ia32_rcp14pd512_mask((__v8df)a, (__v8df)_mm512_setzero_pd(), (__mmask8)-1);
 }
 
-__inline_g __m512i
+// cvtpd2qq/cvtqq2pd are AVX512DQ builtins; widen the target so they parse under an avx512f-only build
+#define __inline_gdq [[gnu::always_inline, gnu::artificial, gnu::target("avx512f,avx512dq")]] static inline
+
+__inline_gdq __m512i
 _mm512_cvtpd_epi64(__m512d a) noexcept
 {
   return (__m512i)__builtin_ia32_cvtpd2qq512_mask((__v8df)a, (__v8di)_mm512_setzero_si512(), (__mmask8)-1, 4);
 }
 
-__inline_g __m512d
+__inline_gdq __m512d
 _mm512_cvtepi64_pd(__m512i a) noexcept
 {
   return (__m512d)__builtin_ia32_cvtqq2pd512_mask((__v8di)a, (__v8df)_mm512_setzero_pd(), (__mmask8)-1, 4);
 }
+
+#undef __inline_gdq
 
 #define _mm512_i32gather_ps(INDEX, ADDR, SCALE)                                                                                            \
   ((__m512)__builtin_ia32_gathersiv16sf((__v16sf)::micron::simd::__bits::_mm512_setzero_ps(), (void const *)(ADDR),                        \

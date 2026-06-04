@@ -4,16 +4,6 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-// Exercises fix #3: src/mutex/locks/auto_lock.hpp:21 — rptr was hardcoded as
-// `void (micron::mutex::*)()`, regardless of the template parameter `M`. For
-// any M != mutex (spin_lock, recursive_lock, queuing_mutex, ...), the dtor
-// dispatch `(mtx.*rptr)()` was a type-punned member-function-pointer call
-// (UB). With the fix the field is `void (M::*rptr)()`.
-//
-// The verifiable test uses a custom TestMutex whose reset function bumps a
-// counter — under the broken code the wrong member-function-pointer is
-// invoked and the counter is not incremented; under the fix the counter is.
-
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/locks.hpp"
@@ -109,72 +99,86 @@ main(void)
   }
   end_test_case();
 
-  test_case("auto_guard<mutex> dtor releases owned mutex (no crash)");
+  test_case("auto_guard<mutex> locks the referenced mutex for its scope");
   {
+    mutex m;
     {
-      auto_guard<mutex> g;
+      auto_guard<mutex> g(m);
+      require_true(m.is_locked());
     }
-    require_true(true);      // smoke
+    require_false(m.is_locked());
   }
   end_test_case();
 
-  test_case("auto_guard<mutex> sequential scopes do not deadlock");
+  test_case("auto_guard<mutex> sequential scopes lock/unlock and do not deadlock");
   {
+    mutex m;
     {
-      auto_guard<mutex> g1;
+      auto_guard<mutex> g1(m);
+      require_true(m.is_locked());
     }
+    require_false(m.is_locked());
     {
-      auto_guard<mutex> g2;
+      auto_guard<mutex> g2(m);
+      require_true(m.is_locked());
     }
-    {
-      auto_guard<mutex> g3;
-    }
-    require_true(true);
+    require_false(m.is_locked());
   }
   end_test_case();
 
-  test_case("auto_guard<spin_lock> compiles + dtor cleanly invokes reset");
+  test_case("auto_guard<spin_lock> locks the referenced spin_lock");
   {
-    // Pre-fix: rptr was typed as void(mutex::*)(); calling it on a spin_lock
-    // through a punned type would be UB. Post-fix: rptr is void(M::*)() and
-    // dispatch is type-correct.
+    spin_lock s;
     {
-      auto_guard<spin_lock> g;
+      auto_guard<spin_lock> g(s);
+      require_true(s.is_locked());
     }
-    require_true(true);
+    require_false(s.is_locked());
   }
   end_test_case();
 
-  test_case("auto_guard<recursive_lock> compiles + dtor cleanly invokes reset");
+  test_case("auto_guard<recursive_lock> locks (and nests on) the referenced lock");
   {
+    recursive_lock r;
     {
-      auto_guard<recursive_lock> g;
+      auto_guard<recursive_lock> g1(r);
+      require_true(r.is_locked());
+      {
+        auto_guard<recursive_lock> g2(r);
+        require_true(r.is_locked());
+      }
+      require_true(r.is_locked());
     }
-    require_true(true);
+    require_false(r.is_locked());
   }
   end_test_case();
 
-  test_case("auto_guard<weak_mutex> compiles + dtor cleanly invokes reset");
+  test_case("auto_guard<weak_mutex> locks the referenced weak_mutex");
   {
+    weak_mutex w;
     {
-      auto_guard<weak_mutex> g;
+      auto_guard<weak_mutex> g(w);
+      require_true(w.is_locked());
     }
-    require_true(true);
+    require_false(w.is_locked());
   }
   end_test_case();
 
-  test_case("auto_guard<TestMutex>: reset_calls increments once per dtor (FIX #3)");
+  test_case("auto_guard<TestMutex>: reset called once per dtor on the SAME instance");
   {
+    TestMutex tm;
     TestMutex::reset_calls = 0;
     {
-      auto_guard<TestMutex> g;
+      auto_guard<TestMutex> g(tm);
+      require_true(tm.is_locked());
     }
     require(TestMutex::reset_calls == 1);
+    require_false(tm.is_locked());
 
     {
-      auto_guard<TestMutex> g1;
+      auto_guard<TestMutex> g1(tm);
       {
-        auto_guard<TestMutex> g2;
+        auto_guard<TestMutex> g2(tm);
       }
     }
     require(TestMutex::reset_calls == 3);

@@ -110,10 +110,13 @@ collapse(const char *str)
   path_t in = prune(path_t(str));
   bool abs = (in.size() > 0 && in[0] == '/');
 
-  // Fixed-depth component stack.  PATH_MAX / 2 is a safe upper bound on the
+  struct span_t {
+    usize off;
+    usize len;
+  };
 
-  constexpr usize max_depth = posix::path_max / 2;
-  path_t stack[max_depth];
+  constexpr usize max_depth = posix::path_max / 2;      // upper bound on component count
+  span_t spans[max_depth];
   usize depth = 0;
 
   const char *s = in.c_str();
@@ -134,11 +137,7 @@ collapse(const char *str)
         start = i + 1;
         continue;
       }
-      if ( depth < max_depth ) {
-        path_t comp;
-        for ( usize j = start; j < i; ++j ) comp += s[j];
-        stack[depth++] = micron::move(comp);
-      }
+      if ( depth < max_depth ) spans[depth++] = span_t{ start, len };
       start = i + 1;
     }
   }
@@ -147,7 +146,7 @@ collapse(const char *str)
   if ( abs ) out += '/';
   for ( usize i = 0; i < depth; ++i ) {
     if ( i ) out += '/';
-    out += stack[i];
+    for ( usize j = 0; j < spans[i].len; ++j ) out += s[spans[i].off + j];
   }
   if ( out.empty() ) out += (abs ? '/' : '.');
   return out;
@@ -408,20 +407,20 @@ access(const T &s, int m) noexcept
 inline bool
 owned_by_me(const char *s) noexcept
 {
-  return posix::is_owned_by_me(s);
+  return posix::is_owned_by(s, posix::getuid());      // posix has no is_owned_by_me
 }
 
 inline bool
 owned_by_me(const path_t &s) noexcept
 {
-  return posix::is_owned_by_me(s.c_str());
+  return posix::is_owned_by(s.c_str(), posix::getuid());
 }
 
 template<is_string T>
 inline bool
 owned_by_me(const T &s) noexcept
 {
-  return posix::is_owned_by_me(s.c_str());
+  return posix::is_owned_by(s.c_str(), posix::getuid());
 }
 
 inline bool
@@ -465,20 +464,20 @@ in_group(const T &s, posix::gid_t g) noexcept
 inline linux_permissions
 permissions(const char *s)
 {
-  return posix::get_permissions(s);
+  return linux_permissions::from_mode(posix::get_permissions(s));
 }
 
 inline linux_permissions
 permissions(const path_t &s)
 {
-  return posix::get_permissions(s.c_str());
+  return linux_permissions::from_mode(posix::get_permissions(s.c_str()));
 }
 
 template<is_string T>
 inline linux_permissions
 permissions(const T &s)
 {
-  return posix::get_permissions(s.c_str());
+  return linux_permissions::from_mode(posix::get_permissions(s.c_str()));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

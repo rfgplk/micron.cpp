@@ -95,6 +95,7 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
       }
     }
 
+    // NOTE: child_apply_limits/apply_caps_child are void
     if constexpr ( Lim ) {
       if ( lims ) child_apply_limits(*lims);
     }

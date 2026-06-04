@@ -51,6 +51,8 @@ struct tls_block_t {
   usize map_sz = 0;         // mmap length
 };
 
+// NOTE: per-thread TLS blocks are keyed on gettid() and NOT reclaimed on thread exit (no thread-exit hook)
+// they leak for the process lifetime
 struct tls_thread_block_t {
   i32 tid;
   tls_block_t blocks[tls_max_modules] = {};
@@ -161,14 +163,23 @@ __tls_get_addr(micron::elf::tls_index_t *ti) noexcept
 {
   using namespace micron::elf;
   if ( !ti || ti->ti_module == 0 || ti->ti_module >= tls_max_modules ) return nullptr;
-  const tls_module_t &m = __tls_modules[ti->ti_module];
-  if ( !m.active ) return nullptr;
   tls_thread_block_t *t = __tls_get_thread();
   if ( !t ) return nullptr;
+  __tls_lock();
+  const tls_module_t &m = __tls_modules[ti->ti_module];
+  if ( !m.active ) {
+    __tls_unlock();
+    return nullptr;
+  }
   if ( !t->blocks[ti->ti_module].ptr ) {
     tls_block_t b = tls_alloc_block_for(m);
-    if ( !b.ptr ) return nullptr;
+    if ( !b.ptr ) {
+      __tls_unlock();
+      return nullptr;
+    }
     t->blocks[ti->ti_module] = b;
   }
-  return reinterpret_cast<u8 *>(t->blocks[ti->ti_module].ptr) + ti->ti_offset;
+  void *p = reinterpret_cast<u8 *>(t->blocks[ti->ti_module].ptr) + ti->ti_offset;
+  __tls_unlock();
+  return p;
 }

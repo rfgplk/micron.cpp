@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../atomic/atomic.hpp"
 #include "../memory/actions.hpp"
 #include "../mutex/mutex.hpp"
 
@@ -36,6 +37,7 @@ public:
 template<typename T> class shared_state
 {
   mutable mutex mtx;
+  atomic_token<usize> refs;
   bool ready;
   bool retrieved;
   bool has_exception;
@@ -51,7 +53,7 @@ template<typename T> class shared_state
   } storage;
 
 public:
-  shared_state() : ready(false), retrieved(false), has_exception(false), exc_msg(nullptr) { }
+  shared_state() : refs(1), ready(false), retrieved(false), has_exception(false), exc_msg(nullptr) { }
 
   ~shared_state()
   {
@@ -62,6 +64,18 @@ public:
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
+
+  void
+  __acquire() noexcept
+  {
+    refs.fetch_add(1, memory_order::relaxed);
+  }
+
+  bool
+  __release() noexcept
+  {
+    return refs.sub_fetch(1, memory_order::acq_rel) == 0;
+  }
 
   void
   wait() const
@@ -78,16 +92,19 @@ public:
   future_status
   wait_for(fduration_t timeout) const
   {
-
     auto start = micron::system_clock<>::now();
+    future_status r;
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) break;
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) {
+          r = ready ? future_status::ready : future_status::timeout;
+          break;
+        }
       }
       __cpu_pause();
     }
-    return ready ? future_status::ready : future_status::timeout;
+    return r;
   }
 
   future_status wait_until();
@@ -148,16 +165,29 @@ public:
 template<> class shared_state<void>
 {
   mutable mutex mtx;
+  atomic_token<usize> refs;
   bool ready;
   bool retrieved;
   bool has_exception;
   const char *exc_msg;
 
 public:
-  shared_state() : ready(false), retrieved(false), has_exception(false), exc_msg(nullptr) { }
+  shared_state() : refs(1), ready(false), retrieved(false), has_exception(false), exc_msg(nullptr) { }
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
+
+  void
+  __acquire() noexcept
+  {
+    refs.fetch_add(1, memory_order::relaxed);
+  }
+
+  bool
+  __release() noexcept
+  {
+    return refs.sub_fetch(1, memory_order::acq_rel) == 0;
+  }
 
   void
   wait() const
@@ -175,14 +205,18 @@ public:
   wait_for(fduration_t timeout) const
   {
     auto start = micron::system_clock<>::now();
+    future_status r;
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) break;
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) {
+          r = ready ? future_status::ready : future_status::timeout;
+          break;
+        }
       }
       __cpu_pause();
     }
-    return ready ? future_status::ready : future_status::timeout;
+    return r;
   }
 
   future_status wait_until();
@@ -237,6 +271,7 @@ public:
 template<typename T> class shared_state<T &>
 {
   mutable mutex mtx;
+  atomic_token<usize> refs;
   bool ready;
   bool retrieved;
   bool has_exception;
@@ -244,10 +279,22 @@ template<typename T> class shared_state<T &>
   T *ptr;
 
 public:
-  shared_state() : ready(false), retrieved(false), has_exception(false), exc_msg(nullptr), ptr(nullptr) { }
+  shared_state() : refs(1), ready(false), retrieved(false), has_exception(false), exc_msg(nullptr), ptr(nullptr) { }
 
   shared_state(const shared_state &) = delete;
   shared_state &operator=(const shared_state &) = delete;
+
+  void
+  __acquire() noexcept
+  {
+    refs.fetch_add(1, memory_order::relaxed);
+  }
+
+  bool
+  __release() noexcept
+  {
+    return refs.sub_fetch(1, memory_order::acq_rel) == 0;
+  }
 
   void
   wait() const
@@ -264,16 +311,19 @@ public:
   future_status
   wait_for(fduration_t timeout) const
   {
-
     auto start = micron::system_clock<>::now();
+    future_status r;
     for ( ;; ) {
       {
         lock_guard<mutex> lck(mtx);
-        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) break;
+        if ( ready or (micron::system_clock<>::now() - start >= timeout) ) {
+          r = ready ? future_status::ready : future_status::timeout;
+          break;
+        }
       }
       __cpu_pause();
     }
-    return ready ? future_status::ready : future_status::timeout;
+    return r;
   }
 
   future_status wait_until();
@@ -351,7 +401,7 @@ public:
   operator=(future &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state ) {
+      if ( state && state->__release() ) {
         delete state;
       }
       state = other.state;
@@ -362,7 +412,7 @@ public:
 
   ~future()
   {
-    if ( state ) {
+    if ( state && state->__release() ) {
       delete state;
     }
   }
@@ -423,7 +473,7 @@ public:
   operator=(future &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state ) {
+      if ( state && state->__release() ) {
         delete state;
       }
       state = other.state;
@@ -434,7 +484,7 @@ public:
 
   ~future()
   {
-    if ( state ) {
+    if ( state && state->__release() ) {
       delete state;
     }
   }
@@ -495,7 +545,7 @@ public:
   operator=(future &&other) noexcept
   {
     if ( this != &other ) {
-      if ( state ) {
+      if ( state && state->__release() ) {
         delete state;
       }
       state = other.state;
@@ -506,7 +556,7 @@ public:
 
   ~future()
   {
-    if ( state ) {
+    if ( state && state->__release() ) {
       delete state;
     }
   }

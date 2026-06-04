@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../io/__std.hpp"      // std{in,out,err}_fileno
 #include "../io/posix/iosys.hpp"
 
 #include "../array/arrays.hpp"
@@ -26,15 +27,20 @@ inline void
 add_callback(void (*f)(void))
 {
   lock_guard l(__global_callback_mtx);
+  if ( __global_callback_size >= __global_callback_ptrs.size() ) return;      // fixed 64-slot registry: drop overflow, don't write OOB
   __global_callback_ptrs[__global_callback_size++] = f;
 }
 
 inline int
 __default_callback(void *)
 {
-  lock_guard l(__global_callback_mtx);
-  if ( !__global_callback_size ) return -1;
-  __global_callback_ptrs.at(--__global_callback_size)();
+  void (*f)(void) = nullptr;
+  {
+    lock_guard l(__global_callback_mtx);
+    if ( !__global_callback_size ) return -1;
+    f = __global_callback_ptrs.at(--__global_callback_size);
+  }
+  if ( f ) f();
   return 0;
 }
 
@@ -48,12 +54,16 @@ __default_daemon_callback(void *)
   posix::close(stdout_fileno);
   posix::close(stderr_fileno);
 
-  posix::open("/dev/null", O_RDWR);
+  posix::open("/dev/null", posix::o_rdwr);
   micron::dup(0);
   micron::dup(0);
-  lock_guard l(__global_callback_mtx);
-  if ( !__global_callback_size ) return -1;
-  __global_callback_ptrs.at(--__global_callback_size)();
+  void (*f)(void) = nullptr;
+  {
+    lock_guard l(__global_callback_mtx);
+    if ( !__global_callback_size ) return -1;
+    f = __global_callback_ptrs.at(--__global_callback_size);
+  }
+  if ( f ) f();
   return 0;
 }
 
@@ -68,10 +78,14 @@ __default_stop_callback(void *)
 inline int
 __default_sleep_callback(void *)
 {
-  pause();
-  lock_guard l(__global_callback_mtx);
-  if ( !__global_callback_size ) return -1;
-  __global_callback_ptrs.at(--__global_callback_size)();
+  posix::pause();
+  void (*f)(void) = nullptr;
+  {
+    lock_guard l(__global_callback_mtx);
+    if ( !__global_callback_size ) return -1;
+    f = __global_callback_ptrs.at(--__global_callback_size);
+  }
+  if ( f ) f();
   return 0;
 }
 

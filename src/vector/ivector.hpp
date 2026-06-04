@@ -163,7 +163,17 @@ public:
     requires(sizeof...(Args) > 1 and micron::is_class_v<T>)
   ivector(usize n, Args &&...args) : __mem(n)
   {
-    for ( usize i = 0; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+    usize i = 0;
+#ifndef __micron_freestanding
+    try {
+      for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+    } catch ( ... ) {
+      for ( usize j = 0; j < i; ++j ) __mem::memory[j].~T();
+      throw;
+    }
+#else
+    for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
+#endif
     __mem::length = n;
   }
 
@@ -181,7 +191,8 @@ public:
   }
 
   template<typename Fn>
-    requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+    requires((micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
+             and not(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>))
   ivector(usize n, Fn &&fn) : __mem(n)
   {
     __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
@@ -203,7 +214,22 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       usize i = 0;
-      for ( const T &value : lst ) new (micron::addr(__mem::memory[i++])) T(value);
+#ifndef __micron_freestanding
+      try {
+        for ( const T &value : lst ) {
+          new (micron::addr(__mem::memory[i])) T(value);
+          ++i;
+        }
+      } catch ( ... ) {
+        for ( usize j = 0; j < i; ++j ) __mem::memory[j].~T();
+        throw;
+      }
+#else
+      for ( const T &value : lst ) {
+        new (micron::addr(__mem::memory[i])) T(value);
+        ++i;
+      }
+#endif
       __mem::length = lst.size();
     } else {
       usize i = 0;
@@ -241,9 +267,13 @@ public:
   }
 
   // move
-  ivector(chunk<byte> &&m) : __mem(m) { m = nullptr; }
+  ivector(chunk<byte> &&m) : __mem(micron::move(m)) { }
 
-  template<typename C = T, bool Sf2 = Sf> ivector(ivector<C, Alloc, Sf2> &&o) : __mem(micron::move(o)) { }
+  template<typename C = T, bool Sf2 = Sf>
+    requires(micron::is_same_v<C, T>)
+  ivector(ivector<C, Alloc, Sf2> &&o) : __mem(micron::move(o))
+  {
+  }
 
   ivector(ivector &&o) : __mem(micron::move(o)) { }
 

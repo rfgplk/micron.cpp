@@ -23,7 +23,7 @@ io::fd_t
 make_uinput(void)
 {
   int r = 0;
-  io::fd_t handle(posix::open("/dev/uinput", o_nonblock | o_wronly));
+  io::fd_t handle(posix::open("/dev/uinput", posix::o_nonblock | posix::o_wronly));
   if ( handle.has_error() ) set_errno(5);
   return handle;
 }
@@ -34,7 +34,7 @@ void
 set_events(const io::fd_t &handle, Args... args)
 {
   int r = 0;
-  if ( r = (micron::posix::ioctl(handle.fd, micron::ui_set_evbit(), args), ...); r != 0 ) {
+  if ( r = (micron::posix::ioctl(handle.fd, posix::ui_set_evbit(), args), ...); r != 0 ) {
     set_errno(-r);
   }
 }
@@ -45,17 +45,17 @@ void
 set_keys(const io::fd_t &handle, Args... args)
 {
   int r = 0;
-  if ( r = (micron::posix::ioctl(handle.fd, micron::ui_set_keybit(), args), ...); r != 0 ) set_errno(-r);
+  if ( r = (micron::posix::ioctl(handle.fd, posix::ui_set_keybit(), args), ...); r != 0 ) set_errno(-r);
 }
 
 void
-start_device(const io::fd_t &handle, const uinput_setup_t &usetup)
+start_device(const io::fd_t &handle, const posix::uinput_setup_t &usetup)
 {
   int r = 0;
-  if ( r = micron::posix::ioctl(handle.fd, ui_dev_setup(), &usetup); r != 0 ) {
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_setup(), &usetup); r != 0 ) {
     set_errno(-r);
   }
-  if ( r = micron::posix::ioctl(handle.fd, ui_dev_create()); r != 0 ) {
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_create()); r != 0 ) {
     set_errno(-r);
   }
 }
@@ -64,13 +64,14 @@ void
 start_device(const io::fd_t &handle, const char *name, u16 vendor, u16 product, u16 version)
 {
   int r = 0;
-  uinput_setup_t usetup{ .id = { .bustype = bus_usb, .vendor = vendor, .product = product, .version = version },
-                         .name = name,
-                         .ff_effects_max = 0 };
-  if ( r = micron::posix::ioctl(handle.fd, ui_dev_setup(), &usetup); r != 0 ) {
+  posix::uinput_setup_t usetup{ .id = { .bustype = posix::bus_usb, .vendor = vendor, .product = product, .version = version },
+                                .name = {},
+                                .ff_effects_max = 0 };
+  for ( usize __i = 0; name[__i] && __i + 1 < sizeof(usetup.name); ++__i ) usetup.name[__i] = static_cast<u8>(name[__i]);
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_setup(), &usetup); r != 0 ) {
     set_errno(-r);
   }
-  if ( r = micron::posix::ioctl(handle.fd, ui_dev_create()); r != 0 ) {
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_create()); r != 0 ) {
     set_errno(-r);
   }
 }

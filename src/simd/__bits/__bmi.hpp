@@ -24,7 +24,11 @@ namespace __bits
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpedantic"
 
-#define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
+// BMI1 (bextr/andn/blsr/blsi/blsmsk/tzcnt) carry target("bmi"); BMI2 (bzhi/pext/pdep/mulx) carry
+// target("bmi,bmi2"). lzcnt/tzcnt lower to generic __builtin_c[lt]z so they parse under any ISA, but
+// the bmi attribute is kept uniform across the BMI1 block. i386 fallback paths use no ia32 builtin.
+#define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("bmi")]] static inline
+#define __inline_g2 [[gnu::always_inline, gnu::artificial, gnu::target("bmi,bmi2")]] static inline
 
 __inline_g unsigned int
 _tzcnt_u32(unsigned int v) noexcept
@@ -160,13 +164,13 @@ __bextr_u64(unsigned long long v, unsigned long long c) noexcept
 #endif
 }
 
-__inline_g unsigned int
+__inline_g2 unsigned int
 _bzhi_u32(unsigned int v, unsigned int n) noexcept
 {
   return __builtin_ia32_bzhi_si(v, n);
 }
 
-__inline_g unsigned long long
+__inline_g2 unsigned long long
 _bzhi_u64(unsigned long long v, unsigned int n) noexcept
 {
 #if defined(__micron_arch_width_64)
@@ -176,13 +180,13 @@ _bzhi_u64(unsigned long long v, unsigned int n) noexcept
 #endif
 }
 
-__inline_g unsigned int
+__inline_g2 unsigned int
 _pext_u32(unsigned int v, unsigned int mask) noexcept
 {
   return __builtin_ia32_pext_si(v, mask);
 }
 
-__inline_g unsigned long long
+__inline_g2 unsigned long long
 _pext_u64(unsigned long long v, unsigned long long mask) noexcept
 {
 #if defined(__micron_arch_width_64)
@@ -200,13 +204,13 @@ _pext_u64(unsigned long long v, unsigned long long mask) noexcept
 #endif
 }
 
-__inline_g unsigned int
+__inline_g2 unsigned int
 _pdep_u32(unsigned int v, unsigned int mask) noexcept
 {
   return __builtin_ia32_pdep_si(v, mask);
 }
 
-__inline_g unsigned long long
+__inline_g2 unsigned long long
 _pdep_u64(unsigned long long v, unsigned long long mask) noexcept
 {
 #if defined(__micron_arch_width_64)
@@ -224,7 +228,7 @@ _pdep_u64(unsigned long long v, unsigned long long mask) noexcept
 #endif
 }
 
-__inline_g unsigned int
+__inline_g2 unsigned int
 _mulx_u32(unsigned int a, unsigned int b, unsigned int *hi) noexcept
 {
   unsigned long long p = (unsigned long long)a * b;
@@ -232,7 +236,7 @@ _mulx_u32(unsigned int a, unsigned int b, unsigned int *hi) noexcept
   return (unsigned int)p;
 }
 
-__inline_g unsigned long long
+__inline_g2 unsigned long long
 _mulx_u64(unsigned long long a, unsigned long long b, unsigned long long *hi) noexcept
 {
 #if defined(__micron_arch_width_64)
@@ -251,6 +255,7 @@ _mulx_u64(unsigned long long a, unsigned long long b, unsigned long long *hi) no
 }
 
 #undef __inline_g
+#undef __inline_g2
 
 #pragma GCC diagnostic pop
 

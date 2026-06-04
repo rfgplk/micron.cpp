@@ -27,7 +27,11 @@ round_pow2(usize n) noexcept
 {
   if ( n < 2 ) return 2;
   usize p = 1;
-  while ( p < n ) p <<= 1;
+  while ( p < n ) {
+    usize np = p << 1;
+    if ( np <= p ) return p;      // overflow: saturate at the top power of two
+    p = np;
+  }
   return p;
 }
 
@@ -36,7 +40,11 @@ round_pow2_down(usize n) noexcept
 {
   if ( n < 2 ) return n;
   usize p = 1;
-  while ( (p << 1) <= n ) p <<= 1;
+  for ( ;; ) {
+    usize np = p << 1;
+    if ( np > n || np <= p ) break;      // stop at n, or on overflow (np==0 would loop forever)
+    p = np;
+  }
   return p;
 }
 
@@ -130,6 +138,10 @@ template<typename K, typename V> struct hopscotch_node {
   }
 };
 
+// ON KEYS: hopscotch_map stores only hash<hash64_t>(key), NOT the key itself,
+// and compares entries by that 64-bit hash; two DISTINCT keys that hash to the same value
+// are therefore treated as the SAME entry (the second insert overwrites / is dropped; a lookup returns the first key's value)
+// this is by design
 template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, V>> class hopscotch_map
 {
   micron::fvector<Nd> entries;
@@ -156,9 +168,6 @@ template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, 
     usize current_empty = empty_slot;
 
     for ( usize attempt = 0; attempt < __max_displacement; ++attempt ) {
-      usize search_start = (current_empty >= MH) ? (current_empty - MH) : 0;
-      (void)search_start;
-
       bool found_swap = false;
       for ( usize i = 0; i < MH && !found_swap; ++i ) {
         usize check_pos = (current_empty + size - i - 1) & __bmask;
@@ -375,6 +384,7 @@ public:
   void
   clear()
   {
+    if ( __bmask == 0 ) return;
     // clear only the logical table (__bmask+1)
     usize sz = __bmask + 1u;
     for ( usize i = 0; i < sz; ++i ) {
@@ -716,6 +726,7 @@ public:
   void
   for_each(Fn &&fn)
   {
+    if ( __bmask == 0 ) return;      // moved-from / uninitialized: null entries buffer
     usize sz = __bmask + 1u;
     for ( usize i = 0; i < sz; ++i )
       if ( entries[i].key != 0 ) fn(entries[i].key, entries[i].value);
@@ -726,6 +737,7 @@ public:
   void
   for_each(Fn &&fn) const
   {
+    if ( __bmask == 0 ) return;      // moved-from / uninitialized: null entries buffer
     usize sz = __bmask + 1u;
     for ( usize i = 0; i < sz; ++i )
       if ( entries[i].key != 0 ) fn(entries[i].key, entries[i].value);

@@ -71,6 +71,10 @@ __try_runpath(const char *runpath, const char *soname) noexcept
     const char *seg_end = micron::format::find(runpath + start, rp_len - start, ':');
     const usize end = seg_end ? static_cast<usize>(seg_end - runpath) : rp_len;
     if ( end > start ) {
+      if ( end - start >= 512u ) {
+        start = end + 1;
+        continue;
+      }
       micron::sstring<512> dir;
       for ( usize i = start; i < end; ++i ) dir += runpath[i];
       dir.null_term();
@@ -91,6 +95,7 @@ resolve_soname(const char *soname, const char *runpath = nullptr) noexcept
   const usize sn_len = micron::strlen(soname);
 
   if ( micron::format::find(soname, sn_len, '/') ) {
+    if ( sn_len >= out.max_size() ) return path_str_t{};
     for ( usize i = 0; i < sn_len; ++i ) out += soname[i];
     out.null_term();
     return __file_exists(out.c_str()) ? out : path_str_t{};

@@ -11,6 +11,7 @@
 #include "prctl.hpp"
 
 #include "bpf.hpp"
+#include "ioctl.hpp"     
 
 namespace micron
 {
@@ -76,8 +77,8 @@ seccomp_data_arg_first_off(u32 n) noexcept
   return 16u + n * 8u + 4u;
 }
 
-// NOTE: needs kernel >5.0
-struct __attribute__((packed)) seccomp_notif_t {
+// NOTE: needs kernel >5.0. NOT packed
+struct seccomp_notif_t {
   u64 id;
   u32 pid;
   u32 flags;
@@ -140,7 +141,7 @@ seccomp_load_filter_notif(const bpf::fprog_t &prog, u32 extra_flags = 0)
 constexpr static const u32 seccomp_ioctl_notif_recv = 0xc0502100u;
 constexpr static const u32 seccomp_ioctl_notif_send = 0xc0182101u;
 constexpr static const u32 seccomp_ioctl_notif_id_valid = 0x40082102u;
-constexpr static const u32 seccomp_ioctl_notif_addfd = 0xc0182103u;
+constexpr static const u32 seccomp_ioctl_notif_addfd = 0x40182103u;      // _IOW (was 0xc0=_IOWR)
 
 inline int
 seccomp_notify_receive(int fd, seccomp_notif_t &req)

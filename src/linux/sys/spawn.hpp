@@ -108,7 +108,7 @@ __apply_file_actions(const spawn_file_actions_t &fa)
       break;
 
     case SPAWN_ACTION_DUP2:
-      micron::dup3(a.fd, a.newfd, 0);
+      micron::dup2(a.fd, a.newfd);
       break;
     }
   }
@@ -132,8 +132,13 @@ __apply_spawnattr(const spawnattr_t &attr)
     if ( micron::syscall_failed(r) ) return static_cast<int>(r);
   }
   if ( attr.__flags & posix_spawn_setsigdef ) {
-    long r = micron::syscall(SYS_rt_sigprocmask, sig_unblock, &attr.sd, nullptr, __sig_syscall_size);
-    if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+    for ( int s = 1; s <= 64; ++s ) {
+      if ( !sigismember(attr.sd, s) ) continue;
+      __syscall_sigaction_t act{};
+      act.k_sa_handler = reinterpret_cast<sighandler_t>(0);      // SIG_DFL
+      long r = micron::syscall(SYS_rt_sigaction, s, &act, nullptr, __sig_syscall_size);
+      if ( micron::syscall_failed(r) ) return static_cast<int>(r);
+    }
   }
   if ( attr.__flags & posix_spawn_setscheduler ) {
     long r = micron::syscall(SYS_sched_setscheduler, 0, attr.policy, &attr.__sp);

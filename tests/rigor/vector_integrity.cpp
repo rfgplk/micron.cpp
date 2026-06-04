@@ -888,6 +888,21 @@ main()
   end_test_case();
 
   // ---------------------------------------------------------------- //
+  test_case("edge: resize down truncates and destroys removed elements");
+  {
+    Probe::reset();
+    {
+      micron::vector<Probe> v;
+      for ( int i = 0; i < 16; ++i ) v.emplace_back(i);
+      v.resize(4);      // resize to smaller – truncates, destroying [4,16)
+      require(v.size(), size_t(4));
+      require(Probe::live, 4);
+    }
+    require(Probe::live, 0);
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
   test_case("edge: single-element vector full lifecycle");
   {
     Probe::reset();

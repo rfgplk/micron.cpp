@@ -58,6 +58,7 @@ apply_reloc(const reloc_ctx_t &ctx, const rela_t &r) noexcept
 {
   const u32 type = elf_r_type(r.info);
   const u32 si = elf_r_sym(r.info);
+  if ( ctx.d->symcount && si >= ctx.d->symcount ) return reloc_result::unresolved;
   u8 *const p = ctx.load_base + r.offset;
   const sxword a = r.addend;
   const u8 *const b = ctx.load_base;
@@ -98,6 +99,7 @@ apply_reloc(const reloc_ctx_t &ctx, const rela_t &r) noexcept
   case r_x86_64_dtpoff64: {
     const char *name = ctx.d->strtab + ctx.d->symtab[si].name;
     (void)name;
+    // NOTE: resolves the offset within THIS module's TLS block only
     *reinterpret_cast<u64 *>(p) = ctx.d->symtab[si].value + static_cast<u64>(a);
     return reloc_result::applied;
   }
@@ -118,6 +120,7 @@ apply_reloc(const reloc_ctx_t &ctx, const rela_t &r) noexcept
 {
   const u32 type = elf_r_type(r.info);
   const u32 si = elf_r_sym(r.info);
+  if ( ctx.d->symcount && si >= ctx.d->symcount ) return reloc_result::unresolved;
   u8 *const p = ctx.load_base + r.offset;
   const sxword a = r.addend;
   const u8 *const b = ctx.load_base;

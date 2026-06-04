@@ -35,9 +35,9 @@ inline constexpr try_to_lock_t try_to_lock{};
 
 template<typename... Locks>
 bool
-try_lock(Locks... locks)
+try_lock(Locks &...locks)      // by-reference (locks are non-copyable); returns true iff EVERY lock was acquired
 {
-  (locks.try_lock(), ...);
+  return (... && locks.try_lock());      // NOTE: short-circuits; no rollback of already-acquired locks on partial failure
 }
 
 template<typename... Locks>

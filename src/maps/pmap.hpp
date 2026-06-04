@@ -27,6 +27,9 @@ namespace micron
 //
 // reclamation is driven by atomic intrusive refcounts on each shared node;
 // the count saturates at __immortal_refs and the node becomes permanently live
+//
+// COLLISION CHAINS: keys whose 64-bit hashes are equal (or that stay equal past
+// __max_depth re-mixes) share a leaf's overflow chain, which has no length bound
 template<typename K, typename V>
   requires micron::is_copy_constructible_v<K> and micron::is_copy_constructible_v<V> and micron::is_move_constructible_v<K>
            and micron::is_move_constructible_v<V>
@@ -164,10 +167,19 @@ class pmap
   {
     __chain *head = nullptr;
     __chain **tail = &head;
-    for ( const __chain *c = src; c; c = c->next ) {
-      *tail = new __chain(c->h, c->key, c->value);
-      tail = &(*tail)->next;
+#ifndef __micron_freestanding
+    try {
+#endif
+      for ( const __chain *c = src; c; c = c->next ) {
+        *tail = new __chain(c->h, c->key, c->value);
+        tail = &(*tail)->next;
+      }
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      __destroy_chain(head);      // a throwing K/V copy must not leak the partial chain
+      throw;
     }
+#endif
     return head;
   }
 
@@ -222,6 +234,26 @@ class pmap
     for ( usize i = 0; i < n; ++i ) __release(cs[i]);
     ::operator delete(in);
   }
+
+  struct __node_guard {
+    uintptr_t p;
+
+    explicit __node_guard(uintptr_t q) noexcept : p(q) { }
+
+    ~__node_guard()
+    {
+      if ( p ) __release(p);
+    }
+
+    void
+    dismiss() noexcept
+    {
+      p = 0;
+    }
+
+    __node_guard(const __node_guard &) = delete;
+    __node_guard &operator=(const __node_guard &) = delete;
+  };
 
   static inline __attribute__((always_inline)) hash64_t
   __mix_hash(hash64_t h) noexcept
@@ -328,15 +360,24 @@ class pmap
     __chain *head = nullptr;
     __chain **tail = &head;
     bool replaced = false;
-    for ( const __chain *c = src; c; c = c->next ) {
-      if ( !replaced && c->h == h && c->key == k ) {
-        *tail = new __chain(h, K(k), micron::move(v));
-        replaced = true;
-      } else {
-        *tail = new __chain(c->h, c->key, c->value);
+#ifndef __micron_freestanding
+    try {
+#endif
+      for ( const __chain *c = src; c; c = c->next ) {
+        if ( !replaced && c->h == h && c->key == k ) {
+          *tail = new __chain(h, K(k), micron::move(v));
+          replaced = true;
+        } else {
+          *tail = new __chain(c->h, c->key, c->value);
+        }
+        tail = &(*tail)->next;
       }
-      tail = &(*tail)->next;
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      __destroy_chain(head);
+      throw;
     }
+#endif
     return head;
   }
 
@@ -346,14 +387,23 @@ class pmap
     __chain *head = nullptr;
     __chain **tail = &head;
     bool dropped = false;
-    for ( const __chain *c = src; c; c = c->next ) {
-      if ( !dropped && c->h == h && c->key == k ) {
-        dropped = true;
-        continue;
+#ifndef __micron_freestanding
+    try {
+#endif
+      for ( const __chain *c = src; c; c = c->next ) {
+        if ( !dropped && c->h == h && c->key == k ) {
+          dropped = true;
+          continue;
+        }
+        *tail = new __chain(c->h, c->key, c->value);
+        tail = &(*tail)->next;
       }
-      *tail = new __chain(c->h, c->key, c->value);
-      tail = &(*tail)->next;
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      __destroy_chain(head);
+      throw;
     }
+#endif
     return head;
   }
 
@@ -396,10 +446,18 @@ class pmap
       __child_absorb(&cs[__phys_idx(bm, idx)], h, k, v);
     };
 
-    place(l->h, l->key, l->value);
-    for ( const __chain *c = l->overflow; c; c = c->next ) place(c->h, c->key, c->value);
-
-    __child_absorb(&cs[__phys_idx(bm, __idx_at(new_h, depth))], new_h, new_k, micron::move(new_v));
+#ifndef __micron_freestanding
+    try {
+#endif
+      place(l->h, l->key, l->value);
+      for ( const __chain *c = l->overflow; c; c = c->next ) place(c->h, c->key, c->value);
+      __child_absorb(&cs[__phys_idx(bm, __idx_at(new_h, depth))], new_h, new_k, micron::move(new_v));
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      __release(__tag_internal_ptr(in));
+      throw;
+    }
+#endif
 
     return in;
   }
@@ -417,16 +475,20 @@ class pmap
       if ( l->h == h && l->key == k ) {
         existed = true;
         __leaf *nl = new __leaf(h, K(k), micron::move(v));
+        __node_guard g{ __tag_leaf_ptr(nl) };
         nl->overflow_len = l->overflow_len;
-        nl->overflow = __copy_chain(l->overflow);
+        nl->overflow = __copy_chain(l->overflow);      // if it throws, g frees nl (overflow still null)
+        g.dismiss();
         return __tag_leaf_ptr(nl);
       }
 
       if ( __chain_has(l->overflow, h, k) ) {
         existed = true;
         __leaf *nl = new __leaf(l->h, l->key, l->value);
+        __node_guard g{ __tag_leaf_ptr(nl) };
         nl->overflow_len = l->overflow_len;
         nl->overflow = __chain_copy_with_replace(l->overflow, h, K(k), micron::move(v));
+        g.dismiss();
         return __tag_leaf_ptr(nl);
       }
 
@@ -437,8 +499,12 @@ class pmap
       }
 
       __leaf *nl = new __leaf(l->h, l->key, l->value);
+      __node_guard g{ __tag_leaf_ptr(nl) };
       nl->overflow_len = l->overflow_len + 1u;
-      nl->overflow = new __chain(h, K(k), micron::move(v), __copy_chain(l->overflow));
+      __chain *rest = __copy_chain(l->overflow);
+      nl->overflow = rest;      // nl now owns rest; if the prepend below throws, g frees nl + rest
+      nl->overflow = new __chain(h, K(k), micron::move(v), rest);
+      g.dismiss();
       return __tag_leaf_ptr(nl);
     }
 
@@ -447,12 +513,18 @@ class pmap
     if ( !__has(in->bitmap, idx) ) {
       existed = false;
       __leaf *nl = new __leaf(h, K(k), micron::move(v));
-      return __tag_internal_ptr(__internal_insert(in, idx, __tag_leaf_ptr(nl)));
+      __node_guard g{ __tag_leaf_ptr(nl) };      // freed if __internal_insert's alloc throws (OOM)
+      uintptr_t res = __tag_internal_ptr(__internal_insert(in, idx, __tag_leaf_ptr(nl)));
+      g.dismiss();
+      return res;
     }
     usize phys = __phys_idx(in->bitmap, idx);
     uintptr_t old_child = __children_of(in)[phys];
     uintptr_t new_child = __insert_into(old_child, h, k, micron::move(v), depth + 1u, existed);
-    return __tag_internal_ptr(__internal_replace(in, idx, new_child));
+    __node_guard g{ new_child };      // freed if __internal_replace's alloc throws (OOM)
+    uintptr_t res = __tag_internal_ptr(__internal_replace(in, idx, new_child));
+    g.dismiss();
+    return res;
   }
 
   static const V *
@@ -489,16 +561,20 @@ class pmap
 
         __chain *first = l->overflow;
         __leaf *nl = new __leaf(first->h, first->key, first->value);
+        __node_guard g{ __tag_leaf_ptr(nl) };
         nl->overflow_len = l->overflow_len - 1u;
         nl->overflow = __copy_chain(first->next);
+        g.dismiss();
         return __tag_leaf_ptr(nl);
       }
 
       if ( __chain_has(l->overflow, h, k) ) {
         erased = true;
         __leaf *nl = new __leaf(l->h, l->key, l->value);
+        __node_guard g{ __tag_leaf_ptr(nl) };
         nl->overflow_len = l->overflow_len - 1u;
         nl->overflow = __chain_copy_with_erase(l->overflow, h, k);
+        g.dismiss();
         return __tag_leaf_ptr(nl);
       }
 
@@ -528,7 +604,10 @@ class pmap
       if ( nn == nullptr ) return 0;
       return __tag_internal_ptr(nn);
     }
-    return __tag_internal_ptr(__internal_replace(in, idx, new_child));
+    __node_guard g{ new_child };      // freed if __internal_replace's alloc throws (OOM)
+    uintptr_t res = __tag_internal_ptr(__internal_replace(in, idx, new_child));
+    g.dismiss();
+    return res;
   }
 
   template<typename Fn>

@@ -846,6 +846,137 @@ vcltq_u32(uint32x4_t a, uint32x4_t b) noexcept
   return vcgtq_u32(b, a);
 }
 
+// signed 64-bit less-than: a < b  <=>  b > a (the only vcltq the s64 set lacked).
+__inline_g uint64x2_t
+vcltq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return vcgtq_s64(b, a);
+}
+
+// >= family. GCC's vector `>=` lowers to CMGE/FCMGE and yields an all-ones lane
+// mask of the matching unsigned width — exactly the NEON vcgeq_* contract.
+__inline_g uint8x16_t
+vcgeq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (uint8x16_t)(a >= b);
+}
+
+__inline_g uint16x8_t
+vcgeq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (uint16x8_t)(a >= b);
+}
+
+__inline_g uint32x4_t
+vcgeq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (uint32x4_t)(a >= b);
+}
+
+__inline_g uint64x2_t
+vcgeq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return (uint64x2_t)(a >= b);
+}
+
+__inline_g uint8x16_t
+vcgeq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)(a >= b);
+}
+
+__inline_g uint16x8_t
+vcgeq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)(a >= b);
+}
+
+__inline_g uint32x4_t
+vcgeq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)(a >= b);
+}
+
+__inline_g uint64x2_t
+vcgeq_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return (uint64x2_t)(a >= b);
+}
+
+__inline_g uint32x4_t
+vcgeq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return (uint32x4_t)(a >= b);
+}
+
+__inline_g uint64x2_t
+vcgeq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return (uint64x2_t)(a >= b);
+}
+
+// <= family. a <= b lowers to CMGE/FCMGE with swapped operands (CMLE compares
+// against zero only), giving the same all-ones lane mask the vcleq_* set wants.
+__inline_g uint8x16_t
+vcleq_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return (uint8x16_t)(a <= b);
+}
+
+__inline_g uint16x8_t
+vcleq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return (uint16x8_t)(a <= b);
+}
+
+__inline_g uint32x4_t
+vcleq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return (uint32x4_t)(a <= b);
+}
+
+__inline_g uint64x2_t
+vcleq_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return (uint64x2_t)(a <= b);
+}
+
+__inline_g uint8x16_t
+vcleq_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return (uint8x16_t)(a <= b);
+}
+
+__inline_g uint16x8_t
+vcleq_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return (uint16x8_t)(a <= b);
+}
+
+__inline_g uint32x4_t
+vcleq_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return (uint32x4_t)(a <= b);
+}
+
+__inline_g uint64x2_t
+vcleq_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return (uint64x2_t)(a <= b);
+}
+
+__inline_g uint32x4_t
+vcleq_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return (uint32x4_t)(a <= b);
+}
+
+__inline_g uint64x2_t
+vcleq_f64(float64x2_t a, float64x2_t b) noexcept
+{
+  return (uint64x2_t)(a <= b);
+}
+
 __inline_g int8x16_t
 vminq_s8(int8x16_t a, int8x16_t b) noexcept
 {
@@ -3241,6 +3372,36 @@ vuzp2q_f32(float32x4_t a, float32x4_t b) noexcept
   return __builtin_shufflevector(a, b, 1, 3, 5, 7);
 }
 
+// D-register (64-bit) combined unzips. AArch64 has no struct-returning VUZP, only
+// UZP1/UZP2, but the ACLE vuzp_* form (val[0]=even lanes, val[1]=odd lanes) is
+// what the half-width arith paths (mul_32_64 / mul_u32_64 / maddubs_8) call.
+__inline_g int32x2x2_t
+vuzp_s32(int32x2_t a, int32x2_t b) noexcept
+{
+  int32x2x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 2);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 3);
+  return r;
+}
+
+__inline_g uint32x2x2_t
+vuzp_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  uint32x2x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 2);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 3);
+  return r;
+}
+
+__inline_g int16x4x2_t
+vuzp_s16(int16x4_t a, int16x4_t b) noexcept
+{
+  int16x4x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 2, 4, 6);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 3, 5, 7);
+  return r;
+}
+
 __inline_g int8x16_t
 vtrn1q_s8(int8x16_t a, int8x16_t b) noexcept
 {
@@ -3325,53 +3486,40 @@ vtrn2q_f32(float32x4_t a, float32x4_t b) noexcept
   return __builtin_shufflevector(a, b, 1, 5, 3, 7);
 }
 
-__inline_g int8x16_t
-vshlq_s8(int8x16_t v, int8x16_t cnt) noexcept
-{
-  return v << cnt;
-}
+// vshlq_* must lower to the hardware SSHL/USHL (NOT the GCC vector `<<`):
+// a negative per-lane count is a RIGHT shift (arithmetic for signed, logical for
+// unsigned) and |count| >= lane width yields 0. The `<<` operator makes negative
+// counts UB (garbage), but every right-shift caller passes vdupq_n(-count) and
+// relies on the real SSHL/USHL semantics. Inline asm guarantees the true op.
+#define __mc_vshlq_signed(SUF, LAY, T)                                                                                                     \
+  __inline_g T vshlq_##SUF(T v, T cnt) noexcept                                                                                            \
+  {                                                                                                                                        \
+    T r;                                                                                                                                   \
+    __asm__("sshl %0." LAY ", %1." LAY ", %2." LAY : "=w"(r) : "w"(v), "w"(cnt));                                                          \
+    return r;                                                                                                                              \
+  }
 
-__inline_g int16x8_t
-vshlq_s16(int16x8_t v, int16x8_t cnt) noexcept
-{
-  return v << cnt;
-}
+__mc_vshlq_signed(s8, "16b", int8x16_t);
+__mc_vshlq_signed(s16, "8h", int16x8_t);
+__mc_vshlq_signed(s32, "4s", int32x4_t);
+__mc_vshlq_signed(s64, "2d", int64x2_t);
 
-__inline_g int32x4_t
-vshlq_s32(int32x4_t v, int32x4_t cnt) noexcept
-{
-  return v << cnt;
-}
+#undef __mc_vshlq_signed
 
-__inline_g int64x2_t
-vshlq_s64(int64x2_t v, int64x2_t cnt) noexcept
-{
-  return v << cnt;
-}
+#define __mc_vshlq_unsigned(SUF, LAY, T, CT)                                                                                               \
+  __inline_g T vshlq_##SUF(T v, CT cnt) noexcept                                                                                           \
+  {                                                                                                                                        \
+    T r;                                                                                                                                   \
+    __asm__("ushl %0." LAY ", %1." LAY ", %2." LAY : "=w"(r) : "w"(v), "w"(cnt));                                                          \
+    return r;                                                                                                                              \
+  }
 
-__inline_g uint8x16_t
-vshlq_u8(uint8x16_t v, int8x16_t cnt) noexcept
-{
-  return v << (uint8x16_t)cnt;
-}
+__mc_vshlq_unsigned(u8, "16b", uint8x16_t, int8x16_t);
+__mc_vshlq_unsigned(u16, "8h", uint16x8_t, int16x8_t);
+__mc_vshlq_unsigned(u32, "4s", uint32x4_t, int32x4_t);
+__mc_vshlq_unsigned(u64, "2d", uint64x2_t, int64x2_t);
 
-__inline_g uint16x8_t
-vshlq_u16(uint16x8_t v, int16x8_t cnt) noexcept
-{
-  return v << (uint16x8_t)cnt;
-}
-
-__inline_g uint32x4_t
-vshlq_u32(uint32x4_t v, int32x4_t cnt) noexcept
-{
-  return v << (uint32x4_t)cnt;
-}
-
-__inline_g uint64x2_t
-vshlq_u64(uint64x2_t v, int64x2_t cnt) noexcept
-{
-  return v << (uint64x2_t)cnt;
-}
+#undef __mc_vshlq_unsigned
 
 __inline_g int8x8_t
 vshrn_n_s16(int16x8_t v, const int n) noexcept

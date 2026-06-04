@@ -13,6 +13,7 @@
 #include "../../string/format.hpp"
 #include "../../string/unistring.hpp"
 #include "../../vector/fvector.hpp"
+#include "../../vector/vector.hpp"  
 #include "../filesystem.hpp"
 #include "../fsys.hpp"
 
@@ -80,8 +81,45 @@ struct device_t {
   ustr8 path;
   ustr8 name;
   ustr8 phys;
-  type_t type;
-  io::fd_t bound_fd;
+  type_t type = type_t::keyboard;
+  io::fd_t bound_fd{ -1 };    
+
+  device_t() = default;
+
+  device_t(ustr8 ip, ustr8 p, ustr8 n, ustr8 ph, type_t t, io::fd_t fd)
+      : i_path(micron::move(ip)), path(micron::move(p)), name(micron::move(n)), phys(micron::move(ph)), type(t), bound_fd(fd)
+  {
+  }
+
+  ~device_t()
+  {
+    if ( bound_fd.open() ) posix::close(bound_fd.fd);
+  }
+
+  device_t(const device_t &) = delete;
+  device_t &operator=(const device_t &) = delete;
+
+  device_t(device_t &&o) noexcept
+      : i_path(micron::move(o.i_path)), path(micron::move(o.path)), name(micron::move(o.name)), phys(micron::move(o.phys)), type(o.type),
+        bound_fd(o.bound_fd)
+  {
+    o.bound_fd = io::fd_t{ -1 };
+  }
+
+  device_t &
+  operator=(device_t &&o) noexcept
+  {
+    if ( this == &o ) return *this;
+    if ( bound_fd.open() ) posix::close(bound_fd.fd);
+    i_path = micron::move(o.i_path);
+    path = micron::move(o.path);
+    name = micron::move(o.name);
+    phys = micron::move(o.phys);
+    type = o.type;
+    bound_fd = o.bound_fd;
+    o.bound_fd = io::fd_t{ -1 };
+    return *this;
+  }
 };
 
 bool
@@ -96,10 +134,10 @@ is_bound(const device_t &dev)
   return !(dev.bound_fd.closed());
 }
 
-fvector<device_t>
+vector<device_t>
 get_devices()
 {
-  micron::fvector<device_t> vc;
+  micron::vector<device_t> vc;
   fsys::system<micron::io::rd> sys;
   auto ps = micron::io::path("/sys/class/input/").all();
   for ( auto &n : ps ) {
@@ -149,6 +187,7 @@ nonblock_bind_device(device_t &dev)
   if ( dev.i_path.empty() ) return -1;
   int fd = static_cast<int>(posix::open(dev.i_path.c_str(), posix::o_nonblock | posix::o_rdonly));
   if ( fd < 0 ) return fd;
+  if ( dev.bound_fd.open() ) posix::close(dev.bound_fd.fd);      // don't leak a prior binding
   dev.bound_fd = fd;
   return fd;
 }
@@ -159,6 +198,7 @@ bind_device(device_t &dev)
   if ( dev.i_path.empty() ) return -1;
   int fd = static_cast<int>(posix::open(dev.i_path.c_str(), posix::o_rdonly));
   if ( fd < 0 ) return fd;
+  if ( dev.bound_fd.open() ) posix::close(dev.bound_fd.fd);      // don't leak a prior binding
   dev.bound_fd = fd;
 
   return fd;

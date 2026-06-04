@@ -4,16 +4,14 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-// Uses micron primitives only — including <thread>/<atomic> alongside
-// spin_lock.hpp pulls libstdc++'s pthread types that conflict with the
-// pthread shim under src/__special.
-
 #include "../../src/mutex/locks/spin_lock.hpp"
 #include "../../src/std.hpp"
 
 #include "../../src/concepts.hpp"
 #include "../../src/thread/thread.hpp"
 #include "../../src/thread/thread_types/auto_thread.hpp"
+
+#include "../support/mt.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -124,12 +122,7 @@ main(void)
     int counter = 0;
     constexpr int kIters = 10000;
     StressArgs a{ &sl, &counter, kIters };
-    {
-      auto_thread<> t1(stress_worker, &a);
-      auto_thread<> t2(stress_worker, &a);
-      auto_thread<> t3(stress_worker, &a);
-      auto_thread<> t4(stress_worker, &a);
-    }      // dtors join
+    mtest::parallel(4, [&](int) { stress_worker(&a); });
     require(counter == 4 * kIters);
   }
   end_test_case();
@@ -145,7 +138,7 @@ main(void)
       while ( !held.get(memory_order::acquire) ) micron::yield();
       require_true(sl.is_locked());
       release_now.store(true, memory_order::release);
-    }      // dtor joins
+    }
     require_false(sl.is_locked());
   }
   end_test_case();

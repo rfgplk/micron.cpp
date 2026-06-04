@@ -61,14 +61,20 @@ class heap_swiss_map
   {
     if ( n <= __min_cap ) return __min_cap;
     usize p = 1;
-    while ( p < n ) p <<= 1;
+    while ( p < n ) {
+      usize np = p << 1;
+      if ( np <= p ) return p;      // overflow: saturate (the subsequent alloc will throw)
+      p = np;
+    }
     return p;
   }
 
   static constexpr u8
   __h2(hash64_t h) noexcept
   {
-    return static_cast<u8>((h >> 57) | __sentinel);
+    u8 v = static_cast<u8>((h >> 40) & 0x7Fu);
+    u8 c = static_cast<u8>(v | __sentinel);
+    return c >= __deleted ? static_cast<u8>(c - 2u) : c;
   }
 
   static constexpr usize
@@ -141,13 +147,23 @@ class heap_swiss_map
   void
   __alloc_storage(usize n_slots)
   {
-    __ctrl = new u8[n_slots + __group];
-    micron::memset(__ctrl, __empty, n_slots + __group);
-    chunk<byte> blk = Alloc::create(n_slots * sizeof(__hs_entry));
-    __entries = reinterpret_cast<__hs_entry *>(blk.ptr);
-    __n_slots = n_slots;
-    __cap_mask = n_slots - 1u;
-    __growth_left = n_slots * __load_num / __load_denom;
+    u8 *ctrl = new u8[n_slots + __group];
+#ifndef __micron_freestanding
+    try {
+#endif
+      chunk<byte> blk = Alloc::create(n_slots * sizeof(__hs_entry));
+      micron::memset(ctrl, __empty, n_slots + __group);
+      __ctrl = ctrl;
+      __entries = reinterpret_cast<__hs_entry *>(blk.ptr);
+      __n_slots = n_slots;
+      __cap_mask = n_slots - 1u;
+      __growth_left = n_slots * __load_num / __load_denom;
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      delete[] ctrl;
+      throw;
+    }
+#endif
   }
 
   void
@@ -229,13 +245,30 @@ class heap_swiss_map
     u8 *old_ctrl = __ctrl;
     __hs_entry *old_entries = __entries;
     usize old_n = __n_slots;
-    __ctrl = nullptr;
-    __entries = nullptr;
-    __n_slots = 0;
-    __cap_mask = 0;
-    __size = 0;
-    __growth_left = 0;
-    __alloc_storage(new_n_slots);
+    usize old_mask = __cap_mask;
+    usize old_size = __size;
+    usize old_growth = __growth_left;
+#ifndef __micron_freestanding
+    try {
+#endif
+      __ctrl = nullptr;
+      __entries = nullptr;
+      __n_slots = 0;
+      __cap_mask = 0;
+      __size = 0;
+      __growth_left = 0;
+      __alloc_storage(new_n_slots);
+#ifndef __micron_freestanding
+    } catch ( ... ) {
+      __ctrl = old_ctrl;
+      __entries = old_entries;
+      __n_slots = old_n;
+      __cap_mask = old_mask;
+      __size = old_size;
+      __growth_left = old_growth;
+      throw;
+    }
+#endif
     if ( old_entries && old_ctrl ) {
       for ( usize i = 0; i < old_n; ++i ) {
         u8 c = old_ctrl[i];
@@ -497,6 +530,8 @@ public:
     V *v = find(key);
     if ( v ) return *v;
     auto r = insert(key, V{});
+    if ( !r.b ) [[unlikely]]
+      exc<except::library_error>("heap_swiss_map::operator[](): insertion failed");
     return *r.b;
   }
 
@@ -572,12 +607,23 @@ public:
     }
 
   public:
+    using value_type = micron::pair<const K &, V &>;
+    using difference_type = ptrdiff_t;
+    using pointer = micron::pair<const K *, V *>;
+    using reference = micron::pair<const K &, V &>;
+
     iterator(heap_swiss_map *m, usize i) : __m(m), __i(i) { advance(); }
 
-    micron::pair<const K &, V &>
+    reference
     operator*()
     {
       return { __m->__entries[__i].key, __m->__entries[__i].value };
+    }
+
+    pointer
+    operator->()
+    {
+      return { micron::addr(__m->__entries[__i].key), micron::addr(__m->__entries[__i].value) };
     }
 
     iterator &
@@ -586,6 +632,14 @@ public:
       ++__i;
       advance();
       return *this;
+    }
+
+    iterator
+    operator++(int)
+    {
+      iterator tmp = *this;
+      ++(*this);
+      return tmp;
     }
 
     bool
@@ -613,12 +667,23 @@ public:
     }
 
   public:
+    using value_type = micron::pair<const K &, const V &>;
+    using difference_type = ptrdiff_t;
+    using pointer = micron::pair<const K *, const V *>;
+    using reference = micron::pair<const K &, const V &>;
+
     const_iterator(const heap_swiss_map *m, usize i) : __m(m), __i(i) { advance(); }
 
-    micron::pair<const K &, const V &>
+    reference
     operator*() const
     {
       return { __m->__entries[__i].key, __m->__entries[__i].value };
+    }
+
+    pointer
+    operator->() const
+    {
+      return { micron::addr(__m->__entries[__i].key), micron::addr(__m->__entries[__i].value) };
     }
 
     const_iterator &
@@ -627,6 +692,14 @@ public:
       ++__i;
       advance();
       return *this;
+    }
+
+    const_iterator
+    operator++(int)
+    {
+      const_iterator tmp = *this;
+      ++(*this);
+      return tmp;
     }
 
     bool

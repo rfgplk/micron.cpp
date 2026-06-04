@@ -35,8 +35,7 @@ class parray
     return r;
   }
 
-  // verify capacity fits in usize
-  static_assert(__cpow(B, H) > 0, "parray: capacity overflow");
+  static_assert(K * H < 64, "parray: capacity (B^H) overflows usize");
 
   struct __node {
     mutable u32 refs;
@@ -87,10 +86,11 @@ class parray
   {
     if ( !p ) [[unlikely]]
       return nullptr;
+    // atomic refcount: a persistent value may be shared (copied) across threads
     if constexpr ( Lvl == 0 )
-      ++static_cast<__leaf *>(p)->refs;
+      __atomic_fetch_add(&static_cast<__leaf *>(p)->refs, 1u, __ATOMIC_RELAXED);
     else
-      ++static_cast<__node *>(p)->refs;
+      __atomic_fetch_add(&static_cast<__node *>(p)->refs, 1u, __ATOMIC_RELAXED);
     return p;
   }
 
@@ -103,11 +103,11 @@ class parray
 
     if constexpr ( Lvl == 0 ) {
       __leaf *l = static_cast<__leaf *>(p);
-      if ( --l->refs == 0 ) [[unlikely]]
+      if ( __atomic_fetch_sub(&l->refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]]
         __dealloc_leaf(l);
     } else {
       __node *n = static_cast<__node *>(p);
-      if ( --n->refs == 0 ) [[unlikely]] {
+      if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]] {
         for ( usize i = 0; i < B; ++i ) __release<Lvl - 1>(n->children[i]);
         abc::dealloc(reinterpret_cast<byte *>(n));
       }
@@ -124,46 +124,60 @@ class parray
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
 
-      if ( p ) {
-        const __leaf *old = static_cast<const __leaf *>(p);
-        if constexpr ( micron::is_trivially_copyable_v<T> )
-          micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
+      if constexpr ( micron::is_trivially_copyable_v<T> ) {
+        if ( p )
+          micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(static_cast<const __leaf *>(p)->values),
+                          B * sizeof(T));
         else
-          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T(old->values[i]);
-      } else {
-        for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
-      }
-
-      if constexpr ( micron::is_trivially_copyable_v<T> )
+          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
         fresh->values[slot] = static_cast<Vf &&>(val);
-      else {
-        fresh->values[slot].~T();
-        new (micron::addr(fresh->values[slot])) T(static_cast<Vf &&>(val));
+        return fresh;
+      } else {
+        usize built = 0;
+#ifndef __micron_freestanding
+        try {
+#endif
+          if ( p ) {
+            const __leaf *old = static_cast<const __leaf *>(p);
+            for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(fresh->values[i])) T(old->values[i]);
+          } else {
+            for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(fresh->values[i])) T();
+          }
+          fresh->values[slot] = static_cast<Vf &&>(val);
+#ifndef __micron_freestanding
+        } catch ( ... ) {
+          for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
+          abc::dealloc(reinterpret_cast<byte *>(fresh));
+          throw;
+        }
+#endif
+        return fresh;
       }
-      return fresh;
 
     } else {
       // internal level
       const usize slot = (idx >> (Lvl * K)) & __mask;
-      __node *fresh = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-      fresh->refs = 1;
-
-      if ( p ) {
-        const __node *old = static_cast<const __node *>(p);
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __set_impl<Lvl - 1>(old->children[i], idx, static_cast<Vf &&>(val));
-          else
-            fresh->children[i] = __retain<Lvl - 1>(old->children[i]);
+      __node *fresh = __alloc_internal();
+#ifndef __micron_freestanding
+      try {
+#endif
+        if ( p ) {
+          const __node *old = static_cast<const __node *>(p);
+          for ( usize i = 0; i < B; ++i ) {
+            if ( i == slot )
+              fresh->children[i] = __set_impl<Lvl - 1>(old->children[i], idx, static_cast<Vf &&>(val));
+            else
+              fresh->children[i] = __retain<Lvl - 1>(old->children[i]);
+          }
+        } else {
+          fresh->children[slot] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
         }
-      } else {
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
-          else
-            fresh->children[i] = nullptr;
-        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        __release<Lvl>(fresh);
+        throw;
       }
+#endif
       return fresh;
     }
   }
@@ -200,18 +214,37 @@ class parray
     if constexpr ( Lvl == 0 ) {
       __leaf *l = __alloc_leaf();
       l->refs = 1;
-      for ( usize i = 0; i < B; ++i ) {
-        if ( base + i < count )
-          new (micron::addr(l->values[i])) T(data[base + i]);
-        else
-          new (micron::addr(l->values[i])) T();
+      usize built = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( usize i = 0; i < B; ++i, ++built ) {
+          if ( base + i < count )
+            new (micron::addr(l->values[i])) T(data[base + i]);
+          else
+            new (micron::addr(l->values[i])) T();
+        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < built; ++j ) l->values[j].~T();
+        abc::dealloc(reinterpret_cast<byte *>(l));
+        throw;
       }
+#endif
       return l;
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
-      __node *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-      n->refs = 1;
-      for ( usize i = 0; i < B; ++i ) n->children[i] = __build_from<Lvl - 1>(data, count, base + i * child_span);
+      __node *n = __alloc_internal();
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( usize i = 0; i < B; ++i ) n->children[i] = __build_from<Lvl - 1>(data, count, base + i * child_span);
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        __release<Lvl>(n);
+        throw;
+      }
+#endif
       return n;
     }
   }
@@ -223,18 +256,37 @@ class parray
     if constexpr ( Lvl == 0 ) {
       __leaf *l = __alloc_leaf();
       l->refs = 1;
-      for ( usize i = 0; i < B; ++i ) new (micron::addr(l->values[i])) T(val);
+      usize built = 0;
+#ifndef __micron_freestanding
+      try {
+#endif
+        for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(l->values[i])) T(val);
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        for ( usize j = 0; j < built; ++j ) l->values[j].~T();
+        abc::dealloc(reinterpret_cast<byte *>(l));
+        throw;
+      }
+#endif
       return l;
     } else {
-      void *child = __build_filled<Lvl - 1>(val);
+      __node *n = __alloc_internal();
+      void *child;
+#ifndef __micron_freestanding
+      try {
+#endif
+        child = __build_filled<Lvl - 1>(val);
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        __release<Lvl>(n);
+        throw;
+      }
+#endif
       // child is shared by all B slots
       if constexpr ( Lvl - 1 == 0 )
         static_cast<__leaf *>(child)->refs = B;
       else
         static_cast<__node *>(child)->refs = B;
-
-      __node *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-      n->refs = 1;
       for ( usize i = 0; i < B; ++i ) n->children[i] = child;
       return n;
     }
@@ -249,46 +301,60 @@ class parray
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
 
-      if ( p ) {
-        const __leaf *old = static_cast<const __leaf *>(p);
-        if constexpr ( micron::is_trivially_copyable_v<T> )
-          micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(old->values), B * sizeof(T));
+      if constexpr ( micron::is_trivially_copyable_v<T> ) {
+        if ( p )
+          micron::bytecpy(reinterpret_cast<byte *>(fresh->values), reinterpret_cast<const byte *>(static_cast<const __leaf *>(p)->values),
+                          B * sizeof(T));
         else
-          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T(old->values[i]);
+          for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
+        fresh->values[slot] = fn(static_cast<const T &>(fresh->values[slot]));
+        return fresh;
       } else {
-        for ( usize i = 0; i < B; ++i ) new (micron::addr(fresh->values[i])) T();
+        usize built = 0;
+#ifndef __micron_freestanding
+        try {
+#endif
+          if ( p ) {
+            const __leaf *old = static_cast<const __leaf *>(p);
+            for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(fresh->values[i])) T(old->values[i]);
+          } else {
+            for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(fresh->values[i])) T();
+          }
+          T result = fn(static_cast<const T &>(fresh->values[slot]));
+          fresh->values[slot] = micron::move(result);
+#ifndef __micron_freestanding
+        } catch ( ... ) {
+          for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
+          abc::dealloc(reinterpret_cast<byte *>(fresh));
+          throw;
+        }
+#endif
+        return fresh;
       }
-
-      T result = fn(static_cast<const T &>(fresh->values[slot]));
-      if constexpr ( micron::is_trivially_copyable_v<T> )
-        fresh->values[slot] = micron::move(result);
-      else {
-        fresh->values[slot].~T();
-        new (micron::addr(fresh->values[slot])) T(micron::move(result));
-      }
-      return fresh;
 
     } else {
       const usize slot = (idx >> (Lvl * K)) & __mask;
-      __node *fresh = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-      fresh->refs = 1;
-
-      if ( p ) {
-        const __node *old = static_cast<const __node *>(p);
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __update_impl<Lvl - 1>(old->children[i], idx, static_cast<Fn &&>(fn));
-          else
-            fresh->children[i] = __retain<Lvl - 1>(old->children[i]);
+      __node *fresh = __alloc_internal();
+#ifndef __micron_freestanding
+      try {
+#endif
+        if ( p ) {
+          const __node *old = static_cast<const __node *>(p);
+          for ( usize i = 0; i < B; ++i ) {
+            if ( i == slot )
+              fresh->children[i] = __update_impl<Lvl - 1>(old->children[i], idx, static_cast<Fn &&>(fn));
+            else
+              fresh->children[i] = __retain<Lvl - 1>(old->children[i]);
+          }
+        } else {
+          fresh->children[slot] = __update_impl<Lvl - 1>(nullptr, idx, static_cast<Fn &&>(fn));
         }
-      } else {
-        for ( usize i = 0; i < B; ++i ) {
-          if ( i == slot )
-            fresh->children[i] = __update_impl<Lvl - 1>(nullptr, idx, static_cast<Fn &&>(fn));
-          else
-            fresh->children[i] = nullptr;
-        }
+#ifndef __micron_freestanding
+      } catch ( ... ) {
+        __release<Lvl>(fresh);
+        throw;
       }
+#endif
       return fresh;
     }
   }
@@ -529,13 +595,23 @@ public:
   set_many(Ps &&...pairs) const
   {
     void *root = __retain<__root_level>(__root);
-    // fold: for each pair, apply set and release old root
-    auto apply_one = [&root](auto &&pair) {
-      void *next = __set_impl<__root_level>(root, pair.a, static_cast<decltype(pair.b) &&>(pair.b));
+#ifndef __micron_freestanding
+    try {
+#endif
+      auto apply_one = [&root](auto &&pair) {
+        if ( pair.a >= length ) [[unlikely]]
+          exc<except::runtime_error>("micron::parray set_many(): index out of range");
+        void *next = __set_impl<__root_level>(root, pair.a, static_cast<decltype(pair.b) &&>(pair.b));
+        __release<__root_level>(root);
+        root = next;
+      };
+      (apply_one(static_cast<Ps &&>(pairs)), ...);
+#ifndef __micron_freestanding
+    } catch ( ... ) {
       __release<__root_level>(root);
-      root = next;
-    };
-    (apply_one(static_cast<Ps &&>(pairs)), ...);
+      throw;
+    }
+#endif
     return parray(root);
   }
 
@@ -557,6 +633,18 @@ public:
   operator[](usize idx) const
   {
     return __get_impl<__root_level>(__root, idx);
+  }
+
+  const T &
+  front() const
+  {
+    return __get_impl<__root_level>(__root, 0);
+  }
+
+  const T &
+  back() const
+  {
+    return __get_impl<__root_level>(__root, length - 1);
   }
 
   size_type
@@ -847,13 +935,13 @@ public:
     bool
     operator==(const const_iterator &o) const
     {
-      return __idx == o.__idx;
+      return __owner == o.__owner && __idx == o.__idx;      // compare owner too: iterators into different parrays are unequal
     }
 
     bool
     operator!=(const const_iterator &o) const
     {
-      return __idx != o.__idx;
+      return !(*this == o);
     }
 
     usize

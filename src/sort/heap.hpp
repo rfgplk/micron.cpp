@@ -5,6 +5,15 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// heapsort
+//   time:  O(n log n) all cases
+//   space: O(1) in-place
+//   stable: no
+//
+//   use: hard real-time / memory-tight; serves as the introsort depth fallback
+
+#include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
 #include "../memory/actions.hpp"
 #include "../types.hpp"
@@ -33,49 +42,26 @@ __sift_down(C &c, usize start, usize n, Compare comp) noexcept
 
     if ( swap_i == root ) return;
 
-    auto tmp = micron::move(first[root]);
-    first[root] = micron::move(first[swap_i]);
-    first[swap_i] = micron::move(tmp);
-
+    micron::swap(first[root], first[swap_i]);
     root = swap_i;
   }
 }
 
 template<is_iterable_container C, typename Compare>
 constexpr void
-__make_heap(C &c, Compare comp) noexcept
+__make_heap(C &c, usize n, Compare comp) noexcept
 {
-  usize n = c.size();
   if ( n < 2 ) return;
-
   for ( usize i = n / 2; i-- > 0; ) __sift_down(c, i, n, comp);
-}
-
-template<is_iterable_container C>
-constexpr void
-make_heap(C &c) noexcept
-{
-  __make_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
-}
-
-template<is_iterable_container C, is_valid_comp<C> Cmp>
-constexpr void
-make_heap(C &c, Cmp comp) noexcept
-{
-  __make_heap(c, comp);
 }
 
 template<is_iterable_container C, typename Compare>
 constexpr void
-__sort_heap(C &c, Compare comp) noexcept
+__sort_heap(C &c, usize n, Compare comp) noexcept
 {
-  usize n = c.size();
   if ( n < 2 ) return;
-
   while ( n > 1 ) {
-    auto tmp = micron::move(c[0]);
-    c[0] = micron::move(c[n - 1]);
-    c[n - 1] = micron::move(tmp);
+    micron::swap(c[0], c[n - 1]);
     --n;
     __sift_down(c, 0, n, comp);
   }
@@ -83,26 +69,41 @@ __sort_heap(C &c, Compare comp) noexcept
 
 template<is_iterable_container C>
 constexpr void
+make_heap(C &c) noexcept
+{
+  __make_heap(c, c.size(), [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+}
+
+template<is_iterable_container C, is_valid_comp<C> Cmp>
+constexpr void
+make_heap(C &c, Cmp comp) noexcept
+{
+  __make_heap(c, c.size(), comp);
+}
+
+template<is_iterable_container C>
+constexpr void
 heap(C &c) noexcept
 {
   auto comp = [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; };
-  __make_heap(c, comp);
-  __sort_heap(c, comp);
+  const usize n = c.size();
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
 }
 
 template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr void
 heap(C &c, Cmp comp) noexcept
 {
-  __make_heap(c, comp);
-  __sort_heap(c, comp);
+  const usize n = c.size();
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
 }
 
 template<is_iterable_container C>
 constexpr C &
 as_heap(C &c) noexcept
 {
-  make_heap(c);
   heap(c);
   return c;
 }
@@ -111,7 +112,6 @@ template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr C &
 as_heap(C &c, Cmp comp) noexcept
 {
-  make_heap(c, comp);
   heap(c, comp);
   return c;
 }
@@ -120,9 +120,10 @@ template<is_iterable_container C>
 constexpr C &
 as_heap(C &c, typename C::size_type lim) noexcept
 {
-  if ( lim < 2 ) return c;
-  __make_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
-  __sort_heap(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; });
+  const usize n = lim < c.size() ? lim : c.size();
+  auto comp = [](const typename C::value_type &a, const typename C::value_type &b) { return a < b; };
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
   return c;
 }
 
@@ -130,9 +131,9 @@ template<is_iterable_container C, is_valid_comp<C> Cmp>
 constexpr C &
 as_heap(C &c, typename C::size_type lim, Cmp comp) noexcept
 {
-  if ( lim < 2 ) return c;
-  __make_heap(c, comp);
-  __sort_heap(c, comp);
+  const usize n = lim < c.size() ? lim : c.size();
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
   return c;
 }
 

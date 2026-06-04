@@ -112,6 +112,12 @@ public:
   void_thread &
   operator=(void_thread &&o)
   {
+    if ( this == &o ) return *this;
+    if ( attributes.pid != 0 ) {
+      stop();
+      pthread::__join_thread(attributes.pid);
+    }
+    __release();
     attributes = micron::move(o.attributes);
     payload = micron::move(o.payload);
     return *this;
@@ -169,6 +175,7 @@ public:
   auto
   can_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       return 1;
@@ -178,8 +185,10 @@ public:
   }
 
   auto
-  join(void) -> int      // thread
+  join(void) -> int      // worker
   {
+    if ( attributes.pid == 0 ) return 0;
+    stop();
     auto r = pthread::__join_thread(attributes.pid);
     __safe_release();
     return r;
@@ -188,6 +197,7 @@ public:
   auto
   try_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       __release();

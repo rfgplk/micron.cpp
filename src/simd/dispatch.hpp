@@ -37,9 +37,18 @@ struct __simd_flags {
   char sse4_2;
   char avx;
   char avx2;
+  char osxsave;
 };
 
-__simd_flags
+inline unsigned long long
+__read_xcr0(void) noexcept
+{
+  unsigned eax, edx;
+  __asm__ volatile(".byte 0x0f, 0x01, 0xd0" : "=a"(eax), "=d"(edx) : "c"(0u));
+  return ((unsigned long long)edx << 32) | eax;
+}
+
+inline __simd_flags
 __get_runtime_features(void)
 {
   __simd_flags flags;
@@ -56,7 +65,15 @@ __get_runtime_features(void)
   flags.sse4_2 = cpu.features.sse4_2;
   flags.avx = cpu.features.avx;
   flags.avx2 = cpu.features.avx2;
+  flags.osxsave = cpu.features.osxsave;
   return flags;
+}
+
+// true iff the OS has enabled XSAVE (OSXSAVE) and XCR0 advertises SSE+AVX (YMM) state save (bits 1,2)
+inline bool
+__os_avx_enabled(const __simd_flags &flags)
+{
+  return flags.osxsave and ((__read_xcr0() & 0x6ull) == 0x6ull);
 }
 
 inline bool
@@ -74,13 +91,13 @@ __has_sse(const __simd_flags &flags)
 inline bool
 __has_avx128(const __simd_flags &flags)
 {
-  return flags.avx;
+  return flags.avx and __os_avx_enabled(flags);
 }
 
 inline bool
 __has_avx256(const __simd_flags &flags)
 {
-  return flags.avx2;
+  return flags.avx2 and __os_avx_enabled(flags);
 }
 
 #ifdef SIMD_RUNTIME_CHECKING

@@ -12,12 +12,21 @@ namespace micron
 {
 namespace posix
 {
+template<typename T>
+constexpr auto
+__ioctl_arg(T v)
+{
+  if constexpr ( micron::is_pointer_v<T> )
+    return v;
+  else
+    return static_cast<unsigned long>(v);
+}
+
 template<typename... Args>
-// TODO: reintroduce this, and resolve type conflicts  requires((micron::is_same_v<Args, unsigned long> && ...))
 int
 ioctl(i32 fd, Args... ops)
 {
-  return static_cast<int>(micron::syscall(SYS_ioctl, fd, ops...));
+  return static_cast<int>(micron::syscall(SYS_ioctl, fd, __ioctl_arg(ops)...));
 }
 
 constexpr static const u32 __ioc_nrbits = 8;

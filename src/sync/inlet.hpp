@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../except.hpp"
+#include "../sum.hpp"
 
 #include "../mutex/locks.hpp"
 
@@ -26,6 +27,9 @@ protected:
   base_inlet_t() = default;
 };
 
+// a mutex-guarded value cell (inspired by Cilk inlets)
+// every accessor (access/try_access/apply/load/store/reset/operator=/operator T) takes the
+// inlet's mutex for its duration
 template<typename T, class Mtx = micron::mutex> class inlet: public base_inlet_t
 {
   T value;
@@ -33,6 +37,7 @@ template<typename T, class Mtx = micron::mutex> class inlet: public base_inlet_t
   const char *_tag;
 
 public:
+  // a handle_t must NOT outlive the inlet that produced it
   class handle_t
   {
     inlet *src;
@@ -144,14 +149,11 @@ public:
     return handle_t(this);
   }
 
-  bool
-  try_access(handle_t &out)
+  option<handle_t, micron::tuple<>>
+  try_access()
   {
-    if ( mtx.try_lock() ) {
-      out = handle_t(this);
-      return true;
-    }
-    return false;
+    if ( mtx.try_lock() ) return option<handle_t, micron::tuple<>>{ handle_t(this) };
+    return option<handle_t, micron::tuple<>>{ micron::tuple<>{} };
   }
 
   template<typename Fn>

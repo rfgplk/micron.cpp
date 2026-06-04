@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../bits/__arch.hpp"
+#include "../../errno.hpp"
 #include "../../syscall.hpp"
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
@@ -184,24 +185,28 @@ lsw(u64 v) noexcept
   return static_cast<u32>(v & 0xFFFFFFFFu);
 }
 
+// NOTE: seccomp_data.args[n] is a u64 at byte offset 16 + n*8; the MSW/LSW split is endian
+// dependent: little-endian stores the low word first (base+0) and the high word at base+4;
+// big-endian is the reverse
 constexpr bpf::insn_t
 load_arg_msw(u32 n) noexcept
 {
+  const u32 base = 16u + n * 8u;
 #if defined(__micron_endian_big)
-
-  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, posix::seccomp_data_arg_first_off(n));
+  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, base);      // big-endian: MSW at base+0
 #else
-  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, posix::seccomp_data_arg_second_off(n));
+  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, base + 4u);      // little-endian: MSW at base+4
 #endif
 }
 
 constexpr bpf::insn_t
 load_arg_lsw(u32 n) noexcept
 {
+  const u32 base = 16u + n * 8u;
 #if defined(__micron_endian_big)
-  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, posix::seccomp_data_arg_second_off(n));
+  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, base + 4u);      // big-endian: LSW at base+4
 #else
-  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, posix::seccomp_data_arg_first_off(n));
+  return bpf::stmt(bpf::ld | bpf::w | bpf::abs, base);      // little-endian: LSW at base+0
 #endif
 }
 
@@ -320,12 +325,11 @@ private:
       break;
 
     case cmp::ne:
-      push(load_arg_lsw(ac.arg));
-      push(jeq_k(val_lsw, 0, 2));
-      push(ret_k(action));
-      push(load_arg_msw(ac.arg));
-      push(jeq_k(val_msw, 1, 0));
-      push(ret_k(action));
+      push(load_arg_lsw(ac.arg));      // [0]
+      push(jeq_k(val_lsw, 0, 2));      // [1] lsw==val -> check msw [2]; lsw!=val -> action [4]
+      push(load_arg_msw(ac.arg));      // [2]
+      push(jeq_k(val_msw, 1, 0));      // [3] msw==val -> skip [5] (no action); msw!=val -> action [4]
+      push(ret_k(action));             // [4]
       break;
 
     case cmp::lt:
@@ -600,8 +604,13 @@ template<usize N>
 inline int
 load(filter_builder<N> &fb, bool set_no_new_privs = true, u32 extra_flags = 0)
 {
-  if ( set_no_new_privs ) micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+  if ( set_no_new_privs ) {
+    i32 __nnp = micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+    if ( __nnp < 0 ) return __nnp;      // NNP must succeed before SET_MODE_FILTER (else EACCES); was discarded
+  }
   auto p = fb.prog();
+  // Refuse to install a filter without a native-arch gate (require_native_arch())
+  if ( !fb.valid() ) return -error::invalid_arg;
   return posix::seccomp_load_filter(p, extra_flags);
 }
 
@@ -616,7 +625,10 @@ template<usize N>
 inline int
 load_notif(filter_builder<N> &fb, bool set_no_new_privs = true)
 {
-  if ( set_no_new_privs ) micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+  if ( set_no_new_privs ) {
+    i32 __nnp = micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+    if ( __nnp < 0 ) return __nnp;      // NNP must succeed before SET_MODE_FILTER (else EACCES); was discarded
+  }
   auto p = fb.prog();
   return posix::seccomp_load_filter_notif(p);
 }
@@ -624,7 +636,10 @@ load_notif(filter_builder<N> &fb, bool set_no_new_privs = true)
 inline int
 load_raw(bpf::fprog_t &prog, bool set_no_new_privs = true, u32 flags = 0)
 {
-  if ( set_no_new_privs ) micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+  if ( set_no_new_privs ) {
+    i32 __nnp = micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+    if ( __nnp < 0 ) return __nnp;      // NNP must succeed before SET_MODE_FILTER (else EACCES); was discarded
+  }
   return posix::seccomp_load_filter(prog, flags);
 }
 
@@ -657,46 +672,5 @@ notif_receive(int listener_fd, posix::seccomp_notif_t &req)
 {
   return posix::seccomp_notify_receive(listener_fd, req);
 }
-
-/*
-inline int
-notif_continue(int listener_fd, u64 id)
-{
-  auto resp = posix::seccomp_notify_continue(id);
-  return posix::seccomp_notify_respond(listener_fd, resp);
-}
-
-inline int
-notif_inject_error(int listener_fd, u64 id, i32 err)
-{
-  auto resp = posix::seccomp_notify_error(id, err);
-  return posix::seccomp_notify_respond(listener_fd, resp);
-}
-inline int
-notif_inject_success(int listener_fd, u64 id, i64 retval)
-{
-  auto resp = posix::seccomp_notify_success(id, retval);
-  return posix::seccomp_notify_respond(listener_fd, resp);
-}
-
-inline bool
-notif_id_valid(int listener_fd, u64 id)
-{
-  return posix::seccomp_notify_id_valid(listener_fd, id) == 0;
-}
-*/
-
-/*
- example
-template <usize N = 64>
-constexpr filter_builder<N>
-minimal_base(arch a = native_arch) noexcept
-{
-  filter_builder<N> f;
-  f.require_arch(a);
-  f.allow(SYS_brk).allow(SYS_mmap).allow(SYS_munmap).allow(SYS_exit).allow(SYS_exit_group).allow(SYS_rt_sigreturn);
-  return f;
-}
-*/
 };      // namespace seccomp
 };      // namespace micron

@@ -27,28 +27,22 @@ class circle_vector
   static constexpr usize __mask = N - 1;
 
   inline void
-  __deep_copy(T *dest, const T *src, usize cnt)
+  __assign_from(const circle_vector &other)
   {
-    for ( usize i = 0; i < cnt; ++i ) {
-      dest[i] = src[i];
-    }
+    for ( usize i = 0; i < other.__size; ++i ) __buffer[i] = other.__buffer[(other.__tail + i) & __mask];
+    __tail = 0;
+    __size = other.__size;
+    __head = other.__size & __mask;
   }
 
   inline void
-  __shallow_copy(T *dest, const T *src, usize cnt)
+  __move_from(circle_vector &other)
   {
-    micron::bytecpy<T>(dest, src, cnt * sizeof(T));
-  }
-
-  template<typename U>
-  inline void
-  __impl_copy(U *dest, const U *src, usize cnt)
-  {
-    if constexpr ( micron::is_class_v<U> or !micron::is_trivially_copyable_v<U> ) {
-      __deep_copy(dest, src, cnt);
-    } else {
-      __shallow_copy(dest, src, cnt);
-    }
+    for ( usize i = 0; i < other.__size; ++i ) __buffer[i] = micron::move(other.__buffer[(other.__tail + i) & __mask]);
+    __tail = 0;
+    __size = other.__size;
+    __head = other.__size & __mask;
+    other.clear();
   }
 
 public:
@@ -105,7 +99,7 @@ public:
     pointer
     operator->() const noexcept
     {
-      return &__buf->__buffer[(__buf->__tail + __index) & __mask];
+      return micron::addressof(__buf->__buffer[(__buf->__tail + __index) & __mask]);
     }
 
     reference
@@ -240,16 +234,9 @@ public:
   ~circle_vector() noexcept = default;
   circle_vector() noexcept = default;
 
-  circle_vector(const circle_vector &other) noexcept : __head(other.__head), __tail(other.__tail), __size(other.__size)
-  {
-    __impl_copy(__buffer.data(), other.__buffer.data(), N);
-  }
+  circle_vector(const circle_vector &other) noexcept { __assign_from(other); }
 
-  circle_vector(circle_vector &&other) noexcept : __head(other.__head), __tail(other.__tail), __size(other.__size)
-  {
-    __impl_copy(__buffer.data(), other.__buffer.data(), N);
-    other.clear();
-  }
+  circle_vector(circle_vector &&other) noexcept { __move_from(other); }
 
   circle_vector &
   operator=(const circle_vector &other) noexcept
@@ -257,10 +244,7 @@ public:
     if constexpr ( Sf == true ) {
       if ( this == micron::addressof(const_cast<circle_vector &>(other)) ) return *this;
     }
-    __head = other.__head;
-    __tail = other.__tail;
-    __size = other.__size;
-    __impl_copy(__buffer.data(), other.__buffer.data(), N);
+    __assign_from(other);
     return *this;
   }
 
@@ -270,11 +254,7 @@ public:
     if constexpr ( Sf == true ) {
       if ( this == micron::addressof(other) ) return *this;
     }
-    __head = other.__head;
-    __tail = other.__tail;
-    __size = other.__size;
-    __impl_copy(__buffer.data(), other.__buffer.data(), N);
-    other.clear();
+    __move_from(other);
     return *this;
   }
 
@@ -379,38 +359,50 @@ public:
   }
 
   reference
-  front() noexcept
+  front()
   {
+    if constexpr ( Sf )
+      if ( __size == 0 ) exc<except::library_error>("circle_vector::front() called on empty");
     return __buffer[__tail];
   }
 
   const_reference
-  front() const noexcept
+  front() const
   {
+    if constexpr ( Sf )
+      if ( __size == 0 ) exc<except::library_error>("circle_vector::front() called on empty");
     return __buffer[__tail];
   }
 
   reference
-  back() noexcept
+  back()
   {
+    if constexpr ( Sf )
+      if ( __size == 0 ) exc<except::library_error>("circle_vector::back() called on empty");
     return __buffer[(__head - 1) & __mask];
   }
 
   const_reference
-  back() const noexcept
+  back() const
   {
+    if constexpr ( Sf )
+      if ( __size == 0 ) exc<except::library_error>("circle_vector::back() called on empty");
     return __buffer[(__head - 1) & __mask];
   }
 
   reference
-  operator[](size_type idx) noexcept
+  operator[](size_type idx)
   {
+    if constexpr ( Sf )
+      if ( idx >= __size ) exc<except::library_error>("circle_vector::operator[] out of range");
     return __buffer[(__tail + idx) & __mask];
   }
 
   const_reference
-  operator[](size_type idx) const noexcept
+  operator[](size_type idx) const
   {
+    if constexpr ( Sf )
+      if ( idx >= __size ) exc<except::library_error>("circle_vector::operator[] out of range");
     return __buffer[(__tail + idx) & __mask];
   }
 

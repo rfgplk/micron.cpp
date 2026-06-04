@@ -325,7 +325,7 @@ public:
   }
 
   auto
-  file_type(const io::path_t &p) const
+  file_type(const io::path_t &p)      // non-const: opens/caches a handle via operator[]
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -334,7 +334,7 @@ public:
   }
 
   bool
-  is_virtual_file(const io::path_t &p) const
+  is_virtual_file(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -343,7 +343,7 @@ public:
   }
 
   bool
-  is_regular_file(const io::path_t &p) const
+  is_regular_file(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -352,7 +352,7 @@ public:
   }
 
   bool
-  is_block_device(const io::path_t &p) const
+  is_block_device(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -361,7 +361,7 @@ public:
   }
 
   bool
-  is_directory(const io::path_t &p) const
+  is_directory(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -370,7 +370,7 @@ public:
   }
 
   bool
-  is_socket(const io::path_t &p) const
+  is_socket(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -379,7 +379,7 @@ public:
   }
 
   bool
-  is_symlink(const io::path_t &p) const
+  is_symlink(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();
@@ -388,7 +388,7 @@ public:
   }
 
   bool
-  is_fifo(const io::path_t &p) const
+  is_fifo(const io::path_t &p)
   {
     auto f = __find_fd(p);
     if ( f == -1 ) f = this->operator[](p).get_fd();

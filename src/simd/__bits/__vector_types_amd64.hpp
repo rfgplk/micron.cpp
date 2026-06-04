@@ -129,16 +129,16 @@ template<typename T> inline constexpr unsigned width_v = sizeof(T) * 8;
 template<typename T, typename L> inline constexpr unsigned lane_count_v = sizeof(T) / sizeof(L);
 
 template<typename T>
-concept v128 = (sizeof(T) == 16);
+concept is_v128 = (sizeof(T) == 16);
 
 template<typename T>
-concept v256 = (sizeof(T) == 32);
+concept is_v256 = (sizeof(T) == 32);
 
 template<typename T>
-concept v512 = (sizeof(T) == 64);
+concept is_v512 = (sizeof(T) == 64);
 
 template<typename T>
-concept v64 = (sizeof(T) == 8);
+concept is_v64 = (sizeof(T) == 8);
 
 static_assert(sizeof(__m64) == 8);
 static_assert(sizeof(__m128) == 16 && alignof(__m128) == 16);

@@ -80,6 +80,19 @@ struct dqblk_t {
   u32 dqb_valid;           // bitmask of QIF_* fields that are valid
 };
 
+struct nextdqblk_t {
+  u64 dqb_bhardlimit;
+  u64 dqb_bsoftlimit;
+  u64 dqb_curspace;
+  u64 dqb_ihardlimit;
+  u64 dqb_isoftlimit;
+  u64 dqb_curinodes;
+  u64 dqb_btime;
+  u64 dqb_itime;
+  u32 dqb_valid;
+  u32 dqb_id;      // id of the quota actually returned
+};
+
 struct dqinfo_t {
   u64 dqi_bgrace;      // seconds before the block soft limit becomes a hard limit
   u64 dqi_igrace;      // seconds before the inode soft limit becomes a hard limit

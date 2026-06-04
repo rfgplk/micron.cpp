@@ -42,7 +42,11 @@ fstatfs(i32 fd, statfs_t &buf) -> i32
   return static_cast<i32>(micron::syscall(SYS_fstatfs, fd, &buf));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-struct statfs_t {      // kernel struct statfs64
+#if defined(__micron_arch_arm32)
+struct __attribute__((packed, aligned(4))) statfs_t {      // kernel struct statfs64 (ARM)
+#else
+struct statfs_t {      // kernel struct statfs64 (i386)
+#endif
   u32 f_type;
   u32 f_bsize;
   u64 f_blocks;

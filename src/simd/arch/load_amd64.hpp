@@ -17,29 +17,24 @@ namespace simd
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // load/aligned loads
-
 template<is_simd_type B>
 inline B
 load(B *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
-    return _mm_load_si128(ptr);
-  }
-  if constexpr ( micron::is_same_v<B, f128> ) {
-    return _mm_load_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d128> ) {
-    return _mm_load_pd(reinterpret_cast<double *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
-    return _mm256_load_si256(ptr);
-  }
-  if constexpr ( micron::is_same_v<B, f256> ) {
-    return _mm256_load_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d256> ) {
-    return _mm256_load_pd(reinterpret_cast<double *>(ptr));
-  }
+    return _mm_load_si128(static_cast<i128 *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, f128> ) {
+    return _mm_load_ps(reinterpret_cast<float *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, d128> ) {
+    return _mm_load_pd(reinterpret_cast<double *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
+    return _mm256_load_si256(static_cast<i256 *>(__builtin_assume_aligned(ptr, 32)));
+  } else if constexpr ( micron::is_same_v<B, f256> ) {
+    return _mm256_load_ps(reinterpret_cast<float *>(__builtin_assume_aligned(ptr, 32)));
+  } else if constexpr ( micron::is_same_v<B, d256> ) {
+    return _mm256_load_pd(reinterpret_cast<double *>(__builtin_assume_aligned(ptr, 32)));
+  } else
+    static_assert(!sizeof(B), "load<B>: unsupported simd width (b64/512-bit have no aligned-load path)");
 }
 
 template<is_simd_type B>
@@ -50,30 +45,28 @@ load(B &ref)
 }
 
 template<is_simd_type B, typename T>
+  requires(!is_simd_type<T>)
 inline B
 load(T *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
-    return _mm_load_si128(reinterpret_cast<i128 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, f128> ) {
-    return _mm_load_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d128> ) {
-    return _mm_load_pd(reinterpret_cast<double *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
-    return _mm256_load_si256(reinterpret_cast<i256 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, f256> ) {
-    return _mm256_load_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d256> ) {
-    return _mm256_load_pd(reinterpret_cast<double *>(ptr));
-  }
+    return _mm_load_si128(reinterpret_cast<i128 *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, f128> ) {
+    return _mm_load_ps(reinterpret_cast<float *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, d128> ) {
+    return _mm_load_pd(reinterpret_cast<double *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
+    return _mm256_load_si256(reinterpret_cast<i256 *>(__builtin_assume_aligned(ptr, 32)));
+  } else if constexpr ( micron::is_same_v<B, f256> ) {
+    return _mm256_load_ps(reinterpret_cast<float *>(__builtin_assume_aligned(ptr, 32)));
+  } else if constexpr ( micron::is_same_v<B, d256> ) {
+    return _mm256_load_pd(reinterpret_cast<double *>(__builtin_assume_aligned(ptr, 32)));
+  } else
+    static_assert(!sizeof(B), "load<B>: unsupported simd width (b64/512-bit have no aligned-load path)");
 }
 
 template<is_simd_type B, typename T>
+  requires(!is_simd_type<T>)
 inline B
 load(T &ref)
 {
@@ -89,22 +82,18 @@ loadu(B *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
     return _mm_loadu_si128(ptr);
-  }
-  if constexpr ( micron::is_same_v<B, f128> ) {
+  } else if constexpr ( micron::is_same_v<B, f128> ) {
     return _mm_loadu_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d128> ) {
+  } else if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_loadu_pd(reinterpret_cast<double *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
     return _mm256_loadu_si256(ptr);
-  }
-  if constexpr ( micron::is_same_v<B, f256> ) {
+  } else if constexpr ( micron::is_same_v<B, f256> ) {
     return _mm256_loadu_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d256> ) {
+  } else if constexpr ( micron::is_same_v<B, d256> ) {
     return _mm256_loadu_pd(reinterpret_cast<double *>(ptr));
-  }
+  } else
+    static_assert(!sizeof(B), "loadu<B>: unsupported simd width (b64/512-bit have no unaligned-load path)");
 }
 
 template<is_simd_type B>
@@ -115,54 +104,49 @@ loadu(B &ref)
 }
 
 template<is_simd_type B, typename T>
+  requires(!is_simd_type<T>)
 inline B
 loadu(T *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
     return _mm_loadu_si128(reinterpret_cast<i128 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, f128> ) {
+  } else if constexpr ( micron::is_same_v<B, f128> ) {
     return _mm_loadu_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d128> ) {
+  } else if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_loadu_pd(reinterpret_cast<double *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
     return _mm256_loadu_si256(reinterpret_cast<i256 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, f256> ) {
+  } else if constexpr ( micron::is_same_v<B, f256> ) {
     return _mm256_loadu_ps(reinterpret_cast<float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d256> ) {
+  } else if constexpr ( micron::is_same_v<B, d256> ) {
     return _mm256_loadu_pd(reinterpret_cast<double *>(ptr));
-  }
+  } else
+    static_assert(!sizeof(B), "loadu<B>: unsupported simd width (b64/512-bit have no unaligned-load path)");
 }
 
 template<is_simd_type B, typename T>
+  requires(!is_simd_type<T>)
 inline B
 loadu(const T *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
     return _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, f128> ) {
+  } else if constexpr ( micron::is_same_v<B, f128> ) {
     return _mm_loadu_ps(reinterpret_cast<const float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d128> ) {
+  } else if constexpr ( micron::is_same_v<B, d128> ) {
     return _mm_loadu_pd(reinterpret_cast<const double *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
     return _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, f256> ) {
+  } else if constexpr ( micron::is_same_v<B, f256> ) {
     return _mm256_loadu_ps(reinterpret_cast<const float *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, d256> ) {
+  } else if constexpr ( micron::is_same_v<B, d256> ) {
     return _mm256_loadu_pd(reinterpret_cast<const double *>(ptr));
-  }
+  } else
+    static_assert(!sizeof(B), "loadu<B>: unsupported simd width (b64/512-bit have no unaligned-load path)");
 }
 
 template<is_simd_type B, typename T>
+  requires(!is_simd_type<T>)
 inline B
 loadu(T &ref)
 {
@@ -304,31 +288,31 @@ loadh_pi(f128 dst, __m64 &ref)
 // streaming loads
 
 template<is_simd_type B>
-inline B
+[[gnu::target("sse4.1,avx2")]] inline B
 stream_load(void *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
-    return _mm_stream_load_si128(reinterpret_cast<i128 *>(ptr));
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
-    return _mm256_stream_load_si256(reinterpret_cast<i256 *>(ptr));
-  }
+    return _mm_stream_load_si128(static_cast<i128 *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
+    return _mm256_stream_load_si256(static_cast<i256 *>(__builtin_assume_aligned(ptr, 32)));
+  } else
+    static_assert(!sizeof(B), "stream_load<B>: only i128 / i256 have a MOVNTDQA path");
 }
 
 template<is_simd_type B>
-inline B
+[[gnu::target("sse4.1,avx2")]] inline B
 stream_load(B *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
-    return _mm_stream_load_si128(ptr);
-  }
-  if constexpr ( micron::is_same_v<B, i256> ) {
-    return _mm256_stream_load_si256(ptr);
-  }
+    return _mm_stream_load_si128(static_cast<i128 *>(__builtin_assume_aligned(ptr, 16)));
+  } else if constexpr ( micron::is_same_v<B, i256> ) {
+    return _mm256_stream_load_si256(static_cast<i256 *>(__builtin_assume_aligned(ptr, 32)));
+  } else
+    static_assert(!sizeof(B), "stream_load<B>: only i128 / i256 have a MOVNTDQA path");
 }
 
 template<is_simd_type B>
-inline B
+[[gnu::target("sse4.1,avx2")]] inline B
 stream_load(B &ref)
 {
   return stream_load<B>(&ref);

@@ -162,39 +162,43 @@ struct __ct_type_checker {
     static_assert(sizeof(__dev_t_type) == sizeof(__uquad_type), "__dev_t_type must match __uquad_type");
     static_assert(sizeof(__uid_t_type) == 4, "__uid_t_type must be 4 bytes");
     static_assert(sizeof(__gid_t_type) == 4, "__gid_t_type must be 4 bytes");
-    static_assert(sizeof(__ino_t_type) == sizeof(__syscall_ulong_type), "__ino_t_type must match __syscall_ulong_type");
+    static_assert(sizeof(__ino_t_type) == sizeof(__uquad_type), "__ino_t_type must be 64-bit (LFS) == __uquad_type");
     static_assert(sizeof(__ino64_t_type) == sizeof(__uquad_type), "__ino64_t_type must match __uquad_type");
     static_assert(sizeof(__mode_t_type) == 4, "__mode_t_type must be 4 bytes");
 
-    static_assert(sizeof(__nlink_t_type) == sizeof(__syscall_ulong_type), "__nlink_t_type must match __syscall_ulong_type");
+#ifdef __micron_arch_amd64
+    static_assert(sizeof(__nlink_t_type) == sizeof(__syscall_ulong_type), "amd64 kernel st_nlink is __kernel_ulong_t (8)");
+#else
+    static_assert(sizeof(__nlink_t_type) == 4, "arm64/arm32/i386: asm-generic st_nlink is unsigned int (4)");
+#endif
     static_assert(sizeof(__fsword_t_type) == sizeof(__syscall_slong_type), "__fsword_t_type must match __syscall_slong_type");
 
-    static_assert(sizeof(__off_t_type) == sizeof(__syscall_slong_type), "__off_t_type must match __syscall_slong_type");
+    static_assert(sizeof(__off_t_type) == sizeof(__squad_type), "__off_t_type must be 64-bit (LFS) == __squad_type");
     static_assert(sizeof(__off64_t_type) == sizeof(__squad_type), "__off64_t_type must match __squad_type");
     static_assert(sizeof(__pid_t_type) == 4, "__pid_t_type must be 4 bytes");
 
-    static_assert(sizeof(__rlim_t_type) == sizeof(__syscall_ulong_type), "__rlim_t_type must match __syscall_ulong_type");
+    static_assert(sizeof(__rlim_t_type) == sizeof(__uquad_type), "__rlim_t_type must be 64-bit (LFS) == __uquad_type");
     static_assert(sizeof(__rlim64_t_type) == sizeof(__uquad_type), "__rlim64_t_type must match __uquad_type");
 
-    static_assert(sizeof(__blkcnt_t_type) == sizeof(__syscall_slong_type), "__blkcnt_t_type must match __syscall_slong_type");
+    static_assert(sizeof(__blkcnt_t_type) == sizeof(__squad_type), "__blkcnt_t_type must be 64-bit (LFS) == __squad_type");
     static_assert(sizeof(__blkcnt64_t_type) == sizeof(__squad_type), "__blkcnt64_t_type must match __squad_type");
 
-    static_assert(sizeof(__fsblkcnt_t_type) == sizeof(__syscall_ulong_type), "__fsblkcnt_t_type must match __syscall_ulong_type");
+    static_assert(sizeof(__fsblkcnt_t_type) == sizeof(__uquad_type), "__fsblkcnt_t_type must be 64-bit (LFS) == __uquad_type");
     static_assert(sizeof(__fsblkcnt64_t_type) == sizeof(__uquad_type), "__fsblkcnt64_t_type must match __uquad_type");
 
-    static_assert(sizeof(__fsfilcnt_t_type) == sizeof(__syscall_ulong_type), "__fsfilcnt_t_type must match __syscall_ulong_type");
+    static_assert(sizeof(__fsfilcnt_t_type) == sizeof(__uquad_type), "__fsfilcnt_t_type must be 64-bit (LFS) == __uquad_type");
     static_assert(sizeof(__fsfilcnt64_t_type) == sizeof(__uquad_type), "__fsfilcnt64_t_type must match __uquad_type");
 
     static_assert(sizeof(__id_t_type) == 4, "__id_t_type must be 4 bytes");
 
     static_assert(sizeof(__clock_t_type) == sizeof(__syscall_slong_type), "__clock_t_type must match __syscall_slong_type");
     static_assert(sizeof(__clockid_t_type) == 4, "__clockid_t_type must be 4 bytes");
-    static_assert(sizeof(__time_t_type) == sizeof(__syscall_slong_type), "__time_t_type must match __syscall_slong_type");
+    static_assert(sizeof(__time_t_type) == sizeof(__squad_type), "__time_t_type must be 64-bit (time64) == __squad_type");
 
     static_assert(sizeof(__timer_t_type) == sizeof(void *), "__timer_t_type must match void*");
 
     static_assert(sizeof(__useconds_t_type) == 4, "__useconds_t_type must be 4 bytes");
-    static_assert(sizeof(__suseconds_t_type) == sizeof(__syscall_slong_type), "__suseconds_t_type must match __syscall_slong_type");
+    static_assert(sizeof(__suseconds_t_type) == sizeof(__squad_type), "__suseconds_t_type must be 64-bit (time64) == __squad_type");
     static_assert(sizeof(__suseconds64_t_type) == sizeof(__squad_type), "__suseconds64_t_type must match __squad_type");
 
     static_assert(sizeof(__daddr_t_type) == 4, "__daddr_t_type must be 4 bytes");

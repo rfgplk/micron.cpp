@@ -137,9 +137,17 @@ template<typename Fn, typename... Args> struct __impl_thread {
     auto *self = static_cast<__impl_thread *>(p);
     __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
     __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
-    // NOTE: these deletes will technically run at program clea
-    // delete self;
+    // the trampoline is the sole owner of the payload and of the per-arg heap copies; the kernel has taken
+    // its by-value params by now (after __invoke), so free them here
+    delete self;
     return nullptr;
+  }
+
+  static void
+  destroy(__impl_thread *self)
+  {
+    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
+    delete self;
   }
 
 private:
@@ -154,7 +162,7 @@ private:
   static void
   __cleanup([[maybe_unused]] __impl_thread *self, micron::index_sequence<I...>)
   {
-    //(delete static_cast<Args *>(self->args[I]), ...);
+    (delete static_cast<Args *>(self->args[I]), ...);
   }
 };
 
@@ -171,7 +179,7 @@ create_thread(const pthread_attr_t &attrs, Fn fn, Args &&...args)
   pthread_t tid{};
   if ( int err = pthread_create(&tid, &attrs, &__impl_thread<Fn, micron::decay_t<Args>...>::trampoline, payload); err != 0 ) {
     errno = err;
-    delete payload;
+    __impl_thread<Fn, micron::decay_t<Args>...>::destroy(payload);      // free args too, not just the holder
     return thread_failed;
   }
   return tid;
@@ -214,7 +222,7 @@ prepare_thread_with_stack(thread_create_state dstate, int policy, addr_t *ptr, u
   return attr;
 }
 
-void
+inline void
 set_affinity(pthread_attr_t &attr, const posix::cpu_set_t &cpu)
 {
   pthread_attr_setaffinity_np(&attr, sizeof(cpu), reinterpret_cast<const cpu_set_t *>(&cpu));
@@ -259,25 +267,25 @@ get_sched_policy(const pthread_attr_t &attr, i32 &policy)
   pthread_attr_getschedpolicy(&attr, &policy);
 }
 
-auto
+inline auto
 get_name(pthread_t pt, char *name, usize sz)
 {
   return pthread_getname_np(pt, name, sz);
 }
 
-auto
+inline auto
 self(void) -> pthread_t
 {
   return pthread_self();
 }
 
-auto
+inline auto
 set_name(pthread_t pt, const char *name)
 {
   return pthread_setname_np(pt, name);
 }
 
-auto
+inline auto
 __join_thread(pthread_t thread, void **rval = nullptr)
 {
   return pthread_join(thread, rval);
@@ -293,7 +301,7 @@ __exit_thread(void *ret = nullptr)
   pthread_exit(ret);
 }
 
-auto
+inline auto
 __try_join_thread(pthread_t thread, void **rval = nullptr)
 {
   return pthread_tryjoin_np(thread, rval);
@@ -302,7 +310,7 @@ __try_join_thread(pthread_t thread, void **rval = nullptr)
 inline auto
 thread_kill(pid_t pid, pthread_t thread, int sig)
 {
-  return posix::tgkill(pid, thread, sig);
+  return posix::tgkill(pid, static_cast<long unsigned int>(pthread_gettid_np(thread)), sig);
 }
 
 inline auto
@@ -339,7 +347,7 @@ cancel(void)
 
 #if !defined(__micron_freestanding)
 inline auto
-get_stack(void) -> stack_t
+get_stack(void) -> micron::stack_t
 {
   pthread_attr_t attr;
   pthread::get_attrs(pthread::self(), attr);

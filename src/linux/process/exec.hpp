@@ -2,6 +2,7 @@
 
 #include "process.hpp"
 
+#include "../../string/format.hpp"
 #include "../sys/spawn.hpp"
 
 namespace micron
@@ -18,7 +19,7 @@ __attribute__((noreturn)) void
 rexecute(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -33,10 +34,6 @@ __attribute__((noreturn)) void
 rexecute(const T &t)
 {
   pid_t pid;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), static_cast<char *>(nullptr) };
   micron::inplace_spawn(pid, t.c_str(), &argv[0], environ);
   __builtin_unreachable();
@@ -48,10 +45,6 @@ __attribute__((noreturn)) void
 rexecute(const T &t, const R &...args)
 {
   pid_t pid;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()) };
 
   (argv.push_back(const_cast<char *>(args.c_str())), ...);
@@ -67,16 +60,13 @@ __attribute__((noreturn)) void
 rexecute(const T &t, A &__argv)
 {
   pid_t pid;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv;
-  format::replace_all<0x0>(__argv, " ");
-  auto itr = __argv.cbegin();
-  auto itr_f = __argv.cbegin();
-  while ( itr < __argv.end() ) {
-    itr_f = mc::format::find(__argv, itr, char(0x0));
+  A buf = __argv;      // don't mutate owner string
+  format::replace_all<0x0>(buf, " ");
+  auto itr = buf.cbegin();
+  auto itr_f = buf.cbegin();
+  while ( itr < buf.end() ) {
+    itr_f = micron::format::find(buf, itr, char(0x0));
     if ( itr_f == nullptr ) {
       argv.emplace_back(const_cast<char *>(itr));
       break;
@@ -92,10 +82,6 @@ __attribute__((noreturn)) void
 rexecute(const char *t)
 {
   pid_t pid;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
   micron::inplace_spawn(pid, t, &argv[0], environ);
   __builtin_unreachable();
@@ -106,10 +92,6 @@ __attribute__((noreturn)) void
 rexecute(const char *t, R *...args)
 {
   pid_t pid;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t) };
 
   (argv.push_back(const_cast<char *>(const_cast<char *>(args))), ...);
@@ -134,7 +116,7 @@ void
 execute(uprocess_t &t)
 {
   micron::svector<char *> argv;
-  argv.push_back(&t.path[0]);
+  if ( t.argv.empty() ) argv.push_back(&t.path[0]);
   for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
   argv.push_back(nullptr);
   t.pids.uid = posix::getuid();
@@ -151,10 +133,6 @@ execute(const T &t)
 {
 
   status_t status;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), static_cast<char *>(nullptr) };
   if ( micron::spawn(status.pid, t.c_str(), &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
@@ -170,13 +148,9 @@ execute(const T &t, const R &...args)
 {
 
   status_t status;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t.c_str()), static_cast<char *>(nullptr) };
 
-  (argv.insert(argv.begin() + 1, &args[0]), ...);
+  (argv.insert(argv.end() - 1, &args[0]), ...);
 
   if ( micron::spawn(status.pid, t.c_str(), &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
@@ -191,16 +165,13 @@ status_t
 execute(const T &t, A &__argv)
 {
   status_t status;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv;
-  format::replace_all<0x0>(__argv, " ");
-  auto itr = __argv.cbegin();
-  auto itr_f = __argv.cbegin();
-  while ( itr < __argv.end() ) {
-    itr_f = mc::format::find(__argv, itr, char(0x0));
+  A buf = __argv;      // operate on a copy
+  format::replace_all<0x0>(buf, " ");
+  auto itr = buf.cbegin();
+  auto itr_f = buf.cbegin();
+  while ( itr < buf.end() ) {
+    itr_f = micron::format::find(buf, itr, char(0x0));
     if ( itr_f == nullptr ) {
       argv.emplace_back(const_cast<char *>(itr));
       break;
@@ -212,7 +183,6 @@ execute(const T &t, A &__argv)
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
   if constexpr ( W ) micron::waitpid(status);
-  __argv.clear();
   return status;
 }
 
@@ -222,10 +192,6 @@ execute(const char *t)
 {
 
   status_t status;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
   if ( micron::spawn(status.pid, t, &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
@@ -240,10 +206,6 @@ execute(const char *t, R *...args)
 {
 
   status_t status;
-  posix::spawnattr_t flags;
-  if ( posix::spawnattr_init(flags) != 0 ) {
-    exc<except::system_error>("micron process failed to init posix::spawnattrs");
-  }
   micron::vector<char *> argv = { const_cast<char *>(t), nullptr };
 
   (argv.insert(argv.begin() + 1, const_cast<char *>(args)), ...);

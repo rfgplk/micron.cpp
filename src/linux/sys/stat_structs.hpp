@@ -118,7 +118,7 @@ struct stat_t {
 #define st_mtime st_mtim.tv_sec
 #define st_ctime st_ctim.tv_sec
 
-  __syscall_slong_t __glibc_reserved[3];
+  __syscall_slong_type __glibc_reserved[3];      // micron's typedef (not glibc's __syscall_slong_t) for freestanding
 
   bool
   operator!=(const stat_t &o) const

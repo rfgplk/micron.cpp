@@ -570,6 +570,8 @@ chown(const char *name, uid_t owner, gid_t group) -> i32
 {
 #if defined(__micron_syscall_generic)
   return static_cast<i32>(micron::syscall(SYS_fchownat, at_fdcwd, name, owner, group, 0));
+#elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)
+  return static_cast<i32>(micron::syscall(SYS_chown32, name, owner, group));      // bare SYS_chown is 16-bit-uid here
 #else
   return static_cast<i32>(micron::syscall(SYS_chown, name, owner, group));
 #endif
@@ -578,13 +580,21 @@ chown(const char *name, uid_t owner, gid_t group) -> i32
 auto
 fchown(i32 fd, uid_t owner, gid_t group) -> i32
 {
+#if defined(__micron_arch_x86) || defined(__micron_arch_arm32)
+  return static_cast<i32>(micron::syscall(SYS_fchown32, fd, owner, group));      // bare SYS_fchown is 16-bit-uid here
+#else
   return static_cast<i32>(micron::syscall(SYS_fchown, fd, owner, group));
+#endif
 }
 
 auto
 fchown(fd_t fd, uid_t owner, gid_t group) -> i32
 {
+#if defined(__micron_arch_x86) || defined(__micron_arch_arm32)
+  return static_cast<i32>(micron::syscall(SYS_fchown32, fd.fd, owner, group));
+#else
   return static_cast<i32>(micron::syscall(SYS_fchown, fd.fd, owner, group));
+#endif
 }
 
 auto
@@ -592,6 +602,8 @@ lchown(const char *name, uid_t owner, gid_t group) -> i32
 {
 #if defined(__micron_syscall_generic)
   return static_cast<i32>(micron::syscall(SYS_fchownat, at_fdcwd, name, owner, group, at_symlink_nofollow));
+#elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)
+  return static_cast<i32>(micron::syscall(SYS_lchown32, name, owner, group));      // bare SYS_lchown is 16-bit-uid here
 #else
   return static_cast<i32>(micron::syscall(SYS_lchown, name, owner, group));
 #endif

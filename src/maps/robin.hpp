@@ -212,14 +212,12 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   {
     if ( n <= __min_cap ) return __min_cap;
     usize p = 1;
-    while ( p < n ) p <<= 1;
+    while ( p < n ) {
+      usize np = p << 1;
+      if ( np <= p ) return p;      // overflow: saturate (the subsequent alloc will throw)
+      p = np;
+    }
     return p;
-  }
-
-  static usize
-  cap_bytes(usize n_elems) noexcept
-  {
-    return round_pow2(n_elems) * sizeof(Nd);
   }
 
   static usize
@@ -597,9 +595,9 @@ public:
     free_ctrl();
   }
 
-  robin_map() : __mem(cap_bytes(default_n_slots())), n_slots_(default_n_slots()), mask_(default_n_slots() - 1u) { alloc_ctrl(n_slots_); }
+  robin_map() : __mem(default_n_slots()), n_slots_(default_n_slots()), mask_(default_n_slots() - 1u) { alloc_ctrl(n_slots_); }
 
-  explicit robin_map(usize n) : __mem(cap_bytes(n)), n_slots_(round_pow2(n)), mask_(round_pow2(n) - 1u) { alloc_ctrl(n_slots_); }
+  explicit robin_map(usize n) : __mem(round_pow2(n)), n_slots_(round_pow2(n)), mask_(round_pow2(n) - 1u) { alloc_ctrl(n_slots_); }
 
   robin_map(const robin_map &) = delete;
 

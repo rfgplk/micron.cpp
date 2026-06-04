@@ -59,7 +59,7 @@ class volatile_t
   {
     if ( hint_size == 0 ) {
       stat_t tmp{};
-      if ( posix::fstat(fd_t{ src_fd }, tmp) != posix::invalid_fd ) hint_size = static_cast<usize>(tmp.st_size);
+      if ( posix::fstat(fd_t{ src_fd }, tmp) == 0 ) hint_size = static_cast<usize>(tmp.st_size);      // fstat returns 0 on success
     }
 
     if ( hint_size > 0 ) posix::ftruncate(__handle, static_cast<posix::off64_t>(hint_size));
@@ -213,10 +213,10 @@ public:
     if constexpr ( B == STAT_EXISTING ) {
       if ( !micron::is_zero(&sd) ) return;
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::volatile_t, fstat failed.");
+      if ( posix::fstat(__handle, sd) != 0 ) exc<except::io_error>("micron::volatile_t, fstat failed.");
     } else {
       __alive();
-      if ( posix::fstat(__handle, sd) == posix::invalid_fd ) exc<except::io_error>("micron::volatile_t, fstat failed.");
+      if ( posix::fstat(__handle, sd) != 0 ) exc<except::io_error>("micron::volatile_t, fstat failed.");
     }
   }
 
@@ -500,7 +500,7 @@ public:
   posix::off64_t
   seek_end(posix::off64_t off = 0)
   {
-    return posix::lseek(__handle, posix::seek_end - off, posix::seek_end);
+    return posix::lseek(__handle, -off, posix::seek_end);
   }
 
   posix::off64_t

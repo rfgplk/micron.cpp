@@ -73,9 +73,11 @@ __expand_mask_u32(uint8_t k) noexcept
 __attribute__((always_inline)) static inline uint64x2_t
 __expand_mask_u64(uint8_t k) noexcept
 {
+  // UINT64_MAX is a libc <stdint.h> macro not provided by the micron include
+  // chain; spell the all-ones lane mask directly.
   uint64_t lanes[2];
-  lanes[0] = (k & 1) ? UINT64_MAX : 0;
-  lanes[1] = (k & 2) ? UINT64_MAX : 0;
+  lanes[0] = (k & 1) ? ~static_cast<uint64_t>(0) : 0;
+  lanes[1] = (k & 2) ? ~static_cast<uint64_t>(0) : 0;
   return vld1q_u64(lanes);
 }
 

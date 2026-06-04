@@ -205,7 +205,7 @@ public:
   {
     if ( o.size() < N ) exc<except::runtime_error>("micron::conarray conarray(A&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
-      __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
+      __impl_container::move_init<N, T>(micron::addr(stack[0]), o.begin());
     else
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
@@ -226,7 +226,7 @@ public:
   conarray(conarray &&o)
   {
     __hold __lock(o.__mtx);
-    __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    __impl_container::move_init<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,7 +298,7 @@ public:
     return micron::addr(stack[0]);
   }
 
-  // NOTE: MUST call release() when done
+  // WARNING: exception-UNSAFE manual exclusive lock; release() must be called manually
   iterator
   get()
   {
@@ -310,6 +310,42 @@ public:
   release()
   {
     __mtx.unlock();
+  }
+
+  // RAII exclusive accessor
+  struct scope {
+    conarray &__c;
+
+    [[gnu::always_inline]] explicit scope(conarray &c) noexcept : __c(c) { __c.__mtx.lock(); }
+
+    [[gnu::always_inline]] ~scope() noexcept { __c.__mtx.unlock(); }
+
+    scope(const scope &) = delete;
+    scope &operator=(const scope &) = delete;
+
+    [[nodiscard]] iterator
+    data() noexcept
+    {
+      return micron::addr(__c.stack[0]);
+    }
+
+    [[nodiscard]] T &
+    operator[](size_type i) noexcept
+    {
+      return __c.stack[i];
+    }
+
+    [[nodiscard]] size_type
+    size() const noexcept
+    {
+      return N;
+    }
+  };
+
+  [[nodiscard]] scope
+  locked() noexcept
+  {
+    return scope(*this);
   }
 
   void
@@ -326,7 +362,7 @@ public:
   T
   at(const size_type i) const
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::conarray at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::conarray at() out of range.");
     __hold __lock(__mtx);
     return stack[i];
   }
@@ -334,9 +370,23 @@ public:
   void
   at(const size_type i, const T &val)
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::conarray at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::conarray at() out of range.");
     __hold __lock(__mtx);
     stack[i] = val;
+  }
+
+  T
+  front() const
+  {
+    __hold __lock(__mtx);
+    return stack[0];
+  }
+
+  T
+  back() const
+  {
+    __hold __lock(__mtx);
+    return stack[N - 1];
   }
 
   inline const_iterator
@@ -353,7 +403,7 @@ public:
     return stack + n;
   }
 
-  // NOTE: operator[] is NOT behind a lock
+  // WARNING: UNSYNCHRONIZED raw access
   inline T &
   operator[](const size_type i) noexcept
   {
@@ -411,10 +461,10 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
   // assignment
 
-  template<typename F, size_type M>
+  template<size_type M>
   conarray &
   operator=(T (&o)[M])
-    requires micron::is_array_v<F> && (M <= N)
+    requires(M <= N)
   {
     __hold __lock(__mtx);
     __impl_container::copy_assign<M, T>(micron::addr(stack[0]), micron::addr(o[0]));
@@ -487,7 +537,8 @@ public:
   operator+(const conarray<T, M> &o) const
   {
     conarray arr;
-    __hold __lock(__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -502,7 +553,8 @@ public:
   operator-(const conarray<T, M> &o) const
   {
     conarray arr;
-    __hold __lock(__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -517,7 +569,8 @@ public:
   operator*(const conarray<T, M> &o) const
   {
     conarray arr;
-    __hold __lock(__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -532,7 +585,8 @@ public:
   operator/(const conarray<T, M> &o) const
   {
     conarray arr;
-    __hold __lock(__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -547,7 +601,8 @@ public:
   operator%(const conarray<T, M> &o) const
   {
     conarray arr;
-    __hold __lock(__mtx);
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
@@ -821,7 +876,12 @@ public:
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) {
+      if constexpr ( micron::is_floating_point_v<T> )
+        dst[i] = static_cast<T>(math::sqrt(dst[i]));      // no narrowing through float
+      else
+        dst[i] = static_cast<T>(math::sqrt(static_cast<double>(dst[i])));
+    }
   }
 
   template<typename F>

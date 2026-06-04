@@ -97,6 +97,7 @@ public:
 
   async_thread(void) : attributes(posix::getpid()), payload{} { }
 
+  // NOTE: moving an already-spawned worker is UB (kernel holds &payload)
   async_thread(async_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
 
   async_thread(const pthread_attr_t &_attrs) : attributes(posix::getpid(), _attrs), payload{} { __impl_preparethread(_attrs); }
@@ -112,6 +113,14 @@ public:
   async_thread &
   operator=(async_thread &&o)
   {
+    if ( this == &o ) return *this;
+    // stop + join *this's current worker BEFORE adopting o; otherwise the running worker is orphaned (never joined) and keeps mutating the payload bytes we are about to overwrite
+    // NOTE: o must be pre-spawn (o.pid == 0): a spawned worker holds &o.payload and cannot be relocated
+    if ( attributes.pid != 0 ) {
+      stop();
+      pthread::__join_thread(attributes.pid);
+    }
+    __release();
     attributes = micron::move(o.attributes);
     payload = micron::move(o.payload);
     return *this;
@@ -169,6 +178,7 @@ public:
   auto
   can_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       return 1;
@@ -178,8 +188,10 @@ public:
   }
 
   auto
-  join(void) -> int      // thread
+  join(void) -> int      // worker
   {
+    if ( attributes.pid == 0 ) return 0;
+    stop();
     auto r = pthread::__join_thread(attributes.pid);
     __safe_release();
     return r;
@@ -188,6 +200,7 @@ public:
   auto
   try_join(void) -> int
   {
+    if ( attributes.pid == 0 ) return 0;
     int r = pthread::__try_join_thread(attributes.pid);
     if ( r == 0 ) {
       __release();

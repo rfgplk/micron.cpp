@@ -63,10 +63,7 @@ using posix::uid_t;
 
 };      // namespace micron
 
-// WARNING: __special/pthread is extern "C" and uses bare pid_t at file scope
 #include "../../bits/__arch.hpp"
-#if defined(__micron_arch_arm_any)
 using pid_t = ::micron::posix::pid_t;
 using uid_t = ::micron::posix::uid_t;
 using gid_t = ::micron::posix::gid_t;
-#endif

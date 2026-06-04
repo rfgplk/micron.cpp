@@ -11,7 +11,9 @@
 #include "../syscall.hpp"
 #include "../type_traits.hpp"
 
+#include "../atomic/atomic.hpp"
 #include "../atomic/intrin.hpp"
+#include "../except.hpp"
 
 namespace micron
 {
@@ -47,7 +49,7 @@ wait_futex(T *ptr, decay_t<T> expected)
   while ( atom::load(ptr, (int)memory_order_relaxed) == expected ) {
     auto ret = __futex(reinterpret_cast<u32 *>(const_cast<decay_t<T> *>(ptr)), futex_wait | futex_private_flag, static_cast<u32>(expected),
                        nullptr, nullptr, 0);
-    if ( ret < 0 and ret != -11 ) {
+    if ( ret < 0 and ret != -11 and ret != -4 ) {
       micron::exc<except::thread_error>("futex wait failed");
     }
   }
@@ -60,6 +62,15 @@ release_futex(T *ptr, decay_t<T> to_store, u32 cnt = 1)
 {
   atom::store(ptr, to_store, (int)memory_order_release);
   __futex(reinterpret_cast<u32 *>(ptr), futex_wake | futex_private_flag, cnt, nullptr, nullptr, 0);
+}
+
+template<typename T>
+  requires(sizeof(T) == 4)
+void
+wake_futex(T *ptr, int cnt = 1)
+{
+  __futex(reinterpret_cast<u32 *>(const_cast<decay_t<T> *>(ptr)), futex_wake | futex_private_flag, static_cast<u32>(cnt), nullptr, nullptr,
+          0);
 }
 
 // __D is the unlocked value

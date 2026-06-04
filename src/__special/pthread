@@ -52,15 +52,17 @@ typedef struct {
 
 using pthread_t = unsigned long int;
 
-#define __SIZEOF_PTHREAD_ATTR_T 56
-#define __SIZEOF_PTHREAD_MUTEX_T 40
-#define __SIZEOF_PTHREAD_MUTEXATTR_T 4
-#define __SIZEOF_PTHREAD_COND_T 48
-#define __SIZEOF_PTHREAD_CONDATTR_T 4
-#define __SIZEOF_PTHREAD_RWLOCK_T 56
-#define __SIZEOF_PTHREAD_RWLOCKATTR_T 8
-#define __SIZEOF_PTHREAD_BARRIER_T 32
-#define __SIZEOF_PTHREAD_BARRIERATTR_T 4
+// opaque pthread buffer sizes _MUST_ go through the arch-correct constants
+// (previously was hardcoded to amd64 consts)
+#define __SIZEOF_PTHREAD_ATTR_T __sizeof_pthread_attr_t
+#define __SIZEOF_PTHREAD_MUTEX_T __sizeof_pthread_mutex_t
+#define __SIZEOF_PTHREAD_MUTEXATTR_T __sizeof_pthread_mutexattr_t
+#define __SIZEOF_PTHREAD_COND_T __sizeof_pthread_cond_t
+#define __SIZEOF_PTHREAD_CONDATTR_T __sizeof_pthread_condattr_t
+#define __SIZEOF_PTHREAD_RWLOCK_T __sizeof_pthread_rwlock_t
+#define __SIZEOF_PTHREAD_RWLOCKATTR_T __sizeof_pthread_rwlockattr_t
+#define __SIZEOF_PTHREAD_BARRIER_T __sizeof_pthread_barrier_t
+#define __SIZEOF_PTHREAD_BARRIERATTR_T __sizeof_pthread_barrierattr_t
 
 union pthread_attr_t {
   char __size[__SIZEOF_PTHREAD_ATTR_T];

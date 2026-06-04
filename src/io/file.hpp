@@ -12,6 +12,7 @@
 #include "../string/strings.hpp"
 #include "io.hpp"
 
+#include "format.hpp"      // string-only io::basename/extension/stem/canonical (no dir handles)
 #include "paths.hpp"
 #include "posix/file.hpp"
 
@@ -739,11 +740,13 @@ public:
       if ( n <= 0 ) break;
 
       work_fill = overlap + static_cast<usize>(n);
-      usize pos = __kmp_search(work.begin(), work_fill, pat, plen, tbl);
+      const usize from = (off == 0) ? overlap : 0;      // first window: skip the unwritten [0, overlap) carry
+      usize pos = __kmp_search(work.begin() + from, work_fill - from, pat, plen, tbl);
 
-      if ( pos < work_fill ) {
-        usize file_pos = static_cast<usize>(off) + pos;
-        if ( pos >= overlap ) file_pos = static_cast<usize>(off) + (pos - overlap);
+      if ( pos < work_fill - from ) {
+        const usize w = from + pos;
+        usize file_pos = static_cast<usize>(off) + w;
+        if ( w >= overlap ) file_pos = static_cast<usize>(off) + (w - overlap);
         return { true, file_pos, plen };
       }
       off += static_cast<posix::off64_t>(n);
@@ -811,7 +814,7 @@ public:
       if ( n <= 0 ) break;
 
       work_fill = overlap + static_cast<usize>(n);
-      usize scan = 0;
+      usize scan = (off == 0) ? overlap : 0;      // first window: skip the unwritten [0, overlap) carry
 
       while ( scan < work_fill ) {
         usize pos = __kmp_search(work.begin() + scan, work_fill - scan, pat, plen, tbl);
@@ -957,7 +960,7 @@ public:
     __need_fd("fsys::file::write_encoded");
     usize src_len = src.size() * sizeof(typename Tp::value_type);
     micron::buffer out(src_len * 4 + 64);
-    usize out_len = fn(out.begin(), reinterpret_cast<const byte *>(src.c_str()), src_len);
+    usize out_len = fn(out.begin(), out.size(), reinterpret_cast<const byte *>(src.c_str()), src_len);
     posix::lseek(__handle.fd, static_cast<posix::off64_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, out.begin(), out_len);
     if ( n > 0 ) seek += static_cast<usize>(n);
@@ -969,7 +972,7 @@ public:
   {
     __need_fd("fsys::file::write_encoded");
     micron::buffer out(src_len * 4 + 64);
-    usize out_len = fn(out.begin(), src, src_len);
+    usize out_len = fn(out.begin(), out.size(), src, src_len);
     posix::lseek(__handle.fd, static_cast<posix::off64_t>(seek), posix::seek_set);
     max_t n = io::write(__handle.fd, out.begin(), out_len);
     if ( n > 0 ) seek += static_cast<usize>(n);
@@ -982,41 +985,42 @@ public:
     __need_fd("fsys::file::append_encoded");
     usize src_len = src.size() * sizeof(typename Tp::value_type);
     micron::buffer out(src_len * 4 + 64);
-    usize out_len = fn(out.begin(), reinterpret_cast<const byte *>(src.c_str()), src_len);
+    usize out_len = fn(out.begin(), out.size(), reinterpret_cast<const byte *>(src.c_str()), src_len);
     posix::off64_t eof = size();
     io::write(__handle.fd, out.begin(), out_len);
     (void)eof;
   }
 
-  io::path
+  // NOTE: io::path is dir-backed (opens dir handles, throws for non-dirs); these lexical accessors
+  // use the string-only io:: free functions so they work for regular files.
+  io::path_t
   as_path() const
   {
-    return io::path(fname.c_str());
+    return io::path_t(fname.c_str());
   }
 
   io::path_t
   fullpath() const
   {
-    io::path p(fname.c_str());
-    return p.canonical();
+    return io::canonical(fname.c_str());
   }
 
   io::path_t
   basename() const
   {
-    return io::path(fname.c_str()).basename();
+    return io::basename(fname.c_str());
   }
 
   io::path_t
   extension() const
   {
-    return io::path(fname.c_str()).extension();
+    return io::extension(fname.c_str());
   }
 
   io::path_t
   stem() const
   {
-    return io::path(fname.c_str()).stem();
+    return io::stem(fname.c_str());
   }
 
   bool
@@ -1222,7 +1226,7 @@ public:
       max_t n = posix::pread(__handle.fd, win.begin(), chunk_sz, off);
       if ( n <= 0 ) break;
       fn(win.begin(), static_cast<usize>(n));
-      data.append(*reinterpret_cast<const T *>(win.begin()), static_cast<usize>(n));
+      data.append(reinterpret_cast<const typename T::value_type *>(win.begin()), static_cast<usize>(n));      // raw bytes, not a T object
       off += n;
     }
   }

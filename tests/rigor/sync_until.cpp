@@ -30,16 +30,6 @@ using sb::require;
 using sb::require_true;
 using sb::test_case;
 
-namespace
-{
-
-// NOTE: until(cond, atomic<T>&) at until.hpp:44 references
-// `atomic<T>::get(memory_order)` which doesn't exist on the lock-based
-// atomic<T>. Templated overload is broken at instantiation time —
-// documented bug; not exercised below.
-
-}      // namespace
-
 int
 main(void)
 {
@@ -65,8 +55,14 @@ main(void)
   }
   end_test_case();
 
-  // SKIPPED: until(cond, atomic<T>&) — overload calls atomic<T>::get(memorder)
-  // which doesn't exist on the lock-based atomic<T>. Documented bonus bug.
+  test_case("until(cond, atomic<T>&) — atomic observed via lock-free __get (was broken, now fixed)");
+  {
+    atomic<int> a;
+    a.__store(5, memory_order::release);
+    until(5, a);      // returns once __get(acquire) == 5
+    require(a.__get(memory_order::acquire) == 5);
+  }
+  end_test_case();
 
   test_case("until(predicate) — lambda predicate variant");
   {

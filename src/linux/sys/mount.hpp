@@ -27,6 +27,13 @@ umount2(const char *t, i32 fl)
 }
 
 inline i32
+umount(const char *t)
+{
+  // arm64/generic has no 1-arg umount; the portable form is umount2(target, 0)
+  return static_cast<i32>(micron::syscall(SYS_umount2, t, 0));
+}
+
+inline i32
 pivot_root(const char *nr, const char *po)
 {
   return static_cast<i32>(micron::syscall(SYS_pivot_root, nr, po));

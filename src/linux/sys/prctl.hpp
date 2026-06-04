@@ -15,7 +15,13 @@ template<typename... Args>
 inline i32
 prctl(i32 option, Args &&...args)
 {
-  return static_cast<i32>(micron::syscall(SYS_prctl, option, static_cast<unsigned long>(args)...));
+  static_assert(sizeof...(Args) <= 4, "prctl takes at most 4 option arguments");
+  unsigned long a[4] = { 0, 0, 0, 0 };
+  if constexpr ( sizeof...(Args) > 0 ) {
+    unsigned long src[] = { static_cast<unsigned long>(args)... };
+    for ( usize i = 0; i < sizeof...(Args); ++i ) a[i] = src[i];
+  }
+  return static_cast<i32>(micron::syscall(SYS_prctl, option, a[0], a[1], a[2], a[3]));
 }
 
 struct prctl_mm_map {

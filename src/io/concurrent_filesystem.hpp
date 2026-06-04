@@ -138,6 +138,8 @@ public:
     return *this;
   }
 
+  // WARNING: references returned by operator[]/append/file/at outlive the internal lock
+  // do __NOT__ retain a returned reference across a remove()/move() of that same path
   auto &
   operator[](const io::path_t &p, const io::modes c = _default_mode, const posix::node_types nd = posix::node_types::regular_file)
   {

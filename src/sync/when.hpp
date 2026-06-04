@@ -9,6 +9,8 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../atomic/atomic.hpp"
+
 #include "pause.hpp"
 
 #include "../thread/spawn.hpp"
@@ -21,25 +23,24 @@
 namespace micron
 {
 
-template<typename D, typename Fn, typename... Args>
+template<typename Fn, typename... Args>
 void
-when(D *result, Fn &&fn, Args &&...args)
+when(atomic_token<bool> *result, Fn fn, Args... args)
 {
-  go(
-      [&](D *res) {
-        while ( *res != true ) cpu_pause<500>();
-        fn(micron::forward<Args>(args)...);
-      },
-      result);
+  go([result, fn = micron::move(fn), ... args = micron::move(args)]() mutable {
+    while ( result->get(memory_order::acquire) != true ) cpu_pause<500>();
+    fn(args...);
+  });
 }
 
-template<typename... D, typename Fn, typename... Args>
+template<typename Fn, typename... Flags>
+  requires(micron::is_invocable_v<Fn> && (micron::is_same_v<Flags, atomic_token<bool>> && ...))
 void
-when_any(Fn &&fn, Args &&...args, D *...result)
+when_any(Fn fn, Flags *...flags)
 {
-  (go([&] {
-     while ( *result != true ) cpu_pause<500>();
-     fn(micron::forward<Args>(args)...);
+  (go([f = flags, fn = fn]() mutable {
+     while ( f->get(memory_order::acquire) != true ) cpu_pause<500>();
+     fn();
    }),
    ...);
 }

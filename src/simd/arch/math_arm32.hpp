@@ -8,6 +8,9 @@
 
 #include "../namespace.hpp"
 
+#include "../../math/generic.hpp"
+#include "../../numerics.hpp"
+
 namespace micron
 {
 namespace simd
@@ -15,6 +18,117 @@ namespace simd
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
+
+namespace __sm
+{
+__attribute__((always_inline)) static inline float
+sqrtf(float x) noexcept
+{
+  return math::mkbits::sqrt_ns::sqrt<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+cbrtf(float x) noexcept
+{
+  return math::mkbits::sqrt_ns::cbrt<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+hypotf(float x, float y) noexcept
+{
+  return math::mkbits::sqrt_ns::hypot<float>(x, y);
+}
+
+__attribute__((always_inline)) static inline float
+powf(float x, float y) noexcept
+{
+  return math::mkbits::pow_ns::pow<float>(x, y);
+}
+
+__attribute__((always_inline)) static inline float
+expf(float x) noexcept
+{
+  return math::mkbits::exp_ns::exp<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+exp2f(float x) noexcept
+{
+  return math::mkbits::exp_ns::exp2<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+expm1f(float x) noexcept
+{
+  return math::mkbits::exp_ns::expm1<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+logf(float x) noexcept
+{
+  return math::mkbits::log_ns::log<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+log2f(float x) noexcept
+{
+  return math::mkbits::log_ns::log2<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+log10f(float x) noexcept
+{
+  return math::mkbits::log_ns::log10<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+log1pf(float x) noexcept
+{
+  return math::mkbits::log_ns::log1p<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+logbf(float x) noexcept
+{
+  return math::mkbits::manip::logb<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+ceilf(float x) noexcept
+{
+  return math::mkbits::round_ns::ceil<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+floorf(float x) noexcept
+{
+  return math::mkbits::round_ns::floor<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+truncf(float x) noexcept
+{
+  return math::mkbits::round_ns::trunc<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+roundf(float x) noexcept
+{
+  return math::mkbits::round_ns::rint<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+rintf(float x) noexcept
+{
+  return math::mkbits::round_ns::rint<float>(x);
+}
+
+__attribute__((always_inline)) static inline float
+nearbyintf(float x) noexcept
+{
+  return math::mkbits::round_ns::nearbyint<float>(x);
+}
+};      // namespace __sm
 
 #define _ri8(x) vreinterpretq_s8_s32(x)
 #define _ri16(x) vreinterpretq_s16_s32(x)
@@ -44,6 +158,18 @@ __expand_mask_u16(uint8_t k) noexcept
   return vceqq_u16(vandq_u16(m, p), p);
 }
 
+__attribute__((always_inline)) static inline uint8x16_t
+__expand_mask_u8(uint16_t k) noexcept
+{
+  static const uint8_t bp[16] = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+
+  uint8x16_t sel = vld1q_u8(bp);
+  uint8x8_t lo = vdup_n_u8(static_cast<uint8_t>(k & 0xFFu));
+  uint8x8_t hi = vdup_n_u8(static_cast<uint8_t>((k >> 8) & 0xFFu));
+  uint8x16_t m = vcombine_u8(lo, hi);
+  return vceqq_u8(vandq_u8(m, sel), sel);
+}
+
 __attribute__((always_inline)) static inline uint32x4_t
 __expand_mask_u32(uint8_t k) noexcept
 {
@@ -55,7 +181,8 @@ __expand_mask_u32(uint8_t k) noexcept
 __attribute__((always_inline)) static inline uint64x2_t
 __expand_mask_u64(uint8_t k) noexcept
 {
-  uint64_t lanes[2] = { (k & 1) ? UINT64_MAX : 0ULL, (k & 2) ? UINT64_MAX : 0ULL };
+  const uint64_t all = numeric_limits<uint64_t>::max();
+  uint64_t lanes[2] = { (k & 1) ? all : 0ULL, (k & 2) ? all : 0ULL };
   return vld1q_u64(lanes);
 }
 
@@ -168,7 +295,7 @@ sqrt(f128 &o)
 inline f128
 sqrt_ss(f128 a)
 {
-  return vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(a, 0)), a, 0);
+  return vsetq_lane_f32(__sm::sqrtf(vgetq_lane_f32(a, 0)), a, 0);
 }
 
 inline f128
@@ -180,7 +307,7 @@ sqrt_round(f128 &o, int /*r*/)
 inline f128
 sqrt_round_ss(f128 /*src*/, f128 a, f128 b, int /*r*/)
 {
-  return vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(b, 0)), a, 0);
+  return vsetq_lane_f32(__sm::sqrtf(vgetq_lane_f32(b, 0)), a, 0);
 }
 
 template<typename M>
@@ -202,14 +329,14 @@ template<typename M>
 inline f128
 mask_sqrt_ss(f128 src, M k, f128 a, f128 b)
 {
-  return (k & 1) ? vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(b, 0)), a, 0) : src;
+  return (k & 1) ? vsetq_lane_f32(__sm::sqrtf(vgetq_lane_f32(b, 0)), a, 0) : src;
 }
 
 template<typename M>
 inline f128
 maskz_sqrt_ss(M k, f128 a, f128 b)
 {
-  return (k & 1) ? vsetq_lane_f32(math::sqrtf(vgetq_lane_f32(b, 0)), a, 0) : vdupq_n_f32(0.f);
+  return (k & 1) ? vsetq_lane_f32(__sm::sqrtf(vgetq_lane_f32(b, 0)), a, 0) : vdupq_n_f32(0.f);
 }
 
 __attribute__((always_inline)) static inline float32x4_t
@@ -243,13 +370,13 @@ rsqrt14(f128 &o)
 inline f128
 rsqrt_ss(f128 a)
 {
-  return vsetq_lane_f32(1.f / math::sqrtf(vgetq_lane_f32(a, 0)), a, 0);
+  return vsetq_lane_f32(1.f / __sm::sqrtf(vgetq_lane_f32(a, 0)), a, 0);
 }
 
 inline f128
 rsqrt14_ss(f128 a, f128 b)
 {
-  return vsetq_lane_f32(1.f / math::sqrtf(vgetq_lane_f32(b, 0)), a, 0);
+  return vsetq_lane_f32(1.f / __sm::sqrtf(vgetq_lane_f32(b, 0)), a, 0);
 }
 
 template<typename M>
@@ -465,14 +592,15 @@ max_i32(i128 &o, i128 &b)
 inline i128
 min_i64(i128 &o, i128 &b)
 {
-  uint64x2_t gt = vreinterpretq_u64_s64(neon_v7_cgtq_s64(_ri64(o), _ri64(b)));
+
+  uint64x2_t gt = neon_v7_cgtq_s64(_ri64(o), _ri64(b));
   return _ru64r(vbslq_u64(gt, _ru64(b), _ru64(o)));
 }
 
 inline i128
 max_i64(i128 &o, i128 &b)
 {
-  uint64x2_t gt = vreinterpretq_u64_s64(neon_v7_cgtq_s64(_ri64(o), _ri64(b)));
+  uint64x2_t gt = neon_v7_cgtq_s64(_ri64(o), _ri64(b));
   return _ru64r(vbslq_u64(gt, _ru64(o), _ru64(b)));
 }
 
@@ -704,29 +832,33 @@ template<typename M>
 inline float
 mask_reduce_max_ps(M k, f128 &o)
 {
-  uint32x4_t imsk = vmvnq_u32(__expand_mask_u32(static_cast<uint8_t>(k)));
-  static const uint32_t neg_inf_bits = 0xFF800000u;
-  f128 masked = vorrq_f32(_rf32u(vandq_u32(__expand_mask_u32(static_cast<uint8_t>(k)), _ru32f(o))),
-                          _rf32u(vandq_u32(imsk, vdupq_n_u32(neg_inf_bits))));
-  return reduce_max_ps(masked);
+
+  uint32x4_t msk = __expand_mask_u32(static_cast<uint8_t>(k));
+  uint32x4_t imsk = vmvnq_u32(msk);
+  static const uint32_t neg_fltmax_bits = 0xFF7FFFFFu;
+  uint32x4_t masked = vorrq_u32(vandq_u32(msk, _ru32f(o)), vandq_u32(imsk, vdupq_n_u32(neg_fltmax_bits)));
+  f128 mf = _rf32u(masked);
+  return reduce_max_ps(mf);
 }
 
 template<typename M>
 inline float
 mask_reduce_min_ps(M k, f128 &o)
 {
-  uint32x4_t imsk = vmvnq_u32(__expand_mask_u32(static_cast<uint8_t>(k)));
-  static const uint32_t pos_inf_bits = 0x7F800000u;
-  f128 masked = vorrq_f32(_rf32u(vandq_u32(__expand_mask_u32(static_cast<uint8_t>(k)), _ru32f(o))),
-                          _rf32u(vandq_u32(imsk, vdupq_n_u32(pos_inf_bits))));
-  return reduce_min_ps(masked);
+
+  uint32x4_t msk = __expand_mask_u32(static_cast<uint8_t>(k));
+  uint32x4_t imsk = vmvnq_u32(msk);
+  static const uint32_t pos_fltmax_bits = 0x7F7FFFFFu;
+  uint32x4_t masked = vorrq_u32(vandq_u32(msk, _ru32f(o)), vandq_u32(imsk, vdupq_n_u32(pos_fltmax_bits)));
+  f128 mf = _rf32u(masked);
+  return reduce_min_ps(mf);
 }
 
 template<typename M>
 inline int
 mask_reduce_max_i32(M k, i128 &o)
 {
-  i128 m = vbslq_s32(__expand_mask_u32(static_cast<uint8_t>(k)), o, vdupq_n_s32(INT32_MIN));
+  i128 m = vbslq_s32(__expand_mask_u32(static_cast<uint8_t>(k)), o, vdupq_n_s32(numeric_limits<int32_t>::min()));
   return reduce_max_i32(m);
 }
 
@@ -734,7 +866,7 @@ template<typename M>
 inline int
 mask_reduce_min_i32(M k, i128 &o)
 {
-  i128 m = vbslq_s32(__expand_mask_u32(static_cast<uint8_t>(k)), o, vdupq_n_s32(INT32_MAX));
+  i128 m = vbslq_s32(__expand_mask_u32(static_cast<uint8_t>(k)), o, vdupq_n_s32(numeric_limits<int32_t>::max()));
   return reduce_min_i32(m);
 }
 
@@ -750,7 +882,7 @@ template<typename M>
 inline unsigned int
 mask_reduce_min_u32(M k, i128 &o)
 {
-  i128 m = _ru32r(vbslq_u32(__expand_mask_u32(static_cast<uint8_t>(k)), _ru32(o), vdupq_n_u32(UINT32_MAX)));
+  i128 m = _ru32r(vbslq_u32(__expand_mask_u32(static_cast<uint8_t>(k)), _ru32(o), vdupq_n_u32(numeric_limits<uint32_t>::max())));
   return reduce_min_u32(m);
 }
 
@@ -758,7 +890,7 @@ template<typename M>
 inline short
 mask_reduce_max_i16(M k, i128 &o)
 {
-  i128 m = _ri16r(vbslq_s16(__expand_mask_u16(static_cast<uint8_t>(k)), _ri16(o), vdupq_n_s16(INT16_MIN)));
+  i128 m = _ri16r(vbslq_s16(__expand_mask_u16(static_cast<uint8_t>(k)), _ri16(o), vdupq_n_s16(numeric_limits<int16_t>::min())));
   return reduce_max_i16(m);
 }
 
@@ -766,7 +898,7 @@ template<typename M>
 inline short
 mask_reduce_min_i16(M k, i128 &o)
 {
-  i128 m = _ri16r(vbslq_s16(__expand_mask_u16(static_cast<uint8_t>(k)), _ri16(o), vdupq_n_s16(INT16_MAX)));
+  i128 m = _ri16r(vbslq_s16(__expand_mask_u16(static_cast<uint8_t>(k)), _ri16(o), vdupq_n_s16(numeric_limits<int16_t>::max())));
   return reduce_min_i16(m);
 }
 
@@ -774,7 +906,7 @@ template<typename M>
 inline char
 mask_reduce_max_i8(M k, i128 &o)
 {
-  i128 m = _ri8r(vbslq_s8(__expand_mask_u16(static_cast<uint8_t>(k)), _ri8(o), vdupq_n_s8(INT8_MIN)));
+  i128 m = _ri8r(vbslq_s8(__expand_mask_u8(static_cast<uint16_t>(k)), _ri8(o), vdupq_n_s8(numeric_limits<int8_t>::min())));
   return reduce_max_i8(m);
 }
 
@@ -782,7 +914,7 @@ template<typename M>
 inline char
 mask_reduce_min_i8(M k, i128 &o)
 {
-  i128 m = _ri8r(vbslq_s8(__expand_mask_u16(static_cast<uint8_t>(k)), _ri8(o), vdupq_n_s8(INT8_MAX)));
+  i128 m = _ri8r(vbslq_s8(__expand_mask_u8(static_cast<uint16_t>(k)), _ri8(o), vdupq_n_s8(numeric_limits<int8_t>::max())));
   return reduce_min_i8(m);
 }
 
@@ -798,7 +930,7 @@ template<typename M>
 inline unsigned short
 mask_reduce_min_u16(M k, i128 &o)
 {
-  i128 m = _ru16r(vbslq_u16(__expand_mask_u16(static_cast<uint8_t>(k)), _ru16(o), vdupq_n_u16(UINT16_MAX)));
+  i128 m = _ru16r(vbslq_u16(__expand_mask_u16(static_cast<uint8_t>(k)), _ru16(o), vdupq_n_u16(numeric_limits<uint16_t>::max())));
   return reduce_min_u16(m);
 }
 
@@ -806,7 +938,7 @@ template<typename M>
 inline unsigned char
 mask_reduce_max_u8(M k, i128 &o)
 {
-  i128 m = _ru8r(vbslq_u8(__expand_mask_u16(static_cast<uint8_t>(k)), _ru8(o), vdupq_n_u8(0)));
+  i128 m = _ru8r(vbslq_u8(__expand_mask_u8(static_cast<uint16_t>(k)), _ru8(o), vdupq_n_u8(0)));
   return reduce_max_u8(m);
 }
 
@@ -814,7 +946,7 @@ template<typename M>
 inline unsigned char
 mask_reduce_min_u8(M k, i128 &o)
 {
-  i128 m = _ru8r(vbslq_u8(__expand_mask_u16(static_cast<uint8_t>(k)), _ru8(o), vdupq_n_u8(UINT8_MAX)));
+  i128 m = _ru8r(vbslq_u8(__expand_mask_u8(static_cast<uint16_t>(k)), _ru8(o), vdupq_n_u8(numeric_limits<uint8_t>::max())));
   return reduce_min_u8(m);
 }
 
@@ -833,43 +965,43 @@ __v7_roundq(float32x4_t a, float (*fn)(float)) noexcept
 inline f128
 ceil(f128 &o)
 {
-  return __v7_roundq(o, math::ceilf);
+  return __v7_roundq(o, __sm::ceilf);
 }
 
 inline f128
 floor(f128 &o)
 {
-  return __v7_roundq(o, math::floorf);
+  return __v7_roundq(o, __sm::floorf);
 }
 
 inline f128
 trunc(f128 &o)
 {
-  return __v7_roundq(o, math::truncf);
+  return __v7_roundq(o, __sm::truncf);
 }
 
 inline f128
 ceil_ss(f128 a, f128 b)
 {
-  return vsetq_lane_f32(math::ceilf(vgetq_lane_f32(b, 0)), a, 0);
+  return vsetq_lane_f32(__sm::ceilf(vgetq_lane_f32(b, 0)), a, 0);
 }
 
 inline f128
 floor_ss(f128 a, f128 b)
 {
-  return vsetq_lane_f32(math::floorf(vgetq_lane_f32(b, 0)), a, 0);
+  return vsetq_lane_f32(__sm::floorf(vgetq_lane_f32(b, 0)), a, 0);
 }
 
 inline f128
 nearbyint(f128 &o)
 {
-  return __v7_roundq(o, math::nearbyintf);
+  return __v7_roundq(o, __sm::nearbyintf);
 }
 
 inline f128
 rint(f128 &o)
 {
-  return __v7_roundq(o, math::rintf);
+  return __v7_roundq(o, __sm::rintf);
 }
 
 inline f128
@@ -877,17 +1009,17 @@ round(f128 &o, int rounding)
 {
   switch ( rounding & 0x7 ) {
   case 0:
-    return __v7_roundq(o, math::roundf);
+    return __v7_roundq(o, __sm::roundf);
   case 1:
-    return __v7_roundq(o, math::floorf);
+    return __v7_roundq(o, __sm::floorf);
   case 2:
-    return __v7_roundq(o, math::ceilf);
+    return __v7_roundq(o, __sm::ceilf);
   case 3:
-    return __v7_roundq(o, math::truncf);
+    return __v7_roundq(o, __sm::truncf);
   case 4:
-    return __v7_roundq(o, math::nearbyintf);
+    return __v7_roundq(o, __sm::nearbyintf);
   default:
-    return __v7_roundq(o, math::roundf);
+    return __v7_roundq(o, __sm::roundf);
   }
 }
 
@@ -897,19 +1029,19 @@ round_ss(f128 a, f128 b, int r)
   float val;
   switch ( r & 0x7 ) {
   case 0:
-    val = math::roundf(vgetq_lane_f32(b, 0));
+    val = __sm::roundf(vgetq_lane_f32(b, 0));
     break;
   case 1:
-    val = math::floorf(vgetq_lane_f32(b, 0));
+    val = __sm::floorf(vgetq_lane_f32(b, 0));
     break;
   case 2:
-    val = math::ceilf(vgetq_lane_f32(b, 0));
+    val = __sm::ceilf(vgetq_lane_f32(b, 0));
     break;
   case 3:
-    val = math::truncf(vgetq_lane_f32(b, 0));
+    val = __sm::truncf(vgetq_lane_f32(b, 0));
     break;
   default:
-    val = math::roundf(vgetq_lane_f32(b, 0));
+    val = __sm::roundf(vgetq_lane_f32(b, 0));
     break;
   }
   return vsetq_lane_f32(val, a, 0);
@@ -918,85 +1050,85 @@ round_ss(f128 a, f128 b, int r)
 inline f128
 exp(f128 &o)
 {
-  return __scalar_f32x4(o, math::expf);
+  return __scalar_f32x4(o, __sm::expf);
 }
 
 inline f128
 exp2(f128 &o)
 {
-  return __scalar_f32x4(o, math::exp2f);
+  return __scalar_f32x4(o, __sm::exp2f);
 }
 
 inline f128
 exp10(f128 &o)
 {
-  return __scalar_f32x4(o, [](float x) { return math::powf(10.f, x); });
+  return __scalar_f32x4(o, [](float x) { return __sm::powf(10.f, x); });
 }
 
 inline f128
 expm1(f128 &o)
 {
-  return __scalar_f32x4(o, math::expm1f);
+  return __scalar_f32x4(o, __sm::expm1f);
 }
 
 inline f128
 log(f128 &o)
 {
-  return __scalar_f32x4(o, math::logf);
+  return __scalar_f32x4(o, __sm::logf);
 }
 
 inline f128
 log2(f128 &o)
 {
-  return __scalar_f32x4(o, math::log2f);
+  return __scalar_f32x4(o, __sm::log2f);
 }
 
 inline f128
 log10(f128 &o)
 {
-  return __scalar_f32x4(o, math::log10f);
+  return __scalar_f32x4(o, __sm::log10f);
 }
 
 inline f128
 log1p(f128 &o)
 {
-  return __scalar_f32x4(o, math::log1pf);
+  return __scalar_f32x4(o, __sm::log1pf);
 }
 
 inline f128
 logb(f128 &o)
 {
-  return __scalar_f32x4(o, math::logbf);
+  return __scalar_f32x4(o, __sm::logbf);
 }
 
 inline f128
 pow(f128 &o, f128 &b)
 {
-  return __scalar2_f32x4(o, b, math::powf);
+  return __scalar2_f32x4(o, b, __sm::powf);
 }
 
 inline f128
 cbrt(f128 &o)
 {
-  return __scalar_f32x4(o, math::cbrtf);
+  return __scalar_f32x4(o, __sm::cbrtf);
 }
 
 inline f128
 invcbrt(f128 &o)
 {
-  return __scalar_f32x4(o, [](float x) { return 1.f / math::cbrtf(x); });
+  return __scalar_f32x4(o, [](float x) { return 1.f / __sm::cbrtf(x); });
 }
 
 inline f128
 invsqrt(f128 &o)
 {
-  return __scalar_f32x4(o, [](float x) { return 1.f / math::sqrtf(x); });
+  return __scalar_f32x4(o, [](float x) { return 1.f / __sm::sqrtf(x); });
 }
 
 inline f128
 hypot(f128 &o, f128 &b)
 {
-  return __scalar2_f32x4(o, b, math::hypotf);
+  return __scalar2_f32x4(o, b, __sm::hypotf);
 }
 
 template<typename M>
@@ -1124,7 +1256,7 @@ svml_floor(f128 &o)
 inline f128
 svml_round(f128 &o)
 {
-  return __v7_roundq(o, math::roundf);
+  return __v7_roundq(o, __sm::roundf);
 }
 
 #undef _ri8

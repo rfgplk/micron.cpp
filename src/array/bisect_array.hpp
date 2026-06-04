@@ -84,22 +84,39 @@ public:
 
   bisect_array() { __impl_container::construct<N, T>(micron::addr(stack[0]), T{}); }
 
+  // build a SORTED array from any iterable source (sorted or NON sorted)
   template<is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(const A &o)
   {
-    if ( o.size() < N ) exc<except::runtime_error>("micron::bisect_array bisect_array(const&) invalid size");
-    __impl_container::copy<N>(micron::addr(stack[0]), micron::addr(o[0]));
-    length = o.size() < N ? o.size() : N;
+    __impl_container::construct<N, T>(micron::addr(stack[0]), T{});
+#ifndef __micron_freestanding
+    try {
+      for ( const auto &v : o ) insert(v);
+    } catch ( ... ) {
+      __impl_container::destroy<N>(micron::addr(stack[0]));
+      throw;
+    }
+#else
+    for ( const auto &v : o ) insert(v);
+#endif
   }
 
   template<is_container A>
     requires(!micron::is_same_v<A, bisect_array>)
   bisect_array(A &&o)
   {
-    if ( o.size() < N ) exc<except::runtime_error>("micron::bisect_array bisect_array(&&) invalid size");
-    __impl_container::move<N>(micron::addr(stack[0]), micron::addr(o[0]));
-    length = o.size() < N ? o.size() : N;
+    __impl_container::construct<N, T>(micron::addr(stack[0]), T{});
+#ifndef __micron_freestanding
+    try {
+      for ( auto &&v : o ) insert(v);
+    } catch ( ... ) {
+      __impl_container::destroy<N>(micron::addr(stack[0]));
+      throw;
+    }
+#else
+    for ( auto &&v : o ) insert(v);
+#endif
   }
 
   bisect_array(const bisect_array &o)
@@ -110,9 +127,28 @@ public:
 
   bisect_array(bisect_array &&o)
   {
-    __impl_container::move<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    __impl_container::move_init<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     length = o.length;
     o.length = 0;
+  }
+
+  bisect_array &
+  operator=(const bisect_array &o)
+  {
+    if ( this == micron::addr(o) ) return *this;
+    __impl_container::copy_assign<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    length = o.length;
+    return *this;
+  }
+
+  bisect_array &
+  operator=(bisect_array &&o)
+  {
+    if ( this == micron::addr(o) ) return *this;
+    __impl_container::move_assign<N>(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    length = o.length;
+    o.length = 0;
+    return *this;
   }
 
   usize
@@ -205,14 +241,26 @@ public:
   const T &
   operator[](usize idx) const
   {
-    if ( idx >= length ) exc<except::library_error>("micron::bisect_array::erase(): out of range");
+    if ( idx >= length ) exc<except::library_error>("micron::bisect_array::operator[](): out of range");
     return stack[idx];
+  }
+
+  const T &
+  front() const noexcept
+  {
+    return stack[0];
+  }
+
+  const T &
+  back() const noexcept
+  {
+    return stack[length - 1];
   }
 
   void
   insert(const T &val)
   {
-    if ( full() ) exc<except::library_error>("micron::bisect_array::erase(): max capacity reached");
+    if ( full() ) exc<except::library_error>("micron::bisect_array::insert(): max capacity reached");
     usize idx = __bisect_right(val);
     for ( usize i = length; i > idx; --i ) stack[i] = stack[i - 1];
     stack[idx] = val;

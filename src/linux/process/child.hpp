@@ -106,7 +106,11 @@ class child
     usize done = 0;
     while ( done < len ) {
       max_t n = micron::write(fd, src + done, len - done);
-      if ( n <= 0 ) break;
+      if ( n < 0 ) {
+        if ( n == -error::interrupted ) continue;      // retry EINTR rather than truncating
+        break;
+      }
+      if ( n == 0 ) break;
       done += static_cast<usize>(n);
     }
   }
@@ -119,7 +123,11 @@ class child
     byte tmp[4096];
     for ( ;; ) {
       max_t n = micron::read(fd, tmp, sizeof(tmp));
-      if ( n <= 0 ) break;
+      if ( n < 0 ) {
+        if ( n == -error::interrupted ) continue;      // retry EINTR
+        break;
+      }
+      if ( n == 0 ) break;      // EOF
       out.append(reinterpret_cast<const typename micron::string::value_type *>(tmp), static_cast<usize>(n));
       total += static_cast<usize>(n);
     }
@@ -318,20 +326,28 @@ public:
   {
     comm_result r;
 
-    if ( __in_fd >= 0 ) {
-      if ( input.size() )
-        __write_all(__in_fd, reinterpret_cast<const byte *>(input.c_str()), input.size() * sizeof(typename micron::string::value_type));
-      __close_fd(__in_fd);      // EOF for the child's stdin
+    // WARNING: writing all of input up front (and only then reading) deadlocks when both the input and the child's output exceed the pipe
+    // buffer
+    const byte *in_data = reinterpret_cast<const byte *>(input.c_str());
+    const usize in_len = input.size() * sizeof(typename micron::string::value_type);
+    usize in_off = 0;
+    bool in_open = (__in_fd >= 0);
+    if ( in_open && in_len == 0 ) {
+      __close_fd(__in_fd);      // nothing to send -> immediate EOF for the child's stdin
+      in_open = false;
+    } else if ( in_open ) {
+      int fl = static_cast<int>(posix::fcntl(__in_fd, posix::f_getfl, 0));
+      if ( fl >= 0 ) posix::fcntl(__in_fd, posix::f_setfl, fl | posix::o_nonblock);
     }
 
     bool out_open = __out_fd >= 0;
     bool err_open = __err_fd >= 0;
     byte tmp[4096];
 
-    while ( out_open || err_open ) {
-      micron::pollfd pfds[2];
+    while ( out_open || err_open || in_open ) {
+      micron::pollfd pfds[3];
       int n = 0;
-      int oidx = -1, eidx = -1;
+      int oidx = -1, eidx = -1, iidx = -1;
       if ( out_open ) {
         pfds[n] = micron::make_poll(__out_fd, posix::poll_in);
         oidx = n++;
@@ -340,15 +356,22 @@ public:
         pfds[n] = micron::make_poll(__err_fd, posix::poll_in);
         eidx = n++;
       }
+      if ( in_open ) {
+        pfds[n] = micron::make_poll(__in_fd, posix::poll_out);
+        iidx = n++;
+      }
 
       int pr = micron::poll_for(pfds, static_cast<micron::nfds_t>(n), -1);
-      if ( pr < 0 ) break;
+      if ( pr < 0 ) {
+        if ( pr == -error::interrupted ) continue;      // interrupted -> re-poll
+        break;
+      }
 
       if ( oidx >= 0 && pfds[oidx].revents != 0 ) {
         max_t k = micron::read(__out_fd, tmp, sizeof(tmp));
         if ( k > 0 )
           r.out.append(reinterpret_cast<const typename micron::string::value_type *>(tmp), static_cast<usize>(k));
-        else {
+        else if ( k != -error::interrupted && k != -error::try_again ) {
           __close_fd(__out_fd);
           out_open = false;
         }
@@ -357,9 +380,22 @@ public:
         max_t k = micron::read(__err_fd, tmp, sizeof(tmp));
         if ( k > 0 )
           r.err.append(reinterpret_cast<const typename micron::string::value_type *>(tmp), static_cast<usize>(k));
-        else {
+        else if ( k != -error::interrupted && k != -error::try_again ) {
           __close_fd(__err_fd);
           err_open = false;
+        }
+      }
+      if ( iidx >= 0 && pfds[iidx].revents != 0 ) {
+        max_t k = micron::write(__in_fd, in_data + in_off, in_len - in_off);
+        if ( k > 0 ) {
+          in_off += static_cast<usize>(k);
+          if ( in_off >= in_len ) {
+            __close_fd(__in_fd);      // all input sent -> EOF for the child's stdin
+            in_open = false;
+          }
+        } else if ( k != -EINTR && k != -EAGAIN ) {
+          __close_fd(__in_fd);      // EPIPE etc: child closed its stdin
+          in_open = false;
         }
       }
     }

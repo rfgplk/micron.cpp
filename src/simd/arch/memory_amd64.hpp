@@ -66,7 +66,7 @@ memcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 memcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
   static_assert(micron::is_trivially_copyable_v<T>, "memcpy512 requires trivially copyable type");
@@ -140,7 +140,7 @@ amemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 amemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
   static_assert(micron::is_trivially_copyable_v<T>, "amemcpy512 requires trivially copyable type");
@@ -216,7 +216,7 @@ ntmemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexce
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 ntmemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
   static_assert(micron::is_trivially_copyable_v<T>, "ntmemcpy512 requires trivially copyable type");
@@ -276,7 +276,7 @@ rmemcpy256(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
 }
 
 template<typename F, typename D>
-F &
+[[gnu::target("avx512f")]] F &
 rmemcpy512(F &__restrict dest, const D &__restrict src, const u64 cnt) noexcept
 {
   const u64 n = (cnt * sizeof(D)) / sizeof(i512);
@@ -362,7 +362,7 @@ memmove256(T *dest, const T *src, const u64 count) noexcept
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 memmove512(T *dest, const T *src, const u64 count) noexcept
 {
   static_assert(micron::is_trivially_copyable_v<T>, "memmove512 requires trivially copyable type");
@@ -465,7 +465,7 @@ amemmove256(T *dest, const T *src, const u64 count) noexcept
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 amemmove512(T *dest, const T *src, const u64 count) noexcept
 {
   static_assert(micron::is_trivially_copyable_v<T>, "amemmove512 requires trivially copyable type");
@@ -545,7 +545,7 @@ memset256(T *__restrict src, const u8 in, const u64 count) noexcept
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 memset512(T *__restrict src, const u8 in, const u64 count) noexcept
 {
   auto *s = reinterpret_cast<u8 *>(src);
@@ -608,7 +608,7 @@ amemset256(T *__restrict src, const u8 in, const u64 count) noexcept
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 amemset512(T *__restrict src, const u8 in, const u64 count) noexcept
 {
   auto *s = reinterpret_cast<u8 *>(__builtin_assume_aligned(src, 64));
@@ -675,7 +675,7 @@ ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept
 }
 
 template<typename T>
-__attribute__((nonnull)) T *
+__attribute__((nonnull, target("avx512f"))) T *
 ntmemset512(T *__restrict src, const u8 in, const u64 count) noexcept
 {
   auto *s = reinterpret_cast<u8 *>(__builtin_assume_aligned(src, 64));
@@ -756,7 +756,7 @@ memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) no
 }
 
 template<typename T>
-__attribute__((nonnull)) i64
+__attribute__((nonnull, target("avx512bw,avx512f"))) i64
 memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
 {
   const auto *s = reinterpret_cast<const u8 *>(src);
@@ -847,7 +847,7 @@ amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) n
 }
 
 template<typename T>
-__attribute__((nonnull)) i64
+__attribute__((nonnull, target("avx512bw,avx512f"))) i64
 amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
 {
   const auto *s = reinterpret_cast<const u8 *>(__builtin_assume_aligned(src, 64));

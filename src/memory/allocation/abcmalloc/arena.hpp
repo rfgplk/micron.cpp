@@ -44,13 +44,7 @@
 
 #include "printing.hpp"
 
-template<typename P>
-void *
-operator new(usize size, P *ptr)
-{
-  (void)size;
-  return ptr;
-}
+#include "../../placement_new.hpp"      // global templated placement operator new (shared, breaks the abcmalloc<->arrays cycle)
 
 namespace abc
 {

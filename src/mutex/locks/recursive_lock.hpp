@@ -24,7 +24,8 @@ class recursive_lock
   current_thread() noexcept
   {
 #if defined(__micron_freestanding)
-    return 0;
+    static thread_local char __anchor;
+    return reinterpret_cast<usize>(&__anchor);
 #else
     return pthread::self();
 #endif
@@ -33,8 +34,9 @@ class recursive_lock
   void
   reset()
   {
-
+    if ( owner.get(memory_order::relaxed) != current_thread() ) return;      // only the owner may unlock (no ownership theft)
     usize d = depth.get(memory_order::relaxed);
+    if ( d == 0 ) return;      // not actually held (no count underflow)
     if ( d > 1 ) {
       depth.store(d - 1, memory_order::relaxed);
     } else {

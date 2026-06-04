@@ -5,9 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "atomic.hpp"  
 #include "intrin.hpp"
 
 #include "../memory/actions.hpp"
+#include "../sync/yield.hpp"
 #include "../types.hpp"
 
 #include "../__special/initializer_list"
@@ -32,9 +34,9 @@ struct atomic_flag {
   }
 
   bool
-  test_and_set([[maybe_unused]] memory_order order = memory_order::seq_cst) noexcept
+  test_and_set(memory_order order = memory_order::seq_cst) noexcept
   {
-    return tk.swap(true);
+    return tk.swap(true, order);
   }
 
   void
@@ -44,9 +46,9 @@ struct atomic_flag {
   }
 
   void
-  wait(bool old, memory_order order = memory_order::seq_cst) const noexcept
+  wait(bool old, [[maybe_unused]] memory_order order = memory_order::seq_cst) const noexcept
   {
-    while ( tk.get(order) == old );
+    while ( tk.get(memory_order::relaxed) == old ) micron::yield();      // relaxed poll + yield, not a bare busy-spin
   }
 };
 };      // namespace micron

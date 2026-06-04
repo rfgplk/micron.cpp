@@ -25,9 +25,10 @@ constexpr int __buffer_packet = 4096;
 template<typename Fn>
 concept intercept_fn = requires(Fn fn, byte *data, usize sz) { fn(data, sz); };
 
+// encoders receive the destination capacity (dst_cap) so they cannot overrun the scratch buffer
 template<typename Fn>
-concept encode_fn = requires(Fn fn, byte *dst, const byte *src, usize len) {
-  { fn(dst, src, len) } -> same_as<usize>;
+concept encode_fn = requires(Fn fn, byte *dst, usize dst_cap, const byte *src, usize len) {
+  { fn(dst, dst_cap, src, len) } -> same_as<usize>;
 };
 
 template<typename C>
@@ -51,7 +52,8 @@ struct stream_result_t {
 struct __intercept_holder {
   void (*fn)(void *ctx, byte *data, usize sz) = nullptr;
   void (*destroy)(void *ctx) = nullptr;
-  alignas(16) byte ctx[64] = {};      // up to 64 bytes of closure
+  void (*relocate)(void *dst, void *src) = nullptr;      // move-construct closure at dst from src, then destroy src
+  alignas(16) byte ctx[64] = {};                         // up to 64 bytes of closure
 
   bool
   valid() const noexcept
@@ -71,7 +73,22 @@ struct __intercept_holder {
     if ( destroy ) destroy(ctx);
     fn = nullptr;
     destroy = nullptr;
+    relocate = nullptr;
     micron::zero(ctx);
+  }
+
+  void
+  move_from(__intercept_holder &o) noexcept
+  {
+    reset();      // destroy our own closure first
+    if ( o.relocate ) o.relocate(ctx, o.ctx);
+    fn = o.fn;
+    destroy = o.destroy;
+    relocate = o.relocate;
+    o.fn = nullptr;
+    o.destroy = nullptr;
+    o.relocate = nullptr;
+    micron::zero(o.ctx);
   }
 };
 
@@ -111,24 +128,20 @@ public:
   stream(const stream &) = delete;
   stream &operator=(const stream &) = delete;
 
-  stream(stream &&o) noexcept : __size(o.__size), __buffer(micron::move(o.__buffer)), __hook(o.__hook)
+  stream(stream &&o) noexcept : __size(o.__size), __buffer(micron::move(o.__buffer)), __hook{}
   {
+    __hook.move_from(o.__hook);
     o.__size = 0;
-    o.__hook.fn = nullptr;
-    o.__hook.destroy = nullptr;
   }
 
   stream &
   operator=(stream &&o) noexcept
   {
     if ( this == &o ) return *this;
-    __hook.reset();
     __size = o.__size;
     __buffer = micron::move(o.__buffer);
-    __hook = o.__hook;
+    __hook.move_from(o.__hook);
     o.__size = 0;
-    o.__hook.fn = nullptr;
-    o.__hook.destroy = nullptr;
     return *this;
   }
 
@@ -141,6 +154,11 @@ public:
     new (static_cast<void *>(__hook.ctx)) Fn(micron::move(fn));
     __hook.fn = [](void *ctx, byte *data, usize sz) { (*reinterpret_cast<Fn *>(ctx))(data, sz); };
     __hook.destroy = [](void *ctx) { reinterpret_cast<Fn *>(ctx)->~Fn(); };
+    __hook.relocate = [](void *dst, void *src) {
+      Fn *s = reinterpret_cast<Fn *>(src);
+      ::new (dst) Fn(micron::move(*s));
+      s->~Fn();
+    };
   }
 
   void
@@ -167,7 +185,7 @@ public:
   {
 
     micron::buffer tmp(__sz);
-    usize out_len = fn(tmp.begin(), src, src_len);
+    usize out_len = fn(tmp.begin(), tmp.size(), src, src_len);
     usize appended = __raw_append(tmp.begin(), out_len);
     if ( appended ) __intercept();
     return appended;
@@ -179,7 +197,7 @@ public:
   {
 
     if ( scratch.size() < src_len ) exc<except::io_error>("micron::stream::encode() scratch buffer too small.");
-    usize out_len = fn(scratch.begin(), src, src_len);
+    usize out_len = fn(scratch.begin(), scratch.size(), src, src_len);
     usize appended = __raw_append(scratch.begin(), out_len);
     if ( appended ) __intercept();
     return appended;
@@ -204,7 +222,7 @@ public:
   encode_into(Fn &&fn, byte *dst, usize dst_cap) const
   {
     if ( __size == 0 ) return 0;
-    return fn(dst, __buffer->begin(), static_cast<usize>(__size));
+    return fn(dst, dst_cap, __buffer->begin(), static_cast<usize>(__size));
   }
 
   template<encode_fn Fn>
@@ -220,7 +238,7 @@ public:
   {
     if ( __size == 0 ) return;
     micron::buffer tmp(static_cast<usize>(__size));
-    usize out_len = fn(tmp.begin(), __buffer->begin(), static_cast<usize>(__size));
+    usize out_len = fn(tmp.begin(), tmp.size(), __buffer->begin(), static_cast<usize>(__size));
     usize copy = out_len < static_cast<usize>(__sz) ? out_len : static_cast<usize>(__sz);
     micron::memcpy(__buffer->begin(), tmp.begin(), copy);
     __size = static_cast<max_t>(copy);
@@ -655,6 +673,11 @@ public:
     new (static_cast<void *>(__hook.ctx)) Fn(micron::move(fn));
     __hook.fn = [](void *ctx, byte *data, usize sz) { (*reinterpret_cast<Fn *>(ctx))(data, sz); };
     __hook.destroy = [](void *ctx) { reinterpret_cast<Fn *>(ctx)->~Fn(); };
+    __hook.relocate = [](void *dst, void *src) {
+      Fn *s = reinterpret_cast<Fn *>(src);
+      ::new (dst) Fn(micron::move(*s));
+      s->~Fn();
+    };
   }
 
   void
@@ -680,7 +703,7 @@ public:
   encode_into(Fn &&fn, byte *dst, usize dst_cap) const
   {
     if ( __size == 0 ) return 0;
-    return fn(dst, __buffer->begin(), static_cast<usize>(__size));
+    return fn(dst, dst_cap, __buffer->begin(), static_cast<usize>(__size));
   }
 
   template<encode_fn Fn>

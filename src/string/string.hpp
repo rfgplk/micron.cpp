@@ -235,8 +235,14 @@ public:
 
   template<usize M, typename F> constexpr hstring(const F (&str)[M]) : __mem(__alloc_size(M))
   {
-    micron::bytecpy(&(__mem::memory)[0], &str[0], M * sizeof(F));
-    __mem::length = M - 1;
+    // WARNING: treat the array as a C-string: copy up to the first F{0} (capped at M-1), NOT a
+    // blind M-1; we ran into an issue where a blind M-element copy over-reads when the array is an oversized
+    // BUFFER rather than a tight string literal
+    usize end = 0;
+    while ( end < M - 1 && !(str[end] == F{ 0 }) ) ++end;
+    micron::bytecpy(&(__mem::memory)[0], &str[0], end * sizeof(F));
+    __mem::memory[end] = T{ 0 };
+    __mem::length = end;
   };
 
   constexpr hstring(const hstring &o) : __mem(__alloc_size(o.length + 1))

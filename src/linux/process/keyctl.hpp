@@ -129,6 +129,7 @@ public:
     return posix::keyctl_set_timeout_key(__id, seconds);
   }
 
+  // NOTE: read/describe/get_security return the kernel's TRUE size, which may EXCEED buflen
   i32
   read(void *buf, usize buflen) const noexcept
   {

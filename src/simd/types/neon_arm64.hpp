@@ -257,14 +257,16 @@ public:
   v128(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15)
     requires micron::is_same_v<T, i128>
   {
-    const int8_t arr[16] = { _e15, _e14, _e13, _e12, _e11, _e10, _e9, _e8, _e7, _e6, _e5, _e4, _e3, _e2, _e1, _e0 };
+    // arg0 -> lane0 (natural order, matching the i32/i64/f32/f64 ctors + x86)
+    const int8_t arr[16] = { _e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15 };
     value = vreinterpretq_s32_s8(vld1q_s8(arr));
   }
 
   v128(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7)
     requires micron::is_same_v<T, i128>
   {
-    const int16_t arr[8] = { _e7, _e6, _e5, _e4, _e3, _e2, _e1, _e0 };
+    // arg0 -> lane0 (natural order, matching the i32/i64/f32/f64 ctors + x86)
+    const int16_t arr[8] = { _e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7 };
     value = vreinterpretq_s32_s16(vld1q_s16(arr));
   }
 
@@ -316,6 +318,10 @@ public:
   operator=(v128 &&o)
   {
     value = o.value;
+    // zero the moved-from source, matching the move ctor
+    if constexpr ( micron::same_as<T, f128> ) o.value = vdupq_n_f32(0.0f);
+    if constexpr ( micron::same_as<T, d128> ) o.value = vdupq_n_f64(0.0);
+    if constexpr ( micron::same_as<T, i128> ) o.value = vdupq_n_s32(0);
     return *this;
   }
 
@@ -1077,13 +1083,23 @@ public:
   {
     v128 _r;
     if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() )
-        _r.value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(-i))));
-      if constexpr ( __is_16_wide<F>() )
-        _r.value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(-i))));
-      if constexpr ( __is_32_wide<F>() ) _r.value = vshlq_s32(value, vdupq_n_s32(-i));
-      if constexpr ( __is_64_wide<F>() )
-        _r.value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(-i))));
+      if constexpr ( micron::is_signed_v<F> ) {
+        if constexpr ( __is_8_wide<F>() )
+          _r.value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(-i))));
+        if constexpr ( __is_16_wide<F>() )
+          _r.value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(-i))));
+        if constexpr ( __is_32_wide<F>() ) _r.value = vshlq_s32(value, vdupq_n_s32(-i));
+        if constexpr ( __is_64_wide<F>() )
+          _r.value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(-i))));
+      } else {
+        if constexpr ( __is_8_wide<F>() )
+          _r.value = vreinterpretq_s32_u8(vshlq_u8(vreinterpretq_u8_s32(value), vdupq_n_s8(static_cast<int8_t>(-i))));
+        if constexpr ( __is_16_wide<F>() )
+          _r.value = vreinterpretq_s32_u16(vshlq_u16(vreinterpretq_u16_s32(value), vdupq_n_s16(static_cast<int16_t>(-i))));
+        if constexpr ( __is_32_wide<F>() ) _r.value = vreinterpretq_s32_u32(vshlq_u32(vreinterpretq_u32_s32(value), vdupq_n_s32(-i)));
+        if constexpr ( __is_64_wide<F>() )
+          _r.value = vreinterpretq_s32_u64(vshlq_u64(vreinterpretq_u64_s32(value), vdupq_n_s64(static_cast<int64_t>(-i))));
+      }
     }
     return _r;
   }
@@ -1092,13 +1108,23 @@ public:
   operator>>=(int i)
   {
     if constexpr ( micron::is_same_v<T, i128> ) {
-      if constexpr ( __is_8_wide<F>() )
-        value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(-i))));
-      if constexpr ( __is_16_wide<F>() )
-        value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(-i))));
-      if constexpr ( __is_32_wide<F>() ) value = vshlq_s32(value, vdupq_n_s32(-i));
-      if constexpr ( __is_64_wide<F>() )
-        value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(-i))));
+      if constexpr ( micron::is_signed_v<F> ) {
+        if constexpr ( __is_8_wide<F>() )
+          value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast<int8_t>(-i))));
+        if constexpr ( __is_16_wide<F>() )
+          value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast<int16_t>(-i))));
+        if constexpr ( __is_32_wide<F>() ) value = vshlq_s32(value, vdupq_n_s32(-i));
+        if constexpr ( __is_64_wide<F>() )
+          value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast<int64_t>(-i))));
+      } else {
+        if constexpr ( __is_8_wide<F>() )
+          value = vreinterpretq_s32_u8(vshlq_u8(vreinterpretq_u8_s32(value), vdupq_n_s8(static_cast<int8_t>(-i))));
+        if constexpr ( __is_16_wide<F>() )
+          value = vreinterpretq_s32_u16(vshlq_u16(vreinterpretq_u16_s32(value), vdupq_n_s16(static_cast<int16_t>(-i))));
+        if constexpr ( __is_32_wide<F>() ) value = vreinterpretq_s32_u32(vshlq_u32(vreinterpretq_u32_s32(value), vdupq_n_s32(-i)));
+        if constexpr ( __is_64_wide<F>() )
+          value = vreinterpretq_s32_u64(vshlq_u64(vreinterpretq_u64_s32(value), vdupq_n_s64(static_cast<int64_t>(-i))));
+      }
     }
     return *this;
   }

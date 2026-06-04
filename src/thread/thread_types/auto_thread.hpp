@@ -53,6 +53,7 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
   __impl_makethread(F f, Args &&...args)
   {
     thread_handler();
+    parent_pid = micron::posix::getpid();
     // WARNING: alive must be set to true before invoking the kernel, else we risk a race (rare but happens)
     payload.alive.store(true, micron::memory_order_seq_cst);
     pid = __as_thread_attached<Stack_Size>(&payload, micron::real_addr(fstack), f, micron::forward<Args>(args)...);
@@ -62,7 +63,8 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
   __release(void)
   {
     micron::czero<Stack_Size>(fstack);
-    parent_pid = 0;
+    // NOTE: do NOT zero parent_pid here; tt is the tgid used to signal the thread and must stay valid for
+    // the object's whole life
     pid = 0;
     payload.alive.store(false, micron::memory_order_seq_cst);
     if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::heap ) {
@@ -97,7 +99,8 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
 public:
   ~auto_thread()
   {
-    if ( parent_pid == 0 and pid == 0 ) return;
+    // join iff a thread is actually live; guard on pid AND alive
+    if ( pid == 0 && !payload.alive.get(micron::memory_order_acquire) ) return;
     __join();
   }
 
@@ -251,6 +254,9 @@ public:
     if ( alive() ) {
       int r = pthread::cancel_thread(pid);
       signal(signal::usr2);
+      pthread::__join_thread(pid);
+      payload.alive.store(false, micron::memory_order_seq_cst);
+      __safe_release();
       return r;
     }
     return -1;
@@ -284,10 +290,12 @@ public:
   result(void)
   {
     wait_for();
-    byte *p = payload.ret_val.get(memory_order_acquire);
-    u64 raw = reinterpret_cast<u64>(p);
-    R val;
-    __builtin_memcpy(&val, &raw, sizeof(R));
+    R val{};
+    if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::literal ) {
+      byte *p = payload.ret_val.get(memory_order_acquire);
+      u64 raw = reinterpret_cast<u64>(p);
+      __builtin_memcpy(&val, &raw, sizeof(R));
+    }
     return val;
   }
 

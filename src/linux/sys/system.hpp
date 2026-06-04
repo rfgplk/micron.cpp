@@ -30,16 +30,33 @@ setpgid(posix::pid_t pid, posix::pid_t gpid)
   return static_cast<posix::pid_t>(micron::syscall(SYS_setpgid, pid, gpid));
 }
 
+// NOTE: on i386/arm32 the bare setuid/getuid/setgid/getgid/geteuid/getegid syscalls are the legacy 16-bit-UID forms
+#if defined(__micron_arch_x86) || defined(__micron_arch_arm32)
+inline constexpr auto __sys_setuid = SYS_setuid32;
+inline constexpr auto __sys_setgid = SYS_setgid32;
+inline constexpr auto __sys_getuid = SYS_getuid32;
+inline constexpr auto __sys_getgid = SYS_getgid32;
+inline constexpr auto __sys_geteuid = SYS_geteuid32;
+inline constexpr auto __sys_getegid = SYS_getegid32;
+#else
+inline constexpr auto __sys_setuid = SYS_setuid;
+inline constexpr auto __sys_setgid = SYS_setgid;
+inline constexpr auto __sys_getuid = SYS_getuid;
+inline constexpr auto __sys_getgid = SYS_getgid;
+inline constexpr auto __sys_geteuid = SYS_geteuid;
+inline constexpr auto __sys_getegid = SYS_getegid;
+#endif
+
 i32
 setuid(posix::uid_t uid)
 {
-  return static_cast<i32>(micron::syscall(SYS_setuid, uid));
+  return static_cast<i32>(micron::syscall(__sys_setuid, uid));
 }
 
 i32
 setgid(posix::gid_t gid)
 {
-  return static_cast<i32>(micron::syscall(SYS_setgid, gid));
+  return static_cast<i32>(micron::syscall(__sys_setgid, gid));
 }
 
 posix::pid_t
@@ -69,19 +86,25 @@ getppid(void)
 gid_t
 getgid(void)
 {
-  return static_cast<gid_t>(micron::syscall(SYS_getgid));
+  return static_cast<gid_t>(micron::syscall(__sys_getgid));
+}
+
+gid_t
+getegid(void)
+{
+  return static_cast<gid_t>(micron::syscall(__sys_getegid));
 }
 
 uid_t
 getuid(void)
 {
-  return static_cast<uid_t>(micron::syscall(SYS_getuid));
+  return static_cast<uid_t>(micron::syscall(__sys_getuid));
 }
 
 uid_t
 geteuid(void)
 {
-  return static_cast<uid_t>(micron::syscall(SYS_geteuid));
+  return static_cast<uid_t>(micron::syscall(__sys_geteuid));
 }
 
 auto

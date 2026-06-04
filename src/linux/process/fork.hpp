@@ -6,7 +6,8 @@
 
 #include "../../memory/stack_constants.hpp"
 
-#include "callbacks.hpp"
+#include "../../thread/callbacks.hpp"
+#include "wait.hpp"
 
 namespace micron
 {
@@ -24,16 +25,28 @@ __base_fork()
   return pid;
 }
 
-// fork and spin off child with dedicated memory stack, run function pointed to
+// fork and run a function in the child
+// NOTE: flags=0 fork is copy-on-write: the kernel does NOT switch the stack pointer,
+// so the child resumes in *this* frame on a COW copy of the parent stack
 template<auto Fn = __default_callback, int Stack = default_stack_size, typename... Args>
 int
 __base_fork(Args &&...args)
 {
-  addr_t *fstack = micron::addrmap(Stack);
-  if ( micron::mmap_failed(fstack) ) exc<except::system_error>("micron process micron::mmap failed to allocate stack");
-  int pid = micron::posix::clone<Stack, Fn>(fstack, __fork_flags_std, micron::forward<Args>(args)...);
+  int pid = micron::posix::__fork_clone(posix::sig_chld);
   if ( pid < 0 ) exc<except::system_error>("micron process failed to fork()");
-  return pid;
+  if ( pid == 0 ) {
+    // child: COW address space, same stack pointer -> forwarded args are live here
+    using ret_t = decltype(Fn(micron::forward<Args>(args)...));
+    if constexpr ( micron::is_same_v<ret_t, int> ) {
+      int rc = Fn(micron::forward<Args>(args)...);
+      micron::syscall(SYS_exit_group, rc);
+    } else {
+      Fn(micron::forward<Args>(args)...);
+      micron::syscall(SYS_exit_group, 0);
+    }
+    __builtin_unreachable();
+  }
+  return pid;      // parent
 }
 
 int

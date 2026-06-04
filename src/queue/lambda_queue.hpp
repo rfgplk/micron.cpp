@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../atomic/atomic.hpp"
+#include "../bits/__pause.hpp"
 #include "../memory/actions.hpp"
 #include "../new.hpp"
 #include "../types.hpp"
@@ -31,8 +32,10 @@ template<usize N> struct lambda_queue {
     }
   };
 
-  u8 slots[N * 64]{};
-  node_base_t *__q[N]{};
+  static constexpr usize slot_bytes = 64;
+
+  u8 slots[N * slot_bytes]{};
+  micron::atomic_ptr<node_base_t *> __q[N]{};
   micron::atomic_token<usize> head{ 0 };
   micron::atomic_token<usize> tail{ 0 };
 
@@ -40,20 +43,24 @@ template<usize N> struct lambda_queue {
   inline void
   push(Fn &&fn)
   {
-    usize idx = tail.fetch_add(1, memory_order_acquire) % N;
-    // Wait if queue is full
-    while ( __q[idx] != nullptr ) {
-      // Spin or yield - queue is full
+    static_assert(sizeof(node_t<micron::decay_t<Fn>>) <= slot_bytes, "lambda_queue: captured callable too large for the 64-byte slot");
+    // claim a unique ring slot (acq_rel: orders the slot publish below w.r.t. other producers)
+    usize idx = tail.fetch_add(1, memory_order_acq_rel) % N;
+    while ( __q[idx].get(memory_order_acquire) != nullptr ) {
+      ::__cpu_pause();
     }
-    __q[idx] = new (&slots[idx * 64]) node_t<Fn>(micron::forward<Fn>(fn));
+    node_base_t *node = new (&slots[idx * slot_bytes]) node_t<micron::decay_t<Fn>>(micron::forward<Fn>(fn));
+    __q[idx].store(node, memory_order_release);
   }
 
   void
   execute()
   {
-    auto __task = pop();
-    if ( __task != nullptr ) [[unlikely]]
-      __task->call();
+    node_base_t *task = pop();
+    if ( task != nullptr ) {
+      task->call();
+      task->~node_base_t();      // placement-new'd into slots[]: destruct in place, do NOT delete
+    }
   }
 
   inline node_base_t *
@@ -62,25 +69,25 @@ template<usize N> struct lambda_queue {
     if ( head.get(memory_order_acquire) == tail.get(memory_order_acquire) ) return nullptr;
 
     usize idx = head.fetch_add(1, memory_order_acquire) % N;
-    node_base_t *task = __q[idx];
-    __q[idx] = nullptr;
+    // a producer increments tail before publishing __q[idx]; wait (acquire) for the publish
+    node_base_t *task;
+    while ( (task = __q[idx].get(memory_order_acquire)) == nullptr ) {
+      ::__cpu_pause();
+    }
+    __q[idx].store(nullptr, memory_order_release);      // free the slot for reuse
     return task;
   }
 
   inline void
   clear()
   {
-    usize h = head.get(memory_order_acquire);
-    usize t = tail.get(memory_order_acquire);
-
-    for ( usize i = h; i < t; i++ ) {
-      usize idx = i % N;
-      if ( __q[idx] != nullptr ) {
-        delete __q[idx];
-        __q[idx] = nullptr;
+    for ( usize i = 0; i < N; ++i ) {
+      node_base_t *n = __q[i].get(memory_order_acquire);
+      if ( n != nullptr ) {
+        n->~node_base_t();      // placement-destruct; storage is the slots[] buffer (never `delete`)
+        __q[i].store(nullptr, memory_order_release);
       }
     }
-
     head.store(0, memory_order_release);
     tail.store(0, memory_order_release);
   }

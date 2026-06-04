@@ -62,8 +62,8 @@ public:
   flag() noexcept
   {
     i32 o = counter.add_fetch(1, memory_order::release);
-    if ( o < 0 ) {
-      release_futex(counter.ptr(), 1);
+    if ( o <= 0 ) {
+      wake_futex(counter.ptr(), 1);
     }
   }
 

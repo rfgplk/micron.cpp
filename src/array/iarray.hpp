@@ -53,10 +53,24 @@ public:
 
   ~iarray() { __impl_container::destroy<N, T>(micron::addr(stack[0])); }
 
-  // NOTE: important
-  // a void initialized array is strictly meant to be in a zeroed out state, regardless of contents
-  // accessing is UB!
-  iarray(void) { __impl_container::zero<N, T>(micron::addr(stack[0])); }
+  iarray(void)
+  {
+    if constexpr ( micron::is_trivially_constructible_v<T> ) {
+      __impl_container::zero<N, T>(micron::addr(stack[0]));
+    } else {
+      size_type i = 0;
+#ifndef __micron_freestanding
+      try {
+        for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+      } catch ( ... ) {
+        for ( size_type j = 0; j < i; ++j ) stack[j].~T();
+        throw;
+      }
+#else
+      for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+#endif
+    }
+  }
 
   template<typename Fn>
     requires(micron::is_function_v<Fn> or micron::is_invocable_v<Fn>)
@@ -80,8 +94,21 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::iarray iarray(init_list): init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
-    if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
+#ifndef __micron_freestanding
+    try {
+      for ( auto &&value : lst ) {
+        new (micron::addr(stack[i])) T(value);
+        ++i;      // advance only after successful construction
+      }
+      for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+    } catch ( ... ) {
+      for ( size_type j = 0; j < i; ++j ) stack[j].~T();
+      throw;
+    }
+#else
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(value);
+    for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+#endif
   }
 
   template<is_container A>
@@ -90,7 +117,7 @@ public:
   {
     if ( o.size() < N ) exc<except::runtime_error>("micron::iarray iarray(A&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
-      __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
+      __impl_container::move_init<N, T>(micron::addr(stack[0]), o.begin());
     else
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
@@ -104,7 +131,7 @@ public:
 
   iarray(const iarray &o) { __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
-  iarray(iarray &&o) { __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
+  iarray(iarray &&o) { __impl_container::move_init<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // iterators
@@ -166,7 +193,7 @@ public:
   const T &
   at(const size_type i) const
   {
-    if ( i >= N ) exc<except::runtime_error>("micron::iarray at() out of range.");
+    if ( i >= N ) exc<except::library_error>("micron::iarray at() out of range.");
     return stack[i];
   }
 
@@ -188,6 +215,18 @@ public:
   operator[](const size_type i) const noexcept
   {
     return stack[i];
+  }
+
+  inline const T &
+  front() const noexcept
+  {
+    return stack[0];
+  }
+
+  inline const T &
+  back() const noexcept
+  {
+    return stack[N - 1];
   }
 
   template<class C>
@@ -223,6 +262,7 @@ public:
   iarray &
   operator=(const iarray &o)
   {
+    if ( this == micron::addr(o) ) return *this;      // operator& is overloaded (returns byte*)
     __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -230,6 +270,7 @@ public:
   iarray &
   operator=(iarray &&o)
   {
+    if ( this == micron::addr(o) ) return *this;      // operator& is overloaded (returns byte*)
     __impl_container::move_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -251,7 +292,7 @@ public:
     return *this;
   }
 
-  template<typename F, size_type M>
+  template<size_type M>
   iarray &
   operator=(T (&o)[M])
     requires(M <= N)
@@ -260,19 +301,6 @@ public:
     return *this;
   }
 
-  /*
-  template <is_constexpr_container A>
-    requires(!micron::is_arithmetic_v<A>)
-  iarray &
-  operator=(const A &o)
-  {
-    if constexpr ( N <= A::length )
-      __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
-    else
-      __impl_container::copy_assign<A::length, T>(micron::addr(stack[0]), micron::addr(o[0]));
-    return *this;
-  }
-*/
   template<is_container A>
     requires(!micron::is_same_v<A, iarray> && !micron::is_arithmetic_v<A>)
   iarray &
@@ -568,7 +596,12 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) {
+      if constexpr ( micron::is_floating_point_v<T> )
+        dst[i] = static_cast<T>(math::sqrt(dst[i]));      // no narrowing through float
+      else
+        dst[i] = static_cast<T>(math::sqrt(static_cast<double>(dst[i])));
+    }
     return arr;
   }
 

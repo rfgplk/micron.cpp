@@ -26,14 +26,14 @@ enum class schedulers : u32 {
   normal = posix::sched_other,
   idle = posix::sched_idle,
   batch = posix::sched_batch,
-  none
+  none = 0xFFFFFFFFu      // explicit out-of-range sentinel (was implicitly 4 == SCHED_ISO, a real policy)
 };
 
 schedulers
 get_scheduler(void)
 {
-  auto r = posix::get_scheduler(posix::getpid());      //::sched_getscheduler(posix::getpid());
-  if ( r == -1 ) exc<except::system_error>("micron::scheduling unable to get scheduler");
+  auto r = posix::get_scheduler(posix::getpid());
+  if ( r < 0 ) exc<except::system_error>("micron::scheduling unable to get scheduler");
   return static_cast<schedulers>(r);
 }
 
@@ -44,28 +44,32 @@ class scheduler_t
   {
     if ( is_scheduled() ) {
       posix::sched_param prio = { .sched_priority = 0 };      // must be zero
-      if ( posix::set_scheduler(pid, (int)sched, prio) == -1 ) exc<except::system_error>("micron::scheduler_t set() failed");
+      if ( posix::set_scheduler(pid, (int)sched, prio) < 0 ) exc<except::system_error>("micron::scheduler_t set() failed");
     } else {
       posix::sched_param prio = { .sched_priority = 99 };
-      if ( posix::set_scheduler(pid, (int)sched, prio) == -1 ) exc<except::system_error>("micron::scheduler_t set() failed");
+      if ( posix::set_scheduler(pid, (int)sched, prio) < 0 ) exc<except::system_error>("micron::scheduler_t set() failed");
     }
   }
 
-  schedulers sched;      // for convenience
-  sched_attr properties;
+  schedulers sched;             // for convenience
+  sched_attr properties{};      // zero-init: a swallowed/partial get must never surface indeterminate bytes
 
 public:
   ~scheduler_t() = default;
 
   scheduler_t(pid_t pid)
   {
-    if ( posix::get_attrs(pid, properties, 0) == -1 ) exc<except::system_error>("micron::scheduler_t unable to get scheduling attributes");
+    if ( posix::get_attrs(pid, properties, 0) < 0 ) exc<except::system_error>("micron::scheduler_t unable to get scheduling attributes");
     sched = static_cast<schedulers>(properties.sched_policy);
   }
 
   scheduler_t(const scheduler_t &o) : sched(o.sched), properties(o.properties) { }
 
-  scheduler_t(scheduler_t &&o) : sched(o.sched), properties(micron::move(o.properties)) { o.sched = schedulers::none; }
+  scheduler_t(scheduler_t &&o) : sched(o.sched), properties(micron::move(o.properties))
+  {
+    o.sched = schedulers::none;
+    o.properties = sched_attr{};
+  }
 
   scheduler_t &
   operator=(const scheduler_t &o)
@@ -81,6 +85,7 @@ public:
     sched = o.sched;
     properties = micron::move(o.properties);
     o.sched = schedulers::none;
+    o.properties = sched_attr{};
     return *this;
   }
 
@@ -103,6 +108,7 @@ public:
   void
   set_scheduler(const schedulers s)
   {
+    sched = s;      // keep the cached policy in sync so is_*()/get_priority()/enable_deadline() reflect it
     properties.size = sizeof(struct sched_attr);
     properties.sched_policy = static_cast<u32>(s);
     properties.sched_flag = 0x01;
@@ -115,10 +121,9 @@ public:
     }
     if ( is_realtime(s) ) properties.sched_priority = 99;
     if ( is_deadline(s) ) {
-      properties.sched_runtime = 0xDEAD;
-      properties.sched_deadline = 0xDEAD;
-      properties.sched_period = 0xDEAD;
-      // sched_runtime <= sched_deadline <= sched_period
+      properties.sched_runtime = 0;
+      properties.sched_deadline = 0;
+      properties.sched_period = 0;
     }
   }
 
@@ -126,16 +131,19 @@ public:
   enable_deadline(u64 time)
   {
     if ( !is_deadline() or time < 1024 ) return;
-    properties.sched_runtime = static_cast<u64>((double)time * 0.5);
-    properties.sched_deadline = static_cast<u64>((double)time * 0.75);
+    // integer arithmetic preserves runtime <= deadline <= period exactly (double math drifts under -Ofast/-ffast-math)
+    properties.sched_runtime = time / 2;
+    properties.sched_deadline = time / 4 * 3;
     properties.sched_period = time;
   }
 
   void
   load_scheduler(const pid_t pid)
   {
+    if ( sched == schedulers::none )
+      exc<except::system_error>("micron::scheduler_t::load_scheduler(): no policy set (moved-from / uninitialized)");
     __set(pid);
-    if ( posix::set_attrs(pid, properties, 0x00) == -1 ) exc<except::system_error>("micron::scheduling unable to set scheduler");
+    if ( posix::set_attrs(pid, properties, 0x00) < 0 ) exc<except::system_error>("micron::scheduling unable to set scheduler");
   }
 
   static bool

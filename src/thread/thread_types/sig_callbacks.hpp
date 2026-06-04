@@ -11,6 +11,8 @@
 #include "../../linux/process/signals.hpp"
 #include "../../linux/sys/__threads.hpp"
 
+#include "../../atomic/atomic.hpp"
+#include "../../bits/__thread_exit_hook.hpp"
 #include "../../control.hpp"
 
 namespace micron
@@ -32,7 +34,8 @@ __thread_sigthrottle(int)
 inline void
 __thread_cancel(int)
 {
-  pthread::cancel();
+  // culled
+  // calling pthread_testcancel() from a signal handler (the old behaviour) is NOT async-signal-safe
 }
 
 inline void
@@ -45,6 +48,10 @@ __thread_yield(int)
 inline __attribute__((noreturn)) void
 __thread_stop(int)
 {
+  // SIGTERM forcibly stops this thread. The full exit epilogue (exit hook / pthread cleanup) is NOT
+  // async-signal-safe and cannot run here, but clearing alive IS
+  if ( micron::__micron_thread_alive_word )
+    static_cast<atomic_token<bool> *>(micron::__micron_thread_alive_word)->store(false, memory_order_seq_cst);
   micron::syscall(SYS_exit, 0);
   __builtin_unreachable();
 }
@@ -52,32 +59,13 @@ __thread_stop(int)
 inline void
 __thread_handler()
 {
+  static atomic_token<bool> __installed{ false };
+  bool expected = false;
+  if ( !__installed.compare_exchange_strong(expected, true, memory_order_acq_rel, memory_order_acquire) ) return;
   auto sa = micron::create_handler(__thread_sigthrottle, signal::user_signal_1);
   micron::add_action(sa, __thread_yield, signal::alarm);
   micron::create_handler(__thread_cancel, signal::user_signal_2);
   micron::create_handler(__thread_stop, signal::terminate);
-  /*
-    posix::sigaction_t sa = {};
-    sa.sigaction_handler.sa_handler = __thread_sigthrottle;
-    micron::posix::sigemptyset(sa.sa_mask);
-    sa.sa_flags = sa_restart;
-    micron::posix::sigaction(posix::sig_usr1, sa, nullptr);
-    // YIELD
-    sa.posix::sigaction_handler.sa_handler = __thread_yield;
-    micron::posix::sigaction(posix::sig_alrm, sa, nullptr);
-    // YIELD
-
-    // CANCEL
-    sa.sigaction_handler.sa_handler = __thread_cancel;
-    micron::posix::sigemptyset(sa.sa_mask);
-    sa.sa_flags = 0;
-    micron::posix::sigaction(posix::sig_usr2, sa, nullptr);
-
-    sa.sigaction_handler.sa_handler = __thread_stop;
-    micron::posix::sigemptyset(sa.sa_mask);
-    sa.sa_flags = 0;
-    micron::posix::sigaction(posix::sig_term, sa, nullptr);
-    *///
 }
 
 };      // namespace micron

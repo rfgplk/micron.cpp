@@ -43,7 +43,7 @@ template<typename T>
 void
 until(const T &cond, const micron::atomic<T> &var)
 {
-  while ( var.get(micron::memory_order_acquire) != cond ) {
+  while ( var.__get(micron::memory_order_acquire) != cond ) {
     __cpu_pause();
   }
 }

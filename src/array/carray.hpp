@@ -687,8 +687,21 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::carray init_list too large.");
     size_type i = 0;
-    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(micron::move(value));
-    if ( lst.size() < N ) __impl_container::construct(micron::addr(stack[lst.size()]), T{}, N - lst.size());
+#ifndef __micron_freestanding
+    try {
+      for ( auto &&value : lst ) {
+        new (micron::addr(stack[i])) T(value);
+        ++i;      // advance only after successful construction
+      }
+      for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+    } catch ( ... ) {
+      for ( size_type j = 0; j < i; ++j ) stack[j].~T();      // unwind already-built prefix
+      throw;
+    }
+#else
+    for ( auto &&value : lst ) new (micron::addr(stack[i++])) T(value);
+    for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
+#endif
   }
 
   template<is_container A>
@@ -697,7 +710,7 @@ public:
   {
     if ( o.size() < N ) exc<except::runtime_error>("micron::carray carray(A&&) invalid size");
     if constexpr ( micron::is_rvalue_reference_v<A &&> )
-      __impl_container::move<N, T>(micron::addr(stack[0]), o.begin());
+      __impl_container::move_init<N, T>(micron::addr(stack[0]), o.begin());
     else
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
@@ -711,7 +724,7 @@ public:
 
   carray(const carray &o) { __impl_container::copy<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
-  carray(carray &&o) { __impl_container::move<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
+  carray(carray &&o) { __impl_container::move_init<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0])); }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // iterators
@@ -802,15 +815,41 @@ public:
   }
 
   inline T &
-  at(const size_type i) noexcept
+  at(const size_type i)
   {
+    if ( i >= N ) exc<except::library_error>("micron::carray at() out of range.");
     return stack[i];
   }
 
   inline const T &
-  at(const size_type i) const noexcept
+  at(const size_type i) const
   {
+    if ( i >= N ) exc<except::library_error>("micron::carray at() out of range.");
     return stack[i];
+  }
+
+  inline T &
+  front() noexcept
+  {
+    return stack[0];
+  }
+
+  inline const T &
+  front() const noexcept
+  {
+    return stack[0];
+  }
+
+  inline T &
+  back() noexcept
+  {
+    return stack[N - 1];
+  }
+
+  inline const T &
+  back() const noexcept
+  {
+    return stack[N - 1];
   }
 
   inline iterator
@@ -886,21 +925,31 @@ public:
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // assignment
 
-  template<typename F, size_type M>
+  template<size_type M>
   carray &
   operator=(T (&o)[M])
-    requires micron::is_array_v<F> && (M <= N)
+    requires(M <= N)
   {
     __impl_container::copy_assign<M, T>(micron::addr(stack[0]), micron::addr(o[0]));
+    return *this;
+  }
+
+  // byte/element fast-fill iff T itself is fundamental
+  template<typename F>
+  carray &
+  operator=(const F &o)
+    requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<T>)
+  {
+    micron::ctypeset<N>(micron::addr(stack[0]), o);
     return *this;
   }
 
   template<typename F>
   carray &
   operator=(const F &o)
-    requires micron::is_fundamental_v<F>
+    requires(micron::is_fundamental_v<F> && !micron::is_fundamental_v<T>)
   {
-    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    for ( size_type i = 0; i < N; ++i ) stack[i] = o;
     return *this;
   }
 
@@ -920,6 +969,7 @@ public:
   carray &
   operator=(const A &o)
   {
+    if ( o.size() == 0 ) return *this;
     if ( N <= o.size() )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
     else
@@ -930,6 +980,7 @@ public:
   carray &
   operator=(const carray &o)
   {
+    if ( this == micron::addr(o) ) return *this;      // operator& is overloaded (returns byte*)
     __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -937,6 +988,7 @@ public:
   carray &
   operator=(carray &&o)
   {
+    if ( this == micron::addr(o) ) return *this;      // operator& is overloaded (returns byte*)
     __impl_container::move_assign<N, T>(micron::addr(stack[0]), micron::addr(o.stack[0]));
     return *this;
   }
@@ -1197,13 +1249,18 @@ public:
   sqrt(void)
   {
     T *__restrict dst = stack;
-    for ( size_type i = 0; i < N; i++ ) dst[i] = math::sqrt(static_cast<float>(dst[i]));
+    for ( size_type i = 0; i < N; i++ ) {
+      if constexpr ( micron::is_floating_point_v<T> )
+        dst[i] = static_cast<T>(math::sqrt(dst[i]));      // no narrowing through float
+      else
+        dst[i] = static_cast<T>(math::sqrt(static_cast<double>(dst[i])));
+    }
   }
 
   template<typename F>
   carray &
   fill(const F &o)
-    requires micron::is_fundamental_v<F>
+    requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<T>)
   {
     micron::ctypeset<N>(micron::addr(stack[0]), o);
     return *this;
@@ -1213,7 +1270,7 @@ public:
   carray &
   fill(const F &o)
   {
-    __impl_container::set<N, T>(micron::addr(stack[0]), o);
+    for ( size_type i = 0; i < N; ++i ) stack[i] = o;
     return *this;
   }
 

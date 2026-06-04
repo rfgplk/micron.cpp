@@ -6,7 +6,7 @@
 // this suite drives the in-bounds API against the ref_vec oracle
 // (tests/support/vector_rigor.hpp) and leans on Tracked balance + ASan +
 // instrumented allocators for memory correctness (there are no throw paths to
-// assert). clone() MOVES (it empties the source).
+// assert). clone() deep-copies (source unchanged), coherent with vector::clone.
 //
 // Element-type coverage: u8/u16/u32/u64, the 24-byte big, and a non-trivial
 // Tracked. Nested fvector<vector<u32>> exercises resource-owning elements.
@@ -64,6 +64,10 @@ from_keys(micron::fvector<E> &v, mtest::ref_vec<CAP> &r, const u64 *ks, usize n)
   }
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// property groups, templated on element type
+// ───────────────────────────────────────────────────────────────────────────
+
 template<typename E>
 static void
 run_props(void)
@@ -71,6 +75,7 @@ run_props(void)
   using V = micron::fvector<E>;
   static_assert(!micron::is_copy_constructible_v<V>, "fvector must be move-only");
 
+  // ── construction / fill / generator / init-list ─────────────────────────────
   test_case("fv ctor(n)/fill/generator vs oracle");
   {
     prng rng(0x4101u);
@@ -116,6 +121,7 @@ run_props(void)
     end_test_case();
   }
 
+  // ── push/emplace/move_back/pop_back + access ────────────────────────────────
   test_case("fv push/emplace/move_back/pop + access vs oracle");
   {
     prng rng(0x4102u);
@@ -129,7 +135,7 @@ run_props(void)
       {
         E e = mtest::elem<E>::make(mtest::gen_raw(rng, band::small));
         u64 k = mtest::elem<E>::key(e);
-        v.push_back(e);
+        v.push_back(e);      // push_back(const T&)
         r.push_back(k);
         ck(mtest::vec_eq<E>(v, r), "push_back-copy", it);
       }
@@ -166,6 +172,7 @@ run_props(void)
   }
   end_test_case();
 
+  // ── move ctor / move assign (no copy) + clone (deep copy) ───────────────────
   test_case("fv move-ctor/move-assign/clone vs oracle");
   {
     prng rng(0x4103u);
@@ -177,25 +184,26 @@ run_props(void)
       V va;
       mtest::ref_vec<CAP> ra;
       from_keys<E>(va, ra, a, na);
-
+      // move ctor empties donor
       V m(micron::move(va));
       ck(mtest::vec_eq<E>(m, ra), "move-ctor", it);
       ck(va.size() == 0u, "move-ctor-donor", it);
-
+      // move-assign into a populated target
       V t;
       mtest::ref_vec<CAP> rt;
       from_keys<E>(t, rt, b, nb);
       t = micron::move(m);
       ck(mtest::vec_eq<E>(t, ra), "move-assign", it);
       ck(m.size() == 0u, "move-assign-donor", it);
-
+      // clone deep-copies: source unchanged, copy independent (coherent with vector::clone)
       V cl = t.clone();
       ck(mtest::vec_eq<E>(cl, ra), "clone", it);
-      ck(t.size() == 0u, "clone-empties-src", it);
+      ck(mtest::vec_eq<E>(t, ra), "clone-src-unchanged", it);
     }
   }
   end_test_case();
 
+  // ── capacity: reserve / resize grow+shrink ──────────────────────────────────
   test_case("fv reserve/resize grow+shrink vs oracle");
   {
     prng rng(0x4104u);
@@ -222,6 +230,7 @@ run_props(void)
   }
   end_test_case();
 
+  // ── iteration + find (nullptr on miss) ──────────────────────────────────────
   test_case("fv iteration + find vs oracle");
   {
     prng rng(0x4105u);
@@ -252,6 +261,7 @@ run_props(void)
   }
   end_test_case();
 
+  // ── insert (index + iterator) ───────────────────────────────────────────────
   test_case("fv insert vs oracle");
   {
     prng rng(0x4106u);
@@ -259,7 +269,7 @@ run_props(void)
     for ( usize it = 0; it < ITERS; ++it ) {
       usize n;
       gen_keys(rng, ks, n, 150, band::small);
-
+      // insert(idx, val) — idx in [0,n] (fvector is unchecked; append allowed)
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -271,7 +281,7 @@ run_props(void)
         r.insert(idx, k);
         ck(mtest::vec_eq<E>(v, r), "insert-idx", it);
       }
-
+      // insert(idx, val, cnt)
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -283,7 +293,7 @@ run_props(void)
         r.insert(idx, mtest::elem<E>::key(e), cnt);
         ck(mtest::vec_eq<E>(v, r), "insert-idx-cnt", it);
       }
-
+      // insert(idx, T&&)
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -295,7 +305,7 @@ run_props(void)
         r.insert(idx, k);
         ck(mtest::vec_eq<E>(v, r), "insert-idx-move", it);
       }
-
+      // insert(iterator, val)
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -311,6 +321,7 @@ run_props(void)
   }
   end_test_case();
 
+  // ── erase (index / range / iterator) ───────────────────────────────────────
   test_case("fv erase variants vs oracle");
   {
     prng rng(0x4107u);
@@ -361,6 +372,7 @@ run_props(void)
   }
   end_test_case();
 
+  // ── remove / assign / append / weld / swap / fill ──────────────────────────
   test_case("fv remove/assign/append/weld/swap/fill vs oracle");
   {
     prng rng(0x4108u);
@@ -369,7 +381,7 @@ run_props(void)
       usize na, nb;
       gen_keys(rng, a, na, MAXLEN, band::small);
       gen_keys(rng, b, nb, MAXLEN, band::small);
-
+      // remove all occurrences
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -379,7 +391,7 @@ run_props(void)
         r.remove_val(mtest::elem<E>::key(mtest::elem<E>::make(raw)));
         ck(mtest::vec_eq<E>(v, r), "remove", it);
       }
-
+      // assign(cnt, val)
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -390,7 +402,7 @@ run_props(void)
         r.assign(cnt, mtest::elem<E>::key(mtest::elem<E>::make(k)));
         ck(mtest::vec_eq<E>(v, r), "assign", it);
       }
-
+      // append(const fvector&) copies (source intact)
       {
         V v;
         mtest::ref_vec<CAP> rv;
@@ -403,7 +415,7 @@ run_props(void)
         ck(mtest::vec_eq<E>(v, rv), "append", it);
         ck(mtest::vec_eq<E>(w, rw), "append-src-intact", it);
       }
-
+      // weld(fvector&&) moves (empties source)
       {
         V v;
         mtest::ref_vec<CAP> rv;
@@ -416,7 +428,7 @@ run_props(void)
         ck(mtest::vec_eq<E>(v, rv), "weld", it);
         ck(w.size() == 0u, "weld-empties", it);
       }
-
+      // swap
       {
         V v;
         mtest::ref_vec<CAP> rv;
@@ -428,7 +440,7 @@ run_props(void)
         ck(mtest::vec_eq<E>(v, rw), "swap-a", it);
         ck(mtest::vec_eq<E>(w, rv), "swap-b", it);
       }
-
+      // fill every element
       {
         V v;
         mtest::ref_vec<CAP> r;
@@ -442,6 +454,7 @@ run_props(void)
   }
   end_test_case();
 
+  // ── sort / insert_sort (ordered element types only) ─────────────────────────
   if constexpr ( orderable<E> ) {
     test_case("fv sort/insert_sort vs oracle");
     {
@@ -474,6 +487,10 @@ run_props(void)
     end_test_case();
   }
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// nested: fvector<vector<u32>>
+// ───────────────────────────────────────────────────────────────────────────
 
 static u64
 rowkey(const micron::vector<u32> &r)
@@ -547,6 +564,10 @@ run_nested(void)
   }
   end_test_case();
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// memory / lifetime / exception (Tracked + instrumented allocators)
+// ───────────────────────────────────────────────────────────────────────────
 
 static void
 run_memory(void)
@@ -622,6 +643,10 @@ run_memory(void)
   }
   end_test_case();
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// driver
+// ───────────────────────────────────────────────────────────────────────────
 
 template<typename E>
 static void
