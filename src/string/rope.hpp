@@ -11,6 +11,7 @@
 #include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/new.hpp"
+#include "../memory_block.hpp"
 
 #include "../except.hpp"
 #include "../tags.hpp"
@@ -76,6 +77,124 @@ private:
 
   static_assert(alignof(__node) >= alignof(T), "node alignment must satisfy T alignment");
 
+  struct __node_stack {
+    static constexpr usize __sbo = 64;
+    const __node *__inl[__sbo];
+    const __node **__heap;      // nullptr while using __inl
+    usize __cap;
+    usize __sz;
+
+    __node_stack() noexcept : __heap(nullptr), __cap(__sbo), __sz(0) { }
+
+    ~__node_stack() noexcept
+    {
+      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+    }
+
+    const __node **
+    __buf() noexcept
+    {
+      return __heap ? __heap : __inl;
+    }
+
+    const __node *const *
+    __buf() const noexcept
+    {
+      return __heap ? __heap : __inl;
+    }
+
+    void
+    __grow()
+    {
+      usize ncap = __cap * 2;
+      auto *nb = reinterpret_cast<const __node **>(abc::alloc(ncap * sizeof(const __node *)));
+      if ( !nb ) [[unlikely]]
+        exc<except::memory_error>("micron::rope walker stack out of memory");
+      const __node **src = __buf();
+      for ( usize i = 0; i < __sz; ++i ) nb[i] = src[i];
+      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+      __heap = nb;
+      __cap = ncap;
+    }
+
+    inline void
+    push(const __node *n)
+    {
+      if ( __sz == __cap ) [[unlikely]]
+        __grow();
+      __buf()[__sz++] = n;
+    }
+
+    inline const __node *
+    pop() noexcept
+    {
+      return __buf()[--__sz];
+    }
+
+    inline bool
+    empty() const noexcept
+    {
+      return __sz == 0;
+    }
+
+    __node_stack(const __node_stack &o) : __heap(nullptr), __cap(__sbo), __sz(0) { __copy_from(o); }
+
+    __node_stack &
+    operator=(const __node_stack &o)
+    {
+      if ( this != &o ) [[likely]] {
+        if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+        __heap = nullptr;
+        __cap = __sbo;
+        __sz = 0;
+        __copy_from(o);
+      }
+      return *this;
+    }
+
+    __node_stack(__node_stack &&o) noexcept : __heap(o.__heap), __cap(o.__cap), __sz(o.__sz)
+    {
+      if ( !__heap )
+        for ( usize i = 0; i < __sz; ++i ) __inl[i] = o.__inl[i];
+      o.__heap = nullptr;
+      o.__cap = __sbo;
+      o.__sz = 0;
+    }
+
+    __node_stack &
+    operator=(__node_stack &&o) noexcept
+    {
+      if ( this != &o ) [[likely]] {
+        if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+        __heap = o.__heap;
+        __cap = o.__cap;
+        __sz = o.__sz;
+        if ( !__heap )
+          for ( usize i = 0; i < __sz; ++i ) __inl[i] = o.__inl[i];
+        o.__heap = nullptr;
+        o.__cap = __sbo;
+        o.__sz = 0;
+      }
+      return *this;
+    }
+
+  private:
+    void
+    __copy_from(const __node_stack &o)
+    {
+      if ( o.__sz > __sbo ) {
+        __heap = reinterpret_cast<const __node **>(abc::alloc(o.__cap * sizeof(const __node *)));
+        if ( !__heap ) [[unlikely]]
+          exc<except::memory_error>("micron::rope walker stack out of memory");
+        __cap = o.__cap;
+      }
+      const __node *const *src = o.__buf();
+      const __node **dst = __buf();
+      for ( usize i = 0; i < o.__sz; ++i ) dst[i] = src[i];
+      __sz = o.__sz;
+    }
+  };
+
   static inline __attribute__((always_inline)) bool
   __is_leaf(const __node *n) noexcept
   {
@@ -94,10 +213,27 @@ private:
     return reinterpret_cast<const T *>(reinterpret_cast<const byte *>(n) + sizeof(__node));
   }
 
+  static inline usize
+  __leaf_bytes(usize len)
+  {
+    if ( len > (npos - sizeof(__node)) / sizeof(T) ) [[unlikely]]
+      exc<except::memory_error>("micron::rope leaf size overflow");
+    return sizeof(__node) + len * sizeof(T);
+  }
+
+  static inline __node *
+  __alloc_node(usize bytes)
+  {
+    auto *n = reinterpret_cast<__node *>(abc::alloc(bytes));
+    if ( !n ) [[unlikely]]
+      exc<except::memory_error>("micron::rope node allocation failed");
+    return n;
+  }
+
   static inline __node *
   __make_leaf(const T *data, usize len)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node) + len * sizeof(T)));
+    auto *n = __alloc_node(__leaf_bytes(len));
     n->left = nullptr;
     n->right = nullptr;
     n->refs = 1;
@@ -109,7 +245,7 @@ private:
   static inline __node *
   __make_leaf_fill(T ch, usize len)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node) + len * sizeof(T)));
+    auto *n = __alloc_node(__leaf_bytes(len));
     n->left = nullptr;
     n->right = nullptr;
     n->refs = 1;
@@ -121,8 +257,10 @@ private:
   static inline __node *
   __make_leaf_concat(const __node *a, const __node *b)
   {
+    if ( a->__length > npos - b->__length ) [[unlikely]]
+      exc<except::memory_error>("micron::rope length overflow");
     usize total = a->__length + b->__length;
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node) + total * sizeof(T)));
+    auto *n = __alloc_node(__leaf_bytes(total));
     n->left = nullptr;
     n->right = nullptr;
     n->refs = 1;
@@ -136,7 +274,7 @@ private:
   __make_leaf_push(const __node *src, T ch)
   {
     usize newlen = src->__length + 1;
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node) + newlen * sizeof(T)));
+    auto *n = __alloc_node(__leaf_bytes(newlen));
     n->left = nullptr;
     n->right = nullptr;
     n->refs = 1;
@@ -150,6 +288,11 @@ private:
   __make_branch(__node *l, __node *r)
   {
     auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+    if ( !n ) [[unlikely]] {
+      __release(l);
+      __release(r);
+      exc<except::memory_error>("micron::rope branch allocation failed");
+    }
     n->left = l;
     n->right = r;
     n->refs = 1;
@@ -168,29 +311,28 @@ private:
   static inline void
   __release(__node *n) noexcept
   {
-    constexpr usize __stack_cap = 64;
-    __node *stack[__stack_cap];
-    usize depth = 0;
+    __node_stack pend;
 
-    while ( n ) [[likely]] {
-      if ( --n->refs != 0 ) [[likely]]
-        break;
-      if ( __is_leaf(n) ) {
+    for ( ;; ) {
+      while ( n ) {
+        if ( --n->refs != 0 ) {
+          n = nullptr;
+          break;
+        }
+        if ( __is_leaf(n) ) {
+          abc::dealloc(reinterpret_cast<byte *>(n));
+          n = nullptr;
+          break;
+        }
+        __node *l = n->left;
+        __node *r = n->right;
         abc::dealloc(reinterpret_cast<byte *>(n));
-        break;
+        if ( l ) pend.push(l);
+        n = r;
       }
-      __node *l = n->left;
-      __node *r = n->right;
-      abc::dealloc(reinterpret_cast<byte *>(n));
-      if ( l ) {
-        if ( depth < __stack_cap ) [[likely]]
-          stack[depth++] = l;
-        else
-          __release(l);
-      }
-      n = r;
+      if ( pend.empty() ) break;
+      n = const_cast<__node *>(pend.pop());
     }
-    while ( depth > 0 ) __release(stack[--depth]);
   }
 
   // construct a balanced tree from contiguous data
@@ -308,21 +450,19 @@ private:
   {
     if ( !root ) return true;
 
-    constexpr usize __max_depth = 64;
-    const __node *stack[__max_depth];
-    usize depth = 0;
+    __node_stack stack;      // height-robust: SBO + heap spill
     const __node *cur = root;
 
     for ( ;; ) {
       while ( cur && !__is_leaf(cur) ) {
-        stack[depth++] = cur;
+        stack.push(cur);
         cur = cur->left;
       }
       if ( cur ) {
         if ( !fn(__leaf_data(cur), cur->__length) ) return false;
       }
-      if ( depth > 0 )
-        cur = stack[--depth]->right;
+      if ( !stack.empty() )
+        cur = stack.pop()->right;
       else
         break;
     }
@@ -392,7 +532,11 @@ private:
   {
     if ( __length == 0 ) return rope();
     __ensure_flat();
+    if ( __length > npos / sizeof(T) ) [[unlikely]]
+      exc<except::memory_error>("micron::rope bitop size overflow");
     T *tmp = reinterpret_cast<T *>(abc::alloc(__length * sizeof(T)));
+    if ( !tmp ) [[unlikely]]
+      exc<except::memory_error>("micron::rope bitop allocation failed");
     micron::simd::__bytes_cycle<Op>(reinterpret_cast<byte *>(tmp), reinterpret_cast<const byte *>(__flat), __length * sizeof(T), k.p, k.n);
     rope out(__build_balanced(tmp, __length), __length);
     abc::dealloc(reinterpret_cast<byte *>(tmp));
@@ -406,6 +550,12 @@ private:
   __index_check(usize n) const
   {
     return n >= __length;
+  }
+
+  inline constexpr __attribute__((always_inline)) bool
+  __empty_check(void) const
+  {
+    return __length == 0 || __root == nullptr;
   }
 
   inline constexpr __attribute__((always_inline)) bool
@@ -460,23 +610,33 @@ private:
   void
   __ensure_flat(void) const
   {
-    if ( __flat ) return;
-    __flat = reinterpret_cast<T *>(abc::alloc((__length + 1) * sizeof(T)));
+    if ( __atomic_load_n(&__flat, __ATOMIC_ACQUIRE) ) return;
+
+    if ( __length > npos / sizeof(T) - 1 ) [[unlikely]]
+      exc<except::memory_error>("micron::rope flatten size overflow");
+    T *buf = reinterpret_cast<T *>(abc::alloc((__length + 1) * sizeof(T)));
+    if ( !buf ) [[unlikely]]
+      exc<except::memory_error>("micron::rope flatten allocation failed");
+
     usize pos = 0;
     __for_each_chunk(__root, [&](const T *data, usize len) -> bool {
-      micron::memcpy(&__flat[pos], data, len);
+      micron::memcpy(&buf[pos], data, len);
       pos += len;
       return true;
     });
-    __flat[__length] = T(0);
+    buf[__length] = T(0);
+
+    T *expected = nullptr;
+    if ( !__atomic_compare_exchange_n(&__flat, &expected, buf, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) [[unlikely]] {
+      // another thread published first; drop ours and use theirs.
+      abc::dealloc(reinterpret_cast<byte *>(buf));
+    }
   }
 
 public:
   class const_iterator
   {
-    static constexpr size_type __max_depth = 64;
-    const __node *__stack[__max_depth];
-    size_type __depth;
+    __node_stack __stack;
     const __node *__leaf;
     size_type __pos;
     size_type __index;      // global character index
@@ -485,7 +645,7 @@ public:
     __push_to_leftmost(const __node *n)
     {
       while ( n && !__is_leaf(n) ) {
-        __stack[__depth++] = n;
+        __stack.push(n);
         n = n->left;
       }
       __leaf = n;
@@ -493,9 +653,9 @@ public:
     }
 
   public:
-    const_iterator() : __depth(0), __leaf(nullptr), __pos(0), __index(0) { }
+    const_iterator() : __leaf(nullptr), __pos(0), __index(0) { }
 
-    explicit const_iterator(const __node *root, size_type start_index = 0) : __depth(0), __leaf(nullptr), __pos(0), __index(start_index)
+    explicit const_iterator(const __node *root, size_type start_index = 0) : __leaf(nullptr), __pos(0), __index(start_index)
     {
       if ( root ) __push_to_leftmost(root);
     }
@@ -536,8 +696,8 @@ public:
     {
       ++__index;
       if ( ++__pos < __leaf->__length ) return *this;
-      if ( __depth > 0 ) {
-        const __node *parent = __stack[--__depth];
+      if ( !__stack.empty() ) {
+        const __node *parent = __stack.pop();
         __push_to_leftmost(parent->right);
       } else {
         __leaf = nullptr;
@@ -595,11 +755,14 @@ public:
   }
 
   template<typename F>
+    requires(sizeof(F) == sizeof(T))
   rope(const rope<F> &o) : __root(__retain(reinterpret_cast<__node *>(o.__root))), __length(o.__length), __flat(nullptr)
   {
   }
 
-  template<is_string S> rope(const S &o) : __flat(nullptr)
+  template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
+  rope(const S &o) : __flat(nullptr)
   {
     __root = __build_balanced(reinterpret_cast<const T *>(o.c_str()), o.size());
     __length = o.size();
@@ -783,12 +946,14 @@ public:
   inline const T &
   front(void) const
   {
+    __safety_check<&rope::__empty_check, except::library_error>("micron::rope front() on empty rope");
     return __char_at(__root, 0);
   }
 
   inline const T &
   back(void) const
   {
+    __safety_check<&rope::__empty_check, except::library_error>("micron::rope back() on empty rope");
     return __char_at(__root, __length - 1);
   }
 
@@ -802,6 +967,7 @@ public:
   inline T
   operator[](const size_type n) const
   {
+    __safety_check<&rope::__index_check, except::library_error>("micron::rope operator[] out of range", n);
     return __char_at(__root, n);
   }
 
@@ -1014,6 +1180,8 @@ public:
     __safety_check<&rope::__valid_cnt, except::library_error>("micron::rope insert() invalid count", cnt);
 
     size_type str_len = M - 1;
+    if ( str_len != 0 && cnt > npos / str_len ) [[unlikely]]
+      exc<except::memory_error>("micron::rope insert() size overflow");
     size_type total = str_len * cnt;
     if ( total == 0 ) return *this;
 

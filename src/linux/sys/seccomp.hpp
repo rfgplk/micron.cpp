@@ -11,7 +11,7 @@
 #include "prctl.hpp"
 
 #include "bpf.hpp"
-#include "ioctl.hpp"     
+#include "ioctl.hpp"
 
 namespace micron
 {

@@ -294,7 +294,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
   U uval;
   bool neg = false;
   if constexpr ( micron::is_signed_v<I> ) {
-    if ( n < 0 && base == 10 ) {
+    if ( n < 0 ) {
       neg = true;
       uval = static_cast<U>(-(n + 1)) + 1u;
     } else {

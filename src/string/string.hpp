@@ -88,9 +88,15 @@ class hstring: private Alloc, public __mutable_memory_resource<T, Alloc>
   }
 
   inline __attribute__((always_inline)) bool
+  __index_check_le(usize n) const
+  {
+    return (n > __mem::length);
+  }
+
+  inline __attribute__((always_inline)) bool
   __range_pos_cnt(usize pos, usize cnt) const
   {
-    return (pos > __mem::length or (pos + cnt) > __mem::length);
+    return (pos > __mem::length or cnt > __mem::length - pos);
   }
 
   inline __attribute__((always_inline)) bool
@@ -261,28 +267,32 @@ public:
   template<typename F> constexpr hstring(const hstring<F> &o) : __mem(__alloc_size(o.length + 1))
   {
     micron::memcpy(__mem::memory, o.memory, o.length);
+    __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
   };
 
-  template<usize N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(__alloc_size(o.length))
+  template<usize N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(__alloc_size(o.length + 1))
   {
     micron::memcpy(&(__mem::memory)[0], &o.memory[0], o.length);
+    __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
   };
 
   template<is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
-  constexpr hstring(const F &o) : __mem(__alloc_size(o.size()))
+  constexpr hstring(const F &o) : __mem(__alloc_size(o.size() + 1))
   {
     micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
+    __mem::memory[o.size()] = T{ 0 };
     __mem::length = o.size();
   };
 
   template<is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
-  constexpr hstring(F &&o) : __mem(__alloc_size(o.size()))
+  constexpr hstring(F &&o) : __mem(__alloc_size(o.size() + 1))
   {
     micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
+    __mem::memory[o.size()] = T{ 0 };
     __mem::length = o.size();
   };
 
@@ -545,6 +555,8 @@ public:
   _buf_set_length(const usize s)
   {
     __mem::length = s;
+    // WARNING: maintain the NUL invariant, otherwise c_str() over-reads past the logical end
+    if ( __mem::memory && s < __mem::capacity ) __mem::memory[s] = T{ 0 };
   }
 
   template<typename F>
@@ -627,9 +639,10 @@ public:
   inline hstring &
   append(const buffer &f, usize n)
   {
-    if ( (__mem::length + n) >= __mem::capacity ) reserve(__mem::capacity + n);
+    if ( (__mem::length + n + 1) >= __mem::capacity ) reserve(__mem::length + n + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &f[0], n);
     __mem::length += n;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -637,9 +650,10 @@ public:
   inline hstring &
   append(const slice<F> &f, usize n)
   {
-    if ( (__mem::length + n) >= __mem::capacity ) reserve(__mem::capacity + n);
+    if ( (__mem::length + n + 1) >= __mem::capacity ) reserve(__mem::length + n + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &f[0], n);
     __mem::length += n;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -647,9 +661,10 @@ public:
   inline hstring &
   append(const F *f, usize n)
   {
-    if ( (__mem::length + n) >= __mem::capacity ) reserve(__mem::capacity + n);
+    if ( (__mem::length + n + 1) >= __mem::capacity ) reserve(__mem::length + n + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], f, n);
     __mem::length += n;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -657,9 +672,10 @@ public:
   inline hstring &
   append(const F (&str)[M])
   {
-    if ( (__mem::length + M) >= __mem::capacity ) reserve(__mem::capacity + M);
-    micron::memcpy(&(__mem::memory)[__mem::length], &str[0], M);
+    if ( (__mem::length + M) >= __mem::capacity ) reserve(__mem::length + M + 1);
+    micron::memcpy(&(__mem::memory)[__mem::length], &str[0], M - 1);
     __mem::length += M - 1;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -667,9 +683,10 @@ public:
   inline hstring &
   append(const hstring<F> &o)
   {
-    if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
+    if ( (__mem::length + o.length + 1) >= __mem::capacity ) reserve(__mem::length + o.length + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -677,16 +694,20 @@ public:
   inline hstring &
   append(const sstring<M, F> &o)
   {
-    if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
+    if ( (__mem::length + o.length + 1) >= __mem::capacity ) reserve(__mem::length + o.length + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
   inline hstring &
   pop_back(void)
   {
-    if ( (__mem::length) > 0 ) (__mem::memory)[__mem::length--] = 0x0;
+    if ( __mem::length > 0 ) {
+      --__mem::length;
+      (__mem::memory)[__mem::length] = T{ 0 };
+    }
     return *this;
   }
 
@@ -705,9 +726,10 @@ public:
   inline hstring &
   push_back(const F (&str)[M])
   {
-    if ( (__mem::length + M) >= __mem::capacity ) reserve(__mem::capacity + M);
-    micron::memcpy(&(__mem::memory)[__mem::length], &str[0], M);
+    if ( (__mem::length + M) >= __mem::capacity ) reserve(__mem::length + M + 1);
+    micron::memcpy(&(__mem::memory)[__mem::length], &str[0], M - 1);
     __mem::length += M - 1;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -715,9 +737,10 @@ public:
   inline hstring &
   push_back(const hstring<F> &o)
   {
-    if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
+    if ( (__mem::length + o.length + 1) >= __mem::capacity ) reserve(__mem::length + o.length + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -725,9 +748,10 @@ public:
   inline hstring &
   push_back(const sstring<M, F> &o)
   {
-    if ( (__mem::length + o.length) >= __mem::capacity ) reserve(__mem::capacity + o.length);
+    if ( (__mem::length + o.length + 1) >= __mem::capacity ) reserve(__mem::length + o.length + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(o.memory)[0], o.length);
     __mem::length += o.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -736,10 +760,12 @@ public:
   insert(usize ind, F ch, usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
+    __safety_check<&hstring::__index_check_le, except::library_error>("micron::hstring insert() index out of range", ind);
     if ( __mem::length + cnt + 1 >= __mem::capacity ) reserve(__mem::length + cnt + 1);
     micron::memmove(&__mem::memory[ind + cnt], &__mem::memory[ind], __mem::length - ind);
     micron::typeset<T>(&__mem::memory[ind], ch, cnt);
     __mem::length += cnt;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -748,12 +774,17 @@ public:
   insert(usize ind, const F (&str)[M], usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
-    if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity ) reserve(__mem::capacity + 1);
-    usize str_len = M - 1;
+    __safety_check<&hstring::__index_check_le, except::library_error>("micron::hstring insert() index out of range", ind);
+    constexpr usize str_len = M - 1;
+    if ( str_len && cnt > (micron::numeric_limits<ssize_t>::max() / str_len) )
+      exc<except::library_error>("micron::hstring insert() count overflow");
+    const usize total = cnt * str_len;
+    if ( __mem::length + total + 1 >= __mem::capacity ) reserve(__mem::length + total + 1);
 
-    micron::memmove(&__mem::memory[ind + cnt * str_len], &__mem::memory[ind], __mem::length - ind);
+    micron::memmove(&__mem::memory[ind + total], &__mem::memory[ind], __mem::length - ind);
     for ( usize i = 0; i < cnt; ++i ) micron::memcpy(&__mem::memory[ind + i * str_len], str, str_len);
-    __mem::length += (cnt * str_len);
+    __mem::length += total;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -761,13 +792,15 @@ public:
   inline hstring &
   insert(usize ind, const sstring<M, F> &o)
   {
+    __safety_check<&hstring::__index_check_le, except::library_error>("micron::hstring insert() index out of range", ind);
     usize end = micron::strlen(o.c_str());
-    if ( __mem::length + end >= __mem::capacity ) {
-      reserve(__mem::capacity + o.length);
+    if ( __mem::length + end + 1 >= __mem::capacity ) {
+      reserve(__mem::length + end + 1);
     }
     micron::memmove(&(__mem::memory)[ind + (end)], &(__mem::memory)[ind], __mem::length - ind);
     micron::memcpy(&(__mem::memory)[ind], &o.memory[0], end);
     __mem::length += end;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -776,18 +809,19 @@ public:
   insert(iterator itr, F ch, usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
-
-    if ( __mem::length >= __mem::capacity or (__mem::length + cnt) >= __mem::capacity ) {
-      usize dif = itr - __mem::memory;
-      reserve(__mem::capacity + cnt);
-      itr = __mem::memory + dif;
-    }
     __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
         "micron::hstring insert() iterator out of range", itr);
+
+    if ( (__mem::length + cnt + 1) >= __mem::capacity ) {
+      usize dif = itr - __mem::memory;
+      reserve(__mem::length + cnt + 1);
+      itr = __mem::memory + dif;
+    }
 
     micron::memmove(itr + cnt, itr, __mem::length - (itr - __mem::memory));
     micron::typeset<T>(itr, ch, cnt);
     __mem::length += cnt;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -796,18 +830,25 @@ public:
   insert(iterator itr, const F (&str)[M], usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring insert() invalid count", cnt);
+    __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
+        "micron::hstring insert() iterator out of range", itr);
+    constexpr usize str_len = M - 1;
+    // overflow-guard cnt*str_len before it feeds the reserve / memmove
+    if ( str_len && cnt > (micron::numeric_limits<ssize_t>::max() / str_len) )
+      exc<except::library_error>("micron::hstring insert() count overflow");
+    const usize total = cnt * str_len;
 
-    if ( __mem::length >= __mem::capacity or (__mem::length + (cnt * M)) >= __mem::capacity ) {
+    if ( (__mem::length + total + 1) >= __mem::capacity ) {
       usize dif = itr - __mem::memory;
-      reserve(__mem::capacity + M);
+      reserve(__mem::length + total + 1);
       itr = __mem::memory + dif;
     }
-    max_t str_len = M - 1;
 
     usize tail_len = __mem::length - (itr - __mem::memory);
-    micron::memmove(itr + cnt * str_len, itr, tail_len);
+    micron::memmove(itr + total, itr, tail_len);
     for ( usize i = 0; i < cnt; ++i ) micron::memcpy(itr + i * str_len, str, str_len);
-    __mem::length += (cnt * str_len);
+    __mem::length += total;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -815,14 +856,17 @@ public:
   inline hstring &
   insert(iterator itr, const hstring<F> &o)
   {
-    if ( __mem::length + o.length >= __mem::capacity ) {
+    __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
+        "micron::hstring insert() iterator out of range", itr);
+    if ( __mem::length + o.length + 1 >= __mem::capacity ) {
       usize dif = itr - __mem::memory;
-      reserve(__mem::capacity + o.length);
+      reserve(__mem::length + o.length + 1);
       itr = __mem::memory + dif;
     }
     micron::memmove(itr + o.length, itr, __mem::length - (itr - &(__mem::memory)[0]));
     micron::memcpy(itr, &(o.memory)[0], o.length);
     __mem::length += o.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -830,15 +874,19 @@ public:
   inline hstring &
   insert(iterator itr, const sstring<M, F> &o)
   {
+    __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
+        "micron::hstring insert() iterator out of range", itr);
     usize end = micron::strlen(o.c_str());
-    if ( __mem::length + end >= __mem::capacity ) {
+    if ( end == 0 ) return *this;
+    if ( __mem::length + end + 1 >= __mem::capacity ) {
       usize dif = itr - __mem::memory;
-      reserve(__mem::capacity + o.length);
+      reserve(__mem::length + end + 1);
       itr = __mem::memory + dif;
     }
-    micron::memmove(itr + (end - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
-    micron::memcpy(itr, &o.memory[0], end - 1);
-    __mem::length += end - 1;
+    micron::memmove(itr + end, itr, __mem::length - (itr - &(__mem::memory)[0]));
+    micron::memcpy(itr, &o.memory[0], end);
+    __mem::length += end;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }
 
@@ -846,14 +894,18 @@ public:
   inline hstring &
   insert(iterator itr, sstring<M, F> &&o)
   {
-    if ( __mem::length + o.length >= __mem::capacity ) {
+    __safety_check<static_cast<bool (hstring::*)(T *) const>(&hstring::__iterator_check), except::library_error>(
+        "micron::hstring insert() iterator out of range", itr);
+    if ( o.length == 0 ) return *this;
+    if ( __mem::length + o.length + 1 >= __mem::capacity ) {
       usize dif = itr - __mem::memory;
-      reserve(__mem::capacity + o.length);
+      reserve(__mem::length + o.length + 1);
       itr = __mem::memory + dif;
     }
-    micron::memmove(itr + (o.length - 1), itr, __mem::length - (itr - &(__mem::memory)[0]));
-    micron::memcpy(itr, &o.memory[0], o.length - 1);
-    __mem::length += o.length - 1;
+    micron::memmove(itr + o.length, itr, __mem::length - (itr - &(__mem::memory)[0]));
+    micron::memcpy(itr, &o.memory[0], o.length);
+    __mem::length += o.length;
+    __mem::memory[__mem::length] = T{ 0 };
     micron::zero(o.memory, o.length);
     o.length = 0;
     return *this;
@@ -928,9 +980,10 @@ public:
   inline hstring &
   operator+=(const buffer &data)
   {
-    if ( (__mem::length + data.size()) >= __mem::capacity ) reserve(__mem::capacity + data.size() + 1);
+    if ( (__mem::length + data.size() + 1) >= __mem::capacity ) reserve(__mem::length + data.size() + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &data[0], data.size());
     __mem::length += data.size();
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   };
 
@@ -939,9 +992,10 @@ public:
   operator+=(const F *data)
   {
     usize end = micron::strlen(data);
-    if ( (__mem::length + end) >= __mem::capacity ) reserve(__mem::capacity + end + 1);
+    if ( (__mem::length + end + 1) >= __mem::capacity ) reserve(__mem::length + end + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(data)[0], end);
     __mem::length += end;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   };
 
@@ -949,10 +1003,11 @@ public:
   inline hstring &
   operator+=(const sstring<M, F> &data)
   {
-    if ( (data.length + __mem::length) >= __mem::capacity ) [[unlikely]]
-      reserve(__mem::capacity + data.length + 1);
+    if ( (data.length + __mem::length + 1) >= __mem::capacity ) [[unlikely]]
+      reserve(__mem::length + data.length + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], data.length);
     __mem::length += data.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   };
 
@@ -960,19 +1015,21 @@ public:
   inline hstring &
   operator+=(const hstring<F> &data)
   {
-    if ( (data.length + __mem::length) >= __mem::capacity ) reserve(__mem::capacity + data.length + 1);
+    if ( (data.length + __mem::length + 1) >= __mem::capacity ) reserve(__mem::length + data.length + 1);
     micron::memcpy(&(__mem::memory)[__mem::length], &(data.memory)[0], data.length);
     __mem::length += data.length;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   };
 
   inline hstring &
   operator+=(const T d)
   {
-    if ( (__mem::length + 1) >= __mem::capacity ) reserve(__mem::capacity + 1);
+    if ( (__mem::length + 1 + 1) >= __mem::capacity ) reserve(__mem::length + 2);
     usize ln = __mem::length == 0 ? 0 : __mem::length;
     __mem::memory[ln] = d;
     __mem::length++;
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   };
 
@@ -980,9 +1037,11 @@ public:
   inline hstring &
   operator+=(const slice<F> &data)
   {
-    if ( (data.size() + __mem::length) >= __mem::capacity ) reserve(__mem::capacity + data.size() + 1);
-    micron::memcpy(&(__mem::memory)[__mem::length], &data[0], data.size() - 1);
-    __mem::length += data.size() - 1;
+    if ( data.size() == 0 ) return *this;
+    if ( (data.size() + __mem::length + 1) >= __mem::capacity ) reserve(__mem::length + data.size() + 1);
+    micron::memcpy(&(__mem::memory)[__mem::length], &data[0], data.size());
+    __mem::length += data.size();
+    __mem::memory[__mem::length] = T{ 0 };
     return *this;
   };
 
@@ -1210,7 +1269,7 @@ public:
       return;
     }
     if ( __mem::memory == nullptr ) [[unlikely]] {
-      __mem::realloc(Alloc::auto_size());
+      __mem::realloc(n ? n : Alloc::auto_size());
       return;
     }
     __mem::expand(n);
@@ -1223,7 +1282,7 @@ public:
       exc<except::memory_error>("micron::hstring try_reserve() was unable to allocate memory");
     }
     if ( __mem::memory == nullptr ) [[unlikely]] {
-      __mem::realloc(Alloc::auto_size());
+      __mem::realloc(n ? n : Alloc::auto_size());
       return;
     }
     __mem::expand(n);

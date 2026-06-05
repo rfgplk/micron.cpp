@@ -13,7 +13,7 @@
 #include "../../string/format.hpp"
 #include "../../string/unistring.hpp"
 #include "../../vector/fvector.hpp"
-#include "../../vector/vector.hpp"  
+#include "../../vector/vector.hpp"
 #include "../filesystem.hpp"
 #include "../fsys.hpp"
 
@@ -82,7 +82,7 @@ struct device_t {
   ustr8 name;
   ustr8 phys;
   type_t type = type_t::keyboard;
-  io::fd_t bound_fd{ -1 };    
+  io::fd_t bound_fd{ -1 };
 
   device_t() = default;
 

@@ -10,7 +10,7 @@
 
 #include "../memory/actions.hpp"
 #include "../memory/cmemory.hpp"
-#include "../memory/placement_new.hpp"  
+#include "../memory/placement_new.hpp"
 
 namespace micron
 {

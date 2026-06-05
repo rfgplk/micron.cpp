@@ -923,8 +923,9 @@ run_ctors(void)
       micron::sstring<64, T> big = make_ss<64, T>(buf, n);
 
       micron::sstring<16, T> small(big);
-      ck(small.size() <= 16u, "cross-copy-clamp", it);
-      usize lim = n < 16u ? n : 16u;
+      ck(small.size() <= 15u, "cross-copy-clamp", it);
+
+      usize lim = n < 15u ? n : 15u;
       bool ok = true;
       for ( usize i = 0; i < lim; ++i )
         if ( static_cast<T>(small[i]) != buf[i] ) {

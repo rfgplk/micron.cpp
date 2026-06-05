@@ -114,8 +114,9 @@ public:
   operator=(async_thread &&o)
   {
     if ( this == &o ) return *this;
-    // stop + join *this's current worker BEFORE adopting o; otherwise the running worker is orphaned (never joined) and keeps mutating the payload bytes we are about to overwrite
-    // NOTE: o must be pre-spawn (o.pid == 0): a spawned worker holds &o.payload and cannot be relocated
+    // stop + join *this's current worker BEFORE adopting o; otherwise the running worker is orphaned (never joined) and keeps mutating the
+    // payload bytes we are about to overwrite NOTE: o must be pre-spawn (o.pid == 0): a spawned worker holds &o.payload and cannot be
+    // relocated
     if ( attributes.pid != 0 ) {
       stop();
       pthread::__join_thread(attributes.pid);

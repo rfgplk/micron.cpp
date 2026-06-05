@@ -9,6 +9,7 @@
 #include "../../memory/allocation/abcmalloc/tapi.hpp"
 
 #include "../../errno.hpp"
+#include "../../type_traits.hpp"
 #include "../__includes.hpp"
 
 #include "sched.hpp"
@@ -17,6 +18,136 @@
 #include "system.hpp"
 
 #include "types.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+
+// raw arch specific asm clone trampolines
+
+#if defined(__micron_arch_amd64)
+[[maybe_unused]] static __attribute__((naked, noinline)) long
+__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+{
+  // entry: rdi=fn rsi=stack rdx=flags rcx=arg r8=ptid r9=tls 8(%rsp)=ctid
+  asm volatile("xorl %eax, %eax\n\t"
+               "movb $56, %al\n\t"           // SYS_clone
+               "movq %rdi, %r11\n\t"         // save fn
+               "movq %rdx, %rdi\n\t"         // flags -> a1
+               "movq %r8, %rdx\n\t"          // ptid  -> a3
+               "movq %r9, %r8\n\t"           // tls   -> a5
+               "movq 8(%rsp), %r10\n\t"      // ctid  -> a4
+               "movq %r11, %r9\n\t"          // fn    -> r9 (preserved across syscall)
+               "andq $-16, %rsi\n\t"         // align child stack top
+               "subq $8, %rsi\n\t"
+               "movq %rcx, (%rsi)\n\t"      // seed arg on child stack
+               "syscall\n\t"
+               "testq %rax, %rax\n\t"
+               "jnz 1f\n\t"               // parent -> return pid in rax
+               "xorl %ebp, %ebp\n\t"      // child: terminate unwind chain
+               "popq %rdi\n\t"            // arg -> a1 of fn
+               "callq *%r9\n\t"           // fn(arg)
+               "movl %eax, %edi\n\t"      // status
+               "xorl %eax, %eax\n\t"
+               "movb $60, %al\n\t"      // SYS_exit
+               "syscall\n\t"
+               "hlt\n\t"
+               "1:\n\t"
+               "ret\n\t");
+}
+#elif defined(__micron_arch_x86)
+[[maybe_unused]] static __attribute__((naked, noinline)) long
+__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+{
+  // all args on stack; +16 after pushing the 4 callee-saved regs
+  asm volatile("pushl %ebp\n\t"
+               "pushl %edi\n\t"
+               "pushl %esi\n\t"
+               "pushl %ebx\n\t"
+               "movl 20(%esp), %eax\n\t"      // fn
+               "movl 24(%esp), %ecx\n\t"      // stack top
+               "movl 28(%esp), %ebx\n\t"      // flags -> a1
+               "movl 36(%esp), %edx\n\t"      // ptid  -> a3
+               "movl 40(%esp), %esi\n\t"      // tls   -> a4 (CLONE_BACKWARDS)
+               "movl 44(%esp), %edi\n\t"      // ctid  -> a5
+               "andl $-16, %ecx\n\t"          // align top
+               "subl $16, %ecx\n\t"           // reserve seed area below newsp
+               "movl %eax, (%ecx)\n\t"        // fn  at newsp+0
+               "movl 32(%esp), %eax\n\t"      // arg
+               "movl %eax, 4(%ecx)\n\t"       // arg at newsp+4
+               "movl $120, %eax\n\t"          // SYS_clone
+               "int $0x80\n\t"
+               "testl %eax, %eax\n\t"
+               "jnz 1f\n\t"                  // parent
+               "movl (%esp), %eax\n\t"       // child: fn
+               "movl 4(%esp), %edx\n\t"      // arg
+               "xorl %ebp, %ebp\n\t"
+               "subl $16, %esp\n\t"         // align outgoing frame
+               "movl %edx, (%esp)\n\t"      // arg -> outgoing slot
+               "calll *%eax\n\t"            // fn(arg)
+               "movl %eax, %ebx\n\t"        // status
+               "movl $1, %eax\n\t"          // SYS_exit
+               "int $0x80\n\t"
+               "hlt\n\t"
+               "1:\n\t"
+               "popl %ebx\n\t"
+               "popl %esi\n\t"
+               "popl %edi\n\t"
+               "popl %ebp\n\t"
+               "ret\n\t");
+}
+#elif defined(__micron_arch_arm64)
+// NOTE: aarch64 GCC __IGNORES__ __attribute__((naked)) (?!?!) which would wrap the body in a prologue/epilogue
+// and corrupt the child SP pivot
+extern "C" long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *);
+asm(".text\n\t"
+    ".weak __micron_clone_entry\n\t"
+    ".type __micron_clone_entry, %function\n\t"
+    ".p2align 2\n"
+    "__micron_clone_entry:\n\t"
+    // entry: x0=fn x1=stack x2=flags x3=arg x4=ptid x5=tls x6=ctid
+    "and x1, x1, #-16\n\t"             // align child stack top
+    "stp x0, x3, [x1, #-16]!\n\t"      // seed {fn, arg}; x1 becomes newsp
+    "mov x0, x2\n\t"                   // flags -> a0
+    "mov x2, x4\n\t"                   // ptid  -> a2
+    "mov x3, x5\n\t"                   // tls   -> a3
+    "mov x4, x6\n\t"                   // ctid  -> a4
+    "mov x8, #220\n\t"                 // SYS_clone
+    "svc #0\n\t"
+    "cbz x0, 1f\n\t"      // child -> 1
+    "ret\n\t"             // parent -> return pid in x0
+    "1:\n\t"
+    "ldp x1, x0, [sp], #16\n\t"      // x1=fn, x0=arg
+    "blr x1\n\t"                     // fn(arg)
+    "mov x8, #93\n\t"                // SYS_exit
+    "svc #0\n\t");
+#elif defined(__micron_arch_arm32)
+[[maybe_unused]] static __attribute__((naked, noinline)) long
+__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+{
+  // entry: r0=fn r1=stack r2=flags r3=arg; ptid@[sp,#0] tls@[sp,#4] ctid@[sp,#8] (+16 after push)
+  asm volatile("stmfd sp!, {r4, r5, r6, r7}\n\t"
+               "mov r7, #120\n\t"           // SYS_clone
+               "mov r5, r0\n\t"             // fn  -> r5 (callee-saved, survives into child)
+               "mov r6, r3\n\t"             // arg -> r6 (callee-saved, survives into child)
+               "mov r0, r2\n\t"             // flags -> a0
+               "and r1, r1, #-16\n\t"       // align newsp (a1)
+               "ldr r2, [sp, #16]\n\t"      // ptid -> a2
+               "ldr r3, [sp, #20]\n\t"      // tls  -> a3 (CLONE_BACKWARDS)
+               "ldr r4, [sp, #24]\n\t"      // ctid -> a4
+               "svc #0\n\t"
+               "tst r0, r0\n\t"
+               "bne 1f\n\t"          // parent
+               "mov r0, r6\n\t"      // child: arg -> a0
+               "blx r5\n\t"          // fn(arg)
+               "mov r7, #1\n\t"      // SYS_exit
+               "svc #0\n\t"
+               "1:\n\t"
+               "ldmfd sp!, {r4, r5, r6, r7}\n\t"
+               "bx lr\n\t");
+}
+#endif
+
+#pragma GCC diagnostic pop
 
 namespace micron
 {
@@ -120,45 +251,78 @@ fork_kernel(void)
 #endif
 }
 
-// WARNING: this separate-stack callable form is unsound in pure C and is no longer used
-// (micron::fork routes through the COW __fork_clone path below); after clone3 switches the
-// child SP to stack, the compiled C frame here still addresses the parent SP, so reading
-// args in the child is undefined
-//
-// TODO: a correct new-stack entry needs an arch asm trampoline
+inline __attribute__((always_inline)) unsigned long
+__micron_fold_exit_signal(unsigned long flags, int exit_signal) noexcept
+{
+  return (flags & ~0xffUL) | (static_cast<unsigned long>(exit_signal) & 0xffUL);
+}
+
+template<auto Fn, typename... Args> struct __clone_payload {
+  void *args[sizeof...(Args)];
+
+  static int
+  thunk(void *p)
+  {
+    auto *self = static_cast<__clone_payload *>(p);
+    int rc = __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
+    destroy(self);
+    return rc;
+  }
+
+  static void
+  destroy(__clone_payload *self)
+  {
+    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
+    delete self;
+  }
+
+private:
+  template<usize... I>
+  static int
+  __invoke(__clone_payload *self, micron::index_sequence<I...>)
+  {
+    using ret_t = decltype(Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...));
+    if constexpr ( micron::is_same_v<ret_t, int> )
+      return Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
+    else {
+      Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
+      return 0;
+    }
+  }
+
+  template<usize... I>
+  static void
+  __cleanup([[maybe_unused]] __clone_payload *self, micron::index_sequence<I...>)
+  {
+    (delete static_cast<Args *>(self->args[I]), ...);
+  }
+};
+
 template<usize Sz, auto Fn, typename... Args>
 pid_t
 clone(addr_t *stack, int flags, Args &&...args)
 {
   if ( !stack ) return -EINVAL;
-  posix::clone_args clone_args{};
-  clone_args.flags = static_cast<u64>(flags);
-  if ( flags & clone_parent or (flags & clone_sighand and flags & clone_thread) )
-    clone_args.exit_signal = 0;      // NOTE: kernel constraint otherwise -22
-  else
-    clone_args.exit_signal = sig_chld;
 
-  clone_args.stack = reinterpret_cast<uintptr_t>(stack);      // mmap base is page-aligned
-  clone_args.stack_size = Sz;
-  clone_args.parent_tid = 0;
-  clone_args.child_tid = 0;
-  clone_args.tls = 0;
+  using payload_t = __clone_payload<Fn, micron::decay_t<Args>...>;
+  auto *payload = new payload_t{ { reinterpret_cast<void *>(new micron::decay_t<Args>(static_cast<Args &&>(args)))... } };
 
-  pid_t pid = static_cast<pid_t>(posix::clone3_kernel(clone_args));
+  unsigned long f = static_cast<unsigned long>(static_cast<unsigned>(flags));
+  int exit_signal = sig_chld;
+  if ( (f & clone_parent) or ((f & clone_sighand) and (f & clone_thread)) ) exit_signal = 0;      // kernel constraint otherwise -22
+  f = __micron_fold_exit_signal(f, exit_signal);
 
-  if ( pid == 0 ) {
-    using ret_t = decltype(Fn(args...));
-    if constexpr ( micron::is_same_v<ret_t, int> ) {
-      int ret = Fn(micron::forward<Args>(args)...);
-      micron::syscall(SYS_exit_group, ret);
-      __builtin_unreachable();
-    } else {
-      Fn(micron::forward<Args>(args)...);
-      micron::syscall(SYS_exit_group, 0);
-      __builtin_unreachable();
-    }
+  uintptr_t top = (reinterpret_cast<uintptr_t>(stack) + Sz) & ~uintptr_t(0xF);
+
+  long raw = ::__micron_clone_entry(&payload_t::thunk, reinterpret_cast<void *>(top), f, reinterpret_cast<void *>(payload), nullptr,
+                                    nullptr, nullptr);
+
+  if ( micron::syscall_failed(raw) ) {
+    payload_t::destroy(payload);      // clone failed, no child ran
+    return static_cast<pid_t>(raw);
   }
-  return pid;
+  if ( !(f & clone_vm) ) payload_t::destroy(payload);      // parent owns its independent (COW) copy
+  return static_cast<pid_t>(raw);
 }
 
 // special clone func
@@ -183,80 +347,21 @@ __fork_clone(int exit_signal)
   return static_cast<pid_t>(raw);
 }
 
-// c-style, legacy
+// c-style entry
 pid_t
-clone(int (*fn)(void *), void *stack, int flags, void *arg, int *parent_tid = nullptr, void *tls = nullptr, int *child_tid = nullptr)
+clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr, int *child_tid = nullptr,
+      unsigned long tls = 0, int exit_signal = sig_chld)
 {
-  if ( !stack ) return -EINVAL;
+  if ( !stack or !fn or stack_size == 0 ) return -EINVAL;
 
-  uintptr_t sp = reinterpret_cast<uintptr_t>(stack);
-  sp += 1024 * 1024;
-  sp &= ~uintptr_t(0xF);
-  void *stack_top = reinterpret_cast<void *>(sp);
+  if ( (flags & clone_parent) or ((flags & clone_sighand) and (flags & clone_thread)) )
+    exit_signal = 0;      // kernel constraint otherwise -22
+  unsigned long f = __micron_fold_exit_signal(flags, exit_signal);
 
-  posix::clone_args args{};
-  args.flags = static_cast<u64>(flags);
-  args.exit_signal = sig_chld;
-  args.stack = reinterpret_cast<u64>(stack_top);
-  args.stack_size = 0;      // opt
-  args.parent_tid = reinterpret_cast<u64>(parent_tid);
-  args.child_tid = reinterpret_cast<u64>(child_tid);
-  args.tls = reinterpret_cast<u64>(tls);
+  uintptr_t top = (reinterpret_cast<uintptr_t>(stack) + stack_size) & ~uintptr_t(0xF);
 
-  long raw = posix::clone3_kernel(args);
-  if ( micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS ) {
-    // clone3 unavailable (pre-5.3 kernel)
-    raw = posix::clone_kernel(flags, stack_top, parent_tid, child_tid, reinterpret_cast<unsigned long>(tls));
-  }
-  pid_t pid = static_cast<pid_t>(raw);
-
-  if ( pid == 0 ) {
-    if ( fn != nullptr ) {
-      int ret = fn(arg);
-      micron::syscall(SYS_exit, ret);
-      __builtin_unreachable();
-    }
-  }
-
-  return pid;
+  long raw = ::__micron_clone_entry(fn, reinterpret_cast<void *>(top), f, arg, parent_tid, reinterpret_cast<void *>(tls), child_tid);
+  return static_cast<pid_t>(raw);
 }
-
-/*
-pid_t
-clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr,
-      int *child_tid = nullptr, unsigned long tls = 0, int exit_signal = sig_chld)
-{
-  if ( !stack || stack_size == 0 )
-    return -EINVAL;
-
-  // Align stack to 16 bytes for x86_64 (downward-growing stack)
-  uintptr_t sp = reinterpret_cast<uintptr_t>(stack) + stack_size;
-  sp &= ~uintptr_t(0xF);
-  void *stack_top = reinterpret_cast<void *>(sp);
-
-  posix::clone_args args{};
-  args.flags = flags;
-  args.exit_signal = exit_signal;
-  args.stack = reinterpret_cast<u64>(stack_top);
-  args.stack_size = stack_size;
-  args.parent_tid = reinterpret_cast<u64>(parent_tid);
-  args.child_tid = reinterpret_cast<u64>(child_tid);
-  args.tls = tls;
-
-  pid_t pid = static_cast<pid_t>(posix::clone3_kernel(args));
-  if ( pid == -1 && errno == ENOSYS ) {
-    pid = static_cast<pid_t>(
-        posix::clone_kernel(flags, stack_top, parent_tid, child_tid, reinterpret_cast<unsigned long>(tls)));
-  }
-
-  if ( pid == 0 ) {
-    // Child executes the function
-    int ret = fn(arg);
-    micron::syscall(SYS_exit, ret);     // ensures child exits safely
-    __builtin_unreachable();
-  }
-
-  return pid;     // Parent receives child's PID
-}*/
 };      // namespace posix
 };      // namespace micron

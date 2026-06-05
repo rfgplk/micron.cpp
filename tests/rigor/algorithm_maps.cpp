@@ -4,17 +4,17 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/algorithm/accumulate.hpp"
-#include "../src/algorithm/algorithm.hpp"
-#include "../src/algorithm/find.hpp"
-#include "../src/algorithm/fold.hpp"
-#include "../src/io/console.hpp"
-#include "../src/io/stdout.hpp"
-#include "../src/maps/rb_map.hpp"
-#include "../src/maps/robin.hpp"
-#include "../src/maps/swiss.hpp"
-#include "../src/std.hpp"
-#include "../src/string/string.hpp"
+#include "../../src/algorithm/accumulate.hpp"
+#include "../../src/algorithm/algorithm.hpp"
+#include "../../src/algorithm/find.hpp"
+#include "../../src/algorithm/fold.hpp"
+#include "../../src/io/console.hpp"
+#include "../../src/io/stdout.hpp"
+#include "../../src/maps/rb_map.hpp"
+#include "../../src/maps/robin.hpp"
+#include "../../src/maps/swiss.hpp"
+#include "../../src/std.hpp"
+#include "../../src/string/string.hpp"
 
 #include "../snowball/snowball.hpp"
 

@@ -306,6 +306,7 @@ operator==(const char (&data)[N], const S &str)
 }
 
 template<typename F, typename G>
+  requires(sizeof(F) == sizeof(G))
 inline hstring<F> &
 operator+=(hstring<F> &lhs, const istring<G> &rhs)
 {
@@ -314,6 +315,7 @@ operator+=(hstring<F> &lhs, const istring<G> &rhs)
 }
 
 template<typename F, typename G>
+  requires(sizeof(F) == sizeof(G))
 inline hstring<F> &
 operator+=(hstring<F> &lhs, const rope<G> &rhs)
 {

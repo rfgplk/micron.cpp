@@ -168,8 +168,10 @@ main(void)
     std::vector<std::int32_t> work(n);
     for ( int pat = 0; pat < 4; ++pat ) {
       fill_pattern(master, n, pat, 0x12345 + pat);
-      bench_one<std::int32_t>("std::sort", PAT_NAME[pat], master, work, n, [](std::vector<std::int32_t> &w) { std::sort(w.begin(), w.end()); });
-      bench_one<std::int32_t>("std::stable_sort", PAT_NAME[pat], master, work, n, [](std::vector<std::int32_t> &w) { std::stable_sort(w.begin(), w.end()); });
+      bench_one<std::int32_t>("std::sort", PAT_NAME[pat], master, work, n,
+                              [](std::vector<std::int32_t> &w) { std::sort(w.begin(), w.end()); });
+      bench_one<std::int32_t>("std::stable_sort", PAT_NAME[pat], master, work, n,
+                              [](std::vector<std::int32_t> &w) { std::stable_sort(w.begin(), w.end()); });
       bench_one<std::int32_t>("std::sort_heap", PAT_NAME[pat], master, work, n, [](std::vector<std::int32_t> &w) {
         std::make_heap(w.begin(), w.end());
         std::sort_heap(w.begin(), w.end());

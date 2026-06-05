@@ -179,6 +179,17 @@ template<> struct max_digits<u64> {
   static constexpr usize value = 21;
 };
 
+// long long/unsigned long long are 64-bit but a DISTINCT type from i64/u64
+#if defined(__micron_arch_width_64)
+template<> struct max_digits<long long> {
+  static constexpr usize value = 21;
+};
+
+template<> struct max_digits<unsigned long long> {
+  static constexpr usize value = 21;
+};
+#endif
+
 template<typename I> constexpr static const usize max_digits_v = max_digits<I>::value;
 
 inline __attribute__((always_inline)) u32

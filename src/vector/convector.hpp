@@ -40,7 +40,8 @@ class convector: public __mutable_memory_resource<T, Alloc>
   using __mem = __mutable_memory_resource<T, Alloc>;
   mutable micron::fast_mutex __mtx;
 
-  // all convector instantiations are mutual friends so two-object ops may lock the other object's mutex even across differing element types / Sf flags
+  // all convector instantiations are mutual friends so two-object ops may lock the other object's mutex even across differing element types
+  // / Sf flags
   template<is_movable_object C2, class A2, bool S2> friend class convector;
 
   struct __hold {

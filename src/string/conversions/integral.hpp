@@ -107,7 +107,6 @@ string_to_int64(const micron::hstring<T> &buf)
 {
   if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
-  i64 result = 0;
   bool neg = false;
   while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
@@ -115,13 +114,22 @@ string_to_int64(const micron::hstring<T> &buf)
     ++ptr;
   } else if ( ptr != end && *ptr == '+' )
     ++ptr;
+  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFLL - 1;      // INT64_MIN
+  constexpr i64 lim_div = lim / 10;
+  constexpr i64 lim_mod = -(lim % 10);
+  i64 acc = 0;
   while ( ptr != end ) {
     char c = *ptr;
     if ( c < '0' || c > '9' ) break;
-    result = result * 10 + (c - '0');
+    int d = c - '0';
+    if ( acc < lim_div || (acc == lim_div && d > lim_mod) )      // overflow -> saturate
+      return neg ? lim : 0x7FFFFFFFFFFFFFFFLL;
+    acc = acc * 10 - d;
     ++ptr;
   }
-  return neg ? -result : result;
+  if ( neg ) return acc;
+  if ( acc == lim ) return 0x7FFFFFFFFFFFFFFFLL;      // +INT64_MIN magnitude not representable -> saturate
+  return -acc;
 }
 
 template<typename T = char>
@@ -133,10 +141,14 @@ string_to_uint64(const micron::hstring<T> &buf)
   u64 result = 0;
   while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '+' ) ++ptr;
+  constexpr u64 mx = 0xFFFFFFFFFFFFFFFFull;
+  constexpr u64 mx_d = mx / 10, mx_m = mx % 10;
   while ( ptr != end ) {
     char c = *ptr;
     if ( c < '0' || c > '9' ) break;
-    result = result * 10 + static_cast<u64>(c - '0');
+    u64 d = static_cast<u64>(c - '0');
+    if ( result > mx_d || (result == mx_d && d > mx_m) ) return mx;      // overflow -> saturate
+    result = result * 10 + d;
     ++ptr;
   }
   return result;
@@ -162,13 +174,22 @@ string_to_int_base(const micron::hstring<T> &buf, u32 base)
     ptr += 2;
   else if ( base == 2 && ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'b' || *(ptr + 1) == 'B') )
     ptr += 2;
+  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFLL - 1;      // INT64_MIN
+  const i64 b = static_cast<i64>(base);
+  const i64 lim_div = lim / b;
+  const i64 lim_mod = -(lim % b);
+  i64 acc = 0;
   while ( ptr != end ) {
     int dv = __impl::digit_val(*ptr, base);
     if ( dv < 0 ) break;
-    result = result * static_cast<i64>(base) + dv;
+    if ( acc < lim_div || (acc == lim_div && dv > lim_mod) )      // overflow -> saturate
+      return neg ? lim : 0x7FFFFFFFFFFFFFFFLL;
+    acc = acc * b - dv;
     ++ptr;
   }
-  return neg ? -result : result;
+  if ( neg ) return acc;
+  if ( acc == lim ) return 0x7FFFFFFFFFFFFFFFLL;
+  return -acc;
 }
 
 template<typename T = char>
@@ -186,10 +207,15 @@ string_to_uint_base(const micron::hstring<T> &buf, u32 base)
     ptr += 2;
   else if ( base == 2 && ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'b' || *(ptr + 1) == 'B') )
     ptr += 2;
+  constexpr u64 mx = 0xFFFFFFFFFFFFFFFFull;
+  const u64 b = static_cast<u64>(base);
+  const u64 mx_d = mx / b, mx_m = mx % b;
   while ( ptr != end ) {
     int dv = __impl::digit_val(*ptr, base);
     if ( dv < 0 ) break;
-    result = result * static_cast<u64>(base) + static_cast<u64>(dv);
+    u64 d = static_cast<u64>(dv);
+    if ( result > mx_d || (result == mx_d && d > mx_m) ) return mx;      // overflow -> saturate
+    result = result * b + d;
     ++ptr;
   }
   return result;
@@ -313,7 +339,6 @@ string_to_uint16(const micron::hstring<T> &buf)
 inline i64
 parse_int(const char *&ptr, const char *end)
 {
-  i64 result = 0;
   bool neg = false;
   while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
@@ -321,11 +346,25 @@ parse_int(const char *&ptr, const char *end)
     ++ptr;
   } else if ( ptr != end && *ptr == '+' )
     ++ptr;
+  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFLL - 1;      // INT64_MIN
+  constexpr i64 lim_div = lim / 10;
+  constexpr i64 lim_mod = -(lim % 10);
+  i64 acc = 0;
+  bool sat = false;
+  i64 sat_val = 0;
   while ( ptr != end && *ptr >= '0' && *ptr <= '9' ) {
-    result = result * 10 + (*ptr - '0');
+    int d = *ptr - '0';
+    if ( !sat && (acc < lim_div || (acc == lim_div && d > lim_mod)) ) {
+      sat = true;
+      sat_val = neg ? lim : 0x7FFFFFFFFFFFFFFFLL;
+    }
+    if ( !sat ) acc = acc * 10 - d;
     ++ptr;
   }
-  return neg ? -result : result;
+  if ( sat ) return sat_val;
+  if ( neg ) return acc;
+  if ( acc == lim ) return 0x7FFFFFFFFFFFFFFFLL;
+  return -acc;
 }
 
 inline u64
@@ -334,8 +373,16 @@ parse_uint(const char *&ptr, const char *end)
   u64 result = 0;
   while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '+' ) ++ptr;
+  constexpr u64 mx = 0xFFFFFFFFFFFFFFFFull;
+  constexpr u64 mx_d = mx / 10, mx_m = mx % 10;
+  bool sat = false;
   while ( ptr != end && *ptr >= '0' && *ptr <= '9' ) {
-    result = result * 10 + static_cast<u64>(*ptr - '0');
+    u64 d = static_cast<u64>(*ptr - '0');
+    if ( !sat && (result > mx_d || (result == mx_d && d > mx_m)) ) {
+      sat = true;
+      result = mx;
+    }
+    if ( !sat ) result = result * 10 + d;
     ++ptr;
   }
   return result;
@@ -391,6 +438,7 @@ int_to_string(I n)
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
+  if ( result.max_size() > len ) result[len] = T{ 0 };
   result._buf_set_length(len);
   return result;
 }
@@ -408,6 +456,7 @@ uint_to_string(I n)
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
+  if ( result.max_size() > len ) result[len] = T{ 0 };
   result._buf_set_length(len);
   return result;
 }
@@ -491,6 +540,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
+  if ( result.max_size() > len ) result[len] = T{ 0 };
   result._buf_set_length(len);
   return result;
 }
@@ -507,6 +557,7 @@ uint_to_string_base(I n, u32 base, bool upper = false)
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
+  if ( result.max_size() > len ) result[len] = T{ 0 };
   result._buf_set_length(len);
   return result;
 }
@@ -594,6 +645,7 @@ int_to_string_padded(I n, usize width)
   if ( neg ) out[pos++] = '-';
   for ( usize i = 0; i < pad; ++i ) out[pos++] = '0';
   for ( usize i = content_start; i < raw.size(); ++i ) out[pos++] = raw[i];
+  if ( result.max_size() > pos ) out[pos] = T{ 0 };
   result._buf_set_length(pos);
   return result;
 }

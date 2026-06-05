@@ -2371,12 +2371,37 @@ parse_decimal(const char *&p) noexcept
   return val;
 }
 
+// bounded var
+constexpr u32
+parse_decimal(const char *&p, const char *end) noexcept
+{
+  u32 val = 0;
+  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) {
+    val = val * 10 + (*p - '0');
+    ++p;
+  }
+  return val;
+}
+
 constexpr u32
 parse_hex(const char *&p) noexcept
 {
   u32 val = 0;
   int d;
   while ( (d = xdigit_to_val(*p)) >= 0 ) {
+    val = val * 16 + d;
+    ++p;
+  }
+  return val;
+}
+
+// bounded var
+constexpr u32
+parse_hex(const char *&p, const char *end) noexcept
+{
+  u32 val = 0;
+  int d;
+  while ( p < end && (d = xdigit_to_val(*p)) >= 0 ) {
     val = val * 16 + d;
     ++p;
   }
@@ -2397,11 +2422,40 @@ parse_hex_byte(const char *&p) noexcept
   return d;
 }
 
+// bounded var
+constexpr int
+parse_hex_byte(const char *&p, const char *end) noexcept
+{
+  if ( p >= end ) return -1;
+  int d = xdigit_to_val(*p);
+  if ( d < 0 ) return -1;
+  ++p;
+  if ( p >= end ) return d;
+  int d2 = xdigit_to_val(*p);
+  if ( d2 >= 0 ) {
+    d = (d << 4) | d2;
+    ++p;
+  }
+  return d;
+}
+
 constexpr u32
 parse_octal(const char *&p) noexcept
 {
   u32 val = 0;
   while ( static_cast<u32>(*p - '0') <= 7 ) {
+    val = val * 8 + (*p - '0');
+    ++p;
+  }
+  return val;
+}
+
+// bounded var
+constexpr u32
+parse_octal(const char *&p, const char *end) noexcept
+{
+  u32 val = 0;
+  while ( p < end && static_cast<u32>(*p - '0') <= 7 ) {
     val = val * 8 + (*p - '0');
     ++p;
   }
@@ -2900,6 +2954,24 @@ template<> struct formatter<u64> {
     return off + __impl::fmt_uint_to_buf(buf + off, buf_sz - off, val, base, upper);
   }
 };
+
+#if defined(__micron_arch_width_64)
+template<> struct formatter<long long> {
+  static inline usize
+  write(char *buf, usize buf_sz, long long val, const __impl::fmt_spec &spec)
+  {
+    return formatter<i64>::write(buf, buf_sz, static_cast<i64>(val), spec);
+  }
+};
+
+template<> struct formatter<unsigned long long> {
+  static inline usize
+  write(char *buf, usize buf_sz, unsigned long long val, const __impl::fmt_spec &spec)
+  {
+    return formatter<u64>::write(buf, buf_sz, static_cast<u64>(val), spec);
+  }
+};
+#endif
 
 template<> struct formatter<i16> {
   static inline usize

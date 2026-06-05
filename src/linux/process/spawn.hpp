@@ -157,13 +157,22 @@ spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *e
   return __spawn_caps<true, true, posix::limits_t, ucap_set_t>(pid, path, argv, envp, lims, caps, fa, attr, cwd);
 }
 
-// WARNING: the following code is currently very unstable/unsafe. stack frames get completely messed up and we have to
-// implement a proper trampoline for it to function properly. the stack/activation frame maintains that the stack pointer
-// must remain stable, otherwise bad things occur.
-
 namespace unsafe
 {
-// TODO: fix
+struct __spawn_clone_arg {
+  micron::posix::spawn_ctx ctx;
+  int read_fd;      // pipe read end, closed in the child
+};
+
+static int
+__spawn_child_thunk(void *p)
+{
+  auto *a = static_cast<__spawn_clone_arg *>(p);
+  micron::close(a->read_fd);
+  micron::posix::spawn_process(&a->ctx);
+  return 127;
+}
+
 int
 __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions_t *__restrict file_actions,
         const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)
@@ -182,17 +191,17 @@ __spawn(pid_t &pid, const char *__restrict path, const posix::spawn_file_actions
   uintptr_t sp = reinterpret_cast<uintptr_t>(stack) + stack_size + 4096 - red_zone;
   sp &= ~uintptr_t(0xF);
 
-  // micron::posix::spawn_ctx ctx{ path, argv, envp, file_actions, attrp, pipefd[1] };
-  auto *ctx = reinterpret_cast<micron::posix::spawn_ctx *>(
-      micron::mmap(nullptr, sizeof(micron::posix::spawn_ctx), prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  auto *arg = reinterpret_cast<__spawn_clone_arg *>(
+      micron::mmap(nullptr, sizeof(__spawn_clone_arg), prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(arg) ) return micron::syscall_errno(reinterpret_cast<long>(arg));
 
-  *ctx = { path, argv, envp, file_actions, attrp, pipefd[1] };
-  pid_t child = static_cast<pid_t>(micron::posix::clone_kernel(posix::sig_chld, reinterpret_cast<void *>(sp), nullptr, nullptr, 0));
+  arg->ctx = { path, argv, envp, file_actions, attrp, pipefd[1] };
+  arg->read_fd = pipefd[0];
 
-  if ( child == 0 ) {
-    micron::close(pipefd[0]);
-    micron::posix::spawn_process(ctx);
-  }
+  // child now runs __spawn_child_thunk on the fresh stack via the asm trampoline
+  unsigned long f = micron::posix::__micron_fold_exit_signal(0, static_cast<int>(posix::sig_chld));
+  pid_t child
+      = static_cast<pid_t>(::__micron_clone_entry(&__spawn_child_thunk, reinterpret_cast<void *>(sp), f, arg, nullptr, nullptr, nullptr));
 
   micron::close(pipefd[1]);
 

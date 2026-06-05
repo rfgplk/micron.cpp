@@ -86,13 +86,21 @@ private:
   inline __attribute__((always_inline)) bool
   __size_check(size_type cnt) const noexcept
   {
-    return (length + cnt >= N);
+    return (cnt > (N - 1) - length);
   }
 
   inline __attribute__((always_inline)) bool
   __range_pos_cnt(size_type pos, size_type cnt) const noexcept
   {
     return (pos > length or cnt > length or (pos + cnt) > length);
+  }
+
+  inline __attribute__((always_inline)) bool
+  __mul_size_check(size_type cnt, size_type unit) const noexcept
+  {
+    if ( unit == 0 ) return false;
+    const size_type room = (N - 1) - length;      // never underflows: length < N
+    return (cnt > room / unit);
   }
 
   inline __attribute__((always_inline)) bool
@@ -513,27 +521,24 @@ public:
 
   template<size_type M, typename F, bool X = Sf> constexpr sstring(const sstring<M, F, X> &o)
   {
+    static_assert(sizeof(F) == sizeof(T), "micron::sstring converting ctor: char width mismatch");
     micron::constexpr_zero(&memory[0], N);
     if ( o.empty() ) {
       length = 0;
       return;
     }
-    if constexpr ( N < M ) {
-      micron::memcpy(&memory[0], &o.memory[0], N);
-    } else if constexpr ( N >= M ) {
-      micron::memcpy(&memory[0], &o.memory[0], M);
-    }
-    if ( o.length > N )
-      length = N;
-    else
-      length = o.length;
+    const size_type cap = N - 1;
+    const size_type srclen = (o.length < M) ? o.length : M - 1;
+    const size_type n = (srclen < cap) ? srclen : cap;
+    if ( n ) micron::memcpy(&memory[0], &o.memory[0], n);
+    length = n;
   };
 
   template<is_string S> constexpr sstring(const S &o)
   {
     micron::constexpr_zero(&memory[0], N);
     const size_type srclen = static_cast<size_type>(o.size());
-    const size_type n = (srclen < N) ? srclen : N;      // clamp to capacity: never over-read source nor over-run dest
+    const size_type n = (srclen < N) ? srclen : N - 1;
     if ( n ) micron::memcpy(&memory[0], o.data(), n);
     length = n;
   };
@@ -555,17 +560,14 @@ public:
 
   template<size_type M, typename F, bool X = Sf> constexpr sstring(sstring<M, F, X> &&o)
   {
-    if constexpr ( N < M ) {
-      micron::memcpy(&memory[0], &o.memory[0], N);
-      micron::constexpr_zero(&o.memory[0], M);      // clear the whole moved-from source (M wide), not just N
-    } else if constexpr ( N >= M ) {
-      micron::memcpy(&memory[0], &o.memory[0], M);
-      micron::constexpr_zero(&o.memory[0], M);      // source buffer is only M wide; zeroing N (> M) overran it
-    }
-    if ( o.length > N )
-      length = N;
-    else
-      length = o.length;
+    static_assert(sizeof(F) == sizeof(T), "micron::sstring converting move ctor: char width mismatch");
+    micron::constexpr_zero(&memory[0], N);
+    const size_type cap = N - 1;
+    const size_type srclen = (o.length < M) ? o.length : M - 1;
+    const size_type n = (srclen < cap) ? srclen : cap;
+    if ( n ) micron::memcpy(&memory[0], &o.memory[0], n);
+    micron::constexpr_zero(&o.memory[0], M);      // clear the whole moved-from source (M wide)
+    length = n;
     o.length = 0;
   };
 
@@ -612,8 +614,9 @@ public:
       micron::memcpy(&memory[0], &o.cdata()[0], o.size());
       length = o.size();
     } else {
-      micron::memcpy(&memory[0], &o.cdata()[0], N);
-      length = N;      // only N copied; clamp stored length to capacity (was o.size() > N -> corrupt)
+      // reserve the NUL slot: copy at most N-1 so memory[length]==0 holds -> c_str() terminated
+      micron::memcpy(&memory[0], &o.cdata()[0], N - 1);
+      length = N - 1;
     }
     return *this;
   }
@@ -622,6 +625,7 @@ public:
   sstring &
   operator=(const sstring<M, F, X> &o)
   {
+    static_assert(sizeof(F) == sizeof(T), "micron::sstring operator=: char width mismatch");
     if ( o.empty() ) {
       length = 0;
       return *this;
@@ -637,6 +641,7 @@ public:
   sstring &
   operator=(sstring<M, F, X> &&o)
   {
+    static_assert(sizeof(F) == sizeof(T), "micron::sstring operator=: char width mismatch");
     if ( o.empty() ) {
       length = 0;
       return *this;
@@ -680,9 +685,11 @@ public:
   sstring &
   operator=(const F (&str)[N])
   {
+    static_assert(sizeof(F) == sizeof(T), "micron::sstring operator=([]): char width mismatch");
     clear();
-    micron::memcpy(&memory, &str, N);
-    length = N;
+    // copy N-1 and reserve the NUL slot so memory[length]==0 holds -> c_str() terminated
+    micron::memcpy(&memory[0], &str[0], N - 1);
+    length = N - 1;
     return *this;
   }
 
@@ -726,6 +733,9 @@ public:
   constexpr void
   set_size(size_type n)
   {
+    if constexpr ( Sf ) {
+      if ( n >= N ) n = N - 1;      // never let length reach/exceed capacity (would skip the NUL slot)
+    }
     length = n;
     // WARNING: must set last char to null, otherwise c_str() breaks
     if ( n < N ) memory[n] = T{ 0 };
@@ -813,6 +823,11 @@ public:
   inline constexpr void
   _buf_set_length(const size_type s)
   {
+    if constexpr ( Sf ) {
+      length = (s >= N) ? N - 1 : s;      // never let length reach/exceed capacity
+      memory[length] = T{ 0 };            // keep the NUL invariant
+      return;
+    }
     length = s;
   }
 
@@ -847,6 +862,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline size_type
   rfind(const sstring<M, F, X> &str, size_type pos = npos) const
   {
@@ -901,6 +917,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline size_type
   find_first_of(const sstring<M, F, X> &chars, size_type pos = 0) const
   {
@@ -991,6 +1008,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline size_type
   find_last_of(const sstring<M, F, X> &chars, size_type pos = npos) const
   {
@@ -1053,6 +1071,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline size_type
   find_first_not_of(const sstring<M, F, X> &chars, size_type pos = 0) const
   {
@@ -1102,6 +1121,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline size_type
   find_last_not_of(const sstring<M, F, X> &chars, size_type pos = npos) const
   {
@@ -1146,6 +1166,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   starts_with(const sstring<M, F, X> &prefix) const
   {
@@ -1187,6 +1208,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   ends_with(const sstring<M, F, X> &suffix) const
   {
@@ -1220,6 +1242,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   contains(const sstring<M, F, X> &needle) const
   {
@@ -1245,6 +1268,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline sstring &
   replace(size_type pos, size_type cnt, const sstring<M, F, X> &with)
   {
@@ -1257,7 +1281,12 @@ public:
   {
     __safety_check<&sstring::__null_check, except::library_error>("micron::sstring replace() null replacement",
                                                                   static_cast<const void *>(with));
-    __safety_check<&sstring::__iterator_check, except::library_error>("micron::sstring replace() iterator out of range", first);
+    if ( __iter_substr_check(first, last) ) {
+      if constexpr ( Sf )
+        exc<except::library_error>("micron::sstring replace() iterator range out of range");
+      else
+        return *this;
+    }
     return __replace_impl(static_cast<size_type>(first - &memory[0]), static_cast<size_type>(last - first), with, micron::strlen(with));
   }
 
@@ -1295,6 +1324,7 @@ public:
   }
 
   template<size_type M, size_type K, typename F, typename G, bool X = Sf, bool Y = Sf>
+    requires(sizeof(F) == sizeof(T) && sizeof(G) == sizeof(T))
   inline sstring &
   replace_all(const sstring<M, F, X> &needle, const sstring<K, G, Y> &with)
   {
@@ -1322,6 +1352,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline int
   compare(const sstring<M, F, X> &other) const
   {
@@ -1367,6 +1398,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   size_type
   find(const sstring<M, F, X> &str, size_type pos = 0) const
   {
@@ -1681,6 +1713,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline size_type
   count(const sstring<M, F, X> &needle) const
   {
@@ -1907,6 +1940,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline sstring &
   remove(const sstring<M, F, X> &needle)
   {
@@ -1956,6 +1990,7 @@ public:
   }
 
   template<size_type M, typename F, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline sstring &
   remove_all(const sstring<M, F, X> &needle)
   {
@@ -1998,6 +2033,7 @@ public:
 
     size_type str_len = M - 1;
 
+    __safety_check<&sstring::__mul_size_check, except::library_error>("micron::sstring insert() out of memory", cnt, str_len);
     __safety_check<&sstring::__insert_ind_check, except::library_error>("micron::sstring insert() out of range",
                                                                         static_cast<size_type>(ind), cnt * str_len);
 
@@ -2031,6 +2067,7 @@ public:
   {
     size_type str_len = M - 1;
 
+    __safety_check<&sstring::__mul_size_check, except::library_error>("micron::sstring insert() out of memory", cnt, str_len);
     __safety_check<&sstring::__insert_iter_check, except::library_error>("micron::sstring insert() out of range",
                                                                          static_cast<const T *>(itr), cnt * str_len);
 
@@ -2041,6 +2078,7 @@ public:
   }
 
   template<typename F, size_type M, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline sstring &
   insert(iterator itr, const sstring<M, F, X> &o)
   {
@@ -2054,6 +2092,7 @@ public:
   }
 
   template<typename F, size_type M, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline sstring &
   insert(iterator itr, sstring<M, F, X> &&o)
   {
@@ -2147,6 +2186,7 @@ public:
   };
 
   template<size_type M2, typename F2 = T, bool X2 = Sf>
+    requires(sizeof(F2) == sizeof(T))
   inline sstring &
   operator+=(const sstring<M2, F2, X2> &data)
   {
@@ -2163,7 +2203,9 @@ public:
   inline sstring &
   operator+=(const slice<F> &data)
   {
-    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.length);
+    if ( data.size() == 0 ) return *this;
+
+    __safety_check<&sstring::__size_check, except::library_error>("micron::sstring operator+=() out of memory", data.size() - 1);
 
     micron::memcpy(&(memory)[length], data.begin(), data.size() - 1);
     length += data.size() - 1;
@@ -2577,6 +2619,7 @@ public:
   }
 
   template<size_type M, typename F = T, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const sstring<M, F, X> &data) const
   {
@@ -2584,6 +2627,7 @@ public:
   }
 
   template<size_type M, typename F = T, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator!=(const sstring<M, F, X> &data) const
   {
@@ -2591,6 +2635,7 @@ public:
   }
 
   template<size_type M, typename F = T, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<(const sstring<M, F, X> &data) const
   {
@@ -2598,6 +2643,7 @@ public:
   }
 
   template<size_type M, typename F = T, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>(const sstring<M, F, X> &data) const
   {
@@ -2605,6 +2651,7 @@ public:
   }
 
   template<size_type M, typename F = T, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<=(const sstring<M, F, X> &data) const
   {
@@ -2612,6 +2659,7 @@ public:
   }
 
   template<size_type M, typename F = T, bool X = Sf>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>=(const sstring<M, F, X> &data) const
   {

@@ -1,0 +1,18 @@
+test rigor/istring.cpp
+test rigor/regex_string_input.cpp
+test rigor/rigor_istring.cpp
+test rigor/rigor_sstring.cpp
+test rigor/rigor_string.cpp
+test rigor/rigor_unistring.cpp
+test rigor/sstring.cpp
+test rigor/string_adv_sstring.cpp
+test rigor/string_adv_string.cpp
+test rigor/string_adv_strings_ops.cpp
+test rigor/string_concat_cross.cpp
+test rigor/string.cpp
+test rigor/string_exhaustive.cpp
+test rigor/string_format_extensive.cpp
+test rigor/string_lifetimes.cpp
+test rigor/string_simd.cpp
+test rigor/unistring.cpp
+
