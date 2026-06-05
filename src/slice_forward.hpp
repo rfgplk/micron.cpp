@@ -20,5 +20,6 @@
 
 namespace micron
 {
-template<is_movable_object T, class C> struct slice;
-};
+// no longer has a custom allocator
+template<is_movable_object T> struct slice;
+};      // namespace micron

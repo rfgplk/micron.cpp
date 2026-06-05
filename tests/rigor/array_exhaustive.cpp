@@ -157,8 +157,7 @@ main()
   test_case("op[](size_type, size_type): slice range");
   {
     a8 v{ 1, 2, 3, 4, 5, 6, 7, 8 };
-    // Slice overload requires explicit allocator template arg.
-    auto s = v.operator[]<micron::allocator_serial<>>(2, 6);
+    auto s = v[2, 6];
     require(s.size(), usize(4));
   }
   end_test_case();

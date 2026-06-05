@@ -210,7 +210,7 @@ public:
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
 
-  template<class C> conarray(const slice<T, C> &o)
+  conarray(const slice<T> &o)
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
@@ -416,34 +416,30 @@ public:
     return stack[i];
   }
 
-  template<class C>
-  inline slice<T, C>
+  inline slice<T>
   operator[]()
   {
-    return slice<T, C>(begin_unsafe(), end_unsafe());
+    return slice<T>(begin_unsafe(), end_unsafe());
   }
 
-  template<class C>
-  inline const slice<T, C>
+  inline const slice<T>
   operator[]() const
   {
-    return slice<T, C>(begin(), end());
+    return slice<T>(begin(), end());
   }
 
-  template<class C>
-  inline __attribute__((always_inline)) const slice<T, C>
+  inline __attribute__((always_inline)) const slice<T>
   operator[](size_type from, size_type to) const
   {
     if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::conarray operator[] out of allocated memory range.");
-    return slice<T, C>(get(from), get(to));
+    return slice<T>(get(from), get(to));
   }
 
-  template<class C>
-  inline __attribute__((always_inline)) slice<T, C>
+  inline __attribute__((always_inline)) slice<T>
   operator[](size_type from, size_type to)
   {
     if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::conarray operator[] out of allocated memory range.");
-    return slice<T, C>(get(from), get(to));
+    return slice<T>(get(from), get(to));
   }
 
   byte *

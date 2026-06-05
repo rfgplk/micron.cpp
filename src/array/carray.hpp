@@ -715,7 +715,7 @@ public:
       __impl_container::copy<N, T>(micron::addr(stack[0]), o.begin());
   }
 
-  template<class C> carray(const slice<T, C> &o)
+  carray(const slice<T> &o)
   {
     const size_type bound = o.size() < N ? o.size() : N;
     __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
@@ -882,32 +882,28 @@ public:
     return stack[i];
   }
 
-  template<class C>
-  inline slice<T, C>
+  inline slice<T>
   operator[]()
   {
-    return slice<T, C>(begin(), end());
+    return slice<T>(begin(), end());
   }
 
-  template<class C>
-  inline const slice<T, C>
+  inline const slice<T>
   operator[]() const
   {
-    return slice<T, C>(cbegin(), cend());
+    return slice<T>(cbegin(), cend());
   }
 
-  template<class C>
-  inline __attribute__((always_inline)) const slice<T, C>
+  inline __attribute__((always_inline)) const slice<T>
   operator[](size_type from, size_type to) const
   {
-    return slice<T, C>(get(from), get(to));
+    return slice<T>(get(from), get(to));
   }
 
-  template<class C>
-  inline __attribute__((always_inline)) slice<T, C>
+  inline __attribute__((always_inline)) slice<T>
   operator[](size_type from, size_type to)
   {
-    return slice<T, C>(get(from), get(to));
+    return slice<T>(get(from), get(to));
   }
 
   byte *

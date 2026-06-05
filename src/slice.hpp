@@ -183,8 +183,10 @@ template<typename T> struct ptr_range {
   T *end = nullptr;
 };
 
-template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct slice: public __immutable_memory_resource<T, Alloc> {
-  using __mem = __immutable_memory_resource<T, Alloc>;
+// NOTE: we're removing the ability to define a custom allocator with slices so we can fix/properly forward declare this without causing a
+// dependency mess
+template<is_movable_object T> struct slice: public __immutable_memory_resource<T, micron::allocator_serial<>> {
+  using __mem = __immutable_memory_resource<T, micron::allocator_serial<>>;
   using category_type = slice_tag;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
@@ -206,7 +208,7 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
     __mem::free();
   }
 
-  slice(void) : __mem(Alloc::auto_size()) { __mem::length = __mem::capacity; }
+  slice(void) : __mem(micron::allocator_serial<>::auto_size()) { __mem::length = __mem::capacity; }
 
   // support const ptrs as well -- be careful!!
   slice(const T *a, const T *b) : __mem(static_cast<size_t>(b - a))
@@ -312,13 +314,13 @@ template<is_movable_object T, class Alloc = micron::allocator_serial<>> struct s
   slice
   operator[](const size_t n, const size_t m) const
   {
-    return slice<T, Alloc>(micron::addr(__mem::memory[n]), micron::addr(__mem::memory[m]));
+    return slice<T>(micron::addr(__mem::memory[n]), micron::addr(__mem::memory[m]));
   }
 
   slice
   operator[](void) const
   {
-    return slice<T, Alloc>(micron::addr(__mem::memory[0]), micron::addr(__mem::memory[__mem::length]));
+    return slice<T>(micron::addr(__mem::memory[0]), micron::addr(__mem::memory[__mem::length]));
   }
 
   iterator
