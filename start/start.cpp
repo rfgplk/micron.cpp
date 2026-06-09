@@ -24,6 +24,15 @@ extern "C" {
 char **environ = nullptr;
 }
 
+// Flush denormals to zero (FTZ + DAZ)
+[[gnu::always_inline]] inline void
+enable_fast_fp() noexcept
+{
+  unsigned int mxcsr = __builtin_ia32_stmxcsr();
+  mxcsr |= 0x8040u;      // 0x8000 = FTZ, 0x0040 = DAZ
+  __builtin_ia32_ldmxcsr(mxcsr);
+}
+
 extern "C" __attribute__((used, visibility("default"))) int
 __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
 {
@@ -43,6 +52,10 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
 
   // io buffer init MUST fire AFTER .init_array
   __boot_io_buffers();
+#ifdef __FAST_MATH__
+  enable_fast_fp();
+#endif
+
   const int rc = __micron_user_main(argc, argv, envp);
 
   micron::exit(rc);
