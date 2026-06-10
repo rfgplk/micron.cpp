@@ -192,14 +192,15 @@ struct uprocess_t {
 
   template<typename... Args>
   uprocess_t(const char *str, Args &&...args)
-      : pids{}, path(str), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
+      : pids{}, path(str), argv{ str, micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
   {
   }
 
   template<typename... Args>
   uprocess_t(micron::sstring<posix::path_max + 1> &&o, Args &&...args)
-      : pids{}, path(micron::move(o)), argv{ micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
+      : pids{}, path(micron::move(o)), argv{ path.c_str(), micron::forward<Args>(args)... }, envp{}, lims(0), affinity(), status(0)
   {
+    // path is initialized before argv (declaration order), so path.c_str() is the moved-in name
   }
 
   uprocess_t(const uprocess_t &o)
@@ -251,7 +252,7 @@ process_list_t
 create_processes(S... names)
 {
   process_list_t p;
-  (p.emplace_back(names, names), ...);
+  (p.emplace_back(names), ...);      // ctor injects argv[0] from the path; don't pass the name twice
   return p;
 }
 
@@ -260,7 +261,7 @@ process_list_t
 create_processes(S... names)
 {
   process_list_t p;
-  (p.emplace_back(names, names), ...);
+  (p.emplace_back(names), ...);      // ctor injects argv[0] from the path; don't pass the name twice
   return p;
 }
 
@@ -269,6 +270,7 @@ run_processes(process_list_t &n)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
+    if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv carries argv[0]; only seed when empty
     for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();
@@ -434,6 +436,7 @@ run_processes(process_list_t &n, const Caps &caps)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
+    if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv carries argv[0]; only seed when empty
     for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();
@@ -448,6 +451,7 @@ run_processes_limited(process_list_t &n, const Lims &lims)
 {
   for ( auto &t : n ) {
     micron::svector<char *> argv;
+    if ( t.argv.empty() ) argv.push_back(&t.path[0]);      // t.argv carries argv[0]; only seed when empty
     for ( usize i = 0; i < t.argv.size(); i++ ) argv.push_back(&t.argv[i][0]);
     argv.push_back(nullptr);
     t.pids.uid = posix::getuid();
