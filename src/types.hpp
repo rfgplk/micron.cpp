@@ -72,12 +72,12 @@ using size_t = __UINTPTR_TYPE__;
 using usize = size_t;
 
 // time block
-using clock_t = __clock_t;
-using clockid_t = __clockid_t;
-using timer_t = __timer_t;
-using suseconds_t = __suseconds_t;
+using clock_t = __clock_t_type;
+using clockid_t = __clockid_t_type;
+using timer_t = __timer_t_type;
+using suseconds_t = __suseconds_t_type;
 
-using time_t = __time_t;
+using time_t = __time_t_type;
 // time64_t is ALWAYS 64-bit
 using time64_t = __INT64_TYPE__;
 using slong_t = __syscall_slong_type;
@@ -107,16 +107,16 @@ using kernel_ptrdiff_t = kernel_long_t;
 
 // __kernel_off_t / __kernel_time_t are WORD-SIZE in the kernel UAPI
 using kernel_off_t = kernel_long_t;
-using kernel_loff_t = __off64_t;      // long long
+using kernel_loff_t = __off64_t_type;      // long long
 using kernel_old_time_t = kernel_long_t;
 using kernel_time_t = kernel_long_t;
-using kernel_time64_t = __suseconds64_t;      // long long
-using kernel_clock_t = __clock_t;             // kernel_long_t
-using kernel_timer_t = int;                   // int
-using kernel_clockid_t = int;                 // int
-using kernel_caddr_t = char *;                // char*
-using kernel_uid16_t = __uid_t_type;          // unsigned short
-using kernel_gid16_t = __gid_t_type;          // unsigned short
+using kernel_time64_t = __suseconds64_t_type;      // long long
+using kernel_clock_t = __clock_t_type;             // kernel_long_t
+using kernel_timer_t = int;                        // int
+using kernel_clockid_t = int;                      // int
+using kernel_caddr_t = char *;                     // char*
+using kernel_uid16_t = __uid_t_type;               // unsigned short
+using kernel_gid16_t = __gid_t_type;               // unsigned short
 
 // using complex = _Complex;
 // using imaginary = _Imaginary;

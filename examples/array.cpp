@@ -16,7 +16,6 @@
 //   - conarray / constarray: constexpr / immutable variants.
 //   - static_size: compile-time capacity constant.
 // See also:
-//   examples/array_members.cpp: full member-by-member tour
 //   examples/io.cpp           : how println() prints any container
 //   examples/slice_span.cpp   : non-owning views over the same memory
 

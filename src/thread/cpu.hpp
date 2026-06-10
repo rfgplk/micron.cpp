@@ -7,6 +7,8 @@
 
 // technically not needed anymore
 
+// i have no idea why this is here
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -841,9 +843,13 @@ public:
   {
     if ( !data_ ) {
       // don't include mman due to spaghetti
-      void *p = reinterpret_cast<void *>(micron::syscall(SYS_mmap, nullptr, sizeof(__data), 0x3, 0x22, -1, 0));
-      if ( reinterpret_cast<max_t>(p) < 0 ) return;
-      data_ = static_cast<__data *>(p);
+#if defined(__micron_arch_width_32)
+      max_t __m = micron::syscall(SYS_mmap2, nullptr, sizeof(__data), 0x3, 0x22, -1, 0);
+#else
+      max_t __m = micron::syscall(SYS_mmap, nullptr, sizeof(__data), 0x3, 0x22, -1, 0);
+#endif
+      if ( micron::syscall_failed(__m) ) return;
+      data_ = reinterpret_cast<__data *>(__m);
       micron::memset(data_, 0, sizeof(__data));
     }
   }

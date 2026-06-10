@@ -25,6 +25,12 @@ struct bad_function_call {
   {
     return "micron::function: call on empty wrapper";
   }
+
+  constexpr u32
+  which() const noexcept
+  {
+    return 0x7f00 + 15;      // == except.hpp library_errno; needed by the -fno-exceptions raise() path (abort(ex.which()))
+  }
 };
 };      // namespace except
 

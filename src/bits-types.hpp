@@ -122,27 +122,4 @@ using __blksize_t_type = __syscall_slong_type;      // page-size scale; word-siz
 using __ssize_t_type = __sword_type;
 using __cpu_mask_type = __syscall_ulong_type;      // cpu_set word == unsigned long (word-size)
 
-using __dev_t = __dev_t_type;     /* Type of device numbers.  */
-using __uid_t = __uid_t_type;     /* Type of user identifications.  */
-using __gid_t = __gid_t_type;     /* Type of group identifications.  */
-using __ino_t = __ino_t_type;     /* Type of file serial numbers.  */
-using __ino64_t = __ino64_t_type; /* Type of file serial numbers (LFS).*/
-using __mode_t = __mode_t_type;   /* Type of file attribute bitmasks.  */
-using __nlink_t = __nlink_t_type; /* Type of file link counts.  */
-using __off_t = __off_t_type;     /* Type of file sizes and offsets.  */
-using __off64_t = __off64_t_type; /* Type of file sizes and offsets (LFS).  */
-using __pid_t = __pid_t_type;     /* Type of process identifications.  */
-// using  __fsid_t __fsid_t_type;	/* Type of file system IDs.  */
-using __clock_t = __clock_t_type; /* Type of CPU usage counts.  */
-using __clockid_t = __clockid_t_type;
-using __rlim_t = __rlim_t_type;           /* Type for resource measurement.  */
-using __rlim64_t = __rlim64_t_type;       /* Type for resource measurement (LFS).  */
-using __id_t = __id_t_type;               /* General type for IDs.  */
-using __time_t = __time_t_type;           /* Seconds since the Epoch.  */
-using __timer_t = __timer_t_type;         /* Seconds since the Epoch.  */
-using __useconds_t = __useconds_t_type;   /* Count of microseconds.  */
-using __suseconds_t = __suseconds_t_type; /* Signed count of microseconds.  */
-using __suseconds64_t = __suseconds64_t_type;
-
-using __daddr_t = __daddr_t_type; /* The type of a disk address.  */
-using __key_t = __key_t_type;     /* Type of an IPC key.  */
+// NOTE: do NOT re-alias these to glibc's reserved names (__off_t, __time_t, __nlink_t, ...)

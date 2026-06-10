@@ -1,5 +1,11 @@
+#include "../src/algorithm/filter.hpp"
+#include "../src/algorithm/fold.hpp"
+#include "../src/array/array.hpp"
+#include "../src/io/console.hpp"
+#include "../src/vector/vector.hpp"
+
 // algorithm_fold_filter.cpp
-// micron's fold and filter algorithms.
+// micron's fold and filter algorithms
 //
 // See also:
 //   examples/algorithm.cpp     — fill / transform / sum / min / max
@@ -15,11 +21,7 @@
 //
 // filter similarly passes fn(const T*).
 
-#include "../src/algorithm/filter.hpp"
-#include "../src/algorithm/fold.hpp"
-#include "../src/array/array.hpp"
-#include "../src/io/console.hpp"
-#include "../src/vector/vector.hpp"
+
 
 int
 main()

@@ -28,9 +28,87 @@
 #include "features.h"
 #include "macros.h"
 
-#include <sys/auxv.h>
-
 BEGIN_C_NS
+
+// must be libc-free
+
+#ifdef ARCH_AARCH64
+#define __NF_NR_openat 56
+#define __NF_NR_close 57
+#define __NF_NR_read 63
+#else
+#define __NF_NR_read 3
+#define __NF_NR_close 6
+#define __NF_NR_openat 322
+#endif
+#define __NF_AT_FDCWD (-100L)
+
+__inline__ long
+__nf_syscall0(long nr)
+{
+#ifdef ARCH_AARCH64
+  register long x8 __asm__("x8") = nr;
+  register long x0 __asm__("x0");
+  __asm__ volatile("svc #0" : "=r"(x0) : "r"(x8) : "memory");
+  return x0;
+#else
+  register long r7 __asm__("r7") = nr;
+  register long r0 __asm__("r0");
+  __asm__ volatile("svc #0" : "=r"(r0) : "r"(r7) : "memory");
+  return r0;
+#endif
+}
+
+__inline__ long
+__nf_syscall3(long nr, long a0, long a1, long a2)
+{
+#ifdef ARCH_AARCH64
+  register long x8 __asm__("x8") = nr;
+  register long x0 __asm__("x0") = a0;
+  register long x1 __asm__("x1") = a1;
+  register long x2 __asm__("x2") = a2;
+  __asm__ volatile("svc #0" : "+r"(x0) : "r"(x1), "r"(x2), "r"(x8) : "memory");
+  return x0;
+#else
+  register long r7 __asm__("r7") = nr;
+  register long r0 __asm__("r0") = a0;
+  register long r1 __asm__("r1") = a1;
+  register long r2 __asm__("r2") = a2;
+  __asm__ volatile("svc #0" : "+r"(r0) : "r"(r1), "r"(r2), "r"(r7) : "memory");
+  return r0;
+#endif
+}
+
+__inline__ long
+__nf_read_file(const char *__restrict__ path, char *__restrict__ buf, long cap)
+{
+  long fd = __nf_syscall3(__NF_NR_openat, __NF_AT_FDCWD, (long)path, 0 /* O_RDONLY */);
+  if ( fd < 0 ) return -1;
+  long n = __nf_syscall3(__NF_NR_read, fd, (long)buf, cap - 1);
+  __nf_syscall3(__NF_NR_close, fd, 0, 0);
+  if ( n < 0 ) n = 0;
+  buf[n] = '\0';
+  return n;
+}
+
+__inline__ unsigned long
+__nf_getauxval(unsigned long type)
+{
+  long fd = __nf_syscall3(__NF_NR_openat, __NF_AT_FDCWD, (long)"/proc/self/auxv", 0);
+  if ( fd < 0 ) return 0;
+  unsigned long val = 0;
+  unsigned long pair[2];
+  while ( __nf_syscall3(__NF_NR_read, fd, (long)pair, (long)sizeof(pair)) == (long)sizeof(pair) ) {
+    if ( pair[0] == type ) {
+      val = pair[1];
+      break;
+    }
+    if ( pair[0] == 0 ) /* AT_NULL */
+      break;
+  }
+  __nf_syscall3(__NF_NR_close, fd, 0, 0);
+  return val;
+}
 
 __inline__ unsigned int
 rfield(const unsigned long r, const unsigned long hi, const unsigned long lo)
@@ -54,8 +132,8 @@ typedef struct hwcaps {
 __inline__ void
 read_hwcaps(hwcaps_t *__restrict__ const h)
 {
-  h->hwcap = getauxval(_NF_AT_HWCAP);
-  h->hwcap2 = getauxval(_NF_AT_HWCAP2);
+  h->hwcap = __nf_getauxval(_NF_AT_HWCAP);
+  h->hwcap2 = __nf_getauxval(_NF_AT_HWCAP2);
 }
 
 // ring0 only, kernel traps us
@@ -136,50 +214,36 @@ read_cntfrq(void)
 // Returns 1 if the kernel exposes ID registers to EL0 via MRS trapping
 // (>= 4.11) bit 11 of AT_HWCAP
 
-char
+__inline__ char
 have_idreg(void)
 {
-  unsigned long h = getauxval(_NF_AT_HWCAP);
-  if ( h & _NF_A64_CPUID )
-    return 1;
+  unsigned long h = __nf_getauxval(_NF_AT_HWCAP);
+  if ( h & _NF_A64_CPUID ) return 1;
   return 0;
 }
 
-int
+__inline__ int
 maximum_arch(void)
 {
-  unsigned long h = getauxval(_NF_AT_HWCAP);
-  unsigned long long h2 = (unsigned long long)getauxval(_NF_AT_HWCAP2);
+  unsigned long h = __nf_getauxval(_NF_AT_HWCAP);
+  unsigned long long h2 = (unsigned long long)__nf_getauxval(_NF_AT_HWCAP2);
 
-  if ( !(h & _NF_A64_FP) || !(h & _NF_A64_ASIMD) )
-    return 0;
+  if ( !(h & _NF_A64_FP) || !(h & _NF_A64_ASIMD) ) return 0;
 
   int level = 80;
 
-  if ( h & _NF_A64_ATOMICS )
-    level = 81;
-  if ( level >= 81 && (h & _NF_A64_DCPOP) )
-    level = 82;
-  if ( level >= 82 && (h & _NF_A64_JSCVT) && (h & _NF_A64_FCMA) && (h & _NF_A64_LRCPC) && (h & _NF_A64_PACA) )
-    level = 83;
-  if ( level >= 83 && (h & _NF_A64_DIT) && (h & _NF_A64_FLAGM) && (h & _NF_A64_ILRCPC) && (h & _NF_A64_USCAT) )
-    level = 84;
-  if ( level >= 84 && (h & _NF_A64_SSBS) && (h & _NF_A64_SB) && (h2 & _NF_A64_BTI) && (h2 & _NF_A64_FRINT) )
-    level = 85;
-  if ( level >= 85 && (h2 & _NF_A64_BF16) && (h2 & _NF_A64_I8MM) )
-    level = 86;
-  if ( level >= 86 && (h2 & _NF_A64_WFXT) )
-    level = 87;
-  if ( level >= 87 && (h2 & _NF_A64_MOPS) && (h2 & _NF_A64_HBC) )
-    level = 88;
-  if ( level >= 88 && (h2 & _NF_A64_CSSC) && (h2 & _NF_A64_RPRFM) )
-    level = 89;
-  if ( level >= 85 && (h2 & _NF_A64_SVE2) )
-    level = (level < 90) ? 90 : level;
-  if ( level >= 90 && (h2 & _NF_A64_SME) )
-    level = (level < 92) ? 92 : level;
-  if ( level >= 92 && (h2 & _NF_A64_SME2) )
-    level = (level < 94) ? 94 : level;
+  if ( h & _NF_A64_ATOMICS ) level = 81;
+  if ( level >= 81 && (h & _NF_A64_DCPOP) ) level = 82;
+  if ( level >= 82 && (h & _NF_A64_JSCVT) && (h & _NF_A64_FCMA) && (h & _NF_A64_LRCPC) && (h & _NF_A64_PACA) ) level = 83;
+  if ( level >= 83 && (h & _NF_A64_DIT) && (h & _NF_A64_FLAGM) && (h & _NF_A64_ILRCPC) && (h & _NF_A64_USCAT) ) level = 84;
+  if ( level >= 84 && (h & _NF_A64_SSBS) && (h & _NF_A64_SB) && (h2 & _NF_A64_BTI) && (h2 & _NF_A64_FRINT) ) level = 85;
+  if ( level >= 85 && (h2 & _NF_A64_BF16) && (h2 & _NF_A64_I8MM) ) level = 86;
+  if ( level >= 86 && (h2 & _NF_A64_WFXT) ) level = 87;
+  if ( level >= 87 && (h2 & _NF_A64_MOPS) && (h2 & _NF_A64_HBC) ) level = 88;
+  if ( level >= 88 && (h2 & _NF_A64_CSSC) && (h2 & _NF_A64_RPRFM) ) level = 89;
+  if ( level >= 85 && (h2 & _NF_A64_SVE2) ) level = (level < 90) ? 90 : level;
+  if ( level >= 90 && (h2 & _NF_A64_SME) ) level = (level < 92) ? 92 : level;
+  if ( level >= 92 && (h2 & _NF_A64_SME2) ) level = (level < 94) ? 94 : level;
 
   return level;
 }
@@ -246,20 +310,18 @@ read_cntfrq(void)
   return (unsigned long long)val;
 }
 
-char
+__inline__ char
 have_idreg(void)
 {
-  unsigned long midr;
-  __asm__ volatile("mrc p15, 0, %0, c0, c0, 0" : "=r"(midr));
-  return (midr != 0) ? 1 : 0;
+  // cp15 ID registers (MIDR et al) are PL1-only on aarch32
+  return 0;
 }
 
-int
+__inline__ int
 maximum_arch(void)
 {
-  unsigned long midr;
-  __asm__ volatile("mrc p15, 0, %0, c0, c0, 0" : "=r"(midr));
-  return (int)rfield(midr, 19, 16);
+  // MIDR is unreadable at PL0 on aarch32; 0 = unknown
+  return 0;
 }
 
 #endif

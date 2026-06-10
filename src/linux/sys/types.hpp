@@ -15,16 +15,16 @@ namespace posix
 {
 using idtype_t = __u32_type;
 using id_t = __u32_type;
-using pid_t = __pid_t;
-using key_t = __key_t;
-using uid_t = __uid_t;
-using gid_t = __gid_t;
-using suseconds_t = __suseconds_t;
-using suseconds64_t = __suseconds64_t;
-using rlim_t = __rlim_t;
-using mode_t = __mode_t;
-using off_t = __off_t;
-using off64_t = __off64_t;
+using pid_t = __pid_t_type;
+using key_t = __key_t_type;
+using uid_t = __uid_t_type;
+using gid_t = __gid_t_type;
+using suseconds_t = __suseconds_t_type;
+using suseconds64_t = __suseconds64_t_type;
+using rlim_t = __rlim_t_type;
+using mode_t = __mode_t_type;
+using off_t = __off_t_type;
+using off64_t = __off64_t_type;
 
 using syscall_long_t = __syscall_slong_type;
 using syscall_ulong_t = __syscall_ulong_type;
@@ -33,11 +33,11 @@ using blkcnt_t = __blkcnt_t_type;
 using nlink_t = __nlink_t_type;
 using clock_t = __clock_t_type;
 
-using dev_t = __dev_t;
+using dev_t = __dev_t_type;
 
-using time_t = __time_t;
-using ino_t = __ino_t;
-using ino64_t = __ino64_t;
+using time_t = __time_t_type;
+using ino_t = __ino_t_type;
+using ino64_t = __ino64_t_type;
 
 using daddr_t = __s32_type;
 };      // namespace posix
