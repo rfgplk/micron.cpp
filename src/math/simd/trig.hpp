@@ -318,6 +318,12 @@ tan(simd::f128 x) noexcept
 #if defined(__micron_arch_arm64)
 namespace __trig_simd_neon_d
 {
+// f64 Cody-Waite 3-word pi/2 words (same as the x86 __trig_simd set, compiled out on arm)
+inline constexpr f64 pio2_hi = 0x1.921fb54400000p+0;
+inline constexpr f64 pio2_mid = 0x1.0b4611a626000p-34;
+inline constexpr f64 pio2_lo = 0x1.9880000000000p-77;
+inline constexpr f64 inv_pio2 = 0x1.45f306dc9c883p-1;
+
 [[gnu::always_inline]] inline simd::d128
 ksin(simd::d128 r) noexcept
 {
@@ -349,7 +355,6 @@ kcos(simd::d128 r) noexcept
 [[gnu::always_inline]] inline simd::d128
 reduce(simd::d128 x, int64x2_t *q_out) noexcept
 {
-  using namespace __trig_simd;
   const float64x2_t fN = simd::neon::rint(simd::neon::mul(x, simd::neon::splat_f64(inv_pio2)));
   float64x2_t t = simd::neon::fms_f64(x, fN, simd::neon::splat_f64(pio2_hi));
   t = simd::neon::fms_f64(t, fN, simd::neon::splat_f64(pio2_mid));
