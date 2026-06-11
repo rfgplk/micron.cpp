@@ -10,7 +10,7 @@ int
 doctor(recipes::gnu::config_t &conf)
 {
   conf.doctor = true;
-  return build(conf);
+  return mc::wexitstatus(build(conf));
 }
 
 template <bool Wait = mc::exec_wait>

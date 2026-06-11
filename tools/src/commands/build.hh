@@ -15,7 +15,7 @@
 
 template <bool Wait = mc::exec_wait>
   requires(recipes::__using_gnu)
-int
+mc::status_t
 build(const recipes::gnu::config_t &conf)
 {
   // if ( conf.check_compileability and !verify_compileability(0, conf.target) ) {
@@ -34,14 +34,15 @@ build(const recipes::gnu::config_t &conf)
   mc::set_color(mc::color::yellow);
   auto start = mc::now();
 
+  mc::status_t status;
   {
     auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
-    mc::execute<Wait>(conf.compiler_path, command);
+    status = mc::execute<Wait>(conf.compiler_path, command);
   };
   if constexpr ( Wait == mc::exec_continue )
-    return 0;
+    return status;
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
   if ( end - start > 1000 )
@@ -49,7 +50,7 @@ build(const recipes::gnu::config_t &conf)
   else
     mc::console("Compilation took: ", (end - start), " milliseconds");
   mc::set_color(mc::color::reset);
-  return 0;
+  return status;
 }
 
 template <typename T = void>

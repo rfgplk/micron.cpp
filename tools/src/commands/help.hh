@@ -32,18 +32,22 @@ help(void)
   mc::console("COMMANDS");
   mc::set_color(mc::color::reset);
   mc::console("    build      compile + link, serially; waits for each invocation");
-  mc::console("    compile    compile, do NOT wait for processes (parallel-ish)");
-  mc::console("    link       compile + link without waiting (alias of compile today)");
+  mc::console("               `build parallel` runs all targets concurrently (see -j)");
+  mc::console("    compile    compile all targets concurrently, reap + report at exit");
+  mc::console("    link       compile + link concurrently (alias of compile today)");
   mc::console("    debug      shorthand for `build` with the debug recipe (-g, -w, -O0)");
   mc::console("    run        build a single source then exec the resulting binary,");
   mc::console("               replacing the duck process (one source only)");
   mc::console("    emulate    build a single source then exec the resulting binary via qemu-arm-static (32-bit),");
   mc::console("               replacing the duck process (one source only)");
   mc::console("    test       build sources, run each, print exit codes (CI mode)");
+  mc::console("               `test parallel` builds then runs everything concurrently");
   mc::console("    doctor     build with diagnostic flags (-ftime-report,");
   mc::console("               -ftime-report-details, -fmem-report, -fopt-info,");
   mc::console("               -fopt-info-missed):  useful for compile-time profiling");
   mc::console("    batch      execute a script of duck command lines (one per line)");
+  mc::console("               `batch parallel` pools build/compile/link lines into one");
+  mc::console("               concurrent run; other lines execute after the pool drains");
   mc::console("    make       scaffold a new project from template          (reserved)");
   mc::console("    recipes    list/select build recipes                     (reserved)");
   mc::console("    help       print this screen");
@@ -57,8 +61,10 @@ help(void)
   mc::console("    <file>            single source file");
   mc::console("                      C++:  .cpp .cc .cxx .c++ .cp .C .ii");
   mc::console("                      C:    .c  .i");
-  mc::console("                      asm:  .s .S .asm .ASM   (auto-selects nasm)");
-  mc::console("    <dir>             every C/C++ source matched in the directory");
+  mc::console("                      asm:  .s .S      GNU as via the gcc driver (arch aware,");
+  mc::console("                                       links by default; --obj for object only)");
+  mc::console("                            .asm .ASM  NASM (always emits an object, .o suffix)");
+  mc::console("    <dir>             every C/C++/asm source matched in the directory");
   mc::console("                      (each file produces its own config and build)");
   mc::console("    <file>.o          additional object linked into the final binary");
   mc::console("    <file>.bin        explicit output target name");
@@ -137,7 +143,12 @@ help(void)
   mc::console("    -k                freestanding / kernel build");
   mc::console("                      (-ffreestanding, -nostdlib, -nostdlib++; drops");
   mc::console("                      default -lpthread linkage)");
+  mc::console("    --asan            AddressSanitizer (-fsanitize=address,");
+  mc::console("                      -fno-omit-frame-pointer); disables -flto");
+  mc::console("    --ubsan           UBSanitizer (-fsanitize=undefined); disables -flto;");
+  mc::console("                      combines with --asan");
   mc::console("    -f                force build:  skip include-mtime change detection");
+  mc::console("    -j <N>            cap for the parallel commands (default: online cpus)");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,6 +163,7 @@ help(void)
   mc::console("                      may be passed multiple times; the first -l replaces");
   mc::console("                      the default, subsequent -l's accumulate");
   mc::console("    --lib <name>      link library by name       (-l<name>)");
+  mc::console("    --def <N[=V]>     preprocessor define        (-DN[=V]); repeatable");
   mc::console("    -gl               link the libs micron::gfx::gl needs");
   mc::console("                      (libX11, libGL, libwayland-client, libwayland-egl, libEGL)");
   mc::console("    -vk               link the libs micron::gfx::vk needs");
@@ -192,8 +204,11 @@ help(void)
   mc::console("        -fopt-info -fopt-info-missed");
   mc::console("    ARM recipe adds:");
   mc::console("        -march=armv7-a -mfpu=neon -mfloat-abi=hard");
-  mc::console("    NASM recipe:");
-  mc::console("        -f elf64 -I<include path>");
+  mc::console("    NASM recipe (.asm):");
+  mc::console("        -f elf64|elf32 (-64/-32) -I<include path>; output is always a .o");
+  mc::console("    GNU as recipe (.s/.S):");
+  mc::console("        gcc driver, arch flags only; links unless --obj/--pp");
+  mc::console("    Sanitizers (--asan/--ubsan) drop -flto=8 (incompatible)");
   mc::console("    Default link libs (unless -k/freestanding):");
   mc::console("        -lpthread");
   mc::console("");
@@ -208,9 +223,14 @@ help(void)
   mc::console("    duck run examples/hello.cpp           # build + exec in place");
   mc::console("    duck debug src/main.cpp -w");
   mc::console("    duck test tests/rigor/                # CI-style summary");
+  mc::console("    duck test parallel tests/rigor/ -j 8  # same, 8 jobs at a time");
+  mc::console("    duck build parallel src/              # concurrent build of a dir");
+  mc::console("    duck batch parallel build.duck        # batchfile, pooled builds");
   mc::console("    duck compile -O3 -s src/server.cpp -o build/");
   mc::console("    duck doctor src/heavy_template.cpp    # compile-time diagnostics");
-  mc::console("    duck build src/boot.S --asm -o boot/  # nasm assembly path");
+  mc::console("    duck build src/boot.s -o boot/        # GNU as via gcc driver");
+  mc::console("    duck build src/blob.asm               # nasm path, emits boot/blob.o");
+  mc::console("    duck build src/x.cpp --asan --ubsan   # sanitized build, no lto");
   mc::console("    duck build src/k.cpp -k -s --std c++23  # freestanding static");
   mc::console("    duck batch scripts/build_all.duck     # script of duck commands");
 }

@@ -13,19 +13,16 @@ namespace gnu
 inline bool
 __is_cpp_standard(const string_type &__std)
 {
-  if ( __std != gcc::__standard_c90 or __std != gcc::__standard_iso9899_1990 or gcc::__standard_iso9899_199409
-       or __std != gcc::__standard_c99 or __std != gcc::__standard_c11 or __std != gcc::__standard_c17
-       or __std != gcc::__standard_iso9899_2017 or __std != gcc::__standard_iso9899_2011 or __std != gcc::__standard_c18
-       or __std != gcc::__standard_c23 or __std != gcc::__standard_iso9899_2023 )
-    return false;
-  return true;
+  for ( usize i = 1; i < __std.size(); ++i )
+    if ( __std[i - 1] == '+' and __std[i] == '+' ) return true;
+  return false;
 }
 
 enum __arch : u32 { x86 = 0, arm, arm64 };
 
 enum __compilers : u32 { gnucc = 0, clang, nasm };
 
-enum __languages : u32 { cpp = 0, c, lasm };
+enum __languages : u32 { cpp = 0, c, lasm, gas };
 
 enum __opt_modes : u32 { optimized = 0, debug };
 
@@ -105,11 +102,15 @@ struct config_t {
   mc::vector<string_type> lib_path;
   mc::vector<string_type> bonus_objs;
   mc::vector<string_type> bonus_libs;
+  mc::vector<string_type> defines;
   bool warnings = false;
   bool doctor = false;
   bool static_binary = false;
   bool freestanding = false;
+  bool asan = false;
+  bool ubsan = false;
   bool check_compileability = true;      // check include paths for updates - default true
+  u32 jobs{ 0 };                         // 0 = default to online cpu count when running parallel
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
@@ -148,12 +149,14 @@ __make_name(config_t &conf)
     itr = conf.target.end();
   else {
     auto sstr = conf.target.substr(itr);
-    if ( sstr == ".cpp" or sstr == ".cp" or sstr == ".cc" or sstr == ".cxx" or sstr == ".c++" or sstr == ".ii" or sstr == ".C"
-         or sstr == ".c" )
+    if ( sstr == ".cpp" or sstr == ".cp" or sstr == ".cc" or sstr == ".cxx" or sstr == ".c++" or sstr == ".ii" or sstr == ".C" )
       conf.language = __languages::cpp;
-    else if ( sstr == ".c" or sstr == ".i" or sstr == ".C" )
+    else if ( sstr == ".c" or sstr == ".i" )
       conf.language = __languages::c;
-    else if ( sstr == ".asm" or sstr == ".ASM" or sstr == ".s" or sstr == ".S" ) {
+    else if ( sstr == ".s" or sstr == ".S" ) {
+      // GNU as syntax - assembled (and linked) through the gcc driver, arch/cross aware
+      conf.language = __languages::gas;
+    } else if ( sstr == ".asm" or sstr == ".ASM" ) {
       conf.language = __languages::lasm;
       conf.compiler = __compilers::nasm;
     }
@@ -179,6 +182,8 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
         conf.target_out.append(".o");
       else if ( conf.compile_type == __comp_type::assembly )
         conf.target_out.append(".s");
+      else if ( conf.compiler == __compilers::nasm )
+        conf.target_out.append(".o");      // nasm always emits an object, never a linked binary
     } else {
       conf.target_out = *conf.bonus_objs.last();
       conf.bonus_objs.pop_back();
@@ -207,22 +212,22 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     break;
   case __compilers::gnucc:
     if ( conf.arch == __arch::x86 ) {
-      if ( conf.language == __languages::c ) {
+      if ( conf.language == __languages::c or conf.language == __languages::gas ) {
         conf.compiler_path = __compiler_gcc;
         // we'll default to c11 since it's reasonable
-        conf.standard = gcc::__standard_c11;
+        if ( conf.language == __languages::c ) conf.standard = gcc::__standard_c11;
       } else if ( conf.language == __languages::cpp )
         conf.compiler_path = __compiler_gpp;
     } else if ( conf.arch == __arch::arm ) {
-      if ( conf.language == __languages::c ) {
+      if ( conf.language == __languages::c or conf.language == __languages::gas ) {
         conf.compiler_path = __compiler_gcc_arm_cross;
-        conf.standard = gcc::__standard_c11;
+        if ( conf.language == __languages::c ) conf.standard = gcc::__standard_c11;
       } else if ( conf.language == __languages::cpp )
         conf.compiler_path = __compiler_gpp_arm_cross;
     } else if ( conf.arch == __arch::arm64 ) {
-      if ( conf.language == __languages::c ) {
+      if ( conf.language == __languages::c or conf.language == __languages::gas ) {
         conf.compiler_path = __compiler_gcc_aarch64_cross;
-        conf.standard = gcc::__standard_c11;
+        if ( conf.language == __languages::c ) conf.standard = gcc::__standard_c11;
       } else if ( conf.language == __languages::cpp )
         conf.compiler_path = __compiler_gpp_aarch64_cross;
     }
@@ -296,6 +301,21 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.freestanding = true;
     } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
       conf.check_compileability = false;
+    } else if ( mc::strcmp(argv[i], "-j") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the -j flag must be followed by a job count");
+      u32 jobs = 0;
+      for ( const char *p = argv[i]; *p; ++p ) {
+        if ( *p < '0' or *p > '9' ) mc::cerror("the -j flag must be followed by a positive integer");
+        jobs = jobs * 10 + static_cast<u32>(*p - '0');
+      }
+      conf.jobs = jobs ? jobs : 1;
+    } else if ( mc::strcmp(argv[i], "--asan") == 0 ) {
+      conf.asan = true;
+    } else if ( mc::strcmp(argv[i], "--ubsan") == 0 ) {
+      conf.ubsan = true;
+    } else if ( mc::strcmp(argv[i], "--def") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the --def flag must be followed by NAME or NAME=VALUE");
+      conf.defines.push_back(string_type{ argv[i] });
     } else if ( mc::strcmp(argv[i], "--obj") == 0 ) {
       conf.compile_type = __comp_type::object;
       user_provided_type = true;
@@ -380,7 +400,7 @@ parse_argv_build(int argc, char **argv)
       else {
         auto sstr = file.substr(itr);
         if ( sstr == ".cpp" or sstr == ".cc" or sstr == ".cxx" or sstr == ".c++" or sstr == ".c" or sstr == ".C" or sstr == ".i"
-             or sstr == ".ii" or sstr == ".cp" ) {
+             or sstr == ".ii" or sstr == ".cp" or sstr == ".s" or sstr == ".S" or sstr == ".asm" or sstr == ".ASM" ) {
           return true;
         }
       }
