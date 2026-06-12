@@ -1389,8 +1389,7 @@ public:
     } else {
       if ( __remote_free.push(p, sz) ) [[likely]]
         return true;
-      // ring full (owner not draining): embed the node in the dead block and publish it on the
-      // overflow LIFO -- never spin against an owner that may not be allocating (ABC-11)
+      // ring full (owner not draining)
       __remote_ovf_node *nd = reinterpret_cast<__remote_ovf_node *>(p);
       nd->sz = sz;
       __remote_ovf_node *head = __remote_ovf.get(micron::memory_order_relaxed);
