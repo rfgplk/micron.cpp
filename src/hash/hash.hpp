@@ -157,4 +157,27 @@ hash(const F data)
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
 }
 
+#if !defined(__micron_arch_width_64)
+// 32-bit targets have uint128_t/int128_t as class backed fallbacks
+template<typename R = hash64_t, u32 seed = default_seed_32>
+inline __attribute__((always_inline)) auto
+hash(const uint128_t &data)
+{
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
+    return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(uint128_t));
+  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+    return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(uint128_t));
+}
+
+template<typename R = hash64_t, u32 seed = default_seed_32>
+inline __attribute__((always_inline)) auto
+hash(const int128_t &data)
+{
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
+    return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(int128_t));
+  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+    return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(int128_t));
+}
+#endif
+
 };      // namespace micron
