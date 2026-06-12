@@ -190,9 +190,8 @@ __route_dealloc(byte *p, usize sz) noexcept
   if ( !owner || owner == me ) [[likely]] {
     return sz ? me->pop(micron::__chunk<byte>{ p, sz }) : me->pop(p);
   }
-  while ( !owner->__remote_push(p, sz) ) [[unlikely]] {
-    for ( int i = 0; i < 64; ++i ) __cpu_pause();
-  }
+  // wait-free: the owner's ring, falling back to the embedded-node overflow LIFO when the ring is full; never spin here
+  (void)owner->__remote_push(p, sz);
   return true;
 }
 

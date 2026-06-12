@@ -416,6 +416,15 @@ class __arena: private cache
   // 64 slots * 64 B  = ~4 KiB per arena
   __mpsc_free_queue<64> __remote_free;
 
+  // remote-free: the ring above is bounded and only drained when the owner thread touches its arena;
+  // compute/poll-bound owner that never allocates starves it, and a freeing thread that spins on a full ring livelocks
+  struct __remote_ovf_node {
+    __remote_ovf_node *next;
+    usize sz;      // 0 == size-unknown (route through __vmap_remove_at)
+  };
+
+  micron::atomic_token<__remote_ovf_node *> __remote_ovf{ nullptr };
+
   micron::atomic_flag __struct_mtx{};
 
   void
@@ -1378,7 +1387,17 @@ public:
       (void)sz;
       return true;
     } else {
-      return __remote_free.push(p, sz);
+      if ( __remote_free.push(p, sz) ) [[likely]]
+        return true;
+      // ring full (owner not draining): embed the node in the dead block and publish it on the
+      // overflow LIFO -- never spin against an owner that may not be allocating (ABC-11)
+      __remote_ovf_node *nd = reinterpret_cast<__remote_ovf_node *>(p);
+      nd->sz = sz;
+      __remote_ovf_node *head = __remote_ovf.get(micron::memory_order_relaxed);
+      do {
+        nd->next = head;
+      } while ( !__remote_ovf.compare_exchange_weak(head, nd, micron::memory_order_release, micron::memory_order_relaxed) );
+      return true;
     }
   }
 
@@ -1388,13 +1407,30 @@ public:
     if constexpr ( !__default_multithread_safe ) {
       return 0;
     } else {
-      return __remote_free.drain([this](byte *p, usize sz) {
+      u32 n = __remote_free.drain([this](byte *p, usize sz) {
         if ( sz ) {
           (void)this->__vmap_remove({ p, sz });
         } else {
           (void)this->__vmap_remove_at(p);
         }
       });
+      if ( __remote_ovf.get(micron::memory_order_relaxed) != nullptr ) {
+        // take-all: producers only push, so swapping the head detaches a consistent list
+        __remote_ovf_node *nd = __remote_ovf.swap(nullptr, micron::memory_order::acq_rel);
+        while ( nd != nullptr ) {
+          __remote_ovf_node *nx = nd->next;      // read the embedded node before the map free recycles it
+          const usize sz = nd->sz;
+          byte *p = reinterpret_cast<byte *>(nd);
+          if ( sz ) {
+            (void)this->__vmap_remove({ p, sz });
+          } else {
+            (void)this->__vmap_remove_at(p);
+          }
+          ++n;
+          nd = nx;
+        }
+      }
+      return n;
     }
   }
 
@@ -1402,7 +1438,7 @@ public:
   __maybe_drain(void) noexcept
   {
     if constexpr ( !__default_multithread_safe ) return;
-    if ( __remote_free.maybe_nonempty() ) [[unlikely]]
+    if ( __remote_free.maybe_nonempty() || __remote_ovf.get(micron::memory_order_relaxed) != nullptr ) [[unlikely]]
       (void)__remote_drain();
   }
 
