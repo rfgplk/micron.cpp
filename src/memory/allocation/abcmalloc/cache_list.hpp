@@ -500,9 +500,9 @@ struct __tlsf_list {
   }
 
   bool
-  is_tombstoned(byte *ptr) noexcept
+  is_tombstoned(byte *ptr) const noexcept
   {
-    tlsf_hdr *hdr = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
+    const tlsf_hdr *hdr = reinterpret_cast<const tlsf_hdr *>(ptr - __hdr_offset);
     return (hdr->flags & __block_tombstone) != 0;
   }
 

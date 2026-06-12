@@ -220,7 +220,8 @@ public:
   bool
   is_block_allocated(byte *ptr) const
   {
-    return __book.is_allocated(ptr);
+    // and !ts
+    return __book.is_allocated(ptr) && !__book.is_tombstoned(ptr);
   }
 
   bool
@@ -509,7 +510,8 @@ public:
   bool
   is_block_allocated(byte *ptr) const
   {
-    return __book.is_allocated(ptr);
+    // and !ts
+    return __book.is_allocated(ptr) && !__book.is_tombstoned(ptr);
   }
 
   bool
