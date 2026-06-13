@@ -737,7 +737,7 @@ struct __buddy_list {
   }
 
   bool
-  is_tombstoned(byte *ptr) noexcept
+  is_tombstoned(byte *ptr) const noexcept
   {
     block_header *hdr = hdr_of_tagged(ptr);
     return (hdr->flags & __block_tombstone) != 0;
