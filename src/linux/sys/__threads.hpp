@@ -20,7 +20,9 @@
 // (depends on arch), if you clone without setting this properly, or passing .tls to clone, it won't be set right, and
 // stack unrolls will trigger stack smashing
 
+#include "../../bits/__arch.hpp"
 #include "../../errno.hpp"
+#include "../../memory/mman.hpp"
 #include "../../type_traits.hpp"
 
 #include "sched.hpp"
@@ -203,6 +205,23 @@ prepare_thread(thread_create_state dstate = thread_create_state::joinable, int p
   return attr;
 }
 
+// WARNING: install a guard page at the low end of a user-provided thread stack;
+// pthread_attr_setstack() suppresses glibcs auto guard page
+template<typename T>
+inline void
+__attach_guarded_stack(pthread_attr_t &attr, T *ptr, usize size) noexcept
+{
+  constexpr usize __stack_guard = __micron_page_size_default;
+  T *base = ptr;
+  usize usable = size;
+  if ( size > __stack_guard && micron::mprotect(ptr, __stack_guard, micron::prot_none) == 0 ) {
+    base = reinterpret_cast<T *>(reinterpret_cast<char *>(ptr) + __stack_guard);
+    usable = size - __stack_guard;
+  }
+  pthread_attr_setstacksize(&attr, usable);
+  pthread_attr_setstack(&attr, base, usable);
+}
+
 inline pthread_attr_t
 prepare_thread_with_stack(thread_create_state dstate, int policy, addr_t *ptr, usize stack_size, int priority = 0)
 {
@@ -216,8 +235,7 @@ prepare_thread_with_stack(thread_create_state dstate, int policy, addr_t *ptr, u
   pthread_attr_setschedpolicy(&attr, static_cast<int>(policy));
   pthread_attr_setschedparam(&attr, reinterpret_cast<sched_param *>(&sp));
   pthread_attr_setinheritsched(&attr, thread_explicit_sched);
-  pthread_attr_setstacksize(&attr, stack_size);
-  pthread_attr_setstack(&attr, ptr, stack_size);
+  __attach_guarded_stack(attr, ptr, stack_size);
 
   return attr;
 }
@@ -233,8 +251,7 @@ template<typename T>
 inline void
 set_stack_thread(pthread_attr_t &attr, T *ptr, usize size)
 {
-  pthread_attr_setstacksize(&attr, size);
-  pthread_attr_setstack(&attr, ptr, size);
+  __attach_guarded_stack(attr, ptr, size);
 }
 
 inline void
