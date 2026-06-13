@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_arm_any)
+#include "zzz_arm.hpp"
+#else
+
 #include "../simd/simd.hpp"
 #include "../types.hpp"
 
@@ -542,3 +547,5 @@ zzz128(const u8 *data, usize sz)
 
 };      // namespace hashes
 };      // namespace micron
+
+#endif      // !__micron_arch_arm_any
