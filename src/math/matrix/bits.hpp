@@ -45,13 +45,25 @@ public:
   B data[__size];      // public for conv.  Class alignas carries through.
   ~int_matrix_base_avx(void) = default;
 
-  int_matrix_base_avx(void) : data{} { micron::czero<__size>(data); }
+  constexpr int_matrix_base_avx(void) : data{}
+  {
+    if !consteval {
+      micron::czero<__size>(data);
+    }
+  }
 
-  int_matrix_base_avx(B n) : data{} { micron::ctypeset<__size, B>(data, n); }
+  constexpr int_matrix_base_avx(B n) : data{}
+  {
+    if !consteval {
+      micron::ctypeset<__size, B>(data, n);
+    } else {
+      for ( usize i = 0; i < __size; ++i ) data[i] = n;
+    }
+  }
 
   template<typename... Args>
     requires(sizeof...(Args) == __size)
-  int_matrix_base_avx(Args... args) : data{ args... }
+  constexpr int_matrix_base_avx(Args... args) : data{ args... }
   {
   }
 
@@ -61,26 +73,51 @@ public:
     micron::bytecpy(data, lst.begin(), __size * sizeof(B));
   }
 
-  int_matrix_base_avx(const int_matrix_base_avx &o) { micron::cmemcpy<__size>(data, o.data); }
-
-  int_matrix_base_avx(int_matrix_base_avx &&o)
+  constexpr int_matrix_base_avx(const int_matrix_base_avx &o) : data{}
   {
-    micron::cmemcpy<__size>(data, o.data);
-    micron::czero<__size>(o.data);
+    if !consteval {
+      micron::cmemcpy<__size>(data, o.data);
+    } else {
+      for ( usize i = 0; i < __size; ++i ) data[i] = o.data[i];
+    }
   }
 
-  int_matrix_base_avx &
+  constexpr int_matrix_base_avx(int_matrix_base_avx &&o) : data{}
+  {
+    if !consteval {
+      micron::cmemcpy<__size>(data, o.data);
+      micron::czero<__size>(o.data);
+    } else {
+      for ( usize i = 0; i < __size; ++i ) {
+        data[i] = o.data[i];
+        o.data[i] = B(0);
+      }
+    }
+  }
+
+  constexpr int_matrix_base_avx &
   operator=(const int_matrix_base_avx &o)
   {
-    micron::cmemcpy<__size>(data, o.data);
+    if !consteval {
+      micron::cmemcpy<__size>(data, o.data);
+    } else {
+      for ( usize i = 0; i < __size; ++i ) data[i] = o.data[i];
+    }
     return *this;
   }
 
-  int_matrix_base_avx &
+  constexpr int_matrix_base_avx &
   operator=(int_matrix_base_avx &&o)
   {
-    micron::cmemcpy<__size>(data, o.data);
-    micron::czero<__size>(o.data);
+    if !consteval {
+      micron::cmemcpy<__size>(data, o.data);
+      micron::czero<__size>(o.data);
+    } else {
+      for ( usize i = 0; i < __size; ++i ) {
+        data[i] = o.data[i];
+        o.data[i] = B(0);
+      }
+    }
     return *this;
   }
 
@@ -207,6 +244,7 @@ public:
 
   int_matrix_base_avx
   transpose() const
+    requires(C == R)
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; ++i )
@@ -240,6 +278,7 @@ public:
 
   int_matrix_base_avx
   mul(const int_matrix_base_avx &o) const
+    requires(C == R)
   {
     int_matrix_base_avx result;
     for ( usize i = 0; i < R; i++ ) {

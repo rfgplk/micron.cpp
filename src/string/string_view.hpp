@@ -40,6 +40,8 @@ public:
   string_view(typename F::iterator a, typename F::iterator b)
       : __start(reinterpret_cast<typename S::iterator>(a)), __end(reinterpret_cast<typename S::iterator>(b))
   {
+    static_assert(sizeof(micron::remove_pointer_t<typename F::iterator>) == sizeof(micron::remove_pointer_t<typename S::iterator>),
+                  "micron::string_view cross-type ctor requires equal element width");
   }
 
   string_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) { }
@@ -204,6 +206,8 @@ public:
   constexpr cstring_view(typename F::iterator a, typename F::iterator b)
       : __start(reinterpret_cast<typename S::iterator>(a)), __end(reinterpret_cast<typename S::iterator>(b))
   {
+    static_assert(sizeof(micron::remove_pointer_t<typename F::iterator>) == sizeof(micron::remove_pointer_t<typename S::iterator>),
+                  "micron::cstring_view cross-type ctor requires equal element width");
   }
 
   constexpr cstring_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) { }
@@ -246,6 +250,7 @@ public:
   set(const S &o, const usize n = 0)
   {
     if ( o.empty() ) return *this;
+    if ( n >= o.size() ) exc<except::library_error>("micron::cstring_view set() out of memory range");
     __start = o.cbegin() + n;
     __end = o.cend();
     return *this;
@@ -342,6 +347,7 @@ public:
   constexpr cstring_view
   substr(const usize a)
   {
+    if ( a >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::cstring_view substr() out of memory range");
     return cstring_view(__start + a, __end);
   }
 };

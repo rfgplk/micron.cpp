@@ -260,18 +260,27 @@ public:
     __mem::length = o.length;
   };
 
-  template<typename F> constexpr hstring(hstring<F> &&o) : __mem(micron::move(o)) { }
+  // we're guarding now against cross width construction, too ub otherwise
+  template<typename F>
+    requires(micron::is_same_v<F, T>)
+  constexpr hstring(hstring<F> &&o) : __mem(micron::move(o))
+  {
+  }
 
   constexpr hstring(hstring &&o) : __mem(micron::move(o)) { }
 
-  template<typename F> constexpr hstring(const hstring<F> &o) : __mem(__alloc_size(o.length + 1))
+  template<typename F>
+    requires(sizeof(F) == sizeof(T))
+  constexpr hstring(const hstring<F> &o) : __mem(__alloc_size(o.length + 1))
   {
     micron::memcpy(__mem::memory, o.memory, o.length);
     __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
   };
 
-  template<usize N, typename F> constexpr hstring(const sstring<N, F> &o) : __mem(__alloc_size(o.length + 1))
+  template<usize N, typename F>
+    requires(sizeof(F) == sizeof(T))
+  constexpr hstring(const sstring<N, F> &o) : __mem(__alloc_size(o.length + 1))
   {
     micron::memcpy(&(__mem::memory)[0], &o.memory[0], o.length);
     __mem::memory[o.length] = T{ 0 };
@@ -356,6 +365,7 @@ public:
   }
 
   template<typename F>
+    requires(micron::is_same_v<F, T>)
   hstring &
   operator=(hstring<F> &&o)
   {
@@ -1170,6 +1180,7 @@ public:
   };
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline hstring<F>
   substr(usize pos = 0, usize cnt = npos) const
   {
@@ -1183,6 +1194,7 @@ public:
   };
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline hstring<F>
   substr(iterator _start, iterator _end = nullptr) const
   {
@@ -1199,6 +1211,7 @@ public:
   };
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline hstring<F>
   substr(const_iterator _start, const_iterator _end = nullptr) const
   {
@@ -1473,6 +1486,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator==(const S &str) const
   {
@@ -1480,6 +1494,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator!=(const S &str) const
   {
@@ -1554,6 +1569,7 @@ public:
   }
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const F (&data)[M]) const
   {
@@ -1561,6 +1577,7 @@ public:
   }
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator!=(const F (&data)[M]) const
   {
@@ -1568,6 +1585,7 @@ public:
   }
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<(const F (&data)[M]) const
   {
@@ -1575,6 +1593,7 @@ public:
   }
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>(const F (&data)[M]) const
   {
@@ -1582,6 +1601,7 @@ public:
   }
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<=(const F (&data)[M]) const
   {
@@ -1589,6 +1609,7 @@ public:
   }
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>=(const F (&data)[M]) const
   {
@@ -1596,6 +1617,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const hstring<F> &data) const
   {
@@ -1603,6 +1625,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator!=(const hstring<F> &data) const
   {
@@ -1610,6 +1633,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<(const hstring<F> &data) const
   {
@@ -1617,6 +1641,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>(const hstring<F> &data) const
   {
@@ -1624,6 +1649,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<=(const hstring<F> &data) const
   {
@@ -1631,6 +1657,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>=(const hstring<F> &data) const
   {
@@ -1638,6 +1665,7 @@ public:
   }
 
   template<usize N, typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const sstring<N, F> &data) const
   {
@@ -1645,6 +1673,7 @@ public:
   }
 
   template<usize N, typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator!=(const sstring<N, F> &data) const
   {
@@ -1652,6 +1681,7 @@ public:
   }
 
   template<usize N, typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<(const sstring<N, F> &data) const
   {
@@ -1659,6 +1689,7 @@ public:
   }
 
   template<usize N, typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>(const sstring<N, F> &data) const
   {
@@ -1666,6 +1697,7 @@ public:
   }
 
   template<usize N, typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<=(const sstring<N, F> &data) const
   {
@@ -1673,6 +1705,7 @@ public:
   }
 
   template<usize N, typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>=(const sstring<N, F> &data) const
   {

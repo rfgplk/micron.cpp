@@ -141,8 +141,16 @@ exp(simd::f128 x) noexcept
 #if defined(__micron_arch_arm64) || defined(__micron_arm_directed_rounding)
   const float32x4_t fN = simd::neon::rint(simd::neon::mul(x, simd::neon::splat_f32(inv_ln2_16)));
 #else
-
-  const int32x4_t Ni_pre = simd::neon::convert_f32_to_i32(simd::neon::mul(x, simd::neon::splat_f32(inv_ln2_16 + 0.5f)));
+  const uint32x4_t __sign_mask = simd::neon::splat_u32(0x80000000u);
+  const uint32x4_t __xs = simd::neon::and_(simd::neon::reinterpret_u32_from_f32(x), __sign_mask);
+  const float32x4_t __half
+      = simd::neon::reinterpret_f32_from_u32(simd::neon::or_(__xs, simd::neon::reinterpret_u32_from_f32(simd::neon::splat_f32(0.5f))));
+#if defined(__micron_arm_fma)
+  const float32x4_t __scaled = simd::neon::fma_f32(__half, x, simd::neon::splat_f32(inv_ln2_16));
+#else
+  const float32x4_t __scaled = simd::neon::add(simd::neon::mul(x, simd::neon::splat_f32(inv_ln2_16)), __half);
+#endif
+  const int32x4_t Ni_pre = simd::neon::convert_f32_to_i32(__scaled);
   const float32x4_t fN = simd::neon::convert_i32_to_f32(Ni_pre);
 #endif
 

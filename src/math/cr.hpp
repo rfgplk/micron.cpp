@@ -89,9 +89,10 @@ round_dd_to_f32(dd64 y) noexcept
   const f64 s = y.hi + y.lo;
   const f64 resid = (y.hi - s) + y.lo;
   if ( resid == 0.0 ) {
+    return f32(s);
   }
-  const u64 b = ieee::to_bits(s);
-  const f64 odd = ieee::from_bits<f64>(b | u64(1));
+  const u64 b = ieee::to_bits(s) | u64(1);
+  const f64 odd = ieee::from_bits<f64>(b);
   return f32(odd);
 }
 

@@ -197,14 +197,19 @@ ulp_distance(F a, F b) noexcept
   using U = typename T::uint_type;
   if ( a == b ) return 0;
   if ( __builtin_isnan(a) || __builtin_isnan(b) ) return -1;
-  auto ord = [](F v) -> i64 {
+  // monotone total order mapped onto a *biased* unsigned axis
+  // full distance must fits in an u64
+  auto ord = [](F v) -> U {
     U u = to_bits(v);
-    if ( u & T::sign_mask ) return -i64(u & ~T::sign_mask);
-    return i64(u);
+    // fold below the zero point (descending magnitude) for negs
+    if ( u & T::sign_mask ) return T::sign_mask - (u & ~T::sign_mask);
+    return u | T::sign_mask;
   };
-  i64 oa = ord(a);
-  i64 ob = ord(b);
-  return oa > ob ? (oa - ob) : (ob - oa);
+  U oa = ord(a);
+  U ob = ord(b);
+  U d = (oa >= ob) ? U(oa - ob) : U(ob - oa);
+  constexpr U i64_max = U(0x7fffffffffffffffULL);
+  return i64(d > i64_max ? i64_max : d);
 }
 
 template<ieee754_floating F>
@@ -215,7 +220,7 @@ next_up(F x) noexcept
   using U = typename T::uint_type;
   if ( __builtin_isnan(x) || (__builtin_isinf_sign(x) > 0) ) return x;
   U u = to_bits(x);
-  if ( u == T::sign_mask ) return F(0);
+  if ( (u & ~T::sign_mask) == 0 ) return from_bits<F>(U(1));
   if ( u & T::sign_mask ) return from_bits<F>(u - 1);
   return from_bits<F>(u + 1);
 }

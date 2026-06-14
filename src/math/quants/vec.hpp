@@ -133,8 +133,14 @@ template<arith_scalar T, usize N>
 operator/(const vec<T, N> &a, T s) noexcept
 {
   vec<T, N> r{};
-  T inv = T(1) / s;
-  for ( usize i = 0; i < N; ++i ) r.data[i] = a.data[i] * inv;
+  if constexpr ( micron::is_floating_point_v<T> ) {
+    // reciprocal-multiply is exact-enough for floats and much faster
+    T inv = T(1) / s;
+    for ( usize i = 0; i < N; ++i ) r.data[i] = a.data[i] * inv;
+  } else {
+    // integral T: T(1)/s integer-divides to 0 for |s|>1, so divide directly
+    for ( usize i = 0; i < N; ++i ) r.data[i] = a.data[i] / s;
+  }
   return r;
 }
 

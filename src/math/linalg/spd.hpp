@@ -95,6 +95,7 @@ template<ieee754_floating F> struct chol_result_dyn {
   bool spd;
 };
 
+// SPD-only Cholesky
 template<ieee754_floating F>
 [[nodiscard]] inline chol_result_dyn<F>
 chol(const dynmat<F> &A) noexcept

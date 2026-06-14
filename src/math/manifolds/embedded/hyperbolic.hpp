@@ -140,7 +140,9 @@ struct hyperbolic {
     const F qv = minkowski(q, v);
     const F k = qv / denom;
     vec<F, ambient> r{};
-    for ( usize i = 0; i < ambient; ++i ) r.data[i] = v.data[i] - k * (p.data[i] + q.data[i]);
+    // Lorentz-model parallel transport along the geodesic p->q:
+    //   PT(v) = v + (<q,v>_L / (1 - <p,q>_L)) * (p + q)
+    for ( usize i = 0; i < ambient; ++i ) r.data[i] = v.data[i] + k * (p.data[i] + q.data[i]);
     return r;
   }
 

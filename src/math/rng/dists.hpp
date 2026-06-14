@@ -636,7 +636,7 @@ public:
   operator()(Rng &g) const noexcept
   {
     if ( __p >= F(1) ) return I(0);
-    if ( __p <= F(0) ) return math::ieee::inf_v<F>(0) > F(0) ? I(0) : I(0);
+    if ( __p <= F(0) ) return numeric_limits<I>::max();
     F u;
     do {
       u = dist::uniform_real<F>(g);

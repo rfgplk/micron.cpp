@@ -172,7 +172,7 @@ ilogb(F x) noexcept
       m <<= 1;
       ++lz;
     }
-    return -T::exp_bias - lz;
+    return -T::exp_bias - lz + 1;
   }
   return e - T::exp_bias;
 }

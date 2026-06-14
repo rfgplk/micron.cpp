@@ -157,7 +157,8 @@ from_matrix(const mat<T, 3, 3> &R) noexcept
     w = (m10 - m01) * inv_s;
   }
   const T n2 = x * x + y * y + z * z + w * w;
-  if ( n2 == T(0) ) return identity<T>();
+  // exact-zero OR non-finite (NaN/Inf input matrix yields NaN n2) -> fall back to identity
+  if ( n2 == T(0) || !ieee::is_finite(n2) ) return identity<T>();
   const T inv_n = math::frsqrt(n2);
   return quaternion<T>{ x * inv_n, y * inv_n, z * inv_n, w * inv_n };
 }

@@ -22,21 +22,21 @@ namespace math
 namespace sparse
 {
 
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 inline void
 scal(T alpha, csc<T, I> &A) noexcept
 {
   scal_values<T>(alpha, A.values.data(), A.nnz());
 }
 
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 inline void
 scal(T alpha, csr<T, I> &A) noexcept
 {
   scal_values<T>(alpha, A.values.data(), A.nnz());
 }
 
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 inline void
 scal(T alpha, sparse_vec<T, I> &v) noexcept
 {
@@ -67,7 +67,7 @@ norm_l2(const sparse_vec<T, I> &v) noexcept
   return math::fsqrt(s);
 }
 
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 [[nodiscard]] inline T
 dot(const sparse_vec<T, I> &a, const sparse_vec<T, I> &b) noexcept
 {
@@ -91,7 +91,7 @@ dot(const sparse_vec<T, I> &a, const sparse_vec<T, I> &b) noexcept
   return s;
 }
 
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 [[nodiscard]] inline T
 dot(const sparse_vec<T, I> &a, const dynvec<T> &b) noexcept
 {

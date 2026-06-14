@@ -448,6 +448,37 @@ open_gap(T *base, usize len, usize p, usize cnt)
   }
 }
 
+// NOTE: assumes T's move-ctor does not throw during the tail slide
+template<typename T, typename Fn>
+inline void
+fill_gap(T *base, usize length, usize p, usize cnt, Fn &&fn)
+{
+  if ( cnt == 0 ) return;
+#ifndef __micron_freestanding
+  usize k = 0;
+  try {
+    for ( ; k < cnt; ++k ) fn(p + k);
+  } catch ( ... ) {
+    for ( usize j = 0; j < k; ++j ) base[p + j].~T();
+    const usize tail = length - p;
+    for ( usize j = 0; j < tail; ++j ) {
+      new (addr(base[p + j])) T(micron::move(base[p + cnt + j]));
+      base[p + cnt + j].~T();
+    }
+    throw;
+  }
+#else
+  for ( usize k = 0; k < cnt; ++k ) fn(p + k);
+#endif
+}
+
+template<typename T>
+inline void
+fill_gap_copy(T *base, usize length, usize p, usize cnt, const T &val)
+{
+  fill_gap(base, length, p, cnt, [&](usize i) { new (addr(base[i])) T(val); });
+}
+
 template<typename T>
 inline void
 close_gap(T *base, usize len, usize p, usize cnt)

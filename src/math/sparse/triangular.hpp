@@ -33,7 +33,7 @@ struct upper_non_unit {
 };
 };      // namespace triangular_tag
 
-template<arith_scalar T, micron::integral I, typename Diag>
+template<ieee754_floating T, micron::integral I, typename Diag>
 inline bool
 solve_lower(const csc<T, I> &L, dynvec<T> &b, Diag) noexcept
 {
@@ -72,7 +72,7 @@ solve_lower(const csc<T, I> &L, dynvec<T> &b, Diag) noexcept
   return true;
 }
 
-template<arith_scalar T, micron::integral I, typename Diag>
+template<ieee754_floating T, micron::integral I, typename Diag>
 inline bool
 solve_upper(const csc<T, I> &U, dynvec<T> &b, Diag) noexcept
 {

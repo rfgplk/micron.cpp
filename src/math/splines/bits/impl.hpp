@@ -200,9 +200,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline bool
 is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexcept
 {
+  (void)probe;
   if ( n < 2 ) return true;
-  const usize end = probe < n ? probe : n;
-  for ( usize i = 1; i < end; ++i )
+  for ( usize i = 1; i < n; ++i )
     if ( x[i] < x[i - 1] ) return false;
   return true;
 }

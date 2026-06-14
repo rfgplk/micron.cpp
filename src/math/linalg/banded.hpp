@@ -35,23 +35,38 @@ namespace linalg
 //   b : main diagonal,  length n
 //   c : super-diagonal, length n-1   (c[i] = A[i, i+1])
 //   d : right-hand side,length n
+//
+// NOTE: A must be diagonally dominant
 template<ieee754_floating F>
 [[gnu::flatten]] inline void
 tridiag_solve(F *__restrict__ a, F *__restrict__ b, F *__restrict__ c, F *__restrict__ d, usize n) noexcept
 {
   if ( n == 0 ) return;
+  // pivot guard
+  constexpr F tiny = default_eps<F>() * F(4);
   if ( n == 1 ) {
-    d[0] = d[0] / b[0];
+    d[0] = (math::fabs(b[0]) > tiny) ? d[0] / b[0] : F(0);
     return;
   }
 
-  c[0] = c[0] / b[0];
-  d[0] = d[0] / b[0];
+  if ( math::fabs(b[0]) > tiny ) {
+    const F inv0 = F(1) / b[0];
+    c[0] = c[0] * inv0;
+    d[0] = d[0] * inv0;
+  } else {
+    c[0] = F(0);
+    d[0] = F(0);
+  }
   for ( usize i = 1; i < n; ++i ) {
     const F m = b[i] - a[i - 1] * c[i - 1];
-    const F inv_m = F(1) / m;
-    if ( i + 1 < n ) c[i] = c[i] * inv_m;
-    d[i] = (d[i] - a[i - 1] * d[i - 1]) * inv_m;
+    if ( math::fabs(m) > tiny ) {
+      const F inv_m = F(1) / m;
+      if ( i + 1 < n ) c[i] = c[i] * inv_m;
+      d[i] = (d[i] - a[i - 1] * d[i - 1]) * inv_m;
+    } else {
+      if ( i + 1 < n ) c[i] = F(0);
+      d[i] = F(0);
+    }
   }
 
   for ( usize i = n - 1; i-- > 0; ) d[i] = d[i] - c[i] * d[i + 1];

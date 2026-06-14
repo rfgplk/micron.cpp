@@ -19,6 +19,7 @@
 //  -> algebra_log
 
 #include "../../../concepts.hpp"
+#include "../../../except.hpp"
 #include "../../../types.hpp"
 #include "../../linalg/matfunc.hpp"
 #include "../../linalg/ops.hpp"
@@ -104,16 +105,24 @@ lie_bracket(const mat<F, N, N> &X, const mat<F, N, N> &Y) noexcept
 
 template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
-algebra_exp(const mat<F, N, N> &X) noexcept
+algebra_exp(const mat<F, N, N> &X) noexcept(!micron::except::__use_exceptions)
 {
-  return linalg::matfunc::expm<F, N>(X).X;
+  const auto res = linalg::matfunc::expm<F, N>(X);
+#ifndef __micron_freestanding
+  if ( !res.finite ) exc<except::range_error>("algebra_exp: matrix exponential did not produce a finite result");
+#endif
+  return res.X;
 }
 
 template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
-algebra_log(const mat<F, N, N> &G) noexcept
+algebra_log(const mat<F, N, N> &G) noexcept(!micron::except::__use_exceptions)
 {
-  return linalg::matfunc::logm<F, N>(G).X;
+  const auto res = linalg::matfunc::logm<F, N>(G);
+#ifndef __micron_freestanding
+  if ( !res.real_log_exists || !res.converged ) exc<except::domain_error>("algebra_log: matrix has no real logarithm or did not converge");
+#endif
+  return res.X;
 }
 
 };      // namespace lie

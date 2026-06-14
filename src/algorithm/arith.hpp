@@ -9,6 +9,7 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../bits/__visit_kv.hpp"
 #include "../concepts.hpp"
 
 // container agnostic functions for arith. operations on contiguous data
@@ -221,5 +222,64 @@ void
 subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept
 {
   for ( usize i = 0; i < n; i++ ) (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%
+// mutations
+template<is_mutable_map M, typename Y>
+  requires micron::is_arithmetic_v<Y>
+void
+add(M &m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = v + y; });
+}
+
+template<is_mutable_map M, typename Y>
+  requires micron::is_arithmetic_v<Y>
+void
+subtract(M &m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = v - y; });
+}
+
+template<is_mutable_map M, typename Y>
+  requires micron::is_arithmetic_v<Y>
+void
+multiply(M &m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = v * y; });
+}
+
+template<is_mutable_map M, typename Y>
+  requires micron::is_arithmetic_v<Y>
+void
+divide(M &m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = v / y; });
+}
+
+template<is_map_class M>
+typename M::mapped_type
+multiply(const M &m) noexcept
+{
+  typename M::mapped_type r = 1;
+  __impl::visit_kv(m, [&](const auto &, const auto &v) { r *= v; });
+  return r;
+}
+
+template<is_mutable_map M, typename Y>
+  requires micron::is_floating_point_v<typename M::mapped_type>
+void
+pow(M &m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = math::powerf(v, y); });
+}
+
+template<is_mutable_map M, typename Y>
+  requires micron::is_integral_v<typename M::mapped_type>
+void
+pow(M &m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = math::power(v, y); });
 }
 };      // namespace micron

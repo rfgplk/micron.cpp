@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../type_traits.hpp"
+
 namespace micron
 {
 namespace math

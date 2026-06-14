@@ -45,25 +45,25 @@ abs64(i64 x) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr i8
 sign8(i8 x) noexcept
 {
-  return i8((x >> 7) - (-x >> 7));
+  return i8(i8(x >> 7) | i8(u8(-u8(x)) >> 7));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i16
 sign16(i16 x) noexcept
 {
-  return i16((x >> 15) - (-x >> 15));
+  return i16(i16(x >> 15) | i16(u16(-u16(x)) >> 15));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 sign32(i32 x) noexcept
 {
-  return (x >> 31) - (-x >> 31);
+  return i32(x >> 31) | i32(u32(-u32(x)) >> 31);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i64
 sign64(i64 x) noexcept
 {
-  return (x >> 63) - (-x >> 63);
+  return i64(x >> 63) | i64(u64(-u64(x)) >> 63);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i8
@@ -365,6 +365,7 @@ mod7(u32 a) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr u32
 div_const(u32 a, u32 d) noexcept
 {
+  // if ( d == 1u ) return a;
   const u32 m = u32((u64(1) << 32) / d + 1u);
   return u32((u64(a) * m) >> 32);
 }

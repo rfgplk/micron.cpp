@@ -143,7 +143,7 @@ private:
   inline __attribute__((always_inline)) bool
   __insert_ind_check(size_type ind, size_type cnt) const noexcept
   {
-    return (ind > length or cnt > N - length);
+    return (ind > length or cnt > (N - 1) - length);
   }
 
   inline __attribute__((always_inline)) bool

@@ -70,7 +70,11 @@ lu(const mat<F, N, N> &A) noexcept
   return r;
 }
 
-// Cholesky decomposition
+// Cholesky decomposition.
+// SPD-only: a non-positive pivot (s <= 0) sets spd=false and returns EARLY, so on
+// failure r.L is only partially filled (entries past the failing pivot stay zero from
+// the zero-init) — callers must check r.spd before using r.L. PSD/indefinite inputs are
+// rejected (use chol_pivot for a rank-revealing pivoted factorisation).
 template<ieee754_floating F, usize N> struct chol_result {
   mat<F, N, N> L;
   bool spd;
@@ -150,7 +154,11 @@ eigen_sym2(const mat<F, 2, 2> &A) noexcept
   F a = A.data[0], b = A.data[1], c = A.data[3];
   F tr = a + c;
   F det = a * c - b * b;
-  F disc = math::fsqrt(tr * tr * F(0.25) - det);
+  // discriminant can dip slightly negative through cancellation; clamp before sqrt.
+  // (under -Ofast the in-fsqrt NaN guard is folded away, so this explicit clamp is mandatory.)
+  F arg = tr * tr * F(0.25) - det;
+  if ( arg < F(0) ) arg = F(0);
+  F disc = math::fsqrt(arg);
   F l1 = tr * F(0.5) + disc;
   F l2 = tr * F(0.5) - disc;
 
@@ -243,6 +251,23 @@ eigen_sym3(const mat<F, 3, 3> &A) noexcept
   res.values.data[1] = M.data[4];
   res.values.data[2] = M.data[8];
   res.vectors = V;
+
+  // sort eigenvalues ascending, carrying eigenvector columns (matches eigen_sym_qr's convention).
+  for ( usize i = 0; i + 1 < 3; ++i ) {
+    usize best = i;
+    for ( usize j = i + 1; j < 3; ++j )
+      if ( res.values.data[j] < res.values.data[best] ) best = j;
+    if ( best != i ) {
+      F tv = res.values.data[i];
+      res.values.data[i] = res.values.data[best];
+      res.values.data[best] = tv;
+      for ( usize rr = 0; rr < 3; ++rr ) {
+        F tc = res.vectors.data[rr * 3 + i];
+        res.vectors.data[rr * 3 + i] = res.vectors.data[rr * 3 + best];
+        res.vectors.data[rr * 3 + best] = tc;
+      }
+    }
+  }
   return res;
 }
 
@@ -329,6 +354,28 @@ svd3(const mat<F, 3, 3> &A) noexcept
     r.U.data[j] = uj.data[0];
     r.U.data[3 + j] = uj.data[1];
     r.U.data[6 + j] = uj.data[2];
+  }
+
+  // sort singular values descending, carrying U-columns, S and V-columns together
+  // (umeyama's reflection-scale and the suite convention assume σ descending; eigen_sym3
+  //  emits them in arbitrary Jacobi order).
+  for ( usize i = 0; i + 1 < 3; ++i ) {
+    usize best = i;
+    for ( usize j = i + 1; j < 3; ++j )
+      if ( r.S.data[j] > r.S.data[best] ) best = j;
+    if ( best != i ) {
+      F ts = r.S.data[i];
+      r.S.data[i] = r.S.data[best];
+      r.S.data[best] = ts;
+      for ( usize rr = 0; rr < 3; ++rr ) {
+        F tu = r.U.data[rr * 3 + i];
+        r.U.data[rr * 3 + i] = r.U.data[rr * 3 + best];
+        r.U.data[rr * 3 + best] = tu;
+        F tv = r.V.data[rr * 3 + i];
+        r.V.data[rr * 3 + i] = r.V.data[rr * 3 + best];
+        r.V.data[rr * 3 + best] = tv;
+      }
+    }
   }
   return r;
 }

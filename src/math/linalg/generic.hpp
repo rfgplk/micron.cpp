@@ -42,38 +42,25 @@ trace(const mat<T, N, N> &A) noexcept
 }
 
 template<ieee754_floating F, usize N>
-[[nodiscard]] inline constexpr F
+[[nodiscard]] inline F
 det(const mat<F, N, N> &A) noexcept
 {
-  auto r = decomp::lu<F, N>(A);
-  if ( r.singular ) return F(0);
-  F d = F(1);
-  for ( usize i = 0; i < N; ++i ) d = d * r.U.data[i * N + i];
-  return d;
+  // route through the pivoted LU
+  return decomp::det<F, N>(A);
 }
 
 template<ieee754_floating F, usize N>
 [[nodiscard]] inline vec<F, N>
 solve(const mat<F, N, N> &A, const vec<F, N> &b) noexcept
 {
-  auto r = decomp::lu<F, N>(A);
-  vec<F, N> x{};
-  if ( r.singular ) {
+  // partial-pivoting LU
+  auto lu = decomp::lu_pivot<F, N>(A);
+  vec<F, N> x = b;
+  if ( lu.singular ) {
     for ( usize i = 0; i < N; ++i ) x.data[i] = ieee::qnan_v<F>();
     return x;
   }
-  vec<F, N> y{};
-  for ( usize i = 0; i < N; ++i ) {
-    F s = b.data[i];
-    for ( usize k = 0; k < i; ++k ) s = s - r.L.data[i * N + k] * y.data[k];
-    y.data[i] = s;      // L has unit diagonal
-  }
-  // Ux = y
-  for ( usize i = N; i-- > 0; ) {
-    F s = y.data[i];
-    for ( usize k = i + 1; k < N; ++k ) s = s - r.U.data[i * N + k] * x.data[k];
-    x.data[i] = s / r.U.data[i * N + i];
-  }
+  decomp::lu_solve<F, N>(lu, x);
   return x;
 }
 
@@ -81,26 +68,14 @@ template<ieee754_floating F, usize N>
 [[nodiscard]] inline mat<F, N, N>
 inv(const mat<F, N, N> &A) noexcept
 {
-  auto r = decomp::lu<F, N>(A);
-  mat<F, N, N> X = mat<F, N, N>::zero();
+  // pivoted inverse
+  auto r = decomp::inv<F, N>(A);
   if ( r.singular ) {
+    mat<F, N, N> X = mat<F, N, N>::zero();
     for ( usize i = 0; i < N * N; ++i ) X.data[i] = ieee::qnan_v<F>();
     return X;
   }
-  for ( usize j = 0; j < N; ++j ) {
-    vec<F, N> y{};
-    for ( usize i = 0; i < N; ++i ) {
-      F s = (i == j) ? F(1) : F(0);
-      for ( usize k = 0; k < i; ++k ) s = s - r.L.data[i * N + k] * y.data[k];
-      y.data[i] = s;
-    }
-    for ( usize i = N; i-- > 0; ) {
-      F s = y.data[i];
-      for ( usize k = i + 1; k < N; ++k ) s = s - r.U.data[i * N + k] * X.data[k * N + j];
-      X.data[i * N + j] = s / r.U.data[i * N + i];
-    }
-  }
-  return X;
+  return r.X;
 }
 
 template<arith_scalar T, usize R1, usize C1, usize R2, usize C2>
@@ -175,9 +150,9 @@ template<ieee754_floating F, usize N>
 condition_number(const mat<F, N, N> &A) noexcept
 {
   const F na = frobenius_norm(A);
-  const auto Ai = inv<F, N>(A);
-  if ( ieee::is_nan(Ai.data[0]) ) return ieee::inf_v<F>(0);
-  return na * frobenius_norm(Ai);
+  const auto Ai = decomp::inv<F, N>(A);      // pivoted
+  if ( Ai.singular ) return ieee::inf_v<F>(0);
+  return na * frobenius_norm(Ai.X);
 }
 
 template<ieee754_floating F, usize R_, usize C_>

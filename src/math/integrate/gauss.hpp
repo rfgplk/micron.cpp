@@ -72,9 +72,10 @@ clenshaw_curtis(Fn f, F a, F b) noexcept
     acc += F(0.5) * a0;
   }
   for ( usize m = 2; m <= N; m += 2 ) {
-    F am = F(0.5) * (y[0] + (m % 2 == 0 ? y[N] : -y[N]));
+    F am = F(0.5) * (y[0] + y[N]);
     for ( usize k = 1; k < N; ++k ) am += y[k] * mk::trig::cos<F>(F(m * k) * pi_n);
     am *= F(2) / F(N);
+    if ( m == N ) am *= F(0.5);
     const F denom = F(1) - F(m * m);
     acc += am / denom;
   }

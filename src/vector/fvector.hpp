@@ -519,7 +519,7 @@ public:
     }
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity + cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, n, cnt);
-    for ( size_type i = 0; i < cnt; ++i ) new (addr(__mem::memory[n + i])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
     return addr(__mem::memory[n]);
   }
@@ -533,7 +533,7 @@ public:
     }
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
-    new (addr(__mem::memory[n])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, 1, val);      // rollback-safe gap fill
     __mem::length++;
     return addr(__mem::memory[n]);
   }
@@ -547,7 +547,7 @@ public:
     }
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
-    new (addr(__mem::memory[n])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, n, 1, [&](size_type i) { new (addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return addr(__mem::memory[n]);
   }
@@ -562,7 +562,7 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity + cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, p, cnt);
-    for ( size_type i = 0; i < cnt; ++i ) new (addr(__mem::memory[p + i])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
     return addr(__mem::memory[p]);
   }
@@ -577,7 +577,7 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
-    new (addr(__mem::memory[p])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, p, 1, [&](size_type i) { new (addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return addr(__mem::memory[p]);
   }
@@ -592,7 +592,7 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
-    new (addr(__mem::memory[p])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, 1, val);      // rollback-safe gap fill
     __mem::length++;
     return addr(__mem::memory[p]);
   }
@@ -621,7 +621,8 @@ public:
 
     // lifetime-correct shift via open_gap (move-constructs the tail); placement-new the new element.
     __impl_container::open_gap(__mem::memory, __mem::length, pos, 1);
-    new (micron::addr(__mem::memory[pos])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, pos, 1,
+                              [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return micron::addr(__mem::memory[pos]);
   }

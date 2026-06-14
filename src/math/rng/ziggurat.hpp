@@ -5,7 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// 256-layer ziggurat tables generated at compile time via Newton iteration
+// 256-layer ziggurat tables generated at compile time
+//   .. region 0 is the base strip + tail (boundary x = R, density floor f[0]=1);
+//   .. regions 1..254 are the equal-area rectangles, x increasing toward 0;
+//   .. region 255 is the smallest box at the peak;
+//   .. f[i] = exp(-x[i]^2/2) is DECREASING with i (f[0]=1, f[255]=f(R));
+//   .. w[i] = x[i]/2^53 (region 0 uses the area-based width q = V/f(R));
+//   .. k[i] = floor( (x[i]/x[i-1]) * 2^53 ) is the fast-accept threshold
 
 #include "../../concepts.hpp"
 #include "../../types.hpp"
@@ -30,59 +36,61 @@ namespace mkbits
 {
 
 struct ziggurat_tables {
-  f64 x[257];
-  f64 y[256];
-  u64 k[256];
-  f64 w[256];
+  f64 w[256];      // x[i] / 2^53  (region 0: area-based width q/2^53)
+  f64 f[256];      // exp(-x[i]^2 / 2)
+  u64 k[256];      // floor((x[i]/x[i-1]) * 2^53)  fast-accept thresholds
 
   static constexpr f64 R = 3.6541528853610088;
-  static constexpr f64 V = 0.00492867323399;      // area per layer
+  static constexpr f64 V = 0.00492867323399;
 };
+
+// f(x) = exp(-x^2/2)
+[[nodiscard]] consteval f64
+__zig_f(f64 x) noexcept
+{
+  return math::mkbits::exp_ns::exp_f64(-0.5 * x * x);
+}
 
 [[nodiscard]] consteval ziggurat_tables
 build_ziggurat() noexcept
 {
   ziggurat_tables t{};
-  auto phi = [](f64 x) constexpr {
-    f64 r = 1.0;
-    f64 term = 1.0;
-    f64 a = -x * x * 0.5;
-    for ( int n = 1; n <= 40; ++n ) {
-      term *= a / f64(n);
-      r += term;
-      if ( term > -1e-300 && term < 1e-300 ) break;
-    }
-    return r;
-  };
+  constexpr f64 M = 9007199254740992.0;      // 2^53
 
-  t.x[0] = ziggurat_tables::R;
-  t.x[256] = 0.0;
-  f64 f = phi(ziggurat_tables::R);
-  t.y[0] = f;
-  for ( int i = 1; i < 256; ++i ) {
-    f64 yi = t.y[i - 1] + ziggurat_tables::V / t.x[i - 1];
-    if ( yi <= 0.0 ) yi = 1e-300;
-    if ( yi >= 1.0 ) yi = 1.0 - 1e-15;
-    f64 xi = t.x[i - 1] * 0.95;
-    for ( int it = 0; it < 50; ++it ) {
-      f64 phi_x = phi(xi);
-      f64 d = phi_x - yi;
-      f64 dp = -xi * phi_x;
-      if ( dp == 0.0 ) break;
-      f64 dx = d / dp;
-      xi -= dx;
-      if ( dx < 1e-15 && dx > -1e-15 ) break;
-      if ( xi < 0.0 ) xi = 1e-12;
-    }
-    t.x[i] = xi;
-    t.y[i] = phi(xi);
+  const f64 R = ziggurat_tables::R;
+  const f64 V = ziggurat_tables::V;
+  const f64 fR = __zig_f(R);
+  const f64 q = V / fR;      // width of the base rectangle incl. tail mass
+
+  // base strip + tail
+  t.k[0] = u64((R / q) * M);
+  t.w[0] = q / M;
+  t.f[0] = 1.0;
+
+  // the topmost (smallest, peak) box uses x = R as its scale seed
+  t.w[255] = R / M;
+  t.f[255] = fR;
+  t.k[1] = 0;
+
+  // walking the stack downward in index
+  f64 dn = R;      // x[255]
+  f64 tn = R;      // previous x (for the k ratio)
+  bool closed = true;
+  for ( int i = 254; i >= 1; --i ) {
+    const f64 arg = V / dn + __zig_f(dn);
+    if ( !(arg > 0.0 && arg < 1.0) ) closed = false;
+    dn = math::fsqrt(-2.0 * math::mkbits::log_ns::log_f64(arg));
+    t.k[i + 1] = u64((dn / tn) * M);
+    tn = dn;
+    t.f[i] = __zig_f(dn);
+    t.w[i] = dn / M;
   }
-  for ( int i = 0; i < 255; ++i ) {
-    t.k[i] = u64((t.x[i + 1] / t.x[i]) * f64(u64(1) << 53));
-    t.w[i] = t.x[i] / f64(u64(1) << 53);
+
+  const f64 smallest = dn;      // x[1]
+  const bool sane = closed && smallest > 0.20 && smallest < 0.23 && t.f[1] > 0.97 && t.f[1] < 0.98;
+  if ( !sane ) {
+    static_assert(false, "division by zero in build_ziggurat");
   }
-  t.k[255] = 0;
-  t.w[255] = t.x[255] / f64(u64(1) << 53);
   return t;
 }
 
@@ -95,39 +103,51 @@ template<ieee754_floating F = f64, rng_concept Rng>
 normal_ziggurat(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
 {
   const f64 *__restrict__ wt = mkbits::ziggurat.w;
-  const f64 *__restrict__ yt = mkbits::ziggurat.y;
+  const f64 *__restrict__ ft = mkbits::ziggurat.f;
   const u64 *__restrict__ kt = mkbits::ziggurat.k;
+  const f64 R = mkbits::ziggurat_tables::R;
 
+  u64 u = g.next();
+  i64 hz = i64(u >> 11);      // 53-bit signed magnitude
+  if ( u & 1ULL ) hz = -hz;
+  u64 iz = (u >> 1) & 0xFFULL;
+  u64 ahz = u64(hz < 0 ? -hz : hz);
+
+  if ( ahz < kt[iz] ) [[likely]]
+    return F(mu + sigma * F(f64(hz) * wt[iz]));
+
+  // slow path: tail (iz == 0) or wedge rejection
   for ( ;; ) {
-    u64 u = g.next();
-    i64 j = i64(u >> 11);      // 53-bit signed magnitude
-    u64 sign_u = u & 1ULL;
-    if ( sign_u ) j = -j;
-    u64 i = (u >> 1) & 0xFFULL;
-    f64 x = f64(j) * wt[i];
-    if ( u64(j < 0 ? -j : j) < kt[i] ) [[likely]]
-      return F(mu + sigma * F(x));
-    if ( i == 0 ) {
-      f64 r = mkbits::ziggurat_tables::R;
-      f64 xt_;
-      f64 yt_;
+    f64 x = f64(hz) * wt[iz];
+    if ( iz == 0 ) {
+      // exponential-tail fallback for the base strip
+      f64 xt;
+      f64 yt;
       do {
         f64 u1 = (g.next() >> 11) * (1.0 / 9007199254740992.0);
         f64 u2 = (g.next() >> 11) * (1.0 / 9007199254740992.0);
         if ( u1 <= 0.0 ) u1 = 1e-300;
         if ( u2 <= 0.0 ) u2 = 1e-300;
-        xt_ = -math::mkbits::log_ns::log_f64(u1) / r;
-        yt_ = -math::mkbits::log_ns::log_f64(u2);
-      } while ( yt_ + yt_ < xt_ * xt_ );
-      f64 v = (j < 0) ? -(r + xt_) : (r + xt_);
+        xt = -math::mkbits::log_ns::log_f64(u1) / R;
+        yt = -math::mkbits::log_ns::log_f64(u2);
+      } while ( yt + yt < xt * xt );
+      f64 v = (hz > 0) ? (R + xt) : -(R + xt);
       return F(mu + sigma * F(v));
     }
-    // wedge rejection
+    // wedge
     f64 u1 = (g.next() >> 11) * (1.0 / 9007199254740992.0);
-    f64 fy = yt[i] + (yt[i - 1] - yt[i]) * u1;
+    f64 fy = ft[iz] + u1 * (ft[iz - 1] - ft[iz]);
     f64 ax = x < 0 ? -x : x;
     f64 phi_x = math::mkbits::exp_ns::exp_f64(-ax * ax * 0.5);
     if ( fy < phi_x ) return F(mu + sigma * F(x));
+
+    // rejected
+    u = g.next();
+    hz = i64(u >> 11);
+    if ( u & 1ULL ) hz = -hz;
+    iz = (u >> 1) & 0xFFULL;
+    ahz = u64(hz < 0 ? -hz : hz);
+    if ( ahz < kt[iz] ) return F(mu + sigma * F(f64(hz) * wt[iz]));
   }
 }
 

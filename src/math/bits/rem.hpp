@@ -104,16 +104,14 @@ template<ieee754_floating F>
 remquo(F x, F y, int *q) noexcept
 {
   F r = remainder<F>(x, y);
-  int sign = ((manip::signbit(x) ^ manip::signbit(y)) ? -1 : 1);
-  F absx = manip::fabs(x);
   F absy = manip::fabs(y);
-  if ( absy == F(0) || ieee::is_inf(absx) || ieee::is_nan(absx) || ieee::is_nan(absy) ) {
+  if ( absy == F(0) || ieee::is_inf(x) || ieee::is_nan(x) || ieee::is_nan(y) ) {
     *q = 0;
     return r;
   }
-  F qf = round_ns::round<F>(F((absx - manip::fabs(r)) / absy));
-  int qi = int(qf) & 7;
-  *q = sign * qi;
+  F qd = F((x - r) / y);
+  F q8 = fmod<F>(round_ns::round<F>(qd), F(8));
+  *q = int(q8);
   return r;
 }
 

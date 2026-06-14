@@ -8,6 +8,7 @@
 #include "../../concepts.hpp"
 #include "../../types.hpp"
 #include "../../vector/vector.hpp"
+#include "../quants/vec.hpp"
 
 namespace micron
 {

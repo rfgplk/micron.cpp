@@ -17,7 +17,7 @@
 #include "../../ieee.hpp"
 #include "../../matrix/pack.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 #include "../../../simd/aliases.hpp"
 #include "../../../simd/arch/types_amd64.hpp"
 #endif
@@ -581,7 +581,12 @@ symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A
       acc = fma_acc<T>(mat_at(A, r, c, rs_A, cs_A), x[ssize_t(j) * incx], acc);
     }
     T &yi = y[ssize_t(i) * incy];
-    yi = fma_acc<T>(alpha, acc, beta * yi);
+    if ( beta == T(0) )
+      yi = alpha * acc;
+    else if ( beta == T(1) )
+      yi = fma_acc<T>(alpha, acc, yi);
+    else
+      yi = fma_acc<T>(alpha, acc, beta * yi);
   }
 }
 
@@ -1287,7 +1292,12 @@ syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t 
         acc = fma_acc<T>(a, b, acc);
       }
       T &cij = mat_at(C, i, j, rs_C, cs_C);
-      cij = fma_acc<T>(alpha, acc, beta * cij);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc<T>(alpha, acc, cij);
+      else
+        cij = fma_acc<T>(alpha, acc, beta * cij);
     }
   }
 }
@@ -1313,7 +1323,12 @@ syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t
         acc = fma_acc<T>(aj, bi, acc);
       }
       T &cij = mat_at(C, i, j, rs_C, cs_C);
-      cij = fma_acc<T>(alpha, acc, beta * cij);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc<T>(alpha, acc, cij);
+      else
+        cij = fma_acc<T>(alpha, acc, beta * cij);
     }
   }
 }
@@ -1332,7 +1347,12 @@ symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A
         acc = fma_acc<T>(mat_at(A, r, c, rs_A, cs_A), mat_at(B, p, j, rs_B, cs_B), acc);
       }
       T &cij = mat_at(C, i, j, rs_C, cs_C);
-      cij = fma_acc<T>(alpha, acc, beta * cij);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc<T>(alpha, acc, cij);
+      else
+        cij = fma_acc<T>(alpha, acc, beta * cij);
     }
   }
 }
@@ -1351,7 +1371,12 @@ symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_
         acc = fma_acc<T>(mat_at(B, i, p, rs_B, cs_B), mat_at(A, r, c, rs_A, cs_A), acc);
       }
       T &cij = mat_at(C, i, j, rs_C, cs_C);
-      cij = fma_acc<T>(alpha, acc, beta * cij);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc<T>(alpha, acc, cij);
+      else
+        cij = fma_acc<T>(alpha, acc, beta * cij);
     }
   }
 }

@@ -58,7 +58,7 @@ template<ieee754_floating F> struct SE2 {
   {
     const F vx = xi.data[0], vy = xi.data[1], omega = xi.data[2];
     F a, b;      // V = [[a, -b], [b, a]]
-    if ( math::fabs<F>(omega) < math::default_eps<F>() ) {
+    if ( omega * omega < F(0.01) ) {
       // Taylor
       a = F(1) - omega * omega / F(6);
       b = omega * F(0.5) - omega * omega * omega / F(24);
@@ -74,21 +74,25 @@ template<ieee754_floating F> struct SE2 {
   [[nodiscard, gnu::flatten]] static constexpr vec<F, 3>
   log_map(const SE2 &g) noexcept
   {
-    const F omega = g.R.theta;
-    F vx, vy;
-    if ( math::fabs<F>(omega) < math::default_eps<F>() ) {
-      vx = g.t.data[0] + g.t.data[1] * (omega * F(0.5));
-      vy = g.t.data[1] - g.t.data[0] * (omega * F(0.5));
+    const F two_pi = F(2) * math::constant_pi<F>;
+    const F ratio = g.R.theta / two_pi;
+    const F k = static_cast<F>(static_cast<i64>(ratio + (ratio >= F(0) ? F(0.5) : F(-0.5))));
+    const F omega = g.R.theta - two_pi * k;
+    F a, b;      // V = [[a, -b], [b, a]]
+    // threshold matched to SO3/SE3 (|omega| < 0.1)
+    if ( omega * omega < F(0.01) ) {
+      a = F(1) - omega * omega / F(6);
+      b = omega * F(0.5) - omega * omega * omega / F(24);
     } else {
       const F s = math::sin<F>(omega);
       const F c = math::cos<F>(omega);
-      const F a = s / omega;
-      const F b = (F(1) - c) / omega;
-      const F det = a * a + b * b;
-      const F inv = F(1) / det;
-      vx = (a * g.t.data[0] + b * g.t.data[1]) * inv;
-      vy = (-b * g.t.data[0] + a * g.t.data[1]) * inv;
+      a = s / omega;
+      b = (F(1) - c) / omega;
     }
+    const F det = a * a + b * b;
+    const F inv = F(1) / det;
+    const F vx = (a * g.t.data[0] + b * g.t.data[1]) * inv;
+    const F vy = (-b * g.t.data[0] + a * g.t.data[1]) * inv;
     return vec<F, 3>{ vx, vy, omega };
   }
 

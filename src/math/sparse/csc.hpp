@@ -67,16 +67,23 @@ template<arith_scalar T, micron::integral I = u32> struct csc {
   [[nodiscard, gnu::always_inline]] usize
   col_nnz(usize j) const noexcept
   {
-    return static_cast<usize>(outer.data()[j + 1] - outer.data()[j]);
+    const I e = outer.data()[j + 1];
+    const I s = outer.data()[j];
+    // guard non-monotone outer
+    return (e >= s) ? static_cast<usize>(e - s) : usize(0);
   }
 
   // NOTE: triplets MUST be sorted by column (and within column by row for best perf)
+  // triplets MUST be sorted by column
   static csc
   from_triplets_sorted(usize r, usize c, const I *rows_arr, const I *cols_arr, const T *vals_arr, usize n)
   {
     csc out(r, c);
     micron::vector<usize, micron::allocator_serial<>, false> counts(c, usize(0));
-    for ( usize k = 0; k < n; ++k ) counts.data()[cols_arr[k]] += 1;
+    for ( usize k = 0; k < n; ++k ) {
+      const usize j = static_cast<usize>(cols_arr[k]);
+      if ( j < c ) counts.data()[j] += 1;
+    }
     out.outer.data()[0] = I(0);
     for ( usize j = 0; j < c; ++j ) out.outer.data()[j + 1] = out.outer.data()[j] + static_cast<I>(counts.data()[j]);
     const usize total = static_cast<usize>(out.outer.data()[c]);
@@ -86,6 +93,7 @@ template<arith_scalar T, micron::integral I = u32> struct csc {
     for ( usize j = 0; j < c; ++j ) pos.data()[j] = static_cast<usize>(out.outer.data()[j]);
     for ( usize k = 0; k < n; ++k ) {
       const usize j = static_cast<usize>(cols_arr[k]);
+      if ( j >= c ) continue;
       const usize p = pos.data()[j];
       out.inner.data()[p] = rows_arr[k];
       out.values.data()[p] = vals_arr[k];

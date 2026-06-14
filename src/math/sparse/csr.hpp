@@ -67,7 +67,10 @@ template<arith_scalar T, micron::integral I = u32> struct csr {
   [[nodiscard, gnu::always_inline]] usize
   row_nnz(usize i) const noexcept
   {
-    return static_cast<usize>(outer.data()[i + 1] - outer.data()[i]);
+    const I e = outer.data()[i + 1];
+    const I s = outer.data()[i];
+    // guard non-monotone outer
+    return (e >= s) ? static_cast<usize>(e - s) : usize(0);
   }
 };
 
@@ -77,7 +80,10 @@ to_csc(const csr<T, I> &A) noexcept
 {
   csc<T, I> out(A.rows, A.cols);
   micron::vector<usize, micron::allocator_serial<>, false> counts(A.cols, usize(0));
-  for ( usize k = 0; k < A.nnz(); ++k ) counts.data()[A.inner.data()[k]] += 1;
+  for ( usize k = 0; k < A.nnz(); ++k ) {
+    const usize j = static_cast<usize>(A.inner.data()[k]);
+    if ( j < A.cols ) counts.data()[j] += 1;
+  }
   out.outer.data()[0] = I(0);
   for ( usize j = 0; j < A.cols; ++j ) out.outer.data()[j + 1] = out.outer.data()[j] + static_cast<I>(counts.data()[j]);
   const usize total = A.nnz();
@@ -90,6 +96,7 @@ to_csc(const csr<T, I> &A) noexcept
     const usize b = static_cast<usize>(A.outer.data()[i + 1]);
     for ( usize k = a; k < b; ++k ) {
       const usize j = static_cast<usize>(A.inner.data()[k]);
+      if ( j >= A.cols ) continue;
       const usize p = pos.data()[j];
       out.inner.data()[p] = static_cast<I>(i);
       out.values.data()[p] = A.values.data()[k];
@@ -105,7 +112,10 @@ to_csr(const csc<T, I> &A) noexcept
 {
   csr<T, I> out(A.rows, A.cols);
   micron::vector<usize, micron::allocator_serial<>, false> counts(A.rows, usize(0));
-  for ( usize k = 0; k < A.nnz(); ++k ) counts.data()[A.inner.data()[k]] += 1;
+  for ( usize k = 0; k < A.nnz(); ++k ) {
+    const usize i = static_cast<usize>(A.inner.data()[k]);
+    if ( i < A.rows ) counts.data()[i] += 1;
+  }
   out.outer.data()[0] = I(0);
   for ( usize i = 0; i < A.rows; ++i ) out.outer.data()[i + 1] = out.outer.data()[i] + static_cast<I>(counts.data()[i]);
   const usize total = A.nnz();
@@ -118,6 +128,7 @@ to_csr(const csc<T, I> &A) noexcept
     const usize b = static_cast<usize>(A.outer.data()[j + 1]);
     for ( usize k = a; k < b; ++k ) {
       const usize i = static_cast<usize>(A.inner.data()[k]);
+      if ( i >= A.rows ) continue;
       const usize p = pos.data()[i];
       out.inner.data()[p] = static_cast<I>(j);
       out.values.data()[p] = A.values.data()[k];

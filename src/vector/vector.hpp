@@ -636,7 +636,7 @@ public:
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity + cnt));
     if ( n >= __mem::length ) exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     __impl_container::open_gap(__mem::memory, __mem::length, n, cnt);
-    for ( size_type i = 0; i < cnt; ++i ) new (micron::addr(__mem::memory[n + i])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
     return micron::addr(__mem::memory[n]);
   }
@@ -651,7 +651,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
     if ( n >= __mem::length ) exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
-    new (micron::addr(__mem::memory[n])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, 1, val);      // rollback-safe gap fill
     __mem::length++;
     return micron::addr(__mem::memory[n]);
   }
@@ -666,7 +666,8 @@ public:
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
     if ( n >= __mem::length ) exc<except::library_error>("micron::vector insert(): out of allocated memory range.");
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
-    new (micron::addr(__mem::memory[n])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, n, 1,
+                               [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return micron::addr(__mem::memory[n]);
   }
@@ -682,7 +683,8 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
-    new (micron::addr(__mem::memory[p])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, p, 1,
+                               [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return micron::addr(__mem::memory[p]);
   }
@@ -698,7 +700,7 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity + cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, p, cnt);
-    for ( size_type i = 0; i < cnt; ++i ) new (micron::addr(__mem::memory[p + i])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
     return micron::addr(__mem::memory[p]);
   }
@@ -714,7 +716,7 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
-    new (micron::addr(__mem::memory[p])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, 1, val);      // rollback-safe gap fill
     __mem::length++;
     return micron::addr(__mem::memory[p]);
   }
@@ -733,8 +735,11 @@ public:
     const size_type p = static_cast<size_type>(it - __mem::memory);
     if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity + cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, p, cnt);
-    size_type i = 0;
-    for ( InputIt q = first; q != last; ++q, ++i ) new (micron::addr(__mem::memory[p + i])) T(*q);
+    InputIt q = first;
+    __impl_container::fill_gap(__mem::memory, __mem::length, p, cnt, [&](size_type idx) {
+      new (micron::addr(__mem::memory[idx])) T(*q);
+      ++q;
+    });
     __mem::length += cnt;
     return micron::addr(__mem::memory[p]);
   }
@@ -765,7 +770,8 @@ public:
     // lifetime-correct shift: open_gap move-constructs the tail (works for move-only & non-trivial T),
     // then placement-new the new element into the vacated slot. (memmove-fallback wrote into raw storage.)
     __impl_container::open_gap(__mem::memory, __mem::length, pos, 1);
-    new (micron::addr(__mem::memory[pos])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, pos, 1,
+                               [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     ++__mem::length;
     return micron::addr(__mem::memory[pos]);
   }
@@ -1601,7 +1607,8 @@ public:
     // lifetime-correct shift: open_gap move-constructs the tail (works for move-only & non-trivial T),
     // then placement-new the new element into the vacated slot. (memmove-fallback wrote into raw storage.)
     __impl_container::open_gap(__mem::memory, __mem::length, pos, 1);
-    new (micron::addr(__mem::memory[pos])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, pos, 1,
+                               [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     ++__mem::length;
     return micron::addr(__mem::memory[pos]);
   }

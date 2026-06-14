@@ -67,8 +67,9 @@ mgs(const mat<F, N, P> &A) noexcept
 
 };      // namespace __stiefel_impl
 
+// NOTE: P >= 2 is required
 template<ieee754_floating F, usize N, usize P>
-  requires(N >= P && P >= 1)
+  requires(N >= P && P >= 2)
 struct stiefel {
   using value_type = F;
   static constexpr usize rows = N;

@@ -292,6 +292,24 @@ maxf128(flong x, flong y)
   return static_cast<flong>(mkbits::manip::fmax<f64>(f64(x), f64(y)));
 }
 
+constexpr f32
+minf32(f32 x, f32 y)
+{
+  return f32(mkbits::manip::fmin<f32>(f32(x), f32(y)));
+}
+
+constexpr f64
+minf64(f64 x, f64 y)
+{
+  return f64(mkbits::manip::fmin<f64>(f64(x), f64(y)));
+}
+
+constexpr flong
+minf128(flong x, flong y)
+{
+  return static_cast<flong>(mkbits::manip::fmin<f64>(f64(x), f64(y)));
+}
+
 template<typename T>
   requires(micron::is_floating_point_v<T>)
 constexpr T
@@ -313,7 +331,15 @@ template<typename T>
 constexpr T
 fmin(T a, T b)
 {
-  return (a < b) ? a : b;
+  if constexpr ( micron::same_as<T, f32> || micron::same_as<T, float> ) {
+    return static_cast<T>(minf32(static_cast<f32>(a), static_cast<f32>(b)));
+  } else if constexpr ( micron::same_as<T, f64> || micron::same_as<T, double> ) {
+    return static_cast<T>(minf64(static_cast<f64>(a), static_cast<f64>(b)));
+  } else if constexpr ( micron::same_as<T, f128> || micron::same_as<T, long double> ) {
+    return static_cast<T>(minf128(static_cast<flong>(a), static_cast<flong>(b)));
+  } else {
+    return (a < b) ? a : b;
+  }
 }
 
 constexpr float

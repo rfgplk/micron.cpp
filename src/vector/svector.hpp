@@ -678,7 +678,7 @@ public:
     if ( ind > length ) exc<except::library_error>("micron::svector insert() index past end.");
     __impl_container::open_gap(micron::addr(stack[0]), length, ind, 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (micron::addr(stack[ind])) T(i);
+      __impl_container::fill_gap(micron::addr(stack[0]), length, ind, 1, [&](usize) { new (micron::addr(stack[ind])) T(i); });
     else
       stack[ind] = i;
     ++length;
@@ -694,7 +694,7 @@ public:
                                                                       static_cast<const T *>(itr));
     __impl_container::open_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (itr) T(i);
+      __impl_container::fill_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1, [&](usize) { new (itr) T(i); });
     else
       *itr = i;
     ++length;
@@ -708,7 +708,7 @@ public:
     if ( ind > length ) exc<except::library_error>("micron::svector move_insert() index past end.");
     __impl_container::open_gap(micron::addr(stack[0]), length, ind, 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (micron::addr(stack[ind])) T(micron::move(i));
+      __impl_container::fill_gap(micron::addr(stack[0]), length, ind, 1, [&](usize) { new (micron::addr(stack[ind])) T(micron::move(i)); });
     else
       stack[ind] = micron::move(i);
     ++length;
@@ -723,7 +723,8 @@ public:
                                                                       static_cast<const T *>(itr));
     __impl_container::open_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1);
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> )
-      new (itr) T(micron::move(i));
+      __impl_container::fill_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1,
+                                 [&](usize) { new (itr) T(micron::move(i)); });
     else
       *itr = micron::move(i);
     ++length;
@@ -737,7 +738,8 @@ public:
     __safety_check<&svector::__push_check, except::library_error>("micron::svector emplace() out of range.");
     if ( ind > length ) exc<except::library_error>("micron::svector emplace() index past end.");
     __impl_container::open_gap(micron::addr(stack[0]), length, ind, 1);
-    new (micron::addr(stack[ind])) T(micron::forward<Args>(args)...);
+    __impl_container::fill_gap(micron::addr(stack[0]), length, ind, 1,
+                               [&](usize) { new (micron::addr(stack[ind])) T(micron::forward<Args>(args)...); });
     ++length;
     return *this;
   }
@@ -750,7 +752,8 @@ public:
     __safety_check<&svector::__iterator_check, except::library_error>("micron::svector emplace() iterator out of range.",
                                                                       static_cast<const T *>(itr));
     __impl_container::open_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1);
-    new (itr) T(micron::forward<Args>(args)...);
+    __impl_container::fill_gap(micron::addr(stack[0]), length, static_cast<usize>(itr - begin()), 1,
+                               [&](usize) { new (itr) T(micron::forward<Args>(args)...); });
     ++length;
     return *this;
   }

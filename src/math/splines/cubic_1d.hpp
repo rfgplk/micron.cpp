@@ -93,15 +93,18 @@ solve_cubic_M(const F *xs, const F *ys, usize n, bc_kind bc, F left_slope, F rig
     d[n - 1] = F(6) * (right_slope - delL);
   } else /* bc_kind::not_a_knot */ {
     if ( n < 4 ) {
-
-      b[0] = F(1);
-      c[0] = F(0);
-      d[0] = F(0);
-      a[n - 2] = F(0);
-      b[n - 1] = F(1);
-      d[n - 1] = F(0);
-      linalg::tridiag_solve<F>(a.data(), b.data(), c.data(), d.data(), n);
-      for ( usize i = 0; i < n; ++i ) M_out[i] = d[i];
+      // n == 3 (n == 2 already returned above): the not-a-knot spline with a
+      // single interior knot degenerates to the unique parabola through the 3
+      // points, whose second derivative is constant
+      const F h0 = xs[1] - xs[0];
+      const F h1 = xs[2] - xs[1];
+      const F del0 = (ys[1] - ys[0]) / h0;
+      const F del1 = (ys[2] - ys[1]) / h1;
+      const F second_dd = (del1 - del0) / (xs[2] - xs[0]);      // f[x0,x1,x2]
+      const F Mconst = F(2) * second_dd;
+      M_out[0] = Mconst;
+      M_out[1] = Mconst;
+      M_out[2] = Mconst;
       return true;
     }
 
@@ -196,6 +199,18 @@ make_cubic(raw_slice<const F> xs, raw_slice<const F> ys, bc_kind bc = bc_kind::n
     return s;
   }
   const usize n = xs.size();
+
+  // relative-spacing guard
+  {
+    const F span = xs[n - 1] - xs[0];
+    const F min_h = F(1e-12) * span;
+    for ( usize i = 0; i + 1 < n; ++i ) {
+      if ( xs[i + 1] - xs[i] <= min_h ) {
+        if ( info ) info->status = build_status::degenerate;
+        return s;
+      }
+    }
+  }
 
   vector<F> M(n, F(0));
   M.set_size(n);

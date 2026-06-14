@@ -98,7 +98,12 @@ gemmt(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
         acc = bits::fma_acc<T>(a, b, acc);
       }
       T &cij = bits::mat_at(C.data, i, j, rs_C, cs_C);
-      cij = bits::fma_acc<T>(alpha, acc, beta * cij);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = bits::fma_acc<T>(alpha, acc, cij);
+      else
+        cij = bits::fma_acc<T>(alpha, acc, beta * cij);
     }
   }
 }

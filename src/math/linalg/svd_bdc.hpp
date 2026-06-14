@@ -248,11 +248,12 @@ bidiag_svd_diag(F *__restrict__ d, F *__restrict__ e, usize n, F *__restrict__ U
 // Cuppen's algorithm to T = B^T B
 template<ieee754_floating F>
 inline F
-solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_pad, int max_iter) noexcept
+solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_pad, int max_iter, bool *converged = nullptr) noexcept
 {
   F lo = d[idx];
   F hi = (idx + 1 < n) ? d[idx + 1] : (d[n - 1] + upper_pad);
   F lam = (lo + hi) * F(0.5);
+  bool ok = false;
 
   for ( int iter = 0; iter < max_iter; ++iter ) {
     F f = F(1);
@@ -278,7 +279,10 @@ solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_p
       continue;
     }
 
-    if ( math::fabs(f) <= default_eps<F>() * F(100) * (math::fabs(lam) + F(1)) ) break;
+    if ( math::fabs(f) <= default_eps<F>() * F(100) * (math::fabs(lam) + F(1)) ) {
+      ok = true;
+      break;
+    }
 
     if ( f > F(0) )
       hi = lam;
@@ -290,9 +294,13 @@ solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_p
     if ( delta == F(0) || new_lam <= lo || new_lam >= hi ) {
       new_lam = (lo + hi) * F(0.5);
     }
-    if ( new_lam == lam ) break;
+    if ( new_lam == lam ) {
+      ok = true;
+      break;
+    }
     lam = new_lam;
   }
+  if ( converged ) *converged = ok;
   return lam;
 }
 
@@ -314,8 +322,9 @@ cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, 
   const F rho = math::fabs(beta);
   const F sign_beta = (beta >= F(0)) ? F(1) : F(-1);
 
-  d[k - 1] -= beta;
-  d[k] -= beta;
+  // rank-1 split T = T_hat + rho * v v^T with v = e_{k-1} + sign_beta * e_k
+  d[k - 1] -= rho;
+  d[k] -= rho;
 
   // recurse on sub-blocks; each sub-block of Q is currently identity
   if ( !cuppen_tridiag_dnc<F>(d, e, k, Q_data, Q_ld, threshold, max_iter) ) return false;
@@ -357,10 +366,13 @@ cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, 
   F upper_pad = rho * sum_z2 + (math::fabs(d_sorted.data()[n - 1]) + F(1)) * F(0.01);
   if ( upper_pad <= F(0) ) upper_pad = F(1);
 
-  // find new eigenvalues
+  // find new eigenvalues; honestly track per-root convergence
   micron::vector<F, micron::allocator_serial<>, false> lam(n, F(0));
+  bool all_converged = true;
   for ( usize i = 0; i < n; ++i ) {
-    lam.data()[i] = solve_secular_root<F>(d_sorted.data(), z2.data(), n, i, rho, upper_pad, max_iter);
+    bool root_ok = false;
+    lam.data()[i] = solve_secular_root<F>(d_sorted.data(), z2.data(), n, i, rho, upper_pad, max_iter, &root_ok);
+    if ( !root_ok ) all_converged = false;
   }
 
   // normalize each column
@@ -402,7 +414,7 @@ cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, 
   for ( usize i = 0; i < n; ++i )
     for ( usize j = 0; j < n; ++j ) Q_data[i * Q_ld + j] = tmp.data()[i * n + j];
 
-  return true;
+  return all_converged;
 }
 
 };      // namespace __impl_svd_bdc
@@ -511,6 +523,9 @@ svd_bdc_dnc(const dynmat<F> &A, usize threshold = 16, int max_iter = 60) noexcep
 
   // R >= C path
   const usize K = C;
+
+  if ( threshold < K ) threshold = K;
+
   auto bd = bidiagonalize<F>(A);
 
   // build tridiagonal T = B^T B (C x C symmetric, in d_t and e_t)

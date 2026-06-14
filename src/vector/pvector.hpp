@@ -814,6 +814,9 @@ public:
   {
     __safety_check<&pvector::__overflow_check, except::library_error>("micron::pvector insert() capacity exceeded", cnt);
     __safety_check<&pvector::__insert_pos_check, except::library_error>("micron::pvector insert() position out of bounds", pos);
+    // cnt==0 with pos==0 makes the reverse-shift guard underflow and be always true for usize
+    if ( cnt == 0 ) [[unlikely]]
+      return clone();
 
     void *root = __retain<__root_level>(__root);
     for ( usize i = __size + cnt - 1; i >= pos + cnt; --i ) {

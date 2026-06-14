@@ -29,7 +29,11 @@ namespace sparse
 
 // y := alpha * A * x + beta * y
 // csc native: walk columns, scatter contributions into y
-template<arith_scalar T, micron::integral I>
+// x.size() >= A.cols
+// y.size() >= A.rows,
+// A.inner[k] < A.rows for all k (scatter target),
+// A.outer non-decreasing with A.outer[A.cols] == A.nnz
+template<ieee754_floating T, micron::integral I>
 inline void
 spmv(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
@@ -51,12 +55,16 @@ spmv(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noex
     if ( xj == T(0) ) continue;
     const usize a = static_cast<usize>(outer[j]);
     const usize b = static_cast<usize>(outer[j + 1]);
-    spmv_col_scatter<T, I>(alpha, xj, vals + a, inner + a, yp, b - a);
+    // guard non-monotone outer
+    const usize cnt = (b >= a) ? (b - a) : usize(0);
+    spmv_col_scatter<T, I>(alpha, xj, vals + a, inner + a, yp, cnt);
   }
 }
 
 // CSC transpose: walk columns as dot products into y[j]
-template<arith_scalar T, micron::integral I>
+// x.size() >= A.rows, y.size() >= A.cols,
+// A.inner[k] < A.rows for all k
+template<ieee754_floating T, micron::integral I>
 inline void
 spmv_transposed(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
@@ -82,7 +90,7 @@ spmv_transposed(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<
 }
 
 // row-wise inner products
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 inline void
 spmv(T alpha, const csr<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
@@ -108,7 +116,7 @@ spmv(T alpha, const csr<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noex
 }
 
 // y := alpha * A * X + beta * Y  (A sparse, X/Y dense)
-template<arith_scalar T, micron::integral I>
+template<ieee754_floating T, micron::integral I>
 inline void
 spmm(T alpha, const csc<T, I> &A, const dynmat<T> &X, T beta, dynmat<T> &Y) noexcept
 {
@@ -126,11 +134,15 @@ spmm(T alpha, const csc<T, I> &A, const dynmat<T> &X, T beta, dynmat<T> &Y) noex
 
 // C := A * B  (both CSC)
 // Gustavson with dense accumulator
-template<arith_scalar T, micron::integral I>
+// B.rows == A.cols (inner dimension)
+template<ieee754_floating T, micron::integral I>
 [[nodiscard]] inline csc<T, I>
 spgemm(const csc<T, I> &A, const csc<T, I> &B) noexcept
 {
   csc<T, I> C(A.rows, B.cols);
+  // dimension mismatch
+  if ( B.rows != A.cols ) return C;
+
   micron::vector<T, micron::allocator_serial<>, false> acc(A.rows, T(0));
   micron::vector<u8, micron::allocator_serial<>, false> marker(A.rows, u8(0));
   micron::vector<I, micron::allocator_serial<>, false> active(A.rows, I(0));
@@ -144,12 +156,16 @@ spgemm(const csc<T, I> &A, const csc<T, I> &B) noexcept
     const usize be = static_cast<usize>(B.outer.data()[j + 1]);
     for ( usize bk = bs; bk < be; ++bk ) {
       const usize k = static_cast<usize>(B.inner.data()[bk]);
+      // guard malformed contraction index
+      if ( k >= A.cols ) continue;
       const T b_kj = B.values.data()[bk];
       if ( b_kj == T(0) ) continue;
       const usize ak_start = static_cast<usize>(A.outer.data()[k]);
       const usize ak_end = static_cast<usize>(A.outer.data()[k + 1]);
       for ( usize ai = ak_start; ai < ak_end; ++ai ) {
         const usize i = static_cast<usize>(A.inner.data()[ai]);
+        // guard malformed row index
+        if ( i >= A.rows ) continue;
         const T a_ik = A.values.data()[ai];
         if ( marker.data()[i] == 0 ) {
           marker.data()[i] = 1;

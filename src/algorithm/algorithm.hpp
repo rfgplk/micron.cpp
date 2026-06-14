@@ -529,7 +529,7 @@ clear(T &src, const R r = 0) noexcept
 }
 
 template<typename R = f64, typename T>
-  requires micron::is_object_v<T>
+  requires micron::is_object_v<T> && (!is_map_class<T>) && (!is_tree<T>)
 constexpr R
 mean(const T &src) noexcept
 {
@@ -537,7 +537,7 @@ mean(const T &src) noexcept
 }
 
 template<typename R = flong, typename T>
-  requires micron::is_object_v<T>
+  requires micron::is_object_v<T> && (!is_map_class<T>) && (!is_tree<T>)
 constexpr R
 geomean(const T &src) noexcept
 {
@@ -547,7 +547,7 @@ geomean(const T &src) noexcept
 }
 
 template<typename R = flong, typename T>
-  requires micron::is_object_v<T>
+  requires micron::is_object_v<T> && (!is_map_class<T>) && (!is_tree<T>)
 constexpr R
 harmonicmean(const T &src) noexcept
 {

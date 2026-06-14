@@ -230,14 +230,18 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   constexpr vector_8<T>
   normalized() const
   {
-    T inv = math::frsqrt(squared_norm());
+    T n2 = squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return { T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 } };
+    T inv = math::frsqrt(n2);
     return { x * inv, y * inv, z * inv, w * inv, a * inv, b * inv, c * inv, d * inv };
   }
 
   constexpr vector_8<T> &
   normalize()
   {
-    T inv = math::frsqrt(squared_norm());
+    T n2 = squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return *this;
+    T inv = math::frsqrt(n2);
     x *= inv;
     y *= inv;
     z *= inv;
@@ -258,25 +262,33 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   constexpr T
   cos_angle(const vector_8<T> &v) const
   {
-    return dot(v) * math::frsqrt(squared_norm() * v.squared_norm());
+    T denom = squared_norm() * v.squared_norm();
+    if ( denom <= math::default_eps<T>() ) return T{ 0 };
+    return dot(v) * math::frsqrt(denom);
   }
 
   constexpr T
   angle(const vector_8<T> &v) const
   {
-    return math::acos(math::fclamp(cos_angle(v), T{ -1 }, T{ 1 }));
+    T denom = squared_norm() * v.squared_norm();
+    if ( denom <= math::default_eps<T>() ) return T{ 0 };
+    return math::acos(math::fclamp(dot(v) * math::frsqrt(denom), T{ -1 }, T{ 1 }));
   }
 
   constexpr T
   scalar_project(const vector_8<T> &v) const
   {
-    return dot(v) / v.magnitude();
+    T n2 = v.squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return T{ 0 };
+    return dot(v) / math::fsqrt(n2);
   }
 
   constexpr vector_8<T>
   project_onto(const vector_8<T> &v) const
   {
-    return v * (dot(v) / v.squared_norm());
+    T n2 = v.squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return { T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 } };
+    return v * (dot(v) / n2);
   }
 
   constexpr vector_8<T>

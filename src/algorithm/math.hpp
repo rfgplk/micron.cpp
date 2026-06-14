@@ -17,6 +17,7 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../bits/__visit_kv.hpp"
 #include "../concepts.hpp"
 
 namespace micron
@@ -214,6 +215,217 @@ atanh(T &cont) noexcept
     *it = 0.5 * math::log((1.0 + x) / (1.0 - x));
   }
   return cont;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+sin(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::sin(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+cos(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::cos(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+tan(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::tan(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+asin(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::asin(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+acos(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::acos(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+atan(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::atan(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+sinh(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::sinh(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+cosh(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::cosh(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+tanh(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::tanh(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+exp(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::exp(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+log(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::log(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+log10(M &m) noexcept
+{
+  constexpr double ln10 = 2.30258509299404568402;
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::log(static_cast<double>(v)) / ln10; });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+sqrt(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::sqrt(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+cbrt(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = math::cbrt(static_cast<double>(v)); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+absolute(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) {
+    auto x = v;
+    v = x < typename M::mapped_type{} ? -x : x;
+  });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+sign(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = (v > 0) - (v < 0); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+clip(M &m, const typename M::mapped_type lo, const typename M::mapped_type hi) noexcept
+{
+  __impl::visit_kv(m, [&](const auto &, auto &v) { v = (v < lo) ? lo : ((v > hi) ? hi : v); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+degrees(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = v * (180.0 / math::pi); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+radians(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) { v = v * (math::pi / 180.0); });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+asinh(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) {
+    double x = static_cast<double>(v);
+    v = math::log(x + math::sqrt(x * x + 1.0));
+  });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+acosh(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) {
+    double x = static_cast<double>(v);
+    v = math::log(x + math::sqrt(x * x - 1.0));
+  });
+  return m;
+}
+
+template<is_mutable_map M>
+  requires micron::is_arithmetic_v<typename M::mapped_type>
+constexpr M &
+atanh(M &m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &, auto &v) {
+    double x = static_cast<double>(v);
+    v = 0.5 * math::log((1.0 + x) / (1.0 - x));
+  });
+  return m;
 }
 
 // EXPERIMENTAL - DERIVATIVES, MIGHT REMOVE

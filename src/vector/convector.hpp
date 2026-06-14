@@ -846,7 +846,7 @@ public:
     if ( __mem::length + cnt > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity + cnt));
     __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     __impl_container::open_gap(__mem::memory, __mem::length, n, cnt);
-    for ( size_type i = 0; i < cnt; ++i ) new (micron::addr(__mem::memory[n + i])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
     return micron::addr(__mem::memory[n]);
   }
@@ -862,7 +862,7 @@ public:
     if ( __mem::length + 1 > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity));
     __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
-    new (micron::addr(__mem::memory[n])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, 1, val);      // rollback-safe gap fill
     __mem::length++;
     return micron::addr(__mem::memory[n]);
   }
@@ -878,7 +878,8 @@ public:
     if ( __mem::length + 1 > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity));
     __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
-    new (micron::addr(__mem::memory[n])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, n, 1,
+                              [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return micron::addr(__mem::memory[n]);
   }
@@ -900,7 +901,8 @@ public:
       exc<except::library_error>("micron::convector insert(): iterator out of range.");
     const size_type __p = static_cast<size_type>(it - __mem::memory);
     __impl_container::open_gap(__mem::memory, __mem::length, __p, 1);
-    new (micron::addr(__mem::memory[__p])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, __p, 1,
+                              [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return micron::addr(__mem::memory[__p]);
   }
@@ -922,7 +924,7 @@ public:
       exc<except::library_error>("micron::convector insert(): iterator out of range.");
     const size_type __p = static_cast<size_type>(it - __mem::memory);
     __impl_container::open_gap(__mem::memory, __mem::length, __p, cnt);
-    for ( size_type i = 0; i < cnt; ++i ) new (micron::addr(__mem::memory[__p + i])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, __p, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
     return micron::addr(__mem::memory[__p]);
   }
@@ -944,7 +946,7 @@ public:
       exc<except::library_error>("micron::convector insert(): iterator out of range.");
     const size_type __p = static_cast<size_type>(it - __mem::memory);
     __impl_container::open_gap(__mem::memory, __mem::length, __p, 1);
-    new (micron::addr(__mem::memory[__p])) T(val);
+    __impl_container::fill_gap_copy(__mem::memory, __mem::length, __p, 1, val);      // rollback-safe gap fill
     __mem::length++;
     return micron::addr(__mem::memory[__p]);
   }
@@ -978,7 +980,8 @@ public:
       if ( __mem::memory[pos] > val ) break;
 
     __impl_container::open_gap(__mem::memory, __mem::length, pos, 1);
-    new (micron::addr(__mem::memory[pos])) T(micron::move(val));
+    __impl_container::fill_gap(__mem::memory, __mem::length, pos, 1,
+                              [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     ++__mem::length;
     return micron::addr(__mem::memory[pos]);
   }

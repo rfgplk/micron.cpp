@@ -51,7 +51,7 @@ sinh_f64(f64 x) noexcept
     return manip::copysign<f64>(r, x);
   }
   // 1/exp(ax) is below ulp(exp(ax)/2)
-  f64 r = 0.5 * exp_ns::exp_f64(ax);
+  f64 r = exp_ns::exp_f64(ax - 0x1.62e42fefa39efp-1);
   return manip::copysign<f64>(r, x);
 }
 
@@ -72,7 +72,7 @@ cosh_f64(f64 x) noexcept
     f64 t = exp_ns::exp_f64(ax);
     return 0.5 * (t + 1.0 / t);
   }
-  return 0.5 * exp_ns::exp_f64(ax);
+  return exp_ns::exp_f64(ax - 0x1.62e42fefa39efp-1);
 }
 
 [[nodiscard, gnu::flatten]] inline constexpr f64

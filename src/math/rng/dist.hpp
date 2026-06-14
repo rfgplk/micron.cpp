@@ -98,8 +98,10 @@ uniform_int(Rng &g, T lo, T hi) noexcept
 {
   if ( hi <= lo ) return lo;
   using U = micron::make_unsigned_t<T>;
-  U range = U(hi - lo) + U(1);
-  return T(lo + T(uniform_uint_below<U>(g, range)));
+  const U span = U(hi) - U(lo);
+  if ( span == U(~U(0)) ) return T(U(g.next()));
+  const U range = span + U(1);
+  return T(U(lo) + uniform_uint_below<U>(g, range));
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +139,8 @@ template<ieee754_floating F = f64, rng_concept Rng>
 [[nodiscard, gnu::always_inline]] inline F
 exp_dist(Rng &g, F lambda = F(1)) noexcept
 {
+  // domain guard
+  if ( lambda <= F(0) ) return math::ieee::inf_v<F>(0);
   F u;
   do {
     u = uniform_real<F>(g);
@@ -150,6 +154,8 @@ template<typename I = i64, rng_concept Rng>
 [[nodiscard]] inline I
 poisson(Rng &g, f64 lambda) noexcept
 {
+  // domain guard
+  if ( lambda <= 0.0 ) return I(0);
   if ( lambda < 30.0 ) {
     f64 L = math::fexp(-lambda);
     I k = 0;

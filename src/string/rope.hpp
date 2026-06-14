@@ -382,33 +382,122 @@ private:
     __node *right;
   };
 
+  struct __split_frame {
+    const __node *other;      // sibling subtree to recombine with on the way back up
+    bool went_left;
+  };
+
+  struct __frame_stack {
+    static constexpr usize __sbo = 64;
+    __split_frame __inl[__sbo];
+    __split_frame *__heap;      // nullptr while using __inl
+    usize __cap;
+    usize __sz;
+
+    __frame_stack() noexcept : __heap(nullptr), __cap(__sbo), __sz(0) { }
+
+    ~__frame_stack() noexcept
+    {
+      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+    }
+
+    __frame_stack(const __frame_stack &) = delete;
+    __frame_stack &operator=(const __frame_stack &) = delete;
+
+    __split_frame *
+    __buf() noexcept
+    {
+      return __heap ? __heap : __inl;
+    }
+
+    void
+    __grow()
+    {
+      usize ncap = __cap * 2;
+      auto *nb = reinterpret_cast<__split_frame *>(abc::alloc(ncap * sizeof(__split_frame)));
+      if ( !nb ) [[unlikely]]
+        exc<except::memory_error>("micron::rope split stack out of memory");
+      __split_frame *src = __buf();
+      for ( usize i = 0; i < __sz; ++i ) nb[i] = src[i];
+      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+      __heap = nb;
+      __cap = ncap;
+    }
+
+    inline void
+    push(const __node *o, bool wl)
+    {
+      if ( __sz == __cap ) [[unlikely]]
+        __grow();
+      __buf()[__sz++] = { o, wl };
+    }
+
+    inline __split_frame
+    pop() noexcept
+    {
+      return __buf()[--__sz];
+    }
+
+    inline bool
+    empty() const noexcept
+    {
+      return __sz == 0;
+    }
+  };
+
   static __split_result
   __split(const __node *n, usize idx)
   {
-    if ( !n ) return { nullptr, nullptr };
-    if ( idx == 0 ) return { nullptr, __retain(const_cast<__node *>(n)) };
-    if ( idx >= n->__length ) return { __retain(const_cast<__node *>(n)), nullptr };
+    __frame_stack frames;
+    __node *L = nullptr;
+    __node *R = nullptr;
 
-    if ( __is_leaf(n) ) {
-      const T *data = __leaf_data(n);
-      __node *left = __make_leaf(data, idx);
-      __node *right = __make_leaf(data + idx, n->__length - idx);
-      return { left, right };
+    for ( ;; ) {
+      if ( !n ) {
+        L = nullptr;
+        R = nullptr;
+        break;
+      }
+      if ( idx == 0 ) {
+        L = nullptr;
+        R = __retain(const_cast<__node *>(n));
+        break;
+      }
+      if ( idx >= n->__length ) {
+        L = __retain(const_cast<__node *>(n));
+        R = nullptr;
+        break;
+      }
+      if ( __is_leaf(n) ) {
+        const T *data = __leaf_data(n);
+        L = __make_leaf(data, idx);
+        R = __make_leaf(data + idx, n->__length - idx);
+        break;
+      }
+      usize left_len = n->left->__length;
+      if ( idx < left_len ) {
+        frames.push(n->right, true);
+        n = n->left;
+      } else if ( idx > left_len ) {
+        frames.push(n->left, false);
+        idx -= left_len;
+        n = n->right;
+      } else {
+        L = __retain(n->left);
+        R = __retain(n->right);
+        break;
+      }
     }
 
-    usize left_len = n->left->__length;
-
-    if ( idx < left_len ) {
-      auto [ll, lr] = __split(n->left, idx);
-      __node *new_right = __concat(lr, __retain(n->right));
-      return { ll, new_right };
-    } else if ( idx > left_len ) {
-      auto [rl, rr] = __split(n->right, idx - left_len);
-      __node *new_left = __concat(__retain(n->left), rl);
-      return { new_left, rr };
-    } else {
-      return { __retain(n->left), __retain(n->right) };
+    // unwind deepest-first, recombining exactly as the recursion's return path did
+    while ( !frames.empty() ) {
+      __split_frame f = frames.pop();
+      if ( f.went_left )
+        R = __concat(R, __retain(const_cast<__node *>(f.other)));
+      else
+        L = __concat(__retain(const_cast<__node *>(f.other)), L);
     }
+    return { L, R };
   }
 
   static inline const T &
@@ -430,17 +519,32 @@ private:
   static __node *
   __push_back_impl(const __node *n, T ch)
   {
-    if ( !n ) return __make_leaf(&ch, 1);
+    __node_stack lefts;      // left siblings to re-attach on the way back up
+    __node *cur = nullptr;
 
-    if ( __is_leaf(n) ) {
-      if ( n->__length < __max_leaf ) return __make_leaf_push(n, ch);
-      __node *tail = __make_leaf(&ch, 1);
-      return __make_branch(__retain(const_cast<__node *>(n)), tail);
+    for ( ;; ) {
+      if ( !n ) {
+        cur = __make_leaf(&ch, 1);
+        break;
+      }
+      if ( __is_leaf(n) ) {
+        if ( n->__length < __max_leaf ) {
+          cur = __make_leaf_push(n, ch);
+        } else {
+          __node *tail = __make_leaf(&ch, 1);
+          cur = __make_branch(__retain(const_cast<__node *>(n)), tail);
+        }
+        break;
+      }
+      lefts.push(n->left);
+      n = n->right;
     }
 
-    // recurse on right, share left
-    __node *new_right = __push_back_impl(n->right, ch);
-    return __make_branch(__retain(n->left), new_right);
+    while ( !lefts.empty() ) {
+      __node *l = const_cast<__node *>(lefts.pop());
+      cur = __make_branch(__retain(l), cur);
+    }
+    return cur;
   }
 
   // apply fn to to each leaf
@@ -892,6 +996,8 @@ public:
     return reinterpret_cast<const char *>(__flat);
   }
 
+  template<typename U = T>
+    requires(sizeof(U) == sizeof(wide))
   inline const wide *
   w_str(void) const
   {
@@ -900,6 +1006,8 @@ public:
     return reinterpret_cast<const wide *>(__flat);
   }
 
+  template<typename U = T>
+    requires(sizeof(U) == sizeof(unicode32))
   inline const unicode32 *
   uni_str(void) const
   {
@@ -1638,6 +1746,7 @@ public:
   }
 
   template<typename F = T, size_type M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const F (&data)[M]) const
   {
@@ -1645,6 +1754,7 @@ public:
   }
 
   template<typename F = T, size_type M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator!=(const F (&data)[M]) const
   {
@@ -1652,6 +1762,7 @@ public:
   }
 
   template<typename F = T, size_type M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<(const F (&data)[M]) const
   {
@@ -1659,6 +1770,7 @@ public:
   }
 
   template<typename F = T, size_type M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>(const F (&data)[M]) const
   {
@@ -1666,6 +1778,7 @@ public:
   }
 
   template<typename F = T, size_type M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<=(const F (&data)[M]) const
   {
@@ -1673,6 +1786,7 @@ public:
   }
 
   template<typename F = T, size_type M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>=(const F (&data)[M]) const
   {
@@ -1680,6 +1794,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const rope<F> &data) const
   {
@@ -1691,6 +1806,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator!=(const rope<F> &data) const
   {
@@ -1698,6 +1814,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<(const rope<F> &data) const
   {
@@ -1706,6 +1823,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>(const rope<F> &data) const
   {
@@ -1714,6 +1832,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator<=(const rope<F> &data) const
   {
@@ -1722,6 +1841,7 @@ public:
   }
 
   template<typename F = T>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator>=(const rope<F> &data) const
   {
@@ -1730,6 +1850,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator==(const S &str) const
   {
@@ -1737,6 +1858,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator!=(const S &str) const
   {
@@ -1744,6 +1866,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator<(const S &str) const
   {
@@ -1751,6 +1874,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator>(const S &str) const
   {
@@ -1758,6 +1882,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator<=(const S &str) const
   {
@@ -1765,6 +1890,7 @@ public:
   }
 
   template<is_string S>
+    requires(sizeof(typename S::value_type) == sizeof(T))
   inline bool
   operator>=(const S &str) const
   {

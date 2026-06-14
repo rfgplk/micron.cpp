@@ -9,6 +9,7 @@
 // runtime-sized dense vector
 
 #include "../../concepts.hpp"
+#include "../../except.hpp"
 #include "../../types.hpp"
 #include "../../vector/vector.hpp"
 
@@ -83,14 +84,16 @@ template<arith_scalar T> struct dynvec {
   }
 
   [[nodiscard, gnu::always_inline]] T &
-  at(usize i) noexcept
+  at(usize i)
   {
+    if ( i >= buf.size() ) exc<except::library_error>("micron::math::dynvec at() out of bounds");
     return buf.data()[i];
   }
 
   [[nodiscard, gnu::always_inline]] const T &
-  at(usize i) const noexcept
+  at(usize i) const
   {
+    if ( i >= buf.size() ) exc<except::library_error>("micron::math::dynvec at() out of bounds");
     return buf.data()[i];
   }
 

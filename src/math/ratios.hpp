@@ -10,16 +10,19 @@
 namespace micron
 {
 
-template<uintmax_t N, uintmax_t D = 1> struct ratio {
-  static constexpr uintmax_t num = N;
-  static constexpr uintmax_t denom = D;
-
-protected:
+template<uintmax_t N, uintmax_t D = 1>
+  requires(D != 0)
+class ratio
+{
   static constexpr uintmax_t
   gcd(uintmax_t a, uintmax_t b)
   {
     return b == 0 ? a : gcd(b, a % b);
   }
+
+public:
+  static constexpr uintmax_t num = N / gcd(N, D);
+  static constexpr uintmax_t denom = D / gcd(N, D);
 };
 
 typedef ratio<static_cast<uintmax_t>(1e18), 1> exa;

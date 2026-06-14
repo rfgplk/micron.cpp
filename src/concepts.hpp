@@ -420,6 +420,25 @@ concept is_swiss_map = requires(micron::remove_cvref_t<T> t) {
   { (*t.begin()).b };
 } && !is_tagged_map<T> && !has_cstr<T>;
 
+// mutable maps (swiss/robin/hopscotch/heap_swiss/b_map/rb_map/conmap)
+template<typename T>
+concept is_mutable_map = is_map_class<T> && requires {
+  typename micron::remove_cvref_t<T>::mutability_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::mutability_type, mutable_tag>;
+};
+
+// persistent maps (immutable/pmap/itable)
+template<typename T>
+concept is_persistent_map = is_map_class<T> && requires {
+  typename micron::remove_cvref_t<T>::mutability_type;
+  requires micron::is_same_v<typename micron::remove_cvref_t<T>::mutability_type, immutable_tag>;
+};
+
+template<typename T>
+concept is_ordered_map = is_map_class<T> && requires(micron::remove_cvref_t<T> t, typename micron::remove_cvref_t<T>::key_type k) {
+  { t.lower_bound(k) };
+};
+
 template<typename T>
 concept is_tree = requires {
   typename micron::remove_cvref_t<T>::category_type;

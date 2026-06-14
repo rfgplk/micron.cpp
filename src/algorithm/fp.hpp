@@ -10,6 +10,8 @@
 #include "fpdata.hpp"
 #include "fperrors.hpp"
 #include "fpfilter.hpp"
+#include "fpmap.hpp"
+#include "fptree.hpp"
 
 namespace micron
 {
@@ -148,5 +150,10 @@ using fp::head;
 using fp::init;
 using fp::last;
 using fp::tail;
+
+using fp::elem;
+using fp::enumerate;
+using fp::keys;
+using fp::values;
 
 };      // namespace micron

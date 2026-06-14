@@ -779,6 +779,8 @@ public:
       return t;
     }
     const usize cnt = static_cast<usize>(n);
+    if ( __mem::length != 0 && cnt > static_cast<usize>(-1) / __mem::length )
+      exc<except::library_error>("micron::istring operator* size overflow");
     const usize total = __mem::length * cnt;
     istring t(total + 1);
     for ( usize k = 0; k < cnt; ++k ) micron::memcpy(&t.memory[k * __mem::length], &__mem::memory[0], __mem::length);
@@ -904,13 +906,15 @@ public:
   };
 
   template<typename F = T, usize M>
+    requires(sizeof(F) == sizeof(T))
   inline bool
   operator==(const F (&data)[M]) const
   {
     constexpr usize len = M - 1;
     if ( len != __mem::length ) return false;
     if constexpr ( len == 0 ) return true;
-    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(&data[0]), len) == 0;
+    return micron::memcmp<byte>(reinterpret_cast<const byte *>(__mem::memory), reinterpret_cast<const byte *>(&data[0]), len * sizeof(T))
+           == 0;
   };
 
   template<typename F = T>

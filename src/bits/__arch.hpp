@@ -322,6 +322,9 @@ inline constexpr unsigned __micron_width = __wordsize;
 #if defined(__ARM_FEATURE_FMA)
 #define __micron_arm_fma 1
 #endif
+#if defined(__ARM_FEATURE_DIRECTED_ROUNDING)
+#define __micron_arm_directed_rounding 1
+#endif
 
 #if defined(__ARM_FEATURE_CLZ)
 #define __micron_arm_clz 1

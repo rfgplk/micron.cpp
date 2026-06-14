@@ -135,6 +135,7 @@ template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 min(const T *first, const T *last) noexcept
 {
+  if ( first == last ) return T{};
   T m = *first;
   for ( ++first; first != last; ++first )
     if ( *first < m ) m = *first;
@@ -145,6 +146,7 @@ template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 max(const T *first, const T *last) noexcept
 {
+  if ( first == last ) return T{};
   T m = *first;
   for ( ++first; first != last; ++first )
     if ( *first > m ) m = *first;
@@ -155,6 +157,7 @@ template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 argmin(const T *first, const T *last) noexcept
 {
+  if ( first == last ) return usize(0);
   usize idx = 0;
   T m = *first;
   for ( const T *p = first + 1; p != last; ++p ) {
@@ -170,6 +173,7 @@ template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 argmax(const T *first, const T *last) noexcept
 {
+  if ( first == last ) return usize(0);
   usize idx = 0;
   T m = *first;
   for ( const T *p = first + 1; p != last; ++p ) {
@@ -185,6 +189,7 @@ template<typename T>
 [[nodiscard, gnu::flatten]] inline constexpr T
 ptp(const T *first, const T *last) noexcept
 {
+  if ( first == last ) return T{};
   T mn = *first, mx = *first;
   for ( ++first; first != last; ++first ) {
     if ( *first < mn )

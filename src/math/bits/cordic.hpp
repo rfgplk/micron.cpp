@@ -382,6 +382,8 @@ atan_f64(f64 x) noexcept
     return x;
   if ( ieee::is_inf(x) ) [[unlikely]]
     return manip::copysign<f64>(0x1.921fb54442d18p+0, x);      // ±π/2
+  if ( ieee::is_zero(x) || manip::fabs(x) < 0x1.0p-27 ) [[unlikely]]
+    return x;
   const bool inv = manip::fabs(x) > 1.0;
   const f64 t = inv ? (1.0 / x) : x;
   const i64 x0 = i64(F64_TO_Q61);

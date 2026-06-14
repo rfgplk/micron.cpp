@@ -45,8 +45,9 @@ xt_y(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
 
 };      // namespace __grassmann_impl
 
+// NOTE: P >= 2 is required
 template<ieee754_floating F, usize N, usize P>
-  requires(N >= P && P >= 1)
+  requires(N >= P && P >= 2)
 struct grassmann {
   using value_type = F;
   static constexpr usize rows = N;

@@ -402,6 +402,7 @@ parse_hex(const char *&ptr, const char *end)
   while ( ptr != end ) {
     int dv = __impl::hex_digit_val(*ptr);
     if ( dv < 0 ) break;
+    if ( static_cast<u64>(result) > (0x7FFFFFFFFFFFFFFFull >> 4) ) break;
     result = (result << 4) | dv;
     ++ptr;
   }

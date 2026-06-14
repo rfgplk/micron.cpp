@@ -15,6 +15,7 @@
 
 #include "../constants.hpp"
 #include "../generic.hpp"
+#include "../log.hpp"
 #include "../sqrt.hpp"
 #include "../trig.hpp"
 
@@ -24,7 +25,7 @@ namespace micron
 {
 
 template<typename B, u32 D, u32 H, u32 W>
-  requires(micron::is_arithmetic_v<B> && (D * H * W * sizeof(B) <= 4096) && (((D * H * W) % (64 / sizeof(B))) == 0))
+  requires(micron::is_arithmetic_v<B> && (D * H * W > 0) && (D * H * W * sizeof(B) <= 4096))
 class __tensor_base_avx
 {
 public:
@@ -48,7 +49,7 @@ public:
   static constexpr u32 __size = D * H * W;
   static constexpr u32 __slice = H * W;
 
-  B alignas(64) __data[__size];
+  alignas(64) B __data[__size];
 
   ~__tensor_base_avx() = default;
 
@@ -694,12 +695,12 @@ public:
 
   __tensor_unop(abs, math::fabs) __tensor_unop(floor, math::ffloor) __tensor_unop(ceil, math::fceil) __tensor_unop(round, math::fround)
       __tensor_unop(trunc, math::ftrunc) __tensor_unop(frac, math::ffract) __tensor_unop(sqrt, math::fsqrt)
-          __tensor_unop(rsqrt, math::frsqrt) __tensor_unop(exp, math::fexp) __tensor_unop(exp2, math::fexp2) __tensor_unop(log, math::flog)
-              __tensor_unop(log2, math::flog2) __tensor_unop(log10, math::flog10) __tensor_unop(sin, math::fsin)
+          __tensor_unop(rsqrt, math::frsqrt) __tensor_unop(exp, math::fexp) __tensor_unop(exp2, math::exp2) __tensor_unop(log, math::log)
+              __tensor_unop(log2, math::flog2) __tensor_unop(log10, math::log10) __tensor_unop(sin, math::sin)
                   __tensor_unop(cos, math::fcos) __tensor_unop(tan, math::ftan) __tensor_unop(asin, math::fasin)
-                      __tensor_unop(acos, math::facos) __tensor_unop(atan, math::fatan) __tensor_unop(sinh, math::fsinh)
-                          __tensor_unop(cosh, math::fcosh) __tensor_unop(tanh, math::ftanh) __tensor_unop(erf, math::ferf)
-                              __tensor_unop(erfc, math::ferfc) __tensor_unop(gamma, math::fgamma)
+                      __tensor_unop(acos, math::facos) __tensor_unop(atan, math::fatan) __tensor_unop(sinh, math::sinh)
+                          __tensor_unop(cosh, math::cosh) __tensor_unop(tanh, math::tanh) __tensor_unop(erf, math::erf)
+                              __tensor_unop(erfc, math::erfc) __tensor_unop(gamma, math::tgamma)
 #undef __tensor_unop
 
                                   __tensor_base_avx saturate() const
@@ -783,7 +784,7 @@ public:
     requires(micron::is_floating_point_v<B>)
   {
     __tensor_base_avx result;
-    for ( usize i = 0; i < __size; ++i ) result.__data[i] = math::flerp(__data[i], other.__data[i], t);
+    for ( usize i = 0; i < __size; ++i ) result.__data[i] = __data[i] + (other.__data[i] - __data[i]) * t;
     return result;
   }
 

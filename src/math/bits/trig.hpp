@@ -7,8 +7,9 @@
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sin cos sincos tan asin acos atan atan2 live here
-//   -> cody waite 2-word range reduction for abs(x) <= 2^20
-//   -> payne hanek 396-bit reduction for abs(x) > 2^20
+//   -> cody waite 2-word range reduction for abs(x) < 2^20
+//   -> cody waite double-double range reduction for 2^20 <= abs(x) < 2^33
+//   -> payne hanek 396-bit reduction for abs(x) >= 2^33
 //   -> Remez kernel polynomials
 //   -> atan 11-coefficient minimax + 4-entry table
 //   -> atan2 9-case special table
@@ -176,15 +177,6 @@ payne_hanek(f64 x, f64 *r) noexcept
 
 };      // namespace __paynehanek
 
-[[nodiscard, gnu::always_inline]] inline constexpr int
-reduce_pio2(f64 x, f64 *r) noexcept
-{
-  const f64 ax = manip::fabs(x);
-  if ( ax < 0x1.0p20 ) return cody_waite(x, r);
-  if ( ax < 0x1.0p33 ) return iter_cody_waite(x, r);
-  return __paynehanek::payne_hanek(x, r);
-}
-
 [[nodiscard, gnu::flatten]] inline constexpr int
 cody_waite_dd(f64 x, dd64 *r) noexcept
 {
@@ -199,17 +191,28 @@ cody_waite_dd(f64 x, dd64 *r) noexcept
   return int(N & 3);
 }
 
+[[nodiscard, gnu::always_inline]] inline constexpr int
+reduce_pio2(f64 x, f64 *r) noexcept
+{
+  const f64 ax = manip::fabs(x);
+  if ( ax < 0x1.0p20 ) return cody_waite(x, r);
+  if ( ax < 0x1.0p33 ) {
+    dd64 rd;
+    const int q = cody_waite_dd(x, &rd);
+    *r = rd.to_double();
+    return q;
+  }
+  return __paynehanek::payne_hanek(x, r);
+}
+
 [[nodiscard, gnu::flatten]] inline constexpr int
 reduce_pio2_dd(f64 x, dd64 *r) noexcept
 {
   const f64 ax = manip::fabs(x);
   if ( ax < 0x1.0p20 ) return cody_waite_dd(x, r);
+  if ( ax < 0x1.0p33 ) return cody_waite_dd(x, r);
   f64 rf;
-  int q;
-  if ( ax < 0x1.0p33 )
-    q = iter_cody_waite(x, &rf);
-  else
-    q = __paynehanek::payne_hanek(x, &rf);
+  const int q = __paynehanek::payne_hanek(x, &rf);
   *r = dd64{ rf, 0.0 };
   return q;
 }

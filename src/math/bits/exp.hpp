@@ -43,7 +43,7 @@ exp_f64(f64 x) noexcept
 
   if ( ieee::is_nan(x) ) [[unlikely]]
     return x;
-  if ( x > 709.78 ) [[unlikely]]
+  if ( x > 0x1.62e42fefa39efp+9 ) [[unlikely]]      // 709.7827128933840: largest x with finite exp(x)
     return ieee::inf_v<f64>(0);
   if ( x < -745.13 ) [[unlikely]]
     return 0.0;
@@ -79,7 +79,7 @@ exp_f32(f32 x) noexcept
 
   if ( ieee::is_nan(x) ) [[unlikely]]
     return x;
-  if ( x > 88.722f ) [[unlikely]]
+  if ( x > 88.72283935546875f ) [[unlikely]]      // first f32 above this overflows; kernel yields inf for it
     return ieee::inf_v<f32>(0);
   if ( x < -103.972f ) [[unlikely]]
     return 0.0f;
@@ -105,7 +105,7 @@ expm1_f64(f64 x) noexcept
   using namespace coeff::exp_f64_data;
   if ( ieee::is_nan(x) ) [[unlikely]]
     return x;
-  if ( x > 709.78 ) [[unlikely]]
+  if ( x > 0x1.62e42fefa39efp+9 ) [[unlikely]]      // 709.7827128933840: largest x with finite exp(x)
     return ieee::inf_v<f64>(0);
   if ( x < -38.0 ) [[unlikely]]
     return -1.0;
@@ -145,14 +145,16 @@ expm1_f32(f32 x) noexcept
   using namespace coeff::exp_f32_data;
   if ( ieee::is_nan(x) ) [[unlikely]]
     return x;
-  if ( x > 88.722f ) [[unlikely]]
+  if ( x > 88.72283935546875f ) [[unlikely]]      // first f32 above this overflows
     return ieee::inf_v<f32>(0);
   if ( x < -20.0f ) [[unlikely]]
     return -1.0f;
   f32 ax = manip::fabs(x);
   if ( ax < 0x1.0p-3f ) {
+    // expm1(x) = x + x^2*(1/2 + x*(1/6 + x*(1/24))); the 1/24 term keeps this <=1 ULP near 0.1
     f32 x2 = x * x;
-    f32 p = hw::fmadd_ss(rem[1], x, rem[0]);
+    f32 p = hw::fmadd_ss(0x1.555556p-5f, x, rem[1]);
+    p = hw::fmadd_ss(p, x, rem[0]);
     return hw::fmadd_ss(p, x2, x);
   }
   return exp_f32(x) - 1.0f;
@@ -315,7 +317,7 @@ exp_dd_f64_with_special(f64 x, bool *handled) noexcept
     *handled = true;
     return dd64{ x, 0.0 };
   }
-  if ( x > 709.78 ) {
+  if ( x > 0x1.62e42fefa39efp+9 ) {      // 709.7827128933840: largest x with finite exp(x)
     *handled = true;
     return dd64{ ieee::inf_v<f64>(0), 0.0 };
   }
