@@ -161,7 +161,7 @@ batch_cmp(const config_t &conf)
                                 gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
                    : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                                 gcc::profiling_flags::flags::strict_overflow));
-  if ( !sanitized ) {
+  if ( !sanitized && !conf.freestanding_eh ) {
     if ( !flags_extensions.empty() ) flags_extensions += ' ';
     flags_extensions += make_flags(gcc::opt_flags::flags::lto_eight);
   }
@@ -284,6 +284,7 @@ batch_cmp_armv7(const config_t &conf)
 
   const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
 
+  // sanitizers and -flto don't mix; drop lto whenever --asan/--ubsan are in play
   const bool sanitized = conf.asan or conf.ubsan;
   string_type flags_sanitize = conf.asan ? "-fsanitize=address -fno-omit-frame-pointer" : "";
   if ( conf.ubsan ) {
@@ -298,7 +299,7 @@ batch_cmp_armv7(const config_t &conf)
                                 gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
                    : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                                 gcc::profiling_flags::flags::strict_overflow));
-  if ( !sanitized ) {
+  if ( !sanitized && !conf.freestanding_eh ) {
     if ( !flags_extensions.empty() ) flags_extensions += ' ';
     flags_extensions += make_flags(gcc::opt_flags::flags::lto_eight);
   }
@@ -434,7 +435,7 @@ batch_cmp_aarch64(const config_t &conf)
                                 gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
                    : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
                                 gcc::profiling_flags::flags::strict_overflow));
-  if ( !sanitized ) {
+  if ( !sanitized && !conf.freestanding_eh ) {
     if ( !flags_extensions.empty() ) flags_extensions += ' ';
     flags_extensions += make_flags(gcc::opt_flags::flags::lto_eight);
   }

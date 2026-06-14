@@ -31,6 +31,7 @@ inline constexpr unsigned __micron_arch = __micron_arch_amd64;
 inline constexpr unsigned __micron_width = __wordsize;
 #elif defined(__aarch64__) || defined(__AARCH64EL__) || defined(__AARCH64EB__)
 #define __micron_arch_arm64 3
+#define __micron_arch_aarch64 3
 #define __micron_arch_width_64 1
 #define __syscall_wordsize 64
 #define __wordsize 64
