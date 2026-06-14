@@ -468,6 +468,9 @@ fill_gap(T *base, usize length, usize p, usize cnt, Fn &&fn)
     throw;
   }
 #else
+  // surpress may be unused
+  (void)base;
+  (void)length;
   for ( usize k = 0; k < cnt; ++k ) fn(p + k);
 #endif
 }
