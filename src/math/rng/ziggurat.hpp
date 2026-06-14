@@ -90,8 +90,10 @@ build_ziggurat() noexcept
   const bool sane = closed && smallest > 0.20 && smallest < 0.23 && t.f[1] > 0.97 && t.f[1] < 0.98;
   if ( !sane ) {
     // static_assert(false, "division by zero in build_ziggurat");
-    int *boom = nullptr;
-    (void)*boom;      // actually hard compile err if evaluated, above doesn't work
+    // int *boom = nullptr;
+    //(void)*boom;      // actually hard compile err if evaluated, above doesn't work
+    // neither did that
+    __builtin_unreachable();      // THIS SHOULD
   }
   return t;
 }
