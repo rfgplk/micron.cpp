@@ -89,7 +89,9 @@ build_ziggurat() noexcept
   const f64 smallest = dn;      // x[1]
   const bool sane = closed && smallest > 0.20 && smallest < 0.23 && t.f[1] > 0.97 && t.f[1] < 0.98;
   if ( !sane ) {
-    static_assert(false, "division by zero in build_ziggurat");
+    // static_assert(false, "division by zero in build_ziggurat");
+    int *boom = nullptr;
+    (void)*boom;      // actually hard compile err if evaluated, above doesn't work
   }
   return t;
 }
