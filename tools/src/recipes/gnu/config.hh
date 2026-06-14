@@ -107,6 +107,7 @@ struct config_t {
   bool doctor = false;
   bool static_binary = false;
   bool freestanding = false;
+  bool freestanding_eh = false;      // freestanding + the micron C++ exception trampoline
   bool asan = false;
   bool ubsan = false;
   bool check_compileability = true;      // check include paths for updates - default true
@@ -299,6 +300,9 @@ parse_config(config_t &conf, int argc, char **argv)
     } else if ( mc::strcmp(argv[i], "-k") == 0 ) {
       // k for "kernel"
       conf.freestanding = true;
+    } else if ( mc::strcmp(argv[i], "--eh") == 0 or mc::strcmp(argv[i], "-ke") == 0 ) {
+      conf.freestanding = true;
+      conf.freestanding_eh = true;
     } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
       conf.check_compileability = false;
     } else if ( mc::strcmp(argv[i], "-j") == 0 ) {

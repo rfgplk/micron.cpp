@@ -36,7 +36,8 @@
 namespace micron::except
 {
 // NOTE: this must be enabled for tests
-#if defined(__micron_freestanding)
+// freestanding defaults to aborting unless the exception trampoline (__micron_eh) has been compiled in
+#if defined(__micron_freestanding) && !defined(__micron_eh)
 constexpr static const bool __use_exceptions = false;
 #else
 constexpr static const bool __use_exceptions = true;

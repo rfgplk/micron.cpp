@@ -1,6 +1,6 @@
 // activation_record.cpp
 
-#include "../../src/bits/ar.hpp"
+#include "../../src/bits/__ar.hpp"
 #include "../../src/memory/mman.hpp"
 
 #include "../snowball/snowball.hpp"

@@ -93,18 +93,29 @@ batch_cmp(const config_t &conf)
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
   const bool linking = (conf.compile_type == __comp_type::linked);
   const string_type bin_type = (conf.static_binary and linking) ? make_flags(gcc::linker_flags::flags::static_link) : "";
-  const string_type freestanding
-      = (conf.freestanding)
-            ? (linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
-                                    gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector,
-                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti)
-                       : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector,
-                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti))
-            : "";
+  string_type freestanding;
+  if ( conf.freestanding ) {
+    freestanding = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
+                                        gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector)
+                           : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
+    if ( conf.freestanding_eh ) {
+      // real C++ exceptions
+      freestanding += " -fexceptions -frtti -fasynchronous-unwind-tables -D__micron_eh";
+      if ( linking ) freestanding += " -Wl,--eh-frame-hdr";      // emit PT_GNU_EH_FRAME so find_fde works
+    } else {
+      freestanding += " ";
+      freestanding += make_flags(gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti);
+    }
+  }
   // -Wno-odr placed after -flto=8 so it actually disables Wodr
   const string_type freestanding_post
       = (conf.freestanding) ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
-  const string_type startup_objs = (conf.freestanding and linking) ? "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp" : "";
+  // the eh trampoline must live in its own TU (separate from throwing code)
+  const string_type startup_objs
+      = (conf.freestanding and linking)
+            ? (conf.freestanding_eh ? "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
+                                    : "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp")
+            : "";
   const string_type arch_width = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
@@ -183,17 +194,16 @@ batch_cmp(const config_t &conf)
     includes_location += ' ';
   }
   if ( !includes_location.empty() ) includes_location.pop_back();
-  const string_type libs_static
-      = (conf.static_binary and linking) ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp)
-                                         : "";
+  const string_type libs_static = (conf.static_binary and linking)
+                                      ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp)
+                                      : "";
 
-  string_type command_pre
-      = conf.warnings
-            ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding, arch_width,
-                           flags_warn_base, flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions, freestanding_post,
-                           flags_extensions_supple)
-            : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding, arch_width,
-                           flags_warn_base, flags_warn_ignore, flags_extensions, freestanding_post, flags_extensions_supple);
+  string_type command_pre = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type,
+                                                         freestanding, arch_width, flags_warn_base, flags_warn_extra, flags_warn_ignore,
+                                                         flags_errors_extra, flags_extensions, freestanding_post, flags_extensions_supple)
+                                          : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type,
+                                                         freestanding, arch_width, flags_warn_base, flags_warn_ignore, flags_extensions,
+                                                         freestanding_post, flags_extensions_supple);
 
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
@@ -223,18 +233,27 @@ batch_cmp_armv7(const config_t &conf)
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
   const bool linking = (conf.compile_type == __comp_type::linked);
   const string_type bin_type = (conf.static_binary and linking) ? make_flags(gcc::linker_flags::flags::static_link) : "";
-  const string_type freestanding
-      = (conf.freestanding)
-            ? (linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
-                                    gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector,
-                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti)
-                       : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector,
-                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti))
-            : "";
+  string_type freestanding;
+  if ( conf.freestanding ) {
+    freestanding = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
+                                        gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector)
+                           : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
+    if ( conf.freestanding_eh ) {
+      // arm32 uses ARM EHABI
+      freestanding += " -fexceptions -frtti -funwind-tables -D__micron_eh";
+    } else {
+      freestanding += " ";
+      freestanding += make_flags(gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti);
+    }
+  }
   // -Wno-odr placed after -flto=8 so it disable Wodr
   const string_type freestanding_post
       = (conf.freestanding) ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
-  const string_type startup_objs = (conf.freestanding and linking) ? "/usr/src/mc_start/start_arm32.s /usr/src/mc_start/start.cpp" : "";
+  const string_type startup_objs
+      = (conf.freestanding and linking)
+            ? (conf.freestanding_eh ? "/usr/src/mc_start/start_arm32.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
+                                    : "/usr/src/mc_start/start_arm32.s /usr/src/mc_start/start.cpp")
+            : "";
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
@@ -314,9 +333,9 @@ batch_cmp_armv7(const config_t &conf)
     includes_location += ' ';
   }
   if ( !includes_location.empty() ) includes_location.pop_back();
-  const string_type libs_static
-      = (conf.static_binary and linking) ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp)
-                                         : "";
+  const string_type libs_static = (conf.static_binary and linking)
+                                      ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp)
+                                      : "";
 
   string_type command_pre
       = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
@@ -350,17 +369,27 @@ batch_cmp_aarch64(const config_t &conf)
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
   const bool linking = (conf.compile_type == __comp_type::linked);
   const string_type bin_type = (conf.static_binary and linking) ? make_flags(gcc::linker_flags::flags::static_link) : "";
-  const string_type freestanding
-      = (conf.freestanding)
-            ? (linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
-                                    gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector,
-                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti)
-                       : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector,
-                                    gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti))
-            : "";
+  string_type freestanding;
+  if ( conf.freestanding ) {
+    freestanding = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
+                                        gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector)
+                           : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
+    if ( conf.freestanding_eh ) {
+      // arm64 uses zero-cost DWARF
+      freestanding += " -fexceptions -frtti -fasynchronous-unwind-tables -mno-outline-atomics -D__micron_eh";
+      if ( linking ) freestanding += " -Wl,--eh-frame-hdr";
+    } else {
+      freestanding += " ";
+      freestanding += make_flags(gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti);
+    }
+  }
   const string_type freestanding_post
       = (conf.freestanding) ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
-  const string_type startup_objs = (conf.freestanding and linking) ? "/usr/src/mc_start/start_arm64.s /usr/src/mc_start/start.cpp" : "";
+  const string_type startup_objs
+      = (conf.freestanding and linking)
+            ? (conf.freestanding_eh ? "/usr/src/mc_start/start_arm64.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
+                                    : "/usr/src/mc_start/start_arm64.s /usr/src/mc_start/start.cpp")
+            : "";
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
@@ -439,9 +468,9 @@ batch_cmp_aarch64(const config_t &conf)
     includes_location += ' ';
   }
   if ( !includes_location.empty() ) includes_location.pop_back();
-  const string_type libs_static
-      = (conf.static_binary and linking) ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp)
-                                         : "";
+  const string_type libs_static = (conf.static_binary and linking)
+                                      ? make_flags(gcc::linker_flags::flags::static_libgcc, gcc::linker_flags::flags::static_libstdc_pp)
+                                      : "";
 
   string_type command_pre
       = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,

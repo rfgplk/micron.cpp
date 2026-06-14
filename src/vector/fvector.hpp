@@ -622,7 +622,7 @@ public:
     // lifetime-correct shift via open_gap (move-constructs the tail); placement-new the new element.
     __impl_container::open_gap(__mem::memory, __mem::length, pos, 1);
     __impl_container::fill_gap(__mem::memory, __mem::length, pos, 1,
-                              [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
+                               [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
     return micron::addr(__mem::memory[pos]);
   }

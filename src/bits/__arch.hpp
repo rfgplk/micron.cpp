@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// guard cross arch compiles
+
+#ifndef __MICRON_ARCH_H
+#define __MICRON_ARCH_H
+
 // this is here so we don't clutter the root dir
 // TODO: change all code macros to use these defs
 
@@ -526,6 +531,11 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_endian_big 1
 #endif
 
+#if defined(__FAST_MATH__)
+#define __micron_fast_math
+#endif
+
 #if !defined(__STDC_HOSTED__) || __STDC_HOSTED__ == 0
 #define __micron_freestanding 1
+#endif
 #endif

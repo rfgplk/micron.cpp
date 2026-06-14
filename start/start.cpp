@@ -4,6 +4,8 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+#include "bits/__arch.hpp"
+
 #include "__auxv.hpp"
 #include "__crt.hpp"
 #include "__stack.hpp"
@@ -24,6 +26,7 @@ extern "C" {
 char **environ = nullptr;
 }
 
+#if defined(__micron_arch_x86_any)
 // Flush denormals to zero (FTZ + DAZ)
 [[gnu::always_inline]] inline void
 enable_fast_fp() noexcept
@@ -32,7 +35,33 @@ enable_fast_fp() noexcept
   mxcsr |= 0x8040u;      // 0x8000 = FTZ, 0x0040 = DAZ
   __builtin_ia32_ldmxcsr(mxcsr);
 }
+#endif
+#if defined(__micron_arch_aarch64)
+// On AArch64 FPCR.FZ flushes subnormal inputs *and* results (FTZ + DAZ in one)
+[[gnu::always_inline]] inline void
+enable_fast_fp() noexcept
+{
+  unsigned long long fpcr;
+  __asm__ __volatile__("mrs %0, fpcr" : "=r"(fpcr));
+  fpcr |= (1ull << 24);      // FZ
+  // fpcr |= (1ull << 19);     // FZ16: half-precision FTZ, only with FEAT_FP16
+  __asm__ __volatile__("msr fpcr, %0" : : "r"(fpcr));
+}
+#endif
+#if defined(__micron_arch_arm32)
+// FPSCR.FZ controls VFP scalar ops
+// apparently SIMD/NEON already flushes subnormals unconditionally, regardless of this bit
+[[gnu::always_inline]] inline void
+enable_fast_fp() noexcept
+{
+  unsigned int fpscr;
+  __asm__ __volatile__("vmrs %0, fpscr" : "=r"(fpscr));
+  fpscr |= (1u << 24);      // FZ
+  // fpscr |= (1u << 19);      // FZ16: needs the FP16 extension
+  __asm__ __volatile__("vmsr fpscr, %0" : : "r"(fpscr));
+}
 
+#endif
 extern "C" __attribute__((used, visibility("default"))) int
 __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
 {
@@ -52,7 +81,7 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
 
   // io buffer init MUST fire AFTER .init_array
   __boot_io_buffers();
-#ifdef __FAST_MATH__
+#if defined(__micron_fast_math) && defined(__micron_arch_x86_any)
   enable_fast_fp();
 #endif
 
