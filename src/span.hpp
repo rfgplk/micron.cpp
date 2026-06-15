@@ -126,9 +126,10 @@ public:
 
   template<usize M> span(const span<T, M> &o)
   {
-    const size_type copy_n = (o.length < N) ? o.length : N;
-    __impl_container::copy(stack, o.stack, copy_n);
-    length = copy_n;
+    if ( o.length > N ) [[unlikely]]
+      exc<except::library_error>("error micron::span(): source span exceeds stack capacity N");
+    __impl_container::copy(stack, o.stack, o.length);
+    length = o.length;
   }
 
   span(const span &o)
@@ -147,9 +148,10 @@ public:
 
   template<usize M> span(span<T, M> &&o)
   {
-    const size_type copy_n = (o.length < N) ? o.length : N;
-    for ( size_type i = 0; i < copy_n; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
-    length = copy_n;
+    if ( o.length > N ) [[unlikely]]
+      exc<except::library_error>("error micron::span(): source span exceeds stack capacity N");
+    for ( size_type i = 0; i < o.length; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
+    length = o.length;
     __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
   }
@@ -208,6 +210,7 @@ public:
 
   span &
   operator=(const byte n)
+    requires(micron::is_trivially_copyable_v<T>)
   {
     micron::memset(micron::addr(stack[0]), n, length * sizeof(T));
     return *this;
@@ -288,25 +291,37 @@ public:
   iterator
   begin()
   {
-    return micron::real_addr_as<T>(stack[0]);
+    return stack;
   }
 
   iterator
   end()
   {
-    return micron::real_addr_as<T>(stack[length]);
+    return stack + length;
+  }
+
+  const_iterator
+  begin() const
+  {
+    return stack;
+  }
+
+  const_iterator
+  end() const
+  {
+    return stack + length;
   }
 
   const_iterator
   cbegin() const
   {
-    return micron::real_addr_as<T>(stack[0]);
+    return stack;
   }
 
   const_iterator
   cend() const
   {
-    return micron::real_addr_as<T>(stack[length]);
+    return stack + length;
   }
 
   iterator
@@ -876,7 +891,10 @@ public:
   {
     if ( length == 0 ) [[unlikely]]
       return T{};
-    return micron::move(stack[--length]);
+    --length;
+    T val = micron::move(stack[length]);
+    stack[length].~T();
+    return val;
   }
 
   raw_slice<T>
@@ -1009,7 +1027,7 @@ public:
   span &
   copy_within(size_type src_start, size_type count, size_type dst)
   {
-    if ( src_start + count > length || dst + count > length ) [[unlikely]]
+    if ( count > length || src_start > length - count || dst > length - count ) [[unlikely]]
       return *this;
     micron::memmove(micron::addr(stack[dst]), micron::addr(stack[src_start]), count);
     return *this;

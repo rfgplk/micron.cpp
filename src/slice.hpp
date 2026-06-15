@@ -9,6 +9,7 @@
 #include "memory/allocation/resources.hpp"
 
 #include "algorithm/memory.hpp"
+#include "bits/__container.hpp"
 #include "memory/addr.hpp"
 #include "tags.hpp"
 #include "types.hpp"
@@ -204,18 +205,26 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   ~slice()
   {
     if ( __mem::memory == nullptr ) return;
-    if ( __mem::length == 0 ) return;      // viewing memory, do not free
+    if constexpr ( !micron::is_trivially_copyable_v<T> ) __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
     __mem::free();
   }
 
-  slice(void) : __mem(micron::allocator_serial<>::auto_size()) { __mem::length = __mem::capacity; }
+  struct __uninit_t {
+  };
+
+  slice(__uninit_t, size_t cap) : __mem(cap) { __mem::length = 0; }
+
+  slice(void) : __mem(micron::allocator_serial<>::auto_size())
+  {
+    __mem::length = __mem::capacity;
+    if constexpr ( !micron::is_trivially_copyable_v<T> ) __impl_container::construct(micron::addr(__mem::memory[0]), T{}, __mem::length);
+  }
 
   // support const ptrs as well -- be careful!!
   slice(const T *a, const T *b) : __mem(static_cast<size_t>(b - a))
   {
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(a),
-                    static_cast<u64>(b - a) * sizeof(T));
-    __mem::length = b - a;
+    __mem::length = static_cast<size_t>(b - a);
+    __impl_container::copy(micron::addr(__mem::memory[0]), a, __mem::length);
   }
 
   slice(nullptr_t) : __mem(nullptr) { __mem::length = 0; }
@@ -224,17 +233,20 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
 
   slice(T *a, T *b) : __mem(static_cast<size_t>(b - a))
   {
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(a),
-                    static_cast<u64>(b - a) * sizeof(T));
-    __mem::length = b - a;
+    __mem::length = static_cast<size_t>(b - a);
+    __impl_container::copy(micron::addr(__mem::memory[0]), a, __mem::length);
   }
 
-  explicit slice(const size_t n) : __mem(n) { __mem::length = __mem::capacity; }
+  explicit slice(const size_t n) : __mem(n)
+  {
+    __mem::length = __mem::capacity;
+    if constexpr ( !micron::is_trivially_copyable_v<T> ) __impl_container::construct(micron::addr(__mem::memory[0]), T{}, __mem::length);
+  }
 
   slice(const size_t n, const T &r) : __mem(n)
   {
     __mem::length = n;
-    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = r;
+    __impl_container::construct(micron::addr(__mem::memory[0]), r, n);
   }
 
   template<typename Fn, typename R>
@@ -242,7 +254,7 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   slice(Fn &&fn, const R &r) : __mem(r.size())
   {
     __mem::length = r.size();
-    for ( size_t i = 0; i < __mem::length; i++ ) __mem::memory[i] = fn(r[i]);
+    for ( size_t i = 0; i < __mem::length; i++ ) new (micron::addr(__mem::memory[i])) T(fn(r[i]));
   }
 
   slice(const slice &) = delete;
@@ -254,7 +266,11 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   slice &
   operator=(slice &&o)
   {
-    if ( __mem::memory ) __mem::free();
+    if ( this == micron::addressof(o) ) return *this;
+    if ( __mem::memory ) {
+      if constexpr ( !micron::is_trivially_copyable_v<T> ) __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+      __mem::free();
+    }
     __mem::memory = o.memory;
     __mem::length = o.length;
     __mem::capacity = o.capacity;
@@ -273,8 +289,9 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
 
   slice &
   operator=(const byte n)
+    requires(micron::is_trivially_copyable_v<T>)
   {
-    micron::memset(micron::addr(__mem::memory[0]), n, __mem::length);
+    micron::memset(micron::addr(__mem::memory[0]), n, __mem::length * sizeof(T));
     return *this;
   }
 
@@ -386,38 +403,31 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   iterator
   end()
   {
-    // guard against mark(0)
-    if ( !__mem::length ) [[unlikely]]
-      return micron::addr(__mem::memory[__mem::length]);
-    return micron::addr(__mem::memory[__mem::length - 1]);
+    return __mem::memory + __mem::length;
   }
 
   const_iterator
   begin() const
   {
-    return micron::addr(__mem::memory[0]);
+    return __mem::memory;
   }
 
   const_iterator
   end() const
   {
-    // guard against mark(0)
-    if ( !__mem::length ) return micron::addr(__mem::memory[__mem::length]);
-    return micron::addr(__mem::memory[__mem::length - 1]);
+    return __mem::memory + __mem::length;
   }
 
   const_iterator
   cbegin() const
   {
-    return micron::addr(__mem::memory[0]);
+    return __mem::memory;
   }
 
   const_iterator
   cend() const
   {
-    // guard against mark(0)
-    if ( !__mem::length ) return micron::addr(__mem::memory[__mem::length]);
-    return micron::addr(__mem::memory[__mem::length - 1]);
+    return __mem::memory + __mem::length;
   }
 
   raw_slice<T>
@@ -479,8 +489,12 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   void
   reset()
   {
-    // zero out the whole thing
-    micron::zero(__mem::memory, __mem::capacity);
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      micron::zero(__mem::memory, __mem::capacity);
+    } else {
+      __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+      __impl_container::construct(micron::addr(__mem::memory[0]), T{}, __mem::capacity);
+    }
     __mem::length = __mem::capacity;
   }
 
@@ -920,6 +934,7 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
     if ( mid >= __mem::length ) [[unlikely]]
       return slice(size_t(0));
     slice tail(__mem::memory + mid, __mem::memory + __mem::length);
+    if constexpr ( !micron::is_trivially_copyable_v<T> ) __impl_container::destroy(micron::addr(__mem::memory[mid]), __mem::length - mid);
     __mem::length = mid;
     return tail;
   }
@@ -927,9 +942,12 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   T
   split_off_first()
   {
+    if ( __mem::length == 0 ) [[unlikely]]
+      return T{};
     T val = micron::move(__mem::memory[0]);
     for ( size_t i = 0; i + 1 < __mem::length; i++ ) __mem::memory[i] = micron::move(__mem::memory[i + 1]);
-    if ( __mem::length > 0 ) __mem::length--;
+    __mem::memory[__mem::length - 1].~T();
+    __mem::length--;
     return val;
   }
 
@@ -950,6 +968,7 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
     if ( __mem::length == 0 ) [[unlikely]]
       return T{};
     T val = micron::move(__mem::memory[__mem::length - 1]);
+    __mem::memory[__mem::length - 1].~T();
     __mem::length--;
     return val;
   }
@@ -1088,7 +1107,10 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   copy_from_slice(const raw_slice<T> &src)
   {
     const size_t n = src.len < __mem::length ? src.len : __mem::length;
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(src.ptr), n * sizeof(T));
+    if constexpr ( micron::is_trivially_copyable_v<T> )
+      micron::bytecpy(reinterpret_cast<byte *>(micron::addr(__mem::memory[0])), reinterpret_cast<const byte *>(src.ptr), n * sizeof(T));
+    else
+      for ( size_t i = 0; i < n; i++ ) __mem::memory[i] = src.ptr[i];
     return *this;
   }
 
@@ -1101,7 +1123,7 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   slice &
   copy_within(size_t src_start, size_t count, size_t dst)
   {
-    if ( src_start + count > __mem::length || dst + count > __mem::length ) [[unlikely]]
+    if ( count > __mem::length || src_start > __mem::length - count || dst > __mem::length - count ) [[unlikely]]
       return *this;
     micron::memmove(micron::addr(__mem::memory[dst]), micron::addr(__mem::memory[src_start]), count);
     return *this;
@@ -1190,34 +1212,35 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
   repeat(size_t n) const
   {
     if ( n == 0 ) return slice(size_t(0));
-    slice out(__mem::length * n);
-    for ( size_t rep = 0; rep < n; rep++ )
-      micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[rep * __mem::length])),
-                      reinterpret_cast<const byte *>(__mem::memory), __mem::length * sizeof(T));
+    slice out(__uninit_t{}, __mem::length * n);
+    for ( size_t rep = 0; rep < n; rep++ ) {
+      __impl_container::copy(micron::addr(out.__mem::memory[rep * __mem::length]), __mem::memory, __mem::length);
+      out.__mem::length += __mem::length;
+    }
     return out;
   }
 
   slice
   concat(const raw_slice<T> &other) const
   {
-    slice out(__mem::length + other.len);
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[0])), reinterpret_cast<const byte *>(__mem::memory),
-                    __mem::length * sizeof(T));
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[__mem::length])), reinterpret_cast<const byte *>(other.ptr),
-                    other.len * sizeof(T));
+    slice out(__uninit_t{}, __mem::length + other.len);
+    __impl_container::copy(micron::addr(out.__mem::memory[0]), __mem::memory, __mem::length);
+    out.__mem::length = __mem::length;
+    __impl_container::copy(micron::addr(out.__mem::memory[__mem::length]), other.ptr, other.len);
+    out.__mem::length += other.len;
     return out;
   }
 
   slice
   join(const raw_slice<T> &other, const T &sep) const
   {
-    size_t total = __mem::length + 1 + other.len;
-    slice out(total);
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[0])), reinterpret_cast<const byte *>(__mem::memory),
-                    __mem::length * sizeof(T));
-    out.__mem::memory[__mem::length] = sep;
-    micron::bytecpy(reinterpret_cast<byte *>(micron::addr(out.__mem::memory[__mem::length + 1])), reinterpret_cast<const byte *>(other.ptr),
-                    other.len * sizeof(T));
+    slice out(__uninit_t{}, __mem::length + 1 + other.len);
+    __impl_container::copy(micron::addr(out.__mem::memory[0]), __mem::memory, __mem::length);
+    out.__mem::length = __mem::length;
+    new (micron::addr(out.__mem::memory[__mem::length])) T(sep);
+    out.__mem::length += 1;
+    __impl_container::copy(micron::addr(out.__mem::memory[out.__mem::length]), other.ptr, other.len);
+    out.__mem::length += other.len;
     return out;
   }
 
