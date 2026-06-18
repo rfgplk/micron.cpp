@@ -1270,6 +1270,120 @@ shr_arith_i64(int64x2_t a) noexcept
   return vshrq_n_s64(a, N);
 }
 
+#if defined(__micron_arch_arm32)
+template<int N>
+__inline_neon int8x16_t
+shr_insert_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return vsriq_n_s8(a, b, N);
+}
+
+template<int N>
+__inline_neon int16x8_t
+shr_insert_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return vsriq_n_s16(a, b, N);
+}
+
+template<int N>
+__inline_neon int32x4_t
+shr_insert_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return vsriq_n_s32(a, b, N);
+}
+
+template<int N>
+__inline_neon int64x2_t
+shr_insert_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return vsriq_n_s64(a, b, N);
+}
+
+template<int N>
+__inline_neon uint8x16_t
+shr_insert_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vsriq_n_u8(a, b, N);
+}
+
+template<int N>
+__inline_neon uint16x8_t
+shr_insert_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vsriq_n_u16(a, b, N);
+}
+
+template<int N>
+__inline_neon uint32x4_t
+shr_insert_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vsriq_n_u32(a, b, N);
+}
+
+template<int N>
+__inline_neon uint64x2_t
+shr_insert_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return vsriq_n_u64(a, b, N);
+}
+
+template<int N>
+__inline_neon int8x16_t
+shl_insert_s8(int8x16_t a, int8x16_t b) noexcept
+{
+  return vsliq_n_s8(a, b, N);
+}
+
+template<int N>
+__inline_neon int16x8_t
+shl_insert_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return vsliq_n_s16(a, b, N);
+}
+
+template<int N>
+__inline_neon int32x4_t
+shl_insert_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return vsliq_n_s32(a, b, N);
+}
+
+template<int N>
+__inline_neon int64x2_t
+shl_insert_s64(int64x2_t a, int64x2_t b) noexcept
+{
+  return vsliq_n_s64(a, b, N);
+}
+
+template<int N>
+__inline_neon uint8x16_t
+shl_insert_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vsliq_n_u8(a, b, N);
+}
+
+template<int N>
+__inline_neon uint16x8_t
+shl_insert_u16(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vsliq_n_u16(a, b, N);
+}
+
+template<int N>
+__inline_neon uint32x4_t
+shl_insert_u32(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vsliq_n_u32(a, b, N);
+}
+
+template<int N>
+__inline_neon uint64x2_t
+shl_insert_u64(uint64x2_t a, uint64x2_t b) noexcept
+{
+  return vsliq_n_u64(a, b, N);
+}
+#endif
+
 __inline_neon float32x2_t
 splat_h_f32(float v) noexcept
 {
