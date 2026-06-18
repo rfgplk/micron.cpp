@@ -54,6 +54,8 @@ template<typename T> struct __async_payload {
 
 struct __thread_payload {
   atomic_token<bool> alive;
+  // the child sets this true the instant it reaches __thread_kernel
+  atomic_token<bool> started{ false };
   // NOTE:
   // the pointer is used as the operand of a static_cast (7.6.1.8), except when the conversion is to pointer
   // to cv void, or to pointer to cv void and subsequently to pointer to cv char, cv unsigned char, or
@@ -74,6 +76,7 @@ struct __thread_payload {
   clear(void)
   {
     alive.store(false);
+    started.store(false, memory_order_release);
     tag_val.store((u8)tag::none, memory_order_release);
     ret_val.store(nullptr, memory_order_release);
     deleter = nullptr;
@@ -104,6 +107,8 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
   pthread::set_cancel_state(pthread::cancel_state::enable);
   pthread::set_cancel_type(pthread::cancel_type::deferred);
   payload->alive.store(true, memory_order_seq_cst);
+  // confirm to the spawner that we actually reached our kernel
+  payload->started.store(true, memory_order_seq_cst);
   // publish this thread's alive flag so the SIGTERM handler can clear it on a forced stop (else joiners hang)
   micron::__micron_thread_alive_word = static_cast<void *>(&payload->alive);
 

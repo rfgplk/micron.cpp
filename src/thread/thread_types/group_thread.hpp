@@ -31,6 +31,11 @@
 
 namespace micron
 {
+// bounded start handshake budget
+// regular time for a new thread to reach its kernel worker prologue is ~microseconds;
+// this is a generous ceiling above which we declare it faulted and hard-error rather
+inline constexpr f64 __thread_start_timeout_ms = 1000.0;
+
 // group_thread, a regular group_thread
 template<usize Stack_Size = thread_stack_size> class group_thread
 {
@@ -52,7 +57,17 @@ template<usize Stack_Size = thread_stack_size> class group_thread
     }
     thread_handler();
     payload.alive.store(true, memory_order_seq_cst);
+    payload.started.store(false, memory_order_seq_cst);
     attributes.pid = __as_unprepared_thread_attached(attrs, &payload, f, micron::forward<Args>(args)...);
+
+    // bounded start handshake
+    if ( !micron::until_timeout(true, __thread_start_timeout_ms, [this]() noexcept {
+           const bool s = payload.started.get(memory_order_acquire);
+           if ( !s ) micron::yield();
+           return s;
+         }) ) {
+      micron::exc<except::thread_error>("micron thread::__impl_preparethread(): spawned thread never reached its kernel (faulted on entry?)");
+    }
   }
 
   void
