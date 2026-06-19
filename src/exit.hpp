@@ -20,12 +20,26 @@ sys_exit(int ret)
   __builtin_unreachable();
 }
 
+__attribute__((noreturn)) inline void
+sys_group_exit(int ret)
+{
+  micron::syscall(SYS_exit_group, ret);
+  __builtin_unreachable();
+}
+
 constexpr static const int exit_ok = 0;
 
 __attribute__((noreturn)) inline void
 _Exit(int s = exit_ok)
 {
   sys_exit(s);
+  __builtin_unreachable();
+}
+
+__attribute__((noreturn)) inline void
+proc_exit(const int s)
+{
+  sys_group_exit(s);
   __builtin_unreachable();
 }
 
@@ -39,14 +53,14 @@ quick_exit(const int s)
 __attribute__((noreturn)) inline void
 abort(void)
 {
-  sys_exit(6);
+  sys_group_exit(6);
   __builtin_unreachable();
 }
 
 __attribute__((noreturn)) inline void
 abort(int ret)
 {
-  sys_exit(ret);
+  sys_group_exit(ret);
   __builtin_unreachable();
 }
 
@@ -130,6 +144,37 @@ exit(int s = exit_ok)
   }
 
   sys_exit(s);
+  __builtin_unreachable();
+}
+
+__attribute__((noreturn)) inline void
+group_exit(int s = exit_ok)
+{
+  using namespace __exit_internal;
+
+  bool expected = false;
+  if ( !micron::atom::compare_exchange(&__exit_in_progress, &expected, true, false, micron::atomic_seq_cst, __ATOMIC_RELAXED) ) {
+    sys_group_exit(s);
+  }
+
+  for ( ;; ) {
+    u32 cur = micron::atom::load(&__atexit_count, micron::atomic_acquire);
+    if ( cur == 0 ) break;
+    u32 idx = cur - 1;
+    micron::atom::store(&__atexit_count, idx, micron::atomic_release);
+    __atexit_entry e = __atexit_table[idx];
+    if ( e.func ) e.func(e.arg);
+  }
+
+  // fire all destructors
+  if ( __fini_array_start && __fini_array_end ) {
+    for ( void (**p)(void) = __fini_array_end; p > __fini_array_start; ) {
+      --p;
+      if ( *p ) (*p)();
+    }
+  }
+
+  proc_exit(s);
   __builtin_unreachable();
 }
 

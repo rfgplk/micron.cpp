@@ -66,7 +66,8 @@ template<usize Stack_Size = thread_stack_size> class group_thread
            if ( !s ) micron::yield();
            return s;
          }) ) {
-      micron::exc<except::thread_error>("micron thread::__impl_preparethread(): spawned thread never reached its kernel (faulted on entry?)");
+      micron::exc<except::thread_error>(
+          "micron thread::__impl_preparethread(): spawned thread never reached its kernel (faulted on entry?)");
     }
   }
 
