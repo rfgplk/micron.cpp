@@ -21,7 +21,7 @@ namespace uxin
 
 using poll_flag = int;
 
-input_event
+inline input_event
 get_event(const device_t &dev)
 {
   input_event event_buf;
@@ -105,7 +105,7 @@ poll(input_t &inp, Args &&...raw_in)
   return 0;
 }
 
-posix::pollfd
+inline posix::pollfd
 __make_poll(const input_t &arg)
 {
   return make_poll(arg.device.bound_fd);

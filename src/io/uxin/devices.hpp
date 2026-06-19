@@ -22,7 +22,7 @@ namespace micron
 namespace uxin
 {
 
-auto
+inline auto
 __parse_device(const char *s, const micron::ustr8 &buf)
 {
   auto tk = micron::format::find(buf, s);
@@ -34,16 +34,13 @@ __parse_device(const char *s, const micron::ustr8 &buf)
   return buf.substr(del + 1, del_eol);
 }
 
-bool
-__has_alnum_keys(const micron::ustr8 &buf)
+inline usize
+__parse_hex_words(const micron::ustr8 &buf, i64 *words, usize max_words)
 {
-  constexpr usize __max_words = 16;
-  i64 words[__max_words] = {};
   usize n_words = 0;
-
   auto cur = buf.cbegin();
   const auto end = buf.cend();
-  while ( n_words < __max_words ) {
+  while ( n_words < max_words ) {
     while ( cur != end && *cur == ' ' ) ++cur;
     if ( cur == end ) break;
     auto next = micron::format::find(buf, cur, ' ');
@@ -54,6 +51,36 @@ __has_alnum_keys(const micron::ustr8 &buf)
     words[n_words++] = hex_string_to_int64(buf.substr(cur, next));
     cur = next + 1;
   }
+  return n_words;
+}
+
+inline bool
+__key_bit_set(const i64 *words, usize n_words, i32 code)
+{
+  const usize k = static_cast<usize>(code);
+  const usize word_from_low = k / 64u;
+  const usize bit_in_word = k % 64u;
+  if ( word_from_low >= n_words ) return false;
+  const usize idx = n_words - 1 - word_from_low;
+  return (words[idx] >> bit_in_word) & i64(1);
+}
+
+inline bool
+__has_key_code(const micron::ustr8 &keybuf, i32 code)
+{
+  constexpr usize __max_words = 16;
+  i64 words[__max_words] = {};
+  const usize n_words = __parse_hex_words(keybuf, words, __max_words);
+  if ( n_words == 0 ) return false;
+  return __key_bit_set(words, n_words, code);
+}
+
+inline bool
+__has_alnum_keys(const micron::ustr8 &buf)
+{
+  constexpr usize __max_words = 16;
+  i64 words[__max_words] = {};
+  const usize n_words = __parse_hex_words(buf, words, __max_words);
   if ( n_words == 0 ) return false;
 
   constexpr byte alnum[] = {
@@ -63,25 +90,19 @@ __has_alnum_keys(const micron::ustr8 &buf)
   constexpr usize n_alnum = sizeof(alnum) / sizeof(alnum[0]);
 
   usize count = 0;
-  for ( usize i = 0; i < n_alnum; ++i ) {
-    const usize k = static_cast<usize>(alnum[i]);
-    const usize word_from_low = k / 64u;
-    const usize bit_in_word = k % 64u;
-    if ( word_from_low >= n_words ) continue;
-    const usize idx = n_words - 1 - word_from_low;
-    if ( (words[idx] >> bit_in_word) & i64(1) ) ++count;
-  }
+  for ( usize i = 0; i < n_alnum; ++i )
+    if ( __key_bit_set(words, n_words, static_cast<i32>(alnum[i])) ) ++count;
   return count >= 30;
 }
 
-enum class type_t : char { keyboard, mouse };
+enum class type_t : char { unknown, keyboard, mouse, touchpad, touchscreen, joystick, tablet, pointing_stick };
 
 struct device_t {
   ustr8 i_path;
   ustr8 path;
   ustr8 name;
   ustr8 phys;
-  type_t type = type_t::keyboard;
+  type_t type = type_t::unknown;
   io::fd_t bound_fd{ -1 };
 
   device_t() = default;
@@ -122,19 +143,19 @@ struct device_t {
   }
 };
 
-bool
+inline bool
 is_loaded(const device_t &dev)
 {
   return !(dev.i_path.empty() or dev.path.empty());
 }
 
-bool
+inline bool
 is_bound(const device_t &dev)
 {
   return !(dev.bound_fd.closed());
 }
 
-vector<device_t>
+inline vector<device_t>
 get_devices()
 {
   micron::vector<device_t> vc;
@@ -152,28 +173,46 @@ get_devices()
 
     if ( !format::contains(buf, "EV") ) continue;
     const i64 ev = hex_string_to_int64(__parse_device("EV", buf));
+    const i64 prop = hex_string_to_int64(__parse_device("PROP", buf));
+    const micron::ustr8 keybuf = __parse_device("KEY", buf);
 
-    // identify by EV bits only
-    // old substring sniffing on the uevent text misclassified
+    // capability bits (EV_*)
     const bool has_key = ev & (i64(1) << ev_key);
     const bool has_rel = ev & (i64(1) << ev_rel);
     const bool has_rep = ev & (i64(1) << ev_rep);
+    const bool has_abs = ev & (i64(1) << ev_abs);
+    // input properties (INPUT_PROP_*)
+    const bool p_direct = prop & (i64(1) << input_prop_direct);
+    const bool p_stick = prop & (i64(1) << input_prop_pointing_stick);
+    // tool / button signatures (BTN_*)
+    const bool k_pen = __has_key_code(keybuf, btn_tool_pen);
+    const bool k_stylus = __has_key_code(keybuf, btn_stylus);
+    const bool k_finger = __has_key_code(keybuf, btn_tool_finger);
+    const bool k_joy = __has_key_code(keybuf, btn_joystick);
+    const bool k_pad = __has_key_code(keybuf, btn_gamepad);
 
-    if ( has_key && has_rep ) {
-      if ( !format::contains(buf, "KEY") || !__has_alnum_keys(__parse_device("KEY", buf)) ) {
-      } else {
-        auto name = __parse_device("NAME", buf);
-        auto phys = __parse_device("PHYS", buf);
-        vc.emplace_back("/dev/input/" + n, "/sys/class/input/" + n, name, phys, type_t::keyboard, -1);
-        continue;
-      }
+    // classify by capability
+    // EV bits alone are ambiguous for absolute devices
+    type_t type = type_t::unknown;
+    if ( has_abs ) {
+      if ( k_pen || k_stylus )
+        type = type_t::tablet;            // pen digitizer (BTN_TOOL_PEN/STYLUS)
+      else if ( p_direct )
+        type = type_t::touchscreen;       // coords map onto a screen (INPUT_PROP_DIRECT)
+      else if ( k_finger )
+        type = type_t::touchpad;          // indirect finger pad (BTN_TOOL_FINGER)
+      else if ( k_joy || k_pad )
+        type = type_t::joystick;          // stick / gamepad (BTN_TRIGGER/BTN_GAMEPAD)
+    } else if ( has_rel && has_key ) {
+      type = p_stick ? type_t::pointing_stick : type_t::mouse;
+    } else if ( has_key && has_rep && __has_alnum_keys(keybuf) ) {
+      type = type_t::keyboard;
     }
-    if ( has_rel && !has_rep ) {
-      auto name = __parse_device("NAME", buf);
-      auto phys = __parse_device("PHYS", buf);
-      vc.emplace_back("/dev/input/" + n, "/sys/class/input/" + n, name, phys, type_t::mouse, -1);
-      continue;
-    }
+    if ( type == type_t::unknown ) continue;      // power / lid / audio / WMI / etc: correctly ignored
+
+    auto name = __parse_device("NAME", buf);
+    auto phys = __parse_device("PHYS", buf);
+    vc.emplace_back("/dev/input/" + n, "/sys/class/input/" + n, name, phys, type, -1);
   }
   return vc;
 }
@@ -181,7 +220,7 @@ get_devices()
 // start reading from device
 // WARNING: need either CAP_SYS_ADMIN or CAP_SYS_RAWIO to be able to read raw character devices.
 // WILL FAIL OTHERWISE
-int
+inline int
 nonblock_bind_device(device_t &dev)
 {
   if ( dev.i_path.empty() ) return -1;
@@ -192,7 +231,7 @@ nonblock_bind_device(device_t &dev)
   return fd;
 }
 
-int
+inline int
 bind_device(device_t &dev)
 {
   if ( dev.i_path.empty() ) return -1;
@@ -204,7 +243,7 @@ bind_device(device_t &dev)
   return fd;
 }
 
-void
+inline void
 unbind_device(device_t &dev)
 {
   // iff the fd is actually open

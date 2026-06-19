@@ -20,13 +20,17 @@ namespace uxin
 {
 
 // high level "open a device and init" func.
-vector<input_t>
+inline vector<input_t>
 open_nonblock(type_t __type)
 {
   switch ( __type ) {
   case type_t::keyboard:
-    break;
   case type_t::mouse:
+  case type_t::touchpad:
+  case type_t::touchscreen:
+  case type_t::joystick:
+  case type_t::tablet:
+  case type_t::pointing_stick:
     break;
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
@@ -43,13 +47,17 @@ open_nonblock(type_t __type)
   return res;
 }
 
-input_t
+inline input_t
 open_first_nonblock(type_t __type)
 {
   switch ( __type ) {
   case type_t::keyboard:
-    break;
   case type_t::mouse:
+  case type_t::touchpad:
+  case type_t::touchscreen:
+  case type_t::joystick:
+  case type_t::tablet:
+  case type_t::pointing_stick:
     break;
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
@@ -66,13 +74,17 @@ open_first_nonblock(type_t __type)
   __builtin_unreachable();
 }
 
-vector<input_t>
+inline vector<input_t>
 open(type_t __type)
 {
   switch ( __type ) {
   case type_t::keyboard:
-    break;
   case type_t::mouse:
+  case type_t::touchpad:
+  case type_t::touchscreen:
+  case type_t::joystick:
+  case type_t::tablet:
+  case type_t::pointing_stick:
     break;
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
@@ -89,13 +101,17 @@ open(type_t __type)
   return res;
 }
 
-input_t
+inline input_t
 open_first(type_t __type)
 {
   switch ( __type ) {
   case type_t::keyboard:
-    break;
   case type_t::mouse:
+  case type_t::touchpad:
+  case type_t::touchscreen:
+  case type_t::joystick:
+  case type_t::tablet:
+  case type_t::pointing_stick:
     break;
   default:
     exc<except::library_error>("uxin open(): invalid specified type of device");
@@ -119,10 +135,16 @@ prepare_listener(type_t __type)
   switch ( __type ) {
   case type_t::keyboard:
     return ::micron::uxin::prepare_generic_keyboard_us(Fn, Fn_2, Fn_3);
-    break;
   case type_t::mouse:
+  case type_t::pointing_stick:
     return ::micron::uxin::prepare_generic_mouse_sensor(Fn, Fn_2, Fn_3);
-    break;
+  case type_t::touchpad:
+  case type_t::touchscreen:
+    return ::micron::uxin::prepare_generic_touchpad_sensor(Fn, Fn_2, Fn_3);
+  case type_t::joystick:
+    return ::micron::uxin::prepare_generic_mouse_sensor_abs(Fn, Fn_2, Fn_3);
+  case type_t::tablet:
+    return ::micron::uxin::prepare_generic_tablet_sensor(Fn, Fn_2, Fn_3);
   default:
     exc<except::library_error>("uxin prepare_listener(): invalid specified type of device");
   }
@@ -176,7 +198,7 @@ read_once(vector<input_t> &inputs, Args &&...__input_packet)
   ::micron::uxin::poll_pack_once(inputs, micron::forward<Args>(__input_packet)...);
 }
 
-void
+inline void
 write()
 {
 }
