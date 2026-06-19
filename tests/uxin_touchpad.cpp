@@ -3,7 +3,6 @@
 #include "../src/io/uxin/reader.hpp"
 #include "../src/std.hpp"
 
-
 void
 motion(const micron::timeval_t &, u16 code, i32 val)
 {
@@ -16,7 +15,6 @@ motion(const micron::timeval_t &, u16 code, i32 val)
   else if ( code == micron::abs_mt_position_y )
     mc::console("  mt Y: ", val);
 }
-
 
 void
 button(const micron::timeval_t &, u16 code, i32 val)
@@ -60,14 +58,13 @@ int
 main()
 {
   auto dev = mc::uxin::get_devices();
-  for ( auto &n : dev )
-    mc::console(n.path, ": ", n.name, " [", type_name(n.type), "]");
+  for ( auto &n : dev ) mc::console(n.path, ": ", n.name, " [", type_name(n.type), "]");
 
   for ( auto &n : dev ) {
     if ( n.type == mc::uxin::type_t::touchpad ) {
       mc::console("binding touchpad: ", n.i_path);
       mc::uxin::bind_device(n);
-      
+
       mc::uxin::poll(n, mc::uxin::prepare_generic_touchpad_sensor(motion), mc::uxin::prepare_generic_touchpad(button));
       return 0;
     }

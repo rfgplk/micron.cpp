@@ -7,6 +7,8 @@
 
 #include "sync/pause.hpp"
 
+#include "sync/__cancelpoint.hpp"
+
 #include "linux/__includes.hpp"
 #include "linux/process/signals.hpp"
 #include "types.hpp"
@@ -77,7 +79,11 @@ cont(posix::pid_t pid)
 inline void
 suspend_until(const posix::sigset_t &mask)
 {
-  micron::syscall(SYS_rt_sigsuspend, &mask, posix::__sig_syscall_size);
+  posix::sigset_t m = mask;
+  posix::sigdelset(m, 32);
+  micron::__testcancel();
+  micron::syscall(SYS_rt_sigsuspend, &m, posix::__sig_syscall_size);
+  micron::__testcancel();
 }
 
 // NOTE: this is helpful for debugging, the func won't be optimized away so you can easily break on it via gdb

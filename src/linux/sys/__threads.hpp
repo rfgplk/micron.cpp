@@ -325,9 +325,9 @@ __try_join_thread(pthread_t thread, void **rval = nullptr)
 }
 
 inline auto
-thread_kill(pid_t pid, pthread_t thread, int sig)
+thread_kill(pid_t pid, pid_t tid, int sig)
 {
-  return posix::tgkill(pid, static_cast<long unsigned int>(pthread_gettid_np(thread)), sig);
+  return posix::tgkill(pid, static_cast<long unsigned int>(tid), sig);
 }
 
 inline auto

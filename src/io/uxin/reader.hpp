@@ -148,8 +148,7 @@ prepare_generic_touchpad_sensor(void) -> input_packet_t
 
 // touchpad / touchscreen buttons & finger-tap tools (EV_KEY)
 inline auto
-prepare_generic_touchpad(void (*fn_cb)(const micron::timeval_t &, u16, i32),
-                         void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+prepare_generic_touchpad(void (*fn_cb)(const micron::timeval_t &, u16, i32), void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                          void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input{ ev_key, slice<button_t>(static_cast<size_t>(7)), fn_cb, fn_acb, fn_rcb };
@@ -200,8 +199,7 @@ prepare_generic_tablet_sensor(void) -> input_packet_t
 
 // graphics tablet / stylus buttons & tools (EV_KEY)
 inline auto
-prepare_generic_tablet(void (*fn_cb)(const micron::timeval_t &, u16, i32),
-                       void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+prepare_generic_tablet(void (*fn_cb)(const micron::timeval_t &, u16, i32), void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                        void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input{ ev_key, slice<button_t>(static_cast<size_t>(5)), fn_cb, fn_acb, fn_rcb };
@@ -217,8 +215,7 @@ prepare_generic_tablet(void (*fn_cb)(const micron::timeval_t &, u16, i32),
 
 // joystick / gamepad buttons (EV_KEY); axes via prepare_generic_mouse_sensor_abs
 inline auto
-prepare_generic_joystick(void (*fn_cb)(const micron::timeval_t &, u16, i32),
-                         void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
+prepare_generic_joystick(void (*fn_cb)(const micron::timeval_t &, u16, i32), void (*fn_acb)(const micron::timeval_t &, u16, i32) = nullptr,
                          void (*fn_rcb)(const micron::timeval_t &, u16, i32) = nullptr) -> input_packet_t
 {
   input_packet_t __input{ ev_key, slice<button_t>(static_cast<size_t>(18)), fn_cb, fn_acb, fn_rcb };

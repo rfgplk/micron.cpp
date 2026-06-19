@@ -38,6 +38,9 @@ enum thread_returns : i32 { return_success, return_force, return_fail };
 
 enum join_status { join_success, join_fail, join_allowed, join_busy };
 
+// bounded budget for a hard-stopped (SIGTERM) thread to publish alive=false before it gets reaped
+inline constexpr f64 __thread_term_timeout_ms = 1000.0;
+
 template<typename T> struct __async_payload {
   atomic_token<bool> alive;
   atomic_token<u64> ret_val;

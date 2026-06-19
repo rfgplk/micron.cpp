@@ -196,13 +196,13 @@ get_devices()
     type_t type = type_t::unknown;
     if ( has_abs ) {
       if ( k_pen || k_stylus )
-        type = type_t::tablet;            // pen digitizer (BTN_TOOL_PEN/STYLUS)
+        type = type_t::tablet;      // pen digitizer (BTN_TOOL_PEN/STYLUS)
       else if ( p_direct )
-        type = type_t::touchscreen;       // coords map onto a screen (INPUT_PROP_DIRECT)
+        type = type_t::touchscreen;      // coords map onto a screen (INPUT_PROP_DIRECT)
       else if ( k_finger )
-        type = type_t::touchpad;          // indirect finger pad (BTN_TOOL_FINGER)
+        type = type_t::touchpad;      // indirect finger pad (BTN_TOOL_FINGER)
       else if ( k_joy || k_pad )
-        type = type_t::joystick;          // stick / gamepad (BTN_TRIGGER/BTN_GAMEPAD)
+        type = type_t::joystick;      // stick / gamepad (BTN_TRIGGER/BTN_GAMEPAD)
     } else if ( has_rel && has_key ) {
       type = p_stick ? type_t::pointing_stick : type_t::mouse;
     } else if ( has_key && has_rep && __has_alnum_keys(keybuf) ) {

@@ -125,14 +125,32 @@ main(void)
   }
   enable_scope()
   {
-    mc::yield();
-    auto t = mc::solo::spawn<mc::auto_thread<>>(fn_forever);
+    mc::atomic_token<bool> stop{ false };
+    mc::atomic_token<u64> ticks{ 0 };
+    auto t = mc::solo::spawn<mc::auto_thread<>>([&stop, &ticks]() {
+      while ( !stop.get(mc::memory_order_acquire) ) {
+        ticks.fetch_add(1, mc::memory_order_acq_rel);
+        mc::sleep(1);
+      }
+    });
+    sb::require(mc::is_alive_ptr(t));
+
+    mc::ssleep(1);
     t->sleep();
-    mc::console("Thread Asleep!");
-    mc::ssleep(2);
+    mc::sleep(50);
+    u64 a = ticks.get(mc::memory_order_acquire);
+    mc::sleep(100);
+    u64 b = ticks.get(mc::memory_order_acquire);
+    sb::require(a == b);
+
     t->awaken();
+    mc::sleep(100);
+    sb::require(ticks.get(mc::memory_order_acquire) > b);
+
     mc::solo::terminate(t);
     mc::solo::dismiss(t);
+    sb::require(!mc::is_alive_ptr(t));
+    mc::console("threads.cpp: per-thread suspend/resume/terminate OK");
   }
 
   disable_scope()

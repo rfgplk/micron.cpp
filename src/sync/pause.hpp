@@ -9,6 +9,8 @@
 
 #include "../bits/__pause.hpp"
 
+#include "__cancelpoint.hpp"
+
 #include "../linux/__includes.hpp"
 #include "../linux/process/wait.hpp"
 #include "../linux/sys/signal.hpp"
@@ -31,7 +33,9 @@ cpu_pause()
 {
   timespec_t r = { L / 1000000000UL, L % 1000000000UL };
 
-  while ( micron::nanosleep(r, r) == -error::interrupted ) {
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
     __cpu_pause();
   }
 }
@@ -40,6 +44,7 @@ template<typename F, typename... Args>
 inline void
 pause(F f, Args... args)
 {
+  micron::__testcancel();
   micron::posix::sigset_t old;
   micron::posix::sigset_t signal;
   micron::posix::sigemptyset(signal);
@@ -48,19 +53,22 @@ pause(F f, Args... args)
   int sig = 0;
   auto s = micron::posix::sigwait(signal, sig);
   micron::posix::sigprocmask(posix::sig_setmask, old, nullptr);
-  if ( s == 0 ) f(sig, args...);      // sigwait returns 0 on success; skip f() on a bogus/error signal
+  micron::__testcancel();
+  if ( s == 0 ) f(sig, args...);
   return;
 }
 
 inline void
 pause()
 {
+  micron::__testcancel();
   micron::posix::sigset_t signal;
   micron::posix::sigemptyset(signal);
   micron::posix::sigaddset(signal, posix::sig_cont);
   micron::posix::sigprocmask(posix::sig_block, signal, nullptr);
   int sig = 0;
   micron::posix::sigwait(signal, sig);
+  micron::__testcancel();
   return;
 }
 
@@ -70,8 +78,11 @@ pause()
 inline int
 wait(int pid)
 {
+  micron::__testcancel();
   int status = 0;
-  return micron::waitpid(pid, &status, 0);
+  int r = micron::waitpid(pid, &status, 0);
+  micron::__testcancel();
+  return r;
 }
 
 // wait for pid to finish
@@ -79,8 +90,10 @@ inline int
 wait_thread(int tid)
 {
   // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
+  micron::__testcancel();
   micron::posix::siginfo_t i;
   int r = static_cast<int>(micron::waitid(P_PID, tid, i, exited));
+  micron::__testcancel();
   if ( r < 0 ) {
     if ( r == -10 ) {
     }
@@ -111,6 +124,7 @@ template<typename... Args>
 inline int
 await(Args... args)
 {
+  micron::__testcancel();
   micron::posix::sigset_t old;
   int save;
   micron::posix::sigset_t signal;
@@ -119,6 +133,7 @@ await(Args... args)
   if ( micron::posix::sigprocmask(posix::sig_setmask, signal, &old) < 0 ) return -1;
   micron::posix::sigwait(signal, save);
   if ( micron::posix::sigprocmask(posix::sig_setmask, old, nullptr) < 0 ) return -1;
+  micron::__testcancel();
   return 0;
 }
 
@@ -158,7 +173,9 @@ sleep_duration(const fduration_t s)
   const auto frac_ms = total_ms - static_cast<micron::fduration_t>(r.tv_sec) * 1000.0;
 
   r.tv_nsec = static_cast<long>(frac_ms * 1'000'000.0);
-  while ( micron::nanosleep(r, rmn) == -error::interrupted ) {
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, rmn) != -error::interrupted ) break;
     r = rmn;
     __cpu_pause();
   }
@@ -171,7 +188,9 @@ ssleep(const umax_t s)
   timespec_t r, rmn;
   r.tv_sec = s;
   r.tv_nsec = 0;
-  while ( micron::nanosleep(r, rmn) == -error::interrupted ) {
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, rmn) != -error::interrupted ) break;
     r = rmn;
     __cpu_pause();
   }
@@ -185,7 +204,9 @@ sleep_for(umax_t ms)
   r.tv_sec = ms / 1000;
   r.tv_nsec = (ms % 1000) * 1000000UL;
 
-  while ( micron::nanosleep(r, r) == -error::interrupted ) {
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
     __cpu_pause();
   }
 }
@@ -198,7 +219,9 @@ sleep(ulong_t ms)
   r.tv_sec = ms / 1000;
   r.tv_nsec = (ms % 1000) * 1000000UL;
 
-  while ( micron::nanosleep(r) == -error::interrupted ) {
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r) != -error::interrupted ) break;
     __cpu_pause();
   }
 }
@@ -211,7 +234,9 @@ sleep_nano(umax_t ns)
   r.tv_sec = ns / 1000000000UL;
   r.tv_nsec = ns % 1000000000UL;
 
-  while ( micron::nanosleep(r, r) == -error::interrupted ) {
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
     __cpu_pause();
   }
 }

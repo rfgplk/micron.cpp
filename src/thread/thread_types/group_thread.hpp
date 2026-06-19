@@ -234,11 +234,12 @@ public:
     return -1;
   }
 
+  // true per-thread suspend
   int
   sleep(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::stop);
+      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::thread_suspend);
     }
     return -1;
   }
@@ -247,29 +248,38 @@ public:
   awaken(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::cont);
+      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::thread_resume);
     }
     return -1;
   }
 
+  // cooperative stop-and-reap
   int
   cancel(void)
   {
     if ( alive() ) {
       int r = pthread::cancel_thread(attributes.pid);
       signal(signal::usr2);
+      if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+      payload.alive.store(false, memory_order_seq_cst);
+      __safe_release();
       return r;
     }
     return -1;
   }
 
+  // hard stop
   int
   terminate(void)
   {
-    if ( alive() ) {
-      return signal(signal::terminate);
+    if ( !alive() ) return -1;
+    int r = signal(signal::terminate);
+    if ( micron::until_timeout(__thread_term_timeout_ms, [this]() noexcept { return !alive(); }) ) {
+      // thread is kernel-dead at this point; must join before we unmap the stack
+      if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+      __release();
     }
-    return -1;
+    return r;
   }
 
   void

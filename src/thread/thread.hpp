@@ -241,11 +241,12 @@ awaken(Args &...t)
   return r;
 }
 
+// SIGALRM -> __thread_yield handler -> micron::yield()
 template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) void
 yield(Tr &t)
 {
-  t.yield();
+  t.signal(signal::alarm);
 }
 
 template<typename Tr = auto_thread<>>
@@ -253,7 +254,7 @@ inline __attribute__((always_inline)) void
 yield(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) ) return;
-  t->yield();
+  t->signal(signal::alarm);
 }
 
 template<typename... Args>
@@ -307,15 +308,15 @@ inline __attribute__((always_inline)) int
 force_stop(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) ) return -1;
-  return t->signal(signal::terminate);
+  return t->terminate();      // self-reaping hard stop
 }
 
 template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) int
 force_stop(Tr &t)
 {
-  // per-thread stop (SIGTERM via __thread_stop), not the process-wide SIGSTOP
-  return t.signal(signal::terminate);
+  // per-thread stop
+  return t.terminate();
 }
 
 template<typename... Args>
@@ -332,14 +333,14 @@ inline __attribute__((always_inline)) int
 terminate(__thread_pointer<Tr> &t)
 {
   if ( !micron::is_alive_ptr(t) ) return -1;
-  return t->signal(signal::terminate);
+  return t->terminate();      // self-reaping hard stop
 }
 
 template<typename Tr = auto_thread<>>
 inline __attribute__((always_inline)) auto
 terminate(Tr &t)
 {
-  return t.signal(signal::terminate);
+  return t.terminate();
 }
 
 template<typename... Args>

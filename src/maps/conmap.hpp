@@ -18,8 +18,6 @@
 
 #include "robin.hpp"
 
-#include <new>
-
 namespace micron
 {
 

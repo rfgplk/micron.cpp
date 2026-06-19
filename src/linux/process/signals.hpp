@@ -48,7 +48,11 @@ enum class signal : i32 {
   profile_expire = posix::sig_prof,
   window_resize = posix::sig_winch,
   usr1 = posix::sig_usr1,
-  usr2 = posix::sig_usr2
+  usr2 = posix::sig_usr2,
+  // real-time signal extensions for true per-thread suspend/resume
+  // kernel SIGRTMIN is 32; 32..34 are reserved by glibc, so we start our own RT usage at +6/+7
+  thread_suspend = 38,      // SIGRTMIN+6
+  thread_resume = 39        // SIGRTMIN+7
 };
 
 inline constexpr const char *
@@ -109,6 +113,10 @@ signal_name(signal sig) noexcept
     return "SIGWINCH";
   case signal::polling:
     return "SIGPOLL";
+  case signal::thread_suspend:
+    return "SIGRTMIN+6";
+  case signal::thread_resume:
+    return "SIGRTMIN+7";
   default:
     return "SIGUNKNOWN";
   }

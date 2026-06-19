@@ -230,11 +230,13 @@ public:
     return -1;
   }
 
+  // true per-thread suspend: deliver thread_suspend; the handler parks ONLY this thread in sigsuspend()
+  // (SIGSTOP would freeze the whole process). resume with awaken().
   int
   sleep(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::stop);
+      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::thread_suspend);
     }
     return -1;
   }
@@ -243,7 +245,7 @@ public:
   awaken(void)
   {
     if ( alive() ) {
-      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::cont);
+      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::thread_resume);
     }
     return -1;
   }
@@ -265,10 +267,14 @@ public:
   int
   terminate(void)
   {
-    if ( alive() ) {
-      return signal(signal::terminate);
+    if ( !alive() ) return -1;
+    int r = signal(signal::terminate);
+    if ( micron::until_timeout(__thread_term_timeout_ms, [this]() noexcept { return !alive(); }) ) {
+      // the thread is now kernel dead
+      if ( pid != 0 ) pthread::__join_thread(pid);
+      __release();
     }
-    return -1;
+    return r;
   }
 
   byte *
