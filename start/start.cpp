@@ -88,7 +88,8 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
 
   const int rc = __micron_user_main(argc, argv, envp);
 
-  micron::exit(rc);
+  // we're single threaded only, but once we add TLS this is critical
+  micron::group_exit(rc);
 }
 
 #if defined(__micron_arch_width_64)
