@@ -9,7 +9,7 @@
 #include "../../types.hpp"
 
 #include "../../linux/__includes.hpp"
-#include "../../linux/sys/__threads.hpp"
+#include "../../linux/sys/micthread/threads.hpp"
 #include "../../linux/sys/resource.hpp"
 #include "../../linux/sys/system.hpp"
 #include "../../memory/stack_constants.hpp"
@@ -44,13 +44,22 @@ template<usize Stack_Size = thread_stack_size> class async_thread
   }
 
   inline __attribute__((always_inline)) void
-  __impl_preparethread(const pthread_attr_t &attrs)
+  __adopt(const thread_attr_t &a)
+  {
+    attributes.stack_addr = a.stack_addr;
+    attributes.stack_size = a.stack_size;
+    attributes.sched_policy = a.sched_policy;
+    attributes.sched_priority = a.sched_priority;
+  }
+
+  inline __attribute__((always_inline)) void
+  __impl_preparethread()
   {
     if ( attributes.stack_addr == nullptr ) {
       micron::exc<except::thread_error>("micron thread::__impl_preparethread(): a stack isn't allocated");
     }
     thread_handler();
-    attributes.pid = __as_unprepared_worker_thread_attached<__worker_kernel>(attrs, &payload);
+    __link_launch<Stack_Size, &__worker_kernel>(attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr);
   }
 
   template<typename Fn, typename... Args>
@@ -69,6 +78,8 @@ template<usize Stack_Size = thread_stack_size> class async_thread
   void
   __release(void)
   {
+    // async_thread does NOT own its stack (the arena does); it DOES own its from-scratch TLS block
+    micron::__tls_free_frame(attributes.tls);
     attributes.clear();
   }
 
@@ -85,9 +96,9 @@ public:
 
   ~async_thread()
   {
-    if ( attributes.pid != 0 ) {
+    if ( __link_valid(attributes.pid, attributes.pth) ) {
       stop();
-      pthread::__join_thread(attributes.pid);
+      __link_join(attributes.pid, &attributes.ctid, attributes.pth);
     }
     __release();
   }
@@ -97,16 +108,25 @@ public:
 
   async_thread(void) : attributes(posix::getpid()), payload{} { }
 
-  // NOTE: moving an already-spawned worker is UB (kernel holds &payload)
-  async_thread(async_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
+  // moving an already-spawned worker is UB (kernel holds &payload/&ctid); guard rejects a live source
+  async_thread(async_thread &&o)
+      : attributes((micron::__thread_assert_movable_src(o.attributes.pid, o.attributes.pth), micron::move(o.attributes))),
+        payload(micron::move(o.payload))
+  {
+  }
 
-  async_thread(const pthread_attr_t &_attrs) : attributes(posix::getpid(), _attrs), payload{} { __impl_preparethread(_attrs); }
+  async_thread(const thread_attr_t &_attrs) : attributes(posix::getpid()), payload{}
+  {
+    __adopt(_attrs);
+    __impl_preparethread();
+  }
 
   template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
-  async_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
+  async_thread(const thread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid()), payload{}
   {
-    __impl_preparethread(_attrs);
+    __adopt(_attrs);
+    __impl_preparethread();
     __impl_runthread(micron::forward<Fn>(fn), micron::forward<Args>(args)...);
   }
 
@@ -114,12 +134,10 @@ public:
   operator=(async_thread &&o)
   {
     if ( this == &o ) return *this;
-    // stop + join *this's current worker BEFORE adopting o; otherwise the running worker is orphaned (never joined) and keeps mutating the
-    // payload bytes we are about to overwrite NOTE: o must be pre-spawn (o.pid == 0): a spawned worker holds &o.payload and cannot be
-    // relocated
-    if ( attributes.pid != 0 ) {
+    micron::__thread_assert_movable_src(o.attributes.pid, o.attributes.pth);      // o must be pre-spawn/joined (holds &o.payload)
+    if ( __link_valid(attributes.pid, attributes.pth) ) {
       stop();
-      pthread::__join_thread(attributes.pid);
+      __link_join(attributes.pid, &attributes.ctid, attributes.pth);
     }
     __release();
     attributes = micron::move(o.attributes);
@@ -173,14 +191,14 @@ public:
   active(void) const
   {
     // more reliable, although slower
-    return (pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), 0) == 0 ? true : false);
+    return (micthread::thread_kill(attributes.parent, __link_tid(attributes.pid, attributes.pth), 0) == 0 ? true : false);
   }
 
   auto
   can_join(void) -> int
   {
-    if ( attributes.pid == 0 ) return 0;
-    int r = pthread::__try_join_thread(attributes.pid);
+    if ( !__link_valid(attributes.pid, attributes.pth) ) return 0;
+    int r = __link_try_join(attributes.pid, &attributes.ctid, attributes.pth);
     if ( r == 0 ) {
       return 1;
     }
@@ -191,9 +209,9 @@ public:
   auto
   join(void) -> int      // worker
   {
-    if ( attributes.pid == 0 ) return 0;
+    if ( !__link_valid(attributes.pid, attributes.pth) ) return 0;
     stop();
-    auto r = pthread::__join_thread(attributes.pid);
+    auto r = __link_join(attributes.pid, &attributes.ctid, attributes.pth);
     __safe_release();
     return r;
   }
@@ -201,8 +219,8 @@ public:
   auto
   try_join(void) -> int
   {
-    if ( attributes.pid == 0 ) return 0;
-    int r = pthread::__try_join_thread(attributes.pid);
+    if ( !__link_valid(attributes.pid, attributes.pth) ) return 0;
+    int r = __link_try_join(attributes.pid, &attributes.ctid, attributes.pth);
     if ( r == 0 ) {
       __release();
       return 0;
@@ -213,13 +231,13 @@ public:
   auto
   thread_id(void) const
   {
-    return pthread::get_thread_id(attributes.pid);
+    return __link_tid(attributes.pid, attributes.pth);
   }
 
   auto
   native_handle(void) const
   {
-    return attributes.pid;
+    return __link_tid(attributes.pid, attributes.pth);
   }
 
   long int signal(const signal s) = delete;

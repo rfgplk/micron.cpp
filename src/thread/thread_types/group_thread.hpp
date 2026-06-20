@@ -9,7 +9,7 @@
 #include "../../types.hpp"
 
 #include "../../linux/__includes.hpp"
-#include "../../linux/sys/__threads.hpp"
+#include "../../linux/sys/micthread/threads.hpp"
 #include "../../linux/sys/resource.hpp"
 #include "../../linux/sys/system.hpp"
 #include "../../memory/stack_constants.hpp"
@@ -50,7 +50,7 @@ template<usize Stack_Size = thread_stack_size> class group_thread
   template<typename F, typename... Args>
     requires(micron::is_invocable_v<micron::decay_t<F>, micron::decay_t<Args> &...>)
   inline __attribute__((always_inline)) void
-  __impl_preparethread(const pthread_attr_t &attrs, F f, Args &&...args)
+  __impl_preparethread(F f, Args &&...args)
   {
     if ( attributes.stack_addr == nullptr ) {
       micron::exc<except::thread_error>("micron thread::__impl_preparethread(): a stack isn't allocated");
@@ -58,7 +58,8 @@ template<usize Stack_Size = thread_stack_size> class group_thread
     thread_handler();
     payload.alive.store(true, memory_order_seq_cst);
     payload.started.store(false, memory_order_seq_cst);
-    attributes.pid = __as_unprepared_thread_attached(attrs, &payload, f, micron::forward<Args>(args)...);
+    __link_launch<Stack_Size, &__thread_kernel<micron::decay_t<F>, micron::decay_t<Args>...>>(
+        attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr, f, micron::forward<Args>(args)...);
 
     // bounded start handshake
     if ( !micron::until_timeout(true, __thread_start_timeout_ms, [this]() noexcept {
@@ -66,6 +67,14 @@ template<usize Stack_Size = thread_stack_size> class group_thread
            if ( !s ) micron::yield();
            return s;
          }) ) {
+      // WARNING: child was created (clone3 succeeded) but never published in time: scheduler-starved
+      // or wedged; NEVER throw and unwind out from under it, the live child WILL write &payload
+      // and the kernel still clears &attributes.ctid, so reclaiming this object's
+      // storage would be a use-after-free / cross-object corruption
+      payload.park.store(__park_dying, memory_order_release);
+      micron::wake_futex(payload.park.ptr(), 1);
+      if ( __link_valid(attributes.pid, attributes.pth) ) __link_join(attributes.pid, &attributes.ctid, attributes.pth);
+      __release();
       micron::exc<except::thread_error>(
           "micron thread::__impl_preparethread(): spawned thread never reached its kernel (faulted on entry?)");
     }
@@ -77,6 +86,7 @@ template<usize Stack_Size = thread_stack_size> class group_thread
     if ( attributes.stack_addr != nullptr ) {
       micron::try_unmap(attributes.stack_addr, Stack_Size);
     }
+    micron::__tls_free_frame(attributes.tls);      // free this thread's from-scratch TLS block
     attributes.clear();
     payload.alive.store(false, memory_order_seq_cst);
     if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::heap ) {
@@ -104,7 +114,7 @@ public:
 
   ~group_thread()
   {
-    if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+    if ( __link_valid(attributes.pid, attributes.pth) ) __link_join(attributes.pid, &attributes.ctid, attributes.pth);
     __release();
   }
 
@@ -113,23 +123,33 @@ public:
 
   group_thread(void) : attributes(posix::getpid()), payload{} { }
 
-  // moving an already-spawned thread is UB (kernel holds &payload)
-  group_thread(group_thread &&o) : attributes(micron::move(o.attributes)), payload(micron::move(o.payload)) { }
+  // moving an already-spawned thread is UB (kernel holds &payload/&ctid); guard rejects a live source
+  group_thread(group_thread &&o)
+      : attributes((micron::__thread_assert_movable_src(o.attributes.pid, o.attributes.pth), micron::move(o.attributes))),
+        payload(micron::move(o.payload))
+  {
+  }
 
   // prepared functions
   template<typename Fn, typename... Args>
     requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
-  group_thread(const pthread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid(), _attrs), payload{}
+  group_thread(const thread_attr_t &_attrs, Fn &&fn, Args &&...args) : attributes(posix::getpid()), payload{}
   {
-    __impl_preparethread(_attrs, micron::forward<Fn>(fn), micron::forward<Args>(args)...);
+    // adopt the caller-allocated stack + scheduling intent (group owns the stack now)
+    attributes.stack_addr = _attrs.stack_addr;
+    attributes.stack_size = _attrs.stack_size;
+    attributes.sched_policy = _attrs.sched_policy;
+    attributes.sched_priority = _attrs.sched_priority;
+    __impl_preparethread(micron::forward<Fn>(fn), micron::forward<Args>(args)...);
   }
 
   group_thread &
   operator=(group_thread &&o)
   {
     if ( this == &o ) return *this;
+    micron::__thread_assert_movable_src(o.attributes.pid, o.attributes.pth);      // o must be pre-spawn/joined
     // release *this's current thread+stack BEFORE adopting o; otherwise the running thread is orphaned
-    if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+    if ( __link_valid(attributes.pid, attributes.pth) ) __link_join(attributes.pid, &attributes.ctid, attributes.pth);
     __release();
     attributes = micron::move(o.attributes);      // thread_attr_t move nulls o.pid / o.stack_addr
     payload = micron::move(o.payload);
@@ -155,14 +175,14 @@ public:
   active(void) const
   {
     // more reliable, although slower
-    return (pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), 0) == 0 ? true : false);
+    return (micthread::thread_kill(attributes.parent, __link_tid(attributes.pid, attributes.pth), 0) == 0 ? true : false);
   }
 
   auto
   can_join(void) -> int
   {
-    if ( attributes.pid == 0 ) return 0;
-    int r = pthread::__try_join_thread(attributes.pid);
+    if ( !__link_valid(attributes.pid, attributes.pth) ) return 0;
+    int r = __link_try_join(attributes.pid, &attributes.ctid, attributes.pth);
     if ( r == 0 ) {
       return 1;
     }
@@ -173,8 +193,8 @@ public:
   auto
   join(void) -> int      // group_thread
   {
-    if ( attributes.pid == 0 ) return 0;      // nothing to join (default/moved-from/already-joined)
-    auto r = pthread::__join_thread(attributes.pid);
+    if ( !__link_valid(attributes.pid, attributes.pth) ) return 0;      // nothing to join (default/moved-from/already-joined)
+    auto r = __link_join(attributes.pid, &attributes.ctid, attributes.pth);
     __safe_release();
     return r;
   }
@@ -184,7 +204,7 @@ public:
   {
     int r = try_join();
     if ( r == error::busy ) {
-      auto rr = pthread::__join_thread(attributes.pid);
+      auto rr = __link_join(attributes.pid, &attributes.ctid, attributes.pth);
       __release();
       return rr;
     }
@@ -194,8 +214,8 @@ public:
   auto
   try_join(void) -> int
   {
-    if ( attributes.pid == 0 ) return 0;      // already joined
-    int r = pthread::__try_join_thread(attributes.pid);
+    if ( !__link_valid(attributes.pid, attributes.pth) ) return 0;      // already joined
+    int r = __link_try_join(attributes.pid, &attributes.ctid, attributes.pth);
     if ( r == 0 ) {
       __release();
       return 0;
@@ -206,66 +226,60 @@ public:
   auto
   thread_id(void) const
   {
-    return pthread::get_thread_id(attributes.pid);
+    return __link_tid(attributes.pid, attributes.pth);
   }
 
   auto
   native_handle(void) const
   {
-    return attributes.pid;
+    return __link_tid(attributes.pid, attributes.pth);
   }
 
   long int
   signal(const micron::signal s)
   {
     if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)s);
+      return micthread::thread_kill(attributes.parent, __link_tid(attributes.pid, attributes.pth), (int)s);
     }
     return -1;
   }
 
-  // pseudo sleep
+  // throttle alias: park (the old USR1 pseudo-sleep is gone)
   int
   sleep_second(void)
   {
-    if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::usr1);
-    }
-    return -1;
+    return sleep();
   }
 
-  // true per-thread suspend
+  // native per-thread suspend: PARK at the next checkpoint; resume with awaken(). no signals.
   int
   sleep(void)
   {
-    if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::thread_suspend);
-    }
-    return -1;
+    if ( !alive() ) return -1;
+    payload.park.store(__park_parked, memory_order_release);
+    return 0;
   }
 
   int
   awaken(void)
   {
-    if ( alive() ) {
-      return pthread::thread_kill(attributes.parent, pthread::get_thread_id(attributes.pid), (int)signal::thread_resume);
-    }
-    return -1;
+    if ( !alive() ) return -1;
+    payload.park.store(__park_run, memory_order_release);
+    micron::wake_futex(payload.park.ptr(), 1);
+    return 0;
   }
 
-  // cooperative stop-and-reap
+  // cooperative stop-and-reap (kill): DYING at the next checkpoint
   int
   cancel(void)
   {
-    if ( alive() ) {
-      int r = pthread::cancel_thread(attributes.pid);
-      signal(signal::usr2);
-      if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
-      payload.alive.store(false, memory_order_seq_cst);
-      __safe_release();
-      return r;
-    }
-    return -1;
+    if ( !alive() ) return -1;
+    payload.park.store(__park_dying, memory_order_release);
+    micron::wake_futex(payload.park.ptr(), 1);
+    if ( __link_valid(attributes.pid, attributes.pth) ) __link_join(attributes.pid, &attributes.ctid, attributes.pth);
+    payload.alive.store(false, memory_order_seq_cst);
+    __safe_release();
+    return 0;
   }
 
   // hard stop
@@ -273,13 +287,17 @@ public:
   terminate(void)
   {
     if ( !alive() ) return -1;
-    int r = signal(signal::terminate);
+    payload.park.store(__park_dying, memory_order_release);
+    micron::wake_futex(payload.park.ptr(), 1);
     if ( micron::until_timeout(__thread_term_timeout_ms, [this]() noexcept { return !alive(); }) ) {
-      // thread is kernel-dead at this point; must join before we unmap the stack
-      if ( attributes.pid != 0 ) pthread::__join_thread(attributes.pid);
+      if ( __link_valid(attributes.pid, attributes.pth) ) __link_join(attributes.pid, &attributes.ctid, attributes.pth);
+      __release();
+    } else {
+      micthread::thread_kill(attributes.parent, __link_tid(attributes.pid, attributes.pth), (int)signal::kill9);
+      __link_join(attributes.pid, &attributes.ctid, attributes.pth);
       __release();
     }
-    return r;
+    return 0;
   }
 
   void

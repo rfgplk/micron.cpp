@@ -118,17 +118,17 @@ main(int, char **)
     static_assert(micron::is_constructible_v<micron::thread<>, FInt, int &>, "thread<> must accept lvalue int");
     static_assert(micron::is_constructible_v<micron::thread<>, FInt, int>, "thread<> must accept rvalue int");
     static_assert(micron::is_constructible_v<micron::thread<>, FPtr, int *>, "thread<> must accept pointer");
-    static_assert(micron::is_constructible_v<micron::group_thread<>, const pthread_attr_t &, FInt, int &>,
+    static_assert(micron::is_constructible_v<micron::group_thread<>, const micron::thread_attr_t &, FInt, int &>,
                   "group_thread<> must accept lvalue int");
-    static_assert(micron::is_constructible_v<micron::group_thread<>, const pthread_attr_t &, FInt, int>,
+    static_assert(micron::is_constructible_v<micron::group_thread<>, const micron::thread_attr_t &, FInt, int>,
                   "group_thread<> must accept rvalue int");
-    static_assert(micron::is_constructible_v<micron::void_thread<>, const pthread_attr_t &, FInt, int &>,
+    static_assert(micron::is_constructible_v<micron::void_thread<>, const micron::thread_attr_t &, FInt, int &>,
                   "void_thread<> must accept lvalue int");
-    static_assert(micron::is_constructible_v<micron::void_thread<>, const pthread_attr_t &, FInt, int>,
+    static_assert(micron::is_constructible_v<micron::void_thread<>, const micron::thread_attr_t &, FInt, int>,
                   "void_thread<> must accept rvalue int");
-    static_assert(micron::is_constructible_v<micron::async_thread<>, const pthread_attr_t &, FInt, int &>,
+    static_assert(micron::is_constructible_v<micron::async_thread<>, const micron::thread_attr_t &, FInt, int &>,
                   "async_thread<> must accept lvalue int");
-    static_assert(micron::is_constructible_v<micron::async_thread<>, const pthread_attr_t &, FInt, int>,
+    static_assert(micron::is_constructible_v<micron::async_thread<>, const micron::thread_attr_t &, FInt, int>,
                   "async_thread<> must accept rvalue int");
     require(true);
   }
@@ -312,11 +312,10 @@ main(int, char **)
 
   test_case("H4+H5 smoke: group_thread runs and returns successfully");
   {
-    auto attrs = micron::pthread::prepare_thread(micron::pthread::thread_create_state::joinable, micron::posix::sched_other, 0);
-    // group_thread expects the stack to be pre-allocated and set on the attrs
+    // group_thread expects the stack to be pre-allocated and carried on the (native) attrs
     auto stack = micron::addrmap(micron::thread_stack_size);
     require(!micron::mmap_failed(stack), true);
-    micron::pthread::set_stack_thread(attrs, stack, micron::thread_stack_size);
+    auto attrs = micron::__thread_attr_with_stack(micron::posix::getpid(), micron::posix::sched_other, stack, micron::thread_stack_size);
 
     {
       micron::group_thread<> t(attrs, return_int, 5);

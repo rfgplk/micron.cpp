@@ -7,6 +7,10 @@
 
 #include "bits.hpp"
 
+#if !defined(__micron_arch_width_64)
+#error "micron::elf loader requires a 64-bit target"
+#endif
+
 namespace micron
 {
 namespace elf

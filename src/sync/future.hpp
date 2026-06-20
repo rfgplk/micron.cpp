@@ -143,7 +143,14 @@ public:
     }
     retrieved = true;
 
-    if ( has_exception ) throw micron::broken_promise{ exc_msg };
+    if ( has_exception ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      throw micron::broken_promise{ exc_msg };
+#else
+      // freestanding without exceptions (-k): cannot unwind; trap on a broken promise instead
+      micron::exc<except::future_error>(exc_msg);
+#endif
+    }
 
     return micron::move(storage.value);
   }
@@ -251,7 +258,14 @@ public:
       exc<except::future_error>("");
     }
     retrieved = true;
-    if ( has_exception ) throw micron::broken_promise{ exc_msg };
+    if ( has_exception ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      throw micron::broken_promise{ exc_msg };
+#else
+      // freestanding without exceptions (-k): cannot unwind; trap on a broken promise instead
+      micron::exc<except::future_error>(exc_msg);
+#endif
+    }
   }
 
   bool
@@ -359,7 +373,14 @@ public:
       exc<except::future_error>("");
     }
     retrieved = true;
-    if ( has_exception ) throw micron::broken_promise{ exc_msg };
+    if ( has_exception ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      throw micron::broken_promise{ exc_msg };
+#else
+      // freestanding without exceptions (-k): cannot unwind; trap on a broken promise instead
+      micron::exc<except::future_error>(exc_msg);
+#endif
+    }
 
     return *ptr;
   }

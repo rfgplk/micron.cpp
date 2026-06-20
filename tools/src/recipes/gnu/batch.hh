@@ -111,11 +111,13 @@ batch_cmp(const config_t &conf)
   const string_type freestanding_post
       = (conf.freestanding) ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
   // the eh trampoline must live in its own TU (separate from throwing code)
-  const string_type startup_objs
-      = (conf.freestanding and linking)
-            ? (conf.freestanding_eh ? "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
-                                    : "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp")
-            : "";
+  // width-aware _start: a -32 freestanding link must use the i386 crt, not the amd64 one
+  string_type startup_objs;
+  if ( conf.freestanding and linking ) {
+    startup_objs = (conf.width == 32) ? "/usr/src/mc_start/start_i386.s " : "/usr/src/mc_start/start.s ";
+    startup_objs += "/usr/src/mc_start/start.cpp";
+    if ( conf.freestanding_eh ) startup_objs += " /usr/src/mc_start/eh_runtime.cpp";
+  }
   const string_type arch_width = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
@@ -375,9 +377,12 @@ batch_cmp_aarch64(const config_t &conf)
     freestanding = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
                                         gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector)
                            : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
+    // mic-thread futex/mutex use __atomic builtins; default -moutline-atomics emits __aarch64_cas*/__aarch64_ldadd*
+    // libgcc helpers that don't resolve under -nostdlib. force them inline for EVERY freestanding aarch64 build.
+    freestanding += " -mno-outline-atomics";
     if ( conf.freestanding_eh ) {
       // arm64 uses zero-cost DWARF
-      freestanding += " -fexceptions -frtti -fasynchronous-unwind-tables -mno-outline-atomics -D__micron_eh";
+      freestanding += " -fexceptions -frtti -fasynchronous-unwind-tables -D__micron_eh";
       if ( linking ) freestanding += " -Wl,--eh-frame-hdr";
     } else {
       freestanding += " ";

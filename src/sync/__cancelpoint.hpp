@@ -6,21 +6,17 @@
 #pragma once
 
 #include "../bits/__arch.hpp"
-
-#if !defined(__micron_freestanding)
-#include "../linux/sys/__threads.hpp"
-#endif
+#include "../bits/__thread_exit_hook.hpp"
 
 namespace micron
 {
 
-// NOTE: intentionally NOT noexcept when a deferred cancel is pending, we perform a forced unwind that propagates through this call
+// the native cancellation/park checkpoint
 inline __attribute__((always_inline)) void
 __testcancel(void)
 {
-#if !defined(__micron_freestanding)
-  pthread::cancel();
-#endif
+  // NOTE: no longer testcancel, our threads don't use that mechanism anymore
+  micron::__micron_park_checkpoint();
 }
 
 };      // namespace micron

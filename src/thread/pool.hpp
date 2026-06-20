@@ -11,9 +11,11 @@
 #include "arena.hpp"
 #include "thread.hpp"
 
-#if !defined(__micron_freestanding)
-
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // thread pools
+//
+// available as freestanding (via micthread)
+
 namespace micron
 {
 
@@ -81,5 +83,3 @@ end_concurrent_pools(void)
 }
 
 };      // namespace micron
-
-#endif

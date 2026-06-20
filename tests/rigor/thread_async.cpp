@@ -15,14 +15,12 @@ using namespace snowball;
 
 namespace
 {
-pthread_attr_t
+micron::thread_attr_t
 make_attrs(void)
 {
-  auto a = micron::pthread::prepare_thread(micron::pthread::thread_create_state::joinable, micron::posix::sched_other, 0);
   auto *stack = micron::addrmap(micron::thread_stack_size);
   snowball::require(!micron::mmap_failed(stack), true);
-  micron::pthread::set_stack_thread(a, stack, micron::thread_stack_size);
-  return a;
+  return micron::__thread_attr_with_stack(micron::posix::getpid(), micron::posix::sched_other, stack, micron::thread_stack_size);
 }
 
 template<typename T>

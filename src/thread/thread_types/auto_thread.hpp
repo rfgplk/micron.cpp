@@ -9,7 +9,7 @@
 #include "../../types.hpp"
 
 #include "../../linux/__includes.hpp"
-#include "../../linux/sys/__threads.hpp"
+#include "../../linux/sys/micthread/threads.hpp"
 #include "../../linux/sys/resource.hpp"
 #include "../../linux/sys/system.hpp"
 #include "../../memory/stack_constants.hpp"
@@ -56,13 +56,30 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
     parent_pid = micron::posix::getpid();
     // WARNING: alive must be set to true before invoking the kernel, else we risk a race (rare but happens)
     payload.alive.store(true, micron::memory_order_seq_cst);
-    pid = __as_thread_attached<Stack_Size>(&payload, micron::real_addr(fstack), f, micron::forward<Args>(args)...);
+    __link_launch<Stack_Size, &__thread_kernel<micron::decay_t<F>, micron::decay_t<Args>...>>(
+        pid, __ctid, __tls, __pth, &payload, micron::real_addr(fstack), f, micron::forward<Args>(args)...);
   }
 
   void
   __release(void)
   {
+    // WARNING: HEISENBUG; since auto_thread is the only class which stack allocs its own stack (on the parent stack)
+    // if it happened to be page-aligned, guard_stack() mprotect'd its first page to PROT_NONE as a low guard
+    // and ___NOTHING___ restored it. czero'ing the whole array wrote through that guard page -> SIGSEGV (~1/page-size of placements),
+    // and even ____WITHOUT____ the czero the leftover PROT_NONE page would fault later when this object's storage is reused
+    {
+      constexpr usize guard = __micron_page_size_default;
+      if constexpr ( Stack_Size > guard ) {
+        if ( (reinterpret_cast<uintptr_t>(fstack) & (guard - 1)) == 0 )
+          micron::mprotect(reinterpret_cast<addr_t *>(fstack), guard, micron::prot_read | micron::prot_write);
+      }
+    }
     micron::czero<Stack_Size>(fstack);
+    // free this thread's from-scratch TLS block (the spawner owns it; safe now the thread is reaped)
+    micron::__tls_free_frame(__tls);
+    __tls = micron::__tls_frame{};
+    __ctid = 0;
+    __pth = 0;
     // NOTE: do NOT zero parent_pid here; tt is the tgid used to signal the thread and must stay valid for
     // the object's whole life
     pid = 0;
@@ -91,7 +108,10 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
   }
 
   pid_t parent_pid;
-  pthread_t pid;
+  pid_t pid;                  // kernel tid (freestanding; 0 = none/joined)
+  int __ctid = 0;            // CHILD_CLEARTID join futex word (freestanding; address stable for the object's life)
+  micron::__tls_frame __tls{};      // per-thread TLS block (freestanding; freed on release)
+  unsigned long __pth = 0;          // pthread_t handle (hosted backend)
   alignas(16) byte fstack[Stack_Size];      // must be 16 byte aligned, stack will be stack allocated and survive for the
                                             // duration of this class
   __thread_payload payload;
@@ -100,7 +120,7 @@ public:
   ~auto_thread()
   {
     // join iff a thread is actually live; guard on pid AND alive
-    if ( pid == 0 && !payload.alive.get(micron::memory_order_acquire) ) return;
+    if ( !__link_valid(pid, __pth) && !payload.alive.get(micron::memory_order_acquire) ) return;
     __join();
   }
 
@@ -147,134 +167,120 @@ public:
   inline bool
   active(void) const
   {
-    // more reliable, although slower
-    return (pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), 0) == 0 ? true : false);
+    // more reliable, although slower: probe the thread with signal 0 (tgkill)
+    return (micthread::thread_kill(parent_pid, __link_tid(pid, __pth), 0) == 0 ? true : false);
   }
 
   auto
   can_join(void) -> int
   {
-    int r = pthread::__try_join_thread(pid);
-    if ( r == 0 ) {
-      return 1;
-    }
-    if ( r == error::busy or r == error::invalid_arg ) return r;
-    return 0;
+    if ( !__link_valid(pid, __pth) ) return 0;
+    return __link_try_join(pid, &__ctid, __pth) == 0 ? 1 : (int)error::busy;
   }
 
   auto
   dismiss(void) -> int      // auto_thread
   {
-    int r = try_join();
-    if ( r == error::busy ) {
-      auto rr = pthread::__join_thread(pid);
-      __release();
-      return rr;
-    }
-    return r;
+    if ( !__link_valid(pid, __pth) ) return 1;
+    __link_join(pid, &__ctid, __pth);      // futex-wait on the CHILD_CLEARTID word
+    __release();
+    return 0;
   }
 
   auto
   join(void) -> int      // auto_thread
   {
-    int r = try_join();
-    if ( r == error::busy ) {
-      auto rr = pthread::__join_thread(pid);
-      __safe_release();
-      return rr;
-    }
-    return r;
+    if ( !__link_valid(pid, __pth) ) return 1;
+    __link_join(pid, &__ctid, __pth);
+    __safe_release();
+    return 0;
   }
 
   auto
   try_join(void) -> int
   {
-    if ( pid == 0 ) return 1;      // already joined/released, idempotent
-    int r = pthread::__try_join_thread(pid);
-    if ( r == 0 ) {
+    if ( !__link_valid(pid, __pth) ) return 1;      // already joined/released, idempotent
+    if ( __link_try_join(pid, &__ctid, __pth) == 0 ) {
       __safe_release();
       return 1;
     }
-    if ( r == error::busy or r == error::invalid_arg ) return r;
     return error::busy;
   }
 
   auto
   thread_id(void) const
   {
-    return pthread::get_thread_id(pid);
+    return __link_tid(pid, __pth);
   }
 
   auto
   native_handle(void) const
   {
-    return pid;
+    return __link_tid(pid, __pth);
   }
 
   int
   signal(const micron::signal s)
   {
     if ( alive() ) {
-      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)s);
+      return micthread::thread_kill(parent_pid, __link_tid(pid, __pth), (int)s);
     }
     return -1;
   }
 
-  // pseudo sleep
+  // throttle alias: park (the old USR1 pseudo-sleep is gone)
   int
   sleep_second(void)
   {
-    if ( alive() ) {
-      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::usr1);
-    }
-    return -1;
+    return sleep();
   }
 
-  // true per-thread suspend: deliver thread_suspend; the handler parks ONLY this thread in sigsuspend()
-  // (SIGSTOP would freeze the whole process). resume with awaken().
+  // native per-thread suspend: set the control word PARKED; the target blocks at its next checkpoint
   int
   sleep(void)
   {
-    if ( alive() ) {
-      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::thread_suspend);
-    }
-    return -1;
+    if ( !alive() ) return -1;
+    payload.park.store(__park_parked, micron::memory_order_release);
+    return 0;
   }
 
   int
   awaken(void)
   {
-    if ( alive() ) {
-      return pthread::thread_kill(parent_pid, pthread::get_thread_id(pid), (int)signal::thread_resume);
-    }
-    return -1;
+    if ( !alive() ) return -1;
+    payload.park.store(__park_run, micron::memory_order_release);
+    micron::wake_futex(payload.park.ptr(), 1);      // wake the parked checkpoint (private futex)
+    return 0;
   }
 
   int
   cancel(void)
   {
-    if ( alive() ) {
-      int r = pthread::cancel_thread(pid);
-      signal(signal::usr2);
-      pthread::__join_thread(pid);
-      payload.alive.store(false, micron::memory_order_seq_cst);
-      __safe_release();
-      return r;
-    }
-    return -1;
+    if ( !alive() ) return -1;
+    payload.park.store(__park_dying, micron::memory_order_release);
+    micron::wake_futex(payload.park.ptr(), 1);
+    __link_join(pid, &__ctid, __pth);
+    payload.alive.store(false, micron::memory_order_seq_cst);
+    __safe_release();
+    return 0;
   }
 
   int
   terminate(void)
   {
     if ( !alive() ) return -1;
-    int r = signal(signal::terminate);
+    payload.park.store(__park_dying, micron::memory_order_release);
+    micron::wake_futex(payload.park.ptr(), 1);
     if ( micron::until_timeout(__thread_term_timeout_ms, [this]() noexcept { return !alive(); }) ) {
-      // the thread is now kernel dead
-      if ( pid != 0 ) pthread::__join_thread(pid);
+      __link_join(pid, &__ctid, __pth);      // cooperative exit observed; reap
+      __release();
+    } else {
+      // runaway thread missed the checkpoint within budget: last-resort hard kill
+      micthread::thread_kill(parent_pid, __link_tid(pid, __pth), (int)signal::kill9);
+      __link_join(pid, &__ctid, __pth);
       __release();
     }
-    return r;
+    return 0;
   }
 
   byte *

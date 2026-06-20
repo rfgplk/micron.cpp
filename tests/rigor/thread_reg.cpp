@@ -150,7 +150,7 @@ main(int, char **)
     atomic_token<bool> never{ false };
     thread<> t([&never]() {
       while ( !never.get(memory_order_acquire) ) {
-        micron::pthread::cancel();
+        micron::micthread::cancel();
         micron::sleep(1);
       }
     });

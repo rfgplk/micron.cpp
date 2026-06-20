@@ -53,7 +53,11 @@ __abort(void)
   if constexpr ( config::__default_abort_on_require ) {
     __exit();
   } else if constexpr ( config::__default_else_throw_on_require ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     throw micron::runtime{ "snowball exception in abort()" };
+#else
+    micron::sys_exit(6);      // -k (no exceptions): cannot throw, just exit
+#endif
   }
   micron::sys_exit(6);
 }
