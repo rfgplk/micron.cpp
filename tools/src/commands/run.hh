@@ -46,6 +46,7 @@ build_and_run(const recipes::gnu::config_t &conf)
 
   if ( r != 0 ) {
     mc::console("Compilation failed with error code: ", r);
+    mc::set_color(mc::color::reset);      // don't leave the terminal stained yellow on abort
     mc::abort();
   }
   mc::set_color(mc::color::reset);

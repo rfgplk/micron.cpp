@@ -73,6 +73,88 @@ make_flags(const mc::constarray<F> flags)
   return r;
 }
 
+struct composed_t {
+  string_type sanitize;   
+  string_type extensions; 
+  string_type link_tail;  
+};
+
+inline void
+__compose_add(string_type &dst, const char *s)
+{
+  if ( s == nullptr or *s == '\0' ) return;
+  if ( !dst.empty() ) dst += ' ';
+  dst += s;
+}
+
+inline composed_t
+compose(const config_t &conf, bool linking)
+{
+  composed_t c;
+  const bool cpp = __is_cpp_standard(conf.standard);
+  const bool fs = conf.freestanding;
+  const bool sanitized = conf.asan or conf.ubsan or conf.tsan or conf.lsan;
+
+  if ( conf.asan and conf.tsan ) mc::cerror("--asan and --tsan are mutually exclusive");
+  if ( fs and (conf.tsan or conf.lsan) ) mc::cerror("--tsan/--lsan need a hosted runtime; not valid under -k");
+  if ( conf.asan ) __compose_add(c.sanitize, "-fsanitize=address -fno-omit-frame-pointer");
+  if ( conf.ubsan ) __compose_add(c.sanitize, "-fsanitize=undefined");
+  if ( conf.tsan ) __compose_add(c.sanitize, "-fsanitize=thread -fno-omit-frame-pointer");
+  if ( conf.lsan and !conf.asan ) __compose_add(c.sanitize, "-fsanitize=leak");      // asan already covers leak
+
+  c.extensions = fs ? (cpp ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
+                    : (cpp ? make_flags(conf.spall ? gcc::profiling_flags::flags::stack_protector_all
+                                                   : gcc::profiling_flags::flags::stack_protector_strong,
+                                        gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow,
+                                        gcc::cpp_flags::flags::ext_numeric_literals)
+                           : make_flags(conf.spall ? gcc::profiling_flags::flags::stack_protector_all
+                                                   : gcc::profiling_flags::flags::stack_protector_strong,
+                                        gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow));
+  // LTO on by default except under sanitizers or freestanding EH
+  if ( !sanitized and !conf.freestanding_eh ) {
+    if ( !c.extensions.empty() ) c.extensions += ' ';
+    c.extensions += make_flags(gcc::opt_flags::flags::lto_eight);
+  }
+
+  // more safeties
+  if ( conf.cfi ) {
+    if ( conf.arch == __arch::x86 )
+      __compose_add(c.extensions, "-fcf-protection=full");      // Intel CET
+    else if ( conf.arch == __arch::arm64 )
+      __compose_add(c.extensions, "-mbranch-protection=standard");      // PAC + BTI
+    else
+      __compose_add(c.extensions, "-mbranch-protection=pac-ret");      // arm32
+  }
+  // FORTIFY is hosted only
+  if ( conf.fortify and !fs and !sanitized and conf.opt_mode != gcc::opt_flags::flags::optimize_zero )
+    __compose_add(c.extensions, conf.arch == __arch::x86 ? "-D_FORTIFY_SOURCE=3" : "-D_FORTIFY_SOURCE=2");
+  if ( (conf.pie or conf.static_pie) and !fs ) __compose_add(c.extensions, "-fPIE");
+  if ( conf.gc ) __compose_add(c.extensions, "-ffunction-sections -fdata-sections");
+  if ( conf.unroll ) __compose_add(c.extensions, "-funroll-loops");
+  if ( conf.pgo_gen and conf.pgo_use ) mc::cerror("--pgo-gen and --pgo-use are mutually exclusive");
+  if ( (conf.pgo_gen or conf.pgo_use) and fs ) mc::cerror("PGO needs a hosted runtime; not valid under -k");
+  if ( conf.pgo_gen ) __compose_add(c.extensions, "-fprofile-generate");
+  if ( conf.pgo_use ) __compose_add(c.extensions, "-fprofile-use -fprofile-correction -Wno-missing-profile");
+  if ( conf.no_eh and cpp ) __compose_add(c.extensions, "-fno-exceptions");      // explicit only; hosted micron uses EH
+  if ( conf.no_rtti and cpp ) __compose_add(c.extensions, "-fno-rtti");
+
+  // links
+  if ( linking ) {
+    if ( (conf.pie or conf.static_pie) and conf.static_binary ) mc::cerror("--pie/--static-pie conflicts with -s (static)");
+    if ( conf.static_pie and fs ) mc::cerror("--static-pie has no PIE-capable freestanding _start; not valid under -k");
+    if ( conf.static_pie )
+      __compose_add(c.link_tail, "-static-pie");
+    else if ( conf.pie and !fs )
+      __compose_add(c.link_tail, "-pie");
+    if ( conf.relro ) __compose_add(c.link_tail, "-Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack");
+    if ( conf.gc ) __compose_add(c.link_tail, "-Wl,--gc-sections");
+    if ( conf.strip ) __compose_add(c.link_tail, "-Wl,--strip-all");
+    if ( conf.tsan and conf.static_binary ) __compose_add(c.link_tail, "-static-libtsan");
+  }
+
+  return c;
+}
+
 // x86
 string_type
 batch_cmp(const config_t &conf)
@@ -147,24 +229,10 @@ batch_cmp(const config_t &conf)
 
   const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
 
-  const bool sanitized = conf.asan or conf.ubsan;
-  string_type flags_sanitize = conf.asan ? "-fsanitize=address -fno-omit-frame-pointer" : "";
-  if ( conf.ubsan ) {
-    if ( !flags_sanitize.empty() ) flags_sanitize += ' ';
-    flags_sanitize += "-fsanitize=undefined";
-  }
-  string_type flags_extensions
-      = (conf.freestanding)
-            ? (__is_cpp_standard(conf.standard) ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
-            : (__is_cpp_standard(conf.standard)
-                   ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                                gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
-                   : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                                gcc::profiling_flags::flags::strict_overflow));
-  if ( !sanitized && !conf.freestanding_eh ) {
-    if ( !flags_extensions.empty() ) flags_extensions += ' ';
-    flags_extensions += make_flags(gcc::opt_flags::flags::lto_eight);
-  }
+  // sanitizer + hardening + perf + size + language fragment, shared across the three arch builders
+  const composed_t __cz = compose(conf, linking);
+  const string_type &flags_sanitize = __cz.sanitize;
+  const string_type &flags_extensions = __cz.extensions;
   const string_type flags_extensions_supple
       = conf.doctor ? (__is_cpp_standard(conf.standard)
                            ? "-fdiagnostics-color=always -fconcepts-diagnostics-depth=2 -ftime-report -ftime-report-details -fmem-report "
@@ -208,9 +276,9 @@ batch_cmp(const config_t &conf)
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
   if ( conf.freestanding )
-    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static);
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
   else
-    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static);
+    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
 };
 
 // armv7
@@ -284,25 +352,10 @@ batch_cmp_armv7(const config_t &conf)
 
   const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
 
-  // sanitizers and -flto don't mix; drop lto whenever --asan/--ubsan are in play
-  const bool sanitized = conf.asan or conf.ubsan;
-  string_type flags_sanitize = conf.asan ? "-fsanitize=address -fno-omit-frame-pointer" : "";
-  if ( conf.ubsan ) {
-    if ( !flags_sanitize.empty() ) flags_sanitize += ' ';
-    flags_sanitize += "-fsanitize=undefined";
-  }
-  string_type flags_extensions
-      = (conf.freestanding)
-            ? (__is_cpp_standard(conf.standard) ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
-            : (__is_cpp_standard(conf.standard)
-                   ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                                gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
-                   : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                                gcc::profiling_flags::flags::strict_overflow));
-  if ( !sanitized && !conf.freestanding_eh ) {
-    if ( !flags_extensions.empty() ) flags_extensions += ' ';
-    flags_extensions += make_flags(gcc::opt_flags::flags::lto_eight);
-  }
+  // sanitizer + hardening + perf + size + language
+  const composed_t __cz = compose(conf, linking);
+  const string_type &flags_sanitize = __cz.sanitize;
+  const string_type &flags_extensions = __cz.extensions;
 
   const string_type flags_extensions_supple
 
@@ -348,9 +401,9 @@ batch_cmp_armv7(const config_t &conf)
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
   if ( conf.freestanding )
-    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static);
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
   else
-    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static);
+    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
 };
 
 string_type
@@ -420,25 +473,10 @@ batch_cmp_aarch64(const config_t &conf)
 
   const string_type flags_warn_ignore = "-Wno-variadic-macros -Wno-inline";
 
-  // sanitizers and -flto don't mix; drop lto whenever --asan/--ubsan are in play
-  const bool sanitized = conf.asan or conf.ubsan;
-  string_type flags_sanitize = conf.asan ? "-fsanitize=address -fno-omit-frame-pointer" : "";
-  if ( conf.ubsan ) {
-    if ( !flags_sanitize.empty() ) flags_sanitize += ' ';
-    flags_sanitize += "-fsanitize=undefined";
-  }
-  string_type flags_extensions
-      = (conf.freestanding)
-            ? (__is_cpp_standard(conf.standard) ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
-            : (__is_cpp_standard(conf.standard)
-                   ? make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                                gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
-                   : make_flags(gcc::profiling_flags::flags::stack_protector_strong, gcc::profiling_flags::flags::stack_clash_protection,
-                                gcc::profiling_flags::flags::strict_overflow));
-  if ( !sanitized && !conf.freestanding_eh ) {
-    if ( !flags_extensions.empty() ) flags_extensions += ' ';
-    flags_extensions += make_flags(gcc::opt_flags::flags::lto_eight);
-  }
+  // sanitizer + hardening + perf + size + language fragment, shared across the three arch builders
+  const composed_t __cz = compose(conf, linking);
+  const string_type &flags_sanitize = __cz.sanitize;
+  const string_type &flags_extensions = __cz.extensions;
 
   const string_type flags_extensions_supple
       = conf.doctor ? (__is_cpp_standard(conf.standard)
@@ -483,9 +521,9 @@ batch_cmp_aarch64(const config_t &conf)
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
   if ( conf.freestanding )
-    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static);
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
   else
-    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static);
+    return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
 };
 
 string_type

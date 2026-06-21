@@ -57,6 +57,15 @@ parse_main(int argc, char **argv)
   requires(recipes::__using_gnu)
 {
   using namespace recipes::gnu;
+  // duck <recipe>.duck  is equal to duck batch <recipe>.duck
+  if ( argc >= 2 and argv[1] != nullptr and string_type{ argv[1] }.ends_with(".duck") ) {
+    mc::vector<char *> __argv;
+    __argv.push_back(argv[0]);
+    char batch_lit[] = "batch";
+    __argv.push_back(batch_lit);
+    for ( int i = 1; i < argc; ++i ) __argv.push_back(argv[i]);
+    return parse_main(static_cast<int>(__argv.size()), __argv.data());
+  }
   if ( argc < 3 ) [[unlikely]] {
     if ( argc == 2 )
       if ( (mc::strcmp(argv[1], "help") == 0) or (mc::strcmp(argv[1], "--help")) or (mc::strcmp(argv[1], "--h"))
