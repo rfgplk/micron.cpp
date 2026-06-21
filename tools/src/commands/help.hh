@@ -126,6 +126,15 @@ help(void)
   mc::console("    -O0 -O1 -O2 -O3   gcc optimization levels");
   mc::console("    -Ofast            aggressive optimization                   (default)");
   mc::console("    -Oz               optimize for size");
+  mc::console("    --perf            profile:  -O3 (FP-safe, not -Ofast) + -funroll-loops");
+  mc::console("    --minsize         profile:  -Os + section gc (implies --gc)");
+  mc::console("    --gc              dead-strip unused sections (-ffunction-sections");
+  mc::console("                      -fdata-sections, -Wl,--gc-sections); pairs with -k");
+  mc::console("    --unroll          -funroll-loops");
+  mc::console("    --pgo-gen         instrument for PGO (-fprofile-generate);  hosted only");
+  mc::console("    --pgo-use         use PGO data (-fprofile-use -fprofile-correction)");
+  mc::console("    --no-eh           -fno-exceptions   (C++ only; explicit opt-in)");
+  mc::console("    --no-rtti         -fno-rtti         (C++ only; explicit opt-in)");
   mc::console("    -d, -g            debug build; switches to the debug recipe");
   mc::console("                      and forces -O0 unless an explicit -O*    is given");
   mc::console("");
@@ -147,6 +156,19 @@ help(void)
   mc::console("                      -fno-omit-frame-pointer); disables -flto");
   mc::console("    --ubsan           UBSanitizer (-fsanitize=undefined); disables -flto;");
   mc::console("                      combines with --asan");
+  mc::console("    --tsan            ThreadSanitizer (-fsanitize=thread); disables -flto;");
+  mc::console("                      mutually exclusive with --asan; hosted only");
+  mc::console("    --lsan            LeakSanitizer (-fsanitize=leak); subsumed by --asan");
+  mc::console("    --cfi             control-flow integrity:  x86 -fcf-protection=full,");
+  mc::console("                      arm64 -mbranch-protection=standard, arm -mbranch-protection=pac-ret");
+  mc::console("    --fortify         -D_FORTIFY_SOURCE=3 (x86) / =2 (arm); needs -O>0, hosted");
+  mc::console("    --spall           -fstack-protector-all (replaces the default -strong)");
+  mc::console("    --pie             position-independent executable  (-fPIE -pie)");
+  mc::console("    --static-pie      static PIE (-static-pie -fPIE);  conflicts with -s");
+  mc::console("    --relro           full RELRO (-Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack)");
+  mc::console("    --strip           strip symbols at link            (-Wl,--strip-all)");
+  mc::console("    --harden          profile:  --cfi --fortify --pie --relro (collapses");
+  mc::console("                      to --cfi --relro under -k; drops --pie under -s)");
   mc::console("    -f                force build:  skip include-mtime change detection");
   mc::console("    -j <N>            cap for the parallel commands (default: online cpus)");
   mc::console("");
@@ -179,6 +201,8 @@ help(void)
   mc::console("        <command> <args...>           # 'duck' itself is implicit");
   mc::console("    '#' starts a line comment. Blank lines are ignored. Tokens are");
   mc::console("    whitespace-separated. Lines run sequentially in declaration order.");
+  mc::console("    A '<file>.duck' path is run as a batch implicitly:");
+  mc::console("        duck build.duck   ==   duck batch build.duck");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +232,8 @@ help(void)
   mc::console("        -f elf64|elf32 (-64/-32) -I<include path>; output is always a .o");
   mc::console("    GNU as recipe (.s/.S):");
   mc::console("        gcc driver, arch flags only; links unless --obj/--pp");
-  mc::console("    Sanitizers (--asan/--ubsan) drop -flto=8 (incompatible)");
+  mc::console("    Sanitizers (--asan/--ubsan/--tsan/--lsan) drop -flto=8 (incompatible);");
+  mc::console("        --asan and --tsan are mutually exclusive");
   mc::console("    Default link libs (unless -k/freestanding):");
   mc::console("        -lpthread");
   mc::console("");
@@ -232,5 +257,9 @@ help(void)
   mc::console("    duck build src/blob.asm               # nasm path, emits boot/blob.o");
   mc::console("    duck build src/x.cpp --asan --ubsan   # sanitized build, no lto");
   mc::console("    duck build src/k.cpp -k -s --std c++23  # freestanding static");
+  mc::console("    duck build src/svc.cpp --harden       # full hosted hardening profile");
+  mc::console("    duck build --arm64 src/k.cpp -k --gc --cfi  # freestanding, gc'd, PAC/BTI");
+  mc::console("    duck build src/hot.cpp --perf         # -O3 + unroll (FP-safe)");
+  mc::console("    duck build.duck                       # implicit batch (== duck batch ...)");
   mc::console("    duck batch scripts/build_all.duck     # script of duck commands");
 }

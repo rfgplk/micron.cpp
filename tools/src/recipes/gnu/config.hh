@@ -110,6 +110,21 @@ struct config_t {
   bool freestanding_eh = false;      // freestanding + the micron C++ exception trampoline
   bool asan = false;
   bool ubsan = false;
+  bool tsan = false;         
+  bool lsan = false;        
+  bool cfi = false;           // x86 -fcf-protection=full / arm -mbranch-protection=
+  bool fortify = false;       // -D_FORTIFY_SOURCE=2|3
+  bool pie = false;       
+  bool static_pie = false;    // -static-pie -fPIE
+  bool relro = false;         // -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack
+  bool gc = false;            // -ffunction-sections -fdata-sections -Wl,--gc-sections
+  bool spall = true;         // -fstack-protector-all
+  bool unroll = false;        // -funroll-loops
+  bool pgo_gen = false;       // -fprofile-generate
+  bool pgo_use = false;       // -fprofile-use
+  bool no_eh = false;         // -fno-exceptions
+  bool no_rtti = false;       // -fno-rtti
+  bool strip = false;         // -Wl,--strip-all
   bool check_compileability = true;      // check include paths for updates - default true
   u32 jobs{ 0 };                         // 0 = default to online cpu count when running parallel
   u32 compile_type{ __comp_type::linked };
@@ -317,6 +332,54 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.asan = true;
     } else if ( mc::strcmp(argv[i], "--ubsan") == 0 ) {
       conf.ubsan = true;
+    } else if ( mc::strcmp(argv[i], "--tsan") == 0 ) {
+      conf.tsan = true;
+    } else if ( mc::strcmp(argv[i], "--lsan") == 0 ) {
+      conf.lsan = true;
+    } else if ( mc::strcmp(argv[i], "--cfi") == 0 ) {
+      conf.cfi = true;
+    } else if ( mc::strcmp(argv[i], "--fortify") == 0 ) {
+      conf.fortify = true;
+    } else if ( mc::strcmp(argv[i], "--pie") == 0 ) {
+      conf.pie = true;
+    } else if ( mc::strcmp(argv[i], "--static-pie") == 0 ) {
+      conf.static_pie = true;
+    } else if ( mc::strcmp(argv[i], "--relro") == 0 ) {
+      conf.relro = true;
+    } else if ( mc::strcmp(argv[i], "--gc") == 0 ) {
+      conf.gc = true;
+    } else if ( mc::strcmp(argv[i], "--spall") == 0 ) {
+      conf.spall = true;
+    } else if ( mc::strcmp(argv[i], "--unroll") == 0 ) {
+      conf.unroll = true;
+    } else if ( mc::strcmp(argv[i], "--pgo-gen") == 0 ) {
+      conf.pgo_gen = true;
+    } else if ( mc::strcmp(argv[i], "--pgo-use") == 0 ) {
+      conf.pgo_use = true;
+    } else if ( mc::strcmp(argv[i], "--no-eh") == 0 ) {
+      conf.no_eh = true;
+    } else if ( mc::strcmp(argv[i], "--no-rtti") == 0 ) {
+      conf.no_rtti = true;
+    } else if ( mc::strcmp(argv[i], "--strip") == 0 ) {
+      conf.strip = true;
+    } else if ( mc::strcmp(argv[i], "--harden") == 0 ) {
+      // full hardening profile
+      conf.cfi = true;
+      conf.fortify = true;
+      conf.pie = true;
+      conf.relro = true;
+    } else if ( mc::strcmp(argv[i], "--minsize") == 0 ) {
+      conf.gc = true;
+      if ( !user_provided_opt ) {
+        conf.opt_mode = gcc::opt_flags::flags::optimize_size;
+        user_provided_opt = true;
+      }
+    } else if ( mc::strcmp(argv[i], "--perf") == 0 ) {
+      conf.unroll = true;
+      if ( !user_provided_opt ) {
+        conf.opt_mode = gcc::opt_flags::flags::optimize_three;
+        user_provided_opt = true;
+      }
     } else if ( mc::strcmp(argv[i], "--def") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the --def flag must be followed by NAME or NAME=VALUE");
       conf.defines.push_back(string_type{ argv[i] });
