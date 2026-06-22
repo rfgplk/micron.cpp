@@ -8,7 +8,7 @@
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
-#include "../../linux/sys/system.hpp"    
+#include "../../linux/sys/system.hpp"
 
 namespace micron
 {

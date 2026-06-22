@@ -59,7 +59,7 @@ struct __thread_payload {
   atomic_token<bool> alive;
   // the child sets this true the instant it reaches __thread_kernel
   atomic_token<bool> started{ false };
-  // native park/sleep/awake/terminate control word 
+  // native park/sleep/awake/terminate control word
   atomic_token<u32> park{ __park_run };
   // NOTE:
   // the pointer is used as the operand of a static_cast (7.6.1.8), except when the conversion is to pointer
@@ -184,7 +184,7 @@ __worker_kernel(__worker_payload *payload)
     while ( payload->queue.empty() ) {
       if ( payload->should_die.get(memory_order_acquire) ) return return_force;
       // WARNING: consume a pending wake token via CAS 1->0 instead of an unconditional store(0)
-      // an unconditional clear races the producer/stop() path: if our store(0) lands __AFTER__ 
+      // an unconditional clear races the producer/stop() path: if our store(0) lands __AFTER__
       // the producer's store(1) and the wake fired before we reach wait_futex, the wakeup is
       // lost and we sleep on 0 forever
       u32 __hw_token = 1;
@@ -205,7 +205,6 @@ __worker_kernel(__worker_payload *payload)
   }
   return return_success;
 }
-
 
 // hosted backend
 #if !defined(__micron_freestanding)
@@ -236,6 +235,7 @@ private:
   {
     KFn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
   }
+
   template<usize... I>
   static void
   __cleanup([[maybe_unused]] __pth_box *self, micron::index_sequence<I...>)
@@ -398,10 +398,10 @@ struct thread_attr_t {
   }
 
   pid_t parent;
-  pid_t pid;             // kernel tid (freestanding; 0 = none/joined)
-  int ctid;              // CHILD_CLEARTID join futex word (freestanding; address must stay stable while running)
+  pid_t pid;                    // kernel tid (freestanding; 0 = none/joined)
+  int ctid;                     // CHILD_CLEARTID join futex word (freestanding; address must stay stable while running)
   micron::__tls_frame tls;      // per-thread TLS block (freestanding; joiner frees)
-  unsigned long pth;     // pthread_t handle (hosted backend)
+  unsigned long pth;            // pthread_t handle (hosted backend)
   i32 sched_policy;
   u32 sched_priority;
   u32 sched_niceness;

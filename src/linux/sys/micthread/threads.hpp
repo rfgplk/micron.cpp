@@ -26,7 +26,7 @@
 #include "../prctl.hpp"
 #include "../system.hpp"
 
-#include "../../io/sys.hpp"  
+#include "../../io/sys.hpp"
 
 #include "../../../atomic/atomic.hpp"
 
@@ -36,8 +36,8 @@
 
 #include "../../../sync/futex.hpp"
 
-#include "tls.hpp"
 #include "../clone.hpp"
+#include "tls.hpp"
 
 // legacy + transitional reasons
 // TODO: remove
@@ -115,8 +115,8 @@ thread_kill(pid_t tgid, tid_t tid, int sig) noexcept
 }
 
 struct stack_region {
-  addr_t *low;      // lowest usable byte -> clone_args.stack
-  usize usable;     // bytes the kernel may use (it computes the top)
+  addr_t *low;       // lowest usable byte -> clone_args.stack
+  usize usable;      // bytes the kernel may use (it computes the top)
 };
 
 template<typename T>

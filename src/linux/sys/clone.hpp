@@ -153,22 +153,22 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
 __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 {
   // rdi=thunk rsi=payload rdx=&clone_args rcx=args_size
-  asm volatile("pushq %r12\n\t"            // preserve callee-saved (parent path restores)
+  asm volatile("pushq %r12\n\t"      // preserve callee-saved (parent path restores)
                "pushq %r13\n\t"
-               "movq %rdi, %r12\n\t"       // thunk -> r12 (survives into child)
-               "movq %rsi, %r13\n\t"       // payload -> r13
-               "movq %rdx, %rdi\n\t"       // &clone_args -> a1
-               "movq %rcx, %rsi\n\t"       // args_size  -> a2
-               "movl $435, %eax\n\t"       // SYS_clone3
+               "movq %rdi, %r12\n\t"      // thunk -> r12 (survives into child)
+               "movq %rsi, %r13\n\t"      // payload -> r13
+               "movq %rdx, %rdi\n\t"      // &clone_args -> a1
+               "movq %rcx, %rsi\n\t"      // args_size  -> a2
+               "movl $435, %eax\n\t"      // SYS_clone3
                "syscall\n\t"
                "testq %rax, %rax\n\t"
-               "jnz 1f\n\t"                // parent -> return tid in rax
-               "xorl %ebp, %ebp\n\t"       // child: terminate unwind chain
-               "andq $-16, %rsp\n\t"       // 16-byte align for the call ABI
-               "movq %r13, %rdi\n\t"       // payload -> a1
-               "callq *%r12\n\t"           // thunk(payload)
-               "movl %eax, %edi\n\t"       // status
-               "movl $60, %eax\n\t"        // SYS_exit
+               "jnz 1f\n\t"               // parent -> return tid in rax
+               "xorl %ebp, %ebp\n\t"      // child: terminate unwind chain
+               "andq $-16, %rsp\n\t"      // 16-byte align for the call ABI
+               "movq %r13, %rdi\n\t"      // payload -> a1
+               "callq *%r12\n\t"          // thunk(payload)
+               "movl %eax, %edi\n\t"      // status
+               "movl $60, %eax\n\t"       // SYS_exit
                "syscall\n\t"
                "hlt\n\t"
                "1:\n\t"
@@ -192,14 +192,14 @@ __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
                "movl $435, %eax\n\t"          // SYS_clone3
                "int $0x80\n\t"
                "testl %eax, %eax\n\t"
-               "jnz 1f\n\t"                  // parent
-               "xorl %ebp, %ebp\n\t"         // child
-               "andl $-16, %esp\n\t"         // align
-               "subl $12, %esp\n\t"          // keep 16-byte alignment after the arg push
-               "pushl %edi\n\t"              // payload arg
-               "calll *%esi\n\t"             // thunk(payload)
-               "movl %eax, %ebx\n\t"         // status
-               "movl $1, %eax\n\t"           // SYS_exit
+               "jnz 1f\n\t"               // parent
+               "xorl %ebp, %ebp\n\t"      // child
+               "andl $-16, %esp\n\t"      // align
+               "subl $12, %esp\n\t"       // keep 16-byte alignment after the arg push
+               "pushl %edi\n\t"           // payload arg
+               "calll *%esi\n\t"          // thunk(payload)
+               "movl %eax, %ebx\n\t"      // status
+               "movl $1, %eax\n\t"        // SYS_exit
                "int $0x80\n\t"
                "hlt\n\t"
                "1:\n\t"
@@ -224,13 +224,13 @@ asm(".text\n\t"
     "mov x1, x3\n\t"                     // args_size  -> a1
     "mov x8, #435\n\t"                   // SYS_clone3
     "svc #0\n\t"
-    "cbz x0, 1f\n\t"                     // child -> 1
-    "ldp x19, x20, [sp], #16\n\t"        // parent: restore + return tid
+    "cbz x0, 1f\n\t"                   // child -> 1
+    "ldp x19, x20, [sp], #16\n\t"      // parent: restore + return tid
     "ret\n\t"
     "1:\n\t"
-    "mov x0, x20\n\t"                    // payload -> a0
-    "blr x19\n\t"                        // thunk(payload)
-    "mov x8, #93\n\t"                    // SYS_exit
+    "mov x0, x20\n\t"      // payload -> a0
+    "blr x19\n\t"          // thunk(payload)
+    "mov x8, #93\n\t"      // SYS_exit
     "svc #0\n\t");
 #elif defined(__micron_arch_arm32)
 [[maybe_unused]] static __attribute__((naked, noinline)) long
@@ -238,11 +238,11 @@ __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 {
   // r0=thunk r1=payload r2=&clone_args r3=args_size
   asm volatile("stmfd sp!, {r4, r5, r7}\n\t"      // preserve callee-saved
-               "mov r4, r0\n\t"                    // thunk (survives into child)
-               "mov r5, r1\n\t"                    // payload
-               "mov r0, r2\n\t"                    // &clone_args -> a1
-               "mov r1, r3\n\t"                    // args_size  -> a2
-               "mov r7, #435\n\t"                  // SYS_clone3
+               "mov r4, r0\n\t"                   // thunk (survives into child)
+               "mov r5, r1\n\t"                   // payload
+               "mov r0, r2\n\t"                   // &clone_args -> a1
+               "mov r1, r3\n\t"                   // args_size  -> a2
+               "mov r7, #435\n\t"                 // SYS_clone3
                "svc #0\n\t"
                "tst r0, r0\n\t"
                "bne 1f\n\t"          // parent
@@ -357,8 +357,8 @@ inline constexpr int __micthread_ctid_alive = 1;
 
 // main clone3 spawn
 inline pid_t
-clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid,
-             int *child_tid, unsigned long flags = micthread_flags)
+clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
+             unsigned long flags = micthread_flags)
 {
   if ( !thunk || !stack_low || stack_size == 0 ) return -EINVAL;
   if ( child_tid ) *child_tid = __micthread_ctid_alive;
@@ -375,6 +375,7 @@ clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_s
   struct __i386_clone_user_desc {
     unsigned int entry_number, base_addr, limit, flags;
   };
+
   __i386_clone_user_desc __i386_tls_desc{ 0xffffffffu, static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
   args.tls = reinterpret_cast<u64>(&__i386_tls_desc);
 #endif

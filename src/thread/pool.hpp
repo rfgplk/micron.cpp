@@ -8,6 +8,9 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "../attributes.hpp"
+#include "../config.hpp"
+
 #include "arena.hpp"
 #include "thread.hpp"
 
@@ -25,7 +28,8 @@ using concurrent_arena = arena::__concurrent_arena<>;
 inline standard_arena *__global_threadpool = nullptr;
 inline concurrent_arena *__global_parallelpool = nullptr;
 
-__attribute__((constructor)) void
+// hosted init via .init_array
+gconstructor_ void
 __make_threadarena(void)
 {
   // WARNING: intentionally never destroyed, prevents hangs in glibcs/freestanding via registering atexits
@@ -34,7 +38,14 @@ __make_threadarena(void)
   __global_threadpool = local_pool;
 };
 
-__attribute__((destructor)) void __destroy_threadarena(void) {
+// freestanding init via start
+extern "C" void
+__boot_threadpool(void)
+{
+  __make_threadarena();
+}
+
+gdestructor_ void __destroy_threadarena(void) {
   // WARNING: do NOT null the pointer here; a still-running worker may dereference __global_threadpool during process
   // teardown; nulling it concurrently is a use-after-free / null-deref race
 };
@@ -71,9 +82,8 @@ __destroy_parallelarena(void) {
 void
 start_concurrent_pools(void)
 {
-#if !defined(__micron_enable_concurrency_at_startup_var)
-  __make_parallelarena();
-#endif
+  // hosted already started worker threads
+  if constexpr ( !micron::config::concurrency_at_startup ) __make_parallelarena();
 }
 
 void

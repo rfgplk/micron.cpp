@@ -108,10 +108,10 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
   }
 
   pid_t parent_pid;
-  pid_t pid;                  // kernel tid (freestanding; 0 = none/joined)
-  int __ctid = 0;            // CHILD_CLEARTID join futex word (freestanding; address stable for the object's life)
-  micron::__tls_frame __tls{};      // per-thread TLS block (freestanding; freed on release)
-  unsigned long __pth = 0;          // pthread_t handle (hosted backend)
+  pid_t pid;                                // kernel tid (freestanding; 0 = none/joined)
+  int __ctid = 0;                           // CHILD_CLEARTID join futex word (freestanding; address stable for the object's life)
+  micron::__tls_frame __tls{};              // per-thread TLS block (freestanding; freed on release)
+  unsigned long __pth = 0;                  // pthread_t handle (hosted backend)
   alignas(16) byte fstack[Stack_Size];      // must be 16 byte aligned, stack will be stack allocated and survive for the
                                             // duration of this class
   __thread_payload payload;

@@ -174,7 +174,7 @@ public:
     thread_name[15] = 0x0;
     micthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
 
-    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());  // best-effort
+    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());      // best-effort
     return threads.top();
   }
 
@@ -197,11 +197,11 @@ public:
     thread_name[15] = 0x0;
     micthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
 
-    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());  // best-effort
+    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());      // best-effort
     {
       posix::sched_param __sp{};
       __sp.sched_priority = 1;
-      posix::sched_setscheduler(threads.top().thread.thread_id(), posix::sched_fifo, __sp);  // best-effort (needs CAP_SYS_NICE)
+      posix::sched_setscheduler(threads.top().thread.thread_id(), posix::sched_fifo, __sp);      // best-effort (needs CAP_SYS_NICE)
     }
     return threads.top();
   }
@@ -240,7 +240,7 @@ public:
     sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 12>(threads.size());
     thread_name[15] = 0x0;
     micthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
-    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());  // best-effort
+    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());      // best-effort
     return threads.top();
   }
 
@@ -277,11 +277,11 @@ public:
     sstring<16> thread_name = "arena/" + int_to_string_stack<u32, char, 12>(threads.size());
     thread_name[15] = 0x0;
     micthread::set_name(threads.top().thread.native_handle(), thread_name.c_str());
-    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());  // best-effort
+    posix::sched_setaffinity(threads.top().thread.thread_id(), sizeof(c.get()), c.get());      // best-effort
     {
       posix::sched_param __sp{};
       __sp.sched_priority = 1;
-      posix::sched_setscheduler(threads.top().thread.thread_id(), posix::sched_fifo, __sp);  // best-effort (needs CAP_SYS_NICE)
+      posix::sched_setscheduler(threads.top().thread.thread_id(), posix::sched_fifo, __sp);      // best-effort (needs CAP_SYS_NICE)
     }
     return threads.top();
   }

@@ -7,10 +7,10 @@
 
 #include "../../../atomic/atomic.hpp"
 #include "../../../bits/__arch.hpp"
-#include "../../../memory/mman.hpp"  
+#include "../../../memory/mman.hpp"
 #include "../../../types.hpp"
 
-#include "../../elf/auxv.hpp"   
+#include "../../elf/auxv.hpp"
 
 #include "../../io/sys.hpp"
 
@@ -20,17 +20,17 @@
 namespace micron
 {
 
-// main thread TLS block 
+// main thread TLS block
 // (tp -> clone_args.tls) installed via CLONE_SETTLS before thread execs
 struct __tls_frame {
   byte *base = nullptr;      // page-aligned
   usize size = 0;            // page-rounded in bytes
   byte *tp = nullptr;        // thread pointer (TCB start) [%fs/%gs/TPIDR]
-  u64 image_size = 0;        // PT_TLS memsz rounded to p_align 
+  u64 image_size = 0;        // PT_TLS memsz rounded to p_align
 };
 
 struct __tls_template_t {
-  const byte *image = nullptr;      // .tdata source 
+  const byte *image = nullptr;      // .tdata source
   u64 filesz = 0;                   // initialised bytes to copy
   u64 memsz = 0;                    // total tls size (filesz + tbss)
   u64 align = 0;                    // PT_TLS p_align
@@ -41,7 +41,9 @@ struct __tls_template_t {
 inline __tls_template_t __micron_tls_template{};
 
 inline atomic_token<u32> __micron_tls_template_state{ 0 };
-inline constexpr u32 __tls_tmpl_uninit = 0;inline constexpr u32 __tls_tmpl_capturing = 1; inline constexpr u32 __tls_tmpl_ready = 2;
+inline constexpr u32 __tls_tmpl_uninit = 0;
+inline constexpr u32 __tls_tmpl_capturing = 1;
+inline constexpr u32 __tls_tmpl_ready = 2;
 
 inline constexpr usize __micron_tls_min_align = 16;      // sysv-amd64 baseline
 inline constexpr usize __micron_tcb_sz = 64;             // variant II TCB: self-ptr@0x00, canary@0x28, pguard@0x30
@@ -49,7 +51,7 @@ inline constexpr usize __arm_tcbhead_sz = 8;             // arm32 tcbhead (dtv +
 inline constexpr usize __arm64_tcbhead_sz = 16;          // arm64 tcbhead
 
 #if defined(__micron_arch_amd64)
-inline constexpr int __micron_arch_set_fs = 0x1002;    
+inline constexpr int __micron_arch_set_fs = 0x1002;
 #endif
 
 inline __attribute__((always_inline)) constexpr u64
@@ -61,7 +63,7 @@ __tls_round_up(u64 v, u64 a) noexcept
 inline byte *
 __tls_raw_mmap(usize bytes) noexcept
 {
-  byte *p = micron::bytemap(bytes);    
+  byte *p = micron::bytemap(bytes);
   return micron::mmap_failed(p) ? nullptr : p;
 }
 
@@ -86,7 +88,8 @@ __tls_capture_from_proc_auxv() noexcept
   for ( usize i = 0; i < pairs; ++i ) {
     unsigned long t = buf[2 * i], v = buf[2 * i + 1];
     if ( t == at_null ) break;
-    if ( t == at_phdr ) phdr_addr = v;
+    if ( t == at_phdr )
+      phdr_addr = v;
     else if ( t == at_phent )
       phent = v;
     else if ( t == at_phnum )
@@ -97,12 +100,8 @@ __tls_capture_from_proc_auxv() noexcept
   if ( phdr_addr == 0 || phent == 0 || phnum == 0 ) return false;
 
   const tls_image img = find_tls_in_phdrs(phdr_addr, phent, phnum);
-  __micron_tls_template = __tls_template_t{ img.image,
-                                            img.filesz,
-                                            img.memsz,
-                                            img.align ? img.align : __micron_tls_min_align,
-                                            pagesz ? pagesz : 4096,
-                                            true };
+  __micron_tls_template
+      = __tls_template_t{ img.image, img.filesz, img.memsz, img.align ? img.align : __micron_tls_min_align, pagesz ? pagesz : 4096, true };
   return true;
 }
 
@@ -110,8 +109,7 @@ __tls_capture_from_proc_auxv() noexcept
 inline void
 __tls_capture_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept
 {
-  __micron_tls_template
-      = __tls_template_t{ image, filesz, memsz, align ? align : __micron_tls_min_align, pagesz ? pagesz : 4096, true };
+  __micron_tls_template = __tls_template_t{ image, filesz, memsz, align ? align : __micron_tls_min_align, pagesz ? pagesz : 4096, true };
   atom::store(__micron_tls_template_state.ptr(), __tls_tmpl_ready, static_cast<int>(memory_order_release));
 }
 
@@ -126,7 +124,8 @@ __tls_ensure_template() noexcept
     return ok;
   }
   // capture is a tiny /proc read; a brief spin is fine (contention only on the very first spawns)
-  while ( atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_capturing ) { }
+  while ( atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_capturing ) {
+  }
   return atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_ready;
 }
 
@@ -147,8 +146,8 @@ __tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page
   byte *base = __tls_raw_mmap(static_cast<usize>(alloc));
   if ( !base ) return f;
   byte *tp = base + block;
-  for ( u64 i = 0; i < filesz; ++i ) base[i] = image[i];    
-  *reinterpret_cast<void **>(tp) = tp;                        // TCB self-pointer (%fs:0 == tp)
+  for ( u64 i = 0; i < filesz; ++i ) base[i] = image[i];
+  *reinterpret_cast<void **>(tp) = tp;      // TCB self-pointer (%fs:0 == tp)
   f = __tls_frame{ base, static_cast<usize>(alloc), tp, block };
 #elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
   // Variant I: [ TCB | pad | image_block ]

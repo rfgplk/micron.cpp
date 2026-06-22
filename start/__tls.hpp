@@ -34,6 +34,7 @@ constexpr static const usize __arm64_tcbhead_sz = 16;
 // i386 GDT TLS via set_thread_area(2)
 // flags = seg_32bit(b0) | limit_in_pages(b4) | useable(b6) = 0x51
 constexpr static const unsigned int __i386_tls_desc_flags = 0x51u;
+
 struct __i386_user_desc {
   unsigned int entry_number;
   unsigned int base_addr;
@@ -135,8 +136,8 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   byte *base = __tls_mmap(alloc_size);
   if ( base == nullptr ) micron::sys_exit(127);
 
-  byte *tp = base;                              // TPIDRURO target
-  byte *image_dst = base + head_aligned;        // image lives at TP + round_up(tcbhead, p_align)
+  byte *tp = base;                            // TPIDRURO target
+  byte *image_dst = base + head_aligned;      // image lives at TP + round_up(tcbhead, p_align)
 
   if ( img.filesz > 0 && img.image != nullptr ) {
     for ( u64 i = 0; i < img.filesz; ++i ) image_dst[i] = img.image[i];
@@ -196,7 +197,8 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   __micron_main_tls.tp = tp;
   __micron_main_tls.image_size = image_block_size;
 #elif defined(__micron_freestanding)
-#error "micron: no __tls_init() branch for this freestanding architecture. Implement the main-thread TLS setup (ala src/linux/sys/micthread/tls.hpp) or build hosted; a silent empty body would crash on the first thread_local access."
+#error                                                                                                                                     \
+    "micron: no __tls_init() branch for this freestanding architecture. Implement the main-thread TLS setup (ala src/linux/sys/micthread/tls.hpp) or build hosted; a silent empty body would crash on the first thread_local access."
 #endif
 }
 
@@ -217,7 +219,8 @@ __tls_destroy() noexcept
   micron::syscall(SYS_munmap, __micron_main_tls.base, __micron_main_tls.size);
   __micron_main_tls = __tls_frame{};
 #elif defined(__micron_freestanding)
-#error "micron: no __tls_destroy() branch for this freestanding architecture. Implement the main-thread TLS setup (ala src/linux/sys/micthread/tls.hpp) or build hosted; a silent empty body would crash on the first thread_local access."
+#error                                                                                                                                     \
+    "micron: no __tls_destroy() branch for this freestanding architecture. Implement the main-thread TLS setup (ala src/linux/sys/micthread/tls.hpp) or build hosted; a silent empty body would crash on the first thread_local access."
 #endif
 }
 

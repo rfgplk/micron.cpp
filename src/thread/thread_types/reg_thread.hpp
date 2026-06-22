@@ -57,7 +57,8 @@ template<usize Stack_Size = thread_stack_size> class thread
     thread_handler();
     payload.alive.store(true, memory_order_seq_cst);
     __link_launch<Stack_Size, &__thread_kernel<micron::decay_t<F>, micron::decay_t<Args>...>>(
-        attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr, f, micron::forward<Args>(args)...);
+        attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr, f,
+        micron::forward<Args>(args)...);
   }
 
   void

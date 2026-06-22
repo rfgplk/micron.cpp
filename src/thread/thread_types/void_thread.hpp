@@ -58,7 +58,8 @@ template<usize Stack_Size = thread_stack_size> class void_thread
       micron::exc<except::thread_error>("micron thread::__impl_preparethread(): a stack isn't allocated");
     }
     thread_handler();
-    __link_launch<Stack_Size, &__worker_kernel>(attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr);
+    __link_launch<Stack_Size, &__worker_kernel>(attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload,
+                                                attributes.stack_addr);
   }
 
   template<typename Fn, typename... Args>

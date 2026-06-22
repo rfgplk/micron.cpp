@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include <micron/bits/__arch.hpp>
+#include <micron/config.hpp>
 
 #include "__auxv.hpp"
 #include "__crt.hpp"
@@ -18,9 +19,24 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wodr"
 extern "C" int __micron_user_main(int argc, char **argv, char **envp) __asm__("main");
-// extern "C" void __boot_abcmalloc(void);
 extern "C" void __boot_io_buffers(void);
 #pragma GCC diagnostic pop
+
+// microns entry/exit points
+extern "C" __attribute__((weak)) void
+__boot_io_sigpipe(void)
+{
+}
+
+extern "C" __attribute__((weak)) void
+__boot_threadpool(void)
+{
+}
+
+extern "C" __attribute__((weak)) void
+__shutdown_io_buffers(void)
+{
+}
 
 extern "C" {
 char **environ = nullptr;
@@ -63,32 +79,43 @@ enable_fast_fp() noexcept
 }
 
 #endif
+#if !((defined(__micron_arch_x86_any) && defined(__micron_x86_sse)) || defined(__micron_arch_arm64) || defined(__micron_arch_arm32))
+// no-op fallback so we remain wellformed on arches without fast fp
+[[gnu::always_inline]] inline void
+enable_fast_fp() noexcept
+{
+}
+#endif
 extern "C" __attribute__((used, visibility("default"))) int
 __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
 {
   environ = envp;
-  // stub for now, just so we have thread_local working, we don't support multithreading in freestanding mode YET
+
+  // TLS first: thread_local storage depends on it
   micron::__tls_init(auxv);
 
-  // OBSOLETE abcmalloc doesnt' depend on runtime initialized code so it fires first
-  // __boot_abcmalloc();
-
-  // get the primary stack region
+  // primary stack region
   micron::__stack_init(auxv);
 
-  // manually start __attribute__((constructor)), functions here don't go through .init_array
+  // NOTE: we must register shutdown io first so it lands at the bottom of the atexit stack,
+  // ensuring it runs last
+  micron::atexit([] { __shutdown_io_buffers(); });
+
+  // threading and sig pipes
+  __boot_threadpool();      // __global_threadpool ready before any user micron::go()
+  __boot_io_sigpipe();      // SIG_IGN installed before any user write()
+
+  // user / third-party global constructors
   for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
   for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
 
   // io buffer init MUST fire AFTER .init_array
   __boot_io_buffers();
-#if defined(__micron_fast_math) && defined(__micron_arch_x86_any) && defined(__micron_x86_sse)
-  enable_fast_fp();
-#endif
+
+  if constexpr ( micron::config::fast_math_x86 ) enable_fast_fp();
 
   const int rc = __micron_user_main(argc, argv, envp);
 
-  // we're single threaded only, but once we add TLS this is critical
   micron::group_exit(rc);
 }
 

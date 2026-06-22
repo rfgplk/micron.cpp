@@ -59,7 +59,8 @@ template<usize Stack_Size = thread_stack_size> class group_thread
     payload.alive.store(true, memory_order_seq_cst);
     payload.started.store(false, memory_order_seq_cst);
     __link_launch<Stack_Size, &__thread_kernel<micron::decay_t<F>, micron::decay_t<Args>...>>(
-        attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr, f, micron::forward<Args>(args)...);
+        attributes.pid, attributes.ctid, attributes.tls, attributes.pth, &payload, attributes.stack_addr, f,
+        micron::forward<Args>(args)...);
 
     // bounded start handshake
     if ( !micron::until_timeout(true, __thread_start_timeout_ms, [this]() noexcept {

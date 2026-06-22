@@ -127,8 +127,8 @@ struct tls_image {
   u64 align;              // p_align from PT_TLS (0 if no PT_TLS)
 };
 
-// computes the PIE / static-pie load bias from PT_PHDR (0 for ET_EXEC) so the returned image pointer is the runtime address of the .tdata template 
-// under -pie/-static-pie the template would be read from the link-time vaddr
+// computes the PIE / static-pie load bias from PT_PHDR (0 for ET_EXEC) so the returned image pointer is the runtime address of the .tdata
+// template under -pie/-static-pie the template would be read from the link-time vaddr
 inline __attribute__((always_inline)) tls_image
 find_tls_in_phdrs(unsigned long phdr_addr, unsigned long phent, unsigned long phnum) noexcept
 {

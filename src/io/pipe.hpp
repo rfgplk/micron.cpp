@@ -16,6 +16,7 @@
 #include "posix/iosys.hpp"
 #include "stream.hpp"
 
+#include "../attributes.hpp"
 #include "../linux/process/signals.hpp"
 
 namespace micron
@@ -23,10 +24,18 @@ namespace micron
 namespace io
 {
 
-void __attribute__((constructor))
-__micron_io_ignore_sigpipe(void)
+// freestanding init via start
+extern "C" void
+__boot_io_sigpipe(void)
 {
   micron::ignore(micron::signal::pipe);
+}
+
+// hosted init via .init_array
+void gconstructor_
+__micron_io_ignore_sigpipe(void)
+{
+  __boot_io_sigpipe();
 }
 
 enum class pipe_end_t : i32 { reader = 0, writer = 1 };

@@ -15,17 +15,15 @@
 #define cpure __attribute__((pure))
 #define cconst __attribute__((const))
 #define cnoreorder __attribute__((no_reorder))
+#if !defined(__micron_freestanding)
 #define gconstructor_ __attribute__((constructor))
-#if !defined(__micron_freestanding)
 #define gconstructor(x) __attribute__((constructor(x)))
-#else
-#define gconstructor(x)
-#endif
-#if !defined(__micron_freestanding)
 #define gdestructor_ __attribute__((destructor))
 #define gdestructor(x) __attribute__((destructor(x)))
 #else
-#define destructor_
+#define gconstructor_
+#define gconstructor(x)
+#define gdestructor_
 #define gdestructor(x)
 #endif
 

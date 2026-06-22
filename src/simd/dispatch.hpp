@@ -100,10 +100,6 @@ __has_avx256(const __simd_flags &flags)
   return flags.avx2 and __os_avx_enabled(flags);
 }
 
-#ifdef SIMD_RUNTIME_CHECKING
-start_fn(void, 100) __runtime_check(void) { [[maybe_unused]] static __simd_flags flags = __get_runtime_features(); }
-#endif
-
 #endif      // __micron_arch_x86_any
 
 };      // namespace simd
