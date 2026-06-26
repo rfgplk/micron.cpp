@@ -52,10 +52,7 @@ private:
   {
     if ( !__kernel_memory.zero() ) {
       __sheet_unregister(__kernel_memory.ptr, __kernel_memory.len);
-      if ( micron::munmap(reinterpret_cast<addr_t *>(__kernel_memory.ptr), __kernel_memory.len) == -1 ) {
-        micron::abort();
-      }
-      // exc<except::memory_error>("abcmalloc ~sheet(): failed to unmap memory");
+      __release_kernel_chunk(__kernel_memory);
       __kernel_memory.ptr = nullptr;
       __kernel_memory.len = 0;
     }
@@ -320,7 +317,7 @@ private:
   {
     if ( !__kernel_memory.zero() ) {
       __sheet_unregister(__kernel_memory.ptr, __kernel_memory.len);
-      if ( micron::munmap(reinterpret_cast<addr_t *>(__kernel_memory.ptr), __kernel_memory.len) == -1 ) micron::abort();
+      __release_kernel_chunk(__kernel_memory);
       __kernel_memory.ptr = nullptr;
       __kernel_memory.len = 0;
     }
