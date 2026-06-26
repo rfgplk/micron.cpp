@@ -192,9 +192,14 @@ get_devices()
     const bool k_pad = __has_key_code(keybuf, btn_gamepad);
 
     // classify by capability
-    // EV bits alone are ambiguous for absolute devices
+    // WARNING: full keyboard and a relative pointer (REL axes + buttons) must be decided
+    // before the abs branch, certain gaming mice & combo receivers expose an EV_ABS axis
     type_t type = type_t::unknown;
-    if ( has_abs ) {
+    if ( has_key && has_rep && __has_alnum_keys(keybuf) ) {
+      type = type_t::keyboard;
+    } else if ( has_rel && has_key ) {
+      type = p_stick ? type_t::pointing_stick : type_t::mouse;
+    } else if ( has_abs ) {
       if ( k_pen || k_stylus )
         type = type_t::tablet;      // pen digitizer (BTN_TOOL_PEN/STYLUS)
       else if ( p_direct )
@@ -203,10 +208,6 @@ get_devices()
         type = type_t::touchpad;      // indirect finger pad (BTN_TOOL_FINGER)
       else if ( k_joy || k_pad )
         type = type_t::joystick;      // stick / gamepad (BTN_TRIGGER/BTN_GAMEPAD)
-    } else if ( has_rel && has_key ) {
-      type = p_stick ? type_t::pointing_stick : type_t::mouse;
-    } else if ( has_key && has_rep && __has_alnum_keys(keybuf) ) {
-      type = type_t::keyboard;
     }
     if ( type == type_t::unknown ) continue;      // power / lid / audio / WMI / etc: correctly ignored
 
