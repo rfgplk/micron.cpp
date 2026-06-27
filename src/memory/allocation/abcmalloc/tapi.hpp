@@ -136,6 +136,25 @@ __claim_arena_slow(void) noexcept
     }
   }
 
+  // WARNING: reclaim a slot whose owner thread has died without releasing it;
+  // a joined threads slot can lag the next threads reclaim, under fast churn stale slots can accumulate rapidly
+  {
+    const u32 n = __arena_pool_next.get(micron::memory_order_acquire);
+    const u32 lim = n > __max_arenas ? __max_arenas : n;
+    for ( u32 i = 0; i < lim; ++i ) {
+      __arena *a = __arena_pool[i];
+      if ( !a ) continue;
+      i32 owner = __arena_owner[i].get(micron::memory_order_acquire);
+      if ( owner <= 0 || owner == tid ) continue;
+      if ( __owner_alive(owner) ) continue;
+      if ( __arena_owner[i].compare_exchange_strong(owner, tid, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+        a->__maybe_drain();
+        __tls_arena = a;
+        return a;
+      }
+    }
+  }
+
   u32 cur = __arena_pool_next.get(micron::memory_order_acquire);
   while ( cur < __max_arenas ) {
     if ( __arena_pool_next.compare_exchange_strong(cur, cur + 1, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
@@ -148,7 +167,10 @@ __claim_arena_slow(void) noexcept
   }
 
   for ( __arena_node *nd = __overflow_head.get(micron::memory_order_acquire); nd != nullptr; nd = nd->next ) {
-    i32 expect = __arena_slot_free;
+    i32 owner = nd->owner.get(micron::memory_order_acquire);
+    const bool reclaimable = (owner == __arena_slot_free) || (owner > 0 && owner != tid && !__owner_alive(owner));
+    if ( !reclaimable ) continue;
+    i32 expect = owner;      // free or a dead owner; claim it
     if ( nd->owner.compare_exchange_strong(expect, tid, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
       nd->arena.__maybe_drain();
       __tls_arena = &nd->arena;
