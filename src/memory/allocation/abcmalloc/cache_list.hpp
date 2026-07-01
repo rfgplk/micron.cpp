@@ -626,6 +626,117 @@ struct __tlsf_list {
     if ( !is_allocated(ptr) ) return 0;
     return block_size(ptr);
   }
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  // deep corruption walk
+  template<class V>
+  void
+  __doctor_walk(V &v)
+  {
+    if ( !base ) return;
+    byte *data_lo = base + __block_align;
+    byte *es_addr = base + __block_align + total;
+
+    // sentinels
+    tlsf_hdr *ss = reinterpret_cast<tlsf_hdr *>(base);
+    if ( ss->bsize != (u32)__block_align || ss->flags != __block_alloc ) v.note("tlsf: start sentinel corrupt", base);
+    tlsf_hdr *es = reinterpret_cast<tlsf_hdr *>(es_addr);
+    if ( es->bsize != (u32)__block_align || es->flags != __block_alloc ) v.note("tlsf: end sentinel corrupt", es_addr);
+
+    // physical block chain via next_phys
+    tlsf_hdr *cur = reinterpret_cast<tlsf_hdr *>(data_lo);
+    tlsf_hdr *prev = ss;
+    usize guard = 0;
+    const usize maxg = (total / __min_block) + 8;
+    while ( reinterpret_cast<byte *>(cur) < es_addr && guard++ < maxg ) {
+      byte *cb = reinterpret_cast<byte *>(cur);
+      ++v.blocks;
+      u32 bs = cur->bsize;
+      if ( bs == 0 || (bs & (__block_align - 1)) != 0 ) {
+        v.note("tlsf: block bsize zero or misaligned", cb);
+        break;
+      }
+      if ( cb + bs > es_addr ) {
+        v.note("tlsf: block extends past data region", cb);
+        break;
+      }
+      const bool flags_known = (cur->flags == __block_free || cur->flags == __block_alloc || cur->flags == __block_tombstone
+                                || cur->flags == (__block_alloc | __block_temporal));
+      if ( !flags_known ) v.note("tlsf: block flags not a valid block_flags", cb);
+      if ( cur->prev_phys != prev ) {
+        v.note("tlsf: prev_phys back-link mismatch", cb);
+        if ( v.repair ) {
+          cur->prev_phys = prev;
+          v.did_repair("tlsf: fixed prev_phys back-link", cb);
+        }
+      }
+      tlsf_hdr *nx = next_phys(cur);
+      if ( cur->flags == __block_free && reinterpret_cast<byte *>(nx) < es_addr && nx->flags == __block_free )
+        v.note("tlsf: adjacent free blocks (missed coalescing)", cb);
+      prev = cur;
+      cur = nx;
+    }
+    if ( guard >= maxg )
+      v.note("tlsf: physical walk overran (corrupt bsize chain)", base);
+    else if ( es->prev_phys != prev )
+      v.note("tlsf: end sentinel prev_phys != last block", es_addr);
+
+    for ( i32 fi = 0; fi < __fl_count; ++fi ) {
+      u32 want_sl = 0;
+      for ( i32 si = 0; si < __sl_count; ++si )
+        if ( heads[idx(fi, si)] != nullptr ) want_sl |= (1u << si);
+      if ( sl_bitmap[fi] != want_sl ) {
+        if ( v.repair ) {
+          sl_bitmap[fi] = want_sl;
+          v.did_repair("tlsf: recomputed sl_bitmap from heads", base);
+        } else
+          v.note("tlsf: sl_bitmap disagrees with heads[]", base);
+      }
+    }
+    u32 want_fl = 0;
+    for ( i32 fi = 0; fi < __fl_count; ++fi )
+      if ( sl_bitmap[fi] ) want_fl |= (1u << fi);
+    if ( fl_bitmap != want_fl ) {
+      if ( v.repair ) {
+        fl_bitmap = want_fl;
+        v.did_repair("tlsf: recomputed fl_bitmap from sl_bitmap", base);
+      } else
+        v.note("tlsf: fl_bitmap disagrees with sl_bitmap", base);
+    }
+
+    for ( i32 i = 0; i < __list_count; ++i ) {
+      tlsf_hdr *n = heads[i];
+      tlsf_hdr *pr = nullptr;
+      usize gc = 0;
+      while ( n && gc++ < maxg ) {
+        ++v.freelist_nodes;
+        byte *nb = reinterpret_cast<byte *>(n);
+        if ( nb < data_lo || nb >= es_addr ) {
+          v.note("tlsf: free-list node out of bounds", n);
+          if ( v.repair ) {
+            if ( pr )
+              pr->next_free = nullptr;
+            else
+              heads[i] = nullptr;
+            v.did_repair("tlsf: truncated free-list at bad node", n);
+          }
+          break;
+        }
+        if ( n->flags != __block_free ) v.note("tlsf: free-list node not flagged free", n);
+        if ( n->prev_free != pr ) {
+          v.note("tlsf: free-list prev_free back-link mismatch", n);
+          if ( v.repair ) {
+            n->prev_free = pr;
+            v.did_repair("tlsf: fixed prev_free back-link", n);
+          }
+        }
+        pr = n;
+        n = n->next_free;
+      }
+      if ( gc >= maxg ) v.note("tlsf: free-list cycle / overrun", base);
+    }
+  }
+#endif
 };
 
 };      // namespace abc

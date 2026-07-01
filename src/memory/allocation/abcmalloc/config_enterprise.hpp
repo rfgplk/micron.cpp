@@ -197,4 +197,36 @@ constexpr static const bool __default_redzone = false;
 
 constexpr static const byte __default_redzone_byte = 0xC1;
 constexpr static const usize __default_redzone_size = 8;
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// doctor mode configuration
+// (enabled via -DABCMALLOC_DOCTOR_HELP)
+#if defined(ABCMALLOC_DOCTOR_HELP)
+constexpr static const bool __default_doctor_help = true;
+#if defined(ABCMALLOC_DOCTOR_RESCUE)
+constexpr static const bool __default_doctor_rescue = true;      // attempt repair vs report-only
+#else
+constexpr static const bool __default_doctor_rescue = false;
+#endif
+#if defined(ABCMALLOC_DOCTOR_RESCUE_CONSERVATIVE)
+constexpr static const bool __default_doctor_rescue_conservative
+    = true;      // escape hatch: reroute/skip/quarantine only, no in-place repair
+#else
+constexpr static const bool __default_doctor_rescue_conservative = false;
+#endif
+constexpr static const bool __default_doctor_harden = true;      // auto-enable redzone/guard/provenance/poison for deep detection
+constexpr static const bool __default_doctor_leak_report_at_exit = true;      // dump the live-set at thread/process exit
+constexpr static const int __default_doctor_color = 2;      // forensic-output ANSI coloring: 0=never 1=always 2=auto (tty-detect on fd 2)
+constexpr static const bool __default_doctor_crash_safe
+    = true;      // install a fault-time SIGSEGV/SIGBUS handler so the sweep/forensics survive faulting on corrupt/unmapped memory
+constexpr static const bool __default_doctor_canary = true;           // snapshot the block header + lay a slack canary at alloc
+constexpr static const byte __default_doctor_canary_byte = 0x5A;      // slack-canary fill byte
+constexpr static const bool __default_doctor_backtrace = true;        // capture an alloc-site backtrace by frame-pointer walking
+constexpr static const usize __default_doctor_max_records
+    = (1ull << 24);      // soft cap: past this the ledger drops all non-live records (logged)
+static_assert(!__default_doctor_rescue || __default_doctor_help, "abcmalloc: doctor rescue requires __default_doctor_help");
+static_assert(!__default_doctor_harden || __default_doctor_help, "abcmalloc: doctor harden requires __default_doctor_help");
+static_assert(!__default_doctor_rescue_conservative || __default_doctor_rescue,
+              "abcmalloc: doctor rescue_conservative requires __default_doctor_rescue");
+#endif
 };      // namespace abc

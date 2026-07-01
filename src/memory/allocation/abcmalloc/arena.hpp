@@ -280,7 +280,7 @@ class __arena: private cache
     register_sheet(node<sheet_type> *nd)
     {
       if ( __count >= __max_sheets ) [[unlikely]]
-        return __max_sheets;      // sentinel: tier full, caller must handle
+        return __max_sheets;      // sentinel
 
       addr_t *lo = nd->nd->addr();
       addr_t *hi = nd->nd->addr_end();
@@ -1584,6 +1584,7 @@ public:
         zero_on_alloc(memory.ptr, memory.len);
         sanitize_on_alloc(memory.ptr, memory.len);
         collect_stats<stat_type::total_memory_throughput>(memory.len);
+        ABC_DOCTOR(doctor::record_alloc(memory.ptr, sz);)
         return memory;
       }
       if ( i == __default_max_retries ) break;
@@ -1693,6 +1694,7 @@ public:
         zero_on_alloc(memory.ptr, memory.len);
         sanitize_on_alloc(memory.ptr, memory.len);
         collect_stats<stat_type::total_memory_throughput>(memory.len);
+        ABC_DOCTOR(doctor::record_alloc(memory.ptr, sz);)
         return memory;
       }
       if ( i == __default_max_retries ) break;
@@ -1756,6 +1758,8 @@ public:
     full_on_free(mem.ptr, mem.len);
     zero_on_free(mem.ptr, mem.len);
     bool ok = __vmap_remove(mem);
+    // record the free only after it succeeds
+    ABC_DOCTOR(if ( ok ) doctor::record_free(mem.ptr, mem.len); else doctor::on_free_result(mem.ptr, false, __FILE__, __LINE__);)
     __debug_print("pop(): removal result: ", (usize)ok);
     return ok;
   }
@@ -1780,6 +1784,7 @@ public:
     full_on_free(mem);
     zero_on_free(mem);
     bool ok = __vmap_remove_at(mem);
+    ABC_DOCTOR(if ( ok ) doctor::record_free(mem, 0); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("pop() addr: removal result: ", (usize)ok);
     return ok;
   }
@@ -1832,6 +1837,7 @@ public:
     full_on_free(mem, len);
     zero_on_free(mem, len);
     bool ok = __vmap_remove({ mem, len });
+    ABC_DOCTOR(if ( ok ) doctor::record_free(mem, len); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("pop(len): removal result: ", (usize)ok);
     return ok;
   }
@@ -1856,6 +1862,7 @@ public:
     full_on_free(mem.ptr, mem.len);
     zero_on_free(mem.ptr, mem.len);
     bool ok = __vmap_tombstone(mem);
+    ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem.ptr, mem.len); else doctor::on_free_result(mem.ptr, false, __FILE__, __LINE__);)
     __debug_print("ts_pop(): tombstone result: ", (usize)ok);
     return ok;
   }
@@ -1879,6 +1886,7 @@ public:
     full_on_free(mem);
     zero_on_free(mem);
     bool ok = __vmap_tombstone_at(mem);
+    ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem, 0); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("ts_pop() addr: tombstone result: ", (usize)ok);
     return ok;
   }
@@ -1902,6 +1910,7 @@ public:
     full_on_free(mem, len);
     zero_on_free(mem, len);
     bool ok = __vmap_tombstone({ mem, len });
+    ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem, len); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("ts_pop(len): tombstone result: ", (usize)ok);
     return ok;
   }
@@ -2035,7 +2044,10 @@ public:
     if ( old_size == 0 ) [[unlikely]]
       return nullptr;
     // in-place reuse
-    if ( old_size >= new_sz and new_sz > (old_size >> 1) ) return ptr;
+    if ( old_size >= new_sz and new_sz > (old_size >> 1) ) {
+      ABC_DOCTOR(doctor::record_realloc(ptr, new_sz);)
+      return ptr;
+    }
 
     micron::__chunk<byte> fresh = push(new_sz);
     if ( __is_sentinel_chunk(fresh) ) [[unlikely]]
@@ -2106,6 +2118,73 @@ public:
     __debug_print_addr("__size_of_alloc(): WARNING addr not found in any bucket: ", addr);
     return 0;
   }
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  // authoritative allocator kind for a user pointer
+  int
+  __doctor_tier_kind(addr_t *addr) const
+  {
+    if ( _precise.find_range(addr) >= 0 ) return 1;
+    if ( _small.find_range(addr) >= 0 ) return 1;
+    if ( _medium.find_range(addr) >= 0 ) return 2;
+    if ( _large.find_range(addr) >= 0 ) return 2;
+    if ( _huge.find_range(addr) >= 0 ) return 2;
+    return 0;
+  }
+
+  // structural health check of one tier's sheet index
+  template<class Tier, class Ctx>
+  void
+  __doctor_check_tier(const Tier &t, Ctx &ctx) const
+  {
+    for ( u32 i = 0; i < t.__count; ++i ) {
+      ++ctx.sheets;
+      addr_t *lo = t.__idx[i].lo;
+      addr_t *hi = t.__idx[i].hi;
+      if ( !(lo < hi) ) ctx.note("tier __idx: lo >= hi (degenerate range)", lo);
+      if ( i + 1 < t.__count && !(hi <= t.__idx[i + 1].lo) ) ctx.note("tier __idx: overlap / mis-order", hi);
+      auto *sh = t.__idx[i].nd->nd;
+      if ( sh->addr() != lo ) ctx.note("sheet base != __idx.lo", lo);
+      if ( sh->addr_end() != hi ) ctx.note("sheet end != __idx.hi", hi);
+      // a sheet spans multiple owner-table granules, checking only lo can miss interior corruption
+      for ( uintptr_t a = reinterpret_cast<uintptr_t>(lo), e = reinterpret_cast<uintptr_t>(hi); a < e; a += __sheet_align )
+        if ( __owner_of(reinterpret_cast<const void *>(a)) != this ) {
+          ctx.note("owner_table: granule not owned by this arena", reinterpret_cast<void *>(a));
+          break;
+        }
+    }
+  }
+
+  template<class Ctx>
+  void
+  __doctor_check_struct(Ctx &ctx) const
+  {
+    ++ctx.arenas;
+    __doctor_check_tier(_precise, ctx);
+    __doctor_check_tier(_small, ctx);
+    __doctor_check_tier(_medium, ctx);
+    __doctor_check_tier(_large, ctx);
+    __doctor_check_tier(_huge, ctx);
+  }
+
+  template<class Tier, class V>
+  void
+  __doctor_walk_tier(Tier &t, V &v)
+  {
+    for ( u32 i = 0; i < t.__count; ++i ) t.__idx[i].nd->nd->__doctor_walk(v);
+  }
+
+  template<class V>
+  void
+  __doctor_walk_blocks(V &v)
+  {
+    __doctor_walk_tier(_precise, v);
+    __doctor_walk_tier(_small, v);
+    __doctor_walk_tier(_medium, v);
+    __doctor_walk_tier(_large, v);
+    __doctor_walk_tier(_huge, v);
+  }
+#endif
 
   bool
   zeroed(void) const

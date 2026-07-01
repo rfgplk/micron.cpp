@@ -213,6 +213,7 @@ __route_dealloc(byte *p, usize sz) noexcept
     return sz ? me->pop(micron::__chunk<byte>{ p, sz }) : me->pop(p);
   }
   // wait-free: the owner's ring, falling back to the embedded-node overflow LIFO when the ring is full; never spin here
+  ABC_DOCTOR(doctor::record_remote_free(p, sz);)
   (void)owner->__remote_push(p, sz);
   return true;
 }
