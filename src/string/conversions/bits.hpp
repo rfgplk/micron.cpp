@@ -904,6 +904,37 @@ d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 }
 
 inline usize
+d2f_trim_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
+{
+  usize n = d2f_buffered(val, buf, buf_sz, precision);
+  usize dot = n;
+  for ( usize i = 0; i < n; ++i ) {
+    if ( buf[i] == '.' ) {
+      dot = i;
+      break;
+    }
+  }
+  usize end = n;
+  if ( dot != n ) {                                            // has a fractional part -> trim it
+    while ( end > dot + 1 && buf[end - 1] == '0' ) --end;      // strip trailing zeros
+    if ( end == dot + 1 ) end = dot;                           // drop a bare trailing '.'
+  }
+  if ( end >= 1 && buf[0] == '-' ) {
+    bool __all_zero = true;
+    for ( usize i = 1; i < end; ++i )
+      if ( buf[i] != '0' && buf[i] != '.' ) {
+        __all_zero = false;
+        break;
+      }
+    if ( __all_zero ) {
+      for ( usize i = 1; i < end; ++i ) buf[i - 1] = buf[i];      // shift left over the leading '-'
+      --end;
+    }
+  }
+  return end;
+}
+
+inline usize
 d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
 {
   if ( buf_sz < 8 ) return 0;
