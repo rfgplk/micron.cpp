@@ -392,7 +392,6 @@ class pvector
         } else {
           for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T();
         }
-        // assign result into the (live) slot — exception-safe
         fresh->values[slot] = fn(static_cast<const T &>(fresh->values[slot]));
 #ifndef __micron_freestanding
       } catch ( ... ) {

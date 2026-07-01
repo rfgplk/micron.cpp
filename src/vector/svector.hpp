@@ -186,7 +186,6 @@ public:
 
   template<typename C = T, size_type M = N, bool Sf2 = Sf> svector(const svector<C, M, Sf2> &o)
   {
-    // clamp BEFORE the copy — copying o.length into T[N] when o.length > N is a stack overflow
     const usize copy_n = (o.length < N) ? o.length : N;
     __impl_container::copy(stack, o.stack, copy_n);
     length = copy_n;

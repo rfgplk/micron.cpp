@@ -22,5 +22,4 @@
 
 namespace micron
 {
-
 };      // namespace micron
