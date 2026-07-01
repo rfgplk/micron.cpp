@@ -357,8 +357,8 @@ inline micron::sstring<Sz, C>
 to_string_stack(f32 val, u32 prec)
 {
   // fixed-precision via ryu, then copy to stack
-  char tmp[48];
-  usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), tmp, 48, prec);
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), tmp, Sz, prec);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -373,8 +373,8 @@ inline micron::sstring<Sz, C>
 to_string_stack(f64 val, u32 prec)
 {
   // fixed-precision via ryu, then copy to stack
-  char tmp[64];
-  usize n = __impl::__ryu::d2f_buffered(val, tmp, 64, prec);
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2f_buffered(val, tmp, Sz, prec);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -422,8 +422,8 @@ template<usize Sz = 48, typename C = char>
 inline micron::sstring<Sz, C>
 float_to_string_stack(f32 val, u32 prec)
 {
-  char tmp[48];
-  usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), tmp, 48, prec);
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), tmp, Sz, prec);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -437,8 +437,8 @@ template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 double_to_string_stack(f64 val, u32 prec)
 {
-  char tmp[64];
-  usize n = __impl::__ryu::d2f_buffered(val, tmp, 64, prec);
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2f_buffered(val, tmp, Sz, prec);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -455,8 +455,23 @@ template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 to_fixed_stack(f64 val, u32 precision = 6)
 {
-  char tmp[64];
-  usize n = __impl::__ryu::d2f_buffered(val, tmp, 64, precision);
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2f_buffered(val, tmp, Sz, precision);
+  if ( n > Sz - 1 ) n = Sz - 1;
+  micron::sstring<Sz, C> result;
+  C *out = &result[0];
+  for ( usize i = 0; i < n; ++i ) out[i] = static_cast<C>(tmp[i]);
+  out[n] = '\0';
+  result._buf_set_length(n);
+  return result;
+}
+
+template<usize Sz = 64, typename C = char>
+inline micron::sstring<Sz, C>
+to_fixed_trim_stack(f64 val, u32 precision = 6)
+{
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2f_trim_buffered(val, tmp, Sz, precision);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -470,8 +485,8 @@ template<usize Sz = 80, typename C = char>
 inline micron::sstring<Sz, C>
 to_scientific_stack(f64 val, u32 precision = 6)
 {
-  char tmp[80];
-  usize n = __impl::__ryu::d2e_buffered(val, tmp, 80, precision);
+  char tmp[Sz];
+  usize n = __impl::__ryu::d2e_buffered(val, tmp, Sz, precision);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];

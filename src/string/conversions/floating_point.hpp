@@ -385,6 +385,16 @@ to_fixed(f64 val, u32 precision = 6)
   return micron::hstring<C>(buf, buf + n);
 }
 
+// fixed precision with trailing fractional zeros trimmed
+template<typename C = char>
+inline micron::hstring<C>
+to_fixed_trim(f64 val, u32 precision = 6)
+{
+  char buf[350];
+  usize n = __impl::__ryu::d2f_trim_buffered(val, buf, 350, precision);
+  return micron::hstring<C>(buf, buf + n);
+}
+
 template<typename C = char>
 inline micron::hstring<C>
 to_scientific(f64 val, u32 precision = 6)
