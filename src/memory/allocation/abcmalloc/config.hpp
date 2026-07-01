@@ -29,3 +29,23 @@
 // default to this
 #include "config_amd64.hpp"
 #endif
+
+// doctor is platform agnostic
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+#define ABC_DOCTOR(...) __VA_ARGS__
+#define ABC_EFF_REDZONE (::abc::__default_redzone)
+#define ABC_EFF_GUARD (::abc::__default_insert_guard_pages)
+#define ABC_EFF_PROVENANCE (::abc::__default_enforce_provenance)
+#define ABC_EFF_POISON_ON_FREE (::abc::__default_poison_on_free)
+#else
+#define ABC_DOCTOR(...)
+#define ABC_EFF_REDZONE __default_redzone
+#define ABC_EFF_GUARD __default_insert_guard_pages
+#define ABC_EFF_PROVENANCE __default_enforce_provenance
+#define ABC_EFF_POISON_ON_FREE __default_poison_on_free
+#endif
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+#include "doctor_fwd.hpp"
+#endif

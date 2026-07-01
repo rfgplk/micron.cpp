@@ -105,6 +105,7 @@ mark_at(byte *ptr, usize size)
 
   // verify the region isn't already tracked
   if ( __current_arena()->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "mark_at(): region already tracked by allocator", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_mark>("mark_at(): region already tracked by allocator");
     return nullptr;
   }
@@ -121,11 +122,13 @@ unmark_at(byte *ptr, usize size)
     return nullptr;
 
   if ( !__current_arena()->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "unmark_at(): region not tracked by allocator", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_unmark_untracked>("unmark_at(): region not tracked by allocator, cannot unmark");
     return nullptr;
   }
 
   if ( !__current_arena()->pop(ptr, size) ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "unmark_at(): failed to unmark region", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_unmark_failed>("unmark_at(): failed to unmark region");
     return nullptr;
   }
@@ -178,6 +181,8 @@ retire(byte *ptr)
     return;
 
   if ( !__query_arena(ptr)->ts_pop(ptr) ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, 0, "retire(): tombstone free failed, pointer not allocated by this arena", __FILE__,
+                                        __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_retire>(
         "retire(): tombstone free failed, pointer may not have been allocated by this arena");
   }
@@ -244,12 +249,16 @@ dealloc(byte *ptr, usize len)
   if ( !ptr ) [[unlikely]]
     return;
   if ( len == 0 ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, 0, "dealloc(): zero-length free is invalid", __FILE__, __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_dealloc_zero>("dealloc(): zero-length free is invalid");
     return;
   }
 
+  ABC_DOCTOR(len = doctor::check_free_size(ptr, len, __FILE__, __LINE__);)
   // dealloc(ptr len) is always explicit us, no fall throughs; treat it as a hard error, we went wrong somewhere
   if ( !__route_dealloc(ptr, len) ) [[unlikely]] {
+    ABC_DOCTOR(
+        if ( doctor::on_bad_free(ptr, len, "dealloc(ptr,len): pointer not recognised or size mismatch", __FILE__, __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_dealloc_size>(
         "dealloc(): free failed with explicit size, pointer not recognised or size mismatch");
   }
@@ -280,6 +289,7 @@ freeze(byte *ptr)
     return;
 
   if ( !__query_arena(ptr)->freeze(ptr) ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, 0, "freeze(): pointer not recognised by allocator", __FILE__, __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_freeze>("freeze(): failed to make region read-only, pointer not recognised by allocator");
   }
 }
@@ -399,6 +409,9 @@ realloc(void *ptr, usize size)      // reallocates memory
 
   byte *result = __current_arena()->resize(reinterpret_cast<byte *>(ptr), size);
   if ( !result ) [[unlikely]] {
+    // rescue: report, then signal failure the C-standard way (return nullptr, original block untouched)
+    ABC_DOCTOR(if ( doctor::on_bad_free(reinterpret_cast<byte *>(ptr), size, "realloc(): pointer not recognised or allocation OOM",
+                                        __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_realloc_unknown>("realloc(): resize failed (pointer not recognised or allocation OOM)");
     return nullptr;
   }
@@ -474,6 +487,8 @@ aligned_free(void *ptr)
   uintptr_t raw_addr = reinterpret_cast<uintptr_t>(raw);
   uintptr_t aligned_addr = reinterpret_cast<uintptr_t>(ptr);
   if ( raw_addr >= aligned_addr ) [[unlikely]] {
+    ABC_DOCTOR(if ( doctor::on_bad_free(reinterpret_cast<byte *>(ptr), 0, "aligned_free(): not an aligned_alloc pointer (bad stashed raw)",
+                                        __FILE__, __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_aligned_free_bad>(
         "aligned_free(): stashed raw pointer is invalid, this pointer was not allocated by aligned_alloc");
     return;
@@ -483,5 +498,9 @@ aligned_free(void *ptr)
 }
 
 };      // namespace abc
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+#include "doctor.hpp"
+#endif
 
 #include "malloc-c.hpp"

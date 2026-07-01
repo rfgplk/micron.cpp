@@ -290,6 +290,15 @@ public:
   {
     __impl_release();
   }
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  template<class V>
+  void
+  __doctor_walk(V &v)
+  {
+    __book.__doctor_walk(v);
+  }
+#endif
 };
 
 template<u64 Sz>
@@ -541,6 +550,15 @@ public:
   {
     __impl_release();
   }
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  template<class V>
+  void
+  __doctor_walk(V &v)
+  {
+    __book.__doctor_walk(v);
+  }
+#endif
 };
 
 template<u64 Sz>

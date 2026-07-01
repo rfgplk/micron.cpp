@@ -589,7 +589,7 @@ struct __buddy_list {
     if ( free_block *cold = cold_pop(o) ) {
       block_header *hdr = hdr_of((byte *)cold, o);
       hdr->order = static_cast<i32>(o);
-      hdr->flags = __block_alloc;      // NOT temporal — non-temporal alloc
+      hdr->flags = __block_alloc;
       tag_set_alloc((byte *)cold, o);
       allocated_bytes += order_sizes[o];
       return { (byte *)cold, order_sizes[o] - __hdr_offset };
@@ -869,5 +869,111 @@ struct __buddy_list {
     if ( !is_allocated(ptr) ) return 0;
     return block_size(ptr);
   }
+
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  // deep corruption walk
+  template<class V>
+  void
+  __doctor_walk(V &v)
+  {
+    if ( !base || !block_tags ) return;
+
+    usize idx = 0;
+    usize guard = 0;
+    const usize maxg = tag_count + 4;
+    while ( idx < tag_count && guard++ < maxg ) {
+      u8 tag = block_tags[idx];
+      if ( tag == __tag_none ) {      // interior/padding at a boundary; skip one min-block
+        ++idx;
+        continue;
+      }
+      i64 o = static_cast<i64>(tag & ~__tag_free);
+      byte *blk = base + (idx << __log2_min);
+      ++v.blocks;
+      if ( o < 0 || o >= max_order ) {
+        v.note("buddy: block tag order out of range", blk);
+        ++idx;
+        continue;
+      }
+      usize osz = order_sizes[o];
+      if ( (usize)(blk - base) + osz > total ) {
+        v.note("buddy: block extends past sheet bounds", blk);
+        break;
+      }
+      if ( ((usize)(blk - base) & (osz - 1)) != 0 ) v.note("buddy: block not aligned to its order size", blk);
+
+      const bool tag_free = (tag & __tag_free) != 0;
+      // the tail block_header is a maintained redundant copy
+      // only for allocated blocks
+      if ( !tag_free ) {
+        block_header *h = hdr_of(blk, o);
+        if ( h->order != static_cast<i32>(o) ) {
+          v.note("buddy: allocated block tail header order != block_tags order", blk);
+          if ( v.repair ) {
+            h->order = static_cast<i32>(o);
+            v.did_repair("buddy: rewrote tail header order from tag", blk);
+          }
+        }
+        const bool flags_alloc
+            = (h->flags == __block_alloc || h->flags == (__block_alloc | __block_temporal) || h->flags == __block_tombstone);
+        if ( !flags_alloc ) {
+          v.note("buddy: allocated block tail header flags not allocated", blk);
+          if ( v.repair ) {
+            h->flags = __block_alloc | (h->flags & __block_temporal);
+            v.did_repair("buddy: reset tail header flags to allocated form", blk);
+          }
+        }
+      }
+      idx += (osz >> __log2_min);
+    }
+    if ( guard >= maxg ) v.note("buddy: tiling walk overran (corrupt tag stream)", base);
+
+    // per order free lists
+    for ( i64 o = 0; o < max_order; ++o ) {
+      const bool has = (free_lists[o] != nullptr);
+      const bool bit = ((free_mask >> o) & 1u) != 0;
+      if ( has != bit ) {
+        v.note("buddy: free_mask bit disagrees with free_lists[o]", base);
+        if ( v.repair ) {
+          if ( has )
+            free_mask |= (u64(1) << o);
+          else
+            free_mask &= ~(u64(1) << o);
+          v.did_repair("buddy: fixed free_mask bit", base);
+        }
+      }
+      free_block *n = free_lists[o];
+      free_block *prev = nullptr;
+      usize gc = 0;
+      while ( n && gc++ < tag_count + 4 ) {
+        ++v.freelist_nodes;
+        if ( !__link_valid(n) ) {
+          v.note("buddy: free-list node out of bounds / misaligned", n);
+          if ( v.repair ) {
+            if ( prev )
+              prev->next = nullptr;
+            else
+              free_lists[o] = nullptr;
+            mask_clear_if_empty(o);
+            v.did_repair("buddy: truncated free-list at bad node", n);
+          }
+          break;
+        }
+        if ( !tag_is_free_at(reinterpret_cast<byte *>(n), o) ) v.note("buddy: free-list node not tagged free at its order", n);
+        if ( n->next && !__link_valid(n->next) ) {
+          v.note("buddy: forged free-list next link", n);
+          if ( v.repair ) {
+            n->next = nullptr;
+            v.did_repair("buddy: nulled forged free-list link", n);
+          }
+          break;
+        }
+        prev = n;
+        n = n->next;
+      }
+      if ( gc >= tag_count + 4 ) v.note("buddy: free-list cycle / overrun at order", base);
+    }
+  }
+#endif
 };
 };      // namespace abc

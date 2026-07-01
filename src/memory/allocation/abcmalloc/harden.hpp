@@ -51,6 +51,7 @@ fail_state(void)
 inline __attribute__((always_inline)) bool
 handle_double_free([[maybe_unused]] byte *addr)
 {
+  ABC_DOCTOR(if ( doctor::on_double_free(addr, __FILE__, __LINE__) ) return true;)
   if constexpr ( __default_double_free_action == 0 ) {
     // ignore silently
     return false;
@@ -185,7 +186,7 @@ zero_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
 inline __attribute__((always_inline)) void
 poison_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
 {
-  if constexpr ( __default_poison_on_free ) {
+  if constexpr ( ABC_EFF_POISON_ON_FREE ) {
     if ( sz == 0 ) {
       sz = __recover_size_from_hdr(addr);
       if ( sz == 0 ) return;
